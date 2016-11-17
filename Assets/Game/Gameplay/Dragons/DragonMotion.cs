@@ -159,7 +159,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	[SerializeField] private float m_insideWaterRecoveryTime = 0.1f;
 	private float m_recoverTimer;
 
-	private bool m_canMoveInsideWater = false;
+	private bool m_canMoveInsideWater = true;
 	public bool canDive
 	{
 		get
@@ -207,8 +207,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private float m_introTimer;
 	private const float m_introDuration = 3;
+	private Vector3 m_introTarget;
+	private Vector3 m_destination;
+	private float m_introDisplacement = 60;
 
-	// private Vector3 m_destination;
+
 	private Transform m_preyPreviousTransformParent;
 	private AI.Machine m_holdPrey = null;
 	private Transform m_holdPreyTransform = null;
@@ -217,9 +220,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private bool m_grab = false;
 
-	private float m_inverseGravityWater = -2;
+	private float m_inverseGravityWater = -0.5f;
+	private float m_accWaterFactor = 0.72f;
 
-	private RegionManager m_regionManager;
+    private RegionManager m_regionManager;
 	public Current                              current { get; set; }
 
 	private Vector3 m_diePosition;
@@ -227,6 +231,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private float m_reviveTimer;
 	private const float m_reviveDuration = 1;
 	private float m_deadTimer = 0;
+
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -279,8 +285,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_boostMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
 
 		// Movement Setup
-		// m_dargonAcceleration = m_dragon.data.def.GetAsFloat("acceleration");
-		m_dargonAcceleration = m_dragon.data.def.GetAsFloat("speedBase");
+		m_dargonAcceleration = m_dragon.data.def.GetAsFloat("acceleration");
+		// m_dargonAcceleration = m_dragon.data.def.GetAsFloat("speedBase");
 		m_dragonMass = m_dragon.data.def.GetAsFloat("mass");
 		m_dragonFricction = m_dragon.data.def.GetAsFloat("friction");
 		m_dragonGravityModifier = m_dragon.data.def.GetAsFloat("gravityModifier");
@@ -329,7 +335,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					break;
 				case State.InsideWater:
 				{
-					m_inverseGravityWater = -2;
+					m_inverseGravityWater = 1.5f;
 					m_animator.SetBool("swim", false);
 					m_animator.SetBool("fly down", false);
 				}break;
@@ -339,7 +345,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}break;
 				case State.Intro:
 				{
-				}break;
+					m_rbody.isKinematic = false;
+					m_animator.SetBool("boost", false);
+					m_animator.SetBool("move", false);
+ 				}break;
 				case State.Latching:
 				{
 					m_groundCollider.enabled = true;
@@ -381,21 +390,26 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					break;
 				case State.InsideWater:
 				{
-					if ( m_canMoveInsideWater )
+					//if ( m_canMoveInsideWater )
 					{
-						m_animator.SetBool("move", false);
-						m_animator.SetBool("swim", true);
+						//m_animator.SetBool("move", false);
+						//m_animator.SetBool("swim", true);
 					}
-					else
+					/*else*/
 					{
 						m_animator.SetBool("fly down", true);
 					}
+                    m_accWaterFactor = 0.70f;
+                    m_inverseGravityWater = 1.5f;
 					m_startParabolicPosition = transform.position;
 				}break;
 				case State.ExitingWater:
 				{
 					m_recoverTimer = m_insideWaterRecoveryTime;
-				}break;
+                    m_accWaterFactor = 2.0f;
+
+                }
+                    break;
 				case State.OuterSpace:
 				{
 					m_animator.SetBool("fly down", true);
@@ -407,9 +421,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}break;
 				case State.Intro:
 				{
-					m_animator.Play("BaseLayer.Intro");
+					m_rbody.isKinematic = true;
+					m_animator.SetBool("boost", true);
+					m_animator.SetBool("move", true);
 					m_introTimer = m_introDuration;
-					RotateToDirection( Vector3.right );
+					m_impulse = Vector3.zero;
+					m_direction = Vector3.right;
+					m_desiredRotation = Quaternion.Euler(0,90.0f,0);
+					transform.rotation = m_desiredRotation;
 				}break;
 				case State.Latching:
 				{
@@ -475,13 +494,20 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				break;
 			case State.Intro:
 			{
+			/*
 				m_introTimer -= Time.deltaTime;
 				if ( m_introTimer <= 0 )
+				{
 					ChangeState( State.Idle );
-				RotateToDirection( Vector3.right );
-				// float delta = m_introTimer / m_introDuration;
-				// m_destination = Vector3.left * 30 * Mathf.Sin( delta * Mathf.PI * 0.5f);
-				// m_destination += m_introTarget;
+				}else{	
+					float delta = m_introTimer / m_introDuration;
+					m_destination = Vector3.left * m_introDisplacement * delta;//Mathf.Sin( delta * Mathf.PI * 0.5f);
+					m_destination += m_introTarget;
+
+					m_impulse = Vector3.zero;
+					m_direction = Vector3.right;
+				}
+				*/
 			}break;
 			case State.Latching:
 			{
@@ -667,15 +693,15 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			case State.InsideWater:
 			case State.ExitingWater:
 			{
-				if (m_canMoveInsideWater)
+				//if (m_canMoveInsideWater)
 				{
 					UpdateWaterMovement();
 				}
-				else
+				/*else
 				{
 					float distance = m_startParabolicPosition.y - transform.position.y;
 					UpdateParabolicMovement( 1, distance);
-				}
+				}*/
 			}break;
 			case State.OuterSpace:
 			case State.ExitingSpace:
@@ -685,12 +711,17 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 			case State.Intro:
 			{
-				// m_impulse = (m_destination - transform.position).normalized;
-				// m_direction = m_impulse;
-				// m_impulse *= m_speedValue;
-				// transform.position = m_destination;
-				// m_rbody.velocity = Vector3.zero;
-				// transform.rotation.SetLookRotation( Vector3.right );
+				m_introTimer -= Time.deltaTime;
+				if ( m_introTimer <= 0 )
+				{
+					ChangeState( State.Idle );
+				}else{	
+					float delta = m_introTimer / m_introDuration;
+					m_destination = Vector3.left * m_introDisplacement * delta;//Mathf.Sin( delta * Mathf.PI * 0.5f);
+					m_destination += m_introTarget;
+					m_rbody.MovePosition( m_destination );
+				}
+
 			}break;
 			case State.Latching:
 			{
@@ -836,32 +867,75 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		return ((src * factor) + (dst * dt)) / (factor + dt);
 	}
 
+    /*
+    private void UpdateMovement() 
+	{
+		Vector3 impulse = m_controls.GetImpulse(1); 
+		if ( impulse != Vector3.zero )
+		{
+			// http://stackoverflow.com/questions/667034/simple-physics-based-movement
+
+			// bool ignoreGravity = OverWaterMovement( ref impulse );
+			bool ignoreGravity = false;
+
+			// v_max = a/f
+			// t_max = 5/f
+
+			float gravity = 0;
+			if (!ignoreGravity)
+				gravity = 9.81f * m_dragonGravityModifier;
+			Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
+			acceleration += impulse * m_dargonAcceleration * GetTargetSpeedMultiplier() * m_dragonMass;	// User Force
+
+			// stroke's Drag
+			m_impulse = m_rbody.velocity;
+			float impulseMag = m_impulse.magnitude;
+
+			m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+
+			m_direction = m_impulse.normalized;
+			RotateToDirection( impulse );
+
+
+		}
+		else
+		{
+			ComputeImpulseToZero();
+			ChangeState( State.Idle );
+		}
+
+		ApplyExternalForce();
+
+		m_rbody.velocity = m_impulse;
+	}
+*/
 	private void UpdateWaterMovement()
 	{
 		Vector3 impulse = m_controls.GetImpulse(1);
+        if (impulse.y < 0) impulse.y *= m_inverseGravityWater;
 
-		float gravity = 9.81f * m_dragonGravityModifier * m_inverseGravityWater;
-		Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
-		acceleration += impulse * m_dargonAcceleration * GetTargetSpeedMultiplier() * m_dragonMass;	// User Force
+        float gravity = 9.81f * m_dragonGravityModifier * -3.0f;// m_inverseGravityWater;
+		Vector3 acceleration = Vector3.down * gravity * m_dragonMass;   // Gravity
+        acceleration += impulse * m_dargonAcceleration * GetTargetSpeedMultiplier() * m_dragonMass * m_accWaterFactor;	// User Force
 
 		// stroke's Drag
 		m_impulse = m_rbody.velocity;
 
 		float impulseMag = m_impulse.magnitude;
-		m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+		m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * 1.0f * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
 		m_direction = m_impulse.normalized;
-		RotateToDirection( impulse );
-
-		m_rbody.velocity = m_impulse;
-
-		m_inverseGravityWater -= Time.deltaTime * 0.5f;
+		RotateToDirection(m_direction);
 
 
+        m_rbody.velocity = m_impulse;
+
+        m_inverseGravityWater -= Time.deltaTime * 0.22f;
+        if (m_inverseGravityWater < 0.05f) m_inverseGravityWater = 0.05f;
 
 
 
 
-		/*
+        /*
 
 		if ( impulse.y > 0 )
 		{
@@ -884,8 +958,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		RotateToDirection( m_direction );
 		m_rbody.velocity = m_impulse;
 		*/
-	}
-
+}
+	
 	private void UpdateParabolicMovement( float sign, float distance )
 	{
 		// Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_currentSpeedMultiplier * Time.deltaTime * 0.1f);
@@ -1198,7 +1272,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if ( m_particleController != null )
 			m_particleController.OnEnterWater( _other );
 
-		rbody.velocity = rbody.velocity * m_waterImpulseMultiplier;
+        rbody.velocity = rbody.velocity * 2.0f;// m_waterImpulseMultiplier;
 		m_impulse = rbody.velocity;
 
 
@@ -1308,8 +1382,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void StartIntroMovement(Vector3 introTarget)
 	{
-		// m_introTarget = introTarget;
-		m_transform.position = introTarget;
+		m_introTarget = introTarget;
+		m_transform.position = introTarget + Vector3.left * m_introDisplacement;
 		m_introTimer = m_introDuration;
 		ChangeState(State.Intro);
 	}
@@ -1377,7 +1451,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			{
 				if ( m_impulse.y < 0 )	// if going deep
 				{
-					m_impulse = m_impulse * m_onWaterCollisionMultiplier;	
+					//m_impulse = m_impulse * m_onWaterCollisionMultiplier;	
+                    //m_impulse = m_impulse * 8;	
 				}
 			}break;
 

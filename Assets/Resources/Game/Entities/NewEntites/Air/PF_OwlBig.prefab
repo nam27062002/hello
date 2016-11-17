@@ -456,6 +456,10 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_burnParticle:
+    name: PF_BonfireToon
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -479,6 +483,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: owl
+  m_dieOutsideFrustum: 1
 --- !u!114 &11485456
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -534,11 +539,8 @@ MonoBehaviour:
     m_senseDelay:
       min: 0.5
       max: 1
-  m_onSpawnSoundProbability: 0
-  m_onSpawnSounds: []
-  m_onEatenSoundProbability: 50
-  m_onEatenSounds:
-  - audio/sfx/animals/air/BirdOwl JBA01_68
+  m_onSpawnSound: 
+  m_onEatenSound: 
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 

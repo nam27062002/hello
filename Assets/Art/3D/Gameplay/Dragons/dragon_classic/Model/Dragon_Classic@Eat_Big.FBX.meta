@@ -74,6 +74,11 @@ ModelImporter:
     100132: Dragon_Tongue_01
     100134: Dragon_Tongue_02
     100136: Dragon_Tongue_03
+    100138: Fire_Dummy
+    100140: SuctionPoint
+    100142: SwallowPoint
+    100144: 'Dragon_SuctionPoint '
+    100146: Dragon_SwallowPoint
     400000: Dragon_Chest
     400002: //RootNode
     400004: Dragon_Head
@@ -143,6 +148,11 @@ ModelImporter:
     400132: Dragon_Tongue_01
     400134: Dragon_Tongue_02
     400136: Dragon_Tongue_03
+    400138: Fire_Dummy
+    400140: SuctionPoint
+    400142: SwallowPoint
+    400144: 'Dragon_SuctionPoint '
+    400146: Dragon_SwallowPoint
     7400000: Eat_Big
     9500000: //RootNode
   materials:
@@ -170,15 +180,15 @@ ModelImporter:
       name: Eat_Big
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 11
+      lastFrame: 10.4
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
-      cycleOffset: 0.44
+      cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 1
-      loopBlend: 1
+      loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
@@ -199,6 +209,13 @@ ModelImporter:
         messageOptions: 0
       - time: 0.3031496
         functionName: EatEvent
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.98867923
+        functionName: EatEndEvent
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
@@ -298,6 +315,12 @@ ModelImporter:
       - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head/Dragon_R_Eye/Dragon_R_Down_EyeLead
         weight: 1
       - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head/Dragon_R_Eye/Dragon_R_Up_EyeLead
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head/Fire_Dummy
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head/SuctionPoint
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head/SwallowPoint
         weight: 1
       - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_RArm_Shoulder
         weight: 1

@@ -52,7 +52,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	/// </summary>
 	private void OnLevelLoaded() {
 
-		PoolManager.CreatePool((GameObject)Resources.Load("Particles/PF_FireNewProc"), 25, true);
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/PF_FireProc"), 25, true);
 		ParticleManager.CreatePool("SmokeParticle", "", 25);
 
 		// Create and populate QuadTree

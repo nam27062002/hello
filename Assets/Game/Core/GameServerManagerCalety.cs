@@ -29,6 +29,8 @@ public class GameServerManagerCalety : GameServerManager
         public delegate bool OnResponse(string response, int responseCode);
         private OnResponse m_onResponse;
 
+        public bool IsNewAppVersionNeeded { get; set; }
+
         public GameSessionDelegate(OnResponse onResponse)
         {
             Debug.TaggedLog(tag, "GameSessionDelegate instantiated");
@@ -55,7 +57,7 @@ public class GameServerManagerCalety : GameServerManager
                     responseAsString = response.ToString();
                 }
 
-                m_onResponse(responseAsString, 200);
+                m_onResponse(responseAsString, (IsNewAppVersionNeeded) ? 426 : 200);
             }
         }
 
@@ -111,7 +113,7 @@ public class GameServerManagerCalety : GameServerManager
         // There are merge conflicts and asks to show the merging popup
         public override void onMergeShowPopupNeeded(CaletyConstants.PopupMergeType eType, JSONNode kLocalAccount, JSONNode kCloudAccount)
         {
-            m_waitingMergeResponse = false;
+            m_waitingMergeResponse = false;            
             Debug.TaggedLog(tag, "onMergeShowPopupNeeded");
         }
 
@@ -151,6 +153,7 @@ public class GameServerManagerCalety : GameServerManager
         public override void onNewAppVersionNeeded()
         {
             Debug.TaggedLog(tag, "onNewAppVersionNeeded");
+            IsNewAppVersionNeeded = true;
         }
 
         // Notify the game that a new version of the app is released. Show a popup that redirects to the store.
@@ -175,7 +178,7 @@ public class GameServerManagerCalety : GameServerManager
         public override void onRequestGameReset()
         {
             Debug.TaggedLog(tag, "onRequestGameReset");
-        }                    
+        }        
 
         void ResetWaitingFlags()
         {
@@ -206,6 +209,8 @@ public class GameServerManagerCalety : GameServerManager
 
             kServerConfig.m_strClientVersion = settingsInstance.GetClientBuildVersion();
         }
+
+        kServerConfig.m_bIsNewVersionRestrictive = false;
 
 #if UNITY_EDITOR
         kServerConfig.m_strClientPlatformBuild = "editor";
@@ -253,6 +258,7 @@ public class GameServerManagerCalety : GameServerManager
                 
                 m_delegate.m_logged = false;
                 m_delegate.m_waitingLoginResponse = true;
+                m_delegate.IsNewAppVersionNeeded = false;
 
                 Dictionary<string, string> parameters = new Dictionary<string, string>();
                 parameters.Add("platformId", platformId);
@@ -528,10 +534,12 @@ public class GameServerManagerCalety : GameServerManager
         Dictionary<string, object> response = null;
 
         // 426 code means that there's a new version of the application available. We simulate that the response was 200 (SUCCESS) because we don't want to force the
-        // user to upgrade
+        // user to upgrade        
+        bool upgradeAvailable = false;
         if (statusCode == 426)
         {
             statusCode = 200;
+            upgradeAvailable = true;
         }
 
         int status = (int)Math.Floor(statusCode / 100.0);
@@ -695,7 +703,7 @@ public class GameServerManagerCalety : GameServerManager
                     if (result != null)
                     {
                         string key = "upgradeAvailable";
-                            response[key] = result.ContainsKey(key) && Convert.ToBoolean(result[key]);
+                        response[key] = upgradeAvailable;
 
                         key = "cloudSaveAvailable";
                         response[key] = result.ContainsKey(key) && Convert.ToBoolean(result[key]);                        

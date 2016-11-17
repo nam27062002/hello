@@ -55,7 +55,7 @@ public class HungryDragonEditorMenu {
 	public static void ShowSettings() { OpenFile("GameSettings.asset", SINGLETONS_FOLDER); }
 
 	[MenuItem("Hungry Dragon/Content/Reload Rules", false, 50)]
-	public static void ReloadDefinitions() { ContentManager.InitContent(); }
+	public static void ReloadDefinitions() { ContentManager.InitContent(true); }
 
 	//---------------------------------------------------- TOOLS -----------------------------------------------------//
 	/// <summary>
@@ -149,13 +149,13 @@ public class HungryDragonEditorMenu {
 	public static void GenerateSpawnerIconsAll() {
 		//SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();
 		SpawnerIconGeneratorEditor.GenerateSpawnerIconsInResources(Colors.transparentWhite);
-	}
+	}   
 
-	//--------------------------------------------------- OTHERS -----------------------------------------------------//
-	/// <summary>
-	/// Add menu item to be able to open the level editor.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Level Editor", false, 50)]
+    //--------------------------------------------------- OTHERS -----------------------------------------------------//
+    /// <summary>
+    /// Add menu item to be able to open the level editor.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Level Editor", false, 50)]
 	public static void ShowLevelEditorWindow() {
 		// Show existing window instance. If one doesn't exist, make one.
 		LevelEditor.LevelEditorWindow window = LevelEditor.LevelEditorWindow.instance;
@@ -194,8 +194,26 @@ public class HungryDragonEditorMenu {
 		window.Show();	// In this case we actually want the window to be closed when losing focus so the temp object created to display savegames is properly destroyed
 	}
 
-	//----------------------------------------------- SCENE SHORTCUTS -------------------------------------------------//
-	[MenuItem("Hungry Dragon/Scenes/SC_Loading", false, 0)]
+    /// <summary>
+	/// Add menu item to be open the persistence profiles editor.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Profiler Settings", false, 51)]
+    public static void ShowProfilerWindow()
+    {
+        // Show existing window instance. If one doesn't exist, make one.
+        ProfilerEditorWindow window = ProfilerEditorWindow.instance;
+
+        // Setup window
+        window.titleContent = new GUIContent("Profiler Settings");
+        window.minSize = new Vector2(ProfilerEditorWindow.SPACING + ProfilerEditorWindow.PROFILE_LIST_COLUMN_WIDTH + ProfilerEditorWindow.PROFILE_VIEW_COLUMN_WIDTH + ProfilerEditorWindow.SPACING, ProfilerEditorWindow.MIN_WINDOW_HEIGHT); // Fixed width, arbitrary minimum
+        window.maxSize = new Vector2(window.minSize.x, float.PositiveInfinity);                     // Fixed width, limitless        
+
+        // Show it
+        window.Show();  // In this case we actually want the window to be closed when losing focus so the temp object created to display savegames is properly destroyed
+    }
+
+    //----------------------------------------------- SCENE SHORTCUTS -------------------------------------------------//
+    [MenuItem("Hungry Dragon/Scenes/SC_Loading", false, 0)]
 	public static void OpenScene1() { OpenScene("Assets/Game/Scenes/SC_Loading.unity", true); }
 
 	[MenuItem("Hungry Dragon/Scenes/SC_Menu", false, 1)]
@@ -241,7 +259,7 @@ public class HungryDragonEditorMenu {
 	/// <param name="_closeLevelEditor">Whether to force closing the level editor before opening the scene.</param>
 	public static void OpenScene(string _scenePath, bool _closeLevelEditor) {
 		// Ask to save current scenes first
-		EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
+		if(!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
 
 		// If asked to close the level editor, do it now
 		if(_closeLevelEditor) {

@@ -40,9 +40,19 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	[SerializeField] private GameObject m_escapeFeedbackContainer = null;
 	[SerializeField] private GameObject m_3dFeedbackContainer = null;
 
+	// Internal
+	private Queue<WorldFeedbackController> m_feedbacksQueue = new Queue<WorldFeedbackController>();	// [AOC] In order to prevent too many feedbacks appearing at once, use a queue to show them sequentially
+
+    public int m_scoreFeedbackMax = 15;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//    
+    private void Awake()
+    {
+        Offsets_Init();        
+    }
+
 	/// <summary>
 	/// First update call.
 	/// </summary>
@@ -58,7 +68,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			if(m_scoreFeedbackContainer != null) {
 				parent = m_scoreFeedbackContainer.transform;
 			}
-			PoolManager.CreatePool(m_scoreFeedbackPrefab, parent, 15);
+			PoolManager.CreatePool(m_scoreFeedbackPrefab, parent, m_scoreFeedbackMax);
 		}
 
 		// Coins
@@ -100,6 +110,8 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			PoolManager.CreatePool(m_escapedFeedbackPrefab, parent, 2, false);
 		}
 
+        Cache_Init();
+
 #if !PRODUCTION      
         Debug_Awake();
 #endif
@@ -116,7 +128,8 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnDestroyed);
 		Messenger.AddListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
 		Messenger.AddListener<Transform>(GameEvents.ENTITY_ESCAPED, OnEscaped);
-	}
+        Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);        
+    }
 	
 	/// <summary>
 	/// The spawner has been disabled.
@@ -129,7 +142,8 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnDestroyed);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
 		Messenger.RemoveListener<Transform>(GameEvents.ENTITY_ESCAPED, OnEscaped);
-	}
+        Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
+    }
 
 	/// <summary>
 	/// Destructor.
@@ -138,7 +152,25 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 #if !PRODUCTION
         Debug_OnDestroy();
 #endif
+        Clear();
     }
+
+    public void Clear()
+    {
+        Cache_Clear();
+        Offsets_Clear();
+    }
+
+	/// <summary>
+	/// Update loop.
+	/// </summary>
+	private void Update() {
+		// Trigger feedbacks one at a time
+		if(m_feedbacksQueue.Count > 0) {
+			WorldFeedbackController fb = m_feedbacksQueue.Dequeue();
+			fb.Spawn();
+		}
+	}
 
     //------------------------------------------------------------------//
     // INTERNAL															//
@@ -161,10 +193,11 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		if(string.IsNullOrEmpty(text)) return;
 
 		// Get an instance from the pool and spawn it!
-		GameObject obj = PoolManager.GetInstance(m_killFeedbackPrefab.name);
+		GameObject obj = PoolManager.GetInstance(m_killFeedbackPrefab.name, false);
 		if (obj != null) {
 			WorldFeedbackController worldFeedback = obj.GetComponent<WorldFeedbackController>();
-			worldFeedback.Spawn(text, _entity.position);
+			worldFeedback.Init(text, _entity.position);
+			m_feedbacksQueue.Enqueue(worldFeedback);
 		}
 	}
 
@@ -179,11 +212,12 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		}
 
 		// Get an instance from the pool and spawn it!
-		GameObject obj = PoolManager.GetInstance(m_escapedFeedbackPrefab.name);
+		GameObject obj = PoolManager.GetInstance(m_escapedFeedbackPrefab.name, false);
 		if (obj != null) 
 		{
 			WorldFeedbackController worldFeedback = obj.GetComponent<WorldFeedbackController>();
-            worldFeedback.Spawn( LocalizationManager.SharedInstance.Get( tid ) , _entity.position);
+            worldFeedback.Init( LocalizationManager.SharedInstance.Get( tid ) , _entity.position);
+			m_feedbacksQueue.Enqueue(worldFeedback);
 		}
 	}
 	
@@ -198,23 +232,22 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	private void OnRewardApplied(Reward _reward, Transform _entity) {
 		// Find out spawn position
 		Vector3 worldPos = Vector3.zero;
-		if(_entity != null) worldPos = _entity.position;
+        if (_entity != null) {
+            // A random offset is added in order to prevent several particles from being located at the same position
+            worldPos = _entity.position + Offsets_GetRandomOffset();            
+        }        
 
-		// Show different feedback for different reward types
-		// Score
-		if(_reward.score > 0) {
+        // Show different feedback for different reward types
+        // Score
+        if (_reward.score > 0) {
 			// Get a score feedback instance and initialize it with the target reward
-			if(m_scoreFeedbackPrefab != null) {
-				// Get an instance from the pool
-				GameObject obj = PoolManager.GetInstance(m_scoreFeedbackPrefab.name);
-
-				// Initialize score component
-				ScoreFeedback scoreFeedback = obj.GetComponent<ScoreFeedback>();
-				scoreFeedback.SetScore(_reward.score);
-
-				// Spawn
-				WorldFeedbackController controller = obj.GetComponent<WorldFeedbackController>();
-				controller.Spawn(worldPos);
+			if(m_scoreFeedbackPrefab != null) {               
+                ScoreCacheItemData itemData = m_cacheDatas[ECacheTypes.Score].GetCacheItemDataAvailable() as ScoreCacheItemData;
+                if (itemData != null)
+                {
+                    itemData.Spawn(CacheWatch.ElapsedMilliseconds, worldPos, _reward.score);
+                    m_feedbacksQueue.Enqueue(itemData.Controller);
+                }
 			}
 		}
 
@@ -269,11 +302,12 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	/// <param name="_reawrd">Reawrd.</param>
 	private void OnFlockEaten(Transform _entity, Reward _reward) {		
 		// Spawn flock feedback bonus, score will be displayed as any other score feedback
-		GameObject flockBonus = PoolManager.GetInstance(m_flockBonusFeedbackPrefab.name);
+		GameObject flockBonus = PoolManager.GetInstance(m_flockBonusFeedbackPrefab.name, false);
 		if (flockBonus != null) {
             string text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_FLOCK_BONUS");
 			WorldFeedbackController worldFeedback = flockBonus.GetComponent<WorldFeedbackController>();
-			worldFeedback.Spawn(text, _entity.position);
+			worldFeedback.Init(text, _entity.position);
+			m_feedbacksQueue.Enqueue(worldFeedback);
 		}
 	}
 
@@ -282,6 +316,202 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	{
 		SpawnEscapedFeedback(_entity);
 	}
+
+    private void OnGameEnded()
+    {
+        Clear();
+    }
+
+    #region offsets
+    // This region is responsible for storing some offsets to be used to spawn feedback particles, typically when an entity is eaten. Every time an entity is eaten a particle
+    // has to be spawned at the eater's mouth position plus an offset in order to prevent all particles from being spawned at the same position
+    private int OFFSETS_MAX = 40;
+    private Vector3[] m_offsets;
+
+    private void Offsets_Init()
+    {
+        if (m_offsets == null)
+        {
+            Offsets_CreateOffsets(1.6f, OFFSETS_MAX);
+        }
+    }
+
+    private void Offsets_Clear()
+    {
+        m_offsets = null;             
+    }
+
+    private void Offsets_CreateOffsets(float _radius, int _numPoints)
+    {
+        m_offsets = new Vector3[_numPoints];
+        Vector2 pos;
+        for (int i = 0; i < _numPoints; i++)
+        {
+            pos = UnityEngine.Random.insideUnitCircle * _radius;
+            m_offsets[i] = new Vector3(pos.x, pos.y, 0f);
+        }
+    }
+
+    private Vector3 Offsets_GetRandomOffset()
+    {
+        int _index = (int)UnityEngine.Random.Range(0, OFFSETS_MAX - 1);        
+        return m_offsets[_index];
+    }
+    #endregion
+
+    #region cache
+    // This region is responsible for storing the game object to be used for showing feedback.
+
+    private System.Diagnostics.Stopwatch CacheWatch;
+
+    private enum ECacheTypes
+    {
+        Score
+    };
+
+    private abstract class CacheData
+    {
+        private CacheItemData[] CacheItemDatas;
+
+        public CacheData(int itemsAmount, string prefabName)
+        {
+            CacheItemDatas = new CacheItemData[itemsAmount];
+
+            // Instantiate all game objects in order to make sure they already exist when they have to be spawned
+            GameObject go;
+            for (int i = 0; i < itemsAmount; i++)
+            {
+                go = PoolManager.GetInstance(prefabName, false);
+                CacheItemDatas[i] = CreateItemData(0, go);
+            }            
+        }
+
+        protected abstract CacheItemData CreateItemData(long timeStamp, GameObject go);
+        
+        public void Clear()
+        {
+            if (CacheItemDatas != null)
+            {
+                int count = CacheItemDatas.Length;
+                for (int i = 0; i < count; i++)
+                {
+                    PoolManager.ReturnInstance(CacheItemDatas[i].GameObject);
+                }
+
+                CacheItemDatas = null;
+            }
+        }
+
+        public CacheItemData GetCacheItemDataAvailable()
+        {
+            // Returns the oldest item
+            int index = 0;
+            int count = CacheItemDatas.Length;
+            long minTimeStamp = long.MaxValue;
+            for (int i = 0; i < count; i++)
+            {
+                if (CacheItemDatas[i].TimeStamp < minTimeStamp)
+                {
+                    index = i;
+                    minTimeStamp = CacheItemDatas[i].TimeStamp;
+                }
+            }
+
+            return CacheItemDatas[index];
+        }                       
+    }
+
+    private class ScoreCacheData : CacheData
+    {
+        public ScoreCacheData(int itemsAmount, string prefabName) : base(itemsAmount, prefabName)
+        {
+        }
+
+        protected override CacheItemData CreateItemData(long timeStamp, GameObject go)
+        {
+            return new ScoreCacheItemData(timeStamp, go);
+        }
+    }
+
+    private class CacheItemData
+    {
+        /// <summary>
+        /// Time stamp of the last time this object was used 
+        /// </summary>
+        public long TimeStamp { get; set; }
+        public GameObject GameObject { get; set; }
+
+        public CacheItemData(long timeStamp, GameObject go)
+        {
+            TimeStamp = timeStamp;
+            GameObject = go;
+        }
+
+        public void Spawn(long timeStamp, Vector3 worldPos, int value)
+        {
+            TimeStamp = timeStamp;
+            SpawnExtended(worldPos, value);
+        }
+
+        protected virtual void SpawnExtended(Vector3 worldPos, int value) {}        
+    }
+
+    private class ScoreCacheItemData : CacheItemData
+    {
+        public ScoreFeedback ScoreFeedback { get; set; }
+        public WorldFeedbackController Controller { get; set; }
+
+        public ScoreCacheItemData(long timeStamp, GameObject go) : base(timeStamp, go)
+        {
+            // Initialize score component
+            ScoreFeedback = go.GetComponent<ScoreFeedback>();                        
+            Controller = go.GetComponent<WorldFeedbackController>();            
+        }
+
+        protected override void SpawnExtended(Vector3 worldPos, int value) 
+        {
+            if (ScoreFeedback != null)
+            {
+                ScoreFeedback.SetScore(value);
+            }
+
+            if (Controller != null)
+            {
+                Controller.Init(worldPos);
+            }
+        }
+    }
+
+    private Dictionary<ECacheTypes, CacheData> m_cacheDatas;
+    
+    private void Cache_Init()
+    {
+        CacheWatch = new System.Diagnostics.Stopwatch();
+        CacheWatch.Start();
+
+        if (m_cacheDatas == null)
+        {
+            m_cacheDatas = new Dictionary<ECacheTypes, CacheData>();
+            
+            // Score cache data
+            CacheData cacheData = new ScoreCacheData(m_scoreFeedbackMax, m_scoreFeedbackPrefab.name);
+            m_cacheDatas.Add(ECacheTypes.Score, cacheData);
+        }
+    }
+
+    private void Cache_Clear()
+    {
+        if (m_cacheDatas != null)
+        {
+            foreach (KeyValuePair<ECacheTypes, CacheData> pair in m_cacheDatas)
+            {
+                pair.Value.Clear();
+            }
+
+            m_cacheDatas = null;
+        }
+    }
+    #endregion
 
     #region debug
     // This region is responsible for enabling/disabling the feedback particles for profiling purposes. 

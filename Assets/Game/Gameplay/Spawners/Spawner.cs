@@ -191,14 +191,18 @@ public class Spawner : MonoBehaviour, ISpawner {
 	public void ResetSpawnTimer()
 	{
 		m_respawnTime = -1;
-	}
+	}    
 
-	public void ForceRemoveEntities() {
+    public void ForceRemoveEntities() {
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			if (m_entities[i] != null) {
 				PoolManager.ReturnInstance(m_entityPrefabStr, m_entities[i]);
 				m_entities[i] = null;
-			}
+                if (ProfilerSettingsManager.ENABLED)
+                {
+                    RemoveFromTotalLogicUnits(1);
+                }                
+            }
 		}
 
 		m_entityAlive = 0;
@@ -221,7 +225,13 @@ public class Spawner : MonoBehaviour, ISpawner {
 						m_entitiesKilled++;
 					}
 					m_entityAlive--;
-					found = true;
+
+                    if (ProfilerSettingsManager.ENABLED)
+                    {
+                        RemoveFromTotalLogicUnits(1);
+                    }
+                         
+                    found = true;
 				}
 			}
 
@@ -254,8 +264,14 @@ public class Spawner : MonoBehaviour, ISpawner {
 			}
 		}
 	}
-		
-	public bool CanRespawn() {		
+    
+    public ERespawnPendingTask RespawnPendingTask { get; set; }
+
+    public bool IsRespawningWithDelay() {
+        return m_state == State.Respawning || m_state == State.Create_Instances || m_state == State.Activating_Instances;
+    }
+
+    public bool CanRespawn() {		
 		// Ignore all logic for always active spawners
 		if (m_alwaysActive) {
 			if (m_entityAlive == 0) {
@@ -358,7 +374,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		return endConditionsOk;
 	}
-
+    
 	public bool Respawn() {
 
 		if (m_state == State.Respawning) {
@@ -384,12 +400,17 @@ public class Spawner : MonoBehaviour, ISpawner {
                 sm_watch.Start();
             }
 
-            long start = sm_watch.ElapsedMilliseconds;
+            long start = sm_watch.ElapsedMilliseconds;                       
 			for (uint i = m_entityAlive; i < m_entitySpawned; i++) {			
 				m_entities[i] = PoolManager.GetInstance(m_entityPrefabStr, false);
 				m_entityAlive++;
 
-				if (sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
+                if (ProfilerSettingsManager.ENABLED)
+                {
+                    AddToTotalLogicUnits(1);
+                }
+
+                if (sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
 					break;
 				}
 			}
@@ -450,7 +471,13 @@ public class Spawner : MonoBehaviour, ISpawner {
 				entity.Spawn(this); // lets spawn Entity component first
 			}
 
-			AI.AIPilot pilot = spawning.GetComponent<AI.AIPilot>();
+            AI.Machine machine = spawning.GetComponent<AI.Machine>();
+            if (machine != null && m_groupController)
+            {
+                machine.EnterGroup(ref m_groupController.flock);
+            }
+
+            AI.AIPilot pilot = spawning.GetComponent<AI.AIPilot>();
 			if (pilot != null) {
 				pilot.SetRail(m_rail, (int)m_rails);
                 m_rail = (m_rail + 1) % (int)m_rails;
@@ -463,14 +490,9 @@ public class Spawner : MonoBehaviour, ISpawner {
 				if (component != entity && component != pilot) {
 					component.Spawn(this);
 				}
-			}
+			}			
 
-			AI.Machine machine = spawning.GetComponent<AI.Machine>();
-			if (machine != null && m_groupController) {				
-				machine.EnterGroup(ref m_groupController.flock);
-			}
-
-            m_entitiesActivated++;           
+            m_entitiesActivated++;                 
 
             if (sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
                 break;
@@ -522,4 +544,52 @@ public class Spawner : MonoBehaviour, ISpawner {
 		v.z = 0f;
 		return v;
 	}
+
+    #region profiler
+    private static float sm_totalLogicUnits = 0f;    
+    public static float totalLogicUnitsSpawned
+    {
+        get
+        {
+            return sm_totalLogicUnits;
+        }       
+    }
+
+    private static int sm_totalEntities = 0;
+    public static int totalEntities
+    {
+        get
+        {
+            return sm_totalEntities;
+        }
+    }
+
+    private void AddToTotalLogicUnits(int amount)
+    {
+        float logicUnitsCoef = 1f;
+        ProfilerSettings settings = ProfilerSettingsManager.SettingsCached;
+        if (settings != null)
+        {            
+            logicUnitsCoef = settings.GetLogicUnits(m_entityPrefabStr);                        
+        }
+
+        sm_totalEntities += amount;
+        sm_totalLogicUnits += logicUnitsCoef * amount;
+        if (sm_totalLogicUnits < 0f)
+        {
+            sm_totalLogicUnits = 0f;
+        }
+    }
+
+    private void RemoveFromTotalLogicUnits(int amount)
+    {
+        AddToTotalLogicUnits(-amount);        
+    }
+
+    public static void ResetTotalLogicUnitsSpawned()
+    {
+        sm_totalLogicUnits = 0f;
+        sm_totalEntities = 0;
+    }
+    #endregion
 }

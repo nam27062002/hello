@@ -435,7 +435,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	/// </summary>
 	private void ReloadData() {
         // If definitions are not loaded, do it now
-        if (!ContentManager.ready) ContentManager.InitContent();
+        if (!ContentManager.ready) ContentManager.InitContent(true);
 
         // Load all gameobjects in the target resources folder
         TextAsset[] prefabs = Resources.LoadAll<TextAsset>(PersistenceProfile.RESOURCES_FOLDER);
@@ -594,7 +594,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
                         ret = true;
                     }
                 }
-                catch (System.Exception e) {
+                catch (System.Exception) {
                     Debug.Log("Cannot parse json result");
                 }
             }

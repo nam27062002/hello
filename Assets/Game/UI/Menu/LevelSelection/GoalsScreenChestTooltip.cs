@@ -72,16 +72,16 @@ public class GoalsScreenChestTooltip : MonoBehaviour {
 		}
 
 		// Initialize reward info - shouldn't change while alive, so do it at the Start() call
-		DefinitionNode rewardDef = ChestManager.GetRewardDef(m_chestIdx + 1);
-		bool isPC = rewardDef.Get("type") == "pc";
+		Chest.RewardData rewardData = ChestManager.GetRewardData(m_chestIdx + 1);
+		bool isPC = rewardData.type == Chest.RewardType.PC;
 
 		m_coinsRewardText.gameObject.SetActive(!isPC);
 		m_pcRewardText.gameObject.SetActive(isPC);
 
 		if(isPC) {
-			m_pcRewardText.text = UIConstants.TMP_SPRITE_PC + StringUtils.FormatNumber(rewardDef.GetAsInt("amount"));
+			m_pcRewardText.text = UIConstants.TMP_SPRITE_PC + StringUtils.FormatNumber(rewardData.amount);
 		} else {
-			m_coinsRewardText.text = UIConstants.TMP_SPRITE_SC + StringUtils.FormatNumber(rewardDef.GetAsInt("amount"));
+			m_coinsRewardText.text = UIConstants.TMP_SPRITE_SC + StringUtils.FormatNumber(rewardData.amount);
 		}
 
 		// Do a first refresh!

@@ -255,9 +255,9 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 5
-    m_maxRadius: 3
-    m_minRadius: 2
+    m_sightRadius: 5.44
+    m_maxRadius: 3.28
+    m_minRadius: 0
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
@@ -265,17 +265,16 @@ MonoBehaviour:
       min: 0.9
       max: 1.1
     m_senseDelay:
-      min: 1
-      max: 2
-  m_onSpawnSoundProbability: 40
-  m_onSpawnSounds: []
-  m_onEatenSoundProbability: 50
-  m_onEatenSounds: []
+      min: 0
+      max: 0
+  m_onSpawnSound: 
+  m_onEatenSound: 
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
+  m_spawnsInsideWater: 1
 --- !u!114 &114000010996125912
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -318,6 +317,10 @@ MonoBehaviour:
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
+    name: PS_Dive
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_burnParticle:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
@@ -343,7 +346,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: canary
+  m_sku: fish_03
+  m_dieOutsideFrustum: 1
 --- !u!114 &114000012916486766
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -363,7 +367,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 1
     max: 1
-  m_serializedJson: '[{"speed":3.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":4,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":0,"separation":1.5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":3,"followAheadFactor":1,"frequencyOffset":{"min":-5,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":3.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":7,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":0,"separation":1.5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":3,"followAheadFactor":1,"frequencyOffset":{"min":-5,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
   m_databaseKey: PF_Fish_Generic_03
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1

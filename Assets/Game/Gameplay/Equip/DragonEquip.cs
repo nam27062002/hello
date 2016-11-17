@@ -21,9 +21,6 @@ public class DragonEquip : MonoBehaviour {
 
 		EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
 
-
-
-
 		/* TODO: refractor full equip function
 		 Dictionary<Equipable.AttachPoint, string> equip = dragon.data.equip;
 		// Change skin if there is any custom available
@@ -80,10 +77,6 @@ public class DragonEquip : MonoBehaviour {
 
 	}
 
-	public void PreviewDisguise(string _disguise) {
-		EquipDisguise(_disguise);
-	}
-
 	/// <summary>
 	/// The component has been enabled.
 	/// </summary>
@@ -111,12 +104,7 @@ public class DragonEquip : MonoBehaviour {
 	
 	private void EquipDisguise(string _disguise) {		
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _disguise);
-
-		if (def != null) {
-			def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES_EQUIP, def.GetAsString("equipSet"));
-		}
-
-		if (def != null)  {
+		if(def != null) {
 			SetSkin(def.GetAsString("skin"));
 		} else {
 			SetSkin(null);
@@ -128,7 +116,7 @@ public class DragonEquip : MonoBehaviour {
 		Material wingsMat;
 
 		if (_name == null || _name.Equals("default") || _name.Equals("")) {
-			_name = m_dragonSku;
+			_name = m_dragonSku + "_0";		// Default skin, all dragons should have it
 		}
 
 		bodyMat  = Resources.Load<Material>("Game/Equipable/Skins/" + m_dragonSku + "/" + _name + "_body");

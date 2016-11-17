@@ -2427,6 +2427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Head
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &11442174
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2513,6 +2514,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Fire_Dummy
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &11457052
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2626,6 +2628,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_trails: []
+  m_xweapontrail: []
 --- !u!114 &11483596
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3296,6 +3299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Spine
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &114000010548335968
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3308,6 +3312,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_RLeg_4
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &114000010921502668
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3320,6 +3325,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Spine
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &114000011050276462
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3354,6 +3360,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Chest
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &114000011158683094
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3366,6 +3373,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Tail3
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &114000011438943868
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3378,6 +3386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Tail4
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &114000012016405872
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3401,6 +3410,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Neck1
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &114000012469074318
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3413,7 +3423,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_minEatAnimTime: 0.1
-  m_eatDistance: 1.5
+  m_eatDistance: 2.1
+  m_eatDetectionRadiusMultiplier: 2.75
+  m_eatDetectionSpeedRadiusMultiplier: 0.15
   m_holdingBloodParticle:
     name: PS_Blood_Explosion_Medium
     path: Blood

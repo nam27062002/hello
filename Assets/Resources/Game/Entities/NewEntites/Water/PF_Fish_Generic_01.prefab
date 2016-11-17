@@ -267,15 +267,14 @@ MonoBehaviour:
     m_senseDelay:
       min: 1
       max: 2
-  m_onSpawnSoundProbability: 40
-  m_onSpawnSounds: []
-  m_onEatenSoundProbability: 50
-  m_onEatenSounds: []
+  m_onSpawnSound: 
+  m_onEatenSound: 
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
+  m_spawnsInsideWater: 1
 --- !u!114 &114000012165437688
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -287,7 +286,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: canary
+  m_sku: fish_01
+  m_dieOutsideFrustum: 1
 --- !u!114 &114000012189381320
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -330,6 +330,10 @@ MonoBehaviour:
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
+    name: PS_Dive
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_burnParticle:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}

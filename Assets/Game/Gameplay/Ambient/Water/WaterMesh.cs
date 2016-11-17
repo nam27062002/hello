@@ -84,7 +84,7 @@ public class WaterMesh : MonoBehaviour
         for (int x = 0; x < numVertsX; x++)
         {
             m_vertices[c] = transform.InverseTransformPoint(new Vector3(min.x + (x * m_cellSize), min.y, min.z + (m_cellSize)));
-            m_UV[c] = new Vector2(1.0f * uvspacing, x * uvspacing);
+            m_UV[c] = new Vector2(1.0f * uvspacing * min.y, x * uvspacing);
             m_colours[c++] = Color.gray;
         }
 
@@ -142,6 +142,9 @@ public class WaterMesh : MonoBehaviour
         m_colliderSize.Set(size.x * lscale.x, size.y * lscale.y, size.z * lscale.z);
 //        box.bounds.SetMinMax(min, max);
 
+
+		box.center = m_colliderCenter;
+		box.size = m_colliderSize;
     }
 
     // Use this for initialization
@@ -162,12 +165,7 @@ public class WaterMesh : MonoBehaviour
             //            m_mesh.triangles = m_indices;
             m_mesh.subMeshCount = 2;
             m_mesh.SetTriangles(m_indices, 0);
-            m_mesh.SetTriangles(m_indices2, 1);
-
-
-            BoxCollider box = GetComponent<BoxCollider>();
-            box.center = m_colliderCenter;
-            box.size = m_colliderSize;
+            m_mesh.SetTriangles(m_indices2, 1);            
         }
     }
 }

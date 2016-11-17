@@ -13,7 +13,7 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 	{
 		Pass
 		{
-			Tags { "RenderType"="Opaque" "LightMode" = "ForwardBase"}
+			Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase"}
 			Cull Back
 
 			Stencil

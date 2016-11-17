@@ -11,7 +11,7 @@ public class ContentManager
 			return m_ready;
 		}
 	}
-	public static void InitContent()
+    public static void InitContent(bool bAvoidDeltaContent = false)
 	{
 		Dictionary<string, string[]> kDefinitionFiles = new Dictionary<string,string[]>();
 
@@ -31,7 +31,9 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.DRAGON_TIERS, new string[]{"Rules/dragonTierDefinitions"});
 
 		// Entites
-		kDefinitionFiles.Add(DefinitionsCategory.ENTITIES, new string[]{"Rules/entityDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.PETS, 				new string[]{"Rules/petDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.ENTITIES, 			new string[]{"Rules/entityDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.DECORATIONS, 		new string[]{"Rules/decorationDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.ENTITY_CATEGORIES, new string[]{"Rules/entityCategoryDefinitions"});
 
 		// Game
@@ -46,13 +48,6 @@ public class ContentManager
 
 		// Disguises
 		kDefinitionFiles.Add(DefinitionsCategory.DISGUISES, new string[]{"Rules/disguisesDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.DISGUISES_EQUIP, new string[]{"Rules/disguiseEquipDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.DISGUISES_POWERUPS, new string[]{"Rules/disguisePowerUpsDefinitions"});
-
-		// Fire and Destruction properties
-		kDefinitionFiles.Add(DefinitionsCategory.FIRE_SPAWN_EFFECTS, new string[]{"Rules/spawnersDragonBurnDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.FIRE_DECORATION_EFFECTS, new string[]{"Rules/entityDragonBurnDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.BURN_DESTRUCTION_DECORATION, new string[]{"Rules/burnRelation"});
 
 		kDefinitionFiles.Add(DefinitionsCategory.HOLD_PREY_TIER, new string[]{"Rules/holdPreyTierSettingsDefinitions"});
 
@@ -63,8 +58,7 @@ public class ContentManager
 
 
 
-        List<string> kRulesListToCalculateCRC = new List<string>();
-		DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, ref kRulesListToCalculateCRC );
+        DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, bAvoidDeltaContent);
 		m_ready = true;
 
 		// Warn all other managers and definition consumers

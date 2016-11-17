@@ -134,11 +134,11 @@ public class ResultsSceneSetup : MonoBehaviour {
 			if(DebugSettings.resultsChestTestMode != ChestTestMode.NONE) {
 				chestIdx = i + 1;
 			}
-			DefinitionNode rewardDef = ChestManager.GetRewardDef(chestIdx);
+			Chest.RewardData rewardData = ChestManager.GetRewardData(chestIdx);
 
 			// Launch with delay
 			StartCoroutine(
-				AnimateChestWithDelay(sortedSlots[i], rewardDef, totalDelay)
+				AnimateChestWithDelay(sortedSlots[i], rewardData, totalDelay)
 			);
 			totalDelay += 0.5f;
 		}
@@ -176,14 +176,14 @@ public class ResultsSceneSetup : MonoBehaviour {
 	/// Lauches the animation of the given chest slot with a specific chest reward data and delay.
 	/// </summary>
 	/// <param name="_slot">Slot to be animated.</param>
-	/// <param name="_chestRewardDef">Chest reward data.</param>
+	/// <param name="_chestRewardData">Chest reward data.</param>
 	/// <param name="_delay">Delay before launching the animation.</param>
-	private IEnumerator AnimateChestWithDelay(ResultsSceneChestSlot _slot, DefinitionNode _chestRewardDef, float _delay) {
+	private IEnumerator AnimateChestWithDelay(ResultsSceneChestSlot _slot, Chest.RewardData _chestRewardData, float _delay) {
 		// Delay
 		yield return new WaitForSeconds(_delay);
 
 		// Do it!
 		_slot.gameObject.SetActive(true);
-		_slot.LaunchAnimation(_chestRewardDef);
+		_slot.LaunchAnimation(_chestRewardData);
 	}
 }

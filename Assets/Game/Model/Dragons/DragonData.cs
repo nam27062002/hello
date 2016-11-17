@@ -73,7 +73,6 @@ public class DragonData {
 
 	// Debug
 	private float m_scaleOffset = 0f;
-	private float m_speedOffset = 0f;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -96,7 +95,7 @@ public class DragonData {
 
 		// Items
 		m_pets = new List<string>();
-		m_disguise = "";
+		m_disguise = GetDefaultDisguise(_def.sku).sku;
 
 		// Other values
 		m_scaleOffset = 0;
@@ -123,13 +122,6 @@ public class DragonData {
 	public float GetScaleAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
 		return m_scaleRange.Lerp(levelDelta) + m_scaleOffset;
-	}
-
-	/// <summary>
-	/// Offsets speed value. Used for Debug purposes on Preproduction fase.
-	/// </summary>
-	public void OffsetSpeedValue(float _speed) {
-		m_speedOffset = _speed;
 	}
 
 	/// <summary>
@@ -183,7 +175,7 @@ public class DragonData {
 	{	
 		m_owned = false;
 		m_progression.Load(0,0);
-		m_disguise = "";
+		m_disguise = m_def != null ? GetDefaultDisguise(m_def.sku).sku : "";
 		m_pets.Clear();
 	}
 
@@ -207,7 +199,7 @@ public class DragonData {
 		if ( _data.ContainsKey("disguise") )
 			m_disguise = _data["disguise"];
 		else
-			m_disguise = "";
+			m_disguise = GetDefaultDisguise(sku).sku;
 
 		// Pets
 		m_pets.Clear();
@@ -248,6 +240,25 @@ public class DragonData {
 
 		return data;
 
+	}
+
+	//------------------------------------------------------------------------//
+	// STATIC UTILS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Gets the default disguise for the given dragon def.
+	/// </summary>
+	/// <returns>The definition of the default disguise to be used by the given dragon.</returns>
+	/// <param name="_dragonSku">The dragon whose default skin we want.</param>
+	public static DefinitionNode GetDefaultDisguise(string _dragonSku) {
+		// Get all the disguises for the given dragon
+		List<DefinitionNode> defList = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", _dragonSku);
+
+		// Sort by unlock level
+		DefinitionsManager.SharedInstance.SortByProperty(ref defList, "unlockLevel", DefinitionsManager.SortType.NUMERIC);
+
+		// There should always be one skin unlocked at level 0, anyway use the first one
+		return defList[0];
 	}
 
 	public static string TierToSku( DragonTier _tier)

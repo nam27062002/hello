@@ -9,7 +9,9 @@ public class DragonEatBehaviour : EatBehaviour {
 	private Dictionary<string, float> m_eatingBoosts = new Dictionary<string, float>();
 	private Animator m_animator;
 	protected bool m_pausedOnFury = false;
-    
+    private float m_eatingSpeed = -1;
+    public Range m_randomSpeedRange = new Range(1.0f, 1.5f);
+	private float m_randomSpeed = 1;
     //--------------
 
     override protected void Awake()
@@ -36,6 +38,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		if ( animEvents != null )
 		{
 			animEvents.onEatEvent += onEatEvent;
+			animEvents.onEatEndEvent += onEatEndEvent;
 			m_waitJawsEvent = true;
 		}
 
@@ -62,12 +65,39 @@ public class DragonEatBehaviour : EatBehaviour {
 		}
 	}
 
+	override protected void Update()
+	{
+		base.Update();
+
+		float eatSpeed = 1;
+		if (m_dragonBoost.IsBoostActive())
+		{
+			if (m_holdingPrey != null)
+			{
+				eatSpeed = m_holdBoostDamageMultiplier / 2.0f;
+			}
+			else
+			{
+				eatSpeed = m_dragonBoost.boostMultiplier;
+			}
+		}
+		eatSpeed *= m_randomSpeed;
+
+		if (m_eatingSpeed != eatSpeed){
+			m_eatingSpeed = eatSpeed;
+			m_animator.SetFloat("eatingSpeed", m_eatingSpeed);
+		}
+	}
+
 
 	void onEatEvent()
 	{
 		OnJawsClose();
 	}
 
+	void onEatEndEvent(){
+		m_randomSpeed = m_randomSpeedRange.GetRandom();
+	}
 
     protected override void EatExtended(PreyData preyData)
     {        		
@@ -144,11 +174,6 @@ public class DragonEatBehaviour : EatBehaviour {
 		base.StopAttackTarget();
 	}
 
-	override protected void BiteKill( bool _canHold = true ) 
-	{
-		
-		base.BiteKill();
-	}
 
 	override protected void StartHold(AI.Machine _prey, bool grab = false) 
 	{
@@ -166,22 +191,6 @@ public class DragonEatBehaviour : EatBehaviour {
 		m_animator.SetBool("eatHold", true);
 	}
 
-	protected override void UpdateHoldingPrey()
-	{
-		base.UpdateHoldingPrey();
-		// if active boost
-		if (m_dragonBoost.IsBoostActive())
-		{
-			// Increase eating speed
-			m_animator.SetFloat("eatingSpeed", m_holdBoostDamageMultiplier / 2.0f);
-		}
-		else
-		{
-			// Change speed back
-			m_animator.SetFloat("eatingSpeed", 1);
-		}
-	}
-
 
 	override public void EndHold()
 	{
@@ -194,16 +203,6 @@ public class DragonEatBehaviour : EatBehaviour {
 		else
 		{
 			motion.EndLatchMovement();
-		}
-
-		// Check if boosting!!
-		if (m_dragonBoost.IsBoostActive())
-		{
-			m_animator.SetFloat("eatingSpeed", m_dragonBoost.boostMultiplier);
-		}
-		else
-		{
-			m_animator.SetFloat("eatingSpeed", 1);
 		}
 
 		m_animator.SetBool("eatHold", false);        
@@ -232,6 +231,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		base.StartAttackTarget (_transform);
 		// Start attack animation
 		m_animator.SetBool("eat", true);
+		m_animator.SetTrigger("eat crazy");
 	}
 
 	public override void PauseEating()

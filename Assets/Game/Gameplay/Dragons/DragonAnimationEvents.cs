@@ -11,7 +11,6 @@ public class DragonAnimationEvents : MonoBehaviour {
 	private AudioObject m_wingsFlyingSoundAO;
 
 	public string m_eatSound;
-	public string m_eatBigSound;
 
 	public string m_wingsWindSound;
 	private AudioObject m_wingsWindSoundAO;
@@ -31,6 +30,9 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public delegate void OnEatEvent();
 	public OnEatEvent onEatEvent; 
+
+	public delegate void OnEatEndEvent();
+	public OnEatEndEvent onEatEndEvent; 
 
 	private bool m_eventsRegistered = false;
 
@@ -129,24 +131,16 @@ public class DragonAnimationEvents : MonoBehaviour {
 		}
 	}
 
-	public void EatBigStartEvent()
-	{
-		if (!string.IsNullOrEmpty(m_eatBigSound))
-		{
-			AudioController.Play(m_eatBigSound, transform);
-		}
-	}
-
 	public void EatEvent()
 	{
 		if (onEatEvent != null)
 			onEatEvent();
 	}
 
-	// To remove when we delete all old dragons
-	public void EatBigEvent()
+	public void EatEndEvent()
 	{
-
+		if (onEatEndEvent != null)
+			onEatEndEvent();
 	}
 
 	public void HitEvent()

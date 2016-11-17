@@ -40,6 +40,7 @@ namespace AI {
 		protected IEntity m_entity = null;
 		protected Pilot m_pilot = null;
 		protected ViewControl m_viewControl = null;
+		public ViewControl view { get { return m_viewControl; } }
 		protected Collider m_collider = null;
 
 		private Signals m_signals;
@@ -167,14 +168,14 @@ namespace AI {
 			}
 
 			if (_trigger == SignalTriggers.OnDestroyed) {
-					m_viewControl.Die(m_signals.GetValue(Signals.Type.Chewing));
-					if (m_motion != null) m_motion.Stop();
-					if (m_collider != null) m_collider.enabled = false;
-					m_entity.Disable(true);
+				m_viewControl.Die(m_signals.GetValue(Signals.Type.Chewing));
+				if (m_motion != null) m_motion.Stop();
+				if (m_collider != null) m_collider.enabled = false;
+				m_entity.Disable(true);
 			} else if (_trigger == SignalTriggers.OnBurning) {
-					m_viewControl.Burn();
-					if (m_motion != null) m_motion.Stop();
-					if (m_collider != null) m_collider.enabled = false;
+				m_viewControl.Burn();
+				if (m_motion != null) m_motion.Stop();
+				if (m_collider != null) m_collider.enabled = false;
 			} else if (_trigger == SignalTriggers.OnInvulnerable) {
 				m_entity.allowEdible = false;
 				m_entity.allowBurnable = false;
@@ -182,7 +183,6 @@ namespace AI {
 				m_entity.allowEdible = true;
 				m_entity.allowBurnable = true;
 			}
-
 		}
 
 		//-----------------------------------------------------------
@@ -216,14 +216,11 @@ namespace AI {
 			OnTrigger(SignalTriggers.OnTriggerEnter, _params);
 			SetSignal(Signals.Type.Trigger, true, _params);
 
-
-			if ( _other.tag == "Water" )
-			{
+			if (_other.tag == "Water") {
+				SetSignal(Signals.Type.InWater, true);
 				m_viewControl.EnterWater( _other, m_pilot.impulse );
 				m_viewControl.StartSwimming();	
-			}
-			else if (_other.tag == "Space" )
-			{
+			} else if (_other.tag == "Space") {
 				m_viewControl.FlyToSpace();
 			}
 		}
@@ -235,13 +232,11 @@ namespace AI {
 			object[] _params = new object[1]{_other.gameObject};
 			OnTrigger(SignalTriggers.OnTriggerExit, _params);
 
-			if ( _other.tag == "Water" )
-			{
+			if (_other.tag == "Water") {
+				SetSignal(Signals.Type.InWater, false);
 				m_viewControl.ExitWater( _other, m_pilot.impulse );
 				m_viewControl.StopSwimming();	
-			}
-			else if (_other.tag == "Space" )
-			{
+			} else if (_other.tag == "Space") {
 				m_viewControl.ReturnFromSpace();
 			}
 		}
@@ -278,8 +273,7 @@ namespace AI {
 				}
 
 				if (m_enableMotion) {
-					if(m_regionManager == null)
-					{
+					if (m_regionManager == null) {
 						m_regionManager = RegionManager.Instance;
 					}
 					CheckForCurrents ();
@@ -478,6 +472,10 @@ namespace AI {
 				PlaySound(m_onEatenSound);
 			}
 			m_edible.BeingSwallowed(_transform, _rewardsPlayer);
+		}
+
+		public void EndSwallowed(Transform _transform){
+			m_edible.EndSwallowed(_transform);
 		}
 
 		public HoldPreyPoint[] holdPreyPoints { get{ return m_edible.holdPreyPoints; } }

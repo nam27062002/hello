@@ -242,6 +242,17 @@ public class ShowHideAnimator : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Relaunches the show animation from the start, regardless of current state.
+	/// </summary>
+	public void RestartShow() {
+		// Instantly force hide state without animation
+		ForceHide(false);
+
+		// Launch the show animation
+		Show(true);
+	}
+
+	/// <summary>
 	/// Hide the object. Will be ignored if object is already hidden/hiding.
 	/// </summary>
 	/// <param name="_animate">Whether to use animations or not.</param>
@@ -286,6 +297,18 @@ public class ShowHideAnimator : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Relaunches the hide animation from the start, regardless of current state.
+	/// </summary>
+	/// <param name="_disableAfterAnimation">Whether to disable the object once the animation has finished or not. Only for non-custom tween animations.</param>
+	public void RestartHide(bool _disableAfterAnimation = true) {
+		// Instantly force show state without animation
+		ForceShow(false);
+
+		// Launch the hide animation
+		Hide(true, _disableAfterAnimation);
+	}
+
+	/// <summary>
 	/// Toggle visibility state.
 	/// </summary>
 	/// <param name="_animate">Whether to use animations or not.</param>
@@ -324,6 +347,19 @@ public class ShowHideAnimator : MonoBehaviour {
 			ForceShow(_animate);
 		} else {
 			ForceHide(_animate);
+		}
+	}
+
+	/// <summary>
+	/// Relaunches the animation of the target state from the start, regardless of current state.
+	/// </summary>
+	/// <param name="_visible">Whether to show or hide the object.</param>
+	/// <param name="_disableAfterAnimation">Whether to disable the object once the animation has finished or not. Only for non-custom tween animations.</param>
+	public void RestartSet(bool _visible, bool _disableAfterAnimation = true) {
+		if(_visible) {
+			RestartShow();
+		} else {
+			RestartHide(_disableAfterAnimation);
 		}
 	}
 

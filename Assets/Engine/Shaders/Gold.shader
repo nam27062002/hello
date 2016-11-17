@@ -16,12 +16,18 @@
 	
 	SubShader 
 	{
-	
-		Tags { "Queue" = "Geometry" }
-		
 	 	Pass
 	 	{
-		
+			Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" "LightMode" = "ForwardBase" }
+			Cull back
+			Stencil
+			{
+				Ref 5
+				Comp always
+				Pass Replace
+				ZFail keep
+			}
+
 			CGPROGRAM
 			// Upgrade NOTE: excluded shader from Xbox360; has structs without semantics (struct v2f members colour)
 			#pragma exclude_renderers xbox360

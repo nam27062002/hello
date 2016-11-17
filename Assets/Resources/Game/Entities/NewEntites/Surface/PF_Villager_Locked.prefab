@@ -977,6 +977,10 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_burnParticle:
+    name: PF_BonfireToon
+    path: 
+    offset: {x: 0, y: 1.05, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -1003,7 +1007,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 1
     m_walkOnWalls: 0
-    m_mass: 5
+    m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 460
     m_faceDirection: 0
@@ -1018,7 +1022,7 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_sightRadius: 10
-    m_maxRadius: 4
+    m_maxRadius: 6.5
     m_minRadius: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -1029,9 +1033,7 @@ MonoBehaviour:
     m_senseDelay:
       min: 0
       max: 0
-  m_onSpawnSoundProbability: 0
   m_onSpawnSound: 
-  m_onEatenSoundProbability: 50
   m_onEatenSound: 
   m_rotateToMouth: 3
   m_inflammable:
@@ -1050,6 +1052,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: villager_01
+  m_isPet: 0
 --- !u!137 &13729824
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -2205,9 +2208,7 @@ MonoBehaviour:
     m_senseDelay:
       min: 1.5
       max: 3.5
-  m_onSpawnSoundProbability: 0
   m_onSpawnSound: 
-  m_onEatenSoundProbability: 50
   m_onEatenSound: 
   m_rotateToMouth: 0
   m_inflammable:
@@ -2250,6 +2251,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: villager_01
+  m_isPet: 0
 --- !u!114 &114000011969977830
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2336,6 +2338,10 @@ MonoBehaviour:
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_burnParticle:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}

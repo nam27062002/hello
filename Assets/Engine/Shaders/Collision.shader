@@ -1,4 +1,4 @@
-﻿Shader "Hungry Dragon/Collision"
+﻿Shader "Hungry Dragon/Collision Debug"
 {
 	Properties
 	{

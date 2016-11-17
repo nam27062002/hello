@@ -890,7 +890,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 139278}
-  m_LocalRotation: {x: 0.6985103, y: -0.69814473, z: -0.15504153, w: 0.02528979}
+  m_LocalRotation: {x: 0.6985103, y: -0.69814473, z: -0.15504153, w: 0.025289785}
   m_LocalPosition: {x: 0.16254486, y: 0.106924586, z: 0.27912664}
   m_LocalScale: {x: 1.0000013, y: 0.9999998, z: 0.99999887}
   m_LocalEulerAnglesHint: {x: -10.4369, y: -165.1585, z: -91.3931}
@@ -981,7 +981,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 1
     m_walkOnWalls: 0
-    m_mass: 10
+    m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 150
     m_faceDirection: 0
@@ -995,8 +995,8 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 8
-    m_maxRadius: 0
+    m_sightRadius: 10
+    m_maxRadius: 6.5
     m_minRadius: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -1007,12 +1007,9 @@ MonoBehaviour:
     m_senseDelay:
       min: 1
       max: 2
-  m_onSpawnSoundProbability: 0
-  m_onSpawnSounds: []
-  m_onEatenSoundProbability: 40
-  m_onEatenSounds:
-  - audio/sfx/Animals/Ground/Cow JBA03_65_1
-  m_rotateToMouth: 0
+  m_onSpawnSound: 
+  m_onEatenSound: 
+  m_rotateToMouth: 2
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
@@ -1043,6 +1040,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: cow
+  m_dieOutsideFrustum: 1
 --- !u!114 &11481650
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1095,6 +1093,10 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_burnParticle:
+    name: PF_BonfireToon
+    path: 
+    offset: {x: 0, y: 0.88, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 

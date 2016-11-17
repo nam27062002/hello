@@ -7,15 +7,13 @@ public class Entity : IEntity {
 	// Properties
 	//-----------------------------------------------
 	// Exposed to inspector
-	[FormerlySerializedAs("m_typeID")]
 	[EntitySkuList]
 	[SerializeField] private string m_sku;
 	public string sku { get { return m_sku; } }
 
+	[SerializeField] private bool m_dieOutsideFrustum = true;
 
 	/************/
-	private DefinitionNode m_def;
-	public DefinitionNode def { get { return m_def; } }
 
 	private CircleArea2D m_bounds;
 	public CircleArea2D circleArea { get{ return m_bounds; } }
@@ -110,27 +108,16 @@ public class Entity : IEntity {
 		m_feedbackData.InitFromDef(m_def);
 	}
 
-
-	void OnEnable() {
-		EntityManager.instance.Register(this);
-	}
-
-	void OnDisable() {
-		if (EntityManager.instance != null)
-			EntityManager.instance.Unregister(this);
-	}
-
 	override public void Spawn(ISpawner _spawner) {
+		base.Spawn(_spawner);
+
 		m_spawner = _spawner;
 
-		if ( InstanceManager.player != null )
-		{
+		if (InstanceManager.player != null) {
 			DragonTier tier = InstanceManager.player.data.tier;
 			m_isGolden = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= goldenChance));
 			m_isPC = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= pcChance));
-		}
-		else
-		{
+		} else {
 			m_isGolden = false;
 			m_isPC = false;
 		}
@@ -140,17 +127,20 @@ public class Entity : IEntity {
 
 		m_health = m_maxHealth;
 
-		base.Spawn(_spawner);
-
 		m_newCamera = InstanceManager.gameCamera;
 
         m_spawned = true;
+
+		EntityManager.instance.Register(this);
     }
 
     public override void Disable(bool _destroyed) {
-		base.Disable( _destroyed );
+		base.Disable(_destroyed);
+
 		m_spawner.RemoveEntity(gameObject, _destroyed);
         m_spawned = false;
+
+		EntityManager.instance.Unregister(this);
     }
 
     /// <summary>
@@ -231,7 +221,7 @@ public class Entity : IEntity {
 	}
 
 	void LateUpdate() {
-        if (m_spawned) {
+		if (m_spawned && m_dieOutsideFrustum) {
             // check camera to destroy this entity if it is outside view area
             if (m_newCamera != null && m_newCamera.IsInsideDeactivationArea(transform.position)) {
                 if (m_spawner != null) {

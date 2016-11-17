@@ -1193,7 +1193,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 103418}
   m_LocalRotation: {x: 0, y: 0.42261833, z: 0, w: 0.9063078}
-  m_LocalPosition: {x: 0, y: -1.1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 50, z: 0}
   m_Children:
@@ -2006,7 +2006,7 @@ Animator:
   m_GameObject: {fileID: 110472}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: f17d92565509c448eafab3dbf5e26cf2, type: 3}
-  m_Controller: {fileID: 22100000, guid: c8f9b3c51bcb24f2d89adf60b16ea36c, type: 2}
+  m_Controller: {fileID: 22100000, guid: 70c0b878bdf024a469d53df7d55da54b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -2057,18 +2057,21 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: ed1fadb186bbe47909358b28e69a9029, type: 2}
   - {fileID: 2100000, guid: d0b338fc64f1149f482c74278dc8b7b4, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -2078,6 +2081,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300000, guid: f17d92565509c448eafab3dbf5e26cf2, type: 3}
   m_Bones:
   - {fileID: 436934}

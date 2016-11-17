@@ -99,8 +99,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 444214}
-  - 114: {fileID: 114000010333019328}
   - 114: {fileID: 11492212}
+  - 114: {fileID: 114000010333019328}
   - 114: {fileID: 11475328}
   - 114: {fileID: 11430714}
   - 114: {fileID: 11439040}
@@ -313,7 +313,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 170304}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.277, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -354,7 +354,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129198}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.760153, y: 33.504448, z: 0.26953125}
+  m_LocalPosition: {x: 99.837204, y: -83.49704, z: 0.26953125}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -504,6 +504,10 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_burnParticle:
+    name: PF_BonfireToon
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -530,7 +534,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 4
+    m_mass: 6
     m_defaultUpVector: 0
     m_orientationSpeed: 170
     m_faceDirection: 1
@@ -544,8 +548,8 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 6
-    m_maxRadius: 3
+    m_sightRadius: 10
+    m_maxRadius: 4
     m_minRadius: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -556,10 +560,8 @@ MonoBehaviour:
     m_senseDelay:
       min: 0.25
       max: 0.75
-  m_onSpawnSoundProbability: 0
-  m_onSpawnSounds: []
-  m_onEatenSoundProbability: 0
-  m_onEatenSounds: []
+  m_onSpawnSound: 
+  m_onEatenSound: 
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
@@ -576,7 +578,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: canary
+  m_sku: bird_01
+  m_dieOutsideFrustum: 1
 --- !u!137 &13794388
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

@@ -12,12 +12,18 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 	private int m_allowBurnable;
 	public bool allowBurnable { get { return m_allowBurnable == 0; } set { if (value) { m_allowBurnable = Mathf.Max(0, m_allowBurnable - 1); } else { m_allowBurnable++; } } }
 
+
+	protected DefinitionNode m_def;
+	public 	  DefinitionNode def { get { return m_def; } }
+
 	// Health
 	protected float m_maxHealth;
 	protected float m_health;
 	public float health { get { return m_health; } set { m_health = value; } }
 
 	public virtual void Spawn(ISpawner _spawner) {
+		m_health = m_maxHealth;
+
 		m_allowEdible = 0;
 		m_allowBurnable = 0;
 	}

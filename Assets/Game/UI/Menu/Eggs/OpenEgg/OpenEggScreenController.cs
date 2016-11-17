@@ -328,39 +328,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		StringBuilder sb = new StringBuilder();
 		switch(rewardType) {
 			case "suit": {
-				// Get disguise def
-				rewardedItemDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, rewardData.value);
-				DefinitionNode targetDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, rewardedItemDef.GetAsString("dragonSku"));
-
-				// Disguise rarity
-				m_rewardRarity.InitFromRarity(rewardedItemDef.GetAsString("rarity"), rewardDef.GetLocalized("tidName"));
-
-				// Aux texts
-				sb.Length = 0;
-				string rewardName = sb.Append("<color=#FFD26CFF>").Append(rewardedItemDef.GetLocalized("tidName")).Append("</color>").ToString();
-				sb.Length = 0;
-				string dragonName = sb.Append("<color=#FFD26CFF>").Append(targetDragonDef.GetLocalized("tidName")).Append("</color>").ToString();
-				sb.Length = 0;
-				string rewardCoins = sb.Append("<color=").Append(UIConstants.COINS_TEXT_COLOR.ToHexString("#")).Append(">").Append(StringUtils.FormatNumber(rewardData.coins)).Append("</color>").ToString();
-
-				// Different texts if the disguise was just unlocked, it was upgraded or it was already maxed
-				int disguiseLevel = UsersManager.currentUser.wardrobe.GetDisguiseLevel(rewardedItemDef.sku);
-				if(rewardData.coins > 0) {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_MAXED", rewardName, dragonName, rewardCoins);
-				} else if(disguiseLevel == 1) {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UNLOCKED", rewardName, dragonName);
-				} else {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UPGRADED", rewardName, dragonName);
-				}
-
-				// Call to action text
-				// Different text if the target dragon is not owned
-				DragonData targetDragonData = DragonManager.GetDragonData(targetDragonDef.sku);
-				if(targetDragonData.isOwned) {
-					m_callToActionText.Localize("TID_EGG_EQUIP_REWARD");
-				} else {
-					m_callToActionText.Localize("TID_EGG_PREVIEW_REWARD");
-				}
+				// [AOC] Eggs no longer drop suits as reward
 			} break;
 
 			case "pet": {
@@ -402,35 +370,17 @@ public class OpenEggScreenController : MonoBehaviour {
 				m_rewardView.transform.SetParentAndReset(m_rewardAnchor);	// Attach it to the anchor and reset transformation
 
 				// Use a MenuDragonLoader to simplify things
-				MenuDragonLoader loader = m_rewardView.AddComponent<MenuDragonLoader>();
-				loader.Setup(MenuDragonLoader.Mode.MANUAL, "fly_idle", true);
-				loader.LoadDragon(DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS).GetRandomValue());
-
-				// Make it smaller since it's a pet
-				float scale = 0.4f;
-				m_rewardView.transform.localScale = Vector3.one * scale;
+				MenuPetLoader loader = m_rewardView.AddComponent<MenuPetLoader>();
+				loader.Setup(MenuPetLoader.Mode.MANUAL, "idle", true);
+				loader.Load("pet_01");	// [AOC] TODO!! Content not ready yet
 
 				// Animate it
-				m_rewardView.transform.DOScale(0f, scale * 0.75f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
+				m_rewardView.transform.DOScale(0f, 1f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
 				m_rewardView.transform.DOLocalRotate(m_rewardView.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true);
 			} break;
 				
 			case "suit": {
-				// Show a 3D preview of the suit
-				m_rewardView = new GameObject("RewardView");
-				m_rewardView.transform.SetParentAndReset(m_rewardAnchor);	// Attach it to the anchor and reset transformation
-
-				// Use a MenuDragonLoader to simplify things
-				MenuDragonLoader loader = m_rewardView.AddComponent<MenuDragonLoader>();
-				loader.Setup(MenuDragonLoader.Mode.MANUAL, "fly_idle", true);
-				loader.LoadDragon(rewardedItemDef.GetAsString("dragonSku"));
-
-				// Apply suit
-				loader.dragonInstance.GetComponent<DragonEquip>().PreviewDisguise(rewardData.value);
-
-				// Animate it
-				m_rewardView.transform.DOScale(0f, 0.75f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
-				m_rewardView.transform.DOLocalRotate(m_rewardView.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true);
+				// [AOC] Eggs no longer drop suits as reward
 			} break;
 		}
 
@@ -446,80 +396,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// If reward is a disguise, initialize and show powers
 		if(rewardType == "suit") {
-			// Show
-			m_rewardPowers.GetComponent<ShowHideAnimator>().Show(false);
-
-			// Aux vars
-			DefinitionNode disguiseDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, rewardData.value);
-			int disguiseLevel = UsersManager.currentUser.wardrobe.GetDisguiseLevel(disguiseDef.sku);
-
-			// Initialize with actual powers data
-			DefinitionNode powerSetDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES_POWERUPS, disguiseDef.GetAsString("powerupSet"));
-			for(int i = 0; i < 3; i++) {
-				// Get def
-				string powerUpSku = powerSetDef.GetAsString("powerup"+(i+1).ToString());
-				DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
-
-				// Get and initialize power button
-				DisguisePowerIcon powerIcon = m_rewardPowers.FindComponentRecursive<DisguisePowerIcon>("Power" + (i+1).ToString());
-				powerIcon.InitFromDefinition(powerDef, i >= disguiseLevel);
-
-				// Intro animation
-				float delay = 0.65f + i * 0.15f;
-				powerIcon.transform.DOScale(2f, 0.25f).From().SetDelay(delay).SetEase(Ease.OutCubic).SetRecyclable(true);
-				powerIcon.GetComponent<CanvasGroup>().DOFade(0f, 0.15f).From().SetDelay(delay).SetRecyclable(true);
-
-				// If just unlocked this power, add a nice unlock effect
-				// The power will just be unlocked if the power index matches the level of the disguise and there is no coins reward (meaning disguise is not already maxed)
-				GameObject godraysObj = powerIcon.FindObjectRecursive("godrayFX");	// Find previously instantiated effects first
-				if(i == (disguiseLevel - 1) && rewardData.coins <= 0) {
-					// Anim params
-					float speedMult = 1f;	// To easily adjust timings
-
-					// Show lock and animate it out
-					Image lockIcon = powerIcon.FindComponentRecursive<Image>("IconLock");
-					lockIcon.gameObject.SetActive(true);
-
-					// Lock scale up
-					delay += 0.1f;	// Sync with icon anim
-					lockIcon.transform.DOScale(4f, 1.0f * speedMult).SetDelay(delay).SetEase(Ease.OutExpo);
-
-					// Lock fade out (halfway through the scale up anim)
-					delay += 0.75f * speedMult;
-					lockIcon.DOFade(0f, 0.25f * speedMult).SetDelay(delay)
-						.OnComplete(() => {
-							// Reset icon for next time
-							lockIcon.color = Color.white; 
-							lockIcon.transform.localScale = Vector3.one;
-							lockIcon.gameObject.SetActive(false);
-						});
-
-					// If not already done, instantiate God Rays effect
-					if(godraysObj == null) {
-						GameObject prefab = Resources.Load<GameObject>("UI/FX/PF_GodRayFX");
-						godraysObj = GameObject.Instantiate<GameObject>(prefab);
-						godraysObj.name = "godrayFX";
-						godraysObj.transform.SetParentAndReset(powerIcon.transform);
-						(godraysObj.transform as RectTransform).anchoredPosition = Vector2.zero;
-						godraysObj.transform.SetSiblingIndex(0);	// At the bottom of the group
-					}
-					godraysObj.SetActive(true);
-
-					// Animate godrays effect
-					// Scale in
-					delay += -0.10f * speedMult;	// Around the same time as the lock starts fading out
-					godraysObj.transform.localScale = Vector3.zero;
-					godraysObj.transform.DOScale(3f, 0.15f * speedMult).SetDelay(delay);
-
-					// Scale back to default
-					delay += 0.15f * speedMult;	// Right after the scale in
-					godraysObj.transform.DOScale(1f, 0.25f * speedMult).SetDelay(delay);
-				} else {
-					// This power was not unlocked
-					// Disable godray effect, if any
-					if(godraysObj != null) godraysObj.SetActive(false);
-				}
-			}
+			// [AOC] Eggs no longer drop suits as reward
 		} else {
 			m_rewardPowers.GetComponent<ShowHideAnimator>().Hide(false);
 		}
@@ -572,7 +449,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
 		switch(m_egg.eggData.rewardData.type) {
 			case "suit": {
-				// No longer given via egs
+				// [AOC] Eggs no longer drop suits as reward
 			} break;
 
 			case "pet": {
