@@ -17,7 +17,7 @@ using TMPro;
 /// <summary>
 /// Auxiliar component to quickly access popular components used in a currency button.
 /// </summary>
-public class CurrencyButton : MonoBehaviour {
+public class CurrencyButton : AnimatedButton {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -31,44 +31,15 @@ public class CurrencyButton : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] private Button m_button = null;
-	public Button button {
-		get { return m_button; }
-	}
-
-	[Space]
-	[SerializeField] private Localizer m_label = null;
-	public Localizer label {
-		get { return m_label; }
-	}
-
 	[SerializeField] private TextMeshProUGUI m_amountText = null;
 	public TextMeshProUGUI amountText {
 		get { return m_amountText; }
-	}
-
-	[Space]
-	[SerializeField] private ShowHideAnimator m_animator = null;
-	public ShowHideAnimator animator {
-		get { return m_animator; }
 	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
 
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
-	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //

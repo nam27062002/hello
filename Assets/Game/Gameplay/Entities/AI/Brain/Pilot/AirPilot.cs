@@ -14,6 +14,10 @@ namespace AI {
 		[SerializeField] private bool m_avoidCollisions = false;
 		public override bool avoidCollisions { get { return m_avoidCollisions; } set { m_avoidCollisions = value; } }
 
+		[SerializeField] private bool m_avoidWater = false;
+		public override bool avoidWater { get { return m_avoidWater; } set { m_avoidWater = value; } }
+
+
 		private uint m_collisionCheckPool; // each prey will detect collisions at different frames
 		protected float m_collisionAvoidFactor;
 		protected Vector3 m_collisionNormal;
@@ -104,7 +108,7 @@ namespace AI {
 					}
 					m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 
-					if (m_avoidCollisions) {
+					if (m_avoidCollisions || m_avoidWater) {
 						AvoidCollisions();
 						m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 					}
@@ -137,8 +141,13 @@ namespace AI {
 				RaycastHit ground;
 
 				float distanceCheck = 5f;
+				int layerMask = m_groundMask;
 
-				if (Physics.Linecast(transform.position, transform.position + (m_direction * distanceCheck), out ground, m_groundMask)) {
+				if (m_avoidWater) {
+					layerMask = m_groundWaterMask;
+				}
+
+				if (Physics.Linecast(transform.position, transform.position + (m_direction * distanceCheck), out ground, layerMask)) {
 					// 2- calc a big force to move away from the ground	
 					m_collisionAvoidFactor = (distanceCheck / ground.distance) * 2f;
 					m_collisionNormal = ground.normal;

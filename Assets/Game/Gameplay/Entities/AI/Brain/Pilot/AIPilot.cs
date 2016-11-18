@@ -16,6 +16,7 @@ using System.Collections.Generic;
 namespace AI {
 	public abstract class AIPilot : Pilot, ISpawnable, ISerializationCallbackReceiver {
 		protected static int m_groundMask;
+		protected static int m_groundWaterMask;
 
 		//--------------------------------------------------------------------//
 		// MEMBERS AND PROPERTIES											  //
@@ -33,6 +34,7 @@ namespace AI {
 
 		//--------------------------------------------------------------------//
 		public virtual bool avoidCollisions { get { return false; } set { } }
+		public virtual bool avoidWater		{ get { return false; } set { } }
 
 		private StateMachine m_brain;
 		public StateMachine brain{ get{ return m_brain; } }
@@ -54,6 +56,7 @@ namespace AI {
 		//--------------------------------------------------------------------//
 		public virtual void Spawn(ISpawner _spawner) {
 			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
+			m_groundWaterMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions", "Water");
 
 			Vector3 pos = transform.position;
 			pos.z += zOffset;

@@ -126,7 +126,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 	}
 
-	private State m_stateAfterRevive = State.None;
+	private State m_previousState = State.None;
 
 	private Transform m_tongue;
 	private Transform m_head;
@@ -399,9 +399,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					{
 						m_animator.SetBool("fly down", true);
 					}
-                    m_accWaterFactor = 0.70f;
-                    m_inverseGravityWater = 1.5f;
-					m_startParabolicPosition = transform.position;
+					if ( m_state != State.Stunned ){
+	                    m_accWaterFactor = 0.70f;
+	                    m_inverseGravityWater = 1.5f;
+						m_startParabolicPosition = transform.position;
+					}
 				}break;
 				case State.ExitingWater:
 				{
@@ -413,7 +415,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.OuterSpace:
 				{
 					m_animator.SetBool("fly down", true);
-					m_startParabolicPosition = transform.position;
+					if ( m_state != State.Stunned ){
+						m_startParabolicPosition = transform.position;
+					}
 				}break;
 				case State.ExitingSpace:
 				{
@@ -489,7 +493,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			case State.Stunned:
 				m_stunnedTimer -= Time.deltaTime;
 				if (m_stunnedTimer <= 0) {
-					ChangeState(State.Idle);
+					switch( m_previousState )
+					{
+						case State.InsideWater:{
+							ChangeState( State.InsideWater );
+						}break;
+						case State.OuterSpace:{
+							ChangeState( State.OuterSpace );
+						}break;
+						default:{
+							ChangeState(State.Idle);
+						}break;
+					}
 				}
 				break;
 			case State.Intro:
@@ -743,7 +758,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				if ( m_reviveTimer <= 0 )
 				{
 					transform.position = m_diePosition;
-					switch( m_stateAfterRevive )
+					switch( m_previousState )
 					{
 						case State.InsideWater:
 						{
@@ -1414,13 +1429,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			// Enable Bubbles
 			if (IsAliveState())
 				StartWaterMovement( _other );
-			m_stateAfterRevive = State.InsideWater;
+			m_previousState = State.InsideWater;
 		}
 		else if ( _other.tag == "Space" )
 		{
 			if (IsAliveState())
 				StartSpaceMovement();
-			m_stateAfterRevive = State.OuterSpace;
+			m_previousState = State.OuterSpace;
 		}
 		
 	}
@@ -1432,13 +1447,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			// Disable Bubbles
 			if (IsAliveState() )
 				EndWaterMovement( _other );
-			m_stateAfterRevive = State.Idle;
+			m_previousState = State.Idle;
 		}
 		else if ( _other.tag == "Space" )
 		{
 			if (IsAliveState())
 				EndSpaceMovement();
-			m_stateAfterRevive = State.Idle;
+			m_previousState = State.Idle;
 		}
 		
 	}
