@@ -194,14 +194,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
         {
             itemData.SpawnText(CacheWatch.ElapsedMilliseconds, _entity.position, text);            
             m_feedbacksQueue.Enqueue(itemData.Controller);
-        }
-
-        /*GameObject obj = PoolManager.GetInstance(m_killFeedbackPrefab.name, false);
-		if (obj != null) {
-			WorldFeedbackController worldFeedback = obj.GetComponent<WorldFeedbackController>();
-			worldFeedback.Init(text, _entity.position);
-			m_feedbacksQueue.Enqueue(worldFeedback);
-		}*/
+        }       
     }
 
 	private void SpawnEscapedFeedback( Transform _entity)
