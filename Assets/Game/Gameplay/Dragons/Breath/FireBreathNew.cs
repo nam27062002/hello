@@ -1,6 +1,3 @@
-#define FIRETEST
-
-
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -51,40 +48,30 @@ public class FireBreathNew : DragonBreathBehaviour {
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
 
-    public GameObject m_dragonFlame = null;
+    public GameObject m_dragonFlameStandard = null;
+    public GameObject m_dragonFlameSuper = null;
 
-
-//    public const bool FIRETEST = true;
-
-
-#if FIRETEST
-    private FireBreathDynamic dragonFlameInstance = null;
-#else
-    private DragonBreath2 dragonFlameInstance = null;
-#endif
+    private FireBreathDynamic dragonFlameStandardInstance = null;
+    private FireBreathDynamic dragonFlameSuperInstance = null;
+    //    private FireBreathDynamic dragonFlameInstance = null;
 
     override protected void ExtendedStart() {
 
         DragonMotion dragonMotion = GetComponent<DragonMotion>();
-
-        GameObject tempFire = Instantiate<GameObject>(m_dragonFlame);
-
         Transform mouth = transform.FindTransformRecursive("mouth");
         m_mouthTransform = mouth; // dragonMotion.tongue;
 
+        GameObject tempFire = Instantiate<GameObject>(m_dragonFlameStandard);
         tempFire.transform.SetParent(mouth, true);
-
         tempFire.transform.localPosition = Vector3.zero;
-
-#if FIRETEST
         tempFire.transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 180.0f));
-        dragonFlameInstance = tempFire.GetComponent<FireBreathDynamic>();
-#else
-        tempFire.transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, -90.0f));
-        dragonFlameInstance = tempFire.GetComponent<DragonBreath2>();
-#endif
+        dragonFlameStandardInstance = tempFire.GetComponent<FireBreathDynamic>();
 
-        dragonFlameInstance.EnableFlame(false);
+        tempFire = Instantiate<GameObject>(m_dragonFlameSuper);
+        tempFire.transform.SetParent(mouth, true);
+        tempFire.transform.localPosition = Vector3.zero;
+        tempFire.transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 180.0f));
+        dragonFlameSuperInstance = tempFire.GetComponent<FireBreathDynamic>();
 
         m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible");
 		m_noPlayerMask = ~LayerMask.GetMask("Player");
@@ -92,8 +79,10 @@ public class FireBreathNew : DragonBreathBehaviour {
         float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
         m_length = furyBaseLength;
         m_length *= transform.localScale.x;
-      	
-        dragonFlameInstance.setEffectScale(furyBaseLength, transform.localScale.x);
+
+        dragonFlameStandardInstance.setEffectScale(furyBaseLength, transform.localScale.x);
+        dragonFlameSuperInstance.setEffectScale(furyBaseLength, transform.localScale.x);
+
         m_length *= 2.0f;
         m_actualLength = m_length;
 
@@ -105,8 +94,13 @@ public class FireBreathNew : DragonBreathBehaviour {
 
 		m_frame = 0;
 
-//		m_light = null;
-	}
+        dragonFlameStandardInstance.gameObject.SetActive(false);
+        dragonFlameStandardInstance.EnableFlame(false);
+        dragonFlameSuperInstance.gameObject.SetActive(false);
+        dragonFlameSuperInstance.EnableFlame(false);
+
+        //		m_light = null;
+    }
 
     override public bool IsInsideArea(Vector2 _point) { 
 	
@@ -147,13 +141,28 @@ public class FireBreathNew : DragonBreathBehaviour {
 	override protected void BeginFury(Type _type) 
 	{
 		base.BeginFury( _type);
-        dragonFlameInstance.EnableFlame(true);
+        if (_type == Type.Standard)
+        {
+            dragonFlameStandardInstance.EnableFlame(true);
+        }
+        else
+        {
+            dragonFlameSuperInstance.EnableFlame(true);
+        }
     }
 
     override protected void EndFury() 
 	{
 		base.EndFury();
-        dragonFlameInstance.EnableFlame(false);
+
+        if (m_type == Type.Standard)
+        {
+            dragonFlameStandardInstance.EnableFlame(false);
+        }
+        else
+        {
+            dragonFlameSuperInstance.EnableFlame(false);
+        }
     }
 
     override protected void Breath(){
@@ -306,13 +315,27 @@ public class FireBreathNew : DragonBreathBehaviour {
     public override void PauseFury()
     {
         base.PauseFury();
-        dragonFlameInstance.EnableFlame(false);
+        if (m_type == Type.Standard)
+        {
+            dragonFlameStandardInstance.EnableFlame(false);
+        }
+        else
+        {
+            dragonFlameSuperInstance.EnableFlame(false);
+        }
     }
 
     public override void ResumeFury()
     {
         base.ResumeFury();
-        dragonFlameInstance.EnableFlame(true);
+        if (m_type == Type.Standard)
+        {
+            dragonFlameStandardInstance.EnableFlame(true);
+        }
+        else
+        {
+            dragonFlameSuperInstance.EnableFlame(true);
+        }
     }
 
 }
