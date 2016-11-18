@@ -42,6 +42,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	[Space]
 	[SerializeField] private CurrencyButton m_SCButton = null;
 	[SerializeField] private CurrencyButton m_PCButton = null;
+	[SerializeField] private AnimatedButton m_equipButton = null;
 
 	[Space]
 	[SerializeField] private ShowHideAnimator m_lockIcon = null;
@@ -111,6 +112,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Subscribe to purchase buttons
 		m_SCButton.button.onClick.AddListener(OnPurchaseDisguiseButton);
 		m_PCButton.button.onClick.AddListener(OnPurchaseDisguiseButton);
+		m_equipButton.button.onClick.AddListener(OnEquipButton);
 	}
 
 	/// <summary>
@@ -151,6 +153,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Unsubscribe from purchase buttons
 		m_SCButton.button.onClick.RemoveListener(OnPurchaseDisguiseButton);
 		m_PCButton.button.onClick.RemoveListener(OnPurchaseDisguiseButton);
+		m_equipButton.button.onClick.RemoveListener(OnEquipButton);
 	}
 
 	//------------------------------------------------------------------------//
@@ -197,6 +200,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		if(m_lockText != null) m_lockText.GetComponent<ShowHideAnimator>().ForceHide(false);
 		if(m_SCButton != null) m_SCButton.animator.ForceHide(false);
 		if(m_PCButton != null) m_PCButton.animator.ForceHide(false);
+		if(m_equipButton != null) m_equipButton.animator.ForceHide(false);
 
 		// Initialize pills
 		m_equippedPill = null;
@@ -211,14 +215,17 @@ public class DisguisesScreenController : MonoBehaviour {
 				bool owned = m_wardrobe.IsDisguiseOwned(def.sku);
 				m_pills[i].Load(def, locked, owned, spr);
 
-				// Is it the initial pill?
+				// Is it the currently equipped disguise?
 				if(def.sku == currentDisguise) {
+					// Mark it as the initial pill
 					initialPill = m_pills[i];
+					m_pills[i].Equip(true, false);
+					m_equippedPill = m_pills[i];
+				} else {
+					m_pills[i].Equip(false, false);
 				}
 
-				// Set initial state
-				m_pills[i].Use(false);
-				m_pills[i].Select(false);
+				// Activate
 				m_pills[i].gameObject.SetActive(true);
 			} else {
 				// Unused pill
@@ -304,9 +311,6 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_title.showHideAnimator.Hide(false);
 		m_title.showHideAnimator.Set(_pill != null);
 
-		// Remove highlight from previously selected pill
-		if(m_selectedPill != null) m_selectedPill.Select(false);
-
 		// Refresh power icons
 		for(int i = 0; i < 3; i++) {
 			// Get def
@@ -346,10 +350,12 @@ public class DisguisesScreenController : MonoBehaviour {
 			}
 		}
 
-		// Refresh unlock buttons
+		// Refresh visuals
 		float priceSC = _pill.def.GetAsFloat("priceSC");
 		float pricePC = _pill.def.GetAsFloat("priceHC");
 		bool isPC = pricePC > priceSC;
+
+		// SC button
 		if(m_SCButton != null) {
 			// Show button?
 			// Only if disguise is neither owned nor locked and is purchased with SC
@@ -362,6 +368,7 @@ public class DisguisesScreenController : MonoBehaviour {
 			}
 		}
 
+		// PC button
 		if(m_PCButton != null) {
 			// Show button?
 			// Only if disguise is neither owned nor locked and is purchased with PC
@@ -374,29 +381,24 @@ public class DisguisesScreenController : MonoBehaviour {
 			}
 		}
 
-		// Store as selected pill and show highlight
+		// Equip button
+		if(m_equipButton != null) {
+			// Show button?
+			// Only if selected disguise is owned and not equipped
+			if(_pill.owned && _pill != m_equippedPill) {
+				m_equipButton.animator.RestartShow();
+			} else {
+				m_equipButton.animator.Hide();
+			}
+		}
+
+		// Store as selected pill
 		m_selectedPill = _pill;
-		m_selectedPill.Select(true);
 
 		// Apply selected disguise to dragon preview
 		if(UsersManager.currentUser.EquipDisguise(m_dragonData.def.sku, m_selectedPill.def.sku)) {
 			// Notify game
 			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
-		}
-
-		// If selected disguise is equippable, do it
-		// To be equipable, it must be owned
-		if(m_selectedPill != m_equippedPill 
-		&& m_selectedPill.owned) {
-			// Refresh previous equipped pill
-			if(m_equippedPill != null) {
-				m_equippedPill.Use(false);
-			} 
-
-			// Refresh and store new equipped pill
-			m_selectedPill.Use(true);
-			m_equippedPill = m_selectedPill;
-			PersistenceManager.Save();
 		}
 	}
 
@@ -459,5 +461,28 @@ public class DisguisesScreenController : MonoBehaviour {
 			m_selectedPill = null;
 			OnPillClicked(pill);
 		}
+	}
+
+	/// <summary>
+	/// Equip button has been pressed.
+	/// </summary>
+	public void OnEquipButton() {
+		// Is current pill valid and equippable?
+		if(m_selectedPill == null) return;
+		if(!m_selectedPill.owned) return;
+
+		// Yeah! Equip
+		// Refresh previous equipped pill
+		if(m_equippedPill != null) {
+			m_equippedPill.Equip(false);
+		} 
+
+		// Refresh and store new equipped pill
+		m_selectedPill.Equip(true);
+		m_equippedPill = m_selectedPill;
+		PersistenceManager.Save();
+
+		// Hide button!
+		m_equipButton.animator.Hide();
 	}
 }
