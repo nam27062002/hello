@@ -54,7 +54,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	[SerializeField] private bool m_capVerticalRotation = true;
 	[SerializeField] private float m_capUpRotationAngle = 40.0f;
 	[SerializeField] private float m_capDownRotationAngle = 60.0f;
-
+	[SerializeField] private float m_noGlideAngle = 50.0f;
 
 	protected Rigidbody m_rbody;
 	public Rigidbody rbody
@@ -160,15 +160,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private float m_recoverTimer;
 
 	private bool m_canMoveInsideWater = true;
-	public bool canDive
-	{
-		get
-		{
+	public bool canDive{
+		get{
 			return m_canMoveInsideWater;
 		}
 
-		set
-		{
+		set{
 			m_canMoveInsideWater = value;
 		}
 	}
@@ -224,7 +221,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private float m_accWaterFactor = 0.72f;
 
     private RegionManager m_regionManager;
-	public Current                              current { get; set; }
+	public Current  	current { get; set; }
 
 	private Vector3 m_diePosition;
 	private Vector3 m_revivePosition;
@@ -555,7 +552,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			RegionManager.Init();
 			m_regionManager = RegionManager.Instance;
 		}
-		CheckForCurrents ();
+		CheckForCurrents();
+		CheckAllowGlide();
 	}
 
 
@@ -584,21 +582,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
             else
             {
                 Vector3 pos = m_transform.position;
-				if(current != null)
-				{
-					if ( current.IsInCurrentDirection( gameObject ) )	// if agains current we dont allow to glide
-					{
-						m_flyLoopBehaviour.allowGlide = true;
-					}
-					else
-					{
-						m_animator.SetBool("glide", false);
-						m_flyLoopBehaviour.allowGlide = false;
-					}
-
-				}
-					
-
 				if(!current.Contains(pos.x, pos.y))
                 {
 					if(current.splineForce != null)
@@ -608,16 +591,48 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					}
 					current = null;
                 }
-
-				if(current == null )
-				{
-					m_flyLoopBehaviour.allowGlide = true;
-					// notify the machine that it's no more in a current.
-					// m_machine.ExitedFromCurrent();
-				}
 			}
         }	
 	}	
+
+	void CheckAllowGlide()
+	{
+		// if the region manager is in place...
+        if(m_regionManager != null)
+        {
+			// if it's not in a current...
+			if(current == null)
+            {
+				float angle = Util.ToAngleDegrees( m_direction );
+				Debug.Log(angle);
+				if ( angle > m_noGlideAngle && angle < 180-m_noGlideAngle ){
+					m_flyLoopBehaviour.allowGlide = false;	
+					m_animator.SetBool("glide", false);
+				}
+				else
+				{
+					m_flyLoopBehaviour.allowGlide = true;	
+				}
+            }
+            else
+            {
+                Vector3 pos = m_transform.position;
+				if(current != null)
+				{
+					if ( !current.IsInCurrentDirection( gameObject ) )	// if agains current we dont allow to glide
+					{
+						m_flyLoopBehaviour.allowGlide = true;
+					}
+					else
+					{
+						m_animator.SetBool("glide", false);
+						m_flyLoopBehaviour.allowGlide = false;
+					}
+				}
+			}
+        }	
+
+	}
 
 
 	void LateUpdate()
