@@ -63,6 +63,7 @@ namespace AI {
 		private ViewControl m_viewControl;
 		private Transform m_eye; // for aiming purpose
 		private Transform m_mouth;
+		private Transform m_groundSensor;
 
 		private Quaternion m_rotation;
 		private Quaternion m_targetRotation;
@@ -85,6 +86,7 @@ namespace AI {
 			m_rbody = m_machine.GetComponent<Rigidbody>();
 			m_viewControl = m_machine.GetComponent<ViewControl>();
 			m_eye = m_machine.transform.FindChild("eye");
+			m_groundSensor = m_machine.transform.FindChild("groundSensor");
 
 			m_mouth = null;
 		}
@@ -412,7 +414,11 @@ namespace AI {
 				m_heightFromGround = 0f;
 			} else {
 				RaycastHit hit;
-				bool hasHit = Physics.Raycast(position + m_upVector * 0.1f, -m_collisionNormal, out hit, 5f, m_groundMask);
+				Vector3 pos = position;
+				if (m_groundSensor != null)
+					pos = m_groundSensor.position;
+
+				bool hasHit = Physics.Raycast(pos + m_upVector * 0.1f, -m_collisionNormal, out hit, 5f, m_groundMask);
 
 				if (hasHit) {
 					m_heightFromGround = hit.distance;
@@ -444,8 +450,12 @@ namespace AI {
 		}
 
 		private bool CheckCollision(Vector3 _up, ref Vector3 _normal, ref Vector3 _direction) {
-			Vector3 start = position + (_up * 3f);
-			Vector3 end = position - (_up * 3f);
+			Vector3 pos = position;
+			if (m_groundSensor != null)
+				pos = m_groundSensor.position;
+			
+			Vector3 start = pos + (_up * 3f);
+			Vector3 end = pos - (_up * 3f);
 
 			// first cast
 			RaycastHit hit;
@@ -457,8 +467,8 @@ namespace AI {
 			
 				// cast forward
 				RaycastHit hitForward;
-				start = position + (m_direction * 0.5f) + (_normal * 3f);
-				end = position + (m_direction * 0.5f) - (_normal * 3f);
+				start = pos + (m_direction * 0.5f) + (_normal * 3f);
+				end = pos + (m_direction * 0.5f) - (_normal * 3f);
 
 				Debug.DrawLine(start, end, Color.magenta);
 				if (hasHit && Physics.Linecast(start, end, out hitForward, m_groundMask)) {
