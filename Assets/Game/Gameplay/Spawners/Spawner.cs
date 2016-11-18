@@ -19,6 +19,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 		Init = 0,
 		Respawning,
 		Create_Instances,
+        Spawning_Instances,
 		Activating_Instances,
 		Alive
 	}
@@ -396,23 +397,42 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 			if (m_entityAlive == m_entitySpawned) {
                 m_entitiesActivated = 0;
-                m_state = State.Activating_Instances;
+                m_state = State.Spawning_Instances;
 			}
 
 			return false;
 		}
 
-		if (m_state == State.Activating_Instances) {
-            ActivateEntities();
+        if (m_state == State.Spawning_Instances) {
+            Spawn();
 
-            // All entities have to be spawned once the spawner is ready otherwise they could be removed before the spawner is ready
-            if (m_entitiesActivated == m_entitySpawned)
-            {
-                Spawn();                
-            }
+            m_state = State.Activating_Instances;
+            return false;            
 		}
 
-		return m_state == State.Alive;
+        if (m_state == State.Activating_Instances)
+        {
+            ActivateEntities();
+
+            if (m_entitiesActivated == m_entitySpawned)
+            {
+                // Disable this spawner after a number of spawns
+                if (m_allEntitiesKilledByPlayer && m_maxSpawns > 0)
+                {
+                    m_respawnCount++;
+                    if (m_respawnCount == m_maxSpawns)
+                    {
+                        gameObject.SetActive(false);
+                        SpawnerManager.instance.Unregister(this);
+                    }
+                }
+
+                m_state = State.Alive;                
+            }
+            return false;
+        }
+
+        return m_state == State.Alive;
 	}
 
     private void ActivateEntities() {
@@ -432,7 +452,7 @@ public class Spawner : MonoBehaviour, ISpawner {
     }
 
 	private void Spawn() {                
-        for (int i=0; i < m_entitiesActivated; i++) {
+        for (int i=0; i < m_entitySpawned; i++) {
 			GameObject spawning = m_entities[i];           
 
 			Vector3 pos = transform.position;
@@ -440,7 +460,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 				m_guideFunction.ResetTime();
 			}
 
-			if (m_entitiesActivated > 0) {
+			if (i > 0) {
 				pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
 			}
 
@@ -472,20 +492,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 					component.Spawn(this);
 				}
 			}			            
-        }
-
-        // Disable this spawner after a number of spawns
-        if (m_allEntitiesKilledByPlayer && m_maxSpawns > 0)
-        {
-            m_respawnCount++;
-            if (m_respawnCount == m_maxSpawns)
-            {
-                gameObject.SetActive(false);
-                SpawnerManager.instance.Unregister(this);
-            }
-        }
-
-        m_state = State.Alive;
+        }        
     }    
 
 	protected virtual AreaBounds GetArea() {
@@ -503,6 +510,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 			case State.Init:					Gizmos.color = Color.grey; 		break;
 			case State.Respawning: 				Gizmos.color = Color.yellow; 	break;
 			case State.Create_Instances: 		Gizmos.color = Color.red; 		break;
+            case State.Spawning_Instances:      Gizmos.color = Color.cyan;    break;
 			case State.Activating_Instances: 	Gizmos.color = Color.blue; 		break;
 			case State.Alive:					Gizmos.color = Color.green; 	break;
 		}
