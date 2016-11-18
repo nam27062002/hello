@@ -5,6 +5,11 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	// Pool of pools! :D
 	private Dictionary<string, Pool> m_particlePools = new Dictionary<string, Pool>();
 
+	public static void CreatePool(ParticleData particle, int _size = 10)
+	{
+		CreatePool( particle.name, particle.path, _size);
+	}
+
 	/// <summary>
 	/// Preload a particle effect before it is needed in game.
 	/// </summary>
@@ -21,6 +26,10 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 			GameObject prefab = (GameObject)Resources.Load("Particles/" + _folderPath + _prefabName);
 			CreatePool(prefab, _size);
 		}
+	}
+
+	public static GameObject Spawn(ParticleData particle, Vector3 _at = default(Vector3)){
+		return Spawn( particle.name, _at, particle.path);
 	}
 
 	/// <summary>
