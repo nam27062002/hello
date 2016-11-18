@@ -604,7 +604,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			if(current == null)
             {
 				float angle = Util.ToAngleDegrees( m_direction );
-				Debug.Log(angle);
 				if ( angle > m_noGlideAngle && angle < 180-m_noGlideAngle ){
 					m_flyLoopBehaviour.allowGlide = false;	
 					m_animator.SetBool("glide", false);
