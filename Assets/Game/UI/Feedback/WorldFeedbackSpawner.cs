@@ -46,11 +46,13 @@ public class WorldFeedbackSpawner : MonoBehaviour {
     public int m_scoreFeedbackMax = 15;
     public int m_coinsFeedbackMax = 5;
     public int m_killFeedbackMax = 5;
+    public int m_flockBonusFeedbackMax = 2;
+    public int m_escapedFeedbackMax = 2;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//      	
-	private void Start() {
+    private void Start() {
 		// Create the pools
 		// No more than X simultaneous messages on screen!
 		// Use container if defined to keep hierarchy clean
@@ -91,7 +93,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			if(m_scoreFeedbackContainer != null) {
 				parent = m_scoreFeedbackContainer.transform;
 			}
-			PoolManager.CreatePool(m_flockBonusFeedbackPrefab, parent, 2);
+			PoolManager.CreatePool(m_flockBonusFeedbackPrefab, parent, m_flockBonusFeedbackMax);
 		}
 
 		// Escape
@@ -101,7 +103,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			if(m_escapeFeedbackContainer != null) {
 				parent = m_escapeFeedbackContainer.transform;
 			}
-			PoolManager.CreatePool(m_escapedFeedbackPrefab, parent, 2, false);
+			PoolManager.CreatePool(m_escapedFeedbackPrefab, parent, m_escapedFeedbackMax, false);
 		}
 
         Cache_Init();
@@ -188,7 +190,6 @@ public class WorldFeedbackSpawner : MonoBehaviour {
         if (string.IsNullOrEmpty(text)) return;
 
         // Get an instance from the pool and spawn it!
-
         TextCacheItemData itemData = m_cacheDatas[ECacheTypes.Kill].GetCacheItemDataAvailable() as TextCacheItemData;
         if (itemData != null)
         {
@@ -207,14 +208,13 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			case 2: tid = "TID_FEEDBACK_GOT_AWAY";break;
 		}
 
-		// Get an instance from the pool and spawn it!
-		GameObject obj = PoolManager.GetInstance(m_escapedFeedbackPrefab.name, false);
-		if (obj != null) 
-		{
-			WorldFeedbackController worldFeedback = obj.GetComponent<WorldFeedbackController>();
-            worldFeedback.Init( LocalizationManager.SharedInstance.Get( tid ) , _entity.position);
-			m_feedbacksQueue.Enqueue(worldFeedback);
-		}
+        // Get an instance from the pool and spawn it!
+        TextCacheItemData itemData = m_cacheDatas[ECacheTypes.Escaped].GetCacheItemDataAvailable() as TextCacheItemData;
+        if (itemData != null)
+        {
+            itemData.SpawnText(CacheWatch.ElapsedMilliseconds, _entity.position, LocalizationManager.SharedInstance.Get(tid));
+            m_feedbacksQueue.Enqueue(itemData.Controller);
+        }        
 	}
 	
 	//------------------------------------------------------------------//
@@ -296,14 +296,16 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	/// <param name="_entity">Entity.</param>
 	/// <param name="_reawrd">Reawrd.</param>
 	private void OnFlockEaten(Transform _entity, Reward _reward) {		
-		// Spawn flock feedback bonus, score will be displayed as any other score feedback
-		GameObject flockBonus = PoolManager.GetInstance(m_flockBonusFeedbackPrefab.name, false);
-		if (flockBonus != null) {
-            string text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_FLOCK_BONUS");
-			WorldFeedbackController worldFeedback = flockBonus.GetComponent<WorldFeedbackController>();
-			worldFeedback.Init(text, _entity.position);
-			m_feedbacksQueue.Enqueue(worldFeedback);
-		}
+		// Spawn flock feedback bonus, score will be displayed as any other score feedback		
+        string text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_FLOCK_BONUS");
+
+        // Get an instance from the pool and spawn it!
+        TextCacheItemData itemData = m_cacheDatas[ECacheTypes.FlockBonus].GetCacheItemDataAvailable() as TextCacheItemData;
+        if (itemData != null)
+        {
+            itemData.SpawnText(CacheWatch.ElapsedMilliseconds, _entity.position, text);
+            m_feedbacksQueue.Enqueue(itemData.Controller);
+        }           		
 	}
 
 
@@ -354,7 +356,9 @@ public class WorldFeedbackSpawner : MonoBehaviour {
     private enum ECacheTypes {
         Score,
         Coins,
-        Kill
+        Kill,
+        FlockBonus,
+        Escaped
     };
 
     private abstract class CacheData
@@ -532,6 +536,14 @@ public class WorldFeedbackSpawner : MonoBehaviour {
             // Kill feedback cache data
             cacheData = new TextCacheData(m_killFeedbackMax, m_killFeedbackPrefab.name);
             m_cacheDatas.Add(ECacheTypes.Kill, cacheData);
+
+            // Flock bonus cache data
+            cacheData = new TextCacheData(m_flockBonusFeedbackMax, m_flockBonusFeedbackPrefab.name);
+            m_cacheDatas.Add(ECacheTypes.FlockBonus, cacheData);            
+
+            // Escaped feedback cache data
+            cacheData = new TextCacheData(m_escapedFeedbackMax, m_escapedFeedbackPrefab.name);
+            m_cacheDatas.Add(ECacheTypes.Escaped, cacheData);            
         }
     }
 
