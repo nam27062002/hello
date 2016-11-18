@@ -45,7 +45,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 196884}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.004, y: 0.357, z: -1.022}
+  m_LocalPosition: {x: 0.004, y: -0.354, z: -1.022}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -58,12 +58,13 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100526}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -264.7964, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 4000013105826774}
   - {fileID: 431288}
+  - {fileID: 4000011923039870}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!114 &11417534
@@ -125,7 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -0.21978736, y: 0.010518551}
+  offset: {x: 0, y: -0.09}
   radius: 0.7226162
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11427948
@@ -140,7 +141,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: spider_ranged
-  m_isPet: 0
+  m_dieOutsideFrustum: 1
 --- !u!114 &11444444
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -224,6 +225,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Spider_Abdomen_2
+  m_lookAtRoot: {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -474,6 +476,21 @@ GameObject:
   - 4: {fileID: 4000011212429436}
   m_Layer: 21
   m_Name: Spider_R_Tooth
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1000011902589584
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000011923039870}
+  m_Layer: 0
+  m_Name: groundSensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -879,6 +896,19 @@ Transform:
   - {fileID: 4000010809345990}
   m_Father: {fileID: 4000011687599142}
   m_RootOrder: 0
+--- !u!4 &4000011923039870
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011902589584}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.648, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 480662}
+  m_RootOrder: 2
 --- !u!4 &4000012113354436
 Transform:
   m_ObjectHideFlags: 1
@@ -996,7 +1026,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011084342400}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.053, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.711, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -1233,7 +1263,7 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.62
-  m_Center: {x: 0, y: 0.63, z: -0.27}
+  m_Center: {x: 0, y: -0.08, z: -0.27}
 --- !u!137 &137000014115532352
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

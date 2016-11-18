@@ -524,12 +524,13 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 174524}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -287.13, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 454500}
   - {fileID: 4000011032456354}
+  - {fileID: 4000010642602572}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &415746
@@ -690,7 +691,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 180512}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -1.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -933,7 +934,7 @@ MonoBehaviour:
     m_minRadius: 0
     m_senseAbove: 1
     m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 1.5, z: 0}
+    m_sensorOffset: {x: 0, y: 0.86, z: 0}
     m_radiusOffset:
       min: 0.9
       max: 1.1
@@ -1015,7 +1016,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.036340714, y: 1.0733751}
+  offset: {x: 0, y: 0.18}
   radius: 0.9683907
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11453012
@@ -1051,7 +1052,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: villager_02
-  m_isPet: 0
+  m_dieOutsideFrustum: 1
 --- !u!137 &13776292
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -1129,6 +1130,21 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 174524}
   m_IsPrefabParent: 1
+--- !u!1 &1000010173523934
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000010642602572}
+  m_Layer: 0
+  m_Name: groundSensor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1000011005056856
 GameObject:
   m_ObjectHideFlags: 0
@@ -1144,6 +1160,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &4000010642602572
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010173523934}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.9659996, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 411742}
+  m_RootOrder: 2
 --- !u!4 &4000011032456354
 Transform:
   m_ObjectHideFlags: 1
@@ -1151,7 +1180,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011005056856}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -1.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -1198,4 +1227,4 @@ CapsuleCollider:
   m_Radius: 0.17
   m_Height: 2.1
   m_Direction: 1
-  m_Center: {x: 0, y: 1.05, z: 0}
+  m_Center: {x: 0, y: 0.05, z: 0}
