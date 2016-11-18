@@ -45,6 +45,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 
     public int m_scoreFeedbackMax = 15;
     public int m_coinsFeedbackMax = 5;
+    public int m_killFeedbackMax = 5;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -81,7 +82,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			if(m_killFeedbackContainer != null) {
 				parent = m_killFeedbackContainer.transform;
 			}
-			PoolManager.CreatePool(m_killFeedbackPrefab, parent, 5, false);
+			PoolManager.CreatePool(m_killFeedbackPrefab, parent, m_killFeedbackMax, false);
 		}
 			
 		// Flock Bonus
@@ -164,7 +165,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			WorldFeedbackController fb = m_feedbacksQueue.Dequeue();
 			fb.Spawn();
 		}
-	}
+	}    
 
     //------------------------------------------------------------------//
     // INTERNAL															//
@@ -182,18 +183,26 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		Entity entity = _entity.GetComponent<Entity>();
 		if(entity == null) return;
 
-		// Check that there's actually some text to be spawned
-		string text = entity.feedbackData.GetFeedback(_type);
-		if(string.IsNullOrEmpty(text)) return;
+        // Check that there's actually some text to be spawned
+        string text = entity.feedbackData.GetFeedback(_type);        
+        if (string.IsNullOrEmpty(text)) return;
 
-		// Get an instance from the pool and spawn it!
-		GameObject obj = PoolManager.GetInstance(m_killFeedbackPrefab.name, false);
+        // Get an instance from the pool and spawn it!
+
+        TextCacheItemData itemData = m_cacheDatas[ECacheTypes.Kill].GetCacheItemDataAvailable() as TextCacheItemData;
+        if (itemData != null)
+        {
+            itemData.SpawnText(CacheWatch.ElapsedMilliseconds, _entity.position, text);            
+            m_feedbacksQueue.Enqueue(itemData.Controller);
+        }
+
+        /*GameObject obj = PoolManager.GetInstance(m_killFeedbackPrefab.name, false);
 		if (obj != null) {
 			WorldFeedbackController worldFeedback = obj.GetComponent<WorldFeedbackController>();
 			worldFeedback.Init(text, _entity.position);
 			m_feedbacksQueue.Enqueue(worldFeedback);
-		}
-	}
+		}*/
+    }
 
 	private void SpawnEscapedFeedback( Transform _entity)
 	{
@@ -351,7 +360,8 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 
     private enum ECacheTypes {
         Score,
-        Coins
+        Coins,
+        Kill
     };
 
     private abstract class CacheData
@@ -416,6 +426,16 @@ public class WorldFeedbackSpawner : MonoBehaviour {
         }
     }
 
+    private class TextCacheData : CacheData
+    {
+        public TextCacheData(int itemsAmount, string prefabName) : base(itemsAmount, prefabName) { }
+
+        protected override CacheItemData CreateItemData(long timeStamp, GameObject go)
+        {
+            return new TextCacheItemData(timeStamp, go);
+        }
+    }
+
     private class CacheItemData {
         /// <summary>
         /// Time stamp of the last time this object was used 
@@ -433,7 +453,13 @@ public class WorldFeedbackSpawner : MonoBehaviour {
             SpawnExtended(worldPos, value);
         }
 
-        protected virtual void SpawnExtended(Vector3 worldPos, int value) {}        
+        public void SpawnText(long timeStamp, Vector3 worldPos,  string text) {
+            TimeStamp = timeStamp;
+            SpawnTextExtended(worldPos, text);
+        }
+
+        protected virtual void SpawnExtended(Vector3 worldPos, int value) {}
+        protected virtual void SpawnTextExtended(Vector3 worldPos, string text) {}
     }
 
     private class ScoreCacheItemData : CacheItemData
@@ -475,6 +501,24 @@ public class WorldFeedbackSpawner : MonoBehaviour {
         }
     }
 
+    private class TextCacheItemData : CacheItemData
+    {        
+        public WorldFeedbackController Controller { get; set; }
+
+        public TextCacheItemData(long timeStamp, GameObject go) : base(timeStamp, go)
+        {            
+            Controller = go.GetComponent<WorldFeedbackController>();
+        }
+
+        protected override void SpawnTextExtended(Vector3 worldPos, string text)        
+        {           
+            if (Controller != null)
+            {
+                Controller.Init(text, worldPos);                
+            }
+        }
+    }
+
     private Dictionary<ECacheTypes, CacheData> m_cacheDatas;
     
     private void Cache_Init() {
@@ -490,7 +534,11 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 
             // Coins cache data
             cacheData = new CoinsCacheData(m_coinsFeedbackMax, m_coinsFeedbackPrefab.name);
-            m_cacheDatas.Add(ECacheTypes.Coins, cacheData);            
+            m_cacheDatas.Add(ECacheTypes.Coins, cacheData);
+
+            // Kill feedback cache data
+            cacheData = new TextCacheData(m_killFeedbackMax, m_killFeedbackPrefab.name);
+            m_cacheDatas.Add(ECacheTypes.Kill, cacheData);
         }
     }
 
