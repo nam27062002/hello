@@ -473,9 +473,11 @@ public class Spawner : MonoBehaviour, ISpawner {
 			}
 
             AI.Machine machine = spawning.GetComponent<AI.Machine>();
-            if (machine != null && m_groupController)
+            if (machine != null)
             {
-                machine.EnterGroup(ref m_groupController.flock);
+				machine.Spawn(this);
+				if (m_groupController)
+                	machine.EnterGroup(ref m_groupController.flock);
             }
 
             AI.AIPilot pilot = spawning.GetComponent<AI.AIPilot>();
@@ -488,7 +490,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 			ISpawnable[] components = spawning.GetComponents<ISpawnable>();
 			foreach (ISpawnable component in components) {
-				if (component != entity && component != pilot) {
+				if (component != entity && component != pilot && component != machine) {
 					component.Spawn(this);
 				}
 			}			            
