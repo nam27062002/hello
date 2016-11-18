@@ -330,7 +330,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 156312}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.194, z: -4.634}
+  m_LocalPosition: {x: 0, y: 2.97, z: -6.21}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -343,7 +343,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 116540}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.9329998, z: 0}
+  m_LocalPosition: {x: 0, y: -3.02, z: -6.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -557,7 +557,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 175262}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.22, z: -1.865}
+  m_LocalPosition: {x: 0, y: -3.09, z: 1.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -775,6 +775,7 @@ MonoBehaviour:
   m_capVerticalRotation: 1
   m_capUpRotationAngle: 55
   m_capDownRotationAngle: 70
+  m_noGlideAngle: 50
   m_parabolicMovementConstant: 2.5
   m_parabolicMovementAdd: 3
   m_parabolicXControl: 20
@@ -1773,6 +1774,7 @@ GameObject:
   - 4: {fileID: 4000010928822206}
   - 95: {fileID: 95000013947758770}
   - 114: {fileID: 114000013642570754}
+  - 114: {fileID: 114000011664763422}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -3793,7 +3795,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: -0.020668149, y: -0.53645164, z: -0.013143412, w: 0.84357554}
+  m_LocalRotation: {x: -0.0019712283, y: 0.71712893, z: 0.0020283458, w: 0.6969349}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4740,6 +4742,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114000011664763422
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011978615256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 372d568832f6644d4b9ca9738dcd76b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_timeToGlide:
+    min: 10
+    max: 20
+  m_glidingTime:
+    min: 2.5
+    max: 5
 --- !u!114 &114000011807457784
 MonoBehaviour:
   m_ObjectHideFlags: 1
