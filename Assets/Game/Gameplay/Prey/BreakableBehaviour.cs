@@ -46,6 +46,9 @@ public class BreakableBehaviour : MonoBehaviour
 
 		AudioController.Play( m_onBreakAudio );
 
+		DragonMotion dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
+		dragonMotion.NoDamageImpact();
+
 		// Destroy
 		gameObject.SetActive( false );
 		Destroy( gameObject );
