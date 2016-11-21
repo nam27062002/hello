@@ -31,12 +31,12 @@ public class BackgroundTintFX : MonoBehaviour {
         Graphics.Blit(source, m_buffer, m_material);
         Graphics.Blit(m_buffer, destination);
 //        Graphics.Blit(source, destination, m_material);
-//        RenderTexture.ReleaseTemporary(m_buffer);
+        RenderTexture.ReleaseTemporary(m_buffer);
     }
 
     void OnPostRender()
     {
-        RenderTexture.ReleaseTemporary(m_buffer);
+//        RenderTexture.ReleaseTemporary(m_buffer);
 //        Debug.Log("Release background tint texture");
     }
 
