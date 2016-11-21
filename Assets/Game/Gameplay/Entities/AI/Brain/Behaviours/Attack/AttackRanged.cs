@@ -70,7 +70,11 @@ namespace AI {
 			protected override void OnAnimDealDamageExtended() {
 				if (m_projectile != null) {					
 					IProjectile projectile = m_projectile.GetComponent<IProjectile>();
-					projectile.Shoot(m_projectileSpawnPoint, ((AttackRangedData)m_data).damage);
+					if ( m_data.forceFaceToShoot ){
+						projectile.ShootAtPosition(m_projectileSpawnPoint, ((AttackRangedData)m_data).damage, m_facingTarget);
+					}else{
+						projectile.Shoot(m_projectileSpawnPoint, ((AttackRangedData)m_data).damage);
+					}
 					m_projectile = null;
 				}
 			}

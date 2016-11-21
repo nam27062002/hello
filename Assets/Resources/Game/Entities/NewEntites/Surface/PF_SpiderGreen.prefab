@@ -115,7 +115,10 @@ MonoBehaviour:
   m_skins: []
   m_web: {fileID: 120000013362175846}
   m_spinneret: {fileID: 485126}
-  m_onAttackParticle: {fileID: 0}
+  m_onAttackParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onAttackParticleAnchor: {fileID: 0}
 --- !u!114 &11432260
 MonoBehaviour:
@@ -176,7 +179,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 1
     max: 1
-  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"hangDownChance":{"min":0.5,"max":0.75},"hangDownDistance":{"min":2,"max":6},"hangDownSpeed":2.5,"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"projectileName":"","projectileSpawnTransformName":"","damage":5,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"hangDownChance":{"min":0.5,"max":0.75},"hangDownDistance":{"min":2,"max":6},"hangDownSpeed":2.5,"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"projectileName":"PF_ArrowPoison","projectileSpawnTransformName":"spinneret","damage":5,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":-1,"forceFaceToShoot":true,"maxFacingAngle":10,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
   m_databaseKey: PF_SpiderGreen
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
@@ -210,8 +213,8 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 10
-    m_maxRadius: 6.5
+    m_sightRadius: 17
+    m_maxRadius: 15
     m_minRadius: 0
     m_senseAbove: 1
     m_senseBelow: 1

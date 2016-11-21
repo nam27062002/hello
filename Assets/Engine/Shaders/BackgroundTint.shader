@@ -1,0 +1,36 @@
+﻿Shader "Hidden/Background tint effect"
+{
+	Properties{
+		_MainTex("Base (RGB)", 2D) = "white" {}
+		_Tint("Tint", Color) = (1.0, 1.0, 1.0, 1.0)
+	}
+
+	SubShader{
+		Pass{
+			Tags{ "Queue" = "Geometry+1" "RenderType" = "Opaque" }
+
+			Stencil
+			{
+				Ref 5
+				Comp NotEqual
+				Pass keep
+				ZFail keep
+			}
+
+			CGPROGRAM
+			#pragma vertex vert_img
+			#pragma fragment frag
+
+			#include "UnityCG.cginc"
+
+			uniform sampler2D _MainTex;
+			uniform float4 _Tint;
+
+			float4 frag(v2f_img i) : COLOR{
+				float4 col = tex2D(_MainTex, i.uv);
+				return col * _Tint;
+			}
+			ENDCG
+		}
+	}
+}

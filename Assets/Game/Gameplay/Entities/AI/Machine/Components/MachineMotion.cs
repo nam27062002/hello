@@ -38,7 +38,25 @@ namespace AI {
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		public bool checkCollisions { set { m_walkOnWalls = value; } }
 		
-		public Vector3 position { get { return m_machine.transform.position; } set { m_machine.transform.position = value; } }
+		public Vector3 position { 
+			get { 
+				if (m_groundSensor != null) {
+					return m_groundSensor.position;
+				} else {
+					return m_machineTransform.position; 
+				}
+			} 
+
+			set { 
+				if (m_groundSensor != null) {
+					m_machineTransform.position = value + (m_machineTransform.position - m_groundSensor.position); 
+				} else {
+					m_machineTransform.position = value; 
+				}
+			} 
+		}
+
+		private Transform m_machineTransform;
 
 		private Vector3 m_direction;
 		public Vector3 direction { get { return m_direction; } }
@@ -85,8 +103,10 @@ namespace AI {
 			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
 			m_rbody = m_machine.GetComponent<Rigidbody>();
 			m_viewControl = m_machine.GetComponent<ViewControl>();
-			m_eye = m_machine.transform.FindChild("eye");
-			m_groundSensor = m_machine.transform.FindChild("groundSensor");
+
+			m_machineTransform = m_machine.transform;
+			m_eye = m_machineTransform.FindChild("eye");
+			m_groundSensor = m_machineTransform.FindChild("groundSensor");
 
 			m_mouth = null;
 		}
@@ -144,7 +164,7 @@ namespace AI {
 				RaycastHit hit;
 				bool hasHit = Physics.Raycast(position + m_upVector * 0.1f, -m_collisionNormal, out hit, 5f, m_groundMask);
 				if (hasHit) {
-					m_machine.position = hit.point;
+					position = hit.point;
 					m_heightFromGround = 0f;
 				}
 			}
@@ -152,10 +172,10 @@ namespace AI {
 			m_rotation = Quaternion.LookRotation(m_direction, m_upVector);
 			m_targetRotation = m_rotation;
 
-			m_machine.transform.rotation = m_rotation;
+			m_machineTransform.rotation = m_rotation;
 
 			//----------------------------------------------------------------------------------
-			m_mouth = m_machine.transform.FindTransformRecursive("Fire_Dummy");
+			m_mouth = m_machineTransform.FindTransformRecursive("Fire_Dummy");
 		}
 
 		public void SetVelocity(Vector3 _v) {
@@ -192,13 +212,13 @@ namespace AI {
 
 			if (m_machine.GetSignal(Signals.Type.Biting)) {
 				Stop();
-				m_rotation = m_machine.transform.rotation;
+				m_rotation = m_machineTransform.rotation;
 				return;
 			} else if (m_machine.GetSignal(Signals.Type.Latching)) {
 				Stop();
 
-				Vector3 mouthOffset = (m_machine.transform.position - m_mouth.transform.position);
-				m_machine.transform.position = Vector3.Lerp( m_machine.transform.position, m_pilot.target + mouthOffset, Time.deltaTime * m_latchBlending);
+				Vector3 mouthOffset = (position - m_mouth.transform.position);
+				position = Vector3.Lerp(position, m_pilot.target + mouthOffset, Time.deltaTime * m_latchBlending);
 
 				if (m_latchBlending < 10f)
 					m_latchBlending += 0.1f * 2f;
@@ -211,7 +231,7 @@ namespace AI {
 
 			if (m_machine.GetSignal(Signals.Type.Panic)) {
 				Stop();
-				m_rotation = m_machine.transform.rotation;
+				m_rotation = m_machineTransform.rotation;
 				m_viewControl.Panic(true, m_machine.GetSignal(Signals.Type.Burning));
 				return;
 			} else {
@@ -272,7 +292,7 @@ namespace AI {
 				}
 
 				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
-				m_machine.transform.rotation = m_rotation;
+				m_machineTransform.rotation = m_rotation;
 
 				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
 
@@ -414,11 +434,7 @@ namespace AI {
 				m_heightFromGround = 0f;
 			} else {
 				RaycastHit hit;
-				Vector3 pos = position;
-				if (m_groundSensor != null)
-					pos = m_groundSensor.position;
-
-				bool hasHit = Physics.Raycast(pos + m_upVector * 0.1f, -m_collisionNormal, out hit, 5f, m_groundMask);
+				bool hasHit = Physics.Raycast(position + m_upVector * 0.1f, -m_collisionNormal, out hit, 5f, m_groundMask);
 
 				if (hasHit) {
 					m_heightFromGround = hit.distance;
@@ -450,10 +466,7 @@ namespace AI {
 		}
 
 		private bool CheckCollision(Vector3 _up, ref Vector3 _normal, ref Vector3 _direction) {
-			Vector3 pos = position;
-			if (m_groundSensor != null)
-				pos = m_groundSensor.position;
-			
+			Vector3 pos = position;			
 			Vector3 start = pos + (_up * 3f);
 			Vector3 end = pos - (_up * 3f);
 
