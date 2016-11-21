@@ -29,7 +29,8 @@ public class GoalsSceneChestSlot : MonoBehaviour {
 		get { return m_uiAnchor; }
 	}
 
-	[SerializeField] private ChestViewController m_view = null;
+	// Internal
+	private ChestViewController m_view = null;
 	public ChestViewController view {
 		get { return m_view; }
 	}
@@ -41,7 +42,11 @@ public class GoalsSceneChestSlot : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-
+		// Instantiate the chest view
+		GameObject chestPrefab = Resources.Load<GameObject>(ChestViewController.PREFAB_PATH);
+		GameObject chestObj = GameObject.Instantiate<GameObject>(chestPrefab);
+		chestObj.transform.SetParent(this.transform, false);
+		m_view = chestObj.GetComponentInChildren<ChestViewController>();
 	}
 
 	/// <summary>
