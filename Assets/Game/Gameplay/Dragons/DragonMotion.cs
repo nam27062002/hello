@@ -172,7 +172,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	// private float m_waterMovementModifier = 0;
 
-	public float m_dargonForce = 20;
+	public float m_dragonForce = 20;
 	public float m_dragonMass = 10;
 	public float m_dragonFricction = 15.0f;
 	public float m_dragonGravityModifier = 0.3f;
@@ -282,7 +282,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_boostMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
 
 		// Movement Setup
-		m_dargonForce = m_dragon.data.def.GetAsFloat("acceleration");
+		m_dragonForce = m_dragon.data.def.GetAsFloat("acceleration");
 		// m_dargonAcceleration = m_dragon.data.def.GetAsFloat("speedBase");
 		m_dragonMass = m_dragon.data.def.GetAsFloat("mass");
 		m_dragonFricction = m_dragon.data.def.GetAsFloat("friction");
@@ -827,7 +827,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			Vector3 gravityAcceleration = Vector3.zero;
             if (!ignoreGravity)
                 gravityAcceleration = Vector3.down * 9.81f * m_dragonGravityModifier;// * m_dragonMass;
-            Vector3 dragonAcceleration = (impulse * m_dargonForce * GetTargetForceMultiplier()) / m_dragonMass;
+            Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
             Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
 			// stroke's Drag
@@ -945,7 +945,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
         float gravity = 9.81f * m_dragonGravityModifier * -3.0f;// m_inverseGravityWater;
 		Vector3 acceleration = Vector3.down * gravity * m_dragonMass;   // Gravity
-        acceleration += impulse * m_dargonForce * GetTargetForceMultiplier() * m_dragonMass * m_accWaterFactor;	// User Force
+        acceleration += impulse * m_dragonForce * GetTargetForceMultiplier() * m_dragonMass * m_accWaterFactor;	// User Force
 
 		// stroke's Drag
 		m_impulse = m_rbody.velocity;
@@ -1272,7 +1272,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		get 
 		{
-			return (m_dargonForce * m_boostMultiplier / m_dragonFricction) * m_dragonMass;
+			return (m_dragonForce * m_boostMultiplier / m_dragonFricction) * m_dragonMass;
 		}
 	}
 
