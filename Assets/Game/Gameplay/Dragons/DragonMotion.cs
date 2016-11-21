@@ -824,17 +824,17 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			// v_max = a/f
 			// t_max = 5/f
 
-			float gravity = 0;
+			Vector3 gravity = Vector3.zero;
 			if (!ignoreGravity)
-				gravity = 9.81f * m_dragonGravityModifier;
-			Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
-			acceleration += impulse * m_dargonAcceleration * GetTargetSpeedMultiplier() * m_dragonMass;	// User Force
+				gravity = Vector3.down * 9.81f * m_dragonGravityModifier;
+            Vector3 dragonAcceleration = (impulse * m_dargonAcceleration * GetTargetSpeedMultiplier());
+            Vector3 force = (gravity + dragonAcceleration) * m_dragonMass;
 
 			// stroke's Drag
 			m_impulse = m_rbody.velocity;
 			float impulseMag = m_impulse.magnitude;
 
-			m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+			m_impulse += (force * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
 
 			m_direction = m_impulse.normalized;
 			RotateToDirection( impulse );
