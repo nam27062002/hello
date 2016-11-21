@@ -31,8 +31,10 @@ public class CollectibleChest : MonoBehaviour {
 	public DragonTier requiredTier { get { return m_requiredTier; }}
 
 	[Space]
-	[SerializeField] private ChestViewController m_chestView = null;
 	[SerializeField] private GameObject m_mapMarker = null;
+
+	// Internal
+	private ChestViewController m_chestView = null;
 
 	// Logic
 	private Chest m_chestData = null;
@@ -52,6 +54,12 @@ public class CollectibleChest : MonoBehaviour {
 
 		// Also make sure the object has the right tag
 		this.gameObject.tag = TAG;
+
+		// Instantiate the actual chest
+		GameObject chestPrefab = Resources.Load<GameObject>(ChestViewController.PREFAB_PATH);
+		GameObject chestObj = GameObject.Instantiate<GameObject>(chestPrefab);
+		chestObj.transform.SetParent(this.transform, false);
+		m_chestView = chestObj.GetComponentInChildren<ChestViewController>();
 	}
 
 	/// <summary>
