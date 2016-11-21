@@ -238,7 +238,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	{
 		if (PreyCount <= 0 && m_attackTarget != null && m_isPlayer)
 		{
-			BiteKill();
+			BiteKill( false );
 		}
 
 		if ( m_attackTarget != null )
