@@ -18,14 +18,13 @@ public class Catapult : Initializable {
 		public Vector3 initialPositionOffset = Vector3.zero;
 	}
 
-	[SerializeField] private float m_vAngle = 45f;
+	[SerializeField] private float m_vAngleMin = 0f;
+	[SerializeField] private float m_vAngleMax = 60f;
 	[SerializeField] private float m_initialVelocity = 10;
 	[SerializeField] private Vector3 m_initialPosition = Vector3.zero;
 	[SerializeField] private ExtraToss[] m_extraProjectiles;
 
 	[SeparatorAttribute]
-	[SerializeField] private float m_vAngleMin = 0f;
-	[SerializeField] private float m_vAngleMax = 60f;
 	[SerializeField] private Vector3 m_eyeOffset = Vector3.zero;
 	[SerializeField] private float m_eyeRadius = 5f;
 
@@ -43,7 +42,7 @@ public class Catapult : Initializable {
 	[SerializeField] private float m_previewMaxTime = 20f;
 	[SerializeField] private Vector3 m_debugTarget = Vector3.zero;
 
-
+	private float m_vAngle;
 	private float m_hAngle;
 	private float m_timer;
 
@@ -94,6 +93,8 @@ public class Catapult : Initializable {
 	}
 
 	public override void Initialize() {
+		m_vAngle = (m_vAngleMax + m_vAngleMin) * 0.5f;
+
 		m_timer = 0;
 		m_animator.StopPlayback();
 
@@ -232,7 +233,9 @@ public class Catapult : Initializable {
 	}
 
 	private Vector3 Eye() {
-		return transform.position + m_eyeOffset.x * transform.forward + transform.forward * m_eyeRadius + m_eyeOffset.y * transform.up + m_eyeOffset.z * transform.right;
+		Vector3 eye = transform.position + m_eyeOffset.x * transform.forward + transform.forward * m_eyeRadius + m_eyeOffset.y * transform.up + m_eyeOffset.z * transform.right;
+		eye.z = 0f;
+		return eye;
 	}
 
 	private bool Aim(Vector3 _target) {		
@@ -265,7 +268,6 @@ public class Catapult : Initializable {
 			float step = Mathf.Max(0.5f, m_previewStep);
 
 			//--------------------------------------------------------------------------------
-			float oldVAngle = m_vAngle;
 			Aim(Eye() + m_debugTarget);
 			DrawToss(Colors.magenta, m_initialPosition, m_initialVelocity, m_vAngle, m_hAngle, maxTime, step);
 
@@ -279,7 +281,6 @@ public class Catapult : Initializable {
 								maxTime, step);
 				}
 			}
-			m_vAngle = oldVAngle;
 
 			//--------------------------------------------------------------------------------
 			DrawMinMaxToss(m_initialPosition, m_initialVelocity, m_vAngleMin, m_hAngle, maxTime, step);
@@ -287,7 +288,7 @@ public class Catapult : Initializable {
 
 			//--------------------------------------------------------------------------------
 			Gizmos.color = Colors.magenta;
-			Gizmos.DrawWireSphere(Eye() + m_debugTarget, 0.5f);
+			Gizmos.DrawSphere(Eye() + m_debugTarget, 1.25f);
 
 			//--------------------------------------------------------------------------------
 			Gizmos.color = Color.yellow;

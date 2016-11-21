@@ -34,11 +34,13 @@ Shader "Hungry Dragon/UnderWater"
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				// make fog work
 				#pragma multi_compile_fog
+				#pragma multi_compile_fwdbase
 
-				#pragma multi_compile_particles
+//				#pragma multi_compile_particles
 				#include "UnityCG.cginc"
+				#include "AutoLight.cginc"
+
 
 				#define CAUSTIC_ANIM_SCALE  2.0f
 				#define CAUSTIC_RADIUS  0.125f
@@ -51,7 +53,7 @@ Shader "Hungry Dragon/UnderWater"
 
 				struct v2f {
 					float4 vertex : SV_POSITION;
-					half2 uv : TEXCOORD0;
+					float2 uv : TEXCOORD0;
 					float4 scrPos:TEXCOORD1;
 					float4 color : COLOR;
 				};
@@ -59,6 +61,9 @@ Shader "Hungry Dragon/UnderWater"
 
 				sampler2D _CameraDepthTexture;
 				sampler2D _MainTex;
+
+//				float4 _CameraDepthTexture_TexelSize;
+
 				float4 _MainTex_ST;
 				float4 _Color;
 
@@ -72,8 +77,6 @@ Shader "Hungry Dragon/UnderWater"
 					v.vertex.y += (sinX + sinY) * 0.15 * moveVertex * v.color.w;
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
-
-
 					o.scrPos = ComputeScreenPos(o.vertex);
 					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
@@ -89,18 +92,20 @@ Shader "Hungry Dragon/UnderWater"
 					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 0.02f) * CAUSTIC_RADIUS,
 										 (sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS));
 
-					float z = depthR;// i.uv.y;
-					fixed4 col = tex2D(_MainTex, 7.0f * (i.uv.xy + anim) * (z * 10.0f) * _ProjectionParams.w) * 0.1f;
+					float z = depthR + 40.0;// i.uv.y;
+					fixed4 col = tex2D(_MainTex, 0.7f * (i.uv.xy/* + anim*/) * (z * 14.0f) * _ProjectionParams.w) * 0.1f;
 					col.w = 0.0f;
 					float w = clamp(1.0 - ((depthR + 5.0) * 0.04f), 0.0f, 1.0f);
-					col = lerp(fixed4(_Color) + col * w * 20.0, col, w * w);
+//					col = lerp(fixed4(_Color) + col * w * 20.0, col, w * w);
+					col = lerp(fixed4(_Color) + col * w * 15.0, col, w * w);
 					return col;
 				}
 			ENDCG
 		}
-/*
+
 		Pass{
-			Blend SrcAlpha OneMinusSrcAlpha
+			Blend SrcAlpha One
+//			Blend SrcAlpha OneMinusSrcAlpha
 			ZWrite Off
 			Fog{ Color(0, 0, 0, 0) }
 
@@ -169,12 +174,12 @@ Shader "Hungry Dragon/UnderWater"
 										(sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS));
 
 					float z = depthR;// i.uv.y;
-					fixed4 col = tex2D(_MainTex, 7.0f * (i.uv.xy + anim) * (z * 10.0f) * _ProjectionParams.w) * 1.0f;
-					col.w = col.r;
+					fixed4 col = (tex2D(_MainTex, 7.0f * (i.uv.xy + anim) * (z * 10.0f) * _ProjectionParams.w) * 0.7f) + _Color * 0.25;
+//					col.w = 1.0f;//dot(col.xyz, float3(0.299, 0.587, 0.114));
 					return col;
 				}
 			ENDCG
 		}
-*/
+
 	}
 }

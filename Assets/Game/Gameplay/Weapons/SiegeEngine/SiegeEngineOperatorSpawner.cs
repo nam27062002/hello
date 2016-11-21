@@ -74,10 +74,7 @@ public class SiegeEngineOperatorSpawner : MonoBehaviour, ISpawner {
 			m_operatorPilot = null;
 		}
 	}
-
-	public ERespawnPendingTask RespawnPendingTask { get; set; }
-	public bool IsRespawningWithDelay() { return false; }
-
+	
 	public bool CanRespawn() {
 		if (m_autoSpawner.state == AutoSpawnBehaviour.State.Idle) {
 			if (IsOperatorDead()) {
@@ -92,7 +89,11 @@ public class SiegeEngineOperatorSpawner : MonoBehaviour, ISpawner {
 			GameObject spawning = PoolManager.GetInstance(m_entityPrefabStr);
 
 			if (spawning != null) {
+				Transform groundSensor = spawning.transform.FindChild("groundSensor");
 				spawning.transform.position = m_spawnAtTransform.position;
+				if (groundSensor != null) {
+					spawning.transform.position += (spawning.transform.position - groundSensor.position);
+				}
 
 				Entity entity = spawning.GetComponent<Entity>();
 				if (entity != null) {

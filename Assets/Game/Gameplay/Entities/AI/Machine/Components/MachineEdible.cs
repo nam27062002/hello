@@ -44,7 +44,9 @@ namespace AI {
 			}
 
 			m_viewControl.SpawnEatenParticlesAt(_transform);
+		}
 
+		public void EndSwallowed( Transform _transform ){
 			m_machine.SetSignal(Signals.Type.Destroyed, true);
 		}
 

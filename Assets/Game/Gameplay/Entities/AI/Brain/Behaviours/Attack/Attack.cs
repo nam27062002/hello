@@ -12,6 +12,8 @@ namespace AI {
 			public bool faceEnemy = true;
 			public bool faceEnemyY = false;
 			public int facing = 1;
+			public bool forceFaceToShoot = false;
+			public float maxFacingAngle = 90;
 		}
 
 		public abstract class Attack : StateComponent {
@@ -35,6 +37,8 @@ namespace AI {
 			private PreyAnimationEvents m_animEvents;
 
 			private object[] m_transitionParam;
+
+			protected Vector3 m_facingTarget = Vector3.zero;
 
 
 			protected override void OnInitialise() {
@@ -77,41 +81,88 @@ namespace AI {
 				if (m_timer <= 0) {
 					m_timer = 0;
 					if (m_onAttackEndEventDone) {
-						StartAttack();
+
+						if (m_machine.enemy == null) {
+							Transition(OnOutOfRange);
+						}
+						else
+						{
+							bool startAttack = true;
+							if (m_data.forceFaceToShoot)
+							{
+								// Check angle to know if we can shoot
+								Vector3 dir = Vector3.right;
+								if (m_data.facing > 0) {
+									dir = m_machine.enemy.position - m_machine.position;
+								} else {
+									dir = m_machine.position - m_machine.enemy.position;
+								}
+								Vector3 pilotDir = m_pilot.transform.forward;
+								if ( Mathf.Abs( Vector2.Angle( dir, pilotDir)) > m_data.maxFacingAngle ){
+									startAttack = false;
+									FacingToShoot();
+								}else{
+									// Save shooting position
+									m_facingTarget = m_machine.enemy.position;
+								}
+
+							}
+							if (startAttack)
+								StartAttack();
+						}
 					}
 				}
 			}
 
-			private void StartAttack() {
-				if (m_machine.enemy == null) {
-					Transition(OnOutOfRange);
-				} else {
-					m_pilot.PressAction(Pilot.Action.Attack);
-
-					if (m_data.faceEnemy) {
-						Vector3 dir = Vector3.zero;
-						if (m_data.facing > 0) {
-							dir = m_machine.enemy.position - m_machine.position;
-						} else {
-							dir = m_machine.position - m_machine.enemy.position;
-						}
-
-						if (m_data.faceEnemyY) {						
-							dir.z = 0;
-						} else {
-							dir.y = 0;
-							dir.z = 0;
-						}
-						m_pilot.SetDirection(dir.normalized);
+			protected void FacingToShoot()
+			{
+				if (m_data.faceEnemy) {
+					Vector3 dir = Vector3.zero;
+					if (m_data.facing > 0) {
+						dir = m_machine.enemy.position - m_machine.position;
+					} else {
+						dir = m_machine.position - m_machine.enemy.position;
 					}
 
-					m_onAttachProjectileEventDone = false;
-					m_onDamageEventDone = false;
-					m_onAttackEndEventDone = false;
-					m_attacksLeft--;
+					if (m_data.faceEnemyY) {						
+						dir.z = 0;
+					} else {
+						dir.y = 0;
+						dir.z = 0;
+					}
+					m_pilot.SetDirection(dir.normalized);
+				}	
+			}
 
-					m_timer = m_data.attackDelay;
+
+			private void StartAttack() {
+				
+				m_pilot.PressAction(Pilot.Action.Attack);
+
+				if (m_data.faceEnemy) {
+					Vector3 dir = Vector3.zero;
+					if (m_data.facing > 0) {
+						dir = m_machine.enemy.position - m_machine.position;
+					} else {
+						dir = m_machine.position - m_machine.enemy.position;
+					}
+
+					if (m_data.faceEnemyY) {						
+						dir.z = 0;
+					} else {
+						dir.y = 0;
+						dir.z = 0;
+					}
+					m_pilot.SetDirection(dir.normalized);
 				}
+
+				m_onAttachProjectileEventDone = false;
+				m_onDamageEventDone = false;
+				m_onAttackEndEventDone = false;
+				m_attacksLeft--;
+
+				m_timer = m_data.attackDelay;
+				
 			}
 
 			private void OnAttachProjectile() {

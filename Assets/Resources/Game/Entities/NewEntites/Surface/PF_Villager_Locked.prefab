@@ -691,7 +691,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 167674}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.89, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -777,13 +777,14 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 131698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -285.29245, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 445016}
   - {fileID: 4000011390334812}
   - {fileID: 4000012095291774}
+  - {fileID: 4000013023448454}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &482786
@@ -932,7 +933,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.036340714, y: 1.0733751}
+  offset: {x: 0, y: 0.22}
   radius: 0.9683907
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11459028
@@ -1021,7 +1022,7 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 10
+    m_sightRadius: 10.5
     m_maxRadius: 6.5
     m_minRadius: 0
     m_senseAbove: 1
@@ -1052,7 +1053,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: villager_01
-  m_isPet: 0
+  m_dieOutsideFrustum: 1
 --- !u!137 &13729824
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -1533,6 +1534,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1000013469181006
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000013023448454}
+  m_Layer: 0
+  m_Name: groundSensor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1000013702775304
 GameObject:
   m_ObjectHideFlags: 1
@@ -1769,7 +1785,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012531856332}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.89, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -1854,7 +1870,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010200754400}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.89, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -1938,6 +1954,19 @@ Transform:
   - {fileID: 4000011970215172}
   m_Father: {fileID: 4000013094901964}
   m_RootOrder: 0
+--- !u!4 &4000013023448454
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013469181006}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.837, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 475722}
+  m_RootOrder: 3
 --- !u!4 &4000013094901964
 Transform:
   m_ObjectHideFlags: 1
@@ -2227,6 +2256,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Human_Spine1
+  m_lookAtRoot: {fileID: 0}
 --- !u!114 &114000011135780984
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2239,6 +2269,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Human_Pelvis
+  m_lookAtRoot: {fileID: 0}
 --- !u!114 &114000011364874232
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2251,7 +2282,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: villager_01
-  m_isPet: 0
+  m_dieOutsideFrustum: 1
 --- !u!114 &114000011969977830
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2264,6 +2295,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Human_Spine1
+  m_lookAtRoot: {fileID: 0}
 --- !u!114 &114000012541412914
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2294,8 +2326,8 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":1.25,"timeToIdle":{"min":3,"max":7},"timeToChangeDirection":{"min":7,"max":12},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":3},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":6,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.1,"actions":{"panic":{"id":0,"active":true},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":false},"home":{"id":3,"active":false}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":1.5,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
-  m_databaseKey: 
+  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":3},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":6,"checkDragonPositionTime":2,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":false},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":0,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":6,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
+  m_databaseKey: PF_Villager_01
 --- !u!114 &114000013706523558
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2380,7 +2412,7 @@ CapsuleCollider:
   m_Radius: 0.17
   m_Height: 2.1
   m_Direction: 1
-  m_Center: {x: 0, y: 1.05, z: 0}
+  m_Center: {x: 0, y: 0.19, z: 0}
 --- !u!136 &136000012600680962
 CapsuleCollider:
   m_ObjectHideFlags: 1

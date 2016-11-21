@@ -330,7 +330,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 156312}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.194, z: -4.634}
+  m_LocalPosition: {x: 0, y: 2.97, z: -6.21}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -343,7 +343,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 116540}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.9329998, z: 0}
+  m_LocalPosition: {x: 0, y: -3.02, z: -6.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -557,7 +557,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 175262}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.22, z: -1.865}
+  m_LocalPosition: {x: 0, y: -3.09, z: 1.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -739,7 +739,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71011e82423ab49ada052e344c2f1209, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_levelUp: {fileID: 147012, guid: 80e922c7232c34f6e9e257feb581ee77, type: 2}
+  m_levelUp: {fileID: 1000011303966220, guid: c13c434e69a19af419fa213079f8660c, type: 2}
   m_levelUpAnchor: {fileID: 4000011218522520}
   m_revive: {fileID: 1000013542236594, guid: 82956920db58f3446a7b0e159de4e931, type: 2}
   m_reviveAnchor: {fileID: 4000013037928750}
@@ -756,7 +756,7 @@ MonoBehaviour:
   m_skimmingParticle: {fileID: 1000010018702160, guid: b942671f031124e12ad02e4b82ec7f2e,
     type: 2}
   m_skimmingAnchor: {fileID: 488014}
-  m_minSpeedSkimming: 1
+  m_minSpeedSkimming: 0
   m_skimmingDistance: 3
 --- !u!114 &11438592
 MonoBehaviour:
@@ -773,18 +773,19 @@ MonoBehaviour:
   m_velocityBlendRate: 256
   m_rotBlendRate: 350
   m_capVerticalRotation: 1
-  m_capUpRotationAngle: 55
-  m_capDownRotationAngle: 70
+  m_capUpRotationAngle: 50
+  m_capDownRotationAngle: 50
+  m_noGlideAngle: 50
   m_parabolicMovementConstant: 2.5
   m_parabolicMovementAdd: 3
   m_parabolicXControl: 20
   m_cloudTrailMinSpeed: 7.5
   m_outerSpaceRecoveryTime: 0.5
   m_insideWaterRecoveryTime: 0.1
-  m_dargonAcceleration: 20
+  m_dragonForce: 20
   m_dragonMass: 10
   m_dragonFricction: 15
-  m_dragonGravityModifier: 0.3
+  m_dragonGravityModifier: 10
 --- !u!114 &11440808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1773,6 +1774,7 @@ GameObject:
   - 4: {fileID: 4000010928822206}
   - 95: {fileID: 95000013947758770}
   - 114: {fileID: 114000013642570754}
+  - 114: {fileID: 114000011664763422}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -2961,8 +2963,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012854477344}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.13, z: 1.65}
+  m_LocalRotation: {x: 0.9999238, y: -0.008726204, z: -0.008726204, w: 0.00007610873}
+  m_LocalPosition: {x: -0.021, y: -0.579, z: 1.118}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 84.449005, y: 0, z: 0}
   m_Children: []
@@ -3793,7 +3795,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: -0.033447348, y: 0.437495, z: 0.016286975, w: 0.898451}
+  m_LocalRotation: {x: -0.0019712283, y: 0.71712893, z: 0.0020283458, w: 0.6969349}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4740,6 +4742,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114000011664763422
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011978615256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 372d568832f6644d4b9ca9738dcd76b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_timeToGlide:
+    min: 10
+    max: 20
+  m_glidingTime:
+    min: 2.5
+    max: 5
 --- !u!114 &114000011807457784
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4849,7 +4868,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_dragonFlame: {fileID: 197018, guid: bd95ec8e1059d5d46b566f6087879846, type: 2}
+  m_dragonFlameStandard: {fileID: 197018, guid: bd95ec8e1059d5d46b566f6087879846,
+    type: 2}
+  m_dragonFlameSuper: {fileID: 1000013828432286, guid: 381cc7087b9ec7e4f97a52941d03341c,
+    type: 2}
 --- !u!114 &114000012814755856
 MonoBehaviour:
   m_ObjectHideFlags: 1

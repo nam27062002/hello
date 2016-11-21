@@ -120,7 +120,7 @@ public static class DebugSettings {
 		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
 
         key = INGAME_GLOW;
-		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
+		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, false));
 
 		key = INGAME_PARTICLES_FEEDBACK;
 		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));

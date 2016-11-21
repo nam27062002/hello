@@ -3,11 +3,15 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using DG.Tweening;
 
 public class DisguisePillEvent : UnityEvent<DisguisePill>{}
 
 [RequireComponent(typeof(ScrollRectSnapPoint))]
 public class DisguisePill : MonoBehaviour, IPointerClickHandler {
+
+	[SerializeField] private Color m_equippedTextColor = Color.white;
+	[SerializeField] private Color m_lockedTextColor = Color.red;
 
 	//------------------------------------------//
 
@@ -39,10 +43,10 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	public Image icon { get { return m_icon; } }
 
 	//------------------------------------------//
-
+	// Internal references
 	private GameObject m_lockIcon;
-	private GameObject m_selection;
-	private GameObject m_equippedFrame;
+	private ShowHideAnimator m_equippedFrame;
+	private DOTweenAnimation m_equippedFX;
 	private Localizer m_infoText;
 
 	//------------------------------------------//
@@ -50,8 +54,8 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	void Awake() {
 		m_icon = transform.FindComponentRecursive<Image>("DragonSkinIcon");
 		m_lockIcon = transform.FindObjectRecursive("IconLock");
-		m_selection = transform.FindObjectRecursive("SelectionEffect");
-		m_equippedFrame = transform.FindObjectRecursive("EquippedFrame");
+		m_equippedFrame = transform.FindComponentRecursive<ShowHideAnimator>("EquippedFrame");
+		m_equippedFX = transform.FindComponentRecursive<DOTweenAnimation>("EquippedFX");
 		m_infoText = transform.FindComponentRecursive<Localizer>("InfoText");
 	}
 
@@ -66,29 +70,33 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 			// Unlocked
 			m_icon.color = Color.white;
 			m_lockIcon.SetActive(false);
-			m_infoText.gameObject.SetActive(false);
+			m_infoText.Localize("");
 		} else {
 			// Locked
 			m_icon.color = Color.gray;
 			m_lockIcon.SetActive(true);
-			m_infoText.gameObject.SetActive(true);
 			m_infoText.Localize("TID_LEVEL", (_def.GetAsInt("unlockLevel") + 1).ToString());
+			m_infoText.text.color = m_lockedTextColor;
 		}
 
-		m_equippedFrame.SetActive(false);
-		m_selection.SetActive(false);
+		m_equippedFrame.ForceHide(false);
+		m_equippedFX.gameObject.SetActive(false);
 
 		m_icon.sprite = _spr;
 	}
 
-	public void Use(bool _value) {
-		if(m_owned) {
-			m_equippedFrame.SetActive(_value);
+	public void Equip(bool _equip, bool _animate = true) {
+		if(_equip && m_owned) {
+			m_equippedFrame.Show(_animate);
+			m_equippedFX.gameObject.SetActive(true);
+			m_equippedFX.DORestart();
+			m_infoText.Localize("Equipped");	// [AOC] HARDCODED!!
+			m_infoText.text.color = m_equippedTextColor;
+		} else {
+			m_equippedFrame.Hide(_animate);
+			m_equippedFX.gameObject.SetActive(false);
+			if(m_owned) m_infoText.Localize("");
 		}
-	}
-
-	public void Select(bool _value) {
-		m_selection.SetActive(_value);
 	}
 
 	//------------------------------------------------------------------//

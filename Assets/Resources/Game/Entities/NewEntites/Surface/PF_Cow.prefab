@@ -241,7 +241,7 @@ GameObject:
   - 114: {fileID: 11451598}
   - 114: {fileID: 11485410}
   - 54: {fileID: 54000010392761118}
-  - 135: {fileID: 135000012088238920}
+  - 136: {fileID: 136000011298179028}
   m_Layer: 21
   m_Name: PF_Cow
   m_TagString: Untagged
@@ -598,7 +598,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 109468}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.128}
+  m_LocalPosition: {x: 0, y: -0.99, z: 0.128}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -722,11 +722,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 128698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -138.14722, y: 4.293291, z: -0.39083496}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 410874}
+  - {fileID: 4000012911739374}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &459444
@@ -890,7 +891,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 139278}
-  m_LocalRotation: {x: 0.6985103, y: -0.69814473, z: -0.15504153, w: 0.025289785}
+  m_LocalRotation: {x: 0.6985102, y: -0.6981447, z: -0.15504152, w: 0.025289765}
   m_LocalPosition: {x: 0.16254486, y: 0.106924586, z: 0.27912664}
   m_LocalScale: {x: 1.0000013, y: 0.9999998, z: 0.99999887}
   m_LocalEulerAnglesHint: {x: -10.4369, y: -165.1585, z: -91.3931}
@@ -995,12 +996,12 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 10
-    m_maxRadius: 6.5
+    m_sightRadius: 13
+    m_maxRadius: 9
     m_minRadius: 0
     m_senseAbove: 1
     m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_sensorOffset: {x: 0, y: 0.89, z: 0}
     m_radiusOffset:
       min: 0.9
       max: 1.1
@@ -1009,7 +1010,7 @@ MonoBehaviour:
       max: 2
   m_onSpawnSound: 
   m_onEatenSound: 
-  m_rotateToMouth: 2
+  m_rotateToMouth: 3
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
@@ -1025,7 +1026,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.25278202, y: 1.0562685}
+  offset: {x: 0, y: 0.09}
   radius: 1.1294149
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11469952
@@ -1060,7 +1061,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.7
     max: 1.3
-  m_serializedJson: '[{"restTime":{"min":4,"max":7},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":7.5,"checkDragonPositionTime":2,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":false},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"speed":5.5,"timeToIdle":{"min":2.5,"max":4.5},"timeToChangeDirection":{"min":4,"max":7},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"standUpTime":0,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":5,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":4,"max":7},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":9,"checkDragonPositionTime":2,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":false},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"speed":5.5,"timeToIdle":{"min":2.5,"max":4.5},"timeToChangeDirection":{"min":4,"max":7},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"standUpTime":0,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":5.5,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
   m_databaseKey: PF_Cow
 --- !u!114 &11485410
 MonoBehaviour:
@@ -1197,6 +1198,34 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 128698}
   m_IsPrefabParent: 1
+--- !u!1 &1000010384777860
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000012911739374}
+  m_Layer: 0
+  m_Name: groundSensor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4000012911739374
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010384777860}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.946, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 458018}
+  m_RootOrder: 1
 --- !u!54 &54000010392761118
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -1212,8 +1241,8 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!135 &135000012088238920
-SphereCollider:
+--- !u!136 &136000011298179028
+CapsuleCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -1221,6 +1250,7 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.9
-  m_Center: {x: 0, y: 0.88, z: 0.01}
+  m_Radius: 0.92
+  m_Height: 3.14
+  m_Direction: 2
+  m_Center: {x: 0, y: -0.12, z: 0.12}

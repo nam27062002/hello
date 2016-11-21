@@ -50,10 +50,9 @@ public class CoinsFeedbackController : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Wait for particle system to end
-		if(m_ps.isStopped && m_ps.particleCount <= 0) {
+		if(!m_ps.IsAlive()) {
 			// De-activate game object and return it to the pool
-			gameObject.SetActive(false);
-			PoolManager.ReturnInstance(this.gameObject);
+			gameObject.SetActive(false);			
 		}
 	}
 

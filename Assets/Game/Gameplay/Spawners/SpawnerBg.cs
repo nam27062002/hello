@@ -192,10 +192,7 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 			}
 		}
 	}
-    
-    public ERespawnPendingTask RespawnPendingTask { get; set; }
-    public bool IsRespawningWithDelay() { return false; }
-
+        
     public bool CanRespawn() {		
 		
 		// If we don't have any entity alive, proceed

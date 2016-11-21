@@ -207,7 +207,9 @@ public abstract class EatBehaviour : MonoBehaviour {
                 {
                     PreyData prey = m_prey[i];
                     prey.prey.transform.parent = prey.startParent;
-                    Swallow(m_prey[i].prey);
+                    if ( prey.absorbTimer > 0 )
+						StartSwallow(m_prey[i].prey);
+                    EndSwallow(m_prey[i].prey);
                     prey.prey = null;
                     prey.startParent = null;
                 }
@@ -337,7 +339,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected void Eat(AI.Machine prey)
     {
         PreyData preyData = null;
-        if (m_prey != null && prey.CanBeBitten())
+        if (m_prey != null)
         {
             // Searches for an empty PreyData
             int i;
@@ -373,6 +375,8 @@ public abstract class EatBehaviour : MonoBehaviour {
                     maxPreysSoFar = PreyCount;
                     //Debug.LogWarning("MAX = " + maxPreysSoFar + " i = " + i + " count = " + count);
                 }
+
+				
             }
             else
             {
@@ -410,6 +414,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 					prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_suction.position, t);
 					prey.prey.transform.localScale = Vector3.Lerp(prey.startScale, prey.startScale * 0.5f, t);
                     PreyCount++;
+                    if ( prey.absorbTimer <= 0 )
+                    	StartSwallow( prey.prey );
                 }
 				else
 				{
@@ -421,7 +427,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 					if (prey.eatingAnimationTimer <= 0) 
 					{
 						prey.prey.transform.parent = prey.startParent;
-						Swallow(prey.prey);
+						EndSwallow(prey.prey);
 						prey.prey = null;
 						prey.startParent = null;
 					}
@@ -534,7 +540,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_holdingPrey.ReceiveDamage(damage * Time.deltaTime);
 		if (m_holdingPrey.IsDead())
 		{
-			Swallow(m_holdingPrey);
+			StartSwallow(m_holdingPrey);
+			EndSwallow(m_holdingPrey);
 			StartBlood();
 			EndHold();
 		}
@@ -852,8 +859,12 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 
 	/// On kill function over prey. Eating or holding
-	private void Swallow(AI.Machine _prey) {
+	private void StartSwallow(AI.Machine _prey) {
 		_prey.BeingSwallowed(m_mouth, m_rewardsPlayer);//( m_mouth );
+	}
+
+	private void EndSwallow(AI.Machine _prey){
+		_prey.EndSwallowed(m_mouth);
 	}
 
 	/// <summary>

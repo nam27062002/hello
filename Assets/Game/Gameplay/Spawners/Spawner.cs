@@ -15,10 +15,16 @@ public class Spawner : MonoBehaviour, ISpawner {
 		public float value = 0f;
 	}
 
+	public enum SpawnPointSeparation {
+		Sphere = 0,
+		Line
+	}
+
 	private enum State {
 		Init = 0,
 		Respawning,
 		Create_Instances,
+        Spawning_Instances,
 		Activating_Instances,
 		Alive
 	}
@@ -48,10 +54,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 	[Tooltip("Spawners may not be present on every run (percentage).")]
 	[SerializeField][Range(0f, 100f)] private float m_activationChance = 100f;
 
-	[Tooltip("Meant for background spawners, will ignore respawn settings and activation triggers.")]
-	[SerializeField] private bool m_alwaysActive = false;
-	public bool alwaysActive { get { return m_alwaysActive; }}
-
 	[Tooltip("Start spawning when any of the activation conditions is triggered.\nIf empty, the spawner will be activated at the start of the game.")]
 	[SerializeField] private SpawnCondition[] m_activationTriggers;
 	public SpawnCondition[] activationTriggers { get { return m_activationTriggers; }}
@@ -62,6 +64,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 	[Separator("Respawn")]
 	[SerializeField] private Range m_spawnTime = new Range(40f, 45f);
+	[SerializeField] private SpawnPointSeparation m_homePosMethod = SpawnPointSeparation.Sphere;
+	[SerializeField] private Range m_homePosDistance = new Range(1f, 2f);
 	[SerializeField] private int m_maxSpawns;
 	
 
@@ -263,43 +267,28 @@ public class Spawner : MonoBehaviour, ISpawner {
 				}
 			}
 		}
-	}
-    
-    public ERespawnPendingTask RespawnPendingTask { get; set; }
-
-    public bool IsRespawningWithDelay() {
-        return m_state == State.Respawning || m_state == State.Create_Instances || m_state == State.Activating_Instances;
-    }
+	}        
 
     public bool CanRespawn() {		
 		// Ignore all logic for always active spawners
-		if (m_alwaysActive) {
-			if (m_entityAlive == 0) {
-				return true;
-			}
-		}
-
-		// Rest of the spawners
-		else {
-			if (m_state == State.Respawning) {
-				// If we can spawn, do it
-				if(CanSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
-					// If we don't have any entity alive, proceed
-					if(m_entityAlive == 0) {
-						// Respawn on cooldown?
-						if(m_gameSceneController.elapsedSeconds > m_respawnTime) {
-							// Everything ok! Spawn!
-							return true;
-						}
+		if (m_state == State.Respawning) {
+			// If we can spawn, do it
+			if(CanSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
+				// If we don't have any entity alive, proceed
+				if(m_entityAlive == 0) {
+					// Respawn on cooldown?
+					if(m_gameSceneController.elapsedSeconds > m_respawnTime) {
+						// Everything ok! Spawn!
+						return true;
 					}
 				}
+			}
 
-				// If we can't spawn and we're ready to be disabled, wait untill all entities are dead to do it
-				else if(m_readyToBeDisabled) {
-					if(m_entityAlive == 0) {
-						SpawnerManager.instance.Unregister(this);
-						Destroy(gameObject);
-					}
+			// If we can't spawn and we're ready to be disabled, wait untill all entities are dead to do it
+			else if(m_readyToBeDisabled) {
+				if(m_entityAlive == 0) {
+					SpawnerManager.instance.Unregister(this);
+					Destroy(gameObject);
 				}
 			}
 		}
@@ -315,8 +304,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 	/// </returns><param name="_time">Elapsed game time.</param>
 	/// </returns><param name="_xp">Earned xp.</param>
 	public bool CanSpawn(float _time, float _xp) {
-		// If always active, we're done!
-		if(m_alwaysActive) return true;
 
 		// If already ready to be disabled, no need for further checks
 		if(m_readyToBeDisabled) return false;
@@ -417,14 +404,22 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 			if (m_entityAlive == m_entitySpawned) {
                 m_entitiesActivated = 0;
-                m_state = State.Activating_Instances;
+                m_state = State.Spawning_Instances;
 			}
 
 			return false;
 		}
 
-		if (m_state == State.Activating_Instances) {
-			Spawn();
+        if (m_state == State.Spawning_Instances) {
+            Spawn();
+
+            m_state = State.Activating_Instances;
+            return false;            
+		}
+
+        if (m_state == State.Activating_Instances)
+        {
+            ActivateEntities();
 
             if (m_entitiesActivated == m_entitySpawned)
             {
@@ -441,26 +436,39 @@ public class Spawner : MonoBehaviour, ISpawner {
 
                 m_state = State.Alive;                
             }
-		}
+            return false;
+        }
 
-		return m_state == State.Alive;
-	}    
+        return m_state == State.Alive;
+	}
 
-	private void Spawn() {        
+    private void ActivateEntities() {
         long start = sm_watch.ElapsedMilliseconds;
         while (m_entitiesActivated < m_entitySpawned) {
-			GameObject spawning = m_entities[m_entitiesActivated];
+            GameObject spawning = m_entities[m_entitiesActivated];
             if (!spawning.activeSelf) {
                 spawning.SetActive(true);
             }
+
+            m_entitiesActivated++;
+
+            if (sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
+                break;
+            }
+        }
+    }
+
+	private void Spawn() {                
+        for (int i=0; i < m_entitySpawned; i++) {
+			GameObject spawning = m_entities[i];           
 
 			Vector3 pos = transform.position;
 			if (m_guideFunction != null) {
 				m_guideFunction.ResetTime();
 			}
 
-			if (m_entitiesActivated > 0) {
-				pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
+			if (i > 0) {
+				pos += RandomStartDisplacement(i); // don't let multiple entities spawn on the same point
 			}
 
 			spawning.transform.position = pos;
@@ -472,9 +480,10 @@ public class Spawner : MonoBehaviour, ISpawner {
 			}
 
             AI.Machine machine = spawning.GetComponent<AI.Machine>();
-            if (machine != null && m_groupController)
-            {
-                machine.EnterGroup(ref m_groupController.flock);
+            if (machine != null) {
+				machine.Spawn(this);
+				if (m_groupController)
+                	machine.EnterGroup(ref m_groupController.flock);
             }
 
             AI.AIPilot pilot = spawning.GetComponent<AI.AIPilot>();
@@ -487,18 +496,12 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 			ISpawnable[] components = spawning.GetComponents<ISpawnable>();
 			foreach (ISpawnable component in components) {
-				if (component != entity && component != pilot) {
+				if (component != entity && component != pilot && component != machine) {
 					component.Spawn(this);
 				}
-			}			
-
-            m_entitiesActivated++;                 
-
-            if (sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
-                break;
-            }            
-        }       
-	}    
+			}			            
+        }        
+    }    
 
 	protected virtual AreaBounds GetArea() {
 		Area area = GetComponent<Area>();
@@ -515,6 +518,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 			case State.Init:					Gizmos.color = Color.grey; 		break;
 			case State.Respawning: 				Gizmos.color = Color.yellow; 	break;
 			case State.Create_Instances: 		Gizmos.color = Color.red; 		break;
+            case State.Spawning_Instances:      Gizmos.color = Color.cyan;    break;
 			case State.Activating_Instances: 	Gizmos.color = Color.blue; 		break;
 			case State.Alive:					Gizmos.color = Color.green; 	break;
 		}
@@ -539,8 +543,23 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 
 
-	virtual protected Vector3 RandomStartDisplacement()	{
-		Vector3 v = Random.onUnitSphere * 2f;
+	protected Vector3 RandomStartDisplacement(int _index)	{
+		Vector3 v = Vector3.zero;
+
+		float d = m_homePosDistance.distance;
+		int s = (_index % 2 == 0)? -1 : 1;
+		_index = Mathf.FloorToInt((_index * s) / 2f) + s;
+
+		switch (m_homePosMethod) {
+			case SpawnPointSeparation.Sphere:
+				v = Random.onUnitSphere * _index * (m_homePosDistance.min + Random.Range(-d * 0.5f, d * 0.5f));
+				break;
+
+			case SpawnPointSeparation.Line:
+				v = Vector3.right * _index * (m_homePosDistance.min + Random.Range(-d * 0.5f, d * 0.5f));
+				break;
+		}
+
 		v.z = 0f;
 		return v;
 	}

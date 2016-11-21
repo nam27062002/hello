@@ -44,13 +44,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	private FastBounds2D m_maxRect = null;
 	private Rect[] m_subRect = new Rect[4];
 	private HashSet<ISpawner> m_selectedSpawners = new HashSet<ISpawner>();
-
-    // Max amount of spawners allowed to respawn simultaneously
-    private const int MAX_SPAWNERS_AT_ONCE = 50;
-
-    // Array used to store the spawners which entities might need to be destroyed because they're not needed anymore
-    private ISpawner[] m_spawnersWithPendingRespawning = new ISpawner[MAX_SPAWNERS_AT_ONCE];    
-
+    
     private List<ISpawner> m_spawning;
 
     private float m_lastX, m_lastY;
@@ -96,15 +90,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
-	}
-
-    private void ClearSpawnersWithPendingRespawning()
-    {
-        for (int i = 0; i < MAX_SPAWNERS_AT_ONCE && m_spawnersWithPendingRespawning[i] != null; i++)
-        {
-            m_spawnersWithPendingRespawning[i] = null;
-        }        
-    }    
+	}        
 
 	/// <summary>
 	/// Called every frame.
@@ -137,40 +123,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		m_updateTimer += Time.deltaTime;
 		if(m_updateTimer > UPDATE_INTERVAL) {
 			// Reset timer
-			m_updateTimer = 0f;
-
-            int spawnersWithPendingRespawningCount = 0;
-
-            // Since some spawners might take more than one frame to respawn all their entities we need to handle the following situations:
-            // 1)A spawner started respawning its entities it wasn't done at last frame and it's not going to be selected at the current frame because it's already inside the camera frustrum:
-            // In this case we need to let the spawner keep respawning its entities. Actually it's priority for respawning should be higher than the new spawners selected at the current frame
-            //
-            // 2)A spawner startes respawning and it wasn't done at last frame and it's not going to be selected at the current frame and it's inside the deactivation area:
-            // In this case we need to remove all entities that the spawner has already created because they would be deactivated anyway
-            if (m_selectedSpawners != null)
-            {                                
-                // Loops through all spawners selected at the last frame to identify cases 1) and 2)
-                foreach (ISpawner item in m_selectedSpawners)
-                {                    
-                    if (item.IsRespawningWithDelay())
-                    {
-                        if (m_newCamera.IsInsideDeactivationArea(item.transform.position) || !item.CanRespawn())
-                        {
-                            item.RespawnPendingTask = ERespawnPendingTask.ForceRemoveEntities;
-                        }
-                        else
-                        {
-                            item.RespawnPendingTask = ERespawnPendingTask.KeepRespawning;
-                        }
-                      
-                        if (spawnersWithPendingRespawningCount < MAX_SPAWNERS_AT_ONCE)
-                        {
-                            m_spawnersWithPendingRespawning[spawnersWithPendingRespawningCount] = item;
-                            spawnersWithPendingRespawningCount++;
-                        }
-                    }                                                          
-                }               
-            }
+			m_updateTimer = 0f;            
 
 			// Only update those spawners closer to the dragon
 			// Use the camera detection area for that
@@ -250,51 +203,13 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
             }           
 
             // Process all selected spawners!
-            foreach (ISpawner item in m_selectedSpawners) {
-                item.RespawnPendingTask = ERespawnPendingTask.None;
-
+            foreach (ISpawner item in m_selectedSpawners) {            
                 if (item.CanRespawn()) {
 					//add item into respawn stack and begin the respawn process
 					m_spawning.Add(item);
 					item.Respawn();
 				}
-			}
-
-            // Spawners with a pending respawning task are handled
-            if (spawnersWithPendingRespawningCount >= MAX_SPAWNERS_AT_ONCE)
-            {
-                Debug.LogWarning("Too many spawners simultaneously: " + spawnersWithPendingRespawningCount);
-                spawnersWithPendingRespawningCount = MAX_SPAWNERS_AT_ONCE;
-            }
-
-            ISpawner spawner;
-            for (int i = 0; i < spawnersWithPendingRespawningCount; i++)
-            {
-                spawner = m_spawnersWithPendingRespawning[i];
-                if (spawner != null)
-                {
-                    switch (spawner.RespawnPendingTask)
-                    {
-                        case ERespawnPendingTask.ForceRemoveEntities:
-                        {
-                            spawner.ForceRemoveEntities();                                                   
-                        }
-                        break;
-
-                        case ERespawnPendingTask.KeepRespawning:
-                        {
-                            // We want these spawners to respawn even though they haven't been selected
-                            m_spawning.Add(m_spawnersWithPendingRespawning[i]);
-
-                            // The spawner is added to m_selectedSpawners to it can be handled at the next frame
-                            m_selectedSpawners.Add(m_spawnersWithPendingRespawning[i]);
-                        }
-                        break;                        
-                    }
-
-                    spawner.RespawnPendingTask = ERespawnPendingTask.None;
-                }
-            }           
+			}          
         }
 
         m_watch.Start();
@@ -308,8 +223,15 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
             while (m_spawning.Count > 0)
             {
-                sp = m_spawning[0];               
-                if (sp.Respawn())
+                sp = m_spawning[0];  
+                
+                // If the spawner is in the deactivation area then its respawning stuff has to be undone as the units respawned would be destroyed anyway             
+                if (m_newCamera.IsInsideDeactivationArea(sp.transform.position))
+                {
+                    sp.ForceRemoveEntities();
+                    m_spawning.RemoveAt(0);
+                }
+                else if (sp.Respawn())
                 {
                     m_spawning.RemoveAt(0);
                 }
@@ -377,8 +299,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		for (int i = 0; i < m_spawners.Count; i++) {
 			m_spawners[i].ForceRemoveEntities();
 		}
-		m_selectedSpawners.Clear();
-        ClearSpawnersWithPendingRespawning();
+		m_selectedSpawners.Clear();        
     }
 
 	//------------------------------------------------------------------------//

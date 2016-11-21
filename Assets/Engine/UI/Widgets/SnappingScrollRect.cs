@@ -139,6 +139,9 @@ public class SnappingScrollRect : ScrollRect {
 			// Skip if child doesn't have the "SnapPoint" component
 			if(child.GetComponent<ScrollRectSnapPoint>() == null) continue;
 
+			// Skip if child is not active
+			if(!child.gameObject.activeSelf) continue;
+
 			// Compute distance from the child (correcting with content's current position) to the snap point
 			Vector2 offset = (new Vector2(child.localPosition.x, child.localPosition.y) + content.anchoredPosition) - viewportSnapPos;
 

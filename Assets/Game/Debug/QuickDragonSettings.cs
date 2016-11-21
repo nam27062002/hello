@@ -24,7 +24,7 @@ public class QuickDragonSettings : MonoBehaviour {
 		{
 			m_motion = InstanceManager.player.GetComponent<DragonMotion>();
 
-			m_sliderAcceleration.value = m_motion.m_dargonAcceleration;
+			m_sliderAcceleration.value = m_motion.m_dragonForce;
 			m_sliderMass.value = m_motion.m_dragonMass;
 			m_sliderFricction.value = m_motion.m_dragonFricction;
 			switch( EntityManager.instance.overlapingMethod )
@@ -49,7 +49,7 @@ public class QuickDragonSettings : MonoBehaviour {
 	public void SetDragonAcceleration(float _size) 
 	{
 		if ( m_motion != null )
-			m_motion.m_dargonAcceleration = _size;
+			m_motion.m_dragonForce = _size;
 	}
 
 	public void SetDragonMass(float _size) 

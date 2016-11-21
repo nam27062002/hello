@@ -40,6 +40,7 @@ namespace AI {
 		protected IEntity m_entity = null;
 		protected Pilot m_pilot = null;
 		protected ViewControl m_viewControl = null;
+		public ViewControl view { get { return m_viewControl; } }
 		protected Collider m_collider = null;
 
 		private Signals m_signals;
@@ -53,16 +54,16 @@ namespace AI {
 
 		private bool m_willPlaySpawnSound;
 
-		public Vector3 position { 	get { if (m_enableMotion && m_motion != null) return m_motion.position; else return transform.position; } 
-									set { if (m_enableMotion && m_motion != null) m_motion.position = value; else transform.position = value; } }
+		public Vector3 position { 	get { if (m_enableMotion) return m_motion.position; else return transform.position; } 
+									set { if (m_enableMotion) m_motion.position = value; else transform.position = value; } }
 
-		public Vector3 eye				{ get { if (m_enableSensor && m_sensor != null) return m_sensor.sensorPosition; else return transform.position; } }
+		public Vector3 eye				{ get { if (m_enableSensor) return m_sensor.sensorPosition; else return transform.position; } }
 		public Vector3 target			{ get { return m_pilot.target; } }
-		public Vector3 direction 		{ get { if (m_enableMotion && m_motion != null) return m_motion.direction; else return Vector3.zero; } }
-		public Vector3 groundDirection	{ get { if (m_enableMotion && m_motion != null) return m_motion.groundDirection; else return Vector3.zero; } }
-		public Vector3 upVector 		{ get { if (m_enableMotion && m_motion != null) return m_motion.upVector;  else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
-		public Vector3 velocity			{ get { if (m_enableMotion && m_motion != null) return m_motion.velocity; else return Vector3.zero;} }
-		public Vector3 angularVelocity	{ get { if (m_enableMotion && m_motion != null) return m_motion.angularVelocity; else return Vector3.zero;} }
+		public Vector3 direction 		{ get { if (m_enableMotion) return m_motion.direction; else return Vector3.zero; } }
+		public Vector3 groundDirection	{ get { if (m_enableMotion) return m_motion.groundDirection; else return Vector3.zero; } }
+		public Vector3 upVector 		{ get { if (m_enableMotion) return m_motion.upVector;  else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
+		public Vector3 velocity			{ get { if (m_enableMotion) return m_motion.velocity; else return Vector3.zero;} }
+		public Vector3 angularVelocity	{ get { if (m_enableMotion) return m_motion.angularVelocity; else return Vector3.zero;} }
 
 		public Transform enemy { 
 			get {
@@ -142,15 +143,17 @@ namespace AI {
 		}
 
 		void OnEnable() {
-			if (m_signals!= null) 
-				m_signals.Init();
+			
 		}
 
 		void OnDisable() {
 			LeaveGroup();
 		}
 
-		public virtual void Spawn(ISpawner _spawner) {			
+		public virtual void Spawn(ISpawner _spawner) {
+			if (m_signals!= null) 
+				m_signals.Init();
+			
 			m_motion.Init();
 			m_sensor.Init();
 			m_edible.Init();
@@ -168,12 +171,12 @@ namespace AI {
 
 			if (_trigger == SignalTriggers.OnDestroyed) {
 				m_viewControl.Die(m_signals.GetValue(Signals.Type.Chewing));
-				if (m_motion != null) m_motion.Stop();
+				if (m_enableMotion) m_motion.Stop();
 				if (m_collider != null) m_collider.enabled = false;
 				m_entity.Disable(true);
 			} else if (_trigger == SignalTriggers.OnBurning) {
 				m_viewControl.Burn();
-				if (m_motion != null) m_motion.Stop();
+				if (m_enableMotion) m_motion.Stop();
 				if (m_collider != null) m_collider.enabled = false;
 			} else if (_trigger == SignalTriggers.OnInvulnerable) {
 				m_entity.allowEdible = false;
@@ -191,7 +194,7 @@ namespace AI {
 			OnTrigger(SignalTriggers.OnCollisionEnter, _params);
 			SetSignal(Signals.Type.Collision, true, _params);
 
-			if (m_motion != null) {
+			if (m_enableMotion) {
 				if (((1 << _collision.gameObject.layer) & m_groundMask) != 0) {
 					m_motion.OnCollisionGroundEnter();
 				}
@@ -199,7 +202,7 @@ namespace AI {
 		}
 
 		void OnCollisionExit(Collision _collision) {
-			if (m_motion != null) {
+			if (m_enableMotion) {
 				if (((1 << _collision.gameObject.layer) & m_groundMask) != 0) {
 					m_motion.OnCollisionGroundExit();
 				}
@@ -361,25 +364,25 @@ namespace AI {
 		}
 
 		public void UseGravity(bool _value) {
-			if (m_motion != null) {
+			if (m_enableMotion) {
 				m_motion.useGravity = _value;
 			}
 		}
 
 		public void CheckCollisions(bool _value) {
-			if (m_motion != null) {
+			if (m_enableMotion) {
 				m_motion.checkCollisions = _value;
 			}
 		}
 
 		public void FaceDirection(bool _value) {
-			if (m_motion != null) {
+			if (m_enableMotion) {
 				m_motion.faceDirection = _value;
 			}
 		}
 
 		public bool IsFacingDirection() {
-			if (m_motion != null) {
+			if (m_enableMotion) {
 				return m_motion.faceDirection;
 			}
 			return false;
@@ -429,7 +432,7 @@ namespace AI {
 			if (!IsDead()) {
 				m_entity.Damage(_damage);
 				if (IsDead()) {
-					if (m_motion != null) m_motion.Stop();
+					if (m_enableMotion) m_motion.Stop();
 				}
 			}
 		}
@@ -471,6 +474,10 @@ namespace AI {
 				PlaySound(m_onEatenSound);
 			}
 			m_edible.BeingSwallowed(_transform, _rewardsPlayer);
+		}
+
+		public void EndSwallowed(Transform _transform){
+			m_edible.EndSwallowed(_transform);
 		}
 
 		public HoldPreyPoint[] holdPreyPoints { get{ return m_edible.holdPreyPoints; } }
@@ -554,7 +561,7 @@ namespace AI {
 		}
 
 		public void SetVelocity(Vector3 _v) {
-			if (m_motion != null) {
+			if (m_enableMotion) {
 				m_motion.SetVelocity(_v);
 			}
 		}
