@@ -13,4 +13,9 @@ public class ParticleData {
 		path = p;
 		offset = o;
 	}
+
+	public bool IsValid()
+	{
+		return !string.IsNullOrEmpty( name );
+	}
 }

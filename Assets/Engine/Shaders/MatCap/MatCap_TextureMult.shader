@@ -13,10 +13,20 @@ Shader "Hungry Dragon/MatCap/Textured Multiply"
 	Subshader
 	{
 		Tags { "RenderType"="Opaque" }
+
+
 		
 		Pass
 		{
 			Tags { "LightMode" = "Always" }
+
+			Stencil
+			{
+				Ref 5
+				Comp always
+				Pass Replace
+				ZFail keep
+			}
 			
 			CGPROGRAM
 				#pragma vertex vert

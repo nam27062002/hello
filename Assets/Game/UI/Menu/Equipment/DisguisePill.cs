@@ -10,6 +10,9 @@ public class DisguisePillEvent : UnityEvent<DisguisePill>{}
 [RequireComponent(typeof(ScrollRectSnapPoint))]
 public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
+	[SerializeField] private Color m_equippedTextColor = Color.white;
+	[SerializeField] private Color m_lockedTextColor = Color.red;
+
 	//------------------------------------------//
 
 	public DisguisePillEvent OnPillClicked = new DisguisePillEvent();
@@ -73,6 +76,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 			m_icon.color = Color.gray;
 			m_lockIcon.SetActive(true);
 			m_infoText.Localize("TID_LEVEL", (_def.GetAsInt("unlockLevel") + 1).ToString());
+			m_infoText.text.color = m_lockedTextColor;
 		}
 
 		m_equippedFrame.ForceHide(false);
@@ -86,7 +90,8 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 			m_equippedFrame.Show(_animate);
 			m_equippedFX.gameObject.SetActive(true);
 			m_equippedFX.DORestart();
-			m_infoText.Localize("Equipped");
+			m_infoText.Localize("Equipped");	// [AOC] HARDCODED!!
+			m_infoText.text.color = m_equippedTextColor;
 		} else {
 			m_equippedFrame.Hide(_animate);
 			m_equippedFX.gameObject.SetActive(false);

@@ -50,7 +50,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 480662}
-  m_RootOrder: 1
+  m_RootOrder: 2
 --- !u!4 &480662
 Transform:
   m_ObjectHideFlags: 1
@@ -62,6 +62,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
+  - {fileID: 4000012772692070}
   - {fileID: 4000013105826774}
   - {fileID: 431288}
   - {fileID: 4000011923039870}
@@ -115,6 +116,11 @@ MonoBehaviour:
   m_skins: []
   m_web: {fileID: 120000012050951676}
   m_spinneret: {fileID: 431288}
+  m_onAttackParticle:
+    name: PS_PoisonSpit
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onAttackParticleAnchor: {fileID: 1000014102590462}
 --- !u!114 &11420830
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -692,6 +698,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1000014102590462
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000012772692070}
+  - 114: {fileID: 114000010881011672}
+  m_Layer: 0
+  m_Name: poisonSpawnAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1000014217838526
 GameObject:
   m_ObjectHideFlags: 1
@@ -909,7 +931,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 480662}
-  m_RootOrder: 2
+  m_RootOrder: 3
 --- !u!4 &4000012113354436
 Transform:
   m_ObjectHideFlags: 1
@@ -992,6 +1014,19 @@ Transform:
   - {fileID: 4000011540255254}
   m_Father: {fileID: 4000012788952492}
   m_RootOrder: 0
+--- !u!4 &4000012772692070
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000014102590462}
+  m_LocalRotation: {x: -0.00000001493365, y: 0.9398302, z: -0.34164205, w: -0.00000004108128}
+  m_LocalPosition: {x: 0, y: -0.341, z: -1.193}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 39.95, y: 179.99998, z: 0}
+  m_Children: []
+  m_Father: {fileID: 480662}
+  m_RootOrder: 0
 --- !u!4 &4000012788952492
 Transform:
   m_ObjectHideFlags: 1
@@ -1034,7 +1069,7 @@ Transform:
   - {fileID: 4000012546749500}
   - {fileID: 4000013573236548}
   m_Father: {fileID: 480662}
-  m_RootOrder: 0
+  m_RootOrder: 1
 --- !u!4 &4000013573236548
 Transform:
   m_ObjectHideFlags: 1
@@ -1200,6 +1235,19 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114000010881011672
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000014102590462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Spider_Abdomen_2
+  m_lookAtRoot: {fileID: 480662}
 --- !u!114 &114000014143578470
 MonoBehaviour:
   m_ObjectHideFlags: 1
