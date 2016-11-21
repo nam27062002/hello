@@ -56,7 +56,10 @@ public class SpiderViewControl : ViewControl {
 		{
 			GameObject go = ParticleManager.Spawn(m_onAttackParticle, m_onAttackParticleAnchor.transform.position);
 			if (go != null)
-				go.transform.rotation = m_onAttackParticleAnchor.transform.rotation;
+			{
+				// go.transform.rotation = m_onAttackParticleAnchor.transform.rotation;
+				go.transform.LookAt( InstanceManager.player.transform );
+			}
 		}
 	}
 }
