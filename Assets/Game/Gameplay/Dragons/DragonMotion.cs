@@ -943,15 +943,16 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		Vector3 impulse = m_controls.GetImpulse(1);
         if (impulse.y < 0) impulse.y *= m_inverseGravityWater;
 
-        float gravity = 9.81f * m_dragonGravityModifier * -3.0f;// m_inverseGravityWater;
-		Vector3 acceleration = Vector3.down * gravity * m_dragonMass;   // Gravity
-        acceleration += impulse * m_dragonForce * GetTargetForceMultiplier() * m_dragonMass * m_accWaterFactor;	// User Force
+		Vector3 gravityAcceleration = Vector3.down * 9.81f * m_dragonGravityModifier * -3.0f;   // Gravity
+		
+        Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass * m_accWaterFactor;
+        Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
 		// stroke's Drag
 		m_impulse = m_rbody.velocity;
 
 		float impulseMag = m_impulse.magnitude;
-		m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * 1.0f * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+		m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
 		m_direction = m_impulse.normalized;
 		RotateToDirection(m_direction);
 
