@@ -9,8 +9,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 442886}
   - 114: {fileID: 11476872}
-  - 114: {fileID: 11496416}
   - 114: {fileID: 114000010428878152}
+  - 114: {fileID: 114000014153379446}
   m_Layer: 0
   m_Name: SP_Archer_01Path_0
   m_TagString: Untagged
@@ -25,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 159526}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 31.339996, y: -141.01999, z: -0.11}
+  m_LocalPosition: {x: 15.11, y: 10.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -45,22 +45,6 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
---- !u!114 &11496416
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 159526}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_circular: 1
-  m_smoothRadius: 0.5
-  m_points:
-  - {x: -9.877075, y: -0.022248268, z: 0}
-  - {x: 15.461426, y: -0.28922844, z: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -86,19 +70,32 @@ MonoBehaviour:
   m_entityPrefab: {fileID: 145886, guid: 420263a716b9f47409bad1957d583d33, type: 2}
   m_entityPrefabStr: Surface/PF_Archer_01
   m_quantity:
-    min: 1
-    max: 1
+    min: 3
+    max: 3
   m_scale:
     min: 1.5
     max: 1.5
-  m_rails: 1
+  m_rails: 3
   m_flockBonus: 0
   m_minTier: 0
   m_activationChance: 100
-  m_alwaysActive: 0
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
     min: 0
     max: 0
   m_maxSpawns: 0
+--- !u!114 &114000014153379446
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 159526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: -0.03183651, y: -0.14382505}
+  size: {x: 49.936325, y: 41.667763}
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
