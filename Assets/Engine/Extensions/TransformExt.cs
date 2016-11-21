@@ -68,9 +68,9 @@ public static class TransformExt {
 		for(int i = numChildren - 1; i >= 0; i--) {
 			// Immediate?
 			if(_immediate) {
-				Object.DestroyImmediate(_t.GetChild(i));
+				Object.DestroyImmediate(_t.GetChild(i).gameObject);
 			} else {
-				Object.Destroy(_t.GetChild(i));
+				Object.Destroy(_t.GetChild(i).gameObject);
 			}
 		}
 	}

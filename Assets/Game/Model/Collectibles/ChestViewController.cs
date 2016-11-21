@@ -21,6 +21,7 @@ public class ChestViewController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public const string PREFAB_PATH = "UI/Metagame/Chests/PF_ChestView";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -28,12 +29,18 @@ public class ChestViewController : MonoBehaviour {
 	// Exposed references
 	[SerializeField] private ParticleSystem m_glowFX = null;
 	[SerializeField] private ParticleSystem m_openFX = null;
+	[SerializeField] private ParticleSystem m_dustFX = null;
 
 	// Exposed setup
 	[Space]
 	[SerializeField] private UnityEvent OnChestOpenEvent = new UnityEvent();
 	public UnityEvent OnChestOpen {
 		get { return OnChestOpenEvent; }
+	}
+
+	[SerializeField] private UnityEvent OnChestAnimLandedEvent = new UnityEvent();
+	public UnityEvent OnChestAnimLanded {
+		get { return OnChestAnimLandedEvent; }
 	}
 
 	// Internal
@@ -51,11 +58,9 @@ public class ChestViewController : MonoBehaviour {
 		m_animator = GetComponent<Animator>();
 
 		// Start with all particles stopped
-		ShowGlowFX(false);
-		if(m_openFX != null) {
-			m_openFX.Stop();
-			m_openFX.gameObject.SetActive(false);
-		}
+		ToggleFX(m_openFX, false);
+		ToggleFX(m_glowFX, false);
+		ToggleFX(m_dustFX, false);
 
 		// Get references (from FBX names)
 		// Respect enum name
@@ -73,16 +78,7 @@ public class ChestViewController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_show">Whether to show it or not.</param>
 	public void ShowGlowFX(bool _show) {
-		if(m_glowFX != null) {
-			if(_show) {
-				m_glowFX.gameObject.SetActive(true);
-				m_glowFX.Play();
-			} else {
-				m_glowFX.Stop();
-				//m_glowFX.Clear();
-				m_glowFX.gameObject.SetActive(false);
-			}
-		}
+		ToggleFX(m_glowFX, _show);
 	}
 
 	/// <summary>
@@ -106,13 +102,46 @@ public class ChestViewController : MonoBehaviour {
 	/// </summary>
 	public void Close() {
 		// Stop particles
-		if(m_openFX != null) {
-			m_openFX.Stop();
-			m_openFX.gameObject.SetActive(false);
-		}
+		ToggleFX(m_openFX, false);
+		ToggleFX(m_dustFX, false);
 
 		// Launch close animation
 		m_animator.SetTrigger("close");
+	}
+
+	/// <summary>
+	/// Triggers the results animation.
+	/// </summary>
+	public void ResultsAnim() {
+		// Stop all particles
+		ToggleFX(m_openFX, false);
+		ToggleFX(m_glowFX, false);
+		ToggleFX(m_dustFX, false);
+
+		// Launch animation
+		m_animator.SetTrigger("results_in");
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Aux method to quickly toggle a particle system on/off.
+	/// </summary>
+	/// <param name="_fx">The system to be toggled.</param>
+	/// <param name="_active">Whether to turn it on or off.</param>
+	private void ToggleFX(ParticleSystem _fx, bool _active) {
+		// Ignore if given FX is not valid
+		if(_fx == null) return;
+
+		// Activate?
+		if(_active) {
+			_fx.gameObject.SetActive(true);
+			_fx.Play();
+		} else {
+			_fx.Stop();
+			_fx.gameObject.SetActive(false);
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -123,12 +152,29 @@ public class ChestViewController : MonoBehaviour {
 	/// </summary>
 	public void OnLidOpen() {
 		// Launch particle system
-		if(m_openFX != null) {
-			m_openFX.gameObject.SetActive(true);
-			m_openFX.Play();
-		}
+		ToggleFX(m_openFX, true);
 
 		// Notify delegates
 		OnChestOpenEvent.Invoke();
+	}
+
+	/// <summary>
+	/// Event to sync with the animation.
+	/// </summary>
+	public void OnChestLanded() {
+		// [AOC] TODO!! Play some SFX
+
+		// Play some VFX
+		ToggleFX(m_dustFX, true);
+
+		// Notify delegates
+		OnChestAnimLandedEvent.Invoke();
+	}
+
+	/// <summary>
+	/// Event to sync with the animation.
+	/// </summary>
+	public void OnCameraShake() {
+		Messenger.Broadcast<float, float>(GameEvents.CAMERA_SHAKE, 0.1f, 0.5f);
 	}
 }
