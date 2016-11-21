@@ -332,7 +332,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					break;
 				case State.InsideWater:
 				{
-					m_inverseGravityWater = 1.5f;
+					//m_inverseGravityWater = 1.5f;
 					m_animator.SetBool("swim", false);
 					m_animator.SetBool("fly down", false);
 				}break;
@@ -397,7 +397,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 						m_animator.SetBool("fly down", true);
 					}
 					if ( m_state != State.Stunned ){
-	                    m_accWaterFactor = 0.70f;
+	                    m_accWaterFactor = 0.60f;
 	                    m_inverseGravityWater = 1.5f;
 						m_startParabolicPosition = transform.position;
 					}
@@ -943,8 +943,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		Vector3 impulse = m_controls.GetImpulse(1);
         if (impulse.y < 0) impulse.y *= m_inverseGravityWater;
 
-		Vector3 gravityAcceleration = Vector3.down * 9.81f * m_dragonGravityModifier * -3.0f;   // Gravity
-		
+		Vector3 gravityAcceleration = Vector3.up * 9.81f * m_dragonGravityModifier * 3.5f;   // Gravity
         Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass * m_accWaterFactor;
         Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
