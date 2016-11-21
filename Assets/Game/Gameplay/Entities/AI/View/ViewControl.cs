@@ -92,18 +92,26 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	private PreyAnimationEvents m_animEvents;
 
+	private static int ATTACK_HASH = Animator.StringToHash("Attack");
+	// private const int ATTACK_HASH = Animator.StringToHash("Attack");
+
 	//-----------------------------------------------
 	// Use this for initialization
 	//-----------------------------------------------
-	void Awake() {
+	protected virtual void Awake() {
 		m_entity = GetComponent<Entity>();
 		m_animator = transform.FindComponentRecursive<Animator>();
-		if (m_animator != null) m_animator.logWarnings = false;
+		if (m_animator != null)
+			m_animator.logWarnings = false;
+
 		m_animEvents = transform.FindComponentRecursive<PreyAnimationEvents>();
 		if ( m_animEvents != null){
 			m_animEvents.onAttackStart += animEventsOnAttackStart;
 			m_animEvents.onAttackEnd += animEventsOnAttackEnd;
+			m_animEvents.onAttackDealDamage += animEventsOnAttackDealDamage;
 		}
+
+
 
 		// Load gold material
 		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
@@ -132,25 +140,53 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			}
 		}
 
-		if (m_burnParticle.name != "") {
-			ParticleManager.CreatePool(m_burnParticle.name, m_burnParticle.path, 20);
+		if (m_burnParticle.IsValid()) {
+			ParticleManager.CreatePool(m_burnParticle, 20);
 		}
 
-		if (m_explosionParticles.name != "") {
-			ParticleManager.CreatePool(m_explosionParticles.name, m_explosionParticles.path);
+		if (m_explosionParticles.IsValid()) {
+			ParticleManager.CreatePool(m_explosionParticles);
 		}
 
 		ParticleManager.CreatePool("PS_EntityPCTrail", "Rewards", 5);
 	}
 
-	void animEventsOnAttackStart() {
+	void Start()
+	{
+		if (m_animator != null)
+		{ 
+			StartEndMachineBehaviour[] behaviours = m_animator.GetBehaviours<StartEndMachineBehaviour>();
+			for( int i = 0; i<behaviours.Length; i++ ){
+				behaviours[i].onStart += onStartAnim;
+				behaviours[i].onEnd += onEndAnim;
+			}
+		}
+	}
+
+	protected virtual void animEventsOnAttackStart() {
 		if ( !string.IsNullOrEmpty( m_onAttackAudio ) )
 			m_onAttackAudioAO = AudioController.Play( m_onAttackAudio, transform.position );
 	}
 
-	void animEventsOnAttackEnd() {
+	protected virtual void animEventsOnAttackEnd() {
 		if ( m_onAttackAudioAO != null && m_onAttackAudioAO.IsPlaying() && m_onAttackAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
 			m_onAttackAudioAO.Stop();
+	}
+	protected virtual void animEventsOnAttackDealDamage(){}
+
+
+	void onStartAnim( int stateNameHash ){
+		if ( stateNameHash == ATTACK_HASH )
+		{
+			animEventsOnAttackStart();
+		}
+	}
+
+	void onEndAnim( int stateNameHash ){
+		if ( stateNameHash == ATTACK_HASH )
+		{
+			animEventsOnAttackEnd();
+		}
 	}
 	//
 
@@ -479,8 +515,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			m_idleAudioAO.Stop();
 		}
 
-		if (!string.IsNullOrEmpty(m_explosionParticles.name)) {
-			ParticleManager.Spawn(m_explosionParticles.name, transform.position + m_explosionParticles.offset, m_explosionParticles.path);
+		if (m_explosionParticles.IsValid()) {
+			ParticleManager.Spawn(m_explosionParticles, transform.position + m_explosionParticles.offset);
 		}
 
 		if (_eaten) {
@@ -502,9 +538,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_idleAudioAO != null && m_idleAudioAO.IsPlaying())
 			m_idleAudioAO.Stop();
 
-		if (string.IsNullOrEmpty(m_explosionParticles.name)) {
-			if (!string.IsNullOrEmpty(m_burnParticle.name)) {
-				ParticleManager.Spawn(m_burnParticle.name, transform.position + m_burnParticle.offset, m_burnParticle.path);
+		if (!m_explosionParticles.IsValid()) {
+			if (m_burnParticle.IsValid()) {
+				ParticleManager.Spawn(m_burnParticle, transform.position + m_burnParticle.offset);
 			}
 		}
 

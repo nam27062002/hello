@@ -2328,7 +2328,6 @@ MonoBehaviour:
   m_wingsIdleSound: Dragon_Soft_Flaps
   m_wingsFlyingSound: Dragon_S_Flaps
   m_eatSound: Dragon_S_Bite
-  m_eatBigSound: 
   m_wingsWindSound: 
   m_wingsStrongFlap: Dragon_Strong_Flap
   m_levelUpSound: Level UP
@@ -2494,6 +2493,7 @@ MonoBehaviour:
   m_capVerticalRotation: 1
   m_capUpRotationAngle: 40
   m_capDownRotationAngle: 60
+  m_noGlideAngle: 50
   m_parabolicMovementConstant: 1
   m_parabolicMovementAdd: 1
   m_parabolicXControl: 10
@@ -3318,6 +3318,9 @@ MonoBehaviour:
     path: Blood
     offset: {x: 0, y: 0, z: 0}
   m_burpSound: 
+  m_randomSpeedRange:
+    min: 1
+    max: 1.5
 --- !u!114 &114000012705948140
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3348,7 +3351,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_dragonFlame: {fileID: 1000013828432286, guid: 381cc7087b9ec7e4f97a52941d03341c,
+  m_dragonFlameStandard: {fileID: 197018, guid: bd95ec8e1059d5d46b566f6087879846,
+    type: 2}
+  m_dragonFlameSuper: {fileID: 1000013828432286, guid: 381cc7087b9ec7e4f97a52941d03341c,
     type: 2}
 --- !u!114 &114000013077924290
 MonoBehaviour:

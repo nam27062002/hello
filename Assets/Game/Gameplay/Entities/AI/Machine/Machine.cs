@@ -143,15 +143,17 @@ namespace AI {
 		}
 
 		void OnEnable() {
-			if (m_signals!= null) 
-				m_signals.Init();
+			
 		}
 
 		void OnDisable() {
 			LeaveGroup();
 		}
 
-		public virtual void Spawn(ISpawner _spawner) {			
+		public virtual void Spawn(ISpawner _spawner) {
+			if (m_signals!= null) 
+				m_signals.Init();
+			
 			m_motion.Init();
 			m_sensor.Init();
 			m_edible.Init();

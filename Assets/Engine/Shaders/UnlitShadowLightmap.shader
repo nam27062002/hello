@@ -26,7 +26,6 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 				ZFail keep
 			}
 
-
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
