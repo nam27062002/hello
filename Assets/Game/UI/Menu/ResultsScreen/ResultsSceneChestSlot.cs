@@ -17,7 +17,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Single chest slot controller in the results scene.
 /// </summary>
-[RequireComponent(typeof(Animator))]
 public class ResultsSceneChestSlot : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -29,10 +28,9 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references, all required
-	[SerializeField] private ChestViewController m_chest = null;
-	[SerializeField] private ParticleSystem m_dustPS = null;
 
 	// Internal
+	private ChestViewController m_chest = null;
 	private GameObject m_rewardObj = null;
 	private Chest.RewardData m_rewardData = null;
 
@@ -43,7 +41,18 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		// Remove placeholder
+		this.transform.DestroyAllChildren(false);
+
+		// Instantiate the actual chest
+		GameObject chestPrefab = Resources.Load<GameObject>(ChestViewController.PREFAB_PATH);
+		GameObject chestObj = GameObject.Instantiate<GameObject>(chestPrefab);
+		chestObj.transform.SetParent(this.transform, false);
+		m_chest = chestObj.GetComponentInChildren<ChestViewController>();
+
+		// Subscribe to chest events
 		m_chest.OnChestOpen.AddListener(OnChestOpened);
+		m_chest.OnChestAnimLanded.AddListener(OnChestLanded);
 	}
 
 	//------------------------------------------------------------------------//
@@ -87,7 +96,7 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 		m_rewardData = _chestRewardData;
 
 		// Launch animation sequence
-		GetComponent<Animator>().SetTrigger("in");
+		m_chest.ResultsAnim();
 	}
 
 	//------------------------------------------------------------------------//
@@ -110,17 +119,5 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 	public void OnChestLanded() {
 		// Launch the open animation
 		m_chest.Open(m_rewardData != null ? m_rewardData.type : Chest.RewardType.SC);
-
-		// [AOC] TODO!! Play some SFX
-
-		// Play some VFX
-		m_dustPS.Play();
-	}
-
-	/// <summary>
-	/// Event to sync with the animation.
-	/// </summary>
-	public void OnCameraShake() {
-		Messenger.Broadcast<float, float>(GameEvents.CAMERA_SHAKE, 0.1f, 0.5f);
 	}
 }

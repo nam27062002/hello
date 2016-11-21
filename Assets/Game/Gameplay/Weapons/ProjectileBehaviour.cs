@@ -79,11 +79,30 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 			Vector3 pos = InstanceManager.player.GetComponent<DragonMotion>().head.position;
 			m_pMotion.Shoot(pos);
 		}
+		EndShot( _damage );
+	}
 
+	public void ShootAtPosition( Transform _from, float _damage, Vector3 _pos){
+		m_targetCenter = _pos;
+
+		if (m_oldParent) {
+			transform.parent = m_oldParent;
+			m_oldParent = null;
+		}
+
+		if (m_pMotion) m_pMotion.enabled = true;
+
+		if (m_pMotion != null) {
+			Vector3 pos = _pos;
+			m_pMotion.Shoot(pos);
+		}
+		EndShot( _damage );
+	}
+
+	private void EndShot( float _damage )
+	{
 		m_damage = _damage;
-
 		m_hasBeenShot = true;
-
 		for( int i = 0; i<m_activateOnShoot.Count; i++ )
 		{
 			m_activateOnShoot[i].SetActive(true);
@@ -92,10 +111,11 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 
 	void Update() {
 		if (m_hasBeenShot) {
-			// The dragon may eat this projectile, so we disable the explosion if that happens 
-			float distanceToTargetSqr = (m_targetCenter - (Vector2)transform.position).sqrMagnitude;
-			if (distanceToTargetSqr <= 0.5f) {
-				Explode(false);
+			if (InstanceManager.gameCamera != null)
+			{
+				bool rem = InstanceManager.gameCamera.IsInsideDeactivationArea( transform.position );
+				if (rem)
+					Explode(false);	
 			}
 		}
 	}

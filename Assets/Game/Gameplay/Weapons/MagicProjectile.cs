@@ -71,4 +71,14 @@ public class MagicProjectile : MonoBehaviour, IProjectile {
 		m_effect.gameObject.SetActive(true);
 		m_hasBeenShot = true;
 	}
+
+	public void ShootAtPosition(Transform _from, float _damage, Vector3 _pos) {		
+		transform.parent = m_oldParent;
+		// m_effect.Target = InstanceManager.player.gameObject;
+		m_effect.MoveVector = _pos - _from.transform.position;
+
+		m_effectIdle.SetActive(false);
+		m_effect.gameObject.SetActive(true);
+		m_hasBeenShot = true;
+	}
 }

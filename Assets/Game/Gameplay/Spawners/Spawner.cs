@@ -15,6 +15,11 @@ public class Spawner : MonoBehaviour, ISpawner {
 		public float value = 0f;
 	}
 
+	public enum SpawnPointSeparation {
+		Sphere = 0,
+		Line
+	}
+
 	private enum State {
 		Init = 0,
 		Respawning,
@@ -59,6 +64,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 	[Separator("Respawn")]
 	[SerializeField] private Range m_spawnTime = new Range(40f, 45f);
+	[SerializeField] private SpawnPointSeparation m_homePosMethod = SpawnPointSeparation.Sphere;
+	[SerializeField] private Range m_homePosDistance = new Range(1f, 2f);
 	[SerializeField] private int m_maxSpawns;
 	
 
@@ -461,7 +468,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 			}
 
 			if (i > 0) {
-				pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
+				pos += RandomStartDisplacement(i); // don't let multiple entities spawn on the same point
 			}
 
 			spawning.transform.position = pos;
@@ -473,8 +480,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 			}
 
             AI.Machine machine = spawning.GetComponent<AI.Machine>();
-            if (machine != null)
-            {
+            if (machine != null) {
 				machine.Spawn(this);
 				if (m_groupController)
                 	machine.EnterGroup(ref m_groupController.flock);
@@ -537,8 +543,23 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 
 
-	virtual protected Vector3 RandomStartDisplacement()	{
-		Vector3 v = Random.onUnitSphere * 2f;
+	protected Vector3 RandomStartDisplacement(int _index)	{
+		Vector3 v = Vector3.zero;
+
+		float d = m_homePosDistance.distance;
+		int s = (_index % 2 == 0)? -1 : 1;
+		_index = Mathf.FloorToInt((_index * s) / 2f) + s;
+
+		switch (m_homePosMethod) {
+			case SpawnPointSeparation.Sphere:
+				v = Random.onUnitSphere * _index * (m_homePosDistance.min + Random.Range(-d * 0.5f, d * 0.5f));
+				break;
+
+			case SpawnPointSeparation.Line:
+				v = Vector3.right * _index * (m_homePosDistance.min + Random.Range(-d * 0.5f, d * 0.5f));
+				break;
+		}
+
 		v.z = 0f;
 		return v;
 	}
