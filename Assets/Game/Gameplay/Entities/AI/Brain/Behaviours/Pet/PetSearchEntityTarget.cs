@@ -31,6 +31,8 @@ namespace AI {
 			DragonPlayer m_owner;
 			float m_range;
 
+			EatBehaviour m_eatBehaviour;
+
 			private PetSearchEntityTargetData m_data;
 			private List<string> m_preferedEntities = new List<string>();
 
@@ -70,11 +72,11 @@ namespace AI {
 				}
 
 				// if prefered entieies we should tell the mouth
-				EatBehaviour eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
+				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 
 				for( int i = 0; i<m_preferedEntities.Count; i++ )
 				{
-					eatBehaviour.AddToIgnoreTierList( m_preferedEntities[i] );
+					m_eatBehaviour.AddToEatExceptionList( m_preferedEntities[i] );
 				}
 
 			}
@@ -108,7 +110,7 @@ namespace AI {
 						for (int e = 0; e < m_numCheckEntities; e++) 
 						{
 							Entity entity = m_checkEntities[e];
-							if (  m_preferedEntities.Contains( entity.sku) )
+							if (  m_preferedEntities.Contains(entity.sku) )
 							{
 								Machine machine = entity.GetComponent<Machine>();
 								if (
@@ -136,8 +138,9 @@ namespace AI {
 					{
 						Entity entity = m_checkEntities[e];
 						Machine machine = entity.GetComponent<Machine>();
+						EatBehaviour.SpecialEatAction specialAction = m_eatBehaviour.GetSpecialEatAction( entity.sku );
 						if (
-							entity.IsEdible() && entity.IsEdible( m_eaterTier ) && machine != null && machine.CanBeBitten() && !machine.isPetTarget
+							entity.IsEdible() && specialAction != EatBehaviour.SpecialEatAction.CannotEat && entity.IsEdible( m_eaterTier ) && machine != null && machine.CanBeBitten() && !machine.isPetTarget
 						)
 						{
 							// Check if physics reachable
