@@ -12,7 +12,8 @@ Shader "Hungry Dragon/UnderWater"
 	Properties 
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_Color("Tint (RGB)", color) = (1, 0, 0, 1)
+		_ColorBack("Background color (RGB)", color) = (1, 0, 0, 1)
+		_ColorFront("Foreground color (RGB)", color) = (1, 0, 0, 1)
 
 	}
 
@@ -65,7 +66,7 @@ Shader "Hungry Dragon/UnderWater"
 //				float4 _CameraDepthTexture_TexelSize;
 
 				float4 _MainTex_ST;
-				float4 _Color;
+				float4 _ColorBack;
 
 
 				v2f vert (appdata_t v) 
@@ -97,7 +98,7 @@ Shader "Hungry Dragon/UnderWater"
 					col.w = 0.0f;
 					float w = clamp(1.0 - ((depthR + 5.0) * 0.04f), 0.0f, 1.0f);
 //					col = lerp(fixed4(_Color) + col * w * 20.0, col, w * w);
-					col = lerp(fixed4(_Color) + col * w * 15.0, col, w * w);
+					col = lerp(fixed4(_ColorBack) + col * w * 15.0, col, w * w);
 					return col;
 				}
 			ENDCG
@@ -144,7 +145,7 @@ Shader "Hungry Dragon/UnderWater"
 				sampler2D _CameraDepthTexture;
 				sampler2D _MainTex;
 				float4 _MainTex_ST;
-				float4 _Color;
+				float4 _ColorFront;
 
 
 				v2f vert(appdata_t v)
@@ -174,7 +175,7 @@ Shader "Hungry Dragon/UnderWater"
 										(sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS));
 
 					float z = depthR;// i.uv.y;
-					fixed4 col = (tex2D(_MainTex, 7.0f * (i.uv.xy + anim) * (z * 10.0f) * _ProjectionParams.w) * 0.7f) + _Color * 0.25;
+					fixed4 col = (tex2D(_MainTex, 7.0f * (i.uv.xy + anim) * (z * 10.0f) * _ProjectionParams.w) * 0.7f) + _ColorFront * 0.5;
 //					col.w = 1.0f;//dot(col.xyz, float3(0.299, 0.587, 0.114));
 					return col;
 				}
