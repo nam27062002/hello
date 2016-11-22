@@ -255,13 +255,13 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				m_idleAudioAO = AudioController.Play( m_idleAudio, transform);
 			}
 		}
-
+/*
         FireBreathNew breath = InstanceManager.player.gameObject.GetComponent<FireBreathNew>();
         if ((m_entity == null || m_entity.IsBurnable()) && (breath.type == DragonBreathBehaviour.Type.Standard || breath.type == DragonBreathBehaviour.Type.Super))
         {
             entityTint(true);
         }
-
+*/
     }
 
 /*
@@ -291,10 +291,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
     void OnFuryToggled(bool _active, DragonBreathBehaviour.Type type)
     {
+/*
         if (m_entity == null || m_entity.IsBurnable())
         {
             entityTint(_active);
         }
+*/
     }
 
 

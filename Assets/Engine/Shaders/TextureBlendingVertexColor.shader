@@ -82,7 +82,7 @@ Shader "Hungry Dragon/Texture Blending Vertex Color + Lightmap And Recieve Shado
 					col = lerp( col2, col, l);
 
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
-					col *= attenuation;
+					col.rgb *= i.color.rgb * attenuation;
 
 					#if LIGHTMAP_ON
 					fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
