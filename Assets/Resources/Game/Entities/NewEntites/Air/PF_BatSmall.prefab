@@ -464,10 +464,11 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":7,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":5,"restUpsideDown":true,"teleport":true,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":7,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":5,"restUpsideDown":true,"teleport":true,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false}]'
   m_databaseKey: PF_BatSmall
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
+  m_avoidWater: 0
 --- !u!114 &11477590
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -497,6 +498,7 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
+    m_senseFire: 1
     m_sightRadius: 8
     m_maxRadius: 4.32
     m_minRadius: 1.81

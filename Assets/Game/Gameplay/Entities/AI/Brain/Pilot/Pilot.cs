@@ -124,8 +124,11 @@ namespace AI {
 			m_actions[(int)Action.Stop] = false;
 		}
 
-		public void SetBoostSpeed(float _boostSpeed) {
+		public void SetBoostSpeed(float _boostSpeed, bool _blend = true) {
 			m_boostSpeed = _boostSpeed;
+			if (!_blend) {
+				m_currentSpeed = m_boostSpeed;
+			}
 			m_actions[(int)Action.Stop] = false;
 		}
 

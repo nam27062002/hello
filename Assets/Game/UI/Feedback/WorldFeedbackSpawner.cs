@@ -382,7 +382,9 @@ public class WorldFeedbackSpawner : MonoBehaviour {
             if (CacheItemDatas != null) {
                 int count = CacheItemDatas.Length;
                 for (int i = 0; i < count; i++) {
-                    PoolManager.ReturnInstance(CacheItemDatas[i].GameObject);
+                    if (CacheItemDatas[i].GameObject != null) {
+                        PoolManager.ReturnInstance(CacheItemDatas[i].GameObject);
+                    }
                 }
 
                 CacheItemDatas = null;

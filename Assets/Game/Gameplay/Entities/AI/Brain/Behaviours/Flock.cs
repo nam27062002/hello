@@ -15,6 +15,7 @@ namespace AI {
 			private FlockData m_data;
 
 			private float m_timer;
+			private Vector3 m_offset;
 
 
 			public override StateComponentData CreateData() {
@@ -31,13 +32,20 @@ namespace AI {
 
 			protected override void OnEnter(State oldState, object[] param) {
 				m_timer = m_data.changeLeaderTime;
+				Group group = m_machine.GetGroup();
+
+				if (group != null && group.HasOffsets()) {
+					m_offset = group.GetOffset(m_pilot.m_machine, m_data.separation);
+				} else {
+					m_offset = UnityEngine.Random.insideUnitSphere * m_data.separation;
+				}
 			}
 
 			protected override void OnUpdate() {
 				Group group = m_machine.GetGroup();
 
 				// Every few seconds we change the leader of this flock
-				if (group !=null && group.count > 1) {
+				if (group != null && group.count > 1) {
 					if (m_data.changeLeaderTime > 0f && m_machine.GetSignal(Signals.Type.Leader)) {
 						m_timer -= Time.deltaTime;
 						if (m_timer <= 0) {
@@ -45,21 +53,9 @@ namespace AI {
 							group.ChangeLeader();
 						}
 					}
-				
-					// Separation: Commented out since it's too expensive when the flock is crowd. Group offsets are used instead to prevent entities from overlapping each other
-					/*Vector3 separation = Vector3.zero;
-					for (int i = 0; i < group.count; i++) {
-						if ((IMachine)group[i] != m_machine) {
-							Vector3 v = m_machine.position - group[i].position;
-							float d = v.magnitude;
-							if (d < m_data.separation) {
-								separation += v.normalized * (m_data.separation - d);
-							}
-						}
-					}				
-					m_pilot.AddImpulse(separation);                                        
-                    */
 				}
+
+				m_pilot.GoTo(m_pilot.target + m_offset);
 			}
 		}
 	}

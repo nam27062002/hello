@@ -3,13 +3,19 @@ using UnityEngine;
 
 namespace AI {
 	public class Group {
+		private static Vector3[] m_offsetsSunflower;
+
 		private List<IMachine> m_members;
 		private int m_leader;
-        private Vector3[] m_offsets;     
+        
 
 		public Group() {
 			m_leader = -1; // there is no one in charge of this flock
-			m_members = new List<IMachine>();            
+			m_members = new List<IMachine>();     
+
+			if (m_offsetsSunflower == null) {
+				CreateOffsets(100);
+			}
 		}        
 
 		public void Enter(IMachine _member) {            
@@ -66,28 +72,44 @@ namespace AI {
 			}
 		}
 
-        public void CreateOffsets(float _radius, int _maxEntities) {
-            m_offsets = new Vector3[_maxEntities];            
-            Vector2 pos;
+		private void CreateOffsets(int _maxEntities) {
+            m_offsetsSunflower = new Vector3[_maxEntities];            
             for (int i = 0; i < _maxEntities; i++) {
-                pos = UnityEngine.Random.insideUnitCircle * _radius;
-                m_offsets[i] = new Vector3(pos.x, pos.y, 0f);
+				m_offsetsSunflower[i] = Sunflower(i + 1, _maxEntities);
             }
         }
 
         public bool HasOffsets() {
-            return m_offsets != null;
+            return m_offsetsSunflower != null;
         }
 
-        public Vector3 GetOffset(IMachine machine)
+		public Vector3 GetOffset(IMachine machine, float _radius)
         {
-            if (m_offsets != null) {               
+            if (m_offsetsSunflower != null) {               
                 int index = m_members.IndexOf(machine);
                 if (index > -1)
-                    return m_offsets[index];
+                    return m_offsetsSunflower[index] * _radius;
             }
 
             return Vector3.zero;
         }
+
+		public Vector3 Sunflower(int _i, int _n) {
+			float b = 0; //round(alpha*sqrt(n));
+			float phi = (Mathf.Sqrt(5f) + 1) / 2f;
+
+			float r = SunflowerRadius(_i, _n, b);
+			float theta = (2 * Mathf.PI * _i) / (phi * phi);
+
+			return new Vector3(r * Mathf.Cos(theta), r * Mathf.Sin(theta), 0f) * 6f; // x6 so the separation is around 1 unit between points
+		}
+
+		public float SunflowerRadius(int _i, int _n, float _b) {
+			if (_i > _n - _b) {
+				return 1f;
+			} else {
+				return Mathf.Sqrt(_i - 0.5f) / Mathf.Sqrt(_n - ((_b + 1) / 2f));
+			}
+		}
     }
 }

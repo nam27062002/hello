@@ -652,10 +652,11 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.9
     max: 1.4
-  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":20,"acceleration":50,"damage":5,"retreatTime":5,"attackPoint":"attack_2","dataType":"AI.Behaviour.ChargeData","editorFolded":false},{"boostSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"timeBeforeBackHome":1,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":20,"acceleration":50,"damage":5,"retreatTime":5,"attackPoint":"attack_2","dataType":"AI.Behaviour.ChargeData","editorFolded":false},{"boostSpeed":10,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"timeBeforeBackHome":1,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false}]'
   m_databaseKey: PF_Hawk
   m_avoidDistanceAttenuation: 2.5
   m_avoidCollisions: 1
+  m_avoidWater: 0
 --- !u!114 &11422592
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -782,6 +783,7 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
+    m_senseFire: 0
     m_sightRadius: 9
     m_maxRadius: 5
     m_minRadius: 0
