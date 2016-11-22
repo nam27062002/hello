@@ -94,10 +94,10 @@ public class FireBreathNew : DragonBreathBehaviour {
 
 		m_frame = 0;
 
-        dragonFlameStandardInstance.gameObject.SetActive(false);
         dragonFlameStandardInstance.EnableFlame(false);
-        dragonFlameSuperInstance.gameObject.SetActive(false);
+        dragonFlameStandardInstance.gameObject.SetActive(false);
         dragonFlameSuperInstance.EnableFlame(false);
+        dragonFlameSuperInstance.gameObject.SetActive(false);
 
         //		m_light = null;
     }
