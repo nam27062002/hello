@@ -9,14 +9,12 @@ namespace AI {
 		private const int CollisionCheckPools = 4;
 		private static uint NextCollisionCheckID = 0;
 
-
 		[SerializeField] private float m_avoidDistanceAttenuation = 2f;
 		[SerializeField] private bool m_avoidCollisions = false;
 		public override bool avoidCollisions { get { return m_avoidCollisions; } set { m_avoidCollisions = value; } }
 
 		[SerializeField] private bool m_avoidWater = false;
 		public override bool avoidWater { get { return m_avoidWater; } set { m_avoidWater = value; } }
-
 
 		private uint m_collisionCheckPool; // each prey will detect collisions at different frames
 		protected float m_collisionAvoidFactor;
@@ -53,17 +51,17 @@ namespace AI {
 
 			if (speed > 0.01f) {
 
-				if ( IsActionPressed(Action.Latching) ){
+				if (IsActionPressed(Action.Latching)) {
 					m_direction = m_targetRotation * Vector3.forward;
-				}else{
+				} else {
 					Vector3 v = m_target - m_machine.position;
 
 					if (m_slowDown) { // this machine will slow down its movement when arriving to its detination
 						v = v.normalized * Mathf.Min(moveSpeed, v.magnitude * 2);
 						Util.MoveTowardsVector3WithDamping(ref m_seek, ref v, 32f * Time.deltaTime, 8.0f);
 					} else {
-						if ( v.sqrMagnitude < moveSpeed * moveSpeed )
-							v = v.normalized * Mathf.Max( moveSpeed * 0.25f, v.magnitude * 2 );
+						if (v.sqrMagnitude < moveSpeed * moveSpeed)
+							v = v.normalized * Mathf.Max(moveSpeed * 0.25f, v.magnitude * 2);
 						else
 							v = v.normalized * moveSpeed;
 						m_seek = v;
@@ -126,9 +124,7 @@ namespace AI {
 
 					Debug.DrawLine(m_machine.position, m_machine.position + m_impulse, Color.white);
 				}
-			}
-			else
-			{
+			} else {
 				m_seek = Vector3.zero;
 			}
 

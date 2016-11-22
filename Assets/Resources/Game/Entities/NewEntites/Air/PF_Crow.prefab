@@ -432,6 +432,7 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
+    m_senseFire: 1
     m_sightRadius: 8
     m_maxRadius: 4
     m_minRadius: 0
@@ -470,10 +471,11 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":9.5,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":20,"separation":1.5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":6,"followAheadFactor":2,"frequencyOffset":{"min":2,"max":10},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":9.5,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":20,"separation":1.5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":6,"catchUpSpeed":10,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Crow
   m_avoidDistanceAttenuation: 6
   m_avoidCollisions: 1
+  m_avoidWater: 0
 --- !u!114 &11451964
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -486,7 +488,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: crow
-  m_isPet: 0
+  m_dieOutsideFrustum: 1
 --- !u!114 &11477200
 MonoBehaviour:
   m_ObjectHideFlags: 1

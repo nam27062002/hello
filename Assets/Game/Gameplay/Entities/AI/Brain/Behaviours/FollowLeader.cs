@@ -6,19 +6,24 @@ namespace AI {
 		[System.Serializable]
 		public class FollowLeaderData : StateComponentData {
 			public float speed = 1f;
-			public float followAheadFactor = 0f;
-			public Range frequencyOffset = new Range(0f, 1f);
+			public float catchUpSpeed = 10f;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/FollowLeader")]
 		public class FollowLeader : StateComponent {
 
+			private enum FollowState {
+				Follow = 0,
+				CatchUp
+			}
+
 			private FollowLeaderData m_data;
 
-			private float m_time;
-			private float m_frequencyOffset;
 			private Vector3 m_offset;
 			private Vector3 m_oldTarget;
+
+			private FollowState m_followState;
+
 
 			public override StateComponentData CreateData() {
 				return new FollowLeaderData();
@@ -32,32 +37,50 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<FollowLeaderData>();
 			}
 
-			protected override void OnEnter(State _oldState, object[] _param) {
-				m_time = 0;
-				m_frequencyOffset = m_data.frequencyOffset.GetRandom();                
-                Group group = m_pilot.m_machine.GetGroup();
-                if (group != null && group.HasOffsets()) {
-                    m_offset = group.GetOffset(m_pilot.m_machine);
-                } else {
-                    m_offset = Random.onUnitSphere * m_data.followAheadFactor;
-                }
-
+			protected override void OnEnter(State _oldState, object[] _param) {				
                 m_pilot.SlowDown(true);
 				m_oldTarget = m_machine.position;
+
+				m_followState = FollowState.CatchUp;
 			}
 
-			protected override void OnUpdate() {             
-                m_pilot.SetMoveSpeed(m_data.speed);
+			protected override void OnUpdate() {
+				if (m_machine.GetSignal(Signals.Type.Leader)) {
+					Transition(SignalTriggers.OnLeaderPromoted);
+				}
+
+				switch (m_followState) {
+					case FollowState.Follow:
+						m_pilot.SetMoveSpeed(m_data.speed);
+						if (ShouldCatchUp()) {
+							m_followState = FollowState.CatchUp;
+						}
+						break;
+
+					case FollowState.CatchUp:
+						m_pilot.SetMoveSpeed(m_data.catchUpSpeed);
+						if (!ShouldCatchUp()) {
+							m_followState = FollowState.Follow;
+						}
+						break;
+				}				               
 
 				IMachine leader = m_machine.GetGroup().leader;
-				Vector3 target = leader.target + m_offset;
+				Vector3 target = leader.target;
 
-				m_time += Time.smoothDeltaTime;
-				target.y += Mathf.Cos(m_frequencyOffset + m_time);
-				target.z += Mathf.Sin(m_frequencyOffset + m_time) * 0.5f;
-
-				m_pilot.GoTo(Vector3.Lerp(m_oldTarget, target, Time.smoothDeltaTime));
+				m_pilot.GoTo(Vector3.Lerp(m_oldTarget, target, Time.smoothDeltaTime * 0.25f));
 				m_oldTarget = target;
+			}
+
+			private bool ShouldCatchUp() {
+				if (m_machine.GetSignal(Signals.Type.Warning)) {
+					return false;
+				} else {
+					float dSqr = (m_pilot.target - m_machine.position).sqrMagnitude;
+					float dDistInc = m_pilot.speed * Time.deltaTime * 2f;
+
+					return dSqr > dDistInc * dDistInc;
+				}
 			}
 		}
 	}

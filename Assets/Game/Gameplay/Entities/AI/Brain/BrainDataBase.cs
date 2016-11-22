@@ -47,7 +47,6 @@ namespace AI {
 			if (m_dataBase.ContainsKey(_key)) {
 				return m_dataBase[_key];
 			}
-
 			return null;
 		}
 
@@ -59,7 +58,6 @@ namespace AI {
 					return data[_typeName];
 				}
 			}
-
 			return null;
 		}
 

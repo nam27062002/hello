@@ -1782,6 +1782,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_minEatAnimTime: 1
   m_eatDistance: 0.75
+  m_eatDetectionRadiusMultiplier: 2.75
+  m_eatDetectionSpeedRadiusMultiplier: 0.15
   m_holdingBloodParticle:
     name: PS_Blood_Explosion_Medium
     path: Blood
@@ -1803,7 +1805,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_melee_01
-  m_isPet: 0
+  m_dieOutsideFrustum: 1
 --- !u!114 &114000011653825936
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1823,10 +1825,11 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":10,"restUpsideDown":true,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":20,"arrivalRadius":0.25,"timeout":{"min":4,"max":6},"onFailShutdown":{"min":4,"max":6},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":4,"max":6},"damage":1,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":10,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":10,"restUpsideDown":true,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":20,"arrivalRadius":0.25,"timeout":{"min":4,"max":6},"onFailShutdown":{"min":4,"max":6},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":4,"max":6},"damage":1,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":10,"panicSpeed":10,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
   m_databaseKey: PF_EnemyBaby
   m_avoidDistanceAttenuation: 0.75
   m_avoidCollisions: 1
+  m_avoidWater: 0
 --- !u!114 &114000011681757254
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1916,6 +1919,7 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
+    m_senseFire: 0
     m_sightRadius: 18
     m_maxRadius: 12
     m_minRadius: 0
@@ -1949,7 +1953,6 @@ MonoBehaviour:
   m_wingsIdleSound: Dragon_Soft_Flaps
   m_wingsFlyingSound: Dragon_S_Flaps
   m_eatSound: Dragon_S_Bite
-  m_eatBigSound: 
   m_wingsWindSound: 
   m_wingsStrongFlap: Dragon_Strong_Flap
   m_levelUpSound: Level UP
@@ -1967,6 +1970,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Head_Ctrl
+  m_lookAtRoot: {fileID: 0}
 --- !u!114 &114000014202338546
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1979,6 +1983,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Chest
+  m_lookAtRoot: {fileID: 0}
 --- !u!136 &136000011476809738
 CapsuleCollider:
   m_ObjectHideFlags: 1
