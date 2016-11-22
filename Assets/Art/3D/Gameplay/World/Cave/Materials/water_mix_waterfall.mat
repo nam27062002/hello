@@ -6,10 +6,10 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: water
-  m_Shader: {fileID: 4800000, guid: 7db02476fb0d8de44a4f1416bf528bef, type: 3}
-  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON _EMISSION
-  m_LightmapFlags: 1
+  m_Name: water_mix_waterfall
+  m_Shader: {fileID: 4800000, guid: 1c8e402466f5e694bbfa39823bbaafc5, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
   m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
@@ -42,7 +42,7 @@ Material:
     - first:
         name: _DetailTex
       second:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 6744c5b41790509438512bf68995890c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -54,8 +54,8 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: d5eed649fad28f247a3d851ad2f20287, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 3fab1a5b9ef83e64c9aa056fda127683, type: 3}
+        m_Scale: {x: 0.7, y: 0.7}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
@@ -76,9 +76,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
+        name: _SecondTex
+      second:
+        m_Texture: {fileID: 2800000, guid: 6744c5b41790509438512bf68995890c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
         name: _SecondTexture
       second:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: cbaa17aad74348741956133e9c59bd66, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -93,7 +99,13 @@ Material:
       second: 1
     - first:
         name: _DstBlend
-      second: 10
+      second: 0
+    - first:
+        name: _Far
+      second: 500
+    - first:
+        name: _FixedTransp
+      second: 0
     - first:
         name: _GlossMapScale
       second: 1
@@ -108,7 +120,10 @@ Material:
       second: 0
     - first:
         name: _Mode
-      second: 3
+      second: 0
+    - first:
+        name: _Near
+      second: 200
     - first:
         name: _OcclusionStrength
       second: 1
@@ -116,10 +131,28 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
+        name: _Shininess
+      second: 0.078125
+    - first:
         name: _SmoothnessTextureChannel
       second: 0
     - first:
+        name: _SpecIntensity
+      second: 0.5
+    - first:
         name: _SpecularHighlights
+      second: 1
+    - first:
+        name: _SpeedX1
+      second: 1
+    - first:
+        name: _SpeedX2
+      second: 1
+    - first:
+        name: _SpeedY1
+      second: 1
+    - first:
+        name: _SpeedY2
       second: 1
     - first:
         name: _SrcBlend
@@ -128,18 +161,30 @@ Material:
         name: _UVSec
       second: 0
     - first:
+        name: _WaterSpeed
+      second: 0.5
+    - first:
+        name: _WaveAmplitude
+      second: 50
+    - first:
+        name: _Width
+      second: 2000
+    - first:
         name: _ZWrite
-      second: 0
+      second: 1
     m_Colors:
     - first:
+        name: _AmbientColor
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
         name: _Color
-      second: {r: 0.15700692, g: 0.45837203, b: 0.64705884, a: 0.903}
-    - first:
-        name: _ColorBack
-      second: {r: 0, g: 0.5395537, b: 0.58823526, a: 0.9019608}
-    - first:
-        name: _ColorFront
-      second: {r: 0, g: 0.46323532, b: 0.44406688, a: 1}
+      second: {r: 0.22388624, g: 0.43854588, b: 0.74264705, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _LightColor
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _LightDir
+      second: {r: 1, g: 1, b: 1, a: 1}
