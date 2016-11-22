@@ -109,7 +109,9 @@ public class Entity : IEntity {
 	}
 
 	override public void Spawn(ISpawner _spawner) {
-		base.Spawn(_spawner);
+        EntityManager.instance.Register(this);
+
+        base.Spawn(_spawner);
 
 		m_spawner = _spawner;
 
@@ -129,18 +131,14 @@ public class Entity : IEntity {
 
 		m_newCamera = InstanceManager.gameCamera;
 
-        m_spawned = true;
-
-		EntityManager.instance.Register(this);
+        m_spawned = true;		
     }
 
     public override void Disable(bool _destroyed) {
 		base.Disable(_destroyed);
 
 		m_spawner.RemoveEntity(gameObject, _destroyed);
-        m_spawned = false;
-
-		EntityManager.instance.Unregister(this);
+        m_spawned = false;		
     }
 
     /// <summary>
