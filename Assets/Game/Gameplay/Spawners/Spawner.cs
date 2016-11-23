@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Spawner : MonoBehaviour, ISpawner {
+public class Spawner : AbstractSpawner {
 	[System.Serializable]
 	public class SpawnCondition {
 		public enum Type {
@@ -20,11 +20,10 @@ public class Spawner : MonoBehaviour, ISpawner {
 		Line
 	}
 
-	private enum State {
+	private enum EState {
 		Init = 0,
 		Respawning,
-		Create_Instances,
-        Spawning_Instances,
+		Create_Instances,        
 		Activating_Instances,
 		Alive
 	}
@@ -73,7 +72,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	// Attributes
 	//-----------------------------------------------
 	protected AreaBounds m_area;
-	public AreaBounds area { 
+	public override AreaBounds area { 
 		get { 
 			if (m_guideFunction != null) {
 				return m_guideFunction.GetBounds();
@@ -82,14 +81,9 @@ public class Spawner : MonoBehaviour, ISpawner {
 			}
 		} 
 	}
-
-	private Rect m_rect;
-	public Rect boundingRect { get { return m_rect; } }
-
+	
 	protected EntityGroupController m_groupController;
-	protected IGuideFunction m_guideFunction;
-	public IGuideFunction guideFunction { get { return m_guideFunction; } }
-
+	
 	private uint m_entityAlive;
 	private uint m_entitySpawned;
 	private uint m_entitiesKilled; // we'll use this to give rewards if the dragon destroys a full flock
@@ -111,7 +105,11 @@ public class Spawner : MonoBehaviour, ISpawner {
 		set { m_showSpawnerInEditor = value; }
 	}
 
-	private State m_state = State.Init;
+	private EState m_state = EState.Init;
+    private EState State {
+        get { return m_state; }
+        set { m_state = value; }
+    }
 
     /// <summary>
     /// Watch used to meassure time time spent on spawning entities. It's defined static to save memory.
@@ -125,7 +123,7 @@ public class Spawner : MonoBehaviour, ISpawner {
     // Methods
     //-----------------------------------------------
     // Use this for initialization
-    protected virtual void Start() {
+    protected override void StartExtended() {
 		float rnd = Random.Range(0f, 100f);
 
 		if (InstanceManager.player.data.tier >= m_minTier) {
@@ -177,7 +175,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 			SpawnerManager.instance.Unregister(this);
 	}
 
-	public void Initialize() {
+	public override void Initialize() {
 		m_respawnTime = -1;
 		m_respawnCount = 0;
 
@@ -189,7 +187,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		m_readyToBeDisabled = false;
 
-		m_state = State.Respawning;
+		State = EState.Respawning;
 	}
 
 	public void ResetSpawnTimer()
@@ -197,81 +195,80 @@ public class Spawner : MonoBehaviour, ISpawner {
 		m_respawnTime = -1;
 	}    
 
-    public void ForceRemoveEntities() {
-		for (int i = 0; i < m_entitySpawned; i++) {			
-			if (m_entities[i] != null) {
-				PoolManager.ReturnInstance(m_entityPrefabStr, m_entities[i]);
-				m_entities[i] = null;
-                if (ProfilerSettingsManager.ENABLED)
-                {
-                    RemoveFromTotalLogicUnits(1);
-                }                
+    public override void ForceRemoveEntities() {
+        for (int i = 0; i < m_entitySpawned; i++)
+        {
+            if (m_entities[i] != null)
+            {
+                RemoveEntity(m_entities[i], false);
             }
+        }
+
+        m_entityAlive = 0;
+        m_entitiesActivated = 0;
+        m_respawnTime = -1;
+        m_allEntitiesKilledByPlayer = false;
+
+        State = EState.Respawning;
+    }
+
+    // entities can remove themselves when are destroyed by the player or auto-disabled when are outside of camera range
+    protected override bool RemoveEntityExtended(GameObject _entity, bool _killedByPlayer) {        
+		bool found = false;
+		for (int i = 0; i < m_entitySpawned; i++) {			
+			if (m_entities[i] == _entity) {				
+				m_entities[i] = null;
+				if (_killedByPlayer) {
+					m_entitiesKilled++;
+				}
+				m_entityAlive--;
+
+                if (ProfilerSettingsManager.ENABLED) {
+                    RemoveFromTotalLogicUnits(1);
+                }
+                         
+                found = true;
+			}
 		}
 
-		m_entityAlive = 0;
-		m_respawnTime = -1;
-		m_allEntitiesKilledByPlayer = false;
+		if (found) {
+			// all the entities are dead
+			if (m_entityAlive == 0 && m_entitiesActivated == m_entitySpawned) {
+				m_allEntitiesKilledByPlayer = m_entitiesKilled == m_entitySpawned;
 
-		m_state = State.Respawning;
+				if (m_allEntitiesKilledByPlayer) {
+					// check if player has destroyed all the flock
+					if (m_flockBonus > 0) {
+						Reward reward = new Reward();
+						reward.score = (int)(m_flockBonus * m_entitiesKilled);
+						Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _entity.transform, reward);
+					}
+
+					// Program the next spawn time
+					m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
+				} else {
+					m_respawnTime = -1; // instant respawn, because player didn't kill all the entities
+				}
+
+				State = EState.Respawning;
+
+				if (m_readyToBeDisabled) {
+					SpawnerManager.instance.Unregister(this);
+					Destroy(gameObject);
+				}
+			}
+		}
+
+        return found;		
 	}
 
-	// entities can remove themselves when are destroyed by the player or auto-disabled when are outside of camera range
-	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
-		if (m_state == State.Alive) {
-			bool found = false;
-			for (int i = 0; i < m_entitySpawned; i++) {			
-				if (m_entities[i] == _entity) 
-				{
-					PoolManager.ReturnInstance(m_entityPrefabStr, m_entities[i]);
-					m_entities[i] = null;
-					if (_killedByPlayer) {
-						m_entitiesKilled++;
-					}
-					m_entityAlive--;
+    protected override void ReturnEntityToPool(GameObject _entity) {
+        PoolManager.ReturnInstance(m_entityPrefabStr, _entity);
+    }
 
-                    if (ProfilerSettingsManager.ENABLED)
-                    {
-                        RemoveFromTotalLogicUnits(1);
-                    }
-                         
-                    found = true;
-				}
-			}
-
-			if (found) {
-				// all the entities are dead
-				if (m_entityAlive == 0) {
-					m_allEntitiesKilledByPlayer = m_entitiesKilled == m_entitySpawned;
-
-					if (m_allEntitiesKilledByPlayer) {
-						// check if player has destroyed all the flock
-						if (m_flockBonus > 0) {
-							Reward reward = new Reward();
-							reward.score = (int)(m_flockBonus * m_entitiesKilled);
-							Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _entity.transform, reward);
-						}
-
-						// Program the next spawn time
-						m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
-					} else {
-						m_respawnTime = -1; // instant respawn, because player didn't kill all the entities
-					}
-
-					m_state = State.Respawning;
-
-					if (m_readyToBeDisabled) {
-						SpawnerManager.instance.Unregister(this);
-						Destroy(gameObject);
-					}
-				}
-			}
-		}
-	}        
-
-    public bool CanRespawn() {		
+    public override bool CanRespawn() {		
 		// Ignore all logic for always active spawners
-		if (m_state == State.Respawning) {
+		if (State == EState.Respawning) {
 			// If we can spawn, do it
 			if(CanSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 				// If we don't have any entity alive, proceed
@@ -308,7 +305,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 		// If already ready to be disabled, no need for further checks
 		if(m_readyToBeDisabled) return false;
 
-		if(m_state != State.Respawning) return false;
+		if(State != EState.Respawning) return false;
 
 		// Check start conditions
 		bool startConditionsOk = (m_activationTriggers.Length == 0);	// If there are no activation triggers defined, the spawner will be considered ready
@@ -362,9 +359,9 @@ public class Spawner : MonoBehaviour, ISpawner {
 		return endConditionsOk;
 	}
     
-	public bool Respawn() {
+	public override bool Respawn() {
 
-		if (m_state == State.Respawning) {
+		if (State == EState.Respawning) {
 			if (m_entitiesKilled == m_entitySpawned) {
 				m_entitySpawned = (uint)m_quantity.GetRandom();
 			} else {
@@ -376,12 +373,12 @@ public class Spawner : MonoBehaviour, ISpawner {
 			m_allEntitiesKilledByPlayer = false;
 			m_respawnTime = -1;
 
-			m_state = State.Create_Instances;
+			State = EState.Create_Instances;
 
 			return false;
 		}
 
-		if (m_state == State.Create_Instances) {
+		if (State == EState.Create_Instances) {
             if (sm_watch == null) {
                 sm_watch = new System.Diagnostics.Stopwatch();
                 sm_watch.Start();
@@ -392,8 +389,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 				m_entities[i] = PoolManager.GetInstance(m_entityPrefabStr, false);
 				m_entityAlive++;
 
-                if (ProfilerSettingsManager.ENABLED)
-                {
+                if (ProfilerSettingsManager.ENABLED) {
                     AddToTotalLogicUnits(1);
                 }
 
@@ -404,20 +400,13 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 			if (m_entityAlive == m_entitySpawned) {
                 m_entitiesActivated = 0;
-                m_state = State.Spawning_Instances;
+                State = EState.Activating_Instances;
 			}
 
 			return false;
 		}
-
-        if (m_state == State.Spawning_Instances) {
-            Spawn();
-
-            m_state = State.Activating_Instances;
-            return false;            
-		}
-
-        if (m_state == State.Activating_Instances)
+        
+        if (State == EState.Activating_Instances)
         {
             ActivateEntities();
 
@@ -434,12 +423,12 @@ public class Spawner : MonoBehaviour, ISpawner {
                     }
                 }
 
-                m_state = State.Alive;                
+                State = EState.Alive;                
             }
             return false;
         }
 
-        return m_state == State.Alive;
+        return State == EState.Alive;
 	}
 
     private void ActivateEntities() {
@@ -448,60 +437,54 @@ public class Spawner : MonoBehaviour, ISpawner {
             GameObject spawning = m_entities[m_entitiesActivated];
             if (!spawning.activeSelf) {
                 spawning.SetActive(true);
+            }           
+
+            Vector3 pos = transform.position;
+            if (m_guideFunction != null) {
+                m_guideFunction.ResetTime();
             }
 
+            if (m_entitiesActivated > 0) {
+                pos += RandomStartDisplacement(m_entitiesActivated); // don't let multiple entities spawn on the same point
+            }
+
+            spawning.transform.position = pos;
+            spawning.transform.localScale = Vector3.one * m_scale.GetRandom();
+
             m_entitiesActivated++;
+
+            Entity entity = spawning.GetComponent<Entity>();
+            if (entity != null) {
+                entity.Spawn(this); // lets spawn Entity component first
+            }
+
+            AI.Machine machine = spawning.GetComponent<AI.Machine>();
+            if (machine != null) {
+                machine.Spawn(this);
+                if (m_groupController)
+                    machine.EnterGroup(ref m_groupController.flock);
+            }
+
+            AI.AIPilot pilot = spawning.GetComponent<AI.AIPilot>();
+            if (pilot != null) {
+                pilot.SetRail(m_rail, (int)m_rails);
+                m_rail = (m_rail + 1) % (int)m_rails;
+                pilot.guideFunction = m_guideFunction;
+                pilot.Spawn(this);
+            }
+
+            ISpawnable[] components = spawning.GetComponents<ISpawnable>();
+            foreach (ISpawnable component in components) {
+                if (component != entity && component != pilot && component != machine) {
+                    component.Spawn(this);
+                }
+            }
 
             if (sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
                 break;
             }
         }
-    }
-
-	private void Spawn() {                
-        for (int i=0; i < m_entitySpawned; i++) {
-			GameObject spawning = m_entities[i];           
-
-			Vector3 pos = transform.position;
-			if (m_guideFunction != null) {
-				m_guideFunction.ResetTime();
-			}
-
-			if (i > 0) {
-				pos += RandomStartDisplacement(i); // don't let multiple entities spawn on the same point
-			}
-
-			spawning.transform.position = pos;
-			spawning.transform.localScale = Vector3.one * m_scale.GetRandom();
-
-			Entity entity = spawning.GetComponent<Entity>();
-			if (entity != null) {
-				entity.Spawn(this); // lets spawn Entity component first
-			}
-
-            AI.Machine machine = spawning.GetComponent<AI.Machine>();
-            if (machine != null) {
-				machine.Spawn(this);
-				if (m_groupController)
-                	machine.EnterGroup(ref m_groupController.flock);
-            }
-
-            AI.AIPilot pilot = spawning.GetComponent<AI.AIPilot>();
-			if (pilot != null) {
-				pilot.SetRail(m_rail, (int)m_rails);
-                m_rail = (m_rail + 1) % (int)m_rails;
-				pilot.guideFunction = m_guideFunction;
-				pilot.Spawn(this);
-			}
-
-			ISpawnable[] components = spawning.GetComponents<ISpawnable>();
-			foreach (ISpawnable component in components) {
-				if (component != entity && component != pilot && component != machine) {
-					component.Spawn(this);
-				}
-			}			            
-        }        
-    }    
+    }	
 
 	protected virtual AreaBounds GetArea() {
 		Area area = GetComponent<Area>();
@@ -513,14 +496,13 @@ public class Spawner : MonoBehaviour, ISpawner {
 		}
 	}
 
-	public void DrawStateGizmos() {
-		switch (m_state) {
-			case State.Init:					Gizmos.color = Color.grey; 		break;
-			case State.Respawning: 				Gizmos.color = Color.yellow; 	break;
-			case State.Create_Instances: 		Gizmos.color = Color.red; 		break;
-            case State.Spawning_Instances:      Gizmos.color = Color.cyan;    break;
-			case State.Activating_Instances: 	Gizmos.color = Color.blue; 		break;
-			case State.Alive:					Gizmos.color = Color.green; 	break;
+	public override void DrawStateGizmos() {
+		switch (State) {
+			case EState.Init:					Gizmos.color = Color.grey; 		break;
+			case EState.Respawning: 				Gizmos.color = Color.yellow; 	break;
+			case EState.Create_Instances: 		Gizmos.color = Color.red; 		break;            
+			case EState.Activating_Instances: 	Gizmos.color = Color.blue; 		break;
+			case EState.Alive:					Gizmos.color = Color.green; 	break;
 		}
 		Gizmos.DrawWireSphere(transform.position, 0.25f * GizmosExt.GetGizmoSize(transform.position));
 	}

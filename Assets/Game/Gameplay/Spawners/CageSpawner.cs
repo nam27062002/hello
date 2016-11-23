@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class CageSpawner : MonoBehaviour, ISpawner {
+public class CageSpawner : AbstractSpawner {
 
 	[Serializable]
 	public class Group {
@@ -19,20 +19,15 @@ public class CageSpawner : MonoBehaviour, ISpawner {
 
 	private AreaBounds m_areaBounds = new RectAreaBounds(Vector3.zero, Vector3.one);
 
-	//---------------------------------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------------------------------	
+	public override AreaBounds area 				{ get { return m_areaBounds; } set { m_areaBounds = value; } }
 
-	private Rect m_rect;
-	public Rect boundingRect { get { return m_rect; } }
-	public string name 					{ get { return name; } }
-	public AreaBounds area 				{ get { return m_areaBounds; } set { m_areaBounds = value; } }
-	public IGuideFunction guideFunction	{ get { return null; } }
-
-	//---------------------------------------------------------------------------------------------------------
-	void Start() {
-		m_rect = new Rect((Vector2)transform.position, Vector2.zero);
+    //---------------------------------------------------------------------------------------------------------
+    protected override void StartExtended() { 
+        m_rect = new Rect((Vector2)transform.position, Vector2.zero);
 	}
 
-	public void Initialize() {
+	public override void Initialize() {
 		int maxEntities = 0;
 
 		for (int g = 0; g < m_groups.Length; g++) {
@@ -60,34 +55,30 @@ public class CageSpawner : MonoBehaviour, ISpawner {
 		}
 	}    
 
-    public void ForceRemoveEntities() {
-		for (int i = 0; i < m_entities.Length; i++) {			
-			if (m_entities[i] != null) {
-				m_entities[i].transform.parent = m_parents[i];
+    public override void ForceRemoveEntities() {
+        for (int i = 0; i < m_entities.Length; i++) {
+            if (m_entities[i] != null) {
+                RemoveEntity(m_entities[i], false);
+            }
+        }
+    }
 
-				PoolManager.ReturnInstance(m_entities[i]);
+    protected override bool RemoveEntityExtended(GameObject _entity, bool _killedPlayer) {
+        bool returnValue = false;
+        for (int i = 0; i < m_entities.Length && !returnValue; i++) {
+            if (m_entities[i] == _entity) {
+                m_entities[i].transform.parent = m_parents[i];
+                returnValue = true;
+                m_entities[i] = null;
+                m_parents[i] = null;
+            }
+        }
 
-				m_entities[i] = null;
-				m_parents[i] = null;
-			}
-		}
-	}
-
-	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
-		for (int i = 0; i < m_entities.Length; i++) {			
-			if (m_entities[i] == _entity) {
-				m_entities[i].transform.parent = m_parents[i];
-
-				PoolManager.ReturnInstance(m_entities[i]);
-
-				m_entities[i] = null;
-				m_parents[i] = null;
-			}
-		}
-	}
+        return returnValue;
+    }
         
-    public bool CanRespawn() 	{ return true; }
-	public bool Respawn()		{ Spawn(); return true; }
+    public override bool CanRespawn() 	{ return true; }
+	public override bool Respawn()		{ Spawn(); return true; }
 
 	//---------------------------------------------------------------------------------------------------------
 
@@ -150,5 +141,5 @@ public class CageSpawner : MonoBehaviour, ISpawner {
 		Gizmos.DrawSphere(transform.position + m_spawnPosition, 0.5f);
 	}
 
-	public void DrawStateGizmos() {}
+	public override void DrawStateGizmos() {}
 }

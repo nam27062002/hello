@@ -539,6 +539,7 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
+    m_senseFire: 1
     m_sightRadius: 10
     m_maxRadius: 4
     m_minRadius: 0
@@ -577,10 +578,11 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":2,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":8,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":15,"separation":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":2,"followAheadFactor":0,"frequencyOffset":{"min":1,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":8,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":15,"separation":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":2,"catchUpSpeed":10,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Canary_01
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
+  m_avoidWater: 0
 --- !u!114 &11473230
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -469,10 +469,11 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.65
     max: 1.15
-  m_serializedJson: '[{"speed":2,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":5,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":10,"separation":0.4,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":2,"followAheadFactor":0,"frequencyOffset":{"min":0.65,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":6,"panicSpeed":10,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":0,"separation":0.75,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":2,"catchUpSpeed":10,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Canary_00
-  m_avoidDistanceAttenuation: 2
+  m_avoidDistanceAttenuation: 6
   m_avoidCollisions: 1
+  m_avoidWater: 0
 --- !u!114 &11439040
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -484,9 +485,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 0.3
-  m_runSpeed: 10
-  m_minPlaybakSpeed: 0.2
+  m_walkSpeed: 2
+  m_runSpeed: 5
+  m_minPlaybakSpeed: 1
   m_maxPlaybakSpeed: 3
   m_onBoostMaxPlaybackSpeed: 1
   m_hasNavigationLayer: 0
@@ -534,7 +535,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 6
+    m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 170
     m_faceDirection: 1
@@ -548,8 +549,9 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 10
-    m_maxRadius: 4
+    m_senseFire: 1
+    m_sightRadius: 5
+    m_maxRadius: 3
     m_minRadius: 0
     m_senseAbove: 1
     m_senseBelow: 1
