@@ -93,7 +93,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private PreyAnimationEvents m_animEvents;
 
 	private static int ATTACK_HASH = Animator.StringToHash("Attack");
-	// private const int ATTACK_HASH = Animator.StringToHash("Attack");
+    // private const int ATTACK_HASH = Animator.StringToHash("Attack");
+
+    //Dragon breath detection
+    private DragonBreathBehaviour m_dragonBreath;
+    private DragonBreathBehaviour.Type m_lastType;
 
 	//-----------------------------------------------
 	// Use this for initialization
@@ -150,7 +154,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 		ParticleManager.CreatePool("PS_EntityPCTrail", "Rewards", 5);
 
-        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+//        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
     }
 
     void Start()
@@ -163,7 +167,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				behaviours[i].onEnd += onEndAnim;
 			}
 		}
-	}
+
+        m_dragonBreath = InstanceManager.player.gameObject.GetComponent<FireBreathNew>();
+        m_lastType = DragonBreathBehaviour.Type.None;
+    }
 
 	protected virtual void animEventsOnAttackStart() {
 		if ( !string.IsNullOrEmpty( m_onAttackAudio ) )
@@ -271,7 +278,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     }
 */
 	void OnDisable() {
-        Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+//        Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
         if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
 			m_idleAudioAO.Stop();
 	}
@@ -279,25 +286,25 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
     void entityTint(bool value)
     {
+        Color col = value ? Color.Lerp(Color.white, Color.red, Mathf.Sin(Time.time * 8.0f)) : Color.black;
         foreach (KeyValuePair<int, Material[]> mats in m_materials)
         {
             foreach (Material mat in mats.Value)
             {
-                mat.SetColor("_Tint", value ? Color.red : Color.white);
+                mat.SetColor("_Tint", col);
             }
         }
 
     }
-
-    void OnFuryToggled(bool _active, DragonBreathBehaviour.Type type)
-    {
-/*
-        if (m_entity == null || m_entity.IsBurnable())
+    /*
+        void OnFuryToggled(bool _active, DragonBreathBehaviour.Type type)
         {
-            entityTint(_active);
+            if (m_entity == null || m_entity.IsBurnable())
+            {
+                entityTint(_active);
+            }
         }
-*/
-    }
+    */
 
 
 
@@ -319,8 +326,23 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				m_animator.SetBool("move", false);
 			}
 		}
-	}
 
+
+        if (m_dragonBreath.type != m_lastType)
+        {
+            m_lastType = m_dragonBreath.type;
+
+            if (m_lastType == DragonBreathBehaviour.Type.None)
+            {
+                entityTint(false);
+            }
+        }
+        if (m_lastType != DragonBreathBehaviour.Type.None)
+        {
+            entityTint(true);
+        }
+
+    }
 
 	// Queries
 	public bool canAttack() {
