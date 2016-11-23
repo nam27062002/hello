@@ -9,8 +9,6 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -18,7 +16,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Select the current dragon in the menu screen.
 /// </summary>
-public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler {
+public class MenuDragonSelector : UISelectorTemplate<DragonData> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -26,10 +24,6 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	private int m_selectedIdx = 0;
-	public int selectedIdx {
-		get { return m_selectedIdx; }
-	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -38,68 +32,61 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		
-	}
-
-	/// <summary>
-	/// First update.
-	/// </summary>
-	private void Start() {
-		// Figure out initial index
-		string selectedSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
-		for(int i = 0; i < DragonManager.dragonsByOrder.Count; i++) {
-			if(selectedSku == DragonManager.dragonsByOrder[i].def.sku) {
-				m_selectedIdx = i;
-				break;
-			}
-		}
-	}
-	
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
-
+		// Subscribe to events
+		OnSelectionChanged.AddListener(OnSelectedDragonChanged);
 	}
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-
+		// Subscribe to events
+		OnSelectionChanged.RemoveListener(OnSelectedDragonChanged);
 	}
 
+	/// <summary>
+	/// First update.
+	/// </summary>
+	private void Start() {
+		// Initialize items list
+		m_items = DragonManager.dragonsByOrder;
+
+		// Figure out initial index
+		string selectedSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
+		for(int i = 0; i < m_items.Count; i++) {
+			if(selectedSku == m_items[i].def.sku) {
+				m_selectedIdx = i;
+				break;
+			}
+		}
+	}
+
+	//------------------------------------------------------------------//
+	// OTHER METHODS													//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// Changes dragon selected to the given one.
 	/// </summary>
 	/// <param name="_sku">The sku of the dragon we want to be the current one.</param>
 	public void SetSelectedDragon(string _sku) {
-		// Find out index
+		// Get data belonging to this sku
 		DragonData data = DragonManager.GetDragonData(_sku);
-
-		// Use select by index
-		if(data != null) SetSelectedDragon(data.def.GetAsInt("order"));
-	}
-
-	/// <summary>
-	/// Changes dragon selected to the given one, by dragon index.
-	/// Index will be clamped to the amount of dragons.
-	/// </summary>
-	/// <param name="_idx">Index of the dragon we want to be the current one.</param>
-	public void SetSelectedDragon(int _idx) {
-		// Clamp index
-		_idx = Mathf.Clamp(_idx, 0, DragonManager.dragonsByOrder.Count);
-
-		// Store new selected index
-		m_selectedIdx = _idx;
-
-		// Notify game
-		Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, DragonManager.dragonsByOrder[_idx].def.sku);
+		if(data == null) return;
+		SelectItem(data);
 	}
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// The selected dragon has been changed.
+	/// </summary>
+	/// <param name="_newDragon">Data of the new dragon.</param>
+	public void OnSelectedDragonChanged(DragonData _newDragon) {
+		// Notify game
+		if(_newDragon != null) Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, _newDragon.def.sku);
+	}
+
 	/// <summary>
 	/// The selected object on the scroll list has changed.
 	/// </summary>
@@ -113,59 +100,6 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 		if(dragonPreview != null) {
 			SetSelectedDragon(dragonPreview.sku);
 		}
-	}
-
-	/// <summary>
-	/// Select next dragon. To be linked with the "next" button.
-	/// </summary>
-	/// <param name="_loop">Allow going from last to first dragon or not.</param>
-	public void SelectNextDragon(bool _loop) {
-		// Figure out next dragon's sku
-		int newSelectedIdx = m_selectedIdx + 1;
-		if(newSelectedIdx >= DragonManager.dragonsByOrder.Count) {
-			if(!_loop) return;
-			newSelectedIdx = 0;
-		}
-
-		// Change selection
-		SetSelectedDragon(newSelectedIdx);
-	}
-
-	/// <summary>
-	/// Select previous dragon. To be linked with the "previous" button.
-	/// </summary>
-	/// <param name="_loop">Allow going from first to last dragon or not.</param>
-	public void SelectPreviousDragon(bool _loop)  {
-		// Figure out previous dragon's sku
-		int newSelectedIdx = m_selectedIdx - 1;
-		if(newSelectedIdx < 0) {
-			if(!_loop) return;
-			newSelectedIdx = DragonManager.dragonsByOrder.Count - 1;
-		}
-
-		// Change selection
-		SetSelectedDragon(newSelectedIdx);
-	}
-
-	/// <summary>
-	/// The input has started dragging over this element.
-	/// </summary>
-	/// <param name="_event">Data related to the event</param>
-	public void OnBeginDrag(PointerEventData _event) {
-		// Select next/previous dragon based on drag horizontal direction
-		if(_event.delta.x > 0) {
-			SelectPreviousDragon(false);
-		} else {
-			SelectNextDragon(false);
-		}
-	}
-
-	/// <summary>
-	/// The input is dragging over this element.
-	/// </summary>
-	/// <param name="_event">Data related to the event.</param>
-	public void OnDrag(PointerEventData _event) {
-		// Nothing to do, but the OnBeginDrag event doesn't work if we don't implement the IDragHandler interface -_-
 	}
 }
 

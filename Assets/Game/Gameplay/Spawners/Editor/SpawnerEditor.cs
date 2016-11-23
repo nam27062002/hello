@@ -87,38 +87,32 @@ public class SpawnerEditor : Editor {
 		p.Next(true);	// To get first element
 		do {
 			// Properties requiring special treatment
-			if(p.name == "m_alwaysActive") {
-				// Draw the property
-				EditorGUILayout.PropertyField(p);
+			if(p.name == m_activationTriggersProp.name) {
+				// Draw activation properties
+				EditorGUI.BeginChangeCheck();
+				EditorGUILayout.PropertyField(m_activationTriggersProp, true);
+				EditorGUILayout.PropertyField(m_deactivationTriggersProp, true);
+				if(EditorGUI.EndChangeCheck()) {
+					// Check for wrong setups (once the property changes have been applied!)
+					checkForErrors = true;
+				}
 
-				// If active, draw activation triggers
-				if(!p.boolValue) {
-					// Draw activation properties
-					EditorGUI.BeginChangeCheck();
-					EditorGUILayout.PropertyField(m_activationTriggersProp, true);
-					EditorGUILayout.PropertyField(m_deactivationTriggersProp, true);
-					if(EditorGUI.EndChangeCheck()) {
-						// Check for wrong setups (once the property changes have been applied!)
-						checkForErrors = true;
-					}
+				// Show feedback messages
+				if(m_repeatedActivationTriggerTypeError) {
+					EditorGUILayout.HelpBox("Two or more activation triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
+				}
 
-					// Show feedback messages
-					if(m_repeatedActivationTriggerTypeError) {
-						EditorGUILayout.HelpBox("Two or more activation triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
-					}
+				if(m_repeatedDeactivationTriggerTypeError) {
+					EditorGUILayout.HelpBox("Two or more deactivation triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
+				}
 
-					if(m_repeatedDeactivationTriggerTypeError) {
-						EditorGUILayout.HelpBox("Two or more deactivation triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
-					}
-
-					if(m_incompatibleValuesError) {
-						EditorGUILayout.HelpBox("A deactivation trigger's value is lower than an activation trigger of the same type!\nSpawner will never be active.", MessageType.Error);
-					}
+				if(m_incompatibleValuesError) {
+					EditorGUILayout.HelpBox("A deactivation trigger's value is lower than an activation trigger of the same type!\nSpawner will never be active.", MessageType.Error);
 				}
 			}
 
 			// Ignore both activation triggers (we're showing them manually)
-			else if(p.name == m_activationTriggersProp.name || p.name == m_deactivationTriggersProp.name) {
+			else if(p.name == m_deactivationTriggersProp.name) {
 				// Do nothing
 			}
 
