@@ -368,7 +368,7 @@ public class ProfilerEditorWindow : EditorWindow {
     {
         //if (!ProfilerSettingsManager.IsLoaded)
         {            
-            List<string> files = LevelEditor.SectionSpawners.Entities_GetFileNames();
+			List<string> files = Entity.Entities_GetFileNames();
             ProfilerSettingsManager.Load(files);                     
             Entities_IsCatalogLoaded = true;
         }
