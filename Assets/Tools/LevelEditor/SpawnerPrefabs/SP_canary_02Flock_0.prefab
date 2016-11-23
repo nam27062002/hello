@@ -11,7 +11,7 @@ GameObject:
   - 114: {fileID: 11418474}
   - 114: {fileID: 11433230}
   - 114: {fileID: 114000011298876212}
-  - 114: {fileID: 114000011164235192}
+  - 114: {fileID: 114000012075963578}
   m_Layer: 0
   m_Name: SP_canary_02Flock_0
   m_TagString: Untagged
@@ -57,7 +57,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_offsetRadius: 1
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -69,20 +68,6 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 173086}
   m_IsPrefabParent: 1
---- !u!114 &114000011164235192
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 173086}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0}
-  size: {x: 17.722128, y: 16.541279}
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114000011298876212
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -106,10 +91,36 @@ MonoBehaviour:
   m_flockBonus: 0
   m_minTier: 0
   m_activationChance: 100
-  m_alwaysActive: 0
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
     min: 0
     max: 0
+  m_homePosMethod: 0
+  m_homePosDistance:
+    min: 1
+    max: 2
   m_maxSpawns: 0
+--- !u!114 &114000012075963578
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 173086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_guideFunction: 0
+  m_innerRadius: 10
+  m_outterRadius: 20
+  m_targetDistance: 7
+  m_depthAmplitude: 0
+  m_depthFrequency: 0
+  m_scale: {x: 1, y: 1, z: 1}
+  m_rotation: {x: 0, y: 0, z: 0}
+  m_boundsScale: {x: 0, y: 0, z: 0}
+  m_forcePreview: 0
+  m_previewStep: 0.1
+  m_previewMaxTime: 60
