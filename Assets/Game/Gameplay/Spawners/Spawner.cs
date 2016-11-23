@@ -48,13 +48,13 @@ public class Spawner : AbstractSpawner {
 	[SerializeField] private int m_flockBonus = 0;
 
 	[Separator("Activation")]
-	[SerializeField] private DragonTier m_minTier = DragonTier.TIER_0;
+	[SerializeField] public DragonTier m_minTier = DragonTier.TIER_0;
 
 	[Tooltip("Spawners may not be present on every run (percentage).")]
-	[SerializeField][Range(0f, 100f)] private float m_activationChance = 100f;
+	[SerializeField][Range(0f, 100f)] public float m_activationChance = 100f;
 
 	[Tooltip("Start spawning when any of the activation conditions is triggered.\nIf empty, the spawner will be activated at the start of the game.")]
-	[SerializeField] private SpawnCondition[] m_activationTriggers;
+	[SerializeField] public SpawnCondition[] m_activationTriggers;
 	public SpawnCondition[] activationTriggers { get { return m_activationTriggers; }}
 
 	[Tooltip("Stop spawning when any of the deactivation conditions is triggered.\nLeave empty for infinite spawning.")]
@@ -62,7 +62,7 @@ public class Spawner : AbstractSpawner {
 	public SpawnCondition[] deactivationTriggers { get { return m_deactivationTriggers; }}
 
 	[Separator("Respawn")]
-	[SerializeField] private Range m_spawnTime = new Range(40f, 45f);
+	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
 	[SerializeField] private SpawnPointSeparation m_homePosMethod = SpawnPointSeparation.Sphere;
 	[SerializeField] private Range m_homePosDistance = new Range(1f, 2f);
 	[SerializeField] private int m_maxSpawns;
