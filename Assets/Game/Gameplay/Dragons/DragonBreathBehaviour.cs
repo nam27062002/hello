@@ -340,6 +340,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		if (m_attackBehaviour) m_attackBehaviour.enabled = true;
 
 		Messenger.Broadcast<bool, Type>(GameEvents.FURY_RUSH_TOGGLED, false, m_type);
+        m_type = Type.None;
 	}
 
 	/// <summary>

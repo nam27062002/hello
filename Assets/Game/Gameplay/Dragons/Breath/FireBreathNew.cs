@@ -153,8 +153,6 @@ public class FireBreathNew : DragonBreathBehaviour {
 
     override protected void EndFury() 
 	{
-		base.EndFury();
-
         if (m_type == Type.Standard)
         {
             dragonFlameStandardInstance.EnableFlame(false);
@@ -163,6 +161,8 @@ public class FireBreathNew : DragonBreathBehaviour {
         {
             dragonFlameSuperInstance.EnableFlame(false);
         }
+        base.EndFury();
+
     }
 
     override protected void Breath(){
