@@ -832,7 +832,7 @@ RectTransform:
   - {fileID: 22454288}
   - {fileID: 224000013743994746}
   m_Father: {fileID: 22499148}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 30, y: 150}
@@ -850,14 +850,14 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 224000010615170654}
-  - {fileID: 224000014142806556}
   - {fileID: 224000011922658428}
+  - {fileID: 224000014142806556}
   - {fileID: 224000013325933004}
   - {fileID: 224000013628401730}
   - {fileID: 224000010584440190}
   - {fileID: 224000013180570202}
-  - {fileID: 22493538}
   - {fileID: 224000012299838824}
+  - {fileID: 22493538}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
@@ -1863,6 +1863,7 @@ GameObject:
   - 114: {fileID: 114000013701367360}
   - 114: {fileID: 114000013934123916}
   - 114: {fileID: 114000013173269486}
+  - 114: {fileID: 114000013835654154}
   m_Layer: 5
   m_Name: ButtonExtended
   m_TagString: Untagged
@@ -3075,8 +3076,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114000013701367360}
-        m_MethodName: OnBackButton
+      - m_Target: {fileID: 114000013835654154}
+        m_MethodName: Show
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7835,7 +7836,7 @@ MonoBehaviour:
   m_snapPos: {x: 0.5, y: 0.5}
   m_snapAnimDuration: 0.25
   m_snapEase: 18
-  m_selectedPoint: {fileID: 0}
+  m_selectedPoint: {fileID: 114000012480066980}
   m_onSelectionChanged:
     m_PersistentCalls:
       m_Calls:
@@ -7927,6 +7928,22 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114000013835654154
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012838108592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b566c2d015b0d4812aa3c3e5e4d82da0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_text: Coming Soon!
+  m_position: {x: 0.5, y: 0.33}
+  m_parent: {fileID: 22499148}
+  m_name: UIFeedbackText
+  m_prefabPath: 
 --- !u!114 &114000013852184814
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -20195,10 +20212,10 @@ RectTransform:
   - {fileID: 224000010524470328}
   m_Father: {fileID: 224000014293312272}
   m_RootOrder: 0
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 150, y: -180}
-  m_SizeDelta: {x: 300, y: 340}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000011713205758
 RectTransform:
@@ -20310,7 +20327,7 @@ RectTransform:
   m_Children:
   - {fileID: 224000012850728922}
   m_Father: {fileID: 22499148}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 360}
@@ -20367,7 +20384,7 @@ RectTransform:
   - {fileID: 224000013724401200}
   - {fileID: 224000013413393366}
   m_Father: {fileID: 22499148}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
@@ -21213,7 +21230,7 @@ RectTransform:
   - {fileID: 224000013131279622}
   - {fileID: 224000011758194602}
   m_Father: {fileID: 22499148}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -0.0078125, y: -9.996144}
@@ -21292,10 +21309,10 @@ RectTransform:
   - {fileID: 224000011290684390}
   m_Father: {fileID: 224000014293312272}
   m_RootOrder: 1
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 470, y: -180}
-  m_SizeDelta: {x: 300, y: 340}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000014293312272
 RectTransform:
