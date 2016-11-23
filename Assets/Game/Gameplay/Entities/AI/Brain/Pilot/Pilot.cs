@@ -25,6 +25,8 @@ namespace AI {
 		//----------------------------------------------------------------------------------------------------------------
 
 		[SerializeField] private float m_blendSpeedFactor = 1f;
+		[SerializeField] private float m_energy = 10f;
+		[SerializeField] private float m_energyDrainSec = 1f;
 
 		protected AreaBounds m_area;
 		public AreaBounds area { get { return m_area; } set { m_area = value; } }
@@ -61,7 +63,11 @@ namespace AI {
 		private float m_zOffset;
 		protected float zOffset { get { return m_zOffset; } }
 
+
 		//
+		protected bool m_boostAvailable;
+		private float m_currentEnergy;
+
 		protected Vector3 m_externalImpulse;
 		protected Vector3 m_impulse;
 		public Vector3 impulse { get { return m_impulse; } }
@@ -82,6 +88,9 @@ namespace AI {
 			m_boostSpeed = 0;
 
 			m_currentSpeed = 0;
+
+			m_boostAvailable = true;
+			m_currentEnergy = m_energy;
 
 			m_zOffset = 0;
 
@@ -124,8 +133,11 @@ namespace AI {
 			m_actions[(int)Action.Stop] = false;
 		}
 
-		public void SetBoostSpeed(float _boostSpeed) {
+		public void SetBoostSpeed(float _boostSpeed, bool _blend = true) {
 			m_boostSpeed = _boostSpeed;
+			if (!_blend) {
+				m_currentSpeed = m_boostSpeed;
+			}
 			m_actions[(int)Action.Stop] = false;
 		}
 
@@ -158,10 +170,14 @@ namespace AI {
 		}
 
 		protected virtual void Update() {
-			if (IsActionPressed(Action.Boost)) {
+			if (m_boostAvailable && IsActionPressed(Action.Boost)) {
 				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_boostSpeed, Time.deltaTime * m_blendSpeedFactor);
+				m_currentEnergy = Mathf.Lerp(m_currentEnergy, 0f, Time.deltaTime * m_energyDrainSec);
+				m_boostAvailable = m_currentEnergy > 0.1f;
 			} else {
 				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_moveSpeed, Time.deltaTime * m_blendSpeedFactor);
+				m_currentEnergy = Mathf.Lerp(m_currentEnergy, m_energy, Time.deltaTime * m_energyDrainSec);
+				m_boostAvailable = m_currentEnergy > (m_energy * 0.5f);
 			}
 		}
 	}

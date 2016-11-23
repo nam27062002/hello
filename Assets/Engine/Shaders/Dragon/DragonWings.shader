@@ -117,7 +117,7 @@ SubShader {
      			float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
 
 				// normalDirection = i.normal;
-     			fixed4 diffuse = max(0,dot( normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
+     			fixed4 diffuse = max(0,dot( -normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
 				diffuse.a = 0.0;
 
      			fixed3 pointLights = fixed3(0,0,0);

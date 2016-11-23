@@ -122,8 +122,13 @@ public abstract class EatBehaviour : MonoBehaviour {
 	public OnEvent onEndEating;
 	public OnEvent onEndLatching;
 
-
-	private List<string> m_ignoreTierList = new List<string>();
+	public enum SpecialEatAction
+	{
+		Eat,
+		CannotEat,
+		None
+	};
+	private Dictionary<string, SpecialEatAction> m_specialEatActions = new Dictionary<string, SpecialEatAction>();
 
     private const float m_absorbDuration = 0.2f;
 
@@ -178,9 +183,28 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// Adds to ignore tier list. Adds and sku to an ignore tier list. This eating behaviour will be able to eat this entities event if it doesn't meet the tier requierement
 	/// </summary>
 	/// <param name="entitySku">Entity sku.</param>
-	public void AddToIgnoreTierList( string entitySku )
+	public void AddToEatExceptionList( string entitySku )
 	{
-		m_ignoreTierList.Add( entitySku );
+		// m_ignoreTierList.Add( entitySku );
+		if ( !m_specialEatActions.ContainsKey(entitySku) )
+			m_specialEatActions.Add( entitySku, SpecialEatAction.Eat);
+		else
+			m_specialEatActions[ entitySku ] = SpecialEatAction.Eat;
+	}
+
+	public void AddToIgnoreList(string entitySku)
+	{
+		if ( !m_specialEatActions.ContainsKey(entitySku) )
+			m_specialEatActions.Add( entitySku, SpecialEatAction.CannotEat);
+		else
+			m_specialEatActions[ entitySku ] = SpecialEatAction.CannotEat;
+	}
+
+	public SpecialEatAction GetSpecialEatAction( string entitySku )
+	{
+		if ( m_specialEatActions.ContainsKey(entitySku) )
+			return m_specialEatActions[ entitySku ];
+		return SpecialEatAction.None;
 	}
 
 	protected void SetupHoldParametersForTier( string tierSku )
@@ -238,7 +262,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	{
 		if (PreyCount <= 0 && m_attackTarget != null && m_isPlayer)
 		{
-			BiteKill();
+			BiteKill( false );
 		}
 
 		if ( m_attackTarget != null )
@@ -691,6 +715,14 @@ public abstract class EatBehaviour : MonoBehaviour {
 				Entity entity = m_checkEntities[e];
 				if (entity.IsEdible())
 				{
+					// if not player check that it can be eaten
+					if ( !m_isPlayer )
+					{
+						SpecialEatAction specialAction = GetSpecialEatAction( entity.sku );
+						if ( specialAction == SpecialEatAction.CannotEat )
+							continue;
+					}
+
 					// Start bite attempt
 					Vector3 heading = (entity.transform.position - arcOrigin);
 					float dot = Vector3.Dot(heading, dir);
@@ -763,9 +795,12 @@ public abstract class EatBehaviour : MonoBehaviour {
             for (int e = 0; e < m_numCheckEntities && preyToHold == null; e++)
             {
 				Entity entity = m_checkEntities[e];
-				if ( entity.IsEdible() )
+				SpecialEatAction specialAction = SpecialEatAction.None;
+            	if ( m_specialEatActions.ContainsKey( entity.sku ) )
+					specialAction = m_specialEatActions[ entity.sku ];
+				if ( entity.IsEdible() && specialAction != SpecialEatAction.CannotEat)
                 {
-					if (entity.IsEdible(m_tier) || m_ignoreTierList.Contains( entity.sku ))
+					if (entity.IsEdible(m_tier) || specialAction == SpecialEatAction.Eat)
                     {
 						if (m_limitEating && (numPreysToEat + PreyCount) < m_limitEatingValue || !m_limitEating)
                         {

@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine.Serialization;
 
 public class Entity : IEntity {
+	private static readonly string RESOURCES_DIR = "Game/Entities";
+
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
@@ -109,7 +113,9 @@ public class Entity : IEntity {
 	}
 
 	override public void Spawn(ISpawner _spawner) {
-		base.Spawn(_spawner);
+        EntityManager.instance.Register(this);
+
+        base.Spawn(_spawner);
 
 		m_spawner = _spawner;
 
@@ -129,18 +135,14 @@ public class Entity : IEntity {
 
 		m_newCamera = InstanceManager.gameCamera;
 
-        m_spawned = true;
-
-		EntityManager.instance.Register(this);
+        m_spawned = true;		
     }
 
     public override void Disable(bool _destroyed) {
 		base.Disable(_destroyed);
 
 		m_spawner.RemoveEntity(gameObject, _destroyed);
-        m_spawned = false;
-
-		EntityManager.instance.Unregister(this);
+        m_spawned = false;		
     }
 
     /// <summary>
@@ -229,5 +231,58 @@ public class Entity : IEntity {
                 }
             }
         }
+	}
+
+	/**************************************************************/
+	// STATIC UTILS MIGRATED FROM LEVEL EDITOR'S SECTION SPAWNERS //
+	/**************************************************************/
+	public static List<string> Entities_GetFileNames()
+	{
+		List<string> returnValue = new List<string>();
+
+		string dirPath = Application.dataPath + "/Resources/" + RESOURCES_DIR;
+		DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
+		Entities_AddFileNamesInDirectory(dirInfo, returnValue);
+
+		return returnValue;
+	}
+
+	private static void Entities_AddFileNamesInDirectory(DirectoryInfo dirInfo, List<string> list)
+	{
+		if (list != null)
+		{                             
+			// Format dir path to something that Unity Resources API understands
+			string resourcePath = dirInfo.FullName.Replace('\\', '/'); // [AOC] Windows uses backward slashes, which Unity doesn't recognize
+			resourcePath = resourcePath.Substring(resourcePath.IndexOf(RESOURCES_DIR));
+			string[] tokens = resourcePath.Split('/');
+			if (tokens != null && tokens.Length > 0)
+			{
+				resourcePath = tokens[tokens.Length - 1] + "/";
+			}
+			else
+			{
+				resourcePath = "";
+			}                
+
+			// Get all prefabs in the target directory, but don't include subdirectories
+			FileInfo[] files = dirInfo.GetFiles("*.prefab");
+			int i;
+			int count = files.Length;
+			for (i = 0; i < count; i++)
+			{
+				list.Add(resourcePath + Path.GetFileNameWithoutExtension(files[i].Name));
+			}
+
+			// Iterate subdirectories and create group for each of them as well!
+			DirectoryInfo[] subdirs = dirInfo.GetDirectories();
+			for (i = 0; i < subdirs.Length; i++)
+			{
+				// Ignore "Assets" directories
+				if (subdirs[i].Name != "Assets")
+				{
+					Entities_AddFileNamesInDirectory(subdirs[i], list);
+				}
+			}
+		}
 	}
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class SpawnerBg : MonoBehaviour, ISpawner {
+public class SpawnerBg : AbstractSpawner {
 	[System.Serializable]
 	public class SpawnCondition {
 		public enum Type {
@@ -51,7 +51,7 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 	// Attributes
 	//-----------------------------------------------
 	protected AreaBounds m_area;
-	public AreaBounds area { 
+	public override AreaBounds area { 
 		get { 
 			if (m_guideFunction != null) {
 				return m_guideFunction.GetBounds();
@@ -60,14 +60,9 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 			}
 		} 
 	}
-
-	private Rect m_rect;
-	public Rect boundingRect { get { return m_rect; } }
-
+	
 	protected EntityGroupController m_groupController;
-	protected IGuideFunction m_guideFunction;
-	public IGuideFunction guideFunction { get { return m_guideFunction; } }
-
+	
 	private uint m_entityAlive;
 	private uint m_entitySpawned;
 	private uint m_entitiesKilled; // we'll use this to give rewards if the dragon destroys a full flock
@@ -87,13 +82,13 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 		get { return m_showSpawnerInEditor; }
 		set { m_showSpawnerInEditor = value; }
 	}
-	
-	//-----------------------------------------------
-	// Methods
-	//-----------------------------------------------
-	// Use this for initialization
-	protected virtual void Start() {
-		m_rect = new Rect((Vector2)transform.position, Vector2.zero);
+
+    //-----------------------------------------------
+    // Methods
+    //-----------------------------------------------
+    // Use this for initialization
+    protected override void StartExtended() {
+        m_rect = new Rect((Vector2)transform.position, Vector2.zero);
 		m_entities = new GameObject[m_quantity.max];
 
 		if (m_rails == 0) m_rails = 1;
@@ -122,7 +117,7 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 			SpawnerManager.instance.Unregister(this);
 	}
 
-	public void Initialize() {
+	public override void Initialize() {
 
 		m_respawnTimer = 0;
 		m_respawnCount = 0;
@@ -139,28 +134,26 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 	public void ResetSpawnTimer()
 	{
 		m_respawnTimer = 0;
-	}    
-
-    public void ForceRemoveEntities() {
-		for (int i = 0; i < m_entitySpawned; i++) {			
-			if (m_entities[i] != null) {
-				PoolManager.ReturnInstance(m_entityPrefabStr, m_entities[i]);
-				m_entities[i] = null;
-			}
-		}
-
-		m_entityAlive = 0;
-		m_respawnTimer = 0;
-		m_allEntitiesKilledByPlayer = false;
 	}
 
-	// entities can remove themselves when are destroyed by the player or auto-disabled when are outside of camera range
-	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
-		bool found = false;
+    public override void ForceRemoveEntities() {
+        for (int i = 0; i < m_entitySpawned; i++) {
+            if (m_entities[i] != null) {
+                RemoveEntity(m_entities[i], false);
+            }
+        }
+
+        m_entityAlive = 0;
+        m_respawnTimer = 0;
+        m_allEntitiesKilledByPlayer = false;
+    }
+
+    // entities can remove themselves when are destroyed by the player or auto-disabled when are outside of camera range
+    protected override bool RemoveEntityExtended(GameObject _entity, bool _killedByPlayer) {
+        bool found = false;
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			if (m_entities[i] == _entity) 
-			{
-				PoolManager.ReturnInstance( m_entityPrefabStr, m_entities[i] );
+			{				
 				m_entities[i] = null;
 				if (_killedByPlayer) {
 					m_entitiesKilled++;
@@ -191,9 +184,15 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 				}
 			}
 		}
+
+        return found;
 	}
-        
-    public bool CanRespawn() {		
+
+    protected override void ReturnEntityToPool(GameObject _entity) {
+        PoolManager.ReturnInstance(m_entityPrefabStr, _entity);
+    }
+
+    public override bool CanRespawn() {		
 		
 		// If we don't have any entity alive, proceed
 		if(m_entityAlive == 0) {
@@ -214,7 +213,7 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 		ExtendedUpdateLogic();
 	}
 
-	public bool Respawn() {
+	public override bool Respawn() {
 		Spawn();
 		return true;
 	}
@@ -316,5 +315,5 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 		return Random.onUnitSphere * 2f;
 	}
 
-	public void DrawStateGizmos() {}
+	public override void DrawStateGizmos() {}
 }

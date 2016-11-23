@@ -51,7 +51,7 @@ namespace AI {
 				m_pilot.SetMoveSpeed(m_data.speed); //TODO
 
 				float m = (m_machine.position - m_target).sqrMagnitude;
-				float d = Mathf.Min(2f, m_data.speed);// * Time.smoothDeltaTime;
+				float d = m_data.speed * Time.deltaTime;
 
 				m_timer -= Time.deltaTime;
 
@@ -70,11 +70,11 @@ namespace AI {
 			}
 
 			private void SelectTarget() {
-				if (m_pilot.guideFunction != null) {					
-					m_target = m_pilot.guideFunction.NextPositionAtSpeed(m_data.speed);					
+				if (m_pilot.guideFunction != null) {
+					m_target = m_pilot.guideFunction.NextPositionAtSpeed(m_pilot.speed);					
 				} else {
 					m_target = m_pilot.area.RandomInside();
-				} 
+				}
 
 				if (m_data.speed > 0f) {
 					m_timer = (m_machine.position - m_target).magnitude / m_data.speed;

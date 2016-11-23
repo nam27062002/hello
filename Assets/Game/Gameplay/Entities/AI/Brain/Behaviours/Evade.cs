@@ -6,6 +6,7 @@ namespace AI {
 		[System.Serializable]
 		public class EvadeData : StateComponentData {
 			public float boostSpeed = 5f;
+			public float panicSpeed = 10f;
 			public bool faceDirectionOnBoost = false;
 		}
 
@@ -45,10 +46,15 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				bool avoid = m_machine.GetSignal(Signals.Type.Danger);
-				m_pilot.Avoid(avoid);
+				m_pilot.Avoid(m_machine.GetSignal(Signals.Type.Warning));
 
-				if (avoid) {
+				if (m_machine.GetSignal(Signals.Type.Critical)) {
+					m_pilot.SetBoostSpeed(m_data.panicSpeed);
+				} else {
+					m_pilot.SetBoostSpeed(m_data.boostSpeed);
+				}
+
+				if (m_machine.GetSignal(Signals.Type.Danger)) {
 					m_pilot.PressAction(Pilot.Action.Boost);
 					//m_machine.FaceDirection(m_data.faceDirectionOnBoost);
 				} else {

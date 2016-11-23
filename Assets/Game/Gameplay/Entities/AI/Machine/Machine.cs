@@ -329,7 +329,10 @@ namespace AI {
 					if(!m_entity.isOnScreen)
 					{
 						// if the object is no longer visible, remove it immediately
-						current.splineForce.RemoveObject(gameObject, true);
+						if(current.splineForce != null)
+						{
+							current.splineForce.RemoveObject(gameObject, true);
+						}
 						current = null;
 					}
 					else if(!current.Contains(pos.x, pos.y))

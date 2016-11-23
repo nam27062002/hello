@@ -149,9 +149,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 		ParticleManager.CreatePool("PS_EntityPCTrail", "Rewards", 5);
-	}
 
-	void Start()
+        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+    }
+
+    void Start()
 	{
 		if (m_animator != null)
 		{ 
@@ -253,14 +255,53 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				m_idleAudioAO = AudioController.Play( m_idleAudio, transform);
 			}
 		}
-	}
+/*
+        FireBreathNew breath = InstanceManager.player.gameObject.GetComponent<FireBreathNew>();
+        if ((m_entity == null || m_entity.IsBurnable()) && (breath.type == DragonBreathBehaviour.Type.Standard || breath.type == DragonBreathBehaviour.Type.Super))
+        {
+            entityTint(true);
+        }
+*/
+    }
 
+/*
+    void OnEnable()
+    {
+        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+    }
+*/
 	void OnDisable() {
-		if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
+        Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
 			m_idleAudioAO.Stop();
 	}
 
-	protected virtual void Update() {
+
+    void entityTint(bool value)
+    {
+        foreach (KeyValuePair<int, Material[]> mats in m_materials)
+        {
+            foreach (Material mat in mats.Value)
+            {
+                mat.SetColor("_Tint", value ? Color.red : Color.white);
+            }
+        }
+
+    }
+
+    void OnFuryToggled(bool _active, DragonBreathBehaviour.Type type)
+    {
+/*
+        if (m_entity == null || m_entity.IsBurnable())
+        {
+            entityTint(_active);
+        }
+*/
+    }
+
+
+
+    protected virtual void Update() {
 		if (m_animator != null) {
 			if (m_hasNavigationLayer) {
 				m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, 3f * Time.deltaTime, 0.2f);
