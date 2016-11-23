@@ -158,7 +158,7 @@ public class MenuDragonPaginator : TabSystem {
 			if(DragonManager.dragonsByOrder[i].tier == _tier) {
 				// Yes!! Select it and return
 				MenuDragonScreenController screenController = InstanceManager.GetSceneController<MenuSceneController>().GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>();
-				screenController.dragonSelector.SetSelectedDragon(i);
+				screenController.dragonSelector.SelectItem(i);
 				return;
 			}
 		}
