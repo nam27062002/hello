@@ -33,6 +33,7 @@ public class MachineEatBehaviour : EatBehaviour {
 		{
 			m_canLatchOnPlayer = false;	
 			m_canEatEntities = true;
+			AddToIgnoreList("goodJunk");
 		}
 		else
 		{
