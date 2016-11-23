@@ -49,7 +49,7 @@ namespace AI {
 				m_pilot.Avoid(m_machine.GetSignal(Signals.Type.Warning));
 
 				if (m_machine.GetSignal(Signals.Type.Critical)) {
-					m_pilot.SetBoostSpeed(m_data.panicSpeed, false);
+					m_pilot.SetBoostSpeed(m_data.panicSpeed);
 				} else {
 					m_pilot.SetBoostSpeed(m_data.boostSpeed);
 				}
