@@ -12,6 +12,7 @@ public class DragonEatBehaviour : EatBehaviour {
     private float m_eatingSpeed = -1;
     public Range m_randomSpeedRange = new Range(1.0f, 1.5f);
 	private float m_randomSpeed = 1;
+	private const float m_boostEatingSpeed = 1.5f;
     //--------------
 
     override protected void Awake()
@@ -78,7 +79,7 @@ public class DragonEatBehaviour : EatBehaviour {
 			}
 			else
 			{
-				eatSpeed = m_dragonBoost.boostMultiplier;
+				eatSpeed = m_boostEatingSpeed;
 			}
 		}
 		eatSpeed *= m_randomSpeed;

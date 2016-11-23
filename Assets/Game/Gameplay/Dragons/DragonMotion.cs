@@ -203,11 +203,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	RaycastHit m_raycastHit = new RaycastHit();
 
 	private float m_introTimer;
-	private const float m_introDuration = 3;
+	private const float m_introDuration = 2.5f;
 	private Vector3 m_introTarget;
 	private Vector3 m_destination;
-	private float m_introDisplacement = 60;
-
+	private float m_introDisplacement = 100;
+	public float introDisplacement{ get{return m_introDisplacement;} }
+	public AnimationCurve m_introDisplacementCurve;
+	public float m_introStopAnimationDelta = 0.1f;
 
 	private Transform m_preyPreviousTransformParent;
 	private AI.Machine m_holdPrey = null;
@@ -468,6 +470,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
+		if ( Input.GetKeyDown(KeyCode.I) )
+			StartIntroMovement( m_introTarget );
+
 		switch (m_state) {
 			case State.Idle:
 				if (m_controls.moving) {
@@ -746,9 +751,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					ChangeState( State.Idle );
 				}else{	
 					float delta = m_introTimer / m_introDuration;
-					m_destination = Vector3.left * m_introDisplacement * delta;//Mathf.Sin( delta * Mathf.PI * 0.5f);
+					m_destination = Vector3.left * m_introDisplacement * m_introDisplacementCurve.Evaluate(1.0f - delta);
 					m_destination += m_introTarget;
 					m_rbody.MovePosition( m_destination );
+					if ( delta < m_introStopAnimationDelta )
+					{
+						m_animator.SetBool("boost", false);
+						m_animator.SetBool("move", false);
+					}
 				}
 
 			}break;

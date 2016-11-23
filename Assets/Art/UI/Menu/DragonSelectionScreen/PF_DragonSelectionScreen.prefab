@@ -520,7 +520,7 @@ MonoBehaviour:
   m_showIfLocked: 1
   m_showIfAvailable: 1
   m_showIfOwned: 1
-  m_hideForDragons: 1
+  m_hideForDragons: 2
   m_restartShowAnimation: 0
 --- !u!114 &11410068
 MonoBehaviour:
@@ -734,7 +734,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 11433254}
-        m_MethodName: SelectNextDragon
+        m_MethodName: SelectNextItem
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -858,6 +858,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14fc5f281d3bf4dfaaf60ae04f03e8cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_items: []
+  m_selectedIdx: 0
 --- !u!114 &11434064
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5332,7 +5334,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 11433254}
-        m_MethodName: SelectPreviousDragon
+        m_MethodName: SelectPreviousItem
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
