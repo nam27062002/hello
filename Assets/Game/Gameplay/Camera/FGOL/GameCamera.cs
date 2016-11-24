@@ -307,15 +307,21 @@ public class GameCamera : MonoBehaviour
 		}
 		else
 		{
-			MoveToSpawnPos(InstanceManager.player.data.def.sku);
-			SetTargetObject( InstanceManager.player.gameObject );
-			m_state = State.INTRO;
-			m_introTimer = m_introDuration;
-			m_introPosition = m_position;
-			m_position += Vector3.left * m_introDisplacement;
+			StartIntro();
 		}
 
 		UpdateBounds();
+	}
+
+	void StartIntro()
+	{
+		MoveToSpawnPos(InstanceManager.player.data.def.sku);
+		SetTargetObject( InstanceManager.player.gameObject );
+		m_state = State.INTRO;
+		m_introTimer = m_introDuration;
+		m_introPosition = m_position;
+		m_introDisplacement = InstanceManager.player.dragonMotion.introDisplacement;
+		m_position += Vector3.left * m_introDisplacement * m_introMoveCurve.Evaluate(0);
 	}
 
 	private void MoveToSpawnPos( string sku )
@@ -484,7 +490,7 @@ public class GameCamera : MonoBehaviour
 				m_frameLargestBossWithPlayer = bca.frameMeAndPlayer;
 			}
 			m_prevNumBosses = m_bossCamAffectors.Count;
-			m_haveBoss = true;
+			m_haveBoss = false;
 			m_bossCamAffectors.Add(bca);
 		}
 	}
@@ -561,6 +567,9 @@ public class GameCamera : MonoBehaviour
 
 	void PlayUpdate()
 	{
+		if ( Input.GetKeyDown(KeyCode.I) )
+			StartIntro();
+
 		float dt = Time.deltaTime;
 		Vector3 targetPosition;
 
