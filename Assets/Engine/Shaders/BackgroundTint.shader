@@ -11,7 +11,7 @@
 
 		Pass{
 			Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
-/*
+
 			Stencil
 			{
 				Ref 5
@@ -19,7 +19,9 @@
 				Pass keep
 				ZFail keep
 			}
-*/
+
+//			Cull off
+
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -63,6 +65,7 @@
 				Pass keep
 				ZFail keep
 			}
+//			Cull off
 
 			CGPROGRAM
 			#pragma vertex vert_img
