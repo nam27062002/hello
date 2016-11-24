@@ -96,7 +96,6 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
-
 		// Only if enabled!
 		if(!m_enabled) return;
 		if(m_spawnersTree == null) return;
@@ -227,7 +226,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
                 
                 // If the spawner is in the deactivation area then its respawning stuff has to be undone as the units respawned would be destroyed anyway             
                 if (m_newCamera.IsInsideDeactivationArea(sp.transform.position))
-                {
+                {                    
                     sp.ForceRemoveEntities();
                     m_spawning.RemoveAt(0);
                 }
@@ -260,16 +259,16 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
         return returnValue;
     }
 
-	//------------------------------------------------------------------------//
-	// PUBLIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Add a spawner to the manager.
-	/// </summary>
-	/// <param name="_spawner">The spawner to be added.</param>
-	public void Register(ISpawner _spawner) {
+    //------------------------------------------------------------------------//
+    // PUBLIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Add a spawner to the manager.
+    /// </summary>
+    /// <param name="_spawner">The spawner to be added.</param>    
+    public void Register(ISpawner _spawner, bool _addToTree) {
 		m_spawners.Add(_spawner);
-		if(m_spawnersTree != null) m_spawnersTree.Insert(_spawner);
+		if(m_spawnersTree != null && _addToTree) m_spawnersTree.Insert(_spawner);
 		_spawner.Initialize();
 	}
 
@@ -277,9 +276,9 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	/// Remove a spawner from the manager.
 	/// </summary>
 	/// <param name="_spawner">The spawner to be removed.</param>
-	public void Unregister(ISpawner _spawner) {
+	public void Unregister(ISpawner _spawner, bool _removeFromTree) {
 		m_spawners.Remove(_spawner);
-		if(m_spawnersTree != null) m_spawnersTree.Remove(_spawner);
+		if(m_spawnersTree != null && _removeFromTree) m_spawnersTree.Remove(_spawner);
 	}
 
 	/// <summary>
@@ -297,7 +296,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Clear spawners
 		m_enabled = false;
 		for (int i = 0; i < m_spawners.Count; i++) {
-			m_spawners[i].ForceRemoveEntities();
+			m_spawners[i].Clear();
 		}
 		m_selectedSpawners.Clear();        
     }
@@ -417,6 +416,54 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
     private void Debug_SetActive() {
 		m_enabled = Prefs.GetBoolPlayer(DebugSettings.INGAME_SPAWNERS);        
-    }  
+    }
     #endregion
+
+    #region profiler
+    private static float sm_totalLogicUnits = 0f;
+    public static float totalLogicUnitsSpawned
+    {
+        get
+        {
+            return sm_totalLogicUnits;
+        }
+    }
+
+    private static int sm_totalEntities = 0;
+    public static int totalEntities
+    {
+        get
+        {
+            return sm_totalEntities;
+        }
+    }
+
+    public static void AddToTotalLogicUnits(int amount, string prefabStr)
+    {
+        float logicUnitsCoef = 1f;
+        ProfilerSettings settings = ProfilerSettingsManager.SettingsCached;
+        if (settings != null)
+        {
+            logicUnitsCoef = (string.IsNullOrEmpty(prefabStr)) ? 1 :  settings.GetLogicUnits(prefabStr);
+        }
+
+        sm_totalEntities += amount;
+        sm_totalLogicUnits += logicUnitsCoef * amount;
+        if (sm_totalLogicUnits < 0f)
+        {
+            sm_totalLogicUnits = 0f;
+        }
+    }
+
+    public static void RemoveFromTotalLogicUnits(int amount, string prefabStr)
+    {
+        AddToTotalLogicUnits(-amount, prefabStr);
+    }
+
+    public static void ResetTotalLogicUnitsSpawned()
+    {
+        sm_totalLogicUnits = 0f;
+        sm_totalEntities = 0;
+    }
+    #endregion        
 }
