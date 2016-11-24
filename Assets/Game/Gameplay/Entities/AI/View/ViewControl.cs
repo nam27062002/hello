@@ -154,7 +154,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 		ParticleManager.CreatePool("PS_EntityPCTrail", "Rewards", 5);
 
-//        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+
     }
 
     void Start()
@@ -168,8 +169,6 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			}
 		}
 
-        m_dragonBreath = InstanceManager.player.gameObject.GetComponent<FireBreathNew>();
-        m_lastType = DragonBreathBehaviour.Type.None;
     }
 
 	protected virtual void animEventsOnAttackStart() {
@@ -262,23 +261,24 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				m_idleAudioAO = AudioController.Play( m_idleAudio, transform);
 			}
 		}
-/*
-        FireBreathNew breath = InstanceManager.player.gameObject.GetComponent<FireBreathNew>();
-        if ((m_entity == null || m_entity.IsBurnable()) && (breath.type == DragonBreathBehaviour.Type.Standard || breath.type == DragonBreathBehaviour.Type.Super))
-        {
-            entityTint(true);
-        }
-*/
+
+        entityTint(false);
+        m_lastType = DragonBreathBehaviour.Type.None;
+        checkTint();
     }
 
-/*
-    void OnEnable()
+    /*
+        void OnEnable()
+        {
+            Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        }
+    */
+    void OnDestroy()
     {
-        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
     }
-*/
-	void OnDisable() {
-//        Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+
+    void OnDisable() {
         if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
 			m_idleAudioAO.Stop();
 	}
@@ -296,17 +296,39 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         }
 
     }
-    /*
-        void OnFuryToggled(bool _active, DragonBreathBehaviour.Type type)
+
+    void OnFuryToggled(bool _active, DragonBreathBehaviour.Type type)
+    {
+        /*
+                if (m_entity == null || m_entity.IsBurnable())
+                {
+                    checkTint();
+                }
+        */
+        entityTint(_active);
+    }
+
+
+    void checkTint()
+    {
+        if (m_dragonBreath == null)
         {
-            if (m_entity == null || m_entity.IsBurnable())
+            m_dragonBreath = InstanceManager.player.gameObject.GetComponent<DragonBreathBehaviour>();
+        }
+
+        if (m_dragonBreath.type != m_lastType)
+        {
+            m_lastType = m_dragonBreath.type;
+            if (m_lastType == DragonBreathBehaviour.Type.None)
             {
-                entityTint(_active);
+                entityTint(false);
             }
         }
-    */
-
-
+        if (m_lastType != DragonBreathBehaviour.Type.None)
+        {
+            entityTint(true);
+        }
+    }
 
     protected virtual void Update() {
 		if (m_animator != null) {
@@ -328,20 +350,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 
-        if (m_dragonBreath.type != m_lastType)
-        {
-            m_lastType = m_dragonBreath.type;
-
-            if (m_lastType == DragonBreathBehaviour.Type.None)
-            {
-                entityTint(false);
-            }
-        }
         if (m_lastType != DragonBreathBehaviour.Type.None)
         {
             entityTint(true);
         }
-
     }
 
 	// Queries

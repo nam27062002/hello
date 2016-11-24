@@ -192,14 +192,14 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 
         if (m_entitiesCounter != null && ProfilerSettingsManager.ENABLED)
         {
-            int value = Spawner.totalEntities;
+            int value = SpawnerManager.totalEntities;
             // The string is taken from this array to prevent memory from being generated every tick
             m_entitiesCounter.text = IntegerToString(value);
         }
 
         if (m_logicUnitsCounter != null && ProfilerSettingsManager.ENABLED)
         {
-            int value = (int)Spawner.totalLogicUnitsSpawned;
+            int value = (int)SpawnerManager.totalLogicUnitsSpawned;
             // The string is taken from this array to prevent memory from being generated every tick
             m_logicUnitsCounter.text = IntegerToString(value);            
         }

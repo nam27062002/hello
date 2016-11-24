@@ -6,140 +6,128 @@ public class CageSpawner : AbstractSpawner {
 
 	[Serializable]
 	public class Group {
-		public GameObject[] entityPrefabs;
+        [EntityPrefabListAttribute]
+        public string[] m_entityPrefabsStr;
 	}
 
 	[SeparatorAttribute("Spawn")]
 	[SerializeField] private Group[]	m_groups;
 	[SerializeField] private Range		m_scale = new Range(1f, 1f);
 	[SerializeField] private Vector3	m_spawnPosition = Vector3.zero;
-
-	private GameObject[] m_entities; // list of alive entities
+	
 	private Transform[] m_parents;
 
-	private AreaBounds m_areaBounds = new RectAreaBounds(Vector3.zero, Vector3.one);
+    private uint m_maxEntities;	
 
-	//---------------------------------------------------------------------------------------------------------	
-	public override AreaBounds area 				{ get { return m_areaBounds; } set { m_areaBounds = value; } }
+    //---------------------------------------------------------------------------------------------------------    
+    // AbstractSpawner implementation
+    //-------------------------------------------------------------------	
 
-    //---------------------------------------------------------------------------------------------------------
-    protected override void StartExtended() { 
-        m_rect = new Rect((Vector2)transform.position, Vector2.zero);
-	}
+    private AreaBounds m_areaBounds = new RectAreaBounds(Vector3.zero, Vector3.one);
+    public override AreaBounds area { get { return m_areaBounds; } set { m_areaBounds = value; } }
 
-	public override void Initialize() {
-		int maxEntities = 0;
+    protected override void OnStart() {
+        m_maxEntities = 0;
+        for (int g = 0; g < m_groups.Length; g++) {
+            m_maxEntities = (uint)Mathf.Max(m_maxEntities, m_groups[g].m_entityPrefabsStr.Length);            
+        }
 
-		for (int g = 0; g < m_groups.Length; g++) {
-			maxEntities = Mathf.Max(maxEntities, m_groups[g].entityPrefabs.Length);
+        // Progressive respawn disabled because it respawns only one instance and it's triggered by CageBehaviour which is not prepared to loop until Respawn returns true
+        UseProgressiveRespawn = false;
+        UseSpawnManagerTree = false;
 
-			for (int e = 0; e < m_groups[g].entityPrefabs.Length; e++) {
-				PoolManager.CreatePool(m_groups[g].entityPrefabs[e], 15, true);
+        if (m_maxEntities > 0) {
+            RegisterInSpawnerManager();
+        }
+    }
+
+    protected override uint GetMaxEntities() {
+        return m_maxEntities;
+    }
+
+    protected override void OnInitialize() {                
+        string prefabName;
+        for (int g = 0; g < m_groups.Length; g++) {			
+			for (int e = 0; e < m_groups[g].m_entityPrefabsStr.Length; e++) {
+                prefabName = m_groups[g].m_entityPrefabsStr[e];
+
+                // TODO[MALH]: Get path relative to quality version
+                PoolManager.CreatePool(prefabName, IEntity.ENTITY_PREFABS_PATH + prefabName, 1, true);                
 			}
 		}
 
-		if (maxEntities > 0f) {
-			m_entities = new GameObject[maxEntities];
-			m_parents = new Transform[maxEntities];
-		}
-	}
-
-	public void SetEntitiesFree() {
-		for (int i = 0; i < m_entities.Length; i++) {			
-			if (m_entities[i] != null) {
-				m_entities[i].transform.parent = m_parents[i];
-
-				// change state in machine
-				m_entities[i].GetComponent<AI.IMachine>().UnlockFromCage();
-			}
+		if (m_maxEntities > 0f) {            			
+			m_parents = new Transform[m_maxEntities];
 		}
 	}    
 
-    public override void ForceRemoveEntities() {
+    protected override void OnPrepareRespawning() {
+        GroupIndexToSpawn = (uint)UnityEngine.Random.Range(0, m_groups.Length);        
+        int count = m_entities.Length;
+        for (int i = 0; i < count; i++)
+        {
+            m_entities[i] = null;
+            m_parents[i] = null;
+        }
+    }
+
+    protected override uint GetEntitiesAmountToRespawn() {
+        return (uint)m_groups[GroupIndexToSpawn].m_entityPrefabsStr.Length;
+    }                            
+
+    protected override string GetPrefabNameToSpawn(uint index) {
+        return m_groups[GroupIndexToSpawn].m_entityPrefabsStr[index];
+    }
+
+    protected override void OnCreateInstance(uint index, GameObject go) {        
+        m_parents[index] = go.transform.parent;        
+    }
+
+    protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
+        Vector3 pos = originPos + m_spawnPosition;
+        if (index > 0)
+        {
+            pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
+        }
+
+        Transform t = spawning.transform;
+        t.position = pos;
+        t.localScale = Vector3.one * m_scale.GetRandom();
+        t.parent = transform;        
+    }
+
+    protected override void OnMachineSpawned(AI.Machine machine) {
+        machine.LockInCage();
+    }
+
+    protected override void OnRemoveEntity(GameObject _entity, int index) {
+        m_entities[index].transform.parent = m_parents[index];
+        m_parents[index] = null;
+    }
+    //---------------------------------------------------------------------------------------------------------   
+
+    public void SetEntitiesFree() {
         for (int i = 0; i < m_entities.Length; i++) {
             if (m_entities[i] != null) {
-                RemoveEntity(m_entities[i], false);
-            }
-        }
-    }
-
-    protected override bool RemoveEntityExtended(GameObject _entity, bool _killedPlayer) {
-        bool returnValue = false;
-        for (int i = 0; i < m_entities.Length && !returnValue; i++) {
-            if (m_entities[i] == _entity) {
                 m_entities[i].transform.parent = m_parents[i];
-                returnValue = true;
-                m_entities[i] = null;
-                m_parents[i] = null;
+
+                // change state in machine
+                m_entities[i].GetComponent<AI.IMachine>().UnlockFromCage();
             }
         }
-
-        return returnValue;
     }
-        
-    public override bool CanRespawn() 	{ return true; }
-	public override bool Respawn()		{ Spawn(); return true; }
 
-	//---------------------------------------------------------------------------------------------------------
+    private uint GroupIndexToSpawn { get; set; }
 
-	private void Spawn() {
-		for (int i = 0; i < m_entities.Length; i++) {
-			m_entities[i] = null;
-			m_parents[i] = null;
-		}
+    private Vector3 RandomStartDisplacement() {
+        return Vector3.right * UnityEngine.Random.Range(-1f, 1f) * 0.5f;
+    }
 
-		// choose one group
-		int groupIndex = UnityEngine.Random.Range(0, m_groups.Length);
-		int entitiesSpawned = m_groups[groupIndex].entityPrefabs.Length;
+    //
+    void OnDrawGizmosSelected() {
+        Gizmos.color = Colors.coral;
+        Gizmos.DrawSphere(transform.position + m_spawnPosition, 0.5f);
+    }
 
-		for (int i = 0; i < entitiesSpawned; i++) {			
-			m_entities[i] = PoolManager.GetInstance(m_groups[groupIndex].entityPrefabs[i].name);
-			m_parents[i] = m_entities[i].transform.parent;
-		}
-
-		for (int i = 0; i < entitiesSpawned; i++) {			
-			GameObject spawning = m_entities[i];
-
-			Vector3 pos = transform.position + m_spawnPosition;
-			if (i > 0) {
-				pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
-			}
-
-			spawning.transform.position = pos;
-			spawning.transform.localScale = Vector3.one * m_scale.GetRandom();
-
-			Entity entity = spawning.GetComponent<Entity>();
-			if (entity != null) {
-				entity.Spawn(this); // lets spawn Entity component first
-			}
-
-			AI.AIPilot pilot = spawning.GetComponent<AI.AIPilot>();
-			if (pilot != null) {
-				pilot.Spawn(this);
-			}
-
-			ISpawnable[] components = spawning.GetComponents<ISpawnable>();
-			foreach (ISpawnable component in components) {
-				if (component != entity && component != pilot) {
-					component.Spawn(this);
-				}
-			}
-
-			spawning.transform.parent = transform;
-			spawning.GetComponent<AI.IMachine>().LockInCage();
-		}
-	}
-
-	private Vector3 RandomStartDisplacement() {
-		return Vector3.right * UnityEngine.Random.Range(-1f, 1f) * 0.5f;
-	}
-
-
-	//
-	void OnDrawGizmosSelected() {
-		Gizmos.color = Colors.coral;
-		Gizmos.DrawSphere(transform.position + m_spawnPosition, 0.5f);
-	}
-
-	public override void DrawStateGizmos() {}
+    //-------------------------------------------------------------------
 }
