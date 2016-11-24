@@ -307,15 +307,21 @@ public class GameCamera : MonoBehaviour
 		}
 		else
 		{
-			MoveToSpawnPos(InstanceManager.player.data.def.sku);
-			SetTargetObject( InstanceManager.player.gameObject );
-			m_state = State.INTRO;
-			m_introTimer = m_introDuration;
-			m_introPosition = m_position;
-			m_position += Vector3.left * m_introDisplacement;
+			StartIntro();
 		}
 
 		UpdateBounds();
+	}
+
+	void StartIntro()
+	{
+		MoveToSpawnPos(InstanceManager.player.data.def.sku);
+		SetTargetObject( InstanceManager.player.gameObject );
+		m_state = State.INTRO;
+		m_introTimer = m_introDuration;
+		m_introPosition = m_position;
+		m_introDisplacement = InstanceManager.player.dragonMotion.introDisplacement;
+		m_position += Vector3.left * m_introDisplacement * m_introMoveCurve.Evaluate(0);
 	}
 
 	private void MoveToSpawnPos( string sku )
@@ -561,6 +567,9 @@ public class GameCamera : MonoBehaviour
 
 	void PlayUpdate()
 	{
+		if ( Input.GetKeyDown(KeyCode.I) )
+			StartIntro();
+
 		float dt = Time.deltaTime;
 		Vector3 targetPosition;
 
@@ -632,32 +641,40 @@ public class GameCamera : MonoBehaviour
 
 		float frameWidth = m_frameWidthDefault;
 
-		if(m_targetMachine != null)
-        {
-            // MachineFish machineFish = m_targetObject.GetComponent<MachineFish>();
-            if(/*(machineFish != null) &&*/ !m_haveBoss)
-            {
-                // frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, machineFish.howFast);
-				frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
-            }
-        }
+
 
 		frameWidth += m_frameWidthIncrement;
 
 		if ( PlayingIntro() )
 		{
 			frameWidth *= m_introFrameWidthMultiplier.Evaluate( 1.0f - (m_introTimer/m_introDuration) );
+			m_snap = true;
+			UpdateZooming(frameWidth, false);
 		}
-		else if(m_hasSlowmo)
+		else
 		{
-			frameWidth -= m_frameWidthDecrement;
-		}
-		else if(m_haveBoss)
-		{
-			frameWidth += m_largestBossFrameIncrement;
+			if(m_targetMachine != null)
+	        {
+	            // MachineFish machineFish = m_targetObject.GetComponent<MachineFish>();
+	            if(/*(machineFish != null) &&*/ !m_haveBoss)
+	            {
+	                // frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, machineFish.howFast);
+					frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
+	            }
+	        }
+
+			if(m_hasSlowmo)
+			{
+				frameWidth -= m_frameWidthDecrement;
+			}
+			else if(m_haveBoss)
+			{
+				frameWidth += m_largestBossFrameIncrement;
+			}
+
+			UpdateZooming(frameWidth, m_haveBoss);
 		}
 
-		UpdateZooming(frameWidth, m_haveBoss);
 
 		UpdateCameraShake();
 		UpdateValues();

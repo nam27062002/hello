@@ -111,7 +111,7 @@ namespace AI {
 								onRange = m < m_data.arrivalRadius * m_data.arrivalRadius;
 								if (m_data.hasGuardState) {
 									m = Mathf.Abs(m_machine.eye.x - m_target.position.x);
-									onGuardArea = m <= 1f;
+									onGuardArea = m <= m_pilot.speed * Time.deltaTime;
 								}
 							} else {
 								onRange = m_machine.GetSignal(Signals.Type.Danger);

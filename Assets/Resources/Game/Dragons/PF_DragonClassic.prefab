@@ -434,7 +434,7 @@ Transform:
   m_GameObject: {fileID: 127870}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.235, y: -0.799, z: 0}
-  m_LocalScale: {x: 50, y: 50, z: 1}
+  m_LocalScale: {x: 10, y: 10, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 485292}
@@ -514,7 +514,7 @@ Transform:
   m_GameObject: {fileID: 149998}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 1}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalScale: {x: 4, y: 4, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 448874}
@@ -786,6 +786,28 @@ MonoBehaviour:
   m_dragonMass: 10
   m_dragonFricction: 15
   m_dragonGravityModifier: 10
+  m_introDisplacementCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0.0008605852
+      value: 1.0044247
+      inSlope: -1.1399102
+      outSlope: -1.1399102
+      tangentMode: 10
+    - time: 0.83798313
+      value: 0.05018016
+      inSlope: -0.8308169
+      outSlope: -0.8308169
+      tangentMode: 0
+    - time: 0.99827886
+      value: 0.00000011920929
+      inSlope: 0.045635603
+      outSlope: 0.045635603
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  m_introStopAnimationDelta: 0.15
 --- !u!114 &11440808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1100,7 +1122,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 0abd3b840028844e4ae84580f2416958, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e64ccb956f450604590f46787b9d4ff2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
