@@ -31,7 +31,7 @@ namespace AI {
 			m_machine.SetSignal(Signals.Type.Chewing, true);
 
 			if (EntityManager.instance != null)
-				EntityManager.instance.Unregister(m_entity as Entity);
+				EntityManager.instance.UnregisterEntity(m_entity as Entity);
 		}
 
 		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer) {			
