@@ -457,6 +457,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_blendSpeedFactor: 1
+  m_energy: 10
+  m_energyDrainSec: 1
   m_brainResource: {fileID: 11400000, guid: 0f4b55188281b4dc38577a13aeb9fe87, type: 2}
   m_railSeparation:
     min: 0.5
@@ -464,11 +466,11 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":7,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":5,"restUpsideDown":true,"teleport":true,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":5,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":0,"restUpsideDown":true,"teleport":true,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false}]'
   m_databaseKey: PF_BatSmall
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
-  m_avoidWater: 0
+  m_avoidWater: 1
 --- !u!114 &11477590
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -502,6 +504,7 @@ MonoBehaviour:
     m_sightRadius: 8
     m_maxRadius: 4.32
     m_minRadius: 1.81
+    m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
