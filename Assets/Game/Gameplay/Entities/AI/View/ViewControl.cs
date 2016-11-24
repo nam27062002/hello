@@ -308,6 +308,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
                 }
         */
         entityTint(_active);
+        m_lastType = _active ? type : DragonBreathBehaviour.Type.None;
+
     }
 
 

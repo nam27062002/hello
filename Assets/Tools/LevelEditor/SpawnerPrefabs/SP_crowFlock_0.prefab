@@ -11,7 +11,7 @@ GameObject:
   - 114: {fileID: 11434038}
   - 114: {fileID: 11410184}
   - 114: {fileID: 11444354}
-  - 114: {fileID: 114000010025256360}
+  - 114: {fileID: 114000011343048424}
   m_Layer: 0
   m_Name: SP_crowFlock_0
   m_TagString: Untagged
@@ -68,7 +68,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 119230, guid: 68b0ff3798ab34b5bb6371b5b0185542, type: 2}
   m_entityPrefabStr: Air/PF_Crow
   m_quantity:
     min: 5
@@ -80,12 +79,15 @@ MonoBehaviour:
   m_flockBonus: 25
   m_minTier: 0
   m_activationChance: 100
-  m_alwaysActive: 0
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
     min: 0
     max: 0
+  m_homePosMethod: 0
+  m_homePosDistance:
+    min: 1
+    max: 2
   m_maxSpawns: 0
 --- !u!1001 &100100000
 Prefab:
@@ -98,7 +100,7 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 128360}
   m_IsPrefabParent: 1
---- !u!114 &114000010025256360
+--- !u!114 &114000011343048424
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -106,14 +108,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 128360}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
+  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_circular: 1
-  m_smoothRadius: 0.5
-  m_points:
-  - {x: -7.2144775, y: -2.9647217, z: 0}
-  - {x: 1.9526825, y: -4.3582, z: 0}
-  - {x: 6.3434067, y: 1.2725525, z: 0}
-  - {x: 1.3645706, y: 6.0787506, z: 0}
-  - {x: -5.642128, y: 3.9743652, z: 0}
+  m_guideFunction: 0
+  m_innerRadius: 10
+  m_outterRadius: 20
+  m_targetDistance: 5
+  m_depthAmplitude: 0
+  m_depthFrequency: 0
+  m_scale: {x: 1, y: 1, z: 1}
+  m_rotation: {x: 0, y: 0, z: 0}
+  m_boundsScale: {x: 0, y: 0, z: 0}
+  m_forcePreview: 0
+  m_previewStep: 0.1
+  m_previewMaxTime: 60

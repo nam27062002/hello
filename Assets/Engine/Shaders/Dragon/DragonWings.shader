@@ -26,7 +26,7 @@ SubShader {
 	Blend SrcAlpha OneMinusSrcAlpha 
 	Cull Off
 //	Cull Front
-	ColorMask RGBA
+//	ColorMask RGBA
 	
 	Pass {
 
@@ -108,7 +108,7 @@ SubShader {
 			{
 				fixed4 main = tex2D(_MainTex, i.texcoord);
 
-//				clip(main.a - _Cutoff);
+				clip(main.a - _Cutoff);
 
 				fixed4 detail = tex2D(_DetailTex, i.texcoord);
 

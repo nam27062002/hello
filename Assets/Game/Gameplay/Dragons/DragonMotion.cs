@@ -66,7 +66,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	Animator  				m_animator;
 	FlyLoopBehaviour		m_flyLoopBehaviour;
 	DragonPlayer			m_dragon;
-	DragonHealthBehaviour	m_health;
+	// DragonHealthBehaviour	m_health;
 	DragonControl			m_controls;
 	DragonAnimationEvents 	m_animationEventController;
 	DragonParticleController m_particleController;
@@ -206,8 +206,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private const float m_introDuration = 2.5f;
 	private Vector3 m_introTarget;
 	private Vector3 m_destination;
-	private float m_introDisplacement = 100;
-	public float introDisplacement{ get{return m_introDisplacement;} }
+	private const float m_introDisplacement = 75;
+	public float introDisplacement{ get{return m_introDisplacement * transform.localScale.x;} }
 	public AnimationCurve m_introDisplacementCurve;
 	public float m_introStopAnimationDelta = 0.1f;
 
@@ -245,7 +245,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_animator			= transform.FindChild("view").GetComponent<Animator>();
 		m_flyLoopBehaviour	= m_animator.GetBehaviour<FlyLoopBehaviour>();
 		m_dragon			= GetComponent<DragonPlayer>();
-		m_health			= GetComponent<DragonHealthBehaviour>();
+		// m_health			= GetComponent<DragonHealthBehaviour>();
 		m_controls 			= GetComponent<DragonControl>();
 		m_animationEventController = GetComponentInChildren<DragonAnimationEvents>();
 		m_particleController = GetComponentInChildren<DragonParticleController>();
@@ -751,7 +751,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					ChangeState( State.Idle );
 				}else{	
 					float delta = m_introTimer / m_introDuration;
-					m_destination = Vector3.left * m_introDisplacement * m_introDisplacementCurve.Evaluate(1.0f - delta);
+					m_destination = Vector3.left * introDisplacement * m_introDisplacementCurve.Evaluate(1.0f - delta);
 					m_destination += m_introTarget;
 					m_rbody.MovePosition( m_destination );
 					if ( delta < m_introStopAnimationDelta )
@@ -1282,20 +1282,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		get 
 		{
-			return (m_dragonForce * m_boostMultiplier / m_dragonFricction) * m_dragonMass;
+			return (m_dragonForce * m_boostMultiplier / m_dragonFricction) / m_dragonMass;
 		}
 	}
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
-
-	/*
-	public void OnImpact(Vector3 _origin, float _damage, float _intensity, Transform _source) {
-		// m_dragon.AddLife(-_damage);
-		m_health.ReceiveDamage(_damage, DamageType.NORMAL , _source, false);
-	}
-	*/
 
 	public void NoDamageImpact()
 	{
@@ -1412,7 +1405,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// </summary>
 	public void StartLatchedOnMovement()
 	{
-		m_latchedOnSpeedMultiplier = 0.1f;
+		m_latchedOnSpeedMultiplier = 0.4f;
 		m_latchedOn = true;
 	}
 
@@ -1428,7 +1421,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public void StartIntroMovement(Vector3 introTarget)
 	{
 		m_introTarget = introTarget;
-		m_transform.position = introTarget + Vector3.left * m_introDisplacement;
+		m_transform.position = introTarget + Vector3.left * introDisplacement;
 		m_introTimer = m_introDuration;
 		ChangeState(State.Intro);
 	}

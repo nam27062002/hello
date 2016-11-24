@@ -64,7 +64,7 @@ namespace LevelEditor {
 					}
 				}
 				*/
-				InstantiateSpawner( go, "IntroSpawners/SP_Test" );
+				InstantiateSpawner( go, "IntroSpawners/SP_Intro" );
 			}else{
 				GetDragonSpawnPoint("", true);
 			}

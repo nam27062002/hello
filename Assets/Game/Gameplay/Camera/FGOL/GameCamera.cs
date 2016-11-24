@@ -641,12 +641,9 @@ public class GameCamera : MonoBehaviour
 
 		float frameWidth = m_frameWidthDefault;
 
-
-
-		frameWidth += m_frameWidthIncrement;
-
 		if ( PlayingIntro() )
 		{
+			frameWidth += m_frameWidthIncrement;
 			frameWidth *= m_introFrameWidthMultiplier.Evaluate( 1.0f - (m_introTimer/m_introDuration) );
 			m_snap = true;
 			UpdateZooming(frameWidth, false);
@@ -662,7 +659,7 @@ public class GameCamera : MonoBehaviour
 					frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
 	            }
 	        }
-
+			frameWidth += m_frameWidthIncrement;
 			if(m_hasSlowmo)
 			{
 				frameWidth -= m_frameWidthDecrement;
