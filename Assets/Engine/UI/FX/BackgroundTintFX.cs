@@ -12,12 +12,21 @@ public class BackgroundTintFX : MonoBehaviour {
 
     private bool m_tintActive;
 
+    private Camera m_camera = null;
+    private RenderTexture m_renderTexture = null;
+
     // Use this for initialization
     void Start()
     {
         m_material = new Material(m_shader);
         setTint(m_Tint, m_Tint2);
-
+/*
+        m_camera = GetComponent<Camera>();
+        
+        m_renderTexture = new RenderTexture(Screen.width, Screen.height, 24);
+        m_renderTexture.Create();
+        m_camera.targetTexture = m_renderTexture;
+*/
         Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
     }
 
@@ -38,13 +47,17 @@ public class BackgroundTintFX : MonoBehaviour {
     }
 
     private RenderTexture m_buffer = null;
-
     // Postprocess the image
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+//        m_material.SetTexture("_MainTex", m_renderTexture);
+//        Graphics.SetRenderTarget(m_renderTexture.colorBuffer, destination.depthBuffer, 0);
+//        Graphics.Blit(m_renderTexture, destination, m_material);
+
         if (m_tintActive)
         {
-            m_buffer = RenderTexture.GetTemporary(source.width, source.height, 24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Default);
+//            m_buffer = RenderTexture.GetTemporary(source.width, source.height, 24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Default);
+            m_buffer = RenderTexture.GetTemporary(source.width, source.height, 24);
             //        Graphics.SetRenderTarget(m_buffer.colorBuffer, m_buffer.depthBuffer, 0);
             Graphics.SetRenderTarget(source.colorBuffer, source.depthBuffer, 0);
             //        setTint(m_Tint, m_Tint2);
@@ -59,32 +72,46 @@ public class BackgroundTintFX : MonoBehaviour {
             Graphics.Blit(source, destination);
         }
     }
-
 /*
     void OnPostRender()
     {
-//        m_material.SetTexture("_MainTex", m_buffer);
-        GL.PushMatrix();
+        m_material.SetTexture("_MainTex", m_renderTexture);
+        Graphics.Blit(m_renderTexture, null, m_material);
+        //        if (m_tintActive)
+        //            RenderTexture.ReleaseTemporary(m_buffer);
+    }
+            void OnPostRender()
+            {
+        //        m_material.SetTexture("_MainTex", m_buffer);
+                m_material.SetTexture("_MainTex", m_renderTexture);
+                setTint(m_Tint, m_Tint2);
 
-        m_material.SetPass(0);
+                GL.PushMatrix();
 
-        GL.LoadOrtho();
+                m_material.SetPass(0);
 
-        // draw a quad over whole screen
-        GL.Begin(GL.TRIANGLES);
-        GL.MultiTexCoord2(0, 0.0f, 0.0f);
-        GL.Vertex3(0, 0, 1);
-        GL.MultiTexCoord2(0, 1.0f, 0.0f);
-        GL.Vertex3(1, 0, 1);
-        GL.MultiTexCoord2(0, 1.0f, 1.0f);
-        GL.Vertex3(1, 1, 1);
-//        GL.MultiTexCoord2(0, 0.0f, 1.0f);
-//        GL.Vertex3(0, 1, 0);
-        GL.End();
+                GL.LoadOrtho();
 
-        GL.PopMatrix();
-        //        Debug.Log("Release background tint texture");
+                // draw a quad over whole screen
+                GL.Begin(GL.QUADS);
+                GL.Vertex3(0, 0, 0);
+                GL.MultiTexCoord2(0, 0.0f, 0.0f);
+                GL.Vertex3(1, 0, 0);
+                GL.MultiTexCoord2(0, 1.0f, 0.0f);
+                GL.Vertex3(1, 1, 0);
+                GL.MultiTexCoord2(0, 1.0f, 1.0f);
+                GL.Vertex3(0, 1, 0);
+                GL.MultiTexCoord2(0, 0.0f, 1.0f);
+                GL.End();
+
+                GL.PopMatrix();
+                //        Debug.Log("Release background tint texture");
+            }
+*/
+/*
+    void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        Graphics.Blit(m_renderTexture, destination, m_material, 0);
     }
 */
-
 }

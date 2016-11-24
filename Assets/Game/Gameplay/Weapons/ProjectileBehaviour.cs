@@ -15,7 +15,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 
 	private Transform m_oldParent = null;
 
-	private Vector2 m_targetCenter;
+	// private Vector2 m_targetCenter;
 	private ProjectileMotion m_pMotion;
 
 	public List<GameObject> m_activateOnShoot = new List<GameObject>();
@@ -66,7 +66,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 	}
 
 	public void Shoot(Transform _from, float _damage) {	
-		m_targetCenter = InstanceManager.player.transform.position;
+		// m_targetCenter = InstanceManager.player.transform.position;
 
 		if (m_oldParent) {
 			transform.parent = m_oldParent;
@@ -83,7 +83,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 	}
 
 	public void ShootAtPosition( Transform _from, float _damage, Vector3 _pos){
-		m_targetCenter = _pos;
+		// m_targetCenter = _pos;
 
 		if (m_oldParent) {
 			transform.parent = m_oldParent;
@@ -135,7 +135,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 			GameObject explosion = ParticleManager.Spawn( m_explosionParticle, transform.position);
 			if (explosion) {
 				// Random position within range
-				// explosion.transform.position = transform.position;			
+				// explosion.transform.position = transform.position;
 				// Random scale within range
 				explosion.transform.localScale = Vector3.one * m_scaleRange.GetRandom();			
 				// Random rotation within range
