@@ -39,4 +39,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		m_health = 0f;
 		gameObject.SetActive(false);
 	}
+
+    public virtual void LogicUpdate() {}
+    public virtual bool CanDieOutsideFrustrum() { return true; }
 }

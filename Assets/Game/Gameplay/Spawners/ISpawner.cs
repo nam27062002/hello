@@ -2,7 +2,8 @@
 
 public interface ISpawner : IQuadTreeItem {    
 	string name { get; }
-	void Initialize();    
+	void Initialize();
+    void Clear();
     void ForceRemoveEntities();
         
     bool CanRespawn();
