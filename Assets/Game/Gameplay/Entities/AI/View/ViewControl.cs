@@ -55,6 +55,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SeparatorAttribute("More Audios")]
 	[SerializeField] private string m_onAttackAudio;
 	private AudioObject m_onAttackAudioAO;
+	protected Vector3 m_attackTargetPosition;
+	public Vector3 attackTargetPosition { get{ return m_attackTargetPosition; } set{ m_attackTargetPosition = value; } }
 	[SerializeField] private string m_onScaredAudio;
 	[SerializeField] private string m_onPanicAudio;
 	[SerializeField] private string m_idleAudio;
