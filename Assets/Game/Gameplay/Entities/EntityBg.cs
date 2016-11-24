@@ -19,8 +19,6 @@ public class EntityBg : IEntity
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
 	}
 
-
-
 	public override void Disable(bool _destroyed) 
 	{
 		base.Disable( _destroyed );
