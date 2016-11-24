@@ -490,7 +490,7 @@ public class GameCamera : MonoBehaviour
 				m_frameLargestBossWithPlayer = bca.frameMeAndPlayer;
 			}
 			m_prevNumBosses = m_bossCamAffectors.Count;
-			m_haveBoss = false;
+			m_haveBoss = true;
 			m_bossCamAffectors.Add(bca);
 		}
 	}
@@ -641,32 +641,40 @@ public class GameCamera : MonoBehaviour
 
 		float frameWidth = m_frameWidthDefault;
 
-		if(m_targetMachine != null)
-        {
-            // MachineFish machineFish = m_targetObject.GetComponent<MachineFish>();
-            if(/*(machineFish != null) &&*/ !m_haveBoss)
-            {
-                // frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, machineFish.howFast);
-				frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
-            }
-        }
+
 
 		frameWidth += m_frameWidthIncrement;
 
 		if ( PlayingIntro() )
 		{
 			frameWidth *= m_introFrameWidthMultiplier.Evaluate( 1.0f - (m_introTimer/m_introDuration) );
+			m_snap = true;
+			UpdateZooming(frameWidth, false);
 		}
-		else if(m_hasSlowmo)
+		else
 		{
-			frameWidth -= m_frameWidthDecrement;
-		}
-		else if(m_haveBoss)
-		{
-			frameWidth += m_largestBossFrameIncrement;
+			if(m_targetMachine != null)
+	        {
+	            // MachineFish machineFish = m_targetObject.GetComponent<MachineFish>();
+	            if(/*(machineFish != null) &&*/ !m_haveBoss)
+	            {
+	                // frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, machineFish.howFast);
+					frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
+	            }
+	        }
+
+			if(m_hasSlowmo)
+			{
+				frameWidth -= m_frameWidthDecrement;
+			}
+			else if(m_haveBoss)
+			{
+				frameWidth += m_largestBossFrameIncrement;
+			}
+
+			UpdateZooming(frameWidth, m_haveBoss);
 		}
 
-		UpdateZooming(frameWidth, m_haveBoss);
 
 		UpdateCameraShake();
 		UpdateValues();
