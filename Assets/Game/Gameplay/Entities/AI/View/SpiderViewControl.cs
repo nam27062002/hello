@@ -9,6 +9,7 @@ public class SpiderViewControl : ViewControl {
 	[SerializeField] private GameObject m_onAttackParticleAnchor;
 
 	private bool m_hanging;
+	private AI.Behaviour.AttackRanged m_rangedAttack;
 
 	protected override void Awake()
 	{
@@ -58,7 +59,7 @@ public class SpiderViewControl : ViewControl {
 			if (go != null)
 			{
 				// go.transform.rotation = m_onAttackParticleAnchor.transform.rotation;
-				go.transform.LookAt( InstanceManager.player.transform );
+				go.transform.LookAt( attackTargetPosition );
 			}
 		}
 	}
