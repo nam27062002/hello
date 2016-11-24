@@ -17,8 +17,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private bool m_active;
 	private bool m_ready;
 
-	public List<GameObject> m_trails;
-    public List<XWeaponTrail> m_xweapontrail;
+	public List<ParticleSystem> m_particleTrails;
 
 
 	private bool m_trailsActive = false;
@@ -54,19 +53,6 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_boostMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
 		m_energyRequiredToBoost = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
 		m_energyRequiredToBoost *= m_dragon.data.def.GetAsFloat("energyMax");
-
-		/*
-		for( int i = 0; i<m_trails.Count; i++ )
-		{
-			TrailRenderer tr = m_trails[i].GetComponent<TrailRenderer>();
-			tr.sortingLayerName = "player";
-		}
-		*/
-
-        foreach (GameObject go in m_trails)
-        {
-            m_xweapontrail.Add(go.GetComponent<XWeaponTrail>());
-        }
 
 		DeactivateTrails();
 	}
@@ -163,21 +149,19 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_trailsActive = true;
         if (!m_insideWater)
         {
-            for (int i = 0; i < m_trails.Count; i++)
-            {
-                m_xweapontrail[i].Activate();
-                m_trails[i].SetActive(true);
-            }
+			for( int i = 0; i<m_particleTrails.Count; i++ )
+			{
+	            m_particleTrails[i].Play();
+			}
         }
 	}
 
 	public void DeactivateTrails()
 	{
 		m_trailsActive = false;
-		for( int i = 0; i<m_trails.Count; i++ )
+		for( int i = 0; i<m_particleTrails.Count; i++ )
 		{
-            m_xweapontrail[i].Deactivate();
-            m_trails[i].SetActive(false);
+            m_particleTrails[i].Stop();
 		}
 	}
 
