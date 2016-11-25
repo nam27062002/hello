@@ -399,7 +399,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 						m_animator.SetBool("fly down", true);
 					}
 					if ( m_state != State.Stunned ){
-	                    m_accWaterFactor = 0.60f;
+	                    m_accWaterFactor = 0.70f;
 	                    m_inverseGravityWater = 1.5f;
 						m_startParabolicPosition = transform.position;
 					}
