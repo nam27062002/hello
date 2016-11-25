@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -34,7 +35,14 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] private ResultsScreenProgressionPill m_progressionPill = null;
+	public ResultsScreenProgressionPill progressionPill {
+		get { return m_progressionPill; }
+	}
+
 	[SerializeField] private ResultsScreenMissionPill m_missionPill = null;
+	public ResultsScreenMissionPill missionPill {
+		get { return m_missionPill; }
+	}
 
 	// Internal Logic
 	private ResultsScreenCarouselPill m_currentPill = null;
@@ -115,8 +123,27 @@ public class ResultsScreenCarousel : MonoBehaviour {
 			case Step.MISSION_0:
 			case Step.MISSION_1:
 			case Step.MISSION_2: {
-				// Set mission difficulty to check whether it must be displayed or not
-				m_missionPill.difficulty = (Mission.Difficulty)(m_step - Step.MISSION_0);	// Quick correlation between Step and Mission.Difficulty enums
+				// Choose target mission
+				// Check cheats!
+				Mission targetMission = null;
+				if(CPResultsScreenTest.missionsMode == CPResultsScreenTest.MissionsTestMode.NONE) {
+					targetMission = MissionManager.GetMission((Mission.Difficulty)(m_step - Step.MISSION_0));	// Quick correlation between Step and Mission.Difficulty enums
+				} else {
+					// Display mission?
+					if((int)CPResultsScreenTest.missionsMode > (m_step - Step.MISSION_0)) {
+						// Yes! Create a fake temp mission
+						List<DefinitionNode> missionDefs = new List<DefinitionNode>();
+						DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.MISSIONS, ref missionDefs);
+						targetMission = new Mission();
+						targetMission.InitFromDefinition(missionDefs.GetRandomValue());
+
+						// Mark mission as completed
+						targetMission.objective.currentValue = targetMission.objective.targetValue;	// This will do it
+					}
+				}
+
+				// Initialize mission pill to check whether it must be displayed or not
+				m_missionPill.InitFromMission(targetMission);
 				if(m_missionPill.MustBeDisplayed()) {
 					// Hide current pill
 					HideCurrentPill();

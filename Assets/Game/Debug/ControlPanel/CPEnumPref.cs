@@ -50,12 +50,45 @@ public class CPEnumPref : CPPrefBase {
 	}
 
 	/// <summary>
+	/// Inits from enum.
+	/// </summary>
+	/// <param name="_propertyId">ID of the property to be used.</param>
+	/// <param name="_enumType">Enum type.</param>
+	/// <param name="_defaultValue">Default value if property doesn't have one.</param>
+	public void InitFromEnum(string _propertyId, Type _enumType, int _defaultValue) {
+		// Don't allow empty property id
+		if(string.IsNullOrEmpty(_propertyId)) return;
+
+		// If type is null, clear everything
+		if(_enumType == null) {
+			m_enumTypeName = "";
+			m_enumType = null;
+			m_enumValues = null;
+		} else {
+			// Ignore if given type is not an enum
+			if(!_enumType.IsEnum) return;
+
+			// Update internal vars
+			m_id.id = _propertyId;
+			m_enumTypeName = _enumType.AssemblyQualifiedName;
+			m_enumType = _enumType;
+			m_defaultValue = _defaultValue;
+
+			// Force a refresh
+			Refresh();
+		}
+	}
+
+	/// <summary>
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
 		m_dropdown.onValueChanged.RemoveListener(OnValueChanged);
 	}
 
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
 	private void Update() {
 		// Initialize if not already done
 		if(isActiveAndEnabled && m_enumType == null) {

@@ -109,21 +109,19 @@ namespace AI {
 							if (m_targetEntity != null) {
 								float m = (m_machine.eye - m_targetEntity.circleArea.center).sqrMagnitude;
 								onRange = m < m_data.arrivalRadius * m_data.arrivalRadius;
-								if (m_data.hasGuardState) {
-									m = Mathf.Abs(m_machine.eye.x - m_target.position.x);
-									onGuardArea = m <= m_pilot.speed * Time.deltaTime;
-								}
 							} else {
 								onRange = m_machine.GetSignal(Signals.Type.Danger);
-								if (m_data.hasGuardState) {
-									onGuardArea = m_machine.GetSignal(Signals.Type.Critical);
-								}
 							}
 
 							if (onRange) {
 								m_transitionParam[0] = m_target;
 								Transition(OnEnemyInRange, m_transitionParam);
 							} else {
+								if (m_data.hasGuardState) {
+									float m = Mathf.Abs(m_machine.eye.x - m_target.position.x);
+									onGuardArea = m <= 2f;
+								}
+
 								if (onGuardArea) {
 									m_transitionParam[0] = m_target;
 									Transition(OnEnemyInGuardArea, m_transitionParam);

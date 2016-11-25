@@ -381,19 +381,26 @@ public class DisguisesScreenController : MonoBehaviour {
 			}
 		}
 
-		// Equip button
-		if(m_equipButton != null) {
-			// Show button?
-			// Only if selected disguise is owned and not equipped
-			if(_pill.owned && _pill != m_equippedPill) {
-				m_equipButton.animator.RestartShow();
-			} else {
-				m_equipButton.animator.Hide();
-			}
-		}
-
 		// Store as selected pill
 		m_selectedPill = _pill;
+
+		// Equip button or auto-equip? Check settings
+		if(Prefs.GetBoolPlayer(DebugSettings.MENU_DISGUISES_AUTO_EQUIP)) {
+			// If selected disguise is owned and not already equipped, equip it
+			if(_pill.owned && _pill != m_equippedPill) {
+				OnEquipButton();
+			}
+		} else {
+			// Show equip button?
+			if(m_equipButton != null) {
+				// Only if selected disguise is owned and not equipped
+				if(_pill.owned && _pill != m_equippedPill) {
+					m_equipButton.animator.RestartShow();
+				} else {
+					m_equipButton.animator.Hide();
+				}
+			}
+		}
 
 		// Apply selected disguise to dragon preview
 		if(UsersManager.currentUser.EquipDisguise(m_dragonData.def.sku, m_selectedPill.def.sku)) {

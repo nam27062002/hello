@@ -320,7 +320,7 @@ public class GameCamera : MonoBehaviour
 		UpdateBounds();
 	}
 
-	void StartIntro( bool useLevelEditor = false )
+	public void StartIntro( bool useLevelEditor = false )
 	{
 		MoveToSpawnPos(useLevelEditor);
 		SetTargetObject( InstanceManager.player.gameObject );
@@ -583,8 +583,6 @@ public class GameCamera : MonoBehaviour
 
 	void PlayUpdate()
 	{
-		if ( Input.GetKeyDown(KeyCode.I) )
-			StartIntro();
 
 		float dt = Time.deltaTime;
 		Vector3 targetPosition;

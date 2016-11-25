@@ -78,7 +78,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 	}
 
 	public void OnAttackEvent() {
-		m_attackBehaviour.OnAttack();
+		if ( m_attackBehaviour != null )
+			m_attackBehaviour.OnAttack();
 	}
 
 	public void TurboLoopStart()

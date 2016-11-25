@@ -22,23 +22,6 @@ public class ResultsSceneSetup : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public enum ChestTestMode {
-		NONE = 0,
-		FIXED_0,
-		FIXED_1,
-		FIXED_2,
-		FIXED_3,
-		FIXED_4,
-		FIXED_5,
-		RANDOM
-	};
-
-	public enum EggTestMode {
-		NONE,
-		RANDOM,
-		FOUND,
-		NOT_FOUND
-	};
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -87,7 +70,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 	public void LaunchAnim() {
 		// How many chests?
 		List<Chest> collectedChests = new List<Chest>();
-		if(DebugSettings.resultsChestTestMode == ChestTestMode.NONE) {
+		if(CPResultsScreenTest.chestsMode == CPResultsScreenTest.ChestTestMode.NONE) {
 			// Real logic
 			// Grab all the chests in the REWARD_PENDING state
 			for(int i = 0; i < ChestManager.dailyChests.Length; i++) {
@@ -97,9 +80,9 @@ public class ResultsSceneSetup : MonoBehaviour {
 			}
 		} else {
 			// [AOC] DEBUG ONLY!!
-			int NUM_COLLECTED_CHESTS = (int)DebugSettings.resultsChestTestMode;
+			int NUM_COLLECTED_CHESTS = (int)CPResultsScreenTest.chestsMode;
 			NUM_COLLECTED_CHESTS -= 1;	// enum starts at 1
-			if(DebugSettings.resultsChestTestMode == ChestTestMode.RANDOM) {
+			if(CPResultsScreenTest.chestsMode == CPResultsScreenTest.ChestTestMode.RANDOM) {
 				NUM_COLLECTED_CHESTS = Random.Range(0, 5);
 			}
 
@@ -131,7 +114,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 		for(int i = 0; i < sortedSlots.Count; i++) {
 			// Get reward definition corresponding to this chest
 			int chestIdx = RewardManager.initialCollectedChests + i + 1;
-			if(DebugSettings.resultsChestTestMode != ChestTestMode.NONE) {
+			if(CPResultsScreenTest.chestsMode != CPResultsScreenTest.ChestTestMode.NONE) {
 				chestIdx = i + 1;
 			}
 			Chest.RewardData rewardData = ChestManager.GetRewardData(chestIdx);
@@ -145,20 +128,20 @@ public class ResultsSceneSetup : MonoBehaviour {
 
 		// Egg found?
 		bool eggFound = false;
-		switch(DebugSettings.resultsEggTestMode) {
-			case EggTestMode.FOUND: {
+		switch(CPResultsScreenTest.eggMode) {
+			case CPResultsScreenTest.EggTestMode.FOUND: {
 				eggFound = true; 
 			} break;
 
-			case EggTestMode.NOT_FOUND: {
+			case CPResultsScreenTest.EggTestMode.NOT_FOUND: {
 				eggFound = false; 
 			} break;
 
-			case EggTestMode.RANDOM: {
+			case CPResultsScreenTest.EggTestMode.RANDOM: {
 				eggFound = (Random.Range(0f, 1f) > 0.5f); 
 			} break;
 
-			case EggTestMode.NONE: {
+			case CPResultsScreenTest.EggTestMode.NONE: {
 				eggFound = EggManager.collectibleEgg != null && EggManager.collectibleEgg.collected;
 			} break;
 		}
