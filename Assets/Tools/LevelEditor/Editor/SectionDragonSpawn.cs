@@ -90,6 +90,17 @@ namespace LevelEditor {
 							}
 						} EditorGUILayoutExt.EndHorizontalSafe();
 						GUI.enabled = true;
+						EditorGUILayout.BeginHorizontal(); {
+							// Label
+							bool intro = GUILayout.Toggle(LevelEditor.settings.useIntro, "Intro");
+							if ( intro != LevelEditor.settings.useIntro )
+							{
+								LevelEditor.settings.useIntro = intro;
+								EditorUtility.SetDirty(LevelEditor.settings);
+								EditorApplication.SaveAssets();
+							}
+						} EditorGUILayoutExt.EndHorizontalSafe();
+
 
 						// Show/Create spawn point
 						GameObject spawnPointObj = null;
