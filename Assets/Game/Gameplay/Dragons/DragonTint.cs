@@ -30,7 +30,9 @@ public class DragonTint : MonoBehaviour
 	float m_furyTimer = 0;
 
 	// Shield
-	float m_shieldValue = 0;
+	// float m_shieldValue = 0;
+
+
 
 	float m_deathAlpha = 1;
 
@@ -122,7 +124,7 @@ public class DragonTint : MonoBehaviour
 			m_otherColorTimer += Time.deltaTime * 5;
 			otherColor = m_curseColor * (Mathf.Sin( m_otherColorTimer) + 1) * 0.5f;
 		}
-		else if ( m_player.IsStarving() )
+		else if ( m_player.IsStarving() || m_player.BeingLatchedOn())
 		{
 			m_otherColorTimer += Time.deltaTime * 5;
 			otherColor = m_damageColor * (Mathf.Sin( m_otherColorTimer) + 1) * 0.5f;
