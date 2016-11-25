@@ -36,9 +36,6 @@ public static class DebugSettings {
 
 	public const string NEW_CAMERA_SYSTEM		 		= "NEW_CAMERA_SYSTEM";
 
-	public const string RESULTS_SCREEN_CHEST_TEST_MODE 	= "RESULTS_SCREEN_CHEST_TEST_MODE";
-	public const string RESULTS_SCREEN_EGG_TEST_MODE 	= "RESULTS_SCREEN_EGG_TEST_MODE";
-
 	public const string INGAME_HUD						= "INGAME_HUD";
 	public const string INGAME_SPAWNERS					= "INGAME_SPAWNERS";
 	public const string INGAME_GLOW						= "INGAME_GLOW";
@@ -96,16 +93,6 @@ public static class DebugSettings {
 	public static bool slowPowerUp {
 		get { return Prefs.GetBoolPlayer(DRAGON_SLOW_POWER_UP, false); }
 		set { Prefs.SetBoolPlayer(DRAGON_SLOW_POWER_UP, value); }
-	}
-
-	public static ResultsSceneSetup.ChestTestMode resultsChestTestMode {
-		get { return (ResultsSceneSetup.ChestTestMode)Prefs.GetIntPlayer(RESULTS_SCREEN_CHEST_TEST_MODE, (int)ResultsSceneSetup.ChestTestMode.NONE); }
-		set { Prefs.SetIntPlayer(RESULTS_SCREEN_CHEST_TEST_MODE, (int)value); }
-	}
-
-	public static ResultsSceneSetup.EggTestMode resultsEggTestMode {
-		get { return (ResultsSceneSetup.EggTestMode)Prefs.GetIntPlayer(RESULTS_SCREEN_EGG_TEST_MODE, (int)ResultsSceneSetup.EggTestMode.NONE); }
-		set { Prefs.SetIntPlayer(RESULTS_SCREEN_EGG_TEST_MODE, (int)value); }
 	}
 
     //------------------------------------------------------------------//

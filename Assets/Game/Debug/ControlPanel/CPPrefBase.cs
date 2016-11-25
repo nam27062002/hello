@@ -20,22 +20,21 @@ using TMPro;
 /// </summary>
 public class CPPrefBase : MonoBehaviour {
 	//------------------------------------------------------------------//
-	// MEMBERS															//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed
 	[InfoBox("Don't forget to connect callbacks to this component!")]
 	[SerializeField] protected CPPropertyId m_id = new CPPropertyId();
+	public string id {
+		get { return m_id.ToString(); }
+		set { m_id.id = value; }
+	}
 
 	// References
 	[Space(5)]
 	[Comment("Label is optional.")]
 	[SerializeField] protected TextMeshProUGUI m_label;
-
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
-	// Shortcut to get the property id as string
-	protected string id { get { return m_id.ToString(); }}
+	public TextMeshProUGUI label { get { return m_label; }}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -44,8 +43,7 @@ public class CPPrefBase : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	protected virtual void Awake() {
-		// Check requirements
-		DebugUtils.Assert(m_id.id != "", "Pref ID not set!");
+		
 	}
 
 	/// <summary>

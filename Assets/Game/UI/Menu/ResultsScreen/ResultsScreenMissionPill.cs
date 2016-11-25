@@ -34,8 +34,8 @@ public class ResultsScreenMissionPill : ResultsScreenCarouselPill {
 	[SerializeField] private Image m_completedFXIcon = null;
 	[SerializeField] private NumberTextAnimator m_coinsTotalAnimator = null;
 
-	// Setup
-	public Mission.Difficulty difficulty = Mission.Difficulty.EASY;
+	// Internal
+	private Mission m_mission = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -63,15 +63,22 @@ public class ResultsScreenMissionPill : ResultsScreenCarouselPill {
 	// ResultsScreenCarouselPill IMPLEMENTATION								  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Initialize the pill with the data of a given mission object.
+	/// </summary>
+	/// <param name="_mission">The mission to be used for initialization.</param>
+	public void InitFromMission(Mission _mission) {
+		// Store mission
+		m_mission = _mission;
+	}
+
+	/// <summary>
 	/// Check whether this pill must be displayed on the carousel or not.
 	/// </summary>
 	/// <returns><c>true</c> if the pill must be displayed on the carousel, <c>false</c> otherwise.</returns>
 	public override bool MustBeDisplayed() {
 		// Must be displayed if mission objective was completed!
-		Mission targetMission = MissionManager.GetMission(difficulty);
-		if(targetMission == null) return false;
-
-		return targetMission.objective.isCompleted;
+		if(m_mission == null) return false;
+		return m_mission.objective.isCompleted;
 	}
 
 	/// <summary>
@@ -80,17 +87,16 @@ public class ResultsScreenMissionPill : ResultsScreenCarouselPill {
 	/// </summary>
 	protected override void StartInternal() {
 		// Aux vars
-		Mission targetMission = MissionManager.GetMission(difficulty);
-		if(targetMission == null) return;
+		if(m_mission == null) return;
 
 		// Mission description
-		m_missionText.text = targetMission.objective.GetDescription();
+		m_missionText.text = m_mission.objective.GetDescription();
 
 		// Reward
-		m_rewardText.text = StringUtils.FormatNumber(targetMission.rewardCoins);
+		m_rewardText.text = StringUtils.FormatNumber(m_mission.rewardCoins);
 
 		// Change Icon
-		m_missionIcon.sprite = Resources.Load<Sprite>(targetMission.def.GetAsString("icon"));
+		m_missionIcon.sprite = Resources.Load<Sprite>(m_mission.def.GetAsString("icon"));
 
 		// Trigger "completed" animation
 		m_completedFXIcon.color = Colors.WithAlpha(Colors.white, 0f);
@@ -101,7 +107,7 @@ public class ResultsScreenMissionPill : ResultsScreenCarouselPill {
 
 			// Add reward to the summary's total
 			.AppendCallback(() => {
-				m_coinsTotalAnimator.SetValue(m_coinsTotalAnimator.finalValue + targetMission.rewardCoins);
+				m_coinsTotalAnimator.SetValue(m_coinsTotalAnimator.finalValue + m_mission.rewardCoins);
 			})
 
 			// Show check mark

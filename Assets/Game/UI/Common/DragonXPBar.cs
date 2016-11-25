@@ -29,6 +29,7 @@ public class DragonXPBar : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Setup
+	[InfoBox("All parameters except XP Bar are optional.")]
 	[SerializeField] protected bool m_linear = true;	// [AOC] Levels are not uniform (same xp per level), but we want the separators at regular intervals, so we need to do the correction
 
 	// Sliders
@@ -37,14 +38,13 @@ public class DragonXPBar : MonoBehaviour {
 		get { return m_xpBar; }
 	}
 
-	[Tooltip("Optional, to be used by heirs")] 
 	[SerializeField] protected Slider m_auxBar;
 	public Slider auxBar {
 		get { return m_auxBar; }
 	}
 
 	// Textfields
-	[Space]
+	[Separator]
 	[SerializeField] protected Localizer m_levelText;
 	public Localizer levelText {
 		get { return m_levelText; }
@@ -55,14 +55,13 @@ public class DragonXPBar : MonoBehaviour {
 		get { return m_dragonNameText; }
 	}
 
-	[Tooltip("Optional")] 
 	[SerializeField] protected Localizer m_dragonDescText;
 	public Localizer dragonDescText {
 		get { return m_dragonDescText; }
 	}
 
 	// Bar separator prefab
-	[Space]
+	[Separator]
 	[SerializeField] protected GameObject m_barSeparatorPrefab = null;
 	[SerializeField] protected RectTransform m_barSeparatorsParent = null;
 

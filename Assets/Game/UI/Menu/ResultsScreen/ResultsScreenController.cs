@@ -19,21 +19,79 @@ public class ResultsScreenController : MonoBehaviour {
 	[SerializeField] private GameObject m_newHighScoreDeco = null;
 
 	[Separator]
-	[SerializeField] private Slider m_levelBar = null;
-	[SerializeField] private Localizer m_levelText = null;
-	[SerializeField] private Localizer m_dragonNameText = null;
-
-	[Separator]
+	[SerializeField] private ResultsScreenUnlockBar m_unlockBar = null;
 	[SerializeField] private ResultsScreenCarousel m_carousel = null;
 
-	// Internal
-	private int m_levelAnimCount = 0;
-	private Tween m_xpBarTween = null;
+	//------------------------------------------------------------------//
+	// PROPERTIES														//
+	//------------------------------------------------------------------//
+	// Make use of properties to easily add test code without getting it all dirty
+	private long score {
+		get {
+			if(CPResultsScreenTest.testEnabled) {
+				return CPResultsScreenTest.scoreValue;
+			} else {
+				return RewardManager.score;
+			}
+		}
+	}
+
+	private long coins {
+		get {
+			if(CPResultsScreenTest.testEnabled) {
+				return CPResultsScreenTest.coinsValue;
+			} else {
+				return RewardManager.coins;
+			}
+		}
+	}
+
+	private int survivalBonus {
+		get {
+			if(CPResultsScreenTest.testEnabled) {
+				return (int)CPResultsScreenTest.survivalBonus;
+			} else {
+				return RewardManager.instance.CalculateSurvivalBonus();
+			}
+		}
+	}
+
+	private long highScore {
+		get {
+			if(CPResultsScreenTest.testEnabled) {
+				return CPResultsScreenTest.highScoreValue;
+			} else {
+				return UsersManager.currentUser.highScore;
+			}
+		}
+	}
+
+	private bool isHighScore {
+		get {
+			if(CPResultsScreenTest.testEnabled) {
+				return CPResultsScreenTest.newHighScore;
+			} else {
+				return RewardManager.isHighScore;
+			}
+		}
+	}
+
+	private float time {
+		get {
+			if(CPResultsScreenTest.testEnabled) {
+				return CPResultsScreenTest.timeValue;
+			} else {
+				return InstanceManager.GetSceneController<GameSceneController>().elapsedSeconds;
+			}
+		}
+	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-
+	/// <summary>
+	/// Initialization.
+	/// </summary>
 	void Awake() {
 		// Check required fields
 		Debug.Assert(m_timeLabel != null, "Required field not initialized!");
@@ -44,9 +102,6 @@ public class ResultsScreenController : MonoBehaviour {
 		Debug.Assert(m_highScoreLabel != null, "Required field not initialized!");
 		Debug.Assert(m_newHighScoreDeco != null, "Required field not initialized!");
 
-		Debug.Assert(m_levelBar != null, "Required field not initialized!");
-		Debug.Assert(m_levelText != null, "Required field not initialized!");
-		Debug.Assert(m_dragonNameText != null, "Required field not initialized!");
 		Debug.Assert(m_carousel != null, "Required field not initialized!");
 	}
 
@@ -68,109 +123,50 @@ public class ResultsScreenController : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-		// If we got a tween running, kill it immediately
-		if(m_xpBarTween != null) {
-			m_xpBarTween.Kill(false);
-			m_xpBarTween = null;
-		}
+		
 	}
 
 	/// <summary>
-	/// Initislization.
+	/// Manual initialization.
 	/// </summary>
 	public void Initialize() {
 		// set values from score manager
 		// Launch number animators
-		int survivalBonus = RewardManager.instance.CalculateSurvivalBonus();
+		int coinsBonus = survivalBonus;
 
-		m_scoreAnimator.SetValue(0, (int)RewardManager.score);
-		m_coinsAnimator.SetValue(0, (int)(RewardManager.coins + survivalBonus));
-		m_bonusCoinsAnimator.SetValue(0, RewardManager.instance.CalculateSurvivalBonus()); //TODO: get bouns coins from Reward Manager
+		// Number animations
+		m_scoreAnimator.SetValue(0, score);
+		m_coinsAnimator.SetValue(0, coins + coinsBonus);
+		m_bonusCoinsAnimator.SetValue(0, coinsBonus);
 
-		m_highScoreLabel.Localize(m_highScoreLabel.tid, StringUtils.FormatNumber(UsersManager.currentUser.highScore));
+		// High Score Label
+		m_highScoreLabel.Localize(m_highScoreLabel.tid, StringUtils.FormatNumber(highScore));
 
-		m_newHighScoreDeco.SetActive(RewardManager.isHighScore);
+		// New High Score animation
+		if(isHighScore) {
+			m_newHighScoreDeco.SetActive(true);
+			m_newHighScoreDeco.transform.localScale = Vector3.zero;
+			m_newHighScoreDeco.transform.DOScale(1f, 0.25f)
+				.SetDelay(m_scoreAnimator.duration)	// Sync with score number animation
+				.SetEase(Ease.OutBack)
+				.SetAutoKill(true)
+				.OnComplete(() => {
+					// TODO!! Play some SFX
+				});
+		} else {
+			m_newHighScoreDeco.SetActive(false);
+		}
 
 		// Set time - format to MM:SS
-		GameSceneController game = InstanceManager.GetSceneController<GameSceneController>();
-		m_timeLabel.text = TimeUtils.FormatTime(game.elapsedSeconds, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES);
+		m_timeLabel.text = TimeUtils.FormatTime(time, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES);
 
-		// Set dragon name and xp
-		// Get updated dragon's data from the dragon manager
-		DragonData data = DragonManager.currentDragon;
-		m_dragonNameText.Localize(data.def.Get("tidName"));
+		// Initialize unlock bar and start animating!
+		m_unlockBar.Initialize(m_carousel.progressionPill);
 
-		// Bar value - animate!
-		// [AOC] As usual, animating the XP bar is not obvious (dragon may have leveled up several times during a single game)
-		m_levelBar.minValue = 0;
-		m_levelBar.maxValue = 1;
-		m_levelBar.value = RewardManager.dragonInitialLevelProgress;
-		m_levelAnimCount = RewardManager.dragonInitialLevel;
-		m_levelText.Localize("TID_LEVEL_ABBR", StringUtils.FormatNumber(m_levelAnimCount + 1));
-		LaunchXPBarAnim();
-
-		// Hide carousel
-		m_carousel.gameObject.SetActive(false);
+		// Start carousel as well!
+		m_carousel.gameObject.SetActive(true);
+		m_carousel.StartCarousel();
 	}
-
-	/// <summary>
-	/// Launches the XP anim.
-	/// </summary>
-	private void LaunchXPBarAnim() {
-		// Aux vars
-		DragonData data = DragonManager.currentDragon;
-		bool isTargetLevel = (m_levelAnimCount == DragonManager.currentDragon.progression.level);
-		float targetDelta = isTargetLevel ? data.progression.progressCurrentLevel : 1f;	// Full bar if not target level
-
-		// Create animation
-		m_xpBarTween = DOTween.To(
-			// Getter function
-			() => { 
-				return m_levelBar.value; 
-			}, 
-
-			// Setter function
-			(_newValue) => {
-				m_levelBar.value = _newValue;
-			},
-
-			// Value and speed
-			targetDelta, 0.75f
-		)
-
-		// Other setup parameters
-		.SetSpeedBased(true)
-		.SetEase(Ease.InOutCubic)
-
-		// What to do once the anim has finished?
-		.OnComplete(
-			() => {
-				// Was it the target level? We're done!
-				if(isTargetLevel) {
-					// Now we can start the carousel!
-					m_carousel.gameObject.SetActive(true);
-					m_carousel.StartCarousel();
-					return;
-				}
-
-				// Not the target level, increase level counter and restart animation!
-				m_levelAnimCount++;
-
-				// Set text and animate
-				m_levelText.Localize("TID_LEVEL_ABBR", StringUtils.FormatNumber(m_levelAnimCount + 1));
-				m_levelText.transform.DOScale(1.5f, 0.15f).SetLoops(2, LoopType.Yoyo);
-
-				// Put bar to the start
-				m_levelBar.value = 0f;
-
-				// Lose tween reference (will be self-destroyed immediately) and create a new one
-				m_xpBarTween = null;
-				LaunchXPBarAnim();
-			}
-		);
-	}
-
-
 
 	/// <summary>
 	/// Try to go back to the menu. If a popup is pending (chest reward, egg reward), it will be displayed instead.
