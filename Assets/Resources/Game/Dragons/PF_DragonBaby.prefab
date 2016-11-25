@@ -288,7 +288,6 @@ GameObject:
   - 114: {fileID: 11444004}
   - 114: {fileID: 11459072}
   - 114: {fileID: 11419346}
-  - 114: {fileID: 11447270}
   - 114: {fileID: 11442574}
   - 114: {fileID: 11455772}
   - 114: {fileID: 11487054}
@@ -2500,10 +2499,17 @@ MonoBehaviour:
   m_cloudTrailMinSpeed: 7.5
   m_outerSpaceRecoveryTime: 0.5
   m_insideWaterRecoveryTime: 0.1
-  m_dargonAcceleration: 20
+  m_dragonForce: 20
   m_dragonMass: 10
   m_dragonFricction: 15
   m_dragonGravityModifier: 0.3
+  m_introDisplacementCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_introStopAnimationDelta: 0.1
 --- !u!114 &11440808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2567,19 +2573,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 2
---- !u!114 &11447270
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 120086}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a50d6acc0e7c645d0a7a60bbdab9c93b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_attackDelay: 0.25
-  m_damage: 10
 --- !u!114 &11455772
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2716,8 +2709,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90a8dcc19fcdf47c48738f4a9245cade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_trails: []
-  m_xweapontrail: []
+  m_particleTrails: []
 --- !u!114 &11483596
 MonoBehaviour:
   m_ObjectHideFlags: 1
