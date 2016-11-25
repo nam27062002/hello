@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using DG.Tweening;
 
 //----------------------------------------------------------------------------//
@@ -21,22 +22,38 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private static readonly float ANIM_SPEED_MULT = 1f;	// To easily adjust timings
-	private static readonly bool UNLOCK_DRAGON_CHEAT = false;
-	
+	// To track bar's animation progress (int _currentLevel, float _levelDelta)
+	public class BarAnimationEvent : UnityEvent<int, float> {}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] private Slider m_progressBar = null;
-	[SerializeField] private Localizer m_infoText = null;
-	[SerializeField] private GameObject m_unlockFX = null;
+	[SerializeField] private Localizer m_currentLevelText = null;
+	[SerializeField] private Localizer m_nextLevelText = null;
+	[SerializeField] private GameObject m_levelUpFX = null;
+
+	// Exposed setup
 	[Space]
-	[SerializeField] private UIScene3DLoader m_nextDragonScene3DLoader = null;
+	[SerializeField] [Range(0.1f, 2f)] private float m_animSpeedMultiplier = 1f;
+
+	// Events
+	[Space]
+	[SerializeField] public BarAnimationEvent OnAnimStart = new BarAnimationEvent();
+	[SerializeField] public BarAnimationEvent OnAnimUpdate = new BarAnimationEvent();
+	[SerializeField] public BarAnimationEvent OnAnimLevelChanged = new BarAnimationEvent();
+	[SerializeField] public BarAnimationEvent OnAnimEnd = new BarAnimationEvent();
 
 	// Internal
-	private DragonData m_nextDragonData = null;
-	private DragonData m_requiredDragonData = null;
+	private Tween m_xpBarTween = null;
+
+	private int m_initialLevel = 0;
+	private int m_currentLevel = 0;	// Updated during animation
+	private int m_targetLevel = 0;
+
+	private float m_initialDelta = 0f;	// Bar position at the start of the animation
+	private float m_finalDelta = 1f;	// Bar position at the end of the animation
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -47,26 +64,18 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	private void Awake() {
 		// Check required fields
 		Debug.Assert(m_progressBar != null, "Required field not initialized!");
-		Debug.Assert(m_infoText != null, "Required field not initialized!");
-		Debug.Assert(m_unlockFX != null, "Required field not initialized!");
-		Debug.Assert(m_nextDragonScene3DLoader != null, "Required field not initialized!");
+		Debug.Assert(m_currentLevelText != null, "Required field not initialized!");
+		Debug.Assert(m_nextLevelText != null, "Required field not initialized!");
+	}
 
-		// Find out next dragon to unlock
-		// It should be the first locked dragon
-		// None if all dragons are already unlocked
-		// Iterate all the dragons by order and find the first one locked
-		m_nextDragonData = null;
-		m_requiredDragonData = null;
-		for(int i = 0; i < DragonManager.dragonsByOrder.Count; i++) {
-			// Is it locked?
-			if(DragonManager.dragonsByOrder[i].isLocked) {
-				// No! Use this dragon
-				m_nextDragonData = DragonManager.dragonsByOrder[i];
-
-				// Find out required dragon as well
-				m_requiredDragonData = DragonManager.GetDragonData(m_nextDragonData.def.GetAsString("previousDragonSku"));
-				break;
-			}
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// If we got a tween running, kill it immediately
+		if(m_xpBarTween != null) {
+			m_xpBarTween.Kill(false);
+			m_xpBarTween = null;
 		}
 	}
 
@@ -78,8 +87,8 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	/// </summary>
 	/// <returns><c>true</c> if the pill must be displayed on the carousel, <c>false</c> otherwise.</returns>
 	public override bool MustBeDisplayed() {
-		// Only if there is an actual dragon to unlock
-		return m_nextDragonData != null;
+		// Always until further notice
+		return true;
 	}
 
 	/// <summary>
@@ -87,48 +96,42 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	/// The <c>OnFinished</c> event will be invoked once the animation has finished.
 	/// </summary>
 	protected override void StartInternal() {
-		// Shouldn't be called if there is no dragon to be unlocked, but just in case
-		if(m_nextDragonData == null) return;
+		// [AOC] As usual, animating the XP bar is not obvious (dragon may have leveled up several times during a single game)
+		DragonData data = DragonManager.currentDragon;
+		if(CPResultsScreenTest.testEnabled) {
+			// Compute which level matches the cheats initial delta
+			float initialLevelRaw = Mathf.Lerp(0, data.progression.numLevels, CPResultsScreenTest.xpInitialDelta);
+			m_initialLevel = Mathf.FloorToInt(initialLevelRaw);
+			if(m_initialLevel >= data.progression.lastLevel) m_initialLevel = data.progression.lastLevel;	// Special case for last level (should only happen with delta >= 1f)
+			m_initialDelta = initialLevelRaw - m_initialLevel;	// The decimal part of the level ^^
 
-		// Bar: animate!
-		if(m_progressBar) {
-			// Initialize bar
-			m_progressBar.minValue = 0;
-			m_progressBar.maxValue = 1;
+			// Do the same with the target level
+			float targetLevelRaw = Mathf.Lerp(0, data.progression.numLevels, CPResultsScreenTest.xpFinalDelta);
+			m_targetLevel = Mathf.FloorToInt(targetLevelRaw);
+			if(m_targetLevel >= data.progression.lastLevel) m_targetLevel = data.progression.lastLevel;		// Special case for last level (should only happen with delta >= 1f)
+			m_finalDelta = targetLevelRaw - m_targetLevel;	// The decimal part of the level ^^
+		} else {
+			// Just get it from the reward manager
+			m_initialLevel = RewardManager.dragonInitialLevel;
+			m_targetLevel = data.progression.level;
 
-			// If we played the game with the unlocking dragon, use XP progress before the game as bar value (we will animate with the XP earned during the game)
-			// Otherwise just use current XP progress - bar won't animate
-			if(DragonManager.currentDragon.def.sku == m_requiredDragonData.def.sku) {
-				m_progressBar.value = RewardManager.dragonInitialTotalXPProgress;
-			} else {
-				m_progressBar.value = m_requiredDragonData.progression.progressByXp;
-			}
-
-			// Program animation
-			LaunchBarAnim();
+			m_initialDelta = RewardManager.dragonInitialLevelProgress;
+			m_finalDelta = data.progression.progressByLevel;
 		}
+		m_currentLevel = m_initialLevel;
+
+		// Initialize bar
+		m_progressBar.minValue = 0;
+		m_progressBar.maxValue = 1;
+		m_progressBar.value = m_initialDelta;
+
+		// All maths done! Launch anim!
+		RefreshLevelTexts(false);
+		LaunchXPBarAnim(0.5f);	// Give some time for the pill's show animation
 
 		// Hide unlock group
-		m_unlockFX.SetActive(false);
-
-		// Initialize info text
-		if(m_nextDragonData.isLocked) {
-			// Different text if we're not using the required dragon
-			if(DragonManager.currentDragon.def.sku == m_requiredDragonData.def.sku) {
-				m_infoText.Localize("TID_RESULTS_TO_UNLOCK_NEXT_DRAGON", m_nextDragonData.def.GetLocalized("tidName"));	// "To unlock Brute:"
-			} else {
-				m_infoText.Localize("TID_RESULTS_DRAGON_REQUIRED", m_requiredDragonData.def.GetLocalized("tidName"), m_nextDragonData.def.GetLocalized("tidName"));	// "Play with Baby to unlock Brute!"
-			}
-		} else {
-			// Should never get here, but just in case
-			m_infoText.Localize("TID_RESULTS_DRAGON_ALREADY_UNLOCKED", m_nextDragonData.def.GetLocalized("tidName"));	// "Brute already unlocked!"
-		}
-
-		// Load and pose the dragon - will override any existing dragon
-		MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
-		if(dragonLoader != null) {
-			dragonLoader.LoadDragon(m_nextDragonData.def.sku);
-			dragonLoader.FindComponentRecursive<Animator>().SetTrigger("idle");
+		if(m_levelUpFX != null) {
+			m_levelUpFX.SetActive(false);
 		}
 
 		// Show ourselves!
@@ -140,108 +143,100 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Launchs the animation of the "unlock next dragon" bar
+	/// Launches the XP anim.
 	/// </summary>
-	private void LaunchBarAnim() {
-		// Target delta
-		float sourceDelta = m_progressBar.value;
-		float targetDelta = m_requiredDragonData.progression.progressByXp;
-		if(UNLOCK_DRAGON_CHEAT) targetDelta = 1f;	// For testing purposes!
+	/// <param name="_delay">Delay before actually starting the animation.</param> 
+	private void LaunchXPBarAnim(float _delay) {
+		// Aux vars
+		DragonData data = DragonManager.currentDragon;
+		bool isTargetLevel = (m_currentLevel == m_targetLevel);
+		float targetDelta = isTargetLevel ? m_finalDelta : 1f;	// Full bar if not target level
 
-		// No animation needed if source and target delta are the same
-		if(Mathf.Abs(targetDelta - sourceDelta) < float.Epsilon) {
-			DelayedFinish(0.5f);	// Notify finish after some delay
-		}
+		// Trigger event
+		OnAnimStart.Invoke(m_currentLevel, m_progressBar.value);
 
-		// Launch the tween!
-		else {
-			DOTween.To(
-				// Getter function
-				() => { 
-					return m_progressBar.value; 
-				}, 
+		// Create animation
+		m_xpBarTween = DOTween.To(
+			// Getter function
+			() => { 
+				return m_progressBar.value; 
+			}, 
 
-				// Setter function
-				(_newValue) => {
-					m_progressBar.value = _newValue;
-				},
+			// Setter function
+			(_newValue) => {
+				m_progressBar.value = _newValue;
+			},
 
-				// Value and duration
-				targetDelta, 2f * ANIM_SPEED_MULT
-			)
+			// Value and speed
+			// Speed based, duration representes units/sec
+			targetDelta, 0.75f * m_animSpeedMultiplier		// [AOC] Should be synched with dragon unlock bar!
+		)
 
 			// Other setup parameters
-			.SetDelay(0.5f * ANIM_SPEED_MULT)	// Give some time for the pill's show animation
-			.SetEase(Ease.InOutCubic)
+			.SetSpeedBased(true)
+			.SetDelay(_delay * m_animSpeedMultiplier)
+			.SetEase(Ease.Linear)
+
+			// Update callback
+			.OnUpdate(
+				() => {
+					// Trigger event
+					OnAnimUpdate.Invoke(m_currentLevel, m_progressBar.value);
+				}
+			)
 
 			// What to do once the anim has finished?
 			.OnComplete(
 				() => {
-					// If we reached max delta, a dragon has been unlocked!
-					if(targetDelta >= 1f || UNLOCK_DRAGON_CHEAT) {
-						LaunchDragonUnlockAnimation();
-					} else {
-						// Notify finish after some delay
-						DelayedFinish(0.5f * ANIM_SPEED_MULT);
+					// Was it the target level? We're done!
+					if(isTargetLevel) {
+						// Give some delay to let the player soak up all the info before moving on to next pill
+						DelayedFinish(0.5f * m_animSpeedMultiplier);
+
+						// Trigger event
+						OnAnimEnd.Invoke(m_currentLevel, m_progressBar.value);
+						return;
 					}
+
+					// Not the target level, increase level counter and restart animation!
+					m_currentLevel++;
+
+					// Set text and animate
+					RefreshLevelTexts(true);
+
+					// Launch Level Up FX
+					if(m_levelUpFX != null) {
+						m_levelUpFX.SetActive(true);
+					}
+
+					// Put bar back to the start
+					m_progressBar.value = 0f;
+
+					// Trigger event
+					OnAnimLevelChanged.Invoke(m_currentLevel, m_progressBar.value);
+
+					// Lose tween reference (will be self-destroyed immediately) and create a new one
+					m_xpBarTween = null;
+					LaunchXPBarAnim(0f);
 				}
 			);
-		}
 	}
 
 	/// <summary>
-	/// Launches the dragon unlock animation.
+	/// Refresh the level texts using the m_levelAnimCount var. Optionally launch a level up animation.
 	/// </summary>
-	private void LaunchDragonUnlockAnimation() {
-		// Prepare for animation
-		m_unlockFX.SetActive(true);
-		m_unlockFX.transform.localScale = Vector3.zero;
+	/// <param name="_animate">If set to <c>true</c> animate.</param>
+	private void RefreshLevelTexts(bool _animate) {
+		// Current level
+		m_currentLevelText.Localize("TID_LEVEL_ABBR", StringUtils.FormatNumber(m_currentLevel + 1));
+		if(_animate) m_currentLevelText.transform.DOScale(1.5f, 0.15f).SetLoops(2, LoopType.Yoyo);
 
-		// Animation
-		DOTween.Sequence()
-			// Initial Pause
-			.SetId(this)
-			.AppendInterval(0.25f * ANIM_SPEED_MULT)
-
-			// Scale up
-			.Append(m_unlockFX.transform.DOScale(1f, 0.25f * ANIM_SPEED_MULT).SetEase(Ease.OutBack))
-
-			// Change bar text as well
-			.AppendCallback(() => {
-				if(m_infoText != null) {
-					m_infoText.Localize("TID_RESULTS_DRAGON_UNLOCKED", m_nextDragonData.def.GetLocalized("tidName"));
-				}
-			})
-
-			// Pause
-			.AppendInterval(1f * ANIM_SPEED_MULT)
-
-			// Scale out
-			.Append(m_unlockFX.transform.DOScale(2f, 0.5f * ANIM_SPEED_MULT).SetEase(Ease.OutCubic))
-
-			// Fade out
-			.Join(m_unlockFX.GetComponent<CanvasGroup>().DOFade(0f, 0.5f * ANIM_SPEED_MULT).SetEase(Ease.OutCubic))
-
-			// Disable object once the sequence is completed
-			.OnComplete(() => {
-				m_unlockFX.SetActive(false);
-				DelayedFinish(1f * ANIM_SPEED_MULT);
-			})
-
-			// Go!!!
-			.Play();
-
-		// Update text with the name of the unlocked dragon
-		Localizer unlockText = m_unlockFX.FindComponentRecursive<Localizer>("UnlockText");
-		if(unlockText != null) unlockText.Localize("TID_RESULTS_DRAGON_UNLOCKED", m_nextDragonData.def.GetLocalized("tidName"));
-
-		// Play cool dragon animation!
-		/*if(m_nextDragonScene3D != null) {
-			Animator anim = m_nextDragonScene3D.FindComponentRecursive<Animator>();
-			if(anim != null) {
-				anim.SetTrigger("unlocked");
-			}
-		}*/
+		// Next level - check for max!
+		if(m_currentLevel == DragonManager.currentDragon.progression.numLevels - 1) {
+			m_nextLevelText.Localize("TID_MAX");
+		} else {
+			m_nextLevelText.Localize("TID_LEVEL_ABBR", StringUtils.FormatNumber(m_currentLevel + 2));
+		}
 	}
 
 	//------------------------------------------------------------------------//

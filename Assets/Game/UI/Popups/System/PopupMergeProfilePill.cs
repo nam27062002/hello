@@ -7,9 +7,9 @@ using TMPro;
 public class PopupMergeProfilePill : MonoBehaviour 
 {
 	public TextMeshProUGUI m_name;
-	public TextMeshProUGUI m_softCurrency;
-	public TextMeshProUGUI m_hardCurrency;
-	public TextMeshProUGUI m_maxScore;
+	public TextMeshProUGUI m_lastSave;
+	public TextMeshProUGUI m_eggs;
+	public TextMeshProUGUI m_timePlayed;
 	public TextMeshProUGUI m_dragons;
 
 	[Space]
@@ -23,18 +23,15 @@ public class PopupMergeProfilePill : MonoBehaviour
 		m_profile = _progress.UserProfile;    
         UserProfile _profileToCompare = _progressToCompare.UserProfile;
 
-        //m_name.text = _profile.timePlayed.ToString("G", LocalizationManager.SharedInstance.Culture);
-        m_name.text = GetTimeString(_progress.lastModified);
-		m_name.color = (_progress.lastModified > _progressToCompare.lastModified) ? m_highlightTextColor : m_normalTextColor;
+        m_name.text = _progress.lastDevice;
+        m_lastSave.text = GetTimeString(_progress.lastModified);
+        m_lastSave.color = (_progress.lastModified > _progressToCompare.lastModified) ? m_highlightTextColor : m_normalTextColor;
 
-		m_softCurrency.text = StringUtils.FormatNumber(m_profile.coins);
-		m_softCurrency.color = (m_profile.coins > _profileToCompare.coins ? m_highlightTextColor : m_normalTextColor);
+		m_eggs.text = StringUtils.FormatNumber(m_profile.eggsCollected);
+        m_eggs.color = (m_profile.eggsCollected > _profileToCompare.eggsCollected ? m_highlightTextColor : m_normalTextColor);
 
-		m_hardCurrency.text =  StringUtils.FormatNumber(m_profile.pc);
-		m_hardCurrency.color = (m_profile.pc > _profileToCompare.pc ? m_highlightTextColor : m_normalTextColor);
-
-		m_maxScore.text = StringUtils.FormatNumber(m_profile.highScore);
-		m_maxScore.color = (m_profile.highScore > _profileToCompare.highScore ? m_highlightTextColor : m_normalTextColor);
+		m_timePlayed.text = TimeUtils.FormatTime(m_profile.timePlayed, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3, TimeUtils.EPrecision.HOURS);
+        m_timePlayed.color = (m_profile.timePlayed > _profileToCompare.timePlayed ? m_highlightTextColor : m_normalTextColor);		
 
 		int dragons1 = m_profile.GetNumOwnedDragons();
 		int dragons2 = _profileToCompare.GetNumOwnedDragons();

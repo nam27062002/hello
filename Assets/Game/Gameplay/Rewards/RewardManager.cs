@@ -125,11 +125,6 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		get { return instance.m_dragonInitialLevelProgress; }
 	}
 
-	private float m_dragonInitialTotalXPProgress = 0;
-	public static float dragonInitialTotalXPProgress {
-		get { return instance.m_dragonInitialTotalXPProgress; }
-	}
-
 	// Chests - store chest progression at the beginning of the game
 	private int m_initialCollectedChests = 0;
 	public static int initialCollectedChests {
@@ -253,11 +248,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		if(DragonManager.currentDragon != null) {
 			instance.m_dragonInitialLevel = DragonManager.currentDragon.progression.level;
 			instance.m_dragonInitialLevelProgress = DragonManager.currentDragon.progression.progressCurrentLevel;
-			instance.m_dragonInitialTotalXPProgress = DragonManager.currentDragon.progression.progressByXp;
 		} else {
 			instance.m_dragonInitialLevel = 1;
 			instance.m_dragonInitialLevelProgress = 0;
-			instance.m_dragonInitialTotalXPProgress = 0;
 		}
 
 		// Chests
