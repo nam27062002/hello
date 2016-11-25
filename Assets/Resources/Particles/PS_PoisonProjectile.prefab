@@ -35,7 +35,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011392783586}
   m_LocalRotation: {x: 0.98901594, y: -0.00000004969221, z: -0.00000004969221, w: -0.14780942}
-  m_LocalPosition: {x: 0, y: 4.44, z: -4.837}
+  m_LocalPosition: {x: 706.815, y: -69.562, z: -156.00421}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: -167.259, y: -0.000015258789, z: -0.000015258789}
   m_Children: []
@@ -85,13 +85,13 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
   moveWithTransform: 0
   autoRandomSeed: 1
   scalingMode: 1
-  randomSeed: 1062295224
+  randomSeed: -1365640929
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -247,12 +247,12 @@ ParticleSystem:
       maxColor: {r: 0, g: 0.4627451, b: 0.19215687, a: 1}
       minMaxState: 2
     startSize:
-      scalar: 0.4
+      scalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 1
+          value: 0.4
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -263,7 +263,7 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 0.5
+          value: 1
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -535,10 +535,15 @@ ParticleSystem:
           inSlope: 0
           outSlope: 0
           tangentMode: 0
+        - time: 0.1908367
+          value: 0.4431488
+          inSlope: -0.35732985
+          outSlope: -0.35732985
+          tangentMode: 0
         - time: 1
-          value: 0.6318182
-          inSlope: -0.40934718
-          outSlope: -0.40934718
+          value: 0.2409091
+          inSlope: -0.2499368
+          outSlope: -0.2499368
           tangentMode: 10
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -1020,8 +1025,8 @@ ParticleSystem:
       minMaxState: 0
     inWorldSpace: 0
   InheritVelocityModule:
-    enabled: 1
-    m_Mode: 1
+    enabled: 0
+    m_Mode: 0
     m_Curve:
       scalar: -0.1
       maxCurve:

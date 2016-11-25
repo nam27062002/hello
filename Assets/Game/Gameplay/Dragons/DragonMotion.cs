@@ -470,8 +470,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
-		if ( Input.GetKeyDown(KeyCode.I) )
-			StartIntroMovement( m_introTarget );
 
 		switch (m_state) {
 			case State.Idle:

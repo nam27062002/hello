@@ -50,6 +50,8 @@ public static class DebugSettings {
 
 	public const string SHOW_MISSING_TIDS				= "SHOW_MISSING_TIDS";
 
+	public const string MENU_DISGUISES_AUTO_EQUIP		= "MENU_DISGUISES_AUTO_EQUIP";
+
     //------------------------------------------------------------------//
     // PROPERTIES														//
     //------------------------------------------------------------------//
