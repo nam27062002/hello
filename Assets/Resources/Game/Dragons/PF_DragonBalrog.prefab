@@ -288,7 +288,6 @@ GameObject:
   - 114: {fileID: 11444004}
   - 114: {fileID: 11459072}
   - 114: {fileID: 11419346}
-  - 114: {fileID: 11447270}
   - 114: {fileID: 11442574}
   - 114: {fileID: 11455772}
   - 114: {fileID: 11487054}
@@ -2321,7 +2320,6 @@ MonoBehaviour:
   m_wingsIdleSound: Dragon_Soft_Flaps
   m_wingsFlyingSound: Dragon_S_Flaps
   m_eatSound: Dragon_S_Bite
-  m_eatBigSound: 
   m_wingsWindSound: 
   m_wingsStrongFlap: Dragon_Strong_Flap
   m_levelUpSound: Level UP
@@ -2487,16 +2485,24 @@ MonoBehaviour:
   m_capVerticalRotation: 1
   m_capUpRotationAngle: 40
   m_capDownRotationAngle: 60
+  m_noGlideAngle: 50
   m_parabolicMovementConstant: 1
   m_parabolicMovementAdd: 1
   m_parabolicXControl: 10
   m_cloudTrailMinSpeed: 7.5
   m_outerSpaceRecoveryTime: 0.5
   m_insideWaterRecoveryTime: 0.1
-  m_dargonAcceleration: 20
+  m_dragonForce: 20
   m_dragonMass: 10
   m_dragonFricction: 15
   m_dragonGravityModifier: 0.3
+  m_introDisplacementCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_introStopAnimationDelta: 0.1
 --- !u!114 &11440808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2560,19 +2566,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 2
---- !u!114 &11447270
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 120086}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a50d6acc0e7c645d0a7a60bbdab9c93b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_attackDelay: 0.25
-  m_damage: 10
 --- !u!114 &11455772
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2709,8 +2702,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90a8dcc19fcdf47c48738f4a9245cade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_trails: []
-  m_xweapontrail: []
+  m_particleTrails: []
 --- !u!114 &11483596
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3306,6 +3298,9 @@ MonoBehaviour:
     path: Blood
     offset: {x: 0, y: 0, z: 0}
   m_burpSound: 
+  m_randomSpeedRange:
+    min: 1
+    max: 1.5
 --- !u!114 &114000012705948140
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3317,8 +3312,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f134506f4047e4ba8f3a04e30e7152, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_breathSound: 
-  m_superBreathSound: 
+  m_breathSound: Dragon_Burst Mode
+  m_superBreathSound: Dragon_Burst Mode
   m_length: 6
   m_sizeCurve:
     serializedVersion: 2
@@ -3336,7 +3331,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_dragonFlame: {fileID: 197018, guid: bd95ec8e1059d5d46b566f6087879846, type: 2}
+  m_dragonFlameStandard: {fileID: 197018, guid: bd95ec8e1059d5d46b566f6087879846,
+    type: 2}
+  m_dragonFlameSuper: {fileID: 1000013828432286, guid: 381cc7087b9ec7e4f97a52941d03341c,
+    type: 2}
 --- !u!114 &114000013077924290
 MonoBehaviour:
   m_ObjectHideFlags: 1
