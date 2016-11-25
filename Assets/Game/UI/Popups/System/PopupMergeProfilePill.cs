@@ -18,7 +18,9 @@ public class PopupMergeProfilePill : MonoBehaviour
 
 	UserProfile m_profile;
 
-	public void Setup(ProgressComparatorSystem _progress, ProgressComparatorSystem _progressToCompare )
+    public GameObject m_highlightGO;
+
+	public void Setup(ProgressComparatorSystem _progress, ProgressComparatorSystem _progressToCompare, bool _highlight )
 	{
 		m_profile = _progress.UserProfile;    
         UserProfile _profileToCompare = _progressToCompare.UserProfile;
@@ -41,6 +43,8 @@ public class PopupMergeProfilePill : MonoBehaviour
 			StringUtils.FormatNumber(DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS).Count)
 		);
 		m_dragons.color = (dragons1 > dragons2 ? m_highlightTextColor : m_normalTextColor);
+
+        IsHighlightEnabled = _highlight;
 	}
 
     private string GetTimeString(int unixTimeStamp)
@@ -50,5 +54,21 @@ public class PopupMergeProfilePill : MonoBehaviour
         dt = dt.AddSeconds(unixTimeStamp).ToLocalTime();
         //return dt.ToString("F");
         return dt.ToString("G");
+    }
+    
+    private bool IsHighlightEnabled
+    {
+        get
+        {
+            return m_highlightGO != null && m_highlightGO.activeSelf;
+        }
+
+        set
+        {
+            if (m_highlightGO != null)
+            {
+                m_highlightGO.SetActive(value);
+            }
+        }
     }
 }

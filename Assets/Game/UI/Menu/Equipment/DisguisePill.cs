@@ -11,6 +11,7 @@ public class DisguisePillEvent : UnityEvent<DisguisePill>{}
 public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
 	[SerializeField] private Color m_equippedTextColor = Color.white;
+	[SerializeField] private Color m_getNowTextColor = Colors.gray;
 	[SerializeField] private Color m_lockedTextColor = Color.red;
 
 	//------------------------------------------//
@@ -70,14 +71,13 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 			// Unlocked
 			m_icon.color = Color.white;
 			m_lockIcon.SetActive(false);
-			m_infoText.Localize("");
 		} else {
 			// Locked
 			m_icon.color = Color.gray;
 			m_lockIcon.SetActive(true);
-			m_infoText.Localize("TID_LEVEL", (_def.GetAsInt("unlockLevel") + 1).ToString());
-			m_infoText.text.color = m_lockedTextColor;
 		}
+
+		RefreshText(false, m_owned, m_locked);
 
 		m_equippedFrame.ForceHide(false);
 		m_equippedFX.gameObject.SetActive(false);
@@ -90,12 +90,41 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 			m_equippedFrame.Show(_animate);
 			m_equippedFX.gameObject.SetActive(true);
 			m_equippedFX.DORestart();
-			m_infoText.Localize("Equipped");	// [AOC] HARDCODED!!
-			m_infoText.text.color = m_equippedTextColor;
 		} else {
 			m_equippedFrame.Hide(_animate);
 			m_equippedFX.gameObject.SetActive(false);
-			if(m_owned) m_infoText.Localize("");
+		}
+
+		RefreshText(_equip, m_owned, m_locked);
+	}
+
+	/// <summary>
+	/// Properly set pill's text and color based on its state.
+	/// </summary>
+	/// <param name="_equipped">Is the disguise equipped?.</param>
+	/// <param name="_owned">Is the disguise owned?</param>
+	/// <param name="_locked">Is the disguise locked?</param>
+	private void RefreshText(bool _equipped, bool _owned, bool _locked) {
+		// Check by priority
+		if(_locked) {
+			// Locked, can't be neither owned nor equipped
+			m_infoText.Localize("TID_LEVEL", (m_def.GetAsInt("unlockLevel") + 1).ToString());
+			m_infoText.text.color = m_lockedTextColor;
+		} else if(_owned) {
+			// Can't be equipped if it's not owned!
+			if(_equipped) {
+				// Equipped
+				m_infoText.Localize("TID_DISGUISES_EQUIPPED");
+				m_infoText.text.color = m_equippedTextColor;
+			} else {
+				// Owned but not equipped
+				m_infoText.Localize("");
+				m_infoText.text.color = Color.white;
+			}
+		} else {
+			// Not owned
+			m_infoText.Localize("TID_DRAGON_GET_NOW");
+			m_infoText.text.color = m_getNowTextColor;
 		}
 	}
 

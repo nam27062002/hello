@@ -45,7 +45,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	private Rect[] m_subRect = new Rect[4];
 	private HashSet<ISpawner> m_selectedSpawners = new HashSet<ISpawner>();
     
-    private List<ISpawner> m_spawning;
+    public List<ISpawner> m_spawning;
 
     private float m_lastX, m_lastY;
 
