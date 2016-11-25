@@ -1818,6 +1818,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_blendSpeedFactor: 100
+  m_energy: 10
+  m_energyDrainSec: 1
   m_brainResource: {fileID: 11400000, guid: dad1c7bb0c1fe428095688a1d8608b84, type: 2}
   m_railSeparation:
     min: 0.5
@@ -1825,11 +1827,11 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":10,"restUpsideDown":true,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":20,"arrivalRadius":0.25,"timeout":{"min":4,"max":6},"onFailShutdown":{"min":4,"max":6},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":4,"max":6},"damage":1,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":10,"panicSpeed":10,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":12,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":12,"restUpsideDown":false,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":35,"arrivalRadius":0.25,"timeout":{"min":4,"max":6},"onFailShutdown":{"min":4,"max":6},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":4,"max":6},"damage":10,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":15,"panicSpeed":15,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
   m_databaseKey: PF_EnemyBaby
-  m_avoidDistanceAttenuation: 0.75
+  m_avoidDistanceAttenuation: 15
   m_avoidCollisions: 1
-  m_avoidWater: 0
+  m_avoidWater: 1
 --- !u!114 &114000011681757254
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1905,7 +1907,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 1
+    m_mass: 5
     m_defaultUpVector: 0
     m_orientationSpeed: 240
     m_faceDirection: 1
@@ -1923,6 +1925,7 @@ MonoBehaviour:
     m_sightRadius: 18
     m_maxRadius: 12
     m_minRadius: 0
+    m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
