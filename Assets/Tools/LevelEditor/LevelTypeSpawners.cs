@@ -53,21 +53,26 @@ namespace LevelEditor {
 			// Create default point if not already done
 			if ( InstanceManager.player != null ){
 				string sku = InstanceManager.player.data.def.sku;
-				GameObject go = GetDragonSpawnPoint(sku, false);
-				// Spawn here eating entity
-				/*
-				for( int i = 0; i<m_spawnsData.Count; i++ ){
-					if ( m_spawnsData[i].m_dragonSku == sku ){
-						if ( !string.IsNullOrEmpty( m_spawnsData[i].m_prefabName ) ){
-							InstantiateSpawner( go, m_spawnsData[i].m_prefabName );
-						}
-					}
-				}
-				*/
-				InstantiateSpawner( go, "IntroSpawners/SP_Intro" );
+				IntroSpawn( sku );
 			}else{
 				GetDragonSpawnPoint("", true);
 			}
+		}
+
+		public void IntroSpawn( string sku )
+		{
+			GameObject go = GetDragonSpawnPoint(sku, false);
+			// Spawn here eating entity
+			/*
+			for( int i = 0; i<m_spawnsData.Count; i++ ){
+				if ( m_spawnsData[i].m_dragonSku == sku ){
+					if ( !string.IsNullOrEmpty( m_spawnsData[i].m_prefabName ) ){
+						InstantiateSpawner( go, m_spawnsData[i].m_prefabName );
+					}
+				}
+			}
+			*/
+			InstantiateSpawner( go, "IntroSpawners/SP_Intro" );
 		}
 
 

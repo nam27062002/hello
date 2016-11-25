@@ -128,6 +128,16 @@ public class GameSceneController : GameSceneControllerBase {
 		if(Input.GetKeyDown(KeyCode.P)) {
 			PopupManager.OpenPopupInstant(PopupPause.PATH);
 		}
+		else if (Input.GetKeyDown(KeyCode.I))
+		{
+			// Check if in editor!
+			bool usingEditor = false;
+			InstanceManager.player.StartIntroMovement( usingEditor );
+			InstanceManager.gameCamera.StartIntro( usingEditor );
+			LevelEditor.LevelTypeSpawners sp = FindObjectOfType<LevelEditor.LevelTypeSpawners>();
+			if ( sp != null )
+				sp.IntroSpawn(InstanceManager.player.data.def.sku);
+		}
 		#endif
 
 		// Different actions based on current state
