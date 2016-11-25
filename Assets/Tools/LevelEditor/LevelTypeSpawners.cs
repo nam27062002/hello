@@ -42,6 +42,8 @@ namespace LevelEditor {
 			}
 		}
 		public List<SpawnData> m_spawnsData = new List<SpawnData>();
+        private GameObject m_spawnerRoot;
+        private int m_spawnersCount;
 
 		/// <summary>
 		/// Initialization.
@@ -72,15 +74,42 @@ namespace LevelEditor {
 				}
 			}
 			*/
-			InstantiateSpawner( go, "IntroSpawners/SP_Intro" );
+			InstantiateSpawner( go, "IntroSpawners/SP_Intro" );            
 		}
 
 
 		void InstantiateSpawner( GameObject root, string spawner){
 			GameObject sp = (GameObject)Resources.Load( spawner );
-			GameObject go = GameObject.Instantiate(sp, root.transform) as GameObject;
-			go.transform.localPosition = Vector3.zero;
+            m_spawnerRoot = GameObject.Instantiate(sp, root.transform) as GameObject;
+            if (m_spawnerRoot != null) {
+                List<ISpawner> spawnersToSpawn = SpawnerManager.instance.m_spawning;
+
+                Spawner[] spawners = m_spawnerRoot.GetComponentsInChildren<Spawner>();
+                int i;
+                m_spawnersCount = spawners.Length;
+                for (i = 0; i < m_spawnersCount; i++) {
+                    spawners[i].OnDone = OnSpawnerDone;
+                    
+                    if (spawnersToSpawn != null && !spawnersToSpawn.Contains(spawners[i]))
+                    {
+                        //add item into respawn stack and begin the respawn process
+                        spawnersToSpawn.Add(spawners[i]);
+                        spawners[i].Respawn();
+                    }
+                }
+
+                m_spawnerRoot.transform.localPosition = Vector3.zero;
+            }
 		}
+
+        private void OnSpawnerDone(AbstractSpawner spawner) {            
+            m_spawnersCount--;
+            if (m_spawnersCount == 0 && m_spawnerRoot != null) {
+                Destroy(m_spawnerRoot);
+                m_spawnerRoot = null;
+            }
+        }
+
 		//------------------------------------------------------------------//
 		// OTHER METHODS													//
 		//------------------------------------------------------------------//

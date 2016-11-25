@@ -76,6 +76,9 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
         gameObject.SetActive(false);
     }
 
+    // Delegate called when the spawner is done with the stuff it had to do
+    public System.Action<AbstractSpawner> OnDone { get; set; }
+
     public bool CanRespawn() {
         return (State == EState.Respawning) ? CanRespawnExtended() : false;       
     }
@@ -264,6 +267,9 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 
     protected void UnregisterFromSpawnerManager() {
         SpawnerManager.instance.Unregister(this, UseSpawnManagerTree);
+        if (OnDone != null) {
+            OnDone(this);
+        }
     }
     
     protected IGuideFunction m_guideFunction = null;

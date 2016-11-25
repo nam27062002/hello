@@ -177,22 +177,7 @@ public class SpawnerBg : AbstractSpawner {
         pilot.SetRail(m_rail, (int)m_rails);
         m_rail = (m_rail + 1) % (int)m_rails;
         pilot.guideFunction = m_guideFunction;
-    }
-
-    protected override void OnAllEntitiesRespawned() {
-        // Disable this spawner after a number of spawns
-        if (EntitiesAllKilledByPlayer && m_maxSpawns > 0)
-        {
-            m_respawnCount++;
-            if (m_respawnCount == m_maxSpawns)
-            {
-                gameObject.SetActive(false);
-                UnregisterFromSpawnerManager();
-            }
-        }
-
-        EntitiesAllKilledByPlayer = false;        
-    }
+    }   
    
     protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
         if (_allKilledByPlayer) {
@@ -202,6 +187,11 @@ public class SpawnerBg : AbstractSpawner {
                 reward.score = (int)(m_flockBonus * EntitiesKilled);
                 Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _lastEntity.transform, reward);
             }
+
+            m_respawnCount++;
+            if (m_maxSpawns > 0 && m_respawnCount == m_maxSpawns) {
+                m_readyToBeDisabled = true;
+            }            
         } 
 
         if (m_readyToBeDisabled) {
