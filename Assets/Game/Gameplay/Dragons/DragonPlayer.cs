@@ -545,7 +545,7 @@ public class DragonPlayer : MonoBehaviour {
 		if ( m_numLatching == 0 )
 		{
 			m_dragonMotion.EndLatchedOnMovement();
-			m_dragonEatBehaviour.ResumeEating( 1.5f );
+			m_dragonEatBehaviour.ResumeEating( 1.0f );
 		}
 	}
 
