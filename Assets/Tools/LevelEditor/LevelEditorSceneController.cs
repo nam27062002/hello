@@ -121,6 +121,10 @@ namespace LevelEditor {
 
 			// Put player in position and make it playable
 			InstanceManager.player.MoveToSpawnPoint(true);
+			if ( LevelEditor.settings.useIntro )
+			{
+				InstanceManager.player.StartIntroMovement( true );	
+			}
 			InstanceManager.player.playable = true;
 
 			// Init game camera
