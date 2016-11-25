@@ -1554,7 +1554,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Time Played
+  m_tid: TID_SAVE_PROFILE_CONFLICT_PLAYTIME
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000010349847776
@@ -2344,7 +2344,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Keep Global
+  m_tid: TID_SAVE_PROFILE_CONFLICT_CLOUD_BUTTON
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000011100623382
@@ -2358,7 +2358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: GLOBAL
+  m_tid: TID_SAVE_PROFILE_CONFLICT_CLOUD_CAPS
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000011114981670
@@ -3136,7 +3136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Keep Local
+  m_tid: TID_SAVE_PROFILE_CONFLICT_LOCAL_BUTTON
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000011606287692
@@ -3150,7 +3150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: LOCAL
+  m_tid: TID_SAVE_PROFILE_CONFLICT_LOCAL_CAPS
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000011750536032
@@ -3184,8 +3184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: You already have a Cloud Save! Please choose which game progress you want
-    to keep
+  m_tid: TID_SAVE_PROFILE_CONFLICT_CHOOSE_DESC
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000011824512386
@@ -3448,6 +3447,7 @@ MonoBehaviour:
   m_dragons: {fileID: 114000014112830758}
   m_normalTextColor: {r: 1, g: 1, b: 1, a: 1}
   m_highlightTextColor: {r: 0.9647059, g: 0.57254905, b: 0.2784314, a: 1}
+  m_highlightGO: {fileID: 1000012513962210}
 --- !u!114 &114000012178410090
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4276,7 +4276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Dragons
+  m_tid: TID_SAVE_PROFILE_CONFLICT_DRAGONS_OWNED
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000012933279130
@@ -4303,7 +4303,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Eggs
+  m_tid: TID_SAVE_PROFILE_CONFLICT_EGGS_OWNED
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000013046932586
@@ -4928,7 +4928,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Choose Profile
+  m_tid: TID_SAVE_PROFILE_CONFLICT_CHOOSE_TITLE
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000013610800906
@@ -5159,7 +5159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Last saved
+  m_tid: TID_SAVE_PROFILE_CONFLICT_LAST_SAVED
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000013930957682
@@ -5621,6 +5621,7 @@ MonoBehaviour:
   m_dragons: {fileID: 114000013450843906}
   m_normalTextColor: {r: 1, g: 1, b: 1, a: 1}
   m_highlightTextColor: {r: 0.9647059, g: 0.57254905, b: 0.2784314, a: 1}
+  m_highlightGO: {fileID: 1000011287686108}
 --- !u!114 &114000014210451278
 MonoBehaviour:
   m_ObjectHideFlags: 1

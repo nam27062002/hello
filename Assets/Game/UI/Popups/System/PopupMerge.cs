@@ -19,13 +19,14 @@ public class PopupMerge : MonoBehaviour
     private ConflictState ConflictState { get; set; }
 
     private Action<ConflictResult> OnResolved { get; set; }
-
-    /*
+   
+    /* 
     // Uncomment to test from SC_Popups scene
     private void Awake()
     {
         Test();
-    }*/
+    }
+    */
 
     /// <summary>
     /// Setup the popup with the two given user profiles.
@@ -39,13 +40,13 @@ public class PopupMerge : MonoBehaviour
 
 		// Initialize left pill with profile 1
 		m_profile1 = _profile1;
-		m_leftPill.Setup(_profile1, _profile2);
+		m_leftPill.Setup(_profile1, _profile2, conflictState == ConflictState.RecommendLocal);
 
 		// Initialize right pill with the other profile
 		m_profile2 = _profile2;
-		m_rightPill.Setup(_profile2, _profile1);
+		m_rightPill.Setup(_profile2, _profile1, conflictState == ConflictState.RecommendCloud);
 
-        m_closeBtn.SetActive(dismissable);
+        m_closeBtn.SetActive(dismissable);        
     }
 
 	public void OnUseLeftOption()
