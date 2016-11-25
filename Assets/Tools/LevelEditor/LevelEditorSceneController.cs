@@ -94,6 +94,17 @@ namespace LevelEditor {
 			} else {
 				// Update running time
 				m_elapsedSeconds += Time.deltaTime;
+
+				if (Input.GetKeyDown(KeyCode.I))
+				{
+					bool usingEditor = true;
+					InstanceManager.player.StartIntroMovement( usingEditor );
+					InstanceManager.gameCamera.StartIntro( usingEditor );
+					LevelTypeSpawners sp = FindObjectOfType<LevelTypeSpawners>();
+					if ( sp != null )
+						sp.IntroSpawn(InstanceManager.player.data.def.sku);
+				}
+
 			}
 		}
 
