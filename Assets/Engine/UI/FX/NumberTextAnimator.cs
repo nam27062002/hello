@@ -39,18 +39,18 @@ public class NumberTextAnimator : MonoBehaviour {
 	}
 
 	// Value tracking
-	private int m_initialValue = 0;
-	public int initialValue {
+	private long m_initialValue = 0;
+	public long initialValue {
 		get { return m_initialValue; }
 	}
 
-	private int m_finalValue = 0;
-	public int finalValue {
+	private long m_finalValue = 0;
+	public long finalValue {
 		get { return m_finalValue; }
 	}
 
-	private int m_currentValue = 0;
-	public int currentValue {
+	private long m_currentValue = 0;
+	public long currentValue {
 		get { return m_currentValue; }
 	}
 
@@ -75,7 +75,7 @@ public class NumberTextAnimator : MonoBehaviour {
 		// Skip if we've reached the final value
 		if(m_currentValue != m_finalValue) {
 			// Update current value
-			int iNewValue = (int)Mathf.SmoothStep(m_initialValue, m_finalValue, (Time.time - m_startTime)/m_duration);
+			long iNewValue = (long)Mathf.SmoothStep(m_initialValue, m_finalValue, (Time.time - m_startTime)/m_duration);
 
 			// If value has changed, update textfield
 			if(iNewValue != m_currentValue) {
@@ -90,7 +90,7 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// </summary>
 	/// <param name="_iInitialValue">Initial value of the textfield.</param>
 	/// <param name="_iFinalValue">Final value of the textfield.</param>
-	public void SetValue(int _iInitialValue, int _iFinalValue) {
+	public void SetValue(long _iInitialValue, long _iFinalValue) {
 		// Store parameters
 		m_initialValue = _iInitialValue;
 		m_finalValue = _iFinalValue;
@@ -107,7 +107,7 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// Alternative version, current value will be used as starting value.
 	/// </summary>
 	/// <param name="_iFinalValue">Final value of the textfield.</param>
-	public void SetValue(int _iFinalValue) {
+	public void SetValue(long _iFinalValue) {
 		// Call the other version
 		SetValue(m_currentValue, _iFinalValue);
 	}
@@ -119,7 +119,7 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// Apply the given value to the textfield. That way we make sure formatting is always respected.
 	/// </summary>
 	/// <param name="_iValue">The value to be applied.</param>
-	private void ApplyValue(int _iValue) {
+	private void ApplyValue(long _iValue) {
 		// Just do it
 		m_targetTxt.text = StringUtils.FormatNumber(_iValue);
 	}

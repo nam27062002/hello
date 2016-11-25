@@ -140,11 +140,11 @@ public class DragonData {
 		if(m_owned) return LockState.OWNED;
 
 		// b) Is dragon locked?
-		// Dragon is considered locked if one of the previous dragons is not maxed out
+		// Dragon is considered locked if THE previous dragon is not maxed out
 		int order = def.GetAsInt("order");
-		for(int i = 0; i < order && i < DragonManager.dragonsByOrder.Count; i++) {
-			// Condition 1: level maxed
-			if(!DragonManager.dragonsByOrder[i].progression.isMaxLevel) {
+		if(order > 0) {		// First dragon should always be owned
+			// Check previous dragon's progression
+			if(!DragonManager.dragonsByOrder[order - 1].progression.isMaxLevel) {
 				return LockState.LOCKED;
 			}
 		}
