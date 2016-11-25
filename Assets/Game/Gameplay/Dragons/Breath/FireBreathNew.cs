@@ -153,8 +153,6 @@ public class FireBreathNew : DragonBreathBehaviour {
 
     override protected void EndFury() 
 	{
-		base.EndFury();
-
         if (m_type == Type.Standard)
         {
             dragonFlameStandardInstance.EnableFlame(false);
@@ -163,6 +161,8 @@ public class FireBreathNew : DragonBreathBehaviour {
         {
             dragonFlameSuperInstance.EnableFlame(false);
         }
+        base.EndFury();
+
     }
 
     override protected void Breath(){
@@ -290,13 +290,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 	{
 		if ( _other.tag == "Water" )
 		{
-			if ( m_isFuryOn )
-			{
-				m_isFuryPaused = true;
-				m_animator.SetBool("breath", false);
-                PauseFury();
-			}
-
+			// TODO: Change View to boiling bubbles
 		}
 	}
 
@@ -304,11 +298,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 	{
 		if ( _other.tag == "Water" )
 		{
-            if (m_isFuryPaused)
-            {
-                ResumeFury();
-            }
-            m_isFuryPaused = false;
+			// TODO: Change View back from boiling bubbles to fire
 		}
 	}
 

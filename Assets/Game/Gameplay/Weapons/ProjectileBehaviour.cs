@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 
-	[SerializeField] private GameObject m_explosionPrefab = null;
+	[SerializeField] private ParticleData m_explosionParticle;
 	[SerializeField] private Range m_scaleRange = new Range(1f, 5f);
 	[SerializeField] private Range m_rotationRange = new Range(0f, 360f);
 	[SerializeField] private float m_knockback = 0;
@@ -15,7 +15,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 
 	private Transform m_oldParent = null;
 
-	private Vector2 m_targetCenter;
+	// private Vector2 m_targetCenter;
 	private ProjectileMotion m_pMotion;
 
 	public List<GameObject> m_activateOnShoot = new List<GameObject>();
@@ -23,8 +23,8 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 
 	// Use this for initialization
 	void Start () {		
-		if (m_explosionPrefab != null) {
-			PoolManager.CreatePool(m_explosionPrefab, 5, false);
+		if (m_explosionParticle.IsValid()) {
+			ParticleManager.CreatePool(m_explosionParticle, 5);
 		}
 
 		m_pMotion = GetComponent<ProjectileMotion>();	
@@ -66,7 +66,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 	}
 
 	public void Shoot(Transform _from, float _damage) {	
-		m_targetCenter = InstanceManager.player.transform.position;
+		// m_targetCenter = InstanceManager.player.transform.position;
 
 		if (m_oldParent) {
 			transform.parent = m_oldParent;
@@ -83,7 +83,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 	}
 
 	public void ShootAtPosition( Transform _from, float _damage, Vector3 _pos){
-		m_targetCenter = _pos;
+		// m_targetCenter = _pos;
 
 		if (m_oldParent) {
 			transform.parent = m_oldParent;
@@ -131,11 +131,11 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 	}
 
 	public void Explode(bool _hitDragon) {
-		if (m_explosionPrefab != null) {
-			GameObject explosion = PoolManager.GetInstance(m_explosionPrefab.name);			
+		if (m_explosionParticle.IsValid()) {
+			GameObject explosion = ParticleManager.Spawn( m_explosionParticle, transform.position);
 			if (explosion) {
 				// Random position within range
-				explosion.transform.position = transform.position;			
+				// explosion.transform.position = transform.position;
 				// Random scale within range
 				explosion.transform.localScale = Vector3.one * m_scaleRange.GetRandom();			
 				// Random rotation within range

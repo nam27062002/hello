@@ -44,7 +44,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	// Methods
 	//-----------------------------------------------
 	void Start() {
-		SpawnerManager.instance.Register(this);
+		SpawnerManager.instance.Register(this, true);
 
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
 		m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
@@ -59,13 +59,22 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		m_rect = new Rect(position - extraSize * 0.5f, size + extraSize);
 	}
 
+    void OnDestroy() {
+        if (SpawnerManager.instance != null) {
+            SpawnerManager.instance.Unregister(this, true);
+        }
+    }
+
 	public void Initialize() {
 		m_state = State.Idle;
 	}    
 
-    public void ForceRemoveEntities() {
+    public void Clear() {
+        ForceRemoveEntities();
+        gameObject.SetActive(false);
+    }
 
-	}
+    public void ForceRemoveEntities() {}
 
 	public void StartRespawn() {
 		// Program the next spawn time

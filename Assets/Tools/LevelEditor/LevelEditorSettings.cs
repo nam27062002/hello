@@ -69,6 +69,7 @@ namespace LevelEditor {
 		[Separator("Level Settings", 20)]
 		[SkuList(DefinitionsCategory.DRAGONS)]
 		public string testDragon = "";	// Dragon with which to test the level
+		public bool useIntro = true;
 
 		[Separator("Ground Settings", 20)]
 		public Vector3 groundPieceSize = new Vector3(50f, 1f, 15f);	// Ground pieces default size

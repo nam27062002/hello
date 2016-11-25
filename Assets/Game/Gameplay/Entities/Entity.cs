@@ -112,9 +112,7 @@ public class Entity : IEntity {
 		m_feedbackData.InitFromDef(m_def);
 	}
 
-	override public void Spawn(ISpawner _spawner) {
-        EntityManager.instance.Register(this);
-
+	override public void Spawn(ISpawner _spawner) {        
         base.Spawn(_spawner);
 
 		m_spawner = _spawner;
@@ -140,6 +138,7 @@ public class Entity : IEntity {
 
     public override void Disable(bool _destroyed) {
 		base.Disable(_destroyed);
+
 
 		m_spawner.RemoveEntity(gameObject, _destroyed);
         m_spawned = false;		
@@ -207,12 +206,13 @@ public class Entity : IEntity {
 	}
 
 
-	/*****************/
-	// Private stuff //
-	/*****************/
+    /*****************/
+    // Private stuff //
+    /*****************/
 
-	// Update is called once per frame
-	void Update () {
+    // Update is called once per frame
+    public override void LogicUpdate() { 
+    //void Update () {
         if (m_spawned) {
             m_checkOnScreenTimer -= Time.deltaTime;
             if (m_checkOnScreenTimer <= 0) {
@@ -222,16 +222,9 @@ public class Entity : IEntity {
         }
 	}
 
-	void LateUpdate() {
-		if (m_spawned && m_dieOutsideFrustum) {
-            // check camera to destroy this entity if it is outside view area
-            if (m_newCamera != null && m_newCamera.IsInsideDeactivationArea(transform.position)) {
-                if (m_spawner != null) {
-                    Disable(false);
-                }
-            }
-        }
-	}
+    public override bool CanDieOutsideFrustrum() {
+        return m_spawned && m_dieOutsideFrustum;
+    }   
 
 	/**************************************************************/
 	// STATIC UTILS MIGRATED FROM LEVEL EDITOR'S SECTION SPAWNERS //

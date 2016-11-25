@@ -198,8 +198,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21157c7809c684e51958f44f14b414b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_leftPill: {fileID: 0}
-  m_rightPill: {fileID: 114000014207297038}
+  m_leftPill: {fileID: 114000014207297038}
+  m_rightPill: {fileID: 114000012136094644}
   m_closeBtn: {fileID: 1000011774710002}
 --- !u!222 &22207182
 CanvasRenderer:
@@ -537,6 +537,7 @@ GameObject:
   m_Component:
   - 224: {fileID: 224000010193900662}
   - 222: {fileID: 222000012943108670}
+  - 114: {fileID: 114000011100623382}
   - 114: {fileID: 114000011450715894}
   - 114: {fileID: 114000013610800906}
   m_Layer: 5
@@ -693,6 +694,7 @@ GameObject:
   m_Component:
   - 224: {fileID: 224000013031358348}
   - 222: {fileID: 222000011564267686}
+  - 114: {fileID: 114000012931722400}
   - 114: {fileID: 114000011492438720}
   - 114: {fileID: 114000011138366298}
   m_Layer: 5
@@ -728,6 +730,7 @@ GameObject:
   m_Component:
   - 224: {fileID: 224000010614792324}
   - 222: {fileID: 222000013089836636}
+  - 114: {fileID: 114000011760088732}
   - 114: {fileID: 114000013930957682}
   m_Layer: 5
   m_Name: Text
@@ -903,6 +906,7 @@ GameObject:
   m_Component:
   - 224: {fileID: 224000012156063416}
   - 222: {fileID: 222000011842953034}
+  - 114: {fileID: 114000010329234822}
   - 114: {fileID: 114000011402099586}
   - 114: {fileID: 114000010051199168}
   m_Layer: 5
@@ -957,6 +961,7 @@ GameObject:
   m_Component:
   - 224: {fileID: 224000013902339218}
   - 222: {fileID: 222000013618019128}
+  - 114: {fileID: 114000011606287692}
   - 114: {fileID: 114000012856384420}
   - 114: {fileID: 114000012807160370}
   m_Layer: 5
@@ -1024,10 +1029,11 @@ GameObject:
   m_Component:
   - 224: {fileID: 224000010082410136}
   - 222: {fileID: 222000010956582394}
+  - 114: {fileID: 114000013037545402}
   - 114: {fileID: 114000014237856082}
   - 114: {fileID: 114000010789752474}
   m_Layer: 5
-  m_Name: Missions
+  m_Name: Eggs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1294,6 +1300,7 @@ GameObject:
   m_Component:
   - 224: {fileID: 224000013832403004}
   - 222: {fileID: 222000012433081762}
+  - 114: {fileID: 114000013905901958}
   - 114: {fileID: 114000012746286182}
   - 114: {fileID: 114000011903791400}
   m_Layer: 5
@@ -1435,6 +1442,20 @@ MonoBehaviour:
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
+--- !u!114 &114000010329234822
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011898449116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: Time Played
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114000010349847776
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2094,7 +2115,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Use This
+  m_tid: Keep Global
+  m_caseType: 0
+  m_replacements: []
+--- !u!114 &114000011100623382
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010747039820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: GLOBAL
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000011138366298
@@ -2219,7 +2254,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Time Played
+  m_text: '#Time Played'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 373cfe43d8edb4ade8df1a6d6746c1b8, type: 2}
   m_sharedMaterial: {fileID: 2116890, guid: 373cfe43d8edb4ade8df1a6d6746c1b8, type: 2}
@@ -2555,7 +2590,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Dragons
+  m_text: '#Dragons'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 373cfe43d8edb4ade8df1a6d6746c1b8, type: 2}
   m_sharedMaterial: {fileID: 2116890, guid: 373cfe43d8edb4ade8df1a6d6746c1b8, type: 2}
@@ -2771,7 +2806,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Use This
+  m_tid: Keep Local
+  m_caseType: 0
+  m_replacements: []
+--- !u!114 &114000011606287692
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012201657554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: LOCAL
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000011750536032
@@ -2794,6 +2843,21 @@ MonoBehaviour:
   m_Spacing: 0
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
+--- !u!114 &114000011760088732
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011461121586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: You already have a Cloud Save! Please choose which game progress you want
+    to keep
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114000011824512386
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3048,12 +3112,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_name: {fileID: 114000012596131692}
-  m_softCurrency: {fileID: 114000014072712338}
-  m_hardCurrency: {fileID: 114000013046932586}
-  m_maxScore: {fileID: 114000011429482328}
+  m_lastSave: {fileID: 114000014072712338}
+  m_eggs: {fileID: 114000013046932586}
+  m_timePlayed: {fileID: 114000011429482328}
   m_dragons: {fileID: 114000014112830758}
   m_normalTextColor: {r: 1, g: 1, b: 1, a: 1}
-  m_highlightTextColor: {r: 0, g: 1, b: 0, a: 1}
+  m_highlightTextColor: {r: 0.9647059, g: 0.57254905, b: 0.2784314, a: 1}
 --- !u!114 &114000012178410090
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3452,7 +3516,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Last saved
+  m_text: '#Last saved'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 373cfe43d8edb4ade8df1a6d6746c1b8, type: 2}
   m_sharedMaterial: {fileID: 2116890, guid: 373cfe43d8edb4ade8df1a6d6746c1b8, type: 2}
@@ -3826,6 +3890,20 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114000012931722400
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011272767646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: Dragons
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114000012933279130
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3839,6 +3917,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 0
+--- !u!114 &114000013037545402
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012381143254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: Eggs
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114000013046932586
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4618,6 +4710,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 0
+--- !u!114 &114000013905901958
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013613377078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: Last saved
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114000013930957682
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5071,12 +5177,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_name: {fileID: 114000011824512386}
-  m_softCurrency: {fileID: 114000010355572522}
-  m_hardCurrency: {fileID: 114000012250081756}
-  m_maxScore: {fileID: 114000010356328168}
+  m_lastSave: {fileID: 114000010355572522}
+  m_eggs: {fileID: 114000012250081756}
+  m_timePlayed: {fileID: 114000010356328168}
   m_dragons: {fileID: 114000013450843906}
   m_normalTextColor: {r: 1, g: 1, b: 1, a: 1}
-  m_highlightTextColor: {r: 0, g: 1, b: 0, a: 1}
+  m_highlightTextColor: {r: 0.9647059, g: 0.57254905, b: 0.2784314, a: 1}
 --- !u!114 &114000014237856082
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5096,7 +5202,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: 'Eggs
+  m_text: '#Eggs
 
 '
   m_isRightToLeft: 0

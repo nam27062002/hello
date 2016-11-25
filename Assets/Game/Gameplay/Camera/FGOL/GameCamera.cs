@@ -298,34 +298,56 @@ public class GameCamera : MonoBehaviour
 		{
 			m_touchControls = gameInputObj.GetComponent<TouchControlsDPad>();
 		}
-
-		if ( InstanceManager.GetSceneController<LevelEditor.LevelEditorSceneController>() )
+		LevelEditor.LevelEditorSceneController editor = InstanceManager.GetSceneController<LevelEditor.LevelEditorSceneController>();
+		if ( editor != null )
 		{
-			MoveToSpawnPos( LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME );
-			SetTargetObject( InstanceManager.player.gameObject );
-			m_state = State.PLAY;
+			if (LevelEditor.LevelEditor.settings.useIntro)
+			{
+				StartIntro(true);
+			}
+			else
+			{
+				MoveToSpawnPos(true);
+				SetTargetObject( InstanceManager.player.gameObject );
+				m_state = State.PLAY;
+			}
 		}
 		else
 		{
-			MoveToSpawnPos(InstanceManager.player.data.def.sku);
-			SetTargetObject( InstanceManager.player.gameObject );
-			m_state = State.INTRO;
-			m_introTimer = m_introDuration;
-			m_introPosition = m_position;
-			m_position += Vector3.left * m_introDisplacement;
+			StartIntro(false);
 		}
 
 		UpdateBounds();
 	}
 
-	private void MoveToSpawnPos( string sku )
+	void StartIntro( bool useLevelEditor = false )
 	{
-		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + sku );
-		if(spawnPointObj == null) 
-		{
-			// We couldn't find a spawn point for this specific type, try to find a generic one
+		MoveToSpawnPos(useLevelEditor);
+		SetTargetObject( InstanceManager.player.gameObject );
+		m_state = State.INTRO;
+		m_introTimer = m_introDuration;
+		m_introPosition = m_position;
+		m_introDisplacement = InstanceManager.player.dragonMotion.introDisplacement;
+		m_position += Vector3.left * m_introDisplacement * m_introMoveCurve.Evaluate(0);
+		m_transform.rotation = Quaternion.identity;
+	}
+
+	private void MoveToSpawnPos( bool _levelEditor = false )
+	{
+		DragonData data = InstanceManager.player.data;
+		GameObject spawnPointObj = null;
+		if(_levelEditor) {
+			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
+			if ( spawnPointObj == null )
+				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+		} else {
+			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+		}
+		// If we couldn't find a valid spawn point, try to find a generic one
+		if(spawnPointObj == null) {
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
 		}
+
 		Vector3 pos = spawnPointObj.transform.position;
 		m_position = pos;
 		m_position.z = -m_minZ;	// ensure we pull back some distance, so that we don't screw up the bounds calculations due to plane-ray intersection messing up
@@ -561,6 +583,9 @@ public class GameCamera : MonoBehaviour
 
 	void PlayUpdate()
 	{
+		if ( Input.GetKeyDown(KeyCode.I) )
+			StartIntro();
+
 		float dt = Time.deltaTime;
 		Vector3 targetPosition;
 
@@ -632,32 +657,37 @@ public class GameCamera : MonoBehaviour
 
 		float frameWidth = m_frameWidthDefault;
 
-		if(m_targetMachine != null)
-        {
-            // MachineFish machineFish = m_targetObject.GetComponent<MachineFish>();
-            if(/*(machineFish != null) &&*/ !m_haveBoss)
-            {
-                // frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, machineFish.howFast);
-				frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
-            }
-        }
-
-		frameWidth += m_frameWidthIncrement;
-
 		if ( PlayingIntro() )
 		{
+			frameWidth += m_frameWidthIncrement;
 			frameWidth *= m_introFrameWidthMultiplier.Evaluate( 1.0f - (m_introTimer/m_introDuration) );
+			m_snap = true;
+			UpdateZooming(frameWidth, false);
 		}
-		else if(m_hasSlowmo)
+		else
 		{
-			frameWidth -= m_frameWidthDecrement;
-		}
-		else if(m_haveBoss)
-		{
-			frameWidth += m_largestBossFrameIncrement;
+			if(m_targetMachine != null)
+	        {
+	            // MachineFish machineFish = m_targetObject.GetComponent<MachineFish>();
+	            if(/*(machineFish != null) &&*/ !m_haveBoss)
+	            {
+	                // frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, machineFish.howFast);
+					frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
+	            }
+	        }
+			frameWidth += m_frameWidthIncrement;
+			if(m_hasSlowmo)
+			{
+				frameWidth -= m_frameWidthDecrement;
+			}
+			else if(m_haveBoss)
+			{
+				frameWidth += m_largestBossFrameIncrement;
+			}
+
+			UpdateZooming(frameWidth, m_haveBoss);
 		}
 
-		UpdateZooming(frameWidth, m_haveBoss);
 
 		UpdateCameraShake();
 		UpdateValues();

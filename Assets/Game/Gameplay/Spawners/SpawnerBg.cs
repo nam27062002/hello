@@ -18,10 +18,7 @@ public class SpawnerBg : AbstractSpawner {
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
-	[Separator("Entity")]
-	[CommentAttribute("The entities will spawn on the coordinates of the Spawner, and will move inside the defined area.")]
-	[SerializeField] public GameObject m_entityPrefab;
-
+	[Separator("Entity")]	
 	[CommentAttribute("The entities will spawn on the coordinates of the Spawner, and will move inside the defined area.")]
 	[EntityPrefabListAttribute]
 	[SerializeField] public string m_entityPrefabStr = "";
@@ -42,8 +39,7 @@ public class SpawnerBg : AbstractSpawner {
 	[SerializeField] private SpawnCondition[] m_deactivationTriggers;
 	public SpawnCondition[] deactivationTriggers { get { return m_deactivationTriggers; }}
 
-	[Separator("Respawn")]
-	[SerializeField] private Range m_spawnTime = new Range(40f, 45f);
+	[Separator("Respawn")]	
 	[SerializeField] private int m_maxSpawns;
 	
 
@@ -61,15 +57,8 @@ public class SpawnerBg : AbstractSpawner {
 		} 
 	}
 	
-	protected EntityGroupController m_groupController;
+	protected EntityGroupController m_groupController;		
 	
-	private uint m_entityAlive;
-	private uint m_entitySpawned;
-	private uint m_entitiesKilled; // we'll use this to give rewards if the dragon destroys a full flock
-	private bool m_allEntitiesKilledByPlayer;
-	protected GameObject[] m_entities; // list of alive entities
-
-	private float m_respawnTimer;
 	private uint m_respawnCount;
 
 	private bool m_readyToBeDisabled;
@@ -83,218 +72,143 @@ public class SpawnerBg : AbstractSpawner {
 		set { m_showSpawnerInEditor = value; }
 	}
 
+    private int m_rail = 0;
+
+    //-----------------------------------------------    
+
     //-----------------------------------------------
-    // Methods
-    //-----------------------------------------------
-    // Use this for initialization
-    protected override void StartExtended() {
-        m_rect = new Rect((Vector2)transform.position, Vector2.zero);
-		m_entities = new GameObject[m_quantity.max];
+    // AbstractSpawner implementation
+    //-----------------------------------------------    
+    protected virtual AreaBounds GetArea() {
+        Area area = GetComponent<Area>();
+        if (area != null) {
+            return area.bounds;
+        }
+        else {
+            // spawner for static objects with a fixed position
+            return new CircleAreaBounds(transform.position, 1f);
+        }
+    }
 
-		if (m_rails == 0) m_rails = 1;
+    protected override void RegisterInEntityManager(IEntity e) {
+        EntityManager.instance.RegisterEntityBg(e as EntityBg);
+    }
 
-		m_entityPrefabPath = IEntity.ENTITY_PREFABS_PATH + m_entityPrefabStr;
-		PoolManager.CreatePool(m_entityPrefabStr, m_entityPrefabPath, Mathf.Max(15, m_entities.Length), true);
+    protected override void UnregisterFromEntityManager(IEntity e)
+    {
+        EntityManager.instance.UnregisterEntityBg(e as EntityBg);
+    }
 
-		m_newCamera = Camera.main.GetComponent<GameCamera>();
+    protected override void OnStart() {
+        if (m_quantity.max < m_quantity.min) {
+            m_quantity.min = m_quantity.max;
+        }
 
-		m_area = GetArea();
+        RegisterInSpawnerManager();
 
-		m_groupController = GetComponent<EntityGroupController>();
-		if (m_groupController) {
-			m_groupController.Init(m_quantity.max);
-		}
-
-		m_guideFunction = GetComponent<IGuideFunction>();
-
-		SpawnerManager.instance.Register(this);
-
-		gameObject.SetActive(false);
+        gameObject.SetActive(false);
 	}
 
-	private void OnDestroy() {
-		if (SpawnerManager.isInstanceCreated)
-			SpawnerManager.instance.Unregister(this);
-	}
+    protected override uint GetMaxEntities() {
+        return (uint)m_quantity.max;
+    }
 
-	public override void Initialize() {
+    protected override void OnInitialize() {        
+        m_respawnCount = 0;
+        m_readyToBeDisabled = false;
 
-		m_respawnTimer = 0;
-		m_respawnCount = 0;
+        if (m_rails == 0) m_rails = 1;
 
-		m_entityAlive = 0;
-		m_entitySpawned = 0;
-		m_entitiesKilled = 0;
+        m_entityPrefabPath = IEntity.ENTITY_PREFABS_PATH + m_entityPrefabStr;
+        PoolManager.CreatePool(m_entityPrefabStr, m_entityPrefabPath, Mathf.Max(15, m_entities.Length), true);
 
-		m_allEntitiesKilledByPlayer = false;
+        m_newCamera = Camera.main.GetComponent<GameCamera>();
 
-		m_readyToBeDisabled = false;
-	}
+        m_area = GetArea();
 
-	public void ResetSpawnTimer()
-	{
-		m_respawnTimer = 0;
-	}
+        m_groupController = GetComponent<EntityGroupController>();
+        if (m_groupController)
+        {
+            m_groupController.Init(m_quantity.max);
+        }
 
-    public override void ForceRemoveEntities() {
-        for (int i = 0; i < m_entitySpawned; i++) {
-            if (m_entities[i] != null) {
-                RemoveEntity(m_entities[i], false);
+        m_guideFunction = GetComponent<IGuideFunction>();
+    }
+
+    protected override bool CanRespawnExtended() {
+        // If we don't have any entity alive, proceed
+        if (EntitiesAlive == 0) {
+            // Respawn on cooldown?
+
+            // Check activation area
+            if (m_newCamera != null && m_newCamera.IsInsideBackgroundActivationArea(transform.position)) {
+                return true;
             }
         }
 
-        m_entityAlive = 0;
-        m_respawnTimer = 0;
-        m_allEntitiesKilledByPlayer = false;
+        return false;
+    }     
+
+    protected override uint GetEntitiesAmountToRespawn() {
+        // If player didn't killed all the spawned entities we'll re spawn only the remaining alive.
+        // Also, this respawn will be instant.
+        return (EntitiesKilled == EntitiesToSpawn) ? (uint)m_quantity.GetRandom() : EntitiesToSpawn - EntitiesKilled;        
+    }   
+
+    protected override string GetPrefabNameToSpawn(uint index) {
+        return m_entityPrefabStr;
+    }    
+    
+    protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
+        if (index > 0) {
+            originPos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
+        }
+
+        spawning.transform.position = originPos;
+        spawning.transform.localScale = Vector3.one * m_scale.GetRandom();
     }
 
-    // entities can remove themselves when are destroyed by the player or auto-disabled when are outside of camera range
-    protected override bool RemoveEntityExtended(GameObject _entity, bool _killedByPlayer) {
-        bool found = false;
-		for (int i = 0; i < m_entitySpawned; i++) {			
-			if (m_entities[i] == _entity) 
-			{				
-				m_entities[i] = null;
-				if (_killedByPlayer) {
-					m_entitiesKilled++;
-				}
-				m_entityAlive--;
-				found = true;
-			}
-		}
-
-		if (found) {
-			// all the entities are dead
-			if (m_entityAlive == 0) {
-				m_allEntitiesKilledByPlayer = m_entitiesKilled == m_entitySpawned;
-
-				if (m_allEntitiesKilledByPlayer) {
-					// check if player has destroyed all the flock
-					if (m_flockBonus > 0) {
-						Reward reward = new Reward();
-						reward.score = (int)(m_flockBonus * m_entitiesKilled);
-						Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _entity.transform, reward);
-					}
-				} else {
-					m_respawnTimer = 0; // instant respawn, because player didn't kill all the entities
-				}
-
-				if (m_readyToBeDisabled) {
-					SpawnerManager.instance.Unregister(this);
-				}
-			}
-		}
-
-        return found;
-	}
-
-    protected override void ReturnEntityToPool(GameObject _entity) {
-        PoolManager.ReturnInstance(m_entityPrefabStr, _entity);
+    protected override void OnMachineSpawned(AI.Machine machine) {
+        if (m_groupController)
+            machine.EnterGroup(ref m_groupController.flock);
     }
 
-    public override bool CanRespawn() {		
-		
-		// If we don't have any entity alive, proceed
-		if(m_entityAlive == 0) {
-			// Respawn on cooldown?
+    protected override void OnPilotSpawned(AI.Pilot pilot) {
+        pilot.SetRail(m_rail, (int)m_rails);
+        m_rail = (m_rail + 1) % (int)m_rails;
+        pilot.guideFunction = m_guideFunction;
+    }
 
-			// Check activation area
-			if(m_newCamera != null && m_newCamera.IsInsideBackgroundActivationArea(transform.position)) {
-				return true;
-			}
-			
+    protected override void OnAllEntitiesRespawned() {
+        // Disable this spawner after a number of spawns
+        if (EntitiesAllKilledByPlayer && m_maxSpawns > 0)
+        {
+            m_respawnCount++;
+            if (m_respawnCount == m_maxSpawns)
+            {
+                gameObject.SetActive(false);
+                UnregisterFromSpawnerManager();
+            }
+        }
 
-		}
+        EntitiesAllKilledByPlayer = false;        
+    }
+   
+    protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
+        if (_allKilledByPlayer) {
+            // check if player has destroyed all the flock
+            if (m_flockBonus > 0) {
+                Reward reward = new Reward();
+                reward.score = (int)(m_flockBonus * EntitiesKilled);
+                Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _lastEntity.transform, reward);
+            }
+        } 
 
-		return false;
-	}
-
-	public void UpdateLogic() {
-		ExtendedUpdateLogic();
-	}
-
-	public override bool Respawn() {
-		Spawn();
-		return true;
-	}
-
-	private void Spawn() {
-		if (m_entitiesKilled == m_entitySpawned) {
-			m_entitySpawned = (uint)m_quantity.GetRandom();
-		} else {
-			// If player didn't killed all the spawned entities we'll re spawn only the remaining alive.
-			// Also, this respawn will be instant.
-			m_entitySpawned = m_entitySpawned - m_entitiesKilled;
-		}
-
-		for (int i = 0; i < m_entitySpawned; i++) {			
-			m_entities[i] = PoolManager.GetInstance(m_entityPrefabStr);
-			m_entityAlive++;
-		}
-		m_entitiesKilled = 0;
-
-		ExtendedSpawn();
-
-		int rail = 0;
-		for (int i = 0; i < m_entitySpawned; i++) {			
-			AI.AIPilot pilot = m_entities[i].GetComponent<AI.AIPilot>();
-			pilot.guideFunction = m_guideFunction;
-
-			Vector3 pos = transform.position;
-			if (m_guideFunction != null) {
-				m_guideFunction.ResetTime();
-			}
-
-			if (i > 0) {
-				pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
-			}
-
-			pilot.transform.position = pos;
-			pilot.transform.localScale = Vector3.one * m_scale.GetRandom();
-			pilot.SetRail(rail, (int)m_rails);
-			rail = (rail + 1) % (int)m_rails;
-
-			pilot.Spawn(this);
-
-			ISpawnable[] components = pilot.GetComponents<ISpawnable>();
-			foreach (ISpawnable component in components) {
-				if (component != pilot ) {
-					component.Spawn(this);
-				}
-			}
-
-			AI.IMachine machine = pilot.GetComponent<AI.IMachine>();
-			if (m_groupController) {	
-				machine.EnterGroup(ref m_groupController.flock);
-			}
-		}
-
-		// Disable this spawner after a number of spawns
-		if (m_allEntitiesKilledByPlayer && m_maxSpawns > 0) {
-			m_respawnCount++;
-			if (m_respawnCount == m_maxSpawns) {
-				gameObject.SetActive(false);
-				SpawnerManager.instance.Unregister(this);
-			}
-		}
-
-		m_allEntitiesKilledByPlayer = false;
-
-		m_respawnTimer = m_spawnTime.GetRandom();
-	}
-
-	protected virtual void ExtendedSpawn() {}
-	protected virtual void ExtendedUpdateLogic() {}
-
-	protected virtual AreaBounds GetArea() {
-		Area area = GetComponent<Area>();
-		if (area != null) {
-			return area.bounds;
-		} else {
-			// spawner for static objects with a fixed position
-			return new CircleAreaBounds(transform.position, 1f);
-		}
-	}
+        if (m_readyToBeDisabled) {
+            UnregisterFromSpawnerManager();
+        }
+    }    
+    //-------------------------------------------------------------------    
 
 	void OnDrawGizmos() {
 		// Only if editor allows it
@@ -310,10 +224,7 @@ public class SpawnerBg : AbstractSpawner {
 		}
 	}
 
-	virtual protected Vector3 RandomStartDisplacement()
-	{
+	protected Vector3 RandomStartDisplacement() {
 		return Random.onUnitSphere * 2f;
-	}
-
-	public override void DrawStateGizmos() {}
+	}    
 }

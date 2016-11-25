@@ -387,15 +387,22 @@ public class DragonPlayer : MonoBehaviour {
 		}
 	}
 
-	public void StartIntroMovement()
+	public void StartIntroMovement( bool useLevelEditor = false )
 	{
 		m_dragonEatBehaviour.enabled = true;
-		// Look for a default spawn point for this dragon type in the scene and move the dragon there
-		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME +"_" + data.def.sku);
+		GameObject spawnPointObj = null;
+		if(useLevelEditor) {
+			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
+			if ( spawnPointObj == null )
+				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+		} else {
+			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+		}
+		// If we couldn't find a valid spawn point, try to find a generic one
 		if(spawnPointObj == null) {
-			// We couldn't find a spawn point for this specific type, try to find a generic one
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
 		}
+
 		if(spawnPointObj != null) 
 		{
 			Vector3 introPos = spawnPointObj.transform.position;
@@ -538,7 +545,7 @@ public class DragonPlayer : MonoBehaviour {
 		if ( m_numLatching == 0 )
 		{
 			m_dragonMotion.EndLatchedOnMovement();
-			m_dragonEatBehaviour.ResumeEating( 2.5f );
+			m_dragonEatBehaviour.ResumeEating( 1.0f );
 		}
 	}
 

@@ -39,6 +39,7 @@ namespace AI {
 			private object[] m_transitionParam;
 
 			protected Vector3 m_facingTarget = Vector3.zero;
+			public Vector3 facingTarget { get{ return m_facingTarget; }}
 
 
 			protected override void OnInitialise() {
@@ -135,7 +136,7 @@ namespace AI {
 			}
 
 
-			private void StartAttack() {
+			protected virtual void StartAttack() {
 				
 				m_pilot.PressAction(Pilot.Action.Attack);
 

@@ -16,7 +16,7 @@ namespace AI {
 			
 			private GameObject m_projectile;
 			private Transform m_projectileSpawnPoint;
-
+			private ViewControl m_viewControl;
 
 			public override StateComponentData CreateData() {
 				return new AttackRangedData();
@@ -35,8 +35,18 @@ namespace AI {
 				GameObject projectilePrefab = Resources.Load<GameObject>("Game/Projectiles/" + ((AttackRangedData)m_data).projectileName);
 				PoolManager.CreatePool(projectilePrefab, 2, true);
 
+				m_viewControl = m_pilot.GetComponent<ViewControl>();
 
 				base.OnInitialise();
+			}
+
+			protected override void StartAttack() 
+			{
+				base.StartAttack();
+				if (m_data.forceFaceToShoot && m_viewControl != null){
+					// Tell view position to attack
+					m_viewControl.attackTargetPosition = m_facingTarget;
+				}
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
