@@ -18,7 +18,7 @@ Shader "Hungry Dragon/UnderWater"
 	}
 
 	SubShader {
-		Tags{ "Queue" = "Transparent+50" "RenderType" = "Transparent" }
+		Tags{ "Queue" = "Transparent+10" "RenderType" = "Transparent" }
 		LOD 100
 
 		Pass {  
