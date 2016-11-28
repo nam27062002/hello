@@ -234,14 +234,17 @@ public class DragonBreathBehaviour : MonoBehaviour {
 					UsersManager.currentUser.superFuryProgression = (int)m_superFuryMax;
 			}
 
-			if (UsersManager.currentUser.superFuryProgression >= m_superFuryMax)
+			if ( !m_dragon.dragonEatBehaviour.IsEating())
 			{
-				BeginFury( Type.Super );
+				if (UsersManager.currentUser.superFuryProgression >= m_superFuryMax)
+				{
+					BeginFury( Type.Super );
 
-			}
-			else if (m_currentFury >= m_furyMax)
-			{
-				BeginFury( Type.Standard );
+				}
+				else if (m_currentFury >= m_furyMax)
+				{
+					BeginFury( Type.Standard );
+				}
 			}
 		}
 
