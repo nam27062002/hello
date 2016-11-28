@@ -16,6 +16,8 @@ Properties {
 	_InnerLightColor ("Inner Light Color", Color) = (1,1,1,1)
 
 	_SpecExponent ("Specular Exponent", float) = 1
+	_Fresnel("Fresnel factor", Range(0, 10)) = 1.5
+	_FresnelColor("Fresnel Color", Color) = (1,1,1,1)
 }
 
 SubShader {
@@ -60,7 +62,8 @@ SubShader {
 		        float3 normalWorld : TEXCOORD3;
 		        float3 binormalWorld : TEXCOORD4;
 
-		        fixed3 posWorld : TEXCOORD5;
+//		        fixed3 posWorld : TEXCOORD5;
+				fixed3 viewDir : TEXCOORD5;
 			};
 
 			sampler2D _MainTex;
@@ -74,8 +77,10 @@ SubShader {
 
 			uniform float _InnerLightAdd;
 			uniform float4 _InnerLightColor;
+			uniform float4 _FresnelColor;
 
 			uniform float _SpecExponent;
+			uniform float _Fresnel;
 
 			v2f vert (appdata_t v)
 			{
@@ -88,12 +93,14 @@ SubShader {
 
 				// Light Probes
 				o.vLight = ShadeSH9(float4(normal, 1.0));
+//				o.vLight = float3(0.5, 0.5, 0.5);// ShadeSH9(float4(normal, 1.0));
 
 				// Half View - See: Blinn-Phong
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
 				float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
 				o.halfDir = normalize(lightDirection + viewDirection);
-				o.posWorld = mul( unity_ObjectToWorld, v.vertex ).xyz;
+//				o.posWorld = mul( unity_ObjectToWorld, v.vertex ).xyz;
+				o.viewDir = normalize(viewDirection);
 
 	            // To calculate tangent world
 	            float4x4 modelMatrix = unity_ObjectToWorld;
@@ -117,6 +124,7 @@ SubShader {
      			fixed4 diffuse = max(0,dot( normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
 
      			fixed3 pointLights = fixed3(0,0,0);
+/*
      			for (int index = 0; index <1; index++)
 	            {    
 					float3 lightPosition = float3(unity_4LightPosX0[index], unity_4LightPosY0[index], unity_4LightPosZ0[index]);
@@ -126,8 +134,10 @@ SubShader {
 					float attenuation = 1.0 / (1.0 + unity_4LightAtten0[index] * squaredDistance);
 					float3 diffuseReflection = attenuation * unity_LightColor[index].rgb * max(0.0, dot(normalDirection, lightDirection));         
 					pointLights = pointLights + diffuseReflection;
-	            }
-
+	            }									
+*/
+				// Fresnel
+				float fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _Fresnel), 0.0, 1.0);
 				// Specular
 				float specularLight = pow(max(dot(normalDirection, i.halfDir), 0), _SpecExponent) * detail.g;
 
@@ -135,7 +145,7 @@ SubShader {
      			fixed4 selfIlluminate = (main * (detail.r * _InnerLightAdd * _InnerLightColor));
 
 				// fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
-				fixed4 col = (diffuse + fixed4(pointLights + i.vLight, 1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
+				fixed4 col = (diffuse + fixed4(pointLights + i.vLight, 1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor); // To use ShaderSH9 better done in vertex shader
 				UNITY_OPAQUE_ALPHA(col.a); 
 
 				return col; 
