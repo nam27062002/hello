@@ -5,17 +5,22 @@ public class BackgroundTintFX : MonoBehaviour {
 
     public Color m_Tint = Color.white;
     public Color m_Tint2 = Color.white;
+    public float timeDecay = 2.0f;
     public Shader m_shader = null;
 
 //    private Camera m_mapCamera;
     private Material m_material;
 
     private bool m_tintActive;
+    private bool m_fade = true;
+    private float m_startTime;
 
     private Camera m_originalCamera = null;
     private Camera m_renderCamera = null;
     private RenderTexture m_renderTexture = null;
     private RenderTexture m_buffer = null;
+
+    private int m_cullingMask;
 
     void Awake()
     {
@@ -46,23 +51,66 @@ public class BackgroundTintFX : MonoBehaviour {
         m_renderCamera.backgroundColor = Color.clear;
         m_renderCamera.clearFlags = CameraClearFlags.SolidColor;
         m_renderCamera.renderingPath = RenderingPath.Forward;
+        Shader rShader = Shader.Find("Hidden/VoidReplacement");
+        m_renderCamera.SetReplacementShader(rShader, "RenderType");
         m_renderCamera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
 
+
+        setRenderCameraActive(false);
+        m_tintActive = false;
+        m_fade = true;
 
         Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
     }
 
     public void OnDestroy()
     {
+
         m_renderCamera.targetTexture = null;
         DestroyObject(m_renderCamera);
+
     }
 
+    void setRenderCameraActive(bool active)
+    {
+        m_renderCamera.gameObject.SetActive(active);
+    }
 
+    public void Update()
+    {
+        if (m_tintActive)
+        {
+            float dTime = (Time.time - m_startTime) / timeDecay;
+
+            if (!m_fade)
+            {
+                dTime = 1.0f - dTime;
+                if (dTime < 0.0f)
+                {
+                    m_tintActive = false;
+                    setRenderCameraActive(false);
+
+                }
+            }
+
+            dTime = Mathf.Clamp(dTime, 0.0f, 1.0f);
+            setTint(Color.Lerp(Color.white, m_Tint, dTime), Color.Lerp(Color.white, m_Tint2, dTime));
+        }
+    }
 
     void OnFuryToggled(bool active, DragonBreathBehaviour.Type type)
     {
-        m_tintActive = active;
+        m_startTime = Time.time;
+        if (active)
+        {
+            m_tintActive = active;
+            m_fade = true;
+            setRenderCameraActive(true);
+        }
+        else
+        {
+            m_fade = false;
+        }
     }
 
     public void setTint(Color col)
@@ -86,23 +134,24 @@ public class BackgroundTintFX : MonoBehaviour {
             RenderTexture.active = null;
             Graphics.Blit(m_buffer, m_material);
         }
-        else
-        {
-        }
 
     }
 
 
     void OnPreRender()
     {
-        m_renderCamera.CopyFrom(m_originalCamera);
-//        m_renderCamera.transform.CopyFrom(m_originalCamera.transform, true);
-        m_renderCamera.backgroundColor = Color.clear;
-        m_renderCamera.clearFlags = CameraClearFlags.SolidColor;
-        m_renderCamera.renderingPath = RenderingPath.Forward;
-        m_renderCamera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
-        m_renderCamera.targetTexture = m_renderTexture;
-        m_renderCamera.Render();
+
+        if (m_tintActive)
+        {
+            m_renderCamera.CopyFrom(m_originalCamera);
+            //        m_renderCamera.transform.CopyFrom(m_originalCamera.transform, true);
+            m_renderCamera.backgroundColor = Color.clear;
+            m_renderCamera.clearFlags = CameraClearFlags.SolidColor;
+            m_renderCamera.renderingPath = RenderingPath.Forward;
+            m_renderCamera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
+            m_renderCamera.targetTexture = m_renderTexture;
+            m_renderCamera.Render();
+        }
 
     }
 }

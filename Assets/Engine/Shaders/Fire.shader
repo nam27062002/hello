@@ -18,6 +18,15 @@
 		Cull Off
 		ZWrite Off
 
+
+		Stencil
+		{
+			Ref 5
+			Comp always
+			Pass Replace
+			ZFail keep
+		}
+
 		Pass
 		{
 			CGPROGRAM
