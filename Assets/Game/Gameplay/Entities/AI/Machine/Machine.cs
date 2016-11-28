@@ -153,9 +153,9 @@ namespace AI {
 		public virtual void Spawn(ISpawner _spawner) {
 			if (m_signals!= null) 
 				m_signals.Init();
-			
-			m_motion.Init();
-			m_sensor.Init();
+
+			if (m_enableMotion) m_motion.Init();
+			if (m_enableSensor) m_sensor.Init();
 			m_edible.Init();
 			m_inflammable.Init();
 
