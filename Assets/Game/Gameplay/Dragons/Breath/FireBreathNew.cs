@@ -55,6 +55,8 @@ public class FireBreathNew : DragonBreathBehaviour {
     private FireBreathDynamic dragonFlameSuperInstance = null;
     //    private FireBreathDynamic dragonFlameInstance = null;
 
+    private bool m_insideWater = false;
+
     override protected void ExtendedStart() {
 
         DragonMotion dragonMotion = GetComponent<DragonMotion>();
@@ -143,11 +145,11 @@ public class FireBreathNew : DragonBreathBehaviour {
 		base.BeginFury( _type);
         if (_type == Type.Standard)
         {
-            dragonFlameStandardInstance.EnableFlame(true);
+            dragonFlameStandardInstance.EnableFlame(true, m_insideWater);
         }
         else
         {
-            dragonFlameSuperInstance.EnableFlame(true);
+            dragonFlameSuperInstance.EnableFlame(true, m_insideWater);
         }
     }
 
@@ -290,7 +292,22 @@ public class FireBreathNew : DragonBreathBehaviour {
 	{
 		if ( _other.tag == "Water" )
 		{
-			// TODO: Change View to boiling bubbles
+			m_insideWater = true;
+			if ( m_isFuryOn )
+			{
+				// Change to water modes
+				switch( m_type )
+				{
+					case Type.Standard:
+					{
+						dragonFlameStandardInstance.SwitchToWaterMode();
+					}break;
+					case Type.Super:
+					{
+						dragonFlameSuperInstance.SwitchToWaterMode();
+					}break;
+				}
+			}
 		}
 	}
 
@@ -298,7 +315,22 @@ public class FireBreathNew : DragonBreathBehaviour {
 	{
 		if ( _other.tag == "Water" )
 		{
+			m_insideWater = false;
 			// TODO: Change View back from boiling bubbles to fire
+			if ( m_isFuryOn )
+			{
+				switch( m_type )
+				{
+					case Type.Standard:
+					{
+						dragonFlameStandardInstance.SwitchToNormalMode();
+					}break;
+					case Type.Super:
+					{
+						dragonFlameSuperInstance.SwitchToNormalMode();
+					}break;
+				}
+			}
 		}
 	}
 
@@ -320,11 +352,11 @@ public class FireBreathNew : DragonBreathBehaviour {
         base.ResumeFury();
         if (m_type == Type.Standard)
         {
-            dragonFlameStandardInstance.EnableFlame(true);
+			dragonFlameStandardInstance.EnableFlame(true, m_insideWater);
         }
         else
         {
-            dragonFlameSuperInstance.EnableFlame(true);
+			dragonFlameSuperInstance.EnableFlame(true, m_insideWater);
         }
     }
 
