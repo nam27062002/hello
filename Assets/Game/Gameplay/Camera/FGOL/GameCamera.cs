@@ -107,10 +107,16 @@ public class GameCamera : MonoBehaviour
 	private FastBounds2D		m_backgroundWorldBounds = new FastBounds2D();	// same, at Z for background spawners
 
 	// Camera bounds (from Dragon)
-	private FastBounds2D 		m_activationMin = new FastBounds2D();
-	public FastBounds2D 		activationMinRect { get { return m_activationMin; }}
-	private FastBounds2D 		m_activationMax = new FastBounds2D();
-	public FastBounds2D 		activationMaxRect { get { return m_activationMax; }}
+	private FastBounds2D 		m_activationMinNear = new FastBounds2D();
+	public FastBounds2D 		activationMinRectNear { get { return m_activationMinNear; }}
+	private FastBounds2D 		m_activationMaxNear = new FastBounds2D();
+	public FastBounds2D 		activationMaxRectNear { get { return m_activationMaxNear; }}
+
+	private FastBounds2D 		m_activationMinFar = new FastBounds2D();
+	public FastBounds2D 		activationMinRectFar { get { return m_activationMinFar; }}
+	private FastBounds2D 		m_activationMaxFar = new FastBounds2D();
+	public FastBounds2D 		activationMaxRectFar { get { return m_activationMaxFar; }}
+
 	private FastBounds2D 		m_deactivation = new FastBounds2D();
 	public FastBounds2D 		deactivationRect { get { return m_deactivation; }}
 
@@ -1146,15 +1152,21 @@ public class GameCamera : MonoBehaviour
 
 		float expand = 0;
 
-		m_activationMin.Set( m_screenWorldBounds );
+		m_activationMinNear.Set( m_screenWorldBounds );
 		expand = m_activationDistance;
-		m_activationMin.ExpandBy(expand, expand);
-		m_activationMin.ExpandBy(-expand, -expand);
+		m_activationMinNear.ExpandBy(expand, expand);
+		m_activationMinNear.ExpandBy(-expand, -expand);
 
-		m_activationMax.Set( m_screenWorldBounds );
+		m_activationMinFar.Set(m_activationMinNear);
+		m_activationMinFar.ApplyScale(1.5f);
+
+		m_activationMaxNear.Set( m_screenWorldBounds );
 		expand = m_activationDistance + m_activationRange;
-		m_activationMax.ExpandBy( expand, expand );
-		m_activationMax.ExpandBy( -expand, -expand );
+		m_activationMaxNear.ExpandBy( expand, expand );
+		m_activationMaxNear.ExpandBy( -expand, -expand );
+
+		m_activationMaxFar.Set(m_activationMaxNear);
+		m_activationMaxFar.ApplyScale(1.5f);
 
 		m_deactivation.Set( m_screenWorldBounds );
 		expand = m_deactivationDistance;
@@ -1183,38 +1195,38 @@ public class GameCamera : MonoBehaviour
 	// Same tests from Dragon Camera
 	public bool IsInsideActivationMinArea(Vector3 _point) {		
 		_point.z = 0;
-		return m_activationMin.Contains(_point);
+		return m_activationMinNear.Contains(_point);
 	}
 
 	public bool IsInsideActivationMinArea(Bounds _bounds) {
 		Vector3 center = _bounds.center;
 		center.z = 0;
 		_bounds.center = center;
-		return m_activationMin.Intersects(_bounds);
+		return m_activationMinNear.Intersects(_bounds);
 	}
 
 	public bool IsInsideActivationMaxArea(Vector3 _point) {
 		_point.z = 0;
-		return m_activationMax.Contains(_point);
+		return m_activationMaxNear.Contains(_point);
 	}
 
 	public bool IsInsideActivationMaxArea(Bounds _bounds) {
 		Vector3 center = _bounds.center;
 		center.z = 0;
 		_bounds.center = center;
-		return m_activationMax.Intersects(_bounds);
+		return m_activationMaxNear.Intersects(_bounds);
 	}
 
 	public bool IsInsideActivationArea(Vector3 _point) {		
 		_point.z = 0;
-		return !m_activationMin.Contains(_point) && m_activationMax.Contains(_point);
+		return !m_activationMinNear.Contains(_point) && m_activationMaxNear.Contains(_point);
 	}
 
 	public bool IsInsideActivationArea(Bounds _bounds) {
 		Vector3 center = _bounds.center;
 		center.z = 0;
 		_bounds.center = center;
-		return !m_activationMin.Intersects(_bounds) && m_activationMax.Intersects(_bounds);
+		return !m_activationMinNear.Intersects(_bounds) && m_activationMaxNear.Intersects(_bounds);
 	}
 
 	public bool IsInsideBackgroundActivationArea(Vector3 _point) {
@@ -1305,11 +1317,11 @@ public class GameCamera : MonoBehaviour
 			Gizmos.DrawWireCube(center, size);
 
 			Gizmos.color = Color.cyan;
-			m_activationMin.GetCentre( out center );
-			m_activationMin.GetSize(out size);
+			m_activationMinNear.GetCentre( out center );
+			m_activationMinNear.GetSize(out size);
 			Gizmos.DrawWireCube(center, size);
-			m_activationMax.GetCentre( out center );
-			m_activationMax.GetSize(out size);
+			m_activationMaxNear.GetCentre( out center );
+			m_activationMaxNear.GetSize(out size);
 			Gizmos.DrawWireCube(center, size);
 
 			Gizmos.color = Color.magenta;
