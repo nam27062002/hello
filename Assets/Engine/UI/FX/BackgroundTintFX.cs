@@ -55,6 +55,8 @@ public class BackgroundTintFX : MonoBehaviour {
         m_renderCamera.SetReplacementShader(rShader, "RenderType");
         m_renderCamera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
 
+
+        setRenderCameraActive(false);
         m_tintActive = false;
         m_fade = true;
 
@@ -69,6 +71,11 @@ public class BackgroundTintFX : MonoBehaviour {
 
     }
 
+    void setRenderCameraActive(bool active)
+    {
+        m_renderCamera.gameObject.SetActive(active);
+    }
+
     public void Update()
     {
         if (m_tintActive)
@@ -81,6 +88,8 @@ public class BackgroundTintFX : MonoBehaviour {
                 if (dTime < 0.0f)
                 {
                     m_tintActive = false;
+                    setRenderCameraActive(false);
+
                 }
             }
 
@@ -96,6 +105,7 @@ public class BackgroundTintFX : MonoBehaviour {
         {
             m_tintActive = active;
             m_fade = true;
+            setRenderCameraActive(true);
         }
         else
         {
