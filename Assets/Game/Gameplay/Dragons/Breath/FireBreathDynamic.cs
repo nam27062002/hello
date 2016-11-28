@@ -162,7 +162,8 @@ public class FireBreathDynamic : MonoBehaviour
 
         // lastInitialPosition = m_whipEnd.transform.position;
 
-        flameAnimationTime = m_FlameAnimation[m_FlameAnimation.length - 1].time;
+        // flameAnimationTime = m_FlameAnimation[m_FlameAnimation.length - 1].time;
+        flameAnimationTime = 0.1f;
         enableTime = m_lastTime = Time.time;
 
     }
