@@ -301,36 +301,57 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
     void OnFuryToggled(bool _active, DragonBreathBehaviour.Type type)
     {
-        /*
-                if (m_entity == null || m_entity.IsBurnable())
-                {
-                    checkTint();
-                }
-        */
-        entityTint(_active);
-        m_lastType = _active ? type : DragonBreathBehaviour.Type.None;
+		if ( IsBurnableByPlayer() )
+		{
+	        entityTint(_active);
+	        m_lastType = _active ? type : DragonBreathBehaviour.Type.None;
+        }
 
+    }
+
+    /// <summary>
+    /// Determines whether this instance is burnable by player.
+    /// </summary>
+    /// <returns><c>true</c> if this instance is burnable by player; otherwise, <c>false</c>.</returns>
+    private bool IsBurnableByPlayer()
+    {
+		if (m_dragonBreath == null)
+        {
+            m_dragonBreath = InstanceManager.player.gameObject.GetComponent<DragonBreathBehaviour>();
+        }
+
+        if ( m_entity != null )
+        {
+	    	switch( m_dragonBreath.type )
+	    	{
+	    		case DragonBreathBehaviour.Type.Super:
+	    			return m_entity.IsBurnable();
+				case DragonBreathBehaviour.Type.Standard:
+				default:
+					return m_entity.IsBurnable( InstanceManager.player.data.tier );
+				
+	    	}
+	    }
+    	return false;
     }
 
 
     void checkTint()
     {
-        if (m_dragonBreath == null)
-        {
-            m_dragonBreath = InstanceManager.player.gameObject.GetComponent<DragonBreathBehaviour>();
-        }
-
-        if (m_dragonBreath.type != m_lastType)
-        {
-            m_lastType = m_dragonBreath.type;
-            if (m_lastType == DragonBreathBehaviour.Type.None)
-            {
-                entityTint(false);
-            }
-        }
-        if (m_lastType != DragonBreathBehaviour.Type.None)
-        {
-            entityTint(true);
+    	if ( IsBurnableByPlayer() )
+    	{
+	        if (m_dragonBreath.type != m_lastType)
+	        {
+	            m_lastType = m_dragonBreath.type;
+	            if (m_lastType == DragonBreathBehaviour.Type.None)
+	            {
+	                entityTint(false);
+	            }
+	        }
+	        if (m_lastType != DragonBreathBehaviour.Type.None)
+	        {
+	            entityTint(true);
+	        }
         }
     }
 

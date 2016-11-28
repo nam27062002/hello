@@ -172,7 +172,7 @@ public class Entity : IEntity {
 	}
 
 	public bool IsBurnable(DragonTier _tier) {
-		return allowBurnable && m_isBurnable && (m_burnableFromTier <= _tier);
+		return IsBurnable() && (m_burnableFromTier <= _tier);
 	}
 
 	public bool IsEdible() {
