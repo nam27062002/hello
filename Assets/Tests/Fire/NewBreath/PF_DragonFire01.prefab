@@ -318,6 +318,7 @@ MonoBehaviour:
     m_CollisionEmiters: 15
     m_iCollisionLayerMask: 0
     m_CollisionPrefabPath: 
+    m_insideWater: 0
   - m_CollisionLayers:
     - Water
     m_CollisionPrefab: Water/PS_BoilingWater
@@ -325,6 +326,16 @@ MonoBehaviour:
     m_CollisionEmiters: 10
     m_iCollisionLayerMask: 0
     m_CollisionPrefabPath: 
+    m_insideWater: 0
+  - m_CollisionLayers:
+    - Ground
+    - GroundVisible
+    m_CollisionPrefab: PF_BonfireUnderwater
+    m_CollisionDelay: 0.2
+    m_CollisionEmiters: 10
+    m_iCollisionLayerMask: 0
+    m_CollisionPrefabPath: 
+    m_insideWater: 1
   m_debugScale: -1
   m_fireParticles:
   - {fileID: 198000013808265608}
