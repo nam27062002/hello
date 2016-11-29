@@ -49,11 +49,11 @@ public class MenuDragonLoader : MonoBehaviour {
 	}
 
 	[Space]
-	[List("idle", "fly_idle", "fly_turbo")]
-	[SerializeField] private string m_initialAnim = "idle";
-	public string initialAnim {
-		get { return m_initialAnim; }
-		set { m_initialAnim = value; }
+	[HideEnumValues(false, true)]
+	[SerializeField] private MenuDragonPreview.Anim m_anim = MenuDragonPreview.Anim.IDLE;
+	public MenuDragonPreview.Anim anim {
+		get { return m_anim; }
+		set { m_anim = value; }
 	}
 
 	[SerializeField] private bool m_resetDragonScale = true;
@@ -63,8 +63,8 @@ public class MenuDragonLoader : MonoBehaviour {
 	}
 
 	// Internal
-	private GameObject m_dragonInstance = null;
-	public GameObject dragonInstance {
+	private MenuDragonPreview m_dragonInstance = null;
+	public MenuDragonPreview dragonInstance {
 		get { return m_dragonInstance; }
 	}
 
@@ -76,15 +76,7 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Try to find out already instantiated previews of the dragon
-		MenuDragonPreview preview = this.GetComponentInChildren<MenuDragonPreview>();
-		if(preview != null) {
-			m_dragonInstance = preview.gameObject;
-		}
-
-		// If this object has any children, consider first one the dragon preview placeholder
-		else if(transform.childCount > 0) {
-			m_dragonInstance = transform.GetChild(0).gameObject;
-		}
+		m_dragonInstance = this.GetComponentInChildren<MenuDragonPreview>();
 	}
 
 	/// <summary>
@@ -119,10 +111,10 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// <param name="_mode">Dragon loading mode.</param>
 	/// <param name="_initialAnim">Initial dragon animation.</param>
 	/// <param name="_resetScale">Whether to respect dragon's prefab original scale or reset it.</param>
-	public void Setup(Mode _mode, string _initialAnim, bool _resetScale) {
+	public void Setup(Mode _mode, MenuDragonPreview.Anim _initialAnim, bool _resetScale) {
 		// Store new setup
 		m_mode = _mode;
-		m_initialAnim = _initialAnim;
+		m_anim = _initialAnim;
 		m_resetDragonScale = _resetScale;
 	}
 
@@ -140,14 +132,15 @@ public class MenuDragonLoader : MonoBehaviour {
 			// Instantiate the prefab and add it as child of this object
 			GameObject dragonPrefab = Resources.Load<GameObject>(def.GetAsString("menuPrefab"));
 			if(dragonPrefab != null) {
-				m_dragonInstance = GameObject.Instantiate<GameObject>(dragonPrefab);
-				m_dragonInstance.transform.SetParent(this.transform);
-				m_dragonInstance.transform.localPosition = Vector3.zero;
-				m_dragonInstance.transform.localRotation = Quaternion.identity;
-				m_dragonInstance.SetLayerRecursively(this.gameObject.layer);
+				GameObject newInstance = GameObject.Instantiate<GameObject>(dragonPrefab);
+				newInstance.transform.SetParent(this.transform);
+				newInstance.transform.localPosition = Vector3.zero;
+				newInstance.transform.localRotation = Quaternion.identity;
+				newInstance.SetLayerRecursively(this.gameObject.layer);
 
-				// Launch the default animation
-				m_dragonInstance.GetComponentInChildren<Animator>().SetTrigger(m_initialAnim);
+				// Store dragon preview and launch the default animation
+				m_dragonInstance = newInstance.GetComponent<MenuDragonPreview>();
+				m_dragonInstance.SetAnim(m_anim);
 
 				// Reset scale if required
 				if(m_resetDragonScale) {
@@ -177,9 +170,9 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// </summary>
 	public void UnloadDragon() {
 		// Just make sure the object doesn't have anything attached
+		m_dragonInstance = null;
 		foreach(Transform child in transform) {
 			GameObject.DestroyImmediate(child.gameObject);	// Immediate so it can be called from the editor
-			m_dragonInstance = null;
 		}
 	}
 
