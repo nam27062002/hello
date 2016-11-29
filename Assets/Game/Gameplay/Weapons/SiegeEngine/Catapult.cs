@@ -179,6 +179,7 @@ public class Catapult : Initializable {
 		m_timer = m_tossDelay;
 
 		m_animator.SetBool("reload", false);
+		m_operatorSpawner.OperatorDoIdle();
 
 		m_state = State.Loaded;
 	}

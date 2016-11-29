@@ -13,7 +13,7 @@
 
 		BindChannels
 		{
-//			Bind "Color", color
+			Bind "Color", color
 			Bind "Vertex", vertex
 			Bind "TexCoord", texcoord
 		}
@@ -30,13 +30,13 @@
 					ZFail keep
 				}
 
-				AlphaTest greater 0.2
+				AlphaTest greater 0.5
 
 				SetTexture[_MainTex]
 				{
-					constantColor(0, 0, 0, 1)
-					//combine texture * primary
-					combine texture * constant
+//					constantColor (0.0, 0.0, 0.0, 1.0)
+					combine texture * primary
+//					combine texture * constant
 				}
 			}
 		}
