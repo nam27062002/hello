@@ -36,6 +36,10 @@ public class ResultsSceneSetup : MonoBehaviour {
 	[Comment("Sort chest slots from left to right, chests will be spawned from the center depending on how many were collected.\nAlways 5 slots, please.", 10)]
 	[SerializeField] private ResultsSceneChestSlot[] m_chestSlots = new ResultsSceneChestSlot[5];
 
+	// Internal
+	private List<ResultsSceneChestSlot> m_activeSlots = new List<ResultsSceneChestSlot>();	// The slots that we'll be actually using, sorted in order of appereance
+	private bool m_eggFound = false;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -65,9 +69,9 @@ public class ResultsSceneSetup : MonoBehaviour {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Setup and launch results animation based on current game stats (RewardManager, etc.).
+	/// Initialize the scene and leave it ready for the LaunchAnim() call.
 	/// </summary>
-	public void LaunchAnim() {
+	public void Init() {
 		// How many chests?
 		List<Chest> collectedChests = new List<Chest>();
 		if(CPResultsScreenTest.chestsMode == CPResultsScreenTest.ChestTestMode.NONE) {
@@ -80,8 +84,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 			}
 		} else {
 			// [AOC] DEBUG ONLY!!
-			int numCollectedChests = (int)CPResultsScreenTest.chestsMode;
-			numCollectedChests -= 1;	// enum starts at 1
+			int numCollectedChests = CPResultsScreenTest.chestsMode - CPResultsScreenTest.ChestTestMode.FIXED_0;
 			if(CPResultsScreenTest.chestsMode == CPResultsScreenTest.ChestTestMode.RANDOM) {
 				numCollectedChests = Random.Range(0, 5);
 			}
@@ -97,11 +100,11 @@ public class ResultsSceneSetup : MonoBehaviour {
 		// Another option (check with design/UI) would be to show the daily chest progression, 
 		// in which case order should be linear (0-1-2-3-4) and probably the chest layout 
 		// different to give more relevance to latest chests (maybe some different asset?)
-		List<ResultsSceneChestSlot> sortedSlots = new List<ResultsSceneChestSlot>();
+		m_activeSlots.Clear();
 		int startIdx = (Mathf.CeilToInt(m_chestSlots.Length/2f) - Mathf.FloorToInt(collectedChests.Count/2f)) - 1;	// -1 for 0-based index
 		int endIdx = startIdx + collectedChests.Count;
 		for(int i = startIdx; i < endIdx; i++) {
-			sortedSlots.Add(m_chestSlots[i]);
+			m_activeSlots.Add(m_chestSlots[i]);
 		}
 
 		// Hide all slots
@@ -109,9 +112,51 @@ public class ResultsSceneSetup : MonoBehaviour {
 			m_chestSlots[i].gameObject.SetActive(false);
 		}
 
+		// Egg found?
+		m_eggFound = false;
+		switch(CPResultsScreenTest.eggMode) {
+			case CPResultsScreenTest.EggTestMode.FOUND: {
+				m_eggFound = true; 
+			} break;
+
+			case CPResultsScreenTest.EggTestMode.NOT_FOUND: {
+				m_eggFound = false; 
+			} break;
+
+			case CPResultsScreenTest.EggTestMode.RANDOM: {
+				m_eggFound = (Random.Range(0f, 1f) > 0.5f); 
+			} break;
+
+			case CPResultsScreenTest.EggTestMode.NONE: {
+				m_eggFound = EggManager.collectibleEgg != null && EggManager.collectibleEgg.collected;
+			} break;
+		}
+
+		// Hide egg slot
+		m_eggSlot.gameObject.SetActive(false);
+
+		// Hide dragon slot
+		m_dragonSlot.gameObject.SetActive(false);
+	}
+
+	/// <summary>
+	/// Launches the dragon intro animation.
+	/// </summary>
+	public void LaunchDragonAnim() {
+		// Show and trigger dragon animation
+		m_dragonSlot.gameObject.SetActive(true);
+		m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS_IN);
+
+		// [AOC] TODO!! Sync camera shake
+	}
+
+	/// <summary>
+	/// Setup and launch results animation based on current game stats (RewardManager, etc.).
+	/// </summary>
+	public void LaunchRewardsAnim() {
 		// Program animation of selected slots
 		float totalDelay = 0f;
-		for(int i = 0; i < sortedSlots.Count; i++) {
+		for(int i = 0; i < m_activeSlots.Count; i++) {
 			// Get reward definition corresponding to this chest
 			int chestIdx = RewardManager.initialCollectedChests + i + 1;
 			if(CPResultsScreenTest.chestsMode != CPResultsScreenTest.ChestTestMode.NONE) {
@@ -121,37 +166,17 @@ public class ResultsSceneSetup : MonoBehaviour {
 
 			// Launch with delay
 			StartCoroutine(
-				AnimateChestWithDelay(sortedSlots[i], rewardData, totalDelay)
+				AnimateChestWithDelay(m_activeSlots[i], rewardData, totalDelay)
 			);
-			totalDelay += 0.15f;
+			totalDelay += 0.20f;	// Arbitrary
 		}
 
-		// Egg found?
-		bool eggFound = false;
-		switch(CPResultsScreenTest.eggMode) {
-			case CPResultsScreenTest.EggTestMode.FOUND: {
-				eggFound = true; 
-			} break;
-
-			case CPResultsScreenTest.EggTestMode.NOT_FOUND: {
-				eggFound = false; 
-			} break;
-
-			case CPResultsScreenTest.EggTestMode.RANDOM: {
-				eggFound = (Random.Range(0f, 1f) > 0.5f); 
-			} break;
-
-			case CPResultsScreenTest.EggTestMode.NONE: {
-				eggFound = EggManager.collectibleEgg != null && EggManager.collectibleEgg.collected;
-			} break;
-		}
-
-		if(eggFound) {
+		// Program egg anim
+		if(m_eggFound) {
 			totalDelay += 0.5f;	// Extra delay
+			m_eggSlot.gameObject.SetActive(true);
 			m_eggSlot.localScale = Vector3.zero;
 			m_eggSlot.DOScale(1f, 0.5f).SetDelay(totalDelay).SetEase(Ease.OutBack);
-		} else {
-			m_eggSlot.gameObject.SetActive(false);
 		}
 	}
 

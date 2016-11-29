@@ -59,7 +59,7 @@ public class DragonEquip : MonoBehaviour {
 			else
 				equip.Add(Equipable.AttachPoint.Pet_1+i, "PF_PetArmored");	
 		}
-
+		DragonPlayer player = GetComponent<DragonPlayer>();
 		AttachPoint[] points = GetComponentsInChildren<AttachPoint>();
 		for (int i = 0; i < points.Length; i++) {
 			Equipable.AttachPoint point = points[i].point;
@@ -69,6 +69,7 @@ public class DragonEquip : MonoBehaviour {
 				string pet = "Game/Equipable/Pets/" + item;
 				GameObject prefabObj = Resources.Load<GameObject>(pet);
 				GameObject equipable = Instantiate<GameObject>(prefabObj);
+				equipable.transform.localScale = Vector3.one * player.data.scale;
 
 				// get equipable object!
 				points[i].Equip(equipable.GetComponent<Equipable>());
