@@ -339,9 +339,12 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	/// Enable all spawners in the manager.
 	/// </summary>
 	public void EnableSpawners() {
-		// Set flag
-		m_enabled = true;
-	}
+        // Set flag
+        m_enabled = true;
+#if !PRODUCTION
+        Debug_SetActive();
+#endif
+    }
 
 	/// <summary>
 	/// Disable all spawners in the manager.
@@ -456,7 +459,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		m_enabled = false;       
     }
 
-    #region debug
+#region debug
     private void Debug_Awake() {        
         Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 
@@ -479,9 +482,9 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
     private void Debug_SetActive() {
 		m_enabled = Prefs.GetBoolPlayer(DebugSettings.INGAME_SPAWNERS);        
     }
-    #endregion
+#endregion
 
-    #region profiler
+#region profiler
     private static float sm_totalLogicUnits = 0f;
     public static float totalLogicUnitsSpawned
     {
@@ -527,5 +530,5 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
         sm_totalLogicUnits = 0f;
         sm_totalEntities = 0;
     }
-    #endregion        
+#endregion
 }
