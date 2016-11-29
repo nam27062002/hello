@@ -62,7 +62,7 @@ public class ResultsSceneController : MonoBehaviour {
 		// Activate and initialize UI
 		m_gameUI.SetActive(false);
 		m_resultsUI.SetActive(true);
-		m_resultsUI.GetComponentInChildren<ResultsScreenController>().Initialize();
+		m_resultsUI.GetComponentInChildren<ResultsScreenController>().LaunchAnim();
 
 		// Turn off main camera
 		m_mainCamera.gameObject.SetActive(false);

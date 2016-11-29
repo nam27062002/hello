@@ -35,6 +35,18 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	public Transform m_source = null;
+	public Transform m_target = null;
+	public GameObject m_prefab = null;
+	[Range(0f, 1f)] public float m_spawnInterval = 0.1f;
+
+	[Space]
+	public float m_duration = 0.5f;
+	public Ease m_ease = Ease.InOutCubic;
+
+	private bool m_toggle = true;
+	private float m_spawnTimer = 0f;
+	private Pool m_pool = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -43,7 +55,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-		
+		m_pool = new Pool(m_prefab, this.transform.parent, 10, true, true);
 	}
 
 	/// <summary>
@@ -57,29 +69,28 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
-		
+		if(m_toggle) {
+			m_spawnTimer += Time.deltaTime;
+			if(m_spawnTimer >= m_spawnInterval) {
+				m_spawnTimer = 0f;
+
+				GameObject obj = m_pool.Get(true);
+				MovingFXAnimator anim = obj.GetComponent<MovingFXAnimator>();
+				anim.parentPool = m_pool;
+				anim.sourcePos = m_source.position;
+				anim.targetTransform = m_target;
+				anim.ease = m_ease;
+				anim.duration = m_duration;
+				anim.Launch();
+			}
+		}
 	}
 
 	/// <summary>
 	/// Multi-purpose callback.
 	/// </summary>
-	private ChestViewController m_chest = null;
 	public void OnTestButton() {
-		// Instantiate the actual chest
-		GameObject chestPrefab = Resources.Load<GameObject>(ChestViewController.PREFAB_PATH);
-		GameObject chestObj = GameObject.Instantiate<GameObject>(chestPrefab);
-		chestObj.transform.SetParent(this.transform, false);
-		m_chest = chestObj.GetComponentInChildren<ChestViewController>();
-
-		// Subscribe to chest events
-		m_chest.OnChestOpen.AddListener(OnChestOpened);
-		m_chest.OnChestAnimLanded.AddListener(OnChestLanded);
-	}
-	private void OnChestOpened() {
-		Debug.Log("OnChestOpened");
-	}
-	private void OnChestLanded() {
-		Debug.Log("OnChestLanded");
+		m_toggle = !m_toggle;
 	}
 
 	/// <summary>

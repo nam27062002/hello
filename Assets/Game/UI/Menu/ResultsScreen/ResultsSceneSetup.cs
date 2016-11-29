@@ -80,13 +80,13 @@ public class ResultsSceneSetup : MonoBehaviour {
 			}
 		} else {
 			// [AOC] DEBUG ONLY!!
-			int NUM_COLLECTED_CHESTS = (int)CPResultsScreenTest.chestsMode;
-			NUM_COLLECTED_CHESTS -= 1;	// enum starts at 1
+			int numCollectedChests = (int)CPResultsScreenTest.chestsMode;
+			numCollectedChests -= 1;	// enum starts at 1
 			if(CPResultsScreenTest.chestsMode == CPResultsScreenTest.ChestTestMode.RANDOM) {
-				NUM_COLLECTED_CHESTS = Random.Range(0, 5);
+				numCollectedChests = Random.Range(0, 5);
 			}
 
-			for(int i = 0; i < NUM_COLLECTED_CHESTS; i++) {
+			for(int i = 0; i < numCollectedChests; i++) {
 				Chest newChest = new Chest();
 				newChest.ChangeState(Chest.State.PENDING_REWARD);
 				collectedChests.Add(newChest);
@@ -123,7 +123,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 			StartCoroutine(
 				AnimateChestWithDelay(sortedSlots[i], rewardData, totalDelay)
 			);
-			totalDelay += 0.5f;
+			totalDelay += 0.15f;
 		}
 
 		// Egg found?
@@ -147,7 +147,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 		}
 
 		if(eggFound) {
-			totalDelay += 1f;	// Extra delay
+			totalDelay += 0.5f;	// Extra delay
 			m_eggSlot.localScale = Vector3.zero;
 			m_eggSlot.DOScale(1f, 0.5f).SetDelay(totalDelay).SetEase(Ease.OutBack);
 		} else {

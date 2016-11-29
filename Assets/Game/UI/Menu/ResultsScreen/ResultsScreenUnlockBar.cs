@@ -41,6 +41,7 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 	// Exposed references
 	[Separator("Custom Results Screen Stuff")]
 	[SerializeField] private Localizer m_infoText = null;
+	[SerializeField] private ParticleSystem m_receiveFX = null;
 	[SerializeField] private GameObject m_dragonUnlockFX = null;
 	[SerializeField] private UIScene3DLoader m_nextDragonScene3DLoader = null;
 
@@ -151,6 +152,11 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 			m_auxBar.minValue = 0f;
 			m_auxBar.maxValue = 1f;
 			m_auxBar.value = m_initialDelta;
+		}
+
+		// FX
+		if(m_receiveFX != null) {
+			m_receiveFX.Stop();
 		}
 
 		// Dragon unlock stuff
@@ -353,6 +359,9 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 		// Don't allow to fold/unfold disguises during animation
 		m_disguisesFoldToggle.interactable = false;
 		m_flagsFolded = true;	// Flags should be folded by the end of the animation
+
+		// Show FX!
+		if(m_receiveFX != null) m_receiveFX.Play(true);
 	}
 
 	/// <summary>
@@ -396,6 +405,9 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 			// Only if next dragon was locked, obviously!
 			LaunchDragonUnlockAnimation();
 		}
+
+		// Stop FX!
+		if(m_receiveFX != null) m_receiveFX.Stop(true);
 
 		// Allow to fold/unfold disguises
 		m_disguisesFoldToggle.interactable = true;
