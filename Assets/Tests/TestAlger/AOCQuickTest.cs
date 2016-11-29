@@ -73,15 +73,6 @@ public class AOCQuickTest : MonoBehaviour {
 			m_spawnTimer += Time.deltaTime;
 			if(m_spawnTimer >= m_spawnInterval) {
 				m_spawnTimer = 0f;
-
-				GameObject obj = m_pool.Get(true);
-				MovingFXAnimator anim = obj.GetComponent<MovingFXAnimator>();
-				anim.parentPool = m_pool;
-				anim.sourcePos = m_source.position;
-				anim.targetTransform = m_target;
-				anim.ease = m_ease;
-				anim.duration = m_duration;
-				anim.Launch();
 			}
 		}
 	}
