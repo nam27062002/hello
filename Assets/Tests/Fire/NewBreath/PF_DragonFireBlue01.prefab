@@ -349,6 +349,7 @@ MonoBehaviour:
     m_CollisionEmiters: 10
     m_iCollisionLayerMask: 0
     m_CollisionPrefabPath: 
+    m_insideWater: 0
   - m_CollisionLayers:
     - Water
     m_CollisionPrefab: Water/PS_BoilingWater
@@ -356,6 +357,16 @@ MonoBehaviour:
     m_CollisionEmiters: 10
     m_iCollisionLayerMask: 0
     m_CollisionPrefabPath: 
+    m_insideWater: 0
+  - m_CollisionLayers:
+    - Ground
+    - GroundVisible
+    m_CollisionPrefab: PF_BonfireUnderwater
+    m_CollisionDelay: 0.2
+    m_CollisionEmiters: 10
+    m_iCollisionLayerMask: 0
+    m_CollisionPrefabPath: 
+    m_insideWater: 1
   m_debugScale: -1
   m_fireParticles:
   - {fileID: 198000014245634598}
@@ -417,7 +428,7 @@ ParticleSystem:
   moveWithTransform: 1
   autoRandomSeed: 1
   scalingMode: 1
-  randomSeed: 30663108
+  randomSeed: 533841463
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -4480,10 +4491,10 @@ ParticleSystem:
       maxGradient:
         key0:
           serializedVersion: 2
-          rgba: 4294917725
+          rgba: 16727645
         key1:
           serializedVersion: 2
-          rgba: 4294929152
+          rgba: 1090480896
         key2:
           serializedVersion: 2
           rgba: 15118080
@@ -4511,7 +4522,7 @@ ParticleSystem:
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 65535
+        atime1: 9445
         atime2: 65535
         atime3: 65535
         atime4: 0
@@ -4519,7 +4530,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_NumColorKeys: 4
-        m_NumAlphaKeys: 2
+        m_NumAlphaKeys: 3
       minGradient:
         key0:
           serializedVersion: 2
@@ -9091,7 +9102,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8deb8bb4c49d8344ab5069deb07daf24, type: 2}
+  - {fileID: 2100000, guid: e1ff2390ced947644b0c80a5a3475e7e, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}

@@ -19,6 +19,9 @@ public class FireBreathDynamic : MonoBehaviour
         public int m_iCollisionLayerMask;
         [HideInInspector, SerializeField]
         public string m_CollisionPrefabPath;
+
+		[SerializeField]
+        public bool m_insideWater;
     }
 
 
@@ -367,7 +370,7 @@ public class FireBreathDynamic : MonoBehaviour
 
             foreach (CollisionPrefab cp in m_collisionPrefabs)
             {
-                if ((cp.m_iCollisionLayerMask & hitLayer) != 0)
+                if ((cp.m_iCollisionLayerMask & hitLayer) != 0 && cp.m_insideWater == WaterAreaManager.instance.IsInsideWater( hit.point ))
                 {
                     if (Time.time > m_lastTime + cp.m_CollisionDelay)
                     {
@@ -501,6 +504,8 @@ public class FireBreathDynamic : MonoBehaviour
 
 			for( int i = 0; i<m_underWaterParticles.Count; i++ )
 				m_underWaterParticles[i].Stop();
+
+			m_showFlame = false;
     	}
 
         enableState = value;
