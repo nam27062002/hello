@@ -501,6 +501,8 @@ public class FireBreathDynamic : MonoBehaviour
 
 			for( int i = 0; i<m_underWaterParticles.Count; i++ )
 				m_underWaterParticles[i].Stop();
+
+			m_showFlame = false;
     	}
 
         enableState = value;

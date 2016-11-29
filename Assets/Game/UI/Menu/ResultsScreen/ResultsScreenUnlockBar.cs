@@ -98,7 +98,7 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 	/// Animation is triggered by the Carousel's progression pill.
 	/// </summary>
 	/// <param name="_progressionPill">Carousel's progression pill to attach events</param>
-	public void Initialize(ResultsScreenProgressionPill _progressionPill) {
+	public void Init(ResultsScreenProgressionPill _progressionPill) {
 		// Initialize with current dragon's data
 		Refresh(DragonManager.currentDragon);
 		m_deltaPerLevel = 1f/m_dragonData.progression.numLevels;
