@@ -30,6 +30,10 @@ public class SiegeEngineOperatorSpawner : AbstractSpawner {
         m_operator = null;
         m_operatorPilot = null;
     }
+
+	void OnDestroy() {
+		ForceRemoveEntities();
+	}
     //-------------------------------------------------------------------
 
     //-------------------------------------------------------------------
@@ -58,7 +62,7 @@ public class SiegeEngineOperatorSpawner : AbstractSpawner {
     protected override bool CanRespawnExtended() {
         if (m_autoSpawner.state == AutoSpawnBehaviour.State.Idle) {
             if (IsOperatorDead()) {
-                return m_newCamera.IsInsideDeactivationArea(m_spawnAtTransform.position);
+				return !m_newCamera.IsInsideActivationMinArea(m_spawnAtTransform.position);
             }
         }
         return false;
@@ -115,6 +119,11 @@ public class SiegeEngineOperatorSpawner : AbstractSpawner {
 
 	public void OperatorDoReload() {
 		m_operatorPilot.PressAction(Pilot.Action.Button_A);
+		m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);
+	}
+
+	public void OperatorDoIdle() {
+		m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
 		m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);
 	}
 
