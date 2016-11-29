@@ -25,6 +25,15 @@
 
 		Pass
 		{
+			Stencil
+			{
+				Ref 5
+				Comp always
+				Pass Replace
+				ZFail keep
+			}
+
+
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -91,8 +100,9 @@
 
 //				float alfa = clamp((intensity / (_AlphaThreshold / _ColorSteps)) - 1.0, 0.0, 1.0);
 				float alfa = clamp((intensity) -_AlphaThreshold, 0.0, 1.0);
-				return fixed4(col, alfa * _Alpha) * i.vCol;
-
+				fixed4 colf = fixed4(col, alfa * _Alpha) * i.vCol;
+				clip(colf.a - 0.1);
+				return colf;
 			}
 
 			ENDCG
