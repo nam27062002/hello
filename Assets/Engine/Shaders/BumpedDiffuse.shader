@@ -8,7 +8,9 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 		_MainTex ("Texture", 2D) = "white" {}
 		_Specular( "Specular", float ) = 1
 		_BumpStrength("Bump Strength", float) = 3
-		_Tint("Tint (RGB)", Color) = (0, 0, 0, 1)
+//		_Tint("Tint (RGB)", Color) = (0, 0, 0, 1)
+		_FresnelFactor("Fresnel factor", Range(0.0, 5.0)) = 0.85
+		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 
 	}
 	SubShader
@@ -110,23 +112,24 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 			{
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
-				// float3 normal : NORMAL;
-
 				float3 vLight : TEXCOORD2;
 
-				float3 halfDir : VECTOR;
-				float3 tangentWorld : TEXCOORD3;  
+				float3 viewDir : VECTOR;
+//				float3 halfDir : VECTOR;
+				float3 tangentWorld : TANGENT;  
 		        float3 normalWorld : TEXCOORD4;
 		        float3 binormalWorld : TEXCOORD5;
 			};
 
-			sampler2D _MainTex;
-			float4 _MainTex_ST;
+			uniform sampler2D _MainTex;
+			uniform float4 _MainTex_ST;
 			uniform float4 _MainTex_TexelSize;
 			uniform float _Specular;
 			uniform float _BumpStrength;
-			uniform float4 _Tint;
-			
+//			uniform float4 _Tint;
+			uniform float _FresnelFactor;
+			uniform float4 _FresnelColor;
+
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -138,8 +141,9 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 
 				// Half View - See: Blinn-Phong
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
-				float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
-				o.halfDir = normalize(lightDirection + viewDirection);
+//				float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
+//				o.halfDir = normalize(lightDirection + viewDirection);
+				o.viewDir = viewDirection;
 
 				// To calculate tangent world
 	            float4x4 modelMatrix = unity_ObjectToWorld;
@@ -150,7 +154,7 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 
 				return o;
 			}
-			
+
 			fixed4 frag (v2f i) : SV_Target
 			{
 				// sample the texture
@@ -172,15 +176,15 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 
      			fixed4 diffuse = max(0,dot( normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
 
-     			fixed4 specular = fixed4(0,0,0,0);
-     			if (_Specular > 0)
-     				specular = pow(max(dot( normalDirection, i.halfDir), 0), _Specular);
+//     			fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
+//				fixed fresnel = pow(max(dot(normalDirection, i.viewDir), 0), _FresnelFactor);
+				fixed fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelFactor), 0.0, 1.0);
 
      			// col = (diffuse + fixed4(UNITY_LIGHTMODEL_AMBIENT.rgb,1)) * col + specular * _LightColor0;
-     			col = (diffuse + fixed4(i.vLight,1)) * col + specular * _LightColor0;
+				col = (diffuse + fixed4(i.vLight, 1)) * col + /*(specular * _LightColor0) + */(fresnel * _FresnelColor);
 
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-				return col + _Tint;
+				return col;// +_Tint;
 			}
 			ENDCG
 		}
