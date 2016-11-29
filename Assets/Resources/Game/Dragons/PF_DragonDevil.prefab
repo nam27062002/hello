@@ -2317,12 +2317,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_wingsIdleSound: Dragon_Soft_Flaps
-  m_wingsFlyingSound: Dragon_S_Flaps
-  m_eatSound: Dragon_S_Bite
+  m_wingsIdleSound: Dragon_Idle_Flaps
+  m_wingsFlyingSound: Dragon_Flaps
+  m_eatSound: Dragon_Eat
   m_wingsWindSound: 
   m_wingsStrongFlap: Dragon_Strong_Flap
-  m_levelUpSound: Level UP
+  m_levelUpSound: Level_Up
   m_starvingSound: 
   m_hitSound: Dragon_Impact
 --- !u!114 &11430736
@@ -2486,6 +2486,7 @@ MonoBehaviour:
   m_capUpRotationAngle: 40
   m_capDownRotationAngle: 60
   m_noGlideAngle: 50
+  m_backBlendMultiplier: 0.35
   m_parabolicMovementConstant: 1
   m_parabolicMovementAdd: 1
   m_parabolicXControl: 10
@@ -3345,7 +3346,7 @@ MonoBehaviour:
     _parentCategoryName: 
     AudioObjectPrefab: {fileID: 0}
     AudioItems:
-    - Name: Dragon_S_Flaps
+    - Name: Dragon_Flaps
       Loop: 0
       loopSequenceCount: 0
       loopSequenceOverlap: 0
@@ -3492,7 +3493,7 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
-    - Name: Dragon_Soft_Flaps
+    - Name: Dragon_Idle_Flaps
       Loop: 0
       loopSequenceCount: 0
       loopSequenceOverlap: 0
@@ -3678,7 +3679,7 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
-    - Name: Dragon_S_Bite
+    - Name: Dragon_Eat
       Loop: 0
       loopSequenceCount: 0
       loopSequenceOverlap: 0
@@ -3879,7 +3880,7 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
-    - Name: Level UP
+    - Name: Level_Up
       Loop: 0
       loopSequenceCount: 0
       loopSequenceOverlap: 0
@@ -4011,6 +4012,63 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
+    - Name: Dragon_Burst Mode
+      Loop: 4
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0.1
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 1
+      SubItemPickMode: 7
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 0
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: 5e0eb134c27392a4da89d679585dd20b, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: 0949ff3831d54d04893f11faef8739cf, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
     _volume: 1
     audioMixerGroup: {fileID: 0}
   musicPlaylists:
@@ -4026,8 +4084,8 @@ MonoBehaviour:
   _volume: 1
   _currentInspectorSelection:
     currentCategoryIndex: 0
-    currentItemIndex: 5
-    currentSubitemIndex: 3
+    currentItemIndex: 4
+    currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
 --- !u!114 &114000012705948140
