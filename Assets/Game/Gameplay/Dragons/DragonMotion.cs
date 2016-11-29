@@ -133,6 +133,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private Transform m_cameraLookAt;
 	private Transform m_transform;
 
+	[CommentAttribute("Back navigation bend multiplier when boost or attack target")]
+	[Range(0, 1f)]
+	public float m_backBlendMultiplier = 0.35f;
 	private Vector2 m_currentFrontBend;
 	private Vector2 m_currentBackBend;
 
@@ -202,6 +205,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	RaycastHit m_raycastHit = new RaycastHit();
 
+	[Space]
 	private float m_introTimer;
 	private const float m_introDuration = 2.5f;
 	private Vector3 m_introTarget;
@@ -669,13 +673,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		if (GetTargetForceMultiplier() > 1)// if boost active
 		{
-			backMultiplier = 0.35f;
+			backMultiplier = m_backBlendMultiplier;
 		}
 
 		if (m_eatBehaviour.GetAttackTarget() != null)
 		{
 			dir = m_eatBehaviour.GetAttackTarget().position - m_eatBehaviour.mouth.position;
-			backMultiplier = 0.35f;
+			backMultiplier = m_backBlendMultiplier;
 		}
 
 		Vector3 localDir = m_transform.InverseTransformDirection(dir.normalized);	// todo: replace with direction to target if trying to bite, or during bite?
