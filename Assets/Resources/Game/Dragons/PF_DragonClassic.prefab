@@ -775,6 +775,7 @@ MonoBehaviour:
   m_capUpRotationAngle: 50
   m_capDownRotationAngle: 50
   m_noGlideAngle: 50
+  m_backBlendMultiplier: 0.35
   m_parabolicMovementConstant: 2.5
   m_parabolicMovementAdd: 3
   m_parabolicXControl: 20
@@ -3935,7 +3936,7 @@ MonoBehaviour:
     _parentCategoryName: 
     AudioObjectPrefab: {fileID: 0}
     AudioItems:
-    - Name: Dragon_S_Flaps
+    - Name: Dragon_Flaps
       Loop: 0
       loopSequenceCount: 0
       loopSequenceOverlap: 0
@@ -4082,7 +4083,7 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
-    - Name: Dragon_Soft_Flaps
+    - Name: Dragon_Idle_Flaps
       Loop: 0
       loopSequenceCount: 0
       loopSequenceOverlap: 0
@@ -4268,7 +4269,7 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
-    - Name: Dragon_S_Bite
+    - Name: Dragon_Eat
       Loop: 0
       loopSequenceCount: 0
       loopSequenceOverlap: 0
@@ -4469,7 +4470,7 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
-    - Name: Level UP
+    - Name: Level_Up
       Loop: 0
       loopSequenceCount: 0
       loopSequenceOverlap: 0
@@ -4673,7 +4674,7 @@ MonoBehaviour:
   _volume: 1
   _currentInspectorSelection:
     currentCategoryIndex: 0
-    currentItemIndex: 6
+    currentItemIndex: 4
     currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
@@ -4891,12 +4892,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_wingsIdleSound: Dragon_Soft_Flaps
-  m_wingsFlyingSound: Dragon_S_Flaps
-  m_eatSound: Dragon_S_Bite
+  m_wingsIdleSound: Dragon_Idle_Flaps
+  m_wingsFlyingSound: Dragon_Flaps
+  m_eatSound: Dragon_Eat
   m_wingsWindSound: 
   m_wingsStrongFlap: Dragon_Strong_Flap
-  m_levelUpSound: Level UP
+  m_levelUpSound: Level_Up
   m_starvingSound: 
   m_hitSound: Dragon_Impact
 --- !u!114 &114000014006788526
@@ -5116,7 +5117,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013638149328}
-  serializedVersion: 4
+  serializedVersion: 2
   lengthInSec: 1
   startDelay:
     scalar: 0
@@ -5154,13 +5155,12 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
+  randomSeed: 4169123404
   looping: 1
   prewarm: 0
   playOnAwake: 0
   moveWithTransform: 0
-  autoRandomSeed: 1
   scalingMode: 1
-  randomSeed: -125843892
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -6850,7 +6850,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013939559234}
-  serializedVersion: 4
+  serializedVersion: 2
   lengthInSec: 1
   startDelay:
     scalar: 0
@@ -6888,13 +6888,12 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
+  randomSeed: 1062787544
   looping: 1
   prewarm: 0
   playOnAwake: 0
   moveWithTransform: 0
-  autoRandomSeed: 1
   scalingMode: 1
-  randomSeed: 1062787544
   InitialModule:
     serializedVersion: 2
     enabled: 1

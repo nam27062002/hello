@@ -59,15 +59,10 @@ public class ResultsSceneController : MonoBehaviour {
 	/// dragon and UI.
 	/// </summary>
 	public void Show() {
-		// Activate and initialize UI
-		m_gameUI.SetActive(false);
-		m_resultsUI.SetActive(true);
-		m_resultsUI.GetComponentInChildren<ResultsScreenController>().LaunchAnim();
-
 		// Turn off main camera
 		m_mainCamera.gameObject.SetActive(false);
 
-		// Select a random scene setup, instantiate and launch it!
+		// Select a random scene setup and instantiate it
 		// Find all scene setup prefabs for the loaded level - we have a special component for that, look for it
 		// If no setup is found (i.e. test levels), use the placeholder prefab
 		GameObject setupPrefab = m_defaultSetupPrefab;
@@ -76,10 +71,19 @@ public class ResultsSceneController : MonoBehaviour {
 			setupPrefab = setupList.setupPrefabs.GetRandomValue();
 		}
 
-		// Instantiate the prefab and launch it!
+		// Instantiate the prefab
 		GameObject newSetupObj = GameObject.Instantiate<GameObject>(setupPrefab);
 		ResultsSceneSetup targetSetup = newSetupObj.GetComponent<ResultsSceneSetup>();
-		targetSetup.LaunchAnim();
+
+		// Activate and initialize UI, turn off Game UI
+		// [AOC] TODO!! Nicer transition
+		m_gameUI.SetActive(false);
+		m_resultsUI.SetActive(true);
+		ResultsScreenController controller = m_resultsUI.GetComponentInChildren<ResultsScreenController>();
+		if(controller != null) {
+			controller.Init(targetSetup);
+			controller.LaunchAnim();
+		}
 	}
 
 	//------------------------------------------------------------------------//
