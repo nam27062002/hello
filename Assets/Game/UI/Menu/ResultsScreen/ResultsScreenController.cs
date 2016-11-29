@@ -4,6 +4,18 @@ using DG.Tweening;
 using TMPro;
 
 public class ResultsScreenController : MonoBehaviour {
+	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
+	private enum State {
+		INIT,
+		INTRO,
+		RESULTS,
+		MISSIONS,
+		PROGRESSION_1,
+		PROGRESSION_2,
+		FINISHED
+	};
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -21,6 +33,12 @@ public class ResultsScreenController : MonoBehaviour {
 	[Separator]
 	[SerializeField] private ResultsScreenUnlockBar m_unlockBar = null;
 	[SerializeField] private ResultsScreenCarousel m_carousel = null;
+
+	// References
+	private ResultsSceneSetup m_scene = null;
+
+	// Internal
+	private State m_state = State.INIT;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -129,7 +147,7 @@ public class ResultsScreenController : MonoBehaviour {
 	/// <summary>
 	/// Manual initialization.
 	/// </summary>
-	public void Initialize() {
+	public void LaunchAnim() {
 		// set values from score manager
 		// Launch number animators
 		int coinsBonus = survivalBonus;

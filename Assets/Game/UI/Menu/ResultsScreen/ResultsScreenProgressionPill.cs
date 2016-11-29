@@ -33,6 +33,7 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	[SerializeField] private Localizer m_currentLevelText = null;
 	[SerializeField] private Localizer m_nextLevelText = null;
 	[SerializeField] private GameObject m_levelUpFX = null;
+	[SerializeField] private ParticleSystem m_transferFX = null;
 
 	// Exposed setup
 	[Space]
@@ -66,6 +67,9 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 		Debug.Assert(m_progressBar != null, "Required field not initialized!");
 		Debug.Assert(m_currentLevelText != null, "Required field not initialized!");
 		Debug.Assert(m_nextLevelText != null, "Required field not initialized!");
+
+		// FX
+		if(m_transferFX != null) m_transferFX.Stop(true);
 	}
 
 	/// <summary>
@@ -128,6 +132,9 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 		// All maths done! Launch anim!
 		RefreshLevelTexts(false);
 		LaunchXPBarAnim(0.5f);	// Give some time for the pill's show animation
+
+		// Transfer FX
+		if(m_transferFX != null) m_transferFX.Play(true);
 
 		// Hide unlock group
 		if(m_levelUpFX != null) {
@@ -195,6 +202,10 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 
 						// Trigger event
 						OnAnimEnd.Invoke(m_currentLevel, m_progressBar.value);
+
+						// Stop transfer FX
+						if(m_transferFX != null) m_transferFX.Stop(true);
+
 						return;
 					}
 

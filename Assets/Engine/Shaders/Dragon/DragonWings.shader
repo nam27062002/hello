@@ -17,6 +17,9 @@ Properties {
 
 	_SpecExponent ("Specular Exponent", float) = 1
 	_Cutoff("Cutoff Level", Range(0, 1)) = 0.5
+	_Fresnel("Fresnel factor", Range(0, 10)) = 1.5
+	_FresnelColor("Fresnel Color", Color) = (1,1,1,1)
+
 }
 
 SubShader {
@@ -62,7 +65,9 @@ SubShader {
 		        float3 normalWorld : TEXCOORD3;
 		        float3 binormalWorld : TEXCOORD4;
 
-		        fixed3 posWorld : TEXCOORD5;
+//		        fixed3 posWorld : TEXCOORD5;
+				fixed3 viewDir : TEXCOORD5;
+
 			};
 
 			sampler2D _MainTex;
@@ -76,9 +81,11 @@ SubShader {
 
 			uniform float _InnerLightAdd;
 			uniform float4 _InnerLightColor;
+			uniform float4 _FresnelColor;
 
 			uniform float _SpecExponent;
 			uniform float _Cutoff;
+			uniform float _Fresnel;
 
 			v2f vert (appdata_t v)
 			{
@@ -91,7 +98,8 @@ SubShader {
 				float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
 				o.halfDir = normalize(lightDirection + viewDirection);
 
-				o.posWorld = mul( unity_ObjectToWorld, v.vertex ).xyz;
+//				o.posWorld = mul( unity_ObjectToWorld, v.vertex ).xyz;
+				o.viewDir = normalize(viewDirection);
 
 	            // To calculate tangent world
 	            float4x4 modelMatrix = unity_ObjectToWorld;
@@ -119,7 +127,7 @@ SubShader {
 				// normalDirection = i.normal;
      			fixed4 diffuse = max(0,dot( -normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
 				diffuse.a = 0.0;
-
+/*
      			fixed3 pointLights = fixed3(0,0,0);
      			for (int index = 0; index <1; index++)
 	            {    
@@ -131,7 +139,9 @@ SubShader {
 					float3 diffuseReflection = attenuation * unity_LightColor[index].rgb * max(0.0, dot(normalDirection, lightDirection));         
 					pointLights = pointLights + diffuseReflection;
 	            }
-
+*/
+				// Fresnel
+				float fresnel = clamp(pow(max(1.0 - abs(dot(i.viewDir, normalDirection)), 0.0), _Fresnel), 0.0, 1.0);
 
 				// Specular
 				float specularLight = pow(max(dot(normalDirection, i.halfDir), 0), _SpecExponent) * detail.g;
@@ -139,8 +149,10 @@ SubShader {
 				// Inner lights
 				fixed4 selfIlluminate = fixed4( (detail.r * _InnerLightAdd * _InnerLightColor.xyz) + specularLight, 0.0 );
 
-				fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)), 1.0)) * main * (_ColorMultiply + _ColorAdd + selfIlluminate);
-				return col; 
+//				fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)), 1.0)) * main * (_ColorMultiply + _ColorAdd + selfIlluminate) + (fresnel * _FresnelColor);
+
+				fixed4 col = (diffuse + fixed4(ShadeSH9(float4(normalDirection, 1.0)), 1.0)) * main * (_ColorMultiply + _ColorAdd + selfIlluminate) + (fresnel * _FresnelColor);
+				return col;
 
 			}
 		ENDCG

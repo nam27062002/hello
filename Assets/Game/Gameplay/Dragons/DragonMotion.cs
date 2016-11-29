@@ -1405,6 +1405,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		m_latchedOnSpeedMultiplier = 0.4f;
 		m_latchedOn = true;
+		m_animator.SetBool("eaten", true);
 	}
 
 	/// <summary>
@@ -1414,6 +1415,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		m_latchedOnSpeedMultiplier = 1f;
 		m_latchedOn = false;
+		m_animator.SetBool("eaten", false);
 	}
 
 	public void StartIntroMovement(Vector3 introTarget)
