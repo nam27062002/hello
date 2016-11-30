@@ -34,7 +34,7 @@ namespace AI {
 		void UnlockFromCage();
 
 		void Bite();
-		void BeingSwallowed(Transform _transform, bool rewardPlayer);
+		void BeginSwallowed(Transform _transform, bool rewardPlayer);
 		void BiteAndHold();
 		bool Burn(Transform _transform);
 

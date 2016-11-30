@@ -41,11 +41,15 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 	// Exposed references
 	[Separator("Custom Results Screen Stuff")]
 	[SerializeField] private Localizer m_infoText = null;
+	[SerializeField] private Slider m_secondaryXPBar = null;
+
+	[Separator("FX")]
 	[SerializeField] private ParticleSystem m_receiveFX = null;
+	[SerializeField] private ParticleSystem m_levelUpFX = null;
 	[SerializeField] private GameObject m_dragonUnlockFX = null;
 	[SerializeField] private UIScene3DLoader m_nextDragonScene3DLoader = null;
 
-	[Separator]
+	[Separator("Disguises")]
 	[SerializeField] private GameObject m_disguisesContainer = null;
 	[SerializeField] private Button m_disguisesFoldToggle = null;
 	[SerializeField] protected GameObject m_disguiseMarkerPrefab = null;
@@ -122,7 +126,7 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 			MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
 			if(dragonLoader != null) {
 				dragonLoader.LoadDragon(m_nextDragonData.def.sku);
-				dragonLoader.FindComponentRecursive<Animator>().SetTrigger("idle");
+				dragonLoader.dragonInstance.SetAnim(MenuDragonPreview.Anim.IDLE);
 			}
 		} else {
 			m_nextDragonScene3DLoader.gameObject.SetActive(false);
@@ -140,13 +144,13 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 
 		// Setup bar
 		if(m_xpBar != null) {
-			// Use XP progress before the game as bar value (we will animate with the XP earned during the game)
+			// Use XP progress before the game as bar value (this bar won't be animated)
 			m_xpBar.minValue = 0f;
 			m_xpBar.maxValue = 1f;
 			m_xpBar.value = m_initialDelta;
 		}
 
-		// Setup secondary bar
+		// Setup aux bar
 		if(m_auxBar != null) {
 			// Use XP progress before the game as bar value (we will animate with the XP earned during the game)
 			m_auxBar.minValue = 0f;
@@ -154,9 +158,21 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 			m_auxBar.value = m_initialDelta;
 		}
 
+		// Setup secondary XP bar
+		if(m_secondaryXPBar != null) {
+			// Use XP progress before the game as bar value (we will animate with the XP earned during the game)
+			m_secondaryXPBar.minValue = 0f;
+			m_secondaryXPBar.maxValue = 1f;
+			m_secondaryXPBar.value = m_initialDelta;
+		}
+
 		// FX
 		if(m_receiveFX != null) {
 			m_receiveFX.Stop();
+		}
+
+		if(m_levelUpFX != null) {
+			m_levelUpFX.Stop();
 		}
 
 		// Dragon unlock stuff
@@ -358,7 +374,7 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 	public void OnXPAnimStart(int _currentLevel, float _levelDelta) {
 		// Don't allow to fold/unfold disguises during animation
 		m_disguisesFoldToggle.interactable = false;
-		m_flagsFolded = true;	// Flags should be folded by the end of the animation
+		m_flagsFolded = false;	// Flags should be unfolded by the end of the animation
 
 		// Show FX!
 		if(m_receiveFX != null) m_receiveFX.Play(true);
@@ -380,8 +396,17 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 	/// <param name="_currentLevel">Animation's current level.</param>
 	/// <param name="_levelDelta">Animation's delta within the current level.</param>
 	public void OnXPAnimLevelChanged(int _currentLevel, float _levelDelta) {
-		// Move main bar forward and show some FX
-		// [AOC] TODO!!
+		// Move secondary xp bar forward and show some FX
+		if(m_secondaryXPBar != null) {
+			m_secondaryXPBar.value = m_auxBar.value;
+		}
+
+		if(m_levelUpFX != null) {
+			m_levelUpFX.Stop();
+			m_levelUpFX.Play();
+		}
+
+		// [AOC] TODO!! Some SFX?
 
 		// Check if a disguise has been unlocked!
 		for(int i = 0; i < m_disguises.Count; i++) {
@@ -412,7 +437,9 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 		// Allow to fold/unfold disguises
 		m_disguisesFoldToggle.interactable = true;
 
-		// Move main bar forward?
-		// [AOC] TODO!!
+		// Quickly advance secondary bar to final value
+		if(m_secondaryXPBar != null) {
+			m_secondaryXPBar.DOValue(m_auxBar.value, 0.15f);
+		}
 	}
 }

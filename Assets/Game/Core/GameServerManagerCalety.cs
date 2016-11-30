@@ -117,6 +117,11 @@ public class GameServerManagerCalety : GameServerManager
             Debug.TaggedLog(tag, "onMergeShowPopupNeeded");
         }
 
+        public override void onShowMaintenanceMode()
+        {         
+            Debug.TaggedLog(tag, "onShowMaintenanceMode");
+        }
+
         // Probably not needed anywhere, but useful for test cases (actually implemented in unit tests)
         public override void onMergeSucceeded()
         {
