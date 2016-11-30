@@ -182,7 +182,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 			totalDuration += 0.5f + 0.5f;
 			m_eggSlot.gameObject.SetActive(true);
 			m_eggSlot.localScale = Vector3.zero;
-			m_eggSlot.DOScale(1f, 0.5f).SetDelay(totalDelay).SetEase(Ease.OutBack);
+			m_eggSlot.DOScale(0.75f, 0.5f).SetDelay(totalDelay).SetEase(Ease.OutBack);
 		}
 
 		return totalDuration;
