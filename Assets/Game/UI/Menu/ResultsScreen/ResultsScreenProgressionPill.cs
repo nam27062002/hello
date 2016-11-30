@@ -100,6 +100,10 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	/// The <c>OnFinished</c> event will be invoked once the animation has finished.
 	/// </summary>
 	protected override void StartInternal() {
+		// Show ourselves!
+		gameObject.SetActive(true);
+		animator.Show();
+
 		// [AOC] As usual, animating the XP bar is not obvious (dragon may have leveled up several times during a single game)
 		DragonData data = DragonManager.currentDragon;
 		if(CPResultsScreenTest.testEnabled) {
@@ -140,10 +144,26 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 		if(m_levelUpFX != null) {
 			m_levelUpFX.SetActive(false);
 		}
+	}
 
+	/// <summary>
+	/// Show the pill once finished.
+	/// </summary>
+	public void ShowFinished() {
 		// Show ourselves!
 		gameObject.SetActive(true);
 		animator.Show();
+
+		// Turn off all FX
+		if(m_transferFX != null) m_transferFX.Stop(true);
+		if(m_levelUpFX != null) m_levelUpFX.SetActive(false);
+
+		// Set bar into final position
+		m_progressBar.value = m_finalDelta;
+
+		// Set texts to final value
+		m_currentLevel = m_targetLevel;
+		RefreshLevelTexts(false);
 	}
 
 	//------------------------------------------------------------------------//
