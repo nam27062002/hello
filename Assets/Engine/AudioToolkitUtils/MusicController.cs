@@ -9,8 +9,12 @@ public class MusicController : MonoBehaviour {
 	void Start () {
 		AudioController.PlayMusic(m_music, m_volume);
 	}
-	
-	void OnDestroy(){
+
+	void OnDisable() {
+		// [AOC] Puttin this on OnDestroy causes a null reference exception
 		AudioController.StopMusic(0.3f);
+	}
+
+	void OnDestroy(){
 	}
 }

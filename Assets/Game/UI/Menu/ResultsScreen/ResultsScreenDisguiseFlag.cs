@@ -63,7 +63,7 @@ public class ResultsScreenDisguiseFlag : MonoBehaviour {
 		if(dragonLoader != null) {
 			// Load dragon
 			dragonLoader.LoadDragon(_disguiseDef.Get("dragonSku"));
-			dragonLoader.FindComponentRecursive<Animator>().SetTrigger("idle");
+			dragonLoader.dragonInstance.SetAnim(MenuDragonPreview.Anim.POSE_FLY);
 
 			// Apply disguise
 			DragonEquip eq = dragonLoader.dragonInstance.GetComponent<DragonEquip>();

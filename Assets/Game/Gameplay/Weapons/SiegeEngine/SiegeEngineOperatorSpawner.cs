@@ -83,7 +83,7 @@ public class SiegeEngineOperatorSpawner : AbstractSpawner {
         t.position = m_spawnAtTransform.position;
         if (groundSensor != null)
         {
-            t.position += (t.position - groundSensor.position);
+			t.position -= groundSensor.localPosition;
         }
 
         t.rotation = m_spawnAtTransform.rotation;//Quaternion.LookRotation(GetLookAtVector());

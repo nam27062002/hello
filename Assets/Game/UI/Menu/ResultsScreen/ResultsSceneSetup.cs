@@ -32,6 +32,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 	[Comment("DragonLoader should be set to \"CURRENT\" mode", 10)]
 	[SerializeField] private MenuDragonLoader m_dragonSlot = null;
 	[SerializeField] private Transform m_eggSlot = null;
+	[SerializeField] private Animator m_goldMountainAnimator = null;
 
 	[Comment("Sort chest slots from left to right, chests will be spawned from the center depending on how many were collected.\nAlways 5 slots, please.", 10)]
 	[SerializeField] private ResultsSceneChestSlot[] m_chestSlots = new ResultsSceneChestSlot[5];
@@ -146,6 +147,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 		// Show and trigger dragon animation
 		m_dragonSlot.gameObject.SetActive(true);
 		m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS_IN);
+		m_goldMountainAnimator.SetTrigger("Intro");
 
 		// [AOC] TODO!! Sync camera shake
 	}
@@ -182,7 +184,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 			totalDuration += 0.5f + 0.5f;
 			m_eggSlot.gameObject.SetActive(true);
 			m_eggSlot.localScale = Vector3.zero;
-			m_eggSlot.DOScale(1f, 0.5f).SetDelay(totalDelay).SetEase(Ease.OutBack);
+			m_eggSlot.DOScale(0.75f, 0.5f).SetDelay(totalDelay).SetEase(Ease.OutBack);
 		}
 
 		return totalDuration;

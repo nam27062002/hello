@@ -403,7 +403,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 						m_animator.SetBool("fly down", true);
 					}
 					if ( m_state != State.Stunned ){
-	                    m_accWaterFactor = 0.70f;
+	                    m_accWaterFactor = 0.80f;
 	                    m_inverseGravityWater = 1.5f;
 						m_startParabolicPosition = transform.position;
 					}
@@ -838,7 +838,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 			Vector3 gravityAcceleration = Vector3.zero;
             if (!ignoreGravity)
+            {
+                //if (impulse.y < 0) impulse.y *= m_dragonGravityModifier;
                 gravityAcceleration = Vector3.down * 9.81f * m_dragonGravityModifier;// * m_dragonMass;
+            }
             Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
             Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
@@ -970,7 +973,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
         m_rbody.velocity = m_impulse;
 
-        m_inverseGravityWater -= Time.deltaTime * 0.22f;
+        m_inverseGravityWater -= Time.deltaTime * 0.28f;
         if (m_inverseGravityWater < 0.05f) m_inverseGravityWater = 0.05f;
 
 
@@ -1318,6 +1321,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		// Change state
 		ChangeState(State.InsideWater);
+
+		// Notify game
+		Messenger.Broadcast<bool>(GameEvents.UNDERWATER_TOGGLED, true);
 	}
 
 	public void EndWaterMovement( Collider _other )
@@ -1334,6 +1340,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		// Wait a second
 		ChangeState( State.ExitingWater );
+
+		// Notify game
+		Messenger.Broadcast<bool>(GameEvents.UNDERWATER_TOGGLED, false);
 	}
 
 	public void StartSpaceMovement()

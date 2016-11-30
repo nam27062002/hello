@@ -25,6 +25,7 @@ public class MenuDragonPreview : MonoBehaviour {
 		IDLE,
 		UNLOCKED,
 		RESULTS_IN,
+		POSE_FLY,
 
 		COUNT
 	};
@@ -32,7 +33,8 @@ public class MenuDragonPreview : MonoBehaviour {
 	public static readonly string[] ANIM_TRIGGERS  = {
 		"idle",
 		"unlocked",
-		"results_in"
+		"results_in",
+		"pose_fly"
 	};
 
 	//------------------------------------------------------------------//

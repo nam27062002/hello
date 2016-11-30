@@ -202,9 +202,14 @@ public class Mission {
 	/// Load state from a persistence object.
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
-	public void Load(SimpleJSON.JSONNode _data) {
+	/// <returns>Whether the mission was successfully loaded</returns>
+	public bool Load(SimpleJSON.JSONNode _data) {
 		// Read values from persistence object
-		InitFromDefinition(MissionManager.GetDef(_data["sku"]));
+		// [AOC] Protection in case mission sku change
+		DefinitionNode missionDef = MissionManager.GetDef(_data["sku"]);
+		if(missionDef == null) return false;
+
+		InitFromDefinition(missionDef);
 
 		// Restore state
 		m_state = (State)_data["state"].AsInt;
@@ -218,6 +223,7 @@ public class Mission {
 
 		// Restore cooldown timestamp
 		m_cooldownStartTimestamp = DateTime.Parse( _data["cooldownStartTimestamp"], System.Globalization.CultureInfo.InvariantCulture);
+		return true;
 	}
 	
 	/// <summary>

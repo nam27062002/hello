@@ -895,7 +895,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	/// On kill function over prey. Eating or holding
 	private void StartSwallow(AI.Machine _prey) {
-		_prey.BeingSwallowed(m_mouth, m_rewardsPlayer);//( m_mouth );
+		_prey.BeginSwallowed(m_mouth, m_rewardsPlayer);//( m_mouth );
 	}
 
 	private void EndSwallow(AI.Machine _prey){

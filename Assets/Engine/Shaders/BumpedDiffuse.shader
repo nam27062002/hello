@@ -9,7 +9,7 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 		_Specular( "Specular", float ) = 1
 		_BumpStrength("Bump Strength", float) = 3
 //		_Tint("Tint (RGB)", Color) = (0, 0, 0, 1)
-		_FresnelFactor("Fresnel factor", Range(0.0, 5.0)) = 0.85
+		_FresnelFactor("Fresnel factor", Range(0.0, 5.0)) = 0.27
 		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 
 	}
@@ -182,6 +182,8 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 
      			// col = (diffuse + fixed4(UNITY_LIGHTMODEL_AMBIENT.rgb,1)) * col + specular * _LightColor0;
 				col = (diffuse + fixed4(i.vLight, 1)) * col + /*(specular * _LightColor0) + */(fresnel * _FresnelColor);
+//				col = (diffuse + fixed4(i.vLight, 1)) * col;
+//				col = lerp(col, _FresnelColor, fresnel * _FresnelColor.a * 4.0);
 
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 				return col;// +_Tint;

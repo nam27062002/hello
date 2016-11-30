@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: bloodSpatter2
-  m_Shader: {fileID: 4800000, guid: 7d115b274302b5d46a753301e417a7e7, type: 3}
+  m_Name: coin_heap
+  m_Shader: {fileID: 4800000, guid: 1f4ced784bec8fd438d70008da842cca, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -17,6 +17,12 @@ Material:
     m_TexEnvs:
     - first:
         name: _BumpMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Cube
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -48,7 +54,7 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: c221d0893d5137c48ab443be07b8a683, type: 3}
+        m_Texture: {fileID: 2800000, guid: bbd1a51b1d9b64da3b3e06140815cf36, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -74,6 +80,9 @@ Material:
         name: _BumpScale
       second: 1
     - first:
+        name: _CubeIntensity
+      second: 0.8
+    - first:
         name: _Cutoff
       second: 0.5
     - first:
@@ -92,9 +101,6 @@ Material:
         name: _GlossyReflections
       second: 1
     - first:
-        name: _InvFade
-      second: 1
-    - first:
         name: _Metallic
       second: 0
     - first:
@@ -106,6 +112,12 @@ Material:
     - first:
         name: _Parallax
       second: 0.02
+    - first:
+        name: _RimIntensity
+      second: 1
+    - first:
+        name: _Rimsize
+      second: 1
     - first:
         name: _SmoothnessTextureChannel
       second: 0
@@ -129,5 +141,8 @@ Material:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
-        name: _TintColor
-      second: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+        name: _RimColour
+      second: {r: 0.53, g: 0.46, b: 0.22, a: 1}
+    - first:
+        name: _Tint
+      second: {r: 0.58, g: 0.36, b: 0.12, a: 1}
