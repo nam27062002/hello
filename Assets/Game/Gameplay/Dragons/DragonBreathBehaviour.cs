@@ -183,7 +183,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		return m_isFuryOn;
 	}
 
-	void Update() {
+	protected virtual void Update() {
 		// Cheat for infinite fire
 		bool cheating = ((DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
 

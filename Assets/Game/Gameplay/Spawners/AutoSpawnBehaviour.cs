@@ -64,7 +64,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 			m_rect = new Rect(position - extraSize * 0.5f, size + extraSize);
 
-			m_disableAtFirstUpdate = m_spawnConditions != null && !m_spawnConditions.IsReadyToSpawn(0f, 0f);
+			m_disableAtFirstUpdate = false;
 
 			return;
 		}
@@ -73,14 +73,38 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		Destroy(gameObject);        
 	}
 
+	/// <summary>
+	/// Component enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+	}
+
+	/// <summary>
+	/// Component disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+	}
+
     void OnDestroy() {
         if (SpawnerManager.instance != null) {
             SpawnerManager.instance.Unregister(this, true);
         }
     }
 
-	public void Initialize() {		
-		m_state = State.Idle;
+	/// <summary>
+	/// A new level was loaded.
+	/// </summary>
+	private void OnLevelLoaded() {
+		m_disableAtFirstUpdate = m_spawnConditions != null && !m_spawnConditions.IsReadyToSpawn(0f, 0f);
+		m_state = (m_disableAtFirstUpdate)? State.Respawning : State.Idle;
+	}
+
+	public void Initialize() {
+		m_state = State.Respawning;
 	}    
 
 	void Update() {

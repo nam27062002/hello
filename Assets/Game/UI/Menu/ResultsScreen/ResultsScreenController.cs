@@ -9,6 +9,7 @@ public class ResultsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	private enum State {
 		INIT,
+		WAIT_INTRO,
 		INTRO,
 		RESULTS,
 		MISSIONS,
@@ -169,7 +170,11 @@ public class ResultsScreenController : MonoBehaviour {
 			case State.INIT: {
 				// Do nothing
 			} break;
-
+			case State.WAIT_INTRO: {
+				if (m_timer <= 0){
+					ChangeState( State.INTRO );
+				}
+			}break;
 			case State.INTRO: {
 				// If timer has finished, go to next state!
 				if(m_timer <= 0f) {
@@ -229,7 +234,7 @@ public class ResultsScreenController : MonoBehaviour {
 	/// </summary>
 	public void LaunchAnim() {
 		// Just change state
-		ChangeState(State.INTRO);
+		ChangeState(State.WAIT_INTRO);
 	}
 
 	//------------------------------------------------------------------------//
@@ -270,7 +275,10 @@ public class ResultsScreenController : MonoBehaviour {
 				m_carousel.Init();
 				m_bottomBarAnimator.ForceHide(false);
 			} break;
-
+			case State.WAIT_INTRO:
+			{
+				m_timer = 0.5f;
+			}break;
 			case State.INTRO: {
 				// Launch dragon animation
 				m_scene.LaunchDragonAnim();
@@ -330,7 +338,8 @@ public class ResultsScreenController : MonoBehaviour {
 			} break;
 
 			case State.FINISHED: {
-				// Nothing to do
+				// Tell carousel to finish as well
+				m_carousel.Finish();
 			} break;
 		}
 

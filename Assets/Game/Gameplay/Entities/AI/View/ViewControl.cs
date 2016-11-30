@@ -626,10 +626,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			ParticleManager.Spawn(m_explosionParticles, transform.position + m_explosionParticles.offset);
 		}
 
-		if (_eaten) {
-			if (!string.IsNullOrEmpty(m_onEatenAudio))
-				AudioController.Play(m_onEatenAudio, transform.position);
-		} else {
+		if (!_eaten) {
 			if (!string.IsNullOrEmpty(m_onExplosionAudio))
 				AudioController.Play(m_onExplosionAudio, transform.position);
 		}
@@ -638,6 +635,13 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_pcTrail != null) {
 			ParticleManager.ReturnInstance(m_pcTrail);
 			m_pcTrail = null;
+		}
+	}
+
+	public void BeginSwallowed()
+	{
+		if (m_entity.isOnScreen && !string.IsNullOrEmpty(m_onEatenAudio)) {
+			AudioController.Play(m_onEatenAudio, transform.position);
 		}
 	}
 

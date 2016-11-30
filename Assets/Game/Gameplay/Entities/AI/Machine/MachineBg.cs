@@ -160,7 +160,7 @@ namespace AI {
 			
 		}
 
-		public void BeingSwallowed(Transform _transform, bool _rewardPlayer) {			
+		public void BeginSwallowed(Transform _transform, bool _rewardPlayer) {			
 			
 		}
 
