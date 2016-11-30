@@ -228,7 +228,7 @@ Transform:
   m_GameObject: {fileID: 160814}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.444, z: 0}
-  m_LocalScale: {x: 1.38, y: 1.38, z: 1.38}
+  m_LocalScale: {x: 1.45, y: 1.45, z: 1.45}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 468922}
@@ -537,8 +537,8 @@ MonoBehaviour:
   m_sensor:
     m_senseFire: 1
     m_sightRadius: 5.5
-    m_maxRadius: 3
-    m_minRadius: 2.5
+    m_maxRadius: 4
+    m_minRadius: 3.5
     m_hysteresisOffset: 1
     m_senseAbove: 1
     m_senseBelow: 1
@@ -548,7 +548,7 @@ MonoBehaviour:
       max: 1.1
     m_senseDelay:
       min: 0
-      max: 0
+      max: 1
   m_onSpawnSound: 
   m_onEatenSound: 
   m_rotateToMouth: 0
@@ -575,11 +575,11 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_speedFactorRange:
-    min: 0.65
-    max: 1.15
-  m_serializedJson: '[{"speed":2,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":3.5,"panicSpeed":7,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":30,"separation":0.75,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":2.5,"catchUpSpeed":8,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+    min: 0.95
+    max: 1.25
+  m_serializedJson: '[{"speed":4,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":8,"panicSpeed":14,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":30,"separation":0.75,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":4,"catchUpSpeed":12,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Canary_02
-  m_avoidDistanceAttenuation: 30
+  m_avoidDistanceAttenuation: 5
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!114 &11476792
@@ -687,5 +687,5 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.32
+  m_Radius: 0.34
   m_Center: {x: 0, y: 0.51, z: 0.06}
