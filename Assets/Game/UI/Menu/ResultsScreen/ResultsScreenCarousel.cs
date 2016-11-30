@@ -117,6 +117,14 @@ public class ResultsScreenCarousel : MonoBehaviour {
 		StartCoroutine(DoStep(Step.PROGRESSION));
 	}
 
+	/// <summary>
+	/// Go to the finished state.
+	/// Will interrupt current pills.
+	/// </summary>
+	public void Finish() {
+		StartCoroutine(DoStep(Step.FINISHED));
+	}
+
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
@@ -208,7 +216,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 				if(m_progressionPill.MustBeDisplayed()) {
 					yield return new WaitForSeconds(pillAnimDuration);
 					m_currentPill = m_progressionPill;
-					m_progressionPill.animator.Show();	// Nothing will happen if already visible
+					m_progressionPill.ShowFinished();	// Nothing will happen if already visible
 				} else {
 					// Just hide current pill and leave no pill visible
 					HideCurrentPill();

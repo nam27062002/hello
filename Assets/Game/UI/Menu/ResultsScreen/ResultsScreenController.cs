@@ -330,7 +330,8 @@ public class ResultsScreenController : MonoBehaviour {
 			} break;
 
 			case State.FINISHED: {
-				// Nothing to do
+				// Tell carousel to finish as well
+				m_carousel.Finish();
 			} break;
 		}
 
