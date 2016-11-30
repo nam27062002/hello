@@ -8,6 +8,13 @@ public class FireBreathDynamic : MonoBehaviour
     [System.Serializable]
     public struct CollisionPrefab
     {
+    	public enum Type
+    	{
+    		NORMAL,
+    		INSIDE_WATER,
+    		WATER_SURFACE
+    			
+    	}
         [SerializeField]
         public string[] m_CollisionLayers;
         [SerializeField]
@@ -21,7 +28,7 @@ public class FireBreathDynamic : MonoBehaviour
         public string m_CollisionPrefabPath;
 
 		[SerializeField]
-        public bool m_insideWater;
+		public Type m_type;
     }
 
 
@@ -68,6 +75,7 @@ public class FireBreathDynamic : MonoBehaviour
     private float m_collisionDistance = 0.0f;
 
     private int m_AllLayerMask;
+    private int m_WaterLayerMask;
 
     private GameObject m_whipEnd;
     private GameObject m_collisionPlane;
@@ -111,6 +119,7 @@ public class FireBreathDynamic : MonoBehaviour
     // Use this for initialization
     void Start () 
 	{
+		m_WaterLayerMask = 1 << LayerMask.NameToLayer("Water");
         m_AllLayerMask = 0;
         for (int i = 0; i < m_collisionPrefabs.Length; i++)
         {
@@ -362,17 +371,38 @@ public class FireBreathDynamic : MonoBehaviour
         }
 		float xStep = (flameAnim * m_distance * m_effectScale) / (m_splits + 1);
         m_collisionSplit = (int)m_splits - 1;
-        m_collisionDistance = 10000000.0f;
+		m_collisionDistance = m_collisionMaxDistance;
 
-        if (Physics.Raycast(transform.position, transform.right, out hit, m_collisionMaxDistance, m_AllLayerMask))
+
+        bool hitsSomething = false;	// if fire colliding with something
+        Vector3 hitPoint = Vector3.zero;	// Closest hit point
+        Transform collisionPlaneTransform = null;
+
+		if (Physics.Raycast(transform.position, transform.right, out hit, m_collisionDistance, m_AllLayerMask))
         {
+        	hitsSomething = true;
             int hitLayer = 1 << hit.transform.gameObject.layer;
 
             foreach (CollisionPrefab cp in m_collisionPrefabs)
             {
-                if ((cp.m_iCollisionLayerMask & hitLayer) != 0 && cp.m_insideWater == WaterAreaManager.instance.IsInsideWater( hit.point ))
+                if ((cp.m_iCollisionLayerMask & hitLayer) != 0 )
                 {
-                    if (Time.time > m_lastTime + cp.m_CollisionDelay)
+					bool spawn = false;
+					switch( cp.m_type )
+					{
+						case CollisionPrefab.Type.NORMAL:
+						{
+							spawn = !WaterAreaManager.instance.IsInsideWater( hit.point );
+						}break;
+						case CollisionPrefab.Type.INSIDE_WATER:
+						{
+							spawn = WaterAreaManager.instance.IsInsideWater( hit.point );
+						}break;
+						default:
+						{
+						}break;
+					}
+                    if (spawn && Time.time > m_lastTime + cp.m_CollisionDelay)
                     {
                         GameObject colFire = ParticleManager.Spawn(cp.m_CollisionPrefab, hit.point, cp.m_CollisionPrefabPath);
                         if (colFire != null)
@@ -382,41 +412,75 @@ public class FireBreathDynamic : MonoBehaviour
 
                         m_lastTime = Time.time;
                     }
-                    break;
                 }
             }
-
 
             m_collisionPlane.transform.position = hit.point;
             m_collisionPlane.transform.up = hit.normal;
 
-
-			SetParticleCollisionsPlane( m_collisionPlane.transform );
-
-
+			collisionPlaneTransform = m_collisionPlane.transform;
             m_collisionDistance = hit.distance;
+            hitPoint = hit.point;
+        }
 
-            Vector3 hitNormal = hit.normal;
-            float wn = Vector3.Dot(hitNormal, whipDirection);
 
-            for (int i = 0; i < m_splits + 1; i++)
+
+        if ( m_insideWater )
+        {
+        	Vector3 endPos = transform.position + transform.right * m_collisionDistance;
+			if (Physics.Raycast(endPos, -transform.right, out hit, m_collisionDistance, m_WaterLayerMask))
+			{
+				hitsSomething = true;
+				int hitLayer = 1 << hit.transform.gameObject.layer;
+				foreach (CollisionPrefab cp in m_collisionPrefabs)
+	            {
+					if ((cp.m_iCollisionLayerMask & hitLayer) != 0 && cp.m_type == CollisionPrefab.Type.WATER_SURFACE)
+	                {
+						bool spawn = false;
+	                    if (spawn && Time.time > m_lastTime + cp.m_CollisionDelay)
+	                    {
+	                        GameObject colFire = ParticleManager.Spawn(cp.m_CollisionPrefab, hit.point, cp.m_CollisionPrefabPath);
+	                        if (colFire != null)
+	                        {
+	                            colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);
+	                        }
+
+	                        m_lastTime = Time.time;
+	                    }
+	                    break;
+	                }
+	            }
+
+				m_collisionPlane.transform.position = hit.point;
+	            m_collisionPlane.transform.up = -hit.normal;
+
+				collisionPlaneTransform = m_collisionPlane.transform;
+				m_collisionDistance = m_collisionDistance - hit.distance;
+	            hitPoint = hit.point;
+			}
+        }
+
+
+        if ( hitsSomething )
+        {
+			SetParticleCollisionsPlane(collisionPlaneTransform);
+			for (int i = 0; i < m_splits + 1; i++)
             {
                 float currentDist = (xStep * (i + 1));
 
-                if (currentDist < hit.distance)
+				if (currentDist < m_collisionDistance)
                 {
                     m_whip[i] = whipOrigin + (whipDirection * currentDist);
                 }
-                else if (currentDist < (hit.distance + xStep))
+				else if (currentDist < (m_collisionDistance + xStep))
                 {
-                    m_whip[i] = hit.point;
+                    m_whip[i] = hitPoint;
                     m_collisionSplit = i;
                 }
                 else
                 {
-                    m_whip[i] = hit.point;
+                    m_whip[i] = hitPoint;
                 }
-
             }
         }
         else
@@ -429,6 +493,9 @@ public class FireBreathDynamic : MonoBehaviour
                 m_whip[i] = whipOrigin + (whipDirection * currentDist);
             }
         }
+
+
+
 
 
         for (int i = 0; i < m_splits + 1; i++)
