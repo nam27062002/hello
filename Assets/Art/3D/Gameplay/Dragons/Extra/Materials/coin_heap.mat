@@ -6,10 +6,10 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: lambert1
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
+  m_Name: coin_heap
+  m_Shader: {fileID: 4800000, guid: 6d5b904f7c5fb4c8585e7bf89c215a7d, type: 3}
+  m_ShaderKeywords: _EMISSION
+  m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
@@ -17,6 +17,12 @@ Material:
     m_TexEnvs:
     - first:
         name: _BumpMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Cube
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -48,9 +54,9 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+        m_Texture: {fileID: 2800000, guid: bbd1a51b1d9b64da3b3e06140815cf36, type: 3}
+        m_Scale: {x: 3.5, y: 3.5}
+        m_Offset: {x: -1.25, y: -1.25}
     - first:
         name: _MetallicGlossMap
       second:
@@ -73,6 +79,9 @@ Material:
     - first:
         name: _BumpScale
       second: 1
+    - first:
+        name: _CubeIntensity
+      second: 0.8
     - first:
         name: _Cutoff
       second: 0.5
@@ -104,6 +113,12 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
+        name: _RimIntensity
+      second: 1
+    - first:
+        name: _Rimsize
+      second: 1
+    - first:
         name: _SmoothnessTextureChannel
       second: 0
     - first:
@@ -121,7 +136,13 @@ Material:
     m_Colors:
     - first:
         name: _Color
-      second: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+      second: {r: 0.588, g: 0.588, b: 0.588, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _RimColour
+      second: {r: 0.53, g: 0.46, b: 0.22, a: 1}
+    - first:
+        name: _Tint
+      second: {r: 0.58, g: 0.36, b: 0.12, a: 1}

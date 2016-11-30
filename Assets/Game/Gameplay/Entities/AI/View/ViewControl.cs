@@ -69,7 +69,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	//-----------------------------------------------
 	private Entity m_entity;
 	private Animator m_animator;
-	private Material m_materialGold;
+//	private Material m_materialGold;
 	private Dictionary<int, Material[]> m_materials;
 
 	private bool m_boost;
@@ -120,7 +120,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 
 		// Load gold material
-		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
+//		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
 
 		// keep the original materials, sometimes it will become Gold!
 		m_materials = new Dictionary<int, Material[]>(); 
@@ -219,9 +219,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_entity != null) {
 			Material altMaterial = null;
 
-			if (m_entity.isGolden) {
-				altMaterial = m_materialGold;
-			} else if (m_skins.Count > 0) {				
+            /*			if (m_entity.isGolden) {
+                            altMaterial = m_materialGold;
+                        } else */
+            if (m_skins.Count > 0) {				
 				for (int i = 0; i < m_skins.Count; i++) {
 					float rnd = UnityEngine.Random.Range(0f, 100f);
 					if (rnd < m_skins[i].m_chance) {
@@ -288,7 +289,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
     void entityTint(bool value)
     {
-        Color col = value ? Color.Lerp(Color.black, Color.yellow, Mathf.Sin(Time.time * 8.0f)) : Color.black;
+        float blink = Mathf.Sin(Time.time * 8.0f) + 1.0f;
+        Color col = value ? Color.Lerp(Color.black, Color.yellow, blink) : Color.black;
         foreach (KeyValuePair<int, Material[]> mats in m_materials)
         {
             foreach (Material mat in mats.Value)
@@ -375,7 +377,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 
-        if (m_lastType != DragonBreathBehaviour.Type.None)
+        if (m_lastType != DragonBreathBehaviour.Type.None || (m_entity != null && m_entity.isGolden))
         {
             entityTint(true);
         }
