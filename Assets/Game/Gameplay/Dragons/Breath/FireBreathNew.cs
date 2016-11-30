@@ -56,6 +56,8 @@ public class FireBreathNew : DragonBreathBehaviour {
     //    private FireBreathDynamic dragonFlameInstance = null;
 
     private bool m_insideWater = false;
+    private bool m_waterMode = false;
+    private float m_waterY = 0;
 
     override protected void ExtendedStart() {
 
@@ -261,6 +263,26 @@ public class FireBreathNew : DragonBreathBehaviour {
 				}
 			}
 		}
+
+		if ( m_insideWater )
+		{
+			if (m_mouthTransform.position.y > m_waterY)
+			{
+				if ( m_waterMode )
+				{	
+					ShowNormalMode();
+					m_waterMode = false;
+				}
+			}
+			else
+			{
+				if (!m_waterMode)
+				{
+					ShowWaterMode();
+					m_waterMode = true;
+				}
+			}
+		}
 	}
 
 	void OnDrawGizmos() {
@@ -293,43 +315,56 @@ public class FireBreathNew : DragonBreathBehaviour {
 		if ( _other.tag == "Water" )
 		{
 			m_insideWater = true;
-			if ( m_isFuryOn )
+			m_waterY = m_mouthTransform.position.y;
+			m_waterMode = true;
+			ShowWaterMode();
+		}
+	}
+
+	private void ShowWaterMode()
+	{
+		if ( m_isFuryOn )
+		{
+			// Change to water modes
+			switch( m_type )
 			{
-				// Change to water modes
-				switch( m_type )
+				case Type.Standard:
 				{
-					case Type.Standard:
-					{
-						dragonFlameStandardInstance.SwitchToWaterMode();
-					}break;
-					case Type.Super:
-					{
-						dragonFlameSuperInstance.SwitchToWaterMode();
-					}break;
-				}
+					dragonFlameStandardInstance.SwitchToWaterMode();
+				}break;
+				case Type.Super:
+				{
+					dragonFlameSuperInstance.SwitchToWaterMode();
+				}break;
 			}
 		}
 	}
+
 
 	void OnTriggerExit(Collider _other)
 	{
 		if ( _other.tag == "Water" )
 		{
 			m_insideWater = false;
-			// TODO: Change View back from boiling bubbles to fire
-			if ( m_isFuryOn )
+			m_waterMode = false;
+			ShowNormalMode();
+		}
+	}
+
+	private void ShowNormalMode()
+	{
+		if ( m_isFuryOn )
+		{
+			switch( m_type )
 			{
-				switch( m_type )
+				case Type.Standard:
 				{
-					case Type.Standard:
-					{
-						dragonFlameStandardInstance.SwitchToNormalMode();
-					}break;
-					case Type.Super:
-					{
-						dragonFlameSuperInstance.SwitchToNormalMode();
-					}break;
-				}
+					dragonFlameStandardInstance.SwitchToNormalMode();
+				}break;
+				case Type.Super:
+				{
+					dragonFlameSuperInstance.SwitchToNormalMode();
+				}break;
 			}
 		}
 	}
