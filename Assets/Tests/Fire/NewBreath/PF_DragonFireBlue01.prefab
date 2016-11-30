@@ -235,7 +235,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013828432286}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11.6837225, y: 329.195, z: -889.77466}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -349,6 +349,7 @@ MonoBehaviour:
     m_CollisionEmiters: 10
     m_iCollisionLayerMask: 0
     m_CollisionPrefabPath: 
+    m_insideWater: 0
   - m_CollisionLayers:
     - Water
     m_CollisionPrefab: Water/PS_BoilingWater
@@ -356,6 +357,16 @@ MonoBehaviour:
     m_CollisionEmiters: 10
     m_iCollisionLayerMask: 0
     m_CollisionPrefabPath: 
+    m_insideWater: 0
+  - m_CollisionLayers:
+    - Ground
+    - GroundVisible
+    m_CollisionPrefab: PF_BonfireUnderwater
+    m_CollisionDelay: 0.2
+    m_CollisionEmiters: 10
+    m_iCollisionLayerMask: 0
+    m_CollisionPrefabPath: 
+    m_insideWater: 1
   m_debugScale: -1
   m_fireParticles:
   - {fileID: 198000014245634598}
@@ -417,7 +428,7 @@ ParticleSystem:
   moveWithTransform: 1
   autoRandomSeed: 1
   scalingMode: 1
-  randomSeed: 533841463
+  randomSeed: 933091967
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -1072,13 +1083,13 @@ ParticleSystem:
       maxGradient:
         key0:
           serializedVersion: 2
-          rgba: 16720128
+          rgba: 16777215
         key1:
           serializedVersion: 2
-          rgba: 4294950810
+          rgba: 4294959839
         key2:
           serializedVersion: 2
-          rgba: 16752640
+          rgba: 16777215
         key3:
           serializedVersion: 2
           rgba: 0
@@ -2585,10 +2596,15 @@ ParticleSystem:
           inSlope: 0
           outSlope: 0
           tangentMode: 0
+        - time: 0.8526591
+          value: 0.9414039
+          inSlope: 1.6000227
+          outSlope: -0.14765236
+          tangentMode: 1
         - time: 1
-          value: 1
-          inSlope: 1.2992183
-          outSlope: 1.2992183
+          value: 0
+          inSlope: -9.683327
+          outSlope: -9.683327
           tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -7682,10 +7698,15 @@ ParticleSystem:
           inSlope: 0
           outSlope: 0
           tangentMode: 0
+        - time: 0.89740956
+          value: 0.9414039
+          inSlope: 1.2740493
+          outSlope: 1.2740493
+          tangentMode: 0
         - time: 1
-          value: 1
-          inSlope: 1.2992183
-          outSlope: 1.2992183
+          value: 0
+          inSlope: -21.881828
+          outSlope: -21.881828
           tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -8915,7 +8936,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5630bc22cc760304fbdfe3de687935c7, type: 2}
+  - {fileID: 2100000, guid: b8da4fc0a202bf64e8b8395b649960fc, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}

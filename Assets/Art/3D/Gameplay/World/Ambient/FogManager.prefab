@@ -53,6 +53,22 @@ GameObject:
   - 4: {fileID: 4000014276203436}
   - 114: {fileID: 114000014084408150}
   m_Layer: 0
+  m_Name: blue_sky (6)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1000012140681720
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000013751029568}
+  - 114: {fileID: 114000011476072394}
+  m_Layer: 0
   m_Name: blue_sky (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,6 +86,22 @@ GameObject:
   - 114: {fileID: 114000013716755024}
   m_Layer: 0
   m_Name: FogManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1000012311490854
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000013401280032}
+  - 114: {fileID: 114000010826370550}
+  m_Layer: 0
+  m_Name: blue_sky (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -156,6 +188,8 @@ Transform:
   - {fileID: 4000012061223726}
   - {fileID: 4000012455045890}
   - {fileID: 4000012921761556}
+  - {fileID: 4000013751029568}
+  - {fileID: 4000013401280032}
   - {fileID: 4000014276203436}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -237,12 +271,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4000010376895950}
   m_RootOrder: 2
---- !u!4 &4000014276203436
+--- !u!4 &4000013401280032
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000011840459450}
+  m_GameObject: {fileID: 1000012311490854}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 424.5, y: -59.9, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 4000010376895950}
+  m_RootOrder: 7
+--- !u!4 &4000013751029568
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012140681720}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 486, y: 78, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -250,6 +297,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4000010376895950}
   m_RootOrder: 6
+--- !u!4 &4000014276203436
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011840459450}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 358.8, y: -70.9, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 4000010376895950}
+  m_RootOrder: 8
+--- !u!114 &114000010826370550
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012311490854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 1, g: 0.9529412, b: 0.3019608, a: 0.15294118}
+  m_fogStart: -300
+  m_fogEnd: 370
 --- !u!114 &114000011202227934
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -270,6 +344,20 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010312997150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 1, g: 0.9529412, b: 0.3019608, a: 0.15294118}
+  m_fogStart: -300
+  m_fogEnd: 370
+--- !u!114 &114000011476072394
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012140681720}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
@@ -354,6 +442,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fogColor: {r: 1, g: 0.9529412, b: 0.3019608, a: 0.15294118}
-  m_fogStart: -300
-  m_fogEnd: 370
+  m_fogColor: {r: 0.25735295, g: 0.8463487, b: 1, a: 0.15294118}
+  m_fogStart: 0
+  m_fogEnd: 10
