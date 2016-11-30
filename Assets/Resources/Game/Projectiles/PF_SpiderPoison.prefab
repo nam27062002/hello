@@ -305,7 +305,7 @@ ParticleSystem:
   moveWithTransform: 0
   autoRandomSeed: 1
   scalingMode: 1
-  randomSeed: 1304623155
+  randomSeed: -1701284241
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -668,8 +668,8 @@ ParticleSystem:
   ShapeModule:
     serializedVersion: 2
     enabled: 1
-    type: 0
-    radius: 0.2
+    type: 1
+    radius: 0.3
     angle: 10
     length: 0.92
     boxX: 1
@@ -2001,7 +2001,7 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010278679320}
   serializedVersion: 4
-  lengthInSec: 1
+  lengthInSec: 0.6
   startDelay:
     scalar: 0
     maxCurve:
@@ -2041,10 +2041,10 @@ ParticleSystem:
   looping: 1
   prewarm: 0
   playOnAwake: 1
-  moveWithTransform: 0
+  moveWithTransform: 1
   autoRandomSeed: 1
   scalingMode: 1
-  randomSeed: 914687111
+  randomSeed: -870193604
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -2200,12 +2200,12 @@ ParticleSystem:
       maxColor: {r: 0, g: 0.4627451, b: 0.19215687, a: 1}
       minMaxState: 2
     startSize:
-      scalar: 0.6
+      scalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 1
+          value: 0.6
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -2223,7 +2223,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 0
-      minMaxState: 0
+      minMaxState: 3
     startSizeY:
       scalar: 1
       maxCurve:
@@ -2419,7 +2419,7 @@ ParticleSystem:
     serializedVersion: 2
     m_Type: 0
     rate:
-      scalar: 2
+      scalar: 6
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -3775,7 +3775,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4c053976d6a97574a8eb7231d2cdcade, type: 2}
+  - {fileID: 2100000, guid: d0f184cdcd3c260498b8aeb6df254789, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
@@ -3792,7 +3792,7 @@ ParticleSystemRenderer:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_RenderMode: 0
-  m_SortMode: 0
+  m_SortMode: 3
   m_MinParticleSize: 0
   m_MaxParticleSize: 0.5
   m_CameraVelocityScale: 0
