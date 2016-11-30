@@ -27,7 +27,7 @@ namespace AI {
 
 		[SeparatorAttribute("Sounds")]
 		[SerializeField] private string m_onSpawnSound = "";
-		[SerializeField] private string m_onEatenSound = "";
+		// [SerializeField] private string m_onEatenSound = "";
 
 		[SeparatorAttribute("Other")]
 		[SerializeField] private RotateToMouthType m_rotateToMouth;
@@ -472,10 +472,8 @@ namespace AI {
 			}
 		}
 
-		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer) {
-			if (m_entity.isOnScreen) {
-				PlaySound(m_onEatenSound);
-			}
+		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer) {
+			m_viewControl.BeginSwallowed();
 			m_edible.BeingSwallowed(_transform, _rewardsPlayer);
 		}
 
