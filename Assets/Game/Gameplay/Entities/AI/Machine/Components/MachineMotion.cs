@@ -158,7 +158,7 @@ namespace AI {
 				m_mass = 0f;
 			}
 
-			if (m_useGravity) {
+			if (m_useGravity && !m_walkOnWalls) {
 				// teleport to ground
 				GetCollisionNormal();
 				RaycastHit hit;
