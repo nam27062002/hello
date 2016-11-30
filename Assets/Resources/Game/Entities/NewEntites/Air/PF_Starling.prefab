@@ -478,7 +478,7 @@ MonoBehaviour:
     m_walkOnWalls: 0
     m_mass: 1
     m_defaultUpVector: 0
-    m_orientationSpeed: 120
+    m_orientationSpeed: 240
     m_faceDirection: 1
     m_rollRotation: 1
     m_limitHorizontalRotation: 0
@@ -491,10 +491,10 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 9
-    m_maxRadius: 5
-    m_minRadius: 0
-    m_hysteresisOffset: 0
+    m_sightRadius: 15
+    m_maxRadius: 8
+    m_minRadius: 4
+    m_hysteresisOffset: 1
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
@@ -561,7 +561,7 @@ MonoBehaviour:
     max: 1.25
   m_serializedJson: '[{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"changeLeaderTime":10,"separation":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"boostSpeed":10,"panicSpeed":14,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":8,"catchUpSpeed":10,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Starling
-  m_avoidDistanceAttenuation: 4
+  m_avoidDistanceAttenuation: 8
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!114 &11468462
