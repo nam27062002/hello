@@ -22,10 +22,6 @@ public class BackgroundTintFX : MonoBehaviour {
 
     private int m_cullingMask;
 
-    void Awake()
-    {
-
-    }
     // Use this for initialization
     void Start()
     {
