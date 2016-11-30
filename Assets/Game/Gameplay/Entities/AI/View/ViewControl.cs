@@ -289,7 +289,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
     void entityTint(bool value)
     {
-        Color col = value ? Color.Lerp(Color.black, Color.yellow, Mathf.Sin(Time.time * 8.0f)) : Color.black;
+        float blink = Mathf.Sin(Time.time * 8.0f) + 1.0f;
+        Color col = value ? Color.Lerp(Color.black, Color.yellow, blink) : Color.black;
         foreach (KeyValuePair<int, Material[]> mats in m_materials)
         {
             foreach (Material mat in mats.Value)
