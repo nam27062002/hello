@@ -25,6 +25,15 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public string m_hitSound;
 
+
+	public string m_enterWaterSound;
+	public string m_enterWaterWithSplashSound;
+	public string m_exitWaterSound;
+	public string m_exitWaterWithSplashSound;
+
+	public string m_skimmingSound;
+	private AudioObject m_skimmingSoundAO;
+
 	protected Animator m_animator;
 
 
@@ -59,8 +68,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	private void OnLevelUp(DragonData _data) 
 	{
-		if ( !string.IsNullOrEmpty( m_levelUpSound ) )
-			AudioController.Play( m_levelUpSound );
+		PlaySound(m_levelUpSound);
 		m_animator.SetTrigger("LevelUp");
 	}
 
@@ -126,10 +134,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void EatStartEvent()
 	{
-		if (!string.IsNullOrEmpty(m_eatSound))
-		{
-			AudioController.Play(m_eatSound, transform);
-		}
+		PlaySound(m_eatSound);
 	}
 
 	public void EatEvent()
@@ -146,8 +151,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void HitEvent()
 	{
-		if ( !string.IsNullOrEmpty( m_hitSound ) )
-			AudioController.Play(m_hitSound);
+		PlaySound( m_hitSound );
 	}
 
 	private void MuteWindSounds()
@@ -178,14 +182,53 @@ public class DragonAnimationEvents : MonoBehaviour {
 			m_starvingSoundAO.volume = m_starvingSoundAO.volumeItem;
 	}
 
-	public void OnInsideWater()
+	public void OnInsideWater( bool withSplash )
 	{
 		MuteWindSounds();
+		if ( withSplash )
+		{
+			PlaySound(m_enterWaterWithSplashSound);
+		}
+		else
+		{
+			PlaySound(m_enterWaterSound);
+		}
 	}
 
-	public void OnExitWater()
+	public void OnExitWater( bool withSplash )
 	{
 		UnmuteWindSounds();
+		if (withSplash )
+		{
+			PlaySound(m_exitWaterWithSplashSound);
+		}
+		else
+		{
+			PlaySound(m_exitWaterSound);
+		}
+
+	}
+
+	public void StartedSkimming()
+	{
+		if ( !string.IsNullOrEmpty( m_skimmingSound))
+		{
+			m_skimmingSoundAO = AudioController.Play( m_skimmingSound, transform);
+		}
+	}
+
+	public void EndedSkimming()
+	{
+		if (m_skimmingSoundAO != null && m_skimmingSoundAO.IsPlaying())
+		{
+			m_skimmingSoundAO.Stop();
+		}
+	}
+
+	private void PlaySound( string audioId )
+	{
+		if ( !string.IsNullOrEmpty(audioId) )
+			AudioController.Play( audioId, transform );
 	}
 
 	public void OnEnterOuterSpace()
