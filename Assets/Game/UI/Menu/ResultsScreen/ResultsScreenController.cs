@@ -199,7 +199,7 @@ public class ResultsScreenController : MonoBehaviour {
 			} break;
 
 			case State.PROGRESSION_2: {
-				// Noting to do for now, go to finish
+				// Noting to do for now, go to missions
 				ChangeState(State.MISSIONS);
 			} break;
 

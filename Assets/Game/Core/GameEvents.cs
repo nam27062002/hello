@@ -39,6 +39,7 @@ public enum GameEvents {
 	SLOW_MOTION_TOGGLED,		// params: bool _activated
 	BOOST_TOGGLED,				// params: bool _activated
 	BIGGER_DRAGON_NEEDED,		// params: DragonTier _requiredTierSku (use COUNT for generic message), string _entitySku
+	UNDERWATER_TOGGLED,			// params: bool _activated
 
 	// Entity events
 	ENTITY_EATEN,				// params: Transform _entity, Reward _reward
