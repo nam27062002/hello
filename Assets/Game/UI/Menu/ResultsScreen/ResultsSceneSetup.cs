@@ -153,9 +153,13 @@ public class ResultsSceneSetup : MonoBehaviour {
 	/// <summary>
 	/// Setup and launch results animation based on current game stats (RewardManager, etc.).
 	/// </summary>
-	public void LaunchRewardsAnim() {
+	/// <returns>The total duration of the animation.</returns>
+	public float LaunchRewardsAnim() {
 		// Program animation of selected slots
 		float totalDelay = 0f;
+		float totalDuration = 0f;
+		float delayPerChest = 0.2f;	// Arbitrary
+		float durationPerChest = 0.1f;	// Arbitrary
 		for(int i = 0; i < m_activeSlots.Count; i++) {
 			// Get reward definition corresponding to this chest
 			int chestIdx = RewardManager.initialCollectedChests + i + 1;
@@ -168,16 +172,20 @@ public class ResultsSceneSetup : MonoBehaviour {
 			StartCoroutine(
 				AnimateChestWithDelay(m_activeSlots[i], rewardData, totalDelay)
 			);
-			totalDelay += 0.20f;	// Arbitrary
+			totalDelay += delayPerChest;
+			totalDuration += delayPerChest + durationPerChest;
 		}
 
 		// Program egg anim
 		if(m_eggFound) {
 			totalDelay += 0.5f;	// Extra delay
+			totalDuration += 0.5f + 0.5f;
 			m_eggSlot.gameObject.SetActive(true);
 			m_eggSlot.localScale = Vector3.zero;
 			m_eggSlot.DOScale(1f, 0.5f).SetDelay(totalDelay).SetEase(Ease.OutBack);
 		}
+
+		return totalDuration;
 	}
 
 	/// <summary>
