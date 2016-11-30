@@ -184,7 +184,7 @@ public class UserMissions
 		for( ; ; idx++) {
 			// If reached the last definition but still haven't looped, do it now
 			// Otherwise it means there are no definitions for the requested difficulty, throw an exception
-			if(idx == defsList.Count) {
+			if(idx >= defsList.Count) {
 				if(loopAllowed) {
 					idx = 0;
 					loopAllowed = false;
@@ -295,7 +295,12 @@ public class UserMissions
 				}
 				
 				// Load data into the target mission
-				m_missions[i].Load(activeMissions[i]);
+				bool success = m_missions[i].Load(activeMissions[i]);
+
+				// If an error ocurred while loading the mission, generate a new one
+				if(!success) {
+					GenerateNewMission((Mission.Difficulty)i);
+				}
 			}
 		}        
     }
