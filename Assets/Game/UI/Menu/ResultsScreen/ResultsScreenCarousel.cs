@@ -238,7 +238,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 		switch(m_step) {
 			case Step.PROGRESSION: {
 				// Go to idle
-				DoStep(Step.IDLE);
+				StartCoroutine(DoStep(Step.IDLE));
 			} break;
 
 			case Step.MISSION_0:
