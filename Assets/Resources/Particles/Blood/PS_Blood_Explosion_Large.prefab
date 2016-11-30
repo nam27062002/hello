@@ -164,10 +164,10 @@ ParticleSystem:
   looping: 0
   prewarm: 0
   playOnAwake: 1
-  moveWithTransform: 0
+  moveWithTransform: 1
   autoRandomSeed: 1
   scalingMode: 2
-  randomSeed: -1313877060
+  randomSeed: -605525195
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -1881,7 +1881,7 @@ ParticleSystem:
   moveWithTransform: 0
   autoRandomSeed: 1
   scalingMode: 2
-  randomSeed: 676707248
+  randomSeed: 160680134
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -2037,12 +2037,12 @@ ParticleSystem:
       maxColor: {r: 1, g: 0, b: 0, a: 1}
       minMaxState: 2
     startSize:
-      scalar: 2
+      scalar: 3
       maxCurve:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 0.75
+          value: 1
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -2053,7 +2053,7 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 1
+          value: 0.6666667
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -2311,15 +2311,15 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 1
-          inSlope: 0
-          outSlope: 0
-          tangentMode: 0
+          value: 0.54545456
+          inSlope: 0.45454544
+          outSlope: 0.45454544
+          tangentMode: 10
         - time: 1
-          value: 0
-          inSlope: -2
-          outSlope: -2
-          tangentMode: 0
+          value: 1
+          inSlope: 0.45454544
+          outSlope: 0.45454544
+          tangentMode: 10
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 0
@@ -2527,7 +2527,7 @@ ParticleSystem:
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 49537
+        atime1: 36237
         atime2: 65535
         atime3: 0
         atime4: 0
@@ -3575,7 +3575,7 @@ ParticleSystem:
   moveWithTransform: 0
   autoRandomSeed: 1
   scalingMode: 2
-  randomSeed: 1543786768
+  randomSeed: 2010941967
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -3731,7 +3731,7 @@ ParticleSystem:
       maxColor: {r: 1, g: 0, b: 0, a: 1}
       minMaxState: 2
     startSize:
-      scalar: 0.5
+      scalar: 0.6
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -3747,7 +3747,7 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 0.4
+          value: 0.5
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -5269,7 +5269,7 @@ ParticleSystemRenderer:
   m_MaxParticleSize: 0.5
   m_CameraVelocityScale: 0
   m_VelocityScale: 0
-  m_LengthScale: 2
+  m_LengthScale: 1
   m_SortingFudge: 0
   m_NormalDirection: 1
   m_RenderAlignment: 0
@@ -5291,7 +5291,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: b98edddef4eb1bc4f81705f915fefae3, type: 2}
+  - {fileID: 2100000, guid: 13933d537d2d91546b7e5aeb9136aadb, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
@@ -5316,7 +5316,7 @@ ParticleSystemRenderer:
   m_LengthScale: 2
   m_SortingFudge: 0
   m_NormalDirection: 1
-  m_RenderAlignment: 0
+  m_RenderAlignment: 1
   m_Pivot: {x: 0, y: 0, z: 0}
   m_Mesh: {fileID: 0}
   m_Mesh1: {fileID: 0}
