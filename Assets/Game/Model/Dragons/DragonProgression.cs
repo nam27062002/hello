@@ -33,7 +33,7 @@ public class DragonProgression : SerializableClass {
 	private float m_xp = 0;
 	public float xp { get { return m_xp; }}
 
-	private float[] m_levelsXp = null;	// Includes redundant level 0
+	private float[] m_levelsXp = null;	// XP required to unlock each level. Includes redundant level 0 (xp required for level 0 is always 0).
 	public float[] levelsXP { get { return m_levelsXp; }}
 
 	public float xpToNextLevel { get { return levelsXP[nextLevel] - levelsXP[level]; }}	// Should be safe, nextLevel is protected and level should never be > lastLevel
@@ -47,6 +47,7 @@ public class DragonProgression : SerializableClass {
 	public int nextLevel { get { return Mathf.Min(m_level + 1, lastLevel); }}
 	public int lastLevel { get { return numLevels - 1; }}
 	public bool isMaxLevel { get { return m_level == lastLevel; }}
+	public bool isMaxed { get { return xp >= levelsXP[lastLevel]; }}
 
 	// Progress [0..1]
 	public float progressByXp { get { return Mathf.InverseLerp(0f, levelsXP[lastLevel], m_xp); }}
@@ -72,13 +73,17 @@ public class DragonProgression : SerializableClass {
 	/// </summary>
 	/// <param name="_owner">The dragon data this progression belongs to.</param>
 	public DragonProgression(DragonData _owner) {
+		// Store owner dragon
 		m_owner = _owner;
 
+		// Get definition based on dragon sku
+		DefinitionNode progressionDef = null;
 		if(_owner != null) {
-			InitFromDef(_owner.def);
-		} else {
-			InitFromDef(null);
+			progressionDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_PROGRESSION, _owner.def.sku);
 		}
+
+		// Init!
+		InitFromDef(progressionDef);
 	}
 
 	/// <summary>
@@ -96,19 +101,28 @@ public class DragonProgression : SerializableClass {
 
 		// Get relevant data from definition
 		int numLevels = _def.GetAsInt("numLevels", 1);
-		int dragonIdx = _def.GetAsInt("order") + 1;	// [1..N]
-		float coefA = _def.GetAsFloat("xpCoefA");
-		float coefB = _def.GetAsFloat("xpCoefB");
 
 		// Reset xp array
 		m_levelsXp = new float[numLevels];
 		m_levelsXp[0] = 0;	// XP required for level 0 is always 0
 		for(int i = 1; i < numLevels; i++) {
-			// Magic formula from content!
-			// xp to complete level X = ([order] + 1)*[xpCoefA] + X*[xpCoefB]
-			//m_levelsXp[i] = (dragonIdx * coefA) + (i * coefB);
-			m_levelsXp[i] = (i * coefB);	// [AOC] Why add a base value?? I think it's just Hadrian's internal math, no need for it
+			m_levelsXp[i] = _def.GetAsFloat("xpLevel" + i);
 		}
+
+		/*
+		string strLevels = "";
+		string strLevelsXP = "";
+		for(int i = 0; i < numLevels; i++) {
+			strLevels += "[ " + i + " ]";
+			strLevelsXP += "[ " + m_levelsXp[i] + " ]";
+		}
+		string str = _def.sku + ":\n";
+		str += strLevels + "\n";
+		str += strLevelsXP + "\n";
+		str += "numLevels: " + numLevels + "\n";
+		str += "lastLevel: " + lastLevel + "\n";
+		Debug.Log(str);
+		*/
 	}
 
 	//------------------------------------------------------------------//
@@ -156,7 +170,7 @@ public class DragonProgression : SerializableClass {
 		// Check level
 		DebugUtils.Assert(_level >= 0 && _level <= lastLevel, "Level out of bounds!");
 
-		// Special case for laast level
+		// Special case for last level
 		int nextLevel = Mathf.Min(_level + 1, lastLevel);
 		return new Range(levelsXP[_level], levelsXP[nextLevel]);
 	}

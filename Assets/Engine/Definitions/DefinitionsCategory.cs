@@ -38,6 +38,7 @@ public class DefinitionsCategory
 	// Dragons
 	public const string DRAGONS = "DRAGONS";
 	public const string DRAGON_TIERS = "DRAGON_TIERS";
+	public const string DRAGON_PROGRESSION = "DRAGON_PROGRESSION";
 
 	// Entities
 	public const string PETS 				= "PETS";

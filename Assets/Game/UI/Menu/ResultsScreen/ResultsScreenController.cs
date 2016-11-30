@@ -43,7 +43,6 @@ public class ResultsScreenController : MonoBehaviour {
 	// To easily setup animation durations
 	[Separator]
 	[SerializeField] private float m_introDuration = 1f;
-	[SerializeField] private float m_resultsDuration = 1f;
 
 	// References
 	private ResultsSceneSetup m_scene = null;
@@ -181,14 +180,14 @@ public class ResultsScreenController : MonoBehaviour {
 			case State.RESULTS: {
 				// If timer has finished, go to next state!
 				if(m_timer <= 0f) {
-					ChangeState(State.MISSIONS);
+					ChangeState(State.PROGRESSION_1);
 				}
 			} break;
 
 			case State.MISSIONS: {
 				// Wait for carousel to finish
 				if(m_carousel.isIdleOrFinished) {
-					ChangeState(State.PROGRESSION_1);
+					ChangeState(State.FINISHED);
 				}
 			} break;
 
@@ -200,8 +199,8 @@ public class ResultsScreenController : MonoBehaviour {
 			} break;
 
 			case State.PROGRESSION_2: {
-				// Noting to do for now, go to finish
-				ChangeState(State.FINISHED);
+				// Noting to do for now, go to missions
+				ChangeState(State.MISSIONS);
 			} break;
 
 			case State.FINISHED: {
@@ -307,10 +306,10 @@ public class ResultsScreenController : MonoBehaviour {
 				}
 
 				// Launch 3D rewards animations
-				m_scene.LaunchRewardsAnim();
+				float duration = m_scene.LaunchRewardsAnim();
 
 				// Start timer to next state
-				m_timer = m_resultsDuration;
+				m_timer = duration;
 			} break;
 
 			case State.MISSIONS: {

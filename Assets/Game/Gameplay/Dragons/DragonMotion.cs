@@ -1318,6 +1318,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		// Change state
 		ChangeState(State.InsideWater);
+
+		// Notify game
+		Messenger.Broadcast<bool>(GameEvents.UNDERWATER_TOGGLED, true);
 	}
 
 	public void EndWaterMovement( Collider _other )
@@ -1334,6 +1337,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		// Wait a second
 		ChangeState( State.ExitingWater );
+
+		// Notify game
+		Messenger.Broadcast<bool>(GameEvents.UNDERWATER_TOGGLED, false);
 	}
 
 	public void StartSpaceMovement()
