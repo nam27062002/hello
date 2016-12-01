@@ -36,18 +36,18 @@ namespace AI {
 				m_timer = m_data.standUpTime;
 				m_pilot.SetMoveSpeed(0f, false);
 				m_pilot.SetBoostSpeed(0f);
-
-				if (m_machine.GetSignal(Signals.Type.InWater)) {
-					m_machine.Drown();
-				}
 			}
 
 			protected override void OnUpdate() {				
 				//
 				m_timer -= Time.deltaTime;
 				if (m_timer <= 0) {
-					SpawnerAreaManager.instance.UpdateAreaAt(m_machine.position, ref m_pilot);
-					Transition(OnRecover);
+					if (m_machine.GetSignal(Signals.Type.InWater)) {
+						m_machine.Drown();
+					} else {
+						SpawnerAreaManager.instance.UpdateAreaAt(m_machine.position, ref m_pilot);
+						Transition(OnRecover);
+					}
 				}
 			}
 		}
