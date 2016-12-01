@@ -47,5 +47,8 @@ public class MenuPlayButton : MenuNavigationButton {
 			// Go to the dragon default screen defined in the inspector
 			OnNavigationButton();
 		}
+
+		// Save flag to not display play screen again
+		GameVars.playScreenShown = true;
 	}
 }

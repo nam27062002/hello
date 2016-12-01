@@ -52,6 +52,8 @@ public static class DebugSettings {
 
 	public const string MENU_DISGUISES_AUTO_EQUIP		= "MENU_DISGUISES_AUTO_EQUIP";
 
+	public const string PLAY_TEST						= "PLAY_TEST";
+
     //------------------------------------------------------------------//
     // PROPERTIES														//
     //------------------------------------------------------------------//
@@ -95,6 +97,11 @@ public static class DebugSettings {
 	public static bool slowPowerUp {
 		get { return Prefs.GetBoolPlayer(DRAGON_SLOW_POWER_UP, false); }
 		set { Prefs.SetBoolPlayer(DRAGON_SLOW_POWER_UP, value); }
+	}
+
+	public static bool isPlayTest {
+		get { return Prefs.GetBoolPlayer(PLAY_TEST, true); }
+		set { Prefs.SetBoolPlayer(PLAY_TEST, value); }
 	}
 
     //------------------------------------------------------------------//

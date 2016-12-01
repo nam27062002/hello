@@ -1033,6 +1033,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		*/
 
 		m_impulse.x += impulse.x * m_parabolicXControl;
+        m_impulse.x = Mathf.Clamp(m_impulse.x, -m_parabolicXControl * 1, m_parabolicXControl * 1);
 
 		m_direction = m_impulse.normalized;
 		RotateToDirection( m_impulse );

@@ -10,7 +10,8 @@
 public enum EngineEvents {
 	// Game Scene Manager
 	SCENE_STATE_CHANGED,	// params: SceneManager.ESceneState _oldState, SceneManager.ESceneState _newState
-	SCENE_UNLOADED,			// params: string _sceneName
+    SCENE_PREUNLOAD,        // params: string _sceneName: The scene is about to be unloaded. Listeners to this event can be sure that all game object in the scene still exist
+    SCENE_UNLOADED,			// params: string _sceneName
 	SCENE_LOADED,			// params: string _sceneName
 
 	// Popups Management
