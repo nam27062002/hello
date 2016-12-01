@@ -183,11 +183,9 @@ namespace AI {
 		}
 
 		public void Stop() {
-			if (!m_machine.GetSignal(Signals.Type.FallDown)) {
-				m_velocity = Vector3.zero;
-				m_rbody.velocity = Vector3.zero;
-				m_rbody.angularVelocity = Vector3.zero;
-			}
+			m_velocity = Vector3.zero;
+			m_rbody.velocity = Vector3.zero;
+			m_rbody.angularVelocity = Vector3.zero;
 		}
 
 		public void OnCollisionGroundEnter() {
@@ -264,7 +262,7 @@ namespace AI {
 
 					if (m_isGrounded || m_walkOnWalls) {						
 						UpdateVelocity();
-						m_rbody.velocity = m_velocity + ((forceGravity * 3f) / m_mass) * Time.deltaTime + m_externalVelocity;
+						m_rbody.velocity = m_velocity + ((forceGravity * 2f) / m_mass) * Time.deltaTime + m_externalVelocity;
 					} else {
 						// free fall, drag, friction and stuff
 						const float airDensity = 1.293f;
@@ -272,7 +270,7 @@ namespace AI {
 						float terminalVelocity = Mathf.Sqrt((2f * m_mass * 9.8f) * (airDensity * 1f * drag));
 
 						Vector3 forceDrag = -m_velocity.normalized * 0.25f * airDensity * drag * 1f * Mathf.Pow(m_velocity.magnitude, 2f) / m_mass;
-						m_acceleration = (forceGravity + forceDrag) * 1.5f;
+						m_acceleration = (forceGravity + forceDrag);
 
 						m_velocity += m_acceleration * Time.deltaTime;
 						m_velocity = Vector3.ClampMagnitude(m_velocity, terminalVelocity) + m_externalVelocity;

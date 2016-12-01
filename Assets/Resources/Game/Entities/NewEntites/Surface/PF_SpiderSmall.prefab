@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Spider_Abdomen_2
-  m_parentRoot: {fileID: 0}
+  m_lookAtRoot: {fileID: 0}
 --- !u!114 &11439598
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -216,8 +216,8 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 18
-    m_maxRadius: 16
+    m_sightRadius: 10.5
+    m_maxRadius: 6.5
     m_minRadius: 0
     m_hysteresisOffset: 0
     m_senseAbove: 1
@@ -230,6 +230,7 @@ MonoBehaviour:
       min: 0.25
       max: 0.5
   m_onSpawnSound: 
+  m_onEatenSound: 
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 

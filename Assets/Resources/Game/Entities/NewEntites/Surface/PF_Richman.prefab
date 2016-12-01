@@ -1036,7 +1036,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Human_Pelvis
-  m_parentRoot: {fileID: 0}
+  m_lookAtRoot: {fileID: 0}
 --- !u!114 &114000011423335904
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1062,7 +1062,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Human_Spine1
-  m_parentRoot: {fileID: 4000014019788774}
+  m_lookAtRoot: {fileID: 4000014019788774}
 --- !u!114 &114000011942830554
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1107,8 +1107,8 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 18
-    m_maxRadius: 16
+    m_sightRadius: 13
+    m_maxRadius: 9
     m_minRadius: 0
     m_hysteresisOffset: 0
     m_senseAbove: 1
@@ -1121,6 +1121,7 @@ MonoBehaviour:
       min: 1.5
       max: 3.5
   m_onSpawnSound: 
+  m_onEatenSound: 
   m_rotateToMouth: 3
   m_inflammable:
     m_ashesAsset: 

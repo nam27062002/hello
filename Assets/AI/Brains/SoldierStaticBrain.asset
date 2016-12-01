@@ -21,9 +21,6 @@ MonoBehaviour:
     - {fileID: 11400000, guid: dc38d9cf90c3d49bab291061fb8b1f57, type: 2}
   - m_name: Fall down
     m_componentAssets: []
-  - m_name: On hit ground
-    m_componentAssets:
-    - {fileID: 11400000, guid: 6020d90484daa470db6214589eaf25ff, type: 2}
   m_transitionData:
   - to: 0
     id: onMaxAttacks
@@ -34,13 +31,10 @@ MonoBehaviour:
   - to: 1
     id: onEnemyInRange
     from: 0
-  - to: 0
-    id: onRecover
-    from: 3
   - to: 2
     id: onFallDown
     from: -1
-  - to: 3
+  - to: 0
     id: OnGround
     from: -1
   m_firstState_A: 0
