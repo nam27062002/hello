@@ -154,25 +154,19 @@ namespace AI {
 			return false;
 		}
 
+		public void Drown() { }
+
 		public float biteResistance { get { return 0; }}
 
-		public void Bite() {
-			
-		}
+		public void Bite() { }
 
-		public void BeginSwallowed(Transform _transform, bool _rewardPlayer) {			
-			
-		}
+		public void BeginSwallowed(Transform _transform, bool _rewardPlayer) { }
 
 		public List<Transform> holdPreyPoints { get{ return null; } }
 
-		public void BiteAndHold() {
-			
-		}
+		public void BiteAndHold() { }
 
-		public void ReleaseHold() {
-			
-		}
+		public void ReleaseHold() { }
 
 		public virtual bool Burn(Transform _transform) {
 			

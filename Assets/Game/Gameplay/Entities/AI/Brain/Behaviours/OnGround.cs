@@ -36,6 +36,10 @@ namespace AI {
 				m_timer = m_data.standUpTime;
 				m_pilot.SetMoveSpeed(0f, false);
 				m_pilot.SetBoostSpeed(0f);
+
+				if (m_machine.GetSignal(Signals.Type.InWater)) {
+					m_machine.Drown();
+				}
 			}
 
 			protected override void OnUpdate() {				
