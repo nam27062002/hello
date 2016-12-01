@@ -260,7 +260,7 @@ namespace AI {
 					GetHeightFromGround();
 					m_isGrounded = m_isColliderOnGround || m_heightFromGround < 0.3f;
 
-					m_machine.SetSignal(Signals.Type.FallDown, !m_isGrounded && m_heightFromGround > 2f);
+					m_machine.SetSignal(Signals.Type.FallDown, !m_isGrounded && m_heightFromGround > 1f);
 
 					if (m_isGrounded || m_walkOnWalls) {						
 						UpdateVelocity();

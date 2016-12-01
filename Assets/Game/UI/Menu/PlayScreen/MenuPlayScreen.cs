@@ -73,7 +73,7 @@ public class MenuPlayScreen : MonoBehaviour {
         if (GameSceneManager.instance != null && !GameSceneManager.isLoading)
         {
             // Show menu HUD, except if the dragon selection tutorial hasn't yet been completed
-            if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION) && InstanceManager.instance != null)
+            if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION) && InstanceManager.instance != null || DebugSettings.isPlayTest)	// Ignore for playtests
             {
                 MenuSceneController menuSceneController = InstanceManager.GetSceneController<MenuSceneController>();
                 if (menuSceneController != null && menuSceneController.hud != null)
@@ -85,9 +85,6 @@ public class MenuPlayScreen : MonoBehaviour {
                     }
                 }                
             }
-
-            // Save flag to not display this screen again
-            GameVars.playScreenShown = true;
         }
 	}
 
