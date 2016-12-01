@@ -8,12 +8,10 @@
 
 
 	SubShader{
-		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" }
+		// No culling or depth
+		Cull Off ZWrite Off ZTest Always
 
 		Pass{
-//			Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" }
-
-			Cull off
 
 			Stencil
 			{
@@ -26,7 +24,7 @@
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma fragmentoption ARB_precision_hint_fastest 
+//			#pragma fragmentoption ARB_precision_hint_fastest 
 
 			#include "UnityCG.cginc"
 
@@ -58,9 +56,6 @@
 		}
 
 		Pass{
-//			Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
-
-			Cull off
 
 			Stencil
 			{
@@ -73,7 +68,7 @@
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma fragmentoption ARB_precision_hint_fastest 
+//			#pragma fragmentoption ARB_precision_hint_fastest 
 
 			#include "UnityCG.cginc"
 
@@ -103,7 +98,5 @@
 			}
 			ENDCG
 		}
-
 	}
-	Fallback off
 }
