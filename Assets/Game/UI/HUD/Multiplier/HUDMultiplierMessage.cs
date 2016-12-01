@@ -44,7 +44,7 @@ public class HUDMultiplierMessage : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<ScoreMultiplier, ScoreMultiplier>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
+		Messenger.AddListener<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
 	}
 	
 	/// <summary>
@@ -52,7 +52,7 @@ public class HUDMultiplierMessage : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<ScoreMultiplier, ScoreMultiplier>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
+		Messenger.RemoveListener<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
 	}
 
 	//------------------------------------------------------------------//
@@ -61,9 +61,8 @@ public class HUDMultiplierMessage : MonoBehaviour {
 	/// <summary>
 	/// Current score multiplier has changed.
 	/// </summary>
-	/// <param name="_oldMultiplier">The previous multiplier.</param>
 	/// <param name="_newMultiplier">The new multiplier.</param>
-	private void OnMultiplierChanged(ScoreMultiplier _oldMultiplier, ScoreMultiplier _newMultiplier) {
+	private void OnMultiplierChanged(ScoreMultiplier _newMultiplier, float fireRushMultiplier) {
 		// Multiplier must have messages!
 		if(_newMultiplier.feedbackMessages.Count == 0) return;
 

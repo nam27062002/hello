@@ -301,6 +301,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			}break;
 		}
 
+		RewardManager.currentFireRushMultiplier = 2;
 
 		if (m_healthBehaviour) m_healthBehaviour.enabled = false;
 		if (m_attackBehaviour) m_attackBehaviour.enabled = false;
@@ -336,6 +337,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			}break;
 
 		}
+		RewardManager.currentFireRushMultiplier = 1;
 		m_isFuryOn = false;
 		m_currentFury = Mathf.Clamp(m_furyRushesCompleted * m_scoreToAddForNextFuryRushes, 0, m_maxScoreToAddForNextFuryRushes);
 
