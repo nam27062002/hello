@@ -179,7 +179,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public float m_dragonMass = 10;
 	public float m_dragonFricction = 15.0f;
 	public float m_dragonGravityModifier = 0.3f;
-
+	private bool m_waterDeepLimit = false;
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -970,13 +970,24 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_direction = m_impulse.normalized;
 		RotateToDirection(m_direction);
 
-
         m_rbody.velocity = m_impulse;
 
         m_inverseGravityWater -= Time.deltaTime * 0.28f;
-        if (m_inverseGravityWater < 0.05f) m_inverseGravityWater = 0.05f;
+        if (m_inverseGravityWater < 0.05f) 
+        {
+        	m_inverseGravityWater = 0.05f;
+        }
 
-
+		if (!m_waterDeepLimit)
+		{
+			float maxPushDown = ((m_inverseGravityWater * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass * m_accWaterFactor);
+			if (maxPushDown < (gravityAcceleration.y + m_impulse.y))
+			{	
+				m_waterDeepLimit = true;
+				Debug.Log("DeepLimit");
+				m_particleController.DeepLimit();
+			}
+		}
 
 
         /*
@@ -1022,6 +1033,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		*/
 
 		m_impulse.x += impulse.x * m_parabolicXControl;
+        m_impulse.x = Mathf.Clamp(m_impulse.x, -m_parabolicXControl * 1, m_parabolicXControl * 1);
 
 		m_direction = m_impulse.normalized;
 		RotateToDirection( m_impulse );
@@ -1307,6 +1319,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public void StartWaterMovement( Collider _other )
 	{
 		// m_waterMovementModifier = 0;
+		m_waterDeepLimit = false;
 
 		bool createsSplash = false;
 		// Trigger particles
