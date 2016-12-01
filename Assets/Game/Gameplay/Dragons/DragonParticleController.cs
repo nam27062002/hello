@@ -120,6 +120,7 @@ public class DragonParticleController : MonoBehaviour
 				{
 					m_skimmingInstance.Stop();
 					m_skimming = false;
+					m_dargonMotion.EndedSkimming();
 				}
 			}
 			else
@@ -135,6 +136,7 @@ public class DragonParticleController : MonoBehaviour
 						// Start skimming	
 						m_skimmingInstance.Play();
 						m_skimming = true;
+						m_dargonMotion.StartedSkimming();
 					}
 				}
 			}
@@ -172,23 +174,31 @@ public class DragonParticleController : MonoBehaviour
 	}
 
 
-	public void OnEnterWater( Collider _other )
+	public bool OnEnterWater( Collider _other )
 	{
 		m_waterY = _transform.position.y;
 		m_insideWater = true;
 
 		if ( m_dargonMotion != null && Mathf.Abs(m_dargonMotion.velocity.y) >= m_minSpeedEnterSplash )
+		{
 			CreateSplash(_other, m_waterEnterSplash);
+			return true;
+		}
+		return false;
 	}
 
-	public void OnExitWater( Collider _other )
+	public bool OnExitWater( Collider _other )
 	{
 		m_insideWater = false;
 		if ( m_bubblesInstance != null && m_bubblesInstance.isPlaying)
 			m_bubblesInstance.Stop();
 
 		if ( m_dargonMotion != null && Mathf.Abs(m_dargonMotion.velocity.y) >= m_minSpeedExitSplash )
+		{
 			CreateSplash(_other, m_waterExitSplash);
+			return true;
+		}
+		return false;
 	}
 
 	private void CreateSplash( Collider _other, string particleName )
