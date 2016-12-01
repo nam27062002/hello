@@ -191,7 +191,7 @@ public class MissionObjective {
 	/// <summary>
 	/// A new game has started.
 	/// </summary>
-	public void OnGameStarted() {
+	public virtual void OnGameStarted() {
 		// We only care if we're a single-run objective
 		if(parentMission.def.GetAsBool("singleRun")) {
 			// Reset counter
@@ -202,7 +202,7 @@ public class MissionObjective {
 	/// <summary>
 	/// A new game has just ended.
 	/// </summary>
-	public void OnGameEnded() {
+	public virtual void OnGameEnded() {
 		// We only care if we're a single-run objective
 		// Don't reset if objective was completed
 		if(parentMission.def.GetAsBool("singleRun") && !isCompleted) {
@@ -224,8 +224,12 @@ public class MissionObjective {
 		// Create a new objective based on mission type
 		switch(_parentMission.def.GetAsString("typeSku")) {
 			case "score":			return new MissionObjectiveScore(_parentMission);
+			case "gold":			return new MissionObjectiveGold(_parentMission);
 			case "survive_time":	return new MissionObjectiveSurviveTime(_parentMission);
 			case "kill":			return new MissionObjectiveKill(_parentMission);
+			case "burn":			return new MissionObjectiveBurn(_parentMission);
+			case "dive":			return new MissionObjectiveDive(_parentMission);
+			case "fire_rush":		return new MissionObjectiveFireRush(_parentMission);
 		}
 
 		// Unrecoginzed mission type, aborting

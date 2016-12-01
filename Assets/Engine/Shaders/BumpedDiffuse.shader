@@ -8,76 +8,12 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 		_MainTex ("Texture", 2D) = "white" {}
 		_Specular( "Specular", float ) = 1
 		_BumpStrength("Bump Strength", float) = 3
-//		_Tint("Tint (RGB)", Color) = (0, 0, 0, 1)
-		_FresnelFactor("Fresnel factor", Range(0.0, 5.0)) = 0.85
+		_FresnelFactor("Fresnel factor", Range(0.0, 5.0)) = 0.27
 		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 
 	}
 	SubShader
 	{
-/*
-//		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
-		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
-		Pass
-		{
-			Cull off
-			ZWrite Off
-//			ZTest Always
-			ColorMask RGB
-			Stencil
-			{
-				Ref 5
-				Comp always
-				Pass Replace
-				ZFail keep
-			}
-
-			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-			#pragma fragmentoption ARB_precision_hint_fastest		
-
-
-			#include "UnityCG.cginc"
-			#include "Lighting.cginc"
-			#include "HungryDragon.cginc"
-
-			struct appdata
-			{
-				float4 vertex : POSITION;
-				float3 normal : NORMAL;
-			};
-			struct v2f
-			{
-				float4 vertex : SV_POSITION;
-				fixed4 color : Color;
-			};
-
-			uniform float4 _Tint;
-
-			v2f vert(appdata v)
-			{
-				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-
-				float3 norm = mul((float3x3)UNITY_MATRIX_IT_MV, v.normal);
-				float2 offset = TransformViewToProjection(norm.xy);
-
-				o.vertex.xy += offset * o.vertex.z * 0.0025;
-				o.color = fixed4(1.0, 0.0, 0.0, 1.0);//_Tint;
-
-				return o;
-			}
-
-			fixed4 frag(v2f i) : SV_Target
-			{
-				return i.color;
-			}
-
-			ENDCG
-		}
-*/
-
 		Pass
 		{
 			Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase"}
@@ -126,7 +62,6 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 			uniform float4 _MainTex_TexelSize;
 			uniform float _Specular;
 			uniform float _BumpStrength;
-//			uniform float4 _Tint;
 			uniform float _FresnelFactor;
 			uniform float4 _FresnelColor;
 
@@ -182,9 +117,11 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 
      			// col = (diffuse + fixed4(UNITY_LIGHTMODEL_AMBIENT.rgb,1)) * col + specular * _LightColor0;
 				col = (diffuse + fixed4(i.vLight, 1)) * col + /*(specular * _LightColor0) + */(fresnel * _FresnelColor);
+//				col = (diffuse + fixed4(i.vLight, 1)) * col;
+//				col = lerp(col, _FresnelColor, fresnel * _FresnelColor.a * 4.0);
 
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-				return col;// +_Tint;
+				return col;
 			}
 			ENDCG
 		}

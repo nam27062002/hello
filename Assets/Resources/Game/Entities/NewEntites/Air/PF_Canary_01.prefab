@@ -241,7 +241,7 @@ Transform:
   m_GameObject: {fileID: 133768}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.561, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalScale: {x: 1.38, y: 1.38, z: 1.38}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 402954}
@@ -527,29 +527,29 @@ MonoBehaviour:
     m_walkOnWalls: 0
     m_mass: 1
     m_defaultUpVector: 0
-    m_orientationSpeed: 120
+    m_orientationSpeed: 480
     m_faceDirection: 1
     m_rollRotation: 1
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
     m_limitVerticalRotation: 1
-    m_faceUpAngle: 355
-    m_faceDownAngle: 5
+    m_faceUpAngle: 315
+    m_faceDownAngle: 45
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 5.5
-    m_maxRadius: 2.5
-    m_minRadius: 2
+    m_sightRadius: 4.5
+    m_maxRadius: 3.5
+    m_minRadius: 3
     m_hysteresisOffset: 1
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
     m_radiusOffset:
-      min: 0.9
-      max: 1.1
+      min: 0.8
+      max: 1.2
     m_senseDelay:
       min: 0
       max: 1
@@ -571,19 +571,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
-  m_energy: 4
-  m_energyDrainSec: 1
+  m_blendSpeedFactor: 4
+  m_energy: 15
+  m_energyDrainSec: 2
   m_brainResource: {fileID: 11400000, guid: 0880f58945d004e4a9334a99cdfb0b84, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
   m_speedFactorRange:
-    min: 0.5
-    max: 1.1
-  m_serializedJson: '[{"speed":2,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":2.5,"panicSpeed":5,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":30,"separation":0.85,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":2,"catchUpSpeed":10,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+    min: 0.9
+    max: 1.2
+  m_serializedJson: '[{"speed":3,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":6,"panicSpeed":13,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":30,"separation":0.85,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":3,"catchUpSpeed":10,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Canary_01
-  m_avoidDistanceAttenuation: 6
+  m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!114 &11473230
@@ -687,5 +687,5 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.34
+  m_Radius: 0.32
   m_Center: {x: 0, y: 0.53, z: 0.06}

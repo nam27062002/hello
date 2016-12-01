@@ -101,10 +101,13 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     private DragonBreathBehaviour m_dragonBreath;
     private DragonBreathBehaviour.Type m_lastType;
 
-	//-----------------------------------------------
-	// Use this for initialization
-	//-----------------------------------------------
-	protected virtual void Awake() {
+
+    private Color m_entityRushColor;
+
+    //-----------------------------------------------
+    // Use this for initialization
+    //-----------------------------------------------
+    protected virtual void Awake() {
 		m_entity = GetComponent<Entity>();
 		m_animator = transform.FindComponentRecursive<Animator>();
 		if (m_animator != null)
@@ -117,13 +120,14 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			m_animEvents.onAttackDealDamage += animEventsOnAttackDealDamage;
 		}
 
+        m_entityRushColor = new Color(255.0f / 255.0f, 161 / 255.0f, 0, 255.0f / 255.0f);
 
 
-		// Load gold material
-//		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
+        // Load gold material
+        //		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
 
-		// keep the original materials, sometimes it will become Gold!
-		m_materials = new Dictionary<int, Material[]>(); 
+        // keep the original materials, sometimes it will become Gold!
+        m_materials = new Dictionary<int, Material[]>(); 
 		Renderer[] renderers = GetComponentsInChildren<Renderer>();
 		for (int i = 0; i < renderers.Length; i++) {
 			m_materials[renderers[i].GetInstanceID()] = renderers[i].materials;
@@ -289,8 +293,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
     void entityTint(bool value)
     {
-        float blink = Mathf.Sin(Time.time * 8.0f) + 1.0f;
-        Color col = value ? Color.Lerp(Color.black, Color.yellow, blink) : Color.black;
+//        float blink = (Mathf.Sin(Time.time * 12.0f) + 1.0f) * 0.5f;
+//        Color col = value ? Color.Lerp(Color.black, Color.yellow, 0.5f + blink * 0.5f) : Color.black;
+        Color col = value ? m_entityRushColor : Color.black;
         foreach (KeyValuePair<int, Material[]> mats in m_materials)
         {
             foreach (Material mat in mats.Value)
@@ -621,10 +626,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			ParticleManager.Spawn(m_explosionParticles, transform.position + m_explosionParticles.offset);
 		}
 
-		if (_eaten) {
-			if (!string.IsNullOrEmpty(m_onEatenAudio))
-				AudioController.Play(m_onEatenAudio, transform.position);
-		} else {
+		if (!_eaten) {
 			if (!string.IsNullOrEmpty(m_onExplosionAudio))
 				AudioController.Play(m_onExplosionAudio, transform.position);
 		}
@@ -633,6 +635,13 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_pcTrail != null) {
 			ParticleManager.ReturnInstance(m_pcTrail);
 			m_pcTrail = null;
+		}
+	}
+
+	public void BeginSwallowed()
+	{
+		if (m_entity.isOnScreen && !string.IsNullOrEmpty(m_onEatenAudio)) {
+			AudioController.Play(m_onEatenAudio, transform.position);
 		}
 	}
 
