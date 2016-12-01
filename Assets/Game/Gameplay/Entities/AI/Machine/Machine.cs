@@ -463,6 +463,9 @@ namespace AI {
 			return true;
 		}
 
+		public void Drown() {
+			SetSignal(Signals.Type.Destroyed, true);
+		}
 
 		public float biteResistance { get { return m_edible.biteResistance; }}
 

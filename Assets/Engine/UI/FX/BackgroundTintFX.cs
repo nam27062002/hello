@@ -20,7 +20,7 @@ public class BackgroundTintFX : MonoBehaviour {
     private RenderTexture m_renderTexture = null;
     private RenderTexture m_buffer = null;
 
-    private int m_cullingMask;
+//    private int m_cullingMask;
 
     // Use this for initialization
     void Start()
@@ -65,6 +65,7 @@ public class BackgroundTintFX : MonoBehaviour {
 
     public void OnDestroy()
     {
+        Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 
         m_renderCamera.targetTexture = null;
         DestroyObject(m_renderCamera);
