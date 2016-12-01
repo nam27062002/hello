@@ -66,25 +66,6 @@ public class MissionObjectiveDive : MissionObjective {
 		return LocalizationManager.SharedInstance.Localize(GetDescriptionTID(), GetTargetValueFormatted());
 	}
 
-	/// <summary>
-	/// Gets the current value of this objective properly formatted.
-	/// Override to customize text in specific objective types.
-	/// </summary>
-	/// <returns>The current value properly formatted.</returns>
-	override public string GetCurrentValueFormatted() {
-		// Return as time
-		return TimeUtils.FormatTime(currentValue, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3, TimeUtils.EPrecision.DAYS);
-	}
-
-	/// <summary>
-	/// Gets the target value of this objective properly formatted.
-	/// Override to customize text in specific objective types.
-	/// </summary>
-	/// <returns>The target value properly formatted.</returns>
-	override public string GetTargetValueFormatted() {
-		return TimeUtils.FormatTime((double)targetValue, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3, TimeUtils.EPrecision.DAYS);
-	}
-
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
