@@ -41,12 +41,18 @@ public class DragonParticleController : MonoBehaviour
 	private RaycastHit m_rayHit;
 	private int m_waterLayer;
 
+	[Space]
+	public GameObject m_waterAirLimitParticle;
+	private ParticleSystem m_waterAirLimitInstance = null;
+
+
 	private Transform _transform;
 	private bool m_insideWater = false;
 	private float m_waterY = 0;
 	private float m_waterDepth = 5;
 	private const float m_waterDepthIncrease = 2;
 	private DragonMotion m_dargonMotion;
+	private DragonEatBehaviour m_dragonEat;
 
 	void Start () 
 	{
@@ -56,6 +62,7 @@ public class DragonParticleController : MonoBehaviour
 		m_bubblesInstance = InitParticles(m_bubbles, m_bubblesAnchor);
 		m_cloudTrailInstance = InitParticles(m_cloudTrail, m_cloudTrailAnchor);
 		m_dargonMotion = transform.parent.GetComponent<DragonMotion>();
+		m_dragonEat = transform.parent.GetComponent<DragonEatBehaviour>();
 		m_waterDepth = InstanceManager.player.data.scale + m_waterDepthIncrease;
 		_transform = transform;
 
@@ -70,6 +77,10 @@ public class DragonParticleController : MonoBehaviour
 		m_skimmingRay.direction = Vector3.down;
 
 		m_waterLayer = 1<<LayerMask.NameToLayer("Water");
+
+		if (m_waterAirLimitParticle != null)
+			m_waterAirLimitInstance = InitParticles( m_waterAirLimitParticle, m_dragonEat.mouth);
+		
 
 	}
 
@@ -222,5 +233,14 @@ public class DragonParticleController : MonoBehaviour
 		if(m_cloudTrailInstance != null) {
 			m_cloudTrailInstance.Play();
 		}
+	}
+
+	/// <summary>
+	/// Function call when Dragon Motion is forced to go up inside water
+	/// </summary>
+	public void DeepLimit()
+	{
+		if (m_waterAirLimitInstance != null)
+		m_waterAirLimitInstance.Play();
 	}
 }
