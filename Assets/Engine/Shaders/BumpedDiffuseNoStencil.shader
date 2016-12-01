@@ -1,7 +1,7 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
-Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
+Shader "Hungry Dragon/Bumped Diffuse no stencil (Spawners)"
 {
 	Properties
 	{
@@ -18,14 +18,6 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 		{
 			Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase"}
 			Cull Back
-
-			Stencil
-			{
-				Ref 5
-				Comp always
-				Pass Replace
-				ZFail keep
-			}
 
 			CGPROGRAM
 			#pragma vertex vert

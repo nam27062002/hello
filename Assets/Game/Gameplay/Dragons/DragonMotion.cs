@@ -1308,12 +1308,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		// m_waterMovementModifier = 0;
 
-		// Trigger animation
-		m_animationEventController.OnInsideWater();
-
+		bool createsSplash = false;
 		// Trigger particles
 		if ( m_particleController != null )
-			m_particleController.OnEnterWater( _other );
+			createsSplash = m_particleController.OnEnterWater( _other );
+
+		// Trigger animation
+		m_animationEventController.OnInsideWater(createsSplash);
 
         rbody.velocity = rbody.velocity * 2.0f;// m_waterImpulseMultiplier;
 		m_impulse = rbody.velocity;
@@ -1331,12 +1332,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if (m_animator )
 			m_animator.SetBool("boost", false);
 
-		// Trigger animation
-		m_animationEventController.OnExitWater();
-
+		
+		bool createsSplash = false;
 		// Trigger particles
 		if (m_particleController != null)
-			m_particleController.OnExitWater( _other );
+			createsSplash = m_particleController.OnExitWater( _other );
+
+		// Trigger animation
+		m_animationEventController.OnExitWater(createsSplash);
 
 		// Wait a second
 		ChangeState( State.ExitingWater );
@@ -1409,6 +1412,16 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_holdPrey = null;
 		m_holdPreyTransform = null;
 		m_grab = false;
+	}
+
+	public void StartedSkimming()
+	{
+		m_animationEventController.StartedSkimming();
+	}
+
+	public void EndedSkimming()
+	{
+		m_animationEventController.EndedSkimming();
 	}
 
 	/// <summary>
