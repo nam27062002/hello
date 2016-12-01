@@ -10,9 +10,9 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow BumpMap (On Line Decorations)"
 	Properties 
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
+		_NormalTex("Normal (RGBA)", 2D) = "white" {}
 		_BumpStrength("Bump Strength", float) = 3
 		_Specular("Specular Factor", float) = 3
-
 	}
 
 	SubShader {
@@ -53,7 +53,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow BumpMap (On Line Decorations)"
 				}; 
 
 				struct v2f {
-					float4 vertex : SV_POSITION;
+					float4 pos : SV_POSITION;
 					half2 texcoord : TEXCOORD0;
 					HG_FOG_COORDS(1)
 					LIGHTING_COORDS(2,3)
@@ -61,8 +61,6 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow BumpMap (On Line Decorations)"
 					float2 lmap : TEXCOORD4;
 					#endif
 					float4 color : COLOR; 
-					float3 halfDir : VECTOR;
-
 					float3 tangentWorld : TANGENT;
 					float3 normalWorld : TEXCOORD5;
 					float3 binormalWorld : TEXCOORD6;
@@ -72,6 +70,8 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow BumpMap (On Line Decorations)"
 				uniform sampler2D _MainTex;
 				uniform float4 _MainTex_ST;
 				uniform float4 _MainTex_TexelSize;
+				uniform sampler2D _NormalTex;
+				uniform float4 _NormalTex_ST;
 				uniform float _BumpStrength;
 				uniform float _Specular;
 
@@ -96,10 +96,6 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow BumpMap (On Line Decorations)"
 					o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
 					o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
 
-					float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
-					float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
-					o.halfDir = normalize(lightDirection + viewDirection);
-
 					return o;
 				}
 				
@@ -107,14 +103,9 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow BumpMap (On Line Decorations)"
 				{
 					fixed4 col = tex2D(_MainTex, i.texcoord) * i.color;	// Color
 
-					float heightSampleCenter = col.a;
+					float4 encodedNormal = tex2D(_NormalTex, _NormalTex_ST.xy * i.texcoord + _NormalTex.zw);
 
-					float heightSampleRight = tex2D(_MainTex, i.texcoord + float2(_MainTex_TexelSize.x, 0)).a;
-
-					float heightSampleUp = tex2D(_MainTex, i.texcoord + float2(0, _MainTex_TexelSize.y)).a;
-
-					float sampleDeltaRight = heightSampleRight - heightSampleCenter;
-					float sampleDeltaUp = heightSampleUp - heightSampleCenter;
+					float3 localCoords = float3()
 
 					float3 encodedNormal = cross(float3(1, 0, sampleDeltaRight * _BumpStrength), float3(0, 1, sampleDeltaUp * _BumpStrength));
 					float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
