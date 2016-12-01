@@ -1058,7 +1058,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_enableMotion: 1
+  m_enableMotion: 0
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
@@ -1074,11 +1074,11 @@ MonoBehaviour:
     m_faceUpAngle: 320
     m_faceDownAngle: 40
   m_affectedByDragonTrample: 0
-  m_enableSensor: 1
+  m_enableSensor: 0
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 18
-    m_maxRadius: 16
+    m_sightRadius: 10
+    m_maxRadius: 6.5
     m_minRadius: 0
     m_hysteresisOffset: 0
     m_senseAbove: 1
@@ -1091,6 +1091,7 @@ MonoBehaviour:
       min: 0.25
       max: 1.25
   m_onSpawnSound: 
+  m_onEatenSound: 
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
