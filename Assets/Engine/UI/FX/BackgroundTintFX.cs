@@ -38,6 +38,10 @@ public class BackgroundTintFX : MonoBehaviour {
         m_renderTexture.Create();
 
         m_buffer = new RenderTexture((int)m_originalCamera.pixelWidth, (int)m_originalCamera.pixelHeight, 24, RenderTextureFormat.ARGB32);
+		m_buffer.wrapMode = TextureWrapMode.Clamp;
+		m_buffer.useMipMap = false;
+		m_buffer.filterMode = FilterMode.Bilinear;
+		m_buffer.Create();
 
         m_renderCamera = new GameObject("Background tint camera", typeof(Camera)).GetComponent<Camera>();
 //        m_renderCamera.transform.SetParent(transform);
@@ -49,7 +53,6 @@ public class BackgroundTintFX : MonoBehaviour {
         m_renderCamera.renderingPath = RenderingPath.Forward;
         //      Shader rShader = Shader.Find("Hidden/VoidReplacement");
         //      m_renderCamera.SetReplacementShader(rShader, "RenderType");
-        m_renderCamera.Render();
         m_renderCamera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
 
 
