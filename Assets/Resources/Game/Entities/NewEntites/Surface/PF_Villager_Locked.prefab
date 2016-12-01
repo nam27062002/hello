@@ -913,6 +913,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_blendSpeedFactor: 1
+  m_energy: 10
+  m_energyDrainSec: 1
   m_brainResource: {fileID: 0}
   m_railSeparation:
     min: 0.5
@@ -1023,9 +1025,10 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 10.5
-    m_maxRadius: 6.5
+    m_sightRadius: 18
+    m_maxRadius: 16
     m_minRadius: 0
+    m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 1.5, z: 0}
@@ -1036,7 +1039,6 @@ MonoBehaviour:
       min: 0
       max: 0
   m_onSpawnSound: 
-  m_onEatenSound: 
   m_rotateToMouth: 3
   m_inflammable:
     m_ashesAsset: 
@@ -2230,6 +2232,7 @@ MonoBehaviour:
     m_sightRadius: 10
     m_maxRadius: 6.5
     m_minRadius: 0
+    m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 0
     m_sensorOffset: {x: 0, y: 0.86, z: 0}
@@ -2240,7 +2243,6 @@ MonoBehaviour:
       min: 1.5
       max: 3.5
   m_onSpawnSound: 
-  m_onEatenSound: 
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
@@ -2258,7 +2260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Human_Spine1
-  m_lookAtRoot: {fileID: 0}
+  m_parentRoot: {fileID: 0}
 --- !u!114 &114000011135780984
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2271,7 +2273,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Human_Pelvis
-  m_lookAtRoot: {fileID: 0}
+  m_parentRoot: {fileID: 0}
 --- !u!114 &114000011364874232
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2297,7 +2299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Human_Spine1
-  m_lookAtRoot: {fileID: 0}
+  m_parentRoot: {fileID: 0}
 --- !u!114 &114000012541412914
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2321,6 +2323,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_blendSpeedFactor: 1
+  m_energy: 10
+  m_energyDrainSec: 1
   m_brainResource: {fileID: 11400000, guid: af593a7751e074e42b7091f92be97d92, type: 2}
   m_railSeparation:
     min: 0.5
