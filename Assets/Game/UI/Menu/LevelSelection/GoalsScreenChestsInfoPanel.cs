@@ -27,7 +27,7 @@ public class GoalsScreenChestsInfoPanel : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// External refs
-	[SerializeField] private TextMeshProUGUI m_collectedText = null;
+	[SerializeField] private Localizer m_collectedText = null;
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
 	[SerializeField] private Slider m_timerBar = null;
 
@@ -102,7 +102,7 @@ public class GoalsScreenChestsInfoPanel : MonoBehaviour {
 	private void Refresh() {
 		// Collected count
 		if(m_collectedText != null) {
-			m_collectedText.text = LocalizationManager.SharedInstance.Localize("%U0/%U1 found", ChestManager.collectedChests.ToString(), ChestManager.NUM_DAILY_CHESTS.ToString());	// [AOC] HARDCODED!!
+			m_collectedText.Localize("TID_CHEST_DAILY_DESC", ChestManager.collectedChests.ToString(), ChestManager.NUM_DAILY_CHESTS.ToString());
 		}
 
 		// Time info
