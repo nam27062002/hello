@@ -23,17 +23,17 @@ namespace AI {
 		}
 
 		public void ClearDataFor(string _key) {
-			if (m_dataBase.ContainsKey(_key)) {
-				m_dataBase.Remove(_key);
-			}
+		//	if (m_dataBase.ContainsKey(_key)) {
+		//		m_dataBase.Remove(_key);
+		//	}
 		}
 
 		public void ClearDataFor(string _key, string _typeName) {
-			if (m_dataBase.ContainsKey(_key)) {
-				if (m_dataBase[_key].ContainsKey(_typeName)) {
-					m_dataBase[_key].Remove(_typeName);
-				}
-			}
+		//	if (m_dataBase.ContainsKey(_key)) {
+		//		if (m_dataBase[_key].ContainsKey(_typeName)) {
+		//			m_dataBase[_key].Remove(_typeName);
+		//		}
+		//	}
 		}
 
 		public void AddDataFor(string _key, AIPilot.StateComponentDataKVP _data) {
