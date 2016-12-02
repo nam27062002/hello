@@ -5,6 +5,8 @@ using TMPro;
 
 public class TouchControlsDPad : TouchControls {
 
+    private const bool DEBUG = false;
+
 	// [AOC] Different modes
 	public enum Mode {
 		FIXED,
@@ -65,7 +67,11 @@ public class TouchControlsDPad : TouchControls {
 		m_dPadDotRectTransform = m_dpadDotObj.transform as RectTransform;
 		m_dPadContainerRectTransform = m_dPadRectTransform.parent as RectTransform;
 		m_dPadContainerRectTransform.anchoredPosition = Vector2.zero;	// Make sure it's centered to its anchors, which we will be moving around!
-		m_debugText = m_dPadContainerRectTransform.FindComponentRecursive<TextMeshProUGUI>();	// Optional
+        m_debugText = m_dPadContainerRectTransform.FindComponentRecursive<TextMeshProUGUI>();	// Optional
+        if (!DEBUG && m_debugText != null) {                        
+            m_debugText.enabled = false;
+            m_debugText = null;            
+        }
 
 		base.Start();
 		
