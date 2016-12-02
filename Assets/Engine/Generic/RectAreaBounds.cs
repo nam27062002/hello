@@ -7,19 +7,21 @@ public class RectAreaBounds : AreaBounds {
 
 	public RectAreaBounds(Vector3 _center, Vector2 _size) {
 		m_size = _size;
-		m_size.z = 4f;
+		m_size.z = 10f;
 		m_extents = m_size * 0.5f;
 		m_bounds = new Bounds(_center, m_size);
 	}
 
 	public RectAreaBounds(Vector3 _center, Vector3 _size) {	
 		m_size = _size;
+		m_size.z = 10f;
 		m_extents = m_size * 0.5f;
 		m_bounds = new Bounds(_center, m_size);
 	}
 
 	public void UpdateBounds(Vector3 _center, Vector3 _size) {	
 		m_size = _size;
+		m_size.z = 10f;
 		m_extents = m_size * 0.5f;
 		m_bounds.center = _center;
 		m_bounds.size = _size;
@@ -42,7 +44,7 @@ public class RectAreaBounds : AreaBounds {
 		Vector3 offset = Vector3.zero;
 		offset.x = Random.Range(-m_extents.x, m_extents.x);
 		offset.y = Random.Range(-m_extents.y, m_extents.y);
-		offset.z = Random.Range(-m_extents.z, m_extents.z);
+		offset.z = 0;//Random.Range(-m_extents.z, m_extents.z);
 
 		return m_bounds.center + offset;
 	}
