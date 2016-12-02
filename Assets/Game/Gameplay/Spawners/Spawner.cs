@@ -200,18 +200,7 @@ public class Spawner : AbstractSpawner {
         pilot.SetRail(m_rail, (int)m_rails);
         m_rail = (m_rail + 1) % (int)m_rails;
         pilot.guideFunction = m_guideFunction;
-    }
-
-    protected override void OnAllEntitiesRespawned() {
-        // Disable this spawner after a number of spawns
-        if (EntitiesAllKilledByPlayer && m_maxSpawns > 0) {
-            m_respawnCount++;
-            if (m_respawnCount == m_maxSpawns) {
-                gameObject.SetActive(false);
-                UnregisterFromSpawnerManager();
-            }
-        }
-    }    
+    }   
 
     protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
         if (_allKilledByPlayer) {
@@ -222,8 +211,13 @@ public class Spawner : AbstractSpawner {
                 Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _lastEntity.transform, reward);
             }
 
-            // Program the next spawn time
-            m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
+            m_respawnCount++;
+            if (m_maxSpawns > 0 && m_respawnCount == m_maxSpawns) {
+                m_readyToBeDisabled = true;
+            } else {
+                // Program the next spawn time
+                m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
+            }
         } else {
             ResetSpawnTimer(); // instant respawn, because player didn't kill all the entities
         }
@@ -232,7 +226,7 @@ public class Spawner : AbstractSpawner {
             UnregisterFromSpawnerManager();
             Destroy(gameObject);
         }
-    }
+    }    
 
     protected override void OnForceRemoveEntities() {
         ResetSpawnTimer();
@@ -366,5 +360,5 @@ public class Spawner : AbstractSpawner {
 
 		v.z = 0f;
 		return v;
-	}       
+	}    
 }

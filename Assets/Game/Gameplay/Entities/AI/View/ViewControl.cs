@@ -69,7 +69,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	//-----------------------------------------------
 	private Entity m_entity;
 	private Animator m_animator;
-	private Material m_materialGold;
+//	private Material m_materialGold;
 	private Dictionary<int, Material[]> m_materials;
 
 	private bool m_boost;
@@ -101,10 +101,13 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     private DragonBreathBehaviour m_dragonBreath;
     private DragonBreathBehaviour.Type m_lastType;
 
-	//-----------------------------------------------
-	// Use this for initialization
-	//-----------------------------------------------
-	protected virtual void Awake() {
+
+    private Color m_entityRushColor;
+
+    //-----------------------------------------------
+    // Use this for initialization
+    //-----------------------------------------------
+    protected virtual void Awake() {
 		m_entity = GetComponent<Entity>();
 		m_animator = transform.FindComponentRecursive<Animator>();
 		if (m_animator != null)
@@ -117,13 +120,14 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			m_animEvents.onAttackDealDamage += animEventsOnAttackDealDamage;
 		}
 
+        m_entityRushColor = new Color(255.0f / 255.0f, 161 / 255.0f, 0, 255.0f / 255.0f);
 
 
-		// Load gold material
-		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
+        // Load gold material
+        //		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
 
-		// keep the original materials, sometimes it will become Gold!
-		m_materials = new Dictionary<int, Material[]>(); 
+        // keep the original materials, sometimes it will become Gold!
+        m_materials = new Dictionary<int, Material[]>(); 
 		Renderer[] renderers = GetComponentsInChildren<Renderer>();
 		for (int i = 0; i < renderers.Length; i++) {
 			m_materials[renderers[i].GetInstanceID()] = renderers[i].materials;
@@ -219,9 +223,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_entity != null) {
 			Material altMaterial = null;
 
-			if (m_entity.isGolden) {
-				altMaterial = m_materialGold;
-			} else if (m_skins.Count > 0) {				
+            /*			if (m_entity.isGolden) {
+                            altMaterial = m_materialGold;
+                        } else */
+            if (m_skins.Count > 0) {				
 				for (int i = 0; i < m_skins.Count; i++) {
 					float rnd = UnityEngine.Random.Range(0f, 100f);
 					if (rnd < m_skins[i].m_chance) {
@@ -288,12 +293,14 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
     void entityTint(bool value)
     {
-        Color col = value ? Color.Lerp(Color.white, Color.red, Mathf.Sin(Time.time * 8.0f)) : Color.black;
+//        float blink = (Mathf.Sin(Time.time * 12.0f) + 1.0f) * 0.5f;
+//        Color col = value ? Color.Lerp(Color.black, Color.yellow, 0.5f + blink * 0.5f) : Color.black;
+        Color col = value ? m_entityRushColor : Color.black;
         foreach (KeyValuePair<int, Material[]> mats in m_materials)
         {
             foreach (Material mat in mats.Value)
             {
-                mat.SetColor("_Tint", col);
+                mat.SetColor("_FresnelColor", col);
             }
         }
 
@@ -301,36 +308,57 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
     void OnFuryToggled(bool _active, DragonBreathBehaviour.Type type)
     {
-        /*
-                if (m_entity == null || m_entity.IsBurnable())
-                {
-                    checkTint();
-                }
-        */
-        entityTint(_active);
-        m_lastType = _active ? type : DragonBreathBehaviour.Type.None;
+		if ( IsBurnableByPlayer() )
+		{
+	        entityTint(_active);
+	        m_lastType = _active ? type : DragonBreathBehaviour.Type.None;
+        }
 
+    }
+
+    /// <summary>
+    /// Determines whether this instance is burnable by player.
+    /// </summary>
+    /// <returns><c>true</c> if this instance is burnable by player; otherwise, <c>false</c>.</returns>
+    private bool IsBurnableByPlayer()
+    {
+		if (m_dragonBreath == null)
+        {
+            m_dragonBreath = InstanceManager.player.gameObject.GetComponent<DragonBreathBehaviour>();
+        }
+
+        if ( m_entity != null )
+        {
+	    	switch( m_dragonBreath.type )
+	    	{
+	    		case DragonBreathBehaviour.Type.Super:
+	    			return m_entity.IsBurnable();
+				case DragonBreathBehaviour.Type.Standard:
+				default:
+					return m_entity.IsBurnable( InstanceManager.player.data.tier );
+				
+	    	}
+	    }
+    	return false;
     }
 
 
     void checkTint()
     {
-        if (m_dragonBreath == null)
-        {
-            m_dragonBreath = InstanceManager.player.gameObject.GetComponent<DragonBreathBehaviour>();
-        }
-
-        if (m_dragonBreath.type != m_lastType)
-        {
-            m_lastType = m_dragonBreath.type;
-            if (m_lastType == DragonBreathBehaviour.Type.None)
-            {
-                entityTint(false);
-            }
-        }
-        if (m_lastType != DragonBreathBehaviour.Type.None)
-        {
-            entityTint(true);
+    	if ( IsBurnableByPlayer() )
+    	{
+	        if (m_dragonBreath.type != m_lastType)
+	        {
+	            m_lastType = m_dragonBreath.type;
+	            if (m_lastType == DragonBreathBehaviour.Type.None)
+	            {
+	                entityTint(false);
+	            }
+	        }
+	        if (m_lastType != DragonBreathBehaviour.Type.None)
+	        {
+	            entityTint(true);
+	        }
         }
     }
 
@@ -354,7 +382,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 
-        if (m_lastType != DragonBreathBehaviour.Type.None)
+        if (m_lastType != DragonBreathBehaviour.Type.None || (m_entity != null && m_entity.isGolden))
         {
             entityTint(true);
         }
@@ -598,10 +626,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			ParticleManager.Spawn(m_explosionParticles, transform.position + m_explosionParticles.offset);
 		}
 
-		if (_eaten) {
-			if (!string.IsNullOrEmpty(m_onEatenAudio))
-				AudioController.Play(m_onEatenAudio, transform.position);
-		} else {
+		if (!_eaten) {
 			if (!string.IsNullOrEmpty(m_onExplosionAudio))
 				AudioController.Play(m_onExplosionAudio, transform.position);
 		}
@@ -610,6 +635,13 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_pcTrail != null) {
 			ParticleManager.ReturnInstance(m_pcTrail);
 			m_pcTrail = null;
+		}
+	}
+
+	public void BeginSwallowed()
+	{
+		if (m_entity.isOnScreen && !string.IsNullOrEmpty(m_onEatenAudio)) {
+			AudioController.Play(m_onEatenAudio, transform.position);
 		}
 	}
 

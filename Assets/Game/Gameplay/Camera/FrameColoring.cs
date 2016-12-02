@@ -18,7 +18,7 @@ public class FrameColoring : MonoBehaviour
 	private bool m_criticaOn = false;
 	private bool m_ko = false;
 
-	void Start()
+	void Awake()
 	{
 		m_material = new Material( m_material );
 		m_value = 0;

@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Archer_BG_01
-  m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
+  m_Shader: {fileID: 4800000, guid: 2627fba37d1037146add5fb33763b424, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -89,6 +89,9 @@ Material:
         name: _EmissionScaleUI
       second: 0
     - first:
+        name: _FresnelFactor
+      second: 0.27
+    - first:
         name: _Glossiness
       second: 0.5
     - first:
@@ -125,3 +128,6 @@ Material:
     - first:
         name: _EmissionColorUI
       second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _FresnelColor
+      second: {r: 0, g: 0, b: 0, a: 0}

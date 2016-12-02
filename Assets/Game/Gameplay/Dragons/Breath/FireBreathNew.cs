@@ -55,6 +55,10 @@ public class FireBreathNew : DragonBreathBehaviour {
     private FireBreathDynamic dragonFlameSuperInstance = null;
     //    private FireBreathDynamic dragonFlameInstance = null;
 
+    private bool m_insideWater = false;
+    private bool m_waterMode = false;
+    private float m_waterY = 0;
+
     override protected void ExtendedStart() {
 
         DragonMotion dragonMotion = GetComponent<DragonMotion>();
@@ -143,11 +147,11 @@ public class FireBreathNew : DragonBreathBehaviour {
 		base.BeginFury( _type);
         if (_type == Type.Standard)
         {
-            dragonFlameStandardInstance.EnableFlame(true);
+            dragonFlameStandardInstance.EnableFlame(true, m_insideWater);
         }
         else
         {
-            dragonFlameSuperInstance.EnableFlame(true);
+            dragonFlameSuperInstance.EnableFlame(true, m_insideWater);
         }
     }
 
@@ -259,6 +263,26 @@ public class FireBreathNew : DragonBreathBehaviour {
 				}
 			}
 		}
+
+		if ( m_insideWater )
+		{
+			if (m_mouthTransform.position.y > m_waterY)
+			{
+				if ( m_waterMode )
+				{	
+					ShowNormalMode();
+					m_waterMode = false;
+				}
+			}
+			else
+			{
+				if (!m_waterMode)
+				{
+					ShowWaterMode();
+					m_waterMode = true;
+				}
+			}
+		}
 	}
 
 	void OnDrawGizmos() {
@@ -290,15 +314,58 @@ public class FireBreathNew : DragonBreathBehaviour {
 	{
 		if ( _other.tag == "Water" )
 		{
-			// TODO: Change View to boiling bubbles
+			m_insideWater = true;
+			m_waterY = m_mouthTransform.position.y;
+			m_waterMode = true;
+			ShowWaterMode();
 		}
 	}
+
+	private void ShowWaterMode()
+	{
+		if ( m_isFuryOn )
+		{
+			// Change to water modes
+			switch( m_type )
+			{
+				case Type.Standard:
+				{
+					dragonFlameStandardInstance.SwitchToWaterMode();
+				}break;
+				case Type.Super:
+				{
+					dragonFlameSuperInstance.SwitchToWaterMode();
+				}break;
+			}
+		}
+	}
+
 
 	void OnTriggerExit(Collider _other)
 	{
 		if ( _other.tag == "Water" )
 		{
-			// TODO: Change View back from boiling bubbles to fire
+			m_insideWater = false;
+			m_waterMode = false;
+			ShowNormalMode();
+		}
+	}
+
+	private void ShowNormalMode()
+	{
+		if ( m_isFuryOn )
+		{
+			switch( m_type )
+			{
+				case Type.Standard:
+				{
+					dragonFlameStandardInstance.SwitchToNormalMode();
+				}break;
+				case Type.Super:
+				{
+					dragonFlameSuperInstance.SwitchToNormalMode();
+				}break;
+			}
 		}
 	}
 
@@ -320,11 +387,11 @@ public class FireBreathNew : DragonBreathBehaviour {
         base.ResumeFury();
         if (m_type == Type.Standard)
         {
-            dragonFlameStandardInstance.EnableFlame(true);
+			dragonFlameStandardInstance.EnableFlame(true, m_insideWater);
         }
         else
         {
-            dragonFlameSuperInstance.EnableFlame(true);
+			dragonFlameSuperInstance.EnableFlame(true, m_insideWater);
         }
     }
 

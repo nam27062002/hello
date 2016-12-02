@@ -27,7 +27,7 @@ namespace AI {
 
 		[SeparatorAttribute("Sounds")]
 		[SerializeField] private string m_onSpawnSound = "";
-		[SerializeField] private string m_onEatenSound = "";
+		// [SerializeField] private string m_onEatenSound = "";
 
 		[SeparatorAttribute("Other")]
 		[SerializeField] private RotateToMouthType m_rotateToMouth;
@@ -153,9 +153,9 @@ namespace AI {
 		public virtual void Spawn(ISpawner _spawner) {
 			if (m_signals!= null) 
 				m_signals.Init();
-			
-			m_motion.Init();
-			m_sensor.Init();
+
+			if (m_enableMotion) m_motion.Init();
+			if (m_enableSensor) m_sensor.Init();
 			m_edible.Init();
 			m_inflammable.Init();
 
@@ -463,6 +463,9 @@ namespace AI {
 			return true;
 		}
 
+		public void Drown() {
+			SetSignal(Signals.Type.Destroyed, true);
+		}
 
 		public float biteResistance { get { return m_edible.biteResistance; }}
 
@@ -472,10 +475,8 @@ namespace AI {
 			}
 		}
 
-		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer) {
-			if (m_entity.isOnScreen) {
-				PlaySound(m_onEatenSound);
-			}
+		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer) {
+			m_viewControl.BeginSwallowed();
 			m_edible.BeingSwallowed(_transform, _rewardsPlayer);
 		}
 

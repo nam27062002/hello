@@ -27,10 +27,13 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	}
 
 	private float m_respawnTime;
+	private SpawnerConditions m_spawnConditions;
 
 	private Bounds m_bounds; // view bounds
 	private Rect m_rect;
 	public Rect boundingRect { get { return m_rect; } }
+
+	private bool m_disableAtFirstUpdate;
 
 	// Scene referemces
 	private GameSceneControllerBase m_gameSceneController = null;
@@ -44,19 +47,46 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	// Methods
 	//-----------------------------------------------
 	void Start() {
-		SpawnerManager.instance.Register(this, true);
+		m_spawnConditions = GetComponent<SpawnerConditions>();
 
-		m_newCamera = Camera.main.GetComponent<GameCamera>();
-		m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
+		if (m_spawnConditions == null || m_spawnConditions.IsAvailable()) {
+			SpawnerManager.instance.Register(this, true);
 
-		GameObject view = transform.FindChild("view").gameObject;
-		m_bounds = view.GetComponentInChildren<Renderer>().bounds;
+			m_newCamera = Camera.main.GetComponent<GameCamera>();
+			m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
 
-		Vector2 position = (Vector2)m_bounds.min;
-		Vector2 size = (Vector2)m_bounds.size;
-		Vector2 extraSize = size * (transform.position.z * 4f) / 100f; // we have to increase the size due to z depth
+			GameObject view = transform.FindChild("view").gameObject;
+			m_bounds = view.GetComponentInChildren<Renderer>().bounds;
 
-		m_rect = new Rect(position - extraSize * 0.5f, size + extraSize);
+			Vector2 position = (Vector2)m_bounds.min;
+			Vector2 size = (Vector2)m_bounds.size;
+			Vector2 extraSize = size * (transform.position.z * 4f) / 100f; // we have to increase the size due to z depth
+
+			m_rect = new Rect(position - extraSize * 0.5f, size + extraSize);
+
+			m_disableAtFirstUpdate = false;
+
+			return;
+		}
+
+		// we are not goin to use this spawner, lets destroy it
+		Destroy(gameObject);        
+	}
+
+	/// <summary>
+	/// Component enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+	}
+
+	/// <summary>
+	/// Component disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 	}
 
     void OnDestroy() {
@@ -65,9 +95,25 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
         }
     }
 
+	/// <summary>
+	/// A new level was loaded.
+	/// </summary>
+	private void OnLevelLoaded() {
+		m_disableAtFirstUpdate = m_spawnConditions != null && !m_spawnConditions.IsReadyToSpawn(0f, 0f);
+		m_state = (m_disableAtFirstUpdate)? State.Respawning : State.Idle;
+	}
+
 	public void Initialize() {
-		m_state = State.Idle;
+		m_state = State.Respawning;
 	}    
+
+	void Update() {
+		if (m_disableAtFirstUpdate) {
+			gameObject.SetActive(false);
+			m_state = State.Respawning;
+			m_disableAtFirstUpdate = false;
+		}
+	}
 
     public void Clear() {
         ForceRemoveEntities();
@@ -84,11 +130,17 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
     public bool CanRespawn() {
 		if (m_state == State.Respawning) {
-			if(m_gameSceneController.elapsedSeconds > m_respawnTime) {
-				bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(m_bounds);
-				//bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(transform.position);	
-				if (isInsideActivationArea) {
-					return true;
+			if (m_spawnConditions != null && m_spawnConditions.IsReadyToBeDisabled(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
+				if (!m_newCamera.IsInsideActivationMinArea(m_bounds)) {
+					Destroy(gameObject);
+				}
+			} else if (m_spawnConditions == null || m_spawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
+				if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
+					bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(m_bounds);
+					//bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(transform.position);	
+					if (isInsideActivationArea) {
+						return true;
+					}
 				}
 			}
 		}
@@ -102,6 +154,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	}
 		
 	private void Spawn() {
+		gameObject.SetActive(true);
+
 		Initializable[] components = GetComponents<Initializable>();
 		foreach (Initializable component in components) {
 			component.Initialize();

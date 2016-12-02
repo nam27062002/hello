@@ -1760,7 +1760,6 @@ MonoBehaviour:
   m_wingsIdleSound: 
   m_wingsFlyingSound: 
   m_eatSound: 
-  m_eatBigSound: 
   m_wingsWindSound: 
   m_wingsStrongFlap: 
   m_levelUpSound: 
@@ -1821,6 +1820,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_blendSpeedFactor: 1
+  m_energy: 10
+  m_energyDrainSec: 1
   m_brainResource: {fileID: 11400000, guid: 550b5677d4a794d71b31727a72933cc6, type: 2}
   m_railSeparation:
     min: 0.5
@@ -1832,6 +1833,7 @@ MonoBehaviour:
   m_databaseKey: PF_PetGhostBuster
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
+  m_avoidWater: 0
 --- !u!114 &114000012488899708
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1861,9 +1863,11 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 0
   m_sensor:
+    m_senseFire: 1
     m_sightRadius: 0
     m_maxRadius: 0
     m_minRadius: 0
+    m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
@@ -1907,6 +1911,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_minEatAnimTime: 0.1
   m_eatDistance: 0.5
+  m_eatDetectionRadiusMultiplier: 2.75
+  m_eatDetectionSpeedRadiusMultiplier: 0.15
   m_holdingBloodParticle:
     name: PS_Blood_Explosion_Medium
     path: Blood

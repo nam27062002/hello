@@ -13,11 +13,10 @@ GameObject:
   - 92: {fileID: 9212364}
   - 81: {fileID: 8136056}
   - 114: {fileID: 11427856}
-  - 114: {fileID: 114000012048095912}
   - 114: {fileID: 11486938}
   - 114: {fileID: 11447402}
   - 114: {fileID: 114000011327172364}
-  - 114: {fileID: 114000010147363370}
+  - 114: {fileID: 114000012048095912}
   - 114: {fileID: 114000011558897754}
   m_Layer: 0
   m_Name: PF_GameCamera
@@ -319,29 +318,6 @@ Camera:
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
   m_StereoMirrorMode: 0
---- !u!114 &114000010147363370
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 101152}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52f78e93835bdf04eb5ad39ac500b342, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  glowMaterial: {fileID: 2100000, guid: 384a7936c98fd0a4c8bb8f336aafe16f, type: 2}
-  glowReplaceShader: {fileID: 4800000, guid: 0d7c5cc6776db14459960ae53cb4ce35, type: 3}
-  glowMode: 0
-  blendMode: 2
-  downsampleSize: 128
-  blurIterations: 4
-  blurSpread: 1.41
-  glowStrength: 1.24
-  ignoreLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  glowColorMultiplier: {r: 1, g: 0.465, b: 0.209, a: 1}
 --- !u!114 &114000010427000824
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -430,7 +406,7 @@ MonoBehaviour:
   m_trackAheadMode: 0
   m_activationDistance: 5
   m_activationRange: 3
-  m_deactivationDistance: 10
+  m_deactivationDistance: 25
   m_useDampCamera: 0
   m_introDuration: 2.5
   m_introDisplacement: 50
@@ -495,11 +471,12 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101152}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b2854bce623d0c44978254dab903414, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Tint: {r: 1, g: 0.54999995, b: 0.31617647, a: 1}
-  m_Tint2: {r: 0.32352942, g: 0.4732055, b: 1, a: 1}
+  m_Tint: {r: 0.6392157, g: 0.53333336, b: 0.4509804, a: 1}
+  m_Tint2: {r: 0.80784315, g: 0.58431375, b: 0.29803923, a: 1}
+  timeDecay: 2
   m_shader: {fileID: 4800000, guid: dd36d0c2ae0fac84dbb7ef8e357fcb03, type: 3}

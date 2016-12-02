@@ -478,7 +478,7 @@ MonoBehaviour:
     m_walkOnWalls: 0
     m_mass: 1
     m_defaultUpVector: 0
-    m_orientationSpeed: 120
+    m_orientationSpeed: 240
     m_faceDirection: 1
     m_rollRotation: 1
     m_limitHorizontalRotation: 0
@@ -491,10 +491,10 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 9
-    m_maxRadius: 5
-    m_minRadius: 0
-    m_hysteresisOffset: 0
+    m_sightRadius: 15
+    m_maxRadius: 8
+    m_minRadius: 4
+    m_hysteresisOffset: 1
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
@@ -505,7 +505,6 @@ MonoBehaviour:
       min: 0
       max: 0.25
   m_onSpawnSound: 
-  m_onEatenSound: 
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
@@ -549,9 +548,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
-  m_energy: 10
-  m_energyDrainSec: 1
+  m_blendSpeedFactor: 4
+  m_energy: 20
+  m_energyDrainSec: 1.5
   m_brainResource: {fileID: 11400000, guid: 0880f58945d004e4a9334a99cdfb0b84, type: 2}
   m_railSeparation:
     min: 0.5
@@ -559,9 +558,9 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.5
     max: 1.25
-  m_serializedJson: '[{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"changeLeaderTime":10,"separation":0.5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"boostSpeed":9.5,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":8,"catchUpSpeed":10,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"changeLeaderTime":10,"separation":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"boostSpeed":10,"panicSpeed":14,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":8,"catchUpSpeed":10,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Starling
-  m_avoidDistanceAttenuation: 4
+  m_avoidDistanceAttenuation: 8
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!114 &11468462
@@ -578,7 +577,7 @@ MonoBehaviour:
   m_walkSpeed: 4
   m_runSpeed: 14
   m_minPlaybakSpeed: 1
-  m_maxPlaybakSpeed: 1.5
+  m_maxPlaybakSpeed: 2
   m_onBoostMaxPlaybackSpeed: 0
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0

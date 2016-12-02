@@ -8,74 +8,12 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 		_MainTex ("Texture", 2D) = "white" {}
 		_Specular( "Specular", float ) = 1
 		_BumpStrength("Bump Strength", float) = 3
-		_Tint("Tint (RGB)", Color) = (0, 0, 0, 1)
+		_FresnelFactor("Fresnel factor", Range(0.0, 5.0)) = 0.27
+		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 
 	}
 	SubShader
 	{
-/*
-//		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
-		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
-		Pass
-		{
-			Cull off
-			ZWrite Off
-//			ZTest Always
-			ColorMask RGB
-			Stencil
-			{
-				Ref 5
-				Comp always
-				Pass Replace
-				ZFail keep
-			}
-
-			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-			#pragma fragmentoption ARB_precision_hint_fastest		
-
-
-			#include "UnityCG.cginc"
-			#include "Lighting.cginc"
-			#include "HungryDragon.cginc"
-
-			struct appdata
-			{
-				float4 vertex : POSITION;
-				float3 normal : NORMAL;
-			};
-			struct v2f
-			{
-				float4 vertex : SV_POSITION;
-				fixed4 color : Color;
-			};
-
-			uniform float4 _Tint;
-
-			v2f vert(appdata v)
-			{
-				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-
-				float3 norm = mul((float3x3)UNITY_MATRIX_IT_MV, v.normal);
-				float2 offset = TransformViewToProjection(norm.xy);
-
-				o.vertex.xy += offset * o.vertex.z * 0.0025;
-				o.color = fixed4(1.0, 0.0, 0.0, 1.0);//_Tint;
-
-				return o;
-			}
-
-			fixed4 frag(v2f i) : SV_Target
-			{
-				return i.color;
-			}
-
-			ENDCG
-		}
-*/
-
 		Pass
 		{
 			Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase"}
@@ -110,23 +48,23 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 			{
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
-				// float3 normal : NORMAL;
-
 				float3 vLight : TEXCOORD2;
 
-				float3 halfDir : VECTOR;
-				float3 tangentWorld : TEXCOORD3;  
+				float3 viewDir : VECTOR;
+//				float3 halfDir : VECTOR;
+				float3 tangentWorld : TANGENT;  
 		        float3 normalWorld : TEXCOORD4;
 		        float3 binormalWorld : TEXCOORD5;
 			};
 
-			sampler2D _MainTex;
-			float4 _MainTex_ST;
+			uniform sampler2D _MainTex;
+			uniform float4 _MainTex_ST;
 			uniform float4 _MainTex_TexelSize;
 			uniform float _Specular;
 			uniform float _BumpStrength;
-			uniform float4 _Tint;
-			
+			uniform float _FresnelFactor;
+			uniform float4 _FresnelColor;
+
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -138,8 +76,9 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 
 				// Half View - See: Blinn-Phong
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
-				float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
-				o.halfDir = normalize(lightDirection + viewDirection);
+//				float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
+//				o.halfDir = normalize(lightDirection + viewDirection);
+				o.viewDir = viewDirection;
 
 				// To calculate tangent world
 	            float4x4 modelMatrix = unity_ObjectToWorld;
@@ -150,7 +89,7 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 
 				return o;
 			}
-			
+
 			fixed4 frag (v2f i) : SV_Target
 			{
 				// sample the texture
@@ -172,15 +111,17 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 
      			fixed4 diffuse = max(0,dot( normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
 
-     			fixed4 specular = fixed4(0,0,0,0);
-     			if (_Specular > 0)
-     				specular = pow(max(dot( normalDirection, i.halfDir), 0), _Specular);
+//     			fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
+//				fixed fresnel = pow(max(dot(normalDirection, i.viewDir), 0), _FresnelFactor);
+				fixed fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelFactor), 0.0, 1.0);
 
      			// col = (diffuse + fixed4(UNITY_LIGHTMODEL_AMBIENT.rgb,1)) * col + specular * _LightColor0;
-     			col = (diffuse + fixed4(i.vLight,1)) * col + specular * _LightColor0;
+				col = (diffuse + fixed4(i.vLight, 1)) * col + /*(specular * _LightColor0) + */(fresnel * _FresnelColor);
+//				col = (diffuse + fixed4(i.vLight, 1)) * col;
+//				col = lerp(col, _FresnelColor, fresnel * _FresnelColor.a * 4.0);
 
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-				return col + _Tint;
+				return col;
 			}
 			ENDCG
 		}

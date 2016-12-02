@@ -1172,6 +1172,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_blendSpeedFactor: 1
+  m_energy: 10
+  m_energyDrainSec: 1
   m_brainResource: {fileID: 11400000, guid: 550b5677d4a794d71b31727a72933cc6, type: 2}
   m_railSeparation:
     min: 0.5
@@ -1179,10 +1181,11 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 1
     max: 1
-  m_serializedJson: '[{"speed":20,"chaseTimeout":2,"cooldown":{"min":3,"max":6},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":0,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"speed":0,"chaseTimeout":0,"cooldown":{"min":0,"max":1},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false}]'
   m_databaseKey: PF_PetFroggy
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
+  m_avoidWater: 0
 --- !u!114 &114000012488899708
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1212,9 +1215,11 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 0
   m_sensor:
+    m_senseFire: 1
     m_sightRadius: 0
     m_maxRadius: 0
     m_minRadius: 0
+    m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}

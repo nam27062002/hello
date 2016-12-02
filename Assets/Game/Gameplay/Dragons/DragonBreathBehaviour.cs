@@ -41,7 +41,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	protected float m_furyDuration = 1f;	// Sandard fury Duraction
 
-
 	protected float m_currentFuryDuration;		// If fury Active, total time it lasts
 	protected float m_currentRemainingFuryDuration;	// If fury Active remaining time 
 
@@ -81,6 +80,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	protected float m_superFuryCoinsMultiplier;
 	protected float m_superFuryDamageMultiplier;
 	protected float m_superFuryLengthMultiplier;
+	protected float m_fireRushMultiplier = 1;
 
 	public string m_breathSound;
     private AudioObject m_breathSoundAO;
@@ -126,6 +126,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		// Get the level
 		m_furyDuration = m_dragon.data.def.GetAsFloat("furyBaseDuration");
+		m_fireRushMultiplier = m_dragon.data.def.GetAsFloat("furyScoreMultiplier", 2);
 
 		m_furyRushesCompleted = 0;
 		m_scoreToAddForNextFuryRushes = (int)(AdditionalGoldRushCompletitionPercentageForConsecutiveRushes * (float)m_furyMax);
@@ -183,7 +184,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		return m_isFuryOn;
 	}
 
-	void Update() {
+	protected virtual void Update() {
 		// Cheat for infinite fire
 		bool cheating = ((DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
 
@@ -234,14 +235,17 @@ public class DragonBreathBehaviour : MonoBehaviour {
 					UsersManager.currentUser.superFuryProgression = (int)m_superFuryMax;
 			}
 
-			if (UsersManager.currentUser.superFuryProgression >= m_superFuryMax)
+			if ( !m_dragon.dragonEatBehaviour.IsEating())
 			{
-				BeginFury( Type.Super );
+				if (UsersManager.currentUser.superFuryProgression >= m_superFuryMax)
+				{
+					BeginFury( Type.Super );
 
-			}
-			else if (m_currentFury >= m_furyMax)
-			{
-				BeginFury( Type.Standard );
+				}
+				else if (m_currentFury >= m_furyMax)
+				{
+					BeginFury( Type.Standard );
+				}
 			}
 		}
 
@@ -298,6 +302,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			}break;
 		}
 
+		RewardManager.currentFireRushMultiplier = m_fireRushMultiplier;
 
 		if (m_healthBehaviour) m_healthBehaviour.enabled = false;
 		if (m_attackBehaviour) m_attackBehaviour.enabled = false;
@@ -333,6 +338,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			}break;
 
 		}
+		RewardManager.currentFireRushMultiplier = 1;
 		m_isFuryOn = false;
 		m_currentFury = Mathf.Clamp(m_furyRushesCompleted * m_scoreToAddForNextFuryRushes, 0, m_maxScoreToAddForNextFuryRushes);
 

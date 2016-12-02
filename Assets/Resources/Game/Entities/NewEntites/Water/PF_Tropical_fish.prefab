@@ -26,7 +26,7 @@ GameObject:
   - 4: {fileID: 444214}
   - 114: {fileID: 11458280}
   - 114: {fileID: 11492212}
-  - 114: {fileID: 11475328}
+  - 114: {fileID: 114000012197381140}
   - 114: {fileID: 11430714}
   - 114: {fileID: 11439040}
   - 136: {fileID: 136000014076394934}
@@ -198,56 +198,6 @@ MonoBehaviour:
   offset: {x: -0.02663979, y: 0.058624238}
   radius: 0.32793802
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &11475328
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 129198}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_useGravity: 0
-    m_walkOnWalls: 0
-    m_mass: 1
-    m_defaultUpVector: 0
-    m_orientationSpeed: 170
-    m_faceDirection: 1
-    m_rollRotation: 1
-    m_limitHorizontalRotation: 0
-    m_faceLeftAngle: -90
-    m_faceRightAngle: 90
-    m_limitVerticalRotation: 0
-    m_faceUpAngle: 45
-    m_faceDownAngle: 30
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 1
-  m_sensor:
-    m_senseFire: 1
-    m_sightRadius: 5
-    m_maxRadius: 3
-    m_minRadius: 2
-    m_hysteresisOffset: 0
-    m_senseAbove: 1
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 0, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0
-      max: 0
-  m_onSpawnSound: 
-  m_onEatenSound: 
-  m_rotateToMouth: 0
-  m_inflammable:
-    m_ashesAsset: 
-    m_dissolveTime: 1.5
-    m_ashExceptions: []
 --- !u!114 &11492212
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -328,6 +278,57 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &114000012197381140
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 129198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8277f7488cb2242bf86d9ff339a851a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_enableMotion: 1
+  m_motion:
+    m_useGravity: 0
+    m_walkOnWalls: 0
+    m_mass: 1
+    m_defaultUpVector: 0
+    m_orientationSpeed: 170
+    m_faceDirection: 1
+    m_rollRotation: 1
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 0
+    m_faceUpAngle: 320
+    m_faceDownAngle: 40
+  m_affectedByDragonTrample: 1
+  m_enableSensor: 1
+  m_sensor:
+    m_senseFire: 1
+    m_sightRadius: 5
+    m_maxRadius: 3
+    m_minRadius: 2
+    m_hysteresisOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
+    m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
+    m_senseDelay:
+      min: 0.25
+      max: 1.25
+  m_onSpawnSound: 
+  m_onEatenSound: 
+  m_rotateToMouth: 0
+  m_inflammable:
+    m_ashesAsset: 
+    m_dissolveTime: 1.5
+    m_ashExceptions: []
+  m_spawnsInsideWater: 1
 --- !u!136 &136000014076394934
 CapsuleCollider:
   m_ObjectHideFlags: 1

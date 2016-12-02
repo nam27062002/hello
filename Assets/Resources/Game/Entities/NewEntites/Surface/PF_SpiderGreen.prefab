@@ -45,10 +45,11 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 174698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -268.3, y: 10, z: 0}
+  m_LocalPosition: {x: 0, y: 100, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
+  - {fileID: 4000010301569088}
   - {fileID: 4000014238602536}
   - {fileID: 485126}
   - {fileID: 4000014148583074}
@@ -66,7 +67,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 409022}
-  m_RootOrder: 1
+  m_RootOrder: 2
 --- !u!114 &11409804
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -116,10 +117,10 @@ MonoBehaviour:
   m_web: {fileID: 120000013362175846}
   m_spinneret: {fileID: 485126}
   m_onAttackParticle:
-    name: 
+    name: PS_PoisonSpit
     path: 
     offset: {x: 0, y: 0, z: 0}
-  m_onAttackParticleAnchor: {fileID: 0}
+  m_onAttackParticleAnchor: {fileID: 1000013013731752}
 --- !u!114 &11432260
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -146,7 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Spider_Abdomen_2
-  m_lookAtRoot: {fileID: 0}
+  m_parentRoot: {fileID: 0}
 --- !u!114 &11439598
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -181,7 +182,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 1
     max: 1
-  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"hangDownChance":{"min":0.5,"max":0.75},"hangDownDistance":{"min":2,"max":6},"hangDownSpeed":2.5,"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"projectileName":"PF_SpiderPoison","projectileSpawnTransformName":"spinneret","damage":5,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":-1,"forceFaceToShoot":true,"maxFacingAngle":10,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"hangDownChance":{"min":0.5,"max":0.75},"hangDownDistance":{"min":2,"max":6},"hangDownSpeed":2.5,"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"projectileName":"PF_SpiderPoison","projectileSpawnTransformName":"spinneret","damage":10,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":-1,"forceFaceToShoot":true,"maxFacingAngle":10,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
   m_databaseKey: PF_SpiderGreen
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
@@ -230,7 +231,6 @@ MonoBehaviour:
       min: 0.25
       max: 0.5
   m_onSpawnSound: 
-  m_onEatenSound: 
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
@@ -610,6 +610,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1000013013731752
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000010301569088}
+  - 114: {fileID: 114000013900485704}
+  m_Layer: 0
+  m_Name: poisonSpawnAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1000013094948012
 GameObject:
   m_ObjectHideFlags: 1
@@ -771,6 +787,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4000013661255120}
   m_RootOrder: 5
+--- !u!4 &4000010301569088
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013013731752}
+  m_LocalRotation: {x: -0.00000001493365, y: 0.9398302, z: -0.34164205, w: -0.00000004108128}
+  m_LocalPosition: {x: 0, y: -0.34100342, z: -1.193}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 39.95, y: 179.99998, z: 0}
+  m_Children: []
+  m_Father: {fileID: 409022}
+  m_RootOrder: 0
 --- !u!4 &4000010319859260
 Transform:
   m_ObjectHideFlags: 1
@@ -1147,7 +1176,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 409022}
-  m_RootOrder: 2
+  m_RootOrder: 3
 --- !u!4 &4000014163721502
 Transform:
   m_ObjectHideFlags: 1
@@ -1176,7 +1205,7 @@ Transform:
   - {fileID: 4000012632206058}
   - {fileID: 4000013661255120}
   m_Father: {fileID: 409022}
-  m_RootOrder: 0
+  m_RootOrder: 1
 --- !u!54 &54000010225638462
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -1220,6 +1249,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114000013900485704
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013013731752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Spider_Abdomen_2
+  m_parentRoot: {fileID: 409022}
 --- !u!120 &120000013362175846
 LineRenderer:
   m_ObjectHideFlags: 1

@@ -68,10 +68,22 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	}
 
 	// Score multiplier
-	[SerializeField] private int m_currentScoreMultiplier = 0;
-	public static ScoreMultiplier currentScoreMultiplier {
-		get { return instance.m_scoreMultipliers[instance.m_currentScoreMultiplier]; }
+	[SerializeField] private int m_currentScoreMultiplierIndex = 0;
+	public static ScoreMultiplier currentScoreMultiplierData {
+		get { return instance.m_scoreMultipliers[instance.m_currentScoreMultiplierIndex]; }
 	}
+
+	[SerializeField] private float m_currentFireRushMultiplier = 1;
+	public static float currentFireRushMultiplier {
+		get { return instance.m_currentFireRushMultiplier; }
+		set { instance.m_currentFireRushMultiplier = value; }
+	}
+
+
+	public static float currentScoreMultiplier{
+		get{ return instance.m_scoreMultipliers[instance.m_currentScoreMultiplierIndex].multiplier * instance.m_currentFireRushMultiplier; }
+	}
+
 	public static ScoreMultiplier defaultScoreMultiplier {
 		get { return instance.m_scoreMultipliers[0]; }
 	}
@@ -80,10 +92,10 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	public static float scoreMultiplierProgress {
 		get { 
 			// Skip last multiplier!
-			if(instance.m_currentScoreMultiplier < instance.m_scoreMultipliers.Length - 1) {
+			if(instance.m_currentScoreMultiplierIndex < instance.m_scoreMultipliers.Length - 1) {
 				return Mathf.InverseLerp(
-					(float)currentScoreMultiplier.requiredKillStreak, 
-					(float)instance.m_scoreMultipliers[instance.m_currentScoreMultiplier + 1].requiredKillStreak, 
+					(float)currentScoreMultiplierData.requiredKillStreak, 
+					(float)instance.m_scoreMultipliers[instance.m_currentScoreMultiplierIndex + 1].requiredKillStreak, 
 					(float)instance.m_scoreMultiplierStreak);
 			}
 			return 0f;
@@ -151,6 +163,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
 		Messenger.AddListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
 		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRush);
 		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
@@ -164,6 +177,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
 		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRush);
 		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
@@ -179,7 +193,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 			// If timer has ended, end multiplier streak
 			if(m_scoreMultiplierTimer <= 0) 
 			{
-				if (m_currentScoreMultiplier != 0)
+				if (m_currentScoreMultiplierIndex != 0)
 				{
 					SetScoreMultiplier(0);
 					Messenger.Broadcast(GameEvents.SCORE_MULTIPLIER_LOST);
@@ -289,7 +303,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	private void ApplyReward(Reward _reward, Transform _entity) {
 		// Score
 		// Apply multiplier
-		_reward.score = (int)(_reward.score * currentScoreMultiplier.multiplier);
+		_reward.score = (int)(_reward.score * currentScoreMultiplier);
 		instance.m_score += _reward.score;
 
 		// Coins
@@ -324,12 +338,12 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		}
 
 		// Store new multiplier value
-		ScoreMultiplier old = m_scoreMultipliers[m_currentScoreMultiplier];
-		m_currentScoreMultiplier = _multiplierIdx;
+		ScoreMultiplier old = m_scoreMultipliers[m_currentScoreMultiplierIndex];
+		m_currentScoreMultiplierIndex = _multiplierIdx;
 
 		// Dispatch game event (only if actually changing)
-		if(old != currentScoreMultiplier) {
-			Messenger.Broadcast<ScoreMultiplier, ScoreMultiplier>(GameEvents.SCORE_MULTIPLIER_CHANGED, old, currentScoreMultiplier);
+		if(old != currentScoreMultiplierData) {
+			Messenger.Broadcast<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, currentScoreMultiplierData, m_currentFireRushMultiplier);
 		}
 	}
 	
@@ -341,13 +355,13 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		m_scoreMultiplierStreak++;
 		
 		// Reset timer
-		m_scoreMultiplierTimer = currentScoreMultiplier.duration;
+		m_scoreMultiplierTimer = currentScoreMultiplierData.duration;
 		
 		// Check if we've reached next threshold
-		if(m_currentScoreMultiplier < m_scoreMultipliers.Length - 1 
-		&& m_scoreMultiplierStreak >= m_scoreMultipliers[m_currentScoreMultiplier + 1].requiredKillStreak) {
+		if(m_currentScoreMultiplierIndex < m_scoreMultipliers.Length - 1 
+		&& m_scoreMultiplierStreak >= m_scoreMultipliers[m_currentScoreMultiplierIndex + 1].requiredKillStreak) {
 			// Yes!! Change current multiplier
-			SetScoreMultiplier(m_currentScoreMultiplier + 1);
+			SetScoreMultiplier(m_currentScoreMultiplierIndex + 1);
 		}
 	}
 
@@ -471,11 +485,16 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// <param name="_source">The source of the damage.</param>
 	private void OnDamageReceived(float _amount, DamageType _type, Transform _source) {
 		// Break current streak
-		if (m_currentScoreMultiplier != 0)
+		if (m_currentScoreMultiplierIndex != 0)
 		{
 			SetScoreMultiplier(0);
 			Messenger.Broadcast(GameEvents.SCORE_MULTIPLIER_LOST);
 		}
+	}
+
+	private void OnFuryRush(bool toggle, DragonBreathBehaviour.Type type )
+	{
+		Messenger.Broadcast<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, currentScoreMultiplierData, m_currentFireRushMultiplier);
 	}
 
 	/// <summary>

@@ -87,6 +87,10 @@ namespace AI {
 
 							Debug.DrawLine(m_machine.position, m_machine.position + flee, Color.red);
 						}
+
+						if (m_machine.GetSignal(Signals.Type.Critical)) {
+							m_seek *= 0.25f;
+						}
 					}
 
 					float dot = Vector3.Dot(m_seek.normalized, flee.normalized);

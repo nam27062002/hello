@@ -29,11 +29,13 @@ namespace AI {
 		public MachineSensor() {}
 
 		public override void Init() {
-			if (InstanceManager.player != null)
-				m_enemy = InstanceManager.player.transform;
-
 			m_senseTimer = 0f;
 			m_enemyRadiusSqr = 0f;
+
+			if (InstanceManager.player != null) {
+				m_enemy = InstanceManager.player.transform;
+				m_enemyRadiusSqr = InstanceManager.player.dragonEatBehaviour.eatDistanceSqr;
+			}
 
 			m_radiusOffsetFactor = m_radiusOffset.GetRandom();
 
@@ -75,7 +77,7 @@ namespace AI {
 					float sightRadiusOut = sightRadiusIn + m_hysteresisOffset;
 
 					Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);
-					distanceSqr = vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr;
+					distanceSqr = Mathf.Max(0f, vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr);
 
 					if (distanceSqr < sightRadiusIn * sightRadiusIn) {
 						isInsideSightArea = true;
@@ -95,7 +97,7 @@ namespace AI {
 
 						if (distanceSqr == 0f) {
 							Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);
-							distanceSqr = vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr;
+							distanceSqr = Mathf.Max(0f, vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr);
 						}
 
 						if (distanceSqr < m_maxRadius * maxRadiusIn) {

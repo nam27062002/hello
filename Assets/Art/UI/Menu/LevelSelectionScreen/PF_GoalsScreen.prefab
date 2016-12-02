@@ -338,7 +338,18 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   OnShowPreAnimation:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114000010082306482}
+        m_MethodName: GoToScreen
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnShowPreAnimationAfterDelay:
@@ -821,6 +832,7 @@ GameObject:
   - 114: {fileID: 114000010729815068}
   - 114: {fileID: 114000012419114482}
   - 114: {fileID: 114000014205190806}
+  - 114: {fileID: 114000012843246722}
   m_Layer: 5
   m_Name: ButtonRemoveMission
   m_TagString: Untagged
@@ -2412,6 +2424,7 @@ GameObject:
   - 114: {fileID: 114000011380731298}
   - 114: {fileID: 114000012832891906}
   - 114: {fileID: 114000012526498220}
+  - 114: {fileID: 114000013410647654}
   m_Layer: 5
   m_Name: ButtonRemoveMission
   m_TagString: Untagged
@@ -2880,6 +2893,7 @@ GameObject:
   - 114: {fileID: 114000013183873106}
   - 114: {fileID: 114000014286521420}
   - 114: {fileID: 114000011216958366}
+  - 114: {fileID: 114000010691732944}
   m_Layer: 5
   m_Name: ButtonRemoveMission
   m_TagString: Untagged
@@ -8792,6 +8806,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114000010691732944
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012170397318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96c7270d3c6a14b07a1bba2ab41b15fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activeDuringPlaytest: 0
 --- !u!114 &114000010716669692
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12258,7 +12284,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_name: eventsTab
   m_allowBackToThisScreen: 1
-  m_tabEnabled: 1
+  m_tabEnabled: 0
 --- !u!114 &114000011921886326
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15429,6 +15455,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 0
+--- !u!114 &114000012843246722
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010153420334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96c7270d3c6a14b07a1bba2ab41b15fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activeDuringPlaytest: 0
 --- !u!114 &114000012847211560
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -17108,6 +17146,18 @@ MonoBehaviour:
   brightness: 0
   saturation: 0
   contrast: 0
+--- !u!114 &114000013410647654
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011720515572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96c7270d3c6a14b07a1bba2ab41b15fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activeDuringPlaytest: 0
 --- !u!114 &114000013419203196
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -22587,8 +22637,8 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -0.0056152, y: 760}
+  m_AnchoredPosition: {x: 0, y: 50.000004}
+  m_SizeDelta: {x: 0, y: 760}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000011107600000
 RectTransform:

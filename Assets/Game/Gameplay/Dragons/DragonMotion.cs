@@ -133,6 +133,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private Transform m_cameraLookAt;
 	private Transform m_transform;
 
+	[CommentAttribute("Back navigation bend multiplier when boost or attack target")]
+	[Range(0, 1f)]
+	public float m_backBlendMultiplier = 0.35f;
 	private Vector2 m_currentFrontBend;
 	private Vector2 m_currentBackBend;
 
@@ -176,7 +179,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public float m_dragonMass = 10;
 	public float m_dragonFricction = 15.0f;
 	public float m_dragonGravityModifier = 0.3f;
-
+	private bool m_waterDeepLimit = false;
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -202,6 +205,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	RaycastHit m_raycastHit = new RaycastHit();
 
+	[Space]
 	private float m_introTimer;
 	private const float m_introDuration = 2.5f;
 	private Vector3 m_introTarget;
@@ -398,8 +402,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					{
 						m_animator.SetBool("fly down", true);
 					}
-					if ( m_state != State.Stunned ){
-	                    m_accWaterFactor = 0.70f;
+					if ( m_state != State.Stunned && m_state != State.Reviving){
+	                    m_accWaterFactor = 0.80f;
 	                    m_inverseGravityWater = 1.5f;
 						m_startParabolicPosition = transform.position;
 					}
@@ -414,7 +418,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.OuterSpace:
 				{
 					m_animator.SetBool("fly down", true);
-					if ( m_state != State.Stunned ){
+					if ( m_state != State.Stunned && m_state != State.Reviving){
 						m_startParabolicPosition = transform.position;
 					}
 				}break;
@@ -669,13 +673,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		if (GetTargetForceMultiplier() > 1)// if boost active
 		{
-			backMultiplier = 0.35f;
+			backMultiplier = m_backBlendMultiplier;
 		}
 
 		if (m_eatBehaviour.GetAttackTarget() != null)
 		{
 			dir = m_eatBehaviour.GetAttackTarget().position - m_eatBehaviour.mouth.position;
-			backMultiplier = 0.35f;
+			backMultiplier = m_backBlendMultiplier;
 		}
 
 		Vector3 localDir = m_transform.InverseTransformDirection(dir.normalized);	// todo: replace with direction to target if trying to bite, or during bite?
@@ -834,7 +838,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 			Vector3 gravityAcceleration = Vector3.zero;
             if (!ignoreGravity)
+            {
+                //if (impulse.y < 0) impulse.y *= m_dragonGravityModifier;
                 gravityAcceleration = Vector3.down * 9.81f * m_dragonGravityModifier;// * m_dragonMass;
+            }
             Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
             Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
@@ -963,13 +970,24 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_direction = m_impulse.normalized;
 		RotateToDirection(m_direction);
 
-
         m_rbody.velocity = m_impulse;
 
-        m_inverseGravityWater -= Time.deltaTime * 0.22f;
-        if (m_inverseGravityWater < 0.05f) m_inverseGravityWater = 0.05f;
+        m_inverseGravityWater -= Time.deltaTime * 0.28f;
+        if (m_inverseGravityWater < 0.05f) 
+        {
+        	m_inverseGravityWater = 0.05f;
+        }
 
-
+		if (!m_waterDeepLimit)
+		{
+			float maxPushDown = ((m_inverseGravityWater * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass * m_accWaterFactor);
+			if (maxPushDown < (gravityAcceleration.y + m_impulse.y))
+			{	
+				m_waterDeepLimit = true;
+				Debug.Log("DeepLimit");
+				m_particleController.DeepLimit();
+			}
+		}
 
 
         /*
@@ -1015,6 +1033,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		*/
 
 		m_impulse.x += impulse.x * m_parabolicXControl;
+        m_impulse.x = Mathf.Clamp(m_impulse.x, -m_parabolicXControl * 1, m_parabolicXControl * 1);
 
 		m_direction = m_impulse.normalized;
 		RotateToDirection( m_impulse );
@@ -1300,13 +1319,15 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public void StartWaterMovement( Collider _other )
 	{
 		// m_waterMovementModifier = 0;
+		m_waterDeepLimit = false;
 
-		// Trigger animation
-		m_animationEventController.OnInsideWater();
-
+		bool createsSplash = false;
 		// Trigger particles
 		if ( m_particleController != null )
-			m_particleController.OnEnterWater( _other );
+			createsSplash = m_particleController.OnEnterWater( _other );
+
+		// Trigger animation
+		m_animationEventController.OnInsideWater(createsSplash);
 
         rbody.velocity = rbody.velocity * 2.0f;// m_waterImpulseMultiplier;
 		m_impulse = rbody.velocity;
@@ -1314,6 +1335,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		// Change state
 		ChangeState(State.InsideWater);
+
+		// Notify game
+		Messenger.Broadcast<bool>(GameEvents.UNDERWATER_TOGGLED, true);
 	}
 
 	public void EndWaterMovement( Collider _other )
@@ -1321,15 +1345,20 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if (m_animator )
 			m_animator.SetBool("boost", false);
 
-		// Trigger animation
-		m_animationEventController.OnExitWater();
-
+		
+		bool createsSplash = false;
 		// Trigger particles
 		if (m_particleController != null)
-			m_particleController.OnExitWater( _other );
+			createsSplash = m_particleController.OnExitWater( _other );
+
+		// Trigger animation
+		m_animationEventController.OnExitWater(createsSplash);
 
 		// Wait a second
 		ChangeState( State.ExitingWater );
+
+		// Notify game
+		Messenger.Broadcast<bool>(GameEvents.UNDERWATER_TOGGLED, false);
 	}
 
 	public void StartSpaceMovement()
@@ -1398,6 +1427,16 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_grab = false;
 	}
 
+	public void StartedSkimming()
+	{
+		m_animationEventController.StartedSkimming();
+	}
+
+	public void EndedSkimming()
+	{
+		m_animationEventController.EndedSkimming();
+	}
+
 	/// <summary>
 	/// Starts the latched on movement. Called When a prey starts latching on us
 	/// </summary>
@@ -1405,6 +1444,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		m_latchedOnSpeedMultiplier = 0.4f;
 		m_latchedOn = true;
+		m_animator.SetBool("eaten", true);
 	}
 
 	/// <summary>
@@ -1414,6 +1454,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		m_latchedOnSpeedMultiplier = 1f;
 		m_latchedOn = false;
+		m_animator.SetBool("eaten", false);
 	}
 
 	public void StartIntroMovement(Vector3 introTarget)
@@ -1467,14 +1508,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		{
 			// Disable Bubbles
 			if (IsAliveState() )
+			{
 				EndWaterMovement( _other );
-			m_previousState = State.Idle;
+				m_previousState = State.Idle;
+			}
 		}
 		else if ( _other.tag == "Space" )
 		{
 			if (IsAliveState())
+			{
 				EndSpaceMovement();
-			m_previousState = State.Idle;
+				m_previousState = State.Idle;
+			}
 		}
 		
 	}

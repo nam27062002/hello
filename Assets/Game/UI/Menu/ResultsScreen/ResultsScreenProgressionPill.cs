@@ -33,6 +33,7 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	[SerializeField] private Localizer m_currentLevelText = null;
 	[SerializeField] private Localizer m_nextLevelText = null;
 	[SerializeField] private GameObject m_levelUpFX = null;
+	[SerializeField] private ParticleSystem m_transferFX = null;
 
 	// Exposed setup
 	[Space]
@@ -66,6 +67,9 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 		Debug.Assert(m_progressBar != null, "Required field not initialized!");
 		Debug.Assert(m_currentLevelText != null, "Required field not initialized!");
 		Debug.Assert(m_nextLevelText != null, "Required field not initialized!");
+
+		// FX
+		if(m_transferFX != null) m_transferFX.Stop(true);
 	}
 
 	/// <summary>
@@ -96,6 +100,10 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	/// The <c>OnFinished</c> event will be invoked once the animation has finished.
 	/// </summary>
 	protected override void StartInternal() {
+		// Show ourselves!
+		gameObject.SetActive(true);
+		animator.Show();
+
 		// [AOC] As usual, animating the XP bar is not obvious (dragon may have leveled up several times during a single game)
 		DragonData data = DragonManager.currentDragon;
 		if(CPResultsScreenTest.testEnabled) {
@@ -129,14 +137,33 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 		RefreshLevelTexts(false);
 		LaunchXPBarAnim(0.5f);	// Give some time for the pill's show animation
 
+		// Transfer FX
+		if(m_transferFX != null) m_transferFX.Play(true);
+
 		// Hide unlock group
 		if(m_levelUpFX != null) {
 			m_levelUpFX.SetActive(false);
 		}
+	}
 
+	/// <summary>
+	/// Show the pill once finished.
+	/// </summary>
+	public void ShowFinished() {
 		// Show ourselves!
 		gameObject.SetActive(true);
 		animator.Show();
+
+		// Turn off all FX
+		if(m_transferFX != null) m_transferFX.Stop(true);
+		if(m_levelUpFX != null) m_levelUpFX.SetActive(false);
+
+		// Set bar into final position
+		m_progressBar.value = m_finalDelta;
+
+		// Set texts to final value
+		m_currentLevel = m_targetLevel;
+		RefreshLevelTexts(false);
 	}
 
 	//------------------------------------------------------------------------//
@@ -195,6 +222,10 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 
 						// Trigger event
 						OnAnimEnd.Invoke(m_currentLevel, m_progressBar.value);
+
+						// Stop transfer FX
+						if(m_transferFX != null) m_transferFX.Stop(true);
+
 						return;
 					}
 

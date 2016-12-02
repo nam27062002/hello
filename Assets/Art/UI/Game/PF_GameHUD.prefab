@@ -2930,8 +2930,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e4f698f201ec4d498313a9d0e6074f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_color1: {r: 0.67545635, g: 1, b: 0.058823526, a: 1}
-  m_color2: {r: 0.07981449, g: 0.8014706, b: 0, a: 1}
+  m_color1: {r: 0.60944766, g: 0.9338235, b: 0, a: 1}
+  m_color2: {r: 0.10980391, g: 0.98039216, b: 0.656173, a: 1}
   m_direction: 1
 --- !u!114 &11420520
 MonoBehaviour:
@@ -3107,7 +3107,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_color1: {r: 1, g: 1, b: 0, a: 1}
-  m_color2: {r: 0.67545635, g: 1, b: 0.058823526, a: 1}
+  m_color2: {r: 0.5019608, g: 0.972549, b: 0.49019608, a: 1}
   m_direction: 1
 --- !u!114 &11427926
 MonoBehaviour:
@@ -3169,7 +3169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_color1: {r: 0, g: 1, b: 0.8431373, a: 1}
-  m_color2: {r: 0.018814897, g: 0.62526655, b: 0.6397059, a: 1}
+  m_color2: {r: 0.47058827, g: 0.47323868, b: 0.854902, a: 1}
   m_direction: 1
 --- !u!114 &11428920
 MonoBehaviour:
@@ -3627,8 +3627,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e4f698f201ec4d498313a9d0e6074f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_color1: {r: 0.6838235, g: 1, b: 1, a: 1}
-  m_color2: {r: 0.2794118, g: 1, b: 0.684, a: 1}
+  m_color1: {r: 0.58823526, g: 1, b: 0.6421907, a: 1}
+  m_color2: {r: 0.47058827, g: 0.69587564, b: 0.854902, a: 1}
   m_direction: 1
 --- !u!114 &11442054
 MonoBehaviour:
@@ -3820,7 +3820,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Egg inventory full!
+  m_tid: TID_FEEDBACK_EGG_INVENTORY_FULL
   m_caseType: 0
   m_replacements: []
 --- !u!114 &11448472
@@ -4208,7 +4208,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Hold with both fingers to boost!
+  m_tid: TID_FEEDBACK_TUTO_HOLD_TO_BOOST
   m_caseType: 0
   m_replacements: []
 --- !u!114 &11459814
@@ -5504,7 +5504,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: TID_SURVIVAL_BONUS
+  m_tid: TID_FEEDBACK_SURVIVAL_BONUS
   m_caseType: 0
   m_replacements: []
 --- !u!114 &11499510
@@ -14104,8 +14104,8 @@ RectTransform:
   m_RootOrder: 7
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 137.4, y: -5.2}
-  m_SizeDelta: {x: 35.3, y: 244.7}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22451736
 RectTransform:
@@ -16080,7 +16080,7 @@ MonoBehaviour:
   m_fontSizeMax: 200
   m_fontStyle: 0
   m_textAlignment: 17
-  m_characterSpacing: 0
+  m_characterSpacing: -5
   m_lineSpacing: 0
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
@@ -17597,7 +17597,7 @@ MonoBehaviour:
   m_fontSizeMax: 200
   m_fontStyle: 0
   m_textAlignment: 17
-  m_characterSpacing: 0
+  m_characterSpacing: -5
   m_lineSpacing: 0
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
@@ -19410,7 +19410,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 200
   m_fontStyle: 0
-  m_textAlignment: 17
+  m_textAlignment: 5
   m_characterSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -19419,7 +19419,7 @@ MonoBehaviour:
   m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_enableAdaptiveJustification: 0
-  m_overflowMode: 3
+  m_overflowMode: 0
   m_enableKerning: 1
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
@@ -19786,7 +19786,7 @@ MonoBehaviour:
   m_text: MEGA
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
-  m_sharedMaterial: {fileID: 2100000, guid: 81230c0a1129d40988dce006382e151f, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: ebfcc8f3b74044e31940c702b1f1ec3a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -19796,10 +19796,10 @@ MonoBehaviour:
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 1
   m_fontColorGradient:
-    topLeft: {r: 1, g: 0.5372549, b: 0.1254902, a: 1}
-    topRight: {r: 1, g: 0.5372549, b: 0.1254902, a: 1}
-    bottomLeft: {r: 0.7411765, g: 0, b: 0.1764706, a: 1}
-    bottomRight: {r: 0.7411765, g: 0, b: 0.1764706, a: 1}
+    topLeft: {r: 0.10980392, g: 0.9098039, b: 0.98039216, a: 1}
+    topRight: {r: 0.1254902, g: 0.99215686, b: 0.8862745, a: 1}
+    bottomLeft: {r: 0.69803923, g: 0.47058827, b: 0.854902, a: 1}
+    bottomRight: {r: 0.69803923, g: 0.47058827, b: 0.854902, a: 1}
   m_fontColorGradientPreset: {fileID: 0}
   m_tintAllSprites: 0
   m_overrideHtmlColors: 0
@@ -20894,7 +20894,7 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       minMaxState: 0
     startSize:
-      scalar: 0.7
+      scalar: 0.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -20910,7 +20910,7 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 0.42857146
+          value: 0.4
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -21172,10 +21172,15 @@ ParticleSystem:
           inSlope: 1.2764425
           outSlope: 1.2764425
           tangentMode: 0
+        - time: 0.87470794
+          value: 0.9959469
+          inSlope: 0.06854534
+          outSlope: 0.06854534
+          tangentMode: 0
         - time: 1
-          value: 1
-          inSlope: 0
-          outSlope: 0
+          value: 0
+          inSlope: -12.5950985
+          outSlope: -12.5950985
           tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -21383,16 +21388,16 @@ ParticleSystem:
       maxGradient:
         key0:
           serializedVersion: 2
-          rgba: 0
+          rgba: 4294929152
         key1:
           serializedVersion: 2
-          rgba: 4278190080
+          rgba: 4293308160
         key2:
           serializedVersion: 2
-          rgba: 0
+          rgba: 16712192
         key3:
           serializedVersion: 2
-          rgba: 0
+          rgba: 16712192
         key4:
           serializedVersion: 2
           rgba: 0
@@ -21406,7 +21411,7 @@ ParticleSystem:
           serializedVersion: 2
           rgba: 0
         ctime0: 0
-        ctime1: 65535
+        ctime1: 30455
         ctime2: 65535
         ctime3: 65535
         ctime4: 65535
@@ -21414,15 +21419,15 @@ ParticleSystem:
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 6553
+        atime1: 65535
         atime2: 65535
         atime3: 65535
         atime4: 0
         atime5: 0
         atime6: 0
         atime7: 0
-        m_NumColorKeys: 2
-        m_NumAlphaKeys: 3
+        m_NumColorKeys: 3
+        m_NumAlphaKeys: 2
       minGradient:
         key0:
           serializedVersion: 2
@@ -22432,7 +22437,7 @@ ParticleSystem:
   moveWithTransform: 1
   autoRandomSeed: 0
   scalingMode: 2
-  randomSeed: 1054323278
+  randomSeed: 1054323264
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -24287,7 +24292,7 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       minMaxState: 0
     startSize:
-      scalar: 0.5
+      scalar: 0.3
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -24303,7 +24308,7 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 0.2
+          value: 0.3333333
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -27710,7 +27715,7 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       minMaxState: 0
     startSize:
-      scalar: 0.5
+      scalar: 0.3
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -27726,7 +27731,7 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 0.2
+          value: 0.3333333
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -31411,10 +31416,15 @@ ParticleSystem:
           inSlope: 1.2764425
           outSlope: 1.2764425
           tangentMode: 0
+        - time: 0.87470794
+          value: 0.9959469
+          inSlope: 0.06854534
+          outSlope: 0.06854534
+          tangentMode: 0
         - time: 1
-          value: 1
-          inSlope: 0
-          outSlope: 0
+          value: 0
+          inSlope: -12.5950985
+          outSlope: -12.5950985
           tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -31622,13 +31632,13 @@ ParticleSystem:
       maxGradient:
         key0:
           serializedVersion: 2
-          rgba: 0
+          rgba: 4278245375
         key1:
           serializedVersion: 2
-          rgba: 4278190080
+          rgba: 4278215679
         key2:
           serializedVersion: 2
-          rgba: 0
+          rgba: 255
         key3:
           serializedVersion: 2
           rgba: 0
@@ -31653,7 +31663,7 @@ ParticleSystem:
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 6553
+        atime1: 65535
         atime2: 65535
         atime3: 65535
         atime4: 0
@@ -31661,7 +31671,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_NumColorKeys: 2
-        m_NumAlphaKeys: 3
+        m_NumAlphaKeys: 2
       minGradient:
         key0:
           serializedVersion: 2
@@ -36245,7 +36255,7 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       minMaxState: 0
     startSize:
-      scalar: 0.7
+      scalar: 0.4
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -36261,7 +36271,7 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 0.42857146
+          value: 0.5
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -39946,10 +39956,15 @@ ParticleSystem:
           inSlope: 1.2764425
           outSlope: 1.2764425
           tangentMode: 0
+        - time: 0.87470794
+          value: 0.9959469
+          inSlope: 0.06854534
+          outSlope: 0.06854534
+          tangentMode: 0
         - time: 1
-          value: 1
-          inSlope: 0
-          outSlope: 0
+          value: 0
+          inSlope: -12.5950985
+          outSlope: -12.5950985
           tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -40157,10 +40172,10 @@ ParticleSystem:
       maxGradient:
         key0:
           serializedVersion: 2
-          rgba: 0
+          rgba: 4278245375
         key1:
           serializedVersion: 2
-          rgba: 4278190080
+          rgba: 4278215679
         key2:
           serializedVersion: 2
           rgba: 0
@@ -40188,7 +40203,7 @@ ParticleSystem:
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 6553
+        atime1: 65535
         atime2: 65535
         atime3: 65535
         atime4: 0
@@ -40196,7 +40211,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_NumColorKeys: 2
-        m_NumAlphaKeys: 3
+        m_NumAlphaKeys: 2
       minGradient:
         key0:
           serializedVersion: 2
@@ -41372,7 +41387,7 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       minMaxState: 0
     startSize:
-      scalar: 0.7
+      scalar: 0.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -41388,7 +41403,7 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 0.42857146
+          value: 0.4
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -41650,10 +41665,15 @@ ParticleSystem:
           inSlope: 1.2764425
           outSlope: 1.2764425
           tangentMode: 0
+        - time: 0.87470794
+          value: 0.9959469
+          inSlope: 0.06854534
+          outSlope: 0.06854534
+          tangentMode: 0
         - time: 1
-          value: 1
-          inSlope: 0
-          outSlope: 0
+          value: 0
+          inSlope: -12.5950985
+          outSlope: -12.5950985
           tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -41861,16 +41881,16 @@ ParticleSystem:
       maxGradient:
         key0:
           serializedVersion: 2
-          rgba: 0
+          rgba: 4294929152
         key1:
           serializedVersion: 2
-          rgba: 4278190080
+          rgba: 4293308160
         key2:
           serializedVersion: 2
-          rgba: 0
+          rgba: 16714752
         key3:
           serializedVersion: 2
-          rgba: 0
+          rgba: 13303552
         key4:
           serializedVersion: 2
           rgba: 0
@@ -41884,7 +41904,7 @@ ParticleSystem:
           serializedVersion: 2
           rgba: 0
         ctime0: 0
-        ctime1: 65535
+        ctime1: 30455
         ctime2: 65535
         ctime3: 65535
         ctime4: 65535
@@ -41892,15 +41912,15 @@ ParticleSystem:
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 6553
+        atime1: 65535
         atime2: 65535
         atime3: 65535
         atime4: 0
         atime5: 0
         atime6: 0
         atime7: 0
-        m_NumColorKeys: 2
-        m_NumAlphaKeys: 3
+        m_NumColorKeys: 3
+        m_NumAlphaKeys: 2
       minGradient:
         key0:
           serializedVersion: 2
@@ -43076,7 +43096,7 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       minMaxState: 0
     startSize:
-      scalar: 0.7
+      scalar: 0.4
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -43092,7 +43112,7 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 0.42857146
+          value: 0.5
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -44753,7 +44773,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8deb8bb4c49d8344ab5069deb07daf24, type: 2}
+  - {fileID: 2100000, guid: e1ff2390ced947644b0c80a5a3475e7e, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
@@ -45017,7 +45037,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 69ddca23def91a54fa44e3b7dbda0efa, type: 2}
+  - {fileID: 2100000, guid: 71f5b8b57ba84104694f5252ff9a6418, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
@@ -45061,7 +45081,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8deb8bb4c49d8344ab5069deb07daf24, type: 2}
+  - {fileID: 2100000, guid: e1ff2390ced947644b0c80a5a3475e7e, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
@@ -45149,7 +45169,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 69ddca23def91a54fa44e3b7dbda0efa, type: 2}
+  - {fileID: 2100000, guid: 71f5b8b57ba84104694f5252ff9a6418, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}

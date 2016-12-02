@@ -1789,7 +1789,7 @@ MonoBehaviour:
     path: Blood
     offset: {x: 0, y: 0, z: 0}
   m_burpSound: 
-  m_eaterTier: 0
+  m_eaterTier: 1
   m_isPet: 0
   m_isAquatic: 0
   m_canMultipleLatchOnPlayer: 0
@@ -1820,14 +1820,14 @@ MonoBehaviour:
   m_blendSpeedFactor: 100
   m_energy: 10
   m_energyDrainSec: 1
-  m_brainResource: {fileID: 11400000, guid: dad1c7bb0c1fe428095688a1d8608b84, type: 2}
+  m_brainResource: {fileID: 11400000, guid: 7dd595c5a7822451bb0b8412c1690197, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":12,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":12,"restUpsideDown":false,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":35,"arrivalRadius":0.25,"timeout":{"min":4,"max":6},"onFailShutdown":{"min":4,"max":6},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":4,"max":6},"damage":10,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":15,"panicSpeed":15,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":11,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":11,"restUpsideDown":false,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":45,"arrivalRadius":0.25,"timeout":{"min":4,"max":6},"onFailShutdown":{"min":4,"max":6},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":4,"max":6},"damage":10,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":11,"panicSpeed":11,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
   m_databaseKey: PF_EnemyBaby
   m_avoidDistanceAttenuation: 15
   m_avoidCollisions: 1
@@ -1936,7 +1936,6 @@ MonoBehaviour:
       min: 0
       max: 0
   m_onSpawnSound: 
-  m_onEatenSound: 
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
@@ -1961,6 +1960,11 @@ MonoBehaviour:
   m_levelUpSound: Level UP
   m_starvingSound: 
   m_hitSound: Dragon_Impact
+  m_enterWaterSound: 
+  m_enterWaterWithSplashSound: 
+  m_exitWaterSound: 
+  m_exitWaterWithSplashSound: 
+  m_skimmingSound: 
 --- !u!114 &114000012646663938
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1973,7 +1977,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Head_Ctrl
-  m_lookAtRoot: {fileID: 0}
+  m_parentRoot: {fileID: 0}
 --- !u!114 &114000014202338546
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1986,7 +1990,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Chest
-  m_lookAtRoot: {fileID: 0}
+  m_parentRoot: {fileID: 0}
 --- !u!136 &136000011476809738
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -22,7 +22,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	private enum Step {
-		INIT,
+		IDLE,
 		PROGRESSION,
 		MISSION_0,
 		MISSION_1,
@@ -46,8 +46,21 @@ public class ResultsScreenCarousel : MonoBehaviour {
 
 	// Internal Logic
 	private ResultsScreenCarouselPill m_currentPill = null;
-	private Step m_step = Step.INIT;
-	
+	private Step m_step = Step.IDLE;
+
+	// Step checks
+	public bool isIdle {
+		get { return m_step == Step.IDLE; }
+	}
+
+	public bool isFinished {
+		get { return m_step == Step.FINISHED; }
+	}
+
+	public bool isIdleOrFinished {
+		get { return isIdle || isFinished; }
+	}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -79,44 +92,72 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	/// <summary>
 	/// Initialize this instance.
 	/// </summary>
-	public void StartCarousel() {
+	public void Init() {
 		// Disable all carousel elements
 		m_progressionPill.animator.ForceHide(false);
 		m_missionPill.animator.ForceHide(false);
 
 		// Reset current step
-		m_step = Step.INIT;
+		StartCoroutine(DoStep(Step.IDLE));
+	}
 
-		// Start!
-		StartCoroutine(CheckNextStep());
+	/// <summary>
+	/// Launch the missions pills.
+	/// Will interrupt current pills.
+	/// </summary>
+	public void DoMissions() {
+		StartCoroutine(DoStep(Step.MISSION_0));
+	}
+
+	/// <summary>
+	/// Launch the progression pill.
+	/// Will interrupt current pills.
+	/// </summary>
+	public void DoProgression() {
+		StartCoroutine(DoStep(Step.PROGRESSION));
+	}
+
+	/// <summary>
+	/// Go to the finished state.
+	/// Will interrupt current pills.
+	/// </summary>
+	public void Finish() {
+		StartCoroutine(DoStep(Step.FINISHED));
 	}
 
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Checks the new step to be launched.
+	/// Launches a specific step and programs next step.
 	/// </summary>
-	private IEnumerator CheckNextStep() {
-		// Skip if we've finished
-		if(m_step == Step.FINISHED) yield return null;
+	/// <param name="_step">The step to be launched.</param>
+	private IEnumerator DoStep(Step _step) {
+		// Skip if already in that step
+		if(m_step == _step) yield return null;
 
-		// Increase step
-		m_step++;
+		// Store new step
+		m_step = _step;
 
 		// Select and init target pill
 		float pillAnimDuration = 0.25f;	// As setup in the ShowHideAnimator component
-		switch(m_step) {
+		switch(_step) {
+			case Step.IDLE: {
+				// Just hide current pill
+				HideCurrentPill();
+			} break;
+
 			case Step.PROGRESSION: {
-				// Hide current pill (there shouldn't be any since it's the first step, but just in case)
+				// Hide current pill
 				HideCurrentPill();
 
-				// Show progress pill if required
+				// Show pill if required
 				if(m_progressionPill.MustBeDisplayed()) {
 					m_currentPill = m_progressionPill;
 					m_currentPill.ShowAndAnimate(pillAnimDuration);	// Add enough delay to let the previous pill hide
 				} else {
-					StartCoroutine(CheckNextStep());
+					// Pill doesn't have to be displayed, go to idle
+					StartCoroutine(DoStep(Step.IDLE));
 				}
 			} break;
 
@@ -125,12 +166,15 @@ public class ResultsScreenCarousel : MonoBehaviour {
 			case Step.MISSION_2: {
 				// Choose target mission
 				// Check cheats!
+				int missionIdx = _step - Step.MISSION_0;	// Quick correlation between Step and Mission.Difficulty enums
 				Mission targetMission = null;
 				if(CPResultsScreenTest.missionsMode == CPResultsScreenTest.MissionsTestMode.NONE) {
-					targetMission = MissionManager.GetMission((Mission.Difficulty)(m_step - Step.MISSION_0));	// Quick correlation between Step and Mission.Difficulty enums
+					// Not using cheats
+					targetMission = MissionManager.GetMission((Mission.Difficulty)missionIdx);
 				} else {
 					// Display mission?
-					if((int)CPResultsScreenTest.missionsMode > (m_step - Step.MISSION_0)) {
+					int numCheatMissions = CPResultsScreenTest.missionsMode - CPResultsScreenTest.MissionsTestMode.FIXED_0;
+					if(numCheatMissions > missionIdx) {
 						// Yes! Create a fake temp mission
 						List<DefinitionNode> missionDefs = new List<DefinitionNode>();
 						DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.MISSIONS, ref missionDefs);
@@ -138,6 +182,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 						targetMission.InitFromDefinition(missionDefs.GetRandomValue());
 
 						// Mark mission as completed
+						targetMission.objective.enabled = true;
 						targetMission.objective.currentValue = targetMission.objective.targetValue;	// This will do it
 					}
 				}
@@ -152,7 +197,12 @@ public class ResultsScreenCarousel : MonoBehaviour {
 					m_currentPill = m_missionPill;
 					m_currentPill.ShowAndAnimate(pillAnimDuration);	// Add enough delay to let the previous pill hide
 				} else {
-					StartCoroutine(CheckNextStep());
+					// Mission doesn't have to be displayed, check next mission or go to idle if last mission
+					if(_step == Step.MISSION_2) {
+						StartCoroutine(DoStep(Step.IDLE));
+					} else {
+						StartCoroutine(DoStep(_step + 1));
+					}
 				}
 			} break;
 
@@ -166,7 +216,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 				if(m_progressionPill.MustBeDisplayed()) {
 					yield return new WaitForSeconds(pillAnimDuration);
 					m_currentPill = m_progressionPill;
-					m_progressionPill.animator.Show();
+					m_progressionPill.ShowFinished();	// Nothing will happen if already visible
 				} else {
 					// Just hide current pill and leave no pill visible
 					HideCurrentPill();
@@ -192,7 +242,28 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	/// A pill has finished its animation.
 	/// </summary>
 	public void OnPillFinished() {
-		// Just check next step
-		StartCoroutine(CheckNextStep());
+		// Depending on current step, launch next step
+		switch(m_step) {
+			case Step.PROGRESSION: {
+				// Go to idle
+				StartCoroutine(DoStep(Step.IDLE));
+			} break;
+
+			case Step.MISSION_0:
+			case Step.MISSION_1:
+			case Step.MISSION_2: {
+				// Check next mission or go to idle if last mission
+				if(m_step == Step.MISSION_2) {
+					StartCoroutine(DoStep(Step.IDLE));
+				} else {
+					StartCoroutine(DoStep(m_step + 1));
+				}
+			} break;
+
+			case Step.IDLE:
+			case Step.FINISHED: {
+				// Do nothing (should never be here)
+			} break;
+		}
 	}
 }

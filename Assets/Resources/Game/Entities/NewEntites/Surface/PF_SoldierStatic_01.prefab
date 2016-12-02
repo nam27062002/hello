@@ -705,13 +705,14 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 158824}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -63.81759, y: -6.4919133, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 412058}
   - {fileID: 433984}
   - {fileID: 4000011574585294}
+  - {fileID: 4000013064795034}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &429706
@@ -1122,7 +1123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Sword_01
-  m_lookAtRoot: {fileID: 0}
+  m_parentRoot: {fileID: 0}
 --- !u!114 &11414130
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1180,7 +1181,7 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 0
-    m_sightRadius: 5
+    m_sightRadius: 18
     m_maxRadius: 5
     m_minRadius: 0
     m_hysteresisOffset: 0
@@ -1194,7 +1195,6 @@ MonoBehaviour:
       min: 0
       max: 0
   m_onSpawnSound: 
-  m_onEatenSound: 
   m_rotateToMouth: 3
   m_inflammable:
     m_ashesAsset: 
@@ -1252,7 +1252,7 @@ MonoBehaviour:
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onExplosionAudio: 
-  m_onAttackAudio: Sword
+  m_onAttackAudio: Soldier_Attack
   m_onScaredAudio: 
   m_onPanicAudio: 
   m_idleAudio: 
@@ -1289,7 +1289,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"damage":5,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"damage":15,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
   m_databaseKey: PF_SoldierStatic_01
 --- !u!137 &13791830
 SkinnedMeshRenderer:
@@ -1369,6 +1369,38 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 158824}
   m_IsPrefabParent: 1
+--- !u!1 &1000010052095164
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000013064795034}
+  m_Layer: 0
+  m_Name: holdPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1000010614431354
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000011156698388}
+  - 114: {fileID: 114000010281241250}
+  - 114: {fileID: 114000012075929564}
+  m_Layer: 21
+  m_Name: HoldPreyPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1000014241999814
 GameObject:
   m_ObjectHideFlags: 0
@@ -1384,6 +1416,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &4000011156698388
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010614431354}
+  m_LocalRotation: {x: -0.3132576, y: 0.65353703, z: -0.28712878, w: 0.6263515}
+  m_LocalPosition: {x: -0.016998291, y: 2.332, z: 0.085}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 2.6987998, y: 181.43149, z: -131.0456}
+  m_Children: []
+  m_Father: {fileID: 4000013064795034}
+  m_RootOrder: 0
 --- !u!4 &4000011574585294
 Transform:
   m_ObjectHideFlags: 1
@@ -1397,6 +1442,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 425314}
   m_RootOrder: 2
+--- !u!4 &4000013064795034
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010052095164}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.95, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 4000011156698388}
+  m_Father: {fileID: 425314}
+  m_RootOrder: 3
 --- !u!54 &54000014056273632
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -1412,6 +1471,30 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &114000010281241250
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010614431354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114000012075929564
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010614431354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Soldier_Spine1
+  m_parentRoot: {fileID: 425314}
 --- !u!136 &136000010966497328
 CapsuleCollider:
   m_ObjectHideFlags: 1

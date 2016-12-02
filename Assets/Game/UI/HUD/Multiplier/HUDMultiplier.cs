@@ -52,7 +52,7 @@ public class HUDMultiplier : HudWidget {
 
     protected override void Start() {
         base.Start();
-        SetMultiplierToShow(RewardManager.currentScoreMultiplier, true);                
+        SetMultiplierToShow(RewardManager.currentScoreMultiplierData,RewardManager.currentFireRushMultiplier,true);                
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ public class HUDMultiplier : HudWidget {
     /// </summary>
     private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<ScoreMultiplier, ScoreMultiplier>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
+		Messenger.AddListener<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
 	}
 	
 	/// <summary>
@@ -68,7 +68,7 @@ public class HUDMultiplier : HudWidget {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<ScoreMultiplier, ScoreMultiplier>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
+		Messenger.RemoveListener<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
 	}
 
 	/// <summary>
@@ -78,7 +78,7 @@ public class HUDMultiplier : HudWidget {
         base.Update();
 
 		// If we have a valid multiplier, show progress to reach next one
-		if(RewardManager.currentScoreMultiplier != RewardManager.defaultScoreMultiplier) {
+		if(RewardManager.currentScoreMultiplierData != RewardManager.defaultScoreMultiplier) {
 			Vector3 scale = m_progressFill.rectTransform.localScale;
 			scale.y = RewardManager.scoreMultiplierProgress;
 			m_progressFill.rectTransform.localScale = scale;
@@ -88,13 +88,14 @@ public class HUDMultiplier : HudWidget {
     //------------------------------------------------------------------//
     // INTERNAL UTILS													//
     //------------------------------------------------------------------//
-    private void SetMultiplierToShow(ScoreMultiplier _mult, bool immediate)
+    private void SetMultiplierToShow(ScoreMultiplier _mult, float fireRushMultiplier ,bool immediate)
     {
         // We just keep the integer part
-        m_multiplierToShow = (long)(_mult.multiplier);
+		m_multiplierToShow = (long)(_mult.multiplier * fireRushMultiplier);
 
         // Do it! Except if going back to "no multiplier"
-        if (_mult != null && _mult != RewardManager.defaultScoreMultiplier)
+        // if (_mult != null && _mult != RewardManager.defaultScoreMultiplier)
+        if ( m_multiplierToShow > 1 )
         {            
             UpdateValue(m_multiplierToShow, false, immediate);
         }
@@ -160,11 +161,10 @@ public class HUDMultiplier : HudWidget {
     /// <summary>
     /// Current score multiplier has changed.
     /// </summary>
-    /// <param name="_oldMultiplier">The previous multiplier.</param>
     /// <param name="_newMultiplier">The new multiplier.</param>
-    private void OnMultiplierChanged(ScoreMultiplier _oldMultiplier, ScoreMultiplier _newMultiplier) {
+    private void OnMultiplierChanged(ScoreMultiplier _newMultiplier, float fireRushMultiplier) {
         // Update text
-        SetMultiplierToShow(_newMultiplier, false);
+		SetMultiplierToShow(_newMultiplier, fireRushMultiplier, false);
         NeedsToPlayAnim = true;
     }
 }

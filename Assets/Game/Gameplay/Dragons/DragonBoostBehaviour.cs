@@ -114,8 +114,6 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		if (m_animator && m_animator.isInitialized)
 		{
 			m_animator.SetBool("boost", true);
-			// speed up eating
-			m_animator.SetFloat("eatingSpeed", m_boostMultiplier);
 		}
 		Messenger.Broadcast<bool>(GameEvents.BOOST_TOGGLED, true);
 	}
@@ -128,8 +126,6 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		if (m_animator && m_animator.isInitialized && !m_insideWater)
 		{
 			m_animator.SetBool("boost", false);
-			// set eating speed as normal
-			m_animator.SetFloat("eatingSpeed", 1);
 		}
 
 		Messenger.Broadcast<bool>(GameEvents.BOOST_TOGGLED, false);

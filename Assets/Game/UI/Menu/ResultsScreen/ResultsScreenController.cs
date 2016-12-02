@@ -4,6 +4,19 @@ using DG.Tweening;
 using TMPro;
 
 public class ResultsScreenController : MonoBehaviour {
+	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
+	private enum State {
+		INIT,
+		WAIT_INTRO,
+		INTRO,
+		RESULTS,
+		MISSIONS,
+		PROGRESSION_1,
+		PROGRESSION_2,
+		FINISHED
+	};
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -21,6 +34,23 @@ public class ResultsScreenController : MonoBehaviour {
 	[Separator]
 	[SerializeField] private ResultsScreenUnlockBar m_unlockBar = null;
 	[SerializeField] private ResultsScreenCarousel m_carousel = null;
+
+	// Animators
+	[Separator]
+	[SerializeField] private ShowHideAnimator m_popupAnimator = null;
+	[SerializeField] private ShowHideAnimator m_bottomBarAnimator = null;
+	[SerializeField] private ShowHideAnimator m_unlockBarAnimator = null;
+
+	// To easily setup animation durations
+	[Separator]
+	[SerializeField] private float m_introDuration = 1f;
+
+	// References
+	private ResultsSceneSetup m_scene = null;
+
+	// Internal
+	private State m_state = State.INIT;
+	private float m_timer = 0f;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -127,45 +157,194 @@ public class ResultsScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Manual initialization.
+	/// Called every frame.
 	/// </summary>
-	public void Initialize() {
-		// set values from score manager
-		// Launch number animators
-		int coinsBonus = survivalBonus;
-
-		// Number animations
-		m_scoreAnimator.SetValue(0, score);
-		m_coinsAnimator.SetValue(0, coins + coinsBonus);
-		m_bonusCoinsAnimator.SetValue(0, coinsBonus);
-
-		// High Score Label
-		m_highScoreLabel.Localize(m_highScoreLabel.tid, StringUtils.FormatNumber(highScore));
-
-		// New High Score animation
-		if(isHighScore) {
-			m_newHighScoreDeco.SetActive(true);
-			m_newHighScoreDeco.transform.localScale = Vector3.zero;
-			m_newHighScoreDeco.transform.DOScale(1f, 0.25f)
-				.SetDelay(m_scoreAnimator.duration)	// Sync with score number animation
-				.SetEase(Ease.OutBack)
-				.SetAutoKill(true)
-				.OnComplete(() => {
-					// TODO!! Play some SFX
-				});
-		} else {
-			m_newHighScoreDeco.SetActive(false);
+	private void Update() {
+		// Update timer
+		if(m_timer > 0f) {
+			m_timer -= Time.deltaTime;
 		}
 
-		// Set time - format to MM:SS
-		m_timeLabel.text = TimeUtils.FormatTime(time, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES);
+		// Do different stuff depending on current state
+		switch(m_state) {
+			case State.INIT: {
+				// Do nothing
+			} break;
+			case State.WAIT_INTRO: {
+				if (m_timer <= 0){
+					ChangeState( State.INTRO );
+				}
+			}break;
+			case State.INTRO: {
+				// If timer has finished, go to next state!
+				if(m_timer <= 0f) {
+					ChangeState(State.RESULTS);
+				}
+			} break;
 
-		// Initialize unlock bar and start animating!
-		m_unlockBar.Initialize(m_carousel.progressionPill);
+			case State.RESULTS: {
+				// If timer has finished, go to next state!
+				if(m_timer <= 0f) {
+					ChangeState(State.PROGRESSION_1);
+				}
+			} break;
 
-		// Start carousel as well!
-		m_carousel.gameObject.SetActive(true);
-		m_carousel.StartCarousel();
+			case State.MISSIONS: {
+				// Wait for carousel to finish
+				if(m_carousel.isIdleOrFinished) {
+					ChangeState(State.FINISHED);
+				}
+			} break;
+
+			case State.PROGRESSION_1: {
+				// Wait for carousel to finish
+				if(m_carousel.isIdleOrFinished) {
+					ChangeState(State.PROGRESSION_2);
+				}
+			} break;
+
+			case State.PROGRESSION_2: {
+				// Noting to do for now, go to missions
+				ChangeState(State.MISSIONS);
+			} break;
+
+			case State.FINISHED: {
+				// Do nothing
+			} break;
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize the screen and leave it ready for the LaunchAnim call.
+	/// </summary>
+	/// <param name="_scene">The 3D scene to be used.</param>
+	public void Init(ResultsSceneSetup _scene) {
+		// Store the 3D scene
+		m_scene = _scene;
+
+		// Go to INIT state
+		ChangeState(State.INIT);
+	}
+
+	/// <summary>
+	/// Manual initialization.
+	/// </summary>
+	public void LaunchAnim() {
+		// Just change state
+		ChangeState(State.WAIT_INTRO);
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Change the internal logic state.
+	/// </summary>
+	/// <param name="_newState">Target state.</param>
+	private void ChangeState(State _newState) {
+		// Different stuff depending on target state
+		switch(_newState) {
+			case State.INIT: {
+				// Tell the 3D scene to reset
+				if(m_scene != null) m_scene.Init();
+
+				// Initialize number animators
+				m_scoreAnimator.SetValue(0, 0);
+				m_coinsAnimator.SetValue(0, 0);
+				m_bonusCoinsAnimator.SetValue(0, 0);
+				m_newHighScoreDeco.SetActive(false);
+
+				// Initialize High Score Label
+				m_highScoreLabel.Localize(m_highScoreLabel.tid, StringUtils.FormatNumber(highScore));
+
+				// Initialize Game time - format to MM:SS
+				m_timeLabel.text = TimeUtils.FormatTime(time, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES);
+
+				// Hide popup
+				m_popupAnimator.ForceHide(false);
+
+				// Initialize unlock bar
+				m_unlockBar.Init(m_carousel.progressionPill);
+				m_unlockBarAnimator.ForceHide(false);
+
+				// Initialize carousel
+				m_carousel.gameObject.SetActive(true);
+				m_carousel.Init();
+				m_bottomBarAnimator.ForceHide(false);
+			} break;
+			case State.WAIT_INTRO:
+			{
+				m_timer = 0.5f;
+			}break;
+			case State.INTRO: {
+				// Launch dragon animation
+				m_scene.LaunchDragonAnim();
+
+				// Start timer to next state
+				m_timer = m_introDuration;
+			} break;
+
+			case State.RESULTS: {
+				// Show popup
+				m_popupAnimator.Show();
+
+				// Show bottom bar
+				m_bottomBarAnimator.Show();
+
+				// Launch number animators
+				int coinsBonus = survivalBonus;
+				m_scoreAnimator.SetValue(0, score);
+				m_coinsAnimator.SetValue(0, coins + coinsBonus);
+				m_bonusCoinsAnimator.SetValue(0, coinsBonus);
+
+				// New High Score animation
+				if(isHighScore) {
+					m_newHighScoreDeco.SetActive(true);
+					m_newHighScoreDeco.transform.localScale = Vector3.zero;
+					m_newHighScoreDeco.transform.DOScale(1f, 0.25f)
+						.SetDelay(m_scoreAnimator.duration)	// Sync with score number animation
+						.SetEase(Ease.OutBack)
+						.SetAutoKill(true)
+						.OnComplete(() => {
+							// TODO!! Play some SFX
+						});
+				}
+
+				// Launch 3D rewards animations
+				float duration = m_scene.LaunchRewardsAnim();
+
+				// Start timer to next state
+				m_timer = duration;
+			} break;
+
+			case State.MISSIONS: {
+				// Show missions carousel
+				m_carousel.DoMissions();
+			} break;
+
+			case State.PROGRESSION_1: {
+				// Show progression carousel (not yet split)
+				m_carousel.DoProgression();
+
+				// Show unlock bar as well
+				m_unlockBarAnimator.Show();
+			} break;
+
+			case State.PROGRESSION_2: {
+				// Nothing to do for now
+			} break;
+
+			case State.FINISHED: {
+				// Tell carousel to finish as well
+				m_carousel.Finish();
+			} break;
+		}
+
+		// Store new state
+		m_state = _newState;
 	}
 
 	/// <summary>

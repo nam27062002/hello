@@ -25,7 +25,7 @@ public class Pool {
 		if(_createContainer) {
 			m_containerObj = new GameObject();
 			m_containerObj.name = "Pool of " + m_prefab.name;
-			m_containerObj.transform.parent = _parent;
+			m_containerObj.transform.SetParent(_parent, false);
 		} else {
 			m_containerObj = _parent.gameObject;
 		}

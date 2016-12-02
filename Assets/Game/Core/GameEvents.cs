@@ -32,13 +32,14 @@ public enum GameEvents {
 	GAME_PAUSED,				// params: bool _paused
 	GAME_ENDED,					// no params
 	REWARD_APPLIED,				// params: Reward _reward, Transform _entity
-	SCORE_MULTIPLIER_CHANGED,	// params: ScoreMultiplier _oldMultiplier, ScoreMultiplier _newMultiplier
+	SCORE_MULTIPLIER_CHANGED,	// params: ScoreMultiplier _newMultiplier, int goldScoreMultiplier
 	SCORE_MULTIPLIER_LOST,		// no params
 	FURY_RUSH_TOGGLED,			// params: bool _activated, DragonBreathBehaviour.Type _type
 	HUNT_EVENT_TOGGLED,			// params: Transform _entityLocation, bool _activated
 	SLOW_MOTION_TOGGLED,		// params: bool _activated
 	BOOST_TOGGLED,				// params: bool _activated
 	BIGGER_DRAGON_NEEDED,		// params: DragonTier _requiredTierSku (use COUNT for generic message), string _entitySku
+	UNDERWATER_TOGGLED,			// params: bool _activated
 
 	// Entity events
 	ENTITY_EATEN,				// params: Transform _entity, Reward _reward

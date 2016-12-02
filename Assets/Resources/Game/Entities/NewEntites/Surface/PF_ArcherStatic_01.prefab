@@ -1077,7 +1077,7 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 0
-    m_sightRadius: 16
+    m_sightRadius: 18
     m_maxRadius: 16
     m_minRadius: 0
     m_hysteresisOffset: 0
@@ -1091,7 +1091,6 @@ MonoBehaviour:
       min: 0.5
       max: 1
   m_onSpawnSound: 
-  m_onEatenSound: 
   m_rotateToMouth: 3
   m_inflammable:
     m_ashesAsset: 
@@ -1174,7 +1173,7 @@ MonoBehaviour:
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onExplosionAudio: 
-  m_onAttackAudio: Bow
+  m_onAttackAudio: Archer_Attack
   m_onScaredAudio: 
   m_onPanicAudio: 
   m_idleAudio: 
@@ -1213,7 +1212,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"restTime":{"min":0,"max":0},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"projectileName":"PF_Arrow","projectileSpawnTransformName":"Human_R_Weapon_01","damage":5,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":0,"max":0},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"projectileName":"PF_Arrow","projectileSpawnTransformName":"Human_R_Weapon_01","damage":10,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
   m_databaseKey: PF_ArcherStatic_01
 --- !u!137 &13708154
 SkinnedMeshRenderer:
@@ -1419,7 +1418,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Human_Spine1
-  m_lookAtRoot: {fileID: 462874}
+  m_parentRoot: {fileID: 462874}
 --- !u!136 &136000010399633126
 CapsuleCollider:
   m_ObjectHideFlags: 1

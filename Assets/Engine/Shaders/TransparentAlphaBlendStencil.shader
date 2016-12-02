@@ -30,11 +30,13 @@
 					ZFail keep
 				}
 
-				AlphaTest greater 0.1
+				AlphaTest greater 0.5
 
 				SetTexture[_MainTex]
 				{
+//					constantColor (0.0, 0.0, 0.0, 1.0)
 					combine texture * primary
+//					combine texture * constant
 				}
 			}
 		}
