@@ -4240,7 +4240,7 @@ MonoBehaviour:
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 1
+      Volume: 0.75
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.1
       MaxInstanceCount: 0
@@ -4630,7 +4630,7 @@ MonoBehaviour:
         DisableOtherSubitems: 0
         ItemModeAudioID: 
         Clip: {fileID: 8300000, guid: 5e0eb134c27392a4da89d679585dd20b, type: 3}
-        Volume: 1
+        Volume: 0.7
         PitchShift: 0
         Pan2D: 0
         Delay: 0
@@ -4648,7 +4648,7 @@ MonoBehaviour:
         DisableOtherSubitems: 0
         ItemModeAudioID: 
         Clip: {fileID: 8300000, guid: 0949ff3831d54d04893f11faef8739cf, type: 3}
-        Volume: 1
+        Volume: 0.65
         PitchShift: 0
         Pan2D: 0
         Delay: 0
@@ -5018,6 +5018,45 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
+    - Name: hd_dragon_wind_boost
+      Loop: 1
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 0.75
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 0
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: 4ffecfe50cb00d44c9bf9537780999d6, type: 3}
+        Volume: 1
+        PitchShift: 2
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 1
+        RandomStartPosition: 0
+        individualSettings: []
     _volume: 1
     audioMixerGroup: {fileID: 0}
   musicPlaylists:
@@ -5033,7 +5072,7 @@ MonoBehaviour:
   _volume: 1
   _currentInspectorSelection:
     currentCategoryIndex: 0
-    currentItemIndex: 11
+    currentItemIndex: 12
     currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
@@ -5254,7 +5293,7 @@ MonoBehaviour:
   m_wingsIdleSound: Dragon_Idle_Flaps
   m_wingsFlyingSound: Dragon_Flaps
   m_eatSound: Dragon_Eat
-  m_wingsWindSound: 
+  m_wingsWindSound: hd_dragon_wind_boost
   m_wingsStrongFlap: Dragon_Strong_Flap
   m_levelUpSound: Level_Up
   m_starvingSound: 
@@ -5481,7 +5520,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013638149328}
-  serializedVersion: 4
+  serializedVersion: 2
   lengthInSec: 1
   startDelay:
     scalar: 0
@@ -5519,13 +5558,12 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
+  randomSeed: 4169123404
   looping: 1
   prewarm: 0
   playOnAwake: 0
   moveWithTransform: 0
-  autoRandomSeed: 0
   scalingMode: 1
-  randomSeed: -125843892
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -7215,7 +7253,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013939559234}
-  serializedVersion: 4
+  serializedVersion: 2
   lengthInSec: 1
   startDelay:
     scalar: 0
@@ -7253,13 +7291,12 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
+  randomSeed: 1062787544
   looping: 1
   prewarm: 0
   playOnAwake: 0
   moveWithTransform: 0
-  autoRandomSeed: 0
   scalingMode: 1
-  randomSeed: 1062787544
   InitialModule:
     serializedVersion: 2
     enabled: 1
