@@ -18,6 +18,7 @@ using DG.Tweening;
 /// Dragon selection tutorial script, should be added to the same object as the 
 /// dragon selection screen.
 /// </summary>
+[RequireComponent(typeof(CanvasGroup))]
 public class DragonSelectionTutorial : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -41,11 +42,8 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	[SerializeField] private CustomEase.EaseType m_ease = CustomEase.EaseType.quartInOut_01;
 
 	// External references
-	[Space]
-	[SerializeField] private CanvasGroup m_uiCanvasGroup = null;
-
-	// Internal references
 	private MenuDragonScroller3D m_scroller = null;
+	private CanvasGroup m_canvasGroup = null;
 
 	// Internal logic
 	private DeltaTimer m_timer = new DeltaTimer();
@@ -62,6 +60,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		// Get external references
 		MenuDragonScreenController screenController = InstanceManager.GetSceneController<MenuSceneController>().GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>(); 
 		m_scroller = screenController.dragonScroller3D;
+		m_canvasGroup = GetComponent<CanvasGroup>();
 
 		// Subscribe to external events. We want to receive these events even when disabled, so do it in the Awake/Destroy instead of the OnEnable/OnDisable.
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
@@ -154,7 +153,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 
 			// Hide HUD and UI
 			InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceHide(false);
-			if(m_uiCanvasGroup != null) m_uiCanvasGroup.alpha = 0;
+			if(m_canvasGroup != null) m_canvasGroup.alpha = 0;
 
 			// Instant scroll to first dragon
 			m_scroller.cameraAnimator.delta = 0f;
@@ -177,7 +176,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 
 			// Show UI back
 			InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceShow(true);
-			if(m_uiCanvasGroup != null) m_uiCanvasGroup.DOFade(1f, 0.25f);
+			if(m_canvasGroup != null) m_canvasGroup.DOFade(1f, 0.25f);
 
 			// Control vars
 			m_state = State.IDLE;
@@ -204,7 +203,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		}
 
 		// If the tutorial wasn't completed, launch it now
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION) && !DebugSettings.isPlayTest) {		// Skip tutorial for the playtests
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
 			StartTutorial();
 		}
 	}

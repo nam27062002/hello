@@ -157,12 +157,8 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
 		switch(_newState) {
 			// Reclaim some memory before loading a scene. 1-Frame state.
 			case ESceneState.RESET: {
-                // PreUnload event is dispatched so listeners can do stuff thar needs to be done before game objects in the current scene start being destroyed. This is typically useful
-                // when the stuff to do when destroying a game object depends on another game object that could already be destroyed if that stuff was done in OnDestroy()
-                if (m_prevScene != "") Messenger.Broadcast<string>(EngineEvents.SCENE_PREUNLOAD, m_prevScene);               
-                
-                // Run a GC pass
-                System.GC.Collect();
+				// Run a GC pass
+				System.GC.Collect();
 			} break;
 
 			// Start loading the scene asynchronously. Run here any process you need to run before loading. 1-Frame state.

@@ -329,8 +329,7 @@ public class GameSceneController : GameSceneControllerBase {
 				m_timer = MIN_LOADING_TIME;
 
 				// Check whether the tutorial popup must be displayed
-				if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)
-				|| DebugSettings.isPlayTest) {
+				if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)) {
 					// Open popup
 					PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);
 					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);

@@ -33,7 +33,6 @@ namespace AI {
 		void LockInCage();
 		void UnlockFromCage();
 
-		void Drown();
 		void Bite();
 		void BeginSwallowed(Transform _transform, bool rewardPlayer);
 		void BiteAndHold();
