@@ -402,7 +402,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					{
 						m_animator.SetBool("fly down", true);
 					}
-					if ( m_state != State.Stunned ){
+					if ( m_state != State.Stunned && m_state != State.Reviving){
 	                    m_accWaterFactor = 0.80f;
 	                    m_inverseGravityWater = 1.5f;
 						m_startParabolicPosition = transform.position;
@@ -418,7 +418,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.OuterSpace:
 				{
 					m_animator.SetBool("fly down", true);
-					if ( m_state != State.Stunned ){
+					if ( m_state != State.Stunned && m_state != State.Reviving){
 						m_startParabolicPosition = transform.position;
 					}
 				}break;
@@ -1508,14 +1508,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		{
 			// Disable Bubbles
 			if (IsAliveState() )
+			{
 				EndWaterMovement( _other );
-			m_previousState = State.Idle;
+				m_previousState = State.Idle;
+			}
 		}
 		else if ( _other.tag == "Space" )
 		{
 			if (IsAliveState())
+			{
 				EndSpaceMovement();
-			m_previousState = State.Idle;
+				m_previousState = State.Idle;
+			}
 		}
 		
 	}
