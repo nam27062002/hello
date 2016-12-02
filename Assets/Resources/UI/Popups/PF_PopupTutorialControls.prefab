@@ -80,6 +80,7 @@ GameObject:
   - 224: {fileID: 22435520}
   - 222: {fileID: 22294600}
   - 114: {fileID: 114000010913590790}
+  - 114: {fileID: 114000014289651992}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -185,6 +186,7 @@ GameObject:
   - 224: {fileID: 22446188}
   - 222: {fileID: 22267212}
   - 114: {fileID: 114000012943224274}
+  - 114: {fileID: 114000013452139524}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -1268,6 +1270,7 @@ GameObject:
   - 224: {fileID: 224000012196725490}
   - 222: {fileID: 222000011864806290}
   - 114: {fileID: 114000013363073544}
+  - 114: {fileID: 114000013705974138}
   m_Layer: 5
   m_Name: Text_boost
   m_TagString: Untagged
@@ -1304,6 +1307,7 @@ GameObject:
   - 224: {fileID: 224000014037153804}
   - 222: {fileID: 222000010059803982}
   - 114: {fileID: 114000010527693002}
+  - 114: {fileID: 114000011653650046}
   m_Layer: 5
   m_Name: Text_move
   m_TagString: Untagged
@@ -1546,8 +1550,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Choose Profile
+  m_tid: TID_FEEDBACK_TUTO_EAT
   m_caseType: 0
+  m_replacements: []
+--- !u!114 &114000011653650046
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013349890428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_FEEDBACK_TUTO_MOVE
+  m_caseType: 1
   m_replacements: []
 --- !u!114 &114000011827809096
 MonoBehaviour:
@@ -1595,7 +1613,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: EAT TO SURVIVE!
+  m_text: Eat to survive!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 203f04b01d4954f51b800e798342df2c, type: 2}
@@ -1745,10 +1763,10 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Loading Level...
+  m_text: Loading
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
-  m_sharedMaterial: {fileID: 2100000, guid: 08bf1978b26ca4392b7f43202078f2ca, type: 2}
+  m_sharedMaterial: {fileID: 2140630, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1803,10 +1821,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 114000012943224274}
-    characterCount: 16
+    characterCount: 7
     spriteCount: 0
-    spaceCount: 1
-    wordCount: 2
+    spaceCount: 0
+    wordCount: 1
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -1968,6 +1986,20 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114000013452139524
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 175666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_GEN_LOADING
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114000013544494342
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2026,6 +2058,34 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114000013705974138
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012302972334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_FEEDBACK_TUTO_BOOST
+  m_caseType: 1
+  m_replacements: []
+--- !u!114 &114000014289651992
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 130776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_FEEDBACK_TUTO_PLAY
+  m_caseType: 1
+  m_replacements: []
 --- !u!222 &222000010059803982
 CanvasRenderer:
   m_ObjectHideFlags: 1

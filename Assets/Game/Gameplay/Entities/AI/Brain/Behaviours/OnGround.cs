@@ -42,8 +42,12 @@ namespace AI {
 				//
 				m_timer -= Time.deltaTime;
 				if (m_timer <= 0) {
-					SpawnerAreaManager.instance.UpdateAreaAt(m_machine.position, ref m_pilot);
-					Transition(OnRecover);
+					if (m_machine.GetSignal(Signals.Type.InWater)) {
+						m_machine.Drown();
+					} else {
+						SpawnerAreaManager.instance.UpdateAreaAt(m_machine.position, ref m_pilot);
+						Transition(OnRecover);
+					}
 				}
 			}
 		}
