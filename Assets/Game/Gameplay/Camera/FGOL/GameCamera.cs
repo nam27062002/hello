@@ -324,9 +324,6 @@ public class GameCamera : MonoBehaviour
 		}
 
 		UpdateBounds();
-
-		QualitySettings.vSyncCount = 0;  // VSync must be disabled
-     	Application.targetFrameRate = 30;
 	}
 
 	public void StartIntro( bool useLevelEditor = false )

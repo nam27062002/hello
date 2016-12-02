@@ -279,9 +279,8 @@ namespace AI {
 						m_regionManager = RegionManager.Instance;
 					}
 					CheckForCurrents ();
-					m_motion.externalVelocity = m_externalForces;
 					m_motion.Update();
-					m_externalForces = Vector3.zero;
+
 				}
 				if (m_enableSensor) m_sensor.Update();
 
@@ -291,6 +290,12 @@ namespace AI {
 				m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.C, m_pilot.IsActionPressed(Pilot.Action.Button_C));
 			}
 			m_inflammable.Update();
+		}
+
+		protected virtual void FixedUpdate()
+		{
+			m_motion.externalVelocity = m_externalForces;
+			m_externalForces = Vector3.zero;
 		}
 
 		public void AddExternalForce( Vector3 force )
