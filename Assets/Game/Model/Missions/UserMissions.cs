@@ -54,7 +54,7 @@ public class UserMissions
 			if(m_missions[i] == null) continue;
 
 			// Check missions in cooldown to be unlocked
-			if(m_missions[i].state == Mission.State.COOLDOWN) {
+			if(m_missions[i].state == Mission.State.COOLDOWN || m_missions[i].state == Mission.State.ACTIVATION_PENDING) {
 				// Has enough time passed for this mission's difficulty?
 				if((DateTime.UtcNow - m_missions[i].cooldownStartTimestamp).TotalMinutes >= MissionManager.GetCooldownPerDifficulty((Mission.Difficulty)i)) {
 					// Yes!
@@ -62,7 +62,9 @@ public class UserMissions
 					// Are we in-game?
 					if(!canActivate) 
 					{
-						m_missions[i].ChangeState(Mission.State.ACTIVATION_PENDING);
+						if(m_missions[i].state != Mission.State.ACTIVATION_PENDING){
+							m_missions[i].ChangeState(Mission.State.ACTIVATION_PENDING);
+						}
 					} 
 					else 
 					{
