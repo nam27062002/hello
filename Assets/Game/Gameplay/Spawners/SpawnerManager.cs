@@ -480,7 +480,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
     }
 
     private void Debug_SetActive() {
-		m_enabled = Prefs.GetBoolPlayer(DebugSettings.INGAME_SPAWNERS);        
+		//m_enabled = Prefs.GetBoolPlayer(DebugSettings.INGAME_SPAWNERS);       
     }
 #endregion
 
