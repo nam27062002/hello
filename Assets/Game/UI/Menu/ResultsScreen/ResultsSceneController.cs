@@ -84,6 +84,9 @@ public class ResultsSceneController : MonoBehaviour {
 			controller.Init(targetSetup);
 			controller.LaunchAnim();
 		}
+
+		// Make sure no slow motion was inherited!
+		Time.timeScale = 1f;
 	}
 
 	//------------------------------------------------------------------------//
