@@ -74,7 +74,7 @@ public class Mission {
 	// Cooldown
 	private DateTime m_cooldownStartTimestamp = new DateTime();
 	public DateTime cooldownStartTimestamp { get { return m_cooldownStartTimestamp; }}
-	public TimeSpan cooldownDuration { get { return new TimeSpan(0, MissionManager.cooldownPerDifficulty[(int)difficulty], 0); }}
+	public TimeSpan cooldownDuration { get { return new TimeSpan(0, MissionManager.GetCooldownPerDifficulty(difficulty), 0); }}
 	public TimeSpan cooldownElapsed { get { return DateTime.UtcNow - m_cooldownStartTimestamp; }}
 	public TimeSpan cooldownRemaining { get { return cooldownDuration - cooldownElapsed; }}
 	public float cooldownProgress { get { return Mathf.InverseLerp(0f, (float)cooldownDuration.TotalSeconds, (float)cooldownElapsed.TotalSeconds); }}

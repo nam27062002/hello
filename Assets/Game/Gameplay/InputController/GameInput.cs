@@ -65,7 +65,7 @@ public class GameInput : MonoBehaviour
 	private static Vector2[]		m_touchPosition = new Vector2[m_maxTouches];
 	private static float[] 			m_touchPressure = new float[ m_maxTouches ];
 	private static int				m_touchID;
-	
+    
 	public bool				isTiltAvailable				{get{return m_isTiltAvailable;}}
 	public bool				isUsingGyroscope			{get{return m_isUsingGyroscope;}}
 	public bool				isDodgyCalibratePosition	{get{return m_isDodgyCalibratePosition;}}
@@ -262,23 +262,26 @@ public class GameInput : MonoBehaviour
 	}
 	
 	public static TouchState CheckTouchState(int id)
-	{	
+	{
 
-		//Debug.Log("CHECKING TOUCH STATE FOR " + id + "..!!!");
-		#if ((UNITY_ANDROID || UNITY_IPHONE) && !UNITY_EDITOR)
-		// NOTE: iPhone multitouch works differently from Android multitouch. Pressing a finger down becomes touch 0, and pressing a second finger
-		// down becomes touch 1 - this is common for both platforms. However, releasing touch 0 has different behaviours: on iOS, the remaining
-		// finger still remains touch 1, on Android it becomes touch 0
-		
-		// NOTE(2): Unity Android bug: On each return to the app (after app loses focus), fingerIds get incremented by 1. Until Unity fixes this,
-		// we'll put in a temp hack that takes relative finger ids starting from the lowest one....
-		
-		//Debug.Log("Checking for id: " + id);
-		//string debugString = "Current touch ids: ";
-		
+        //Debug.Log("CHECKING TOUCH STATE FOR " + id + "..!!!");
+    #if ((UNITY_ANDROID || UNITY_IPHONE) && !UNITY_EDITOR)
+        // NOTE: iPhone multitouch works differently from Android multitouch. Pressing a finger down becomes touch 0, and pressing a second finger
+        // down becomes touch 1 - this is common for both platforms. However, releasing touch 0 has different behaviours: on iOS, the remaining
+        // finger still remains touch 1, on Android it becomes touch 0
+
+        // NOTE(2): Unity Android bug: On each return to the app (after app loses focus), fingerIds get incremented by 1. Until Unity fixes this,
+        // we'll put in a temp hack that takes relative finger ids starting from the lowest one....
+
+        //Debug.Log("Checking for id: " + id);
+        //string debugString = "Current touch ids: ";       
 		int lowestFingerId = int.MaxValue;
-		foreach(Touch touch in Input.touches)
+        int i;
+        int touchCount = Input.touchCount;
+        Touch touch;
+		for (i = 0; i < touchCount; i++)
 		{
+            touch = Input.GetTouch(i);
 			//debugString += touch.fingerId + ",";
 			if(touch.fingerId <= lowestFingerId)
 			{
@@ -289,9 +292,9 @@ public class GameInput : MonoBehaviour
 		//debugString += " | Num touches = " + Input.touchCount + " | lowestFingerId = " + lowestFingerId + " | ";
 		//Debug.Log(debugString);
 		
-		for(int i=0; i < Input.touches.Length; i++)
+		for (i=0; i < touchCount; i++)
 		{
-			Touch touch = Input.touches[i];
+			touch = Input.GetTouch(i);
 			
 			#if UNITY_IPHONE
 			int effectiveFingerId = touch.fingerId;
@@ -430,17 +433,21 @@ public class GameInput : MonoBehaviour
 		#else
 		// NOTE(2): Unity Android bug: On each return to the app (after app loses focus), fingerIds get incremented by 1. Until Unity fixes this,
 		// we'll put in a temp hack that takes relative finger ids starting from the lowest one....
-		int lowestFingerId = int.MaxValue;
-		foreach(Touch touch in Input.touches)
+		int lowestFingerId = int.MaxValue;        
+        int touchCount = Input.touchCount;
+        Touch touch;
+		for (int i = 0; i < touchCount; i++)
 		{
+            touch = Input.GetTouch(i);
 			if(touch.fingerId <= lowestFingerId)
 			{
 				lowestFingerId = touch.fingerId;
 			}
 		}
-		foreach( Touch touch in Input.touches )
+		for (int i = 0; i < touchCount; i++)
 		{
-			int effectiveFingerId = touch.fingerId - lowestFingerId;
+            touch = Input.GetTouch(i);
+            int effectiveFingerId = touch.fingerId - lowestFingerId;
 			if ( touch.phase == UnityEngine.TouchPhase.Began )
 			{
 				m_touchPosition[0].Set(touch.position.x, touch.position.y);
@@ -486,17 +493,21 @@ public class GameInput : MonoBehaviour
 		// NOTE(2): Unity Android bug: On each return to the app (after app loses focus), fingerIds get incremented by 1. Until Unity fixes this,
 		// we'll put in a temp hack that takes relative finger ids starting from the lowest one....
 		int lowestFingerId = int.MaxValue;
-		foreach(Touch touch in Input.touches)
+        int touchCount = Input.touchCount;
+        Touch touch;
+        for(int i = 0; i < touchCount; i++)
 		{
+            touch = Input.GetTouch(i);
 			if(touch.fingerId <= lowestFingerId)
 			{
 				lowestFingerId = touch.fingerId;
 			}
 		}
-		
-		foreach( Touch touch in Input.touches )
-		{
-			int effectiveFingerId = touch.fingerId - lowestFingerId;
+
+        for (int i = 0; i < touchCount; i++)
+        {
+            touch = Input.GetTouch(i);
+            int effectiveFingerId = touch.fingerId - lowestFingerId;
 			if 	((effectiveFingerId == id) && 
 			     ((touch.phase == UnityEngine.TouchPhase.Began) || (touch.phase == UnityEngine.TouchPhase.Moved) || (touch.phase == UnityEngine.TouchPhase.Stationary))
 			     )

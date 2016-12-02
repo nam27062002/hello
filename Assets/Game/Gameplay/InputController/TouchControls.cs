@@ -109,7 +109,7 @@ abstract public class TouchControls : MonoBehaviour {
 		{
 			touchAction = false;
 			//Debug.Log("ABOUT TO CHECK TOUCH STATE FOR 0..!!!");
-			TouchState touchState = GameInput.CheckTouchState(0);
+			TouchState touchState = GameInput.CheckTouchState(0);            
 			//Debug.Log("Got touchState 0 = " + touchState.ToString()); 		// NO TOUCH STATE IS BEING RECEIVED AFTER APP COMES BACK
 			if(touchState == TouchState.pressed)
 			{
@@ -117,9 +117,9 @@ abstract public class TouchControls : MonoBehaviour {
 				{
 					if(OnTouchPress())
 					{
-						m_currentTouchState = TouchState.pressed;
+                        m_currentTouchState = TouchState.pressed;
 						m_decelerate = false;
-						SetTouchObjRendering(true);
+						SetTouchObjRendering(true);                                                
 					}
 				}
 			}
@@ -131,7 +131,7 @@ abstract public class TouchControls : MonoBehaviour {
 					{							
 						m_currentTouchState = TouchState.held;
 						m_decelerate = false;
-						SetTouchObjRendering(true);
+						SetTouchObjRendering(true);                        
 					}
 				}
 
@@ -183,9 +183,9 @@ abstract public class TouchControls : MonoBehaviour {
 			if(m_boostWithSecondTouch)
 			{
 				//Debug.Log("ABOUT TO CHECK TOUCH STATE FOR 1..!!!");
-				TouchState touchState2 = GameInput.CheckTouchState(1);
-				//Debug.Log("Got touchState 1 = " + touchState2.ToString()); 		// NO TOUCH STATE IS BEING RECEIVED AFTER APP COMES BACK
-				if(touchState2 == TouchState.pressed)
+				TouchState touchState2 = GameInput.CheckTouchState(1);                
+                //Debug.Log("Got touchState 1 = " + touchState2.ToString()); 		// NO TOUCH STATE IS BEING RECEIVED AFTER APP COMES BACK
+                if (touchState2 == TouchState.pressed)
 				{
 					if(m_currentTouchState2 == TouchState.none)
 					{
