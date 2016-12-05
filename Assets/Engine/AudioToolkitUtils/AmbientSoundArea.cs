@@ -23,7 +23,7 @@ public class AmbientSoundArea : MonoBehaviour
 			if ( m_ambientSoundAO != null )
 			{
 				m_ambientSoundAO.Stop();
-				m_ambientSound = null;
+				m_ambientSoundAO = null;
 			}
 		}
 	}
