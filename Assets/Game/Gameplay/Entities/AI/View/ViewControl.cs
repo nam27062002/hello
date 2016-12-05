@@ -71,6 +71,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private Animator m_animator;
 //	private Material m_materialGold;
 	private Dictionary<int, Material[]> m_materials;
+    // All materials are stored in this list (it contains the same materials as m_materials does) to prevent memory from being allocated when looping through m_materials in entityTint()
+    private List<Material> m_allMaterials;
 
 	private bool m_boost;
 	private bool m_scared;
@@ -127,11 +129,27 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         //		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
 
         // keep the original materials, sometimes it will become Gold!
-        m_materials = new Dictionary<int, Material[]>(); 
-		Renderer[] renderers = GetComponentsInChildren<Renderer>();
-		for (int i = 0; i < renderers.Length; i++) {
-			m_materials[renderers[i].GetInstanceID()] = renderers[i].materials;
-		}
+        m_materials = new Dictionary<int, Material[]>();        
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        m_allMaterials = new List<Material>();
+        if (renderers != null) {
+            int count = renderers.Length;
+            int matCount;
+            Material[] materials;
+            for (int i = 0; i < count; i++) {
+                // Stores the materials of this renderer in a dictionary for direct access
+                materials = renderers[i].materials;
+                m_materials[renderers[i].GetInstanceID()] = materials;
+
+                // Stores the materials of this renderer in the list of all materials for sequencial access with no memory allocations
+                if (materials != null) {
+                    matCount = materials.Length;
+                    for (int j = 0; j < matCount; j++) {
+                        m_allMaterials.Add(materials[j]);
+                    }
+                }
+            }
+        }
 
 		// particle management
 		if (m_onEatenParticles.Count <= 0) {
@@ -296,14 +314,18 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 //        float blink = (Mathf.Sin(Time.time * 12.0f) + 1.0f) * 0.5f;
 //        Color col = value ? Color.Lerp(Color.black, Color.yellow, 0.5f + blink * 0.5f) : Color.black;
         Color col = value ? m_entityRushColor : Color.black;
-        foreach (KeyValuePair<int, Material[]> mats in m_materials)
+        if (m_allMaterials != null)
         {
-            foreach (Material mat in mats.Value)
+            int i;
+            int count = m_allMaterials.Count;            
+            for (i = 0; i < count; i++)
             {
-                mat.SetColor("_FresnelColor", col);
+                if (m_allMaterials[i] != null)
+                {
+                    m_allMaterials[i].SetColor("_FresnelColor", col);                        
+                }
             }
-        }
-
+        }       
     }
 
     void OnFuryToggled(bool _active, DragonBreathBehaviour.Type type)
