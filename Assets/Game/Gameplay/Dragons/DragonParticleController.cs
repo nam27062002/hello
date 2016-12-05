@@ -240,7 +240,7 @@ public class DragonParticleController : MonoBehaviour
 	/// </summary>
 	public void DeepLimit()
 	{
-		if (m_waterAirLimitInstance != null)
-		m_waterAirLimitInstance.Play();
+		if (m_waterAirLimitInstance != null && (m_waterY - m_dragonEat.mouth.position.y) > m_waterDepth)
+			m_waterAirLimitInstance.Play();
 	}
 }

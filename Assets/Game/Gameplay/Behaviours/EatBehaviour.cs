@@ -867,7 +867,18 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private void StartBlood(){
 		Vector3 bloodPos = m_mouth.position;
 		bloodPos.z = -50f;
-		m_bloodEmitter.Add(ParticleManager.Spawn(m_holdingBloodParticle.name, bloodPos + m_holdingBloodParticle.offset, m_holdingBloodParticle.path));
+		GameObject go = ParticleManager.Spawn(m_holdingBloodParticle, bloodPos + m_holdingBloodParticle.offset);
+		if ( go != null )
+		{
+			FollowTransform ft = go.GetComponent<FollowTransform>();
+			if (ft != null)
+			{
+				ft.m_follow = m_mouth;
+				ft.m_offset = m_holdingBloodParticle.offset;
+			}
+				
+		}
+		m_bloodEmitter.Add(go);
 		m_holdingBlood = 0.5f;
 	}
 
