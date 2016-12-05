@@ -88,7 +88,7 @@ class SpawnerCounter : EditorWindow
         //Results
         if (GUILayout.Button("EXPORT LEVEL DATAS"))
         {
-            textReadyToExport = new string[spawnersArray.Length];
+            textReadyToExport = new string[spawnersArray.Length+1];
             textReadyToExport = concatenateFinalArray(spawnersArray, spawnersArray.Length);
             previewLine0 = textReadyToExport[0];
             previewLine0 = textReadyToExport[2];
@@ -114,7 +114,7 @@ class SpawnerCounter : EditorWindow
     string[] concatenateFinalArray(Spawner[] initalArray, int totalObjects)
     {
 
-        string[] finalArray = new string[totalObjects];
+        string[] finalArray = new string[totalObjects+1];
         float gpCondition = 0f;
         float timeCondition = 0f;
 
@@ -127,7 +127,7 @@ class SpawnerCounter : EditorWindow
 
 
         finalArray[0] = "spawner_sku;entity_spawned (AVG);activation_gp;activation_time;respawn_time;activating_chance;minTierToActivate";
-        for (int i = 1; i < totalObjects -1; i++)
+        for (int i = 0; i < totalObjects; i++)
         {
             //Get activation GP & time
             for (int j = 0; j < initalArray[i].m_activationTriggers.Length; j++)
@@ -149,7 +149,7 @@ class SpawnerCounter : EditorWindow
                 }
             }
 
-            finalArray[i] = initalArray[i].name + ";" + initalArray[i].m_quantity.center + ";" + gpCondition + ";" + timeCondition + ";" + initalArray[i].m_spawnTime.center + ";" + initalArray[i].m_activationChance + ";" + initalArray[i].m_minTier;
+			finalArray[i+1] = initalArray[i].name + ";" + initalArray[i].m_quantity.center + ";" + gpCondition + ";" + timeCondition + ";" + initalArray[i].m_spawnTime.center + ";" + initalArray[i].m_activationChance + ";" + initalArray[i].m_minTier + ";" + initalArray[i].transform.position;
         }
         return (finalArray);
     }
