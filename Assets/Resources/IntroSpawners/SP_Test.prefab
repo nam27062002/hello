@@ -43,7 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 159356, guid: b06ee040eb3834954905e3f7c770e6e6, type: 2}
   m_entityPrefabStr: Air/PF_Canary_01
   m_quantity:
     min: 3
@@ -52,15 +51,18 @@ MonoBehaviour:
     min: 0.9
     max: 1.1
   m_rails: 1
-  m_flockBonus: 25
+  m_flockBonus: 0
   m_minTier: 0
   m_activationChance: 100
-  m_alwaysActive: 1
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
     min: 0
     max: 0
+  m_homePosMethod: 0
+  m_homePosDistance:
+    min: 1
+    max: 2
   m_maxSpawns: 1
 --- !u!114 &11422820
 MonoBehaviour:
