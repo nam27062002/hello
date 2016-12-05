@@ -35,7 +35,6 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 
 	[Comment("Mission Cooldowns (minutes)")]
 	[SerializeField] private int[] m_cooldownPerDifficulty = new int[(int)Mission.Difficulty.COUNT];	// minutes
-	public static int[] cooldownPerDifficulty { get { return instance.m_cooldownPerDifficulty; }}	// minutes
 
 	[Comment("Mission Reward Formula")]
 	[SerializeField] private int[] m_maxRewardPerDifficulty = new int[(int)Mission.Difficulty.COUNT];
@@ -139,7 +138,12 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// <returns>The cooldown per difficulty.</returns>
 	public static int GetCooldownPerDifficulty( Mission.Difficulty _difficulty )
 	{
-		return instance.m_cooldownPerDifficulty[ (int)_difficulty ];
+		// No cooldown during PlayTest
+		if(DebugSettings.isPlayTest) {
+			return 0;
+		} else {
+			return instance.m_cooldownPerDifficulty[ (int)_difficulty ];
+		}
 	}
 
 	public static int GetDragonsRequiredToUnlickMissionDifficulty( Mission.Difficulty _difficulty )

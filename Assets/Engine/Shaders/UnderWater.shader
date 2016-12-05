@@ -14,6 +14,7 @@ Shader "Hungry Dragon/UnderWater"
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_ColorBack("Background color (RGB)", color) = (1, 0, 0, 1)
 		_ColorFront("Foreground color (RGB)", color) = (1, 0, 0, 1)
+		_CausticIntensity("Caustic Intensity", Range(0, 20)) = 15
 
 	}
 
@@ -67,6 +68,7 @@ Shader "Hungry Dragon/UnderWater"
 
 				float4 _MainTex_ST;
 				float4 _ColorBack;
+				float _CausticIntensity;
 
 
 				v2f vert (appdata_t v) 
@@ -96,7 +98,7 @@ Shader "Hungry Dragon/UnderWater"
 					float z = depthR + 40.0;// i.uv.y;
 					fixed4 col = tex2D(_MainTex, 0.7f * (i.uv.xy/* + anim*/) * (z * 14.0f) * _ProjectionParams.w) * 0.1f;
 					col.w = 0.0f;
-					float w = clamp(1.0 - ((depthR + 5.0) * 0.04f), 0.0f, 1.0f);
+					float w = clamp(1.0 - ((depthR + _CausticIntensity) * 0.04f), 0.0f, 1.0f);
 //					col = lerp(fixed4(_Color) + col * w * 20.0, col, w * w);
 					col = lerp(fixed4(_ColorBack) + col * w * 15.0, col, w * w);
 					return col;

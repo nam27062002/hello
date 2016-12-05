@@ -57,7 +57,7 @@ namespace Assets.Code.Game.Spline
                 this.decreaseForceAlongSpline = decreaseForceAlongSpline;
             }
 
-            public void Update()
+            public void FixedUpdate()
             {
 				int step = 0;
 				spline.GetClosestPointToPoint (obj.transform.position, NumSteps, out t, out step);
@@ -265,7 +265,7 @@ namespace Assets.Code.Game.Spline
 			}
 		}
 
-        void Update()
+        void FixedUpdate()
         {
             m_deletedObjs.Clear();
 
@@ -281,7 +281,7 @@ namespace Assets.Code.Game.Spline
 					{
 						m_deletedObjs.Add(obj);
 					} else {
-                    	obj.Update();
+                    	obj.FixedUpdate();
 					}
                 }
                 else
