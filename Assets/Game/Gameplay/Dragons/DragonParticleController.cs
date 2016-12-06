@@ -241,6 +241,9 @@ public class DragonParticleController : MonoBehaviour
 	public void DeepLimit()
 	{
 		if (m_waterAirLimitInstance != null && (m_waterY - m_dragonEat.mouth.position.y) > m_waterDepth)
+		{
+			m_waterAirLimitInstance.transform.rotation = Quaternion.Euler(90,0,0);
 			m_waterAirLimitInstance.Play();
+		}
 	}
 }
