@@ -263,7 +263,7 @@ public class FireLightning : DragonBreathBehaviour {
 
 	void OnTriggerEnter(Collider _other)
 	{
-		if ( _other.tag == "Water" )
+		if ( _other.CompareTag("Water") )
 		{
 			m_insideWater = true;
 		}
@@ -271,7 +271,7 @@ public class FireLightning : DragonBreathBehaviour {
 
 	void OnTriggerExit(Collider _other)
 	{
-		if ( _other.tag == "Water" )
+		if ( _other.CompareTag("Water") )
 		{
 			m_insideWater = false;
 		}

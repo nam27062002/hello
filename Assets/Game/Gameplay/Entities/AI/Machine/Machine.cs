@@ -218,11 +218,11 @@ namespace AI {
 			OnTrigger(SignalTriggers.OnTriggerEnter, _params);
 			SetSignal(Signals.Type.Trigger, true, _params);
 
-			if (_other.tag == "Water") {
+			if (_other.CompareTag("Water")) {
 				SetSignal(Signals.Type.InWater, true);
 				m_viewControl.EnterWater( _other, m_pilot.impulse );
 				m_viewControl.StartSwimming();	
-			} else if (_other.tag == "Space") {
+			} else if (_other.CompareTag("Space")) {
 				m_viewControl.FlyToSpace();
 			}
 		}
@@ -234,11 +234,11 @@ namespace AI {
 			object[] _params = new object[1]{_other.gameObject};
 			OnTrigger(SignalTriggers.OnTriggerExit, _params);
 
-			if (_other.tag == "Water") {
+			if (_other.CompareTag("Water")) {
 				SetSignal(Signals.Type.InWater, false);
 				m_viewControl.ExitWater( _other, m_pilot.impulse );
 				m_viewControl.StopSwimming();	
-			} else if (_other.tag == "Space") {
+			} else if (_other.CompareTag("Space")) {
 				m_viewControl.ReturnFromSpace();
 			}
 		}
@@ -246,7 +246,7 @@ namespace AI {
 		void OnTriggerStay(Collider _other) {
 			if (m_affectedByDragonTrample) {
 				// lets check if dragon is trampling this entity
-				if (!GetSignal(Signals.Type.FallDown) && _other.gameObject.tag == "Player") {
+				if (!GetSignal(Signals.Type.FallDown) && _other.gameObject.CompareTag("Player")) {
 					// is in trample mode? - dragon has the mouth full
 					DragonEatBehaviour dragonEat = InstanceManager.player.dragonEatBehaviour; 
 

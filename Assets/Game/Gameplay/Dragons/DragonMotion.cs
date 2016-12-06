@@ -1092,7 +1092,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_impulse = m_rbody.velocity;
 			if ( m_deadTimer < 1.5f * Time.timeScale )
 			{
-				float gravity = 9.81f * m_dragonGravityModifier * 35;
+				float gravity = 9.81f * m_dragonGravityModifier * 10;
 				Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
 
 				// stroke's Drag
@@ -1236,7 +1236,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		
 	public void AddForce(Vector3 _force) {
 		m_impulse = _force;
-		ChangeState(State.Stunned);
+		if ( IsAliveState() )
+			ChangeState(State.Stunned);
 	}
 
 	public void AddExternalForce( Vector3 _force )
@@ -1484,27 +1485,31 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// <param name="_other">Other.</param>
 	void OnTriggerEnter(Collider _other)
 	{
-		if ( _other.tag == "Water" )
+		if ( _other.CompareTag("Water") )
 		{
 			// Check direction?
 
 			// Enable Bubbles
 			if (IsAliveState())
+			{
 				StartWaterMovement( _other );
-			m_previousState = State.InsideWater;
+				m_previousState = State.InsideWater;
+			}
 		}
-		else if ( _other.tag == "Space" )
+		else if ( _other.CompareTag("Space") )
 		{
 			if (IsAliveState())
+			{
 				StartSpaceMovement();
-			m_previousState = State.OuterSpace;
+				m_previousState = State.OuterSpace;
+			}
 		}
 		
 	}
 
 	void OnTriggerExit( Collider _other )
 	{
-		if ( _other.tag == "Water" )
+		if ( _other.CompareTag("Water") )
 		{
 			// Disable Bubbles
 			if (IsAliveState() )
@@ -1513,7 +1518,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_previousState = State.Idle;
 			}
 		}
-		else if ( _other.tag == "Space" )
+		else if ( _other.CompareTag("Space") )
 		{
 			if (IsAliveState())
 			{

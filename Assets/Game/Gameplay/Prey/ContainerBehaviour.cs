@@ -72,7 +72,7 @@ public class ContainerBehaviour : MonoBehaviour
 
 	void OnCollisionEnter( Collision collision )
 	{
-		if ( collision.transform.tag == "Player" )
+		if ( collision.transform.CompareTag("Player") )
 		{
 			if ( m_currentHits.m_breaksWithoutTurbo )
 			{

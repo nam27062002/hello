@@ -107,10 +107,11 @@ public class MachineEatBehaviour : EatBehaviour {
 	{
 		if (m_isPet)
 		{
-			m_mouth = transform.FindTransformRecursive("Fire_Dummy");// SuctionPoint
-			m_bite = transform.FindTransformRecursive("BitePoint");
-			m_swallow = transform.FindTransformRecursive("Pet_Head");// SwallowPoint
-			m_suction = transform.FindTransformRecursive("SuctionPoint");
+            Transform cacheTransform = transform;
+			m_mouth = cacheTransform.FindTransformRecursive("Fire_Dummy");// SuctionPoint
+			m_bite = cacheTransform.FindTransformRecursive("BitePoint");
+			m_swallow = cacheTransform.FindTransformRecursive("Pet_Head");// SwallowPoint
+			m_suction = cacheTransform.FindTransformRecursive("SuctionPoint");
 
 			if ( m_bite == null )
 				m_bite = m_mouth;	

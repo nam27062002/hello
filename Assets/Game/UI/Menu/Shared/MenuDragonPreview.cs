@@ -26,6 +26,7 @@ public class MenuDragonPreview : MonoBehaviour {
 		UNLOCKED,
 		RESULTS_IN,
 		POSE_FLY,
+		FLY,
 
 		COUNT
 	};
@@ -34,7 +35,8 @@ public class MenuDragonPreview : MonoBehaviour {
 		"idle",
 		"unlocked",
 		"results_in",
-		"pose_fly"
+		"pose_fly",
+		"fly"
 	};
 
 	//------------------------------------------------------------------//

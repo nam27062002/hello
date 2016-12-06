@@ -11,7 +11,7 @@ public class BreakableBehaviour : MonoBehaviour
 
 	void OnCollisionEnter( Collision collision )
 	{
-		if ( collision.transform.tag == "Player" )
+		if ( collision.transform.CompareTag("Player") )
 		{
 			DragonPlayer player = collision.transform.gameObject.GetComponent<DragonPlayer>();
 			DragonTier tier = player.GetTierWhenBreaking();

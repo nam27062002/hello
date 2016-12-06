@@ -25,7 +25,7 @@ public class AutoParenter : MonoBehaviour {
 				p = m_parentRoot.FindTransformRecursive(m_parentName);
 
 			if (p == null) {
-                string parentObjName = transform.name;
+                string parentObjName = t.name;
                 Debug.LogError(string.Format("Can't find transform for {0} on object {1}", m_parentName, parentObjName));
 			} else {
 				t.SetParent(p, true);

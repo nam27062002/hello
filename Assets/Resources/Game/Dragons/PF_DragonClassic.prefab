@@ -355,7 +355,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -27.049133, y: 322.80334, z: -884.75}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -757,7 +757,7 @@ MonoBehaviour:
   m_skimmingAnchor: {fileID: 488014}
   m_minSpeedSkimming: 0
   m_skimmingDistance: 3
-  m_waterAirLimitParticle: {fileID: 1000014138380770, guid: 32bd8689eb3e0e048a58b3307803829f,
+  m_waterAirLimitParticle: {fileID: 1000013716686454, guid: 32bd8689eb3e0e048a58b3307803829f,
     type: 2}
 --- !u!114 &11438592
 MonoBehaviour:
@@ -3743,7 +3743,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: 0.17451344, y: 0.015101166, z: -0.0026767515, w: 0.9845354}
+  m_LocalRotation: {x: 0.03510556, y: 0.7090141, z: -0.03538421, w: 0.7034306}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4240,7 +4240,7 @@ MonoBehaviour:
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 0.75
+      Volume: 1
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.1
       MaxInstanceCount: 0
@@ -4630,7 +4630,7 @@ MonoBehaviour:
         DisableOtherSubitems: 0
         ItemModeAudioID: 
         Clip: {fileID: 8300000, guid: 5e0eb134c27392a4da89d679585dd20b, type: 3}
-        Volume: 0.7
+        Volume: 1
         PitchShift: 0
         Pan2D: 0
         Delay: 0
@@ -4648,7 +4648,7 @@ MonoBehaviour:
         DisableOtherSubitems: 0
         ItemModeAudioID: 
         Clip: {fileID: 8300000, guid: 0949ff3831d54d04893f11faef8739cf, type: 3}
-        Volume: 0.65
+        Volume: 1
         PitchShift: 0
         Pan2D: 0
         Delay: 0
@@ -5018,45 +5018,6 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
-    - Name: hd_dragon_wind_boost
-      Loop: 1
-      loopSequenceCount: 0
-      loopSequenceOverlap: 0
-      loopSequenceRandomDelay: 0
-      loopSequenceRandomPitch: 0
-      loopSequenceRandomVolume: 0
-      DestroyOnLoad: 1
-      Volume: 0.75
-      SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 0
-      Delay: 0
-      RandomVolume: 0
-      RandomPitch: 0
-      RandomDelay: 0
-      overrideAudioSourceSettings: 0
-      audioSource_MinDistance: 1
-      audioSource_MaxDistance: 500
-      spatialBlend: 0
-      subItems:
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: 4ffecfe50cb00d44c9bf9537780999d6, type: 3}
-        Volume: 1
-        PitchShift: 2
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 0
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 1
-        RandomStartPosition: 0
-        individualSettings: []
     _volume: 1
     audioMixerGroup: {fileID: 0}
   musicPlaylists:
@@ -5072,7 +5033,7 @@ MonoBehaviour:
   _volume: 1
   _currentInspectorSelection:
     currentCategoryIndex: 0
-    currentItemIndex: 12
+    currentItemIndex: 11
     currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
@@ -5293,7 +5254,7 @@ MonoBehaviour:
   m_wingsIdleSound: Dragon_Idle_Flaps
   m_wingsFlyingSound: Dragon_Flaps
   m_eatSound: Dragon_Eat
-  m_wingsWindSound: hd_dragon_wind_boost
+  m_wingsWindSound: 
   m_wingsStrongFlap: Dragon_Strong_Flap
   m_levelUpSound: Level_Up
   m_starvingSound: 
@@ -5520,7 +5481,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013638149328}
-  serializedVersion: 2
+  serializedVersion: 4
   lengthInSec: 1
   startDelay:
     scalar: 0
@@ -5558,17 +5519,18 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
-  randomSeed: 4169123404
   looping: 1
   prewarm: 0
   playOnAwake: 0
   moveWithTransform: 0
+  autoRandomSeed: 0
   scalingMode: 1
+  randomSeed: -125843888
   InitialModule:
     serializedVersion: 2
     enabled: 1
     startLifetime:
-      scalar: 0.3
+      scalar: 0.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -5715,7 +5677,7 @@ ParticleSystem:
         atime7: 0
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
-      minColor: {r: 0.84705883, g: 0.47058824, b: 1, a: 0.5019608}
+      minColor: {r: 0.47058824, g: 0.8666667, b: 1, a: 0.5019608}
       maxColor: {r: 1, g: 0.6, b: 0.5019608, a: 0.5019608}
       minMaxState: 2
     startSize:
@@ -7253,7 +7215,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013939559234}
-  serializedVersion: 2
+  serializedVersion: 4
   lengthInSec: 1
   startDelay:
     scalar: 0
@@ -7291,17 +7253,18 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
-  randomSeed: 1062787544
   looping: 1
   prewarm: 0
   playOnAwake: 0
   moveWithTransform: 0
+  autoRandomSeed: 0
   scalingMode: 1
+  randomSeed: 1062787520
   InitialModule:
     serializedVersion: 2
     enabled: 1
     startLifetime:
-      scalar: 0.3
+      scalar: 0.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -7448,7 +7411,7 @@ ParticleSystem:
         atime7: 0
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
-      minColor: {r: 0.84705883, g: 0.47058824, b: 1, a: 0.2509804}
+      minColor: {r: 0.47058824, g: 0.93333334, b: 1, a: 0.2509804}
       maxColor: {r: 1, g: 0.6, b: 0.5019608, a: 0.2509804}
       minMaxState: 2
     startSize:

@@ -9,7 +9,7 @@ public class AmbientSoundArea : MonoBehaviour
 
 	void OnTriggerEnter( Collider other)
 	{
-		if ( other.tag == "Player" )	
+		if ( other.CompareTag("Player") )	
 		{
 			if ( !string.IsNullOrEmpty( m_ambientSound ) )
 				m_ambientSoundAO = AudioController.PlayAmbienceSound(m_ambientSound);
@@ -18,7 +18,7 @@ public class AmbientSoundArea : MonoBehaviour
 
 	void OnTriggerExit( Collider other)
 	{
-		if ( other.tag == "Player" )	
+		if ( other.CompareTag("Player") )	
 		{
 			if ( m_ambientSoundAO != null )
 			{

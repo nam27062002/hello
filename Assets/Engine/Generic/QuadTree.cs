@@ -40,18 +40,20 @@ public class QuadTree<T> where T : IQuadTreeItem {
 	private QuadTreeNode<T> m_root;
 	private List<QuadTreeNode<T>> m_nodes;
 	private Dictionary<T, List<QuadTreeNode<T>>> m_indexTable;
+    // Declared as a member to prevent memory from being allocated every time GetItemsInRange() is called
+    private HashSet<T> m_hashSet;
 
-	//------------------------------------------------------------------------//
-	// METHODS																  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Create a new QuadTree with the given dimensions.
-	/// </summary>
-	/// <param name="_x">X position in world coords.</param>
-	/// <param name="_y">Y position in world coords.</param>
-	/// <param name="_w">Wdith in world coords.</param>.</param>
-	/// <param name="_h">Height in world coords.</param>
-	public QuadTree(float _x, float _y, float _w, float _h) {
+    //------------------------------------------------------------------------//
+    // METHODS																  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Create a new QuadTree with the given dimensions.
+    /// </summary>
+    /// <param name="_x">X position in world coords.</param>
+    /// <param name="_y">Y position in world coords.</param>
+    /// <param name="_w">Wdith in world coords.</param>.</param>
+    /// <param name="_h">Height in world coords.</param>
+    public QuadTree(float _x, float _y, float _w, float _h) {
 		m_root = new QuadTreeNode<T>();
 		m_nodes = new List<QuadTreeNode<T>>();
 		m_indexTable = new Dictionary<T, List<QuadTreeNode<T>>>();
@@ -97,12 +99,18 @@ public class QuadTree<T> where T : IQuadTreeItem {
 	/// <returns>An array with all the items in range.</returns>
 	/// <param name="_rect">The rectangle to be checked.</param>
 	public T[] GetItemsInRange(Rect _rect) {
-		HashSet<T> hashSet = new HashSet<T>();	
-		PreOrderInRange(m_root, _rect, ref hashSet);
+        if (m_hashSet == null) {
+            m_hashSet = new HashSet<T>();
+        }
+        else {
+            m_hashSet.Clear();
+        }
+        
+		PreOrderInRange(m_root, _rect, ref m_hashSet);
 
 		int i = 0;
-		T[] array = new T[hashSet.Count];
-		foreach(T item in hashSet) {
+		T[] array = new T[m_hashSet.Count];
+		foreach(T item in m_hashSet) {
 			array[i] = item;
 			i++;
 		}

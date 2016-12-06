@@ -88,7 +88,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	}
 
 	private void OnCollisionEnter(Collision collision) {
-		if (collision.transform.tag == "Player") {
+		if (collision.transform.CompareTag("Player")) {
 			if (m_currentHits.m_breaksWithoutTurbo) {
 				Break();
 			} else if (m_waitTimer <= 0) {

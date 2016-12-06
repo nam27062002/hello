@@ -164,15 +164,16 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// find mouth transform 
 	protected virtual void MouthCache() 
 	{
-		m_mouth = transform.FindTransformRecursive("SuctionPoint");	// Check to eat
-		m_bite = transform.FindTransformRecursive("BitePoint");	// only to shader HSW
-		m_swallow = transform.FindTransformRecursive("SwallowPoint"); // second and last eating pre position
-		m_suction = transform.FindTransformRecursive("SuctionPoint");	// first eating prey position
+        Transform cacheTransform = transform;
+		m_mouth = cacheTransform.FindTransformRecursive("SuctionPoint");	// Check to eat
+		m_bite = cacheTransform.FindTransformRecursive("BitePoint");	// only to shader HSW
+		m_swallow = cacheTransform.FindTransformRecursive("SwallowPoint"); // second and last eating pre position
+		m_suction = cacheTransform.FindTransformRecursive("SuctionPoint");	// first eating prey position
 
 		if ( m_mouth == null )
-			m_mouth = transform.FindTransformRecursive("Fire_Dummy");
+			m_mouth = cacheTransform.FindTransformRecursive("Fire_Dummy");
 		if ( m_swallow == null )
-			m_swallow = transform.FindTransformRecursive("Dragon_Head");
+			m_swallow = cacheTransform.FindTransformRecursive("Dragon_Head");
 		if ( m_bite == null )
 			m_bite = m_mouth;	
 		if (m_suction == null)
@@ -360,7 +361,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// </summary>
 
 	/// Start Eating _prey
-	protected void Eat(AI.Machine prey)
+	protected void Eat(AI.Machine prey, bool overrideEatTime = false, float time = 0.1f)
     {
         PreyData preyData = null;
         if (m_prey != null)
@@ -383,7 +384,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 
                 preyData = m_prey[i];
                 float eatTime = Mathf.Max(m_minEatAnimTime, m_eatSpeedFactor * prey.biteResistance);
-
+                if ( overrideEatTime )
+                	eatTime = time;
                 preyData.startParent = prey.transform.parent;
                 prey.transform.parent = m_mouth;
                 preyData.startScale = prey.transform.localScale;
@@ -564,10 +566,13 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_holdingPrey.ReceiveDamage(damage * Time.deltaTime);
 		if (m_holdingPrey.IsDead())
 		{
-			StartSwallow(m_holdingPrey);
-			EndSwallow(m_holdingPrey);
 			StartBlood();
+			AI.Machine toEat = m_holdingPrey;
 			EndHold();
+			Eat( toEat, true, 0.5f);
+			// StartSwallow(m_holdingPrey);
+			// EndSwallow(m_holdingPrey);
+
 		}
 		else
 		{
@@ -867,7 +872,18 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private void StartBlood(){
 		Vector3 bloodPos = m_mouth.position;
 		bloodPos.z = -50f;
-		m_bloodEmitter.Add(ParticleManager.Spawn(m_holdingBloodParticle.name, bloodPos + m_holdingBloodParticle.offset, m_holdingBloodParticle.path));
+		GameObject go = ParticleManager.Spawn(m_holdingBloodParticle, bloodPos + m_holdingBloodParticle.offset);
+		if ( go != null )
+		{
+			FollowTransform ft = go.GetComponent<FollowTransform>();
+			if (ft != null)
+			{
+				ft.m_follow = m_mouth;
+				ft.m_offset = m_holdingBloodParticle.offset;
+			}
+				
+		}
+		m_bloodEmitter.Add(go);
 		m_holdingBlood = 0.5f;
 	}
 
