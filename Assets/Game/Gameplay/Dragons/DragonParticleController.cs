@@ -16,6 +16,7 @@ public class DragonParticleController : MonoBehaviour
 	[Space]
 	public GameObject m_bubbles;
 	public Transform m_bubblesAnchor;
+	public float m_bubblesDrowningMultiplier = 3;
 	private ParticleSystem m_bubblesInstance;
 	private ParticleSystem.MinMaxCurve m_defaultRate;
 	private ParticleSystem.MinMaxCurve m_doubleRate;
@@ -66,8 +67,8 @@ public class DragonParticleController : MonoBehaviour
 		{
 			m_defaultRate = m_bubblesInstance.emission.rate;
 			m_doubleRate = m_defaultRate;
-			m_doubleRate.constantMax *= 10;
-			m_doubleRate.constantMin *= 10;
+			m_doubleRate.constantMax *= m_bubblesDrowningMultiplier;
+			m_doubleRate.constantMin *= m_bubblesDrowningMultiplier;
 		}
 
 		m_cloudTrailInstance = InitParticles(m_cloudTrail, m_cloudTrailAnchor);
