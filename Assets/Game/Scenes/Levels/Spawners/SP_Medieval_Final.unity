@@ -18891,6 +18891,22 @@ Transform:
   m_PrefabParentObject: {fileID: 4000010716684430, guid: c5d6ce97c28894536b6293b88ebc0d42,
     type: 2}
   m_PrefabInternal: {fileID: 938996209}
+--- !u!1 &944690868 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 189300, guid: 565e403669d5f4202a7416794ea28c37, type: 2}
+  m_PrefabInternal: {fileID: 1922064565}
+--- !u!65 &944690869
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 944690868}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 2, z: 4}
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1 &945065859 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 177470, guid: 274b988f27eeeac4198e62ea73efff0d, type: 2}
@@ -38895,7 +38911,13 @@ Prefab:
       propertyPath: m_Name
       value: PF_CollectibleChest (4)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 135000010126680662, guid: 565e403669d5f4202a7416794ea28c37,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 135000010126680662, guid: 565e403669d5f4202a7416794ea28c37, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 565e403669d5f4202a7416794ea28c37, type: 2}
   m_IsPrefabParent: 0
 --- !u!4 &1922064566 stripped
