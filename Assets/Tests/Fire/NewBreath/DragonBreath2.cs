@@ -59,8 +59,9 @@ public class DragonBreath2 : MonoBehaviour
 	{
         ParticleManager.CreatePool(m_collisionFirePrefab, "Fire&Destruction/_PrefabsWIP/FireEffects/", m_collisionEmiters);
 
-        m_whipEnd = transform.FindTransformRecursive("WhipEnd");
-        m_iniCanon = transform.FindTransformRecursive("IniCanon");
+        Transform t = transform;
+        m_whipEnd = t.FindTransformRecursive("WhipEnd");
+        m_iniCanon = t.FindTransformRecursive("IniCanon");
 
         m_groundLayerMask = LayerMask.GetMask(m_groundLayer);
 

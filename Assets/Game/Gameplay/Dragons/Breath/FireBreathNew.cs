@@ -62,13 +62,15 @@ public class FireBreathNew : DragonBreathBehaviour {
     override protected void ExtendedStart() {
 
         DragonMotion dragonMotion = GetComponent<DragonMotion>();
-        Transform mouth = transform.FindTransformRecursive("mouth");
+        Transform cacheTransform = transform;
+        Transform mouth = cacheTransform.FindTransformRecursive("mouth");
         m_mouthTransform = mouth; // dragonMotion.tongue;
 
         GameObject tempFire = Instantiate<GameObject>(m_dragonFlameStandard);
-        tempFire.transform.SetParent(mouth, true);
-        tempFire.transform.localPosition = Vector3.zero;
-        tempFire.transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 180.0f));
+        Transform t = tempFire.transform;
+        t.SetParent(mouth, true);
+        t.localPosition = Vector3.zero;
+        t.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 180.0f));
         dragonFlameStandardInstance = tempFire.GetComponent<FireBreathDynamic>();
 
         tempFire = Instantiate<GameObject>(m_dragonFlameSuper);
@@ -84,8 +86,8 @@ public class FireBreathNew : DragonBreathBehaviour {
         m_length = furyBaseLength;
         m_length *= transform.localScale.x;
 
-        dragonFlameStandardInstance.setEffectScale(furyBaseLength, transform.localScale.x);
-        dragonFlameSuperInstance.setEffectScale(furyBaseLength, transform.localScale.x);
+        dragonFlameStandardInstance.setEffectScale(furyBaseLength, cacheTransform.localScale.x);
+        dragonFlameSuperInstance.setEffectScale(furyBaseLength, cacheTransform.localScale.x);
 
         m_length *= 2.0f;
         m_actualLength = m_length;

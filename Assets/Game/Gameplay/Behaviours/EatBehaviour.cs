@@ -164,15 +164,16 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// find mouth transform 
 	protected virtual void MouthCache() 
 	{
-		m_mouth = transform.FindTransformRecursive("SuctionPoint");	// Check to eat
-		m_bite = transform.FindTransformRecursive("BitePoint");	// only to shader HSW
-		m_swallow = transform.FindTransformRecursive("SwallowPoint"); // second and last eating pre position
-		m_suction = transform.FindTransformRecursive("SuctionPoint");	// first eating prey position
+        Transform cacheTransform = transform;
+		m_mouth = cacheTransform.FindTransformRecursive("SuctionPoint");	// Check to eat
+		m_bite = cacheTransform.FindTransformRecursive("BitePoint");	// only to shader HSW
+		m_swallow = cacheTransform.FindTransformRecursive("SwallowPoint"); // second and last eating pre position
+		m_suction = cacheTransform.FindTransformRecursive("SuctionPoint");	// first eating prey position
 
 		if ( m_mouth == null )
-			m_mouth = transform.FindTransformRecursive("Fire_Dummy");
+			m_mouth = cacheTransform.FindTransformRecursive("Fire_Dummy");
 		if ( m_swallow == null )
-			m_swallow = transform.FindTransformRecursive("Dragon_Head");
+			m_swallow = cacheTransform.FindTransformRecursive("Dragon_Head");
 		if ( m_bite == null )
 			m_bite = m_mouth;	
 		if (m_suction == null)
