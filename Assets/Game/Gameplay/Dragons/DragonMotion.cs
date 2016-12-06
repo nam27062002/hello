@@ -1490,14 +1490,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 			// Enable Bubbles
 			if (IsAliveState())
+			{
 				StartWaterMovement( _other );
-			m_previousState = State.InsideWater;
+				m_previousState = State.InsideWater;
+			}
 		}
 		else if ( _other.tag == "Space" )
 		{
 			if (IsAliveState())
+			{
 				StartSpaceMovement();
-			m_previousState = State.OuterSpace;
+				m_previousState = State.OuterSpace;
+			}
 		}
 		
 	}
