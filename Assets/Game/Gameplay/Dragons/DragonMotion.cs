@@ -1092,7 +1092,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_impulse = m_rbody.velocity;
 			if ( m_deadTimer < 1.5f * Time.timeScale )
 			{
-				float gravity = 9.81f * m_dragonGravityModifier * 35;
+				float gravity = 9.81f * m_dragonGravityModifier * 10;
 				Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
 
 				// stroke's Drag
@@ -1236,7 +1236,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		
 	public void AddForce(Vector3 _force) {
 		m_impulse = _force;
-		ChangeState(State.Stunned);
+		if ( IsAliveState() )
+			ChangeState(State.Stunned);
 	}
 
 	public void AddExternalForce( Vector3 _force )
