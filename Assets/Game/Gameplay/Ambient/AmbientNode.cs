@@ -53,7 +53,7 @@ public class AmbientNode : MonoBehaviour
 	/*
 	void OnTriggerEnter( Collider other)
 	{
-		if ( other.tag == "Player" )	
+		if ( other.CompareTag("Player") )	
 		{
 			// Tell Ambient Manager to use this one
 			if (m_onEnter != null)

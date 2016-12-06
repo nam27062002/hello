@@ -401,7 +401,7 @@ public class AmbientHazard : MonoBehaviour {
 	private void OnCollisionEnter(Collision _collision) {
 		// Is it the player?
 		DragonPlayer player = InstanceManager.player;
-		if(player != null && _collision.collider.tag == "Player") {
+		if(player != null && _collision.collider.CompareTag("Player")) {
 			// Apply initial damage
 			if(dragonHealthBehaviour != null) {
 				dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, DamageType.POISON, true);	// Resetting all current DOTs
@@ -431,7 +431,7 @@ public class AmbientHazard : MonoBehaviour {
 	private void OnTriggerStay(Collider _collider) {
 		// Is it the player?
 		DragonPlayer player = InstanceManager.player;
-		if(player != null && _collider.tag == "Player") {
+		if(player != null && _collider.CompareTag( "Player")) {
 			// Reset dot timer
 			if(dragonHealthBehaviour != null) {
 				dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, DamageType.POISON, true);	// Resetting all current DOTs

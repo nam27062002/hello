@@ -60,7 +60,7 @@ public class FireBallBreath : DragonBreathBehaviour {
 
 	void OnTriggerEnter(Collider _other)
 	{
-		if ( _other.tag == "Water" )
+		if ( _other.CompareTag("Water") )
 		{
 			if ( m_isFuryOn )
 			{
@@ -72,7 +72,7 @@ public class FireBallBreath : DragonBreathBehaviour {
 
 	void OnTriggerExit(Collider _other)
 	{
-		if ( _other.tag == "Water" )
+		if ( _other.CompareTag("Water") )
 		{
 			m_isFuryPaused = false;
 		}

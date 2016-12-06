@@ -163,7 +163,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 	void OnTriggerEnter(Collider _other)
 	{
-		if ( _other.tag == "Water" )
+		if ( _other.CompareTag("Water") )
 		{
 			m_insideWater = true;
 			// if trails active then activate bubles
@@ -178,7 +178,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 	void OnTriggerExit( Collider _other )
 	{
-		if ( _other.tag == "Water" )
+		if ( _other.CompareTag("Water") )
 		{
 			m_insideWater = false;
 			// if trails active

@@ -1485,7 +1485,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// <param name="_other">Other.</param>
 	void OnTriggerEnter(Collider _other)
 	{
-		if ( _other.tag == "Water" )
+		if ( _other.CompareTag("Water") )
 		{
 			// Check direction?
 
@@ -1496,7 +1496,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_previousState = State.InsideWater;
 			}
 		}
-		else if ( _other.tag == "Space" )
+		else if ( _other.CompareTag("Space") )
 		{
 			if (IsAliveState())
 			{
@@ -1509,7 +1509,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	void OnTriggerExit( Collider _other )
 	{
-		if ( _other.tag == "Water" )
+		if ( _other.CompareTag("Water") )
 		{
 			// Disable Bubbles
 			if (IsAliveState() )
@@ -1518,7 +1518,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_previousState = State.Idle;
 			}
 		}
-		else if ( _other.tag == "Space" )
+		else if ( _other.CompareTag("Space") )
 		{
 			if (IsAliveState())
 			{

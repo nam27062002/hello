@@ -84,7 +84,7 @@ public class CatapultAmmo : MonoBehaviour {
 
 	private void OnTriggerEnter(Collider _other) {
 		if (m_hasBeenTossed) {
-			if (_other.tag == "Player")  {
+			if (_other.CompareTag("Player"))  {
 				Explode(true);
 			} else if ((((1 << _other.gameObject.layer) & LayerMask.GetMask("Ground", "GroundVisible")) > 0)) {
 				Explode(false);

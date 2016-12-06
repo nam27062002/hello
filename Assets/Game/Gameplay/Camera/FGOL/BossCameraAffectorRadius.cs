@@ -58,7 +58,7 @@ public class BossCameraAffectorRadius : MonoBehaviour
 	protected void OnTriggerEnter( Collider _collider )
 	{
 		// leaving this check here to be absolutely sure that nothing will go wrong...
-		if(!m_bca.permanentlyDisabled && _collider.tag == "Player")
+		if(!m_bca.permanentlyDisabled && _collider.CompareTag("Player"))
 		{
 			NotifyBossCam();
         }
@@ -66,7 +66,7 @@ public class BossCameraAffectorRadius : MonoBehaviour
 
 	protected void OnTriggerExit(Collider _collider)
 	{
-		if (_collider.tag == "Player")
+		if (_collider.CompareTag("Player"))
 			RemoveBossCam();
 	}
 

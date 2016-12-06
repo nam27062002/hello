@@ -51,7 +51,7 @@ class RegionScraper
 
         for (int i = 0; i < polyMeshes.Length; i++)
         {
-            if (polyMeshes[i].gameObject.tag == tag)
+            if (polyMeshes[i].gameObject.CompareTag(tag))
             {
 				List<Vector3> vertices = new List<Vector3>(polyMeshes[i].keyPoints);
 				// Add polymesh position

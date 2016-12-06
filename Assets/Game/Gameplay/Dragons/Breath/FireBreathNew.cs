@@ -186,7 +186,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * length, out ground, m_groundMask)) 
 			{
 				m_actualLength = ground.distance;
-				if ( ground.collider.tag == "Water" )
+				if ( ground.collider.CompareTag("Water") )
 					hitingWater = true;
 			} 
 			else 
@@ -312,7 +312,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 
 	void OnTriggerEnter(Collider _other)
 	{
-		if ( _other.tag == "Water" )
+		if ( _other.CompareTag("Water") )
 		{
 			m_insideWater = true;
 			m_waterY = m_mouthTransform.position.y;
@@ -343,7 +343,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 
 	void OnTriggerExit(Collider _other)
 	{
-		if ( _other.tag == "Water" )
+		if ( _other.CompareTag("Water") )
 		{
 			m_insideWater = false;
 			m_waterMode = false;
