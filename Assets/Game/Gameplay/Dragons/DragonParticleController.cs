@@ -53,7 +53,7 @@ public class DragonParticleController : MonoBehaviour
 	private bool m_insideWater = false;
 	private float m_waterY = 0;
 	private float m_waterDepth = 5;
-	private const float m_waterDepthIncrease = 2;
+	private const float m_waterDepthIncrease = 8;
 	private DragonMotion m_dargonMotion;
 	private DragonEatBehaviour m_dragonEat;
 
