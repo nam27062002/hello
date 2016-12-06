@@ -16,7 +16,10 @@ public class DragonParticleController : MonoBehaviour
 	[Space]
 	public GameObject m_bubbles;
 	public Transform m_bubblesAnchor;
+	public float m_bubblesDrowningMultiplier = 3;
 	private ParticleSystem m_bubblesInstance;
+	private ParticleSystem.MinMaxCurve m_defaultRate;
+	private ParticleSystem.MinMaxCurve m_doubleRate;
 
 	[Space]
 	public GameObject m_cloudTrail;
@@ -60,6 +63,14 @@ public class DragonParticleController : MonoBehaviour
 		m_levelUpInstance = InitParticles(m_levelUp, m_levelUpAnchor);
 		m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
 		m_bubblesInstance = InitParticles(m_bubbles, m_bubblesAnchor);
+		if ( m_bubblesInstance != null )
+		{
+			m_defaultRate = m_bubblesInstance.emission.rate;
+			m_doubleRate = m_defaultRate;
+			m_doubleRate.constantMax *= m_bubblesDrowningMultiplier;
+			m_doubleRate.constantMin *= m_bubblesDrowningMultiplier;
+		}
+
 		m_cloudTrailInstance = InitParticles(m_cloudTrail, m_cloudTrailAnchor);
 		m_dargonMotion = transform.parent.GetComponent<DragonMotion>();
 		m_dragonEat = transform.parent.GetComponent<DragonEatBehaviour>();
@@ -189,6 +200,11 @@ public class DragonParticleController : MonoBehaviour
 	{
 		m_waterY = _transform.position.y;
 		m_insideWater = true;
+		if ( m_bubblesInstance != null )
+		{
+			ParticleSystem.EmissionModule emission = m_bubblesInstance.emission;
+			emission.rate = m_defaultRate;
+		}
 
 		if ( m_dargonMotion != null && Mathf.Abs(m_dargonMotion.velocity.y) >= m_minSpeedEnterSplash )
 		{
@@ -241,6 +257,15 @@ public class DragonParticleController : MonoBehaviour
 	public void DeepLimit()
 	{
 		if (m_waterAirLimitInstance != null && (m_waterY - m_dragonEat.mouth.position.y) > m_waterDepth)
+		{
+			m_waterAirLimitInstance.transform.rotation = Quaternion.Euler(90,0,0);
 			m_waterAirLimitInstance.Play();
+		}
+
+		if ( m_bubblesInstance != null )
+		{
+			ParticleSystem.EmissionModule emission = m_bubblesInstance.emission;
+			emission.rate = m_doubleRate;
+		}
 	}
 }

@@ -361,7 +361,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// </summary>
 
 	/// Start Eating _prey
-	protected void Eat(AI.Machine prey)
+	protected void Eat(AI.Machine prey, bool overrideEatTime = false, float time = 0.1f)
     {
         PreyData preyData = null;
         if (m_prey != null)
@@ -384,7 +384,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 
                 preyData = m_prey[i];
                 float eatTime = Mathf.Max(m_minEatAnimTime, m_eatSpeedFactor * prey.biteResistance);
-
+                if ( overrideEatTime )
+                	eatTime = time;
                 preyData.startParent = prey.transform.parent;
                 prey.transform.parent = m_mouth;
                 preyData.startScale = prey.transform.localScale;
@@ -565,10 +566,13 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_holdingPrey.ReceiveDamage(damage * Time.deltaTime);
 		if (m_holdingPrey.IsDead())
 		{
-			StartSwallow(m_holdingPrey);
-			EndSwallow(m_holdingPrey);
 			StartBlood();
+			AI.Machine toEat = m_holdingPrey;
 			EndHold();
+			Eat( toEat, true, 0.5f);
+			// StartSwallow(m_holdingPrey);
+			// EndSwallow(m_holdingPrey);
+
 		}
 		else
 		{
