@@ -156,7 +156,10 @@ namespace UbiBCN
 							
 							// Get the singleton's instance from it
 							m_instance = singletonObj.GetComponent<T>();
-						}
+
+                            // Prevents this game object which has been created by scripts to be saved in the scene if a instance stayed in the scene after playing by mistake
+                            m_instance.hideFlags = HideFlags.DontSaveInEditor;
+                        }
 					}
 					
 					// If there wasn't a valid prefab, create a new object to hold the instance
@@ -167,10 +170,13 @@ namespace UbiBCN
 						// Create the instance by adding it as a component of the game object we just created
 						// Store its reference so this is only done once
 						m_instance = singletonObj.AddComponent<T>();
-					}
-					
-					// Attach the singleton object as child of the Singletons container to make it have the DontDestroyOnLoad flag and to keep the hierarchy clean
-					singletonObj.transform.SetParent(containerObj.transform, false);
+
+                        // Prevents this game object which has been created by scripts to be saved in the scene if a instance stayed in the scene after playing by mistake
+                        m_instance.hideFlags = HideFlags.DontSaveInEditor;
+                    }                    
+
+                    // Attach the singleton object as child of the Singletons container to make it have the DontDestroyOnLoad flag and to keep the hierarchy clean
+                    singletonObj.transform.SetParent(containerObj.transform, false);
 					
 					// Instance has been created and stored, unlock instance creation
 					m_state = ISingleton.EState.READY;
