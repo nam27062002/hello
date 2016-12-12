@@ -63,6 +63,8 @@ namespace AI {
 
 				if (m_idleTimer > 0f) {
 					Vector3 direction = (m_machine.groundDirection == Vector3.zero)? Vector3.right : m_machine.groundDirection;
+					direction.z = 0f;
+
 					Vector3 target = m_machine.position + direction * m_side * 1.5f;
 					m_side = 1; // we'll keep walking in the same direction
 
