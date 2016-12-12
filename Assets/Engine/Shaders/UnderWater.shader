@@ -15,6 +15,7 @@ Shader "Hungry Dragon/UnderWater"
 		_ColorBack("Background color (RGB)", color) = (1, 0, 0, 1)
 		_ColorFront("Foreground color (RGB)", color) = (1, 0, 0, 1)
 		_CausticIntensity("Caustic Intensity", Range(0, 20)) = 15
+		_WaveRadius("Wave radius ", Range(0.0, 1.0)) = 0.15
 
 	}
 
@@ -69,6 +70,7 @@ Shader "Hungry Dragon/UnderWater"
 				float4 _MainTex_ST;
 				float4 _ColorBack;
 				float _CausticIntensity;
+				float _WaveRadius;
 
 
 				v2f vert (appdata_t v) 
@@ -77,7 +79,7 @@ Shader "Hungry Dragon/UnderWater"
 					float sinX = sin((v.vertex.x * 22.1f) + _Time.y) + sin((v.vertex.x * 42.2f) + _Time.y * 5.7f) + sin((v.vertex.z * 62.2f) + _Time.y * 6.52f);
 					float sinY = sin((v.vertex.z * 35.0f) + _Time.y) + sin((v.vertex.z * 65.3f) + _Time.y * 5.7f) + sin((v.vertex.x * 21.2f) + _Time.y * 6.52f);
 					float moveVertex = 1.0;// step(0.0, v.vertex.y);
-					v.vertex.y += (sinX + sinY) * 0.15 * moveVertex * v.color.w;
+					v.vertex.y += (sinX + sinY) * _WaveRadius * moveVertex * v.color.w;
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
 					o.scrPos = ComputeScreenPos(o.vertex);
