@@ -114,7 +114,6 @@ GameObject:
   - 114: {fileID: 11441476}
   - 114: {fileID: 114000012063080978}
   - 114: {fileID: 114000013261418882}
-  - 114: {fileID: 114000012013271672}
   m_Layer: 5
   m_Name: ButtonPlay
   m_TagString: Untagged
@@ -1925,59 +1924,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114000012013271672
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 186714}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57f40cd3e78c84229b0cc30131f65a6d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_curve:
-    serializedVersion: 2
-    m_Curve:
-    - time: -0.06401183
-      value: 2.805627
-      inSlope: 29.884195
-      outSlope: -126.858025
-      tangentMode: 21
-    - time: 0.0035555959
-      value: -5.765843
-      inSlope: -126.858025
-      outSlope: 608.901
-      tangentMode: 21
-    - time: 0.017611781
-      value: 2.7929823
-      inSlope: 305.21326
-      outSlope: 305.21326
-      tangentMode: 10
-    - time: 0.38973463
-      value: 3.3606634
-      inSlope: 1.5255207
-      outSlope: -81.008766
-      tangentMode: 21
-    - time: 0.5296933
-      value: -7.9772167
-      inSlope: -81.008766
-      outSlope: 45.284336
-      tangentMode: 21
-    - time: 0.8621209
-      value: 7.0765476
-      inSlope: 45.284336
-      outSlope: -51.324306
-      tangentMode: 21
-    - time: 1
-      value: 0
-      inSlope: -51.324306
-      outSlope: -51.324306
-      tangentMode: 10
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  m_curveScale: 1
 --- !u!114 &114000012063080978
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2116,12 +2062,12 @@ MonoBehaviour:
     serializedVersion: 2
     rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
-  m_enableVertexGradient: 0
+  m_enableVertexGradient: 1
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
     topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 0.39310342, b: 0, a: 1}
+    bottomRight: {r: 1, g: 0.3921569, b: 0, a: 1}
   m_fontColorGradientPreset: {fileID: 0}
   m_tintAllSprites: 0
   m_overrideHtmlColors: 0
@@ -2139,7 +2085,7 @@ MonoBehaviour:
   m_fontSizeMax: 200
   m_fontStyle: 0
   m_textAlignment: 17
-  m_characterSpacing: 0
+  m_characterSpacing: -2
   m_lineSpacing: 0
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
@@ -7590,7 +7536,7 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 186.32, y: -35.2}
+  m_AnchoredPosition: {x: 168.3, y: -35.2}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000010298894424
