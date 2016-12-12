@@ -83,6 +83,7 @@ Shader "Hungry Dragon/UnderWater"
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
 					o.scrPos = ComputeScreenPos(o.vertex);
+//					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
 					o.color = v.color;
@@ -97,12 +98,13 @@ Shader "Hungry Dragon/UnderWater"
 					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 0.02f) * CAUSTIC_RADIUS,
 										 (sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS));
 
-					float z = depthR + 40.0;// i.uv.y;
-					fixed4 col = tex2D(_MainTex, 0.7f * (i.uv.xy/* + anim*/) * (z * 14.0f) * _ProjectionParams.w) * 0.1f;
+					float z = depthR + 10.0;// i.uv.y;
+//					fixed4 col = tex2D(_MainTex, 0.7f * (i.uv.xy/* + anim*/) * (z * 14.0f) * _ProjectionParams.w) * 0.1f;
+					fixed4 col = tex2D(_MainTex, (fmod(i.uv.xy + float2(0.0 * _Time.y, 0.0), 1024.0)/* + anim*/ * 0.1) * (1.0 + (z * _ProjectionParams.w * 25.0))) * 0.51f;
 					col.w = 0.0f;
-					float w = clamp(1.0 - ((depthR + _CausticIntensity) * 0.04f), 0.0f, 1.0f);
+					float w = clamp(1.0 - ((depthR + _CausticIntensity) * 0.0125f), 0.0f, 1.0f);
 //					col = lerp(fixed4(_Color) + col * w * 20.0, col, w * w);
-					col = lerp(fixed4(_ColorBack) + col * w * 15.0, col, w * w);
+					col = lerp(fixed4(_ColorBack) + col * w * 0.0, col, w * w);
 					return col;
 				}
 			ENDCG
@@ -178,8 +180,12 @@ Shader "Hungry Dragon/UnderWater"
 					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 0.02f) * CAUSTIC_RADIUS,
 										(sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS));
 
-					float z = depthR;// i.uv.y;
-					fixed4 col = (tex2D(_MainTex, 7.0f * (i.uv.xy + anim) * (z * 10.0f) * _ProjectionParams.w) * 0.7f) + _ColorFront * 0.5;
+//					float z = depthR;// i.uv.y;
+//					fixed4 col = (tex2D(_MainTex, 7.0f * (i.uv.xy + anim) * (z * 10.0f) * _ProjectionParams.w) * 0.7f) + _ColorFront * 0.5;
+					float z = depthR + 10.0;// i.uv.y;
+//					fixed4 col = tex2D(_MainTex, 0.7f * (i.uv.xy/* + anim*/) * (z * 14.0f) * _ProjectionParams.w) * 0.1f;
+					fixed4 col = (tex2D(_MainTex, (fmod(i.uv.xy + float2(0.0 * _Time.y, 0.0), 1024.0)/* + anim*/ * 0.1) * (1.0 + (z * _ProjectionParams.w * 5.0))) * 0.7f) + _ColorFront * 0.5;
+
 //					col.w = 1.0f;//dot(col.xyz, float3(0.299, 0.587, 0.114));
 					return col;
 				}

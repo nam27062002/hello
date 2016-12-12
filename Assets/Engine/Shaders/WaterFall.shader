@@ -10,6 +10,7 @@ Shader "Hungry Dragon/Waterfall"
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_DetailTex("Detail (RGB)", 2D) = "white" {}
+		_BlendTex("Blend (RGB)", 2D) = "white" {}
 		_WaterSpeed("Speed ", Float) = 0.5
 	}
 
@@ -42,6 +43,7 @@ Shader "Hungry Dragon/Waterfall"
 				struct appdata_t {
 					float4 vertex : POSITION;
 					float2 uv : TEXCOORD0;
+					float2 uv2 : TEXCOORD1;
 					float4 color : COLOR;
 				}; 
 
@@ -49,7 +51,7 @@ Shader "Hungry Dragon/Waterfall"
 					float4 vertex : SV_POSITION;
 					float3 viewDir: TEXCOORD2;
 					float2 uv : TEXCOORD0;
-					float4 scrPos:TEXCOORD1;
+					float2 uv2:TEXCOORD1;
 					float4 color : COLOR;
 //					LIGHTING_COORDS(2, 3)
 
@@ -61,6 +63,8 @@ Shader "Hungry Dragon/Waterfall"
 				float4 _MainTex_ST;
 				sampler2D _DetailTex;
 				float4 _DetailTex_ST;
+				sampler2D _BlendTex;
+				float4 _BlendTex_ST;
 				float _WaterSpeed;
 
 
@@ -69,8 +73,8 @@ Shader "Hungry Dragon/Waterfall"
 					v2f o;
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
-					o.scrPos = ComputeScreenPos(o.vertex);
 					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+					o.uv2 = TRANSFORM_TEX(v.uv2, _BlendTex);
 					o.viewDir = o.vertex - _WorldSpaceCameraPos;
 
 					o.color = v.color;
@@ -78,20 +82,23 @@ Shader "Hungry Dragon/Waterfall"
 
 					return o;
 				}
-				
+
+
 				fixed4 frag (v2f i) : SV_Target
 				{
 					float2 anim = float2(0.0, _Time.y * _WaterSpeed);
 
 					fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy + anim)) * 1.0f;
 					col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.75)) * 0.5f;
+					fixed4 blend = tex2D(_BlendTex, 1.0f * (i.uv2.xy + anim * 1.5));
+					col = lerp(col, blend, i.color.w);
+					col.w *= 1.0 - i.color.w;
 
 					fixed3 one = fixed3(1, 1, 1);
 					col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
 
 //					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 //					col *= attenuation;
-
 
 					return col;
 				}

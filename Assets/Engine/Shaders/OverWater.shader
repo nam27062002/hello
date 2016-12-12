@@ -51,9 +51,8 @@ Shader "Hungry Dragon/OverWater"
 					float4 vertex : SV_POSITION;
 					float3 viewDir: TEXCOORD2;
 					float2 uv : TEXCOORD0;
-//					float4 scrPos:TEXCOORD1;
 					float4 color : COLOR;
-//					LIGHTING_COORDS(2, 3)
+					HG_FOG_COORDS(1)
 
 				};
 
@@ -65,6 +64,7 @@ Shader "Hungry Dragon/OverWater"
 				float4 _DetailTex_ST;
 				float _WaterSpeed;
 				float _WaveRadius;
+				HG_FOG_VARIABLES
 
 
 				v2f vert (appdata_t v) 
@@ -82,10 +82,12 @@ Shader "Hungry Dragon/OverWater"
 
 					o.color = v.color;
 //					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
+					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
 
 					return o;
 				}
-				
+
+
 				fixed4 frag (v2f i) : SV_Target
 				{
 					float2 anim = float2(0.0, _Time.y * _WaterSpeed);
@@ -95,6 +97,9 @@ Shader "Hungry Dragon/OverWater"
 
 					fixed3 one = fixed3(1, 1, 1);
 					col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
+
+
+					HG_APPLY_FOG(i, col);	// Fog
 
 //					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 //					col *= attenuation;
