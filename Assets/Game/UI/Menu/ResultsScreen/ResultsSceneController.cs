@@ -66,9 +66,9 @@ public class ResultsSceneController : MonoBehaviour {
 		// Find all scene setup prefabs for the loaded level - we have a special component for that, look for it
 		// If no setup is found (i.e. test levels), use the placeholder prefab
 		GameObject setupPrefab = m_defaultSetupPrefab;
-		ResultsSceneSetupList setupList = GameObject.FindObjectOfType<ResultsSceneSetupList>();
-		if(setupList != null && setupList.setupPrefabs.Length > 0) {
-			setupPrefab = setupList.setupPrefabs.GetRandomValue();
+		LevelData levelData = LevelManager.currentLevelData;
+		if(levelData != null && levelData.resultScenesPrefabs.Length > 0) {
+			setupPrefab = levelData.resultScenesPrefabs.GetRandomValue();
 		}
 
 		// Instantiate the prefab
