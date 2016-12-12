@@ -1,7 +1,7 @@
-﻿// MissionObjectiveDive.cs
+﻿// MissionObjectiveDiveTime.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 30/11/2016.
+// Created by Alger Ortín Castellví on 12/12/2016.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
@@ -14,16 +14,15 @@ using System;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Underwater mission objective. Swim X meters.
+/// Underwater mission objective. Spend X time underwater.
 /// </summary>
 [Serializable]
-public class MissionObjectiveDive : MissionObjective {
+public class MissionObjectiveDiveTime : MissionObjective {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Internal
 	private bool m_diving = false;
-	private Vector3 m_lastPosition = Vector3.zero;
 
 	//------------------------------------------------------------------//
 	// METHODS															//
@@ -32,7 +31,7 @@ public class MissionObjectiveDive : MissionObjective {
 	/// Parametrized constructor.
 	/// </summary>
 	/// <param name="_parentMission">The mission this objective belongs to.</param>
-	public MissionObjectiveDive(Mission _parentMission) : base(_parentMission) {
+	public MissionObjectiveDiveTime(Mission _parentMission) : base(_parentMission) {
 		// Subscribe to external events
 		Messenger.AddListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
 
@@ -77,11 +76,6 @@ public class MissionObjectiveDive : MissionObjective {
 	private void OnUnderwaterToggled(bool _activated) {
 		// Update internal flag
 		m_diving = _activated;
-
-		// Store initial dive position
-		if(_activated) {
-			m_lastPosition = InstanceManager.player.transform.position;
-		}
 	}
 
 	/// <summary>
@@ -93,7 +87,7 @@ public class MissionObjectiveDive : MissionObjective {
 		if(game != null && game.state == GameSceneController.EStates.RUNNING) {
 			// Is the dragon underwater?
 			if(m_diving) {
-				currentValue += (InstanceManager.player.transform.position - m_lastPosition).magnitude;
+				currentValue += Time.deltaTime;
 			}
 		}
 	}

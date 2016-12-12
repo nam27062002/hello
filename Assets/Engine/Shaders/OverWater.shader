@@ -11,6 +11,7 @@ Shader "Hungry Dragon/OverWater"
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_DetailTex("Detail (RGB)", 2D) = "white" {}
 		_WaterSpeed("Speed ", Float) = 0.5
+		_WaveRadius("Wave radius ", Range(0.0, 1.0)) = 0.15
 	}
 
 	SubShader {
@@ -63,6 +64,7 @@ Shader "Hungry Dragon/OverWater"
 				sampler2D _DetailTex;
 				float4 _DetailTex_ST;
 				float _WaterSpeed;
+				float _WaveRadius;
 
 
 				v2f vert (appdata_t v) 
@@ -71,7 +73,7 @@ Shader "Hungry Dragon/OverWater"
 					float sinX = sin((v.vertex.x * 22.1f) + _Time.y) + sin((v.vertex.x * 42.2f) + _Time.y * 5.7f) + sin((v.vertex.z * 62.2f) + _Time.y * 6.52f);
 					float sinY = sin((v.vertex.z * 35.0f) + _Time.y) + sin((v.vertex.z * 65.3f) + _Time.y * 5.7f) + sin((v.vertex.x * 21.2f) + _Time.y * 6.52f);
 					float moveVertex = 1.0;// step(0.0, v.vertex.y);
-					v.vertex.y += (sinX + sinY) * 0.15 * moveVertex * v.color.w;
+					v.vertex.y += (sinX + sinY) * _WaveRadius * moveVertex * v.color.w;
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
 //					o.scrPos = ComputeScreenPos(o.vertex);
