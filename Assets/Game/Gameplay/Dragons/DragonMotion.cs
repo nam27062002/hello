@@ -718,20 +718,20 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	void FixedUpdate() {
 		switch (m_state) {
 			case State.Idle:
-				UpdateIdleMovement();
+				UpdateIdleMovement(Time.fixedDeltaTime);
 				// UpdateMovement();
 				break;
 
 			case State.Fly:
 			case State.Fly_Down:
-				UpdateMovement();
+				UpdateMovement(Time.fixedDeltaTime);
 				break;
 			case State.InsideWater:
 			case State.ExitingWater:
 			{
 				//if (m_canMoveInsideWater)
 				{
-					UpdateWaterMovement();
+					UpdateWaterMovement(Time.fixedDeltaTime);
 				}
 				/*else
 				{
@@ -743,7 +743,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			case State.ExitingSpace:
 			{
 				float distance = transform.position.y - m_startParabolicPosition.y;
-				UpdateParabolicMovement( -1, distance);
+				UpdateParabolicMovement(Time.fixedDeltaTime, -1, distance);
 			}break;
 			case State.Intro:
 			{
@@ -771,7 +771,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 			case State.Dead:
 			{
-				DeadFall();
+				DeadFall( Time.fixedDeltaTime );
 			}break;
 			case State.Reviving:
 			{
@@ -823,7 +823,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// <summary>
 	/// Updates the movement.
 	/// </summary>
-	private void UpdateMovement() 
+	private void UpdateMovement( float _deltaTime) 
 	{
 		Vector3 impulse = m_controls.GetImpulse(1); 
 		if ( impulse != Vector3.zero )
@@ -849,7 +849,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_impulse = m_rbody.velocity;
 			float impulseMag = m_impulse.magnitude;
 
-			m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+			m_impulse += (acceleration * _deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
 
 			m_direction = m_impulse.normalized;
 			RotateToDirection( impulse );
@@ -858,7 +858,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 		else
 		{
-			ComputeImpulseToZero();
+			ComputeImpulseToZero(_deltaTime);
 			ChangeState( State.Idle );
 		}
 
@@ -953,7 +953,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_rbody.velocity = m_impulse;
 	}
 */
-	private void UpdateWaterMovement()
+	private void UpdateWaterMovement( float _deltaTime )
 	{
 		Vector3 impulse = m_controls.GetImpulse(1);
         if (impulse.y < 0) impulse.y *= m_inverseGravityWater;
@@ -966,13 +966,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_impulse = m_rbody.velocity;
 
 		float impulseMag = m_impulse.magnitude;
-		m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+		m_impulse += (acceleration * _deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
 		m_direction = m_impulse.normalized;
 		RotateToDirection(m_direction);
 
         m_rbody.velocity = m_impulse;
 
-        m_inverseGravityWater -= Time.deltaTime * 0.28f;
+        m_inverseGravityWater -= _deltaTime * 0.28f;
         if (m_inverseGravityWater < 0.05f) 
         {
         	m_inverseGravityWater = 0.05f;
@@ -984,7 +984,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			if (maxPushDown < (gravityAcceleration.y + m_impulse.y))
 			{	
 				m_waterDeepLimit = true;
-				Debug.Log("DeepLimit");
 				m_particleController.DeepLimit();
 			}
 		}
@@ -1015,14 +1014,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		*/
 }
 	
-	private void UpdateParabolicMovement( float sign, float distance )
+	private void UpdateParabolicMovement( float _deltaTime, float sign, float distance)
 	{
 		// Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_currentSpeedMultiplier * Time.deltaTime * 0.1f);
-		Vector3 impulse = m_controls.GetImpulse(Time.deltaTime * GetTargetForceMultiplier());
+		Vector3 impulse = m_controls.GetImpulse(_deltaTime * GetTargetForceMultiplier());
 
 		// check collision with ground, only down?
 		float moveValue = sign * (m_parabolicMovementConstant + ( m_parabolicMovementAdd * distance ));
-		m_impulse.y += Time.deltaTime * moveValue;
+		m_impulse.y += _deltaTime * moveValue;
 		/*
 		float abs = Mathf.Abs( moveValue ) * 10;
 #if DEBUG
@@ -1040,7 +1039,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_rbody.velocity = m_impulse;
 	}
 
-	private void UpdateIdleMovement() {
+	private void UpdateIdleMovement(float _deltaTime) {
 
 		Vector3 oldDirection = m_direction;
 		CheckGround( out m_raycastHit);
@@ -1048,11 +1047,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			
 			// Vector3 impulse = Vector3.up * m_speedValue * 0.1f;			
 			Vector3 impulse = Vector3.up * 1 * 0.1f;			
-			ComputeFinalImpulse(impulse);	
+			ComputeFinalImpulse(_deltaTime, impulse);	
 		}
 		else 
 		{
-			ComputeImpulseToZero();
+			ComputeImpulseToZero(_deltaTime);
 		}
 		bool slowly = true;
 		if ( current == null){
@@ -1081,7 +1080,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		
 	}
 
-	private void DeadFall(){
+	private void DeadFall(float _deltaTime){
 
 		Vector3 oldDirection = m_direction;
 		CheckGround( out m_raycastHit);
@@ -1101,7 +1100,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}
 			else
 			{
-				ComputeImpulseToZero();
+				ComputeImpulseToZero(_deltaTime);
 			}
 		}
 
@@ -1123,22 +1122,22 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	}
 
 
-	private void ComputeFinalImpulse(Vector3 _impulse) {
+	private void ComputeFinalImpulse(float _deltaTime ,Vector3 _impulse) {
 		// we keep the velocity value
 		{
 			// on air impulse formula, we don't fully change the velocity vector 
 			// m_impulse = Vector3.Lerp(m_impulse, _impulse, m_impulseTransformationSpeed * Time.deltaTime);
 			// m_impulse.Normalize();
 
-			Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref _impulse, m_velocityBlendRate * Time.deltaTime, 8.0f);
+			Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref _impulse, m_velocityBlendRate * _deltaTime, 8.0f);
 			m_direction = m_impulse.normalized;
 		}
 	}
 
-	private void ComputeImpulseToZero()
+	private void ComputeImpulseToZero(float _deltaTime)
 	{
 		float impulseMag = m_impulse.magnitude;
-		m_impulse += -(m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime);
+		m_impulse += -(m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime);
 		m_direction = m_impulse.normalized;
 	}
 
