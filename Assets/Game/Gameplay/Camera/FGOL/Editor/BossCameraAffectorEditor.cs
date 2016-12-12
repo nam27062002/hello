@@ -149,7 +149,7 @@ public class BossCameraAffectorEditor : Editor
 			case PrefabType.ModelPrefab:
 				PrefabUtility.ReplacePrefab(m_instance, m_affector, ReplacePrefabOptions.ConnectToPrefab);
 				// save the assets automatically so that the prefab will be applied on disc.
-				EditorApplication.SaveAssets();
+				AssetDatabase.SaveAssets();
 				DestroyImmediate(m_instance);
 				break;
 		}

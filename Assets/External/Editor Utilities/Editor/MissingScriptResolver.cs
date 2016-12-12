@@ -245,7 +245,7 @@ This component's properties are shown below to help you determine which script i
 				EditorUtility.SetDirty( this.target );
 				//EditorApplication.SaveScene();	// [AOC] Deprecated, replaced by the following line
 				EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
-				EditorApplication.SaveAssets();
+				AssetDatabase.SaveAssets();
 
 				// Check for more objects with missing scripts
 				if( Selection.activeGameObject.activeInHierarchy )
