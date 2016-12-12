@@ -1,7 +1,7 @@
-﻿// ResultsSceneSetupList.cs
+﻿// LevelData.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 27/09/2016.
+// Created by Alger Ortín Castellví on 12/12/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
@@ -13,10 +13,10 @@ using UnityEngine;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// List all the possible result scenes in a single level.
-/// Each level should have at least one of these (typically in the Art scene).
+/// Scriptable object meant to store all kind of data related to a game level.
 /// </summary>
-public class ResultsSceneSetupList : MonoBehaviour {
+[CreateAssetMenu]
+public class LevelData : ScriptableObject {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -24,20 +24,43 @@ public class ResultsSceneSetupList : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Exposed setup
-	[SerializeField] private GameObject[] m_setupPrefabs = null;
-	public GameObject[] setupPrefabs {
-		get { return m_setupPrefabs; }
+	// Exposed members
+	[SerializeField] private string m_debugName = "New Level";
+	public string debugName {
+		get { return m_debugName; }
+	}
+
+	// [AOC] TODO!!
+	// [Separator("Scenes")]
+	// [InfoBox("Don't forget to add all the referenced scenes to the Build Settings!")]
+	// [SerializeField] private string m_spawnersScene = null;
+	// [SerializeField] private string m_collisionScene = null;
+	// [SerializeField] private string m_soundScene = null;
+	// [SerializeField] private string[] m_artScenes = null;
+
+	[Separator("Other Data")]
+	[SerializeField] private GameObject[] m_resultScenesPrefabs = null;
+	public GameObject[] resultScenesPrefabs {
+		get { return m_resultScenesPrefabs; }
+	}
+
+	// Volatile members
+	// Not stored, must be initialized in runtime using the Init method.
+	private DefinitionNode m_def = null;
+	public DefinitionNode def {
+		get { return m_def; }
 	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization.
+	/// Initialize volatile data for this level data instance.
 	/// </summary>
-	private void Awake() {
-
+	/// <param name="_levelDef">The definition of the level to be linked with this data.</param>
+	public void Init(DefinitionNode _levelDef) {
+		// Just store level's def
+		m_def = _levelDef;
 	}
 
 	//------------------------------------------------------------------------//

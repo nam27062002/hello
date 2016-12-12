@@ -30,7 +30,7 @@ public class CPLevelSelector : MonoBehaviour {
 	[SerializeField] private TMP_Dropdown m_dropdown = null;
 
 	// Internal
-	private List<DefinitionNode> m_levelDefs = null;
+	private List<LevelData> m_levelDatas = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -59,24 +59,29 @@ public class CPLevelSelector : MonoBehaviour {
 	/// </summary>
 	private void LoadLevels() {
 		// Skip if already loaded
-		if(m_levelDefs != null) return;
+		if(m_levelDatas != null) return;
 
 		// If the current screen is NOT the loading screen, we're good, everything is loaded
 		if(GameSceneManager.currentScene == LoadingSceneController.NAME) return;
 
 		// Refresh the levels list
-		m_levelDefs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.LEVELS, ref m_levelDefs);
+		m_levelDatas = new List<LevelData>();
+		List<string> levelSkus = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.LEVELS);
 
 		// Update dropdown
 		m_dropdown.ClearOptions();
 		int selectedIdx = 0;
-		for(int i = 0; i < m_levelDefs.Count; i++) {
+		for(int i = 0; i < levelSkus.Count; i++) {
+			// Load level data
+			LevelData data = LevelManager.GetLevelData(levelSkus[i]);
+			if(data == null) continue;
+			m_levelDatas.Add(data);
+
 			// Add the option
-			m_dropdown.options.Add(new TMP_Dropdown.OptionData(m_levelDefs[i].GetLocalized("tidName")));
+			m_dropdown.options.Add(new TMP_Dropdown.OptionData(data.debugName));
 
 			// Is it the current level?
-			if(m_levelDefs[i].sku == UsersManager.currentUser.currentLevel) {
+			if(levelSkus[i] == UsersManager.currentUser.currentLevel) {
 				selectedIdx = i;
 			}
 		}
@@ -96,11 +101,11 @@ public class CPLevelSelector : MonoBehaviour {
 	/// </summary>
 	public void OnValueChanged(int _newValue) {
 		// Ignore if we're not ready
-		if(m_levelDefs == null) return;
+		if(m_levelDatas == null) return;
 
 		// If different than current one, update and save persistence
-		_newValue = Mathf.Clamp(_newValue, 0, m_levelDefs.Count - 1);
-		string newLevelSku = m_levelDefs[_newValue].sku;
+		_newValue = Mathf.Clamp(_newValue, 0, m_levelDatas.Count - 1);
+		string newLevelSku = m_levelDatas[_newValue].def.sku;
 		if(newLevelSku != UsersManager.currentUser.currentLevel) {
 			UsersManager.currentUser.currentLevel = newLevelSku;
 			PersistenceManager.Save();

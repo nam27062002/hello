@@ -79,7 +79,8 @@ namespace AI {
 					case IdleState.Hang_up:
 						m = (m_machine.position - m_target).sqrMagnitude;
 						if (m < 2f) {
-							Transition(OnMove);
+							m_machine.upVector = Vector3.down;
+							Transition(OnMove);;
 						}
 						break;
 
