@@ -229,6 +229,7 @@ public class MissionObjective {
 			case "kill":			return new MissionObjectiveKill(_parentMission);
 			case "burn":			return new MissionObjectiveBurn(_parentMission);
 			case "dive":			return new MissionObjectiveDive(_parentMission);
+			case "dive_time":		return new MissionObjectiveDiveTime(_parentMission);
 			case "fire_rush":		return new MissionObjectiveFireRush(_parentMission);
 		}
 
