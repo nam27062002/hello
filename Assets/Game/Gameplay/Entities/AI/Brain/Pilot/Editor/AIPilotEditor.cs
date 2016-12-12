@@ -136,7 +136,7 @@ public class AIPilotEditor : Editor {
 	/// Perform all the required operations to load the object's data.
 	/// </summary>
 	private void Load() {
-		m_targetAIPilot.LoadFromJson();
+		m_targetAIPilot.LoadFromJson(true);
 	}
 
 	/// <summary>
