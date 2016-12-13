@@ -50,14 +50,12 @@ public class Actions {
 			availableActions.Add(m_goOn);
 		}
 
-		availableActions.Add(m_home);
-
 		//----------------------------------------------------
 		return availableActions.GetRandomValue();
 	}
 
 	public Action GetDefaultAction() {
-		if (UnityEngine.Random.Range(0f, 1f) < 0.5f) {
+		if (m_goOn.active && UnityEngine.Random.Range(0f, 1f) < 0.5f) {
 			return m_goOn;
 		} else {
 			return m_home;

@@ -11,6 +11,7 @@ Shader "Hungry Dragon/OverWater"
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_DetailTex("Detail (RGB)", 2D) = "white" {}
 		_WaterSpeed("Speed ", Float) = 0.5
+		_WaveRadius("Wave radius ", Range(0.0, 1.0)) = 0.15
 	}
 
 	SubShader {
@@ -50,9 +51,8 @@ Shader "Hungry Dragon/OverWater"
 					float4 vertex : SV_POSITION;
 					float3 viewDir: TEXCOORD2;
 					float2 uv : TEXCOORD0;
-//					float4 scrPos:TEXCOORD1;
 					float4 color : COLOR;
-//					LIGHTING_COORDS(2, 3)
+					HG_FOG_COORDS(1)
 
 				};
 
@@ -63,6 +63,8 @@ Shader "Hungry Dragon/OverWater"
 				sampler2D _DetailTex;
 				float4 _DetailTex_ST;
 				float _WaterSpeed;
+				float _WaveRadius;
+				HG_FOG_VARIABLES
 
 
 				v2f vert (appdata_t v) 
@@ -71,7 +73,7 @@ Shader "Hungry Dragon/OverWater"
 					float sinX = sin((v.vertex.x * 22.1f) + _Time.y) + sin((v.vertex.x * 42.2f) + _Time.y * 5.7f) + sin((v.vertex.z * 62.2f) + _Time.y * 6.52f);
 					float sinY = sin((v.vertex.z * 35.0f) + _Time.y) + sin((v.vertex.z * 65.3f) + _Time.y * 5.7f) + sin((v.vertex.x * 21.2f) + _Time.y * 6.52f);
 					float moveVertex = 1.0;// step(0.0, v.vertex.y);
-					v.vertex.y += (sinX + sinY) * 0.15 * moveVertex * v.color.w;
+					v.vertex.y += (sinX + sinY) * _WaveRadius * moveVertex * v.color.w;
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
 //					o.scrPos = ComputeScreenPos(o.vertex);
@@ -80,10 +82,12 @@ Shader "Hungry Dragon/OverWater"
 
 					o.color = v.color;
 //					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
+					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
 
 					return o;
 				}
-				
+
+
 				fixed4 frag (v2f i) : SV_Target
 				{
 					float2 anim = float2(0.0, _Time.y * _WaterSpeed);
@@ -93,6 +97,9 @@ Shader "Hungry Dragon/OverWater"
 
 					fixed3 one = fixed3(1, 1, 1);
 					col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
+
+
+					HG_APPLY_FOG(i, col);	// Fog
 
 //					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 //					col *= attenuation;

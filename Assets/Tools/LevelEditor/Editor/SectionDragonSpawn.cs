@@ -86,7 +86,7 @@ namespace LevelEditor {
 								newDragon = options[newIdx];
 								LevelEditor.settings.testDragon = newDragon;
 								EditorUtility.SetDirty(LevelEditor.settings);
-								EditorApplication.SaveAssets();
+								AssetDatabase.SaveAssets();
 							}
 						} EditorGUILayoutExt.EndHorizontalSafe();
 						GUI.enabled = true;
@@ -97,7 +97,7 @@ namespace LevelEditor {
 							{
 								LevelEditor.settings.useIntro = intro;
 								EditorUtility.SetDirty(LevelEditor.settings);
-								EditorApplication.SaveAssets();
+								AssetDatabase.SaveAssets();
 							}
 						} EditorGUILayoutExt.EndHorizontalSafe();
 

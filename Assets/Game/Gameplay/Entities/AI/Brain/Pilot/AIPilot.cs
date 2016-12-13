@@ -238,7 +238,7 @@ namespace AI {
 		/// </summary>
 		public void OnAfterDeserialize() {
 			// Load from the json string
-			LoadFromJson();
+			LoadFromJson(false);
 		}
 
         /// <summary>
@@ -285,7 +285,7 @@ namespace AI {
         /// <summary>
         /// Load from the json.
         /// </summary>
-        public void LoadFromJson() {
+		public void LoadFromJson(bool _force) {
             // [AOC] Since Unity doesn't serialize custom classes inheriting from an abstract class, 
             //		 we'll serialize it on our own via reflection into a json
             //		 Copied from HSX
@@ -294,7 +294,7 @@ namespace AI {
                 return;
             }
 
-            if (!BrainDataBase.instance.HasDataFor(m_databaseKey)) {
+			if (_force || !BrainDataBase.instance.HasDataFor(m_databaseKey)) {
                 // Parse the JSON
                 if (string.IsNullOrEmpty(m_serializedJson)) m_serializedJson = "[]";    // [AOC] Make sure it's a valid json string
                 List<object> serializedDatas = FGOLMiniJSON.Json.Deserialize(m_serializedJson) as List<object>;

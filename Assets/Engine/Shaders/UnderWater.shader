@@ -15,6 +15,7 @@ Shader "Hungry Dragon/UnderWater"
 		_ColorBack("Background color (RGB)", color) = (1, 0, 0, 1)
 		_ColorFront("Foreground color (RGB)", color) = (1, 0, 0, 1)
 		_CausticIntensity("Caustic Intensity", Range(0, 20)) = 15
+		_WaveRadius("Wave radius ", Range(0.0, 1.0)) = 0.15
 
 	}
 
@@ -69,6 +70,7 @@ Shader "Hungry Dragon/UnderWater"
 				float4 _MainTex_ST;
 				float4 _ColorBack;
 				float _CausticIntensity;
+				float _WaveRadius;
 
 
 				v2f vert (appdata_t v) 
@@ -77,10 +79,11 @@ Shader "Hungry Dragon/UnderWater"
 					float sinX = sin((v.vertex.x * 22.1f) + _Time.y) + sin((v.vertex.x * 42.2f) + _Time.y * 5.7f) + sin((v.vertex.z * 62.2f) + _Time.y * 6.52f);
 					float sinY = sin((v.vertex.z * 35.0f) + _Time.y) + sin((v.vertex.z * 65.3f) + _Time.y * 5.7f) + sin((v.vertex.x * 21.2f) + _Time.y * 6.52f);
 					float moveVertex = 1.0;// step(0.0, v.vertex.y);
-					v.vertex.y += (sinX + sinY) * 0.15 * moveVertex * v.color.w;
+					v.vertex.y += (sinX + sinY) * _WaveRadius * moveVertex * v.color.w;
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
 					o.scrPos = ComputeScreenPos(o.vertex);
+//					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
 					o.color = v.color;
@@ -95,12 +98,13 @@ Shader "Hungry Dragon/UnderWater"
 					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 0.02f) * CAUSTIC_RADIUS,
 										 (sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS));
 
-					float z = depthR + 40.0;// i.uv.y;
-					fixed4 col = tex2D(_MainTex, 0.7f * (i.uv.xy/* + anim*/) * (z * 14.0f) * _ProjectionParams.w) * 0.1f;
+					float z = depthR + 10.0;// i.uv.y;
+//					fixed4 col = tex2D(_MainTex, 0.7f * (i.uv.xy/* + anim*/) * (z * 14.0f) * _ProjectionParams.w) * 0.1f;
+					fixed4 col = tex2D(_MainTex, (fmod(i.uv.xy + float2(0.0 * _Time.y, 0.0), 1024.0)/* + anim*/ * 0.1) * (1.0 + (z * _ProjectionParams.w * 25.0))) * 0.51f;
 					col.w = 0.0f;
-					float w = clamp(1.0 - ((depthR + _CausticIntensity) * 0.04f), 0.0f, 1.0f);
+					float w = clamp(1.0 - ((depthR + _CausticIntensity) * 0.0125f), 0.0f, 1.0f);
 //					col = lerp(fixed4(_Color) + col * w * 20.0, col, w * w);
-					col = lerp(fixed4(_ColorBack) + col * w * 15.0, col, w * w);
+					col = lerp(fixed4(_ColorBack) + col * w * 0.0, col, w * w);
 					return col;
 				}
 			ENDCG
@@ -176,8 +180,12 @@ Shader "Hungry Dragon/UnderWater"
 					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 0.02f) * CAUSTIC_RADIUS,
 										(sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS));
 
-					float z = depthR;// i.uv.y;
-					fixed4 col = (tex2D(_MainTex, 7.0f * (i.uv.xy + anim) * (z * 10.0f) * _ProjectionParams.w) * 0.7f) + _ColorFront * 0.5;
+//					float z = depthR;// i.uv.y;
+//					fixed4 col = (tex2D(_MainTex, 7.0f * (i.uv.xy + anim) * (z * 10.0f) * _ProjectionParams.w) * 0.7f) + _ColorFront * 0.5;
+					float z = depthR + 10.0;// i.uv.y;
+//					fixed4 col = tex2D(_MainTex, 0.7f * (i.uv.xy/* + anim*/) * (z * 14.0f) * _ProjectionParams.w) * 0.1f;
+					fixed4 col = (tex2D(_MainTex, (fmod(i.uv.xy + float2(0.0 * _Time.y, 0.0), 1024.0)/* + anim*/ * 0.1) * (1.0 + (z * _ProjectionParams.w * 5.0))) * 0.7f) + _ColorFront * 0.5;
+
 //					col.w = 1.0f;//dot(col.xyz, float3(0.299, 0.587, 0.114));
 					return col;
 				}

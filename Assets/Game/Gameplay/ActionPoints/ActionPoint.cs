@@ -15,7 +15,7 @@ public class ActionPoint : MonoBehaviour, IQuadTreeItem {
 
 
 	void Awake() {
-		m_boundingRect = new Rect(transform.position - Vector3.one * m_radius, Vector2.one * m_radius);
+		m_boundingRect = new Rect(transform.position - Vector3.one * m_radius, Vector2.one * m_radius * 2f);
 	}
 
 	void Start() {

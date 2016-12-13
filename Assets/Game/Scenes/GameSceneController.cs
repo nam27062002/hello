@@ -323,7 +323,8 @@ public class GameSceneController : GameSceneControllerBase {
 		switch(_newState) {
 			case EStates.LOADING_LEVEL: {
 				// Start loading current level
-				m_levelLoadingTask = LevelManager.LoadLevel(UsersManager.currentUser.currentLevel);
+				LevelManager.SetCurrentLevel(UsersManager.currentUser.currentLevel);
+				m_levelLoadingTask = LevelManager.LoadLevel();
 
 				// Initialize minimum loading time as well
 				m_timer = MIN_LOADING_TIME;
@@ -339,7 +340,7 @@ public class GameSceneController : GameSceneControllerBase {
 			} break;
 
 			case EStates.COUNTDOWN: {
-				LevelManager.SetArtSceneActive(UsersManager.currentUser.currentLevel);
+				LevelManager.SetArtSceneActive();
 				// Start countdown timer
 				m_timer = COUNTDOWN;
 

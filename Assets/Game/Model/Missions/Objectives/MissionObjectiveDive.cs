@@ -14,7 +14,7 @@ using System;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Underwater mission objective. Spend X time underwater.
+/// Underwater mission objective. Swim X meters.
 /// </summary>
 [Serializable]
 public class MissionObjectiveDive : MissionObjective {
@@ -23,6 +23,7 @@ public class MissionObjectiveDive : MissionObjective {
 	//------------------------------------------------------------------//
 	// Internal
 	private bool m_diving = false;
+	private Vector3 m_lastPosition = Vector3.zero;
 
 	//------------------------------------------------------------------//
 	// METHODS															//
@@ -76,6 +77,11 @@ public class MissionObjectiveDive : MissionObjective {
 	private void OnUnderwaterToggled(bool _activated) {
 		// Update internal flag
 		m_diving = _activated;
+
+		// Store initial dive position
+		if(_activated) {
+			m_lastPosition = InstanceManager.player.transform.position;
+		}
 	}
 
 	/// <summary>
@@ -87,7 +93,7 @@ public class MissionObjectiveDive : MissionObjective {
 		if(game != null && game.state == GameSceneController.EStates.RUNNING) {
 			// Is the dragon underwater?
 			if(m_diving) {
-				currentValue += Time.deltaTime;
+				currentValue += (InstanceManager.player.transform.position - m_lastPosition).magnitude;
 			}
 		}
 	}

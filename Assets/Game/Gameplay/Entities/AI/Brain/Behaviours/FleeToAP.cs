@@ -90,7 +90,7 @@ namespace AI {
 							action = ap.GetDefaultAction();
 						}
 
-						if (action != null) {
+						if (action != null) {							
 							if (action.id == Actions.Id.Home) {
 								Transition(OnGoBackHome);
 								return;

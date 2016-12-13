@@ -33,7 +33,7 @@ Shader "Hungry Dragon/Texture Blending Vertex Color + Lightmap And Recieve Shado
 					float4 vertex : POSITION;
 					float2 texcoord : TEXCOORD0;
 					float4 color : COLOR;
-					float3 normal : NORMAL;
+//					float3 normal : NORMAL;
 					#if LIGHTMAP_ON
 					float4 texcoord1 : TEXCOORD1;
 					#endif

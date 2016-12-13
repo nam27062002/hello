@@ -214,9 +214,9 @@ public class ActiveMonobehaviourProfiler : MonoBehaviour
 		}
 
 		DateTime startProcessTime = DateTime.UtcNow;
-		uint prevHeap = UnityEngine.Profiler.usedHeapSize;			
+		uint prevHeap = UnityEngine.Profiling.Profiler.usedHeapSize;			
 		script.SendMessage(method);
-		memory = (float)(UnityEngine.Profiler.usedHeapSize - prevHeap) / 1000;
+		memory = (float)(UnityEngine.Profiling.Profiler.usedHeapSize - prevHeap) / 1000;
 		time = (DateTime.UtcNow - startProcessTime).TotalMilliseconds;
 	}
 #endif
