@@ -5,7 +5,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Lightmap And Recieve Shadow BumpMap (On Line Decorations)" 
+Shader "Hungry Dragon/Lightmap And Recieve Shadow with Normal Map (On Line Decorations)"
 {
 	Properties 
 	{
