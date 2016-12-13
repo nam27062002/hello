@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: dungeon_floor
-  m_Shader: {fileID: 4800000, guid: f493c23147f904dd28c1dbe194f90bd9, type: 3}
+  m_Shader: {fileID: 4800000, guid: d6461419cb5f2ad4b84347dd9ba18781, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -58,6 +58,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
+        name: _NormalTex
+      second:
+        m_Texture: {fileID: 2800000, guid: 81a3cde9e28179549924891b2c9af10f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
         name: _OcclusionMap
       second:
         m_Texture: {fileID: 0}
@@ -104,11 +110,17 @@ Material:
         name: _Mode
       second: 0
     - first:
+        name: _NormalStrength
+      second: 2
+    - first:
         name: _OcclusionStrength
       second: 1
     - first:
         name: _Parallax
       second: 0.02
+    - first:
+        name: _Specular
+      second: 2
     - first:
         name: _SrcBlend
       second: 1
