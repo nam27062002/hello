@@ -5,7 +5,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Lightmap And Recieve Shadow with Normal Map (On Line Decorations)"
+Shader "Hungry Dragon/Lightmap And Recieve Shadow with Normal Map and overlay (On Line Decorations)"
 {
 	Properties 
 	{
@@ -107,6 +107,9 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with Normal Map (On Line Decor
 				fixed4 frag (v2f i) : SV_Target
 				{
 					fixed4 col = tex2D(_MainTex, i.texcoord) * i.color;	// Color
+					fixed4 one = fixed4(1, 1, 1, 1);
+					// col = one- (one-col) * (1-(i.color-fixed4(0.5,0.5,0.5,0.5)));	// Soft Light
+					col = one - 2 * (one - i.color) * (one - col);	// Overlay
 
 					float4 encodedNormal = tex2D(_NormalTex, _NormalTex_ST.xy * i.texcoord + _NormalTex_ST.zw);
 
@@ -116,7 +119,6 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with Normal Map (On Line Decor
 					float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
 
 					fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
-
 
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col *= attenuation;
