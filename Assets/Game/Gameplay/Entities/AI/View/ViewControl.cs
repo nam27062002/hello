@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
+
 
 public class ViewControl : MonoBehaviour, ISpawnable {
 
@@ -39,6 +41,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SeparatorAttribute("Eaten")]
 	[SerializeField] private List<ParticleData> m_onEatenParticles = new List<ParticleData>();
 	[SerializeField] private string m_onEatenAudio;
+	private AudioObject m_onEatenAudioAO;
 
 	[SeparatorAttribute("Water")]
 	[SerializeField] private float m_speedToWaterSplash;
@@ -58,7 +61,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	protected Vector3 m_attackTargetPosition;
 	public Vector3 attackTargetPosition { get{ return m_attackTargetPosition; } set{ m_attackTargetPosition = value; } }
 	[SerializeField] private string m_onScaredAudio;
+	private AudioObject m_onScaredAudioAO;
 	[SerializeField] private string m_onPanicAudio;
+	private AudioObject m_onPanicAudioAO;
 	[SerializeField] private string m_idleAudio;
 	private AudioObject m_idleAudioAO;
 
@@ -197,7 +202,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	protected virtual void animEventsOnAttackStart() {
 		if ( !string.IsNullOrEmpty( m_onAttackAudio ) )
-			m_onAttackAudioAO = AudioController.Play( m_onAttackAudio, transform.position );
+			m_onAttackAudioAO = AudioController.Play( m_onAttackAudio, transform );
 	}
 
 	protected virtual void animEventsOnAttackEnd() {
@@ -306,6 +311,29 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     void OnDisable() {
         if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
 			m_idleAudioAO.Stop();
+
+			// Return parented audio objects if needed
+		RemoveAudioParent( m_idleAudioAO );
+		RemoveAudioParent( m_onAttackAudioAO );
+
+		RemoveAudioParent( m_onEatenAudioAO );
+		RemoveAudioParent( m_onScaredAudioAO );
+		RemoveAudioParent( m_onPanicAudioAO );
+	}
+
+	void RemoveAudioParent(AudioObject ao)
+	{
+		if ( ao != null && ao.transform.parent == transform )
+		{
+			InstanceManager.instance.StartCoroutine( Unparent( ao.transform ));
+		}
+	}
+
+	IEnumerator Unparent( Transform go )
+	{
+		yield return null;
+		go.parent = null;
+		yield return null;
 	}
 
 
@@ -520,7 +548,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_scared != _scared) {
 			m_scared = _scared;
 			if ( !string.IsNullOrEmpty(m_onScaredAudio) )
-				AudioController.Play(m_onScaredAudio, transform.position);
+			{
+				m_onScaredAudioAO = AudioController.Play(m_onScaredAudio, transform);
+			}
 			m_animator.SetBool("scared", _scared);
 		}
 	}
@@ -535,7 +565,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				m_animator.speed = 0f;
 			} else {
 				if ( !string.IsNullOrEmpty(m_onPanicAudio) )
-					AudioController.Play( m_onPanicAudio, transform.position);
+					m_onPanicAudioAO = AudioController.Play( m_onPanicAudio, transform);
 				m_animator.SetBool("hold", _panic);
 			}
 		}
@@ -663,7 +693,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	public void BeginSwallowed()
 	{
 		if (m_entity.isOnScreen && !string.IsNullOrEmpty(m_onEatenAudio)) {
-			AudioController.Play(m_onEatenAudio, transform.position);
+			m_onEatenAudioAO = AudioController.Play(m_onEatenAudio, transform);
 		}
 	}
 
