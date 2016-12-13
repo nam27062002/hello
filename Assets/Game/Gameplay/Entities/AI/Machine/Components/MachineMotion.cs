@@ -102,6 +102,10 @@ namespace AI {
 			base.Attach (_machine, _entity, _pilot);
 			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
 			m_rbody = m_machine.GetComponent<Rigidbody>();
+			if ( m_rbody != null )
+			{
+				m_rbody.interpolation = RigidbodyInterpolation.None;
+			}
 			m_viewControl = m_machine.GetComponent<ViewControl>();
 
 			m_machineTransform = m_machine.transform;

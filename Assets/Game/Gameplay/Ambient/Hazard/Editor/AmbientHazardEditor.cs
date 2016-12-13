@@ -320,7 +320,7 @@ public class AmbientHazardEditor : Editor {
 
 			// Finalize mesh and assign it to the collider
 			mesh.RecalculateNormals();
-			mesh.Optimize();
+			;
 			collider.sharedMesh = null;
 			collider.sharedMesh = mesh;
 		}
