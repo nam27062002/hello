@@ -43,6 +43,7 @@ namespace AI {
 
 				m_pilot.Avoid(false);
 				m_pilot.ReleaseAction(Pilot.Action.Boost);
+				m_pilot.ReleaseAction(Pilot.Action.Scared);
 			}
 
 			protected override void OnUpdate() {
@@ -50,8 +51,10 @@ namespace AI {
 
 				if (m_machine.GetSignal(Signals.Type.Critical)) {
 					m_pilot.SetBoostSpeed(m_data.panicSpeed);
+					m_pilot.PressAction(Pilot.Action.Scared);
 				} else {
 					m_pilot.SetBoostSpeed(m_data.boostSpeed);
+					m_pilot.ReleaseAction(Pilot.Action.Scared);
 				}
 
 				if (m_machine.GetSignal(Signals.Type.Danger)) {
