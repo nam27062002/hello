@@ -12,9 +12,15 @@ Shader "Hungry Dragon/UnderWater"
 	Properties 
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_ColorBack("Background color (RGB)", color) = (1, 0, 0, 1)
-		_ColorFront("Foreground color (RGB)", color) = (1, 0, 0, 1)
-		_CausticIntensity("Caustic Intensity", Range(0, 20)) = 15
+		_ColorBack("Background color", color) = (1, 0, 0, 1)
+		_ColorFront("Foreground color", color) = (1, 0, 0, 1)
+
+		_FogFar("Fog far", float) = 1
+		_FogNear("Fog near", float) = 0
+
+		_CausticFar("Caustic far", float) = 1
+		_CausticNear("Caustic near", float) = 0
+
 		_WaveRadius("Wave radius ", Range(0.0, 1.0)) = 0.15
 
 	}
@@ -69,9 +75,12 @@ Shader "Hungry Dragon/UnderWater"
 
 				float4 _MainTex_ST;
 				float4 _ColorBack;
-				float _CausticIntensity;
 				float _WaveRadius;
 
+				float _FogFar;
+				float _FogNear;
+				float _CausticFar;
+				float _CausticNear;
 
 				v2f vert (appdata_t v) 
 				{
@@ -84,7 +93,7 @@ Shader "Hungry Dragon/UnderWater"
 					o.vertex = UnityObjectToClipPos(v.vertex);
 					o.scrPos = ComputeScreenPos(o.vertex);
 //					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+					o.uv = TRANSFORM_TEX(v.vertex.xy, _MainTex);
 
 					o.color = v.color;
 					return o;
@@ -95,17 +104,23 @@ Shader "Hungry Dragon/UnderWater"
 					float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).x) * 1.0f;
 					float depthR = (depth - i.scrPos.z);
 
-					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 0.02f) * CAUSTIC_RADIUS,
-										 (sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS));
+					float lerpFog = 1.0 - clamp((depthR - _FogNear) / (_FogFar - _FogNear), 0.0, 1.0);
+					float lerpCaustic = 1.0 - clamp((depthR - _CausticNear) / (_CausticFar - _CausticNear), 0.0, 1.0);
 
-					float z = depthR + 10.0;// i.uv.y;
+//					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 0.02f) * CAUSTIC_RADIUS,
+//										 (sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS));
+
+					float z = depthR;// i.uv.y;
 //					fixed4 col = tex2D(_MainTex, 0.7f * (i.uv.xy/* + anim*/) * (z * 14.0f) * _ProjectionParams.w) * 0.1f;
-					fixed4 col = tex2D(_MainTex, (fmod(i.uv.xy + float2(0.0 * _Time.y, 0.0), 1024.0)/* + anim*/ * 0.1) * (1.0 + (z * _ProjectionParams.w * 25.0))) * 0.51f;
+					fixed4 col = tex2D(_MainTex, (fmod(i.uv.xy + float2(3.0 * _Time.y, 0.0), 1024.0)/* + anim*/ * 0.025) * (1.0 + (z * _ProjectionParams.w * 25.0))) * 0.51f;
 					col.w = 0.0f;
-					float w = clamp(1.0 - ((depthR + _CausticIntensity) * 0.0125f), 0.0f, 1.0f);
+
+					fixed4 frag = lerp(fixed4(_ColorBack), fixed4(0.0, 0.0, 0.0, 0.0), lerpFog);
+					frag += lerp(fixed4(0.0, 0.0, 0.0, 0.0), col, lerpCaustic);
+//					float w = clamp(1.0 - ((depthR + _CausticIntensity) * 0.0125f), 0.0f, 1.0f);
 //					col = lerp(fixed4(_Color) + col * w * 20.0, col, w * w);
-					col = lerp(fixed4(_ColorBack) + col * w * 0.0, col, w * w);
-					return col;
+//					col = lerp(fixed4(_ColorBack) + col * w * 0.0, col, w * w);
+					return frag;
 				}
 			ENDCG
 		}
@@ -152,6 +167,8 @@ Shader "Hungry Dragon/UnderWater"
 				sampler2D _MainTex;
 				float4 _MainTex_ST;
 				float4 _ColorFront;
+				float _CausticFar;
+				float _CausticNear;
 
 
 				v2f vert(appdata_t v)
@@ -177,8 +194,12 @@ Shader "Hungry Dragon/UnderWater"
 					float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).x) * 1.0f;
 					float depthR = (depth - i.scrPos.z);
 
-					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 0.02f) * CAUSTIC_RADIUS,
-										(sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS));
+//					float lerpFog = 1.0 - clamp((depthR - _FogNear) / (_FogFar - _FogNear), 0.0, 1.0);
+					float lerpCaustic = 1.0 - clamp((depthR - _CausticNear) / (_CausticFar - _CausticNear), 0.0, 1.0);
+
+
+//					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 0.02f) * CAUSTIC_RADIUS,
+//										(sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS));
 
 //					float z = depthR;// i.uv.y;
 //					fixed4 col = (tex2D(_MainTex, 7.0f * (i.uv.xy + anim) * (z * 10.0f) * _ProjectionParams.w) * 0.7f) + _ColorFront * 0.5;
