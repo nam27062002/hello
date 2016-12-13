@@ -7,7 +7,7 @@ public class DragonEquip : MonoBehaviour {
 
 	private string m_dragonSku;
 
-	public static int m_numPets = 0;
+	public static int m_numPets = 1;
 
 	void Awake() {
 		DragonPlayer player = GetComponent<DragonPlayer>();
