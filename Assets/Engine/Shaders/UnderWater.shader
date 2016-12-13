@@ -166,6 +166,7 @@ Shader "Hungry Dragon/UnderWater"
 				sampler2D _CameraDepthTexture;
 				sampler2D _MainTex;
 				float4 _MainTex_ST;
+				float4 _MainTex_TexelSize;
 				float4 _ColorFront;
 				float _CausticFar;
 				float _CausticNear;
@@ -205,7 +206,7 @@ Shader "Hungry Dragon/UnderWater"
 //					fixed4 col = (tex2D(_MainTex, 7.0f * (i.uv.xy + anim) * (z * 10.0f) * _ProjectionParams.w) * 0.7f) + _ColorFront * 0.5;
 					float z = depthR + 10.0;// i.uv.y;
 //					fixed4 col = tex2D(_MainTex, 0.7f * (i.uv.xy/* + anim*/) * (z * 14.0f) * _ProjectionParams.w) * 0.1f;
-					fixed4 col = (tex2D(_MainTex, (fmod(i.uv.xy + float2(0.0 * _Time.y, 0.0), 1024.0)/* + anim*/ * 0.1) * (1.0 + (z * _ProjectionParams.w * 5.0))) * 0.7f) + _ColorFront * 0.5;
+					fixed4 col = (tex2D(_MainTex, (fmod(i.uv.xy + float2(0.0 * _Time.y, 0.0), _MainTex_TexelSize.z)/* + anim*/ * 0.1) * (1.0 + (z * _ProjectionParams.w * 5.0))) * 0.7f) + _ColorFront * 0.5;
 
 //					col.w = 1.0f;//dot(col.xyz, float3(0.299, 0.587, 0.114));
 					return col;

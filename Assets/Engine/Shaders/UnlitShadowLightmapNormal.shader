@@ -108,12 +108,14 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with Normal Map and overlay (O
 				{
 					fixed4 col = tex2D(_MainTex, i.texcoord) * i.color;	// Color
 					fixed4 one = fixed4(1, 1, 1, 1);
+					float specMask = col.w;
+					col.w = 1.0;
 					// col = one- (one-col) * (1-(i.color-fixed4(0.5,0.5,0.5,0.5)));	// Soft Light
 					col = one - 2 * (one - i.color) * (one - col);	// Overlay
 
 					float4 encodedNormal = tex2D(_NormalTex, _NormalTex_ST.xy * i.texcoord + _NormalTex_ST.zw);
 
-					float3 localCoords = float3(2.0 * encodedNormal.xz - float2(1.0, 1.0), _NormalStrength);
+					float3 localCoords = float3(2.0 * encodedNormal.xz - float2(1.0, 1.0), 1.0 / _NormalStrength);
 
 					float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
 					float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
@@ -133,7 +135,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with Normal Map and overlay (O
 					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 
 					// col = fixed4(1,1,1,1) * i.fogCoord;
-					return col + (specular * _LightColor0);
+					return col + (specular * specMask * _LightColor0);
 				}
 			ENDCG
 		}
