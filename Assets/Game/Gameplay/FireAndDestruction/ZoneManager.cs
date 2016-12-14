@@ -56,7 +56,22 @@ public class ZoneManager : MonoBehaviour {
 	}
 
 	public ZoneEffect GetDestructionEffectCode(Decoration _deco) {		
-		// TOOD: the destruction effects will be disabled until we have enough time 
+		if (_deco.isDestructible) {
+			Zone zone = GetZone(_deco.transform.position.z);
+
+			if (zone != Zone.None) {
+				if (m_dragonTier == DragonTier.COUNT) {
+					m_dragonTier = InstanceManager.player.data.tier;
+				}
+
+				if (m_dragonTier >= _deco.minTierDestruction) {
+					return ZoneEffect.M; // should be destroyed
+				} else if (m_dragonTier >= _deco.minTierDestructionFeedback) {
+					return ZoneEffect.S; // should give feedback?
+				}
+			}
+		}
+
 		return ZoneEffect.None;
 	}
 
