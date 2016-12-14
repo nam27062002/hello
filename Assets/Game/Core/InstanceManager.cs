@@ -35,6 +35,12 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 		set { if(instance != null) instance.m_player = value; }
 	}
 
+	private MusicController m_musicController = null;
+	public static MusicController musicController{
+		get { return instance.m_musicController; }
+		set { if(instance != null) instance.m_musicController = value; }
+	}
+
 	private GameCamera m_gameCamera = null;
 	public static GameCamera gameCamera {
 		get { return instance.m_gameCamera; }
