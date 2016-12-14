@@ -48,9 +48,9 @@ public class SpawnerAreaManager : UbiBCN.SingletonMonoBehaviour<SpawnerAreaManag
 		// Create and populate QuadTree
 		// Get map bounds!
 		m_mapBounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
-		LevelMapData data = GameObjectExt.FindComponent<LevelMapData>(true);
+		LevelData data = LevelManager.currentLevelData;
 		if(data != null) {
-			m_mapBounds = data.mapCameraBounds;
+			m_mapBounds = data.bounds;
 		}
 
 		m_rows = (int)Mathf.Ceil(m_mapBounds.height / CELL_SIZE) + 1;
