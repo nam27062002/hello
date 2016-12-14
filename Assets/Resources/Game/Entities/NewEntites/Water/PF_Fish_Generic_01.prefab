@@ -16,9 +16,9 @@ GameObject:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 4000011792763322}
+  - component: {fileID: 4000011792763322}
   m_Layer: 0
   m_Name: Fish_Body
   m_TagString: Untagged
@@ -31,9 +31,9 @@ GameObject:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 4000013202956856}
+  - component: {fileID: 4000013202956856}
   m_Layer: 0
   m_Name: Fish_Tail2
   m_TagString: Untagged
@@ -46,10 +46,10 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 4000012084136254}
-  - 95: {fileID: 95000012430315244}
+  - component: {fileID: 4000012084136254}
+  - component: {fileID: 95000012430315244}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -62,16 +62,16 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 4000012010139738}
-  - 114: {fileID: 114000012189381320}
-  - 114: {fileID: 114000012165437688}
-  - 114: {fileID: 114000010826471072}
-  - 114: {fileID: 114000013907561372}
-  - 114: {fileID: 114000013458673740}
-  - 136: {fileID: 136000013630646580}
-  - 54: {fileID: 54000011713955124}
+  - component: {fileID: 4000012010139738}
+  - component: {fileID: 114000012189381320}
+  - component: {fileID: 114000012165437688}
+  - component: {fileID: 114000010826471072}
+  - component: {fileID: 114000013907561372}
+  - component: {fileID: 114000013458673740}
+  - component: {fileID: 136000013630646580}
+  - component: {fileID: 54000011713955124}
   m_Layer: 23
   m_Name: PF_Fish_Generic_01
   m_TagString: Untagged
@@ -84,10 +84,10 @@ GameObject:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 4000012749401816}
-  - 137: {fileID: 137000010483090720}
+  - component: {fileID: 4000012749401816}
+  - component: {fileID: 137000010483090720}
   m_Layer: 0
   m_Name: Fish_01
   m_TagString: Untagged
@@ -100,9 +100,9 @@ GameObject:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 4000011735572270}
+  - component: {fileID: 4000011735572270}
   m_Layer: 0
   m_Name: Fish_Tail1
   m_TagString: Untagged
@@ -119,11 +119,11 @@ Transform:
   m_LocalRotation: {x: -0.0012627012, y: 0.0012628486, z: 0.7071057, w: 0.70710564}
   m_LocalPosition: {x: -0.026865538, y: -0.41439512, z: -0.0015046566}
   m_LocalScale: {x: 1.0000001, y: 0.99999976, z: 0.99999994}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 4000013202956856}
   m_Father: {fileID: 4000011792763322}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4000011792763322
 Transform:
   m_ObjectHideFlags: 1
@@ -133,11 +133,11 @@ Transform:
   m_LocalRotation: {x: 0.50000006, y: -0.5, z: -0.4999999, w: 0.5}
   m_LocalPosition: {x: 3.5528543e-14, y: 0.6623411, z: -0.00000011886373}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 4000011735572270}
   m_Father: {fileID: 4000012084136254}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4000012010139738
 Transform:
   m_ObjectHideFlags: 1
@@ -147,11 +147,11 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.02, y: 3.074, z: 3.391}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 4000012084136254}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4000012084136254
 Transform:
   m_ObjectHideFlags: 1
@@ -161,12 +161,12 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.391, z: 0}
   m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 4000012749401816}
   - {fileID: 4000011792763322}
   m_Father: {fileID: 4000012010139738}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4000012749401816
 Transform:
   m_ObjectHideFlags: 1
@@ -176,10 +176,10 @@ Transform:
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0.10723272, y: 1.23, z: 0.86}
   m_LocalScale: {x: 1.6666666, y: 1.6666675, z: 1.6666675}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 4000012084136254}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4000013202956856
 Transform:
   m_ObjectHideFlags: 1
@@ -190,10 +190,10 @@ Transform:
     w: 0.99999845}
   m_LocalPosition: {x: -0.42131722, y: 0, z: -2.9802322e-10}
   m_LocalScale: {x: 0.99999994, y: 0.99999994, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 4000011735572270}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &54000011713955124
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -256,9 +256,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 5
-    m_maxRadius: 3
-    m_minRadius: 2
+    m_sightRadius: 14
+    m_maxRadius: 10
+    m_minRadius: 6
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -270,7 +270,6 @@ MonoBehaviour:
       min: 0
       max: 0
   m_onSpawnSound: 
-  m_onEatenSound: 
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
@@ -330,10 +329,10 @@ MonoBehaviour:
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
-  m_speedToWaterSplash: 0
+  m_speedToWaterSplash: 2
   m_waterSplashParticle:
     name: PS_Dive
-    path: 
+    path: Water
     offset: {x: 0, y: 0, z: 0}
   m_burnParticle:
     name: 
@@ -403,7 +402,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 39cf2e27aa36f447caef7e95d98d1b33, type: 2}
-  m_SubsetIndices: 
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
@@ -411,7 +412,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_SelectedWireframeHidden: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89

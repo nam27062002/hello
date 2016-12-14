@@ -5,12 +5,12 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 480610}
-  - 33: {fileID: 3383300}
-  - 23: {fileID: 2375664}
-  - 95: {fileID: 9550686}
+  - component: {fileID: 480610}
+  - component: {fileID: 3383300}
+  - component: {fileID: 2375664}
+  - component: {fileID: 9550686}
   m_Layer: 0
   m_Name: view_burned
   m_TagString: Untagged
@@ -23,9 +23,9 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 457372}
+  - component: {fileID: 457372}
   m_Layer: 0
   m_Name: FireNodes
   m_TagString: Untagged
@@ -38,10 +38,10 @@ GameObject:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 499174}
-  - 114: {fileID: 11448586}
+  - component: {fileID: 499174}
+  - component: {fileID: 11448586}
   m_Layer: 0
   m_Name: FireNode (4)
   m_TagString: Untagged
@@ -54,14 +54,14 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 441286}
-  - 114: {fileID: 114000012170982328}
-  - 114: {fileID: 11465220}
-  - 114: {fileID: 11428340}
-  - 114: {fileID: 114000011931421630}
-  - 65: {fileID: 65000010941343384}
+  - component: {fileID: 441286}
+  - component: {fileID: 114000012170982328}
+  - component: {fileID: 11465220}
+  - component: {fileID: 11428340}
+  - component: {fileID: 114000011931421630}
+  - component: {fileID: 65000010941343384}
   m_Layer: 16
   m_Name: PF_Cart
   m_TagString: Untagged
@@ -74,10 +74,10 @@ GameObject:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 428726}
-  - 114: {fileID: 11461700}
+  - component: {fileID: 428726}
+  - component: {fileID: 11461700}
   m_Layer: 0
   m_Name: FireNode (5)
   m_TagString: Untagged
@@ -90,12 +90,12 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 414354}
-  - 33: {fileID: 3348120}
-  - 23: {fileID: 2322270}
-  - 95: {fileID: 9502630}
+  - component: {fileID: 414354}
+  - component: {fileID: 3348120}
+  - component: {fileID: 2322270}
+  - component: {fileID: 9502630}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -108,10 +108,10 @@ GameObject:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 472562}
-  - 114: {fileID: 11478632}
+  - component: {fileID: 472562}
+  - component: {fileID: 11478632}
   m_Layer: 0
   m_Name: FireNode (3)
   m_TagString: Untagged
@@ -128,10 +128,10 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 441286}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &428726
 Transform:
   m_ObjectHideFlags: 1
@@ -141,10 +141,10 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.1502695, y: 0.055343717, z: 0.18999998}
   m_LocalScale: {x: 1.2597827, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 457372}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &441286
 Transform:
   m_ObjectHideFlags: 1
@@ -154,13 +154,13 @@ Transform:
   m_LocalRotation: {x: -0, y: 0.99018604, z: -0, w: 0.13975574}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
-  m_LocalEulerAnglesHint: {x: 0, y: -195.75699, z: 0}
   m_Children:
   - {fileID: 457372}
   - {fileID: 414354}
   - {fileID: 480610}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: -195.75699, z: 0}
 --- !u!4 &457372
 Transform:
   m_ObjectHideFlags: 1
@@ -170,13 +170,13 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 472562}
   - {fileID: 499174}
   - {fileID: 428726}
   m_Father: {fileID: 441286}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &472562
 Transform:
   m_ObjectHideFlags: 1
@@ -186,10 +186,10 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.8589414, y: 0.97, z: 0.9259666}
   m_LocalScale: {x: 1.1349742, y: 1.1349744, z: 1.1349744}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 457372}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &480610
 Transform:
   m_ObjectHideFlags: 1
@@ -199,10 +199,10 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 441286}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &499174
 Transform:
   m_ObjectHideFlags: 1
@@ -212,10 +212,10 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.0327326, y: 0.7761575, z: 0.9700001}
   m_LocalScale: {x: 1.0759722, y: 1.1075196, z: 1.1075196}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 457372}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &2322270
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -230,7 +230,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 05e783b93d3ff98449dcaadb7ce6af45, type: 2}
-  m_SubsetIndices: 
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
@@ -238,7 +240,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_SelectedWireframeHidden: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -259,7 +261,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: efcb466cf2fa34f75be22ac54a9b0f7f, type: 2}
-  m_SubsetIndices: 
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
@@ -267,7 +271,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_SelectedWireframeHidden: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
