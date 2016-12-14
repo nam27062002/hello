@@ -58,9 +58,9 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		// Create and populate QuadTree
 		// Get map bounds!
 		Rect bounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
-		LevelMapData data = GameObjectExt.FindComponent<LevelMapData>(true);
+		LevelData data = LevelManager.currentLevelData;
 		if(data != null) {
-			bounds = data.mapCameraBounds;
+			bounds = data.bounds;
 		}
 		m_fireNodesTree = new QuadTree<FireNode>(bounds.x, bounds.y, bounds.width, bounds.height);
 		for(int i = 0; i < m_fireNodes.Count; i++) {

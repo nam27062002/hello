@@ -76,9 +76,9 @@ public class ZoneManager : MonoBehaviour {
 	//----------------------------------------------------------------------------------------------------------------------------------------------------------
 	void OnDrawGizmosSelected() {
 		Rect mapBounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
-		LevelMapData data = GameObjectExt.FindComponent<LevelMapData>(true);
-		if (data != null) {
-			mapBounds = data.mapCameraBounds;
+		LevelData data = LevelManager.currentLevelData;
+		if(data != null) {
+			mapBounds = data.bounds;
 		}
 
 		Vector3 centerZone1 = (Vector3)mapBounds.center;

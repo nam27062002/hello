@@ -39,10 +39,23 @@ public class LevelData : ScriptableObject {
 	// [SerializeField] private string[] m_artScenes = null;
 
 	[Separator("Other Data")]
+	[SerializeField] private Rect m_bounds = new Rect();
+	public Rect bounds {
+		get { return m_bounds; }
+	}
+
+	[SerializeField] private GameObject m_mapPrefab = null;
+	public GameObject mapPrefab {
+		get { return m_mapPrefab; }
+	}
+
 	[SerializeField] private GameObject[] m_resultScenesPrefabs = null;
 	public GameObject[] resultScenesPrefabs {
 		get { return m_resultScenesPrefabs; }
 	}
+
+	[Separator("Debug")]
+	[SerializeField] private Color m_boundsColor = Colors.paleYellow;
 
 	// Volatile members
 	// Not stored, must be initialized in runtime using the Init method.

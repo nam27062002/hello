@@ -18,7 +18,7 @@ using UnityEngine;
 /// customized for that level.
 /// </summary>
 [RequireComponent(typeof(Camera))]
-public class LevelMapData : MonoBehaviour {
+public class MapCamera : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -26,11 +26,15 @@ public class LevelMapData : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Exposed members
-	[Comment("The camera prefab must have a Camera and a LevelMapData components, and it should be unique for each level")]
-	[SerializeField] private Rect m_mapCameraBounds = new Rect();
-	public Rect mapCameraBounds {
-		get { return m_mapCameraBounds; }
+	// Properties
+	private Camera m_camera = null;
+	public Camera camera {
+		get {
+			if(m_camera == null) {
+				m_camera = GetComponent<Camera>();
+			}
+			return m_camera;
+		}
 	}
 	
 	//------------------------------------------------------------------------//
@@ -54,34 +58,35 @@ public class LevelMapData : MonoBehaviour {
 		// Only if enabled
 		if(!isActiveAndEnabled) return;
 
-		// Draw bounds in the world space
-		Vector3 tl = new Vector3(m_mapCameraBounds.xMin, m_mapCameraBounds.yMin, 0);
-		Vector3 tr = new Vector3(m_mapCameraBounds.xMax, m_mapCameraBounds.yMin, 0);
-		Vector3 bl = new Vector3(m_mapCameraBounds.xMin, m_mapCameraBounds.yMax, 0);
-		Vector3 br = new Vector3(m_mapCameraBounds.xMax, m_mapCameraBounds.yMax, 0);
+		// Only if we have a valid level loaded
+		if(LevelManager.currentLevelData == null) return;
 
-		Gizmos.color = Colors.purple;
+		// Draw bounds in the world space
+		Rect bounds = LevelManager.currentLevelData.bounds;
+		Vector3 tl = new Vector3(bounds.xMin, bounds.yMin, 0);
+		Vector3 tr = new Vector3(bounds.xMax, bounds.yMin, 0);
+		Vector3 bl = new Vector3(bounds.xMin, bounds.yMax, 0);
+		Vector3 br = new Vector3(bounds.xMax, bounds.yMax, 0);
+
+		Gizmos.color = Colors.paleYellow;
 		Gizmos.DrawLine(tl, tr);
 		Gizmos.DrawLine(bl, br);
 		Gizmos.DrawLine(tl, bl);
 		Gizmos.DrawLine(tr, br);
 
 		// Draw camera bounds as well
-		Camera cam = GetComponent<Camera>();
-		if(cam != null) {
-			Vector3 camPos = cam.transform.position;
-			Vector2 camHalfSize = new Vector2(cam.orthographicSize * cam.aspect, cam.orthographicSize);
-			tl = new Vector3(camPos.x - camHalfSize.x, camPos.y + camHalfSize.y, 0);
-			tr = new Vector3(camPos.x + camHalfSize.x, camPos.y + camHalfSize.y, 0);
-			bl = new Vector3(camPos.x - camHalfSize.x, camPos.y - camHalfSize.y, 0);
-			br = new Vector3(camPos.x + camHalfSize.x, camPos.y - camHalfSize.y, 0);
+		Vector3 camPos = camera.transform.position;
+		Vector2 camHalfSize = new Vector2(camera.orthographicSize * camera.aspect, camera.orthographicSize);
+		tl = new Vector3(camPos.x - camHalfSize.x, camPos.y + camHalfSize.y, 0);
+		tr = new Vector3(camPos.x + camHalfSize.x, camPos.y + camHalfSize.y, 0);
+		bl = new Vector3(camPos.x - camHalfSize.x, camPos.y - camHalfSize.y, 0);
+		br = new Vector3(camPos.x + camHalfSize.x, camPos.y - camHalfSize.y, 0);
 
-			Gizmos.color = Colors.purple;
-			Gizmos.DrawLine(tl, tr);
-			Gizmos.DrawLine(bl, br);
-			Gizmos.DrawLine(tl, bl);
-			Gizmos.DrawLine(tr, br);
-		}
+		Gizmos.color = Colors.purple;
+		Gizmos.DrawLine(tl, tr);
+		Gizmos.DrawLine(bl, br);
+		Gizmos.DrawLine(tl, bl);
+		Gizmos.DrawLine(tr, br);
 	}
 	#endif
 
