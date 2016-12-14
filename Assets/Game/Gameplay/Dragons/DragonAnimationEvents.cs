@@ -4,6 +4,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	private DragonAttackBehaviour m_attackBehaviour;
 	private DragonBoostBehaviour m_bostBehaviour;
+	private DragonParticleController m_particleController;
 	public string m_wingsIdleSound;
 	private AudioObject m_wingsIdleSoundAO;
 
@@ -48,6 +49,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
 		m_bostBehaviour = transform.parent.GetComponent<DragonBoostBehaviour>();
+		m_particleController = transform.parent.GetComponentInChildren<DragonParticleController>();
 		m_animator = GetComponent<Animator>();
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
@@ -246,5 +248,10 @@ public class DragonAnimationEvents : MonoBehaviour {
 		Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_ENDED);
 	}
 
+	public void OnNoAirBubbles()
+	{
+		if ( m_particleController != null )
+			m_particleController.OnNoAirBubbles();
+	}
 
 }

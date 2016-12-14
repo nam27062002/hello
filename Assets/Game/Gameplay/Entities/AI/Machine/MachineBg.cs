@@ -154,6 +154,11 @@ namespace AI {
 			return false;
 		}
 
+		public bool IsDying()
+		{
+			return false;
+		}
+
 		public void Drown() { }
 
 		public float biteResistance { get { return 0; }}
