@@ -114,12 +114,9 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with Normal Map and overlay (O
 					col = one - 2 * (one - i.color) * (one - col);	// Overlay
 
 					float4 encodedNormal = tex2D(_NormalTex, _NormalTex_ST.xy * i.texcoord + _NormalTex_ST.zw);
-
 					float3 localCoords = float3(2.0 * encodedNormal.xz - float2(1.0, 1.0), 1.0 / _NormalStrength);
-
 					float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
 					float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
-
 					fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
 
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
