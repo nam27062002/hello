@@ -6,6 +6,8 @@ using System.Collections.Generic;
 
 public class ViewControl : MonoBehaviour, ISpawnable {
 
+	public static Color GOLD_TINT = new Color(255.0f / 255.0f, 161 / 255.0f, 0, 255.0f / 255.0f);
+
 	[Serializable]
 	public class SkinData {
 		public Material skin;
@@ -39,6 +41,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SerializeField] private string m_animC = "";
 
 	[SeparatorAttribute("Eaten")]
+	[SerializeField] private string m_corpseAsset = "";
 	[SerializeField] private List<ParticleData> m_onEatenParticles = new List<ParticleData>();
 	[SerializeField] private string m_onEatenAudio;
 	private AudioObject m_onEatenAudioAO;
@@ -105,11 +108,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     // private const int ATTACK_HASH = Animator.StringToHash("Attack");
 
     //Dragon breath detection
+	private DragonBoostBehaviour m_dragonBoost;
     private DragonBreathBehaviour m_dragonBreath;
     private DragonBreathBehaviour.Type m_lastType;
 
-
-    private Color m_entityRushColor;
 
     //-----------------------------------------------
     // Use this for initialization
@@ -126,9 +128,6 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			m_animEvents.onAttackEnd += animEventsOnAttackEnd;
 			m_animEvents.onAttackDealDamage += animEventsOnAttackDealDamage;
 		}
-
-        m_entityRushColor = new Color(255.0f / 255.0f, 161 / 255.0f, 0, 255.0f / 255.0f);
-
 
         // Load gold material
         //		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
@@ -155,6 +154,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
                 }
             }
         }
+
+		if (!string.IsNullOrEmpty(m_corpseAsset)) {
+			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/" + m_corpseAsset, 3, true);
+		}
 
 		// particle management
 		if (m_onEatenParticles.Count <= 0) {
@@ -295,6 +298,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         entityTint(false);
         m_lastType = DragonBreathBehaviour.Type.None;
         checkTint();
+
+		m_dragonBoost = InstanceManager.player.dragonBoostBehaviour;
     }
 
     /*
@@ -341,7 +346,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     {
 //        float blink = (Mathf.Sin(Time.time * 12.0f) + 1.0f) * 0.5f;
 //        Color col = value ? Color.Lerp(Color.black, Color.yellow, 0.5f + blink * 0.5f) : Color.black;
-        Color col = value ? m_entityRushColor : Color.black;
+		Color col = value ? GOLD_TINT : Color.black;
         if (m_allMaterials != null)
         {
             int i;
@@ -439,6 +444,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     }
 
 	// Queries
+	public bool HasCorpseAsset() {
+		return !string.IsNullOrEmpty(m_corpseAsset);
+	}
+
 	public bool canAttack() {
 		return !m_attack;
 	}
@@ -681,6 +690,14 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 			if (!string.IsNullOrEmpty(m_onExplosionAudio))
 				AudioController.Play(m_onExplosionAudio, transform.position);
+		} else {
+			if (!string.IsNullOrEmpty(m_corpseAsset)) {
+				// spawn corpse
+				GameObject corpse = PoolManager.GetInstance(m_corpseAsset, true);
+				corpse.transform.CopyFrom(transform);
+
+				corpse.GetComponent<Corpse>().Spawn(m_entity.isGolden, m_dragonBoost.IsBoostActive());
+			}
 		}
 
 		// Stop pc trail effect (if any)

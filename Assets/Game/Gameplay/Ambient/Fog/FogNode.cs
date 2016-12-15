@@ -6,6 +6,7 @@ public class FogNode : MonoBehaviour, IQuadTreeItem
 	public Color m_fogColor = Color.white;
 	public float m_fogStart = 0;
 	public float m_fogEnd = 100;
+	public float m_fogRamp = 1;
 
 	private Rect m_rect;
 	public Rect boundingRect { get { 

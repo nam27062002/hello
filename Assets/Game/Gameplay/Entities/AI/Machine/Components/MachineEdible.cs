@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-
 namespace AI {
 	public class MachineEdible : MachineComponent {
 
+		//-----------------------------------------------
+		//
+		//-----------------------------------------------
 		private float m_biteResistance = 1f;
 		public float biteResistance { get { return m_biteResistance; }}
 
@@ -35,7 +37,7 @@ namespace AI {
 		}
 
 		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer) {			
-			if ( _rewardsPlayer ){
+			if (_rewardsPlayer) {
 				// Get the reward to be given from the entity
 				Reward reward = (m_entity as Entity).GetOnKillReward(false);
 

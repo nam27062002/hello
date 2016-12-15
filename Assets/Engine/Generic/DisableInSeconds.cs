@@ -65,7 +65,7 @@ public class DisableInSeconds : MonoBehaviour {
     }
 
 	private void Disable() {
-		gameObject.SetActive(false);
+		//gameObject.SetActive(false);
 		switch(m_returnTo) {
 			case PoolType.PoolManager: 		PoolManager.ReturnInstance(gameObject); 	break;
 			case PoolType.ParticleManager: 	ParticleManager.ReturnInstance(gameObject); break;
