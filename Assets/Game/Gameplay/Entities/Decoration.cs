@@ -22,9 +22,6 @@ public class Decoration : IEntity {
 	private int m_burnFeedbackChance;
 	public  int burnFeedbackChance { get { return m_burnFeedbackChance; } }
 
-	private bool m_isDestructible;
-	public bool  isDestructible { get { return m_isDestructible; } }
-
 	private DragonTier m_minTierDestructionFeedback;
 	public  DragonTier minTierDestructionFeedback { get { return m_minTierDestructionFeedback; } }
 
@@ -47,7 +44,6 @@ public class Decoration : IEntity {
 		m_minTierBurn			= (DragonTier)m_def.GetAsInt("minTierBurn", (int)DragonTier.COUNT);
 		m_burnFeedbackChance	= m_def.GetAsInt("burnFeedbackChance", 100);
 
-		m_isDestructible 				= m_def.GetAsBool("isDestructible");
 		m_minTierDestructionFeedback 	= (DragonTier)m_def.GetAsInt("minTierDestructionFeedback", (int)DragonTier.COUNT);
 		m_minTierDestruction			= (DragonTier)m_def.GetAsInt("minTierDestruction", (int)DragonTier.COUNT);
 
