@@ -36,7 +36,6 @@ public class FireLightning : DragonBreathBehaviour {
 	Transform m_headTransform;
 	Vector3 m_dir;
 
-	int m_fireMask;
 	int m_groundMask;
 	int m_waterMask;
 	bool m_insideWater;
@@ -107,8 +106,6 @@ public class FireLightning : DragonBreathBehaviour {
 		m_mouthTransform = GetComponent<DragonMotion>().tongue;
 		m_headTransform = GetComponent<DragonMotion>().head;
 
-
-		m_fireMask = LayerMask.GetMask("Edible", "Burnable");
 		m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
 		m_waterMask = LayerMask.GetMask("Water");
 
