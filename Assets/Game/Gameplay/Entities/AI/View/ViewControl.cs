@@ -39,6 +39,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SerializeField] private string m_animC = "";
 
 	[SeparatorAttribute("Eaten")]
+	[SerializeField] private string m_corpseAsset = "";
 	[SerializeField] private List<ParticleData> m_onEatenParticles = new List<ParticleData>();
 	[SerializeField] private string m_onEatenAudio;
 	private AudioObject m_onEatenAudioAO;
@@ -155,6 +156,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
                 }
             }
         }
+
+		if (!string.IsNullOrEmpty(m_corpseAsset)) {
+			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/" + m_corpseAsset, 3, true);
+		}
 
 		// particle management
 		if (m_onEatenParticles.Count <= 0) {
@@ -439,6 +444,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     }
 
 	// Queries
+	public bool HasCorpseAsset() {
+		return !string.IsNullOrEmpty(m_corpseAsset);
+	}
+
 	public bool canAttack() {
 		return !m_attack;
 	}
@@ -681,6 +690,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (!_eaten) {
 			if (!string.IsNullOrEmpty(m_onExplosionAudio))
 				AudioController.Play(m_onExplosionAudio, transform.position);
+		} else {
+			if (!string.IsNullOrEmpty(m_corpseAsset)) {
+				// spawn corpse
+				GameObject corpse = PoolManager.GetInstance(m_corpseAsset, true);
+				corpse.transform.CopyFrom(transform);
+			}
 		}
 
 		// Stop pc trail effect (if any)
