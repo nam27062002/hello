@@ -28,6 +28,9 @@ public class ResultsSceneSetup : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed references, all required
 	[SerializeField] private Camera m_camera = null;
+	public Camera camera {
+		get { return m_camera; }
+	}
 
 	[Comment("DragonLoader should be set to \"CURRENT\" mode", 10)]
 	[SerializeField] private MenuDragonLoader m_dragonSlot = null;
@@ -157,6 +160,9 @@ public class ResultsSceneSetup : MonoBehaviour {
 	/// </summary>
 	/// <returns>The total duration of the animation.</returns>
 	public float LaunchRewardsAnim() {
+		// Make current camera the main one
+
+
 		// Program animation of selected slots
 		float totalDelay = 0f;
 		float totalDuration = 0f;
