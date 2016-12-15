@@ -438,17 +438,27 @@ public abstract class EatBehaviour : MonoBehaviour {
 					float t = 1.0f - Mathf.Max(0, prey.absorbTimer / m_absorbDuration);
 					// swallow entity
 					prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_suction.position, t);
-					prey.prey.transform.localScale = Vector3.Lerp(prey.startScale, prey.startScale * 0.5f, t);
-                    PreyCount++;
-                    if ( prey.absorbTimer <= 0 )
-                    	StartSwallow( prey.prey );
+
+					if (!prey.prey.HasCorpse()) {
+						prey.prey.transform.localScale = Vector3.Lerp(prey.startScale, prey.startScale * 0.5f, t);
+					}
+                    
+					PreyCount++;
+					if (prey.absorbTimer <= 0) {					
+                    	StartSwallow(prey.prey);
+					}
                 }
 				else
 				{
 					prey.eatingAnimationTimer -= Time.deltaTime;
 					float t = 1.0f - Mathf.Max(0, prey.eatingAnimationTimer / prey.eatingAnimationDuration);
+
 					prey.prey.transform.position = Vector3.Lerp(m_suction.position, m_swallow.position, t);
-					prey.prey.transform.localScale = Vector3.Lerp(prey.startScale * 0.5f, prey.startScale * 0.25f, t);
+
+					if (!prey.prey.HasCorpse()) {						
+						prey.prey.transform.localScale = Vector3.Lerp(prey.startScale * 0.5f, prey.startScale * 0.25f, t);
+					}
+
 					// remaining time eating
 					if (prey.eatingAnimationTimer <= 0) 
 					{

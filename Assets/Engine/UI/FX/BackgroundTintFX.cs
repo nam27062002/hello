@@ -21,6 +21,7 @@ public class BackgroundTintFX : MonoBehaviour {
     private RenderTexture m_buffer = null;
 
     private bool m_wasEnabled = false;
+	private Shader m_replacementShader = null;
 
 //    private int m_cullingMask;
 
@@ -53,8 +54,8 @@ public class BackgroundTintFX : MonoBehaviour {
         m_renderCamera.backgroundColor = Color.clear;
         m_renderCamera.clearFlags = CameraClearFlags.SolidColor;
         m_renderCamera.renderingPath = RenderingPath.Forward;
-        //      Shader rShader = Shader.Find("Hidden/VoidReplacement");
-        //      m_renderCamera.SetReplacementShader(rShader, "RenderType");
+		m_replacementShader = Shader.Find("Hidden/VoidReplacement");
+//		m_renderCamera.SetReplacementShader(m_replacementShader, "RenderType");
         m_renderCamera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
 
 
@@ -160,8 +161,9 @@ public class BackgroundTintFX : MonoBehaviour {
             m_renderCamera.renderingPath = RenderingPath.Forward;
             m_renderCamera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
             m_renderCamera.targetTexture = m_renderTexture;
-            m_renderCamera.Render();
-        }
+			m_renderCamera.Render();
+//			m_renderCamera.RenderWithShader(m_replacementShader, "RenderType");
+		}
 
     }
 }
