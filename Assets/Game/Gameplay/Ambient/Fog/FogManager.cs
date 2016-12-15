@@ -15,11 +15,13 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 		public Color m_fogColor;
 		public float m_fogStart;
 		public float m_fogEnd;
+		public float m_fogRamp;
 		public void Reset()
 		{
 			m_fogColor = Color.clear;
 			m_fogStart = 0;
 			m_fogEnd = 0;
+			m_fogRamp = 0;
 		}
 	}
 
@@ -77,9 +79,9 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 	void RefillQuadtree()
 	{
 		Rect bounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
-		LevelMapData data = GameObjectExt.FindComponent<LevelMapData>(true);
+		LevelData data = LevelManager.currentLevelData;
 		if(data != null) {
-			bounds = data.mapCameraBounds;
+			bounds = data.bounds;
 		}
 		m_fogNodesArray = FindObjectsOfType(typeof(FogNode)) as FogNode[];
 		m_fogNodes = new QuadTree<FogNode>(bounds.x, bounds.y, bounds.width, bounds.height);
@@ -204,6 +206,7 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 				result.m_fogColor += m_resultNodes[i].m_node.m_fogColor * w;
 				result.m_fogStart += m_resultNodes[i].m_node.m_fogStart * w;
 				result.m_fogEnd += m_resultNodes[i].m_node.m_fogEnd * w;
+				result.m_fogRamp += m_resultNodes[i].m_node.m_fogRamp * w;
 			}
 		}
 

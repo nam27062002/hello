@@ -54,7 +54,7 @@
 			}
 			ENDCG
 		}
-
+/**
 		Pass{
 
 			Stencil
@@ -74,13 +74,14 @@
 
 			uniform sampler2D _MainTex;
 			float4 _MainTex_ST;
-			uniform float4 _Tint;
-			uniform float4 _Tint2;
+//			uniform float4 _Tint;
+//			uniform float4 _Tint2;
 
 			struct v2f {
 				float4 pos : SV_POSITION;
 				float2 uv : TEXCOORD0;
 			};
+
 
 			v2f vert(appdata_img v)
 			{
@@ -98,5 +99,6 @@
 			}
 			ENDCG
 		}
+**/
 	}
 }

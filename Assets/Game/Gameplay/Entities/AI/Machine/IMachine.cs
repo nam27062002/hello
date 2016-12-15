@@ -23,6 +23,7 @@ namespace AI {
 		void CheckCollisions(bool _value);
 		void FaceDirection(bool _value);
 		bool IsFacingDirection();
+		bool HasCorpse();
 
 		// Group membership -> for collective behaviours
 		void	EnterGroup(ref Group _group);
@@ -40,5 +41,8 @@ namespace AI {
 		bool Burn(Transform _transform);
 
 		void SetVelocity(Vector3 _v);
+
+		bool IsDying();
+
 	}
 }

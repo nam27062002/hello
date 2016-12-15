@@ -114,6 +114,10 @@ namespace AI {
 			return false;
 		}
 
+		public bool HasCorpse() {
+			return false;
+		}
+
 		// Group membership -> for collective behaviours
 		public void	EnterGroup(ref Group _group) {
 			if (m_group != _group) {
@@ -151,6 +155,11 @@ namespace AI {
 		}
 
 		public bool IsDead() {
+			return false;
+		}
+
+		public bool IsDying()
+		{
 			return false;
 		}
 

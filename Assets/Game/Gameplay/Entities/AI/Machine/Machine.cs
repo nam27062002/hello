@@ -48,7 +48,7 @@ namespace AI {
 		private Group m_group; // this will be a reference
 
 
-		private MachineEdible m_edible = new MachineEdible();
+		[SerializeField] private MachineEdible m_edible = new MachineEdible();
 		[SerializeField] private MachineInflammable m_inflammable = new MachineInflammable();
 
 
@@ -392,6 +392,13 @@ namespace AI {
 		public bool IsFacingDirection() {
 			if (m_enableMotion) {
 				return m_motion.faceDirection;
+			}
+			return false;
+		}
+
+		public bool HasCorpse() {
+			if (m_viewControl != null) {
+				return m_viewControl.HasCorpseAsset();
 			}
 			return false;
 		}

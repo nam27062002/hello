@@ -100,7 +100,7 @@ public static class DebugSettings {
 	}
 
 	public static bool isPlayTest {
-		get { return Prefs.GetBoolPlayer(PLAY_TEST, true); }
+		get { return Prefs.GetBoolPlayer(PLAY_TEST, false); }
 		set { Prefs.SetBoolPlayer(PLAY_TEST, value); }
 	}
 

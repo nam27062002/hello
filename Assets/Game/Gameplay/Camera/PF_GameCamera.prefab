@@ -5,19 +5,20 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 481130}
-  - 20: {fileID: 2055932}
-  - 124: {fileID: 12481626}
-  - 92: {fileID: 9212364}
-  - 81: {fileID: 8136056}
-  - 114: {fileID: 11427856}
-  - 114: {fileID: 11486938}
-  - 114: {fileID: 11447402}
-  - 114: {fileID: 114000011327172364}
-  - 114: {fileID: 114000012048095912}
-  - 114: {fileID: 114000011558897754}
+  - component: {fileID: 481130}
+  - component: {fileID: 2055932}
+  - component: {fileID: 12481626}
+  - component: {fileID: 9212364}
+  - component: {fileID: 8136056}
+  - component: {fileID: 11427856}
+  - component: {fileID: 11486938}
+  - component: {fileID: 11447402}
+  - component: {fileID: 114000011327172364}
+  - component: {fileID: 114000012048095912}
+  - component: {fileID: 114000011558897754}
+  - component: {fileID: 114795868151240438}
   m_Layer: 0
   m_Name: PF_GameCamera
   m_TagString: MainCamera
@@ -34,12 +35,12 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 411.60928, y: 71.83871, z: -55.946796}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 4000011292646294}
   - {fileID: 4000014029663616}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &2055932
 Camera:
   m_ObjectHideFlags: 1
@@ -228,12 +229,12 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 4000011292646294}
-  - 114: {fileID: 114000011098854082}
-  - 114: {fileID: 114000010427000824}
-  - 114: {fileID: 114000010868137718}
+  - component: {fileID: 4000011292646294}
+  - component: {fileID: 114000011098854082}
+  - component: {fileID: 114000010427000824}
+  - component: {fileID: 114000010868137718}
   m_Layer: 0
   m_Name: SlowMoController
   m_TagString: Untagged
@@ -246,11 +247,11 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 4000014029663616}
-  - 20: {fileID: 20000010244123100}
-  - 114: {fileID: 114000010965087310}
+  - component: {fileID: 4000014029663616}
+  - component: {fileID: 20000010244123100}
+  - component: {fileID: 114000010965087310}
   m_Layer: 0
   m_Name: DebugCamera
   m_TagString: Untagged
@@ -267,10 +268,10 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 481130}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4000014029663616
 Transform:
   m_ObjectHideFlags: 1
@@ -280,10 +281,10 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 481130}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &20000010244123100
 Camera:
   m_ObjectHideFlags: 1
@@ -413,17 +414,20 @@ MonoBehaviour:
   m_introMoveCurve:
     serializedVersion: 2
     m_Curve:
-    - time: -0.003035443
+    - serializedVersion: 2
+      time: -0.003035443
       value: 0.15069163
       inSlope: 0
       outSlope: 0
       tangentMode: 0
-    - time: 0.7244883
+    - serializedVersion: 2
+      time: 0.7244883
       value: 0.14992097
       inSlope: 0
       outSlope: 0
       tangentMode: 0
-    - time: 0.996438
+    - serializedVersion: 2
+      time: 0.996438
       value: 0.00000012875535
       inSlope: 0.46718732
       outSlope: 0.46718732
@@ -434,17 +438,20 @@ MonoBehaviour:
   m_introFrameWidthMultiplier:
     serializedVersion: 2
     m_Curve:
-    - time: 0.0074568
+    - serializedVersion: 2
+      time: 0.0074568
       value: 1.4988964
       inSlope: -0.0006571188
       outSlope: -0.0006571188
       tangentMode: 0
-    - time: 0.8579138
+    - serializedVersion: 2
+      time: 0.8579138
       value: 0.99999976
       inSlope: 0
       outSlope: 0
       tangentMode: 0
-    - time: 1
+    - serializedVersion: 2
+      time: 1
       value: 1
       inSlope: 0
       outSlope: 0
@@ -476,7 +483,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b2854bce623d0c44978254dab903414, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Tint: {r: 0.6392157, g: 0.53333336, b: 0.4509804, a: 1}
-  m_Tint2: {r: 0.80784315, g: 0.58431375, b: 0.29803923, a: 1}
+  m_Tint: {r: 0.3455882, g: 0.28555498, b: 0.23886244, a: 1}
+  m_Tint2: {r: 0.36764705, g: 0.2609712, b: 0.12435122, a: 1}
   timeDecay: 2
   m_shader: {fileID: 4800000, guid: dd36d0c2ae0fac84dbb7ef8e357fcb03, type: 3}
+--- !u!114 &114795868151240438
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52f78e93835bdf04eb5ad39ac500b342, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  glowMaterial: {fileID: 2100000, guid: 384a7936c98fd0a4c8bb8f336aafe16f, type: 2}
+  glowReplaceShader: {fileID: 4800000, guid: 0d7c5cc6776db14459960ae53cb4ce35, type: 3}
+  glowMode: 0
+  blendMode: 0
+  downsampleSize: 64
+  blurIterations: 8
+  blurSpread: 1.5
+  glowStrength: 1.2
+  ignoreLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  glowColorMultiplier: {r: 1, g: 0.853, b: 0.71, a: 1}

@@ -20,6 +20,7 @@ public class LevelData : ScriptableObject {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public const string DEFAULT_MAP_PREFAB = "Game/Levels/PF_MapDefault";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -39,10 +40,29 @@ public class LevelData : ScriptableObject {
 	// [SerializeField] private string[] m_artScenes = null;
 
 	[Separator("Other Data")]
+	[SerializeField] private Rect m_bounds = new Rect(-500f, 200f, 1000f, 400f);	// Default arbitrary size
+	public Rect bounds {
+		get { return m_bounds; }
+	}
+
+	[SerializeField] private GameObject m_mapPrefab = null;
+	public GameObject mapPrefab {
+		get {
+			// If no prefab is defined, use default one
+			if(m_mapPrefab == null) {
+				m_mapPrefab = Resources.Load<GameObject>(DEFAULT_MAP_PREFAB);
+			}
+			return m_mapPrefab;
+		}
+	}
+
 	[SerializeField] private GameObject[] m_resultScenesPrefabs = null;
 	public GameObject[] resultScenesPrefabs {
 		get { return m_resultScenesPrefabs; }
 	}
+
+	[Separator("Debug")]
+	[SerializeField] private Color m_boundsColor = Colors.paleYellow;
 
 	// Volatile members
 	// Not stored, must be initialized in runtime using the Init method.

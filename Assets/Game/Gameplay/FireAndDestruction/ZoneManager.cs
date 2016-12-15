@@ -56,19 +56,17 @@ public class ZoneManager : MonoBehaviour {
 	}
 
 	public ZoneEffect GetDestructionEffectCode(Decoration _deco) {		
-		if (_deco.isDestructible) {
-			Zone zone = GetZone(_deco.transform.position.z);
+		Zone zone = GetZone(_deco.transform.position.z);
 
-			if (zone != Zone.None) {
-				if (m_dragonTier == DragonTier.COUNT) {
-					m_dragonTier = InstanceManager.player.data.tier;
-				}
+		if (zone != Zone.None) {
+			if (m_dragonTier == DragonTier.COUNT) {
+				m_dragonTier = InstanceManager.player.data.tier;
+			}
 
-				if (m_dragonTier >= _deco.minTierDestruction) {
-					return ZoneEffect.M; // should be destroyed
-				} else if (m_dragonTier >= _deco.minTierDestructionFeedback) {
-					return ZoneEffect.S; // should give feedback?
-				}
+			if (m_dragonTier >= _deco.minTierDestruction) {
+				return ZoneEffect.M; // should be destroyed
+			} else if (m_dragonTier >= _deco.minTierDestructionFeedback) {
+				return ZoneEffect.S; // should give feedback?
 			}
 		}
 
@@ -91,9 +89,9 @@ public class ZoneManager : MonoBehaviour {
 	//----------------------------------------------------------------------------------------------------------------------------------------------------------
 	void OnDrawGizmosSelected() {
 		Rect mapBounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
-		LevelMapData data = GameObjectExt.FindComponent<LevelMapData>(true);
-		if (data != null) {
-			mapBounds = data.mapCameraBounds;
+		LevelData data = LevelManager.currentLevelData;
+		if(data != null) {
+			mapBounds = data.bounds;
 		}
 
 		Vector3 centerZone1 = (Vector3)mapBounds.center;
