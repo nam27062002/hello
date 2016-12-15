@@ -61,8 +61,8 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow + Normal Map"
 					float3 halfDir : TEXCOORD5;
 				};
 
-				sampler2D _MainTex;
-				float4 _MainTex_ST;
+				uniform sampler2D _MainTex;
+				uniform float4 _MainTex_ST;
 				uniform sampler2D _NormalTex;
 				uniform float4 _NormalTex_ST;
 				uniform float _NormalStrength;

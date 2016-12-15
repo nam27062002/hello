@@ -13,6 +13,7 @@ public class SiegeEngineOperatorSpawner : AbstractSpawner {
 
 	//-------------------------------------------------------------------
 	[SerializeField] private string m_entityPrefabStr;
+	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
 	[SerializeField] private Transform m_spawnAtTransform;
 	[SerializeField] private LookAtVector m_lookAtVector;
 	//-------------------------------------------------------------------	
@@ -21,6 +22,10 @@ public class SiegeEngineOperatorSpawner : AbstractSpawner {
 	private Machine m_operator;
 	private Pilot m_operatorPilot;
 
+	private float m_respawnTime;
+
+	// Scene referemces
+	private GameSceneControllerBase m_gameSceneController = null;
 	private AutoSpawnBehaviour m_autoSpawner;
 
     void Awake()
@@ -51,6 +56,10 @@ public class SiegeEngineOperatorSpawner : AbstractSpawner {
 
         m_newCamera = Camera.main.GetComponent<GameCamera>();
 
+		m_respawnTime = -1;
+
+		m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
+
 		// TODO[MALH]: Get path relative to quality version
 		PoolManager.CreatePool(m_entityPrefabStr, IEntity.ENTITY_PREFABS_PATH + m_entityPrefabStr, (int)GetMaxEntities(), true);        
     }
@@ -62,7 +71,9 @@ public class SiegeEngineOperatorSpawner : AbstractSpawner {
     protected override bool CanRespawnExtended() {
         if (m_autoSpawner.state == AutoSpawnBehaviour.State.Idle) {
             if (IsOperatorDead()) {
-				return !m_newCamera.IsInsideActivationMinArea(m_spawnAtTransform.position);
+				if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
+					return !m_newCamera.IsInsideActivationMinArea(m_spawnAtTransform.position);
+				}
             }
         }
         return false;
@@ -102,6 +113,8 @@ public class SiegeEngineOperatorSpawner : AbstractSpawner {
         if (m_operator != null && _entity == m_operator.gameObject) {
             m_operator = null;
             m_operatorPilot = null;
+
+			m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
         }
     }    
     //-------------------------------------------------------------------

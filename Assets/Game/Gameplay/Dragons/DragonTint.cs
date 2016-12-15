@@ -11,6 +11,7 @@ public class DragonTint : MonoBehaviour
 
 	Renderer[] m_dragonRenderers = null;
 	List<Material> m_materials = new List<Material>();
+	List<Color> m_fresnelColors = new List<Color>();
 	List<Material> m_bodyMaterials = new List<Material>();
 
 	float m_otherColorTimer = 0;
@@ -60,9 +61,10 @@ public class DragonTint : MonoBehaviour
 			for( int j = 0;j<mats.Length; j++ )
 			{
 				string shaderName = mats[j].shader.name;
-				if ( shaderName.Contains("Wings") || shaderName.Contains("Dragon") )
+				if ( shaderName.Contains("Dragon/Wings") || shaderName.Contains("Dragon/Body") )
 				{
 					m_materials.Add( mats[j] );
+					m_fresnelColors.Add( mats[j].GetColor("_FresnelColor"));
 					if (shaderName.Contains("Body"))
 						m_bodyMaterials.Add( mats[j] );
 				}
@@ -109,6 +111,7 @@ public class DragonTint : MonoBehaviour
 		m_deathAlpha = Mathf.Clamp01(m_deathAlpha);
 		multiplyColor.a = m_deathAlpha;
 		SetColorMultiply(multiplyColor);
+		SetFresnelAlpha( m_deathAlpha );
 
 		// Color add
 		m_damageTimer -= Time.deltaTime;
@@ -171,6 +174,18 @@ public class DragonTint : MonoBehaviour
 	{
 		for( int i = 0; i<m_materials.Count; i++ )	
 			m_materials[i].SetColor("_ColorMultiply", c );
+	}
+
+	void SetFresnelAlpha( float alpha )
+	{
+		
+		for( int i = 0; i<m_materials.Count; i++ )	
+		{
+			Color c = m_fresnelColors[i];
+			c.a = alpha;
+			m_fresnelColors[i] = c;
+			m_materials[i].SetColor("_FresnelColor", c );
+		}
 	}
 
 	void SetColorAdd( Color c)
