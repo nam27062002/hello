@@ -1549,6 +1549,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				StartWaterMovement( _other );
 				m_previousState = State.InsideWater;
 			}
+			else
+			{
+				m_animator.SetBool("swim", true);
+			}
 		}
 		else if ( _other.CompareTag("Space") )
 		{
@@ -1571,6 +1575,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			{
 				EndWaterMovement( _other );
 				m_previousState = State.Idle;
+			}
+			else
+			{
+				m_animator.SetBool("swim", false);
 			}
 		}
 		else if ( _other.CompareTag("Space") )
