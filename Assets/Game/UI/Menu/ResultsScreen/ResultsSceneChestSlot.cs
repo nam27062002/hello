@@ -10,6 +10,7 @@
 using UnityEngine;
 using DG.Tweening;
 using System.Collections.Generic;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -86,9 +87,17 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 			m_rewardObj.SetActive(false);
 
 			// Set text
-			TextMesh text = m_rewardObj.FindComponentRecursive<TextMesh>();
+			TextMeshPro text = m_rewardObj.FindComponentRecursive<TextMeshPro>();
 			if(text != null) {
+				// Set formatted text
 				text.text = "+" + StringUtils.FormatNumber(_chestRewardData.amount);
+
+				// Make it look to parent camera
+				ResultsSceneSetup parentScene = GetComponentInParent<ResultsSceneSetup>();
+				LookAt lookAt = text.GetComponent<LookAt>();
+				if(lookAt != null && parentScene != null) {
+					lookAt.lookAtObject = parentScene.camera.transform;
+				}
 			}
 		}
 

@@ -62,6 +62,9 @@ public class ResultsSceneController : MonoBehaviour {
 		// Turn off main camera
 		m_mainCamera.gameObject.SetActive(false);
 
+		// Define results scene camera as main one
+
+
 		// Select a random scene setup and instantiate it
 		// Find all scene setup prefabs for the loaded level - we have a special component for that, look for it
 		// If no setup is found (i.e. test levels), use the placeholder prefab

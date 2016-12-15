@@ -85,8 +85,13 @@ public class Corpse : MonoBehaviour {
 			if (!string.IsNullOrEmpty(m_blood.name) && m_bloodPoints != null) {
 				for (int i = 0; i < m_bloodPoints.Length; i++) {
 					GameObject ps = ParticleManager.Spawn(m_blood.name, Vector3.zero, m_blood.path);
-					ps.transform.SetParent(m_bloodPoints[i].transform);
-					ps.transform.localPosition = Vector3.zero;
+
+					FollowTransform ft = ps.GetComponent<FollowTransform>();
+					if (ft != null) {
+						ft.m_follow = m_bloodPoints[i].transform;
+					} else {
+						ps.transform.localPosition = Vector3.zero;
+					}
 				}
 			}
 		}
@@ -116,6 +121,10 @@ public class Corpse : MonoBehaviour {
 
 				m_time -= Time.deltaTime;
 				if (m_time <= 0) m_time = 0f;
+			}
+
+			for (int i = 0; i < m_gibs.Length; i++) {
+				m_gibs[i].AddForce(Vector3.down * 25f);
 			}
 		}
 	}

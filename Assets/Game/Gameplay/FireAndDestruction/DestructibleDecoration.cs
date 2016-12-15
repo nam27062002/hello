@@ -192,7 +192,7 @@ public class DestructibleDecoration : Initializable {
 
 						m_autoSpawner.StartRespawn();
 						m_view.SetActive(false);
-						m_viewDestroyed.SetActive(true);
+						//m_viewDestroyed.SetActive(true);
 						m_spawned = false;
 
 
