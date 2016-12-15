@@ -11,6 +11,7 @@ public class FogSetter : MonoBehaviour
 	float m_start;
 	float m_end;
 	Color m_color;
+	float m_rampY;
 
 	bool m_firstTime;
 
@@ -54,17 +55,20 @@ public class FogSetter : MonoBehaviour
 				m_start = res.m_fogStart;
 				m_end = res.m_fogEnd;
 				m_color = res.m_fogColor;
+				m_rampY = res.m_fogRamp;
 			}
 			else
 			{
 				m_start = Mathf.Lerp( m_start, res.m_fogStart, delta);
 				m_end = Mathf.Lerp( m_end, res.m_fogEnd, delta);
 				m_color = Color.Lerp( m_color, res.m_fogColor, delta);
+				m_rampY = Mathf.Lerp( m_rampY, res.m_fogRamp, delta);
 			}
 
 			Shader.SetGlobalFloat("_FogStart", m_start);
 			Shader.SetGlobalFloat("_FogEnd", m_end);
 			Shader.SetGlobalColor("_FogColor", m_color);
+			Shader.SetGlobalFloat("_FogRampY", m_rampY);
 		}
 	}
 }
