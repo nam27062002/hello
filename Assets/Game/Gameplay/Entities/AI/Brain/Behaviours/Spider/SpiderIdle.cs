@@ -60,11 +60,12 @@ namespace AI {
 
 			protected override void OnUpdate() {		
 				float m = 0;
+				float d = 1f;//((SpiderIdleData)m_data).hangDownSpeed * Time.deltaTime;
 
 				switch (m_idleState) {
 					case IdleState.Hang_down:
 						m = (m_machine.position - m_target).sqrMagnitude;
-						if (m < 1f) {
+						if (m <= d * d) {
 							ChangeState(IdleState.Hang_idle);
 						}
 						break;
@@ -76,9 +77,9 @@ namespace AI {
 						}
 						break;
 
-					case IdleState.Hang_up:
+					case IdleState.Hang_up: 
 						m = (m_machine.position - m_target).sqrMagnitude;
-						if (m < 2f) {
+						if (m <= d * d) {
 							m_machine.upVector = Vector3.down;
 							Transition(OnMove);;
 						}
