@@ -41,5 +41,8 @@ namespace AI {
 		bool Burn(Transform _transform);
 
 		void SetVelocity(Vector3 _v);
+
+		bool IsDying();
+
 	}
 }

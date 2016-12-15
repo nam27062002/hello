@@ -31,7 +31,7 @@ public class MapScroller : MonoBehaviour {
 
 	// Internal references
 	private Camera m_camera = null;
-	private LevelMapData m_levelMapData = null;
+	private LevelData m_levelData = null;
 
 	// Aux vars
 	private Vector2 m_cameraHalfSize = Vector2.one;
@@ -48,28 +48,26 @@ public class MapScroller : MonoBehaviour {
 		// Check required fields
 		Debug.Assert(m_scrollRect != null, "Required field not initialized!");
 
-		// Get map camera and data from the scene
-		// [AOC] Brute force the Map Object search, since designers/artists love to leave it disabled
-		//       This is super-expensive, but we only do it once per level so we should be able to afford it
-		m_levelMapData = GameObjectExt.FindComponent<LevelMapData>(true);
-		Debug.Assert(m_levelMapData != null, "The loaded level doesn't contain a LevelMapData object, map scroller can't be initialized.");
+		// Get current level's data
+		m_levelData = LevelManager.currentLevelData;
 
-		// Make sure parent object is enabled
-		Debug.Log(m_levelMapData);
-		Debug.Log(m_levelMapData.transform);
-		Debug.Log(m_levelMapData.transform.parent);
-		Debug.Log(m_levelMapData.transform.parent.gameObject);
-		m_levelMapData.transform.parent.gameObject.SetActive(true);
-
-		// Extract camera from it
-		m_camera = m_levelMapData.GetComponent<Camera>();
-		Debug.Assert(m_camera != null, "The object holding the LevelMapData doesn't have a Camera component");
+		// Create an instance of the map camera from the level's data prefab
+		Debug.Assert(m_levelData.mapPrefab != null, "The loaded level doesn't have a Map prefab assigned, minimap will be disabled.");
+		if(m_levelData.mapPrefab != null) {
+			GameObject mapObj = Instantiate<GameObject>(m_levelData.mapPrefab);
+			m_camera = mapObj.GetComponentInChildren<MapCamera>().camera;
+			Debug.Assert(m_camera != null, "The object holding the LevelMapData doesn't have a Camera component");
+		}
 	}
 
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+		// Nothing to do if we don't have all the required elements
+		if(m_camera == null) return;
+		if(m_levelData == null) return;
+
 		// Make sure camera object is enabled
 		EnableCamera(true);
 
@@ -99,6 +97,10 @@ public class MapScroller : MonoBehaviour {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
+		// Nothing to do if we don't have all the required elements
+		if(m_camera == null) return;
+		if(m_levelData == null) return;
+
 		// Disable camera object
 		EnableCamera(false);
 
@@ -110,6 +112,10 @@ public class MapScroller : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
+		// Nothing to do if we don't have all the required elements
+		if(m_camera == null) return;
+		if(m_levelData == null) return;
+
 		// Detect zoom
 		if(m_zoomSpeed > 0f) {
 			// Aux vars
@@ -157,7 +163,7 @@ public class MapScroller : MonoBehaviour {
 			// Perform some common stuff if zoom was changed
 			if(zoomChanged) {
 				// Make sure the orthographic size is within limits
-				m_camera.orthographicSize = Mathf.Clamp(m_camera.orthographicSize, m_minZoom, m_levelMapData.mapCameraBounds.height/2f);	// orthographicSize is half the viewport's height!
+				m_camera.orthographicSize = Mathf.Clamp(m_camera.orthographicSize, m_minZoom, m_levelData.bounds.height/2f);	// orthographicSize is half the viewport's height!
 
 				// Refresh scroll rect's sizes to match new camera viewport
 				RefreshCameraSize();
@@ -172,7 +178,7 @@ public class MapScroller : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-		
+		// [AOC] Instantiated map prefab should be destroyed with the scene, so don't do anything
 	}
 
 	//------------------------------------------------------------------------//
@@ -182,19 +188,23 @@ public class MapScroller : MonoBehaviour {
 	/// Update the camera position in the world to match the position of the scroll rect content.
 	/// </summary>
 	private void UpdateCameraPosition() {
+		// Make it safe
+		if(m_camera == null) return;
+		if(m_levelData == null) return;
+
 		// Content matches level bounds, scrollrect viewport matches camera viewport
 		// Scroll position is the top-left corner of the content rectangle, take in consideration camera size to make the maths
 		m_camera.transform.SetPosX(
 			Mathf.Lerp(
-				m_levelMapData.mapCameraBounds.xMin + m_cameraHalfSize.x, 
-				m_levelMapData.mapCameraBounds.xMax - m_cameraHalfSize.x, 
+				m_levelData.bounds.xMin + m_cameraHalfSize.x, 
+				m_levelData.bounds.xMax - m_cameraHalfSize.x, 
 				m_scrollRect.horizontalNormalizedPosition
 			)
 		);
 		m_camera.transform.SetPosY(
 			Mathf.Lerp(
-				m_levelMapData.mapCameraBounds.yMin + m_cameraHalfSize.y, 
-				m_levelMapData.mapCameraBounds.yMax - m_cameraHalfSize.y, 
+				m_levelData.bounds.yMin + m_cameraHalfSize.y, 
+				m_levelData.bounds.yMax - m_cameraHalfSize.y, 
 				m_scrollRect.verticalNormalizedPosition
 			)
 		);
@@ -204,11 +214,15 @@ public class MapScroller : MonoBehaviour {
 	/// Update camera size and scroll components size.
 	/// </summary>
 	private void RefreshCameraSize() {
+		// Make it safe
+		if(m_camera == null) return;
+		if(m_levelData == null) return;
+
 		// Setup scroll content to match map's boundaries
 		// [AOC] The idea is to match the scrollrect viewport to the camera's viewport and the scrollrect content to the camera limits
 		// 		 Constant values are camera's orthoSize, aspectRatio, limits and scrollrect's viewport size
 		//		 The only value to change is the scrollrect's content size, so we can easily compute the relation
-		Vector2 cameraLimits = m_levelMapData.mapCameraBounds.size;
+		Vector2 cameraLimits = m_levelData.bounds.size;
 		Vector2 viewportSize = m_scrollRect.viewport.rect.size;
 		Vector2 cameraSize = new Vector2(m_camera.orthographicSize * m_camera.aspect * 2f, m_camera.orthographicSize * 2f);	// [AOC] orthographicSize gives us half the height of the camera viewport in world coords
 		m_cameraHalfSize = cameraSize/2f;
@@ -222,16 +236,19 @@ public class MapScroller : MonoBehaviour {
 	/// </summary>
 	/// <param name="_pos">The position to scroll to (in world coords).</param>
 	private void ScrollToWorldPos(Vector3 _pos) {
+		// Make it safe
+		if(m_levelData == null) return;
+
 		// Ideally the ScrollRect will already snap to edges
 		// Scroll position is the top-left corner of the content rectangle, take in consideration camera size to make the maths
 		m_scrollRect.horizontalNormalizedPosition = Mathf.InverseLerp(
-			m_levelMapData.mapCameraBounds.xMin + m_cameraHalfSize.x, 
-			m_levelMapData.mapCameraBounds.xMax - m_cameraHalfSize.x, 
+			m_levelData.bounds.xMin + m_cameraHalfSize.x, 
+			m_levelData.bounds.xMax - m_cameraHalfSize.x, 
 			_pos.x
 		);
 		m_scrollRect.verticalNormalizedPosition = Mathf.InverseLerp(
-			m_levelMapData.mapCameraBounds.yMin + m_cameraHalfSize.y, 
-			m_levelMapData.mapCameraBounds.yMax - m_cameraHalfSize.y, 
+			m_levelData.bounds.yMin + m_cameraHalfSize.y, 
+			m_levelData.bounds.yMax - m_cameraHalfSize.y, 
 			_pos.y
 		);
 

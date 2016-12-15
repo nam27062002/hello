@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class DragonParticleController : MonoBehaviour 
 {
@@ -18,8 +19,9 @@ public class DragonParticleController : MonoBehaviour
 	public Transform m_bubblesAnchor;
 	public float m_bubblesDrowningMultiplier = 3;
 	private ParticleSystem m_bubblesInstance;
-	private ParticleSystem.MinMaxCurve m_defaultRate;
-	private ParticleSystem.MinMaxCurve m_doubleRate;
+	private float m_defaultRate = 1;
+	private float m_rateMultiplier = 0;
+
 
 	[Space]
 	public GameObject m_cloudTrail;
@@ -51,11 +53,23 @@ public class DragonParticleController : MonoBehaviour
 
 	private Transform _transform;
 	private bool m_insideWater = false;
+	private bool m_alive = true;
 	private float m_waterY = 0;
 	private float m_waterDepth = 5;
 	private const float m_waterDepthIncrease = 8;
 	private DragonMotion m_dargonMotion;
 	private DragonEatBehaviour m_dragonEat;
+
+	[System.Serializable]
+	public class BodyParticle
+	{
+		public bool m_stopInsideWater = false;
+		public bool m_stopWhenDead = false;
+		public ParticleSystem m_particleReference;
+	}
+
+	[Space]
+	public List<BodyParticle> m_bodyParticles = new List<BodyParticle>();
 
 	void Start () 
 	{
@@ -65,10 +79,8 @@ public class DragonParticleController : MonoBehaviour
 		m_bubblesInstance = InitParticles(m_bubbles, m_bubblesAnchor);
 		if ( m_bubblesInstance != null )
 		{
-			m_defaultRate = m_bubblesInstance.emission.rate;
-			m_doubleRate = m_defaultRate;
-			m_doubleRate.constantMax *= m_bubblesDrowningMultiplier;
-			m_doubleRate.constantMin *= m_bubblesDrowningMultiplier;
+			m_defaultRate = m_bubblesInstance.emission.rateOverTimeMultiplier;
+			m_rateMultiplier = m_defaultRate * m_bubblesDrowningMultiplier;
 		}
 
 		m_cloudTrailInstance = InitParticles(m_cloudTrail, m_cloudTrailAnchor);
@@ -98,12 +110,14 @@ public class DragonParticleController : MonoBehaviour
 	void OnEnable() {
 		// Register events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener(GameEvents.PLAYER_KO, OnKo);
 		Messenger.AddListener(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
 	void OnDisable()
 	{
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.RemoveListener(GameEvents.PLAYER_KO, OnKo);
 		Messenger.RemoveListener(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
@@ -190,9 +204,17 @@ public class DragonParticleController : MonoBehaviour
 		m_waterDepth = data.scale + m_waterDepthIncrease;
 	}
 
+	void OnKo()
+	{
+		m_alive = false;	
+		CheckBodyParts();
+	}
+
 	void OnRevive()
 	{
 		m_reviveInstance.Play();
+		m_alive = true;
+		CheckBodyParts();
 	}
 
 
@@ -203,8 +225,10 @@ public class DragonParticleController : MonoBehaviour
 		if ( m_bubblesInstance != null )
 		{
 			ParticleSystem.EmissionModule emission = m_bubblesInstance.emission;
-			emission.rate = m_defaultRate;
+			emission.rateOverTimeMultiplier = m_defaultRate;
 		}
+
+		CheckBodyParts();
 
 		if ( m_dargonMotion != null && Mathf.Abs(m_dargonMotion.velocity.y) >= m_minSpeedEnterSplash )
 		{
@@ -219,6 +243,8 @@ public class DragonParticleController : MonoBehaviour
 		m_insideWater = false;
 		if ( m_bubblesInstance != null && m_bubblesInstance.isPlaying)
 			m_bubblesInstance.Stop();
+
+		CheckBodyParts();
 
 		if ( m_dargonMotion != null && Mathf.Abs(m_dargonMotion.velocity.y) >= m_minSpeedExitSplash )
 		{
@@ -254,18 +280,49 @@ public class DragonParticleController : MonoBehaviour
 	/// <summary>
 	/// Function call when Dragon Motion is forced to go up inside water
 	/// </summary>
-	public void DeepLimit()
+	public void OnNoAirBubbles()
 	{
-		if (m_waterAirLimitInstance != null && (m_waterY - m_dragonEat.mouth.position.y) > m_waterDepth)
+		if ( m_insideWater )
 		{
-			m_waterAirLimitInstance.transform.rotation = Quaternion.Euler(90,0,0);
-			m_waterAirLimitInstance.Play();
-		}
+			if (m_waterAirLimitInstance != null)
+			{
+				m_waterAirLimitInstance.transform.rotation = Quaternion.Euler(90,0,0);
+				m_waterAirLimitInstance.Play();
+			}
 
-		if ( m_bubblesInstance != null )
-		{
-			ParticleSystem.EmissionModule emission = m_bubblesInstance.emission;
-			emission.rate = m_doubleRate;
+			if ( m_bubblesInstance != null )
+			{
+				ParticleSystem.EmissionModule emission = m_bubblesInstance.emission;
+				emission.rateOverTimeMultiplier = m_rateMultiplier;
+			}
 		}
 	}
+
+	public bool ShouldShowDeepLimitParticles()
+	{
+		if (m_waterAirLimitInstance != null && (m_waterY - m_dragonEat.mouth.position.y) > m_waterDepth)
+			return true;
+		return false;
+	}
+
+
+	public void CheckBodyParts()
+	{
+		for( int i = 0; i<m_bodyParticles.Count; i++ )
+		{
+			if ( (m_insideWater && m_bodyParticles[i].m_stopInsideWater)
+				|| (!m_alive && m_bodyParticles[i].m_stopWhenDead)
+			)
+			{
+				if (m_bodyParticles[i].m_particleReference.isPlaying)
+					m_bodyParticles[i].m_particleReference.Stop();
+			}
+			else
+			{
+				if (!m_bodyParticles[i].m_particleReference.isPlaying)
+					m_bodyParticles[i].m_particleReference.Play();
+			}
+		}
+	}
+
 }

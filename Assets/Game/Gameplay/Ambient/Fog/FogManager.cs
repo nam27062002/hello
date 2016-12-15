@@ -77,9 +77,9 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 	void RefillQuadtree()
 	{
 		Rect bounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
-		LevelMapData data = GameObjectExt.FindComponent<LevelMapData>(true);
+		LevelData data = LevelManager.currentLevelData;
 		if(data != null) {
-			bounds = data.mapCameraBounds;
+			bounds = data.bounds;
 		}
 		m_fogNodesArray = FindObjectsOfType(typeof(FogNode)) as FogNode[];
 		m_fogNodes = new QuadTree<FogNode>(bounds.x, bounds.y, bounds.width, bounds.height);

@@ -984,7 +984,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			if (maxPushDown < (gravityAcceleration.y + m_impulse.y))
 			{	
 				m_waterDeepLimit = true;
-				m_particleController.DeepLimit();
+				if (m_particleController.ShouldShowDeepLimitParticles())
+					m_animator.SetTrigger("no air");
 			}
 		}
 

@@ -14,6 +14,7 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow + N
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
 		_NormalStrength("Normal Strength", float) = 3
 		_Specular("Specular Factor", float) = 3
+		_SpecularDir("Specular Dir", Vector) = (0,0,-1,0)
 	}
 
 	SubShader {
@@ -70,6 +71,7 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow + N
 				uniform float4 _NormalTex_ST;
 				uniform float _NormalStrength;
 				uniform float _Specular;
+				uniform fixed4 _SpecularDir;
 
 				HG_FOG_VARIABLES
 				
@@ -96,7 +98,8 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow + N
 					// Half View - See: Blinn-Phong
 					float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
 //					float3 viewDirection = normalize(worldPos.xyz - _WorldSpaceCameraPos);
-					float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
+					// float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz); 
+					float3 lightDirection = normalize(_SpecularDir.rgb);
 					o.halfDir = normalize(lightDirection + viewDirection);
 
 

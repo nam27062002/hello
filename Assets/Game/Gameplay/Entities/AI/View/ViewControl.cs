@@ -683,11 +683,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			m_idleAudioAO.Stop();
 		}
 
-		if (m_explosionParticles.IsValid()) {
-			ParticleManager.Spawn(m_explosionParticles, transform.position + m_explosionParticles.offset);
-		}
-
 		if (!_eaten) {
+			if (m_explosionParticles.IsValid()) {
+				ParticleManager.Spawn(m_explosionParticles, transform.position + m_explosionParticles.offset);
+			}
+
 			if (!string.IsNullOrEmpty(m_onExplosionAudio))
 				AudioController.Play(m_onExplosionAudio, transform.position);
 		} else {

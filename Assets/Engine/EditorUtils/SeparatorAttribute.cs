@@ -23,7 +23,7 @@ public class SeparatorAttribute : PropertyAttribute {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public static readonly string DEFAULT_TEXT = "";
-	public static readonly float DEFAULT_SIZE = 20f;
+	public static readonly float DEFAULT_SIZE = 25f;
 	public static readonly Color DEFAULT_COLOR = new Color(0.65f, 0.65f, 0.65f);	// Silver-ish
 	
 	public enum Orientation {

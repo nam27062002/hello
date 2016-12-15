@@ -6,6 +6,7 @@ Shader "Hungry Dragon/Bumped Diffuse Transparent (Spawners)"
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_Specular( "Specular", float ) = 1
+		_Tint( "Tint", color) = (1, 1, 1, 1)
 	}
 	SubShader
 	{
@@ -50,6 +51,7 @@ Shader "Hungry Dragon/Bumped Diffuse Transparent (Spawners)"
 			uniform float4 _MainTex_TexelSize;
 			uniform float _Specular;
 			uniform float _BumpStrength;
+			uniform float4 _Tint;
 
 			
 			v2f vert (appdata v)
@@ -84,7 +86,7 @@ Shader "Hungry Dragon/Bumped Diffuse Transparent (Spawners)"
 
      			// col = (diffuse + fixed4(UNITY_LIGHTMODEL_AMBIENT.rgb,1)) * col + specular * _LightColor0;
      			col = (diffuse + fixed4(i.vLight,1)) * col + specular * _LightColor0;
-				return col;
+				return col * _Tint;
 			}
 			ENDCG
 		}

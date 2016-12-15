@@ -35,26 +35,30 @@ namespace AI {
 
 					if (collider.CompareTag("Player")) {
 						DragonPlayer dragon = InstanceManager.player;
-						if (dragon.HasMineShield()) {
-							dragon.LoseMineShield();
-						} else {
-							DragonHealthBehaviour health = dragon.GetComponent<DragonHealthBehaviour>();
-							if ( health != null)
-							{
-								health.ReceiveDamage(m_data.damage, DamageType.NORMAL, m_machine.transform);
-								if ( health.IsAlive() )
-									Messenger.Broadcast<float, float>(GameEvents.CAMERA_SHAKE, m_data.cameraShakeDuration, 0);		
+
+						if ( !m_machine.IsDying() )
+						{
+							if (dragon.HasMineShield()) {
+								dragon.LoseMineShield();
+							} else {
+								DragonHealthBehaviour health = dragon.GetComponent<DragonHealthBehaviour>();
+								if ( health != null)
+								{
+									health.ReceiveDamage(m_data.damage, DamageType.NORMAL, m_machine.transform);
+									if ( health.IsAlive() )
+										Messenger.Broadcast<float, float>(GameEvents.CAMERA_SHAKE, m_data.cameraShakeDuration, 0);		
+								}
 							}
+
+							DragonMotion dragonMotion = dragon.GetComponent<DragonMotion>();
+
+							Vector3 knockBack = dragonMotion.transform.position - m_machine.position;
+							knockBack.Normalize();
+
+							knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_data.damage, 2f));
+
+							dragonMotion.AddForce(knockBack);
 						}
-
-						DragonMotion dragonMotion = dragon.GetComponent<DragonMotion>();
-
-						Vector3 knockBack = dragonMotion.transform.position - m_machine.position;
-						knockBack.Normalize();
-
-						knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_data.damage, 2f));
-
-						dragonMotion.AddForce(knockBack);
 					} else if ( collider.CompareTag("Pet") ){
 						// is armored pet we should push it
 					} else if (collider.layer == LayerMask.NameToLayer("GroundPreys")) {

@@ -20,8 +20,10 @@ public class SkyLayerController : MonoBehaviour
 			yield return null;
 		}
 
-		LevelMapData data = GameObjectExt.FindComponent<LevelMapData>(true);
-		m_center = data.mapCameraBounds.center;
+		LevelData data = LevelManager.currentLevelData;
+		if(data != null) {
+			m_center = data.bounds.center;
+		}
 
 		m_playerTransform = InstanceManager.player.transform;
 		m_material = GetComponent<Renderer>().material;

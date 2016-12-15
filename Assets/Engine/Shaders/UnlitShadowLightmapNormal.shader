@@ -5,7 +5,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Lightmap And Recieve Shadow with Normal Map and overlay (On Line Decorations)"
+Shader "Hungry Dragon/Lightmap And Recieve Shadow + Normal Map" 
 {
 	Properties 
 	{
@@ -13,82 +13,76 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with Normal Map and overlay (O
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
 		_NormalStrength("Normal Strength", float) = 3
 		_Specular("Specular Factor", float) = 3
+		_SpecularDir("Specular Dir", Vector) = (0,0,-1,0)
 	}
 
 	SubShader {
-		Tags { "RenderType"="Opaque" "Queue"="Geometry" "LightMode"="ForwardBase" }
+		Tags { "RenderType"="Opaque" }
 		LOD 100
 		
-		Pass {		
-
-			Stencil
-			{
-				Ref 4
-				Comp always
-				Pass Replace
-				ZFail keep
-			}
+		Pass {  
+			Tags { "LightMode" = "ForwardBase" }
 
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
 				#pragma multi_compile_fog
 				#pragma multi_compile_fwdbase
-
+							
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
-				#include "Lighting.cginc"
 				#include "HungryDragon.cginc"
+				#include "Lighting.cginc"
+
 
 				struct appdata_t {
 					float4 vertex : POSITION;
 					float2 texcoord : TEXCOORD0;
+//					float4 color : COLOR;
 					#if LIGHTMAP_ON
 					float4 texcoord1 : TEXCOORD1;
 					#endif
-
-					float4 color : COLOR;
 					float3 normal : NORMAL;
 					float4 tangent : TANGENT;
 				}; 
 
 				struct v2f {
-					float4 pos : SV_POSITION;
+					float4 vertex : SV_POSITION;
 					half2 texcoord : TEXCOORD0;
+//					float4 color : COLOR;
 					HG_FOG_COORDS(1)
 					#if LIGHTMAP_ON
-					float2 lmap : TEXCOORD4;
+					float2 lmap : TEXCOORD2;
 					#endif
-					float4 color : COLOR; 
+					half2 texcoord2 : TEXCOORD3;
 					float3 tangentWorld : TANGENT;
-					float3 normalWorld : TEXCOORD5;
-					float3 binormalWorld : TEXCOORD6;
-					float3 halfDir : TEXCOORD2;
+					float3 normalWorld : NORMAL;
+					float3 binormalWorld : TEXCOORD4;
+					float3 halfDir : TEXCOORD5;
 				};
 
-				uniform sampler2D _MainTex;
-				uniform float4 _MainTex_ST;
-				uniform float4 _MainTex_TexelSize;
+				sampler2D _MainTex;
+				float4 _MainTex_ST;
 				uniform sampler2D _NormalTex;
 				uniform float4 _NormalTex_ST;
 				uniform float _NormalStrength;
 				uniform float _Specular;
+				uniform fixed4 _SpecularDir;
 
 				HG_FOG_VARIABLES
 				
 				v2f vert (appdata_t v) 
 				{
 					v2f o;
-					o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 					o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
+					o.texcoord2 = TRANSFORM_TEX(v.texcoord, _NormalTex);
+//					o.color = v.color;
 					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
-					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 					#endif
-					o.color = v.color;
-
-					// To calculate tangent world
+																							// To calculate tangent world
 					float4x4 modelMatrix = unity_ObjectToWorld;
 					float4x4 modelMatrixInverse = unity_WorldToObject;
 					o.tangentWorld = normalize(mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
@@ -98,30 +92,21 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with Normal Map and overlay (O
 					fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 					// Half View - See: Blinn-Phong
 					float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
-					float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
+//					float3 viewDirection = normalize(worldPos.xyz - _WorldSpaceCameraPos);
+					// float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz); 
+					float3 lightDirection = normalize(_SpecularDir.rgb);
 					o.halfDir = normalize(lightDirection + viewDirection);
+
 
 					return o;
 				}
 				
 				fixed4 frag (v2f i) : SV_Target
 				{
-					fixed4 col = tex2D(_MainTex, i.texcoord) * i.color;	// Color
-					fixed4 one = fixed4(1, 1, 1, 1);
-					float specMask = col.w;
-					col.w = 1.0;
-					// col = one- (one-col) * (1-(i.color-fixed4(0.5,0.5,0.5,0.5)));	// Soft Light
-					col = one - 2 * (one - i.color) * (one - col);	// Overlay
+					
+					fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
+					float specMask = col.a;
 
-					float4 encodedNormal = tex2D(_NormalTex, _NormalTex_ST.xy * i.texcoord + _NormalTex_ST.zw);
-					float3 localCoords = float3(2.0 * encodedNormal.xz - float2(1.0, 1.0), 1.0 / _NormalStrength);
-					float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
-					float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
-					fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
-
-					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
-					col *= attenuation;
-					 
 					#if LIGHTMAP_ON
 					fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 					col.rgb *= lm;
@@ -129,14 +114,17 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with Normal Map and overlay (O
 
 					HG_APPLY_FOG(i, col);	// Fog
 
-					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+					float4 encodedNormal = tex2D(_NormalTex, _NormalTex_ST.xy * i.texcoord2 + _NormalTex_ST.zw);
+					float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
+					float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
+					float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
+					fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
 
-					// col = fixed4(1,1,1,1) * i.fogCoord;
+					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 					return col + (specular * specMask * _LightColor0);
 				}
 			ENDCG
 		}
 	}
-
 	Fallback "Mobile/VertexLit"
 }
