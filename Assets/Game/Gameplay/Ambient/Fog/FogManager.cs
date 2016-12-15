@@ -15,11 +15,13 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 		public Color m_fogColor;
 		public float m_fogStart;
 		public float m_fogEnd;
+		public float m_fogRamp;
 		public void Reset()
 		{
 			m_fogColor = Color.clear;
 			m_fogStart = 0;
 			m_fogEnd = 0;
+			m_fogRamp = 0;
 		}
 	}
 
@@ -204,6 +206,7 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 				result.m_fogColor += m_resultNodes[i].m_node.m_fogColor * w;
 				result.m_fogStart += m_resultNodes[i].m_node.m_fogStart * w;
 				result.m_fogEnd += m_resultNodes[i].m_node.m_fogEnd * w;
+				result.m_fogRamp += m_resultNodes[i].m_node.m_fogRamp * w;
 			}
 		}
 
