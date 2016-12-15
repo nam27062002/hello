@@ -10,27 +10,32 @@ public class Corpse : MonoBehaviour {
 		public Quaternion localRotation;
 	}
 	//------------------------------------
+	[SerializeField] private float m_fadeDelay = 0.5f;
 	[SerializeField] private float m_fadeTime = 1f;
 	[SerializeField] private float m_forceExplosion = 175f;
 	[SerializeField] private ParticleData m_blood;
 	[SerializeField] private Transform[] m_bloodPoints;
 
 	private Rigidbody[] m_gibs;
-	private Renderer[] m_renderers;
+	private List<Material> m_materials;
 	private List<SimpleTransform> m_originalTransforms;
 	private List<Vector3> m_forceDirection;
 
+	private bool m_spawned;
 	private float m_time;
+	private float m_delay;
 
 
 	// Use this for initialization
 	void Awake() {		
+		m_spawned = false;
+
 		m_originalTransforms = new List<SimpleTransform>();
 		m_forceDirection = new List<Vector3>();
+		m_materials = new List<Material>();
 
 		Transform view = transform.FindChild("view");
 		m_gibs = view.GetComponentsInChildren<Rigidbody>();
-		m_renderers = view.GetComponentsInChildren<Renderer>();
 
 		for (int i = 0; i < m_gibs.Length; i++) {
 			SimpleTransform t = new SimpleTransform();
@@ -43,10 +48,25 @@ public class Corpse : MonoBehaviour {
 			dir.Normalize();
 			m_forceDirection.Add(dir);
 		}
+
+		Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
+		for (int i = 0; i < renderers.Length; i++) {
+			Material[] materials = renderers[i].materials;
+			for (int m = 0; m < materials.Length; m++) {
+				m_materials.Add(materials[m]);
+			}
+		}
 	}
 
-	void OnEnable() {
+	void OnDisable() {
+		m_spawned = false;
+	}
+
+	public void Spawn(bool _isGold, bool _hasBoost) {
 		if (m_gibs != null) {
+
+			float forceFactor = _hasBoost ? 1.25f : 1f;
+
 			for (int i = 0; i < m_gibs.Length; i++) {
 				m_gibs[i].transform.position = Vector3.zero;
 				m_gibs[i].transform.rotation = Quaternion.identity;
@@ -59,7 +79,7 @@ public class Corpse : MonoBehaviour {
 				m_gibs[i].rotation = Quaternion.identity;
 				m_gibs[i].velocity = Vector3.zero;
 
-				m_gibs[i].AddForce(m_forceDirection[i] * m_forceExplosion, ForceMode.Impulse);
+				m_gibs[i].AddForce(m_forceDirection[i] * m_forceExplosion * forceFactor, ForceMode.Impulse);
 			}
 
 			if (!string.IsNullOrEmpty(m_blood.name) && m_bloodPoints != null) {
@@ -72,12 +92,31 @@ public class Corpse : MonoBehaviour {
 		}
 
 		m_time = m_fadeTime;
+		Color tint = Color.white;
+		Color fresnel = _isGold ?  ViewControl.GOLD_TINT : Color.black;
+
+		for (int i = 0; i < m_materials.Count; i++) {
+			m_materials[i].SetColor("_FresnelColor", fresnel);      
+			m_materials[i].SetColor("_Tint", tint);
+		}
+
+		m_delay = m_fadeDelay;
+		m_spawned = true;
 	}
 
 	void Update() {
-		float alpha = m_time / m_fadeTime;
+		if (m_spawned) {
+			m_delay -= Time.deltaTime;
+			if (m_delay <= 0) {
+				Color tint = Color.white;
+				tint.a = m_time / m_fadeTime;
+				for (int i = 0; i < m_materials.Count; i++) {
+					m_materials[i].SetColor("_Tint", tint);
+				}
 
-		m_time -= Time.deltaTime;
-		if (m_time <= 0) m_time = 0f;
+				m_time -= Time.deltaTime;
+				if (m_time <= 0) m_time = 0f;
+			}
+		}
 	}
 }
