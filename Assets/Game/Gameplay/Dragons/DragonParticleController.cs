@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class DragonParticleController : MonoBehaviour 
 {
@@ -52,11 +53,23 @@ public class DragonParticleController : MonoBehaviour
 
 	private Transform _transform;
 	private bool m_insideWater = false;
+	private bool m_alive = true;
 	private float m_waterY = 0;
 	private float m_waterDepth = 5;
 	private const float m_waterDepthIncrease = 8;
 	private DragonMotion m_dargonMotion;
 	private DragonEatBehaviour m_dragonEat;
+
+	[System.Serializable]
+	public class BodyParticle
+	{
+		public bool m_stopInsideWater = false;
+		public bool m_stopWhenDead = false;
+		public ParticleSystem m_particleReference;
+	}
+
+	[Space]
+	public List<BodyParticle> m_bodyParticles = new List<BodyParticle>();
 
 	void Start () 
 	{
@@ -97,12 +110,14 @@ public class DragonParticleController : MonoBehaviour
 	void OnEnable() {
 		// Register events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener(GameEvents.PLAYER_KO, OnKo);
 		Messenger.AddListener(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
 	void OnDisable()
 	{
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.RemoveListener(GameEvents.PLAYER_KO, OnKo);
 		Messenger.RemoveListener(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
@@ -189,9 +204,17 @@ public class DragonParticleController : MonoBehaviour
 		m_waterDepth = data.scale + m_waterDepthIncrease;
 	}
 
+	void OnKo()
+	{
+		m_alive = false;	
+		CheckBodyParts();
+	}
+
 	void OnRevive()
 	{
 		m_reviveInstance.Play();
+		m_alive = true;
+		CheckBodyParts();
 	}
 
 
@@ -204,6 +227,8 @@ public class DragonParticleController : MonoBehaviour
 			ParticleSystem.EmissionModule emission = m_bubblesInstance.emission;
 			emission.rateOverTimeMultiplier = m_defaultRate;
 		}
+
+		CheckBodyParts();
 
 		if ( m_dargonMotion != null && Mathf.Abs(m_dargonMotion.velocity.y) >= m_minSpeedEnterSplash )
 		{
@@ -218,6 +243,8 @@ public class DragonParticleController : MonoBehaviour
 		m_insideWater = false;
 		if ( m_bubblesInstance != null && m_bubblesInstance.isPlaying)
 			m_bubblesInstance.Stop();
+
+		CheckBodyParts();
 
 		if ( m_dargonMotion != null && Mathf.Abs(m_dargonMotion.velocity.y) >= m_minSpeedExitSplash )
 		{
@@ -278,5 +305,24 @@ public class DragonParticleController : MonoBehaviour
 		return false;
 	}
 
+
+	public void CheckBodyParts()
+	{
+		for( int i = 0; i<m_bodyParticles.Count; i++ )
+		{
+			if ( (m_insideWater && m_bodyParticles[i].m_stopInsideWater)
+				|| (!m_alive && m_bodyParticles[i].m_stopWhenDead)
+			)
+			{
+				if (m_bodyParticles[i].m_particleReference.isPlaying)
+					m_bodyParticles[i].m_particleReference.Stop();
+			}
+			else
+			{
+				if (!m_bodyParticles[i].m_particleReference.isPlaying)
+					m_bodyParticles[i].m_particleReference.Play();
+			}
+		}
+	}
 
 }
