@@ -160,6 +160,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	[SerializeField] private float m_cloudTrailMinSpeed = 7.5f;
 	[SerializeField] private float m_outerSpaceRecoveryTime = 0.5f;
 	[SerializeField] private float m_insideWaterRecoveryTime = 0.1f;
+	private const float m_waterGravityMultiplier = 3.5f;
+	private Vector3 m_waterEnterPosition;
+	private bool m_insideWater = false;
 	private float m_recoverTimer;
 
 	private bool m_canMoveInsideWater = true;
@@ -234,6 +237,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private float m_reviveTimer;
 	private const float m_reviveDuration = 1;
 	private float m_deadTimer = 0;
+	private const float m_deadGravityMultiplier = 5;
 
 
 	//------------------------------------------------------------------//
@@ -444,6 +448,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.Dead:
 				{
 					m_animator.SetTrigger("dead");
+					if ( m_previousState == State.InsideWater )
+						m_animator.SetBool("swim", true);
 					// Save Position!
 					m_diePosition = transform.position;
 					m_deadTimer = 0;
@@ -771,7 +777,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 			case State.Dead:
 			{
-				DeadFall( Time.fixedDeltaTime );
+				if ( m_previousState == State.InsideWater || m_insideWater)
+				{
+					DeadDrowning( Time.fixedDeltaTime );
+				}
+				else
+				{
+					DeadFall( Time.fixedDeltaTime );
+				}
 			}break;
 			case State.Reviving:
 			{
@@ -958,7 +971,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		Vector3 impulse = m_controls.GetImpulse(1);
         if (impulse.y < 0) impulse.y *= m_inverseGravityWater;
 
-		Vector3 gravityAcceleration = Vector3.up * 9.81f * m_dragonGravityModifier * 3.5f;   // Gravity
+		Vector3 gravityAcceleration = Vector3.up * 9.81f * m_dragonGravityModifier * m_waterGravityMultiplier;   // Gravity
         Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass * m_accWaterFactor;
         Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
@@ -1088,16 +1101,15 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if (m_height >= 2f * transform.localScale.y) { // dragon will fly up to avoid mesh intersection
 
 			m_deadTimer += Time.deltaTime;
-
 			m_impulse = m_rbody.velocity;
 			if ( m_deadTimer < 1.5f * Time.timeScale )
 			{
-				float gravity = 9.81f * m_dragonGravityModifier * 10;
+				float gravity = 9.81f * m_dragonGravityModifier * m_deadGravityMultiplier;
 				Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
 
 				// stroke's Drag
 				float impulseMag = m_impulse.magnitude;
-				m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+				m_impulse += (acceleration * _deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
 			}
 			else
 			{
@@ -1114,6 +1126,45 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_direction = Vector3.left;
 		}
 
+
+		RotateToDirection(m_direction, false);
+		m_desiredRotation = m_transform.rotation;
+
+		ApplyExternalForce();
+		m_rbody.velocity = m_impulse;
+	}
+
+
+	private void DeadDrowning(float _deltaTime){
+
+		Vector3 oldDirection = m_direction;
+		m_deadTimer += Time.deltaTime;
+		m_impulse = m_rbody.velocity;
+		if ( m_deadTimer < 1.5f * Time.timeScale )
+		{
+			Vector3 gravityAcceleration = Vector3.up * 9.81f * m_dragonGravityModifier * m_waterGravityMultiplier * m_deadGravityMultiplier;   // Gravity
+			if ( transform.position.y > (m_waterEnterPosition.y - m_groundCollider.radius))
+				gravityAcceleration -= gravityAcceleration;
+
+			Vector3 acceleration = gravityAcceleration;	// Gravity
+
+			// stroke's Drag
+			float impulseMag = m_impulse.magnitude;
+			m_impulse += (acceleration * _deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
+		}
+		else
+		{
+			ComputeImpulseToZero(_deltaTime);
+		}
+
+		if ( oldDirection.x > 0 )
+		{
+			m_direction = Vector3.right;	
+		}
+		else
+		{
+			m_direction = Vector3.left;
+		}
 
 		RotateToDirection(m_direction, false);
 		m_desiredRotation = m_transform.rotation;
@@ -1488,6 +1539,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if ( _other.CompareTag("Water") )
 		{
 			// Check direction?
+			m_waterEnterPosition = transform.position;
+			m_insideWater = true;
+			// Modify Y to match real pos?
 
 			// Enable Bubbles
 			if (IsAliveState())
@@ -1511,6 +1565,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		if ( _other.CompareTag("Water") )
 		{
+			m_insideWater = false;
 			// Disable Bubbles
 			if (IsAliveState() )
 			{

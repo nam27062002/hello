@@ -12,6 +12,7 @@ using UnityEditor;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Threading;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -181,7 +182,12 @@ public class SpawnerIconGeneratorEditor : Editor {
 	/// <param name="_backgroundColor">The background color of the icon (recommended to use full transparency).</param>
 	public static void GenerateIcon(GameObject _entityPrefab, Color _backgroundColor, string _name) {
 		// Generate a new texture
-		Texture2D tex = AssetPreview.GetAssetPreview(_entityPrefab);
+		Texture2D tex = null;
+		do
+		{
+			tex = AssetPreview.GetAssetPreview(_entityPrefab);
+		}while(tex == null && AssetPreview.IsLoadingAssetPreview( _entityPrefab.GetInstanceID()));
+
 		if(tex != null) {
 			// Create a copy, we don't want to modify the source
 			tex = Instantiate<Texture2D>(tex);
