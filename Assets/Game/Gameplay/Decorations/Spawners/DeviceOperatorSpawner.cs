@@ -2,7 +2,7 @@
 using System.Collections;
 using AI;
 
-public class SiegeEngineOperatorSpawner : AbstractSpawner {	
+public class DeviceOperatorSpawner : AbstractSpawner {	
 
 	private enum LookAtVector {
 		Right = 0,
@@ -15,6 +15,7 @@ public class SiegeEngineOperatorSpawner : AbstractSpawner {
 	[SerializeField] private string m_entityPrefabStr;
 	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
 	[SerializeField] private Transform m_spawnAtTransform;
+	[SerializeField] private bool m_mustBeChild = false;
 	[SerializeField] private LookAtVector m_lookAtVector;
 	//-------------------------------------------------------------------	
 
@@ -91,14 +92,20 @@ public class SiegeEngineOperatorSpawner : AbstractSpawner {
         Transform groundSensor = spawning.transform.FindChild("groundSensor");
 
         Transform t = spawning.transform;
-        t.position = m_spawnAtTransform.position;
-        if (groundSensor != null)
-        {
-			t.position -= groundSensor.localPosition;
-        }
+        
+		if (m_mustBeChild) {
+			t.parent = m_spawnAtTransform;
+			t.localPosition = Vector3.zero;
+		} else {
+			t.position = m_spawnAtTransform.position;
+	        if (groundSensor != null) {
+				t.position -= groundSensor.localPosition;
+	        }
 
-        t.rotation = m_spawnAtTransform.rotation;//Quaternion.LookRotation(GetLookAtVector());
-        t.localScale = Vector3.one;
+			t.rotation = m_spawnAtTransform.rotation;//Quaternion.LookRotation(GetLookAtVector());
+		}
+
+		t.localScale = Vector3.one;
     }
 
     protected override void OnMachineSpawned(AI.Machine machine) {

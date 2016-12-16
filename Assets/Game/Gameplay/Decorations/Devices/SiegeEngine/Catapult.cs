@@ -2,7 +2,7 @@
 using System;
 using System.Collections;
 
-public class Catapult : Initializable {
+public class Catapult : SimpleDevice {
 
 	private enum State {		
 		Reload = 0,
@@ -20,7 +20,7 @@ public class Catapult : Initializable {
 
 	[SerializeField] private float m_vAngleMin = 0f;
 	[SerializeField] private float m_vAngleMax = 60f;
-	[SerializeField] private float m_initialVelocity = 10;
+	[SerializeField] private float m_initialVelocity = 10f;
 	[SerializeField] private Vector3 m_initialPosition = Vector3.zero;
 	[SerializeField] private ExtraToss[] m_extraProjectiles;
 
@@ -48,11 +48,8 @@ public class Catapult : Initializable {
 
 	private Animator m_animator;
 	private PreyAnimationEvents m_animEvents;
-	private AutoSpawnBehaviour m_autoSpawner;
-	private SiegeEngineOperatorSpawner m_operatorSpawner;
-	private InflammableDecoration m_inflammable;
 
-	private bool m_operatorAvailable;
+
 	private GameObject[] m_ammo;
 	private Transform m_ammoTransform;
 
@@ -61,20 +58,13 @@ public class Catapult : Initializable {
 	private State m_state;
 
 	// Use this for initialization
-	void Awake() {
-		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
-		m_operatorSpawner = GetComponent<SiegeEngineOperatorSpawner>();
-		m_inflammable = GetComponent<InflammableDecoration>();
-
+	void Start () {
 		m_ammo = new GameObject[m_extraProjectiles.Length + 1];
 		GameObject projectilePrefab = Resources.Load<GameObject>("Game/Projectiles/" + m_ammoName);
 		PoolManager.CreatePool(projectilePrefab, 3, true);
 
 		FindAmmoSpawnTransform();
-	}
 
-
-	void Start () {
 		GetHorizontalAngle();
 
 		m_target = InstanceManager.player.transform;
@@ -88,61 +78,22 @@ public class Catapult : Initializable {
 		m_animEvents.onAttackEnd		+= new PreyAnimationEvents.OnAttackEndDelegate(OnReload);
 
 		m_timer = 0;
-		m_operatorAvailable = false;
 		m_state = State.Reload;
 	}
 
 	public override void Initialize() {
+		base.Initialize();
+
 		m_vAngle = (m_vAngleMax + m_vAngleMin) * 0.5f;
 
 		m_timer = 0;
 		m_animator.StopPlayback();
 
-		m_operatorAvailable = false;
 		m_state = State.Reload;
 	}
 
 	// Update is called once per frame
-	void Update () {		
-		if (m_inflammable.IsBurning() 
-		|| 	m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning) {	// if respawning we wait
-			m_animator.StartPlayback();
-			for (int i = 0; i < m_ammo.Length; i++) {
-				if (m_ammo[i] != null) {
-					m_ammo[i].GetComponent<CatapultAmmo>().Explode(false);
-					m_ammo[i] = null;
-				}
-			}
-			m_operatorAvailable = false;
-			return;
-		}
-
-
-		if (m_operatorAvailable) {
-			if (m_operatorSpawner.IsOperatorDead()) {
-				m_operatorAvailable = false;
-				if (m_state == State.Reload) {
-					m_animator.StartPlayback();
-				}
-				return;
-			}
-		} else {
-			//check respawn conditions
-			if (m_operatorSpawner.CanRespawn()) {
-				m_operatorSpawner.Respawn();
-			}
-
-			if (!m_operatorSpawner.IsOperatorDead()) {				
-				m_operatorAvailable = true;
-				m_animator.StopPlayback();
-				if (m_state == State.Reload) { // reload time
-					OnReload();
-				}
-			}
-
-			return;
-		}
-
+	protected override void ExtendedUpdate() {	
 		if (m_state == State.Loaded) {
 			m_timer -= Time.deltaTime;
 			if (m_timer <= 0f) {
@@ -155,6 +106,29 @@ public class Catapult : Initializable {
 				}
 				m_timer = 0f;
 			}
+		}
+	}
+
+	protected override void OnRespawning() {
+		m_animator.StartPlayback();
+		for (int i = 0; i < m_ammo.Length; i++) {
+			if (m_ammo[i] != null) {
+				m_ammo[i].GetComponent<CatapultAmmo>().Explode(false);
+				m_ammo[i] = null;
+			}
+		}
+	}
+
+	protected override void OnOperatorDead() {
+		if (m_state == State.Reload) {
+			m_animator.StartPlayback();
+		}
+	}
+
+	protected override void OnOperatorSpawned() {
+		m_animator.StopPlayback();
+		if (m_state == State.Reload) { // reload time
+			OnReload();
 		}
 	}
 
