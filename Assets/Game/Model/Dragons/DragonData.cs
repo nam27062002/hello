@@ -23,6 +23,8 @@ public class DragonData {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	public const string GAME_PREFAB_PATH = "Game/Dragons/";
+	public const string MENU_PREFAB_PATH = "UI/Menu/Dragons/";
 
 	// Dragons can be unlocked with coins when the previous tier is completed (all dragons in it at max level), or directly with PC.
 	public enum LockState {
