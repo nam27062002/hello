@@ -622,7 +622,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1000013729445482, guid: d56b871ba168b9941aa7c1d042f23aee, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4000010440637504, guid: d56b871ba168b9941aa7c1d042f23aee, type: 2}
       propertyPath: m_LocalPosition.y
@@ -630,7 +630,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4000010440637504, guid: d56b871ba168b9941aa7c1d042f23aee, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 100.5
+      value: 414.6
       objectReference: {fileID: 0}
     - target: {fileID: 114000013716755024, guid: d56b871ba168b9941aa7c1d042f23aee,
         type: 2}
@@ -854,6 +854,45 @@ Prefab:
       propertyPath: m_Name
       value: inside waterfall cave 6
       objectReference: {fileID: 0}
+    - target: {fileID: 1000012311490854, guid: d56b871ba168b9941aa7c1d042f23aee, type: 2}
+      propertyPath: m_Name
+      value: waterfall
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010826370550, guid: d56b871ba168b9941aa7c1d042f23aee,
+        type: 2}
+      propertyPath: m_fogColor.r
+      value: 0.30196083
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010826370550, guid: d56b871ba168b9941aa7c1d042f23aee,
+        type: 2}
+      propertyPath: m_fogColor.g
+      value: 0.85557795
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010826370550, guid: d56b871ba168b9941aa7c1d042f23aee,
+        type: 2}
+      propertyPath: m_fogColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010826370550, guid: d56b871ba168b9941aa7c1d042f23aee,
+        type: 2}
+      propertyPath: m_fogStart
+      value: -12.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010826370550, guid: d56b871ba168b9941aa7c1d042f23aee,
+        type: 2}
+      propertyPath: m_fogRamp
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010826370550, guid: d56b871ba168b9941aa7c1d042f23aee,
+        type: 2}
+      propertyPath: m_fogEnd
+      value: -74.24
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010826370550, guid: d56b871ba168b9941aa7c1d042f23aee,
+        type: 2}
+      propertyPath: m_fogColor.a
+      value: 0.359
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d56b871ba168b9941aa7c1d042f23aee, type: 2}
   m_IsPrefabParent: 0
@@ -962,7 +1001,7 @@ GameObject:
   - component: {fileID: 1443287500}
   - component: {fileID: 1443287501}
   m_Layer: 0
-  m_Name: Dungeon a
+  m_Name: Dungeon red light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -976,7 +1015,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1443287499}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 558.23, y: -63.82, z: 0}
+  m_LocalPosition: {x: 570.2, y: -63.82, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 100535576}
@@ -994,7 +1033,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fogColor: {r: 0.9044118, g: 0.76315475, b: 0.39235505, a: 0.297}
+  m_fogColor: {r: 0.9044118, g: 0.5088921, b: 0.39235505, a: 0.378}
   m_fogStart: -0.4
   m_fogEnd: 16.76
   m_fogRamp: 1

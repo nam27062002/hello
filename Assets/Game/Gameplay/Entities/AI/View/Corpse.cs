@@ -122,6 +122,10 @@ public class Corpse : MonoBehaviour {
 				m_time -= Time.deltaTime;
 				if (m_time <= 0) m_time = 0f;
 			}
+
+			for (int i = 0; i < m_gibs.Length; i++) {
+				m_gibs[i].AddForce(Vector3.down * 25f);
+			}
 		}
 	}
 }

@@ -5,15 +5,15 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 452510}
-  - 33: {fileID: 3368826}
-  - 23: {fileID: 2321470}
-  - 114: {fileID: 11418634}
-  - 65: {fileID: 6599682}
-  - 114: {fileID: 11462240}
-  - 114: {fileID: 114000011989213114}
+  - component: {fileID: 452510}
+  - component: {fileID: 3368826}
+  - component: {fileID: 2321470}
+  - component: {fileID: 11418634}
+  - component: {fileID: 6599682}
+  - component: {fileID: 11462240}
+  - component: {fileID: 114000011989213114}
   m_Layer: 4
   m_Name: PF_Water
   m_TagString: Water
@@ -30,10 +30,10 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2148.1, y: 104.3, z: 0}
   m_LocalScale: {x: 70, y: 35, z: 10}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &2321470
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -49,7 +49,9 @@ MeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: ca7b7447fd4e6e646bf3984832d69688, type: 2}
   - {fileID: 2100000, guid: 6882099d0a6c2ba4db01a5afa3a3ad68, type: 2}
-  m_SubsetIndices: 
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
@@ -57,7 +59,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_SelectedWireframeHidden: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -130,3 +132,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ambientSound: Underwater
+  m_onEnterSnapshot: {fileID: 0}

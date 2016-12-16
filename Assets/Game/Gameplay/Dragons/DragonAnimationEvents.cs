@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
 
 public class DragonAnimationEvents : MonoBehaviour {
 
@@ -46,6 +47,12 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	private bool m_eventsRegistered = false;
 
+	public AudioMixerSnapshot m_insideWaterSnapshot;
+	public float m_waterDeepToSnapshot;
+	private bool m_checkWaterSnapshot = false;
+	private float m_startWaterMovementY;
+
+
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
 		m_bostBehaviour = transform.parent.GetComponent<DragonBoostBehaviour>();
@@ -65,6 +72,19 @@ public class DragonAnimationEvents : MonoBehaviour {
 		{
 			Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 			Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
+		}
+	}
+
+	void Update()
+	{
+		if ( m_checkWaterSnapshot )
+		{
+			if ( transform.position.y < m_startWaterMovementY - m_waterDeepToSnapshot)
+			{
+				if ( m_insideWaterSnapshot != null )
+					InstanceManager.musicController.RegisterSnapshot(m_insideWaterSnapshot);
+				m_checkWaterSnapshot = false;
+			}
 		}
 	}
 
@@ -187,6 +207,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public void OnInsideWater( bool withSplash )
 	{
 		MuteWindSounds();
+		m_checkWaterSnapshot = true;
+		m_startWaterMovementY = transform.position.y;
 		if ( withSplash )
 		{
 			PlaySound(m_enterWaterWithSplashSound);
@@ -200,6 +222,10 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public void OnExitWater( bool withSplash )
 	{
 		UnmuteWindSounds();
+		if (!m_checkWaterSnapshot && m_insideWaterSnapshot != null)	// Means we registered snapshot
+			InstanceManager.musicController.UnregisterSnapshot(m_insideWaterSnapshot);	
+		m_checkWaterSnapshot = false;
+
 		if (withSplash )
 		{
 			PlaySound(m_exitWaterWithSplashSound);
