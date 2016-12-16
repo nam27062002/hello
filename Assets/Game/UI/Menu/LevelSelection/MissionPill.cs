@@ -206,6 +206,13 @@ public class MissionPill : MonoBehaviour {
 
 		// Difficulty
 		RefreshDifficulty(m_activeObj.FindComponentRecursive<Localizer>("DifficultyText"), true);
+
+		GameObject watchAd = m_activeObj.FindObjectRecursive("ButtonWatchAd");
+		if ( watchAd != null ){
+			// Check if ads availables to skip mission
+			watchAd.SetActive( false );
+		}
+
 	}
 
 	/// <summary>
@@ -321,6 +328,22 @@ public class MissionPill : MonoBehaviour {
 			// Currency popup / Resources flow disabled for now
             UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
+	}
+
+	/// <summary>
+	/// Callback for the remove mission button with ads.
+	/// </summary>
+	public void OnFreeRemoveMission(){
+		if ( m_mission == null ) return;
+
+		PopupController popup = PopupManager.OpenPopupInstant(PopupAdRevive.PATH);
+		popup.OnClosePostAnimation.AddListener(OnAdClosed);
+	}
+
+	private void OnAdClosed() {
+
+		MissionManager.RemoveMission(m_missionDifficulty);
+		PersistenceManager.Save();
 	}
 
 	/// <summary>
