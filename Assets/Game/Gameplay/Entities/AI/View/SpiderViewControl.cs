@@ -9,26 +9,56 @@ public class SpiderViewControl : ViewControl {
 	[SerializeField] private GameObject m_onAttackParticleAnchor;
 
 	private bool m_hanging;
+	private Vector3 m_startHangingPos;
+	private Vector3 m_startBitePos;
+	private float m_startBiteDistance;
 	private AI.Behaviour.AttackRanged m_rangedAttack;
+	private float m_startWebWidth;
+	private bool m_bite = false;
 
 	protected override void Awake()
 	{
 		base.Awake();
+		m_startWebWidth = m_web.widthMultiplier;
 		if ( m_onAttackParticle.IsValid()  )
 			ParticleManager.CreatePool( m_onAttackParticle);
 	}
 
 	public override void Spawn(ISpawner _spawner) {
 		base.Spawn(_spawner);
-
+		m_web.widthMultiplier = m_startWebWidth;
 		m_hanging = false;
 		m_web.enabled = false;
+		m_bite = false;
 	}
-	
+
+	public override void Bite()
+	{
+		m_bite = true;
+		m_startBitePos = transform.position;
+		m_startBiteDistance = (m_startBitePos - m_startHangingPos).sqrMagnitude;
+	}
+
+
 	// Update is called once per frame
 	protected override void Update() {
 		if (m_hanging) {
 			m_web.SetPosition(1, m_spinneret.position);
+
+			// Check if eating!
+			if ( m_bite )
+			{
+				float newBiteDistance = (transform.position - m_startHangingPos).sqrMagnitude;
+				if ( newBiteDistance > m_startBiteDistance ) 
+				{
+					float proportionToStretch = m_startBiteDistance/newBiteDistance;
+					m_web.widthMultiplier = m_startWebWidth * proportionToStretch;
+				}
+				else
+				{
+					m_web.widthMultiplier = m_startWebWidth;
+				}
+			}
 		}
 
 		base.Update();
@@ -39,7 +69,8 @@ public class SpiderViewControl : ViewControl {
 			m_hanging = true;
 			m_web.enabled = true;
 
-			m_web.SetPosition(0, transform.position + Vector3.up * 0.5f);
+			m_startHangingPos = transform.position + Vector3.up * 0.5f;
+			m_web.SetPosition(0, m_startHangingPos);
 			m_web.SetPosition(1, m_spinneret.position);
 		}
 	}

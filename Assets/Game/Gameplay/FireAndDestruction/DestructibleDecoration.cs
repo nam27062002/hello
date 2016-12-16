@@ -8,8 +8,22 @@ public class DestructibleDecoration : Initializable {
 		GoThrough
 	}
 
+	private enum UpVector {
+		Up = 0,
+		Down,
+		Right,
+		Left,
+		Forward,
+		Back
+	};
+
 	[SerializeField] private InteractionType m_zone1Interaction = InteractionType.Collision;
 	[SerializeField] private float m_knockBackStrength = 5f;
+
+	[SerializeField] private bool m_particleFaceDragonDirection = false;
+	[SerializeField] private UpVector m_particleUpVector = UpVector.Up;
+	[SerializeField] private UpVector m_particleRotationAxis = UpVector.Back;
+
 	[CommentAttribute("Add a feedback effect when this object is touched by Dragon.")]
 	[SerializeField] private string m_feddbackParticle = "";
 	[CommentAttribute("Add a destroy effect when this object is trampled by Dragon.")]
@@ -143,7 +157,10 @@ public class DestructibleDecoration : Initializable {
 					if (_other.contacts.Length > 0) {
 						ContactPoint contact = _other.contacts[0];
 						if (m_feddbackParticle != "") {
-							ParticleManager.Spawn(m_feddbackParticle, contact.point - (m_collider.center - m_colliderCenter));
+							GameObject ps = ParticleManager.Spawn(m_feddbackParticle, contact.point - (m_collider.center - m_colliderCenter));
+							if (m_particleFaceDragonDirection) {
+								FaceDragon(ps);
+							}
 						}
 					}
 				}
@@ -165,14 +182,22 @@ public class DestructibleDecoration : Initializable {
 							} else {
 								particlePosition.x -= m_collider.size.x * 0.5f;
 							}
-							ParticleManager.Spawn(m_feddbackParticle, particlePosition);
+							GameObject ps = ParticleManager.Spawn(m_feddbackParticle, particlePosition);
+
+							if (m_particleFaceDragonDirection) {
+								FaceDragon(ps);
+							}
 						}
 
 						if ( !string.IsNullOrEmpty(m_onFeedbackAudio) )
 							AudioController.Play(m_onFeedbackAudio, transform.position + m_colliderCenter);
 					} else {
 						if (m_destroyParticle != "") {
-							ParticleManager.Spawn(m_destroyParticle, transform.position);
+							GameObject ps = ParticleManager.Spawn(m_destroyParticle, transform.position);
+
+							if (m_particleFaceDragonDirection) {
+								FaceDragon(ps);
+							}
 						}
 
 						if (m_zone == ZoneManager.Zone.Zone1 && m_knockBackStrength > 0f) {
@@ -217,14 +242,40 @@ public class DestructibleDecoration : Initializable {
 						}
 
 						if ( m_feddbackParticle != "") {
-							ParticleManager.Spawn(m_feddbackParticle, particlePosition);
+							GameObject ps = ParticleManager.Spawn(m_feddbackParticle, particlePosition);
+
+							if (m_particleFaceDragonDirection) {
+								FaceDragon(ps);
+							}
 						}
 
-						if ( !string.IsNullOrEmpty(m_onFeedbackAudio) )
+						if (!string.IsNullOrEmpty(m_onFeedbackAudio))
 							AudioController.Play(m_onFeedbackAudio, transform.position + m_colliderCenter);
 					}
 				}
 			}
 		}
+	}
+
+	void FaceDragon(GameObject _ps) {
+		DragonMotion dragonMotion = m_breath.GetComponent<DragonMotion>();
+		Vector3 dir = dragonMotion.direction;
+		dir.z = 0;
+		dir.Normalize();
+
+		float angle = Vector3.Angle(GetUpVectorValue(m_particleUpVector), dir);
+		_ps.transform.rotation = Quaternion.AngleAxis(angle, GetUpVectorValue(m_particleRotationAxis));
+	}
+
+	Vector3 GetUpVectorValue(UpVector _enum) {
+		switch (_enum) {
+			case UpVector.Up: 		return Vector3.up; 		break;
+			case UpVector.Down: 	return Vector3.down; 	break;
+			case UpVector.Right: 	return Vector3.right; 	break;
+			case UpVector.Left: 	return Vector3.left; 	break;
+			case UpVector.Forward: 	return Vector3.forward; break;
+			case UpVector.Back: 	return Vector3.back;	break;
+		}
+		return Vector3.zero;
 	}
 }
