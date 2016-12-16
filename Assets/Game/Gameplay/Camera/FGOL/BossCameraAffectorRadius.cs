@@ -61,13 +61,19 @@ public class BossCameraAffectorRadius : MonoBehaviour
 		if(!m_bca.permanentlyDisabled && _collider.CompareTag("Player"))
 		{
 			NotifyBossCam();
+			float radius = m_bca.radius / transform.lossyScale.x;
+			float addToAvoidInAndOut = Mathf.Min(radius * 1.1f,radius + 1 );
+			m_collider.radius = addToAvoidInAndOut;
         }
 	}
 
 	protected void OnTriggerExit(Collider _collider)
 	{
 		if (_collider.CompareTag("Player"))
+		{
 			RemoveBossCam();
+			m_collider.radius = m_bca.radius / transform.lossyScale.x;
+		}
 	}
 
 	//--------------------------------------------------------
