@@ -130,7 +130,7 @@ public class MenuDragonLoader : MonoBehaviour {
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _sku);
 		if(def != null) {
 			// Instantiate the prefab and add it as child of this object
-			GameObject dragonPrefab = Resources.Load<GameObject>(def.GetAsString("menuPrefab"));
+			GameObject dragonPrefab = Resources.Load<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString("menuPrefab"));
 			if(dragonPrefab != null) {
 				GameObject newInstance = GameObject.Instantiate<GameObject>(dragonPrefab);
 				newInstance.transform.SetParent(this.transform);

@@ -133,8 +133,7 @@ public class MenuPetLoader : MonoBehaviour {
 		if(def != null) {
 			// Instantiate the prefab and add it as child of this object
 			// [AOC] TODO!! Content not ready yet
-			//GameObject petPrefab = Resources.Load<GameObject>(def.GetAsString("menuPrefab"));
-			GameObject petPrefab = Resources.Load<GameObject>("UI/Menu/Pets/PF_PetFroggyMenu");
+			GameObject petPrefab = Resources.Load<GameObject>(Pet.MENU_PREFAB_PATH + def.GetAsString("menuPrefab"));
 			if(petPrefab != null) {
 				m_petInstance = GameObject.Instantiate<GameObject>(petPrefab);
 				m_petInstance.transform.SetParent(this.transform);
