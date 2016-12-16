@@ -45,7 +45,6 @@ public class DisguisesScreenController : MonoBehaviour {
 	[SerializeField] private AnimatedButton m_equipButton = null;
 
 	[Space]
-	[SerializeField] private ShowHideAnimator m_lockIcon = null;
 	[SerializeField] private Localizer m_lockText = null;
 
 	// Preview
@@ -196,7 +195,6 @@ public class DisguisesScreenController : MonoBehaviour {
 			if(m_powerAnims[i] != null) m_powerAnims[i].ForceHide(false);
 		}
 		if(m_title != null) m_title.showHideAnimator.ForceHide(false);
-		if(m_lockIcon != null) m_lockIcon.ForceHide(false);
 		if(m_lockText != null) m_lockText.GetComponent<ShowHideAnimator>().ForceHide(false);
 		if(m_SCButton != null) m_SCButton.animator.ForceHide(false);
 		if(m_PCButton != null) m_PCButton.animator.ForceHide(false);
@@ -332,18 +330,10 @@ public class DisguisesScreenController : MonoBehaviour {
 		}
 
 		// Refresh the lock info
-		if(m_lockIcon != null) {
-			if(_pill.locked) {
-				m_lockIcon.RestartShow();	// Restart animation
-			} else {
-				m_lockIcon.Hide();
-			}
-		}
-
 		if(m_lockText != null) {
 			ShowHideAnimator anim = m_lockText.GetComponent<ShowHideAnimator>();
 			if(_pill.locked) {
-				m_lockText.Localize("Reach level %U0 on %U1 to unlock!", StringUtils.FormatNumber(_pill.def.GetAsInt("unlockLevel") + 1), m_dragonData.def.GetLocalized("tidName"));	// [AOC] HARDCODED!!
+				m_lockText.Localize("TID_DISGUISES_UNLOCK_INFO", StringUtils.FormatNumber(_pill.def.GetAsInt("unlockLevel") + 1), m_dragonData.def.GetLocalized("tidName"));	// Reach level %U0 on %U1 to unlock!
 				anim.RestartShow();	// Restart animation
 			} else {
 				anim.Hide();
@@ -467,6 +457,9 @@ public class DisguisesScreenController : MonoBehaviour {
 			DisguisePill pill = m_selectedPill;
 			m_selectedPill = null;
 			OnPillClicked(pill);
+
+			// Instantly equip it!
+			OnEquipButton();
 		}
 	}
 

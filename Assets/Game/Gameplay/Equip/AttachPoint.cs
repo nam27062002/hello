@@ -30,6 +30,9 @@ public class AttachPoint : MonoBehaviour {
 
 	private void EquipPet() {
 		m_item.transform.position = transform.position;
+		AI.Machine machine = m_item.GetComponent<AI.Machine>();
+		machine.Spawn(null);
+
 		AI.AIPilot pilot = m_item.GetComponent<AI.AIPilot>();
 		m_item.transform.position = transform.position;
 		pilot.homeTransform = transform;
@@ -37,7 +40,7 @@ public class AttachPoint : MonoBehaviour {
 
 		ISpawnable[] components = pilot.GetComponents<ISpawnable>();
 		foreach (ISpawnable component in components) {
-			if (component != pilot ) {
+			if (component != pilot && component != machine) {
 				component.Spawn(null);
 			}
 		}
