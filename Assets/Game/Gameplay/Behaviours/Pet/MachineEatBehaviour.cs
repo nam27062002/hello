@@ -111,6 +111,10 @@ public class MachineEatBehaviour : EatBehaviour {
 			m_mouth = cacheTransform.FindTransformRecursive("Fire_Dummy");// SuctionPoint
 			m_bite = cacheTransform.FindTransformRecursive("BitePoint");
 			m_swallow = cacheTransform.FindTransformRecursive("Pet_Head");// SwallowPoint
+			// To remove. Just here to back compatibility with older pets
+			if ( m_swallow == null )
+				m_swallow = cacheTransform.FindTransformRecursive("Dragon_Head");// SwallowPoint
+			// End to remove
 			m_suction = cacheTransform.FindTransformRecursive("SuctionPoint");
 
 			if ( m_bite == null )
