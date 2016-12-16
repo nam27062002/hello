@@ -43,7 +43,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 	[Separator("Rewards")]
 	[SerializeField] private GameObject m_rewardInfo = null;
-	[SerializeField] private DisguiseRarityTitle m_rewardRarity = null;
+	[SerializeField] private RarityTitle m_rewardRarity = null;
 	[SerializeField] private Localizer m_rewardDescText = null;
 	[SerializeField] private GameObject m_rewardPowers = null;
 
@@ -372,7 +372,7 @@ public class OpenEggScreenController : MonoBehaviour {
 				// Use a MenuDragonLoader to simplify things
 				MenuPetLoader loader = m_rewardView.AddComponent<MenuPetLoader>();
 				loader.Setup(MenuPetLoader.Mode.MANUAL, "idle", true);
-				loader.Load("pet_01");	// [AOC] TODO!! Content not ready yet
+				loader.Load("pet_0");
 
 				// Animate it
 				m_rewardView.transform.DOScale(0f, 1f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
