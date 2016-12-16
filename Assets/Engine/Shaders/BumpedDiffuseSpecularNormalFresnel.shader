@@ -7,7 +7,7 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
-		_EmissiveTex("Emissive (RGBA)", 2D) = "white" {}
+		_GlowTex("Emissive (RGBA)", 2D) = "white" {}
 		_NormalStrength("Normal Strength", float) = 3
 		_SpecularPower( "Specular Power", float ) = 1
 		_SpecularDir("Specular Dir", Vector) = (0,0,-1,0)
@@ -20,11 +20,12 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 
 	SubShader
 	{
+		Tags{ "RenderType" = "Glow"  "Queue" = "Geometry" "LightMode" = "ForwardBase" }
 		Pass
 		{
-			Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase"}
 			Cull Back
-
+			ColorMask RGB
+/*
 			Stencil
 			{
 				Ref 5
@@ -32,10 +33,12 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 				Pass Replace
 				ZFail keep
 			}
-
+*/
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma fragmentoption ARB_precision_hint_fastest
+			#pragma multi_compile_particles
 
 
 			#include "UnityCG.cginc"
@@ -69,13 +72,17 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 			uniform float4 _MainTex_TexelSize;
 			uniform sampler2D _NormalTex;
 			uniform float4 _NormalTex_ST;
-			uniform sampler2D _EmissiveTex;
+			uniform sampler2D _GlowTex;
 			uniform float _SpecularPower;
 			uniform fixed4 _SpecularDir;
 			uniform float _NormalStrength;
 			uniform float _FresnelFactor;
 			uniform float4 _FresnelColor;
 			uniform float4 _EmissiveColor;
+
+//			uniform half4 _GlowColor;
+//			uniform half4 _GlowColorMult;
+
 
 			v2f vert (appdata v)
 			{
@@ -106,7 +113,7 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 				return o;
 			}
 
-			fixed4 frag (v2f i) : SV_Target
+			half4 frag (v2f i) : COLOR
 			{
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, i.uv);
@@ -125,8 +132,9 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 
 				col = diffuse * col + (specular * _LightColor0) + (fresnel * _FresnelColor);
 
-				float3 emissive = tex2D(_EmissiveTex, i.uv2);
-				col = lerp(col, _EmissiveColor, emissive.r + emissive.g + emissive.b);
+				float3 emissive = tex2D(_GlowTex, i.uv2);
+//				col = lerp(col, _EmissiveColor, emissive.r + emissive.g + emissive.b);
+				col += _EmissiveColor * (emissive.r + emissive.g + emissive.b);
 
 
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
@@ -135,5 +143,9 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 			ENDCG
 		}
 	}
-Fallback "Mobile/VertexLit"
+
+	Fallback "Diffuse"
+	CustomEditor "GlowMaterialInspector"
+
+//	Fallback "Mobile/VertexLit"
 }

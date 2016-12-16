@@ -149,7 +149,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		Debug.Assert(data != null, "Attempting to load dragon with id " + _sku + ", but the manager has no data linked to this id");
 
 		// Load the prefab for the dragon with the given ID
-		GameObject prefabObj = Resources.Load<GameObject>(data.def.GetAsString("gamePrefab"));
+		GameObject prefabObj = Resources.Load<GameObject>(DragonData.GAME_PREFAB_PATH + data.def.GetAsString("gamePrefab"));
 
 		Debug.Assert(data != null, "The prefab defined to dragon " + _sku + " couldn't be found");
 

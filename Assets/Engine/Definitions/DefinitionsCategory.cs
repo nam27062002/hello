@@ -54,7 +54,7 @@ public class DefinitionsCategory
 	public const string EGGS = "EGGS";
 	public const string EGG_REWARDS = "EGG_REWARDS";
 	public const string CHEST_REWARDS = "CHEST_REWARDS";
-	public const string DISGUISE_REWARDS_DISTRIBUTION = "DISGUISE_REWARDS_DISTRIBUTION";
+	public const string RARITIES = "RARITIES";
 
 	// Disguises
 	public const string DISGUISES = "DISGUISES";

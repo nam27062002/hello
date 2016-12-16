@@ -29,7 +29,7 @@ public class PopupAdRevive : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private Localizer m_timerText = null;
-	[SerializeField] private float m_adDuration = 10f;	// Simulate ad duration
+	[SerializeField] private float m_adDuration = 1000f;	// Simulate ad duration
 
 	// Internal
 	private bool m_adRunning = false;
@@ -52,7 +52,7 @@ public class PopupAdRevive : MonoBehaviour {
 	private void Update() {
 		if(m_adRunning) {
 			// Refresh text
-            m_timerText.Localize("TID_GAME_REVIVE_AD_ENDS_IN", StringUtils.FormatNumber(Mathf.CeilToInt((float)m_timer.GetTimeLeft())));
+            m_timerText.Localize("TID_GAME_REVIVE_AD_ENDS_IN", StringUtils.FormatNumber(Mathf.CeilToInt((float)m_timer.GetTimeLeft() / 1000.0f)));
 
 			// Once timer finished, auto-close the popup and stop refreshing
 			if(m_timer.IsFinished()) {

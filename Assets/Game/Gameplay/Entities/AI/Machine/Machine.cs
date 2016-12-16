@@ -484,6 +484,7 @@ namespace AI {
 		public void Bite() {
 			if (m_edible != null && !IsDead()) {
 				m_edible.Bite();
+				m_viewControl.Bite();
 			}
 		}
 
