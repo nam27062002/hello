@@ -707,6 +707,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 	}
 
+	/// <summary>
+	/// Bite this instance. When someone starts eating this view
+	/// </summary>
+	public virtual void Bite(){}
+
 	public void BeginSwallowed()
 	{
 		if (m_entity.isOnScreen && !string.IsNullOrEmpty(m_onEatenAudio)) {
