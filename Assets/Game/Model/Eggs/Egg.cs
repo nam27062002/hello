@@ -22,8 +22,9 @@ public class Egg {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static readonly string SKU_STANDARD_EGG = "egg_standard";
-	public static readonly string SKU_PREMIUM_EGG = "egg_premium";
+	public const string SKU_STANDARD_EGG = "egg_standard";
+	public const string SKU_PREMIUM_EGG = "egg_premium";
+	public const string PREFAB_PATH = "UI/Metagame/Eggs/";
 
 	public enum State {
 		INIT,		// Init state
@@ -273,7 +274,7 @@ public class Egg {
 	/// <returns>The newly created instance, <c>null</c> if the instance couldn't be created.</returns>
 	public EggController CreateView() {
 		// Load the prefab for this egg as defined in the definition
-		GameObject prefabObj = Resources.Load<GameObject>(def.GetAsString("prefabPath"));
+		GameObject prefabObj = Resources.Load<GameObject>(PREFAB_PATH + def.GetAsString("prefabPath"));
 		Debug.Assert(prefabObj != null, "The prefab defined to egg " + def.sku + " couldn't be found");
 
 		// Create a new instance - will automatically be added to the InstanceManager.player property

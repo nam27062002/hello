@@ -3,6 +3,10 @@ using System.Collections;
 using UnityEngine.Serialization;
 
 public class Pet : IEntity {
+	// Constants
+	public const string GAME_PREFAB_PATH = "Game/Equipable/Pets/";
+	public const string MENU_PREFAB_PATH = "UI/Menu/Pets/";
+
 	// Exposed to inspector
 	[PetSkuList]
 	[SerializeField] private string m_sku;

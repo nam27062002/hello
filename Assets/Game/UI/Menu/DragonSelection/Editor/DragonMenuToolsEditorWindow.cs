@@ -161,7 +161,7 @@ public class DragonMenuToolsEditorWindow : EditorWindow {
 						}
 
 						// Instantiate the prefab and add it as child of the slot
-						GameObject dragonPrefab = Resources.Load<GameObject>(defs[i].GetAsString("menuPrefab"));
+						GameObject dragonPrefab = Resources.Load<GameObject>(DragonData.MENU_PREFAB_PATH + defs[i].GetAsString("menuPrefab"));
 						GameObject dragonObj = PrefabUtility.InstantiatePrefab(dragonPrefab) as GameObject;
 						dragonObj.transform.SetParent(slots[i].transform, false);
 						dragonObj.name = dragonPrefab.name;	// Remove the "(Clone)" text
