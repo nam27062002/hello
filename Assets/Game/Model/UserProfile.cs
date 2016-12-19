@@ -162,6 +162,21 @@ public class UserProfile : UserSaveSystem
 		set{ m_dailyChestsResetTimestamp = value; }
 	}
 
+	// Remove Mission Ads
+	private DateTime m_dailyRemoveMissionAdTimestamp;
+	public DateTime dailyRemoveMissionAdTimestamp {
+		get{ return m_dailyRemoveMissionAdTimestamp; }
+		set{ m_dailyRemoveMissionAdTimestamp = value; }
+	}
+
+	private int m_dailyRemoveMissionAdUses = 0;
+	public int dailyRemoveMissionAdUses {
+		get{ return m_dailyRemoveMissionAdUses; }
+		set{ m_dailyRemoveMissionAdUses = value; }
+	}
+
+
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
@@ -444,6 +459,19 @@ public class UserProfile : UserSaveSystem
 			}
 			m_dailyChestsResetTimestamp = DateTime.UtcNow;
 		}
+
+		m_dailyRemoveMissionAdUses = 0;
+		if ( _data.ContainsKey("dailyRemoveMissionAdTimestamp") )
+		{
+			m_dailyRemoveMissionAdTimestamp = DateTime.Parse(_data["dailyRemoveMissionAdTimestamp"], System.Globalization.CultureInfo.InvariantCulture);;
+
+			if ( _data.ContainsKey("dailyRemoveMissionAdUses") )
+				m_dailyRemoveMissionAdUses = _data["dailyRemoveMissionAdUses"].AsInt;
+		}
+		else
+		{
+			m_dailyRemoveMissionAdTimestamp = DateTime.UtcNow;
+		}
 	}
 
 	/// <summary>
@@ -565,6 +593,10 @@ public class UserProfile : UserSaveSystem
 
 		data.Add("eggs", SaveEggData());
 		data.Add("chests", SaveChestsData());
+
+		// Daily remove missions with ads
+		data.Add("dailyRemoveMissionAdTimestamp", m_dailyRemoveMissionAdTimestamp.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		data.Add("dailyRemoveMissionAdUses", m_dailyRemoveMissionAdUses.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
 		// Return it
 		return data;
