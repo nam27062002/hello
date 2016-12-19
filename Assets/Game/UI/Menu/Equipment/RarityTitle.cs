@@ -25,6 +25,7 @@ public class RarityTitle : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	[Serializable]
 	private class RarityBackground {
+		[SkuList(DefinitionsCategory.RARITIES, false)]
 		public string rarity = "";
 		public GameObject gameObject = null;
 	}
@@ -34,12 +35,6 @@ public class RarityTitle : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	[Comment("There should be one background for each rarity (as defined in the content)", 10)]
 	[SerializeField] private List<RarityBackground> m_backgroundsByRarity = new List<RarityBackground>();
-
-	// Data
-	private DefinitionNode m_itemDef = null;
-	public DefinitionNode itemDef {
-		get { return m_itemDef; }
-	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -55,18 +50,28 @@ public class RarityTitle : MonoBehaviour {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Manually initializes with a hardcoded rarity value.
+	/// Manually initializes with a given rarity sku.
+	/// </summary>
+	/// <param name="_raritySku">Rarity sku.</param>
+	/// <param name="_text">Text to be displayed, already localized.</parm>
+	public void InitFromRarity(string _raritySku, string _text) {
+		// Get rarity definition
+		DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, _raritySku);
+
+		// Use alternative initializer
+		InitFromRarity(rarityDef, _text);
+	}
+
+	/// <summary>
+	/// Manually initializes with a given rarity definition.
 	/// </summary>
 	/// <param name="_rarity">Rarity value.</param>
-	/// <param name="_text">Text to be displayed as name, already localized.</parm>
-	public void InitFromRarity(string _rarity, string _text) {
-		// Not using definition
-		m_itemDef = null;
-
+	/// <param name="_text">Text to be displayed, already localized.</parm>
+	public void InitFromRarity(DefinitionNode _rarityDef, string _text) {
 		// Choose right background
 		for(int i = 0; i < m_backgroundsByRarity.Count; i++) {
 			// Is it a match?
-			bool match = (m_backgroundsByRarity[i].rarity == _rarity);
+			bool match = (m_backgroundsByRarity[i].rarity == _rarityDef.sku);
 
 			// Only show target rarity background
 			m_backgroundsByRarity[i].gameObject.SetActive(match);

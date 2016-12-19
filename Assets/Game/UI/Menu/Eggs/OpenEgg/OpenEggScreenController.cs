@@ -318,6 +318,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Aux vars
 		Egg.EggReward rewardData = m_egg.eggData.rewardData;
 		DefinitionNode rewardDef = m_egg.eggData.rewardDef;
+		DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, rewardDef.Get("rarity"));
 		DefinitionNode rewardedItemDef = null;	// [AOC] Will be initialized with either a suit or a pet definition
 		string rewardType = m_egg.eggData.rewardData.type;
 
@@ -325,24 +326,19 @@ public class OpenEggScreenController : MonoBehaviour {
 		m_rewardInfo.GetComponent<ShowHideAnimator>().Show(false);
 
 		// Different initializations based on reward type
-		StringBuilder sb = new StringBuilder();
 		switch(rewardType) {
-			case "suit": {
-				// [AOC] Eggs no longer drop suits as reward
-			} break;
-
 			case "pet": {
 				// Pet def
-				// [AOC] TODO!!
-				//rewardedItemDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, rewardData.value);
+				rewardedItemDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, rewardData.value);
 
 				// Pet rarity
-				string rarity = rewardDef.sku.Replace("pet_", "");
-				m_rewardRarity.InitFromRarity(rarity, rewardDef.GetLocalized("tidName"));
+				string text = LocalizationManager.SharedInstance.Localize("%U0 Pet %U1", rarityDef.GetLocalized("tidName"), rewardedItemDef.GetLocalized("tidName"));	// [AOC] HARDCODED!!
+				m_rewardRarity.InitFromRarity(rarityDef, text);
 
 				// [AOC] TODO!!
 				//m_rewardDescText.Localize("TID_EGG_REWARD_PET", rewardDef.sku);
-				m_rewardDescText.Localize("TID_GEN_COMING_SOON");
+				m_rewardDescText.Localize("");
+				m_rewardDescText.text.text = "";
 
 				// Call to action text
 				m_callToActionText.Localize("TID_EGG_EQUIP_REWARD");
@@ -365,26 +361,21 @@ public class OpenEggScreenController : MonoBehaviour {
 		switch(rewardType) {
 			case "pet": {
 				// Show a 3D preview of the pet
-				// [AOC] TODO!! Show a random dragon for now
 				m_rewardView = new GameObject("RewardView");
 				m_rewardView.transform.SetParentAndReset(m_rewardAnchor);	// Attach it to the anchor and reset transformation
 
-				// Use a MenuDragonLoader to simplify things
+				// Use a PetLoader to simplify things
 				MenuPetLoader loader = m_rewardView.AddComponent<MenuPetLoader>();
 				loader.Setup(MenuPetLoader.Mode.MANUAL, "idle", true);
-				loader.Load("pet_0");
+				loader.Load(rewardedItemDef.sku);
 
 				// Animate it
 				m_rewardView.transform.DOScale(0f, 1f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
 				m_rewardView.transform.DOLocalRotate(m_rewardView.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true);
 			} break;
-				
-			case "suit": {
-				// [AOC] Eggs no longer drop suits as reward
-			} break;
 		}
 
-		// If the reward is being replaced by coins, show it (works for both pets and suits)
+		// If the reward is being replaced by coins, show it (works for any type of reward)
 		if(rewardData.coins > 0) {
 			// Create instance
 			GameObject prefab = Resources.Load<GameObject>("UI/Metagame/Rewards/PF_CoinsReward");
@@ -394,11 +385,30 @@ public class OpenEggScreenController : MonoBehaviour {
 			coinsObj.transform.SetParent(m_rewardView.transform, false);
 		}
 
-		// If reward is a disguise, initialize and show powers
-		if(rewardType == "suit") {
-			// [AOC] Eggs no longer drop suits as reward
-		} else {
-			m_rewardPowers.GetComponent<ShowHideAnimator>().Hide(false);
+		// Initialize power based on reward type
+		switch(rewardType) {
+			case "pet": {
+				// Show
+				m_rewardPowers.GetComponent<ShowHideAnimator>().Show(false);
+
+				// Initialize with powers data
+				DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, rewardedItemDef.GetAsString("powerup0"));
+				DisguisePowerIcon powerIcon = m_rewardPowers.FindComponentRecursive<DisguisePowerIcon>("Power1");
+				powerIcon.InitFromDefinition(powerDef, false);
+
+				// Intro animation
+				float delay = 0.65f;	// [AOC] Magic Number!!
+				powerIcon.transform.DOScale(2f, 0.25f).From().SetDelay(delay).SetEase(Ease.OutCubic).SetRecyclable(true);
+				powerIcon.GetComponent<CanvasGroup>().DOFade(0f, 0.15f).From().SetDelay(delay).SetRecyclable(true);
+
+				// Pet's powers are not unlocked, so disable godray FX (if any)
+				GameObject godraysObj = powerIcon.FindObjectRecursive("godrayFX");
+				if(godraysObj != null) godraysObj.SetActive(false);
+			} break;
+
+			default: {
+				m_rewardPowers.GetComponent<ShowHideAnimator>().Hide(false);
+			} break;
 		}
 	}
 
@@ -448,10 +458,6 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Depending on opened egg's reward, perform different actions
 		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
 		switch(m_egg.eggData.rewardData.type) {
-			case "suit": {
-				// [AOC] Eggs no longer drop suits as reward
-			} break;
-
 			case "pet": {
 				// Go to the pets screen
 				PetsScreenController petScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();

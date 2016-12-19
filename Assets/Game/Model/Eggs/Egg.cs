@@ -239,12 +239,25 @@ public class Egg {
 
 		// Apply the reward
 		switch(m_rewardData.type) {
-			case "suit": {
-				// [AOC] Eggs no longer give disguises as reward
-			} break;
-
 			case "pet": {
-				// [AOC] TODO!!
+				// Get a random pet of the target rarity
+				List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", rewardDef.Get("rarity"));
+				DefinitionNode targetDef = petDefs.GetRandomValue();
+
+				// Initialize reward data based on obtained pet
+				m_rewardData.value = targetDef.sku;
+
+				// If the pet is not owned, unlock it
+				// Otherwise give special egg part or coins
+				bool owned = false;
+				if(!owned) {
+					// [AOC] TODO!!
+				} else {
+					// [AOC] TODO!!
+					// Give special egg part or coins
+					m_rewardData.coins = 100;
+					UsersManager.currentUser.AddCoins(m_rewardData.coins);
+				}
 			} break;
 		}
 

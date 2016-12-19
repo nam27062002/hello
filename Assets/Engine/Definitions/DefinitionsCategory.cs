@@ -59,7 +59,6 @@ public class DefinitionsCategory
 	// Disguises
 	public const string DISGUISES = "DISGUISES";
 	public const string DISGUISES_EQUIP = "DISGUISES_EQUIP";
-	public const string DISGUISES_POWERUPS = "DISGUISES_POWERUPS";
 
 	// Hold Prey
 	public const string HOLD_PREY_TIER = "HOLD_PREY_TIER";

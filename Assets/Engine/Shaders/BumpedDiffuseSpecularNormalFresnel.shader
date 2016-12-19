@@ -12,7 +12,8 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 		_SpecularPower( "Specular Power", float ) = 1
 		_SpecularDir("Specular Dir", Vector) = (0,0,-1,0)
 		_FresnelFactor("Fresnel factor", Range(0.0, 5.0)) = 0.27
-		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
+		_FresnelInitialColor("Fresnel initial (RGB)", Color) = (0, 0, 0, 0)
+		_FresnelFinalColor("Fresnel final (RGB)", Color) = (0, 0, 0, 0)
 		_EmissiveColor("Emissive color (RGB)", Color) = (0, 0, 0, 0)
 
 	}
@@ -77,7 +78,8 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 			uniform fixed4 _SpecularDir;
 			uniform float _NormalStrength;
 			uniform float _FresnelFactor;
-			uniform float4 _FresnelColor;
+			uniform float4 _FresnelInitialColor;
+			uniform float4 _FresnelFinalColor;
 			uniform float4 _EmissiveColor;
 
 //			uniform half4 _GlowColor;
@@ -130,7 +132,8 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 //				fixed fresnel = pow(max(dot(normalDirection, i.viewDir), 0), _FresnelFactor);
 				fixed fresnel = clamp(pow(max(dot(i.viewDir, normalDirection), 0.0), _FresnelFactor), 0.0, 1.0);
 
-				col = diffuse * col + (specular * _LightColor0) + (fresnel * _FresnelColor);
+//				col = diffuse * col + (specular * _LightColor0) + (fresnel * _FresnelColor);
+				col = diffuse * col + (specular * _LightColor0) + lerp(_FresnelInitialColor, _FresnelFinalColor, fresnel);
 
 				float3 emissive = tex2D(_GlowTex, i.uv2);
 //				col = lerp(col, _EmissiveColor, emissive.r + emissive.g + emissive.b);

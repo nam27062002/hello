@@ -462,7 +462,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	public void SpawnEatenParticlesAt(Transform _transform) {
 #if !PRODUCTION
         // If the debug settings for particles eaten is disabled then they are not spawned
-        if (!Prefs.GetBoolPlayer(DebugSettings.INGAME_PARTICLES_EATEN))
+        if (!Prefs.GetBoolPlayer(DebugSettings.INGAME_PARTICLES_EATEN, true))
             return;
 #endif
 
