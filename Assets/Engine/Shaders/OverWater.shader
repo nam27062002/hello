@@ -71,9 +71,9 @@ Shader "Hungry Dragon/OverWater"
 				uniform fixed4 _StartPosition;
 
 
-#define SPLASHRADIUS 12.0
-#define SPLASHSIZE 3.0
-#define SPLASHTIME 1.5
+#define SPLASHRADIUS 10.0
+#define SPLASHSIZE 1.5
+#define SPLASHTIME 2.0
 
 				v2f vert (appdata_t v) 
 				{
@@ -86,8 +86,8 @@ Shader "Hungry Dragon/OverWater"
 					float dt = _Time.y - _StartTime;
 					float ct = clamp(1.0 - (dt / SPLASHTIME), 0.0, 1.0);
 
-//					v.vertex.y += ((sinX + sinY) * _WaveRadius * moveVertex * v.color.w) + ct;//(sin(dt) * dst * ct * SPLASHSIZE);
-					v.vertex.y += ((sinX + sinY) * _WaveRadius * moveVertex * v.color.w) + (cos((dst * 10.0) + dt * 10.0) * dst * sin(ct * 2.0) * SPLASHSIZE);
+//					v.vertex.y += ((sinX + sinY) * _WaveRadius * moveVertex * v.color.w) + (cos((dst * 10.0) + dt * 10.0) * dst * sin(ct * 2.0) * SPLASHSIZE);
+					v.vertex.y += ((sinX + sinY) * _WaveRadius * moveVertex * v.color.w);
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
 //					o.scrPos = ComputeScreenPos(o.vertex);
