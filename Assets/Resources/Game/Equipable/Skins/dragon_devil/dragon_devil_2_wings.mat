@@ -6,20 +6,19 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dragon_devil_2_wings
-  m_Shader: {fileID: 4800000, guid: fe667cdf59c41409d8c355c76af3643d, type: 3}
+  m_Name: dragon_classic_2_wings
+  m_Shader: {fileID: 4800000, guid: e4ed8932b499b4d62a9afbbbcc368a56, type: 3}
   m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 3000
-  stringTagMap:
-    RenderType: Transparent
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
     - first:
         name: _BumpMap
       second:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: ef5831249031041218d14da9ac07b23d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -41,6 +40,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
+        name: _DetailTex
+      second:
+        m_Texture: {fileID: 2800000, guid: 9e09b9511abb3485398f5dc64c42e1fa, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
         name: _EmissionMap
       second:
         m_Texture: {fileID: 0}
@@ -49,7 +54,7 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: f785f98c4efdd4528ad031032256516b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7004ca9a0f6204553bfb707be020c1dd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -75,8 +80,11 @@ Material:
         name: _BumpScale
       second: 1
     - first:
+        name: _BumpStrength
+      second: 3
+    - first:
         name: _Cutoff
-      second: 0.5
+      second: 0.21
     - first:
         name: _DetailNormalMapScale
       second: 1
@@ -90,17 +98,26 @@ Material:
         name: _Glossiness
       second: 0.5
     - first:
+        name: _InnerLightAdd
+      second: 10
+    - first:
         name: _Metallic
       second: 0
     - first:
         name: _Mode
       second: 3
     - first:
+        name: _NoiseValue
+      second: 0
+    - first:
         name: _OcclusionStrength
       second: 1
     - first:
         name: _Parallax
       second: 0.02
+    - first:
+        name: _SpecExponent
+      second: 10.05
     - first:
         name: _SrcBlend
       second: 1
@@ -115,8 +132,20 @@ Material:
         name: _Color
       second: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
     - first:
+        name: _ColorAdd
+      second: {r: 0.6911765, g: 0.6911765, b: 0.6911765, a: 1}
+    - first:
+        name: _ColorMultiply
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
         name: _EmissionColorUI
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _InnerLightColor
+      second: {r: 0.03448248, g: 0, b: 1, a: 0.872}
+    - first:
+        name: _NoiseColor
       second: {r: 1, g: 1, b: 1, a: 1}
