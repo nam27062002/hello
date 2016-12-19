@@ -583,7 +583,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
     }
 
     private void Debug_SetActive() {
-        enabled = Prefs.GetBoolPlayer(DebugSettings.INGAME_PARTICLES_FEEDBACK);        
+        enabled = Prefs.GetBoolPlayer(DebugSettings.INGAME_PARTICLES_FEEDBACK, true);        
     }
     #endregion
 }

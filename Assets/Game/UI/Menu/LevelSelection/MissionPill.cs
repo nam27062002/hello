@@ -207,12 +207,53 @@ public class MissionPill : MonoBehaviour {
 		// Difficulty
 		RefreshDifficulty(m_activeObj.FindComponentRecursive<Localizer>("DifficultyText"), true);
 
+		RefreshRemovePayButtons();
+	}
+
+	private void RefreshRemovePayButtons()
+	{
 		GameObject watchAd = m_activeObj.FindObjectRecursive("ButtonWatchAd");
-		if ( watchAd != null ){
+		GameObject removeButton = m_activeObj.FindObjectRecursive("ButtonRemoveMission");
+		if ( watchAd != null && removeButton != null){
+			
+			bool canPayWithAds = CanPayRemoveMissionWithAds();
 			// Check if ads availables to skip mission
-			watchAd.SetActive( false );
+			watchAd.SetActive( canPayWithAds );
+			removeButton.SetActive( !canPayWithAds );
+		}
+	}
+
+	/// <summary>
+	/// Determines whether the yser can pay to remove this mission with ads.
+	/// </summary>
+	/// <returns><c>true</c> if the user can pay to remove the mission with ads; otherwise, <c>false</c>.</returns>
+	private bool CanPayRemoveMissionWithAds()
+	{
+		if (Application.internetReachability == NetworkReachability.NotReachable)
+		{
+			return false;
 		}
 
+		DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+        if (_def != null)
+        {
+			int usesPerDay = _def.GetAsInt("dailyAdsRemoveMissions");
+			if ( usesPerDay > 0 )
+			{
+				// Check remaining uses
+				if ( DateTime.UtcNow >= UsersManager.currentUser.dailyRemoveMissionAdTimestamp )
+				{
+					UsersManager.currentUser.dailyRemoveMissionAdTimestamp = DateTime.UtcNow.AddDays(1);
+					UsersManager.currentUser.dailyRemoveMissionAdUses = 0;
+				}
+				if (UsersManager.currentUser.dailyRemoveMissionAdUses >= usesPerDay) 
+				{
+					return false;
+				}
+			}
+        }
+       
+		return true;
 	}
 
 	/// <summary>
@@ -342,6 +383,7 @@ public class MissionPill : MonoBehaviour {
 
 	private void OnAdClosed() {
 
+		UsersManager.currentUser.dailyRemoveMissionAdUses++;
 		MissionManager.RemoveMission(m_missionDifficulty);
 		PersistenceManager.Save();
 	}
@@ -378,6 +420,10 @@ public class MissionPill : MonoBehaviour {
 		if(_newMission.difficulty == m_missionDifficulty) {
 			m_mission = _newMission;
 			Refresh();
+		}
+		else
+		{
+			RefreshRemovePayButtons();
 		}
 	}
 
