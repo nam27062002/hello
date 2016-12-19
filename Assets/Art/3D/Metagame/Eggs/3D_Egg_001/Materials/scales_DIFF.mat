@@ -9,7 +9,7 @@ Material:
   m_Name: scales_DIFF
   m_Shader: {fileID: 4800000, guid: 6a206d3664d59fc4e912085ba47c4b98, type: 3}
   m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX
-    GLOWEFFECT_USE_MAINTEX GLOWEFFECT_USE_VERTEXCOLOR_OFF
+    GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -103,7 +103,7 @@ Material:
       second: 0
     - first:
         name: _FresnelFactor
-      second: 5
+      second: 0.41
     - first:
         name: _GlossMapScale
       second: 1
@@ -136,7 +136,7 @@ Material:
       second: 0
     - first:
         name: _SpecularPower
-      second: 185.3
+      second: 100
     - first:
         name: _SrcBlend
       second: 1
@@ -155,10 +155,16 @@ Material:
       second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _EmissiveColor
-      second: {r: 1, g: 0.253, b: 0, a: 0}
+      second: {r: 0.42647058, g: 0.13762976, b: 0.031358134, a: 0}
     - first:
         name: _FresnelColor
       second: {r: 0.5955882, g: 0.23412776, b: 0, a: 0}
     - first:
+        name: _FresnelFinalColor
+      second: {r: 0.25, g: 0.06992901, b: 0.003676474, a: 0}
+    - first:
+        name: _FresnelInitialColor
+      second: {r: 0.04184689, g: 0.19130924, b: 0.31617647, a: 0}
+    - first:
         name: _SpecularDir
-      second: {r: 8.49, g: 0.3, b: 2.62, a: 0}
+      second: {r: -34.55, g: -24.1, b: -1.5, a: 0}
