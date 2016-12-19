@@ -25,6 +25,7 @@ public class InflammableDecoration : Initializable {
 
 	private AutoSpawnBehaviour m_autoSpawner;
 	private DestructibleDecoration m_destructibleBehaviour;
+	protected DeviceOperatorSpawner m_operatorSpawner;
 	private Vector3 m_startPosition;
 
 	private Dictionary<Renderer, Material[]> m_originalMaterials = new Dictionary<Renderer, Material[]>();
@@ -61,6 +62,7 @@ public class InflammableDecoration : Initializable {
 	private void OnLevelLoaded() {
 		m_entity = GetComponent<Decoration>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
+		m_operatorSpawner = GetComponent<DeviceOperatorSpawner>();
 		m_viewBurned = transform.FindChild("view_burned").gameObject;
 		m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
 		m_collider = GetComponent<BoxCollider>();
@@ -178,6 +180,10 @@ public class InflammableDecoration : Initializable {
 							float seconds = m_burningTime;
 							m_timer.Start(seconds * 1000);
 
+							if (m_operatorSpawner != null && !m_operatorSpawner.IsOperatorDead()) {
+								m_operatorSpawner.OperatorBurn();
+							}
+
 							m_viewBurned.SetActive(true);
 							SwitchViewToDissolve();
 						}
@@ -194,6 +200,10 @@ public class InflammableDecoration : Initializable {
 					if (reachedByFire) {
 						for (int i = 0; i < m_fireNodes.Length; i++) {
 							m_fireNodes[i].Burn(Vector2.zero, false);
+						}
+
+						if (m_operatorSpawner != null && !m_operatorSpawner.IsOperatorDead()) {
+							m_operatorSpawner.OperatorBurn();
 						}
 
 						if (m_explosionParticle != "") {
