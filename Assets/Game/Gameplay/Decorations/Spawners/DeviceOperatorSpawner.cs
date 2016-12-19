@@ -90,21 +90,20 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 
     protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
         Transform groundSensor = spawning.transform.FindChild("groundSensor");
-
         Transform t = spawning.transform;
         
 		if (m_mustBeChild) {
 			t.parent = m_spawnAtTransform;
 			t.localPosition = Vector3.zero;
+			t.localRotation = Quaternion.identity;
 		} else {
 			t.position = m_spawnAtTransform.position;
-	        if (groundSensor != null) {
-				t.position -= groundSensor.localPosition;
-	        }
-
-			t.rotation = m_spawnAtTransform.rotation;//Quaternion.LookRotation(GetLookAtVector());
+			t.rotation = m_spawnAtTransform.rotation;
 		}
 
+		if (groundSensor != null) {
+			t.position -= groundSensor.localPosition;
+		}
 		t.localScale = Vector3.one;
     }
 
@@ -150,6 +149,10 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	public void OperatorDoShoot() {
 		m_operatorPilot.PressAction(Pilot.Action.Button_B);
 		m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
+	}
+
+	public void OperatorBurn() {
+		m_operator.Burn(transform);
 	}
 
 	private Vector3 GetLookAtVector() {
