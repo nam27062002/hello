@@ -255,11 +255,17 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 
 				// Initial dragon
                 SimpleJSON.JSONClass _dragon = new SimpleJSON.JSONClass();
-                _dragon.Add("sku", _initialDragonSku);
+                /*_dragon.Add("sku", _initialDragonSku);
                 _dragon.Add("owned", "true");                
 				_dragons.Add(_dragon);
+				*/
 
-				// [AOC] HACK!! Classic dragon
+				// [AOC] HACK!! During development, add all the dragons that should be owned from the start
+				_dragon = new SimpleJSON.JSONClass();
+				_dragon.Add("sku", "dragon_crocodile");
+				_dragon.Add("owned", "true");                
+				_dragons.Add(_dragon);
+
 				_dragon = new SimpleJSON.JSONClass();
 				_dragon.Add("sku", "dragon_classic");
 				_dragon.Add("owned", "true");                
