@@ -9,6 +9,7 @@
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -29,10 +30,12 @@ public class PopupTutorialControls : MonoBehaviour {
 	// Exposed
 	[SerializeField] private ShowHideAnimator m_loadingInfo = null;
 	[SerializeField] private ShowHideAnimator m_playButton = null;
+	[SerializeField] private TextMeshProUGUI m_loadingTxt = null;
 
 	// References
-	private Slider m_loadingBar = null;
 	private GameSceneController m_sceneController = null;
+	private string m_localizedLoadingString = "";
+	private float m_loadProgress = 0f;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -42,20 +45,22 @@ public class PopupTutorialControls : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get references
-		m_loadingBar = m_loadingInfo.FindComponentRecursive<Slider>();
 		m_sceneController = InstanceManager.GetSceneController<GameSceneController>();
+
+		// Cache localized string to avoid doing the translation every frame
+		m_localizedLoadingString = LocalizationManager.SharedInstance.Localize("TID_GEN_LOADING");
+		m_localizedLoadingString += " {0}%";	// Add percentage replacement at the end
 	}
 
 	/// <summary>
 	/// Update loop.
 	/// </summary>
 	private void Update() {
-		// Update progress bar
-		m_loadingBar.normalizedValue = m_sceneController.levelLoadingProgress;
-
 		// Show/Hide elements
-		m_loadingInfo.Set(m_sceneController.levelLoadingProgress < 1f, true);
-		m_playButton.Set(m_sceneController.levelLoadingProgress >= 1f, true);
+		m_loadProgress = m_sceneController.levelLoadingProgress;
+		m_loadingInfo.Set(m_loadProgress < 1f, true);
+		m_playButton.Set(m_loadProgress >= 1f, true);
+		m_loadingTxt.text = System.String.Format(m_localizedLoadingString, StringUtils.FormatNumber(m_loadProgress * 100f, 0));
 	}
 
 	//------------------------------------------------------------------------//
