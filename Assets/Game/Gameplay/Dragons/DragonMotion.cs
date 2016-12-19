@@ -342,7 +342,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					break;
 				case State.InsideWater:
 				{
-					//m_inverseGravityWater = 1.5f;
 					m_animator.SetBool("swim", false);
 					m_animator.SetBool("fly down", false);
 				}break;
@@ -397,15 +396,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					break;
 				case State.InsideWater:
 				{
-					//if ( m_canMoveInsideWater )
-					{
-						//m_animator.SetBool("move", false);
-						//m_animator.SetBool("swim", true);
-					}
-					/*else*/
-					{
-						m_animator.SetBool("fly down", true);
-					}
+					// if ( m_canMoveInsideWater )
+
+					m_animator.SetBool("swim", true);
+					m_animator.SetBool("fly down", true);
 					if ( m_state != State.Stunned && m_state != State.Reviving){
 	                    m_accWaterFactor = 0.80f;
 	                    m_inverseGravityWater = 1.5f;
@@ -539,6 +533,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				RotateToDirection( m_holdPreyTransform.forward );
 				Vector3 deltaPosition = Vector3.Lerp( m_tongue.position, m_holdPreyTransform.position, Time.deltaTime * 8);	// Mouth should be moving and orienting
 				transform.position += deltaPosition - m_tongue.position;
+			}break;
+			case State.InsideWater:
+			{
+				if (m_direction.y > -0.65f) {
+					m_animator.SetBool("fly down", false);
+				}
+
 			}break;
 			case State.ExitingWater:
 			{
