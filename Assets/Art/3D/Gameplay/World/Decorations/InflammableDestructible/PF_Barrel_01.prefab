@@ -59,7 +59,6 @@ GameObject:
   - component: {fileID: 455884}
   - component: {fileID: 3348450}
   - component: {fileID: 2377074}
-  - component: {fileID: 9554900}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -232,23 +231,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 147504}
   m_Mesh: {fileID: 4300000, guid: 757bdce500a5a96478023391c65ff3e5, type: 3}
---- !u!95 &9554900
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 165674}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: ac5967e7468fea94ea6a1b42d05f41c8, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
 --- !u!95 &9593284
 Animator:
   serializedVersion: 3
@@ -343,8 +325,6 @@ MonoBehaviour:
   m_zone1Interaction: 1
   m_knockBackStrength: 0
   m_particleFaceDragonDirection: 1
-  m_particleUpVector: 0
-  m_particleRotationAxis: 5
   m_feddbackParticle: PS_SplintersSmall
   m_destroyParticle: PS_SplintersDestruction
   m_onDestroyAudio: Barrel_Destroyed
