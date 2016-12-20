@@ -41,21 +41,20 @@ public class DragonProgression : SerializableClass {
 		
 	// Level
 	private int m_level = 0;
-	public int level { get { return m_level; }}	// [0..N-1], should never be > lastLevel
+	public int level { get { return m_level; }}	// [0..N-1]
 
-	public int numLevels { get { return m_levelsXp.Length; }}
-	public int nextLevel { get { return Mathf.Min(m_level + 1, lastLevel); }}
-	public int lastLevel { get { return numLevels - 1; }}
-	public bool isMaxLevel { get { return m_level == lastLevel; }}
-	public bool isMaxed { get { return xp >= levelsXP[lastLevel]; }}
+	public int maxLevel { get { return m_levelsXp.Length - 1; }}
+	public int nextLevel { get { return Mathf.Min(m_level + 1, maxLevel); }}
+	public bool isMaxLevel { get { return m_level == maxLevel; }}
+	public bool isMaxed { get { return xp >= levelsXP[maxLevel]; }}
 
 	// Progress [0..1]
-	public float progressByXp { get { return Mathf.InverseLerp(0f, levelsXP[lastLevel], m_xp); }}
-	public float progressByLevel { get { return Mathf.InverseLerp(0, lastLevel, m_level); }}
+	public float progressByXp { get { return Mathf.InverseLerp(0f, levelsXP[maxLevel], m_xp); }}
+	public float progressByLevel { get { return Mathf.InverseLerp(0, maxLevel, m_level); }}
 	public float progressCurrentLevel { 
 		get { 
 			// If we've already reached last level, progress is always 1
-			if(level >= lastLevel) return 1f;
+			if (level >= maxLevel) return 1f;
 			return Mathf.InverseLerp(levelsXP[m_level], levelsXP[nextLevel], m_xp);
 		}
 	}
@@ -100,12 +99,12 @@ public class DragonProgression : SerializableClass {
 		}
 
 		// Get relevant data from definition
-		int numLevels = _def.GetAsInt("numLevels", 1);
+		int maxLevel = _def.GetAsInt("maxLevel", 1);
 
 		// Reset xp array
-		m_levelsXp = new float[numLevels];
+		m_levelsXp = new float[maxLevel];
 		m_levelsXp[0] = 0;	// XP required for level 0 is always 0
-		for(int i = 1; i < numLevels; i++) {
+		for(int i = 0; i < maxLevel; i++) {
 			m_levelsXp[i] = _def.GetAsFloat("xpLevel" + i);
 		}
 
@@ -139,7 +138,7 @@ public class DragonProgression : SerializableClass {
 		if(_xpToAdd <= 0) return;
 
 		// Add xp, capping to max level's XP
-		m_xp = Mathf.Min(m_xp + _xpToAdd, m_levelsXp[lastLevel]);
+		m_xp = Mathf.Min(m_xp + _xpToAdd, m_levelsXp[maxLevel]);
 
 		// Check for level ups
 		if(_checkLevelUp) {
@@ -158,7 +157,7 @@ public class DragonProgression : SerializableClass {
 				return i - 1;
 			}
 		}
-		return lastLevel;	// We're at the last level
+		return maxLevel;	// We're at the last level
 	}
 
 	/// <summary>
@@ -168,10 +167,10 @@ public class DragonProgression : SerializableClass {
 	/// <param name="_level">The level whose data we want.</param>
 	public Range GetXpRangeForLevel(int _level) {
 		// Check level
-		DebugUtils.Assert(_level >= 0 && _level <= lastLevel, "Level out of bounds!");
+		DebugUtils.Assert(_level >= 0 && _level <= maxLevel, "Level out of bounds!");
 
 		// Special case for last level
-		int nextLevel = Mathf.Min(_level + 1, lastLevel);
+		int nextLevel = Mathf.Min(_level + 1, maxLevel);
 		return new Range(levelsXP[_level], levelsXP[nextLevel]);
 	}
 
@@ -181,7 +180,7 @@ public class DragonProgression : SerializableClass {
 	/// <returns><c>true</c> if there is a pending level up.</returns>
 	public bool IsLevelUpReady() {
 		// For sure not if we're already in the last level
-		if(m_level >= lastLevel) return false;
+		if(m_level >= maxLevel) return false;
 
 		// Check next level
 		if(m_xp >= levelsXP[m_level + 1]) {
@@ -223,6 +222,6 @@ public class DragonProgression : SerializableClass {
 		m_xp = Mathf.Max(0f, _xp);
 
 		// Check and apply level
-		m_level = Mathf.Clamp(_level, 0, lastLevel);
+		m_level = Mathf.Clamp(_level, 0, maxLevel);
 	}
 }

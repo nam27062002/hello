@@ -332,7 +332,7 @@ public class OpenEggScreenController : MonoBehaviour {
 				rewardedItemDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, rewardData.value);
 
 				// Pet rarity
-				string text = LocalizationManager.SharedInstance.Localize("%U0 Pet %U1", rarityDef.GetLocalized("tidName"), rewardedItemDef.GetLocalized("tidName"));	// [AOC] HARDCODED!!
+				string text = rewardDef.GetLocalized("tidName", rewardedItemDef.GetLocalized("tidName"));
 				m_rewardRarity.InitFromRarity(rarityDef, text);
 
 				// [AOC] TODO!!

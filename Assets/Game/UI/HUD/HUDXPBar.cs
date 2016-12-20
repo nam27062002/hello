@@ -76,14 +76,14 @@ public class HUDXPBar : MonoBehaviour {
 					StringUtils.FormatNumber(progression.xp, 0),
 					StringUtils.FormatNumber(Mathf.Ceil(xpRange.max), 0),
 					StringUtils.FormatNumber(progression.level + 1),
-					StringUtils.FormatNumber(progression.lastLevel + 1)
+					StringUtils.FormatNumber(progression.maxLevel + 1)
 				);
 			} else {
 				m_levelXpText.text = String.Format("{0}/{1} (lv. {2}/{3})",
 					StringUtils.FormatNumber(progression.xp - xpRange.min, 0),
                     StringUtils.FormatNumber(Mathf.Ceil(xpRange.distance), 0),
                     StringUtils.FormatNumber(progression.level + 1),
-                    StringUtils.FormatNumber(progression.lastLevel + 1)
+					StringUtils.FormatNumber(progression.maxLevel + 1)
 				);
 			}
 

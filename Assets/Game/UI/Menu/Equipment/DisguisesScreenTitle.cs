@@ -72,7 +72,7 @@ public class DisguisesScreenTitle : DragonXPBar {
 
 			// Linear?
 			if(m_linear) {
-				m_auxBar.value = Mathf.InverseLerp(0, m_dragonData.progression.numLevels, unlockLevel);
+				m_auxBar.value = Mathf.InverseLerp(0, m_dragonData.progression.maxLevel, unlockLevel);
 			} else {
 				m_auxBar.value = m_dragonData.progression.GetXpRangeForLevel(unlockLevel).min;
 			}
