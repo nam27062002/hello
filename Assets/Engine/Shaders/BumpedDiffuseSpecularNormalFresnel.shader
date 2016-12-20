@@ -25,7 +25,7 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 		Pass
 		{
 			Cull Back
-			ColorMask RGB
+			ColorMask RGBA
 /*
 			Stencil
 			{
