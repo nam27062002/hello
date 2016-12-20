@@ -31,7 +31,7 @@ Shader "Custom/UI/UIImage" {
 			"PreviewType"="Plane"
 			"CanUseSpriteAtlas"="True"
 		}
-		
+/*
 		Stencil {
 			Ref [_Stencil]
 			Comp [_StencilComp]
@@ -39,7 +39,7 @@ Shader "Custom/UI/UIImage" {
 			ReadMask [_StencilReadMask]
 			WriteMask [_StencilWriteMask]
 		}
-
+*/
 		Cull Off
 		Lighting Off
 		ZWrite Off
