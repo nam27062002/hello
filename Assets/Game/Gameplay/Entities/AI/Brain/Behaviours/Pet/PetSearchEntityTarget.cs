@@ -61,7 +61,7 @@ namespace AI {
 				base.OnInitialise();
 
 				m_owner = InstanceManager.player;
-				m_range = m_owner.data.GetScaleAtLevel( m_owner.data.progression.lastLevel) * 10f;
+				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * 10f;
 				m_data = m_pilot.GetComponentData<PetSearchEntityTargetData>();
 
 				if (!string.IsNullOrEmpty( m_data.m_preferedEntitiesList) )
