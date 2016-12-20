@@ -193,6 +193,12 @@ public class DragonEatBehaviour : EatBehaviour {
 	}
 
 
+	override protected void UpdateHoldingPrey()
+	{
+		base.UpdateHoldingPrey();
+		m_dragon.AddLife( m_holdHealthGainRate * Time.deltaTime );
+	}
+
 	override public void EndHold()
 	{
 		base.EndHold();
