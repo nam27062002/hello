@@ -33,6 +33,9 @@ public class WaterMesh : MonoBehaviour
 	
 	void Awake()
 	{
+        MeshRenderer mr = GetComponent<MeshRenderer>();
+        m_overWaterMaterial = mr.materials[0];
+
         if (!generateMesh)
         {
             return;
@@ -64,7 +67,6 @@ public class WaterMesh : MonoBehaviour
         m_indices2 = new int[m_numTriangles2 * 3];
         m_UV = new Vector2[m_numVertices];
         m_colours = new Color[m_numVertices];
-
 
         float uvspacing = 2.0f / m_cellSize;
 
@@ -135,12 +137,9 @@ public class WaterMesh : MonoBehaviour
         m_colliderSize.Set(size.x * lscale.x, size.y * lscale.y, size.z * lscale.z);
 //        box.bounds.SetMinMax(min, max);
 
-
 		box.center = m_colliderCenter;
 		box.size = m_colliderSize;
 
-        MeshRenderer mr = GetComponent<MeshRenderer>();
-        m_overWaterMaterial = mr.materials[0];
     }
 
     // Use this for initialization
@@ -170,10 +169,10 @@ public class WaterMesh : MonoBehaviour
 
     private void OnUnderwaterToggled(bool _activated)
     {
-        Vector3 startPosition = transform.InverseTransformPoint(InstanceManager.player.transform.position);
 
         if (m_overWaterMaterial != null)
         {
+            Vector3 startPosition = transform.InverseTransformPoint(InstanceManager.player.transform.position);
             m_overWaterMaterial.SetFloat("_StartTime", Time.timeSinceLevelLoad);
             m_overWaterMaterial.SetVector("_StartPosition", startPosition);
 //            m_overWaterMaterial.SetFloat("_WaterSpeed", Random.RandomRange(1.0f, 3.0f));
