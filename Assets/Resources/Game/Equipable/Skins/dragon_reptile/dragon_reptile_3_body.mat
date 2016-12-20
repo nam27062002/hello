@@ -7,10 +7,10 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_reptile_3_body
-  m_Shader: {fileID: 4800000, guid: 2f8c595491dd543a8868ae13d5e98890, type: 3}
+  m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 2000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -18,7 +18,7 @@ Material:
     - first:
         name: _BumpMap
       second:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: fe452f39c13284c89aa949d3d28b0979, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -40,6 +40,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
+        name: _DetailTex
+      second:
+        m_Texture: {fileID: 2800000, guid: 0318404b239d84abcb0c9c327bf5643c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
         name: _EmissionMap
       second:
         m_Texture: {fileID: 0}
@@ -48,7 +54,7 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: d6bf8acd531194d138ca7abda25c3e50, type: 3}
+        m_Texture: {fileID: 2800000, guid: f7c48ebf38f91430ca1f7ba808c88d6e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -86,8 +92,14 @@ Material:
         name: _EmissionScaleUI
       second: 0
     - first:
+        name: _Fresnel
+      second: 1.5
+    - first:
         name: _Glossiness
       second: 0.5
+    - first:
+        name: _InnerLightAdd
+      second: 0
     - first:
         name: _Metallic
       second: 0
@@ -100,6 +112,9 @@ Material:
     - first:
         name: _Parallax
       second: 0.02
+    - first:
+        name: _SpecExponent
+      second: 1
     - first:
         name: _SrcBlend
       second: 1
@@ -124,4 +139,10 @@ Material:
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
         name: _EmissionColorUI
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _FresnelColor
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _InnerLightColor
       second: {r: 1, g: 1, b: 1, a: 1}

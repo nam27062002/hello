@@ -160,7 +160,7 @@ public class DragonXPBar : MonoBehaviour {
 			m_xpBar.minValue = 0;
 			m_xpBar.maxValue = 1;
 			if(m_linear) {
-				float deltaPerLevel = 1f/_data.progression.numLevels;
+				float deltaPerLevel = 1f/(_data.progression.maxLevel);
 				m_xpBar.value = _data.progression.progressByLevel + Mathf.Lerp(0f, deltaPerLevel, _data.progression.progressCurrentLevel);	// [AOC] This should do it!
 			} else {
 				m_xpBar.value = _data.progression.progressByXp;
@@ -169,7 +169,7 @@ public class DragonXPBar : MonoBehaviour {
 
 		// Level Text
 		if(m_levelText != null) {
-			m_levelText.Localize("TID_LEVEL", StringUtils.FormatNumber(_data.progression.level + 1) + "/" + StringUtils.FormatNumber(_data.progression.numLevels));
+			m_levelText.Localize("TID_LEVEL", StringUtils.FormatNumber(_data.progression.level + 1) + "/" + StringUtils.FormatNumber(_data.progression.maxLevel + 1));
 		}
 
 		// Things to update only when target dragon has changed
@@ -202,21 +202,22 @@ public class DragonXPBar : MonoBehaviour {
 		}
 
 		// Make sure we have enough separators
-		if(m_barSeparators.Count < _data.progression.numLevels) {
-			ExpandSeparatorsPool(_data.progression.numLevels - m_barSeparators.Count);
+		if(m_barSeparators.Count < (_data.progression.maxLevel - 1)) {
+			ExpandSeparatorsPool((_data.progression.maxLevel - 1) - m_barSeparators.Count);
 		}
 
 		// Put separators into position
 		float delta = 0f;
 		int level = 0;
+		int maxLevel = _data.progression.maxLevel;
 		for(int i = 0; i < m_barSeparators.Count; i++) {
 			// Show?
 			// [AOC] Exclude first level (no separator at the start!)
 			level = i + 1;
-			if(level < _data.progression.numLevels) {
+			if(level < maxLevel) {
 				// Initialize and show it
 				if(m_linear) {
-					delta = Mathf.InverseLerp(0, _data.progression.numLevels, level);
+					delta = Mathf.InverseLerp(0, maxLevel, level);
 				} else {
 					// Mark the start of the level
 					delta = _data.progression.GetXpRangeForLevel(level).min/_data.progression.xpRange.max;

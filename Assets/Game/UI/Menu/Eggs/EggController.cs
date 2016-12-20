@@ -16,8 +16,6 @@ using UnityEngine.UI;
 /// <summary>
 /// Main control of a single egg prefab in the menu.
 /// </summary>
-//[RequireComponent(typeof(OpenEggBehaviour))]
-//[RequireComponent(typeof(ReadyEggBehaviour))]
 public class EggController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -26,9 +24,6 @@ public class EggController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] private GameObject m_incubatorFX;
-
 	// Data
 	private Egg m_eggData = null;
 	public Egg eggData {
@@ -125,15 +120,6 @@ public class EggController : MonoBehaviour {
 			case Egg.State.READY: {
 				m_animator.SetTrigger("ready");
 			} break;
-		}
-
-		// In addition, if it's the egg on the incubator show some nice FX
-		if(m_incubatorFX != null) {
-			bool showFX = (m_eggData.state == Egg.State.READY_FOR_INCUBATION
-						|| m_eggData.state == Egg.State.INCUBATING
-						|| m_eggData.state == Egg.State.READY);
-			//m_incubatorFX.SetActive(showFX);
-			m_incubatorFX.SetActive(false);	// Disable for now
 		}
 	}
 

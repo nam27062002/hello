@@ -56,6 +56,8 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	private float m_initialDelta = 0f;	// Bar position at the start of the animation
 	private float m_finalDelta = 1f;	// Bar position at the end of the animation
 
+	private bool m_isTargetMaxLevel = false;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -108,25 +110,36 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 		DragonData data = DragonManager.currentDragon;
 		if(CPResultsScreenTest.testEnabled) {
 			// Compute which level matches the cheats initial delta
-			float initialLevelRaw = Mathf.Lerp(0, data.progression.numLevels, CPResultsScreenTest.xpInitialDelta);
+			float initialLevelRaw = Mathf.Lerp(0, data.progression.maxLevel, CPResultsScreenTest.xpInitialDelta);
 			m_initialLevel = Mathf.FloorToInt(initialLevelRaw);
-			if(m_initialLevel >= data.progression.lastLevel) m_initialLevel = data.progression.lastLevel;	// Special case for last level (should only happen with delta >= 1f)
 			m_initialDelta = initialLevelRaw - m_initialLevel;	// The decimal part of the level ^^
 
+			if(m_initialLevel >= data.progression.maxLevel) {
+				m_initialLevel = data.progression.maxLevel;	// Special case for last level (should only happen with delta >= 1f)
+				m_initialDelta = 1f;
+			}
+
 			// Do the same with the target level
-			float targetLevelRaw = Mathf.Lerp(0, data.progression.numLevels, CPResultsScreenTest.xpFinalDelta);
+			float targetLevelRaw = Mathf.Lerp(0, data.progression.maxLevel, CPResultsScreenTest.xpFinalDelta);
 			m_targetLevel = Mathf.FloorToInt(targetLevelRaw);
-			if(m_targetLevel >= data.progression.lastLevel) m_targetLevel = data.progression.lastLevel;		// Special case for last level (should only happen with delta >= 1f)
 			m_finalDelta = targetLevelRaw - m_targetLevel;	// The decimal part of the level ^^
+
+			if(m_targetLevel >= data.progression.maxLevel) {
+				m_targetLevel = data.progression.maxLevel;		// Special case for last level (should only happen with delta >= 1f)
+				m_finalDelta = 1f;
+			}
+
 		} else {
 			// Just get it from the reward manager
 			m_initialLevel = RewardManager.dragonInitialLevel;
 			m_targetLevel = data.progression.level;
 
 			m_initialDelta = RewardManager.dragonInitialLevelProgress;
-			m_finalDelta = data.progression.progressByLevel;
+			m_finalDelta = data.progression.progressCurrentLevel;
 		}
 		m_currentLevel = m_initialLevel;
+
+		m_isTargetMaxLevel = m_targetLevel == data.progression.maxLevel;
 
 		// Initialize bar
 		m_progressBar.minValue = 0;
@@ -176,8 +189,14 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	private void LaunchXPBarAnim(float _delay) {
 		// Aux vars
 		DragonData data = DragonManager.currentDragon;
-		bool isTargetLevel = (m_currentLevel == m_targetLevel);
+		bool isTargetLevel = false;
 		float targetDelta = isTargetLevel ? m_finalDelta : 1f;	// Full bar if not target level
+
+		if (m_isTargetMaxLevel) {
+			isTargetLevel = (m_currentLevel == (m_targetLevel - 1));
+		} else {
+			isTargetLevel = (m_currentLevel == m_targetLevel);
+		}
 
 		// Trigger event
 		OnAnimStart.Invoke(m_currentLevel, m_progressBar.value);
@@ -216,12 +235,18 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 			.OnComplete(
 				() => {
 					// Was it the target level? We're done!
-					if(isTargetLevel) {
-						// Give some delay to let the player soak up all the info before moving on to next pill
-						DelayedFinish(0.5f * m_animSpeedMultiplier);
-
+					if(isTargetLevel) {								
 						// Trigger event
 						OnAnimEnd.Invoke(m_currentLevel, m_progressBar.value);
+
+						// Set bar into final position
+						m_progressBar.value = m_finalDelta;
+						// Set texts to final value
+						m_currentLevel = m_targetLevel;
+						RefreshLevelTexts(false);
+
+						// Give some delay to let the player soak up all the info before moving on to next pill
+						DelayedFinish(0.5f * m_animSpeedMultiplier);
 
 						// Stop transfer FX
 						if(m_transferFX != null) m_transferFX.Stop(true);
@@ -258,14 +283,15 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	/// </summary>
 	/// <param name="_animate">If set to <c>true</c> animate.</param>
 	private void RefreshLevelTexts(bool _animate) {
-		// Current level
-		m_currentLevelText.Localize("TID_LEVEL_ABBR", StringUtils.FormatNumber(m_currentLevel + 1));
-		if(_animate) m_currentLevelText.transform.DOScale(1.5f, 0.15f).SetLoops(2, LoopType.Yoyo);
-
-		// Next level - check for max!
-		if(m_currentLevel == DragonManager.currentDragon.progression.numLevels - 1) {
+		if (m_isTargetMaxLevel && m_currentLevel == m_targetLevel) {
+			m_currentLevelText.Localize("TID_LEVEL_ABBR", StringUtils.FormatNumber(m_currentLevel + 1));
 			m_nextLevelText.Localize("TID_MAX");
 		} else {
+			// Current level
+			m_currentLevelText.Localize("TID_LEVEL_ABBR", StringUtils.FormatNumber(m_currentLevel + 1));
+			if(_animate) m_currentLevelText.transform.DOScale(1.5f, 0.15f).SetLoops(2, LoopType.Yoyo);
+
+			// Next level
 			m_nextLevelText.Localize("TID_LEVEL_ABBR", StringUtils.FormatNumber(m_currentLevel + 2));
 		}
 	}

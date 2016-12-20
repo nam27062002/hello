@@ -144,7 +144,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 		switch(_step) {
 			case Step.IDLE: {
 				// Just hide current pill
-				HideCurrentPill();
+				//HideCurrentPill();
 			} break;
 
 			case Step.PROGRESSION: {

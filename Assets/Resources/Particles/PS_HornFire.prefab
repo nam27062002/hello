@@ -35,13 +35,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1742514729165746}
-  m_LocalRotation: {x: 0.98513985, y: -0.000000035554216, z: -0.000000050569447, w: -0.17175429}
-  m_LocalPosition: {x: 0, y: 0.034, z: -5.39}
-  m_LocalScale: {x: 1, y: 1.0000005, z: 1.0000005}
+  m_LocalRotation: {x: 0.9221777, y: 0.007402878, z: 0.017560702, w: -0.38629684}
+  m_LocalPosition: {x: 0.4, y: 0.911, z: -0.927}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -160.22, y: -0.000015258789, z: -0.000015258789}
+  m_LocalEulerAnglesHint: {x: -134.543, y: -2.1789856, z: -0.0069885254}
 --- !u!114 &114659758775824988
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parentName: Dragon_Tail6
+  m_parentName: Dragon_Head
   m_parentRoot: {fileID: 0}
 --- !u!198 &198283667058192968
 ParticleSystem:
@@ -142,7 +142,7 @@ ParticleSystem:
         m_RotationOrder: 0
       minMaxState: 3
     startSpeed:
-      scalar: 2
+      scalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -262,7 +262,7 @@ ParticleSystem:
       maxColor: {r: 1, g: 0.4745098, b: 0, a: 1}
       minMaxState: 2
     startSize:
-      scalar: 1.5
+      scalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -280,7 +280,7 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 0.06666667
+          value: 0.10000001
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -469,7 +469,7 @@ ParticleSystem:
   ShapeModule:
     serializedVersion: 3
     enabled: 1
-    type: 9
+    type: 1
     radius: 0.01
     angle: 0
     length: 1
@@ -493,7 +493,7 @@ ParticleSystem:
     enabled: 1
     serializedVersion: 3
     rateOverTime:
-      scalar: 100
+      scalar: 15
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1146,10 +1146,10 @@ ParticleSystem:
       minMaxState: 1
     inWorldSpace: 0
   InheritVelocityModule:
-    enabled: 0
+    enabled: 1
     m_Mode: 1
     m_Curve:
-      scalar: 1
+      scalar: 0.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -2581,7 +2581,7 @@ ParticleSystemRenderer:
   m_ReflectionProbeUsage: 0
   m_Materials:
   - {fileID: 2100000, guid: f6899e410c696ca4ab152895f5eb1862, type: 2}
-  - {fileID: 2100000, guid: f6899e410c696ca4ab152895f5eb1862, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

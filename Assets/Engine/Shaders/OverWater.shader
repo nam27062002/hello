@@ -12,6 +12,8 @@ Shader "Hungry Dragon/OverWater"
 		_DetailTex("Detail (RGB)", 2D) = "white" {}
 		_WaterSpeed("Speed ", Float) = 0.5
 		_WaveRadius("Wave radius ", Range(0.0, 1.0)) = 0.15
+		_StartTime("Start time", Float) = 0.0
+		_StartPosition("Start position", Vector) = (0,0,0,0)
 	}
 
 	SubShader {
@@ -65,7 +67,13 @@ Shader "Hungry Dragon/OverWater"
 				float _WaterSpeed;
 				float _WaveRadius;
 				HG_FOG_VARIABLES
+				uniform float _StartTime;
+				uniform fixed4 _StartPosition;
 
+
+#define SPLASHRADIUS 10.0
+#define SPLASHSIZE 1.5
+#define SPLASHTIME 2.0
 
 				v2f vert (appdata_t v) 
 				{
@@ -73,15 +81,23 @@ Shader "Hungry Dragon/OverWater"
 					float sinX = sin((v.vertex.x * 22.1f) + _Time.y) + sin((v.vertex.x * 42.2f) + _Time.y * 5.7f) + sin((v.vertex.z * 62.2f) + _Time.y * 6.52f);
 					float sinY = sin((v.vertex.z * 35.0f) + _Time.y) + sin((v.vertex.z * 65.3f) + _Time.y * 5.7f) + sin((v.vertex.x * 21.2f) + _Time.y * 6.52f);
 					float moveVertex = 1.0;// step(0.0, v.vertex.y);
-					v.vertex.y += (sinX + sinY) * _WaveRadius * moveVertex * v.color.w;
+
+					float dst = clamp(1.0 - (length(v.vertex - _StartPosition) / SPLASHRADIUS), 0.0, 1.0);
+					float dt = _Time.y - _StartTime;
+					float ct = clamp(1.0 - (dt / SPLASHTIME), 0.0, 1.0);
+
+//					v.vertex.y += ((sinX + sinY) * _WaveRadius * moveVertex * v.color.w) + (cos((dst * 10.0) + dt * 10.0) * dst * sin(ct * 2.0) * SPLASHSIZE);
+					v.vertex.y += ((sinX + sinY) * _WaveRadius * moveVertex * v.color.w);
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
 //					o.scrPos = ComputeScreenPos(o.vertex);
 					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 					o.viewDir = o.vertex - _WorldSpaceCameraPos;
 
+//					o.color = lerp(v.color, float4(1.0, 0.0, 1.0, 1.0), dst * ct);
 					o.color = v.color;
-//					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
+//					o.color = float4(1.0, 0.0, 1.0, 1.0);
+					//					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
 
 					return o;

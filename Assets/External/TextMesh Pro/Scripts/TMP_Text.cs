@@ -48,7 +48,7 @@ namespace TMPro
     public enum MaskingTypes { MaskOff = 0, MaskHard = 1, MaskSoft = 2 }; //, MaskTex = 4 };
     public enum TextOverflowModes { Overflow = 0, Ellipsis = 1, Masking = 2, Truncate = 3, ScrollRect = 4, Page = 5 };
     public enum MaskingOffsetMode { Percentage = 0, Pixel = 1 };
-    public enum TextureMappingOptions { Character = 0, Line = 1, Paragraph = 2, MatchAspect = 3 };
+    public enum TextureMappingOptions { Character = 0, Line = 1, Paragraph = 2, MatchAspect = 3, CharacterRandom = 4 };
 
     public enum FontStyles { Normal = 0x0, Bold = 0x1, Italic = 0x2, Underline = 0x4, LowerCase = 0x8, UpperCase = 0x10, SmallCaps = 0x20, Strikethrough = 0x40, Superscript = 0x80, Subscript = 0x100 };
     public enum FontWeights { Thin = 100, ExtraLight = 200, Light = 300, Normal = 400, Medium = 500, SemiBold = 600, Bold = 700, Heavy = 800, Black = 900 };

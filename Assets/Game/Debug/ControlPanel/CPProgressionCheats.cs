@@ -63,9 +63,14 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Clear persistence
 		PersistenceManager.Clear();
 
-		// If required, tutorial will be auto-completed next time we reload the profile
+		// Reset all preferences
 		PlayerPrefs.DeleteAll();
+
+		// If required, tutorial will be auto-completed next time we reload the profile
 		Prefs.SetBoolPlayer("skipTutorialCheat", _skipTutorial);
+
+		// Initialize debug settings, they have been reset when reseting the preferences
+		DebugSettings.Init();
 
 		// Restart game
 		FlowManager.Restart();

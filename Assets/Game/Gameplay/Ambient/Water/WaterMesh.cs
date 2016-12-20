@@ -27,11 +27,15 @@ public class WaterMesh : MonoBehaviour
     private Vector3 m_colliderCenter;
     private Vector3 m_colliderSize;
 
+    private Material m_overWaterMaterial;
 
     public bool generateMesh = true;
 	
 	void Awake()
 	{
+        MeshRenderer mr = GetComponent<MeshRenderer>();
+        m_overWaterMaterial = mr.materials[0];
+
         if (!generateMesh)
         {
             return;
@@ -63,7 +67,6 @@ public class WaterMesh : MonoBehaviour
         m_indices2 = new int[m_numTriangles2 * 3];
         m_UV = new Vector2[m_numVertices];
         m_colours = new Color[m_numVertices];
-
 
         float uvspacing = 2.0f / m_cellSize;
 
@@ -111,14 +114,6 @@ public class WaterMesh : MonoBehaviour
                 m_indices[c + 4] = (numVertsX * (v + 1)) + u + 1;
                 m_indices[c + 5] = (numVertsX * v) + u + 1;
 
-
-/*
-                m_indices[c] = (numVertsX * v) + u;
-                m_indices[c + 1] = (numVertsX * v) + u + 1;
-                m_indices[c + 2] = (numVertsX * (v + 1)) + u;
-                m_indices[c + 3] = (numVertsX * v) + u + 1;
-                m_indices[c + 4] = (numVertsX * (v + 1)) + u + 1;
-                m_indices[c + 5] = (numVertsX * (v + 1)) + u;*/
                 c += 6;
             }
         }
@@ -142,9 +137,9 @@ public class WaterMesh : MonoBehaviour
         m_colliderSize.Set(size.x * lscale.x, size.y * lscale.y, size.z * lscale.z);
 //        box.bounds.SetMinMax(min, max);
 
-
 		box.center = m_colliderCenter;
 		box.size = m_colliderSize;
+
     }
 
     // Use this for initialization
@@ -167,5 +162,25 @@ public class WaterMesh : MonoBehaviour
             m_mesh.SetTriangles(m_indices, 0);
             m_mesh.SetTriangles(m_indices2, 1);            
         }
+
+        Messenger.AddListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
+
     }
+
+    private void OnUnderwaterToggled(bool _activated)
+    {
+
+        if (m_overWaterMaterial != null)
+        {
+            Vector3 startPosition = transform.InverseTransformPoint(InstanceManager.player.transform.position);
+            m_overWaterMaterial.SetFloat("_StartTime", Time.timeSinceLevelLoad);
+            m_overWaterMaterial.SetVector("_StartPosition", startPosition);
+//            m_overWaterMaterial.SetFloat("_WaterSpeed", Random.RandomRange(1.0f, 3.0f));
+        }
+        //        Debug.Log("WaterMesh - OnUnderwaterToggled " + playerLocation);
+
+
+
+    }
+
 }

@@ -112,7 +112,7 @@ public class DragonData {
 	/// <returns>The dragon max health at the given level.</returns>
 	/// <param name="_level">The level at which we want to know the max health value.</param>
 	public float GetMaxHealthAtLevel(int _level) {
-		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
+		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
 		return m_healthRange.Lerp(levelDelta);
 	}
 
@@ -122,7 +122,7 @@ public class DragonData {
 	/// <returns>The dragon scale at the given level.</returns>
 	/// <param name="_level">The level at which we want to know the scale value.</param>
 	public float GetScaleAtLevel(int _level) {
-		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
+		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
 		return m_scaleRange.Lerp(levelDelta) + m_scaleOffset;
 	}
 

@@ -462,7 +462,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	public void SpawnEatenParticlesAt(Transform _transform) {
 #if !PRODUCTION
         // If the debug settings for particles eaten is disabled then they are not spawned
-        if (!Prefs.GetBoolPlayer(DebugSettings.INGAME_PARTICLES_EATEN))
+        if (!Prefs.GetBoolPlayer(DebugSettings.INGAME_PARTICLES_EATEN, true))
             return;
 #endif
 
@@ -690,14 +690,14 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 			if (!string.IsNullOrEmpty(m_onExplosionAudio))
 				AudioController.Play(m_onExplosionAudio, transform.position);
-		} else {
-			if (!string.IsNullOrEmpty(m_corpseAsset)) {
-				// spawn corpse
-				GameObject corpse = PoolManager.GetInstance(m_corpseAsset, true);
-				corpse.transform.CopyFrom(transform);
+		}
 
-				corpse.GetComponent<Corpse>().Spawn(m_entity.isGolden, m_dragonBoost.IsBoostActive());
-			}
+		if (!string.IsNullOrEmpty(m_corpseAsset)) {
+			// spawn corpse
+			GameObject corpse = PoolManager.GetInstance(m_corpseAsset, true);
+			corpse.transform.CopyFrom(transform);
+
+			corpse.GetComponent<Corpse>().Spawn(m_entity.isGolden, m_dragonBoost.IsBoostActive());
 		}
 
 		// Stop pc trail effect (if any)
