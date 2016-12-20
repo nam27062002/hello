@@ -86,11 +86,13 @@ public class Corpse : MonoBehaviour {
 				for (int i = 0; i < m_bloodPoints.Length; i++) {
 					GameObject ps = ParticleManager.Spawn(m_blood.name, Vector3.zero, m_blood.path);
 
-					FollowTransform ft = ps.GetComponent<FollowTransform>();
-					if (ft != null) {
-						ft.m_follow = m_bloodPoints[i].transform;
-					} else {
-						ps.transform.localPosition = Vector3.zero;
+					if (ps != null) {
+						FollowTransform ft = ps.GetComponent<FollowTransform>();
+						if (ft != null) {
+							ft.m_follow = m_bloodPoints[i].transform;
+						} else {
+							ps.transform.localPosition = Vector3.zero;
+						}
 					}
 				}
 			}
