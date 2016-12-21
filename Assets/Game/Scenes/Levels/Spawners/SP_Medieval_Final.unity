@@ -30642,6 +30642,18 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!135 &944690988
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 944690868}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &945065859 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 177470, guid: 274b988f27eeeac4198e62ea73efff0d, type: 2}
@@ -44220,6 +44232,11 @@ Prefab:
       propertyPath: m_spawnTime.max
       value: 45
       objectReference: {fileID: 0}
+    - target: {fileID: 114000011329399542, guid: c53c961034f56a640aa7d2fb4420d18a,
+        type: 2}
+      propertyPath: m_entityPrefabStr
+      value: Surface/PF_SpiderRed
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114000013804917148, guid: c53c961034f56a640aa7d2fb4420d18a, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: c53c961034f56a640aa7d2fb4420d18a, type: 2}
@@ -46877,12 +46894,12 @@ Prefab:
     - target: {fileID: 114000010556823396, guid: 95e7a0da4e22daf4f9b0ed43eba5d50d,
         type: 2}
       propertyPath: offset.y
-      value: 0.67767763
+      value: 0.44317293
       objectReference: {fileID: 0}
     - target: {fileID: 114000010556823396, guid: 95e7a0da4e22daf4f9b0ed43eba5d50d,
         type: 2}
       propertyPath: size.y
-      value: 4.6906214
+      value: 4.221612
       objectReference: {fileID: 0}
     - target: {fileID: 114000012831036214, guid: 95e7a0da4e22daf4f9b0ed43eba5d50d,
         type: 2}
@@ -46897,7 +46914,7 @@ Prefab:
     - target: {fileID: 114000010556823396, guid: 95e7a0da4e22daf4f9b0ed43eba5d50d,
         type: 2}
       propertyPath: offset.x
-      value: 0.21681976
+      value: 0.16471863
       objectReference: {fileID: 0}
     - target: {fileID: 111670, guid: 95e7a0da4e22daf4f9b0ed43eba5d50d, type: 2}
       propertyPath: m_Name
@@ -46906,7 +46923,7 @@ Prefab:
     - target: {fileID: 114000010556823396, guid: 95e7a0da4e22daf4f9b0ed43eba5d50d,
         type: 2}
       propertyPath: size.x
-      value: 5.588875
+      value: 5.171959
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 95e7a0da4e22daf4f9b0ed43eba5d50d, type: 2}
@@ -50924,6 +50941,7 @@ Transform:
   m_Children:
   - {fileID: 986806188}
   - {fileID: 550209534}
+  - {fileID: 1879036722}
   - {fileID: 50938552}
   - {fileID: 1835143806}
   - {fileID: 530843280}
@@ -50931,7 +50949,6 @@ Transform:
   - {fileID: 231584071}
   - {fileID: 968943088}
   - {fileID: 569321591}
-  - {fileID: 1879036722}
   - {fileID: 277471128}
   - {fileID: 826229850}
   - {fileID: 418761386}
@@ -58630,7 +58647,7 @@ Transform:
   - {fileID: 1002213401}
   - {fileID: 1611888549}
   m_Father: {fileID: 1596218350}
-  m_RootOrder: 9
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1880150376
 Prefab:
@@ -62912,7 +62929,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 495222, guid: 92f7458ffd7873f4dbf66498407291a6, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 64.17
+      value: 65.65
       objectReference: {fileID: 0}
     - target: {fileID: 495222, guid: 92f7458ffd7873f4dbf66498407291a6, type: 2}
       propertyPath: m_LocalPosition.z
@@ -63024,8 +63041,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -0.082035065, y: 1.9643927}
-  size: {x: 6.459358, y: 7.113228}
+  offset: {x: -0.082035065, y: 0.49866772}
+  size: {x: 6.459358, y: 4.181778}
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!1 &2022001589
 GameObject:
@@ -66181,12 +66198,12 @@ Prefab:
     - target: {fileID: 114000012318038126, guid: 512541d1d2b527241ba2ced4943a5395,
         type: 2}
       propertyPath: offset.y
-      value: -0.62111044
+      value: -0.766809
       objectReference: {fileID: 0}
     - target: {fileID: 114000012318038126, guid: 512541d1d2b527241ba2ced4943a5395,
         type: 2}
       propertyPath: size.y
-      value: 7.0513887
+      value: 6.7599916
       objectReference: {fileID: 0}
     - target: {fileID: 114000012318038126, guid: 512541d1d2b527241ba2ced4943a5395,
         type: 2}
