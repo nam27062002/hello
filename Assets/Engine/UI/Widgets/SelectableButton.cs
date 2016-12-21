@@ -91,16 +91,25 @@ public class SelectableButton : MonoBehaviour {
 		newSprites.disabledSprite = _selected ? m_transitionSprite : m_transitionSpriteDisabled;
 		button.spriteState = newSprites;
 
-		// Consume trigger to reset animation state
-		if(button.transition == Selectable.Transition.Animation) {
-			button.animator.ResetTrigger(m_transitionAnimationTrigger);
-		}
-
 		// Set button's disabled state
 		// Delay it until the end of frame, otherwise the transition setup wont be updated in time
 		// Make it interactable by default, will be re-applied on the coroutine
 		bool willBeInteractable = _selected ? false : !_stayDisabled;	// Disabled if selected or forced by flag
 		button.interactable = willBeInteractable;
+
+		// Consume trigger to reset animation state
+		if(button.transition == Selectable.Transition.Animation) {
+			// button.animator.ResetTrigger(m_transitionAnimationTrigger);
+			if ( _selected)
+				button.animator.SetTrigger("Selected");
+			else
+			{
+				button.animator.SetTrigger("Normal");
+				button.animator.ResetTrigger("Highlighted");
+				button.animator.ResetTrigger("Selected");
+			}
+		}
+
 		m_selected = _selected;
 	}
 }
