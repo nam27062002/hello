@@ -149,7 +149,7 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow + N
 					fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
 
 					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-					return col + (specular * specMask * i.color.a * _LightColor0);
+					return col + (specular * specMask * i.color * _LightColor0);
 //					return col + (specular  * _LightColor0);
 //					return col;
 				}

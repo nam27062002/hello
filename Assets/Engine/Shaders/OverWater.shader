@@ -125,9 +125,9 @@ Shader "Hungry Dragon/OverWater"
 					fixed3 one = fixed3(1, 1, 1);
 					col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
 
-					UNITY_OPAQUE_ALPHA(col.a);
-
 					HG_APPLY_FOG(i, col);	// Fog
+
+					UNITY_OPAQUE_ALPHA(col.a);
 
 //					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 //					col *= attenuation;
