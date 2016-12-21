@@ -19,7 +19,7 @@ Properties {
 	_Cutoff("Cutoff Level", Range(0, 1)) = 0.5
 	_Fresnel("Fresnel factor", Range(0, 10)) = 1.5
 	_FresnelColor("Fresnel Color", Color) = (1,1,1,1)
-
+	_AmbientAdd("Ambient Add", Color) = (0,0,0,0)
 }
 
 SubShader {
@@ -82,6 +82,7 @@ SubShader {
 			uniform float _InnerLightAdd;
 			uniform float4 _InnerLightColor;
 			uniform float4 _FresnelColor;
+			uniform float4 _AmbientAdd;
 
 			uniform float _SpecExponent;
 			uniform float _Cutoff;
@@ -151,7 +152,7 @@ SubShader {
 
 //				fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)), 1.0)) * main * (_ColorMultiply + _ColorAdd + selfIlluminate) + (fresnel * _FresnelColor);
 
-				fixed4 col = (diffuse + fixed4(ShadeSH9(float4(normalDirection, 1.0)), 1.0)) * main * (_ColorMultiply + _ColorAdd + selfIlluminate) + (fresnel * _FresnelColor);
+				fixed4 col = (diffuse + fixed4(ShadeSH9(float4(normalDirection, 1.0)), 1.0)) * main * (_ColorMultiply + _ColorAdd + selfIlluminate) + (fresnel * _FresnelColor) + _AmbientAdd;
 				return col;
 
 			}
