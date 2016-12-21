@@ -1444,7 +1444,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public void StartGrabPreyMovement(AI.Machine prey, Transform _holdPreyTransform)
 	{
 		// TODO: Calculate hold speed multiplier
-		m_holdSpeedMultiplier = 0.8f;
+		m_holdSpeedMultiplier = 0.6f;
 
 		m_grab = true;
 		m_holdPrey = prey;
