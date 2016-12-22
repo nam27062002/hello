@@ -19,13 +19,23 @@ public class BreakableBehaviour : MonoBehaviour
 			{
 				Break();
 			}
-			else
+			else if (tier >= m_tierWithTurboBreak)
 			{
 				DragonBoostBehaviour boost = collision.transform.gameObject.GetComponent<DragonBoostBehaviour>();	
-				if ( boost.IsBoostActive() && tier >= m_tierWithTurboBreak )
+				if ( boost.IsBoostActive())
 				{
 					Break();
 				}
+				else
+				{
+					// Message : You need boost!
+					Messenger.Broadcast( GameEvents.BREAK_OBJECT_NEED_TURBO );
+				}
+			}
+			else
+			{
+				// Message: You need a bigger dragon
+				Messenger.Broadcast( GameEvents.BREAK_OBJECT_BIGGER_DRAGON );	
 			}
 		}
 	}

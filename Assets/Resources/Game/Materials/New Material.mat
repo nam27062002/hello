@@ -6,10 +6,10 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dungeon_001
-  m_Shader: {fileID: 4800000, guid: d6461419cb5f2ad4b84347dd9ba18781, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
+  m_Name: New Material
+  m_Shader: {fileID: 10755, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _EMISSION
+  m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
@@ -48,19 +48,13 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: c4a448a4a85ca6443b05f9bfe131777c, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
       second:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _NormalTex
-      second:
-        m_Texture: {fileID: 2800000, guid: 8ab493a847ffa3945a9037a89db3b138, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -71,12 +65,6 @@ Material:
         m_Offset: {x: 0, y: 0}
     - first:
         name: _ParallaxMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _SecondTexture
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -110,9 +98,6 @@ Material:
         name: _Mode
       second: 0
     - first:
-        name: _NormalStrength
-      second: 0.5
-    - first:
         name: _OcclusionStrength
       second: 1
     - first:
@@ -121,9 +106,6 @@ Material:
     - first:
         name: _SmoothnessTextureChannel
       second: 0
-    - first:
-        name: _Specular
-      second: 140
     - first:
         name: _SpecularHighlights
       second: 1
@@ -139,10 +121,7 @@ Material:
     m_Colors:
     - first:
         name: _Color
-      second: {r: 0.8, g: 0.8, b: 0.8, a: 1}
+      second: {r: 0.12856834, g: 0.21691175, b: 0.42647058, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _SpecularDir
-      second: {r: 0, g: 0, b: -1, a: 0}
