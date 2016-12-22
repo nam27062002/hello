@@ -22,6 +22,7 @@ public class SlowmoManager : MonoBehaviour
 	private float m_startSlowmoTime;
 	private float m_startCooldownTime;
 	private float m_prevTimescale = 1f;
+	private GameSceneController m_game;
 
 	//------------------------------------------------------------
 	// Public Properties:
@@ -58,6 +59,7 @@ public class SlowmoManager : MonoBehaviour
 	{
 		// let's initialize so that the first time will always happen (also if happens at 0s after the level has been loaded).
 		m_startCooldownTime = -m_cooldown - 1f;
+		m_game = InstanceManager.GetSceneController<GameSceneController>();
 	}
 
 	protected void OnApplicationQuit()
@@ -140,16 +142,15 @@ public class SlowmoManager : MonoBehaviour
 	{
 
 		// TODO (MALH) Recover this
-		/*
 		if(m_inProgress)
 		{
 			ShowDebugMessage("<color=cyan><b>slowmo</b></color> -> <color=red><b>stop</b></color> -> stopping");
 
 			// check if the game was paused and hadle the case.
-			if(App.Pause)
+			if (m_game.paused)
 			{
 				// reset the chached timescale in the App script so to not resume the game with the slowmo timescale.
-				App.Instance.ResetCachedTimeScale();
+				m_game.ResetCachedTimeScale();
 			}
 			else
 			{
@@ -164,6 +165,6 @@ public class SlowmoManager : MonoBehaviour
 		{
 			ShowDebugMessage("<color=cyan><b>slowmo</b></color> -> <color=red><b>stop</b></color> -> not in progress");
 		}
-		*/
+
 	}
 }
