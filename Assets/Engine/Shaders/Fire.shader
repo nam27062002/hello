@@ -12,7 +12,8 @@
 
 	SubShader
 	{
-		Tags{ "Queue" = "Transparent" "RenderType" = "ExcludeAdditive" }
+//		Tags{ "Queue" = "Transparent" "RenderType" = "ExcludeAdditive" }
+		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
 		LOD 100
 		Blend SrcAlpha OneMinusSrcAlpha 
 		Cull Off
@@ -80,6 +81,7 @@
 				noise += tex2D(_NoiseTex, i.noiseUV - float2(0.0, _Time.y * _Flamespeed * 2.0)) * _Flamethrower;
 
 				noise *= 0.5;
+				clip(noise.r - 0.25);
 				noise.g = (noise.g * i.uv.y * _Flamedistance);
 
 				noise.r = 0.0f;
