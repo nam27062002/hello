@@ -97,7 +97,6 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow + Normal Map"
 					float3 lightDirection = normalize(_SpecularDir.rgb);
 					o.halfDir = normalize(lightDirection + viewDirection);
 
-
 					return o;
 				}
 				

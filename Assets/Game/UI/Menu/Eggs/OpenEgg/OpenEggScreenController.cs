@@ -53,10 +53,12 @@ public class OpenEggScreenController : MonoBehaviour {
 		get { return m_egg; }
 	}
 
-	private MenuScreenScene m_scene = null;		// Reference to the 3d scene
+	// Reference to 3D scene elements
+	private MenuScreenScene m_scene = null;
 	private Transform m_eggAnchor = null;
 	private Transform m_rewardAnchor = null;
 	private GameObject m_rewardView = null;
+	private GameObject m_rewardGodRaysFX = null;
 
 	// Internal
 	private State m_state = State.IDLE;
@@ -85,6 +87,7 @@ public class OpenEggScreenController : MonoBehaviour {
 			// Image
 			Image image = m_flashFX.AddComponent<Image>();
 			image.color = Colors.white;
+			image.raycastTarget = false;
 
 			// Start hidden
 			m_flashFX.SetLayerRecursively("UI");
@@ -131,6 +134,8 @@ public class OpenEggScreenController : MonoBehaviour {
 			m_rewardView = null;
 		}
 
+		if(m_rewardGodRaysFX != null) m_rewardGodRaysFX.SetActive(false);
+
 		// Unsubscribe to external events.
 		Messenger.RemoveListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
 		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
@@ -171,6 +176,7 @@ public class OpenEggScreenController : MonoBehaviour {
 			GameObject.Destroy(m_rewardView);
 			m_rewardView = null;
 		}
+		if(m_rewardGodRaysFX != null) m_rewardGodRaysFX.SetActive(false);
 
 		// Hide HUD and buttons
 		bool animate = this.gameObject.activeInHierarchy;	// If the screen is not visible, don't animate
@@ -243,6 +249,13 @@ public class OpenEggScreenController : MonoBehaviour {
 				Debug.Assert(m_rewardAnchor != null, "Required \"RewardAnchor\" transform not found!");
 			}
 		}
+
+		// God Rays effect in the 3D scene
+		if(m_rewardGodRaysFX == null) {
+			if(m_scene != null) {
+				m_rewardGodRaysFX = m_scene.FindObjectRecursive("PF_GodRaysFX_3D");
+			}
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -286,12 +299,15 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_state != State.OPENING) return;
 		if(m_egg == null) return;
 
+		// Aux vars
+		Color rarityColor = UIConstants.GetRarityColor(m_egg.eggData.rewardDef.Get("rarity"));		// Color based on reward's rarity :)
+
 		// [AOC] TODO!! Nice FX!
 		// Do a full-screen flash FX
 		if(m_flashFX != null) {
 			m_flashFX.SetActive(true);
-			m_flashFX.GetComponent<Image>().color = Colors.white;
-			m_flashFX.GetComponent<Image>().DOFade(0f, 1f).SetEase(Ease.OutExpo).SetRecyclable(true).OnComplete(() => { m_flashFX.SetActive(false); });
+			m_flashFX.GetComponent<Image>().color = rarityColor;
+			m_flashFX.GetComponent<Image>().DOFade(0f, 2f).SetEase(Ease.OutExpo).SetRecyclable(true).OnComplete(() => { m_flashFX.SetActive(false); });
 		}
 
 		// [AOC] TEMP!! Some dummy effect on the egg xD
@@ -300,6 +316,15 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Show reward info
 		LaunchRewardAnimation();
+
+		// Show reward godrays
+		if(m_rewardGodRaysFX != null) {
+			// Custom color based on reward's rarity
+			SpriteRenderer glowRenderer = m_rewardGodRaysFX.FindComponentRecursive<SpriteRenderer>("Glow");
+			if(glowRenderer != null) glowRenderer.color = rarityColor;
+
+			m_rewardGodRaysFX.SetActive(true);
+		}
 
 		// Show/Hide buttons and HUD
 		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();
@@ -501,6 +526,8 @@ public class OpenEggScreenController : MonoBehaviour {
 				GameObject.Destroy(m_rewardView);
 				m_rewardView = null;
 			}
+
+			if(m_rewardGodRaysFX != null) m_rewardGodRaysFX.SetActive(false);
 
 			// Restore HUD
 			InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();
