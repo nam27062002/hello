@@ -62,12 +62,15 @@ public class ResultsScreenDisguiseFlag : MonoBehaviour {
 		MenuDragonLoader dragonLoader = m_preview.scene.FindComponentRecursive<MenuDragonLoader>();
 		if(dragonLoader != null) {
 			// Load dragon
+			dragonLoader.removeFresnel = true;
 			dragonLoader.LoadDragon(_disguiseDef.Get("dragonSku"));
 			dragonLoader.dragonInstance.SetAnim(MenuDragonPreview.Anim.POSE_FLY);
 
 			// Apply disguise
 			DragonEquip eq = dragonLoader.dragonInstance.GetComponent<DragonEquip>();
 			eq.EquipDisguise(_disguiseDef.sku);
+			dragonLoader.dragonInstance.SetFresnelColor(Color.black);
+
 		}
 
 		// Store definition

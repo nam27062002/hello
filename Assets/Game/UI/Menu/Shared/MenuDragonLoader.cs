@@ -62,6 +62,12 @@ public class MenuDragonLoader : MonoBehaviour {
 		set { m_resetDragonScale = value; }
 	}
 
+	[SerializeField] private bool m_removeFresnel = false;
+	public bool removeFresnel {
+		get { return m_removeFresnel; }
+		set { m_removeFresnel = value; }
+	}
+
 	// Internal
 	private MenuDragonPreview m_dragonInstance = null;
 	public MenuDragonPreview dragonInstance {
@@ -145,6 +151,11 @@ public class MenuDragonLoader : MonoBehaviour {
 				// Reset scale if required
 				if(m_resetDragonScale) {
 					m_dragonInstance.transform.localScale = Vector3.one;
+				}
+
+				if (m_removeFresnel )
+				{
+					m_dragonInstance.SetFresnelColor( Color.black );
 				}
 			}
 		}

@@ -136,8 +136,9 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 				col = diffuse * col + (specular * _LightColor0) + lerp(_FresnelInitialColor, _FresnelFinalColor, fresnel);
 
 				float3 emissive = tex2D(_GlowTex, i.uv2);
-//				col = lerp(col, _EmissiveColor, emissive.r + emissive.g + emissive.b);
-				col += _EmissiveColor * (emissive.r + emissive.g + emissive.b);
+				col = lerp(col, _EmissiveColor, (emissive.r + emissive.g + emissive.b) * _EmissiveColor.a);	// Multiplicative, emissive color alpha controls intensity
+//				col = lerp(col, _EmissiveColor, emissive.r + emissive.g + emissive.b);				// Multiplicative, no intensity control
+//				col += _EmissiveColor * (emissive.r + emissive.g + emissive.b);					// Additive, no intesity control
 
 
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
