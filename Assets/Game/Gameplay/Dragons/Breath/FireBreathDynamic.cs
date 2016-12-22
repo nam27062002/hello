@@ -394,10 +394,12 @@ public class FireBreathDynamic : MonoBehaviour
 						{
 							spawn = !WaterAreaManager.instance.IsInsideWater( hit.point );
 						}break;
+
 						case CollisionPrefab.Type.INSIDE_WATER:
 						{
 							spawn = WaterAreaManager.instance.IsInsideWater( hit.point );
 						}break;
+
 						default:
 						{
 						}break;
@@ -510,11 +512,11 @@ public class FireBreathDynamic : MonoBehaviour
             {
                 if (transform.right.x < 0.0f)
                 {
-                    m_whipTangent[i] = -transform.up;
+                    m_whipTangent[i] = transform.up;
                 }
                 else
                 {
-                    m_whipTangent[i] = transform.up;
+                    m_whipTangent[i] = -transform.up;
                 }
             }
             else
