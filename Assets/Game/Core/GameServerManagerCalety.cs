@@ -216,6 +216,7 @@ public class GameServerManagerCalety : GameServerManager
         }
 
         kServerConfig.m_bIsNewVersionRestrictive = false;
+        kServerConfig.m_bIsUsingHTTPS = false;
 
 #if UNITY_EDITOR
         kServerConfig.m_strClientPlatformBuild = "editor";

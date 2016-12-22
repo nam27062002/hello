@@ -47,7 +47,9 @@ public class HUDMessage : MonoBehaviour {
 		FIRE_RUSH,
 		MEGA_FIRE_RUSH,
 		EGG_FOUND,
-		EGG_INVENTORY_FULL
+		EGG_INVENTORY_FULL,
+		BREAK_OBJECT_BIGGER_DRAGON,
+		BREAK_OBJECT_NEED_TURBO
 	}
 
 	// How to react with consecutive triggers
@@ -156,6 +158,8 @@ public class HUDMessage : MonoBehaviour {
 			case Type.MEGA_FIRE_RUSH:		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
 			case Type.EGG_FOUND:			Messenger.AddListener<CollectibleEgg>(GameEvents.EGG_COLLECTED, OnEggCollected);			break;
 			case Type.EGG_INVENTORY_FULL:	Messenger.AddListener<CollectibleEgg>(GameEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
+			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.AddListener(GameEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
+			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.AddListener(GameEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
 		}
 	}
 
@@ -178,6 +182,8 @@ public class HUDMessage : MonoBehaviour {
 			case Type.MEGA_FIRE_RUSH:		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
 			case Type.EGG_FOUND:			Messenger.RemoveListener<CollectibleEgg>(GameEvents.EGG_COLLECTED, OnEggCollected);				break;
 			case Type.EGG_INVENTORY_FULL:	Messenger.RemoveListener<CollectibleEgg>(GameEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
+			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.RemoveListener(GameEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
+			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.RemoveListener(GameEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
 		}
 	}
 
@@ -442,6 +448,16 @@ public class HUDMessage : MonoBehaviour {
 	/// </summary>
 	/// <param name="_egg">The found egg.</param>
 	private void OnEggCollectedFail(CollectibleEgg _egg) {
+		Show();
+	}
+
+	void OnBreakObjectNeedBiggerDragon()
+	{
+		Show();
+	}
+
+	void OnBreakObjectNeedTurbo()
+	{
 		Show();
 	}
 }

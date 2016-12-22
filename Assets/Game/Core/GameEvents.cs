@@ -40,6 +40,8 @@ public enum GameEvents {
 	BOOST_TOGGLED,				// params: bool _activated
 	BIGGER_DRAGON_NEEDED,		// params: DragonTier _requiredTierSku (use COUNT for generic message), string _entitySku
 	UNDERWATER_TOGGLED,			// params: bool _activated
+	BREAK_OBJECT_BIGGER_DRAGON, // no params
+	BREAK_OBJECT_NEED_TURBO,	// no params
 
 	// Entity events
 	ENTITY_EATEN,				// params: Transform _entity, Reward _reward

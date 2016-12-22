@@ -129,15 +129,17 @@ public class UIColorFX : MonoBehaviour {
 	/// Make sure materials are created and apply them to all subchildren.
 	/// </summary>
 	private void ApplyMaterials() {
-		// Create all materials if not already done
+        // Create all materials if not already done
+        Material mBase = Resources.Load<Material>("UI/UIImageHolder");
 		if(m_imageMaterial == null) {
-			m_imageMaterial = new Material(Shader.Find("Custom/UI/UIImage"));
+			m_imageMaterial = new Material(mBase);
 			m_imageMaterial.hideFlags = HideFlags.HideAndDontSave;
 			m_imageMaterial.name = "MT_UIColorFX";
 		}
 
-		if(m_fontMaterial == null) {
-			m_fontMaterial = new Material(Shader.Find("Custom/UI/UIFont"));
+        mBase = Resources.Load<Material>("UI/UIFontHolder");
+        if (m_fontMaterial == null) {
+			m_fontMaterial = new Material(mBase);
 			m_fontMaterial.hideFlags = HideFlags.HideAndDontSave;
 			m_fontMaterial.name = "MT_UIColorFX";
 		}

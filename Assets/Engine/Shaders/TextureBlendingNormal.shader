@@ -141,7 +141,6 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow + N
 
 					HG_APPLY_FOG(i, col);	// Fog
 
-
 					float4 encodedNormal = tex2D(_NormalTex, _NormalTex_ST.xy * i.texcoord + _NormalTex_ST.zw);
 					float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
 					float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
@@ -149,7 +148,7 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow + N
 					fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
 
 					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-					return col + (specular * specMask * i.color.a * _LightColor0);
+					return col + (specular * specMask * i.color * _LightColor0);
 //					return col + (specular  * _LightColor0);
 //					return col;
 				}
