@@ -13,15 +13,12 @@ namespace AI {
 		private HoldPreyPoint[] m_holdPreyPoints = null;
 		public HoldPreyPoint[] holdPreyPoints { get{ return m_holdPreyPoints; } }
 
-		private ViewControl m_viewControl;
-
 
 		public MachineEdible() {}
 
 		public override void Attach (IMachine _machine, IEntity _entity, Pilot _pilot){
 			base.Attach (_machine, _entity, _pilot);
 
-			m_viewControl = m_machine.GetComponent<ViewControl>();
 			m_biteResistance = m_entity.def.GetAsFloat("biteResistance");
 			m_holdPreyPoints = m_pilot.transform.GetComponentsInChildren<HoldPreyPoint>();
 		}
@@ -44,8 +41,6 @@ namespace AI {
 				// Dispatch global event
 				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_pilot.transform, reward);
 			}
-
-			m_viewControl.SpawnEatenParticlesAt(_transform);
 		}
 
 		public void EndSwallowed( Transform _transform ){

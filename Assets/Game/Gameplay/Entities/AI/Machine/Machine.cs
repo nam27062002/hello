@@ -484,12 +484,12 @@ namespace AI {
 		public void Bite() {
 			if (m_edible != null && !IsDead()) {
 				m_edible.Bite();
-				m_viewControl.Bite();
+				m_viewControl.Bite(transform);
 			}
 		}
 
 		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer) {
-			m_viewControl.BeginSwallowed();
+			m_viewControl.BeginSwallowed(_transform);
 			m_edible.BeingSwallowed(_transform, _rewardsPlayer);
 		}
 
