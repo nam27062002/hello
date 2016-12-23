@@ -68,6 +68,7 @@ namespace AI {
 		public Vector3 upVector { get { return m_upVector; } set { m_upVector = value;} }
 
 		private Vector3 m_collisionNormal;
+		private Vector3 m_fallingFrom;
 		private bool m_isGrounded;
 		private bool m_isColliderOnGround;
 		private float m_heightFromGround;
@@ -244,11 +245,12 @@ namespace AI {
 				m_viewControl.Panic(false, m_machine.GetSignal(Signals.Type.Burning));
 			}
 
-			m_viewControl.Falling(m_machine.GetSignal(Signals.Type.FallDown));
+			bool isFallingDown = m_machine.GetSignal(Signals.Type.FallDown);
+			m_viewControl.Falling(isFallingDown);
 				
 			if (m_pilot != null) {				
 				if (m_useGravity) {
-					if (m_isGrounded && m_machine.GetSignal(Signals.Type.FallDown)) 
+					if (m_isGrounded && isFallingDown) 
 						Stop();
 				}
 
@@ -264,7 +266,22 @@ namespace AI {
 					GetHeightFromGround();
 					m_isGrounded = m_isColliderOnGround || m_heightFromGround < 0.3f;
 
-					m_machine.SetSignal(Signals.Type.FallDown, !m_isGrounded && m_heightFromGround > 1f);
+					bool hasToFallDown = !m_isGrounded && m_heightFromGround > 1f;
+					if (isFallingDown) {
+						if (!hasToFallDown) {
+							m_machine.SetSignal(Signals.Type.FallDown, false);
+							// check if it has to die > 10 units of distance?
+							float dy = Mathf.Abs(m_machineTransform.position.y - m_fallingFrom.y);
+							if (dy > 10f) {
+								m_machine.SetSignal(Signals.Type.Destroyed, true);
+							}
+						}
+					} else {
+						if (hasToFallDown) {
+							m_machine.SetSignal(Signals.Type.FallDown, true);
+							m_fallingFrom = m_machineTransform.position;
+						}
+					}
 
 					if (m_isGrounded || m_walkOnWalls) {						
 						UpdateVelocity();
