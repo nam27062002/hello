@@ -94,7 +94,12 @@ public class DestructibleDecoration : Initializable {
 			//Destroy(m_entity);
 		} else {
 			m_view = transform.FindChild("view").gameObject;
-			m_viewDestroyed = transform.FindChild("view_burned").gameObject; // maybe, we'll need another game object, for now we use the burned one
+			Transform viewDestroyed = transform.FindChild("view_destroyed");
+			if (viewDestroyed != null) {
+				m_viewDestroyed = viewDestroyed.gameObject;
+			} else {
+				m_viewDestroyed = transform.FindChild("view_burned").gameObject; // maybe, we'll need another game object, for now we use the burned one
+			}
 			m_colliderCenter = m_collider.center;
 
 			if (m_zone == ZoneManager.Zone.Zone1) {
@@ -206,7 +211,7 @@ public class DestructibleDecoration : Initializable {
 
 						m_autoSpawner.StartRespawn();
 						m_view.SetActive(false);
-						//m_viewDestroyed.SetActive(true);
+						m_viewDestroyed.SetActive(true);
 						m_spawned = false;
 
 

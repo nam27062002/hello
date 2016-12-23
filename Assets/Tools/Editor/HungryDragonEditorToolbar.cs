@@ -129,6 +129,14 @@ public class HungryDragonEditorToolbar : EditorWindow {
 			// Add a separator
 			GUILayout.Space(SEPARATOR_SIZE);
 
+			// Egg Test Scene
+			if(GUILayout.Button(new GUIContent("00", "Eggs Test Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				HungryDragonEditorMenu.OpenScene("Assets/Art/3D/Metagame/Eggs/3D_Egg_001/SC_EggTest.unity", true);
+			}
+
+			// Add a separator
+			GUILayout.Space(SEPARATOR_SIZE);
+
 			// Multipurpose button 1
 			if(GUILayout.Button(new GUIContent("MT", "Find missing and null Text and TextMeshProUGUI refs"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				FindMissingReferencesTool.FindMissingReferences(true, 

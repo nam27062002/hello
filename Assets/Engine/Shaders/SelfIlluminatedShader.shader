@@ -72,8 +72,8 @@ SubShader
 
 			// Half View - See: Blinn-Phong
 			float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
-	        float3 lightDirection = normalize(_LightDir.rgb);
-	        o.halfDir = normalize(lightDirection + viewDirection);
+	       		float3 lightDirection = normalize(_LightDir.rgb);
+	        	o.halfDir = normalize(lightDirection + viewDirection);
 	        
 	   		UNITY_TRANSFER_FOG(o, o.vertex);
 	    	return o;
