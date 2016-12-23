@@ -147,7 +147,7 @@ public class SlowmoManager : MonoBehaviour
 			ShowDebugMessage("<color=cyan><b>slowmo</b></color> -> <color=red><b>stop</b></color> -> stopping");
 
 			// check if the game was paused and hadle the case.
-			if (m_game.paused)
+			if (m_game != null && m_game.paused)
 			{
 				// reset the chached timescale in the App script so to not resume the game with the slowmo timescale.
 				m_game.ResetCachedTimeScale();

@@ -710,13 +710,21 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	/// <summary>
 	/// Bite this instance. When someone starts eating this view
 	/// </summary>
-	public virtual void Bite(){}
+	public virtual void Bite( Transform _transform )
+	{
+	}
 
-	public void BeginSwallowed()
+	public void BeginSwallowed( Transform _transform )
+	{
+		OnEatenEvent( _transform );
+	}
+
+	public void OnEatenEvent( Transform _transform )
 	{
 		if (m_entity.isOnScreen && !string.IsNullOrEmpty(m_onEatenAudio)) {
 			m_onEatenAudioAO = AudioController.Play(m_onEatenAudio, transform);
 		}
+		SpawnEatenParticlesAt( _transform );
 	}
 
 	public void Burn() {
