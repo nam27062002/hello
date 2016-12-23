@@ -24,7 +24,6 @@ public class OpenEggScreenController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	public enum State {
 		IDLE,
-		INTRO_DELAY,
 		INTRO,
 		OPENING
 	}
@@ -47,18 +46,8 @@ public class OpenEggScreenController : MonoBehaviour {
 	[SerializeField] private Localizer m_rewardDescText = null;
 	[SerializeField] private GameObject m_rewardPowers = null;
 
-	// References
-	private EggController m_egg = null;
-	public EggController egg {
-		get { return m_egg; }
-	}
-
-	// Reference to 3D scene elements
-	private MenuScreenScene m_scene = null;
-	private Transform m_eggAnchor = null;
-	private Transform m_rewardAnchor = null;
-	private GameObject m_rewardView = null;
-	private GameObject m_rewardGodRaysFX = null;
+	// Reference to 3D scene
+	private OpenEggSceneController m_scene = null;
 
 	// Internal
 	private State m_state = State.IDLE;
@@ -74,7 +63,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Prepare the flash FX image
-		m_flashFX = new GameObject("FlashFX");
+		//m_flashFX = new GameObject("FlashFX");
 		if(m_flashFX != null) {
 			// Transform - full screen rect transform
 			RectTransform rectTransform = m_flashFX.AddComponent<RectTransform>();
@@ -108,14 +97,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
-		// State-dependent
-		if(m_state == State.INTRO_DELAY) {
-			// Has camera finished moving?
-			if(!InstanceManager.GetSceneController<MenuSceneController>().screensController.tweening) {
-				// Yes!! Launch intro
-				LaunchIntroNewEgg();
-			}
-		}
+		
 	}
 
 	/// <summary>
@@ -124,17 +106,9 @@ public class OpenEggScreenController : MonoBehaviour {
 	private void OnDisable() {
 		// Reset state
 		m_state = State.IDLE;
-		if(m_egg != null) {
-			GameObject.Destroy(m_egg.gameObject);
-			m_egg = null;
-		}
 
-		if(m_rewardView != null) {
-			GameObject.Destroy(m_rewardView);
-			m_rewardView = null;
-		}
-
-		if(m_rewardGodRaysFX != null) m_rewardGodRaysFX.SetActive(false);
+		// Clear 3D scene
+		if(m_scene != null) m_scene.Clear();
 
 		// Unsubscribe to external events.
 		Messenger.RemoveListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
@@ -155,8 +129,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// Launch an open flow with a given Egg instance.
 	/// </summary>
 	/// <param name="_egg">The egg to be opened.</param>
-	/// <param name="_eggView">Optionally reuse an existing egg on the scene. If <c>null</c>, a new instance of the egg prefab will be used.</param>
-	public void StartFlow(Egg _egg, EggController _eggView = null) {
+	public void StartFlow(Egg _egg) {
 		// Check params
 		if(_egg == null) return;
 		if(_egg.state != Egg.State.READY) return;
@@ -165,18 +138,8 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Make sure all required references are set
 		ValidateReferences();
 
-		// If we already have an egg on screen, clear it
-		if(m_egg != null) {
-			GameObject.Destroy(m_egg.gameObject);
-			m_egg = null;
-		}
-
-		// Same with reward view
-		if(m_rewardView != null) {
-			GameObject.Destroy(m_rewardView);
-			m_rewardView = null;
-		}
-		if(m_rewardGodRaysFX != null) m_rewardGodRaysFX.SetActive(false);
+		// Clear 3D scene
+		m_scene.Clear();
 
 		// Hide HUD and buttons
 		bool animate = this.gameObject.activeInHierarchy;	// If the screen is not visible, don't animate
@@ -192,32 +155,12 @@ public class OpenEggScreenController : MonoBehaviour {
 		m_rewardInfo.GetComponent<ShowHideAnimator>().Hide(false);
 		m_rewardPowers.GetComponent<ShowHideAnimator>().Hide(false);
 
-		// Reuse an existing egg view or create a new one?
-		if(_eggView == null) {
-			// Create a new instance of the egg prefab
-			m_egg = _egg.CreateView();
+		// Initialize egg view
+		m_scene.InitEggView(_egg);
 
-			// Attach it to the 3d scene's anchor point
-			m_egg.transform.SetParent(m_eggAnchor, false);
-			m_egg.transform.position = m_eggAnchor.position;
-
-			// Launch intro as soon as possible (wait for the camera to stop moving)
-			m_egg.gameObject.SetActive(false);
-			m_state = State.INTRO_DELAY;
-		} else {
-			// Change hierarchy on the 3d scene - keep current position
-			m_egg = _eggView;
-			m_egg.transform.SetParent(m_eggAnchor, true);
-
-			// Immediately launch intro animation (skip INTRO_DELAY) state
-			LaunchIntroExistingEgg();
-		}
-
-		// [AOC] Hacky!! Disable particle FX for now
-		ParticleSystem[] particleFX = m_egg.GetComponentsInChildren<ParticleSystem>();
-		for(int i = 0; i < particleFX.Length; i++) {
-			particleFX[i].gameObject.SetActive(false);
-		}
+		// Launch intro!
+		m_scene.LaunchIntro();
+		m_state = State.INTRO;
 	}
 
 	//------------------------------------------------------------------//
@@ -231,29 +174,14 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_scene == null) {
 			MenuSceneController sceneController = InstanceManager.GetSceneController<MenuSceneController>();
 			Debug.Assert(sceneController != null, "This component must be only used in the menu scene!");
-			m_scene = sceneController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
-		}
-
-		// Egg view anchor in the 3d scene
-		if(m_eggAnchor == null) {
-			if(m_scene != null) {
-				m_eggAnchor = m_scene.FindTransformRecursive("OpenEggAnchor");
-				Debug.Assert(m_eggAnchor != null, "Required \"OpenEggAnchor\" transform not found!");
-			}
-		}
-
-		// Reward anchor in the 3d scene
-		if(m_rewardAnchor == null) {
-			if(m_scene != null) {
-				m_rewardAnchor = m_scene.FindTransformRecursive("RewardAnchor");
-				Debug.Assert(m_rewardAnchor != null, "Required \"RewardAnchor\" transform not found!");
-			}
-		}
-
-		// God Rays effect in the 3D scene
-		if(m_rewardGodRaysFX == null) {
-			if(m_scene != null) {
-				m_rewardGodRaysFX = m_scene.FindObjectRecursive("PF_GodRaysFX_3D");
+			MenuScreenScene menuScene = sceneController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
+			if(menuScene != null) {
+				// Get scene controller and initialize
+				m_scene = menuScene.GetComponent<OpenEggSceneController>();
+				if(m_scene != null) {
+					m_scene.OnIntroFinished.AddListener(OnIntroFinished);
+					m_scene.OnEggOpenFinished.AddListener(LaunchRewardAnimation);
+				}
 			}
 		}
 	}
@@ -262,75 +190,28 @@ public class OpenEggScreenController : MonoBehaviour {
 	// ANIMATIONS														//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Start the intro animation for a new egg!
-	/// </summary>
-	private void LaunchIntroNewEgg() {
-		// Assume we can do it (no checks)
-		// Activate egg
-		m_egg.gameObject.SetActive(true);
-
-		// [AOC] TODO!! Some awesome FX!!
-		m_egg.transform.DOScale(0f, 0.5f).From().SetEase(Ease.OutElastic).OnComplete(OnIntroFinished);
-
-		// Change logic state
-		m_state = State.INTRO;
-	}
-
-	/// <summary>
-	/// Start the intro animation for an existing egg!
-	/// </summary>
-	private void LaunchIntroExistingEgg() {
-		// Assume we can do it (no checks)
-		// Make sure egg is active
-		m_egg.gameObject.SetActive(true);
-
-		// [AOC] TODO!! Some awesome FX!!
-		m_egg.transform.DOMove(m_eggAnchor.position, 0.5f).SetEase(Ease.InOutCirc).OnComplete(OnIntroFinished);	// Try to sync with camera transition (values copied from MenuScreensController)
-
-		// Change logic state
-		m_state = State.INTRO;
-	}
-
-	/// <summary>
 	/// Launches the open egg animation!
 	/// </summary>
 	private void LaunchOpenAnimation() {
 		// This option should only be available on the OPENING state and with a valid egg
 		if(m_state != State.OPENING) return;
-		if(m_egg == null) return;
+		if(m_scene.eggView == null) return;
 
-		// Aux vars
-		Color rarityColor = UIConstants.GetRarityColor(m_egg.eggData.rewardDef.Get("rarity"));		// Color based on reward's rarity :)
-
-		// [AOC] TODO!! Nice FX!
-		// Do a full-screen flash FX
+		// Do a full-screen flash FX (TEMP)
 		if(m_flashFX != null) {
+			Color rarityColor = UIConstants.GetRarityColor(m_scene.eggData.rewardDef.Get("rarity"));		// Color based on reward's rarity :)
 			m_flashFX.SetActive(true);
 			m_flashFX.GetComponent<Image>().color = rarityColor;
 			m_flashFX.GetComponent<Image>().DOFade(0f, 2f).SetEase(Ease.OutExpo).SetRecyclable(true).OnComplete(() => { m_flashFX.SetActive(false); });
 		}
 
-		// [AOC] TEMP!! Some dummy effect on the egg xD
-		//m_egg.transform.DOScale(Vector3.zero, 0.25f).SetEase(Ease.InBack).OnComplete(() => { m_egg.gameObject.SetActive(false); });
-		m_egg.gameObject.SetActive(false);
-
-		// Show reward info
-		LaunchRewardAnimation();
-
-		// Show reward godrays
-		if(m_rewardGodRaysFX != null) {
-			// Custom color based on reward's rarity
-			SpriteRenderer glowRenderer = m_rewardGodRaysFX.FindComponentRecursive<SpriteRenderer>("Glow");
-			if(glowRenderer != null) glowRenderer.color = rarityColor;
-
-			m_rewardGodRaysFX.SetActive(true);
-		}
-
 		// Show/Hide buttons and HUD
-		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().Hide();
 		m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
 		m_finalPanel.Show();
+
+		// Do the 3D anim
+		m_scene.LaunchOpenEggAnim();
 
 		// Change logic state
 		m_state = State.IDLE;
@@ -340,12 +221,15 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// Launches the animation of the reward components.
 	/// </summary>
 	private void LaunchRewardAnimation() {
+		// Show HUD
+		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();
+
 		// Aux vars
-		Egg.EggReward rewardData = m_egg.eggData.rewardData;
-		DefinitionNode rewardDef = m_egg.eggData.rewardDef;
+		Egg.EggReward rewardData = m_scene.eggData.rewardData;
+		DefinitionNode rewardDef = m_scene.eggData.rewardDef;
 		DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, rewardDef.Get("rarity"));
 		DefinitionNode rewardedItemDef = null;	// [AOC] Will be initialized with either a suit or a pet definition
-		string rewardType = m_egg.eggData.rewardData.type;
+		string rewardType = rewardData.type;
 
 		// Activate info container
 		m_rewardInfo.GetComponent<ShowHideAnimator>().Show(false);
@@ -360,8 +244,7 @@ public class OpenEggScreenController : MonoBehaviour {
 				string text = rewardDef.GetLocalized("tidName", rewardedItemDef.GetLocalized("tidName"));
 				m_rewardRarity.InitFromRarity(rarityDef, text);
 
-				// [AOC] TODO!!
-				//m_rewardDescText.Localize("TID_EGG_REWARD_PET", rewardDef.sku);
+				// No description for now
 				m_rewardDescText.Localize("");
 				m_rewardDescText.text.text = "";
 
@@ -381,34 +264,6 @@ public class OpenEggScreenController : MonoBehaviour {
 		m_rewardDescText.text.color = Colors.WithAlpha(m_rewardDescText.text.color, 1f);
 		m_rewardDescText.transform.DOBlendableLocalMoveBy(Vector3.right * 500f, 0.30f).From().SetDelay(0.20f).SetEase(Ease.OutCubic).SetRecyclable(true);
 		m_rewardDescText.text.DOFade(0f, 0.15f).From().SetDelay(0.20f).SetEase(Ease.Linear).SetRecyclable(true);
-
-		// Create a fake reward view
-		switch(rewardType) {
-			case "pet": {
-				// Show a 3D preview of the pet
-				m_rewardView = new GameObject("RewardView");
-				m_rewardView.transform.SetParentAndReset(m_rewardAnchor);	// Attach it to the anchor and reset transformation
-
-				// Use a PetLoader to simplify things
-				MenuPetLoader loader = m_rewardView.AddComponent<MenuPetLoader>();
-				loader.Setup(MenuPetLoader.Mode.MANUAL, "idle", true);
-				loader.Load(rewardedItemDef.sku);
-
-				// Animate it
-				m_rewardView.transform.DOScale(0f, 1f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
-				m_rewardView.transform.DOLocalRotate(m_rewardView.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true);
-			} break;
-		}
-
-		// If the reward is being replaced by coins, show it (works for any type of reward)
-		if(rewardData.coins > 0) {
-			// Create instance
-			GameObject prefab = Resources.Load<GameObject>("UI/Metagame/Rewards/PF_CoinsReward");
-			GameObject coinsObj = GameObject.Instantiate<GameObject>(prefab);
-
-			// Attach it to the reward view and reset transformation
-			coinsObj.transform.SetParent(m_rewardView.transform, false);
-		}
 
 		// Initialize power based on reward type
 		switch(rewardType) {
@@ -435,6 +290,9 @@ public class OpenEggScreenController : MonoBehaviour {
 				m_rewardPowers.GetComponent<ShowHideAnimator>().Hide(false);
 			} break;
 		}
+
+		// Initialize and launch 3D reward view
+		m_scene.LaunchRewardAnim();
 	}
 
 	//------------------------------------------------------------------//
@@ -444,9 +302,6 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// The intro has finished!
 	/// </summary>
 	private void OnIntroFinished() {
-		// Change egg state
-		m_egg.eggData.ChangeState(Egg.State.OPENING);
-
 		// Show instant open button and info text
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().Show();
 		m_tapInfoText.GetComponent<ShowHideAnimator>().Show();
@@ -456,17 +311,25 @@ public class OpenEggScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// The egg open animation has finished!
+	/// </summary>
+	private void OnEggOpenFinished() {
+		// Launch the reward animation
+		LaunchRewardAnimation();
+	}
+
+	/// <summary>
 	/// Skip the egg tapping process.
 	/// </summary>
 	public void OnInstantOpenButton() {
 		// Open the egg!
 		// This option should only be available on the OPENING state and with a valid egg
 		if(m_state != State.OPENING) return;
-		if(m_egg == null) return;
-		if(m_egg.eggData.state != Egg.State.OPENING) return;
+		if(m_scene.eggData == null) return;
+		if(m_scene.eggData.state != Egg.State.OPENING) return;
 
 		// Collect the egg! - this automatically empties the incubator
-		m_egg.eggData.Collect();		
+		m_scene.eggData.Collect();		
 
 		// Animation will be triggered by the EGG_COLLECTED event
 	}
@@ -477,16 +340,16 @@ public class OpenEggScreenController : MonoBehaviour {
 	public void OnCallToActionButton() {
 		// This option should only be available on the IDLE state and with a valid egg
 		if(m_state != State.IDLE) return;
-		if(m_egg == null) return;
-		if(m_egg.eggData.state != Egg.State.COLLECTED) return;
+		if(m_scene.eggData == null) return;
+		if(m_scene.eggData.state != Egg.State.COLLECTED) return;
 
 		// Depending on opened egg's reward, perform different actions
 		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
-		switch(m_egg.eggData.rewardData.type) {
+		switch(m_scene.eggData.rewardData.type) {
 			case "pet": {
 				// Go to the pets screen
 				PetsScreenController petScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();
-				petScreen.Initialize(m_egg.eggData.rewardData.value);
+				petScreen.Initialize(m_scene.eggData.rewardData.value);
 				screensController.GoToScreen((int)MenuScreens.PETS);
 			} break;
 		}
@@ -498,10 +361,10 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// <param name="_egg">The egg.</param>
 	private void OnEggCollected(Egg _egg) {
 		// Must have a valid egg
-		if(m_egg == null) return;
+		if(m_scene.eggData == null) return;
 
 		// If it matches our curent egg, launch its animation!
-		if(_egg == m_egg.eggData) {
+		if(_egg == m_scene.eggData) {
 			// Launch animation!
 			LaunchOpenAnimation();
 		}
@@ -521,13 +384,8 @@ public class OpenEggScreenController : MonoBehaviour {
 			m_rewardInfo.GetComponent<ShowHideAnimator>().Hide();
 			m_rewardPowers.GetComponent<ShowHideAnimator>().Hide();
 
-			// Destroy reward view
-			if(m_rewardView != null) {
-				GameObject.Destroy(m_rewardView);
-				m_rewardView = null;
-			}
-
-			if(m_rewardGodRaysFX != null) m_rewardGodRaysFX.SetActive(false);
+			// Clear 3D scene
+			if(m_scene != null) m_scene.Clear();
 
 			// Restore HUD
 			InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();
