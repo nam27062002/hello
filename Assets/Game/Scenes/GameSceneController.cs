@@ -269,6 +269,13 @@ public class GameSceneController : GameSceneControllerBase {
 		}
 	}
 
+	/// <summary>
+	/// Resets the cached time scale.
+	/// </summary>
+	public void ResetCachedTimeScale()
+	{
+		m_timeScaleBackup = 1.0f;
+	}
 
 	//------------------------------------------------------------------//
 	// INTERNAL UTILS													//

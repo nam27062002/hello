@@ -1055,7 +1055,9 @@ public class GameCamera : MonoBehaviour
 	// from m_position and m_fov.
 	private void UpdateValues()
 	{
-		m_transform.position = m_position + Random.insideUnitSphere * m_cameraShake;
+		m_transform.position = m_position;
+		if ( Time.timeScale > 0 )
+			m_transform.position += Random.insideUnitSphere * m_cameraShake;
 
 		if((m_targetTransform != null) && !PlayingIntro())
 		{
