@@ -138,14 +138,16 @@ namespace AI {
 			float maxRadiusOut	= maxRadiusIn + m_hysteresisOffset;
 			float minRadiusOut	= minRadiusIn + m_hysteresisOffset;
 
-			if (m_senseFire && InstanceManager.player != null) {
-				float fireRadius = 0f;
-				if (InstanceManager.player.IsFuryOn() || InstanceManager.player.IsSuperFuryOn()) {
-					fireRadius = InstanceManager.player.breathBehaviour.actualLength;
+			if (Application.isPlaying) {
+				if (m_senseFire && InstanceManager.player != null) {
+					float fireRadius = 0f;
+					if (InstanceManager.player.IsFuryOn() || InstanceManager.player.IsSuperFuryOn()) {
+						fireRadius = InstanceManager.player.breathBehaviour.actualLength;
+					}
+					sightRadiusIn += fireRadius;
+					maxRadiusIn += fireRadius;
+					minRadiusIn += fireRadius;
 				}
-				sightRadiusIn += fireRadius;
-				maxRadiusIn += fireRadius;
-				minRadiusIn += fireRadius;
 			}
 
 			Vector3 pos = _go.position + (_go.rotation * m_sensorOffset);
