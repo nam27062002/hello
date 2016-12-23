@@ -32,8 +32,9 @@ public class SpiderViewControl : ViewControl {
 		m_bite = false;
 	}
 
-	public override void Bite()
+	public override void Bite( Transform _transform)
 	{
+		base.Bite(_transform);
 		m_bite = true;
 		m_startBitePos = transform.position;
 		m_startBiteDistance = (m_startBitePos - m_startHangingPos).sqrMagnitude;
