@@ -359,6 +359,11 @@ public class Egg {
 		m_state = (State)_data["state"].AsInt;
 		m_isNew = _data["isNew"].AsBool;
 
+		// Special case: temporal states shouldn't be persisted (only happens in case of crash)
+		if(m_state == State.OPENING) {
+			m_state = State.READY;
+		}
+
 		// Reward
 		if ( _data.ContainsKey("rewardSku") )
 			m_rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, _data["rewardSku"]);
