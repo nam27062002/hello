@@ -628,7 +628,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1691758130020170
 GameObject:
   m_ObjectHideFlags: 1
@@ -641,6 +641,7 @@ GameObject:
   - component: {fileID: 114012555431743440}
   - component: {fileID: 114023022278722310}
   - component: {fileID: 114452472235615286}
+  - component: {fileID: 114543772481867678}
   m_Layer: 5
   m_Name: TIPS
   m_TagString: Untagged
@@ -1167,6 +1168,46 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114543772481867678
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1691758130020170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7cea57daac154b0597603fde47e6fe5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tids:
+  - TID_TIP_RESULTS_FLOCK
+  - TID_TIP_RESULTS_UPGRADE
+  - TID_TIP_RESULTS_FIRERUSH_X
+  - TID_TIP_RESULTS_MEGAFIRE
+  - TID_TIP_LOADING_SURVIVE
+  - TID_TIP_LOADING_LATCHON_01
+  - TID_TIP_LOADING_LATCHON_02
+  - TID_TIP_LOADING_UNLOCK_DRAGONS
+  - TID_TIP_LOADING_BUY_DRAGONS
+  - TID_TIP_LOADING_UNLOCK_LEVELS
+  - TID_TIP_LOADING_EXPLORE
+  - TID_TIP_LOADING_GHOST
+  - TID_TIP_LOADING_BADRUBBISH
+  - TID_TIP_LOADING_GOLDPREY
+  - TID_TIP_LOADING_MULTIPLIERS
+  - TID_TIP_LOADING_FACEBOOK
+  - TID_TIP_LOADING_CLOUDSAVING_01
+  - TID_TIP_LOADING_CLOUDSAVING_02
+  - TID_TIP_LOADING_CLOUDSAVING_03
+  - TID_TIP_LOADING_MINIMAP
+  - TID_TIP_LOADING_FOOD
+  - TID_TIP_LOADING_AIRFLOWS
+  - TID_TIP_LOADING_INCUBATOR
+  - TID_TIP_LOADING_CATAPULT
+  - TID_TIP_LOADING_CHEST
+  - TID_TIP_MULTIPLIERFIRE
+  - TID_TIP_REMOVE
+  - TID_TIP_LOADING_EGGSLEVEL
 --- !u!114 &114593573333267254
 MonoBehaviour:
   m_ObjectHideFlags: 1

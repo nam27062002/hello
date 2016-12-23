@@ -26,21 +26,60 @@ public class Egg {
 	public const string SKU_PREMIUM_EGG = "egg_premium";
 	public const string PREFAB_PATH = "UI/Metagame/Eggs/";
 
+	// Respect indices for the animation controller!!
 	public enum State {
-		INIT,		// Init state
-		STORED,		// Egg is in storage, waiting to be moved to the incubation slot
-		READY_FOR_INCUBATION,	// Egg is in the incubation slot
-		INCUBATING,	// Egg is incubating
-		READY,		// Egg has finished incubation period and is ready to be collected
-		OPENING,	// Egg is being opened
-		COLLECTED,	// Egg reward has been collected
-		SHOWROOM	// Egg for display only, state is not relevant
+		INIT = 0,				// 0 Init state
+		STORED,					// 1 Egg is in storage, waiting to be moved to the incubation slot
+		READY_FOR_INCUBATION,	// 2 Egg is in the incubation slot
+		INCUBATING,				// 3 Egg is incubating
+		READY,					// 4 Egg has finished incubation period and is ready to be collected
+		OPENING,				// 5 Egg is being opened
+		COLLECTED,				// 6 Egg reward has been collected
+		SHOWROOM				// 7 Egg for display only, state is not relevant
 	};
 
 	public struct EggReward {
 		public string type;		// Reward type, matches rewardDefinitions "type" property.
 		public string value;	// Typically a sku: disguiseSku, petSku
 		public long coins;		// Coins to be given instead of the reward. Only if bigger than 0.
+
+		/// <summary>
+		/// Initialize this data object from a reward definition.
+		/// </summary>
+		/// <param name="_rewardDef">Reward def.</param>
+		public void InitFromDef(DefinitionNode _rewardDef) {
+			// Reset if def is null
+			if(_rewardDef == null) {
+				type = "";
+				value = "";
+				coins = 0;
+				return;
+			}
+
+			// Initialize the reward data
+			type = _rewardDef.GetAsString("type");
+			value = "";
+			coins = 0;
+
+			switch(type) {
+				case "pet": {
+					// Get a random pet of the target rarity
+					List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", _rewardDef.Get("rarity"));
+					DefinitionNode targetDef = petDefs.GetRandomValue();
+
+					// Initialize reward data based on obtained pet
+					value = targetDef.sku;
+
+					// If the pet is already owned, give special egg part or coins instead
+					bool owned = false;
+					if(owned) {
+						// [AOC] TODO!!
+						// Give special egg part or coins
+						coins = 100;
+					}
+				} break;
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -185,6 +224,12 @@ public class Egg {
 				// Dispatch game event
 				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_STARTED, this);
 			} break;
+
+			// Opening
+			case State.OPENING: {
+				// If no reward was generated, do it now
+				GenerateReward();
+			} break;
 		}
 
 		// Broadcast game event
@@ -225,27 +270,36 @@ public class Egg {
 	}
 
 	/// <summary>
+	/// Generates a reward for this particular egg.
+	/// Will be ignored if the egg already has a reward.
+	/// </summary>
+	public void GenerateReward() {
+		// Skip if reward was already generated
+		if(m_rewardDef != null) return; 
+
+		// Generate the reward and init data
+		m_rewardDef = EggManager.GenerateReward();
+		m_rewardData.InitFromDef(m_rewardDef);
+	}
+
+	/// <summary>
 	/// Hatches the egg and gives the player a newly generated reward.
 	/// Only if the egg is in the OPENING state.
 	/// </summary>
 	public void Collect() {
-		// Generate the reward
-		m_rewardDef = EggManager.GenerateReward();
+		// If no reward was generated (shouldn't happen), do it now
+		if(m_rewardDef == null) GenerateReward();
 
-		// Initialize the reward data
-		m_rewardData.type = m_rewardDef.GetAsString("type");
-		m_rewardData.value = "";
-		m_rewardData.coins = 0;
-
-		// Apply the reward
+		// Apply the reward!
 		switch(m_rewardData.type) {
-			case "suit": {
-				// [AOC] Eggs no longer give disguises as reward
-			} break;
-
 			case "pet": {
 				// [AOC] TODO!!
 			} break;
+		}
+
+		// Give coins (if any)
+		if(m_rewardData.coins > 0) {
+			UsersManager.currentUser.AddCoins(m_rewardData.coins);
 		}
 
 		// Change state
@@ -259,9 +313,8 @@ public class Egg {
 			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER, true);
 		}
 
-        UsersManager.currentUser.eggsCollected++;
-
 		// Save persistence
+		UsersManager.currentUser.eggsCollected++;
 		PersistenceManager.Save();
 
 		// Notify game
@@ -305,6 +358,11 @@ public class Egg {
 		// State
 		m_state = (State)_data["state"].AsInt;
 		m_isNew = _data["isNew"].AsBool;
+
+		// Special case: temporal states shouldn't be persisted (only happens in case of crash)
+		if(m_state == State.OPENING) {
+			m_state = State.READY;
+		}
 
 		// Reward
 		if ( _data.ContainsKey("rewardSku") )

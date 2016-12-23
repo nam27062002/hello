@@ -89,6 +89,9 @@ Material:
         name: _DstBlend
       second: 0
     - first:
+        name: _Fresnel
+      second: 5
+    - first:
         name: _GlossMapScale
       second: 1
     - first:
@@ -99,7 +102,7 @@ Material:
       second: 1
     - first:
         name: _InnerLightAdd
-      second: 17.22
+      second: 0
     - first:
         name: _Metallic
       second: 0
@@ -117,7 +120,7 @@ Material:
       second: 0
     - first:
         name: _SpecExponent
-      second: 6.7
+      second: 10
     - first:
         name: _SpecularHighlights
       second: 1
@@ -132,17 +135,23 @@ Material:
       second: 1
     m_Colors:
     - first:
+        name: _AmbientAdd
+      second: {r: 0, g: 0, b: 0, a: 0}
+    - first:
         name: _Color
       second: {r: 0.588, g: 0.588, b: 0.588, a: 1}
     - first:
         name: _ColorAdd
-      second: {r: 0, g: 0, b: 0, a: 0}
+      second: {r: 0.13333333, g: 0.071886405, b: 0.07058823, a: 0}
     - first:
         name: _ColorMultiply
-      second: {r: 1, g: 0.9229209, b: 0.7205882, a: 1}
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
+        name: _FresnelColor
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
         name: _InnerLightColor
-      second: {r: 1, g: 0.03676468, b: 0.03676468, a: 1}
+      second: {r: 0.2941177, g: 0.1937796, b: 0.16862747, a: 1}

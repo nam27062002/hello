@@ -18,6 +18,7 @@ Properties {
 	_SpecExponent ("Specular Exponent", float) = 1
 	_Fresnel("Fresnel factor", Range(0, 10)) = 1.5
 	_FresnelColor("Fresnel Color", Color) = (1,1,1,1)
+	_AmbientAdd("Ambient Add", Color) = (0,0,0,0)
 }
 
 SubShader {
@@ -78,6 +79,7 @@ SubShader {
 			uniform float _InnerLightAdd;
 			uniform float4 _InnerLightColor;
 			uniform float4 _FresnelColor;
+			uniform float4 _AmbientAdd;
 
 			uniform float _SpecExponent;
 			uniform float _Fresnel;
@@ -145,7 +147,7 @@ SubShader {
      			fixed4 selfIlluminate = (main * (detail.r * _InnerLightAdd * _InnerLightColor));
 
 				// fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
-				fixed4 col = (diffuse + fixed4(pointLights + i.vLight, 1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor); // To use ShaderSH9 better done in vertex shader
+				fixed4 col = (diffuse + fixed4(pointLights + i.vLight, 1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor) + _AmbientAdd; // To use ShaderSH9 better done in vertex shader
 				UNITY_OPAQUE_ALPHA(col.a); 
 
 				return col; 

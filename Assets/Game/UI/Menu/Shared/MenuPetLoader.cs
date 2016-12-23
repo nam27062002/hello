@@ -19,6 +19,18 @@ public class MenuPetLoader : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	public enum Anim {
+		IDLE,
+		BREAK_EGG,
+
+		COUNT
+	};
+
+	public static readonly string[] ANIM_TRIGGERS  = {
+		"idle",
+		"break_egg"
+	};
+
 	public enum Mode {
 		MANUAL				// Manual control via the Load() method and the exposed m_petSku parameter
 	}
@@ -47,11 +59,11 @@ public class MenuPetLoader : MonoBehaviour {
 	}
 
 	[Space]
-	[List("idle")]
-	[SerializeField] private string m_initialAnim = "idle";
-	public string initialAnim {
-		get { return m_initialAnim; }
-		set { m_initialAnim = value; }
+	[HideEnumValues(false, true)]
+	[SerializeField] private Anim m_anim = Anim.IDLE;
+	public Anim anim {
+		get { return m_anim; }
+		set { m_anim = value; }
 	}
 
 	[SerializeField] private bool m_resetScale = true;
@@ -113,10 +125,10 @@ public class MenuPetLoader : MonoBehaviour {
 	/// <param name="_mode">Pet loading mode.</param>
 	/// <param name="_initialAnim">Initial animation.</param>
 	/// <param name="_resetScale">Whether to respect pet's prefab original scale or reset it.</param>
-	public void Setup(Mode _mode, string _initialAnim, bool _resetScale) {
+	public void Setup(Mode _mode, Anim _initialAnim, bool _resetScale) {
 		// Store new setup
 		m_mode = _mode;
-		m_initialAnim = _initialAnim;
+		m_anim = _initialAnim;
 		m_resetScale = _resetScale;
 	}
 
@@ -142,7 +154,7 @@ public class MenuPetLoader : MonoBehaviour {
 				m_petInstance.SetLayerRecursively(this.gameObject.layer);
 
 				// Launch the default animation
-				m_petInstance.GetComponentInChildren<Animator>().SetTrigger(m_initialAnim);
+				m_petInstance.GetComponentInChildren<Animator>().SetTrigger(ANIM_TRIGGERS[(int)m_anim]);
 
 				// Reset scale if required
 				if(m_resetScale) {

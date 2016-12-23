@@ -16,8 +16,6 @@ using UnityEngine.UI;
 /// <summary>
 /// Main control of a single egg prefab in the menu.
 /// </summary>
-//[RequireComponent(typeof(OpenEggBehaviour))]
-//[RequireComponent(typeof(ReadyEggBehaviour))]
 public class EggController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -26,9 +24,6 @@ public class EggController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] private GameObject m_incubatorFX;
-
 	// Data
 	private Egg m_eggData = null;
 	public Egg eggData {
@@ -96,7 +91,7 @@ public class EggController : MonoBehaviour {
 	/// <summary>
 	/// Refresh this object based on egg's current state.
 	/// </summary>
-	private void Refresh() {
+	public void Refresh() {
 		// Valid data required!
 		if(m_eggData == null) return;
 
@@ -104,37 +99,25 @@ public class EggController : MonoBehaviour {
 		m_openBehaviour.enabled = (m_eggData.state == Egg.State.OPENING);
 		m_readyBehaviour.enabled = (m_eggData.state == Egg.State.READY);
 
-		// Launch different animations depending on state
-		switch(m_eggData.state) {
-			case Egg.State.INIT:
-			case Egg.State.STORED:
-			case Egg.State.OPENING:
-			case Egg.State.COLLECTED: {
-				m_animator.SetTrigger("idle");
-			} break;
+		// Set animator's parameters
+		m_animator.SetInteger("egg_state", (int)m_eggData.state);
 
-			case Egg.State.READY_FOR_INCUBATION:
-			case Egg.State.SHOWROOM: {
-				m_animator.SetTrigger("idle_rotation");
-			} break;
+		// Collect steps
+		float[] intensities = { 0.5f, 1f, 1.5f };	// [AOC] MAGIC NUMBERS
+		int step = Mathf.Clamp(m_openBehaviour.tapCount, 0, intensities.Length - 1);
+		m_animator.SetInteger("collect_step", step);
+		m_animator.SetFloat("intensity", intensities[step]);
 
-			case Egg.State.INCUBATING: {
-				m_animator.SetTrigger("incubating");
-			} break;
-
-			case Egg.State.READY: {
-				m_animator.SetTrigger("ready");
-			} break;
+		// Rarity
+		int rarity = 0;
+		if(m_eggData.rewardDef != null) {
+			switch(m_eggData.rewardDef.Get("rarity")) {
+				case "common":	rarity = 0;	break;
+				case "rare":	rarity = 1;	break;
+				case "epic":	rarity = 2;	break;
+			}
 		}
-
-		// In addition, if it's the egg on the incubator show some nice FX
-		if(m_incubatorFX != null) {
-			bool showFX = (m_eggData.state == Egg.State.READY_FOR_INCUBATION
-						|| m_eggData.state == Egg.State.INCUBATING
-						|| m_eggData.state == Egg.State.READY);
-			//m_incubatorFX.SetActive(showFX);
-			m_incubatorFX.SetActive(false);	// Disable for now
-		}
+		m_animator.SetInteger("rarity", rarity);
 	}
 
 	//------------------------------------------------------------------//

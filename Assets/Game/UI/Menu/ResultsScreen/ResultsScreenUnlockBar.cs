@@ -46,6 +46,7 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 	[Separator("FX")]
 	[SerializeField] private ParticleSystem m_receiveFX = null;
 	[SerializeField] private ParticleSystem m_levelUpFX = null;
+	[SerializeField] private GameObject m_dragonUnlockBG = null;
 	[SerializeField] private GameObject m_dragonUnlockFX = null;
 	[SerializeField] private UIScene3DLoader m_nextDragonScene3DLoader = null;
 
@@ -105,7 +106,7 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 	public void Init(ResultsScreenProgressionPill _progressionPill) {
 		// Initialize with current dragon's data
 		Refresh(DragonManager.currentDragon);
-		m_deltaPerLevel = 1f/m_dragonData.progression.numLevels;
+		m_deltaPerLevel = 1f/(m_dragonData.progression.maxLevel);
 
 		// Change separators to work with the aux bar rather than the main bar
 		for(int i = 0; i < m_barSeparators.Count; i++) {
@@ -127,8 +128,10 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 			if(dragonLoader != null) {
 				dragonLoader.LoadDragon(m_nextDragonData.def.sku);
 				dragonLoader.dragonInstance.SetAnim(MenuDragonPreview.Anim.IDLE);
+				m_dragonUnlockBG.SetActive(true);
 			}
 		} else {
+			m_dragonUnlockBG.SetActive(false);
 			m_nextDragonScene3DLoader.gameObject.SetActive(false);
 		}
 
@@ -177,7 +180,7 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 
 		// Dragon unlock stuff
 		if(CPResultsScreenTest.testEnabled) {
-			m_nextDragonLocked = CPResultsScreenTest.nextDragonLocked;
+			m_nextDragonLocked = m_nextDragonData != null ? CPResultsScreenTest.nextDragonLocked : false;
 		} else {
 			m_nextDragonLocked = m_nextDragonData != null ? m_nextDragonData.isLocked : false;
 		}
@@ -208,7 +211,7 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 			info.def = defList[i];
 
 			// Compute delta corresponding to this disguise unlock level
-			info.delta = Mathf.InverseLerp(0, m_dragonData.progression.numLevels, unlockLevel);
+			info.delta = Mathf.InverseLerp(0, m_dragonData.progression.maxLevel, unlockLevel);
 			info.unlocked = (info.delta <= m_auxBar.normalizedValue);	// Use aux var to quicly determine initial state
 
 			// Create and initialize bar marker

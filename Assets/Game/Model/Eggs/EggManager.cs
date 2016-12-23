@@ -214,7 +214,29 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	/// <returns>The definition of the reward to be given, as defined in the EGG_REWARDS definitions category.</returns>
 	public static DefinitionNode GenerateReward() {
 		// Probabiliy set makes it easy for us!
-		string rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
+		// [AOC] Are we testing?
+		string rewardSku = "";
+		switch(CPGachaTest.rewardChanceMode) {
+			case CPGachaTest.RewardChanceMode.DEFAULT: {
+				rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
+			} break;
+
+			case CPGachaTest.RewardChanceMode.COMMON_ONLY: {
+				rewardSku = "pet_common";
+			} break;
+
+			case CPGachaTest.RewardChanceMode.RARE_ONLY: {
+				rewardSku = "pet_rare";
+			} break;
+
+			case CPGachaTest.RewardChanceMode.EPIC_ONLY: {
+				rewardSku = "pet_epic";
+			} break;
+
+			case CPGachaTest.RewardChanceMode.SAME_PROBABILITY: {
+				rewardSku = instance.m_rewardDropRate.GetLabel(UnityEngine.Random.Range(0, instance.m_rewardDropRate.numElements));		// Pick one random element without taking probabilities in account
+			} break;
+		}
 		return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, rewardSku);
 	}
 

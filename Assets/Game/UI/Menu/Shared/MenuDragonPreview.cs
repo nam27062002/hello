@@ -68,5 +68,22 @@ public class MenuDragonPreview : MonoBehaviour {
 			m_animator.SetTrigger(ANIM_TRIGGERS[(int)_anim]);
 		}
 	}
+
+	public void SetFresnelColor( Color col )
+	{
+		Renderer[] renderers = GetComponentsInChildren<Renderer>();
+		for( int i = 0; i<renderers.Length; i++ )
+		{
+			Material[] mats = renderers[i].materials;
+			for( int j = 0;j<mats.Length; j++ )
+			{
+				string shaderName = mats[j].shader.name;
+				if ( shaderName.Contains("Dragon/Wings") || shaderName.Contains("Dragon/Body") )
+				{
+					mats[j].SetColor("_FresnelColor", col);
+				}
+			}
+		}
+	}
 }
 
