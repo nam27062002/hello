@@ -482,6 +482,11 @@ namespace AI {
 				m_upVector = normal;
 				m_direction = m_groundDirection;
 				Debug.DrawLine(position, position + m_upVector, Color.cyan);
+			} else {
+				if (m_groundDirection.y > 0.5f || m_groundDirection.y < -0.5f) {
+					if (m_groundDirection.x < 0f) m_groundDirection = Vector3.left;
+					if (m_groundDirection.x > 0f) m_groundDirection = Vector3.right;
+				}
 			}
 
 			m_collisionNormal = normal;

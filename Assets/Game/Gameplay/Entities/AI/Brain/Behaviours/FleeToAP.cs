@@ -152,16 +152,18 @@ namespace AI {
 								m_dragonPositionTimer = m_data.checkDragonPositionTime;
 							}
 
-							float dSqr = (m_machine.transform.position - m_lastPos).sqrMagnitude;
-							if (dSqr < 0.015f) {
-								m_timeStuck += Time.deltaTime;
-							} else {
-								m_timeStuck = 0;	
-							}
-							m_lastPos = m_machine.transform.position;
+							if (m_pilot.speed >= m_pilot.moveSpeed * 0.5f) {
+								float dSqr = (m_machine.transform.position - m_lastPos).sqrMagnitude;
+								if (dSqr < 0.005f) {
+									m_timeStuck += Time.deltaTime;
+								} else {
+									m_timeStuck = 0;	
+								}
+								m_lastPos = m_machine.transform.position;
 
-							if (m_timeStuck > 1f) {
-								ChangeState(FleeState.Panic);
+								if (m_timeStuck > 0.75f) {
+									ChangeState(FleeState.Panic);
+								}
 							}
 
 						}   break;
