@@ -209,7 +209,7 @@ public class DisguisesScreenController : MonoBehaviour {
 				// Init pill
 				DefinitionNode def = defList[i];
 				Sprite spr = icons[def.GetAsString("icon")];
-				bool locked = (def.GetAsInt("unlockLevel") > (m_dragonData.progression.level + 1));
+				bool locked = (def.GetAsInt("unlockLevel") > m_dragonData.progression.level);
 				bool owned = m_wardrobe.IsDisguiseOwned(def.sku);
 				m_pills[i].Load(def, locked, owned, spr);
 
