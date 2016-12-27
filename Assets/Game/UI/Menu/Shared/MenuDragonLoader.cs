@@ -153,9 +153,9 @@ public class MenuDragonLoader : MonoBehaviour {
 					m_dragonInstance.transform.localScale = Vector3.one;
 				}
 
-				if (m_removeFresnel )
+				if (m_removeFresnel)
 				{
-					m_dragonInstance.SetFresnelColor( Color.black );
+					m_dragonInstance.SetFresnelColor(Color.black);
 				}
 			}
 		}
