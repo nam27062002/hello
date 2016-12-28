@@ -152,7 +152,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
                     matCount = materials.Length;
                     for (int j = 0; j < matCount; j++) {
                         m_allMaterials.Add(materials[j]);
-						m_defaultTints.Add(materials[i].GetColor("_FresnelColor"));
+						if (materials[j].HasProperty("_FresnelColor")) {
+							m_defaultTints.Add(materials[j].GetColor("_FresnelColor"));
+						} else {
+							m_defaultTints.Add(Color.black);
+						}
                     }
                 }
             }
