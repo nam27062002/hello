@@ -445,4 +445,11 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 			m_secondaryXPBar.DOValue(m_auxBar.value, 0.15f);
 		}
 	}
+
+
+
+	public void OnFillBar(int _currentLevel, float _levelDelta) {
+		// start filling animation (stand alone version) at a faster speed
+
+	}
 }

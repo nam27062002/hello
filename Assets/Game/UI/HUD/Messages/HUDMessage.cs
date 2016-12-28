@@ -92,7 +92,10 @@ public class HUDMessage : MonoBehaviour {
 
 	// Custom exposed setup for specific types - editor will decide when to show them
 	[HideInInspector]
-	[SerializeField] private float m_boostReminderTriggerTime = 30f;
+	[SerializeField] private float m_boostReminderTriggerTime = 150f;
+	[HideInInspector]
+	[SerializeField] private float m_boostReminderFirstSessionTriggerTime = 20f;
+	private float m_boostDurationTime = 1f;
 
 	// Events
 	[Space]
@@ -117,9 +120,16 @@ public class HUDMessage : MonoBehaviour {
 	}
 
 	// Custom internal vars for specific types
+	private float m_messageDuration;
+	private float m_boostReminderTime = 0f;
+	private float m_boostReminderIntervalTime = 0f;
 	private float m_timeSinceLastBoostReminder = 0f;
+	private float m_currentBoostTime = 0f;
 	private string m_needBiggerDragonEntitySku = "";
-	
+	private bool m_isBoosting;
+
+	private bool m_hasEverPerformedAction;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -137,6 +147,27 @@ public class HUDMessage : MonoBehaviour {
 		if(m_messageSystem != null) {
 			m_messageSystem.Add(this);
 		}
+	}
+
+	virtual protected void Start() {
+		m_messageDuration = m_idleDuration;
+
+		switch(m_type) {
+			case Type.BOOST_REMINDER: {
+					if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
+						m_boostReminderTime = m_boostReminderTriggerTime;
+						m_boostReminderIntervalTime = m_boostReminderTime;
+						m_messageDuration = m_idleDuration * 0.5f;
+					} else {
+						m_boostReminderTime = m_boostReminderFirstSessionTriggerTime;
+						m_boostReminderIntervalTime = m_boostReminderTime * 2f;
+					}
+				}
+				break;
+		}
+
+		m_isBoosting = false;
+		m_hasEverPerformedAction = false;
 	}
 
 	/// <summary>
@@ -204,18 +235,34 @@ public class HUDMessage : MonoBehaviour {
 			}
 		}
 
+		if (m_hasEverPerformedAction) {
+			return;
+		}
+
 		// Custom actions depending on message type
 		switch(m_type) {
-			case Type.BOOST_REMINDER: {
-				// [AOC] Check!! Only during the first X games? Or for the first tier?
-				if(m_timeSinceLastBoostReminder < m_boostReminderTriggerTime) {
+			case Type.BOOST_REMINDER:
+				if (m_isBoosting) { 
+					m_currentBoostTime += Time.deltaTime;
+					if (m_currentBoostTime >= m_boostDurationTime) {
+						if (m_visible) {
+							TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();							
+							text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_TUTO_BOOST_SUCCESS");
+							Show();
+						}
+						m_hasEverPerformedAction = true;
+					}
+				} else {
+					m_currentBoostTime = 0f;
 					m_timeSinceLastBoostReminder += Time.deltaTime;
-					if(m_timeSinceLastBoostReminder >= m_boostReminderTriggerTime) {
+					if (m_timeSinceLastBoostReminder >= m_boostReminderTime) {
 						// Show feedback!
 						Show();
+						m_timeSinceLastBoostReminder = 0f;
+						m_boostReminderTime = m_boostReminderIntervalTime;
 					}
 				}
-			} break;
+			break;
 		}
 	}
 
@@ -239,7 +286,7 @@ public class HUDMessage : MonoBehaviour {
 				} break;
 
 				case RepeatType.RESTART_TIMER: {
-					m_timer = m_idleDuration;
+					m_timer = m_messageDuration;
 					return;
 				} break;
 
@@ -263,7 +310,7 @@ public class HUDMessage : MonoBehaviour {
 		m_anim.SetTrigger("in");
 
 		// Setup hide mode
-		m_timer = m_idleDuration;
+		m_timer = m_messageDuration;
 		m_anim.SetBool("out_auto", m_hideMode == HideMode.ANIMATION);
 
 		// Notify
@@ -393,16 +440,7 @@ public class HUDMessage : MonoBehaviour {
 	/// </summary>
 	/// <param name="_toggled">Whether the boost was turned on or off.</param>
 	private void OnBoostToggled(bool _toggled) {
-		// Make sure we're hidden
-		Hide();
-
-		// Disable timer while boosting
-		// Reset timer when stopping
-		if(_toggled) {
-			m_timeSinceLastBoostReminder = m_boostReminderTriggerTime;	// This will stop updating the timer
-		} else {
-			m_timeSinceLastBoostReminder = 0f;
-		}
+		m_isBoosting = _toggled;
 	}
 
 	/// <summary>

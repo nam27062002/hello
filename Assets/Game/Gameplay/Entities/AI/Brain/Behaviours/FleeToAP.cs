@@ -27,6 +27,7 @@ namespace AI {
 			private enum FleeState {
 				Flee = 0,
 				Flee_Panic,
+				Panic,
 				Slow_Down
 			}
 
@@ -36,10 +37,13 @@ namespace AI {
 			private FleeState m_fleeState;
 
 			private Vector3 m_target;
+			private Vector3 m_lastPos;
+			private float m_timeStuck;
 
 			private float m_dragonVisibleTimer;
 			private float m_dragonPositionTimer;
 			private float m_actionPointTimer;
+			private float m_panicTimer;
 
 
 			public override StateComponentData CreateData() {
@@ -63,6 +67,11 @@ namespace AI {
 				m_dragonVisibleTimer = 0f;
 				m_dragonPositionTimer = 0f;
              	m_actionPointTimer = 0f;
+				m_panicTimer = 0f;
+
+				m_timeStuck = 0f;
+
+				m_lastPos = m_machine.transform.position;
 
 				m_fleeState = FleeState.Flee;
 			}
@@ -109,58 +118,127 @@ namespace AI {
 					Transition(OnActionPoint);
 				} else {
 					Vector3 direction = m_machine.direction;
-					if (m_fleeState <= FleeState.Flee_Panic) {
-						
-						if (!m_machine.GetSignal(Signals.Type.Warning)) {
-							m_fleeState = FleeState.Slow_Down;
-							m_pilot.ReleaseAction(Pilot.Action.Scared); 
-						} else {
-							m_dragonVisibleTimer -= Time.deltaTime;
-							if (m_dragonVisibleTimer <= 0f) {
-								if (m_fleeState == FleeState.Flee) {
-									if (m_machine.GetSignal(Signals.Type.Danger)) {
-										m_pilot.PressAction(Pilot.Action.Scared); 
-										m_dragonVisibleTimer = 5f;
-										m_fleeState = FleeState.Flee_Panic;
+					bool warning = m_machine.GetSignal(Signals.Type.Warning);
+					bool danger = m_machine.GetSignal(Signals.Type.Danger);
+
+
+					switch (m_fleeState) {
+						case FleeState.Flee:
+						case FleeState.Flee_Panic: {
+							if (!warning) {
+								ChangeState(FleeState.Slow_Down); 
+							} else {
+								m_dragonVisibleTimer -= Time.deltaTime;
+								if (m_dragonVisibleTimer <= 0f) {
+									if (danger) {
+										ChangeState(FleeState.Flee_Panic);
+									} else {
+										ChangeState(FleeState.Flee);
 									}
-								} else if (m_fleeState == FleeState.Flee) {
-									if (!m_machine.GetSignal(Signals.Type.Danger)) {
-										m_pilot.ReleaseAction(Pilot.Action.Scared); 
-										m_dragonVisibleTimer = 5f;
-										m_fleeState = FleeState.Flee;
-									}
+									m_dragonVisibleTimer = 5f;
 								}
 							}
-						}
 
-						// Maybe dragon has outrun us! let's check!
-						m_pilot.SetMoveSpeed(m_data.speed);
-						m_dragonPositionTimer -= Time.deltaTime;
-						if (m_dragonPositionTimer <= 0f) {
-							if (enemy) {						
-								if (enemy.position.x < m_machine.position.x) {
-									direction = Vector3.right;
+							// Maybe dragon has outrun us! let's check!
+							m_dragonPositionTimer -= Time.deltaTime;
+							if (m_dragonPositionTimer <= 0f) {
+								if (enemy) {						
+									if (enemy.position.x < m_machine.position.x) {
+										direction = Vector3.right;
+									} else {
+										direction = Vector3.left;
+									}
+								}
+								m_dragonPositionTimer = m_data.checkDragonPositionTime;
+							}
+
+							if (m_pilot.speed >= m_pilot.moveSpeed * 0.5f) {
+								float dSqr = (m_machine.transform.position - m_lastPos).sqrMagnitude;
+								if (dSqr < 0.005f) {
+									m_timeStuck += Time.deltaTime;
 								} else {
-									direction = Vector3.left;
+									m_timeStuck = 0;	
+								}
+								m_lastPos = m_machine.transform.position;
+
+								if (m_timeStuck > 0.75f) {
+									ChangeState(FleeState.Panic);
 								}
 							}
-							m_dragonPositionTimer = m_data.checkDragonPositionTime;
-						}
-					} else if (m_fleeState == FleeState.Slow_Down) {
-						if (m_machine.GetSignal(Signals.Type.Warning)) {
-							m_fleeState = FleeState.Flee;
-							m_dragonVisibleTimer = 5f;
-						}
 
-						m_pilot.SetMoveSpeed(0);
+						}   break;
 
-						if (m_pilot.speed < 1) {
-							Transition(OnIdleAlert);
-						}
+						case FleeState.Panic:
+							if (m_machine.enemy != null) {
+								if (m_machine.enemy.position.x < m_machine.position.x) {
+									m_pilot.SetDirection(Vector3.left, true);
+								} else {
+									m_pilot.SetDirection(Vector3.right, true);
+								}
+							}
+
+							m_panicTimer -= Time.deltaTime;
+							if (m_panicTimer <= 0) {
+								ChangeState(FleeState.Flee_Panic);
+							}
+							break;
+
+						case FleeState.Slow_Down:
+							if (warning) ChangeState(FleeState.Flee);						
+
+							m_pilot.SetMoveSpeed(0);
+
+							if (m_pilot.speed < 1) Transition(OnIdleAlert);							
+							break;
 					}
 
 					m_target = m_machine.position + direction * 1.5f;
 					m_pilot.GoTo(m_target);
+				}
+			}
+
+			private void ChangeState(FleeState _nextState) {
+				if (_nextState != m_fleeState) {
+					switch(m_fleeState) {
+						case FleeState.Flee:
+							break;
+
+						case FleeState.Flee_Panic:
+							m_pilot.ReleaseAction(Pilot.Action.Scared);
+							break;
+
+						case FleeState.Panic:
+							m_timeStuck = 0f;
+							m_pilot.ReleaseAction(Pilot.Action.Scared);
+							break;
+
+						case FleeState.Slow_Down:
+							break;
+					}
+
+					switch(_nextState) {
+						case FleeState.Flee:
+							m_dragonVisibleTimer = 5f;
+							m_pilot.SetMoveSpeed(m_data.speed);
+							break;
+
+						case FleeState.Flee_Panic:
+							m_dragonVisibleTimer = 5f;
+							m_pilot.SetMoveSpeed(m_data.speed);
+							m_pilot.PressAction(Pilot.Action.Scared); 
+							break;
+
+						case FleeState.Panic:
+							m_panicTimer = 5f;
+							m_pilot.Stop();
+							m_pilot.PressAction(Pilot.Action.Scared); 
+							break;
+
+						case FleeState.Slow_Down:
+							break;
+					}
+
+					m_fleeState = _nextState;
 				}
 			}
 		}

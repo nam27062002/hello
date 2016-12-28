@@ -81,6 +81,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private Dictionary<int, Material[]> m_materials;
     // All materials are stored in this list (it contains the same materials as m_materials does) to prevent memory from being allocated when looping through m_materials in entityTint()
     private List<Material> m_allMaterials;
+	private List<Color> m_defaultTints;
 
 	private bool m_boost;
 	private bool m_scared;
@@ -136,6 +137,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         m_materials = new Dictionary<int, Material[]>();        
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
         m_allMaterials = new List<Material>();
+		m_defaultTints = new List<Color>();
         if (renderers != null) {
             int count = renderers.Length;
             int matCount;
@@ -150,6 +152,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
                     matCount = materials.Length;
                     for (int j = 0; j < matCount; j++) {
                         m_allMaterials.Add(materials[j]);
+						if (materials[j].HasProperty("_FresnelColor")) {
+							m_defaultTints.Add(materials[j].GetColor("_FresnelColor"));
+						} else {
+							m_defaultTints.Add(Color.black);
+						}
                     }
                 }
             }
@@ -344,18 +351,16 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
     void entityTint(bool value)
     {
-//        float blink = (Mathf.Sin(Time.time * 12.0f) + 1.0f) * 0.5f;
-//        Color col = value ? Color.Lerp(Color.black, Color.yellow, 0.5f + blink * 0.5f) : Color.black;
-		Color col = value ? GOLD_TINT : Color.black;
-        if (m_allMaterials != null)
-        {
+        if (m_allMaterials != null) {
             int i;
             int count = m_allMaterials.Count;            
-            for (i = 0; i < count; i++)
-            {
-                if (m_allMaterials[i] != null)
-                {
-                    m_allMaterials[i].SetColor("_FresnelColor", col);                        
+            for (i = 0; i < count; i++) {
+                if (m_allMaterials[i] != null) {
+					if (value) {
+						m_allMaterials[i].SetColor("_FresnelColor", GOLD_TINT);                        
+					} else {
+						m_allMaterials[i].SetColor("_FresnelColor", m_defaultTints[i]);
+					}
                 }
             }
         }       

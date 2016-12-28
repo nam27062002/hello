@@ -140,16 +140,22 @@ namespace AI {
 			if (m_collisionCheckPool == Time.frameCount % CollisionCheckPools) {
 				RaycastHit ground;
 
+				bool isInsideWater = false;
 				float distanceCheck = 5f;
 				int layerMask = m_groundMask;
 
 				if (m_avoidWater) {
 					layerMask = m_groundWaterMask;
+					isInsideWater = m_machine.GetSignal(Signals.Type.InWater);
 				}
 
-				if (Physics.Linecast(transform.position, transform.position + (m_direction * distanceCheck), out ground, layerMask)) {
+				if (isInsideWater) {
+					m_collisionAvoidFactor = 10f;
+					m_collisionNormal = Vector3.up;
+					m_collisionNormal.z = 0f;
+				} else if (Physics.Linecast(transform.position, transform.position + (m_direction * distanceCheck), out ground, layerMask)) {
 					// 2- calc a big force to move away from the ground	
-					m_collisionAvoidFactor = (distanceCheck / ground.distance) * 2f;
+					m_collisionAvoidFactor = (distanceCheck / ground.distance) * 5f;
 					m_collisionNormal = ground.normal;
 					m_collisionNormal.z = 0f;
 				} else {

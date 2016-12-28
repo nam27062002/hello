@@ -69,6 +69,7 @@ GameObject:
   - component: {fileID: 33544977909420836}
   - component: {fileID: 23063982932659494}
   - component: {fileID: 54246284226660438}
+  - component: {fileID: 135275364825472416}
   m_Layer: 0
   m_Name: Gibs_03
   m_TagString: Untagged
@@ -102,6 +103,7 @@ GameObject:
   - component: {fileID: 33523860029705074}
   - component: {fileID: 23229956702945788}
   - component: {fileID: 54521107531791916}
+  - component: {fileID: 136179814902491150}
   m_Layer: 0
   m_Name: Gibs_04
   m_TagString: Untagged
@@ -120,6 +122,7 @@ GameObject:
   - component: {fileID: 33695347313983862}
   - component: {fileID: 23029484697441854}
   - component: {fileID: 54912949049199408}
+  - component: {fileID: 135813641857236606}
   m_Layer: 0
   m_Name: Gibs_01
   m_TagString: Untagged
@@ -203,6 +206,7 @@ GameObject:
   - component: {fileID: 33186956953444110}
   - component: {fileID: 23509777006654192}
   - component: {fileID: 54158886711836994}
+  - component: {fileID: 135694806270298282}
   m_Layer: 0
   m_Name: Gibs_02
   m_TagString: Untagged
@@ -221,6 +225,7 @@ GameObject:
   - component: {fileID: 33775468346086436}
   - component: {fileID: 23732522522836890}
   - component: {fileID: 54928481196014038}
+  - component: {fileID: 136537766174236582}
   m_Layer: 0
   m_Name: Gibs_05
   m_TagString: Untagged
@@ -344,7 +349,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1520248295183312}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -149.331, y: -1.2529895, z: 0}
+  m_LocalPosition: {x: 433.6632, y: -13.572479, z: -14.484667}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4789730612288884}
@@ -699,7 +704,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_fadeDelay: 0.75
-  m_fadeTime: 0.75
+  m_fadeTime: 1.5
   m_forceExplosion: 250
   m_blood:
     name: PS_Blood_Explosion_Medium
@@ -722,7 +727,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_activeTime: 1.75
+  m_activeTime: 2.5
   m_returnTo: 0
 --- !u!114 &114364457540666486
 MonoBehaviour:
@@ -776,3 +781,65 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Gibs_03
   m_parentRoot: {fileID: 4789730612288884}
+--- !u!135 &135275364825472416
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1356227542873600}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.027319092
+  m_Center: {x: 3.0537264e-16, y: 0.000000008381902, z: 0.000000054948032}
+--- !u!135 &135694806270298282
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1835309368149060}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.04
+  m_Center: {x: -0.0019145679, y: 0.00000012395739, z: -0.01}
+--- !u!135 &135813641857236606
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1460551716794538}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.04
+  m_Center: {x: -0.000001906667, y: 0, z: -0}
+--- !u!136 &136179814902491150
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1455043521909866}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.01
+  m_Height: 0.06
+  m_Direction: 2
+  m_Center: {x: -0.0000019073187, y: 0.00000011856806, z: 0}
+--- !u!136 &136537766174236582
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1858606835308814}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.02
+  m_Height: 0.09
+  m_Direction: 2
+  m_Center: {x: 0.0013087331, y: -0.0031880233, z: -0.008403686}
