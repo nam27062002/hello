@@ -68,7 +68,7 @@ namespace AI {
 		public Vector3 upVector { get { return m_upVector; } set { m_upVector = value;} }
 
 		private Vector3 m_collisionNormal;
-		private Vector3 m_fallingFrom;
+		private float m_fallingFromY;
 		private bool m_isGrounded;
 		private bool m_isColliderOnGround;
 		private float m_heightFromGround;
@@ -179,6 +179,8 @@ namespace AI {
 
 			m_machineTransform.rotation = m_rotation;
 
+			m_fallingFromY = -99999f;
+
 			//----------------------------------------------------------------------------------
 			m_mouth = m_machineTransform.FindTransformRecursive("Fire_Dummy");
 		}
@@ -268,18 +270,22 @@ namespace AI {
 
 					bool hasToFallDown = !m_isGrounded && m_heightFromGround > 1f;
 					if (isFallingDown) {
+						if (m_fallingFromY < m_machineTransform.position.y)
+							m_fallingFromY = m_machineTransform.position.y;
+
 						if (!hasToFallDown) {
 							m_machine.SetSignal(Signals.Type.FallDown, false);
 							// check if it has to die > 10 units of distance?
-							float dy = Mathf.Abs(m_machineTransform.position.y - m_fallingFrom.y);
+							float dy = Mathf.Abs(m_machineTransform.position.y - m_fallingFromY);
 							if (dy > 10f) {
 								m_machine.SetSignal(Signals.Type.Destroyed, true);
 							}
+							m_fallingFromY = -99999f;
 						}
 					} else {
 						if (hasToFallDown) {
 							m_machine.SetSignal(Signals.Type.FallDown, true);
-							m_fallingFrom = m_machineTransform.position;
+							m_fallingFromY = m_machineTransform.position.y;
 						}
 					}
 
