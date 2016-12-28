@@ -179,6 +179,8 @@ namespace AI {
 
 			m_machineTransform.rotation = m_rotation;
 
+			m_fallingFromY = -99999f;
+
 			//----------------------------------------------------------------------------------
 			m_mouth = m_machineTransform.FindTransformRecursive("Fire_Dummy");
 		}
@@ -278,7 +280,7 @@ namespace AI {
 							if (dy > 10f) {
 								m_machine.SetSignal(Signals.Type.Destroyed, true);
 							}
-							m_fallingFromY = -1000f;
+							m_fallingFromY = -99999f;
 						}
 					} else {
 						if (hasToFallDown) {
