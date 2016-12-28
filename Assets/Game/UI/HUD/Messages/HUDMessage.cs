@@ -245,7 +245,11 @@ public class HUDMessage : MonoBehaviour {
 				if (m_isBoosting) { 
 					m_currentBoostTime += Time.deltaTime;
 					if (m_currentBoostTime >= m_boostDurationTime) {
-						Hide();
+						if (m_visible) {
+							TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();							
+							text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_TUTO_BOOST_SUCCESS");
+							Show();
+						}
 						m_hasEverPerformedAction = true;
 					}
 				} else {
