@@ -32,6 +32,7 @@ public class HUDMessageEditor : Editor {
 	SerializedProperty m_idleDurationProp = null;
 
 	SerializedProperty m_boostReminderTriggerTimeProp = null;
+	SerializedProperty m_boostReminderFirstSessionTriggerTimeProp = null;
 
 	SerializedProperty m_onShowProp = null;
 	SerializedProperty m_onHideProp = null;
@@ -49,6 +50,7 @@ public class HUDMessageEditor : Editor {
 		m_idleDurationProp = serializedObject.FindProperty("m_idleDuration");
 
 		m_boostReminderTriggerTimeProp = serializedObject.FindProperty("m_boostReminderTriggerTime");
+		m_boostReminderFirstSessionTriggerTimeProp = serializedObject.FindProperty("m_boostReminderFirstSessionTriggerTime");
 
 		m_onShowProp = serializedObject.FindProperty("OnShow");
 		m_onHideProp = serializedObject.FindProperty("OnHide");
@@ -64,6 +66,7 @@ public class HUDMessageEditor : Editor {
 		m_idleDurationProp = null;
 
 		m_boostReminderTriggerTimeProp = null;
+		m_boostReminderFirstSessionTriggerTimeProp = null;
 
 		m_onShowProp = null;
 		m_onHideProp = null;
@@ -95,6 +98,7 @@ public class HUDMessageEditor : Editor {
 			case HUDMessage.Type.BOOST_REMINDER: {
 				EditorGUILayoutExt.Separator();
 				EditorGUILayout.PropertyField(m_boostReminderTriggerTimeProp);
+				EditorGUILayout.PropertyField(m_boostReminderFirstSessionTriggerTimeProp);
 			} break;
 		}
 
