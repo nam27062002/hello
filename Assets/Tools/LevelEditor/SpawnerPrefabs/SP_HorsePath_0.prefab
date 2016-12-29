@@ -5,12 +5,12 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 433160}
-  - 114: {fileID: 11434966}
-  - 114: {fileID: 114000013542127144}
-  - 114: {fileID: 114000010182257866}
+  - component: {fileID: 433160}
+  - component: {fileID: 11434966}
+  - component: {fileID: 114000013542127144}
+  - component: {fileID: 114000010182257866}
   m_Layer: 0
   m_Name: SP_HorsePath_0
   m_TagString: Untagged
@@ -27,10 +27,10 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -134.9, y: 4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 196.95699, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 196.95699, z: 0}
 --- !u!114 &11434966
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -81,7 +81,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 128698, guid: 5715094aa37bd4441b54968c547c98f5, type: 2}
   m_entityPrefabStr: Surface/PF_Horse
   m_quantity:
     min: 1
