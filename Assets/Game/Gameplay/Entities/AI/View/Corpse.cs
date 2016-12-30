@@ -18,6 +18,7 @@ public class Corpse : MonoBehaviour {
 
 	private Rigidbody[] m_gibs;
 	private List<Material> m_materials;
+	private List<Color> m_defaultTints;
 	private List<SimpleTransform> m_originalTransforms;
 	private List<Vector3> m_forceDirection;
 
@@ -33,6 +34,7 @@ public class Corpse : MonoBehaviour {
 		m_originalTransforms = new List<SimpleTransform>();
 		m_forceDirection = new List<Vector3>();
 		m_materials = new List<Material>();
+		m_defaultTints = new List<Color>();
 
 		Transform view = transform.FindChild("view");
 		m_gibs = view.GetComponentsInChildren<Rigidbody>();
@@ -54,6 +56,11 @@ public class Corpse : MonoBehaviour {
 			Material[] materials = renderers[i].materials;
 			for (int m = 0; m < materials.Length; m++) {
 				m_materials.Add(materials[m]);
+				if (materials[m].HasProperty("_FresnelColor")) {
+					m_defaultTints.Add(materials[m].GetColor("_FresnelColor"));
+				} else {
+					m_defaultTints.Add(Color.black);
+				}
 			}
 		}
 	}
@@ -100,10 +107,12 @@ public class Corpse : MonoBehaviour {
 
 		m_time = m_fadeTime;
 		Color tint = Color.white;
-		Color fresnel = _isGold ?  ViewControl.GOLD_TINT : Color.black;
-
 		for (int i = 0; i < m_materials.Count; i++) {
-			m_materials[i].SetColor("_FresnelColor", fresnel);      
+			if (_isGold) {
+				m_materials[i].SetColor("_FresnelColor", ViewControl.GOLD_TINT);                        
+			} else {
+				m_materials[i].SetColor("_FresnelColor", m_defaultTints[i]);
+			}
 			m_materials[i].SetColor("_Tint", tint);
 		}
 
