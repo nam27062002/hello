@@ -65,6 +65,10 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	}
 
+	void OnDisable() {
+		if (!m_checkWaterSnapshot && m_insideWaterSnapshot != null)	// Means we registered snapshot
+			InstanceManager.musicController.UnregisterSnapshot(m_insideWaterSnapshot);
+	}
 
 	void OnDestroy()
 	{
