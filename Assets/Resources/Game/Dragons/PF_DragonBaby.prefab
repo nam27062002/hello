@@ -2337,6 +2337,8 @@ MonoBehaviour:
   m_exitWaterSound: Dragon_Water_Out_Soft
   m_exitWaterWithSplashSound: Dragon_Water_Out_Hard
   m_skimmingSound: Dragon_Surfing
+  m_insideWaterSnapshot: {fileID: 0}
+  m_waterDeepToSnapshot: 0
 --- !u!114 &11430736
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2484,6 +2486,7 @@ MonoBehaviour:
   m_minSpeedSkimming: 1
   m_skimmingDistance: 1
   m_waterAirLimitParticle: {fileID: 0}
+  m_bodyParticles: []
 --- !u!114 &11438592
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3343,8 +3346,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_minEatAnimTime: 0.1
   m_eatDistance: 0.8
-  m_eatDetectionRadiusMultiplier: 2.75
-  m_eatDetectionSpeedRadiusMultiplier: 0.15
+  m_eatDetectionRadiusMultiplier: 3
+  m_eatDetectionSpeedRadiusMultiplier: 0.1
   m_holdingBloodParticle:
     name: PS_Blood_Explosion_Medium
     path: Blood
