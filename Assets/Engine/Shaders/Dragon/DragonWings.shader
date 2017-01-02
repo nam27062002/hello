@@ -20,6 +20,10 @@ Properties {
 	_Fresnel("Fresnel factor", Range(0, 10)) = 1.5
 	_FresnelColor("Fresnel Color", Color) = (1,1,1,1)
 	_AmbientAdd("Ambient Add", Color) = (0,0,0,0)
+
+	_SecondLightDir("Second Light dir", Vector) = (0,0,-1,0)
+	_SecondLightColor("Second Light Color", Color) = (0.0, 0.0, 0.0, 0.0)
+
 }
 
 SubShader {
@@ -59,9 +63,10 @@ SubShader {
 			struct v2f {
 				float4 vertex : SV_POSITION;
 				half2 texcoord : TEXCOORD0;
-				float3 halfDir : VECTOR;
+//				float3 halfDir : VECTOR;
 
-				float3 tangentWorld : TEXCOORD2;  
+				float3 vLight : TEXCOORD1;
+				float3 tangentWorld : TEXCOORD2;
 		        float3 normalWorld : TEXCOORD3;
 		        float3 binormalWorld : TEXCOORD4;
 
@@ -88,19 +93,27 @@ SubShader {
 			uniform float _Cutoff;
 			uniform float _Fresnel;
 
+			uniform float3 _SecondLightDir;
+			uniform float4 _SecondLightColor;
+
 			v2f vert (appdata_t v)
 			{
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 
+				// Normal
+				float3 normal = UnityObjectToWorldNormal(v.normal);
+				// Light Probes
+				o.vLight = ShadeSH9(float4(normal, 1.0));
+
 				// Half View - See: Blinn-Phong
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
-				float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
-				o.halfDir = normalize(lightDirection + viewDirection);
+//				float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
+//				o.halfDir = normalize(lightDirection + viewDirection);
 
 //				o.posWorld = mul( unity_ObjectToWorld, v.vertex ).xyz;
-				o.viewDir = normalize(viewDirection);
+				o.viewDir = viewDirection;
 
 	            // To calculate tangent world
 	            float4x4 modelMatrix = unity_ObjectToWorld;
@@ -125,8 +138,12 @@ SubShader {
 	            float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
      			float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
 
+				float3 light0Direction = normalize(_WorldSpaceLightPos0.xyz);
+				float3 light1Direction = normalize(_SecondLightDir.xyz);
+
 				// normalDirection = i.normal;
-     			fixed4 diffuse = max(0,dot( -normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
+     			fixed4 diffuse = max(0,dot( -normalDirection, light0Direction)) * _LightColor0;
+				diffuse += max(0, dot(normalDirection, light1Direction)) * _SecondLightColor;
 				diffuse.a = 0.0;
 /*
      			fixed3 pointLights = fixed3(0,0,0);
@@ -145,14 +162,17 @@ SubShader {
 				float fresnel = clamp(pow(max(1.0 - abs(dot(i.viewDir, normalDirection)), 0.0), _Fresnel), 0.0, 1.0);
 
 				// Specular
-				float specularLight = pow(max(dot(normalDirection, i.halfDir), 0), _SpecExponent) * detail.g;
+				float3 halfDir = normalize(i.viewDir + light0Direction);
+				float specularLight = pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
+				halfDir = normalize(i.viewDir + light1Direction);
+				specularLight += pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
 				
 				// Inner lights
 				fixed4 selfIlluminate = fixed4( (detail.r * _InnerLightAdd * _InnerLightColor.xyz) + specularLight, 0.0 );
 
 //				fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)), 1.0)) * main * (_ColorMultiply + _ColorAdd + selfIlluminate) + (fresnel * _FresnelColor);
 
-				fixed4 col = (diffuse + fixed4(ShadeSH9(float4(normalDirection, 1.0)), 1.0)) * main * (_ColorMultiply + _ColorAdd + selfIlluminate) + (fresnel * _FresnelColor) + _AmbientAdd;
+				fixed4 col = (diffuse + fixed4(i.vLight, 1.0)) * main * (_ColorMultiply + _ColorAdd + selfIlluminate) + (fresnel * _FresnelColor) + _AmbientAdd;
 				return col;
 
 			}
