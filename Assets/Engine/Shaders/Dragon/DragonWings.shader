@@ -22,7 +22,7 @@ Properties {
 	_AmbientAdd("Ambient Add", Color) = (0,0,0,0)
 
 	_SecondLightDir("Second Light dir", Vector) = (0,0,-1,0)
-	_SecondLightIntensity("Second Light intensity", Range(0, 3)) = 0.5
+	_SecondLightColor("Second Light Color", Color) = (0.0, 0.0, 0.0, 0.0)
 
 }
 
@@ -94,7 +94,7 @@ SubShader {
 			uniform float _Fresnel;
 
 			uniform float3 _SecondLightDir;
-			uniform float _SecondLightIntensity;
+			uniform float4 _SecondLightColor;
 
 			v2f vert (appdata_t v)
 			{
@@ -143,7 +143,7 @@ SubShader {
 
 				// normalDirection = i.normal;
      			fixed4 diffuse = max(0,dot( -normalDirection, light0Direction)) * _LightColor0;
-				diffuse += max(0, dot(normalDirection, light1Direction)) * _LightColor0 * _SecondLightIntensity;
+				diffuse += max(0, dot(normalDirection, light1Direction)) * _SecondLightColor;
 				diffuse.a = 0.0;
 /*
      			fixed3 pointLights = fixed3(0,0,0);
@@ -165,7 +165,7 @@ SubShader {
 				float3 halfDir = normalize(i.viewDir + light0Direction);
 				float specularLight = pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
 				halfDir = normalize(i.viewDir + light1Direction);
-				specularLight += pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g * _SecondLightIntensity;
+				specularLight += pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
 				
 				// Inner lights
 				fixed4 selfIlluminate = fixed4( (detail.r * _InnerLightAdd * _InnerLightColor.xyz) + specularLight, 0.0 );
