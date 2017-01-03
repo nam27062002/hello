@@ -145,6 +145,7 @@ public class WaterMesh : MonoBehaviour
     // Use this for initialization
     void Start () 
 	{
+        // Please reimplement HasBeenStarted() method below if you move this statement since we're assuming that m_transform is null until this Start() is called
 		m_transform = transform;
 		m_position = m_transform.position;
 
@@ -167,12 +168,26 @@ public class WaterMesh : MonoBehaviour
 
     }
 
+    private bool HasBeenStarted()
+    {
+        return m_transform != null;
+    }
+
+    void OnDestroy()
+    {
+        // The listener has to be removed only if it was added, since it's added in Start() we need to check if it's been started
+        if (HasBeenStarted())
+        {
+            Messenger.RemoveListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
+        }
+    }    
+
     private void OnUnderwaterToggled(bool _activated)
     {
 
         if (m_overWaterMaterial != null)
         {
-            Vector3 startPosition = transform.InverseTransformPoint(InstanceManager.player.transform.position);
+            Vector3 startPosition = m_transform.InverseTransformPoint(InstanceManager.player.transform.position);
             m_overWaterMaterial.SetFloat("_StartTime", Time.timeSinceLevelLoad);
             m_overWaterMaterial.SetVector("_StartPosition", startPosition);
 //            m_overWaterMaterial.SetFloat("_WaterSpeed", Random.RandomRange(1.0f, 3.0f));
