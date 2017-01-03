@@ -79,7 +79,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	// Movement control
 	private Vector3 m_impulse;
 	private Vector3 m_direction;
-	private Vector3 m_externalForce;	// Used for wind flows, to be set every frame
+    private Vector3 m_directionWhenBoostPressed;
+    private Vector3 m_externalForce;	// Used for wind flows, to be set every frame
 	private Quaternion m_desiredRotation;
 	private Vector3 m_angularVelocity = Vector3.zero;
 	private float m_boostSpeedMultiplier;
@@ -477,7 +478,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		switch (m_state) {
 			case State.Idle:
-				if (m_controls.moving) {
+				if (m_controls.moving || boostSpeedMultiplier > 1) {
 					ChangeState(State.Fly);
 				}
 				break;
@@ -839,7 +840,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// </summary>
 	private void UpdateMovement( float _deltaTime) 
 	{
-		Vector3 impulse = m_controls.GetImpulse(1); 
+		Vector3 impulse = m_controls.GetImpulse(1);
+        if (boostSpeedMultiplier > 1)
+        {
+            if (impulse == Vector3.zero)
+            {
+                impulse = m_directionWhenBoostPressed;
+            }
+        }
+        else
+        {
+            m_directionWhenBoostPressed = m_direction;
+        }
 		if ( impulse != Vector3.zero )
 		{
 			// http://stackoverflow.com/questions/667034/simple-physics-based-movement
