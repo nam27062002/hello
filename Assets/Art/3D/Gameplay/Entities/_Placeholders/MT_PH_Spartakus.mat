@@ -6,10 +6,10 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: MT_tower_entrance_1
-  m_Shader: {fileID: 4800000, guid: d6461419cb5f2ad4b84347dd9ba18781, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
+  m_Name: MT_PH_Kamikaze 1
+  m_Shader: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _EMISSION
+  m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
@@ -48,19 +48,13 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: c0f7f4173530b0f4c9149950c5bd019a, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6bafa34b870e94e1c881ebe9e796789d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
       second:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _NormalTex
-      second:
-        m_Texture: {fileID: 2800000, guid: df31eb6e805d77b48a29a3dc4cde27cf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -77,8 +71,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
+        name: PixelSnap
+      second: 0
+    - first:
         name: _BumpScale
       second: 1
+    - first:
+        name: _BumpStrength
+      second: 3
     - first:
         name: _Cutoff
       second: 0.5
@@ -89,17 +89,17 @@ Material:
         name: _DstBlend
       second: 0
     - first:
-        name: _EmissionScaleUI
-      second: 0
+        name: _FresnelFactor
+      second: 0.27
     - first:
-        name: _FogEnd
-      second: 100
-    - first:
-        name: _FogStart
-      second: 0
+        name: _GlossMapScale
+      second: 1
     - first:
         name: _Glossiness
       second: 0.5
+    - first:
+        name: _GlossyReflections
+      second: 1
     - first:
         name: _Metallic
       second: 0
@@ -107,17 +107,20 @@ Material:
         name: _Mode
       second: 0
     - first:
-        name: _NormalStrength
-      second: 2
-    - first:
         name: _OcclusionStrength
       second: 1
     - first:
         name: _Parallax
       second: 0.02
     - first:
+        name: _SmoothnessTextureChannel
+      second: 0
+    - first:
         name: _Specular
-      second: 1000
+      second: 1
+    - first:
+        name: _SpecularHighlights
+      second: 1
     - first:
         name: _SrcBlend
       second: 1
@@ -135,11 +138,11 @@ Material:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
-        name: _EmissionColorUI
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _FogColor
+        name: _FresnelColor
       second: {r: 0, g: 0, b: 0, a: 0}
     - first:
-        name: _SpecularDir
-      second: {r: 0, g: 0, b: -2, a: 0}
+        name: _IntensityAndScrolling
+      second: {r: 0.1, g: 0.1, b: 1, a: 1}
+    - first:
+        name: _Tint
+      second: {r: 1, g: 1, b: 1, a: 1}
