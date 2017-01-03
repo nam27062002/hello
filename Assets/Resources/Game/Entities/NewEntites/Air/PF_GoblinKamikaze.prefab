@@ -45,6 +45,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1620090600063436
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4561654831339580}
+  m_Layer: 22
+  m_Name: exclamation_mark
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1688677885518720
 GameObject:
   m_ObjectHideFlags: 0
@@ -58,8 +73,8 @@ GameObject:
   - component: {fileID: 114041918052272936}
   - component: {fileID: 114152825529454246}
   - component: {fileID: 54867483832359824}
-  - component: {fileID: 65392409036010386}
   - component: {fileID: 114272332680742080}
+  - component: {fileID: 135483071828693612}
   m_Layer: 22
   m_Name: PF_GoblinKamikaze
   m_TagString: Untagged
@@ -83,6 +98,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1830963790571376
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4331679458391012}
+  m_Layer: 22
+  m_Name: points
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &4306692636174644
 Transform:
   m_ObjectHideFlags: 1
@@ -98,18 +128,46 @@ Transform:
   m_Father: {fileID: 4359037457365340}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4331679458391012
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1830963790571376}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4561654831339580}
+  m_Father: {fileID: 4359037457365340}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4359037457365340
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1688677885518720}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -68.83545, y: 16.658405, z: 7.689357}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -45.83506, y: 3.1129746, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4306692636174644}
+  - {fileID: 4331679458391012}
   m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4561654831339580
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1620090600063436}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 1.03, z: 0.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4331679458391012}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4673246154748336
@@ -229,18 +287,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!65 &65392409036010386
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1688677885518720}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.3, y: 2.76, z: 2.4}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!95 &95528562672202254
 Animator:
   serializedVersion: 3
@@ -269,17 +315,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
+  m_blendSpeedFactor: 10
   m_energy: 10
   m_energyDrainSec: 1
-  m_brainResource: {fileID: 11400000, guid: fcba6844efb2f4ff6b18023d9b2856d4, type: 2}
+  m_brainResource: {fileID: 11400000, guid: f939edea44668469281698be0cacaaf2, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
   m_speedFactorRange:
     min: 1
     max: 1
-  m_serializedJson: '[{"speed":5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":5,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":20,"acceleration":400,"dataType":"AI.Behaviour.RocketDashData","editorFolded":false},{"damage":25,"radius":8,"cameraShakeDuration":1,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
   m_databaseKey: PF_GoblinKamikaze
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 1
@@ -318,6 +364,7 @@ MonoBehaviour:
   m_animA: dash
   m_animB: 
   m_animC: 
+  m_exclamationTransform: {fileID: 4561654831339580}
   m_corpseAsset: 
   m_onEatenParticles: []
   m_onEatenAudio: 
@@ -327,15 +374,15 @@ MonoBehaviour:
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_burnParticle:
-    name: 
+    name: PF_BonfireToon
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
-    name: 
+    name: PF_Mine_Explosion
     path: 
     offset: {x: 0, y: 0, z: 0}
-  m_onExplosionAudio: 
+  m_onExplosionAudio: Explosion_Big
   m_onAttackAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
@@ -404,3 +451,15 @@ MonoBehaviour:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
+--- !u!135 &135483071828693612
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1688677885518720}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.32
+  m_Center: {x: 0, y: 0, z: 0}

@@ -539,7 +539,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				if (m_direction.y > -0.65f) {
 					m_animator.SetBool("fly down", false);
 				}
-
 			}break;
 			case State.ExitingWater:
 			{

@@ -18,6 +18,7 @@ namespace AI {
 			Button_A, // "buttons" to manage
 			Button_B, // the specila actions 
 			Button_C, // of the current machine
+			ExclamationMark,
 
 			Count
 		}
