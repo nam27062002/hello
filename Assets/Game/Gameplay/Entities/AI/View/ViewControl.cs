@@ -40,6 +40,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SerializeField] private string m_animB = "";
 	[SerializeField] private string m_animC = "";
 
+	[SeparatorAttribute("Exclamation Mark")]
+	[SerializeField] private Transform m_exclamationTransform;
+
 	[SeparatorAttribute("Eaten")]
 	[SerializeField] private string m_corpseAsset = "";
 	[SerializeField] private List<ParticleData> m_onEatenParticles = new List<ParticleData>();
@@ -92,6 +95,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private bool m_inSpace;
 	private bool m_moving;
 	private bool m_attackingTarget;
+
+	private bool m_isExclamationMarkOn;
+	private GameObject m_exclamationMarkOn;
 
 	private float m_desiredBlendX;
 	private float m_desiredBlendY;
@@ -166,6 +172,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/" + m_corpseAsset, 3, true);
 		}
 
+		m_isExclamationMarkOn = false;
+		if (m_exclamationTransform != null) {
+			PoolManager.CreatePool("PF_ExclamationMark", "Game/Entities/PF_ExclamationMark", 3, true);
+		}
+
 		// particle management
 		if (m_onEatenParticles.Count <= 0) {
 			// if this entity doesn't have any particles attached, set the standard blood particle
@@ -194,11 +205,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		ParticleManager.CreatePool("PS_EntityPCTrail", "Rewards", 5);
 
         Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
-
     }
 
-    void Start()
-	{
+	void Start() {
 		if (m_animator != null)
 		{ 
 			StartEndMachineBehaviour[] behaviours = m_animator.GetBehaviours<StartEndMachineBehaviour>();
@@ -219,6 +228,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if ( m_onAttackAudioAO != null && m_onAttackAudioAO.IsPlaying() && m_onAttackAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
 			m_onAttackAudioAO.Stop();
 	}
+
 	protected virtual void animEventsOnAttackDealDamage(){}
 
 
@@ -248,6 +258,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_moving = false;
 		m_attackingTarget = false;
 
+		m_isExclamationMarkOn = false;
+
 		if (m_animator != null) {
 			m_animator.enabled = true;
 			m_animator.speed = 1f;
@@ -256,9 +268,6 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_entity != null) {
 			Material altMaterial = null;
 
-            /*			if (m_entity.isGolden) {
-                            altMaterial = m_materialGold;
-                        } else */
             if (m_skins.Count > 0) {				
 				for (int i = 0; i < m_skins.Count; i++) {
 					float rnd = UnityEngine.Random.Range(0f, 100f);
@@ -461,6 +470,21 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		return false;
 	}
 	//
+
+	public void ShowExclamationMark(bool _value) {
+		if (m_exclamationTransform != null && m_isExclamationMarkOn != _value) {
+			if (_value) {
+				m_exclamationMarkOn = PoolManager.GetInstance("PF_ExclamationMark");
+				FollowTransform ft = m_exclamationMarkOn.GetComponent<FollowTransform>();
+				ft.m_follow = m_exclamationTransform;
+			} else {
+				PoolManager.ReturnInstance(m_exclamationMarkOn);
+				m_exclamationMarkOn = null;
+			}
+
+			m_isExclamationMarkOn = _value;
+		}
+	}
 
 
 	//Particles
@@ -683,6 +707,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	protected virtual void OnSpecialAnimationExit(SpecialAnims _anim) {}
 
 	public void Die(bool _eaten = false) {
+		ShowExclamationMark(false);
 
 		if (m_idleAudioAO != null && m_idleAudioAO.IsPlaying()) {
 			m_idleAudioAO.Stop();

@@ -70,6 +70,7 @@ namespace AI {
 				m_direction = Vector2.left;
 			}
 
+			Stop();
 			m_speedFactor = m_speedFactorRange.GetRandom();
 
 			m_target = transform.position;
