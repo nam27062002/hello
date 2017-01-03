@@ -49,13 +49,13 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 
 				struct v2f {
 					float4 vertex : SV_POSITION;
-					half2 texcoord : TEXCOORD0;
+					float2 texcoord : TEXCOORD0;
 					float4 color : COLOR;
 					HG_FOG_COORDS(1)
 					#if LIGHTMAP_ON
 					float2 lmap : TEXCOORD2;
 					#endif
-					half2 texcoord2 : TEXCOORD3;
+					float2 texcoord2 : TEXCOORD3;
 
 					float3 tangentWorld : TANGENT;
 					float3 normalWorld : NORMAL;
@@ -109,12 +109,14 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 				fixed4 frag (v2f i) : SV_Target
 				{
 					
-					fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
+					float4 col = tex2D(_MainTex, i.texcoord);	// Color
 					float specMask = col.w;
-					fixed4 col2 = tex2D(_SecondTexture, i.texcoord2);	// Color
+					float4 col2 = tex2D(_SecondTexture, i.texcoord2);	// Color
 					float l = saturate( col.a + ( (i.color.a * 2) - 1 ) );
 //					float l = clamp(col.a + (i.color.a * 2.0) - 1.0, 0.0, 1.0);
-					col = lerp( col2, col, l);
+//					col = lerp( col2, col, l);
+
+					col.a = 1.0;
 					// Sof Light with vertex color 
 					// http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html
 					// https://en.wikipedia.org/wiki/Relative_luminance
@@ -139,9 +141,12 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 					col.rgb *= lm;
 					#endif
 
-					HG_APPLY_FOG(i, col);	// Fog
 
-					float4 encodedNormal = tex2D(_NormalTex, _NormalTex_ST.xy * i.texcoord + _NormalTex_ST.zw);
+					HG_APPLY_FOG(i, col);	// Fog
+//					col = 0.5;
+
+//					float4 encodedNormal = tex2D(_NormalTex, _NormalTex_ST.xy * i.texcoord + _NormalTex_ST.zw);
+					float4 encodedNormal = tex2D(_NormalTex, i.texcoord);
 					float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
 					float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
 					float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
