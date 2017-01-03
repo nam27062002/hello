@@ -240,13 +240,11 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 
                 _returnValue = new SimpleJSON.JSONClass();
 
-				// [AOC] HACK!! Show classic dragon by default
                 // User Profile: sc, pc, currentDragon
                 SimpleJSON.JSONClass _userProfile = new SimpleJSON.JSONClass();
                 _userProfile.Add("sc", _sc);
                 _userProfile.Add("pc", _pc);
-                //_userProfile.Add("currentDragon", _initialDragonSku);
-				_userProfile.Add("currentDragon", "dragon_classic");
+                _userProfile.Add("currentDragon", _initialDragonSku);
                 _userProfile.Add("currentLevel", "level_0");	// Only one level now
                 _returnValue.Add("userProfile", _userProfile);
 
@@ -255,20 +253,8 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 
 				// Initial dragon
                 SimpleJSON.JSONClass _dragon = new SimpleJSON.JSONClass();
-                /*_dragon.Add("sku", _initialDragonSku);
+                _dragon.Add("sku", _initialDragonSku);
                 _dragon.Add("owned", "true");                
-				_dragons.Add(_dragon);
-				*/
-
-				// [AOC] HACK!! During development, add all the dragons that should be owned from the start
-				_dragon = new SimpleJSON.JSONClass();
-				_dragon.Add("sku", "dragon_crocodile");
-				_dragon.Add("owned", "true");                
-				_dragons.Add(_dragon);
-
-				_dragon = new SimpleJSON.JSONClass();
-				_dragon.Add("sku", "dragon_classic");
-				_dragon.Add("owned", "true");                
 				_dragons.Add(_dragon);
 
                 _returnValue.Add("dragons", _dragons);                
