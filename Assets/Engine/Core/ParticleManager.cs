@@ -146,7 +146,13 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// Clear all particle pools.
 	/// </summary>
 	public static void Clear() {
-		instance.m_particlePools.Clear();
+        if (instance.m_particlePools != null) {
+            foreach (KeyValuePair<string, Pool> pair in instance.m_particlePools) {
+                pair.Value.Clear();
+            }
+
+            instance.m_particlePools.Clear();
+        }
 	}
 
 	/// <summary>
