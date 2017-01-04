@@ -80,7 +80,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	//-----------------------------------------------
 	private Entity m_entity;
 	private Animator m_animator;
-//	private Material m_materialGold;
+	private float m_disableAnimatorTimer;
+
+	//	private Material m_materialGold;
 	private Dictionary<int, Material[]> m_materials;
     // All materials are stored in this list (it contains the same materials as m_materials does) to prevent memory from being allocated when looping through m_materials in entityTint()
     private List<Material> m_allMaterials;
@@ -433,20 +435,29 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
     protected virtual void Update() {
 		if (m_animator != null) {
-			if (m_hasNavigationLayer) {
-				m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, 3f * Time.deltaTime, 0.2f);
-				m_animator.SetFloat("direction X", m_currentBlendX);
-
-				m_currentBlendY = Util.MoveTowardsWithDamping(m_currentBlendY, m_desiredBlendY, 3f * Time.deltaTime, 0.2f);
-				m_animator.SetFloat("direction Y", m_currentBlendY);
+			if (m_disableAnimatorTimer > 0) {
+				m_disableAnimatorTimer -= Time.deltaTime;
+				if (m_disableAnimatorTimer <= 0) {
+					m_animator.enabled = false;
+				}
 			}
 
-			m_animator.SetBool("swim", m_swim);
-			m_animator.SetBool("fly down", m_inSpace);
-			if (!m_swim){
-				m_animator.SetBool("move", m_moving);
-			} else {
-				m_animator.SetBool("move", false);
+			if (m_animator.enabled) {
+				if (m_hasNavigationLayer) {
+					m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, 3f * Time.deltaTime, 0.2f);
+					m_animator.SetFloat("direction X", m_currentBlendX);
+
+					m_currentBlendY = Util.MoveTowardsWithDamping(m_currentBlendY, m_desiredBlendY, 3f * Time.deltaTime, 0.2f);
+					m_animator.SetFloat("direction Y", m_currentBlendY);
+				}
+
+				m_animator.SetBool("swim", m_swim);
+				m_animator.SetBool("fly down", m_inSpace);
+				if (!m_swim){
+					m_animator.SetBool("move", m_moving);
+				} else {
+					m_animator.SetBool("move", false);
+				}
 			}
 		}
 
@@ -772,7 +783,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 		if (m_animator != null) {
-			m_animator.enabled = false;
+			m_animator.speed = 1f;
+			m_animator.SetTrigger("burn");
+			m_disableAnimatorTimer = 0.5f;
+		} else {
+			m_disableAnimatorTimer = 0f;
 		}
 	}
 }
