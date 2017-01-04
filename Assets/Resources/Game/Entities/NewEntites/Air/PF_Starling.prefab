@@ -491,9 +491,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 15
-    m_maxRadius: 8
-    m_minRadius: 4
+    m_sightRadius: 8
+    m_maxRadius: 4
+    m_minRadius: 2
     m_hysteresisOffset: 1
     m_senseAbove: 1
     m_senseBelow: 1
@@ -502,8 +502,8 @@ MonoBehaviour:
       min: 0.9
       max: 1.1
     m_senseDelay:
-      min: 0
-      max: 0.25
+      min: 1
+      max: 3
   m_onSpawnSound: 
   m_rotateToMouth: 0
   m_inflammable:
@@ -549,7 +549,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_blendSpeedFactor: 4
-  m_energy: 20
+  m_energy: 5
   m_energyDrainSec: 1.5
   m_brainResource: {fileID: 11400000, guid: 0880f58945d004e4a9334a99cdfb0b84, type: 2}
   m_railSeparation:
@@ -560,7 +560,7 @@ MonoBehaviour:
     max: 1.25
   m_serializedJson: '[{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"changeLeaderTime":10,"separation":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"boostSpeed":10,"panicSpeed":14,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":8,"catchUpSpeed":10,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Starling
-  m_avoidDistanceAttenuation: 8
+  m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!114 &11468462
@@ -584,6 +584,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
   m_onEatenParticles:
   - name: PF_feathers_3D_noblood_blue
