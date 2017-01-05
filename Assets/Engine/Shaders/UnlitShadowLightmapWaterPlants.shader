@@ -10,10 +10,12 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Water Plants(On Line Decoratio
 	Properties 
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
+		_SpeedWave ("Speed Wave", float) = 1.0
 	}
 
 	SubShader {
 		Tags { "RenderType"="Opaque" "Queue"="Geometry" "LightMode"="ForwardBase" }
+//		Tags{ "RenderType" = "Opaque" "Queue" = "Geometry" }
 		LOD 100
 		
 		Pass {		
@@ -26,7 +28,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Water Plants(On Line Decoratio
 				ZFail keep
 			}
 
-			cull off
+			cull front
 
 			CGPROGRAM
 				#pragma vertex vert
@@ -52,7 +54,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Water Plants(On Line Decoratio
 					float4 vertex : SV_POSITION;
 					half2 texcoord : TEXCOORD0;
 					HG_FOG_COORDS(1)
-					LIGHTING_COORDS(2,3)
+//					LIGHTING_COORDS(2,3)
 					#if LIGHTMAP_ON
 					float2 lmap : TEXCOORD4;
 					#endif
@@ -61,6 +63,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Water Plants(On Line Decoratio
 
 				sampler2D _MainTex;
 				float4 _MainTex_ST;
+				float _SpeedWave;
 
 				HG_FOG_VARIABLES
 				
@@ -68,11 +71,13 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Water Plants(On Line Decoratio
 				{
 					v2f o;
 					float hMult = v.vertex.y;
-					v.vertex += float4(sin((hMult * _Time.y ) * 0.5) * hMult * 0.08, 0.0, 0.0, 0.0f);
-					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+					v.vertex += float4(sin((_Time.y * 10.0 * hMult * _SpeedWave + ) * 0.525) * hMult * 0.08, 0.0, 0.0, 0.0f);
+//					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+					o.vertex = UnityObjectToClipPos(v.vertex);
+
 					o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
-					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
+//					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 					#endif
@@ -84,12 +89,12 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Water Plants(On Line Decoratio
 				{
 					fixed4 col = tex2D(_MainTex, i.texcoord) * i.color;	// Color
 
-					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
-					col *= attenuation;
+//					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
+//					col *= attenuation;
 					 
 					#if LIGHTMAP_ON
 					fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
-					col.rgb *= lm;
+					col.rgb *= lm; 
 					#endif
 
 					HG_APPLY_FOG(i, col);	// Fog
@@ -104,5 +109,5 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Water Plants(On Line Decoratio
 		}
 	}
 
-	Fallback "Mobile/VertexLit"
+//	Fallback "Mobile/VertexLit"
 }
