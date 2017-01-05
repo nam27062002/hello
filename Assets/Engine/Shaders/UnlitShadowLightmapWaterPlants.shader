@@ -71,7 +71,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Water Plants(On Line Decoratio
 				{
 					v2f o;
 					float hMult = v.vertex.y;
-					v.vertex += float4(sin((_Time.y * 10.0 * hMult * _SpeedWave + ) * 0.525) * hMult * 0.08, 0.0, 0.0, 0.0f);
+					v.vertex += float4(sin((_Time.y * 10.0 * hMult * _SpeedWave ) * 0.525) * hMult * 0.08, 0.0, 0.0, 0.0f);
 //					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 					o.vertex = UnityObjectToClipPos(v.vertex);
 
