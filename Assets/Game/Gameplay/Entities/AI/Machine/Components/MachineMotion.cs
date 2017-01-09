@@ -190,7 +190,7 @@ namespace AI {
 		}
 
 		public void Stop() {
-			if (!m_machine.GetSignal(Signals.Type.FallDown)) {
+			if (!(m_machine.GetSignal(Signals.Type.FallDown) || m_pilot.IsActionPressed(Pilot.Action.Jump))) {
 				m_velocity = Vector3.zero;
 				m_rbody.velocity = Vector3.zero;
 				m_rbody.angularVelocity = Vector3.zero;
@@ -247,12 +247,13 @@ namespace AI {
 				m_viewControl.Panic(false, m_machine.GetSignal(Signals.Type.Burning));
 			}
 
+			bool isJumping = m_pilot.IsActionPressed(Pilot.Action.Jump);
 			bool isFallingDown = m_machine.GetSignal(Signals.Type.FallDown);
-			m_viewControl.Falling(isFallingDown);
+			m_viewControl.Falling(isFallingDown && !isJumping);
 				
 			if (m_pilot != null) {				
 				if (m_useGravity) {
-					if (m_isGrounded && isFallingDown) 
+					if (m_isGrounded && (isFallingDown || isJumping)) 
 						Stop();
 				}
 
@@ -269,11 +270,12 @@ namespace AI {
 					m_isGrounded = m_isColliderOnGround || m_heightFromGround < 0.3f;
 
 					bool hasToFallDown = !m_isGrounded && m_heightFromGround > 1f;
-					if (isFallingDown) {
+					if (isFallingDown || isJumping) {
 						if (m_fallingFromY < m_machineTransform.position.y)
 							m_fallingFromY = m_machineTransform.position.y;
 
-						if (!hasToFallDown) {
+						if (!hasToFallDown) { 
+							m_pilot.ReleaseAction(Pilot.Action.Jump);
 							m_machine.SetSignal(Signals.Type.FallDown, false);
 							// check if it has to die > 10 units of distance?
 							float dy = Mathf.Abs(m_machineTransform.position.y - m_fallingFromY);
@@ -284,14 +286,21 @@ namespace AI {
 						}
 					} else {
 						if (hasToFallDown) {
-							m_machine.SetSignal(Signals.Type.FallDown, true);
+							m_machine.SetSignal(Signals.Type.FallDown, !isJumping);
 							m_fallingFromY = m_machineTransform.position.y;
 						}
 					}
 
-					if (m_isGrounded || m_walkOnWalls) {						
+					if (isJumping) {
+						if (m_pilot.IsActionPressed(Pilot.Action.Attack)) {
+							m_rbody.velocity = Vector3.zero;
+						} else {
+							m_velocity += (forceGravity * 3f) * Time.fixedDeltaTime;
+							m_rbody.velocity = m_velocity;
+						}
+					} else if (m_isGrounded || m_walkOnWalls) {
 						UpdateVelocity();
-						m_rbody.velocity = m_velocity + ((forceGravity * 3f) / m_mass) * Time.deltaTime + m_externalVelocity;
+						m_rbody.velocity = m_velocity + ((forceGravity * 3f) / m_mass) * Time.fixedDeltaTime + m_externalVelocity;
 					} else {
 						// free fall, drag, friction and stuff
 						const float airDensity = 1.293f;
@@ -301,7 +310,7 @@ namespace AI {
 						Vector3 forceDrag = -m_velocity.normalized * 0.25f * airDensity * drag * 1f * Mathf.Pow(m_velocity.magnitude, 2f) / m_mass;
 						m_acceleration = (forceGravity + forceDrag) * 1.5f;
 
-						m_velocity += m_acceleration * Time.deltaTime;
+						m_velocity += m_acceleration * Time.fixedDeltaTime;
 						m_velocity = Vector3.ClampMagnitude(m_velocity, terminalVelocity) + m_externalVelocity;
 						m_rbody.velocity = m_velocity;
 					}
@@ -356,7 +365,12 @@ namespace AI {
 			// "Physics" updates
 			Vector3 impulse = (m_pilot.impulse - m_velocity);
 			impulse /= m_mass; //mass
-			m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_pilot.speed);
+
+			if (m_pilot.IsActionPressed(Pilot.Action.Jump)) {
+				m_velocity += impulse;
+			} else {
+				m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_pilot.speed);
+			}
 		}
 
 

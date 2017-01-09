@@ -11,6 +11,7 @@ namespace AI {
 			Aim,
 			Bite,
 			Fire,
+			Jump,
 			Avoid,
 			Pursuit,
 			Scared,
@@ -146,6 +147,8 @@ namespace AI {
 			m_moveSpeed = 0f;
 			m_currentSpeed = 0f;
 			m_boostSpeed = 0f;
+			m_impulse = Vector3.zero;
+			m_externalImpulse = Vector3.zero;
 			m_actions[(int)Action.Stop] = true;
 		}
 
