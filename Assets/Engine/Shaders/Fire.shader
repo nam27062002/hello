@@ -81,12 +81,13 @@
 				noise += tex2D(_NoiseTex, i.noiseUV - float2(0.0, _Time.y * _Flamespeed * 2.0)) * _Flamethrower;
 
 				noise *= 0.5;
-				clip(noise.r - 0.25);
+//				clip(noise.r - 0.25);
 				noise.g = (noise.g * i.uv.y * _Flamedistance);
 
 				noise.r = 0.0f;
 				fixed4 col = tex2D(_MainTex, i.uv - noise.rg);
 				col.a *= smoothstep(0.025, 0.15, noise.g);
+				clip(col.a - 0.1);
 
 				return col * i.color;
 			}
