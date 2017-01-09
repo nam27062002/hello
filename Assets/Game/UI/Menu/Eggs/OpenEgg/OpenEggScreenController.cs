@@ -36,7 +36,6 @@ public class OpenEggScreenController : MonoBehaviour {
 	[SerializeField] private Localizer m_tapInfoText = null;
 
 	[Separator("Buttons")]
-	[SerializeField] private Button m_instantOpenButton = null;
 	[SerializeField] private Localizer m_callToActionText = null;
 	[SerializeField] private ShowHideAnimator m_finalPanel = null;
 
@@ -144,7 +143,6 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Hide HUD and buttons
 		bool animate = this.gameObject.activeInHierarchy;	// If the screen is not visible, don't animate
 		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceHide(animate);
-		m_instantOpenButton.GetComponent<ShowHideAnimator>().ForceHide(animate);
 		m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide(animate);
 		m_finalPanel.ForceHide(animate);
 
@@ -206,7 +204,6 @@ public class OpenEggScreenController : MonoBehaviour {
 		}
 
 		// Show/Hide buttons and HUD
-		m_instantOpenButton.GetComponent<ShowHideAnimator>().Hide();
 		m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
 		m_finalPanel.Show();
 
@@ -302,8 +299,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// The intro has finished!
 	/// </summary>
 	private void OnIntroFinished() {
-		// Show instant open button and info text
-		m_instantOpenButton.GetComponent<ShowHideAnimator>().Show();
+		// Show info text
 		m_tapInfoText.GetComponent<ShowHideAnimator>().Show();
 
 		// Change logic state
@@ -316,22 +312,6 @@ public class OpenEggScreenController : MonoBehaviour {
 	private void OnEggOpenFinished() {
 		// Launch the reward animation
 		LaunchRewardAnimation();
-	}
-
-	/// <summary>
-	/// Skip the egg tapping process.
-	/// </summary>
-	public void OnInstantOpenButton() {
-		// Open the egg!
-		// This option should only be available on the OPENING state and with a valid egg
-		if(m_state != State.OPENING) return;
-		if(m_scene.eggData == null) return;
-		if(m_scene.eggData.state != Egg.State.OPENING) return;
-
-		// Collect the egg! - this automatically empties the incubator
-		m_scene.eggData.Collect();		
-
-		// Animation will be triggered by the EGG_COLLECTED event
 	}
 
 	/// <summary>
