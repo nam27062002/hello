@@ -282,26 +282,26 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     /// <summary>
     /// Current resolution
     /// </summary>
-    private Vector2 m_deviceResolution;
+    public Vector2 Device_Resolution { get; private set; }
 
     /// <summary>
     /// Current device orientation
     /// </summary>
-    private DeviceOrientation m_deviceOrientation;
+    public DeviceOrientation Device_Orientation { get; private set; }    
     
     private IEnumerator Device_Update()
     {
         IsAlive = true;
-        m_deviceResolution = new Vector2(Screen.width, Screen.height);
-        m_deviceOrientation = Input.deviceOrientation;
+        Device_Resolution = new Vector2(Screen.width, Screen.height);
+        Device_Orientation = Input.deviceOrientation;
 
         while (IsAlive)
         {
             // Check for a Resolution Change
-            if (m_deviceResolution.x != Screen.width || m_deviceResolution.y != Screen.height)
+            if (Device_Resolution.x != Screen.width || Device_Resolution.y != Screen.height)
             {
-                m_deviceResolution = new Vector2(Screen.width, Screen.height);
-                Messenger.Broadcast<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, m_deviceResolution);                
+                Device_Resolution = new Vector2(Screen.width, Screen.height);
+                Messenger.Broadcast<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, Device_Resolution);                
             }
 
             // Check for an Orientation Change
@@ -312,10 +312,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 case DeviceOrientation.FaceDown:        // Ignore
                     break;
                 default:
-                    if (m_deviceOrientation != Input.deviceOrientation)
+                    if (Device_Orientation != Input.deviceOrientation)
                     {
-                        m_deviceOrientation = Input.deviceOrientation;
-                        Messenger.Broadcast<DeviceOrientation>(GameEvents.DEVICE_ORIENTATION_CHANGED, m_deviceOrientation);
+                        Device_Orientation = Input.deviceOrientation;
+                        Messenger.Broadcast<DeviceOrientation>(GameEvents.DEVICE_ORIENTATION_CHANGED, Device_Orientation);
                     }
                     break;
             }

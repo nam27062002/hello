@@ -299,8 +299,10 @@ public class GameCamera : MonoBehaviour
         Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
 
         UpdateUseDampCamera();
-        UpdateFrameWidthVerticalCoef();        
+        UpdateFrameWidthVerticalCoef();
+        UpdateFrameWidthCoef(ApplicationManager.instance.Device_Orientation);
     }
+
 	/*
 	IEnumerator Start() 
 	{
@@ -1019,9 +1021,9 @@ public class GameCamera : MonoBehaviour
 	// Zooming in and out is done by specifying the desired width of the frame, i.e. how wide is the visible frame in metres at the z=0 plane?
 	// We zoom in and out by animating Z position, but at close range we zoom in by animating FOV instead.
 	private void UpdateZooming(float desiredFrameWidth, bool bossZoom)
-	{
+	{        
         // Desired frame width is multiplied by a coef in order to adjust it for the different orientations
-        desiredFrameWidth *= sm_frameWidthCoef;
+        desiredFrameWidth *= sm_frameWidthCoef;        
 
         // deal with frame height and vertical FOV, as unity camera uses vertical FOV.
         float desiredFrameHeight = desiredFrameWidth * m_pixelAspectY;
@@ -1324,22 +1326,26 @@ public class GameCamera : MonoBehaviour
 	}
 
     private void OnDeviceOrientationChanged(DeviceOrientation newOrientation)
-    {
-        Debug.Log("OnDeviceOrientationChanged " + newOrientation);
-        switch (newOrientation)
-        {
-            case DeviceOrientation.LandscapeLeft:
-            case DeviceOrientation.LandscapeRight:
-                sm_frameWidthCoef = 1f;
-                break;
+    {        
+        UpdateFrameWidthCoef(newOrientation);        
+    }
 
+    private void UpdateFrameWidthCoef(DeviceOrientation orientation)
+    {
+        switch (orientation)
+        {            
             case DeviceOrientation.Portrait:
             case DeviceOrientation.PortraitUpsideDown:
                 sm_frameWidthCoef = sm_frameWidthPortraitCoef;
                 break;
-        }
-    }
 
+            default:
+                sm_frameWidthCoef = 1f;
+                break;
+        }
+
+        Debug.Log("UpdateFrameWidthCoef(" + orientation + ") -> sm_frameWidthCoef = " + sm_frameWidthCoef);
+    }
 
     //------------------------------------------------------------------//
     // Debug															//
