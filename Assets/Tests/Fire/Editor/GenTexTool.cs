@@ -18,6 +18,52 @@ public enum TexFormats
     RGBA = 2
 }
 
+static class Mathv
+{
+    public static Vector2 Sin(Vector2 v)
+    {
+        return new Vector2(Mathf.Sin(v.x), Mathf.Sin(v.y));
+    }
+
+    public static Vector2 Floor(Vector2 v)
+    {
+        return new Vector2(Mathf.Floor(v.x), Mathf.Floor(v.y));
+    }
+
+    public static Vector2 Fract(Vector2 v)
+    {
+        return v - Floor(v);
+    }
+
+    public static float Fract(float v)
+    {
+        return v - Mathf.Floor(v);
+    }
+
+    public static Vector2 Mod(Vector2 v, float d)
+    {
+        return v - d * Floor(Div(v, d));
+    }
+
+    public static Vector2 Div(Vector2 v1, Vector2 v2)
+    {
+        return new Vector2(v1.x / v2.x, v1.y / v2.y);
+    }
+    public static Vector2 Div(Vector2 v1, float v2)
+    {
+        return new Vector2(v1.x / v2, v1.y / v2);
+    }
+
+    public static Vector2 Mul(Vector2 v1, Vector2 v2)
+    {
+        return new Vector2(v1.x * v2.x, v1.y * v2.y);
+    }
+    public static Vector2 Mul(Vector2 v1, float v2)
+    {
+        return new Vector2(v1.x * v2, v1.y * v2);
+    }
+}
+
 public abstract class TextureGenBase : ScriptableObject
 {
     protected Vector2 iResolution;
@@ -29,94 +75,101 @@ public abstract class TextureGenBase : ScriptableObject
     abstract public void guiGen();
 }
 
+
 public class Perlin : TextureGenBase
 {
-    public int detail = 4;
-    public float scale = 8.0f;
-    public float seed = 100.0f;
-    public bool tileable = true;
+    Vector2 m_v10 = new Vector2(1.0f, 0.0f);
+    Vector2 m_v01 = new Vector2(0.0f, 1.0f);
+    Vector2 m_v11 = new Vector2(1.0f, 1.0f);
 
-    private Vector2 internalSeed = new Vector2(0.0f, 157.0f);
-    private Vector2 internalSeed2 = new Vector2(1.0f, 157.0f);
-
-
-
+    Vector2 m_three = new Vector2(3.0f, 3.0f);
+    Vector2 m_vHashSeed = new Vector2(35.6898f, 24.3563f);
+    float m_fHashSeed = 353753.373453f;
     //
+    public float m_Tiles = 1.0f;
+    public float m_Scale = 14.0f;
+    public float m_Amplitude = 0.55f;
+    public int m_Iterations = 8;
+    //
+
     public Perlin()
     {
         serializedName = "PerlinPrefs";
+    }
+
+    //----------------------------------------------------------------------------------------
+    float Hash(Vector2 p, float scale)
+    {
+        // This is tiling part, adjusts with the scale...
+        p = Mathv.Mod(p, scale);
+        return Mathv.Fract(Mathf.Sin(Vector2.Dot(p, m_vHashSeed)) * m_fHashSeed);
+    }
+
+    float Noise(Vector2 x, float scale)
+    {
+        x = Mathv.Mul(x, scale);
+
+        Vector2 p = Mathv.Floor(x);
+        Vector2 f = x - p;  //Fract
+        f = Mathv.Mul(Mathv.Mul(f, f), m_three - Mathv.Mul(f, 2.0f));
+
+        float res = Mathf.Lerp(Mathf.Lerp(Hash(p, scale),
+            Hash(p + m_v10, scale), f.x),
+            Mathf.Lerp(Hash(p + m_v01, scale),
+            Hash(p + m_v11, scale), f.x), f.y);
+
+        return res;
+    }
+
+
+    float fBm(Vector2 p)
+    {
+        float f = 0.4f;
+
+        // Change starting scale to any integer value...
+        float scale = m_Scale;
+        float amp = m_Amplitude;
+        for (int i = 0; i < m_Iterations; i++)
+        {
+            f += Noise(p, scale) * amp;
+            amp *= -0.65f;
+            // Scale must be multiplied by an integer value...
+            scale *= 2.0f;
+        }
+        return f;
     }
 
     public override void initGen(Texture2D canvas)
     {
         iResolution.x = canvas.width;
         iResolution.y = canvas.height;
-
-        internalSeed = new Vector2(0.0f, seed / iResolution.x);
-        internalSeed2 = new Vector2(1.0f, seed / iResolution.x);
-    }
-
-    Vector2 Sin(Vector2 v)
-    {
-        return new Vector2(Mathf.Sin(v.x), Mathf.Sin(v.y));
-    }
-
-    Vector2 Fract(Vector2 v)
-    {
-        return new Vector2(v.x - Mathf.Floor(v.x), v.y - Mathf.Floor(v.y));
-    }
-
-    public Vector2 divide(Vector2 v1, Vector2 v2)
-    {
-        return new Vector2(v1.x / v2.x, v1.y / v2.y);
-    }
-    public Vector2 divide(Vector2 v1, float v2)
-    {
-        return new Vector2(v1.x / v2, v1.y / v2);
-    }
-
-    public Vector2 multiply(Vector2 v1, Vector2 v2)
-    {
-        return new Vector2(v1.x * v2.x, v1.y * v2.y);
-    }
-
-
-    Vector2 h(Vector2 uv)
-    {
-//        return Fract(multiply(uv , new Vector2(Random.value, Random.value)));
-        return Fract(Sin(uv + internalSeed) * seed);
     }
 
     public override Vector4 doGen(Vector2 iFragCoord)
     {
-        Vector2 uv = (scale * divide(iFragCoord, iResolution.y));// - new Vector2(7.0f, 4.0f);
-        //        Debug.Log("h seed: " + h(uv));
-        Vector2 m, r;
-        float l, s = 1.0f;
+        Vector2 uv = Mathv.Div(iFragCoord, iResolution) * m_Tiles;
 
-        float ret = 0.0f;
+        // Do the noise cloud (fractal Brownian motion)
+        float bri = fBm(uv);
 
-        for (int c = 0; c < detail; c++)
-        {
-            m = Fract(uv * s);
-            l = Vector2.Dot((uv * s) - m, internalSeed2);
-            Vector2 ll = new Vector2(l, l);
-            s += s;
-            m = multiply(m, multiply(m, new Vector2(3.0f, 3.0f) - m - m));
-            r = Vector2.Lerp(h(ll), h(ll + Vector2.one), m.x);
-            ret += Mathf.Lerp(r.x, r.y, m.y) / s;
-        }
-        return new Vector4(ret, ret, ret, 1.0f);
+        bri = Mathf.Min(bri * bri, 1.0f);   // ...cranked up the contrast for no reason.
+
+
+        return new Vector4(bri, bri, bri, 1.0f);
     }
 
     public override void guiGen()
     {
         EditorGUILayout.BeginVertical();
-        detail = EditorGUILayout.IntField("detail:", detail);
-        seed = EditorGUILayout.FloatField("seed:", seed);
-        scale = EditorGUILayout.FloatField("scale:", scale);
+        m_Scale = EditorGUILayout.FloatField("Initial Scale:", m_Scale);
+        m_Amplitude = EditorGUILayout.FloatField("Initial Amplitude:", m_Amplitude);
+        m_Iterations = EditorGUILayout.IntField("Iterations:", m_Iterations);
+
+        //        seed = EditorGUILayout.FloatField("seed:", seed);
+        //        scale = EditorGUILayout.FloatField("scale:", scale);
         EditorGUILayout.EndVertical();
     }
+
 
 }
 
