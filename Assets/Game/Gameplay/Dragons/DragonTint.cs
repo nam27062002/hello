@@ -11,8 +11,9 @@ public class DragonTint : MonoBehaviour
 
 	Renderer[] m_dragonRenderers = null;
 	List<Material> m_materials = new List<Material>();
+    List<Shader> m_originalShaders = new List<Shader>();
 	List<Color> m_fresnelColors = new List<Color>();
-	List<Material> m_bodyMaterials = new List<Material>();
+//	List<Material> m_bodyMaterials = new List<Material>();
 
 	float m_otherColorTimer = 0;
 
@@ -61,13 +62,15 @@ public class DragonTint : MonoBehaviour
 			for( int j = 0;j<mats.Length; j++ )
 			{
 				string shaderName = mats[j].shader.name;
-				if ( shaderName.Contains("Dragon/Wings") || shaderName.Contains("Dragon/Body") )
-				{
-					m_materials.Add( mats[j] );
-					m_fresnelColors.Add( mats[j].GetColor("_FresnelColor"));
-					if (shaderName.Contains("Body"))
-						m_bodyMaterials.Add( mats[j] );
-				}
+                if (shaderName.Contains("Dragon/Wings") || shaderName.Contains("Dragon/Body"))
+                {
+                    m_materials.Add(mats[j]);
+                    m_fresnelColors.Add(mats[j].GetColor("_FresnelColor"));
+                    m_originalShaders.Add(mats[j].shader);
+//					if (shaderName.Contains("Body"))
+//						m_bodyMaterials.Add( mats[j] );
+//                  }
+                }
 			}
 		}
 	}
@@ -208,16 +211,16 @@ public class DragonTint : MonoBehaviour
 
 	private void OnPlayerKo()
 	{
-		// Switch body material to wings
-		for( int i = 0; i<m_bodyMaterials.Count; i++ )
-			m_bodyMaterials[i].shader = Shader.Find("Hungry Dragon/Dragon/Wings (Transparent)");
-	}
+        // Switch body material to wings
+        for (int i = 0; i < m_materials.Count; i++) 
+            m_materials[i].shader = Shader.Find("Hungry Dragon/Dragon/Death");
+    }
 
-	private void OnPlayerRevive()
+    private void OnPlayerRevive()
 	{
 		// Switch back body materials
-		for( int i = 0; i<m_bodyMaterials.Count; i++ )
-			m_bodyMaterials[i].shader = Shader.Find("Hungry Dragon/Dragon/Body");
-	}
+		for( int i = 0; i< m_materials.Count; i++ )
+            m_materials[i].shader = m_originalShaders[i];
+    }
 
 }
