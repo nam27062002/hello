@@ -91,19 +91,8 @@ public class TouchControlsDPad : TouchControls {
 		// Start hidden
 		m_dpadObj.SetActive(false);
 		m_dpadDotObj.SetActive(false);
-		if(m_debugText != null) m_debugText.gameObject.SetActive(false);
-
-		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);
-	}
+		if(m_debugText != null) m_debugText.gameObject.SetActive(false);		
+	}	
 	
 	override public void SetRender(bool enable)
 	{
@@ -372,7 +361,7 @@ public class TouchControlsDPad : TouchControls {
 	/// A CP pref has been changed.
 	/// </summary>
 	/// <param name="_prefId">Preference identifier.</param>
-	private void OnPrefChanged(string _prefId) {
+	protected override void OnPrefChangedExtended(string _prefId) {
 		// We only care about some prefs
 		if(_prefId == DebugSettings.DPAD_MODE) {
 			m_dPadMode = (Mode)Prefs.GetIntPlayer(DebugSettings.DPAD_MODE, (int)m_dPadMode);

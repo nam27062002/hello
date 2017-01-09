@@ -103,7 +103,7 @@ public class EggController : MonoBehaviour {
 		m_animator.SetInteger("egg_state", (int)m_eggData.state);
 
 		// Collect steps
-		float[] intensities = { 0.5f, 1f, 1.5f };	// [AOC] MAGIC NUMBERS
+		float[] intensities = { 0.5f, 1.5f };	// [AOC] MAGIC NUMBERS, one per tap step!
 		int step = Mathf.Clamp(m_openBehaviour.tapCount, 0, intensities.Length - 1);
 		m_animator.SetInteger("collect_step", step);
 		m_animator.SetFloat("intensity", intensities[step]);
