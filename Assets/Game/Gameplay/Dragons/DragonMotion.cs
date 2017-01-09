@@ -315,6 +315,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_lastPosition = transform.position;
 		m_lastSpeed = 0;
 
+
+
 		if (m_state == State.None)
 			ChangeState(State.Fly);
 
@@ -323,6 +325,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	}
 
 	void OnEnable() {
+		Messenger.AddListener(GameEvents.PLAYER_DIED, PnPDied);
+	}
+
+	void OnDisable()
+	{
+		Messenger.RemoveListener(GameEvents.PLAYER_DIED, PnPDied);
+	}
+
+	private void PnPDied()
+	{
+		m_impulse = Vector3.zero;
+		m_deadTimer = 1000;
 	}
 	
 	private void ChangeState(State _nextState) {

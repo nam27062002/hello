@@ -274,14 +274,6 @@ namespace AI {
 					}
 				}
 
-				if (m_enableMotion) {
-					if (m_regionManager == null) {
-						m_regionManager = RegionManager.Instance;
-					}
-					CheckForCurrents ();
-					m_motion.Update();
-
-				}
 				if (m_enableSensor) m_sensor.Update();
 
 				//forward special actions
@@ -294,8 +286,16 @@ namespace AI {
 			m_inflammable.Update();
 		}
 
-		protected virtual void FixedUpdate()
-		{
+		protected virtual void FixedUpdate() {
+			if (!IsDead()) {
+				if (m_enableMotion) {
+					if (m_regionManager == null) {
+						m_regionManager = RegionManager.Instance;
+					}
+					CheckForCurrents();
+					m_motion.Update();
+				}
+			}
 			m_motion.externalVelocity = m_externalForces;
 			m_externalForces = Vector3.zero;
 		}

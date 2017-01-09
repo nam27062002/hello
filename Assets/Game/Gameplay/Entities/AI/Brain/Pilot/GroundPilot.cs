@@ -40,6 +40,9 @@ namespace AI {
 					}
 				}
 			}
+
+			m_impulse += m_externalImpulse;
+			m_externalImpulse = Vector3.zero;
 		}
 
 		private void TransformTarget() {
