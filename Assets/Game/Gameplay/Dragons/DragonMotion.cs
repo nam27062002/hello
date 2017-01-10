@@ -1077,6 +1077,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
     private void UpdateSpaceMovement(float _deltaTime)
     {
         Vector3 impulse = m_controls.GetImpulse(1);
+        Vector3 origImpulse = impulse;
         if (boostSpeedMultiplier > 1)
         {
             if (impulse == Vector3.zero)
@@ -1093,27 +1094,34 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
             // http://stackoverflow.com/questions/667034/simple-physics-based-movement
 
             impulse.y = 0;
+            impulse.Normalize();
             Vector3 gravityAcceleration = Vector3.zero;
                 //if (impulse.y < 0) impulse.y *= m_dragonGravityModifier;
-            gravityAcceleration = Vector3.down * 9.81f * m_dragonGravityModifier;// * m_dragonMass;
+            gravityAcceleration = Vector3.down * 9.81f * m_dragonGravityModifier * 0.9f;// * m_dragonMass;
             Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
             Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
             // stroke's Drag
-            m_impulse = m_rbody.velocity;
-            float impulseMag = m_impulse.magnitude;
+           
 
+            m_impulse = m_rbody.velocity;
             Vector3 impulseCapped = m_impulse;
             impulseCapped.y = 0;
+            float impulseMag = impulseCapped.magnitude;
 
+        
+
+            Vector3 mimpulseback = m_impulse;
             m_impulse += (acceleration * _deltaTime) - (impulseCapped.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
 
             m_direction = m_impulse.normalized;
             // m_direction.y = m_rbody.velocity.normalized.y;
-            RotateToDirection(m_impulse, true);
+            //RotateToDirection(origImpulse);
+            //RotateToDirection(mimpulseback.normalized);
+            //m_rbody.velocity = m_impulse;
 
             //m_direction = m_impulse.normalized;
-            //RotateToDirection(impulse);
+            RotateToDirection(m_impulse.normalized);
 
         }
         /*else
