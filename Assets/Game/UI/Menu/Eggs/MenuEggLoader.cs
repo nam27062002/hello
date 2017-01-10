@@ -34,14 +34,14 @@ public class MenuEggLoader : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		
-	}
+	}    
 
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void OnEnable() {
-		// If a egg sku was defined from inspector, load it now (unless an egg is already loaded)
-		if(!string.IsNullOrEmpty(m_eggSku) && m_eggScene3D == null) {
+	private void OnEnable() {     
+        // If a egg sku was defined from inspector, load it now (unless an egg is already loaded)
+        if (!string.IsNullOrEmpty(m_eggSku) && m_eggScene3D == null) {
 			// Create a new egg
 			Egg newEgg = Egg.CreateFromSku(m_eggSku);
 			newEgg.ChangeState(Egg.State.SHOWROOM);	// By default it will be on showroom state
@@ -54,13 +54,9 @@ public class MenuEggLoader : MonoBehaviour {
 	/// <summary>
 	/// Default destructor.
 	/// </summary>
-	private void OnDestroy() {
-		// Destroy egg 3D scene
-		if(m_eggScene3D != null) {
-			UIScene3DManager.Remove(m_eggScene3D);
-			m_eggScene3D = null;
-		}
-	}
+	private void OnDestroy() {        
+        Unload();
+    }
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -69,6 +65,7 @@ public class MenuEggLoader : MonoBehaviour {
 	/// Load the given egg's preview.
 	/// If it's the same that is already loaded, nothing will be done.
 	/// If a different egg was loaded, it will be unloaded.
+    /// Once you're done with loading eggs you should call <c>Unload()</c>
 	/// </summary>
 	/// <param name="_egg">The egg to be displayed. <c>null</c> to unload any active preview.</param>
 	public void Load(Egg _egg) {
@@ -88,6 +85,14 @@ public class MenuEggLoader : MonoBehaviour {
 			m_eggSku = string.Empty;
 		}
 	}
+
+    public void Unload() {
+        // Destroy egg 3D scene
+        if (m_eggScene3D != null) {
+            UIScene3DManager.Remove(m_eggScene3D);
+            m_eggScene3D = null;
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
