@@ -36,8 +36,7 @@ public static class DebugSettings {
 	public const string SHOW_COLLISIONS					        = "SHOW_COLLISIONS";
 	public const string SHOW_SPEED						        = "SHOW_SPEED";
 
-	public const string NEW_CAMERA_SYSTEM		 		        = "NEW_CAMERA_SYSTEM";
-    public const string CAMERA_FRAME_WIDTH_PORTRAIT_COEF        = "CAMERA_FRAME_WIDTH_PORTRAIT_COEF";
+	public const string NEW_CAMERA_SYSTEM		 		        = "NEW_CAMERA_SYSTEM";    
 
     public const string INGAME_HUD						        = "INGAME_HUD";
 	public const string INGAME_SPAWNERS					        = "INGAME_SPAWNERS";
@@ -131,9 +130,6 @@ public static class DebugSettings {
         Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, false));
 
         key = DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD;
-        Prefs.SetFloatPlayer(key, Prefs.GetFloatPlayer(key, TouchControls.BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD));
-
-        key = CAMERA_FRAME_WIDTH_PORTRAIT_COEF;
-        Prefs.SetFloatPlayer(key, Prefs.GetFloatPlayer(key, GameCamera.FRAME_WIDTH_PORTRAIT_DEFAULT_COEF));
+        Prefs.SetFloatPlayer(key, Prefs.GetFloatPlayer(key, TouchControls.BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD));		        
     }
 }
