@@ -12,19 +12,7 @@ using UnityEngine;
 using System.Collections;
 
 public class GameCamera : MonoBehaviour
-{
-    public const float FRAME_WIDTH_PORTRAIT_DEFAULT_COEF = 1f;
-
-    /// <summary>
-    /// Coefficient to multiply the frame width by when the orientation is portrait
-    /// </summary>
-    private static float sm_frameWidthPortraitCoef = FRAME_WIDTH_PORTRAIT_DEFAULT_COEF;
-
-    /// <summary>
-    /// Coefficient to multiply the frame width by in order to adjust the camera zoom to make the game look better on portrait orientation
-    /// </summary>
-    private static float        sm_frameWidthCoef = 1f;    
-
+{	 
 	private const float			m_maxTrackAheadScaleX = 0.15f;
     private const float         m_maxTrackAheadScaleY = 0.2f; //JO
 	private const float			m_trackBlendRate = 1.0f;
@@ -249,13 +237,8 @@ public class GameCamera : MonoBehaviour
 		m_snap = true;
 		
 		// get screen dimensions and aspect ratio
-		float pw = m_unityCamera.pixelWidth;
-		float ph = m_unityCamera.pixelHeight;
-		m_pixelWidth = (int)pw;
-		m_pixelHeight = (int)ph;
-		m_pixelAspectX = pw/ph;
-		m_pixelAspectY = ph/pw;
-		
+		UpdatePixelData();
+
 		m_position = m_transform.position;
 		m_currentPos = m_position;
 		m_currentLookAt = m_lookAt = m_position;
@@ -291,16 +274,14 @@ public class GameCamera : MonoBehaviour
 		// Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 		Messenger.AddListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
-		Messenger.AddListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);
-        Messenger.AddListener<DeviceOrientation>(GameEvents.DEVICE_ORIENTATION_CHANGED, OnDeviceOrientationChanged);
+		Messenger.AddListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);       
 
 
         // Subscribe to external events
         Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
+		Messenger.AddListener<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
 
-        UpdateUseDampCamera();
-        UpdateFrameWidthVerticalCoef();
-        UpdateFrameWidthCoef(ApplicationManager.instance.Device_Orientation);
+        UpdateUseDampCamera();        
     }
 
 	/*
@@ -383,10 +364,10 @@ public class GameCamera : MonoBehaviour
 		Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 		Messenger.RemoveListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
 		Messenger.RemoveListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);
-        Messenger.RemoveListener<DeviceOrientation>(GameEvents.DEVICE_ORIENTATION_CHANGED, OnDeviceOrientationChanged);
-
+       
         // Unsubscribe from external events.
         Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
+		Messenger.RemoveListener<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
 
 		InstanceManager.gameCamera = null;
 
@@ -399,21 +380,31 @@ public class GameCamera : MonoBehaviour
         switch (_id) {
             case DebugSettings.NEW_CAMERA_SYSTEM:
                 UpdateUseDampCamera();		    			    
-                break;
-
-            case DebugSettings.CAMERA_FRAME_WIDTH_PORTRAIT_COEF:
-                UpdateFrameWidthVerticalCoef();                
-                break;
+                break;			           
         }        
 	}    
 
+	private void UpdatePixelData()
+	{
+		float pw = m_unityCamera.pixelWidth;
+		float ph = m_unityCamera.pixelHeight;
+		Debug.Log("pw " + pw);
+		Debug.Log("ph " + ph);
+		m_pixelWidth = (int)pw;
+		m_pixelHeight = (int)ph;
+		m_pixelAspectX = pw/ph;
+		m_pixelAspectY = ph/pw;
+	}
+
+	private void OnResolutionChanged(Vector2 resolution)
+	{
+		Debug.Log("New resolution " + resolution);
+		UpdatePixelData ();
+	}
+
     private void UpdateUseDampCamera() {
         m_useDampCamera = Prefs.GetBoolPlayer(DebugSettings.NEW_CAMERA_SYSTEM);
-    }
-
-    private void UpdateFrameWidthVerticalCoef() {
-        sm_frameWidthPortraitCoef = Prefs.GetFloatPlayer(DebugSettings.CAMERA_FRAME_WIDTH_PORTRAIT_COEF);
-    }    
+    }		      
 
     private void CountDownEnded()
 	{
@@ -1021,10 +1012,7 @@ public class GameCamera : MonoBehaviour
 	// Zooming in and out is done by specifying the desired width of the frame, i.e. how wide is the visible frame in metres at the z=0 plane?
 	// We zoom in and out by animating Z position, but at close range we zoom in by animating FOV instead.
 	private void UpdateZooming(float desiredFrameWidth, bool bossZoom)
-	{        
-        // Desired frame width is multiplied by a coef in order to adjust it for the different orientations
-        desiredFrameWidth *= sm_frameWidthCoef;        
-
+	{        		        
         // deal with frame height and vertical FOV, as unity camera uses vertical FOV.
         float desiredFrameHeight = desiredFrameWidth * m_pixelAspectY;
 		
@@ -1324,29 +1312,7 @@ public class GameCamera : MonoBehaviour
 		}
 		m_hasSlowmo = active;
 	}
-
-    private void OnDeviceOrientationChanged(DeviceOrientation newOrientation)
-    {        
-        UpdateFrameWidthCoef(newOrientation);        
-    }
-
-    private void UpdateFrameWidthCoef(DeviceOrientation orientation)
-    {
-        switch (orientation)
-        {            
-            case DeviceOrientation.Portrait:
-            case DeviceOrientation.PortraitUpsideDown:
-                sm_frameWidthCoef = sm_frameWidthPortraitCoef;
-                break;
-
-            default:
-                sm_frameWidthCoef = 1f;
-                break;
-        }
-
-        Debug.Log("UpdateFrameWidthCoef(" + orientation + ") -> sm_frameWidthCoef = " + sm_frameWidthCoef);
-    }
-
+		    
     //------------------------------------------------------------------//
     // Debug															//
     //------------------------------------------------------------------//
