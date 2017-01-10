@@ -42,12 +42,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public static float m_waterImpulseMultiplier = 0.75f;
 	public static float m_onWaterCollisionMultiplier = 0.5f;
+    public static bool m_outerSpaceUsePhysics = true;
 
-	//------------------------------------------------------------------//
-	// MEMBERS															//
-	//------------------------------------------------------------------//
-	// Exposed members
-	[SerializeField] private float m_stunnedTime;
+    //------------------------------------------------------------------//
+    // MEMBERS															//
+    //------------------------------------------------------------------//
+    // Exposed members
+    [SerializeField] private float m_stunnedTime;
 	[SerializeField] private float m_velocityBlendRate = 256.0f;
 	[SerializeField] private float m_rotBlendRate = 350.0f;
 
@@ -431,9 +432,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.OuterSpace:
 				{
 					m_animator.SetBool("fly down", true);
-					if ( m_state != State.Stunned && m_state != State.Reviving){
-						m_startParabolicPosition = transform.position;
-					}
+                    if (!m_outerSpaceUsePhysics)
+                    {
+                        if (m_state != State.Stunned && m_state != State.Reviving)
+                        {
+                            m_startParabolicPosition = transform.position;
+                        }
+                    }
 				}break;
 				case State.ExitingSpace:
 				{
@@ -769,9 +774,16 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 			case State.OuterSpace:
 			case State.ExitingSpace:
-			{
-				float distance = transform.position.y - m_startParabolicPosition.y;
-				UpdateParabolicMovement(Time.fixedDeltaTime, -1, distance);
+		    {
+                if (m_outerSpaceUsePhysics)
+                {
+                    UpdateSpaceMovement(Time.fixedDeltaTime);
+                }
+                else
+                { 
+                    float distance = transform.position.y - m_startParabolicPosition.y;
+                    UpdateParabolicMovement(Time.fixedDeltaTime, -1, distance);
+                }
 			}break;
 			case State.Intro:
 			{
@@ -1059,9 +1071,63 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		RotateToDirection( m_direction );
 		m_rbody.velocity = m_impulse;
 		*/
-}
-	
-	private void UpdateParabolicMovement( float _deltaTime, float sign, float distance)
+    }
+
+
+    private void UpdateSpaceMovement(float _deltaTime)
+    {
+        Vector3 impulse = m_controls.GetImpulse(1);
+        if (boostSpeedMultiplier > 1)
+        {
+            if (impulse == Vector3.zero)
+            {
+                impulse = m_directionWhenBoostPressed;
+            }
+        }
+        else
+        {
+            m_directionWhenBoostPressed = m_direction;
+        }
+        //if (impulse != Vector3.zero)
+        {
+            // http://stackoverflow.com/questions/667034/simple-physics-based-movement
+
+            impulse.y = 0;
+            Vector3 gravityAcceleration = Vector3.zero;
+                //if (impulse.y < 0) impulse.y *= m_dragonGravityModifier;
+            gravityAcceleration = Vector3.down * 9.81f * m_dragonGravityModifier;// * m_dragonMass;
+            Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
+            Vector3 acceleration = gravityAcceleration + dragonAcceleration;
+
+            // stroke's Drag
+            m_impulse = m_rbody.velocity;
+            float impulseMag = m_impulse.magnitude;
+
+            Vector3 impulseCapped = m_impulse;
+            impulseCapped.y = 0;
+
+            m_impulse += (acceleration * _deltaTime) - (impulseCapped.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
+
+            m_direction = m_impulse.normalized;
+            // m_direction.y = m_rbody.velocity.normalized.y;
+            RotateToDirection(m_impulse, true);
+
+            //m_direction = m_impulse.normalized;
+            //RotateToDirection(impulse);
+
+        }
+        /*else
+        {
+            ComputeImpulseToZero(_deltaTime);
+            ChangeState(State.Idle);
+        }*/
+
+        ApplyExternalForce();
+
+        m_rbody.velocity = m_impulse;
+    }
+
+    private void UpdateParabolicMovement( float _deltaTime, float sign, float distance)
 	{
 		// Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_currentSpeedMultiplier * Time.deltaTime * 0.1f);
 		Vector3 impulse = m_controls.GetImpulse(_deltaTime * GetTargetForceMultiplier());
