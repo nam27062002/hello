@@ -62,6 +62,10 @@ namespace AI {
 				m_attackState = AttackState.Idle;
 			}
 
+			protected override void OnExit(State _newState) {
+				m_machine.SetSignal(Signals.Type.Invulnerable, false);
+			}
+
 			protected override void OnUpdate() {
 				if (m_timer > 0) {
 					m_timer -= Time.deltaTime;
@@ -87,6 +91,7 @@ namespace AI {
 
 				m_pilot.PressAction(Pilot.Action.Attack);
 				m_pilot.PressAction(Pilot.Action.Jump);
+				m_machine.SetSignal(Signals.Type.Invulnerable, true);
 				m_machine.SetVelocity(Vector3.up * m_data.jumpVelocity);
 
 				m_attacksLeft--;
@@ -98,6 +103,7 @@ namespace AI {
 			private void EndAttack() {
 				m_meleeWeapon.enabled = false;
 
+				m_machine.SetSignal(Signals.Type.Invulnerable, false);
 				m_pilot.ReleaseAction(Pilot.Action.Attack);
 				m_pilot.Stop();
 
