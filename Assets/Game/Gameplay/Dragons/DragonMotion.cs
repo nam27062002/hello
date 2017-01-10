@@ -1094,7 +1094,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
             // http://stackoverflow.com/questions/667034/simple-physics-based-movement
 
             impulse.y = 0;
-            impulse.Normalize();
+            //impulse.Normalize();
             Vector3 gravityAcceleration = Vector3.zero;
                 //if (impulse.y < 0) impulse.y *= m_dragonGravityModifier;
             gravityAcceleration = Vector3.down * 9.81f * m_dragonGravityModifier * 0.9f;// * m_dragonMass;
