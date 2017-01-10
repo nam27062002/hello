@@ -130,7 +130,7 @@ public class DragonTint : MonoBehaviour
 			m_otherColorTimer += Time.deltaTime * 5;
 			otherColor = m_curseColor * (Mathf.Sin( m_otherColorTimer) + 1) * 0.5f;
 		}
-		else if ( m_player.IsStarving() || m_player.BeingLatchedOn())
+		else if ( (m_player.currentHealthModifier != null && m_player.currentHealthModifier.IsStarving()) || m_player.BeingLatchedOn())
 		{
 			m_otherColorTimer += Time.deltaTime * 5;
 			otherColor = m_damageColor * (Mathf.Sin( m_otherColorTimer) + 1) * 0.5f;
