@@ -25,7 +25,7 @@ namespace AI {
 			protected override void OnEnter(State oldState, object[] param) {
 				if (!m_pilot.IsActionPressed(Pilot.Action.Jump)) {
 					m_pilot.PressAction(Pilot.Action.Jump);
-					m_machine.SetVelocity(Vector3.up * 20f);
+					m_machine.SetVelocity(Vector3.up * 15f);
 					m_jumpState = JumpState.GoingUp;
 					m_lastY = m_machine.position.y;
 				} else {

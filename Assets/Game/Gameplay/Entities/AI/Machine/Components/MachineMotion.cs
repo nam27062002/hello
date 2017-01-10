@@ -19,6 +19,7 @@ namespace AI {
 		public bool useGravity { get { return m_useGravity; } set { m_useGravity = value; } }
 		[SerializeField] private bool m_walkOnWalls = false;
 		[SerializeField] private float m_mass = 1f;
+		[SerializeField] private bool m_attackPausesJump = false;
 
 		[SeparatorAttribute]
 		[SerializeField] private UpVector m_defaultUpVector = UpVector.Up;
@@ -71,6 +72,7 @@ namespace AI {
 		private float m_fallingFromY;
 		private bool m_isGrounded;
 		private bool m_isColliderOnGround;
+		private bool m_isJumping;
 		private float m_heightFromGround;
 
 		private Vector3 m_velocity;
@@ -179,6 +181,7 @@ namespace AI {
 
 			m_machineTransform.rotation = m_rotation;
 
+			m_isJumping = false;
 			m_fallingFromY = -99999f;
 
 			//----------------------------------------------------------------------------------
@@ -247,13 +250,20 @@ namespace AI {
 				m_viewControl.Panic(false, m_machine.GetSignal(Signals.Type.Burning));
 			}
 
-			bool isJumping = m_pilot.IsActionPressed(Pilot.Action.Jump);
-			bool isFallingDown = m_machine.GetSignal(Signals.Type.FallDown);
-			m_viewControl.Falling(isFallingDown && !isJumping);
+			bool isJumpingAlt = m_pilot.IsActionPressed(Pilot.Action.Jump);
+			if (m_isJumping != isJumpingAlt) {
+				if (isJumpingAlt) {
+					m_fallingFromY = m_machineTransform.position.y;
+				}
+				m_isJumping = isJumpingAlt;
+			}
+
+			bool isFallingDown = !m_isJumping && m_machine.GetSignal(Signals.Type.FallDown);
+			m_viewControl.Falling(isFallingDown);
 				
 			if (m_pilot != null) {				
 				if (m_useGravity) {
-					if (m_isGrounded && (isFallingDown || isJumping)) 
+					if (m_isGrounded && (isFallingDown || m_isJumping)) 
 						Stop();
 				}
 
@@ -269,33 +279,43 @@ namespace AI {
 					GetHeightFromGround();
 					m_isGrounded = m_isColliderOnGround || m_heightFromGround < 0.3f;
 
-					bool hasToFallDown = !m_isGrounded && m_heightFromGround > 1f;
-					if (isFallingDown || isJumping) {
-						if (m_fallingFromY < m_machineTransform.position.y)
+					if (m_isJumping) {
+						if (m_fallingFromY <= m_machineTransform.position.y) {
 							m_fallingFromY = m_machineTransform.position.y;
-
-						if (!hasToFallDown) { 
-							m_pilot.ReleaseAction(Pilot.Action.Jump);
-							m_machine.SetSignal(Signals.Type.FallDown, false);
-							// check if it has to die > 10 units of distance?
-							float dy = Mathf.Abs(m_machineTransform.position.y - m_fallingFromY);
-							if (dy > 10f) {
-								m_machine.SetSignal(Signals.Type.Destroyed, true);
+						} else {
+							if (m_isColliderOnGround) { 
+								m_pilot.ReleaseAction(Pilot.Action.Jump);
+								m_fallingFromY = -99999f;
 							}
-							m_fallingFromY = -99999f;
 						}
 					} else {
-						if (hasToFallDown) {
-							m_machine.SetSignal(Signals.Type.FallDown, !isJumping);
-							m_fallingFromY = m_machineTransform.position.y;
+						bool hasToFallDown = !m_isGrounded && m_heightFromGround > 1f;
+						if (isFallingDown) {
+							if (m_fallingFromY < m_machineTransform.position.y)
+								m_fallingFromY = m_machineTransform.position.y;
+
+							if (!hasToFallDown) {
+								m_machine.SetSignal(Signals.Type.FallDown, false);
+								// check if it has to die > 10 units of distance?
+								float dy = Mathf.Abs(m_machineTransform.position.y - m_fallingFromY);
+								if (dy > 10f) {
+									m_machine.SetSignal(Signals.Type.Destroyed, true);
+								}
+								m_fallingFromY = -99999f;
+							}
+						} else {
+							if (hasToFallDown) {
+								m_machine.SetSignal(Signals.Type.FallDown, true);
+								m_fallingFromY = m_machineTransform.position.y;
+							}
 						}
 					}
 
-					if (isJumping) {
-						if (m_pilot.IsActionPressed(Pilot.Action.Attack)) {
+					if (m_isJumping) {
+						if (m_attackPausesJump && m_pilot.IsActionPressed(Pilot.Action.Attack)) {
 							m_rbody.velocity = Vector3.zero;
 						} else {
-							m_velocity += (forceGravity * 3f) * Time.fixedDeltaTime;
+							m_velocity += (forceGravity) * Time.fixedDeltaTime;
 							m_rbody.velocity = m_velocity;
 						}
 					} else if (m_isGrounded || m_walkOnWalls) {
