@@ -29,7 +29,7 @@ public class OpenEggSceneController : MonoBehaviour {
 	[SerializeField] private Transform m_eggAnchor = null;
 	[SerializeField] private Transform m_rewardAnchor = null;
 	[SerializeField] private ParticleSystem m_openEggFX = null;
-	[SerializeField] private GameObject m_rewardGodRaysFX = null;
+	[SerializeField] private GodRaysFX m_rewardGodRaysFX = null;
 
 	// Events
 	public UnityEvent OnIntroFinished = new UnityEvent();
@@ -96,7 +96,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		}
 
 		if(m_rewardGodRaysFX != null) {
-			m_rewardGodRaysFX.SetActive(false);
+			m_rewardGodRaysFX.StopFX();
 		}
 
 		if(m_openEggFX != null) {
@@ -211,15 +211,16 @@ public class OpenEggSceneController : MonoBehaviour {
 		}
 
 		// Show reward godrays
+		// Custom color based on reward's rarity
 		if(m_rewardGodRaysFX != null) {
-			// Custom color based on reward's rarity
-			Color rarityColor = UIConstants.GetRarityColor(eggData.rewardDef.Get("rarity"));		// Color based on reward's rarity :)
-			SpriteRenderer glowRenderer = m_rewardGodRaysFX.FindComponentRecursive<SpriteRenderer>("Glow");
-			if(glowRenderer != null) glowRenderer.color = rarityColor;
+			m_rewardGodRaysFX.StartFX(eggData.rewardDef.Get("rarity"));
 
-			// Show with some delay to sync with pet's animation
-			m_rewardGodRaysFX.SetActive(true);
-			m_rewardGodRaysFX.transform.DOScale(0f, 0.25f).From().SetDelay(0.15f).SetRecyclable(true);
+			/*// Show with some delay to sync with pet's animation
+			m_rewardGodRaysFX.transform.DOScale(0f, 0.05f).From().SetDelay(0.15f).SetRecyclable(true).OnStart(
+				() => {
+					m_rewardGodRaysFX.StartFX(eggData.rewardDef.Get("rarity"));
+				}
+			);*/
 		}
 	}
 

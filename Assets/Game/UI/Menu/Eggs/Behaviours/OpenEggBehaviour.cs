@@ -23,7 +23,7 @@ public class OpenEggBehaviour : MonoBehaviour, IPointerClickHandler {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly int TAPS_TO_OPEN = 3;
+	public static readonly int TAPS_TO_OPEN = 2;
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
