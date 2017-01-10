@@ -138,7 +138,7 @@ namespace Assets.Code.Game.Spline
 
 				if(objMachine != null)
 				{
-					float angle = Vector3.Dot(velocity, objMachine.velocity);
+					float angle = Vector3.Dot(velocity, objMachine.direction);
                     if(angle > 0)
 					{
 						return true;
@@ -146,7 +146,7 @@ namespace Assets.Code.Game.Spline
 				}
 				else if ( objDragon != null ) 
 				{
-					float angle = Vector3.Dot(velocity, objDragon.velocity);
+					float angle = Vector3.Dot(velocity, objDragon.direction);
                     if(angle > 0)
 					{
 						return true;

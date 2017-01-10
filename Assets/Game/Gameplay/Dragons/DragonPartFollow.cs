@@ -95,7 +95,7 @@ public class DragonPartFollow : MonoBehaviour {
 			Vector3 finalDir = Vector3.Slerp( dir, wanterDir, Time.deltaTime * springSpeed);
 			partTransform.position = follow.position + finalDir * partInfo.m_distance;
 
-			partTransform.LookAt( follow );
+			partTransform.LookAt( follow, follow.up );
 			partTransform.Rotate( m_upDir, Space.Self );
 			// partTransform.Rotate( -partInfo.m_localRotation.eulerAngles, Space.Self );
 

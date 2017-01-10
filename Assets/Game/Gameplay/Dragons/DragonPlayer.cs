@@ -49,12 +49,16 @@ public class DragonPlayer : MonoBehaviour {
 	private float m_energyBase = 1f;
 	public float energyBase {get{return m_energyBase;}}
 
-	private float m_healthWarningThreshold = 1f;
-	private float m_healthCriticalThreshold = 1;
+	// Health modifiers
+	private DragonHealthModifier[] m_healthModifiers = null;	// Sorted by threshold
+	private DragonHealthModifier m_currentHealthModifier = null;
+	public DragonHealthModifier currentHealthModifier {
+		get { return m_currentHealthModifier; }
+	}
 
 	// Power up addition done to the max value ( tant per cent to add)
-	private float m_healthModifier = 0;
-	private float m_energyModifier = 0;
+	private float m_healthBonus = 0;
+	private float m_energyBonus = 0;
 
 	private int m_mineShield;
 	private int m_freeRevives = 0;
@@ -138,13 +142,19 @@ public class DragonPlayer : MonoBehaviour {
 		// Cache content data
 		m_healthMax = m_data.maxHealth;
 		m_energyMax = m_data.def.GetAsFloat("energyBase");
-		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
-		m_healthWarningThreshold = def.GetAsFloat("healthWarningThreshold");
-		m_healthCriticalThreshold = def.GetAsFloat("healthCriticalThreshold");
 
+		// Init health modifiers
+		List<DefinitionNode> healthModifierDefs = new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGON_HEALTH_MODIFIERS, ref healthModifierDefs);
+		DefinitionsManager.SharedInstance.SortByProperty(ref healthModifierDefs, "threshold", DefinitionsManager.SortType.NUMERIC);		// Sort by threshold
+		m_healthModifiers = new DragonHealthModifier[healthModifierDefs.Count];
+		for(int i = 0; i < healthModifierDefs.Count; i++) {
+			m_healthModifiers[i] = new DragonHealthModifier(healthModifierDefs[i]);
+		}
 
-		m_healthModifier = 0;
-		m_energyModifier = 0;
+		// Init bonuses
+		m_healthBonus = 0;
+		m_energyBonus = 0;
 
 		// Check avoid first hit modifiers
 		m_mineShield = 0;
@@ -181,8 +191,8 @@ public class DragonPlayer : MonoBehaviour {
 	{
 		// Make sure the dragon has the scale according to its level
 		gameObject.transform.localScale = Vector3.one * data.scale;
-		SetHealthModifier( m_healthModifier );
-		SetBoostModifier( m_energyModifier );
+		SetHealthBonus( m_healthBonus );
+		SetBoostBonus( m_energyBonus );
 	}
 
 	public void ReviveScale()
@@ -221,40 +231,34 @@ public class DragonPlayer : MonoBehaviour {
 	/// Reset some variable stats for this dragon.
 	/// </summary>
 	public void ResetStats(bool _revive) {
+		// Store some previous values
+		DragonHealthModifier oldHealthModifier = ComputeHealthModifier();
 
-		bool wasStarving = IsStarving();
-		bool wasCritical = IsCritical();
-
+		// Reset stats
 		m_health = m_healthMax;
 		m_energy = m_energyMax;
 
+		// Update health modifier
+		m_currentHealthModifier = ComputeHealthModifier();
 
-
-		if (_revive) {
-			m_invulnerableAfterReviveTimer = m_invulnerableTime;
-		} else {
-			m_invulnerableAfterReviveTimer = 0;
-		}
-
+		// When reviving, do some special logic
 		if ( _revive )
 		{
+			m_invulnerableAfterReviveTimer = m_invulnerableTime;
 			m_dragonMotion.Revive();
 			ReviveScale();
 
-			bool isStarving = IsStarving();
-			if(wasStarving != isStarving) {
-				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, isStarving);
+			// If health modifier changed, notify game
+			if(m_currentHealthModifier != oldHealthModifier) {
+				Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);
 			}
 
-			bool isCritical = IsCritical();
-			if(wasCritical != isCritical) {
-				Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, isCritical);
-			}
-
+			// Notify revive to game
 			Messenger.Broadcast(GameEvents.PLAYER_REVIVE);
 		}
 		else
 		{
+			m_invulnerableAfterReviveTimer = 0;
 			playable = true;
 		}
 	}
@@ -267,9 +271,9 @@ public class DragonPlayer : MonoBehaviour {
 		// If invulnerable and taking damage, don't apply
 		if(IsInvulnerable() && _offset < 0) return;
 
-		// Aux vars
-		bool wasStarving = IsStarving();
-		bool wasCritical = IsCritical();
+		// Store some variables
+		DragonHealthModifier oldHealthModifier = m_currentHealthModifier;
+
 		// Update health
 		m_health = Mathf.Min(m_healthMax, Mathf.Max(0, m_health + _offset));
 
@@ -291,31 +295,24 @@ public class DragonPlayer : MonoBehaviour {
 
 				// Send global even
 				Messenger.Broadcast(GameEvents.PLAYER_KO);
-					// Hode Starving and Critical effects
-				if (wasStarving)
-					Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, false);
-				if (wasCritical)
-					Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, false);
+
+				// Clear any health modifiers
+				m_currentHealthModifier = null;
+				if(oldHealthModifier != m_currentHealthModifier) {
+					Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);
+				}
+
 				// Make dragon unplayable (xD)
 				playable = false;
 			}
 		}
 		else
 		{
-			// Check for starvation
-			bool isStarving = IsStarving();
-			if(wasStarving != isStarving) {
-				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, isStarving);
-			}
-
-			bool isCritical = IsCritical();
-			if(wasCritical != isCritical) {
-				Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, isCritical);
-
-				// Special case: if we're leaving the critical stat but we're still starving, toggle starving mode
-				if(!isCritical && isStarving) {
-					Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, isStarving);
-				}
+			// Update health modifier
+			m_currentHealthModifier = ComputeHealthModifier();
+			if(oldHealthModifier != m_currentHealthModifier) {
+				//Debug.Log("HEALTH MODIFIER CHANGE FROM " + (oldHealthModifier == null ? "none" : oldHealthModifier.def.sku) + " TO " + (m_currentHealthModifier == null ? "none" : m_currentHealthModifier.def.sku));
+				Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);
 			}
 		}
 	}
@@ -350,6 +347,19 @@ public class DragonPlayer : MonoBehaviour {
 		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Super;
 	}
 
+	/// <summary>
+	/// Compute the health modifier to be applied based on current health percentage.
+	/// </summary>
+	/// <returns>The health modifier to be applied. <c>null</c> if none.</returns>
+	public DragonHealthModifier ComputeHealthModifier() {
+		// Modifiers are sorted, so this should work
+		for(int i = 0; i < m_healthModifiers.Length; i++) {
+			if(m_health < m_healthMax * m_healthModifiers[i].threshold) {
+				return m_healthModifiers[i];
+			}
+		}
+		return null;
+	}
 
 	/// <summary>
 	/// Moves this dragon to its default spawn point in the current level.
@@ -422,23 +432,6 @@ public class DragonPlayer : MonoBehaviour {
 	}
 	
 	/// <summary>
-	/// Is the dragon starving?
-	/// </summary>
-	/// <returns><c>true</c> if the dragon is alive and its current life under the specified warning threshold; otherwise, <c>false</c>.</returns>
-	public bool IsStarving() {
-		return (m_health < m_healthMax * m_healthWarningThreshold);
-	}
-
-	/// <summary>
-	/// Is dragon in critical confition?
-	/// </summary>
-	/// <returns><c>true</c> if this instance is critical; otherwise, <c>false</c>.</returns>
-	public bool IsCritical()
-	{
-		return (m_health < m_healthMax * m_healthCriticalThreshold);
-	}
-	
-	/// <summary>
 	/// Whether the dragon can take damage or not.
 	/// </summary>
 	/// <returns><c>true</c> if the dragon currently is invulnerable; otherwise, <c>false</c>.</returns>
@@ -468,8 +461,8 @@ public class DragonPlayer : MonoBehaviour {
 		// Make sure the dragon has the scale according to its level
 		gameObject.transform.localScale = Vector3.one * data.scale;
 
-		SetHealthModifier( m_healthModifier );
-		SetBoostModifier( m_energyModifier );
+		SetHealthBonus( m_healthBonus );
+		SetBoostBonus( m_energyBonus );
 	}
 
 	public void LoseMineShield()
@@ -503,19 +496,19 @@ public class DragonPlayer : MonoBehaviour {
 	}
 
 	// Increases health max by value where value is a tant per cent
-	public void SetHealthModifier( float value )
+	public void SetHealthBonus( float value )
 	{
 		m_healthBase = m_data.maxHealth;
-		m_healthModifier = value;
-		m_healthMax = m_healthBase + (m_healthModifier / 100.0f * m_healthBase);
+		m_healthBonus = value;
+		m_healthMax = m_healthBase + (m_healthBonus / 100.0f * m_healthBase);
 		m_health = m_healthMax;
 	}
 
-	public void SetBoostModifier( float value )
+	public void SetBoostBonus( float value )
 	{
 		m_energyBase = m_data.def.GetAsFloat("energyBase");
-		m_energyModifier = value;
-		m_energyMax = m_energyBase + ( m_energyModifier / 100.0f * m_energyBase );
+		m_energyBonus = value;
+		m_energyMax = m_energyBase + ( m_energyBonus / 100.0f * m_energyBase );
 		m_energy = m_energyMax;
 	}
 
