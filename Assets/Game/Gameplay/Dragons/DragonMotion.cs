@@ -654,7 +654,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
                 Vector3 pos = m_transform.position;
 				if(current != null)
 				{
-					if ( !current.IsInCurrentDirection( gameObject ) )	// if agains current we dont allow to glide
+					if ( current.IsInCurrentDirection( gameObject ) )	// if goes in the same direction as the current
 					{
 						m_flyLoopBehaviour.allowGlide = true;
 						// Do not tremble
