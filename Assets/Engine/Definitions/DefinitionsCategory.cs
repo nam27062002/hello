@@ -39,6 +39,7 @@ public class DefinitionsCategory
 	public const string DRAGONS = "DRAGONS";
 	public const string DRAGON_TIERS = "DRAGON_TIERS";
 	public const string DRAGON_PROGRESSION = "DRAGON_PROGRESSION";
+	public const string DRAGON_HEALTH_MODIFIERS = "DRAGON_HEALTH_MODIFIERS";
 
 	// Entities
 	public const string PETS 				= "PETS";

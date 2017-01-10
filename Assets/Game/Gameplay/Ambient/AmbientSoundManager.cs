@@ -95,7 +95,7 @@ public class AmbientSoundManager : MonoBehaviour
 			m_furyVolume = Mathf.Clamp01( m_furyVolume );
 			// m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_1, m_furyVolume);
 
-			if ( m_player.IsStarving() )
+			if ( m_player.currentHealthModifier != null && m_player.currentHealthModifier.IsStarving() )
 				m_starvingVolume += Time.deltaTime;
 			else
 				m_starvingVolume -= Time.deltaTime;

@@ -52,8 +52,7 @@ public enum GameEvents {
 
 	// Player events
 	PLAYER_DAMAGE_RECEIVED,		// params: float _damage, DamageType _type, Transform _source
-	PLAYER_STARVING_TOGGLED,	// params: bool _isStarving
-	PLAYER_CRITICAL_TOGGLED,	// params: bool _isCritical
+	PLAYER_HEALTH_MODIFIER_CHANGED,	// params: DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier
 	PLAYER_STATE_CHANGED,		// params: DragonPlayer.EState _oldState, DragonPlayer.EState _newState
 	PLAYER_KO,					// no params
 	PLAYER_DIED,				// no params
