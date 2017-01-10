@@ -315,6 +315,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_lastPosition = transform.position;
 		m_lastSpeed = 0;
 
+
+
 		if (m_state == State.None)
 			ChangeState(State.Fly);
 
@@ -323,6 +325,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	}
 
 	void OnEnable() {
+		Messenger.AddListener(GameEvents.PLAYER_DIED, PnPDied);
+	}
+
+	void OnDisable()
+	{
+		Messenger.RemoveListener(GameEvents.PLAYER_DIED, PnPDied);
+	}
+
+	private void PnPDied()
+	{
+		m_impulse = Vector3.zero;
+		m_deadTimer = 1000;
 	}
 	
 	private void ChangeState(State _nextState) {
@@ -617,6 +631,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			// if it's not in a current...
 			if(current == null)
             {
+            	// Do not tremble
+				m_animator.SetBool("against_current", false);
+
 				float angle = Util.ToAngleDegrees( m_direction );
 				if ( angle > m_noGlideAngle && angle < 180-m_noGlideAngle ){
 					m_flyLoopBehaviour.allowGlide = false;	
@@ -635,11 +652,15 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					if ( !current.IsInCurrentDirection( gameObject ) )	// if agains current we dont allow to glide
 					{
 						m_flyLoopBehaviour.allowGlide = true;
+						// Do not tremble
+						m_animator.SetBool("against_current", false);
 					}
 					else
 					{
 						m_animator.SetBool("glide", false);
 						m_flyLoopBehaviour.allowGlide = false;
+						// Allow tremble
+						m_animator.SetBool("against_current", true);
 					}
 				}
 			}

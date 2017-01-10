@@ -2,14 +2,19 @@ using UnityEngine;
 using System.Collections;
 
 abstract public class TouchControls : MonoBehaviour {
-	
-	// INSPECTOR VARIABLES
-	public bool m_boostWithRadiusCheck = false;
-	public bool m_boostWithSecondTouch = true;
-	public bool m_boostWithHardPush = false;
 
-	// PROTECTED MEMBERS
-	protected TouchControlsType m_type;
+    public static bool BOOST_WITH_HARD_PUSH_DEFAULT_ENABLED = false;
+    public static float BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD = 0.85f;   
+
+    // INSPECTOR VARIABLES
+    public bool m_boostWithRadiusCheck = false;
+	public bool m_boostWithSecondTouch = true;
+
+    private bool m_boostWithHardPush = BOOST_WITH_HARD_PUSH_DEFAULT_ENABLED;
+    private float m_boostWithHardPushThreshold = BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD;
+
+    // PROTECTED MEMBERS
+    protected TouchControlsType m_type;
 	
 	protected TouchState m_currentTouchState = TouchState.none;
 	protected Vector3 m_currentTouchPos = Vector3.zero;
@@ -31,10 +36,8 @@ abstract public class TouchControls : MonoBehaviour {
 	public TouchState CurrentTouchState { get { return this.m_currentTouchState; } }
 	public Vector3 CurrentTouchPos { get { return m_currentTouchPos; } }
 
-	public bool touchAction = false;
+	public bool touchAction = false;    	   
 
-
-	
 	// Use this for initialization
 	virtual public void Start () {
 	
@@ -52,8 +55,18 @@ abstract public class TouchControls : MonoBehaviour {
 			Input.GetMouseButtonUp(0);
 			Input.GetMouseButtonUp(1);
 		}
-	}
+
+        UpdateBoostWithHardPush();
+
+        // Subscribe to external events
+        Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);
+    }
 	
+    public virtual void OnDestroy() {
+        // Unsubscribe from external events
+        Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);        
+    }
+
 	private void ResetTouchValues()
 	{
 		m_currentTouchState = TouchState.none;
@@ -139,7 +152,7 @@ abstract public class TouchControls : MonoBehaviour {
 				{
 					if (m_boostWithHardPush)
 					{
-						if ( GameInput.touchPressure[0] > 0.85f )
+						if ( GameInput.touchPressure[0] > m_boostWithHardPushThreshold)
 							touchAction = true;
 					}
 				}
@@ -221,4 +234,52 @@ abstract public class TouchControls : MonoBehaviour {
 	virtual public void ClearBoost( bool forceDecceleration )
 	{
 	}
+
+    private void OnPrefChanged(string id)
+    {     
+        switch (id)            
+        {
+            case DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH:
+                UpdateBoostWithHardPushEnabled();
+                break;
+
+            case DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD:
+                UpdateBoostWithHardPushThreshold();
+                break;
+
+            default:
+                OnPrefChangedExtended(id);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Subclasses of this class just have to override this method to handle change of preferences
+    /// </summary>
+    /// <param name="id"></param>
+    protected virtual void OnPrefChangedExtended(string id) {}
+
+    private void UpdateBoostWithHardPush()
+    {
+        UpdateBoostWithHardPushEnabled();
+        UpdateBoostWithHardPushThreshold();
+    }
+
+    private void UpdateBoostWithHardPushEnabled()
+    {
+#if PRODUCTION                
+        m_boostWithHardPush = BOOST_WITH_HARD_PUSH_DEFAULT_ENABLED;
+#else
+        m_boostWithHardPush = Prefs.GetBoolPlayer(DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH);        
+#endif
+    }
+
+    private void UpdateBoostWithHardPushThreshold()
+    {
+#if PRODUCTION        
+        m_boostWithHardPushThreshold = BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD;
+#else        
+        m_boostWithHardPushThreshold = Prefs.GetFloatPlayer(DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD);
+#endif
+    }
 }

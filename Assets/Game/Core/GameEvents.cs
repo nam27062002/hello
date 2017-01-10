@@ -103,5 +103,9 @@ public enum GameEvents {
 
 	// Camera events
 	CAMERA_INTRO_DONE,			// no params
-	CAMERA_SHAKE				// params: float _duration, float _intensity
+	CAMERA_SHAKE,				// params: float _duration, float _intensity
+
+    // Device events
+    DEVICE_RESOLUTION_CHANGED,  // params: Vector2 _newResolution
+    DEVICE_ORIENTATION_CHANGED  // params: DeviceOrientation _newOrientation
 }

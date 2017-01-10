@@ -4,6 +4,8 @@
 // Created by David Germade on 24/08/2016.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
+using System;
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -22,11 +24,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     /// </summary>
     private const int SocialNetworkReauthTime = 120;    
 
+    private bool IsAlive { get; set; }
+
     /// <summary>
 	/// Initialization. This method will be called only once regardless the amount of times the user is led to the Loading scene.
 	/// </summary>
 	protected void Awake()
-    {
+    {                
 #if !PRODUCTION
         DebugSettings.Init();
 #endif
@@ -56,6 +60,17 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         //gv.StartBuildValidation();        
     }
 
+    protected void Start()
+    {
+        StartCoroutine(Device_Update());
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        IsAlive = false;
+    }
+
     private void Reset()
     {
         LastPauseTime = -1;
@@ -74,13 +89,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {        
         // To Debug
         /*if (Input.GetKeyDown(KeyCode.A))
-        {
+        {            
             //NeedsToRestartFlow = true;           
             //Debug_ToggleIsPaused();
 
             //Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
             //Debug.Log("eggs collected = " + UsersManager.currentUser.eggsCollected);            
-        }*/     
+        }  
+        */   
         
         if (NeedsToRestartFlow)
         {
@@ -259,7 +275,57 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     }
     #endregion
 
-        #region debug
+    #region device   
+    // Time in seconds to wait until the device has to be updated again.
+    public const float DEVICE_NEXT_UPDATE = 0.5f;        
+
+    /// <summary>
+    /// Current resolution
+    /// </summary>
+    public Vector2 Device_Resolution { get; private set; }
+
+    /// <summary>
+    /// Current device orientation
+    /// </summary>
+    public DeviceOrientation Device_Orientation { get; private set; }    
+    
+    private IEnumerator Device_Update()
+    {
+        IsAlive = true;
+        Device_Resolution = new Vector2(Screen.width, Screen.height);
+        Device_Orientation = Input.deviceOrientation;
+
+        while (IsAlive)
+        {
+            // Check for a Resolution Change
+            if (Device_Resolution.x != Screen.width || Device_Resolution.y != Screen.height)
+            {
+                Device_Resolution = new Vector2(Screen.width, Screen.height);
+                Messenger.Broadcast<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, Device_Resolution);                
+            }
+
+            // Check for an Orientation Change
+            switch (Input.deviceOrientation)
+            {
+                case DeviceOrientation.Unknown:            // Ignore
+                case DeviceOrientation.FaceUp:            // Ignore
+                case DeviceOrientation.FaceDown:        // Ignore
+                    break;
+                default:
+                    if (Device_Orientation != Input.deviceOrientation)
+                    {
+                        Device_Orientation = Input.deviceOrientation;
+                        Messenger.Broadcast<DeviceOrientation>(GameEvents.DEVICE_ORIENTATION_CHANGED, Device_Orientation);
+                    }
+                    break;
+            }
+
+            yield return new WaitForSeconds(DEVICE_NEXT_UPDATE);
+        }
+    }
+    #endregion
+
+    #region debug
     private bool Debug_IsPaused { get; set; }
 
     private void Debug_ToggleIsPaused()
