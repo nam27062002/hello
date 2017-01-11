@@ -10,12 +10,12 @@ public class FrameColoring : MonoBehaviour
 
 	private float m_value = 0.5f;
 	private Color m_color;
-	public Material m_material;
+	public Material m_material = null;
 
 	private bool m_furyOn = false;
 	DragonBreathBehaviour.Type m_furyType = DragonBreathBehaviour.Type.None;
 	private bool m_starvingOn = false;
-	private bool m_criticaOn = false;
+	private bool m_criticalOn = false;
 	private bool m_ko = false;
 
 	void Awake()
@@ -24,8 +24,7 @@ public class FrameColoring : MonoBehaviour
 		m_value = 0;
 		m_color = Color.black;
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
-		Messenger.AddListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
-		Messenger.AddListener<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, OnCritical);
+		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 		Messenger.AddListener(GameEvents.PLAYER_KO, OnKo);
 		Messenger.AddListener(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
@@ -33,8 +32,7 @@ public class FrameColoring : MonoBehaviour
 	private void OnDestroy() 
 	{
 		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
-		Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
-		Messenger.RemoveListener<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, OnCritical);
+		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 		Messenger.RemoveListener(GameEvents.PLAYER_KO, OnKo);
 		Messenger.RemoveListener(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
@@ -59,7 +57,7 @@ public class FrameColoring : MonoBehaviour
 
 		}
 
-		else if ( m_criticaOn )
+		else if ( m_criticalOn )
 		{
 			m_value = Mathf.Lerp( m_value, 0.7f + Mathf.Sin( Time.time * 5 ) * 0.2f, Time.deltaTime * 10);
 			m_color = Color.Lerp( m_color, m_starvingColor, Time.deltaTime * 10);
@@ -96,14 +94,10 @@ public class FrameColoring : MonoBehaviour
 		m_furyType = _type;
 	}
 
-	private void OnStarving( bool _enabled )
+	private void OnHealthModifierChanged( DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier )
 	{
-		m_starvingOn = _enabled;
-	}
-
-	private void OnCritical( bool _isCritical ) 
-	{
-		m_criticaOn = _isCritical;
+		m_starvingOn = (_newModifier != null && _newModifier.IsStarving());
+		m_criticalOn = (_newModifier != null && _newModifier.IsCritical());
 	}
 
 	private void OnKo()

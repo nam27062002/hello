@@ -70,7 +70,13 @@ public abstract class TextureGenBase : ScriptableObject
 
     public string serializedName;
 
-    abstract public void initGen(Texture2D canvas);
+//    abstract public void initGen(Texture2D canvas);
+    public void initGen(Texture2D canvas)
+    {
+        iResolution.x = canvas.width;
+        iResolution.y = canvas.height;
+    }
+
     abstract public Vector4 doGen(Vector2 iFragCoord);
     abstract public void guiGen();
 }
@@ -138,13 +144,13 @@ public class Perlin : TextureGenBase
         }
         return f;
     }
-
+/*
     public override void initGen(Texture2D canvas)
     {
         iResolution.x = canvas.width;
         iResolution.y = canvas.height;
     }
-
+*/
     public override Vector4 doGen(Vector2 iFragCoord)
     {
         Vector2 uv = Mathv.Div(iFragCoord, iResolution) * m_Tiles;
@@ -173,6 +179,84 @@ public class Perlin : TextureGenBase
 
 }
 
+
+public class Voronoi : TextureGenBase
+{
+
+    Vector2 m_vHashSeed = new Vector2(41.0f, 289.0f);
+    Vector2 m_vHashSeed2 = new Vector2(262144.0f, 32768.0f);
+
+
+    public Voronoi()
+    {
+        serializedName = "VoronoiPrefs";
+    }
+
+
+
+    // Vector2 to Vector2 hash.
+    Vector2 hash22(Vector2 p)
+    {
+        // Faster, but doesn't disperse things quite as nicely. However, when framerate
+        // is an issue, and it often is, this is a good one to use. Basically, it's a tweaked 
+        // amalgamation I put together, based on a couple of other random algorithms I've 
+        // seen around... so use it with caution, because I make a tonne of mistakes. :)
+        float n = Mathf.Sin(Vector2.Dot(p, m_vHashSeed));
+        //return fract(vec2(262144, 32768)*n); 
+
+        // Animated.
+        p = Mathv.Fract(m_vHashSeed2 * n);
+//        return sin(p * 6.2831853 + iGlobalTime) * 0.5 + 0.5;
+        return Mathv.Sin(Mathv.Mul(p, Mathf.PI * 2.0f) * 0.5f) + (Vector2.one * 0.5f);
+    }
+
+    float VoronoiFilter(Vector2 p)
+    {
+        Vector2 g = Mathv.Floor(p), off = new Vector2();
+        p -= g;
+
+        Vector3 d = Vector3.one;
+
+        for (int y = -1; y <= 1; y++)
+        {
+            for (int x = -1; x <= 1; x++)
+            {
+                off.Set(x, y);
+                off += hash22(g + off) - p;
+
+                d.z = Vector2.Dot(off, off);
+                d.y = Mathf.Max(d.x, Mathf.Min(d.y, d.z));
+                d.x = Mathf.Min(d.x, d.z);
+            }
+        }
+
+        float r = Mathf.Max(d.y / 1.2f - d.x * 1.0f, 0.0f) / 1.2f;
+
+        return r;
+    }
+
+    public override Vector4 doGen(Vector2 iFragCoord)
+    {
+        Vector2 uv = Mathv.Div((iFragCoord - iResolution * 0.5f), iResolution);
+        //        float n = Mathf.Pow(1.0f - Vector2.Dot(uv, uv), 2.0f);
+        float v = VoronoiFilter(uv * 2.0f);
+
+        return new Vector4(v, v, v, 1.0f);
+    }
+
+    public override void guiGen()
+    {
+        EditorGUILayout.BeginVertical();
+//        m_Scale = EditorGUILayout.FloatField("Initial Scale:", m_Scale);
+//        m_Amplitude = EditorGUILayout.FloatField("Initial Amplitude:", m_Amplitude);
+//        m_Iterations = EditorGUILayout.IntField("Iterations:", m_Iterations);
+
+        //        seed = EditorGUILayout.FloatField("seed:", seed);
+        //        scale = EditorGUILayout.FloatField("scale:", scale);
+        EditorGUILayout.EndVertical();
+    }
+
+}
 
 //----------------------------------------------------------------------//
 // CLASSES																//

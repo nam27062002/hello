@@ -59,7 +59,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		m_particleController = transform.parent.GetComponentInChildren<DragonParticleController>();
 		m_animator = GetComponent<Animator>();
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.AddListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
+		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 		m_eventsRegistered = true;
 		// m_animator.SetBool( "starving", true);
 
@@ -78,7 +78,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		if (m_eventsRegistered)
 		{
 			Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-			Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
+			Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 		}
 	}
 
@@ -101,8 +101,9 @@ public class DragonAnimationEvents : MonoBehaviour {
 		m_animator.SetTrigger("LevelUp");
 	}
 
-	private void OnStarving( bool starving)
+	private void OnHealthModifierChanged(DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier)
 	{
+		bool starving = (_newModifier != null && _newModifier.IsStarving());
 		m_animator.SetBool( "starving", starving);
 		if (!string.IsNullOrEmpty( m_starvingSound)){
 			if ( starving ){

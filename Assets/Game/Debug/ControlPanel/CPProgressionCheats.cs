@@ -7,9 +7,10 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -154,10 +155,23 @@ public class CPProgressionCheats : MonoBehaviour {
 		if(slotIdx >= 0) PersistenceManager.Save();
 	}
 
-	/// <summary>
-	/// Simulates daily chest collection (no menu refresh for now, reload menu for that).
-	/// </summary>
-	public void OnAddDailyChest() {
+    public void OnAcquireAllDragons() {
+        List<DragonData> dragons = DragonManager.GetDragonsByLockState(DragonData.LockState.ANY);
+        if (dragons != null) {
+            int i;
+            int count = dragons.Count;
+            for (i = 0; i < count; i++) {
+                if (!dragons[i].isOwned) {
+                    dragons[i].Acquire();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Simulates daily chest collection (no menu refresh for now, reload menu for that).
+    /// </summary>
+    public void OnAddDailyChest() {
 		// Find the first non-collected chest
 		Chest ch = null;
 		foreach(Chest chest in ChestManager.dailyChests) {

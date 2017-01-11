@@ -37,6 +37,7 @@ public class HUDMessage : MonoBehaviour {
 	public enum Type {
 		LEVEL_UP,
 		SURVIVAL_BONUS,
+		HEALTH_EATMORE,
 		HEALTH_STARVING,
 		HEALTH_CRITICAL,
 		CURSED,
@@ -178,8 +179,9 @@ public class HUDMessage : MonoBehaviour {
 		switch(m_type) {
 			case Type.LEVEL_UP:				Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
 			case Type.SURVIVAL_BONUS:		Messenger.AddListener(GameEvents.SURVIVAL_BONUS_ACHIEVED, OnStandardMessage);				break;
-			case Type.HEALTH_STARVING:		Messenger.AddListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnToggleMessage);			break;
-			case Type.HEALTH_CRITICAL:		Messenger.AddListener<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, OnToggleMessage);			break;
+			case Type.HEALTH_EATMORE:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
+			case Type.HEALTH_STARVING:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
+			case Type.HEALTH_CRITICAL:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.CURSED:				Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);	break;
 			case Type.NEED_BIGGER_DRAGON:	Messenger.AddListener<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.AddListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
@@ -202,8 +204,9 @@ public class HUDMessage : MonoBehaviour {
 			// Unsubscribe from external events, based on type
 			case Type.LEVEL_UP:				Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
 			case Type.SURVIVAL_BONUS:		Messenger.RemoveListener(GameEvents.SURVIVAL_BONUS_ACHIEVED, OnStandardMessage);				break;
-			case Type.HEALTH_STARVING:		Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnToggleMessage);			break;
-			case Type.HEALTH_CRITICAL:		Messenger.RemoveListener<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, OnToggleMessage);			break;
+			case Type.HEALTH_EATMORE:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
+			case Type.HEALTH_STARVING:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
+			case Type.HEALTH_CRITICAL:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.CURSED:				Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);	break;
 			case Type.NEED_BIGGER_DRAGON:	Messenger.RemoveListener<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.RemoveListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
@@ -375,6 +378,25 @@ public class HUDMessage : MonoBehaviour {
 			Show();
 		} else {
 			Hide();
+		}
+	}
+
+	/// <summary>
+	/// The dragon's health modifier has been changed.
+	/// </summary>
+	/// <param name="_oldModifier">Old modifier.</param>
+	/// <param name="_newModifier">New modifier.</param>
+	private void OnHealthModifierChanged(DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier) {
+		// If no modifier, turn off
+		if(_newModifier == null) {
+			Hide();
+		} else {
+			// Toggle depending on new modifier and message type
+			switch(m_type) {
+				case Type.HEALTH_EATMORE: OnToggleMessage(_newModifier.IsEatMore());	break;
+				case Type.HEALTH_STARVING: OnToggleMessage(_newModifier.IsStarving());	break;
+				case Type.HEALTH_CRITICAL: OnToggleMessage(_newModifier.IsCritical());	break;
+			}
 		}
 	}
 
