@@ -127,7 +127,7 @@ public static class DebugSettings {
 		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
 
         key = DRAGON_BOOST_WITH_HARD_PUSH;
-        Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, false));
+		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, TouchControls.BOOST_WITH_HARD_PUSH_DEFAULT_ENABLED));
 
         key = DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD;
         Prefs.SetFloatPlayer(key, Prefs.GetFloatPlayer(key, TouchControls.BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD));		        
