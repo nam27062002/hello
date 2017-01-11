@@ -107,6 +107,13 @@ namespace GlowEffect
             glowMaterial.SetColor("_GlowColorMultiplier", glowColorMultiplier);
         }
 
+#if UNITY_EDITOR
+        public void Update()
+        {
+            UpdateGlowMaterial();
+        }
+#endif
+
         public void OnDisable()
         {
             glowMaterial.mainTexture = null;
