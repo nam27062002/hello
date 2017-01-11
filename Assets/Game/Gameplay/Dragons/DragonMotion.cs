@@ -408,7 +408,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					m_direction = m_impulse.normalized;
 					m_stunnedTimer = m_stunnedTime;
 					m_rbody.freezeRotation = true;
-					m_animator.SetTrigger("damage");
 					break;
 				case State.InsideWater:
 				{
@@ -1393,6 +1392,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	}
 		
 	public void AddForce(Vector3 _force) {
+		m_animator.SetTrigger("damage");
 		m_impulse = _force;
 		if ( IsAliveState() )
 			ChangeState(State.Stunned);

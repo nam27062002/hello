@@ -81,6 +81,10 @@ public class IncubatorSlot : MonoBehaviour {
 		//Refresh();
 	}
 
+    private void OnDestroy() {        
+        m_eggPreview.Unload();
+    }
+
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>

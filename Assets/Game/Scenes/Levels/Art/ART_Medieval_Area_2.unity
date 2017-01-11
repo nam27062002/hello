@@ -72,7 +72,7 @@ LightmapSettings:
     m_FinalGatherFiltering: 1
     m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
-  m_LightingDataAsset: {fileID: 112000001, guid: 8f0ce19020489c44cbf6716d1c9eb809,
+  m_LightingDataAsset: {fileID: 112000009, guid: 8f0ce19020489c44cbf6716d1c9eb809,
     type: 2}
   m_RuntimeCPUUsage: 25
 --- !u!196 &4
@@ -527,6 +527,76 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 400000, guid: a4a7511ecccf91240a8db8a386dfbd4b, type: 3}
   m_PrefabInternal: {fileID: 24188544}
+--- !u!1 &35480321
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1733345817}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 35480324}
+  - component: {fileID: 35480323}
+  - component: {fileID: 35480322}
+  m_Layer: 0
+  m_Name: aquatic_plant (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &35480322
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1733345817}
+  m_GameObject: {fileID: 35480321}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &35480323
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1733345817}
+  m_GameObject: {fileID: 35480321}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &35480324
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1733345817}
+  m_GameObject: {fileID: 35480321}
+  m_LocalRotation: {x: -0.70001453, y: 0.14496267, z: 0.12836668, w: 0.6873773}
+  m_LocalPosition: {x: 516.3756, y: -76.25114, z: 4.4024825}
+  m_LocalScale: {x: 80.42909, y: 80.42909, z: 80.42909}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 65
+  m_LocalEulerAnglesHint: {x: -88.310005, y: 138.43301, z: -116.143005}
 --- !u!1001 &35613569
 Prefab:
   m_ObjectHideFlags: 0
@@ -3836,6 +3906,76 @@ ParticleSystem:
       minColor: {r: 1, g: 1, b: 1, a: 1}
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       minMaxState: 0
+--- !u!1 &124277231
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1650999252}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 124277234}
+  - component: {fileID: 124277233}
+  - component: {fileID: 124277232}
+  m_Layer: 0
+  m_Name: aquatic_plant (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &124277232
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1650999252}
+  m_GameObject: {fileID: 124277231}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &124277233
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1650999252}
+  m_GameObject: {fileID: 124277231}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &124277234
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1650999252}
+  m_GameObject: {fileID: 124277231}
+  m_LocalRotation: {x: -0.5360845, y: 0.4611003, z: 0.4611002, w: 0.5360845}
+  m_LocalPosition: {x: 493.42, y: -78.1, z: 8.84}
+  m_LocalScale: {x: 80.42909, y: 80.42909, z: 80.42909}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 63
+  m_LocalEulerAnglesHint: {x: -89.99999, y: 180, z: -98.60101}
 --- !u!1 &126283359
 GameObject:
   m_ObjectHideFlags: 0
@@ -4218,6 +4358,76 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
   m_PrefabInternal: {fileID: 170666648}
+--- !u!1 &175319859
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 6680959}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 175319862}
+  - component: {fileID: 175319861}
+  - component: {fileID: 175319860}
+  m_Layer: 0
+  m_Name: aquatic_plant (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &175319860
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 6680959}
+  m_GameObject: {fileID: 175319859}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &175319861
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 6680959}
+  m_GameObject: {fileID: 175319859}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &175319862
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 6680959}
+  m_GameObject: {fileID: 175319859}
+  m_LocalRotation: {x: -0.3045927, y: 0.63814056, z: 0.63814044, w: 0.30459273}
+  m_LocalPosition: {x: 499.7, y: -78.1, z: 8.83}
+  m_LocalScale: {x: 92.493454, y: 92.493454, z: 92.493454}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 64
+  m_LocalEulerAnglesHint: {x: -89.99999, y: 180, z: -51.031982}
 --- !u!1 &181075792
 GameObject:
   m_ObjectHideFlags: 0
@@ -4288,6 +4498,76 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 181075792}
   m_Mesh: {fileID: 4300002, guid: 9f403cd0f8782b0428e60f989af94bd3, type: 3}
+--- !u!1 &186944087
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 285656894}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 186944090}
+  - component: {fileID: 186944089}
+  - component: {fileID: 186944088}
+  m_Layer: 0
+  m_Name: aquatic_plant (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &186944088
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 285656894}
+  m_GameObject: {fileID: 186944087}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &186944089
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 285656894}
+  m_GameObject: {fileID: 186944087}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &186944090
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 285656894}
+  m_GameObject: {fileID: 186944087}
+  m_LocalRotation: {x: -0.711184, y: 0.19956757, z: 0.18193562, w: 0.64906824}
+  m_LocalPosition: {x: 527.2894, y: -75.23034, z: 6.3643274}
+  m_LocalScale: {x: 70.64708, y: 70.64708, z: 70.64708}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 66
+  m_LocalEulerAnglesHint: {x: -95.23399, y: -0.17999268, z: 31.513992}
 --- !u!1 &190973665
 GameObject:
   m_ObjectHideFlags: 0
@@ -5348,6 +5628,76 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
   m_IsPrefabParent: 0
+--- !u!1 &359897210
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 817540746}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 359897213}
+  - component: {fileID: 359897212}
+  - component: {fileID: 359897211}
+  m_Layer: 0
+  m_Name: aquatic_plant (7)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &359897211
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 817540746}
+  m_GameObject: {fileID: 359897210}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &359897212
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 817540746}
+  m_GameObject: {fileID: 359897210}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &359897213
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 817540746}
+  m_GameObject: {fileID: 359897210}
+  m_LocalRotation: {x: -0.41579038, y: 0.624863, z: 0.5467305, w: 0.3711474}
+  m_LocalPosition: {x: 548.8768, y: -80.29753, z: 3.5876842}
+  m_LocalScale: {x: 65.93347, y: 65.93348, z: 65.93348}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 69
+  m_LocalEulerAnglesHint: {x: -82.704, y: 175.854, z: -63.631004}
 --- !u!1 &370458426
 GameObject:
   m_ObjectHideFlags: 0
@@ -6454,6 +6804,76 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: -77.215004, y: -271.336, z: 589.987}
+--- !u!1 &682693991
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1951857710}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 682693994}
+  - component: {fileID: 682693993}
+  - component: {fileID: 682693992}
+  m_Layer: 0
+  m_Name: aquatic_plant
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &682693992
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1951857710}
+  m_GameObject: {fileID: 682693991}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &682693993
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1951857710}
+  m_GameObject: {fileID: 682693991}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &682693994
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1951857710}
+  m_GameObject: {fileID: 682693991}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 504.73, y: -77.48, z: 6.74}
+  m_LocalScale: {x: 110, y: 110, z: 110}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 62
+  m_LocalEulerAnglesHint: {x: -108.465, y: 180, z: -180}
 --- !u!1001 &698604326
 Prefab:
   m_ObjectHideFlags: 0
@@ -7400,6 +7820,76 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8d0cb2c7edf86ae44921f4c8b878af99, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &785700447
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 20937429}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 785700450}
+  - component: {fileID: 785700449}
+  - component: {fileID: 785700448}
+  m_Layer: 0
+  m_Name: aquatic_plant (6)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &785700448
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 20937429}
+  m_GameObject: {fileID: 785700447}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &785700449
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 20937429}
+  m_GameObject: {fileID: 785700447}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &785700450
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 20937429}
+  m_GameObject: {fileID: 785700447}
+  m_LocalRotation: {x: -0.64638203, y: 0.24243686, z: 0.24033903, w: 0.6823869}
+  m_LocalPosition: {x: 544.62, y: -79.25, z: 6.11}
+  m_LocalScale: {x: 57.457237, y: 57.457237, z: 57.457237}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 68
+  m_LocalEulerAnglesHint: {x: -87.077, y: 23.302002, z: 16.633001}
 --- !u!1001 &793544039
 Prefab:
   m_ObjectHideFlags: 0
@@ -8118,6 +8608,76 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 926750894}
   m_Mesh: {fileID: 4300076, guid: fb89d4825eba78d478cd7b1808ab4118, type: 3}
+--- !u!1 &964118441
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 19187901}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 964118444}
+  - component: {fileID: 964118443}
+  - component: {fileID: 964118442}
+  m_Layer: 0
+  m_Name: aquatic_plant (14)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &964118442
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 19187901}
+  m_GameObject: {fileID: 964118441}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &964118443
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 19187901}
+  m_GameObject: {fileID: 964118441}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &964118444
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 19187901}
+  m_GameObject: {fileID: 964118441}
+  m_LocalRotation: {x: -0.64922106, y: -0.36207676, z: -0.35951635, w: 0.5640572}
+  m_LocalPosition: {x: 587.17, y: -78.13, z: -2.13}
+  m_LocalScale: {x: 67.36096, y: 67.36096, z: 67.36096}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 76
+  m_LocalEulerAnglesHint: {x: -83.092, y: -209.01999, z: 147.53601}
 --- !u!1001 &970316270
 Prefab:
   m_ObjectHideFlags: 0
@@ -11607,6 +12167,146 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1092503622}
   m_Mesh: {fileID: 4300056, guid: fb89d4825eba78d478cd7b1808ab4118, type: 3}
+--- !u!1 &1094202522
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1828095960}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1094202525}
+  - component: {fileID: 1094202524}
+  - component: {fileID: 1094202523}
+  m_Layer: 0
+  m_Name: aquatic_plant (15)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &1094202523
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1828095960}
+  m_GameObject: {fileID: 1094202522}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &1094202524
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1828095960}
+  m_GameObject: {fileID: 1094202522}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &1094202525
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1828095960}
+  m_GameObject: {fileID: 1094202522}
+  m_LocalRotation: {x: -0.61744267, y: 0.34462237, z: 0.3446223, w: 0.61744267}
+  m_LocalPosition: {x: 502.42, y: -78.21, z: 12.886}
+  m_LocalScale: {x: 118.988625, y: 118.98864, z: 118.98864}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 77
+  m_LocalEulerAnglesHint: {x: -89.99999, y: 180, z: -121.664}
+--- !u!1 &1102681599
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 224138640}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1102681602}
+  - component: {fileID: 1102681601}
+  - component: {fileID: 1102681600}
+  m_Layer: 0
+  m_Name: aquatic_plant (5)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &1102681600
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 224138640}
+  m_GameObject: {fileID: 1102681599}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &1102681601
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 224138640}
+  m_GameObject: {fileID: 1102681599}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &1102681602
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 224138640}
+  m_GameObject: {fileID: 1102681599}
+  m_LocalRotation: {x: -0.7268037, y: -0.13178095, z: -0.120452076, w: 0.6632356}
+  m_LocalPosition: {x: 529.96, y: -75.87, z: 8.73}
+  m_LocalScale: {x: 57.457237, y: 57.457237, z: 57.457237}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 67
+  m_LocalEulerAnglesHint: {x: -95.23399, y: -0.17999268, z: -20.390015}
 --- !u!1001 &1112716340
 Prefab:
   m_ObjectHideFlags: 0
@@ -20607,6 +21307,76 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
   m_IsPrefabParent: 0
+--- !u!1 &1737861199
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 350119010}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1737861202}
+  - component: {fileID: 1737861201}
+  - component: {fileID: 1737861200}
+  m_Layer: 0
+  m_Name: aquatic_plant (8)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &1737861200
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 350119010}
+  m_GameObject: {fileID: 1737861199}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &1737861201
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 350119010}
+  m_GameObject: {fileID: 1737861199}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &1737861202
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 350119010}
+  m_GameObject: {fileID: 1737861199}
+  m_LocalRotation: {x: -0.27707815, y: 0.63230777, z: 0.6566469, w: 0.30369306}
+  m_LocalPosition: {x: 552.39734, y: -80.63858, z: 2.0400155}
+  m_LocalScale: {x: 57.457237, y: 57.457237, z: 57.457237}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 70
+  m_LocalEulerAnglesHint: {x: -87.077, y: 23.302002, z: 108.188}
 --- !u!1 &1754855692
 GameObject:
   m_ObjectHideFlags: 0
@@ -20643,6 +21413,76 @@ Transform:
   m_Father: {fileID: 1421462802}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1756248543
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1813197301}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1756248546}
+  - component: {fileID: 1756248545}
+  - component: {fileID: 1756248544}
+  m_Layer: 0
+  m_Name: aquatic_plant (13)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &1756248544
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1813197301}
+  m_GameObject: {fileID: 1756248543}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &1756248545
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1813197301}
+  m_GameObject: {fileID: 1756248543}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &1756248546
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1813197301}
+  m_GameObject: {fileID: 1756248543}
+  m_LocalRotation: {x: -0.6573522, y: 0.36224782, z: 0.31355986, w: 0.58167416}
+  m_LocalPosition: {x: 600.83, y: -74.25, z: 8.15}
+  m_LocalScale: {x: 89.07665, y: 89.07665, z: 89.07665}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 75
+  m_LocalEulerAnglesHint: {x: -82.704, y: 175.854, z: -118.635}
 --- !u!1001 &1765227847
 Prefab:
   m_ObjectHideFlags: 0
@@ -21071,6 +21911,76 @@ Transform:
   m_Father: {fileID: 867943528}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1812964608
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1725154094}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1812964611}
+  - component: {fileID: 1812964610}
+  - component: {fileID: 1812964609}
+  m_Layer: 0
+  m_Name: aquatic_plant (12)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &1812964609
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1725154094}
+  m_GameObject: {fileID: 1812964608}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &1812964610
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1725154094}
+  m_GameObject: {fileID: 1812964608}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &1812964611
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1725154094}
+  m_GameObject: {fileID: 1812964608}
+  m_LocalRotation: {x: -0.11686614, y: -0.7505673, z: -0.6408728, w: 0.110784195}
+  m_LocalPosition: {x: 567.77, y: -76.871, z: 2.2129}
+  m_LocalScale: {x: 59.755524, y: 59.755524, z: 59.755524}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 74
+  m_LocalEulerAnglesHint: {x: -81.089005, y: -173.882, z: 12.465}
 --- !u!1001 &1813197301
 Prefab:
   m_ObjectHideFlags: 0
@@ -21145,6 +22055,76 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
   m_IsPrefabParent: 0
+--- !u!1 &1813233919
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1052983403}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1813233922}
+  - component: {fileID: 1813233921}
+  - component: {fileID: 1813233920}
+  m_Layer: 0
+  m_Name: aquatic_plant (11)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &1813233920
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1052983403}
+  m_GameObject: {fileID: 1813233919}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &1813233921
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1052983403}
+  m_GameObject: {fileID: 1813233919}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &1813233922
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1052983403}
+  m_GameObject: {fileID: 1813233919}
+  m_LocalRotation: {x: -0.82591426, y: 0.036443185, z: 0.0042524734, w: 0.5626006}
+  m_LocalPosition: {x: 582.402, y: -75.634, z: 2.354}
+  m_LocalScale: {x: 57.457237, y: 57.457237, z: 57.457237}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 73
+  m_LocalEulerAnglesHint: {x: -68.37701, y: -185.29099, z: 188.64899}
 --- !u!1001 &1827410018
 Prefab:
   m_ObjectHideFlags: 0
@@ -21507,6 +22487,76 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1856075346}
   m_Mesh: {fileID: 4300084, guid: fb89d4825eba78d478cd7b1808ab4118, type: 3}
+--- !u!1 &1868204251
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 419763758}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1868204254}
+  - component: {fileID: 1868204253}
+  - component: {fileID: 1868204252}
+  m_Layer: 0
+  m_Name: aquatic_plant (10)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &1868204252
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 419763758}
+  m_GameObject: {fileID: 1868204251}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &1868204253
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 419763758}
+  m_GameObject: {fileID: 1868204251}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &1868204254
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 419763758}
+  m_GameObject: {fileID: 1868204251}
+  m_LocalRotation: {x: -0.6110112, y: -0.450282, z: -0.31233823, w: 0.57127607}
+  m_LocalPosition: {x: 559.634, y: -77.891, z: 3.812}
+  m_LocalScale: {x: 57.457237, y: 57.457237, z: 57.457237}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 72
+  m_LocalEulerAnglesHint: {x: -78.34801, y: -138.893, z: 73.246}
 --- !u!4 &1879768152
 Transform:
   m_ObjectHideFlags: 0
@@ -22194,6 +23244,76 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1969344652}
   m_Mesh: {fileID: 4300086, guid: fb89d4825eba78d478cd7b1808ab4118, type: 3}
+--- !u!1 &1982014510
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1827410018}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1982014513}
+  - component: {fileID: 1982014512}
+  - component: {fileID: 1982014511}
+  m_Layer: 0
+  m_Name: aquatic_plant (9)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!23 &1982014511
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1827410018}
+  m_GameObject: {fileID: 1982014510}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &1982014512
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3300012, guid: 645ec3e00dbefee499157b6a7baa92dc,
+    type: 3}
+  m_PrefabInternal: {fileID: 1827410018}
+  m_GameObject: {fileID: 1982014510}
+  m_Mesh: {fileID: 4300010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+--- !u!4 &1982014513
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 645ec3e00dbefee499157b6a7baa92dc, type: 3}
+  m_PrefabInternal: {fileID: 1827410018}
+  m_GameObject: {fileID: 1982014510}
+  m_LocalRotation: {x: -0.67852885, y: 0.07737604, z: 0.11959864, w: 0.72063017}
+  m_LocalPosition: {x: 554.74347, y: -79.84874, z: 2.5748944}
+  m_LocalScale: {x: 57.457237, y: 57.457237, z: 57.457237}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 71
+  m_LocalEulerAnglesHint: {x: -85.16701, y: -37.069, z: 53.096}
 --- !u!1 &2054239971
 GameObject:
   m_ObjectHideFlags: 0
