@@ -90,7 +90,7 @@ Shader "Hidden/Glow Effect/Glow Replace" {
 				#endif
 
 				#if GLOWEFFECT_MULTIPLY_COLOR
-				glow *= _GlowColorMult;
+				glow *= _GlowColorMult * _GlowColorMult.a;
 				#endif
 
 				return glow;
@@ -155,7 +155,6 @@ Shader "Hidden/Glow Effect/Glow Replace" {
 			{
 				v2f o;
 				o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
-//				o.pos = UnityObjectToClipPos(v.vertex);
 
 		       	o.uv = TRANSFORM_TEX(v.texcoord, _MainTex).xy;
 				#if GLOWEFFECT_USE_GLOWTEX
@@ -178,7 +177,9 @@ Shader "Hidden/Glow Effect/Glow Replace" {
 				#endif
 
 				#if GLOWEFFECT_USE_GLOWTEX
+//				half4 glowTex = tex2D(_GlowTex, i.uv1);
 				glow += mainTex.a * tex2D(_GlowTex,i.uv1);
+//				glow += glowTex * glowTex.a;
 				#endif
 
 				#if GLOWEFFECT_USE_GLOWCOLOR
@@ -190,7 +191,7 @@ Shader "Hidden/Glow Effect/Glow Replace" {
 				#endif
 
 				#if GLOWEFFECT_MULTIPLY_COLOR
-				glow *= _GlowColorMult;
+				glow *= _GlowColorMult * _GlowColorMult.a;
 				#endif
 
 				return glow;
