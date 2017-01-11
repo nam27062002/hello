@@ -10,7 +10,6 @@ GameObject:
   - component: {fileID: 466452}
   - component: {fileID: 3374166}
   - component: {fileID: 2389160}
-  - component: {fileID: 11403562}
   m_Layer: 11
   m_Name: view
   m_TagString: Untagged
@@ -83,25 +82,6 @@ MeshCollider:
   m_InflateMesh: 0
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: c2e234e6e78a24d1dbe6a6b36d4c3bb3, type: 3}
---- !u!114 &11403562
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 160766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8845233bc93a243879832d2842686764, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tierWithTurboBreak: 4
-  m_tierNoTurboBreak: 4
-  m_onBreakParticle: PF_CaveBlockerExplosion
-  m_onBreakAudio: Rocks
-  m_maxShakeForce: 1
-  m_maxShakeDuration: 1
-  m_maxPushForce: 2
-  m_view: {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -127,6 +107,7 @@ GameObject:
   - component: {fileID: 4179107262380996}
   - component: {fileID: 114099013974481482}
   - component: {fileID: 6412230}
+  - component: {fileID: 114714819731338518}
   m_Layer: 11
   m_Name: PF_Rock_Obstacle
   m_TagString: Untagged
@@ -163,7 +144,20 @@ MonoBehaviour:
   m_tierNoTurboBreak: 4
   m_onBreakParticle: PF_CaveBlockerExplosion
   m_onBreakAudio: Rocks
-  m_maxShakeForce: 0.2
-  m_maxShakeDuration: 1
-  m_maxPushForce: 2
   m_view: {fileID: 466452}
+--- !u!114 &114714819731338518
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1363612444948474}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db034c24f2ef34bb4b159beded17fcf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_wobbleDuration: 0.5
+  m_wobbleOffset: {x: 0.08, y: 0.08}
+  m_wobbleSpeed: {x: 12, y: 15}
+  m_nextWobbleTimeout: 1
+  m_disableWhenDone: 1

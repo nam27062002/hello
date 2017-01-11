@@ -9,19 +9,18 @@ public class BreakableBehaviour : MonoBehaviour
 	public string m_onBreakParticle;
 	public string m_onBreakAudio;
 
-	public float m_maxShakeForce = 1;
-	public float m_maxShakeDuration = 1;
-	public float m_maxPushForce = 2;
-	private float m_shakeTimer = 0;
-	private float m_shakeDuration = 0;
-	private float m_shakeForce = 0;
-
+	private Wobbler m_wobbler;
 	public Transform m_view;
+	private Vector3 m_initialViewPos;
 
 	void Start()
 	{
 		if ( m_view == null )
-			transform.FindChild("view");
+			m_view = transform.FindChild("view");
+		m_initialViewPos = m_view.localPosition;
+		m_wobbler = GetComponent<Wobbler>();
+		m_wobbler.enabled = false;
+		
 	}
 
 	void OnCollisionEnter( Collision collision )
@@ -46,7 +45,7 @@ public class BreakableBehaviour : MonoBehaviour
 				{
 					// Message : You need boost!
 					Messenger.Broadcast( GameEvents.BREAK_OBJECT_NEED_TURBO );
-					Shake( m_maxShakeForce * value, m_maxShakeDuration * value);
+					Shake();
 				}
 			}
 			else
@@ -54,7 +53,7 @@ public class BreakableBehaviour : MonoBehaviour
 				// Message: You need a bigger dragon
 				Messenger.Broadcast( GameEvents.BREAK_OBJECT_BIGGER_DRAGON );	
 				value *= 0.5f;
-				Shake( m_maxShakeForce * value, m_maxShakeDuration * value);
+				Shake();
 			}
 		}
 	}
@@ -75,11 +74,15 @@ public class BreakableBehaviour : MonoBehaviour
 
 		AudioController.Play( m_onBreakAudio );
 
+		DragonMotion dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
 		if ( pushVector != Vector3.zero )
 		{
-			DragonMotion dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
 			pushVector *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude, 2f));
 			dragonMotion.AddForce( pushVector );
+		}
+		else
+		{
+			dragonMotion.NoDamageImpact();
 		}
 
 
@@ -89,29 +92,10 @@ public class BreakableBehaviour : MonoBehaviour
 		Destroy( gameObject );
 	}
 
-	public void Shake( float force, float duration )
+	public void Shake()
 	{
-		if ( m_shakeTimer <= 0 )
-			StartCoroutine("Shaking");
-		m_shakeTimer = m_shakeDuration = Mathf.Max( m_shakeTimer, duration);
-		m_shakeForce = Mathf.Max( m_shakeForce, force);
-	}
-
-
-	IEnumerator Shaking ()
-	{
-		yield return null;
-		Vector3 startPos = m_view.position;
-		while( m_shakeTimer > 0 && m_shakeDuration > 0)
-		{
-			m_shakeTimer -= Time.deltaTime;	
-			m_view.position = startPos + Random.insideUnitSphere * m_shakeForce * (m_shakeTimer / m_shakeDuration);
-			yield return null;
-		}
-		m_shakeForce = 0;
-		m_shakeTimer = 0;
-		m_shakeDuration = 0;
-		m_view.position = startPos;
+		m_wobbler.enabled = true;
+		m_wobbler.StartWobbling( m_view, m_initialViewPos);
 	}
 
 }
