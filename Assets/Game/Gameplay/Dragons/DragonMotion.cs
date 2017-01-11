@@ -1466,13 +1466,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
 
-	public void NoDamageImpact( Vector3 force )
+	public void NoDamageImpact()
 	{
 		m_animator.SetTrigger("impact");
-		m_impulse = force;
-		if ( IsAliveState() )
-			ChangeState(State.Stunned);
-
 	}
 
 	public bool IsInsideWater() {
