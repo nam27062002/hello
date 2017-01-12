@@ -1242,7 +1242,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012344657622}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 557.4532, y: -13.03677, z: -0.52823067}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000010683655290}
@@ -2306,7 +2306,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_minEatAnimTime: 1
-  m_eatDistance: 0.75
+  m_eatDistance: 1
   m_eatDetectionRadiusMultiplier: 2.75
   m_eatDetectionSpeedRadiusMultiplier: 0.15
   m_holdingBloodParticle:
@@ -2314,7 +2314,7 @@ MonoBehaviour:
     path: Blood
     offset: {x: 0, y: 0, z: 0}
   m_burpSound: 
-  m_eaterTier: 1
+  m_eaterTier: 0
   m_isPet: 0
   m_isAquatic: 0
   m_canMultipleLatchOnPlayer: 0
@@ -2342,7 +2342,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 100
+  m_blendSpeedFactor: 1
   m_energy: 10
   m_energyDrainSec: 1
   m_brainResource: {fileID: 11400000, guid: d95e4279165be4a26a70cb1fa716b06f, type: 2}
@@ -2350,13 +2350,14 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_speedFactorRange:
-    min: 0.75
-    max: 1.25
-  m_serializedJson: '[{"speed":11,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":11,"restUpsideDown":false,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":45,"arrivalRadius":0.25,"timeout":{"min":4,"max":6},"onFailShutdown":{"min":4,"max":6},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":4,"max":6},"damage":20,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":11,"panicSpeed":11,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
+    min: 1
+    max: 1
+  m_serializedJson: '[{"speed":11,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":11,"restUpsideDown":false,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":45,"arrivalRadius":0.25,"timeout":{"min":4,"max":6},"onFailShutdown":{"min":4,"max":6},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":4,"max":6},"damage":20,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":11,"panicSpeed":11,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"tier":2,"dataType":"AI.Behaviour.AttackSelectorData","editorFolded":false},{"speed":45,"hasWeapon":false,"dataType":"AI.Behaviour.CurveDashData","editorFolded":false}]'
   m_databaseKey: PF_EnemyClassic
-  m_avoidDistanceAttenuation: 15
-  m_avoidCollisions: 1
-  m_avoidWater: 1
+  m_preciseDestArrival: 0
+  m_avoidDistanceAttenuation: 2
+  m_avoidCollisions: 0
+  m_avoidWater: 0
 --- !u!114 &114000011681757254
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2368,8 +2369,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.08590388, y: 0.23518455}
-  radius: 1.25
+  offset: {x: 0, y: 0}
+  radius: 5
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114000012425715312
 MonoBehaviour:
@@ -2382,22 +2383,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 10
-  m_runSpeed: 15
+  m_walkSpeed: 1
+  m_runSpeed: 1
   m_minPlaybakSpeed: 1
-  m_maxPlaybakSpeed: 1
+  m_maxPlaybakSpeed: 1.5
   m_onBoostMaxPlaybackSpeed: 0
-  m_hasNavigationLayer: 1
+  m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
-  m_animA: eatHold
+  m_animA: 
   m_animB: 
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles:
-  - name: PS_Blood_Explosion_Small
-    path: Blood
-    offset: {x: 0, y: 0, z: 0}
+  m_onEatenParticles: []
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -2405,7 +2403,7 @@ MonoBehaviour:
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_burnParticle:
-    name: PF_BonfireToon
+    name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 
@@ -2434,16 +2432,16 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 5
+    m_mass: 1
     m_attackPausesJump: 0
     m_defaultUpVector: 0
-    m_orientationSpeed: 240
+    m_orientationSpeed: 120
     m_faceDirection: 1
     m_rollRotation: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
-    m_limitVerticalRotation: 1
+    m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
   m_affectedByDragonTrample: 0
@@ -2480,7 +2478,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parentName: Dragon_Head_Ctrl
+  m_parentName: 
   m_parentRoot: {fileID: 0}
 --- !u!114 &114000014202338546
 MonoBehaviour:
@@ -2493,7 +2491,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parentName: Dragon_Chest
+  m_parentName: 
   m_parentRoot: {fileID: 0}
 --- !u!114 &114248256390731900
 MonoBehaviour:
@@ -2506,22 +2504,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_wingsIdleSound: Dragon_Idle_Flaps
-  m_wingsFlyingSound: Dragon_Flaps
-  m_eatSound: Dragon_Eat
+  m_wingsIdleSound: 
+  m_wingsFlyingSound: 
+  m_eatSound: 
   m_wingsWindSound: 
-  m_wingsStrongFlap: Dragon_Strong_Flap
-  m_levelUpSound: Level_Up
+  m_wingsStrongFlap: 
+  m_levelUpSound: 
   m_starvingSound: 
-  m_hitSound: Dragon_Impact
-  m_enterWaterSound: Dragon_Water_In_Soft
-  m_enterWaterWithSplashSound: Dragon_Water_In_Hard
-  m_exitWaterSound: Dragon_Water_Out_Soft
-  m_exitWaterWithSplashSound: Dragon_Water_Out_Hard
-  m_skimmingSound: Dragon_Surfing
-  m_insideWaterSnapshot: {fileID: 245688877317836546, guid: f9c941808b0b54fa79ff7aae4e1db556,
-    type: 2}
-  m_waterDeepToSnapshot: 4
+  m_hitSound: 
+  m_enterWaterSound: 
+  m_enterWaterWithSplashSound: 
+  m_exitWaterSound: 
+  m_exitWaterWithSplashSound: 
+  m_skimmingSound: 
+  m_insideWaterSnapshot: {fileID: 0}
+  m_waterDeepToSnapshot: 0
 --- !u!114 &114539882776074204
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2534,11 +2531,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_timeToGlide:
-    min: 10
-    max: 20
+    min: 3
+    max: 4
   m_glidingTime:
-    min: 2.5
-    max: 5
+    min: 4
+    max: 6
 --- !u!136 &136000011476809738
 CapsuleCollider:
   m_ObjectHideFlags: 1

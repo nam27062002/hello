@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 476f90a6cbdac4eb69432e3a345d1c01, type: 3}
-  m_Name: EnemyClassicBrain
+  m_Name: EnemyDragonBrain
   m_EditorClassIdentifier: 
   m_states:
   - m_name: Wander
@@ -21,7 +21,7 @@ MonoBehaviour:
     m_componentAssets:
     - {fileID: 11400000, guid: f02e71317c5fd45319c279bb3716b071, type: 2}
     - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
-  - m_name: Pursuit
+  - m_name: PursuitToHold
     m_componentAssets:
     - {fileID: 11400000, guid: f169cd6c920fa43b8876708d78f4a6b2, type: 2}
   - m_name: Latch
@@ -32,6 +32,12 @@ MonoBehaviour:
     - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
     - {fileID: 11400000, guid: cdc2a30fcd81a46a88bcf06ba5b18f47, type: 2}
     - {fileID: 11400000, guid: e76be2bec77bd450d8b35540a4488860, type: 2}
+  - m_name: AttackSelector
+    m_componentAssets:
+    - {fileID: 11400000, guid: 7551f65623e804881bf17f8681e8547e, type: 2}
+  - m_name: Attack
+    m_componentAssets:
+    - {fileID: 11400000, guid: 3c6b1177666d44adeb3c237171fff7ef, type: 2}
   m_transitionData:
   - to: 0
     id: onMove
@@ -39,10 +45,10 @@ MonoBehaviour:
   - to: 0
     id: onEnemyInSight
     from: 1
-  - to: 2
+  - to: 5
     id: onEnemyInSight
     from: 0
-  - to: 2
+  - to: 5
     id: onEnemyInRange
     from: 0
   - to: 3
@@ -63,5 +69,17 @@ MonoBehaviour:
   - to: 0
     id: onTimeFinished
     from: 4
+  - to: 2
+    id: onEnemySmallerTier
+    from: 5
+  - to: 2
+    id: onEnemyEqualTier
+    from: 5
+  - to: 6
+    id: onEnemyBiggerTier
+    from: 5
+  - to: 4
+    id: onDashEnd
+    from: 6
   m_firstState_A: 1
   m_firstState_B: 1
