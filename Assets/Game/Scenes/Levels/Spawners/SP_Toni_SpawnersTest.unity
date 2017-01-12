@@ -2073,6 +2073,7 @@ Transform:
   - {fileID: 1686616794}
   - {fileID: 843098067}
   - {fileID: 889981903}
+  - {fileID: 922087198}
   m_Father: {fileID: 1110869601}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2537,6 +2538,11 @@ Prefab:
         type: 2}
       propertyPath: m_quantity.max
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 039dc098dc7e54f1da4eaa0e1268c3df,
+        type: 2}
+      propertyPath: m_entityPrefabStr
+      value: Goblin/PF_SpartakusV2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 039dc098dc7e54f1da4eaa0e1268c3df, type: 2}
@@ -3121,6 +3127,11 @@ MonoBehaviour:
     m_goOn:
       id: 2
       active: 1
+--- !u!4 &922087198 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4932551312445024, guid: 039dc098dc7e54f1da4eaa0e1268c3df,
+    type: 2}
+  m_PrefabInternal: {fileID: 1190075879}
 --- !u!1 &936011841
 GameObject:
   m_ObjectHideFlags: 0
@@ -4243,6 +4254,67 @@ MonoBehaviour:
   m_forcePreview: 0
   m_previewStep: 0.1
   m_previewMaxTime: 60
+--- !u!1001 &1190075879
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 551489512}
+    m_Modifications:
+    - target: {fileID: 4932551312445024, guid: 039dc098dc7e54f1da4eaa0e1268c3df, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -144.39
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932551312445024, guid: 039dc098dc7e54f1da4eaa0e1268c3df, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932551312445024, guid: 039dc098dc7e54f1da4eaa0e1268c3df, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932551312445024, guid: 039dc098dc7e54f1da4eaa0e1268c3df, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932551312445024, guid: 039dc098dc7e54f1da4eaa0e1268c3df, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932551312445024, guid: 039dc098dc7e54f1da4eaa0e1268c3df, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932551312445024, guid: 039dc098dc7e54f1da4eaa0e1268c3df, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932551312445024, guid: 039dc098dc7e54f1da4eaa0e1268c3df, type: 2}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 039dc098dc7e54f1da4eaa0e1268c3df,
+        type: 2}
+      propertyPath: m_quantity.min
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 039dc098dc7e54f1da4eaa0e1268c3df,
+        type: 2}
+      propertyPath: m_quantity.max
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 039dc098dc7e54f1da4eaa0e1268c3df,
+        type: 2}
+      propertyPath: m_entityPrefabStr
+      value: Goblin/PF_Spartakus
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913308816413266, guid: 039dc098dc7e54f1da4eaa0e1268c3df, type: 2}
+      propertyPath: m_Name
+      value: SP_Goblin_Spartakus (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 039dc098dc7e54f1da4eaa0e1268c3df, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &1191974493
 GameObject:
   m_ObjectHideFlags: 0
@@ -4807,11 +4879,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 465066, guid: 12480f61e1a802d4ba6e2c2ade7c2f7f, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -44.81
+      value: -69.07
       objectReference: {fileID: 0}
     - target: {fileID: 465066, guid: 12480f61e1a802d4ba6e2c2ade7c2f7f, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 9.99
+      value: 21.24
       objectReference: {fileID: 0}
     - target: {fileID: 465066, guid: 12480f61e1a802d4ba6e2c2ade7c2f7f, type: 2}
       propertyPath: m_LocalPosition.z
@@ -4843,7 +4915,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11426232, guid: 12480f61e1a802d4ba6e2c2ade7c2f7f, type: 2}
       propertyPath: m_entityPrefabStr
-      value: Air/PF_BatBig
+      value: Monster/PF_Gargoyle
+      objectReference: {fileID: 0}
+    - target: {fileID: 11426232, guid: 12480f61e1a802d4ba6e2c2ade7c2f7f, type: 2}
+      propertyPath: m_scale.min
+      value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11426232, guid: 12480f61e1a802d4ba6e2c2ade7c2f7f, type: 2}
+      propertyPath: m_scale.max
+      value: 1.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 12480f61e1a802d4ba6e2c2ade7c2f7f, type: 2}
