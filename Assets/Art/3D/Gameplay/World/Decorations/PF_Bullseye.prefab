@@ -16,12 +16,12 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 4000012374561932}
-  - 33: {fileID: 33000011231466570}
-  - 23: {fileID: 23000013640901492}
-  - 95: {fileID: 95000014184148792}
+  - component: {fileID: 4000012374561932}
+  - component: {fileID: 33000011231466570}
+  - component: {fileID: 23000013640901492}
+  - component: {fileID: 95000014184148792}
   m_Layer: 0
   m_Name: PF_Bullseye
   m_TagString: Untagged
@@ -36,12 +36,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013742142902}
   m_LocalRotation: {x: -0.018278789, y: -0.7068705, z: -0.7068705, w: 0.018278789}
-  m_LocalPosition: {x: 566.15, y: -13.435, z: 0.43}
+  m_LocalPosition: {x: 322.47333, y: 30.51111, z: -87.94771}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: -89.981, y: 0, z: -897.124}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: -89.981, y: 0, z: -897.124}
 --- !u!23 &23000013640901492
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -56,7 +56,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 06a31752d61b5d34396a69d09a91f2a3, type: 2}
-  m_SubsetIndices: 
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
@@ -64,7 +66,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_SelectedWireframeHidden: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
