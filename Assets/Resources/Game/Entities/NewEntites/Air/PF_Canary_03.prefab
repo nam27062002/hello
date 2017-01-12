@@ -395,7 +395,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 194316}
-  m_LocalRotation: {x: -0.25353712, y: 0.5587252, z: 0.5541722, w: 0.5625286}
+  m_LocalRotation: {x: -0.2535371, y: 0.5587251, z: 0.55417216, w: 0.56252855}
   m_LocalPosition: {x: -0.08062987, y: -0.021874828, z: 0.043720305}
   m_LocalScale: {x: 0.99999994, y: 1, z: 1.0000001}
   m_Children:
@@ -524,6 +524,7 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 1
+    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 480
     m_faceDirection: 1
@@ -587,7 +588,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_blendSpeedFactor: 4
   m_energy: 15
-  m_energyDrainSec: 3
+  m_energyDrainSec: 5
   m_brainResource: {fileID: 11400000, guid: 0880f58945d004e4a9334a99cdfb0b84, type: 2}
   m_railSeparation:
     min: 0.5
@@ -595,7 +596,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 1
     max: 1.35
-  m_serializedJson: '[{"speed":4.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":7,"panicSpeed":12,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":3,"separation":0.65,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":5,"catchUpSpeed":10,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":4.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":7,"panicSpeed":12,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":3,"separation":0.75,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":5,"catchUpSpeed":10,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Canary_03
   m_avoidDistanceAttenuation: 3.5
   m_avoidCollisions: 1

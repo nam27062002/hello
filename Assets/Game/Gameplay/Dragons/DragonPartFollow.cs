@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class DragonPartFollow : MonoBehaviour {
 
 	
-	private Transform m_follow;
+	public Transform m_root;
 	public List<Transform> m_parts;
 	public float springSpeed = 1.0f;
 	private class PartInfo
@@ -21,7 +21,8 @@ public class DragonPartFollow : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		m_follow = transform;
+		if ( m_root == null )
+			m_root = transform;
 		m_partInfos = new List<PartInfo>();
 		for( int i = 0; i<m_parts.Count; i++ )
 		{
@@ -79,7 +80,7 @@ public class DragonPartFollow : MonoBehaviour {
 			Transform follow;
 			if ( i == 0)
 			{
-				follow = m_follow;
+				follow = m_root;
 			}
 			else
 			{
@@ -95,7 +96,7 @@ public class DragonPartFollow : MonoBehaviour {
 			Vector3 finalDir = Vector3.Slerp( dir, wanterDir, Time.deltaTime * springSpeed);
 			partTransform.position = follow.position + finalDir * partInfo.m_distance;
 
-			partTransform.LookAt( follow );
+			partTransform.LookAt( follow, follow.up );
 			partTransform.Rotate( m_upDir, Space.Self );
 			// partTransform.Rotate( -partInfo.m_localRotation.eulerAngles, Space.Self );
 

@@ -17,7 +17,7 @@
 
 	SubShader
 	{
-		Tags{ "Queue" = "Transparent+15" "RenderType" = "Transparent" }
+		Tags{ "Queue" = "Transparent+8" "RenderType" = "Transparent" }
 		LOD 100
 		Blend SrcAlpha OneMinusSrcAlpha
 		Cull Off
@@ -25,6 +25,7 @@
 
 		Pass
 		{
+/*
 			Stencil
 			{
 				Ref 5
@@ -32,7 +33,7 @@
 				Pass Replace
 				ZFail keep
 			}
-
+*/
 
 			CGPROGRAM
 			#pragma vertex vert

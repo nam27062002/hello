@@ -34,12 +34,6 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	private float m_sessionStartHealthDrainTime;
 	private float m_sessionStartHealthDrainModifier;
 
-	// Critical health modifiers
-	private float m_healthCriticalLimit;
-	private float m_criticalHealthModifier;
-	private float m_starvingLimit;
-	private float m_starvingHealthModifier;
-
 	private int m_damageAnimState;
 
 	//-----------------------------------------------
@@ -62,14 +56,8 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_sessionStartHealthDrainTime = m_dragon.data.def.GetAsFloat("sessionStartHealthDrainTime"); // 45
 		m_sessionStartHealthDrainModifier = m_dragon.data.def.GetAsFloat("sessionStartHealthDrainModifier");// 0.5
 
-		// Global setting values
-		DefinitionNode settings = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
-		m_healthCriticalLimit = settings.GetAsFloat("healthCriticalThreshold");	// 0.08
-		m_criticalHealthModifier = settings.GetAsFloat("healthCriticalModifier");	// 0.2
-		m_starvingLimit = settings.GetAsFloat("healthWarningThreshold");	// 0.20
-		m_starvingHealthModifier = settings.GetAsFloat("healthWarningModifier");	// 0.5
-
 		m_damageMultiplier = 0;
+
 		//
 		m_damageAnimState = Animator.StringToHash("Damage");
 	}
@@ -181,13 +169,11 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			damage = damage + (damage * (m_gameController.elapsedSeconds * m_healthDrainAmpPerSecond));
 		}
 
+		// Apply health modifier
 		float healthFraction = m_dragon.healthFraction;
-
-		if(healthFraction < m_healthCriticalLimit)
-			return damage * m_criticalHealthModifier;
-
-		if(healthFraction < m_starvingLimit)
-			return damage * m_starvingHealthModifier;
+		if(m_dragon.currentHealthModifier != null) {
+			damage *= m_dragon.currentHealthModifier.modifier;
+		}
 
 		return damage;
 	}
