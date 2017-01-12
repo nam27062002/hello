@@ -144,13 +144,7 @@ public class Perlin : TextureGenBase
         }
         return f;
     }
-/*
-    public override void initGen(Texture2D canvas)
-    {
-        iResolution.x = canvas.width;
-        iResolution.y = canvas.height;
-    }
-*/
+
     public override Vector4 doGen(Vector2 iFragCoord)
     {
         Vector2 uv = Mathv.Div(iFragCoord, iResolution) * m_Tiles;
@@ -195,25 +189,7 @@ public class Voronoi : TextureGenBase
         serializedName = "VoronoiPrefs";
     }
 
-
-
     // Vector2 to Vector2 hash.
-/*  
- *  Vector2 hash22(Vector2 p)
-    {
-        // Faster, but doesn't disperse things quite as nicely. However, when framerate
-        // is an issue, and it often is, this is a good one to use. Basically, it's a tweaked 
-        // amalgamation I put together, based on a couple of other random algorithms I've 
-        // seen around... so use it with caution, because I make a tonne of mistakes. :)
-        float n = Mathf.Sin(Vector2.Dot(p, m_vHashSeed));
-        //return fract(vec2(262144, 32768)*n); 
-
-        // Animated.
-        p = Mathv.Fract(m_vHashSeed2 * n);
-//        return sin(p * 6.2831853 + iGlobalTime) * 0.5 + 0.5;
-        return Mathv.Sin(Mathv.Mul(p, Mathf.PI * 2.0f) * 0.5f) + (Vector2.one * 0.5f);
-    }
-*/
     Vector2 hash22(Vector2 p)
     {
         p = new Vector2(Vector2.Dot(p, m_vHashSeed), Vector2.Dot(p, m_vHashSeed2));
@@ -245,15 +221,13 @@ public class Voronoi : TextureGenBase
         }
 
         //        float r = Mathf.Max(d.y / 1.2f - d.x * 1.0f, 0.2f) / 1.0f;
-        g.Set(Mathf.Sqrt(m.x), m.y + m.z);
+        g.Set(Mathf.Sqrt(m.x), (m.y + m.z) / Mathf.Sqrt(m.x));
         return g;
     }
 
     public override Vector4 doGen(Vector2 iFragCoord)
     {
-//        Vector2 uv = Mathv.Div((iFragCoord - iResolution * 0.5f), iResolution);
         Vector2 uv = Mathv.Div(iFragCoord, iResolution);
-        //        float n = Mathf.Pow(1.0f - Vector2.Dot(uv, uv), 2.0f);
         Vector2 v = VoronoiFilter(uv * m_Scale);
 
         return new Vector4(v.x, v.y, v.x * v.y, 1.0f);
@@ -263,11 +237,6 @@ public class Voronoi : TextureGenBase
     {
         EditorGUILayout.BeginVertical();
         m_Scale = EditorGUILayout.FloatField("Initial Scale:", m_Scale);
-//        m_Amplitude = EditorGUILayout.FloatField("Initial Amplitude:", m_Amplitude);
-//        m_Iterations = EditorGUILayout.IntField("Iterations:", m_Iterations);
-
-        //        seed = EditorGUILayout.FloatField("seed:", seed);
-        //        scale = EditorGUILayout.FloatField("scale:", scale);
         EditorGUILayout.EndVertical();
     }
 
