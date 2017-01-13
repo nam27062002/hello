@@ -1,7 +1,7 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
-Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
+Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 {
 	Properties
 	{
@@ -15,7 +15,9 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 		_FresnelFactor("Fresnel factor", Range(0.0, 5.0)) = 0.27
 		_FresnelInitialColor("Fresnel initial (RGB)", Color) = (0, 0, 0, 0)
 		_FresnelFinalColor("Fresnel final (RGB)", Color) = (0, 0, 0, 0)
-		_EmissiveColor("Emissive color (RGB)", Color) = (0, 0, 0, 0)
+		_RimFactor("Rim factor", Range(0.0, 8.0)) = 0.27
+		_RimColor("Rim Color (RGB)", Color) = (1.0, 1.0, 1.0, 1.0)
+		_GlowColorMult("Emissive color (RGB)", Color) = (0, 0, 0, 0)
 
 	}
 
@@ -82,7 +84,13 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 			uniform float _FresnelFactor;
 			uniform float4 _FresnelInitialColor;
 			uniform float4 _FresnelFinalColor;
-			uniform float4 _EmissiveColor;
+			uniform float4 _GlowColorMult;
+			uniform float _RimFactor;
+			uniform float4 _RimColor;
+
+//			#if GLOWEFFECT_MULTIPLY_COLOR
+//			uniform float4 _GlowColorMult;
+//			#endif
 
 //			uniform half4 _GlowColor;
 //			uniform half4 _GlowColorMult;
@@ -96,8 +104,8 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 				o.uv2 = TRANSFORM_TEX(v.uv, _NormalTex);
 				fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 
-				//float3 normal = UnityObjectToWorldNormal(v.normal);
-				// o.vLight = ShadeSH9(float4(normal, 1.0));
+//				float3 normal = UnityObjectToWorldNormal(v.normal);
+//				o.vLight = ShadeSH9(float4(normal, 1.0));
 
 				// Half View - See: Blinn-Phong
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
@@ -108,11 +116,11 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 				o.halfDir = normalize(lightDirection + viewDirection);
 
 				// To calculate tangent world
-	            		float4x4 modelMatrix = unity_ObjectToWorld;
-     				float4x4 modelMatrixInverse = unity_WorldToObject; 
-	           		o.tangentWorld = normalize( mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
-	     			o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
-	     			o.binormalWorld = normalize( cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
+	            float4x4 modelMatrix = unity_ObjectToWorld;
+     			float4x4 modelMatrixInverse = unity_WorldToObject; 
+	           	o.tangentWorld = normalize( mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
+	     		o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
+	     		o.binormalWorld = normalize( cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
 
 				return o;
 			}
@@ -124,30 +132,31 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel (Spawners)"
 				float specMask = col.w;
 
 				// Aux vars
-	            		float3 encodedNormal = tex2D(_NormalTex, i.uv2);
+           		float3 encodedNormal = tex2D(_NormalTex, i.uv2);
 				float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
 				float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
-     				float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
-     				float3 lightDirection = normalize(_SpecularDir.xyz);
+   				float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
+   				float3 lightDirection = normalize(_SpecularDir.xyz);
 
-     				// Compute diffuse and specular
-     				// fixed4 diffuse = max(0, dot(normalDirection, lightDirection)) * _LightColor0;	// World light color
+   				// Compute diffuse and specular
 				fixed4 diffuse = max(0, dot(normalDirection, lightDirection)) * _LightColor;		// Custom light color
-				//fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower);
-				fixed specular = pow(max(0, dot(normalDirection, lightDirection)), _SpecularPower);
+				fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower);
+				//fixed specular = pow(max(0, dot(normalDirection, lightDirection)), _SpecularPower);
 
-	     			// [AOC] We use light color alpha as specular intensity
-	     			specular *= _LightColor.a;
+	     		// [AOC] We use light color alpha as specular intensity
+	     		specular *= _LightColor.a;
 
 				// fixed fresnel = pow(max(dot(normalDirection, i.viewDir), 0), _FresnelFactor);
-				fixed fresnel = clamp(pow(max(dot(i.viewDir, normalDirection), 0.0), _FresnelFactor), 0.0, 1.0);
+				float nf = max(dot(i.viewDir, normalDirection), 0.0);
+				float fresnel = clamp(pow(nf, _FresnelFactor), 0.0, 1.0);
+				float rim = clamp(pow(1.0 - nf, _RimFactor), 0.0, 1.0);
 
 				// col = diffuse * col + (specular * _LightColor0) + (fresnel * _FresnelColor);
 				// col = diffuse * col + (specular * _LightColor0) + lerp(_FresnelInitialColor, _FresnelFinalColor, fresnel);	// World light color
-				col = diffuse * col + (specular * _LightColor) + lerp(_FresnelInitialColor, _FresnelFinalColor, fresnel);	// Custom light color
+				col = diffuse * col + (specular * _LightColor) + lerp(_FresnelInitialColor, _FresnelFinalColor, fresnel) + (rim * _RimColor);	// Custom light color
 
 				float3 emissive = tex2D(_GlowTex, i.uv2);
-				col = lerp(col, _EmissiveColor, (emissive.r + emissive.g + emissive.b) * _EmissiveColor.a);	// Multiplicative, emissive color alpha controls intensity
+				col = lerp(col, _GlowColorMult, (emissive.r + emissive.g + emissive.b) * _GlowColorMult.a);	// Multiplicative, emissive color alpha controls intensity
 				// col = lerp(col, _EmissiveColor, emissive.r + emissive.g + emissive.b);			// Multiplicative, no intensity control
 				// col += _EmissiveColor * (emissive.r + emissive.g + emissive.b);				// Additive, no intesity control
 

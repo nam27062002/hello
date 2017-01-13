@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 476f90a6cbdac4eb69432e3a345d1c01, type: 3}
+  m_Name: GargoyleBrain
+  m_EditorClassIdentifier: 
+  m_states:
+  - m_name: Idle
+    m_componentAssets:
+    - {fileID: 11400000, guid: 54603296f3e5a48fea9d81ec91327f69, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
+  - m_name: Wander
+    m_componentAssets:
+    - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
+  - m_name: Pursuit
+    m_componentAssets:
+    - {fileID: 11400000, guid: 3ff23bd6dcc5240d09e52388bceb9084, type: 2}
+  - m_name: Curve Dash
+    m_componentAssets:
+    - {fileID: 11400000, guid: 3c6b1177666d44adeb3c237171fff7ef, type: 2}
+  m_transitionData:
+  - to: 1
+    id: onMove
+    from: 0
+  - to: 2
+    id: onEnemyInSight
+    from: 0
+  - to: 3
+    id: onEnemyInRange
+    from: 0
+  - to: 0
+    id: onRest
+    from: 1
+  - to: 2
+    id: onEnemyInSight
+    from: 1
+  - to: 3
+    id: onEnemyInRange
+    from: 1
+  - to: 3
+    id: onEnemyInRange
+    from: 2
+  - to: 1
+    id: onEnemyOutOfSight
+    from: 2
+  - to: 2
+    id: onDashEnd
+    from: 3
+  m_firstState_A: 0
+  m_firstState_B: 1

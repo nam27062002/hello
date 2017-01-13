@@ -9,6 +9,8 @@ namespace AI {
 		private const int CollisionCheckPools = 4;
 		private static uint NextCollisionCheckID = 0;
 
+		[SerializeField] private bool m_preciseDestArrival = false;
+
 		[SerializeField] private float m_avoidDistanceAttenuation = 2f;
 		[SerializeField] private bool m_avoidCollisions = false;
 		public override bool avoidCollisions { get { return m_avoidCollisions; } set { m_avoidCollisions = value; } }
@@ -60,10 +62,11 @@ namespace AI {
 						v = v.normalized * Mathf.Min(moveSpeed, v.magnitude * 2);
 						Util.MoveTowardsVector3WithDamping(ref m_seek, ref v, 32f * Time.deltaTime, 8.0f);
 					} else {
-						if (v.sqrMagnitude < moveSpeed * moveSpeed)
+						if (m_preciseDestArrival && (v.sqrMagnitude < moveSpeed * moveSpeed)) {
 							v = v.normalized * Mathf.Max(moveSpeed * 0.25f, v.magnitude * 2);
-						else
+						} else {
 							v = v.normalized * moveSpeed;
+						}
 						m_seek = v;
 					}
 					Debug.DrawLine(m_machine.position, m_machine.position + m_seek, Color.green);

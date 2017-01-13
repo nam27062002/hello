@@ -144,13 +144,7 @@ public class Perlin : TextureGenBase
         }
         return f;
     }
-/*
-    public override void initGen(Texture2D canvas)
-    {
-        iResolution.x = canvas.width;
-        iResolution.y = canvas.height;
-    }
-*/
+
     public override Vector4 doGen(Vector2 iFragCoord)
     {
         Vector2 uv = Mathv.Div(iFragCoord, iResolution) * m_Tiles;
@@ -183,8 +177,11 @@ public class Perlin : TextureGenBase
 public class Voronoi : TextureGenBase
 {
 
-    Vector2 m_vHashSeed = new Vector2(41.0f, 289.0f);
-    Vector2 m_vHashSeed2 = new Vector2(262144.0f, 32768.0f);
+    Vector2 m_vHashSeed = new Vector2(127.1f, 311.7f);
+    Vector2 m_vHashSeed2 = new Vector2(269.5f, 183.3f);
+    float m_fHashSeed = 18.5453f;
+
+    public float m_Scale = 8.0f;
 
 
     public Voronoi()
@@ -192,67 +189,54 @@ public class Voronoi : TextureGenBase
         serializedName = "VoronoiPrefs";
     }
 
-
-
     // Vector2 to Vector2 hash.
     Vector2 hash22(Vector2 p)
     {
-        // Faster, but doesn't disperse things quite as nicely. However, when framerate
-        // is an issue, and it often is, this is a good one to use. Basically, it's a tweaked 
-        // amalgamation I put together, based on a couple of other random algorithms I've 
-        // seen around... so use it with caution, because I make a tonne of mistakes. :)
-        float n = Mathf.Sin(Vector2.Dot(p, m_vHashSeed));
-        //return fract(vec2(262144, 32768)*n); 
-
-        // Animated.
-        p = Mathv.Fract(m_vHashSeed2 * n);
-//        return sin(p * 6.2831853 + iGlobalTime) * 0.5 + 0.5;
-        return Mathv.Sin(Mathv.Mul(p, Mathf.PI * 2.0f) * 0.5f) + (Vector2.one * 0.5f);
+        p = new Vector2(Vector2.Dot(p, m_vHashSeed), Vector2.Dot(p, m_vHashSeed2));
+        return Mathv.Fract(Mathv.Mul(Mathv.Sin(p), m_fHashSeed));
     }
 
-    float VoronoiFilter(Vector2 p)
+
+    Vector2 VoronoiFilter(Vector2 p)
     {
-        Vector2 g = Mathv.Floor(p), off = new Vector2();
-        p -= g;
+        Vector2 n = Mathv.Floor(p);
+        Vector2 f = Mathv.Fract(p);
 
-        Vector3 d = Vector3.one;
 
-        for (int y = -1; y <= 1; y++)
+        Vector3 m = Vector3.one * 8.0f;
+        Vector2 g = new Vector2();
+
+        for (int j = -1; j <= 1; j++)
         {
-            for (int x = -1; x <= 1; x++)
+            for (int i = -1; i <= 1; i++)
             {
-                off.Set(x, y);
-                off += hash22(g + off) - p;
+                g.Set(i, j);
+                Vector2 o = hash22(n + g);
+                Vector2 r = g - f + (Vector2.one * 0.5f) + (Mathv.Sin(Mathv.Mul(o, Mathf.PI * 2.0f)) * 0.5f);
+                float d = Vector2.Dot(r, r);
 
-                d.z = Vector2.Dot(off, off);
-                d.y = Mathf.Max(d.x, Mathf.Min(d.y, d.z));
-                d.x = Mathf.Min(d.x, d.z);
+                if (d < m.x)
+                    m.Set(d, o.x, o.y);
             }
         }
 
-        float r = Mathf.Max(d.y / 1.2f - d.x * 1.0f, 0.0f) / 1.2f;
-
-        return r;
+        //        float r = Mathf.Max(d.y / 1.2f - d.x * 1.0f, 0.2f) / 1.0f;
+        g.Set(Mathf.Sqrt(m.x), (m.y + m.z) / Mathf.Sqrt(m.x));
+        return g;
     }
 
     public override Vector4 doGen(Vector2 iFragCoord)
     {
-        Vector2 uv = Mathv.Div((iFragCoord - iResolution * 0.5f), iResolution);
-        //        float n = Mathf.Pow(1.0f - Vector2.Dot(uv, uv), 2.0f);
-        float v = VoronoiFilter(uv * 2.0f);
+        Vector2 uv = Mathv.Div(iFragCoord, iResolution);
+        Vector2 v = VoronoiFilter(uv * m_Scale);
 
-        return new Vector4(v, v, v, 1.0f);
+        return new Vector4(v.x, v.y, v.x * v.y, 1.0f);
     }
 
     public override void guiGen()
     {
         EditorGUILayout.BeginVertical();
-//        m_Scale = EditorGUILayout.FloatField("Initial Scale:", m_Scale);
-//        m_Amplitude = EditorGUILayout.FloatField("Initial Amplitude:", m_Amplitude);
-//        m_Iterations = EditorGUILayout.IntField("Iterations:", m_Iterations);
-
-        //        seed = EditorGUILayout.FloatField("seed:", seed);
-        //        scale = EditorGUILayout.FloatField("scale:", scale);
+        m_Scale = EditorGUILayout.FloatField("Initial Scale:", m_Scale);
         EditorGUILayout.EndVertical();
     }
 
@@ -424,14 +408,18 @@ public class GenTexTool : EditorWindow {
                         textureName = EditorUtility.SaveFilePanel("Save png", path, fName, "png");
                         if (textureName.Length != 0)
                         {
+                            byte[] pngData;
                             if (backgroundImage.format != TextureFormat.ARGB32 && backgroundImage.format != TextureFormat.RGB24)
                             {
 				                Texture2D tempTexture = new Texture2D(backgroundImage.width, backgroundImage.height );
                                 tempTexture.SetPixels(backgroundImage.GetPixels( 0 ), 0 );
-                                backgroundImage = tempTexture;                            
+                                pngData = tempTexture.EncodeToPNG();
+                            }
+                            else
+                            {
+                                pngData = backgroundImage.EncodeToPNG();
                             }
 
-                            byte[] pngData = backgroundImage.EncodeToPNG();
                             if (pngData != null)
                             {
                                 File.WriteAllBytes(textureName, pngData);
@@ -446,7 +434,25 @@ public class GenTexTool : EditorWindow {
             GUILayout.Space(0.0f);    
 
             EditorGUILayout.BeginVertical();
-                selectedTab = GUILayout.Toolbar(selectedTab, toolbarOptions);
+                int currentSelectedTab = GUILayout.Toolbar(selectedTab, toolbarOptions);
+                if (currentSelectedTab != selectedTab)
+                {
+                selectedTab = currentSelectedTab;
+                if (currentTexGen != null)
+                    DestroyObject(currentTexGen);
+
+                    switch(selectedTab)
+                    {
+                        case 0:
+                            currentTexGen = new Perlin();
+                            break;
+
+                        case 1:
+                            currentTexGen = new Voronoi();
+                            break;
+
+                    }
+                }
                 if (currentTexGen != null)
                 {
                     currentTexGen.guiGen();
