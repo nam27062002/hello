@@ -28,7 +28,8 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decora
 				ZFail keep
 			}
 
-			cull front
+//			cull front
+			cull off
 
 			CGPROGRAM
 				#pragma vertex vert

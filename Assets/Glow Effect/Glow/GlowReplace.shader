@@ -82,7 +82,9 @@ Shader "Hidden/Glow Effect/Glow Replace" {
 				#endif
 
 				#if GLOWEFFECT_USE_GLOWCOLOR
-				glow += _GlowColor;
+				// [AOC] Try using each object's glow color as a modifier of the source color, rather than just adding it
+				//glow += _GlowColor;
+				glow *= _GlowColor * _GlowColor.a;	// Alpha controls intensity
 				#endif
 
 				#if GLOWEFFECT_USE_VERTEXCOLOR
