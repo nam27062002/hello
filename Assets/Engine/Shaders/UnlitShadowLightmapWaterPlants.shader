@@ -5,7 +5,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Lightmap And Recieve Shadow Water Plants(On Line Decorations)" 
+Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decorations)" 
 {
 	Properties 
 	{

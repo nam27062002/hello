@@ -181,6 +181,7 @@ GameObject:
   - component: {fileID: 11404656}
   - component: {fileID: 114000012561923044}
   - component: {fileID: 114000012346129918}
+  - component: {fileID: 114977920656640834}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -5744,8 +5745,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e4f698f201ec4d498313a9d0e6074f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_color1: {r: 1, g: 1, b: 0, a: 1}
-  m_color2: {r: 0.9490197, g: 0.4901961, b: 0, a: 1}
+  m_color1: {r: 0.5441177, g: 1, b: 0.928489, a: 1}
+  m_color2: {r: 0.33088237, g: 1, b: 0.8950404, a: 1}
   m_direction: 1
 --- !u!114 &114000011065985762
 MonoBehaviour:
@@ -7165,26 +7166,27 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 2
       time: 0
-      value: 11.088256
-      inSlope: 65.04633
-      outSlope: 65.04633
-      tangentMode: 34
+      value: -1
+      inSlope: 7.5231977
+      outSlope: 7.5231977
+      tangentMode: 0
     - serializedVersion: 2
-      time: 0.32692307
-      value: 32.353405
-      inSlope: 0.98730856
-      outSlope: -2.9014778
-      tangentMode: 1
+      time: 0.48400697
+      value: 1
+      inSlope: 0.09054107
+      outSlope: 0.09054107
+      tangentMode: 0
     - serializedVersion: 2
-      time: 0.97449124
-      value: 3.6733503
-      inSlope: -93.64327
-      outSlope: -51.34015
-      tangentMode: 1
+      time: 0.993153
+      value: -1
+      inSlope: -6.1796007
+      outSlope: -6.1796007
+      tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  m_curveScale: 1
+  m_curveScale: 0.33
+  m_verticalPivot: 0.5
 --- !u!114 &114000012413750834
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7589,12 +7591,12 @@ MonoBehaviour:
   m_Padding:
     m_Left: 140
     m_Right: 210
-    m_Top: 13
+    m_Top: -15
     m_Bottom: 0
   m_ChildAlignment: 4
   m_Spacing: 5
   m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 1
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
 --- !u!114 &114000013049078974
@@ -7706,8 +7708,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e4f698f201ec4d498313a9d0e6074f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_color1: {r: 0.67545635, g: 1, b: 0.058823526, a: 1}
-  m_color2: {r: 0.09411766, g: 0.603, b: 0, a: 1}
+  m_color1: {r: 0.5, g: 1, b: 0.64827585, a: 1}
+  m_color2: {r: 0.48184887, g: 0.8897059, b: 0.15046495, a: 1}
   m_direction: 1
 --- !u!114 &114000013631256696
 MonoBehaviour:
@@ -8014,8 +8016,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e4f698f201ec4d498313a9d0e6074f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_color1: {r: 1, g: 1, b: 0, a: 1}
-  m_color2: {r: 0.5019608, g: 0.972549, b: 0.49019608, a: 1}
+  m_color1: {r: 0, g: 1, b: 0.8431373, a: 1}
+  m_color2: {r: 0.018814897, g: 0.62526655, b: 0.6397059, a: 1}
   m_direction: 1
 --- !u!114 &114000013955310698
 MonoBehaviour:
@@ -8614,6 +8616,24 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114977920656640834
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 129932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1679637790, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: 75
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
 --- !u!198 &198000010351655774
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -41124,7 +41144,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 133.49, y: -6.75}
-  m_SizeDelta: {x: 132.79, y: -16.5}
+  m_SizeDelta: {x: 119.77, y: -16.5}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!224 &224000012907272558
 RectTransform:

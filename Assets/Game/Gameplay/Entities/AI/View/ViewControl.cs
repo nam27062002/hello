@@ -615,7 +615,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			} else {
 				if ( !string.IsNullOrEmpty(m_onPanicAudio) )
 					m_onPanicAudioAO = AudioController.Play( m_onPanicAudio, transform);
-				m_animator.SetBool("hold", _panic);
+				m_animator.SetBool("holded", _panic);
 			}
 		}
 	}
