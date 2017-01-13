@@ -81,6 +81,16 @@ public class EggRewardInfo : MonoBehaviour {
 					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.itemDef.GetAsString("powerup0"));
 					powerIcon.InitFromDefinition(powerDef, false);
 				}
+
+				// Duplicated info
+				if(_rewardData.duplicated) {
+					// Are all the golden eggs opened (giving coins instead if so)
+					if(_rewardData.coins > 0) {
+						m_goldenFragmentInfo.Localize("TID_EGG_REWARD_DUPLICATED_2", _rewardData.itemDef.Get("tidName"), StringUtils.FormatNumber(_rewardData.coins));	// %U0 already unlocked!\nYou get %U1 coins instead!
+					} else {
+						m_goldenFragmentInfo.Localize("TID_EGG_REWARD_DUPLICATED_1", _rewardData.itemDef.Get("tidName"));	// %U0 already unlocked!\nYou get a Golden Egg fragment instead!
+					}
+				}
 			} break;
 		}
 
