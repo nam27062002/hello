@@ -1,0 +1,102 @@
+﻿// EggRewardTitle.cs
+// Hungry Dragon
+// 
+// Created by Alger Ortín Castellví on 12/01/2017.
+// Copyright (c) 2017 Ubisoft. All rights reserved.
+
+//----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
+using UnityEngine;
+using TMPro;
+using DG.Tweening;
+
+//----------------------------------------------------------------------------//
+// CLASSES																	  //
+//----------------------------------------------------------------------------//
+/// <summary>
+/// Simple script to easily setup the egg reward title.
+/// </summary>
+[RequireComponent(typeof(Animator))]
+public class EggRewardInfo : MonoBehaviour {
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	// Exposed
+	[SerializeField] private RarityTitleGroup m_rarityTitle = null;
+	[SerializeField] private Localizer m_goldenFragmentTitle = null;
+	[SerializeField] private Localizer m_goldenFragmentInfo = null;
+	[SerializeField] private GameObject m_rewardPowers = null;
+
+	// Other references
+	private Animator m_animator = null;
+
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	private void Awake() {
+		m_animator = GetComponent<Animator>();
+	}
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize the title with the given Egg Reward Data and launch the animation.
+	/// </summary>
+	/// <param name="_rewardData">Egg reward data to be used for initialization.</param>
+	public void InitAndAnimate(EggReward _rewardData) {
+		// Ignore if given data is not valid or is not initialized
+		if(_rewardData == null) return;
+		if(_rewardData.def == null) return;
+
+		// Aux vars
+		DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, _rewardData.def.Get("rarity"));
+
+		// Different initializations based on reward type
+		switch(_rewardData.type) {
+			case "pet": {
+				// Rarity
+				string text = _rewardData.def.GetLocalized("tidName");	// "Rare Pet"
+				m_rarityTitle.InitFromRarity(rarityDef, text);
+
+				// Pet name
+				TextMeshProUGUI rewardNameText = m_rarityTitle.activeTitle.auxText;
+				if(rewardNameText != null) {
+					Localizer loc = rewardNameText.GetComponent<Localizer>();
+					if(loc != null) loc.Localize(_rewardData.itemDef.Get("tidName"));	// Froggy
+				}
+
+				// Power icon
+				DisguisePowerIcon powerIcon = m_rewardPowers.FindComponentRecursive<DisguisePowerIcon>("Power1");
+				if(!_rewardData.duplicated) {
+					// Initialize with powers data
+					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.itemDef.GetAsString("powerup0"));
+					powerIcon.InitFromDefinition(powerDef, false);
+				}
+			} break;
+		}
+
+		// Setup and launch animation
+		m_animator.SetBool("duplicated", _rewardData.duplicated);
+		m_animator.SetTrigger("show");
+	}
+
+	/// <summary>
+	/// Hide everything!
+	/// </summary>
+	public void Hide() {
+		m_animator.SetTrigger("hide");
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+}
