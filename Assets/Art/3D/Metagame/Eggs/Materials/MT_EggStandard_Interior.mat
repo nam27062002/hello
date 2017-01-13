@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_EggStandard_Interior
   m_Shader: {fileID: 4800000, guid: 6a206d3664d59fc4e912085ba47c4b98, type: 3}
-  m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX
+  m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR GLOWEFFECT_USE_GLOWTEX
     GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -168,6 +168,9 @@ Material:
     - first:
         name: _FresnelInitialColor
       second: {r: 0.53676474, g: 0.019733952, b: 0.11600861, a: 1}
+    - first:
+        name: _GlowColor
+      second: {r: 1, g: 1, b: 1, a: 0}
     - first:
         name: _GlowColorMult
       second: {r: 1, g: 0.8897059, b: 0.8897059, a: 0}
