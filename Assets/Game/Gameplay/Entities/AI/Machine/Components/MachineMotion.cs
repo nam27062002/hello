@@ -25,6 +25,7 @@ namespace AI {
 		[SerializeField] private UpVector m_defaultUpVector = UpVector.Up;
 		[SerializeField] private float m_orientationSpeed = 120f;
 		[SerializeField] private bool m_faceDirection = true;
+		[SerializeField] private bool m_useDragonStyleRotation = false;
 		public bool faceDirection { get { return m_faceDirection; } set { m_faceDirection = value; } }
 		[SerializeField][HideInInspector] private bool m_rollRotation = false;
 
@@ -470,6 +471,31 @@ namespace AI {
 				
 					m_targetRotation = Quaternion.AngleAxis(angle, m_direction) * m_targetRotation;
 				}
+			} else if (m_useDragonStyleRotation && m_pilot.speed > 0.01f) {
+				float angle = m_direction.ToAngleDegrees();
+				float roll = angle;
+				float pitch = angle;
+				float yaw = 0;
+
+				Quaternion qRoll = Quaternion.Euler(0.0f, 0.0f, roll);
+				Quaternion qYaw = Quaternion.Euler(0.0f, yaw, 0.0f);
+				Quaternion qPitch = Quaternion.Euler(pitch, 0.0f, 0.0f);
+				m_targetRotation = qYaw * qRoll * qPitch;
+				Vector3 eulerRot = m_targetRotation.eulerAngles;
+				if (m_limitVerticalRotation)
+				{
+					// top cap
+					if (eulerRot.z > m_faceUpAngle && eulerRot.z < 180 - m_faceUpAngle) 
+					{
+						eulerRot.z = m_faceUpAngle;
+					}
+					// bottom cap
+					else if ( eulerRot.z > 180 + m_faceDownAngle && eulerRot.z < 360-m_faceDownAngle )
+					{
+						eulerRot.z = -m_faceDownAngle;
+					}
+				}
+				m_targetRotation = Quaternion.Euler(eulerRot) * Quaternion.Euler(0,90.0f,0);
 
 			} else {
 				if (m_pilot.speed > 0.01f) {
@@ -484,7 +510,7 @@ namespace AI {
 				else if (m_direction.x > 0f)m_targetRotation = Quaternion.AngleAxis(m_faceRightAngle, m_upVector) * m_targetRotation; 
 			}
 
-			if (m_limitVerticalRotation) {
+			if (m_limitVerticalRotation && !m_useDragonStyleRotation) {
 				Vector3 euler = m_targetRotation.eulerAngles;
 				if (m_direction.y > 0.25f) 			euler.x = Mathf.Max(m_faceUpAngle, euler.x);
 				else if (m_direction.y < -0.25f) 	euler.x = Mathf.Min(m_faceDownAngle, euler.x);
