@@ -17,7 +17,7 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 		_FresnelFinalColor("Fresnel final (RGB)", Color) = (0, 0, 0, 0)
 		_RimFactor("Rim factor", Range(0.0, 8.0)) = 0.27
 		_RimColor("Rim Color (RGB)", Color) = (1.0, 1.0, 1.0, 1.0)
-		_GlowColorMult("Emissive color (RGB)", Color) = (0, 0, 0, 0)
+		_EmissiveColor("Emissive color (RGB)", Color) = (0, 0, 0, 0)
 
 	}
 
@@ -84,7 +84,7 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 			uniform float _FresnelFactor;
 			uniform float4 _FresnelInitialColor;
 			uniform float4 _FresnelFinalColor;
-			uniform float4 _GlowColorMult;
+			uniform float4 _EmissiveColor;
 			uniform float _RimFactor;
 			uniform float4 _RimColor;
 
@@ -156,7 +156,7 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 				col = diffuse * col + (specular * _LightColor) + lerp(_FresnelInitialColor, _FresnelFinalColor, fresnel) + (rim * _RimColor);	// Custom light color
 
 				float3 emissive = tex2D(_GlowTex, i.uv2);
-				col = lerp(col, _GlowColorMult, (emissive.r + emissive.g + emissive.b) * _GlowColorMult.a);	// Multiplicative, emissive color alpha controls intensity
+				col = lerp(col, _EmissiveColor, (emissive.r + emissive.g + emissive.b) * _EmissiveColor.a);	// Multiplicative, emissive color alpha controls intensity
 				// col = lerp(col, _EmissiveColor, emissive.r + emissive.g + emissive.b);			// Multiplicative, no intensity control
 				// col += _EmissiveColor * (emissive.r + emissive.g + emissive.b);				// Additive, no intesity control
 

@@ -38,50 +38,6 @@ public class Egg {
 		SHOWROOM				// 7 Egg for display only, state is not relevant
 	};
 
-	public struct EggReward {
-		public string type;		// Reward type, matches rewardDefinitions "type" property.
-		public string value;	// Typically a sku: disguiseSku, petSku
-		public long coins;		// Coins to be given instead of the reward. Only if bigger than 0.
-
-		/// <summary>
-		/// Initialize this data object from a reward definition.
-		/// </summary>
-		/// <param name="_rewardDef">Reward def.</param>
-		public void InitFromDef(DefinitionNode _rewardDef) {
-			// Reset if def is null
-			if(_rewardDef == null) {
-				type = "";
-				value = "";
-				coins = 0;
-				return;
-			}
-
-			// Initialize the reward data
-			type = _rewardDef.GetAsString("type");
-			value = "";
-			coins = 0;
-
-			switch(type) {
-				case "pet": {
-					// Get a random pet of the target rarity
-					List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", _rewardDef.Get("rarity"));
-					DefinitionNode targetDef = petDefs.GetRandomValue();
-
-					// Initialize reward data based on obtained pet
-					value = targetDef.sku;
-
-					// If the pet is already owned, give special egg part or coins instead
-					bool owned = false;
-					if(owned) {
-						// [AOC] TODO!!
-						// Give special egg part or coins
-						coins = 100;
-					}
-				} break;
-			}
-		}
-	}
-
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -91,12 +47,7 @@ public class Egg {
 		get { return m_def; }
 	}
 
-	private DefinitionNode m_rewardDef = null;	// Only valid after the egg has been collected
-	public DefinitionNode rewardDef {
-		get { return m_rewardDef; }
-	}
-
-	private EggReward m_rewardData = new EggReward();
+	private EggReward m_rewardData = new EggReward();	// Only valid after the egg has been collected
 	public EggReward rewardData {
 		get { return m_rewardData; }
 	}
@@ -275,11 +226,10 @@ public class Egg {
 	/// </summary>
 	public void GenerateReward() {
 		// Skip if reward was already generated
-		if(m_rewardDef != null) return; 
+		if(m_rewardData.def != null) return; 
 
 		// Generate the reward and init data
-		m_rewardDef = EggManager.GenerateReward();
-		m_rewardData.InitFromDef(m_rewardDef);
+		m_rewardData.InitFromDef(EggManager.GenerateReward());
 	}
 
 	/// <summary>
@@ -288,7 +238,7 @@ public class Egg {
 	/// </summary>
 	public void Collect() {
 		// If no reward was generated (shouldn't happen), do it now
-		if(m_rewardDef == null) GenerateReward();
+		if(m_rewardData.def == null) GenerateReward();
 
 		// Apply the reward!
 		switch(m_rewardData.type) {
@@ -366,9 +316,9 @@ public class Egg {
 
 		// Reward
 		if ( _data.ContainsKey("rewardSku") )
-			m_rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, _data["rewardSku"]);
+			m_rewardData.InitFromDef(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, _data["rewardSku"]));
 		else
-			m_rewardDef = null;
+			m_rewardData.InitFromDef(null);
 
 		// Incubating timestamp
 		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"]);
@@ -390,9 +340,9 @@ public class Egg {
 		data.Add("isNew",m_isNew.ToString());
 
 		// Reward
-		if(m_rewardDef != null) 
+		if(m_rewardData.def != null) 
 		{
-			data.Add("rewardSku", m_rewardDef.sku);
+			data.Add("rewardSku", m_rewardData.def.sku);
 		}
 
 		// Incubating timestamp
