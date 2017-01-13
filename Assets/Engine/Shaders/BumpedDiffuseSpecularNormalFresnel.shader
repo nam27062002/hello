@@ -18,6 +18,7 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 		_RimFactor("Rim factor", Range(0.0, 8.0)) = 0.27
 		_RimColor("Rim Color (RGB)", Color) = (1.0, 1.0, 1.0, 1.0)
 		_EmissiveColor("Emissive color (RGB)", Color) = (0, 0, 0, 0)
+		_GlowColor("Glow (RGB, Alpha is intensity)", Color) = (1, 1, 1, 1)
 
 	}
 
@@ -87,6 +88,7 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 			uniform float4 _EmissiveColor;
 			uniform float _RimFactor;
 			uniform float4 _RimColor;
+			uniform float4 _GlowColor;
 
 //			#if GLOWEFFECT_MULTIPLY_COLOR
 //			uniform float4 _GlowColorMult;
