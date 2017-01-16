@@ -110,8 +110,8 @@ public class EggController : MonoBehaviour {
 
 		// Rarity
 		int rarity = 0;
-		if(m_eggData.rewardDef != null) {
-			switch(m_eggData.rewardDef.Get("rarity")) {
+		if(m_eggData.rewardData.def != null) {
+			switch(m_eggData.rewardData.def.Get("rarity")) {
 				case "common":	rarity = 0;	break;
 				case "rare":	rarity = 1;	break;
 				case "epic":	rarity = 2;	break;

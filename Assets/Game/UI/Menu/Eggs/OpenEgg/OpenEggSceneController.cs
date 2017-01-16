@@ -120,6 +120,8 @@ public class OpenEggSceneController : MonoBehaviour {
 		m_eggView = _egg.CreateView();
 
 		// Attach it to the 3d scene's anchor point
+		// Make sure anchor is active!
+		m_eggAnchor.gameObject.SetActive(true);
 		m_eggView.transform.SetParent(m_eggAnchor, false);
 		m_eggView.transform.position = m_eggAnchor.position;
 
@@ -179,8 +181,8 @@ public class OpenEggSceneController : MonoBehaviour {
 		if(m_eggView == null) return;
 
 		// Aux vars
-		Egg.EggReward rewardData = eggData.rewardData;
-		DefinitionNode rewardDef = eggData.rewardDef;
+		EggReward rewardData = eggData.rewardData;
+		DefinitionNode rewardDef = eggData.rewardData.def;
 
 		// Create a fake reward view
 		switch(rewardData.type) {
@@ -192,7 +194,7 @@ public class OpenEggSceneController : MonoBehaviour {
 				// Use a PetLoader to simplify things
 				MenuPetLoader loader = m_rewardView.AddComponent<MenuPetLoader>();
 				loader.Setup(MenuPetLoader.Mode.MANUAL, MenuPetLoader.Anim.BREAK_EGG, true);
-				loader.Load(rewardData.value);
+				loader.Load(rewardData.itemDef.sku);
 
 				// Animate it
 				m_rewardView.transform.DOScale(0f, 1f).SetDelay(0.1f).From().SetRecyclable(true).SetEase(Ease.OutBack);
@@ -213,7 +215,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		// Show reward godrays
 		// Custom color based on reward's rarity
 		if(m_rewardGodRaysFX != null) {
-			m_rewardGodRaysFX.StartFX(eggData.rewardDef.Get("rarity"));
+			m_rewardGodRaysFX.StartFX(eggData.rewardData.def.Get("rarity"));
 
 			/*// Show with some delay to sync with pet's animation
 			m_rewardGodRaysFX.transform.DOScale(0f, 0.05f).From().SetDelay(0.15f).SetRecyclable(true).OnStart(

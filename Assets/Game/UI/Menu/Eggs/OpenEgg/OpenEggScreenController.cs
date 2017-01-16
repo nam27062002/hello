@@ -36,14 +36,12 @@ public class OpenEggScreenController : MonoBehaviour {
 	[SerializeField] private Localizer m_tapInfoText = null;
 
 	[Separator("Buttons")]
+	[SerializeField] private GameObject m_callToActionButton = null;
 	[SerializeField] private Localizer m_callToActionText = null;
 	[SerializeField] private ShowHideAnimator m_finalPanel = null;
 
 	[Separator("Rewards")]
-	[SerializeField] private GameObject m_rewardInfo = null;
-	[SerializeField] private RarityTitle m_rewardRarity = null;
-	[SerializeField] private Localizer m_rewardDescText = null;
-	[SerializeField] private GameObject m_rewardPowers = null;
+	[SerializeField] private EggRewardInfo m_rewardInfo = null;
 
 	// Reference to 3D scene
 	private OpenEggSceneController m_scene = null;
@@ -150,8 +148,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_flashFX != null) m_flashFX.SetActive(false);
 
 		// Hide reward elements
-		m_rewardInfo.GetComponent<ShowHideAnimator>().Hide(false);
-		m_rewardPowers.GetComponent<ShowHideAnimator>().Hide(false);
+		m_rewardInfo.Hide();
 
 		// Initialize egg view
 		m_scene.InitEggView(_egg);
@@ -197,7 +194,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Do a full-screen flash FX (TEMP)
 		if(m_flashFX != null) {
-			Color rarityColor = UIConstants.GetRarityColor(m_scene.eggData.rewardDef.Get("rarity"));		// Color based on reward's rarity :)
+			Color rarityColor = UIConstants.GetRarityColor(m_scene.eggData.rewardData.def.Get("rarity"));		// Color based on reward's rarity :)
 			m_flashFX.SetActive(true);
 			m_flashFX.GetComponent<Image>().color = rarityColor;
 			m_flashFX.GetComponent<Image>().DOFade(0f, 2f).SetEase(Ease.OutExpo).SetRecyclable(true).OnComplete(() => { m_flashFX.SetActive(false); });
@@ -222,71 +219,27 @@ public class OpenEggScreenController : MonoBehaviour {
 		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();
 
 		// Aux vars
-		Egg.EggReward rewardData = m_scene.eggData.rewardData;
-		DefinitionNode rewardDef = m_scene.eggData.rewardDef;
-		DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, rewardDef.Get("rarity"));
-		DefinitionNode rewardedItemDef = null;	// [AOC] Will be initialized with either a suit or a pet definition
-		string rewardType = rewardData.type;
+		EggReward rewardData = m_scene.eggData.rewardData;
+		DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, rewardData.def.Get("rarity"));
 
-		// Activate info container
-		m_rewardInfo.GetComponent<ShowHideAnimator>().Show(false);
+		// Initialize title and launch animation
+		m_rewardInfo.InitAndAnimate(rewardData);
 
-		// Different initializations based on reward type
-		switch(rewardType) {
+		// Initialize power icon based on reward type
+		// Initialize other stuff based on reward type
+		switch(rewardData.type) {
 			case "pet": {
-				// Pet def
-				rewardedItemDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, rewardData.value);
-
-				// Pet rarity
-				string text = rewardDef.GetLocalized("tidName", rewardedItemDef.GetLocalized("tidName"));
-				m_rewardRarity.InitFromRarity(rarityDef, text);
-
-				// No description for now
-				m_rewardDescText.Localize("");
-				m_rewardDescText.text.text = "";
-
 				// Call to action text
 				m_callToActionText.Localize("TID_EGG_EQUIP_REWARD");
 			} break;
-		}
-
-		// Rarity title animation
-		CanvasGroup rarityCanvasGroup = m_rewardRarity.ForceGetComponent<CanvasGroup>();
-		rarityCanvasGroup.alpha = 1f;
-		rarityCanvasGroup.DOFade(0f, 0.15f).From().SetEase(Ease.Linear).SetRecyclable(true);
-		m_rewardRarity.transform.localScale = Vector3.one;
-		m_rewardRarity.transform.DOScale(3f, 0.30f).From().SetEase(Ease.OutCubic).SetRecyclable(true);
-
-		// Description text animation
-		m_rewardDescText.text.color = Colors.WithAlpha(m_rewardDescText.text.color, 1f);
-		m_rewardDescText.transform.DOBlendableLocalMoveBy(Vector3.right * 500f, 0.30f).From().SetDelay(0.20f).SetEase(Ease.OutCubic).SetRecyclable(true);
-		m_rewardDescText.text.DOFade(0f, 0.15f).From().SetDelay(0.20f).SetEase(Ease.Linear).SetRecyclable(true);
-
-		// Initialize power based on reward type
-		switch(rewardType) {
-			case "pet": {
-				// Show
-				m_rewardPowers.GetComponent<ShowHideAnimator>().Show(false);
-
-				// Initialize with powers data
-				DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, rewardedItemDef.GetAsString("powerup0"));
-				DisguisePowerIcon powerIcon = m_rewardPowers.FindComponentRecursive<DisguisePowerIcon>("Power1");
-				powerIcon.InitFromDefinition(powerDef, false);
-
-				// Intro animation
-				float delay = 0.65f;	// [AOC] Magic Number!!
-				powerIcon.transform.DOScale(2f, 0.25f).From().SetDelay(delay).SetEase(Ease.OutCubic).SetRecyclable(true);
-				powerIcon.GetComponent<CanvasGroup>().DOFade(0f, 0.15f).From().SetDelay(delay).SetRecyclable(true);
-
-				// Pet's powers are not unlocked, so disable godray FX (if any)
-				GameObject godraysObj = powerIcon.FindObjectRecursive("godrayFX");
-				if(godraysObj != null) godraysObj.SetActive(false);
-			} break;
 
 			default: {
-				m_rewardPowers.GetComponent<ShowHideAnimator>().Hide(false);
+				
 			} break;
 		}
+
+		// Don't show call to action button if the reward is a duplicate
+		m_callToActionButton.SetActive(!rewardData.duplicated);
 
 		// Initialize and launch 3D reward view
 		m_scene.LaunchRewardAnim();
@@ -329,7 +282,7 @@ public class OpenEggScreenController : MonoBehaviour {
 			case "pet": {
 				// Go to the pets screen
 				PetsScreenController petScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();
-				petScreen.Initialize(m_scene.eggData.rewardData.value);
+				petScreen.Initialize(m_scene.eggData.rewardData.itemDef.sku);
 				screensController.GoToScreen((int)MenuScreens.PETS);
 			} break;
 		}
@@ -361,8 +314,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		// If leaving this screen, launch all the hide animations that are not automated
 		if(_event.fromScreenIdx == (int)MenuScreens.OPEN_EGG) {
 			// Hide reward elements
-			m_rewardInfo.GetComponent<ShowHideAnimator>().Hide();
-			m_rewardPowers.GetComponent<ShowHideAnimator>().Hide();
+			m_rewardInfo.Hide();
 
 			// Clear 3D scene
 			if(m_scene != null) m_scene.Clear();
