@@ -132,6 +132,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private Transform m_tongue;
 	private Transform m_head;
+	private Transform m_suction;
 	private Transform m_cameraLookAt;
 	private Transform m_transform;
 
@@ -241,6 +242,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private float m_deadTimer = 0;
 	private const float m_deadGravityMultiplier = 5;
 
+	private float m_latchingTimer;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -315,7 +317,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_angularVelocity = Vector3.zero;
 		m_lastPosition = transform.position;
 		m_lastSpeed = 0;
-
+		m_suction = m_eatBehaviour.suction;
 
 
 		if (m_state == State.None)
@@ -457,6 +459,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.Latching:
 				{
 					m_groundCollider.enabled = false;
+					m_latchingTimer = 0;
 				}break;
 				case State.Dead:
 				{
@@ -549,9 +552,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 			case State.Latching:
 			{
+				/*	-> Moved to late update to synch with prey animation
 				RotateToDirection( m_holdPreyTransform.forward );
-				Vector3 deltaPosition = Vector3.Lerp( m_tongue.position, m_holdPreyTransform.position, Time.deltaTime * 8);	// Mouth should be moving and orienting
-				transform.position += deltaPosition - m_tongue.position;
+				// Vector3 deltaPosition = Vector3.Lerp( m_suction.position, m_holdPreyTransform.position, Time.deltaTime * 8);	// Mouth should be moving and orienting
+				Vector3 deltaPosition = m_holdPreyTransform.position;
+				transform.position += deltaPosition - m_suction.position;
+				*/
+
 			}break;
 			case State.InsideWater:
 			{
@@ -693,6 +700,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				Vector3 holdPoint = m_tongue.InverseTransformPoint( m_holdPreyTransform.position );
 				// m_holdPrey.transform.localPosition = -holdPoint;
 				m_holdPrey.transform.localPosition = Vector3.Lerp( pos, -holdPoint, Time.deltaTime * 20);
+			}
+			else
+			{
+				m_latchingTimer += Time.deltaTime;	
+				RotateToDirection( m_holdPreyTransform.forward );
+				Vector3 deltaPosition = Vector3.Lerp( m_suction.position, m_holdPreyTransform.position, m_latchingTimer * 8);	// Mouth should be moving and orienting
+				// Vector3 deltaPosition = m_holdPreyTransform.position;
+				transform.position += deltaPosition - m_suction.position;
 			}
 		}
 	}
