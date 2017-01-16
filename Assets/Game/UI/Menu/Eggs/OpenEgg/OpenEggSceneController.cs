@@ -30,6 +30,9 @@ public class OpenEggSceneController : MonoBehaviour {
 	[SerializeField] private Transform m_rewardAnchor = null;
 	[SerializeField] private ParticleSystem m_openEggFX = null;
 	[SerializeField] private GodRaysFX m_rewardGodRaysFX = null;
+	[Tooltip("One per rarity, matching order")]
+	[SerializeField] private ParticleSystem[] m_tapFX = new ParticleSystem[(int)EggReward.Rarity.COUNT];
+
 
 	// Events
 	public UnityEvent OnIntroFinished = new UnityEvent();
@@ -61,14 +64,16 @@ public class OpenEggSceneController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-
+		// Subscribe to external events
+		Messenger.AddListener<EggController, int>(GameEvents.EGG_TAP, OnEggTap);
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-
+		// Unsubscribe from external events
+		Messenger.RemoveListener<EggController, int>(GameEvents.EGG_TAP, OnEggTap);
 	}
 
 	/// <summary>
@@ -78,6 +83,14 @@ public class OpenEggSceneController : MonoBehaviour {
 		Clear();
 	}
 
+	/// <summary>
+	/// A change has been done in the inspector.
+	/// </summary>
+	private void OnValidate() {
+		// Make sure the rarity array has exactly the same length as rarities in the game.
+		m_tapFX.Resize((int)EggReward.Rarity.COUNT);
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
@@ -85,6 +98,12 @@ public class OpenEggSceneController : MonoBehaviour {
 	/// Clear the whole 3D scene.
 	/// </summary>
 	public void Clear() {
+		// Return tap FX to the pool
+		for(int i = 0; i < m_tapFX.Length; i++) {
+			m_tapFX[i].transform.SetParent(this.transform);
+			m_tapFX[i].gameObject.SetActive(false);
+		}
+
 		if(m_eggView != null) {
 			GameObject.Destroy(m_eggView.gameObject);
 			m_eggView = null;
@@ -110,11 +129,8 @@ public class OpenEggSceneController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_egg">The egg to be opened.</param>
 	public void InitEggView(Egg _egg) {
-		// If we already have an egg view, destroy it
-		if(m_eggView != null) {
-			GameObject.Destroy(m_eggView.gameObject);
-			m_eggView = null;
-		}
+		// Clear any active stuff
+		Clear();
 
 		// Create a new instance of the egg prefab
 		m_eggView = _egg.CreateView();
@@ -132,6 +148,11 @@ public class OpenEggSceneController : MonoBehaviour {
 		ParticleSystem[] particleFX = m_eggView.GetComponentsInChildren<ParticleSystem>();
 		for(int i = 0; i < particleFX.Length; i++) {
 			particleFX[i].gameObject.SetActive(false);
+		}
+
+		// Disable tap FX
+		for(int i = 0; i < m_tapFX.Length; i++) {
+			m_tapFX[i].gameObject.SetActive(false);
 		}
 	}
 
@@ -215,7 +236,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		// Show reward godrays
 		// Custom color based on reward's rarity
 		if(m_rewardGodRaysFX != null) {
-			m_rewardGodRaysFX.StartFX(eggData.rewardData.def.Get("rarity"));
+			m_rewardGodRaysFX.StartFX(eggData.rewardData.rarity);
 
 			/*// Show with some delay to sync with pet's animation
 			m_rewardGodRaysFX.transform.DOScale(0f, 0.05f).From().SetDelay(0.15f).SetRecyclable(true).OnStart(
@@ -246,5 +267,25 @@ public class OpenEggSceneController : MonoBehaviour {
 	private void OnEggOpenFinishedCallback() {
 		// Notify external scripts
 		OnEggOpenFinished.Invoke();
+	}
+
+	/// <summary>
+	/// An opening egg has been tapped.
+	/// </summary>
+	/// <param name="_egg">The egg that has been tapped.</param>
+	/// <param name="_tapCount">Tap count.</param>
+	private void OnEggTap(EggController _egg, int _tapCount) {
+		// Show the right particle effect based on rarity!
+		if(_tapCount == 1 && _egg == m_eggView) {
+			// In order for the tap FX to look good, we must attach it to the egg view
+			ParticleSystem tapFX = m_tapFX[(int)_egg.eggData.rewardData.rarity];
+			tapFX.transform.SetParentAndReset(m_eggView.anchorFX);
+
+			// Activate FX
+			tapFX.gameObject.SetActive(true);
+			tapFX.Stop(true);
+			tapFX.Clear();
+			tapFX.Play(true);
+		}
 	}
 }

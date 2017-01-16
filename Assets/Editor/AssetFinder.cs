@@ -90,6 +90,39 @@ public class AssetFinder : EditorWindow {
 
     }
 
+    /// <summary>
+    /// Resets all shader keywords stored in materials or material selection
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Texture mipmap reset")]
+    public static void TextureMipmapReset()
+    {
+        Debug.Log("Obtaining texture list");
+
+        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
+
+        List<Texture2D> textureList;
+        FindAssetInContent<Texture2D>(Directory.GetCurrentDirectory() + "\\Assets", out textureList);
+
+        float c = 0;
+        foreach (Texture2D texture in textureList)
+        {
+            string path = AssetDatabase.GetAssetPath(texture);
+            TextureImporter textureImporter = AssetImporter.GetAtPath(path) as TextureImporter;
+            textureImporter.mipmapEnabled = false;
+                       
+            if (EditorUtility.DisplayCancelableProgressBar( "Reimporting texture", path, c / (float)textureList.Count))
+            {
+                EditorUtility.ClearProgressBar();
+                break;
+            }
+
+            AssetDatabase.ImportAsset(path);
+        }
+
+        Debug.Log("list length: " + textureList.Count);
+
+    }
+
 
 
     //------------------------------------------------------------------//

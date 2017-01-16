@@ -24,6 +24,12 @@ public class EggController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	// Exposed members
+	[SerializeField] private Transform m_anchorFX = null;
+	public Transform anchorFX {
+		get { return m_anchorFX; }
+	}
+
 	// Data
 	private Egg m_eggData = null;
 	public Egg eggData {
@@ -109,15 +115,7 @@ public class EggController : MonoBehaviour {
 		m_animator.SetFloat("intensity", intensities[step]);
 
 		// Rarity
-		int rarity = 0;
-		if(m_eggData.rewardData.def != null) {
-			switch(m_eggData.rewardData.def.Get("rarity")) {
-				case "common":	rarity = 0;	break;
-				case "rare":	rarity = 1;	break;
-				case "epic":	rarity = 2;	break;
-			}
-		}
-		m_animator.SetInteger("rarity", rarity);
+		m_animator.SetInteger("rarity", (int)m_eggData.rewardData.rarity);
 	}
 
 	//------------------------------------------------------------------//
