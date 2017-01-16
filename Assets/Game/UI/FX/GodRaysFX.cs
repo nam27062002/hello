@@ -25,9 +25,8 @@ public class GodRaysFX : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private ParticleSystem m_commonPS = null;
-	[SerializeField] private ParticleSystem m_rarePS = null;
-	[SerializeField] private ParticleSystem m_epicPS = null;
+	[Tooltip("One per rarity, matching order")]
+	[SerializeField] private ParticleSystem[] m_rarityPS = new ParticleSystem[(int)EggReward.Rarity.COUNT];
 
 	// Internal
 	private ParticleSystem m_basePS = null;
@@ -43,18 +42,26 @@ public class GodRaysFX : MonoBehaviour {
 		m_basePS = GetComponent<ParticleSystem>();
 	}
 
+	/// <summary>
+	/// A change has been done in the inspector.
+	/// </summary>
+	private void OnValidate() {
+		// Make sure the rarity array has exactly the same length as rarities in the game.
+		m_rarityPS.Resize((int)EggReward.Rarity.COUNT);
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Start (or restart) the FX with a given rarity.
 	/// </summary>
-	/// <param name="_raritySku">The sku of the rarity to be used to initialize the FX.</param>
-	public void StartFX(string _raritySku) {
+	/// <param name="_rarity">The rarity to be used to initialize the FX.</param>
+	public void StartFX(EggReward.Rarity _rarity) {
 		// Toggle proper sub-system based on given rarity
-		m_commonPS.gameObject.SetActive(_raritySku == "common");
-		m_rarePS.gameObject.SetActive(_raritySku == "rare");
-		m_epicPS.gameObject.SetActive(_raritySku == "epic");
+		for(int i = 0; i < m_rarityPS.Length; i++) {
+			m_rarityPS[i].gameObject.SetActive(i == (int)_rarity);
+		}
 
 		// Relaunch effect
 		StopFX();
