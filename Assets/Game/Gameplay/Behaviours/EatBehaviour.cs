@@ -56,6 +56,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	// First position when swallowing. Rotation has to end here
 	protected Transform m_suction;
+	public Transform suction
+	{
+		get{ return m_suction; }
+	}
 	// Second position when swallowing. Prey moved directly to this point while applying swallow shader
 	protected Transform m_swallow;
 	// Only used to update swallow shader
