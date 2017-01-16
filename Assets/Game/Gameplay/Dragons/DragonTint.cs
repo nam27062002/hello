@@ -176,7 +176,7 @@ public class DragonTint : MonoBehaviour
 	void SetColorMultiply( Color c )
 	{
 		for( int i = 0; i<m_materials.Count; i++ )	
-			m_materials[i].SetColor("_ColorMultiply", c );
+			m_materials[i].SetColor("_Tint", c );
 	}
 
 	void SetFresnelAlpha( float alpha )
