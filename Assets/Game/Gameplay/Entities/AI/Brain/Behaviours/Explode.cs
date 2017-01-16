@@ -68,7 +68,7 @@ namespace AI {
 						} else {
 							DragonHealthBehaviour health = dragon.GetComponent<DragonHealthBehaviour>();
 							if (health != null) {
-								health.ReceiveDamage(m_data.damage, DamageType.NORMAL, m_machine.transform);
+								health.ReceiveDamage(m_data.damage, DamageType.MINE, m_machine.transform);
 								if (health.IsAlive())
 									Messenger.Broadcast<float, float>(GameEvents.CAMERA_SHAKE, m_data.cameraShakeDuration, 0);		
 							}

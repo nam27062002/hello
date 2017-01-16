@@ -119,6 +119,22 @@ public class Corpse : MonoBehaviour {
 		m_delay = m_fadeDelay;
 		m_spawned = true;
 	}
+	/*
+	public void SwitchDragonTextures(  )
+	{
+		Color tint = Color.white;
+		for (int i = 0; i < m_materials.Count; i++) {
+			if (m_materials[i].shader.name.Contains("Body"))
+			{
+				m_materials[i].SetColor("_FresnelColor", m_defaultTints[i]);
+			}
+			else if (m_materials[i].shader.name.Contains("Wings"))
+			{
+				m_materials[i].SetColor("_FresnelColor", m_defaultTints[i]);	
+			}
+		}
+	}
+	*/
 
 	void Update() {
 		if (m_spawned) {
