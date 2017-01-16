@@ -62,6 +62,7 @@ public class DragonParticleController : MonoBehaviour
 	private const float m_waterDepthIncrease = 8;
 	private DragonMotion m_dargonMotion;
 	private DragonEatBehaviour m_dragonEat;
+	private DragonEquip m_dragonEquip;
 
 	[System.Serializable]
 	public class BodyParticle
@@ -89,6 +90,7 @@ public class DragonParticleController : MonoBehaviour
 		m_cloudTrailInstance = InitParticles(m_cloudTrail, m_cloudTrailAnchor);
 		m_dargonMotion = transform.parent.GetComponent<DragonMotion>();
 		m_dragonEat = transform.parent.GetComponent<DragonEatBehaviour>();
+		m_dragonEquip = transform.parent.GetComponent<DragonEquip>();
 		m_waterDepth = InstanceManager.player.data.scale + m_waterDepthIncrease;
 		_transform = transform;
 
@@ -228,7 +230,7 @@ public class DragonParticleController : MonoBehaviour
 			corpse.transform.CopyFrom(transform);
 			Corpse c = corpse.GetComponent<Corpse>();
 			c.Spawn(false, false);
-			// c.SwitchDragonTextures();
+			c.SwitchDragonTextures(m_dragonEquip.bodyMaterial.mainTexture, m_dragonEquip.wingsMaterial.mainTexture);
 
 		}
 	}
