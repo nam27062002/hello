@@ -4,6 +4,7 @@ using System.Collections;
 public class AnimStateSetups : MonoBehaviour {
 
 	public Range m_timeToGlide = new Range(3f, 4f);
+	public bool m_allowToGlide = true;
 	public Range m_glidingTime = new Range(4f, 6f);
 
 	// Use this for initialization
@@ -17,6 +18,7 @@ public class AnimStateSetups : MonoBehaviour {
 			{
 				loopBehaviour.m_timeToGlide = m_timeToGlide;
 				loopBehaviour.ResetTimer();
+				loopBehaviour.allowGlide = m_allowToGlide;
 			}
 
 			GlideBehaviour glide = anim.GetBehaviour<GlideBehaviour>();

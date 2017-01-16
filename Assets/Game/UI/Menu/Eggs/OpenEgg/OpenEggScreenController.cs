@@ -194,7 +194,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Do a full-screen flash FX (TEMP)
 		if(m_flashFX != null) {
-			Color rarityColor = UIConstants.GetRarityColor(m_scene.eggData.rewardData.def.Get("rarity"));		// Color based on reward's rarity :)
+			Color rarityColor = UIConstants.GetRarityColor(m_scene.eggData.rewardData.rarity);		// Color based on reward's rarity :)
 			m_flashFX.SetActive(true);
 			m_flashFX.GetComponent<Image>().color = rarityColor;
 			m_flashFX.GetComponent<Image>().DOFade(0f, 2f).SetEase(Ease.OutExpo).SetRecyclable(true).OnComplete(() => { m_flashFX.SetActive(false); });

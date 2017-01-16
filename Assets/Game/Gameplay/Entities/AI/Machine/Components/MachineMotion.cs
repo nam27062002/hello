@@ -25,6 +25,7 @@ namespace AI {
 		[SerializeField] private UpVector m_defaultUpVector = UpVector.Up;
 		[SerializeField] private float m_orientationSpeed = 120f;
 		[SerializeField] private bool m_faceDirection = true;
+		[SerializeField] private bool m_useDragonStyleRotation = false;
 		public bool faceDirection { get { return m_faceDirection; } set { m_faceDirection = value; } }
 		[SerializeField][HideInInspector] private bool m_rollRotation = false;
 
@@ -89,7 +90,7 @@ namespace AI {
 		private Quaternion m_rotation;
 		private Quaternion m_targetRotation;
 
-		private float m_latchBlending = 1f;
+		private float m_latchBlending = 0f;
 
 		private Transform m_attackTarget = null;
 		public Transform attackTarget { get{ return m_attackTarget; } set{ m_attackTarget = value; } }
@@ -228,18 +229,12 @@ namespace AI {
 				return;
 			} else if (m_machine.GetSignal(Signals.Type.Latching)) {
 				Stop();
-
-				Vector3 mouthOffset = (position - m_mouth.transform.position);
-				position = Vector3.Lerp(position, m_pilot.target + mouthOffset, Time.deltaTime * m_latchBlending);
-
-				if (m_latchBlending < 10f)
-					m_latchBlending += 0.1f * 2f;
-
+				// m_latchBlending += Time.deltaTime;
+				// Vector3 mouthOffset = (position - m_mouth.position);
+				// position = Vector3.Lerp(position, m_pilot.target + mouthOffset, m_latchBlending);
 				m_viewControl.Move(0);
 				return;	
 			}
-
-			m_latchBlending = 1f;
 
 			if (m_machine.GetSignal(Signals.Type.Panic)) {
 				Stop();
@@ -381,6 +376,18 @@ namespace AI {
 			}
 		}
 
+		public void LateUpdate() {
+			if (m_machine.GetSignal(Signals.Type.Latching)) {
+				m_latchBlending += Time.deltaTime;
+				Vector3 mouthOffset = (position - m_mouth.position);
+				position = Vector3.Lerp(position, m_pilot.target + mouthOffset, m_latchBlending);
+			}
+			else
+			{
+				m_latchBlending = 0;
+			}
+
+		}
 		private void UpdateVelocity() {
 			// "Physics" updates
 			Vector3 impulse = (m_pilot.impulse - m_velocity);
@@ -470,6 +477,31 @@ namespace AI {
 				
 					m_targetRotation = Quaternion.AngleAxis(angle, m_direction) * m_targetRotation;
 				}
+			} else if (m_useDragonStyleRotation && m_pilot.speed > 0.01f) {
+				float angle = m_direction.ToAngleDegrees();
+				float roll = angle;
+				float pitch = angle;
+				float yaw = 0;
+
+				Quaternion qRoll = Quaternion.Euler(0.0f, 0.0f, roll);
+				Quaternion qYaw = Quaternion.Euler(0.0f, yaw, 0.0f);
+				Quaternion qPitch = Quaternion.Euler(pitch, 0.0f, 0.0f);
+				m_targetRotation = qYaw * qRoll * qPitch;
+				Vector3 eulerRot = m_targetRotation.eulerAngles;
+				if (m_limitVerticalRotation)
+				{
+					// top cap
+					if (eulerRot.z > m_faceUpAngle && eulerRot.z < 180 - m_faceUpAngle) 
+					{
+						eulerRot.z = m_faceUpAngle;
+					}
+					// bottom cap
+					else if ( eulerRot.z > 180 + m_faceDownAngle && eulerRot.z < 360-m_faceDownAngle )
+					{
+						eulerRot.z = -m_faceDownAngle;
+					}
+				}
+				m_targetRotation = Quaternion.Euler(eulerRot) * Quaternion.Euler(0,90.0f,0);
 
 			} else {
 				if (m_pilot.speed > 0.01f) {
@@ -484,7 +516,7 @@ namespace AI {
 				else if (m_direction.x > 0f)m_targetRotation = Quaternion.AngleAxis(m_faceRightAngle, m_upVector) * m_targetRotation; 
 			}
 
-			if (m_limitVerticalRotation) {
+			if (m_limitVerticalRotation && !m_useDragonStyleRotation) {
 				Vector3 euler = m_targetRotation.eulerAngles;
 				if (m_direction.y > 0.25f) 			euler.x = Mathf.Max(m_faceUpAngle, euler.x);
 				else if (m_direction.y < -0.25f) 	euler.x = Mathf.Min(m_faceDownAngle, euler.x);

@@ -89,7 +89,8 @@ public enum GameEvents {
 	EGG_STATE_CHANGED,			// params: Egg _egg, Egg.State _from, Egg.State _to
 	EGG_INCUBATION_STARTED,		// params: Egg _egg
 	EGG_INCUBATION_ENDED,		// params: Egg _egg
-	EGG_OPENED,					// params: Egg _egg				// [AOC] Triggered when any egg is opened and its reward collected, whether it is the one in the incubator or one purchased from the shop
+	EGG_TAP,					// params: EggController _egg, int _tapCount	// [AOC] Triggered when opening an egg
+	EGG_OPENED,					// params: Egg _egg		// [AOC] Triggered when any egg is opened and its reward collected, whether it is the one in the incubator or one purchased from the shop
 
 	// GameServerManager events
 	LOGGED,						// params: bool	
