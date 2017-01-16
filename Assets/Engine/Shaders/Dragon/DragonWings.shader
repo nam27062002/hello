@@ -9,7 +9,7 @@ Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 	_BumpMap ("Normal Map (RGB)", 2D) = "white" {}
 	_DetailTex ("Detail (RGB)", 2D) = "white" {} // r -> inner light, g -> specular
-	_ColorMultiply ("Color Multiply", Color) = (1,1,1,1)
+	_Tint ("Color Multiply", Color) = (1,1,1,1)
 	_ColorAdd ("Color Add", Color) = (0,0,0,0)
 
 	_InnerLightAdd ("Inner Light Add", float) = 0
@@ -81,7 +81,7 @@ SubShader {
 			sampler2D _DetailTex;
 			float4 _DetailTex_ST;
 
-			float4 _ColorMultiply;
+			float4 _Tint;
 			float4 _ColorAdd;
 
 			uniform float _InnerLightAdd;
@@ -170,9 +170,9 @@ SubShader {
 				// Inner lights
 				fixed4 selfIlluminate = fixed4( (detail.r * _InnerLightAdd * _InnerLightColor.xyz) + specularLight, 0.0 );
 
-//				fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)), 1.0)) * main * (_ColorMultiply + _ColorAdd + selfIlluminate) + (fresnel * _FresnelColor);
+//				fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)), 1.0)) * main * (_Tint + _ColorAdd + selfIlluminate) + (fresnel * _FresnelColor);
 
-				fixed4 col = (diffuse + fixed4(i.vLight, 1.0)) * main * (_ColorMultiply + _ColorAdd + selfIlluminate) + (fresnel * _FresnelColor) + _AmbientAdd;
+				fixed4 col = (diffuse + fixed4(i.vLight, 1.0)) * main * (_Tint + _ColorAdd + selfIlluminate) + (fresnel * _FresnelColor) + _AmbientAdd;
 				return col;
 
 			}

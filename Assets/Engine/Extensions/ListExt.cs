@@ -189,4 +189,40 @@ public static class ListExt {
 	public static void SortAlphanumeric(this string[] _array) {
 		Array.Sort(_array, new AlphanumComparatorFast());
 	}
+
+	/// <summary>
+	/// Force the target list to have a specific length.
+	/// If current length is longer than the target length, elements at the end of the array will be removed.
+	/// If it's shorter, new elements will be added with the default value for the array type.
+	/// </summary>
+	/// <param name="_list">The list to be modified.</param>
+	/// <param name="_length">New length for the list.</param>
+	public static void Resize<T>(this List<T> _list, int _length) {
+		// Add or remove elements?
+		int originalLength = _list.Count;
+		if(_length < originalLength) {
+			// Just do it
+			_list.RemoveRange(_length, originalLength - _length);
+		} else if(_length > originalLength) {
+			// This bit is purely an optimisation, to avoid multiple automatic capacity changes.
+			if(_length > _list.Capacity) {
+				_list.Capacity = _length;
+			}
+
+			// Use the Repeat method to generate the range to add
+			_list.AddRange(Enumerable.Repeat(default(T), _length - originalLength));
+		}
+	}
+
+	/// <summary>
+	/// Force the target array to have a specific length.
+	/// If current length is longer than the target length, elements at the end of the array will be removed.
+	/// If it's shorter, new elements will be added with the default value for the array type.
+	/// </summary>
+	/// <param name="_array">The array to be modified.</param>
+	/// <param name="_length">New length for the array.</param>
+	public static void Resize<T>(this T[] _array, int _length) {
+		// System library makes it easy for us
+		System.Array.Resize(ref _array, _length);
+	}
 }

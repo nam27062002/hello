@@ -90,7 +90,7 @@ namespace AI {
 		private Quaternion m_rotation;
 		private Quaternion m_targetRotation;
 
-		private float m_latchBlending = 1f;
+		private float m_latchBlending = 0f;
 
 		private Transform m_attackTarget = null;
 		public Transform attackTarget { get{ return m_attackTarget; } set{ m_attackTarget = value; } }
@@ -229,18 +229,12 @@ namespace AI {
 				return;
 			} else if (m_machine.GetSignal(Signals.Type.Latching)) {
 				Stop();
-
-				Vector3 mouthOffset = (position - m_mouth.transform.position);
-				position = Vector3.Lerp(position, m_pilot.target + mouthOffset, Time.deltaTime * m_latchBlending);
-
-				if (m_latchBlending < 10f)
-					m_latchBlending += 0.1f * 2f;
-
+				// m_latchBlending += Time.deltaTime;
+				// Vector3 mouthOffset = (position - m_mouth.position);
+				// position = Vector3.Lerp(position, m_pilot.target + mouthOffset, m_latchBlending);
 				m_viewControl.Move(0);
 				return;	
 			}
-
-			m_latchBlending = 1f;
 
 			if (m_machine.GetSignal(Signals.Type.Panic)) {
 				Stop();
@@ -382,6 +376,18 @@ namespace AI {
 			}
 		}
 
+		public void LateUpdate() {
+			if (m_machine.GetSignal(Signals.Type.Latching)) {
+				m_latchBlending += Time.deltaTime;
+				Vector3 mouthOffset = (position - m_mouth.position);
+				position = Vector3.Lerp(position, m_pilot.target + mouthOffset, m_latchBlending);
+			}
+			else
+			{
+				m_latchBlending = 0;
+			}
+
+		}
 		private void UpdateVelocity() {
 			// "Physics" updates
 			Vector3 impulse = (m_pilot.impulse - m_velocity);

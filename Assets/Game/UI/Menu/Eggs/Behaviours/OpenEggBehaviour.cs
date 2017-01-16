@@ -67,6 +67,9 @@ public class OpenEggBehaviour : MonoBehaviour, IPointerClickHandler {
 		// Increase tap count!
 		m_tapCount++;
 
+		// Trigger external events
+		Messenger.Broadcast<EggController, int>(GameEvents.EGG_TAP, eggController, m_tapCount);
+
 		// If we've reached the required amount of taps, open egg!
 		if(m_tapCount >= TAPS_TO_OPEN) {
 			// Do it!

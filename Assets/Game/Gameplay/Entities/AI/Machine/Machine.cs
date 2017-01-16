@@ -300,6 +300,15 @@ namespace AI {
 			m_externalForces = Vector3.zero;
 		}
 
+		protected virtual void LateUpdate()
+		{
+			if (!IsDead()) {
+				if (m_enableMotion) {
+					m_motion.LateUpdate();
+				}
+			}
+		}
+
 		public void AddExternalForce( Vector3 force )
 		{
 			m_externalForces += force;
