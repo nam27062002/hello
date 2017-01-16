@@ -463,7 +463,7 @@ namespace AI {
 		}
 
 
-		public bool CanBeBitten()
+		public virtual bool CanBeBitten()
 		{
 			if (!enabled)
 				return false;

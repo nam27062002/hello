@@ -79,7 +79,7 @@ public class FireBreathNew : DragonBreathBehaviour {
         tempFire.transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 180.0f));
         dragonFlameSuperInstance = tempFire.GetComponent<FireBreathDynamic>();
 
-        m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible");
+		m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "FireBlocker");
 		m_noPlayerMask = ~LayerMask.GetMask("Player");
 
         float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
