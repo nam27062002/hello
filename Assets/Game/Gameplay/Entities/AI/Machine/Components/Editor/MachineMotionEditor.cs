@@ -71,6 +71,8 @@ public class MachineMotionEditor : ExtendedPropertyDrawer {
 						DrawAndAdvance(m_rootProperty.FindPropertyRelative("m_rollRotation"));
 						EditorGUI.indentLevel--;
 					}
+				} else if (_property.name == "m_useDragonStyleRotation") {
+					DrawToggleLeftAndAdvance(_property);
 				} else if (_property.name == "m_limitHorizontalRotation") {
 					DrawToggleLeftAndAdvance(_property);
 

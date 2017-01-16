@@ -38,7 +38,10 @@ public class UITooltip : MonoBehaviour {
 	// Other references
 	private ShowHideAnimator m_animator = null;
 	public ShowHideAnimator animator {
-		get { return m_animator; }
+		get {
+			if(m_animator == null) m_animator = GetComponent<ShowHideAnimator>();
+			return m_animator; 
+		}
 	}
 
 	//------------------------------------------------------------------------//
