@@ -69,11 +69,16 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
-	public static Color GetRarityColor(string _raritySku) {
-		switch(_raritySku) {
-			case "common":	return RARITY_COMMON_COLOR;		break;
-			case "rare":	return RARITY_RARE_COLOR;		break;
-			case "epic":	return RARITY_EPIC_COLOR;		break;
+	/// <summary>
+	/// Gets the color corresponding to a given rarity.
+	/// </summary>
+	/// <returns>The rarity color.</returns>
+	/// <param name="_rarity">The rarity to be checked.</param>
+	public static Color GetRarityColor(EggReward.Rarity _rarity) {
+		switch(_rarity) {
+			case EggReward.Rarity.COMMON:	return RARITY_COMMON_COLOR;		break;
+			case EggReward.Rarity.RARE:		return RARITY_RARE_COLOR;		break;
+			case EggReward.Rarity.EPIC:		return RARITY_EPIC_COLOR;		break;
 		}
 		return Color.white;
 	}

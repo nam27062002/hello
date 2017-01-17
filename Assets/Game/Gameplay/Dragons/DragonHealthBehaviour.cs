@@ -116,7 +116,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 			// Apply damage
 			float damage = GetModifiedDamageForCurrentHealth(_amount);
-			m_dragon.AddLife(-damage);
+			m_dragon.AddLife(-damage, _type);
 
 			// Notify game
 			Messenger.Broadcast<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, _amount, _type, _source);

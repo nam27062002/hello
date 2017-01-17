@@ -155,7 +155,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1341144563950862}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: -4.28, y: -0.955, z: 0}
+  m_LocalPosition: {x: -170.42418, y: 2.2422333, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4345250930740474}
@@ -426,9 +426,11 @@ MonoBehaviour:
     m_useGravity: 1
     m_walkOnWalls: 0
     m_mass: 2.5
+    m_attackPausesJump: 0
     m_defaultUpVector: 0
-    m_orientationSpeed: 230
+    m_orientationSpeed: 120
     m_faceDirection: 0
+    m_useDragonStyleRotation: 0
     m_rollRotation: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
@@ -451,8 +453,8 @@ MonoBehaviour:
       min: 0.9
       max: 1.1
     m_senseDelay:
-      min: 1.5
-      max: 3.5
+      min: 0
+      max: 0
   m_onSpawnSound: 
   m_rotateToMouth: 3
   m_inflammable:
@@ -567,7 +569,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":0.75,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":3},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":3,"checkDragonPositionTime":2,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":true},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":3,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":3},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":9,"checkDragonPositionTime":1,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":true},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":7,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
   m_databaseKey: PF_Worker
 --- !u!135 &135135939214642904
 SphereCollider:

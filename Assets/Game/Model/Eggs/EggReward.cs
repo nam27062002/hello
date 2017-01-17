@@ -20,6 +20,15 @@ public class EggReward {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public enum Rarity {
+		UNKNOWN = -1,
+
+		COMMON,
+		RARE,
+		EPIC,
+
+		COUNT
+	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -40,6 +49,12 @@ public class EggReward {
 	private DefinitionNode m_itemDef = null;
 	public DefinitionNode itemDef { 
 		get { return m_itemDef; }
+	}
+
+	// Shortcut to the reward's rarity. Initialized from the definition.
+	private Rarity m_rarity = Rarity.UNKNOWN;
+	public Rarity rarity {
+		get { return m_rarity; }
 	}
 
 	// Is it a duplicated?
@@ -70,6 +85,7 @@ public class EggReward {
 		// Reset all variables
 		m_type = "";
 		m_itemDef = null;
+		m_rarity = Rarity.UNKNOWN;
 		m_duplicated = false;
 		m_coins = 0;
 
@@ -80,8 +96,12 @@ public class EggReward {
 		m_type = _rewardDef.GetAsString("type");
 		switch(m_type) {
 			case "pet": {
+				// Find out reward rarity
+				DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, _rewardDef.Get("rarity"));
+				m_rarity = (Rarity)rarityDef.GetAsInt("order");
+
 				// Get a random pet of the target rarity
-				List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", _rewardDef.Get("rarity"));
+				List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", rarityDef.sku);
 				m_itemDef = petDefs.GetRandomValue();
 
 				// If the pet is already owned, give special egg part or coins instead
