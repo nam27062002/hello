@@ -107,6 +107,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		for(int i = 0; i < m_tapFX.Length; i++) {
 			if(m_tapFX[i] != null) {
 				m_tapFX[i].transform.SetParent(m_tapFXPool);
+				m_tapFX[i].Stop(true);
 				m_tapFX[i].gameObject.SetActive(false);
 			}
 		}
@@ -127,7 +128,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		
 		for(int i = 0; i < m_openFX.Length; i++) {
 			if(m_openFX[i] != null) {
-				m_openFX[i].Stop();
+				m_openFX[i].Stop(true);
 			}
 		}
 	}
@@ -153,10 +154,17 @@ public class OpenEggSceneController : MonoBehaviour {
 		// Launch intro as soon as possible (wait for the camera to stop moving)
 		m_eggView.gameObject.SetActive(false);
 
-		// [AOC] Hacky!! Disable particle FX
+		// [AOC] Hacky!! Disable particle FX (Premium Egg Idle)
 		ParticleSystem[] particleFX = m_eggView.GetComponentsInChildren<ParticleSystem>();
 		for(int i = 0; i < particleFX.Length; i++) {
 			particleFX[i].gameObject.SetActive(false);
+		}
+
+		// Attach tap FX to the egg's view (but don't activate it just yet)
+		ParticleSystem tapFX = m_tapFX[(int)eggData.rewardData.rarity];
+		if(tapFX != null) {
+			tapFX.transform.SetParentAndReset(m_eggView.anchorFX);
+			tapFX.gameObject.SetActive(false);
 		}
 	}
 
@@ -259,9 +267,6 @@ public class OpenEggSceneController : MonoBehaviour {
 	/// The intro anim has finished.
 	/// </summary>
 	private void OnIntroFinishedCallback() {
-		// Change egg state
-		eggData.ChangeState(Egg.State.OPENING);
-
 		// Notify external scripts
 		OnIntroFinished.Invoke();
 	}
@@ -282,11 +287,8 @@ public class OpenEggSceneController : MonoBehaviour {
 	private void OnEggTap(EggController _egg, int _tapCount) {
 		// Show the right particle effect based on rarity!
 		if(_tapCount == 1 && _egg == m_eggView) {
-			// In order for the tap FX to look good, we must attach it to the egg view
-			ParticleSystem tapFX = m_tapFX[(int)_egg.eggData.rewardData.rarity];
-			tapFX.transform.SetParentAndReset(m_eggView.anchorFX);
-
 			// Activate FX
+			ParticleSystem tapFX = m_tapFX[(int)_egg.eggData.rewardData.rarity];
 			tapFX.gameObject.SetActive(true);
 			tapFX.Stop(true);
 			tapFX.Clear();

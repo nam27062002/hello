@@ -103,7 +103,7 @@ namespace AI {
 			if (m_timer <= 0f) {
 				m_timer = 0f;
 			}
-				
+
 			switch (m_state) {
 				case State.Burned:
 					if (m_timer <= 0f) {

@@ -89,6 +89,8 @@ namespace AI {
 			return null;
 		}
 
+		public void DisableSensor(float _seconds) { }
+
 		public void UseGravity(bool _value) {
 			if (m_motion != null) {
 				m_motion.useGravity = _value;

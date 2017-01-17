@@ -61,6 +61,9 @@ public class DragonPlayer : MonoBehaviour {
 	private float m_energyBonus = 0;
 
 	private int m_mineShield;
+	private int m_poisonShield;
+	private float m_poisonShieldTimer;
+
 	private int m_freeRevives = 0;
 	private int m_tierIncreaseBreak = 0;
 
@@ -158,6 +161,9 @@ public class DragonPlayer : MonoBehaviour {
 
 		// Check avoid first hit modifiers
 		m_mineShield = 0;
+		m_poisonShield = 0;
+		m_poisonShieldTimer = 0;
+
 		m_freeRevives = 0;
 		m_tierIncreaseBreak = 0;
 
@@ -222,6 +228,9 @@ public class DragonPlayer : MonoBehaviour {
 				m_invulnerableAfterReviveTimer = 0;
 			}
 		}
+
+		if (m_poisonShieldTimer > 0)
+			m_poisonShieldTimer -= Time.deltaTime;
 	}
 
 	//------------------------------------------------------------------//
@@ -280,6 +289,8 @@ public class DragonPlayer : MonoBehaviour {
 		// Check for death!
 		if(m_health <= 0f) 
 		{
+			m_dragonMotion.Die();
+
 			// Check if free revive
 			if (m_freeRevives > 0)
 			{
@@ -288,11 +299,8 @@ public class DragonPlayer : MonoBehaviour {
 				Messenger.Broadcast(GameEvents.PLAYER_FREE_REVIVE);
 			}
 			// If I have an angel pet and aura still playing
-
 			else
 			{
-				m_dragonMotion.Die();
-
 				// Send global even
 				Messenger.Broadcast<DamageType>(GameEvents.PLAYER_KO, _type);	// Reason
 
@@ -474,6 +482,22 @@ public class DragonPlayer : MonoBehaviour {
 		return m_mineShield > 0;
 	}
 
+	public void LosePoisonShield()
+	{
+		m_poisonShield--;
+		m_poisonShieldTimer = 1;
+	}
+
+	public bool HasPoisonShield()
+	{
+		return m_poisonShield > 0;
+	}
+
+	public bool HasPoisonShieldActive()
+	{
+		return m_poisonShieldTimer > 0;
+	}
+
 	public int GetReminingLives()
 	{
 		return m_freeRevives;
@@ -504,6 +528,12 @@ public class DragonPlayer : MonoBehaviour {
 		m_health = m_healthMax;
 	}
 
+	public void AddHealthBonus(float value)
+	{
+		m_healthBonus += value;
+		SetHealthBonus( m_healthBonus );
+	}
+
 	public void SetBoostBonus( float value )
 	{
 		m_energyBase = m_data.def.GetAsFloat("energyBase");
@@ -512,14 +542,25 @@ public class DragonPlayer : MonoBehaviour {
 		m_energy = m_energyMax;
 	}
 
-	public void SetFreeRevives( int revives )
+	public void AddBoostBonus( float value )
 	{
-		m_freeRevives = revives;
+		m_energyBonus += value;
+		SetBoostBonus( m_energyBonus );
 	}
 
-	public void SetMineShields( int numHits )
+	public void AddFreeRevives( int revives )
 	{
-		m_mineShield = numHits;
+		m_freeRevives += revives;
+	}
+
+	public void AddMineShields( int numHits )
+	{
+		m_mineShield += numHits;
+	}
+
+	public void AddPoisonShields( int numHits )
+	{
+		m_poisonShield += numHits;
 	}
 
 	public void StartLatchedOn()

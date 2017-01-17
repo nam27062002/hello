@@ -39,7 +39,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	public float furyBase {get{return m_furyBase;}}
 	// private float m_furyModifier = 0;
 
-	protected float m_furyDuration = 1f;	// Sandard fury Duraction
+	protected float m_furyBaseDuration = 1f;	// Sandard fury Base Duration
+	protected float m_furyDurationBonus = 0;	// Power ups multiplier
+	protected float m_furyDuration = 1f;	// Sandard fury Duration
+
 
 	protected float m_currentFuryDuration;		// If fury Active, total time it lasts
 	protected float m_currentRemainingFuryDuration;	// If fury Active remaining time 
@@ -125,7 +128,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		// m_furyModifier = 0;
 
 		// Get the level
-		m_furyDuration = m_dragon.data.def.GetAsFloat("furyBaseDuration");
+		AddDurationBonus(0);
 		m_fireRushMultiplier = m_dragon.data.def.GetAsFloat("furyScoreMultiplier", 2);
 
 		m_furyRushesCompleted = 0;
@@ -161,6 +164,20 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		}
 	}
 	*/
+
+	public void SetDurationBonus( float furyBonus )
+	{
+		m_furyBaseDuration = m_dragon.data.def.GetAsFloat("furyBaseDuration");
+		m_furyDurationBonus = furyBonus;
+		m_furyDuration = m_furyBaseDuration + (m_furyDurationBonus / 100.0f * m_furyBaseDuration);
+	}
+
+	public void AddDurationBonus( float furyBonus )
+	{
+		m_furyDurationBonus += furyBonus;
+		SetDurationBonus( m_furyDurationBonus );
+	}
+
 	void OnDestroy()
 	{
 		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_BURNED, OnEntityBurned);
