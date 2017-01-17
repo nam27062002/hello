@@ -78,7 +78,7 @@ public class DragonTint : MonoBehaviour
 	void OnEnable() 
 	{
 		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
-		Messenger.AddListener(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.AddListener(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 	}
 
@@ -86,7 +86,7 @@ public class DragonTint : MonoBehaviour
 	{
 		// Unsubscribe from external events
 		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
-		Messenger.RemoveListener(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.RemoveListener(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 	}
 
@@ -209,11 +209,17 @@ public class DragonTint : MonoBehaviour
 		m_caveColor = c;
 	}
 
-	private void OnPlayerKo()
+	private void OnPlayerKo( DamageType _type )
 	{
         // Switch body material to wings
         for (int i = 0; i < m_materials.Count; i++) 
             m_materials[i].shader = Shader.Find("Hungry Dragon/Dragon/Death");
+
+     	if ( _type == DamageType.MINE )
+     	{
+     		// Shows corpse
+     		m_deathAlpha = 0;
+     	}
     }
 
     private void OnPlayerRevive()
@@ -221,6 +227,8 @@ public class DragonTint : MonoBehaviour
 		// Switch back body materials
 		for( int i = 0; i< m_materials.Count; i++ )
             m_materials[i].shader = m_originalShaders[i];
+
+		m_deathAlpha = 1;
     }
 
 }
