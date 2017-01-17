@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class DragonPowerUp : MonoBehaviour {
 	//------------------------------------------------------------------------//
@@ -34,6 +35,7 @@ public class DragonPowerUp : MonoBehaviour {
 			dragonSku = preview.sku;
 		}
 
+		// Disguise power up
 		string disguise = UsersManager.currentUser.GetEquipedDisguise(dragonSku);
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, disguise);
 		if (def != null) {
@@ -43,6 +45,23 @@ public class DragonPowerUp : MonoBehaviour {
 		}
 
 
+		// Pet power ups
+		List<string> pets = UsersManager.currentUser.GetEquipedPets(dragonSku);
+		for( int i = 0; i<pets.Count; i++ )
+		{
+			if ( !string.IsNullOrEmpty( pets[i] ) )
+			{
+				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, pets[i]);
+				if ( petDef != null )
+				{
+					string powerUp = petDef.Get("powerup");
+					if ( !string.IsNullOrEmpty( powerUp ) )
+					{
+						SetPowerUp(powerUp);
+					}
+				}
+			}
+		}
 	}
 
 	void SetPowerUp( string powerUpSku )
