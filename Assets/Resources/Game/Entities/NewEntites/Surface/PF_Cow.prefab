@@ -891,7 +891,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 139278}
-  m_LocalRotation: {x: 0.6985103, y: -0.69814473, z: -0.15504153, w: 0.025289759}
+  m_LocalRotation: {x: 0.6985102, y: -0.6981447, z: -0.15504152, w: 0.025289755}
   m_LocalPosition: {x: 0.16254486, y: 0.106924586, z: 0.27912664}
   m_LocalScale: {x: 1.0000013, y: 0.9999998, z: 0.99999887}
   m_Children:
@@ -987,6 +987,7 @@ MonoBehaviour:
     m_defaultUpVector: 0
     m_orientationSpeed: 150
     m_faceDirection: 0
+    m_useDragonStyleRotation: 0
     m_rollRotation: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
@@ -1009,8 +1010,8 @@ MonoBehaviour:
       min: 0.9
       max: 1.1
     m_senseDelay:
-      min: 1
-      max: 2
+      min: 0
+      max: 0.5
   m_onSpawnSound: 
   m_rotateToMouth: 3
   m_inflammable:
@@ -1065,7 +1066,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.7
     max: 1.3
-  m_serializedJson: '[{"restTime":{"min":4,"max":7},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":9,"checkDragonPositionTime":2,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":false},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"speed":5.5,"timeToIdle":{"min":2.5,"max":4.5},"timeToChangeDirection":{"min":4,"max":7},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":5.5,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":4,"max":7},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":9,"checkDragonPositionTime":0.5,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":false},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"speed":5.5,"timeToIdle":{"min":2.5,"max":4.5},"timeToChangeDirection":{"min":4,"max":7},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":5.5,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
   m_databaseKey: PF_Cow
 --- !u!114 &11485410
 MonoBehaviour:
