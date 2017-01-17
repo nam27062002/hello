@@ -150,6 +150,9 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Hide reward elements
 		m_rewardInfo.Hide();
 
+		// Change egg state
+		_egg.ChangeState(Egg.State.OPENING);
+
 		// Initialize egg view
 		m_scene.InitEggView(_egg);
 
