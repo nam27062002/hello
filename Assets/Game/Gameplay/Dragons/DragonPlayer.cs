@@ -61,6 +61,8 @@ public class DragonPlayer : MonoBehaviour {
 	private float m_energyBonus = 0;
 
 	private int m_mineShield;
+	private int m_poisonShield;
+	private int m_curseShield;
 	private int m_freeRevives = 0;
 	private int m_tierIncreaseBreak = 0;
 
@@ -158,6 +160,9 @@ public class DragonPlayer : MonoBehaviour {
 
 		// Check avoid first hit modifiers
 		m_mineShield = 0;
+		m_poisonShield = 0;
+		m_curseShield = 0;
+
 		m_freeRevives = 0;
 		m_tierIncreaseBreak = 0;
 
@@ -267,7 +272,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// Add/remove health to the dragon.
 	/// </summary>
 	/// <param name="_offset">The amount of health to be added/removed.</param>
-	public void AddLife(float _offset) {
+	public void AddLife(float _offset, DamageType _type = DamageType.NONE) {
 		// If invulnerable and taking damage, don't apply
 		if(IsInvulnerable() && _offset < 0) return;
 
@@ -294,7 +299,7 @@ public class DragonPlayer : MonoBehaviour {
 				m_dragonMotion.Die();
 
 				// Send global even
-				Messenger.Broadcast(GameEvents.PLAYER_KO);
+				Messenger.Broadcast<DamageType>(GameEvents.PLAYER_KO, _type);	// Reason
 
 				// Clear any health modifiers
 				m_currentHealthModifier = null;
@@ -474,6 +479,25 @@ public class DragonPlayer : MonoBehaviour {
 		return m_mineShield > 0;
 	}
 
+	public void LosePoisonShield()
+	{
+		m_poisonShield--;
+	}
+	public bool HasPoisonShield()
+	{
+		return m_poisonShield > 0;
+	}
+
+	public void LoseCurseShield()
+	{
+		m_curseShield--;
+	}
+
+	public bool HasCurseShield()
+	{
+		return m_curseShield > 0;
+	}
+
 	public int GetReminingLives()
 	{
 		return m_freeRevives;
@@ -504,6 +528,12 @@ public class DragonPlayer : MonoBehaviour {
 		m_health = m_healthMax;
 	}
 
+	public void AddHealthBonus(float value)
+	{
+		m_healthBonus += value;
+		SetHealthBonus( m_healthBonus );
+	}
+
 	public void SetBoostBonus( float value )
 	{
 		m_energyBase = m_data.def.GetAsFloat("energyBase");
@@ -512,14 +542,30 @@ public class DragonPlayer : MonoBehaviour {
 		m_energy = m_energyMax;
 	}
 
-	public void SetFreeRevives( int revives )
+	public void AddBoostBonus( float value )
 	{
-		m_freeRevives = revives;
+		m_energyBonus += value;
+		SetBoostBonus( m_energyBonus );
 	}
 
-	public void SetMineShields( int numHits )
+	public void AddFreeRevives( int revives )
 	{
-		m_mineShield = numHits;
+		m_freeRevives += revives;
+	}
+
+	public void AddMineShields( int numHits )
+	{
+		m_mineShield += numHits;
+	}
+
+	public void AddPoisonShields( int numHits )
+	{
+		m_poisonShield += numHits;
+	}
+
+	public void AddCurseShields( int numHits )
+	{
+		m_curseShield += numHits;
 	}
 
 	public void StartLatchedOn()

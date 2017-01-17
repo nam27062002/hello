@@ -24,6 +24,7 @@ namespace AI {
 			private static string OnOutOfRange = "onOutOfRange";
 
 
+
 			protected AttackData m_data;
 
 			private bool m_onAttachProjectileEventDone;
@@ -36,8 +37,6 @@ namespace AI {
 
 			private PreyAnimationEvents m_animEvents;
 
-			private object[] m_transitionParam;
-
 			protected Vector3 m_facingTarget = Vector3.zero;
 			public Vector3 facingTarget { get{ return m_facingTarget; }}
 
@@ -45,9 +44,6 @@ namespace AI {
 			protected override void OnInitialise() {
 				m_animEvents 	= m_pilot.FindComponentRecursive<PreyAnimationEvents>();
 				m_machine.SetSignal(Signals.Type.Alert, true);
-
-				m_transitionParam = new object[1];
-				m_transitionParam[0] = m_data.retreatTime; // retreat time
 
 				m_attacksLeft = m_data.consecutiveAttacks;
 			}
@@ -201,7 +197,8 @@ namespace AI {
 							Transition(OnOutOfRange);
 						}
 					} else {
-						Transition(OnMaxAttacks, m_transitionParam);
+						m_machine.DisableSensor(m_data.retreatTime);
+						Transition(OnMaxAttacks);
 					}
 				}
 			}

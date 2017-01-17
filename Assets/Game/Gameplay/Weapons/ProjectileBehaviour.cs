@@ -145,18 +145,18 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 
 		if (_hitDragon) {
 			if (m_knockback > 0) {
-				DragonMotion dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
+				DragonMotion dragonMotion = InstanceManager.player.dragonMotion;
 
 				Vector3 knockBack = dragonMotion.transform.position - transform.position;
 				knockBack.z = 0f;
 				knockBack.Normalize();
 
-				knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_knockback, 1f));
+				knockBack *= m_knockback;
 
 				dragonMotion.AddForce(knockBack);
 			}
 
-			InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, DamageType.NORMAL);
+			InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, DamageType.NORMAL);
 		}
 
 		gameObject.SetActive(false);

@@ -38,7 +38,7 @@ namespace AI {
 				m_pilot.SetBoostSpeed(0f);
 			}
 
-			protected override void OnUpdate() {				
+			protected override void OnUpdate() {
 				//
 				m_timer -= Time.deltaTime;
 				if (m_timer <= 0) {

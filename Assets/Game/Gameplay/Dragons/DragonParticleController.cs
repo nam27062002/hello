@@ -50,6 +50,9 @@ public class DragonParticleController : MonoBehaviour
 	public GameObject m_waterAirLimitParticle;
 	private ParticleSystem m_waterAirLimitInstance = null;
 
+	[Space]
+	public string m_corpseAsset = "";
+
 
 	private Transform _transform;
 	private bool m_insideWater = false;
@@ -59,6 +62,7 @@ public class DragonParticleController : MonoBehaviour
 	private const float m_waterDepthIncrease = 8;
 	private DragonMotion m_dargonMotion;
 	private DragonEatBehaviour m_dragonEat;
+	private DragonEquip m_dragonEquip;
 
 	[System.Serializable]
 	public class BodyParticle
@@ -86,6 +90,7 @@ public class DragonParticleController : MonoBehaviour
 		m_cloudTrailInstance = InitParticles(m_cloudTrail, m_cloudTrailAnchor);
 		m_dargonMotion = transform.parent.GetComponent<DragonMotion>();
 		m_dragonEat = transform.parent.GetComponent<DragonEatBehaviour>();
+		m_dragonEquip = transform.parent.GetComponent<DragonEquip>();
 		m_waterDepth = InstanceManager.player.data.scale + m_waterDepthIncrease;
 		_transform = transform;
 
@@ -103,21 +108,24 @@ public class DragonParticleController : MonoBehaviour
 
 		if (m_waterAirLimitParticle != null)
 			m_waterAirLimitInstance = InitParticles( m_waterAirLimitParticle, m_dragonEat.mouth);
-		
+
+		if (!string.IsNullOrEmpty(m_corpseAsset)) {
+			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/" + m_corpseAsset, 1, true);
+		}
 
 	}
 
 	void OnEnable() {
 		// Register events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.AddListener(GameEvents.PLAYER_KO, OnKo);
+		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
 		Messenger.AddListener(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
 	void OnDisable()
 	{
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.RemoveListener(GameEvents.PLAYER_KO, OnKo);
+		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
 		Messenger.RemoveListener(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
@@ -204,10 +212,27 @@ public class DragonParticleController : MonoBehaviour
 		m_waterDepth = data.scale + m_waterDepthIncrease;
 	}
 
-	void OnKo()
+	void OnKo( DamageType type )
 	{
 		m_alive = false;	
 		CheckBodyParts();
+		if ( type == DamageType.MINE )
+		{
+			SpawnCorpse();
+		}
+	}
+
+	void SpawnCorpse()
+	{
+		if (!string.IsNullOrEmpty(m_corpseAsset)) {
+			// spawn corpse
+			GameObject corpse = PoolManager.GetInstance(m_corpseAsset, true);
+			corpse.transform.CopyFrom(transform);
+			Corpse c = corpse.GetComponent<Corpse>();
+			c.Spawn(false, false);
+			c.SwitchDragonTextures(m_dragonEquip.bodyMaterial.mainTexture, m_dragonEquip.wingsMaterial.mainTexture);
+
+		}
 	}
 
 	void OnRevive()

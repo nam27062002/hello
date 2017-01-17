@@ -116,7 +116,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 			// Apply damage
 			float damage = GetModifiedDamageForCurrentHealth(_amount);
-			m_dragon.AddLife(-damage);
+			m_dragon.AddLife(-damage, _type);
 
 			// Notify game
 			Messenger.Broadcast<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, _amount, _type, _source);
@@ -131,6 +131,36 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	/// <param name="_type">Type of damage to be applied. If a DOT of a different type is being applied, type will be override.</param> 
 	/// <param name="_reset">Whether to override current DOT or accumulate it.</param>
 	public void ReceiveDamageOverTime(float _dps, float _duration, DamageType _type, bool _reset = true) {
+
+		// power ups
+		switch( _type )
+		{
+			case DamageType.MINE:
+			{
+				if (m_dragon.HasMineShield())
+				{
+					m_dragon.LoseMineShield();
+					return;
+				}
+			}break;
+			case DamageType.CURSE:
+			{
+				if (m_dragon.HasCurseShield())
+				{
+					m_dragon.LoseCurseShield();
+					return;
+				}
+			}break;
+			case DamageType.POISON:
+			{
+				if (m_dragon.HasPoisonShield())
+				{
+					m_dragon.LosePoisonShield();
+					return;
+				}
+			}break;
+		}
+
 		// Clear current dots?
 		if(_reset) {
 			m_dots.Clear();

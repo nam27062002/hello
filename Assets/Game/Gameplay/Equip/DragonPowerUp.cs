@@ -37,12 +37,12 @@ public class DragonPowerUp : MonoBehaviour {
 		string disguise = UsersManager.currentUser.GetEquipedDisguise(dragonSku);
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, disguise);
 		if (def != null) {
-			for( int i = 0; i < 3; i++) {
-				string powerUp = def.Get("powerup" + i.ToString());
-				if(!string.IsNullOrEmpty(powerUp))
-					SetPowerUp(powerUp);
-			}
+			string powerUp = def.Get("powerup");
+			if(!string.IsNullOrEmpty(powerUp))
+				SetPowerUp(powerUp);
 		}
+
+
 	}
 
 	void SetPowerUp( string powerUpSku )
@@ -58,11 +58,11 @@ public class DragonPowerUp : MonoBehaviour {
 			{
 				case "hp_increase":	// gives the player extra health
 				{
-					player.SetHealthBonus( def.GetAsFloat("param1"));
+					player.AddHealthBonus( def.GetAsFloat("param1"));
 				}break;
 				case "boost_increase":
 				{
-					player.SetBoostBonus( def.GetAsFloat("param1"));
+					player.AddBoostBonus( def.GetAsFloat("param1"));
 				}break;
 				case "fury_increase":
 				{
@@ -72,7 +72,12 @@ public class DragonPowerUp : MonoBehaviour {
 						breath.SetFuryModifier( def.GetAsFloat("param1") );
 						*/
 				}break;
-
+				case "fury_duration":
+				{
+					DragonBreathBehaviour breath = player.GetComponent<DragonBreathBehaviour>();
+					if ( breath != null )
+						breath.AddDurationBonus( def.GetAsFloat("param1") );
+				}break;
 				case "dive":	// lets you move inside water
 				{
 					DragonMotion motion = GetComponent<DragonMotion>();
@@ -87,17 +92,22 @@ public class DragonPowerUp : MonoBehaviour {
 					{
 						case "mine":
 						{
-							player.SetMineShields( numHits );
+							player.AddMineShields( numHits );
 						}break;
 						case "poison":
 						{
+							player.AddPoisonShields( numHits );
+						}break;
+						case "curse":
+						{
+							player.AddCurseShields( numHits );
 						}break;
 					}
 				}break;
 				case "lives":
 				{
 					int numExtraLives = def.GetAsInt("param1");
-					player.SetFreeRevives( numExtraLives );
+					player.AddFreeRevives( numExtraLives );
 				}break;
 				case "dragonram":
 				{

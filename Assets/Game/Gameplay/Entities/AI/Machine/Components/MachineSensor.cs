@@ -42,6 +42,16 @@ namespace AI {
 			s_groundMask = LayerMask.GetMask("Ground", "GroundVisible");			
 		}
 
+		public void Disable(float _seconds) {
+			if (_seconds > 0f) {
+				m_senseTimer = _seconds;
+
+				m_machine.SetSignal(Signals.Type.Warning, false);
+				m_machine.SetSignal(Signals.Type.Danger, false);
+				m_machine.SetSignal(Signals.Type.Critical, 	false);
+			}
+		}
+
 		public override void Update() {
 			bool isFalling = m_machine.GetSignal(Signals.Type.FallDown) && !m_pilot.IsActionPressed(Pilot.Action.Jump);
 			if (m_enemy == null || !m_machine.GetSignal(Signals.Type.Alert) || m_machine.GetSignal(Signals.Type.Panic) || isFalling) {

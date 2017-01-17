@@ -22,7 +22,6 @@ namespace AI {
 
 
 			protected ChargeData m_data;
-			private object[] m_transitionParam;
 
 			private Vector3 m_target;
 
@@ -44,9 +43,6 @@ namespace AI {
 
 				m_data = m_pilot.GetComponentData<ChargeData>();
 				m_machine.SetSignal(Signals.Type.Alert, true);
-
-				m_transitionParam = new object[1];
-				m_transitionParam[0] = m_data.retreatTime; // retreat time
 
 				m_meleeWeapon = m_pilot.FindComponentRecursive<MeleeWeapon>();
 				m_meleeWeapon.enabled = false;
@@ -110,7 +106,8 @@ namespace AI {
 				float m = (m_machine.position - m_target).sqrMagnitude;
 
 				if (m < 0.5f) {
-					Transition(OnChargeEnd, m_transitionParam);
+					m_machine.DisableSensor(m_data.retreatTime);
+					Transition(OnChargeEnd);
 				} else {
 					m_pilot.GoTo(m_target);
 				}
