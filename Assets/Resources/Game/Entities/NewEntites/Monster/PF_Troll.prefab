@@ -699,7 +699,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1224495718214964}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 102.22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4968746494951878}
@@ -1118,7 +1118,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1280568003522936}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -182.99539, y: 2.9605074, z: 0}
+  m_LocalPosition: {x: 55.093822, y: -9.985897, z: 1.5933182}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4856057368377466}
@@ -1389,7 +1389,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Sword_01
-  m_parentRoot: {fileID: 0}
+  m_parentRoot: {fileID: 4856057368377466}
 --- !u!114 &114605653605623280
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1410,6 +1410,7 @@ MonoBehaviour:
     m_defaultUpVector: 0
     m_orientationSpeed: 60
     m_faceDirection: 0
+    m_useDragonStyleRotation: 0
     m_rollRotation: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
@@ -1476,7 +1477,7 @@ MonoBehaviour:
   m_animB: 
   m_animC: 
   m_exclamationTransform: {fileID: 0}
-  m_corpseAsset: 
+  m_corpseAsset: PF_CowCorpse
   m_onEatenParticles:
   - name: PS_Blood_Explosion_Large
     path: Blood
@@ -1513,6 +1514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ee45223b4af4374bf6c562470c1498, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_knockback: 12
 --- !u!114 &114883298474649214
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1524,7 +1526,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: soldier
+  m_sku: troll
   m_dieOutsideFrustum: 1
 --- !u!114 &114887832156207672
 MonoBehaviour:
@@ -1540,6 +1542,10 @@ MonoBehaviour:
   m_machine: {fileID: 114605653605623280}
   m_needBoost: 1
   m_timeBetweenAttaks: 2
+  m_hitParticle:
+    name: PS_Blood_Explosion_Large
+    path: Blood
+    offset: {x: 0, y: 0, z: 14}
 --- !u!114 &114942837333358150
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1554,14 +1560,14 @@ MonoBehaviour:
   m_blendSpeedFactor: 0.5
   m_energy: 10
   m_energyDrainSec: 1
-  m_brainResource: {fileID: 11400000, guid: 1bc6a6f8f3bad4cb59a9ab4625e5fd20, type: 2}
+  m_brainResource: {fileID: 11400000, guid: 3cd87b86bb6114016ac1664f93dfbd8a, type: 2}
   m_railSeparation:
     min: 2
     max: 3
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":1,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":1,"arrivalRadius":1,"hasGuardState":true,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"damage":30,"consecutiveAttacks":5,"attackDelay":5,"retreatTime":5,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":6,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":1,"arrivalRadius":1,"hasGuardState":true,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"damage":30,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":5,"stop":true,"faceEnemy":false,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":6,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"speed":1,"damage":40,"dataType":"AI.Behaviour.AttackTurnAroundData","editorFolded":false}]'
   m_databaseKey: PF_Troll
 --- !u!135 &135701294603358756
 SphereCollider:
@@ -1574,7 +1580,7 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 25
-  m_Center: {x: 0, y: 0, z: 102.22}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &136913318244061966
 CapsuleCollider:
   m_ObjectHideFlags: 1

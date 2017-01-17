@@ -16,14 +16,13 @@ namespace AI {
 
 		public void ReduceDurability() {
 			m_armorDurability--;
+			if (m_armorDurability <= 0) {
+				SetSignal(Signals.Type.Destroyed, true);
+			}
 		}
 
 		public override bool CanBeBitten() {
-			if (m_armorDurability > 0) {
-				return false;
-			} else {
-				return base.CanBeBitten();
-			}
+			return false;
 		}
 	}
 }

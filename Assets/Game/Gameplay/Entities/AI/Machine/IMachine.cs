@@ -19,6 +19,8 @@ namespace AI {
 		bool GetSignal(Signals.Type _signal);
 		object[] GetSignalParams(Signals.Type _signal);
 
+		void DisableSensor(float _seconds);
+
 		void UseGravity(bool _value);
 		void CheckCollisions(bool _value);
 		void FaceDirection(bool _value);

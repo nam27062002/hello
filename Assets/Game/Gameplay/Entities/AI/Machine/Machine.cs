@@ -382,6 +382,12 @@ namespace AI {
 			return m_signals.GetParams(_signal);
 		}
 
+		public void DisableSensor(float _seconds) {
+			if (m_enableSensor) {
+				m_sensor.Disable(_seconds);
+			}
+		}
+
 		public void UseGravity(bool _value) {
 			if (m_enableMotion) {
 				m_motion.useGravity = _value;
