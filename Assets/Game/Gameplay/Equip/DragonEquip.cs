@@ -66,19 +66,10 @@ public class DragonEquip : MonoBehaviour {
 
 	void Start()
 	{
+		EquipPets( UsersManager.currentUser.GetEquipedPets( m_dragonSku ) );
 
-		Dictionary<Equipable.AttachPoint, string> equip = new Dictionary<Equipable.AttachPoint, string>();
-		for( int i = 0; i<m_numPets; i++ )
-		{
-			if ( i == 0 )
-				equip.Add(Equipable.AttachPoint.Pet_1+i, "PF_PetFroggy");	
-			else if ( i == 1 )
-				equip.Add(Equipable.AttachPoint.Pet_1+i, "PF_PetGhostBuster");	
-			else
-				equip.Add(Equipable.AttachPoint.Pet_1+i, "PF_PetArmored");	
-		}
+		/*
 		DragonPlayer player = GetComponent<DragonPlayer>();
-		AttachPoint[] points = GetComponentsInChildren<AttachPoint>();
 		for (int i = 0; i < points.Length; i++) {
 			Equipable.AttachPoint point = points[i].point;
 			if (equip.ContainsKey(point)) {
@@ -93,7 +84,7 @@ public class DragonEquip : MonoBehaviour {
 				points[i].Equip(equipable.GetComponent<Equipable>());
 			}
 		}
-
+		*/
 	}
 
 	/// <summary>
@@ -170,6 +161,39 @@ public class DragonEquip : MonoBehaviour {
 					}
 				}
 				r.materials = mats;
+			}
+		}
+	}
+
+
+	public void EquipPets( List<string> pets )
+	{
+		AttachPoint[] points = GetComponentsInChildren<AttachPoint>();
+		DragonPlayer player = GetComponent<DragonPlayer>();
+		for( int i = 0; i<pets.Count; i++ )
+		{
+			if ( !string.IsNullOrEmpty(pets[i]) )
+			{
+				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, pets[i]);
+				if ( def != null )
+				{
+					// Search attaching point
+					for (int j = 0; j < points.Length; j++) 
+					{
+						if (points[j].point == Equipable.AttachPoint.Pet_1+i) 
+						{
+							string item = pets[i];
+							string pet = "Game/Equipable/Pets/" + def.Get("gamePrefab");
+							GameObject prefabObj = Resources.Load<GameObject>(pet);
+							GameObject equipable = Instantiate<GameObject>(prefabObj);
+							equipable.transform.localScale = Vector3.one * player.data.scale;
+
+							// get equipable object!
+							points[j].Equip(equipable.GetComponent<Equipable>());
+							continue;
+						}
+					}
+				}
 			}
 		}
 	}

@@ -670,6 +670,13 @@ public class UserProfile : UserSaveSystem
 			return m_dragonsBySku[ _dragonSku ].diguise;
 		return "";
 	}
+
+	public List<string> GetEquipedPets( string _dragonSku )
+	{
+		if ( m_dragonsBySku.ContainsKey( _dragonSku ) )
+			return m_dragonsBySku[ _dragonSku ].pets;
+		return new List<string>();
+	}
     
 	/// <summary>
 	/// Try to equip the given disguise into the target dragon.

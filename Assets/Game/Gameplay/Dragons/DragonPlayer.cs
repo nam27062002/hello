@@ -62,6 +62,7 @@ public class DragonPlayer : MonoBehaviour {
 
 	private int m_mineShield;
 	private int m_poisonShield;
+	private int m_curseShield;
 	private int m_freeRevives = 0;
 	private int m_tierIncreaseBreak = 0;
 
@@ -159,6 +160,9 @@ public class DragonPlayer : MonoBehaviour {
 
 		// Check avoid first hit modifiers
 		m_mineShield = 0;
+		m_poisonShield = 0;
+		m_curseShield = 0;
+
 		m_freeRevives = 0;
 		m_tierIncreaseBreak = 0;
 
@@ -484,6 +488,16 @@ public class DragonPlayer : MonoBehaviour {
 		return m_poisonShield > 0;
 	}
 
+	public void LoseCurseShield()
+	{
+		m_curseShield--;
+	}
+
+	public bool HasCurseShield()
+	{
+		return m_curseShield > 0;
+	}
+
 	public int GetReminingLives()
 	{
 		return m_freeRevives;
@@ -547,6 +561,11 @@ public class DragonPlayer : MonoBehaviour {
 	public void AddPoisonShields( int numHits )
 	{
 		m_poisonShield += numHits;
+	}
+
+	public void AddCurseShields( int numHits )
+	{
+		m_curseShield += numHits;
 	}
 
 	public void StartLatchedOn()

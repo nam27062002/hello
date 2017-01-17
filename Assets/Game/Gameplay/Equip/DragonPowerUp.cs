@@ -98,6 +98,10 @@ public class DragonPowerUp : MonoBehaviour {
 						{
 							player.AddPoisonShields( numHits );
 						}break;
+						case "curse":
+						{
+							player.AddCurseShields( numHits );
+						}break;
 					}
 				}break;
 				case "lives":
