@@ -34,6 +34,12 @@ public class EggRewardInfo : MonoBehaviour {
 
 	// Other references
 	private Animator m_animator = null;
+	private Animator animator {
+		get { 
+			if(m_animator == null) m_animator = GetComponent<Animator>();
+			return m_animator;
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -42,7 +48,7 @@ public class EggRewardInfo : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		m_animator = GetComponent<Animator>();
+		
 	}
 
 	//------------------------------------------------------------------------//
@@ -78,7 +84,7 @@ public class EggRewardInfo : MonoBehaviour {
 				DisguisePowerIcon powerIcon = m_rewardPowers.FindComponentRecursive<DisguisePowerIcon>("Power1");
 				if(!_rewardData.duplicated) {
 					// Initialize with powers data
-					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.itemDef.GetAsString("powerup0"));
+					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.itemDef.GetAsString("powerup"));
 					powerIcon.InitFromDefinition(powerDef, false);
 				}
 
@@ -95,15 +101,15 @@ public class EggRewardInfo : MonoBehaviour {
 		}
 
 		// Setup and launch animation
-		m_animator.SetBool("duplicated", _rewardData.duplicated);
-		m_animator.SetTrigger("show");
+		animator.SetBool("duplicated", _rewardData.duplicated);
+		animator.SetTrigger("show");
 	}
 
 	/// <summary>
 	/// Hide everything!
 	/// </summary>
 	public void Hide() {
-		m_animator.SetTrigger("hide");
+		animator.SetTrigger("hide");
 	}
 
 	//------------------------------------------------------------------------//

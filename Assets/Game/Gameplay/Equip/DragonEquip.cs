@@ -9,6 +9,24 @@ public class DragonEquip : MonoBehaviour {
 
 	public static int m_numPets = 1;
 
+	private Material m_bodyMaterial;
+	public Material bodyMaterial
+	{
+		get
+		{
+			return m_bodyMaterial;
+		}
+	}
+
+	private Material m_wingsMaterial;
+	public Material wingsMaterial
+	{
+		get
+		{
+			return m_wingsMaterial;
+		}
+	}
+
 	void Awake() {
 		DragonPlayer player = GetComponent<DragonPlayer>();
 
@@ -113,23 +131,21 @@ public class DragonEquip : MonoBehaviour {
 	}
 
 	void SetSkin(string _name) {
-		Material bodyMat;
-		Material wingsMat;
 
 		if (_name == null || _name.Equals("default") || _name.Equals("")) {
 			_name = m_dragonSku + "_0";		// Default skin, all dragons should have it
 		}
 
-		bodyMat  = Resources.Load<Material>("Game/Equipable/Skins/" + m_dragonSku + "/" + _name + "_body");
-		wingsMat = Resources.Load<Material>("Game/Equipable/Skins/" + m_dragonSku + "/" + _name + "_wings");
+		m_bodyMaterial  = Resources.Load<Material>("Game/Equipable/Skins/" + m_dragonSku + "/" + _name + "_body");
+		m_wingsMaterial = Resources.Load<Material>("Game/Equipable/Skins/" + m_dragonSku + "/" + _name + "_wings");
 
 		// [AOC] HACK!! Older dragons still don't have the proper materials ----
 		// 		 To be removed
 		if(m_dragonSku != "dragon_baby" && m_dragonSku != "dragon_classic") {
 			Renderer renderer = transform.FindChild("view").GetComponentInChildren<Renderer>();
 			Material[] materials = renderer.materials;
-			if(materials.Length > 0) materials[0] = bodyMat;
-			if(materials.Length > 1) materials[1] = wingsMat;
+			if(materials.Length > 0) materials[0] = m_bodyMaterial;
+			if(materials.Length > 1) materials[1] = m_wingsMaterial;
 			renderer.materials = materials;
 		}
 		// ---------------------------------------------------------------------
@@ -146,11 +162,11 @@ public class DragonEquip : MonoBehaviour {
 				{
 					if ( mats[j].shader.name.Contains("Wings") )
 					{
-						mats[j] = wingsMat;
+						mats[j] = m_wingsMaterial;
 					}
 					else if (mats[j].shader.name.Contains("Dragon"))
 					{
-						mats[j] = bodyMat;
+						mats[j] = m_bodyMaterial;
 					}
 				}
 				r.materials = mats;

@@ -28,10 +28,13 @@ public class OpenEggSceneController : MonoBehaviour {
 	// Exposed
 	[SerializeField] private Transform m_eggAnchor = null;
 	[SerializeField] private Transform m_rewardAnchor = null;
-	[SerializeField] private ParticleSystem m_openEggFX = null;
+	[Space]
 	[SerializeField] private GodRaysFX m_rewardGodRaysFX = null;
+	[SerializeField] private Transform m_tapFXPool = null;
 	[Tooltip("One per rarity, matching order")]
 	[SerializeField] private ParticleSystem[] m_tapFX = new ParticleSystem[(int)EggReward.Rarity.COUNT];
+	[Tooltip("One per rarity, matching order")]
+	[SerializeField] private ParticleSystem[] m_openFX = new ParticleSystem[(int)EggReward.Rarity.COUNT];
 
 
 	// Events
@@ -50,6 +53,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		get { return (m_eggView == null) ? null : m_eggView.eggData; }
 	}
 
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -57,7 +61,7 @@ public class OpenEggSceneController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-
+		Clear();
 	}
 
 	/// <summary>
@@ -88,6 +92,7 @@ public class OpenEggSceneController : MonoBehaviour {
 	/// </summary>
 	private void OnValidate() {
 		// Make sure the rarity array has exactly the same length as rarities in the game.
+		m_openFX.Resize((int)EggReward.Rarity.COUNT);
 		m_tapFX.Resize((int)EggReward.Rarity.COUNT);
 	}
 
@@ -100,8 +105,11 @@ public class OpenEggSceneController : MonoBehaviour {
 	public void Clear() {
 		// Return tap FX to the pool
 		for(int i = 0; i < m_tapFX.Length; i++) {
-			m_tapFX[i].transform.SetParent(this.transform);
-			m_tapFX[i].gameObject.SetActive(false);
+			if(m_tapFX[i] != null) {
+				m_tapFX[i].transform.SetParent(m_tapFXPool);
+				m_tapFX[i].Stop(true);
+				m_tapFX[i].gameObject.SetActive(false);
+			}
 		}
 
 		if(m_eggView != null) {
@@ -117,9 +125,11 @@ public class OpenEggSceneController : MonoBehaviour {
 		if(m_rewardGodRaysFX != null) {
 			m_rewardGodRaysFX.StopFX();
 		}
-
-		if(m_openEggFX != null) {
-			m_openEggFX.Stop();
+		
+		for(int i = 0; i < m_openFX.Length; i++) {
+			if(m_openFX[i] != null) {
+				m_openFX[i].Stop(true);
+			}
 		}
 	}
 
@@ -144,15 +154,17 @@ public class OpenEggSceneController : MonoBehaviour {
 		// Launch intro as soon as possible (wait for the camera to stop moving)
 		m_eggView.gameObject.SetActive(false);
 
-		// [AOC] Hacky!! Disable particle FX
+		// [AOC] Hacky!! Disable particle FX (Premium Egg Idle)
 		ParticleSystem[] particleFX = m_eggView.GetComponentsInChildren<ParticleSystem>();
 		for(int i = 0; i < particleFX.Length; i++) {
 			particleFX[i].gameObject.SetActive(false);
 		}
 
-		// Disable tap FX
-		for(int i = 0; i < m_tapFX.Length; i++) {
-			m_tapFX[i].gameObject.SetActive(false);
+		// Attach tap FX to the egg's view (but don't activate it just yet)
+		ParticleSystem tapFX = m_tapFX[(int)eggData.rewardData.rarity];
+		if(tapFX != null) {
+			tapFX.transform.SetParentAndReset(m_eggView.anchorFX);
+			tapFX.gameObject.SetActive(false);
 		}
 	}
 
@@ -184,10 +196,11 @@ public class OpenEggSceneController : MonoBehaviour {
 		// Hide egg
 		m_eggView.gameObject.SetActive(false);
 
-		// Trigger FX
-		if(m_openEggFX != null) {
-			m_openEggFX.Clear();
-			m_openEggFX.Play(true);
+		// Trigger the proper FX based on reward rarity
+		ParticleSystem openFX = m_openFX[(int)eggData.rewardData.rarity];
+		if(openFX != null) {
+			openFX.Clear();
+			openFX.Play(true);
 		}
 
 		// Program reward animation
@@ -254,9 +267,6 @@ public class OpenEggSceneController : MonoBehaviour {
 	/// The intro anim has finished.
 	/// </summary>
 	private void OnIntroFinishedCallback() {
-		// Change egg state
-		m_eggView.eggData.ChangeState(Egg.State.OPENING);
-
 		// Notify external scripts
 		OnIntroFinished.Invoke();
 	}
@@ -277,11 +287,8 @@ public class OpenEggSceneController : MonoBehaviour {
 	private void OnEggTap(EggController _egg, int _tapCount) {
 		// Show the right particle effect based on rarity!
 		if(_tapCount == 1 && _egg == m_eggView) {
-			// In order for the tap FX to look good, we must attach it to the egg view
-			ParticleSystem tapFX = m_tapFX[(int)_egg.eggData.rewardData.rarity];
-			tapFX.transform.SetParentAndReset(m_eggView.anchorFX);
-
 			// Activate FX
+			ParticleSystem tapFX = m_tapFX[(int)_egg.eggData.rewardData.rarity];
 			tapFX.gameObject.SetActive(true);
 			tapFX.Stop(true);
 			tapFX.Clear();

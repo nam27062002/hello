@@ -163,7 +163,14 @@ public class DragonEatBehaviour : EatBehaviour {
 
 	public void AddEatingBost( string entitySku, float value )
 	{
-		m_eatingBoosts.Add( entitySku, value);
+		if ( m_eatingBoosts.ContainsKey(entitySku) )
+		{
+			m_eatingBoosts[entitySku] += value;
+		}
+		else
+		{
+			m_eatingBoosts.Add( entitySku, value);
+		}
 	}
 
 	public override void StopAttackTarget()

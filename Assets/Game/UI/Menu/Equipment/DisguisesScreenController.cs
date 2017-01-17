@@ -36,7 +36,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	// References
 	[Separator("Scene References")]
 	[SerializeField] private DisguisesScreenTitle m_title = null;
-	[SerializeField] private DisguisePowerIcon[] m_powers;
+	[SerializeField] private DisguisePowerIcon m_powerIcon;
 	[SerializeField] private SnappingScrollRect m_scrollList = null;
 
 	[Space]
@@ -57,7 +57,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	private DisguisePill m_selectedPill;	// Pill corresponding to the selected disguise
 
 	// Powers
-	private ShowHideAnimator[] m_powerAnims = new ShowHideAnimator[3];
+	private ShowHideAnimator m_powerAnim = null;
 
 	// Other data
 	private DragonData m_dragonData = null;
@@ -97,9 +97,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		}
 
 		// Store some references
-		for(int i = 0; i < m_powers.Length; i++) {
-			m_powerAnims[i] = m_powers[i].GetComponent<ShowHideAnimator>();
-		}
+		m_powerAnim = m_powerIcon.GetComponent<ShowHideAnimator>();
 
 		m_dragonData = null;
 		m_wardrobe = UsersManager.currentUser.wardrobe;
@@ -191,9 +189,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		Dictionary<string, Sprite> icons = ResourcesExt.LoadSpritesheet("UI/Metagame/Disguises/" + m_dragonData.def.sku);
 
 		// Hide all the contextual info
-		for(int i = 0; i < m_powerAnims.Length; i++) {
-			if(m_powerAnims[i] != null) m_powerAnims[i].ForceHide(false);
-		}
+		if(m_powerAnim != null) m_powerAnim.ForceHide(false);
 		if(m_title != null) m_title.showHideAnimator.ForceHide(false);
 		if(m_lockText != null) m_lockText.GetComponent<ShowHideAnimator>().ForceHide(false);
 		if(m_SCButton != null) m_SCButton.animator.ForceHide(false);
@@ -255,9 +251,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		PersistenceManager.Save();
 
 		// Hide all powerups
-		for(int i = 0; i < m_powerAnims.Length; i++) {
-			if(m_powerAnims[i] != null) m_powerAnims[i].Hide();
-		}
+		if(m_powerAnim != null) m_powerAnim.Hide();
 
 		// Hide header
 		m_title.GetComponent<ShowHideAnimator>().Hide();
@@ -309,24 +303,22 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_title.showHideAnimator.Hide(false);
 		m_title.showHideAnimator.Set(_pill != null);
 
-		// Refresh power icons
-		for(int i = 0; i < 3; i++) {
-			// Get def
-			string powerUpSku = _pill.def.GetAsString("powerup" + i.ToString());
-			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
+		// Refresh power icon
+		// Get def
+		string powerSku = _pill.def.GetAsString("powerup");
+		DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerSku);
 
-			// If no power, hide the power icon
-			if(powerDef == null) {
-				m_powerAnims[i].Hide();
-			} else {
-				// Refresh data
-				m_powers[i].InitFromDefinition(powerDef, false);	// [AOC] Powers are not locked anymore
+		// If no power, hide the power icon
+		if(powerDef == null) {
+			m_powerAnim.Hide();
+		} else {
+			// Refresh data
+			m_powerIcon.InitFromDefinition(powerDef, false);	// [AOC] Powers are not locked anymore
 
-				// Show
-				// Force an instant hide first to force the animation to be launched
-				m_powerAnims[i].Hide(false);
-				m_powerAnims[i].Show();
-			}
+			// Show
+			// Force an instant hide first to force the animation to be launched
+			m_powerAnim.Hide(false);
+			m_powerAnim.Show();
 		}
 
 		// Refresh the lock info

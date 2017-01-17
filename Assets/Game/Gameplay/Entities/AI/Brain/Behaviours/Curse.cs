@@ -47,7 +47,15 @@ namespace AI {
 					if (m_machine.GetSignal(Signals.Type.Trigger) && m_enabled) {					
 						object[] param = m_machine.GetSignalParams(Signals.Type.Trigger);
 						if (param != null && param.Length > 0 && ((GameObject)param[0]).CompareTag("Player")) {
-							m_dragon.ReceiveDamageOverTime(m_data.damage, m_data.duration, DamageType.CURSE);
+							if (InstanceManager.player.HasPoisonShield())
+							{
+								InstanceManager.player.LosePoisonShield();
+							}
+							else
+							{
+								m_dragon.ReceiveDamageOverTime(m_data.damage, m_data.duration, DamageType.CURSE);
+							}
+
 						}
 						m_timer = 1.0f;
 					}
