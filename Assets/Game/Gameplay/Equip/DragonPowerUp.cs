@@ -140,6 +140,9 @@ public class DragonPowerUp : MonoBehaviour {
 					DragonEatBehaviour eatBehaviour = GetComponent<DragonEatBehaviour>();
 					eatBehaviour.AddEatingBost( from, percentage);
 				}break;
+				default:
+				{
+				}break;
 			}
 		}
 	}
