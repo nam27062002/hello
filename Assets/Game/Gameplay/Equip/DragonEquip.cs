@@ -38,53 +38,11 @@ public class DragonEquip : MonoBehaviour {
 		}
 
 		EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
-
-		/* TODO: refractor full equip function
-		 Dictionary<Equipable.AttachPoint, string> equip = dragon.data.equip;
-		// Change skin if there is any custom available
-		if (equip.ContainsKey(Equipable.AttachPoint.Skin)) {
-			SetSkin(equip[Equipable.AttachPoint.Skin]);
-		} else {
-			SetSkin(null);
-		}
-			
-		// Equip items and Pets
-		AttachPoint[] points = GetComponentsInChildren<AttachPoint>();
-		for (int i = 0; i < points.Length; i++) {
-			Equipable.AttachPoint point = points[i].point;
-			if (equip.ContainsKey(point)) {
-				string item = equip[point];
-
-				GameObject prefabObj = Resources.Load<GameObject>(item);
-				GameObject equipable = Instantiate<GameObject>(prefabObj);
-
-				// get equipable object!
-				points[i].Equip(equipable.GetComponent<Equipable>());
-			}
-		}*/
 	}
 
 	void Start()
 	{
 		EquipPets( UsersManager.currentUser.GetEquipedPets( m_dragonSku ) );
-
-		/*
-		DragonPlayer player = GetComponent<DragonPlayer>();
-		for (int i = 0; i < points.Length; i++) {
-			Equipable.AttachPoint point = points[i].point;
-			if (equip.ContainsKey(point)) {
-				string item = equip[point];
-
-				string pet = "Game/Equipable/Pets/" + item;
-				GameObject prefabObj = Resources.Load<GameObject>(pet);
-				GameObject equipable = Instantiate<GameObject>(prefabObj);
-				equipable.transform.localScale = Vector3.one * player.data.scale;
-
-				// get equipable object!
-				points[i].Equip(equipable.GetComponent<Equipable>());
-			}
-		}
-		*/
 	}
 
 	/// <summary>

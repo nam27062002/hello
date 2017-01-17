@@ -143,17 +143,13 @@ public class DragonHealthBehaviour : MonoBehaviour {
 					return;
 				}
 			}break;
-			case DamageType.CURSE:
-			{
-				if (m_dragon.HasCurseShield())
-				{
-					m_dragon.LoseCurseShield();
-					return;
-				}
-			}break;
 			case DamageType.POISON:
 			{
-				if (m_dragon.HasPoisonShield())
+				if ( m_dragon.HasPoisonShieldActive() )
+				{
+					return;
+				}
+				else if (m_dragon.HasPoisonShield())
 				{
 					m_dragon.LosePoisonShield();
 					return;

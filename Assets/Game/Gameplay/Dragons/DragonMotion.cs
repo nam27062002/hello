@@ -376,6 +376,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				{
 					m_groundCollider.enabled = true;
 				}break;
+				case State.Dead:
+				{
+					m_animator.ResetTrigger("dead");
+				}break;
 				case State.Reviving:
 				{
 					m_rbody.detectCollisions = true;

@@ -19,7 +19,6 @@ public enum DamageType {
 	NONE = -1,
 
 	NORMAL,
-	CURSE,
 	POISON,
 	LATCH,
 	MINE
