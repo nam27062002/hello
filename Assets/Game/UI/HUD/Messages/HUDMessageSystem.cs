@@ -40,7 +40,7 @@ public class HUDMessageSystem : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
 	}
 
 	/// <summary>
@@ -48,7 +48,7 @@ public class HUDMessageSystem : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
 	}
 
 	//------------------------------------------------------------------------//
@@ -114,7 +114,7 @@ public class HUDMessageSystem : MonoBehaviour {
 	/// A HUD message has been triggered.
 	/// </summary>
 	/// <param name="_msg">The message that triggered the event.</param>
-	private void OnPlayerKo() {
+	private void OnPlayerKo(DamageType _type) {
 		// Hide current message (if any)
 		if(m_currentMessage != null) m_currentMessage.Hide();
 	}

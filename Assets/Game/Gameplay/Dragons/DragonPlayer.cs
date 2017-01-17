@@ -267,7 +267,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// Add/remove health to the dragon.
 	/// </summary>
 	/// <param name="_offset">The amount of health to be added/removed.</param>
-	public void AddLife(float _offset) {
+	public void AddLife(float _offset, DamageType _type = DamageType.NONE) {
 		// If invulnerable and taking damage, don't apply
 		if(IsInvulnerable() && _offset < 0) return;
 
@@ -294,7 +294,7 @@ public class DragonPlayer : MonoBehaviour {
 				m_dragonMotion.Die();
 
 				// Send global even
-				Messenger.Broadcast(GameEvents.PLAYER_KO);
+				Messenger.Broadcast<DamageType>(GameEvents.PLAYER_KO, _type);	// Reason
 
 				// Clear any health modifiers
 				m_currentHealthModifier = null;
