@@ -37,11 +37,9 @@ public class DragonPowerUp : MonoBehaviour {
 		string disguise = UsersManager.currentUser.GetEquipedDisguise(dragonSku);
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, disguise);
 		if (def != null) {
-			for( int i = 0; i < 3; i++) {
-				string powerUp = def.Get("powerup" + i.ToString());
-				if(!string.IsNullOrEmpty(powerUp))
-					SetPowerUp(powerUp);
-			}
+			string powerUp = def.Get("powerup");
+			if(!string.IsNullOrEmpty(powerUp))
+				SetPowerUp(powerUp);
 		}
 	}
 
