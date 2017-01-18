@@ -63,8 +63,8 @@ namespace AI {
 
 				if (hasPlayerReceivedDamage) {
 					if (!m_machine.IsDying()) {
-						if (dragon.HasMineShield()) {
-							dragon.LoseMineShield();
+						if (dragon.HasShield( DamageType.MINE )) {
+							dragon.LoseShield(DamageType.MINE);
 						} else {
 							DragonHealthBehaviour health = dragon.GetComponent<DragonHealthBehaviour>();
 							if (health != null) {

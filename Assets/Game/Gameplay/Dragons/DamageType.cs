@@ -21,5 +21,7 @@ public enum DamageType {
 	NORMAL,
 	POISON,
 	LATCH,
-	MINE
+	MINE,
+	ARROW
+
 }

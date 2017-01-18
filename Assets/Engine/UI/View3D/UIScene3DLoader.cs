@@ -40,7 +40,10 @@ public class UIScene3DLoader : MonoBehaviour {
 
 	private RawImage m_rawImage = null;
 	public RawImage rawImage {
-		get { return m_rawImage; }
+		get { 
+			if(m_rawImage == null) m_rawImage = GetComponent<RawImage>();
+			return m_rawImage; 
+		}
 	}
 	
 	//------------------------------------------------------------------------//
@@ -52,9 +55,6 @@ public class UIScene3DLoader : MonoBehaviour {
 	private void Awake() {
 		// Check required fields
 		Debug.Assert(m_scenePrefab != null, "Required field not initialized!");
-
-		// Initialize external references
-		m_rawImage = GetComponent<RawImage>();
 	}
 
 	/// <summary>
@@ -82,7 +82,6 @@ public class UIScene3DLoader : MonoBehaviour {
 	/// </summary>
 	/// <param name="_scenePrefab">Scene prefab.</param>
 	public void LoadScene(GameObject _scenePrefab) {
-		Debug.Log("LOADING SCENE " + _scenePrefab.name);
 		// The prefab must contain a UIScene3D component
 		if(_scenePrefab.GetComponent<UIScene3D>() == null) {
 			Debug.LogError("Trying to load a scene without the UIScene3D component - aborting");
@@ -98,8 +97,8 @@ public class UIScene3DLoader : MonoBehaviour {
 		m_sceneInstance = UIScene3DManager.CreateFromPrefab<UIScene3D>(m_scenePrefab);
 
 		// Initialize the raw image where the dragon will be rendered
-		m_rawImage.texture = m_sceneInstance.renderTexture;
-		m_rawImage.color = Colors.white;
+		rawImage.texture = m_sceneInstance.renderTexture;
+		rawImage.color = Colors.white;
 	}
 
 	/// <summary>
@@ -110,7 +109,7 @@ public class UIScene3DLoader : MonoBehaviour {
 		if(m_sceneInstance != null) {
 			UIScene3DManager.Remove(m_sceneInstance);
 			m_sceneInstance = null;
-			m_rawImage.texture = null;
+			rawImage.texture = null;
 		}
 	}
 
