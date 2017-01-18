@@ -38,8 +38,7 @@ public static class DebugSettings {
 	public const string NEW_CAMERA_SYSTEM		 		        = "NEW_CAMERA_SYSTEM";    
 
     public const string INGAME_HUD						        = "INGAME_HUD";
-	public const string INGAME_SPAWNERS					        = "INGAME_SPAWNERS";
-	public const string INGAME_GLOW						        = "INGAME_GLOW";
+	public const string INGAME_SPAWNERS					        = "INGAME_SPAWNERS";	
 	public const string INGAME_PARTICLES_FEEDBACK 		        = "INGAME_PARTICLES_FEEDBACK";
     public const string INGAME_PARTICLES_EATEN 			        = "INGAME_PARTICLES_EATEN";
 
@@ -109,10 +108,7 @@ public static class DebugSettings {
         Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
 
         key = INGAME_SPAWNERS;        
-		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
-
-        key = INGAME_GLOW;
-		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, false));
+		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));        
 
 		key = INGAME_PARTICLES_FEEDBACK;
 		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));

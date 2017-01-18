@@ -105,13 +105,14 @@ public class LoadingSceneController : SceneController {
 		SpawnerAreaManager.CreateInstance(true);
 		EntityManager.CreateInstance(true);
 		InstanceManager.CreateInstance(true);
-		
+        GameDeviceQualityManager.CreateInstance();
+
         // Load persistence        
         SaveFacade.Instance.Init();               
-        PersistenceManager.Init();		                      
+        PersistenceManager.Init();        
 
-		// Initialize localization
-		SetSavedLanguage();
+        // Initialize localization
+        SetSavedLanguage();
 	}
 
     public static void SetSavedLanguage()
