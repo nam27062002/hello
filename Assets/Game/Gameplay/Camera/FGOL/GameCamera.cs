@@ -266,7 +266,9 @@ public class GameCamera : MonoBehaviour
         Debug_Awake();
 #endif
 
-		InstanceManager.gameCamera = this;
+        SetupGlow();
+
+        InstanceManager.gameCamera = this;
 
 		// Subscribe to external events
 		// Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
@@ -1349,38 +1351,33 @@ public class GameCamera : MonoBehaviour
 		}
 	}
 
+    private void SetupGlow()
+    {
+        // The effect is enabled if the feature is enabled for this device
+        GlowEffect.GlowEffect glow = GetComponent<GlowEffect.GlowEffect>();
+        if (glow != null)
+        {
+            glow.enabled = GameDeviceQualityManager.instance.IsGlowEnabled;
+        }
+    }
+
     #region debug
     // This region is responsible for enabling/disabling the glow effect for profiling purposes. This code is placed here because GlowEffect is a third-party code so 
     // we don't want to change it if it's not really necessary in order to make future updates easier
     private void Debug_Awake()
     {
-        Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
-
-        // Enable/Disable object depending on the flag
-        Debug_SetActive();
+        Messenger.AddListener(GameEvents.CP_QUALITY_CHANGED, Debug_OnChanged);        
     }
 
     private void Debug_OnDestroy()
     {
-		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+        Messenger.RemoveListener(GameEvents.CP_QUALITY_CHANGED, Debug_OnChanged);
     }
 
-    private void Debug_OnChanged(string _id, bool _newValue)
+    private void Debug_OnChanged()
     {
-        if (_id == DebugSettings.INGAME_GLOW)
-        {
-            // Enable/Disable object
-            Debug_SetActive();
-        }
-    }
-
-    private void Debug_SetActive()
-    {
-        GlowEffect.GlowEffect glow = GetComponent<GlowEffect.GlowEffect>();
-        if (glow != null)
-        {
-			glow.enabled = Prefs.GetBoolPlayer(DebugSettings.INGAME_GLOW);
-        }
-    }
+        // Enable/Disable object
+        SetupGlow();        
+    }    
     #endregion
 }
