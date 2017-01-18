@@ -218,7 +218,6 @@ namespace AI {
 
 
 		public override void Update() {
-
 			if (m_pilot.IsActionPressed(Pilot.Action.Stop)) {
 				Stop();
 			}
@@ -243,6 +242,55 @@ namespace AI {
 				return;
 			} else {
 				m_viewControl.Panic(false, m_machine.GetSignal(Signals.Type.Burning));
+			}
+
+			//--------------
+
+			// machine should face the same direction it is moving
+			UpdateOrientation();
+
+			//Aiming!!
+			if (m_eye != null) {
+				UpdateAim();
+			}
+
+			m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
+			m_machineTransform.rotation = m_rotation;
+
+			m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
+
+
+			// View updates
+			UpdateAttack();
+
+			// Check if targeting to bend through that direction
+			if (m_attackTarget)
+			{
+				Vector3 dir = m_attackTarget.position - position;
+				dir.Normalize();
+				m_viewControl.NavigationLayer(dir);	
+			}
+			else
+			{
+				m_viewControl.NavigationLayer(m_pilot.impulse);	
+			}
+
+			if (m_pilot.speed > 0.01f) {
+				m_viewControl.Move(m_pilot.speed);//m_pilot.impulse.magnitude); //???
+			} else {
+				m_viewControl.Move(0f);
+			}
+
+			m_viewControl.Boost(m_pilot.IsActionPressed(Pilot.Action.Boost));
+			m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
+		}
+
+		public override void FixedUpdate() {
+
+			if (m_machine.GetSignal(Signals.Type.Biting)
+			||  m_machine.GetSignal(Signals.Type.Latching)
+			||  m_machine.GetSignal(Signals.Type.Panic)) {	
+				return;
 			}
 
 			bool isJumpingAlt = m_pilot.IsActionPressed(Pilot.Action.Jump);
@@ -335,44 +383,6 @@ namespace AI {
 				}
 
 				Debug.DrawLine(position, position + m_rbody.velocity, Color.yellow);
-
-				// machine should face the same direction it is moving
-				UpdateOrientation();
-
-				//Aiming!!
-				if (m_eye != null) {
-					UpdateAim();
-				}
-
-				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
-				m_machineTransform.rotation = m_rotation;
-
-				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
-
-
-				// View updates
-				UpdateAttack();
-
-				// Check if targeting to bend through that direction
-				if (m_attackTarget)
-				{
-					Vector3 dir = m_attackTarget.position - position;
-					dir.Normalize();
-					m_viewControl.NavigationLayer(dir);	
-				}
-				else
-				{
-					m_viewControl.NavigationLayer(m_pilot.impulse);	
-				}
-
-				if (m_pilot.speed > 0.01f) {
-					m_viewControl.Move(m_pilot.speed);//m_pilot.impulse.magnitude); //???
-				} else {
-					m_viewControl.Move(0f);
-				}
-
-				m_viewControl.Boost(m_pilot.IsActionPressed(Pilot.Action.Boost));
-				m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
 			}
 		}
 

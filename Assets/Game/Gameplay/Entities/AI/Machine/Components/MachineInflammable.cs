@@ -10,6 +10,7 @@ namespace AI {
 		//-----------------------------------------------
 		enum State {
 			Idle = 0,
+			Burning,
 			Burned,
 			Ashes
 		};
@@ -19,8 +20,11 @@ namespace AI {
 		//
 		//-----------------------------------------------
 		[SerializeField] private string m_ashesAsset = "";
+		[SerializeField] private float m_burningTime = 0f;
 		[SerializeField] private float m_dissolveTime = 1.5f;
 		[SerializeField] private List<Renderer> m_ashExceptions = new List<Renderer>();
+
+		public float burningTime { get { return m_burningTime; } }
 
 		//-----------------------------------------------
 		//
@@ -76,21 +80,13 @@ namespace AI {
 			m_machine.SetSignal(Signals.Type.Burning, true);
 			m_machine.SetSignal(Signals.Type.Panic, true);
 
-			// change materials
-			for (int i = 0; i < m_renderers.Length; i++) {
-				if (m_ashMaterials[i] != null) {
-					m_renderers[i].materials = m_ashMaterials[i];
-				} else {
-					m_renderers[i].enabled = false;
-				}
-			}
-
 			// reward
 			Reward reward = (m_entity as Entity).GetOnKillReward(true);
 			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, m_machine.transform, reward);
 
-			//
-			m_nextState = State.Burned;
+			m_timer = m_burningTime;
+
+			m_nextState = State.Burning;
 		}
 
 
@@ -105,6 +101,12 @@ namespace AI {
 			}
 
 			switch (m_state) {
+				case State.Burning:
+					if (m_timer <= 0f) {
+						m_nextState = State.Burned;
+					}
+					break;
+
 				case State.Burned:
 					if (m_timer <= 0f) {
 						m_nextState = State.Ashes;
@@ -133,7 +135,16 @@ namespace AI {
 				}
 			}
 
-			if (m_nextState == State.Burned) {				
+			if (m_nextState == State.Burned) {
+				// change materials
+				for (int i = 0; i < m_renderers.Length; i++) {
+					if (m_ashMaterials[i] != null) {
+						m_renderers[i].materials = m_ashMaterials[i];
+					} else {
+						m_renderers[i].enabled = false;
+					}
+				}
+
 				m_timer = 0.5f; //secs
 				UpdateAshLevel(1);
 			} else if (m_nextState == State.Ashes) {
@@ -143,8 +154,7 @@ namespace AI {
 			m_state = m_nextState;
 		}
 
-		private void UpdateAshLevel( float delta )
-		{
+		private void UpdateAshLevel(float delta) {
 			float ashLevel = Mathf.Min(1, Mathf.Max(0, 1 - delta));
 			for (int i = 0; i < m_ashMaterials.Count; i++) {
 				Material[] mats = m_ashMaterials[i];
