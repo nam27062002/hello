@@ -19,7 +19,7 @@ using System.Collections.Generic;
 /// </summary>
 public class GameDeviceQualityManager : UbiBCN.SingletonMonoBehaviour<GameDeviceQualityManager>
 {
-    public class HDFeatureSettings : DeviceQualityManager.FeatureSettings
+    public class GameFeatureSettings : DeviceQualityManager.FeatureSettings
     {
         public static Dictionary<string, Data> Datas { get; set; }
 
@@ -176,7 +176,7 @@ public class GameDeviceQualityManager : UbiBCN.SingletonMonoBehaviour<GameDevice
         private Dictionary<string, ELevel2Values> Level2Values;
         private Dictionary<string, ELevel3Values> Level3Values;
 
-        public HDFeatureSettings()
+        public GameFeatureSettings()
         {
             if (Datas == null)
             {
@@ -374,11 +374,11 @@ public class GameDeviceQualityManager : UbiBCN.SingletonMonoBehaviour<GameDevice
         Messenger.RemoveListener(EngineEvents.DEFINITIONS_LOADED, OnDefinitionsLoaded);
     }
 
-    public HDFeatureSettings Device_CurrentFeatureSettings
+    public GameFeatureSettings Device_CurrentFeatureSettings
     {
         get
         {
-            return (m_deviceQualityManager == null) ? null : m_deviceQualityManager.Device_CurrentFeatureSettings as HDFeatureSettings;
+            return (m_deviceQualityManager == null) ? null : m_deviceQualityManager.Device_CurrentFeatureSettings as GameFeatureSettings;
         }        
     }
 
@@ -386,7 +386,7 @@ public class GameDeviceQualityManager : UbiBCN.SingletonMonoBehaviour<GameDevice
     {
         get
         {
-            return Device_CurrentFeatureSettings.GetValueAsBool(HDFeatureSettings.KEY_GLOW);
+            return Device_CurrentFeatureSettings.GetValueAsBool(GameFeatureSettings.KEY_GLOW);
         }
     }
 
@@ -395,7 +395,7 @@ public class GameDeviceQualityManager : UbiBCN.SingletonMonoBehaviour<GameDevice
         m_deviceQualityManager.Profiles_Clear();
 
         // All profiles are loaded from rules        
-        HDFeatureSettings featureSettings;
+        GameFeatureSettings featureSettings;
         Dictionary<string, DefinitionNode> definitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.FEATURE_PROFILE_SETTINGS);
         foreach (KeyValuePair<string, DefinitionNode> pair in definitions)
         {
@@ -409,13 +409,13 @@ public class GameDeviceQualityManager : UbiBCN.SingletonMonoBehaviour<GameDevice
         DeviceQualityManager.FeatureSettings profileSettings = m_deviceQualityManager.Profiles_GetFeatureSettingsPerRating(m_deviceQualityManager.Device_CalculatedRating);
 
         // A new HDFeatureSettings object is created instead of using the profile feature settings one because it might be changed and we want the profile one to stay the same
-        HDFeatureSettings deviceSettings = CreateFeatureSettings();        
+        GameFeatureSettings deviceSettings = CreateFeatureSettings();        
         deviceSettings.FromJSON(profileSettings.ToJSON());
         m_deviceQualityManager.Device_CurrentFeatureSettings = deviceSettings;
     }
 
-    private HDFeatureSettings CreateFeatureSettings()
+    private GameFeatureSettings CreateFeatureSettings()
     {
-        return new HDFeatureSettings();
+        return new GameFeatureSettings();
     }
 }
