@@ -7,8 +7,12 @@
 
 		_Speed("Fire Speed", Float) = 1.0				// Fire speed
 		_Power("Fire Power", Range(0.0, 10.0)) = 3.0	// Fire power
-		_Seed("Random Seed", Float) = 0.0							//Randomize effect
+		_IOffset("Intensity Offset", Range(0.0, 2.0)) = 0.0							//intensity offset in noise texture
 		_Alpha("Alpha", Range(0.0, 1.0)) = 1.0	// alpha translucency
+		_Tint("Cloud colors", Color) = (.5, .5, .5, 1)
+		_MoonPos("Moon position", Vector) = (0.0, 0.0, 0.0)
+		_MoonRadius("Moon radius", Float) = 0.1			//
+
 
 	}
 
@@ -16,8 +20,8 @@
 	{
 		Tags{ "Queue" = "Transparent+8" "RenderType" = "Transparent" }
 		LOD 100
-		Blend SrcAlpha One
-//		Blend SrcAlpha OneMinusSrcAlpha
+//		Blend SrcAlpha One
+		Blend SrcAlpha OneMinusSrcAlpha
 //		Blend One OneMinusSrcColor
 
 
@@ -70,9 +74,11 @@
 
 			float	_Speed;
 			float	_Power;
-			float	_Seed;
+			float	_IOffset;
 			float	_Alpha;
-
+			float4	_Tint;
+			float2	_MoonPos;
+			float	_MoonRadius;
 
 			v2f vert (appdata v)
 			{
@@ -84,24 +90,43 @@
 				return o;
 			}			
 
+
+			half moon(float2 uv, float2 sunPos, float radius)
+			{
+				float2 dv = uv - sunPos;
+				float d = dot(dv, dv);
+				half r = 1.0 - smoothstep(radius, radius + 0.005, d);
+				dv = uv - (sunPos + 0.05);
+				d = dot(dv, dv);
+				r -= 1.0 - smoothstep(radius, radius + 0.005, d);
+				return clamp(r, 0.0, 1.0);
+			}
+
+
 			fixed4 frag (v2f i) : SV_Target
 			{
-//				float intensity = tex2D(_MainTex, (i.uv.xy + float2(_Time.y * _Speed, _Seed))).x;
-//				intensity += tex2D(_NoiseTex2, (i.uv.xy + float2(_Time.y * _Speed * 0.333, -_Seed) + float2(intensity * 0.5, 0.0))).x;// +pow(i.uv.y, 3.0);
+				float persp = 1.0;
+			i.uv.x -= 0.5;
+				float mon = moon(i.uv, _MoonPos, _MoonRadius);
+			i.uv.x *= (i.uv.y * 0.75);
+				float intensity = tex2D(_MainTex, (i.uv.xy + float2(_Time.y * _Speed * persp, 0.0))).x;
+				float s = sin(i.uv.x * 5.0 + _Time.y * _Speed * 10.0);
+				float c = cos(i.uv.y * 5.0 + _Time.y * _Speed * 10.0);
+				float2x2 mr = float2x2(s, c, -c, s);
+				intensity += tex2D(_NoiseTex2, (i.uv.xy + float2(_Time.y * _Speed * 0.555 * persp, 0.0) + mul(mr, float2(0.0, intensity * _IOffset)))).x;// +pow(i.uv.y, 3.0);
 //				i.uv = frac(i.uv);
 //				float intensity = tex2D(_MainTex, i.uv.xy * float2(0.5, 2.0)).x;
 				//intensity += tex2D(_NoiseTex2, (i.uv2.xy * float2(0.33, 2.0))).x;// +pow(i.uv.y, 3.0);
-				float intensity = tex2D(_MainTex, i.uv.xy * float2(1.0, 2.0)).x;
-				intensity += tex2D(_NoiseTex2, (i.uv2.xy * float2(1.0, 2.0))).x;// +pow(i.uv.y, 3.0);
+//				float intensity = tex2D(_MainTex, i.uv.xy * float2(1.0, 2.0)).x;
+//				intensity += tex2D(_NoiseTex2, (i.uv2.xy * float2(1.0, 2.0))).x;// +pow(i.uv.y, 3.0);
 
 
-				half2 d = i.uv - half2(0.5, 0.5);
-
-				intensity = intensity * (0.25 - dot(d, d)) * _Power;
+//				half2 d = i.uv - half2(0.5, 0.5);
+//				intensity = intensity * (0.25 - dot(d, d)) * _Power;
 //				intensity = intensity * (0.25 - (i.uv.y - 0.5)) * _Power;
 				//				float alfa = clamp((intensity / (_AlphaThreshold / _ColorSteps)) - 1.0, 0.0, 1.0);
-				float alfa = intensity;
-				fixed4 colf = fixed4(alfa, alfa, alfa, alfa * _Alpha) * i.vCol;
+				float alfa = intensity + mon;
+				fixed4 colf = fixed4(alfa, alfa, alfa, alfa * _Alpha) * i.vCol * _Tint * i.uv.y;
 //				clip(colf.a - 0.1);
 				return colf;
 			}
