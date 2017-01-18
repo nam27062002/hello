@@ -96,7 +96,7 @@ public class DragonData {
 		m_scaleRange = m_def.GetAsRange("scale");
 
 		// Items
-		m_pets = new List<string>();
+		m_pets = new List<string>( m_tierDef.GetAsInt("maxPetEquipped", 0) );
 		m_disguise = GetDefaultDisguise(_def.sku).sku;
 
 		// Other values
@@ -208,9 +208,9 @@ public class DragonData {
 		if ( _data.ContainsKey("pets") )
 		{
 			SimpleJSON.JSONArray equip = _data["pets"].AsArray;
-			for (int i = 0; i < equip.Count; i++) 
+			for (int i = 0; i < equip.Count && i < m_pets.Count; i++) 
 			{
-				m_pets.Add( equip[i] );
+				m_pets[i] = equip[i];
 			}
 		}
 
@@ -229,7 +229,6 @@ public class DragonData {
 		data.Add("owned", m_owned.ToString());
 		data.Add("xp", progression.xp.ToString());
 		data.Add("level", progression.level.ToString());
-
 		data.Add("disguise", m_disguise);
 
 

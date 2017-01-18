@@ -168,7 +168,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private bool m_insideWater = false;
 	private float m_recoverTimer;
 
-	private bool m_canMoveInsideWater = true;
+	private bool m_canMoveInsideWater = false;
 	public bool canDive{
 		get{
 			return m_canMoveInsideWater;
@@ -311,7 +311,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	void Start() {
 		// Initialize some internal vars
 		m_stunnedTimer = 0;
-		canDive = DebugSettings.dive;
 		m_impulse = Vector3.zero;
 		m_direction = Vector3.right;
 		m_angularVelocity = Vector3.zero;
@@ -376,6 +375,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.Latching:
 				{
 					m_groundCollider.enabled = true;
+				}break;
+				case State.Dead:
+				{
+					m_animator.ResetTrigger("dead");
 				}break;
 				case State.Reviving:
 				{
@@ -1044,23 +1047,25 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
         m_rbody.velocity = m_impulse;
 
-        m_inverseGravityWater -= _deltaTime * 0.28f;
-        if (m_inverseGravityWater < 0.05f) 
+        if ( !m_canMoveInsideWater )
         {
-        	m_inverseGravityWater = 0.05f;
-        }
+	        m_inverseGravityWater -= _deltaTime * 0.28f;
+	        if (m_inverseGravityWater < 0.05f) 
+	        {
+	        	m_inverseGravityWater = 0.05f;
+	        }
 
-		if (!m_waterDeepLimit)
-		{
-			float maxPushDown = ((m_inverseGravityWater * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass * m_accWaterFactor);
-			if (maxPushDown < (gravityAcceleration.y + m_impulse.y))
-			{	
-				m_waterDeepLimit = true;
-				if (m_particleController.ShouldShowDeepLimitParticles())
-					m_animator.SetTrigger("no air");
+			if (!m_waterDeepLimit)
+			{
+				float maxPushDown = ((m_inverseGravityWater * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass * m_accWaterFactor);
+				if (maxPushDown < (gravityAcceleration.y + m_impulse.y))
+				{	
+					m_waterDeepLimit = true;
+					if (m_particleController.ShouldShowDeepLimitParticles())
+						m_animator.SetTrigger("no air");
+				}
 			}
-		}
-
+        }
 
         /*
 
