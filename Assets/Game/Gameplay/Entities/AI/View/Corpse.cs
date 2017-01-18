@@ -120,6 +120,22 @@ public class Corpse : MonoBehaviour {
 		m_spawned = true;
 	}
 
+	public void SwitchDragonTextures( Texture bodyTexture, Texture wingsTexture )
+	{
+		Color tint = Color.white;
+		for (int i = 0; i < m_materials.Count; i++) {
+			if (m_materials[i].name.Contains("body"))
+			{
+				m_materials[i].mainTexture = bodyTexture;
+			}
+			else if (m_materials[i].name.Contains("wings"))
+			{
+				m_materials[i].mainTexture = wingsTexture;
+			}
+		}
+	}
+
+
 	void Update() {
 		if (m_spawned) {
 			m_delay -= Time.deltaTime;

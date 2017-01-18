@@ -36,6 +36,14 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 	private int m_damageAnimState;
 
+	// Power ups modifiers
+	private float m_drainReduceModifier = 0;
+	private Dictionary<DamageType, float> m_damageReductions = new Dictionary<DamageType, float>();
+
+	private Dictionary<string, float> m_eatingHpBoosts = new Dictionary<string, float>();
+	private float m_globalEatingHpBoost = 0;
+
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -67,6 +75,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	{
 		// Apply health drain
 		float drain = GetModifiedDamageForCurrentHealth( m_healthDrainPerSecond, true);
+
+		// Check power ups 
+		drain = drain - drain * m_drainReduceModifier / 100.0f;
+
 		m_dragon.AddLife(-drain * Time.deltaTime);
 
 		// Apply damage over time
@@ -87,6 +99,11 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			if ( Input.GetKeyDown( KeyCode.M) )
 				m_dragon.AddLife( -m_dragon.health );
 		#endif
+	}
+
+	public void AddDrainReduceModifier( float value )
+	{
+		m_drainReduceModifier += value;
 	}
 
 	public bool IsAlive() {
@@ -111,12 +128,25 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	/// <param name="_hitAnimation">Whether to trigger the hit animation or not.</param>
 	public void ReceiveDamage(float _amount, DamageType _type, Transform _source = null, bool _hitAnimation = true) {
 		if(enabled) {
+
+			if ( m_dragon.HasShield( _type ) )
+			{
+				m_dragon.LoseShield( _type );
+				return;
+			}
+
+			// power ups
+			if ( m_damageReductions.ContainsKey( _type ) )
+			{
+				_amount = _amount - _amount * m_damageReductions[ _type ] / 100.0f;
+			}
+
 			// Play animation?
 			if(_hitAnimation) PlayHitAnimation();
 
 			// Apply damage
 			float damage = GetModifiedDamageForCurrentHealth(_amount);
-			m_dragon.AddLife(-damage);
+			m_dragon.AddLife(-damage, _type);
 
 			// Notify game
 			Messenger.Broadcast<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, _amount, _type, _source);
@@ -131,6 +161,24 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	/// <param name="_type">Type of damage to be applied. If a DOT of a different type is being applied, type will be override.</param> 
 	/// <param name="_reset">Whether to override current DOT or accumulate it.</param>
 	public void ReceiveDamageOverTime(float _dps, float _duration, DamageType _type, bool _reset = true) {
+
+		// Check shields
+		if ( m_dragon.HasShieldActive( _type ) )
+		{
+			return;
+		}
+		else if ( m_dragon.HasShield( _type ) )
+		{
+			m_dragon.LoseShield( _type );
+			return;
+		}
+
+		// Check damage Reduction
+		if ( m_damageReductions.ContainsKey( _type ) )
+		{
+			_dps = _dps - _dps * m_damageReductions[ _type ] / 100.0f;
+		}
+
 		// Clear current dots?
 		if(_reset) {
 			m_dots.Clear();
@@ -170,7 +218,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		}
 
 		// Apply health modifier
-		float healthFraction = m_dragon.healthFraction;
+		// float healthFraction = m_dragon.healthFraction;
 		if(m_dragon.currentHealthModifier != null) {
 			damage *= m_dragon.currentHealthModifier.modifier;
 		}
@@ -191,4 +239,55 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	void OnEnable() {
 		// PlayHitAnimation();
 	}
+
+	public void AddDamageReduction( DamageType type, float percentage )
+	{
+		if (m_damageReductions.ContainsKey(type))
+		{
+			m_damageReductions[type] += percentage;
+		}
+		else
+		{
+			m_damageReductions.Add(type, percentage);
+		}
+	}
+
+	/*
+	*	Adds eating hp boost from entitySky entities
+	*/
+	public void AddEatingHpBoost( string entitySku, float value )
+	{
+		if ( m_eatingHpBoosts.ContainsKey(entitySku) )
+		{
+			m_eatingHpBoosts[entitySku] += value;
+		}
+		else
+		{
+			m_eatingHpBoosts.Add( entitySku, value);
+		}
+	}
+
+	/**
+	*	Adds eating boost to all eating
+	*/
+	public void AddEatingHpBoost( float value )
+	{
+		m_globalEatingHpBoost += value;
+	}
+	/**
+	*	Boost applied to rewarded hp used when eating or burning entities
+	*/
+	public float GetBoostedHp( string origin, float reward )
+	{
+		float rewardHealth = reward + (reward * m_globalEatingHpBoost) / 100.0f;
+
+		// Check if origin is in power up and give proper boost
+		if ( m_eatingHpBoosts.ContainsKey( origin ) )
+		{
+			rewardHealth += (reward * m_eatingHpBoosts[origin]) / 100.0f;
+		}
+
+		return rewardHealth;
+	}
+
 }

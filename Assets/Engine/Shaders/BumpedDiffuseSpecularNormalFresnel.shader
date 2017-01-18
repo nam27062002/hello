@@ -151,7 +151,7 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 				// fixed fresnel = pow(max(dot(normalDirection, i.viewDir), 0), _FresnelFactor);
 				float nf = max(dot(i.viewDir, normalDirection), 0.0);
 				float fresnel = clamp(pow(nf, _FresnelFactor), 0.0, 1.0);
-				float rim = clamp(pow(1.0 - nf, _RimFactor), 0.0, 1.0);
+				float rim = clamp(pow(1.0 - nf, _RimFactor), 0.0, 1.0) * _RimColor.a;	// Use rim color alpha as intensity
 
 				// col = diffuse * col + (specular * _LightColor0) + (fresnel * _FresnelColor);
 				// col = diffuse * col + (specular * _LightColor0) + lerp(_FresnelInitialColor, _FresnelFinalColor, fresnel);	// World light color

@@ -170,12 +170,12 @@ namespace AI {
 			}
 
 			if (_trigger == SignalTriggers.OnDestroyed) {
-				m_viewControl.Die(m_signals.GetValue(Signals.Type.Chewing));
+				m_viewControl.Die(m_signals.GetValue(Signals.Type.Chewing), m_signals.GetValue(Signals.Type.Burning));
 				if (m_enableMotion) m_motion.Stop();
 				if (m_collider != null) m_collider.enabled = false;
 				m_entity.Disable(true);
 			} else if (_trigger == SignalTriggers.OnBurning) {
-				m_viewControl.Burn();
+				m_viewControl.Burn(m_inflammable.burningTime);
 				if (m_enableMotion) m_motion.Stop();
 				if (m_collider != null) m_collider.enabled = false;
 			} else if (_trigger == SignalTriggers.OnInvulnerable) {
@@ -275,7 +275,8 @@ namespace AI {
 				}
 
 				if (m_enableSensor) m_sensor.Update();
-
+				if (m_enableMotion) m_motion.Update();
+					
 				//forward special actions
 				m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.A, m_pilot.IsActionPressed(Pilot.Action.Button_A));
 				m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.B, m_pilot.IsActionPressed(Pilot.Action.Button_B));
@@ -293,11 +294,20 @@ namespace AI {
 						m_regionManager = RegionManager.Instance;
 					}
 					CheckForCurrents();
-					m_motion.Update();
+					m_motion.FixedUpdate();
 				}
 			}
 			m_motion.externalVelocity = m_externalForces;
 			m_externalForces = Vector3.zero;
+		}
+
+		protected virtual void LateUpdate()
+		{
+			if (!IsDead()) {
+				if (m_enableMotion) {
+					m_motion.LateUpdate();
+				}
+			}
 		}
 
 		public void AddExternalForce( Vector3 force )
@@ -371,6 +381,12 @@ namespace AI {
 
 		public object[] GetSignalParams(Signals.Type _signal) {
 			return m_signals.GetParams(_signal);
+		}
+
+		public void DisableSensor(float _seconds) {
+			if (m_enableSensor) {
+				m_sensor.Disable(_seconds);
+			}
 		}
 
 		public void UseGravity(bool _value) {
@@ -463,7 +479,7 @@ namespace AI {
 		}
 
 
-		public bool CanBeBitten()
+		public virtual bool CanBeBitten()
 		{
 			if (!enabled)
 				return false;

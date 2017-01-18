@@ -33,8 +33,6 @@ namespace AI {
 
 			private AttackState m_attackState;
 
-			private object[] m_transitionParam;
-
 
 			//-----------------------------------------------------
 			public override StateComponentData CreateData() {
@@ -49,9 +47,6 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<JumpAttackData>();
 				m_meleeWeapon = m_pilot.FindComponentRecursive<MeleeWeapon>();
 				m_meleeWeapon.enabled = false;
-
-				m_transitionParam = new object[1];
-				m_transitionParam[0] = m_data.retreatTime; // retreat time
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
@@ -112,7 +107,8 @@ namespace AI {
 						Transition(OnOutOfRange);
 					}
 				} else {
-					Transition(OnMaxAttacks, m_transitionParam);
+					m_machine.DisableSensor(m_data.retreatTime);
+					Transition(OnMaxAttacks);
 				}
 
 				m_attackState = AttackState.Idle;

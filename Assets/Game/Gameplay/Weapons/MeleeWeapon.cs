@@ -3,6 +3,8 @@ using System.Collections;
 
 public class MeleeWeapon : MonoBehaviour {
 
+	[SerializeField] private float m_knockback = 0;
+
 	private Collider m_weapon;
 	private TrailRenderer m_trail;
 
@@ -26,7 +28,18 @@ public class MeleeWeapon : MonoBehaviour {
 
 	void OnTriggerEnter(Collider _other) {
 		if (_other.CompareTag("Player")) {
-			InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, DamageType.NORMAL);
+			if (m_knockback > 0) {
+				DragonMotion dragonMotion = InstanceManager.player.dragonMotion;
+
+				Vector3 knockBack = dragonMotion.transform.position - transform.position;
+				knockBack.z = 0f;
+				knockBack.Normalize();
+
+				knockBack *= m_knockback;
+
+				dragonMotion.AddForce(knockBack);
+			}
+			InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, DamageType.NORMAL);
 		}
 	}
 }

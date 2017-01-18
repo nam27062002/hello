@@ -6,7 +6,7 @@ public class DragonEatBehaviour : EatBehaviour {
 
 	private DragonPlayer m_dragon;
 	private DragonBoostBehaviour m_dragonBoost;
-	private Dictionary<string, float> m_eatingBoosts = new Dictionary<string, float>();
+	private DragonHealthBehaviour m_dragonHealth;
 	private Animator m_animator;
 	protected bool m_pausedOnFury = false;
     private float m_eatingSpeed = -1;
@@ -26,7 +26,8 @@ public class DragonEatBehaviour : EatBehaviour {
 	{
         base.Start();
 		m_dragon = GetComponent<DragonPlayer>();
-		m_dragonBoost = GetComponent<DragonBoostBehaviour>();
+		m_dragonBoost = m_dragon.dragonBoostBehaviour;
+		m_dragonHealth = m_dragon.dragonHealthBehaviour;
 		m_motion = GetComponent<DragonMotion>();
 
 		m_tier = m_dragon.data.tier;
@@ -120,18 +121,10 @@ public class DragonEatBehaviour : EatBehaviour {
 
 	void OnEntityEaten( Transform t, Reward reward )
 	{
-		// Check if origin is in power up and give proper boost
-		if ( m_eatingBoosts.ContainsKey( reward.origin ) )
-		{
-			m_dragon.AddLife(reward.health + (reward.health * m_eatingBoosts[reward.origin] / 100.0f));
-		}
-		else
-		{
-			m_dragon.AddLife(reward.health);
-		}
-
-		m_dragon.AddEnergy(reward.energy);        
+		m_dragon.AddLife( m_dragonHealth.GetBoostedHp( reward.origin, reward.health) );
+		m_dragon.AddEnergy(reward.energy);
 	}
+
 
 	void OnFuryToggled( bool toogle, DragonBreathBehaviour.Type type)
 	{
@@ -161,10 +154,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		}
 	}
 
-	public void AddEatingBost( string entitySku, float value )
-	{
-		m_eatingBoosts.Add( entitySku, value);
-	}
+
 
 	public override void StopAttackTarget()
 	{
@@ -174,7 +164,6 @@ public class DragonEatBehaviour : EatBehaviour {
 		}
 		base.StopAttackTarget();
 	}
-
 
 	override protected void StartHold(AI.Machine _prey, bool grab = false) 
 	{

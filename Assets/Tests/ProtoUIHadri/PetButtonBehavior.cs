@@ -35,9 +35,9 @@ public class PetButtonBehavior : MonoBehaviour {
 
         if (isLocked) return;
         //manager.GetComponent<PetManager>().clearFeedback();
-        manager.GetComponent<PetManager>().attributeSlot(petSelected, this.gameObject, petID);
+        manager.GetComponent<PetManagerHadri>().attributeSlot(petSelected, this.gameObject, petID);
         //Check if equipped to display or no the check icon
-        if(manager.GetComponent<PetManager>().checkSlotWithPet(petID))
+        if(manager.GetComponent<PetManagerHadri>().checkSlotWithPet(petID))
         {
             this.GetComponent<Image>().sprite = petSelected;
         }

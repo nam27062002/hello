@@ -26,7 +26,6 @@ public static class DebugSettings {
 	public const string DRAGON_INFINITE_SUPER_FIRE 	 	        = "DRAGON_INFINITE_SUPER_FIRE";
 	public const string DRAGON_INFINITE_BOOST  			        = "DRAGON_INFINITE_BOOST";
 	public const string DRAGON_EAT			 			        = "DRAGON_EAT";
-	public const string DRAGON_DIVE			 			        = "DRAGON_DIVE";
 	public const string DRAGON_EAT_DISTANCE_POWER_UP 	        = "DRAGON_EAT_DISTANCE_POWER_UP";
 	public const string DRAGON_SLOW_POWER_UP   			        = "DRAGON_SLOW_POWER_UP";
     public const string DRAGON_BOOST_WITH_HARD_PUSH             = "DRAGON_BOOST_WITH_HARD_PUSH";
@@ -84,11 +83,6 @@ public static class DebugSettings {
 	public static bool eat {
 		get { return Prefs.GetBoolPlayer(DRAGON_EAT, false); }
 		set { Prefs.SetBoolPlayer(DRAGON_EAT, value); }
-	}
-
-	public static bool dive {
-		get { return Prefs.GetBoolPlayer(DRAGON_DIVE, false); }
-		set { Prefs.SetBoolPlayer(DRAGON_DIVE, value); }
 	}
 
 	public static bool eatDistancePowerUp {

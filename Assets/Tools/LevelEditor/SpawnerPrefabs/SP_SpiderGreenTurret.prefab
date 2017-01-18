@@ -5,12 +5,12 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 495222}
-  - 114: {fileID: 11418398}
-  - 114: {fileID: 114000011329399542}
-  - 114: {fileID: 114000013804917148}
+  - component: {fileID: 495222}
+  - component: {fileID: 11418398}
+  - component: {fileID: 114000011329399542}
+  - component: {fileID: 114000013804917148}
   m_Layer: 0
   m_Name: SP_SpiderGreenTurret
   m_TagString: Untagged
@@ -27,10 +27,10 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -84.02, y: 12.57, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &11418398
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -83,7 +83,7 @@ MonoBehaviour:
   m_spawnTime:
     min: 0
     max: 0
-  m_homePosMethod: 0
+  m_homePosMethod: 1
   m_homePosDistance:
     min: 0
     max: 0

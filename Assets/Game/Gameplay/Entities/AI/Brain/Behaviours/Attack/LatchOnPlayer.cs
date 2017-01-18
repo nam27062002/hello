@@ -22,7 +22,6 @@ namespace AI {
 			private EatBehaviour m_eatBehaviour;
 
 			private LatchData m_data;
-			private object[] m_transitionParam;
 
 			private Transform m_parent;
 			private float m_timer;
@@ -50,9 +49,6 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<LatchData>();
 				m_eatBehaviour.holdDamage = m_data.damage;
 				m_eatBehaviour.holdDuration = m_data.duration;
-
-				m_transitionParam = new object[1];
-				m_transitionParam[0] = m_data.retreatTime.GetRandom(); // retreat time
 
 				base.OnInitialise();
 			}
@@ -104,9 +100,9 @@ namespace AI {
 				}
 			}
 
-			void OnEndLatchingEvent()
-			{	
-				Transition(OnEndLatching, m_transitionParam);
+			void OnEndLatchingEvent() {	
+				m_machine.DisableSensor(m_data.retreatTime.GetRandom());
+				Transition(OnEndLatching);
 			}
 		}
 	}
