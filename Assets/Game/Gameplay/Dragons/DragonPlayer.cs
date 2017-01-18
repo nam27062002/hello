@@ -60,9 +60,9 @@ public class DragonPlayer : MonoBehaviour {
 	private float m_healthBonus = 0;
 	private float m_energyBonus = 0;
 
-	private int m_mineShield;
-	private int m_poisonShield;
-	private float m_poisonShieldTimer;
+	public Dictionary<DamageType, int> m_shield = new Dictionary<DamageType, int>();
+	public Dictionary<DamageType, float> m_shieldTimers = new Dictionary<DamageType, float>();
+	public const float m_shieldsDuration = 1.0f;
 
 	private int m_freeRevives = 0;
 	private int m_tierIncreaseBreak = 0;
@@ -159,11 +159,6 @@ public class DragonPlayer : MonoBehaviour {
 		m_healthBonus = 0;
 		m_energyBonus = 0;
 
-		// Check avoid first hit modifiers
-		m_mineShield = 0;
-		m_poisonShield = 0;
-		m_poisonShieldTimer = 0;
-
 		m_freeRevives = 0;
 		m_tierIncreaseBreak = 0;
 
@@ -228,9 +223,6 @@ public class DragonPlayer : MonoBehaviour {
 				m_invulnerableAfterReviveTimer = 0;
 			}
 		}
-
-		if (m_poisonShieldTimer > 0)
-			m_poisonShieldTimer -= Time.deltaTime;
 	}
 
 	//------------------------------------------------------------------//
@@ -473,29 +465,42 @@ public class DragonPlayer : MonoBehaviour {
 		SetBoostBonus( m_energyBonus );
 	}
 
-	public void LoseMineShield()
+	public void LoseShield( DamageType _type )
 	{
-		m_mineShield--;
-	}
-	public bool HasMineShield()
-	{
-		return m_mineShield > 0;
+		if ( m_shield.ContainsKey( _type ) )
+		{
+			m_shield[_type] = m_shield[_type] - 1;
+			// Checks if needs activation
+			if ( _type == DamageType.POISON )
+			{
+				if ( m_shieldTimers.ContainsKey( _type ) )
+				{
+					m_shieldTimers[_type] = Time.time;
+				}
+				else
+				{
+					m_shieldTimers.Add(_type, Time.time);
+				}
+			}
+		}
 	}
 
-	public void LosePoisonShield()
+	public bool HasShield( DamageType _type )
 	{
-		m_poisonShield--;
-		m_poisonShieldTimer = 1;
+		if ( m_shield.ContainsKey( _type ) )	
+		{
+			return m_shield[_type] > 0;
+		}
+		return false;
 	}
 
-	public bool HasPoisonShield()
+	public bool HasShieldActive( DamageType _type )
 	{
-		return m_poisonShield > 0;
-	}
-
-	public bool HasPoisonShieldActive()
-	{
-		return m_poisonShieldTimer > 0;
+		if ( m_shieldTimers.ContainsKey( _type ) )	
+		{
+			return Time.time <= m_shieldTimers[_type] + m_shieldsDuration;
+		}
+		return false;
 	}
 
 	public int GetReminingLives()
@@ -553,15 +558,19 @@ public class DragonPlayer : MonoBehaviour {
 		m_freeRevives += revives;
 	}
 
-	public void AddMineShields( int numHits )
+	public void AddShields( DamageType _type, int _numHits )
 	{
-		m_mineShield += numHits;
+		if ( m_shield.ContainsKey( _type ) )
+		{
+			m_shield[_type] += _numHits;
+		}
+		else
+		{
+			m_shield.Add( _type, _numHits );
+		}
 	}
 
-	public void AddPoisonShields( int numHits )
-	{
-		m_poisonShield += numHits;
-	}
+
 
 	public void StartLatchedOn()
 	{

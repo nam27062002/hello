@@ -111,11 +111,33 @@ public class DragonPowerUp : MonoBehaviour {
 					{
 						case "mine":
 						{
-							player.AddMineShields( numHits );
+							player.AddShields( DamageType.MINE, numHits );
 						}break;
 						case "poison":
 						{
-							player.AddPoisonShields( numHits );
+							player.AddShields( DamageType.POISON, numHits );
+						}break;
+					}
+				}break;
+				case "lower_damage":
+				{
+					// Check sub type with param one
+					string subtype = def.Get("param1");
+					float percentage = def.GetAsFloat("param2");
+					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
+					switch( subtype )
+					{
+						case "mine":
+						{
+							healthBehaviour.AddDamageReduction( DamageType.MINE, percentage );
+						}break;
+						case "poison":
+						{
+							healthBehaviour.AddDamageReduction( DamageType.POISON, percentage );
+						}break;
+						case "arrows":
+						{
+							healthBehaviour.AddDamageReduction( DamageType.ARROW, percentage );
 						}break;
 					}
 				}break;
@@ -136,6 +158,13 @@ public class DragonPowerUp : MonoBehaviour {
 					DragonEatBehaviour eatBehaviour = GetComponent<DragonEatBehaviour>();
 					eatBehaviour.AddEatingBost( from, percentage);
 				}break;
+				case "reduce_lifedrain":
+				{
+					float percentage = def.GetAsFloat("param1");
+					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
+					healthBehaviour.AddDrainReduceModifier( percentage );
+				}break;
+
 				default:
 				{
 				}break;

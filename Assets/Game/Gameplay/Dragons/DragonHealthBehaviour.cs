@@ -36,6 +36,11 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 	private int m_damageAnimState;
 
+	// Power ups modifiers
+	private float m_drainReduceModifier = 0;
+	private Dictionary<DamageType, float> m_damageReductions = new Dictionary<DamageType, float>();
+
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -67,6 +72,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	{
 		// Apply health drain
 		float drain = GetModifiedDamageForCurrentHealth( m_healthDrainPerSecond, true);
+
+		// Check power ups 
+		drain = drain - drain * m_drainReduceModifier / 100.0f;
+
 		m_dragon.AddLife(-drain * Time.deltaTime);
 
 		// Apply damage over time
@@ -87,6 +96,11 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			if ( Input.GetKeyDown( KeyCode.M) )
 				m_dragon.AddLife( -m_dragon.health );
 		#endif
+	}
+
+	public void AddDrainReduceModifier( float value )
+	{
+		m_drainReduceModifier += value;
 	}
 
 	public bool IsAlive() {
@@ -111,6 +125,19 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	/// <param name="_hitAnimation">Whether to trigger the hit animation or not.</param>
 	public void ReceiveDamage(float _amount, DamageType _type, Transform _source = null, bool _hitAnimation = true) {
 		if(enabled) {
+
+			if ( m_dragon.HasShield( _type ) )
+			{
+				m_dragon.LoseShield( _type );
+				return;
+			}
+
+			// power ups
+			if ( m_damageReductions.ContainsKey( _type ) )
+			{
+				_amount = _amount - _amount * m_damageReductions[ _type ] / 100.0f;
+			}
+
 			// Play animation?
 			if(_hitAnimation) PlayHitAnimation();
 
@@ -132,29 +159,21 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	/// <param name="_reset">Whether to override current DOT or accumulate it.</param>
 	public void ReceiveDamageOverTime(float _dps, float _duration, DamageType _type, bool _reset = true) {
 
-		// power ups
-		switch( _type )
+		// Check shields
+		if ( m_dragon.HasShieldActive( _type ) )
 		{
-			case DamageType.MINE:
-			{
-				if (m_dragon.HasMineShield())
-				{
-					m_dragon.LoseMineShield();
-					return;
-				}
-			}break;
-			case DamageType.POISON:
-			{
-				if ( m_dragon.HasPoisonShieldActive() )
-				{
-					return;
-				}
-				else if (m_dragon.HasPoisonShield())
-				{
-					m_dragon.LosePoisonShield();
-					return;
-				}
-			}break;
+			return;
+		}
+		else if ( m_dragon.HasShield( _type ) )
+		{
+			m_dragon.LoseShield( _type );
+			return;
+		}
+
+		// Check damage Reduction
+		if ( m_damageReductions.ContainsKey( _type ) )
+		{
+			_dps = _dps - _dps * m_damageReductions[ _type ] / 100.0f;
 		}
 
 		// Clear current dots?
@@ -196,7 +215,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		}
 
 		// Apply health modifier
-		float healthFraction = m_dragon.healthFraction;
+		// float healthFraction = m_dragon.healthFraction;
 		if(m_dragon.currentHealthModifier != null) {
 			damage *= m_dragon.currentHealthModifier.modifier;
 		}
@@ -216,5 +235,17 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 	void OnEnable() {
 		// PlayHitAnimation();
+	}
+
+	public void AddDamageReduction( DamageType type, float percentage )
+	{
+		if (m_damageReductions.ContainsKey(type))
+		{
+			m_damageReductions[type] += percentage;
+		}
+		else
+		{
+			m_damageReductions.Add(type, percentage);
+		}
 	}
 }
