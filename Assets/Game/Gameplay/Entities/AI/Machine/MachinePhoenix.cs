@@ -16,7 +16,8 @@ namespace AI {
 		}
 
 
-		protected virtual void Update() {
+		protected override void Update() {
+			base.Update();
 			if ( !m_phoenixActive )
 			{
 				if ( m_pilot.IsActionPressed(Pilot.Action.Fire))

@@ -31,11 +31,23 @@ MonoBehaviour:
   - to: 0
     id: onFuryOff
     from: 1
+  - to: 2
+    id: onEnemyInBurnRange
+    from: 1
   - to: 1
     id: onFuryOn
     from: 0
   - to: 0
     id: onFuryOff
+    from: 2
+  - to: 1
+    id: onEnemyOutOfSight
+    from: 2
+  - to: 1
+    id: onCollisionDetected
+    from: 2
+  - to: 1
+    id: onChaseTimeout
     from: 2
   m_firstState_A: 0
   m_firstState_B: 0
