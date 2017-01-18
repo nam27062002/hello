@@ -40,6 +40,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	private float m_drainReduceModifier = 0;
 	private Dictionary<DamageType, float> m_damageReductions = new Dictionary<DamageType, float>();
 
+	private Dictionary<string, float> m_eatingHpBoosts = new Dictionary<string, float>();
+	private float m_globalEatingHpBoost = 0;
+
 
 	//-----------------------------------------------
 	// Methods
@@ -248,4 +251,43 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			m_damageReductions.Add(type, percentage);
 		}
 	}
+
+	/*
+	*	Adds eating hp boost from entitySky entities
+	*/
+	public void AddEatingHpBoost( string entitySku, float value )
+	{
+		if ( m_eatingHpBoosts.ContainsKey(entitySku) )
+		{
+			m_eatingHpBoosts[entitySku] += value;
+		}
+		else
+		{
+			m_eatingHpBoosts.Add( entitySku, value);
+		}
+	}
+
+	/**
+	*	Adds eating boost to all eating
+	*/
+	public void AddEatingHpBoost( float value )
+	{
+		m_globalEatingHpBoost += value;
+	}
+	/**
+	*	Boost applied to rewarded hp used when eating or burning entities
+	*/
+	public float GetBoostedHp( string origin, float reward )
+	{
+		float rewardHealth = reward + (reward * m_globalEatingHpBoost) / 100.0f;
+
+		// Check if origin is in power up and give proper boost
+		if ( m_eatingHpBoosts.ContainsKey( origin ) )
+		{
+			rewardHealth += (reward * m_eatingHpBoosts[origin]) / 100.0f;
+		}
+
+		return rewardHealth;
+	}
+
 }
