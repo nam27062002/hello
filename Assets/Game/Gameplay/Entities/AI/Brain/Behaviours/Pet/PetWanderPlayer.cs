@@ -64,6 +64,8 @@ namespace AI {
 			private void SelectTarget() {
 				m_target = m_pilot.homeTransform;	//  Get Pet position??
 				// check collision
+
+					// FIX THIS!
 				RaycastHit groundHit;
 				if (Physics.Linecast(m_machine.position, m_target.position, out groundHit, m_groundMask)) {
 					m_targetOffset = groundHit.point - m_target.position;
@@ -71,6 +73,8 @@ namespace AI {
 				} else {
 					m_targetOffset = Vector3.zero;
 				}
+
+				m_targetOffset = Vector3.zero;
 			}
 		}
 	}
