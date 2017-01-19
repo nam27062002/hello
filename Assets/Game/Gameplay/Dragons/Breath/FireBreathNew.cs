@@ -59,6 +59,8 @@ public class FireBreathNew : DragonBreathBehaviour {
     private bool m_waterMode = false;
     private float m_waterY = 0;
 
+    private float m_lengthPowerUpMultiplier = 0;
+
     override protected void ExtendedStart() {
 
         DragonMotion dragonMotion = GetComponent<DragonMotion>();
@@ -82,14 +84,8 @@ public class FireBreathNew : DragonBreathBehaviour {
 		m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "FireBlocker");
 		m_noPlayerMask = ~LayerMask.GetMask("Player");
 
-        float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
-        m_length = furyBaseLength;
-        m_length *= transform.localScale.x;
+		RecalculateLength();
 
-        dragonFlameStandardInstance.setEffectScale(furyBaseLength, cacheTransform.localScale.x);
-        dragonFlameSuperInstance.setEffectScale(furyBaseLength, cacheTransform.localScale.x);
-
-        m_length *= 2.0f;
         m_actualLength = m_length;
 
         m_sphCenter = m_mouthTransform.position;
@@ -106,6 +102,25 @@ public class FireBreathNew : DragonBreathBehaviour {
         dragonFlameSuperInstance.gameObject.SetActive(false);
 
         //		m_light = null;
+    }
+
+    public void RecalculateLength()
+    {
+    	if ( m_dragon )
+    	{
+			float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
+			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
+	        m_length *= transform.localScale.x;
+
+			dragonFlameStandardInstance.setEffectScale(furyBaseLength / 2.0f, transform.localScale.x);
+			dragonFlameSuperInstance.setEffectScale(furyBaseLength * m_superFuryLengthMultiplier / 2.0f, transform.localScale.x);
+		}
+    }
+
+    public void AddPowerUpLengthMultiplier(float value)
+    {
+		m_lengthPowerUpMultiplier += value;
+		RecalculateLength();
     }
 
     override public bool IsInsideArea(Vector2 _point) { 
@@ -302,11 +317,11 @@ public class FireBreathNew : DragonBreathBehaviour {
 			{
 				case Type.Standard:
 				{
-					Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length * 2);
+					Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length);
 				}break;
 				case Type.Super:
 				{
-					Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length);
+					Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length * m_superFuryLengthMultiplier);
 				}break;
 			}
 		}

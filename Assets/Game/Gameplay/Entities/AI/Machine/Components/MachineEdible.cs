@@ -49,10 +49,12 @@ namespace AI {
 
 		public void BiteAndHold() {
 			m_machine.SetSignal(Signals.Type.Panic, true);
+			m_machine.SetSignal(Signals.Type.Latched, true);
 		}
 
 		public void ReleaseHold() {
 			m_machine.SetSignal(Signals.Type.Panic, false);
+			m_machine.SetSignal(Signals.Type.Latched, false);
 		}
 
 		public override void Update() {}

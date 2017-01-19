@@ -88,6 +88,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         {
             featureSettings = CreateFeatureSettings();
             SimpleJSON.JSONNode json = pair.Value.ToJSON();
+            json = FormatJSON(json);
             featureSettings.FromJSON(json);
             m_deviceQualityManager.Profiles_AddFeatureSettings(pair.Key, featureSettings);
         }
@@ -99,7 +100,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         // Checks if there's a definition for the device in content
         JSONNode deviceSettingsJSON = GetDeviceFeatureSettingsAsJSON();        
         if (deviceSettingsJSON != null)
-        {
+        {            
             // Checks if the rating has been overriden for this device
             if (deviceSettingsJSON.ContainsKey(FeatureSettings.KEY_RATING))
             {
@@ -140,7 +141,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
                 m_deviceQualityManager.Device_CurrentFeatureSettings.Reset();
             }
 
-            FeatureSettings settings = m_deviceQualityManager.Device_CurrentFeatureSettings;
+            FeatureSettings settings = m_deviceQualityManager.Device_CurrentFeatureSettings;                        
             settings.FromJSON(profileSettigns.ToJSON());            
         }
     }
@@ -153,6 +154,27 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
     private float CalculateRating()
     {
         return 1f;
+    }
+
+    public virtual JSONNode FormatJSON(JSONNode json)
+    {
+        JSONNode returnValue = json;        
+        if (json != null)
+        {
+            JSONClass jsonClass = json as JSONClass;
+
+            returnValue = new JSONClass();            
+            foreach (KeyValuePair<string, JSONNode> pair in jsonClass.m_Dict)
+            {
+                // Empty keys or keys with "as_profile" as a value need to be ignored
+                if (!string.IsNullOrEmpty(pair.Value.Value) && pair.Value.Value != "as_profile")
+                {
+                    returnValue.Add(pair.Key, pair.Value);
+                }
+            }
+        }
+
+        return returnValue;
     }
 
     /// <summary>
@@ -169,6 +191,12 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
             {
                 returnValue = pair.Value.ToJSON();
             }
+        }
+
+        // We only need the keys that actually have a valid value
+        if (returnValue != null)
+        {
+            returnValue = FormatJSON(returnValue);
         }
 
         return returnValue;
