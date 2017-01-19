@@ -231,7 +231,7 @@ public class GameFeatureSettings : FeatureSettings
         Level3Values.Clear();
     }
 
-    protected override void ExtendedFromJSON(JSONNode json)
+    protected override void ExtendedOverrideFromJSON(JSONNode json)
     {
         if (json != null)
         {

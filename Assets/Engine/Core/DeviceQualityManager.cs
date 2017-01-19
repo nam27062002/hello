@@ -33,7 +33,15 @@ public class DeviceQualityManager
     #region profiles
     // This region is responsible for loading and handling the different quality profiles
 
+    /// <summary>
+    /// List of the profile names sorted in ascending order for rating in order to ease the searches of profile per rating
+    /// </summary>
     public List<string> Profiles_Names { get; set; }
+
+    /// <summary>
+    /// Key: Profile name
+    /// Value: Configuration (set of feature settings) for that profile
+    /// </summary>
     private Dictionary<string, FeatureSettings> Profiles_FeatureSettings { get; set; }
 
     public void Profiles_Clear()
@@ -69,7 +77,29 @@ public class DeviceQualityManager
                 Profiles_FeatureSettings = new Dictionary<string, FeatureSettings>();
             }
             Profiles_FeatureSettings.Add(profileName, settings);
+
+            // Makes sure that the profiles are sorted which is important to be able to determine the profile for a rating given (Profiles_RatingToProfileName())
+            Profiles_Names.Sort(Profiles_Sort);
         }
+    }
+
+    private int Profiles_Sort(string p1, string p2)
+    {
+        int returnValue = 0;
+
+        float rating1 = (Profiles_FeatureSettings.ContainsKey(p1)) ? Profiles_FeatureSettings[p1].Rating : 0f;
+        float rating2 = (Profiles_FeatureSettings.ContainsKey(p2)) ? Profiles_FeatureSettings[p2].Rating : 0f;
+        
+        if (rating1 > rating2)
+        {
+            returnValue = 1;
+        }
+        else if (rating1 < rating2)
+        {
+            returnValue = -1;
+        }
+
+        return returnValue;
     }
 
     public FeatureSettings Profiles_GetFeatureSettings(string profileName)
@@ -91,13 +121,18 @@ public class DeviceQualityManager
         string returnValue = null;
         if (Profiles_Names != null)
         {
+            // Loops through all profiles, which are sorted in ascending order per rating, until one with bigger rating than the passed as an argument is found
             int i;
             int count = Profiles_Names.Count;
-            for (i = 0; i < count && Profiles_FeatureSettings[Profiles_Names[i]].Rating <= rating; i++) ; // Empty
+            for (i = 0; i < count && Profiles_FeatureSettings[Profiles_Names[i]].Rating <= rating; i++); // Empty            
+
+            // We need to substract 1 to obtain the profile for rating because the exit condition was to reach the last profile or to find the immediately bigger one
             if (i > 0)
             {
-                returnValue = Profiles_Names[i-1];
+                i--;
             }
+
+            returnValue = Profiles_Names[i];
         }
 
         return returnValue;
