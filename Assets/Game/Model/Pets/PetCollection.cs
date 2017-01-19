@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PetManager
+public class PetCollection
 {
 
 	private List<string> m_pets;
@@ -10,25 +10,41 @@ public class PetManager
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-	public PetManager()
+	/// <summary>
+	/// Default constructor.
+	/// </summary>
+	public PetCollection()
 	{
 		m_pets = new List<string>();
 	}
 
+	/// <summary>
+	/// Reset the collection to its initial state.
+	/// </summary>
+	public void Init() {
+		m_pets.Clear();
+	}
 
-	public bool IsPetOwned(string _sku) {
+	/// <summary>
+	/// Check whether a pet is unlocked by this user.
+	/// </summary>
+	/// <returns><c>true</c> if the pet with the given sku has been unlocked by this user, <c>false</c> otherwise.</returns>
+	/// <param name="_sku">Sku of the pet to be checked.</param>
+	public bool IsPetUnlocked(string _sku) {
 		if ( m_pets != null && m_pets.Contains(_sku)) {
 			return true;
 		}
 		return false;
 	}
 
-	public void UnlockDisguise(string _sku) {
+	/// <summary>
+	/// Marks the pet with the given sku as unlocked. Nothing happens if the pet was already unlocked.
+	/// </summary>
+	/// <param name="_sku">Sku of the pet to be unlocked.</param>
+	public void UnlockPet(string _sku) {
 		if ( !m_pets.Contains( _sku ) )
 			m_pets.Add( _sku );
 	}
-
-
 
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//

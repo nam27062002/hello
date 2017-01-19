@@ -197,7 +197,8 @@ public static class ListExt {
 	/// </summary>
 	/// <param name="_list">The list to be modified.</param>
 	/// <param name="_length">New length for the list.</param>
-	public static void Resize<T>(this List<T> _list, int _length) {
+	/// <param name="_fillValue">Value to be used for newly added list elements. <c>default(T)</c> by default.</param>
+	public static void Resize<T>(this List<T> _list, int _length, T _fillValue = default(T)) {
 		// Add or remove elements?
 		int originalLength = _list.Count;
 		if(_length < originalLength) {
@@ -210,7 +211,7 @@ public static class ListExt {
 			}
 
 			// Use the Repeat method to generate the range to add
-			_list.AddRange(Enumerable.Repeat(default(T), _length - originalLength));
+			_list.AddRange(Enumerable.Repeat(_fillValue, _length - originalLength));
 		}
 	}
 
