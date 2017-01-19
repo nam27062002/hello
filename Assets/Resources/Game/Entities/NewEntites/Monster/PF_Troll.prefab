@@ -1386,7 +1386,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1280568003522936}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -178.74934, y: 1.7552258, z: 9.109375}
+  m_LocalPosition: {x: -10.001, y: -0.001, z: -3.0507812}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4856057368377466}
@@ -1762,7 +1762,19 @@ MonoBehaviour:
     m_burningTime: 2
     m_dissolveTime: 1.5
     m_ashExceptions: []
-  m_armorDurabilityMax: 3
+  m_armorDurabilityPerTier:
+    m_valueList:
+    - count: 0
+      needBoost: 0
+    - count: 0
+      needBoost: 0
+    - count: 0
+      needBoost: 0
+    - count: 0
+      needBoost: 0
+    - count: 0
+      needBoost: 0
+    m_keyList: 0000000001000000020000000300000004000000
 --- !u!114 &114612990824987710
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1798,7 +1810,7 @@ MonoBehaviour:
   m_animB: 
   m_animC: 
   m_exclamationTransform: {fileID: 0}
-  m_corpseAsset: PF_CowCorpse
+  m_corpseAsset: PF_TrollCorpse
   m_onEatenParticles:
   - name: PS_Blood_Explosion_Large
     path: Blood
@@ -1894,7 +1906,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_machine: {fileID: 114605653605623280}
-  m_needBoost: 1
   m_timeBetweenAttaks: 2
   m_hitParticle:
     name: PS_Blood_Explosion_Large

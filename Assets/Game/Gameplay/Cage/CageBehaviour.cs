@@ -3,33 +3,20 @@ using System.Collections.Generic;
 using System;
 
 public class CageBehaviour : MonoBehaviour, ISpawnable {
-
-	//-----------------------------------------------
-	// Classes
-	//-----------------------------------------------
-	[Serializable]
-	public class ContainerHit {
-		public int m_numHits;
-		public bool m_breaksWithoutTurbo;
-	}
-
-	[Serializable]
-	public class SerializableInstance : SerializableDictionary<DragonTier, ContainerHit>
-	{}
-
-
+	
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
 	[SeparatorAttribute]
-	[SerializeField] public  SerializableInstance m_hits = new SerializableInstance();
+	[SerializeField] private HitsPerDragonTier m_hitsPerTier;
 	[SeparatorAttribute]
 	[SerializeField] private GameObject m_colliderHolder;
 	[SerializeField] private GameObject m_view;
 	[SerializeField] private string m_onBreakParticle;
 
+
 	private float m_waitTimer = 0;
-	private ContainerHit m_currentHits;
+	private Hit m_currentHits;
 	private DragonTier m_tier;
 
 	private ISpawner m_spawner;
@@ -45,7 +32,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 		m_cageSpawner = GetComponent<CageSpawner>();
 		m_cageSpawner.Initialize();
 
-		m_currentHits = new ContainerHit();
+		m_currentHits = new Hit();
 
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
 	}
@@ -53,13 +40,13 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	public void Spawn(ISpawner _spawner) {
 		m_spawner = _spawner;
 
-		DragonPlayer player = InstanceManager.player.GetComponent<DragonPlayer>();
+		DragonPlayer player = InstanceManager.player;
 		m_tier = player.GetTierWhenBreaking();
 
 		m_waitTimer = 0;
-		ContainerHit originalHits = m_hits.Get(m_tier);
-		m_currentHits.m_numHits = originalHits.m_numHits;
-		m_currentHits.m_breaksWithoutTurbo = originalHits.m_breaksWithoutTurbo;
+		Hit originalHits = m_hitsPerTier.Get(m_tier);
+		m_currentHits.count = originalHits.count;
+		m_currentHits.needBoost = originalHits.needBoost;
 
 		m_view.SetActive(true);
 		SetCollisionsEnabled(true);
@@ -89,21 +76,23 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 
 	private void OnCollisionEnter(Collision collision) {
 		if (collision.transform.CompareTag("Player")) {
-			if (m_currentHits.m_breaksWithoutTurbo) {
-				Break();
-			} else if (m_waitTimer <= 0) {
-				GameObject go = collision.transform.gameObject;
-				DragonBoostBehaviour boost = go.GetComponent<DragonBoostBehaviour>();	
-				if (boost.IsBoostActive()) 	{
-					DragonMotion dragonMotion = go.GetComponent<DragonMotion>();	// Check speed is enough
-					if (dragonMotion.lastSpeed >= (dragonMotion.absoluteMaxSpeed * 0.85f)) {
-						m_waitTimer = 0.5f;
-						// Check Min Speed
-						m_currentHits.m_numHits--;
-						if (m_currentHits.m_numHits <= 0)
-							Break();
+			if (m_currentHits.needBoost) {				
+				if (m_waitTimer <= 0) {
+					GameObject go = collision.transform.gameObject;
+					DragonBoostBehaviour boost = go.GetComponent<DragonBoostBehaviour>();	
+					if (boost.IsBoostActive()) 	{
+						DragonMotion dragonMotion = go.GetComponent<DragonMotion>();	// Check speed is enough
+						if (dragonMotion.lastSpeed >= (dragonMotion.absoluteMaxSpeed * 0.85f)) {
+							m_waitTimer = 0.5f;
+							// Check Min Speed
+							m_currentHits.count--;
+							if (m_currentHits.count <= 0)
+								Break();
+						}
 					}
 				}
+			} else {
+				Break();
 			}
 		}
 	}
