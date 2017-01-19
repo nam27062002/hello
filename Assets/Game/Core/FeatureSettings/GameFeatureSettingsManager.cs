@@ -57,7 +57,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         Messenger.RemoveListener(EngineEvents.DEFINITIONS_LOADED, OnDefinitionsLoaded);
     }    
 
-    public string Device_Model { get; set; }
+    public string Device_Model { get; set; }    
 
     public float Device_CalculatedRating
     {
@@ -137,6 +137,11 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
             m_deviceQualityManager.Profiles_AddData(featureSettings.Profile, featureSettings.Rating, settingsJSON);
         }
 
+        SetupFeatureSettings();        
+    }   
+
+    public void SetupFeatureSettings()
+    {
         // The device rating is calculated
         float rating = CalculateRating();
         m_deviceQualityManager.Device_CalculatedRating = rating;
@@ -144,9 +149,9 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         string profileName = null;
 
         // Checks if there's a definition for the device in content
-        JSONNode deviceSettingsJSON = GetDeviceFeatureSettingsAsJSON();        
+        JSONNode deviceSettingsJSON = GetDeviceFeatureSettingsAsJSON();
         if (deviceSettingsJSON != null)
-        {            
+        {
             // Checks if the rating has been overriden for this device
             if (deviceSettingsJSON.ContainsKey(FeatureSettings.KEY_RATING))
             {
@@ -174,10 +179,8 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         if (deviceSettingsJSON != null)
         {
             Device_CurrentFeatureSettings.OverrideFromJSON(deviceSettingsJSON);
-        }        
-
-        Debug.Log(Device_CurrentFeatureSettings.ToJSON());      
-    }   
+        }
+    }
 
     private GameFeatureSettings CreateFeatureSettings()
     {
