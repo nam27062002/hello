@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 114000012425715312}
   - component: {fileID: 54000010719601432}
   - component: {fileID: 114000010733057202}
+  - component: {fileID: 114770802747815666}
   m_Layer: 22
   m_Name: PF_EnemyClassic
   m_TagString: Untagged
@@ -940,6 +941,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1702792330309694
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4161680438828034}
+  - component: {fileID: 114750942391247870}
+  - component: {fileID: 135893246205431004}
+  m_Layer: 0
+  m_Name: BossCameraAffectorRadius
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1760455948363104
 GameObject:
   m_ObjectHideFlags: 1
@@ -1160,6 +1178,7 @@ Transform:
   m_Children:
   - {fileID: 4000010683655290}
   - {fileID: 4893852824326902}
+  - {fileID: 4161680438828034}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -71.401, y: 0, z: 0}
@@ -1315,6 +1334,19 @@ Transform:
   - {fileID: 4870488925687740}
   m_Father: {fileID: 4445299781770252}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4161680438828034
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1702792330309694}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4000014232033856}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4170640869348970
 Transform:
@@ -2314,6 +2346,7 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_firePoints: []
   m_burnParticle:
     name: 
     path: 
@@ -2378,6 +2411,7 @@ MonoBehaviour:
   m_rotateToMouth: 3
   m_inflammable:
     m_ashesAsset: 
+    m_burningTime: 0
     m_dissolveTime: 1.5
     m_ashExceptions: []
 --- !u!114 &114000014202338546
@@ -2437,6 +2471,47 @@ MonoBehaviour:
   m_glidingTime:
     min: 4
     max: 6
+--- !u!114 &114750942391247870
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1702792330309694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 496eb6d30e8434219814682a6649d1ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_bca: {fileID: 114770802747815666}
+  m_collider: {fileID: 135893246205431004}
+--- !u!114 &114770802747815666
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012344657622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ecedc79e668a408395849ca8a7a9c4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frameWidthIncrement: 18.2
+  frameMeAndPlayer: 0
+  radius: 18.13
+  detectType: 0
+  m_minPerformanceRatingToUse: 0.4
+--- !u!135 &135893246205431004
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1702792330309694}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 18.13
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &136000011476809738
 CapsuleCollider:
   m_ObjectHideFlags: 1
