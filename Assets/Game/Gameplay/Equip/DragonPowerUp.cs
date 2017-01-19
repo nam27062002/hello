@@ -205,6 +205,15 @@ public class DragonPowerUp : MonoBehaviour {
 					Entity.AddScoreMultiplier( def.GetAsFloat("param1", 0));
 					m_warnEntities = true;
 				}break;
+				case "fire_size":
+				{
+					FireBreathNew fireBreath = GetComponent<FireBreathNew>();
+					float percentage = def.GetAsFloat("param1", 0);
+					if (fireBreath != null )
+					{
+						fireBreath.AddPowerUpLengthMultiplier( percentage );
+					}
+				}break;
 				default:
 				{
 				}break;
