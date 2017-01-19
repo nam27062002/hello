@@ -218,6 +218,7 @@ GameObject:
   - component: {fileID: 4074008975762130}
   - component: {fileID: 114887832156207672}
   - component: {fileID: 135701294603358756}
+  - component: {fileID: 114734590568598190}
   m_Layer: 29
   m_Name: vulnerable
   m_TagString: Untagged
@@ -280,7 +281,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4889497157332238}
   - component: {fileID: 114883298474649214}
-  - component: {fileID: 114279221352649492}
   - component: {fileID: 114942837333358150}
   - component: {fileID: 114605653605623280}
   - component: {fileID: 114707265918811848}
@@ -1386,7 +1386,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1280568003522936}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -180.8947, y: 3.0063074, z: 9.109375}
+  m_LocalPosition: {x: -10.001, y: -0.001, z: -3.0507812}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4856057368377466}
@@ -1636,20 +1636,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Soldier_L_Calf
   m_parentRoot: {fileID: 4856057368377466}
---- !u!114 &114279221352649492
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1280568003522936}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: -0.026763916, y: 2.0384321}
-  radius: 1.7177498
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114279754018899894
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1776,7 +1762,19 @@ MonoBehaviour:
     m_burningTime: 2
     m_dissolveTime: 1.5
     m_ashExceptions: []
-  m_armorDurabilityMax: 3
+  m_armorDurabilityPerTier:
+    m_valueList:
+    - count: 0
+      needBoost: 0
+    - count: 0
+      needBoost: 0
+    - count: 0
+      needBoost: 0
+    - count: 0
+      needBoost: 0
+    - count: 0
+      needBoost: 0
+    m_keyList: 0000000001000000020000000300000004000000
 --- !u!114 &114612990824987710
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1812,7 +1810,7 @@ MonoBehaviour:
   m_animB: 
   m_animC: 
   m_exclamationTransform: {fileID: 0}
-  m_corpseAsset: PF_CowCorpse
+  m_corpseAsset: PF_TrollCorpse
   m_onEatenParticles:
   - name: PS_Blood_Explosion_Large
     path: Blood
@@ -1844,6 +1842,20 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+--- !u!114 &114734590568598190
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1224495718214964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: -0.007080078, y: 0.001871109}
+  radius: 0.80020595
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114865439723635640
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1894,7 +1906,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_machine: {fileID: 114605653605623280}
-  m_needBoost: 1
   m_timeBetweenAttaks: 2
   m_hitParticle:
     name: PS_Blood_Explosion_Large
