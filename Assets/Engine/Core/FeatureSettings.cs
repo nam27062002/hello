@@ -2,8 +2,10 @@
 public class FeatureSettings
 {
     public const string KEY_RATING = "rating";
+    public const string KEY_PROFILE = "profile";
 
     public float Rating { get; set; }
+    public string Profile { get; set; }
 
     public void Reset()
     {
@@ -35,6 +37,12 @@ public class FeatureSettings
                 Rating = json[key].AsFloat;
             }
 
+            key = KEY_PROFILE;
+            if (json.ContainsKey(key))
+            {
+                Profile = json[key];
+            }
+
             ExtendedOverrideFromJSON(json);
         }
     }
@@ -45,6 +53,7 @@ public class FeatureSettings
     {
         SimpleJSON.JSONClass returnValue = new SimpleJSON.JSONClass();
         returnValue.Add(KEY_RATING, Rating.ToString());
+        returnValue.Add(KEY_PROFILE, Rating.ToString());
         ExtendedToJSON(returnValue);
 
         return returnValue;

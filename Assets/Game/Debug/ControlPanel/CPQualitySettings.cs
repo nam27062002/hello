@@ -34,6 +34,15 @@ public class CPQualitySettings : MonoBehaviour
                 }
             }           
         }
+
+        Setup();
+    }
+
+    void Setup()
+    {
+        PrefabOptions_Setup();
+        Quality_Setup();
+        Profile_Setup();
     }
 
     void Update()
@@ -46,7 +55,7 @@ public class CPQualitySettings : MonoBehaviour
         }
     }
 
-    #region prefab_logic_units
+    #region prefab_settings_option
     private void PrefabSettingsOption_SetLabel(Transform t, string value)
     {
         if (t != null)
@@ -87,14 +96,10 @@ public class CPQualitySettings : MonoBehaviour
             {
                 optionData = new TMP_Dropdown.OptionData();
                 optionData.text = v;
-                options.Add(optionData);
+                options.Add(optionData);                
             }
             
-            dropDown.AddOptions(options);
-
-            // Sets the current option
-            string currentValue = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(value.Key);
-            dropDown.value = values.IndexOf(currentValue);
+            dropDown.AddOptions(options);            
 
             if (m_settingsOptionsDropDowns == null)
             {
@@ -102,8 +107,34 @@ public class CPQualitySettings : MonoBehaviour
             }
 
             m_settingsOptionsDropDowns.Add(value.Key, dropDown);
+
+            // Sets the current option
+            PrefabOptions_SetupOption(value.Key);
         }
     }
+
+    private void PrefabOptions_Setup()
+    {
+        if (m_settingsOptionsDropDowns != null)
+        {
+            foreach (KeyValuePair<string, TMP_Dropdown> pair in m_settingsOptionsDropDowns)
+            {
+                PrefabOptions_SetupOption(pair.Key);
+            }
+        }
+    }
+
+    private void PrefabOptions_SetupOption(string key)
+    {
+        if (m_settingsOptionsDropDowns != null && m_settingsOptionsDropDowns.ContainsKey(key))
+        {
+            GameFeatureSettings.Data data = GameFeatureSettings.Datas[key];
+            List<string> values = GameFeatureSettings.GetValueTypeValuesAsString(data.ValueType);
+            string currentValue = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key);
+            m_settingsOptionsDropDowns[key].value = values.IndexOf(currentValue);
+        }
+    }
+
 
     private void PrefabOptions_Update()
     {
@@ -120,6 +151,66 @@ public class CPQualitySettings : MonoBehaviour
     public void PrefabOptions_SetValue(int optionId)
     {
         PrefabSettingsOption_IsDirty = true;
+    }
+    #endregion
+
+    #region quality
+    public TextMeshProUGUI m_calculatedRating;
+    public TextMeshProUGUI m_rating;
+
+    private void Quality_Setup()
+    {
+        if (m_calculatedRating != null)
+        {
+            m_calculatedRating.text = "" + GameFeatureSettingsManager.instance.Device_CalculatedRating;
+        }
+
+        if (m_rating != null)
+        {
+            m_rating.text = "" + GameFeatureSettingsManager.instance.Device_CurrentRating;
+        }
+    }
+    #endregion    
+
+    #region profile
+    public TMP_Dropdown m_profileDropDown;
+
+    private void Profile_Setup()
+    {
+        if (m_profileDropDown != null)
+        {
+            m_profileDropDown.ClearOptions();
+
+            TMP_Dropdown.OptionData optionData;
+            List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
+            List<string> values = GameFeatureSettingsManager.instance.Profiles_Names;
+            foreach (string v in values)
+            {
+                optionData = new TMP_Dropdown.OptionData();
+                optionData.text = v;
+                options.Add(optionData);
+            }
+
+            m_profileDropDown.AddOptions(options);
+
+            // Sets the current option
+            string currentValue = GameFeatureSettingsManager.instance.Device_CurrentProfile;
+            m_profileDropDown.value = values.IndexOf(currentValue);
+
+            if (m_settingsOptionsDropDowns == null)
+            {
+                m_settingsOptionsDropDowns = new Dictionary<string, TMP_Dropdown>();
+            }            
+        }
+    }
+
+    public void Profile_SetOption(int option)
+    {        
+        GameFeatureSettingsManager manager = GameFeatureSettingsManager.instance;
+        manager.Device_CurrentProfile = manager.Profiles_Names[m_profileDropDown.value];
+
+        // The view has to be updated so it will show the configuration for the new profile
+        Setup();
     }
     #endregion
 }
