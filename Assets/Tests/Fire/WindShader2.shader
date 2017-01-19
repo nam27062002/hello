@@ -4,29 +4,31 @@
 	{
 		_MainTex ("Noise", 2D) = "white" {}
 		_NoiseTex2("Noise2", 2D) = "white" {}
+		_NoiseTex3("Noise3", 2D) = "white" {}
 
 		_Speed("Fire Speed", Float) = 1.0				// Fire speed
-		_Power("Fire Power", Range(0.0, 10.0)) = 3.0	// Fire power
-		_IOffset("Intensity Offset", Range(0.0, 2.0)) = 0.0							//intensity offset in noise texture
-		_Alpha("Alpha", Range(0.0, 1.0)) = 1.0	// alpha translucency
-		_Tint("Cloud colors", Color) = (.5, .5, .5, 1)
+		_IOffset("Intensity Offset", Range(0.0, 0.2)) = 0.0							//intensity offset in noise texture
+		_IPower("Intensity Power", Range(0.01, 10.0)) = 0.001							//intensity offset in noise texture
+		_BackgroundColor("BackGround color", Color) = (.5, .5, .5, 1)
+		_Tint("Clouds color", Color) = (.5, .5, .5, 1)
 		_MoonPos("Moon position", Vector) = (0.0, 0.0, 0.0)
 		_MoonRadius("Moon radius", Float) = 0.1			//
-
+		_MoonColor("Moon color", Color) = (0.75, 0.25, 0.0, 1.0)			//
+		_StarsPInches("Stars per inches", Range(1, 100)) = 4
 
 	}
 
 	SubShader
 	{
-		Tags{ "Queue" = "Transparent+8" "RenderType" = "Transparent" }
+		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" }
 		LOD 100
 //		Blend SrcAlpha One
-		Blend SrcAlpha OneMinusSrcAlpha
+//		Blend SrcAlpha OneMinusSrcAlpha
 //		Blend One OneMinusSrcColor
 
 
-		Cull Off
-		ZWrite Off
+		Cull off
+//		ZWrite Off
 
 		Pass
 		{
@@ -71,14 +73,18 @@
 			float4  _MainTex_ST;
 			sampler2D _NoiseTex2;
 			float4  _NoiseTex2_ST;
+			sampler2D _NoiseTex3;
+			float4  _NoiseTex3_ST;
 
 			float	_Speed;
-			float	_Power;
 			float	_IOffset;
-			float	_Alpha;
+			float	_IPower;
+			float4	_BackgroundColor;
 			float4	_Tint;
 			float2	_MoonPos;
 			float	_MoonRadius;
+			float4	_MoonColor;
+			float	_StarsPInches;
 
 			v2f vert (appdata v)
 			{
@@ -90,45 +96,64 @@
 				return o;
 			}			
 
-
 			half moon(float2 uv, float2 sunPos, float radius)
 			{
 				float2 dv = uv - sunPos;
 				float d = dot(dv, dv);
-				half r = 1.0 - smoothstep(radius, radius + 0.005, d);
-				dv = uv - (sunPos + 0.05);
+				half r = 1.0 - smoothstep(radius, radius + 0.0025, d);
+				dv = uv - (sunPos + sin(_Time.y) * 0.075);
 				d = dot(dv, dv);
-				r -= 1.0 - smoothstep(radius, radius + 0.005, d);
+				r -= 1.0 - smoothstep(radius, radius + 0.0025, d);
 				return clamp(r, 0.0, 1.0);
+			}
+
+			float2 hash22(float2 uv)
+			{
+				return frac(sin(uv * float2(361424.0, 51675.0)) * float2(23234434.0, 3463247.0));
+			}
+
+			half star(float2 uv)
+			{
+//				float intensity = tex2D(_MainTex, (i.uv.xy + float2(_Time.y * _Speed * persp, 0.0))).x;
+//				intensity = tex2D(_MainTex, (i.uv.xy + float2(_Time.y * _Speed * persp, 0.0))).x;
+				float2 si = floor(uv * _StarsPInches) / _StarsPInches;
+//				float2 so = float2(tex2D(_MainTex, si + _Time.yy).x , tex2D(_NoiseTex2, si + _Time.yy).x) / _StarsPInches;
+				float2 so = tex2D(_NoiseTex3, si).xy;
+//				float2 so = hash22(si);
+				float2 d = (si + so / _StarsPInches) - uv;
+
+//				return clamp((1.0 - smoothstep(0.00000, 0.00002, dot(d, d) * (so.x + so.y) * 4.0)) * so.x, 0.0, 1.0);
+				return (1.0 - smoothstep(0.00000, 0.00002, dot(d, d) * (so.x + so.y) * 4.0)) * so.x;
 			}
 
 
 			fixed4 frag (v2f i) : SV_Target
 			{
 				float persp = 1.0;
-			i.uv.x -= 0.5;
+				float st = star(i.uv);
+				i.uv.x -= 0.5;
 				float mon = moon(i.uv, _MoonPos, _MoonRadius);
-			i.uv.x *= (i.uv.y * 0.75);
+				i.uv.x *= ((1.0 - i.uv.y) + 0.5);
 				float intensity = tex2D(_MainTex, (i.uv.xy + float2(_Time.y * _Speed * persp, 0.0))).x;
-				float s = sin(i.uv.x * 5.0 + _Time.y * _Speed * 10.0);
-				float c = cos(i.uv.y * 5.0 + _Time.y * _Speed * 10.0);
+				float s = sin(i.uv.x * 5.0 + _Time.y * _Speed * 5.0);
+				float c = cos(i.uv.y * 5.0 + _Time.y * _Speed * 7.0);
 				float2x2 mr = float2x2(s, c, -c, s);
-				intensity += tex2D(_NoiseTex2, (i.uv.xy + float2(_Time.y * _Speed * 0.555 * persp, 0.0) + mul(mr, float2(0.0, intensity * _IOffset)))).x;// +pow(i.uv.y, 3.0);
-//				i.uv = frac(i.uv);
-//				float intensity = tex2D(_MainTex, i.uv.xy * float2(0.5, 2.0)).x;
-				//intensity += tex2D(_NoiseTex2, (i.uv2.xy * float2(0.33, 2.0))).x;// +pow(i.uv.y, 3.0);
-//				float intensity = tex2D(_MainTex, i.uv.xy * float2(1.0, 2.0)).x;
-//				intensity += tex2D(_NoiseTex2, (i.uv2.xy * float2(1.0, 2.0))).x;// +pow(i.uv.y, 3.0);
+				intensity += tex2D(_NoiseTex2, (i.uv.yx + float2(_Time.y * _Speed * 0.555 * persp, 0.0) + mul(mr, float2((1.0 - intensity) * _IOffset, intensity * _IOffset)))).x;// +pow(i.uv.y, 3.0);
 
 
-//				half2 d = i.uv - half2(0.5, 0.5);
-//				intensity = intensity * (0.25 - dot(d, d)) * _Power;
-//				intensity = intensity * (0.25 - (i.uv.y - 0.5)) * _Power;
 				//				float alfa = clamp((intensity / (_AlphaThreshold / _ColorSteps)) - 1.0, 0.0, 1.0);
-				float alfa = intensity + mon;
-				fixed4 colf = fixed4(alfa, alfa, alfa, alfa * _Alpha) * i.vCol * _Tint * i.uv.y;
-//				clip(colf.a - 0.1);
-				return colf;
+				float alfa = clamp(1.0 - (intensity * pow(i.uv.y, _IPower)), 0.0, 1.0);// +mon;
+//				float alfa = intensity;
+																  //				fixed4 colf = fixed4(alfa, alfa, alfa, alfa * _Alpha) * i.vCol * _Tint * i.uv.y;
+//				fixed4 cloudsC = fixed4(alfa, alfa, alfa, 1.0) * _Tint;
+				fixed4 cloudsC = lerp(_BackgroundColor, _Tint, alfa);
+//				return cloudsC;
+
+				fixed4 moonC = fixed4(max(mon, st) * _MoonColor.xyz, 1.0);
+				//				clip(colf.a - 0.1);
+				//colf += mon * _MoonColor;
+				return max(cloudsC, moonC);
+				//return lerp(moonC, cloudsC, alfa * 1.0);
 			}
 
 			ENDCG

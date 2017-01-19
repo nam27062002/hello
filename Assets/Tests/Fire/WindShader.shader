@@ -5,9 +5,8 @@
 		_MainTex ("Noise", 2D) = "white" {}
 		_NoiseTex2("Noise2", 2D) = "white" {}
 
-		_Speed("Fire Speed", Float) = 1.0				// Fire speed
+//		_Speed("Fire Speed", Float) = 1.0				// Fire speed
 		_Power("Fire Power", Range(0.0, 10.0)) = 3.0	// Fire power
-		_Seed("Random Seed", Float) = 0.0							//Randomize effect
 		_Alpha("Alpha", Range(0.0, 1.0)) = 1.0	// alpha translucency
 
 	}
@@ -68,9 +67,9 @@
 			sampler2D _NoiseTex2;
 			float4  _NoiseTex2_ST;
 
-			float	_Speed;
+//			float	_Speed;
 			float	_Power;
-			float	_Seed;
+//			float	_Seed;
 			float	_Alpha;
 
 
@@ -91,13 +90,13 @@
 //				i.uv = frac(i.uv);
 //				float intensity = tex2D(_MainTex, i.uv.xy * float2(0.5, 2.0)).x;
 				//intensity += tex2D(_NoiseTex2, (i.uv2.xy * float2(0.33, 2.0))).x;// +pow(i.uv.y, 3.0);
-				float intensity = tex2D(_MainTex, i.uv.xy * float2(1.0, 2.0)).x;
-				intensity += tex2D(_NoiseTex2, (i.uv2.xy * float2(1.0, 2.0))).x;// +pow(i.uv.y, 3.0);
+				float intensity = tex2D(_MainTex, i.uv.xy * float2(1.0, 1.0)).x;
+				intensity += tex2D(_NoiseTex2, (i.uv.xy * float2(0.5, 1.0))).x;// +pow(i.uv.y, 3.0);
 
 
 				half2 d = i.uv - half2(0.5, 0.5);
+				intensity = intensity * (0.5 - abs(d.y)) * _Power;
 
-				intensity = intensity * (0.25 - dot(d, d)) * _Power;
 //				intensity = intensity * (0.25 - (i.uv.y - 0.5)) * _Power;
 				//				float alfa = clamp((intensity / (_AlphaThreshold / _ColorSteps)) - 1.0, 0.0, 1.0);
 				float alfa = intensity;
