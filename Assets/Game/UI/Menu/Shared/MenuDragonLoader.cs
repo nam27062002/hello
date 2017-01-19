@@ -62,6 +62,12 @@ public class MenuDragonLoader : MonoBehaviour {
 		set { m_resetDragonScale = value; }
 	}
 
+	[SerializeField] private bool m_showPets = false;
+	public bool showPets {
+		get { return m_showPets; }
+		set { m_showPets = value; }
+	}
+
 	[SerializeField] private bool m_removeFresnel = false;
 	public bool removeFresnel {
 		get { return m_removeFresnel; }
@@ -153,8 +159,14 @@ public class MenuDragonLoader : MonoBehaviour {
 					m_dragonInstance.transform.localScale = Vector3.one;
 				}
 
-				if (m_removeFresnel)
-				{
+				// Toggle pets
+				DragonEquip equip = m_dragonInstance.GetComponent<DragonEquip>();
+				if(equip != null) {
+					equip.TogglePets(m_showPets);
+				}
+
+				// Remove fresnel if required
+				if(m_removeFresnel) {
 					m_dragonInstance.SetFresnelColor(Color.black);
 				}
 			}

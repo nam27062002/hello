@@ -2,47 +2,77 @@
 using System.Collections.Generic;
 
 public class DragonEquip : MonoBehaviour {
-	private static readonly string DISGUISE_CHANGE_PS = "PS_DisguiseChange";
-	private static readonly string DISGUISE_CHANGE_PS_FOLDER = "Menu";
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	private const string SKIN_PATH = "Game/Equipable/Skins/";
+	private const string PET_PREFAB_PATH_GAME = "Game/Equipable/Pets/";
+	private const string PET_PREFAB_PATH_MENU = "UI/Menu/Pets/";
 
+	private const string DISGUISE_CHANGE_PS = "PS_DisguiseChange";
+	private const string DISGUISE_CHANGE_PS_FOLDER = "Menu";
+
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	// Exposed
+	[SerializeField] private bool m_menuMode = false;
+
+	// Internal
 	private string m_dragonSku;
+	private AttachPoint[] m_attachPoints = new AttachPoint[(int)Equipable.AttachPoint.Count];
 
-	public static int m_numPets = 1;
-
+	// Skins
 	private Material m_bodyMaterial;
-	public Material bodyMaterial
-	{
-		get
-		{
-			return m_bodyMaterial;
-		}
+	public Material bodyMaterial {
+		get { return m_bodyMaterial; }
 	}
 
 	private Material m_wingsMaterial;
-	public Material wingsMaterial
-	{
-		get
-		{
-			return m_wingsMaterial;
-		}
+	public Material wingsMaterial {
+		get { return m_wingsMaterial; }
 	}
 
-	void Awake() {
-		DragonPlayer player = GetComponent<DragonPlayer>();
+	// Test
+	public static int m_numPets = 1; // [AOC] DEPRECATED!! (Remove from CP)
 
-		if (player != null) {
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization
+	/// </summary>
+	private void Awake() {
+		// Get assigned dragon sku - from Player for in-game dragons, from DragonPreview for menu dragons
+		DragonPlayer player = GetComponent<DragonPlayer>();
+		if(player != null) {
 			m_dragonSku = player.data.def.sku;
 		} else {
 			MenuDragonPreview preview = GetComponent<MenuDragonPreview>();
 			m_dragonSku = preview.sku;
 		}
 
+		// Store attach points sorted to match AttachPoint enum
+		AttachPoint[] points = GetComponentsInChildren<AttachPoint>();
+		for(int i = 0; i < points.Length; i++) {
+			m_attachPoints[(int)points[i].point] = points[i];
+		}
+
+		// Equip current disguise
 		EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+
+		// Equip current pets loadout
+		List<string> pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
+		for(int i = 0; i < pets.Count; i++) {
+			EquipPet(pets[i], i);
+		}
 	}
 
-	void Start()
-	{
-		EquipPets( UsersManager.currentUser.GetEquipedPets( m_dragonSku ) );
+	/// <summary>
+	/// First update call.
+	/// </summary>
+	private void Start() {
+		
 	}
 
 	/// <summary>
@@ -51,25 +81,25 @@ public class DragonEquip : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
+		Messenger.AddListener<string, int , string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
-	
+
 	/// <summary>
 	/// The component has been disabled.
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
+		Messenger.RemoveListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
 
-	private void OnDisguiseChanged(string _sku) {
-		if (m_dragonSku == _sku) {
-			// Show some FX and cool animation!
-			// https://youtu.be/RFqw3xiuSvQ?t=8m45s
-			ParticleManager.Spawn(DISGUISE_CHANGE_PS, transform.position + new Vector3(0f, 1.5f, -4f), DISGUISE_CHANGE_PS_FOLDER);	// [AOC] Hardcoded offset! :(
-			EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
-		}
-	}
-	
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Equip the disguise with the given sku.
+	/// </summary>
+	/// <param name="_disguiseSku">The disguise to be equipped.</param>
 	public void EquipDisguise(string _disguiseSku) {		
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _disguiseSku);
 		if(def != null) {
@@ -79,14 +109,17 @@ public class DragonEquip : MonoBehaviour {
 		}
 	}
 
-	void SetSkin(string _name) {
-
-		if (_name == null || _name.Equals("default") || _name.Equals("")) {
+	/// <summary>
+	/// Sets the skin of the dragon. Performs the actual texture swap.
+	/// </summary>
+	/// <param name="_name">Name of the skin to be applied.</param>
+	private void SetSkin(string _name) {
+		if(_name == null || _name.Equals("default") || _name.Equals("")) {
 			_name = m_dragonSku + "_0";		// Default skin, all dragons should have it
 		}
 
-		m_bodyMaterial  = Resources.Load<Material>("Game/Equipable/Skins/" + m_dragonSku + "/" + _name + "_body");
-		m_wingsMaterial = Resources.Load<Material>("Game/Equipable/Skins/" + m_dragonSku + "/" + _name + "_wings");
+		m_bodyMaterial = Resources.Load<Material>(SKIN_PATH + m_dragonSku + "/" + _name + "_body");
+		m_wingsMaterial = Resources.Load<Material>(SKIN_PATH + m_dragonSku + "/" + _name + "_wings");
 
 		// [AOC] HACK!! Older dragons still don't have the proper materials ----
 		// 		 To be removed
@@ -100,21 +133,16 @@ public class DragonEquip : MonoBehaviour {
 		// ---------------------------------------------------------------------
 
 		Transform view = transform.FindChild("view");
-		if ( view != null )
-		{
+		if(view != null) {
 			Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
-			for( int i = 0; i<renderers.Length; i++ )
-			{
+			for(int i = 0; i < renderers.Length; i++) {
 				Renderer r = renderers[i];
 				Material[] mats = r.materials;
-				for( int j = 0;j<mats.Length; j++ )
-				{
-					if ( mats[j].shader.name.Contains("Wings") )
-					{
+				for(int j = 0; j < mats.Length; j++) {
+					if(mats[j].shader.name.Contains("Wings")) {
 						mats[j] = m_wingsMaterial;
 					}
-					else if (mats[j].shader.name.Contains("Dragon"))
-					{
+					else if(mats[j].shader.name.Contains("Dragon")) {
 						mats[j] = m_bodyMaterial;
 					}
 				}
@@ -123,36 +151,96 @@ public class DragonEquip : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Equip a single pet.
+	/// </summary>
+	/// <param name="_petSku">Pet sku. Use empty string to unequip.</param>
+	/// <param name="_slot">Slot index.</param>
+	public void EquipPet(string _petSku, int _slot) {
+		// Check slot
+		int attachPointIdx = (int)Equipable.AttachPoint.Pet_1 + _slot;
+		if(attachPointIdx < (int)Equipable.AttachPoint.Pet_1 || attachPointIdx > (int)Equipable.AttachPoint.Pet_5) return;	// [AOC] MAGIC NUMBERS!! Figure out a better way!
+		if(m_attachPoints[attachPointIdx] == null) return;
 
-	public void EquipPets( List<string> pets )
-	{
-		AttachPoint[] points = GetComponentsInChildren<AttachPoint>();
-		DragonPlayer player = GetComponent<DragonPlayer>();
-		for( int i = 0; i<pets.Count; i++ )
-		{
-			if ( !string.IsNullOrEmpty(pets[i]) )
-			{
-				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, pets[i]);
-				if ( def != null )
-				{
-					// Search attaching point
-					for (int j = 0; j < points.Length; j++) 
-					{
-						if (points[j].point == Equipable.AttachPoint.Pet_1+i) 
-						{
-							string item = pets[i];
-							string pet = "Game/Equipable/Pets/" + def.Get("gamePrefab");
-							GameObject prefabObj = Resources.Load<GameObject>(pet);
-							GameObject equipable = Instantiate<GameObject>(prefabObj);
-							equipable.transform.localScale = Vector3.one * player.data.scale;
+		// Equip or unequip?
+		if(string.IsNullOrEmpty(_petSku)) {
+			// Unequip
+			m_attachPoints[attachPointIdx].Unequip();
+		} else {
+			// Equip!
+			// Get pet definition
+			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _petSku);
+			if(petDef == null) return;
 
-							// get equipable object!
-							points[j].Equip(equipable.GetComponent<Equipable>());
-							continue;
-						}
-					}
+			// Load prefab and instantiate
+			string pet = null;
+			if(m_menuMode) {
+				pet = PET_PREFAB_PATH_MENU + petDef.Get("menuPrefab");
+			} else {
+				pet = PET_PREFAB_PATH_GAME + petDef.Get("gamePrefab");
+			}
+			GameObject prefabObj = Resources.Load<GameObject>(pet);
+			GameObject newInstance = Instantiate<GameObject>(prefabObj);
+
+			// Adjust scale and parenting
+			if(m_menuMode) {
+				// In menu mode, make it a child of the dragon so it inherits scale factor
+				newInstance.transform.SetParent(m_attachPoints[attachPointIdx].transform, true);	// [AOC] Compensate scale factor with the dragon using the worldPositionStays parameter
+				newInstance.transform.localPosition = Vector3.zero;
+				newInstance.transform.localRotation = Quaternion.identity;
+			} else {
+				// In game mode, adjust to dragon's scale factor
+				DragonPlayer player = GetComponent<DragonPlayer>();
+				newInstance.transform.localScale = Vector3.one * player.data.scale;
+			}
+
+			// Get equipable object!
+			m_attachPoints[attachPointIdx].Equip(newInstance.GetComponent<Equipable>());
+		}
+	}
+
+	/// <summary>
+	/// Show/Hide the pets. Useful specially on the menus.
+	/// </summary>
+	/// <param name="_show">Whether to show or not the pets.</param>
+	public void TogglePets(bool _show) {
+		// Iterate through all pet attach points and activate/deactivate them
+		for(int i = (int)Equipable.AttachPoint.Pet_1; i < (int)Equipable.AttachPoint.Pet_5; i++) {
+			if(m_attachPoints[i] != null) {
+				if(m_attachPoints[i].item != null) {
+					m_attachPoints[i].item.gameObject.SetActive(_show);
 				}
 			}
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The selected disguise has been changed in the menu.
+	/// </summary>
+	/// <param name="_sku">The new disguise to be equipped.</param>
+	private void OnDisguiseChanged(string _sku) {
+		if(m_dragonSku == _sku) {
+			// Show some FX and cool animation!
+			// https://youtu.be/RFqw3xiuSvQ?t=8m45s
+			ParticleManager.Spawn(DISGUISE_CHANGE_PS, transform.position + new Vector3(0f, 1.5f, -4f), DISGUISE_CHANGE_PS_FOLDER);	// [AOC] Hardcoded offset! :(
+			EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+		}
+	}
+
+	/// <summary>
+	/// The pets loadout has changed in the menu.
+	/// </summary>
+	/// <param name="_dragonSku">The dragon whose assigned pets have changed.</param>
+	/// <param name="_slotIdx">Slot that has been changed.</param>
+	/// <param name="_newPetSku">New pet assigned to the slot. Empty string for unequip.</param>
+	public void OnPetChanged(string _dragonSku, int _slotIdx, string _newPetSku) {
+		// Is it meant for this draogn?
+		if(_dragonSku == m_dragonSku) {
+			// [AOC] TODO!! Make it look good!
+			EquipPet(_newPetSku, _slotIdx);
 		}
 	}
 }

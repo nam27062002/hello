@@ -70,7 +70,8 @@ public class PetCategoryTab : Tab {
 	/// All existing pills will be cleared.
 	/// </summary>
 	/// <param name="_category">Category.</param>
-	public void InitFromDef(string _category) {
+	/// <param name="_dragonData">The dragon we're tuning.</param> 
+	public void Init(string _category, DragonData _dragonData) {
 		// Store target category
 		m_category = _category;
 
@@ -88,7 +89,7 @@ public class PetCategoryTab : Tab {
 			}
 
 			// Initialize pill
-			m_pills[i].InitFromDef(defs[i]);
+			m_pills[i].Init(defs[i], _dragonData);
 			m_pills[i].gameObject.SetActive(true);
 		}
 

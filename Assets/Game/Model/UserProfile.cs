@@ -118,6 +118,12 @@ public class UserProfile : UserSaveSystem
 		get{ return m_wardrobe; }
 	}
 
+	// Pets
+	PetCollection m_petCollection;
+	public PetCollection petCollection {
+		get { return m_petCollection; }
+	}
+
 	// Missions
 	UserMissions m_userMissions;
 	public UserMissions userMissions
@@ -204,6 +210,7 @@ public class UserProfile : UserSaveSystem
 		m_incubatingEgg = null;
 
 		m_wardrobe = new Wardrobe();
+		m_petCollection = new PetCollection();
 		m_userMissions = new UserMissions();      
     }
 
@@ -425,6 +432,12 @@ public class UserProfile : UserSaveSystem
 			m_wardrobe.Load( _data["disguises"] );
 		}
 
+		// Pets
+		m_petCollection.Init();
+		if(_data.ContainsKey("pets")) {
+			m_petCollection.Load(_data["pets"]);
+		}
+
 		// Missions
 		if ( _data.ContainsKey("missions") )
 		{
@@ -589,6 +602,7 @@ public class UserProfile : UserSaveSystem
 		data.Add( "dragons", dragons );
 
 		data.Add("disguises", m_wardrobe.Save());
+		data.Add("pets", m_petCollection.Save());
 		data.Add("missions", m_userMissions.Save());
 
 		data.Add("eggs", SaveEggData());
@@ -664,6 +678,11 @@ public class UserProfile : UserSaveSystem
 	//------------------------------------------------------------------------//
 	// DISGUISES MANAGEMENT													  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get the sku of the disguise equipped to a specific dragon.
+	/// </summary>
+	/// <returns>The sku of the equipped disguise.</returns>
+	/// <param name="_dragonSku">The dragon whose disguie we want to check.</param>
 	public string GetEquipedDisguise( string _dragonSku )
 	{
 		if ( m_dragonsBySku.ContainsKey( _dragonSku ) )
@@ -671,13 +690,6 @@ public class UserProfile : UserSaveSystem
 		return "";
 	}
 
-	public List<string> GetEquipedPets( string _dragonSku )
-	{
-		if ( m_dragonsBySku.ContainsKey( _dragonSku ) )
-			return m_dragonsBySku[ _dragonSku ].pets;
-		return new List<string>();
-	}
-    
 	/// <summary>
 	/// Try to equip the given disguise into the target dragon.
 	/// Doesn't check that the disguise actually belongs to the dragon.
@@ -697,6 +709,97 @@ public class UserProfile : UserSaveSystem
 			}
 		}
 		return ret;
+	}
+
+	/// <summary>
+	/// Get the current pet loadout for the target dragon.
+	/// </summary>
+	/// <returns>The list of all the pet slots of the target dragon with the sku of the pet equipped in each of them. Empty string if the slot is empty.</returns>
+	/// <param name="_dragonSku">The dragon whose pet loadout we want to know.</param>
+	public List<string> GetEquipedPets( string _dragonSku )
+	{
+		if ( m_dragonsBySku.ContainsKey( _dragonSku ) )
+			return m_dragonsBySku[ _dragonSku ].pets;
+		return new List<string>();
+	}
+
+	/// <summary>
+	/// Given a dragon and a pet, check whether the pet is equipped in that dragon
+	/// and figure out which slot it's in.
+	/// </summary>
+	/// <returns>The slot the pet is in.<c>-1</c> if the pet is not equipped or either the dragon or the pet skus were not valid.</returns>
+	/// <param name="_dragonSku">The dragon whose loadout we want to check.</param>
+	/// <param name="_petSku">The pet we're looking for.</param>
+	public int GetPetSlot(string _dragonSku, string _petSku) {
+		// Check dragon sku
+		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
+		DragonData dragon = m_dragonsBySku[_dragonSku];
+
+		// Just find target pet's slot in the target dragon's loadout
+		return dragon.pets.IndexOf(_petSku);
+	}
+
+	/// <summary>
+	/// Try to equip the given pet to the first available slot in the target dragon.
+	/// Checks that the pet is actually unlocked, and not already equipped in another slot.
+	/// Also makes sure that there is slots available.
+	/// </summary>
+	/// <returns>
+	/// The index of the slot where the pet was equipped.
+	/// Negative value if pet couldn't be equipped, with the following error codes:
+	/// -1: Unknown dragon sku
+	/// -2: Pet already equipped
+	/// -3: Pet is locked or sku not valid
+	/// -4: No free slots available
+	/// </returns>
+	/// <param name="_dragonSku">The dragon where we want to attach the pet.</param>
+	/// <param name="_petSku">The pet we want to equip.</param>
+	public int EquipPet(string _dragonSku, string _petSku) {
+		// Check dragon sku
+		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
+		DragonData dragon = m_dragonsBySku[_dragonSku];
+
+		// Is pet already equipped?
+		if(dragon.pets.Contains(_petSku)) return -2;
+
+		// Is pet unlocked?
+		if(!m_petCollection.IsPetUnlocked(_petSku)) return -3;
+
+		// Find the first available slot
+		for(int i = 0; i < dragon.pets.Count; i++) {
+			if(string.IsNullOrEmpty(dragon.pets[i])) {
+				dragon.pets[i] = _petSku;
+				return i;
+			}
+		}
+
+		// No empty slots found
+		return -4;
+	}
+
+	/// <summary>
+	/// Try to unequip the given pet from the target dragon.
+	/// </summary>
+	/// <returns>
+	/// The index of the slot where the pet was equipped.
+	/// Negative value if pet couldn't be unequipped, with the following error codes:
+	/// -1: Unknown dragon sku
+	/// -2: Pet not equipped or sku not valid
+	/// </returns>
+	/// <param name="_dragonSku">The dragon from where we want to unequip the pet.</param>
+	/// <param name="_petSku">The pet we want to unequip.</param>
+	public int UnequipPet(string _dragonSku, string _petSku) {
+		// Check dragon sku
+		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
+		DragonData dragon = m_dragonsBySku[_dragonSku];
+
+		// Is pet equipped?
+		int idx = dragon.pets.IndexOf(_petSku);
+		if(idx < 0) return -2;
+
+		// Everything ok, unequip the pet!
+		dragon.pets[idx] = string.Empty;
+		return idx;
 	}
 }
 

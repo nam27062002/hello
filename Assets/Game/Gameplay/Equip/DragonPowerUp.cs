@@ -22,8 +22,25 @@ public class DragonPowerUp : MonoBehaviour {
 	public static readonly Color COLOR_WATER = new Color(0f, 0.91f, 100f);
 
 	//------------------------------------------------------------------------//
+	// ATTRIBUTES															  //
+	//------------------------------------------------------------------------//
+	private bool m_warnEntities = false;
+
+	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
+	void Awake()
+	{
+		Entity.ResetSCMuliplier();
+		Entity.ResetScoreMultiplier();
+	}
+
+	void OnDestroy()
+	{
+		Entity.ResetSCMuliplier();
+		Entity.ResetScoreMultiplier();
+	}
+
 	void Start() 
 	{
 		DragonPlayer player = GetComponent<DragonPlayer>();
@@ -61,6 +78,12 @@ public class DragonPowerUp : MonoBehaviour {
 					}
 				}
 			}
+		}
+
+		if ( m_warnEntities )
+		{
+			Messenger.Broadcast(GameEvents.APPLY_ENTITY_POWERUPS);
+			m_warnEntities = false;
 		}
 	}
 
@@ -170,7 +193,27 @@ public class DragonPowerUp : MonoBehaviour {
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
 					healthBehaviour.AddDrainReduceModifier( percentage );
 				}break;
-
+				case "sc+":
+				{
+					// Increase SC given for all preys by [param1]
+					Entity.AddSCMultiplier( def.GetAsFloat("param1", 0));
+					m_warnEntities = true;
+				}break;
+				case "score+":
+				{
+					// Increase score given by any prey by [param1]
+					Entity.AddScoreMultiplier( def.GetAsFloat("param1", 0));
+					m_warnEntities = true;
+				}break;
+				case "fire_size":
+				{
+					FireBreathNew fireBreath = GetComponent<FireBreathNew>();
+					float percentage = def.GetAsFloat("param1", 0);
+					if (fireBreath != null )
+					{
+						fireBreath.AddPowerUpLengthMultiplier( percentage );
+					}
+				}break;
 				default:
 				{
 				}break;

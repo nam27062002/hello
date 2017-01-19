@@ -17,8 +17,8 @@ public class CPQualitySettings : MonoBehaviour
         {
             // Show the current value of the feature settings
             string key;            
-            Dictionary<string, GameDeviceQualityManager.GameFeatureSettings.Data> datas = GameDeviceQualityManager.GameFeatureSettings.Datas;
-            foreach (KeyValuePair<string, GameDeviceQualityManager.GameFeatureSettings.Data> pair in datas)
+            Dictionary<string, GameFeatureSettings.Data> datas = GameFeatureSettings.Datas;
+            foreach (KeyValuePair<string, GameFeatureSettings.Data> pair in datas)
             {
                 key = pair.Key;
                 Transform thisParent = transform;
@@ -73,7 +73,7 @@ public class CPQualitySettings : MonoBehaviour
     #region settings_options
     private Dictionary<string, TMP_Dropdown> m_settingsOptionsDropDowns;
 
-    private void SettingsOptions_Add(GameDeviceQualityManager.GameFeatureSettings.Data value, GameObject prefabOption)
+    private void SettingsOptions_Add(GameFeatureSettings.Data value, GameObject prefabOption)
     {
         TMP_Dropdown dropDown = prefabOption.GetComponentInChildren<TMP_Dropdown>();
         if (dropDown != null)
@@ -82,7 +82,7 @@ public class CPQualitySettings : MonoBehaviour
            
             TMP_Dropdown.OptionData optionData;
             List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
-            List<string> values = GameDeviceQualityManager.GameFeatureSettings.GetValueTypeValuesAsString(value.ValueType);
+            List<string> values = GameFeatureSettings.GetValueTypeValuesAsString(value.ValueType);
             foreach (string v in values)
             {
                 optionData = new TMP_Dropdown.OptionData();
@@ -93,7 +93,7 @@ public class CPQualitySettings : MonoBehaviour
             dropDown.AddOptions(options);
 
             // Sets the current option
-            string currentValue = GameDeviceQualityManager.instance.Device_CurrentFeatureSettings.GetValueAsString(value.Key);
+            string currentValue = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(value.Key);
             dropDown.value = values.IndexOf(currentValue);
 
             if (m_settingsOptionsDropDowns == null)
@@ -108,8 +108,8 @@ public class CPQualitySettings : MonoBehaviour
     private void PrefabOptions_Update()
     {
         if (m_settingsOptionsDropDowns != null)
-        {            
-            GameDeviceQualityManager.GameFeatureSettings settings = GameDeviceQualityManager.instance.Device_CurrentFeatureSettings;
+        {
+            GameFeatureSettings settings = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings;
             foreach (KeyValuePair<string, TMP_Dropdown> pair in m_settingsOptionsDropDowns)
             {                
                 settings.SetValueFromIndex(pair.Key, pair.Value.value);

@@ -243,7 +243,9 @@ public class Egg {
 		// Apply the reward!
 		switch(m_rewardData.type) {
 			case "pet": {
-				// [AOC] TODO!!
+				// Tell the pet collection to add the new pet
+				// No problem if the pet is already unlocked ^^
+				UsersManager.currentUser.petCollection.UnlockPet(m_rewardData.itemDef.sku);
 			} break;
 		}
 

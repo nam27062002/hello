@@ -9,6 +9,7 @@ GameObject:
   m_Component:
   - component: {fileID: 424588}
   - component: {fileID: 54000013371132386}
+  - component: {fileID: 114387062110789312}
   m_Layer: 0
   m_Name: PF_PetArmoredMenu
   m_TagString: Pet
@@ -831,9 +832,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1022285832020776}
-  m_LocalRotation: {x: 0, y: 0.9063078, z: 0, w: 0.42261824}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: -0.83, z: -0.251}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 4812042285078856}
   - {fileID: 4853332140469882}
@@ -1078,6 +1079,18 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114387062110789312
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cd18c69356f446dfb8aebbf457a182a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_type: 0
 --- !u!114 &114520162515404978
 MonoBehaviour:
   m_ObjectHideFlags: 1

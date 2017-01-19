@@ -12,7 +12,7 @@ public class Wardrobe
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// [AOC] Disguises no longer has levels. We'll keep the int value to track owned disguises though. 0 - not owned, 1 - owned.
+	// [AOC] Disguises no longer have levels. We'll keep the int value to track owned disguises though. 0 - not owned, 1 - owned.
 	private Dictionary<string, int> m_disguises;
 
 

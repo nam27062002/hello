@@ -105,7 +105,7 @@ public class LoadingSceneController : SceneController {
 		SpawnerAreaManager.CreateInstance(true);
 		EntityManager.CreateInstance(true);
 		InstanceManager.CreateInstance(true);
-        GameDeviceQualityManager.CreateInstance();
+        GameFeatureSettingsManager.CreateInstance(true);
 
         // Load persistence        
         SaveFacade.Instance.Init();               

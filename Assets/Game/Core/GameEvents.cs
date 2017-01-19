@@ -4,6 +4,9 @@
 // Created by Alger Ortín Castellví on 24/08/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
+//------------------------------------------------------------------------//
+// CONSTANTS															  //
+//------------------------------------------------------------------------//
 /// <summary>
 /// Collection of events related to the game.
 /// Please keep the params documented!
@@ -75,6 +78,7 @@ public enum GameEvents {
 	MENU_DRAGON_SELECTED,		 // params: string _selectedDragonSku	// [AOC] Triggered when the dragon hovered in the dragon selection screen changes
 	MENU_DRAGON_CONFIRMED,		 // params: string _confirmedDragonSku	// [AOC] Triggered when the dragon hovered on the menu is valid to be used in gameplay (UserProfile.currentDragon updated)
 	MENU_DRAGON_DISGUISE_CHANGE, // params: string _dragonSku
+	MENU_DRAGON_PET_CHANGE,		 // params: string _dragonSku, int _slotIdx, string _newPetSku
 
 	// Mission events
 	MISSION_COMPLETED,			// params: Mission _mission
@@ -106,7 +110,16 @@ public enum GameEvents {
 	CAMERA_INTRO_DONE,			// no params
 	CAMERA_SHAKE,				// params: float _duration, float _intensity
 
+	// power up events
+	APPLY_ENTITY_POWERUPS,		// no params
+
     // Device events
     DEVICE_RESOLUTION_CHANGED,  // params: Vector2 _newResolution
     DEVICE_ORIENTATION_CHANGED  // params: DeviceOrientation _newOrientation
 }
+
+//------------------------------------------------------------------------//
+// CLASSES																  //
+// For events requiring 4 or more parameters, where we can't use the	  //
+// templated Messenger methods.											  //
+//------------------------------------------------------------------------//
