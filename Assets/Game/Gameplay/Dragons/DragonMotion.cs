@@ -182,6 +182,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	// private float m_waterMovementModifier = 0;
 
 	public float m_dragonForce = 20;
+	private float m_dragonForcePowerupMultiplier = 0;
 	public float m_dragonMass = 10;
 	public float m_dragonFricction = 15.0f;
 	public float m_dragonGravityModifier = 0.3f;
@@ -296,7 +297,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_boostMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
 
 		// Movement Setup
-		m_dragonForce = m_dragon.data.def.GetAsFloat("force");
+		RecalculateDragonForce();
 		// m_dargonAcceleration = m_dragon.data.def.GetAsFloat("speedBase");
 		m_dragonMass = m_dragon.data.def.GetAsFloat("mass");
 		m_dragonFricction = m_dragon.data.def.GetAsFloat("friction");
@@ -324,6 +325,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		// Add modifiers
 
+	}
+
+	void RecalculateDragonForce()
+	{
+		m_dragonForce = m_dragon.data.def.GetAsFloat("force");
+		m_dragonForce = m_dragonForce + m_dragonForce * m_dragonForcePowerupMultiplier / 100.0f;
+	}
+
+	public void AddSpeedPowerup( float value )
+	{
+		m_dragonForcePowerupMultiplier += value;
+		RecalculateDragonForce();
 	}
 
 	void OnEnable() {

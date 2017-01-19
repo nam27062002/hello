@@ -214,6 +214,14 @@ public class DragonPowerUp : MonoBehaviour {
 						fireBreath.AddPowerUpLengthMultiplier( percentage );
 					}
 				}break;
+				case "speed+":
+				{
+					DragonMotion motion = GetComponent<DragonMotion>();
+					if ( motion != null )
+					{
+						motion.AddSpeedPowerup( def.GetAsFloat("param1", 0));
+					}
+				}break;
 				default:
 				{
 				}break;

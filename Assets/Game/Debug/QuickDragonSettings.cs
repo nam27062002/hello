@@ -14,8 +14,7 @@ public class QuickDragonSettings : MonoBehaviour {
 	public Slider m_sliderWaterX;
 	public Slider m_sliderWaterEnterMultiplier;
 	public Slider m_sliderWaterCollisionMultiplier;
-	public TMP_Dropdown m_eatTypeDropDown;
-	public TMP_Dropdown m_numPetsDropDown;
+	public TMP_Dropdown m_eatTypeDropDown;	
 	private DragonMotion m_motion;
 
 	void OnEnable()
@@ -41,9 +40,7 @@ public class QuickDragonSettings : MonoBehaviour {
 		}	
 
 		m_sliderWaterEnterMultiplier.value = DragonMotion.m_waterImpulseMultiplier;
-		m_sliderWaterCollisionMultiplier.value = DragonMotion.m_onWaterCollisionMultiplier;
-
-		m_numPetsDropDown.value = DragonEquip.m_numPets;	
+		m_sliderWaterCollisionMultiplier.value = DragonMotion.m_onWaterCollisionMultiplier;		
 	}
 	
 	public void SetDragonAcceleration(float _size) 
@@ -81,12 +78,7 @@ public class QuickDragonSettings : MonoBehaviour {
 				case 2:EntityManager.instance.overlapingMethod = EntityManager.OverlapingMethod.Box;break;
 			}
 		}
-	}
-
-	public void SetNumPets( int numPets )
-	{
-		DragonEquip.m_numPets = numPets;
-	}
+	}	
 
 	public void SetParabolicConstant( float _size )
 	{
