@@ -55,17 +55,58 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         }
 
         Messenger.RemoveListener(EngineEvents.DEFINITIONS_LOADED, OnDefinitionsLoaded);
-    }
+    }    
 
-    public GameFeatureSettings Device_CurrentFeatureSettings
+    public string Device_Model { get; set; }
+
+    public float Device_CalculatedRating
     {
         get
         {
-            return (m_deviceQualityManager == null) ? null : m_deviceQualityManager.Device_CurrentFeatureSettings as GameFeatureSettings;
+            return m_deviceQualityManager.Device_CalculatedRating;
         }
     }
 
-    public string Device_Model { get; set; }
+    public float Device_CurrentRating
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.Rating;
+        }
+    }
+
+    public string Device_CurrentProfile
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.Profile;
+        }
+
+        set
+        {
+            JSONNode profileSettigns = m_deviceQualityManager.Profiles_GetDataAsJSON(value);
+            if (profileSettigns == null)
+            {
+                DeviceQualityManager.LogError("No feature settings found for profile " + value);
+            }
+            else
+            {
+                // We need Device_CurrentFeatureSettings to be a separated object from the one that we have for the profile because the configuration for the device
+                // might be slightly different to the profile one                         
+                Device_CurrentFeatureSettings.FromJSON(profileSettigns);
+            }
+        }
+    }
+
+    public GameFeatureSettings Device_CurrentFeatureSettings { get; set; }
+
+    public List<string> Profiles_Names
+    {
+        get
+        {
+            return m_deviceQualityManager.Profiles_Names;
+        }
+    }
 
     public bool IsGlowEnabled
     {
@@ -81,16 +122,16 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
 
         DefinitionsManager defManager = DefinitionsManager.SharedInstance;
 
-        // All profiles are loaded from rules        
-        GameFeatureSettings featureSettings;
+        // All profiles are loaded from rules           
+        GameFeatureSettings featureSettings = CreateFeatureSettings();    // Helper
+        JSONNode settingsJSON;
         Dictionary<string, DefinitionNode> definitions = defManager.GetDefinitions(DefinitionsCategory.FEATURE_PROFILE_SETTINGS);
         foreach (KeyValuePair<string, DefinitionNode> pair in definitions)
         {
-            featureSettings = CreateFeatureSettings();
-            SimpleJSON.JSONNode json = pair.Value.ToJSON();
-            json = FormatJSON(json);
-            featureSettings.FromJSON(json);
-            m_deviceQualityManager.Profiles_AddFeatureSettings(pair.Key, featureSettings);
+            settingsJSON = pair.Value.ToJSON();            
+            settingsJSON = FormatJSON(settingsJSON);
+            featureSettings.FromJSON(settingsJSON);
+            m_deviceQualityManager.Profiles_AddData(featureSettings.Profile, featureSettings.Rating, settingsJSON);
         }
 
         // The device rating is calculated
@@ -108,43 +149,22 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
             }
         }
 
+        Device_CurrentFeatureSettings = CreateFeatureSettings();        
+
         // Gets the FeatureSettings object of the profile that corresponds to the calculated rating
         string profileName = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
-        Device_SetProfileFeatureSettings(profileName);
-        
+        Device_CurrentProfile = profileName;
+
+        Device_CurrentFeatureSettings.Rating = rating;
+
         // We need to override the default configuration of the profile with the particular configuration defined for the device, if there's one
         if (deviceSettingsJSON != null)
         {
-            m_deviceQualityManager.Device_CurrentFeatureSettings.OverrideFromJSON(deviceSettingsJSON);
-        }
+            Device_CurrentFeatureSettings.OverrideFromJSON(deviceSettingsJSON);
+        }        
 
-        Debug.Log(m_deviceQualityManager.Device_CurrentFeatureSettings.ToJSON());      
-    }
-
-    public void Device_SetProfileFeatureSettings(string profileName)
-    {
-        FeatureSettings profileSettigns = m_deviceQualityManager.Profiles_GetFeatureSettings(profileName);
-        if (profileSettigns == null)
-        {
-            DeviceQualityManager.LogError("No feature settings found for profile " + profileName);
-        }
-        else
-        {
-            // We need Device_CurrentFeatureSettings to be a separated object from the one that we have for the profile because the configuration for the device
-            // might be slightly different to the profile one 
-            if (m_deviceQualityManager.Device_CurrentFeatureSettings == null)
-            {
-                m_deviceQualityManager.Device_CurrentFeatureSettings = CreateFeatureSettings();
-            }
-            else
-            {
-                m_deviceQualityManager.Device_CurrentFeatureSettings.Reset();
-            }
-
-            FeatureSettings settings = m_deviceQualityManager.Device_CurrentFeatureSettings;                        
-            settings.FromJSON(profileSettigns.ToJSON());            
-        }
-    }
+        Debug.Log(Device_CurrentFeatureSettings.ToJSON());      
+    }   
 
     private GameFeatureSettings CreateFeatureSettings()
     {

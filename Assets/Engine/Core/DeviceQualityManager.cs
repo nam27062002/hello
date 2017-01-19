@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+using SimpleJSON;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -33,6 +34,18 @@ public class DeviceQualityManager
     #region profiles
     // This region is responsible for loading and handling the different quality profiles
 
+    private class ProfileData
+    {
+        public float Rating { get; set; }
+        public JSONNode Json { get; set; }
+
+        public ProfileData(float rating, JSONNode json)
+        {
+            Rating = rating;
+            Json = json;
+        }
+    }
+
     /// <summary>
     /// List of the profile names sorted in ascending order for rating in order to ease the searches of profile per rating
     /// </summary>
@@ -42,7 +55,7 @@ public class DeviceQualityManager
     /// Key: Profile name
     /// Value: Configuration (set of feature settings) for that profile
     /// </summary>
-    private Dictionary<string, FeatureSettings> Profiles_FeatureSettings { get; set; }
+    private Dictionary<string, ProfileData> Profiles_Data { get; set; }
 
     public void Profiles_Clear()
     {
@@ -51,13 +64,13 @@ public class DeviceQualityManager
             Profiles_Names.Clear();
         }
 
-        if (Profiles_FeatureSettings != null)
+        if (Profiles_Data != null)
         {
-            Profiles_FeatureSettings.Clear();
+            Profiles_Data.Clear();
         }
     }    
 
-    public void Profiles_AddFeatureSettings(string profileName, FeatureSettings settings)
+    public void Profiles_AddData(string profileName, float rating, JSONNode settings)
     {
         if (Profiles_Names == null)
         {
@@ -72,11 +85,13 @@ public class DeviceQualityManager
         {
             Profiles_Names.Add(profileName);
 
-            if (Profiles_FeatureSettings == null)
+            if (Profiles_Data == null)
             {
-                Profiles_FeatureSettings = new Dictionary<string, FeatureSettings>();
+                Profiles_Data = new Dictionary<string, ProfileData>();
             }
-            Profiles_FeatureSettings.Add(profileName, settings);
+
+            ProfileData profileData = new ProfileData(rating, settings);
+            Profiles_Data.Add(profileName, profileData);
 
             // Makes sure that the profiles are sorted which is important to be able to determine the profile for a rating given (Profiles_RatingToProfileName())
             Profiles_Names.Sort(Profiles_Sort);
@@ -87,8 +102,8 @@ public class DeviceQualityManager
     {
         int returnValue = 0;
 
-        float rating1 = (Profiles_FeatureSettings.ContainsKey(p1)) ? Profiles_FeatureSettings[p1].Rating : 0f;
-        float rating2 = (Profiles_FeatureSettings.ContainsKey(p2)) ? Profiles_FeatureSettings[p2].Rating : 0f;
+        float rating1 = (Profiles_Data.ContainsKey(p1)) ? Profiles_Data[p1].Rating : 0f;
+        float rating2 = (Profiles_Data.ContainsKey(p2)) ? Profiles_Data[p2].Rating : 0f;
         
         if (rating1 > rating2)
         {
@@ -102,12 +117,12 @@ public class DeviceQualityManager
         return returnValue;
     }
 
-    public FeatureSettings Profiles_GetFeatureSettings(string profileName)
+    public JSONNode Profiles_GetDataAsJSON(string profileName)
     {
-        FeatureSettings returnValue = null;
-        if (Profiles_FeatureSettings != null && Profiles_FeatureSettings.ContainsKey(profileName))
+        JSONNode returnValue = null;
+        if (Profiles_Data != null && Profiles_Data.ContainsKey(profileName))
         {
-            returnValue = Profiles_FeatureSettings[profileName];
+            returnValue = Profiles_Data[profileName].Json;
         }
 
         return returnValue;
@@ -124,7 +139,7 @@ public class DeviceQualityManager
             // Loops through all profiles, which are sorted in ascending order per rating, until one with bigger rating than the passed as an argument is found
             int i;
             int count = Profiles_Names.Count;
-            for (i = 0; i < count && Profiles_FeatureSettings[Profiles_Names[i]].Rating <= rating; i++); // Empty            
+            for (i = 0; i < count && Profiles_Data[Profiles_Names[i]].Rating <= rating; i++); // Empty            
 
             // We need to substract 1 to obtain the profile for rating because the exit condition was to reach the last profile or to find the immediately bigger one
             if (i > 0)
@@ -141,10 +156,10 @@ public class DeviceQualityManager
     /// <summary>
     /// Returns the <c>FeatureSettings</c> object of the profile that corresponds to the device rating passed as a parameter.
     /// </summary>    
-    public FeatureSettings Profiles_GetFeatureSettingsPerRating(float rating)
+    public JSONNode Profiles_GetDataPerRatingAsJSON(float rating)
     {
         string profileName = Profiles_RatingToProfileName(rating);
-        return (profileName == null) ? null : Profiles_FeatureSettings[profileName];        
+        return (profileName == null) ? null : Profiles_Data[profileName].Json;        
     }
     #endregion
 
@@ -154,10 +169,7 @@ public class DeviceQualityManager
         Device_CalculatedRating = 0f;
     }
 
-    public float Device_CalculatedRating { get; set; }
-
-    public FeatureSettings Device_CurrentFeatureSettings { get; set; }
-    
+    public float Device_CalculatedRating { get; set; }    
     #endregion
 
     #region log
