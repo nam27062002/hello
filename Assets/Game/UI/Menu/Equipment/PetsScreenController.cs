@@ -41,6 +41,9 @@ public class PetsScreenController : MonoBehaviour {
 			return m_animator;
 		}
 	}
+
+	// Cache some data for faster access
+	private DragonData m_dragonData = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -106,9 +109,13 @@ public class PetsScreenController : MonoBehaviour {
 			}
 		}
 
+		// Store reference to target dragon data for faster access
+		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+		m_dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
+
 		// Initialize all tabs one by one
 		foreach(KeyValuePair<string, PetCategoryTab> kvp in m_tabsByCategory) {
-			kvp.Value.InitFromDef(kvp.Key);
+			kvp.Value.Init(kvp.Key, m_dragonData);
 		}
 	}
 

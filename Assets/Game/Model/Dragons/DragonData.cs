@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -62,6 +63,7 @@ public class DragonData {
 	public float scale { get { return GetScaleAtLevel(progression.level); }}
 
 	// Pets
+	// One entry per pet slot, will be empty if no pet is equipped in that slot
 	[SerializeField] private List<string> m_pets;
 	public List<string> pets { get { return m_pets; } }
 
@@ -96,8 +98,9 @@ public class DragonData {
 		m_scaleRange = m_def.GetAsRange("scale");
 
 		// Items
-		m_pets = new List<string>( m_tierDef.GetAsInt("maxPetEquipped", 0) );
 		m_disguise = GetDefaultDisguise(_def.sku).sku;
+		m_pets = new List<string>();
+		m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);	// Enforce pets list size to number of slots
 
 		// Other values
 		m_scaleOffset = 0;
@@ -178,7 +181,7 @@ public class DragonData {
 		m_owned = false;
 		m_progression.Load(0,0);
 		m_disguise = m_def != null ? GetDefaultDisguise(m_def.sku).sku : "";
-		m_pets.Clear();
+		m_pets = Enumerable.Repeat(string.Empty, m_tierDef.GetAsInt("maxPetEquipped", 0)).ToList();	// Use Linq to easily fill the list with the default value
 	}
 
 	/// <summary>
@@ -204,7 +207,8 @@ public class DragonData {
 			m_disguise = GetDefaultDisguise(sku).sku;
 
 		// Pets
-		m_pets.Clear();
+		// We must have all the slots, enforce list's size
+		m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);
 		if ( _data.ContainsKey("pets") )
 		{
 			SimpleJSON.JSONArray equip = _data["pets"].AsArray;
@@ -235,7 +239,7 @@ public class DragonData {
 		SimpleJSON.JSONArray pets = new SimpleJSON.JSONArray();
 		for( int i = 0; i<m_pets.Count; i++ )
 		{
-			pets.Add( m_pets[i] );
+			pets.Add( m_pets[i] == null ? string.Empty : m_pets[i] );	// [AOC] Adding a null value here breaks the JSON parsing when loading back :/
 		}
 		data.Add("pets", pets);
 
