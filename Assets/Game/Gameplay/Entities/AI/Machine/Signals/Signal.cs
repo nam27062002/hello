@@ -43,6 +43,7 @@ namespace AI {
 	        BackToHome,
 	        Burning, 
 	        Chewing, 
+			Latched,
 			Biting,
 			Latching,
 	        Destroyed, 

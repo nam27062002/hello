@@ -322,6 +322,10 @@ namespace AI {
 					GetHeightFromGround();
 					m_isGrounded = m_isColliderOnGround || m_heightFromGround < 0.3f;
 
+					if (m_machine.GetSignal(Signals.Type.Latched)) {
+						m_fallingFromY = -99999f;
+					}
+
 					if (m_isJumping) {
 						if (m_fallingFromY <= m_machineTransform.position.y) {
 							m_fallingFromY = m_machineTransform.position.y;
