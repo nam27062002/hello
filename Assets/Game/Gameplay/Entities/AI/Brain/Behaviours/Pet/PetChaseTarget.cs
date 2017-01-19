@@ -126,7 +126,7 @@ namespace AI {
 				if (m_target != null && m_target.gameObject.activeInHierarchy) {
 
 					// if eating move forward only
-					if ( m_eatBehaviour.IsEating() )
+					if ( m_eatBehaviour != null && m_eatBehaviour.IsEating() )
 					{
 						// m_pilot.GoTo( m_machine.transform.position + m_machine.transform.forward * m_data.speed * 0.5f);
 					}

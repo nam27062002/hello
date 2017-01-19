@@ -65,6 +65,11 @@ public class DefinitionsCategory
 	public const string HOLD_PREY_TIER = "HOLD_PREY_TIER";
 
 	// Power Ups
-	public const string POWERUPS = "POWERUPS";    
+	public const string POWERUPS = "POWERUPS";
+
+    // Quality settings
+    public const string FEATURE_PROFILE_SETTINGS = "FEATURE_PROFILE_SETTINGS";
+    public const string FEATURE_DEVICE_SETTINGS = "FEATURE_DEVICE_SETTINGS";
+    public const string DEVICE_RATING_SETTINGS = "DEVICE_RATING_SETTINGS";
 };
     
