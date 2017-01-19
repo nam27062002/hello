@@ -65,11 +65,24 @@ public class Entity : IEntity {
 	private GameCamera m_newCamera;
 
 
+	//-----------------------------------------------
+	// Power up static values
+	//-----------------------------------------------
+
+	private static float m_powerUpSCMultiplier = 0;
+	private static float m_powerUpScoreMultiplier = 0;
+
 	/************/
 	void Awake() {
 		// [AOC] Obtain the definition and initialize important data
 		InitFromDef();
 		m_bounds = GetComponentInChildren<CircleArea2D>();
+		Messenger.AddListener(GameEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
+	}
+
+	void OnDestroy()
+	{
+		Messenger.RemoveListener(GameEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
 	}
 
 	private void InitFromDef() {
@@ -80,6 +93,7 @@ public class Entity : IEntity {
 		// Reward
 		m_reward.score = m_def.GetAsInt("rewardScore");
 		m_reward.coins = m_def.GetAsInt("rewardCoins");
+		ApplyPowerUpMultipliers();
 		m_reward.pc = m_def.GetAsInt("rewardPC");
 		m_reward.health = m_def.GetAsFloat("rewardHealth");
 		m_reward.energy = m_def.GetAsFloat("rewardEnergy");
@@ -277,5 +291,35 @@ public class Entity : IEntity {
 				}
 			}
 		}
+	}
+
+	void ApplyPowerUpMultipliers()
+	{
+		m_reward.score = m_def.GetAsInt("rewardScore");
+		m_reward.score += Mathf.FloorToInt((m_reward.score * m_powerUpScoreMultiplier) / 100.0f);
+
+		m_reward.coins = m_def.GetAsInt("rewardCoins");
+		m_reward.coins += Mathf.FloorToInt((m_reward.coins * m_powerUpSCMultiplier) / 100.0f);
+	}
+
+
+	public static void ResetSCMuliplier()
+	{
+		m_powerUpSCMultiplier = 0;
+	}
+
+	public static void AddSCMultiplier( float value )
+	{
+		m_powerUpSCMultiplier += value;
+	}
+
+	public static void ResetScoreMultiplier()
+	{
+		m_powerUpScoreMultiplier = 0;
+	}
+
+	public static void AddScoreMultiplier( float value )
+	{
+		m_powerUpScoreMultiplier += value;
 	}
 }
