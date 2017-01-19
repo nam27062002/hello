@@ -84,16 +84,19 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
 
         set
         {
-            JSONNode profileSettigns = m_deviceQualityManager.Profiles_GetDataAsJSON(value);
-            if (profileSettigns == null)
+            if (Device_CurrentFeatureSettings.Profile != value)
             {
-                DeviceQualityManager.LogError("No feature settings found for profile " + value);
-            }
-            else
-            {
-                // We need Device_CurrentFeatureSettings to be a separated object from the one that we have for the profile because the configuration for the device
-                // might be slightly different to the profile one                         
-                Device_CurrentFeatureSettings.FromJSON(profileSettigns);
+                JSONNode profileSettigns = m_deviceQualityManager.Profiles_GetDataAsJSON(value);
+                if (profileSettigns == null)
+                {
+                    DeviceQualityManager.LogError("No feature settings found for profile " + value);
+                }
+                else
+                {
+                    // We need Device_CurrentFeatureSettings to be a separated object from the one that we have for the profile because the configuration for the device
+                    // might be slightly different to the profile one                         
+                    Device_CurrentFeatureSettings.FromJSON(profileSettigns);
+                }
             }
         }
     }
@@ -138,6 +141,8 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         float rating = CalculateRating();
         m_deviceQualityManager.Device_CalculatedRating = rating;
 
+        string profileName = null;
+
         // Checks if there's a definition for the device in content
         JSONNode deviceSettingsJSON = GetDeviceFeatureSettingsAsJSON();        
         if (deviceSettingsJSON != null)
@@ -147,14 +152,22 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
             {
                 rating = deviceSettingsJSON[FeatureSettings.KEY_RATING].AsFloat;
             }
+
+            if (deviceSettingsJSON.ContainsKey(FeatureSettings.KEY_PROFILE))
+            {
+                profileName = deviceSettingsJSON[FeatureSettings.KEY_PROFILE];
+            }
         }
 
-        Device_CurrentFeatureSettings = CreateFeatureSettings();        
+        Device_CurrentFeatureSettings = CreateFeatureSettings();
 
         // Gets the FeatureSettings object of the profile that corresponds to the calculated rating
-        string profileName = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
-        Device_CurrentProfile = profileName;
+        if (string.IsNullOrEmpty(profileName))
+        {
+            profileName = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        }
 
+        Device_CurrentProfile = profileName;
         Device_CurrentFeatureSettings.Rating = rating;
 
         // We need to override the default configuration of the profile with the particular configuration defined for the device, if there's one
