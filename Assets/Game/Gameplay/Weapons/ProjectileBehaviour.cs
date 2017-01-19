@@ -9,6 +9,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 	[SerializeField] private Range m_scaleRange = new Range(1f, 5f);
 	[SerializeField] private Range m_rotationRange = new Range(0f, 360f);
 	[SerializeField] private float m_knockback = 0;
+	[SerializeField] private DamageType m_damageType = DamageType.NORMAL;
 
 	private float m_damage;
 	private bool m_hasBeenShot;
@@ -156,7 +157,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 				dragonMotion.AddForce(knockBack);
 			}
 
-			InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, DamageType.NORMAL);
+			InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType);
 		}
 
 		gameObject.SetActive(false);

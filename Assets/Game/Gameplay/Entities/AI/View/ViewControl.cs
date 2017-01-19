@@ -804,7 +804,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	private void SpawnBurnParticle(Vector3 _at, float _disableInSeconds) {
 		GameObject go = ParticleManager.Spawn(m_burnParticle, _at + m_burnParticle.offset);
-		DisableInSeconds dis = go.GetComponent<DisableInSeconds>();
-		dis.activeTime = _disableInSeconds;
+		if ( go != null )
+		{
+			DisableInSeconds dis = go.GetComponent<DisableInSeconds>();
+			dis.activeTime = _disableInSeconds;
+		}
 	}
 }

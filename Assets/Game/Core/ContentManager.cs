@@ -55,7 +55,12 @@ public class ContentManager
 
 		// Power Ups
 		kDefinitionFiles.Add(DefinitionsCategory.POWERUPS, new string[]{"Rules/powerUpsDefinitions"});
-        
+
+        // Quality Settings
+        kDefinitionFiles.Add(DefinitionsCategory.FEATURE_PROFILE_SETTINGS, new string[] { "Rules/featureProfileSettings" });
+        kDefinitionFiles.Add(DefinitionsCategory.FEATURE_DEVICE_SETTINGS, new string[] { "Rules/featureDeviceSettings" });
+        kDefinitionFiles.Add(DefinitionsCategory.DEVICE_RATING_SETTINGS, new string[] { "Rules/deviceRatingSettings" });
+
         // ADD HERE ANY NEW DEFINITIONS FILE!
 
 

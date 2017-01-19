@@ -8,6 +8,8 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -23,6 +25,22 @@ public class PetsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Exposed
+	[SerializeField] TabSystem m_categoryTabs = null;
+
+	// Internal
+	private Dictionary<string, PetCategoryTab> m_tabsByCategory = null;
+
+	// Internal references
+	private NavigationShowHideAnimator m_animator = null;
+	private NavigationShowHideAnimator animator {
+		get { 
+			if(m_animator == null) {
+				m_animator = GetComponent<NavigationShowHideAnimator>();
+			}
+			return m_animator;
+		}
+	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -31,7 +49,8 @@ public class PetsScreenController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-
+		// Subscribe to animator's events
+		animator.OnShowPreAnimation.AddListener(OnShowPreAnimation);
 	}
 
 	/// <summary>
@@ -66,7 +85,8 @@ public class PetsScreenController : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-
+		// Unsubscribe from animator's events
+		animator.OnShowPreAnimation.RemoveListener(OnShowPreAnimation);
 	}
 
 	//------------------------------------------------------------------------//
@@ -77,23 +97,30 @@ public class PetsScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_initialPetSku">The pet to focus. Leave empty to load current setup.</param>
 	public void Initialize(string _initialPetSku = "") {
+		// If not done yet, fill the tabs dictionary
+		if(m_tabsByCategory == null) {
+			m_tabsByCategory = new Dictionary<string, PetCategoryTab>();
+			foreach(NavigationScreen screen in m_categoryTabs.screens) {
+				PetCategoryTab tab = (PetCategoryTab)screen;
+				m_tabsByCategory.Add(tab.screenName, tab);	// [AOC] Screen name is set from the editor and it matches the category IDs
+			}
+		}
 
+		// Initialize all tabs one by one
+		foreach(KeyValuePair<string, PetCategoryTab> kvp in m_tabsByCategory) {
+			kvp.Value.InitFromDef(kvp.Key);
+		}
 	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Screen is about to be shown.
+	/// Screen is about to be open.
 	/// </summary>
-	public void OnShow() {
-		// [AOC] TODO!! Initialize
-	}
-
-	/// <summary>
-	/// Screen has been hidden.
-	/// </summary>
-	public void OnHide() {
-		// [AOC] TODO!! Finalize
+	/// <param name="_animator">The animator that triggered the event.</param>
+	public void OnShowPreAnimation(ShowHideAnimator _animator) {
+		// Refresh with initial data!
+		Initialize();
 	}
 }

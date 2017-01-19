@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: windmaterial
-  m_Shader: {fileID: 4800000, guid: 0a560467ae0c88841a1265f6207e99d7, type: 3}
+  m_Name: MT_Wind
+  m_Shader: {fileID: 4800000, guid: 87e6fe19d163bc443910dc94823f7d3a, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -90,7 +90,7 @@ Material:
     m_Floats:
     - first:
         name: _Alpha
-      second: 0.815
+      second: 1
     - first:
         name: _AlphaThreshold
       second: 1.17
@@ -119,11 +119,17 @@ Material:
         name: _GlossyReflections
       second: 1
     - first:
+        name: _IOffset
+      second: 0.12
+    - first:
         name: _Metallic
       second: 0
     - first:
         name: _Mode
       second: 0
+    - first:
+        name: _MoonRadius
+      second: 0.01
     - first:
         name: _OcclusionStrength
       second: 1
@@ -132,7 +138,7 @@ Material:
       second: 0.02
     - first:
         name: _Power
-      second: 1.29
+      second: 6
     - first:
         name: _RampOffset
       second: 0.616
@@ -161,6 +167,9 @@ Material:
         name: _UVSec
       second: 0
     - first:
+        name: _VOffset
+      second: 0.1
+    - first:
         name: _ZWrite
       second: 1
     m_Colors:
@@ -170,3 +179,9 @@ Material:
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _MoonPos
+      second: {r: 0, g: 0.5, b: 0, a: 1}
+    - first:
+        name: _Tint
+      second: {r: 1, g: 1, b: 1, a: 1}
