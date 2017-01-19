@@ -10,6 +10,7 @@ namespace AI {
 		public class PetSearchEntityTargetData : StateComponentData {
 			[Comment("Comma Separated list", 5)]
 			public string m_preferedEntitiesList;
+			public string m_searchButNoEatEntityList;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Search Entity Target")]
@@ -35,6 +36,7 @@ namespace AI {
 
 			private PetSearchEntityTargetData m_data;
 			private List<string> m_preferedEntities = new List<string>();
+			private List<string> m_searchButNoEatList = new List<string>();
 
 
 			public override StateComponentData CreateData() {
@@ -71,12 +73,26 @@ namespace AI {
 					m_preferedEntities = new List<string>( splitResult );
 				}
 
+				if (!string.IsNullOrEmpty( m_data.m_searchButNoEatEntityList) )
+				{
+					// Use the separator string to split the string value
+					string[] splitResult = m_data.m_searchButNoEatEntityList.Split(new string[] { "," }, StringSplitOptions.None);
+					m_searchButNoEatList = new List<string>( splitResult );
+				}
+
 				// if prefered entieies we should tell the mouth
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 
+				// This will allow to eat them ignoring tier limit
 				for( int i = 0; i<m_preferedEntities.Count; i++ )
 				{
 					m_eatBehaviour.AddToEatExceptionList( m_preferedEntities[i] );
+				}
+
+				// This will make eater to not eat it. If the same sku is in both lists it will not eat it!
+				for( int i = 0; i<m_searchButNoEatList.Count; i++ )
+				{
+					m_eatBehaviour.AddToIgnoreList( m_searchButNoEatList[i] );
 				}
 
 			}
@@ -104,29 +120,31 @@ namespace AI {
 
 
 					// if prefered entieies check first
-					if ( m_preferedEntities.Count > 0 )
+					if ( m_preferedEntities.Count > 0 || m_searchButNoEatList.Count > 0 )
 					{
 						m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( centerPos , m_range * 2, m_checkEntities);	
 						for (int e = 0; e < m_numCheckEntities; e++) 
 						{
 							Entity entity = m_checkEntities[e];
-							if (  m_preferedEntities.Contains(entity.sku) )
+							bool inSearchButNotEat = m_searchButNoEatList.Contains( entity.sku );
+							if ( inSearchButNotEat || m_preferedEntities.Contains(entity.sku) )
 							{
 								Machine machine = entity.GetComponent<Machine>();
-								if (
-									machine != null && machine.CanBeBitten() && !machine.isPetTarget
-								)
+								if ( machine != null && !machine.isPetTarget)
 								{
-									// Check if physics reachable
-									RaycastHit hit;
-									Vector3 dir = entity.circleArea.center - m_machine.position;
-									bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
-									if ( !hasHit )
+									if ( inSearchButNotEat || machine.CanBeBitten() )
 									{
-										// Check if closed? Not for the moment
-										m_transitionParam[0] = entity.transform;
-										Transition( OnEnemyInRange, m_transitionParam);
-										return;
+										// Check if physics reachable
+										RaycastHit hit;
+										Vector3 dir = entity.circleArea.center - m_machine.position;
+										bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
+										if ( !hasHit )
+										{
+											// Check if closed? Not for the moment
+											m_transitionParam[0] = entity.transform;
+											Transition( OnEnemyInRange, m_transitionParam);
+											return;
+										}
 									}
 								}
 							}
