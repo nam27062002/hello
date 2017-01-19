@@ -185,7 +185,9 @@ public class DragonEquip : MonoBehaviour {
 			// Adjust scale and parenting
 			if(m_menuMode) {
 				// In menu mode, make it a child of the dragon so it inherits scale factor
-				newInstance.transform.SetParentAndReset(m_attachPoints[attachPointIdx].transform);
+				newInstance.transform.SetParent(m_attachPoints[attachPointIdx].transform, true);	// [AOC] Compensate scale factor with the dragon using the worldPositionStays parameter
+				newInstance.transform.localPosition = Vector3.zero;
+				newInstance.transform.localRotation = Quaternion.identity;
 			} else {
 				// In game mode, adjust to dragon's scale factor
 				DragonPlayer player = GetComponent<DragonPlayer>();
