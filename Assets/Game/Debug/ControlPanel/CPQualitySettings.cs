@@ -11,7 +11,7 @@ public class CPQualitySettings : MonoBehaviour
 {
     public GameObject m_prefabOption;
 
-    void Start()
+    void Awake()
     {
         if (m_prefabOption != null)
         {
@@ -36,7 +36,12 @@ public class CPQualitySettings : MonoBehaviour
         }
 
         Profile_Start();
-        Device_Start();
+        Device_Start();        
+    }    
+
+    void OnEnable()
+    {
+        // We want the view to be refreshed every time the tab becomes enabled so it will show the latest feature settings since server might have changed after this tab Awake was called
         Setup();
     }
 
@@ -281,7 +286,9 @@ public class CPQualitySettings : MonoBehaviour
         if (manager.Device_Model != m_deviceNames[m_deviceDropDown.value])
         {
             manager.Device_Model = m_deviceNames[m_deviceDropDown.value];
-            manager.SetupFeatureSettings();
+
+            // We want theonfiguration for this device to be used
+            manager.SetupCurrentFeatureSettings(null);
 
             // The view has to be updated so it will show the configuration for the new profile
             Setup();
