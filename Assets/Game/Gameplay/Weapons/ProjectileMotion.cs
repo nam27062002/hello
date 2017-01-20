@@ -1,14 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ProjectileMotion : Initializable, MotionInterface 
-{
-
-	public enum Type
-	{
+public class ProjectileMotion : MonoBehaviour {
+	public enum Type {
 		Arrow,
 		Missile,
-		Spear
+		Spear,
+		Bomb
 	};
 
 	public Type m_moveType;
@@ -20,8 +18,7 @@ public class ProjectileMotion : Initializable, MotionInterface
 	Vector3 m_position;
 
 	// Use this for initialization
-	void Start () 
-	{
+	void Start() {
 	}
 	
 	// Update is called once per frame
@@ -85,61 +82,4 @@ public class ProjectileMotion : Initializable, MotionInterface
 			}break;
 		}
 	}
-
-	public override void Initialize()
-	{
-
-	}
-
-	public Vector3 position 
-	{ 
-		get
-		{
-			return m_position;	
-		}
-		set
-		{
-			m_position = value;
-		}
-	}
-	public Vector3 direction 
-	{ 
-		get
-		{
-			return m_direction;
-		}
-	}
-
-	public Vector3 groundDirection 
-	{ 
-		get
-		{
-			return Vector3.zero;
-		}
-	}
-
-	public Vector3 velocity 
-	{ 	
-		get
-		{
-			return m_forceVector;
-		}
-	}
-
-	public Vector3 angularVelocity
-	{
-		get
-		{
-			return Vector3.zero;
-		}
-	}
-
-	public float maxSpeed 
-	{ 
-		get
-		{
-			return 0;
-		}
-	}
-
 }
