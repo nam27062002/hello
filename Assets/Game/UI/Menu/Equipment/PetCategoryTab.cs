@@ -140,14 +140,15 @@ public class PetCategoryTab : Tab {
 	/// <param name="_delay">Optional delay before launching the animation.</param>
 	public void ScrollToPill(PetPill _pill, float _delay = 0f) {
 		// Make sure target pill belongs to this tab
-		if(m_pills.IndexOf(_pill) < 0) return;
+		int pillIdx = m_pills.IndexOf(_pill);
+		if(pillIdx < 0) return;
 
 		// Kill any existing anim on the scrolllist
 		m_scrollList.DOKill();
 
 		// Scroll content to pill!
-		//float pillDeltaX = _pill.transform.position.x/m_scrollList.content.rect.width;
-		float pillDeltaX = Mathf.InverseLerp(m_scrollList.content.rect.xMin, m_scrollList.content.rect.xMin, _pill.transform.position.x);
+		//float pillDeltaX = Mathf.InverseLerp(m_scrollList.content.rect.xMin, m_scrollList.content.rect.xMax, _pill.transform.position.x);
+		float pillDeltaX = Mathf.InverseLerp(0, m_pills.Count, pillIdx);
 		m_scrollList.DOHorizontalNormalizedPos(pillDeltaX, 0.15f)
 			.SetDelay(_delay)
 			.SetEase(Ease.OutQuad)
