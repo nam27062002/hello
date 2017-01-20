@@ -83,6 +83,7 @@ MonoBehaviour:
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
+    m_burningTime: 0
     m_dissolveTime: 1.5
     m_ashExceptions: []
 --- !u!114 &11442140
@@ -115,6 +116,7 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
@@ -494,7 +496,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 1
     max: 1
-  m_serializedJson: '[{"amplitude":0,"frequency":0,"dataType":"AI.Behaviour.MineData","editorFolded":false},{"damage":30,"radius":0,"cameraShakeDuration":0.75,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
+  m_serializedJson: '[{"amplitude":0,"frequency":0,"dataType":"AI.Behaviour.MineData","editorFolded":false},{"isMine":true,"damage":30,"radius":0,"cameraShakeDuration":0.75,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
   m_databaseKey: PF_MineSmall_01_Static
   m_updateMachinePos: 1
 --- !u!114 &114548311907084112
@@ -549,7 +551,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1785464264398294}
   serializedVersion: 5
   lengthInSec: 5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -3114,7 +3116,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1619008201568656}
   serializedVersion: 5
   lengthInSec: 5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -5679,7 +5681,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1907168657350812}
   serializedVersion: 5
   lengthInSec: 5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -8250,7 +8252,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1976077206756098}
   serializedVersion: 5
   lengthInSec: 5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -10821,7 +10823,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1056872538681156}
   serializedVersion: 5
   lengthInSec: 5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -13386,7 +13388,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1414006527139546}
   serializedVersion: 5
   lengthInSec: 5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1

@@ -11,7 +11,7 @@ public class CPQualitySettings : MonoBehaviour
 {
     public GameObject m_prefabOption;
 
-    void Start()
+    void Awake()
     {
         if (m_prefabOption != null)
         {
@@ -35,6 +35,13 @@ public class CPQualitySettings : MonoBehaviour
             }           
         }
 
+        Profile_Start();
+        Device_Start();        
+    }    
+
+    void OnEnable()
+    {
+        // We want the view to be refreshed every time the tab becomes enabled so it will show the latest feature settings since server might have changed after this tab Awake was called
         Setup();
     }
 
@@ -43,6 +50,7 @@ public class CPQualitySettings : MonoBehaviour
         PrefabOptions_Setup();
         Quality_Setup();
         Profile_Setup();
+        Device_Setup();
     }
 
     void Update()
@@ -175,7 +183,7 @@ public class CPQualitySettings : MonoBehaviour
     #region profile
     public TMP_Dropdown m_profileDropDown;
 
-    private void Profile_Setup()
+    private void Profile_Start()
     {
         if (m_profileDropDown != null)
         {
@@ -191,26 +199,100 @@ public class CPQualitySettings : MonoBehaviour
                 options.Add(optionData);
             }
 
-            m_profileDropDown.AddOptions(options);
+            m_profileDropDown.AddOptions(options);            
+        }        
+    }
 
+    private void Profile_Setup()
+    {
+        if (m_profileDropDown != null)
+        {
             // Sets the current option
             string currentValue = GameFeatureSettingsManager.instance.Device_CurrentProfile;
+            List<string> values = GameFeatureSettingsManager.instance.Profiles_Names;
             m_profileDropDown.value = values.IndexOf(currentValue);
-
-            if (m_settingsOptionsDropDowns == null)
-            {
-                m_settingsOptionsDropDowns = new Dictionary<string, TMP_Dropdown>();
-            }            
         }
     }
 
     public void Profile_SetOption(int option)
-    {        
+    {
         GameFeatureSettingsManager manager = GameFeatureSettingsManager.instance;
-        manager.Device_CurrentProfile = manager.Profiles_Names[m_profileDropDown.value];
+        if (manager.Device_CurrentProfile != manager.Profiles_Names[m_profileDropDown.value])
+        {
+            // The model is cleared because we are forcing a profile so the model information is not used anymore
+            manager.Device_Model = null;
+            manager.Device_CurrentProfile = manager.Profiles_Names[m_profileDropDown.value];
 
-        // The view has to be updated so it will show the configuration for the new profile
-        Setup();
+            // The view has to be updated so it will show the configuration for the new profile
+            Setup();
+        }
+    }
+    #endregion
+
+    #region device
+    public TMP_Dropdown m_deviceDropDown;
+    private List<string> m_deviceNames;
+
+    private void Device_Start()
+    {
+        if (m_deviceDropDown != null)
+        {
+            m_deviceDropDown.ClearOptions();
+
+            TMP_Dropdown.OptionData optionData;
+            List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
+
+            if (m_deviceNames == null)
+            {
+                Dictionary<string, DefinitionNode> deviceDefs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.FEATURE_DEVICE_SETTINGS);
+                m_deviceNames = new List<string>();
+                foreach (KeyValuePair<string, DefinitionNode> pair in deviceDefs)
+                {
+                    m_deviceNames.Add(pair.Key);
+                }
+                m_deviceNames.Add("None");
+            }
+
+            foreach (string v in m_deviceNames)
+            {
+                optionData = new TMP_Dropdown.OptionData();
+                optionData.text = v;
+                options.Add(optionData);
+            }
+
+            m_deviceDropDown.AddOptions(options);           
+        }
+    }
+
+    private void Device_Setup()
+    {
+        if (m_deviceDropDown != null)
+        {
+            // Sets the current option
+            string currentValue = GameFeatureSettingsManager.instance.Device_Model;
+            int index = m_deviceNames.IndexOf(currentValue);
+            if (index == -1)
+            {
+                index = m_deviceNames.Count - 1;
+            }
+
+            m_deviceDropDown.value = index;
+        }
+    }
+
+    public void Device_SetOption(int option)
+    {
+        GameFeatureSettingsManager manager = GameFeatureSettingsManager.instance;
+        if (manager.Device_Model != m_deviceNames[m_deviceDropDown.value])
+        {
+            manager.Device_Model = m_deviceNames[m_deviceDropDown.value];
+
+            // We want theonfiguration for this device to be used
+            manager.SetupCurrentFeatureSettings(null);
+
+            // The view has to be updated so it will show the configuration for the new profile
+            Setup();
+        }
     }
     #endregion
 }

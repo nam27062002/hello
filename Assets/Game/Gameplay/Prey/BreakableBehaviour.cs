@@ -70,7 +70,7 @@ public class BreakableBehaviour : MonoBehaviour
 				Shake();
 			}
 
-			if (m_remainingHits == 0) {
+			if (m_remainingHits <= 0) {
 				Break(pushVector);
 			}
 		}

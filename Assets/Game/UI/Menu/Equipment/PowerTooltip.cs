@@ -17,7 +17,7 @@ using System;
 /// <summary>
 /// Simple controller for a disguise power tooltip.
 /// </summary>
-public class DisguisePowerTooltip : MonoBehaviour {
+public class PowerTooltip : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//

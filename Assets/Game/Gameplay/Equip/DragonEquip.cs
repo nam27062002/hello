@@ -214,6 +214,16 @@ public class DragonEquip : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Get one of the attach points for this dragon equip.
+	/// </summary>
+	/// <returns>The requested attach point, <c>null</c> if not found.</returns>
+	/// <param name="_point">The attach point to be found.</param>
+	public AttachPoint GetAttachPoint(Equipable.AttachPoint _point) {
+		// Array is always initialized to enum's size and properly initialized if Awake has been called
+		return m_attachPoints[(int)_point];
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//

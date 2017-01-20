@@ -57,7 +57,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         Messenger.RemoveListener(EngineEvents.DEFINITIONS_LOADED, OnDefinitionsLoaded);
     }    
 
-    public string Device_Model { get; set; }
+    public string Device_Model { get; set; }    
 
     public float Device_CalculatedRating
     {
@@ -141,12 +141,24 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         float rating = CalculateRating();
         m_deviceQualityManager.Device_CalculatedRating = rating;
 
+        Device_CurrentFeatureSettings = CreateFeatureSettings();
+
+        SetupCurrentFeatureSettings(null);        
+    }   
+
+    public void SetupCurrentFeatureSettings(JSONNode deviceSettingsJSON)
+    {
+        float rating = m_deviceQualityManager.Device_CalculatedRating;
         string profileName = null;
 
-        // Checks if there's a definition for the device in content
-        JSONNode deviceSettingsJSON = GetDeviceFeatureSettingsAsJSON();        
+        // If no device configuration is passed then try to get the device configuration from rules
+        if (deviceSettingsJSON == null)
+        {
+            deviceSettingsJSON = GetDeviceFeatureSettingsAsJSON();
+        }        
+
         if (deviceSettingsJSON != null)
-        {            
+        {
             // Checks if the rating has been overriden for this device
             if (deviceSettingsJSON.ContainsKey(FeatureSettings.KEY_RATING))
             {
@@ -157,9 +169,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
             {
                 profileName = deviceSettingsJSON[FeatureSettings.KEY_PROFILE];
             }
-        }
-
-        Device_CurrentFeatureSettings = CreateFeatureSettings();
+        }        
 
         // Gets the FeatureSettings object of the profile that corresponds to the calculated rating
         if (string.IsNullOrEmpty(profileName))
@@ -174,19 +184,155 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         if (deviceSettingsJSON != null)
         {
             Device_CurrentFeatureSettings.OverrideFromJSON(deviceSettingsJSON);
-        }        
-
-        Debug.Log(Device_CurrentFeatureSettings.ToJSON());      
-    }   
+        }
+    }    
 
     private GameFeatureSettings CreateFeatureSettings()
     {
         return new GameFeatureSettings();
     }
 
-    private float CalculateRating()
+    private class DeviceSettings
     {
-        return 1f;
+        public float Rating { get; set; }
+        public float Boundary { get; set; }
+
+        public DeviceSettings(float rating, float boundary)
+        {
+            Rating = rating;
+            Boundary = boundary;
+        }
+
+        public static int Sort(DeviceSettings d1, DeviceSettings d2)
+        {
+            int returnValue = 0;
+            if (d1.Rating > d2.Rating)
+            {
+                returnValue = 1;
+            }
+            else if (d1.Rating < d2.Rating)
+            {
+                returnValue = -1;
+            }
+
+            return returnValue;
+        }
+    }
+
+    private float CalculateRating()
+    {                        
+        //Average the devices RAM, CPU and GPU details to give a rating betwen 0 and 1
+        float finalDeviceRating = 0.0f;
+        
+        Dictionary<string, DefinitionNode> definitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DEVICE_RATING_SETTINGS);
+        List<DeviceSettings> memoryData = new List<DeviceSettings>();
+        List<DeviceSettings> cpuCoresData = new List<DeviceSettings>();
+        List<DeviceSettings> gpuMemoryData = new List<DeviceSettings>();
+        List<DeviceSettings> textureSizeData = new List<DeviceSettings>();        
+
+        DeviceSettings data;
+        string key;
+        foreach (KeyValuePair<string, DefinitionNode> pair in definitions)
+        {
+            key = "memoryRating";
+            if (pair.Value.Has(key))
+            {
+                data = new DeviceSettings(pair.Value.GetAsFloat(key), pair.Value.GetAsFloat("memoryBoundary"));
+                memoryData.Add(data);
+            }
+
+            key = "cpuCoresRating";
+            if (pair.Value.Has(key))
+            {
+                data = new DeviceSettings(pair.Value.GetAsFloat(key), pair.Value.GetAsFloat("cpuCoresBoundary"));
+                cpuCoresData.Add(data);
+            }
+
+            key = "gpuMemoryRating";
+            if (pair.Value.Has(key))
+            {
+                data = new DeviceSettings(pair.Value.GetAsFloat(key), pair.Value.GetAsFloat("cpuCoresBoundary"));
+                gpuMemoryData.Add(data);
+            }
+
+            key = "textureSizeRating";
+            if (pair.Value.Has(key))
+            {
+                data = new DeviceSettings(pair.Value.GetAsFloat(key), pair.Value.GetAsFloat("textureSizeBoundary"));
+                textureSizeData.Add(data);
+            }            
+        }
+
+        // Lists are sorted in ascendent order of rating
+        memoryData.Sort(DeviceSettings.Sort);
+        cpuCoresData.Sort(DeviceSettings.Sort);
+        gpuMemoryData.Sort(DeviceSettings.Sort);
+        textureSizeData.Sort(DeviceSettings.Sort);
+
+        // Memory rating
+        float memQualityRating = 1.0f;
+        int deviceCapacity = SystemInfo.systemMemorySize;
+        foreach (DeviceSettings ds in memoryData)
+        {
+            if (deviceCapacity <= ds.Boundary)
+            {
+                memQualityRating = ds.Rating;
+                break;
+            }
+        }
+
+        // cpu rating
+        float cpuQualityRating = 1.0f;
+        deviceCapacity = SystemInfo.processorCount;
+        foreach (DeviceSettings ds in cpuCoresData)
+        {            
+            if (SystemInfo.processorCount <= ds.Boundary)
+            {
+                cpuQualityRating = ds.Rating;
+                break;
+            }
+        }
+
+        float gpuMemQualityLevel = 1.0f;
+        deviceCapacity = SystemInfo.graphicsMemorySize;
+        foreach (DeviceSettings ds in gpuMemoryData)            
+        {
+            if (deviceCapacity <= ds.Boundary)
+            {
+                gpuMemQualityLevel = ds.Rating;
+                break;
+            }
+        }
+
+        float texSizeQualityLevel = 1.0f;
+        deviceCapacity = SystemInfo.maxTextureSize;
+        foreach (DeviceSettings ds in textureSizeData)            
+        {
+            if (deviceCapacity <= ds.Boundary)
+            {
+                texSizeQualityLevel = ds.Rating;
+                break;
+            }           
+        }
+
+        float shaderMultiplier = 1.0f;
+        if (SystemInfo.graphicsShaderLevel == 20)
+        {
+            shaderMultiplier = 0.0f;
+        }
+
+        //UnityEngine.Debug.Log("DeviceQualitySettings(Graphics) - gpuMemQualityLevel: " + gpuMemQualityLevel + " texSizeQualityLevel: " + texSizeQualityLevel + " shaderMultiplier: " + shaderMultiplier);
+
+        //float gpuQualityRating = ((gpuMemQualityLevel + texSizeQualityLevel) / 2);
+
+        //UnityEngine.Debug.Log("DeviceQualitySettings - memQualityLevel: " + memQualityRating + " cpuQualityRating: " + cpuQualityRating + " gpuMemQualityLevel: " + gpuQualityRating);
+
+        finalDeviceRating = ((memQualityRating + cpuQualityRating + gpuMemQualityLevel) / 3) * shaderMultiplier;
+        finalDeviceRating = Mathf.Clamp(finalDeviceRating, 0.0f, 1.0f);
+
+        //UnityEngine.Debug.Log( "DeviceQualitySettings - Final Value: " + finalDeviceRating );
+
+        return finalDeviceRating;                
     }
 
     public virtual JSONNode FormatJSON(JSONNode json)

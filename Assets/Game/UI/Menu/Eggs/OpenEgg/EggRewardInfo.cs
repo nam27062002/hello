@@ -81,7 +81,7 @@ public class EggRewardInfo : MonoBehaviour {
 				}
 
 				// Power icon
-				DisguisePowerIcon powerIcon = m_rewardPowers.FindComponentRecursive<DisguisePowerIcon>("Power1");
+				PowerIcon powerIcon = m_rewardPowers.FindComponentRecursive<PowerIcon>("Power1");
 				if(!_rewardData.duplicated) {
 					// Initialize with powers data
 					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.itemDef.GetAsString("powerup"));
