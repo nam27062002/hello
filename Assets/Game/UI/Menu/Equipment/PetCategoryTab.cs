@@ -146,7 +146,8 @@ public class PetCategoryTab : Tab {
 		m_scrollList.DOKill();
 
 		// Scroll content to pill!
-		float pillDeltaX = _pill.transform.localPosition.x/m_scrollList.content.rect.width;
+		//float pillDeltaX = _pill.transform.position.x/m_scrollList.content.rect.width;
+		float pillDeltaX = Mathf.InverseLerp(m_scrollList.content.rect.xMin, m_scrollList.content.rect.xMin, _pill.transform.position.x);
 		m_scrollList.DOHorizontalNormalizedPos(pillDeltaX, 0.15f)
 			.SetDelay(_delay)
 			.SetEase(Ease.OutQuad)

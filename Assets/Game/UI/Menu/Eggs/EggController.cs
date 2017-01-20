@@ -30,6 +30,8 @@ public class EggController : MonoBehaviour {
 		get { return m_anchorFX; }
 	}
 
+	[SerializeField] private GameObject m_idleFX = null;
+
 	// Data
 	private Egg m_eggData = null;
 	public Egg eggData {
@@ -116,6 +118,13 @@ public class EggController : MonoBehaviour {
 
 		// Rarity
 		m_animator.SetInteger("rarity", (int)m_eggData.rewardData.rarity);
+
+		// Idle FX - disabled after tapping the egg
+		if(m_idleFX != null) {
+			bool hide = (m_eggData.state == Egg.State.OPENING && step > 0);
+			hide |= m_eggData.state == Egg.State.COLLECTED;
+			m_idleFX.SetActive(!hide);
+		}
 	}
 
 	//------------------------------------------------------------------//

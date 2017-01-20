@@ -293,6 +293,8 @@ public class OpenEggSceneController : MonoBehaviour {
 			tapFX.Stop(true);
 			tapFX.Clear();
 			tapFX.Play(true);
+
+			// Disable smoke FX
 		}
 	}
 }
