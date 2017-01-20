@@ -1,4 +1,5 @@
-﻿// PetPill.cs
+﻿
+// PetPill.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 17/01/2017.
@@ -162,22 +163,15 @@ public class PetPill : MonoBehaviour {
 		// If equipped, try to unequip
 		else if(equipped) {
 			// Unequip
-			if(UsersManager.currentUser.UnequipPet(m_dragonData.def.sku, m_def.sku) >= 0) {
-				// Notify game - this will trigger a Refresh(), since we're subscribed to the event
-				Messenger.Broadcast<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, m_dragonData.def.sku, m_slot, string.Empty);
-				PersistenceManager.Save();
-			}
+			UsersManager.currentUser.UnequipPet(m_dragonData.def.sku, m_def.sku);
 		} 
 
 		// Otherwise try to equip
 		else {
 			// Equip
+			// Refresh will be automatically triggered by the OnPetChanged callback
 			int newSlot = UsersManager.currentUser.EquipPet(m_dragonData.def.sku, m_def.sku);
-			if(newSlot >= 0) {
-				// Notify game - this will trigger a Refresh(), since we're subscribed to the event
-				Messenger.Broadcast<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, m_dragonData.def.sku, newSlot, m_def.sku);
-				PersistenceManager.Save();
-			} else if(newSlot == -4) {
+			if(newSlot == -4) {
 				// No available slots, show feedback
 				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("There are no available slots!\nPlease unequip another pet before equipping this one!"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// [AOC] HARDCODED!!
 			}

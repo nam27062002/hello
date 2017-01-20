@@ -18,7 +18,7 @@ using TMPro;
 /// <summary>
 /// Simple controller for a disguise power icon.
 /// </summary>
-public class DisguisePowerIcon : MonoBehaviour {
+public class PowerIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -32,6 +32,11 @@ public class DisguisePowerIcon : MonoBehaviour {
 	[Tooltip("Optional")] [SerializeField] private Localizer m_nameText = null;
 	[Tooltip("Optional")] [SerializeField] private TextMeshProUGUI m_shortDescriptionText = null;
 
+	[Space]
+	[Comment("Optional, define an object for when there is a power or a placeholder for when ther is no power to show")]
+	[Tooltip("Optional")] [SerializeField] private GameObject m_emptyObj = null;
+	[Tooltip("Optional")] [SerializeField] private GameObject m_equippedObj = null;
+
 	// Exposed Setup
 	[Space]
 	[SerializeField][Range(0, 1)] private float m_tooltipArrowOffset = 0.5f;
@@ -40,6 +45,23 @@ public class DisguisePowerIcon : MonoBehaviour {
 	private DefinitionNode m_powerDef = null;
 	public DefinitionNode powerDef {
 		get { return m_powerDef; }
+	}
+
+	// Internal references (shortcuts)
+	private ShowHideAnimator m_anim = null;
+	public ShowHideAnimator anim {
+		get {
+			if(m_anim == null) m_anim = GetComponent<ShowHideAnimator>();
+			return m_anim;
+		}
+	}
+
+	private UITooltipTrigger m_trigger = null;
+	private UITooltipTrigger trigger {
+		get {
+			if(m_trigger == null) m_trigger = GetComponentInChildren<UITooltipTrigger>();
+			return m_trigger;
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -64,10 +86,16 @@ public class DisguisePowerIcon : MonoBehaviour {
 	public void InitFromDefinition(DefinitionNode _powerDef, bool _locked) {
 		// Save definition
 		m_powerDef = _powerDef;
+		bool show = (_powerDef != null);
 
-		// Hide if given definition is not valid
-		if(_powerDef == null) {
-			ShowHideAnimator anim = GetComponent<ShowHideAnimator>();
+		// If both main and placeholder objects are defined, toggle them accordingly
+		if(m_equippedObj != null && m_emptyObj != null) {
+			m_equippedObj.SetActive(show);
+			m_emptyObj.SetActive(!show);
+		}
+
+		// Otherwise, hide if given definition is not valid
+		else if(!show) {
 			if(anim != null) {
 				anim.Hide();
 			} else {
@@ -76,28 +104,31 @@ public class DisguisePowerIcon : MonoBehaviour {
 			return;
 		}
 
-		// Power icon
-		if(m_powerIcon != null) {
-			// Load power icons spritesheet
-			Sprite[] allIcons = Resources.LoadAll<Sprite>("UI/Metagame/Powers/icons_powers");
+		// If showing, initialize all visible items
+		if(show) {
+			// Power icon
+			if(m_powerIcon != null) {
+				// Load power icons spritesheet
+				Sprite[] allIcons = Resources.LoadAll<Sprite>("UI/Metagame/Powers/icons_powers");
 
-			// Pick target icon
-			string iconName = _powerDef.GetAsString("icon");
-			m_powerIcon.sprite = Array.Find<Sprite>(allIcons, (_sprite) => { return _sprite.name == iconName; });
+				// Pick target icon
+				string iconName = _powerDef.GetAsString("icon");
+				m_powerIcon.sprite = Array.Find<Sprite>(allIcons, (_sprite) => { return _sprite.name == iconName; });
+			}
+
+			// Name
+			if(m_nameText != null) {
+				m_nameText.Localize(_powerDef.Get("tidName"));
+			}
+
+			// Short description
+			if(m_shortDescriptionText != null) {
+				m_shortDescriptionText.text = DragonPowerUp.GetDescription(_powerDef, true);	// Custom formatting depending on powerup type, already localized
+			}
+
+			// Lock
+			SetLocked(_locked);
 		}
-
-		// Name
-		if(m_nameText != null) {
-			m_nameText.Localize(_powerDef.Get("tidName"));
-		}
-
-		// Short description
-		if(m_shortDescriptionText != null) {
-			m_shortDescriptionText.text = DragonPowerUp.GetDescription(_powerDef, true);	// Custom formatting depending on powerup type, already localized
-		}
-
-		// Lock
-		SetLocked(_locked);
 	}
 
 	/// <summary>
@@ -125,10 +156,10 @@ public class DisguisePowerIcon : MonoBehaviour {
 	/// <param name="_trigger">The button which triggered the event.</param>
 	public void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
 		// Make sure the trigger that opened the tooltip is linked to this icon
-		if(_trigger != this.GetComponent<UITooltipTrigger>()) return;
+		if(_trigger != trigger) return;
 
 		// Tooltip will take care of the rest
-		DisguisePowerTooltip powerTooltip = _tooltip.GetComponent<DisguisePowerTooltip>();
+		PowerTooltip powerTooltip = _tooltip.GetComponent<PowerTooltip>();
 		if(powerTooltip != null) {
 			// Initialize
 			powerTooltip.InitFromDefinition(m_powerDef);

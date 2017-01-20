@@ -30,6 +30,12 @@ public class GodRaysFX : MonoBehaviour {
 
 	// Internal
 	private ParticleSystem m_basePS = null;
+	private ParticleSystem basePS {
+		get { 
+			if(m_basePS == null) m_basePS = GetComponent<ParticleSystem>();
+			return m_basePS;
+		}
+	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -38,8 +44,6 @@ public class GodRaysFX : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Get missing refs
-		m_basePS = GetComponent<ParticleSystem>();
 	}
 
 	/// <summary>
@@ -60,12 +64,14 @@ public class GodRaysFX : MonoBehaviour {
 	public void StartFX(EggReward.Rarity _rarity) {
 		// Toggle proper sub-system based on given rarity
 		for(int i = 0; i < m_rarityPS.Length; i++) {
-			m_rarityPS[i].gameObject.SetActive(i == (int)_rarity);
+			if(m_rarityPS[i] != null) {
+				m_rarityPS[i].gameObject.SetActive(i == (int)_rarity);
+			}
 		}
 
 		// Relaunch effect
 		StopFX();
-		m_basePS.Play(true);
+		basePS.Play(true);
 	}
 
 	/// <summary>
@@ -73,8 +79,8 @@ public class GodRaysFX : MonoBehaviour {
 	/// </summary>
 	public void StopFX() {
 		// Just do it on base PS
-		m_basePS.Stop(true);
-		m_basePS.Clear(true);
+		basePS.Stop(true);
+		basePS.Clear(true);
 	}
 
 	//------------------------------------------------------------------------//

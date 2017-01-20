@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -100,6 +101,61 @@ public class PetCategoryTab : Tab {
 
 		// Scroll back to the beginning of the list
 		m_scrollList.normalizedPosition = Vector2.zero;
+	}
+
+	/// <summary>
+	/// Get the pill corresponding to a given pet.
+	/// </summary>
+	/// <returns>The pill, if found. <c>null</c> otherwise.</returns>
+	/// <param name="_petSku">The pet we're looking for.</param>
+	public PetPill GetPill(string _petSku) {
+		// Check pills one by one
+		// Not optimal, but we'll have few pills so we can afford it
+		for(int i = 0; i < m_pills.Count; i++) {
+			if(m_pills[i].def.sku == _petSku) {
+				// Found! Return target pill
+				return m_pills[i];
+			}
+		}
+
+		// Pill not found
+		return null;
+	}
+
+	/// <summary>
+	/// Scroll to a specific pet in the list.
+	/// Will be ignored if the given pet doesn't belong to this tab.
+	/// </summary>
+	/// <param name="_petSku">Pet to scroll to.</param>
+	/// <param name="_delay">Optional delay before launching the animation.</param>
+	public void ScrollToPet(string _petSku, float _delay = 0f) {
+		ScrollToPill(GetPill(_petSku), _delay);
+	}
+
+	/// <summary>
+	/// Scroll to a specific pill in the list.
+	/// Will be ignored if the given pill doesn't belong to this tab.
+	/// </summary>
+	/// <param name="_pill">Pill to scroll to.</param>
+	/// <param name="_delay">Optional delay before launching the animation.</param>
+	public void ScrollToPill(PetPill _pill, float _delay = 0f) {
+		// Make sure target pill belongs to this tab
+		if(m_pills.IndexOf(_pill) < 0) return;
+
+		// Kill any existing anim on the scrolllist
+		m_scrollList.DOKill();
+
+		// Scroll content to pill!
+		float pillDeltaX = _pill.transform.localPosition.x/m_scrollList.content.rect.width;
+		m_scrollList.DOHorizontalNormalizedPos(pillDeltaX, 0.15f)
+			.SetDelay(_delay)
+			.SetEase(Ease.OutQuad)
+			.OnComplete(() => {
+				// Highlight pill
+				// [AOC] TODO!! Better effect
+				_pill.transform.DOKill(true);
+				_pill.transform.DOScale(0.75f, 0.1f).SetLoops(8, LoopType.Yoyo);
+			});
 	}
 
 	//------------------------------------------------------------------------//
