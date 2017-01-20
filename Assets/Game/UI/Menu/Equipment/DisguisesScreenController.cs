@@ -36,7 +36,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	// References
 	[Separator("Scene References")]
 	[SerializeField] private DisguisesScreenTitle m_title = null;
-	[SerializeField] private DisguisePowerIcon m_powerIcon;
+	[SerializeField] private PowerIcon m_powerIcon;
 	[SerializeField] private SnappingScrollRect m_scrollList = null;
 
 	[Space]

@@ -768,7 +768,12 @@ public class UserProfile : UserSaveSystem
 		// Find the first available slot
 		for(int i = 0; i < dragon.pets.Count; i++) {
 			if(string.IsNullOrEmpty(dragon.pets[i])) {
+				// Success! Equip pet
 				dragon.pets[i] = _petSku;
+
+				// Notify game
+				Messenger.Broadcast<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, _dragonSku, i, _petSku);
+
 				return i;
 			}
 		}
@@ -793,13 +798,44 @@ public class UserProfile : UserSaveSystem
 		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
 		DragonData dragon = m_dragonsBySku[_dragonSku];
 
-		// Is pet equipped?
+		// Check whether pet is equipped
 		int idx = dragon.pets.IndexOf(_petSku);
 		if(idx < 0) return -2;
 
+		// Empty slot
+		return UnequipPet(_dragonSku, idx);
+	}
+
+	/// <summary>
+	/// Same as the previous method, but using slot index instead of pet sku.
+	/// </summary>
+	/// <returns>
+	/// The index of the slot where the pet was equipped.
+	/// Negative value if pet couldn't be unequipped, with the following error codes:
+	/// -1: Unknown dragon sku
+	/// -2: Invalid slot index
+	/// -3: Slot is already empty
+	/// </returns>
+	/// <param name="_dragonSku">The dragon from where we want to unequip the pet.</param>
+	/// <param name="_slotIdx">Slot to be unequipped.</param>
+	public int UnequipPet(string _dragonSku, int _slotIdx) {
+		// Check dragon sku
+		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
+		DragonData dragon = m_dragonsBySku[_dragonSku];
+
+		// Check slot index
+		if(_slotIdx < 0 || _slotIdx >= dragon.pets.Count) return -2;
+
+		// Make sure index is equipped
+		if(string.IsNullOrEmpty(dragon.pets[_slotIdx])) return -3;
+
 		// Everything ok, unequip the pet!
-		dragon.pets[idx] = string.Empty;
-		return idx;
+		dragon.pets[_slotIdx] = string.Empty;
+
+		// Notify game
+		Messenger.Broadcast<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, _dragonSku, _slotIdx, string.Empty);
+
+		return _slotIdx;
 	}
 }
 

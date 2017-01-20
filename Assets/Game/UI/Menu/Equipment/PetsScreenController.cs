@@ -26,10 +26,12 @@ public class PetsScreenController : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] TabSystem m_categoryTabs = null;
+	[SerializeField] private TabSystem m_categoryTabs = null;
+	[SerializeField] private List<PowerIcon> m_powerIcons = new List<PowerIcon>();
 
 	// Internal
 	private Dictionary<string, PetCategoryTab> m_tabsByCategory = null;
+	private PetSlotInfo[] m_slotInfos = null;
 
 	// Internal references
 	private NavigationShowHideAnimator m_animator = null;
@@ -44,6 +46,7 @@ public class PetsScreenController : MonoBehaviour {
 
 	// Cache some data for faster access
 	private DragonData m_dragonData = null;
+	private string m_initialPetSku = "";
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -67,14 +70,16 @@ public class PetsScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-
+		// Subscribe to external events
+		Messenger.AddListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-
+		// Unsubscribe from external events
+		Messenger.RemoveListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
 
 	/// <summary>
@@ -99,12 +104,23 @@ public class PetsScreenController : MonoBehaviour {
 	/// Setup the screen with a specific pet selected.
 	/// </summary>
 	/// <param name="_initialPetSku">The pet to focus. Leave empty to load current setup.</param>
-	public void Initialize(string _initialPetSku = "") {
+	public void Initialize(string _initialPetSku) {
+		// Store target pet
+		m_initialPetSku = _initialPetSku;
+
+		// Do the rest
+		Initialize();
+	}
+
+	/// <summary>
+	/// Setup the screen.
+	/// </summary>
+	public void Initialize() {
 		// If not done yet, fill the tabs dictionary
 		if(m_tabsByCategory == null) {
 			m_tabsByCategory = new Dictionary<string, PetCategoryTab>();
-			foreach(NavigationScreen screen in m_categoryTabs.screens) {
-				PetCategoryTab tab = (PetCategoryTab)screen;
+			for(int i = 0; i < m_categoryTabs.screens.Count; i++) {
+				PetCategoryTab tab = (PetCategoryTab)m_categoryTabs.screens[i];
 				m_tabsByCategory.Add(tab.screenName, tab);	// [AOC] Screen name is set from the editor and it matches the category IDs
 			}
 		}
@@ -116,6 +132,87 @@ public class PetsScreenController : MonoBehaviour {
 		// Initialize all tabs one by one
 		foreach(KeyValuePair<string, PetCategoryTab> kvp in m_tabsByCategory) {
 			kvp.Value.Init(kvp.Key, m_dragonData);
+		}
+
+		// Slots
+		// Make sure the list is initialized
+		if(m_slotInfos == null) {
+			m_slotInfos = this.GetComponentsInChildren<PetSlotInfo>();
+		}
+		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.PETS);
+		MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller3D>().GetDragonPreview(m_dragonData.def.sku);
+		for(int i = 0; i < m_slotInfos.Length; i++) {
+			m_slotInfos[i].Init(i, dragonPreview);
+		}
+
+		// Do a first refresh
+		Refresh();
+	}
+
+	/// <summary>
+	/// Update visuals with current data.
+	/// </summary>
+	public void Refresh() {
+		// We must have the data!
+		if(m_dragonData == null) return;
+
+		// Powers
+		for(int i = 0; i < m_powerIcons.Count; i++) {
+			// 3 possibilities: equipped, not-equipped or invisible
+			if(i < m_dragonData.pets.Count) {
+				// Show
+				m_powerIcons[i].gameObject.SetActive(true);
+
+				// Equipped?
+				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_dragonData.pets[i]);
+				if(petDef == null) {
+					m_powerIcons[i].InitFromDefinition(null, false);
+				} else {
+					// Get power definition
+					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
+					m_powerIcons[i].InitFromDefinition(powerDef, false);
+				}
+			} else {
+				// Instant hide
+				m_powerIcons[i].anim.ForceHide(false);
+			}
+		}
+
+		// Slots
+		for(int i = 0; i < m_slotInfos.Length; i++) {
+			m_slotInfos[i].Refresh(m_dragonData);
+		}
+	}
+
+	/// <summary>
+	/// Scroll to a specific pet.
+	/// </summary>
+	/// <param name="_petSku">Pet sku.</param>
+	/// <param name="_additionalDelay">Add extra delay, mostly to sync with other animations</param>
+	public void ScrollToPet(string _petSku, float _additionalDelay = 0f) {
+		// Only if already initialized
+		if(m_tabsByCategory == null) return;
+
+		// Find tab where the pet is
+		for(int i = 0; i < m_categoryTabs.screens.Count; i++) {
+			// Does this tab have the target pet?
+			PetCategoryTab tab = (PetCategoryTab)m_categoryTabs.screens[i];
+			PetPill pill = tab.GetPill(_petSku);
+			if(pill != null) {
+				// Found!! Make it the active tab
+				PetCategoryTab previousTab = (PetCategoryTab)m_categoryTabs.currentScreen;
+				m_categoryTabs.GoToScreen(tab);
+
+				// Scroll to the target pill, adding a small delay if we're changing tabs
+				float delay = _additionalDelay;
+				if(previousTab != tab) {
+					delay += 0.3f;
+				}
+				tab.ScrollToPill(pill, delay);
+
+				// We're done! break loop
+				break;
+			}
 		}
 	}
 
@@ -129,5 +226,25 @@ public class PetsScreenController : MonoBehaviour {
 	public void OnShowPreAnimation(ShowHideAnimator _animator) {
 		// Refresh with initial data!
 		Initialize();
+
+		// If we want to scroll to a pet, do it now
+		if(!string.IsNullOrEmpty(m_initialPetSku)) {
+			ScrollToPet(m_initialPetSku, 0.25f);	// Give enough time for the show animation!
+			m_initialPetSku = string.Empty;
+		}
+	}
+
+	/// <summary>
+	/// The pets loadout has changed in the menu.
+	/// </summary>
+	/// <param name="_dragonSku">The dragon whose assigned pets have changed.</param>
+	/// <param name="_slotIdx">Slot that has been changed.</param>
+	/// <param name="_newPetSku">New pet assigned to the slot. Empty string for unequip.</param>
+	public void OnPetChanged(string _dragonSku, int _slotIdx, string _newPetSku) {
+		// Update data!
+		Refresh();
+
+		// Save persistence - centralize all pets management persistence in here
+		PersistenceManager.Save();
 	}
 }
