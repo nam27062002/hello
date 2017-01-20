@@ -19,10 +19,11 @@ using TMPro;
 /// Simple widget to display number version.
 /// </summary>
 public class CPStats : MonoBehaviour {
-	//------------------------------------------------------------------//
-	// MEMBERS															//
-	//------------------------------------------------------------------//
-	public TextMeshProUGUI m_DeviceModel;    
+    //------------------------------------------------------------------//
+    // MEMBERS															//
+    //------------------------------------------------------------------//
+    public TextMeshProUGUI m_DeviceModel;
+    public TextMeshProUGUI m_DeviceGeneration;    
     public TextMeshProUGUI m_FpsLabel;
 	public TextMeshProUGUI m_ScreenSize;
 	public TextMeshProUGUI m_LevelName;
@@ -40,8 +41,11 @@ public class CPStats : MonoBehaviour {
 		// Just initialize text
 		m_DeviceModel.text = "Model: " + SystemInfo.deviceModel;
 #if UNITY_IOS
-        m_DeviceModel.text += " Generation: " + UnityEngine.iOS.Device.generation;
+        m_DeviceGeneration.text = "Generation: " + UnityEngine.iOS.Device.generation;
+#else
+        m_DeviceGeneration.transform.parent.gameObject.SetActive(false);
 #endif
+
         m_FpsLabel.text = "FPS: ";
 		m_ScreenSize.text = "Screen Size: " + Screen.width + "x"+ Screen.height;
 		m_LevelName.text = "Scene Name: "+ SceneManager.GetActiveScene().name;
