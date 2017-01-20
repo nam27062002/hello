@@ -31,7 +31,7 @@
 				}
 
 				SetTexture[_MainTex] {
-					combine texture * previous DOUBLE
+					combine texture * previous QUAD
 				}
 			}
 		}
