@@ -322,7 +322,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_fireNodeTimer -= Time.deltaTime;
 		if (m_fireNodeTimer <= 0) {
 			m_fireNodeTimer += m_checkNodeFireTime;
-			FirePropagationManager.instance.FireUpNodes( bounds2D, Overlaps, direction);
+			FirePropagationManager.instance.FireUpNodes( bounds2D, Overlaps, m_dragon.data.tier, direction);
 		}
 	}
 	virtual protected void EndFury() 
