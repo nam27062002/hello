@@ -66,9 +66,12 @@ public class DragonAnimationEvents : MonoBehaviour {
 	}
 
 	void OnDisable() {
-		if (!m_checkWaterSnapshot && m_insideWaterSnapshot != null)	{ // Means we registered snapshot
-			if (InstanceManager.musicController != null) {
-				InstanceManager.musicController.UnregisterSnapshot(m_insideWaterSnapshot);
+		if ( ApplicationManager.IsAlive )
+		{
+			if (!m_checkWaterSnapshot && m_insideWaterSnapshot != null)	{ // Means we registered snapshot
+				if (InstanceManager.musicController != null) {
+					InstanceManager.musicController.UnregisterSnapshot(m_insideWaterSnapshot);
+				}
 			}
 		}
 	}

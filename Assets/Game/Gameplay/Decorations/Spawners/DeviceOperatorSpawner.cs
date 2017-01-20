@@ -38,7 +38,10 @@ public class DeviceOperatorSpawner : AbstractSpawner {
     }
 
 	void OnDestroy() {
-		ForceRemoveEntities();
+		if ( ApplicationManager.IsAlive )
+		{
+			ForceRemoveEntities();
+		}
 	}
     //-------------------------------------------------------------------
 

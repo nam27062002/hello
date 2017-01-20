@@ -173,14 +173,16 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	}
 	
 	void OnDisable() {
-
-		if (m_isFuryOn) 
+		if ( ApplicationManager.IsAlive )
 		{
-			m_isFuryOn = false;
-			m_animator.SetBool("breath", false);// Stop fury rush (if active)
-			if (m_healthBehaviour) m_healthBehaviour.enabled = true;
-			if (m_attackBehaviour) m_attackBehaviour.enabled = true;
-			Messenger.Broadcast<bool, Type>(GameEvents.FURY_RUSH_TOGGLED, false, Type.None);
+			if (m_isFuryOn) 
+			{
+				m_isFuryOn = false;
+				m_animator.SetBool("breath", false);// Stop fury rush (if active)
+				if (m_healthBehaviour) m_healthBehaviour.enabled = true;
+				if (m_attackBehaviour) m_attackBehaviour.enabled = true;
+				Messenger.Broadcast<bool, Type>(GameEvents.FURY_RUSH_TOGGLED, false, Type.None);
+			}
 		}
 	}
 

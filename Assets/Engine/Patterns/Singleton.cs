@@ -58,20 +58,17 @@ public class Singleton<T> where T : Singleton<T>, new() {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Destructor
-	/// </summary>
-	protected virtual void OnDestroy() {
+	protected virtual void OnApplicationQuit() {
 		// Make sure instance reference is cleaned up
 		// [AOC] I think it's useless, but they do it: https://youtu.be/64uOVmQ5R1k?t=20m16s
-		// [AOC] In any case make sure to do it only if we're the SingletonScriptableObject instance!
+		// [AOC] In any case make sure to do it only if we're the singleton instance!
 		if(m_instance != null && m_instance == this) m_instance = null;
 		
 		// Avoid re-creating the instance while the application is quitting
 		// Unless manually destroying the instance
-		if(m_state != ISingleton.EState.DESTROYING_INSTANCE) {
-			m_state = ISingleton.EState.APPLICATION_QUITTING;
-		}
+		m_state = ISingleton.EState.APPLICATION_QUITTING;
+
+		Messenger.RemoveListener( GameEvents.APPLICATION_QUIT, OnApplicationQuit);
 	}
 	
 	//------------------------------------------------------------------//
@@ -114,7 +111,9 @@ public class Singleton<T> where T : Singleton<T>, new() {
 				// [AOC] Not needed since scriptable objects already persist through scenes (and doing this throws a warning in runtime)
 				//		 See http://answers.unity3d.com/questions/1115856/scriptableobject-vs-dontdestroyonload.html
 				//ScriptableObject.DontDestroyOnLoad(m_instance);
-				
+
+				Messenger.AddListener( GameEvents.APPLICATION_QUIT, m_instance.OnApplicationQuit);
+
 				// Instance has been created and stored, unlock instance creation
 				m_state = ISingleton.EState.READY;
 			}
@@ -130,9 +129,13 @@ public class Singleton<T> where T : Singleton<T>, new() {
 
 		// Remember that we're manually destroying the SingletonScriptableObject so recreation of the instance is not banned
 		m_state = ISingleton.EState.DESTROYING_INSTANCE;
-		
+
+		Messenger.RemoveListener( GameEvents.APPLICATION_QUIT, m_instance.OnApplicationQuit);
+
 		// Immediately destroy game object holding the SingletonScriptableObject
 		m_instance = null;
+
+
 	}
 }
 

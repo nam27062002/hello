@@ -54,8 +54,9 @@ public class MenuEggLoader : MonoBehaviour {
 	/// <summary>
 	/// Default destructor.
 	/// </summary>
-	private void OnDestroy() {        
-        Unload();
+	private void OnDestroy() {    
+		if ( ApplicationManager.IsAlive )
+        	Unload();
     }
 
 	//------------------------------------------------------------------------//
