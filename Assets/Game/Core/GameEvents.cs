@@ -22,7 +22,7 @@ public enum GameEvents {
 	CP_INT_CHANGED,				// params: string _prefID, int _newValue
 	CP_FLOAT_CHANGED,			// params: string _prefID, float _newValue
 	CP_ENUM_CHANGED,			// params: string _prefID, int _newValue (should be casted to target enum)
-    CP_QUALITY_CHANGED,          // no params
+    CP_QUALITY_CHANGED,         // no params
 
 	// Profile events
 	PROFILE_COINS_CHANGED,		// params: long _oldAmount, long _newAmount

@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: curvyLine
-  m_Shader: {fileID: 4800000, guid: f7e5a323cb617044091300b369bb2c50, type: 3}
+  m_Name: Dust_spotAdd 1
+  m_Shader: {fileID: 4800000, guid: e2e52a5da952247b0a2b911f92db4e3c, type: 3}
   m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
     GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
   m_LightmapFlags: 5
@@ -19,27 +19,12 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 463f3e17448c6f147a7b7811acdfb56f, type: 3}
-        m_Scale: {x: 1, y: 4}
-        m_Offset: {x: -0.8720093, y: 0}
-    - first:
-        name: _NoiseTex2
-      second:
-        m_Texture: {fileID: 2800000, guid: 463f3e17448c6f147a7b7811acdfb56f, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6ac76a161525c974fa6080455a5c8410, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
-        name: _Alpha
-      second: 0.144
-    - first:
-        name: _Power
-      second: 5.2
-    - first:
-        name: _Seed
-      second: 2.92
-    - first:
-        name: _Speed
+        name: _InvFade
       second: 1
     m_Colors:
     - first:
