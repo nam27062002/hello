@@ -83,7 +83,8 @@ namespace AI {
 					if ( m_data.forceFaceToShoot ){
 						projectile.ShootAtPosition(m_projectileSpawnPoint, ((AttackRangedData)m_data).damage, m_facingTarget);
 					}else{
-						projectile.Shoot(m_projectileSpawnPoint, ((AttackRangedData)m_data).damage);
+						Vector3 target = InstanceManager.player.dragonMotion.head.position;
+						projectile.Shoot(target, ((AttackRangedData)m_data).damage);
 					}
 					m_projectile = null;
 				}

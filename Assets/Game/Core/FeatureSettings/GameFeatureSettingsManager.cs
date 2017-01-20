@@ -169,7 +169,15 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
             {
                 profileName = deviceSettingsJSON[FeatureSettings.KEY_PROFILE];
             }
+        }
+
+        // If no profileName is available for the device in iOS then we assume that it's a new device so its rating has to be the maximum
+#if UNITY_IOS        
+        if (string.IsNullOrEmpty(profileName))
+        {
+            rating = 1f;
         }        
+#endif
 
         // Gets the FeatureSettings object of the profile that corresponds to the calculated rating
         if (string.IsNullOrEmpty(profileName))
@@ -178,7 +186,11 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         }
 
         Device_CurrentProfile = profileName;
+
+        // In iOS the rating of the device has to be the rating of the profile since the calculated rating is used only as a reference.         
+#if !UNITY_IOS             
         Device_CurrentFeatureSettings.Rating = rating;
+#endif
 
         // We need to override the default configuration of the profile with the particular configuration defined for the device, if there's one
         if (deviceSettingsJSON != null)
@@ -267,8 +279,8 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         memoryData.Sort(DeviceSettings.Sort);
         cpuCoresData.Sort(DeviceSettings.Sort);
         gpuMemoryData.Sort(DeviceSettings.Sort);
-        textureSizeData.Sort(DeviceSettings.Sort);
-
+        textureSizeData.Sort(DeviceSettings.Sort);        
+        
         // Memory rating
         float memQualityRating = 1.0f;
         int deviceCapacity = SystemInfo.systemMemorySize;

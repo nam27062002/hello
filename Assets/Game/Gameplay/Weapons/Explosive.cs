@@ -5,6 +5,8 @@ using UnityEngine;
 public class Explosive {
 	
 	private float m_damage;
+	public float damage { set { m_damage = value; } }
+
 	private DamageType m_damageType;
 	private float m_radiusSqr;
 
@@ -36,9 +38,9 @@ public class Explosive {
 		m_playerRadiusSqr = sc.radius * sc.radius;
 	}
 
-	public void Explode(Vector3 _at, bool _playerTriggered) {
+	public void Explode(Vector3 _at, float _knockback, bool _triggeredByPlayer) {
 		DragonPlayer dragon = InstanceManager.player;
-		bool hasPlayerReceivedDamage = _playerTriggered;
+		bool hasPlayerReceivedDamage = _triggeredByPlayer;
 
 		if (!hasPlayerReceivedDamage && m_radiusSqr > 0f) {
 			float dSqr = (dragon.transform.position - _at).sqrMagnitude;
@@ -58,14 +60,15 @@ public class Explosive {
 						Messenger.Broadcast<float, float>(GameEvents.CAMERA_SHAKE, m_cameraShakeTime, 0f);
 					}
 
-					DragonMotion dragonMotion = dragon.dragonMotion;
+					if (_knockback > 0) {
+						DragonMotion dragonMotion = InstanceManager.player.dragonMotion;
 
-					Vector3 knockBack = dragonMotion.position - _at;
-					knockBack.Normalize();
+						Vector3 knockBackDirection = dragonMotion.transform.position - _at;
+						knockBackDirection.z = 0f;
+						knockBackDirection.Normalize();
 
-					knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_damage, 2f));
-
-					dragonMotion.AddForce(knockBack);
+						dragonMotion.AddForce(knockBackDirection * _knockback);
+					}
 				}
 			}
 		}
