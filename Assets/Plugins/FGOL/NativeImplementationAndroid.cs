@@ -209,13 +209,7 @@ namespace FGOL.Plugins.Native
 		{
 			//	TODO: implement
 			return false;
-		}
-
-		public bool IsPictureInPictureVideoPlaying()
-		{
-			//	TODO: implement if such android
-			return false;
-		}
+		}		
 
 		public void RequestExclusiveAudio(bool exclusiveAudio)
 		{
