@@ -22,8 +22,8 @@ public class CPStats : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	public TextMeshProUGUI m_DeviceModel;
-	public TextMeshProUGUI m_FpsLabel;
+	public TextMeshProUGUI m_DeviceModel;    
+    public TextMeshProUGUI m_FpsLabel;
 	public TextMeshProUGUI m_ScreenSize;
 	public TextMeshProUGUI m_LevelName;
 
@@ -39,7 +39,10 @@ public class CPStats : MonoBehaviour {
 	{
 		// Just initialize text
 		m_DeviceModel.text = "Model: " + SystemInfo.deviceModel;
-		m_FpsLabel.text = "FPS: ";
+#if UNITY_IOS
+        m_DeviceModel.text += " Generation: " + UnityEngine.iOS.Device.generation;
+#endif
+        m_FpsLabel.text = "FPS: ";
 		m_ScreenSize.text = "Screen Size: " + Screen.width + "x"+ Screen.height;
 		m_LevelName.text = "Scene Name: "+ SceneManager.GetActiveScene().name;
 		m_ControlPanel = GetComponentInParent<ControlPanel>();
