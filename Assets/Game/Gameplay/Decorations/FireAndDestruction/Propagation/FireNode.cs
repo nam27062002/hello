@@ -27,7 +27,9 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	Vector3 m_lastBreathDirection;
 	public Vector3 lastBreathHitDiretion { get { return m_lastBreathDirection; } }
 
-	private ZoneManager.ZoneEffect m_zoneEffect;
+	private Decoration m_decoration;
+	private DragonTier m_lastBurnTier;
+	public DragonTier lastBurnTier{ get{ return m_lastBurnTier; } }
 
 	private List<FireNode> m_neighbours;
 	private List<float> m_neihboursDistance;
@@ -59,8 +61,8 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		gameObject.SetActive(false);
 	}
 
-	public void Init(ZoneManager.ZoneEffect _effect) {		
-		m_zoneEffect = _effect;
+	public void Init(Decoration _decoration) {		
+		m_decoration = _decoration;
 		Reset();
 
 		FirePropagationManager.Insert(this);
@@ -96,11 +98,14 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		return m_state == State.Extinguish;
 	}
 
-	public void Burn(Vector2 _direction, bool _dragonBreath) {
+	public void Burn(Vector2 _direction, bool _dragonBreath, DragonTier _tier) {
 		if (m_state == State.Extinguished) {
-			if (m_zoneEffect >= ZoneManager.ZoneEffect.M) {
 
-				if (m_zoneEffect == ZoneManager.ZoneEffect.L) {
+			ZoneManager.ZoneEffect effect = InstanceManager.zoneManager.GetFireEffectCode( m_decoration, _tier);
+			m_lastBurnTier = _tier;
+
+			if (effect >= ZoneManager.ZoneEffect.M) {
+				if (effect == ZoneManager.ZoneEffect.L) {
 					m_nextState = State.Extinguish;
 				} else {
 					m_nextState = State.Spreading;
@@ -152,7 +157,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 						if (m_neihboursDistance[i] > 0) {
 							m_neihboursDistance[i] -= 0.25f;						
 						} else {
-							m_neighbours[i].Burn(Vector2.zero, false);
+							m_neighbours[i].Burn(Vector2.zero, false, m_lastBurnTier);
 						}
 					}
 				}

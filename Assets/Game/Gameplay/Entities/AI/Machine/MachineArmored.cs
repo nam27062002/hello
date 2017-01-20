@@ -22,12 +22,14 @@ namespace AI {
 		}
 
 		public bool ReduceDurability(bool _boost) {
-			if (!m_armorDurability.needBoost || _boost) {
-				m_armorDurability.count--;
-				if (m_armorDurability.count <= 0) {
-					SetSignal(Signals.Type.Destroyed, true);
+			if (m_armorDurability.count > 0) {
+				if (!m_armorDurability.needBoost || _boost) {
+					m_armorDurability.count--;
+					if (m_armorDurability.count <= 0) {
+						SetSignal(Signals.Type.Destroyed, true);
+					}
+					return true;
 				}
-				return true;
 			}
 
 			return false;

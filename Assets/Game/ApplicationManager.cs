@@ -24,13 +24,18 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     /// </summary>
     private const int SocialNetworkReauthTime = 120;    
 
-    private bool IsAlive { get; set; }
+    private static bool m_isAlive = true;
+    public static bool IsAlive { 
+    	get{ return m_isAlive; }
+    }
 
     /// <summary>
 	/// Initialization. This method will be called only once regardless the amount of times the user is led to the Loading scene.
 	/// </summary>
 	protected void Awake()
     {                
+		m_isAlive = true;
+
 #if !PRODUCTION
         DebugSettings.Init();
 #endif
@@ -68,8 +73,15 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        IsAlive = false;
+        m_isAlive = false;
     }
+
+	protected void OnApplicationQuit()
+    {
+        m_isAlive = false;
+        Messenger.Broadcast(GameEvents.APPLICATION_QUIT);
+    }
+
 
     private void Reset()
     {
@@ -89,14 +101,22 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {        
         // To Debug
         /*if (Input.GetKeyDown(KeyCode.A))
-        {            
+        {
+            // Simulation of quality/get response from server
+            string deviceModel = "server";
+            GameFeatureSettingsManager.instance.Device_Model = deviceModel;
+            DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.FEATURE_DEVICE_SETTINGS, deviceModel);
+            GameFeatureSettingsManager.instance.SetupCurrentFeatureSettings(def.ToJSON());
+
+            // The client is notified that some quality settings might have changed
+            Messenger.Broadcast(GameEvents.CP_QUALITY_CHANGED);
+            
             //NeedsToRestartFlow = true;           
             //Debug_ToggleIsPaused();
 
             //Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
             //Debug.Log("eggs collected = " + UsersManager.currentUser.eggsCollected);            
-        }  
-        */   
+        }*/            
         
         if (NeedsToRestartFlow)
         {
@@ -291,7 +311,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     
     private IEnumerator Device_Update()
     {
-        IsAlive = true;
         Device_Resolution = new Vector2(Screen.width, Screen.height);
         Device_Orientation = Input.deviceOrientation;
 

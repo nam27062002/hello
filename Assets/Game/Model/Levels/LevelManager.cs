@@ -35,12 +35,6 @@ public class LevelManager : Singleton<LevelManager> {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	protected void OnEnable() {
-
-	}
 
 	//------------------------------------------------------------------//
 	// PUBLIC UTILS														//

@@ -14,7 +14,7 @@ using namespace std;
 
 extern "C"
 {
-    char* cStringCopy(const char* string)
+    char* stringCopy(const char* string)
     {
         if (string == NULL)
             return NULL;
@@ -28,7 +28,7 @@ extern "C"
     const char* IOsGetCountryCode()
     {
         NSLocale *currentLocale = [NSLocale currentLocale];  // get the current locale.
-        return cStringCopy( ((NSString*)[currentLocale objectForKey:NSLocaleCountryCode]).UTF8String );
+        return stringCopy( ((NSString*)[currentLocale objectForKey:NSLocaleCountryCode]).UTF8String );
     }
     
     // https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/Account+merging
@@ -75,8 +75,8 @@ extern "C"
         // TODO (miguel)
         // NSUUID *IDFA = [[ASIdentifierManager sharedManager] advertisingIdentifier];
         // NSString *idfaString = [IDFA UUIDString];
-        // return (idfaString == nil) ? cStringCopy( "" ) : cStringCopy( idfaString.UTF8String );
-        return cStringCopy( "" );
+        // return (idfaString == nil) ? stringCopy( "" ) : stringCopy( idfaString.UTF8String );
+        return stringCopy( "" );
     }
     
     const char* IOsFormatPrice( float price, const char* currencyLocale )
@@ -86,7 +86,7 @@ extern "C"
         [_currencyFormatter setCurrencyCode: [NSString stringWithUTF8String: currencyLocale] ];
         NSString* priceStr = [_currencyFormatter stringFromNumber:@(price)];
         
-        return (priceStr == nil) ? cStringCopy( "" ) : cStringCopy( priceStr.UTF8String );
+        return (priceStr == nil) ? stringCopy( "" ) : stringCopy( priceStr.UTF8String );
     }
     
     const char* NetworkClient_GetDefaultProxyURL()
@@ -102,10 +102,10 @@ extern "C"
             
             if (CFStringGetCString(proxyCFstr, buffer, 4096, kCFStringEncodingUTF8))
             {
-                return cStringCopy(std::string(buffer).c_str());
+                return stringCopy(std::string(buffer).c_str());
             }
         }
-        return cStringCopy("");
+        return stringCopy("");
     }
     
     int NetworkClient_GetDefaultProxyPort()

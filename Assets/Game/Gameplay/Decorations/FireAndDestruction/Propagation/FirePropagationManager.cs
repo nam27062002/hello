@@ -4,17 +4,11 @@ using System.Collections.Generic;
 // This is a Quadtree! a Quadtree full of fires
 public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagationManager> {
 	
-	[SerializeField] private float m_checkFireTime = 0.25f;
-
 	private QuadTree<FireNode> m_fireNodesTree;
 	private List<FireNode> m_fireNodes;
 	private AudioSource m_fireNodeAudio;
-	private DragonBreathBehaviour m_breath;
-		
-	private float m_timer;
 
 	public List<Transform> m_burningFireNodes = new List<Transform>();
-
 
 	void Awake() {
 		m_fireNodesTree = new QuadTree<FireNode>(-600f, -100f, 1000f, 400f);
@@ -66,9 +60,6 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		for(int i = 0; i < m_fireNodes.Count; i++) {
 			m_fireNodesTree.Insert(m_fireNodes[i]);
 		}
-
-		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
-		m_timer = m_checkFireTime;
 	}
 
 	/// <summary>
@@ -111,28 +102,24 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	}
 
 	void Update() {
-		if(m_breath == null) return;
-
-		//check if this intersecs with dragon breath
-		if (m_breath.IsFuryOn()) {
-			m_timer -= Time.deltaTime;
-			if (m_timer <= 0) {
-				m_timer += m_checkFireTime;
-				FireNode[] nodes = m_fireNodesTree.GetItemsInRange(m_breath.bounds2D);
-
-				for (int i = 0; i < nodes.Length; i++) {
-					FireNode fireNode = nodes[i];
-					if (m_breath.Overlaps(fireNode.area)) {
-						fireNode.Burn(m_breath.direction, true);
-					}
-				}
-			}
-		}
-
 		for (int i = 0; i < m_fireNodes.Count; i++) {
 			m_fireNodes[i].UpdateLogic();
 		}
 	}
+
+	public delegate bool CheckMethod( CircleAreaBounds _fireNodeBounds );
+
+	public void FireUpNodes( Rect _rectArea, CheckMethod _checkMethod, DragonTier _tier, Vector3 _direction )
+	{
+		FireNode[] nodes = m_fireNodesTree.GetItemsInRange(_rectArea);
+		for (int i = 0; i < nodes.Length; i++) {
+			FireNode fireNode = nodes[i];
+			if (_checkMethod(fireNode.area)) {
+				fireNode.Burn(_direction, true, _tier);
+			}
+		}
+	}
+
 		
 	// :3
 	void OnDrawGizmosSelected() {

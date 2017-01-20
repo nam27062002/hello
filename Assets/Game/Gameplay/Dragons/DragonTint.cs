@@ -92,7 +92,7 @@ public class DragonTint : MonoBehaviour
 
 	private void OnDamageReceived(float _amount, DamageType _type, Transform _source) 
 	{
-		if ( _type == DamageType.NORMAL )
+		if ( _type != DamageType.LATCH && _type != DamageType.POISON)
 			m_damageTimer = m_damageTotalTime;
 	}
 	

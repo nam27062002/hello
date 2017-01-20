@@ -5,19 +5,19 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 465066}
-  - 114: {fileID: 11478246}
-  - 114: {fileID: 11426232}
-  - 114: {fileID: 114000010144215686}
+  - component: {fileID: 465066}
+  - component: {fileID: 11478246}
+  - component: {fileID: 11426232}
+  - component: {fileID: 114000010144215686}
   m_Layer: 0
   m_Name: SP_Mine_big_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &465066
 Transform:
   m_ObjectHideFlags: 1
@@ -25,12 +25,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 158102}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 292.17047, y: -18.260996, z: 0}
+  m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &11426232
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -42,7 +42,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 143052, guid: 91f7a35b6887e4661bb23d819d78113b, type: 2}
   m_entityPrefabStr: Air/PF_MineBig
   m_quantity:
     min: 1
@@ -54,12 +53,15 @@ MonoBehaviour:
   m_flockBonus: 0
   m_minTier: 0
   m_activationChance: 100
-  m_alwaysActive: 0
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
-    min: 0
-    max: 0
+    min: 120
+    max: 150
+  m_homePosMethod: 0
+  m_homePosDistance:
+    min: 1
+    max: 2
   m_maxSpawns: 0
 --- !u!114 &11478246
 MonoBehaviour:
@@ -100,5 +102,5 @@ MonoBehaviour:
   m_circular: 1
   m_smoothRadius: 0.5
   m_points:
-  - {x: -1, y: 0, z: 0}
-  - {x: 1, y: 0, z: 0}
+  - {x: -6.8989887, y: 0.10241318, z: 0}
+  - {x: 6.9399548, y: 0.08193064, z: 0}

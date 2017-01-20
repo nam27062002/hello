@@ -60,27 +60,4 @@ void _StopAudioFromOtherApps()
     _SetAudioExclusive(true);
 }
 
-//  Returns true if PIP video is playing on iOS
-bool _IsPIPVideoPlaying()
-{
-    bool pipIsPlaying = false;
-    
-    //  Not supported on iOS8 and lower
-    if (_IsOperatingSystemOfVersion(9, true))
-    {
-        bool pipSupported = [AVPictureInPictureController isPictureInPictureSupported];
-        NSLog(@"PIP playback support: %d", pipSupported);
-        
-        if (pipSupported)
-        {
-            //  TODO:
-            //  This value is simulated and does not have to be true as it actually checks only audio.
-            //  Some more work is needed in order to check if actually a PIP, if possible at all.
-            pipIsPlaying = _IsAudioPlayingFromOtherApps() && !_IsIPodMusicPlaying();
-        }
-    }
-    
-    return pipIsPlaying;
-}
-
 // ------------------------------------------------------------------------------

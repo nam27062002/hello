@@ -26,6 +26,7 @@ public class EggReward {
 		COMMON,
 		RARE,
 		EPIC,
+		SPECIAL,
 
 		COUNT
 	}

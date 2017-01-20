@@ -12,7 +12,6 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
 		_SecondTexture ("Second Texture (RGB)", 2D) = "white" {}
-
 	}
 
 	SubShader {

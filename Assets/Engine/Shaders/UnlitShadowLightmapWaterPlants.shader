@@ -14,7 +14,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decora
 	}
 
 	SubShader {
-		Tags { "RenderType"="Opaque" "Queue"="Geometry"}
+		Tags { "RenderType"="Opaque" "Queue"="Geometry" "DisableBatching"="true" }
 //		Tags{ "RenderType" = "Opaque" "Queue" = "Geometry" }
 		LOD 100
 		

@@ -47,6 +47,13 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 		set { if(instance != null) instance.m_gameCamera = value; }
 	}
 
+
+	private ZoneManager m_zoneManager = null;
+	public static ZoneManager zoneManager {
+		get { return instance.m_zoneManager; }
+		set { if(instance != null) instance.m_zoneManager = value; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
