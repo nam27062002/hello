@@ -5,13 +5,13 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 496654}
-  - 114: {fileID: 11449404}
-  - 114: {fileID: 11451560}
-  - 114: {fileID: 11453016}
-  - 114: {fileID: 11464310}
+  - component: {fileID: 496654}
+  - component: {fileID: 11449404}
+  - component: {fileID: 11451560}
+  - component: {fileID: 11453016}
+  - component: {fileID: 11464310}
   m_Layer: 0
   m_Name: SP_bat_bigFlock_0
   m_TagString: Untagged
@@ -26,12 +26,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 188156}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.72, y: 8.84, z: 0}
+  m_LocalPosition: {x: 0, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &11449404
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -62,17 +62,17 @@ MonoBehaviour:
     min: 3
     max: 3
   m_scale:
-    min: 1
-    max: 1
-  m_rails: 1
+    min: 0.8
+    max: 1.2
+  m_rails: 3
   m_flockBonus: 0
   m_minTier: 0
   m_activationChance: 100
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
-    min: 0
-    max: 0
+    min: 120
+    max: 150
   m_homePosMethod: 0
   m_homePosDistance:
     min: 1
