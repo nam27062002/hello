@@ -3,7 +3,7 @@
 
 	Properties{
 		_MainTex("Particle Texture", 2D) = "white" {}
-		_Color("Color", Color) = (1,1,1,1)
+		_TintColor("Color", Color) = (1,1,1,1)
 
 //		_InvFade("Soft Particles Factor", Range(0.01,3.0)) = 1.0
 	}
@@ -26,11 +26,12 @@
 
 			Pass{
 				SetTexture[_MainTex] {
-					constantColor[_Color]
-					combine constant * texture, constant * texture quad
+					constantColor [_TintColor]
+					combine constant * primary
 				}
+
 				SetTexture[_MainTex] {
-					combine primary * previous
+					combine texture * previous DOUBLE
 				}
 			}
 		}
