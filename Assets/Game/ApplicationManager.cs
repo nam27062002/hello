@@ -89,14 +89,22 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {        
         // To Debug
         /*if (Input.GetKeyDown(KeyCode.A))
-        {            
+        {
+            // Simulation of quality/get response from server
+            string deviceModel = "server";
+            GameFeatureSettingsManager.instance.Device_Model = deviceModel;
+            DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.FEATURE_DEVICE_SETTINGS, deviceModel);
+            GameFeatureSettingsManager.instance.SetupCurrentFeatureSettings(def.ToJSON());
+
+            // The client is notified that some quality settings might have changed
+            Messenger.Broadcast(GameEvents.CP_QUALITY_CHANGED);
+            
             //NeedsToRestartFlow = true;           
             //Debug_ToggleIsPaused();
 
             //Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
             //Debug.Log("eggs collected = " + UsersManager.currentUser.eggsCollected);            
-        }  
-        */   
+        }*/            
         
         if (NeedsToRestartFlow)
         {

@@ -153,6 +153,7 @@ public class ChestViewController : MonoBehaviour {
 	public void OnLidOpen() {
 		// Launch particle system
 		ToggleFX(m_openFX, true);
+		ToggleFX(m_glowFX, false);
 
 		// Notify delegates
 		OnChestOpenEvent.Invoke();

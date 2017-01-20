@@ -3,6 +3,11 @@
 public class CircleAreaBounds : AreaBounds {
 	private Bounds m_bounds;
 	private float m_radius;
+	public float radius
+	{
+		get { return m_radius; }
+	}
+
 	private float m_diameter;
 
 	public CircleAreaBounds(Vector3 _center, float _radius) {	

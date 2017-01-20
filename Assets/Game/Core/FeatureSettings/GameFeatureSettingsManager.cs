@@ -57,7 +57,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         Messenger.RemoveListener(EngineEvents.DEFINITIONS_LOADED, OnDefinitionsLoaded);
     }    
 
-    public string Device_Model { get; set; }
+    public string Device_Model { get; set; }    
 
     public float Device_CalculatedRating
     {
@@ -141,12 +141,24 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         float rating = CalculateRating();
         m_deviceQualityManager.Device_CalculatedRating = rating;
 
+        Device_CurrentFeatureSettings = CreateFeatureSettings();
+
+        SetupCurrentFeatureSettings(null);        
+    }   
+
+    public void SetupCurrentFeatureSettings(JSONNode deviceSettingsJSON)
+    {
+        float rating = m_deviceQualityManager.Device_CalculatedRating;
         string profileName = null;
 
-        // Checks if there's a definition for the device in content
-        JSONNode deviceSettingsJSON = GetDeviceFeatureSettingsAsJSON();        
+        // If no device configuration is passed then try to get the device configuration from rules
+        if (deviceSettingsJSON == null)
+        {
+            deviceSettingsJSON = GetDeviceFeatureSettingsAsJSON();
+        }        
+
         if (deviceSettingsJSON != null)
-        {            
+        {
             // Checks if the rating has been overriden for this device
             if (deviceSettingsJSON.ContainsKey(FeatureSettings.KEY_RATING))
             {
@@ -157,9 +169,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
             {
                 profileName = deviceSettingsJSON[FeatureSettings.KEY_PROFILE];
             }
-        }
-
-        Device_CurrentFeatureSettings = CreateFeatureSettings();
+        }        
 
         // Gets the FeatureSettings object of the profile that corresponds to the calculated rating
         if (string.IsNullOrEmpty(profileName))
@@ -174,10 +184,8 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         if (deviceSettingsJSON != null)
         {
             Device_CurrentFeatureSettings.OverrideFromJSON(deviceSettingsJSON);
-        }        
-
-        Debug.Log(Device_CurrentFeatureSettings.ToJSON());      
-    }   
+        }
+    }    
 
     private GameFeatureSettings CreateFeatureSettings()
     {

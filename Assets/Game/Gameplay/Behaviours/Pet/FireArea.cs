@@ -6,14 +6,17 @@ using UnityEngine;
 public class FireArea : MonoBehaviour {
 
 	private CircleArea2D m_circle;
+	private Rect m_rect;
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
-	private DragonTier m_tier;
+	public DragonTier m_tier = DragonTier.TIER_4;
+
+	private float m_checkNodeFireTime = 0.25f;
+	private float m_fireNodeTimer = 0;
 
 	// Use this for initialization
 	void Start () {
 		m_circle = GetComponent<CircleArea2D>();
-		m_tier = InstanceManager.player.data.tier;
 	}
 	
 	// Update is called once per frame
@@ -33,6 +36,24 @@ public class FireArea : MonoBehaviour {
 					}
 				}
 			}
+
+
+			m_fireNodeTimer -= Time.deltaTime;
+			if (m_fireNodeTimer <= 0) {
+				
+				m_fireNodeTimer += m_checkNodeFireTime;
+
+				// Update rect
+				m_rect.center = m_circle.center;
+				m_rect.height = m_rect.width = m_circle.radius;
+
+				FirePropagationManager.instance.FireUpNodes( m_rect, Overlaps, Vector3.zero);
+			}
 		}
+	}
+
+	bool Overlaps( CircleAreaBounds _fireNodeBounds )
+	{
+		return m_circle.Overlaps( _fireNodeBounds.center, _fireNodeBounds.radius);
 	}
 }
