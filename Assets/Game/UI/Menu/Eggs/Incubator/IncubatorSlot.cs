@@ -81,8 +81,11 @@ public class IncubatorSlot : MonoBehaviour {
 		//Refresh();
 	}
 
-    private void OnDestroy() {        
-        m_eggPreview.Unload();
+    private void OnDestroy() {     
+    	if ( ApplicationManager.IsAlive )   
+    	{
+        	m_eggPreview.Unload();
+        }
     }
 
 	/// <summary>

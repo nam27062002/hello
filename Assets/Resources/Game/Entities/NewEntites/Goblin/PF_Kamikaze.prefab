@@ -325,8 +325,9 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 1
     max: 1
-  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":20,"acceleration":400,"dataType":"AI.Behaviour.RocketDashData","editorFolded":false},{"damage":25,"radius":8,"cameraShakeDuration":1,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":20,"acceleration":400,"dataType":"AI.Behaviour.RocketDashData","editorFolded":false},{"isMine":false,"damage":25,"radius":8,"cameraShakeDuration":1,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
   m_databaseKey: PF_Kamikaze
+  m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 1
   m_avoidWater: 1
@@ -373,6 +374,7 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
@@ -422,6 +424,7 @@ MonoBehaviour:
     m_defaultUpVector: 0
     m_orientationSpeed: 120
     m_faceDirection: 0
+    m_useDragonStyleRotation: 0
     m_rollRotation: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
@@ -450,6 +453,7 @@ MonoBehaviour:
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
+    m_burningTime: 0
     m_dissolveTime: 1.5
     m_ashExceptions: []
 --- !u!135 &135483071828693612

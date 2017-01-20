@@ -173,31 +173,31 @@ public class DragonPowerUp : MonoBehaviour {
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
 					healthBehaviour.AddEatingHpBoost( from, percentage);
 				}break;
-				case "food+":	// adds % bonus hp from any source
+				case "food_increase":	// adds % bonus hp from any source
 				{
 					float percentage = def.GetAsFloat("param1");
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
 					healthBehaviour.AddEatingHpBoost(percentage);
 				}break; 
-				case "reduce_lifedrain":	// reduces lifedrain by param1 %
+				case "reduce_life_drain":	// reduces lifedrain by param1 %
 				{
 					float percentage = def.GetAsFloat("param1");
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
 					healthBehaviour.AddDrainReduceModifier( percentage );
 				}break;
-				case "sc+":	// Increase SC given for all preys by param1 %
+				case "more_coin":	// Increase SC given for all preys by param1 %
 				{
 					
 					Entity.AddSCMultiplier( def.GetAsFloat("param1", 0));
 					m_warnEntities = true;
 				}break;
-				case "score+":	// Increases score given for all preys by param1 %
+				case "score_increase":	// Increases score given for all preys by param1 %
 				{
 					// Increase score given by any prey by [param1]
 					Entity.AddScoreMultiplier( def.GetAsFloat("param1", 0));
 					m_warnEntities = true;
 				}break;
-				case "fire_size":	// Increases fire size by param1 %
+				case "fury_size_increase":	// Increases fire size by param1 %
 				{
 					FireBreathNew fireBreath = GetComponent<FireBreathNew>();
 					float percentage = def.GetAsFloat("param1", 0);
@@ -206,7 +206,7 @@ public class DragonPowerUp : MonoBehaviour {
 						fireBreath.AddPowerUpLengthMultiplier( percentage );
 					}
 				}break;
-				case "speed+":	// Increases max speed by param1 %
+				case "speed_increase":	// Increases max speed by param1 %
 				{
 					DragonMotion motion = GetComponent<DragonMotion>();
 					if ( motion != null )

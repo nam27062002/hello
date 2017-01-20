@@ -83,6 +83,7 @@ MonoBehaviour:
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
+    m_burningTime: 0
     m_dissolveTime: 1.5
     m_ashExceptions: []
 --- !u!114 &11442140
@@ -118,6 +119,7 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
@@ -497,7 +499,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"damage":30,"radius":0,"cameraShakeDuration":0.75,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"isMine":true,"damage":30,"radius":0,"cameraShakeDuration":0.75,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
   m_databaseKey: PF_MineSmall_01
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 5
@@ -555,7 +557,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1618508225356218}
   serializedVersion: 5
   lengthInSec: 5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -3120,7 +3122,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1260321048644698}
   serializedVersion: 5
   lengthInSec: 5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -5691,7 +5693,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1662383691391786}
   serializedVersion: 5
   lengthInSec: 5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -8262,7 +8264,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1161905632674724}
   serializedVersion: 5
   lengthInSec: 5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -10833,7 +10835,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1647907389012150}
   serializedVersion: 5
   lengthInSec: 5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -13398,7 +13400,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1787145270712358}
   serializedVersion: 5
   lengthInSec: 5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
