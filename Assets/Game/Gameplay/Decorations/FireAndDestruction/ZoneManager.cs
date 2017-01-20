@@ -25,28 +25,27 @@ public class ZoneManager : MonoBehaviour {
 	public Color zone1Color { get { return m_zone1Color; } }
 	public Color zone2Color { get { return m_zone2Color; } }
 
-	private DragonTier m_dragonTier = DragonTier.COUNT;
-
 
 	//----------------------------------------------------------------------------------------------------------------------------------------------------------//
-
-	void Start() {
-		//load definitions 
-		m_dragonTier = InstanceManager.player.data.tier;
+	void Awake()
+	{
+		InstanceManager.zoneManager = this;	
 	}
 
-	public ZoneEffect GetFireEffectCode(Decoration _deco) {
+	void OnDestroy()
+	{
+		if ( ApplicationManager.IsAlive )
+			InstanceManager.zoneManager = null;		
+	}
+
+	public ZoneEffect GetFireEffectCode(Decoration _deco, DragonTier _tier) {
 		if (_deco.isBurnable) {
 			Zone zone = GetZone(_deco.transform.position.z);
 
 			if (zone != Zone.None) {
-				if (m_dragonTier == DragonTier.COUNT) {
-					m_dragonTier = InstanceManager.player.data.tier;
-				}
-
-				if (m_dragonTier >= _deco.minTierBurn) {
+				if (_tier >= _deco.minTierBurn) {
 					return ZoneEffect.M; // should burn?
-				} else if (m_dragonTier >= _deco.minTierBurnFeedback) {
+				} else if (_tier >= _deco.minTierBurnFeedback) {
 					return ZoneEffect.S; // should give feedback?
 				}
 			}
@@ -55,17 +54,14 @@ public class ZoneManager : MonoBehaviour {
 		return ZoneEffect.None;
 	}
 
-	public ZoneEffect GetDestructionEffectCode(Decoration _deco) {		
+	public ZoneEffect GetDestructionEffectCode(Decoration _deco, DragonTier _tier) {		
 		Zone zone = GetZone(_deco.transform.position.z);
 
 		if (zone != Zone.None) {
-			if (m_dragonTier == DragonTier.COUNT) {
-				m_dragonTier = InstanceManager.player.data.tier;
-			}
 
-			if (m_dragonTier >= _deco.minTierDestruction) {
+			if (_tier >= _deco.minTierDestruction) {
 				return ZoneEffect.M; // should be destroyed
-			} else if (m_dragonTier >= _deco.minTierDestructionFeedback) {
+			} else if (_tier >= _deco.minTierDestructionFeedback) {
 				return ZoneEffect.S; // should give feedback?
 			}
 		}

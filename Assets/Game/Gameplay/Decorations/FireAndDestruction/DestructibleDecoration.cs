@@ -78,7 +78,7 @@ public class DestructibleDecoration : Initializable {
 		m_zoneManager = GameObjectExt.FindComponent<ZoneManager>(true);
 		if (m_zoneManager != null) {
 			m_zone = m_zoneManager.GetZone(transform.position.z);
-			m_effect = m_zoneManager.GetDestructionEffectCode(m_entity);
+			m_effect = m_zoneManager.GetDestructionEffectCode(m_entity, InstanceManager.player.data.tier);
 		} else {
 			m_zone = ZoneManager.Zone.None;
 			m_effect = ZoneManager.ZoneEffect.None;
