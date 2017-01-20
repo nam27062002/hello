@@ -194,7 +194,7 @@ public class Entity : IEntity {
 	}
 
 	public bool IsEdible(DragonTier _tier) {
-		return allowEdible && m_isEdible && (m_edibleFromTier <= _tier);
+		return IsEdible() && (m_edibleFromTier <= _tier);
 	}
 
 	public bool CanBeHolded(DragonTier _tier) {

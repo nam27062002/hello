@@ -7,7 +7,7 @@ namespace AI {
 		Vector3 eye			{ get; }
 		Vector3 target		{ get; }
 		Vector3 upVector	{ get; set; }
-		Transform enemy 	{ get; } 
+		Transform enemy 	{ get; set; } 
 
 		// Monobehaviour methods
 		T GetComponent<T>();

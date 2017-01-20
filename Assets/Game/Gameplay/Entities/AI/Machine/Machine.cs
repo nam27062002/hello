@@ -73,6 +73,11 @@ namespace AI {
 					return null;
 				}
 			}
+			set
+			{
+				if (m_sensor != null)
+					m_sensor.enemy = value;
+			}
 		}
 
 		bool m_isHolded = false;	// if machine being holded
@@ -155,7 +160,14 @@ namespace AI {
 				m_signals.Init();
 
 			if (m_enableMotion) m_motion.Init();
-			if (m_enableSensor) m_sensor.Init();
+			if (m_enableSensor) 
+			{
+				m_sensor.Init();
+				if (InstanceManager.player != null)
+				{
+					m_sensor.SetupEnemy( InstanceManager.player.transform, InstanceManager.player.dragonEatBehaviour.eatDistanceSqr);
+				}
+			}
 			m_edible.Init();
 			m_inflammable.Init();
 
