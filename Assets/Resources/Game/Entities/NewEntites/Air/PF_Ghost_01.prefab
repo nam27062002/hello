@@ -594,6 +594,7 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
@@ -659,6 +660,7 @@ MonoBehaviour:
     max: 1.25
   m_serializedJson: '[{"speed":0.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"damage":8,"duration":4,"dataType":"AI.Behaviour.CurseData","editorFolded":false}]'
   m_databaseKey: PF_Ghost_01
+  m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 5
   m_avoidCollisions: 0
   m_avoidWater: 0
@@ -689,9 +691,11 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 1
+    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 120
     m_faceDirection: 0
+    m_useDragonStyleRotation: 0
     m_rollRotation: 0
     m_limitHorizontalRotation: 1
     m_faceLeftAngle: -45
@@ -720,6 +724,7 @@ MonoBehaviour:
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
+    m_burningTime: 0
     m_dissolveTime: 1.5
     m_ashExceptions:
     - {fileID: 2378524}

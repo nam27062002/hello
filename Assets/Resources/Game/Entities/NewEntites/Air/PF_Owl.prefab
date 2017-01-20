@@ -425,6 +425,7 @@ MonoBehaviour:
     max: 1.35
   m_serializedJson: '[{"speed":9,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":10.5,"panicSpeed":12,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
   m_databaseKey: PF_Owl
+  m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 1
   m_avoidWater: 1
@@ -449,6 +450,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
   m_onEatenParticles:
   - name: PF_feathers_3D
@@ -460,6 +462,7 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
@@ -518,9 +521,11 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 3
+    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 120
     m_faceDirection: 1
+    m_useDragonStyleRotation: 0
     m_rollRotation: 1
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
@@ -549,6 +554,7 @@ MonoBehaviour:
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
+    m_burningTime: 0
     m_dissolveTime: 1.5
     m_ashExceptions: []
 --- !u!137 &13777030
