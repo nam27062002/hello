@@ -66,7 +66,7 @@ bool _IsPIPVideoPlaying()
     bool pipIsPlaying = false;
     
     //  Not supported on iOS8 and lower
-    if (_IsOperatingSystemOfVersion(9, true))
+    /*if (_IsOperatingSystemOfVersion(9, true))
     {
         bool pipSupported = [AVPictureInPictureController isPictureInPictureSupported];
         NSLog(@"PIP playback support: %d", pipSupported);
@@ -78,7 +78,7 @@ bool _IsPIPVideoPlaying()
             //  Some more work is needed in order to check if actually a PIP, if possible at all.
             pipIsPlaying = _IsAudioPlayingFromOtherApps() && !_IsIPodMusicPlaying();
         }
-    }
+    }*/
     
     return pipIsPlaying;
 }
