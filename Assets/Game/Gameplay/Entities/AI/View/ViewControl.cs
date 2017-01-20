@@ -335,16 +335,19 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     }
 
     void OnDisable() {
-        if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
-			m_idleAudioAO.Stop();
+    	if ( ApplicationManager.IsAlive )
+    	{
+	        if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
+				m_idleAudioAO.Stop();
 
-			// Return parented audio objects if needed
-		RemoveAudioParent( m_idleAudioAO );
-		RemoveAudioParent( m_onAttackAudioAO );
+				// Return parented audio objects if needed
+			RemoveAudioParent( m_idleAudioAO );
+			RemoveAudioParent( m_onAttackAudioAO );
 
-		RemoveAudioParent( m_onEatenAudioAO );
-		RemoveAudioParent( m_onScaredAudioAO );
-		RemoveAudioParent( m_onPanicAudioAO );
+			RemoveAudioParent( m_onEatenAudioAO );
+			RemoveAudioParent( m_onScaredAudioAO );
+			RemoveAudioParent( m_onPanicAudioAO );
+		}
 	}
 
 	void RemoveAudioParent(AudioObject ao)

@@ -44,10 +44,11 @@ public class DragonData {
 
 	[SerializeField] private DefinitionNode m_tierDef = null;
 	public DefinitionNode tierDef { get { return m_tierDef; }}
+	private DragonTier m_tier;	// Cached value
+	public DragonTier tier { get { return  m_tier; }}
 
 	// Progression
 	[SerializeField] private bool m_owned = false;
-	public DragonTier tier { get { return (DragonTier)m_tierDef.GetAsInt("order"); }}
 	public LockState lockState { get { return GetLockState(); }}
 	public bool isLocked { get { return lockState == LockState.LOCKED; }}
 	public bool isOwned { get { return m_owned; }}
@@ -89,7 +90,7 @@ public class DragonData {
 		// Store definition
 		m_def = _def;
 		m_tierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, _def.GetAsString("tier"));
-
+		m_tier = (DragonTier)m_tierDef.GetAsInt("order");
 		// Progression
 		m_progression = new DragonProgression(this);
 

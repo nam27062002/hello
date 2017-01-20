@@ -69,14 +69,17 @@ namespace AI
 
 		public void OnDestroy()
 		{
-			if(m_current != null)
+			if ( ApplicationManager.IsAlive )
 			{
-				m_current.Exit(null);
-				m_current = null;
-			}
-			for(int i = 0; i < m_states.Length; i++)
-			{
-				m_states[i].Remove();
+				if(m_current != null)
+				{
+					m_current.Exit(null);
+					m_current = null;
+				}
+				for(int i = 0; i < m_states.Length; i++)
+				{
+					m_states[i].Remove();
+				}
 			}
 		}
 

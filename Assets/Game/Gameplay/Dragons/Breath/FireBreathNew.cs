@@ -186,7 +186,8 @@ public class FireBreathNew : DragonBreathBehaviour {
 
     }
 
-    override protected void Breath(){
+    override protected void Breath()
+    {
         m_direction = -m_mouthTransform.right;
 		m_direction.Normalize();
 		m_directionP.Set(m_direction.y, -m_direction.x);
@@ -300,6 +301,8 @@ public class FireBreathNew : DragonBreathBehaviour {
 				}
 			}
 		}
+
+		base.Breath();
 	}
 
 	void OnDrawGizmos() {

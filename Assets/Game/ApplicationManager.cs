@@ -24,13 +24,18 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     /// </summary>
     private const int SocialNetworkReauthTime = 120;    
 
-    private bool IsAlive { get; set; }
+    private static bool m_isAlive = true;
+    public static bool IsAlive { 
+    	get{ return m_isAlive; }
+    }
 
     /// <summary>
 	/// Initialization. This method will be called only once regardless the amount of times the user is led to the Loading scene.
 	/// </summary>
 	protected void Awake()
     {                
+		m_isAlive = true;
+
 #if !PRODUCTION
         DebugSettings.Init();
 #endif
@@ -68,8 +73,15 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        IsAlive = false;
+        m_isAlive = false;
     }
+
+	protected void OnApplicationQuit()
+    {
+        m_isAlive = false;
+        Messenger.Broadcast(GameEvents.APPLICATION_QUIT);
+    }
+
 
     private void Reset()
     {
@@ -299,7 +311,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     
     private IEnumerator Device_Update()
     {
-        IsAlive = true;
         Device_Resolution = new Vector2(Screen.width, Screen.height);
         Device_Orientation = Input.deviceOrientation;
 

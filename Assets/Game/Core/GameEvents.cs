@@ -113,6 +113,8 @@ public enum GameEvents {
 	// power up events
 	APPLY_ENTITY_POWERUPS,		// no params
 
+	APPLICATION_QUIT,
+
     // Device events
     DEVICE_RESOLUTION_CHANGED,  // params: Vector2 _newResolution
     DEVICE_ORIENTATION_CHANGED  // params: DeviceOrientation _newOrientation
