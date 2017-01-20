@@ -35,7 +35,7 @@ namespace FGOL.Plugins.Native
 		[DllImport("__Internal")] private static extern string _GetLanguage();
 		[DllImport("__Internal")] private static extern string _GetConnectionType();
 
-		[DllImport("__Internal")] private static extern bool _IsAudioPlayingFromOtherApps();s		
+		[DllImport("__Internal")] private static extern bool _IsAudioPlayingFromOtherApps();		
 		[DllImport("__Internal")] private static extern void _SetAudioExclusive(bool audioExclusive);
 
 		[DllImport("__Internal")] private static extern string _HashedValueForAccountName(string userAccountName);
