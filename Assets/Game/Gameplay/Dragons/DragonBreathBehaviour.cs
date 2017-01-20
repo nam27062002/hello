@@ -37,7 +37,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	}
 	private float m_furyBase = 1f;
 	public float furyBase {get{return m_furyBase;}}
-	// private float m_furyModifier = 0;
 
 	protected float m_furyBaseDuration = 1f;	// Sandard fury Base Duration
 	protected float m_furyDurationBonus = 0;	// Power ups multiplier
@@ -90,6 +89,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
     public string m_superBreathSound;
     private AudioObject m_superBreathSoundAO;
 
+	private float m_checkNodeFireTime = 0.25f;
+	private float m_fireNodeTimer = 0;
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -125,8 +127,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			m_currentFury = m_furyMax * 0.5f;
 		}
 
-		// m_furyModifier = 0;
-
 		// Get the level
 		AddDurationBonus(0);
 		m_fireRushMultiplier = m_dragon.data.def.GetAsFloat("furyScoreMultiplier", 2);
@@ -146,24 +146,12 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() 
 	{
-		// SetFuryModifier( m_furyModifier );
 	}
 
 	public void SetFuryMax( float max )
 	{
 		m_furyMax = max;
 	}
-	/*
-	public void SetFuryModifier( float value)
-	{
-		if (m_dragon != null)
-		{
-			m_furyBase = m_dragon.data.def.GetAsFloat("furyMax");
-			m_furyModifier = value;
-			m_furyMax = m_furyBase + ( m_furyModifier / 100.0f * m_furyBase );
-		}
-	}
-	*/
 
 	public void SetDurationBonus( float furyBonus )
 	{
@@ -327,7 +315,14 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		Messenger.Broadcast<bool, Type>(GameEvents.FURY_RUSH_TOGGLED, true, m_type);
 	}
-	virtual protected void Breath() {}
+	virtual protected void Breath() 
+	{
+		m_fireNodeTimer -= Time.deltaTime;
+		if (m_fireNodeTimer <= 0) {
+			m_fireNodeTimer += m_checkNodeFireTime;
+			FirePropagationManager.instance.FireUpNodes( bounds2D, Overlaps, direction);
+		}
+	}
 	virtual protected void EndFury() 
 	{
 		switch( m_type )
@@ -356,6 +351,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			}break;
 
 		}
+
 		RewardManager.currentFireRushMultiplier = 1;
 		m_isFuryOn = false;
 		m_currentFury = Mathf.Clamp(m_furyRushesCompleted * m_scoreToAddForNextFuryRushes, 0, m_maxScoreToAddForNextFuryRushes);
