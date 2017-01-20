@@ -20,8 +20,7 @@ namespace FGOL.Plugins.Native
 		string[] GetCertificateSignatureSHA(); //used by Android
 
 		//	Audio & multitasking
-		bool IsAudioPlayingFromOtherApps();
-		bool IsPictureInPictureVideoPlaying();
+		bool IsAudioPlayingFromOtherApps();		
 		void RequestExclusiveAudio(bool exclusiveAudio);
 
 		// General info

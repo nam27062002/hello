@@ -5,13 +5,13 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 465822}
-  - 114: {fileID: 11480652}
-  - 114: {fileID: 11422820}
-  - 114: {fileID: 114000013829439274}
-  - 114: {fileID: 114000011446190228}
+  - component: {fileID: 465822}
+  - component: {fileID: 11480652}
+  - component: {fileID: 11422820}
+  - component: {fileID: 114000013829439274}
+  - component: {fileID: 114000011446190228}
   m_Layer: 0
   m_Name: SP_owl_01Flock_0
   m_TagString: Untagged
@@ -26,12 +26,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 184836}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -248, y: 15.5, z: 0}
+  m_LocalPosition: {x: 0, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &11422820
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -101,7 +101,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 137012, guid: e1854f3ca6c224e1b9146db02b669faa, type: 2}
   m_entityPrefabStr: Air/PF_Owl
   m_quantity:
     min: 1
@@ -113,10 +112,13 @@ MonoBehaviour:
   m_flockBonus: 0
   m_minTier: 0
   m_activationChance: 100
-  m_alwaysActive: 0
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
-    min: 0
-    max: 0
+    min: 120
+    max: 150
+  m_homePosMethod: 0
+  m_homePosDistance:
+    min: 1
+    max: 2
   m_maxSpawns: 0

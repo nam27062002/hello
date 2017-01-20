@@ -136,12 +136,7 @@ namespace FGOL.Plugins.Native
 		public bool IsAudioPlayingFromOtherApps()
 		{
 			return false;
-		}
-		
-		public bool IsPictureInPictureVideoPlaying()
-		{		
-			return false;
-		}
+		}				
 		
 		public void RequestExclusiveAudio(bool exclusiveAudio)
 		{

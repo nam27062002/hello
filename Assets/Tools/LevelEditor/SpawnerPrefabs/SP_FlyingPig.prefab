@@ -5,12 +5,12 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 447832}
-  - 114: {fileID: 11451506}
-  - 114: {fileID: 11448584}
-  - 114: {fileID: 114000011743134776}
+  - component: {fileID: 447832}
+  - component: {fileID: 11451506}
+  - component: {fileID: 11448584}
+  - component: {fileID: 114000011743134776}
   m_Layer: 0
   m_Name: SP_FlyingPig
   m_TagString: Untagged
@@ -25,12 +25,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 177470}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -75.6, y: -32.5, z: 0}
+  m_LocalPosition: {x: 0, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &11448584
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -42,7 +42,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 107828, guid: 13034bc07554643d4aa95b0cce5cb2e9, type: 2}
   m_entityPrefabStr: Air/PF_FlyingPig
   m_quantity:
     min: 1
@@ -57,8 +56,8 @@ MonoBehaviour:
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
-    min: 0
-    max: 0
+    min: 5000
+    max: 5000
   m_homePosMethod: 0
   m_homePosDistance:
     min: 1
@@ -103,5 +102,11 @@ MonoBehaviour:
   m_circular: 1
   m_smoothRadius: 0.5
   m_points:
-  - {x: -1, y: 0, z: 0}
-  - {x: 1, y: 0, z: 0}
+  - {x: -10.293327, y: -5.0572996, z: 0}
+  - {x: -13.629526, y: 1.5020609, z: 0}
+  - {x: -10.309113, y: 7.715626, z: 0}
+  - {x: -0.112006664, y: 10.779182, z: 0}
+  - {x: 10.257996, y: 7.7912693, z: 0}
+  - {x: 12.890764, y: 1.6911697, z: 0}
+  - {x: 10.250103, y: -4.4953785, z: 0}
+  - {x: -0.02161336, y: -7.715625, z: 0}
