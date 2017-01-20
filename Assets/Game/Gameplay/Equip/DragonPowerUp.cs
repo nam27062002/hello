@@ -102,19 +102,11 @@ public class DragonPowerUp : MonoBehaviour {
 				{
 					player.AddHealthBonus( def.GetAsFloat("param1"));
 				}break;
-				case "boost_increase":
+				case "boost_increase":	// increases boost bar
 				{
 					player.AddBoostBonus( def.GetAsFloat("param1"));
 				}break;
-				case "fury_increase":
-				{
-					/*
-					DragonBreathBehaviour breath = player.GetComponent<DragonBreathBehaviour>();
-					if ( breath != null )
-						breath.SetFuryModifier( def.GetAsFloat("param1") );
-						*/
-				}break;
-				case "fury_duration":
+				case "fury_duration":	// Adds fury duration
 				{
 					DragonBreathBehaviour breath = player.GetComponent<DragonBreathBehaviour>();
 					if ( breath != null )
@@ -125,7 +117,7 @@ public class DragonPowerUp : MonoBehaviour {
 					DragonMotion motion = GetComponent<DragonMotion>();
 					motion.canDive = true;
 				}break;
-				case "avoid":
+				case "avoid":	// avoids numHits
 				{
 					// Check sub type with param one
 					string subtype = def.Get("param1");
@@ -142,7 +134,7 @@ public class DragonPowerUp : MonoBehaviour {
 						}break;
 					}
 				}break;
-				case "lower_damage":
+				case "lower_damage":	// redices damage from sources
 				{
 					// Check sub type with param one
 					string subtype = def.Get("param1");
@@ -164,7 +156,7 @@ public class DragonPowerUp : MonoBehaviour {
 						}break;
 					}
 				}break;
-				case "lives":
+				case "lives":		// adds lives to the player
 				{
 					int numExtraLives = def.GetAsInt("param1");
 					player.AddFreeRevives( numExtraLives );
@@ -181,31 +173,31 @@ public class DragonPowerUp : MonoBehaviour {
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
 					healthBehaviour.AddEatingHpBoost( from, percentage);
 				}break;
-				case "food+":
+				case "food+":	// adds % bonus hp from any source
 				{
 					float percentage = def.GetAsFloat("param1");
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
 					healthBehaviour.AddEatingHpBoost(percentage);
 				}break; 
-				case "reduce_lifedrain":
+				case "reduce_lifedrain":	// reduces lifedrain by param1 %
 				{
 					float percentage = def.GetAsFloat("param1");
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
 					healthBehaviour.AddDrainReduceModifier( percentage );
 				}break;
-				case "sc+":
+				case "sc+":	// Increase SC given for all preys by param1 %
 				{
-					// Increase SC given for all preys by [param1]
+					
 					Entity.AddSCMultiplier( def.GetAsFloat("param1", 0));
 					m_warnEntities = true;
 				}break;
-				case "score+":
+				case "score+":	// Increases score given for all preys by param1 %
 				{
 					// Increase score given by any prey by [param1]
 					Entity.AddScoreMultiplier( def.GetAsFloat("param1", 0));
 					m_warnEntities = true;
 				}break;
-				case "fire_size":
+				case "fire_size":	// Increases fire size by param1 %
 				{
 					FireBreathNew fireBreath = GetComponent<FireBreathNew>();
 					float percentage = def.GetAsFloat("param1", 0);
@@ -214,7 +206,7 @@ public class DragonPowerUp : MonoBehaviour {
 						fireBreath.AddPowerUpLengthMultiplier( percentage );
 					}
 				}break;
-				case "speed+":
+				case "speed+":	// Increases max speed by param1 %
 				{
 					DragonMotion motion = GetComponent<DragonMotion>();
 					if ( motion != null )
