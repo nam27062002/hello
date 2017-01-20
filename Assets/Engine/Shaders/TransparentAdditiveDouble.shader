@@ -27,7 +27,10 @@
 			Pass{
 				SetTexture[_MainTex] {
 					constantColor[_Color]
-					combine constant * texture, constant * texture double
+					combine constant * texture, constant * texture quad
+				}
+				SetTexture[_MainTex] {
+					combine primary * previous
 				}
 			}
 		}
