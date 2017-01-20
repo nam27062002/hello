@@ -40,7 +40,7 @@ public class CPStats : MonoBehaviour {
 		// Just initialize text
 		m_DeviceModel.text = "Model: " + SystemInfo.deviceModel;
 #if UNITY_IOS
-        m_DeviceModel.text =+ " Generation: " + UnityEngine.iOS.Device.generation;
+        m_DeviceModel.text += " Generation: " + UnityEngine.iOS.Device.generation;
 #endif
         m_FpsLabel.text = "FPS: ";
 		m_ScreenSize.text = "Screen Size: " + Screen.width + "x"+ Screen.height;
