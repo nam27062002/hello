@@ -5,15 +5,14 @@ using System;
 
 namespace AI {
 	namespace Behaviour {	
+		public enum CheckType
+		{
+			Edible,
+			Burnable
+		};
 
 		[System.Serializable]
 		public class PetSearchShootTargetData : StateComponentData {
-			public enum CheckType
-			{
-				Edible,
-				Burnable
-			};
-
 			public DragonTier shootingTier;
 			public CheckType checkType;
 		}
@@ -95,11 +94,11 @@ namespace AI {
 							bool isViable = false;
 							switch( m_data.checkType )
 							{
-								case PetSearchShootTargetData.CheckType.Edible:
+								case CheckType.Edible:
 								{
 									isViable = entity.IsEdible( m_data.shootingTier );
 								}break;
-								case PetSearchShootTargetData.CheckType.Burnable:
+								case CheckType.Burnable:
 								{
 									isViable = entity.IsBurnable( m_data.shootingTier );
 								}break;
