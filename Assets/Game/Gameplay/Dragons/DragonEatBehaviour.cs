@@ -123,6 +123,7 @@ public class DragonEatBehaviour : EatBehaviour {
 	{
 		m_dragon.AddLife( m_dragonHealth.GetBoostedHp( reward.origin, reward.health) );
 		m_dragon.AddEnergy(reward.energy);
+		m_dragon.AddAlcohol( reward.alcohol );
 	}
 
 

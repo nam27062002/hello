@@ -37,6 +37,12 @@ public class DragonPlayer : MonoBehaviour {
 	private float m_energy;
 	public float energy { get { return m_energy; } }
 
+	private float m_alcohol = 0;
+	public float alcohol { get { return m_alcohol; } }
+	private float m_alcoholMax = 1;
+	public float alcoholMax {get{return m_alcoholMax;}}
+	public float m_alcoholDrain = 1;
+
 	// Cache content data
 	private float m_healthMax = 1f;
 	public float healthMax {get{return m_healthMax;}}
@@ -146,6 +152,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_healthMax = m_data.maxHealth;
 		m_energyMax = m_data.def.GetAsFloat("energyBase");
 
+
 		// Init health modifiers
 		List<DefinitionNode> healthModifierDefs = new List<DefinitionNode>();
 		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGON_HEALTH_MODIFIERS, ref healthModifierDefs);
@@ -222,6 +229,13 @@ public class DragonPlayer : MonoBehaviour {
 			if (m_invulnerableAfterReviveTimer <= 0) {
 				m_invulnerableAfterReviveTimer = 0;
 			}
+		}
+
+		if ( m_alcohol > 0 )
+		{
+			m_alcohol -= Time.deltaTime * m_alcoholDrain;
+			if ( m_alcohol < 0 )
+				m_alcohol = 0;
 		}
 	}
 
@@ -324,9 +338,20 @@ public class DragonPlayer : MonoBehaviour {
 	public void AddEnergy(float _offset) {
 		m_energy = Mathf.Min(m_energyMax, Mathf.Max(0, m_energy + _offset));
 	}
-		
 
-	
+	public void AddAlcohol( float _offset ){
+		bool drunk = IsDrunk();
+		m_alcohol += _offset;
+		if ( drunk != IsDrunk() ) 
+		{
+			Messenger.Broadcast<bool>(GameEvents.DRUNK_TOGGLED, IsDrunk());
+		}
+	}
+
+	public bool IsDrunk()
+	{
+		return m_alcohol > m_alcoholMax;
+	}
 
 	/// <summary>
 	/// Determines whether this instance is fury on.
