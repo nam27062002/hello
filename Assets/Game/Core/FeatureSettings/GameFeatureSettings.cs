@@ -7,6 +7,7 @@ public class GameFeatureSettings : FeatureSettings
     public static Dictionary<string, Data> Datas { get; set; }
 
     public const string KEY_QUALITY_LEVEL = "qualityLevel";
+    public const string KEY_SHADERS_LEVEL = "shadersLevel";
     public const string KEY_GLOW = "glow";
     public const string KEY_ENTITIES_LOD = "entitiesLOD";
     public const string KEY_LEVELS_LOD = "levelsLOD";
@@ -17,12 +18,18 @@ public class GameFeatureSettings : FeatureSettings
         {
             Datas = new Dictionary<string, Data>();
 
-            // QualityLevel: Unity quality level
+            // qualityLevel: Unity quality settings level
             string key = KEY_QUALITY_LEVEL;
             Data data = new DataQualityLevel(key, EQualityLevelValues.very_low);
             Datas.Add(key, data);
 
-            // Glow: default value is false because glow has caused crashed in several devices so false is a safer value for a device until it's proved that the feature works properly
+            // shadersLevel: Configuration for shaders
+            key = KEY_SHADERS_LEVEL;
+            data = new DataLevel3(key, ELevel3Values.low);
+            Datas.Add(key, data);
+
+
+            // glow: default value is false because glow has caused crashed in several devices so false is a safer value for a device until it's proved that the feature works properly
             key = KEY_GLOW;
             data = new DataBool(key, false);
             Datas.Add(key, data);
