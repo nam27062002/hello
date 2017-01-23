@@ -314,24 +314,28 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
     // List of shader variant collections to warm up. They have to be sorted in ascendent order (the lowest quality one first)
     public ShaderVariantCollection[] m_shadersVariantCollections;
 
+    private const string SHADERS_KEY_HIGH = "HI_DETAIL_ON";
+    private const string SHADERS_KEY_MID = "MEDIUM_DETAIL_ON";
+    private const string SHADERS_KEY_LOW = "LOW_DETAIL_ON";
+
     private void Shaders_ApplyQuality(GameFeatureSettings.ELevel3Values quality)
     {
-        Shader.DisableKeyword("HI_DETAIL_ON");
-        Shader.DisableKeyword("MEDIUM_DETAIL_ON");
-        Shader.DisableKeyword("LOW_DETAIL_ON");
+        Shader.DisableKeyword(SHADERS_KEY_HIGH);
+        Shader.DisableKeyword(SHADERS_KEY_MID);
+        Shader.DisableKeyword(SHADERS_KEY_LOW);
 
         switch (quality)
         {
             case GameFeatureSettings.ELevel3Values.high:
-                Shader.EnableKeyword("HI_DETAIL_ON");
+                Shader.EnableKeyword(SHADERS_KEY_HIGH);
                 break;
 
             case GameFeatureSettings.ELevel3Values.mid:
-                Shader.EnableKeyword("MEDIUM_DETAIL_ON");
+                Shader.EnableKeyword(SHADERS_KEY_MID);
                 break;
 
             default:
-                Shader.EnableKeyword("LOW_DETAIL_ON");
+                Shader.EnableKeyword(SHADERS_KEY_LOW);
                 break;
         }
 
