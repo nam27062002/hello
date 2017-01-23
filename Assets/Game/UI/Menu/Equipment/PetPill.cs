@@ -151,7 +151,7 @@ public class PetPill : MonoBehaviour {
 		// If locked, show some feedback
 		if(locked) {
 			// No available slots, show feedback
-			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("Unlock by opening eggs!"), new Vector2(0.5f, 0.35f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// [AOC] HARDCODED!!
+			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO"), new Vector2(0.5f, 0.35f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 
 			// Small animation on the lock icon
 			m_lockIcon.transform.DOKill(true);
@@ -171,7 +171,7 @@ public class PetPill : MonoBehaviour {
 			int newSlot = UsersManager.currentUser.EquipPet(m_dragonData.def.sku, m_def.sku);
 			if(newSlot == -4) {
 				// No available slots, show feedback
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("There are no available slots!\nPlease unequip another pet before equipping this one!"), new Vector2(0.5f, 0.35f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// [AOC] HARDCODED!!
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_NO_SLOTS"), new Vector2(0.5f, 0.35f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// There are no available slots!\nUnequip another pet before equipping this one.
 			}
 		}
 	}
@@ -180,9 +180,15 @@ public class PetPill : MonoBehaviour {
 	/// Info button was pressed.
 	/// </summary>
 	public void OnInfoButton() {
+		// Ignore if pill is not initialized
+		if(m_def == null) return;
+
 		// Open info popup for this pet
-		// [AOC] TODO!! Coming Soon message for now
-		UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"), new Vector2(0.5f, 0.35f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+		PopupController popup = PopupManager.OpenPopupInstant(PopupInfoPet.PATH);
+		PopupInfoPet petPopup = popup.GetComponent<PopupInfoPet>();
+		if(petPopup != null) {
+			petPopup.InitFromDef(m_def);
+		}
 	}
 
 	/// <summary>
