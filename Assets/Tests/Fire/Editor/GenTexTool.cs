@@ -96,6 +96,7 @@ public class Perlin : TextureGenBase
     public float m_Scale = 14.0f;
     public float m_Amplitude = 0.55f;
     public int m_Iterations = 8;
+    public float m_seed = 1.0f;
     //
 
     public Perlin()
@@ -164,6 +165,15 @@ public class Perlin : TextureGenBase
         m_Scale = EditorGUILayout.FloatField("Initial Scale:", m_Scale);
         m_Amplitude = EditorGUILayout.FloatField("Initial Amplitude:", m_Amplitude);
         m_Iterations = EditorGUILayout.IntField("Iterations:", m_Iterations);
+        m_seed = EditorGUILayout.FloatField("Seed:", m_seed);
+
+        if (GUI.changed)
+        {
+            m_vHashSeed = new Vector2(35.6898f * m_seed, 24.3563f * m_seed);
+            m_fHashSeed = 533.373453f * m_seed;
+
+            Debug.Log("Changed Texture tool Perlin random seed!");
+        }
 
         //        seed = EditorGUILayout.FloatField("seed:", seed);
         //        scale = EditorGUILayout.FloatField("scale:", scale);
