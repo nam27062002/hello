@@ -197,6 +197,8 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         {
             Device_CurrentFeatureSettings.OverrideFromJSON(deviceSettingsJSON);
         }
+
+        ApplyCurrentFeatureSetting();
     }    
 
     private GameFeatureSettings CreateFeatureSettings()
@@ -345,6 +347,21 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         //UnityEngine.Debug.Log( "DeviceQualitySettings - Final Value: " + finalDeviceRating );
 
         return finalDeviceRating;                
+    }    
+
+    public void ApplyCurrentFeatureSetting()
+    {
+        ApplyFeatureSetting(Device_CurrentFeatureSettings);      
+    }
+
+    private void ApplyFeatureSetting(GameFeatureSettings settings)
+    {        
+        GameFeatureSettings.EQualityLevelValues quality = settings.GetValueAsQualityLevel(GameFeatureSettings.KEY_QUALITY_LEVEL);
+        int qualityIndex = (int)quality;
+        QualitySettings.SetQualityLevel(qualityIndex);
+
+        //ApplyShaderQuality(deviceRating);
+        //ApplyPhysicQuality(deviceRating);
     }
 
     public virtual JSONNode FormatJSON(JSONNode json)

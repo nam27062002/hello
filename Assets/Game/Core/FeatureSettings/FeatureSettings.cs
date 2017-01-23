@@ -2,10 +2,10 @@
 public class FeatureSettings
 {
     public const string KEY_RATING = "rating";
-    public const string KEY_PROFILE = "profile";
+    public const string KEY_PROFILE = "profile";    
 
     public float Rating { get; set; }
-    public string Profile { get; set; }
+    public string Profile { get; set; }    
 
     public void Reset()
     {
@@ -41,7 +41,7 @@ public class FeatureSettings
             if (json.ContainsKey(key))
             {
                 Profile = json[key];
-            }
+            }           
 
             ExtendedOverrideFromJSON(json);
         }
