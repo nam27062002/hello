@@ -186,7 +186,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		DefinitionsManager.SharedInstance.SortByProperty(ref defList, "shopOrder", DefinitionsManager.SortType.NUMERIC);
 
 		// Load disguise icons for this dragon
-		Dictionary<string, Sprite> icons = ResourcesExt.LoadSpritesheet("UI/Metagame/Disguises/" + m_dragonData.def.sku);
+		Dictionary<string, Sprite> icons = ResourcesExt.LoadSpritesheet(UIConstants.DISGUISE_ICONS_PATH + m_dragonData.def.sku);
 
 		// Hide all the contextual info
 		if(m_powerAnim != null) m_powerAnim.ForceHide(false);
