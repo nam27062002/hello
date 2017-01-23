@@ -132,10 +132,10 @@ public class DragonEquip : MonoBehaviour {
 				Renderer r = renderers[i];
 				Material[] mats = r.materials;
 				for(int j = 0; j < mats.Length; j++) {
-					if(mats[j].shader.name.Contains("Wings")) {
+					if(mats[j].shader.name.Contains("Dragon/Wings")) {
 						mats[j] = m_wingsMaterial;
 					}
-					else if(mats[j].shader.name.Contains("Dragon")) {
+					else if(mats[j].shader.name.Contains("Dragon/Body")) {
 						mats[j] = m_bodyMaterial;
 					}
 				}
