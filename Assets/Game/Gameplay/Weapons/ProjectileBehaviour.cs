@@ -10,6 +10,8 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 	[SerializeField] private Range m_rotationRange = new Range(0f, 360f);
 	[SerializeField] private float m_knockback = 0;
 	[SerializeField] private DamageType m_damageType = DamageType.NORMAL;
+	[SerializeField] private bool m_damagesPlayer = true;
+	[SerializeField] private bool m_damagesEntities = false;
 
 	private float m_damage;
 	private bool m_hasBeenShot;
@@ -124,8 +126,23 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 	void OnTriggerEnter(Collider _other) {
 		if (m_hasBeenShot) {
 			if (_other.CompareTag("Player"))  {
-				Explode(true);
+				if (m_damagesPlayer)
+					Explode(true);
 			} else if ((((1 << _other.gameObject.layer) & LayerMask.GetMask("Ground", "GroundVisible")) > 0)) {
+				Explode(false);
+			} else if ((((1 << _other.gameObject.layer) & LayerMask.GetMask("WaterPreys", "GroundPreys", "AirPreys")) > 0)) {
+				KillEntity( _other.gameObject );
+			}
+		}
+	}
+
+	public void KillEntity( GameObject go )
+	{
+		AI.Machine m = go.GetComponent<AI.Machine>();
+		if ( m )
+		{
+			if (m.Burn(transform))
+			{
 				Explode(false);
 			}
 		}

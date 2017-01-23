@@ -280,6 +280,12 @@ public class Builder : MonoBehaviour
 		sw.Close();
 	}
 
+	private static void OutputAndroidBuildVersion(){
+		StreamWriter sw2 = File.CreateText("androidBuildVersion.txt");
+		sw2.WriteLine( PlayerSettings.Android.bundleVersionCode );
+		sw2.Close();
+	}
+
 	/// <summary>
 	/// Start a process.
 	/// </summary>
