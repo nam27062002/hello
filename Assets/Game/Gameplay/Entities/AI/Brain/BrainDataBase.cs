@@ -14,6 +14,10 @@ namespace AI {
 			m_dataBase = new Dictionary<string, Dictionary<string, AIPilot.StateComponentDataKVP>>();
 		}
 
+		protected override void OnApplicationQuit() {
+			
+		}
+
 		public bool HasDataFor(string _key) {
 			return m_dataBase.ContainsKey(_key) && m_dataBase[_key].Count > 0;
 		}
