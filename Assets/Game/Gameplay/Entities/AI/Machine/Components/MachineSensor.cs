@@ -17,7 +17,10 @@ namespace AI {
 		[SerializeField] private Range m_senseDelay = new Range(0.25f, 1.25f);
 
 		private Transform m_enemy; //enemy should be a Machine.. but dragon doesn't have this component
-		public Transform enemy { get { return m_enemy; } }
+		public Transform enemy { 
+			get { return m_enemy; } 
+			set { m_enemy = value; }
+		}
 
 		private float m_radiusOffsetFactor = 1f;
 		private float m_enemyRadiusSqr;
@@ -32,14 +35,20 @@ namespace AI {
 			m_senseTimer = 0f;
 			m_enemyRadiusSqr = 0f;
 
+			/*
 			if (InstanceManager.player != null) {
-				m_enemy = InstanceManager.player.transform;
-				m_enemyRadiusSqr = InstanceManager.player.dragonEatBehaviour.eatDistanceSqr;
+				SetupEnemy(InstanceManager.player.transform, InstanceManager.player.dragonEatBehaviour.eatDistanceSqr);
 			}
-
+			*/
 			m_radiusOffsetFactor = m_radiusOffset.GetRandom();
 
 			s_groundMask = LayerMask.GetMask("Ground", "GroundVisible");			
+		}
+
+		public void SetupEnemy( Transform _tr, float distanceSqr )
+		{
+			m_enemy = _tr;
+			m_enemyRadiusSqr = distanceSqr;
 		}
 
 		public void Disable(float _seconds) {

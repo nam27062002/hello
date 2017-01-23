@@ -227,7 +227,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	protected virtual void OnDisable()
     {
-        if (m_prey != null)
+        if (m_prey != null && ApplicationManager.IsAlive)
         {
             int count = m_prey.Length;
             for (int i = 0; i < count; i++)

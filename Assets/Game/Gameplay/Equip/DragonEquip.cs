@@ -40,9 +40,9 @@ public class DragonEquip : MonoBehaviour {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization
+	/// Start
 	/// </summary>
-	private void Awake() {
+	private void Start() {
 		// Get assigned dragon sku - from Player for in-game dragons, from DragonPreview for menu dragons
 		DragonPlayer player = GetComponent<DragonPlayer>();
 		if(player != null) {
@@ -66,13 +66,6 @@ public class DragonEquip : MonoBehaviour {
 		for(int i = 0; i < pets.Count; i++) {
 			EquipPet(pets[i], i);
 		}
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-		
 	}
 
 	/// <summary>

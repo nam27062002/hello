@@ -91,18 +91,21 @@ public class DisableInSeconds : MonoBehaviour {
 */
     void OnBecameInvisible()
     {
-        // we are disabling a particle system
-        for (int i = 0; i < m_particleSystems.Length; i++)
-        {
-            if (m_particleSystems[i].loop)
-            {
-                ParticleSystem.EmissionModule em = m_particleSystems[i].emission;
-                em.enabled = false;
-                m_particleSystems[i].Stop();
-            }
-        }
+    	if ( ApplicationManager.IsAlive )
+    	{
+	        // we are disabling a particle system
+	        for (int i = 0; i < m_particleSystems.Length; i++)
+	        {
+	            if (m_particleSystems[i].loop)
+	            {
+	                ParticleSystem.EmissionModule em = m_particleSystems[i].emission;
+	                em.enabled = false;
+	                m_particleSystems[i].Stop();
+	            }
+	        }
 
-        Disable();
+	        Disable();
+        }
     }
 
 
