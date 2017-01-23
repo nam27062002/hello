@@ -87,15 +87,15 @@ SubShader {
 //			fixed4 tex2 = tex2D (_DetailTex, i.uv2.yx);
 //			fixed4 one = fixed4(1,1,1,1);
 //			fixed4 col = one - (one - tex) * (one - tex2);
-			i.uv.x += i.camPos.x / 512.0 - 0.5;
-			float persp = (0.3 + i.uv.y * 1.5);
+			i.uv.x += i.camPos.x * _MainTex_ST.z - 0.5;
+			float persp = (0.1 + i.uv.y * 2.5);
 			float2 uv = i.uv.xy + float2((_Time.y * _Speed), 0.0) * float2(persp, 1.0);
 
 			//float intensity = tex2D(_MainTex, frac(uv2 * float2(1.0 / persp, 1.0))).x;
 			float intensity = tex2D(_MainTex, uv * float2(1.0 / persp, 1.0)).x;
 
 			float2 d = normalize(uv);
-			float2 uv2 = i.uv2.xy + d * intensity * _IOffset;
+			float2 uv2 = i.uv2.xy - d * intensity * _IOffset;
 
 //			float s = sin(i.uv.x * 5.0 * PI + _Time.y * _Speed * 5.0);
 //			float c = cos(i.uv.y * 5.0 * PI + _Time.y * _Speed * 7.0);
