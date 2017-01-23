@@ -5,6 +5,10 @@ using System;
 
 namespace AI {
 	namespace Behaviour {	
+		[System.Serializable]
+		public class PetSearchBurnTargetData : StateComponentData {
+			public float dragonSizeRangeMultipier = 10;
+		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Search Burn Target")]
 		public class PetSearchBurnTarget : StateComponent {
@@ -26,6 +30,17 @@ namespace AI {
 			DragonTier m_tier;
 
 
+			private PetSearchBurnTargetData m_data;
+
+			public override StateComponentData CreateData() {
+				return new PetSearchBurnTargetData();
+			}
+
+			public override System.Type GetDataType() {
+				return typeof(PetSearchBurnTargetData);
+			}
+
+
 			protected override void OnInitialise() {
 				m_timer = 0f;
 				m_shutdownSensorTime = 0f;
@@ -38,7 +53,8 @@ namespace AI {
 
 				m_owner = InstanceManager.player;
 				m_tier = InstanceManager.player.data.tier;
-				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * 10f;
+				m_data = m_pilot.GetComponentData<PetSearchBurnTargetData>();
+				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * m_data.dragonSizeRangeMultipier;
 
 			}
 

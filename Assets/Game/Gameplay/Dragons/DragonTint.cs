@@ -39,11 +39,12 @@ public class DragonTint : MonoBehaviour
 	float m_deathAlpha = 1;
 
 	// Use this for initialization
-	void Start () 
+	IEnumerator Start () 
 	{
 		m_breath = GetComponent<DragonBreathBehaviour>();
 		m_player = GetComponent<DragonPlayer>();
 		m_health = GetComponent<DragonHealthBehaviour>();
+		yield return null;
 		Transform t = transform.FindChild("view");
 		if ( t != null )
 		{
