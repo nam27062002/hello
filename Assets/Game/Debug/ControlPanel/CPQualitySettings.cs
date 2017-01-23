@@ -60,6 +60,7 @@ public class CPQualitySettings : MonoBehaviour
             PrefabOptions_Update();
             Messenger.Broadcast(GameEvents.CP_QUALITY_CHANGED);
             PrefabSettingsOption_IsDirty = false;
+            GameFeatureSettingsManager.instance.ApplyCurrentFeatureSetting();
         }
     }
 
