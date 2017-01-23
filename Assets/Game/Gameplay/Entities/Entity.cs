@@ -99,6 +99,7 @@ public class Entity : IEntity {
 		m_reward.energy = m_def.GetAsFloat("rewardEnergy");
 		// m_reward.fury = m_def.GetAsFloat("rewardFury");
 		m_reward.xp = m_def.GetAsFloat("rewardXp");
+		m_reward.alcohol = m_def.GetAsFloat("alcohol",0);
 		m_reward.origin = m_def.Get("sku");
 
 		// Simple data
@@ -171,6 +172,10 @@ public class Entity : IEntity {
 		// Give coins? True if the entity was golden or has been burnt
 		if(!m_isGolden && !_burnt) {
 			newReward.coins = 0;
+		}
+
+		if (_burnt){
+			newReward.alcohol = 0;
 		}
 
 		// Give PC?

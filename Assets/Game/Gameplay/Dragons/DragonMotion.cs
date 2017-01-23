@@ -903,6 +903,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private void UpdateMovement( float _deltaTime) 
 	{
 		Vector3 impulse = m_controls.GetImpulse(1);
+
+		if ( m_dragon.IsDrunk() )
+		{
+			impulse = -impulse;
+		}
+
         if (boostSpeedMultiplier > 1)
         {
             if (impulse == Vector3.zero)
@@ -1044,6 +1050,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private void UpdateWaterMovement( float _deltaTime )
 	{
 		Vector3 impulse = m_controls.GetImpulse(1);
+		if ( m_dragon.IsDrunk() )
+		{
+			impulse = -impulse;
+		}
+
         if (impulse.y < 0) impulse.y *= m_inverseGravityWater;
 
 		Vector3 gravityAcceleration = Vector3.up * 9.81f * m_dragonGravityModifier * m_waterGravityMultiplier;   // Gravity
