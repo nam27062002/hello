@@ -27,7 +27,7 @@ public class PetPill : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private UIScene3DLoader m_preview = null;
+	[SerializeField] private Image m_preview = null;
 	[SerializeField] private GameObject m_lockIcon = null;
 	[SerializeField] private Image m_powerIcon = null;
 
@@ -109,11 +109,9 @@ public class PetPill : MonoBehaviour {
 		// Store definition
 		m_def = _petDef;
 
-		// Load 3D preview
-		MenuPetLoader petLoader = m_preview.scene.FindComponentRecursive<MenuPetLoader>();
-		if(petLoader != null) {
-			petLoader.Load(m_def.sku);
-			//petLoader.petInstance.SetAnim(MenuPetPreview.Anim.IDLE);	// [AOC] TODO!! Pose the pet
+		// Load preview
+		if(m_preview != null) {
+			m_preview.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + m_def.Get("icon"));
 		}
 
 		// Power icon
@@ -153,7 +151,7 @@ public class PetPill : MonoBehaviour {
 		// If locked, show some feedback
 		if(locked) {
 			// No available slots, show feedback
-			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("Unlock by opening eggs!"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// [AOC] HARDCODED!!
+			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("Unlock by opening eggs!"), new Vector2(0.5f, 0.35f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// [AOC] HARDCODED!!
 
 			// Small animation on the lock icon
 			m_lockIcon.transform.DOKill(true);
@@ -173,7 +171,7 @@ public class PetPill : MonoBehaviour {
 			int newSlot = UsersManager.currentUser.EquipPet(m_dragonData.def.sku, m_def.sku);
 			if(newSlot == -4) {
 				// No available slots, show feedback
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("There are no available slots!\nPlease unequip another pet before equipping this one!"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// [AOC] HARDCODED!!
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("There are no available slots!\nPlease unequip another pet before equipping this one!"), new Vector2(0.5f, 0.35f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// [AOC] HARDCODED!!
 			}
 		}
 	}
@@ -184,7 +182,7 @@ public class PetPill : MonoBehaviour {
 	public void OnInfoButton() {
 		// Open info popup for this pet
 		// [AOC] TODO!! Coming Soon message for now
-		UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+		UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"), new Vector2(0.5f, 0.35f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 	}
 
 	/// <summary>

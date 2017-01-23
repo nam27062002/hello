@@ -197,6 +197,8 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         {
             Device_CurrentFeatureSettings.OverrideFromJSON(deviceSettingsJSON);
         }
+
+        ApplyCurrentFeatureSetting();
     }    
 
     private GameFeatureSettings CreateFeatureSettings()
@@ -345,6 +347,92 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         //UnityEngine.Debug.Log( "DeviceQualitySettings - Final Value: " + finalDeviceRating );
 
         return finalDeviceRating;                
+    }    
+
+    public void ApplyCurrentFeatureSetting()
+    {
+        ApplyFeatureSetting(Device_CurrentFeatureSettings);      
+    }
+
+    private void ApplyFeatureSetting(GameFeatureSettings settings)
+    {
+#if !UNITY_EDITOR
+        GameFeatureSettings.EQualityLevelValues quality = settings.GetValueAsQualityLevel(GameFeatureSettings.KEY_QUALITY_LEVEL);
+        int qualityIndex = (int)quality;
+        QualitySettings.SetQualityLevel(qualityIndex);
+        DeviceQualityManager.Log(">> qualityLevel:" + quality.ToString() + " index = " + qualityIndex);
+
+        ApplyShaderQuality(settings.GetValueAsLevel3(GameFeatureSettings.KEY_SHADERS_LEVEL));
+        ApplyPhysicQuality(settings.Rating);
+#endif
+
+        DeviceQualityManager.Log("Device Rating:" + settings.Rating);
+        DeviceQualityManager.Log("Profile:" + settings.Profile);
+        DeviceQualityManager.Log(GetSystemInfo());
+        DeviceQualityManager.Log(GetShadersInfo());
+        DeviceQualityManager.Log(">> Time.fixedDeltaTime:" + Time.fixedDeltaTime);
+    }
+
+    private static void ApplyPhysicQuality(float deviceRating)
+    {
+        float startValue = Rules_PhysicsMaxRating;
+        if (deviceRating < startValue)
+        {
+            float perc = Mathf.Clamp01(deviceRating / startValue);
+            float fixedTimeStep = Mathf.Lerp(0.025f, 0.01666666f, perc);
+            Time.fixedDeltaTime = fixedTimeStep;            
+        }
+    }
+
+    private static void ApplyShaderQuality(GameFeatureSettings.ELevel3Values quality)
+    {
+        Shader.DisableKeyword("HI_DETAIL_ON");
+        Shader.DisableKeyword("MEDIUM_DETAIL_ON");
+        Shader.DisableKeyword("LOW_DETAIL_ON");
+
+        switch (quality)
+        {
+            case GameFeatureSettings.ELevel3Values.high:
+                Shader.EnableKeyword("HI_DETAIL_ON");
+                break;
+
+            case GameFeatureSettings.ELevel3Values.mid:
+                Shader.EnableKeyword("MEDIUM_DETAIL_ON");
+                break;
+
+            default:
+                Shader.EnableKeyword("LOW_DETAIL_ON");
+                break;
+        }       
+    }
+
+    private static string GetShadersInfo()
+    {
+        System.Text.StringBuilder strBuilder = new System.Text.StringBuilder();
+        strBuilder.AppendLine("");
+        strBuilder.AppendLine(">> Shader.HI_DETAIL_ON=" + Shader.IsKeywordEnabled("HI_DETAIL_ON"));
+        strBuilder.AppendLine(">> Shader.MEDIUM_DETAIL_ON=" + Shader.IsKeywordEnabled("MEDIUM_DETAIL_ON"));
+        strBuilder.AppendLine(">> Shader.LOW_DETAIL_ON=" + Shader.IsKeywordEnabled("LOW_DETAIL_ON"));
+        return strBuilder.ToString();
+    }
+
+    private static string GetSystemInfo()
+    {
+        System.Text.StringBuilder strBuilder = new System.Text.StringBuilder();
+        strBuilder.AppendLine("");
+        strBuilder.AppendLine("MODEL : " + SystemInfo.deviceModel);
+        strBuilder.AppendLine("GPU ID : " + SystemInfo.graphicsDeviceID.ToString());
+        strBuilder.AppendLine("GPU VENDOR : " + SystemInfo.graphicsDeviceVendor);
+        strBuilder.AppendLine("GPU VENDOR ID : " + SystemInfo.graphicsDeviceVendorID.ToString());
+        strBuilder.AppendLine("GPU VERSION : " + SystemInfo.graphicsDeviceVersion);
+        strBuilder.AppendLine("GPU MEMORY : " + SystemInfo.graphicsMemorySize.ToString());
+        strBuilder.AppendLine("GPU SHADER LEVEL : " + SystemInfo.graphicsShaderLevel.ToString());
+        strBuilder.AppendLine("MAX TEX SIZE : " + SystemInfo.maxTextureSize.ToString());
+        strBuilder.AppendLine("OS : " + SystemInfo.operatingSystem);
+        strBuilder.AppendLine("CPU COUNT : " + SystemInfo.processorCount.ToString());
+        strBuilder.AppendLine("CPU TYPE : " + SystemInfo.processorType);
+        strBuilder.AppendLine("SYSTEM MEMORY : " + SystemInfo.systemMemorySize);
+        return strBuilder.ToString();
     }
 
     public virtual JSONNode FormatJSON(JSONNode json)
@@ -392,4 +480,19 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
 
         return returnValue;
     }
+
+    #region rules
+    private const string RULES_DEFAULT_SKU = "L0";
+
+    private const string KEY_PHYSICS_MAX_RATING = "physicsMaxRating";
+    private static float Rules_PhysicsMaxRating
+    {
+        get
+        {
+            string key = KEY_PHYSICS_MAX_RATING;
+            DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DEVICE_RATING_SETTINGS, RULES_DEFAULT_SKU);
+            return (def == null) ? 0f : def.GetAsFloat(key);
+        }
+    } 
+    #endregion
 }

@@ -71,6 +71,78 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_uiSpritesheetPath; }
 	}
 
+	[SerializeField] private string m_disguiseIconsPath = "UI/Metagame/Disguises/";
+	public static string DISGUISE_ICONS_PATH {
+		get { return instance.m_disguiseIconsPath; }
+	}
+
+	[SerializeField] private string m_petIconsPath = "UI/Metagame/Pets/Icons/";
+	public static string PET_ICONS_PATH {
+		get { return instance.m_petIconsPath; }
+	}
+
+	// More colors
+	[Separator("Powerups Colors")]
+	[SerializeField] private Color m_powerColorHealth = new Color(0.7f, 0.8f, 0.24f);
+	public static Color POWER_COLOR_HEALTH {
+		get { return instance.m_powerColorHealth; }
+	}
+
+	[SerializeField] private Color m_powerColorBoost = new Color(0.38f, 1f, 0.78f);
+	public static Color POWER_COLOR_BOOST {
+		get { return instance.m_powerColorBoost; }
+	}
+
+	[SerializeField] private Color m_powerColorFire = new Color(1f, 0.64f, 0.22f);
+	public static Color POWER_COLOR_FIRE {
+		get { return instance.m_powerColorFire; }
+	}
+
+	[SerializeField] private Color m_powerColorBite = new Color(1f, 0.5f, 0.44f);
+	public static Color POWER_COLOR_BITE {
+		get { return instance.m_powerColorBite; }
+	}
+
+	[SerializeField] private Color m_powerColorSpeed = new Color(0.38f, 1f, 0.78f);
+	public static Color POWER_COLOR_SPEED {
+		get { return instance.m_powerColorSpeed; }
+	}
+
+	[SerializeField] private Color m_powerColorGold = new Color(1f, 0.71f, 0.1f);
+	public static Color POWER_COLOR_GOLD {
+		get { return instance.m_powerColorGold; }
+	}
+
+	[SerializeField] private Color m_powerColorPC = new Color(0.96f, 0.46f, 1f);
+	public static Color POWER_COLOR_PC {
+		get { return instance.m_powerColorPC; }
+	}
+
+	[SerializeField] private Color m_powerColorMine = new Color(0.63f, 0.63f, 0.63f);
+	public static Color POWER_COLOR_MINE {
+		get { return instance.m_powerColorMine; }
+	}
+
+	[SerializeField] private Color m_powerColorPoison = new Color(0f, 1f, 0f);
+	public static Color POWER_COLOR_POISON {
+		get { return instance.m_powerColorPoison; }
+	}
+
+	[SerializeField] private Color m_powerColorObstacle = new Color(0.87f, 0.67f, 0.20f);
+	public static Color POWER_COLOR_OBSTACLE {
+		get { return instance.m_powerColorObstacle; }
+	}
+
+	[SerializeField] private Color m_powerColorEntity = new Color(1f, 1f, 1f);
+	public static Color POWER_COLOR_ENTITY {
+		get { return instance.m_powerColorEntity; }
+	}
+
+	[SerializeField] private Color m_powerColorWater = new Color(0f, 0.91f, 1f);
+	public static Color POWER_COLOR_WATER {
+		get { return instance.m_powerColorWater; }
+	}
+
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
@@ -102,6 +174,22 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		}
 
 		// Unknown rarity, return white
+		return Color.white;
+	}
+
+	/// <summary>
+	/// Gets the special color assigned to the given power type.
+	/// </summary>
+	/// <returns>The color assigned to the power's type.</returns>
+	/// <param name="_powerDef">Power to be consulted.</param>
+	public static Color GetPowerColor(string _powerSku) {
+		// Get definition
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _powerSku);
+		if(def != null) {
+			return DragonPowerUp.GetColor(def);
+		}
+
+		// Unknown power, return white
 		return Color.white;
 	}
 }

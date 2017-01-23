@@ -21,6 +21,7 @@ public class DragonEquip : MonoBehaviour {
 	// Internal
 	private string m_dragonSku;
 	private AttachPoint[] m_attachPoints = new AttachPoint[(int)Equipable.AttachPoint.Count];
+	private bool m_showPets = true;
 
 	// Skins
 	private Material m_bodyMaterial;
@@ -32,9 +33,6 @@ public class DragonEquip : MonoBehaviour {
 	public Material wingsMaterial {
 		get { return m_wingsMaterial; }
 	}
-
-	// Test
-	public static int m_numPets = 1; // [AOC] DEPRECATED!! (Remove from CP)
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -189,6 +187,9 @@ public class DragonEquip : MonoBehaviour {
 
 			// Get equipable object!
 			m_attachPoints[attachPointIdx].Equip(newInstance.GetComponent<Equipable>());
+
+			// Apply pets visibility
+			m_attachPoints[attachPointIdx].item.gameObject.SetActive(m_showPets);
 		}
 	}
 
@@ -197,11 +198,14 @@ public class DragonEquip : MonoBehaviour {
 	/// </summary>
 	/// <param name="_show">Whether to show or not the pets.</param>
 	public void TogglePets(bool _show) {
+		// Store value
+		m_showPets = _show;
+
 		// Iterate through all pet attach points and activate/deactivate them
 		for(int i = (int)Equipable.AttachPoint.Pet_1; i < (int)Equipable.AttachPoint.Pet_5; i++) {
 			if(m_attachPoints[i] != null) {
 				if(m_attachPoints[i].item != null) {
-					m_attachPoints[i].item.gameObject.SetActive(_show);
+					m_attachPoints[i].item.gameObject.SetActive(m_showPets);
 				}
 			}
 		}
@@ -228,7 +232,7 @@ public class DragonEquip : MonoBehaviour {
 		if(m_dragonSku == _sku) {
 			// Show some FX and cool animation!
 			// https://youtu.be/RFqw3xiuSvQ?t=8m45s
-			ParticleManager.Spawn(DISGUISE_CHANGE_PS, transform.position + new Vector3(0f, 1.5f, -4f), DISGUISE_CHANGE_PS_FOLDER);	// [AOC] Hardcoded offset! :(
+			ParticleManager.Spawn(DISGUISE_CHANGE_PS, transform.position + new Vector3(0.5f, 2.5f, -4f), DISGUISE_CHANGE_PS_FOLDER);	// [AOC] Hardcoded offset! :(
 			EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
 		}
 	}
