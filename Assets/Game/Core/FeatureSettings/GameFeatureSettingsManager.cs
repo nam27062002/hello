@@ -355,13 +355,28 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
     }
 
     private void ApplyFeatureSetting(GameFeatureSettings settings)
-    {        
+    {
+#if !UNITY_EDITOR
         GameFeatureSettings.EQualityLevelValues quality = settings.GetValueAsQualityLevel(GameFeatureSettings.KEY_QUALITY_LEVEL);
         int qualityIndex = (int)quality;
         QualitySettings.SetQualityLevel(qualityIndex);
+        DeviceQualityManager.Log(">> qualityLevel:" + quality.ToString() + " index = " + qualityIndex);
 
         //ApplyShaderQuality(deviceRating);
-        //ApplyPhysicQuality(deviceRating);
+        ApplyPhysicQuality(settings.Rating);
+#endif
+    }
+
+    static void ApplyPhysicQuality(float deviceRating)
+    {
+        float startValue = Rules_PhysicsMaxRating;
+        if (deviceRating < startValue)
+        {
+            float perc = Mathf.Clamp01(deviceRating / startValue);
+            float fixedTimeStep = Mathf.Lerp(0.025f, 0.01666666f, perc);
+            Time.fixedDeltaTime = fixedTimeStep;
+            DeviceQualityManager.Log(">> Time.fixedDeltaTime:" + fixedTimeStep);
+        }
     }
 
     public virtual JSONNode FormatJSON(JSONNode json)
@@ -409,4 +424,19 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
 
         return returnValue;
     }
+
+    #region rules
+    private const string RULES_DEFAULT_SKU = "L0";
+
+    private const string KEY_PHYSICS_MAX_RATING = "physicsMaxRating";
+    private static float Rules_PhysicsMaxRating
+    {
+        get
+        {
+            string key = KEY_PHYSICS_MAX_RATING;
+            DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DEVICE_RATING_SETTINGS, RULES_DEFAULT_SKU);
+            return (def == null) ? 0f : def.GetAsFloat(key);
+        }
+    } 
+    #endregion
 }
