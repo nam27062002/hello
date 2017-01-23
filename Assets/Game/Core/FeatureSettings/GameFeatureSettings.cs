@@ -308,8 +308,151 @@ public class GameFeatureSettings : FeatureSettings
             switch (Datas[key].ValueType)
             {
                 case EValueType.Bool:
-                    BoolValues[key] = (EBoolValues)index == EBoolValues.TRUE;
-                    break;
+                {
+                    bool value = (EBoolValues)index == EBoolValues.TRUE;
+                    if (BoolValues.ContainsKey(key))
+                    {
+                        BoolValues[key] = value;
+                    }
+                    else
+                    {
+                        BoolValues.Add(key, value);
+                    }
+                }
+                break;
+
+                case EValueType.Level2:
+                {
+                    ELevel2Values value = (ELevel2Values)index;
+                    if (Level2Values.ContainsKey(key))
+                    {
+                            Level2Values[key] = value;
+                    }
+                    else
+                    {
+                        Level2Values.Add(key, value);
+                    }
+                }
+                break;
+
+                case EValueType.Level3:
+                {
+                    ELevel3Values value = (ELevel3Values)index;
+                    if (Level3Values.ContainsKey(key))
+                    {
+                        Level3Values[key] = value;
+                    }
+                    else
+                    {
+                        Level3Values.Add(key, value);
+                    }
+                }
+                break;
+
+                case EValueType.Level5:
+                {
+                    ELevel5Values value = (ELevel5Values)index;
+                    if (Level5Values.ContainsKey(key))
+                    {
+                        Level5Values[key] = value;
+                    }
+                    else
+                    {
+                        Level5Values.Add(key, value);
+                    }
+                }
+                break;
+
+                case EValueType.QualityLevel:
+                {
+                    EQualityLevelValues value = (EQualityLevelValues)index;
+                    if (QualityLevelValues.ContainsKey(key))
+                    {
+                        QualityLevelValues[key] = value;
+                    }
+                    else
+                    {
+                        QualityLevelValues.Add(key, value);
+                    }
+                }
+                break;
+            }               
+        }
+    }
+
+    public void SetValueFromString(string key, string valueAsString)
+    {
+        if (Datas.ContainsKey(key))
+        {
+            switch (Datas[key].ValueType)
+            {
+                case EValueType.Bool:
+                {
+                    bool value = false;
+                    if (!string.IsNullOrEmpty(valueAsString))
+                    {
+                        string upper = valueAsString.ToUpper();
+                        value = upper == EBoolValues.TRUE.ToString();
+                    }
+                    BoolValues[key] = value;
+                }
+                break;
+
+                case EValueType.Level2:
+                {                        
+                    ELevel2Values value = (ELevel2Values)GetEnumIndexFromString<ELevel2Values>(valueAsString);
+                    if (Level2Values.ContainsKey(key))
+                    {
+                        Level2Values[key] = value;
+                    }
+                    else
+                    {
+                        Level2Values.Add(key, value);
+                    }
+                }
+                break;
+
+                case EValueType.Level3:
+                {                        
+                    ELevel3Values value = (ELevel3Values)GetEnumIndexFromString<ELevel3Values>(valueAsString);
+                    if (Level3Values.ContainsKey(key))
+                    {
+                        Level3Values[key] = value;
+                    }
+                    else
+                    {
+                        Level3Values.Add(key, value);
+                    }
+                }
+                break;
+
+                case EValueType.Level5:
+                {                        
+                    ELevel5Values value = (ELevel5Values)GetEnumIndexFromString<ELevel5Values>(valueAsString);
+                    if (Level5Values.ContainsKey(key))
+                    {
+                        Level5Values[key] = value;
+                    }
+                    else
+                    {
+                        Level5Values.Add(key, value);
+                    }
+                }
+                break;
+
+                case EValueType.QualityLevel:
+                {                        
+                    EQualityLevelValues value = (EQualityLevelValues)GetEnumIndexFromString<EQualityLevelValues>(valueAsString);
+                    if (QualityLevelValues.ContainsKey(key))
+                    {
+                        QualityLevelValues[key] = value;
+                    }
+                    else
+                    {
+                        QualityLevelValues.Add(key, value);
+                    }
+                }
+                break;
             }
         }
     }
@@ -330,85 +473,9 @@ public class GameFeatureSettings : FeatureSettings
             foreach (KeyValuePair<string, Data> pair in Datas)
             {
                 key = pair.Key;
-
                 if (json.ContainsKey(key))
-                {
-                    switch (pair.Value.ValueType)
-                    {
-                        case EValueType.Bool:
-                            {
-                                bool value = json[key].AsBool;
-                                if (BoolValues.ContainsKey(key))
-                                {
-                                    BoolValues[key] = value;
-                                }
-                                else
-                                {
-                                    BoolValues.Add(key, value);
-                                }
-                            }
-                            break;
-
-                        case EValueType.Level2:
-                            {
-                                string valueString = json[key];
-                                ELevel2Values value = (ELevel2Values)GetEnumIndexFromString<ELevel2Values>(valueString);
-                                if (Level2Values.ContainsKey(key))
-                                {
-                                    Level2Values[key] = value;
-                                }
-                                else
-                                {
-                                    Level2Values.Add(key, value);
-                                }
-                            }
-                            break;
-
-                        case EValueType.Level3:
-                            {
-                                string valueString = json[key];
-                                ELevel3Values value = (ELevel3Values)GetEnumIndexFromString<ELevel3Values>(valueString);
-                                if (Level3Values.ContainsKey(key))
-                                {
-                                    Level3Values[key] = value;
-                                }
-                                else
-                                {
-                                    Level3Values.Add(key, value);
-                                }
-                            }
-                            break;
-
-                        case EValueType.Level5:
-                            {
-                                string valueString = json[key];
-                                ELevel5Values value = (ELevel5Values)GetEnumIndexFromString<ELevel5Values>(valueString);
-                                if (Level5Values.ContainsKey(key))
-                                {
-                                    Level5Values[key] = value;
-                                }
-                                else
-                                {
-                                    Level5Values.Add(key, value);
-                                }
-                            }
-                            break;
-
-                        case EValueType.QualityLevel:
-                            {
-                                string valueString = json[key];
-                                EQualityLevelValues value = (EQualityLevelValues)GetEnumIndexFromString<EQualityLevelValues>(valueString);
-                                if (QualityLevelValues.ContainsKey(key))
-                                {
-                                    QualityLevelValues[key] = value;
-                                }
-                                else
-                                {
-                                    QualityLevelValues.Add(key, value);
-                                }
-                            }
-                            break;
-                    }
+                {                    
+                    SetValueFromString(key, json[key]);                  
                 }
             }
         }
@@ -420,43 +487,7 @@ public class GameFeatureSettings : FeatureSettings
         foreach (KeyValuePair<string, Data> pair in Datas)
         {
             key = pair.Key;
-            switch (pair.Value.ValueType)
-            {
-                case EValueType.Bool:
-                    if (BoolValues.ContainsKey(key))
-                    {
-                        json.Add(key, BoolValues[key].ToString());
-                    }
-                    break;
-
-                case EValueType.Level2:
-                    if (Level2Values.ContainsKey(key))
-                    {
-                        json.Add(key, Level2Values[key].ToString());
-                    }
-                    break;
-
-                case EValueType.Level3:
-                    if (Level3Values.ContainsKey(key))
-                    {
-                        json.Add(key, Level3Values[key].ToString());
-                    }
-                    break;
-
-                case EValueType.Level5:
-                    if (Level3Values.ContainsKey(key))
-                    {
-                        json.Add(key, Level5Values[key].ToString());
-                    }
-                    break;
-
-                case EValueType.QualityLevel:
-                    if (Level3Values.ContainsKey(key))
-                    {
-                        json.Add(key, QualityLevelValues[key].ToString());
-                    }
-                    break;
-            }
+            json.Add(key, GetValueAsString(key));            
         }
     }
 }
