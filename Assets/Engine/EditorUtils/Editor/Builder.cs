@@ -278,6 +278,10 @@ public class Builder : MonoBehaviour
 		StreamWriter sw = File.CreateText("outputVersion.txt");
 		sw.WriteLine( GameSettings.internalVersion );
 		sw.Close();
+
+		StreamWriter sw2 = File.CreateText("androidBuildVersion.txt");
+		sw2.WriteLine( PlayerSettings.Android.bundleVersionCode );
+		sw2.Close();
 	}
 
 	/// <summary>
