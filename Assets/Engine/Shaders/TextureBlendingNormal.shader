@@ -133,7 +133,7 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 				{
 					
 					float4 col = tex2D(_MainTex, i.texcoord);	// Color
-					float specMask = 1.0;// col.w;
+					float specMask = col.w;
 					float4 col2 = tex2D(_SecondTexture, i.texcoord2);	// Color
 					float l = saturate( col.a + ( (i.color.a * 2) - 1 ) );
 //					float l = clamp(col.a + (i.color.a * 2.0) - 1.0, 0.0, 1.0);
