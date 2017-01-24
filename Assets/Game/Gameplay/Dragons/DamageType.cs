@@ -23,6 +23,7 @@ public enum DamageType {
 	LATCH,
 	MINE,
 	EXPLOSION,
-	ARROW
+	ARROW,
+	FLOUR
 
 }
