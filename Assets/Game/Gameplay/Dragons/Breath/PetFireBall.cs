@@ -13,11 +13,14 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 	private LayerMask m_colliderMask;
 	private ProjectileMotion m_pMotion;
 	private bool m_hasBeenShot;
+	private Rect m_rect;
+
 
 	// Use this for initialization
 	void Start () 
 	{
 		m_area = GetComponent<CircleArea2D>();
+		m_rect = new Rect();
 		if (m_explosionParticle.IsValid()) {
 			ParticleManager.CreatePool(m_explosionParticle, 5);
 		}
@@ -133,7 +136,16 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 			}
 		}
 
+		m_rect.center = m_area.center;
+		m_rect.height = m_rect.width = m_area.radius;
+		FirePropagationManager.instance.FireUpNodes( m_rect, Overlaps, m_fireTier, Vector3.zero);
+
 		gameObject.SetActive(false);
 		PoolManager.ReturnInstance( gameObject );
+	}
+
+	bool Overlaps( CircleAreaBounds _fireNodeBounds )
+	{
+		return m_area.Overlaps( _fireNodeBounds.center, _fireNodeBounds.radius);
 	}
 }

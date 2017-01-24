@@ -17,6 +17,7 @@ public class FireArea : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		m_circle = GetComponent<CircleArea2D>();
+		m_rect = new Rect();
 	}
 	
 	// Update is called once per frame
