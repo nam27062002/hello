@@ -72,31 +72,7 @@ public class GameFeatureSettings : FeatureSettings
     public static List<string> GetValueTypeValuesAsString(EValueType valueType)
     {
         return (ValueTypes != null && ValueTypes.ContainsKey(valueType)) ? ValueTypes[valueType] : null;
-    }
-
-    private static int GetEnumIndexFromString<T>(string value)
-    {
-        int returnValue = 0;
-        Array values = Enum.GetValues(typeof(T));
-        foreach (T v in values)
-        {
-            if (v.ToString() == value)
-            {
-                break;
-            }
-            else
-            {
-                returnValue++;
-            }
-        }
-
-        if (returnValue >= values.Length)
-        {
-            DeviceQualityManager.LogError("No enum value found in " + typeof(T).ToString() + " for string " + value);
-        }
-
-        return returnValue;
-    }
+    }    
 
     public enum EValueType
     {
@@ -170,15 +146,11 @@ public class GameFeatureSettings : FeatureSettings
             DefaultValue = defaultValue;
         }
 
+
         public int DefaultValue { get; set; }
     }   
 
-    private Dictionary<string, object> Values;
-    private Dictionary<string, bool> BoolValues;
-    private Dictionary<string, ELevel2Values> Level2Values;
-    private Dictionary<string, ELevel3Values> Level3Values;
-    private Dictionary<string, ELevel5Values> Level5Values;
-    private Dictionary<string, EQualityLevelValues> QualityLevelValues;    
+    private Dictionary<string, object> Values;   
 
     public GameFeatureSettings()
     {
@@ -187,12 +159,7 @@ public class GameFeatureSettings : FeatureSettings
             Build();
         }
 
-        Values = new Dictionary<string, object>();
-        BoolValues = new Dictionary<string, bool>();
-        Level2Values = new Dictionary<string, ELevel2Values>();
-        Level3Values = new Dictionary<string, ELevel3Values>();
-        Level5Values = new Dictionary<string, ELevel5Values>();
-        QualityLevelValues = new Dictionary<string, EQualityLevelValues>();
+        Values = new Dictionary<string, object>();       
     }
 
     public bool GetValueAsBool(string key)
@@ -265,12 +232,7 @@ public class GameFeatureSettings : FeatureSettings
 
     protected override void ExtendedReset()
     {
-        Values.Clear();
-        BoolValues.Clear();
-        Level2Values.Clear();
-        Level3Values.Clear();
-        Level5Values.Clear();
-        QualityLevelValues.Clear();
+        Values.Clear();        
     }
 
     protected override void ExtendedOverrideFromJSON(JSONNode json)
