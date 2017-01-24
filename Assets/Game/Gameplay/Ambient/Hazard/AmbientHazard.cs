@@ -55,6 +55,7 @@ public class AmbientHazard : MonoBehaviour {
 	[SerializeField] private float m_damageMultiplier = 1f;
 	[Tooltip("Duration of the poison effect")]
 	[SerializeField] private float m_damageDuration = 0.5f;
+	[SerializeField] private DamageType m_damageType = DamageType.POISON;
 	[Tooltip("How hard the hazard knocks back the player on contact.\nDisable the \"trigger\" flag on the collider in order to use knockback.")]
 	[SerializeField] private float m_knockBackIntensity = 0f;
 
@@ -404,7 +405,7 @@ public class AmbientHazard : MonoBehaviour {
 		if(player != null && _collision.collider.CompareTag("Player")) {
 			// Apply initial damage
 			if(dragonHealthBehaviour != null) {
-				dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, DamageType.POISON, true);	// Resetting all current DOTs
+				dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, m_damageType, true);	// Resetting all current DOTs
 			}
 
 			// Apply knockback
@@ -434,7 +435,7 @@ public class AmbientHazard : MonoBehaviour {
 		if(player != null && _collider.CompareTag( "Player")) {
 			// Reset dot timer
 			if(dragonHealthBehaviour != null) {
-				dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, DamageType.POISON, true);	// Resetting all current DOTs
+				dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, m_damageType, true);	// Resetting all current DOTs
 			}
 
 			// [AOC] TODO!! Play SFX
