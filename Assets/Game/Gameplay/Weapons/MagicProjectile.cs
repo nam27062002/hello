@@ -51,6 +51,11 @@ public class MagicProjectile : MonoBehaviour, IProjectile {
 		}
 	}
 
+	public void Explode(bool b)
+	{
+
+	}
+
 	public void AttachTo(Transform _parent) {
 		m_oldParent = transform.parent;
 		transform.parent = _parent;

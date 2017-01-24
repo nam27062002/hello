@@ -8,10 +8,11 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 408412}
-  - component: {fileID: 11401698}
   - component: {fileID: 11404390}
   - component: {fileID: 5476966}
   - component: {fileID: 135304990021057800}
+  - component: {fileID: 114175296510890580}
+  - component: {fileID: 114954653416055262}
   m_Layer: 4
   m_Name: PF_PetFireBall
   m_TagString: Untagged
@@ -26,7 +27,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 173528}
   m_LocalRotation: {x: 0.00000013155935, y: 0, z: -0.00000008193444, w: 1}
-  m_LocalPosition: {x: 229.43, y: -60.3, z: -7}
+  m_LocalPosition: {x: 218.55223, y: -64.15137, z: -40.78125}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4809563237234616}
@@ -48,32 +49,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!114 &11401698
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 173528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f6c024143a7a42ee9b9ee5cd452c92b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_explosionParticle:
-    name: 
-    path: 
-    offset: {x: 0, y: 0, z: 0}
-  m_scaleRange:
-    min: 0.25
-    max: 0.25
-  m_rotationRange:
-    min: 0
-    max: 360
-  m_knockback: 10
-  m_damageType: 5
-  m_damagesPlayer: 0
-  m_damagesEntities: 1
-  m_activateOnShoot: []
 --- !u!114 &11404390
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -201,6 +176,36 @@ Transform:
   m_Father: {fileID: 408412}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114175296510890580
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 173528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32940d0579fed4a93820a45a586a5e99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_explosionParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_maxTime: 10
+--- !u!114 &114954653416055262
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 173528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0}
+  radius: 3
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!135 &135304990021057800
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -268,7 +273,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1632592036
+  randomSeed: 1270209314
   InitialModule:
     serializedVersion: 3
     enabled: 1
