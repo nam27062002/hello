@@ -76,8 +76,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         m_isAlive = false;
     }
 
-	protected void OnApplicationQuit()
+	protected  override void OnApplicationQuit()
     {
+        base.OnApplicationQuit();
         m_isAlive = false;
         Messenger.Broadcast(GameEvents.APPLICATION_QUIT);
     }
