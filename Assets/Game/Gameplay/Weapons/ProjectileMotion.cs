@@ -6,7 +6,8 @@ public class ProjectileMotion : MonoBehaviour {
 		Arrow,
 		Missile,
 		Spear,
-		Bomb
+		Bomb,
+		FallingMine
 	};
 
 	public Type m_moveType;
@@ -48,8 +49,23 @@ public class ProjectileMotion : MonoBehaviour {
 				transform.rotation = Quaternion.Euler(eulerRot);
 
 			}break;
+			case Type.FallingMine:
+			{
+			}break;
 		}
 		transform.position = m_position;
+	}
+
+	void FixedUpdate()
+	{
+		switch( m_moveType )
+		{
+			case Type.FallingMine:
+			{
+				m_forceVector += Physics.gravity * Time.fixedDeltaTime;
+				m_position += m_forceVector * Time.deltaTime;
+			}break;
+		}
 	}
 
 	public void Shoot( Vector3 _target )
@@ -79,6 +95,11 @@ public class ProjectileMotion : MonoBehaviour {
 
 				Vector3 newDir = Vector3.RotateTowards(Vector3.forward, -m_direction, 2f*Mathf.PI, 0.0f);
 				transform.rotation = Quaternion.AngleAxis(90f, m_direction) * Quaternion.LookRotation(newDir);
+			}break;
+			case Type.FallingMine:
+			{
+				m_position = transform.position;
+				m_forceVector = Vector3.zero;
 			}break;
 		}
 	}

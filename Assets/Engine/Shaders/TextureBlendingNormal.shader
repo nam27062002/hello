@@ -29,12 +29,28 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 				#pragma fragment frag
 				#pragma multi_compile_fog
 				#pragma multi_compile_fwdbase
-							
+				#pragma glsl_no_auto_normalization
+				#pragma fragmentoption ARB_precision_hint_fastest
+				#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
+
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
 				#include "HungryDragon.cginc"
 				#include "Lighting.cginc"
 
+				#if LOW_DETAIL_ON
+				#endif
+
+				#if MEDIUM_DETAIL_ON
+				#define RIM
+				#define BUMP
+				#endif
+
+				#if HI_DETAIL_ON
+				#define RIM
+				#define BUMP
+				#define SPEC
+				#endif
 
 				struct appdata_t {
 					float4 vertex : POSITION;
@@ -57,9 +73,11 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 					#endif
 					float2 texcoord2 : TEXCOORD3;
 
-					float3 tangentWorld : TANGENT;
 					float3 normalWorld : NORMAL;
+					#ifdef BUMP
+					float3 tangentWorld : TANGENT;
 					float3 binormalWorld : TEXCOORD4;
+					#endif
 					float3 halfDir : TEXCOORD5;
 				};
 
@@ -67,9 +85,11 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 				float4 _MainTex_ST;
 				sampler2D _SecondTexture;
 				float4 _SecondTexture_ST;
+				#ifdef BUMP
 				uniform sampler2D _NormalTex;
 				uniform float4 _NormalTex_ST;
 				uniform float _NormalStrength;
+				#endif
 				uniform float _Specular;
 				uniform fixed4 _SpecularDir;
 
@@ -87,18 +107,21 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 					#endif
+
+					#ifdef BUMP
 																							// To calculate tangent world
 					float4x4 modelMatrix = unity_ObjectToWorld;
 					float4x4 modelMatrixInverse = unity_WorldToObject;
-					o.tangentWorld = normalize(mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
 					o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
+					o.tangentWorld = normalize(mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
 					o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
+					#else
+					o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
+					#endif
 
 					fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 					// Half View - See: Blinn-Phong
 					float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
-//					float3 viewDirection = normalize(worldPos.xyz - _WorldSpaceCameraPos);
-					// float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz); 
 					float3 lightDirection = normalize(_SpecularDir.rgb);
 					o.halfDir = normalize(lightDirection + viewDirection);
 
@@ -146,10 +169,15 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 //					col = 0.5;
 
 //					float4 encodedNormal = tex2D(_NormalTex, _NormalTex_ST.xy * i.texcoord + _NormalTex_ST.zw);
+					#ifdef BUMP
 					float4 encodedNormal = tex2D(_NormalTex, i.texcoord);
 					float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
 					float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
 					float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
+					#else
+					float3 normalDirection = i.normalWorld;
+					#endif
+
 					fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
 
 					UNITY_OPAQUE_ALPHA(col.a);	// Opaque

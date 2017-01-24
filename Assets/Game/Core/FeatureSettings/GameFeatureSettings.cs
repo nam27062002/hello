@@ -3,7 +3,8 @@ using System;
 using System.Collections.Generic;
 
 public class GameFeatureSettings : FeatureSettings
-{
+{    
+    private static Dictionary<EValueType, List<string>> ValueTypes;
     public static Dictionary<string, Data> Datas { get; set; }
 
     public const string KEY_QUALITY_LEVEL = "qualityLevel";
@@ -14,105 +15,64 @@ public class GameFeatureSettings : FeatureSettings
 
     public static void Build()
     {
+        if (ValueTypes == null)
+        {
+            ValueTypes = new Dictionary<EValueType, List<string>>();
+            
+            ValueTypes.Add(EValueType.Bool, new List<string>(BoolValuesKeys));
+            ValueTypes.Add(EValueType.Level2, GetValueTypeValuesAsString<ELevel2Values>());
+            ValueTypes.Add(EValueType.Level3, GetValueTypeValuesAsString<ELevel3Values>());
+            ValueTypes.Add(EValueType.Level5, GetValueTypeValuesAsString<ELevel5Values>());
+            ValueTypes.Add(EValueType.QualityLevel, GetValueTypeValuesAsString<EQualityLevelValues>());            
+        }
+
         if (Datas == null)
         {
             Datas = new Dictionary<string, Data>();
 
             // qualityLevel: Unity quality settings level
             string key = KEY_QUALITY_LEVEL;
-            Data data = new DataQualityLevel(key, EQualityLevelValues.very_low);
+            Data data = new DataInt(key, EValueType.QualityLevel, (int)EQualityLevelValues.very_low);
             Datas.Add(key, data);
 
             // shadersLevel: Configuration for shaders
             key = KEY_SHADERS_LEVEL;
-            data = new DataLevel3(key, ELevel3Values.low);
+            data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
             Datas.Add(key, data);
 
 
             // glow: default value is false because glow has caused crashed in several devices so false is a safer value for a device until it's proved that the feature works properly
             key = KEY_GLOW;
-            data = new DataBool(key, false);
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
             Datas.Add(key, data);
 
             // entitiesLOD
             key = KEY_ENTITIES_LOD;
-            data = new DataLevel2(key, ELevel2Values.low);
+            data = new DataInt(key, EValueType.Level2, (int)ELevel2Values.low);            
             Datas.Add(key, data);
 
             // levelsLOD
             key = KEY_LEVELS_LOD;
-            data = new DataLevel3(key, ELevel3Values.low);
+            data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
             Datas.Add(key, data);
         }
     }
 
-    public static List<string> GetValueTypeValuesAsString(EValueType valueType)
+    public static List<string> GetValueTypeValuesAsString<T>()
     {
         List<string> returnValue = new List<string>();
-        switch (valueType)
+        foreach (T v in Enum.GetValues(typeof(T)))
         {
-            case EValueType.Bool:
-                foreach (EBoolValues v in Enum.GetValues(typeof(EBoolValues)))
-                {
-                    returnValue.Add(v.ToString());
-                }
-                break;
-
-            case EValueType.Level2:
-                foreach (ELevel2Values v in Enum.GetValues(typeof(ELevel2Values)))
-                {
-                    returnValue.Add(v.ToString());
-                }
-                break;
-
-            case EValueType.Level3:
-                foreach (ELevel3Values v in Enum.GetValues(typeof(ELevel3Values)))
-                {
-                    returnValue.Add(v.ToString());
-                }
-                break;
-
-            case EValueType.Level5:
-                foreach (ELevel5Values v in Enum.GetValues(typeof(ELevel5Values)))
-                {
-                    returnValue.Add(v.ToString());
-                }
-                break;
-
-            case EValueType.QualityLevel:
-                foreach (EQualityLevelValues v in Enum.GetValues(typeof(EQualityLevelValues)))
-                {
-                    returnValue.Add(v.ToString());
-                }
-                break;
+            returnValue.Add(v.ToString());
         }
 
         return returnValue;
     }
 
-    private static int GetEnumIndexFromString<T>(string value)
+    public static List<string> GetValueTypeValuesAsString(EValueType valueType)
     {
-        int returnValue = 0;
-        Array values = Enum.GetValues(typeof(T));
-        foreach (T v in values)
-        {
-            if (v.ToString() == value)
-            {
-                break;
-            }
-            else
-            {
-                returnValue++;
-            }
-        }
-
-        if (returnValue >= values.Length)
-        {
-            DeviceQualityManager.LogError("No enum value found in " + typeof(T).ToString() + " for string " + value);
-        }
-
-        return returnValue;
-    }
+        return (ValueTypes != null && ValueTypes.ContainsKey(valueType)) ? ValueTypes[valueType] : null;
+    }    
 
     public enum EValueType
     {
@@ -127,6 +87,12 @@ public class GameFeatureSettings : FeatureSettings
     {
         FALSE,
         TRUE
+    };
+
+    public static string[] BoolValuesKeys = new string[]
+    {
+        "false",
+        "true"
     };
 
     public enum ELevel2Values
@@ -162,72 +128,29 @@ public class GameFeatureSettings : FeatureSettings
     };
 
     public abstract class Data
-    {
+    {        
         public Data(string key, EValueType valueType)
         {
             Key = key;
-            ValueType = valueType;
+            ValueType = valueType;            
         }
 
         public string Key { get; set; }
-        public EValueType ValueType { get; set; }
-    }
+        public EValueType ValueType { get; set; }              
+    }    
 
-    public class DataBool : Data
+    public class DataInt : Data
     {
-        public DataBool(string key, bool defaultValue) : base(key, EValueType.Bool)
+        public DataInt(string key, EValueType type, int defaultValue) : base(key, type)
         {
             DefaultValue = defaultValue;
         }
 
-        public bool DefaultValue { get; set; }
-    }
 
-    public class DataLevel2 : Data
-    {
-        public DataLevel2(string key, ELevel2Values defaultValue) : base(key, EValueType.Level2)
-        {
-            DefaultValue = defaultValue;
-        }
+        public int DefaultValue { get; set; }
+    }   
 
-        public ELevel2Values DefaultValue { get; set; }
-    }
-
-    public class DataLevel3 : Data
-    {
-        public DataLevel3(string key, ELevel3Values defaultValue) : base(key, EValueType.Level3)
-        {
-            DefaultValue = defaultValue;
-        }
-
-        public ELevel3Values DefaultValue { get; set; }
-    }
-
-    public class DataLevel5 : Data
-    {
-        public DataLevel5(string key, ELevel5Values defaultValue) : base(key, EValueType.Level5)
-        {
-            DefaultValue = defaultValue;
-        }
-
-        public ELevel5Values DefaultValue { get; set; }
-    }
-
-    public class DataQualityLevel : Data
-    {
-        public DataQualityLevel(string key, EQualityLevelValues defaultValue) : base(key, EValueType.QualityLevel)
-        {
-            DefaultValue = defaultValue;
-        }
-
-        public EQualityLevelValues DefaultValue { get; set; }
-    }
-
-    private Dictionary<string, bool> BoolValues;
-    private Dictionary<string, ELevel2Values> Level2Values;
-    private Dictionary<string, ELevel3Values> Level3Values;
-    private Dictionary<string, ELevel5Values> Level5Values;
-    private Dictionary<string, EQualityLevelValues> QualityLevelValues;
+    private Dictionary<string, object> Values;   
 
     public GameFeatureSettings()
     {
@@ -236,233 +159,80 @@ public class GameFeatureSettings : FeatureSettings
             Build();
         }
 
-        BoolValues = new Dictionary<string, bool>();
-        Level2Values = new Dictionary<string, ELevel2Values>();
-        Level3Values = new Dictionary<string, ELevel3Values>();
-        Level5Values = new Dictionary<string, ELevel5Values>();
-        QualityLevelValues = new Dictionary<string, EQualityLevelValues>();
+        Values = new Dictionary<string, object>();       
     }
 
     public bool GetValueAsBool(string key)
     {
-        return (BoolValues.ContainsKey(key)) ? BoolValues[key] : (Datas[key] as DataBool).DefaultValue;
+        EBoolValues valueAsBool = (Values.ContainsKey(key)) ? (EBoolValues)Values[key] : (EBoolValues)((Datas[key] as DataInt).DefaultValue);
+        return valueAsBool == EBoolValues.TRUE;            
     }
 
     public ELevel2Values GetValueAsLevel2(string key)
     {
-        return (Level2Values.ContainsKey(key)) ? Level2Values[key] : (Datas[key] as DataLevel2).DefaultValue;
+        return (Values.ContainsKey(key)) ? (ELevel2Values)Values[key] : (ELevel2Values)((Datas[key] as DataInt).DefaultValue);        
     }
 
     public ELevel3Values GetValueAsLevel3(string key)
     {
-        return (Level3Values.ContainsKey(key)) ? Level3Values[key] : (Datas[key] as DataLevel3).DefaultValue;
+        return (Values.ContainsKey(key)) ? (ELevel3Values)Values[key] : (ELevel3Values)((Datas[key] as DataInt).DefaultValue);
     }
 
     public ELevel5Values GetValueAsLevel5(string key)
     {
-        return (Level5Values.ContainsKey(key)) ? Level5Values[key] : (Datas[key] as DataLevel5).DefaultValue;
+        return (Values.ContainsKey(key)) ? (ELevel5Values)Values[key] : (ELevel5Values)((Datas[key] as DataInt).DefaultValue);
     }
 
     public EQualityLevelValues GetValueAsQualityLevel(string key)
     {
-        return (QualityLevelValues.ContainsKey(key)) ? QualityLevelValues[key] : (Datas[key] as DataQualityLevel).DefaultValue;
+        return (Values.ContainsKey(key)) ? (EQualityLevelValues)Values[key] : (EQualityLevelValues)((Datas[key] as DataInt).DefaultValue);
     }
 
     public string GetValueAsString(string key)
     {
         string returnValue = null;
-        if (Datas.ContainsKey(key))
+        if (Values != null && Values.ContainsKey(key))
         {
-            switch (Datas[key].ValueType)
+            EValueType type = Datas[key].ValueType;
+            int index = (int)Values[key];
+            if (ValueTypes.ContainsKey(type))
             {
-                case EValueType.Bool:
-                    returnValue = GetValueAsBool(key) + "";
-                    returnValue = returnValue.ToUpper();
-                    break;
-
-                case EValueType.Level2:
-                    returnValue = GetValueAsLevel2(key).ToString();
-                    break;
-
-                case EValueType.Level3:
-                    returnValue = GetValueAsLevel3(key).ToString();
-                    break;
-
-                case EValueType.Level5:
-                    returnValue = GetValueAsLevel5(key).ToString();
-                    break;
-
-                case EValueType.QualityLevel:
-                    returnValue = GetValueAsQualityLevel(key).ToString();
-                    break;
-            }
+                returnValue = ValueTypes[type][index];
+            }                        
         }
 
-        return returnValue;
+        return returnValue;        
     }    
 
     public void SetValueFromIndex(string key, int index)
     {
         if (Datas.ContainsKey(key))
         {
-            switch (Datas[key].ValueType)
+            if (Values.ContainsKey(key))
             {
-                case EValueType.Bool:
-                {
-                    bool value = (EBoolValues)index == EBoolValues.TRUE;
-                    if (BoolValues.ContainsKey(key))
-                    {
-                        BoolValues[key] = value;
-                    }
-                    else
-                    {
-                        BoolValues.Add(key, value);
-                    }
-                }
-                break;
-
-                case EValueType.Level2:
-                {
-                    ELevel2Values value = (ELevel2Values)index;
-                    if (Level2Values.ContainsKey(key))
-                    {
-                            Level2Values[key] = value;
-                    }
-                    else
-                    {
-                        Level2Values.Add(key, value);
-                    }
-                }
-                break;
-
-                case EValueType.Level3:
-                {
-                    ELevel3Values value = (ELevel3Values)index;
-                    if (Level3Values.ContainsKey(key))
-                    {
-                        Level3Values[key] = value;
-                    }
-                    else
-                    {
-                        Level3Values.Add(key, value);
-                    }
-                }
-                break;
-
-                case EValueType.Level5:
-                {
-                    ELevel5Values value = (ELevel5Values)index;
-                    if (Level5Values.ContainsKey(key))
-                    {
-                        Level5Values[key] = value;
-                    }
-                    else
-                    {
-                        Level5Values.Add(key, value);
-                    }
-                }
-                break;
-
-                case EValueType.QualityLevel:
-                {
-                    EQualityLevelValues value = (EQualityLevelValues)index;
-                    if (QualityLevelValues.ContainsKey(key))
-                    {
-                        QualityLevelValues[key] = value;
-                    }
-                    else
-                    {
-                        QualityLevelValues.Add(key, value);
-                    }
-                }
-                break;
-            }               
-        }
+                Values[key] = index;
+            }
+            else
+            {
+                Values.Add(key, index);
+            }                          
+        }        
     }
 
     public void SetValueFromString(string key, string valueAsString)
     {
         if (Datas.ContainsKey(key))
         {
-            switch (Datas[key].ValueType)
-            {
-                case EValueType.Bool:
-                {
-                    bool value = false;
-                    if (!string.IsNullOrEmpty(valueAsString))
-                    {
-                        string upper = valueAsString.ToUpper();
-                        value = upper == EBoolValues.TRUE.ToString();
-                    }
-                    BoolValues[key] = value;
-                }
-                break;
+            List<string> values = ValueTypes[Datas[key].ValueType];
+            int valueAsIndex = values.IndexOf(valueAsString);
 
-                case EValueType.Level2:
-                {                        
-                    ELevel2Values value = (ELevel2Values)GetEnumIndexFromString<ELevel2Values>(valueAsString);
-                    if (Level2Values.ContainsKey(key))
-                    {
-                        Level2Values[key] = value;
-                    }
-                    else
-                    {
-                        Level2Values.Add(key, value);
-                    }
-                }
-                break;
-
-                case EValueType.Level3:
-                {                        
-                    ELevel3Values value = (ELevel3Values)GetEnumIndexFromString<ELevel3Values>(valueAsString);
-                    if (Level3Values.ContainsKey(key))
-                    {
-                        Level3Values[key] = value;
-                    }
-                    else
-                    {
-                        Level3Values.Add(key, value);
-                    }
-                }
-                break;
-
-                case EValueType.Level5:
-                {                        
-                    ELevel5Values value = (ELevel5Values)GetEnumIndexFromString<ELevel5Values>(valueAsString);
-                    if (Level5Values.ContainsKey(key))
-                    {
-                        Level5Values[key] = value;
-                    }
-                    else
-                    {
-                        Level5Values.Add(key, value);
-                    }
-                }
-                break;
-
-                case EValueType.QualityLevel:
-                {                        
-                    EQualityLevelValues value = (EQualityLevelValues)GetEnumIndexFromString<EQualityLevelValues>(valueAsString);
-                    if (QualityLevelValues.ContainsKey(key))
-                    {
-                        QualityLevelValues[key] = value;
-                    }
-                    else
-                    {
-                        QualityLevelValues.Add(key, value);
-                    }
-                }
-                break;
-            }
+            SetValueFromIndex(key, valueAsIndex);           
         }
     }
 
     protected override void ExtendedReset()
     {
-        BoolValues.Clear();
-        Level2Values.Clear();
-        Level3Values.Clear();
-        Level5Values.Clear();
+        Values.Clear();        
     }
 
     protected override void ExtendedOverrideFromJSON(JSONNode json)

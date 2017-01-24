@@ -139,7 +139,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 			if (m_stopAtTarget) {
 				float distanceToTarget = (m_target - m_position).sqrMagnitude;
 				if (distanceToTarget > m_distanceToTarget) {
-					Impact(false);
+					Explode(false);
 					return;
 				}
 				m_distanceToTarget = distanceToTarget;
@@ -148,7 +148,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 			if (m_timer > 0f) {
 				m_timer -= Time.deltaTime;
 				if (m_timer <= 0f) {
-					Impact(false);
+					Explode(false);
 					return;
 				}
 			}
@@ -156,7 +156,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 			if (InstanceManager.gameCamera != null) {
 				bool rem = InstanceManager.gameCamera.IsInsideDeactivationArea(m_position);
 				if (rem) {
-					Impact(false);
+					Explode(false);
 					return;
 				}
 			}
@@ -166,14 +166,14 @@ public class Projectile : MonoBehaviour, IProjectile {
 	private void OnTriggerEnter(Collider _other) {
 		if (m_hasBeenShot) {
 			if (_other.CompareTag("Player"))  {
-				Impact(true);
+				Explode(true);
 			} else if ((((1 << _other.gameObject.layer) & LayerMask.GetMask("Ground", "GroundVisible")) > 0)) {
-				Impact(false);
+				Explode(false);
 			}
 		}
 	}
 
-	private void Impact(bool _triggeredByPlayer) {
+	public void Explode(bool _triggeredByPlayer) {
 		// dealing damage
 		if (m_damageType == DamageType.EXPLOSION || m_damageType == DamageType.MINE) {
 			m_explosive.Explode(m_position, m_knockback, _triggeredByPlayer);
