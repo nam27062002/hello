@@ -719,12 +719,13 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 138210}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 240.1, y: -142.22, z: 7.07}
+  m_LocalPosition: {x: 525.8873, y: -13.701992, z: -2.71}
   m_LocalScale: {x: 1.15, y: 1.15, z: 1.15}
   m_Children:
   - {fileID: 450668}
   - {fileID: 493086}
   - {fileID: 482678}
+  - {fileID: 4201027527473698}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -23.089, z: 0}
@@ -1186,6 +1187,90 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 138210}
   m_IsPrefabParent: 1
+--- !u!1 &1319323999123452
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4201027527473698}
+  - component: {fileID: 33595352763320392}
+  - component: {fileID: 64559406009987478}
+  - component: {fileID: 114018368079986404}
+  - component: {fileID: 23032144877358102}
+  m_Layer: 9
+  m_Name: Co_A1_tower platform_001 (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &4201027527473698
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1319323999123452}
+  m_LocalRotation: {x: -0, y: -0, z: 0.95200443, w: -0.30608422}
+  m_LocalPosition: {x: 1.480023, y: 5.16, z: 0.13043487}
+  m_LocalScale: {x: 0.30340868, y: 0.30340868, z: 0.27}
+  m_Children: []
+  m_Father: {fileID: 479000}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &23032144877358102
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1319323999123452}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 1cd4aa982266d44c1b79f00acdaa6455, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &33595352763320392
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1319323999123452}
+  m_Mesh: {fileID: 0}
+--- !u!64 &64559406009987478
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1319323999123452}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Convex: 0
+  m_InflateMesh: 0
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 0}
 --- !u!65 &65000013700007226
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -1196,8 +1281,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 4.413658, y: 9.843214, z: 8.188216}
-  m_Center: {x: 0.08792114, y: 0.14370728, z: -3.594108}
+  m_Size: {x: 2.85, y: 5.28, z: 3.16}
+  m_Center: {x: 0.08792114, y: 2.54, z: -0.19}
 --- !u!114 &114000011844506918
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1223,7 +1308,44 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zone1Interaction: 1
   m_knockBackStrength: 0
+  m_particleFaceDragonDirection: 0
   m_feddbackParticle: PS_SplintersRocks
   m_destroyParticle: PS_SplintersRocksBig
   m_onDestroyAudio: Scaffold_Destroyed
   m_onFeedbackAudio: 
+--- !u!114 &114018368079986404
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1319323999123452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e465a4fb08594de49a41e213281fe691, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  keyPoints:
+  - {x: 11.969325, y: -0.6378403, z: 0.0000027332171}
+  - {x: 9.643408, y: -3.7970917, z: 0.0000027332171}
+  - {x: 1.5149965, y: 1.9283609, z: -0.0000027332171}
+  - {x: 3.8455982, y: 5.2557445, z: -0.0000027332171}
+  curvePoints:
+  - {x: 10.806366, y: -2.2174659, z: 0.0000027332171}
+  - {x: 5.579202, y: -0.9343654, z: 0}
+  - {x: 2.6802974, y: 3.5920527, z: -0.0000027332171}
+  - {x: 7.9074616, y: 2.308952, z: 0}
+  isCurve: 00000000
+  curveDetail: 0.1
+  colliderDepth: 10
+  buildColliderEdges: 1
+  buildColliderFront: 0
+  colliderParent: {fileID: 0}
+  uvPosition: {x: 0, y: 0}
+  uvScale: 1
+  uvRotation: 0
+  showNormals: 0
+  showOutline: 1
+  pinkMeshOffset: 0
+  mergeObject: {fileID: 0}
+  mergeStartPoint: 0
+  mergeEndPoint: 0
