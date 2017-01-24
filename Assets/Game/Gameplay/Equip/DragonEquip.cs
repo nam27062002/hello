@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class DragonEquip : MonoBehaviour {
@@ -155,8 +156,23 @@ public class DragonEquip : MonoBehaviour {
 
 		// Equip or unequip?
 		if(string.IsNullOrEmpty(_petSku)) {
-			// Unequip
-			m_attachPoints[attachPointIdx].Unequip();
+			// In the menu, trigger the animation
+			if(m_menuMode) {
+				// Launch out animation
+				if(m_attachPoints[attachPointIdx].item != null) {
+					MenuPetPreview pet = m_attachPoints[attachPointIdx].item.GetComponent<MenuPetPreview>();
+					pet.SetAnim(MenuPetPreview.Anim.OUT);
+
+					// Program a delayed destruction of the item (to give some time to see the anim)
+					GameObject.Destroy(m_attachPoints[attachPointIdx].item.gameObject, 0.3f);	// [AOC] MAGIC NUMBERS!! More or less synced with the animation
+				}
+
+				// Unequip
+				m_attachPoints[attachPointIdx].Unequip(false);
+			} else {
+				// Unequip
+				m_attachPoints[attachPointIdx].Unequip(true);
+			}
 		} else {
 			// Equip!
 			// Get pet definition

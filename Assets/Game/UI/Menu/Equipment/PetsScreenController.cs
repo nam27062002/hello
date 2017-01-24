@@ -145,14 +145,15 @@ public class PetsScreenController : MonoBehaviour {
 			m_slotInfos[i].Init(i, dragonPreview);
 		}
 
-		// Do a first refresh
-		Refresh();
+		// Do a first refresh - without animation
+		Refresh(false);
 	}
 
 	/// <summary>
 	/// Update visuals with current data.
 	/// </summary>
-	public void Refresh() {
+	/// <param name="_animate">Whether to show animations or not.</param>
+	public void Refresh(bool _animate) {
 		// We must have the data!
 		if(m_dragonData == null) return;
 
@@ -166,11 +167,11 @@ public class PetsScreenController : MonoBehaviour {
 				// Equipped?
 				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_dragonData.pets[i]);
 				if(petDef == null) {
-					m_powerIcons[i].InitFromDefinition(null, false);
+					m_powerIcons[i].InitFromDefinition(null, false, _animate);
 				} else {
 					// Get power definition
 					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
-					m_powerIcons[i].InitFromDefinition(powerDef, false);
+					m_powerIcons[i].InitFromDefinition(powerDef, false, _animate);
 				}
 			} else {
 				// Instant hide
@@ -180,7 +181,7 @@ public class PetsScreenController : MonoBehaviour {
 
 		// Slots
 		for(int i = 0; i < m_slotInfos.Length; i++) {
-			m_slotInfos[i].Refresh(m_dragonData);
+			m_slotInfos[i].Refresh(m_dragonData, _animate);
 		}
 	}
 
@@ -242,7 +243,7 @@ public class PetsScreenController : MonoBehaviour {
 	/// <param name="_newPetSku">New pet assigned to the slot. Empty string for unequip.</param>
 	public void OnPetChanged(string _dragonSku, int _slotIdx, string _newPetSku) {
 		// Update data!
-		Refresh();
+		Refresh(true);
 
 		// Save persistence - centralize all pets management persistence in here
 		PersistenceManager.Save();

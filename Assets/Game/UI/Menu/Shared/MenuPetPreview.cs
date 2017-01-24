@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -24,13 +25,15 @@ public class MenuPetPreview : MonoBehaviour {
 	public enum Anim {
 		IDLE,
 		IN,
+		OUT,
 
 		COUNT
 	};
 
 	public static readonly string[] ANIM_TRIGGERS  = {
 		"idle",
-		"in"
+		"in",
+		"out"
 	};
 
 	//------------------------------------------------------------------//

@@ -24,10 +24,12 @@ public class AttachPoint : MonoBehaviour {
 		}
 	}
 
-	public void Unequip() {
+	public void Unequip(bool _destroyItem) {
 		if(m_item == null) return;
 
-		GameObject.Destroy(m_item.gameObject);
+		if(_destroyItem) {
+			GameObject.Destroy(m_item.gameObject);
+		}
 		m_item = null;
 	}
 
