@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 114598444018470182}
   - component: {fileID: 114391430644990302}
   m_Layer: 0
-  m_Name: SP_Goblin_Bomber
+  m_Name: SP_Gargoyle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36,7 +36,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1646362531023180}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -86.5, y: 24.6, z: 0}
+  m_LocalPosition: {x: -58.6, y: 24.69, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -67,8 +67,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -0.03327179, y: 0.1046114}
-  size: {x: 28.442123, y: 11.918668}
+  offset: {x: 0, y: 0}
+  size: {x: 28.595276, y: 10.387072}
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114598444018470182
 MonoBehaviour:
@@ -81,7 +81,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefabStr: Goblin/PF_Bomber
+  m_entityPrefabStr: Monster/PF_Gargoyle
   m_quantity:
     min: 1
     max: 1
@@ -95,8 +95,8 @@ MonoBehaviour:
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
-    min: 0
-    max: 0
+    min: 120
+    max: 150
   m_homePosMethod: 0
   m_homePosDistance:
     min: 1
