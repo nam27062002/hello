@@ -68,7 +68,56 @@ public class CPQualitySettings : MonoBehaviour
     #endregion
 
     #region settings_options
-    private Dictionary<string, TMP_Dropdown> m_settingsOptionsDropDowns;
+    private class SettingsRange
+    {
+        public SettingsRange(float min, float max, float interval)
+        {
+            Setup(min, max, interval);
+        }
+
+        public void Setup(float min, float max, float interval)
+        {
+            Min = min;
+            Max = max;
+            Interval = interval;
+
+            if (Values == null)
+            {
+                Values = new List<float>();
+                ValuesAsStrings = new List<string>();
+            }
+            else
+            {
+                Values.Clear();
+                ValuesAsStrings.Clear();
+            }
+
+            for (float i = Min; i < Max; i+= Interval)
+            {
+                Values.Add(i);
+            }
+
+            if (Values[Values.Count - 1] != Max)
+            {
+                Values.Add(Max);
+            }
+
+            int count = Values.Count;
+            for (int i = 0; i < count; i++)
+            {
+                ValuesAsStrings.Add(Values[i] + "");
+            }
+        }
+
+        public float Min { get; set; }
+        public float Max { get; set; }
+        public float Interval { get; set; }
+        public List<float> Values { get; set; }
+        public List<string> ValuesAsStrings { get; set; }
+    }
+
+    private Dictionary<string, SettingsRange> m_settingsOptionsRanges;
+    private Dictionary<string, TMP_Dropdown> m_settingsOptionsDropDowns;      
 
     private void SettingsOptions_Setup()
     {
@@ -76,8 +125,16 @@ public class CPQualitySettings : MonoBehaviour
         {
             SettingsOptions_Clear();
 
-            // Show the current value of the feature settings
             string key;
+            if (m_settingsOptionsRanges == null)
+            {
+                m_settingsOptionsRanges = new Dictionary<string, SettingsRange>();
+                
+                SettingsOptions_AddRange(GameFeatureSettings.KEY_FLOAT_TEST, 3f, 5f, 0.5f);
+                SettingsOptions_AddRange(GameFeatureSettings.KEY_INT_TEST, 3f, 5f, 1f);
+            }
+
+            // Show the current value of the feature settings            
             Dictionary<string, GameFeatureSettings.Data> datas = GameFeatureSettings.Datas;
             foreach (KeyValuePair<string, GameFeatureSettings.Data> pair in datas)
             {
@@ -95,6 +152,19 @@ public class CPQualitySettings : MonoBehaviour
                     SettingsOptions_Add(pair.Value, prefabOption);
                 }
             }
+        }
+    }
+
+    private void SettingsOptions_AddRange(string key, float min, float max, float interval)
+    {
+        if (GameFeatureSettings.Datas[key].ValueType == GameFeatureSettings.EValueType.Int || GameFeatureSettings.Datas[key].ValueType == GameFeatureSettings.EValueType.Float)
+        {
+            SettingsRange range = new SettingsRange(min, max, interval);
+            m_settingsOptionsRanges.Add(key, range);
+        }
+        else
+        {
+            Debug.LogError("No range can be defined for key " + key + " with type " + GameFeatureSettings.Datas[key].ValueType);
         }
     }
 
@@ -129,6 +199,7 @@ public class CPQualitySettings : MonoBehaviour
         TMP_Dropdown dropDown = prefabOption.GetComponentInChildren<TMP_Dropdown>();
         if (dropDown != null)
         {
+            string key = value.Key;
             dropDown.ClearOptions();
            
             TMP_Dropdown.OptionData optionData;
@@ -136,12 +207,20 @@ public class CPQualitySettings : MonoBehaviour
             List<string> values = GameFeatureSettings.GetValueTypeValuesAsString(value.ValueType);
             if (values == null)
             {
-                // If no values then only the current option has to be shown
-                optionData = new TMP_Dropdown.OptionData();
-                optionData.text = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(value.Key);
-                options.Add(optionData);
+                if (m_settingsOptionsRanges.ContainsKey(key))
+                {
+                    values = m_settingsOptionsRanges[key].ValuesAsStrings;
+                }
+                else
+                {
+                    // If no values then only the current option has to be shown
+                    optionData = new TMP_Dropdown.OptionData();
+                    optionData.text = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(value.Key);
+                    options.Add(optionData);
+                }
             }
-            else
+            
+            if (values != null)
             {
                 foreach (string v in values)
                 {
@@ -158,13 +237,13 @@ public class CPQualitySettings : MonoBehaviour
                 m_settingsOptionsDropDowns = new Dictionary<string, TMP_Dropdown>();
             }
 
-            m_settingsOptionsDropDowns.Add(value.Key, dropDown);
+            m_settingsOptionsDropDowns.Add(key, dropDown);
 
             // Sets the current option
-            PrefabOptions_SetupOption(value.Key);
+            PrefabOptions_SetupOption(key);
         }
     }
-
+    
     private void PrefabOptions_Setup()
     {
         if (m_settingsOptionsDropDowns != null)
@@ -182,6 +261,11 @@ public class CPQualitySettings : MonoBehaviour
         {
             GameFeatureSettings.Data data = GameFeatureSettings.Datas[key];
             List<string> values = GameFeatureSettings.GetValueTypeValuesAsString(data.ValueType);
+            if (values == null && m_settingsOptionsRanges.ContainsKey(key))
+            {
+                values = m_settingsOptionsRanges[key].ValuesAsStrings;
+            }
+
             if (values == null)
             {
                 m_settingsOptionsDropDowns[key].value = 0;
@@ -199,10 +283,25 @@ public class CPQualitySettings : MonoBehaviour
     {
         if (m_settingsOptionsDropDowns != null)
         {
+            string key;
+            List<string> values;
             GameFeatureSettings settings = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings;
             foreach (KeyValuePair<string, TMP_Dropdown> pair in m_settingsOptionsDropDowns)
-            {                
-                settings.SetValueFromIndex(pair.Key, pair.Value.value);
+            {
+                key = pair.Key;
+                values = GameFeatureSettings.GetValueTypeValuesAsString(GameFeatureSettings.Datas[key].ValueType);
+                if (values == null)
+                {
+                    if (m_settingsOptionsRanges.ContainsKey(key))
+                    {
+                        values = m_settingsOptionsRanges[key].ValuesAsStrings;
+                        settings.SetValueFromString(key, values[pair.Value.value]);                                                
+                    }
+                }
+                else
+                {
+                    settings.SetValueFromIndex(key, pair.Value.value);
+                }
             }
         }
     }
