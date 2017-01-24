@@ -48,10 +48,29 @@ SubShader {
 		CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma glsl_no_auto_normalization
+			#pragma fragmentoption ARB_precision_hint_fastest
+			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 			#include "UnityCG.cginc" 
 			#include "Lighting.cginc"
 			#include "../HungryDragon.cginc"
+
+			#if LOW_DETAIL_ON
+			#endif
+
+			#if MEDIUM_DETAIL_ON
+			#define RIM
+			#define BUMP
+			#endif
+
+			#if HI_DETAIL_ON
+			#define RIM
+			#define BUMP
+			#define SPEC
+			#endif
+
+//			#define BUMP
 
 			struct appdata_t {
 				float4 vertex : POSITION;
@@ -66,10 +85,12 @@ SubShader {
 //				float3 halfDir : VECTOR;
 
 				float3 vLight : TEXCOORD1;
-				float3 tangentWorld : TEXCOORD2;
-		        float3 normalWorld : TEXCOORD3;
-		        float3 binormalWorld : TEXCOORD4;
 
+				float3 normalWorld : TEXCOORD3;
+#ifdef BUMP
+				float3 tangentWorld : TEXCOORD2;
+		        float3 binormalWorld : TEXCOORD4;
+#endif
 //		        fixed3 posWorld : TEXCOORD5;
 				fixed3 viewDir : TEXCOORD5;
 
@@ -77,9 +98,12 @@ SubShader {
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
-			sampler2D _BumpMap;
 			sampler2D _DetailTex;
 			float4 _DetailTex_ST;
+
+			#ifdef BUMP
+			sampler2D _BumpMap;
+			#endif
 
 			float4 _Tint;
 			float4 _ColorAdd;
@@ -115,13 +139,16 @@ SubShader {
 //				o.posWorld = mul( unity_ObjectToWorld, v.vertex ).xyz;
 				o.viewDir = viewDirection;
 
-	            // To calculate tangent world
-	            float4x4 modelMatrix = unity_ObjectToWorld;
-     			float4x4 modelMatrixInverse = unity_WorldToObject; 
-	            o.tangentWorld = normalize( mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
-     			o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
-     			o.binormalWorld = normalize( cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
-
+#ifdef BUMP
+				// To calculate tangent world
+				float4x4 modelMatrix = unity_ObjectToWorld;
+				float4x4 modelMatrixInverse = unity_WorldToObject;
+				o.tangentWorld = normalize(mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
+				o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
+				o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
+#else
+				o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
+#endif
 				return o;
 			}
 
@@ -134,9 +161,13 @@ SubShader {
 
 				fixed4 detail = tex2D(_DetailTex, i.texcoord);
 
-	            float3 encodedNormal = UnpackNormal (tex2D (_BumpMap, i.texcoord));
-	            float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
-     			float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
+#ifdef BUMP
+				float3 encodedNormal = UnpackNormal(tex2D(_BumpMap, i.texcoord));
+				float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
+				float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
+#else
+				float3 normalDirection = i.normalWorld;
+#endif
 
 				float3 light0Direction = normalize(_WorldSpaceLightPos0.xyz);
 				float3 light1Direction = normalize(_SecondLightDir.xyz);
@@ -145,19 +176,7 @@ SubShader {
      			fixed4 diffuse = max(0,dot( -normalDirection, light0Direction)) * _LightColor0;
 				diffuse += max(0, dot(normalDirection, light1Direction)) * _SecondLightColor;
 				diffuse.a = 0.0;
-/*
-     			fixed3 pointLights = fixed3(0,0,0);
-     			for (int index = 0; index <1; index++)
-	            {    
-					float4 lightPosition = float4(unity_4LightPosX0[index], unity_4LightPosY0[index], unity_4LightPosZ0[index], 1.0);
-					float3 vertexToLightSource = lightPosition.xyz - i.posWorld.xyz;
-					float3 lightDirection = normalize(vertexToLightSource);
-					float squaredDistance = dot(vertexToLightSource, vertexToLightSource);
-					float attenuation = 1.0 / (1.0 + unity_4LightAtten0[index] * squaredDistance);
-					float3 diffuseReflection = attenuation * unity_LightColor[index].rgb * max(0.0, dot(normalDirection, lightDirection));         
-					pointLights = pointLights + diffuseReflection;
-	            }
-*/
+
 				// Fresnel
 				float fresnel = clamp(pow(max(1.0 - abs(dot(i.viewDir, normalDirection)), 0.0), _Fresnel), 0.0, 1.0);
 
