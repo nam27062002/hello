@@ -5,11 +5,9 @@ using System.Collections.Generic;
 public class PetFireBall :  MonoBehaviour, IProjectile { 
 
 	[SerializeField] private ParticleData m_explosionParticle;
+	[SerializeField] private DragonTier m_fireTier;
 
 	CircleArea2D m_area;
-	float m_timer;
-
-	public float m_maxTime;
 
 	private Transform m_oldParent = null;
 	private LayerMask m_colliderMask;
@@ -72,7 +70,6 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 
 	public void Shoot(Vector3 _target, float _damage = 0f) {
 
-		m_timer = 0;
 		if (m_oldParent) {
 			transform.parent = m_oldParent;
 			m_oldParent = null;
@@ -87,7 +84,6 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 
 	public void ShootAtPosition( Transform _from, float _damage, Vector3 _pos){
 
-		m_timer = 0;
 		if (m_oldParent) {
 			transform.parent = m_oldParent;
 			m_oldParent = null;
@@ -128,7 +124,7 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_area.center, m_area.radius * 3);
 		for (int i = 0; i < preys.Length; i++) 
 		{
-			if ( preys[i].IsBurnable())
+			if ( preys[i].IsBurnable(m_fireTier))
 			{
 				AI.Machine machine =  preys[i].GetComponent<AI.Machine>();
 				if (machine != null) {

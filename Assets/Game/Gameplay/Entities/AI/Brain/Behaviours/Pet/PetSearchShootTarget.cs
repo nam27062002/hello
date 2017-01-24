@@ -15,6 +15,7 @@ namespace AI {
 		public class PetSearchShootTargetData : StateComponentData {
 			public DragonTier shootingTier;
 			public CheckType checkType;
+			public float dragonSizeRangeMultiplier = 10;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Search Shoot Target")]
@@ -57,8 +58,8 @@ namespace AI {
 				base.OnInitialise();
 
 				m_owner = InstanceManager.player;
-				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * 20f;
 				m_data = m_pilot.GetComponentData<PetSearchShootTargetData>();
+				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * m_data.dragonSizeRangeMultiplier;
 			}
 
 			// The first element in _param must contain the amount of time without detecting an enemy
