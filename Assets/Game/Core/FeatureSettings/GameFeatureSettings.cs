@@ -12,6 +12,10 @@ public class GameFeatureSettings : FeatureSettings
     public const string KEY_GLOW = "glow";
     public const string KEY_ENTITIES_LOD = "entitiesLOD";
     public const string KEY_LEVELS_LOD = "levelsLOD";
+    public const string KEY_INT_TEST = "intTest";    
+    public const string KEY_FLOAT_TEST = "floatTest";
+    public const string KEY_STRING_TEST = "stringTest";
+    public const string KEY_INT_RANGE_TEST = "intRangeTest";
 
     public static void Build()
     {
@@ -23,7 +27,10 @@ public class GameFeatureSettings : FeatureSettings
             ValueTypes.Add(EValueType.Level2, GetValueTypeValuesAsString<ELevel2Values>());
             ValueTypes.Add(EValueType.Level3, GetValueTypeValuesAsString<ELevel3Values>());
             ValueTypes.Add(EValueType.Level5, GetValueTypeValuesAsString<ELevel5Values>());
-            ValueTypes.Add(EValueType.QualityLevel, GetValueTypeValuesAsString<EQualityLevelValues>());            
+            ValueTypes.Add(EValueType.QualityLevel, GetValueTypeValuesAsString<EQualityLevelValues>());
+            ValueTypes.Add(EValueType.Int, null);
+            ValueTypes.Add(EValueType.String, null);
+            ValueTypes.Add(EValueType.Float, null);
         }
 
         if (Datas == null)
@@ -55,6 +62,21 @@ public class GameFeatureSettings : FeatureSettings
             key = KEY_LEVELS_LOD;
             data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
             Datas.Add(key, data);
+
+            // intTest
+            key = KEY_INT_TEST;
+            data = new DataInt(key, EValueType.Int, 0);
+            Datas.Add(key, data);
+
+            // floatTest
+            key = KEY_FLOAT_TEST;
+            data = new DataFloat(key, EValueType.Float, 0f);
+            Datas.Add(key, data);
+
+            // stringTest
+            key = KEY_STRING_TEST;
+            data = new DataString(key, EValueType.String, "");
+            Datas.Add(key, data);
         }
     }
 
@@ -80,7 +102,10 @@ public class GameFeatureSettings : FeatureSettings
         Level2,
         Level3,
         Level5,
-        QualityLevel
+        QualityLevel,
+        Int,
+        Float,
+        String
     };
 
     public enum EBoolValues
@@ -129,26 +154,57 @@ public class GameFeatureSettings : FeatureSettings
 
     public abstract class Data
     {        
-        public Data(string key, EValueType valueType)
+        public Data(string key, EValueType valueType, string defaultValue)
         {
             Key = key;
-            ValueType = valueType;            
+            ValueType = valueType;
+            DefaultValueAsString = defaultValue;        
         }
 
         public string Key { get; set; }
-        public EValueType ValueType { get; set; }              
+        public EValueType ValueType { get; set; }      
+        public string DefaultValueAsString { get; set; }        
     }    
 
     public class DataInt : Data
     {
-        public DataInt(string key, EValueType type, int defaultValue) : base(key, type)
+        public DataInt(string key, EValueType type, int defaultValue) : base(key, type, defaultValue + "")
         {
             DefaultValue = defaultValue;
         }
 
-
         public int DefaultValue { get; set; }
-    }   
+    }
+
+    public class DataFloat : Data
+    {
+        public DataFloat(string key, EValueType type, float defaultValue) : base(key, type, defaultValue + "")
+        {
+            DefaultValue = defaultValue;
+        }
+
+        public float DefaultValue { get; set; }
+    }    
+    
+    public class DataString : Data
+    {
+        public DataString(string key, EValueType type, string defaultValue) : base(key, type, defaultValue)
+        {                       
+        }
+
+        public string DefaultValue
+        {
+            get
+            {
+                return DefaultValueAsString;
+            }
+            
+            set
+            {
+                DefaultValueAsString = value;
+            }
+        }
+    }
 
     private Dictionary<string, object> Values;   
 
@@ -166,6 +222,16 @@ public class GameFeatureSettings : FeatureSettings
     {
         EBoolValues valueAsBool = (Values.ContainsKey(key)) ? (EBoolValues)Values[key] : (EBoolValues)((Datas[key] as DataInt).DefaultValue);
         return valueAsBool == EBoolValues.TRUE;            
+    }
+
+    public int GetValueAsInt(string key)
+    {
+        return (Values.ContainsKey(key)) ? (int)Values[key] : (int)((Datas[key] as DataInt).DefaultValue);
+    }
+
+    public float GetValueAsFloat(string key)
+    {
+        return (Values.ContainsKey(key)) ? (float)Values[key] : (float)((Datas[key] as DataFloat).DefaultValue);
     }
 
     public ELevel2Values GetValueAsLevel2(string key)
@@ -191,14 +257,36 @@ public class GameFeatureSettings : FeatureSettings
     public string GetValueAsString(string key)
     {
         string returnValue = null;
-        if (Values != null && Values.ContainsKey(key))
+        if (Values.ContainsKey(key))
         {
             EValueType type = Datas[key].ValueType;
-            int index = (int)Values[key];
-            if (ValueTypes.ContainsKey(type))
+            switch (type)
             {
-                returnValue = ValueTypes[type][index];
-            }                        
+                case EValueType.Int:
+                    returnValue = (int)Values[key] + "";
+                    break;
+
+                case EValueType.Float:
+                    returnValue = (float)Values[key] + "";
+                    break;
+
+                case EValueType.String:
+                    returnValue = (string)Values[key];
+                    break;
+
+                default:
+                    // Enum value
+                    int index = (int)Values[key];
+                    if (ValueTypes.ContainsKey(type))
+                    {
+                        returnValue = ValueTypes[type][index];
+                    }
+                    break;
+            }            
+        }
+        else
+        {
+            returnValue = Datas[key].DefaultValueAsString;
         }
 
         return returnValue;        
@@ -208,13 +296,17 @@ public class GameFeatureSettings : FeatureSettings
     {
         if (Datas.ContainsKey(key))
         {
-            if (Values.ContainsKey(key))
+            List<string> values = ValueTypes[Datas[key].ValueType];
+            if (values != null)
             {
-                Values[key] = index;
-            }
-            else
-            {
-                Values.Add(key, index);
+                if (Values.ContainsKey(key))
+                {
+                    Values[key] = index;
+                }
+                else
+                {
+                    Values.Add(key, index);
+                }
             }                          
         }        
     }
@@ -224,9 +316,51 @@ public class GameFeatureSettings : FeatureSettings
         if (Datas.ContainsKey(key))
         {
             List<string> values = ValueTypes[Datas[key].ValueType];
-            int valueAsIndex = values.IndexOf(valueAsString);
+            if (values == null)
+            {
+                switch (Datas[key].ValueType)
+                {
+                    case EValueType.Int:
+                        int valueAsInt = int.Parse(valueAsString);
+                        if (Values.ContainsKey(key))
+                        {
+                            Values[key] = valueAsInt;
+                        }
+                        else
+                        {
+                            Values.Add(key, valueAsInt);
+                        }
+                        break;
 
-            SetValueFromIndex(key, valueAsIndex);           
+                    case EValueType.Float:
+                        float valueAsFloat = float.Parse(valueAsString);
+                        if (Values.ContainsKey(key))
+                        {
+                            Values[key] = valueAsFloat;
+                        }
+                        else
+                        {
+                            Values.Add(key, valueAsFloat);
+                        }
+                        break;
+
+                    case EValueType.String:
+                        if (Values.ContainsKey(key))
+                        {
+                            Values[key] = valueAsString;
+                        }
+                        else
+                        {
+                            Values.Add(key, valueAsString);
+                        }
+                        break;
+                }               
+            }
+            else
+            {
+                int valueAsIndex = values.IndexOf(valueAsString);
+                SetValueFromIndex(key, valueAsIndex);
+            }
         }
     }
 
@@ -254,7 +388,7 @@ public class GameFeatureSettings : FeatureSettings
     protected override void ExtendedToJSON(JSONNode json)
     {
         string key;
-        foreach (KeyValuePair<string, Data> pair in Datas)
+        foreach (KeyValuePair<string, object> pair in Values)            
         {
             key = pair.Key;
             json.Add(key, GetValueAsString(key));            

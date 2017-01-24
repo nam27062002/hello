@@ -12,29 +12,7 @@ public class CPQualitySettings : MonoBehaviour
     public GameObject m_prefabOption;
 
     void Awake()
-    {
-        if (m_prefabOption != null)
-        {
-            // Show the current value of the feature settings
-            string key;            
-            Dictionary<string, GameFeatureSettings.Data> datas = GameFeatureSettings.Datas;
-            foreach (KeyValuePair<string, GameFeatureSettings.Data> pair in datas)
-            {
-                key = pair.Key;
-                Transform thisParent = transform;
-                GameObject prefabOption = (GameObject)Instantiate(m_prefabOption);
-                if (prefabOption != null)
-                {
-                    prefabOption.transform.parent = thisParent;
-                    prefabOption.transform.SetLocalScale(1f);
-                    prefabOption.SetActive(true);
-
-                    PrefabSettingsOption_SetLabel(prefabOption.transform, pair.Key);                    
-                    SettingsOptions_Add(pair.Value, prefabOption);
-                }
-            }           
-        }
-
+    {        
         Profile_Start();
         Device_Start();        
     }    
@@ -47,6 +25,7 @@ public class CPQualitySettings : MonoBehaviour
 
     void Setup()
     {
+        SettingsOptions_Setup();
         PrefabOptions_Setup();
         Quality_Setup();
         Profile_Setup();
@@ -91,6 +70,60 @@ public class CPQualitySettings : MonoBehaviour
     #region settings_options
     private Dictionary<string, TMP_Dropdown> m_settingsOptionsDropDowns;
 
+    private void SettingsOptions_Setup()
+    {
+        if (m_prefabOption != null)
+        {
+            SettingsOptions_Clear();
+
+            // Show the current value of the feature settings
+            string key;
+            Dictionary<string, GameFeatureSettings.Data> datas = GameFeatureSettings.Datas;
+            foreach (KeyValuePair<string, GameFeatureSettings.Data> pair in datas)
+            {
+                key = pair.Key;
+                Transform thisParent = transform;
+                GameObject prefabOption = (GameObject)Instantiate(m_prefabOption);
+                if (prefabOption != null)
+                {
+                    prefabOption.name = "settings_" + pair.Key;
+                    prefabOption.transform.parent = thisParent;
+                    prefabOption.transform.SetLocalScale(1f);
+                    prefabOption.SetActive(true);
+
+                    PrefabSettingsOption_SetLabel(prefabOption.transform, pair.Key);
+                    SettingsOptions_Add(pair.Value, prefabOption);
+                }
+            }
+        }
+    }
+
+    private void SettingsOptions_Clear()
+    {
+        if (m_settingsOptionsDropDowns != null)
+        {
+            Transform t;
+            string name;
+            foreach (KeyValuePair<string, TMP_Dropdown> pair in m_settingsOptionsDropDowns)
+            {
+                name = "settings_" + pair.Key;
+                t = pair.Value.transform;
+                while (t.name != name)
+                {
+                    t = t.parent;
+                }
+
+                if (t != null)
+                {
+                    t.parent = null;
+                    Destroy(t.gameObject);
+                }                
+            }
+
+            m_settingsOptionsDropDowns.Clear();
+        }
+    }
+
     private void SettingsOptions_Add(GameFeatureSettings.Data value, GameObject prefabOption)
     {
         TMP_Dropdown dropDown = prefabOption.GetComponentInChildren<TMP_Dropdown>();
@@ -101,11 +134,21 @@ public class CPQualitySettings : MonoBehaviour
             TMP_Dropdown.OptionData optionData;
             List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
             List<string> values = GameFeatureSettings.GetValueTypeValuesAsString(value.ValueType);
-            foreach (string v in values)
+            if (values == null)
             {
+                // If no values then only the current option has to be shown
                 optionData = new TMP_Dropdown.OptionData();
-                optionData.text = v;
-                options.Add(optionData);                
+                optionData.text = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(value.Key);
+                options.Add(optionData);
+            }
+            else
+            {
+                foreach (string v in values)
+                {
+                    optionData = new TMP_Dropdown.OptionData();
+                    optionData.text = v;
+                    options.Add(optionData);
+                }
             }
             
             dropDown.AddOptions(options);            
@@ -139,8 +182,15 @@ public class CPQualitySettings : MonoBehaviour
         {
             GameFeatureSettings.Data data = GameFeatureSettings.Datas[key];
             List<string> values = GameFeatureSettings.GetValueTypeValuesAsString(data.ValueType);
-            string currentValue = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key);
-            m_settingsOptionsDropDowns[key].value = values.IndexOf(currentValue);
+            if (values == null)
+            {
+                m_settingsOptionsDropDowns[key].value = 0;
+            }
+            else
+            {
+                string currentValue = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key);
+                m_settingsOptionsDropDowns[key].value = values.IndexOf(currentValue);
+            }
         }
     }
 
@@ -288,7 +338,7 @@ public class CPQualitySettings : MonoBehaviour
         {
             manager.Device_Model = m_deviceNames[m_deviceDropDown.value];
 
-            // We want theonfiguration for this device to be used
+            // We want the configuration for this device to be used
             manager.SetupCurrentFeatureSettings(null);
 
             // The view has to be updated so it will show the configuration for the new profile
