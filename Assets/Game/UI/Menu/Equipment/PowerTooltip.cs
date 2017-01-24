@@ -49,7 +49,6 @@ public class PowerTooltip : MonoBehaviour {
 		Debug.Assert(m_nameText != null, "Required field!");
 		Debug.Assert(m_descriptionText != null, "Required field!");
 		Debug.Assert(m_powerIcon != null, "Required field!");
-		Debug.Assert(m_lockInfo != null, "Required field!");
 	}
 
 	//------------------------------------------------------------------------//
@@ -91,7 +90,7 @@ public class PowerTooltip : MonoBehaviour {
 	/// <param name="_locked">Whether the power is locked or not.</param>
 	public void SetLocked(bool _locked) {
 		// Lock info
-		m_lockInfo.SetActive(_locked);
+		if(m_lockInfo != null) m_lockInfo.SetActive(_locked);
 	}
 
 	//------------------------------------------------------------------------//
