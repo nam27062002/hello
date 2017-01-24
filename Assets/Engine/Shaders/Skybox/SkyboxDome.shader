@@ -39,7 +39,7 @@ SubShader {
 	float4		_SkyLowColor;
 	float		_Speed;
 	float		_IOffset;
-	float4		_CamPos;
+//	float4		_CamPos;
 
 	HG_FOG_VARIABLES
 
@@ -54,7 +54,7 @@ SubShader {
 		float2 uv : TEXCOORD0;
 		float2 uv2 : TEXCOORD1;
 		HG_FOG_COORDS(2)
-		float4 camPos : TEXCOORD3;
+//		float4 camPos : TEXCOORD3;
 	};
 
 
@@ -69,7 +69,7 @@ SubShader {
 		o.uv2 = TRANSFORM_TEX(v.texcoord.xy,_DetailTex);
 		HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
 //		o.camPos.xy = TRANSFORM_TEX(mul(unity_WorldToObject, _CamPos), _MainTex);
-		o.camPos.xy = mul(unity_WorldToObject, _CamPos);
+//		o.camPos.xy = mul(unity_WorldToObject, _CamPos);
 		return o;
 	}
 	ENDCG
@@ -87,7 +87,8 @@ SubShader {
 //			fixed4 tex2 = tex2D (_DetailTex, i.uv2.yx);
 //			fixed4 one = fixed4(1,1,1,1);
 //			fixed4 col = one - (one - tex) * (one - tex2);
-			i.uv.x += i.camPos.x * _MainTex_ST.z - 0.5;
+//			i.uv.x += i.camPos.x * _MainTex_ST.z - 0.5;
+			i.uv.x += -0.5;
 			float persp = (0.1 + i.uv.y * 2.5);
 			float2 uv = i.uv.xy + float2((_Time.y * _Speed), 0.0) * float2(persp, 1.0);
 
@@ -103,11 +104,11 @@ SubShader {
 //			float intensity2 = tex2D(_DetailTex, (i.uv2.xy + float2(_Time.y * _Speed * 0.555, 0.0) + mul(mr, float2((1.0 - intensity) * _IOffset, intensity * _IOffset)))).x;// +pow(i.uv.y, 3.0);
 			float intensity2 = tex2D(_DetailTex, uv2).x;// +pow(i.uv.y, 3.0);
 
-			fixed4 col = (intensity + intensity2) * 0.333;
+//			fixed4 col = (intensity + intensity2) * 0.666;
+			fixed4 col = 1.0 - (1.0 - intensity) * (1.0 - intensity2);
 			float4 skyCol = lerp(_SkyLowColor, _SkyHighColor, clamp(persp, 0.0, 1.0));
 //			col = 1.0 - (1.0 - col) * (1.0 - skyCol);
 			col = col + skyCol;
-
 
 			HG_APPLY_FOG(i, col);	// Fog
 			UNITY_OPAQUE_ALPHA(col.a);	// Opaque
