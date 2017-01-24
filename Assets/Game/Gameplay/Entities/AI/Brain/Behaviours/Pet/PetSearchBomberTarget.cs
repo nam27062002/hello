@@ -5,21 +5,17 @@ using System;
 
 namespace AI {
 	namespace Behaviour {	
-		public enum CheckType
-		{
-			Edible,
-			Burnable
-		};
 
 		[System.Serializable]
-		public class PetSearchShootTargetData : StateComponentData {
+		public class PetSearchBomberTargetData : StateComponentData {
 			public DragonTier shootingTier;
 			public CheckType checkType;
 			public float dragonSizeRangeMultiplier = 10;
+			public float maxWidthDistance = 3;
 		}
 
-		[CreateAssetMenu(menuName = "Behaviour/Pet/Search Shoot Target")]
-		public class PetSearchShootTarget : StateComponent {
+		[CreateAssetMenu(menuName = "Behaviour/Pet/Search Bomber Target")]
+		public class PetSearchBomberTarget : StateComponent {
 
 			[StateTransitionTrigger]
 			private static string onEnemyTargeted = "onEnemyTargeted";
@@ -36,15 +32,15 @@ namespace AI {
 			DragonPlayer m_owner;
 			float m_range;
 
-			private PetSearchShootTargetData m_data;
+			private PetSearchBomberTargetData m_data;
 
 
 			public override StateComponentData CreateData() {
-				return new PetSearchShootTargetData();
+				return new PetSearchBomberTargetData();
 			}
 
 			public override System.Type GetDataType() {
-				return typeof(PetSearchShootTargetData);
+				return typeof(PetSearchBomberTargetData);
 			}
 
 			protected override void OnInitialise() {
@@ -58,7 +54,7 @@ namespace AI {
 				base.OnInitialise();
 
 				m_owner = InstanceManager.player;
-				m_data = m_pilot.GetComponentData<PetSearchShootTargetData>();
+				m_data = m_pilot.GetComponentData<PetSearchBomberTargetData>();
 				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * m_data.dragonSizeRangeMultiplier;
 			}
 
@@ -105,7 +101,7 @@ namespace AI {
 								}break;
 							}
 
-							if ( isViable )
+							if ( isViable && machine.position.y < m_pilot.transform.position.y && Mathf.Abs(machine.position.x - m_pilot.transform.position.x) <= m_data.maxWidthDistance )
 							{
 								// Check if physics reachable
 								RaycastHit hit;

@@ -6,4 +6,6 @@ public interface IProjectile {
 	void Shoot(Vector3 _target, float _damage = 0f);
 		// Shoots At world position _pos
 	void ShootAtPosition( Transform _from, float _damage, Vector3 _pos);
+
+	void Explode(bool _hitDragon);
 }

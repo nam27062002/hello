@@ -28,12 +28,30 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow + Normal Map"
 				#pragma fragment frag
 				#pragma multi_compile_fog
 				#pragma multi_compile_fwdbase
-							
+				#pragma glsl_no_auto_normalization
+				#pragma fragmentoption ARB_precision_hint_fastest
+				#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
+
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
 				#include "HungryDragon.cginc"
 				#include "Lighting.cginc"
 
+				#if LOW_DETAIL_ON
+				#endif
+
+				#if MEDIUM_DETAIL_ON
+				#define RIM
+				#define BUMP
+				#endif
+
+				#if HI_DETAIL_ON
+				#define RIM
+				#define BUMP
+				#define SPEC
+				#endif
+
+//				#define BUMP
 
 				struct appdata_t {
 					float4 vertex : POSITION;
@@ -55,17 +73,21 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow + Normal Map"
 					float2 lmap : TEXCOORD2;
 					#endif
 					half2 texcoord2 : TEXCOORD3;
-					float3 tangentWorld : TANGENT;
 					float3 normalWorld : NORMAL;
+					#ifdef BUMP
+					float3 tangentWorld : TANGENT;
 					float3 binormalWorld : TEXCOORD4;
+					#endif
 					float3 halfDir : TEXCOORD5;
 				};
 
 				uniform sampler2D _MainTex;
 				uniform float4 _MainTex_ST;
+				#ifdef BUMP
 				uniform sampler2D _NormalTex;
 				uniform float4 _NormalTex_ST;
 				uniform float _NormalStrength;
+				#endif
 				uniform float _Specular;
 				uniform fixed4 _SpecularDir;
 
@@ -76,18 +98,24 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow + Normal Map"
 					v2f o;
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 					o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
+					#ifdef BUMP
 					o.texcoord2 = TRANSFORM_TEX(v.texcoord, _NormalTex);
+					#endif
 //					o.color = v.color;
 					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 					#endif
-																							// To calculate tangent world
+
+					#ifdef BUMP																					// To calculate tangent world
 					float4x4 modelMatrix = unity_ObjectToWorld;
 					float4x4 modelMatrixInverse = unity_WorldToObject;
 					o.tangentWorld = normalize(mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
 					o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
 					o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
+					#else
+					o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
+					#endif
 
 					fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 					// Half View - See: Blinn-Phong
@@ -110,13 +138,16 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow + Normal Map"
 					fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 					col.rgb *= lm;
 					#endif
-
 					HG_APPLY_FOG(i, col);	// Fog
 
+					#ifdef BUMP
 					float4 encodedNormal = tex2D(_NormalTex, _NormalTex_ST.xy * i.texcoord2 + _NormalTex_ST.zw);
 					float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
 					float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
 					float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
+					#else
+					float3 normalDirection = i.normalWorld;
+					#endif
 					fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
 
 					UNITY_OPAQUE_ALPHA(col.a);	// Opaque

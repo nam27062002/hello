@@ -27,8 +27,8 @@ public class PetSlotInfo : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private GameObject m_emptySlotObj = null;
-	[SerializeField] private GameObject m_equippedSlotObj = null;
+	[SerializeField] private ShowHideAnimator m_emptySlotAnim = null;
+	[SerializeField] private ShowHideAnimator m_equippedSlotAnim = null;
 	[Space]
 	[SerializeField] private Localizer m_nameText = null;
 
@@ -95,7 +95,7 @@ public class PetSlotInfo : MonoBehaviour {
 	/// Refresh the slot's info with a specific dragon data.
 	/// </summary>
 	/// <param name="_dragonData">The dragon data to be used to refresh this slot's info.</param>
-	public void Refresh(DragonData _dragonData) {
+	public void Refresh(DragonData _dragonData, bool _animate) {
 		// Store dragon data
 		m_dragonData = _dragonData;
 
@@ -109,8 +109,8 @@ public class PetSlotInfo : MonoBehaviour {
 			// [AOC] TODO!! Make it nicer
 			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_dragonData.pets[m_slotIdx]);
 			bool equipped = (petDef != null);
-			m_equippedSlotObj.SetActive(equipped);
-			m_emptySlotObj.SetActive(!equipped);
+			m_equippedSlotAnim.Set(equipped, _animate);
+			m_emptySlotAnim.Set(!equipped, _animate);
 
 			// Pet info
 			if(equipped) {
@@ -131,7 +131,7 @@ public class PetSlotInfo : MonoBehaviour {
 	/// </summary>
 	public void OnEmptySlotTap() {
 		// Show some feedback
-		UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("Pick a pet from the list below!"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// [AOC] HARDCODED!!
+		UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_EMPTY_SLOT_INFO"), new Vector2(0.5f, 0.35f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 	}
 
 	/// <summary>
