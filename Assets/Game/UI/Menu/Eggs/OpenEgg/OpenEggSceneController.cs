@@ -227,7 +227,7 @@ public class OpenEggSceneController : MonoBehaviour {
 
 				// Use a PetLoader to simplify things
 				MenuPetLoader loader = m_rewardView.AddComponent<MenuPetLoader>();
-				loader.Setup(MenuPetLoader.Mode.MANUAL, MenuPetLoader.Anim.BREAK_EGG, true);
+				loader.Setup(MenuPetLoader.Mode.MANUAL, MenuPetPreview.Anim.IN, true);
 				loader.Load(rewardData.itemDef.sku);
 
 				// Animate it

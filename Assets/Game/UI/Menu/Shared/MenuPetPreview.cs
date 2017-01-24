@@ -21,6 +21,17 @@ public class MenuPetPreview : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	public enum Anim {
+		IDLE,
+		IN,
+
+		COUNT
+	};
+
+	public static readonly string[] ANIM_TRIGGERS  = {
+		"idle",
+		"in"
+	};
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -29,6 +40,9 @@ public class MenuPetPreview : MonoBehaviour {
 	[SerializeField] private string m_sku;
 	public string sku { get { return m_sku; }}
 
+	// Internal
+	private Animator m_animator = null;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -36,7 +50,17 @@ public class MenuPetPreview : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		
+		m_animator = GetComponentInChildren<Animator>();
+	}
+
+	/// <summary>
+	/// Apply the given animation to the pet's animator.
+	/// </summary>
+	/// <param name="_anim">The animation to be launched.</param>
+	public void SetAnim(Anim _anim) {
+		if(m_animator != null) {
+			m_animator.SetTrigger(ANIM_TRIGGERS[(int)_anim]);
+		}
 	}
 }
 

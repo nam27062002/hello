@@ -81,6 +81,19 @@ public class PetCategoryTab : Tab {
 		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "category", _category);
 		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 
+		// Put owned pets at the beginning of the list
+		defs.Sort((DefinitionNode _def1, DefinitionNode _def2) => {
+			bool unlocked1 = UsersManager.currentUser.petCollection.IsPetUnlocked(_def1.sku);
+			bool unlocked2 = UsersManager.currentUser.petCollection.IsPetUnlocked(_def2.sku);
+			if(unlocked1 && !unlocked2) {
+				return -1;
+			} else if(unlocked2 && !unlocked1) {
+				return 1;
+			} else {
+				return _def1.GetAsInt("order").CompareTo(_def2.GetAsInt("order"));
+			}
+		});
+
 		// Initialize one pill for each pet
 		for(int i = 0; i < defs.Count; i++) {
 			// If we don't have enough pills, instantiate new ones
