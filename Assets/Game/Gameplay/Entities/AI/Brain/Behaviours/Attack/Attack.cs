@@ -129,7 +129,7 @@ namespace AI {
 						dir.y = 0;
 						dir.z = 0;
 					}
-					m_pilot.SetDirection(dir.normalized);
+					m_pilot.SetDirection(dir.normalized, true);
 				}	
 			}
 
