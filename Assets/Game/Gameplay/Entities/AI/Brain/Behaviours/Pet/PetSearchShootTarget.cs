@@ -28,7 +28,7 @@ namespace AI {
 			private float m_timer;
 			private object[] m_transitionParam;
 
-			private Entity[] m_checkEntities = new Entity[20];
+			private Entity[] m_checkEntities = new Entity[50];
 			private int m_numCheckEntities = 0;
 
 			private int m_collidersMask;
@@ -90,7 +90,7 @@ namespace AI {
 					{
 						Entity entity = m_checkEntities[e];
 						Machine machine = entity.GetComponent<Machine>();
-						if (machine != null && machine.CanBeBitten() && !machine.isPetTarget	)
+						if (machine != null && machine.CanBeBitten() && !machine.isPetTarget )
 						{
 							bool isViable = false;
 							switch( m_data.checkType )
@@ -107,18 +107,23 @@ namespace AI {
 
 							if ( isViable )
 							{
-								// Check if physics reachable
-								RaycastHit hit;
-								Vector3 dir = entity.circleArea.center - m_machine.position;
-								bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
-								if ( !hasHit )
+								// Test if in front of player!
+								Vector3 entityDir = machine.position - m_owner.dragonMotion.position;
+								if( Vector2.Dot( m_owner.dragonMotion.direction, entityDir) > 0)
 								{
-									// Check if closed? Not for the moment
-									m_transitionParam[0] = entity.transform;
-									m_machine.enemy = entity.transform;
-									m_machine.SetSignal(Signals.Type.Warning, true);
-									Transition( onEnemyTargeted, m_transitionParam);
-									break;
+									// Check if physics reachable
+									RaycastHit hit;
+									Vector3 dir = entity.circleArea.center - m_machine.position;
+									bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
+									if ( !hasHit )
+									{
+										// Check if closed? Not for the moment
+										m_transitionParam[0] = entity.transform;
+										m_machine.enemy = entity.transform;
+										m_machine.SetSignal(Signals.Type.Warning, true);
+										Transition( onEnemyTargeted, m_transitionParam);
+										break;
+									}
 								}
 							}
 						}
