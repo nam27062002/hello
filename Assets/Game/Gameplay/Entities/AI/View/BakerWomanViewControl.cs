@@ -18,8 +18,10 @@ public class BakerWomanViewControl : ViewControl {
 
 	protected override void OnSpecialAnimationEnter(SpecialAnims _anim) {
 		//spawn flour object, particle system	
-		if (m_flourParticles.IsValid()) {
-			ParticleManager.Spawn(m_flourParticles, m_flourSpawnTransform.position);
+		if (m_flourParticles.IsValid()) {			
+			if (m_moving) {
+				ParticleManager.Spawn(m_flourParticles, m_flourSpawnTransform.position);
+			}			
 		}
 	}
 }

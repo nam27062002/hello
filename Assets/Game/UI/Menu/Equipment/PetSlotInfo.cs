@@ -95,7 +95,7 @@ public class PetSlotInfo : MonoBehaviour {
 	/// Refresh the slot's info with a specific dragon data.
 	/// </summary>
 	/// <param name="_dragonData">The dragon data to be used to refresh this slot's info.</param>
-	public void Refresh(DragonData _dragonData) {
+	public void Refresh(DragonData _dragonData, bool _animate) {
 		// Store dragon data
 		m_dragonData = _dragonData;
 
@@ -109,8 +109,8 @@ public class PetSlotInfo : MonoBehaviour {
 			// [AOC] TODO!! Make it nicer
 			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_dragonData.pets[m_slotIdx]);
 			bool equipped = (petDef != null);
-			m_equippedSlotAnim.Set(equipped);
-			m_emptySlotAnim.Set(!equipped);
+			m_equippedSlotAnim.Set(equipped, _animate);
+			m_emptySlotAnim.Set(!equipped, _animate);
 
 			// Pet info
 			if(equipped) {
