@@ -108,15 +108,8 @@ public class PowerIcon : MonoBehaviour {
 		if(show) {
 			// Power icon
 			if(m_powerIcon != null) {
-				// Load power icons spritesheet
-				Sprite[] allIcons = Resources.LoadAll<Sprite>(UIConstants.POWER_ICONS_PATH);
-
-				// Pick target icon, use first one if not found
-				string iconName = _powerDef.GetAsString("icon");
-				m_powerIcon.sprite = Array.Find<Sprite>(allIcons, (_sprite) => { return _sprite.name == iconName; });
-				if(m_powerIcon.sprite == null) {
-					m_powerIcon.sprite = allIcons[0];
-				}
+				// Load from resources
+				m_powerIcon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + _powerDef.GetAsString("icon"));
 			}
 
 			// Name
