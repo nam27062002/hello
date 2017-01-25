@@ -20,10 +20,13 @@ public class FeatureSettings
     /// </summary>    
     public void FromJSON(JSONNode json)
     {        
-        Reset();        
+        Reset();
+        ParseJSON(json);    
         OverrideFromJSON(json); 
     }
-    
+
+    protected virtual void ParseJSON(JSONNode json) {}
+
     /// <summary>
     /// Overrides the current data of this object with the data defined in <c>json</c>. Only the keys defined in <c>json</c> are overriden.
     /// </summary>    

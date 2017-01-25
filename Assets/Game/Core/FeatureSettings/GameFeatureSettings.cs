@@ -29,11 +29,15 @@ public class GameFeatureSettings : FeatureSettings
     public const string KEY_GLOW = "glow";
     public const string KEY_ENTITIES_LOD = "entitiesLOD";
     public const string KEY_LEVELS_LOD = "levelsLOD";
+
+    /*
+    // Examples of how to use different type datas
     public const string KEY_INT_TEST = "intTest";    
     public const string KEY_FLOAT_TEST = "floatTest";
     public const string KEY_STRING_TEST = "stringTest";
     public const string KEY_INT_RANGE_TEST = "intRangeTest";
     public const string KEY_FLOAT_RANGE_TEST = "floatRangeTest";
+    */
 
     public static void Build()
     {
@@ -81,6 +85,7 @@ public class GameFeatureSettings : FeatureSettings
             data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
             Datas.Add(key, data);
 
+            /*
             // intTest
             key = KEY_INT_TEST;
             data = new DataInt(key, EValueType.Int, 0);
@@ -109,6 +114,7 @@ public class GameFeatureSettings : FeatureSettings
             int intervalAsInt = 1;
             data = new DataRange(key, EValueType.Int, minAsInt, minAsInt, maxAsInt, intervalAsInt);
             Datas.Add(key, data);
+            */
         }
     }
 
@@ -186,6 +192,24 @@ public class GameFeatureSettings : FeatureSettings
 
     public abstract class Data
     {        
+        public static void ParseValueInt(string value)
+        {
+            int outValue;
+            if (!int.TryParse(value, out outValue))
+            {
+                LogError(value + " is not an int value");
+            }
+        }
+
+        public static void ParseValueFloat(string value)
+        {
+            float outValue;
+            if (!float.TryParse(value, out outValue))
+            {
+                LogError(value + " is not a float value");
+            }
+        }
+
         public Data(string key, EValueType valueType, object defaultValue, string defaultValueAsString)
         {
             Key = key;
@@ -215,6 +239,23 @@ public class GameFeatureSettings : FeatureSettings
             }
         }
 
+        public void ParseValue(string value)
+        {
+            if (IsAList)
+            {
+                if (ValuesAsStrings.IndexOf(value) == -1)
+                {
+                    LogError(value + " + is not among the valid values: [" + ValuesAsStrings.ToString() + "] for key = " + Key);
+                }                 
+            } 
+            else
+            {
+                ParseSingleValue(value);
+            }
+        }
+
+        protected abstract void ParseSingleValue(string value);
+
         public List<string> ValuesAsStrings { get; set; }
         public abstract string GetDataAsString(object data);
         public abstract object GetStringAsData(string data);        
@@ -241,6 +282,11 @@ public class GameFeatureSettings : FeatureSettings
     {
         public DataInt(string key, EValueType type, int defaultValue) : base(key, type, defaultValue, defaultValue + "")
         {
+        }
+
+        protected override void ParseSingleValue(string value)
+        {
+            ParseValueInt(value);            
         }
 
         public override string GetDataAsString(object data)
@@ -270,7 +316,12 @@ public class GameFeatureSettings : FeatureSettings
     {
         public DataFloat(string key, EValueType type, float defaultValue) : base(key, type, defaultValue, defaultValue + "")
         {         
-        }       
+        }
+
+        protected override void ParseSingleValue(string value)
+        {
+            ParseValueFloat(value);
+        }
 
         public override string GetDataAsString(object data)
         {
@@ -287,7 +338,11 @@ public class GameFeatureSettings : FeatureSettings
     {
         public DataString(string key, EValueType type, string defaultValue) : base(key, type, defaultValue, defaultValue)
         {                       
-        }        
+        }
+
+        protected override void ParseSingleValue(string value)
+        {        
+        }
 
         public override string GetDataAsString(object data)
         {
@@ -369,7 +424,21 @@ public class GameFeatureSettings : FeatureSettings
             }
         }
        
-        private List<object> Values { get; set; }        
+        private List<object> Values { get; set; }
+
+        protected override void ParseSingleValue(string value)
+        {
+            switch (ValueType)
+            {
+                case EValueType.Int:
+                    ParseValueInt(value);
+                    break;
+
+                case EValueType.Float:
+                    ParseValueFloat(value);
+                    break;
+            }
+        }
 
         public override string GetDataAsString(object data)
         {            
@@ -513,6 +582,24 @@ public class GameFeatureSettings : FeatureSettings
         Values.Clear();        
     }
 
+    protected override void ParseJSON(JSONNode json)
+    {
+        /*JSONClass jsonClass = json as JSONClass;
+        foreach (KeyValuePair<string, JSONNode> pair in jsonClass.m_Dict)
+        {
+            if (Datas.ContainsKey(pair.Key))
+            {
+                Datas[pair.Key].ParseValue(pair.Value);
+            }
+            else
+            {
+                LogError("Key " + pair.Key + " not valid");
+            }
+        }
+        
+        base.ParseJSON(json);*/        
+    }
+
     protected override void ExtendedOverrideFromJSON(JSONNode json)
     {
         if (json != null)
@@ -538,4 +625,22 @@ public class GameFeatureSettings : FeatureSettings
             json.Add(key, GetValueAsString(key));            
         }
     }
+
+    #region debug
+    private const string DEBUG_CHANNEL = "[GameFeatureSettings]";
+    private static void Log(string msg)
+    {
+        Debug.Log(DEBUG_CHANNEL + msg);
+    }
+
+    private static void LogWarning(string msg)
+    {
+        Debug.LogWarning(DEBUG_CHANNEL + msg);
+    }
+
+    private static void LogError(string msg)
+    {
+        Debug.LogError(DEBUG_CHANNEL + msg);
+    }
+    #endregion
 }
