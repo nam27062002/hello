@@ -115,7 +115,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             // ---------------------------
             // Test feature settings
-            Debug_TestFeatureSettingsTypeData();
+            //Debug_TestFeatureSettingsTypeData();
             // ---------------------------                        
 
             // ---------------------------
@@ -398,6 +398,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private void Debug_TestFeatureSettingsTypeData()
     {
+        /*
         // Int
         string key = GameFeatureSettings.KEY_INT_TEST;
         int valueAsInt = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsInt(key);
@@ -420,7 +421,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         // String
         key = GameFeatureSettings.KEY_STRING_TEST;
-        Debug.Log(key + " as string = " + GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));
+        Debug.Log(key + " as string = " + GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));        
+        */
     }
     #endregion    
 }
