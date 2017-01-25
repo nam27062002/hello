@@ -42,8 +42,10 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma glsl_no_auto_normalization
 			#pragma fragmentoption ARB_precision_hint_fastest
-			#pragma multi_compile_particles
+			#pragma glsl_no_auto_normalization
+			#pragma fragmentoption ARB_precision_hint_fastest
 
 
 			#include "UnityCG.cginc"
@@ -170,8 +172,6 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 		}
 	}
 
-	Fallback "Diffuse"
 	CustomEditor "GlowMaterialInspector"
 
-//	Fallback "Mobile/VertexLit"
 }

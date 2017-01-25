@@ -96,28 +96,20 @@ public class PowerIcon : MonoBehaviour {
 		}
 
 		// Otherwise, hide if given definition is not valid
-		else if(!show) {
+		else {
 			if(anim != null) {
-				anim.Hide(_animate);
+				anim.Set(show, _animate);
 			} else {
-				this.gameObject.SetActive(false);
+				this.gameObject.SetActive(show);
 			}
-			return;
 		}
 
 		// If showing, initialize all visible items
 		if(show) {
 			// Power icon
 			if(m_powerIcon != null) {
-				// Load power icons spritesheet
-				Sprite[] allIcons = Resources.LoadAll<Sprite>("UI/Metagame/Powers/icons_powers");
-
-				// Pick target icon, use first one if not found
-				string iconName = _powerDef.GetAsString("icon");
-				m_powerIcon.sprite = Array.Find<Sprite>(allIcons, (_sprite) => { return _sprite.name == iconName; });
-				if(m_powerIcon.sprite == null) {
-					m_powerIcon.sprite = allIcons[0];
-				}
+				// Load from resources
+				m_powerIcon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + _powerDef.GetAsString("icon"));
 			}
 
 			// Name

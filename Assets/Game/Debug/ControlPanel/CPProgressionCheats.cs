@@ -168,6 +168,18 @@ public class CPProgressionCheats : MonoBehaviour {
         }
     }
 
+	/// <summary>
+	/// Unlock all pets.
+	/// </summary>
+	public void OnUnlockAllPets() {
+		List<DefinitionNode> petDefs = new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.PETS, ref petDefs);
+		for(int i = 0; i < petDefs.Count; i++) {
+			UsersManager.currentUser.petCollection.UnlockPet(petDefs[i].sku);
+		}
+		PersistenceManager.Save();
+	}
+
     /// <summary>
     /// Simulates daily chest collection (no menu refresh for now, reload menu for that).
     /// </summary>

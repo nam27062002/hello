@@ -30,6 +30,9 @@ public class PetPill : MonoBehaviour {
 	[SerializeField] private Image m_preview = null;
 	[SerializeField] private GameObject m_lockIcon = null;
 	[SerializeField] private Image m_powerIcon = null;
+	[Space]
+	[SerializeField] private Image m_selectedFrame = null;
+	[SerializeField] private Color m_selectedColor = Colors.gold;
 
 	// Internal
 	private DefinitionNode m_def = null;
@@ -40,6 +43,16 @@ public class PetPill : MonoBehaviour {
 	// Shortcuts
 	private PetCollection petCollection {
 		get { return UsersManager.currentUser.petCollection; }
+	}
+
+	private PetsScreenController m_parentScreen = null;
+	private PetsScreenController parentScreen {
+		get {
+			if(m_parentScreen == null) {
+				m_parentScreen = this.gameObject.FindComponentInParents<PetsScreenController>();	// Find rather than Get to include inactive objects (this method could be called with the screen disabled)
+			}
+			return m_parentScreen;
+		}
 	}
 
 	// Cache some data for convenience
@@ -58,7 +71,8 @@ public class PetPill : MonoBehaviour {
 	}
 
 	private DragonData m_dragonData = null;
-	
+	private Color m_defaultColor = Color.white;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -66,7 +80,7 @@ public class PetPill : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-
+		m_defaultColor = m_selectedFrame.color;
 	}
 
 	/// <summary>
@@ -115,7 +129,14 @@ public class PetPill : MonoBehaviour {
 		}
 
 		// Power icon
-		// [AOC] TODO!! Mini-icons not yet in the project
+		if(m_powerIcon != null) {
+			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_def.Get("powerup"));
+			Sprite powerIcon = null;
+			if(powerDef != null) {
+				parentScreen.powerMiniIcons.TryGetValue(powerDef.Get("miniIcon"), out powerIcon);
+			}
+			m_powerIcon.sprite = powerIcon;	// If null it will look ugly, that way we know we have a miniIcon missing
+		}
 
 		// Refresh contextual elements
 		Refresh();
@@ -138,7 +159,8 @@ public class PetPill : MonoBehaviour {
 		// Lock icon
 		m_lockIcon.SetActive(m_locked);
 
-		this.FindComponentRecursive<Image>("Bg").color = equipped ? Colors.ParseHexString("FFC300FF") : Colors.ParseHexString("CCC9AEFF");
+		// Color highlight
+		m_selectedFrame.color = equipped ? m_selectedColor : m_defaultColor;
 	}
 
 	//------------------------------------------------------------------------//

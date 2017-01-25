@@ -47,6 +47,17 @@ public class PetsScreenController : MonoBehaviour {
 	// Cache some data for faster access
 	private DragonData m_dragonData = null;
 	private string m_initialPetSku = "";
+
+	// Cache some assets for faster acess
+	private Dictionary<string, Sprite> m_powerMiniIcons = null;
+	public Dictionary<string, Sprite> powerMiniIcons {
+		get {
+			if(m_powerMiniIcons == null) {
+				m_powerMiniIcons = ResourcesExt.LoadSpritesheet(UIConstants.POWER_MINI_ICONS_PATH);
+			}
+			return m_powerMiniIcons;
+		}
+	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -124,6 +135,9 @@ public class PetsScreenController : MonoBehaviour {
 				m_tabsByCategory.Add(tab.screenName, tab);	// [AOC] Screen name is set from the editor and it matches the category IDs
 			}
 		}
+
+		// In order to properly initialize everything, object must be active
+		this.gameObject.SetActive(true);
 
 		// Store reference to target dragon data for faster access
 		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();

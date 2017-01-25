@@ -24,7 +24,9 @@ Shader "Hungry Dragon/Texture Blending Vertex Color + Lightmap And Recieve Shado
 				#pragma vertex vert
 				#pragma fragment frag
 				#pragma multi_compile_fwdbase
-							
+				#pragma glsl_no_auto_normalization
+				#pragma fragmentoption ARB_precision_hint_fastest
+
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
 				#include "HungryDragon.cginc"
@@ -99,6 +101,5 @@ Shader "Hungry Dragon/Texture Blending Vertex Color + Lightmap And Recieve Shado
 
 		}
 	}
-
-	Fallback "Mobile/VertexLit"
+//	Fallback "Mobile/VertexLit"
 }

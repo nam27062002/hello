@@ -25,6 +25,7 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	[SerializeField] private DOTweenAnimation m_tween = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -33,6 +34,12 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	private void Awake() {
+		Debug.Assert(m_tween != null, "Required component missing!");
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -42,10 +49,12 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 	/// </summary>
 	/// <param name="_event">Data related to the event.</param>
 	public void OnPointerClick(PointerEventData _event) {
-		// Small animation :P
-		this.transform.DOKill(true);
-		//this.transform.DOScale(1.25f, 0.1f).SetRecyclable(true).SetLoops(2, LoopType.Yoyo).SetEase(Ease.Linear).SetRecyclable(true);
-		this.transform.DOBlendableLocalRotateBy(new Vector3(0f, 0f, -45f), 0.1f).SetLoops(4, LoopType.Yoyo).SetEase(Ease.Linear).SetRecyclable(true);
-		_event.Reset();
+		// Trigger animation
+		m_tween.DORestart();
+
+		// Propagate event to parent hierarchy (we don't want to capture the event)
+		// From https://coeurdecode.com/2015/10/20/bubbling-events-in-unity/ <3
+		// Dirty hack to simulate event propagation. The downside is that the lock icon must then be a children of the dragon scroller.
+		ExecuteEvents.ExecuteHierarchy(transform.parent.gameObject, _event, ExecuteEvents.pointerClickHandler);
 	}
 }

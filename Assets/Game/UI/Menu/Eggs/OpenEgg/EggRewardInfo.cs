@@ -30,7 +30,7 @@ public class EggRewardInfo : MonoBehaviour {
 	[SerializeField] private RarityTitleGroup m_rarityTitle = null;
 	[SerializeField] private Localizer m_goldenFragmentTitle = null;
 	[SerializeField] private Localizer m_goldenFragmentInfo = null;
-	[SerializeField] private GameObject m_rewardPowers = null;
+	[SerializeField] private PowerIcon m_rewardPower = null;
 
 	// Other references
 	private Animator m_animator = null;
@@ -81,11 +81,10 @@ public class EggRewardInfo : MonoBehaviour {
 				}
 
 				// Power icon
-				PowerIcon powerIcon = m_rewardPowers.FindComponentRecursive<PowerIcon>("Power1");
 				if(!_rewardData.duplicated) {
 					// Initialize with powers data
 					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.itemDef.GetAsString("powerup"));
-					powerIcon.InitFromDefinition(powerDef, false);
+					m_rewardPower.InitFromDefinition(powerDef, false);
 				}
 
 				// Duplicated info
