@@ -20,7 +20,7 @@ public class Entity : IEntity {
 	/************/
 
 	private CircleArea2D m_bounds;
-	public CircleArea2D circleArea { get{ return m_bounds; } }
+	public override CircleArea2D circleArea { get{ return m_bounds; } }
 
 	private Reward m_reward;
 	public Reward reward { get { return m_reward; }}
