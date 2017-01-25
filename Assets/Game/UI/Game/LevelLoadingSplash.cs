@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -24,7 +25,13 @@ public class LevelLoadingSplash : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	// Exposed
 	[SerializeField] private Slider m_progressBar = null;
+	[Space]
+	[SerializeField] private UIScene3DLoader m_dragonPreview = null;
+	[SerializeField] private PowerIcon[] m_powerIcons = null;
+
+	// Internal references
 	private GameSceneController m_sceneController = null;
 
 	//------------------------------------------------------------------//
@@ -36,6 +43,9 @@ public class LevelLoadingSplash : MonoBehaviour {
 	private void Awake() {
 		// Check required references
 		DebugUtils.Assert(m_progressBar != null, "Required param!");
+
+		// Initialize with current dragon setup
+		Initialize();
 	}
 
 	/// <summary>
@@ -77,6 +87,65 @@ public class LevelLoadingSplash : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 
+	}
+
+	//------------------------------------------------------------------//
+	// OTHER METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize with current dragon setup.
+	/// </summary>
+	private void Initialize() {
+		// Aux vars
+		DragonData currentDragon = DragonManager.GetDragonData(UsersManager.currentUser.currentDragon);
+
+		// Dragon preview
+		if(m_dragonPreview != null) {
+			MenuDragonLoader dragonLoader = m_dragonPreview.scene.FindComponentRecursive<MenuDragonLoader>();
+			if(dragonLoader != null) {
+				// Load dragon
+				//dragonLoader.removeFresnel = true;
+				dragonLoader.showPets = false;
+				dragonLoader.LoadDragon(currentDragon.def.sku);
+				dragonLoader.dragonInstance.SetAnim(MenuDragonPreview.Anim.POSE_FLY);
+			}
+		}
+
+		// Powers: skin + pets
+		List<DefinitionNode> powerDefs = new List<DefinitionNode>();
+
+		// Skin
+		DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.diguise);
+		powerDefs.Add(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup")));	// Can be null
+
+		// Pets
+		for(int i = 0; i < currentDragon.pets.Count; i++) {
+			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, currentDragon.pets[i]);
+			if(petDef == null) {
+				powerDefs.Add(null);
+			} else {
+				powerDefs.Add(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup")));
+			}
+		}
+
+		// Initialize power icons
+		for(int i = 0; i < m_powerIcons.Length; i++) {
+			// Hide if there are not enough powers defined
+			if(i >= powerDefs.Count) {
+				m_powerIcons[i].gameObject.SetActive(false);
+				continue;
+			}
+
+			// Hide if there is no power associated
+			if(powerDefs[i] == null) {
+				m_powerIcons[i].gameObject.SetActive(false);
+				continue;
+			}
+
+			// Everything ok! Initialize
+			m_powerIcons[i].gameObject.SetActive(true);
+			m_powerIcons[i].InitFromDefinition(powerDefs[i], false, false);
+		}
 	}
 
 	//------------------------------------------------------------------//
