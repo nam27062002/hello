@@ -54,7 +54,7 @@ namespace AI {
 			protected override void OnEnter(State oldState, object[] param) {
 				base.OnEnter(oldState, param);
 
-				m_machine.SetSignal(Signals.Type.Invulnerable, true);
+			//	m_machine.SetSignal(Signals.Type.Invulnerable, true);
 
 				m_pilot.SetMoveSpeed(m_data.speed, false);
 
@@ -66,7 +66,7 @@ namespace AI {
 			}
 
 			protected override void OnExit(State _newState) {
-				m_machine.SetSignal(Signals.Type.Invulnerable, false);
+				//m_machine.SetSignal(Signals.Type.Invulnerable, false);
 			}
 
 			protected override void OnUpdate() {		
