@@ -43,6 +43,9 @@ Shader "Hungry Dragon/UnderWater"
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
+				#pragma glsl_no_auto_normalization
+				#pragma fragmentoption ARB_precision_hint_fastest
+
 //				#pragma multi_compile_fog
 //				#pragma multi_compile_fwdbase
 

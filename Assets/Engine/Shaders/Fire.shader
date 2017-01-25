@@ -19,7 +19,6 @@
 		Cull Off
 		ZWrite Off
 
-
 		Stencil
 		{
 			Ref 5
@@ -33,6 +32,8 @@
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma fragmentoption ARB_precision_hint_fastest
+			#pragma glsl_no_auto_normalization
 			#pragma fragmentoption ARB_precision_hint_fastest
 
 			
@@ -95,8 +96,6 @@
 		}
 	}
 
-//	Fallback "Diffuse"
-	CustomEditor "GlowMaterialInspector"
+CustomEditor "GlowMaterialInspector"
 
-//Fallback "Mobile/VertexLit"
 }
