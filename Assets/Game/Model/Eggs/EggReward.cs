@@ -109,7 +109,7 @@ public class EggReward {
 				// Cheat support
 				switch(CPGachaTest.duplicateMode) {
 					case CPGachaTest.DuplicateMode.DEFAULT: {
-						m_duplicated = false;	// [AOC] TODO!! Pending Pets implementation
+						m_duplicated = UsersManager.currentUser.petCollection.IsPetUnlocked(m_itemDef.sku);
 					} break;
 
 					case CPGachaTest.DuplicateMode.ALWAYS: {
