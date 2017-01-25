@@ -278,8 +278,28 @@ public class DragonPowerUp : MonoBehaviour {
 			case "dragonram": {
 				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_OBSTACLE.ToHexString("#"));
 			} break;
-			
-			case "preyHpBoost": {
+
+            case "fury_size_increase":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
+            }break;
+
+            case "fury_duration":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
+                }break;
+
+            case "speed_increase":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_SPEED.ToHexString("#"));
+                }break;
+
+            case "reduce_life_drain":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_DRAIN.ToHexString("#"));
+                }break;
+
+            case "preyHpBoost": {
 				// Show target entity name
 				// [AOC] TODO!! Plural
 				DefinitionNode entityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, _powerDef.GetAsString("param1"));

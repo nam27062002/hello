@@ -89,7 +89,8 @@ MonoBehaviour:
   m_damageBase: 5
   m_damageMultiplier: 1
   m_damageDuration: 0.5
-  m_knockBackIntensity: 0
+  m_damageType: 6
+  m_knockBackIntensity: 20
   m_visualActivationRadius: 0
   m_initialState: 2
   m_initialDelay: 0
@@ -117,7 +118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_activeTime: 2
+  m_activeTime: 1
   m_returnTo: 1
 --- !u!135 &135158328591725760
 SphereCollider:
@@ -129,8 +130,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
-  m_Center: {x: 0.0790863, y: 1, z: 0}
+  m_Radius: 1.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &198276587184948758
 ParticleSystem:
   m_ObjectHideFlags: 1

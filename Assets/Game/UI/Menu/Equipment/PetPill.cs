@@ -155,7 +155,7 @@ public class PetPill : MonoBehaviour {
 
 			// Small animation on the lock icon
 			m_lockIcon.transform.DOKill(true);
-			m_lockIcon.transform.DOScale(1.5f, 0.1f).SetRecyclable(true).SetLoops(2, LoopType.Yoyo).SetEase(Ease.Linear);
+			m_lockIcon.transform.DOScale(1.5f, 0.1f).SetRecyclable(true).SetLoops(2, LoopType.Yoyo).SetEase(Ease.Linear).SetRecyclable(true);
 		}
 
 		// If equipped, try to unequip

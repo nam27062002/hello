@@ -80,8 +80,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	//-----------------------------------------------
 	private Entity m_entity;
-	private Animator m_animator;
-	private float m_disableAnimatorTimer;
+	protected Animator m_animator;
+	protected float m_disableAnimatorTimer;
 
 	//	private Material m_materialGold;
 	private Dictionary<int, Material[]> m_materials;
@@ -89,15 +89,15 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     private List<Material> m_allMaterials;
 	private List<Color> m_defaultTints;
 
-	private bool m_boost;
-	private bool m_scared;
-	private bool m_panic; //bite and hold state
-	private bool m_falling;
-	private bool m_attack;
-	private bool m_swim;
-	private bool m_inSpace;
-	private bool m_moving;
-	private bool m_attackingTarget;
+	protected bool m_boost;
+	protected bool m_scared;
+	protected bool m_panic; //bite and hold state
+	protected bool m_falling;
+	protected bool m_attack;
+	protected bool m_swim;
+	protected bool m_inSpace;
+	protected bool m_moving;
+	protected bool m_attackingTarget;
 
 	private bool m_isExclamationMarkOn;
 	private GameObject m_exclamationMarkOn;

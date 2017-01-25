@@ -83,21 +83,22 @@ public class PowerIcon : MonoBehaviour {
 	/// </summary>
 	/// <param name="_powerDef">Power definition.</param>
 	/// <param name="_locked">Whether the power is locked or not.</param>
-	public void InitFromDefinition(DefinitionNode _powerDef, bool _locked) {
+	/// <parma name="_animate">Optional, whether to show animations or not.</param>
+	public void InitFromDefinition(DefinitionNode _powerDef, bool _locked, bool _animate = true) {
 		// Save definition
 		m_powerDef = _powerDef;
 		bool show = (_powerDef != null);
 
 		// If defined, trigger empty/equipped animators
 		if(m_equippedAnim != null && m_emptyAnim != null) {
-			m_equippedAnim.Set(show);
-			m_emptyAnim.Set(!show);
+			m_equippedAnim.Set(show, _animate);
+			m_emptyAnim.Set(!show, _animate);
 		}
 
 		// Otherwise, hide if given definition is not valid
 		else if(!show) {
 			if(anim != null) {
-				anim.Hide();
+				anim.Hide(_animate);
 			} else {
 				this.gameObject.SetActive(false);
 			}

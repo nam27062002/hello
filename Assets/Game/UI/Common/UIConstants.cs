@@ -138,20 +138,29 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_powerColorEntity; }
 	}
 
-	[SerializeField] private Color m_powerColorWater = new Color(0f, 0.91f, 1f);
-	public static Color POWER_COLOR_WATER {
-		get { return instance.m_powerColorWater; }
-	}
+    [SerializeField]
+    private Color m_powerColorWater = new Color(0f, 0.91f, 1f);
+    public static Color POWER_COLOR_WATER
+    {
+        get { return instance.m_powerColorWater; }
+    }
 
-	//------------------------------------------------------------------------//
-	// METHODS																  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Gets the color corresponding to a given rarity.
-	/// </summary>
-	/// <returns>The rarity color.</returns>
-	/// <param name="_rarity">The rarity to be checked.</param>
-	public static Color GetRarityColor(EggReward.Rarity _rarity) {
+    [SerializeField]
+    private Color m_powerColorDrain = new Color(0f, 0.91f, 1f);
+    public static Color POWER_COLOR_DRAIN
+    {
+        get { return instance.m_powerColorDrain; }
+    }
+
+    //------------------------------------------------------------------------//
+    // METHODS																  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Gets the color corresponding to a given rarity.
+    /// </summary>
+    /// <returns>The rarity color.</returns>
+    /// <param name="_rarity">The rarity to be checked.</param>
+    public static Color GetRarityColor(EggReward.Rarity _rarity) {
 		switch(_rarity) {
 			case EggReward.Rarity.COMMON:	return RARITY_COMMON_COLOR;		break;
 			case EggReward.Rarity.RARE:		return RARITY_RARE_COLOR;		break;
