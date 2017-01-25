@@ -158,10 +158,14 @@ public class PersistenceManager : Singleton<PersistenceManager> {
     /// The game should be reloaded afterwards.
     /// </summary>
     /// <param name="_profileName">The name of the profile to be cleared.</param>
-    public static void Clear(string _profileName = "") 
+    public static void Clear(string _profileName=null) 
 	{
-		// Delete persistence file
-		string path = GetPersistenceFilePath(_profileName);
+        // If no profileName is provided then we assume that the active profile is the one that has to be deleted
+        if (_profileName == null)
+            _profileName = activeProfile;
+
+        // Delete persistence file
+        string path = GetPersistenceFilePath(_profileName);
 		File.Delete(path);
 
 		// Create a new save file with the default data from the profile

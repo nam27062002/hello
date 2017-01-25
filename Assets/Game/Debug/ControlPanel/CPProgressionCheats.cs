@@ -56,16 +56,21 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// </summary>
 	public void OnResetProgress(bool _skipTutorial) {
 		// If not in the menu, show feedback message and return
-		if(!CheckScene()) return;
+		if(!CheckScene()) return;        
 
 		// Close control panel
-		ControlPanel.instance.Toggle();
+		ControlPanel.instance.Toggle();       
 
-		// Clear persistence
-		PersistenceManager.Clear();
+        // Clear persistence and sets the default persistence
+        PersistenceManager.Clear();
 
-		// Reset all preferences
-		PlayerPrefs.DeleteAll();
+        UsersManager.Reset();
+
+        // We need to load the default persistence in order to make UserManager.currentUser load the default data
+        FGOL.Save.SaveGameManager.Instance.Load(Authenticator.Instance.User);
+
+        // Reset all preferences
+        PlayerPrefs.DeleteAll();
 
 		// If required, tutorial will be auto-completed next time we reload the profile
 		Prefs.SetBoolPlayer("skipTutorialCheat", _skipTutorial);

@@ -185,6 +185,15 @@ namespace FGOL.Save
             return saveState;
         }
 
+        public bool IsStoredClear()
+        {
+#if PRODUCTION
+            return false;
+#else
+            return false;
+#endif
+        }
+
         public MemoryStream SaveToStream()
         {
             MemoryStream stream = null;
@@ -201,15 +210,30 @@ namespace FGOL.Save
                     writer.Write(json);
                     writer.Close();
 
-                    compressed = CLZF2.Compress(compMemStream.ToArray());
+                    if (IsStoredClear())
+                    {
+                        compressed = compMemStream.ToArray();
+                    }
+                    else
+                    {
+                        compressed = CLZF2.Compress(compMemStream.ToArray());
+                    }                    
                 }
             }
 
             if(compressed != null)
             {
-                byte[] encrypted = AESEncryptor.Encrypt(m_cryptoKey, m_cryptoIV, compressed);
+                byte[] encrypted;
+                if (IsStoredClear())
+                {
+                    encrypted = compressed;
+                }
+                else
+                {
+                    encrypted = AESEncryptor.Encrypt(m_cryptoKey, m_cryptoIV, compressed);
+                }
 
-                if(encrypted != null)
+                if (encrypted != null)
                 {
                     stream = new MemoryStream();
 
@@ -370,17 +394,23 @@ namespace FGOL.Save
                 {
                     if(IsValidFile(stream, ref contentBytes))
                     {
-                        byte[] decrypted = AESEncryptor.Decrypt(m_cryptoKey, m_cryptoIV, contentBytes);
-
-                        if(decrypted != null)
+                        if (IsStoredClear())
                         {
-                            decompressed = CLZF2.Decompress(decrypted);
+                            decompressed = contentBytes;
                         }
                         else
                         {
-                            Debug.LogError("SaveData :: Decryption failed!");
-                            state = LoadState.Corrupted;
-                        }
+                            byte[] decrypted = AESEncryptor.Decrypt(m_cryptoKey, m_cryptoIV, contentBytes);
+                            if (decrypted != null)
+                            {
+                                decompressed = CLZF2.Decompress(decrypted);
+                            }
+                            else
+                            {
+                                Debug.LogError("SaveData :: Decryption failed!");
+                                state = LoadState.Corrupted;
+                            }                            
+                        }                                                
                     }
                     else
                     {
@@ -499,6 +529,6 @@ namespace FGOL.Save
         {
             get { return m_saveData.rawData; }
         }
-#endif        
+#endif
     }
 }
