@@ -20,7 +20,7 @@ namespace AI {
 			private float m_timer;
 			private object[] m_transitionParam;
 
-			private Entity[] m_checkEntities = new Entity[20];
+			private Entity[] m_checkEntities = new Entity[50];
 			private int m_numCheckEntities = 0;
 
 			private int m_collidersMask;
