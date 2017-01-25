@@ -96,13 +96,12 @@ public class PowerIcon : MonoBehaviour {
 		}
 
 		// Otherwise, hide if given definition is not valid
-		else if(!show) {
+		else {
 			if(anim != null) {
-				anim.Hide(_animate);
+				anim.Set(show, _animate);
 			} else {
-				this.gameObject.SetActive(false);
+				this.gameObject.SetActive(show);
 			}
-			return;
 		}
 
 		// If showing, initialize all visible items
