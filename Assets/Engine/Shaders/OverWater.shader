@@ -31,8 +31,8 @@ Shader "Hungry Dragon/OverWater"
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				#pragma multi_compile_fog
-				#pragma multi_compile_fwdbase
+//				#pragma multi_compile_fog
+//				#pragma multi_compile_fwdbase
 //				#pragma multi_compile_particles
 
 				#include "UnityCG.cginc"
