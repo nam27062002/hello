@@ -9,8 +9,8 @@ GameObject:
   m_Component:
   - component: {fileID: 486734}
   - component: {fileID: 11453216}
-  - component: {fileID: 11410154}
   - component: {fileID: 114000013810013306}
+  - component: {fileID: 114704809361054716}
   m_Layer: 0
   m_Name: SP_SoldierPath_0
   m_TagString: Untagged
@@ -31,22 +31,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &11410154
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 179300}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_circular: 1
-  m_smoothRadius: 0.5
-  m_points:
-  - {x: -18.47461, y: -0.6424637, z: -0.071905136}
-  - {x: 17.78376, y: -0.73831797, z: 1.2145329}
 --- !u!114 &11453216
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -104,3 +88,17 @@ MonoBehaviour:
     min: 1
     max: 2
   m_maxSpawns: 0
+--- !u!114 &114704809361054716
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 179300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0}
+  size: {x: 50, y: 50}
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}

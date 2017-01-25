@@ -81,7 +81,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_petIconsPath; }
 	}
 
-	[SerializeField] private string m_powerIconsPath = "UI/Metagame/Powers/icons_powers";
+	[SerializeField] private string m_powerIconsPath = "UI/Metagame/Powers/";
 	public static string POWER_ICONS_PATH {
 		get { return instance.m_powerIconsPath; }
 	}
