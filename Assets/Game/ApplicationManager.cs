@@ -101,23 +101,48 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     protected void Update()
     {        
         // To Debug
-        /*if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.A))
         {
             // Simulation of quality/get response from server
-            string deviceModel = "server";
+            /*string deviceModel = "server";
             GameFeatureSettingsManager.instance.Device_Model = deviceModel;
             DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.FEATURE_DEVICE_SETTINGS, deviceModel);
             GameFeatureSettingsManager.instance.SetupCurrentFeatureSettings(def.ToJSON());
 
             // The client is notified that some quality settings might have changed
             Messenger.Broadcast(GameEvents.CP_QUALITY_CHANGED);
-            
+            */
+
+            // Int
+            string key = GameFeatureSettings.KEY_INT_TEST;
+            int valueAsInt = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsInt(key);
+            Debug.Log(key + " = " + valueAsInt + " as string = " + GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));
+
+            // Float
+            key = GameFeatureSettings.KEY_FLOAT_TEST;
+            float valueAsFloat = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsFloat(key);
+            Debug.Log(key + " = " + valueAsFloat + " as string = " + GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));
+
+            // Float range
+            key = GameFeatureSettings.KEY_FLOAT_RANGE_TEST;
+            valueAsFloat = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsFloat(key);
+            Debug.Log(key + " = " + valueAsFloat + " as string = " + GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));
+
+            // Int range
+            key = GameFeatureSettings.KEY_INT_RANGE_TEST;
+            valueAsInt = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsInt(key);
+            Debug.Log(key + " = " + valueAsInt + " as string = " + GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));
+
+            // String
+            key = GameFeatureSettings.KEY_STRING_TEST;
+            Debug.Log(key + " as string = " + GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));            
+
             //NeedsToRestartFlow = true;           
             //Debug_ToggleIsPaused();
 
             //Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
             //Debug.Log("eggs collected = " + UsersManager.currentUser.eggsCollected);            
-        }*/            
+        }            
         
         if (NeedsToRestartFlow)
         {
