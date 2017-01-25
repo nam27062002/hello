@@ -47,6 +47,17 @@ public class PetsScreenController : MonoBehaviour {
 	// Cache some data for faster access
 	private DragonData m_dragonData = null;
 	private string m_initialPetSku = "";
+
+	// Cache some assets for faster acess
+	private Dictionary<string, Sprite> m_powerMiniIcons = null;
+	public Dictionary<string, Sprite> powerMiniIcons {
+		get {
+			if(m_powerMiniIcons == null) {
+				m_powerMiniIcons = ResourcesExt.LoadSpritesheet(UIConstants.POWER_MINI_ICONS_PATH);
+			}
+			return m_powerMiniIcons;
+		}
+	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
