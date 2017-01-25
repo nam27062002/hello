@@ -49,7 +49,7 @@ public class PetPill : MonoBehaviour {
 	private PetsScreenController parentScreen {
 		get {
 			if(m_parentScreen == null) {
-				m_parentScreen = GetComponentInParent<PetsScreenController>();
+				m_parentScreen = this.gameObject.FindComponentInParents<PetsScreenController>();	// Find rather than Get to include inactive objects (this method could be called with the screen disabled)
 			}
 			return m_parentScreen;
 		}
