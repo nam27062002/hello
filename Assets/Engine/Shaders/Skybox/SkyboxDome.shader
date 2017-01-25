@@ -27,7 +27,6 @@ SubShader {
 	
 		
 	CGINCLUDE
-	#pragma multi_compile LIGHTMAP_OFF LIGHTMAP_ON
 	#include "UnityCG.cginc"
 	#include "../HungryDragon.cginc"
 
@@ -79,7 +78,9 @@ SubShader {
 		CGPROGRAM
 		#pragma vertex vert
 		#pragma fragment frag
-		#pragma fragmentoption ARB_precision_hint_fastest		
+		#pragma glsl_no_auto_normalization
+		#pragma fragmentoption ARB_precision_hint_fastest
+
 		fixed4 frag (v2f i) : COLOR
 		{
 			

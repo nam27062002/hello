@@ -299,6 +299,31 @@ public class DragonPowerUp : MonoBehaviour {
                     return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_DRAIN.ToHexString("#"));
                 }break;
 
+            case "more_coin":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.COINS_TEXT_COLOR.ToHexString("#"));
+                }break;
+
+            case "score_increase":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_SCORE.ToHexString("#"));
+                }break;
+
+            case "food_increase":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FOOD.ToHexString("#"));
+                }break;
+
+            case "lower_damage":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_OBSTACLE.ToHexString("#"));
+                }break;
+
+            case "fireball":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
+                }break;
+
             case "preyHpBoost": {
 				// Show target entity name
 				// [AOC] TODO!! Plural
