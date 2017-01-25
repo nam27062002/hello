@@ -81,6 +81,16 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_petIconsPath; }
 	}
 
+	[SerializeField] private string m_powerIconsPath = "UI/Metagame/Powers/icons_powers";
+	public static string POWER_ICONS_PATH {
+		get { return instance.m_powerIconsPath; }
+	}
+
+	[SerializeField] private string m_powerMiniIconsPath = "UI/Metagame/Powers/icons_mini_powers";
+	public static string POWER_MINI_ICONS_PATH {
+		get { return instance.m_powerMiniIconsPath; }
+	}
+
 	// More colors
 	[Separator("Powerups Colors")]
 	[SerializeField] private Color m_powerColorHealth = new Color(0.7f, 0.8f, 0.24f);
@@ -152,6 +162,26 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
         get { return instance.m_powerColorDrain; }
     }
 
+    [SerializeField]
+    private Color m_powerColorScore = new Color(0f, 0.91f, 1f);
+    public static Color POWER_COLOR_SCORE
+    {
+        get { return instance.m_powerColorScore; }
+    }
+
+    [SerializeField]
+    private Color m_powerColorFood = new Color(0f, 0.91f, 1f);
+    public static Color POWER_COLOR_FOOD
+    {
+        get { return instance.m_powerColorFood; }
+    }
+
+    [SerializeField]
+    private Color m_powerColorLowerDamage = new Color(0f, 0.91f, 1f);
+    public static Color POWER_COLOR_LOWERDAMAGE
+    {
+        get { return instance.m_powerColorLowerDamage; }
+    }
     //------------------------------------------------------------------------//
     // METHODS																  //
     //------------------------------------------------------------------------//

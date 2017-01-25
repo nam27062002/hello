@@ -110,7 +110,7 @@ public class PowerIcon : MonoBehaviour {
 			// Power icon
 			if(m_powerIcon != null) {
 				// Load power icons spritesheet
-				Sprite[] allIcons = Resources.LoadAll<Sprite>("UI/Metagame/Powers/icons_powers");
+				Sprite[] allIcons = Resources.LoadAll<Sprite>(UIConstants.POWER_ICONS_PATH);
 
 				// Pick target icon, use first one if not found
 				string iconName = _powerDef.GetAsString("icon");
