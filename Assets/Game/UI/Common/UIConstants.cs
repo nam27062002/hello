@@ -162,6 +162,26 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
         get { return instance.m_powerColorDrain; }
     }
 
+    [SerializeField]
+    private Color m_powerColorScore = new Color(0f, 0.91f, 1f);
+    public static Color POWER_COLOR_SCORE
+    {
+        get { return instance.m_powerColorScore; }
+    }
+
+    [SerializeField]
+    private Color m_powerColorFood = new Color(0f, 0.91f, 1f);
+    public static Color POWER_COLOR_FOOD
+    {
+        get { return instance.m_powerColorFood; }
+    }
+
+    [SerializeField]
+    private Color m_powerColorLowerDamage = new Color(0f, 0.91f, 1f);
+    public static Color POWER_COLOR_LOWERDAMAGE
+    {
+        get { return instance.m_powerColorLowerDamage; }
+    }
     //------------------------------------------------------------------------//
     // METHODS																  //
     //------------------------------------------------------------------------//
