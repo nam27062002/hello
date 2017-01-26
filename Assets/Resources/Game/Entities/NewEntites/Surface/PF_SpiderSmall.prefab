@@ -45,7 +45,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 174698}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -55.994, y: 7.003, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000013011180664}
@@ -100,6 +100,7 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
@@ -185,6 +186,7 @@ MonoBehaviour:
     max: 1.25
   m_serializedJson: '[{"hangDownChance":{"min":100,"max":100},"hangDownDistance":{"min":2,"max":6},"hangDownSpeed":2.5,"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":20,"max":30},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
   m_databaseKey: PF_SpiderSmall
+  m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
   m_avoidWater: 0
@@ -208,6 +210,7 @@ MonoBehaviour:
     m_defaultUpVector: 0
     m_orientationSpeed: 120
     m_faceDirection: 0
+    m_useDragonStyleRotation: 0
     m_rollRotation: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
@@ -236,6 +239,7 @@ MonoBehaviour:
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
+    m_burningTime: 0
     m_dissolveTime: 1.5
     m_ashExceptions: []
 --- !u!1001 &100100000
