@@ -26,14 +26,6 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	// Auxiliar class to display disguises unlocking
-	private class DisguiseInfo {
-		public DefinitionNode def = null;
-		public float delta = 0f;
-		public DragonXPBarSeparator barMarker = null;
-		public bool unlocked = false;
-		public ResultsScreenDisguiseFlag flag = null;
-	};
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -53,7 +45,6 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 	[Separator("Disguises")]
 	[SerializeField] private GameObject m_disguisesContainer = null;
 	[SerializeField] private Button m_disguisesFoldToggle = null;
-	[SerializeField] protected GameObject m_disguiseMarkerPrefab = null;
 	[SerializeField] private GameObject m_disguiseUnlockPrefab = null;
 
 	// Anim speeds
@@ -61,7 +52,6 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 	[SerializeField] [Range(0.1f, 2f)] private float m_dragonUnlockSpeedMultiplier = 1f;
 
 	// Disguises unlock
-	private List<DisguiseInfo> m_disguises = new List<DisguiseInfo>();
 	private List<ResultsScreenDisguiseFlag> m_flags = new List<ResultsScreenDisguiseFlag>();
 
 	// Internal
@@ -196,43 +186,22 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 			m_infoText.Localize("TID_RESULTS_DRAGON_ALREADY_UNLOCKED", m_nextDragonData.def.GetLocalized("tidName"));	// "Brute already unlocked!"
 		}
 
-		// Initialize disguises unlock info
-		// Get all disguises for this dragon and sort them by unlockLevel property
-		Transform markersParent = m_barSeparatorsParent == null ? m_xpBar.transform : m_barSeparatorsParent;
-		List<DefinitionNode> defList = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", m_dragonData.def.sku);
-		DefinitionsManager.SharedInstance.SortByProperty(ref defList, "unlockLevel", DefinitionsManager.SortType.NUMERIC);
-		for(int i = 0; i < defList.Count; i++) {
-			// Skip if unlockLevel is 0 (default skin)
-			int unlockLevel = defList[i].GetAsInt("unlockLevel");
-			if(unlockLevel <= 0) continue;
-
-			// Create info for this disguise
-			DisguiseInfo info = new DisguiseInfo();
-			info.def = defList[i];
-
-			// Compute delta corresponding to this disguise unlock level
-			info.delta = Mathf.InverseLerp(0, m_dragonData.progression.maxLevel, unlockLevel);
-			info.unlocked = (info.delta <= m_auxBar.normalizedValue);	// Use aux var to quicly determine initial state
-
-			// Create and initialize bar marker
-			GameObject markerObj = (GameObject)GameObject.Instantiate(m_disguiseMarkerPrefab, markersParent, false);;
-			info.barMarker = markerObj.GetComponent<DragonXPBarSeparator>();
-			info.barMarker.AttachToSlider(m_auxBar, info.delta);
+		// Custom treatment to disguises markes in this screen
+		for(int i = 0; i < m_disguises.Count; i++) {
+			// Re-attach to use aux slider instead of main one
+			m_disguises[i].barMarker.AttachToSlider(m_auxBar, m_disguises[i].delta);
 
 			// If the disguise is going to be unlocked, crate a flag for it!
-			if(info.delta <= m_targetDelta) {
+			if(m_disguises[i].delta <= m_targetDelta) {
 				// Instantiate and initialize flag
 				GameObject flagObj = GameObject.Instantiate(m_disguiseUnlockPrefab, m_disguisesContainer.transform, false) as GameObject;
-				info.flag = flagObj.GetComponent<ResultsScreenDisguiseFlag>();
-				info.flag.InitFromDef(info.def);
-				m_flags.Add(info.flag);
+				m_disguises[i].flag = flagObj.GetComponent<ResultsScreenDisguiseFlag>();
+				m_disguises[i].flag.InitFromDef(m_disguises[i].def);
+				m_flags.Add(m_disguises[i].flag);
 
 				// Start hidden
-				info.flag.gameObject.SetActive(false);
+				m_disguises[i].flag.gameObject.SetActive(false);
 			}
-
-			// Add to disguises list
-			m_disguises.Add(info);
 		}
 
 		// Initialize disguises fold toggle

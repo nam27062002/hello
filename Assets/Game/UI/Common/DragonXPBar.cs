@@ -25,6 +25,15 @@ public class DragonXPBar : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	private const int SEPARATORS_POOL_SIZE = 10;
 
+	// Auxiliar class to display disguises unlocking
+	protected class DisguiseInfo {
+		public DefinitionNode def = null;
+		public float delta = 0f;
+		public DragonXPBarSeparator barMarker = null;
+		public bool unlocked = false;
+		public ResultsScreenDisguiseFlag flag = null;
+	};
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -60,14 +69,16 @@ public class DragonXPBar : MonoBehaviour {
 		get { return m_dragonDescText; }
 	}
 
-	// Bar separator prefab
+	// Bar separators prefab
 	[Separator]
 	[SerializeField] protected GameObject m_barSeparatorPrefab = null;
 	[SerializeField] protected RectTransform m_barSeparatorsParent = null;
+	[SerializeField] protected GameObject m_disguiseMarkerPrefab = null;
 
 	// Internal
 	protected DragonData m_dragonData = null;	// Last used dragon data
 	protected List<DragonXPBarSeparator> m_barSeparators = new List<DragonXPBarSeparator>();
+	protected List<DisguiseInfo> m_disguises = new List<DisguiseInfo>();
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -77,7 +88,7 @@ public class DragonXPBar : MonoBehaviour {
 	/// </summary>
 	virtual protected void Awake() {
 		// Create, initialize and instantiate a pool of bar separators
-		ExpandSeparatorsPool(SEPARATORS_POOL_SIZE);
+		ResizeSeparatorsPool(SEPARATORS_POOL_SIZE);
 	}
 
 	/// <summary>
@@ -102,21 +113,16 @@ public class DragonXPBar : MonoBehaviour {
 	/// <summary>
 	/// Creates and initialize as many separators as desired to the pool.
 	/// </summary>
-	private void ExpandSeparatorsPool(int _amount) {
+	private void ResizeSeparatorsPool(int _capacity) {
 		// Ignore if separator is null
 		if(m_barSeparatorPrefab == null) return;
 
-		// If offset is negative, remove from the pool
-		if(_amount < 0) {
-			m_barSeparators.RemoveRange(Mathf.Max(m_barSeparators.Count, 0), _amount);
-		}
-
 		// If positive, add to the pool
-		else if(_amount > 0) {
+		if(_capacity > m_barSeparators.Count) {
 			GameObject obj = null;
 			DragonXPBarSeparator separator = null;
 			Transform separatorsParent = m_barSeparatorsParent == null ? m_xpBar.transform : m_barSeparatorsParent;
-			for(int i = 0; i < _amount; i++) {
+			for(int i = m_barSeparators.Count; i < _capacity; i++) {
 				// Attach separator to the slider and start disabled
 				obj = (GameObject)GameObject.Instantiate(m_barSeparatorPrefab, separatorsParent, false);
 				separator = obj.GetComponent<DragonXPBarSeparator>();
@@ -198,37 +204,90 @@ public class DragonXPBar : MonoBehaviour {
 			for(int i = 0; i < m_barSeparators.Count; i++) {
 				m_barSeparators[i].gameObject.SetActive(false);
 			}
+
+			for(int i = 0; i < m_disguises.Count; i++) {
+				m_disguises[i].barMarker.gameObject.SetActive(false);
+			}
 			return;
 		}
 
-		// Make sure we have enough separators
-		if(m_barSeparators.Count < (_data.progression.maxLevel - 1)) {
-			ExpandSeparatorsPool((_data.progression.maxLevel - 1) - m_barSeparators.Count);
+		// Bar separators
+		if(m_barSeparatorPrefab != null) {
+			// Make sure we have enough separators
+			ResizeSeparatorsPool(_data.progression.maxLevel - 1);
+
+			// Put separators into position
+			float delta = 0f;
+			int level = 0;
+			int maxLevel = _data.progression.maxLevel;
+			for(int i = 0; i < m_barSeparators.Count; i++) {
+				// Show?
+				// [AOC] Exclude first level (no separator at the start!)
+				level = i + 1;
+				if(level < maxLevel) {
+					// Initialize and show it
+					if(m_linear) {
+						delta = Mathf.InverseLerp(0, maxLevel, level);
+					} else {
+						// Mark the start of the level
+						delta = _data.progression.GetXpRangeForLevel(level).min/_data.progression.xpRange.max;
+					}
+
+					// Activate and put into position
+					m_barSeparators[i].gameObject.SetActive(true);
+					m_barSeparators[i].SetDelta(delta);
+				} else {
+					// Hide separator
+					m_barSeparators[i].gameObject.SetActive(false);
+				}
+			}
 		}
 
-		// Put separators into position
-		float delta = 0f;
-		int level = 0;
-		int maxLevel = _data.progression.maxLevel;
-		for(int i = 0; i < m_barSeparators.Count; i++) {
-			// Show?
-			// [AOC] Exclude first level (no separator at the start!)
-			level = i + 1;
-			if(level < maxLevel) {
-				// Initialize and show it
-				if(m_linear) {
-					delta = Mathf.InverseLerp(0, maxLevel, level);
-				} else {
-					// Mark the start of the level
-					delta = _data.progression.GetXpRangeForLevel(level).min/_data.progression.xpRange.max;
-				}
+		// Do the same with the disguises unlock markers
+		// Only if prefab is defined
+		if(m_disguiseMarkerPrefab != null) {
+			// Get all disguises for this dragon and sort them by unlockLevel property
+			Transform markersParent = m_barSeparatorsParent == null ? m_xpBar.transform : m_barSeparatorsParent;
+			List<DefinitionNode> defList = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", _data.def.sku);
+			DefinitionsManager.SharedInstance.SortByProperty(ref defList, "unlockLevel", DefinitionsManager.SortType.NUMERIC);
+			int slotIdx = 0;
+			for(int i = 0; i < defList.Count; i++) {
+				// Skip if unlockLevel is 0 (default skin)
+				int unlockLevel = defList[i].GetAsInt("unlockLevel");
+				if(unlockLevel <= 0) continue;
 
-				// Activate and put into position
-				m_barSeparators[i].gameObject.SetActive(true);
-				m_barSeparators[i].SetDelta(delta);
-			} else {
-				// Hide separator
-				m_barSeparators[i].gameObject.SetActive(false);
+				// Can we reuse info object?
+				DisguiseInfo info = null;
+				if(i < m_disguises.Count) {
+					info = m_disguises[slotIdx];
+				} else {
+					info = new DisguiseInfo();
+					m_disguises.Add(info);
+				}
+				slotIdx++;
+
+				// Initialize info
+				info.def = defList[i];
+
+				// Compute delta corresponding to this disguise unlock level
+				info.delta = Mathf.InverseLerp(0, _data.progression.maxLevel, unlockLevel);
+				info.unlocked = (info.delta <= m_xpBar.normalizedValue);	// Use current var value to quicly determine initial state
+
+				// Create a new bar marker or reuse an existing one
+				if(info.barMarker == null) {
+					GameObject markerObj = (GameObject)GameObject.Instantiate(m_disguiseMarkerPrefab, markersParent, false);
+					info.barMarker = markerObj.GetComponent<DragonXPBarSeparator>();
+					info.barMarker.AttachToSlider(m_xpBar, info.delta);
+				} else {
+					info.barMarker.SetDelta(info.delta);
+					info.barMarker.gameObject.SetActive(true);
+				}
+			}
+
+			// Reset the rest of info objects
+			for(int i = slotIdx; i < m_disguises.Count; i++) {
+				m_disguises[i].def = null;
+				m_disguises[i].barMarker.gameObject.SetActive(false);
 			}
 		}
 	}
