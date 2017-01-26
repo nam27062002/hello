@@ -15,6 +15,10 @@ namespace AI {
 		private int m_leader;
         
 		private Formation m_formation;
+		public Formation formation { get { return m_formation; } }
+
+		private Quaternion m_rotation;
+
 
 		public Group() {
 			m_leader = -1; // there is no one in charge of this flock
@@ -25,6 +29,8 @@ namespace AI {
 			}
 
 			m_formation = Formation.SunFlower;
+
+			m_rotation = Quaternion.identity;
 		}
 
 		public void SetFormation(Formation _formation) {
@@ -99,17 +105,24 @@ namespace AI {
             return m_offsetsSunflower != null;
         }
 
+		public void UpdateRotation(Vector3 _dir) {
+			float angle = Vector3.Angle(Vector3.down, _dir);
+			if (_dir.x < 0)
+				angle *= -1;
+			m_rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+		}
+
 		public Vector3 GetOffset(IMachine machine, float _radius) {
 			int index = m_members.IndexOf(machine);
 
 			if (index > -1) {				
 				if (m_formation == Formation.Triangle) {
 					if (m_offsetsTriangle != null) {
-						return m_offsetsTriangle[index] * _radius;
+						return m_rotation * (m_offsetsTriangle[index] * _radius);
 					}
 				} else {
 		            if (m_offsetsSunflower != null) {
-						return m_offsetsSunflower[index] * _radius;
+						return m_rotation * (m_offsetsSunflower[index] * _radius);
 		            }
 				}
 			}
@@ -133,6 +146,10 @@ namespace AI {
 			} else {
 				return Mathf.Sqrt(_i - 0.5f) / Mathf.Sqrt(_n - ((_b + 1) / 2f));
 			}
+		}
+
+		public Vector3 GetSunflowerPosAt(int _i) {
+			return m_rotation * m_offsetsSunflower[_i];
 		}
 
 		public void Triangle(int _maxEntities) {
@@ -170,7 +187,7 @@ namespace AI {
 		}
 
 		public Vector3 GetTrianglePosAt(int _i) {
-			return m_offsetsTriangle[_i];
+			return m_rotation * m_offsetsTriangle[_i];
 		}
     }
 }
