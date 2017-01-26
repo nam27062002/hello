@@ -5,7 +5,7 @@ namespace AI {
 	namespace Behaviour {
 		[System.Serializable]
 		public class PetChaseTargetData : StateComponentData {
-			public float speed;
+			public float speedMultiplier = 1.5f;
 			public string attackPoint;
 			public float chaseTimeout;
 			public Range m_cooldown;
@@ -29,6 +29,7 @@ namespace AI {
 			protected Entity m_targetEntity;
 			protected MachineEatBehaviour m_eatBehaviour;
 			protected float m_timer;
+			protected float m_speed;
 
 			private object[] m_transitionParam;
 
@@ -42,6 +43,7 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<PetChaseTargetData>();
+				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * m_data.speedMultiplier;
 				m_eatBehaviour = m_pilot.GetComponent<MachineEatBehaviour>();
 
 				m_machine.SetSignal(Signals.Type.Alert, true);
@@ -51,7 +53,7 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
-				m_pilot.SetMoveSpeed(m_data.speed);
+				m_pilot.SetMoveSpeed(m_speed);
 				m_pilot.SlowDown(false);
 
 				m_target = null;
@@ -152,7 +154,7 @@ namespace AI {
 							}
 							// pos.z = Mathf.Clamp( pos.z, -2, 2);
 							m_pilot.GoTo(pos);
-							m_pilot.SetMoveSpeed(m_data.speed);
+							m_pilot.SetMoveSpeed(m_speed);
 						}
 					}
 
