@@ -120,7 +120,6 @@ public class PowerIcon : MonoBehaviour {
 			// Short description
 			if(m_shortDescriptionText != null) {
 				m_shortDescriptionText.text = DragonPowerUp.GetDescription(_powerDef, true);	// Custom formatting depending on powerup type, already localized
-				m_shortDescriptionText.color = DragonPowerUp.GetColor(_powerDef);
 			}
 
 			// Lock
