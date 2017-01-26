@@ -487,6 +487,10 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
             returnValue = new JSONClass();
             foreach (KeyValuePair<string, JSONNode> pair in jsonClass.m_Dict)
             {
+                // Sku key is not used
+                if (pair.Key == "sku")
+                    continue;
+
                 // Empty keys or keys with "as_profile" as a value need to be ignored
                 if (!string.IsNullOrEmpty(pair.Value.Value) && pair.Value.Value != "as_profile")
                 {

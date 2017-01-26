@@ -29,15 +29,13 @@ public class GameFeatureSettings : FeatureSettings
     public const string KEY_GLOW = "glow";
     public const string KEY_ENTITIES_LOD = "entitiesLOD";
     public const string KEY_LEVELS_LOD = "levelsLOD";
-
-    /*
+    
     // Examples of how to use different type datas
     public const string KEY_INT_TEST = "intTest";    
     public const string KEY_FLOAT_TEST = "floatTest";
     public const string KEY_STRING_TEST = "stringTest";
     public const string KEY_INT_RANGE_TEST = "intRangeTest";
     public const string KEY_FLOAT_RANGE_TEST = "floatRangeTest";
-    */
 
     public static void Build()
     {
@@ -84,8 +82,7 @@ public class GameFeatureSettings : FeatureSettings
             key = KEY_LEVELS_LOD;
             data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
             Datas.Add(key, data);
-
-            /*
+            
             // intTest
             key = KEY_INT_TEST;
             data = new DataInt(key, EValueType.Int, 0);
@@ -104,17 +101,21 @@ public class GameFeatureSettings : FeatureSettings
             key = KEY_FLOAT_RANGE_TEST;           
             float minAsFloat = 3f;
             float maxAsFloat = 5f;
-            float intervalAsFloat = 1f;
+            float intervalAsFloat = 0.5f;
             data = new DataRange(key, EValueType.Float, minAsFloat, minAsFloat, maxAsFloat, intervalAsFloat);
             Datas.Add(key, data);
 
             key = KEY_INT_RANGE_TEST;
             int minAsInt = 3;
             int maxAsInt = 5;
-            int intervalAsInt = 1;
+            int intervalAsInt = -1;
             data = new DataRange(key, EValueType.Int, minAsInt, minAsInt, maxAsInt, intervalAsInt);
-            Datas.Add(key, data);
-            */
+            Datas.Add(key, data);     
+            
+            foreach (KeyValuePair<string, Data> pair in Datas)
+            {
+                Keys_AddKey(pair.Key);
+            }       
         }
     }
 
@@ -245,7 +246,7 @@ public class GameFeatureSettings : FeatureSettings
             {
                 if (ValuesAsStrings.IndexOf(value) == -1)
                 {
-                    LogError(value + " + is not among the valid values: [" + ValuesAsStrings.ToString() + "] for key = " + Key);
+                    LogError(value + " is not among the valid values: " + GetValuesAsStringsList() + " for key = " + Key);
                 }                 
             } 
             else
@@ -257,6 +258,27 @@ public class GameFeatureSettings : FeatureSettings
         protected abstract void ParseSingleValue(string value);
 
         public List<string> ValuesAsStrings { get; set; }
+        public string GetValuesAsStringsList()
+        {
+            
+            string returnValue = "[";
+            if (ValuesAsStrings != null)
+            {
+                int count = ValuesAsStrings.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    returnValue += ValuesAsStrings[i];
+                    if (i < count - 1)
+                    {
+                        returnValue += ",";
+                    }
+                }
+            }
+            returnValue += "]";
+
+            return returnValue;
+        }
+
         public abstract string GetDataAsString(object data);
         public abstract object GetStringAsData(string data);        
 
@@ -485,7 +507,7 @@ public class GameFeatureSettings : FeatureSettings
     
     private Dictionary<string, object> Values { get; set; }
 
-    public GameFeatureSettings()
+    public GameFeatureSettings() : base()
     {
         if (Datas == null)
         {
@@ -582,22 +604,12 @@ public class GameFeatureSettings : FeatureSettings
         Values.Clear();        
     }
 
-    protected override void ParseJSON(JSONNode json)
+    protected override void ParseValue(string key, string valueAsString)
     {
-        /*JSONClass jsonClass = json as JSONClass;
-        foreach (KeyValuePair<string, JSONNode> pair in jsonClass.m_Dict)
+        if (Datas.ContainsKey(key))
         {
-            if (Datas.ContainsKey(pair.Key))
-            {
-                Datas[pair.Key].ParseValue(pair.Value);
-            }
-            else
-            {
-                LogError("Key " + pair.Key + " not valid");
-            }
-        }
-        
-        base.ParseJSON(json);*/        
+            Datas[key].ParseValue(valueAsString);
+        }                            
     }
 
     protected override void ExtendedOverrideFromJSON(JSONNode json)
@@ -624,23 +636,5 @@ public class GameFeatureSettings : FeatureSettings
             key = pair.Key;
             json.Add(key, GetValueAsString(key));            
         }
-    }
-
-    #region debug
-    private const string DEBUG_CHANNEL = "[GameFeatureSettings]";
-    private static void Log(string msg)
-    {
-        Debug.Log(DEBUG_CHANNEL + msg);
-    }
-
-    private static void LogWarning(string msg)
-    {
-        Debug.LogWarning(DEBUG_CHANNEL + msg);
-    }
-
-    private static void LogError(string msg)
-    {
-        Debug.LogError(DEBUG_CHANNEL + msg);
-    }
-    #endregion
+    }    
 }
