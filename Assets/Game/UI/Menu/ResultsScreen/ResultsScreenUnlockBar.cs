@@ -190,6 +190,7 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 		for(int i = 0; i < m_disguises.Count; i++) {
 			// Re-attach to use aux slider instead of main one
 			m_disguises[i].barMarker.AttachToSlider(m_auxBar, m_disguises[i].delta);
+			m_disguises[i].unlocked = (m_disguises[i].delta <= m_auxBar.normalizedValue);	// Use current var value to quicly determine initial state
 
 			// If the disguise is going to be unlocked, crate a flag for it!
 			if(m_disguises[i].delta <= m_targetDelta) {
@@ -281,12 +282,14 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 	private void LaunchDisguiseUnlockAnimation(int _disguiseIdx) {
 		// Get target disguise info
 		DisguiseInfo info = m_disguises[_disguiseIdx];
+		Debug.Log("Launching anim for flag " + _disguiseIdx);
 
 		// It should have a flag instanced, activate it and launch animation
 		if(info.flag == null) return;
 		info.flag.gameObject.SetActive(true);
 		info.flag.LaunchAnim();
 		info.flag.ToggleHighlight(true);
+		Debug.Log("DONE!");
 
 		// If there are other flags, move them out of the way
 		// Reverse-loop so the first flags are the farther away (disguises are sorted, so no problem)
@@ -383,6 +386,7 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 		// Check if a disguise has been unlocked!
 		for(int i = 0; i < m_disguises.Count; i++) {
 			// Skip if already unlocked
+			Debug.Log("Disguise " + i + ":\nunlocked? " + m_disguises[i].unlocked + "\nlevel: " + m_disguises[i].def.GetAsInt("unlockLevel") + "\ncurrentLevel: " + _currentLevel);
 			if(m_disguises[i].unlocked) continue;
 			if(m_disguises[i].def.GetAsInt("unlockLevel") == _currentLevel) {
 				LaunchDisguiseUnlockAnimation(i);

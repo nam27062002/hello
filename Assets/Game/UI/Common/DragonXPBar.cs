@@ -125,6 +125,7 @@ public class DragonXPBar : MonoBehaviour {
 			for(int i = m_barSeparators.Count; i < _capacity; i++) {
 				// Attach separator to the slider and start disabled
 				obj = (GameObject)GameObject.Instantiate(m_barSeparatorPrefab, separatorsParent, false);
+				obj.transform.SetAsFirstSibling();	// At the bottom
 				separator = obj.GetComponent<DragonXPBarSeparator>();
 				separator.AttachToSlider(m_xpBar, 0f);
 				obj.SetActive(false);
@@ -184,10 +185,8 @@ public class DragonXPBar : MonoBehaviour {
 			if(m_dragonNameText != null) m_dragonNameText.Localize(_data.def.GetAsString("tidName"));
 			if(m_dragonDescText != null) m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
 			
-			// Bar separators
-			if(m_barSeparatorPrefab != null) {
-				InitSeparators(_data);
-			}
+			// Bar separators and markers
+			InitSeparators(_data);
 
 			// Store new dragon data
 			m_dragonData = _data;
@@ -276,6 +275,7 @@ public class DragonXPBar : MonoBehaviour {
 				// Create a new bar marker or reuse an existing one
 				if(info.barMarker == null) {
 					GameObject markerObj = (GameObject)GameObject.Instantiate(m_disguiseMarkerPrefab, markersParent, false);
+					markerObj.transform.SetAsLastSibling();	// Make sure it shows at the top
 					info.barMarker = markerObj.GetComponent<DragonXPBarSeparator>();
 					info.barMarker.AttachToSlider(m_xpBar, info.delta);
 				} else {
