@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 135000013338795870}
   - component: {fileID: 114000013147041998}
   m_Layer: 0
-  m_Name: PF_PetFroggy
+  m_Name: PF_PetFreezeAura
   m_TagString: Pet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,6 +35,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000012877512430}
+  - {fileID: 4194122849156800}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -616,6 +617,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1855287051077470
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4194122849156800}
+  - component: {fileID: 114864880920350470}
+  m_Layer: 0
+  m_Name: FreezingAura
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &4000010005222306
 Transform:
   m_ObjectHideFlags: 1
@@ -1066,6 +1083,19 @@ Transform:
   m_Father: {fileID: 4000010457050872}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4194122849156800
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1855287051077470}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 424588}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &54000013371132386
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -1181,7 +1211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
+  m_blendSpeedFactor: 10
   m_energy: 10
   m_energyDrainSec: 1
   m_brainResource: {fileID: 11400000, guid: 550b5677d4a794d71b31727a72933cc6, type: 2}
@@ -1191,8 +1221,8 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 1
     max: 1
-  m_serializedJson: '[{"speedMultiplier":1.5,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"ignoreNotListedUnits":false,"dragonSizeRangeMultiplier":10,"preferedRangeMultiplier":2,"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"speedMultiplier":1.5,"chaseTimeout":2,"cooldown":{"min":3,"max":6},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false}]'
-  m_databaseKey: PF_PetFroggy
+  m_serializedJson: '[{"ignoreNotListedUnits":false,"dragonSizeRangeMultiplier":10,"preferedRangeMultiplier":2,"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"speedMultiplier":1.5,"chaseTimeout":0,"cooldown":{"min":0,"max":1},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"speedMultiplier":1.5,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false}]'
+  m_databaseKey: PF_PetFreezeAura
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
@@ -1261,7 +1291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
-  radius: 5
+  radius: 1.12
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114000013147041998
 MonoBehaviour:
@@ -1299,6 +1329,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: pet_0
+--- !u!114 &114864880920350470
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1855287051077470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1369ea7828bae4f44b332588b34957f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_radius: 15
 --- !u!135 &135000013338795870
 SphereCollider:
   m_ObjectHideFlags: 1

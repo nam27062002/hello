@@ -53,14 +53,17 @@ namespace AI {
 		// speed and leerping between values, trying to achieve smooth speed changes
 		protected virtual float speedFactor { get { return 1f; } }
 
+		private float m_freezeFactor = 1;
+		protected virtual float freezeFactor{ get {return m_freezeFactor;} }
+
 		private float m_moveSpeed;
-		public float moveSpeed { get { return m_moveSpeed * speedFactor; } }
+		public float moveSpeed { get { return m_moveSpeed * speedFactor * freezeFactor; } }
 		
 		private float m_boostSpeed;
-		public float boostSpeed { get { return m_boostSpeed * speedFactor; } }
+		public float boostSpeed { get { return m_boostSpeed * speedFactor * freezeFactor; } }
 
 		private float m_currentSpeed;
-		public float speed { get { return m_currentSpeed * speedFactor; } }
+		public float speed { get { return m_currentSpeed * speedFactor * freezeFactor; } }
 
 		private float m_zOffset;
 		protected float zOffset { get { return m_zOffset; } }
@@ -141,6 +144,11 @@ namespace AI {
 				m_currentSpeed = m_boostSpeed;
 			}
 			m_actions[(int)Action.Stop] = false;
+		}
+
+		public void SetFreezeFactor(float _factor)
+		{
+			m_freezeFactor = _factor;
 		}
 
 		public void Stop() {

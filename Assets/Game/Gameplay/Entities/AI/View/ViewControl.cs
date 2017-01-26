@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class ViewControl : MonoBehaviour, ISpawnable {
 
 	public static Color GOLD_TINT = new Color(255.0f / 255.0f, 161 / 255.0f, 0, 255.0f / 255.0f);
+	public static Color FREEZE_TINT = new Color(0.0f/255.0f, 0/255.0f, 255.0f/255.0f, 255.0f / 255.0f);
 
 	[Serializable]
 	public class SkinData {
@@ -20,6 +21,14 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		C,
 
 		Count
+	}
+
+	public enum EntityTint
+	{
+		NORMAL,
+		GOLD,
+		FREEZE,
+		NONE
 	}
 
 	//-----------------------------------------------
@@ -119,11 +128,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
     //Dragon breath detection
 	private DragonBoostBehaviour m_dragonBoost;
-    private DragonBreathBehaviour m_dragonBreath;
-    private DragonBreathBehaviour.Type m_lastType;
+
+	private EntityTint m_entityTint = EntityTint.NONE;
 
 	//
-
+	private bool m_freezing = false;
 
     //-----------------------------------------------
     // Use this for initialization
@@ -316,9 +325,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			}
 		}
 
-        entityTint(false);
-        m_lastType = DragonBreathBehaviour.Type.None;
-        checkTint();
+		DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
+		CheckTint( dragonBreath.IsFuryOn(), dragonBreath.type);
 
 		m_dragonBoost = InstanceManager.player.dragonBoostBehaviour;
     }
@@ -366,47 +374,48 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	}
 
 
-    void entityTint(bool value)
+    void SetEntityTint(EntityTint value)
     {
+    	m_entityTint = value;
         if (m_allMaterials != null) {
             int i;
-            int count = m_allMaterials.Count;            
+            int count = m_allMaterials.Count;
             for (i = 0; i < count; i++) {
                 if (m_allMaterials[i] != null) {
-					if (value) {
-						m_allMaterials[i].SetColor("_FresnelColor", GOLD_TINT);                        
-					} else {
-						m_allMaterials[i].SetColor("_FresnelColor", m_defaultTints[i]);
-					}
+                	switch( value )
+                	{
+                		case EntityTint.GOLD:
+                		{
+							m_allMaterials[i].SetColor("_FresnelColor", GOLD_TINT);
+                		}break;
+                		case EntityTint.FREEZE:
+                		{
+							m_allMaterials[i].SetColor("_FresnelColor", FREEZE_TINT);
+                		}break;
+                		case EntityTint.NORMAL:
+                		{
+							m_allMaterials[i].SetColor("_FresnelColor", m_defaultTints[i]);
+                		}break;
+                	}
                 }
             }
         }       
     }
 
-    void OnFuryToggled(bool _active, DragonBreathBehaviour.Type type)
+    void OnFuryToggled(bool _active, DragonBreathBehaviour.Type _type)
     {
-		if ( IsBurnableByPlayer() )
-		{
-	        entityTint(_active);
-	        m_lastType = _active ? type : DragonBreathBehaviour.Type.None;
-        }
-
+        CheckTint( _active, _type);
     }
 
     /// <summary>
     /// Determines whether this instance is burnable by player.
     /// </summary>
     /// <returns><c>true</c> if this instance is burnable by player; otherwise, <c>false</c>.</returns>
-    private bool IsBurnableByPlayer()
+    private bool IsBurnableByPlayer( DragonBreathBehaviour.Type _fireType )
     {
-		if (m_dragonBreath == null)
-        {
-            m_dragonBreath = InstanceManager.player.gameObject.GetComponent<DragonBreathBehaviour>();
-        }
-
         if ( m_entity != null )
         {
-	    	switch( m_dragonBreath.type )
+			switch( _fireType )
 	    	{
 	    		case DragonBreathBehaviour.Type.Super:
 	    			return m_entity.IsBurnable();
@@ -420,23 +429,28 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     }
 
 
-    void checkTint()
+	void CheckTint( bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None )
     {
-    	if ( IsBurnableByPlayer() )
+    	EntityTint _tint = ViewControl.EntityTint.NORMAL;
+    	if ( _furyActive ) 
     	{
-	        if (m_dragonBreath.type != m_lastType)
-	        {
-	            m_lastType = m_dragonBreath.type;
-	            if (m_lastType == DragonBreathBehaviour.Type.None)
-	            {
-	                entityTint(false);
-	            }
-	        }
-	        if (m_lastType != DragonBreathBehaviour.Type.None)
-	        {
-	            entityTint(true);
-	        }
-        }
+			if ( IsBurnableByPlayer(_type) )
+			{	
+				_tint = EntityTint.GOLD;
+			}
+    	}
+    	else
+    	{
+    		if ( m_freezing )	
+    		{
+    			_tint = EntityTint.FREEZE;
+    		}
+    	}
+
+    	if ( _tint != m_entityTint )
+    	{
+    		SetEntityTint( _tint);
+    	}
     }
 
     protected virtual void Update() {
@@ -467,11 +481,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			}
 		}
 
-
+		/*
         if (m_lastType != DragonBreathBehaviour.Type.None || (m_entity != null && m_entity.isGolden))
         {
-            entityTint(true);
+            EntityTint(true);
         }
+        */
     }
 
 	// Queries
@@ -812,5 +827,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			DisableInSeconds dis = go.GetComponent<DisableInSeconds>();
 			dis.activeTime = _disableInSeconds;
 		}
+	}
+
+	public void Freezing( bool _value )
+	{
+		m_freezing = _value;
+		DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
+		CheckTint( dragonBreath.IsFuryOn(), dragonBreath.type);
 	}
 }

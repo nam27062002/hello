@@ -81,7 +81,7 @@ public class MachineEatBehaviour : EatBehaviour {
 	override protected void BiteKill( bool _canHold = true ) 
 	{
 		if ( !m_machine.IsDead() && !m_machine.IsDying() )
-			base.BiteKill();
+			base.BiteKill(_canHold);
 	}
 
 
