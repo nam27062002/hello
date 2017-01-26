@@ -13,7 +13,10 @@ namespace AI {
 			protected float m_timer;
 
 			protected override void OnEnter(State oldState, object[] param) {
-				m_timer = (float)param[0];
+				m_timer = 0;
+				if (param.Length > 0 && param[0] is float )
+					m_timer = (float)param[0];
+				
 			}
 
 			protected override void OnUpdate() {
