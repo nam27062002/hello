@@ -6,7 +6,7 @@ namespace AI {
 		
 		[System.Serializable]
 		public class WanderPlayerData : StateComponentData {
-			public float speed;
+			public float speedMultiplier = 1.5f;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Wander Player")]
@@ -18,6 +18,7 @@ namespace AI {
 			private WanderPlayerData m_data;
 			private Transform m_target;
 			private Vector3 m_targetOffset;
+			private float m_speed;
 
 			public override StateComponentData CreateData() {
 				return new WanderPlayerData();
@@ -32,12 +33,13 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<WanderPlayerData>();
 				m_collider = m_pilot.GetComponent<SphereCollider>();
 				m_target = m_machine.transform;
+				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * m_data.speedMultiplier;
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
 				SelectTarget();
 				m_pilot.SlowDown(true); // this wander state doesn't have an idle check
-				m_pilot.SetMoveSpeed(m_data.speed); //TODO
+				m_pilot.SetMoveSpeed(m_speed); //TODO
 			}
 
 			protected override void OnUpdate() {
@@ -45,7 +47,7 @@ namespace AI {
 
 				if ((targetPos - m_pilot.transform.position).sqrMagnitude > 2)
 				{
-					m_pilot.SetMoveSpeed(m_data.speed); //TODO
+					m_pilot.SetMoveSpeed(m_speed); //TODO
 					m_pilot.GoTo(targetPos);
 
 					Debug.DrawLine(m_machine.position, targetPos, Colors.gold);

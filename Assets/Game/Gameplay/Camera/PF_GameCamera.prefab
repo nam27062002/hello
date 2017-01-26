@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 114000012048095912}
   - component: {fileID: 114795868151240438}
   - component: {fileID: 114000011558897754}
+  - component: {fileID: 114911447019432680}
   m_Layer: 0
   m_Name: PF_GameCamera
   m_TagString: MainCamera
@@ -510,3 +511,34 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   glowColorMultiplier: {r: 1, g: 0.6161004, b: 0.24264705, a: 1}
+--- !u!114 &114911447019432680
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101152}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21b004808c23bd443b3b992a6e418cd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_material: {fileID: 2100000, guid: c68159e287fd5cd4b9322d920fe401ea, type: 2}
+  curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  m_timeEffect: 1

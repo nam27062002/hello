@@ -42,4 +42,6 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
     public virtual void LogicUpdate() {}
     public virtual bool CanDieOutsideFrustrum() { return true; }
+
+	public virtual CircleArea2D circleArea { get{ return null; } }
 }
