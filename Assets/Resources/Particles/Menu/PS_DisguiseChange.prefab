@@ -106,9 +106,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4928604827470798}
-  - component: {fileID: 198838803304540594}
   - component: {fileID: 199279630097344558}
-  - component: {fileID: 114337032146622992}
+  - component: {fileID: 198838803304540594}
   m_Layer: 0
   m_Name: PS_DisguiseChange
   m_TagString: Untagged
@@ -222,7 +221,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1863753819720618}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 2.13, y: 0, z: -1.84}
+  m_LocalPosition: {x: -0, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4514542178075132}
@@ -492,19 +491,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114337032146622992
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1863753819720618}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_activeTime: 1
-  m_returnTo: 1
 --- !u!198 &198838803304540594
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -513,7 +499,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1863753819720618}
   serializedVersion: 5
   lengthInSec: 0.5
-  speed: 1
+  simulationSpeed: 1
   looping: 0
   prewarm: 0
   playOnAwake: 1
@@ -560,7 +546,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 697640403
+  randomSeed: -1761730192
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3121,7 +3107,7 @@ ParticleSystemRenderer:
   m_ReflectionProbeUsage: 0
   m_Materials:
   - {fileID: 2100000, guid: 83e1e85ff9b081d4e8f9ac6d72fcedfe, type: 2}
-  - {fileID: 2100000, guid: 3bf98f1dc2405f1418e234efc5a7abd1, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
