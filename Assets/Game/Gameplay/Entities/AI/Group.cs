@@ -10,11 +10,17 @@ namespace AI {
 
 		private static Vector3[] m_offsetsSunflower;
 		private static Vector3[] m_offsetsTriangle;
+		private static float[] m_triangleRows;
 
 		private List<IMachine> m_members;
 		private int m_leader;
         
 		private Formation m_formation;
+		public Formation formation { get { return m_formation; } }
+
+		private Quaternion m_lastrotation;
+		private Quaternion m_rotation;
+
 
 		public Group() {
 			m_leader = -1; // there is no one in charge of this flock
@@ -25,6 +31,8 @@ namespace AI {
 			}
 
 			m_formation = Formation.SunFlower;
+
+			m_lastrotation = m_rotation = Quaternion.identity;
 		}
 
 		public void SetFormation(Formation _formation) {
@@ -92,6 +100,7 @@ namespace AI {
             }
 
 			m_offsetsTriangle = new Vector3[100];
+			m_triangleRows = new float[100];
 			Triangle(100);
         }
 
@@ -99,17 +108,25 @@ namespace AI {
             return m_offsetsSunflower != null;
         }
 
+		public void UpdateRotation(Vector3 _dir) {
+			float angle = Vector3.Angle(Vector3.down, _dir);
+			if (_dir.x < 0)
+				angle *= -1;
+			m_lastrotation = m_rotation;
+			m_rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+		}
+
 		public Vector3 GetOffset(IMachine machine, float _radius) {
 			int index = m_members.IndexOf(machine);
 
 			if (index > -1) {				
 				if (m_formation == Formation.Triangle) {
 					if (m_offsetsTriangle != null) {
-						return m_offsetsTriangle[index] * _radius;
+						return Quaternion.Slerp(m_lastrotation, m_rotation, 1f / m_triangleRows[index]) * (m_offsetsTriangle[index] * _radius);
 					}
 				} else {
 		            if (m_offsetsSunflower != null) {
-						return m_offsetsSunflower[index] * _radius;
+						return m_rotation * (m_offsetsSunflower[index] * _radius);
 		            }
 				}
 			}
@@ -135,6 +152,10 @@ namespace AI {
 			}
 		}
 
+		public Vector3 GetSunflowerPosAt(int _i) {
+			return m_rotation * m_offsetsSunflower[_i];
+		}
+
 		public void Triangle(int _maxEntities) {
 			float factor = 1f;
 
@@ -150,27 +171,29 @@ namespace AI {
 				//
 				if (row == 0) {
 					m_offsetsTriangle[row] = new Vector3(0, y, 0);
+					m_triangleRows[row] = y + 1f;
 				} else {
 					float w = factor * (entitiesInThisRow - 1);
 					for (int i = 0; i < entitiesInThisRow; i++) {
 						m_offsetsTriangle[row + i] = new Vector3((-w * 0.5f) + (i * factor), y, 0);
+						m_triangleRows[row + i] = y + 1f;
 					}
 				}
 				//
 
-				row += entitiesInThisRow;
 				y += factor;
+				row += entitiesInThisRow;
 
 				_maxEntities -= entitiesInThisRow;
 			}
 
 			for (int i = 0; i < _maxEntities; i++) {
-				m_offsetsTriangle[i].x /= (2f * m_offsetsTriangle[i].y);
+				m_offsetsTriangle[i].x /= (2f * m_triangleRows[i]);
 			}
 		}
 
 		public Vector3 GetTrianglePosAt(int _i) {
-			return m_offsetsTriangle[_i];
+			return m_rotation * m_offsetsTriangle[_i];
 		}
     }
 }

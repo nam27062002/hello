@@ -71,6 +71,11 @@ public class CircleArea2D : MonoBehaviour, Area {
 		return false;
 	}
 
+	public bool Overlaps( CircleArea2D _circle )
+	{
+		return Overlaps(_circle.center, _circle.radius);
+	}
+
 	public bool IsInside( Vector2 _point )
 	{
 		Vector3 c = center;

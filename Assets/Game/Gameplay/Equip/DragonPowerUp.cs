@@ -337,6 +337,11 @@ public class DragonPowerUp : MonoBehaviour {
                     return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FOOD.ToHexString("#"));
                 }break;
 
+            case "freeze_aura":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_WATER.ToHexString("#"));
+                }break;
+
             case "fireball":
                 {
                     return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
@@ -376,7 +381,19 @@ public class DragonPowerUp : MonoBehaviour {
 				return UIConstants.POWER_COLOR_BOOST;
 			} break;
 
-			case "fury_increase": {
+			case "fury_size_increase": {
+				return UIConstants.POWER_COLOR_FIRE;
+			} break;
+
+			case "freeze_aura": {
+				return UIConstants.POWER_COLOR_WATER;
+			} break;
+
+			case "fury_duration_increase": {
+				return UIConstants.POWER_COLOR_FIRE;
+			} break;
+
+			case "lower_damage": {
 				return UIConstants.POWER_COLOR_FIRE;
 			} break;
 
@@ -412,6 +429,30 @@ public class DragonPowerUp : MonoBehaviour {
 			} break;
 
 			case "preyHpBoost": {
+				return UIConstants.POWER_COLOR_HEALTH;
+			} break;
+
+			case "speed_increase": {
+				return UIConstants.POWER_COLOR_HEALTH;
+			} break;
+
+			case "reduce_life_drain": {
+				return UIConstants.POWER_COLOR_HEALTH;
+			} break;
+
+			case "more_coin": {
+				return UIConstants.POWER_COLOR_HEALTH;
+			} break;
+
+			case "score_increase": {
+				return UIConstants.POWER_COLOR_HEALTH;
+			} break;
+
+			case "food_increase": {
+				return UIConstants.POWER_COLOR_HEALTH;
+			} break;
+
+			case "fireball": {
 				return UIConstants.POWER_COLOR_HEALTH;
 			} break;
 

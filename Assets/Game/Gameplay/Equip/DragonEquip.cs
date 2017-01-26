@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 
 public class DragonEquip : MonoBehaviour {
 	//------------------------------------------------------------------------//
@@ -9,9 +10,6 @@ public class DragonEquip : MonoBehaviour {
 	private const string SKIN_PATH = "Game/Equipable/Skins/";
 	private const string PET_PREFAB_PATH_GAME = "Game/Equipable/Pets/";
 	private const string PET_PREFAB_PATH_MENU = "UI/Menu/Pets/";
-
-	private const string DISGUISE_CHANGE_PS = "PS_DisguiseChange";
-	private const string DISGUISE_CHANGE_PS_FOLDER = "Menu";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -249,11 +247,15 @@ public class DragonEquip : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">The new disguise to be equipped.</param>
 	private void OnDisguiseChanged(string _sku) {
+		// Is it meant for this dragon?
 		if(m_dragonSku == _sku) {
-			// Show some FX and cool animation!
-			// https://youtu.be/RFqw3xiuSvQ?t=8m45s
-			ParticleManager.Spawn(DISGUISE_CHANGE_PS, transform.position + new Vector3(0.5f, 2.5f, -4f), DISGUISE_CHANGE_PS_FOLDER);	// [AOC] Hardcoded offset! :(
-			EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+			// Do it with some delay to sync with FX
+			// DOTween allows us to do it in a super-easy way
+			DOVirtual.DelayedCall(0.25f, 
+				() => {
+					EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+				}
+			);
 		}
 	}
 
@@ -264,7 +266,7 @@ public class DragonEquip : MonoBehaviour {
 	/// <param name="_slotIdx">Slot that has been changed.</param>
 	/// <param name="_newPetSku">New pet assigned to the slot. Empty string for unequip.</param>
 	public void OnPetChanged(string _dragonSku, int _slotIdx, string _newPetSku) {
-		// Is it meant for this draogn?
+		// Is it meant for this dragon?
 		if(_dragonSku == m_dragonSku) {
 			// [AOC] TODO!! Make it look good!
 			EquipPet(_newPetSku, _slotIdx);

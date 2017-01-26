@@ -35,11 +35,23 @@ public class EntityGroupController : MonoBehaviour
 		}
 	}
 
-	/*
+
 	void OnDrawGizmosSelected() {
-		flock.Triangle(100);
-		for (int i = 0; i < 100; i++) {
-			Gizmos.DrawSphere(transform.position + flock.GetTrianglePosAt(i), 0.15f);
+		if (flock == null) {
+			flock = new AI.Group();
 		}
-	}*/
+			
+		for (int i = 0; i < 100; i++) {
+			switch(m_formation) {
+				case AI.Group.Formation.SunFlower:
+					Gizmos.DrawSphere(transform.position + flock.GetSunflowerPosAt(i), 0.15f);
+					break;
+
+				case AI.Group.Formation.Triangle:
+					Gizmos.DrawSphere(transform.position + flock.GetTrianglePosAt(i), 0.15f);
+					break;
+			}
+
+		}
+	}
 }

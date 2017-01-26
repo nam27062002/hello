@@ -116,7 +116,11 @@ public class LevelLoadingSplash : MonoBehaviour {
 
 		// Skin
 		DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.diguise);
-		powerDefs.Add(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup")));	// Can be null
+		if(skinDef == null) {
+			powerDefs.Add(null);
+		} else {
+			powerDefs.Add(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup")));	// Can be null
+		}
 
 		// Pets
 		for(int i = 0; i < currentDragon.pets.Count; i++) {
