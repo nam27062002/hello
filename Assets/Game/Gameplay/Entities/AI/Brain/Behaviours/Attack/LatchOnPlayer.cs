@@ -75,6 +75,8 @@ namespace AI {
 				m_holdTransform = null;
 				if ( m_eatBehaviour.IsLatching() )
 					m_eatBehaviour.EndHold();
+				if ( m_eatBehaviour.GetAttackTarget() != null )
+					m_eatBehaviour.StopAttackTarget();
 
 				m_pilot.transform.parent = m_originalParent;
 				m_eatBehaviour.enabled = false;
