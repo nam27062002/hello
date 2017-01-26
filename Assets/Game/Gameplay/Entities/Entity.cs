@@ -20,7 +20,7 @@ public class Entity : IEntity {
 	/************/
 
 	private CircleArea2D m_bounds;
-	public CircleArea2D circleArea { get{ return m_bounds; } }
+	public override CircleArea2D circleArea { get{ return m_bounds; } }
 
 	private Reward m_reward;
 	public Reward reward { get { return m_reward; }}
@@ -99,6 +99,7 @@ public class Entity : IEntity {
 		m_reward.energy = m_def.GetAsFloat("rewardEnergy");
 		// m_reward.fury = m_def.GetAsFloat("rewardFury");
 		m_reward.xp = m_def.GetAsFloat("rewardXp");
+		m_reward.alcohol = m_def.GetAsFloat("alcohol",0);
 		m_reward.origin = m_def.Get("sku");
 
 		// Simple data
@@ -173,6 +174,10 @@ public class Entity : IEntity {
 			newReward.coins = 0;
 		}
 
+		if (_burnt){
+			newReward.alcohol = 0;
+		}
+
 		// Give PC?
 		if(!m_isPC) {
 			newReward.pc = 0;
@@ -194,7 +199,7 @@ public class Entity : IEntity {
 	}
 
 	public bool IsEdible(DragonTier _tier) {
-		return allowEdible && m_isEdible && (m_edibleFromTier <= _tier);
+		return IsEdible() && (m_edibleFromTier <= _tier);
 	}
 
 	public bool CanBeHolded(DragonTier _tier) {

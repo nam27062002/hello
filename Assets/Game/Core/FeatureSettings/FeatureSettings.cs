@@ -2,10 +2,10 @@
 public class FeatureSettings
 {
     public const string KEY_RATING = "rating";
-    public const string KEY_PROFILE = "profile";
+    public const string KEY_PROFILE = "profile";    
 
     public float Rating { get; set; }
-    public string Profile { get; set; }
+    public string Profile { get; set; }    
 
     public void Reset()
     {
@@ -20,10 +20,13 @@ public class FeatureSettings
     /// </summary>    
     public void FromJSON(JSONNode json)
     {        
-        Reset();        
+        Reset();
+        ParseJSON(json);    
         OverrideFromJSON(json); 
     }
-    
+
+    protected virtual void ParseJSON(JSONNode json) {}
+
     /// <summary>
     /// Overrides the current data of this object with the data defined in <c>json</c>. Only the keys defined in <c>json</c> are overriden.
     /// </summary>    
@@ -41,7 +44,7 @@ public class FeatureSettings
             if (json.ContainsKey(key))
             {
                 Profile = json[key];
-            }
+            }           
 
             ExtendedOverrideFromJSON(json);
         }

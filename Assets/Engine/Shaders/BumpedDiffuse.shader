@@ -30,11 +30,29 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-
+			#pragma glsl_no_auto_normalization
+			#pragma fragmentoption ARB_precision_hint_fastest
+			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"
+
+			#if LOW_DETAIL_ON
+			#endif
+
+			#if MEDIUM_DETAIL_ON
+			#define RIM
+			#define BUMP
+			#endif
+
+			#if HI_DETAIL_ON
+			#define RIM
+			#define BUMP
+			#define SPEC
+			#endif
+
+//			#define BUMP
 
 			struct appdata
 			{
@@ -52,9 +70,11 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 
 				float3 viewDir : VECTOR;
 //				float3 halfDir : VECTOR;
-				float3 tangentWorld : TANGENT;  
 		        float3 normalWorld : TEXCOORD4;
+				#ifdef BUMP
+				float3 tangentWorld : TANGENT;  
 		        float3 binormalWorld : TEXCOORD5;
+				#endif
 			};
 
 			uniform sampler2D _MainTex;
@@ -82,10 +102,14 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 
 				// To calculate tangent world
 	            float4x4 modelMatrix = unity_ObjectToWorld;
-     			float4x4 modelMatrixInverse = unity_WorldToObject; 
+     			float4x4 modelMatrixInverse = unity_WorldToObject;
+				#ifdef BUMP
 	            o.tangentWorld = normalize( mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
      			o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
      			o.binormalWorld = normalize( cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
+				#else
+				o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
+				#endif
 
 				return o;
 			}
@@ -95,6 +119,7 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, i.uv);
 
+				#ifdef BUMP
 				// Calc normal from detail texture normal and tangent world
 				float heightSampleCenter = col.a;
 
@@ -108,6 +133,9 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 	            float3 encodedNormal = cross(float3(1, 0, sampleDeltaRight * _BumpStrength ),float3(0, 1, sampleDeltaUp * _BumpStrength));
 	            float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
      			float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
+				#else
+				float3 normalDirection = i.normalWorld;
+				#endif
 
      			fixed4 diffuse = max(0,dot( normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
 

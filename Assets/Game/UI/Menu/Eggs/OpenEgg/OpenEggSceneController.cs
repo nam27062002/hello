@@ -29,7 +29,8 @@ public class OpenEggSceneController : MonoBehaviour {
 	[SerializeField] private Transform m_eggAnchor = null;
 	[SerializeField] private Transform m_rewardAnchor = null;
 	[Space]
-	[SerializeField] private GodRaysFX m_rewardGodRaysFX = null;
+	//[SerializeField] private GodRaysFX m_rewardGodRaysFX = null;	// [AOC] Commented out until fixed
+	[SerializeField] private GodRaysFXFast m_godRaysFX = null;
 	[SerializeField] private Transform m_tapFXPool = null;
 	[Tooltip("One per rarity, matching order")]
 	[SerializeField] private ParticleSystem[] m_tapFX = new ParticleSystem[(int)EggReward.Rarity.COUNT];
@@ -122,8 +123,11 @@ public class OpenEggSceneController : MonoBehaviour {
 			m_rewardView = null;
 		}
 
-		if(m_rewardGodRaysFX != null) {
+		/*if(m_rewardGodRaysFX != null) {
 			m_rewardGodRaysFX.StopFX();
+		}*/
+		if(m_godRaysFX != null) {
+			m_godRaysFX.StopFX();
 		}
 		
 		for(int i = 0; i < m_openFX.Length; i++) {
@@ -227,7 +231,7 @@ public class OpenEggSceneController : MonoBehaviour {
 
 				// Use a PetLoader to simplify things
 				MenuPetLoader loader = m_rewardView.AddComponent<MenuPetLoader>();
-				loader.Setup(MenuPetLoader.Mode.MANUAL, MenuPetLoader.Anim.BREAK_EGG, true);
+				loader.Setup(MenuPetLoader.Mode.MANUAL, MenuPetPreview.Anim.IN, true);
 				loader.Load(rewardData.itemDef.sku);
 
 				// Animate it
@@ -247,16 +251,17 @@ public class OpenEggSceneController : MonoBehaviour {
 		}
 
 		// Show reward godrays
-		// Custom color based on reward's rarity
-		if(m_rewardGodRaysFX != null) {
+		// Except if duplicate! (for now)
+		/*if(m_rewardGodRaysFX != null) {
 			m_rewardGodRaysFX.StartFX(eggData.rewardData.rarity);
+		}
+		*/
+		if(m_godRaysFX != null && !eggData.rewardData.duplicated) {
+			// Custom color based on reward's rarity
+			m_godRaysFX.StartFX(eggData.rewardData.rarity);
 
-			/*// Show with some delay to sync with pet's animation
-			m_rewardGodRaysFX.transform.DOScale(0f, 0.05f).From().SetDelay(0.15f).SetRecyclable(true).OnStart(
-				() => {
-					m_rewardGodRaysFX.StartFX(eggData.rewardDef.Get("rarity"));
-				}
-			);*/
+			// Show with some delay to sync with pet's animation
+			m_godRaysFX.transform.DOScale(0f, 0.05f).From().SetDelay(0.15f).SetRecyclable(true);
 		}
 	}
 

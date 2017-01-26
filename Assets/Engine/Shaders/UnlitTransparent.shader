@@ -16,6 +16,9 @@ Shader "Hungry Dragon/Unlit Transparent Custom Fog (Background entities & Clouds
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma glsl_no_auto_normalization
+			#pragma fragmentoption ARB_precision_hint_fastest
+
 			
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"

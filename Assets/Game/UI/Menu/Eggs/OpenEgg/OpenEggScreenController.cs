@@ -233,7 +233,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		switch(rewardData.type) {
 			case "pet": {
 				// Call to action text
-				m_callToActionText.Localize("SHOW");	// [AOC] HARDCODED!! Was TID_EGG_EQUIP_REWARD but doesn't feel right
+				m_callToActionText.Localize("TID_EGG_SHOW_REWARD");
 			} break;
 
 			default: {

@@ -6,20 +6,6 @@ public class DragonPowerUp : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static readonly Color COLOR_HEALTH = new Color(0.7f, 0.8f, 0.24f);
-	public static readonly Color COLOR_BOOST = new Color(0.38f, 1f, 0.78f);
-	public static readonly Color COLOR_FIRE = new Color(1f, 0.64f, 0.22f);
-	public static readonly Color COLOR_BITE = new Color(1f, 0.5f, 0.44f);
-	public static readonly Color COLOR_SPEED = new Color(0.38f, 1f, 0.78f);
-
-	public static readonly Color COLOR_GOLD = new Color(1f, 0.71f, 0.1f);
-	public static readonly Color COLOR_PC = new Color(0.96f, 0.46f, 1f);
-
-	public static readonly Color COLOR_MINE = new Color(0.63f, 0.63f, 0.63f);
-	public static readonly Color COLOR_POISON = new Color(0f, 1f, 0f);
-	public static readonly Color COLOR_OBSTACLE = new Color(0.87f, 0.67f, 0.20f);
-	public static readonly Color COLOR_ENTITY = new Color(1f, 1f, 1f);
-	public static readonly Color COLOR_WATER = new Color(0f, 0.91f, 100f);
 
 	//------------------------------------------------------------------------//
 	// ATTRIBUTES															  //
@@ -251,19 +237,19 @@ public class DragonPowerUp : MonoBehaviour {
 		// Every power type has a different format
 		switch(_powerDef.GetAsString("type")) {
 			case "hp_increase":	 {
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), COLOR_HEALTH.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), UIConstants.POWER_COLOR_HEALTH.ToHexString("#"));
 			} break;
 
 			case "boost_increase": {
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), COLOR_BOOST.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), UIConstants.POWER_COLOR_BOOST.ToHexString("#"));
 			} break;
 
 			case "fury_increase": {
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), COLOR_FIRE.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
 			} break;
 
 			case "dive": {
-				return _powerDef.GetLocalized(fieldId, COLOR_WATER.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
 			} break;
 			
 			case "avoid": {
@@ -272,11 +258,34 @@ public class DragonPowerUp : MonoBehaviour {
 				int numHits = _powerDef.GetAsInt("param2");
 				switch(subtype) {
 					case "mine": {
-						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), COLOR_MINE.ToHexString("#"));
+						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_MINE.ToHexString("#"));
 					} break;
 
 					case "poison": {
-						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), COLOR_POISON.ToHexString("#"));
+						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_POISON.ToHexString("#"));
+					} break;
+
+					default: {
+						return _powerDef.GetLocalized(fieldId);
+					} break;
+				}
+			} break;
+
+			case "lower_damage": {
+				// Check sub type with param one
+				string subtype = _powerDef.Get("param1");
+				int numHits = _powerDef.GetAsInt("param2");
+				switch(subtype) {
+					case "mine": {
+						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_MINE.ToHexString("#"));
+					} break;
+
+					case "poison": {
+						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_POISON.ToHexString("#"));
+					} break;
+
+					case "arrows": {
+						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_ENTITY.ToHexString("#"));
 					} break;
 
 					default: {
@@ -286,18 +295,58 @@ public class DragonPowerUp : MonoBehaviour {
 			} break;
 
 			case "lives": {
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), COLOR_HEALTH.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_HEALTH.ToHexString("#"));
 			} break;
 
 			case "dragonram": {
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), COLOR_OBSTACLE.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_OBSTACLE.ToHexString("#"));
 			} break;
-			
-			case "preyHpBoost": {
+
+            case "fury_size_increase":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
+            }break;
+
+            case "fury_duration":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
+                }break;
+
+            case "speed_increase":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_SPEED.ToHexString("#"));
+                }break;
+
+            case "reduce_life_drain":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_DRAIN.ToHexString("#"));
+                }break;
+
+            case "more_coin":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.COINS_TEXT_COLOR.ToHexString("#"));
+                }break;
+
+            case "score_increase":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_SCORE.ToHexString("#"));
+                }break;
+
+            case "food_increase":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FOOD.ToHexString("#"));
+                }break;
+
+            case "fireball":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
+                }break;
+
+            case "preyHpBoost": {
 				// Show target entity name
 				// [AOC] TODO!! Plural
 				DefinitionNode entityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, _powerDef.GetAsString("param1"));
-				return _powerDef.GetLocalized(fieldId, entityDef.GetLocalized("tidName"), StringUtils.FormatNumber(_powerDef.GetAsFloat("param2"), 0), COLOR_ENTITY.ToHexString("#"), COLOR_HEALTH.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, entityDef.GetLocalized("tidName"), StringUtils.FormatNumber(_powerDef.GetAsFloat("param2"), 0), UIConstants.POWER_COLOR_ENTITY.ToHexString("#"), UIConstants.POWER_COLOR_HEALTH.ToHexString("#"));
 			} break;
 
 			default: {
@@ -306,5 +355,103 @@ public class DragonPowerUp : MonoBehaviour {
 		}
 
 		return "";
+	}
+
+	/// <summary>
+	/// Gets the special color assigned to the given power type.
+	/// </summary>
+	/// <returns>The color assigned to the power's type.</returns>
+	/// <param name="_powerDef">Power definition to be consulted.</param>
+	public static Color GetColor(DefinitionNode _powerDef) {
+		// Check definition
+		if(_powerDef == null) return Color.white;
+
+		// Every power type has a different format
+		switch(_powerDef.GetAsString("type")) {
+			case "hp_increase":	 {
+				return UIConstants.POWER_COLOR_HEALTH;
+			} break;
+
+			case "boost_increase": {
+				return UIConstants.POWER_COLOR_BOOST;
+			} break;
+
+			case "fury_size_increase": {
+				return UIConstants.POWER_COLOR_FIRE;
+			} break;
+
+			case "fury_duration_increase": {
+				return UIConstants.POWER_COLOR_FIRE;
+			} break;
+
+			case "lower_damage": {
+				return UIConstants.POWER_COLOR_FIRE;
+			} break;
+
+			case "dive": {
+				return UIConstants.POWER_COLOR_WATER;
+			} break;
+
+			case "avoid": {
+				// Check sub type with param one
+				string subtype = _powerDef.Get("param1");
+				int numHits = _powerDef.GetAsInt("param2");
+				switch(subtype) {
+					case "mine": {
+						return UIConstants.POWER_COLOR_MINE;
+					} break;
+
+					case "poison": {
+						return UIConstants.POWER_COLOR_POISON;
+					} break;
+
+					default: {
+						return Color.white;
+					} break;
+				}
+			} break;
+
+			case "lives": {
+				return UIConstants.POWER_COLOR_HEALTH;
+			} break;
+
+			case "dragonram": {
+				return UIConstants.POWER_COLOR_OBSTACLE;
+			} break;
+
+			case "preyHpBoost": {
+				return UIConstants.POWER_COLOR_HEALTH;
+			} break;
+
+			case "speed_increase": {
+				return UIConstants.POWER_COLOR_HEALTH;
+			} break;
+
+			case "reduce_life_drain": {
+				return UIConstants.POWER_COLOR_HEALTH;
+			} break;
+
+			case "more_coin": {
+				return UIConstants.POWER_COLOR_HEALTH;
+			} break;
+
+			case "score_increase": {
+				return UIConstants.POWER_COLOR_HEALTH;
+			} break;
+
+			case "food_increase": {
+				return UIConstants.POWER_COLOR_HEALTH;
+			} break;
+
+			case "fireball": {
+				return UIConstants.POWER_COLOR_HEALTH;
+			} break;
+
+			default: {
+				return Color.white;
+			} break;
+		}
+
+		return Color.white;
 	}
 }

@@ -21,7 +21,7 @@ public class PersistenceProfile : MonoBehaviour {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public static readonly string RESOURCES_FOLDER = "Game/PersistenceProfiles/";
-	public static readonly string DEFAULT_PROFILE = "Default";	// This one must always exist
+	public const string DEFAULT_PROFILE = "Default";	// This one must always exist
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//

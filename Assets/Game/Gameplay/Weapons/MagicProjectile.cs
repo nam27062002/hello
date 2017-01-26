@@ -51,6 +51,11 @@ public class MagicProjectile : MonoBehaviour, IProjectile {
 		}
 	}
 
+	public void Explode(bool b)
+	{
+
+	}
+
 	public void AttachTo(Transform _parent) {
 		m_oldParent = transform.parent;
 		transform.parent = _parent;
@@ -63,7 +68,7 @@ public class MagicProjectile : MonoBehaviour, IProjectile {
 		m_effectIdle.SetActive(true);
 	}
 
-	public void Shoot(Transform _from, float _damage) {		
+	public void Shoot(Vector3 _target, float _damage = 0f) {
 		transform.parent = m_oldParent;
 		m_effect.Target = InstanceManager.player.gameObject;
 

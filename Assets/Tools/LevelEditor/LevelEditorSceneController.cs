@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using System.Collections;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -48,10 +49,13 @@ namespace LevelEditor {
             PersistenceManager.Init();
             PersistenceManager.Load();
 
-            // Load the dragon
+			// Load the dragon
             DragonManager.LoadDragon(LevelEditor.settings.testDragon);
             if (InstanceManager.player != null)
+            {
                 InstanceManager.player.playable = false;
+				InstanceManager.player.gameObject.SetActive(false);
+			}
 
             // Call parent
             base.Awake();
@@ -60,8 +64,14 @@ namespace LevelEditor {
 		/// <summary>
 		/// First update.
 		/// </summary>
-		private void Start() {
-			
+		private IEnumerator Start() {
+
+			while( !PersistenceManager.loadCompleted )
+			{
+				yield return null;
+			}
+
+			InstanceManager.player.gameObject.SetActive(true);
 		}
 
 		/// <summary>
@@ -90,7 +100,8 @@ namespace LevelEditor {
 		/// </summary>
 		private void Update() {
 			if (!m_started) {
-				StartGame();
+				if ( InstanceManager.player != null )
+					StartGame();
 			} else {
 				// Update running time
 				m_elapsedSeconds += Time.deltaTime;

@@ -11,6 +11,9 @@ namespace AI {
 			[Comment("Comma Separated list", 5)]
 			public string m_preferedEntitiesList;
 			public string m_searchButNoEatEntityList;
+			public bool m_ignoreNotListedUnits = false;
+			public float m_dragonSizeRangeMultiplier = 10;
+			public float m_preferedRangeMultiplier = 2;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Search Entity Target")]
@@ -24,7 +27,7 @@ namespace AI {
 			private DragonTier m_eaterTier;
 			private object[] m_transitionParam;
 
-			private Entity[] m_checkEntities = new Entity[20];
+			private Entity[] m_checkEntities = new Entity[40];
 			private int m_numCheckEntities = 0;
 
 			private int m_collidersMask;
@@ -63,8 +66,8 @@ namespace AI {
 				base.OnInitialise();
 
 				m_owner = InstanceManager.player;
-				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * 10f;
 				m_data = m_pilot.GetComponentData<PetSearchEntityTargetData>();
+				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * m_data.m_dragonSizeRangeMultiplier;
 
 				if (!string.IsNullOrEmpty( m_data.m_preferedEntitiesList) )
 				{
@@ -122,7 +125,7 @@ namespace AI {
 					// if prefered entieies check first
 					if ( m_preferedEntities.Count > 0 || m_searchButNoEatList.Count > 0 )
 					{
-						m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( centerPos , m_range * 2, m_checkEntities);	
+						m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( centerPos , m_range * m_data.m_preferedRangeMultiplier, m_checkEntities);	
 						for (int e = 0; e < m_numCheckEntities; e++) 
 						{
 							Entity entity = m_checkEntities[e];
@@ -151,26 +154,29 @@ namespace AI {
 						}
 					}
 
-					m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( centerPos , m_range, m_checkEntities);
-					for (int e = 0; e < m_numCheckEntities; e++) 
+					if ( !m_data.m_ignoreNotListedUnits )
 					{
-						Entity entity = m_checkEntities[e];
-						Machine machine = entity.GetComponent<Machine>();
-						EatBehaviour.SpecialEatAction specialAction = m_eatBehaviour.GetSpecialEatAction( entity.sku );
-						if (
-							entity.IsEdible() && specialAction != EatBehaviour.SpecialEatAction.CannotEat && entity.IsEdible( m_eaterTier ) && machine != null && machine.CanBeBitten() && !machine.isPetTarget
-						)
+						m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( centerPos , m_range, m_checkEntities);
+						for (int e = 0; e < m_numCheckEntities; e++) 
 						{
-							// Check if physics reachable
-							RaycastHit hit;
-							Vector3 dir = entity.circleArea.center - m_machine.position;
-							bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
-							if ( !hasHit )
+							Entity entity = m_checkEntities[e];
+							Machine machine = entity.GetComponent<Machine>();
+							EatBehaviour.SpecialEatAction specialAction = m_eatBehaviour.GetSpecialEatAction( entity.sku );
+							if (
+								entity.IsEdible() && specialAction != EatBehaviour.SpecialEatAction.CannotEat && entity.IsEdible( m_eaterTier ) && machine != null && machine.CanBeBitten() && !machine.isPetTarget
+							)
 							{
-								// Check if closed? Not for the moment
-								m_transitionParam[0] = entity.transform;
-								Transition( OnEnemyInRange, m_transitionParam);
-								break;
+								// Check if physics reachable
+								RaycastHit hit;
+								Vector3 dir = entity.circleArea.center - m_machine.position;
+								bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
+								if ( !hasHit )
+								{
+									// Check if closed? Not for the moment
+									m_transitionParam[0] = entity.transform;
+									Transition( OnEnemyInRange, m_transitionParam);
+									break;
+								}
 							}
 						}
 					}

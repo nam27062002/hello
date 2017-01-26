@@ -73,6 +73,11 @@ namespace AI {
 					return null;
 				}
 			}
+			set
+			{
+				if (m_sensor != null)
+					m_sensor.enemy = value;
+			}
 		}
 
 		bool m_isHolded = false;	// if machine being holded
@@ -84,6 +89,10 @@ namespace AI {
 		private RegionManager 	m_regionManager;
 		public Current			current { get; set; }
 		private Vector3		m_externalForces;	// Mostly for currents
+
+		// Freezing
+		private bool m_freezing = false;
+		private float m_freezingMultiplier = 1;
 
 		//---------------------------------------------------------------------------------
 
@@ -155,7 +164,14 @@ namespace AI {
 				m_signals.Init();
 
 			if (m_enableMotion) m_motion.Init();
-			if (m_enableSensor) m_sensor.Init();
+			if (m_enableSensor) 
+			{
+				m_sensor.Init();
+				if (InstanceManager.player != null)
+				{
+					m_sensor.SetupEnemy( InstanceManager.player.transform, InstanceManager.player.dragonEatBehaviour.eatDistanceSqr);
+				}
+			}
 			m_edible.Init();
 			m_inflammable.Init();
 
@@ -294,6 +310,7 @@ namespace AI {
 						m_regionManager = RegionManager.Instance;
 					}
 					CheckForCurrents();
+					CheckFreeze();
 					m_motion.FixedUpdate();
 				}
 			}
@@ -370,6 +387,26 @@ namespace AI {
 				}
 	        }	
 		}	
+
+		public void CheckFreeze()
+		{
+			// can freeze?
+			if ( m_entity.circleArea != null )
+			{
+				m_freezing = FreezingObjectsRegistry.instance.Overlaps( (CircleAreaBounds)m_entity.circleArea.bounds );
+				if ( m_freezing )
+				{
+					m_freezingMultiplier -= Time.deltaTime;
+				}
+				else
+				{
+					m_freezingMultiplier += Time.deltaTime;
+				}
+				m_freezingMultiplier = Mathf.Clamp( m_freezingMultiplier, 0.5f, 1.0f);
+				m_pilot.SetFreezeFactor( m_freezingMultiplier );
+				m_viewControl.Freezing( m_freezing );
+			}
+		}
 
 		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null) {
 			m_signals.SetValue(_signal, _activated, _params);

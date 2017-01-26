@@ -66,7 +66,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 		m_hasBeenShot = false;
 	}
 
-	public void Shoot(Transform _from, float _damage) {	
+	public void Shoot(Vector3 _target, float _damage = 0f) {
 		// m_targetCenter = InstanceManager.player.transform.position;
 
 		if (m_oldParent) {
@@ -77,7 +77,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 		if (m_pMotion) m_pMotion.enabled = true;
 
 		if (m_pMotion != null) {
-			Vector3 pos = InstanceManager.player.GetComponent<DragonMotion>().head.position;
+			Vector3 pos = InstanceManager.player.dragonMotion.head.position;
 			m_pMotion.Shoot(pos);
 		}
 		EndShot( _damage );
@@ -124,7 +124,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 	void OnTriggerEnter(Collider _other) {
 		if (m_hasBeenShot) {
 			if (_other.CompareTag("Player"))  {
-				Explode(true);
+					Explode(true);
 			} else if ((((1 << _other.gameObject.layer) & LayerMask.GetMask("Ground", "GroundVisible")) > 0)) {
 				Explode(false);
 			}

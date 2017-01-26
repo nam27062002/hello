@@ -49,7 +49,6 @@ public class PowerTooltip : MonoBehaviour {
 		Debug.Assert(m_nameText != null, "Required field!");
 		Debug.Assert(m_descriptionText != null, "Required field!");
 		Debug.Assert(m_powerIcon != null, "Required field!");
-		Debug.Assert(m_lockInfo != null, "Required field!");
 	}
 
 	//------------------------------------------------------------------------//
@@ -68,12 +67,8 @@ public class PowerTooltip : MonoBehaviour {
 
 		// Power icon
 		if(m_powerIcon != null) {
-			// Load power icons spritesheet
-			Sprite[] allIcons = Resources.LoadAll<Sprite>("UI/Metagame/Powers/icons_powers");
-
-			// Pick target icon
-			string iconName = _powerDef.GetAsString("icon");
-			m_powerIcon.sprite = Array.Find<Sprite>(allIcons, (_sprite) => { return _sprite.name == iconName; });
+			// Load from resources
+			m_powerIcon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + _powerDef.GetAsString("icon"));
 			m_powerIcon.color = Color.white;
 		}
 
@@ -91,7 +86,7 @@ public class PowerTooltip : MonoBehaviour {
 	/// <param name="_locked">Whether the power is locked or not.</param>
 	public void SetLocked(bool _locked) {
 		// Lock info
-		m_lockInfo.SetActive(_locked);
+		if(m_lockInfo != null) m_lockInfo.SetActive(_locked);
 	}
 
 	//------------------------------------------------------------------------//

@@ -27,9 +27,12 @@ public class PetPill : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private UIScene3DLoader m_preview = null;
+	[SerializeField] private Image m_preview = null;
 	[SerializeField] private GameObject m_lockIcon = null;
 	[SerializeField] private Image m_powerIcon = null;
+	[Space]
+	[SerializeField] private Image m_selectedFrame = null;
+	[SerializeField] private Color m_selectedColor = Colors.gold;
 
 	// Internal
 	private DefinitionNode m_def = null;
@@ -40,6 +43,16 @@ public class PetPill : MonoBehaviour {
 	// Shortcuts
 	private PetCollection petCollection {
 		get { return UsersManager.currentUser.petCollection; }
+	}
+
+	private PetsScreenController m_parentScreen = null;
+	private PetsScreenController parentScreen {
+		get {
+			if(m_parentScreen == null) {
+				m_parentScreen = this.gameObject.FindComponentInParents<PetsScreenController>();	// Find rather than Get to include inactive objects (this method could be called with the screen disabled)
+			}
+			return m_parentScreen;
+		}
 	}
 
 	// Cache some data for convenience
@@ -58,7 +71,8 @@ public class PetPill : MonoBehaviour {
 	}
 
 	private DragonData m_dragonData = null;
-	
+	private Color m_defaultColor = Color.white;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -66,7 +80,7 @@ public class PetPill : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-
+		m_defaultColor = m_selectedFrame.color;
 	}
 
 	/// <summary>
@@ -109,15 +123,20 @@ public class PetPill : MonoBehaviour {
 		// Store definition
 		m_def = _petDef;
 
-		// Load 3D preview
-		MenuPetLoader petLoader = m_preview.scene.FindComponentRecursive<MenuPetLoader>();
-		if(petLoader != null) {
-			petLoader.Load(m_def.sku);
-			//petLoader.petInstance.SetAnim(MenuPetPreview.Anim.IDLE);	// [AOC] TODO!! Pose the pet
+		// Load preview
+		if(m_preview != null) {
+			m_preview.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + m_def.Get("icon"));
 		}
 
 		// Power icon
-		// [AOC] TODO!! Mini-icons not yet in the project
+		if(m_powerIcon != null) {
+			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_def.Get("powerup"));
+			Sprite powerIcon = null;
+			if(powerDef != null) {
+				parentScreen.powerMiniIcons.TryGetValue(powerDef.Get("miniIcon"), out powerIcon);
+			}
+			m_powerIcon.sprite = powerIcon;	// If null it will look ugly, that way we know we have a miniIcon missing
+		}
 
 		// Refresh contextual elements
 		Refresh();
@@ -140,7 +159,8 @@ public class PetPill : MonoBehaviour {
 		// Lock icon
 		m_lockIcon.SetActive(m_locked);
 
-		this.FindComponentRecursive<Image>("Bg").color = equipped ? Colors.ParseHexString("FFC300FF") : Colors.ParseHexString("CCC9AEFF");
+		// Color highlight
+		m_selectedFrame.color = equipped ? m_selectedColor : m_defaultColor;
 	}
 
 	//------------------------------------------------------------------------//
@@ -153,11 +173,11 @@ public class PetPill : MonoBehaviour {
 		// If locked, show some feedback
 		if(locked) {
 			// No available slots, show feedback
-			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("Unlock by opening eggs!"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// [AOC] HARDCODED!!
+			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO"), new Vector2(0.5f, 0.35f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 
 			// Small animation on the lock icon
 			m_lockIcon.transform.DOKill(true);
-			m_lockIcon.transform.DOScale(1.5f, 0.1f).SetRecyclable(true).SetLoops(2, LoopType.Yoyo).SetEase(Ease.Linear);
+			m_lockIcon.transform.DOScale(1.5f, 0.1f).SetRecyclable(true).SetLoops(2, LoopType.Yoyo).SetEase(Ease.Linear).SetRecyclable(true);
 		}
 
 		// If equipped, try to unequip
@@ -173,7 +193,7 @@ public class PetPill : MonoBehaviour {
 			int newSlot = UsersManager.currentUser.EquipPet(m_dragonData.def.sku, m_def.sku);
 			if(newSlot == -4) {
 				// No available slots, show feedback
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("There are no available slots!\nPlease unequip another pet before equipping this one!"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// [AOC] HARDCODED!!
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_NO_SLOTS"), new Vector2(0.5f, 0.35f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// There are no available slots!\nUnequip another pet before equipping this one.
 			}
 		}
 	}
@@ -182,9 +202,15 @@ public class PetPill : MonoBehaviour {
 	/// Info button was pressed.
 	/// </summary>
 	public void OnInfoButton() {
+		// Ignore if pill is not initialized
+		if(m_def == null) return;
+
 		// Open info popup for this pet
-		// [AOC] TODO!! Coming Soon message for now
-		UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+		PopupController popup = PopupManager.OpenPopupInstant(PopupInfoPet.PATH);
+		PopupInfoPet petPopup = popup.GetComponent<PopupInfoPet>();
+		if(petPopup != null) {
+			petPopup.InitFromDef(m_def);
+		}
 	}
 
 	/// <summary>

@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ProjectileMotion : Initializable, MotionInterface 
-{
-
-	public enum Type
-	{
+public class ProjectileMotion : MonoBehaviour {
+	public enum Type {
 		Arrow,
 		Missile,
-		Spear
+		Spear,
+		Bomb,
+		FallingMine
 	};
 
 	public Type m_moveType;
@@ -20,8 +19,7 @@ public class ProjectileMotion : Initializable, MotionInterface
 	Vector3 m_position;
 
 	// Use this for initialization
-	void Start () 
-	{
+	void Start() {
 	}
 	
 	// Update is called once per frame
@@ -51,8 +49,23 @@ public class ProjectileMotion : Initializable, MotionInterface
 				transform.rotation = Quaternion.Euler(eulerRot);
 
 			}break;
+			case Type.FallingMine:
+			{
+			}break;
 		}
 		transform.position = m_position;
+	}
+
+	void FixedUpdate()
+	{
+		switch( m_moveType )
+		{
+			case Type.FallingMine:
+			{
+				m_forceVector += Physics.gravity * Time.fixedDeltaTime;
+				m_position += m_forceVector * Time.deltaTime;
+			}break;
+		}
 	}
 
 	public void Shoot( Vector3 _target )
@@ -83,63 +96,11 @@ public class ProjectileMotion : Initializable, MotionInterface
 				Vector3 newDir = Vector3.RotateTowards(Vector3.forward, -m_direction, 2f*Mathf.PI, 0.0f);
 				transform.rotation = Quaternion.AngleAxis(90f, m_direction) * Quaternion.LookRotation(newDir);
 			}break;
+			case Type.FallingMine:
+			{
+				m_position = transform.position;
+				m_forceVector = Vector3.zero;
+			}break;
 		}
 	}
-
-	public override void Initialize()
-	{
-
-	}
-
-	public Vector3 position 
-	{ 
-		get
-		{
-			return m_position;	
-		}
-		set
-		{
-			m_position = value;
-		}
-	}
-	public Vector3 direction 
-	{ 
-		get
-		{
-			return m_direction;
-		}
-	}
-
-	public Vector3 groundDirection 
-	{ 
-		get
-		{
-			return Vector3.zero;
-		}
-	}
-
-	public Vector3 velocity 
-	{ 	
-		get
-		{
-			return m_forceVector;
-		}
-	}
-
-	public Vector3 angularVelocity
-	{
-		get
-		{
-			return Vector3.zero;
-		}
-	}
-
-	public float maxSpeed 
-	{ 
-		get
-		{
-			return 0;
-		}
-	}
-
 }

@@ -25,6 +25,10 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 				#pragma vertex vert
 				#pragma fragment frag
 				#pragma multi_compile_fwdbase
+				#pragma glsl_no_auto_normalization
+				#pragma fragmentoption ARB_precision_hint_fastest
+
+
 							
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"

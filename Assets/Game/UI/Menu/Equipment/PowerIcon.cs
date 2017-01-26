@@ -33,9 +33,9 @@ public class PowerIcon : MonoBehaviour {
 	[Tooltip("Optional")] [SerializeField] private TextMeshProUGUI m_shortDescriptionText = null;
 
 	[Space]
-	[Comment("Optional, define an object for when there is a power or a placeholder for when ther is no power to show")]
-	[Tooltip("Optional")] [SerializeField] private GameObject m_emptyObj = null;
-	[Tooltip("Optional")] [SerializeField] private GameObject m_equippedObj = null;
+	[Comment("Optional, define an animator to be triggered when there is a power and another one for when there is no power to show")]
+	[Tooltip("Optional")] [SerializeField] private ShowHideAnimator m_emptyAnim = null;
+	[Tooltip("Optional")] [SerializeField] private ShowHideAnimator m_equippedAnim = null;
 
 	// Exposed Setup
 	[Space]
@@ -83,40 +83,33 @@ public class PowerIcon : MonoBehaviour {
 	/// </summary>
 	/// <param name="_powerDef">Power definition.</param>
 	/// <param name="_locked">Whether the power is locked or not.</param>
-	public void InitFromDefinition(DefinitionNode _powerDef, bool _locked) {
+	/// <parma name="_animate">Optional, whether to show animations or not.</param>
+	public void InitFromDefinition(DefinitionNode _powerDef, bool _locked, bool _animate = true) {
 		// Save definition
 		m_powerDef = _powerDef;
 		bool show = (_powerDef != null);
 
-		// If both main and placeholder objects are defined, toggle them accordingly
-		if(m_equippedObj != null && m_emptyObj != null) {
-			m_equippedObj.SetActive(show);
-			m_emptyObj.SetActive(!show);
+		// If defined, trigger empty/equipped animators
+		if(m_equippedAnim != null && m_emptyAnim != null) {
+			m_equippedAnim.Set(show, _animate);
+			m_emptyAnim.Set(!show, _animate);
 		}
 
 		// Otherwise, hide if given definition is not valid
-		else if(!show) {
+		else {
 			if(anim != null) {
-				anim.Hide();
+				anim.Set(show, _animate);
 			} else {
-				this.gameObject.SetActive(false);
+				this.gameObject.SetActive(show);
 			}
-			return;
 		}
 
 		// If showing, initialize all visible items
 		if(show) {
 			// Power icon
 			if(m_powerIcon != null) {
-				// Load power icons spritesheet
-				Sprite[] allIcons = Resources.LoadAll<Sprite>("UI/Metagame/Powers/icons_powers");
-
-				// Pick target icon, use first one if not found
-				string iconName = _powerDef.GetAsString("icon");
-				m_powerIcon.sprite = Array.Find<Sprite>(allIcons, (_sprite) => { return _sprite.name == iconName; });
-				if(m_powerIcon.sprite == null) {
-					m_powerIcon.sprite = allIcons[0];
-				}
+				// Load from resources
+				m_powerIcon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + _powerDef.GetAsString("icon"));
 			}
 
 			// Name

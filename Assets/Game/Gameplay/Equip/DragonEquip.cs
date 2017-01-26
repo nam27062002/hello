@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class DragonEquip : MonoBehaviour {
@@ -21,6 +22,7 @@ public class DragonEquip : MonoBehaviour {
 	// Internal
 	private string m_dragonSku;
 	private AttachPoint[] m_attachPoints = new AttachPoint[(int)Equipable.AttachPoint.Count];
+	private bool m_showPets = true;
 
 	// Skins
 	private Material m_bodyMaterial;
@@ -33,16 +35,13 @@ public class DragonEquip : MonoBehaviour {
 		get { return m_wingsMaterial; }
 	}
 
-	// Test
-	public static int m_numPets = 1; // [AOC] DEPRECATED!! (Remove from CP)
-
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization
+	/// Start
 	/// </summary>
-	private void Awake() {
+	private void Start() {
 		// Get assigned dragon sku - from Player for in-game dragons, from DragonPreview for menu dragons
 		DragonPlayer player = GetComponent<DragonPlayer>();
 		if(player != null) {
@@ -66,13 +65,6 @@ public class DragonEquip : MonoBehaviour {
 		for(int i = 0; i < pets.Count; i++) {
 			EquipPet(pets[i], i);
 		}
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-		
 	}
 
 	/// <summary>
@@ -139,10 +131,10 @@ public class DragonEquip : MonoBehaviour {
 				Renderer r = renderers[i];
 				Material[] mats = r.materials;
 				for(int j = 0; j < mats.Length; j++) {
-					if(mats[j].shader.name.Contains("Wings")) {
+					if(mats[j].shader.name.Contains("Dragon/Wings")) {
 						mats[j] = m_wingsMaterial;
 					}
-					else if(mats[j].shader.name.Contains("Dragon")) {
+					else if(mats[j].shader.name.Contains("Dragon/Body")) {
 						mats[j] = m_bodyMaterial;
 					}
 				}
@@ -164,8 +156,23 @@ public class DragonEquip : MonoBehaviour {
 
 		// Equip or unequip?
 		if(string.IsNullOrEmpty(_petSku)) {
-			// Unequip
-			m_attachPoints[attachPointIdx].Unequip();
+			// In the menu, trigger the animation
+			if(m_menuMode) {
+				// Launch out animation
+				if(m_attachPoints[attachPointIdx].item != null) {
+					MenuPetPreview pet = m_attachPoints[attachPointIdx].item.GetComponent<MenuPetPreview>();
+					pet.SetAnim(MenuPetPreview.Anim.OUT);
+
+					// Program a delayed destruction of the item (to give some time to see the anim)
+					GameObject.Destroy(m_attachPoints[attachPointIdx].item.gameObject, 0.3f);	// [AOC] MAGIC NUMBERS!! More or less synced with the animation
+				}
+
+				// Unequip
+				m_attachPoints[attachPointIdx].Unequip(false);
+			} else {
+				// Unequip
+				m_attachPoints[attachPointIdx].Unequip(true);
+			}
 		} else {
 			// Equip!
 			// Get pet definition
@@ -188,6 +195,10 @@ public class DragonEquip : MonoBehaviour {
 				newInstance.transform.SetParent(m_attachPoints[attachPointIdx].transform, true);	// [AOC] Compensate scale factor with the dragon using the worldPositionStays parameter
 				newInstance.transform.localPosition = Vector3.zero;
 				newInstance.transform.localRotation = Quaternion.identity;
+
+				// Also launch intro animation
+				MenuPetPreview petPreview = newInstance.GetComponent<MenuPetPreview>();
+				petPreview.SetAnim(MenuPetPreview.Anim.IN);
 			} else {
 				// In game mode, adjust to dragon's scale factor
 				DragonPlayer player = GetComponent<DragonPlayer>();
@@ -196,6 +207,9 @@ public class DragonEquip : MonoBehaviour {
 
 			// Get equipable object!
 			m_attachPoints[attachPointIdx].Equip(newInstance.GetComponent<Equipable>());
+
+			// Apply pets visibility
+			m_attachPoints[attachPointIdx].item.gameObject.SetActive(m_showPets);
 		}
 	}
 
@@ -204,11 +218,14 @@ public class DragonEquip : MonoBehaviour {
 	/// </summary>
 	/// <param name="_show">Whether to show or not the pets.</param>
 	public void TogglePets(bool _show) {
+		// Store value
+		m_showPets = _show;
+
 		// Iterate through all pet attach points and activate/deactivate them
 		for(int i = (int)Equipable.AttachPoint.Pet_1; i < (int)Equipable.AttachPoint.Pet_5; i++) {
 			if(m_attachPoints[i] != null) {
 				if(m_attachPoints[i].item != null) {
-					m_attachPoints[i].item.gameObject.SetActive(_show);
+					m_attachPoints[i].item.gameObject.SetActive(m_showPets);
 				}
 			}
 		}
@@ -235,7 +252,7 @@ public class DragonEquip : MonoBehaviour {
 		if(m_dragonSku == _sku) {
 			// Show some FX and cool animation!
 			// https://youtu.be/RFqw3xiuSvQ?t=8m45s
-			ParticleManager.Spawn(DISGUISE_CHANGE_PS, transform.position + new Vector3(0f, 1.5f, -4f), DISGUISE_CHANGE_PS_FOLDER);	// [AOC] Hardcoded offset! :(
+			ParticleManager.Spawn(DISGUISE_CHANGE_PS, transform.position + new Vector3(0.5f, 2.5f, -4f), DISGUISE_CHANGE_PS_FOLDER);	// [AOC] Hardcoded offset! :(
 			EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
 		}
 	}
