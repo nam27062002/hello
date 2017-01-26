@@ -72,12 +72,12 @@ namespace AI {
 			}
 
 			protected override void OnExit(State _newState) {
+				m_holdTransform = null;
 				if ( m_eatBehaviour.IsLatching() )
 					m_eatBehaviour.EndHold();
 
 				m_pilot.transform.parent = m_originalParent;
 				m_eatBehaviour.enabled = false;
-				m_holdTransform = null;
 
 				m_machine.SetSignal(Signals.Type.Latching, false);
 				m_pilot.ReleaseAction(Pilot.Action.Latching);
@@ -100,9 +100,14 @@ namespace AI {
 				}
 			}
 
-			void OnEndLatchingEvent() {	
-				m_machine.DisableSensor(m_data.retreatTime.GetRandom());
-				Transition(OnEndLatching);
+			void OnEndLatchingEvent() {
+				if ( m_holdTransform )	
+				{
+					m_eatBehaviour.enabled = false;
+					m_holdTransform = null;
+					m_machine.DisableSensor(m_data.retreatTime.GetRandom());
+					Transition(OnEndLatching);
+				}
 			}
 		}
 	}
