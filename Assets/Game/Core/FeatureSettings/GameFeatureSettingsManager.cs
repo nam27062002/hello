@@ -54,7 +54,10 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
             m_deviceQualityManager.Clear();
         }
 
-        Messenger.RemoveListener(EngineEvents.DEFINITIONS_LOADED, Rules_OnLoaded);
+        if (ApplicationManager.IsAlive)
+        {
+            Messenger.RemoveListener(EngineEvents.DEFINITIONS_LOADED, Rules_OnLoaded);
+        }
     }
 
     #region device
@@ -438,6 +441,9 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
     public void ApplyCurrentFeatureSetting()
     {
         ApplyFeatureSetting(Device_CurrentFeatureSettings);
+
+        //JSONNode json = Device_CurrentFeatureSettings.ToJSON();
+        //Debug.Log(json);
     }
 
     private void ApplyFeatureSetting(GameFeatureSettings settings)

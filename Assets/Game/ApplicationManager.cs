@@ -101,24 +101,39 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     protected void Update()
     {        
         // To Debug
-        /*if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.A))
         {
-            // Simulation of quality/get response from server
-            string deviceModel = "server";
-            GameFeatureSettingsManager.instance.Device_Model = deviceModel;
-            DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.FEATURE_DEVICE_SETTINGS, deviceModel);
-            GameFeatureSettingsManager.instance.SetupCurrentFeatureSettings(def.ToJSON());
+            // ---------------------------
+            // Test eggs collected
+            //Debug_TestEggsCollected();
+            // ---------------------------       
 
-            // The client is notified that some quality settings might have changed
-            Messenger.Broadcast(GameEvents.CP_QUALITY_CHANGED);
-            
-            //NeedsToRestartFlow = true;           
+            // ---------------------------
+            // Test feature settings from server
+            //Debug_TestFeatureSettingsFromServer();
+            // ---------------------------            
+
+            // ---------------------------
+            // Test feature settings
+            //Debug_TestFeatureSettingsTypeData();
+            // ---------------------------                        
+
+            // ---------------------------
+            // Test restart flow
+            //Debug_RestartFlow();
+            // ---------------------------            
+
+            // ---------------------------
+            // Test toggle pause
             //Debug_ToggleIsPaused();
+            // ---------------------------
 
-            //Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
-            //Debug.Log("eggs collected = " + UsersManager.currentUser.eggsCollected);            
-        }*/            
-        
+            // ---------------------------
+            // Test feature settings
+            //Debug_TestToggleSound();
+            // ---------------------------            
+        }
+
         if (NeedsToRestartFlow)
         {
             NeedsToRestartFlow = false;
@@ -348,10 +363,66 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     #region debug
     private bool Debug_IsPaused { get; set; }
 
+    private void Debug_RestartFlow()
+    {        
+        NeedsToRestartFlow = true;           
+    }
+
     private void Debug_ToggleIsPaused()
     {
         Debug_IsPaused = !Debug_IsPaused;
         OnApplicationPause(Debug_IsPaused);
+    }
+
+    private void Debug_TestToggleSound()
+    {
+        Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
+    }
+
+    private void Debug_TestEggsCollected()
+    {
+        Debug.Log("eggs collected = " + UsersManager.currentUser.eggsCollected);
+    }
+
+    private void Debug_TestFeatureSettingsFromServer()
+    {
+        // Simulation of quality/get response from server
+        string deviceModel = "server";
+        GameFeatureSettingsManager.instance.Device_Model = deviceModel;
+        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.FEATURE_DEVICE_SETTINGS, deviceModel);
+        GameFeatureSettingsManager.instance.SetupCurrentFeatureSettings(def.ToJSON());
+
+        // The client is notified that some quality settings might have changed
+        Messenger.Broadcast(GameEvents.CP_QUALITY_CHANGED);
+    }
+
+    private void Debug_TestFeatureSettingsTypeData()
+    {
+        /*
+        // Int
+        string key = GameFeatureSettings.KEY_INT_TEST;
+        int valueAsInt = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsInt(key);
+        Debug.Log(key + " = " + valueAsInt + " as string = " + GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));
+
+        // Float
+        key = GameFeatureSettings.KEY_FLOAT_TEST;
+        float valueAsFloat = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsFloat(key);
+        Debug.Log(key + " = " + valueAsFloat + " as string = " + GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));
+
+        // Float range
+        key = GameFeatureSettings.KEY_FLOAT_RANGE_TEST;
+        valueAsFloat = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsFloat(key);
+        Debug.Log(key + " = " + valueAsFloat + " as string = " + GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));
+
+        // Int range
+        key = GameFeatureSettings.KEY_INT_RANGE_TEST;
+        valueAsInt = GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsInt(key);
+        Debug.Log(key + " = " + valueAsInt + " as string = " + GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));
+
+        // String
+        key = GameFeatureSettings.KEY_STRING_TEST;
+        Debug.Log(key + " as string = " + GameFeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));        
+        */
     }
     #endregion    
 }

@@ -3,8 +3,9 @@ using System.Collections;
 
 public class EntityGroupController : MonoBehaviour 
 {
+	[SerializeField] private AI.Group.Formation m_formation;
 	public AI.Group flock = new AI.Group();
-	
+
 	private GameObject[] m_entities;
 	public GameObject[] entities { get { return m_entities; } }
 
@@ -12,6 +13,7 @@ public class EntityGroupController : MonoBehaviour
 	// Use this for initialization
 	public void Init(int _maxEntities) {
 		flock = new AI.Group();
+		flock.SetFormation(m_formation);
         m_entities = new GameObject[_maxEntities];
 	}
 
@@ -32,4 +34,12 @@ public class EntityGroupController : MonoBehaviour
 			}
 		}
 	}
+
+	/*
+	void OnDrawGizmosSelected() {
+		flock.Triangle(100);
+		for (int i = 0; i < 100; i++) {
+			Gizmos.DrawSphere(transform.position + flock.GetTrianglePosAt(i), 0.15f);
+		}
+	}*/
 }

@@ -152,6 +152,8 @@ public class DragonPlayer : MonoBehaviour {
 		m_healthMax = m_data.maxHealth;
 		m_energyMax = m_data.def.GetAsFloat("energyBase");
 
+		m_alcoholMax = m_data.def.GetAsFloat("maxAlcohol");
+		m_alcoholDrain = m_data.def.GetAsFloat("alcoholDrain", 1f);
 
 		// Init health modifiers
 		List<DefinitionNode> healthModifierDefs = new List<DefinitionNode>();

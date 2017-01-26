@@ -4,7 +4,24 @@ using System.Collections.Generic;
 
 public class GameFeatureSettings : FeatureSettings
 {    
-    private static Dictionary<EValueType, List<string>> ValueTypes;
+    public class ValueTypeData
+    {
+        public ValueTypeData(EValueType valueType)
+        {
+            ValueType = valueType;
+        }
+
+        public ValueTypeData(EValueType valueType, List<string> valueTypesAsString)
+        {
+            ValueType = valueType;
+            ValuesAsStrings = valueTypesAsString;
+        }        
+
+        public EValueType ValueType { get; set; }        
+        public List<string> ValuesAsStrings { get; set; }       
+    }    
+
+    private static Dictionary<EValueType, List<string>> ValueTypeDatas;
     public static Dictionary<string, Data> Datas { get; set; }
 
     public const string KEY_QUALITY_LEVEL = "qualityLevel";
@@ -13,19 +30,31 @@ public class GameFeatureSettings : FeatureSettings
     public const string KEY_ENTITIES_LOD = "entitiesLOD";
     public const string KEY_LEVELS_LOD = "levelsLOD";
 
+    /*
+    // Examples of how to use different type datas
+    public const string KEY_INT_TEST = "intTest";    
+    public const string KEY_FLOAT_TEST = "floatTest";
+    public const string KEY_STRING_TEST = "stringTest";
+    public const string KEY_INT_RANGE_TEST = "intRangeTest";
+    public const string KEY_FLOAT_RANGE_TEST = "floatRangeTest";
+    */
+
     public static void Build()
     {
-        if (ValueTypes == null)
+        if (ValueTypeDatas == null)
         {
-            ValueTypes = new Dictionary<EValueType, List<string>>();
+            ValueTypeDatas = new Dictionary<EValueType, List<string>>();
             
-            ValueTypes.Add(EValueType.Bool, new List<string>(BoolValuesKeys));
-            ValueTypes.Add(EValueType.Level2, GetValueTypeValuesAsString<ELevel2Values>());
-            ValueTypes.Add(EValueType.Level3, GetValueTypeValuesAsString<ELevel3Values>());
-            ValueTypes.Add(EValueType.Level5, GetValueTypeValuesAsString<ELevel5Values>());
-            ValueTypes.Add(EValueType.QualityLevel, GetValueTypeValuesAsString<EQualityLevelValues>());            
+            ValueTypeDatas.Add(EValueType.Bool, new List<string>(BoolValuesKeys));            
+            ValueTypeDatas.Add(EValueType.Int, null);
+            ValueTypeDatas.Add(EValueType.Float, null);
+            ValueTypeDatas.Add(EValueType.String, null);            
+            ValueTypeDatas.Add(EValueType.Level2, GetValueTypeValuesAsString<ELevel2Values>());            
+            ValueTypeDatas.Add(EValueType.Level3, GetValueTypeValuesAsString<ELevel3Values>());
+            ValueTypeDatas.Add(EValueType.Level5, GetValueTypeValuesAsString<ELevel5Values>());            
+            ValueTypeDatas.Add(EValueType.QualityLevel, GetValueTypeValuesAsString<EQualityLevelValues>());            
         }
-
+       
         if (Datas == null)
         {
             Datas = new Dictionary<string, Data>();
@@ -55,6 +84,37 @@ public class GameFeatureSettings : FeatureSettings
             key = KEY_LEVELS_LOD;
             data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
             Datas.Add(key, data);
+
+            /*
+            // intTest
+            key = KEY_INT_TEST;
+            data = new DataInt(key, EValueType.Int, 0);
+            Datas.Add(key, data);
+
+            // floatTest
+            key = KEY_FLOAT_TEST;
+            data = new DataFloat(key, EValueType.Float, 0f);
+            Datas.Add(key, data);
+
+            // stringTest
+            key = KEY_STRING_TEST;
+            data = new DataString(key, EValueType.String, "");
+            Datas.Add(key, data);
+
+            key = KEY_FLOAT_RANGE_TEST;           
+            float minAsFloat = 3f;
+            float maxAsFloat = 5f;
+            float intervalAsFloat = 1f;
+            data = new DataRange(key, EValueType.Float, minAsFloat, minAsFloat, maxAsFloat, intervalAsFloat);
+            Datas.Add(key, data);
+
+            key = KEY_INT_RANGE_TEST;
+            int minAsInt = 3;
+            int maxAsInt = 5;
+            int intervalAsInt = 1;
+            data = new DataRange(key, EValueType.Int, minAsInt, minAsInt, maxAsInt, intervalAsInt);
+            Datas.Add(key, data);
+            */
         }
     }
 
@@ -67,20 +127,23 @@ public class GameFeatureSettings : FeatureSettings
         }
 
         return returnValue;
-    }
-
-    public static List<string> GetValueTypeValuesAsString(EValueType valueType)
-    {
-        return (ValueTypes != null && ValueTypes.ContainsKey(valueType)) ? ValueTypes[valueType] : null;
     }    
+
+    public static List<string> GetKeyValuesAsString(string key)
+    {
+        return (Datas.ContainsKey(key)) ? Datas[key].ValuesAsStrings : null;
+    }
 
     public enum EValueType
     {
         Bool,
+        Int,
+        Float,
+        String,
         Level2,
         Level3,
         Level5,
-        QualityLevel
+        QualityLevel        
     };
 
     public enum EBoolValues
@@ -129,28 +192,298 @@ public class GameFeatureSettings : FeatureSettings
 
     public abstract class Data
     {        
-        public Data(string key, EValueType valueType)
+        public static void ParseValueInt(string value)
+        {
+            int outValue;
+            if (!int.TryParse(value, out outValue))
+            {
+                LogError(value + " is not an int value");
+            }
+        }
+
+        public static void ParseValueFloat(string value)
+        {
+            float outValue;
+            if (!float.TryParse(value, out outValue))
+            {
+                LogError(value + " is not a float value");
+            }
+        }
+
+        public Data(string key, EValueType valueType, object defaultValue, string defaultValueAsString)
         {
             Key = key;
-            ValueType = valueType;            
+            ValueType = valueType;
+            DefaultValue = defaultValue;
+            DefaultValueAsString = defaultValueAsString;
+            ValuesAsStrings = ValueTypeDatas[valueType];
         }
 
         public string Key { get; set; }
-        public EValueType ValueType { get; set; }              
+        public EValueType ValueType { get; set; }      
+        public object DefaultValue { get; set; }
+        public string DefaultValueAsString { get; set; }
+        public int DefaultValueAsInt
+        {
+            get
+            {
+                return (int)DefaultValue;
+            }
+        }
+
+        public float DefaultValueAsFloat
+        {
+            get
+            {
+                return (float)DefaultValue;
+            }
+        }
+
+        public void ParseValue(string value)
+        {
+            if (IsAList)
+            {
+                if (ValuesAsStrings.IndexOf(value) == -1)
+                {
+                    LogError(value + " + is not among the valid values: [" + ValuesAsStrings.ToString() + "] for key = " + Key);
+                }                 
+            } 
+            else
+            {
+                ParseSingleValue(value);
+            }
+        }
+
+        protected abstract void ParseSingleValue(string value);
+
+        public List<string> ValuesAsStrings { get; set; }
+        public abstract string GetDataAsString(object data);
+        public abstract object GetStringAsData(string data);        
+
+        public bool IsAList
+        {
+            get
+            {
+                return ValuesAsStrings != null;
+            }
+        }
+
+        /// <summary>
+        /// Returns the value associated to an index
+        /// </summary>        
+        public virtual object GetValueFromListIndex(int index)
+        {
+            // By default it returns the index in the list
+            return index;
+        }
     }    
 
     public class DataInt : Data
     {
-        public DataInt(string key, EValueType type, int defaultValue) : base(key, type)
+        public DataInt(string key, EValueType type, int defaultValue) : base(key, type, defaultValue, defaultValue + "")
         {
-            DefaultValue = defaultValue;
         }
 
+        protected override void ParseSingleValue(string value)
+        {
+            ParseValueInt(value);            
+        }
 
-        public int DefaultValue { get; set; }
-    }   
+        public override string GetDataAsString(object data)
+        {
+            string returnValue = null;
+            int intValue = (int)data;
+            if (ValueType == EValueType.Int)
+            {
+                returnValue = intValue + "";
+            }
+            else
+            {
+                // Enum value                
+                returnValue = ValuesAsStrings[intValue];                
+            }
 
-    private Dictionary<string, object> Values;   
+            return returnValue;             
+        }
+
+        public override object GetStringAsData(string data)
+        {
+            return int.Parse(data);
+        }        
+    }
+
+    public class DataFloat : Data
+    {
+        public DataFloat(string key, EValueType type, float defaultValue) : base(key, type, defaultValue, defaultValue + "")
+        {         
+        }
+
+        protected override void ParseSingleValue(string value)
+        {
+            ParseValueFloat(value);
+        }
+
+        public override string GetDataAsString(object data)
+        {
+            return ((float)data) + "";            
+        }        
+
+        public override object GetStringAsData(string data)
+        {
+            return float.Parse(data);
+        }       
+    }    
+    
+    public class DataString : Data
+    {
+        public DataString(string key, EValueType type, string defaultValue) : base(key, type, defaultValue, defaultValue)
+        {                       
+        }
+
+        protected override void ParseSingleValue(string value)
+        {        
+        }
+
+        public override string GetDataAsString(object data)
+        {
+            return (string)data;
+        }
+
+        public override object GetStringAsData(string data)
+        {
+            return data;
+        }        
+    }
+
+    public class DataRange : Data
+    {
+        public DataRange(string key, EValueType type, float defaultValue, float min, float max, float interval=-1f) : base(key, type, defaultValue, null)
+        {            
+            DefaultValueAsString = GetDataAsString(defaultValue);
+
+            if (interval > -1)
+            {
+                Setup();
+                
+                for (float i = min; i <= max; i += interval)
+                {
+                    Values.Add(i);
+                }
+
+                if ((float)Values[Values.Count - 1] != max)
+                {
+                    Values.Add(max);
+                }
+
+                SetupStrings();
+            }
+        }
+
+        public DataRange(string key, EValueType type, int defaultValue, int min, int max, int interval=-1) : base(key, type, defaultValue, null)
+        {
+            DefaultValueAsString = GetDataAsString(defaultValue);
+
+            if (interval > -1)
+            {
+                Setup();
+
+                for (int i = min; i <= max; i += interval)
+                {
+                    Values.Add(i);
+                }
+
+                if ((int)Values[Values.Count - 1] != max)
+                {
+                    Values.Add(max);
+                }
+
+                SetupStrings();
+            }
+        }
+
+        private void Setup()
+        {            
+            if (Values == null)
+            {
+                Values = new List<object>();
+                ValuesAsStrings = new List<string>();
+            }
+            else
+            {
+                Values.Clear();
+                ValuesAsStrings.Clear();
+            }           
+        }
+
+        private void SetupStrings()
+        {
+            int count = Values.Count;
+            for (int i = 0; i < count; i++)
+            {
+                ValuesAsStrings.Add(Values[i] + "");
+            }
+        }
+       
+        private List<object> Values { get; set; }
+
+        protected override void ParseSingleValue(string value)
+        {
+            switch (ValueType)
+            {
+                case EValueType.Int:
+                    ParseValueInt(value);
+                    break;
+
+                case EValueType.Float:
+                    ParseValueFloat(value);
+                    break;
+            }
+        }
+
+        public override string GetDataAsString(object data)
+        {            
+            string returnValue = null;
+            switch (ValueType)
+            {
+                case EValueType.Int:
+                    returnValue = ((int)data) +"";
+                    break;
+
+                case EValueType.Float:
+                    returnValue = ((float)data) + "";
+                    break;
+            }
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Returns the value associated to an index
+        /// </summary>        
+        public override object GetValueFromListIndex(int index)
+        {
+            return Values[index];
+        }
+
+        public override object GetStringAsData(string data)
+        {
+            float originalData = float.Parse(data);
+            object returnValue = null;
+            switch (ValueType)
+            {
+                case EValueType.Int:
+                    returnValue = (int)originalData;
+                    break;
+
+                case EValueType.Float:
+                    returnValue = originalData;
+                    break;
+            }
+
+            return returnValue;
+        }        
+    }
+    
+    private Dictionary<string, object> Values { get; set; }
 
     public GameFeatureSettings()
     {
@@ -168,54 +501,55 @@ public class GameFeatureSettings : FeatureSettings
         return valueAsBool == EBoolValues.TRUE;            
     }
 
+    public int GetValueAsInt(string key)
+    {        
+        return (Values.ContainsKey(key)) ? (int)Values[key] : Datas[key].DefaultValueAsInt;
+    }
+
+    public float GetValueAsFloat(string key)
+    {
+        return (Values.ContainsKey(key)) ? (float)Values[key] : Datas[key].DefaultValueAsFloat;
+    }
+
     public ELevel2Values GetValueAsLevel2(string key)
     {
-        return (Values.ContainsKey(key)) ? (ELevel2Values)Values[key] : (ELevel2Values)((Datas[key] as DataInt).DefaultValue);        
+        return (Values.ContainsKey(key)) ? (ELevel2Values)Values[key] : (ELevel2Values)(Datas[key].DefaultValueAsInt);        
     }
 
     public ELevel3Values GetValueAsLevel3(string key)
     {
-        return (Values.ContainsKey(key)) ? (ELevel3Values)Values[key] : (ELevel3Values)((Datas[key] as DataInt).DefaultValue);
+        return (Values.ContainsKey(key)) ? (ELevel3Values)Values[key] : (ELevel3Values)(Datas[key].DefaultValueAsInt);
     }
 
     public ELevel5Values GetValueAsLevel5(string key)
     {
-        return (Values.ContainsKey(key)) ? (ELevel5Values)Values[key] : (ELevel5Values)((Datas[key] as DataInt).DefaultValue);
+        return (Values.ContainsKey(key)) ? (ELevel5Values)Values[key] : (ELevel5Values)(Datas[key].DefaultValueAsInt);
     }
 
     public EQualityLevelValues GetValueAsQualityLevel(string key)
     {
-        return (Values.ContainsKey(key)) ? (EQualityLevelValues)Values[key] : (EQualityLevelValues)((Datas[key] as DataInt).DefaultValue);
+        return (Values.ContainsKey(key)) ? (EQualityLevelValues)Values[key] : (EQualityLevelValues)(Datas[key].DefaultValueAsInt);
     }
 
     public string GetValueAsString(string key)
     {
-        string returnValue = null;
-        if (Values != null && Values.ContainsKey(key))
-        {
-            EValueType type = Datas[key].ValueType;
-            int index = (int)Values[key];
-            if (ValueTypes.ContainsKey(type))
-            {
-                returnValue = ValueTypes[type][index];
-            }                        
-        }
-
-        return returnValue;        
+        // The stored value is returned as string if it exists, otherwise the default value is returned
+        return (Values.ContainsKey(key)) ? Datas[key].GetDataAsString(Values[key]) : Datas[key].DefaultValueAsString;        
     }    
 
     public void SetValueFromIndex(string key, int index)
     {
-        if (Datas.ContainsKey(key))
-        {
+        if (Datas.ContainsKey(key) && Datas[key].IsAList)
+        {            
+            object value = Datas[key].GetValueFromListIndex(index);
             if (Values.ContainsKey(key))
             {
-                Values[key] = index;
+                Values[key] = value;
             }
             else
             {
-                Values.Add(key, index);
-            }                          
+                Values.Add(key, value);
+            }                                                   
         }        
     }
 
@@ -223,16 +557,47 @@ public class GameFeatureSettings : FeatureSettings
     {
         if (Datas.ContainsKey(key))
         {
-            List<string> values = ValueTypes[Datas[key].ValueType];
-            int valueAsIndex = values.IndexOf(valueAsString);
-
-            SetValueFromIndex(key, valueAsIndex);           
+            if (Datas[key].IsAList)
+            {
+                int valueAsIndex = Datas[key].ValuesAsStrings.IndexOf(valueAsString);
+                SetValueFromIndex(key, valueAsIndex);
+            }
+            else
+            {
+                object data = Datas[key].GetStringAsData(valueAsString);
+                if (Values.ContainsKey(key))
+                {
+                    Values[key] = data;
+                }
+                else
+                {
+                    Values.Add(key, data);
+                }                
+            }                     
         }
     }
 
     protected override void ExtendedReset()
     {
         Values.Clear();        
+    }
+
+    protected override void ParseJSON(JSONNode json)
+    {
+        /*JSONClass jsonClass = json as JSONClass;
+        foreach (KeyValuePair<string, JSONNode> pair in jsonClass.m_Dict)
+        {
+            if (Datas.ContainsKey(pair.Key))
+            {
+                Datas[pair.Key].ParseValue(pair.Value);
+            }
+            else
+            {
+                LogError("Key " + pair.Key + " not valid");
+            }
+        }
+        
+        base.ParseJSON(json);*/        
     }
 
     protected override void ExtendedOverrideFromJSON(JSONNode json)
@@ -254,10 +619,28 @@ public class GameFeatureSettings : FeatureSettings
     protected override void ExtendedToJSON(JSONNode json)
     {
         string key;
-        foreach (KeyValuePair<string, Data> pair in Datas)
+        foreach (KeyValuePair<string, object> pair in Values)            
         {
             key = pair.Key;
             json.Add(key, GetValueAsString(key));            
         }
     }
+
+    #region debug
+    private const string DEBUG_CHANNEL = "[GameFeatureSettings]";
+    private static void Log(string msg)
+    {
+        Debug.Log(DEBUG_CHANNEL + msg);
+    }
+
+    private static void LogWarning(string msg)
+    {
+        Debug.LogWarning(DEBUG_CHANNEL + msg);
+    }
+
+    private static void LogError(string msg)
+    {
+        Debug.LogError(DEBUG_CHANNEL + msg);
+    }
+    #endregion
 }
