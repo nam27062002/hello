@@ -299,6 +299,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         {
             settingsJSON = pair.Value.ToJSON();
             settingsJSON = FormatJSON(settingsJSON);
+            settingsJSON = featureSettings.ParseJSON(settingsJSON);
             featureSettings.FromJSON(settingsJSON);
             m_deviceQualityManager.Profiles_AddData(featureSettings.Profile, featureSettings.Rating, settingsJSON);
         }

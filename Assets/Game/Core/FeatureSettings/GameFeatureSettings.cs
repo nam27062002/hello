@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-public class GameFeatureSettings : FeatureSettings
+public class GameFeatureSettings
 {    
     public class ValueTypeData
     {
@@ -24,6 +24,8 @@ public class GameFeatureSettings : FeatureSettings
     private static Dictionary<EValueType, List<string>> ValueTypeDatas;
     public static Dictionary<string, Data> Datas { get; set; }
 
+    public const string KEY_RATING = "rating";
+    public const string KEY_PROFILE = "profile";
     public const string KEY_QUALITY_LEVEL = "qualityLevel";
     public const string KEY_SHADERS_LEVEL = "shadersLevel";
     public const string KEY_GLOW = "glow";
@@ -57,9 +59,18 @@ public class GameFeatureSettings : FeatureSettings
         {
             Datas = new Dictionary<string, Data>();
 
+            // profile
+            string key = KEY_PROFILE;
+            Data data = new DataString(key, EValueType.String, "very_low");
+            Datas.Add(key, data);
+
+            key = KEY_RATING;
+            data = new DataFloat(key, EValueType.Float, 0f);
+            Datas.Add(key, data);
+
             // qualityLevel: Unity quality settings level
-            string key = KEY_QUALITY_LEVEL;
-            Data data = new DataInt(key, EValueType.QualityLevel, (int)EQualityLevelValues.very_low);
+            key = KEY_QUALITY_LEVEL;
+            data = new DataInt(key, EValueType.QualityLevel, (int)EQualityLevelValues.very_low);
             Datas.Add(key, data);
 
             // shadersLevel: Configuration for shaders
@@ -102,20 +113,15 @@ public class GameFeatureSettings : FeatureSettings
             float minAsFloat = 3f;
             float maxAsFloat = 5f;
             float intervalAsFloat = 0.5f;
-            data = new DataRange(key, EValueType.Float, minAsFloat, minAsFloat, maxAsFloat, intervalAsFloat);
+            data = new DataRangeFloat(key, EValueType.Float, minAsFloat, minAsFloat, maxAsFloat, intervalAsFloat);
             Datas.Add(key, data);
 
             key = KEY_INT_RANGE_TEST;
             int minAsInt = 3;
             int maxAsInt = 5;
             int intervalAsInt = -1;
-            data = new DataRange(key, EValueType.Int, minAsInt, minAsInt, maxAsInt, intervalAsInt);
-            Datas.Add(key, data);     
-            
-            foreach (KeyValuePair<string, Data> pair in Datas)
-            {
-                Keys_AddKey(pair.Key);
-            }       
+            data = new DataRangeInt(key, EValueType.Int, minAsInt, minAsInt, maxAsInt, intervalAsInt);
+            Datas.Add(key, data);                             
         }
     }
 
@@ -193,22 +199,26 @@ public class GameFeatureSettings : FeatureSettings
 
     public abstract class Data
     {        
-        public static void ParseValueInt(string value)
+        public static bool ParseValueInt(string value, out int outValue)
         {
-            int outValue;
-            if (!int.TryParse(value, out outValue))
+            bool returnValue = int.TryParse(value, out outValue);
+            if (!returnValue)
             {
                 LogError(value + " is not an int value");
             }
+
+            return returnValue;
         }
 
-        public static void ParseValueFloat(string value)
+        public static bool ParseValueFloat(string value, out float outValue)
         {
-            float outValue;
-            if (!float.TryParse(value, out outValue))
+            bool returnValue = float.TryParse(value, out outValue);
+            if (!returnValue)
             {
                 LogError(value + " is not a float value");
             }
+
+            return returnValue;
         }
 
         public Data(string key, EValueType valueType, object defaultValue, string defaultValueAsString)
@@ -240,22 +250,26 @@ public class GameFeatureSettings : FeatureSettings
             }
         }
 
-        public void ParseValue(string value)
+        public bool ParseValue(string value)
         {
+            bool returnValue = false;
             if (IsAList)
             {
-                if (ValuesAsStrings.IndexOf(value) == -1)
+                returnValue = ValuesAsStrings.IndexOf(value) > -1;                
+                if (!returnValue)
                 {
                     LogError(value + " is not among the valid values: " + GetValuesAsStringsList() + " for key = " + Key);
-                }                 
+                }                                                
             } 
             else
             {
-                ParseSingleValue(value);
+                returnValue = ParseSingleValue(value);
             }
+
+            return returnValue;
         }
 
-        protected abstract void ParseSingleValue(string value);
+        protected abstract bool ParseSingleValue(string value);
 
         public List<string> ValuesAsStrings { get; set; }
         public string GetValuesAsStringsList()
@@ -306,9 +320,10 @@ public class GameFeatureSettings : FeatureSettings
         {
         }
 
-        protected override void ParseSingleValue(string value)
-        {
-            ParseValueInt(value);            
+        protected override bool ParseSingleValue(string value)
+        {            
+            int valueAsInt;
+            return ParseValueInt(value, out valueAsInt);            
         }
 
         public override string GetDataAsString(object data)
@@ -340,9 +355,10 @@ public class GameFeatureSettings : FeatureSettings
         {         
         }
 
-        protected override void ParseSingleValue(string value)
-        {
-            ParseValueFloat(value);
+        protected override bool ParseSingleValue(string value)
+        {            
+            float valueAsFloat;
+            return ParseValueFloat(value, out valueAsFloat);            
         }
 
         public override string GetDataAsString(object data)
@@ -362,8 +378,9 @@ public class GameFeatureSettings : FeatureSettings
         {                       
         }
 
-        protected override void ParseSingleValue(string value)
-        {        
+        protected override bool ParseSingleValue(string value)
+        {
+            return true;
         }
 
         public override string GetDataAsString(object data)
@@ -377,12 +394,15 @@ public class GameFeatureSettings : FeatureSettings
         }        
     }
 
-    public class DataRange : Data
+    public class DataRangeFloat : Data
     {
-        public DataRange(string key, EValueType type, float defaultValue, float min, float max, float interval=-1f) : base(key, type, defaultValue, null)
+        public DataRangeFloat(string key, EValueType type, float defaultValue, float min, float max, float interval=-1f) : base(key, type, defaultValue, null)
         {            
             DefaultValueAsString = GetDataAsString(defaultValue);
 
+            Min = min;
+            Max = max;
+                       
             if (interval > -1)
             {
                 Setup();
@@ -401,9 +421,81 @@ public class GameFeatureSettings : FeatureSettings
             }
         }
 
-        public DataRange(string key, EValueType type, int defaultValue, int min, int max, int interval=-1) : base(key, type, defaultValue, null)
+        private List<float> Values { get; set; }
+
+        private float Min { get; set; }
+        private float Max { get; set; }
+
+        private void Setup()
+        {            
+            if (Values == null)
+            {
+                Values = new List<float>();
+                ValuesAsStrings = new List<string>();
+            }
+            else
+            {
+                Values.Clear();
+                ValuesAsStrings.Clear();
+            }           
+        }
+
+        private void SetupStrings()
+        {
+            int count = Values.Count;
+            for (int i = 0; i < count; i++)
+            {
+                ValuesAsStrings.Add(Values[i] + "");
+            }
+        }
+
+        protected override bool ParseSingleValue(string value)
+        {
+            bool returnValue = false;
+            float valueAsFloat;
+            bool isFloat = ParseValueFloat(value, out valueAsFloat);
+            if (isFloat)
+            {                
+                if ((valueAsFloat < Min || valueAsFloat > Max))
+                {
+                    LogError(value + " for key " + Key + " must belong to [" + Min + "," + Max + "]");
+                }
+                else
+                {
+                    returnValue = true;
+                }
+            }            
+
+            return returnValue;
+        }       
+
+        public override string GetDataAsString(object data)
+        {
+            return ((float)data) + "";            
+        }
+
+        /// <summary>
+        /// Returns the value associated to an index
+        /// </summary>        
+        public override object GetValueFromListIndex(int index)
+        {
+            return Values[index];
+        }
+
+        public override object GetStringAsData(string data)
+        {
+            return float.Parse(data);            
+        }        
+    }
+
+    public class DataRangeInt : Data
+    {       
+        public DataRangeInt(string key, EValueType type, int defaultValue, int min, int max, int interval = -1) : base(key, type, defaultValue, null)
         {
             DefaultValueAsString = GetDataAsString(defaultValue);
+
+            Min = min;
+            Max = max;
 
             if (interval > -1)
             {
@@ -423,18 +515,22 @@ public class GameFeatureSettings : FeatureSettings
             }
         }
 
+        private List<int> Values { get; set; }
+        private int Min { get; set; }
+        private int Max { get; set; }
+
         private void Setup()
-        {            
+        {
             if (Values == null)
             {
-                Values = new List<object>();
+                Values = new List<int>();
                 ValuesAsStrings = new List<string>();
             }
             else
             {
                 Values.Clear();
                 ValuesAsStrings.Clear();
-            }           
+            }
         }
 
         private void SetupStrings()
@@ -444,38 +540,31 @@ public class GameFeatureSettings : FeatureSettings
             {
                 ValuesAsStrings.Add(Values[i] + "");
             }
-        }
-       
-        private List<object> Values { get; set; }
+        }        
 
-        protected override void ParseSingleValue(string value)
+        protected override bool ParseSingleValue(string value)
         {
-            switch (ValueType)
+            bool returnValue = false;
+            int valueAsInt;
+            bool isInt = ParseValueInt(value, out valueAsInt);
+            if (isInt)
             {
-                case EValueType.Int:
-                    ParseValueInt(value);
-                    break;
-
-                case EValueType.Float:
-                    ParseValueFloat(value);
-                    break;
+                if (valueAsInt < Min || valueAsInt > Max)
+                {
+                    LogError(value + " for key " + Key + " must belong to [" + Min + "," + Max + "]");
+                }
+                else
+                {
+                    returnValue = true;
+                }
             }
+
+            return returnValue;
         }
 
         public override string GetDataAsString(object data)
-        {            
-            string returnValue = null;
-            switch (ValueType)
-            {
-                case EValueType.Int:
-                    returnValue = ((int)data) +"";
-                    break;
-
-                case EValueType.Float:
-                    returnValue = ((float)data) + "";
-                    break;
-            }
-            return returnValue;
+        {
+            return ((int)data) + "";            
         }
 
         /// <summary>
@@ -488,26 +577,13 @@ public class GameFeatureSettings : FeatureSettings
 
         public override object GetStringAsData(string data)
         {
-            float originalData = float.Parse(data);
-            object returnValue = null;
-            switch (ValueType)
-            {
-                case EValueType.Int:
-                    returnValue = (int)originalData;
-                    break;
-
-                case EValueType.Float:
-                    returnValue = originalData;
-                    break;
-            }
-
-            return returnValue;
-        }        
+            return int.Parse(data);            
+        }
     }
-    
+
     private Dictionary<string, object> Values { get; set; }
 
-    public GameFeatureSettings() : base()
+    public GameFeatureSettings()
     {
         if (Datas == null)
         {
@@ -515,6 +591,48 @@ public class GameFeatureSettings : FeatureSettings
         }
 
         Values = new Dictionary<string, object>();       
+    }
+
+    public float Rating
+    {
+        get
+        {
+            return GetValueAsFloat(KEY_RATING);
+        }
+
+        set
+        {
+            string key = KEY_RATING;
+            if (Values.ContainsKey(key))
+            {
+                Values[key] = value;
+            }
+            else
+            {
+                Values.Add(key, value);
+            }
+        }
+    }
+
+    public string Profile
+    {
+        get
+        {
+            return GetValueAsString(KEY_PROFILE);
+        }
+
+        set
+        {
+            string key = KEY_PROFILE;
+            if (Values.ContainsKey(key))
+            {
+                Values[key] = value;
+            }
+            else
+            {
+                Values.Add(key, value);
+            }
+        }
     }
 
     public bool GetValueAsBool(string key)
@@ -597,22 +715,62 @@ public class GameFeatureSettings : FeatureSettings
                 }                
             }                     
         }
+    }    
+
+    public void Reset()
+    {
+        Values.Clear();
     }
 
-    protected override void ExtendedReset()
+    /// <summary>
+    /// Loads this object with the data defined by <c>json</c>. Default values are set for the keys that are not defined in <c>json</c>.
+    /// </summary>    
+    public void FromJSON(JSONNode json)
     {
-        Values.Clear();        
+        Reset();
+        OverrideFromJSON(json);
     }
 
-    protected override void ParseValue(string key, string valueAsString)
+    public JSONNode ParseJSON(JSONNode json)
     {
+        JSONNode returnValue = new JSONClass();
+        if (json != null)
+        {
+            JSONClass jsonClass = json as JSONClass;
+            foreach (KeyValuePair<string, JSONNode> pair in jsonClass.m_Dict)
+            {
+                if (Datas.ContainsKey(pair.Key))
+                {
+                    if (ParseValue(pair.Key, pair.Value))
+                    {
+                        returnValue.Add(pair.Key, pair.Value);
+                    }
+                }
+                else
+                {
+                    LogError("Key " + pair.Key + " not valid");
+                }
+            }
+        }
+
+        return returnValue;
+    }
+
+    protected bool ParseValue(string key, string valueAsString)
+    {
+        bool returnValue = false;
         if (Datas.ContainsKey(key))
         {
-            Datas[key].ParseValue(valueAsString);
-        }                            
+            returnValue = Datas[key].ParseValue(valueAsString);
+        }
+
+        return returnValue;
     }
 
-    protected override void ExtendedOverrideFromJSON(JSONNode json)
+    /// <summary>
+    /// Overrides the current data of this object with the data defined in <c>json</c>. Only the keys defined in <c>json</c> are overriden.
+    /// </summary>    
+    public void OverrideFromJSON(JSONNode json)
     {
         if (json != null)
         {
@@ -621,20 +779,41 @@ public class GameFeatureSettings : FeatureSettings
             {
                 key = pair.Key;
                 if (json.ContainsKey(key))
-                {                    
-                    SetValueFromString(key, json[key]);                  
+                {
+                    SetValueFromString(key, json[key]);
                 }
-            }
+            }            
         }
     }
 
-    protected override void ExtendedToJSON(JSONNode json)
+    public SimpleJSON.JSONNode ToJSON()
     {
+        SimpleJSON.JSONClass returnValue = new SimpleJSON.JSONClass();
         string key;
-        foreach (KeyValuePair<string, object> pair in Values)            
+        foreach (KeyValuePair<string, object> pair in Values)
         {
             key = pair.Key;
-            json.Add(key, GetValueAsString(key));            
+            returnValue.Add(key, GetValueAsString(key));
         }
+
+        return returnValue;
     }    
+
+    #region debug
+    private const string DEBUG_CHANNEL = "[GameFeatureSettings] ";
+    public static void Log(string msg)
+    {
+        Debug.Log(DEBUG_CHANNEL + msg);
+    }
+
+    public static void LogWarning(string msg)
+    {
+        Debug.LogWarning(DEBUG_CHANNEL + msg);
+    }
+
+    public static void LogError(string msg)
+    {
+        Debug.LogError(DEBUG_CHANNEL + msg);
+    }
+    #endregion  
 }
