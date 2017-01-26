@@ -337,6 +337,11 @@ public class DragonPowerUp : MonoBehaviour {
                     return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FOOD.ToHexString("#"));
                 }break;
 
+            case "freeze_aura":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_WATER.ToHexString("#"));
+                }break;
+
             case "fireball":
                 {
                     return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
@@ -378,6 +383,10 @@ public class DragonPowerUp : MonoBehaviour {
 
 			case "fury_size_increase": {
 				return UIConstants.POWER_COLOR_FIRE;
+			} break;
+
+			case "freeze_aura": {
+				return UIConstants.POWER_COLOR_WATER;
 			} break;
 
 			case "fury_duration_increase": {
