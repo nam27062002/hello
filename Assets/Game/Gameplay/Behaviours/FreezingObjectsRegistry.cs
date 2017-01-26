@@ -23,6 +23,7 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
 		Registry reg = new Registry();
 		reg.m_transform = tr;
 		reg.m_distanceSqr = distance * distance;
+		m_registry.Add( reg );
 	}
 
 	public void Unregister( Transform tr )
