@@ -15,10 +15,10 @@ using UnityEngine;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// This class is used as a facade that returns the configuration for all features in the game. 
+/// This class is used as a facade that returns the configuration for all features of the aookucatuib
 /// This class uses <c>DeviceQualityManager</c> to retrieve the configuration of these features taking into consideration the quality of the device
 /// </summary>
-public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeatureSettingsManager>
+public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSettingsManager>
 {
     private DeviceQualityManager m_deviceQualityManager;
 
@@ -221,7 +221,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         }
     }
 
-    public GameFeatureSettings Device_CurrentFeatureSettings { get; set; }
+    public FeatureSettings Device_CurrentFeatureSettings { get; set; }
 
     private string Device_GetInfo()
     {
@@ -292,19 +292,44 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         DefinitionsManager defManager = DefinitionsManager.SharedInstance;
 
         // All profiles are loaded from rules           
-        GameFeatureSettings featureSettings = CreateFeatureSettings();    // Helper
+        FeatureSettings featureSettings = FeatureSettingsHelper;    // Helper
         JSONNode settingsJSON;
         Dictionary<string, DefinitionNode> definitions = defManager.GetDefinitions(DefinitionsCategory.FEATURE_PROFILE_SETTINGS);
         foreach (KeyValuePair<string, DefinitionNode> pair in definitions)
         {
             settingsJSON = pair.Value.ToJSON();
             settingsJSON = FormatJSON(settingsJSON);
+            settingsJSON = featureSettings.ParseJSON(settingsJSON);
             featureSettings.FromJSON(settingsJSON);
             m_deviceQualityManager.Profiles_AddData(featureSettings.Profile, featureSettings.Rating, settingsJSON);
         }
 
-        // The device rating is calculated
-        float rating = Device_CalculateRating();
+        // In Unity editor feature settings for all devices are parsed to identify errors
+#if UNITY_EDITOR
+        string profileName;
+        string validProfileNames = DebugUtils.ListToString(m_deviceQualityManager.Profiles_Names);
+        definitions = defManager.GetDefinitions(DefinitionsCategory.FEATURE_DEVICE_SETTINGS);
+        foreach (KeyValuePair<string, DefinitionNode> pair in definitions)
+        {
+            settingsJSON = pair.Value.ToJSON();
+            settingsJSON = FormatJSON(settingsJSON);
+            settingsJSON = featureSettings.ParseJSON(settingsJSON);            
+
+            // Makes sure that profile is a valid value
+            if (settingsJSON.ContainsKey(FeatureSettings.KEY_PROFILE))
+            {
+                profileName = settingsJSON[FeatureSettings.KEY_PROFILE];
+                if (m_deviceQualityManager.Profiles_GetDataAsJSON(profileName) == null)
+                {
+                    FeatureSettings.LogError("Sku <" + settingsJSON[FeatureSettings.KEY_SKU] + ">: " + profileName + " is not among the valid values for profile name: " + validProfileNames);                        
+                }
+            }
+        }
+#endif
+
+
+            // The device rating is calculated
+            float rating = Device_CalculateRating();
         m_deviceQualityManager.Device_CalculatedRating = rating;
 
         Device_CurrentFeatureSettings = CreateFeatureSettings();
@@ -321,7 +346,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
     private const string SHADERS_KEY_MID = "MEDIUM_DETAIL_ON";
     private const string SHADERS_KEY_LOW = "LOW_DETAIL_ON";
 
-    private void Shaders_ApplyQuality(GameFeatureSettings.ELevel3Values quality)
+    private void Shaders_ApplyQuality(FeatureSettings.ELevel3Values quality)
     {
         Shader.DisableKeyword(SHADERS_KEY_HIGH);
         Shader.DisableKeyword(SHADERS_KEY_MID);
@@ -329,11 +354,11 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
 
         switch (quality)
         {
-            case GameFeatureSettings.ELevel3Values.high:
+            case FeatureSettings.ELevel3Values.high:
                 Shader.EnableKeyword(SHADERS_KEY_HIGH);
                 break;
 
-            case GameFeatureSettings.ELevel3Values.mid:
+            case FeatureSettings.ELevel3Values.mid:
                 Shader.EnableKeyword(SHADERS_KEY_MID);
                 break;
 
@@ -345,7 +370,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         Shaders_WarmUpVariantCollection(quality);
     }
 
-    private void Shaders_WarmUpVariantCollection(GameFeatureSettings.ELevel3Values quality)
+    private void Shaders_WarmUpVariantCollection(FeatureSettings.ELevel3Values quality)
     {
         ShaderVariantCollection collection = null;
         if (m_shadersVariantCollections != null)
@@ -378,6 +403,20 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
     #endregion
 
     #region feature_settings
+    private FeatureSettings m_featureSettingsHelper;
+    private FeatureSettings FeatureSettingsHelper
+    {
+        get
+        {
+            if (m_featureSettingsHelper == null)
+            {
+                m_featureSettingsHelper = CreateFeatureSettings();
+            }
+
+            return m_featureSettingsHelper;
+        }
+    }
+
     public void SetupCurrentFeatureSettings(JSONNode deviceSettingsJSON)
     {
         float rating = m_deviceQualityManager.Device_CalculatedRating;
@@ -433,9 +472,9 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         ApplyCurrentFeatureSetting();
     }
 
-    private GameFeatureSettings CreateFeatureSettings()
+    private FeatureSettings CreateFeatureSettings()
     {
-        return new GameFeatureSettings();
+        return new FeatureSettings();
     }
 
     public void ApplyCurrentFeatureSetting()
@@ -446,7 +485,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         //Debug.Log(json);
     }
 
-    private void ApplyFeatureSetting(GameFeatureSettings settings)
+    private void ApplyFeatureSetting(FeatureSettings settings)
     {
 #if !UNITY_EDITOR
         GameFeatureSettings.EQualityLevelValues quality = settings.GetValueAsQualityLevel(GameFeatureSettings.KEY_QUALITY_LEVEL);
@@ -456,7 +495,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         ApplyPhysicQuality(settings.Rating);
 #endif
 
-        GameFeatureSettings.ELevel3Values shadersLevel = settings.GetValueAsLevel3(GameFeatureSettings.KEY_SHADERS_LEVEL);
+        FeatureSettings.ELevel3Values shadersLevel = settings.GetValueAsLevel3(FeatureSettings.KEY_SHADERS_LEVEL);
         Shaders_ApplyQuality(shadersLevel);
 
         DeviceQualityManager.Log("Device Rating:" + settings.Rating);
@@ -487,8 +526,11 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
             returnValue = new JSONClass();
             foreach (KeyValuePair<string, JSONNode> pair in jsonClass.m_Dict)
             {
+                if (pair.Key == "iOSGeneration")
+                    continue;
+                             
                 // Empty keys or keys with "as_profile" as a value need to be ignored
-                if (!string.IsNullOrEmpty(pair.Value.Value) && pair.Value.Value != "as_profile")
+                if (!string.IsNullOrEmpty(pair.Value.Value) && pair.Value.Value != "as_content")
                 {
                     returnValue.Add(pair.Key, pair.Value);
                 }
@@ -518,7 +560,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
         if (returnValue != null)
         {
             returnValue = FormatJSON(returnValue);
-        }
+        }        
 
         return returnValue;
     }
@@ -537,7 +579,7 @@ public class GameFeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<GameFeat
     {
         get
         {
-            return Device_CurrentFeatureSettings.GetValueAsBool(GameFeatureSettings.KEY_GLOW);
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_GLOW);
         }
     }
     #endregion

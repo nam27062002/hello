@@ -402,7 +402,7 @@ namespace AI {
 				{
 					m_freezingMultiplier += Time.deltaTime;
 				}
-				m_freezingMultiplier = Mathf.Clamp( m_freezingMultiplier, 0.5f, 1.0f);
+				m_freezingMultiplier = Mathf.Clamp( m_freezingMultiplier, 0.25f, 1.0f);
 				m_pilot.SetFreezeFactor( m_freezingMultiplier );
 				m_viewControl.Freezing( m_freezing );
 			}

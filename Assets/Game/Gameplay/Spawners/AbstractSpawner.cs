@@ -113,7 +113,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
             while (EntitiesAlive < EntitiesToSpawn) {
                 prefabName = GetPrefabNameToSpawn(EntitiesAlive);
                 go = PoolManager.GetInstance(prefabName, !UseProgressiveRespawn);                
-                OnCreateInstance(EntitiesAlive, go);
+				go.transform.position = transform.position;
+				OnCreateInstance(EntitiesAlive, go);
                 m_entities[EntitiesAlive] = go.GetComponent<IEntity>();                                  
                 EntitiesAlive++;
 
