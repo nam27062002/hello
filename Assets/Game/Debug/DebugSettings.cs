@@ -84,11 +84,6 @@ public static class DebugSettings {
 		set { Prefs.SetBoolPlayer(DRAGON_EAT, value); }
 	}
 
-	public static bool eatDistancePowerUp {
-		get { return Prefs.GetBoolPlayer(DRAGON_EAT_DISTANCE_POWER_UP, false); }
-		set { Prefs.SetBoolPlayer(DRAGON_EAT_DISTANCE_POWER_UP, value); }
-	}
-
 	public static bool slowPowerUp {
 		get { return Prefs.GetBoolPlayer(DRAGON_SLOW_POWER_UP, false); }
 		set { Prefs.SetBoolPlayer(DRAGON_SLOW_POWER_UP, value); }
