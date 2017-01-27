@@ -1357,7 +1357,7 @@ public class GameCamera : MonoBehaviour
         GlowEffect.GlowEffect glow = GetComponent<GlowEffect.GlowEffect>();
         if (glow != null)
         {
-            glow.enabled = GameFeatureSettingsManager.instance.IsGlowEnabled;
+            glow.enabled = FeatureSettingsManager.instance.IsGlowEnabled;
         }
     }
 

@@ -245,6 +245,10 @@ public abstract class EatBehaviour : MonoBehaviour {
             }
 
             PreyCount = 0;
+			EndHold();
+
+			if ( m_attackTarget != null )
+				StopAttackTarget();
         }		
 	}
 
@@ -335,6 +339,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// </summary>
 	public void OnJawsClose()
 	{
+		if ( !enabled ) return;
 		// Bite kill!
 		if ( m_holdingPrey == null && !m_pauseEating && m_holdingPlayer == null)
 		{

@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 #if UNITY_EDITOR
@@ -116,5 +117,26 @@ public class DebugUtils {
     public static void LogException(System.Exception exception, UnityEngine.Object context)
     {
         UnityEngine.Debug.LogException(exception, context);
+    }
+
+    public static string ListToString<T>(List<T> list)
+    {        
+        string returnValue = "[";
+        if (list != null)
+        {
+            int count = list.Count;
+            for (int i = 0; i < count; i++)
+            {
+                returnValue += list[i].ToString();
+                if (i < count - 1)
+                {
+                    returnValue += ",";
+                }
+            }
+        }
+        returnValue += "]";
+
+        return returnValue;
+
     }
 }
