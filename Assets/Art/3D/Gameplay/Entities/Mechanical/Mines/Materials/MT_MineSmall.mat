@@ -6,11 +6,11 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: MT_Merida
-  m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: 2000
+  m_Name: MT_MineSmall
+  m_Shader: {fileID: 4800000, guid: d6461419cb5f2ad4b84347dd9ba18781, type: 3}
+  m_ShaderKeywords: _EMISSION
+  m_LightmapFlags: 1
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -48,13 +48,19 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 6e9e047e4d6d8403f807d66dc30182a4, type: 3}
+        m_Texture: {fileID: 2800000, guid: 82cd5b5ac9ddc40beb4662cc7dce074e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
       second:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _NormalTex
+      second:
+        m_Texture: {fileID: 2800000, guid: 00f53569cd195784d81a3d93f2ed470d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -86,14 +92,17 @@ Material:
         name: _DstBlend
       second: 0
     - first:
-        name: _EmissionScaleUI
-      second: 0
-    - first:
         name: _FresnelFactor
       second: 0.27
     - first:
+        name: _GlossMapScale
+      second: 1
+    - first:
         name: _Glossiness
       second: 0.5
+    - first:
+        name: _GlossyReflections
+      second: 1
     - first:
         name: _Metallic
       second: 0
@@ -101,14 +110,23 @@ Material:
         name: _Mode
       second: 0
     - first:
+        name: _NormalStrength
+      second: 0.6
+    - first:
         name: _OcclusionStrength
       second: 1
     - first:
         name: _Parallax
       second: 0.02
     - first:
-        name: _Specular
+        name: _SmoothnessTextureChannel
       second: 0
+    - first:
+        name: _Specular
+      second: 50
+    - first:
+        name: _SpecularHighlights
+      second: 1
     - first:
         name: _SrcBlend
       second: 1
@@ -126,8 +144,8 @@ Material:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
-        name: _EmissionColorUI
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
         name: _FresnelColor
-      second: {r: 0.9558824, g: 0.07028548, b: 0.07028548, a: 0}
+      second: {r: 0, g: 0, b: 0, a: 0}
+    - first:
+        name: _SpecularDir
+      second: {r: 0, g: 0, b: -1, a: 0}
