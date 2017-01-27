@@ -8,6 +8,8 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 		_MainTex ("Texture", 2D) = "white" {}
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
 		_GlowTex("Emissive (RGBA)", 2D) = "white" {}
+		_ReflectionMap("Reflection Map", Cube) = "white" {}
+		_ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.0
 		_LightColor("Light Color", Color) = (1, 1, 1, 1)
 		_NormalStrength("Normal Strength", float) = 3
 		_SpecularPower( "Specular Power", float ) = 1
@@ -80,6 +82,8 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 			uniform sampler2D _NormalTex;
 			uniform float4 _NormalTex_ST;
 			uniform sampler2D _GlowTex;
+			uniform samplerCUBE _ReflectionMap;
+			uniform float _ReflectionAmount;
 			uniform float _SpecularPower;
 			uniform fixed4 _SpecularDir;
 			uniform float4 _LightColor;
@@ -164,9 +168,15 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 				// col = lerp(col, _EmissiveColor, emissive.r + emissive.g + emissive.b);			// Multiplicative, no intensity control
 				// col += _EmissiveColor * (emissive.r + emissive.g + emissive.b);				// Additive, no intesity control
 
+				float4 reflection = texCUBE(_ReflectionMap, normalDirection) * _ReflectionAmount;
+
+				//fixed4 one = fixed4(1, 1, 1, 1);
+				// col = one- (one-col) * (1-(i.color-fixed4(0.5,0.5,0.5,0.5)));	// Soft Light
+				//col = one - 2.0 * (one - reflection) * (one - col);	// Overlay
+
 
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-				return col;
+				return col + reflection;
 			}
 			ENDCG
 		}
