@@ -10,8 +10,9 @@ GameObject:
   - component: {fileID: 465066}
   - component: {fileID: 11478246}
   - component: {fileID: 11426232}
+  - component: {fileID: 114000010144215686}
   m_Layer: 0
-  m_Name: SP_Mine_big_0_Basic
+  m_Name: SP_Mine_medium_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41,7 +42,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefabStr: Air/PF_MineBig_Static
+  m_entityPrefabStr: Air/PF_MineMedium
   m_quantity:
     min: 1
     max: 1
@@ -87,3 +88,19 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 158102}
   m_IsPrefabParent: 1
+--- !u!114 &114000010144215686
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 158102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_circular: 1
+  m_smoothRadius: 0.5
+  m_points:
+  - {x: -6.8989887, y: 0.10241318, z: 0}
+  - {x: 6.9399548, y: 0.08193064, z: 0}
