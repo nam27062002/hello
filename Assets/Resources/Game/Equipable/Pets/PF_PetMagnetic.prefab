@@ -16,8 +16,9 @@ GameObject:
   - component: {fileID: 114000011637225726}
   - component: {fileID: 54000013371132386}
   - component: {fileID: 135000013338795870}
+  - component: {fileID: 114000013147041998}
   m_Layer: 0
-  m_Name: PF_PetWizard
+  m_Name: PF_PetMagnetic
   m_TagString: Pet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,7 +31,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 422.07965, y: -14.411646, z: 2.850141}
+  m_LocalPosition: {x: -207.66527, y: 33.32555, z: 3.9448242}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000012877512430}
@@ -593,7 +594,7 @@ GameObject:
   - component: {fileID: 4000012877512430}
   - component: {fileID: 95000013976620126}
   - component: {fileID: 114000010852223014}
-  - component: {fileID: 114977693411222454}
+  - component: {fileID: 114677617322148974}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -987,7 +988,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000014122255018}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.83, z: -0.251}
+  m_LocalPosition: {x: 0, y: -0.587, z: -0.156}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children:
   - {fileID: 4000012848778366}
@@ -1184,15 +1185,15 @@ MonoBehaviour:
   m_blendSpeedFactor: 10
   m_energy: 10
   m_energyDrainSec: 1
-  m_brainResource: {fileID: 11400000, guid: cbf1a873ae53d422c93e98b74ffc920a, type: 2}
+  m_brainResource: {fileID: 11400000, guid: 5ba1a977b24c0472ea425663825d467a, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
   m_speedFactorRange:
     min: 1
     max: 1
-  m_serializedJson: '[{"speedMultiplier":1.5,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"projectileName":"PF_PetFireBall","projectileSpawnTransformName":"Fire_Dummy","damage":5,"consecutiveAttacks":0,"attackDelay":0,"retreatTime":0,"stop":false,"faceEnemy":true,"faceEnemyY":true,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":20,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"shootingTier":4,"checkType":1,"dragonSizeRangeMultiplier":20,"shutdownRange":{"min":2,"max":5},"dataType":"AI.Behaviour.PetSearchShootTargetData","editorFolded":false}]'
-  m_databaseKey: PF_PetWizard
+  m_serializedJson: '[{"speedMultiplier":1.5,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"speedMultiplier":1.5,"chaseTimeout":2,"cooldown":{"min":3,"max":6},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"shootingTier":4,"checkType":0,"dragonSizeRangeMultiplier":10,"shutdownRange":{"min":1,"max":1},"dataType":"AI.Behaviour.PetSearchShootTargetData","editorFolded":false},{"projectileName":"PF_PetMagneticProjectile","projectileSpawnTransformName":"Fire_Dummy","damage":0,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":true,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":20,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"timeSecondAction":{"min":1,"max":1},"dataType":"AI.Behaviour.PetDecideActionData","editorFolded":false}]'
+  m_databaseKey: PF_PetMagnetic
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
@@ -1222,7 +1223,7 @@ MonoBehaviour:
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
-    m_limitVerticalRotation: 0
+    m_limitVerticalRotation: 1
     m_faceUpAngle: 320
     m_faceDownAngle: 40
   m_affectedByDragonTrample: 0
@@ -1263,6 +1264,30 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   radius: 5
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!114 &114000013147041998
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba2f224ef9dd2406dad9cae440cae718, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_minEatAnimTime: 0.1
+  m_eatDistance: 0.5
+  m_eatDetectionRadiusMultiplier: 2.75
+  m_eatDetectionSpeedRadiusMultiplier: 0.15
+  m_holdingBloodParticle:
+    name: PS_Blood_Explosion_Medium
+    path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_burpSound: 
+  m_eaterTier: 0
+  m_isPet: 1
+  m_isAquatic: 0
+  m_canMultipleLatchOnPlayer: 0
 --- !u!114 &114000013672329336
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1275,7 +1300,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: pet_0
---- !u!114 &114977693411222454
+--- !u!114 &114677617322148974
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
