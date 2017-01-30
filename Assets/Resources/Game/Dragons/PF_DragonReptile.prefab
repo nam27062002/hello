@@ -2321,7 +2321,7 @@ MonoBehaviour:
   m_wingsIdleSound: Dragon_Idle_Flaps
   m_wingsFlyingSound: Dragon_Flaps
   m_eatSound: Dragon_Eat
-  m_wingsWindSound: hd_dragon_wind_boost
+  m_wingsWindSound: Dragon_wind_boost
   m_wingsStrongFlap: Dragon_Strong_Flap
   m_levelUpSound: Level_Up
   m_starvingSound: 
@@ -2331,8 +2331,9 @@ MonoBehaviour:
   m_exitWaterSound: Dragon_Water_Out_Soft
   m_exitWaterWithSplashSound: Dragon_Water_Out_Hard
   m_skimmingSound: Dragon_Surfing
-  m_insideWaterSnapshot: {fileID: 0}
-  m_waterDeepToSnapshot: 0
+  m_insideWaterSnapshot: {fileID: 245688877317836546, guid: f9c941808b0b54fa79ff7aae4e1db556,
+    type: 2}
+  m_waterDeepToSnapshot: 4
 --- !u!114 &11430736
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3442,7 +3443,7 @@ MonoBehaviour:
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 1
+      Volume: 0.5
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.1
       MaxInstanceCount: 0
@@ -3589,7 +3590,7 @@ MonoBehaviour:
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 1
+      Volume: 0.5
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.1
       MaxInstanceCount: 0
@@ -3736,7 +3737,7 @@ MonoBehaviour:
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 0.75
+      Volume: 1
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.1
       MaxInstanceCount: 0
@@ -3775,7 +3776,7 @@ MonoBehaviour:
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 1
+      Volume: 0.51
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.4
       MaxInstanceCount: 1
@@ -4126,7 +4127,7 @@ MonoBehaviour:
         DisableOtherSubitems: 0
         ItemModeAudioID: 
         Clip: {fileID: 8300000, guid: 5e0eb134c27392a4da89d679585dd20b, type: 3}
-        Volume: 0.7
+        Volume: 1
         PitchShift: 0
         Pan2D: 0
         Delay: 0
@@ -4144,7 +4145,7 @@ MonoBehaviour:
         DisableOtherSubitems: 0
         ItemModeAudioID: 
         Clip: {fileID: 8300000, guid: 0949ff3831d54d04893f11faef8739cf, type: 3}
-        Volume: 0.65
+        Volume: 1
         PitchShift: 0
         Pan2D: 0
         Delay: 0
@@ -4165,7 +4166,7 @@ MonoBehaviour:
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 0.7
+      Volume: 0.5
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.1
       MaxInstanceCount: 0
@@ -4240,7 +4241,7 @@ MonoBehaviour:
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 1
+      Volume: 0.5
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.1
       MaxInstanceCount: 0
@@ -4315,7 +4316,7 @@ MonoBehaviour:
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 0.7
+      Volume: 0.5
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.1
       MaxInstanceCount: 0
@@ -4390,7 +4391,7 @@ MonoBehaviour:
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 1
+      Volume: 0.6
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.1
       MaxInstanceCount: 0
@@ -4465,7 +4466,7 @@ MonoBehaviour:
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 0.7
+      Volume: 0.57
       SubItemPickMode: 7
       MinTimeBetweenPlayCalls: 0.1
       MaxInstanceCount: 0
@@ -4514,7 +4515,7 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
-    - Name: hd_dragon_wind_boost
+    - Name: Dragon_wind_boost
       Loop: 1
       loopSequenceCount: 0
       loopSequenceOverlap: 0
@@ -4522,13 +4523,13 @@ MonoBehaviour:
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 0.75
+      Volume: 0.25
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.1
       MaxInstanceCount: 0
       Delay: 0
       RandomVolume: 0
-      RandomPitch: 0
+      RandomPitch: 1
       RandomDelay: 0
       overrideAudioSourceSettings: 0
       audioSource_MinDistance: 1
@@ -4541,15 +4542,15 @@ MonoBehaviour:
         ItemModeAudioID: 
         Clip: {fileID: 8300000, guid: 4ffecfe50cb00d44c9bf9537780999d6, type: 3}
         Volume: 1
-        PitchShift: 2
+        PitchShift: 0
         Pan2D: 0
         Delay: 0
-        RandomPitch: 0
+        RandomPitch: 1
         RandomVolume: 0
         RandomDelay: 0
         ClipStopTime: 0
         ClipStartTime: 0
-        FadeIn: 0
+        FadeIn: 0.2
         FadeOut: 1
         RandomStartPosition: 0
         individualSettings: []

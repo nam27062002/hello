@@ -420,7 +420,7 @@ namespace AI {
 		private void UpdateAttack() {
 			if (m_pilot.IsActionPressed(Pilot.Action.Attack) && m_viewControl.canAttack()) {
 				// start attack!
-				m_viewControl.Attack();
+				m_viewControl.Attack(m_machine.GetSignal(Signals.Type.Melee), m_machine.GetSignal(Signals.Type.Ranged));
 			} else {
 				if (m_viewControl.hasAttackEnded()) {					
 					m_pilot.ReleaseAction(Pilot.Action.Attack);
