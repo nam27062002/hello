@@ -8,7 +8,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	public static Color GOLD_TINT = new Color(255.0f / 255.0f, 161 / 255.0f, 0, 255.0f / 255.0f);
     public static Color FREEZE_TINT = new Color(0.0f / 255.0f, 200.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f);
-    public static float FREEZE_TIME = 1.5f;
+    public static float FREEZE_TIME = 1.0f;
 
     [Serializable]
 	public class SkinData {
@@ -486,13 +486,15 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
         if (m_freezing)
         {
+            SetEntityTint(EntityTint.FREEZE);
+
+            float fri = getFreezeIntensity();
             float dTime = Time.time - Mathf.Abs(m_freezeTime);
             if (m_freezeTime < 0.0 && dTime > FREEZE_TIME)
             {
                 m_freezing = false;
             }
 
-            SetEntityTint(EntityTint.FREEZE);
 
         }
 
@@ -850,7 +852,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
     public float getFreezeIntensity()
     {
-        return (m_freezeTime < 0.0f) ? 1.0f - Mathf.Clamp01(Time.time - Mathf.Abs(m_freezeTime)) / FREEZE_TIME : Mathf.Clamp01((Time.time - m_freezeTime) / FREEZE_TIME);
+        return (m_freezeTime < 0.0f) ? 1.0f - Mathf.Clamp01((Time.time - Mathf.Abs(m_freezeTime)) / FREEZE_TIME) : Mathf.Clamp01((Time.time - m_freezeTime) / FREEZE_TIME);
     }
     public void Freezing(bool _value)
     {
@@ -863,7 +865,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         }
         else
         {
-            if (m_freezing != _value)
+            if (m_freezeTime > 0.0f)
                 m_freezeTime = -Time.time;
         }
 
