@@ -13,8 +13,8 @@ public class OptimizationToolEditor
 	[MenuItem("Hungry Dragon/OptimizationUtility/Enable All")]
 	public static void EnableAll()
 	{
-		SceneMaterialSetupEditor.GenerateSceneMaterialFromEditor();
-		SceneMaterialSetupEditor.SetAllBumpMapToNull();
+		//SceneMaterialSetupEditor.GenerateSceneMaterialFromEditor();
+		//SceneMaterialSetupEditor.SetAllBumpMapToNull();
 
 		// Broken
 		//SceneLightmapSetupEditor.UpdateAllLightMapDataInfosEditor();
@@ -26,8 +26,8 @@ public class OptimizationToolEditor
 	[MenuItem("Hungry Dragon/OptimizationUtility/Disable All")]
 	public static void DisableAll()
 	{
-		SceneMaterialSetupEditor.RestoreOriginalMaterialFromEditor();
-		SceneMaterialSetupEditor.DeleteFoldersEditor();
+		//SceneMaterialSetupEditor.RestoreOriginalMaterialFromEditor();
+		//SceneMaterialSetupEditor.DeleteFoldersEditor();
 
 		// Broken
 		//SceneLightmapSetupEditor.RestoreAllLightMapDataInfosEditor();
@@ -137,7 +137,7 @@ public class DisableShadowsOnPrefabs : EditorWindow
 
 public class SceneMaterialSetupEditor
 {
-	[MenuItem("Hungry Dragon/OptimizationUtility/SceneMaterial/GenerateSceneMaterial")]
+	/*[MenuItem("Hungry Dragon/OptimizationUtility/SceneMaterial/GenerateSceneMaterial")]
     public static void GenerateSceneMaterialFromEditor()
     {
         // List<string> foldersToCheckOut = OptimizationDataEditor.instance.GetSceneMaterialFolders();
@@ -270,6 +270,7 @@ public class SceneMaterialSetupEditor
         AssetDatabase.StopAssetEditing();
         AssetDatabase.SaveAssets();
     }
+    */
 }
 // TODO (MALH): Recover this class?
 /* 
@@ -481,44 +482,46 @@ public class SpawnerScenesVariationsEditor
 }
 
 public class PrefabsSetupEditor
-{
-    static bool showDialog = false;
+{               
 	static Dictionary<int,Material> materialDictionary = new Dictionary<int,Material> ();
 
     [MenuItem("FGOL/OptimizationUtility/Prefabs/GeneratePrefabsLOD")]
     public static void GeneratePrefabsEditorLODEditor()
-    {
-        // List<string> foldersToCheckOut = OptimizationDataEditor.instance.GetPrefabsFolderToBeReset();
-        // FGOL.Perforce.PerforceManager.Checkout(foldersToCheckOut, true);
-        GeneratePrefabsLOD();
-        // FGOL.Perforce.PerforceManager.Revert(foldersToCheckOut);
+    {     
+        GeneratePrefabsLOD();     
     }
 
     public static void GeneratePrefabsLOD()
     {
 		materialDictionary.Clear();
 
-		string prefabsDestinationFolder = Application.dataPath + "/Resources/" + IEntity.ENTITY_PREFABS_LOW_PATH;
-		OptimizationDataEditor.instance.DeleteAndCreateADir( prefabsDestinationFolder );
-		string materialsDestinationFolder = Application.dataPath + "/Resources/" + IEntity.ENTITY_PREFABS_LOW_PATH + "/Materials";
-		OptimizationDataEditor.instance.DeleteAndCreateADir( materialsDestinationFolder );
+        string prefabsDestinationFolder = OptimizationDataInfo.PrefabsFolderPathDest;
+        prefabsDestinationFolder = StringUtil.FormatPathToProjectRoot(prefabsDestinationFolder);        
+        OptimizationDataEditor.instance.DeleteAndCreateADir( prefabsDestinationFolder );
+        prefabsDestinationFolder += "/";
 
-		string projectPath = Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length);
-		OptimizationDataEditor.instance.DeleteAndCreateADir( projectPath + OptimizationDataInfo.MaterialPrefabsSavePath );
+        string materialsFolder = OptimizationDataInfo.PrefabsMaterialsPathDest;
+        materialsFolder = StringUtil.FormatPathToProjectRoot(materialsFolder);
+        OptimizationDataEditor.instance.DeleteAndCreateADir(materialsFolder);
 
-		string prefabOriginalFolder = Application.dataPath + "/Resources/" + IEntity.ENTITY_PREFABS_PATH;
-		string[] files = Directory.GetFiles(prefabOriginalFolder, "*.prefab", SearchOption.AllDirectories);
+        string prefabOriginalFolder = OptimizationDataInfo.PrefabsFolderPathSrc;
+        string dataPath = Application.dataPath;
+        dataPath = dataPath.Replace("/Assets", "");
+        prefabOriginalFolder = dataPath + "/" + prefabOriginalFolder;
+        string[] files = Directory.GetFiles(prefabOriginalFolder, "*.prefab", SearchOption.AllDirectories);
 
+        string fileName;
 		foreach (string f in files) 
 		{
-			
-			string resoucePath = f.Substring( (Application.dataPath + "/Resources/").Length );
+            // In windows the name of the file is separated from its folder by "\\" so we need to make sure it's a valid file name, so we need to use fileName instead f from here on 
+            fileName = f.Replace("\\", "/");
+			string resoucePath = fileName.Substring( (Application.dataPath + "/Resources/").Length );
 			resoucePath = resoucePath.Substring( 0, resoucePath.Length - ".prefab".Length);
 			GameObject prefab =  Resources.Load<GameObject>( resoucePath) ;
 			if ( prefab != null )
 			{
 				// Create a prefab copy
-				string destinationPrefabPath = "Assets/Resources/" + IEntity.ENTITY_PREFABS_LOW_PATH + f.Substring( prefabOriginalFolder.Length);
+				string destinationPrefabPath = prefabsDestinationFolder + fileName.Substring( prefabOriginalFolder.Length);
 				Directory.CreateDirectory( Path.GetDirectoryName(destinationPrefabPath) );
 				UnityEngine.Object newPrefab = PrefabUtility.CreateEmptyPrefab( destinationPrefabPath );
 
@@ -538,8 +541,8 @@ public class PrefabsSetupEditor
     }
 
     private static void CreateLowMaterials( GameObject prefab )
-    {
-		Renderer[] renderers = prefab.GetComponentsInChildren<Renderer> ();
+    {             
+        Renderer[] renderers = prefab.GetComponentsInChildren<Renderer> ();
 		if (renderers != null && renderers.Length > 0)
 		{
 			for (int i = 0; i < renderers.Length; i++)
@@ -553,7 +556,10 @@ public class PrefabsSetupEditor
 	{
 		bool materialChanged = false;
 		Material[] sharedMaterials = renderer.sharedMaterials;
-		for (int i=0; i<sharedMaterials.Length; i++)
+        string materialsFolder = OptimizationDataInfo.PrefabsMaterialsPathDest;
+        materialsFolder = StringUtil.FormatPathToProjectRoot(materialsFolder);
+        materialsFolder += "/";
+        for (int i=0; i<sharedMaterials.Length; i++)
 		{
 			Material material = sharedMaterials[i];
 			if (material != null)
@@ -570,9 +576,9 @@ public class PrefabsSetupEditor
 							clonedMaterial.name = material.name + OptimizationDataInfo.LDSufix;
 							materialDictionary [materialInstanceID] = clonedMaterial;
 
-							string materialName = clonedMaterial.name + OptimizationDataInfo.MaterialFileExtension;
-							string materialSVPath = OptimizationDataInfo.MaterialPrefabsSavePath + "/" + materialName;
-							AssetDatabase.CreateAsset (clonedMaterial, materialSVPath);
+							string materialName = clonedMaterial.name + OptimizationDataInfo.MaterialFileExtension;                            
+                            string materialSVPath = materialsFolder + materialName;
+                            AssetDatabase.CreateAsset (clonedMaterial, materialSVPath);
 							sharedMaterials [i] = materialDictionary [materialInstanceID];
 							materialChanged = true;
 							break;
@@ -594,16 +600,11 @@ public class PrefabsSetupEditor
     [MenuItem("FGOL/OptimizationUtility/Prefabs/DeleteFolders")]
     public static void DeleteFoldersEditor()
     {
-        DeleteFolders();
-    }
+        // materials folder
+        string folder = OptimizationDataInfo.PrefabsMaterialsPathDest;
+        OptimizationDataEditor.instance.DeleteADir(folder);
 
-    public static void DeleteFolders()
-    {
-		string prefabsDestinationFolder = Application.dataPath + "/Resouces/" + IEntity.ENTITY_PREFABS_LOW_PATH;
-		OptimizationDataEditor.instance.DeleteADir( prefabsDestinationFolder );
-		string materialsDestinationFolder = Application.dataPath + "/Resouces/" + IEntity.ENTITY_PREFABS_LOW_PATH + "/Materials";
-		OptimizationDataEditor.instance.DeleteADir( materialsDestinationFolder );
-    }
-
-
+        folder = OptimizationDataInfo.PrefabsFolderPathDest;
+        OptimizationDataEditor.instance.DeleteADir(folder);
+    }   
 }
