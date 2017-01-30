@@ -200,7 +200,7 @@ public class DragonPowerUp : MonoBehaviour {
 						motion.AddSpeedPowerup( def.GetAsFloat("param1", 0));
 					}
 				}break;
-				case "eat_distance_increase":
+				case "vacuum":
 				{
 					DragonEatBehaviour eatBehaviour =  GetComponent<DragonEatBehaviour>();
 					eatBehaviour.AddEatDistance( def.GetAsFloat("param1", 0) );
