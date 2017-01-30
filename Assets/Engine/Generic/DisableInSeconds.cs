@@ -11,6 +11,7 @@ public class DisableInSeconds : MonoBehaviour {
 	[SerializeField] private float m_activeTime = 1f;
 	public float activeTime { set { m_activeTime = value; m_activeTimer = m_activeTime; } }
 	[SerializeField] private PoolType m_returnTo = PoolType.PoolManager;
+	[SerializeField] private bool m_disableOnInvisible = true;
 
 	private float m_activeTimer;
 //	private bool m_coroutineRunning;
@@ -91,7 +92,7 @@ public class DisableInSeconds : MonoBehaviour {
 */
     void OnBecameInvisible()
     {
-    	if ( ApplicationManager.IsAlive )
+		if ( ApplicationManager.IsAlive && m_disableOnInvisible)
     	{
 	        // we are disabling a particle system
 	        for (int i = 0; i < m_particleSystems.Length; i++)
