@@ -77,7 +77,7 @@ Shader "Hungry Dragon/Skybox/SkyboxCubeMap"
 
 //				col *= dd;
 
-				float4 skyCol = lerp(_Color1, _Color2, clamp(i.uv.y * 5.0, 0.0, 1.0));
+				float4 skyCol = lerp(_Color1, _Color2, clamp(i.uv.y * 2.0, 0.0, 1.0));
 //				float3x3 mat = rotationMatrix(float3(0.0, 1.0, 0.0), sin(_Time.x * 2.0 + input.viewDir.y * 2.0) * 3.141516);
 //				fixed4 col = tex2D(_NoiseTex, mul(mat, input.viewDir).xy);
 //				mat = rotationMatrix(float3(-1.0, 1.0, 0.0), sin(_Time.x * 1.0 + input.viewDir.y * 2.0) * 3.141516);
