@@ -50,7 +50,9 @@ public class HUDMessage : MonoBehaviour {
 		EGG_FOUND,
 		EGG_INVENTORY_FULL,
 		BREAK_OBJECT_BIGGER_DRAGON,
-		BREAK_OBJECT_NEED_TURBO
+		BREAK_OBJECT_NEED_TURBO,
+		SHIELD_POISON_LOST,
+		SHIELD_MINE_LOST,
 	}
 
 	// How to react with consecutive triggers
@@ -183,6 +185,8 @@ public class HUDMessage : MonoBehaviour {
 			case Type.HEALTH_STARVING:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.HEALTH_CRITICAL:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.POISON:				Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);	break;
+			case Type.SHIELD_MINE_LOST:		Messenger.AddListener<DamageType>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLostMine);	break;
+			case Type.SHIELD_POISON_LOST:	Messenger.AddListener<DamageType>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLostPoison);	break;
 			case Type.NEED_BIGGER_DRAGON:	Messenger.AddListener<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.AddListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.AddListener<CollectibleChest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
@@ -208,6 +212,8 @@ public class HUDMessage : MonoBehaviour {
 			case Type.HEALTH_STARVING:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.HEALTH_CRITICAL:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.POISON:				Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);	break;
+			case Type.SHIELD_MINE_LOST:		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLostMine);	break;
+			case Type.SHIELD_POISON_LOST:	Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLostPoison);	break;
 			case Type.NEED_BIGGER_DRAGON:	Messenger.RemoveListener<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.RemoveListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.RemoveListener<CollectibleChest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
@@ -489,6 +495,20 @@ public class HUDMessage : MonoBehaviour {
 	/// <param name="_type">Type of damage.</param>
 	/// <param name="_source">Source of the damage (optional).</param>
 	private void OnDamageReceived(float _damage, DamageType _type, Transform _source) {
+		// For now we're only interested in the type
+		if(_type == DamageType.POISON) {
+			Show();
+		}
+	}
+
+	private void OnShieldLostMine(DamageType _type) {
+		// For now we're only interested in the type
+		if(_type == DamageType.MINE) {
+			Show();
+		}
+	}
+
+	private void OnShieldLostPoison(DamageType _type) {
 		// For now we're only interested in the type
 		if(_type == DamageType.POISON) {
 			Show();
