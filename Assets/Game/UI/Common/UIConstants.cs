@@ -163,6 +163,20 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
     }
 
     [SerializeField]
+    private Color m_powerColorVacuum = new Color(0f, 0.91f, 1f);
+    public static Color POWER_COLOR_VACUUM
+    {
+        get { return instance.m_powerColorDrain; }
+    }
+
+    [SerializeField]
+    private Color m_powerColorMagnetic = new Color(0f, 0.91f, 1f);
+    public static Color POWER_COLOR_MAGNETIC
+    {
+        get { return instance.m_powerColorDrain; }
+    }
+
+    [SerializeField]
     private Color m_powerColorScore = new Color(0f, 0.91f, 1f);
     public static Color POWER_COLOR_SCORE
     {

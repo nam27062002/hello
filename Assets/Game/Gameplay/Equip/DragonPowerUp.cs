@@ -200,7 +200,7 @@ public class DragonPowerUp : MonoBehaviour {
 						motion.AddSpeedPowerup( def.GetAsFloat("param1", 0));
 					}
 				}break;
-				case "eat_distance_increase":
+				case "vacuum":
 				{
 					DragonEatBehaviour eatBehaviour =  GetComponent<DragonEatBehaviour>();
 					eatBehaviour.AddEatDistance( def.GetAsFloat("param1", 0) );
@@ -352,6 +352,16 @@ public class DragonPowerUp : MonoBehaviour {
                     return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
                 }break;
 
+            case "magnetic":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_MAGNETIC.ToHexString("#"));
+                }break;
+
+            case "vacuum":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_VACUUM.ToHexString("#"));
+                }break;
+
             case "preyHpBoost": {
 				// Show target entity name
 				// [AOC] TODO!! Plural
@@ -388,6 +398,14 @@ public class DragonPowerUp : MonoBehaviour {
 
 			case "fury_size_increase": {
 				return UIConstants.POWER_COLOR_FIRE;
+			} break;
+
+			case "magnetic": {
+				return UIConstants.POWER_COLOR_MAGNETIC;
+			} break;
+
+			case "vacuum": {
+				return UIConstants.POWER_COLOR_VACUUM;
 			} break;
 
 			case "freeze_aura": {
