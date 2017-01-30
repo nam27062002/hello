@@ -63,9 +63,8 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 		m_respawnTime = -1;
 
 		m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
-
-		// TODO[MALH]: Get path relative to quality version
-		PoolManager.CreatePool(m_entityPrefabStr, IEntity.ENTITY_PREFABS_PATH + m_entityPrefabStr, (int)GetMaxEntities(), true);        
+		
+		PoolManager.CreatePool(m_entityPrefabStr, IEntity.EntityPrefabsPath + m_entityPrefabStr, (int)GetMaxEntities(), true);        
     }
 
     protected override uint GetMaxEntities() {
