@@ -649,13 +649,15 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 	}
 		
-	public void Attack() {
+	public void Attack(bool _melee, bool _ranged) {
 		if (m_panic)
 			return;
 		
 		if (!m_attack) {
 			m_attack = true;
 			m_animator.SetBool("attack", true);
+			m_animator.SetBool("melee",  _melee);
+			m_animator.SetBool("ranged", _ranged);
 		}
 	}
 
@@ -666,6 +668,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_attack) {
 			m_attack = false;
 			m_animator.SetBool("attack", false);
+			m_animator.SetBool("melee",  false);
+			m_animator.SetBool("ranged", false);
 		}
 	}
 

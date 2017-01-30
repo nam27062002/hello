@@ -35,11 +35,15 @@ namespace AI {
 				base.OnEnter(_oldState, _param);
 				m_meleeWeapon.damage = ((AttackMeleeData)m_data).damage;
 				m_meleeWeapon.enabled = false;
+
+				m_machine.SetSignal(Signals.Type.Melee, true);
 			}
 
 			protected override void OnExit(State _newState) {
 				base.OnExit(_newState);
 				m_meleeWeapon.enabled = false;
+
+				m_machine.SetSignal(Signals.Type.Melee, false);
 			}
 
 			protected override void OnAnimDealDamageExtended() {
