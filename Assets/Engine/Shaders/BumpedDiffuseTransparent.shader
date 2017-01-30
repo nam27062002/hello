@@ -13,14 +13,14 @@ Shader "Hungry Dragon/Bumped Diffuse Transparent (Spawners)"
 	SubShader
 	{
 		Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
-		ZWrite On
+		ZWrite Off
 		Blend SrcAlpha OneMinusSrcAlpha 
-		Cull Back
+		Cull back
 		ColorMask RGBA
 
 		Pass
 		{
-			Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
+//			Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -113,9 +113,10 @@ Shader "Hungry Dragon/Bumped Diffuse Transparent (Spawners)"
 				fixed fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelFactor), 0.0, 1.0);
 
 				// col = (diffuse + fixed4(UNITY_LIGHTMODEL_AMBIENT.rgb,1)) * col + specular * _LightColor0;
-				col = (diffuse + fixed4(i.vLight, 1)) * col + /*(specular * _LightColor0) + */(fresnel * _FresnelColor);
+				col = ((diffuse + fixed4(i.vLight, 1)) * col + (fresnel * _FresnelColor)) * _Tint;
+				col.a = clamp(_Tint.a + fresnel, 0.0, 1.0);
 
-				return col * _Tint;
+				return col;
 			}
 			ENDCG
 		}

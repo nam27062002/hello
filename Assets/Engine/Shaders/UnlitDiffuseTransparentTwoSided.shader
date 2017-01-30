@@ -8,7 +8,6 @@
 	}
 
 	Category{
-		Tags{ "Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "Glow" }
 
 		//		AlphaTest Greater .01
 		Lighting Off Fog{ Color(0,0,0,0) }
@@ -23,13 +22,17 @@
 		SubShader{
 			Blend SrcAlpha OneMinusSrcAlpha
 			Pass{
+				Tags{ "Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "Glow" }
 				Cull front
 				SetTexture[_MainTex] {
-					combine texture * primary, constant * primary
+					constantColor[_Tint]
+					combine texture * constant, texture * primary
 				}
 			}
 			Pass{
+				Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "TransparentGlow" }
 				Cull back
+				Zwrite off
 //				Blend SrcAlpha OneMinusSrcAlpha
 
 				SetTexture[_MainTex]{
