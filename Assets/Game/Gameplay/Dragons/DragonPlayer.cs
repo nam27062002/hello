@@ -509,6 +509,9 @@ public class DragonPlayer : MonoBehaviour {
 					m_shieldTimers.Add(_type, Time.time);
 				}
 			}
+
+			// event shield lost
+			Messenger.Broadcast<DamageType>(GameEvents.PLAYER_LOST_SHIELD, _type);
 		}
 	}
 

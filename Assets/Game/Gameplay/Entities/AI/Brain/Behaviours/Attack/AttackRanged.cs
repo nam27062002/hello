@@ -52,6 +52,8 @@ namespace AI {
 			protected override void OnEnter(State _oldState, object[] _param) {
 				base.OnEnter(_oldState, _param);
 				m_pilot.PressAction(Pilot.Action.Aim);
+
+				m_machine.SetSignal(Signals.Type.Ranged, true);
 			}
 
 			protected override void OnExit(State _newState) {
@@ -62,6 +64,8 @@ namespace AI {
 					PoolManager.ReturnInstance(m_projectile);
 					m_projectile = null;
 				}
+
+				m_machine.SetSignal(Signals.Type.Ranged, false);
 			}
 
 			protected override void OnAttachProjectileExtended() {	

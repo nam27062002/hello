@@ -16,6 +16,7 @@ namespace AI {
 			public DragonTier shootingTier;
 			public CheckType checkType;
 			public float dragonSizeRangeMultiplier = 10;
+			public Range m_shutdownRange = new Range(10,20);
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Search Shoot Target")]
@@ -64,13 +65,7 @@ namespace AI {
 
 			// The first element in _param must contain the amount of time without detecting an enemy
 			protected override void OnEnter(State _oldState, object[] _param) {
-				if (_param != null && _param.Length > 0) {
-					if ( _param[0] is float )
-						m_shutdownSensorTime = (float)_param[0];
-				} else {
-					m_shutdownSensorTime = 0f;
-				}
-
+				m_shutdownSensorTime = m_data.m_shutdownRange.GetRandom();
 				if (m_shutdownSensorTime > 0f) {
 					m_timer = m_shutdownSensorTime;
 				} else {

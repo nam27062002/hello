@@ -53,6 +53,8 @@ namespace AI {
 			InWater,
 			LockedInCage,
 			Invulnerable,
+			Ranged,
+			Melee,
 
 			Count
 		}

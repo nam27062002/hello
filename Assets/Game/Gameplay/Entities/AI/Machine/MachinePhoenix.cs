@@ -8,6 +8,12 @@ namespace AI {
 		bool m_phoenixActive = false;
 		public GameObject m_fire;
 
+		public GameObject m_view;
+		public GameObject m_viewWhenBurning;
+
+		public ParticleData m_onFireParticle;
+		public ParticleData m_onFireEndsParticle;
+
 		public override void Spawn(ISpawner _spawner) {
 			base.Spawn(_spawner);
 
@@ -39,17 +45,23 @@ namespace AI {
 		private void Activate()
 		{
 			m_phoenixActive = true;
+
+			m_view.SetActive(false);
+			// on fire particle
+
 			m_fire.SetActive(true);
+			m_viewWhenBurning.SetActive(true);
 		}
 
 		private void Deactivate()
 		{
 			m_phoenixActive = false;
+
+			m_view.SetActive(true);
+			// on fire particle
+
 			m_fire.SetActive(false);
+			m_viewWhenBurning.SetActive(false);
 		}
-
-
-
-
 	}
 }
