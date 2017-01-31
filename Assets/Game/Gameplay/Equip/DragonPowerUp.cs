@@ -19,12 +19,14 @@ public class DragonPowerUp : MonoBehaviour {
 	{
 		Entity.ResetSCMuliplier();
 		Entity.ResetScoreMultiplier();
+		Entity.ResetXpMultiplier();
 	}
 
 	void OnDestroy()
 	{
 		Entity.ResetSCMuliplier();
 		Entity.ResetScoreMultiplier();
+		Entity.ResetXpMultiplier();
 	}
 
 	void Start() 
@@ -183,6 +185,11 @@ public class DragonPowerUp : MonoBehaviour {
 					Entity.AddScoreMultiplier( def.GetAsFloat("param1", 0));
 					m_warnEntities = true;
 				}break;
+				case "more_xp":
+				{
+					Entity.AddXpMultiplier( def.GetAsFloat("param1", 0));
+					m_warnEntities = true;
+				}break;
 				case "fury_size_increase":	// Increases fire size by param1 %
 				{
 					FireBreathNew fireBreath = GetComponent<FireBreathNew>();
@@ -251,6 +258,10 @@ public class DragonPowerUp : MonoBehaviour {
 
 			case "fury_increase": {
 				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
+			} break;
+
+			case "more_xp": {
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), UIConstants.POWER_COLOR_XP.ToHexString("#"));
 			} break;
 
 			case "dive": {
@@ -352,7 +363,7 @@ public class DragonPowerUp : MonoBehaviour {
                     return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
                 }break;
 
-            case "magnetic":
+            case "magnet":
                 {
                     return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_MAGNETIC.ToHexString("#"));
                 }break;

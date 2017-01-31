@@ -296,7 +296,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 
     private void Entities_Create(uint amount) {
         m_entities = new IEntity[amount];        
-    }
+    }    
     #endregion
 
     #region interface_for_subclasses

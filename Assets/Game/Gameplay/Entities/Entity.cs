@@ -69,8 +69,9 @@ public class Entity : IEntity {
 	// Power up static values
 	//-----------------------------------------------
 
-	private static float m_powerUpSCMultiplier = 0;
-	private static float m_powerUpScoreMultiplier = 0;
+	private static float m_powerUpSCMultiplier = 0;	// Soft currency power up multiplier
+	private static float m_powerUpScoreMultiplier = 0;	// Score power up multiplier
+	private static float m_powerUpXpMultiplier = 0;	// XP power up multiplier
 
 	/************/
 	void Awake() {
@@ -91,14 +92,15 @@ public class Entity : IEntity {
 
 		// Cache some frequently accessed values from the definition for faster access
 		// Reward
-		m_reward.score = m_def.GetAsInt("rewardScore");
-		m_reward.coins = m_def.GetAsInt("rewardCoins");
+		// m_reward.score = m_def.GetAsInt("rewardScore");
+		// m_reward.coins = m_def.GetAsInt("rewardCoins");
+		// m_reward.xp = m_def.GetAsFloat("rewardXp");
 		ApplyPowerUpMultipliers();
 		m_reward.pc = m_def.GetAsInt("rewardPC");
 		m_reward.health = m_def.GetAsFloat("rewardHealth");
 		m_reward.energy = m_def.GetAsFloat("rewardEnergy");
 		// m_reward.fury = m_def.GetAsFloat("rewardFury");
-		m_reward.xp = m_def.GetAsFloat("rewardXp");
+
 		m_reward.alcohol = m_def.GetAsFloat("alcohol",0);
 		m_reward.origin = m_def.Get("sku");
 
@@ -305,6 +307,9 @@ public class Entity : IEntity {
 
 		m_reward.coins = m_def.GetAsInt("rewardCoins");
 		m_reward.coins += Mathf.FloorToInt((m_reward.coins * m_powerUpSCMultiplier) / 100.0f);
+
+		m_reward.xp = m_def.GetAsFloat("rewardXp");
+		m_reward.xp += (m_reward.xp * m_powerUpXpMultiplier) / 100.0f;
 	}
 
 
@@ -326,5 +331,15 @@ public class Entity : IEntity {
 	public static void AddScoreMultiplier( float value )
 	{
 		m_powerUpScoreMultiplier += value;
+	}
+
+	public static void ResetXpMultiplier()
+	{
+		m_powerUpXpMultiplier = 0;
+	}
+
+	public static void AddXpMultiplier( float value )
+	{
+		m_powerUpXpMultiplier += value;
 	}
 }

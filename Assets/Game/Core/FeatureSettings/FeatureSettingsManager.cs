@@ -1,4 +1,4 @@
-﻿// GameFeatureSettingsManager.cs
+﻿// FeatureSettingsManager.cs
 // Hungry Dragon
 // 
 // Created by David Germade
@@ -488,7 +488,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     private void ApplyFeatureSetting(FeatureSettings settings)
     {
 #if !UNITY_EDITOR
-        GameFeatureSettings.EQualityLevelValues quality = settings.GetValueAsQualityLevel(GameFeatureSettings.KEY_QUALITY_LEVEL);
+        FeatureSettings.EQualityLevelValues quality = settings.GetValueAsQualityLevel(FeatureSettings.KEY_QUALITY_LEVEL);
         int qualityIndex = (int)quality;
         QualitySettings.SetQualityLevel(qualityIndex);
         DeviceQualityManager.Log(">> qualityLevel:" + quality.ToString() + " index = " + qualityIndex);        
@@ -580,6 +580,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         get
         {
             return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_GLOW);
+        }
+    }
+
+    public FeatureSettings.ELevel2Values EntitiesLOD
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsLevel2(FeatureSettings.KEY_ENTITIES_LOD);
         }
     }
     #endregion
