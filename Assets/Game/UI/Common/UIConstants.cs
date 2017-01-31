@@ -138,6 +138,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_powerColorPoison; }
 	}
 
+	[SerializeField] private Color m_powerColorXp = new Color(0f, 1f, 0f);
+	public static Color POWER_COLOR_XP {
+		get { return instance.m_powerColorXp; }
+	}
+
 	[SerializeField] private Color m_powerColorObstacle = new Color(0.87f, 0.67f, 0.20f);
 	public static Color POWER_COLOR_OBSTACLE {
 		get { return instance.m_powerColorObstacle; }

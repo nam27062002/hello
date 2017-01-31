@@ -150,8 +150,10 @@ namespace AI {
 					if (m > m_data.arrivalRadius * m_data.arrivalRadius) {
 						m_timer += Time.deltaTime;
 						if (m_timer > m_timeOut) {
-							m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+							float shutDown = m_data.onFailShutdown.GetRandom();
+							m_transitionParam[0] = shutDown;
 							m_eatBehaviour.enabled = false;
+							m_machine.DisableSensor( shutDown );
 							Transition( OnPursuitTimeOut, m_transitionParam );
 						} else {
 							if (m_targetEntity != null)
