@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class CageSpawner : AbstractSpawner {
+public class PrisonerSpawner : AbstractSpawner {
 
 	[Serializable]
 	public class Group {
@@ -26,19 +26,17 @@ public class CageSpawner : AbstractSpawner {
     private AreaBounds m_areaBounds = new RectAreaBounds(Vector3.zero, Vector3.one);
     public override AreaBounds area { get { return m_areaBounds; } set { m_areaBounds = value; } }
 
-    protected override void OnStart() {
+	private void Awake() {
+		// Progressive respawn disabled because it respawns only one instance and it's triggered by CageBehaviour which is not prepared to loop until Respawn returns true
+		UseProgressiveRespawn = false;
+		UseSpawnManagerTree = false;
+
         m_maxEntities = 0;
         for (int g = 0; g < m_groups.Length; g++) {
             m_maxEntities = (uint)Mathf.Max(m_maxEntities, m_groups[g].m_entityPrefabsStr.Length);            
-        }
+        }        
 
-        // Progressive respawn disabled because it respawns only one instance and it's triggered by CageBehaviour which is not prepared to loop until Respawn returns true
-        UseProgressiveRespawn = false;
-        UseSpawnManagerTree = false;
-
-        if (m_maxEntities > 0) {
-            RegisterInSpawnerManager();
-        }
+		Initialize();
     }
 
     protected override uint GetMaxEntities() {
@@ -112,6 +110,7 @@ public class CageSpawner : AbstractSpawner {
 
                 // change state in machine
                 m_entities[i].GetComponent<AI.IMachine>().UnlockFromCage();
+				m_entities[i] = null;
             }
         }
     }

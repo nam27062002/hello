@@ -19,27 +19,21 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	private Hit m_currentHits;
 	private DragonTier m_tier;
 
-	private ISpawner m_spawner;
-	private CageSpawner m_cageSpawner;
+	private PrisonerSpawner m_cageSpawner;
 
-	private GameCamera m_newCamera;
 
 
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
 	void Awake() {
-		m_cageSpawner = GetComponent<CageSpawner>();
+		m_cageSpawner = GetComponent<PrisonerSpawner>();
 		m_cageSpawner.Initialize();
 
 		m_currentHits = new Hit();
-
-		m_newCamera = Camera.main.GetComponent<GameCamera>();
 	}
 
 	public void Spawn(ISpawner _spawner) {
-		m_spawner = _spawner;
-
 		DragonPlayer player = InstanceManager.player;
 		m_tier = player.GetTierWhenBreaking();
 
@@ -51,27 +45,17 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 		m_view.SetActive(true);
 		SetCollisionsEnabled(true);
 
-		m_cageSpawner.area = m_spawner.area; // cage spawner will share the area defined to spawn the cage.
+		m_cageSpawner.area = _spawner.area; // cage spawner will share the area defined to spawn the cage.
 		m_cageSpawner.Respawn();
 	}
 
-	private void Disable(bool _destroyed) {		
-		m_spawner.RemoveEntity(gameObject, _destroyed);
+	void OnDisable() {
 		m_cageSpawner.ForceRemoveEntities();
 	}
 
 	// Update is called once per frame
 	private void Update() {
 		m_waitTimer -= Time.deltaTime;
-	}
-
-	private void LateUpdate() {
-		// check camera to destroy this entity if it is outside view area
-		if (m_newCamera != null && m_newCamera.IsInsideDeactivationArea(transform.position)) {
-			if (m_spawner != null) {
-				Disable(false);
-			}
-		}
 	}
 
 	private void OnCollisionEnter(Collision collision) {

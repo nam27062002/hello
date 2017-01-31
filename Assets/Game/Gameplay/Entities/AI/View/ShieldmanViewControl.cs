@@ -10,6 +10,7 @@ public class ShieldmanViewControl : ViewControl {
 
 	public override void Spawn(ISpawner _spawner) {
 		base.Spawn(_spawner);
+
 		m_shield.SetActive(false);
 	}
 
