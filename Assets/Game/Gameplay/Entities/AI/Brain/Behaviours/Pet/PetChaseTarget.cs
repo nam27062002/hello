@@ -131,9 +131,11 @@ namespace AI {
 					if ( m_eatBehaviour != null && m_eatBehaviour.IsEating() )
 					{
 						// m_pilot.GoTo( m_machine.transform.position + m_machine.transform.forward * m_data.speed * 0.5f);
+						m_pilot.SlowDown(true);
 					}
 					else
 					{
+						m_pilot.SlowDown(false);
 						// if not eating check chase timeout
 						m_timer += Time.deltaTime;
 						if ( m_timer >= m_data.chaseTimeout )
@@ -147,14 +149,23 @@ namespace AI {
 							// Chase
 							if (m_targetEntity != null) {
 								pos = m_targetEntity.circleArea.center;
+								/*
 								if (m_targetMachine != null)
-									pos += m_targetMachine.velocity * Time.deltaTime;
+								{
+									if ( Vector3.Dot( m_pilot.direction, m_targetMachine.direction) > 0 )
+									{
+										pos += (m_targetMachine.velocity * Time.deltaTime) * 2;	
+									}
+								}
+								*/
 							} else {
 								pos = m_target.position;
 							}
-							// pos.z = Mathf.Clamp( pos.z, -2, 2);
+							float magnitude = (pos - m_pilot.transform.position).sqrMagnitude;
+							if ( magnitude < m_speed * 0.25f ) // !!!
+								magnitude = m_speed * 0.25f;
+							m_pilot.SetMoveSpeed(Mathf.Min( m_speed, magnitude));
 							m_pilot.GoTo(pos);
-							m_pilot.SetMoveSpeed(m_speed);
 						}
 					}
 

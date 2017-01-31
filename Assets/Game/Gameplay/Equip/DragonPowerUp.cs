@@ -19,12 +19,14 @@ public class DragonPowerUp : MonoBehaviour {
 	{
 		Entity.ResetSCMuliplier();
 		Entity.ResetScoreMultiplier();
+		Entity.ResetXpMultiplier();
 	}
 
 	void OnDestroy()
 	{
 		Entity.ResetSCMuliplier();
 		Entity.ResetScoreMultiplier();
+		Entity.ResetXpMultiplier();
 	}
 
 	void Start() 
@@ -183,6 +185,11 @@ public class DragonPowerUp : MonoBehaviour {
 					Entity.AddScoreMultiplier( def.GetAsFloat("param1", 0));
 					m_warnEntities = true;
 				}break;
+				case "more_xp":
+				{
+					Entity.AddXpMultiplier( def.GetAsFloat("param1", 0));
+					m_warnEntities = true;
+				}break;
 				case "fury_size_increase":	// Increases fire size by param1 %
 				{
 					FireBreathNew fireBreath = GetComponent<FireBreathNew>();
@@ -199,6 +206,11 @@ public class DragonPowerUp : MonoBehaviour {
 					{
 						motion.AddSpeedPowerup( def.GetAsFloat("param1", 0));
 					}
+				}break;
+				case "vacuum":
+				{
+					DragonEatBehaviour eatBehaviour =  GetComponent<DragonEatBehaviour>();
+					eatBehaviour.AddEatDistance( def.GetAsFloat("param1", 0) );
 				}break;
 				default:
 				{
@@ -347,6 +359,16 @@ public class DragonPowerUp : MonoBehaviour {
                     return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
                 }break;
 
+            case "magnet":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_MAGNETIC.ToHexString("#"));
+                }break;
+
+            case "vacuum":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_VACUUM.ToHexString("#"));
+                }break;
+
             case "preyHpBoost": {
 				// Show target entity name
 				// [AOC] TODO!! Plural
@@ -383,6 +405,14 @@ public class DragonPowerUp : MonoBehaviour {
 
 			case "fury_size_increase": {
 				return UIConstants.POWER_COLOR_FIRE;
+			} break;
+
+			case "magnetic": {
+				return UIConstants.POWER_COLOR_MAGNETIC;
+			} break;
+
+			case "vacuum": {
+				return UIConstants.POWER_COLOR_VACUUM;
 			} break;
 
 			case "freeze_aura": {

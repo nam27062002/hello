@@ -50,9 +50,8 @@ public class CageSpawner : AbstractSpawner {
         for (int g = 0; g < m_groups.Length; g++) {			
 			for (int e = 0; e < m_groups[g].m_entityPrefabsStr.Length; e++) {
                 prefabName = m_groups[g].m_entityPrefabsStr[e];
-
-                // TODO[MALH]: Get path relative to quality version
-                PoolManager.CreatePool(prefabName, IEntity.ENTITY_PREFABS_PATH + prefabName, 1, true);                
+                
+                PoolManager.CreatePool(prefabName, IEntity.EntityPrefabsPath + prefabName, 1, true);                
 			}
 		}
 

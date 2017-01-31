@@ -7,7 +7,8 @@ public class ProjectileMotion : MonoBehaviour {
 		Missile,
 		Spear,
 		Bomb,
-		FallingMine
+		FallingMine,
+		PositionMissile	// Goes to position and explodes there
 	};
 
 	public Type m_moveType;
@@ -17,6 +18,8 @@ public class ProjectileMotion : MonoBehaviour {
 	Vector3 m_direction;
 	Vector3 m_forceVector;
 	Vector3 m_position;
+	Vector3 m_target;
+	Vector3 m_startPosition;
 
 	// Use this for initialization
 	void Start() {
@@ -52,6 +55,17 @@ public class ProjectileMotion : MonoBehaviour {
 			case Type.FallingMine:
 			{
 			}break;
+			case Type.PositionMissile:
+			{
+				m_duration -= Time.deltaTime;
+				m_position = Vector3.Lerp( m_target, m_startPosition, m_duration / m_arrowMaxDuration);
+				if ( m_duration <= 0 )
+				{
+					IProjectile pb = GetComponent<IProjectile>();
+					if (pb != null)
+						pb.Explode(false);
+				}
+			}break;
 		}
 		transform.position = m_position;
 	}
@@ -71,6 +85,7 @@ public class ProjectileMotion : MonoBehaviour {
 	public void Shoot( Vector3 _target )
 	{
 		_target.z = 0;
+		m_startPosition = _target;
 		switch( m_moveType )
 		{
 			case Type.Spear:
@@ -100,6 +115,14 @@ public class ProjectileMotion : MonoBehaviour {
 			{
 				m_position = transform.position;
 				m_forceVector = Vector3.zero;
+			}break;
+			case Type.PositionMissile:
+			{
+				m_position = transform.position;
+				m_startPosition = m_position;
+				m_target = _target;
+				m_duration = (m_target - m_startPosition).magnitude / m_arrowSpeed;
+				m_arrowMaxDuration = m_duration;
 			}break;
 		}
 	}

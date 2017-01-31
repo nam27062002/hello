@@ -118,9 +118,9 @@ namespace AI {
 						m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 					}
 
-					float lerpFactor = (IsActionPressed(Action.Boost))? 4f : 2f;
+					//float lerpFactor = (IsActionPressed(Action.Boost))? 4f : 2f;
 
-					m_impulse = Vector3.Lerp(m_lastImpulse, Vector3.ClampMagnitude(m_impulse, speed), Time.smoothDeltaTime * lerpFactor);
+					//m_impulse = Vector3.Lerp(m_lastImpulse, Vector3.ClampMagnitude(m_impulse, speed), Time.smoothDeltaTime * lerpFactor);
 					m_impulse += m_externalImpulse;
 
 					if (!m_directionForced) {// behaviours are overriding the actual direction of this machine

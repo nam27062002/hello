@@ -13,6 +13,8 @@ public class DragonEatBehaviour : EatBehaviour {
     public Range m_randomSpeedRange = new Range(1.0f, 1.5f);
 	private float m_randomSpeed = 1;
 	private const float m_boostEatingSpeed = 1.5f;
+	protected float m_powerUpEatPercentage = 0;
+	protected float m_powerUpEatDistance = 0;
     //--------------
 
     override protected void Awake()
@@ -213,15 +215,17 @@ public class DragonEatBehaviour : EatBehaviour {
 	protected override float GetEatDistance()
 	{
 		float ret = m_eatDistance * transform.localScale.x;
-
-		//if ( m_dragonBoost.IsBoostActive() )
-		//	ret *= 2;
-
-		if (DebugSettings.eatDistancePowerUp) {
-			ret *= 2;
-		}
+		ret += m_powerUpEatDistance;
 		return ret;
 	}    
+
+	public void AddEatDistance(float percentage)
+	{
+		m_powerUpEatPercentage += percentage;
+		m_powerUpEatDistance = (m_eatDistance * transform.localScale.x) * m_powerUpEatPercentage / 100.0f;
+	}
+
+
 
 	public override void StartAttackTarget (Transform _transform)
 	{
