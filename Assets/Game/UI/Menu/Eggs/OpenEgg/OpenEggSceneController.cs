@@ -36,6 +36,7 @@ public class OpenEggSceneController : MonoBehaviour {
 	[SerializeField] private ParticleSystem[] m_tapFX = new ParticleSystem[(int)EggReward.Rarity.COUNT];
 	[Tooltip("One per rarity, matching order")]
 	[SerializeField] private ParticleSystem[] m_openFX = new ParticleSystem[(int)EggReward.Rarity.COUNT];
+	[SerializeField] private ParticleSystem m_explosionFX = null;
 
 
 	// Events
@@ -135,6 +136,10 @@ public class OpenEggSceneController : MonoBehaviour {
 				m_openFX[i].Stop(true);
 			}
 		}
+
+		if(m_explosionFX != null) {
+			m_explosionFX.Stop(true);
+		}
 	}
 
 	/// <summary>
@@ -205,6 +210,12 @@ public class OpenEggSceneController : MonoBehaviour {
 		if(openFX != null) {
 			openFX.Clear();
 			openFX.Play(true);
+		}
+
+		// Explosion FX
+		// Match material with the egg shell!
+		if(m_explosionFX != null) {
+			m_explosionFX.Play();
 		}
 
 		// Program reward animation

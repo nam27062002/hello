@@ -129,9 +129,7 @@ public class Spawner : AbstractSpawner {
 
         if (m_rails == 0) m_rails = 1;
 
-        string entityPrefabPath = IEntity.ENTITY_PREFABS_PATH + m_entityPrefabStr;
-
-        // TODO[MALH]: Get path relative to quality version
+        string entityPrefabPath = IEntity.EntityPrefabsPath + m_entityPrefabStr;        
         PoolManager.CreatePool(m_entityPrefabStr, entityPrefabPath, Mathf.Max(15, m_entities.Length), true);
 
         // Get external references

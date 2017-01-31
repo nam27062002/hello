@@ -1,26 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-// using FGOL.Utilities;
 
 using UnityEngine;
 using System.IO;
 
 public class OptimizationDataInfo:Singleton<OptimizationDataInfo>
-{
-    private string[] levelToLoad = {
-        "Hawaii",
-        "Arctic",
-        "MiddleEast"
-    };
-    private string[] SpawnerLevelToLoad = {
-        "SP_Hawaii",
-        "SP_Arctic",
-        "SP_MiddleEast"
-    };
+{   
     public const string AssetFolderName = "Assets";
-    public const string AssetFolderPath = AssetFolderName;
-    public const string PrefabFolderName = "Prefabs";
+    public const string AssetFolderPath = AssetFolderName;    
     public const string ResourcesFolderName = "Resources";
     public const string DirectorySeparator = "/";
     public const String ResourceFolderPath = AssetFolderPath + DirectorySeparator + ResourcesFolderName;
@@ -29,23 +17,24 @@ public class OptimizationDataInfo:Singleton<OptimizationDataInfo>
     public const String SceneMaterialSVFolderName = "SceneMaterialSV";
     public const String PrefabsMaterialSVFolderSVName = "PrefabsMaterialSV";
     public const String MaterialResourceSaveFolderPath = AssetFolderPath + DirectorySeparator + ResourcesFolderName + DirectorySeparator + MaterialFolderName;
-    public const string MaterialSceneSavePath = AssetFolderPath + DirectorySeparator + ArtFolderName + DirectorySeparator + SceneMaterialSVFolderName;
-    public const string MaterialPrefabsSavePath = AssetFolderPath + DirectorySeparator + ArtFolderName + DirectorySeparator + PrefabsMaterialSVFolderSVName;
+    public const string MaterialSceneSavePath = AssetFolderPath + DirectorySeparator + ArtFolderName + DirectorySeparator + SceneMaterialSVFolderName;    
     public readonly string[] PropertiesNameTofind = {"_NM","_BumpMap","_NormalMap"};
     public const String HDSufix = "HD";
     public const String MDSufix = "MD";
     public const String LDSufix = "LD";
     public const String MetaFileExtension = ".meta";
-    public const String MaterialFileExtension = ".mat";
-    public const String PrefabsFolderPath = AssetFolderPath + DirectorySeparator + PrefabFolderName;
+    public const String MaterialFileExtension = ".mat";    
     public const String MultiSufixFolferName = "MRes";
-    public const String PoolsFolderName = "Pools";
-    public const String ResourcePoolsFolderPath = PrefabsFolderPath + DirectorySeparator + ResourcesFolderName + DirectorySeparator + PoolsFolderName;
+    public const String PoolsFolderName = "Pools";    
     public const String LightMaplFolderName = "LightMap";
     public const String LightmapResourceSaveFolderPath = AssetFolderPath + DirectorySeparator + ResourcesFolderName + DirectorySeparator + LightMaplFolderName;
 
+    // Prefabs    
+    public const String PrefabsFolderPathSrc = ResourceFolderPath + DirectorySeparator + IEntity.ENTITY_PREFABS_PATH;
+    public const String PrefabsFolderPathDest = ResourceFolderPath + DirectorySeparator + IEntity.ENTITY_PREFABS_LOW_PATH;
+    public const String PrefabsMaterialsPathDest = PrefabsFolderPathDest + "Materials";
 
-	public const string ArtScenePath = "Game/Scenes/Levels/Art/";
+    public const string ArtScenePath = "Game/Scenes/Levels/Art/";
 	public const string SpawnersScenePath = "Game/Scenes/Levels/Spawners/";
 
 

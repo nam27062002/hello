@@ -131,9 +131,11 @@ namespace AI {
 					if ( m_eatBehaviour != null && m_eatBehaviour.IsEating() )
 					{
 						// m_pilot.GoTo( m_machine.transform.position + m_machine.transform.forward * m_data.speed * 0.5f);
+						m_pilot.SlowDown(true);
 					}
 					else
 					{
+						m_pilot.SlowDown(false);
 						// if not eating check chase timeout
 						m_timer += Time.deltaTime;
 						if ( m_timer >= m_data.chaseTimeout )
@@ -160,8 +162,8 @@ namespace AI {
 								pos = m_target.position;
 							}
 							float magnitude = (pos - m_pilot.transform.position).sqrMagnitude;
-							if ( magnitude < m_speed * 0.1f ) // !!!
-								magnitude = m_speed * 0.1f;
+							if ( magnitude < m_speed * 0.25f ) // !!!
+								magnitude = m_speed * 0.25f;
 							m_pilot.SetMoveSpeed(Mathf.Min( m_speed, magnitude));
 							m_pilot.GoTo(pos);
 						}

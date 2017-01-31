@@ -204,7 +204,6 @@ public class OpenEggScreenController : MonoBehaviour {
 		}
 
 		// Show/Hide buttons and HUD
-		m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
 		m_finalPanel.Show();
 
 		// Do the 3D anim
@@ -302,7 +301,12 @@ public class OpenEggScreenController : MonoBehaviour {
 		// If it matches our curent egg, launch its animation!
 		if(_egg == m_scene.eggData) {
 			// Launch animation!
-			LaunchOpenAnimation();
+			// Delay to sync with the egg anim
+			DOVirtual.DelayedCall(1.75f, LaunchOpenAnimation);
+			//LaunchOpenAnimation();
+
+			// Hide UI!
+			m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
 		}
 	}
 

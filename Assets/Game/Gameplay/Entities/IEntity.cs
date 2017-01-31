@@ -5,6 +5,17 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 	public const string ENTITY_PREFABS_PATH = "Game/Entities/NewEntites/";
 	public const string ENTITY_PREFABS_LOW_PATH = "Game/Entities/NewEntitesLow/";
+    
+    /// <summary>
+    /// Returns the path where the prefabs for entities are stored. It depends on the quality settings
+    /// </summary>
+    public static string EntityPrefabsPath
+    {
+        get
+        {
+            return (FeatureSettingsManager.instance.EntitiesLOD == FeatureSettings.ELevel2Values.low) ? ENTITY_PREFABS_LOW_PATH : ENTITY_PREFABS_PATH;
+        }
+    }
 
 	private int m_allowEdible;
 	public bool allowEdible { get { return m_allowEdible == 0; } set { if (value) { m_allowEdible = Mathf.Max(0, m_allowEdible - 1); } else { m_allowEdible++; } } }

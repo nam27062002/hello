@@ -308,7 +308,28 @@ public static class StringUtil
 
         return result;
     }
-	
-    
+
+    public static string FormatPathToProjectRoot(string path)
+    {
+        // Removes the last / if it exists
+        string returnValue = null;
+        if (path != null)
+        {
+            if (path[path.Length - 1] == '/')
+            {
+                returnValue = path.Substring(0, path.Length - 1);
+            }
+            else
+            {
+                returnValue = path;
+            }
+        }
+
+        // Makes sure that its from Assets folder
+        returnValue = StringUtils.FormatPath(returnValue, StringUtils.PathFormat.PROJECT_ROOT);
+
+        return returnValue;
+    }
+
     // todo: add helper stuff for JSON parsing?
 }
