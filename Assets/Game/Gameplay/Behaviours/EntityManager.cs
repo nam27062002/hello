@@ -6,6 +6,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 
     private List<Entity> m_entities;
     private List<EntityBg> m_entitiesBg;
+	private List<Cage> m_cages;
     private List<Entity> m_searchList;
     private Rect m_area;    
 
@@ -29,6 +30,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
     {
         m_entities = new List<Entity>();
         m_entitiesBg = new List<EntityBg>();
+		m_cages = new List<Cage>();
         m_searchList = new List<Entity>();
         m_entitiesColliderMask = 1 << LayerMask.NameToLayer("AirPreys") | 1 << LayerMask.NameToLayer("WaterPreys") | 1 << LayerMask.NameToLayer("MachinePreys") | 1 << LayerMask.NameToLayer("GroundPreys") | 1 << LayerMask.NameToLayer("Mines");        
     }
@@ -52,6 +54,16 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
     {
         m_entitiesBg.Remove(_entity);
     }
+
+	public void RegisterEntityCage(Cage _cage)
+	{     
+		m_cages.Add(_cage);
+	}
+
+	public void UnregisterEntityCage(Cage _cage)
+	{
+		m_cages.Remove(_cage);
+	}
 
     public Entity[] GetEntitiesInRange2D(Vector2 _center, float _radius)
     {
@@ -210,6 +222,12 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             {
                 m_entitiesBg[i].LogicUpdate();
             }
+
+			count = m_cages.Count;
+			for (i = 0; i < count; i++)
+			{
+				m_cages[i].LogicUpdate();
+			}
         }
     }
 
@@ -238,6 +256,16 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
                     m_entitiesBg[i].Disable(false);                    
                 }
             }            
+
+			count = m_cages.Count;
+			// Inverse loop because the current entity could be deleted from the list if it's disabled
+			for (i = count - 1; i > -1; i--)
+			{
+				if (m_cages[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_cages[i].transform.position))
+				{
+					m_cages[i].Disable(false);                    
+				}
+			}  
         }        
     }
 }

@@ -264,21 +264,18 @@ namespace AI {
 			UpdateAttack();
 
 			// Check if targeting to bend through that direction
-			if (m_attackTarget)
-			{
+			if (m_attackTarget) {
 				Vector3 dir = m_attackTarget.position - position;
 				dir.Normalize();
 				m_viewControl.NavigationLayer(dir);	
-			}
-			else
-			{
+			} else {
 				m_viewControl.NavigationLayer(m_pilot.impulse);	
 			}
 
-			if (m_pilot.speed > 0.01f) {
-				m_viewControl.Move(m_pilot.speed);//m_pilot.impulse.magnitude); //???
-			} else {
+			if (m_machine.GetSignal(Signals.Type.LockedInCage) || m_pilot.speed <= 0.01f) {
 				m_viewControl.Move(0f);
+			} else {
+				m_viewControl.Move(m_pilot.speed);//m_pilot.impulse.magnitude); //???
 			}
 
 			m_viewControl.Boost(m_pilot.IsActionPressed(Pilot.Action.Boost));
@@ -294,7 +291,8 @@ namespace AI {
 			if (m_machine.GetSignal(Signals.Type.Biting)
 			||  m_machine.GetSignal(Signals.Type.Latching)
 			||  m_machine.GetSignal(Signals.Type.Panic)
-			||  m_machine.GetSignal(Signals.Type.Latched)) {	
+			||  m_machine.GetSignal(Signals.Type.Latched)
+			||  m_machine.GetSignal(Signals.Type.LockedInCage)) {	
 				return;
 			}
 
