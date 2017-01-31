@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -99,7 +100,7 @@ public class EggController : MonoBehaviour {
 	/// <summary>
 	/// Refresh this object based on egg's current state.
 	/// </summary>
-	public void Refresh() {
+	private void Refresh() {
 		// Valid data required!
 		if(m_eggData == null) return;
 
@@ -111,10 +112,8 @@ public class EggController : MonoBehaviour {
 		m_animator.SetInteger("egg_state", (int)m_eggData.state);
 
 		// Collect steps
-		float[] intensities = { 0.5f, 1.5f };	// [AOC] MAGIC NUMBERS, one per tap step!
-		int step = Mathf.Clamp(m_openBehaviour.tapCount, 0, intensities.Length - 1);
+		int step = Mathf.Clamp(m_openBehaviour.tapCount, 0, OpenEggBehaviour.TAPS_TO_OPEN);
 		m_animator.SetInteger("collect_step", step);
-		m_animator.SetFloat("intensity", intensities[step]);
 
 		// Rarity
 		m_animator.SetInteger("rarity", (int)m_eggData.rewardData.rarity);
@@ -124,6 +123,11 @@ public class EggController : MonoBehaviour {
 			bool hide = (m_eggData.state == Egg.State.OPENING && step > 0);
 			hide |= m_eggData.state == Egg.State.COLLECTED;
 			m_idleFX.SetActive(!hide);
+		}
+
+		// Animation intensity - reset to default if state is different than collected
+		if(m_eggData.state != Egg.State.COLLECTED) {
+			m_animator.SetFloat("intensity", 1f);
 		}
 	}
 
@@ -139,8 +143,33 @@ public class EggController : MonoBehaviour {
 	private void OnEggStateChanged(Egg _egg, Egg.State _from, Egg.State _to) {
 		// If it's this egg, refresh
 		if(_egg == m_eggData) {
+			// Update animator parameters
 			Refresh();
+
+			// If going to "collected", launch extra FX
+			if(_to == Egg.State.COLLECTED) {
+				// Increase intensity over time
+				// Super-easy to do with DOTween library!
+				DOVirtual.Float(1f, 10f, 1.75f, 
+					(float _value) => { m_animator.SetFloat("intensity", _value); }
+				)
+				.SetEase(Ease.Linear)
+				.SetDelay(0f)
+				.OnComplete(
+					() => { m_animator.SetFloat("intensity", 1f); }
+				);
+			}
 		}
+	}
+
+	/// <summary>
+	/// The egg has been tapped.
+	/// To be called by child behaviours.
+	/// </summary>
+	/// <param name="_tapCount">Total tap count (including this one).</param>
+	public void OnTap(int _tapCount) {
+		// Update animator parameters
+		Refresh();
 	}
 }
 
