@@ -19,12 +19,14 @@ public class DragonPowerUp : MonoBehaviour {
 	{
 		Entity.ResetSCMuliplier();
 		Entity.ResetScoreMultiplier();
+		Entity.ResetXpMultiplier();
 	}
 
 	void OnDestroy()
 	{
 		Entity.ResetSCMuliplier();
 		Entity.ResetScoreMultiplier();
+		Entity.ResetXpMultiplier();
 	}
 
 	void Start() 
@@ -181,6 +183,11 @@ public class DragonPowerUp : MonoBehaviour {
 				{
 					// Increase score given by any prey by [param1]
 					Entity.AddScoreMultiplier( def.GetAsFloat("param1", 0));
+					m_warnEntities = true;
+				}break;
+				case "more_xp":
+				{
+					Entity.AddXpMultiplier( def.GetAsFloat("param1", 0));
 					m_warnEntities = true;
 				}break;
 				case "fury_size_increase":	// Increases fire size by param1 %
