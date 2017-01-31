@@ -23,7 +23,6 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	private enum Step {
 		IDLE,
-		PROGRESSION,
 		MISSION_0,
 		MISSION_1,
 		MISSION_2,
@@ -33,12 +32,6 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Exposed References
-	[SerializeField] private ResultsScreenProgressionPill m_progressionPill = null;
-	public ResultsScreenProgressionPill progressionPill {
-		get { return m_progressionPill; }
-	}
-
 	[SerializeField] private ResultsScreenMissionPill m_missionPill = null;
 	public ResultsScreenMissionPill missionPill {
 		get { return m_missionPill; }
@@ -69,11 +62,9 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Check required fields
-		Debug.Assert(m_progressionPill != null, "Required field!");
 		Debug.Assert(m_missionPill != null, "Required field!");
 
 		// Subscribe to the OnFinished event on each pill
-		m_progressionPill.OnFinished.AddListener(OnPillFinished);
 		m_missionPill.OnFinished.AddListener(OnPillFinished);
 	}
 
@@ -82,7 +73,6 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from the OnFinished event on each pill
-		m_progressionPill.OnFinished.RemoveListener(OnPillFinished);
 		m_missionPill.OnFinished.RemoveListener(OnPillFinished);
 	}
 
@@ -94,7 +84,6 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	/// </summary>
 	public void Init() {
 		// Disable all carousel elements
-		m_progressionPill.animator.ForceHide(false);
 		m_missionPill.animator.ForceHide(false);
 
 		// Reset current step
@@ -107,14 +96,6 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	/// </summary>
 	public void DoMissions() {
 		StartCoroutine(DoStep(Step.MISSION_0));
-	}
-
-	/// <summary>
-	/// Launch the progression pill.
-	/// Will interrupt current pills.
-	/// </summary>
-	public void DoProgression() {
-		StartCoroutine(DoStep(Step.PROGRESSION));
 	}
 
 	/// <summary>
@@ -145,20 +126,6 @@ public class ResultsScreenCarousel : MonoBehaviour {
 			case Step.IDLE: {
 				// Just hide current pill
 				//HideCurrentPill();
-			} break;
-
-			case Step.PROGRESSION: {
-				// Hide current pill
-				HideCurrentPill();
-
-				// Show pill if required
-				if(m_progressionPill.MustBeDisplayed()) {
-					m_currentPill = m_progressionPill;
-					m_currentPill.ShowAndAnimate(pillAnimDuration);	// Add enough delay to let the previous pill hide
-				} else {
-					// Pill doesn't have to be displayed, go to idle
-					StartCoroutine(DoStep(Step.IDLE));
-				}
 			} break;
 
 			case Step.MISSION_0:
@@ -207,18 +174,8 @@ public class ResultsScreenCarousel : MonoBehaviour {
 			} break;
 
 			case Step.FINISHED: {
-				// Hide current pill, unless it's the progression pill!
-				if(m_currentPill != m_progressionPill) {
-					HideCurrentPill();
-				}
-
-				// If possible, leave the progression pill visible, but don't animate it again!
-				if(m_progressionPill.MustBeDisplayed()) {
-					yield return new WaitForSeconds(pillAnimDuration);
-					m_currentPill = m_progressionPill;
-					m_progressionPill.ShowFinished();	// Nothing will happen if already visible
-				} else {
-					// Just hide current pill and leave no pill visible
+				// Hide current pill
+				if(m_currentPill) {
 					HideCurrentPill();
 				}
 			} break;
@@ -244,11 +201,6 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	public void OnPillFinished() {
 		// Depending on current step, launch next step
 		switch(m_step) {
-			case Step.PROGRESSION: {
-				// Go to idle
-				StartCoroutine(DoStep(Step.IDLE));
-			} break;
-
 			case Step.MISSION_0:
 			case Step.MISSION_1:
 			case Step.MISSION_2: {

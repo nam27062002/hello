@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -175,9 +176,7 @@ public class DragonXPBar : MonoBehaviour {
 		}
 
 		// Level Text
-		if(m_levelText != null) {
-			m_levelText.Localize("TID_LEVEL", StringUtils.FormatNumber(_data.progression.level + 1) + "/" + StringUtils.FormatNumber(_data.progression.maxLevel + 1));
-		}
+		RefreshLevelText(_data.progression.level, _data.progression.maxLevel, false);
 
 		// Things to update only when target dragon has changed
 		if(m_dragonData != _data) {
@@ -190,6 +189,32 @@ public class DragonXPBar : MonoBehaviour {
 
 			// Store new dragon data
 			m_dragonData = _data;
+		}
+	}
+
+	/// <summary>
+	/// Refresh the level text with the given values. Optionally launch a level up animation.
+	/// </summary>
+	/// <param name="_currentLevel">Dragon's current level [0..N-1].</param>
+	/// <param name="_maxLevel">Dragon's max level [0..N-1].</param>
+	/// <param name="_animate">Whether to launch a level up animation or not.</param>
+	virtual protected void RefreshLevelText(int _currentLevel, int _maxLevel, bool _animate) {
+		// Ignore if level text is not defined
+		if(m_levelText == null) return;
+
+		// Update text
+		m_levelText.Localize(
+			"TID_LEVEL_ABBR", "\n" +						// [AOC] HARDCODED!! Hardcoded line break 
+			LocalizationManager.SharedInstance.Localize(
+				"TID_FRACTION", 
+				StringUtils.FormatNumber(_currentLevel + 1), 
+				StringUtils.FormatNumber(_maxLevel + 1)
+			)
+		);
+
+		// Animate?
+		if(_animate) {
+			m_levelText.transform.DOScale(1.5f, 0.15f).SetLoops(2, LoopType.Yoyo);
 		}
 	}
 

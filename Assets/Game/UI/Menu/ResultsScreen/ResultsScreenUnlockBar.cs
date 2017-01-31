@@ -50,18 +50,26 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 	// Anim speeds
 	[Separator("To easily tune animations")]
 	[SerializeField] [Range(0.1f, 2f)] private float m_dragonUnlockSpeedMultiplier = 1f;
+	[SerializeField] [Range(0.1f, 2f)] private float m_barSpeedMultiplier = 1f;
 
 	// Disguises unlock
 	private List<ResultsScreenDisguiseFlag> m_flags = new List<ResultsScreenDisguiseFlag>();
 
 	// Internal
-	private DragonData m_nextDragonData = null;
 	private Tween m_xpBarTween = null;
-	private float m_initialDelta = 0f;
-	private float m_targetDelta = 1f;
+
+	private int m_initialLevel = 0;
+	private int m_currentLevel = 0;	// Updated during animation
+	private int m_targetLevel = 0;
+
+	private float m_initialDelta = 0f;	// Bar position at the start of the animation
+	private float m_targetDelta = 1f;	// Bar position at the end of the animation
+
 	private float m_deltaPerLevel = 0f;
+
 	private bool m_flagsFolded = true;	// By default flags are folded when animation has finished
 	private bool m_nextDragonLocked = true;	// Is the next dragon locked or has it been already unlocked using PC?
+	private DragonData m_nextDragonData = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -92,9 +100,11 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 	/// Manual initialization.
 	/// Animation is triggered by the Carousel's progression pill.
 	/// </summary>
-	/// <param name="_progressionPill">Carousel's progression pill to attach events</param>
-	public void Init(ResultsScreenProgressionPill _progressionPill) {
-		// Initialize with current dragon's data
+	public void Init() {
+		// [AOC] As usual, animating the XP bar is not obvious (dragon may have 
+		//		 leveled up several times during a single game, disguises unlocked, etc.)
+
+		// Initialize bar with current dragon's data
 		Refresh(DragonManager.currentDragon);
 		m_deltaPerLevel = 1f/(m_dragonData.progression.maxLevel);
 
@@ -125,15 +135,43 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 			m_nextDragonScene3DLoader.gameObject.SetActive(false);
 		}
 
-		// Compute initial and target deltas
+		// Compute initial and target deltas and levels
+		// Are we testing?
+		DragonProgression progression = m_dragonData.progression;
 		if(CPResultsScreenTest.testEnabled) {
-			// For testing purposes
+			// Initial level and delta
 			m_initialDelta = CPResultsScreenTest.xpInitialDelta;
+			float initialLevelRaw = Mathf.Lerp(0, progression.maxLevel, m_initialDelta);
+			m_initialLevel = Mathf.FloorToInt(initialLevelRaw);
+
+			// Special case for last level (should only happen with delta >= 1f)
+			if(m_initialLevel >= progression.maxLevel) {
+				m_initialLevel = progression.maxLevel;
+				m_initialDelta = 1f;
+			}
+
+			// Do the same with the target level and delta
 			m_targetDelta = CPResultsScreenTest.xpFinalDelta;
+			float targetLevelRaw = Mathf.Lerp(0, progression.maxLevel, m_targetDelta);
+			m_targetLevel = Mathf.FloorToInt(targetLevelRaw);
+
+			// Special case for last level (should only happen with delta >= 1f)
+			if(m_targetLevel >= progression.maxLevel) {
+				m_targetLevel = progression.maxLevel;
+				m_targetDelta = 1f;
+			}
 		} else {
-			m_initialDelta = (RewardManager.dragonInitialLevel * m_deltaPerLevel) + Mathf.Lerp(0f, m_deltaPerLevel, m_dragonData.progression.progressCurrentLevel);	// [AOC] This should do it!
-			m_targetDelta = (m_dragonData.progression.level * m_deltaPerLevel) + Mathf.Lerp(0f, m_deltaPerLevel, m_dragonData.progression.progressCurrentLevel);	// [AOC] This should do it!
+			// Just get levels from the reward manager
+			m_initialLevel = RewardManager.dragonInitialLevel;
+			m_targetLevel = progression.level;
+
+			// Deltas are stored as relative to the level. Must be scaled to the global scale.
+			m_initialDelta = (m_initialLevel * m_deltaPerLevel) + Mathf.Lerp(0f, m_deltaPerLevel, RewardManager.dragonInitialLevelProgress);
+			m_targetDelta = (m_targetLevel * m_deltaPerLevel) + Mathf.Lerp(0f, m_deltaPerLevel, progression.progressCurrentLevel);
 		}
+
+		// Start at the beginning!
+		m_currentLevel = m_initialLevel;
 
 		// Setup bar
 		if(m_xpBar != null) {
@@ -210,12 +248,37 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 		m_disguisesFoldToggle.transform.SetAsLastSibling();
 		m_disguisesFoldToggle.interactable = false;
 		m_disguisesFoldToggle.onClick.AddListener(ToggleFlags);
+	}
 
-		// Attach to carousel's progression pill animation events
-		_progressionPill.OnAnimStart.AddListener(OnXPAnimStart);
-		_progressionPill.OnAnimUpdate.AddListener(OnXPAnimUpdate);
-		_progressionPill.OnAnimLevelChanged.AddListener(OnXPAnimLevelChanged);
-		_progressionPill.OnAnimEnd.AddListener(OnXPAnimEnd);
+	/// <summary>
+	/// Launch the animation from the XP at the start of the game to the XP at the end.
+	/// Init() method must have been called first.
+	/// </summary>
+	/// <returns>The estimated total duration of the animation, in seconds.</returns>
+	public float LaunchAnimation() {
+		// Ignore if already animating
+		if(m_xpBarTween != null) return 0f;
+
+		// Don't allow to fold/unfold disguises during animation
+		m_disguisesFoldToggle.interactable = false;
+		m_flagsFolded = false;	// Flags should be unfolded by the end of the animation
+
+		// Single super-tween to do so
+		m_xpBarTween = m_auxBar
+			.DOValue(m_targetDelta, 0.15f * m_barSpeedMultiplier)	// Speed based, duration representes units/sec
+			.SetSpeedBased(true)
+			.SetDelay(0.25f * m_barSpeedMultiplier)	// Add some delay to give time to appear (external animator)
+			.SetEase(Ease.Linear)
+			.OnUpdate(OnXPAnimUpdate)
+			.OnComplete(OnXPAnimEnd)
+			.SetAutoKill(true);
+
+		// Show FX!
+		if(m_receiveFX != null) m_receiveFX.Play(true);
+
+		// Compute and return total animation duration
+		float duration = (m_targetDelta - m_initialDelta)/(0.15f * m_barSpeedMultiplier);
+		return m_xpBarTween.Delay() + duration;
 	}
 
 	//------------------------------------------------------------------------//
@@ -267,11 +330,10 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 		if(unlockText != null) unlockText.Localize("TID_RESULTS_DRAGON_UNLOCKED", m_nextDragonData.def.GetLocalized("tidName"));
 
 		// Play cool dragon animation!
-		/*if(m_nextDragonScene3D != null) {
-			Animator anim = m_nextDragonScene3D.FindComponentRecursive<Animator>();
-			if(anim != null) {
-				anim.SetTrigger("unlocked");
-			}
+		/*MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
+		if(dragonLoader != null) {
+			dragonLoader.LoadDragon(m_nextDragonData.def.sku);
+			dragonLoader.dragonInstance.SetAnim(MenuDragonPreview.Anim.UNLOCKED);
 		}*/
 	}
 
@@ -311,20 +373,6 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 		}
 	}
 
-	/// <summary>
-	/// Utility function to convert a delta within a level to a global delta.
-	/// </summary>
-	/// <returns>The global delta.</returns>
-	/// <param name="_level">The target level.</param>
-	/// <param name="_levelDelta">The local delta within the level.</param>
-	private float LocalToGlobalDelta(int _level, float _levelDelta) {
-		// Dragon data must be initialized
-		if(m_dragonData == null) return 0f;
-
-		// [AOC] This should do it!
-		return (_level * m_deltaPerLevel) + Mathf.Lerp(0f, m_deltaPerLevel, _levelDelta);
-	}
-
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -344,63 +392,46 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 	/// <summary>
 	/// Progression bar animation event.
 	/// </summary>
-	/// <param name="_currentLevel">Animation's current level.</param>
-	/// <param name="_levelDelta">Animation's delta within the current level.</param>
-	public void OnXPAnimStart(int _currentLevel, float _levelDelta) {
-		// Don't allow to fold/unfold disguises during animation
-		m_disguisesFoldToggle.interactable = false;
-		m_flagsFolded = false;	// Flags should be unfolded by the end of the animation
+	public void OnXPAnimUpdate() {
+		// Check for level ups!
+		int newLevel = Mathf.FloorToInt(Mathf.Lerp(0, m_dragonData.progression.maxLevel, m_auxBar.value));
+		if(newLevel != m_currentLevel) {
+			// Update text!
+			RefreshLevelText(newLevel, m_dragonData.progression.maxLevel, true);
 
-		// Show FX!
-		if(m_receiveFX != null) m_receiveFX.Play(true);
-	}
-
-	/// <summary>
-	/// Progression bar animation event.
-	/// </summary>
-	/// <param name="_currentLevel">Animation's current level.</param>
-	/// <param name="_levelDelta">Animation's delta within the current level.</param>
-	public void OnXPAnimUpdate(int _currentLevel, float _levelDelta) {
-		// We're actually animating the secondary bar
-		m_auxBar.value = LocalToGlobalDelta(_currentLevel, _levelDelta);
-	}
-
-	/// <summary>
-	/// Progression bar animation event.
-	/// </summary>
-	/// <param name="_currentLevel">Animation's current level.</param>
-	/// <param name="_levelDelta">Animation's delta within the current level.</param>
-	public void OnXPAnimLevelChanged(int _currentLevel, float _levelDelta) {
-		// Move secondary xp bar forward and show some FX
-		if(m_secondaryXPBar != null) {
-			m_secondaryXPBar.value = m_auxBar.value;
-		}
-
-		if(m_levelUpFX != null) {
-			m_levelUpFX.Stop();
-			m_levelUpFX.Play();
-		}
-
-		// [AOC] TODO!! Some SFX?
-
-		// Check if a disguise has been unlocked!
-		for(int i = 0; i < m_disguises.Count; i++) {
-			// Skip if already unlocked
-			Debug.Log("Disguise " + i + ":\nunlocked? " + m_disguises[i].unlocked + "\nlevel: " + m_disguises[i].def.GetAsInt("unlockLevel") + "\ncurrentLevel: " + _currentLevel);
-			if(m_disguises[i].unlocked) continue;
-			if(m_disguises[i].def.GetAsInt("unlockLevel") == _currentLevel) {
-				LaunchDisguiseUnlockAnimation(i);
-				m_disguises[i].unlocked = true;	// Mark as unlocked
+			// Instantly move secondary xp bar forward
+			if(m_secondaryXPBar != null) {
+				m_secondaryXPBar.value = m_auxBar.value;
 			}
+
+			// Show some FX
+			if(m_levelUpFX != null) {
+				m_levelUpFX.Stop();
+				m_levelUpFX.Play();
+			}
+
+			// [AOC] TODO!! Some SFX?
+
+			// Check if a disguise has been unlocked!
+			for(int i = 0; i < m_disguises.Count; i++) {
+				// Skip if already unlocked
+				Debug.Log("Disguise " + i + ":\nunlocked? " + m_disguises[i].unlocked + "\nlevel: " + m_disguises[i].def.GetAsInt("unlockLevel") + "\ncurrentLevel: " + newLevel);
+				if(m_disguises[i].unlocked) continue;
+				if(m_disguises[i].def.GetAsInt("unlockLevel") == newLevel) {
+					LaunchDisguiseUnlockAnimation(i);
+					m_disguises[i].unlocked = true;	// Mark as unlocked
+				}
+			}
+
+			// Store new value
+			m_currentLevel = newLevel;
 		}
 	}
 
 	/// <summary>
 	/// Progression bar animation event.
 	/// </summary>
-	/// <param name="_currentLevel">Animation's current level.</param>
-	/// <param name="_levelDelta">Animation's delta within the current level.</param>
-	public void OnXPAnimEnd(int _currentLevel, float _levelDelta) {
+	public void OnXPAnimEnd() {
 		// If we reached max delta, a dragon has been unlocked!
 		if(m_targetDelta >= 1f && m_nextDragonLocked) {
 			// Only if next dragon was locked, obviously!
@@ -417,12 +448,10 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 		if(m_secondaryXPBar != null) {
 			m_secondaryXPBar.DOValue(m_auxBar.value, 0.15f);
 		}
-	}
 
-
-
-	public void OnFillBar(int _currentLevel, float _levelDelta) {
-		// start filling animation (stand alone version) at a faster speed
-
+		// Lose tween reference
+		if(m_xpBarTween != null) {
+			m_xpBarTween = null;
+		}
 	}
 }

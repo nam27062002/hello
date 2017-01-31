@@ -91,6 +91,14 @@ public class HungryDragonEditorMenu {
 	}
 
 	/// <summary>
+	/// Find missing references on scene.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Time Scaler", false, 4)]
+	public static void TimeScalerWindow() {
+		TimeScaler.ShowWindow();
+	}
+
+	/// <summary>
 	/// Custom toolbar for the project.
 	/// </summary>
 	[MenuItem("Hungry Dragon/Tools/Hungry Dragon Toolbar", false, 50)]
