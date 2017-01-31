@@ -23,7 +23,7 @@ public class OpenEggBehaviour : MonoBehaviour, IPointerClickHandler {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly int TAPS_TO_OPEN = 2;
+	public static readonly int TAPS_TO_OPEN = 1;
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -82,17 +82,9 @@ public class OpenEggBehaviour : MonoBehaviour, IPointerClickHandler {
 
 		// Otherwise show some FX
 		else {
-			/*// Kill any existing tween
-			DOTween.Kill("eggTap");
-
-			// Scale down a bit every time xD
-			// Use relative scaling
-			Vector3 targetScale = new Vector3(transform.localScale.x * 1.1f, transform.localScale.y * 0.9f, transform.localScale.z * 1.1f);
-			transform.DOScale(targetScale, 0.5f).SetEase(Ease.OutElastic).SetId("eggTap");*/
+			// View controller will manage it
+			eggController.OnTap(m_tapCount);
 		}
-
-		// Refresh view
-		eggController.Refresh();
 	}
 }
 
