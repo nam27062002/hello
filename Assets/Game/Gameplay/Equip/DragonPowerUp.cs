@@ -260,6 +260,10 @@ public class DragonPowerUp : MonoBehaviour {
 				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
 			} break;
 
+			case "more_xp": {
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), UIConstants.POWER_COLOR_XP.ToHexString("#"));
+			} break;
+
 			case "dive": {
 				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
 			} break;
