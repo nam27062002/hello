@@ -186,7 +186,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public float m_dragonMass = 10;
 	public float m_dragonFricction = 15.0f;
 	public float m_dragonGravityModifier = 0.3f;
-	private bool m_waterDeepLimit = false;
+    public float m_dragonAirGravityModifier = 0.3f;
+    public float m_dragonWaterGravityModifier = 0.3f;
+    private bool m_waterDeepLimit = false;
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -302,8 +304,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_dragonMass = m_dragon.data.def.GetAsFloat("mass");
 		m_dragonFricction = m_dragon.data.def.GetAsFloat("friction");
 		m_dragonGravityModifier = m_dragon.data.def.GetAsFloat("gravityModifier");
+        m_dragonAirGravityModifier = m_dragon.data.def.GetAsFloat("airGravityModifier");
+        m_dragonWaterGravityModifier = m_dragon.data.def.GetAsFloat("waterGravityModifier");
 
-		m_tongue = transform.FindTransformRecursive("Fire_Dummy");
+        m_tongue = transform.FindTransformRecursive("Fire_Dummy");
 	}
 
 	/// <summary>
@@ -1057,7 +1061,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
         if (impulse.y < 0) impulse.y *= m_inverseGravityWater;
 
-		Vector3 gravityAcceleration = Vector3.up * 9.81f * m_dragonGravityModifier * m_waterGravityMultiplier;   // Gravity
+		Vector3 gravityAcceleration = Vector3.up * 9.81f * m_dragonWaterGravityModifier * m_waterGravityMultiplier;   // Gravity
         Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass * m_accWaterFactor;
         Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
@@ -1140,7 +1144,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
             //impulse.Normalize();
             Vector3 gravityAcceleration = Vector3.zero;
                 //if (impulse.y < 0) impulse.y *= m_dragonGravityModifier;
-            gravityAcceleration = Vector3.down * 9.81f * m_dragonGravityModifier * 0.9f;// * m_dragonMass;
+            gravityAcceleration = Vector3.down * 9.81f * m_dragonAirGravityModifier * 0.9f;// * m_dragonMass;
             Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
             Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
