@@ -26,6 +26,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 		MISSION_0,
 		MISSION_1,
 		MISSION_2,
+		CHESTS,
 		FINISHED
 	}
 	
@@ -35,6 +36,11 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	[SerializeField] private ResultsScreenMissionPill m_missionPill = null;
 	public ResultsScreenMissionPill missionPill {
 		get { return m_missionPill; }
+	}
+
+	[SerializeField] private ResultsScreenChestsPill m_chestsPill = null;
+	public ResultsScreenChestsPill chestsPill {
+		get { return m_chestsPill; }
 	}
 
 	// Internal Logic
@@ -63,9 +69,11 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	private void Awake() {
 		// Check required fields
 		Debug.Assert(m_missionPill != null, "Required field!");
+		Debug.Assert(m_chestsPill != null, "Required field!");
 
 		// Subscribe to the OnFinished event on each pill
 		m_missionPill.OnFinished.AddListener(OnPillFinished);
+		m_chestsPill.OnFinished.AddListener(OnPillFinished);
 	}
 
 	/// <summary>
@@ -74,6 +82,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe from the OnFinished event on each pill
 		m_missionPill.OnFinished.RemoveListener(OnPillFinished);
+		m_chestsPill.OnFinished.RemoveListener(OnPillFinished);
 	}
 
 	//------------------------------------------------------------------------//
@@ -85,6 +94,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	public void Init() {
 		// Disable all carousel elements
 		m_missionPill.animator.ForceHide(false);
+		m_chestsPill.animator.ForceHide(false);
 
 		// Reset current step
 		StartCoroutine(DoStep(Step.IDLE));
@@ -96,6 +106,14 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	/// </summary>
 	public void DoMissions() {
 		StartCoroutine(DoStep(Step.MISSION_0));
+	}
+
+	/// <summary>
+	/// Launch the chests pill.
+	/// Will interrupt current pills.
+	/// </summary>
+	public void DoChests() {
+		StartCoroutine(DoStep(Step.CHESTS));
 	}
 
 	/// <summary>
@@ -121,7 +139,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 		m_step = _step;
 
 		// Select and init target pill
-		float pillAnimDuration = 0.25f;	// As setup in the ShowHideAnimator component
+		float hideAnimDuration = 0.25f;	// As setup in the ShowHideAnimator component
 		switch(_step) {
 			case Step.IDLE: {
 				// Just hide current pill
@@ -162,7 +180,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 
 					// Show mission pill
 					m_currentPill = m_missionPill;
-					m_currentPill.ShowAndAnimate(pillAnimDuration);	// Add enough delay to let the previous pill hide
+					m_currentPill.ShowAndAnimate(hideAnimDuration);	// Add enough delay to let the previous pill hide
 				} else {
 					// Mission doesn't have to be displayed, check next mission or go to idle if last mission
 					if(_step == Step.MISSION_2) {
@@ -173,9 +191,33 @@ public class ResultsScreenCarousel : MonoBehaviour {
 				}
 			} break;
 
-			case Step.FINISHED: {
+			case Step.CHESTS: {
 				// Hide current pill
-				if(m_currentPill) {
+				HideCurrentPill();
+
+				// Show pill if required
+				if(m_chestsPill.MustBeDisplayed()) {
+					m_currentPill = m_chestsPill;
+					m_currentPill.ShowAndAnimate(hideAnimDuration);	// Add enough delay to let the previous pill hide
+				} else {
+					// Pill doesn't have to be displayed, go to idle
+					StartCoroutine(DoStep(Step.IDLE));
+				}
+			} break;
+
+			case Step.FINISHED: {
+				// Hide current pill, unless it's the chests pill!
+				if(m_currentPill != m_chestsPill) {
+					HideCurrentPill();
+				}
+
+				// If possible, leave the chests pill visible, but don't animate it again!
+				if(m_chestsPill.MustBeDisplayed()) {
+					yield return new WaitForSeconds(hideAnimDuration);
+					m_currentPill = m_chestsPill;
+					m_chestsPill.ShowCompleted();	// Nothing will happen if already visible
+				} else {
+					// Just hide current pill and leave no pill visible
 					HideCurrentPill();
 				}
 			} break;
@@ -210,6 +252,11 @@ public class ResultsScreenCarousel : MonoBehaviour {
 				} else {
 					StartCoroutine(DoStep(m_step + 1));
 				}
+			} break;
+
+			case Step.CHESTS: {
+				// Go to idle
+				StartCoroutine(DoStep(Step.IDLE));
 			} break;
 
 			case Step.IDLE:

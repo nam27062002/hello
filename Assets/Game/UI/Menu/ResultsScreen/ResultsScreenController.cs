@@ -14,7 +14,8 @@ public class ResultsScreenController : MonoBehaviour {
 		RESULTS,
 		PROGRESSION,
 		COLLECTIBLES,
-		MISSIONS,
+		CAROUSEL_MISSIONS,
+		CAROUSEL_CHESTS,
 		FINISHED
 	};
 
@@ -32,7 +33,7 @@ public class ResultsScreenController : MonoBehaviour {
 	[SerializeField] private GameObject m_newHighScoreDeco = null;
 
 	[Separator]
-	[SerializeField] private ResultsScreenUnlockBar m_unlockBar = null;
+	[SerializeField] private ResultsScreenXPBar m_unlockBar = null;
 	[SerializeField] private ResultsScreenCarousel m_carousel = null;
 
 	// Animators
@@ -199,12 +200,19 @@ public class ResultsScreenController : MonoBehaviour {
 			case State.COLLECTIBLES: {
 				// If timer has finished, go to next state!
 				if(m_timer <= 0f) {
-					ChangeState(State.MISSIONS);
+					ChangeState(State.CAROUSEL_MISSIONS);
 				}
 			} break;
 
-			case State.MISSIONS: {
+			case State.CAROUSEL_MISSIONS: {
 				// Wait for carousel to finish
+				if(m_carousel.isIdleOrFinished) {
+					ChangeState(State.CAROUSEL_CHESTS);
+				}
+			} break;
+
+			case State.CAROUSEL_CHESTS: {
+				// Wait for the carousel to finish
 				if(m_carousel.isIdleOrFinished) {
 					ChangeState(State.FINISHED);
 				}
@@ -356,9 +364,14 @@ public class ResultsScreenController : MonoBehaviour {
 				m_timer = m_scene.LaunchRewardsAnim();
 			} break;
 
-			case State.MISSIONS: {
+			case State.CAROUSEL_MISSIONS: {
 				// Show missions carousel
 				m_carousel.DoMissions();
+			} break;
+
+			case State.CAROUSEL_CHESTS: {
+				// Show chests carousel
+				m_carousel.DoChests();
 			} break;
 
 			case State.FINISHED: {

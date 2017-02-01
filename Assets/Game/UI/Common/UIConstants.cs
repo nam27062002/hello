@@ -201,9 +201,16 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	}
 
 	[Space]
-	[SerializeField] [Tooltip("Units per second, the bar fills from 0 to 1")] private float m_resultsXPBarSpeed = 0.20f;
+	[Tooltip("Units per second, the whole bar is 1 unit")]
+	[SerializeField] private float m_resultsXPBarSpeed = 0.15f;
 	public static float resultsXPBarSpeed {
 		get { return instance.m_resultsXPBarSpeed; }
+	}
+
+	[Tooltip("Minimum and maximum duration of the XP bar animation. Speed will be adjusted accordingly.")]
+	[SerializeField] private Range m_resultsXPBarMinMaxDuration = new Range(1f, 3f);
+	public static Range resultsXPBarMinMaxDuration {
+		get { return instance.m_resultsXPBarMinMaxDuration; }
 	}
 
 	[SerializeField] private float m_resultsDragonUnlockSpeedMultiplier = 1f;

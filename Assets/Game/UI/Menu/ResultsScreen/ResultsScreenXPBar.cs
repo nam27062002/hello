@@ -1,4 +1,4 @@
-// ResultsScreenUnlockBar.cs
+// ResultsScreenXPBar.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 21/11/2016.
@@ -18,11 +18,10 @@ using DG.Tweening;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Controls the summary screen unlock bar.
-/// Animation is controlled by the Carousel's progression pill.
+/// Controls the summary screen xp bar.
 /// </summary>
 [RequireComponent(typeof(ShowHideAnimator))]
-public class ResultsScreenUnlockBar : DragonXPBar {
+public class ResultsScreenXPBar : DragonXPBar {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -258,9 +257,21 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 		m_disguisesFoldToggle.interactable = false;
 		m_flagsFolded = false;	// Flags should be unfolded by the end of the animation
 
+		// Compute total animation duration and re-adjust speed if need be
+		float deltaOffset = m_targetDelta - m_initialDelta;
+		float speed = UIConstants.resultsXPBarSpeed;
+		float duration = deltaOffset/speed;
+		if(duration < UIConstants.resultsXPBarMinMaxDuration.min) {
+			duration = UIConstants.resultsXPBarMinMaxDuration.min;
+			speed = deltaOffset/duration;
+		} else if(duration > UIConstants.resultsXPBarMinMaxDuration.max) {
+			duration = UIConstants.resultsXPBarMinMaxDuration.max;
+			speed = deltaOffset/duration;
+		}
+
 		// Single super-tween to do so
 		m_xpBarTween = m_auxBar
-			.DOValue(m_targetDelta, UIConstants.resultsXPBarSpeed)	// Speed based, duration representes units/sec
+			.DOValue(m_targetDelta, speed)	// Speed based, duration represents units/sec
 			.SetSpeedBased(true)
 			.SetDelay(0.25f)	// Add some delay to give time to appear (external animator)
 			.SetEase(Ease.Linear)
@@ -271,10 +282,10 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 		// Show FX!
 		if(m_receiveFX != null) m_receiveFX.Play(true);
 
-		// Compute and return total animation duration
-		// [AOC] We can't use the tween.Duration property because it's a speed base tween, so manually do the maths
-		float duration = (m_targetDelta - m_initialDelta)/UIConstants.resultsXPBarSpeed;
+		// Return total animation duration
+		// [AOC] We can't use the tween.Duration property because it's a speed base tween, luckily we have already precomputed the duration ^^
 		return m_xpBarTween.Delay() + duration;
+
 	}
 
 	//------------------------------------------------------------------------//
