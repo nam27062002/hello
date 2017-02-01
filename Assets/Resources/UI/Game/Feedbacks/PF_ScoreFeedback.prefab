@@ -5,15 +5,15 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 224: {fileID: 22406882}
-  - 95: {fileID: 9514100}
-  - 222: {fileID: 22259630}
-  - 114: {fileID: 11444956}
-  - 114: {fileID: 11490788}
-  - 114: {fileID: 11433150}
-  - 114: {fileID: 114000013555690874}
+  - component: {fileID: 22406882}
+  - component: {fileID: 9514100}
+  - component: {fileID: 22259630}
+  - component: {fileID: 11444956}
+  - component: {fileID: 11490788}
+  - component: {fileID: 11433150}
+  - component: {fileID: 114000013555690874}
   m_Layer: 5
   m_Name: PF_ScoreFeedback
   m_TagString: Untagged
@@ -75,11 +75,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_thresholds:
-  - maxScore: 350
+  - maxScore: 50
     colorRange:
       key0:
         serializedVersion: 2
-        rgba: 4292507826
+        rgba: 4294705057
       key1:
         serializedVersion: 2
         rgba: 4294027629
@@ -117,12 +117,13 @@ MonoBehaviour:
       atime5: 0
       atime6: 0
       atime7: 0
+      m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     fontScaleRange:
       min: 0.6
       max: 0.8
-  - maxScore: 750
+  - maxScore: 100
     colorRange:
       key0:
         serializedVersion: 2
@@ -164,12 +165,13 @@ MonoBehaviour:
       atime5: 0
       atime6: 0
       atime7: 0
+      m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     fontScaleRange:
       min: 0.81
       max: 1
-  - maxScore: 2600
+  - maxScore: 200
     colorRange:
       key0:
         serializedVersion: 2
@@ -211,12 +213,13 @@ MonoBehaviour:
       atime5: 0
       atime6: 0
       atime7: 0
+      m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     fontScaleRange:
       min: 1.01
       max: 1.2
-  - maxScore: 5000
+  - maxScore: 300
     colorRange:
       key0:
         serializedVersion: 2
@@ -258,12 +261,13 @@ MonoBehaviour:
       atime5: 0
       atime6: 0
       atime7: 0
+      m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     fontScaleRange:
       min: 1.21
       max: 1.4
-  - maxScore: 10000
+  - maxScore: 500
     colorRange:
       key0:
         serializedVersion: 2
@@ -305,19 +309,20 @@ MonoBehaviour:
       atime5: 0
       atime6: 0
       atime7: 0
+      m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     fontScaleRange:
       min: 1.41
       max: 1.6
-  - maxScore: 25000
+  - maxScore: 1000
     colorRange:
       key0:
         serializedVersion: 2
-        rgba: 4281985733
+        rgba: 4278373117
       key1:
         serializedVersion: 2
-        rgba: 4278241791
+        rgba: 4278224127
       key2:
         serializedVersion: 2
         rgba: 0
@@ -352,19 +357,20 @@ MonoBehaviour:
       atime5: 0
       atime6: 0
       atime7: 0
+      m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     fontScaleRange:
       min: 1.61
       max: 1.8
-  - maxScore: 50000
+  - maxScore: 2000
     colorRange:
       key0:
         serializedVersion: 2
-        rgba: 4278240767
+        rgba: 4278224383
       key1:
         serializedVersion: 2
-        rgba: 4278224383
+        rgba: 4278215935
       key2:
         serializedVersion: 2
         rgba: 0
@@ -399,6 +405,7 @@ MonoBehaviour:
       atime5: 0
       atime6: 0
       atime7: 0
+      m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     fontScaleRange:
@@ -419,10 +426,10 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
