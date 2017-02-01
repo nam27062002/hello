@@ -15,6 +15,13 @@ public class DragonEatBehaviour : EatBehaviour {
 	private const float m_boostEatingSpeed = 1.5f;
 	protected float m_powerUpEatPercentage = 0;
 	protected float m_powerUpEatDistance = 0;
+
+	protected float m_sizeUpEatSpeedFactor = 1;
+	public float sizeUpEatSpeedFactor
+	{
+		get { return m_sizeUpEatSpeedFactor; }
+		set { m_sizeUpEatSpeedFactor = value; }
+	}
     //--------------
 
     override protected void Awake()
@@ -101,6 +108,11 @@ public class DragonEatBehaviour : EatBehaviour {
 
 	void onEatEndEvent(){
 		m_randomSpeed = m_randomSpeedRange.GetRandom();
+	}
+
+	protected override float GetEatSpeedFactor()
+	{
+		return m_eatSpeedFactor * sizeUpEatSpeedFactor;
 	}
 
     protected override void EatExtended(PreyData preyData)

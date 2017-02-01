@@ -146,6 +146,13 @@ public class DragonPlayer : MonoBehaviour {
 	// Internal
 	private float m_invulnerableAfterReviveTimer;
 
+	private bool m_superSizeInvulnerable = false;
+	public bool superSizeInvulnerable
+	{
+		get{ return m_superSizeInvulnerable; }
+		set{ m_superSizeInvulnerable = value; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -197,6 +204,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_holdPreyPoints = transform.GetComponentsInChildren<HoldPreyPoint>();
 
 		// Subscribe to external events
+		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 	}
 
@@ -488,6 +496,8 @@ public class DragonPlayer : MonoBehaviour {
 
 		// During fire, we're invulnerable
 		if(m_breathBehaviour.IsFuryOn()) return true;
+
+		if ( m_superSizeInvulnerable ) return true;
 		
 		// If cheat is enable
 		if(DebugSettings.invulnerable) return true;
@@ -652,5 +662,10 @@ public class DragonPlayer : MonoBehaviour {
 		for( int i = 0; i< m_holdPreyPoints.Length; i++ )
 			if ( !m_holdPreyPoints[i].holded ) return true;
 		return false;
+	}
+
+	public void SetSuperSize( float size )
+	{
+		
 	}
 }

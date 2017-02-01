@@ -62,12 +62,8 @@ public class HungryLetter : MonoBehaviour
 		// m_mapMarker.HideOnMap = true;
 		m_particle.Stop();
 
-#if UNITY_5_3_OR_NEWER
         ParticleSystem.EmissionModule em = m_particle.emission;
         em.enabled = false;
-#else
-        m_particle.enableEmission = false;
-#endif
     }
 
 	//------------------------------------------------------------
