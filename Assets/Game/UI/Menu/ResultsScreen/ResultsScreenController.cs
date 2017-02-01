@@ -12,9 +12,9 @@ public class ResultsScreenController : MonoBehaviour {
 		WAIT_INTRO,
 		INTRO,
 		RESULTS,
+		PROGRESSION,
+		COLLECTIBLES,
 		MISSIONS,
-		PROGRESSION_1,
-		PROGRESSION_2,
 		FINISHED
 	};
 
@@ -185,7 +185,21 @@ public class ResultsScreenController : MonoBehaviour {
 			case State.RESULTS: {
 				// If timer has finished, go to next state!
 				if(m_timer <= 0f) {
-					ChangeState(State.PROGRESSION_1);
+					ChangeState(State.PROGRESSION);
+				}
+			} break;
+			
+			case State.PROGRESSION: {
+				// If timer has finished, go to next state!
+				if(m_timer <= 0f) {
+					ChangeState(State.COLLECTIBLES);
+				}
+			} break;
+
+			case State.COLLECTIBLES: {
+				// If timer has finished, go to next state!
+				if(m_timer <= 0f) {
+					ChangeState(State.MISSIONS);
 				}
 			} break;
 
@@ -194,18 +208,6 @@ public class ResultsScreenController : MonoBehaviour {
 				if(m_carousel.isIdleOrFinished) {
 					ChangeState(State.FINISHED);
 				}
-			} break;
-
-			case State.PROGRESSION_1: {
-				// Wait for carousel to finish
-				if(m_carousel.isIdleOrFinished) {
-					ChangeState(State.PROGRESSION_2);
-				}
-			} break;
-
-			case State.PROGRESSION_2: {
-				// Noting to do for now, go to missions
-				ChangeState(State.MISSIONS);
 			} break;
 
 			case State.FINISHED: {
@@ -267,7 +269,7 @@ public class ResultsScreenController : MonoBehaviour {
 				m_popupAnimator.ForceHide(false);
 
 				// Initialize unlock bar
-				m_unlockBar.Init(m_carousel.progressionPill);
+				m_unlockBar.Init();
 				m_unlockBarAnimator.ForceHide(false);
 
 				// Initialize carousel
@@ -295,46 +297,68 @@ public class ResultsScreenController : MonoBehaviour {
 				m_bottomBarAnimator.Show();
 
 				// Launch number animators
+				// Reset
+				m_scoreAnimator.duration = UIConstants.resultsPanelTextsDuration;
+				m_coinsAnimator.duration = UIConstants.resultsPanelTextsDuration;
+				m_bonusCoinsAnimator.duration = UIConstants.resultsPanelTextsDuration;
+				m_scoreAnimator.SetValue(0, false);
+				m_coinsAnimator.SetValue(0, false);
+				m_bonusCoinsAnimator.SetValue(0, false);
+
+				// Animated sequence!
 				int coinsBonus = survivalBonus;
-				m_scoreAnimator.SetValue(0, score);
-				m_coinsAnimator.SetValue(0, coins + coinsBonus);
-				m_bonusCoinsAnimator.SetValue(0, coinsBonus);
+				Sequence seq = DOTween.Sequence()
+					// Score
+					.AppendInterval(0.25f)	// Initial delay, give time for the show animation
+					.AppendCallback(() => { m_scoreAnimator.SetValue(0, score); })
 
-				// New High Score animation
-				if(isHighScore) {
-					m_newHighScoreDeco.SetActive(true);
-					m_newHighScoreDeco.transform.localScale = Vector3.zero;
-					m_newHighScoreDeco.transform.DOScale(1f, 0.25f)
-						.SetDelay(m_scoreAnimator.duration)	// Sync with score number animation
-						.SetEase(Ease.OutBack)
-						.SetAutoKill(true)
-						.OnComplete(() => {
-							// TODO!! Play some SFX
-						});
-				}
+					// High score
+					.AppendInterval(m_scoreAnimator.duration * 0.9f)	// Overlap a little bit
+					.AppendCallback(() => {
+						// New High Score animation
+						if(isHighScore) {
+							m_newHighScoreDeco.SetActive(true);
+							m_newHighScoreDeco.transform.localScale = Vector3.zero;
+							m_newHighScoreDeco.transform.DOScale(1f, 0.25f)
+								.SetEase(Ease.OutBack)
+								.SetAutoKill(true)
+								.OnComplete(() => {
+									// TODO!! Play some SFX
+								});
+						}
+					})
 
-				// Launch 3D rewards animations
-				float duration = m_scene.LaunchRewardsAnim();
+					// Bonus coins
+					.AppendInterval(isHighScore ? 0.25f: 0f)
+					.AppendCallback(() => { m_bonusCoinsAnimator.SetValue(0, coinsBonus); })
+
+					// Coins total
+					.AppendInterval(m_bonusCoinsAnimator.duration * 0.9f)	// Overlap a little bit
+					.AppendCallback(() => { m_coinsAnimator.SetValue(0, coins + coinsBonus); })
+
+					// Final pause
+					.AppendInterval(m_coinsAnimator.duration + 0.25f);
 
 				// Start timer to next state
-				m_timer = duration;
+				m_timer = seq.Duration();
+			} break;
+			
+			case State.PROGRESSION: {
+				// Show and animate unlock bar as well
+				// Start timer to next state
+				m_unlockBarAnimator.Show();
+				m_timer = m_unlockBar.LaunchAnimation();
+			} break;
+
+			case State.COLLECTIBLES: {
+				// Launch 3D rewards animations
+				// Start timer to next state
+				m_timer = m_scene.LaunchRewardsAnim();
 			} break;
 
 			case State.MISSIONS: {
 				// Show missions carousel
 				m_carousel.DoMissions();
-			} break;
-
-			case State.PROGRESSION_1: {
-				// Show progression carousel (not yet split)
-				m_carousel.DoProgression();
-
-				// Show unlock bar as well
-				m_unlockBarAnimator.Show();
-			} break;
-
-			case State.PROGRESSION_2: {
-				// Nothing to do for now
 			} break;
 
 			case State.FINISHED: {

@@ -75,12 +75,12 @@ public class NumberTextAnimator : MonoBehaviour {
 		// Skip if we've reached the final value
 		if(m_currentValue != m_finalValue) {
 			// Update current value
-			long iNewValue = (long)Mathf.SmoothStep(m_initialValue, m_finalValue, (Time.time - m_startTime)/m_duration);
+			long newValue = (long)Mathf.SmoothStep(m_initialValue, m_finalValue, (Time.time - m_startTime)/m_duration);
 
 			// If value has changed, update textfield
-			if(iNewValue != m_currentValue) {
-				ApplyValue(iNewValue);
-				m_currentValue = iNewValue;
+			if(newValue != m_currentValue) {
+				ApplyValue(newValue);
+				m_currentValue = newValue;
 			}
 		}
 	}
@@ -88,12 +88,12 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// <summary>
 	/// Animate the textfield to interpolate using these parameters.
 	/// </summary>
-	/// <param name="_iInitialValue">Initial value of the textfield.</param>
-	/// <param name="_iFinalValue">Final value of the textfield.</param>
-	public void SetValue(long _iInitialValue, long _iFinalValue) {
+	/// <param name="_initialValue">Initial value of the textfield.</param>
+	/// <param name="_finalValue">Final value of the textfield.</param>
+	public void SetValue(long _initialValue, long _finalValue) {
 		// Store parameters
-		m_initialValue = _iInitialValue;
-		m_finalValue = _iFinalValue;
+		m_initialValue = _initialValue;
+		m_finalValue = _finalValue;
 
 		// Reset timestamp and current value
 		m_currentValue = m_initialValue;
@@ -106,10 +106,16 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// <summary>
 	/// Alternative version, current value will be used as starting value.
 	/// </summary>
-	/// <param name="_iFinalValue">Final value of the textfield.</param>
-	public void SetValue(long _iFinalValue) {
+	/// <param name="_finalValue">Final value of the textfield.</param>
+	/// <param name="_animate">Whether to animate or not.</param>
+	public void SetValue(long _finalValue, bool _animate) {
 		// Call the other version
-		SetValue(m_currentValue, _iFinalValue);
+		// Animate? Start at current value, otherwise force same values as initial and final
+		if(_animate) {
+			SetValue(m_currentValue, _finalValue);
+		} else {
+			SetValue(_finalValue, _finalValue);
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -118,9 +124,9 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// <summary>
 	/// Apply the given value to the textfield. That way we make sure formatting is always respected.
 	/// </summary>
-	/// <param name="_iValue">The value to be applied.</param>
-	private void ApplyValue(long _iValue) {
+	/// <param name="_value">The value to be applied.</param>
+	private void ApplyValue(long _value) {
 		// Just do it
-		m_targetTxt.text = StringUtils.FormatNumber(_iValue);
+		m_targetTxt.text = StringUtils.FormatNumber(_value);
 	}
 }

@@ -107,7 +107,7 @@ public class ResultsScreenMissionPill : ResultsScreenCarouselPill {
 
 			// Add reward to the summary's total
 			.AppendCallback(() => {
-				m_coinsTotalAnimator.SetValue(m_coinsTotalAnimator.finalValue + m_mission.rewardCoins);
+				m_coinsTotalAnimator.SetValue(m_coinsTotalAnimator.finalValue + m_mission.rewardCoins, true);
 			})
 
 			// Show check mark
