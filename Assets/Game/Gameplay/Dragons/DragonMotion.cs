@@ -910,7 +910,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		if ( m_dragon.IsDrunk() )
 		{
-			impulse = -impulse;
+            //impulse = -impulse;
+            float drunkX = -0.6f;
+            float drunkY = 0.6f;
+            impulse.x = drunkX * impulse.x;
+            impulse.y = drunkY * impulse.y;
 		}
 
         if (boostSpeedMultiplier > 1)
