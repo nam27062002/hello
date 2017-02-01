@@ -11,20 +11,28 @@ public class DrunkCameraEffect : MonoBehaviour
     private bool m_isDrunk = false;
     private float m_startTime = 0.0f;
 
-	void Awake()
+    private bool m_wasEnabled = false;
+
+    void Awake()
 	{
 	}
 
     private void Start()
     {
-        setDrunk(true);
+//        setDrunk(true);
+        Messenger.AddListener<bool>(GameEvents.DRUNK_TOGGLED, setDrunk);
+        m_wasEnabled = true;
     }
 
-	private void OnDestroy() 
+    private void OnDestroy() 
 	{
-	}
+        if (m_wasEnabled)
+        {
+            Messenger.RemoveListener<bool>(GameEvents.DRUNK_TOGGLED, setDrunk);
+        }
+    }
 
-	void OnRenderImage (RenderTexture source, RenderTexture destination)
+    void OnRenderImage (RenderTexture source, RenderTexture destination)
     {
         if (m_DrunkEffect)
         {
