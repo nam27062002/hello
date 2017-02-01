@@ -396,15 +396,18 @@ namespace AI {
 				m_freezing = FreezingObjectsRegistry.instance.Overlaps( (CircleAreaBounds)m_entity.circleArea.bounds );
 				if ( m_freezing )
 				{
-					m_freezingMultiplier -= Time.deltaTime;
+					m_freezingMultiplier -= Time.deltaTime * FreezingObjectsRegistry.m_freezinSpeed;
 				}
 				else
 				{
-					m_freezingMultiplier += Time.deltaTime;
+					m_freezingMultiplier += Time.deltaTime * FreezingObjectsRegistry.m_defrostSpeed;
 				}
-				m_freezingMultiplier = Mathf.Clamp( m_freezingMultiplier, 0.25f, 1.0f);
+				m_freezingMultiplier = Mathf.Clamp( m_freezingMultiplier, FreezingObjectsRegistry.m_minFreezeSpeedMultiplier, 1.0f);
 				m_pilot.SetFreezeFactor( m_freezingMultiplier );
-				m_viewControl.Freezing( m_freezing );
+
+				float freezingLevel = (1.0f - m_freezingMultiplier) / (1.0f - FreezingObjectsRegistry.m_minFreezeSpeedMultiplier);
+
+				m_viewControl.Freezing( freezingLevel );
 			}
 		}
 

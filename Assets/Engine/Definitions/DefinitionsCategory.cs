@@ -46,6 +46,7 @@ public class DefinitionsCategory
 	public const string ENTITIES 			= "ENTITIES";
 	public const string DECORATIONS 		= "DECORATIONS";
 	public const string ENTITY_CATEGORIES 	= "ENTITY_CATEGORIES";
+	public const string FREEZE_CONSTANTS	= "FREEZE_CONSTANTS";
 
 	// Game
 	public const string SCORE_MULTIPLIERS = "SCORE_MULTIPLIERS";
@@ -56,6 +57,7 @@ public class DefinitionsCategory
 	public const string EGG_REWARDS = "EGG_REWARDS";
 	public const string CHEST_REWARDS = "CHEST_REWARDS";
 	public const string RARITIES = "RARITIES";
+	public const string HUNGRY_LETTERS = "HUNGRY_LETTERS";
 
 	// Disguises
 	public const string DISGUISES = "DISGUISES";

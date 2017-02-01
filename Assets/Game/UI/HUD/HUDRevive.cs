@@ -60,7 +60,7 @@ public class HUDRevive : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
-		Messenger.AddListener(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
+		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 		m_timer.Stop();
 		m_paidReviveCount = 0;
 		m_freeReviveCount = 0;
@@ -80,7 +80,7 @@ public class HUDRevive : MonoBehaviour {
 	void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
-		Messenger.RemoveListener(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
+		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 
 		// Restore timescale
 		Time.timeScale = 1f;
@@ -106,9 +106,9 @@ public class HUDRevive : MonoBehaviour {
 	/// <summary>
 	/// Performs the revive logic
 	/// </summary>
-	private void DoRevive() {
+	private void DoRevive( DragonPlayer.ReviveReason reason ) {
 		// Revive!
-		InstanceManager.player.ResetStats(true);
+		InstanceManager.player.ResetStats(true, reason);
 	}
 
 	//------------------------------------------------------------------------//
@@ -128,7 +128,7 @@ public class HUDRevive : MonoBehaviour {
 
 			// Do it!
 			m_paidReviveCount++;
-			DoRevive();
+			DoRevive( DragonPlayer.ReviveReason.PAYING );
 		} else {
 			// Currency popup / Resources flow disabled for now
             UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
@@ -190,7 +190,7 @@ public class HUDRevive : MonoBehaviour {
 		Time.timeScale = 0.25f;
 	}
 
-	private void OnPlayerRevive()
+	private void OnPlayerRevive( DragonPlayer.ReviveReason reason )
 	{
 		// Stop timer
 		m_timer.Stop();
@@ -208,6 +208,6 @@ public class HUDRevive : MonoBehaviour {
 	private void OnAdClosed() {
 		// Do it!
 		m_freeReviveCount++;
-		DoRevive();
+		DoRevive( DragonPlayer.ReviveReason.AD );
 	}
 }

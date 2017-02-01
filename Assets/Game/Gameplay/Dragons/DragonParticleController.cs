@@ -11,8 +11,10 @@ public class DragonParticleController : MonoBehaviour
 
 	[Space]
 	public GameObject m_revive;
+	public GameObject m_petRevive;
 	public Transform m_reviveAnchor;
 	private ParticleSystem m_reviveInstance;
+	private ParticleSystem m_revivePetInstance;
 
 	[Space]
 	public GameObject m_bubbles;
@@ -80,6 +82,7 @@ public class DragonParticleController : MonoBehaviour
 		// Instantiate Particles (at start so we don't feel any framerate drop during gameplay)
 		m_levelUpInstance = InitParticles(m_levelUp, m_levelUpAnchor);
 		m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
+		m_revivePetInstance = InitParticles(m_petRevive, m_reviveAnchor);
 		m_bubblesInstance = InitParticles(m_bubbles, m_bubblesAnchor);
 		if ( m_bubblesInstance != null )
 		{
@@ -119,14 +122,14 @@ public class DragonParticleController : MonoBehaviour
 		// Register events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
-		Messenger.AddListener(GameEvents.PLAYER_REVIVE, OnRevive);
+		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
 	void OnDisable()
 	{
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
-		Messenger.RemoveListener(GameEvents.PLAYER_REVIVE, OnRevive);
+		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
 	void Update()
@@ -235,9 +238,19 @@ public class DragonParticleController : MonoBehaviour
 		}
 	}
 
-	void OnRevive()
+	void OnRevive(DragonPlayer.ReviveReason reason)
 	{
-		m_reviveInstance.Play();
+		switch( reason )
+		{
+			case DragonPlayer.ReviveReason.FREE_REVIVE_PET:
+			{
+				m_revivePetInstance.Play();
+			}break;
+			default:
+			{
+				m_reviveInstance.Play();
+			}break;
+		}
 		m_alive = true;
 		CheckBodyParts();
 	}
