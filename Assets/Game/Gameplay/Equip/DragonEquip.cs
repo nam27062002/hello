@@ -37,9 +37,9 @@ public class DragonEquip : MonoBehaviour {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Start
+	/// Initialization.
 	/// </summary>
-	private void Start() {
+	private void Awake() {
 		// Get assigned dragon sku - from Player for in-game dragons, from DragonPreview for menu dragons
 		DragonPlayer player = GetComponent<DragonPlayer>();
 		if(player != null) {
