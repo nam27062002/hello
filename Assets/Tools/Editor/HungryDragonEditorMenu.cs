@@ -54,6 +54,9 @@ public class HungryDragonEditorMenu {
 	[MenuItem("Hungry Dragon/Content/Game Settings", false, 0)]
 	public static void ShowSettings() { OpenFile("GameSettings.asset", SINGLETONS_FOLDER); }
 
+	[MenuItem("Hungry Dragon/Content/UI Constants", false, 0)]
+	public static void ShowUIConstants() { OpenFile("UIConstants.asset", SINGLETONS_FOLDER); }
+
 	[MenuItem("Hungry Dragon/Content/Reload Rules", false, 50)]
 	public static void ReloadDefinitions() { ContentManager.InitContent(true); }
 

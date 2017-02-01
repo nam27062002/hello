@@ -435,6 +435,7 @@ namespace AI {
 				Transform target = m_machine.enemy;
 				if (target != null) {
 					Vector3 targetDir = target.position - m_eye.position;
+					targetDir.z = 0f;
 
 					targetDir.Normalize();
 					Vector3 cross = Vector3.Cross(targetDir, Vector3.right);
@@ -456,6 +457,7 @@ namespace AI {
 
 					// face target
 					m_targetRotation = Quaternion.Euler(0, angle, 0);
+					m_pilot.SetDirection(m_targetRotation * Vector3.forward, true);
 
 					// blend between attack directions
 					m_viewControl.Aim(aim);

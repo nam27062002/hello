@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -153,54 +154,68 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_powerColorEntity; }
 	}
 
-    [SerializeField]
-    private Color m_powerColorWater = new Color(0f, 0.91f, 1f);
-    public static Color POWER_COLOR_WATER
-    {
-        get { return instance.m_powerColorWater; }
-    }
+    [SerializeField] private Color m_powerColorWater = new Color(0f, 0.91f, 1f);
+	public static Color POWER_COLOR_WATER {
+		get { return instance.m_powerColorWater; }
+	}
 
-    [SerializeField]
-    private Color m_powerColorDrain = new Color(0f, 0.91f, 1f);
-    public static Color POWER_COLOR_DRAIN
-    {
-        get { return instance.m_powerColorDrain; }
-    }
+	[SerializeField] private Color m_powerColorDrain = new Color(0f, 0.91f, 1f);
+	public static Color POWER_COLOR_DRAIN {
+		get { return instance.m_powerColorDrain; }
+	}
 
-    [SerializeField]
-    private Color m_powerColorVacuum = new Color(0f, 0.91f, 1f);
-    public static Color POWER_COLOR_VACUUM
-    {
-        get { return instance.m_powerColorDrain; }
-    }
+	[SerializeField] private Color m_powerColorVacuum = new Color(0f, 0.91f, 1f);
+	public static Color POWER_COLOR_VACUUM {
+		get { return instance.m_powerColorDrain; }
+	}
 
-    [SerializeField]
-    private Color m_powerColorMagnetic = new Color(0f, 0.91f, 1f);
-    public static Color POWER_COLOR_MAGNETIC
-    {
-        get { return instance.m_powerColorDrain; }
-    }
+	[SerializeField] private Color m_powerColorMagnetic = new Color(0f, 0.91f, 1f);
+	public static Color POWER_COLOR_MAGNETIC {
+		get { return instance.m_powerColorDrain; }
+	}
 
-    [SerializeField]
-    private Color m_powerColorScore = new Color(0f, 0.91f, 1f);
-    public static Color POWER_COLOR_SCORE
-    {
-        get { return instance.m_powerColorScore; }
-    }
+	[SerializeField] private Color m_powerColorScore = new Color(0f, 0.91f, 1f);
+	public static Color POWER_COLOR_SCORE {
+		get { return instance.m_powerColorScore; }
+	}
 
-    [SerializeField]
-    private Color m_powerColorFood = new Color(0f, 0.91f, 1f);
-    public static Color POWER_COLOR_FOOD
-    {
-        get { return instance.m_powerColorFood; }
-    }
+	[SerializeField] private Color m_powerColorFood = new Color(0f, 0.91f, 1f);
+	public static Color POWER_COLOR_FOOD {
+		get { return instance.m_powerColorFood; }
+	}
 
-    [SerializeField]
-    private Color m_powerColorLowerDamage = new Color(0f, 0.91f, 1f);
-    public static Color POWER_COLOR_LOWERDAMAGE
-    {
-        get { return instance.m_powerColorLowerDamage; }
-    }
+	[SerializeField] private Color m_powerColorLowerDamage = new Color(0f, 0.91f, 1f);
+	public static Color POWER_COLOR_LOWERDAMAGE {
+		get { return instance.m_powerColorLowerDamage; }
+	}
+
+	[Separator("Animations")]
+	[SerializeField] private float m_openEggSpinIntensity = 50f;
+	public static float openEggSpinIntensity {
+		get { return instance.m_openEggSpinIntensity; }
+	}
+
+	[SerializeField] private Ease m_openEggSpinEase = Ease.OutExpo;
+	public static Ease openEggSpinEase {
+		get { return instance.m_openEggSpinEase;}
+	}
+
+	[Space]
+	[SerializeField] [Tooltip("Units per second, the bar fills from 0 to 1")] private float m_resultsXPBarSpeed = 0.20f;
+	public static float resultsXPBarSpeed {
+		get { return instance.m_resultsXPBarSpeed; }
+	}
+
+	[SerializeField] private float m_resultsDragonUnlockSpeedMultiplier = 1f;
+	public static float resultsDragonUnlockSpeedMultiplier {
+		get { return instance.m_resultsDragonUnlockSpeedMultiplier; }
+	}
+
+	[SerializeField] private float m_resultsPanelTextsDuration = 1f;
+	public static float resultsPanelTextsDuration {
+		get { return instance.m_resultsPanelTextsDuration; }
+	}
+
     //------------------------------------------------------------------------//
     // METHODS																  //
     //------------------------------------------------------------------------//

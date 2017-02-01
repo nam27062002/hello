@@ -47,11 +47,6 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 	[SerializeField] private Button m_disguisesFoldToggle = null;
 	[SerializeField] private GameObject m_disguiseUnlockPrefab = null;
 
-	// Anim speeds
-	[Separator("To easily tune animations")]
-	[SerializeField] [Range(0.1f, 2f)] private float m_dragonUnlockSpeedMultiplier = 1f;
-	[SerializeField] [Range(0.1f, 2f)] private float m_barSpeedMultiplier = 1f;
-
 	// Disguises unlock
 	private List<ResultsScreenDisguiseFlag> m_flags = new List<ResultsScreenDisguiseFlag>();
 
@@ -265,9 +260,9 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 
 		// Single super-tween to do so
 		m_xpBarTween = m_auxBar
-			.DOValue(m_targetDelta, 0.15f * m_barSpeedMultiplier)	// Speed based, duration representes units/sec
+			.DOValue(m_targetDelta, UIConstants.resultsXPBarSpeed)	// Speed based, duration representes units/sec
 			.SetSpeedBased(true)
-			.SetDelay(0.25f * m_barSpeedMultiplier)	// Add some delay to give time to appear (external animator)
+			.SetDelay(0.25f)	// Add some delay to give time to appear (external animator)
 			.SetEase(Ease.Linear)
 			.OnUpdate(OnXPAnimUpdate)
 			.OnComplete(OnXPAnimEnd)
@@ -277,7 +272,8 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 		if(m_receiveFX != null) m_receiveFX.Play(true);
 
 		// Compute and return total animation duration
-		float duration = (m_targetDelta - m_initialDelta)/(0.15f * m_barSpeedMultiplier);
+		// [AOC] We can't use the tween.Duration property because it's a speed base tween, so manually do the maths
+		float duration = (m_targetDelta - m_initialDelta)/UIConstants.resultsXPBarSpeed;
 		return m_xpBarTween.Delay() + duration;
 	}
 
@@ -296,10 +292,10 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 		DOTween.Sequence()
 			// Initial Pause
 			.SetId(this)
-			.AppendInterval(0.25f * m_dragonUnlockSpeedMultiplier)
+			.AppendInterval(0.25f * UIConstants.resultsDragonUnlockSpeedMultiplier)
 
 			// Scale up
-			.Append(m_dragonUnlockFX.transform.DOScale(1f, 0.25f * m_dragonUnlockSpeedMultiplier).SetEase(Ease.OutBack))
+			.Append(m_dragonUnlockFX.transform.DOScale(1f, 0.25f * UIConstants.resultsDragonUnlockSpeedMultiplier).SetEase(Ease.OutBack))
 
 			// Change bar text as well
 			.AppendCallback(() => {
@@ -309,13 +305,13 @@ public class ResultsScreenUnlockBar : DragonXPBar {
 			})
 
 			// Pause
-			.AppendInterval(1f * m_dragonUnlockSpeedMultiplier)
+			.AppendInterval(1f * UIConstants.resultsDragonUnlockSpeedMultiplier)
 
 			// Scale out
-			.Append(m_dragonUnlockFX.transform.DOScale(2f, 0.5f * m_dragonUnlockSpeedMultiplier).SetEase(Ease.OutCubic))
+			.Append(m_dragonUnlockFX.transform.DOScale(2f, 0.5f * UIConstants.resultsDragonUnlockSpeedMultiplier).SetEase(Ease.OutCubic))
 
 			// Fade out
-			.Join(m_dragonUnlockFX.GetComponent<CanvasGroup>().DOFade(0f, 0.5f * m_dragonUnlockSpeedMultiplier).SetEase(Ease.OutCubic))
+			.Join(m_dragonUnlockFX.GetComponent<CanvasGroup>().DOFade(0f, 0.5f * UIConstants.resultsDragonUnlockSpeedMultiplier).SetEase(Ease.OutCubic))
 
 			// Disable object once the sequence is completed
 			.OnComplete(() => {

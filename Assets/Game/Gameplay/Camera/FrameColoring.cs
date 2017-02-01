@@ -26,7 +26,7 @@ public class FrameColoring : MonoBehaviour
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
-		Messenger.AddListener(GameEvents.PLAYER_REVIVE, OnRevive);
+		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
 	private void OnDestroy() 
@@ -34,7 +34,7 @@ public class FrameColoring : MonoBehaviour
 		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
-		Messenger.RemoveListener(GameEvents.PLAYER_REVIVE, OnRevive);
+		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
 	void OnRenderImage (RenderTexture source, RenderTexture destination)
@@ -105,7 +105,7 @@ public class FrameColoring : MonoBehaviour
 		m_ko = true;
 	}
 
-	private void OnRevive()
+	private void OnRevive( DragonPlayer.ReviveReason reason )
 	{
 		m_ko = false;	
 	}

@@ -80,7 +80,7 @@ public class DragonTint : MonoBehaviour
 	{
 		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
-		Messenger.AddListener(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
+		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 	}
 
 	void OnDisable() 
@@ -88,7 +88,7 @@ public class DragonTint : MonoBehaviour
 		// Unsubscribe from external events
 		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
-		Messenger.RemoveListener(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
+		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 	}
 
 	private void OnDamageReceived(float _amount, DamageType _type, Transform _source) 
@@ -223,7 +223,7 @@ public class DragonTint : MonoBehaviour
      	}
     }
 
-    private void OnPlayerRevive()
+	private void OnPlayerRevive( DragonPlayer.ReviveReason reason )
 	{
 		// Switch back body materials
 		for( int i = 0; i< m_materials.Count; i++ )

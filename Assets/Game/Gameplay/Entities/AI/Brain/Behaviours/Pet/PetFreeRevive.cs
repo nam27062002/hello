@@ -22,7 +22,7 @@ namespace AI {
 			protected override void OnUpdate(){
 				if ( m_executeFreeRevive ){
 					m_executeFreeRevive = false;
-					InstanceManager.player.ResetStats(true);	// do it on next update?
+					InstanceManager.player.ResetStats(true, DragonPlayer.ReviveReason.FREE_REVIVE_PET);	// do it on next update?
 					Messenger.Broadcast(GameEvents.PLAYER_FREE_REVIVE);
 				}
 			}

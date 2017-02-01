@@ -298,6 +298,9 @@ public class ResultsScreenController : MonoBehaviour {
 
 				// Launch number animators
 				// Reset
+				m_scoreAnimator.duration = UIConstants.resultsPanelTextsDuration;
+				m_coinsAnimator.duration = UIConstants.resultsPanelTextsDuration;
+				m_bonusCoinsAnimator.duration = UIConstants.resultsPanelTextsDuration;
 				m_scoreAnimator.SetValue(0, false);
 				m_coinsAnimator.SetValue(0, false);
 				m_bonusCoinsAnimator.SetValue(0, false);
@@ -310,7 +313,7 @@ public class ResultsScreenController : MonoBehaviour {
 					.AppendCallback(() => { m_scoreAnimator.SetValue(0, score); })
 
 					// High score
-					.AppendInterval(m_scoreAnimator.duration - 0.1f)	// Overlap a little bit
+					.AppendInterval(m_scoreAnimator.duration * 0.9f)	// Overlap a little bit
 					.AppendCallback(() => {
 						// New High Score animation
 						if(isHighScore) {
@@ -326,11 +329,11 @@ public class ResultsScreenController : MonoBehaviour {
 					})
 
 					// Bonus coins
-					.AppendInterval(isHighScore ? 0.25f : 0f)
+					.AppendInterval(isHighScore ? 0.25f: 0f)
 					.AppendCallback(() => { m_bonusCoinsAnimator.SetValue(0, coinsBonus); })
 
 					// Coins total
-					.AppendInterval(m_bonusCoinsAnimator.duration - 0.1f)	// Overlap a little bit
+					.AppendInterval(m_bonusCoinsAnimator.duration * 0.9f)	// Overlap a little bit
 					.AppendCallback(() => { m_coinsAnimator.SetValue(0, coins + coinsBonus); })
 
 					// Final pause
