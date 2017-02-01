@@ -41,11 +41,15 @@ public class GoalsScreenChestsInfoPanel : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		// Get anchor ref
+		// Get anchor ref (if any)
 		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
-		MenuScreenScene scene = menuController.screensController.GetScene((int)MenuScreens.GOALS);
-		GoalsSceneController goalScene = scene.GetComponent<GoalsSceneController>();
-		m_3dAnchor = goalScene.infoPanelUIAnchor;
+		if(menuController != null) {
+			MenuScreenScene scene = menuController.screensController.GetScene((int)MenuScreens.GOALS);
+			if(scene != null) {
+				GoalsSceneController goalScene = scene.GetComponent<GoalsSceneController>();
+				m_3dAnchor = goalScene.infoPanelUIAnchor;
+			}
+		}
 	}
 
 	/// <summary>
