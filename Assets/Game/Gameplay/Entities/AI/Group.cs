@@ -122,7 +122,8 @@ namespace AI {
 			if (index > -1) {				
 				if (m_formation == Formation.Triangle) {
 					if (m_offsetsTriangle != null) {
-						return Quaternion.Slerp(m_lastrotation, m_rotation, 1f / m_triangleRows[index]) * (m_offsetsTriangle[index] * _radius);
+						//return Quaternion.Slerp(m_lastrotation, m_rotation, 1f / m_triangleRows[index]) * (m_offsetsTriangle[index] * _radius);
+						return m_rotation * (m_offsetsTriangle[index] * _radius);
 					}
 				} else {
 		            if (m_offsetsSunflower != null) {
