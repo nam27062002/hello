@@ -112,7 +112,6 @@ public class LevelManager : Singleton<LevelManager> {
 		{
 			loadingTask = SceneManager.LoadSceneAsync(spawnersScenes[i], LoadSceneMode.Additive);
 			if(DebugUtils.SoftAssert(loadingTask != null, "The spawners scene " + spawnersScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
-				loadingTask.allowSceneActivation = true;
 				loadingTasks.Add(loadingTask);
 			}	
 		}
@@ -123,7 +122,6 @@ public class LevelManager : Singleton<LevelManager> {
 		{
 			loadingTask = SceneManager.LoadSceneAsync(collisionScenes[i], LoadSceneMode.Additive);
 			if(DebugUtils.SoftAssert(loadingTask != null, "The collision scene " + collisionScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
-				loadingTask.allowSceneActivation = true;
 				loadingTasks.Add(loadingTask);
 			}
 		}
@@ -135,7 +133,6 @@ public class LevelManager : Singleton<LevelManager> {
 			if ( !string.IsNullOrEmpty( soundScenes[i]) ){
 				loadingTask = SceneManager.LoadSceneAsync(soundScenes[i], LoadSceneMode.Additive);
 				if(DebugUtils.SoftAssert(loadingTask != null, "The sound scene " + soundScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
-					loadingTask.allowSceneActivation = true;
 					loadingTasks.Add(loadingTask);
 				}
 			}
@@ -147,9 +144,13 @@ public class LevelManager : Singleton<LevelManager> {
 		{
 			loadingTask = SceneManager.LoadSceneAsync(artScenes[i], LoadSceneMode.Additive);
 			if(DebugUtils.SoftAssert(loadingTask != null, "The art scene " + artScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)"))  {
-				loadingTask.allowSceneActivation = true;
 				loadingTasks.Add(loadingTask);
 			}
+		}
+
+		// Disable auto-scene activation: activating the scenes abuses the CPU, causing fps drops. Since we want the loading screen to be fluid, we will activate all the scene at once when the loading is finished.
+		for(int i = 0; i < loadingTasks.Count; i++) {
+			loadingTasks[i].allowSceneActivation = false;
 		}
 		
 		return loadingTasks.ToArray();

@@ -20,13 +20,16 @@ public class GameSceneController : GameSceneControllerBase {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string NAME = "SC_Game";
-	public static readonly float COUNTDOWN = 3.5f;	// Seconds. This countdown is used as a safety net if the intro animation does not end or does not send the proper event
-	public static readonly float MIN_LOADING_TIME = 1f;	// Seconds, to avoid loading screen flickering
+	public const string NAME = "SC_Game";
+	public const float INITIAL_DELAY = 1f;	// Seconds. Initial delay before actually start the loading. Useful to give time to initialize and load assets for the loading screen.
+	public const float COUNTDOWN = 3.5f;	// Seconds. This countdown is used as a safety net if the intro animation does not end or does not send the proper event
+	public const float MIN_LOADING_TIME = 1f;	// Seconds, to avoid loading screen flickering
 
 	public enum EStates {
 		INIT,
+		DELAY,
 		LOADING_LEVEL,
+		ACTIVATING_LEVEL,
 		COUNTDOWN,
 		RUNNING,
 		FINISHED
@@ -66,14 +69,21 @@ public class GameSceneController : GameSceneControllerBase {
 	}
 
 	// Level loading
-	private AsyncOperation[] m_levelLoadingTask = null;
+	private AsyncOperation[] m_levelLoadingTasks = null;
 	public float levelLoadingProgress {
 		get {
 			if(state == EStates.LOADING_LEVEL) {
-				if(m_levelLoadingTask == null) return 1f;	// Shouldn't be null at this state
+				if(m_levelLoadingTasks == null) return 1f;	// Shouldn't be null at this state
 				float progress = 0f;
-				for(int i = 0; i < m_levelLoadingTask.Length; i++) progress += m_levelLoadingTask[i].progress;
-				return Mathf.Min(progress/m_levelLoadingTask.Length, 1f - Mathf.Max(m_timer/MIN_LOADING_TIME, 0f));	// Either progress or fake timer
+				for(int i = 0; i < m_levelLoadingTasks.Length; i++) {
+					// When allowSceneActivation is set to false then progress is stopped at 0.9. The isDone is then maintained at false. When allowSceneActivation is set to true isDone can complete.
+					if(m_levelLoadingTasks[i].allowSceneActivation) {
+						progress += m_levelLoadingTasks[i].progress;
+					} else {
+						progress += m_levelLoadingTasks[i].progress/0.9f;
+					}
+				}
+				return Mathf.Min(progress/m_levelLoadingTasks.Length, 1f - Mathf.Max(m_timer/MIN_LOADING_TIME, 0f));	// Either progress or fake timer
 			} else if(state > EStates.LOADING_LEVEL) {
 				return 1;
 			} else {
@@ -142,6 +152,16 @@ public class GameSceneController : GameSceneControllerBase {
 
 		// Different actions based on current state
 		switch(m_state) {
+			case EStates.DELAY: {
+				// Just wait for the timer to run off
+				if(m_timer > 0) {
+					m_timer -= Time.deltaTime;
+					if(m_timer <= 0) {
+						ChangeState(EStates.LOADING_LEVEL);
+					}
+				}
+			} break;
+
 			// During loading, wait until level is loaded
 			case EStates.LOADING_LEVEL: {
 				// Update timer
@@ -151,6 +171,19 @@ public class GameSceneController : GameSceneControllerBase {
 
 				// Change state only if allowed, otherwise it will be manually done
 				if(levelLoadingProgress >= 1) {
+					if(m_startWhenLoaded) ChangeState(EStates.ACTIVATING_LEVEL);
+				}
+			} break;
+
+			// During activation, wait until all scenes have been activated
+			case EStates.ACTIVATING_LEVEL: {
+				// All loading tasks must be in the Done state
+				bool allDone = true;
+				for(int i = 0; i < m_levelLoadingTasks.Length && allDone; i++) {
+					allDone &= m_levelLoadingTasks[i].isDone;
+				}
+
+				if(allDone) {
 					if(m_startWhenLoaded) ChangeState(EStates.COUNTDOWN);
 				}
 			} break;
@@ -224,7 +257,7 @@ public class GameSceneController : GameSceneControllerBase {
 		// [AOC] TODO!! Reset game stats
 		
 		// Change state
-		ChangeState(EStates.LOADING_LEVEL);
+		ChangeState(EStates.DELAY);
 	}
 	
 	/// <summary>
@@ -291,15 +324,19 @@ public class GameSceneController : GameSceneControllerBase {
 		// Actions to perform when leaving the current state
 		switch(m_state) {
 			case EStates.LOADING_LEVEL: {
+				// Nothing to do
+			} break;
+
+			case EStates.ACTIVATING_LEVEL: {
 				// Delete loading task
-				m_levelLoadingTask = null;
+				m_levelLoadingTasks = null;
 
 				// Init game camera
 				InstanceManager.gameCamera.Init();
 
 				// Dispatch game event
 				Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);
-				
+
 				// Enable dragon back and put it in the spawn point
 				// Don't make it playable until the countdown ends
 				InstanceManager.player.playable = false;
@@ -310,7 +347,7 @@ public class GameSceneController : GameSceneControllerBase {
 				// Spawn collectibles
 				ChestManager.OnLevelLoaded();
 				EggManager.SelectCollectibleEgg();
-				
+
 				// Notify the game
 				Messenger.Broadcast(GameEvents.GAME_STARTED);
 			} break;
@@ -328,10 +365,15 @@ public class GameSceneController : GameSceneControllerBase {
 		
 		// Actions to perform when entering the new state
 		switch(_newState) {
+			case EStates.DELAY: {
+				// Reset timer
+				m_timer = INITIAL_DELAY;
+			} break;
+
 			case EStates.LOADING_LEVEL: {
 				// Start loading current level
 				LevelManager.SetCurrentLevel(UsersManager.currentUser.currentLevel);
-				m_levelLoadingTask = LevelManager.LoadLevel();
+				m_levelLoadingTasks = LevelManager.LoadLevel();
 
 				// Initialize minimum loading time as well
 				m_timer = MIN_LOADING_TIME;
@@ -343,6 +385,13 @@ public class GameSceneController : GameSceneControllerBase {
 					PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);
 					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
 					PersistenceManager.Save();
+				}
+			} break;
+
+			case EStates.ACTIVATING_LEVEL: {
+				// Activate all the scenes
+				for(int i = 0; i < m_levelLoadingTasks.Length; i++) {
+					m_levelLoadingTasks[i].allowSceneActivation = true;
 				}
 			} break;
 
@@ -395,7 +444,7 @@ public class GameSceneController : GameSceneControllerBase {
 
 	public override bool IsLevelLoaded()
 	{
-		return state > EStates.LOADING_LEVEL;
+		return state > EStates.ACTIVATING_LEVEL;
 	}
 
 	private void CountDownEnded()
