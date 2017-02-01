@@ -37,6 +37,7 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.ENTITIES, 			new string[]{"Rules/entityDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.DECORATIONS, 		new string[]{"Rules/decorationDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.ENTITY_CATEGORIES, new string[]{"Rules/entityCategoryDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.FREEZE_CONSTANTS, 	new string[]{"Rules/freezeConstantDefinitions"});
 
 		// Game
 		kDefinitionFiles.Add(DefinitionsCategory.SCORE_MULTIPLIERS, new string[]{"Rules/scoreMultiplierDefinitions"});

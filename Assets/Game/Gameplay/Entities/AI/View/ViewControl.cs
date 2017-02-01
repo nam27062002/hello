@@ -133,8 +133,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private EntityTint m_entityTint = EntityTint.NONE;
 
 	//
-	private bool m_freezing = false;
-    private float m_freezeTime = 0.0f;
+    private float m_freezingLevel = 0;
+    private bool m_wasFreezing = true;
 
     //-----------------------------------------------
     // Use this for initialization
@@ -392,7 +392,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
                 		}break;
                 		case EntityTint.FREEZE:
                 		{
-							m_allMaterials[i].SetColor("_FresnelColor", FREEZE_TINT * getFreezeIntensity());
+							m_allMaterials[i].SetColor("_FresnelColor", FREEZE_TINT * m_freezingLevel);
                 		}break;
                 		case EntityTint.NORMAL:
                 		{
@@ -443,7 +443,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     	}
     	else
     	{
-    		if ( m_freezing )	
+    		if ( m_freezingLevel > 0 )	
     		{
     			_tint = EntityTint.FREEZE;
     		}
@@ -484,18 +484,16 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 
-        if (m_freezing)
+        if (m_freezingLevel > 0)
         {
+			m_wasFreezing = true;
             SetEntityTint(EntityTint.FREEZE);
-
-            float fri = getFreezeIntensity();
-            float dTime = Time.time - Mathf.Abs(m_freezeTime);
-            if (m_freezeTime < 0.0 && dTime > FREEZE_TIME)
-            {
-                m_freezing = false;
-            }
-
-
+        }
+        else if ( m_wasFreezing )
+        {
+			DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
+        	CheckTint( dragonBreath.IsFuryOn(), dragonBreath.type);
+        	m_wasFreezing = false;
         }
 
         /*
@@ -850,26 +848,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 	}
 
-    public float getFreezeIntensity()
-    {
-        return (m_freezeTime < 0.0f) ? 1.0f - Mathf.Clamp01((Time.time - Mathf.Abs(m_freezeTime)) / FREEZE_TIME) : Mathf.Clamp01((Time.time - m_freezeTime) / FREEZE_TIME);
-    }
-    public void Freezing(bool _value)
-    {
-        if (_value)
-        {
-            if (m_freezing != _value)
-                m_freezeTime = Time.time;
-            m_freezing = _value;
+	public void Freezing( float freezeLevel )
+	{
+		m_freezingLevel = freezeLevel;
+	}
 
-        }
-        else
-        {
-            if (m_freezeTime > 0.0f)
-                m_freezeTime = -Time.time;
-        }
-
-        //        DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
-        //		CheckTint( dragonBreath.IsFuryOn(), dragonBreath.type);
-    }
 }

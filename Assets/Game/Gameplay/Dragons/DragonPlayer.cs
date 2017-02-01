@@ -235,9 +235,17 @@ public class DragonPlayer : MonoBehaviour {
 
 		if ( m_alcohol > 0 )
 		{
+			bool drunk = IsDrunk();
+
+				// Recide Alcohol
 			m_alcohol -= Time.deltaTime * m_alcoholDrain;
 			if ( m_alcohol < 0 )
 				m_alcohol = 0;
+					
+			if ( drunk != IsDrunk() ) 
+			{
+				Messenger.Broadcast<bool>(GameEvents.DRUNK_TOGGLED, IsDrunk());
+			}
 		}
 	}
 
