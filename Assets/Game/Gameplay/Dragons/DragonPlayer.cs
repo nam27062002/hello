@@ -20,6 +20,18 @@ using System.Collections.Generic;
 /// such as health, energy, etc.
 /// </summary>
 public class DragonPlayer : MonoBehaviour {
+
+	//------------------------------------------------------------------//
+	//------------------------------------------------------------------//
+	public enum ReviveReason
+	{
+		AD,
+		PAYING,
+		FREE_REVIVE_PET,
+		UNKNOWN	
+	};
+
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -255,7 +267,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// <summary>
 	/// Reset some variable stats for this dragon.
 	/// </summary>
-	public void ResetStats(bool _revive) {
+	public void ResetStats(bool _revive, ReviveReason reason = ReviveReason.UNKNOWN) {
 		// Store some previous values
 		DragonHealthModifier oldHealthModifier = ComputeHealthModifier();
 
@@ -279,7 +291,7 @@ public class DragonPlayer : MonoBehaviour {
 			}
 
 			// Notify revive to game
-			Messenger.Broadcast(GameEvents.PLAYER_REVIVE);
+			Messenger.Broadcast<ReviveReason>(GameEvents.PLAYER_REVIVE, reason);
 		}
 		else
 		{
