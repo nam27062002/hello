@@ -12,9 +12,23 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
 
 	List<Registry> m_registry;
 
+	public static float m_freezinSpeed = 1;
+	public static float m_defrostSpeed = 0.5f;
+	public static float m_minFreezeSpeedMultiplier = 0.25f;
+
+
 	public FreezingObjectsRegistry()
 	{
 		m_registry = new List<Registry>();
+
+		DefinitionNode node = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.FREEZE_CONSTANTS, "freezeConstant");
+		if ( node != null )
+		{
+			m_freezinSpeed = node.GetAsFloat( "freezingSpeed", 1.0f );
+			m_defrostSpeed = node.GetAsFloat( "defrostSpeed", 0.5f );
+			m_minFreezeSpeedMultiplier = node.GetAsFloat("minFreezeSpeedMultiplier", 0.25f);
+		}
+
 	}
 
 
