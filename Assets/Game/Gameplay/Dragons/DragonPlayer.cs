@@ -90,6 +90,14 @@ public class DragonPlayer : MonoBehaviour {
 
 	private int m_numLatching = 0;
 
+	// Super size transformation
+	private float m_superSizeTarget = 1;
+	private float m_superSizeSize = 1;
+	private float m_superSizeStart = 1;
+	private float m_superSizeTimer = 0f;
+	private float m_superSizeDuration = 0.5f;
+
+
 	// Interaction
 	public bool playable {
 		set {
@@ -266,6 +274,20 @@ public class DragonPlayer : MonoBehaviour {
 			{
 				Messenger.Broadcast<bool>(GameEvents.DRUNK_TOGGLED, IsDrunk());
 			}
+		}
+
+		if (m_superSizeTimer > 0 )
+		{
+			m_superSizeTimer -= Time.deltaTime;
+			if ( m_superSizeTimer > 0 )
+			{
+				m_superSizeSize = Mathf.Lerp( m_superSizeTarget, m_superSizeStart,m_superSizeTimer / m_superSizeDuration);
+			}
+			else
+			{
+				m_superSizeSize = m_superSizeTarget;
+			}
+			gameObject.transform.localScale = Vector3.one * data.scale * m_superSizeSize;
 		}
 	}
 
@@ -666,6 +688,10 @@ public class DragonPlayer : MonoBehaviour {
 
 	public void SetSuperSize( float size )
 	{
-		
+		m_superSizeTarget = size;
+		m_superSizeStart = m_superSizeSize;
+		m_superSizeDuration = m_superSizeTimer = 0.5f;
 	}
+
+
 }
