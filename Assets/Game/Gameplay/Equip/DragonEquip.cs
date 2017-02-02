@@ -58,6 +58,11 @@ public class DragonEquip : MonoBehaviour {
 		// Equip current disguise
 		EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
 
+
+	}
+
+	private void Start()
+	{
 		// Equip current pets loadout
 		List<string> pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
 		for(int i = 0; i < pets.Count; i++) {

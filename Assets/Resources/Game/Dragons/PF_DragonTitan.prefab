@@ -295,6 +295,7 @@ GameObject:
   - component: {fileID: 114000013077924290}
   - component: {fileID: 114000012469074318}
   - component: {fileID: 114000013999769094}
+  - component: {fileID: 114325811366099984}
   m_Layer: 12
   m_Name: PF_DragonTitan
   m_TagString: Player
@@ -2384,6 +2385,7 @@ MonoBehaviour:
   m_levelUp: {fileID: 147012, guid: 80e922c7232c34f6e9e257feb581ee77, type: 2}
   m_levelUpAnchor: {fileID: 488014}
   m_revive: {fileID: 0}
+  m_petRevive: {fileID: 0}
   m_reviveAnchor: {fileID: 0}
   m_bubbles: {fileID: 105258, guid: f3cddb62f324a4668b40f72b9be4eb4e, type: 2}
   m_bubblesAnchor: {fileID: 4000012015477780}
@@ -2432,6 +2434,8 @@ MonoBehaviour:
   m_dragonMass: 10
   m_dragonFricction: 15
   m_dragonGravityModifier: 0.3
+  m_dragonAirGravityModifier: 0.3
+  m_dragonWaterGravityModifier: 0.3
   m_introDisplacementCurve:
     serializedVersion: 2
     m_Curve:
@@ -4780,6 +4784,17 @@ MonoBehaviour:
     currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
+--- !u!114 &114325811366099984
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a17f5651d14a4b0aba4d2d89ad8fca5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114513190383431452
 MonoBehaviour:
   m_ObjectHideFlags: 1
