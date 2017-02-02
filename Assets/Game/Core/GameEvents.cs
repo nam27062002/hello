@@ -71,7 +71,7 @@ public enum GameEvents {
 	CHESTS_PROCESSED,			// no params					// ChestManager has processed the chests and given the rewards
 	EGG_COLLECTED,				// params: CollectibleEgg _egg
 	EGG_COLLECTED_FAIL,			// params: CollectibleEgg _egg
-	LETTER_COLLECTED,			//
+	LETTER_COLLECTED,			// params: Reward _r
 	EARLY_ALL_HUNGRY_LETTERS_COLLECTED, 	//
 	SUPER_SIZE_TOGGLE,			// params: bool _activated
 
