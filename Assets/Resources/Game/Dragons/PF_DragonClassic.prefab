@@ -84,6 +84,7 @@ GameObject:
   - component: {fileID: 114000013077924290}
   - component: {fileID: 114000012469074318}
   - component: {fileID: 114000010816463694}
+  - component: {fileID: 114258700555348566}
   m_Layer: 12
   m_Name: PF_DragonClassic
   m_TagString: Player
@@ -747,6 +748,7 @@ MonoBehaviour:
   m_levelUp: {fileID: 1000011303966220, guid: c13c434e69a19af419fa213079f8660c, type: 2}
   m_levelUpAnchor: {fileID: 4000011218522520}
   m_revive: {fileID: 1000013542236594, guid: 82956920db58f3446a7b0e159de4e931, type: 2}
+  m_petRevive: {fileID: 0}
   m_reviveAnchor: {fileID: 4000013037928750}
   m_bubbles: {fileID: 105258, guid: f3cddb62f324a4668b40f72b9be4eb4e, type: 2}
   m_bubblesAnchor: {fileID: 4000012015477780}
@@ -806,6 +808,8 @@ MonoBehaviour:
   m_dragonMass: 10
   m_dragonFricction: 15
   m_dragonGravityModifier: 10
+  m_dragonAirGravityModifier: 0.3
+  m_dragonWaterGravityModifier: 0.3
   m_introDisplacementCurve:
     serializedVersion: 2
     m_Curve:
@@ -5500,6 +5504,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Tail1
   m_parentRoot: {fileID: 414586}
+--- !u!114 &114258700555348566
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a17f5651d14a4b0aba4d2d89ad8fca5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114679044384173678
 MonoBehaviour:
   m_ObjectHideFlags: 1
