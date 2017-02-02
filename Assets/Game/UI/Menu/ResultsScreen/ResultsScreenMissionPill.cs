@@ -16,7 +16,7 @@ using TMPro;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Progression to unlock next dragon.
+/// Single mission pill for the results screen carousel.
 /// </summary>
 public class ResultsScreenMissionPill : ResultsScreenCarouselPill {
 	//------------------------------------------------------------------------//

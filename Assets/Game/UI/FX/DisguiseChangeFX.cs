@@ -28,6 +28,9 @@ public class DisguiseChangeFX : MonoBehaviour {
 
 	// Internal
 	private GameObject m_fxInstance = null;
+
+	// Internal references
+	private MenuDragonScroller3D m_dragonScroller = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -82,8 +85,29 @@ public class DisguiseChangeFX : MonoBehaviour {
 	/// <summary>
 	/// The selected disguise has been changed in the menu.
 	/// </summary>
-	/// <param name="_sku">The new disguise to be equipped.</param>
-	private void OnDisguiseChanged(string _sku) {
+	/// <param name="_dragonSku">The dragon whose disguise has been changed.</param>
+	private void OnDisguiseChanged(string _dragonSku) {
+		// Launch FX!
 		StartFX();
+
+		// Adjust scale based on dragon
+		if(m_fxInstance != null) {
+			// Reset scale
+			m_fxInstance.transform.localScale = Vector3.one;
+
+			// If dragon scroller hasn't yet been found, look for it
+			if(m_dragonScroller == null) {
+				MenuScreenScene scene3D = InstanceManager.GetSceneController<MenuSceneController>().GetScreenScene(MenuScreens.DISGUISES);
+				m_dragonScroller = scene3D.GetComponent<MenuDragonScroller3D>();
+			}
+
+			// Apply scale according to target dragon's preview
+			if(m_dragonScroller != null) {
+				MenuDragonPreview preview = m_dragonScroller.GetDragonPreview(_dragonSku);
+				if(preview != null) {
+					m_fxInstance.transform.localScale = preview.transform.localScale;
+				}
+			}
+		}
 	}
 }

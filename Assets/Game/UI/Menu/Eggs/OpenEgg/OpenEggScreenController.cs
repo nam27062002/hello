@@ -302,7 +302,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(_egg == m_scene.eggData) {
 			// Launch animation!
 			// Delay to sync with the egg anim
-			DOVirtual.DelayedCall(1.75f, LaunchOpenAnimation);
+			DOVirtual.DelayedCall(1.75f, LaunchOpenAnimation, false);
 			//LaunchOpenAnimation();
 
 			// Hide UI!

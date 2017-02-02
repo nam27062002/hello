@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using DG.Tweening;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -104,7 +105,7 @@ public class CollectibleEgg : MonoBehaviour {
 		m_collectFX.Play();
 
 		// Disable view after a delay
-		Invoke("HideAfterDelay", 0.05f);
+		DOVirtual.DelayedCall(0.05f, HideAfterDelay, false);
 
 		// Dispatch global event
 		Messenger.Broadcast<CollectibleEgg>(GameEvents.EGG_COLLECTED, this);

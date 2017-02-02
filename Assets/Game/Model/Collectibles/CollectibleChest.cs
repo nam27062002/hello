@@ -101,7 +101,7 @@ public class CollectibleChest : MonoBehaviour {
 		// Figure out reward type to show the proper FX
 		Chest.RewardData rewardData = ChestManager.GetRewardData(ChestManager.collectedAndPendingChests);
 //		m_chestView.ShowGlowFX(false);
-		m_chestView.Open(rewardData.type);
+		m_chestView.Open(rewardData.type, false);
 	}
 
 	//------------------------------------------------------------------//

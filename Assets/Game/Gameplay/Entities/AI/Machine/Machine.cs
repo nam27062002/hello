@@ -537,6 +537,11 @@ namespace AI {
 			SetSignal(Signals.Type.Destroyed, true);
 		}
 
+		public void Smashed()
+		{
+			SetSignal(Signals.Type.Destroyed, true);
+		}
+
 		public float biteResistance { get { return m_edible.biteResistance; }}
 
 		public void Bite() {

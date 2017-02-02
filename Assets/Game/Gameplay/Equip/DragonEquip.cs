@@ -58,6 +58,11 @@ public class DragonEquip : MonoBehaviour {
 		// Equip current disguise
 		EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
 
+
+	}
+
+	private void Start()
+	{
 		// Equip current pets loadout
 		List<string> pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
 		for(int i = 0; i < pets.Count; i++) {
@@ -251,10 +256,12 @@ public class DragonEquip : MonoBehaviour {
 		if(m_dragonSku == _sku) {
 			// Do it with some delay to sync with FX
 			// DOTween allows us to do it in a super-easy way
-			DOVirtual.DelayedCall(0.25f, 
+			DOVirtual.DelayedCall(
+				0.25f, 
 				() => {
 					EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
-				}
+				},
+				false
 			);
 		}
 	}
