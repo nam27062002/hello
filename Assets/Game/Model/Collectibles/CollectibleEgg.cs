@@ -105,7 +105,7 @@ public class CollectibleEgg : MonoBehaviour {
 		m_collectFX.Play();
 
 		// Disable view after a delay
-		DOVirtual.DelayedCall(0.05f, HideAfterDelay);
+		DOVirtual.DelayedCall(0.05f, HideAfterDelay, false);
 
 		// Dispatch global event
 		Messenger.Broadcast<CollectibleEgg>(GameEvents.EGG_COLLECTED, this);

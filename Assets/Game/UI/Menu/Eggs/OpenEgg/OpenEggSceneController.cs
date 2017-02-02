@@ -219,7 +219,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		}
 
 		// Program reward animation
-		DOVirtual.DelayedCall(0.35f, OnEggOpenFinishedCallback);
+		DOVirtual.DelayedCall(0.35f, OnEggOpenFinishedCallback, false);
 	}
 
 	/// <summary>
