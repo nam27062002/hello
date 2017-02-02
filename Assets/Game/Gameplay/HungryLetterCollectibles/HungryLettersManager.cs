@@ -79,11 +79,11 @@ public class HungryLettersManager : MonoBehaviour
 		m_data = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.HUNGRY_LETTERS, "hungry_letters");// GameDataManager.Instance.gameDB.GetItem<Definitions.HungryCollectibleData>(App.Instance.currentLevel);
 		if ( m_data != null )
 		{
-			int sum = m_data.GetAsInt("easySpawnPercentage") + m_data.GetAsInt("normalSpawnPercentage") + m_data.GetAsInt("hardSpawnPercentage");
+			int sum = m_data.GetAsInt("easySpawnPercentage", 50) + m_data.GetAsInt("normalSpawnPercentage", 30) + m_data.GetAsInt("hardSpawnPercentage", 20);
 			Assert.Fatal(sum == 100, "The sum of the spawn percentages set in the DB is NOT 100 (it's " + sum + "). Please fix them !!!");
 
-			m_coinAwards = m_data.GetAsList<int>("m_coinsAwarded");
-			m_scoreAwards = m_data.GetAsList<int>("m_scoreAwarded");
+			m_coinAwards = m_data.GetAsList<int>("coinsAwarded");
+			m_scoreAwards = m_data.GetAsList<int>("scoreAwarded");
 		}
 
 
@@ -130,13 +130,15 @@ public class HungryLettersManager : MonoBehaviour
 		AudioController.Play( "" );	// TODO: AudioManager.Ui.HungryLetter?
 		// AudioManager.PlaySfx(AudioManager.Ui.HungryLetter);
 		// place letter in the UI.
+		m_specificLettersCollected[(int)letter.letter] = true;
+		letter.gameObject.SetActive(false);
 		/*
 		if(HungryLettersPanel.Instance != null)
 		{
 			//Mark this letter as "collected"
-			m_specificLettersCollected[(int)letter.letter] = true;
+
 			// send the proper event out.
-			EventManager.Instance.TriggerEvent(Events.CollectedHungryLetter, m_data.coinsAwarded[m_lettersCollected], m_data.gemsAwarded[m_lettersCollected], m_data.spinsAwarded[m_lettersCollected]);
+			// EventManager.Instance.TriggerEvent(Events.CollectedHungryLetter, m_data.coinsAwarded[m_lettersCollected], m_data.gemsAwarded[m_lettersCollected], m_data.spinsAwarded[m_lettersCollected]);
 #if !PRODUCTION || UNITY_EDITOR
 			// avoid null references when debugging...
 			if(m_lettersCollected == m_blueLetterPrefabs.Length)
@@ -152,6 +154,7 @@ public class HungryLettersManager : MonoBehaviour
 			);
 		}
 		*/
+
 #if AWARD_AS_SOON_AS_COLLECTED
 		// award stuff.
 		AwardStuff();
@@ -173,8 +176,10 @@ public class HungryLettersManager : MonoBehaviour
 		// award stuff.
 		// TODO: Recover UpdateSessionData
 		// SessionDataManager.Instance.UpdateSessionData(m_data.scoreAwarded[m_lettersCollected], m_data.coinsAwarded[m_lettersCollected], m_data.gemsAwarded[m_lettersCollected], m_data.spinsAwarded[m_lettersCollected]);
-		m_reward.coins = m_coinAwards[ m_lettersCollected ];
-		m_reward.score = m_scoreAwards[ m_lettersCollected ];
+		if ( m_lettersCollected < m_coinAwards.Count )
+			m_reward.coins = m_coinAwards[ m_lettersCollected ];
+		if ( m_lettersCollected < m_scoreAwards.Count )
+			m_reward.score = m_scoreAwards[ m_lettersCollected ];
 		Messenger.Broadcast<Reward>(GameEvents.LETTER_COLLECTED, m_reward);
 		//report analytics.
 		// TODO: Recover analytics
@@ -198,6 +203,7 @@ public class HungryLettersManager : MonoBehaviour
 		if(m_lettersCollected == m_instantiatedLetters.Length)
 		{
 			Messenger.Broadcast(GameEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED);
+			Messenger.Broadcast<bool>(GameEvents.SUPER_SIZE_TOGGLE, true);
 			// TODO: Recover this!
 			// HungryLettersPanel.Instance.AllCollected();
 		}
@@ -238,9 +244,9 @@ public class HungryLettersManager : MonoBehaviour
 			{
 				// pick a random difficulty based on the percentages set in the DB.
 				int random = Random.Range(1, 101); // 101 NOT included...
-				int easySpawnPercentage = m_data.GetAsInt("easySpawnPercentage");
-				int normalSpawnPercentage = m_data.GetAsInt("normalSpawnPercentage");
-				int hardSpawnPercentage = m_data.GetAsInt("hardSpawnPercentage");
+				int easySpawnPercentage = m_data.GetAsInt("easySpawnPercentage", 50);
+				int normalSpawnPercentage = m_data.GetAsInt("normalSpawnPercentage", 30);
+				int hardSpawnPercentage = m_data.GetAsInt("hardSpawnPercentage", 20);
 				if(random <= easySpawnPercentage)
 				{
 					difficulty = Difficulties.Easy;

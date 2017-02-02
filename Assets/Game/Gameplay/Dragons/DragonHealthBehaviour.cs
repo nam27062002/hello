@@ -128,7 +128,8 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	/// <param name="_hitAnimation">Whether to trigger the hit animation or not.</param>
 	public void ReceiveDamage(float _amount, DamageType _type, Transform _source = null, bool _hitAnimation = true) {
 		if(enabled) {
-
+			if ( m_dragon.IsInvulnerable() )
+				return;
 			if ( m_dragon.HasShield( _type ) )
 			{
 				m_dragon.LoseShield( _type );
@@ -162,6 +163,8 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	/// <param name="_reset">Whether to override current DOT or accumulate it.</param>
 	public void ReceiveDamageOverTime(float _dps, float _duration, DamageType _type, bool _reset = true) {
 
+		if ( m_dragon.IsInvulnerable() )
+			return;
 		// Check shields
 		if ( m_dragon.HasShieldActive( _type ) )
 		{

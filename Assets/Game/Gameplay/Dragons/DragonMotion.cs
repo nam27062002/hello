@@ -98,6 +98,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		set { m_holdSpeedMultiplier = value; }
 	}
 
+	private float m_superSizeSpeedMultiplier = 1;
+	public float superSizeSpeedMultiplier
+	{
+		get {return m_superSizeSpeedMultiplier;}
+		set { m_superSizeSpeedMultiplier = value; }
+	}
+
+
 	private float m_latchedOnSpeedMultiplier = 0;
 	private bool m_latchedOn = false;
 	public bool isLatchedMovement 
@@ -910,7 +918,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		if ( m_dragon.IsDrunk() )
 		{
-			impulse = -impulse;
+            //impulse = -impulse;
+            float drunkX = -0.6f;
+            float drunkY = 0.6f;
+            impulse.x = drunkX * impulse.x;
+            impulse.y = drunkY * impulse.y;
 		}
 
         if (boostSpeedMultiplier > 1)
@@ -1001,7 +1013,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	float GetTargetForceMultiplier()
 	{
-		return m_boostSpeedMultiplier * m_holdSpeedMultiplier * m_latchedOnSpeedMultiplier;
+		return m_boostSpeedMultiplier * m_holdSpeedMultiplier * m_latchedOnSpeedMultiplier * m_superSizeSpeedMultiplier;
 	}
 
 	Vector3 Damping( Vector3 src, Vector3 dst, float dt, float factor)

@@ -8,13 +8,13 @@ public class HungryLetterMapMarker : MapMarker {
 	void Awake( )
 	{
 		m_hungryLetter = GetComponent<HungryLetter>();
-		Messenger.AddListener(GameEvents.LETTER_COLLECTED, OnCollectedHungryLetter);
+		Messenger.AddListener<Reward>(GameEvents.LETTER_COLLECTED, OnCollectedHungryLetter);
 
 	}
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener(GameEvents.LETTER_COLLECTED, OnCollectedHungryLetter);
+		Messenger.RemoveListener<Reward>(GameEvents.LETTER_COLLECTED, OnCollectedHungryLetter);
 	}
 
 	protected void OnUpdateMarkerStatus(int mapLevel)	// this was overriding something
@@ -41,7 +41,7 @@ public class HungryLetterMapMarker : MapMarker {
 		// OnMapUpdate();
 	}
 
-	private void OnCollectedHungryLetter()
+	private void OnCollectedHungryLetter( Reward _r )
 	{
 		// TODO: Recover this
 		/*

@@ -33,6 +33,13 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		get { return m_boostMultiplier; }
 	}
 
+	protected bool m_superSizeInfiniteBoost = false;
+	public bool superSizeInfiniteBoost
+	{
+		get { return m_superSizeInfiniteBoost; }
+		set { m_superSizeInfiniteBoost = value; }
+	}
+
 
 	//-----------------------------------------------
 	// Methods
@@ -90,7 +97,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 		if (m_active) {
 			// Don't drain energy if cheat is enabled or dragon fury is on
-			if(!DebugSettings.infiniteBoost && !m_dragon.IsFuryOn()) {
+			if(!DebugSettings.infiniteBoost && !m_dragon.IsFuryOn() && !m_superSizeInfiniteBoost) {
                 if (m_insideWater)
                     m_dragon.AddEnergy(-Time.deltaTime * m_energyDrain * 5);
                 else
@@ -187,6 +194,5 @@ public class DragonBoostBehaviour : MonoBehaviour {
 				ActivateTrails();
 			}
 		}
-
 	}
 }
