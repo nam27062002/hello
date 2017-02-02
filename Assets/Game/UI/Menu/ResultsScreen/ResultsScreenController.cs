@@ -15,7 +15,6 @@ public class ResultsScreenController : MonoBehaviour {
 		PROGRESSION,
 		COLLECTIBLES,
 		CAROUSEL_MISSIONS,
-		CAROUSEL_CHESTS,
 		FINISHED
 	};
 
@@ -41,10 +40,6 @@ public class ResultsScreenController : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_popupAnimator = null;
 	[SerializeField] private ShowHideAnimator m_bottomBarAnimator = null;
 	[SerializeField] private ShowHideAnimator m_unlockBarAnimator = null;
-
-	// To easily setup animation durations
-	[Separator]
-	[SerializeField] private float m_introDuration = 1f;
 
 	// References
 	private ResultsSceneSetup m_scene = null;
@@ -207,13 +202,6 @@ public class ResultsScreenController : MonoBehaviour {
 			case State.CAROUSEL_MISSIONS: {
 				// Wait for carousel to finish
 				if(m_carousel.isIdleOrFinished) {
-					ChangeState(State.CAROUSEL_CHESTS);
-				}
-			} break;
-
-			case State.CAROUSEL_CHESTS: {
-				// Wait for the carousel to finish
-				if(m_carousel.isIdleOrFinished) {
 					ChangeState(State.FINISHED);
 				}
 			} break;
@@ -285,16 +273,17 @@ public class ResultsScreenController : MonoBehaviour {
 				m_carousel.Init();
 				m_bottomBarAnimator.ForceHide(false);
 			} break;
-			case State.WAIT_INTRO:
-			{
+
+			case State.WAIT_INTRO: {
 				m_timer = 0.5f;
-			}break;
+			} break;
+
 			case State.INTRO: {
 				// Launch dragon animation
 				m_scene.LaunchDragonAnim();
 
 				// Start timer to next state
-				m_timer = m_introDuration;
+				m_timer = UIConstants.resultsIntroDuration;
 			} break;
 
 			case State.RESULTS: {
@@ -304,11 +293,16 @@ public class ResultsScreenController : MonoBehaviour {
 				// Show bottom bar
 				m_bottomBarAnimator.Show();
 
+				// Compute durations
+				float totalDuration = UIConstants.resultsPanelDuration - m_popupAnimator.tweenDuration;
+				float finalPause = 0.25f;
+				float textAnimationDuration = (totalDuration - finalPause)/3f;	// 3 texts to be filled
+
 				// Launch number animators
 				// Reset
-				m_scoreAnimator.duration = UIConstants.resultsPanelTextsDuration;
-				m_coinsAnimator.duration = UIConstants.resultsPanelTextsDuration;
-				m_bonusCoinsAnimator.duration = UIConstants.resultsPanelTextsDuration;
+				m_scoreAnimator.duration = textAnimationDuration;
+				m_coinsAnimator.duration = textAnimationDuration;
+				m_bonusCoinsAnimator.duration = textAnimationDuration;
 				m_scoreAnimator.SetValue(0, false);
 				m_coinsAnimator.SetValue(0, false);
 				m_bonusCoinsAnimator.SetValue(0, false);
@@ -317,11 +311,11 @@ public class ResultsScreenController : MonoBehaviour {
 				int coinsBonus = survivalBonus;
 				Sequence seq = DOTween.Sequence()
 					// Score
-					.AppendInterval(0.25f)	// Initial delay, give time for the show animation
+					.AppendInterval(m_popupAnimator.tweenDuration)	// Initial delay, give time for the show animation
 					.AppendCallback(() => { m_scoreAnimator.SetValue(0, score); })
 
 					// High score
-					.AppendInterval(m_scoreAnimator.duration * 0.9f)	// Overlap a little bit
+					.AppendInterval(textAnimationDuration * 0.9f)	// Overlap a little bit
 					.AppendCallback(() => {
 						// New High Score animation
 						if(isHighScore) {
@@ -341,11 +335,11 @@ public class ResultsScreenController : MonoBehaviour {
 					.AppendCallback(() => { m_bonusCoinsAnimator.SetValue(0, coinsBonus); })
 
 					// Coins total
-					.AppendInterval(m_bonusCoinsAnimator.duration * 0.9f)	// Overlap a little bit
+					.AppendInterval(textAnimationDuration * 0.9f)	// Overlap a little bit
 					.AppendCallback(() => { m_coinsAnimator.SetValue(0, coins + coinsBonus); })
 
 					// Final pause
-					.AppendInterval(m_coinsAnimator.duration + 0.25f);
+					.AppendInterval(textAnimationDuration + finalPause);
 
 				// Start timer to next state
 				m_timer = seq.Duration();
@@ -361,17 +355,15 @@ public class ResultsScreenController : MonoBehaviour {
 			case State.COLLECTIBLES: {
 				// Launch 3D rewards animations
 				// Start timer to next state
-				m_timer = m_scene.LaunchRewardsAnim();
+				m_timer = m_scene.LaunchRewardsAnim(m_carousel.chestsPill);
+
+				// Show chests carousel as well
+				m_carousel.DoChests();
 			} break;
 
 			case State.CAROUSEL_MISSIONS: {
 				// Show missions carousel
 				m_carousel.DoMissions();
-			} break;
-
-			case State.CAROUSEL_CHESTS: {
-				// Show chests carousel
-				m_carousel.DoChests();
 			} break;
 
 			case State.FINISHED: {

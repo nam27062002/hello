@@ -85,9 +85,15 @@ public class ChestViewController : MonoBehaviour {
 	/// Launch the open animation.
 	/// </summary>
 	/// <param name="_reward">What reward to show after the open animation.</param>
-	public void Open(Chest.RewardType _reward) {
-		// Launch animation - particle effect will be launched with the animation event
-		m_animator.SetTrigger("open");
+	/// <param name="_instant">Instantly pose the chest to the open position.</param>
+	public void Open(Chest.RewardType _reward, bool _instant) {
+		// Launch animation
+		if(_instant) {
+			m_animator.SetTrigger("open_pose");
+		} else {
+			// Particle effect will be launched with the animation event
+			m_animator.SetTrigger("open");
+		}
 
 		// Show the right reward
 		if(m_rewardViews != null) {

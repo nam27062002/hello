@@ -118,7 +118,7 @@ public class GoalsSceneController : MonoBehaviour {
 			if(ChestManager.collectedChests > i) {
 				// Figure out reward type to show the proper FX
 				rewardData = ChestManager.GetRewardData(i + 1);
-				m_chestSlots[i].view.Open(rewardData.type);
+				m_chestSlots[i].view.Open(rewardData.type, false);
 			} else {
 				m_chestSlots[i].view.Close();
 			}

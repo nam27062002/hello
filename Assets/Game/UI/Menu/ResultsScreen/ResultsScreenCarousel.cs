@@ -142,8 +142,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 		float hideAnimDuration = 0.25f;	// As setup in the ShowHideAnimator component
 		switch(_step) {
 			case Step.IDLE: {
-				// Just hide current pill
-				//HideCurrentPill();
+				// Nothing to do
 			} break;
 
 			case Step.MISSION_0:
@@ -255,8 +254,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 			} break;
 
 			case Step.CHESTS: {
-				// Go to idle
-				StartCoroutine(DoStep(Step.IDLE));
+				// Nothing to do (actually it's never called), the chests pill is controlled from the main flow (ResultsScreenController)
 			} break;
 
 			case Step.IDLE:

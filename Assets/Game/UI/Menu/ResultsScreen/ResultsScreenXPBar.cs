@@ -273,7 +273,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 		m_xpBarTween = m_auxBar
 			.DOValue(m_targetDelta, speed)	// Speed based, duration represents units/sec
 			.SetSpeedBased(true)
-			.SetDelay(0.25f)	// Add some delay to give time to appear (external animator)
+			.SetDelay(0.5f)	// Add some delay to give time to appear (external animator)
 			.SetEase(Ease.Linear)
 			.OnUpdate(OnXPAnimUpdate)
 			.OnComplete(OnXPAnimEnd)

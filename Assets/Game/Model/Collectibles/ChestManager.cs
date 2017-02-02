@@ -35,13 +35,13 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 		get { return instance.m_user.dailyChests; }
 	}
 
-	// Chest sorted by state (INIT -> NOT_COLLECTED -> PENDING_REWARD -> COLLECTED)
+	// Chest sorted by state (COLLECTED -> PENDING_REWARD -> NOT_COLLECTED -> INIT)
 	public static List<Chest> sortedChests {
 		get {
 			List<Chest> sortedChests = new List<Chest>(dailyChests);
 			sortedChests.Sort(
 				(_ch1, _ch2) => { 
-					return _ch1.state.CompareTo(_ch2.state);
+					return -_ch1.state.CompareTo(_ch2.state);	// [AOC] Invert sign because we actually want to sort them in the reverse order of the enum
 				}
 			);
 			return sortedChests;

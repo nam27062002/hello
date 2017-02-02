@@ -80,23 +80,7 @@ public class ResultsScreenChestsPill : ResultsScreenCarouselPill {
 		gameObject.SetActive(true);
 		animator.Show();
 
-		// Launch animation!
-		Sequence seq = DOTween.Sequence();
-		seq.AppendInterval(0.5f);	// Initial delay
-		for(int i = m_processedChests; i < m_finalChests; i++) {
-			// Increase processed chests count
-			seq.AppendCallback(() => {
-				m_processedChests++;
-				RefreshTexts(true);
-			});
-
-			// Wait for the animation to finish
-			seq.AppendInterval(0.5f);
-		}
-		seq.AppendCallback(() => {
-			OnFinished.Invoke();
-		});
-		seq.Play();
+		// Animation is controlled from outside (to be synced with the 3D animation)
 	}
 
 	//------------------------------------------------------------------------//
@@ -145,6 +129,18 @@ public class ResultsScreenChestsPill : ResultsScreenCarouselPill {
 		animator.Show();
 	}
 
+	/// <summary>
+	/// Increses the chest count and animates the text.
+	/// </summary>
+	public void IncreaseChestCount() {
+		// Make sure we're within limits
+		if(m_processedChests < m_finalChests) {
+			m_processedChests++;
+			RefreshTexts(true);
+		} else {
+			RefreshTexts(false);
+		}
+	}
 
 	/// <summary>
 	/// Refresh counter with the current data.
@@ -159,7 +155,7 @@ public class ResultsScreenChestsPill : ResultsScreenCarouselPill {
 			if(_animate) {
 				// Play some SFX?
 				m_collectedText.transform.DOKill(true);
-				m_collectedText.transform.DOScale(1.5f, 0.15f).SetLoops(2, LoopType.Yoyo);
+				m_collectedText.transform.DOScale(3f, 0.15f).SetLoops(2, LoopType.Yoyo);
 			}
 		}
 	}
