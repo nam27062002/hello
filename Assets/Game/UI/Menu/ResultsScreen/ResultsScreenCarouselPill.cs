@@ -56,8 +56,8 @@ public abstract class ResultsScreenCarouselPill : MonoBehaviour {
 	/// </summary>
 	/// <param name="_delay">Seconds to wait before showing this pill.</param>
 	public void ShowAndAnimate(float _delay) {
-		// http://docs.unity3d.com/ScriptReference/MonoBehaviour.Invoke.html
-		Invoke("StartInternal", _delay);
+		// Super easy with DOTween
+		DOVirtual.DelayedCall(_delay, StartInternal, false);
 	}
 
 	//------------------------------------------------------------------------//

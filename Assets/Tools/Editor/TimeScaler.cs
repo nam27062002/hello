@@ -37,7 +37,7 @@ public class TimeScaler : EditorWindow {
 	/// </summary>
 	public static void ShowWindow() {
 		TimeScaler window = (TimeScaler)EditorWindow.GetWindow(typeof(TimeScaler));
-		window.minSize = new Vector2(100f, 45f);
+		window.minSize = new Vector2(100f, 20f);
 	}
 
 	/// <summary>
@@ -47,14 +47,12 @@ public class TimeScaler : EditorWindow {
 		// Detect changes
 		EditorGUI.BeginChangeCheck();
 
-		// Slider
-		m_scale = EditorGUILayout.Slider("Time Scale", m_scale, m_range.min, m_range.max);
-
-		// Range
+		// Label - min - slider - max
 		EditorGUILayout.BeginHorizontal(); {
-			EditorGUILayout.PrefixLabel("Range");
-			m_range.min = EditorGUILayout.FloatField(m_range.min);
-			m_range.max = EditorGUILayout.FloatField(m_range.max);
+			GUILayout.Label("Time Scale", GUILayout.Width(70f));
+			m_range.min = EditorGUILayout.FloatField(m_range.min, GUILayout.Width(20f));
+			m_scale = EditorGUILayout.Slider(Time.timeScale, m_range.min, m_range.max);
+			m_range.max = EditorGUILayout.FloatField(m_range.max, GUILayout.Width(20f));
 		} EditorGUILayout.EndHorizontal();
 
 		// If changed, validate values and apply new timescale
