@@ -35,7 +35,7 @@ namespace AI {
 			{
 				m_data = m_pilot.GetComponentData<PetDecideActionData>();
 				m_transitionParam = new object[1];
-
+				m_timer =  Time.time + m_data.m_timeSecondAction.GetRandom();
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
@@ -44,13 +44,14 @@ namespace AI {
 				{
 					// Seond Action
 					Transition( OnTimedAction, param);
+					m_timer =  Time.time + m_data.m_timeSecondAction.GetRandom();
 				}
 				else
 				{
 					// Default action
 					Transition( OnDefaultAction, param);
 				}
-				m_timer =  Time.time + m_data.m_timeSecondAction.GetRandom();
+
 			}
 
 
