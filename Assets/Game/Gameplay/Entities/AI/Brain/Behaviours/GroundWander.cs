@@ -80,7 +80,7 @@ namespace AI {
 					m_pilot.SlowDown(true);
 
 					float m = Mathf.Abs(m_machine.position.x - m_pilot.target.x);
-					if (m < 1f) {
+					if (m < 2f) {
 						Transition(OnRest);
 					}
 				}
