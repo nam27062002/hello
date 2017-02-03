@@ -96,31 +96,42 @@ namespace AI {
 						}
 					}
 
-					float dot = Vector3.Dot(m_seek.normalized, flee.normalized);
+
 					float seekMagnitude = m_seek.magnitude;
 					float fleeMagnitude = flee.magnitude;
 
-					if (dot <= DOT_START) {
-						m_perpendicularAvoid = true;
-					} else if (dot > DOT_END) {
-						m_perpendicularAvoid = false;
-					}
+					// add seek and flee vectors
+					if (IsActionPressed(Action.Avoid)) {
+						float dot = Vector3.Dot(m_seek.normalized, flee.normalized);
+						if (dot <= DOT_START) {
+							m_perpendicularAvoid = true;
+						} else if (dot > DOT_END) {
+							m_perpendicularAvoid = false;
+						}
 
-					if (m_perpendicularAvoid) {
-						m_impulse.Set(-flee.y, flee.x, flee.z);
+						if (m_perpendicularAvoid) {
+							m_impulse.Set(-flee.y, flee.x, flee.z);
+						} else {
+							m_impulse = m_seek + flee;
+						}
+						m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 					} else {
-						m_impulse = m_seek + flee;
+						m_impulse = m_seek;
 					}
-					m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 
+					// check near collisions 7
 					if (m_avoidCollisions || m_avoidWater) {
 						AvoidCollisions();
 						m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 					}
 
-					//float lerpFactor = (IsActionPressed(Action.Boost))? 4f : 2f;
+					if (IsActionPressed(Action.Avoid)) {
+						float lerpFactor = (IsActionPressed(Action.Boost))? 4f : 2f;
+						m_impulse = Vector3.Lerp(m_lastImpulse, Vector3.ClampMagnitude(m_impulse, speed), Time.smoothDeltaTime * lerpFactor);
+					} else {
+						m_impulse = Vector3.ClampMagnitude(m_impulse, speed);
+					}
 
-					//m_impulse = Vector3.Lerp(m_lastImpulse, Vector3.ClampMagnitude(m_impulse, speed), Time.smoothDeltaTime * lerpFactor);
 					m_impulse += m_externalImpulse;
 
 					if (!m_directionForced) {// behaviours are overriding the actual direction of this machine

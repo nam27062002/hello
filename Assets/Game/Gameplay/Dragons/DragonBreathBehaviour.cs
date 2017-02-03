@@ -276,9 +276,11 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	virtual public bool Overlaps( CircleAreaBounds _circle) { return false; }
 	virtual protected void ExtendedStart() {}
 	virtual protected void ExtendedUpdate() {}
+	virtual public void RecalculateSize(){}
 
 	virtual protected void BeginFury( Type _type ) 
 	{
+		RecalculateSize();
 		m_type = _type;
 		m_isFuryOn = true;
 
