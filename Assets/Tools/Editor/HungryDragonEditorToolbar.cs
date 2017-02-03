@@ -26,12 +26,12 @@ public class HungryDragonEditorToolbar : EditorWindow {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private static readonly float MARGIN = 5f;
-	private static readonly float BUTTON_SIZE = 25f;
-	private static readonly float SEPARATOR_SIZE = 10f;
+	private const float MARGIN = 5f;
+	private const float BUTTON_SIZE = 25f;
+	private const float SEPARATOR_SIZE = 10f;
 
-	private static readonly int NUM_BUTTONS = 7;		// Update as needed
-	private static readonly int NUM_SEPARATORS = 1;		// Update as needed
+	private const int NUM_BUTTONS = 8;		// Update as needed
+	private const int NUM_SEPARATORS = 1;		// Update as needed
 
 	//------------------------------------------------------------------------//
 	// STATICS																  //
@@ -148,6 +148,11 @@ public class HungryDragonEditorToolbar : EditorWindow {
 					new Type[] { typeof(UnityEngine.Sprite) },
 					new Type[] { typeof(UnityEngine.UI.Image) }*/
 				);
+			}
+
+			// Ease Preview Tool
+			if(GUILayout.Button(new GUIContent("EZ", "Ease Preview Tool"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				HungryDragonEditorMenu.EasePreviewToolWindow();
 			}
 
 			// Right margin

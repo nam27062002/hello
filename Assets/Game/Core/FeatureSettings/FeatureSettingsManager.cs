@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+using FGOL.Server;
 using SimpleJSON;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,19 +32,18 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     private void Awake()
     {
 #if UNITY_EDITOR
-        Device_Model = "UNITY_EDITOR";        
+        Device_Model = "UNITY_EDITOR";
 #else
         Device_Model = SystemInfo.deviceModel;
 #endif
 
-        m_deviceQualityManager = new DeviceQualityManager();
+        Server_Reset();
 
-        if (ContentManager.ready)
-        {
-            Rules_OnLoaded();
-        }
+        CurrentQualityIndex = -1;
+        Shaders_CurrentKey = null;
+        State = EState.WaitingForRules;
 
-        Messenger.AddListener(EngineEvents.DEFINITIONS_LOADED, Rules_OnLoaded);
+        m_deviceQualityManager = new DeviceQualityManager();       
     }
 
     protected override void OnDestroy()
@@ -52,13 +52,205 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         if (m_deviceQualityManager != null)
         {
             m_deviceQualityManager.Clear();
+        }        
+    }
+
+    private void Update()
+    {
+        switch (State)
+        {
+            case EState.WaitingForRules:
+                if (ContentManager.ready)
+                {
+                    Rules_OnLoaded();
+                    State_Timer = 0f;
+                    State = EState.WaitingToCheckConnection;
+                }                
+                break;
+
+            case EState.WaitingToCheckConnection:
+                State_Timer -= Time.deltaTime;
+                if (State_Timer <= 0)
+                {
+                    State = EState.CheckingConnection;
+
+                    // Check if there's connection
+                    Authenticator.Instance.CheckConnection(delegate (Error connectionError)
+                    {
+                        if (connectionError == null)
+                        {
+                            // If there's connection then the request is sent to the server
+                            Server_RequestQualitySettings();
+                        }
+                        else
+                        {
+                            // Wait to check the connection again
+                            State_Timer = SERVER_TIME_TO_WAIT_BETWEEN_CONNECTION_CHECKS;
+                            State = EState.WaitingToCheckConnection;                            
+                        }
+                    });
+                }
+                break;           
+
+            case EState.WaitingToApplyServerResponse:
+                if (Server_QualitySettingsJSON == null)
+                {
+                    LogError("JSON received from server can't be null");
+                    State = EState.Done;
+                }
+                else if (ISApplyFeatureSettingsAllowed())
+                {                    
+                    SetupCurrentFeatureSettings(Server_QualitySettingsJSON);                    
+                    State = EState.Done;
+                }
+                break;
+
+            case EState.WaitingForTheUserToLogInToUpload:                
+                if (GameSessionManager.SharedInstance.IsLogged())
+                {
+                    State = EState.Done;
+                    Server_UploadQualitySettings();
+                }                
+                else
+                {
+                    // If the time given to wait for the user to log in has expired then we just ignore that request from server
+                    State_Timer -= Time.deltaTime;
+                    if (State_Timer <= 0f)
+                    {
+                        State = EState.Done;
+                    }
+                }
+                break;
+        }       
+    }
+
+    public bool IsReady()
+    {
+        return Device_CurrentFeatureSettings != null;
+    }
+
+    #region state
+    // This region is responsible for handling the different states of this singleton. This is the flow:
+    // 1)The singleton has to wait for the rules to be loaded
+    // 2)Once they're loaded the quality settings information defined in content is applied and the singleton has to check whether or not there's connection, when there's connection a request for the latest
+    //   quality setting defined on server side is sent
+    // 3)The singleton has to wait for the response from server
+    // 4)Once the response is received the singleton has to wait for an appropriate moment (not ingame) to apply the new quality settings.
+    // 5)Once the quality settings information from server are applied then no more changes will happen on quality settings so the flow is done
+
+    private enum EState
+    {
+        WaitingForRules,                        // Waiting for rules to be loaded
+        WaitingToCheckConnection,               // Time to wait before checking if there's connection
+        CheckingConnection,                     // Checks whether or not there's connection        
+        WaitingForServerResponse,               // Waiting for the response with the quality settings information from server 
+        WaitingToApplyServerResponse,           // Waiting for an appropriate moment to apply the quality settings received from server
+        WaitingForTheUserToLogInToUpload,       // Waiting for the user to log in once the client has been told to upload its quality settings information to the server
+        Done                                    // No more stuff has to be done once server quality settings have been applied
+    }
+
+    private EState m_state;
+    private EState State
+    {
+        get
+        {
+            return m_state;
         }
 
-        if (ApplicationManager.IsAlive)
+        set
         {
-            Messenger.RemoveListener(EngineEvents.DEFINITIONS_LOADED, Rules_OnLoaded);
+            m_state = value;
+
+            switch(m_state)
+            {
+                case EState.WaitingForTheUserToLogInToUpload:
+                    State_Timer = SERVER_TIME_TO_WAIT_FOR_LOGIN_WHEN_TOLD_TO_UPLOAD;
+                    break;
+            }
         }
     }
+
+    /// <summary>
+    /// General purpose timer to use by the current state
+    /// </summary>
+    private float State_Timer { get; set; }
+    #endregion
+
+    #region server
+    // This region is responsible for sending related to quality settings request to the server and for receiving the responses
+    // The response for the quality settings request can be null if the server doesn't have that information. If so then the client has to provide the server with that information.
+    // In order to be allowed to do so the user has to be logged. 
+
+    private float SERVER_TIME_TO_WAIT_BETWEEN_CONNECTION_CHECKS = 5f;
+
+    /// <summary>
+    /// Time to wat for the user to log in once the client has been told to upload its quality settings information to the server
+    /// </summary>
+    private float SERVER_TIME_TO_WAIT_FOR_LOGIN_WHEN_TOLD_TO_UPLOAD = 20f * 60f;
+
+    private JSONNode Server_QualitySettingsJSON { get; set; }    
+
+    private void Server_Reset()
+    {
+        Server_QualitySettingsJSON = null;        
+    }
+
+    private void Server_RequestQualitySettings()
+    {
+        Server_Reset();
+
+        // We need to wait for the response
+        State = EState.WaitingForServerResponse;
+
+        GameServerManager.SharedInstance.GetQualitySettings(delegate (Error error, Dictionary<string, object> response)
+        {
+            if (error == null)
+            {
+                // If there's no error then we need to wait for the right moment to apply the quality settings received from server
+                string qualitySettings = response["response"] as string;
+
+                // If there's no data then we need to upload the profile calculated to the server when as long as the user logs in
+                if (qualitySettings == null)
+                {
+                    State = EState.WaitingForTheUserToLogInToUpload;                    
+                }
+                else
+                {
+                    JSONNode json = JSONNode.Parse(qualitySettings);
+                    Server_QualitySettingsJSON = FormatJSON(json);
+                    State = EState.WaitingToApplyServerResponse;
+                }
+            }
+            else
+            {
+                DeviceQualityManager.LogError("get quality settings response error " + error.message);
+
+                // No quality settings information got from server so nothing has to be applied and the game continues with the information defined in content
+                State = EState.Done;
+            }
+        });
+    }
+
+    private void Server_UploadQualitySettings()
+    {
+        // Only the profile has to be sent to the server
+        JSONNode json = new JSONClass();
+        json.Add("profile", Device_CurrentProfile);
+        string data = "{\"profile\":\"very_low\"}";
+
+        GameServerManager.SharedInstance.SetQualitySettings(data, delegate (Error error, Dictionary<string, object> response)
+        {
+            if (error == null)
+            {
+                Log("Quality settings uploaded successfully");
+            }
+            else
+            {
+                Log("Error when uploading quality settings " + error.message);
+            }
+        });
+    }
+    #endregion
 
     #region device
     public string Device_Model { get; set; }
@@ -299,7 +491,6 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             settingsJSON = pair.Value.ToJSON();
             settingsJSON = FormatJSON(settingsJSON);
-            settingsJSON = featureSettings.ParseJSON(settingsJSON);
             featureSettings.FromJSON(settingsJSON);
             m_deviceQualityManager.Profiles_AddData(featureSettings.Profile, featureSettings.Rating, settingsJSON);
         }
@@ -312,8 +503,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         foreach (KeyValuePair<string, DefinitionNode> pair in definitions)
         {
             settingsJSON = pair.Value.ToJSON();
-            settingsJSON = FormatJSON(settingsJSON);
-            settingsJSON = featureSettings.ParseJSON(settingsJSON);            
+            settingsJSON = FormatJSON(settingsJSON);                    
 
             // Makes sure that profile is a valid value
             if (settingsJSON.ContainsKey(FeatureSettings.KEY_PROFILE))
@@ -327,9 +517,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
 #endif
 
-
-            // The device rating is calculated
-            float rating = Device_CalculateRating();
+        // The device rating is calculated
+        float rating = Device_CalculateRating();
         m_deviceQualityManager.Device_CalculatedRating = rating;
 
         Device_CurrentFeatureSettings = CreateFeatureSettings();
@@ -342,32 +531,48 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     // List of shader variant collections to warm up. They have to be sorted in ascendent order (the lowest quality one first)
     public ShaderVariantCollection[] m_shadersVariantCollections;
 
-    private const string SHADERS_KEY_HIGH = "HI_DETAIL_ON";
+    public const string SHADERS_KEY_HIGH = "HI_DETAIL_ON";
     private const string SHADERS_KEY_MID = "MEDIUM_DETAIL_ON";
     private const string SHADERS_KEY_LOW = "LOW_DETAIL_ON";
 
-    private void Shaders_ApplyQuality(FeatureSettings.ELevel3Values quality)
-    {
-        Shader.DisableKeyword(SHADERS_KEY_HIGH);
-        Shader.DisableKeyword(SHADERS_KEY_MID);
-        Shader.DisableKeyword(SHADERS_KEY_LOW);
+    private string Shaders_CurrentKey { get; set; }
 
+    private string Shaders_QualityLevelToKey(FeatureSettings.ELevel3Values quality)
+    {
+        string returnValue = null;
         switch (quality)
         {
             case FeatureSettings.ELevel3Values.high:
-                Shader.EnableKeyword(SHADERS_KEY_HIGH);
+                returnValue = SHADERS_KEY_HIGH;
                 break;
 
             case FeatureSettings.ELevel3Values.mid:
-                Shader.EnableKeyword(SHADERS_KEY_MID);
+                returnValue = SHADERS_KEY_MID;
                 break;
 
             default:
-                Shader.EnableKeyword(SHADERS_KEY_LOW);
+                returnValue = SHADERS_KEY_LOW;
                 break;
         }
 
-        Shaders_WarmUpVariantCollection(quality);
+        return returnValue;
+    }
+
+    private void Shaders_ApplyQuality(FeatureSettings.ELevel3Values quality)
+    {
+        string key = Shaders_QualityLevelToKey(quality);
+        if (key != Shaders_CurrentKey)
+        {
+            Shaders_CurrentKey = key;
+
+            Shader.DisableKeyword(SHADERS_KEY_HIGH);
+            Shader.DisableKeyword(SHADERS_KEY_MID);
+            Shader.DisableKeyword(SHADERS_KEY_LOW);
+
+            Shader.EnableKeyword(Shaders_CurrentKey);
+            
+            Shaders_WarmUpVariantCollection(quality);
+        }
     }
 
     private void Shaders_WarmUpVariantCollection(FeatureSettings.ELevel3Values quality)
@@ -485,24 +690,41 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         //Debug.Log(json);
     }
 
+    private int CurrentQualityIndex { get; set; }
+
+    /// <summary>
+    /// Returns whether or not this is a good moment to apply feature settings as it can change quality settings, which migh have an impact on performance. Typically we don't want to apply 
+    /// them when ingame.
+    /// </summary>
+    /// <returns></returns>
+    private bool ISApplyFeatureSettingsAllowed()
+    {
+        return true;
+    }
+
     private void ApplyFeatureSetting(FeatureSettings settings)
     {
 #if !UNITY_EDITOR
         FeatureSettings.EQualityLevelValues quality = settings.GetValueAsQualityLevel(FeatureSettings.KEY_QUALITY_LEVEL);
         int qualityIndex = (int)quality;
-        QualitySettings.SetQualityLevel(qualityIndex);
-        DeviceQualityManager.Log(">> qualityLevel:" + quality.ToString() + " index = " + qualityIndex);        
+        if (qualityIndex != CurrentQualityIndex)
+        {
+            CurrentQualityIndex = qualityIndex;
+            QualitySettings.SetQualityLevel(CurrentQualityIndex);
+            Log(">> qualityLevel:" + quality.ToString() + " index = " + qualityIndex);
+        }
+
         ApplyPhysicQuality(settings.Rating);
 #endif
 
         FeatureSettings.ELevel3Values shadersLevel = settings.GetValueAsLevel3(FeatureSettings.KEY_SHADERS_LEVEL);
         Shaders_ApplyQuality(shadersLevel);
 
-        DeviceQualityManager.Log("Device Rating:" + settings.Rating);
-        DeviceQualityManager.Log("Profile:" + settings.Profile);
-        DeviceQualityManager.Log(Device_GetInfo());
-        DeviceQualityManager.Log(Shaders_GetInfo());
-        DeviceQualityManager.Log(">> Time.fixedDeltaTime:" + Time.fixedDeltaTime);
+        Log("Device Rating:" + settings.Rating);
+        Log("Profile:" + settings.Profile);
+        Log(Device_GetInfo());
+        Log(Shaders_GetInfo());
+        Log(">> Time.fixedDeltaTime:" + Time.fixedDeltaTime);
     }
 
     private void ApplyPhysicQuality(float deviceRating)
@@ -535,6 +757,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                     returnValue.Add(pair.Key, pair.Value);
                 }
             }
+
+#if UNITY_EDITOR
+            // Only in editor mode we want to detect any field or value that is not supported
+            returnValue = FeatureSettingsHelper.ParseJSON(returnValue);
+#endif
         }
 
         return returnValue;
@@ -575,11 +802,27 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
-    public bool IsGlowEnabled
+    public bool IsGlowEffectEnabled
     {
         get
         {
-            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_GLOW);
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_GLOW_EFFECT);
+        }
+    }
+
+    public bool IsDrunkEffectEnabled
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_DRUNK_EFFECT);
+        }
+    }
+                
+    public bool IsFrameColorEffectEnabled
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_FRAME_COLOR_EFFECT);
         }
     }
 
@@ -589,6 +832,25 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             return Device_CurrentFeatureSettings.GetValueAsLevel2(FeatureSettings.KEY_ENTITIES_LOD);
         }
+    }
+    #endregion
+
+    #region log
+    private const string PREFIX = "FeatureSettingsManager:";
+
+    public static void Log(string message)
+    {
+        Debug.Log(PREFIX + message);
+    }
+
+    public static void LogWarning(string message)
+    {
+        Debug.LogWarning(PREFIX + message);
+    }
+
+    public static void LogError(string message)
+    {
+        Debug.LogError(PREFIX + message);
     }
     #endregion
 }

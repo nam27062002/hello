@@ -288,6 +288,8 @@ public class DragonPlayer : MonoBehaviour {
 				m_superSizeSize = m_superSizeTarget;
 			}
 			gameObject.transform.localScale = Vector3.one * data.scale * m_superSizeSize;
+			if (m_breathBehaviour.IsFuryOn())
+				m_breathBehaviour.RecalculateSize();
 		}
 	}
 

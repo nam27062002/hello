@@ -13,6 +13,7 @@ namespace AI {
 		private static float[] m_triangleRows;
 
 		private List<IMachine> m_members;
+		private int[] m_offsetIndex;
 		private int m_leader;
         
 		private Formation m_formation;
@@ -25,6 +26,11 @@ namespace AI {
 		public Group() {
 			m_leader = -1; // there is no one in charge of this flock
 			m_members = new List<IMachine>();     
+
+			m_offsetIndex = new int[100];
+			for (int i = 0; i < 100; i++) {
+				m_offsetIndex[i] = i;
+			}
 
 			if (m_offsetsSunflower == null) {
 				CreateOffsets(100);
@@ -58,8 +64,11 @@ namespace AI {
 				if (count == 0) {
 					m_leader = -1;
 				} else if (m_leader == index) {
-					m_leader = count - 1;
+					m_leader = 0;
 					m_members[m_leader].SetSignal(Signals.Type.Leader, true);
+
+					//m_offsetIndex[index] = m_offsetIndex[m_leader];
+					//m_offsetIndex[m_leader] = 0;
 				} else if (m_leader > index) {
 					m_leader--;
 				}                              
@@ -67,9 +76,13 @@ namespace AI {
 		}
 
 		public void ChangeLeader() {
-			m_members[m_leader].SetSignal(Signals.Type.Leader, false);
+			int oldLeader = m_leader;
+			m_members[oldLeader].SetSignal(Signals.Type.Leader, false);
 			m_leader = (m_leader + 1) % count;
 			m_members[m_leader].SetSignal(Signals.Type.Leader, true);
+
+			/*m_offsetIndex[oldLeader] = m_offsetIndex[m_leader];
+			m_offsetIndex[m_leader] = 0;*/
 		}
 
 		public IMachine leader {
@@ -99,10 +112,10 @@ namespace AI {
 				m_offsetsSunflower[i] = Sunflower(i + 1, _maxEntities);
             }
 
-			m_offsetsTriangle = new Vector3[100];
-			m_triangleRows = new float[100];
-			Triangle(100);
-        }
+			m_offsetsTriangle = new Vector3[_maxEntities];
+			m_triangleRows = new float[_maxEntities];
+			Triangle(_maxEntities);
+		}
 
         public bool HasOffsets() {
             return m_offsetsSunflower != null;
@@ -117,12 +130,12 @@ namespace AI {
 		}
 
 		public Vector3 GetOffset(IMachine machine, float _radius) {
-			int index = m_members.IndexOf(machine);
+			int machineIndex = m_members.IndexOf(machine);
+			int index = m_offsetIndex[machineIndex];
 
 			if (index > -1) {				
 				if (m_formation == Formation.Triangle) {
-					if (m_offsetsTriangle != null) {
-						//return Quaternion.Slerp(m_lastrotation, m_rotation, 1f / m_triangleRows[index]) * (m_offsetsTriangle[index] * _radius);
+					if (m_offsetsTriangle != null) {						
 						return m_rotation * (m_offsetsTriangle[index] * _radius);
 					}
 				} else {

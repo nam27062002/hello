@@ -198,8 +198,8 @@ public class SelectionGrid {
 		// If style was already created, update background texture
 		m_selectionColor = _color;
 		if(m_buttonStyle != null) {
-			m_buttonStyle.onActive.background = Texture2DExt.Create(2, 2, m_selectionColor);
-			m_buttonStyle.onNormal.background = Texture2DExt.Create(2, 2, m_selectionColor);
+			m_buttonStyle.onActive.background = Texture2DExt.Create(m_selectionColor);
+			m_buttonStyle.onNormal.background = Texture2DExt.Create(m_selectionColor);
 		}
 	}
 

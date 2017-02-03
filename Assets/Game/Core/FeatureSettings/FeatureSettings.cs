@@ -29,7 +29,9 @@ public class FeatureSettings
     public const string KEY_PROFILE = "profile";
     public const string KEY_QUALITY_LEVEL = "qualityLevel";
     public const string KEY_SHADERS_LEVEL = "shadersLevel";
-    public const string KEY_GLOW = "glow";
+    public const string KEY_GLOW_EFFECT = "glow";
+    public const string KEY_DRUNK_EFFECT = "drunkEffect";
+    public const string KEY_FRAME_COLOR_EFFECT = "frameColorEffect";
     public const string KEY_ENTITIES_LOD = "entitiesLOD";
     public const string KEY_LEVELS_LOD = "levelsLOD";
 
@@ -72,7 +74,7 @@ public class FeatureSettings
 
             // profile
             key = KEY_PROFILE;
-            data = new DataString(key, "very_low");
+            data = new DataString(key, null);
             Datas.Add(key, data);
 
 
@@ -88,8 +90,16 @@ public class FeatureSettings
 
 
             // glow: default value is false because glow has caused crashed in several devices so false is a safer value for a device until it's proved that the feature works properly
-            key = KEY_GLOW;
+            key = KEY_GLOW_EFFECT;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+            
+            key = KEY_DRUNK_EFFECT;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+
+            key = KEY_FRAME_COLOR_EFFECT;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
             Datas.Add(key, data);
 
             // entitiesLOD

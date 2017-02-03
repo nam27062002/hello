@@ -24,6 +24,7 @@ public class Entity : IEntity {
 
 	private Reward m_reward;
 	public Reward reward { get { return m_reward; }}
+	public override int score { get { return m_reward.score; } }
 
 	private float m_goldenChance = 0f;
 	public float goldenChance { get { return m_goldenChance; }}
@@ -160,6 +161,7 @@ public class Entity : IEntity {
 		m_spawner.RemoveEntity(gameObject, _destroyed);
         m_spawned = false;		
     }
+
 
     /// <summary>
     /// Get a Reward struct initialized with the reward to be given when killing this

@@ -286,8 +286,8 @@ namespace LevelEditor {
 			{ // Group list elements
 				GUIStyle newStyle = new GUIStyle(EditorStyles.miniButton);
 				
-				Texture2D selectedTexture = Texture2DExt.Create(2, 2, Colors.gray);
-				Texture2D idleTexture = Texture2DExt.Create(2, 2, Colors.transparentBlack);
+				Texture2D selectedTexture = Texture2DExt.Create(Colors.gray);
+				Texture2D idleTexture = Texture2DExt.Create(Colors.transparentBlack);
 				
 				newStyle.alignment = TextAnchor.MiddleLeft;
 				
@@ -308,7 +308,7 @@ namespace LevelEditor {
 			{ // Scroll list white background
 				GUIStyle newStyle = new GUIStyle(EditorStyles.helpBox);
 				
-				Texture2D whiteTexture = Texture2DExt.Create(2, 2, Colors.white);
+				Texture2D whiteTexture = Texture2DExt.Create(Colors.white);
 				
 				newStyle.normal.background = whiteTexture;
 				newStyle.onNormal.background = whiteTexture;

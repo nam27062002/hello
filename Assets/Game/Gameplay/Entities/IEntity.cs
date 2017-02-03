@@ -13,7 +13,9 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
     {
         get
         {
-            return (FeatureSettingsManager.instance.EntitiesLOD == FeatureSettings.ELevel2Values.low) ? ENTITY_PREFABS_LOW_PATH : ENTITY_PREFABS_PATH;
+            // Entities LOD flag has been disabled because it's not really worth it
+            //return (FeatureSettingsManager.instance.EntitiesLOD == FeatureSettings.ELevel2Values.low) ? ENTITY_PREFABS_LOW_PATH : ENTITY_PREFABS_PATH;
+            return ENTITY_PREFABS_PATH;
         }
     }
 
@@ -31,6 +33,8 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 	protected float m_maxHealth;
 	protected float m_health;
 	public float health { get { return m_health; } set { m_health = value; } }
+
+	public virtual int score { get { return 0; } }
 
 	public virtual void Spawn(ISpawner _spawner) {
 		m_health = m_maxHealth;
