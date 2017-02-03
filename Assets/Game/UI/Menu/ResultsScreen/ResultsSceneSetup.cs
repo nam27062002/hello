@@ -11,6 +11,7 @@ using UnityEngine;
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -41,7 +42,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 	[SerializeField] private ResultsSceneChestSlot[] m_chestSlots = new ResultsSceneChestSlot[5];
 
 	// Internal
-	private List<ResultsSceneChestSlot> m_activeSlots = new List<ResultsSceneChestSlot>();	// The slots that we'll be actually using, sorted in order of appereance
+	private List<ResultsSceneChestSlot> m_rewardedSlots = new List<ResultsSceneChestSlot>();	// The slots that we'll be actually using, sorted in order of appereance
 	private bool m_eggFound = false;
 
 	//------------------------------------------------------------------------//
@@ -77,43 +78,89 @@ public class ResultsSceneSetup : MonoBehaviour {
 	/// </summary>
 	public void Init() {
 		// How many chests?
-		List<Chest> collectedChests = new List<Chest>();
+		int preCollectedChests = 0;
+		int pendingChests = 0;
+		int collectedAndPendingChests = 0;
+		List<Chest> sortedChests = new List<Chest>();
+		List<Chest> sourceChests = ChestManager.sortedChests;
 		if(CPResultsScreenTest.chestsMode == CPResultsScreenTest.ChestTestMode.NONE) {
 			// Real logic
-			// Grab all the chests in the REWARD_PENDING state
-			for(int i = 0; i < ChestManager.dailyChests.Length; i++) {
-				if(ChestManager.dailyChests[i].state == Chest.State.PENDING_REWARD) {
-					collectedChests.Add(ChestManager.dailyChests[i]);
+			for(int i = 0; i < sourceChests.Count; i++) {
+				sortedChests.Add(sourceChests[i]);
+				switch(sourceChests[i].state) {
+					case Chest.State.COLLECTED: {
+						preCollectedChests++; 
+					} break;
+
+					case Chest.State.PENDING_REWARD: {
+						pendingChests++; 
+					}break;
 				}
 			}
+			collectedAndPendingChests = preCollectedChests + pendingChests;
 		} else {
 			// [AOC] DEBUG ONLY!!
-			int numCollectedChests = CPResultsScreenTest.chestsMode - CPResultsScreenTest.ChestTestMode.FIXED_0;
+			pendingChests = CPResultsScreenTest.chestsMode - CPResultsScreenTest.ChestTestMode.FIXED_0;
 			if(CPResultsScreenTest.chestsMode == CPResultsScreenTest.ChestTestMode.RANDOM) {
-				numCollectedChests = Random.Range(0, 5);
+				pendingChests = Random.Range(0, 5);
 			}
 
-			for(int i = 0; i < numCollectedChests; i++) {
-				Chest newChest = new Chest();
-				newChest.ChangeState(Chest.State.PENDING_REWARD);
-				collectedChests.Add(newChest);
+			// Adjust number of previously collected chests to prevent overflowing max chests
+			preCollectedChests = ChestManager.collectedChests;
+			collectedAndPendingChests = preCollectedChests + pendingChests;
+			if(collectedAndPendingChests > ChestManager.NUM_DAILY_CHESTS) {
+				collectedAndPendingChests = ChestManager.NUM_DAILY_CHESTS;
+				preCollectedChests = collectedAndPendingChests - pendingChests;
+			}
+
+			// Either reuse actual chest or create a fake new one
+			for(int i = 0; i < sourceChests.Count; i++) {
+				if(i < preCollectedChests) {
+					sortedChests.Add(sourceChests[i]);
+				} else if(i < collectedAndPendingChests) {
+					Chest newChest = new Chest();
+					newChest.ChangeState(Chest.State.PENDING_REWARD);
+					sortedChests.Add(newChest);
+				} else {
+					Chest newChest = new Chest();
+					newChest.ChangeState(Chest.State.NOT_COLLECTED);
+					sortedChests.Add(newChest);
+				}
 			}
 		}
 
-		// Show the chests in the center, left to right
-		// Another option (check with design/UI) would be to show the daily chest progression, 
-		// in which case order should be linear (0-1-2-3-4) and probably the chest layout 
-		// different to give more relevance to latest chests (maybe some different asset?)
-		m_activeSlots.Clear();
-		int startIdx = (Mathf.CeilToInt(m_chestSlots.Length/2f) - Mathf.FloorToInt(collectedChests.Count/2f)) - 1;	// -1 for 0-based index
-		int endIdx = startIdx + collectedChests.Count;
-		for(int i = startIdx; i < endIdx; i++) {
-			m_activeSlots.Add(m_chestSlots[i]);
-		}
+		// Initialize chest slots
+		// Testing different layouts!
+		switch(CPResultsScreenTest.chestsLayout) {
+			// Option A) Show the chests in the center, left to right
+			case CPResultsScreenTest.ChestsLayout.ONLY_COLLECTED_CHESTS: {
+				m_rewardedSlots.Clear();
+				int startIdx = (Mathf.CeilToInt(m_chestSlots.Length/2f) - Mathf.FloorToInt(pendingChests/2f)) - 1;	// -1 for 0-based index
+				int endIdx = startIdx + pendingChests;
+				int chestIdx = preCollectedChests + 1;
+				for(int i = startIdx; i < endIdx; i++) {
+					m_rewardedSlots.Add(m_chestSlots[i]);
+					m_chestSlots[i].InitFromChest(sortedChests[chestIdx], ChestManager.GetRewardData(chestIdx + 1));
+				}
 
-		// Hide all slots
-		for(int i = 0; i < m_chestSlots.Length; i++) {
-			m_chestSlots[i].gameObject.SetActive(false);
+				// Hide all slots
+				for(int i = 0; i < m_chestSlots.Length; i++) {
+					m_chestSlots[i].gameObject.SetActive(false);
+				}
+			} break;
+
+			// Option B) Show the daily chest progression, linear order (0-1-2-3-4) left to right
+			case CPResultsScreenTest.ChestsLayout.FULL_PROGRESSION: {
+				// Using all chest slots
+				m_rewardedSlots.Clear();
+				for(int i = 0; i < m_chestSlots.Length; i++) {
+					// Initialize based on chest state
+					m_chestSlots[i].InitFromChest(sortedChests[i], ChestManager.GetRewardData(i + 1));
+					if(sortedChests[i].state == Chest.State.PENDING_REWARD) {
+						m_rewardedSlots.Add(m_chestSlots[i]);
+					}
+				}
+			} break;
 		}
 
 		// Egg found?
@@ -147,67 +194,75 @@ public class ResultsSceneSetup : MonoBehaviour {
 	/// Launches the dragon intro animation.
 	/// </summary>
 	public void LaunchDragonAnim() {
+		// Launch gold mountain animation
+		m_goldMountainAnimator.SetTrigger("Intro");
+
 		// Show and trigger dragon animation
 		m_dragonSlot.gameObject.SetActive(true);
 		m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS_IN);
-		m_goldMountainAnimator.SetTrigger("Intro");
-
-		// [AOC] TODO!! Sync camera shake
 	}
 
 	/// <summary>
 	/// Setup and launch results animation based on current game stats (RewardManager, etc.).
 	/// </summary>
 	/// <returns>The total duration of the animation.</returns>
-	public float LaunchRewardsAnim() {
-		// Make current camera the main one
-
+	/// <param name="_carouselPill">The carousel's pill, used to sync both animations.</param>
+	public float LaunchRewardsAnim(ResultsScreenChestsPill _carouselPill) {
+		// Make things easy with a sequence!
+		Sequence seq = DOTween.Sequence();
+		seq.AppendInterval(_carouselPill.animator.tweenDuration);	// Initial delay (time for the pill to appear)
+		seq.AppendInterval(UIConstants.resultsChestsAndEggMinDuration * 0.5f);	// Extra delay - half here, half by the end of the whole sequence
 
 		// Program animation of selected slots
-		float totalDelay = 0f;
-		float totalDuration = 0f;
-		float delayPerChest = 0.2f;	// Arbitrary
-		float durationPerChest = 0.1f;	// Arbitrary
-		for(int i = 0; i < m_activeSlots.Count; i++) {
-			// Get reward definition corresponding to this chest
-			int chestIdx = RewardManager.initialCollectedChests + i + 1;
-			if(CPResultsScreenTest.chestsMode != CPResultsScreenTest.ChestTestMode.NONE) {
-				chestIdx = i + 1;
-			}
-			Chest.RewardData rewardData = ChestManager.GetRewardData(chestIdx);
+		for(int i = 0; i < m_rewardedSlots.Count; i++) {
+			// In order to be able to use inline functions within a loop, we must store looped vars into a copy
+			ResultsSceneChestSlot slot = m_rewardedSlots[i];
 
-			// Launch with delay
-			StartCoroutine(
-				AnimateChestWithDelay(m_activeSlots[i], rewardData, totalDelay)
-			);
-			totalDelay += delayPerChest;
-			totalDuration += delayPerChest + durationPerChest;
+			// Launch anim
+			seq.AppendCallback(() => {
+				// Do it
+				slot.gameObject.SetActive(true);
+				slot.LaunchRewardAnim();
+			});
+
+			seq.AppendInterval(UIConstants.resultsChestDuration * 0.4f);	// Arbitrary, to sync with animation
+			seq.AppendCallback(() => {
+				// Update pill
+				_carouselPill.IncreaseChestCount();
+			});
+
+			// Add arbitrary delay (time to finish the animation + delay to next chest)
+			seq.AppendInterval(UIConstants.resultsChestDuration * 0.6f);
 		}
 
-		// Program egg anim
+		// Program egg animation (if required!)
 		if(m_eggFound) {
-			totalDelay += 0.5f;	// Extra delay
-			totalDuration += 0.5f + 0.5f;
+			// Precompute durations (must add up to 1f)
+			float eggAnimDuration = UIConstants.resultsEggDuration;
+			float inDelay = eggAnimDuration * 0.1f;
+			float inDuration = eggAnimDuration * 0.7f;
+			float outDuration = eggAnimDuration * 0.2f;
+
+			// Initialize
+			float eggSlotScale = m_eggSlot.transform.localScale.x;
 			m_eggSlot.gameObject.SetActive(true);
-			m_eggSlot.localScale = Vector3.zero;
-			m_eggSlot.DOScale(0.75f, 0.5f).SetDelay(totalDelay).SetEase(Ease.OutBack);
+			m_eggSlot.transform.SetLocalScale(0f);
+			seq.AppendInterval(inDelay);	// Initial delay
+
+			// Up
+			seq.Append(m_eggSlot.DOScale(eggSlotScale, inDuration * 0.9f).SetEase(Ease.OutBack));
+			seq.Join(m_eggSlot.DOLocalMoveY(0.25f, inDuration * 0.9f).SetRelative(true).SetEase(Ease.OutBack));
+			seq.Join(m_eggSlot.DOBlendableLocalRotateBy(Vector3.up * 360f, inDuration, RotateMode.FastBeyond360).SetEase(Ease.OutCubic));
+
+			// Down
+			seq.Append(m_eggSlot.DOLocalMoveY(-0.25f, outDuration).SetRelative(true).SetEase(Ease.OutQuad));
 		}
 
-		return totalDuration;
-	}
+		// Final delay
+		seq.AppendInterval(UIConstants.resultsChestsAndEggMinDuration * 0.5f);	// Final delay (time to process everything and let the last chest animation finish
 
-	/// <summary>
-	/// Lauches the animation of the given chest slot with a specific chest reward data and delay.
-	/// </summary>
-	/// <param name="_slot">Slot to be animated.</param>
-	/// <param name="_chestRewardData">Chest reward data.</param>
-	/// <param name="_delay">Delay before launching the animation.</param>
-	private IEnumerator AnimateChestWithDelay(ResultsSceneChestSlot _slot, Chest.RewardData _chestRewardData, float _delay) {
-		// Delay
-		yield return new WaitForSeconds(_delay);
-
-		// Do it!
-		_slot.gameObject.SetActive(true);
-		_slot.LaunchAnimation(_chestRewardData);
+		// Done!
+		seq.Play();
+		return seq.Duration();
 	}
 }

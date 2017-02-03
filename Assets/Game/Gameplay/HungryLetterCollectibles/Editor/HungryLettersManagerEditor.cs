@@ -23,6 +23,7 @@ public class HungryLettersManagerEditor : Editor
 				{
 					manager.AddSpawnerPoint( placeHolder, placeholderEditors[i].difficulty);
 				}
+				EditorUtility.SetDirty( target );
 			}
         }
     }

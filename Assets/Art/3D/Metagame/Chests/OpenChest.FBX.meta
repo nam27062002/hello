@@ -135,7 +135,8 @@ ModelImporter:
     4300046: Gold_06
     4300048: Gold_03
     4300050: Gold_07
-    7400000: Take 001
+    7400000: AN_ChestOpen
+    7400002: AN_ChestOpenPose
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -159,7 +160,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Take 001
+      name: AN_ChestOpen
       takeName: Take 001
       firstFrame: 0
       lastFrame: 38
@@ -245,6 +246,86 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: AN_ChestOpenPose
+      takeName: Take 001
+      firstFrame: 37
+      lastFrame: 38
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Chest_L_Handle
+        weight: 1
+      - path: Chest_R_Handle
+        weight: 1
+      - path: Chest_Top
+        weight: 1
+      - path: Chest_Top/Chest_Lock_Top
+        weight: 1
+      - path: Chest_Top/Chest_Lock_Top/Chest_Lock_Botom
+        weight: 1
+      - path: Gems
+        weight: 1
+      - path: Gems/Gem_01
+        weight: 1
+      - path: Gems/Gem_02
+        weight: 1
+      - path: Gems/Gem_03
+        weight: 1
+      - path: Gems/Gem_04
+        weight: 1
+      - path: Gems/Gem_05
+        weight: 1
+      - path: Gems/Gem_06
+        weight: 1
+      - path: Gems/Gem_010
+        weight: 1
+      - path: Gems/Gem_10
+        weight: 1
+      - path: Gold
+        weight: 1
+      - path: Gold/Gold_01
+        weight: 1
+      - path: Gold/Gold_02
+        weight: 1
+      - path: Gold/Gold_03
+        weight: 1
+      - path: Gold/Gold_04
+        weight: 1
+      - path: Gold/Gold_05
+        weight: 1
+      - path: Gold/Gold_06
+        weight: 1
+      - path: Gold/Gold_07
+        weight: 1
+      - path: Gold/Gold_08
+        weight: 1
+      - path: Gold/Gold_09
+        weight: 1
+      - path: Gold/Gold_10
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -270,6 +351,7 @@ ModelImporter:
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
+    serializedVersion: 2
     human: []
     skeleton: []
     armTwist: 0.5
@@ -280,7 +362,10 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
   humanoidOversampling: 1

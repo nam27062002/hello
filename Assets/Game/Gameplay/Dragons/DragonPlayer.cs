@@ -90,6 +90,14 @@ public class DragonPlayer : MonoBehaviour {
 
 	private int m_numLatching = 0;
 
+	// Super size transformation
+	private float m_superSizeTarget = 1;
+	private float m_superSizeSize = 1;
+	private float m_superSizeStart = 1;
+	private float m_superSizeTimer = 0f;
+	private float m_superSizeDuration = 0.5f;
+
+
 	// Interaction
 	public bool playable {
 		set {
@@ -146,6 +154,13 @@ public class DragonPlayer : MonoBehaviour {
 	// Internal
 	private float m_invulnerableAfterReviveTimer;
 
+	private bool m_superSizeInvulnerable = false;
+	public bool superSizeInvulnerable
+	{
+		get{ return m_superSizeInvulnerable; }
+		set{ m_superSizeInvulnerable = value; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -197,6 +212,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_holdPreyPoints = transform.GetComponentsInChildren<HoldPreyPoint>();
 
 		// Subscribe to external events
+		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 	}
 
@@ -258,6 +274,20 @@ public class DragonPlayer : MonoBehaviour {
 			{
 				Messenger.Broadcast<bool>(GameEvents.DRUNK_TOGGLED, IsDrunk());
 			}
+		}
+
+		if (m_superSizeTimer > 0 )
+		{
+			m_superSizeTimer -= Time.deltaTime;
+			if ( m_superSizeTimer > 0 )
+			{
+				m_superSizeSize = Mathf.Lerp( m_superSizeTarget, m_superSizeStart,m_superSizeTimer / m_superSizeDuration);
+			}
+			else
+			{
+				m_superSizeSize = m_superSizeTarget;
+			}
+			gameObject.transform.localScale = Vector3.one * data.scale * m_superSizeSize;
 		}
 	}
 
@@ -488,6 +518,8 @@ public class DragonPlayer : MonoBehaviour {
 
 		// During fire, we're invulnerable
 		if(m_breathBehaviour.IsFuryOn()) return true;
+
+		if ( m_superSizeInvulnerable ) return true;
 		
 		// If cheat is enable
 		if(DebugSettings.invulnerable) return true;
@@ -653,4 +685,13 @@ public class DragonPlayer : MonoBehaviour {
 			if ( !m_holdPreyPoints[i].holded ) return true;
 		return false;
 	}
+
+	public void SetSuperSize( float size )
+	{
+		m_superSizeTarget = size;
+		m_superSizeStart = m_superSizeSize;
+		m_superSizeDuration = m_superSizeTimer = 0.5f;
+	}
+
+
 }

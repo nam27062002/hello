@@ -136,6 +136,13 @@ public abstract class EatBehaviour : MonoBehaviour {
 
     private const float m_absorbDuration = 0.2f;
 
+    private bool m_eatEverything = false;
+    public bool eatEverything
+    {
+		get { return m_eatEverything; }
+		set { m_eatEverything = value; }
+    }
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -392,7 +399,7 @@ public abstract class EatBehaviour : MonoBehaviour {
                 prey.Bite();
 
                 preyData = m_prey[i];
-                float eatTime = Mathf.Max(m_minEatAnimTime, m_eatSpeedFactor * prey.biteResistance);
+				float eatTime = Mathf.Max(m_minEatAnimTime, prey.biteResistance * GetEatSpeedFactor());
                 if ( overrideEatTime )
                 	eatTime = time;
                 preyData.startParent = prey.transform.parent;
@@ -422,6 +429,11 @@ public abstract class EatBehaviour : MonoBehaviour {
         if (preyData != null)
 			EatExtended(preyData); 
                
+	}
+
+	protected virtual float GetEatSpeedFactor()
+	{
+		return m_eatSpeedFactor;
 	}
 
     protected virtual void EatExtended(PreyData preyData) {}
@@ -822,9 +834,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 				SpecialEatAction specialAction = SpecialEatAction.None;
             	if ( m_specialEatActions.ContainsKey( entity.sku ) )
 					specialAction = m_specialEatActions[ entity.sku ];
-				if ( entity.IsEdible() && specialAction != SpecialEatAction.CannotEat)
+				if ( (entity.IsEdible() && specialAction != SpecialEatAction.CannotEat) || eatEverything)
                 {
-					if (entity.IsEdible(m_tier) || specialAction == SpecialEatAction.Eat)
+					if (entity.IsEdible(m_tier) || specialAction == SpecialEatAction.Eat || eatEverything)
                     {
 						if (m_limitEating && (numPreysToEat + PreyCount) < m_limitEatingValue || !m_limitEating)
                         {
