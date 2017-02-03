@@ -190,8 +190,10 @@ public class Spawner : AbstractSpawner {
     }
 
     protected override void OnMachineSpawned(Machine machine) {
-        if (m_groupController)
-            machine.EnterGroup(ref m_groupController.flock);
+		if (m_groupController) {				
+			machine.EnterGroup(ref m_groupController.flock);
+			machine.position = transform.position + m_groupController.flock.GetOffset(machine, 1f);
+		}
     }
 
     protected override void OnPilotSpawned(Pilot pilot) {

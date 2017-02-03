@@ -53,6 +53,8 @@ namespace AI {
 				float m = (m_machine.position - m_target).sqrMagnitude;
 				float d = m_data.speed * Time.deltaTime;
 
+				d = Mathf.Max(2f, d);
+
 				m_timer -= Time.deltaTime;
 
 				if (m_timer < 0 || m < d * d) {
