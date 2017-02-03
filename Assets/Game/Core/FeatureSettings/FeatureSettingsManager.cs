@@ -528,7 +528,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     // List of shader variant collections to warm up. They have to be sorted in ascendent order (the lowest quality one first)
     public ShaderVariantCollection[] m_shadersVariantCollections;
 
-    private const string SHADERS_KEY_HIGH = "HI_DETAIL_ON";
+    public const string SHADERS_KEY_HIGH = "HI_DETAIL_ON";
     private const string SHADERS_KEY_MID = "MEDIUM_DETAIL_ON";
     private const string SHADERS_KEY_LOW = "LOW_DETAIL_ON";
 

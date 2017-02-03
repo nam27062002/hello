@@ -32,9 +32,12 @@ public class HungryDragonEditorMenu {
 	/// Constructor.
 	/// </summary>
 	static HungryDragonEditorMenu() {
-		// Subscribe to the scene update call
-		//SceneView.onSceneGUIDelegate += OnSceneGUI;
-	}
+        // Subscribe to the scene update call
+        //SceneView.onSceneGUIDelegate += OnSceneGUI;
+
+        // By default we want all shaders to behave as if HIGH key was enabled when editing
+        Shader.EnableKeyword(FeatureSettingsManager.SHADERS_KEY_HIGH);
+    }
 
 	/// <summary>
 	/// Scene has been updated.
