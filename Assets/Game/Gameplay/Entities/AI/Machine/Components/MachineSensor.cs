@@ -63,7 +63,11 @@ namespace AI {
 
 		public override void Update() {
 			bool isFalling = m_machine.GetSignal(Signals.Type.FallDown) && !m_pilot.IsActionPressed(Pilot.Action.Jump);
-			if (m_enemy == null || !m_machine.GetSignal(Signals.Type.Alert) || m_machine.GetSignal(Signals.Type.Panic) || isFalling) {
+			if (m_machine.GetSignal(Signals.Type.Panic)) {
+				m_machine.SetSignal(Signals.Type.Warning, true);
+				m_machine.SetSignal(Signals.Type.Danger, true);
+				m_machine.SetSignal(Signals.Type.Critical, 	true);
+			} else if (m_enemy == null || !m_machine.GetSignal(Signals.Type.Alert) || isFalling) {
 				m_machine.SetSignal(Signals.Type.Warning, false);
 				m_machine.SetSignal(Signals.Type.Danger, false);
 				m_machine.SetSignal(Signals.Type.Critical, 	false);
