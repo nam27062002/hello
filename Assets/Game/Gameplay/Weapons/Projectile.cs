@@ -26,6 +26,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	[SeparatorAttribute("Visual")]
 	[SerializeField] private List<GameObject> m_activateOnShoot = new List<GameObject>();
 	[SerializeField] private ParticleData m_onHitParticle;
+	[SerializeField] private float m_stickOnDragonTime = 0f;
 
 	//---------------------------------------------------------------------------------------
 
@@ -39,6 +40,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	private Explosive m_explosive;
 
 	private bool m_hasBeenShot;
+	private bool m_isStuckOnPlayer;
 	private float m_timer;
 
 	private Transform m_oldParent;
@@ -57,6 +59,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 		}
 
 		m_hasBeenShot = false;
+		m_isStuckOnPlayer = false;
 	}
 
 	void OnDisable() {
@@ -79,6 +82,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 		//wait until the projectil is shot
 		m_hasBeenShot = false;
+		m_isStuckOnPlayer = false;
 	}
 
 	public void Shoot(Vector3 _target, float _damage = 0f) {
@@ -161,6 +165,15 @@ public class Projectile : MonoBehaviour, IProjectile {
 				}
 			}
 		}
+
+		if (m_isStuckOnPlayer) {
+			m_timer -= Time.deltaTime;
+			if (m_timer <= 0f) {
+				gameObject.SetActive(false);
+				PoolManager.ReturnInstance(gameObject);
+				m_isStuckOnPlayer = false;
+			}
+		}
 	}
 
 	private void OnTriggerEnter(Collider _other) {
@@ -199,7 +212,32 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 		m_hasBeenShot = false;
 
-		gameObject.SetActive(false);
-		PoolManager.ReturnInstance(gameObject);
+		if (m_stickOnDragonTime > 0f && _triggeredByPlayer) {
+			StickOnPlayer();
+		} else {
+			gameObject.SetActive(false);
+			PoolManager.ReturnInstance(gameObject);
+		}
+	}
+
+	private void StickOnPlayer() {
+		m_isStuckOnPlayer = true;
+		transform.parent = SearchClosestHoldPoint(InstanceManager.player.holdPreyPoints);
+		m_timer = m_stickOnDragonTime;
+	}
+
+	private Transform SearchClosestHoldPoint(HoldPreyPoint[] holdPreyPoints) {
+		float distance = float.MaxValue;
+		Transform holdTransform = InstanceManager.player.transform;
+
+		for (int i = 0; i < holdPreyPoints.Length; i++) {
+			HoldPreyPoint point = holdPreyPoints[i];
+			if (Vector3.SqrMagnitude(m_position - point.transform.position) < distance) {
+				distance = Vector3.SqrMagnitude(m_position - point.transform.position);
+				holdTransform = point.transform;
+			}
+		}
+
+		return holdTransform;
 	}
 }
