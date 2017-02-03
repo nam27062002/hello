@@ -35,18 +35,7 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	public Transform m_source = null;
-	public Transform m_target = null;
-	public GameObject m_prefab = null;
-	[Range(0f, 1f)] public float m_spawnInterval = 0.1f;
-
-	[Space]
-	public float m_duration = 0.5f;
 	public Ease m_ease = Ease.InOutCubic;
-
-	private bool m_toggle = true;
-	private float m_spawnTimer = 0f;
-	private Pool m_pool = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -55,7 +44,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-		m_pool = new Pool(m_prefab, this.transform.parent, 10, true, true);
+		
 	}
 
 	/// <summary>
@@ -69,19 +58,14 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
-		if(m_toggle) {
-			m_spawnTimer += Time.deltaTime;
-			if(m_spawnTimer >= m_spawnInterval) {
-				m_spawnTimer = 0f;
-			}
-		}
+		
 	}
 
 	/// <summary>
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		m_toggle = !m_toggle;
+		
 	}
 
 	/// <summary>

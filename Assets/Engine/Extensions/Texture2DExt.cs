@@ -60,10 +60,10 @@ public static class Texture2DExt {
 	/// Create a new texture with the given parameters.
 	/// The texture will be width by height size, with an ARGB32 TextureFormat, with mipmaps and in sRGB color space.
 	/// </summary>
+	/// <param name="_color">The color used to initialize all the pixels in the textures.</param>
 	/// <param name="_width">The width of the texture in pixels.</param>
 	/// <param name="_height">The height of the texture in pixels.</param>
-	/// <param name="_color">The color used to initialize all the pixels in the textures.</param>
-	public static Texture2D Create(int _width, int _height, Color _color) {
+	public static Texture2D Create(Color _color, int _width = 2, int _height = 2) {
 		// Easy thanks to the other extension methods
 		Texture2D tex = new Texture2D(_width, _height);
 		tex.Fill(_color);
