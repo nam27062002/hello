@@ -74,7 +74,7 @@ public class FeatureSettings
 
             // profile
             key = KEY_PROFILE;
-            data = new DataString(key, "very_low");
+            data = new DataString(key, null);
             Datas.Add(key, data);
 
 

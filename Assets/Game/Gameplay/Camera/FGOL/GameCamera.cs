@@ -266,6 +266,8 @@ public class GameCamera : MonoBehaviour
         Debug_Awake();
 #endif
 
+        // We can't setup post process effects here because FeatureSettings means to be ready first. Since Gamecamera and FeatureSettings are initialized at the same time when the game is
+        // launched from the level editor, we need to synchronize this stuff
         NeedsToSetupPostProcessEffects = true;
 
         InstanceManager.gameCamera = this;
