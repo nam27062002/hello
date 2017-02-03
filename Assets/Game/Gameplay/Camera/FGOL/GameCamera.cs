@@ -266,7 +266,7 @@ public class GameCamera : MonoBehaviour
         Debug_Awake();
 #endif
 
-        SetupGlow();
+        NeedsToSetupPostProcessEffects = true;
 
         InstanceManager.gameCamera = this;
 
@@ -587,6 +587,11 @@ public class GameCamera : MonoBehaviour
 			PlayUpdate();
 		}
 
+        if (NeedsToSetupPostProcessEffects && FeatureSettingsManager.instance.IsReady())
+        {
+            SetupPostProcessEffects();
+        }
+
 		/*
 		switch( m_state )
 		{
@@ -610,7 +615,6 @@ public class GameCamera : MonoBehaviour
 
 	void PlayUpdate()
 	{
-
 		float dt = Time.deltaTime;
 		Vector3 targetPosition;
 
@@ -1351,13 +1355,44 @@ public class GameCamera : MonoBehaviour
 		}
 	}
 
-    private void SetupGlow()
+    private bool NeedsToSetupPostProcessEffects { get; set; }
+
+    private void SetupPostProcessEffects()
+    {
+        NeedsToSetupPostProcessEffects = false;
+
+        SetupGlowEffect();
+        SetupDrunkEffect();
+        SetupFrameColorEffect();
+    }
+
+    private void SetupGlowEffect()
     {
         // The effect is enabled if the feature is enabled for this device
         GlowEffect.GlowEffect glow = GetComponent<GlowEffect.GlowEffect>();
         if (glow != null)
         {
-            glow.enabled = FeatureSettingsManager.instance.IsGlowEnabled;
+            glow.enabled = FeatureSettingsManager.instance.IsGlowEffectEnabled;
+        }
+    }
+
+    private void SetupDrunkEffect()
+    {
+        // The effect is enabled if the feature is enabled for this device
+        DrunkCameraEffect effect = GetComponent<DrunkCameraEffect>();
+        if (effect != null)
+        {
+            effect.enabled = FeatureSettingsManager.instance.IsDrunkEffectEnabled;
+        }
+    }
+
+    private void SetupFrameColorEffect()
+    {
+        // The effect is enabled if the feature is enabled for this device
+        FrameColoring effect = GetComponent<FrameColoring>();
+        if (effect != null)
+        {
+            effect.enabled = FeatureSettingsManager.instance.IsFrameColorEffectEnabled;
         }
     }
 
@@ -1376,8 +1411,7 @@ public class GameCamera : MonoBehaviour
 
     private void Debug_OnChanged()
     {
-        // Enable/Disable object
-        SetupGlow();        
+        NeedsToSetupPostProcessEffects = true;        
     }    
     #endregion
 }

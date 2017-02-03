@@ -124,6 +124,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }       
     }
 
+    public bool IsReady()
+    {
+        return Device_CurrentFeatureSettings != null;
+    }
+
     #region state
     // This region is responsible for handling the different states of this singleton. This is the flow:
     // 1)The singleton has to wait for the rules to be loaded
@@ -486,7 +491,6 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             settingsJSON = pair.Value.ToJSON();
             settingsJSON = FormatJSON(settingsJSON);
-            settingsJSON = featureSettings.ParseJSON(settingsJSON);
             featureSettings.FromJSON(settingsJSON);
             m_deviceQualityManager.Profiles_AddData(featureSettings.Profile, featureSettings.Rating, settingsJSON);
         }
@@ -499,8 +503,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         foreach (KeyValuePair<string, DefinitionNode> pair in definitions)
         {
             settingsJSON = pair.Value.ToJSON();
-            settingsJSON = FormatJSON(settingsJSON);
-            settingsJSON = featureSettings.ParseJSON(settingsJSON);            
+            settingsJSON = FormatJSON(settingsJSON);                    
 
             // Makes sure that profile is a valid value
             if (settingsJSON.ContainsKey(FeatureSettings.KEY_PROFILE))
@@ -754,6 +757,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                     returnValue.Add(pair.Key, pair.Value);
                 }
             }
+
+#if UNITY_EDITOR
+            // Only in editor mode we want to detect any field or value that is not supported
+            returnValue = FeatureSettingsHelper.ParseJSON(returnValue);
+#endif
         }
 
         return returnValue;
@@ -794,11 +802,27 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
-    public bool IsGlowEnabled
+    public bool IsGlowEffectEnabled
     {
         get
         {
-            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_GLOW);
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_GLOW_EFFECT);
+        }
+    }
+
+    public bool IsDrunkEffectEnabled
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_DRUNK_EFFECT);
+        }
+    }
+                
+    public bool IsFrameColorEffectEnabled
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_FRAME_COLOR_EFFECT);
         }
     }
 
