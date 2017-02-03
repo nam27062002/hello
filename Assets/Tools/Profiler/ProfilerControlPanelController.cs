@@ -288,4 +288,16 @@ public class ProfilerControlPanelController : MonoBehaviour
     }
     #endregion
 
+    #region test
+    public void Test_OnToggleDrunkEffect()
+    {
+        ApplicationManager.instance.Debug_TestToggleDrunk();
+    }
+
+    public void Test_OnToggleFrameColorEffect()
+    {
+        ApplicationManager.instance.Debug_TestToggleFrameColor();
+    }
+    #endregion
+
 }

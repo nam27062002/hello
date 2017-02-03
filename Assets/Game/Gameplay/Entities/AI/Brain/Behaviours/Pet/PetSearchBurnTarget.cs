@@ -86,17 +86,21 @@ namespace AI {
 
 						if ( entity.IsBurnable() && ( entity.IsBurnable(m_tier) || InstanceManager.player.breathBehaviour.type == DragonBreathBehaviour.Type.Super ) )
 						{
-							// Check if physics reachable
 							Machine machine = entity.GetComponent<Machine>();
-							RaycastHit hit;
-							Vector3 dir = entity.circleArea.center - m_machine.position;
-							bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
-							if ( !hasHit )
+							if ( machine != null && machine.CanBeBitten() )
 							{
-								// Check if closed? Not for the moment
-								m_transitionParam[0] = entity.transform;
-								Transition( OnEnemyInBurnRange, m_transitionParam);
-								break;
+								// Check if physics reachable
+								// Machine machine = entity.GetComponent<Machine>();
+								RaycastHit hit;
+								Vector3 dir = entity.circleArea.center - m_machine.position;
+								bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
+								if ( !hasHit )
+								{
+									// Check if closed? Not for the moment
+									m_transitionParam[0] = entity.transform;
+									Transition( OnEnemyInBurnRange, m_transitionParam);
+									break;
+								}
 							}
 						}
 					}

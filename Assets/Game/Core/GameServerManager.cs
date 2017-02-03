@@ -71,4 +71,6 @@ public class GameServerManager
     public virtual void SetPersistence(string persistence, Action<Error, Dictionary<string, object>> callback) {}
     public virtual void SendLog(string message, string stackTrace, UnityEngine.LogType logType) {}
     public virtual void UpdateSaveVersion(bool prelimUpdate, Action<Error, Dictionary<string, object>> callback) {}
+    public virtual void GetQualitySettings(Action<Error, Dictionary<string, object>> callback) {}
+    public virtual void SetQualitySettings(string qualitySettings, Action<Error, Dictionary<string, object>> callback) {}
 }
