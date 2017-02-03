@@ -13,7 +13,9 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
     {
         get
         {
-            return (FeatureSettingsManager.instance.EntitiesLOD == FeatureSettings.ELevel2Values.low) ? ENTITY_PREFABS_LOW_PATH : ENTITY_PREFABS_PATH;
+            // Entities LOD flag has been disabled because it's not really worth it
+            //return (FeatureSettingsManager.instance.EntitiesLOD == FeatureSettings.ELevel2Values.low) ? ENTITY_PREFABS_LOW_PATH : ENTITY_PREFABS_PATH;
+            return ENTITY_PREFABS_PATH;
         }
     }
 
