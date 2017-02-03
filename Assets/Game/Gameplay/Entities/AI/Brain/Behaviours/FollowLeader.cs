@@ -20,7 +20,6 @@ namespace AI {
 			private FollowLeaderData m_data;
 
 			private Vector3 m_offset;
-			private Vector3 m_oldTarget;
 
 			private FollowState m_followState;
 
@@ -37,10 +36,8 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<FollowLeaderData>();
 			}
 
-			protected override void OnEnter(State _oldState, object[] _param) {				
-                m_pilot.SlowDown(true);
-				m_oldTarget = m_machine.position;
-
+			protected override void OnEnter(State _oldState, object[] _param) {				                
+				m_pilot.SlowDown(false);
 				m_followState = FollowState.CatchUp;
 			}
 
@@ -49,37 +46,44 @@ namespace AI {
 					Transition(SignalTriggers.OnLeaderPromoted);
 				}
 
+				IMachine leader = m_machine.GetGroup().leader;
 				switch (m_followState) {
 					case FollowState.Follow:
 						m_pilot.SetMoveSpeed(m_data.speed);
-						if (ShouldCatchUp()) {
+						m_pilot.GoTo(leader.target);
+						if (ShouldCatchUp() > 1f) {
+							m_pilot.SlowDown(true);
 							m_followState = FollowState.CatchUp;
 						}
 						break;
 
 					case FollowState.CatchUp:
-						m_pilot.SetMoveSpeed(m_data.catchUpSpeed);
-						if (!ShouldCatchUp()) {
+						float speedFactor = ShouldCatchUp();
+
+						m_pilot.SetMoveSpeed(Mathf.Min(m_data.catchUpSpeed, m_data.speed * speedFactor));
+						m_pilot.GoTo(leader.position);
+
+						if (speedFactor <= 1f) {
+							m_pilot.SlowDown(true);
 							m_followState = FollowState.Follow;
 						}
 						break;
-				}				               
-
-				IMachine leader = m_machine.GetGroup().leader;
-				Vector3 target = leader.target;
-
-				m_pilot.GoTo(Vector3.Lerp(m_oldTarget, target, Time.smoothDeltaTime * 0.25f));
-				m_oldTarget = target;
+				}     
 			}
 
-			private bool ShouldCatchUp() {
+			private float ShouldCatchUp() {
 				if (m_machine.GetSignal(Signals.Type.Warning)) {
-					return false;
+					return 1f;
 				} else {
-					float dSqr = (m_pilot.target - m_machine.position).sqrMagnitude;
-					float dDistInc = m_pilot.speed * Time.deltaTime * 2f;
+					Group g = m_machine.GetGroup();
+					IMachine leader = g.leader;
+					Vector3 offset = g.GetOffset(m_pilot.m_machine, 1f);
 
-					return dSqr > dDistInc * dDistInc;
+					float dSqr = (leader.position - m_machine.position).sqrMagnitude;
+					if (offset.sqrMagnitude > 0f)
+						return dSqr / offset.sqrMagnitude;
+					else 
+						return 1f;
 				}
 			}
 		}

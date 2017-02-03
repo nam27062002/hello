@@ -41,8 +41,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 408412}
-  - component: {fileID: 11401698}
-  - component: {fileID: 11404390}
+  - component: {fileID: 114652798602353440}
   - component: {fileID: 5476966}
   - component: {fileID: 6565240}
   m_Layer: 16
@@ -262,45 +261,6 @@ TrailRenderer:
     textureMode: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
---- !u!114 &11401698
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 173528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f6c024143a7a42ee9b9ee5cd452c92b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_explosionParticle:
-    name: 
-    path: 
-    offset: {x: 0, y: 0, z: 0}
-  m_scaleRange:
-    min: 0.25
-    max: 0.25
-  m_rotationRange:
-    min: 0
-    max: 360
-  m_knockback: 2.5
-  m_damageType: 5
-  m_activateOnShoot:
-  - {fileID: 139188}
---- !u!114 &11404390
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 173528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cb470657b1c542bfb885d23d4cd392a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_moveType: 0
-  m_arrowSpeed: 20
-  m_arrowMaxDuration: 5
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -384,3 +344,29 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 173528}
   m_IsPrefabParent: 1
+--- !u!114 &114652798602353440
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 173528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69843bc5296534848970ecd538e50246, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_motionType: 0
+  m_speed: 20
+  m_maxTime: 5
+  m_stopAtTarget: 0
+  m_defaultDamage: 5
+  m_damageType: 5
+  m_radius: 0
+  m_knockback: 2.5
+  m_activateOnShoot:
+  - {fileID: 139188}
+  m_onHitParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_stickOnDragonTime: 10

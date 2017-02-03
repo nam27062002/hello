@@ -11,25 +11,36 @@ public class DragonPartFollow : MonoBehaviour {
 	private class PartInfo
 	{
 		public Vector3 m_previousPos;
-		public Quaternion m_localRotation;
-		public Vector3 m_localPosition;
-		public float m_distance = 0;	
+		public Vector3 m_direction;
+		public float m_distance = 0;
 	}
 
 	private List<PartInfo> m_partInfos;
 	public Vector3 m_upDir = Vector3.up;
+	private float m_startScale;
 	// Use this for initialization
 	void Start () 
 	{
 		if ( m_root == null )
 			m_root = transform;
+		m_startScale = m_root.lossyScale.x;
 		m_partInfos = new List<PartInfo>();
 		for( int i = 0; i<m_parts.Count; i++ )
 		{
 			PartInfo newPart = new PartInfo();
-			newPart.m_localRotation = m_parts[i].localRotation;
-			newPart.m_localPosition = m_parts[i].localPosition;
-			newPart.m_distance = m_parts[i].localPosition.magnitude;
+
+			if ( i == 0)
+			{
+				Vector3 dir = (m_parts[i].position - m_root.position);
+				newPart.m_distance = dir.magnitude;
+				newPart.m_direction = dir.normalized;
+			}
+			else
+			{
+				Vector3 dir = (m_parts[i].position - m_parts[i-1].position);
+				newPart.m_distance = dir.magnitude;
+				newPart.m_direction = dir.normalized;
+			}
 			newPart.m_previousPos = m_parts[i].position;
 
 			m_partInfos.Add( newPart );
@@ -75,6 +86,7 @@ public class DragonPartFollow : MonoBehaviour {
 
 	void LateUpdate () 
 	{
+		float scale = (m_root.lossyScale.x / m_startScale);
 		for( int i = 0; i<m_parts.Count; i++ )
 		{
 			Transform follow;
@@ -92,23 +104,15 @@ public class DragonPartFollow : MonoBehaviour {
 
 
 			Vector3 dir = (partInfo.m_previousPos - follow.position).normalized;
-			Vector3 wanterDir = follow.TransformDirection( partInfo.m_localPosition.normalized );
+			Vector3 wanterDir = follow.TransformDirection( partInfo.m_direction );
 			Vector3 finalDir = Vector3.Slerp( dir, wanterDir, Time.deltaTime * springSpeed);
-			partTransform.position = follow.position + finalDir * partInfo.m_distance;
+			partTransform.position = follow.position + finalDir * partInfo.m_distance * scale;
+
 
 			partTransform.LookAt( follow, follow.up );
 			partTransform.Rotate( m_upDir, Space.Self );
-			// partTransform.Rotate( -partInfo.m_localRotation.eulerAngles, Space.Self );
 
 			partInfo.m_previousPos = partTransform.position;
-
-			/*
-			// Adjust rotation
-			partTransform.localRotation = Quaternion.Slerp( partTransform.localRotation, Quaternion.identity, Time.deltaTime * springSpeed);
-			partTransform.position = follow.position - partTransform.forward * partInfo.m_distance;
-			partTransform.Rotate( partInfo.m_localRotation.eulerAngles, Space.Self );
-			partInfo.m_previousPos = partTransform.position;
-			*/
 
 		}
 	}
