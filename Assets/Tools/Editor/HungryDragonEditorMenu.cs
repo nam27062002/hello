@@ -94,17 +94,25 @@ public class HungryDragonEditorMenu {
 	}
 
 	/// <summary>
-	/// Find missing references on scene.
+	/// Easily change time scale in runtime.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Time Scaler", false, 4)]
+	[MenuItem("Hungry Dragon/Tools/Time Scaler", false, 50)]
 	public static void TimeScalerWindow() {
 		TimeScaler.ShowWindow();
 	}
 
 	/// <summary>
+	/// Preview of all Ease functions.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Ease Preview Tool", false, 51)]
+	public static void EasePreviewToolWindow() {
+		EasePreviewTool.ShowWindow();
+	}
+
+	/// <summary>
 	/// Custom toolbar for the project.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Hungry Dragon Toolbar", false, 50)]
+	[MenuItem("Hungry Dragon/Tools/Hungry Dragon Toolbar", false, 100)]
 	public static void HungryDragonToolbar() {
 		HungryDragonEditorToolbar.ShowWindow();
 	}
@@ -112,7 +120,7 @@ public class HungryDragonEditorMenu {
 	/// <summary>
 	/// Custom tools for the dragon selection menu.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Dragon Selection Menu Tools", false, 100)]
+	[MenuItem("Hungry Dragon/Tools/Dragon Selection Menu Tools", false, 150)]
 	public static void DragonMenuTools() {
 		DragonMenuToolsEditorWindow.ShowWindow();
 	}
@@ -120,7 +128,7 @@ public class HungryDragonEditorMenu {
 	/// <summary>
 	/// Regenerate the icon for the selected entity prefab.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (selected entity prefabs)", false, 150)]
+	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (selected entity prefabs)", false, 200)]
 	public static void GenerateSpawnerIconsSelected() {
 		// Show error message if nothing is selected
 		if(Selection.gameObjects.Length == 0) {
@@ -156,7 +164,7 @@ public class HungryDragonEditorMenu {
 	/// <summary>
 	/// Regenerate the icon for all the spawners in the scene.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (all, takes a while)", false, 151)]
+	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (all, takes a while)", false, 201)]
 	public static void GenerateSpawnerIconsAll() {
 		//SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();
 		SpawnerIconGeneratorEditor.GenerateSpawnerIconsInResources(Colors.transparentWhite);

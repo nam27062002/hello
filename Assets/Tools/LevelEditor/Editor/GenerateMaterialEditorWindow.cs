@@ -96,7 +96,7 @@ namespace LevelEditor {
 			// Generate textures for preview
 			m_textures = new List<Texture2D>();
 			for(int i = 0; i < m_colors.Count; i++) {
-				m_textures.Add(Texture2DExt.Create(2, 2, m_colors[i]));
+				m_textures.Add(Texture2DExt.Create(m_colors[i]));
 			}
 		}
 
