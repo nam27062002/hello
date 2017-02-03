@@ -63,10 +63,9 @@ public class FireBreathNew : DragonBreathBehaviour {
 
     override protected void ExtendedStart() {
 
-        DragonMotion dragonMotion = GetComponent<DragonMotion>();
         Transform cacheTransform = transform;
         Transform mouth = cacheTransform.FindTransformRecursive("mouth");
-        m_mouthTransform = mouth; // dragonMotion.tongue;
+        m_mouthTransform = mouth;
 
         GameObject tempFire = Instantiate<GameObject>(m_dragonFlameStandard);
         Transform t = tempFire.transform;
@@ -83,8 +82,6 @@ public class FireBreathNew : DragonBreathBehaviour {
 
 		m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "FireBlocker");
 		m_noPlayerMask = ~LayerMask.GetMask("Player");
-
-		RecalculateLength();
 
         m_actualLength = m_length;
 
@@ -104,7 +101,7 @@ public class FireBreathNew : DragonBreathBehaviour {
         //		m_light = null;
     }
 
-    public void RecalculateLength()
+    override public void RecalculateSize()
     {
     	if ( m_dragon )
     	{
@@ -120,7 +117,6 @@ public class FireBreathNew : DragonBreathBehaviour {
     public void AddPowerUpLengthMultiplier(float value)
     {
 		m_lengthPowerUpMultiplier += value;
-		RecalculateLength();
     }
 
     override public bool IsInsideArea(Vector2 _point) { 

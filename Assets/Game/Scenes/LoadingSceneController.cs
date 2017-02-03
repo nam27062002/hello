@@ -105,7 +105,9 @@ public class LoadingSceneController : SceneController {
 		SpawnerAreaManager.CreateInstance(true);
 		EntityManager.CreateInstance(true);
 		InstanceManager.CreateInstance(true);
-        FeatureSettingsManager.CreateInstance(true);
+
+        // The stuff that this manager handles has to be done only once, regardless the game reboots
+        FeatureSettingsManager.CreateInstance(false);
 
         // Load persistence        
         SaveFacade.Instance.Init();               
