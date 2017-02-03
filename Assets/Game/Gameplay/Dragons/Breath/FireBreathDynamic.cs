@@ -114,6 +114,13 @@ public class FireBreathDynamic : MonoBehaviour
         }
 
         m_collisionMaxDistance *= 2.0f;
+
+        for (int i = 0; i < m_fireParticles.Count; i++)
+            m_fireParticles[i].transform.SetLocalScale(m_effectScale);
+
+        for (int i = 0; i < m_underWaterParticles.Count; i++)
+            m_underWaterParticles[i].transform.SetLocalScale(m_effectScale);
+
     }
 
     // Use this for initialization
@@ -155,13 +162,13 @@ public class FireBreathDynamic : MonoBehaviour
 
         m_whipEnd = transform.FindChild("WhipEnd").gameObject;
         m_collisionPlane = transform.FindChild("WhipEnd/collisionPlane").gameObject;
-
+/*
         for( int i = 0; i<m_fireParticles.Count; i++ )
 			m_fireParticles[i].transform.SetLocalScale(m_effectScale);
 
 		for( int i = 0; i<m_underWaterParticles.Count; i++ )
 			m_underWaterParticles[i].transform.SetLocalScale(m_effectScale);
-
+*/
         InitWhip();
 		InitArrays();
 //		InitUVs();
@@ -241,9 +248,10 @@ public class FireBreathDynamic : MonoBehaviour
 		int whipIndex = 0;
         Vector3 newPos1, newPos2;
 
+        float efs = Mathf.Clamp(m_effectScale, 0.0f, 3.75f);
         for ( int i = 2; i < m_numPos; i += 2 )
 		{
-			float yDisplacement = m_shapeCurve.Evaluate(step / (float)(m_splits+2)) * m_aplitude * m_effectScale*0.25f;
+			float yDisplacement = m_shapeCurve.Evaluate(step / (float)(m_splits+2)) * m_aplitude * efs *0.25f;
 
             Vector3 whipTangent = transform.InverseTransformDirection(m_whipTangent[whipIndex]);
 
@@ -338,7 +346,7 @@ public class FireBreathDynamic : MonoBehaviour
         m_mesh.colors = m_color;
 
         Vector3 particlePos = m_whipEnd.transform.localPosition;
-        float particleDistance = m_distance * (m_effectScale*0.5f);       
+        float particleDistance = m_distance * (m_effectScale*0.38f);       
         particlePos.x = m_collisionDistance < particleDistance ? m_collisionDistance : particleDistance;
         m_whipEnd.transform.localPosition = particlePos;
 
