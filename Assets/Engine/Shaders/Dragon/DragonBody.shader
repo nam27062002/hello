@@ -74,7 +74,7 @@ SubShader {
 			#endif
 
 //			#define BUMP
-			#define REFL
+//			#define REFL
 
 			struct appdata_t {
 				float4 vertex : POSITION;
@@ -149,7 +149,7 @@ SubShader {
 				o.normalWorld = normal;
      			o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
 				#else
-				o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
+				o.normalWorld = normal;
 				#endif
 				return o;
 			}
@@ -186,7 +186,7 @@ SubShader {
 				fixed4 col;
 
 				#ifdef REFL
-				fixed4 reflection = texCUBE(_ReflectionMap, reflect(i.viewDir, normalDirection)) * _ReflectionAmount;
+				fixed4 reflection = texCUBE(_ReflectionMap, reflect(i.viewDir, normalDirection));
 				col = (1.0 - _ReflectionAmount) * main + _ReflectionAmount * reflection;
 
 				#else
