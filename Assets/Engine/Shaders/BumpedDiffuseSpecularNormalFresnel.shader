@@ -49,6 +49,23 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 			#pragma glsl_no_auto_normalization
 			#pragma fragmentoption ARB_precision_hint_fastest
 
+			#if LOW_DETAIL_ON
+			#endif
+
+			#if MEDIUM_DETAIL_ON
+			#define RIM
+			#define BUMP
+			#endif
+
+			#if HI_DETAIL_ON
+			#define RIM
+			#define BUMP
+			#define SPEC
+			#define REFL
+			#endif
+
+			#define BUMP
+			#define REFL
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
@@ -67,13 +84,14 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 				float2 uv : TEXCOORD0;
 				float2 uv2 : TEXCOORD3;
 				float4 vertex : SV_POSITION;
-//				float3 vLight : TEXCOORD2;
 
 				float3 viewDir : TEXTCOORD1;
 				float3 halfDir : TEXTCOORD2;
-				float3 tangentWorld : TANGENT;  
-		        float3 normalWorld : TEXCOORD4;
+				float3 normalWorld : TEXCOORD4;
+				#ifdef BUMP
+				float3 tangentWorld : TANGENT;
 		        float3 binormalWorld : TEXCOORD5;
+				#endif
 			};
 
 			uniform sampler2D _MainTex;
@@ -82,8 +100,10 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 			uniform sampler2D _NormalTex;
 			uniform float4 _NormalTex_ST;
 			uniform sampler2D _GlowTex;
+			#ifdef REFL
 			uniform samplerCUBE _ReflectionMap;
 			uniform float _ReflectionAmount;
+			#endif
 			uniform float _SpecularPower;
 			uniform fixed4 _SpecularDir;
 			uniform float4 _LightColor;
@@ -124,11 +144,15 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 				o.halfDir = normalize(lightDirection + viewDirection);
 
 				// To calculate tangent world
-	            float4x4 modelMatrix = unity_ObjectToWorld;
-     			float4x4 modelMatrixInverse = unity_WorldToObject; 
-	           	o.tangentWorld = normalize( mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
-	     		o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
-	     		o.binormalWorld = normalize( cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
+																								  // To calculate tangent world
+				#ifdef BUMP
+				o.tangentWorld = UnityObjectToWorldNormal(v.tangent);
+				o.normalWorld = UnityObjectToWorldNormal(v.normal);
+				o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
+				#else
+				o.normalWorld = UnityObjectToWorldNormal(v.normal);
+				#endif
+
 
 				return o;
 			}
@@ -140,10 +164,15 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 				float specMask = col.w;
 
 				// Aux vars
+				#ifdef BUMP
            		float3 encodedNormal = tex2D(_NormalTex, i.uv2);
 				float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
 				float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
    				float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
+				#else
+				float3 normalDirection = i.normalWorld;
+				#endif
+
    				float3 lightDirection = normalize(_SpecularDir.xyz);
 
    				// Compute diffuse and specular
@@ -161,6 +190,10 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 
 				// col = diffuse * col + (specular * _LightColor0) + (fresnel * _FresnelColor);
 				// col = diffuse * col + (specular * _LightColor0) + lerp(_FresnelInitialColor, _FresnelFinalColor, fresnel);	// World light color
+				#ifdef REFL
+				float4 reflection = texCUBE(_ReflectionMap, normalDirection);
+				col = (1.0 - _ReflectionAmount) * col + _ReflectionAmount * reflection;
+				#endif
 				col = diffuse * col + (specular * _LightColor) + lerp(_FresnelInitialColor, _FresnelFinalColor, fresnel) + (rim * _RimColor);	// Custom light color
 
 				float3 emissive = tex2D(_GlowTex, i.uv2);
@@ -168,15 +201,13 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 				// col = lerp(col, _EmissiveColor, emissive.r + emissive.g + emissive.b);			// Multiplicative, no intensity control
 				// col += _EmissiveColor * (emissive.r + emissive.g + emissive.b);				// Additive, no intesity control
 
-				float4 reflection = texCUBE(_ReflectionMap, normalDirection) * _ReflectionAmount;
-
 				//fixed4 one = fixed4(1, 1, 1, 1);
 				// col = one- (one-col) * (1-(i.color-fixed4(0.5,0.5,0.5,0.5)));	// Soft Light
 				//col = one - 2.0 * (one - reflection) * (one - col);	// Overlay
 
 
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-				return col + reflection;
+				return col;
 			}
 			ENDCG
 		}
