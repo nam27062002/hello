@@ -73,9 +73,17 @@ public class HungryDragonEditorMenu {
 	}
 
 	/// <summary>
+	/// Delete all empty folders under the "Assets" directory.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Delete Empty Folders", false, 1)]
+	public static void DoDeleteEmptyFolders() {
+		DeleteEmptyFolders.DeleteFolders();
+	}
+
+	/// <summary>
 	/// Simple content viewer.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Rules Reader", false, 1)]
+	[MenuItem("Hungry Dragon/Tools/Rules Reader", false, 2)]
 	public static void ShowRulesReader() {
 		RulesReaderEditorWindow.ShowWindow(); 
 	}
@@ -83,7 +91,7 @@ public class HungryDragonEditorMenu {
 	/// <summary>
 	/// Find missing references on scene.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Find Missing References", false, 2)]
+	[MenuItem("Hungry Dragon/Tools/Find Missing References", false, 3)]
 	public static void FindMissingReferences() {
 		FindMissingReferencesTool.FindMissingReferences(false);
 	}
@@ -91,7 +99,7 @@ public class HungryDragonEditorMenu {
 	/// <summary>
 	/// Find missing references on scene.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Find Missing And NULL References", false, 3)]
+	[MenuItem("Hungry Dragon/Tools/Find Missing And NULL References", false, 4)]
 	public static void FindMissingAndNullReferences() {
 		FindMissingReferencesTool.FindMissingReferences(true);
 	}
