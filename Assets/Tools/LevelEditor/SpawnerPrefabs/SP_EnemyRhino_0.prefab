@@ -5,12 +5,12 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 410758}
-  - 114: {fileID: 11430732}
-  - 114: {fileID: 11445310}
-  - 114: {fileID: 11480388}
+  - component: {fileID: 410758}
+  - component: {fileID: 11430732}
+  - component: {fileID: 11445310}
+  - component: {fileID: 11480388}
   m_Layer: 0
   m_Name: SP_EnemyRhino_0
   m_TagString: Untagged
@@ -25,12 +25,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 157098}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 27.4, y: -7.2, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &11430732
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -56,7 +56,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 117248, guid: 2823f77898d8a469e9d75742ef184616, type: 2}
   m_entityPrefabStr: Air/PF_EnemyRhino
   m_quantity:
     min: 1
@@ -65,15 +64,17 @@ MonoBehaviour:
     min: 1
     max: 1
   m_rails: 1
-  m_flockBonus: 0
   m_minTier: 0
   m_activationChance: 100
-  m_alwaysActive: 0
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
     min: 40
     max: 45
+  m_homePosMethod: 0
+  m_homePosDistance:
+    min: 1
+    max: 2
   m_maxSpawns: 0
 --- !u!114 &11480388
 MonoBehaviour:
