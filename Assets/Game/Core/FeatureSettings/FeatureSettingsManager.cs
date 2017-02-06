@@ -852,5 +852,53 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     {
         Debug.LogError(PREFIX + message);
     }
+
+    public void Debug_Test()
+    {
+        // 0: very_low
+        // 0.3: low
+        // 0.7: mid
+        // 0.85: high
+        // 1: very_high
+        float rating = 0f;
+        string profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 0.1f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 0.3f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 0.5f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 0.7f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 0.8f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 0.85f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 0.9f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 1.0f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 1.1f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+    }
     #endregion
 }
