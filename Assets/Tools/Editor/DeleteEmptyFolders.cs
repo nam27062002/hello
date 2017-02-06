@@ -18,7 +18,7 @@ public class DeleteEmptyFolders : EditorWindow {
 		GetEmptyFolders(Application.dataPath);
 
 		var window = EditorWindow.GetWindow(typeof(DeleteEmptyFolders));
-		window.titleContent.text = "Delete empty";
+		window.titleContent.text = "Delete empty folders";
 		window.Show();
 	}
 
@@ -63,15 +63,23 @@ public class DeleteEmptyFolders : EditorWindow {
 
 	// Immidiate mode GUI
 	private void OnGUI() {
+		// Refresh button
+		if(GUILayout.Button("Refresh", GUILayout.Width(100f))) {
+			m_foldersToDelete.Clear();
+			GetEmptyFolders(Application.dataPath);
+		}
+
+		// Is there any empty folder?
 		if(m_foldersToDelete != null && m_foldersToDelete.Count > 0) {
 			// Display all empty folders paths
-			m_scrollPos = GUILayout.BeginScrollView(m_scrollPos);
-			GUILayout.BeginVertical();
-			for(int i = 0; i < m_foldersToDelete.Count; i++) {
-				GUILayout.Label(m_foldersToDelete[i]);
-			}
-			GUILayout.EndVertical();
-			GUILayout.EndScrollView();
+			m_scrollPos = GUILayout.BeginScrollView(m_scrollPos); {
+				GUILayout.BeginVertical(); {
+					for(int i = 0; i < m_foldersToDelete.Count; i++) {
+						// Cleanup name a little bit
+						GUILayout.Label(m_foldersToDelete[i].Replace(Application.dataPath, ""));	// Remove root project folder
+					}
+				} GUILayout.EndVertical();
+			} GUILayout.EndScrollView();
 
 			// Delete button
 			if(GUILayout.Button("DELETE ALL", GUILayout.Height(50))) {
