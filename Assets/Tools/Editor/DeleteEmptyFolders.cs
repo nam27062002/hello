@@ -74,7 +74,7 @@ public class DeleteEmptyFolders : EditorWindow {
 			GUILayout.EndScrollView();
 
 			// Delete button
-			if(GUILayout.Button("Delete ALL", GUILayout.Width(100))) {
+			if(GUILayout.Button("DELETE ALL", GUILayout.Height(50))) {
 				// Iterate over all empty folders and delete them along with their meta files
 				for(int i = 0; i < m_foldersToDelete.Count; i++) {
 					// Delete folder
@@ -97,6 +97,8 @@ public class DeleteEmptyFolders : EditorWindow {
 				// Get further empty folders if exists - shouldn't be any if the recursive scan works correctly
 				GetEmptyFolders(Application.dataPath);
 			}
+
+			EditorGUILayout.Space();
 		} else {
 			GUILayout.Label("No empty folders found");
 		}
