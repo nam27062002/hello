@@ -141,7 +141,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
             // Test frame color effect
             //Debug_TestToggleFrameColor();
-            // ---------------------------                 
+            // ---------------------------    
+
+            // ---------------------------
+            // Test quality settings
+            //Debug_TestQualitySettings();
+            // ---------------------------                
         }
 
         if (NeedsToRestartFlow)
@@ -444,6 +449,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         Debug_IsFrameColorOn = !Debug_IsFrameColorOn;
         Messenger.Broadcast<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, Debug_IsFrameColorOn, DragonBreathBehaviour.Type.Super);        
+    }
+
+    public void Debug_TestQualitySettings()
+    {
+        FeatureSettingsManager.instance.Debug_Test();
     }
     #endregion
 }

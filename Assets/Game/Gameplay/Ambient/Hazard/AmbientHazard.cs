@@ -439,10 +439,13 @@ public class AmbientHazard : MonoBehaviour {
 			}
 
 			// Apply knockback
-			Vector3 repulseDirection = dragonMotion.position - transform.position;
-			if(dragonMotion != null) {
-				//dragonMotion.Stop(); ??
-				dragonMotion.AddForce(repulseDirection.normalized * m_knockBackIntensity);
+			if (m_knockBackIntensity > 0)
+			{
+				Vector3 repulseDirection = dragonMotion.position - transform.position;
+				if(dragonMotion != null) {
+					//dragonMotion.Stop(); ??
+					dragonMotion.AddForce(repulseDirection.normalized * m_knockBackIntensity);
+				}
 			}
 
 			// [AOC] TODO!! Play SFX

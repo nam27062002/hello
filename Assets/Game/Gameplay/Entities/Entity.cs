@@ -218,6 +218,11 @@ public class Entity : IEntity {
 		return allowEdible && m_canBeLatchedOn && m_latchFromTier <= _tier;
 	}
 
+	public bool CanBeSmashed()
+	{
+		return true;
+	}
+
 	public bool IntersectsWith(Vector2 _center, float _radius) {
 		if (m_bounds != null) {
 			return m_bounds.Overlaps(_center, _radius);

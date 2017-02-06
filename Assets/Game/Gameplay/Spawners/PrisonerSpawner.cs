@@ -97,8 +97,7 @@ public class PrisonerSpawner : AbstractSpawner {
         machine.LockInCage();
     }
 
-    protected override void OnRemoveEntity(GameObject _entity, int index) {
-        m_entities[index].transform.parent = m_parents[index];
+    protected override void OnRemoveEntity(GameObject _entity, int index) {        
         m_parents[index] = null;
     }
     //---------------------------------------------------------------------------------------------------------   

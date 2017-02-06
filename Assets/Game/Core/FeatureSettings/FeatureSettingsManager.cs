@@ -260,11 +260,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         //Average the devices RAM, CPU and GPU details to give a rating betwen 0 and 1
         float finalDeviceRating = 0.0f;
 
+        int processorCount = SystemInfo.processorCount;
+        int systemMemorySize = SystemInfo.systemMemorySize;
+        int graphicsMemorySize = SystemInfo.graphicsMemorySize;
+
         Dictionary<string, DefinitionNode> definitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DEVICE_RATING_SETTINGS);
         List<DeviceSettings> memoryData = new List<DeviceSettings>();
         List<DeviceSettings> cpuCoresData = new List<DeviceSettings>();
-        List<DeviceSettings> gpuMemoryData = new List<DeviceSettings>();
-        List<DeviceSettings> textureSizeData = new List<DeviceSettings>();
+        List<DeviceSettings> gpuMemoryData = new List<DeviceSettings>();        
 
         DeviceSettings data;
         string key;
@@ -287,86 +290,62 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             key = "gpuMemoryRating";
             if (pair.Value.Has(key))
             {
-                data = new DeviceSettings(pair.Value.GetAsFloat(key), pair.Value.GetAsFloat("cpuCoresBoundary"));
+                data = new DeviceSettings(pair.Value.GetAsFloat(key), pair.Value.GetAsFloat("gpuMemoryBoundary"));
                 gpuMemoryData.Add(data);
-            }
-
-            key = "textureSizeRating";
-            if (pair.Value.Has(key))
-            {
-                data = new DeviceSettings(pair.Value.GetAsFloat(key), pair.Value.GetAsFloat("textureSizeBoundary"));
-                textureSizeData.Add(data);
-            }
+            }            
         }
 
         // Lists are sorted in ascendent order of rating
         memoryData.Sort(DeviceSettings.Sort);
         cpuCoresData.Sort(DeviceSettings.Sort);
-        gpuMemoryData.Sort(DeviceSettings.Sort);
-        textureSizeData.Sort(DeviceSettings.Sort);
+        gpuMemoryData.Sort(DeviceSettings.Sort);        
 
         // Memory rating
-        float memQualityRating = 1.0f;
-        int deviceCapacity = SystemInfo.systemMemorySize;
+        Device_MemoryRating = 1.0f;        
         foreach (DeviceSettings ds in memoryData)
         {
-            if (deviceCapacity <= ds.Boundary)
+            if (systemMemorySize <= ds.Boundary)
             {
-                memQualityRating = ds.Rating;
+                Device_MemoryRating = ds.Rating;
                 break;
             }
         }
 
         // cpu rating
-        float cpuQualityRating = 1.0f;
-        deviceCapacity = SystemInfo.processorCount;
+        Device_CPUCoresRating = 1.0f;        
         foreach (DeviceSettings ds in cpuCoresData)
         {
-            if (SystemInfo.processorCount <= ds.Boundary)
+            if (processorCount <= ds.Boundary)
             {
-                cpuQualityRating = ds.Rating;
+                Device_CPUCoresRating = ds.Rating;
                 break;
             }
         }
 
-        float gpuMemQualityLevel = 1.0f;
-        deviceCapacity = SystemInfo.graphicsMemorySize;
+        Device_GfxMemoryRating = 1.0f;        
         foreach (DeviceSettings ds in gpuMemoryData)
         {
-            if (deviceCapacity <= ds.Boundary)
+            if (graphicsMemorySize <= ds.Boundary)
             {
-                gpuMemQualityLevel = ds.Rating;
+                Device_GfxMemoryRating = ds.Rating;
                 break;
             }
-        }
-
-        float texSizeQualityLevel = 1.0f;
-        deviceCapacity = SystemInfo.maxTextureSize;
-        foreach (DeviceSettings ds in textureSizeData)
-        {
-            if (deviceCapacity <= ds.Boundary)
-            {
-                texSizeQualityLevel = ds.Rating;
-                break;
-            }
-        }
+        }       
 
         float shaderMultiplier = 1.0f;
         if (SystemInfo.graphicsShaderLevel == 20)
         {
             shaderMultiplier = 0.0f;
-        }
+        }              
 
-        //UnityEngine.Debug.Log("DeviceQualitySettings(Graphics) - gpuMemQualityLevel: " + gpuMemQualityLevel + " texSizeQualityLevel: " + texSizeQualityLevel + " shaderMultiplier: " + shaderMultiplier);
-
-        //float gpuQualityRating = ((gpuMemQualityLevel + texSizeQualityLevel) / 2);
-
-        //UnityEngine.Debug.Log("DeviceQualitySettings - memQualityLevel: " + memQualityRating + " cpuQualityRating: " + cpuQualityRating + " gpuMemQualityLevel: " + gpuQualityRating);
-
-        finalDeviceRating = ((memQualityRating + cpuQualityRating + gpuMemQualityLevel) / 3) * shaderMultiplier;
+        finalDeviceRating = ((Device_MemoryRating + Device_CPUCoresRating + Device_GfxMemoryRating) / 3) * shaderMultiplier;
         finalDeviceRating = Mathf.Clamp(finalDeviceRating, 0.0f, 1.0f);
 
-        //UnityEngine.Debug.Log( "DeviceQualitySettings - Final Value: " + finalDeviceRating );
+        Log("Memory size = " + systemMemorySize + " memQualityRating = " + Device_MemoryRating +
+           "Graphics memory size = " + graphicsMemorySize + " gpuMemQualityLevel = " + Device_GfxMemoryRating +
+           "Num cores = " + processorCount + " cpuQualityRating = " + Device_CPUCoresRating +
+           "Shader multiplier = " + shaderMultiplier + 
+           "Device rating = " + finalDeviceRating);       
 
         return finalDeviceRating;
     }
@@ -378,6 +357,10 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             return m_deviceQualityManager.Device_CalculatedRating;
         }
     }
+
+    public float Device_CPUCoresRating { get; private set; }
+    public float Device_MemoryRating { get; private set; }
+    public float Device_GfxMemoryRating { get; private set; }
 
     public float Device_CurrentRating
     {
@@ -851,6 +834,54 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     public static void LogError(string message)
     {
         Debug.LogError(PREFIX + message);
+    }
+
+    public void Debug_Test()
+    {
+        // 0: very_low
+        // 0.3: low
+        // 0.7: mid
+        // 0.85: high
+        // 1: very_high
+        float rating = 0f;
+        string profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 0.1f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 0.3f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 0.5f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 0.7f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 0.8f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 0.85f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 0.9f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 1.0f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
+
+        rating = 1.1f;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        Log("Rating: " + rating + " profile = " + profile);
     }
     #endregion
 }
