@@ -1,6 +1,3 @@
-// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
-
 // Custom Dragon Shader.
 // - Detail Texture. R: Inner Light value. G: Spec value.
 
@@ -9,6 +6,10 @@ Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 	_BumpMap ("Normal Map (RGB)", 2D) = "white" {}
 	_DetailTex ("Detail (RGB)", 2D) = "white" {} // r -> inner light, g -> specular
+
+	_ReflectionMap("Reflection Map", Cube) = "white" {}
+	_ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.0
+
 	_Tint ("Color Multiply", Color) = (1,1,1,1)
 	_ColorAdd ("Color Add", Color) = (0,0,0,0)
 
@@ -29,11 +30,9 @@ Properties {
 SubShader {
 	Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "LightMode" = "ForwardBase" }
 //	Tags{ "Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout" "LightMode" = "ForwardBase" }
-	ZWrite on
-	Blend SrcAlpha OneMinusSrcAlpha 
 	Cull Off
 //	Cull Front
-//	ColorMask RGBA
+	ColorMask RGBA
 	
 	Pass {
 
@@ -44,6 +43,9 @@ SubShader {
 			Pass Replace
 			ZFail keep
 		}
+		ztest less
+		ZWrite on
+		Blend SrcAlpha OneMinusSrcAlpha
 
 		CGPROGRAM
 			#pragma vertex vert
@@ -68,9 +70,11 @@ SubShader {
 			#define RIM
 			#define BUMP
 			#define SPEC
+			#define REFL
 			#endif
 
 //			#define BUMP
+//			#define REFL
 
 			struct appdata_t {
 				float4 vertex : POSITION;
@@ -120,6 +124,11 @@ SubShader {
 			uniform float3 _SecondLightDir;
 			uniform float4 _SecondLightColor;
 
+			#ifdef REFL
+			uniform samplerCUBE _ReflectionMap;
+			uniform float _ReflectionAmount;
+			#endif
+
 			v2f vert (appdata_t v)
 			{
 				v2f o;
@@ -133,72 +142,94 @@ SubShader {
 
 				// Half View - See: Blinn-Phong
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
-//				float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
-//				o.halfDir = normalize(lightDirection + viewDirection);
-
-//				o.posWorld = mul( unity_ObjectToWorld, v.vertex ).xyz;
 				o.viewDir = viewDirection;
 
-#ifdef BUMP
 				// To calculate tangent world
-				float4x4 modelMatrix = unity_ObjectToWorld;
-				float4x4 modelMatrixInverse = unity_WorldToObject;
-				o.tangentWorld = normalize(mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
-				o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
+				#ifdef BUMP
+				o.tangentWorld = UnityObjectToWorldNormal(v.tangent);
+				o.normalWorld = normal;
 				o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
-#else
+				#else
 				o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
-#endif
+				#endif
 				return o;
 			}
-
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
 				fixed4 main = tex2D(_MainTex, i.texcoord);
-
 				clip(main.a - _Cutoff);
-
 				fixed4 detail = tex2D(_DetailTex, i.texcoord);
 
-#ifdef BUMP
+				#ifdef BUMP
 				float3 encodedNormal = UnpackNormal(tex2D(_BumpMap, i.texcoord));
 				float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
 				float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
-#else
+				#else
 				float3 normalDirection = i.normalWorld;
-#endif
+				#endif
 
 				float3 light0Direction = normalize(_WorldSpaceLightPos0.xyz);
 				float3 light1Direction = normalize(_SecondLightDir.xyz);
-
+				
 				// normalDirection = i.normal;
-     			fixed4 diffuse = max(0,dot( -normalDirection, light0Direction)) * _LightColor0;
+     			fixed4 diffuse = max(0,dot( normalDirection, light0Direction)) * _LightColor0;
 				diffuse += max(0, dot(normalDirection, light1Direction)) * _SecondLightColor;
-				diffuse.a = 0.0;
 
 				// Fresnel
-				float fresnel = clamp(pow(max(1.0 - abs(dot(i.viewDir, normalDirection)), 0.0), _Fresnel), 0.0, 1.0);
+				float fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _Fresnel), 0.0, 1.0);
 
 				// Specular
 				float3 halfDir = normalize(i.viewDir + light0Direction);
 				float specularLight = pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
 				halfDir = normalize(i.viewDir + light1Direction);
 				specularLight += pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
-				
+
+				fixed4 col;
+
+				#ifdef REFL
+				fixed4 reflection = texCUBE(_ReflectionMap, reflect(i.viewDir, normalDirection)) * _ReflectionAmount;
+				col = (1.0 - _ReflectionAmount) * main + _ReflectionAmount * reflection;
+
+				#else
+				col = main;
+				#endif
+
 				// Inner lights
-				fixed4 selfIlluminate = fixed4( (detail.r * _InnerLightAdd * _InnerLightColor.xyz) + specularLight, 0.0 );
+				fixed4 selfIlluminate = (col * (detail.r * _InnerLightAdd * _InnerLightColor));
+				// fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _Tint + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
+				col = (diffuse + fixed4(i.vLight, 1)) * col * _Tint + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor) + _AmbientAdd; // To use ShaderSH9 better done in vertex shader
 
-//				fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)), 1.0)) * main * (_Tint + _ColorAdd + selfIlluminate) + (fresnel * _FresnelColor);
-
-				fixed4 col = (diffuse + fixed4(i.vLight, 1.0)) * main * (_Tint + _ColorAdd + selfIlluminate) + (fresnel * _FresnelColor) + _AmbientAdd;
 				return col;
 
 			}
 		ENDCG
 	}
 
-	
+/*
+	//Occlusion
+	Pass{
+
+		Stencil
+		{
+			Ref 5
+			Comp notequal
+			Pass Replace
+			ZFail keep
+		}
+
+		ztest greater
+		ZWrite Off
+
+		//		lighting off
+
+		SetTexture[_MainTex]{
+			constantColor(0, 0, 0, 0)
+			combine constant * primary
+		}
+
+	}
+*/
 }
 //Fallback "Mobile/VertexLit"
 }
