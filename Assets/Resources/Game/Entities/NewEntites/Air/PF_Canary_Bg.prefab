@@ -105,7 +105,6 @@ GameObject:
   - component: {fileID: 114000010458821034}
   - component: {fileID: 114000010256084602}
   - component: {fileID: 54000012378199642}
-  - component: {fileID: 135000012242400150}
   m_Layer: 0
   m_Name: PF_Canary_Bg
   m_TagString: Untagged
@@ -472,7 +471,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 1
     max: 1
-  m_serializedJson: '[{"speed":5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"changeLeaderTime":0,"separation":1.5,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"changeLeaderTime":0,"separation":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
   m_databaseKey: PF_Canary_Bg
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 4
@@ -556,7 +555,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 112
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &114000010256084602
 MonoBehaviour:
@@ -601,7 +600,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
   m_firePoints: []
   m_burnParticle:
-    name: PF_BonfireToon
+    name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 
@@ -611,9 +610,9 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
   m_onExplosionAudio: 
   m_onAttackAudio: 
-  m_onScaredAudio: hd_bird_alert
-  m_onPanicAudio: hd_bird_alert
-  m_idleAudio: hd_bird_idle
+  m_onScaredAudio: 
+  m_onPanicAudio: 
+  m_idleAudio: 
   m_skins: []
 --- !u!114 &114000011522986806
 MonoBehaviour:
@@ -657,15 +656,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7583070c5fa34c85bd761acfb9a495f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!135 &135000012242400150
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 129198}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.19
-  m_Center: {x: 0, y: 0.31, z: 0.03}
