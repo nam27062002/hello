@@ -541,6 +541,11 @@ namespace AI {
 			SetSignal(Signals.Type.Destroyed, true);
 		}
 
+		public bool CanBeSmashed()
+		{
+			return CanBeBitten() && m_entity.CanBeSmashed();
+		}
+
 		public void Smashed()
 		{
 			SetSignal(Signals.Type.Destroyed, true);

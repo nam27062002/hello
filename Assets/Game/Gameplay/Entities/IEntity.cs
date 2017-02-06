@@ -59,4 +59,6 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
     public virtual bool CanDieOutsideFrustrum() { return true; }
 
 	public virtual CircleArea2D circleArea { get{ return null; } }
+
+	public virtual bool CanBeSmashed(){ return false; }
 }

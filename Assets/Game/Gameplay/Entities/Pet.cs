@@ -22,4 +22,9 @@ public class Pet : IEntity {
 		m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, sku);
 		m_maxHealth = 1f;
 	}
+
+	override public bool CanBeSmashed()
+	{
+		return false;
+	}
 }
