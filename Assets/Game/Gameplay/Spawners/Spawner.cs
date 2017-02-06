@@ -3,6 +3,9 @@ using System.Collections;
 using AI;
 
 public class Spawner : AbstractSpawner {
+
+	private static float FLOCK_BONUS_MULTIPLIER = 0.1f;
+
 	[System.Serializable]
 	public class SpawnCondition {
 		public enum Type {
@@ -32,8 +35,6 @@ public class Spawner : AbstractSpawner {
 	[SerializeField] public RangeInt m_quantity = new RangeInt(1, 1);
 	[SerializeField] public Range	 m_scale = new Range(1f, 1f);
 	[SerializeField] private uint	m_rails = 1;
-	[CommentAttribute("Amount of points obtained after killing the whole flock. Points are multiplied by the amount of entities spawned.")]
-	[SerializeField] private int m_flockBonus = 0;
 
 	[Separator("Activation")]
 	[SerializeField] public DragonTier m_minTier = DragonTier.TIER_0;
@@ -77,6 +78,8 @@ public class Spawner : AbstractSpawner {
 	}	    
     
     private int m_rail = 0;
+
+	private float m_flockBonus = 0;
 
     //-----------------------------------------------    
 
@@ -180,7 +183,7 @@ public class Spawner : AbstractSpawner {
         return m_entityPrefabStr;
     }
 
-    protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
+	protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
         if (index > 0) {
             originPos += RandomStartDisplacement((int)index); // don't let multiple entities spawn on the same point
         }
@@ -190,8 +193,10 @@ public class Spawner : AbstractSpawner {
     }
 
     protected override void OnMachineSpawned(Machine machine) {
-        if (m_groupController)
-            machine.EnterGroup(ref m_groupController.flock);
+		if (m_groupController) {				
+			machine.EnterGroup(ref m_groupController.flock);
+			machine.position = transform.position + m_groupController.flock.GetOffset(machine, 1f);
+		}
     }
 
     protected override void OnPilotSpawned(Pilot pilot) {
@@ -199,6 +204,14 @@ public class Spawner : AbstractSpawner {
         m_rail = (m_rail + 1) % (int)m_rails;
         pilot.guideFunction = m_guideFunction;
     }   
+
+	protected override void OnAllEntitiesRespawned() {
+		if (m_groupController) {
+			m_flockBonus = m_entities[0].score * EntitiesToSpawn * FLOCK_BONUS_MULTIPLIER;
+		} else {
+			m_flockBonus = 0f;
+		}
+	}
 
     protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
         if (_allKilledByPlayer) {

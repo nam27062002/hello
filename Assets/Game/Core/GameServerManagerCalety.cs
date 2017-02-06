@@ -240,7 +240,7 @@ public class GameServerManagerCalety : GameServerManager
 
     public override void Ping(Action<Error> callback)
     {
-        Commands_PrepareToRunCommand(ECommand.Ping, null,
+        Commands_EnqueueCommand(ECommand.Ping, null,
             delegate (Error error, Dictionary<string, object> response)
             {
                 callback(error);
@@ -270,7 +270,7 @@ public class GameServerManagerCalety : GameServerManager
                 parameters.Add("platformId", platformId);
                 parameters.Add("platformUserId", platformUserId);
                 parameters.Add("platformToken", platformToken);
-                Commands_PrepareToRunCommand(ECommand.Login, parameters, callback);                
+                Commands_EnqueueCommand(ECommand.Login, parameters, callback);                
             }
         }       
     }
@@ -286,28 +286,44 @@ public class GameServerManagerCalety : GameServerManager
     }
 
     public override void GetServerTime(Action<Error, Dictionary<string, object>> callback)
-    {        
-        Commands_PrepareToRunCommand(ECommand.GetTime, null, callback);            
+    {
+        Commands_EnqueueCommand(ECommand.GetTime, null, callback);            
     }
 
     public override void GetPersistence(Action<Error, Dictionary<string, object>> callback)
     {
-        Commands_PrepareToRunCommand(ECommand.GetPersistence, null, callback);        
+        Commands_EnqueueCommand(ECommand.GetPersistence, null, callback);        
     }
 
     public override void SetPersistence(string persistence, Action<Error, Dictionary<string, object>> callback)
     {
         Dictionary<string, string> parameters = new Dictionary<string, string>();
-        parameters.Add("persistence", persistence);        
-        Commands_PrepareToRunCommand(ECommand.SetPersistence, parameters, callback);        
+        parameters.Add("persistence", persistence);
+        Commands_EnqueueCommand(ECommand.SetPersistence, parameters, callback);        
     }
 
     public override void UpdateSaveVersion(bool prelimUpdate, Action<Error, Dictionary<string, object>> callback)
     {
         Dictionary<string, string> parameters = new Dictionary<string, string>();
         parameters.Add("fgolID", GameSessionManager.SharedInstance.GetUID());
-        parameters.Add("prelimUpdate", prelimUpdate.ToString());        
-        Commands_PrepareToRunCommand(ECommand.UpdateSaveVersion, parameters, callback);
+        parameters.Add("prelimUpdate", prelimUpdate.ToString());
+        Commands_EnqueueCommand(ECommand.UpdateSaveVersion, parameters, callback);
+    }
+
+    public override void GetQualitySettings(Action<Error, Dictionary<string, object>> callback)     
+    {
+        Commands_EnqueueCommand(ECommand.GetQualitySettings, null, callback);
+    }
+
+    /// <summary>
+    /// Uploads the quality settings information calculated by client to the server
+    /// </summary>
+    /// <param name="qualitySettings">Json in string format of the quality settings to upload</param>    
+    public override void SetQualitySettings(string qualitySettings, Action<Error, Dictionary<string, object>> callback)
+    {
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("qualitySettings", qualitySettings);
+        Commands_EnqueueCommand(ECommand.SetQualitySettings, parameters, callback);
     }
 
     private bool IsLogged()
@@ -319,7 +335,7 @@ public class GameServerManagerCalety : GameServerManager
     /// <summary>
     /// Max amount of retries when an authorization error is got after sending a command. If this happens then Auth is tried to sent before resending the command that caused the error
     /// </summary>
-    private const int COMMANDS_MAX_AUTH_RETRIES = 1;
+    private const int COMMANDS_MAX_AUTH_RETRIES = 1;    
 
     private enum ECommand
     {
@@ -329,24 +345,105 @@ public class GameServerManagerCalety : GameServerManager
         GetTime,
         GetPersistence,
         SetPersistence,
-        UpdateSaveVersion
+        UpdateSaveVersion,
+        GetQualitySettings,
+        SetQualitySettings
     }
-    
-    public delegate void BeforeCommandComplete(Error error);    
+
+    private class Command
+    {
+        public ECommand Cmd { get; private set; }
+        public Dictionary<string, string> Parameters { get; set; }
+        public Action<Error, Dictionary<string, object>> Callback { get; private set; }
+
+        public void Reset()
+        {
+            Cmd = ECommand.None;
+            Parameters = null;
+            Callback = null;
+        }
+
+        public void Setup(ECommand cmd, Dictionary<string, string> parameters, Action<Error, Dictionary<string, object>> callback)
+        {
+            Cmd = cmd;
+            Parameters = parameters;
+            Callback = callback;
+        }
+    }
+
+    /// <summary>
+    /// Pool of commands to reduce the impact in memory of sending commands to the server. Every time a <c>Command</c> object is needed we should check this pool first to get the object
+    /// and once we're done we have to return the object to this pool
+    /// </summary>
+    private Queue<Command> Commands_Pool { get; set; }
+
+    private Queue<Command> Commands_Queue { get; set; }
+       
+    private Command Commands_CurrentCommand { get; set; }         
+
+    public delegate void BeforeCommandComplete(Error error);
     //public delegate void AfterCommand(Command command, Dictionary<string, string> parameters, Error error, Dictionary<string, object> result, Action<Error, Dictionary<string, object>> callback, int retries);
-   
-    private ECommand Commands_CurrentCommand { get; set; }  
-    private Action<Error, Dictionary<string, object>> Commands_CurrentCallback { get; set; }
 
     private void Commands_Init()
-    {                
-        Commands_Reset();
+    {
+        Commands_Pool = new Queue<Command>();
+        Commands_Queue = new Queue<Command>();        
     }
 
-    private void Commands_Reset()
+    private Command Commands_GetCommand()
     {
-        Commands_CurrentCommand = ECommand.None;
-        Commands_CurrentCallback = null;
+        Command returnValue = null;
+        if (Commands_Pool.Count == 0)
+        {
+            returnValue = new Command();
+        }
+        else
+        {
+            returnValue = Commands_Pool.Dequeue();
+        }
+
+        return returnValue;
+    }
+
+    private void Commands_ReturnCommand(Command command)
+    {
+        command.Reset();
+
+        if (Commands_Pool.Contains(command))
+        {
+            LogError("This command is already in the pool");
+        }
+        else
+        {            
+            Commands_Pool.Enqueue(command);
+        }
+    }
+
+    private void Commands_EnqueueCommand(ECommand command, Dictionary<string, string> parameters, Action<Error, Dictionary<string, object>> callback)
+    {
+        Command cmd = Commands_GetCommand();
+        cmd.Setup(command, parameters, callback);
+
+        // If no command is being processed and the queue is empty then it's run immeditaly
+        if (Commands_CurrentCommand == null && Commands_IsQueueEmpty())
+        {
+            Commands_CurrentCommand = cmd;
+            Commands_PrepareToRunCommand(cmd);
+        }
+        else
+        {
+            Commands_Queue.Enqueue(cmd);
+        }       
+    }
+
+    private Command Commands_DequeueCommand()
+    {        
+        return Commands_Queue.Dequeue();                
+    }
+
+    private bool Commands_IsQueueEmpty()
+    {
+        return Commands_Queue.Count == 0;
     }
 
     private bool Commands_RequiresAuth(ECommand command)
@@ -417,10 +514,10 @@ public class GameServerManagerCalety : GameServerManager
         }
     }
 
-    private void Commands_AfterCommand(ECommand command, Dictionary<string, string> parameters, Error error, Dictionary<string, object> result, Action<Error, Dictionary<string, object>> callback, int retries)
+    private void Commands_AfterCommand(Command command, Error error, Dictionary<string, object> result, int retries)
     {                       
         //Try and recover from an auth error                    
-        if (error != null && error.GetType() == typeof(AuthenticationError) && retries < COMMANDS_MAX_AUTH_RETRIES && command != ECommand.Login)
+        if (error != null && error.GetType() == typeof(AuthenticationError) && retries < COMMANDS_MAX_AUTH_RETRIES && command.Cmd != ECommand.Login)
         {
             //Invalidate the session in an attempt to force re-auth
             if (Authenticator.Instance.User != null)
@@ -430,52 +527,52 @@ public class GameServerManagerCalety : GameServerManager
             }
 
             Log(string.Format("(AfterCommand) :: Auth Error Retrying ({0})", retries));
-            Commands_PrepareToRunCommand(command, parameters, callback, ++retries);
+            Commands_PrepareToRunCommand(command, ++retries);
         }
-        else if (callback != null)
+        else if (command.Callback != null)
         {
             Log("Commander Callback :: " + command);
-            callback(error, result);
+            command.Callback(error, result);
         }                             
     }
 
-    private void Commands_PrepareToRunCommand(ECommand command, Dictionary<string, string> parameters, Action<Error, Dictionary<string, object>> callback, int retries=0)
+    private void Commands_PrepareToRunCommand(Command command, int retries=0)
     {
-        Log("PrepareToRunCommand " + command);
+        Log("PrepareToRunCommand " + command.Cmd);       
+
         //Make sure we have a valid parameters object as before or after command callbacks may modify it
-        if (parameters == null)
+        if (command.Parameters == null)
         {
-            parameters = new Dictionary<string, string>();
+            command.Parameters = new Dictionary<string, string>();
         }
 
         BeforeCommandComplete runCommand = delegate(Error beforeError)
         {
             if (beforeError == null)
             {
-                Commands_RunCommand(command, parameters, delegate (Error error, Dictionary<string, object> result)                    
+                Commands_RunCommand(command, delegate (Error error, Dictionary<string, object> result)                    
                 {
-                    Commands_AfterCommand(command, parameters, error, result, callback, retries);                        
+                    Commands_AfterCommand(command, error, result, retries);                        
                 });
             }
-            else if (callback != null)
+            else if (command.Callback != null)
             {
-                callback(beforeError, null);
+                command.Callback(beforeError, null);
             }
         };
 
-        Commands_BeforeCommand(command, parameters, runCommand);                           
+        Commands_BeforeCommand(command.Cmd, command.Parameters, runCommand);                           
     }   
     
-    private void Commands_RunCommand(ECommand command, Dictionary<string, string> parameters, Action<Error, Dictionary<string, object>> callback)
+    private void Commands_RunCommand(Command command, Action<Error, Dictionary<string, object>> callback)
     {
-        Log("RunCommand " + command + " CurrentCommand = " + Commands_CurrentCommand);
+        Log("RunCommand " + command.Cmd + " CurrentCommand = " + Commands_CurrentCommand.Cmd);
         // Commands have to be executed one by one since we're not using actions on server side
-        if (Commands_CurrentCommand == ECommand.None)
-        {            
-            Commands_CurrentCommand = command;
-            Commands_CurrentCallback = callback;
-
-            switch (Commands_CurrentCommand)
+        if (Commands_CurrentCommand == command)
+        {
+            Dictionary<string, string> parameters = command.Parameters;
+                           
+            switch (command.Cmd)
             {
                 case ECommand.Ping:
                 {                    
@@ -514,24 +611,43 @@ public class GameServerManagerCalety : GameServerManager
                     Commands_OnResponse(null, 200);
                 }
                 break;
+
+                case ECommand.GetQualitySettings:
+                {
+                    CaletyExtensions_GetQualitySettings();
+                }
+                break;
+
+                case ECommand.SetQualitySettings:
+                {
+                    CaletyExtensions_SetQualitySettings(parameters["qualitySettings"]);
+                }
+                break;
             }
         }
         else
         {
-            LogError("GameServerManagerCalety error: command " + command + " can't be executed because command " + Commands_CurrentCommand + " is still being processed.");
+            LogError("GameServerManagerCalety error: command " + command.Cmd + " can't be executed because command " + Commands_CurrentCommand.Cmd + " is still being processed.");
         }
     }
 
     private void Commands_OnExecuteCommandDone(Error error, Dictionary<string, object> result)
     {
-        // Current command needs to be reseted before calling the callback because we're already done with it command and the callback might trigger another command so we need to reset it first
-        // since only one command can be handled simultaneously
-        Action<Error, Dictionary<string, object>> callback = Commands_CurrentCallback;
-        Commands_Reset();        
+        Action<Error, Dictionary<string, object>> callback = Commands_CurrentCommand.Callback;
+        Commands_ReturnCommand(Commands_CurrentCommand);
+        Commands_CurrentCommand = null;
         if (callback != null)
         {
             callback(error, result);
-        }        
+        }
+
+        // If no command is being processed and there's a command enqueued then that command is processed
+        // We need to verify that Commands_CurrentCommand is null because the callback called right above might have call another command
+        if (Commands_CurrentCommand == null && !Commands_IsQueueEmpty())
+        {
+            Commands_CurrentCommand = Commands_DequeueCommand();
+            Commands_PrepareToRunCommand(Commands_CurrentCommand);
+        }
     }
 
     private bool Commands_OnResponse(string responseData, int statusCode)
@@ -696,7 +812,7 @@ public class GameServerManagerCalety : GameServerManager
                 result = SimpleJSON.JSON.Parse(responseData);                
             }
 
-            switch (Commands_CurrentCommand)
+            switch (Commands_CurrentCommand.Cmd)
             {
                 case ECommand.Login:
                 {                   
@@ -732,10 +848,10 @@ public class GameServerManagerCalety : GameServerManager
 
                     // [DGR] SERVER: Receive these parameters from server
                     response = new Dictionary<string, object>();
-                        response["dateTime"] = time;
+                    response["dateTime"] = time;
                     response["unixTimestamp"] = time;
                 }
-                break;
+                break;               
 
                 default:
                 {
@@ -748,7 +864,7 @@ public class GameServerManagerCalety : GameServerManager
         }
         else
         {
-            LogWarning(Commands_CurrentCommand, error);
+            LogWarning(Commands_CurrentCommand.Cmd, error);
         }
 
         Commands_OnExecuteCommandDone(error, response);
@@ -761,15 +877,19 @@ public class GameServerManagerCalety : GameServerManager
     private static string COMMAND_TIME = "/api/server/time";
     private static string COMMAND_GET_PERSISTENCE = "/api/persistence/get";
     private static string COMMAND_SET_PERSISTENCE = "/api/persistence/set";
+    private static string COMMAND_GET_QUALITY_SETTINGS = "/api/adq/settings";
+    private static string COMMAND_SET_QUALITY_SETTINGS = "/api/quality/upload";
 
     private void CaletyExtensions_Init()
     {
 		// All codes need to be handled in order to be sure that the game will continue regardless the network error
-		int[] codes = new int[] { 200, 301, 302, 303, 304, 305, 306, 307, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 426, 500, 501, 502, 503, 504, 505 };
+		int[] codes = new int[] { 200, 204, 301, 302, 303, 304, 305, 306, 307, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 426, 500, 501, 502, 503, 504, 505 };
         NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_PING, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnPing);
         NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_TIME, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnGetTime);
         NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_GET_PERSISTENCE, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnGetPersistenceResponse);
-        NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_SET_PERSISTENCE, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnSetPersistenceResponse);        
+        NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_SET_PERSISTENCE, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnSetPersistenceResponse);
+        NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_GET_QUALITY_SETTINGS, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnGetQualitySettingsResponse);
+        NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_SET_QUALITY_SETTINGS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnSetQualitySettingsResponse);
     }    
 
     private bool CaletyExtensions_OnPing(string strResponse, string strCmd, int iResponseCode)
@@ -799,6 +919,18 @@ public class GameServerManagerCalety : GameServerManager
     {
         Log("OnSetPersistenceResponse statusCode=" + iResponseCode);
         return Commands_OnResponse(strResponse, iResponseCode);        
+    }
+
+    public bool CaletyExtensions_OnGetQualitySettingsResponse(string strResponse, string strCmd, int iResponseCode)
+    {
+        Log("OnGetQualitySettingsResponse statusCode=" + iResponseCode);
+        return Commands_OnResponse(strResponse, iResponseCode);
+    }
+
+    public bool CaletyExtensions_OnSetQualitySettingsResponse(string strResponse, string strCmd, int iResponseCode)
+    {
+        Log("OnSetQualitySettingsResponse statusCode=" + iResponseCode);
+        return Commands_OnResponse(strResponse, iResponseCode);
     }
 
     private void CaletyExtensions_LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken)
@@ -843,6 +975,27 @@ public class GameServerManagerCalety : GameServerManager
     private void CaletyExtensions_GetTime()
     {
         ServerManager.SharedInstance.SendCommand(COMMAND_TIME);
+    }
+
+    private void CaletyExtensions_GetQualitySettings()
+    {        
+        // The user is not required to be logged to request the quality settings for her device        
+        ServerManager.SharedInstance.SendCommand(COMMAND_GET_QUALITY_SETTINGS);        
+    }
+
+    private void CaletyExtensions_SetQualitySettings(string qualitySettings)
+    {
+        // The user is required to be logged to set its quality settings to prevent anonymous users from messing with the quality settings of other users who have the same device model
+        if (IsLogged())
+        {
+            Dictionary<string, string> kParams = new Dictionary<string, string>();
+            kParams["uid"] = GameSessionManager.SharedInstance.GetUID();                        
+            ServerManager.SharedInstance.SendCommand(COMMAND_SET_QUALITY_SETTINGS, kParams, qualitySettings);
+        }
+        else
+        {
+            LogError("SetQualitySettings require the user to be logged");
+        }
     }
     #endregion
 

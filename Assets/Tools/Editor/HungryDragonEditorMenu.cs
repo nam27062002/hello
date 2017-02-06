@@ -32,9 +32,12 @@ public class HungryDragonEditorMenu {
 	/// Constructor.
 	/// </summary>
 	static HungryDragonEditorMenu() {
-		// Subscribe to the scene update call
-		//SceneView.onSceneGUIDelegate += OnSceneGUI;
-	}
+        // Subscribe to the scene update call
+        //SceneView.onSceneGUIDelegate += OnSceneGUI;
+
+        // By default we want all shaders to behave as if HIGH key was enabled when editing
+        Shader.EnableKeyword(FeatureSettingsManager.SHADERS_KEY_HIGH);
+    }
 
 	/// <summary>
 	/// Scene has been updated.
@@ -70,9 +73,17 @@ public class HungryDragonEditorMenu {
 	}
 
 	/// <summary>
+	/// Delete all empty folders under the "Assets" directory.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Delete Empty Folders", false, 1)]
+	public static void DoDeleteEmptyFolders() {
+		DeleteEmptyFolders.DeleteFolders();
+	}
+
+	/// <summary>
 	/// Simple content viewer.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Rules Reader", false, 1)]
+	[MenuItem("Hungry Dragon/Tools/Rules Reader", false, 2)]
 	public static void ShowRulesReader() {
 		RulesReaderEditorWindow.ShowWindow(); 
 	}
@@ -80,7 +91,7 @@ public class HungryDragonEditorMenu {
 	/// <summary>
 	/// Find missing references on scene.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Find Missing References", false, 2)]
+	[MenuItem("Hungry Dragon/Tools/Find Missing References", false, 3)]
 	public static void FindMissingReferences() {
 		FindMissingReferencesTool.FindMissingReferences(false);
 	}
@@ -88,23 +99,31 @@ public class HungryDragonEditorMenu {
 	/// <summary>
 	/// Find missing references on scene.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Find Missing And NULL References", false, 3)]
+	[MenuItem("Hungry Dragon/Tools/Find Missing And NULL References", false, 4)]
 	public static void FindMissingAndNullReferences() {
 		FindMissingReferencesTool.FindMissingReferences(true);
 	}
 
 	/// <summary>
-	/// Find missing references on scene.
+	/// Easily change time scale in runtime.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Time Scaler", false, 4)]
+	[MenuItem("Hungry Dragon/Tools/Time Scaler", false, 50)]
 	public static void TimeScalerWindow() {
 		TimeScaler.ShowWindow();
 	}
 
 	/// <summary>
+	/// Preview of all Ease functions.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Ease Preview Tool", false, 51)]
+	public static void EasePreviewToolWindow() {
+		EasePreviewTool.ShowWindow();
+	}
+
+	/// <summary>
 	/// Custom toolbar for the project.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Hungry Dragon Toolbar", false, 50)]
+	[MenuItem("Hungry Dragon/Tools/Hungry Dragon Toolbar", false, 100)]
 	public static void HungryDragonToolbar() {
 		HungryDragonEditorToolbar.ShowWindow();
 	}
@@ -112,7 +131,7 @@ public class HungryDragonEditorMenu {
 	/// <summary>
 	/// Custom tools for the dragon selection menu.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Dragon Selection Menu Tools", false, 100)]
+	[MenuItem("Hungry Dragon/Tools/Dragon Selection Menu Tools", false, 150)]
 	public static void DragonMenuTools() {
 		DragonMenuToolsEditorWindow.ShowWindow();
 	}
@@ -120,7 +139,7 @@ public class HungryDragonEditorMenu {
 	/// <summary>
 	/// Regenerate the icon for the selected entity prefab.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (selected entity prefabs)", false, 150)]
+	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (selected entity prefabs)", false, 200)]
 	public static void GenerateSpawnerIconsSelected() {
 		// Show error message if nothing is selected
 		if(Selection.gameObjects.Length == 0) {
@@ -156,7 +175,7 @@ public class HungryDragonEditorMenu {
 	/// <summary>
 	/// Regenerate the icon for all the spawners in the scene.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (all, takes a while)", false, 151)]
+	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (all, takes a while)", false, 201)]
 	public static void GenerateSpawnerIconsAll() {
 		//SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();
 		SpawnerIconGeneratorEditor.GenerateSpawnerIconsInResources(Colors.transparentWhite);

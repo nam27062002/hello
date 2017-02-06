@@ -66,7 +66,7 @@ public class SeparatorAttributeEditor : DecoratorDrawer {
 		// Initialized style for a line
 		// [AOC] We will be drawing a box actually, so copy some values from the box style
 		GUIStyle lineStyle = new GUIStyle();
-		lineStyle.normal.background = Texture2DExt.Create(2, 2, _separator.m_color);
+		lineStyle.normal.background = Texture2DExt.Create(_separator.m_color);
 		lineStyle.margin = EditorStyles.helpBox.margin;
 		lineStyle.padding = EditorStyles.helpBox.padding;
 
@@ -164,7 +164,7 @@ public class SeparatorAttributeEditor : DecoratorDrawer {
 		// Initialized style for a line
 		// [AOC] We will be drawing a box actually, so copy some values from the box style
 		GUIStyle lineStyle = new GUIStyle();
-		lineStyle.normal.background = Texture2DExt.Create(2, 2, _separator.m_color);
+		lineStyle.normal.background = Texture2DExt.Create(_separator.m_color);
 		lineStyle.margin = EditorStyles.helpBox.margin;
 		lineStyle.padding = EditorStyles.helpBox.padding;
 		

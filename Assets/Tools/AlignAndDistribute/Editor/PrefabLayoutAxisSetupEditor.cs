@@ -46,7 +46,7 @@ public class PrefabLayoutAxisSetupEditor : ExtendedPropertyDrawer {
 		// If title style was not created, do it now
 		if(s_titleBackgroundStyle == null) {
 			s_titleBackgroundStyle = new GUIStyle();
-			s_titleBackgroundStyle.normal.background = Texture2DExt.Create(2, 2, new Color(0.65f, 0.65f, 0.65f));
+			s_titleBackgroundStyle.normal.background = Texture2DExt.Create(new Color(0.65f, 0.65f, 0.65f));
 			s_titleBackgroundStyle.margin = EditorStyles.helpBox.margin;
 			s_titleBackgroundStyle.padding = EditorStyles.helpBox.padding;
 		}

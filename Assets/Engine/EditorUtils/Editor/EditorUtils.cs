@@ -405,4 +405,15 @@ public static class EditorUtils {
 		Type[] types = TypeUtil.GetTypesByClassName(typeName);
 		return types;
 	}
+
+	/// <summary>
+	/// Create a texture with the given values.
+	/// </summary>
+	/// <returns>The newly created texture.</returns>
+	/// <param name="_color">Color of the texture.</param>
+	/// <param name="_width">Width in pixels of the new texture.</param>
+	/// <param name="_height">Height in pixels of the new texture.</param>
+	public static Texture2D CreateTexture(Color _color, int _width = 2, int _height = 2) {
+		return Texture2DExt.Create(_color, _width, _height);
+	}
 }
