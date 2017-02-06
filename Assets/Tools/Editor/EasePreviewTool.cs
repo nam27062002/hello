@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEditor;
 using System;
 using System.Collections.Generic;
@@ -23,129 +24,6 @@ public class EasePreviewTool : EditorWindow {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Auxiliar class to easily store, display and setup the live preview.
-	/// </summary>
-	private class LivePreviewTween {
-		// Generic
-		public string id = "";
-		private string prefsId {
-			get { return "LivePreviewTween." + id; }
-		}
-
-		// Serializable
-		public bool toggle = false;
-		public Ease ease = Ease.Linear;
-		public float duration = 1f;
-		public Vector2 fromValue = new Vector2(-1f, -1f);
-		public Vector2 toValue = Vector2.one;
-		public bool yoyoRepeat = true;
-
-		// Logic
-		public float delta = 0f;
-		public Vector2 value = Vector2.zero;
-		private bool backwards = false;
-
-		/// <summary>
-		/// Parametrized constructor.
-		/// </summary>
-		/// <param name="_id">Identifier to save the setup into settings.</param>
-		public LivePreviewTween(string _id) {
-			// Store ID
-			id = _id;
-		}
-
-		/// <summary>
-		/// Save data to Editor prefs.
-		/// </summary>
-		public void Save() {
-			// Validate some values
-			duration = Mathf.Max(0f, duration);
-			fromValue.x = Mathf.Clamp(fromValue.x, -1f, 1f);
-			fromValue.y = Mathf.Clamp(fromValue.y, -1f, 1f);
-			toValue.x = Mathf.Clamp(toValue.x, -1f, 1f);
-			toValue.y = Mathf.Clamp(toValue.y, -1f, 1f);
-
-			// Save everything in a single string
-			// Use Unity's JSON serialization tools!
-			string saveStr = EditorJsonUtility.ToJson(this);
-
-			// Save it!
-			EditorPrefs.SetString(prefsId, saveStr);
-		}
-
-		/// <summary>
-		/// Load data from Editor prefs.
-		/// </summary>
-		public void Load() {
-			// Load from a single string in editor prefs. If it doesn't exist, leave default values
-			string loadStr = EditorPrefs.GetString(prefsId, string.Empty);
-			if(string.IsNullOrEmpty(loadStr)) return;
-
-			// Use Unity's JSON serialization tools!
-			EditorJsonUtility.FromJsonOverwrite(loadStr, this);
-		}
-
-		/// <summary>
-		/// Do the inspector gui!
-		/// </summary>
-		public void OnGUI() {
-			// Better prefix label width
-			float labelWidthBackup = EditorGUIUtility.labelWidth;
-			EditorGUIUtility.labelWidth = 100f;
-
-			// Group it all in a toggle group
-			EditorGUI.BeginChangeCheck();
-			SeparatorAttributeEditor.DrawSeparator(new SeparatorAttribute(5));
-			toggle = EditorGUILayout.BeginToggleGroup(id, toggle); {
-				EditorGUI.indentLevel++;
-				ease = (Ease)EditorGUILayout.EnumPopup("Ease", ease);
-				duration = EditorGUILayout.FloatField("Duration", duration);
-				fromValue = EditorGUILayout.Vector2Field("From", fromValue);
-				toValue = EditorGUILayout.Vector2Field("To", toValue);
-				yoyoRepeat = EditorGUILayout.Toggle("YoYo Repeat?", yoyoRepeat);
-				EditorGUI.indentLevel--;
-			} EditorGUILayout.EndToggleGroup();
-
-			// If changes were made, save them!
-			if(EditorGUI.EndChangeCheck()) {
-				Save();
-			}
-
-			// Restore label width
-			EditorGUIUtility.labelWidth = labelWidthBackup;
-		}
-
-		/// <summary>
-		/// Update value
-		/// </summary>
-		/// <param name="_deltaTime">Delta time.</param>
-		public void Update(float _deltaTime) {
-			// Update delta
-			delta += _deltaTime/duration;
-
-			// Detect loop ending
-			if(delta >= 1f) {
-				// Reset delta
-				delta = 0f;
-
-				// If yoyo-ing, reverse direction
-				if(yoyoRepeat) {
-					backwards = !backwards;
-				}
-			}
-
-			// Compute new value!
-			// Going forward or backwards?
-			float easedDelta = delta;
-			if(backwards) {
-				easedDelta = DOVirtual.EasedValue(0f, 1f, 1f - delta, ease);
-			} else {
-				easedDelta = DOVirtual.EasedValue(0f, 1f, delta, ease);
-			}
-			value = Vector2.LerpUnclamped(fromValue, toValue, easedDelta);
-		}
-	}
 
 	//------------------------------------------------------------------------//
 	// STATICS																  //
@@ -206,6 +84,14 @@ public class EasePreviewTool : EditorWindow {
 		// Load stored data
 		m_moveTween.Load();
 		m_scaleTween.Load();
+
+		// Restart tweens so they are synced
+		m_moveTween.Restart();
+		m_scaleTween.Restart();
+
+		// We want to know if a tween is changed
+		m_moveTween.OnChange.AddListener(OnTweenChanged);
+		m_scaleTween.OnChange.AddListener(OnTweenChanged);
 	}
 
 	/// <summary>
@@ -387,8 +273,8 @@ public class EasePreviewTool : EditorWindow {
 		GUI.Box(areaPos, "LIVE PREVIEW", EditorStyles.helpBox);
 
 		// Apply transformations
-		Vector2 offset = m_moveTween.toggle ? m_moveTween.value : Vector2.zero;
-		Vector2 scale = m_scaleTween.toggle ? m_scaleTween.value : Vector2.one;
+		Vector2 offset = m_moveTween.toggled ? m_moveTween.value : Vector2.zero;
+		Vector2 scale = m_scaleTween.toggled ? m_scaleTween.value : Vector2.one;
 		Vector3 boxSize = new Vector2(30f * scale.x, 30f * scale.y);
 
 		// Add some margins so the box doesn't go outside the area!
@@ -416,5 +302,168 @@ public class EasePreviewTool : EditorWindow {
 			EditorGUILayout.Space();
 			m_scaleTween.OnGUI();
 		} EditorGUILayout.EndScrollView();
+	}
+
+	/// <summary>
+	/// A tween has been toggled.
+	/// </summary>
+	/// <param name="_tween">Target tween.</param>
+	private void OnTweenChanged(LivePreviewTween _tween) {
+		// Restart both tweens so they are synced
+		m_moveTween.Restart();
+		m_scaleTween.Restart();
+	}
+}
+
+/// <summary>
+/// Auxiliar class to easily store, display and setup the live preview.
+/// </summary>
+public class LivePreviewTween {
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+
+	//------------------------------------------------------------------------//
+	// MEMBERS																  //
+	//------------------------------------------------------------------------//
+	// Generic
+	public string id = "";
+	private string prefsId {
+		get { return "LivePreviewTween." + id; }
+	}
+
+	// Serializable
+	public bool toggled = false;
+	public Ease ease = Ease.Linear;
+	public float duration = 1f;
+	public Vector2 fromValue = new Vector2(-1f, -1f);
+	public Vector2 toValue = Vector2.one;
+	public bool yoyoRepeat = true;
+
+	// Logic
+	public float delta = 0f;
+	public Vector2 value = Vector2.zero;
+	private bool backwards = false;
+
+	// Events
+	public class LivePreviewTweenEvent : UnityEvent<LivePreviewTween> { }
+	public LivePreviewTweenEvent OnChange = new LivePreviewTweenEvent();
+
+	//------------------------------------------------------------------------//
+	// METHODS																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Parametrized constructor.
+	/// </summary>
+	/// <param name="_id">Identifier to save the setup into settings.</param>
+	public LivePreviewTween(string _id) {
+		// Store ID
+		id = _id;
+	}
+
+	/// <summary>
+	/// Save data to Editor prefs.
+	/// </summary>
+	public void Save() {
+		// Validate some values
+		duration = Mathf.Max(0f, duration);
+		fromValue.x = Mathf.Clamp(fromValue.x, -1f, 1f);
+		fromValue.y = Mathf.Clamp(fromValue.y, -1f, 1f);
+		toValue.x = Mathf.Clamp(toValue.x, -1f, 1f);
+		toValue.y = Mathf.Clamp(toValue.y, -1f, 1f);
+
+		// Save everything in a single string
+		// Use Unity's JSON serialization tools!
+		string saveStr = EditorJsonUtility.ToJson(this);
+
+		// Save it!
+		EditorPrefs.SetString(prefsId, saveStr);
+	}
+
+	/// <summary>
+	/// Load data from Editor prefs.
+	/// </summary>
+	public void Load() {
+		// Load from a single string in editor prefs. If it doesn't exist, leave default values
+		string loadStr = EditorPrefs.GetString(prefsId, string.Empty);
+		if(string.IsNullOrEmpty(loadStr)) return;
+
+		// Use Unity's JSON serialization tools!
+		EditorJsonUtility.FromJsonOverwrite(loadStr, this);
+	}
+
+	/// <summary>
+	/// Do the inspector gui!
+	/// </summary>
+	public void OnGUI() {
+		// Better prefix label width
+		float labelWidthBackup = EditorGUIUtility.labelWidth;
+		EditorGUIUtility.labelWidth = 100f;
+
+		// Group it all in a toggle group
+		EditorGUI.BeginChangeCheck();
+		SeparatorAttributeEditor.DrawSeparator(new SeparatorAttribute(5));
+		bool wasToggled = toggled;
+		toggled = EditorGUILayout.BeginToggleGroup(id, toggled); {
+			EditorGUI.indentLevel++;
+			ease = (Ease)EditorGUILayout.EnumPopup("Ease", ease);
+			duration = EditorGUILayout.FloatField("Duration", duration);
+			fromValue = EditorGUILayout.Vector2Field("From", fromValue);
+			toValue = EditorGUILayout.Vector2Field("To", toValue);
+			yoyoRepeat = EditorGUILayout.Toggle("YoYo Repeat?", yoyoRepeat);
+			EditorGUI.indentLevel--;
+		} EditorGUILayout.EndToggleGroup();
+
+		// If changes were made, save them!
+		if(EditorGUI.EndChangeCheck()) {
+			// Save!
+			Save();
+
+			// Notify external listeners
+			OnChange.Invoke(this);
+		}
+
+		// Restore label width
+		EditorGUIUtility.labelWidth = labelWidthBackup;
+	}
+
+	/// <summary>
+	/// Update value
+	/// </summary>
+	/// <param name="_deltaTime">Delta time.</param>
+	public void Update(float _deltaTime) {
+		// Update delta
+		delta += _deltaTime/duration;
+
+		// Detect loop ending
+		if(delta >= 1f) {
+			// Reset delta
+			delta = 0f;
+
+			// If yoyo-ing, reverse direction
+			if(yoyoRepeat) {
+				backwards = !backwards;
+			}
+		}
+
+		// Compute new value!
+		// Going forward or backwards?
+		float easedDelta = delta;
+		if(backwards) {
+			easedDelta = DOVirtual.EasedValue(0f, 1f, 1f - delta, ease);
+		} else {
+			easedDelta = DOVirtual.EasedValue(0f, 1f, delta, ease);
+		}
+		value = Vector2.LerpUnclamped(fromValue, toValue, easedDelta);
+	}
+
+	/// <summary>
+	/// Restart the tween from the start.
+	/// </summary>
+	public void Restart() {
+		// Reset delta and backwards properties and force an update
+		delta = 0f;
+		backwards = false;
+		Update(0);
 	}
 }
