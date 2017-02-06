@@ -5,13 +5,13 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 496654}
-  - 114: {fileID: 11449404}
-  - 114: {fileID: 11451560}
-  - 114: {fileID: 11453016}
-  - 114: {fileID: 11464310}
+  - component: {fileID: 496654}
+  - component: {fileID: 11449404}
+  - component: {fileID: 11451560}
+  - component: {fileID: 11453016}
+  - component: {fileID: 11464310}
   m_Layer: 0
   m_Name: SP_enemy_baby
   m_TagString: Untagged
@@ -26,12 +26,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 188156}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.72, y: 8.84, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &11449404
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -65,7 +65,6 @@ MonoBehaviour:
     min: 1
     max: 1
   m_rails: 1
-  m_flockBonus: 0
   m_minTier: 0
   m_activationChance: 100
   m_activationTriggers: []
@@ -89,6 +88,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_formation: 0
 --- !u!114 &11464310
 MonoBehaviour:
   m_ObjectHideFlags: 1

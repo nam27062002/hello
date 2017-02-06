@@ -80,6 +80,10 @@ namespace AI {
 			if (m_enableMotion) m_motion.Update();
 		}
 
+		protected virtual void FixedUpdate() {
+			if (m_enableMotion) m_motion.FixedUpdate();
+		}
+
 		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params) {
 			
 		}
