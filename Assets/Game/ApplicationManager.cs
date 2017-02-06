@@ -131,7 +131,17 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
             // Test feature settings
             //Debug_TestToggleSound();
-            // ---------------------------            
+            // ---------------------------     
+
+            // ---------------------------
+            // Test drunk effect
+            //Debug_TestToggleDrunk();
+            // ---------------------------     
+
+            // ---------------------------
+            // Test frame color effect
+            //Debug_TestToggleFrameColor();
+            // ---------------------------                 
         }
 
         if (NeedsToRestartFlow)
@@ -419,6 +429,22 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Debug.Log(key + " as string = " + FeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));                        
         */
     }
-    #endregion    
+
+    private bool Debug_IsDrunkOn { get; set; }
+
+    public void Debug_TestToggleDrunk()
+    {
+        Debug_IsDrunkOn = !Debug_IsDrunkOn;
+        Messenger.Broadcast<bool>(GameEvents.DRUNK_TOGGLED, Debug_IsDrunkOn);
+    }
+
+    private bool Debug_IsFrameColorOn { get; set; }
+
+    public void Debug_TestToggleFrameColor()
+    {
+        Debug_IsFrameColorOn = !Debug_IsFrameColorOn;
+        Messenger.Broadcast<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, Debug_IsFrameColorOn, DragonBreathBehaviour.Type.Super);        
+    }
+    #endregion
 }
 

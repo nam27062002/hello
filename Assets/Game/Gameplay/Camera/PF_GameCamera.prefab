@@ -12,11 +12,9 @@ GameObject:
   - component: {fileID: 12481626}
   - component: {fileID: 9212364}
   - component: {fileID: 8136056}
-  - component: {fileID: 11427856}
   - component: {fileID: 11486938}
   - component: {fileID: 11447402}
   - component: {fileID: 114000011327172364}
-  - component: {fileID: 114000012048095912}
   - component: {fileID: 114795868151240438}
   - component: {fileID: 114000011558897754}
   - component: {fileID: 114911447019432680}
@@ -90,28 +88,13 @@ Behaviour:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101152}
   m_Enabled: 1
---- !u!114 &11427856
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 101152}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8bac2e609b1841e6825ac01c45579a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_followTransform: {fileID: 0}
-  m_updateDistance: 0
-  m_sunLight: {fileID: 0}
-  m_ambientNodes: []
 --- !u!114 &11447402
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101152}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 59f76425a5ea34e8ab1c599724f79c98, type: 3}
   m_Name: 
@@ -466,30 +449,13 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101152}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2e96ee87f4354624da902d5ece0e6e46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_TurnSpeed: 10
   m_MoveSpeed: 10
---- !u!114 &114000012048095912
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 101152}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b2854bce623d0c44978254dab903414, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Tint: {r: 0.3455882, g: 0.3455882, b: 0.3455882, a: 1}
-  m_Tint2: {r: 0.36764705, g: 0.2609712, b: 0.12435122, a: 1}
-  timeDecay: 2
-  m_shader: {fileID: 4800000, guid: dd36d0c2ae0fac84dbb7ef8e357fcb03, type: 3}
-  m_Focus: 0.5
-  m_LensOffset: 0.5
 --- !u!114 &114795868151240438
 MonoBehaviour:
   m_ObjectHideFlags: 1

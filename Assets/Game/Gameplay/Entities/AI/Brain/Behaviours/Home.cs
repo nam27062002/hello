@@ -35,6 +35,7 @@ namespace AI {
 				m_alertRestoreValue = m_machine.GetSignal(Signals.Type.Alert);
 				m_machine.SetSignal(Signals.Type.Alert, false);
 				m_pilot.SetMoveSpeed(m_data.speed);
+				m_pilot.SlowDown(true);
 			}
 
 			protected override void OnExit(State _newState) {
@@ -45,7 +46,7 @@ namespace AI {
 				m_pilot.GoTo(m_pilot.homePosition);
 
 				float dSqr = (m_machine.position - m_pilot.homePosition).sqrMagnitude;
-				if (dSqr < 3f) {
+				if (dSqr < 2f * 2f) {
 					Transition(OnBackAtHome);
 				}
 			}
