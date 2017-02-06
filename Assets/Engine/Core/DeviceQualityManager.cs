@@ -139,12 +139,12 @@ public class DeviceQualityManager
             // Loops through all profiles, which are sorted in ascending order per rating, until one with bigger rating than the passed as an argument is found
             int i;
             int count = Profiles_Names.Count;
-            for (i = 0; i < count && Profiles_Data[Profiles_Names[i]].Rating <= rating; i++); // Empty            
+            for (i = 0; i < count && Profiles_Data[Profiles_Names[i]].Rating < rating; i++); // Empty            
 
-            // We need to substract 1 to obtain the profile for rating because the exit condition was to reach the last profile or to find the immediately bigger one
-            if (i > 0)
+            // We need to  make sure it doesn't exceed the max value
+            if (i >= count)
             {
-                i--;
+                i = count - 1;
             }
 
             returnValue = Profiles_Names[i];
