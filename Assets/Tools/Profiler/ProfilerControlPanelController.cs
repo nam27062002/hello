@@ -150,7 +150,7 @@ public class ProfilerControlPanelController : MonoBehaviour
             }
 
             PrefabLogicUnits_IsDirty = false;
-        }
+        }        
     }
 
     public void SetNumEntities(int optionId)
@@ -289,7 +289,7 @@ public class ProfilerControlPanelController : MonoBehaviour
     #endregion
 
     #region test
-    public BossCameraAffector m_bossCameraAffector;
+    public BossCameraAffector m_bossCameraAffector;    
 
     public void Test_OnToggleDrunkEffect()
     {
@@ -299,11 +299,14 @@ public class ProfilerControlPanelController : MonoBehaviour
     public void Test_OnToggleFrameColorEffect()
     {
         ApplicationManager.instance.Debug_TestToggleFrameColor();
-    }
+    }   
 
     public void Test_OnToggleBossCameraEffect()
-    {
-        Debug.Log("BossCamera");
+    {        
+        if (m_bossCameraAffector != null)
+        {
+            ApplicationManager.instance.Debug_OnToggleBossCameraEffect(m_bossCameraAffector);            
+        }        
     }
     #endregion
 
