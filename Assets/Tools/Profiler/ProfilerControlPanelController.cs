@@ -289,6 +289,8 @@ public class ProfilerControlPanelController : MonoBehaviour
     #endregion
 
     #region test
+    public BossCameraAffector m_bossCameraAffector;
+
     public void Test_OnToggleDrunkEffect()
     {
         ApplicationManager.instance.Debug_TestToggleDrunk();
@@ -297,6 +299,11 @@ public class ProfilerControlPanelController : MonoBehaviour
     public void Test_OnToggleFrameColorEffect()
     {
         ApplicationManager.instance.Debug_TestToggleFrameColor();
+    }
+
+    public void Test_OnToggleBossCameraEffect()
+    {
+        Debug.Log("BossCamera");
     }
     #endregion
 
