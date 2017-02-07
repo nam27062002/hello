@@ -45,6 +45,7 @@ public class ContentManager
 
 		// Metagame
 		kDefinitionFiles.Add(DefinitionsCategory.EGGS, new string[]{"Rules/eggDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.GOLDEN_EGGS, new string[]{"Rules/goldenEggDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.EGG_REWARDS, new string[]{"Rules/eggRewardDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.CHEST_REWARDS, new string[]{"Rules/chestRewardDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.RARITIES, new string[]{"Rules/rarityDefinitions"});
