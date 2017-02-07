@@ -4,6 +4,7 @@ using System.Collections;
 public class CatapultAmmo : MonoBehaviour {
 
 	[SerializeField] private float m_damage;
+	[SerializeField] private float m_knockback = 0f;
 	[SerializeField] private string m_hitParticle = "";
 
 	[SeparatorAttribute]
@@ -96,6 +97,16 @@ public class CatapultAmmo : MonoBehaviour {
 		ParticleManager.Spawn(m_hitParticle, transform.position);
 
 		if (_hitDragon) {
+			if (m_knockback > 0) {
+				DragonMotion dragonMotion = InstanceManager.player.dragonMotion;
+
+				Vector3 knockBackDirection = dragonMotion.transform.position - transform.position;
+				knockBackDirection.z = 0f;
+				knockBackDirection.Normalize();
+
+				dragonMotion.AddForce(knockBackDirection * m_knockback);
+			}
+
 			InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, DamageType.NORMAL);
 		}
 
