@@ -35,6 +35,16 @@ public class EggRewardInfo : MonoBehaviour {
 	[SerializeField] private Localizer m_goldenFragmentInfo = null;
 	[SerializeField] private TextMeshProUGUI m_goldenFragmentCounter = null;
 
+	[Separator("Fragments Counter Animation Parameters")]
+	[SerializeField] private float m_counterDelay = 3.5f;
+	[SerializeField] private float m_counterInDuration = 0.15f;
+	[SerializeField] private float m_counterIdleInDuration = 0.2f;
+	[SerializeField] private float m_counterIdleOutDuration = 0.2f;
+	[SerializeField] private float m_counterOutDuration = 0.15f;
+	[SerializeField] private float m_counterScaleFactor = 2f;
+	[SerializeField] private Ease m_counterEaseIn = Ease.OutCubic;
+	[SerializeField] private Ease m_counterEaseOut = Ease.InCubic;
+
 	// Other references
 	private Animator m_animator = null;
 	private Animator animator {
@@ -104,7 +114,7 @@ public class EggRewardInfo : MonoBehaviour {
 
 				// Fragments counter
 				RefreshGoldenFragmentCounter(EggManager.goldenEggFragments - _rewardData.fragments, false);	// Reward has already been given at this point, so show the current amount minus the rewarded amount
-				DOVirtual.DelayedCall(3f, () => { RefreshGoldenFragmentCounter(EggManager.goldenEggFragments, true); }, false);	// Sync with animation
+				DOVirtual.DelayedCall(m_counterDelay, () => { RefreshGoldenFragmentCounter(EggManager.goldenEggFragments, true); }, false);	// Sync with animation
 			}
 		}
 
@@ -129,14 +139,21 @@ public class EggRewardInfo : MonoBehaviour {
 	/// <param name="_amount">Amount to display.</param>
 	/// <param name="_animate">Whether to animate or not.</param>
 	private void RefreshGoldenFragmentCounter(int _amount, bool _animate) {
-		// Set text
-		m_goldenFragmentCounter.text = 
-			UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT + " " + 
+		// Compose new string
+		string newText = UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT + " " + 
 			LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(_amount), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments));
 
 		// Animate?
 		if(_animate) {
-			m_goldenFragmentCounter.transform.DOScale(1.5f, 0.15f).SetLoops(2, LoopType.Yoyo).SetRecyclable(true);
+			DOTween.Sequence()
+				.Append(m_goldenFragmentCounter.transform.DOScale(m_counterScaleFactor, m_counterInDuration).SetRecyclable(true).SetEase(m_counterEaseIn))
+				.AppendInterval(m_counterIdleInDuration)
+				.AppendCallback(() => { m_goldenFragmentCounter.text = newText; })
+				.AppendInterval(m_counterIdleOutDuration)
+				.Append(m_goldenFragmentCounter.transform.DOScale(1f, m_counterOutDuration).SetRecyclable(true).SetEase(m_counterEaseOut));
+		} else {
+			// Set text
+			m_goldenFragmentCounter.text = newText;
 		}
 	}
 
