@@ -253,10 +253,10 @@ public class OpenEggSceneController : MonoBehaviour {
 				loader.Load(rewardData.itemDef.sku);
 
 				// Animate it
-				seq.AppendInterval(0.1f)	// Initial delay
-					.Append(m_rewardView.transform.DOScale(0f, 1f).From().SetRecyclable(true).SetEase(Ease.OutBack))
+				seq.AppendInterval(0.05f)	// Initial delay
+					.Append(m_rewardView.transform.DOScale(0f, 0.5f).From().SetRecyclable(true).SetEase(Ease.OutBack))
 					.Join(DOVirtual.DelayedCall(
-						0.5f,
+						0f,
 						() => {
 							m_rewardView.transform.DOLocalRotate(m_rewardView.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetRecyclable(true);
 						},
