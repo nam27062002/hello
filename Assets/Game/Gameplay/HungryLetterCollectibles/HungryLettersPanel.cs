@@ -195,7 +195,7 @@ public class HungryLettersPanel : MonoBehaviour
 
 		m_tweening = true;
 		m_presenting = true;
-		DOTween.Play( gameObject);
+		DOTween.Restart( gameObject);
 		// m_tween.PlayForward();
 	}
 
@@ -209,6 +209,7 @@ public class HungryLettersPanel : MonoBehaviour
 		m_tweening = true;
 		m_presenting = false;
 		DOTween.PlayBackwards(gameObject);
+		TweenCompleted();
 		// m_tween.PlayReverse();
 	}
 
