@@ -264,7 +264,10 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 			} break;
 
 			case CPGachaTest.RewardChanceMode.SAME_PROBABILITY: {
-				rewardSku = instance.m_rewardDropRate.GetLabel(UnityEngine.Random.Range(0, instance.m_rewardDropRate.numElements));		// Pick one random element without taking probabilities in account
+				// Exclude special pets!
+				do {
+					rewardSku = instance.m_rewardDropRate.GetLabel(UnityEngine.Random.Range(0, instance.m_rewardDropRate.numElements));		// Pick one random element without taking probabilities in account
+				} while(rewardSku == "pet_special");
 			} break;
 		}
 		return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, rewardSku);

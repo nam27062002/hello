@@ -78,7 +78,6 @@ public class EggReward {
 		get { return m_coins; }
 	}
 
-	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -168,8 +167,23 @@ public class EggReward {
 						}
 					}
 				}
+
+				Debug.Log("EGG REWARD GENERATED:\n" + this.ToString());
 			} break;
 		}
+	}
+
+	/// <summary>
+	/// For debug purposes.
+	/// </summary>
+	public string ToString() {
+		return "Type: " + m_type + "\n" +
+			"Def: " + (m_def == null ? "NULL" : m_def.sku) + "\n" +
+			"Item Def: " + (m_itemDef == null ? "NULL" : m_itemDef.sku) + "\n" +
+			"Rarity: " + m_rarity + "\n" +
+			"Duplicated: " + m_duplicated + "\n" +
+			"Fragments: " + m_fragments + "\n" +
+			"Coins: " + m_coins;
 	}
 
 	//------------------------------------------------------------------------//
