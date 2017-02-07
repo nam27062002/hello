@@ -68,4 +68,5 @@ Shader "Hungry Dragon/Unlit Custom Fog (Background entities)"
 			ENDCG
 		}
 	}
+	Fallback "Mobile/VertexLit"
 }

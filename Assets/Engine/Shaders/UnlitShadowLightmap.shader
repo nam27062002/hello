@@ -30,7 +30,6 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 				#pragma vertex vert
 				#pragma fragment frag
 				#pragma multi_compile_fwdbase
-
 				#pragma glsl_no_auto_normalization
 				#pragma fragmentoption ARB_precision_hint_fastest
 
@@ -102,6 +101,5 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 			ENDCG
 		}
 	}
-
-//	Fallback "Mobile/VertexLit"
+	Fallback "Mobile/VertexLit"
 }

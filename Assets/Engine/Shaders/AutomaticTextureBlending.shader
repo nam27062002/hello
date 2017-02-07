@@ -103,4 +103,5 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 			ENDCG
 		}
 	}
+	Fallback "Mobile/VertexLit"
 }

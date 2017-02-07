@@ -15,7 +15,7 @@ Shader "Hungry Dragon/Waterfall"
 	}
 
 	SubShader {
-		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent"  "LightMode" = "ForwardBase" }
+		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque"  "LightMode" = "ForwardBase" }
 		LOD 100
 
 		Pass {  
@@ -105,4 +105,5 @@ Shader "Hungry Dragon/Waterfall"
 			ENDCG
 		}
 	}
+	Fallback "Mobile/VertexLit"
 }

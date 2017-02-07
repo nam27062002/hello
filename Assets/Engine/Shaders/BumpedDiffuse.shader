@@ -19,6 +19,8 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 			Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase"}
 			Cull Back
 
+			zwrite on
+
 			Stencil
 			{
 				Ref 5

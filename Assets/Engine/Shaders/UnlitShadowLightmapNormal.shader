@@ -17,11 +17,10 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow + Normal Map"
 	}
 
 	SubShader {
-		Tags { "RenderType"="Opaque" }
+		Tags{ "RenderType" = "Opaque" "Queue" = "Geometry" "LightMode" = "ForwardBase" }
 		LOD 100
 		
 		Pass {  
-			Tags { "LightMode" = "ForwardBase" }
 
 			CGPROGRAM
 				#pragma vertex vert

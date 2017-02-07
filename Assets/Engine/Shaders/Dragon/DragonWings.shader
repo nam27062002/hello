@@ -231,5 +231,5 @@ SubShader {
 	}
 */
 }
-//Fallback "Mobile/VertexLit"
+Fallback "Mobile/VertexLit"
 }
