@@ -58,7 +58,7 @@ public class HungryLettersAllCollectedContainer : MonoBehaviour
 	{
 		// m_tweenRotation.PlayForward();
 		// m_tweenTransform.PlayForward();
-		DOTween.Play(gameObject);
+		DOTween.Restart(gameObject);
 		m_particle.Play();
 	}
 

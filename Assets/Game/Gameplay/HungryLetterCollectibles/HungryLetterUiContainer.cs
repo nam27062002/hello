@@ -22,6 +22,7 @@ public class HungryLetterUiContainer : MonoBehaviour
 
 	private List<Transform> m_letterMovers;
 	private List<Transform> m_letterMoversQueue;
+	private List<Transform> m_letterMoversQueueTarget;
 
 	private Action m_moveLetterCallback;
 
@@ -33,6 +34,7 @@ public class HungryLetterUiContainer : MonoBehaviour
 	{
 		m_letterMovers = new List<Transform>();
 		m_letterMoversQueue = new List<Transform>();
+		m_letterMoversQueueTarget = new List<Transform>();
 		for(int i = 0; i < lettersNumber; i++)
 		{
 			GameObject go = Instantiate(m_letterMoverPrefab) as GameObject;
@@ -57,68 +59,31 @@ public class HungryLetterUiContainer : MonoBehaviour
 		DOTween.Restart( mover.gameObject, "scale");
 		DOTween.Restart( mover.gameObject, "position");
 		DOTween.Restart( mover.gameObject, "rotation");
-		// DOTween.Play( mover, "scale");
-		// DOTween.Play( mover, "position");
-		// DOTween.Play( mover, "rotation");
-
-		// mover.m_tweenScale.ResetToBeginning();
-		// mover.m_tweenPosition.ResetToBeginning();
-		// mover.m_tweenRotation.ResetToBeginning();
-		// trigger the scale.
-		// mover.m_tweenScale.PlayForward();
-		// mover.m_tweenPosition.PlayForward();
-		// mover.m_tweenRotation.PlayForward();
-		// configure the tween transform.
-
-		DOTweenAnimation[] anims = mover.GetComponents<DOTweenAnimation>();
-		for( int i = 0; i<anims.Length; i++ )
-		{
-			if (anims[i].id == "transform")
-			{
-				switch( anims[i].animationType )
-				{
-					case DG.Tweening.Core.DOTweenAnimationType.Move:
-					{
-						anims[i].endValueTransform = to;
-						anims[i].targetType = DG.Tweening.Core.TargetType.Transform;
-						anims[i].onComplete.RemoveAllListeners();
-						anims[i].onComplete.AddListener(OnTweenCompleted);
-					}break;
-					case DG.Tweening.Core.DOTweenAnimationType.Rotate:
-					{
-						anims[i].endValueTransform = to;
-						anims[i].targetType = DG.Tweening.Core.TargetType.Transform;
-					}break;
-					case DG.Tweening.Core.DOTweenAnimationType.Scale:
-					{
-						anims[i].endValueTransform = to;
-						anims[i].targetType = DG.Tweening.Core.TargetType.Transform;
-					}break;
-				}
-			}
-		}
 
 		// mover.m_tweenTransform.to = to;
 		// mover.m_tweenTransform.AddOnFinished(OnTweenCompleted);
 		// add this mover to the queue of the ones that need to move in the ui.
 		m_letterMoversQueue.Add(mover);
+		m_letterMoversQueueTarget.Add(to);
 	}
 
 	public void TweenLetter()
 	{
 		// get the first letter to move.
 		Transform mover = m_letterMoversQueue[0];
+		Transform to = m_letterMoversQueueTarget[0];
 		// move the letter.
 		if(HungryLettersPanel.Instance.tweenLetterDelay > 0f)
 		{
-			StartCoroutine(MoveLetterCoroutine(mover));
+			StartCoroutine(MoveLetterCoroutine(mover, to));
 		}
 		else
 		{
-			MoveLetter(mover);
+			MoveLetter(mover, to);
 		}
 		// remove the letter from the queue.
 		m_letterMoversQueue.Remove(mover);
+		m_letterMoversQueueTarget.Remove(to);
 	}
 
 	public void ReInit(int lettersNumber)
@@ -137,6 +102,7 @@ public class HungryLetterUiContainer : MonoBehaviour
 		{
 			m_moveLetterCallback();
         }
+
 		// notify the panel that the letter is in place.
 		HungryLettersPanel.Instance.OnLetterInPlace();
 
@@ -156,14 +122,51 @@ public class HungryLetterUiContainer : MonoBehaviour
 	// Private Methods:
 	//------------------------------------------------------------
 
-	private IEnumerator MoveLetterCoroutine(Transform mover)
+	private IEnumerator MoveLetterCoroutine(Transform mover, Transform to)
 	{
 		yield return new WaitForSeconds(HungryLettersPanel.Instance.tweenLetterDelay);
-		MoveLetter(mover);
+		MoveLetter(mover, to);
 	}
 
-	private void MoveLetter(Transform mover)
+	private void MoveLetter(Transform mover, Transform to)
 	{
+		mover.parent = to;
+		DOTweenAnimation[] anims = mover.GetComponents<DOTweenAnimation>();
+		for( int i = 0; i<anims.Length; i++ )
+		{
+			if (anims[i].id == "transform")
+			{
+				switch( anims[i].animationType )
+				{
+					case DG.Tweening.Core.DOTweenAnimationType.Move:
+					{
+						anims[i].endValueTransform = to;
+						anims[i].targetType = DG.Tweening.Core.TargetType.Transform;
+						anims[i].CreateTween();
+						anims[i].onComplete.RemoveAllListeners();
+						anims[i].onComplete.AddListener(OnTweenCompleted);
+					}break;
+					case DG.Tweening.Core.DOTweenAnimationType.Rotate:
+					{
+						anims[i].endValueTransform = to;
+						anims[i].targetType = DG.Tweening.Core.TargetType.Transform;
+						anims[i].CreateTween();
+					}break;
+					/*
+					case DG.Tweening.Core.DOTweenAnimationType.Scale:
+					{
+						// anims[i].endValueTransform = to;
+						// anims[i].targetType = DG.Tweening.Core.TargetType.Transform;
+						anims[i].endValueFloat = to.lossyScale.x;
+						anims[i].endValueV3 = to.lossyScale;
+						anims[i].CreateTween();
+					}break;
+					*/
+				}
+			}
+		}
+		
+
 		DOTween.Restart( mover.gameObject, "transform");
 	}
 
