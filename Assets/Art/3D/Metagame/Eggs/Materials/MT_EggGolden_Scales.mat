@@ -88,6 +88,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - first:
+        name: _ReflectionMap
+      second:
+        m_Texture: {fileID: 8900000, guid: 14ca732449041b64aa36929057e32ebc, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
         name: _BumpScale
@@ -129,6 +135,9 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
+        name: _ReflectionAmount
+      second: 1
+    - first:
         name: _RimFactor
       second: 4
     - first:
@@ -164,10 +173,10 @@ Material:
       second: {r: 0.5955882, g: 0.23412776, b: 0, a: 0}
     - first:
         name: _FresnelFinalColor
-      second: {r: 0.572, g: 0.4765667, b: 0.07779199, a: 1}
+      second: {r: 0.41911763, g: 0.2688133, b: 0, a: 1}
     - first:
         name: _FresnelInitialColor
-      second: {r: 0.603, g: 0.44705173, b: 0.08317242, a: 1}
+      second: {r: 0.04411763, g: 0.031368934, b: 0.0016219706, a: 1}
     - first:
         name: _GlowColor
       second: {r: 1, g: 1, b: 1, a: 1}
@@ -176,7 +185,7 @@ Material:
       second: {r: 0, g: 0, b: 0, a: 0}
     - first:
         name: _LightColor
-      second: {r: 0.83823526, g: 0.6416836, b: 0, a: 0.191}
+      second: {r: 0.7794118, g: 0.5966532, b: 0, a: 1}
     - first:
         name: _RimColor
       second: {r: 0.747, g: 0.6512941, b: 0.428778, a: 1}

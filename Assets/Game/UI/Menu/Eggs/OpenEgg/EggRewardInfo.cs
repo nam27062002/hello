@@ -28,9 +28,12 @@ public class EggRewardInfo : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private RarityTitleGroup m_rarityTitle = null;
+	[Space]
+	[SerializeField] private PowerIcon m_rewardPower = null;
+	[Space]
 	[SerializeField] private Localizer m_goldenFragmentTitle = null;
 	[SerializeField] private Localizer m_goldenFragmentInfo = null;
-	[SerializeField] private PowerIcon m_rewardPower = null;
+	[SerializeField] private TextMeshProUGUI m_goldenFragmentCounter = null;
 
 	// Other references
 	private Animator m_animator = null;
@@ -86,17 +89,23 @@ public class EggRewardInfo : MonoBehaviour {
 					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.itemDef.GetAsString("powerup"));
 					m_rewardPower.InitFromDefinition(powerDef, false);
 				}
-
-				// Duplicated info
-				if(_rewardData.duplicated) {
-					// Are all the golden eggs opened (giving coins instead if so)
-					if(_rewardData.coins > 0) {
-						m_goldenFragmentInfo.Localize("TID_EGG_REWARD_DUPLICATED_2", _rewardData.itemDef.GetLocalized("tidName"), StringUtils.FormatNumber(_rewardData.coins));	// %U0 already unlocked!\nYou get %U1 coins instead!
-					} else {
-						m_goldenFragmentInfo.Localize("TID_EGG_REWARD_DUPLICATED_1", _rewardData.itemDef.GetLocalized("tidName"));	// %U0 already unlocked!\nYou get a Golden Egg fragment instead!
-					}
-				}
 			} break;
+		}
+
+		// Duplicated info
+		m_goldenFragmentCounter.gameObject.SetActive(_rewardData.fragments > 0);
+		if(_rewardData.duplicated) {
+			// Are all the golden eggs opened (giving coins instead if so)
+			if(_rewardData.coins > 0) {
+				m_goldenFragmentInfo.Localize("TID_EGG_REWARD_DUPLICATED_2", _rewardData.itemDef.GetLocalized("tidName"), StringUtils.FormatNumber(_rewardData.coins));	// %U0 already unlocked!\nYou get %U1 coins instead!
+			} else {
+				m_goldenFragmentTitle.Localize("TID_EGG_REWARD_FRAGMENT", StringUtils.FormatNumber(_rewardData.fragments));	// %U0 Golden Egg Fragments
+				m_goldenFragmentInfo.Localize("TID_EGG_REWARD_DUPLICATED_1", _rewardData.itemDef.GetLocalized("tidName"), StringUtils.FormatNumber(_rewardData.fragments));	// %U0 already unlocked!\nYou get %U1 Golden Egg fragments instead!
+
+				// Fragments counter
+				RefreshGoldenFragmentCounter(EggManager.goldenEggFragments - _rewardData.fragments, false);	// Reward has already been given at this point, so show the current amount minus the rewarded amount
+				DOVirtual.DelayedCall(3f, () => { RefreshGoldenFragmentCounter(EggManager.goldenEggFragments, true); }, false);	// Sync with animation
+			}
 		}
 
 		// Setup and launch animation
@@ -109,6 +118,26 @@ public class EggRewardInfo : MonoBehaviour {
 	/// </summary>
 	public void Hide() {
 		animator.SetTrigger("hide");
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Refresh the golden fragment counter text.
+	/// </summary>
+	/// <param name="_amount">Amount to display.</param>
+	/// <param name="_animate">Whether to animate or not.</param>
+	private void RefreshGoldenFragmentCounter(int _amount, bool _animate) {
+		// Set text
+		m_goldenFragmentCounter.text = 
+			UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT + " " + 
+			LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(_amount), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments));
+
+		// Animate?
+		if(_animate) {
+			m_goldenFragmentCounter.transform.DOScale(1.5f, 0.15f).SetLoops(2, LoopType.Yoyo).SetRecyclable(true);
+		}
 	}
 
 	//------------------------------------------------------------------------//

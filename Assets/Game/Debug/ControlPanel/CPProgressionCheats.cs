@@ -160,6 +160,26 @@ public class CPProgressionCheats : MonoBehaviour {
 		if(slotIdx >= 0) PersistenceManager.Save();
 	}
 
+	/// <summary>
+	/// Set the amount of golden egg fragments.
+	/// </summary>
+	public void OnSetGoldenEggFragments() {
+		// Get amount from linked input field
+		TMP_InputField input = GetComponentInChildren<TMP_InputField>();
+		if(input == null) Debug.Log("Requires a nested Input Field!");
+		int amount = int.Parse(input.text);
+
+		// Update profile - make sure amount is valid
+		UserProfile currentUser = UsersManager.instance.m_currentUser;
+		currentUser.goldenEggFragments = Mathf.Clamp(amount, 0, EggManager.goldenEggRequiredFragments);		// Clamp between limits!
+
+		// Save persistence
+		PersistenceManager.Save();
+	}
+
+	/// <summary>
+	/// Unlock and buy all dragons.
+	/// </summary>
     public void OnAcquireAllDragons() {
         List<DragonData> dragons = DragonManager.GetDragonsByLockState(DragonData.LockState.ANY);
         if (dragons != null) {
