@@ -1,40 +1,29 @@
 ﻿Shader "Hidden/VoidReplacement"
 {
-	SubShader
-	{
+	SubShader{
 		Tags{ "RenderType" = "Opaque" }
-
-		// No culling or depth
-		Cull Off ZWrite Off ZTest Always
-		Fog{ Mode Off }
-		Pass
-		{
+		Pass{
 			CGPROGRAM
+
 			#pragma vertex vert
 			#pragma fragment frag
-			
 			#include "UnityCG.cginc"
 
-			struct appdata
-			{
-				float4 vertex : POSITION;
+			struct v2f {
+				float4 pos : SV_POSITION;
+//				float2 depth : TEXCOORD0;
 			};
 
-			struct v2f
-			{
-				float4 vertex : SV_POSITION;
-			};
-
-			v2f vert (appdata v)
-			{
+			v2f vert(appdata_base v) {
 				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.pos = UnityObjectToClipPos(v.vertex);
+//				UNITY_TRANSFER_DEPTH(o.depth);
 				return o;
 			}
-			
-			fixed4 frag (v2f i) : SV_Target
-			{
-				return fixed4(1.0, 1.0, 0.0, 1.0);
+
+			half4 frag(v2f i) : SV_Target{
+				return half4(0.0, 0.5, 1.0, 1.0);
+//				UNITY_OUTPUT_DEPTH(i.depth);
 			}
 			ENDCG
 		}

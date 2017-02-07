@@ -3,7 +3,7 @@
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-		_Color ("Color", Color) = (1,1,1,1)
+//		_Color ("Color", Color) = (1,1,1,1)
 		_Intensity ("Intensity", float) = 1
 	}
 	SubShader
@@ -40,7 +40,7 @@
 			}
 			
 			sampler2D _MainTex;
-			fixed4 _Color;
+//			fixed4 _Color;
 			fixed _Intensity;
 
 			#define RADIUS 0.008
