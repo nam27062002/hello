@@ -299,11 +299,28 @@ public class ProfilerControlPanelController : MonoBehaviour
     public void Test_OnToggleFrameColorEffect()
     {
         ApplicationManager.instance.Debug_TestToggleFrameColor();
-    }
+    }   
 
     public void Test_OnToggleBossCameraEffect()
     {
-        Debug.Log("BossCamera");
+        if (m_bossCameraAffector != null)
+        {
+            GameCamera gameCamera = InstanceManager.gameCamera;
+            if (gameCamera != null)
+            {
+                bool enabled = !m_bossCameraAffector.enabled;
+                m_bossCameraAffector.enabled = enabled;
+
+                if (enabled)
+                {
+                    gameCamera.NotifyBoss(m_bossCameraAffector);
+                }
+                else
+                {
+                    gameCamera.RemoveBoss(m_bossCameraAffector);
+                }                
+            }
+        }        
     }
     #endregion
 
