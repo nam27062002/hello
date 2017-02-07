@@ -34,6 +34,8 @@ public class FeatureSettings
     public const string KEY_FRAME_COLOR_EFFECT = "frameColorEffect";
     public const string KEY_ENTITIES_LOD = "entitiesLOD";
     public const string KEY_LEVELS_LOD = "levelsLOD";
+    public const string KEY_BOSS_ZOOM_OUT = "bossZoomOut";
+    public const string KEY_DECO_SPAWNERS = "decoSpawners";
 
     // Examples of how to use different type datas
     /*
@@ -111,7 +113,17 @@ public class FeatureSettings
             key = KEY_LEVELS_LOD;
             data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
             Datas.Add(key, data);
-            
+
+            // bossZoomOut
+            key = KEY_BOSS_ZOOM_OUT;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+            // decoSpawners
+            key = KEY_DECO_SPAWNERS;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
             /*
             // intTest
             key = KEY_INT_TEST;
@@ -129,7 +141,7 @@ public class FeatureSettings
             int intervalAsInt = 1;
             data = new DataRangeInt(key, minAsInt, minAsInt, maxAsInt, intervalAsInt);
             Datas.Add(key, data);   
-            */                          
+            */
         }
     }
 
