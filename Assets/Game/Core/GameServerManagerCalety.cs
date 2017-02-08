@@ -851,7 +851,17 @@ public class GameServerManagerCalety : GameServerManager
                     response["dateTime"] = time;
                     response["unixTimestamp"] = time;
                 }
-                break;               
+                break;
+
+                case ECommand.GetQualitySettings:
+                {                
+                    response = new Dictionary<string, object>();
+                    response["response"] = responseData;
+
+                    // statusCode 204 means that the client has to upload its settings to the server
+                    response["upLoadRequired"] = (statusCode == 204);                    
+                }
+                break;
 
                 default:
                 {

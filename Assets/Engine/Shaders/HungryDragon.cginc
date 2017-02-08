@@ -11,7 +11,7 @@
 #define HG_APPLY_FOG(i,col) col.rgb = lerp( (col).rgb,(_FogColor).rgb,i.fogCoord);
 
 #define HG_DARKEN(idx) float darken : TEXCOORD##idx;
-#define HG_TRANSFER_DARKEN(o,worldPos) o.darken = clamp( (-worldPos.z * 0.15) - 1, 0, 0.5);
+#define HG_TRANSFER_DARKEN(o,worldPos) o.darken = clamp( abs(worldPos.z - 1.0) / 16.0, 0, 0.8);
 #define HG_APPLY_DARKEN(i, col) col = lerp( col, fixed4(0,0,0,1), i.darken);
 
 
