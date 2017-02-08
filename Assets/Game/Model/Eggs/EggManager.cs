@@ -119,8 +119,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		// are readjusted - therefore we need to first add all the elements and then 
 		// define the probabilities for each one
 		instance.m_rewardDropRate = new ProbabilitySet();
-		List<DefinitionNode> rewardDefs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.EGG_REWARDS, ref rewardDefs);
+		List<DefinitionNode> rewardDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.EGG_REWARDS);
 		for(int i = 0; i < rewardDefs.Count; i++) {
 			instance.m_rewardDropRate.AddElement(rewardDefs[i].sku);
 		}
@@ -130,8 +129,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 
 		// Initialize required golden egg fragments requirements
 		instance.m_goldenEggRequiredFragments.Clear();
-		List<DefinitionNode> goldenEggDefinitions = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.GOLDEN_EGGS, ref goldenEggDefinitions);
+		List<DefinitionNode> goldenEggDefinitions = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.GOLDEN_EGGS);
 		DefinitionsManager.SharedInstance.SortByProperty(ref goldenEggDefinitions, "order", DefinitionsManager.SortType.NUMERIC);
 		for(int i = 0; i < goldenEggDefinitions.Count; i++) {
 			instance.m_goldenEggRequiredFragments.Add(goldenEggDefinitions[i].GetAsInt("fragmentsRequired"));

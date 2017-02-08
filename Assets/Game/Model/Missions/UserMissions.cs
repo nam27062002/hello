@@ -181,8 +181,7 @@ public class UserMissions
 		int idx = m_generationIdx[(int)_difficulty];
 		bool loopAllowed = true;	// Allow only one loop through all the definitions - just a security check
 		DefinitionNode def = null;
-		List<DefinitionNode> defsList = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.MISSIONS, ref defsList);	// [AOC] Order is not trustable, but we don't care since this is temporal
+		List<DefinitionNode> defsList = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSIONS);	// [AOC] Order is not trustable, but we don't care since this is temporal
 		for( ; ; idx++) {
 			// If reached the last definition but still haven't looped, do it now
 			// Otherwise it means there are no definitions for the requested difficulty, throw an exception

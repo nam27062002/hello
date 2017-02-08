@@ -110,9 +110,8 @@ public class CPProgressionCheats : MonoBehaviour {
 		long amount = long.Parse(input.text);
 
 		// Update profile - make sure amount is valid
-		UserProfile currentUser = UsersManager.instance.m_currentUser;
-		long toAdd = System.Math.Max(amount - currentUser.pc, -currentUser.pc);	// Min 0 pc! This will exclude negative amounts :)
-		currentUser.AddPC(toAdd);
+		long toAdd = System.Math.Max(amount - UsersManager.currentUser.pc, -UsersManager.currentUser.pc);	// Min 0 pc! This will exclude negative amounts :)
+		UsersManager.currentUser.AddPC(toAdd);
 
 		// Save persistence
 		PersistenceManager.Save();
@@ -170,8 +169,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		int amount = int.Parse(input.text);
 
 		// Update profile - make sure amount is valid
-		UserProfile currentUser = UsersManager.instance.m_currentUser;
-		currentUser.goldenEggFragments = Mathf.Clamp(amount, 0, EggManager.goldenEggRequiredFragments);		// Clamp between limits!
+		UsersManager.currentUser.goldenEggFragments = Mathf.Max(0, amount);		// No negative values!
 
 		// Save persistence
 		PersistenceManager.Save();
@@ -197,11 +195,37 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// Unlock all pets.
 	/// </summary>
 	public void OnUnlockAllPets() {
-		List<DefinitionNode> petDefs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.PETS, ref petDefs);
+		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
 		for(int i = 0; i < petDefs.Count; i++) {
 			UsersManager.currentUser.petCollection.UnlockPet(petDefs[i].sku);
 		}
+		PersistenceManager.Save();
+	}
+
+	/// <summary>
+	/// Reset all pets to lock state.
+	/// Resets golden egg fragments and collected eggs count as well.
+	/// </summary>
+	public void OnResetAllPets() {
+		// Easy!
+		UsersManager.currentUser.petCollection.Reset();
+		UsersManager.currentUser.eggsCollected = 0;
+		UsersManager.currentUser.goldenEggFragments = 0;
+		UsersManager.currentUser.goldenEggsCollected = 0;
+		PersistenceManager.Save();
+	}
+
+	/// <summary>
+	/// Reset only the special pets to lock state.
+	/// Resets golden egg fragments and collected golden eggs count as well.
+	/// </summary>
+	public void OnResetSpecialPets() {
+		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", "special");
+		for(int i = 0; i < petDefs.Count; i++) {
+			UsersManager.currentUser.petCollection.RemovePet(petDefs[i].sku);
+		}
+		UsersManager.currentUser.goldenEggFragments = 0;
+		UsersManager.currentUser.goldenEggsCollected = 0;
 		PersistenceManager.Save();
 	}
 

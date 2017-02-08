@@ -164,8 +164,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		instance.m_user = user;
 		instance.m_dragonsBySku = user.dragonsBySku;
 
-		List<DefinitionNode> defs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS, ref defs);
+		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGONS);
 
 		// Initialize ordered list
 		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);

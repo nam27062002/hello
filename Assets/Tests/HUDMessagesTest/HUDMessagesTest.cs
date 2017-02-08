@@ -48,8 +48,7 @@ public class HUDMessagesTest : MonoBehaviour {
 		
 		// Init health modifiers
 		// Fake thresholds
-		List<DefinitionNode> healthModifierDefs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGON_HEALTH_MODIFIERS, ref healthModifierDefs);
+		List<DefinitionNode> healthModifierDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGON_HEALTH_MODIFIERS);
 		DefinitionsManager.SharedInstance.SortByProperty(ref healthModifierDefs, "threshold", DefinitionsManager.SortType.NUMERIC);		// Sort by threshold
 		m_healthModifiers = new DragonHealthModifier[healthModifierDefs.Count];
 		for(int i = 0; i < healthModifierDefs.Count; i++) {
@@ -100,8 +99,7 @@ public class HUDMessagesTest : MonoBehaviour {
 
 			case 4:	{
 				Mission m = new Mission();
-				List<DefinitionNode> missions = new List<DefinitionNode>();
-				DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.MISSIONS, ref missions);
+				List<DefinitionNode> missions = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSIONS);
 				m.InitFromDefinition(missions.GetRandomValue());
 				Messenger.Broadcast<Mission>(GameEvents.MISSION_COMPLETED, m);
 			} break;

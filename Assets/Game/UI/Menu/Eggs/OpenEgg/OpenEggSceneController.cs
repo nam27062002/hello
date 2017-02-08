@@ -26,26 +26,30 @@ public class OpenEggSceneController : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[Separator("Anchors")]
 	[SerializeField] private Transform m_eggAnchor = null;
 	[SerializeField] private Transform m_rewardAnchor = null;
-	[Space]
-	//[SerializeField] private GodRaysFX m_rewardGodRaysFX = null;	// [AOC] Commented out until fixed
+
+	[Separator("VFX")]
+	[SerializeField] private ParticleSystem m_explosionFX = null;
 	[SerializeField] private GodRaysFXFast m_godRaysFX = null;
 	[SerializeField] private Transform m_tapFXPool = null;
 	[Tooltip("One per rarity, matching order")]
 	[SerializeField] private ParticleSystem[] m_tapFX = new ParticleSystem[(int)EggReward.Rarity.COUNT];
 	[Tooltip("One per rarity, matching order")]
 	[SerializeField] private ParticleSystem[] m_openFX = new ParticleSystem[(int)EggReward.Rarity.COUNT];
-	[SerializeField] private ParticleSystem m_explosionFX = null;
 
+	[Separator("Prefabs")]
+	[Tooltip("One per rarity, matching order. None for \"special\".")]
+	[SerializeField] private GameObject[] m_goldenFragments = new GameObject[(int)EggReward.Rarity.COUNT];
 
 	// Events
+	[Separator("Events")]
 	public UnityEvent OnIntroFinished = new UnityEvent();
 	public UnityEvent OnEggOpenFinished = new UnityEvent();
 
 	// Internal
 	private GameObject m_rewardView = null;
-	private EggController m_goldenEggView = null;
 
 	private EggController m_eggView = null;
 	public EggController eggView {
@@ -97,6 +101,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		// Make sure the rarity array has exactly the same length as rarities in the game.
 		m_openFX.Resize((int)EggReward.Rarity.COUNT);
 		m_tapFX.Resize((int)EggReward.Rarity.COUNT);
+		m_goldenFragments.Resize((int)EggReward.Rarity.COUNT);
 	}
 
 	//------------------------------------------------------------------------//
@@ -120,9 +125,8 @@ public class OpenEggSceneController : MonoBehaviour {
 			m_eggView = null;
 		}
 
-		if(m_goldenEggView != null) {
-			GameObject.Destroy(m_goldenEggView.gameObject);
-			m_goldenEggView = null;
+		for(int i = 0; i < m_goldenFragments.Length; i++) {
+			if(m_goldenFragments[i] != null) m_goldenFragments[i].SetActive(false);
 		}
 
 		if(m_rewardView != null) {
@@ -130,9 +134,6 @@ public class OpenEggSceneController : MonoBehaviour {
 			m_rewardView = null;
 		}
 
-		/*if(m_rewardGodRaysFX != null) {
-			m_rewardGodRaysFX.StopFX();
-		}*/
 		if(m_godRaysFX != null) {
 			m_godRaysFX.StopFX();
 		}
@@ -221,6 +222,18 @@ public class OpenEggSceneController : MonoBehaviour {
 		// Explosion FX
 		// Match material with the egg shell!
 		if(m_explosionFX != null) {
+			// Find egg shell material
+			Renderer[] renderers = m_eggView.GetComponentsInChildren<Renderer>();
+			for(int i = 0; i < renderers.Length; i++) {
+				for(int j = 0; j < renderers[i].materials.Length; j++) {
+					if(renderers[i].materials[j].name.Contains("Scales")) {
+						// Use this one!
+						m_explosionFX.GetComponent<ParticleSystemRenderer>().material = renderers[i].materials[j];
+						break;
+					}
+				}
+			}
+
 			m_explosionFX.Play();
 		}
 
@@ -265,16 +278,11 @@ public class OpenEggSceneController : MonoBehaviour {
 			} break;
 		}
 
-		// If the reward is a duplicate, switch the reward by the golden egg and show accoplation animation of the new piece
+		// If the reward is a duplicate, we're giving golden fragments instead, switch the reward view by the replacement (TODO: show accoplation animation of the new piece into the egg "under construction" ?)
 		if(rewardData.fragments > 0) {
-			// Load golden egg view
-			Egg goldenEgg = Egg.CreateFromSku(Egg.SKU_GOLDEN_EGG);
-			goldenEgg.ChangeState(Egg.State.SHOWROOM);
-			m_goldenEggView = goldenEgg.CreateView();
-			m_eggAnchor.gameObject.SetActive(true);
-			m_goldenEggView.transform.SetParent(m_eggAnchor, false);
-			m_goldenEggView.transform.position = m_eggAnchor.position;
-			m_goldenEggView.gameObject.SetActive(false);	// Start hidden! xD
+			// Select the target fragments view matching reward's rarity
+			GameObject targetFragmentsView = m_goldenFragments[(int)rewardData.rarity];
+			targetFragmentsView.transform.localRotation = Quaternion.identity;
 
 			// Program animation
 			seq.AppendCallback(() => {
@@ -284,11 +292,14 @@ public class OpenEggSceneController : MonoBehaviour {
 			});
 
 			// Let's do a quick placeholder for now
-			seq.Append(m_rewardView.transform.DOLocalRotate(m_rewardView.transform.localRotation.eulerAngles + Vector3.up * 720, 1f, RotateMode.FastBeyond360).SetEase(Ease.InCubic));
+			// 1. Acceleration
+			seq.Append(m_rewardView.transform.DOLocalRotate(m_rewardView.transform.localRotation.eulerAngles + Vector3.up * 720f, 1f, RotateMode.FastBeyond360).SetEase(Ease.InCubic));
+
+			// 2. Swap
 			seq.AppendCallback(() => {
 				// Swap reward view with golden egg
-				m_rewardView.gameObject.SetActive(false);
-				m_goldenEggView.gameObject.SetActive(true);
+				m_rewardView.SetActive(false);
+				targetFragmentsView.SetActive(true);
 
 				// Show VFX to cover the swap
 				ParticleSystem openFX = m_openFX[(int)EggReward.Rarity.SPECIAL];
@@ -298,7 +309,14 @@ public class OpenEggSceneController : MonoBehaviour {
 				}
 
 			});
-			seq.Append(m_goldenEggView.transform.DOLocalRotate(m_goldenEggView.transform.localRotation.eulerAngles + Vector3.up * 720, 2f, RotateMode.FastBeyond360).SetEase(Ease.OutCubic));
+
+			// 3. Slow down
+			seq.Append(targetFragmentsView.transform.DOLocalRotate(targetFragmentsView.transform.localRotation.eulerAngles + Vector3.up * 720f, 2f, RotateMode.FastBeyond360).SetEase(Ease.OutCubic));
+
+			// 4. Final infinite turn around
+			seq.AppendCallback(() => {
+				targetFragmentsView.transform.DOLocalRotate(targetFragmentsView.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetRecyclable(true);
+			});
 		}
 
 		// If the reward is being replaced by coins, show feedback (works for any type of reward)
