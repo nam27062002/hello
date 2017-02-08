@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.Events;
 using TMPro;
 using DG.Tweening;
 
@@ -36,7 +37,7 @@ public class EggRewardInfo : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_goldenFragmentCounter = null;
 
 	[Separator("Fragments Counter Animation Parameters")]
-	[SerializeField] private float m_counterDelay = 3.5f;
+	[SerializeField] private float m_counterDelay = 3f;
 	[SerializeField] private float m_counterInDuration = 0.15f;
 	[SerializeField] private float m_counterIdleInDuration = 0.2f;
 	[SerializeField] private float m_counterIdleOutDuration = 0.2f;
@@ -44,6 +45,10 @@ public class EggRewardInfo : MonoBehaviour {
 	[SerializeField] private float m_counterScaleFactor = 2f;
 	[SerializeField] private Ease m_counterEaseIn = Ease.OutCubic;
 	[SerializeField] private Ease m_counterEaseOut = Ease.InCubic;
+	[SerializeField] private float m_counterEggCompletedDuration = 0.25f;
+
+	// Events
+	public UnityEvent OnAnimFinished = new UnityEvent();
 
 	// Other references
 	private Animator m_animator = null;
@@ -107,8 +112,10 @@ public class EggRewardInfo : MonoBehaviour {
 		if(_rewardData.duplicated) {
 			// Are all the golden eggs opened (giving coins instead if so)
 			if(_rewardData.coins > 0) {
+				// Giving coins
 				m_goldenFragmentInfo.Localize("TID_EGG_REWARD_DUPLICATED_2", _rewardData.itemDef.GetLocalized("tidName"), StringUtils.FormatNumber(_rewardData.coins));	// %U0 already unlocked!\nYou get %U1 coins instead!
 			} else {
+				// Giving fragments
 				m_goldenFragmentTitle.Localize("TID_EGG_REWARD_FRAGMENT", StringUtils.FormatNumber(_rewardData.fragments));	// %U0 Golden Egg Fragments
 				m_goldenFragmentInfo.Localize("TID_EGG_REWARD_DUPLICATED_1", _rewardData.itemDef.GetLocalized("tidName"), StringUtils.FormatNumber(_rewardData.fragments));	// %U0 already unlocked!\nYou get %U1 Golden Egg fragments instead!
 
@@ -140,17 +147,36 @@ public class EggRewardInfo : MonoBehaviour {
 	/// <param name="_animate">Whether to animate or not.</param>
 	private void RefreshGoldenFragmentCounter(int _amount, bool _animate) {
 		// Compose new string
-		string newText = UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT + " " + 
-			LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(_amount), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments));
+		// If we've actually completed the egg, use different string
+		bool goldenEggCompleted = (_amount >= EggManager.goldenEggRequiredFragments);
+		string newText = "";
+		if(goldenEggCompleted) {
+			newText = LocalizationManager.SharedInstance.Localize("TID_GOLDEN_EGG_COMPLETED");
+		} else {
+			newText = UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT + " " + 
+				LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(_amount), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments));
+		}
 
 		// Animate?
 		if(_animate) {
-			DOTween.Sequence()
+			// Reset scale and create animation sequence
+			m_goldenFragmentCounter.transform.SetLocalScale(1f);
+			Sequence seq = DOTween.Sequence()
 				.Append(m_goldenFragmentCounter.transform.DOScale(m_counterScaleFactor, m_counterInDuration).SetRecyclable(true).SetEase(m_counterEaseIn))
 				.AppendInterval(m_counterIdleInDuration)
-				.AppendCallback(() => { m_goldenFragmentCounter.text = newText; })
-				.AppendInterval(m_counterIdleOutDuration)
-				.Append(m_goldenFragmentCounter.transform.DOScale(1f, m_counterOutDuration).SetRecyclable(true).SetEase(m_counterEaseOut));
+				.AppendCallback(() => { m_goldenFragmentCounter.text = newText; });
+
+			// Special animation if egg completed!
+			if(goldenEggCompleted) {
+				// [AOC] TODO!! Launch some FX!
+				seq.AppendInterval(m_counterEggCompletedDuration);
+			} else {
+				seq.AppendInterval(m_counterIdleOutDuration)
+					.Append(m_goldenFragmentCounter.transform.DOScale(1f, m_counterOutDuration).SetRecyclable(true).SetEase(m_counterEaseOut));
+			}
+
+			// This is the last step of the animation, so notify
+			seq.AppendCallback(() => { OnAnimFinished.Invoke(); });
 		} else {
 			// Set text
 			m_goldenFragmentCounter.text = newText;

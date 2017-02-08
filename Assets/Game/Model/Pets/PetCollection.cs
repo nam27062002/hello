@@ -21,7 +21,7 @@ public class PetCollection
 	/// <summary>
 	/// Reset the collection to its initial state.
 	/// </summary>
-	public void Init() {
+	public void Reset() {
 		m_pets.Clear();
 	}
 
@@ -44,6 +44,15 @@ public class PetCollection
 	public void UnlockPet(string _sku) {
 		if ( !m_pets.Contains( _sku ) )
 			m_pets.Add( _sku );
+	}
+
+	/// <summary>
+	/// Remove a pet from the collection.
+	/// Should only be used for debugging.
+	/// </summary>
+	/// <param name="_sku">Pet to be removed.</param>
+	public void RemovePet(string _sku) {
+		m_pets.Remove(_sku);
 	}
 
 	//------------------------------------------------------------------//

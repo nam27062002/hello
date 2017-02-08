@@ -445,7 +445,7 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Pets
-		m_petCollection.Init();
+		m_petCollection.Reset();
 		if(_data.ContainsKey("pets")) {
 			m_petCollection.Load(_data["pets"]);
 		}
