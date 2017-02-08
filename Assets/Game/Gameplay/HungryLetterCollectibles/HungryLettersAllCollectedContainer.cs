@@ -54,13 +54,16 @@ public class HungryLettersAllCollectedContainer : MonoBehaviour
 	// Public Methods:
 	//------------------------------------------------------------
 
-	public void StartAllCollectedAnimation()
+	public void StartAllCollectedAnimation( Transform _tr )
 	{
 		// m_tweenRotation.PlayForward();
 		// m_tweenTransform.PlayForward();
+		transform.parent = _tr;
 		DOTweenAnimation[] anims = gameObject.GetComponents<DOTweenAnimation>();
 		for( int i = 0; i<anims.Length; i++ )
+		{
 			anims[i].CreateTween();
+		}
 		DOTween.Restart(gameObject);
 		m_particle.Play();
 	}
