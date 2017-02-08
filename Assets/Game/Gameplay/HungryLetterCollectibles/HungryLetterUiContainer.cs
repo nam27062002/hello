@@ -138,14 +138,20 @@ public class HungryLetterUiContainer : MonoBehaviour
 			{
 				switch( anims[i].animationType )
 				{
+					/*
 					case DG.Tweening.Core.DOTweenAnimationType.Move:
 					{
 						anims[i].endValueTransform = to;
 						anims[i].targetType = DG.Tweening.Core.TargetType.Transform;
 						anims[i].CreateTween();
-						anims[i].onComplete.RemoveAllListeners();
-						anims[i].onComplete.AddListener(OnTweenCompleted);
 					}break;
+					case DG.Tweening.Core.DOTweenAnimationType.LocalMove:
+					{
+						anims[i].endValueTransform = to;
+						anims[i].targetType = DG.Tweening.Core.TargetType.Transform;
+						anims[i].CreateTween();
+					}break;
+					*/
 					case DG.Tweening.Core.DOTweenAnimationType.Rotate:
 					{
 						anims[i].endValueTransform = to;
@@ -166,8 +172,13 @@ public class HungryLetterUiContainer : MonoBehaviour
 			}
 		}
 		
-
+		StartCoroutine( Delay(1, OnTweenCompleted));
 		DOTween.Restart( mover.gameObject, "transform");
 	}
 
+	System.Collections.IEnumerator Delay( float seconds, Action action)
+	{
+		yield return new WaitForSeconds( seconds);
+		action();
+	}
 }

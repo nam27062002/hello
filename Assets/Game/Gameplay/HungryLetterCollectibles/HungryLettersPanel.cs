@@ -29,6 +29,8 @@ public class HungryLettersPanel : MonoBehaviour
 	private float m_dismissAllCollectedPanelDelay = 1f;
 	[SerializeField]
 	private HungryLettersAllCollectedContainer[] m_letterPlaces;
+	[SerializeField]
+	private RectTransform[] m_letterTargets;
 
 	//------------------------------------------------------------
 	// Private Variables:
@@ -41,6 +43,7 @@ public class HungryLettersPanel : MonoBehaviour
 	private int m_letterInPlaceCounter;
 	private int m_allCollectedInPlaceCounter;
 	private UnityEngine.Coroutine m_dismissCoroutine;
+	private UnityEngine.Coroutine m_onTweenCompleteCoroutine;
 
 	//------------------------------------------------------------
 	// Public Properties:
@@ -88,7 +91,7 @@ public class HungryLettersPanel : MonoBehaviour
 	public void TransferLetterToUi(HungryLetter letterToMove, Action moveLetterCallback = null)
 	{
 		// if there is a dismiss coroutine in progress, stop it.
-		if(m_dismissCoroutine != null)
+		if(m_dismissCoroutine != null )
 		{
 			StopCoroutine(m_dismissCoroutine);
 			m_dismissCoroutine = null;
@@ -97,7 +100,13 @@ public class HungryLettersPanel : MonoBehaviour
 				m_panelInPlace = false;
 			}
 			m_tweening = false;			
+
+			if (m_onTweenCompleteCoroutine != null)
+			{
+				StopCoroutine(m_onTweenCompleteCoroutine);
+			}
 		}
+
 		// set the letter to send to the panel.
 		m_uiLetterContainer.TransferLetterToUi(letterToMove, GetLetterPlace(letterToMove.letter), m_uiLetterLocalScale, moveLetterCallback);
 		if(!m_panelInPlace)
@@ -209,8 +218,7 @@ public class HungryLettersPanel : MonoBehaviour
 		m_tweening = true;
 		m_presenting = false;
 		DOTween.PlayBackwards(gameObject);
-		TweenCompleted();
-		// m_tween.PlayReverse();
+		m_onTweenCompleteCoroutine = StartCoroutine( Delay(0.5f, TweenCompleted));
 	}
 
 	private Transform GetLetterPlace(HungryLettersManager.CollectibleLetters letter)
@@ -222,11 +230,11 @@ public class HungryLettersPanel : MonoBehaviour
 	{
 		for(int i = 0; i < m_letterPlaces.Length; i++)
 		{
-			m_letterPlaces[i].StartAllCollectedAnimation();
+			m_letterPlaces[i].StartAllCollectedAnimation( m_letterTargets[i] );
 		}
 	}
 
-	private void OnAllCollectedAnimationFinished()
+	public void OnAllCollectedAnimationFinished()
 	{
 		m_allCollectedInPlaceCounter++;
 		if(m_allCollectedInPlaceCounter == m_letterPlaces.Length)
