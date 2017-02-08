@@ -209,7 +209,7 @@ public class UserProfile : UserSaveSystem
 	{
 		m_dragonsBySku = new Dictionary<string, DragonData>();
 		DragonData newDragonData = null;
-		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS);
+		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGONS);
 		for(int i = 0; i < defs.Count; i++) {
 			newDragonData = new DragonData();
 			newDragonData.Init(defs[i]);
