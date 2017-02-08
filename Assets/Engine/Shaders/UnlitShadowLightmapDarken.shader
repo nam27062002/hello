@@ -106,6 +106,6 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with near darken(On Line Decor
 			ENDCG
 		}
 	}
-
-//	Fallback "Mobile/VertexLit"
+		
+	Fallback "Hungry Dragon/VertexLit"
 }

@@ -101,5 +101,5 @@ Shader "Hungry Dragon/Texture Blending Vertex Color + Lightmap And Recieve Shado
 
 		}
 	}
-	Fallback "Mobile/VertexLit"
+	Fallback "Hungry Dragon/VertexLit"
 }

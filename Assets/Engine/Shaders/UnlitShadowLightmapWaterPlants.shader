@@ -120,5 +120,5 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decora
 		}
 	}
 
-//	Fallback "Mobile/VertexLit"
+	Fallback "Hungry Dragon/VertexLit"
 }

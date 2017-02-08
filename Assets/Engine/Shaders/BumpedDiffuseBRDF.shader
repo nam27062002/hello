@@ -115,5 +115,5 @@ Shader "Hungry Dragon/Bumped Diffuse BRDF (Spawners)"
 			ENDCG
 		}
 	}
-Fallback "Mobile/VertexLit"
+	Fallback "Hungry Dragon/VertexLit"
 }

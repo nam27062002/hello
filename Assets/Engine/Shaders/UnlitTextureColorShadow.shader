@@ -57,5 +57,5 @@ SubShader {
 		ENDCG
 	}
 }
-Fallback "Mobile/VertexLit"
+	Fallback "Hungry Dragon/VertexLit"
 }

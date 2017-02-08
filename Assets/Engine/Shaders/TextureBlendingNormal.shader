@@ -186,5 +186,5 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 			ENDCG
 		}
 	}
-	Fallback "Mobile/VertexLit"
+	Fallback "Hungry Dragon/VertexLit"
 }

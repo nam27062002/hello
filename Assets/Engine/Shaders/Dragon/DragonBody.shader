@@ -206,6 +206,8 @@ SubShader {
 			}
 		ENDCG
 	}
+
+
 /*
 	//Occlusion
 	Pass{
@@ -232,5 +234,5 @@ SubShader {
 
 */	
 }
-Fallback "Mobile/VertexLit"
+Fallback "Hungry Dragon/VertexLit"
 }
