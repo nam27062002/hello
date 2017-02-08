@@ -2,7 +2,18 @@
   <!-- =========================================================================================================================- -->
   <!-- DEVELOPMENT  -->
   <!-- =========================================================================================================================- -->
+  <!-- 
+      "default" entry is used to override the values defined in the profile settings. Example: If we needed to disable glow effect for all devices regardless their profile settings, 
+      we could define "false" for the key "glow" here. If a device has an entry in this file which has "glow" enabled then that device will use glow. The approach is to disable a broken
+      feature for all devices by setting that feature to false in "default" entry and then enable it device by device (after testing it on the actual devices) by setting that feature to
+      true on the entry corresponding to that device in this file.
+   -->
+  <Definition sku="default"/>
+  
+  <!-- This entry is used to test different configuration when running on the editor -->
   <Definition sku="UNITY_EDITOR" rating="1" profile="very_high"/>
+  
+  <!-- This entry is used to test that settings from server override the ones defined by content -->
   <Definition sku="server" rating="0.4" profile="mid" entitiesLOD="high"/>
 
   <!-- =========================================================================================================================- -->

@@ -209,8 +209,7 @@ public class UserProfile : UserSaveSystem
 	{
 		m_dragonsBySku = new Dictionary<string, DragonData>();
 		DragonData newDragonData = null;
-		List<DefinitionNode> defs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS, ref defs);
+		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGONS);
 		for(int i = 0; i < defs.Count; i++) {
 			newDragonData = new DragonData();
 			newDragonData.Init(defs[i]);
@@ -446,7 +445,7 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Pets
-		m_petCollection.Init();
+		m_petCollection.Reset();
 		if(_data.ContainsKey("pets")) {
 			m_petCollection.Load(_data["pets"]);
 		}

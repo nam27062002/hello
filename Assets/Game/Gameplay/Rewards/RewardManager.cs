@@ -213,8 +213,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	public void InitFromDef() {
 		// Init score multipliers
-		List<DefinitionNode> defs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.SCORE_MULTIPLIERS, ref defs);
+		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.SCORE_MULTIPLIERS);
 		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 		m_scoreMultipliers = new ScoreMultiplier[defs.Count];
 		ScoreMultiplier newMult;
