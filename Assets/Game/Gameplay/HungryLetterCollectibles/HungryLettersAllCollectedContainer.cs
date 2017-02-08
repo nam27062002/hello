@@ -11,10 +11,14 @@ public class HungryLettersAllCollectedContainer : MonoBehaviour
 	//------------------------------------------------------------
 
 	private Transform m_transform;
+	private RectTransform m_rectTransform;
+
 	private List<GameObject> m_originalChildrenList;
 
 	private ParticleSystem m_particle;
 	private Transform m_originalParent;
+
+	private Rect m_orignalRect;
 	private Quaternion m_originalRotation;
 	private Vector3 m_originalPosition;
 	private Vector3 m_originalLocalScale;
@@ -34,9 +38,12 @@ public class HungryLettersAllCollectedContainer : MonoBehaviour
 	{
 		m_transform = transform;
 		m_originalParent = m_transform.parent;
-		m_originalPosition = m_transform.localPosition;		
-		m_originalRotation = m_transform.localRotation;
-		m_originalLocalScale = m_transform.localScale;
+		m_rectTransform = GetComponent<RectTransform>();
+
+		m_originalPosition = m_rectTransform.anchoredPosition3D;
+		// m_originalPosition = m_transform.localPosition;
+		// m_originalRotation = m_transform.localRotation;
+		// m_originalLocalScale = m_transform.localScale;
 
 		m_originalChildrenList = new List<GameObject>();
 		// cache the gameobject that don't need to be removed when resetting the panel.
@@ -83,9 +90,10 @@ public class HungryLettersAllCollectedContainer : MonoBehaviour
 		// m_tweenRotation.ResetToBeginning();
 		// m_tweenTransform.ResetToBeginning();
 		m_transform.parent = m_originalParent;
-		m_transform.localPosition = m_originalPosition;
-		m_transform.localRotation = m_originalRotation;
-		m_transform.localScale = m_originalLocalScale;
+		m_rectTransform.anchoredPosition3D = m_originalPosition;
+		// m_transform.localPosition = m_originalPosition;
+		// m_transform.localRotation = m_originalRotation;
+		// m_transform.localScale = m_originalLocalScale;
 		if(m_particle != null)
 		{
 			m_particle.Stop();
