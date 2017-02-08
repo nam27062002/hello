@@ -218,7 +218,7 @@ public class Entity : IEntity {
 		return allowEdible && m_canBeLatchedOn && m_latchFromTier <= _tier;
 	}
 
-	public bool CanBeSmashed()
+	override public bool CanBeSmashed()
 	{
 		return true;
 	}
