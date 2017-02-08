@@ -1452,6 +1452,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	}
 		
 	public void AddForce(Vector3 _force) {
+		if ( m_dragon.IsInvulnerable() )
+			return;
 		m_animator.SetTrigger("damage");
 		m_impulse = _force;
 		if ( IsAliveState() )
