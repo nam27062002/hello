@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
 using DG.Tweening;
@@ -28,26 +29,26 @@ public class EggRewardInfo : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[Separator("Reward Info")]
 	[SerializeField] private RarityTitleGroup m_rarityTitle = null;
-	[Space]
 	[SerializeField] private PowerIcon m_rewardPower = null;
-	[Space]
+
+	[Separator("Golden Egg Fragments Info")]
 	[SerializeField] private Localizer m_goldenFragmentTitle = null;
 	[SerializeField] private Localizer m_goldenFragmentInfo = null;
-	[SerializeField] private TextMeshProUGUI m_goldenFragmentCounter = null;
 
-	[Separator("Fragments Counter Animation Parameters")]
+	[Separator("Golden Egg Fragments Counter")]
+	[SerializeField] private TextMeshProUGUI m_goldenFragmentCounter = null;
+	[SerializeField] private Localizer m_goldenFragmentToCompleteInfo = null;
+	[SerializeField] private Image m_goldenFragmentCounterIcon = null;
+	[SerializeField] private ParticleSystem m_goldenFragmentCounterFX = null;
+
+	[Separator("Animation Parameters")]
 	[SerializeField] private float m_counterDelay = 3f;
-	[SerializeField] private float m_counterInDuration = 0.15f;
-	[SerializeField] private float m_counterIdleInDuration = 0.2f;
-	[SerializeField] private float m_counterIdleOutDuration = 0.2f;
-	[SerializeField] private float m_counterOutDuration = 0.15f;
-	[SerializeField] private float m_counterScaleFactor = 2f;
-	[SerializeField] private Ease m_counterEaseIn = Ease.OutCubic;
-	[SerializeField] private Ease m_counterEaseOut = Ease.InCubic;
-	[SerializeField] private float m_counterEggCompletedDuration = 0.25f;
+	[SerializeField] private float m_counterDuration = 1f;
 
 	// Events
+	[Separator("Events")]
 	public UnityEvent OnAnimFinished = new UnityEvent();
 
 	// Other references
@@ -107,8 +108,13 @@ public class EggRewardInfo : MonoBehaviour {
 			} break;
 		}
 
+		// Golden egg fragments counter
+		bool givingFragments = _rewardData.fragments > 0;
+		m_goldenFragmentCounter.gameObject.SetActive(givingFragments);
+		m_goldenFragmentCounterIcon.gameObject.SetActive(givingFragments);
+		m_goldenFragmentToCompleteInfo.gameObject.SetActive(givingFragments);
+
 		// Duplicated info
-		m_goldenFragmentCounter.gameObject.SetActive(_rewardData.fragments > 0);
 		if(_rewardData.duplicated) {
 			// Are all the golden eggs opened (giving coins instead if so)
 			if(_rewardData.coins > 0) {
@@ -156,29 +162,20 @@ public class EggRewardInfo : MonoBehaviour {
 			newText = LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(_amount), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments));
 		}
 
+		// Set text
+		m_goldenFragmentCounter.text = newText;
+
+		// Set different elements visibility
+		m_goldenFragmentCounterIcon.gameObject.SetActive(!goldenEggCompleted);
+		m_goldenFragmentToCompleteInfo.gameObject.SetActive(!goldenEggCompleted);
+
 		// Animate?
 		if(_animate) {
-			// Reset scale and create animation sequence
-			m_goldenFragmentCounter.transform.SetLocalScale(1f);
-			Sequence seq = DOTween.Sequence()
-				.Append(m_goldenFragmentCounter.transform.DOScale(m_counterScaleFactor, m_counterInDuration).SetRecyclable(true).SetEase(m_counterEaseIn))
-				.AppendInterval(m_counterIdleInDuration)
-				.AppendCallback(() => { m_goldenFragmentCounter.text = newText; });
+			// Trigger Particle FX
+			m_goldenFragmentCounterFX.Play();
 
-			// Special animation if egg completed!
-			if(goldenEggCompleted) {
-				// [AOC] TODO!! Launch some FX!
-				seq.AppendInterval(m_counterEggCompletedDuration);
-			} else {
-				seq.AppendInterval(m_counterIdleOutDuration)
-					.Append(m_goldenFragmentCounter.transform.DOScale(1f, m_counterOutDuration).SetRecyclable(true).SetEase(m_counterEaseOut));
-			}
-
-			// This is the last step of the animation, so notify
-			seq.AppendCallback(() => { OnAnimFinished.Invoke(); });
-		} else {
-			// Set text
-			m_goldenFragmentCounter.text = newText;
+			// Program finish callback
+			DOVirtual.DelayedCall(m_counterDuration, () => { OnAnimFinished.Invoke(); });
 		}
 	}
 

@@ -23,7 +23,8 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 	//------------------------------------------------------------------//
 	public enum Type {
 		COINS,
-		PC
+		PC,
+		GOLDEN_FRAGMENTS
 	}
 
 	public enum IconType {
@@ -99,6 +100,11 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 			case Type.PC: {
 				text = StringUtils.FormatNumber(UsersManager.currentUser.pc);
 				iconString = UIConstants.TMP_SPRITE_PC;
+			} break;
+
+			case Type.GOLDEN_FRAGMENTS: {
+				text = LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(EggManager.goldenEggFragments), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments));
+				iconString = UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT;
 			} break;
 		}
 
