@@ -42,6 +42,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         CurrentQualityIndex = -1;
         Shaders_CurrentKey = null;
         State = EState.WaitingForRules;
+        m_deviceDefaultFeatureSettingsJSON = null;
 
         m_deviceQualityManager = new DeviceQualityManager();       
     }
@@ -609,7 +610,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     public void SetupCurrentFeatureSettings(JSONNode deviceSettingsJSON)
     {
         float rating = m_deviceQualityManager.Device_CalculatedRating;
-        string profileName = null;
+        string profileName = null;        
 
         // If no device configuration is passed then try to get the device configuration from rules
         if (deviceSettingsJSON == null)
@@ -651,6 +652,17 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 #if !UNITY_IOS             
         Device_CurrentFeatureSettings.Rating = rating;
 #endif
+
+        // Default settings are applied. These default settings are used to override the profile settings and they can be override by the particular settings for this device.
+        // These default settings are used with two purposes:
+        // 1)To define the same value for all profiles, typically for settings that are not relevant for the performance
+        // 2)To disable a feature that is not working properly for some devices. The approach is to disable the broken feature for all devices by setting that feature to false in the "default" 
+        //   entry and then enable it device by device(after testing it on the actual devices) by setting that feature to true on the entry corresponding to that device in this featureDeviceSettings.xml
+        JSONNode defaultJSON = GetDeviceDefaultFeatureSettingsAsJSON();
+        if (defaultJSON != null)
+        {
+            Device_CurrentFeatureSettings.OverrideFromJSON(defaultJSON);
+        }
 
         // We need to override the default configuration of the profile with the particular configuration defined for the device, if there's one
         if (deviceSettingsJSON != null)
@@ -774,6 +786,25 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }        
 
         return returnValue;
+    }
+
+    private JSONNode m_deviceDefaultFeatureSettingsJSON;
+    private JSONNode GetDeviceDefaultFeatureSettingsAsJSON()
+    {
+        if (m_deviceDefaultFeatureSettingsJSON == null)
+        {
+            DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.FEATURE_DEVICE_SETTINGS, "default");
+            if (def != null)
+            {
+                m_deviceDefaultFeatureSettingsJSON = def.ToJSON();
+                if (m_deviceDefaultFeatureSettingsJSON != null)
+                {
+                    FormatJSON(m_deviceDefaultFeatureSettingsJSON);
+                }
+            }
+        }
+
+        return m_deviceDefaultFeatureSettingsJSON;
     }
     #endregion
 

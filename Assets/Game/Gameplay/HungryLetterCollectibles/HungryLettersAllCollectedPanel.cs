@@ -27,7 +27,7 @@ public class HungryLettersAllCollectedPanel : MonoBehaviour
 
 	public void Dismiss()
 	{
-		m_tween.DOPlay();
+		m_tween.DORestart();
 	}
 
 	public void Reset()

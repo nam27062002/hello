@@ -63,8 +63,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	private void Awake() 
 	{
 		// Initialize internal values from content
-		List<DefinitionNode> difficultyDefs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.MISSION_DIFFICULTIES, ref difficultyDefs);
+		List<DefinitionNode> difficultyDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSION_DIFFICULTIES);
 		for(int i = 0; i < difficultyDefs.Count; i++) {
 			int difficultyIdx = difficultyDefs[i].GetAsInt("index");
 

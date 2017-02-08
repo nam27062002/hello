@@ -127,7 +127,7 @@ public class DragonEatBehaviour : EatBehaviour {
 
 	protected override void UpdateEating() {
 		base.UpdateEating();
-		if ( PreyCount <= 0 && m_attackTarget == null)
+		if (PreyCount <= 0 && m_attackTarget == null)
 			m_animator.SetBool("eat", false);	
 	}
 
