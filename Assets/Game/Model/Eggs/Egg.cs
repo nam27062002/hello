@@ -24,6 +24,7 @@ public class Egg {
 	//------------------------------------------------------------------------//
 	public const string SKU_STANDARD_EGG = "egg_standard";
 	public const string SKU_PREMIUM_EGG = "egg_premium";
+	public const string SKU_GOLDEN_EGG = "egg_golden";
 	public const string PREFAB_PATH = "UI/Metagame/Eggs/";
 
 	// Respect indices for the animation controller!!
@@ -229,7 +230,13 @@ public class Egg {
 		if(m_rewardData.def != null) return; 
 
 		// Generate the reward and init data
-		m_rewardData.InitFromDef(EggManager.GenerateReward());
+		// For golden eggs, reward is always a special pet!
+		if(m_def.sku == SKU_GOLDEN_EGG) {
+			DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, "pet_special");
+			m_rewardData.InitFromDef(rewardDef);
+		} else {
+			m_rewardData.InitFromDef(EggManager.GenerateReward());
+		}
 	}
 
 	/// <summary>
@@ -249,6 +256,13 @@ public class Egg {
 			} break;
 		}
 
+		// Give golden fragment (if any)
+		if(m_rewardData.fragments > 0) {
+			// Add golden egg fragments
+			// Detecting when the golden egg is completed will be controlled by the UI (to better sync animations)
+			UsersManager.currentUser.goldenEggFragments += m_rewardData.fragments;
+		}
+
 		// Give coins (if any)
 		if(m_rewardData.coins > 0) {
 			UsersManager.currentUser.AddCoins(m_rewardData.coins);
@@ -265,8 +279,16 @@ public class Egg {
 			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER, true);
 		}
 
-		// Save persistence
+		// Increase collected eggs counter
 		UsersManager.currentUser.eggsCollected++;
+
+		// If golden egg, increase total and reset fragments counter
+		if(def.sku == SKU_GOLDEN_EGG) {
+			UsersManager.currentUser.goldenEggFragments -= EggManager.goldenEggRequiredFragments;	// In case we have extra fragments!
+			UsersManager.currentUser.goldenEggsCollected++;
+		}
+
+		// Save persistence
 		PersistenceManager.Save();
 
 		// Notify game

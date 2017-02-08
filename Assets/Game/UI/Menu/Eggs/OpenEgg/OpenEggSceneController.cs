@@ -45,6 +45,7 @@ public class OpenEggSceneController : MonoBehaviour {
 
 	// Internal
 	private GameObject m_rewardView = null;
+	private EggController m_goldenEggView = null;
 
 	private EggController m_eggView = null;
 	public EggController eggView {
@@ -117,6 +118,11 @@ public class OpenEggSceneController : MonoBehaviour {
 		if(m_eggView != null) {
 			GameObject.Destroy(m_eggView.gameObject);
 			m_eggView = null;
+		}
+
+		if(m_goldenEggView != null) {
+			GameObject.Destroy(m_goldenEggView.gameObject);
+			m_goldenEggView = null;
 		}
 
 		if(m_rewardView != null) {
@@ -232,6 +238,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		// Aux vars
 		EggReward rewardData = eggData.rewardData;
 		DefinitionNode rewardDef = eggData.rewardData.def;
+		Sequence seq = DOTween.Sequence();
 
 		// Create a fake reward view
 		switch(rewardData.type) {
@@ -246,12 +253,55 @@ public class OpenEggSceneController : MonoBehaviour {
 				loader.Load(rewardData.itemDef.sku);
 
 				// Animate it
-				m_rewardView.transform.DOScale(0f, 1f).SetDelay(0.1f).From().SetRecyclable(true).SetEase(Ease.OutBack);
-				m_rewardView.transform.DOLocalRotate(m_rewardView.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true);
+				seq.AppendInterval(0.05f)	// Initial delay
+					.Append(m_rewardView.transform.DOScale(0f, 0.5f).From().SetRecyclable(true).SetEase(Ease.OutBack))
+					.Join(DOVirtual.DelayedCall(
+						0f,
+						() => {
+							m_rewardView.transform.DOLocalRotate(m_rewardView.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetRecyclable(true);
+						},
+						false
+					));
 			} break;
 		}
 
-		// If the reward is being replaced by coins, show it (works for any type of reward)
+		// If the reward is a duplicate, switch the reward by the golden egg and show accoplation animation of the new piece
+		if(rewardData.fragments > 0) {
+			// Load golden egg view
+			Egg goldenEgg = Egg.CreateFromSku(Egg.SKU_GOLDEN_EGG);
+			goldenEgg.ChangeState(Egg.State.SHOWROOM);
+			m_goldenEggView = goldenEgg.CreateView();
+			m_eggAnchor.gameObject.SetActive(true);
+			m_goldenEggView.transform.SetParent(m_eggAnchor, false);
+			m_goldenEggView.transform.position = m_eggAnchor.position;
+			m_goldenEggView.gameObject.SetActive(false);	// Start hidden! xD
+
+			// Program animation
+			seq.AppendCallback(() => {
+				m_rewardView.transform.DOKill(false);	// Kill infinite rotation
+
+				// [AOC] TODO!! Trigger golden fragment animation
+			});
+
+			// Let's do a quick placeholder for now
+			seq.Append(m_rewardView.transform.DOLocalRotate(m_rewardView.transform.localRotation.eulerAngles + Vector3.up * 720, 1f, RotateMode.FastBeyond360).SetEase(Ease.InCubic));
+			seq.AppendCallback(() => {
+				// Swap reward view with golden egg
+				m_rewardView.gameObject.SetActive(false);
+				m_goldenEggView.gameObject.SetActive(true);
+
+				// Show VFX to cover the swap
+				ParticleSystem openFX = m_openFX[(int)EggReward.Rarity.SPECIAL];
+				if(openFX != null) {
+					openFX.Clear();
+					openFX.Play(true);
+				}
+
+			});
+			seq.Append(m_goldenEggView.transform.DOLocalRotate(m_goldenEggView.transform.localRotation.eulerAngles + Vector3.up * 720, 2f, RotateMode.FastBeyond360).SetEase(Ease.OutCubic));
+		}
+
+		// If the reward is being replaced by coins, show feedback (works for any type of reward)
 		if(rewardData.coins > 0) {
 			// Create instance
 			GameObject prefab = Resources.Load<GameObject>("UI/Metagame/Rewards/PF_CoinsReward");
@@ -259,20 +309,21 @@ public class OpenEggSceneController : MonoBehaviour {
 
 			// Attach it to the reward view and reset transformation
 			coinsObj.transform.SetParent(m_rewardView.transform, false);
+
+			// Program animation
+			coinsObj.SetActive(false);
+			seq.AppendInterval(0.5f);	// Delay
+			seq.AppendCallback(() => { coinsObj.SetActive(true); });
 		}
 
 		// Show reward godrays
 		// Except if duplicate! (for now)
-		/*if(m_rewardGodRaysFX != null) {
-			m_rewardGodRaysFX.StartFX(eggData.rewardData.rarity);
-		}
-		*/
 		if(m_godRaysFX != null && !eggData.rewardData.duplicated) {
 			// Custom color based on reward's rarity
 			m_godRaysFX.StartFX(eggData.rewardData.rarity);
 
 			// Show with some delay to sync with pet's animation
-			m_godRaysFX.transform.DOScale(0f, 0.05f).From().SetDelay(0.15f).SetRecyclable(true);
+			seq.Insert(0.15f, m_godRaysFX.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
 		}
 	}
 

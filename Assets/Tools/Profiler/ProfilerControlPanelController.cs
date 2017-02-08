@@ -150,7 +150,7 @@ public class ProfilerControlPanelController : MonoBehaviour
             }
 
             PrefabLogicUnits_IsDirty = false;
-        }
+        }        
     }
 
     public void SetNumEntities(int optionId)
@@ -289,7 +289,7 @@ public class ProfilerControlPanelController : MonoBehaviour
     #endregion
 
     #region test
-    public BossCameraAffector m_bossCameraAffector;
+    public BossCameraAffector m_bossCameraAffector;    
 
     public void Test_OnToggleDrunkEffect()
     {
@@ -302,24 +302,10 @@ public class ProfilerControlPanelController : MonoBehaviour
     }   
 
     public void Test_OnToggleBossCameraEffect()
-    {
+    {        
         if (m_bossCameraAffector != null)
         {
-            GameCamera gameCamera = InstanceManager.gameCamera;
-            if (gameCamera != null)
-            {
-                bool enabled = !m_bossCameraAffector.enabled;
-                m_bossCameraAffector.enabled = enabled;
-
-                if (enabled)
-                {
-                    gameCamera.NotifyBoss(m_bossCameraAffector);
-                }
-                else
-                {
-                    gameCamera.RemoveBoss(m_bossCameraAffector);
-                }                
-            }
+            ApplicationManager.instance.Debug_OnToggleBossCameraEffect(m_bossCameraAffector);            
         }        
     }
     #endregion

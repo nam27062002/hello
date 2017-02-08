@@ -195,16 +195,27 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_state != State.OPENING) return;
 		if(m_scene.eggView == null) return;
 
+		// Aux vars
+		Egg eggData = m_scene.eggData;
+		EggReward rewardData = eggData.rewardData;
+
 		// Do a full-screen flash FX (TEMP)
 		if(m_flashFX != null) {
-			Color rarityColor = UIConstants.GetRarityColor(m_scene.eggData.rewardData.rarity);		// Color based on reward's rarity :)
+			Color rarityColor = UIConstants.GetRarityColor(rewardData.rarity);		// Color based on reward's rarity :)
 			m_flashFX.SetActive(true);
 			m_flashFX.GetComponent<Image>().color = rarityColor;
 			m_flashFX.GetComponent<Image>().DOFade(0f, 2f).SetEase(Ease.OutExpo).SetRecyclable(true).OnComplete(() => { m_flashFX.SetActive(false); });
 		}
 
 		// Show/Hide buttons and HUD
-		m_finalPanel.Show();
+		// Delay if duplicate, we need to give enough time for the duplicate animation!
+		float delay = 0f;
+		if(rewardData.fragments > 0) {
+			delay = 2f;
+		} else if(rewardData.coins > 0) {
+			delay = 1f;
+		}
+		DOVirtual.DelayedCall(delay, () => { m_finalPanel.Show(); }, false);
 
 		// Do the 3D anim
 		m_scene.LaunchOpenEggAnim();
@@ -222,7 +233,6 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Aux vars
 		EggReward rewardData = m_scene.eggData.rewardData;
-		DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, rewardData.def.Get("rarity"));
 
 		// Initialize title and launch animation
 		m_rewardInfo.InitAndAnimate(rewardData);
@@ -233,10 +243,6 @@ public class OpenEggScreenController : MonoBehaviour {
 			case "pet": {
 				// Call to action text
 				m_callToActionText.Localize("TID_EGG_SHOW_REWARD");
-			} break;
-
-			default: {
-				
 			} break;
 		}
 
@@ -303,7 +309,6 @@ public class OpenEggScreenController : MonoBehaviour {
 			// Launch animation!
 			// Delay to sync with the egg anim
 			DOVirtual.DelayedCall(1.75f, LaunchOpenAnimation, false);
-			//LaunchOpenAnimation();
 
 			// Hide UI!
 			m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();

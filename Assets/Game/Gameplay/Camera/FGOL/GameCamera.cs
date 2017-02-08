@@ -697,10 +697,11 @@ public class GameCamera : MonoBehaviour
 		}
 		else
 		{
-			if(m_targetMachine != null)
+            bool hasBoss = HasBoss();
+            if (m_targetMachine != null)
 	        {
 	            // MachineFish machineFish = m_targetObject.GetComponent<MachineFish>();
-	            if(/*(machineFish != null) &&*/ !m_haveBoss)
+	            if(/*(machineFish != null) &&*/ !hasBoss)
 	            {
 	                // frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, machineFish.howFast);
 					frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
@@ -711,12 +712,12 @@ public class GameCamera : MonoBehaviour
 			{
 				frameWidth -= m_frameWidthDecrement;
 			}
-			else if(m_haveBoss)
+			else if(hasBoss)
 			{
 				frameWidth += m_largestBossFrameIncrement;
 			}
 
-			UpdateZooming(frameWidth, m_haveBoss);
+			UpdateZooming(frameWidth, hasBoss);
 		}
 
 
@@ -743,12 +744,12 @@ public class GameCamera : MonoBehaviour
 		UpdateDampPos(desiredPos);
 		UpdateLookAt(desiredPos);
 
-
+        bool hasBoss = HasBoss();
 		float frameWidth = m_frameWidthDefault;
 		if(m_targetMachine != null)
         {
             // MachineFish machineFish = m_targetObject.GetComponent<MachineFish>();
-            if(/*(machineFish != null) &&*/ !m_haveBoss)
+            if(/*(machineFish != null) &&*/ !hasBoss)
             {
                 // frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, machineFish.howFast);
 				frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
@@ -759,11 +760,11 @@ public class GameCamera : MonoBehaviour
 		{
 			frameWidth -= m_frameWidthDecrement;
 		}
-		else if(m_haveBoss)
+		else if(hasBoss)
 		{
 			frameWidth += m_largestBossFrameIncrement;
 		}
-		UpdateZooming(frameWidth, m_haveBoss);	// Sets m_position.z
+		UpdateZooming(frameWidth, hasBoss);	// Sets m_position.z
 
 		m_transform.position = m_position + Random.insideUnitSphere * m_cameraShake;
 		m_transform.LookAt( m_lookAt );
@@ -862,7 +863,7 @@ public class GameCamera : MonoBehaviour
 
 	void CheckForBossCamMode()
 	{
-		if(m_haveBoss) 
+		if(HasBoss()) 
 		{
 			// we've got a boss, see if we just acquired a boss (or gained another)
 			if (m_bossCamAffectors.Count > m_prevNumBosses) 
@@ -1302,7 +1303,17 @@ public class GameCamera : MonoBehaviour
 		return m_screenWorldBounds.Intersects(_bounds);
 	}
 
+    private bool HasBoss()
+    {
+        bool returnValue = m_haveBoss;
+        if (returnValue)
+        {
+            // Check if the feature is enabled
+            returnValue = FeatureSettingsManager.instance.IsBossZoomOutEnabled;
+        }
 
+        return returnValue;
+    }
 
 
 
