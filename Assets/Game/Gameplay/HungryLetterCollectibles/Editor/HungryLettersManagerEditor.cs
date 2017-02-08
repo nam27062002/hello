@@ -15,6 +15,7 @@ public class HungryLettersManagerEditor : Editor
         if(GUILayout.Button("Retrieve Spawn Points"))
         {
             HungryLettersManager manager = (HungryLettersManager) target;
+            manager.ClearSpawnPoints();
 			HungryLettersPlaceholderEditor[] placeholderEditors = GameObject.FindObjectsOfType<HungryLettersPlaceholderEditor>();
 			for( int i = 0; i<placeholderEditors.Length; i++ )
 			{
@@ -23,8 +24,8 @@ public class HungryLettersManagerEditor : Editor
 				{
 					manager.AddSpawnerPoint( placeHolder, placeholderEditors[i].difficulty);
 				}
-				EditorUtility.SetDirty( target );
 			}
+			EditorUtility.SetDirty( target );
         }
     }
 }
