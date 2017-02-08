@@ -143,8 +143,6 @@ public class HungryLetterUiContainer : MonoBehaviour
 						anims[i].endValueTransform = to;
 						anims[i].targetType = DG.Tweening.Core.TargetType.Transform;
 						anims[i].CreateTween();
-						anims[i].onComplete.RemoveAllListeners();
-						anims[i].onComplete.AddListener(OnTweenCompleted);
 					}break;
 					case DG.Tweening.Core.DOTweenAnimationType.Rotate:
 					{
@@ -166,8 +164,13 @@ public class HungryLetterUiContainer : MonoBehaviour
 			}
 		}
 		
-
+		StartCoroutine( Delay(1, OnTweenCompleted));
 		DOTween.Restart( mover.gameObject, "transform");
 	}
 
+	System.Collections.IEnumerator Delay( float seconds, Action action)
+	{
+		yield return new WaitForSeconds( seconds);
+		action();
+	}
 }

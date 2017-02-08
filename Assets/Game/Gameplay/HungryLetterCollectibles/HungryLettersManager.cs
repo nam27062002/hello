@@ -86,10 +86,10 @@ public class HungryLettersManager : MonoBehaviour
 			m_scoreAwards = m_data.GetAsList<int>("scoreAwarded");
 		}
 
-
-
 		// instantiate the letters.
 		InstantiateLetters(m_letterPrefabs);
+
+		m_lettersCollected = 0;
 	}
 
 	protected void Start()
