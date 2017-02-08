@@ -92,7 +92,7 @@ public class BossCameraAffectorRadius : MonoBehaviour
 		{
 			// make this check because it could happen that some entities (like treasure chests) could be destroyed/disabled
 			// before to enter in the level, so, before the camera to be instantiated.
-			if(InstanceManager.gameCamera != null)
+			if(InstanceManager.instance != null && InstanceManager.gameCamera != null)
 			{
 				InstanceManager.gameCamera.RemoveBoss(m_bca);
 			}
