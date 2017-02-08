@@ -183,8 +183,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_alcoholDrain = m_data.def.GetAsFloat("alcoholDrain", 1f);
 
 		// Init health modifiers
-		List<DefinitionNode> healthModifierDefs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGON_HEALTH_MODIFIERS, ref healthModifierDefs);
+		List<DefinitionNode> healthModifierDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGON_HEALTH_MODIFIERS);
 		DefinitionsManager.SharedInstance.SortByProperty(ref healthModifierDefs, "threshold", DefinitionsManager.SortType.NUMERIC);		// Sort by threshold
 		m_healthModifiers = new DragonHealthModifier[healthModifierDefs.Count];
 		for(int i = 0; i < healthModifierDefs.Count; i++) {
