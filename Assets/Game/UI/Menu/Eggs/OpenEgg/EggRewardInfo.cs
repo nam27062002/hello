@@ -151,10 +151,9 @@ public class EggRewardInfo : MonoBehaviour {
 		bool goldenEggCompleted = (_amount >= EggManager.goldenEggRequiredFragments);
 		string newText = "";
 		if(goldenEggCompleted) {
-			newText = LocalizationManager.SharedInstance.Localize("TID_GOLDEN_EGG_COMPLETED");
+			newText = LocalizationManager.SharedInstance.Localize("TID_EGG_GOLDEN_COMPLETED");
 		} else {
-			newText = UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT + " " + 
-				LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(_amount), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments));
+			newText = LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(_amount), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments));
 		}
 
 		// Animate?

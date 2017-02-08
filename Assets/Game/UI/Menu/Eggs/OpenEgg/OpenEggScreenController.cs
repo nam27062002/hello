@@ -189,7 +189,7 @@ public class OpenEggScreenController : MonoBehaviour {
 				m_scene = menuScene.GetComponent<OpenEggSceneController>();
 				if(m_scene != null) {
 					m_scene.OnIntroFinished.AddListener(OnIntroFinished);
-					m_scene.OnEggOpenFinished.AddListener(LaunchRewardAnimation);
+					m_scene.OnEggOpenFinished.AddListener(OnEggOpenFinished);
 				}
 			}
 		}
@@ -303,8 +303,8 @@ public class OpenEggScreenController : MonoBehaviour {
 			Egg goldenEgg = Egg.CreateFromSku(Egg.SKU_GOLDEN_EGG);
 			goldenEgg.ChangeState(Egg.State.READY);
 
-			// Start flow!
-			StartFlow(goldenEgg);
+			// Start flow! (After some delay)
+			DOVirtual.DelayedCall(0.5f, () => { StartFlow(goldenEgg); });
 		}
 	}
 
