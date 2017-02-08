@@ -29,6 +29,8 @@ public class HungryLettersPanel : MonoBehaviour
 	private float m_dismissAllCollectedPanelDelay = 1f;
 	[SerializeField]
 	private HungryLettersAllCollectedContainer[] m_letterPlaces;
+	[SerializeField]
+	private RectTransform[] m_letterTargets;
 
 	//------------------------------------------------------------
 	// Private Variables:
@@ -209,8 +211,7 @@ public class HungryLettersPanel : MonoBehaviour
 		m_tweening = true;
 		m_presenting = false;
 		DOTween.PlayBackwards(gameObject);
-		TweenCompleted();
-		// m_tween.PlayReverse();
+		StartCoroutine( Delay(0.5f, TweenCompleted));
 	}
 
 	private Transform GetLetterPlace(HungryLettersManager.CollectibleLetters letter)
@@ -222,11 +223,11 @@ public class HungryLettersPanel : MonoBehaviour
 	{
 		for(int i = 0; i < m_letterPlaces.Length; i++)
 		{
-			m_letterPlaces[i].StartAllCollectedAnimation();
+			m_letterPlaces[i].StartAllCollectedAnimation( m_letterTargets[i] );
 		}
 	}
 
-	private void OnAllCollectedAnimationFinished()
+	public void OnAllCollectedAnimationFinished()
 	{
 		m_allCollectedInPlaceCounter++;
 		if(m_allCollectedInPlaceCounter == m_letterPlaces.Length)
