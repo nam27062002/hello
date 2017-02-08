@@ -38,7 +38,7 @@ public class MapMarker : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
+	protected virtual void Awake() {
 		// Initialize internal vars
 		m_originalScale = transform.localScale;
 
@@ -70,7 +70,7 @@ public class MapMarker : MonoBehaviour {
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	private void OnDestroy() {
+	protected virtual void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
 	}
