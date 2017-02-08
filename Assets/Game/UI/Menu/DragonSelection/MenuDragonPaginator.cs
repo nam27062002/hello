@@ -43,8 +43,7 @@ public class MenuDragonPaginator : TabSystem {
 		Debug.Assert(m_dummyTab != null, "Required field!");
 
 		// Create a button for each tier
-		List<DefinitionNode> tierDefs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGON_TIERS, ref tierDefs);
+		List<DefinitionNode> tierDefs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGON_TIERS);
 		DefinitionsManager.SharedInstance.SortByProperty(ref tierDefs, "order", DefinitionsManager.SortType.NUMERIC);
 		for(int i = 0; i < tierDefs.Count; i++) {
 			// Create a new instance of the prefab as a child of this object
