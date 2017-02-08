@@ -43,6 +43,7 @@ public class HungryLettersPanel : MonoBehaviour
 	private int m_letterInPlaceCounter;
 	private int m_allCollectedInPlaceCounter;
 	private UnityEngine.Coroutine m_dismissCoroutine;
+	private UnityEngine.Coroutine m_onTweenCompleteCoroutine;
 
 	//------------------------------------------------------------
 	// Public Properties:
@@ -90,7 +91,7 @@ public class HungryLettersPanel : MonoBehaviour
 	public void TransferLetterToUi(HungryLetter letterToMove, Action moveLetterCallback = null)
 	{
 		// if there is a dismiss coroutine in progress, stop it.
-		if(m_dismissCoroutine != null)
+		if(m_dismissCoroutine != null )
 		{
 			StopCoroutine(m_dismissCoroutine);
 			m_dismissCoroutine = null;
@@ -99,7 +100,13 @@ public class HungryLettersPanel : MonoBehaviour
 				m_panelInPlace = false;
 			}
 			m_tweening = false;			
+
+			if (m_onTweenCompleteCoroutine != null)
+			{
+				StopCoroutine(m_onTweenCompleteCoroutine);
+			}
 		}
+
 		// set the letter to send to the panel.
 		m_uiLetterContainer.TransferLetterToUi(letterToMove, GetLetterPlace(letterToMove.letter), m_uiLetterLocalScale, moveLetterCallback);
 		if(!m_panelInPlace)
@@ -211,7 +218,7 @@ public class HungryLettersPanel : MonoBehaviour
 		m_tweening = true;
 		m_presenting = false;
 		DOTween.PlayBackwards(gameObject);
-		StartCoroutine( Delay(0.5f, TweenCompleted));
+		m_onTweenCompleteCoroutine = StartCoroutine( Delay(0.5f, TweenCompleted));
 	}
 
 	private Transform GetLetterPlace(HungryLettersManager.CollectibleLetters letter)

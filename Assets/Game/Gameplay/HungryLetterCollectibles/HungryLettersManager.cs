@@ -197,7 +197,6 @@ public class HungryLettersManager : MonoBehaviour
 		if(m_lettersCollected == m_instantiatedLetters.Length)
 		{
 			Messenger.Broadcast(GameEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED);
-			Messenger.Broadcast<bool>(GameEvents.SUPER_SIZE_TOGGLE, true);
 			HungryLettersPanel.Instance.AllCollected();
 		}
 	}
