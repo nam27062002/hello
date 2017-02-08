@@ -339,6 +339,9 @@ public class DragonPlayer : MonoBehaviour {
 		// If invulnerable and taking damage, don't apply
 		if(IsInvulnerable() && _offset < 0) return;
 
+		// If cheat is enable
+		if(DebugSettings.invulnerable && _offset < 0) return;
+
 		// Store some variables
 		DragonHealthModifier oldHealthModifier = m_currentHealthModifier;
 
@@ -521,9 +524,6 @@ public class DragonPlayer : MonoBehaviour {
 		if(m_breathBehaviour.IsFuryOn()) return true;
 
 		if ( m_superSizeInvulnerable ) return true;
-		
-		// If cheat is enable
-		if(DebugSettings.invulnerable) return true;
 		
 		// All checks passed, we're not invulnerable
 		return false;

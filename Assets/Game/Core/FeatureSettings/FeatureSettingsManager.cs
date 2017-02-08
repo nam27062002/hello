@@ -236,7 +236,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         // Only the profile has to be sent to the server
         JSONNode json = new JSONClass();
         json.Add("profile", Device_CurrentProfile);
-        string data = "{\"profile\":\"very_low\"}";
+        string data = json.ToString();
+        //string data = "{\"profile\":\"very_low\"}";
 
         GameServerManager.SharedInstance.SetQualitySettings(data, delegate (Error error, Dictionary<string, object> response)
         {
@@ -814,6 +815,22 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         get
         {
             return Device_CurrentFeatureSettings.GetValueAsLevel2(FeatureSettings.KEY_ENTITIES_LOD);
+        }
+    }
+
+    public bool IsBossZoomOutEnabled
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_BOSS_ZOOM_OUT);
+        }
+    }
+
+    public bool IsDecoSpawnersEnabled
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_DECO_SPAWNERS);
         }
     }
     #endregion

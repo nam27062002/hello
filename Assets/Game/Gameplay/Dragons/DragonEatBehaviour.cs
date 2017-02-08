@@ -125,21 +125,21 @@ public class DragonEatBehaviour : EatBehaviour {
         }             
 	}
 
-	protected override void UpdateEating()
-	{
+	protected override void UpdateEating() {
 		base.UpdateEating();
 		if ( PreyCount <= 0 && m_attackTarget == null)
 			m_animator.SetBool("eat", false);	
 	}
 
-
-	void OnEntityEaten( Transform t, Reward reward )
-	{
-		m_dragon.AddLife( m_dragonHealth.GetBoostedHp( reward.origin, reward.health) );
+	void OnEntityEaten(Transform t, Reward reward) {
+		if (reward.health >= 0) {
+			m_dragon.AddLife(m_dragonHealth.GetBoostedHp(reward.origin, reward.health));
+		} else {
+			m_dragonHealth.ReceiveDamage(Mathf.Abs(reward.health), DamageType.NORMAL, t, true);
+		}
 		m_dragon.AddEnergy(reward.energy);
-		m_dragon.AddAlcohol( reward.alcohol );
+		m_dragon.AddAlcohol(reward.alcohol);
 	}
-
 
 	void OnFuryToggled( bool toogle, DragonBreathBehaviour.Type type)
 	{
