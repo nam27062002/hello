@@ -28,7 +28,7 @@ public class PetPill : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private Image m_preview = null;
-	[SerializeField] private GameObject m_lockIcon = null;
+	[SerializeField] private Animator m_lockIconAnim = null;
 	[SerializeField] private Image m_powerIcon = null;
 	[Space]
 	[SerializeField] private GameObject m_equippedFrame = null;
@@ -156,11 +156,27 @@ public class PetPill : MonoBehaviour {
 		m_slot = UsersManager.currentUser.GetPetSlot(m_dragonData.def.sku, m_def.sku);
 
 		// Lock icon
-		m_lockIcon.SetActive(m_locked);
+		m_lockIconAnim.gameObject.SetActive(m_locked);
 
 		// Color highlight
 		m_equippedFrame.SetActive(equipped);
 		m_equippedPowerFrame.SetActive(equipped);
+	}
+
+	/// <summary>
+	/// Prepare the unlock animation.
+	/// Refresh() shouldn't be called between this call and LaunchUnlockAnim();
+	/// </summary>
+	public void PrepareUnlockAnim() {
+		m_lockIconAnim.gameObject.SetActive(true);
+		m_lockIconAnim.SetTrigger("idle");
+	}
+
+	/// <summary>
+	/// Show the unlock animation.
+	/// </summary>
+	public void LaunchUnlockAnim() {
+		m_lockIconAnim.SetTrigger("unlock");
 	}
 
 	//------------------------------------------------------------------------//
@@ -176,8 +192,7 @@ public class PetPill : MonoBehaviour {
 			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO"), new Vector2(0.5f, 0.35f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 
 			// Small animation on the lock icon
-			m_lockIcon.transform.DOKill(true);
-			m_lockIcon.transform.DOScale(1.5f, 0.1f).SetRecyclable(true).SetLoops(2, LoopType.Yoyo).SetEase(Ease.Linear).SetRecyclable(true);
+			m_lockIconAnim.SetTrigger("bounce");
 		}
 
 		// If equipped, try to unequip
