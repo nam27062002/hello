@@ -24,6 +24,7 @@ namespace AI {
 			private float m_maxFarDistance;
 			private float m_startRandom;
 			private float m_minorRandom;
+			private float m_circleTimer = 0;
 
 			public override StateComponentData CreateData() {
 				return new WanderPlayerData();
@@ -56,8 +57,9 @@ namespace AI {
 				Vector3 targetPos = InstanceManager.player.transform.position;
 				Vector2 circleMove;
 
-				circleMove.x = Mathf.Sin(Time.time + m_startRandom) * m_maxFarDistance;
-				circleMove.y = Mathf.Cos(Time.time + m_startRandom) * m_maxFarDistance;
+				m_circleTimer += Time.deltaTime;
+				circleMove.x = Mathf.Sin(m_circleTimer + m_startRandom) * m_maxFarDistance;
+				circleMove.y = Mathf.Cos(m_circleTimer + m_startRandom) * m_maxFarDistance;
 				// circleMove *= (0.75f + (Mathf.Sin( Time.time + m_startRandom)/2.0f + 1) * 0.25f);
 				circleMove *= 0.7f + ((Mathf.Sin( (Time.time + m_startRandom) * m_minorRandom) / 2.0f) + 1) * 0.3f;
 				targetPos.x += circleMove.x;

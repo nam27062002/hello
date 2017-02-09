@@ -212,13 +212,14 @@ public class DragonPlayer : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 	void OnDestroy()
 	{
 		// Unsubscribe from external events
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 	/// <summary>
@@ -545,6 +546,20 @@ public class DragonPlayer : MonoBehaviour {
 		SetBoostBonus( m_energyBonus );
 	}
 
+	void OnFuryToggled( bool toogle, DragonBreathBehaviour.Type type)
+	{
+		if (toogle)
+		{
+			m_dragonEatBehaviour.PauseEating();
+		}
+		else
+		{
+			if (!BeingLatchedOn())
+				m_dragonEatBehaviour.ResumeEating();
+			
+		}
+	}
+
 	public void LoseShield( DamageType _type )
 	{
 		if ( m_shield.ContainsKey( _type ) )
@@ -668,10 +683,11 @@ public class DragonPlayer : MonoBehaviour {
 	public void EndLatchedOn()
 	{
 		m_numLatching--;
-		if ( m_numLatching == 0 )
+		if ( m_numLatching == 0)
 		{
 			m_dragonMotion.EndLatchedOnMovement();
-			m_dragonEatBehaviour.ResumeEating( 1.0f );
+			if ( !m_breathBehaviour.IsFuryOn() )
+				m_dragonEatBehaviour.ResumeEating( 1.0f );
 		}
 	}
 
