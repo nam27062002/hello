@@ -86,7 +86,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected bool m_rewardsPlayer = false;	
 	protected bool m_canLatchOnPlayer = false;
 	public virtual bool canMultipleLatchOnPlayer { get { return false; } }
-	protected bool m_canEatEntities = true;
+
+	[SerializeField] private bool m_canEatEntities = false;
+	private bool m_eatingEntitiesEnabled = false;
+	public bool eatingEntitiesEnabled { set { m_eatingEntitiesEnabled = value && m_canEatEntities; } get { return m_eatingEntitiesEnabled; } }
+
 	protected bool m_waitJawsEvent = false;	// if wait for jaws closing event or just wait time
 	protected bool m_limitEating = false;	// If there is a limit on eating preys at a time
 	protected int m_limitEatingValue = 1;	// limit value
@@ -157,16 +161,18 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_holdHealthGainRate = 10;
 		m_holdDuration = 1;
 
+		m_eatingEntitiesEnabled = m_canEatEntities;
 		m_playerColliderMask = 1 << LayerMask.NameToLayer("Player");
 	}
 
     protected virtual void Start () {
+		m_eatingEntitiesEnabled = m_canEatEntities;
+
         if (m_canEatEntities) {
             int amount = (m_limitEating) ? m_limitEatingValue : MAX_PREYS;
             m_preysToEat = new AI.Machine[amount];
             m_prey = new PreyData[amount];
-            for (int i = 0; i < amount; i++)
-            {
+			for (int i = 0; i < amount; i++) {
                 m_prey[i] = new PreyData();
             }
         }
@@ -181,11 +187,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_swallow = cacheTransform.FindTransformRecursive("SwallowPoint"); // second and last eating pre position
 		m_suction = cacheTransform.FindTransformRecursive("SuctionPoint");	// first eating prey position
 
-		if ( m_mouth == null )
+		if (m_mouth == null)
 			m_mouth = cacheTransform.FindTransformRecursive("Fire_Dummy");
-		if ( m_swallow == null )
+		if (m_swallow == null)
 			m_swallow = cacheTransform.FindTransformRecursive("Dragon_Head");
-		if ( m_bite == null )
+		if (m_bite == null)
 			m_bite = m_mouth;	
 		if (m_suction == null)
 			m_suction = m_mouth;
@@ -222,7 +228,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected void SetupHoldParametersForTier( string tierSku )
 	{
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.HOLD_PREY_TIER, "tier", tierSku);
-		if ( def != null)
+		if (def != null)
 		{
 			m_holdStunTime = def.GetAsFloat("stunTime");
 			m_holdDamage = def.GetAsFloat("damage");
@@ -744,7 +750,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			}
 		}
 
-		if (m_canEatEntities && m_attackTarget == null) {
+		if (m_eatingEntitiesEnabled && m_attackTarget == null) {
 			m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( arcOrigin, arcRadius, m_checkEntities);
 			for (int e = 0; e < m_numCheckEntities; e++) 
 			{
@@ -819,7 +825,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			}
 		}
 
-		if ( m_canEatEntities && m_holdingPlayer == null )
+		if (m_eatingEntitiesEnabled && m_holdingPlayer == null )
 		{
 			AI.Machine preyToHold = null;
 			Entity entityToHold = null;

@@ -31,8 +31,8 @@ public class PetPill : MonoBehaviour {
 	[SerializeField] private GameObject m_lockIcon = null;
 	[SerializeField] private Image m_powerIcon = null;
 	[Space]
-	[SerializeField] private Image m_selectedFrame = null;
-	[SerializeField] private Color m_selectedColor = Colors.gold;
+	[SerializeField] private GameObject m_equippedFrame = null;
+	[SerializeField] private GameObject m_equippedPowerFrame = null;
 
 	// Internal
 	private DefinitionNode m_def = null;
@@ -71,7 +71,6 @@ public class PetPill : MonoBehaviour {
 	}
 
 	private DragonData m_dragonData = null;
-	private Color m_defaultColor = Color.white;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -80,7 +79,7 @@ public class PetPill : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		m_defaultColor = m_selectedFrame.color;
+		
 	}
 
 	/// <summary>
@@ -160,7 +159,8 @@ public class PetPill : MonoBehaviour {
 		m_lockIcon.SetActive(m_locked);
 
 		// Color highlight
-		m_selectedFrame.color = equipped ? m_selectedColor : m_defaultColor;
+		m_equippedFrame.SetActive(equipped);
+		m_equippedPowerFrame.SetActive(equipped);
 	}
 
 	//------------------------------------------------------------------------//

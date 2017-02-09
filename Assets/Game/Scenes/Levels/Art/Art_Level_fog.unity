@@ -71,7 +71,7 @@ LightmapSettings:
     m_FinalGatherFiltering: 1
     m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
-  m_LightingDataAsset: {fileID: 112000005, guid: 8f0ce19020489c44cbf6716d1c9eb809,
+  m_LightingDataAsset: {fileID: 112000006, guid: 8f0ce19020489c44cbf6716d1c9eb809,
     type: 2}
   m_RuntimeCPUUsage: 25
 --- !u!196 &4
@@ -92,6 +92,53 @@ NavMeshSettings:
     cellSize: 0.16666667
     accuratePlacement: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &30562764
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000011840459450, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 30562765}
+  - component: {fileID: 30562766}
+  m_Layer: 0
+  m_Name: carla fog (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &30562765
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000014276203436, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 30562764}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 243.5, y: 45.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 100535576}
+  m_RootOrder: 48
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &30562766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000014084408150, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 30562764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
+  m_fogStart: -10.45
+  m_fogEnd: -1.5
+  m_fogRamp: 62.93
 --- !u!1 &63991422
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,7 +182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fogColor: {r: 0.13760288, g: 0.25735295, b: 0.022707619, a: 0.39}
+  m_fogColor: {r: 0.51694155, g: 0.5955882, b: 0.41165656, a: 0.509}
   m_fogStart: 3.43
   m_fogEnd: 20.33
   m_fogRamp: 14.14
@@ -328,7 +375,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fogColor: {r: 0.5416105, g: 0.7205882, b: 0.30201122, a: 0.303}
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
   m_fogStart: 3.43
   m_fogEnd: 20.33
   m_fogRamp: 14.14
@@ -425,6 +472,100 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bb2cdc72d41584fa3bd6dbe9036302e1, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &394158186
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000011840459450, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 394158187}
+  - component: {fileID: 394158188}
+  m_Layer: 0
+  m_Name: carla fog (7)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &394158187
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000014276203436, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 394158186}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 257.68, y: 49.96, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 100535576}
+  m_RootOrder: 51
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &394158188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000014084408150, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 394158186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
+  m_fogStart: -10.45
+  m_fogEnd: -1.5
+  m_fogRamp: 62.93
+--- !u!1 &411384389
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000011840459450, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 411384390}
+  - component: {fileID: 411384391}
+  m_Layer: 0
+  m_Name: carla fog (6)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &411384390
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000014276203436, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 411384389}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 257.1, y: 64.4, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 100535576}
+  m_RootOrder: 50
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &411384391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000014084408150, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 411384389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
+  m_fogStart: -10.45
+  m_fogEnd: -1.5
+  m_fogRamp: 62.93
 --- !u!1 &456956747
 GameObject:
   m_ObjectHideFlags: 0
@@ -515,7 +656,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fogColor: {r: 0.5416105, g: 0.7205882, b: 0.30201122, a: 0.303}
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
   m_fogStart: 3.43
   m_fogEnd: 20.33
   m_fogRamp: 14.14
@@ -609,7 +750,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fogColor: {r: 0.5416105, g: 0.7205882, b: 0.30201122, a: 0.303}
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
   m_fogStart: 3.43
   m_fogEnd: 20.33
   m_fogRamp: 14.14
@@ -660,6 +801,100 @@ MonoBehaviour:
   m_fogStart: 0
   m_fogEnd: 11.7
   m_fogRamp: 1
+--- !u!1 &580750432
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000011840459450, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 580750433}
+  - component: {fileID: 580750434}
+  m_Layer: 0
+  m_Name: carla fog (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &580750433
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000014276203436, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 580750432}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 213.3, y: 35.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 100535576}
+  m_RootOrder: 45
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &580750434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000014084408150, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 580750432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
+  m_fogStart: -10.45
+  m_fogEnd: -1.5
+  m_fogRamp: 62.93
+--- !u!1 &586238825
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000011840459450, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 586238826}
+  - component: {fileID: 586238827}
+  m_Layer: 0
+  m_Name: carla fog (13)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &586238826
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000014276203436, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 586238825}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 271.93, y: 45.41, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 100535576}
+  m_RootOrder: 57
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &586238827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000014084408150, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 586238825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
+  m_fogStart: -10.45
+  m_fogEnd: -1.5
+  m_fogRamp: 62.93
 --- !u!1 &613713005
 GameObject:
   m_ObjectHideFlags: 0
@@ -703,7 +938,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fogColor: {r: 0.13760288, g: 0.25735295, b: 0.022707619, a: 0.39}
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
   m_fogStart: 3.43
   m_fogEnd: 20.33
   m_fogRamp: 14.14
@@ -750,10 +985,104 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fogColor: {r: 0.13760288, g: 0.25735295, b: 0.022707619, a: 0.39}
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
   m_fogStart: 3.43
   m_fogEnd: 20.33
   m_fogRamp: 14.14
+--- !u!1 &637817621
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000011840459450, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 637817622}
+  - component: {fileID: 637817623}
+  m_Layer: 0
+  m_Name: carla fog (8)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &637817622
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000014276203436, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 637817621}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 270.8, y: 61.7, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 100535576}
+  m_RootOrder: 52
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &637817623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000014084408150, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 637817621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
+  m_fogStart: -10.45
+  m_fogEnd: -1.5
+  m_fogRamp: 62.93
+--- !u!1 &648496139
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000011840459450, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 648496140}
+  - component: {fileID: 648496141}
+  m_Layer: 0
+  m_Name: carla fog (12)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &648496140
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000014276203436, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 648496139}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 284.3, y: 60.3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 100535576}
+  m_RootOrder: 56
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &648496141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000014084408150, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 648496139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
+  m_fogStart: -10.45
+  m_fogEnd: -1.5
+  m_fogRamp: 62.93
 --- !u!1 &664670168
 GameObject:
   m_ObjectHideFlags: 0
@@ -801,6 +1130,53 @@ MonoBehaviour:
   m_fogStart: 3.43
   m_fogEnd: 20.33
   m_fogRamp: 14.14
+--- !u!1 &803931011
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000011840459450, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 803931012}
+  - component: {fileID: 803931013}
+  m_Layer: 0
+  m_Name: carla fog (5)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &803931012
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000014276203436, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 803931011}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 244.5, y: 32.3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 100535576}
+  m_RootOrder: 49
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &803931013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000014084408150, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 803931011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
+  m_fogStart: -10.45
+  m_fogEnd: -1.5
+  m_fogRamp: 62.93
 --- !u!1 &807939705
 GameObject:
   m_ObjectHideFlags: 0
@@ -938,10 +1314,57 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fogColor: {r: 0.5416105, g: 0.7205882, b: 0.30201122, a: 0.303}
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
   m_fogStart: 3.43
   m_fogEnd: 20.33
   m_fogRamp: 14.14
+--- !u!1 &983555921
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000011840459450, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 983555922}
+  - component: {fileID: 983555923}
+  m_Layer: 0
+  m_Name: carla fog (9)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &983555922
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000014276203436, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 983555921}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 283.4, y: 51.7, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 100535576}
+  m_RootOrder: 53
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &983555923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000014084408150, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 983555921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
+  m_fogStart: -10.45
+  m_fogEnd: -1.5
+  m_fogRamp: 62.93
 --- !u!1001 &1031334062
 Prefab:
   m_ObjectHideFlags: 0
@@ -987,15 +1410,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1000013729445482, guid: d56b871ba168b9941aa7c1d042f23aee, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4000010440637504, guid: d56b871ba168b9941aa7c1d042f23aee, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 68.5
+      value: 53.2
       objectReference: {fileID: 0}
     - target: {fileID: 4000010440637504, guid: d56b871ba168b9941aa7c1d042f23aee, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 84.5
+      value: 142.5
       objectReference: {fileID: 0}
     - target: {fileID: 114000013716755024, guid: d56b871ba168b9941aa7c1d042f23aee,
         type: 2}
@@ -1410,6 +1833,53 @@ MonoBehaviour:
   m_fogStart: 0
   m_fogEnd: 11.7
   m_fogRamp: 1
+--- !u!1 &1177901150
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000011840459450, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1177901151}
+  - component: {fileID: 1177901152}
+  m_Layer: 0
+  m_Name: carla fog (10)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1177901151
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000014276203436, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1177901150}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 279.8, y: 35, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 100535576}
+  m_RootOrder: 54
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1177901152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000014084408150, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1177901150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
+  m_fogStart: -10.45
+  m_fogEnd: -1.5
+  m_fogRamp: 62.93
 --- !u!1 &1295968659
 GameObject:
   m_ObjectHideFlags: 0
@@ -1453,10 +1923,104 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fogColor: {r: 0.5416105, g: 0.7205882, b: 0.30201122, a: 0.303}
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
   m_fogStart: 3.43
   m_fogEnd: 20.33
   m_fogRamp: 14.14
+--- !u!1 &1436383819
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000011840459450, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1436383820}
+  - component: {fileID: 1436383821}
+  m_Layer: 0
+  m_Name: carla fog (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1436383820
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000014276203436, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1436383819}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 217.2, y: 47.8, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 100535576}
+  m_RootOrder: 46
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1436383821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000014084408150, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1436383819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
+  m_fogStart: -10.45
+  m_fogEnd: -1.5
+  m_fogRamp: 62.93
+--- !u!1 &1441174341
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000011840459450, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1441174342}
+  - component: {fileID: 1441174343}
+  m_Layer: 0
+  m_Name: carla fog
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1441174342
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000014276203436, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1441174341}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 266.6, y: 33.1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 100535576}
+  m_RootOrder: 44
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1441174343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000014084408150, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1441174341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 0.285579, g: 0.36764705, b: 0.17571366, a: 0.665}
+  m_fogStart: -10.45
+  m_fogEnd: -1.5
+  m_fogRamp: 62.93
 --- !u!1 &1443287499
 GameObject:
   m_ObjectHideFlags: 0
@@ -1840,10 +2404,57 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fogColor: {r: 0.13760288, g: 0.25735295, b: 0.022707619, a: 0.39}
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
   m_fogStart: 3.43
   m_fogEnd: 20.33
   m_fogRamp: 14.14
+--- !u!1 &1694180227
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000011840459450, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1694180228}
+  - component: {fileID: 1694180229}
+  m_Layer: 0
+  m_Name: carla fog (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1694180228
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000014276203436, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1694180227}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 239.7, y: 59.3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 100535576}
+  m_RootOrder: 47
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1694180229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000014084408150, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1694180227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
+  m_fogStart: -10.45
+  m_fogEnd: -1.5
+  m_fogRamp: 62.93
 --- !u!1 &1699452478
 GameObject:
   m_ObjectHideFlags: 0
@@ -1934,7 +2545,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fogColor: {r: 0.13760288, g: 0.25735295, b: 0.022707619, a: 0.39}
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
   m_fogStart: 3.43
   m_fogEnd: 20.33
   m_fogRamp: 14.14
@@ -2032,6 +2643,53 @@ MonoBehaviour:
   m_fogStart: 0
   m_fogEnd: 11.7
   m_fogRamp: 1
+--- !u!1 &2053731411
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000011840459450, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 2053731412}
+  - component: {fileID: 2053731413}
+  m_Layer: 0
+  m_Name: carla fog (11)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2053731412
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000014276203436, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2053731411}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 293.3, y: 41.9, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 100535576}
+  m_RootOrder: 55
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2053731413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000014084408150, guid: d56b871ba168b9941aa7c1d042f23aee,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2053731411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04349dec8bf60427fa9d95ed3e737260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogColor: {r: 0.7433599, g: 0.83823526, b: 0.61634946, a: 0.509}
+  m_fogStart: -10.45
+  m_fogEnd: -1.5
+  m_fogRamp: 62.93
 --- !u!1 &2129246425
 GameObject:
   m_ObjectHideFlags: 0

@@ -86,10 +86,10 @@ public class HungryLettersManager : MonoBehaviour
 			m_scoreAwards = m_data.GetAsList<int>("scoreAwarded");
 		}
 
-
-
 		// instantiate the letters.
 		InstantiateLetters(m_letterPrefabs);
+
+		m_lettersCollected = 0;
 	}
 
 	protected void Start()
@@ -127,21 +127,18 @@ public class HungryLettersManager : MonoBehaviour
 		// TODO: Recover this
 		// HSXAnalyticsManager.Instance.HungryLetterCollected(m_lettersCollected + 1, letter.cachedTransform.position);
 		// play the sfx.
-		AudioController.Play( "" );	// TODO: AudioManager.Ui.HungryLetter?
+		AudioController.Play( "AudioManager.Ui.HungryLetter" );	// TODO: AudioManager.Ui.HungryLetter?
 		// AudioManager.PlaySfx(AudioManager.Ui.HungryLetter);
 		// place letter in the UI.
 		m_specificLettersCollected[(int)letter.letter] = true;
-		letter.gameObject.SetActive(false);
-		/*
 		if(HungryLettersPanel.Instance != null)
 		{
-			//Mark this letter as "collected"
-
+			// Mark this letter as "collected"
 			// send the proper event out.
 			// EventManager.Instance.TriggerEvent(Events.CollectedHungryLetter, m_data.coinsAwarded[m_lettersCollected], m_data.gemsAwarded[m_lettersCollected], m_data.spinsAwarded[m_lettersCollected]);
 #if !PRODUCTION || UNITY_EDITOR
 			// avoid null references when debugging...
-			if(m_lettersCollected == m_blueLetterPrefabs.Length)
+			if(m_lettersCollected == m_letterPrefabs.Length)
 			{
 				m_lettersCollected = 0;
 			}
@@ -153,7 +150,6 @@ public class HungryLettersManager : MonoBehaviour
 #endif
 			);
 		}
-		*/
 
 #if AWARD_AS_SOON_AS_COLLECTED
 		// award stuff.
@@ -174,8 +170,6 @@ public class HungryLettersManager : MonoBehaviour
 	{
 		//TextSystem.Instance.ShowSituationalText(SituationalTextSystem.Type.HungryLetterCollected);
 		// award stuff.
-		// TODO: Recover UpdateSessionData
-		// SessionDataManager.Instance.UpdateSessionData(m_data.scoreAwarded[m_lettersCollected], m_data.coinsAwarded[m_lettersCollected], m_data.gemsAwarded[m_lettersCollected], m_data.spinsAwarded[m_lettersCollected]);
 		if ( m_lettersCollected < m_coinAwards.Count )
 			m_reward.coins = m_coinAwards[ m_lettersCollected ];
 		if ( m_lettersCollected < m_scoreAwards.Count )
@@ -203,9 +197,7 @@ public class HungryLettersManager : MonoBehaviour
 		if(m_lettersCollected == m_instantiatedLetters.Length)
 		{
 			Messenger.Broadcast(GameEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED);
-			Messenger.Broadcast<bool>(GameEvents.SUPER_SIZE_TOGGLE, true);
-			// TODO: Recover this!
-			// HungryLettersPanel.Instance.AllCollected();
+			HungryLettersPanel.Instance.AllCollected();
 		}
 	}
 
@@ -373,8 +365,7 @@ public class HungryLettersManager : MonoBehaviour
 		// spawn the new letters.
 		Spawn();
 		// reinitialize the UI.
-		// TODO: recover this
-		// HungryLettersPanel.Instance.ReInit(m_instantiatedLetters.Length);
+		HungryLettersPanel.Instance.ReInit(m_instantiatedLetters.Length);
 	}
 
 	//------------------------------------------------------------
@@ -439,8 +430,7 @@ public class HungryLettersManager : MonoBehaviour
 			counter--;
 		}
 		// reinitialize the UI.
-		// TODO: recover this
-		// HungryLettersPanel.Instance.ReInit(m_instantiatedLetters.Length);
+		HungryLettersPanel.Instance.ReInit(m_instantiatedLetters.Length);
 	}
 
 	public void ClearSpawnPoints()

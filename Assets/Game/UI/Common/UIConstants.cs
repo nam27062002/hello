@@ -32,6 +32,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_tmpSpritePC; }
 	}
 
+	[SerializeField] private string m_tmpSpriteGoldenEggFragment = "<sprite name=\"icon_dragon_scale\">";
+	public static string TMP_SPRITE_GOLDEN_EGG_FRAGMENT {
+		get { return instance.m_tmpSpriteGoldenEggFragment; }
+	}
+
 	// Colors
 	[Separator("Colors")]
 	[SerializeField] private Color m_coinsTextColor = new Color(1f, 0.8f, 0.1f);

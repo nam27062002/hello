@@ -36,12 +36,21 @@ public class OpenEggScreenController : MonoBehaviour {
 	[SerializeField] private Localizer m_tapInfoText = null;
 
 	[Separator("Buttons")]
+	[SerializeField] private GameObject m_backButton = null;
+	[SerializeField] private GameObject m_buyEggButton = null;
 	[SerializeField] private GameObject m_callToActionButton = null;
 	[SerializeField] private Localizer m_callToActionText = null;
 	[SerializeField] private ShowHideAnimator m_finalPanel = null;
 
 	[Separator("Rewards")]
 	[SerializeField] private EggRewardInfo m_rewardInfo = null;
+
+	[Separator("Animation Parameters")]
+	[SerializeField] private float m_openAnimationDelay = 1.75f;
+	[SerializeField] private float m_finalPanelDelay = 0f;
+	[SerializeField] private float m_finalPanelDelayWhenFragmentsGiven = 2f;
+	[SerializeField] private float m_finalPanelDelayWhenCoinsGiven = 1f;
+	[SerializeField] private float m_goldenEggOpenDelay = 3f;
 
 	// Reference to 3D scene
 	private OpenEggSceneController m_scene = null;
@@ -88,6 +97,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Subscribe to external events.
 		Messenger.AddListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
+		m_rewardInfo.OnAnimFinished.AddListener(OnRewardAnimFinished);
 	}
 
 	/// <summary>
@@ -110,6 +120,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Unsubscribe to external events.
 		Messenger.RemoveListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
 		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
+		m_rewardInfo.OnAnimFinished.RemoveListener(OnRewardAnimFinished);
 	}
 
 	/// <summary>
@@ -178,7 +189,7 @@ public class OpenEggScreenController : MonoBehaviour {
 				m_scene = menuScene.GetComponent<OpenEggSceneController>();
 				if(m_scene != null) {
 					m_scene.OnIntroFinished.AddListener(OnIntroFinished);
-					m_scene.OnEggOpenFinished.AddListener(LaunchRewardAnimation);
+					m_scene.OnEggOpenFinished.AddListener(OnEggOpenFinished);
 				}
 			}
 		}
@@ -195,16 +206,17 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_state != State.OPENING) return;
 		if(m_scene.eggView == null) return;
 
+		// Aux vars
+		Egg eggData = m_scene.eggData;
+		EggReward rewardData = eggData.rewardData;
+
 		// Do a full-screen flash FX (TEMP)
 		if(m_flashFX != null) {
-			Color rarityColor = UIConstants.GetRarityColor(m_scene.eggData.rewardData.rarity);		// Color based on reward's rarity :)
+			Color rarityColor = UIConstants.GetRarityColor(rewardData.rarity);		// Color based on reward's rarity :)
 			m_flashFX.SetActive(true);
 			m_flashFX.GetComponent<Image>().color = rarityColor;
 			m_flashFX.GetComponent<Image>().DOFade(0f, 2f).SetEase(Ease.OutExpo).SetRecyclable(true).OnComplete(() => { m_flashFX.SetActive(false); });
 		}
-
-		// Show/Hide buttons and HUD
-		m_finalPanel.Show();
 
 		// Do the 3D anim
 		m_scene.LaunchOpenEggAnim();
@@ -222,29 +234,40 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Aux vars
 		EggReward rewardData = m_scene.eggData.rewardData;
-		DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, rewardData.def.Get("rarity"));
+		bool goldenEggCompleted = (EggManager.goldenEggFragments >= EggManager.goldenEggRequiredFragments);
 
-		// Initialize title and launch animation
-		m_rewardInfo.InitAndAnimate(rewardData);
-
-		// Initialize power icon based on reward type
-		// Initialize other stuff based on reward type
+		// Initialize stuff based on reward type
 		switch(rewardData.type) {
 			case "pet": {
 				// Call to action text
 				m_callToActionText.Localize("TID_EGG_SHOW_REWARD");
 			} break;
-
-			default: {
-				
-			} break;
 		}
+
+		// Initialize and show final panel
+		// Delay if duplicate, we need to give enough time for the duplicate animation!
+		float delay = m_finalPanelDelay;
+		if(rewardData.fragments > 0) {
+			delay = m_finalPanelDelayWhenFragmentsGiven;
+		} else if(rewardData.coins > 0) {
+			delay = m_finalPanelDelayWhenCoinsGiven;
+		}
+		DOVirtual.DelayedCall(delay, () => { m_finalPanel.Show(); }, false);
 
 		// Don't show call to action button if the reward is a duplicate
 		m_callToActionButton.SetActive(!rewardData.duplicated);
 
+		// Don't show back button if we've completed a golden egg!
+		m_backButton.SetActive(!goldenEggCompleted);
+
+		// Same with egg buy button
+		m_buyEggButton.SetActive(!goldenEggCompleted);
+
 		// Initialize and launch 3D reward view
 		m_scene.LaunchRewardAnim();
+
+		// Initialize and launch 2D info animation
+		m_rewardInfo.InitAndAnimate(rewardData);
 	}
 
 	//------------------------------------------------------------------//
@@ -267,6 +290,22 @@ public class OpenEggScreenController : MonoBehaviour {
 	private void OnEggOpenFinished() {
 		// Launch the reward animation
 		LaunchRewardAnimation();
+	}
+
+	/// <summary>
+	/// The reward animation has finished.
+	/// </summary>
+	private void OnRewardAnimFinished() {
+		// If a golden egg has been completed, start the open flow
+		bool goldenEggCompleted = (EggManager.goldenEggFragments >= EggManager.goldenEggRequiredFragments);
+		if(goldenEggCompleted) {
+			// Create a new egg
+			Egg goldenEgg = Egg.CreateFromSku(Egg.SKU_GOLDEN_EGG);
+			goldenEgg.ChangeState(Egg.State.READY);
+
+			// Start flow! (After some delay)
+			DOVirtual.DelayedCall(0.5f, () => { StartFlow(goldenEgg); });
+		}
 	}
 
 	/// <summary>
@@ -302,11 +341,10 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(_egg == m_scene.eggData) {
 			// Launch animation!
 			// Delay to sync with the egg anim
-			DOVirtual.DelayedCall(1.75f, LaunchOpenAnimation, false);
-			//LaunchOpenAnimation();
+			DOVirtual.DelayedCall(m_openAnimationDelay, LaunchOpenAnimation, false);
 
 			// Hide UI!
-			m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
+			m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide();
 		}
 	}
 

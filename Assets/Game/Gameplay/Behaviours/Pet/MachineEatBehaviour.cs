@@ -5,7 +5,8 @@ public class MachineEatBehaviour : EatBehaviour {
 
 	[SerializeField] private DragonTier m_eaterTier;
 	public DragonTier eaterTier { get {return m_eaterTier; }}
-	public bool m_isPet = false;
+
+	[SerializeField] private bool m_isPet = false;
 
 	[SerializeField] private bool m_isAquatic = false;
 	protected override bool isAquatic { get { return m_isAquatic; } }
@@ -29,16 +30,11 @@ public class MachineEatBehaviour : EatBehaviour {
 		SetupHoldParametersForTier( DragonData.TierToSku( m_eaterTier));
 
 		m_machine = GetComponent<AI.Machine>();
-		if ( m_isPet )
-		{
+		if (m_isPet) {
 			m_canLatchOnPlayer = false;	
-			m_canEatEntities = true;
 			AddToIgnoreList("goodJunk");
-		}
-		else
-		{
+		} else {
 			m_canLatchOnPlayer = true;
-			m_canEatEntities = false;
 		}
 
 		// Check if view has eat event

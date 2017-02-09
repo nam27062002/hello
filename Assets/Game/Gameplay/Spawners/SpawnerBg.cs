@@ -90,7 +90,7 @@ public class SpawnerBg : AbstractSpawner {
         }
     }
 
-    protected override void RegisterInEntityManager(IEntity e) {
+    protected override void RegisterInEntityManager(IEntity e) {        
         EntityManager.instance.RegisterEntityBg(e as EntityBg);
     }
 
@@ -103,7 +103,7 @@ public class SpawnerBg : AbstractSpawner {
         if (m_quantity.max < m_quantity.min) {
             m_quantity.min = m_quantity.max;
         }
-
+        
         RegisterInSpawnerManager();
 
         gameObject.SetActive(false);
@@ -137,7 +137,7 @@ public class SpawnerBg : AbstractSpawner {
 
     protected override bool CanRespawnExtended() {
         // If we don't have any entity alive, proceed
-        if (EntitiesAlive == 0) {
+        if (EntitiesAlive == 0 && FeatureSettingsManager.instance.IsDecoSpawnersEnabled) {
             // Respawn on cooldown?
 
             // Check activation area

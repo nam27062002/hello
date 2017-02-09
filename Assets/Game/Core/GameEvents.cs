@@ -73,6 +73,7 @@ public enum GameEvents {
 	EGG_COLLECTED_FAIL,			// params: CollectibleEgg _egg
 	LETTER_COLLECTED,			// params: Reward _r
 	EARLY_ALL_HUNGRY_LETTERS_COLLECTED, 	//
+	ALL_HUNGRY_LETTERS_COLLECTED,			//
 	SUPER_SIZE_TOGGLE,			// params: bool _activated
 
 	// Dragon collection events

@@ -25,15 +25,39 @@ public class FeatureSettings
     public static Dictionary<string, Data> Datas { get; set; }
 
     public const string KEY_SKU = "sku";
+
+    // Rating of the device corresponding to this set of settings
     public const string KEY_RATING = "rating";
+
+    // Name of the profile assigned to this set of settings
     public const string KEY_PROFILE = "profile";
+
+    // This key decides the quality level to use by Unity quality settings based on the capabilities of the devices
     public const string KEY_QUALITY_LEVEL = "qualityLevel";
+
+    // This key decides the quality level used for the shaders based on the capabilities of the devices
     public const string KEY_SHADERS_LEVEL = "shadersLevel";
+
+    // This flag enables/disables the glow effect used to highlight some objects in the scene
     public const string KEY_GLOW_EFFECT = "glow";
+
+    // This flag enables/disables the graphic effect played when the user's dragon is drunk
     public const string KEY_DRUNK_EFFECT = "drunkEffect";
+
+    // This flag enables/disables the frame coloring effect used when the user's dragon is starving or enters in fury mode
     public const string KEY_FRAME_COLOR_EFFECT = "frameColorEffect";
+
+    // This key decides the quality of the entities prefabs. Low LOD prefabs are the same as HIGH prefabs but without normal map. It's used to save memory
     public const string KEY_ENTITIES_LOD = "entitiesLOD";
+
+    // This key decides the quality of the scenes
     public const string KEY_LEVELS_LOD = "levelsLOD";
+
+    // This flag enables/disables the zoom out effect played when there's a point of interest, typically a boss
+    public const string KEY_BOSS_ZOOM_OUT = "bossZoomOut";
+
+    // This flag enables/disables the spawners of the entities that have only a decorative purpose
+    public const string KEY_DECO_SPAWNERS = "decoSpawners";
 
     // Examples of how to use different type datas
     /*
@@ -111,7 +135,17 @@ public class FeatureSettings
             key = KEY_LEVELS_LOD;
             data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
             Datas.Add(key, data);
-            
+
+            // bossZoomOut
+            key = KEY_BOSS_ZOOM_OUT;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+            // decoSpawners
+            key = KEY_DECO_SPAWNERS;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
             /*
             // intTest
             key = KEY_INT_TEST;
@@ -129,7 +163,7 @@ public class FeatureSettings
             int intervalAsInt = 1;
             data = new DataRangeInt(key, minAsInt, minAsInt, maxAsInt, intervalAsInt);
             Datas.Add(key, data);   
-            */                          
+            */
         }
     }
 

@@ -2258,6 +2258,7 @@ MonoBehaviour:
     path: Blood
     offset: {x: 0, y: 0, z: 0}
   m_burpSound: 
+  m_canEatEntities: 0
   m_eaterTier: 0
   m_isPet: 0
   m_isAquatic: 0
@@ -2296,10 +2297,10 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 1
     max: 1
-  m_serializedJson: '[{"speed":7,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":7,"restUpsideDown":false,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":20,"arrivalRadius":0.5,"timeout":{"min":1,"max":2},"onFailShutdown":{"min":2,"max":3},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":4,"max":8},"damage":7,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":7,"panicSpeed":7,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"tier":0,"dataType":"AI.Behaviour.AttackSelectorData","editorFolded":false},{"speed":45,"hasWeapon":false,"dataType":"AI.Behaviour.CurveDashData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":9,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":9,"restUpsideDown":false,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":24,"arrivalRadius":0.5,"timeout":{"min":1.5,"max":2.5},"onFailShutdown":{"min":1,"max":2},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":2.5,"max":4.5},"damage":7,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":7,"panicSpeed":7,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"tier":0,"dataType":"AI.Behaviour.AttackSelectorData","editorFolded":false},{"speed":45,"attackPoint":"","hasWeapon":false,"dataType":"AI.Behaviour.CurveDashData","editorFolded":false}]'
   m_databaseKey: PF_EnemyClassic 1
   m_preciseDestArrival: 1
-  m_avoidDistanceAttenuation: 3
+  m_avoidDistanceAttenuation: 5
   m_avoidCollisions: 1
   m_avoidWater: 0
 --- !u!114 &114000011681757254
@@ -2377,7 +2378,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 2.6
+    m_mass: 1
     m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 240

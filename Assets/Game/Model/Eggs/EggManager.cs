@@ -31,7 +31,9 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Settings
+	// Serialized just for debugging, it's initialized from content
 	[SerializeField] private ProbabilitySet m_rewardDropRate = new ProbabilitySet();
+	[SerializeField] private List<int> m_goldenEggRequiredFragments = new List<int>();
 
 	// Inventory
 	public static Egg[] inventory {
@@ -72,6 +74,25 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	private CollectibleEgg m_collectibleEgg = null;
 	public static CollectibleEgg collectibleEgg { get { return instance.m_collectibleEgg; }}
 
+	// Golden egg managements
+	public static int goldenEggRequiredFragments {
+		get { 
+			// If all eggs are collected, return -1
+			if(instance.m_user.goldenEggsCollected < instance.m_goldenEggRequiredFragments.Count) {
+				return instance.m_goldenEggRequiredFragments[instance.m_user.goldenEggsCollected]; 
+			}
+			return -1;
+		}
+	}
+
+	public static int goldenEggFragments {
+		get { return instance.m_user.goldenEggFragments; }
+	}
+
+	public static bool allGoldenEggsCollected {
+		get { return instance.m_user.goldenEggsCollected >= instance.m_goldenEggRequiredFragments.Count; }
+	}
+
 	// Internal
 	UserProfile m_user;
 
@@ -98,13 +119,20 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		// are readjusted - therefore we need to first add all the elements and then 
 		// define the probabilities for each one
 		instance.m_rewardDropRate = new ProbabilitySet();
-		List<DefinitionNode> rewardDefs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.EGG_REWARDS, ref rewardDefs);
+		List<DefinitionNode> rewardDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.EGG_REWARDS);
 		for(int i = 0; i < rewardDefs.Count; i++) {
 			instance.m_rewardDropRate.AddElement(rewardDefs[i].sku);
 		}
 		for(int i = 0; i < rewardDefs.Count; i++) {
 			instance.m_rewardDropRate.SetProbability(i, rewardDefs[i].GetAsFloat("droprate"));
+		}
+
+		// Initialize required golden egg fragments requirements
+		instance.m_goldenEggRequiredFragments.Clear();
+		List<DefinitionNode> goldenEggDefinitions = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.GOLDEN_EGGS);
+		DefinitionsManager.SharedInstance.SortByProperty(ref goldenEggDefinitions, "order", DefinitionsManager.SortType.NUMERIC);
+		for(int i = 0; i < goldenEggDefinitions.Count; i++) {
+			instance.m_goldenEggRequiredFragments.Add(goldenEggDefinitions[i].GetAsInt("fragmentsRequired"));
 		}
 	}
 
@@ -234,7 +262,10 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 			} break;
 
 			case CPGachaTest.RewardChanceMode.SAME_PROBABILITY: {
-				rewardSku = instance.m_rewardDropRate.GetLabel(UnityEngine.Random.Range(0, instance.m_rewardDropRate.numElements));		// Pick one random element without taking probabilities in account
+				// Exclude special pets!
+				do {
+					rewardSku = instance.m_rewardDropRate.GetLabel(UnityEngine.Random.Range(0, instance.m_rewardDropRate.numElements));		// Pick one random element without taking probabilities in account
+				} while(rewardSku == "pet_special");
 			} break;
 		}
 		return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, rewardSku);
