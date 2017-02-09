@@ -82,9 +82,16 @@ public class NavigationScreenSystem : MonoBehaviour {
 	/// </summary>
 	virtual protected void Start() {
 		// Initial screen is visible from the beginning
+		// Override if a screen change was demanded before the Start() method.
+		NavigationScreen targetInitialScreen = m_initialScreen;
+		if(currentScreen != null) {
+			targetInitialScreen = currentScreen;
+		}
+
+		// Show initial screen, hide the rest
 		bool initialScreenSet = false;
 		for(int i = 0; i < m_screens.Count; i++) {
-			if(m_screens[i] == m_initialScreen && !initialScreenSet) {
+			if(m_screens[i] == targetInitialScreen && !initialScreenSet) {
 				m_currentScreenIdx = i;
 				m_screens[i].Show(NavigationScreen.AnimType.NONE);
 				initialScreenSet = true;
