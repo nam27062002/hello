@@ -207,11 +207,22 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// Resets golden egg fragments and collected eggs count as well.
 	/// </summary>
 	public void OnResetAllPets() {
-		// Easy!
+		// Clear equipped pets
+		foreach(DragonData dragon in DragonManager.dragonsByOrder) {
+			for(int i = 0; i < dragon.pets.Count; i++) {
+				UsersManager.currentUser.UnequipPet(dragon.def.sku, i);
+			}
+		}
+
+		// Clear pet collection
 		UsersManager.currentUser.petCollection.Reset();
+
+		// Clear collected eggs and fragments
 		UsersManager.currentUser.eggsCollected = 0;
 		UsersManager.currentUser.goldenEggFragments = 0;
 		UsersManager.currentUser.goldenEggsCollected = 0;
+
+		// Save!
 		PersistenceManager.Save();
 	}
 
@@ -220,12 +231,26 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// Resets golden egg fragments and collected golden eggs count as well.
 	/// </summary>
 	public void OnResetSpecialPets() {
+		// Get all special pets
 		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", "special");
+
+		// Clear equipped pets
+		foreach(DragonData dragon in DragonManager.dragonsByOrder) {
+			for(int i = 0; i < petDefs.Count; i++) {
+				UsersManager.currentUser.UnequipPet(dragon.def.sku, petDefs[i].sku);
+			}
+		}
+
+		// Remove from collection
 		for(int i = 0; i < petDefs.Count; i++) {
 			UsersManager.currentUser.petCollection.RemovePet(petDefs[i].sku);
 		}
+
+		// Clear collected data
 		UsersManager.currentUser.goldenEggFragments = 0;
 		UsersManager.currentUser.goldenEggsCollected = 0;
+
+		// Save!
 		PersistenceManager.Save();
 	}
 

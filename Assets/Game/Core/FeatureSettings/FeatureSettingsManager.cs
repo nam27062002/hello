@@ -94,35 +94,37 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                 break;           
 
             case EState.WaitingToApplyServerResponse:
-                if (Server_QualitySettingsJSON == null)
+                if (Server_QualitySettingsJSONToApply == null)
                 {
                     LogError("JSON received from server can't be null");
                     State = EState.Done;
                 }
                 else if (ISApplyFeatureSettingsAllowed())
                 {                    
-                    SetupCurrentFeatureSettings(Server_QualitySettingsJSON);                    
+                    SetupCurrentFeatureSettings(Server_QualitySettingsJSONToApply);                    
                     State = EState.Done;
                 }
-                break;
-
-            case EState.WaitingForTheUserToLogInToUpload:                
-                if (GameSessionManager.SharedInstance.IsLogged())
+                break;            
+        }  
+        
+        // Checks if the client has been told to upload the settings calculated by the client. It's not been implemented as a state because we want this upload
+        // to happen as soon as possible (when the user logs in), otherwise we would have to synchronize it with the other states
+        if (Server_TimeToWaitToUploadSettings > 0f)
+        {
+            if (GameSessionManager.SharedInstance.IsLogged())
+            {                
+                Server_UploadQualitySettings();
+            }
+            else
+            {
+                // If the time given to wait for the user to log in has expired then we just ignore that request from server
+                Server_TimeToWaitToUploadSettings -= Time.deltaTime;
+                if (Server_TimeToWaitToUploadSettings <= 0f)
                 {
-                    State = EState.Done;
-                    Server_UploadQualitySettings();
-                }                
-                else
-                {
-                    // If the time given to wait for the user to log in has expired then we just ignore that request from server
-                    State_Timer -= Time.deltaTime;
-                    if (State_Timer <= 0f)
-                    {
-                        State = EState.Done;
-                    }
+                    Server_ResetUploadQualitySettings();
                 }
-                break;
-        }       
+            }            
+        }     
     }
 
     public bool IsReady()
@@ -145,31 +147,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         WaitingToCheckConnection,               // Time to wait before checking if there's connection
         CheckingConnection,                     // Checks whether or not there's connection        
         WaitingForServerResponse,               // Waiting for the response with the quality settings information from server 
-        WaitingToApplyServerResponse,           // Waiting for an appropriate moment to apply the quality settings received from server
-        WaitingForTheUserToLogInToUpload,       // Waiting for the user to log in once the client has been told to upload its quality settings information to the server
+        WaitingToApplyServerResponse,           // Waiting for an appropriate moment to apply the quality settings received from server        
         Done                                    // No more stuff has to be done once server quality settings have been applied
     }
-
-    private EState m_state;
-    private EState State
-    {
-        get
-        {
-            return m_state;
-        }
-
-        set
-        {
-            m_state = value;
-
-            switch(m_state)
-            {
-                case EState.WaitingForTheUserToLogInToUpload:
-                    State_Timer = SERVER_TIME_TO_WAIT_FOR_LOGIN_WHEN_TOLD_TO_UPLOAD;
-                    break;
-            }
-        }
-    }
+    
+    private EState State { get; set; }    
 
     /// <summary>
     /// General purpose timer to use by the current state
@@ -187,13 +169,24 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     /// <summary>
     /// Time to wat for the user to log in once the client has been told to upload its quality settings information to the server
     /// </summary>
-    private float SERVER_TIME_TO_WAIT_FOR_LOGIN_WHEN_TOLD_TO_UPLOAD = 20f * 60f;
+    private float SERVER_TIME_TO_WAIT_FOR_LOGIN_WHEN_TOLD_TO_UPLOAD = 20f;// * 60f;    
 
-    private JSONNode Server_QualitySettingsJSON { get; set; }    
+    private float Server_TimeToWaitToUploadSettings { get; set; }
+
+    /// <summary>
+    /// JSON with the quality settings received from the server to be applied
+    /// </summary>
+    private JSONNode Server_QualitySettingsJSONToApply { get; set; }
+
+    /// <summary>
+    /// String with the quality settings calculated by the client to upload to the server
+    /// </summary>
+    private string Server_QualitySettingsToUpload { get; set; }
 
     private void Server_Reset()
     {
-        Server_QualitySettingsJSON = null;        
+        Server_QualitySettingsJSONToApply = null;
+        Server_ResetUploadQualitySettings();
     }
 
     private void Server_RequestQualitySettings()
@@ -208,17 +201,26 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             if (error == null)
             {
                 // If there's no error then we need to wait for the right moment to apply the quality settings received from server
-                string qualitySettings = response["response"] as string;
+                string qualitySettings = response["response"] as string;                
+                if (qualitySettings != null)
+                {                    
+                    JSONNode json = JSONNode.Parse(qualitySettings);
+                    Server_QualitySettingsJSONToApply = FormatJSON(json);                    
+                }
 
                 // If there's no data then we need to upload the profile calculated to the server when as long as the user logs in
-                if (qualitySettings == null)
+                string key = "upLoadRequired";
+                if (response.ContainsKey(key) && (bool)response[key])
                 {
-                    State = EState.WaitingForTheUserToLogInToUpload;                    
+                    Server_PrepareUploadQualitySettings();
+                }
+
+                if (Server_QualitySettingsJSONToApply == null)
+                {
+                    State = EState.Done;
                 }
                 else
                 {
-                    JSONNode json = JSONNode.Parse(qualitySettings);
-                    Server_QualitySettingsJSON = FormatJSON(json);
                     State = EState.WaitingToApplyServerResponse;
                 }
             }
@@ -232,26 +234,48 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         });
     }
 
-    private void Server_UploadQualitySettings()
+    private void Server_ResetUploadQualitySettings()
     {
-        // Only the profile has to be sent to the server
+        Server_TimeToWaitToUploadSettings = 0f;
+        Server_QualitySettingsToUpload = null;
+    }
+
+    private void Server_PrepareUploadQualitySettings()
+    {
+        // Stores current quality settings to make sure that they are the ones calculated by the client, otherwise if Server_UploadQualitySettings() is called after 
+        // the client applied the quality settings received from server we could be sending the quality settings received from server
         JSONNode json = new JSONClass();
         json.Add("profile", Device_CurrentProfile);
-        string data = json.ToString();
-        //string data = "{\"profile\":\"very_low\"}";
+        Server_QualitySettingsToUpload = json.ToString();
+        //Server_QualitySettingsJSONToUpload = "high";        
 
-        GameServerManager.SharedInstance.SetQualitySettings(data, delegate (Error error, Dictionary<string, object> response)
-        {
-            if (error == null)
-            {
-                Log("Quality settings uploaded successfully");
-            }
-            else
-            {
-                Log("Error when uploading quality settings " + error.message);
-            }
-        });
+        // Sets max time to wait to upload settings
+        Server_TimeToWaitToUploadSettings = SERVER_TIME_TO_WAIT_FOR_LOGIN_WHEN_TOLD_TO_UPLOAD;        
     }
+
+    private void Server_UploadQualitySettings()
+    {
+        if (string.IsNullOrEmpty(Server_QualitySettingsToUpload))
+        {
+            LogError("Empty quality settings can't be uploaded");
+        }
+        else
+        {
+            GameServerManager.SharedInstance.SetQualitySettings(Server_QualitySettingsToUpload, delegate (Error error, Dictionary<string, object> response)
+            {
+                if (error == null)
+                {
+                    Log("Quality settings uploaded successfully");
+                }
+                else
+                {
+                    Log("Error when uploading quality settings " + error.message);
+                }
+            });            
+        }
+
+        Server_ResetUploadQualitySettings();
+    }        
     #endregion
 
     #region device
@@ -695,7 +719,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     /// <returns></returns>
     private bool ISApplyFeatureSettingsAllowed()
     {
-        return true;
+        // It's not allowed to changing feature settings ingame because it might cause a halt
+        return !FlowManager.IsInGameScene();
     }
 
     private void ApplyFeatureSetting(FeatureSettings settings)
@@ -744,7 +769,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             returnValue = new JSONClass();
             foreach (KeyValuePair<string, JSONNode> pair in jsonClass.m_Dict)
             {
-                if (pair.Key == "iOSGeneration")
+                if (pair.Key == "iOSGeneration" || // used for making easier to identify a device
+                    pair.Key == "mngd")            // used on server side to identify devices that have been managed
                     continue;
                              
                 // Empty keys or keys with "as_profile" as a value need to be ignored

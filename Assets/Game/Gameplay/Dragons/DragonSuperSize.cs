@@ -38,7 +38,14 @@ public class DragonSuperSize : MonoBehaviour {
 		m_modeDuration = def.GetAsFloat("modeDuration", 10);
 		m_timer = 0;
 
-		Messenger.AddListener<bool>(GameEvents.SUPER_SIZE_TOGGLE, OnSuperSize);
+		Messenger.AddListener(GameEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED, OnEarlyLetters);
+		Messenger.AddListener(GameEvents.ALL_HUNGRY_LETTERS_COLLECTED, OnLettersCollected);
+	}
+
+	void OnDestroy()
+	{
+		Messenger.RemoveListener(GameEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED, OnEarlyLetters);
+		Messenger.RemoveListener(GameEvents.ALL_HUNGRY_LETTERS_COLLECTED, OnLettersCollected);
 	}
 	
 	// Update is called once per frame
@@ -85,6 +92,17 @@ public class DragonSuperSize : MonoBehaviour {
 		m_motion.superSizeSpeedMultiplier = 1;
 		m_eat.sizeUpEatSpeedFactor = 1;
 		m_eat.eatEverything = false;
+	}
+
+	void OnEarlyLetters()
+	{
+		m_dragon.superSizeInvulnerable = m_invincible;
+	}
+
+	void OnLettersCollected()
+	{
+		StartSuperSize();
+		Messenger.Broadcast<bool>( GameEvents.SUPER_SIZE_TOGGLE, true);
 	}
 
 	void OnSuperSize( bool _value )
