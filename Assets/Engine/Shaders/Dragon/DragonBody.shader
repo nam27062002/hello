@@ -9,6 +9,10 @@ Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 	_BumpMap ("Normal Map (RGB)", 2D) = "white" {}
 	_DetailTex ("Detail (RGB)", 2D) = "white" {} // r -> inner light, g -> specular
+
+	_ReflectionMap("Reflection Map", Cube) = "white" {}
+	_ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.0
+
 	_Tint ("Color Multiply", Color) = (1,1,1,1)
 	_ColorAdd ("Color Add", Color) = (0,0,0,0)
 
@@ -26,7 +30,6 @@ Properties {
 
 SubShader {
 	Tags { "Queue"="Geometry" "IgnoreProjector"="True" "RenderType"="Opaque" "LightMode"="ForwardBase" }
-	ZWrite On
 	Cull Back
 //	LOD 100
 	ColorMask RGBA
@@ -40,6 +43,9 @@ SubShader {
 			Pass Replace
 			ZFail keep
 		}
+
+		ztest less
+		ZWrite On
 
 		CGPROGRAM
 			#pragma vertex vert
@@ -64,9 +70,11 @@ SubShader {
 			#define RIM
 			#define BUMP
 			#define SPEC
+			#define REFL
 			#endif
 
 //			#define BUMP
+//			#define REFL
 
 			struct appdata_t {
 				float4 vertex : POSITION;
@@ -115,6 +123,11 @@ SubShader {
 			uniform float3 _SecondLightDir;
 			uniform float4 _SecondLightColor;
 
+			#ifdef REFL
+			uniform samplerCUBE _ReflectionMap;
+			uniform float _ReflectionAmount;
+			#endif
+
 			v2f vert (appdata_t v)
 			{
 				v2f o;
@@ -123,30 +136,21 @@ SubShader {
 
 				// Normal
 				float3 normal = UnityObjectToWorldNormal(v.normal);
-
 				// Light Probes
 				o.vLight = ShadeSH9(float4(normal, 1.0));
-//				o.vLight = float3(0.5, 0.5, 0.5);// ShadeSH9(float4(normal, 1.0));
 
 				// Half View - See: Blinn-Phong
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
-				float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
-//				o.halfDir = normalize(lightDirection + viewDirection);
-//				o.posWorld = mul( unity_ObjectToWorld, v.vertex ).xyz;
-//				o.viewDir = normalize(viewDirection);
 				o.viewDir = viewDirection;
 
+				// To calculate tangent world
 				#ifdef BUMP
-	            // To calculate tangent world
-	            float4x4 modelMatrix = unity_ObjectToWorld;
-     			float4x4 modelMatrixInverse = unity_WorldToObject; 
-	            o.tangentWorld = normalize( mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
-     			o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
-     			o.binormalWorld = normalize( cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
+	            o.tangentWorld = UnityObjectToWorldNormal(v.tangent);
+				o.normalWorld = normal;
+     			o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
 				#else
-				o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
+				o.normalWorld = normal;
 				#endif
-
 				return o;
 			}
 			
@@ -159,6 +163,7 @@ SubShader {
 	            float3 encodedNormal = UnpackNormal (tex2D (_BumpMap, i.texcoord));
 	            float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
      			float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
+	
 				#else
 				float3 normalDirection = i.normalWorld;
 				#endif
@@ -171,17 +176,29 @@ SubShader {
 
 				// Fresnel
 				float fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _Fresnel), 0.0, 1.0);
+
 				// Specular
 				float3 halfDir = normalize(i.viewDir + light0Direction);
 				float specularLight = pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
 				halfDir = normalize(i.viewDir + light1Direction);
 				specularLight += pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
 
-	            // Inner lights
-     			fixed4 selfIlluminate = (main * (detail.r * _InnerLightAdd * _InnerLightColor));
+				fixed4 col;
 
+				#ifdef REFL
+				fixed4 reflection = texCUBE(_ReflectionMap, reflect(i.viewDir, normalDirection));
+				col = (1.0 - _ReflectionAmount) * main + _ReflectionAmount * reflection;
+
+				#else
+				col = main;
+				#endif
+
+	            // Inner lights
+     			fixed4 selfIlluminate = (col * (detail.r * _InnerLightAdd * _InnerLightColor));
 				// fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _Tint + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
-				fixed4 col = (diffuse + fixed4(i.vLight, 1)) * main * _Tint + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor) + _AmbientAdd; // To use ShaderSH9 better done in vertex shader
+				col = (diffuse + fixed4(i.vLight, 1)) * col * _Tint + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor) + _AmbientAdd; // To use ShaderSH9 better done in vertex shader
+
+
 				UNITY_OPAQUE_ALPHA(col.a); 
 
 				return col; 
@@ -189,8 +206,31 @@ SubShader {
 			}
 		ENDCG
 	}
+/*
+	//Occlusion
+	Pass{
 
-	
+		Stencil
+		{
+			Ref 5
+			Comp notequal
+			Pass Replace
+			ZFail keep
+		}
+
+		ztest greater
+		ZWrite Off
+
+//		lighting off
+
+		SetTexture[_MainTex]{
+			constantColor (0, 0, 0, 0)
+			combine constant * primary
+		}
+
+	}
+
+*/	
 }
 //Fallback "Mobile/VertexLit"
 }

@@ -262,7 +262,11 @@ namespace AI {
 		void OnTriggerStay(Collider _other) {
 			if (m_affectedByDragonTrample) {
 				// lets check if dragon is trampling this entity
-				if (!GetSignal(Signals.Type.FallDown) && _other.gameObject.CompareTag("Player")) {
+				if (!GetSignal(Signals.Type.FallDown) && 
+					!GetSignal(Signals.Type.Latched) &&
+					_other.gameObject.CompareTag("Player")) {
+					//----------------------------------------------------------------------------------
+
 					// is in trample mode? - dragon has the mouth full
 					DragonEatBehaviour dragonEat = InstanceManager.player.dragonEatBehaviour; 
 
@@ -273,7 +277,7 @@ namespace AI {
 					if (isEating || isLatching || isGrabbing) {
 						Vector3 speed = InstanceManager.player.dragonMotion.velocity;
 						m_motion.SetVelocity(speed * 10f);
-						SetSignal(Signals.Type.FallDown, true);
+						SetSignal(Signals.Type.FallDown, true);					
 					}
 				}
 			}
@@ -535,6 +539,11 @@ namespace AI {
 
 		public void Drown() {
 			SetSignal(Signals.Type.Destroyed, true);
+		}
+
+		public bool CanBeSmashed()
+		{
+			return CanBeBitten() && m_entity.CanBeSmashed();
 		}
 
 		public void Smashed()

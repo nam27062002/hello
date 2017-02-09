@@ -148,8 +148,7 @@ public class DragonMenuToolsEditorWindow : EditorWindow {
 					}
 
 					// Load dragon definitions
-					List<DefinitionNode> defs = new List<DefinitionNode>();
-					DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS, ref defs);
+					List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGONS);
 					DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 
 					// Instantiate dragon prefabs

@@ -2258,6 +2258,7 @@ MonoBehaviour:
     path: Blood
     offset: {x: 0, y: 0, z: 0}
   m_burpSound: 
+  m_canEatEntities: 1
   m_eaterTier: 0
   m_isPet: 0
   m_isAquatic: 0
@@ -2296,7 +2297,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 1
     max: 1
-  m_serializedJson: '[{"speed":15,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":15,"restUpsideDown":false,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":65,"arrivalRadius":0.5,"timeout":{"min":1,"max":1.5},"onFailShutdown":{"min":2.5,"max":3.5},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":4,"max":8},"damage":34,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":15,"panicSpeed":15,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"tier":0,"dataType":"AI.Behaviour.AttackSelectorData","editorFolded":false},{"speed":45,"hasWeapon":false,"dataType":"AI.Behaviour.CurveDashData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":15,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":15,"restUpsideDown":false,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":65,"arrivalRadius":0.5,"timeout":{"min":1,"max":1.5},"onFailShutdown":{"min":2.5,"max":3.5},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":4,"max":8},"damage":34,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":15,"panicSpeed":15,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"tier":0,"dataType":"AI.Behaviour.AttackSelectorData","editorFolded":false},{"speed":45,"hasWeapon":false,"dataType":"AI.Behaviour.CurveDashData","editorFolded":false},{"seconds":5,"dataType":"AI.Behaviour.TimerAData","editorFolded":false},{"ignoreNotListedUnits":false,"dragonSizeRangeMultiplier":10,"preferedRangeMultiplier":10,"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"seconds":5,"dataType":"AI.Behaviour.TimerBData","editorFolded":false},{"speedMultiplier":15,"chaseTimeout":0,"cooldown":{"min":0,"max":0},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false}]'
   m_databaseKey: PF_EnemyClassic 4
   m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 3
@@ -2314,7 +2315,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
-  radius: 5
+  radius: 2.39
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114000012425715312
 MonoBehaviour:

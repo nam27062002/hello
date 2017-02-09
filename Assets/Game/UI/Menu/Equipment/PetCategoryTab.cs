@@ -156,6 +156,9 @@ public class PetCategoryTab : Tab {
 		int pillIdx = m_pills.IndexOf(_pill);
 		if(pillIdx < 0) return;
 
+		// Prepare unlock anim
+		_pill.PrepareUnlockAnim();
+
 		// Kill any existing anim on the scrolllist
 		m_scrollList.DOKill();
 
@@ -166,10 +169,8 @@ public class PetCategoryTab : Tab {
 			.SetDelay(_delay)
 			.SetEase(Ease.OutQuad)
 			.OnComplete(() => {
-				// Highlight pill
-				// [AOC] TODO!! Better effect
-				_pill.transform.DOKill(true);
-				_pill.transform.DOScale(0.75f, 0.1f).SetLoops(8, LoopType.Yoyo);
+				// Show unlock anim!
+				_pill.LaunchUnlockAnim();
 			});
 	}
 

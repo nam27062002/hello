@@ -110,9 +110,8 @@ public class CPProgressionCheats : MonoBehaviour {
 		long amount = long.Parse(input.text);
 
 		// Update profile - make sure amount is valid
-		UserProfile currentUser = UsersManager.instance.m_currentUser;
-		long toAdd = System.Math.Max(amount - currentUser.pc, -currentUser.pc);	// Min 0 pc! This will exclude negative amounts :)
-		currentUser.AddPC(toAdd);
+		long toAdd = System.Math.Max(amount - UsersManager.currentUser.pc, -UsersManager.currentUser.pc);	// Min 0 pc! This will exclude negative amounts :)
+		UsersManager.currentUser.AddPC(toAdd);
 
 		// Save persistence
 		PersistenceManager.Save();
@@ -160,6 +159,25 @@ public class CPProgressionCheats : MonoBehaviour {
 		if(slotIdx >= 0) PersistenceManager.Save();
 	}
 
+	/// <summary>
+	/// Set the amount of golden egg fragments.
+	/// </summary>
+	public void OnSetGoldenEggFragments() {
+		// Get amount from linked input field
+		TMP_InputField input = GetComponentInChildren<TMP_InputField>();
+		if(input == null) Debug.Log("Requires a nested Input Field!");
+		int amount = int.Parse(input.text);
+
+		// Update profile - make sure amount is valid
+		UsersManager.currentUser.goldenEggFragments = Mathf.Max(0, amount);		// No negative values!
+
+		// Save persistence
+		PersistenceManager.Save();
+	}
+
+	/// <summary>
+	/// Unlock and buy all dragons.
+	/// </summary>
     public void OnAcquireAllDragons() {
         List<DragonData> dragons = DragonManager.GetDragonsByLockState(DragonData.LockState.ANY);
         if (dragons != null) {
@@ -177,11 +195,62 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// Unlock all pets.
 	/// </summary>
 	public void OnUnlockAllPets() {
-		List<DefinitionNode> petDefs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.PETS, ref petDefs);
+		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
 		for(int i = 0; i < petDefs.Count; i++) {
 			UsersManager.currentUser.petCollection.UnlockPet(petDefs[i].sku);
 		}
+		PersistenceManager.Save();
+	}
+
+	/// <summary>
+	/// Reset all pets to lock state.
+	/// Resets golden egg fragments and collected eggs count as well.
+	/// </summary>
+	public void OnResetAllPets() {
+		// Clear equipped pets
+		foreach(DragonData dragon in DragonManager.dragonsByOrder) {
+			for(int i = 0; i < dragon.pets.Count; i++) {
+				UsersManager.currentUser.UnequipPet(dragon.def.sku, i);
+			}
+		}
+
+		// Clear pet collection
+		UsersManager.currentUser.petCollection.Reset();
+
+		// Clear collected eggs and fragments
+		UsersManager.currentUser.eggsCollected = 0;
+		UsersManager.currentUser.goldenEggFragments = 0;
+		UsersManager.currentUser.goldenEggsCollected = 0;
+
+		// Save!
+		PersistenceManager.Save();
+	}
+
+	/// <summary>
+	/// Reset only the special pets to lock state.
+	/// Resets golden egg fragments and collected golden eggs count as well.
+	/// </summary>
+	public void OnResetSpecialPets() {
+		// Get all special pets
+		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", "special");
+
+		// Clear equipped pets
+		foreach(DragonData dragon in DragonManager.dragonsByOrder) {
+			for(int i = 0; i < petDefs.Count; i++) {
+				UsersManager.currentUser.UnequipPet(dragon.def.sku, petDefs[i].sku);
+			}
+		}
+
+		// Remove from collection
+		for(int i = 0; i < petDefs.Count; i++) {
+			UsersManager.currentUser.petCollection.RemovePet(petDefs[i].sku);
+		}
+
+		// Clear collected data
+		UsersManager.currentUser.goldenEggFragments = 0;
+		UsersManager.currentUser.goldenEggsCollected = 0;
+
+		// Save!
 		PersistenceManager.Save();
 	}
 

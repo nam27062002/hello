@@ -304,11 +304,47 @@ public class CPQualitySettings : MonoBehaviour
     #endregion
 
     #region quality
+    public TextMeshProUGUI m_cpuCores;
+    public TextMeshProUGUI m_cpuCoresRating;
+    public TextMeshProUGUI m_memory;
+    public TextMeshProUGUI m_memoryRating;
+    public TextMeshProUGUI m_gfxMemory;
+    public TextMeshProUGUI m_gfxMemoryRating;
     public TextMeshProUGUI m_calculatedRating;
     public TextMeshProUGUI m_rating;
 
     private void Quality_Setup()
     {
+        if (m_cpuCores != null)
+        {
+            m_cpuCores.text = "" + SystemInfo.processorCount;
+        }
+
+        if (m_cpuCoresRating != null)
+        {
+            m_cpuCoresRating.text = "" + FeatureSettingsManager.instance.Device_CPUCoresRating;
+        }
+
+        if (m_memory != null)
+        {
+            m_memory.text = "" + SystemInfo.systemMemorySize;
+        }
+
+        if (m_memoryRating != null)
+        {
+            m_memoryRating.text = "" + FeatureSettingsManager.instance.Device_MemoryRating;
+        }
+
+        if (m_gfxMemory != null)
+        {
+            m_gfxMemory.text = "" + SystemInfo.graphicsMemorySize;
+        }
+
+        if (m_gfxMemoryRating != null)
+        {
+            m_gfxMemoryRating.text = "" + FeatureSettingsManager.instance.Device_GfxMemoryRating;
+        }
+
         if (m_calculatedRating != null)
         {
             m_calculatedRating.text = "" + FeatureSettingsManager.instance.Device_CalculatedRating;

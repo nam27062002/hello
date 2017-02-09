@@ -133,10 +133,10 @@ public class UserProfile : UserSaveSystem
 
 	// Eggs
 	private Egg[] m_eggsInventory;
-	public Egg[] eggsInventory
-	{
+	public Egg[] eggsInventory {
 		get {return m_eggsInventory;}
 	}
+
 	private Egg m_incubatingEgg;
 	public Egg incubatingEgg
 	{
@@ -151,10 +151,22 @@ public class UserProfile : UserSaveSystem
 		set{ m_incubationEndTimestamp = value; }
 	}
 
-    /// <summary>
-    /// Amount of eggs collected (already rewarded) by the user so far
-    /// </summary>
-    public int eggsCollected { get; set; }    
+	public int eggsCollected { // Amount of eggs collected (already rewarded) by the user so far
+		get; 
+		set; 
+	}
+
+	private int m_goldenEggFragments = 0;
+	public int goldenEggFragments {
+		get { return m_goldenEggFragments; }
+		set { m_goldenEggFragments = value; }
+	}
+
+	private int m_goldenEggsCollected = 0;
+	public int goldenEggsCollected {
+		get { return m_goldenEggsCollected; }
+		set { m_goldenEggsCollected = value; }
+	}
 
     // Chests
     private Chest[] m_dailyChests = new Chest[ChestManager.NUM_DAILY_CHESTS];	// Should always have the same length
@@ -197,17 +209,17 @@ public class UserProfile : UserSaveSystem
 	{
 		m_dragonsBySku = new Dictionary<string, DragonData>();
 		DragonData newDragonData = null;
-		List<DefinitionNode> defs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS, ref defs);
+		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGONS);
 		for(int i = 0; i < defs.Count; i++) {
 			newDragonData = new DragonData();
 			newDragonData.Init(defs[i]);
 			m_dragonsBySku[defs[i].sku] = newDragonData;
 		}
 
-
 		m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
 		m_incubatingEgg = null;
+		m_goldenEggFragments = 0;
+		m_goldenEggsCollected = 0;
 
 		m_wardrobe = new Wardrobe();
 		m_petCollection = new PetCollection();
@@ -433,7 +445,7 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Pets
-		m_petCollection.Init();
+		m_petCollection.Reset();
 		if(_data.ContainsKey("pets")) {
 			m_petCollection.Load(_data["pets"]);
 		}
@@ -451,15 +463,13 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Eggs
-		if ( _data.ContainsKey("eggs") )
-		{
+		if(_data.ContainsKey("eggs")) {
 			LoadEggData(_data["eggs"] as SimpleJSON.JSONClass);
-		}
-		else
-		{
+		} else {
 			// Clean Eggs Data
-			for( int i = 0; i<EggManager.INVENTORY_SIZE; i++ )
+			for(int i = 0; i<EggManager.INVENTORY_SIZE; i++) {
 				eggsInventory[i] = null;
+			}
 			m_incubatingEgg = null;
 		}
 
@@ -528,6 +538,10 @@ public class UserProfile : UserSaveSystem
 
         // Eggs collected
         eggsCollected = _data["collectedAmount"].AsInt;
+
+		// Golden egg
+		m_goldenEggFragments = _data["goldenEggFragments"].AsInt;
+		m_goldenEggsCollected = _data["goldenEggsCollected"].AsInt;
     }
 
 	/// <summary>
@@ -646,7 +660,11 @@ public class UserProfile : UserSaveSystem
 		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
         // Eggs collected
-        data.Add("collectedAmount", eggsCollected.ToString());
+		data.Add("collectedAmount", eggsCollected.ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+		// Golden eggs
+		data.Add("goldenEggFragments", m_goldenEggFragments.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		data.Add("goldenEggsCollected", m_goldenEggsCollected.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
         return data;
 	}

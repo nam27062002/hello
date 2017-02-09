@@ -183,8 +183,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_alcoholDrain = m_data.def.GetAsFloat("alcoholDrain", 1f);
 
 		// Init health modifiers
-		List<DefinitionNode> healthModifierDefs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGON_HEALTH_MODIFIERS, ref healthModifierDefs);
+		List<DefinitionNode> healthModifierDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGON_HEALTH_MODIFIERS);
 		DefinitionsManager.SharedInstance.SortByProperty(ref healthModifierDefs, "threshold", DefinitionsManager.SortType.NUMERIC);		// Sort by threshold
 		m_healthModifiers = new DragonHealthModifier[healthModifierDefs.Count];
 		for(int i = 0; i < healthModifierDefs.Count; i++) {
@@ -213,13 +212,14 @@ public class DragonPlayer : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 	void OnDestroy()
 	{
 		// Unsubscribe from external events
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 	/// <summary>
@@ -339,6 +339,9 @@ public class DragonPlayer : MonoBehaviour {
 	public void AddLife(float _offset, DamageType _type = DamageType.NONE) {
 		// If invulnerable and taking damage, don't apply
 		if(IsInvulnerable() && _offset < 0) return;
+
+		// If cheat is enable
+		if(DebugSettings.invulnerable && _offset < 0) return;
 
 		// Store some variables
 		DragonHealthModifier oldHealthModifier = m_currentHealthModifier;
@@ -523,9 +526,6 @@ public class DragonPlayer : MonoBehaviour {
 
 		if ( m_superSizeInvulnerable ) return true;
 		
-		// If cheat is enable
-		if(DebugSettings.invulnerable) return true;
-		
 		// All checks passed, we're not invulnerable
 		return false;
 	}
@@ -544,6 +544,20 @@ public class DragonPlayer : MonoBehaviour {
 
 		SetHealthBonus( m_healthBonus );
 		SetBoostBonus( m_energyBonus );
+	}
+
+	void OnFuryToggled( bool toogle, DragonBreathBehaviour.Type type)
+	{
+		if (toogle)
+		{
+			m_dragonEatBehaviour.PauseEating();
+		}
+		else
+		{
+			if (!BeingLatchedOn())
+				m_dragonEatBehaviour.ResumeEating();
+			
+		}
 	}
 
 	public void LoseShield( DamageType _type )
@@ -669,10 +683,11 @@ public class DragonPlayer : MonoBehaviour {
 	public void EndLatchedOn()
 	{
 		m_numLatching--;
-		if ( m_numLatching == 0 )
+		if ( m_numLatching == 0)
 		{
 			m_dragonMotion.EndLatchedOnMovement();
-			m_dragonEatBehaviour.ResumeEating( 1.0f );
+			if ( !m_breathBehaviour.IsFuryOn() )
+				m_dragonEatBehaviour.ResumeEating( 1.0f );
 		}
 	}
 

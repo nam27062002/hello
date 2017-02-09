@@ -285,7 +285,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 188468}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.1949954, y: 3.3540902, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 476310}
@@ -444,7 +444,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Bat_Tail_1
-  m_parentRoot: {fileID: 0}
+  m_parentRoot: {fileID: 476310}
 --- !u!114 &11452102
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -456,7 +456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 0.5
+  m_blendSpeedFactor: 1
   m_energy: 10
   m_energyDrainSec: 1
   m_brainResource: {fileID: 11400000, guid: fcba6844efb2f4ff6b18023d9b2856d4, type: 2}
@@ -466,12 +466,12 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":35,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":30,"panicSpeed":30,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":25,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":12,"panicSpeed":15,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":true},{"changeLeaderTime":0,"separation":0.75,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
   m_databaseKey: PF_BatSmall 1
-  m_preciseDestArrival: 0
+  m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 4
-  m_avoidCollisions: 1
-  m_avoidWater: 1
+  m_avoidCollisions: 0
+  m_avoidWater: 0
 --- !u!114 &11477590
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -487,7 +487,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 1
+    m_mass: 5
     m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 120
@@ -549,11 +549,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 2
-  m_runSpeed: 2
-  m_minPlaybakSpeed: 2
-  m_maxPlaybakSpeed: 2
-  m_onBoostMaxPlaybackSpeed: 0
+  m_walkSpeed: 5
+  m_runSpeed: 15
+  m_minPlaybakSpeed: 1
+  m_maxPlaybakSpeed: 1.5
+  m_onBoostMaxPlaybackSpeed: 1
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
   m_animA: 
@@ -582,7 +582,7 @@ MonoBehaviour:
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onExplosionAudio: 
-  m_onAttackAudio: hd_bat_attack
+  m_onAttackAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
   m_idleAudio: 
@@ -677,7 +677,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 112
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!135 &135000011011454580
 SphereCollider:

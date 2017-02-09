@@ -55,7 +55,6 @@ public class DragonEatBehaviour : EatBehaviour {
 
 		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 		Messenger.AddListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		// m_waitJawsEvent = false;// not working propertly for the moment!
 	}
 
@@ -63,7 +62,6 @@ public class DragonEatBehaviour : EatBehaviour {
 	{
 		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 		Messenger.RemoveListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 	override protected void OnDisable()
@@ -125,40 +123,20 @@ public class DragonEatBehaviour : EatBehaviour {
         }             
 	}
 
-	protected override void UpdateEating()
-	{
+	protected override void UpdateEating() {
 		base.UpdateEating();
-		if ( PreyCount <= 0 && m_attackTarget == null)
+		if (PreyCount <= 0 && m_attackTarget == null)
 			m_animator.SetBool("eat", false);	
 	}
 
-
-	void OnEntityEaten( Transform t, Reward reward )
-	{
-		m_dragon.AddLife( m_dragonHealth.GetBoostedHp( reward.origin, reward.health) );
+	void OnEntityEaten(Transform t, Reward reward) {
+		if (reward.health >= 0) {
+			m_dragon.AddLife(m_dragonHealth.GetBoostedHp(reward.origin, reward.health));
+		} else {
+			m_dragonHealth.ReceiveDamage(Mathf.Abs(reward.health), DamageType.NORMAL, t, true);
+		}
 		m_dragon.AddEnergy(reward.energy);
-		m_dragon.AddAlcohol( reward.alcohol );
-	}
-
-
-	void OnFuryToggled( bool toogle, DragonBreathBehaviour.Type type)
-	{
-		if (toogle)
-		{
-			if ( !m_pauseEating )
-			{
-				m_pausedOnFury = true;
-				PauseEating();
-			}
-		}
-		else
-		{
-			if ( m_pauseEating && m_pausedOnFury )
-			{
-				m_pausedOnFury = false;
-				ResumeEating();
-			}
-		}
+		m_dragon.AddAlcohol(reward.alcohol);
 	}
 
 	void OnMultiplierLost()

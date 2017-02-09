@@ -131,14 +131,59 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
             // Test feature settings
             //Debug_TestToggleSound();
-            // ---------------------------            
+            // ---------------------------     
+
+            // ---------------------------
+            // Test drunk effect
+            //Debug_TestToggleDrunk();
+            // ---------------------------     
+
+            // ---------------------------
+            // Test frame color effect
+            //Debug_TestToggleFrameColor();
+            // ---------------------------    
+
+            // ---------------------------
+            // Test quality settings
+            //Debug_TestQualitySettings();
+            // ---------------------------                
         }
 
         if (NeedsToRestartFlow)
         {
             NeedsToRestartFlow = false;
             FlowManager.Restart();
-        }        
+        }
+
+#if !PRODUCTION
+        // Boss camera effect cheat to be able to enable/disable anywhere. We want to be able to check the impact in performance of the effect so we want to have
+        // time to close the console before the effect starts playing
+        if (Debug_TimeToEnableBossCameraEffect > 0f)
+        {
+            Debug_TimeToEnableBossCameraEffect -= Time.deltaTime;
+            if (Debug_TimeToEnableBossCameraEffect <= 0f)
+            {
+                GameCamera gameCamera = InstanceManager.gameCamera;
+                if (gameCamera != null && Debug_BossCameraAffector != null)
+                {
+                    bool enabled = !Debug_BossCameraAffector.enabled;
+                    Debug_BossCameraAffector.enabled = enabled;
+
+                    if (enabled)
+                    {
+                        InstanceManager.gameCamera.NotifyBoss(Debug_BossCameraAffector);
+                    }
+                    else
+                    {
+                        InstanceManager.gameCamera.RemoveBoss(Debug_BossCameraAffector);
+                    }
+                }
+
+                Debug_BossCameraAffector = null;
+                Debug_TimeToEnableBossCameraEffect = 0f;
+            }
+        }       
+#endif
     }
 
     private int LastPauseTime { get; set; }
@@ -419,6 +464,53 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Debug.Log(key + " as string = " + FeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));                        
         */
     }
-    #endregion    
+
+    private bool Debug_IsDrunkOn { get; set; }
+
+    public void Debug_TestToggleDrunk()
+    {
+        Debug_IsDrunkOn = !Debug_IsDrunkOn;
+        Messenger.Broadcast<bool>(GameEvents.DRUNK_TOGGLED, Debug_IsDrunkOn);
+    }
+
+    private bool Debug_IsFrameColorOn { get; set; }
+
+    public void Debug_TestToggleFrameColor()
+    {
+        Debug_IsFrameColorOn = !Debug_IsFrameColorOn;
+        Messenger.Broadcast<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, Debug_IsFrameColorOn, DragonBreathBehaviour.Type.Super);        
+    }
+
+    public void Debug_TestQualitySettings()
+    {
+        FeatureSettingsManager.instance.Debug_Test();
+    }
+
+    private float Debug_TimeToEnableBossCameraEffect { get; set; }
+
+    private BossCameraAffector Debug_BossCameraAffector { get; set; }
+
+    public void Debug_OnToggleBossCameraEffect(BossCameraAffector affector)
+    {    
+        if (affector != null)
+        {
+            GameCamera gameCamera = InstanceManager.gameCamera;
+            if (gameCamera != null)
+            {
+                // If the timer hasn't expired yet then it means that the operation scheduled hasn't been performed yet so we just need to cancel the operation scheduled by setting the timer to 0
+                if (Debug_TimeToEnableBossCameraEffect > 0f)
+                {
+                    Debug_TimeToEnableBossCameraEffect = 0f;
+                    Debug_BossCameraAffector = null;
+                }
+                else
+                {
+                    Debug_BossCameraAffector = affector;
+                    Debug_TimeToEnableBossCameraEffect = 5f;
+                }
+            }
+        }
+    }
+    #endregion
 }
 

@@ -79,6 +79,7 @@ namespace AI {
 			protected override void OnExit(State newState) {				
 				m_pilot.SlowDown(false);
 				m_pilot.ReleaseAction(Pilot.Action.Scared);
+				m_pilot.SetDirection(m_machine.direction, false);
 			}
 
 			protected override void OnUpdate() {
@@ -179,12 +180,13 @@ namespace AI {
 
 							m_panicTimer -= Time.deltaTime;
 							if (m_panicTimer <= 0) {
+								m_pilot.SetDirection(m_machine.direction, false);
 								ChangeState(FleeState.Flee_Panic);
 							}
 							break;
 
 						case FleeState.Slow_Down:
-							if (warning) ChangeState(FleeState.Flee);						
+							if (warning) ChangeState(FleeState.Flee);			
 
 							m_pilot.SetMoveSpeed(0);
 

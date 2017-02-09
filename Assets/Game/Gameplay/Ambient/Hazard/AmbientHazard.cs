@@ -438,6 +438,16 @@ public class AmbientHazard : MonoBehaviour {
 				dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, m_damageType, true);	// Resetting all current DOTs
 			}
 
+			// Apply knockback
+			if (m_knockBackIntensity > 0)
+			{
+				Vector3 repulseDirection = dragonMotion.position - transform.position;
+				if(dragonMotion != null) {
+					//dragonMotion.Stop(); ??
+					dragonMotion.AddForce(repulseDirection.normalized * m_knockBackIntensity);
+				}
+			}
+
 			// [AOC] TODO!! Play SFX
 		}
 	}

@@ -54,6 +54,7 @@ public class DefinitionsCategory
 
 	// Metagame
 	public const string EGGS = "EGGS";
+	public const string GOLDEN_EGGS = "GOLDEN_EGGS";
 	public const string EGG_REWARDS = "EGG_REWARDS";
 	public const string CHEST_REWARDS = "CHEST_REWARDS";
 	public const string RARITIES = "RARITIES";

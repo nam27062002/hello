@@ -45,7 +45,7 @@ namespace AI {
 					if (m_machine.GetSignal(Signals.Type.InWater)) {
 						m_machine.Drown();
 					} else {
-						SpawnerAreaManager.instance.UpdateAreaAt(m_machine.position, ref m_pilot);
+						//SpawnerAreaManager.instance.UpdateAreaAt(m_machine.position, ref m_pilot);
 						Transition(OnRecover);
 					}
 				}
