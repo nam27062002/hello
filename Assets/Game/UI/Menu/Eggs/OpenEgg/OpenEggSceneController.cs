@@ -33,6 +33,7 @@ public class OpenEggSceneController : MonoBehaviour {
 	[Separator("VFX")]
 	[SerializeField] private ParticleSystem m_explosionFX = null;
 	[SerializeField] private GodRaysFXFast m_godRaysFX = null;
+	[SerializeField] private ParticleSystem m_goldenFragmentsSwapFX = null;
 	[SerializeField] private Transform m_tapFXPool = null;
 	[Tooltip("One per rarity, matching order")]
 	[SerializeField] private ParticleSystem[] m_tapFX = new ParticleSystem[(int)EggReward.Rarity.COUNT];
@@ -150,7 +151,11 @@ public class OpenEggSceneController : MonoBehaviour {
 		if(m_godRaysFX != null) {
 			m_godRaysFX.StopFX();
 		}
-		
+
+		if(m_goldenFragmentsSwapFX != null) {
+			m_goldenFragmentsSwapFX.Stop();
+		}
+
 		for(int i = 0; i < m_openFX.Length; i++) {
 			if(m_openFX[i] != null) {
 				m_openFX[i].Stop(true);
@@ -309,10 +314,9 @@ public class OpenEggSceneController : MonoBehaviour {
 				targetFragmentsView.SetActive(true);
 
 				// Show VFX to cover the swap
-				ParticleSystem openFX = m_openFX[(int)EggReward.Rarity.SPECIAL];
-				if(openFX != null) {
-					openFX.Clear();
-					openFX.Play(true);
+				if(m_goldenFragmentsSwapFX != null) {
+					m_goldenFragmentsSwapFX.Clear();
+					m_goldenFragmentsSwapFX.Play(true);
 				}
 
 			});
