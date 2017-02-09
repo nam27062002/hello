@@ -693,10 +693,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 		else if ( m_holdingPlayer != null)
 		{
-			if (onEndLatching != null)
-				onEndLatching();
 			m_holdingPlayer.EndLatchedOn();
 			m_holdingPlayer = null;
+			if (onEndLatching != null)
+				onEndLatching();
 		}
 
 		m_holdTransform = null;
