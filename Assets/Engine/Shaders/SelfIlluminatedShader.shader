@@ -111,5 +111,5 @@ SubShader
 	
 }
 
-Fallback "VertexLit"
+Fallback "Hungry Dragon/VertexLit"
 }

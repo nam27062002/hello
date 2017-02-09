@@ -102,7 +102,6 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 					o.texcoord2 = TRANSFORM_TEX(v.texcoord, _SecondTexture);
 					o.color = v.color;
 					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
-//					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 					#endif
@@ -153,9 +152,6 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 						// col = col * (i.color + fixed4(0.5,0.5,0.5,0.5));	// Soft Light
 						col = 2 * i.color * col;	// Overlay
 					}
-
-//					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
-//					col *= attenuation;
 
 					#if LIGHTMAP_ON
 					fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap

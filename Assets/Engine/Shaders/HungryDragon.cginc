@@ -14,6 +14,8 @@
 #define HG_TRANSFER_DARKEN(o,worldPos) o.darken = clamp( (-worldPos.z * 0.1) - 1, 0, 0.8);
 #define HG_APPLY_DARKEN(i, col) col = lerp( col, fixed4(0,0,0,1), i.darken);
 
+#define DYNAMIC_SHADOWS
+
 
 #endif // HUNGRYDRAGON_CG_INCLUDED
     

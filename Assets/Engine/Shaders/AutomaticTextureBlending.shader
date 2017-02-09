@@ -27,8 +27,6 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 				#pragma multi_compile_fwdbase
 				#pragma glsl_no_auto_normalization
 				#pragma fragmentoption ARB_precision_hint_fastest
-
-
 							
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
@@ -47,7 +45,9 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 					float4 vertex : SV_POSITION; 
 					half2 texcoord : TEXCOORD0;
 					HG_FOG_COORDS(1)
+					#ifdef DYNAMIC_SHADOWS
 					LIGHTING_COORDS(2,3)
+					#endif
 					float2 lmap : TEXCOORD4; 
 					float blendValue : TEXCOORD5;
 				};
@@ -71,7 +71,10 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 					float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 					HG_TRANSFER_FOG(o, worldPos);	// Fog
 
+					#ifdef DYNAMIC_SHADOWS
 					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
+					#endif
+
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 					#endif
@@ -87,8 +90,10 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 					float l = saturate( col.a + i.blendValue );
 					col = lerp( col2, col, l);
 
+					#ifdef DYNAMIC_SHADOWS
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col *= attenuation;
+					#endif
 
 					#if LIGHTMAP_ON
 					fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap

@@ -33,7 +33,9 @@ Properties
 			float2 lmap : TEXCOORD3; 
 			#endif		
 			
+			#ifdef DYNAMIC_SHADOWS
 			LIGHTING_COORDS(6, 7)
+			#endif
 		};
 		
 		float _Distance;
@@ -48,7 +50,9 @@ Properties
 			o.lmap = v.texcoord.xy * unity_LightmapST.xy + unity_LightmapST.zw;
 			#endif
 
+			#ifdef DYNAMIC_SHADOWS
 			TRANSFER_VERTEX_TO_FRAGMENT(o);
+			#endif
 			
 			return o;
 		}
@@ -73,9 +77,11 @@ Properties
 				fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));
 				tex.rgb *= lm;
 				#endif
-								
+
+				#ifdef DYNAMIC_SHADOWS
 				float attenuation = LIGHT_ATTENUATION(i);
 				tex.rgb *= attenuation;											
+				#endif
 				
     			return tex;	
 			}
