@@ -55,7 +55,6 @@ public class DragonEatBehaviour : EatBehaviour {
 
 		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 		Messenger.AddListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		// m_waitJawsEvent = false;// not working propertly for the moment!
 	}
 
@@ -63,7 +62,6 @@ public class DragonEatBehaviour : EatBehaviour {
 	{
 		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 		Messenger.RemoveListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 	override protected void OnDisable()
@@ -139,26 +137,6 @@ public class DragonEatBehaviour : EatBehaviour {
 		}
 		m_dragon.AddEnergy(reward.energy);
 		m_dragon.AddAlcohol(reward.alcohol);
-	}
-
-	void OnFuryToggled( bool toogle, DragonBreathBehaviour.Type type)
-	{
-		if (toogle)
-		{
-			if ( !m_pauseEating )
-			{
-				m_pausedOnFury = true;
-				PauseEating();
-			}
-		}
-		else
-		{
-			if ( m_pauseEating && m_pausedOnFury )
-			{
-				m_pausedOnFury = false;
-				ResumeEating();
-			}
-		}
 	}
 
 	void OnMultiplierLost()

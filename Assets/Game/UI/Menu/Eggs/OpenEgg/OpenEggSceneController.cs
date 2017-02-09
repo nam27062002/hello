@@ -33,6 +33,7 @@ public class OpenEggSceneController : MonoBehaviour {
 	[Separator("VFX")]
 	[SerializeField] private ParticleSystem m_explosionFX = null;
 	[SerializeField] private GodRaysFXFast m_godRaysFX = null;
+	[SerializeField] private ParticleSystem m_goldenFragmentsSwapFX = null;
 	[SerializeField] private Transform m_tapFXPool = null;
 	[Tooltip("One per rarity, matching order")]
 	[SerializeField] private ParticleSystem[] m_tapFX = new ParticleSystem[(int)EggReward.Rarity.COUNT];
@@ -68,6 +69,15 @@ public class OpenEggSceneController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		// Create rotation tween for all fragments
+		for(int i = 0; i < m_goldenFragments.Length; i++) {
+			if(m_goldenFragments[i] != null) {
+				// Make it blendable so we can add other rotation animations to it
+				m_goldenFragments[i].transform.DOBlendableRotateBy(Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetRecyclable(true).Pause();	// Start paused
+			}
+		}
+
+		// Don't show anything
 		Clear();
 	}
 
@@ -126,7 +136,11 @@ public class OpenEggSceneController : MonoBehaviour {
 		}
 
 		for(int i = 0; i < m_goldenFragments.Length; i++) {
-			if(m_goldenFragments[i] != null) m_goldenFragments[i].SetActive(false);
+			if(m_goldenFragments[i] != null) {
+				// Stop rotation animation (to stop updating it)
+				m_goldenFragments[i].transform.DOPause();
+				m_goldenFragments[i].SetActive(false);
+			}
 		}
 
 		if(m_rewardView != null) {
@@ -137,7 +151,11 @@ public class OpenEggSceneController : MonoBehaviour {
 		if(m_godRaysFX != null) {
 			m_godRaysFX.StopFX();
 		}
-		
+
+		if(m_goldenFragmentsSwapFX != null) {
+			m_goldenFragmentsSwapFX.Stop();
+		}
+
 		for(int i = 0; i < m_openFX.Length; i++) {
 			if(m_openFX[i] != null) {
 				m_openFX[i].Stop(true);
@@ -259,6 +277,7 @@ public class OpenEggSceneController : MonoBehaviour {
 				// Show a 3D preview of the pet
 				m_rewardView = new GameObject("RewardView");
 				m_rewardView.transform.SetParentAndReset(m_rewardAnchor);	// Attach it to the anchor and reset transformation
+				m_rewardView.transform.DOBlendableRotateBy(Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetRecyclable(true);	// Infinite rotation!
 
 				// Use a PetLoader to simplify things
 				MenuPetLoader loader = m_rewardView.AddComponent<MenuPetLoader>();
@@ -267,14 +286,14 @@ public class OpenEggSceneController : MonoBehaviour {
 
 				// Animate it
 				seq.AppendInterval(0.05f)	// Initial delay
-					.Append(m_rewardView.transform.DOScale(0f, 0.5f).From().SetRecyclable(true).SetEase(Ease.OutBack))
-					.Join(DOVirtual.DelayedCall(
+					.Append(m_rewardView.transform.DOScale(0f, 0.5f).From().SetRecyclable(true).SetEase(Ease.OutBack));
+					/*.Join(DOVirtual.DelayedCall(
 						0f,
 						() => {
-							m_rewardView.transform.DOLocalRotate(m_rewardView.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetRecyclable(true);
+							m_rewardView.transform.DOBlendableRotateBy(Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetRecyclable(true);
 						},
 						false
-					));
+					));*/
 			} break;
 		}
 
@@ -282,18 +301,11 @@ public class OpenEggSceneController : MonoBehaviour {
 		if(rewardData.fragments > 0) {
 			// Select the target fragments view matching reward's rarity
 			GameObject targetFragmentsView = m_goldenFragments[(int)rewardData.rarity];
-			targetFragmentsView.transform.localRotation = Quaternion.identity;
+			targetFragmentsView.transform.DORestart();	// Restart infinite rotation tween
 
-			// Program animation
-			seq.AppendCallback(() => {
-				m_rewardView.transform.DOKill(false);	// Kill infinite rotation
-
-				// [AOC] TODO!! Trigger golden fragment animation
-			});
-
-			// Let's do a quick placeholder for now
+			// Golden fragment animation
 			// 1. Acceleration
-			seq.Append(m_rewardView.transform.DOLocalRotate(m_rewardView.transform.localRotation.eulerAngles + Vector3.up * 720f, 1f, RotateMode.FastBeyond360).SetEase(Ease.InCubic));
+			seq.Append(m_rewardView.transform.DOBlendableRotateBy(Vector3.up * 720f, 1f, RotateMode.FastBeyond360).SetEase(Ease.InCubic));
 
 			// 2. Swap
 			seq.AppendCallback(() => {
@@ -302,21 +314,16 @@ public class OpenEggSceneController : MonoBehaviour {
 				targetFragmentsView.SetActive(true);
 
 				// Show VFX to cover the swap
-				ParticleSystem openFX = m_openFX[(int)EggReward.Rarity.SPECIAL];
-				if(openFX != null) {
-					openFX.Clear();
-					openFX.Play(true);
+				if(m_goldenFragmentsSwapFX != null) {
+					m_goldenFragmentsSwapFX.Clear();
+					m_goldenFragmentsSwapFX.Play(true);
 				}
 
 			});
 
-			// 3. Slow down
-			seq.Append(targetFragmentsView.transform.DOLocalRotate(targetFragmentsView.transform.localRotation.eulerAngles + Vector3.up * 720f, 2f, RotateMode.FastBeyond360).SetEase(Ease.OutCubic));
-
-			// 4. Final infinite turn around
-			seq.AppendCallback(() => {
-				targetFragmentsView.transform.DOLocalRotate(targetFragmentsView.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetRecyclable(true);
-			});
+			// 3. Golden piece initial inertia
+			// We can mix it with the infinite rotation animation thanks to the Blendable tween type! ^_^
+			seq.Append(targetFragmentsView.transform.DOBlendableRotateBy(Vector3.up * 720f, 2f, RotateMode.FastBeyond360).SetEase(Ease.OutCubic));
 		}
 
 		// If the reward is being replaced by coins, show feedback (works for any type of reward)

@@ -20,7 +20,7 @@ public class HungryLetter : MonoBehaviour
 	private Collider m_collider;
 	private HungryLettersManager m_letterManager;
 	private ParticleSystem m_particle;
-	private MapMarker m_mapMarker;
+	private HungryLetterMapMarker m_mapMarker;
 
 	//------------------------------------------------------------
 	// Public Properties:
@@ -39,7 +39,7 @@ public class HungryLetter : MonoBehaviour
 		m_collider = GetComponent<Collider>();
 		Assert.Fatal(m_collider != null);
 		m_particle = GetComponent<ParticleSystem>();
-		m_mapMarker = GetComponent<MapMarker>();
+		m_mapMarker = GetComponentInChildren<HungryLetterMapMarker>();
 	}
 
 	protected void OnCollisionEnter(Collision coll)
@@ -75,6 +75,10 @@ public class HungryLetter : MonoBehaviour
 		m_letterManager = manager;
 		cachedTransform.parent = container;
 		cachedTransform.localPosition = Vector3.zero;
+		if ( m_mapMarker != null)
+		{
+			m_mapMarker.OnUpdateMarkerStatus();
+		}
 	}
 
 	public void ChangeLayers()
