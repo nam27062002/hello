@@ -97,6 +97,13 @@ namespace AI {
 
 			protected override void OnUpdate() {	
 
+				// if eating move forward only
+				if ( m_eatBehaviour != null && m_eatBehaviour.IsEating() )
+				{
+					m_pilot.SlowDown(true);
+					return;
+				}
+
 				if (m_targetMachine != null) {
 					if ( !m_targetMachine.CanBeBitten()) {
 						m_target = null;
@@ -126,48 +133,39 @@ namespace AI {
 				}
 									
 				if (m_target != null && m_target.gameObject.activeInHierarchy) {
-
-					// if eating move forward only
-					if ( m_eatBehaviour != null && m_eatBehaviour.IsEating() )
+					m_pilot.SlowDown(false);
+					// if not eating check chase timeout
+					m_timer += Time.deltaTime;
+					if ( m_timer >= m_data.chaseTimeout )
 					{
-						// m_pilot.GoTo( m_machine.transform.position + m_machine.transform.forward * m_data.speed * 0.5f);
-						m_pilot.SlowDown(true);
+						m_transitionParam[0] = m_data.m_cooldown.GetRandom();
+						Transition(OnChaseTimeOut, m_transitionParam);
 					}
 					else
 					{
-						m_pilot.SlowDown(false);
-						// if not eating check chase timeout
-						m_timer += Time.deltaTime;
-						if ( m_timer >= m_data.chaseTimeout )
-						{
-							m_transitionParam[0] = m_data.m_cooldown.GetRandom();
-							Transition(OnChaseTimeOut, m_transitionParam);
-						}
-						else
-						{
-							Vector3 pos;
-							// Chase
-							if (m_targetEntity != null) {
-								pos = m_targetEntity.circleArea.center;
-								/*
-								if (m_targetMachine != null)
+						Vector3 pos;
+						// Chase
+						if (m_targetEntity != null) {
+							pos = m_targetEntity.circleArea.center;
+							/*
+							if (m_targetMachine != null)
+							{
+								if ( Vector3.Dot( m_pilot.direction, m_targetMachine.direction) > 0 )
 								{
-									if ( Vector3.Dot( m_pilot.direction, m_targetMachine.direction) > 0 )
-									{
-										pos += (m_targetMachine.velocity * Time.deltaTime) * 2;	
-									}
+									pos += (m_targetMachine.velocity * Time.deltaTime) * 2;	
 								}
-								*/
-							} else {
-								pos = m_target.position;
 							}
-							float magnitude = (pos - m_pilot.transform.position).sqrMagnitude;
-							if ( magnitude < m_speed * 0.25f ) // !!!
-								magnitude = m_speed * 0.25f;
-							m_pilot.SetMoveSpeed(Mathf.Min( m_speed, magnitude));
-							m_pilot.GoTo(pos);
+							*/
+						} else {
+							pos = m_target.position;
 						}
+						float magnitude = (pos - m_pilot.transform.position).sqrMagnitude;
+						if ( magnitude < m_speed * 0.25f ) // !!!
+							magnitude = m_speed * 0.25f;
+						m_pilot.SetMoveSpeed(Mathf.Min( m_speed, magnitude));
+						m_pilot.GoTo(pos);
 					}
+					
 
 				} else {
 					m_transitionParam[0] = m_data.m_cooldown.GetRandom();
