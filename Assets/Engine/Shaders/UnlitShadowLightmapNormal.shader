@@ -149,11 +149,13 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow + Normal Map"
 					#endif
 					fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
 
-					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-					return col + (specular * specMask * _LightColor0);
+					col = col + (specular * specMask * _LightColor0);
+//					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+					HG_DEPTH_ALPHA(i, col)
+					return col;
 				}
 			ENDCG
 		}
 	}
-	Fallback "Hungry Dragon/VertexLit"
+//	Fallback "Hungry Dragon/VertexLit"
 }

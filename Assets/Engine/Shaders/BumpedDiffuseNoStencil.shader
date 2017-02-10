@@ -112,11 +112,12 @@ Shader "Hungry Dragon/Bumped Diffuse no stencil (Spawners)"
 //				col = (diffuse + fixed4(i.vLight, 1)) * col;
 //				col = lerp(col, _FresnelColor, fresnel * _FresnelColor.a * 4.0);
 
-				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+//				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+				HG_DEPTH_ALPHA(i, col)
 				return col;
 			}
 			ENDCG
 		}
 	}
-	Fallback "Hungry Dragon/VertexLit"
+//	Fallback "Hungry Dragon/VertexLit"
 }

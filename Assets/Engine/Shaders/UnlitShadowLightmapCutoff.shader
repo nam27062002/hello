@@ -100,6 +100,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Cutoff (On Line Decorations)"
 
 
 //					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+					HG_DEPTH_ALPHA(i, col)
 
 					// col = fixed4(1,1,1,1) * i.fogCoord;
 					return col;
@@ -108,5 +109,5 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Cutoff (On Line Decorations)"
 		}
 	}
 
-	Fallback "Hungry Dragon/VertexLit"
+//	Fallback "Hungry Dragon/VertexLit"
 }

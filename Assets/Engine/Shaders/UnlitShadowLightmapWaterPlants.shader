@@ -106,7 +106,8 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decora
 					HG_APPLY_FOG(i, col);	// Fog
 
 
-					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+//					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+					HG_DEPTH_ALPHA(i, col)
 
 					// col = fixed4(1,1,1,1) * i.fogCoord;
 					return col;
@@ -115,5 +116,5 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decora
 		}
 	}
 
-	Fallback "Hungry Dragon/VertexLit"
+//	Fallback "Hungry Dragon/VertexLit"
 }
