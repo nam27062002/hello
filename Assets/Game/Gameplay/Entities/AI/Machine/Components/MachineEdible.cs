@@ -37,7 +37,7 @@ namespace AI {
 			if (_rewardsPlayer) {
 				// Get the reward to be given from the entity
 				Reward reward = (m_entity as Entity).GetOnKillReward(false);
-
+				reward.alcohol = 0;
 				// Dispatch global event
 				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_pilot.transform, reward);
 			}
