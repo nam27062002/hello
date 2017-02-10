@@ -103,6 +103,7 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 			} break;
 
 			case Type.GOLDEN_FRAGMENTS: {
+				this.gameObject.SetActive(!EggManager.allGoldenEggsCollected);	// Hide if all golden eggs have been collected
 				text = LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(EggManager.goldenEggFragments), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments));
 				iconString = UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT;
 			} break;
