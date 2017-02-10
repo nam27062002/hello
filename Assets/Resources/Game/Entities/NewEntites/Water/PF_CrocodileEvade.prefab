@@ -525,7 +525,7 @@ GameObject:
   - component: {fileID: 114650032960384754}
   - component: {fileID: 114185850136965936}
   m_Layer: 23
-  m_Name: PF_Crocodile
+  m_Name: PF_CrocodileEvade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1167,7 +1167,7 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 2.5
-    m_attackPausesJump: 1
+    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 360
     m_faceDirection: 1
@@ -1183,9 +1183,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 0
-    m_sightRadius: 7
-    m_maxRadius: 5
-    m_minRadius: 3
+    m_sightRadius: 16
+    m_maxRadius: 14
+    m_minRadius: 5
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -1194,8 +1194,8 @@ MonoBehaviour:
       min: 0.9
       max: 1.1
     m_senseDelay:
-      min: 0.5
-      max: 1
+      min: 0
+      max: 0
   m_onSpawnSound: 
   m_rotateToMouth: 0
   m_inflammable:
@@ -1218,17 +1218,17 @@ MonoBehaviour:
   m_blendSpeedFactor: 1
   m_energy: 10
   m_energyDrainSec: 1
-  m_brainResource: {fileID: 11400000, guid: 4f9b057e9309c47f588d24b01c78688b, type: 2}
+  m_brainResource: {fileID: 11400000, guid: 49187d524b36743a7ba28d0b7c3542f6, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":2.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"retreatTime":{"min":4,"max":6},"damage":5,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":5,"panicSpeed":8,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":20,"arrivalRadius":0.25,"timeout":{"min":3,"max":4},"onFailShutdown":{"min":5,"max":7},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"changeLeaderTime":0,"separation":2,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
-  m_databaseKey: PF_Crocodile
+  m_serializedJson: '[{"speed":1.5,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":20,"panicSpeed":25,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":0,"separation":2,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":1,"catchUpSpeed":10,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
+  m_databaseKey: PF_CrocodileEvade
   m_preciseDestArrival: 1
-  m_avoidDistanceAttenuation: 2.5
+  m_avoidDistanceAttenuation: 7
   m_avoidCollisions: 1
   m_avoidWater: 0
 --- !u!114 &114374007850489848
@@ -1256,7 +1256,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_walkSpeed: 5
-  m_runSpeed: 5
+  m_runSpeed: 8
   m_minPlaybakSpeed: 1
   m_maxPlaybakSpeed: 2
   m_onBoostMaxPlaybackSpeed: 0
