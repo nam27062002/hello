@@ -450,17 +450,21 @@ public class WeiboSocialInterface : ISocialInterface
 			{
 				if (error == null && response != null)
 				{
-#if !PRODUCTION
-					string responseString = Encoding.Unicode.GetString(response, 0, response.Length);
-					Debug.Log("Response from Weibo SharePicture: " + responseString);
-#endif
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                    {
+                        string responseString = Encoding.Unicode.GetString(response, 0, response.Length);
+                        Debug.Log("Response from Weibo SharePicture: " + responseString);
+                    }
+
 					onShare(true);
 				}
 				else
 				{
-#if !PRODUCTION
-					Debug.Log("Error from Weibo SharePicture: " + error.message);
-#endif
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                    {
+                        Debug.Log("Error from Weibo SharePicture: " + error.message);
+                    }
+
 					onShare(false);
 				}
 			});
@@ -480,25 +484,29 @@ public class WeiboSocialInterface : ISocialInterface
 				switch (request.State)
 				{
 					case HTTPRequestStates.Finished:
-#if !PRODUCTION
-						if (response != null)
-						{
-							Debug.Log("Response from Weibo SharePicture: " + response.DataAsText);
-						}
-#endif
+                        if (FeatureSettingsManager.IsDebugEnabled)
+                        {
+                            if (response != null)
+                            {
+                                Debug.Log("Response from Weibo SharePicture: " + response.DataAsText);
+                            }
+                        }
+
 						onShare(true);
 						break;
 					case HTTPRequestStates.Error:
 					case HTTPRequestStates.Aborted:
 					case HTTPRequestStates.ConnectionTimedOut:
 					case HTTPRequestStates.TimedOut:
-#if !PRODUCTION
-						Debug.Log("Failed sharepicture: " + request.State.ToString());
-						if (response != null)
-						{
-							Debug.Log("Failed sharepicture: " + response.StatusCode + " - " + response.Data + ": " + response.DataAsText);
-						}
-#endif
+                        if (FeatureSettingsManager.IsDebugEnabled)
+                        {
+                            Debug.Log("Failed sharepicture: " + request.State.ToString());
+                            if (response != null)
+                            {
+                                Debug.Log("Failed sharepicture: " + response.StatusCode + " - " + response.Data + ": " + response.DataAsText);
+                            }
+                        }
+
 						onShare(false);
 						break;
 

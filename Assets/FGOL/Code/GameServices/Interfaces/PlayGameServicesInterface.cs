@@ -199,13 +199,5 @@ public class PlayGameServicesInterface : GameServicesInterface
             }
         }
     }
-
-#if !PRODUCTION
-    public override void ResetAchievements()
-    {
-        Debug.LogError("Android Achievements cannot be reset this way");
-    }
-#endif
-
 }
 #endif

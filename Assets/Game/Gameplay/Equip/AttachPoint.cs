@@ -12,17 +12,6 @@ public class AttachPoint : MonoBehaviour {
 		get { return m_item; }
 	}
 
-	public void Equip(Equipable _item) {
-		// store the item related to this Attach Point
-		m_item = _item;
-
-		// check type of item
-		// use correct method to equip this item
-		switch (m_item.type) { 
-			case Equipable.Type.Pet:		EquipPet(); 		break;
-			case Equipable.Type.Accessory:	EquipAccessory();	break;
-		}
-	}
 
 	public void Unequip(bool _destroyItem) {
 		if(m_item == null) return;
@@ -37,7 +26,8 @@ public class AttachPoint : MonoBehaviour {
 	//----------------------------------------------------------//
 
 
-	private void EquipPet() {
+	public void EquipPet(Equipable _pet) {
+		m_item = _pet;
 		m_item.transform.position = transform.position;
 
 		AI.Machine machine = m_item.GetComponent<AI.Machine>();
@@ -59,7 +49,8 @@ public class AttachPoint : MonoBehaviour {
 		}
 	}
 
-	private void EquipAccessory() {
+	public void EquipAccessory( Equipable _accesory ) {
+		m_item = _accesory;
 		m_item.transform.parent = transform;
 		m_item.transform.localPosition = Vector3.zero;
 	}

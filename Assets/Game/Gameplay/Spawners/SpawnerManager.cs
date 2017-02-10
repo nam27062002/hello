@@ -65,17 +65,15 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		m_spawners = new List<ISpawner>();
 		m_spawning = new List<ISpawner>();
 
-#if !PRODUCTION
-        Debug_Awake();
-#endif
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Debug_Awake();
     }
 
     protected override void OnDestroy() {
         base.OnDestroy();
 
-#if !PRODUCTION
-        Debug_OnDestroy();
-#endif      
+        if (ApplicationManager.IsAlive && FeatureSettingsManager.IsDebugEnabled)
+            Debug_OnDestroy();
     }
 
     /// <summary>
@@ -341,9 +339,9 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	public void EnableSpawners() {
         // Set flag
         m_enabled = true;
-#if !PRODUCTION
-        Debug_SetActive();
-#endif
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Debug_SetActive();
     }
 
 	/// <summary>

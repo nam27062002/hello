@@ -109,9 +109,8 @@ public class WorldFeedbackSpawner : MonoBehaviour {
         Cache_Init();
         Offsets_Init();
 
-#if !PRODUCTION
-        Debug_Awake();
-#endif
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Debug_Awake();
     }
 
     /// <summary>
@@ -146,9 +145,9 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-#if !PRODUCTION
-        Debug_OnDestroy();
-#endif
+        if (ApplicationManager.IsAlive && FeatureSettingsManager.IsDebugEnabled)
+            Debug_OnDestroy();
+
         Clear();
     }
 
