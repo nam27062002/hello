@@ -261,10 +261,12 @@ public class GameCamera : MonoBehaviour
         m_expOne = Mathf.Exp(1.0f);
 		m_bossCamMode = BossCamMode.NoBoss;
 		m_state = State.INTRO;
-#if !PRODUCTION
-        // gameObject.AddComponent<RenderProfiler>();	// TODO (MALH): Recover this
-        Debug_Awake();
-#endif
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            // gameObject.AddComponent<RenderProfiler>();	// TODO (MALH): Recover this
+            Debug_Awake();
+        }
 
         // We can't setup post process effects here because FeatureSettings means to be ready first. Since Gamecamera and FeatureSettings are initialized at the same time when the game is
         // launched from the level editor, we need to synchronize this stuff
@@ -360,8 +362,7 @@ public class GameCamera : MonoBehaviour
 		m_transform.position = m_position;
 	}
 
-	void OnDestroy()
-	{
+	void OnDestroy() {
 		// Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		// Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		// Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
@@ -375,9 +376,8 @@ public class GameCamera : MonoBehaviour
 
 		InstanceManager.gameCamera = null;
 
-#if !PRODUCTION
-        Debug_OnDestroy();
-#endif
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Debug_OnDestroy();
     }
 
     private void OnDebugSettingChanged(string _id) {

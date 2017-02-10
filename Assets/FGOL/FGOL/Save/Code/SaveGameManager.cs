@@ -965,40 +965,42 @@ namespace FGOL.Save
         #region Debug Methods
         public void CorruptedSave(string userID)
         {
-#if !PRODUCTION
-            string savePath = SaveUtilities.GetSavePath(userID);
-
-            Debug.Log("SaveGameManager (CorruptedSave) :: Corrupting save at path - " + savePath);
-
-            using(FileStream fs = new FileStream(savePath, FileMode.Open, FileAccess.ReadWrite))
+            if (FeatureSettingsManager.IsDebugEnabled)
             {
-                byte[] shit = Encoding.UTF8.GetBytes("Holy shit govenor! I'm corrupting your save file bruv! What ya gonna do bout it? Get a cheeky Nandos?");
+                string savePath = SaveUtilities.GetSavePath(userID);
 
-                fs.Seek(0, SeekOrigin.Begin);
-                fs.Write(shit, 0, shit.Length);
-                fs.Flush();
-                fs.Close();
+                Debug.Log("SaveGameManager (CorruptedSave) :: Corrupting save at path - " + savePath);
 
-                Debug.Log("SaveGameManager (CorruptedSave) :: Save Corrupted");
+                using (FileStream fs = new FileStream(savePath, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    byte[] shit = Encoding.UTF8.GetBytes("Holy shit govenor! I'm corrupting your save file bruv! What ya gonna do bout it? Get a cheeky Nandos?");
+
+                    fs.Seek(0, SeekOrigin.Begin);
+                    fs.Write(shit, 0, shit.Length);
+                    fs.Flush();
+                    fs.Close();
+
+                    Debug.Log("SaveGameManager (CorruptedSave) :: Save Corrupted");
+                }
             }
-#endif
         }
 
         public void DeleteLocalSave(string userID)
         {
-#if !PRODUCTION
-            string savePath = SaveUtilities.GetSavePath(userID);
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                string savePath = SaveUtilities.GetSavePath(userID);
 
-            try
-            {
-                Debug.Log("Delete save at path: " + savePath);
-                File.Delete(savePath);
+                try
+                {
+                    Debug.Log("Delete save at path: " + savePath);
+                    File.Delete(savePath);
+                }
+                catch (Exception e)
+                {
+                    DebugUtils.LogException(e);
+                }
             }
-            catch(Exception e) 
-            {
-                DebugUtils.LogException(e);
-            }
-#endif
         }
         #endregion
     }

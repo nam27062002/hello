@@ -267,19 +267,25 @@ abstract public class TouchControls : MonoBehaviour {
 
     private void UpdateBoostWithHardPushEnabled()
     {
-#if PRODUCTION                
-        m_boostWithHardPush = BOOST_WITH_HARD_PUSH_DEFAULT_ENABLED;
-#else
-        m_boostWithHardPush = Prefs.GetBoolPlayer(DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH);        
-#endif
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            m_boostWithHardPush = Prefs.GetBoolPlayer(DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH);
+        }
+        else
+        {
+            m_boostWithHardPush = BOOST_WITH_HARD_PUSH_DEFAULT_ENABLED;
+        }
     }
 
     private void UpdateBoostWithHardPushThreshold()
     {
-#if PRODUCTION        
-        m_boostWithHardPushThreshold = BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD;
-#else        
-        m_boostWithHardPushThreshold = Prefs.GetFloatPlayer(DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD);
-#endif
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            m_boostWithHardPushThreshold = Prefs.GetFloatPlayer(DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD);
+        }
+        else
+        {
+            m_boostWithHardPushThreshold = BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD;
+        }            
     }
 }

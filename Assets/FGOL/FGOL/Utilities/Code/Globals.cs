@@ -12,34 +12,14 @@ public static class Globals
         set { s_debugOverrideVersion = value; }
     }
 #endif
-
-    public enum Environment
-    {
-        development,
-        preproduction,
-        production
-    }
-
+    
     public enum Platform
     {
         iOS,
         Android,
         Amazon,
         Unknown
-    }
-
-    public static Environment GetEnvironment()
-	{
-        Environment environment = Environment.development;
-		
-#if PREPRODUCTION
-		environment = Environment.preproduction;
-#elif PRODUCTION
-		environment = Environment.production;
-#endif
-
-        return environment;
-	}
+    }   
 
     public static Platform GetPlatform()
     {
@@ -63,14 +43,15 @@ public static class Globals
     public static string GetApplicationVersion()
     {        
         string version = FGOL.Plugins.Native.NativeBinding.Instance.GetBundleVersion();
-
 #if !PRODUCTION
-        if (!string.IsNullOrEmpty(s_debugOverrideVersion))
+        if (FeatureSettingsManager.IsDebugEnabled)
         {
-            version = s_debugOverrideVersion;
+            if (!string.IsNullOrEmpty(s_debugOverrideVersion))
+            {
+                version = s_debugOverrideVersion;
+            }
         }
 #endif
-
         return version;
     }
 

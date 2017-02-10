@@ -185,13 +185,21 @@ namespace FGOL.Save
             return saveState;
         }
 
+        /// <summary>
+        /// Returns whether or not the data are stored clear.
+        /// </summary>
+        /// <returns></returns>
         public bool IsStoredClear()
         {
-#if PRODUCTION
-            return false;
-#else
-            return false;
-#endif
+            // It should always return false except when debugging that can be changed to true
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                return false;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public MemoryStream SaveToStream()

@@ -80,13 +80,6 @@ public class AmazonGameServicesInterface : GameServicesInterface
         }
     }
 
-#if !PRODUCTION
-    public override void ResetAchievements()
-    {
-        Debug.LogError("Amazon achievements can't be reset!");
-    }
-#endif
-
     public override void ShowAchievements()
     {
         if (IsLoggedIn())

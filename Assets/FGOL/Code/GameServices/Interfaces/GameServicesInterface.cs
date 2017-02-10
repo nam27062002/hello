@@ -86,8 +86,4 @@ public abstract class GameServicesInterface
     public abstract void ShowAchievements();
     public abstract void PostScore(string leaderboardID, long score);
     public abstract void ShowLeaderboard(string leaderboardID = null);
-
-#if !PRODUCTION
-    public abstract void ResetAchievements();
-#endif
 }
