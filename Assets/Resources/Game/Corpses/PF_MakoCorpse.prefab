@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 33346279377845552}
   - component: {fileID: 23679569158511812}
   - component: {fileID: 54767434605471512}
-  - component: {fileID: 135401414068184778}
+  - component: {fileID: 136943305061760994}
   m_Layer: 8
   m_Name: Mako_Gibs2
   m_TagString: Untagged
@@ -121,7 +121,7 @@ GameObject:
   - component: {fileID: 23558431720385428}
   - component: {fileID: 95154135435405634}
   - component: {fileID: 54306378483639954}
-  - component: {fileID: 135416686904689648}
+  - component: {fileID: 136872431877662958}
   m_Layer: 8
   m_Name: Mako_Gibs1
   m_TagString: Untagged
@@ -176,7 +176,7 @@ GameObject:
   - component: {fileID: 33507547084792936}
   - component: {fileID: 23525845819550988}
   - component: {fileID: 54262679174492774}
-  - component: {fileID: 135578164006686976}
+  - component: {fileID: 136884605924783570}
   m_Layer: 8
   m_Name: Mako_Gibs5
   m_TagString: Untagged
@@ -211,7 +211,7 @@ GameObject:
   - component: {fileID: 33952759251999338}
   - component: {fileID: 23127392229961896}
   - component: {fileID: 54423186462007274}
-  - component: {fileID: 135093330913665684}
+  - component: {fileID: 136613461556807606}
   m_Layer: 8
   m_Name: Mako_Gibs3
   m_TagString: Untagged
@@ -381,7 +381,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1776473419349764}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.518, y: -4.0002, z: 3.0002}
+  m_LocalPosition: {x: -3.2821493, y: 0.2914424, z: -3.068894}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4606065861903378}
@@ -800,18 +800,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Mako_Gibs5
   m_parentRoot: {fileID: 4606065861903378}
---- !u!135 &135093330913665684
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1842829747448838}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.85449207
-  m_Center: {x: -2.0701563, y: 0.0068952236, z: 0.08410113}
 --- !u!135 &135331300463223210
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -822,22 +810,23 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.8220109
+  m_Radius: 0.63
   m_Center: {x: -0.9781338, y: 0.0034324187, z: -0.011879118}
---- !u!135 &135401414068184778
-SphereCollider:
+--- !u!136 &136613461556807606
+CapsuleCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1417806802591808}
+  m_GameObject: {fileID: 1842829747448838}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.1446941
-  m_Center: {x: 1.919723, y: 0.028147094, z: 0.07394319}
---- !u!135 &135416686904689648
-SphereCollider:
+  m_Radius: 0.37
+  m_Height: 1.94
+  m_Direction: 0
+  m_Center: {x: -2.0701554, y: 0.0068962965, z: 0.0841014}
+--- !u!136 &136872431877662958
+CapsuleCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -845,11 +834,12 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.2966129
-  m_Center: {x: 0.2589955, y: -0.47921154, z: 0.24071288}
---- !u!135 &135578164006686976
-SphereCollider:
+  m_Radius: 0.73
+  m_Height: 2.43
+  m_Direction: 0
+  m_Center: {x: 0.25899646, y: -0.03, z: 0.09}
+--- !u!136 &136884605924783570
+CapsuleCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -857,6 +847,20 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.9423683
-  m_Center: {x: 0.35803646, y: 0.57287693, z: -0.19115928}
+  m_Radius: 0.62
+  m_Height: 2.5
+  m_Direction: 0
+  m_Center: {x: 0.41, y: 0.18, z: 0.07}
+--- !u!136 &136943305061760994
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1417806802591808}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.62
+  m_Height: 2.71
+  m_Direction: 0
+  m_Center: {x: 1.919724, y: 0.028148167, z: 0.07394346}
