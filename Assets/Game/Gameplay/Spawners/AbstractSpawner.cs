@@ -303,12 +303,18 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     public virtual AreaBounds area { get; set; }
     protected virtual void RegisterInEntityManager(IEntity e)
     {
-        EntityManager.instance.RegisterEntity(e as Entity);
+        if (EntityManager.instance != null)
+        {
+            EntityManager.instance.RegisterEntity(e as Entity);
+        }
     }
 
     protected virtual void UnregisterFromEntityManager(IEntity e)
     {
-        EntityManager.instance.UnregisterEntity(e as Entity);
+        if (EntityManager.instance != null)
+        {
+            EntityManager.instance.UnregisterEntity(e as Entity);
+        }
     }
 
     protected virtual void OnStart() {}

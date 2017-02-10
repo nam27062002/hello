@@ -39,12 +39,4 @@ public class NullGameServicesInterface : GameServicesInterface
     public override void ShowLeaderboard(string leaderboardID = null)
     {
     }
-
-#if !PRODUCTION
-    public override void ResetAchievements()
-    {
-        Debug.LogError("you're in the editor aren't you? silly billy");
-    }
-#endif
-
 }
