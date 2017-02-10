@@ -41,8 +41,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
         CurrentQualityIndex = -1;
         Shaders_CurrentKey = null;
-        State = EState.WaitingForRules;
-        m_deviceDefaultFeatureSettingsJSON = null;
+        State = EState.WaitingForRules;        
 
         m_deviceQualityManager = new DeviceQualityManager();       
     }
@@ -492,21 +491,30 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
         DefinitionsManager defManager = DefinitionsManager.SharedInstance;
 
-        // All profiles are loaded from rules           
+        // All profiles and configurationjs collections are loaded from rules                           
         FeatureSettings featureSettings = FeatureSettingsHelper;    // Helper
         JSONNode settingsJSON;
         Dictionary<string, DefinitionNode> definitions = defManager.GetDefinitions(DefinitionsCategory.FEATURE_PROFILE_SETTINGS);
         foreach (KeyValuePair<string, DefinitionNode> pair in definitions)
-        {
+        {                        
             settingsJSON = pair.Value.ToJSON();
             settingsJSON = FormatJSON(settingsJSON);
             featureSettings.FromJSON(settingsJSON);
-            m_deviceQualityManager.Profiles_AddData(featureSettings.Profile, featureSettings.Rating, settingsJSON);
+
+            // Checks if it's a configuration collection or a profile to store it in the right place
+            if (string.IsNullOrEmpty(featureSettings.Profile))
+            {
+                Configs_AddConfig(pair.Key, settingsJSON);
+            }
+            else
+            {                               
+                m_deviceQualityManager.Profiles_AddData(featureSettings.Profile, featureSettings.Rating, settingsJSON);
+            }
         }
 
         // In Unity editor feature settings for all devices are parsed to identify errors
-#if UNITY_EDITOR
-        string profileName;
+#if UNITY_EDITOR     
+        string profileName;     
         string validProfileNames = DebugUtils.ListToString(m_deviceQualityManager.Profiles_Names);
         definitions = defManager.GetDefinitions(DefinitionsCategory.FEATURE_DEVICE_SETTINGS);
         foreach (KeyValuePair<string, DefinitionNode> pair in definitions)
@@ -524,7 +532,20 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                 }
             }
         }
-#endif
+#endif       
+
+        // Banned settings are stored in Configs_Catalog
+        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.FEATURE_DEVICE_SETTINGS, CONFIG_SKU_BANNED);
+        if (def != null)
+        {
+            JSONNode json = def.ToJSON();
+            if (json != null)
+            {
+                FormatJSON(json);
+            }
+
+            Configs_AddConfig(CONFIG_SKU_BANNED, json);
+        }
 
         // The device rating is calculated
         float rating = Device_CalculateRating();
@@ -677,15 +698,24 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Device_CurrentFeatureSettings.Rating = rating;
 #endif
 
-        // Default settings are applied. These default settings are used to override the profile settings and they can be override by the particular settings for this device.
-        // These default settings are used with two purposes:
-        // 1)To define the same value for all profiles, typically for settings that are not relevant for the performance
-        // 2)To disable a feature that is not working properly for some devices. The approach is to disable the broken feature for all devices by setting that feature to false in the "default" 
-        //   entry and then enable it device by device(after testing it on the actual devices) by setting that feature to true on the entry corresponding to that device in this featureDeviceSettings.xml
-        JSONNode defaultJSON = GetDeviceDefaultFeatureSettingsAsJSON();
-        if (defaultJSON != null)
+        // Debug or release settings are applied 
+        string configSku = CONFIG_SKU_RELEASE;
+#if !PRODUCTION
+        configSku = CONFIG_SKU_DEBUG;
+#endif
+        JSONNode configJSON = Configs_GetConfig(configSku);
+        if (configJSON != null)
         {
-            Device_CurrentFeatureSettings.OverrideFromJSON(defaultJSON);
+            Device_CurrentFeatureSettings.OverrideFromJSON(configJSON);
+        }
+
+        // Banned settings are applied. These settings are used to override the profile settings and they can be override by the particular settings for this device.
+        // Its purpose is to disable a feature that has been proven to be problematic on several devices. In this case the feature is banned by default for all devices and it has to be
+        // enabled device by device (after testing it on the actual devices) on their corresponding entries in featureDeviceSettings.xml        
+        JSONNode bannedJSON = Configs_GetConfig(CONFIG_SKU_BANNED);
+        if (bannedJSON != null)
+        {
+            Device_CurrentFeatureSettings.OverrideFromJSON(bannedJSON);
         }
 
         // We need to override the default configuration of the profile with the particular configuration defined for the device, if there's one
@@ -769,8 +799,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             returnValue = new JSONClass();
             foreach (KeyValuePair<string, JSONNode> pair in jsonClass.m_Dict)
             {
-                if (pair.Key == "iOSGeneration" || // used for making easier to identify a device
-                    pair.Key == "mngd")            // used on server side to identify devices that have been managed
+                if (
+                    pair.Key == "iOSGeneration" || // used for making easier to identify a device
+                    pair.Key == "mngd" ||          // used on server side to identify devices that have been managed
+                    pair.Key == "comments"         // used on server to store some comments about the settings managed for a device
+                    )            
                     continue;
                              
                 // Empty keys or keys with "as_profile" as a value need to be ignored
@@ -812,25 +845,50 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }        
 
         return returnValue;
-    }
+    }    
+    #endregion
 
-    private JSONNode m_deviceDefaultFeatureSettingsJSON;
-    private JSONNode GetDeviceDefaultFeatureSettingsAsJSON()
+    #region configs
+    // Region responsible for storing some special configurations such as "debug" or "release" settings
+
+    /// <summary>
+    /// Configuration with the settings banned for all devices by default.
+    /// </summary>
+    private const string CONFIG_SKU_BANNED = "banned";
+
+    /// <summary>
+    /// Configuration with the settings for debug mode
+    /// </summary>
+    private const string CONFIG_SKU_DEBUG = "debug";
+
+    /// <summary>
+    /// Configuration with the settings for release mode
+    /// </summary>
+    private const string CONFIG_SKU_RELEASE = "release";
+
+    private Dictionary<string, JSONNode> Configs_Catalog;
+
+    private void Configs_AddConfig(string sku, JSONNode json)
     {
-        if (m_deviceDefaultFeatureSettingsJSON == null)
+        if (Configs_Catalog == null)
         {
-            DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.FEATURE_DEVICE_SETTINGS, "default");
-            if (def != null)
-            {
-                m_deviceDefaultFeatureSettingsJSON = def.ToJSON();
-                if (m_deviceDefaultFeatureSettingsJSON != null)
-                {
-                    FormatJSON(m_deviceDefaultFeatureSettingsJSON);
-                }
-            }
+            Configs_Catalog = new Dictionary<string, JSONNode>();
         }
 
-        return m_deviceDefaultFeatureSettingsJSON;
+        if (Configs_Catalog.ContainsKey(sku))
+        {
+            LogWarning("Configuration <" + sku + "> has already been added to the catalog of configurations");
+            Configs_Catalog[sku] = json;
+        }
+        else
+        {
+            Configs_Catalog.Add(sku, json);
+        }
+    }
+
+    private JSONNode Configs_GetConfig(string sku)
+    {
+        return (Configs_Catalog != null && Configs_Catalog.ContainsKey(sku)) ? Configs_Catalog[sku] : null;
     }
     #endregion
 

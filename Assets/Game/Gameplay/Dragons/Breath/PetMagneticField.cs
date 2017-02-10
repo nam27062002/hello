@@ -6,20 +6,15 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 
 	[SerializeField] private ParticleData m_explosionParticle;
 
-	CircleArea2D m_area;
-
 	private Transform m_oldParent = null;
 	private LayerMask m_colliderMask;
 	private ProjectileMotion m_pMotion;
 	private bool m_hasBeenShot;
-	private Rect m_rect;
 
 
 	// Use this for initialization
 	void Start () 
 	{
-		m_area = GetComponent<CircleArea2D>();
-		m_rect = new Rect();
 		if (m_explosionParticle.IsValid()) {
 			ParticleManager.CreatePool(m_explosionParticle, 5);
 		}
@@ -114,7 +109,7 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 	public void Explode( bool _hitsDragon )
 	{
 		if (m_explosionParticle.IsValid()) {
-			GameObject explosion = ParticleManager.Spawn( m_explosionParticle, transform.position);
+			ParticleManager.Spawn( m_explosionParticle, transform.position);
 		}
 		gameObject.SetActive(false);
 		PoolManager.ReturnInstance( gameObject );

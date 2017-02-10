@@ -307,21 +307,23 @@ public class OpenEggSceneController : MonoBehaviour {
 			// 1. Acceleration
 			seq.Append(m_rewardView.transform.DOBlendableRotateBy(Vector3.up * 720f, 1f, RotateMode.FastBeyond360).SetEase(Ease.InCubic));
 
-			// 2. Swap
-			seq.AppendCallback(() => {
-				// Swap reward view with golden egg
-				m_rewardView.SetActive(false);
-				targetFragmentsView.SetActive(true);
-
-				// Show VFX to cover the swap
+			// 2. Show VFX to cover the swap
+			// We want it to launch a bit before doing the swap. To do so, use a combination of InserCallback() with the sequence's current duration.
+			seq.InsertCallback(seq.Duration() - 0.25f, () => {
 				if(m_goldenFragmentsSwapFX != null) {
 					m_goldenFragmentsSwapFX.Clear();
 					m_goldenFragmentsSwapFX.Play(true);
 				}
-
 			});
 
-			// 3. Golden piece initial inertia
+			// 3. Swap
+			seq.AppendCallback(() => {
+				// Swap reward view with golden egg
+				m_rewardView.SetActive(false);
+				targetFragmentsView.SetActive(true);
+			});
+
+			// 4. Golden piece initial inertia
 			// We can mix it with the infinite rotation animation thanks to the Blendable tween type! ^_^
 			seq.Append(targetFragmentsView.transform.DOBlendableRotateBy(Vector3.up * 720f, 2f, RotateMode.FastBeyond360).SetEase(Ease.OutCubic));
 		}

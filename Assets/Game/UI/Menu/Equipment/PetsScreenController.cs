@@ -244,7 +244,7 @@ public class PetsScreenController : MonoBehaviour {
 
 		// If we want to scroll to a pet, do it now
 		if(!string.IsNullOrEmpty(m_initialPetSku)) {
-			ScrollToPet(m_initialPetSku, 0.25f);	// Give enough time for the show animation!
+			ScrollToPet(m_initialPetSku, 0.5f);	// Give enough time for the show animation!
 			m_initialPetSku = string.Empty;
 		}
 	}

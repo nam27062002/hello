@@ -136,7 +136,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 	}
 
-	private State m_previousState = State.None;
+	private State m_previousState = State.Idle;
 
 	private Transform m_tongue;
 	private Transform m_head;
@@ -445,7 +445,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 					m_animator.SetBool("swim", true);
 					m_animator.SetBool("fly down", true);
-					if ( m_state != State.Stunned && m_state != State.Reviving){
+					if ( m_state != State.Stunned && m_state != State.Reviving && m_state != State.Latching){
 	                    m_accWaterFactor = 0.80f;
 	                    m_inverseGravityWater = 1.5f;
 						m_startParabolicPosition = transform.position;
@@ -463,7 +463,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					m_animator.SetBool("fly down", true);
                     if (!m_outerSpaceUsePhysics)
                     {
-                        if (m_state != State.Stunned && m_state != State.Reviving)
+                        if (m_state != State.Stunned && m_state != State.Reviving && m_state != State.Latching)
                         {
                             m_startParabolicPosition = transform.position;
                         }
@@ -1550,12 +1550,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		// Trigger animation
 		m_animationEventController.OnInsideWater(createsSplash);
 
-        rbody.velocity = rbody.velocity * 2.0f;// m_waterImpulseMultiplier;
-		m_impulse = rbody.velocity;
+		if ( m_state != State.Latching ) 
+		{
+	        rbody.velocity = rbody.velocity * 2.0f;// m_waterImpulseMultiplier;
+			m_impulse = rbody.velocity;
 
-
-		// Change state
-		ChangeState(State.InsideWater);
+			// Change state
+			ChangeState(State.InsideWater);
+		}
 
 		// Notify game
 		Messenger.Broadcast<bool>(GameEvents.UNDERWATER_TOGGLED, true);
@@ -1575,8 +1577,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		// Trigger animation
 		m_animationEventController.OnExitWater(createsSplash);
 
-		// Wait a second
-		ChangeState( State.ExitingWater );
+		if ( m_state != State.Latching )
+		{
+			// Wait a second
+			ChangeState( State.ExitingWater );
+		}
 
 		// Notify game
 		Messenger.Broadcast<bool>(GameEvents.UNDERWATER_TOGGLED, false);
@@ -1592,8 +1597,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_particleController.OnEnterOuterSpace();
 		}
 
-		// Change state
-		ChangeState(State.OuterSpace);
+		if ( m_state != State.Latching )
+		{
+			// Change state
+			ChangeState(State.OuterSpace);
+		}
 	}
 
 	public void EndSpaceMovement()
@@ -1606,7 +1614,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_particleController.OnExitOuterSpace();
 		}
 
-		ChangeState( State.ExitingSpace );
+		if ( m_state != State.Latching )
+		{
+			ChangeState( State.ExitingSpace );
+		}
 	}
 
 	public void StartGrabPreyMovement(AI.Machine prey, Transform _holdPreyTransform)
@@ -1642,7 +1653,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void EndLatchMovement()
 	{
-		ChangeState(State.Idle);
+		ChangeState(m_previousState);
 		m_holdPrey = null;
 		m_holdPreyTransform = null;
 		m_grab = false;
