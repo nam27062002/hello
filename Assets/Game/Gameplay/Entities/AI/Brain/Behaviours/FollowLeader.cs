@@ -17,10 +17,9 @@ namespace AI {
 				CatchUp
 			}
 
-			private FollowLeaderData m_data;
+			protected FollowLeaderData m_data;
 
 			private Vector3 m_offset;
-
 			private FollowState m_followState;
 
 
@@ -61,7 +60,8 @@ namespace AI {
 						float speedFactor = ShouldCatchUp();
 
 						m_pilot.SetMoveSpeed(Mathf.Min(m_data.catchUpSpeed, m_data.speed * speedFactor));
-						m_pilot.GoTo(leader.position);
+						m_pilot.GoTo(leader.target);
+						//m_pilot.GoTo(leader.position);
 
 						if (speedFactor <= 1f) {
 							m_pilot.SlowDown(true);
@@ -79,7 +79,8 @@ namespace AI {
 					IMachine leader = g.leader;
 					Vector3 offset = g.GetOffset(m_pilot.m_machine, 1f);
 
-					float dSqr = (leader.position - m_machine.position).sqrMagnitude;
+					//float dSqr = (leader.position - m_machine.position).sqrMagnitude;
+					float dSqr = (leader.target - m_machine.position).sqrMagnitude;
 					if (offset.sqrMagnitude > 0f)
 						return dSqr / offset.sqrMagnitude;
 					else 

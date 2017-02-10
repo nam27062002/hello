@@ -97,11 +97,33 @@ public class DragonEquip : MonoBehaviour {
 	/// <param name="_disguiseSku">The disguise to be equipped.</param>
 	public void EquipDisguise(string _disguiseSku) {		
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _disguiseSku);
-		if(def != null) {
-			SetSkin(def.GetAsString("skin"));
-		} else {
-			SetSkin(null);
+		if ( def == null)
+		{
+			def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, m_dragonSku + "_0");	
 		}
+		SetSkin( def.Get("skin") );
+
+		// Now body parts!
+		List<string> bodyParts = def.GetAsList<string>("body_parts");
+		for( int i = 0; i<bodyParts.Count; i++ )
+		{
+			if ( !string.IsNullOrEmpty(bodyParts[i]) )
+			{
+				GameObject prefabObj = Resources.Load<GameObject>("Game/Equipable/Items/" + bodyParts[i]);
+				if ( prefabObj != null )
+				{
+					GameObject objInstance = Instantiate<GameObject>(prefabObj);
+					Equipable equipable = objInstance.GetComponent<Equipable>();
+					int attackPointIdx = (int)equipable.attachPoint;
+					if ( equipable != null && attackPointIdx < m_attachPoints.Length )
+					{
+						if (m_attachPoints[attackPointIdx] != null )
+							m_attachPoints[attackPointIdx].EquipAccessory( equipable );
+					}
+				}
+			}
+		}
+
 	}
 
 	/// <summary>
@@ -109,6 +131,8 @@ public class DragonEquip : MonoBehaviour {
 	/// </summary>
 	/// <param name="_name">Name of the skin to be applied.</param>
 	private void SetSkin(string _name) {
+
+		// Texture change
 		if(_name == null || _name.Equals("default") || _name.Equals("")) {
 			_name = m_dragonSku + "_0";		// Default skin, all dragons should have it
 		}
@@ -144,6 +168,7 @@ public class DragonEquip : MonoBehaviour {
 				r.materials = mats;
 			}
 		}
+
 	}
 
 	/// <summary>
@@ -209,7 +234,7 @@ public class DragonEquip : MonoBehaviour {
 			}
 
 			// Get equipable object!
-			m_attachPoints[attachPointIdx].Equip(newInstance.GetComponent<Equipable>());
+			m_attachPoints[attachPointIdx].EquipPet(newInstance.GetComponent<Equipable>());
 
 			// Apply pets visibility
 			m_attachPoints[attachPointIdx].item.gameObject.SetActive(m_showPets);
