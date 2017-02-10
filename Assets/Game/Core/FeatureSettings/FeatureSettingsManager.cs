@@ -699,10 +699,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 #endif
 
         // Debug or release settings are applied 
-        string configSku = CONFIG_SKU_RELEASE;
-#if !PRODUCTION
-        configSku = CONFIG_SKU_DEBUG;
-#endif
+        string configSku = (IsDebugEnabled) ? CONFIG_SKU_DEBUG : CONFIG_SKU_RELEASE;
         JSONNode configJSON = Configs_GetConfig(configSku);
         if (configJSON != null)
         {
@@ -898,6 +895,17 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         get
         {
             return m_deviceQualityManager.Profiles_Names;
+        }
+    }
+
+    /// <summary>
+    /// Returns whether or not debug mode is enabled. It's a static method to be sure that it will be available at all times since it's looked up by some MonoBehaviours when awaking
+    /// </summary>
+    public static bool IsDebugEnabled
+    {
+        get
+        {
+            return UnityEngine.Debug.isDebugBuild;
         }
     }
 
