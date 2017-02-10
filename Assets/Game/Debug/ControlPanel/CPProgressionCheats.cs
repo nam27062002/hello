@@ -195,10 +195,16 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// Unlock all pets.
 	/// </summary>
 	public void OnUnlockAllPets() {
+		// Do it!
 		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
 		for(int i = 0; i < petDefs.Count; i++) {
 			UsersManager.currentUser.petCollection.UnlockPet(petDefs[i].sku);
 		}
+
+		// Mark all golden eggs as collected
+		UsersManager.currentUser.goldenEggsCollected = 100;	// Dirty, but should do the trick xD
+
+		// Save persistence
 		PersistenceManager.Save();
 	}
 
