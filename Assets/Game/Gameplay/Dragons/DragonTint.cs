@@ -34,9 +34,10 @@ public class DragonTint : MonoBehaviour
 	// Shield
 	// float m_shieldValue = 0;
 
-
-
 	float m_deathAlpha = 1;
+
+	private bool m_starvingOn = false;
+	private bool m_criticalOn = false;
 
 	// Use this for initialization
 	IEnumerator Start () 
@@ -81,6 +82,7 @@ public class DragonTint : MonoBehaviour
 		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
+		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 	}
 
 	void OnDisable() 
@@ -89,6 +91,7 @@ public class DragonTint : MonoBehaviour
 		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
+		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 	}
 
 	private void OnDamageReceived(float _amount, DamageType _type, Transform _source) 
@@ -131,7 +134,7 @@ public class DragonTint : MonoBehaviour
 			m_otherColorTimer += Time.deltaTime * 5;
 			otherColor = m_curseColor * (Mathf.Sin( m_otherColorTimer) + 1) * 0.5f;
 		}
-		else if ( (m_player.currentHealthModifier != null && m_player.currentHealthModifier.IsStarving()) || m_player.BeingLatchedOn())
+		else if (m_starvingOn || m_criticalOn || m_player.BeingLatchedOn())
 		{
 			m_otherColorTimer += Time.deltaTime * 5;
 			otherColor = m_damageColor * (Mathf.Sin( m_otherColorTimer) + 1) * 0.5f;
@@ -232,4 +235,9 @@ public class DragonTint : MonoBehaviour
 		m_deathAlpha = 1;
     }
 
+	private void OnHealthModifierChanged( DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier )
+	{
+		m_starvingOn = (_newModifier != null && _newModifier.IsStarving());
+		m_criticalOn = (_newModifier != null && _newModifier.IsCritical());
+	}
 }
