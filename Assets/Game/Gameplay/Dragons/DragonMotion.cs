@@ -136,7 +136,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 	}
 
-	private State m_previousState = State.None;
+	private State m_previousState = State.Idle;
 
 	private Transform m_tongue;
 	private Transform m_head;
