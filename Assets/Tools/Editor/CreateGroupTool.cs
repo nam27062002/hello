@@ -58,9 +58,8 @@ public class CreateGroupTool {
 		newGroupObj.transform.position = groupPos;
 
 		// Reparent all selected objects
-		Undo.RecordObjects(Selection.gameObjects, "CreateGroupTool");
 		foreach(GameObject go in Selection.gameObjects) {
-			go.transform.SetParent(newGroupObj.transform, true);
+			Undo.SetTransformParent(go.transform, newGroupObj.transform, "CreateGroupTool." + go.name);
 		}
 
 		// Done! Ping new object and return
