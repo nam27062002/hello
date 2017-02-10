@@ -89,6 +89,10 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		get { return instance.m_user.goldenEggFragments; }
 	}
 
+	public static bool goldenEggCompleted {
+		get { return !allGoldenEggsCollected && goldenEggFragments >= goldenEggRequiredFragments; }
+	}
+
 	public static bool allGoldenEggsCollected {
 		get { return instance.m_user.goldenEggsCollected >= instance.m_goldenEggRequiredFragments.Count; }
 	}

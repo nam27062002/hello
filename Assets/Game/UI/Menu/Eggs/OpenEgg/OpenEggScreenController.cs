@@ -234,7 +234,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Aux vars
 		EggReward rewardData = m_scene.eggData.rewardData;
-		bool goldenEggCompleted = (EggManager.goldenEggFragments >= EggManager.goldenEggRequiredFragments);
+		bool goldenEggCompleted = EggManager.goldenEggCompleted;
 
 		// Initialize stuff based on reward type
 		switch(rewardData.type) {
@@ -297,8 +297,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnRewardAnimFinished() {
 		// If a golden egg has been completed, start the open flow
-		bool goldenEggCompleted = (EggManager.goldenEggFragments >= EggManager.goldenEggRequiredFragments);
-		if(goldenEggCompleted) {
+		if(EggManager.goldenEggCompleted) {
 			// Create a new egg
 			Egg goldenEgg = Egg.CreateFromSku(Egg.SKU_GOLDEN_EGG);
 			goldenEgg.ChangeState(Egg.State.READY);

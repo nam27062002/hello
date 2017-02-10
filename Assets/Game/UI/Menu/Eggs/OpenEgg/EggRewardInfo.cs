@@ -119,6 +119,7 @@ public class EggRewardInfo : MonoBehaviour {
 			// Are all the golden eggs opened (giving coins instead if so)
 			if(_rewardData.coins > 0) {
 				// Giving coins
+				m_goldenFragmentTitle.Localize("TID_EGG_REWARD_COINS", StringUtils.FormatNumber(_rewardData.coins));	// %U0 Coins!
 				m_goldenFragmentInfo.Localize("TID_EGG_REWARD_DUPLICATED_2", _rewardData.itemDef.GetLocalized("tidName"), StringUtils.FormatNumber(_rewardData.coins));	// %U0 already unlocked!\nYou get %U1 coins instead!
 			} else {
 				// Giving fragments
