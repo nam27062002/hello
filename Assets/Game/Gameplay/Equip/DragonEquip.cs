@@ -109,13 +109,13 @@ public class DragonEquip : MonoBehaviour {
 		{
 			if ( !string.IsNullOrEmpty(bodyParts[i]) )
 			{
-				GameObject prefabObj = Resources.Load<GameObject>(bodyParts[i]);
+				GameObject prefabObj = Resources.Load<GameObject>("Game/Equipable/Items/" + bodyParts[i]);
 				if ( prefabObj != null )
 				{
 					GameObject objInstance = Instantiate<GameObject>(prefabObj);
 					Equipable equipable = objInstance.GetComponent<Equipable>();
 					int attackPointIdx = (int)equipable.attachPoint;
-					if ( equipable != null && m_attachPoints.Length < attackPointIdx)
+					if ( equipable != null && attackPointIdx < m_attachPoints.Length )
 					{
 						if (m_attachPoints[attackPointIdx] != null )
 							m_attachPoints[attackPointIdx].EquipAccessory( equipable );
