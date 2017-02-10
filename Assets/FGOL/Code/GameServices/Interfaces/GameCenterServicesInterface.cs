@@ -115,23 +115,4 @@ public class GameCenterServicesInterface : GameServicesInterface
             Social.Active.ShowLeaderboardUI();
         }
     }
-
-#if !PRODUCTION
-    public override void ResetAchievements()
-    {
-        GameCenterPlatform.ResetAllAchievements(HandleAchievementReset);
-    }
-
-    private void HandleAchievementReset(bool status)
-    {
-        if (status)
-        {
-            Debug.LogError("Achievements should have been reset");
-        }
-        else
-        {
-            Debug.LogError("Achievements have failed to reset");
-        }
-    }
-#endif
 }

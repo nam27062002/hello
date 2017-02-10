@@ -29,15 +29,13 @@ public class GameHUD : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-#if !PRODUCTION
-        Debug_Awake();        
-#endif
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Debug_Awake();        
     }
 
     void OnDestroy() {
-#if !PRODUCTION
-        Debug_OnDestroy();
-#endif
+        if (ApplicationManager.IsAlive && FeatureSettingsManager.IsDebugEnabled)
+            Debug_OnDestroy();
     }    
 
     //------------------------------------------------------------------//

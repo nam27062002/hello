@@ -36,9 +36,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {                
 		m_isAlive = true;
 
-#if !PRODUCTION
-        DebugSettings.Init();
-#endif
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            DebugSettings.Init();
+        }
+
         Setting_Init();
 
         Reset();
@@ -155,35 +157,36 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             FlowManager.Restart();
         }
 
-#if !PRODUCTION
-        // Boss camera effect cheat to be able to enable/disable anywhere. We want to be able to check the impact in performance of the effect so we want to have
-        // time to close the console before the effect starts playing
-        if (Debug_TimeToEnableBossCameraEffect > 0f)
+        if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Debug_TimeToEnableBossCameraEffect -= Time.deltaTime;
-            if (Debug_TimeToEnableBossCameraEffect <= 0f)
+            // Boss camera effect cheat to be able to enable/disable anywhere. We want to be able to check the impact in performance of the effect so we want to have
+            // time to close the console before the effect starts playing
+            if (Debug_TimeToEnableBossCameraEffect > 0f)
             {
-                GameCamera gameCamera = InstanceManager.gameCamera;
-                if (gameCamera != null && Debug_BossCameraAffector != null)
+                Debug_TimeToEnableBossCameraEffect -= Time.deltaTime;
+                if (Debug_TimeToEnableBossCameraEffect <= 0f)
                 {
-                    bool enabled = !Debug_BossCameraAffector.enabled;
-                    Debug_BossCameraAffector.enabled = enabled;
+                    GameCamera gameCamera = InstanceManager.gameCamera;
+                    if (gameCamera != null && Debug_BossCameraAffector != null)
+                    {
+                        bool enabled = !Debug_BossCameraAffector.enabled;
+                        Debug_BossCameraAffector.enabled = enabled;
 
-                    if (enabled)
-                    {
-                        InstanceManager.gameCamera.NotifyBoss(Debug_BossCameraAffector);
+                        if (enabled)
+                        {
+                            InstanceManager.gameCamera.NotifyBoss(Debug_BossCameraAffector);
+                        }
+                        else
+                        {
+                            InstanceManager.gameCamera.RemoveBoss(Debug_BossCameraAffector);
+                        }
                     }
-                    else
-                    {
-                        InstanceManager.gameCamera.RemoveBoss(Debug_BossCameraAffector);
-                    }
+
+                    Debug_BossCameraAffector = null;
+                    Debug_TimeToEnableBossCameraEffect = 0f;
                 }
-
-                Debug_BossCameraAffector = null;
-                Debug_TimeToEnableBossCameraEffect = 0f;
             }
-        }       
-#endif
+        }
     }
 
     private int LastPauseTime { get; set; }

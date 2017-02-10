@@ -46,6 +46,8 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 	private Vector3 m_centerOffset = Vector3.zero;
 	private float m_time;
 
+	private float m_size;
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -69,6 +71,8 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 		size.y = Mathf.Abs(size.y);
 		size.z = Mathf.Abs(size.z);
 
+		m_size = Mathf.Max(size.x, size.y);
+
 		return new RectAreaBounds(transform.position + m_centerOffset + center, size);
 	}
 
@@ -79,7 +83,10 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 	}
 
 	public Vector3 NextPositionAtSpeed(float _speed) {
-		m_time += _speed * Time.deltaTime;
+
+		float speedFactor = 0.185f + ((0.125f - 0.185f) * ((m_size - 20f) / (40f - 20f)));
+
+		m_time += _speed * Time.deltaTime * speedFactor;
 		if (UpdateFunction(m_time)) {
 			m_time = 0f;
 		}

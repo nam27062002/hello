@@ -360,16 +360,4 @@ public class UserSaveSystem : SaveSystem
     public override void Downgrade()
     {
     }
-
-#if !PRODUCTION
-    public void DisableOnboarding()
-	{
-		m_hasBeenIngame = true;
-		m_numGameLoops = 2;
-		sharkSelectOnboarding = true;
-		levelSelectOnboarding = true;
-        facebookInviteSent = true;
-        SaveFacade.Instance.Save(name);
-	}
-#endif
 }
