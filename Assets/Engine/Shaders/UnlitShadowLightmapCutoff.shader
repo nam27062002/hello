@@ -49,7 +49,9 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Cutoff (On Line Decorations)"
 					float4 vertex : SV_POSITION;
 					half2 texcoord : TEXCOORD0;
 					HG_FOG_COORDS(1)
+					#ifdef DYNAMIC_SHADOWS
 					LIGHTING_COORDS(2,3)
+					#endif
 					#if LIGHTMAP_ON
 					float2 lmap : TEXCOORD4;
 					#endif
@@ -68,7 +70,9 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Cutoff (On Line Decorations)"
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 					o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
+					#ifdef DYNAMIC_SHADOWS
 					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
+					#endif
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 					#endif
@@ -82,8 +86,10 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Cutoff (On Line Decorations)"
 
 					clip(col.a - _CutOff);
 
+					#ifdef DYNAMIC_SHADOWS
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col *= attenuation;
+					#endif
 					 
 					#if LIGHTMAP_ON
 					fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
@@ -94,6 +100,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Cutoff (On Line Decorations)"
 
 
 //					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+					HG_DEPTH_ALPHA(i, col)
 
 					// col = fixed4(1,1,1,1) * i.fogCoord;
 					return col;
@@ -102,5 +109,5 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Cutoff (On Line Decorations)"
 		}
 	}
 
-//	Fallback "Mobile/VertexLit"
+//	Fallback "Hungry Dragon/VertexLit"
 }

@@ -11,7 +11,8 @@ public interface ISpawner : IQuadTreeItem {
 	void RemoveEntity(GameObject _entity, bool _killedByPlayer);
 	void DrawStateGizmos();
 
-	AreaBounds area{ get; }
-	IGuideFunction guideFunction{ get; }
-	Transform transform{ get; }
+	AreaBounds area { get; }
+	IGuideFunction guideFunction { get; }
+	Transform transform { get; }
+	Quaternion rotation { get; }
 }

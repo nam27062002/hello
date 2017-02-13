@@ -54,7 +54,9 @@ public class Spawner : AbstractSpawner {
 	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
 	[SerializeField] private SpawnPointSeparation m_homePosMethod = SpawnPointSeparation.Sphere;
 	[SerializeField] private Range m_homePosDistance = new Range(1f, 2f);
+
 	[SerializeField] private int m_maxSpawns;
+
 	
 
 	//-----------------------------------------------
@@ -347,6 +349,10 @@ public class Spawner : AbstractSpawner {
 				// Icons are stored in the Gizmos folder in the project root (Unity rules), and have the same name as the entities
 				Gizmos.DrawIcon(transform.position, IEntity.ENTITY_PREFABS_PATH + this.m_entityPrefabStr, true);
 			#endif
+
+			// orientation
+			Gizmos.color = Colors.lime;
+			Gizmos.DrawLine(transform.position, transform.position + transform.rotation * Vector3.forward * 5f);
 		}
 
 		DrawStateGizmos();

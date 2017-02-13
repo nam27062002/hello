@@ -77,5 +77,5 @@ Shader "Hungry Dragon/MatCap/Textured Add Transparent"
 		}
 	}
 	
-	Fallback "VertexLit"
+//	Fallback "VertexLit"
 }

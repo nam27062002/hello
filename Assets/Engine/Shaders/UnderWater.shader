@@ -29,6 +29,11 @@ Shader "Hungry Dragon/UnderWater"
 		Tags{ "Queue" = "Transparent+10" "RenderType" = "Transparent" }
 		LOD 100
 
+		GrabPass
+		{
+			"_BackgroundTexture"
+		}
+
 		Pass {  
 			Blend SrcAlpha OneMinusSrcAlpha
 			ZWrite Off
@@ -71,7 +76,7 @@ Shader "Hungry Dragon/UnderWater"
 				};
 
 
-				sampler2D _CameraDepthTexture;
+//				sampler2D _CameraDepthTexture;
 				sampler2D _MainTex;
 
 //				float4 _CameraDepthTexture_TexelSize;
@@ -80,6 +85,7 @@ Shader "Hungry Dragon/UnderWater"
 				float4 _MainTex_TexelSize;
 				float4 _ColorBack;
 				float _WaveRadius;
+				sampler2D _BackgroundTexture;
 
 				float _FogFar;
 				float _FogNear;
@@ -105,8 +111,9 @@ Shader "Hungry Dragon/UnderWater"
 
 				fixed4 frag (v2f i) : SV_Target
 				{
-					float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).x) * 1.0f;
-					float depthR = (depth - i.scrPos.z);
+//				float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).x) * 1.0f;
+				float depth = LinearEyeDepth(tex2Dproj(_BackgroundTexture, (i.scrPos)).w) * 1.0f;
+				float depthR = (depth - i.scrPos.z);
 
 					float lerpFog = 1.0 - clamp((depthR - _FogNear) / (_FogFar - _FogNear), 0.0, 1.0);
 					float lerpCaustic = 1.0 - clamp((depthR - _CausticNear) / (_CausticFar - _CausticNear), 0.0, 1.0);

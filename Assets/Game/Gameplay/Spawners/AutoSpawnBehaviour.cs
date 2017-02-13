@@ -32,6 +32,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	private Bounds m_bounds; // view bounds
 	private Rect m_rect;
 	public Rect boundingRect { get { return m_rect; } }
+	public Quaternion rotation { get { return Quaternion.identity; } }
 
 	private bool m_disableAtFirstUpdate;
 

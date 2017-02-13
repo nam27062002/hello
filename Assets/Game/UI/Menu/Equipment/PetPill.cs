@@ -22,13 +22,15 @@ public class PetPill : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private static readonly Color LOCKED_COLOR = new Color(0.5f, 0.5f, 0.5f);
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private Image m_preview = null;
-	[SerializeField] private Animator m_lockIconAnim = null;
+	[SerializeField] private GameObject m_lockIcon = null;
+	[SerializeField] private GameObject m_lockIconSpecial = null;
 	[SerializeField] private Image m_powerIcon = null;
 	[Space]
 	[SerializeField] private GameObject m_equippedFrame = null;
@@ -39,6 +41,9 @@ public class PetPill : MonoBehaviour {
 	public DefinitionNode def {
 		get { return m_def; }
 	}
+
+	private GameObject m_currentLockIcon = null;
+	private Animator m_currentLockIconAnim = null;
 
 	// Shortcuts
 	private PetCollection petCollection {
@@ -70,6 +75,7 @@ public class PetPill : MonoBehaviour {
 		get { return m_slot >= 0; }
 	}
 
+	private bool m_special = false;
 	private DragonData m_dragonData = null;
 
 	//------------------------------------------------------------------------//
@@ -119,8 +125,9 @@ public class PetPill : MonoBehaviour {
 			return;
 		}
 
-		// Store definition
+		// Store definition and some data
 		m_def = _petDef;
+		m_special = (_petDef.Get("rarity") == "special");
 
 		// Load preview
 		if(m_preview != null) {
@@ -136,6 +143,17 @@ public class PetPill : MonoBehaviour {
 			}
 			m_powerIcon.sprite = powerIcon;	// If null it will look ugly, that way we know we have a miniIcon missing
 		}
+
+		// Lock icons
+		// Different lock icon for special pets
+		if(m_special) {
+			m_currentLockIcon = m_lockIconSpecial;
+		} else {
+			m_currentLockIcon = m_lockIcon;
+		}
+		m_lockIcon.SetActive(!m_special);
+		m_lockIconSpecial.SetActive(m_special);
+		m_currentLockIconAnim = m_currentLockIcon.GetComponent<Animator>();
 
 		// Refresh contextual elements
 		Refresh();
@@ -156,11 +174,18 @@ public class PetPill : MonoBehaviour {
 		m_slot = UsersManager.currentUser.GetPetSlot(m_dragonData.def.sku, m_def.sku);
 
 		// Lock icon
-		m_lockIconAnim.gameObject.SetActive(m_locked);
+		m_currentLockIcon.SetActive(m_locked);
 
-		// Color highlight
+		// Hide power icon for locked special pets
+		bool isSpecialAndLocked = m_special && m_locked;
+		m_powerIcon.transform.parent.gameObject.SetActive(!isSpecialAndLocked);
+
+		// Color highlight when equipped
 		m_equippedFrame.SetActive(equipped);
 		m_equippedPowerFrame.SetActive(equipped);
+
+		// Tone down pet preview when locked for better contrast with the lock icon
+		m_preview.color = m_locked ? LOCKED_COLOR : Color.white;
 	}
 
 	/// <summary>
@@ -168,15 +193,15 @@ public class PetPill : MonoBehaviour {
 	/// Refresh() shouldn't be called between this call and LaunchUnlockAnim();
 	/// </summary>
 	public void PrepareUnlockAnim() {
-		m_lockIconAnim.gameObject.SetActive(true);
-		m_lockIconAnim.SetTrigger("idle");
+		m_currentLockIcon.SetActive(true);
+		m_currentLockIconAnim.SetTrigger("idle");
 	}
 
 	/// <summary>
 	/// Show the unlock animation.
 	/// </summary>
 	public void LaunchUnlockAnim() {
-		m_lockIconAnim.SetTrigger("unlock");
+		m_currentLockIconAnim.SetTrigger("unlock");
 	}
 
 	//------------------------------------------------------------------------//
@@ -188,11 +213,15 @@ public class PetPill : MonoBehaviour {
 	public void OnTap() {
 		// If locked, show some feedback
 		if(locked) {
-			// No available slots, show feedback
-			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO"), new Vector2(0.5f, 0.35f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			// Different feedback if pet is unlocked with golden egg fragments
+			if(m_special) {
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO_SPECIAL"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			} else {
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			}
 
 			// Small animation on the lock icon
-			m_lockIconAnim.SetTrigger("bounce");
+			m_currentLockIconAnim.SetTrigger("bounce");
 		}
 
 		// If equipped, try to unequip
@@ -208,7 +237,7 @@ public class PetPill : MonoBehaviour {
 			int newSlot = UsersManager.currentUser.EquipPet(m_dragonData.def.sku, m_def.sku);
 			if(newSlot == -4) {
 				// No available slots, show feedback
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_NO_SLOTS"), new Vector2(0.5f, 0.35f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// There are no available slots!\nUnequip another pet before equipping this one.
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_NO_SLOTS"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// There are no available slots!\nUnequip another pet before equipping this one.
 			}
 		}
 	}

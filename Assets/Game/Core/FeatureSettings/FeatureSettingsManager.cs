@@ -64,7 +64,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                 {
                     Rules_OnLoaded();
                     State_Timer = 0f;
-                    State = EState.WaitingToCheckConnection;
+                    State = EState.WaitingToCheckConnection;                    
                 }                
                 break;
 
@@ -100,7 +100,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                 }
                 else if (ISApplyFeatureSettingsAllowed())
                 {                    
-                    SetupCurrentFeatureSettings(Server_QualitySettingsJSONToApply);                    
+                    // Content configuration for that device and server configuration
+                    SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), Server_QualitySettingsJSONToApply);                    
                     State = EState.Done;
                 }
                 break;            
@@ -163,12 +164,22 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     // The response for the quality settings request can be null if the server doesn't have that information. If so then the client has to provide the server with that information.
     // In order to be allowed to do so the user has to be logged. 
 
+    /// <summary>
+    /// Key for the latest settings received from server
+    /// </summary>
+    private string SERVER_KEY_SETTINGS_DATA_CACHED = "fSettings_data";
+
+    /// <summary>
+    /// Key for the version of the game when the latest settings were stored.
+    /// </summary>
+    private string SERVER_KEY_SETTINGS_VERSION_CACHED = "fSettings_version";
+
     private float SERVER_TIME_TO_WAIT_BETWEEN_CONNECTION_CHECKS = 5f;
 
     /// <summary>
     /// Time to wat for the user to log in once the client has been told to upload its quality settings information to the server
     /// </summary>
-    private float SERVER_TIME_TO_WAIT_FOR_LOGIN_WHEN_TOLD_TO_UPLOAD = 20f;// * 60f;    
+    private float SERVER_TIME_TO_WAIT_FOR_LOGIN_WHEN_TOLD_TO_UPLOAD = 20f * 60f;    
 
     private float Server_TimeToWaitToUploadSettings { get; set; }
 
@@ -176,12 +187,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     /// JSON with the quality settings received from the server to be applied
     /// </summary>
     private JSONNode Server_QualitySettingsJSONToApply { get; set; }
-
-    /// <summary>
-    /// String with the quality settings calculated by the client to upload to the server
-    /// </summary>
-    private string Server_QualitySettingsToUpload { get; set; }
-
+   
     private void Server_Reset()
     {
         Server_QualitySettingsJSONToApply = null;
@@ -217,10 +223,15 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                 if (Server_QualitySettingsJSONToApply == null)
                 {
                     State = EState.Done;
+                    Server_ClearCache();                                                                
                 }
                 else
                 {
-                    State = EState.WaitingToApplyServerResponse;
+                    // If needs to be stored in the mobile cache so it can be applied next time the user starts the game just in case she's playing offline
+                    string currentVersion = ServerManager.SharedInstance.GetServerConfig().m_strClientVersion;
+                    Server_CacheData(currentVersion, Server_QualitySettingsJSONToApply.ToString());
+
+                    State = EState.WaitingToApplyServerResponse;                    
                 }
             }
             else
@@ -235,46 +246,71 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     private void Server_ResetUploadQualitySettings()
     {
-        Server_TimeToWaitToUploadSettings = 0f;
-        Server_QualitySettingsToUpload = null;
+        Server_TimeToWaitToUploadSettings = 0f ;       
     }
 
     private void Server_PrepareUploadQualitySettings()
-    {
-        // Stores current quality settings to make sure that they are the ones calculated by the client, otherwise if Server_UploadQualitySettings() is called after 
-        // the client applied the quality settings received from server we could be sending the quality settings received from server
-        JSONNode json = new JSONClass();
-        json.Add("profile", Device_CurrentProfile);
-        Server_QualitySettingsToUpload = json.ToString();
-        //Server_QualitySettingsJSONToUpload = "high";        
-
+    {        
         // Sets max time to wait to upload settings
         Server_TimeToWaitToUploadSettings = SERVER_TIME_TO_WAIT_FOR_LOGIN_WHEN_TOLD_TO_UPLOAD;        
     }
 
     private void Server_UploadQualitySettings()
     {
-        if (string.IsNullOrEmpty(Server_QualitySettingsToUpload))
+        // The calculated profile is the one that is sent to the server since the current profile could be different to the calculated profile if the client has applied
+        // some settings received from server that were stored in the device cache in a previous session
+        JSONNode json = new JSONClass();
+        string profileName = Device_CalculatedProfile;
+        //profileName = "high";
+        json.Add("profile", profileName);             
+        GameServerManager.SharedInstance.SetQualitySettings(json.ToString(), delegate (Error error, Dictionary<string, object> response)
         {
-            LogError("Empty quality settings can't be uploaded");
-        }
-        else
-        {
-            GameServerManager.SharedInstance.SetQualitySettings(Server_QualitySettingsToUpload, delegate (Error error, Dictionary<string, object> response)
+            if (error == null)
             {
-                if (error == null)
-                {
-                    Log("Quality settings uploaded successfully");
-                }
-                else
-                {
-                    Log("Error when uploading quality settings " + error.message);
-                }
-            });            
-        }
+                Log("Quality settings uploaded successfully");
+            }
+            else
+            {
+                Log("Error when uploading quality settings " + error.message);
+            }
+        });                    
 
         Server_ResetUploadQualitySettings();
-    }        
+    }   
+    
+    /// <summary>
+    /// Returns the JSON received from server that is stored in the device cache
+    /// </summary>
+    /// <returns></returns>
+    private JSONNode Server_GetCachedJSON()
+    {
+        JSONNode returnValue = null;
+        
+        string raw = PlayerPrefs.GetString(SERVER_KEY_SETTINGS_DATA_CACHED);
+        if (!string.IsNullOrEmpty(raw))
+        {            
+            returnValue = JSON.Parse(raw);
+        }
+
+        return returnValue;
+    }     
+
+    private string Server_GetVersionCachedJSON()
+    {
+        return PlayerPrefs.GetString(SERVER_KEY_SETTINGS_VERSION_CACHED);
+    }
+
+    private void Server_ClearCache()
+    {
+        PlayerPrefs.DeleteKey(SERVER_KEY_SETTINGS_VERSION_CACHED);
+        PlayerPrefs.DeleteKey(SERVER_KEY_SETTINGS_DATA_CACHED);
+    }
+
+    private void Server_CacheData(string version, string data)
+    {
+        PlayerPrefs.SetString(SERVER_KEY_SETTINGS_VERSION_CACHED, version);
+        PlayerPrefs.SetString(SERVER_KEY_SETTINGS_DATA_CACHED, data);
+    }
     #endregion
 
     #region device
@@ -394,6 +430,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             return Device_CurrentFeatureSettings.Rating;
         }
     }
+
+    private string Device_CalculatedProfile { get; set; }
 
     public string Device_CurrentProfile
     {
@@ -553,7 +591,20 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
         Device_CurrentFeatureSettings = CreateFeatureSettings();
 
-        SetupCurrentFeatureSettings(null);
+        // Checks if the latest server settings cached are still valid
+        string serverLastVersion = Server_GetVersionCachedJSON();
+        if (!string.IsNullOrEmpty(serverLastVersion))
+        {
+            string currentVersion = ServerManager.SharedInstance.GetServerConfig().m_strClientVersion;
+            if (!currentVersion.Equals(serverLastVersion))
+            {
+                Server_ClearCache();
+            }
+        }
+
+        // Retrieves the latest configuration received from server to apply it since the user might be playing offline
+        JSONNode serverJSON = Server_GetCachedJSON();        
+        SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), serverJSON);
     }
     #endregion
 
@@ -652,12 +703,12 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
-    public void SetupCurrentFeatureSettings(JSONNode deviceSettingsJSON)
+    public void SetupCurrentFeatureSettings(JSONNode deviceSettingsJSON, JSONNode serverSettingsJSON)
     {
         float rating = m_deviceQualityManager.Device_CalculatedRating;
-        string profileName = null;        
+        string profileName = null;
 
-        // If no device configuration is passed then try to get the device configuration from rules
+        // If no device configuration is passed then try to get the device configuration from rules        
         if (deviceSettingsJSON == null)
         {
             deviceSettingsJSON = GetDeviceFeatureSettingsAsJSON();
@@ -675,7 +726,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             {
                 profileName = deviceSettingsJSON[FeatureSettings.KEY_PROFILE];
             }
-        }
+        }        
 
         // If no profileName is available for the device in iOS then we assume that it's a new device so its rating has to be the maximum
 #if UNITY_IOS        
@@ -689,6 +740,23 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         if (string.IsNullOrEmpty(profileName))
         {
             profileName = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+        }
+        
+        Device_CalculatedProfile = profileName;        
+
+        // The config received from server has to override the profile
+        if (serverSettingsJSON != null)
+        {
+            // Checks if the rating has been overriden for this device
+            if (serverSettingsJSON.ContainsKey(FeatureSettings.KEY_RATING))
+            {
+                rating = serverSettingsJSON[FeatureSettings.KEY_RATING].AsFloat;
+            }
+
+            if (serverSettingsJSON.ContainsKey(FeatureSettings.KEY_PROFILE))
+            {
+                profileName = serverSettingsJSON[FeatureSettings.KEY_PROFILE];
+            }
         }
 
         Device_CurrentProfile = profileName;
@@ -721,7 +789,18 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             Device_CurrentFeatureSettings.OverrideFromJSON(deviceSettingsJSON);
         }
 
+        // The configuration received from server has the maximum priority, so it overrides everything
+        if (serverSettingsJSON != null)
+        {
+            Device_CurrentFeatureSettings.OverrideFromJSON(serverSettingsJSON);
+        }
+
         ApplyCurrentFeatureSetting();
+    }
+
+    public void RestoreCurrentFeatureSettingsToDevice()
+    {
+        SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), null);
     }
 
     private FeatureSettings CreateFeatureSettings()

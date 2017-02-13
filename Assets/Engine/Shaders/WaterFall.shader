@@ -15,6 +15,7 @@ Shader "Hungry Dragon/Waterfall"
 	}
 
 	SubShader {
+//		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque"  "LightMode" = "ForwardBase" }
 		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent"  "LightMode" = "ForwardBase" }
 		LOD 100
 
@@ -22,13 +23,16 @@ Shader "Hungry Dragon/Waterfall"
 			Blend SrcAlpha OneMinusSrcAlpha
 			Cull Off
 			ZWrite On
-			Fog{ Color(0, 0, 0, 0) }
+//			Fog{ Color(0, 0, 0, 0) }
 
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
 				#pragma multi_compile_fog
 				#pragma multi_compile_fwdbase
+				#pragma glsl_no_auto_normalization
+				#pragma fragmentoption ARB_precision_hint_fastest
+
 //				#pragma multi_compile_particles
 
 				#include "UnityCG.cginc"
@@ -58,7 +62,7 @@ Shader "Hungry Dragon/Waterfall"
 				};
 
 
-				sampler2D _CameraDepthTexture;
+//				sampler2D _CameraDepthTexture;
 				sampler2D _MainTex;
 				float4 _MainTex_ST;
 				sampler2D _DetailTex;
@@ -91,18 +95,23 @@ Shader "Hungry Dragon/Waterfall"
 					fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy + anim)) * 1.0f;
 					col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.75)) * 0.5f;
 					fixed4 blend = tex2D(_BlendTex, 1.0f * (i.uv2.xy + anim * 1.5));
+//					blend.xyz *= blend.a;
 					col = lerp(col, blend, i.color.w);
-					col.w *= 1.0 - i.color.w;
+//					col.w *= 1.0 - i.color.w;
+//					return col;
 
 					fixed3 one = fixed3(1, 1, 1);
 					col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
 
 //					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 //					col *= attenuation;
+//					HG_DEPTH_ALPHA(i, col)
 
 					return col;
 				}
 			ENDCG
 		}
 	}
+	Fallback "Hungry Dragon/VertexLit"
+//	Fallback "Mobile/VertexLit"
 }
