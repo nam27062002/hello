@@ -49,7 +49,7 @@ SubShader {
 	};
 	
 	struct v2f {
-		float4 pos : SV_POSITION;
+		float4 vertex : SV_POSITION;
 		float2 uv : TEXCOORD0;
 		float2 uv2 : TEXCOORD1;
 		HG_FOG_COORDS(2)
@@ -63,7 +63,7 @@ SubShader {
 	v2f vert (appdata_full v)
 	{
 		v2f o;
-		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 		o.uv = TRANSFORM_TEX(v.texcoord.xy,_MainTex); 
 		o.uv2 = TRANSFORM_TEX(v.texcoord.xy,_DetailTex);
 		HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
@@ -80,6 +80,9 @@ SubShader {
 		#pragma fragment frag
 		#pragma glsl_no_auto_normalization
 		#pragma fragmentoption ARB_precision_hint_fastest
+
+//		#include "HungryDragon.cginc"
+
 
 		fixed4 frag (v2f i) : COLOR
 		{
@@ -112,7 +115,9 @@ SubShader {
 			col = col + skyCol;
 
 			HG_APPLY_FOG(i, col);	// Fog
-			UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+//			UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+			HG_DEPTH_ALPHA(i, col)
+
 
 //			float4 skyCol = lerp(_SkyLowColor, _SkyHighColor, clamp(persp, 0.0, 1.0));
 			return col;// +skyCol;
@@ -120,4 +125,5 @@ SubShader {
 		ENDCG 
 	}	
 }
+//	Fallback "Hungry Dragon/VertexLit"
 }

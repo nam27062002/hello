@@ -45,7 +45,9 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow"
 					half2 texcoord : TEXCOORD0;
 					float4 color : COLOR;
 					HG_FOG_COORDS(1)
+					#ifdef DYNAMIC_SHADOWS
 					LIGHTING_COORDS(2,3)
+					#endif
 					float2 lmap : TEXCOORD4; 
 					half2 texcoord2 : TEXCOORD5;
 				};
@@ -65,7 +67,9 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow"
 					o.texcoord2 = TRANSFORM_TEX(v.texcoord, _SecondTexture);
 					o.color = v.color;
 					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
+					#ifdef DYNAMIC_SHADOWS
 					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
+					#endif
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 					#endif
@@ -97,8 +101,10 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow"
 						col = 2 * i.color * col;	// Overlay
 					}
 
+					#ifdef DYNAMIC_SHADOWS
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col *= attenuation;
+					#endif
 
 					#if LIGHTMAP_ON
 					fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
@@ -108,11 +114,12 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow"
 					HG_APPLY_FOG(i, col);	// Fog
 
 
-					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+//					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+					HG_DEPTH_ALPHA(i, col)
 					return col;
 				}
 			ENDCG
 		}
 	}
-//	Fallback "Mobile/VertexLit"
+//	Fallback "Hungry Dragon/VertexLit"
 }

@@ -46,8 +46,6 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 			#pragma fragment frag
 			#pragma glsl_no_auto_normalization
 			#pragma fragmentoption ARB_precision_hint_fastest
-			#pragma glsl_no_auto_normalization
-			#pragma fragmentoption ARB_precision_hint_fastest
 
 			#if LOW_DETAIL_ON
 			#endif
@@ -64,8 +62,8 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 			#define REFL
 			#endif
 
-			#define BUMP
-			#define REFL
+//			#define BUMP
+//			#define REFL
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
@@ -204,7 +202,6 @@ Shader "Hungry Dragon/NormalMap + Diffuse + Specular + Fresnel + Rim (Glow)"
 				//fixed4 one = fixed4(1, 1, 1, 1);
 				// col = one- (one-col) * (1-(i.color-fixed4(0.5,0.5,0.5,0.5)));	// Soft Light
 				//col = one - 2.0 * (one - reflection) * (one - col);	// Overlay
-
 
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 				return col;

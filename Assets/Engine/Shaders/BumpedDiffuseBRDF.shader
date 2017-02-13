@@ -108,12 +108,13 @@ Shader "Hungry Dragon/Bumped Diffuse BRDF (Spawners)"
 
      			col = (brdf + fixed4(i.vLight,1)) * col + specular;
 
-				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+//				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+				HG_DEPTH_ALPHA(i, col)
 
 				return col;
 			}
 			ENDCG
 		}
 	}
-Fallback "Mobile/VertexLit"
+//	Fallback "Hungry Dragon/VertexLit"
 }

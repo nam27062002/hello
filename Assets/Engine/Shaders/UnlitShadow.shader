@@ -34,7 +34,9 @@ SubShader {
 				float4 vertex : SV_POSITION;
 				half2 texcoord : TEXCOORD0;
 				UNITY_FOG_COORDS(1)
+				#ifdef DYNAMIC_SHADOWS
 				LIGHTING_COORDS(2,3)
+				#endif
 			};
 
 			sampler2D _MainTex;
@@ -46,14 +48,23 @@ SubShader {
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 				UNITY_TRANSFER_FOG(o,o.vertex);
+				#ifdef DYNAMIC_SHADOWS
 				TRANSFER_VERTEX_TO_FRAGMENT(o);
+				#endif
 				return o;
 			}
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float attenuation = LIGHT_ATTENUATION(i);
-				fixed4 col = tex2D(_MainTex, i.texcoord) * attenuation;
+				fixed4 col = tex2D(_MainTex, i.texcoord);
+
+				#ifdef DYNAMIC_SHADOWS
+				float attenuation = LIGHT_ATTENUATION(i);	// Shadow
+				col.rgb *= attenuation;
+				#else
+				float attenuation = 0.0;
+				#endif
+
 				col += UNITY_LIGHTMODEL_AMBIENT * (1.0 - attenuation);
 				UNITY_APPLY_FOG(i.fogCoord, col);
 				UNITY_OPAQUE_ALPHA(col.a);

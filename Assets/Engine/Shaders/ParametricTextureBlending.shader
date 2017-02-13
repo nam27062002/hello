@@ -53,7 +53,9 @@ Shader "Hungry Dragon/Parametric Texture Blending + Lightmap And Recieve Shadow"
 					float4 vertex : SV_POSITION; 
 					half2 texcoord : TEXCOORD0;
 					HG_FOG_COORDS(1)
+					#ifdef DYNAMIC_SHADOWS
 					LIGHTING_COORDS(2,3)
+					#endif
 					float2 lmap : TEXCOORD4; 
 					float blendValue : COLOR;
 
@@ -92,7 +94,9 @@ Shader "Hungry Dragon/Parametric Texture Blending + Lightmap And Recieve Shadow"
 					float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 					HG_TRANSFER_FOG(o, worldPos);	// Fog
 
+					#ifdef DYNAMIC_SHADOWS
 					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
+					#endif
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 					#endif
@@ -123,8 +127,10 @@ Shader "Hungry Dragon/Parametric Texture Blending + Lightmap And Recieve Shadow"
 					float l = saturate( col.a + i.blendValue );
 					col = lerp( col2, col, l);
 
+					#ifdef DYNAMIC_SHADOWS
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col *= attenuation;
+					#endif
 
 					#if LIGHTMAP_ON
 					fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
@@ -139,10 +145,13 @@ Shader "Hungry Dragon/Parametric Texture Blending + Lightmap And Recieve Shadow"
 					float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
 					fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
 					 
-					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-					return col + specular * specMask * _LightColor0.xyzz * i.blendValue;
+//					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+					col = col + specular * specMask * _LightColor0.xyzz * i.blendValue
+					HG_DEPTH_ALPHA(i, col)
+					return col;
 				}
 			ENDCG
 		}
 	}
+//	Fallback "Hungry Dragon/VertexLit"
 }

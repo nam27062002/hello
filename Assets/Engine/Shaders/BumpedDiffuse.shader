@@ -19,6 +19,8 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 			Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase"}
 			Cull Back
 
+			zwrite on
+
 			Stencil
 			{
 				Ref 5
@@ -148,11 +150,12 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 //				col = (diffuse + fixed4(i.vLight, 1)) * col;
 //				col = lerp(col, _FresnelColor, fresnel * _FresnelColor.a * 4.0);
 
-				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+//				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+				HG_DEPTH_ALPHA(i, col)
 				return col;
 			}
 			ENDCG
 		}
 	}
-Fallback "Mobile/VertexLit"
+//	Fallback "Hungry Dragon/VertexLit"
 }

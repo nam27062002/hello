@@ -438,7 +438,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         string deviceModel = "server";
         FeatureSettingsManager.instance.Device_Model = deviceModel;
         DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.FEATURE_DEVICE_SETTINGS, deviceModel);
-        FeatureSettingsManager.instance.SetupCurrentFeatureSettings(def.ToJSON());
+        FeatureSettingsManager.instance.SetupCurrentFeatureSettings(def.ToJSON(), null);
 
         // The client is notified that some quality settings might have changed
         Messenger.Broadcast(GameEvents.CP_QUALITY_CHANGED);
