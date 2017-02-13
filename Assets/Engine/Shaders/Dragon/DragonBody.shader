@@ -198,14 +198,16 @@ SubShader {
 				// fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _Tint + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
 				col = (diffuse + fixed4(i.vLight, 1)) * col * _Tint + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor) + _AmbientAdd; // To use ShaderSH9 better done in vertex shader
 
-
-				UNITY_OPAQUE_ALPHA(col.a); 
+				HG_DEPTH_ALPHA(i,col)
+//				UNITY_OPAQUE_ALPHA(col.a); 
 
 				return col; 
 
 			}
 		ENDCG
 	}
+
+
 /*
 	//Occlusion
 	Pass{
@@ -232,5 +234,5 @@ SubShader {
 
 */	
 }
-//Fallback "Mobile/VertexLit"
+//Fallback "Hungry Dragon/VertexLit"
 }

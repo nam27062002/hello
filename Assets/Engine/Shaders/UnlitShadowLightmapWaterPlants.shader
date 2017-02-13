@@ -60,7 +60,6 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decora
 					float4 vertex : SV_POSITION;
 					float2 texcoord : TEXCOORD0;
 					HG_FOG_COORDS(1)
-//					LIGHTING_COORDS(2,3)
 					#if LIGHTMAP_ON
 					float2 lmap : TEXCOORD2;
 					#endif
@@ -87,7 +86,6 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decora
 					o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 //					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
 					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, tvertex));	// Fog
-//					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 					#endif
@@ -100,9 +98,6 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decora
 //					return fixed4(1.0, 1.0, 0.0, 1.0);
 					fixed4 col = tex2D(_MainTex, i.texcoord) * i.color;	// Color
 
-//					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
-//					col *= attenuation;
-					 
 					#if LIGHTMAP_ON
 					fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 					col.rgb *= lm * 1.0; 
@@ -111,7 +106,8 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decora
 					HG_APPLY_FOG(i, col);	// Fog
 
 
-					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+//					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+					HG_DEPTH_ALPHA(i, col)
 
 					// col = fixed4(1,1,1,1) * i.fogCoord;
 					return col;
@@ -120,5 +116,5 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decora
 		}
 	}
 
-//	Fallback "Mobile/VertexLit"
+//	Fallback "Hungry Dragon/VertexLit"
 }

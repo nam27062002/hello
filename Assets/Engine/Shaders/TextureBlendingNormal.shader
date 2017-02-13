@@ -102,7 +102,6 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 					o.texcoord2 = TRANSFORM_TEX(v.texcoord, _SecondTexture);
 					o.color = v.color;
 					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
-//					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 					#endif
@@ -154,9 +153,6 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 						col = 2 * i.color * col;	// Overlay
 					}
 
-//					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
-//					col *= attenuation;
-
 					#if LIGHTMAP_ON
 					fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 					col.rgb *= lm;
@@ -178,13 +174,16 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 
 					fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
 
-					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-					return col + (specular * specMask * i.color * _LightColor0);
+					col = col + (specular * specMask * i.color * _LightColor0);
+//					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+					HG_DEPTH_ALPHA(i, col)
+
+					return col;
 //					return col + (specular  * _LightColor0);
 //					return col;
 				}
 			ENDCG
 		}
 	}
-	Fallback "Mobile/VertexLit"
+//	Fallback "Hungry Dragon/VertexLit"
 }

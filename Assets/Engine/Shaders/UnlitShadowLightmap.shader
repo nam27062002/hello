@@ -30,7 +30,6 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 				#pragma vertex vert
 				#pragma fragment frag
 				#pragma multi_compile_fwdbase
-
 				#pragma glsl_no_auto_normalization
 				#pragma fragmentoption ARB_precision_hint_fastest
 
@@ -53,7 +52,9 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 					float4 vertex : SV_POSITION;
 					half2 texcoord : TEXCOORD0;
 					HG_FOG_COORDS(1)
+					#ifdef DYNAMIC_SHADOWS
 					LIGHTING_COORDS(2,3)
+					#endif
 					#if LIGHTMAP_ON
 					float2 lmap : TEXCOORD4;
 					#endif
@@ -71,7 +72,9 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 					o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
+					#ifdef DYNAMIC_SHADOWS
 					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
+					#endif
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 					#endif
@@ -83,8 +86,10 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 				{
 					fixed4 col = tex2D(_MainTex, i.texcoord) * i.color;	// Color
 
+					#ifdef DYNAMIC_SHADOWS
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col *= attenuation;
+					#endif
 					 
 					#if LIGHTMAP_ON
 					fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
@@ -94,7 +99,8 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 					HG_APPLY_FOG(i, col);	// Fog
 
 
-					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+//					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+					HG_DEPTH_ALPHA(i, col)
 
 					// col = fixed4(1,1,1,1) * i.fogCoord;
 					return col;
@@ -102,6 +108,5 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 			ENDCG
 		}
 	}
-
-//	Fallback "Mobile/VertexLit"
+//	Fallback "Hungry Dragon/VertexLit"
 }
