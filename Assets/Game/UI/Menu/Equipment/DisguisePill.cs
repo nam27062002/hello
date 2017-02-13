@@ -45,7 +45,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
 	//------------------------------------------//
 	// Internal references
-	private GameObject m_lockIcon;
+	private Animator m_lockIconAnim;
 	private ShowHideAnimator m_equippedFrame;
 	private DOTweenAnimation m_equippedFX;
 	private Localizer m_infoText;
@@ -54,7 +54,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
 	void Awake() {
 		m_icon = transform.FindComponentRecursive<Image>("DragonSkinIcon");
-		m_lockIcon = transform.FindObjectRecursive("IconLock");
+		m_lockIconAnim = transform.FindComponentRecursive<Animator>("PF_UILock");
 		m_equippedFrame = transform.FindComponentRecursive<ShowHideAnimator>("EquippedFrame");
 		m_equippedFX = transform.FindComponentRecursive<DOTweenAnimation>("EquippedFX");
 		m_infoText = transform.FindComponentRecursive<Localizer>("InfoText");
@@ -70,11 +70,11 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		if(!_locked) {
 			// Unlocked
 			m_icon.color = Color.white;
-			m_lockIcon.SetActive(false);
+			m_lockIconAnim.gameObject.SetActive(false);
 		} else {
 			// Locked
 			m_icon.color = Color.gray;
-			m_lockIcon.SetActive(true);
+			m_lockIconAnim.gameObject.SetActive(true);
 		}
 
 		RefreshText(false, m_owned, m_locked);
@@ -137,5 +137,10 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	/// <param name="_eventData">Event data.</param>
 	public void OnPointerClick(PointerEventData _eventData) {
 		OnPillClicked.Invoke(this);
+
+		// Small animation on the lock icon
+		if(m_locked) {
+			m_lockIconAnim.SetTrigger("bounce");
+		}
 	}
 }
