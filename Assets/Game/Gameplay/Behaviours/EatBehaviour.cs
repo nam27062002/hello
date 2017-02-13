@@ -258,7 +258,9 @@ public abstract class EatBehaviour : MonoBehaviour {
             }
 
             PreyCount = 0;
-			EndHold();
+
+            if ( IsLatching() || IsGrabbing() )
+				EndHold();
 
 			if ( m_attackTarget != null )
 				StopAttackTarget();

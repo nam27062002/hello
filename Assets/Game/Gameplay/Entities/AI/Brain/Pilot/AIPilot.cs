@@ -64,7 +64,10 @@ namespace AI {
 
 			SetArea(_spawner);
 
-			Quaternion rot = _spawner.rotation;
+
+			Quaternion rot = Quaternion.identity;
+			if ( _spawner != null )
+			 	rot = _spawner.rotation;
 
 			if (rot == Quaternion.identity) {
 				if (UnityEngine.Random.Range(0f, 1f) < 0.5f) {
