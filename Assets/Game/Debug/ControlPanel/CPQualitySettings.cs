@@ -465,8 +465,8 @@ public class CPQualitySettings : MonoBehaviour
             manager.Device_Model = m_deviceNames[m_deviceDropDown.value];
 
             // We want the configuration for this device to be used
-            manager.SetupCurrentFeatureSettings(null);
-
+            manager.RestoreCurrentFeatureSettingsToDevice();
+            
             // The view has to be updated so it will show the configuration for the new profile
             Setup();
         }
