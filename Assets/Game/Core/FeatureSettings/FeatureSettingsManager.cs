@@ -187,12 +187,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     /// JSON with the quality settings received from the server to be applied
     /// </summary>
     private JSONNode Server_QualitySettingsJSONToApply { get; set; }
-
-    /// <summary>
-    /// String with the quality settings calculated by the client to upload to the server
-    /// </summary>
-    private string Server_QualitySettingsToUpload { get; set; }
-    
+   
     private void Server_Reset()
     {
         Server_QualitySettingsJSONToApply = null;
@@ -251,43 +246,34 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     private void Server_ResetUploadQualitySettings()
     {
-        Server_TimeToWaitToUploadSettings = 0f;
-        Server_QualitySettingsToUpload = null;
+        Server_TimeToWaitToUploadSettings = 0f ;       
     }
 
     private void Server_PrepareUploadQualitySettings()
-    {
-        // Stores current quality settings to make sure that they are the ones calculated by the client, otherwise if Server_UploadQualitySettings() is called after 
-        // the client applied the quality settings received from server we could be sending the quality settings received from server
-        JSONNode json = new JSONClass();
-        json.Add("profile", Device_CurrentProfile);
-        Server_QualitySettingsToUpload = json.ToString();
-        //Server_QualitySettingsJSONToUpload = "high";        
-
+    {        
         // Sets max time to wait to upload settings
         Server_TimeToWaitToUploadSettings = SERVER_TIME_TO_WAIT_FOR_LOGIN_WHEN_TOLD_TO_UPLOAD;        
     }
 
     private void Server_UploadQualitySettings()
     {
-        if (string.IsNullOrEmpty(Server_QualitySettingsToUpload))
+        // The calculated profile is the one that is sent to the server since the current profile could be different to the calculated profile if the client has applied
+        // some settings received from server that were stored in the device cache in a previous session
+        JSONNode json = new JSONClass();
+        string profileName = Device_CalculatedProfile;
+        //profileName = "high";
+        json.Add("profile", profileName);             
+        GameServerManager.SharedInstance.SetQualitySettings(json.ToString(), delegate (Error error, Dictionary<string, object> response)
         {
-            LogError("Empty quality settings can't be uploaded");
-        }
-        else
-        {
-            GameServerManager.SharedInstance.SetQualitySettings(Server_QualitySettingsToUpload, delegate (Error error, Dictionary<string, object> response)
+            if (error == null)
             {
-                if (error == null)
-                {
-                    Log("Quality settings uploaded successfully");
-                }
-                else
-                {
-                    Log("Error when uploading quality settings " + error.message);
-                }
-            });            
-        }
+                Log("Quality settings uploaded successfully");
+            }
+            else
+            {
+                Log("Error when uploading quality settings " + error.message);
+            }
+        });                    
 
         Server_ResetUploadQualitySettings();
     }   
@@ -444,6 +430,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             return Device_CurrentFeatureSettings.Rating;
         }
     }
+
+    private string Device_CalculatedProfile { get; set; }
 
     public string Device_CurrentProfile
     {
@@ -738,7 +726,23 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             {
                 profileName = deviceSettingsJSON[FeatureSettings.KEY_PROFILE];
             }
+        }        
+
+        // If no profileName is available for the device in iOS then we assume that it's a new device so its rating has to be the maximum
+#if UNITY_IOS        
+        if (string.IsNullOrEmpty(profileName))
+        {
+            rating = 1f;
+        }        
+#endif
+
+        // Gets the FeatureSettings object of the profile that corresponds to the calculated rating
+        if (string.IsNullOrEmpty(profileName))
+        {
+            profileName = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
         }
+        
+        Device_CalculatedProfile = profileName;        
 
         // The config received from server has to override the profile
         if (serverSettingsJSON != null)
@@ -753,20 +757,6 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             {
                 profileName = serverSettingsJSON[FeatureSettings.KEY_PROFILE];
             }
-        }
-
-        // If no profileName is available for the device in iOS then we assume that it's a new device so its rating has to be the maximum
-#if UNITY_IOS        
-        if (string.IsNullOrEmpty(profileName))
-        {
-            rating = 1f;
-        }        
-#endif
-
-        // Gets the FeatureSettings object of the profile that corresponds to the calculated rating
-        if (string.IsNullOrEmpty(profileName))
-        {
-            profileName = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
         }
 
         Device_CurrentProfile = profileName;
