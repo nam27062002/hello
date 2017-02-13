@@ -2,9 +2,8 @@
 {
 	Properties{
 		_MainTex("Base (RGB)", 2D) = "white" {}
-		_Depth("Depth (RGB)", 2D) = "white" {}
 		_Tint("Tint", Color) = (1.0, 1.0, 1.0, 1.0)
-		_Tint2("Tint2", Color) = (1.0, 1.0, 1.0, 1.0)
+		_TexelOffset("Texel offset", Range(1, 10)) = 1.0
 		_Focus("Focus", Range(0.0, 10.0)) = 0.5
 		_LensOffset("Lens offset", Range(0.0, 1.0)) = 0.5
 	}
@@ -12,16 +11,18 @@
 
 	SubShader{
 		// No culling or depth
-		Cull Off ZWrite Off ZTest Always
+//		Cull Off ZWrite Off ZTest Always
 
 		Pass{
-/*
+
+			Tags{ "RenderType" = "Opaque" }
+
 			Stencil
 			{
 				Ref 5
 				Comp NotEqual
 			}
-*/
+
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -35,10 +36,14 @@
 
 			uniform sampler2D _MainTex;
 			float4 _MainTex_ST;
+			uniform float4 _MainTex_TexelSize;
+
 			uniform sampler2D _Depth;
 			uniform float4 _Tint;
 			uniform float4 _Tint2;
-			sampler2D _CameraDepthTexture;
+			sampler2D _LastCameraDepthTexture;
+			float4 _LastCameraDepthTexture_TexelSize;
+			float _TexelOffset;
 
 			float _Focus;
 			float _LensOffset;
@@ -57,36 +62,37 @@
 				return o;
 			}
 
-			float4 frag(v2f i) : COLOR{
+			float4 frag(v2f i) : SV_Target
+			{
 //				float4 depth = tex2D(_MainTex, i.uv);
-				float depth = 1.0 - Linear01Depth(tex2D(_CameraDepthTexture, i.uv).x);
+//				float depth = Linear01Depth(tex2D(_LastCameraDepthTexture, i.uv).x);
+				float2 offset = float2(_MainTex_TexelSize.x * _TexelOffset, 0.0);
+//				float depthr = Linear01Depth(tex2D(_LastCameraDepthTexture, i.uv + offset.xy).x);
+//				float deptht = Linear01Depth(tex2D(_LastCameraDepthTexture, i.uv + offset.yx).x);
 
+				float dv = (_ProjectionParams.z - _ProjectionParams.y);
+				float depth = tex2D(_MainTex, i.uv).a;
+//				return depth;
+				float depthr = tex2D(_MainTex, i.uv + offset.xy).a;
+				float deptht = tex2D(_MainTex, i.uv + offset.yx).a;
 
-//				return float4(1.0, 0.0, 0.0, 1.0);
-				float depthR = abs(depth - _Focus);
+				float absDepth = smoothstep(0.0, 0.0125, abs(depthr - depth) + abs(deptht - depth));
 
-				float2 eix = float2(1.0, 0.0);
-				float4 col = tex2D(_MainTex, i.uv + eix.xy * depthR * _LensOffset);
-				col += tex2D(_MainTex, i.uv + eix.yx * depthR * _LensOffset);
-				col += tex2D(_MainTex, i.uv);
-				col *= 0.33333;
+				float4 col = lerp(_Tint2, _Tint, absDepth);
 
-
-//				float4 col = tex2D(_MainTex, i.uv) * lerp(_Tint, _Tint2, i.uv.y);
 				return col;
-//				return float4(1.0, 1.0, 0.0, 1.0);
 			}
 			ENDCG
 		}
-/**
+
 		Pass{
 
 			Stencil
 			{
 				Ref 5
 				Comp Equal
-//				Pass keep
-//				ZFail keep
+				Pass keep
+				ZFail keep
 			}
 
 			CGPROGRAM
@@ -117,12 +123,11 @@
 			}
 
 			float4 frag(v2f i) : COLOR{
-				float4 col = tex2D(_MainTex, i.uv);// *lerp(_Tint, _Tint2, i.uv.y);
+				float4 col = float4(1.0, 0.0, 0.0, 1.0); // tex2D(_MainTex, i.uv);// *lerp(_Tint, _Tint2, i.uv.y);
 //				return float4(1.0, 0.0, 0.0, 1.0);
 				return col;
 			}
 			ENDCG
 		}
-**/
 	}
 }
