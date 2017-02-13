@@ -13,6 +13,7 @@ public class DragonParticleController : MonoBehaviour
 	public GameObject m_revive;
 	public Transform m_reviveAnchor;
 	private ParticleSystem m_reviveInstance;
+	public ParticleData m_petRevive;
 
 	[Space]
 	public GameObject m_bubbles;
@@ -246,7 +247,10 @@ public class DragonParticleController : MonoBehaviour
 			}break;
 			case DragonPlayer.ReviveReason.FREE_REVIVE_PET:
 			{
-				// do nothing
+				// Instantiate particle
+				GameObject go = Resources.Load<GameObject>("Particles/" + m_petRevive.path + m_petRevive.name);
+				GameObject instance = GameObject.Instantiate(go);
+				instance.transform.position = m_reviveAnchor.position + m_petRevive.offset;
 			}break;
 		}
 		m_alive = true;

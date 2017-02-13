@@ -8,8 +8,7 @@ public class ProjectileMotion : MonoBehaviour {
 		Spear,
 		Bomb,
 		FallingMine,
-		PositionMissile,	// Goes to position and explodes there
-		ReviveMissile
+		PositionMissile	// Goes to position and explodes there
 	};
 
 	public Type m_moveType;
@@ -68,23 +67,6 @@ public class ProjectileMotion : MonoBehaviour {
 						pb.Explode(false);
 				}
 			}break;
-			case Type.ReviveMissile:
-			{	
-				m_duration -= Time.deltaTime;
-				float delta = m_duration / m_arrowMaxDuration;
-				m_position = Vector3.Lerp( m_target, m_startPosition, delta);
-
-				float l = Mathf.Sin( Mathf.PI * delta );
-				m_position.x += Mathf.Sin( Time.time * 5 ) * 0.5f * l;
-				m_position.y += Mathf.Cos( Time.time * 5 ) * 0.5f * l;
-
-				if ( m_duration <= 0 )
-				{
-					IProjectile pb = GetComponent<IProjectile>();
-					if (pb != null)
-						pb.Explode(false);
-				}
-			}break;
 		}
 		transform.position = m_position;
 	}
@@ -136,16 +118,6 @@ public class ProjectileMotion : MonoBehaviour {
 				m_forceVector = Vector3.zero;
 			}break;
 			case Type.PositionMissile:
-			{
-				m_position = transform.position;
-				m_startPosition = m_position;
-				m_target = _target;
-				m_duration = (m_target - m_startPosition).magnitude / m_arrowSpeed;
-				if ( m_duration <= 0 )
-					m_duration = 0.1f;
-				m_arrowMaxDuration = m_duration;
-			}break;
-			case Type.ReviveMissile:
 			{
 				m_position = transform.position;
 				m_startPosition = m_position;

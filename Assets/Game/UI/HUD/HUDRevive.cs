@@ -211,9 +211,6 @@ public class HUDRevive : MonoBehaviour {
 
 		// Hide
 		m_animator.Hide();
-
-		// Restore timescale
-		Time.timeScale = 1f;
 	}
 
 	/// <summary>
