@@ -29,12 +29,11 @@ Shader "Hungry Dragon/UnderWater"
 		Tags{ "Queue" = "Transparent+10" "RenderType" = "Transparent" }
 		LOD 100
 
-/*
 		GrabPass
 		{
 			"_BackgroundTexture"
 		}
-*/
+
 		Pass {  
 			Blend SrcAlpha OneMinusSrcAlpha
 			ZWrite Off
