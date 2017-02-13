@@ -8,7 +8,8 @@ public class ProjectileMotion : MonoBehaviour {
 		Spear,
 		Bomb,
 		FallingMine,
-		PositionMissile	// Goes to position and explodes there
+		PositionMissile,	// Goes to position and explodes there
+		ReviveMissile
 	};
 
 	public Type m_moveType;
@@ -30,6 +31,7 @@ public class ProjectileMotion : MonoBehaviour {
 	{
 		switch(m_moveType)
 		{
+			case Type.ReviveMissile:
 			case Type.Arrow:
 			{
 				m_position = m_position + m_direction * m_arrowSpeed * Time.deltaTime;
@@ -100,7 +102,7 @@ public class ProjectileMotion : MonoBehaviour {
 				m_direction.Normalize();
 				m_forceVector = m_direction * Mathf.Min( force , 100 );
 			}break;
-
+			case Type.ReviveMissile:
 			case Type.Arrow:
 			{
 				m_position = transform.position;

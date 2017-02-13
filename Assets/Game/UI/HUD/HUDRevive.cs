@@ -61,6 +61,7 @@ public class HUDRevive : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
+		Messenger.AddListener(GameEvents.PLAYER_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 		m_timer.Stop();
 		m_paidReviveCount = 0;
 		m_freeReviveCount = 0;
@@ -81,6 +82,7 @@ public class HUDRevive : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
+		Messenger.RemoveListener(GameEvents.PLAYER_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 
 		// Restore timescale
 		Time.timeScale = 1f;
@@ -191,6 +193,18 @@ public class HUDRevive : MonoBehaviour {
 	}
 
 	private void OnPlayerRevive( DragonPlayer.ReviveReason reason )
+	{
+		// Stop timer
+		m_timer.Stop();
+
+		// Hide
+		m_animator.Hide();
+
+		// Restore timescale
+		Time.timeScale = 1f;
+	}
+
+	private void OnPlayerPreFreeRevive()
 	{
 		// Stop timer
 		m_timer.Stop();
