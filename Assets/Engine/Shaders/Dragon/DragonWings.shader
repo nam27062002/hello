@@ -70,11 +70,8 @@ SubShader {
 			#define RIM
 			#define BUMP
 			#define SPEC
-			#define REFL
-			#endif
-
-//			#define BUMP
 //			#define REFL
+			#endif
 
 			struct appdata_t {
 				float4 vertex : POSITION;
@@ -147,7 +144,7 @@ SubShader {
 				// To calculate tangent world
 				#ifdef BUMP
 				o.tangentWorld = UnityObjectToWorldNormal(v.tangent);
-				o.normalWorld = normal;
+				o.normalWorld = -normal;
 				o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
 				#else
 				o.normalWorld = normal;
@@ -173,17 +170,21 @@ SubShader {
 				float3 light1Direction = normalize(_SecondLightDir.xyz);
 				
 				// normalDirection = i.normal;
-     			fixed4 diffuse = max(0,dot( normalDirection, light0Direction)) * _LightColor0;
-				diffuse += max(0, dot(normalDirection, light1Direction)) * _SecondLightColor;
+//     			fixed4 diffuse = max(0,dot( normalDirection, light0Direction)) * _LightColor0;
+//				diffuse += max(0, dot(normalDirection, light1Direction)) * _SecondLightColor;
+				fixed4 diffuse = abs(dot(normalDirection, light0Direction)) * _LightColor0;
+				diffuse += abs(dot(normalDirection, light1Direction)) * _SecondLightColor;
 
 				// Fresnel
 				float fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _Fresnel), 0.0, 1.0);
 
 				// Specular
 				float3 halfDir = normalize(i.viewDir + light0Direction);
-				float specularLight = pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
+//				float specularLight = pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
+				float specularLight = pow(abs(dot(normalDirection, halfDir)), _SpecExponent) * detail.g;
 				halfDir = normalize(i.viewDir + light1Direction);
-				specularLight += pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
+//				specularLight += pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
+				specularLight += pow(abs(dot(normalDirection, halfDir)), _SpecExponent) * detail.g;
 
 				fixed4 col;
 
@@ -200,7 +201,8 @@ SubShader {
 				// fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _Tint + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
 				col = (diffuse + fixed4(i.vLight, 1)) * col * _Tint + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor) + _AmbientAdd; // To use ShaderSH9 better done in vertex shader
 
-				HG_DEPTH_ALPHA(i, col)
+//				HG_DEPTH_ALPHA(i, col)
+//				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 
 				return col;
 
