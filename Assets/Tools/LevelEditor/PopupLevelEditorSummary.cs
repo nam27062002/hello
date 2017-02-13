@@ -60,6 +60,13 @@ namespace LevelEditor {
 			PopupController controller = GetComponent<PopupController>();
 			DebugUtils.Assert(controller != null, "Required component!");
 			controller.OnOpenPreAnimation.AddListener(OnOpenPreAnimation);
+
+			Messenger.AddListener(GameEvents.PLAYER_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
+		}
+
+		void OnDestroy()
+		{
+			Messenger.RemoveListener(GameEvents.PLAYER_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 		}
 		
 		/// <summary>
@@ -104,6 +111,12 @@ namespace LevelEditor {
 		/// </summary>
 		public void OnFinishButton() {
 			result = Result.FINISH;
+			GetComponent<PopupController>().Close(true);
+		}
+
+		void OnPlayerPreFreeRevive()
+		{
+			Time.timeScale = 1;
 			GetComponent<PopupController>().Close(true);
 		}
 	}
