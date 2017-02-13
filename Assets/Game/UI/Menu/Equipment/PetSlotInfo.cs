@@ -131,7 +131,7 @@ public class PetSlotInfo : MonoBehaviour {
 	/// </summary>
 	public void OnEmptySlotTap() {
 		// Show some feedback
-		UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_EMPTY_SLOT_INFO"), new Vector2(0.5f, 0.35f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+		UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_EMPTY_SLOT_INFO"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 	}
 
 	/// <summary>
