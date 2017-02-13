@@ -65,5 +65,5 @@ SubShader {
 	}
 }
 	// Pass to render object as a shadow caster
-	Fallback "VertexLit"
+//	Fallback "VertexLit"
 }

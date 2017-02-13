@@ -98,5 +98,5 @@ Shader "Hungry Dragon/MatCap/Bumped Textured Multiply"
 		}
 	}
 	
-	Fallback "VertexLit"
+//	Fallback "VertexLit"
 }

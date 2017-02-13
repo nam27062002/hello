@@ -17,8 +17,6 @@
 
 #define HG_DEPTH_ALPHA(i, o) o.w = i.vertex.z;
 
-#define DYNAMIC_SHADOWS
-
-
+//#define DYNAMIC_SHADOWS
 #endif // HUNGRYDRAGON_CG_INCLUDED
     

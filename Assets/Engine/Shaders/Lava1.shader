@@ -88,5 +88,5 @@ Properties
 			ENDCG
 		}
 	}
-Fallback "VertexLit"	
+//Fallback "VertexLit"	
 }
