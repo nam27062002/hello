@@ -36,8 +36,6 @@ public class BackgroundTintFX : MonoBehaviour {
         m_material = new Material(m_shader);
 
         m_originalCamera = GetComponent<Camera>();
-        m_originalCamera.depthTextureMode = DepthTextureMode.Depth;
-
 /*
         m_renderTexture = new RenderTexture((int)m_originalCamera.pixelWidth, (int)m_originalCamera.pixelHeight, 24, RenderTextureFormat.ARGB32);
 //        m_renderTexture = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.ARGB32);

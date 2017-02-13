@@ -3,6 +3,7 @@
 	Properties
 	{
 		_MainTex("Particle Texture", 2D) = "white" {}
+		_StencilMask("Stencil Mask", int) = 10
 	}
 
 	Category
@@ -24,7 +25,7 @@
 			{
 				Stencil
 				{
-					Ref 5
+					Ref [_StencilMask]
 					Comp always
 					Pass Replace
 					ZFail keep

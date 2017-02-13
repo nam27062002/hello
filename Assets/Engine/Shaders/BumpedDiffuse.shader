@@ -10,7 +10,7 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 		_BumpStrength("Bump Strength", float) = 3
 		_FresnelFactor("Fresnel factor", Range(0.0, 5.0)) = 0.27
 		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
-
+		_StencilMask("Stencil Mask", int) = 10
 	}
 	SubShader
 	{
@@ -19,11 +19,11 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 			Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase"}
 			Cull Back
 
-			zwrite on
+			ZWrite on
 
 			Stencil
 			{
-				Ref 5
+				Ref [_StencilMask]
 				Comp always
 				Pass Replace
 				ZFail keep

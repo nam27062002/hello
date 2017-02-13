@@ -8,6 +8,7 @@ Shader "Hungry Dragon/MatCap/Textured Multiply"
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_MatCap ("MatCap (RGB)", 2D) = "white" {}
+		_StencilMask("Stencil Mask", int) = 10
 	}
 	
 	Subshader
@@ -22,7 +23,7 @@ Shader "Hungry Dragon/MatCap/Textured Multiply"
 
 			Stencil
 			{
-				Ref 5
+				Ref [_StencilMask]
 				Comp always
 				Pass Replace
 				ZFail keep

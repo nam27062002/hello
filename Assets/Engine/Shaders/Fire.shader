@@ -7,7 +7,8 @@
 		_Flamespeed("Flame speed", Range(0.0, 2.0)) = 0.5
 		_Flamethrower("Flame thrower", Range(0.0, 5.0)) = 0.8
 		_Flamedistance("Flame distance", Range(0.0, 5.0)) = 1.5
-
+			
+		_StencilMask("Stencil Mask", int) = 10
 	}
 
 	SubShader
@@ -21,7 +22,7 @@
 
 		Stencil
 		{
-			Ref 5
+			Ref [_StencilMask]
 			Comp always
 			Pass Replace
 			ZFail keep

@@ -17,6 +17,7 @@
 
 #define HG_DEPTH_ALPHA(i, o) o.w = i.vertex.z;
 
+#define HG_STENCIL_MASK 5
 //#define DYNAMIC_SHADOWS
 #endif // HUNGRYDRAGON_CG_INCLUDED
     
