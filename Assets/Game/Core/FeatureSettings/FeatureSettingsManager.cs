@@ -32,7 +32,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     private void Awake()
     {
 #if UNITY_EDITOR
-        Device_Model = "MY_UNITY_EDITOR";
+        Device_Model = "UNITY_EDITOR";
 #else
         Device_Model = SystemInfo.deviceModel;
 #endif
