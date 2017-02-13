@@ -301,6 +301,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 
     #region interface_for_subclasses
     public virtual AreaBounds area { get; set; }
+	public Quaternion rotation { get { return transform.rotation; } }
+
     protected virtual void RegisterInEntityManager(IEntity e)
     {
         if (EntityManager.instance != null)
