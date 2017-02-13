@@ -23,8 +23,8 @@ public class BackgroundTintFX : MonoBehaviour {
     private bool m_wasEnabled = false;
 	private Shader m_replacementShader = null;
 
-    [Range(0.0f, 1.0f)]
-    public float m_Focus = 0.5f;
+    [Range(1.0f, 10.0f)]
+    public float m_TexelOffset = 2.0f;
 
     [Range(0.0f, 1.0f)]
     public float m_LensOffset = 0.5f;
@@ -34,10 +34,11 @@ public class BackgroundTintFX : MonoBehaviour {
     void Start()
     {
         m_material = new Material(m_shader);
-        setTint(m_Tint, m_Tint2);
 
         m_originalCamera = GetComponent<Camera>();
+        m_originalCamera.depthTextureMode = DepthTextureMode.Depth;
 
+/*
         m_renderTexture = new RenderTexture((int)m_originalCamera.pixelWidth, (int)m_originalCamera.pixelHeight, 24, RenderTextureFormat.ARGB32);
 //        m_renderTexture = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.ARGB32);
         m_renderTexture.wrapMode = TextureWrapMode.Clamp;
@@ -65,22 +66,23 @@ public class BackgroundTintFX : MonoBehaviour {
 
 
         setRenderCameraActive(false);
+*/
         m_tintActive = false;
         m_fade = true;
 
-        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
-        m_wasEnabled = true;
+//        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+//        m_wasEnabled = true;
 
-        OnFuryToggled(true, DragonBreathBehaviour.Type.Super);
+//        OnFuryToggled(true, DragonBreathBehaviour.Type.Super);
 
     }
 
     public void OnDestroy()
     {
-        if (m_wasEnabled)
-        {
-            Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
-        }
+//        if (m_wasEnabled)
+//        {
+//            Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+//        }
         if (m_renderCamera != null)
         {
             m_renderCamera.targetTexture = null;
@@ -96,52 +98,8 @@ public class BackgroundTintFX : MonoBehaviour {
 
     public void Update()
     {
-        if (m_tintActive)
-        {
-            float dTime = (Time.time - m_startTime) / timeDecay;
-
-            if (!m_fade)
-            {
-                dTime = 1.0f - dTime;
-                if (dTime < 0.0f)
-                {
-                    m_tintActive = false;
-                    setRenderCameraActive(false);
-
-                }
-            }
-
-            dTime = Mathf.Clamp(dTime, 0.0f, 1.0f);
-            setTint(Color.Lerp(Color.white, m_Tint, dTime), Color.Lerp(Color.white, m_Tint2, dTime));
-        }
-        m_material.SetFloat("_Focus", m_Focus);
+        m_material.SetFloat("_TexelOffset", m_TexelOffset);
         m_material.SetFloat("_LensOffset", m_LensOffset);
-    }
-
-    void OnFuryToggled(bool active, DragonBreathBehaviour.Type type)
-    {
-        m_startTime = Time.time;
-        if (active)
-        {
-            m_tintActive = active;
-            m_fade = true;
-            setRenderCameraActive(true);
-        }
-        else
-        {
-            m_fade = false;
-        }
-    }
-
-    public void setTint(Color col)
-    {
-        m_material.SetColor("_Tint", col);
-        m_material.SetColor("_Tint2", col);
-    }
-    public void setTint(Color col, Color col2)
-    {
-        m_material.SetColor("_Tint", col);
-        m_material.SetColor("_Tint2", col2);
     }
 
     void OnRenderImage(RenderTexture source, RenderTexture dest)

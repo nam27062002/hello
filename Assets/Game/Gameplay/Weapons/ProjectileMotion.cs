@@ -30,6 +30,7 @@ public class ProjectileMotion : MonoBehaviour {
 	{
 		switch(m_moveType)
 		{
+			
 			case Type.Arrow:
 			{
 				m_position = m_position + m_direction * m_arrowSpeed * Time.deltaTime;
@@ -122,6 +123,8 @@ public class ProjectileMotion : MonoBehaviour {
 				m_startPosition = m_position;
 				m_target = _target;
 				m_duration = (m_target - m_startPosition).magnitude / m_arrowSpeed;
+				if ( m_duration <= 0 )
+					m_duration = 0.1f;
 				m_arrowMaxDuration = m_duration;
 			}break;
 		}

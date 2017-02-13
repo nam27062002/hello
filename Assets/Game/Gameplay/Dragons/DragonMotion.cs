@@ -353,11 +353,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	void OnEnable() {
 		Messenger.AddListener(GameEvents.PLAYER_DIED, PnPDied);
+		Messenger.AddListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggle);
 	}
 
 	void OnDisable()
 	{
 		Messenger.RemoveListener(GameEvents.PLAYER_DIED, PnPDied);
+		Messenger.RemoveListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggle);
 	}
 
 	private void PnPDied()
@@ -365,7 +367,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_impulse = Vector3.zero;
 		m_deadTimer = 1000;
 	}
-	
+
+	private void OnDrunkToggle(bool _active)
+	{
+		m_animator.SetBool("drunk", _active);
+	}
+
 	private void ChangeState(State _nextState) {
 		if (m_state != _nextState) {
 			// we are leaving old state
@@ -1266,7 +1273,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		CheckGround( out m_raycastHit);
 		if (m_height >= 2f * transform.localScale.y) { // dragon will fly up to avoid mesh intersection
 
-			m_deadTimer += Time.deltaTime;
+			m_deadTimer += _deltaTime;
 			m_impulse = m_rbody.velocity;
 			if ( m_deadTimer < 1.5f * Time.timeScale )
 			{
@@ -1653,7 +1660,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void EndLatchMovement()
 	{
-		ChangeState(m_previousState);
+		if ( m_state != State.Dead )
+			ChangeState(m_previousState);
 		m_holdPrey = null;
 		m_holdPreyTransform = null;
 		m_grab = false;

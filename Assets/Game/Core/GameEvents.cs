@@ -62,6 +62,7 @@ public enum GameEvents {
 	PLAYER_STATE_CHANGED,		// params: DragonPlayer.EState _oldState, DragonPlayer.EState _newState
 	PLAYER_KO,					// params: DamageType
 	PLAYER_DIED,				// no params
+	PLAYER_PRE_FREE_REVIVE,			// no params
 	PLAYER_FREE_REVIVE,			// no params
 	PLAYER_REVIVE,				// no params
 
