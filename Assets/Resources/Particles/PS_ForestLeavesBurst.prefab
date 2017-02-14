@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4023213919587236}
   - component: {fileID: 198890181269093844}
   - component: {fileID: 199791882376103944}
+  - component: {fileID: 114497934012234850}
   m_Layer: 0
   m_Name: PS_ForestLeavesBurst
   m_TagString: Untagged
@@ -41,6 +42,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114497934012234850
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1630992844379352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f909925ab84d41e690e75abdd8a2027, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &198890181269093844
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -49,7 +61,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1630992844379352}
   serializedVersion: 5
   lengthInSec: 1
-  speed: 1
+  simulationSpeed: 1
   looping: 0
   prewarm: 0
   playOnAwake: 1

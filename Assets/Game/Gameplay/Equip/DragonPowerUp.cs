@@ -211,6 +211,10 @@ public class DragonPowerUp : MonoBehaviour {
 				{
 					DragonEatBehaviour eatBehaviour =  GetComponent<DragonEatBehaviour>();
 					eatBehaviour.AddEatDistance( def.GetAsFloat("param1", 0) );
+
+					// enable vacumm particle
+					DragonParticleController particleController = GetComponentInChildren<DragonParticleController>();
+					particleController.EnableVacuum();
 				}break;
 				default:
 				{
