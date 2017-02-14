@@ -18,7 +18,7 @@ using DG.Tweening;
 /// <summary>
 /// Controls a single egg on the open egg menu.
 /// </summary>
-[RequireComponent(typeof(EggController))]
+[RequireComponent(typeof(EggView))]
 public class OpenEggBehaviour : MonoBehaviour, IPointerClickHandler {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -62,13 +62,13 @@ public class OpenEggBehaviour : MonoBehaviour, IPointerClickHandler {
 		if(m_tapCount >= TAPS_TO_OPEN) return;
 
 		// Aux vars
-		EggController eggController = GetComponent<EggController>();
+		EggView eggController = GetComponent<EggView>();
 
 		// Increase tap count!
 		m_tapCount++;
 
 		// Trigger external events
-		Messenger.Broadcast<EggController, int>(GameEvents.EGG_TAP, eggController, m_tapCount);
+		Messenger.Broadcast<EggView, int>(GameEvents.EGG_TAP, eggController, m_tapCount);
 
 		// If we've reached the required amount of taps, open egg!
 		if(m_tapCount >= TAPS_TO_OPEN) {

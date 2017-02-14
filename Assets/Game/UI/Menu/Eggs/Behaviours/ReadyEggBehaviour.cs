@@ -18,7 +18,7 @@ using DG.Tweening;
 /// <summary>
 /// Controls a single egg when it's ready for collection.
 /// </summary>
-[RequireComponent(typeof(EggController))]
+[RequireComponent(typeof(EggView))]
 public class ReadyEggBehaviour : MonoBehaviour, IPointerClickHandler {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -62,7 +62,7 @@ public class ReadyEggBehaviour : MonoBehaviour, IPointerClickHandler {
 			.Play();
 
 		// Incubator screen will take care of it
-		InstanceManager.sceneController.GetComponent<MenuScreensController>().StartOpenEggFlow(GetComponent<EggController>().eggData);
+		InstanceManager.sceneController.GetComponent<MenuScreensController>().StartOpenEggFlow(GetComponent<EggView>().eggData);
 	}
 }
 
