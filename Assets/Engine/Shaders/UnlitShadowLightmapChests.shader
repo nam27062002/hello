@@ -10,6 +10,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (Chests)"
 	Properties 
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
+		_StencilMask("Stencil Mask", int) = 10
 	}
 
 	SubShader {
@@ -20,7 +21,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (Chests)"
 
 			Stencil
 			{
-				Ref 5
+				Ref [_StencilMask]
 				Comp always
 				Pass Replace
 				ZFail keep

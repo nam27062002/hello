@@ -26,6 +26,8 @@ Properties {
 	_SecondLightDir("Second Light dir", Vector) = (0,0,-1,0)
 	_SecondLightColor("Second Light Color", Color) = (0.0, 0.0, 0.0, 0.0)
 
+	_StencilMask("Stencil Mask", int) = 10
+
 }
 
 SubShader {
@@ -38,7 +40,7 @@ SubShader {
 
 		Stencil
 		{
-			Ref 5
+			Ref [_StencilMask]
 			Comp always
 			Pass Replace
 			ZFail keep
@@ -214,7 +216,7 @@ SubShader {
 
 		Stencil
 		{
-			Ref 5
+			Ref [_StencilMask]
 			Comp notequal
 			Pass Replace
 			ZFail keep

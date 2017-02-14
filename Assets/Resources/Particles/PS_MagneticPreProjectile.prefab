@@ -55,6 +55,7 @@ GameObject:
   - component: {fileID: 4730948516349016}
   - component: {fileID: 198228958533937652}
   - component: {fileID: 199545716800194764}
+  - component: {fileID: 114920458326214752}
   m_Layer: 0
   m_Name: PS_MagneticPreProjectile
   m_TagString: Untagged
@@ -103,6 +104,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114920458326214752
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1965719472579342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f909925ab84d41e690e75abdd8a2027, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &198228958533937652
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -111,10 +123,10 @@ ParticleSystem:
   m_GameObject: {fileID: 1965719472579342}
   serializedVersion: 5
   lengthInSec: 0.3
-  speed: 1
+  simulationSpeed: 1
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   autoRandomSeed: 1
   startDelay:
     scalar: 0.2
@@ -2748,10 +2760,10 @@ ParticleSystem:
   m_GameObject: {fileID: 1435047084949148}
   serializedVersion: 5
   lengthInSec: 0.3
-  speed: 1
+  simulationSpeed: 1
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   autoRandomSeed: 1
   startDelay:
     scalar: 0.1
@@ -5391,10 +5403,10 @@ ParticleSystem:
   m_GameObject: {fileID: 1274842138926052}
   serializedVersion: 5
   lengthInSec: 0.3
-  speed: 1
+  simulationSpeed: 1
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   autoRandomSeed: 1
   startDelay:
     scalar: 0

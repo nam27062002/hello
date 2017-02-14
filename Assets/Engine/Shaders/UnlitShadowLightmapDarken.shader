@@ -10,6 +10,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with near darken(On Line Decor
 	Properties 
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
+		_StencilMask("Stencil Mask", int) = 10
 	}
 
 	SubShader {
@@ -20,7 +21,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with near darken(On Line Decor
 
 			Stencil
 			{
-				Ref 4
+				Ref [_StencilMask]
 				Comp always
 				Pass Replace
 				ZFail keep
