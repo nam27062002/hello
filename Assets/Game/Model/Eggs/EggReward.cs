@@ -32,6 +32,45 @@ public class EggReward {
 	}
 
 	//------------------------------------------------------------------------//
+	// STATIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Given a rarity sku, return the equivalent enum value.
+	/// </summary>
+	/// <returns>The rarity enum value.</returns>
+	/// <param name="_raritySku">Rarity sku to be checked.</param>
+	public static Rarity SkuToRarity(string _raritySku) {
+		// We could double-check with content, but it's much faster if we hardcode it (and these skus are not supposed to change)
+		//DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, _raritySku);
+		//return (Rarity)rarityDef.GetAsInt("order");
+		switch(_raritySku) {
+			case "common":	return Rarity.COMMON; 	break;
+			case "rare":	return Rarity.RARE;		break;
+			case "epic":	return Rarity.EPIC;		break;
+			case "special":	return Rarity.SPECIAL;	break;
+			default:		return Rarity.UNKNOWN;	break;
+		}
+		return Rarity.UNKNOWN;
+	}
+
+	/// <summary>
+	/// Given a rarity, return its sku.
+	/// </summary>
+	/// <returns>The sku of the given rarity. Empty string if unknown.</returns>
+	/// <param name="_rarity">Rarity whose sku we want.</param>
+	public static string RarityToSku(Rarity _rarity) {
+		// We could double-check with content, but it's much faster if we hardcode it (and these skus are not supposed to change)
+		switch(_rarity) {
+			case Rarity.COMMON:		return "common";		break;
+			case Rarity.RARE:		return "rare";			break;
+			case Rarity.EPIC:		return "epic";			break;
+			case Rarity.SPECIAL:	return "special";		break;
+			default:				return string.Empty;	break;
+		}
+		return string.Empty;
+	}
+
+	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Reward type, matches rewardDefinitions "type" property.
@@ -105,11 +144,11 @@ public class EggReward {
 		switch(m_type) {
 			case "pet": {
 				// Find out reward rarity
-				DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, _rewardDef.Get("rarity"));
-				m_rarity = (Rarity)rarityDef.GetAsInt("order");
+				string raritySku = _rewardDef.Get("rarity");
+				m_rarity = SkuToRarity(raritySku);
 
 				// Special case if golden egg
-				List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", rarityDef.sku);
+				List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", raritySku);
 				if(m_rarity == Rarity.SPECIAL) {
 					// Get a random special pet, but make sure it's one we don't have. If we have it, just reroll the dice.
 					m_itemDef = petDefs.GetRandomValue();

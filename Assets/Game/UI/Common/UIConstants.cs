@@ -273,14 +273,8 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	/// <returns>The rarity color.</returns>
 	/// <param name="_raritySku">The rarity to be checcked.</param>
 	public static Color GetRarityColor(string _raritySku) {
-		// Get rarity enum equivalent from def
-		DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, _raritySku);
-		if(rarityDef != null) {
-			return GetRarityColor((EggReward.Rarity)rarityDef.GetAsInt("order"));
-		}
-
-		// Unknown rarity, return white
-		return Color.white;
+		// Get rarity enum equivalent from sku
+		return GetRarityColor(EggReward.SkuToRarity(_raritySku));
 	}
 
 	/// <summary>
