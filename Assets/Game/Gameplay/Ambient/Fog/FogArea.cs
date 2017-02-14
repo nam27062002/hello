@@ -3,16 +3,17 @@ using System.Collections;
 
 public class FogArea : MonoBehaviour
 {
-	public Color m_fogColor = Color.white;
-	public float m_fogStart = 0;
-	public float m_fogEnd = 100;
-	public float m_fogRamp = 1;
+	
 	public float m_insideScale = 1.5f;
 	FogManager m_fogManager;
-
+	public FogManager.FogAttributes m_attributes;
+	public bool m_drawInside = false;
 	void Awake()
 	{
 		m_fogManager = FindObjectOfType<FogManager>();
+
+		m_attributes.CreateTexture();
+		m_attributes.RefreshTexture();
 	}
 
 	void OnTriggerEnter( Collider other)
@@ -36,9 +37,42 @@ public class FogArea : MonoBehaviour
 
 	void OnDrawGizmosSelected()
 	{
-		Shader.SetGlobalFloat("_FogStart", m_fogStart);
-		Shader.SetGlobalFloat("_FogEnd", m_fogEnd);
-		Shader.SetGlobalColor("_FogColor", m_fogColor);
-		Shader.SetGlobalFloat("_FogRampY", m_fogRamp);
+		if ( m_attributes.texture == null )
+			m_attributes.CreateTexture();
+		m_attributes.RefreshTexture();
+
+		Shader.SetGlobalFloat("_FogStart", m_attributes.m_fogStart);
+		Shader.SetGlobalFloat("_FogEnd", m_attributes.m_fogEnd);
+		Shader.SetGlobalTexture("_FogTexture", m_attributes.texture);
+
+		if (m_drawInside)
+		{
+			Color c = m_attributes.m_fogGradient.Evaluate(0.5f);
+			c.a = c.a / 2.0f;
+			Gizmos.color = c;
+			MeshFilter meshFilter = GetComponent<MeshFilter>();
+			if ( meshFilter != null )
+			{
+				Gizmos.DrawMesh( meshFilter.sharedMesh );	
+			}
+		}
+
+
+		Gizmos.color = Color.white;
+		Vector3 _from = transform.position;
+		_from.z = m_attributes.m_fogStart;
+		Vector3 _to = transform.position;
+		_to.z = m_attributes.m_fogEnd;
+
+		Gizmos.DrawLine( _from, _to);
+		float crossSize = 2;
+		Gizmos.DrawLine( _from + Vector3.up * crossSize, _from + Vector3.down * crossSize );
+		Gizmos.DrawLine( _from + Vector3.left * crossSize, _from + Vector3.right * crossSize );
+
+		Gizmos.DrawLine( _to + Vector3.up * crossSize, _to + Vector3.down * crossSize );
+		Gizmos.DrawLine( _to + Vector3.left * crossSize, _to + Vector3.right * crossSize );
+		// 
 	}
+
+
 }
