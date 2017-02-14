@@ -1,0 +1,134 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1373911218337086}
+  m_IsPrefabParent: 1
+--- !u!1 &1373911218337086
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4692215417523900}
+  - component: {fileID: 114130535698999904}
+  - component: {fileID: 64309091269074076}
+  - component: {fileID: 33747983242081762}
+  - component: {fileID: 114713438493338490}
+  m_Layer: 16
+  m_Name: PF_ParticleTrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4692215417523900
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1373911218337086}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 384.88, y: 134.08, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &33747983242081762
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1373911218337086}
+  m_Mesh: {fileID: 0}
+--- !u!64 &64309091269074076
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1373911218337086}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Convex: 1
+  m_InflateMesh: 0
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 0}
+--- !u!114 &114130535698999904
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1373911218337086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cea06f4fa95c427393f58af70d67776, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_particle:
+    name: PS_ForestLeavesBurst
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_event: 0
+--- !u!114 &114713438493338490
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1373911218337086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e465a4fb08594de49a41e213281fe691, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  keyPoints:
+  - {x: -0.28564453, y: 5.641548, z: 0}
+  - {x: 3.451477, y: 0.44036102, z: 0}
+  - {x: 9.254669, y: -1.1279831, z: 0}
+  - {x: 6.118164, y: -7.1300125, z: 0}
+  - {x: 5.667938, y: -9.100571, z: 0}
+  - {x: -0.1352539, y: -7.5322266, z: 0}
+  - {x: 0.31497192, y: -5.5616684, z: 0}
+  - {x: -0.3310852, y: -6.608757, z: 0}
+  - {x: -3.126892, y: -6.767479, z: 0}
+  - {x: -6.9226685, y: -1.7260513, z: 0}
+  - {x: -4.1268616, y: -1.5673294, z: 0}
+  - {x: -4.5055847, y: 1.3288345, z: 0}
+  curvePoints:
+  - {x: 1.5829163, y: 3.0409546, z: 0}
+  - {x: 6.353073, y: -0.34381104, z: 0}
+  - {x: 7.6864166, y: -4.128998, z: 0}
+  - {x: 5.893051, y: -8.115292, z: 0}
+  - {x: 2.7663422, y: -8.316399, z: 0}
+  - {x: 0.08985901, y: -6.5469475, z: 0}
+  - {x: -0.008056641, y: -6.0852127, z: 0}
+  - {x: -1.7289886, y: -6.688118, z: 0}
+  - {x: -5.0247803, y: -4.246765, z: 0}
+  - {x: -5.524765, y: -1.6466904, z: 0}
+  - {x: -4.316223, y: -0.11924744, z: 0}
+  - {x: -2.3956146, y: 3.4851913, z: 0}
+  isCurve: 000000000000000000000000
+  curveDetail: 0.1
+  colliderDepth: 10
+  buildColliderEdges: 1
+  buildColliderFront: 0
+  colliderParent: {fileID: 0}
+  uvPosition: {x: 0, y: 0}
+  uvScale: 1
+  uvRotation: 0
+  showNormals: 0
+  showOutline: 1
+  pinkMeshOffset: 0
+  mergeObject: {fileID: 0}
+  mergeStartPoint: 0
+  mergeEndPoint: 0
