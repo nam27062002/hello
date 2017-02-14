@@ -23,26 +23,22 @@ Shader "Hungry Dragon/UnderWater"
 
 		_WaveRadius("Wave radius ", Range(0.0, 1.0)) = 0.15
 
+		_StencilMask("Stencil Mask", int) = 10
 	}
 
 	SubShader {
 		Tags{ "Queue" = "Transparent+10" "RenderType" = "Transparent" }
 		LOD 100
 
-		GrabPass
-		{
-			"_BackgroundTexture"
-		}
-
 		Pass {  
 			Blend SrcAlpha OneMinusSrcAlpha
 			ZWrite Off
 			Fog{ Color(0, 0, 0, 0) }
-
 			Stencil
 			{
-				Ref 5
+				Ref [_StencilMask]
 				Comp NotEqual
+				Pass DecrWrap//keep
 			}
 
 			CGPROGRAM
@@ -50,17 +46,18 @@ Shader "Hungry Dragon/UnderWater"
 				#pragma fragment frag
 				#pragma glsl_no_auto_normalization
 				#pragma fragmentoption ARB_precision_hint_fastest
-
+				#pragma shader_feature _WATER
 //				#pragma multi_compile_fog
 //				#pragma multi_compile_fwdbase
 
 //				#pragma multi_compile_particles
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
+				#include "HungryDragon.cginc"
 
 
 				#define CAUSTIC_ANIM_SCALE  2.0f
-				#define CAUSTIC_RADIUS  0.125f
+				#define CAUSTIC_RADIUS 0.125f
 
 				struct appdata_t {
 					float4 vertex : POSITION;
@@ -111,9 +108,10 @@ Shader "Hungry Dragon/UnderWater"
 
 				fixed4 frag (v2f i) : SV_Target
 				{
-//				float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).x) * 1.0f;
-				float depth = LinearEyeDepth(tex2Dproj(_BackgroundTexture, (i.scrPos)).w) * 1.0f;
-				float depthR = (depth - i.scrPos.z);
+					return fixed4(0.0, 0.0, 0.0, 0.0);
+	//				float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).x) * 1.0f;
+					float depth = LinearEyeDepth(tex2Dproj(_BackgroundTexture, (i.scrPos)).w) * 1.0f;
+					float depthR = (depth - i.scrPos.z);
 
 					float lerpFog = 1.0 - clamp((depthR - _FogNear) / (_FogFar - _FogNear), 0.0, 1.0);
 					float lerpCaustic = 1.0 - clamp((depthR - _CausticNear) / (_CausticFar - _CausticNear), 0.0, 1.0);
@@ -144,8 +142,9 @@ Shader "Hungry Dragon/UnderWater"
 
 			Stencil
 			{
-				Ref 5
+				Ref [_StencilMask]
 				Comp Equal
+				Pass IncrWrap
 			}
 
 			CGPROGRAM
@@ -203,6 +202,7 @@ Shader "Hungry Dragon/UnderWater"
 
 				fixed4 frag(v2f i) : SV_Target
 				{
+					return fixed4(0.0, 0.0, 0.0, 0.0);
 					float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).x) * 1.0f;
 					float depthR = (depth - i.scrPos.z);
 

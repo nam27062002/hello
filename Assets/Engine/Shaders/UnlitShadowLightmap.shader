@@ -10,6 +10,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 	Properties 
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
+//		_StencilMask("Stencil Mask", int) = 10
 	}
 
 	SubShader {
@@ -17,15 +18,15 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 		LOD 100
 		
 		Pass {		
-
+/*
 			Stencil
 			{
-				Ref 4
+				Ref [_StencilMask]
 				Comp always
 				Pass Replace
 				ZFail keep
 			}
-
+*/
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
