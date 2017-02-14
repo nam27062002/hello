@@ -10,7 +10,15 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 	private List<FogNode> m_usedFogNodes = new List<FogNode>();
 	private Rect m_getRect = new Rect();
 
-	public struct FogResult
+	public enum FogMode
+	{
+		FogNodes,
+		FogArea
+	};
+	public FogMode m_fogMode = FogMode.FogNodes;
+
+	[System.Serializable]
+	public class FogResult
 	{
 		public Color m_fogColor;
 		public float m_fogStart;
@@ -46,6 +54,19 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 
 	private bool m_useQuadtree = false;
 
+
+	// For Area Mode
+	public FogResult m_defaultAreaFog;
+	List<FogArea> m_fogAreaList = new List<FogArea>();
+	float m_start;
+	float m_end;
+	Color m_color;
+	float m_rampY;
+	bool m_firstTime = true;
+
+
+	FogResult m_tempResult = new FogResult();
+
 	void Awake()
 	{
 		Shader.SetGlobalTexture("_FogTexture", m_fogCurveTexture);
@@ -68,12 +89,62 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 
 	void Update()
 	{
-		if ( !Application.isPlaying )	
+		switch( m_fogMode )
 		{
-			RefillQuadtree();
-			Shader.SetGlobalTexture("_FogTexture", m_fogCurveTexture);
-			m_ready = true;	
+			case FogMode.FogNodes:
+			{
+				if ( !Application.isPlaying )	
+				{
+					RefillQuadtree();
+					Shader.SetGlobalTexture("_FogTexture", m_fogCurveTexture);
+					m_ready = true;	
+				}
+			}break;
+			case FogMode.FogArea:
+			{
+				if ( Application.isPlaying )	
+				{
+					if ( m_fogAreaList.Count > 0 )
+					{
+						FogArea selectedFogArea = m_fogAreaList.Last<FogArea>();
+						m_tempResult.m_fogStart = selectedFogArea.m_fogStart;
+						m_tempResult.m_fogEnd = selectedFogArea.m_fogEnd;
+						m_tempResult.m_fogColor = selectedFogArea.m_fogColor;
+						m_tempResult.m_fogRamp = selectedFogArea.m_fogRamp;
+					}
+					else
+					{
+						m_tempResult.m_fogStart = m_defaultAreaFog.m_fogStart;
+						m_tempResult.m_fogEnd = m_defaultAreaFog.m_fogEnd;
+						m_tempResult.m_fogColor = m_defaultAreaFog.m_fogColor;
+						m_tempResult.m_fogRamp = m_defaultAreaFog.m_fogRamp;
+					}
+
+					if ( m_firstTime )
+					{
+						m_firstTime = false;
+						m_start = m_tempResult.m_fogStart;
+						m_end = m_tempResult.m_fogEnd;
+						m_color = m_tempResult.m_fogColor;
+						m_rampY = m_tempResult.m_fogRamp;
+					}
+					else
+					{
+						float delta = Time.deltaTime;
+						m_start = Mathf.Lerp( m_start, m_tempResult.m_fogStart, delta);
+						m_end = Mathf.Lerp( m_end, m_tempResult.m_fogEnd, delta);
+						m_color = Color.Lerp( m_color, m_tempResult.m_fogColor, delta);
+						m_rampY = Mathf.Lerp( m_rampY, m_tempResult.m_fogRamp, delta);
+					}
+					Shader.SetGlobalFloat("_FogStart", m_start);
+					Shader.SetGlobalFloat("_FogEnd", m_end);
+					Shader.SetGlobalColor("_FogColor", m_color);
+					Shader.SetGlobalFloat("_FogRampY", m_rampY);
+				}
+			}break;
 		}
+
+
 	}
 
 	void RefillQuadtree()
@@ -94,9 +165,9 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 		return m_ready;
 	}
 
-	public FogResult GetFog( Vector3 position )
+	public void GetFog( Vector3 position, ref FogResult result )
 	{
-		FogResult result = new FogResult();
+		// FogResult result = new FogResult();
 		result.Reset();
 		// Search closest fog nodes
 		for( int i = 0; i<NODES_TO_TAKE_INTO_ACCOUNT; i++ )
@@ -209,8 +280,6 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 				result.m_fogRamp += m_resultNodes[i].m_node.m_fogRamp * w;
 			}
 		}
-
-		return result;
 	}
 
 	void OnDrawGizmos()
@@ -241,6 +310,18 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 	{
 		for( int i = 0; i<m_fogNodesArray.Length; i++ )
 			m_fogNodesArray[i].CustomGuizmoDraw( m_usedFogNodes.Contains( m_fogNodesArray[i] ) );
+	}
+
+
+	public void RegisterFog( FogArea _area )
+	{
+		m_fogAreaList.Add( _area );
+	}
+
+
+	public void UnregisterFog( FogArea _area )
+	{
+		m_fogAreaList.Remove( _area );
 	}
 
 }
