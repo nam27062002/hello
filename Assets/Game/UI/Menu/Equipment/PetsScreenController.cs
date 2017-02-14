@@ -58,6 +58,13 @@ public class PetsScreenController : MonoBehaviour {
 			return m_powerMiniIcons;
 		}
 	}
+
+	// Some public getters
+	public PetCategoryTab currentTab {
+		get {
+			return (PetCategoryTab)m_categoryTabs.currentScreen;
+		}
+	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
