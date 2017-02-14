@@ -54,6 +54,10 @@ public class DragonParticleController : MonoBehaviour
 	[Space]
 	public string m_corpseAsset = "";
 
+	[Space]
+	public ParticleData m_vacuumParticle;
+	public Transform m_vacuumAnchor;
+	private ParticleSystem m_vacuumInstance = null;
 
 	private Transform _transform;
 	private bool m_insideWater = false;
@@ -248,8 +252,7 @@ public class DragonParticleController : MonoBehaviour
 			case DragonPlayer.ReviveReason.FREE_REVIVE_PET:
 			{
 				// Instantiate particle
-				GameObject go = Resources.Load<GameObject>("Particles/" + m_petRevive.path + m_petRevive.name);
-				GameObject instance = GameObject.Instantiate(go);
+				GameObject instance = m_petRevive.CreateInstance();
 				instance.transform.position = m_reviveAnchor.position + m_petRevive.offset;
 			}break;
 		}
@@ -365,4 +368,28 @@ public class DragonParticleController : MonoBehaviour
 		}
 	}
 
+
+	public void EnableVacuum()
+	{
+		if ( m_vacuumInstance == null )
+		{
+			GameObject go = m_vacuumParticle.CreateInstance();
+			if ( go != null )
+			{
+				m_vacuumInstance = go.GetComponentInChildren<ParticleSystem>();
+				go.transform.parent = m_vacuumAnchor;
+				go.transform.localRotation = Quaternion.identity;
+				go.transform.localPosition = m_vacuumParticle.offset;
+			}
+		}
+
+		if ( m_vacuumInstance != null )
+			m_vacuumInstance.Play();
+	} 
+
+	public void DisableVacuum()
+	{
+		if ( m_vacuumInstance != null )
+			m_vacuumInstance.Stop();
+	}
 }

@@ -25,4 +25,11 @@ public class ParticleData {
 	{
 		return !string.IsNullOrEmpty( name );
 	}
+
+	public GameObject CreateInstance()
+	{
+		GameObject go = Resources.Load<GameObject>("Particles/" + path + name);
+		GameObject instance = GameObject.Instantiate(go);
+		return instance;
+	}
 }
