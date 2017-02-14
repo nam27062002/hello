@@ -53,8 +53,8 @@ public class OpenEggSceneController : MonoBehaviour {
 	// Internal
 	private GameObject m_rewardView = null;
 
-	private EggController m_eggView = null;
-	public EggController eggView {
+	private EggView m_eggView = null;
+	public EggView eggView {
 		get { return m_eggView; }
 	}
 
@@ -93,7 +93,7 @@ public class OpenEggSceneController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<EggController, int>(GameEvents.EGG_TAP, OnEggTap);
+		Messenger.AddListener<EggView, int>(GameEvents.EGG_TAP, OnEggTap);
 	}
 
 	/// <summary>
@@ -101,7 +101,7 @@ public class OpenEggSceneController : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<EggController, int>(GameEvents.EGG_TAP, OnEggTap);
+		Messenger.RemoveListener<EggView, int>(GameEvents.EGG_TAP, OnEggTap);
 	}
 
 	/// <summary>
@@ -190,7 +190,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		Clear();
 
 		// Create a new instance of the egg prefab
-		m_eggView = _egg.CreateView();
+		m_eggView = EggView.CreateFromData(_egg);
 
 		// Attach it to the 3d scene's anchor point
 		// Make sure anchor is active!
@@ -377,7 +377,7 @@ public class OpenEggSceneController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_egg">The egg that has been tapped.</param>
 	/// <param name="_tapCount">Tap count.</param>
-	private void OnEggTap(EggController _egg, int _tapCount) {
+	private void OnEggTap(EggView _egg, int _tapCount) {
 		// Show the right particle effect based on rarity!
 		if(_tapCount == 1 && _egg == m_eggView) {
 			// Activate FX

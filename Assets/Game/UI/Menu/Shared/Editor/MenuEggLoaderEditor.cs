@@ -1,4 +1,4 @@
-﻿// MenuPetLoaderEditor.cs
+﻿// MenuEggLoaderEditor.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 14/02/2017.
@@ -14,13 +14,10 @@ using UnityEditor;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Custom editor for the MenuPetLoader class.
+/// Custom editor for the MenuEggLoader class.
 /// </summary>
-[CustomEditor(typeof(MenuPetLoader))]
-public class MenuPetLoaderEditor : Editor {
-	//------------------------------------------------------------------------//
-	// METHODS																  //
-	//------------------------------------------------------------------------//
+[CustomEditor(typeof(MenuEggLoader))]
+public class MenuEggLoaderEditor : Editor {
 	/// <summary>
 	/// Draw the inspector.
 	/// </summary>
@@ -28,9 +25,9 @@ public class MenuPetLoaderEditor : Editor {
 		// Default inspector
 		DrawDefaultInspector();
 
-		// Force loading the pet
-		if(GUILayout.Button("Load Pet")) {
-			((MenuPetLoader)target).Reload();
+		// Force loading the egg
+		if(GUILayout.Button("Load Egg")) {
+			((MenuEggLoader)target).Reload();
 		}
 	}
 }
