@@ -24,8 +24,8 @@ public class EggUIScene3D : UIScene3D {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	private EggController m_eggView = null;
-	public EggController egg {
+	private EggView m_eggView = null;
+	public EggView egg {
 		get { return m_eggView; }
 	}
 	
@@ -73,7 +73,7 @@ public class EggUIScene3D : UIScene3D {
 	/// <param name="_newEgg">The egg to be rendered. It's state will be changed to SHOWROOM. Use <c>null</c> to clear view. If another egg is being rendered, its view will be destroyed.</param>
 	public void SetEgg(Egg _newEgg) {
 		// If not null, create a new view for the target egg
-		EggController eggView = null;
+		EggView eggView = null;
 		if(_newEgg != null) {
 			// Unless it's the same egg we have loaded, in wich case we won't do anything
 			if(m_eggView != null && m_eggView.eggData == _newEgg) {
@@ -81,7 +81,7 @@ public class EggUIScene3D : UIScene3D {
 			}
 
 			// Create the new egg view
-			eggView = _newEgg.CreateView();
+			eggView = EggView.CreateFromData(_newEgg);
 		}
 
 		// Use view setter
@@ -92,7 +92,7 @@ public class EggUIScene3D : UIScene3D {
 	/// Defines the egg to be rendered by this scene.
 	/// </summary>
 	/// <param name="_newEggView">The view to be rendered. Use <c>null</c> to clear view. If another egg is being rendered, it will be destroyed.</param>
-	public void SetEgg(EggController _newEggView) {
+	public void SetEgg(EggView _newEggView) {
 		// If egg is different than current one, clear current one
 		if(_newEggView != m_eggView) {
 			if(m_eggView != null) {

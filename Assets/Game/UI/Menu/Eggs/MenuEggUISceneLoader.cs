@@ -1,4 +1,4 @@
-﻿// MenuEggLoader.cs
+﻿// MenuEggUISceneLoader.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 14/07/2016.
@@ -16,7 +16,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Auxiliar component to easily load a 3D egg preview into the UI.
 /// </summary>
-public class MenuEggLoader : MonoBehaviour {
+public class MenuEggUISceneLoader : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//

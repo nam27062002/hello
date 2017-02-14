@@ -7,6 +7,7 @@ public class FogArea : MonoBehaviour
 	public float m_fogStart = 0;
 	public float m_fogEnd = 100;
 	public float m_fogRamp = 1;
+	public float m_insideScale = 1.5f;
 	FogManager m_fogManager;
 
 	void Awake()
@@ -19,6 +20,7 @@ public class FogArea : MonoBehaviour
 		if ( other.CompareTag("Player") )	
 		{
 			m_fogManager.RegisterFog( this );
+			transform.localScale = Vector3.one * m_insideScale;
 		}
 	}
 
@@ -27,6 +29,7 @@ public class FogArea : MonoBehaviour
 		if ( other.CompareTag("Player") )	
 		{
 			m_fogManager.UnregisterFog( this );
+			transform.localScale = Vector3.one * 1;
 		}
 	}
 

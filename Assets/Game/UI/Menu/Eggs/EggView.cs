@@ -1,4 +1,4 @@
-// MenuEgg.cs
+// EggView.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 03/03/2016.
@@ -17,7 +17,7 @@ using DG.Tweening;
 /// <summary>
 /// Main control of a single egg prefab in the menu.
 /// </summary>
-public class EggController : MonoBehaviour {
+public class EggView : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -33,7 +33,7 @@ public class EggController : MonoBehaviour {
 
 	[SerializeField] private GameObject m_idleFX = null;
 
-	// Data
+	// Data - can be null
 	private Egg m_eggData = null;
 	public Egg eggData {
 		get { return m_eggData; }
@@ -53,6 +53,79 @@ public class EggController : MonoBehaviour {
 
 	// Internal references
 	private Animator m_animator = null;
+
+	//------------------------------------------------------------------------//
+	// FACTORY METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Create an egg view by its sku.
+	/// If the application is running, a new Egg data will be created as well and initialized to SHOWROOM state.
+	/// </summary>
+	/// <returns>The new egg view. <c>null</c> if the egg view couldn't be created.</returns>
+	/// <param name="_eggSku">The sku of the egg in the EGGS definitions category.</param>
+	public static EggView CreateFromSku(string _eggSku) {
+		// Egg can't be created if definitions are not loaded
+		Debug.Assert(ContentManager.ready, "Definitions not yet loaded!");
+
+		// Find and validate definition
+		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _eggSku);
+
+		// Use internal method
+		EggView newEggView = CreateFromDef(eggDef);
+
+		// If the application is running, create a new egg data and assign it to the new view
+		if(newEggView != null && Application.isPlaying) {
+			Egg newEgg = Egg.CreateFromDef(eggDef);
+			newEgg.ChangeState(Egg.State.SHOWROOM);
+			newEggView.eggData = newEgg;
+		}
+
+		// Return the newly created instance
+		return newEggView;
+	}
+
+	/// <summary>
+	/// Create an egg view for the given egg data.
+	/// </summary>
+	/// <returns>The new egg view. <c>null</c> if the egg view couldn't be created.</returns>
+	/// <param name="_eggData">The egg data to be used to initialize this egg.</param>
+	public static EggView CreateFromData(Egg _eggData) {
+		// Ignore if data not valid
+		if(_eggData == null) return null;
+
+		// Use internal method
+		EggView newEggView = CreateFromDef(_eggData.def);
+
+		// Assign the given egg data to the newly created egg view
+		if(newEggView != null) {
+			newEggView.eggData = _eggData;
+		}
+
+		// Return the newly created instance
+		return newEggView;
+	}
+
+	/// <summary>
+	/// Create an egg view given an egg definition. Internal usage only.
+	/// </summary>
+	/// <returns>The new egg view. <c>null</c> if the egg view couldn't be created.</returns>
+	/// <param name="_def">The egg definition.</param>
+	private static EggView CreateFromDef(DefinitionNode _def) {
+		// Def must be valid!
+		if(_def == null) return null;
+
+		// Create new egg view from the definition
+		// Load the prefab for this egg as defined in the definition
+		GameObject prefabObj = Resources.Load<GameObject>(Egg.PREFAB_PATH + _def.GetAsString("prefabPath"));
+		Debug.Assert(prefabObj != null, "The prefab defined to egg " + _def.sku + " couldn't be found");
+
+		// Create a new instance and obtain the egg view component
+		GameObject newInstance = GameObject.Instantiate<GameObject>(prefabObj);
+		EggView newEggView = newInstance.GetComponent<EggView>();
+
+		// Return the newly created instance
+		return newEggView;
+	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -101,32 +174,39 @@ public class EggController : MonoBehaviour {
 	/// Refresh this object based on egg's current state.
 	/// </summary>
 	private void Refresh() {
-		// Valid data required!
-		if(m_eggData == null) return;
+		// If we don't have valid data, simulate SHOWROOM state
+		Egg.State state = Egg.State.SHOWROOM;
+		if(m_eggData != null) {
+			state = m_eggData.state;
+		}
 
 		// Enable/disable behaviours based on current egg's state
-		m_openBehaviour.enabled = (m_eggData.state == Egg.State.OPENING);
-		m_readyBehaviour.enabled = (m_eggData.state == Egg.State.READY);
+		m_openBehaviour.enabled = (state == Egg.State.OPENING);
+		m_readyBehaviour.enabled = (state == Egg.State.READY);
 
 		// Set animator's parameters
-		m_animator.SetInteger("egg_state", (int)m_eggData.state);
+		m_animator.SetInteger("egg_state", (int)state);
 
 		// Collect steps
 		int step = Mathf.Clamp(m_openBehaviour.tapCount, 0, OpenEggBehaviour.TAPS_TO_OPEN);
 		m_animator.SetInteger("collect_step", step);
 
 		// Rarity
-		m_animator.SetInteger("rarity", (int)m_eggData.rewardData.rarity);
+		if(m_eggData != null) {
+			m_animator.SetInteger("rarity", (int)m_eggData.rewardData.rarity);
+		} else {
+			m_animator.SetInteger("rarity", (int)EggReward.Rarity.COMMON);
+		}
 
 		// Idle FX - disabled after tapping the egg
 		if(m_idleFX != null) {
-			bool hide = (m_eggData.state == Egg.State.OPENING && step > 0);
-			hide |= m_eggData.state == Egg.State.COLLECTED;
+			bool hide = (state == Egg.State.OPENING && step > 0);
+			hide |= state == Egg.State.COLLECTED;
 			m_idleFX.SetActive(!hide);
 		}
 
 		// Animation intensity - reset to default if state is different than collected
-		if(m_eggData.state != Egg.State.COLLECTED) {
+		if(state != Egg.State.COLLECTED) {
 			m_animator.SetFloat("intensity", 1f);
 		}
 	}

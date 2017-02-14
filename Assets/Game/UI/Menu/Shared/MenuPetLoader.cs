@@ -169,7 +169,7 @@ public class MenuPetLoader : MonoBehaviour {
 	/// Destroy current loaded pet, if any.
 	/// </summary>
 	public void Unload() {
-		// Just make sure the object doesn't have anything attached
+		// Destroy all childs of the loader and clear references
 		foreach(Transform child in transform) {
 			GameObject.DestroyImmediate(child.gameObject);	// Immediate so it can be called from the editor
 			m_petInstance = null;
