@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 [ExecuteInEditMode]
-public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
+public class FogManager : MonoBehaviour
 {
 	// private FogNode[] m_fogNodes;
 	// private List<FogNode> m_usedFogNodes = new List<FogNode>();
@@ -79,6 +79,8 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 
 	void Awake()
 	{
+		InstanceManager.fogManager = this;
+
 		m_texture = new Texture2D( FogAttributes.TEXTURE_SIZE,1, TextureFormat.RGBA32, false);
 		m_texture.filterMode = FilterMode.Point;
 		m_texture.wrapMode = TextureWrapMode.Clamp;
@@ -113,9 +115,14 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 		m_ready = true;
 	}
 
+	void OnDestroy()
+	{
+		InstanceManager.fogManager = null;
+	}
+
 	void Update()
 	{
-		if ( Application.isPlaying )
+		if ( Application.isPlaying && ApplicationManager.instance.Debug_FogManagerOn)
 		{
 			if ( m_activeFogAreaList.Count > 0 )
 			{
@@ -171,8 +178,6 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 				Shader.SetGlobalFloat("_FogEnd", m_end);
 				Shader.SetGlobalTexture("_FogTexture", m_texture);
 			}
-			// Shader.SetGlobalColor("_FogColor", m_color);
-			// Shader.SetGlobalFloat("_FogRampY", m_rampY);
 		}
 	}
 

@@ -1,14 +1,12 @@
 #ifndef HUNGRYDRAGON_CG_INCLUDED
 #define HUNGRYDRAGON_CG_INCLUDED
 
-#define HG_FOG_COORDS(idx) float fogCoord : TEXCOORD##idx;
+#define HG_FOG_COORDS(idx) float2 fogCoord : TEXCOORD##idx;
 #define HG_FOG_VARIABLES 	sampler2D _FogTexture;\
-							float4 _FogColor;\
 							float _FogStart;\
-							float _FogEnd; \
-							float _FogRampY;
-#define HG_TRANSFER_FOG(o,worldPos) o.fogCoord = tex2Dlod(_FogTexture, float4(saturate((worldPos.z-_FogStart)/(_FogEnd-_FogStart)),_FogRampY,0,0)).x * _FogColor.a;
-#define HG_APPLY_FOG(i,col) col.rgb = lerp( (col).rgb,(_FogColor).rgb,i.fogCoord);
+							float _FogEnd;
+#define HG_TRANSFER_FOG(o,worldPos) o.fogCoord = float2(saturate((worldPos.z-_FogStart)/(_FogEnd-_FogStart)), 0.5);
+#define HG_APPLY_FOG(i,col)  fixed4 fogCol = tex2D(_FogTexture, i.fogCoord); col.rgb = lerp( (col).rgb,fogCol.rgb,fogCol.a);
 
 #define HG_DARKEN(idx) float darken : TEXCOORD##idx;
 #define HG_DARKEN_DISTANCE 16.0
