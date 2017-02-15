@@ -114,6 +114,13 @@ public class Projectile : MonoBehaviour, IProjectile {
 	public void AttachTo(Transform _parent, Vector3 _offset) {
 		enabled = true;
 
+		if (m_entity != null) {
+			m_entity.Spawn(null);
+			if (EntityManager.instance != null)	{
+				EntityManager.instance.RegisterEntity(m_entity);
+			}
+		}
+
 		//save real parent to restore this when the arrow is shot
 		m_oldParent = m_trasnform.parent;
 
@@ -173,14 +180,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 		Shoot(_pos, _damage);
 	}
 
-	private void DoShoot(float _speed, float _damage) {
-		if (m_entity != null) {
-			m_entity.Spawn(null);
-			if (EntityManager.instance != null)	{
-				EntityManager.instance.RegisterEntity(m_entity);
-			}
-		}
-
+	private void DoShoot(float _speed, float _damage) {		
 		if (m_oldParent) {
 			m_trasnform.parent = m_oldParent;
 			m_oldParent = null;

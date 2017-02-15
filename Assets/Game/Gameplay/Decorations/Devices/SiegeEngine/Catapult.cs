@@ -95,6 +95,16 @@ public class Catapult : SimpleDevice {
 	// Update is called once per frame
 	protected override void ExtendedUpdate() {	
 		if (m_state == State.Loaded) {
+
+			// Catapult ammo may be eaten!
+			for (int i = 0; i < m_ammo.Length; i++) {
+				if (m_ammo[i] != null) {
+					if (!m_ammo[i].activeInHierarchy) {
+						m_ammo[i] = null;
+					}
+				}
+			}
+
 			m_timer -= Time.deltaTime;
 			if (m_timer <= 0f) {
 				if (m_target != null && Aim(m_target.position)) {
