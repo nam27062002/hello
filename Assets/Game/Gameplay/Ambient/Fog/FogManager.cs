@@ -76,6 +76,7 @@ public class FogManager : MonoBehaviour
 	float m_transitionTimer = 0;
 	FogAttributes m_lastSelectedAttributes;
 	FogAttributes m_selectedAttributes;
+	bool m_active = false;
 
 	void Awake()
 	{
@@ -98,6 +99,9 @@ public class FogManager : MonoBehaviour
 		defaultAttributes.texture = m_defaultAreaFog.texture;
 		m_generatedAttributes.Add(defaultAttributes);
 
+		m_active = Prefs.GetBoolPlayer(DebugSettings.FOG_MANAGER, true);
+		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+
 	}
 
 	IEnumerator Start()
@@ -118,11 +122,18 @@ public class FogManager : MonoBehaviour
 	void OnDestroy()
 	{
 		InstanceManager.fogManager = null;
+		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+	}
+
+	void Debug_OnChanged( string _key, bool value)
+	{
+		if ( _key == DebugSettings.FOG_MANAGER )
+			m_active = value;
 	}
 
 	void Update()
 	{
-		if ( Application.isPlaying && ApplicationManager.instance.Debug_FogManagerOn)
+		if ( Application.isPlaying && m_active)
 		{
 			if ( m_activeFogAreaList.Count > 0 )
 			{

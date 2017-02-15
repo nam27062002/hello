@@ -41,6 +41,7 @@ public static class DebugSettings {
 	public const string INGAME_SPAWNERS					        = "INGAME_SPAWNERS";	
 	public const string INGAME_PARTICLES_FEEDBACK 		        = "INGAME_PARTICLES_FEEDBACK";
     public const string INGAME_PARTICLES_EATEN 			        = "INGAME_PARTICLES_EATEN";
+	public const string FOG_MANAGER   							= "FOG_MANAGER";
 
 	public const string DPAD_MODE 						        = "DPAD_MODE";
 	public const string DPAD_SMOOTH_FACTOR 				        = "DPAD_SMOOTH_FACTOR";
@@ -116,5 +117,8 @@ public static class DebugSettings {
 
         key = DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD;
         Prefs.SetFloatPlayer(key, Prefs.GetFloatPlayer(key, TouchControls.BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD));		        
+
+		key = FOG_MANAGER;
+		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
     }
 }

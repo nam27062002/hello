@@ -514,13 +514,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             }
         }
     }
-
-	public bool Debug_FogManagerOn { get; set; }
-
-    public void Debug_OnToggleFogManager()
-    {
-		Debug_FogManagerOn = !Debug_FogManagerOn;
-    }
     #endregion
 }
 
