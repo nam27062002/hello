@@ -39,10 +39,11 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 		}
 	}
 
+	public void AttachTo(Transform _parent) {		
+		AttachTo(_parent, Vector3.zero);
+	}
 
-
-	public void AttachTo(Transform _parent) {
-
+	public void AttachTo(Transform _parent, Vector3 _offset) {
 		//init stuff
 		Initializable[] components = GetComponents<Initializable>();		
 		foreach (Initializable component in components) {
@@ -54,7 +55,7 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 
 		//reset transforms, so we don't have any displacement
 		transform.parent = _parent;
-		transform.localPosition = Vector3.zero;
+		transform.localPosition = _offset;
 		transform.localRotation = Quaternion.identity;
 		transform.localScale = Vector3.one;
 
@@ -65,8 +66,7 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 		m_hasBeenShot = false;
 	}
 
-	public void Shoot(Vector3 _target, float _damage = 0f) {
-
+	public void Shoot(Vector3 _target) {
 		if (m_oldParent) {
 			transform.parent = m_oldParent;
 			m_oldParent = null;
@@ -79,18 +79,16 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 		m_hasBeenShot = true;
 	}
 
-	public void ShootAtPosition( Transform _from, float _damage, Vector3 _pos){
+	public void Shoot(Vector3 _target, float _damage) {
+		Shoot(_target);
+	}
 
-		if (m_oldParent) {
-			transform.parent = m_oldParent;
-			m_oldParent = null;
-		}
+	public void ShootTowards(Vector3 _direction) {}
+	public void ShootTowards(Vector3 _direction, float _speed) {}
+	public void ShootTowards(Vector3 _direction, float _speed, float _damage) {}
 
-		if (m_pMotion != null) {
-			m_pMotion.enabled = true;
-			m_pMotion.Shoot(_pos);
-		}
-		m_hasBeenShot = true;
+	public void ShootAtPosition(Transform _from, float _damage, Vector3 _pos) {
+		Shoot(_pos);
 	}
 
 	void OnCollisionEnter( Collision _collision )

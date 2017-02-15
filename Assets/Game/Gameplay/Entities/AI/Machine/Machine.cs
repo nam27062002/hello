@@ -54,8 +54,8 @@ namespace AI {
 
 		private bool m_willPlaySpawnSound;
 
-		public Vector3 position { 	get { if (m_enableMotion) return m_motion.position; else return transform.position; } 
-									set { if (m_enableMotion) m_motion.position = value; else transform.position = value; } }
+		public Vector3 position			{ 	get { if (m_enableMotion) return m_motion.position; else return transform.position; } 
+											set { if (m_enableMotion) m_motion.position = value; else transform.position = value; } }
 
 		public Vector3 eye				{ get { if (m_enableSensor) return m_sensor.sensorPosition; else return transform.position; } }
 		public Vector3 target			{ get { return m_pilot.target; } }
@@ -551,7 +551,7 @@ namespace AI {
 			SetSignal(Signals.Type.Destroyed, true);
 		}
 
-		public float biteResistance { get { return m_edible.biteResistance; }}
+		public float biteResistance { get { return m_edible.biteResistance; } }
 
 		public void Bite() {
 			if (m_edible != null && !IsDead()) {

@@ -233,7 +233,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public float m_introStopAnimationDelta = 0.1f;
 
 	private Transform m_preyPreviousTransformParent;
-	private AI.Machine m_holdPrey = null;
+	private AI.IMachine m_holdPrey = null;
 	private Transform m_holdPreyTransform = null;
 
 	private float m_boostMultiplier;
@@ -1627,7 +1627,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 	}
 
-	public void StartGrabPreyMovement(AI.Machine prey, Transform _holdPreyTransform)
+	public void StartGrabPreyMovement(AI.IMachine prey, Transform _holdPreyTransform)
 	{
 		// TODO: Calculate hold speed multiplier
 		m_holdSpeedMultiplier = 0.6f;
@@ -1650,7 +1650,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_grab = false;
 	}
 
-	public void StartLatchMovement( AI.Machine prey, Transform _holdPreyTransform )
+	public void StartLatchMovement( AI.IMachine prey, Transform _holdPreyTransform )
 	{
 		m_grab = false;
 		m_holdPrey = prey;

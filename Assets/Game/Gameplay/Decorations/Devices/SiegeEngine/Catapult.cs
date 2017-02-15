@@ -113,7 +113,7 @@ public class Catapult : SimpleDevice {
 		m_animator.StartPlayback();
 		for (int i = 0; i < m_ammo.Length; i++) {
 			if (m_ammo[i] != null) {
-				m_ammo[i].GetComponent<CatapultAmmo>().Explode(false);
+				m_ammo[i].GetComponent<Projectile>().Explode(false);
 				m_ammo[i] = null;
 			}
 		}
@@ -138,7 +138,7 @@ public class Catapult : SimpleDevice {
 			if (m_ammo[i] == null) {
 				m_ammo[i] = PoolManager.GetInstance(m_ammoName);
 
-				CatapultAmmo catapultAmmo = m_ammo[i].GetComponent<CatapultAmmo>();
+				Projectile catapultAmmo = m_ammo[i].GetComponent<Projectile>();
 				catapultAmmo.AttachTo(m_ammoTransform, m_ammoTransform.rotation * m_extraProjectiles[i].initialPositionOffset);
 			}
 		}
@@ -146,7 +146,7 @@ public class Catapult : SimpleDevice {
 		if (m_ammo[i] == null) {
 			m_ammo[i] = PoolManager.GetInstance(m_ammoName);
 
-			CatapultAmmo catapultAmmo = m_ammo[i].GetComponent<CatapultAmmo>();
+			Projectile catapultAmmo = m_ammo[i].GetComponent<Projectile>();
 			catapultAmmo.AttachTo(m_ammoTransform, m_ammoTransform.rotation * m_initialPosition);
 		}
 
@@ -162,22 +162,30 @@ public class Catapult : SimpleDevice {
 		int i;
 		for (i = 0; i < m_ammo.Length - 1; i++) {
 			if (m_ammo[i] != null) {
-				CatapultAmmo catapultAmmo = m_ammo[i].GetComponent<CatapultAmmo>();
-				catapultAmmo.Toss(	m_initialVelocity + m_extraProjectiles[i].initialVelocityOffset, 
-									m_vAngle + m_extraProjectiles[i].vAngleOffset, 
-									m_hAngle + m_extraProjectiles[i].hAngleOffset
-								 );
+				Projectile catapultAmmo = m_ammo[i].GetComponent<Projectile>();
+				Vector3 direction = DirectionFromAngles(m_vAngle + m_extraProjectiles[i].vAngleOffset, 
+														m_hAngle + m_extraProjectiles[i].hAngleOffset);
+
+				catapultAmmo.ShootTowards(direction, m_initialVelocity + m_extraProjectiles[i].initialVelocityOffset);
+
 				m_ammo[i] = null;
 			}
 		}
 
 		if (m_ammo[i] != null) {
-			CatapultAmmo catapultAmmo = m_ammo[i].GetComponent<CatapultAmmo>();
-			catapultAmmo.Toss(m_initialVelocity, m_vAngle, m_hAngle);
+			Projectile catapultAmmo = m_ammo[i].GetComponent<Projectile>();
+			Vector3 direction = DirectionFromAngles(m_vAngle, m_hAngle);
+
+			catapultAmmo.ShootTowards(direction, m_initialVelocity);
+
 			m_ammo[i] = null;
 		}
 
 		m_animator.SetBool("toss", false);
+	}
+
+	private Vector3 DirectionFromAngles(float _vAngle, float _hAngle) {
+		return Quaternion.AngleAxis(_hAngle, Vector3.up) * Quaternion.AngleAxis(_vAngle, Vector3.left) * Vector3.forward;
 	}
 
 	private void OnReload() {
@@ -291,6 +299,9 @@ public class Catapult : SimpleDevice {
 
 			lastTarget = target;
 		}
+
+		Vector3 direction = DirectionFromAngles(_vAngle, _hAngle);
+		Gizmos.DrawLine(m_ammoTransform.position + _po, m_ammoTransform.position + _po + (direction * 2f));
 	}
 
 	private void DrawMinMaxToss(Vector3 _po, float _vo, float _vAngle, float _hAngle, float _maxTime, float _step) {
