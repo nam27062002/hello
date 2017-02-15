@@ -8,20 +8,25 @@ public class FogArea : MonoBehaviour
 	FogManager m_fogManager;
 	public FogManager.FogAttributes m_attributes;
 	public bool m_drawInside = false;
+	public Vector3 m_startScale;
 	void Awake()
 	{
 		m_fogManager = FindObjectOfType<FogManager>();
+		m_startScale = transform.localScale;
+	}
 
-		m_attributes.CreateTexture();
-		m_attributes.RefreshTexture();
+	void OnDestroy()
+	{
+		if ( m_attributes.texture != null )
+			m_attributes.DestroyTexture();
 	}
 
 	void OnTriggerEnter( Collider other)
 	{
 		if ( other.CompareTag("Player") )	
 		{
-			m_fogManager.RegisterFog( this );
-			transform.localScale = Vector3.one * m_insideScale;
+			m_fogManager.ActivateArea( this );
+			transform.localScale = m_startScale * m_insideScale;
 		}
 	}
 
@@ -29,11 +34,10 @@ public class FogArea : MonoBehaviour
 	{
 		if ( other.CompareTag("Player") )	
 		{
-			m_fogManager.UnregisterFog( this );
-			transform.localScale = Vector3.one * 1;
+			m_fogManager.DeactivateArea( this );
+			transform.localScale = m_startScale;
 		}
 	}
-
 
 	void OnDrawGizmosSelected()
 	{
@@ -47,13 +51,13 @@ public class FogArea : MonoBehaviour
 
 		if (m_drawInside)
 		{
-			Color c = m_attributes.m_fogGradient.Evaluate(0.5f);
+			Color c = m_attributes.m_fogGradient.Evaluate(1);
 			c.a = c.a / 2.0f;
 			Gizmos.color = c;
 			MeshFilter meshFilter = GetComponent<MeshFilter>();
 			if ( meshFilter != null )
 			{
-				Gizmos.DrawMesh( meshFilter.sharedMesh );	
+				Gizmos.DrawMesh( meshFilter.sharedMesh, transform.position, transform.rotation, transform.localScale );	
 			}
 		}
 

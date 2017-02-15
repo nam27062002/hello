@@ -18,13 +18,28 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 		public float m_fogStart;
 		public float m_fogEnd;
 		private Texture2D m_texture;
-		public Texture2D texture{ get { return m_texture; } }
+		public Texture2D texture{ 
+			get { return m_texture; } 
+			set { m_texture = value; } 
+		}
 
 		public void CreateTexture()
 		{
 			m_texture = new Texture2D(TEXTURE_SIZE,1, TextureFormat.RGBA32, false);
 			m_texture.filterMode = FilterMode.Point;
 			m_texture.wrapMode = TextureWrapMode.Clamp;
+		}
+
+		public void DestroyTexture( bool inmediate = false )
+		{
+			if (m_texture != null )
+			{
+				if ( inmediate )
+					DestroyImmediate( m_texture );
+				else
+					Destroy( m_texture);	
+				m_texture = null;
+			}
 		}
 
 		public void RefreshTexture()
@@ -45,7 +60,8 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 	public FogAttributes m_defaultAreaFog;
 
 	// Runtime variables
-	List<FogArea> m_fogAreaList = new List<FogArea>();
+	List<FogAttributes> m_generatedAttributes = new List<FogAttributes>();
+	List<FogArea> m_activeFogAreaList = new List<FogArea>();
 	float m_start;
 	float m_end;
 	Texture2D m_texture;
@@ -63,6 +79,7 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 
 		m_defaultAreaFog.CreateTexture();
 		m_defaultAreaFog.RefreshTexture();
+
 	}
 
 	IEnumerator Start()
@@ -82,11 +99,11 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 
 	void Update()
 	{
-		if ( Application.isPlaying )	
+		if ( Application.isPlaying )
 		{
-			if ( m_fogAreaList.Count > 0 )
+			if ( m_activeFogAreaList.Count > 0 )
 			{
-				FogArea selectedFogArea = m_fogAreaList.Last<FogArea>();
+				FogArea selectedFogArea = m_activeFogAreaList.Last<FogArea>();
 				m_tmpStart = selectedFogArea.m_attributes.m_fogStart;
 				m_tmpEnd = selectedFogArea.m_attributes.m_fogEnd;
 				m_tmpTexture = selectedFogArea.m_attributes.texture;
@@ -133,165 +150,70 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 		return m_ready;
 	}
 
-	/*
-	public void GetFog( Vector3 position, ref FogResult result )
+
+	public void ActivateArea( FogArea _area )
 	{
-		// FogResult result = new FogResult();
-		result.Reset();
-		// Search closest fog nodes
-		for( int i = 0; i<NODES_TO_TAKE_INTO_ACCOUNT; i++ )
+		if ( _area.m_attributes.texture == null )
 		{
-			m_resultNodes[i].Reset();
+			for( int i = 0; i<m_generatedAttributes.Count; i++ )
+			{
+				if ( Equals(m_generatedAttributes[i].m_fogGradient, _area.m_attributes.m_fogGradient) )
+				{
+					_area.m_attributes.m_fogGradient = m_generatedAttributes[i].m_fogGradient;
+					_area.m_attributes.texture = m_generatedAttributes[i].texture;
+					break;
+				}
+
+			}
+
+			if ( _area.m_attributes.texture == null )
+			{
+				_area.m_attributes.CreateTexture();
+				_area.m_attributes.RefreshTexture();
+
+				FogAttributes newAttributes = new FogAttributes();
+				newAttributes.m_fogGradient = _area.m_attributes.m_fogGradient;
+				newAttributes.texture = _area.m_attributes.texture;
+				m_generatedAttributes.Add( newAttributes );
+			}
 		}
 
-		m_usedFogNodes.Clear();
+		m_activeFogAreaList.Add( _area );
+	}
 
-		Vector2 pos = (Vector2)position;
-		FogNode[] inRangeNodes;
-		if ( m_useQuadtree )
+	public bool Equals( Gradient a, Gradient b)
+	{
+		
+		if ( a.mode == b.mode && a.alphaKeys.Length == b.alphaKeys.Length && a.colorKeys.Length == b.colorKeys.Length )
 		{
-			int sizeMultiplier = 1;
-			float distance;
-			int validNodes = 0;
-			do
+			for( int i = 0; i<a.alphaKeys.Length; i++ )
 			{
-				validNodes = 0;
-				distance = 100 * sizeMultiplier;
-				m_getRect.size = Vector2.one * distance;
-				m_getRect.center = pos;
-				inRangeNodes = m_fogNodes.GetItemsInRange( m_getRect );
-				// remove nodes not in distance
-				for( int i = 0; i<inRangeNodes.Length; i++ )
+				if( !a.alphaKeys[i].Equals(b.alphaKeys[i]))
 				{
-					if ( ((Vector2)inRangeNodes[i].transform.position - pos).sqrMagnitude > (distance * distance) )
-					{
-						inRangeNodes[i] = null;
-					}
-					else
-					{
-						validNodes++;
-					}
+					return false;
 				}
-				sizeMultiplier++;
-			}while( validNodes < NODES_TO_TAKE_INTO_ACCOUNT );
+			}
+
+			for( int i = 0; i<a.colorKeys.Length; i++ )
+			{
+				if( !a.colorKeys[i].Equals(b.colorKeys[i]))
+				{
+					return false;
+				}
+			}
 		}
 		else
 		{
-			inRangeNodes = m_fogNodesArray;
+			return false;
 		}
-		for( int i = 0; i<inRangeNodes.Length; i++ )
-		{
-			if ( inRangeNodes[i] == null )
-				continue;
+		return true;
 
-			Vector2 nodePos = (Vector2)inRangeNodes[i].transform.position;
-			float magnitude = (pos - nodePos).sqrMagnitude;
-			// find empty or farthest
-			int selectedIndex = -1;
-			float farthestValue;
 
-			// Ambient Values
-			farthestValue = 0;
-			for( int j = 0; j<NODES_TO_TAKE_INTO_ACCOUNT; j++ )
-			{
-				if ( m_resultNodes[j].m_node == null)
-				{
-					selectedIndex = j;
-					break;
-				}
-				else if ( m_resultNodes[j].m_distance > farthestValue)
-				{
-					farthestValue = m_resultNodes[j].m_distance;
-					selectedIndex = j;
-				}
-			}
-
-			if ( selectedIndex != -1 && magnitude < m_resultNodes[selectedIndex].m_distance)
-			{
-				m_resultNodes[selectedIndex].m_distance = magnitude;
-				m_resultNodes[selectedIndex].m_node = inRangeNodes[i];
-			}
-		}
-
-		// Now set the weigth
-			// Total Distance
-		float totalDistance = 0;
-		for( int i = 0; i<NODES_TO_TAKE_INTO_ACCOUNT; i++ )
-		{
-			if ( m_resultNodes[i].m_node != null )
-			{
-				totalDistance += m_resultNodes[i].m_distance;
-				m_usedFogNodes.Add(m_resultNodes[i].m_node);
-			}
-		}
-
-			// Inverse Values
-		float totalWeight = 0;
-		for( int i = 0; i<NODES_TO_TAKE_INTO_ACCOUNT; i++ )
-		{
-			if ( m_resultNodes[i].m_node != null )
-			{
-				float w = Mathf.Pow(totalDistance - m_resultNodes[i].m_distance, NODES_TO_TAKE_INTO_ACCOUNT);
-				m_resultNodes[i].m_weight = w;
-				totalWeight += m_resultNodes[i].m_weight;
-			}
-		}
-
-			// Normalize values
-		for( int i = 0; i<NODES_TO_TAKE_INTO_ACCOUNT; i++ )
-		{
-			if ( m_resultNodes[i].m_node != null )
-			{
-				float w = m_resultNodes[i].m_weight / totalWeight;
-				result.m_fogColor += m_resultNodes[i].m_node.m_fogColor * w;
-				result.m_fogStart += m_resultNodes[i].m_node.m_fogStart * w;
-				result.m_fogEnd += m_resultNodes[i].m_node.m_fogEnd * w;
-				result.m_fogRamp += m_resultNodes[i].m_node.m_fogRamp * w;
-			}
-		}
 	}
 
-
-	void OnDrawGizmos()
+	public void DeactivateArea( FogArea _area )
 	{
-#if UNITY_EDITOR
-		// Check if fog node selected
-		if ( m_fogNodesArray != null )
-		for( int i = 0; i<m_fogNodesArray.Length; i++ )
-		{
-			if (UnityEditor.Selection.Contains( m_fogNodesArray[i].gameObject ) )
-			{
-				DrawGizmos();
-				return;
-			}
-		}
-
-		if ( UnityEditor.Selection.activeGameObject != null && UnityEditor.Selection.activeGameObject.GetComponent<FogSetter>() != null )
-			DrawGizmos();
-#endif			
-	}
-
-	void OnDrawGizmosSelected()
-	{
-		DrawGizmos();
-	}
-
-	void DrawGizmos()
-	{
-		for( int i = 0; i<m_fogNodesArray.Length; i++ )
-			m_fogNodesArray[i].CustomGuizmoDraw( m_usedFogNodes.Contains( m_fogNodesArray[i] ) );
-	}
-	*/
-
-	public void RegisterFog( FogArea _area )
-	{
-		m_fogAreaList.Add( _area );
-	}
-
-
-	public void UnregisterFog( FogArea _area )
-	{
-		m_fogAreaList.Remove( _area );
+		m_activeFogAreaList.Remove( _area );
 	}
 
 }
