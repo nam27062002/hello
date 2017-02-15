@@ -308,6 +308,11 @@ public class ProfilerControlPanelController : MonoBehaviour
             ApplicationManager.instance.Debug_OnToggleBossCameraEffect(m_bossCameraAffector);            
         }        
     }
+
+    public void Test_OnToggleFogManager()
+    {
+		ApplicationManager.instance.Debug_OnToggleFogManager();            
+    }
     #endregion
 
 }

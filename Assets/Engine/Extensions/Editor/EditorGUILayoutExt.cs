@@ -105,6 +105,56 @@ public static class EditorGUILayoutExt {
 		
 		return totalHeight;
 	}
+
+	/// <summary>
+	/// Custom drawer for an array property, excluding its size field so it can't be modified.
+	/// Optionally force a fixed size on the array, removing/adding elements as needed.
+	/// Layout version.
+	/// </summary>
+	/// <param name="_property">The array property to be drawn. Must be of type array.</param>
+	/// <param name="_customElementDrawer">Optional method to be invoked instead of the default property drawer for each element of the array. Must take as parameters the property to be displayed and the index of that property within the array we're rendering.</param>
+	/// <param name="_forcedSize">If bigger than 0, elements will be added/removed to the array to match it. Otherwise the array's current length will be used.</param>
+	public static void FixedLengthArray(SerializedProperty _property, Action<SerializedProperty, int> _customElementDrawer = null, int _forcedSize = -1) {
+		// Check type
+		if(!DebugUtils.Assert(_property.isArray, "Must be an array property type")) return;
+
+		// If required, adjust size by adding/removing elements to the array
+		if(_forcedSize > 0) {
+			if(_property.arraySize != _forcedSize) {
+				_property.arraySize = _forcedSize;	// This will do it
+			}
+		}
+
+		// Draw property label + foldout widget
+		_property.isExpanded = EditorGUILayout.Foldout(_property.isExpanded, _property.displayName);
+
+		// If unfolded, draw array entries
+		if(_property.isExpanded) {
+			// Indentation in
+			EditorGUI.indentLevel++;
+
+			// Aux vars
+			SerializedProperty elementProp = null;
+
+			// Iterate through all elements
+			for(int i = 0; i < _property.arraySize; i++) {
+				// Get property for this element
+				elementProp = _property.GetArrayElementAtIndex(i);
+
+				// Draw the property - shall we use a custom drawer?
+				if(_customElementDrawer != null) {
+					// Yes! Invoke it and store size taken
+					_customElementDrawer(elementProp, i);
+				} else {
+					// No, use default property drawer
+					EditorGUILayout.PropertyField(elementProp, true);
+				}
+			}
+
+			// Indent back out
+			EditorGUI.indentLevel--;
+		}
+	}
 	
 	/// <summary>
 	/// Custom version of the EditorGUILayout.Vector3Field, putting the label at the same row as the XYZ textfields.

@@ -21,7 +21,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	// Text Mesh Pro shortcuts
-	[Separator("Text Mesh Pro shortcuts")]
+	#region TMP_Shortcuts
 	[SerializeField] private string m_tmpSpriteSC = "<sprite name=\"icon_sc\">";
 	public static string TMP_SPRITE_SC {
 		get { return instance.m_tmpSpriteSC; }
@@ -36,9 +36,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string TMP_SPRITE_GOLDEN_EGG_FRAGMENT {
 		get { return instance.m_tmpSpriteGoldenEggFragment; }
 	}
+	#endregion
 
+	// -------------------------------------------------------------------------
 	// Colors
-	[Separator("Colors")]
+	#region Colors
 	[SerializeField] private Color m_coinsTextColor = new Color(1f, 0.8f, 0.1f);
 	public static Color COINS_TEXT_COLOR {
 		get { return instance.m_coinsTextColor; }
@@ -48,30 +50,25 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static Color PC_TEXT_COLOR {
 		get { return instance.m_pcTextColor; }
 	}
+	#endregion
 
-	[Space]
-	[SerializeField] private Color m_rarityCommonColor = new Color(1f, 1f, 1f);		// White
-	public static Color RARITY_COMMON_COLOR {
-		get { return instance.m_rarityCommonColor; }
+	// -------------------------------------------------------------------------
+	// Rarities
+	#region Rarities
+	[SerializeField] private Color[] m_rarityColors = new Color[(int)EggReward.Rarity.COUNT];
+	public static Color[] RARITY_COLORS {
+		get { return instance.m_rarityColors; }
 	}
 
-	[SerializeField] private Color m_rarityRareColor = new Color(0.8f, 1f, 1f);		// Blue-ish
-	public static Color RARITY_RARE_COLOR {
-		get { return instance.m_rarityRareColor; }
+	[SerializeField] private Sprite[] m_rarityIcons = new Sprite[(int)EggReward.Rarity.COUNT];
+	public static Sprite[] RARITY_ICONS {
+		get { return instance.m_rarityIcons; }
 	}
+	#endregion
 
-	[SerializeField] private Color m_rarityEpicColor = new Color(1f, 0.8f, 0.1f);	// Gold
-	public static Color RARITY_EPIC_COLOR {
-		get { return instance.m_rarityEpicColor; }
-	}
-
-	[SerializeField] private Color m_raritySpecialColor = new Color(1f, 0.5f, 0f);	// Orange
-	public static Color RARITY_SPECIAL_COLOR {
-		get { return instance.m_raritySpecialColor; }
-	}
-
+	// -------------------------------------------------------------------------
 	// Asset paths in Resources
-	[Separator("Asset paths in Resources")]
+	#region AssetPaths
 	[SerializeField] private string m_uiSpritesheetPath = "UI/Common/SpriteSheets/UI_spritesheet";
 	public static string UI_SPRITESHEET_PATH {
 		get { return instance.m_uiSpritesheetPath; }
@@ -96,9 +93,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string POWER_MINI_ICONS_PATH {
 		get { return instance.m_powerMiniIconsPath; }
 	}
+	#endregion
 
-	// More colors
-	[Separator("Powerups Colors")]
+	// -------------------------------------------------------------------------
+	// Power colors
+	#region PowerColors
 	[SerializeField] private Color m_powerColorHealth = new Color(0.7f, 0.8f, 0.24f);
 	public static Color POWER_COLOR_HEALTH {
 		get { return instance.m_powerColorHealth; }
@@ -193,8 +192,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static Color POWER_COLOR_LOWERDAMAGE {
 		get { return instance.m_powerColorLowerDamage; }
 	}
+	#endregion
 
-	[Separator("Animations")]
+	// -------------------------------------------------------------------------
+	// Open Egg animation setup
+	#region OpenEggAnimSetup
 	[SerializeField] private float m_openEggSpinIntensity = 50f;
 	public static float openEggSpinIntensity {
 		get { return instance.m_openEggSpinIntensity; }
@@ -204,8 +206,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static Ease openEggSpinEase {
 		get { return instance.m_openEggSpinEase;}
 	}
+	#endregion
 
-	[Space]
+	// -------------------------------------------------------------------------
+	// Results animation setup
+	#region ResultsAnimSetup
 	[SerializeField] private float m_resultsIntroDuration = 0.25f;
 	public static float resultsIntroDuration {
 		get { return instance.m_resultsIntroDuration; }
@@ -248,9 +253,10 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static float resultsEggDuration {
 		get { return instance.m_resultsEggDuration; }
 	}
+	#endregion
 
     //------------------------------------------------------------------------//
-    // METHODS																  //
+    // STATIC METHODS														  //
     //------------------------------------------------------------------------//
     /// <summary>
     /// Gets the color corresponding to a given rarity.
@@ -258,13 +264,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
     /// <returns>The rarity color.</returns>
     /// <param name="_rarity">The rarity to be checked.</param>
     public static Color GetRarityColor(EggReward.Rarity _rarity) {
-		switch(_rarity) {
-			case EggReward.Rarity.COMMON:	return RARITY_COMMON_COLOR;		break;
-			case EggReward.Rarity.RARE:		return RARITY_RARE_COLOR;		break;
-			case EggReward.Rarity.EPIC:		return RARITY_EPIC_COLOR;		break;
-			case EggReward.Rarity.SPECIAL:	return RARITY_SPECIAL_COLOR;	break;
-		}
-		return Color.white;
+		return RARITY_COLORS[(int)_rarity];
 	}
 
 	/// <summary>
