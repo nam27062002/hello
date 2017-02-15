@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -31,6 +32,7 @@ public class PetSlotInfo : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_equippedSlotAnim = null;
 	[Space]
 	[SerializeField] private Localizer m_nameText = null;
+	[SerializeField] private Image m_rarityIcon = null;
 
 	// Internal
 	private int m_slotIdx = 0;
@@ -117,8 +119,14 @@ public class PetSlotInfo : MonoBehaviour {
 				// Name
 				m_nameText.Localize(petDef.Get("tidName"));
 
-				// Rarity
-				m_nameText.text.color = UIConstants.GetRarityColor(petDef.Get("rarity"));
+				// Rarity icon
+				EggReward.Rarity rarity = EggReward.SkuToRarity(petDef.Get("rarity"));
+				m_rarityIcon.sprite = UIConstants.RARITY_ICONS[(int)rarity];
+				m_rarityIcon.gameObject.SetActive(m_rarityIcon.sprite != null);	// Hide if no icon
+				//m_nameText.text.color = UIConstants.GetRarityColor(petDef.Get("rarity"));
+
+				// Rarity glow
+				// TODO!!
 			}
 		}
 	}
