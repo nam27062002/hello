@@ -48,7 +48,7 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 			{
 				m_texture.SetPixel(i, 0, m_fogGradient.Evaluate( i / (float)TEXTURE_SIZE));
 			}
-			m_texture.Apply();
+			m_texture.Apply(false);
 		}
 
 	}
@@ -62,14 +62,20 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 	// Runtime variables
 	List<FogAttributes> m_generatedAttributes = new List<FogAttributes>();
 	List<FogArea> m_activeFogAreaList = new List<FogArea>();
+
 	float m_start;
 	float m_end;
 	Texture2D m_texture;
-	bool m_firstTime = true;
 
 	float m_tmpStart;
 	float m_tmpEnd;
 	Texture2D m_tmpTexture;
+
+	bool m_firstTime = true;
+
+	float m_transitionTimer = 0;
+	FogAttributes m_lastSelectedAttributes;
+	FogAttributes m_selectedAttributes;
 
 	void Awake()
 	{
@@ -77,8 +83,18 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 		m_texture.filterMode = FilterMode.Point;
 		m_texture.wrapMode = TextureWrapMode.Clamp;
 
+		m_tmpTexture = new Texture2D( FogAttributes.TEXTURE_SIZE,1, TextureFormat.RGBA32, false);
+		m_tmpTexture.filterMode = FilterMode.Point;
+		m_tmpTexture.wrapMode = TextureWrapMode.Clamp;
+
 		m_defaultAreaFog.CreateTexture();
 		m_defaultAreaFog.RefreshTexture();
+
+			// Register default attributes
+		FogAttributes defaultAttributes = new FogAttributes();
+		defaultAttributes.m_fogGradient = m_defaultAreaFog.m_fogGradient;
+		defaultAttributes.texture = m_defaultAreaFog.texture;
+		m_generatedAttributes.Add(defaultAttributes);
 
 	}
 
@@ -104,45 +120,70 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 			if ( m_activeFogAreaList.Count > 0 )
 			{
 				FogArea selectedFogArea = m_activeFogAreaList.Last<FogArea>();
-				m_tmpStart = selectedFogArea.m_attributes.m_fogStart;
-				m_tmpEnd = selectedFogArea.m_attributes.m_fogEnd;
-				m_tmpTexture = selectedFogArea.m_attributes.texture;
+				m_selectedAttributes = selectedFogArea.m_attributes;
 			}
 			else
 			{
-				m_tmpStart = m_defaultAreaFog.m_fogStart;
-				m_tmpEnd = m_defaultAreaFog.m_fogEnd;
-				m_tmpTexture = m_defaultAreaFog.texture;
+				m_selectedAttributes = m_defaultAreaFog;
 			}
 
+			if (m_lastSelectedAttributes != m_selectedAttributes)
+			{
+				m_lastSelectedAttributes = m_selectedAttributes;
+				m_transitionTimer = 1.0f;
+			}
+
+			bool updateValues = false;
 			if ( m_firstTime )
 			{
 				m_firstTime = false;
-				m_start = m_tmpStart;
-				m_end = m_tmpEnd;
-				for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )
-					m_texture.SetPixel(i, 0, m_tmpTexture.GetPixel(i,0));
+				updateValues = true;
+				SetAsSelectedAttributes();
 			}
 			else
 			{
-				float delta = Time.deltaTime;
-				m_start = Mathf.Lerp( m_start, m_tmpStart, delta);
-				m_end = Mathf.Lerp( m_end, m_tmpEnd, delta);
-				for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )
+				if ( m_transitionTimer > 0 )
 				{
-					Color c = Color.Lerp( m_texture.GetPixel(i,0), m_tmpTexture.GetPixel(i,0), delta);
-					m_texture.SetPixel( i, 0, c);
+					updateValues = true;
+					m_transitionTimer -= Time.deltaTime;
+					if ( m_transitionTimer <= 0 )
+					{
+						SetAsSelectedAttributes();
+					}
+					else
+					{
+						float delta = 1.0f - m_transitionTimer;
+						m_start = Mathf.Lerp( m_tmpStart, m_selectedAttributes.m_fogStart, delta);
+						m_end = Mathf.Lerp( m_tmpEnd, m_selectedAttributes.m_fogEnd, delta);
+						for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )
+						{
+							Color c = Color.Lerp( m_tmpTexture.GetPixel(i,0), m_selectedAttributes.texture.GetPixel(i,0), delta);
+							m_texture.SetPixel( i, 0, c);
+						}
+					}
 				}
 			}
-			m_texture.Apply();
-			Shader.SetGlobalFloat("_FogStart", m_start);
-			Shader.SetGlobalFloat("_FogEnd", m_end);
-			Shader.SetGlobalTexture("_FogTexture", m_texture);
+
+			if ( updateValues )
+			{
+				m_texture.Apply(false);
+				Shader.SetGlobalFloat("_FogStart", m_start);
+				Shader.SetGlobalFloat("_FogEnd", m_end);
+				Shader.SetGlobalTexture("_FogTexture", m_texture);
+			}
 			// Shader.SetGlobalColor("_FogColor", m_color);
 			// Shader.SetGlobalFloat("_FogRampY", m_rampY);
 		}
-			
+	}
 
+	private void SetAsSelectedAttributes()
+	{
+		m_start = m_tmpStart = m_selectedAttributes.m_fogStart;
+		m_end = m_tmpEnd = m_selectedAttributes.m_fogEnd;
+		for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )
+			m_texture.SetPixel(i, 0, m_selectedAttributes.texture.GetPixel(i,0));
+		for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )
+			m_tmpTexture.SetPixel(i, 0, m_selectedAttributes.texture.GetPixel(i,0));
 	}
 
 	public bool IsReady()
