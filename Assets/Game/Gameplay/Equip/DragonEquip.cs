@@ -224,8 +224,9 @@ public class DragonEquip : MonoBehaviour {
 				newInstance.transform.localPosition = Vector3.zero;
 				newInstance.transform.localRotation = Quaternion.identity;
 
-				// Also launch intro animation
+				// Initialize preview and launch intro animation
 				MenuPetPreview petPreview = newInstance.GetComponent<MenuPetPreview>();
+				petPreview.sku = _petSku;
 				petPreview.SetAnim(MenuPetPreview.Anim.IN);
 			} else {
 				// In game mode, adjust to dragon's scale factor
