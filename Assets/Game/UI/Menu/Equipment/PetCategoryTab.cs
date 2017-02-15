@@ -45,6 +45,11 @@ public class PetCategoryTab : Tab {
 	public string category {
 		get { return m_category; }
 	}
+
+	private List<DefinitionNode> m_defs = new List<DefinitionNode>();
+	public List<DefinitionNode> defs {
+		get { return m_defs; }
+	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -76,13 +81,14 @@ public class PetCategoryTab : Tab {
 		// Store target category
 		m_category = _category;
 
-		// Get all the pets matching the target category
-		// Sort them!
-		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "category", _category);
-		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
+		// If not yet done, get all the pets matching the target category
+		if(m_defs.Count == 0) {
+			m_defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "category", _category);
+		}
 
-		// Put owned pets at the beginning of the list
-		defs.Sort((DefinitionNode _def1, DefinitionNode _def2) => {
+		// Sort them!
+		// Put owned pets at the beginning of the list, then sort by order
+		m_defs.Sort((DefinitionNode _def1, DefinitionNode _def2) => {
 			bool unlocked1 = UsersManager.currentUser.petCollection.IsPetUnlocked(_def1.sku);
 			bool unlocked2 = UsersManager.currentUser.petCollection.IsPetUnlocked(_def2.sku);
 			if(unlocked1 && !unlocked2) {
@@ -95,7 +101,7 @@ public class PetCategoryTab : Tab {
 		});
 
 		// Initialize one pill for each pet
-		for(int i = 0; i < defs.Count; i++) {
+		for(int i = 0; i < m_defs.Count; i++) {
 			// If we don't have enough pills, instantiate new ones
 			if(i >= m_pills.Count) {
 				GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, m_scrollList.content, false);
@@ -103,12 +109,12 @@ public class PetCategoryTab : Tab {
 			}
 
 			// Initialize pill
-			m_pills[i].Init(defs[i], _dragonData);
+			m_pills[i].Init(m_defs[i], _dragonData);
 			m_pills[i].gameObject.SetActive(true);
 		}
 
 		// Hide any non-used pills
-		for(int i = defs.Count; i < m_pills.Count; i++) {
+		for(int i = m_defs.Count; i < m_pills.Count; i++) {
 			m_pills[i].gameObject.SetActive(false);
 		}
 

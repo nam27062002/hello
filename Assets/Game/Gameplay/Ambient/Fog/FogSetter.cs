@@ -15,6 +15,8 @@ public class FogSetter : MonoBehaviour
 
 	bool m_firstTime;
 
+	FogManager.FogResult m_result;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -41,28 +43,29 @@ public class FogSetter : MonoBehaviour
 	{
 		m_fogManager = FindObjectOfType<FogManager>();
 		m_firstTime = true;
+		m_result = new FogManager.FogResult();
 	}
 	
 	void UpdateFog( float delta )
 	{
-		if (m_fogManager != null )
+		if (m_fogManager != null && m_fogManager.m_fogMode == FogManager.FogMode.FogNodes)
 		{
-			FogManager.FogResult res = m_fogManager.GetFog( transform.position);
+			m_fogManager.GetFog( transform.position, ref m_result);
 
 			if ( m_firstTime )
 			{
 				m_firstTime = false;
-				m_start = res.m_fogStart;
-				m_end = res.m_fogEnd;
-				m_color = res.m_fogColor;
-				m_rampY = res.m_fogRamp;
+				m_start = m_result.m_fogStart;
+				m_end = m_result.m_fogEnd;
+				m_color = m_result.m_fogColor;
+				m_rampY = m_result.m_fogRamp;
 			}
 			else
 			{
-				m_start = Mathf.Lerp( m_start, res.m_fogStart, delta);
-				m_end = Mathf.Lerp( m_end, res.m_fogEnd, delta);
-				m_color = Color.Lerp( m_color, res.m_fogColor, delta);
-				m_rampY = Mathf.Lerp( m_rampY, res.m_fogRamp, delta);
+				m_start = Mathf.Lerp( m_start, m_result.m_fogStart, delta);
+				m_end = Mathf.Lerp( m_end, m_result.m_fogEnd, delta);
+				m_color = Color.Lerp( m_color, m_result.m_fogColor, delta);
+				m_rampY = Mathf.Lerp( m_rampY, m_result.m_fogRamp, delta);
 			}
 
 			Shader.SetGlobalFloat("_FogStart", m_start);
