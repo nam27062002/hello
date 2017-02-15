@@ -141,8 +141,10 @@ public class MenuPetLoader : MonoBehaviour {
 				m_petInstance.transform.localRotation = Quaternion.identity;
 				m_petInstance.SetLayerRecursively(this.gameObject.layer);
 
-				// Launch the default animation
-				m_petInstance.GetComponent<MenuPetPreview>().SetAnim(MenuPetPreview.Anim.IN);
+				// Initialize preview and launch the default animation
+				MenuPetPreview petPreview = m_petInstance.GetComponent<MenuPetPreview>();
+				petPreview.sku = _sku;
+				petPreview.SetAnim(MenuPetPreview.Anim.IN);
 
 				// Reset scale if required
 				if(m_resetScale) {
