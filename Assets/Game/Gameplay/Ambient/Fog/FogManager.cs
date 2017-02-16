@@ -90,18 +90,17 @@ public class FogManager : MonoBehaviour
 		m_tmpTexture.filterMode = FilterMode.Point;
 		m_tmpTexture.wrapMode = TextureWrapMode.Clamp;
 
-		m_defaultAreaFog.CreateTexture();
-		m_defaultAreaFog.RefreshTexture();
 
 			// Register default attributes
-		FogAttributes defaultAttributes = new FogAttributes();
-		defaultAttributes.m_fogGradient = m_defaultAreaFog.m_fogGradient;
-		defaultAttributes.texture = m_defaultAreaFog.texture;
-		m_generatedAttributes.Add(defaultAttributes);
+		CheckTextureAvailability( m_defaultAreaFog );
 
 		m_active = Prefs.GetBoolPlayer(DebugSettings.FOG_MANAGER, true);
 		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 
+		if ( !Application.isPlaying )
+		{
+			RefreshFog();
+		}
 	}
 
 	IEnumerator Start()
@@ -273,4 +272,19 @@ public class FogManager : MonoBehaviour
 		m_activeFogAreaList.Remove( _area );
 	}
 
+	void OnDrawGizmosSelected()
+	{
+		RefreshFog();
+	}
+
+	void RefreshFog()
+	{
+		if ( m_defaultAreaFog.texture == null )
+			m_defaultAreaFog.CreateTexture();
+		m_defaultAreaFog.RefreshTexture();
+
+		Shader.SetGlobalFloat("_FogStart", m_defaultAreaFog.m_fogStart);
+		Shader.SetGlobalFloat("_FogEnd", m_defaultAreaFog.m_fogEnd);
+		Shader.SetGlobalTexture("_FogTexture", m_defaultAreaFog.texture);
+	}
 }

@@ -22,6 +22,19 @@ public class FogAreaEditor : Editor {
 		{
 			m_target.m_attributes.DestroyTexture(true);
 			m_target = null;
+
+			FogManager manager = FindObjectOfType<FogManager>();
+			if ( manager != null )
+			{
+				Shader.SetGlobalFloat("_FogStart", manager.m_defaultAreaFog.m_fogStart);
+				Shader.SetGlobalFloat("_FogEnd", manager.m_defaultAreaFog.m_fogEnd);
+				if ( manager.m_defaultAreaFog.texture == null )
+				{
+					manager.m_defaultAreaFog.CreateTexture();
+					manager.m_defaultAreaFog.RefreshTexture();
+				}
+				Shader.SetGlobalTexture("_FogTexture", manager.m_defaultAreaFog.texture);
+			}
 		}
 	}
 

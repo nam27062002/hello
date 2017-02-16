@@ -9,10 +9,14 @@ public class FogArea : MonoBehaviour
 	public FogManager.FogAttributes m_attributes;
 	public bool m_drawInside = false;
 	public Vector3 m_startScale;
-	void Awake()
+	void Start()
 	{
 		m_fogManager = FindObjectOfType<FogManager>();
 		m_startScale = transform.localScale;
+		if ( UnityEngine.Debug.isDebugBuild )
+		{
+			m_fogManager.CheckTextureAvailability(m_attributes);
+		}
 	}
 
 	void OnDestroy()
