@@ -9,10 +9,14 @@ public class FogArea : MonoBehaviour
 	public FogManager.FogAttributes m_attributes;
 	public bool m_drawInside = false;
 	public Vector3 m_startScale;
-	void Awake()
+	void Start()
 	{
 		m_fogManager = FindObjectOfType<FogManager>();
 		m_startScale = transform.localScale;
+		if ( UnityEngine.Debug.isDebugBuild )
+		{
+			m_fogManager.CheckTextureAvailability(m_attributes);
+		}
 	}
 
 	void OnDestroy()
@@ -45,9 +49,12 @@ public class FogArea : MonoBehaviour
 			m_attributes.CreateTexture();
 		m_attributes.RefreshTexture();
 
-		Shader.SetGlobalFloat("_FogStart", m_attributes.m_fogStart);
-		Shader.SetGlobalFloat("_FogEnd", m_attributes.m_fogEnd);
-		Shader.SetGlobalTexture("_FogTexture", m_attributes.texture);
+		if (!Application.isPlaying )
+		{
+			Shader.SetGlobalFloat("_FogStart", m_attributes.m_fogStart);
+			Shader.SetGlobalFloat("_FogEnd", m_attributes.m_fogEnd);
+			Shader.SetGlobalTexture("_FogTexture", m_attributes.texture);
+		}
 
 		if (m_drawInside)
 		{

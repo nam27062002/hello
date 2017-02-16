@@ -131,7 +131,9 @@ public class ProfilerControlPanelController : MonoBehaviour
                 }
             }
         }
-    }   
+
+        Checkpoints_Start();
+    }    
 
     void Update()
     {
@@ -285,6 +287,57 @@ public class ProfilerControlPanelController : MonoBehaviour
     public void PrefabOptions_SetLogicUnits(int optionId)
     {
         PrefabLogicUnits_IsDirty = true;
+    }
+    #endregion
+
+    #region checkpoints
+    private enum ECheckpoint
+    {
+        Castle,
+        Tunnel,
+        Dungeons,
+        Caves,
+        Bridge
+    }
+
+    private Vector3[] m_checkpointsPositions = new Vector3[]
+    {
+        new Vector3(598, -3, 0f),
+        new Vector3(598, -46, 0f),
+        new Vector3(566, -62, 0f),
+        new Vector3(522, -61, 0f),
+        new Vector3(460, -11, 0f),
+    };
+
+    public TMP_Dropdown m_checkpoints;
+
+    private void Checkpoints_Start()
+    {        
+        if (m_checkpoints != null)
+        {
+            List<TMP_Dropdown.OptionData> options = null;
+            m_checkpoints.ClearOptions();
+
+            TMP_Dropdown.OptionData optionData;
+            options = new List<TMP_Dropdown.OptionData>();
+            int count = m_checkpointsPositions.Length;
+            for (int i = 0; i < count; i ++)
+            {
+                optionData = new TMP_Dropdown.OptionData();
+                optionData.text = ((ECheckpoint)i).ToString();
+                options.Add(optionData);
+            }
+
+            m_checkpoints.AddOptions(options);           
+        }
+    }
+
+    public void Checkpoints_SetOptionId(int optionId)
+    {        
+        if (InstanceManager.player != null)
+        {
+            InstanceManager.player.transform.position = m_checkpointsPositions[optionId];
+        }
     }
     #endregion
 
