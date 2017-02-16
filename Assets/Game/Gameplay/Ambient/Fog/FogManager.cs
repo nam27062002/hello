@@ -25,7 +25,7 @@ public class FogManager : MonoBehaviour
 		public void CreateTexture()
 		{
 			m_texture = new Texture2D(TEXTURE_SIZE,1, TextureFormat.RGBA32, false);
-			m_texture.filterMode = FilterMode.Point;
+			m_texture.filterMode = FilterMode.Bilinear;
 			m_texture.wrapMode = TextureWrapMode.Clamp;
 		}
 
@@ -97,19 +97,19 @@ public class FogManager : MonoBehaviour
 		InstanceManager.fogManager = this;
 
 		m_texture = new Texture2D( FogAttributes.TEXTURE_SIZE,1, TextureFormat.RGBA32, false);
-		m_texture.filterMode = FilterMode.Point;
+		m_texture.filterMode = FilterMode.Bilinear;
 		m_texture.wrapMode = TextureWrapMode.Clamp;
 
 		m_tmpTexture = new Texture2D( FogAttributes.TEXTURE_SIZE,1, TextureFormat.RGBA32, false);
-		m_tmpTexture.filterMode = FilterMode.Point;
+		m_tmpTexture.filterMode = FilterMode.Bilinear;
 		m_tmpTexture.wrapMode = TextureWrapMode.Clamp;
 
 		m_blitDestination = new RenderTexture( FogAttributes.TEXTURE_SIZE, 1, 0);
-		m_blitDestination.filterMode = FilterMode.Point;
+		m_blitDestination.filterMode = FilterMode.Bilinear;
 		m_blitDestination.wrapMode = TextureWrapMode.Clamp;
 
 		m_blitOrigin = new RenderTexture( FogAttributes.TEXTURE_SIZE, 1, 0);
-		m_blitOrigin.filterMode = FilterMode.Point;
+		m_blitOrigin.filterMode = FilterMode.Bilinear;
 		m_blitOrigin.wrapMode = TextureWrapMode.Clamp;
 
 		Shader s = Shader.Find("Hidden/FogBlend");
