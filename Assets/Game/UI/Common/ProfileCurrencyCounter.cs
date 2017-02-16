@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Text;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -44,6 +45,9 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_text = null;
 	[SerializeField] private Animator m_anim = null;
+
+	// Internal
+	private StringBuilder m_stringBuilder = new StringBuilder();
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -110,17 +114,18 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 		}
 
 		// Apply to textfield based on icon type
+		m_stringBuilder.Length = 0;	// Reset string builder
 		switch(m_iconType) {
 			case IconType.NONE: {
 				m_text.text = text;
 			} break;
 
 			case IconType.LEFT: {
-				m_text.text = iconString + text;
+				m_text.text = m_stringBuilder.Append(iconString).Append(" ").Append(text).ToString();
 			} break;
 
 			case IconType.RIGHT: {
-				m_text.text = text + iconString;
+				m_text.text = m_stringBuilder.Append(text).Append(" ").Append(iconString).ToString();
 			} break;
 		}
 	}
