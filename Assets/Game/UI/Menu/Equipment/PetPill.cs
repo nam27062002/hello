@@ -272,7 +272,7 @@ public class PetPill : MonoBehaviour {
 		PopupController popup = PopupManager.OpenPopupInstant(PopupInfoPet.PATH);
 		PopupInfoPet petPopup = popup.GetComponent<PopupInfoPet>();
 		if(petPopup != null) {
-			petPopup.Refresh(m_def, parentScreen.currentTab.defs);
+			petPopup.Init(m_def, parentScreen.currentTab.defs);
 		}
 	}
 
