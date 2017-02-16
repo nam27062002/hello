@@ -121,7 +121,9 @@ public class FogManager : MonoBehaviour
 
 		m_active = Prefs.GetBoolPlayer(DebugSettings.FOG_MANAGER, true);
 		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+		Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChangedString);
 
+		m_fogBlendMode = (FogBlendMode) Prefs.GetIntPlayer( DebugSettings.FOG_BLEND_TYPE, 0);
 		OnModeChanged();
 
 		if ( !Application.isPlaying )
@@ -149,12 +151,21 @@ public class FogManager : MonoBehaviour
 	{
 		InstanceManager.fogManager = null;
 		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+		Messenger.RemoveListener<string>(GameEvents.CP_STRING_CHANGED, Debug_OnChangedString);
 	}
 
 	void Debug_OnChanged( string _key, bool value)
 	{
 		if ( _key == DebugSettings.FOG_MANAGER )
 			m_active = value;
+	}
+
+	void Debug_OnChangedString( string _key )
+	{
+		if ( _key == DebugSettings.FOG_BLEND_TYPE )
+		{
+			m_fogBlendMode = (FogBlendMode) Prefs.GetIntPlayer(_key, 0);
+		}
 	}
 
 	void Update()
