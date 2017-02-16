@@ -209,32 +209,41 @@ public class FogManager : MonoBehaviour
 
 	public void ActivateArea( FogArea _area )
 	{
-		if ( _area.m_attributes.texture == null )
+		CheckTextureAvailability( _area.m_attributes );
+		m_activeFogAreaList.Add( _area );
+	}
+
+	public void CheckTextureAvailability( FogManager.FogAttributes _attributes)
+	{
+		if ( _attributes.texture == null )
 		{
 			for( int i = 0; i<m_generatedAttributes.Count; i++ )
 			{
-				if ( Equals(m_generatedAttributes[i].m_fogGradient, _area.m_attributes.m_fogGradient) )
+				if ( Equals(m_generatedAttributes[i].m_fogGradient, _attributes.m_fogGradient) )
 				{
-					_area.m_attributes.m_fogGradient = m_generatedAttributes[i].m_fogGradient;
-					_area.m_attributes.texture = m_generatedAttributes[i].texture;
+					_attributes.m_fogGradient = m_generatedAttributes[i].m_fogGradient;
+					_attributes.texture = m_generatedAttributes[i].texture;
 					break;
 				}
 
 			}
 
-			if ( _area.m_attributes.texture == null )
+			if ( _attributes.texture == null )
 			{
-				_area.m_attributes.CreateTexture();
-				_area.m_attributes.RefreshTexture();
+				_attributes.CreateTexture();
+				_attributes.RefreshTexture();
 
 				FogAttributes newAttributes = new FogAttributes();
-				newAttributes.m_fogGradient = _area.m_attributes.m_fogGradient;
-				newAttributes.texture = _area.m_attributes.texture;
+				newAttributes.m_fogGradient = _attributes.m_fogGradient;
+				newAttributes.texture = _attributes.texture;
 				m_generatedAttributes.Add( newAttributes );
+
+				if ( UnityEngine.Debug.isDebugBuild && m_generatedAttributes.Count >= m_maxGradientTextures)
+				{
+					Debug.TaggedLogWarning("Fog Manager", "To many gradient textures");
+				}
 			}
 		}
-
-		m_activeFogAreaList.Add( _area );
 	}
 
 	public bool Equals( Gradient a, Gradient b)
