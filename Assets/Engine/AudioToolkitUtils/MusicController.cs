@@ -142,8 +142,7 @@ public class MusicController : MonoBehaviour
                 Music_OffsetAccummulated = 0;
             }
 
-            Music_CurrentAudioObject = AudioController.PlayMusic(Music_CurrentKey, m_musicVolume, 0, offset);            
-            Log("Play " + Music_CurrentKey + " offset = " + offset + " length = " + Music_CurrentAudioObject.clipLength + " audioTime = " + Music_CurrentAudioObject.audioTime);
+            Music_CurrentAudioObject = AudioController.PlayMusic(Music_CurrentKey, m_musicVolume, 0, offset);                        
         }
         else
         {
