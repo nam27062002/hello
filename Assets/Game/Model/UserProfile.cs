@@ -27,6 +27,8 @@ public class UserProfile : UserSaveSystem
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
+	// Make sure persistence JSON is formatted equal in all systems!
+	private static readonly System.Globalization.CultureInfo JSON_FORMATTING_CULTURE = System.Globalization.CultureInfo.InvariantCulture;
 
     //------------------------------------------------------------------------//
     // MEMBERS																  //
@@ -193,7 +195,12 @@ public class UserProfile : UserSaveSystem
 		set{ m_dailyRemoveMissionAdUses = value; }
 	}
 
-
+	// Map upgrades
+	private int m_mapLevel = 0;
+	public int mapLevel {
+		get { return m_mapLevel; }
+		set { m_mapLevel = value; }
+	}
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -344,7 +351,7 @@ public class UserProfile : UserSaveSystem
 
         if (profile.ContainsKey("timestamp"))
         {
-            m_saveTimestamp = DateTime.Parse(profile["timestamp"], System.Globalization.CultureInfo.InvariantCulture);
+            m_saveTimestamp = DateTime.Parse(profile["timestamp"], JSON_FORMATTING_CULTURE);
         }
         else
         {
@@ -483,10 +490,11 @@ public class UserProfile : UserSaveSystem
 			m_dailyChestsResetTimestamp = DateTime.UtcNow;
 		}
 
+		// Daily mission Ads
 		m_dailyRemoveMissionAdUses = 0;
 		if ( _data.ContainsKey("dailyRemoveMissionAdTimestamp") )
 		{
-			m_dailyRemoveMissionAdTimestamp = DateTime.Parse(_data["dailyRemoveMissionAdTimestamp"], System.Globalization.CultureInfo.InvariantCulture);;
+			m_dailyRemoveMissionAdTimestamp = DateTime.Parse(_data["dailyRemoveMissionAdTimestamp"], JSON_FORMATTING_CULTURE);;
 
 			if ( _data.ContainsKey("dailyRemoveMissionAdUses") )
 				m_dailyRemoveMissionAdUses = _data["dailyRemoveMissionAdUses"].AsInt;
@@ -494,6 +502,14 @@ public class UserProfile : UserSaveSystem
 		else
 		{
 			m_dailyRemoveMissionAdTimestamp = DateTime.UtcNow;
+		}
+
+		// Map upgrades
+		key = "mapLevel";
+		if(profile.ContainsKey(key)) {
+			m_mapLevel = profile[key].AsInt;
+		} else {
+			m_mapLevel = 0;
 		}
 	}
 
@@ -534,7 +550,7 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Incubator timer
-		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], System.Globalization.CultureInfo.InvariantCulture);
+		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], JSON_FORMATTING_CULTURE);
 
         // Eggs collected
         eggsCollected = _data["collectedAmount"].AsInt;
@@ -570,7 +586,7 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Reset timestamp
-		m_dailyChestsResetTimestamp = DateTime.Parse(_data["resetTimestamp"], System.Globalization.CultureInfo.InvariantCulture);
+		m_dailyChestsResetTimestamp = DateTime.Parse(_data["resetTimestamp"], JSON_FORMATTING_CULTURE);
 	}
 
 	//------------------------------------------------------------------------//
@@ -586,22 +602,22 @@ public class UserProfile : UserSaveSystem
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 		SimpleJSON.JSONClass profile = new SimpleJSON.JSONClass();
 
-        profile.Add("timestamp", m_saveTimestamp.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        profile.Add("timestamp", m_saveTimestamp.ToString(JSON_FORMATTING_CULTURE));
 
         // Economy
-		profile.Add( "sc", m_coins.ToString(System.Globalization.CultureInfo.InvariantCulture));
-		profile.Add( "pc", m_pc.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		profile.Add( "sc", m_coins.ToString(JSON_FORMATTING_CULTURE));
+		profile.Add( "pc", m_pc.ToString(JSON_FORMATTING_CULTURE));
 
 		// Game settings
 		profile.Add("currentDragon",m_currentDragon);
 		profile.Add("currentLevel",m_currentLevel);
-		profile.Add("tutorialStep",((int)m_tutorialStep).ToString(System.Globalization.CultureInfo.InvariantCulture));
-		profile.Add("furyUsed", m_furyUsed.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		profile.Add("tutorialStep",((int)m_tutorialStep).ToString(JSON_FORMATTING_CULTURE));
+		profile.Add("furyUsed", m_furyUsed.ToString(JSON_FORMATTING_CULTURE));
 
 		// Game stats
-		profile.Add("gamesPlayed",m_gamesPlayed.ToString(System.Globalization.CultureInfo.InvariantCulture));
-		profile.Add("highScore",m_highScore.ToString(System.Globalization.CultureInfo.InvariantCulture));
-		profile.Add("superFuryProgression",m_superFuryProgression.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		profile.Add("gamesPlayed",m_gamesPlayed.ToString(JSON_FORMATTING_CULTURE));
+		profile.Add("highScore",m_highScore.ToString(JSON_FORMATTING_CULTURE));
+		profile.Add("superFuryProgression",m_superFuryProgression.ToString(JSON_FORMATTING_CULTURE));
 
 		data.Add("userProfile", profile);
 
@@ -623,8 +639,11 @@ public class UserProfile : UserSaveSystem
 		data.Add("chests", SaveChestsData());
 
 		// Daily remove missions with ads
-		data.Add("dailyRemoveMissionAdTimestamp", m_dailyRemoveMissionAdTimestamp.ToString(System.Globalization.CultureInfo.InvariantCulture));
-		data.Add("dailyRemoveMissionAdUses", m_dailyRemoveMissionAdUses.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		data.Add("dailyRemoveMissionAdTimestamp", m_dailyRemoveMissionAdTimestamp.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("dailyRemoveMissionAdUses", m_dailyRemoveMissionAdUses.ToString(JSON_FORMATTING_CULTURE));
+
+		// Map upgrades
+		profile.Add("mapLevel", m_mapLevel.ToString(JSON_FORMATTING_CULTURE));
 
 		// Return it
 		return data;
@@ -657,14 +676,14 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Incubator timer
-		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(JSON_FORMATTING_CULTURE));
 
         // Eggs collected
-		data.Add("collectedAmount", eggsCollected.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		data.Add("collectedAmount", eggsCollected.ToString(JSON_FORMATTING_CULTURE));
 
 		// Golden eggs
-		data.Add("goldenEggFragments", m_goldenEggFragments.ToString(System.Globalization.CultureInfo.InvariantCulture));
-		data.Add("goldenEggsCollected", m_goldenEggsCollected.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		data.Add("goldenEggFragments", m_goldenEggFragments.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("goldenEggsCollected", m_goldenEggsCollected.ToString(JSON_FORMATTING_CULTURE));
 
         return data;
 	}
@@ -687,7 +706,7 @@ public class UserProfile : UserSaveSystem
 		data.Add("chests", chestsArray);
 
 		// Reset timestamp
-		data.Add("resetTimestamp", m_dailyChestsResetTimestamp.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		data.Add("resetTimestamp", m_dailyChestsResetTimestamp.ToString(JSON_FORMATTING_CULTURE));
 
 		// Done!
 		return data;
