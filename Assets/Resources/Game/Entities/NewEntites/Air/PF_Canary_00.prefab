@@ -463,7 +463,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_blendSpeedFactor: 0.5
-  m_energy: 15
+  m_energy: 10
   m_energyDrainSec: 5
   m_brainResource: {fileID: 11400000, guid: 35a662e89e7a340ab9f035ee4612930b, type: 2}
   m_railSeparation:
@@ -472,10 +472,10 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.85
     max: 1.15
-  m_serializedJson: '[{"boostSpeed":8.5,"panicSpeed":14.5,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":0,"separation":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":5,"catchUpSpeed":8,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":5,"catchUpSpeed":8,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"boostSpeed":13,"panicSpeed":14.5,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":0,"separation":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":2.5,"catchUpSpeed":4,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":2.5,"catchUpSpeed":4,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Canary_00
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 3.5
+  m_avoidDistanceAttenuation: 12
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!114 &11439040
@@ -560,8 +560,8 @@ MonoBehaviour:
   m_sensor:
     m_senseFire: 1
     m_sightRadius: 5
-    m_maxRadius: 4
-    m_minRadius: 3.5
+    m_maxRadius: 3.5
+    m_minRadius: 3
     m_hysteresisOffset: 1
     m_senseAbove: 1
     m_senseBelow: 1
