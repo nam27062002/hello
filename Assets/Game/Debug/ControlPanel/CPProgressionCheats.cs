@@ -233,6 +233,31 @@ public class CPProgressionCheats : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Reset the pets collection to a random amount of locked/unlocked pets.
+	/// Resets golden egg fragments and collected eggs count as well.
+	/// </summary>
+	public void OnResetPetsRandomly() {
+		/*// Clear equipped pets
+		foreach(DragonData dragon in DragonManager.dragonsByOrder) {
+			for(int i = 0; i < dragon.pets.Count; i++) {
+				UsersManager.currentUser.UnequipPet(dragon.def.sku, i);
+			}
+		}
+
+		// Clear pet collection
+		UsersManager.currentUser.petCollection.Reset();
+
+		// Clear collected eggs and fragments
+		UsersManager.currentUser.eggsCollected = 0;
+		UsersManager.currentUser.goldenEggFragments = 0;
+		UsersManager.currentUser.goldenEggsCollected = 0;
+
+		// Save!
+		PersistenceManager.Save();*/
+		Debug.Log("TODO!!");
+	}
+
+	/// <summary>
 	/// Reset only the special pets to lock state.
 	/// Resets golden egg fragments and collected golden eggs count as well.
 	/// </summary>
