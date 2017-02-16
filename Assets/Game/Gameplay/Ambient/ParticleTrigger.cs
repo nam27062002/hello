@@ -12,10 +12,12 @@ public class ParticleTrigger : MonoBehaviour {
 		Both
 	};
 	public TriggerEvent m_event;
+	private Collider m_collider;
 
 	void Start()
 	{
 		ParticleManager.CreatePool( m_particle, 2 );
+		m_collider = GetComponent<Collider>();
 	}
 
 	void OnTriggerEnter( Collider other)
@@ -36,7 +38,8 @@ public class ParticleTrigger : MonoBehaviour {
 
 	private void SpawnParticle(Collider other)
 	{
-		GameObject go = ParticleManager.Spawn(m_particle, other.transform.position);
+		Vector3 position = m_collider.ClosestPointOnBounds( other.transform.position);
+		GameObject go = ParticleManager.Spawn(m_particle, position);
 		if ( go != null)
 		{
 			go.transform.rotation = other.transform.rotation;

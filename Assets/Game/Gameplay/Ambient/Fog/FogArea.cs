@@ -49,9 +49,12 @@ public class FogArea : MonoBehaviour
 			m_attributes.CreateTexture();
 		m_attributes.RefreshTexture();
 
-		Shader.SetGlobalFloat("_FogStart", m_attributes.m_fogStart);
-		Shader.SetGlobalFloat("_FogEnd", m_attributes.m_fogEnd);
-		Shader.SetGlobalTexture("_FogTexture", m_attributes.texture);
+		if (!Application.isPlaying )
+		{
+			Shader.SetGlobalFloat("_FogStart", m_attributes.m_fogStart);
+			Shader.SetGlobalFloat("_FogEnd", m_attributes.m_fogEnd);
+			Shader.SetGlobalTexture("_FogTexture", m_attributes.texture);
+		}
 
 		if (m_drawInside)
 		{
