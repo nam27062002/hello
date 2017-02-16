@@ -4900,6 +4900,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 587149485}
+  - component: {fileID: 587149486}
   m_Layer: 0
   m_Name: L1_castle_dungeon_LOW
   m_TagString: Untagged
@@ -4927,10 +4928,10 @@ Transform:
   - {fileID: 915865645}
   - {fileID: 641565952}
   - {fileID: 233563391}
+  - {fileID: 2115870842}
   - {fileID: 24188545}
   - {fileID: 1038337366}
   - {fileID: 1035948653}
-  - {fileID: 2115870842}
   - {fileID: 1788505005}
   - {fileID: 1237701868}
   - {fileID: 88810395}
@@ -4938,6 +4939,20 @@ Transform:
   m_Father: {fileID: 115908745}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &587149486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 587149484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88aa4ad79f26e47ef85ce444992f1cda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Low: 1
+  Medium: 1
+  High: 1
 --- !u!1001 &602545370
 Prefab:
   m_ObjectHideFlags: 0
@@ -7724,6 +7739,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 930725794}
+  - component: {fileID: 930725795}
   m_Layer: 0
   m_Name: L1_castle_dungeon_HIGH
   m_TagString: Untagged
@@ -7749,6 +7765,20 @@ Transform:
   m_Father: {fileID: 115908745}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &930725795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 930725793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88aa4ad79f26e47ef85ce444992f1cda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Low: 0
+  Medium: 0
+  High: 1
 --- !u!1001 &970316270
 Prefab:
   m_ObjectHideFlags: 0
@@ -12763,6 +12793,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1552982576}
+  - component: {fileID: 1552982577}
   m_Layer: 0
   m_Name: L1_castle_dungeon_MEDIUM
   m_TagString: Untagged
@@ -12792,6 +12823,20 @@ Transform:
   m_Father: {fileID: 115908745}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1552982577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1552982575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88aa4ad79f26e47ef85ce444992f1cda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Low: 0
+  Medium: 1
+  High: 1
 --- !u!1001 &1564142220
 Prefab:
   m_ObjectHideFlags: 0
@@ -17018,7 +17063,7 @@ Transform:
   - {fileID: 455436657}
   - {fileID: 1653469548}
   m_Father: {fileID: 587149485}
-  m_RootOrder: 13
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2123671788
 Prefab:
