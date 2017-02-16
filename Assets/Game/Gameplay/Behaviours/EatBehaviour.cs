@@ -8,7 +8,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		public float eatingAnimationDuration;
 		public Transform startParent;
 		public Vector3 startScale;
-		public AI.Machine prey;
+		public AI.IMachine prey;
 		public Quaternion dyingRotation;
 	};
 
@@ -33,7 +33,7 @@ public abstract class EatBehaviour : MonoBehaviour {
     private static int maxPreysSoFar = 0;
     private const int MAX_PREYS = 40; // Max amount of preys allowed to be eaten simultaneously
     protected PreyData[] m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
-    private AI.Machine[] m_preysToEat; // Temporary array needed when eating. It's defined here to prevent memory from being generated when eating
+    private AI.IMachine[] m_preysToEat; // Temporary array needed when eating. It's defined here to prevent memory from being generated when eating
 
     protected int PreyCount { get; set; }
     
@@ -42,7 +42,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	// Hold stuff
 	private float m_holdPreyTimer = 0;
-	protected AI.Machine m_holdingPrey = null;
+	protected AI.IMachine m_holdingPrey = null;
 	protected DragonPlayer m_holdingPlayer = null;
 	protected DragonHealthBehaviour m_holdingPlayerHealth = null;
 	protected Transform m_holdTransform = null;
@@ -170,7 +170,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
         if (m_canEatEntities) {
             int amount = (m_limitEating) ? m_limitEatingValue : MAX_PREYS;
-            m_preysToEat = new AI.Machine[amount];
+            m_preysToEat = new AI.IMachine[amount];
             m_prey = new PreyData[amount];
 			for (int i = 0; i < amount; i++) {
                 m_prey[i] = new PreyData();
@@ -273,7 +273,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	public bool IsLatching()
 	{
-		return m_holdingPlayer != null || (!m_grabbingPrey && m_holdingPrey);
+		return m_holdingPlayer != null || (!m_grabbingPrey && m_holdingPrey != null);
 	}
 
 	public bool IsGrabbing()
@@ -385,7 +385,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// </summary>
 
 	/// Start Eating _prey
-	protected void Eat(AI.Machine prey, bool overrideEatTime = false, float time = 0.1f)
+	protected void Eat(AI.IMachine prey, bool overrideEatTime = false, float time = 0.1f)
     {
         PreyData preyData = null;
         if (m_prey != null)
@@ -523,7 +523,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// </summary>
 
 	/// Start holding a prey machine
-	virtual protected void StartHold( AI.Machine _prey, bool grab = false) 
+	virtual protected void StartHold( AI.IMachine _prey, bool grab = false) 
 	{
 		m_grabbingPrey = grab;
 		// look for closer hold point
@@ -606,7 +606,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if (m_holdingPrey.IsDead())
 		{
 			StartBlood();
-			AI.Machine toEat = m_holdingPrey;
+			AI.IMachine toEat = m_holdingPrey;
 			EndHold();
 			Eat( toEat, true, 0.5f);
 			// StartSwallow(m_holdingPrey);
@@ -829,7 +829,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		if (m_eatingEntitiesEnabled && m_holdingPlayer == null )
 		{
-			AI.Machine preyToHold = null;
+			AI.IMachine preyToHold = null;
 			Entity entityToHold = null;
             
 			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_mouth.position, eatDistance, m_checkEntities);
@@ -851,7 +851,7 @@ public abstract class EatBehaviour : MonoBehaviour {
                             // Makes sure that it won't exceed the max limit
                             if (numPreysToEat < maxPreysToEat)
                             {
-                                AI.Machine machine = entity.GetComponent<AI.Machine>();
+                                AI.IMachine machine = entity.GetComponent<AI.IMachine>();
                                 if ( machine.CanBeBitten() )
                                 {
                                     m_preysToEat[numPreysToEat] = machine;
@@ -868,7 +868,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 					{
 						if (_canHold)
 						{
-							AI.Machine machine = entity.GetComponent<AI.Machine>();
+							AI.IMachine machine = entity.GetComponent<AI.IMachine>();
 							if ( machine.CanBeBitten() )
 							{
 								preyToHold = machine;
@@ -949,11 +949,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 
 	/// On kill function over prey. Eating or holding
-	private void StartSwallow(AI.Machine _prey) {
+	private void StartSwallow(AI.IMachine _prey) {
 		_prey.BeginSwallowed(m_mouth, m_rewardsPlayer);//( m_mouth );
 	}
 
-	private void EndSwallow(AI.Machine _prey){
+	private void EndSwallow(AI.IMachine _prey){
 		_prey.EndSwallowed(m_mouth);
 	}
 

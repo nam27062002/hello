@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000013667407138}
-  - component: {fileID: 114000012561699444}
+  - component: {fileID: 114514008799517958}
   - component: {fileID: 54000011151965070}
   - component: {fileID: 136000011943049098}
   m_Layer: 16
@@ -126,7 +126,7 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!114 &114000012561699444
+--- !u!114 &114514008799517958
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -134,15 +134,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000013315842086}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c438c7e1c5e6c4f8fb6807a597924c4e, type: 3}
+  m_Script: {fileID: 11500000, guid: 69843bc5296534848970ecd538e50246, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damage: 50
+  m_motionType: 2
+  m_speed: 0
+  m_rotationSpeed: 1
+  m_maxTime: 30
+  m_scaleTime: 0.5
+  m_stopAtTarget: 0
+  m_defaultDamage: 50
+  m_damageType: 0
+  m_radius: 0
   m_knockback: 5
-  m_hitParticle: PS_CatapultRock
-  m_speedFactor: 0.75
-  m_rotationSpeedFactor: 1
-  m_onExplodeAudio: Catapult_Impact
+  m_activateOnShoot: []
+  m_onHitParticle:
+    name: PS_CatapultRock
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_stickOnDragonTime: 0
+  m_onHitAudio: Catapult_Impact
 --- !u!136 &136000011943049098
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -56,10 +56,14 @@ public class MagicProjectile : MonoBehaviour, IProjectile {
 
 	}
 
-	public void AttachTo(Transform _parent) {
+	public void AttachTo(Transform _parent) {		
+		AttachTo(_parent, Vector3.zero);
+	}
+
+	public void AttachTo(Transform _parent, Vector3 _offset) {
 		m_oldParent = transform.parent;
 		transform.parent = _parent;
-		transform.position = Vector3.zero;
+		transform.position = _offset;
 		transform.localPosition = Vector3.zero;
 		m_effect.transform.position = Vector3.zero;
 		m_effect.transform.localPosition = Vector3.zero;
@@ -68,7 +72,7 @@ public class MagicProjectile : MonoBehaviour, IProjectile {
 		m_effectIdle.SetActive(true);
 	}
 
-	public void Shoot(Vector3 _target, float _damage = 0f) {
+	public void Shoot(Vector3 _target) {
 		transform.parent = m_oldParent;
 		m_effect.Target = InstanceManager.player.gameObject;
 
@@ -76,6 +80,14 @@ public class MagicProjectile : MonoBehaviour, IProjectile {
 		m_effect.gameObject.SetActive(true);
 		m_hasBeenShot = true;
 	}
+
+	public void Shoot(Vector3 _target, float _damage) {
+		Shoot(_target);
+	}
+
+	public void ShootTowards(Vector3 _direction) {}
+	public void ShootTowards(Vector3 _direction, float _speed) {}
+	public void ShootTowards(Vector3 _direction, float _speed, float _damage) {}
 
 	public void ShootAtPosition(Transform _from, float _damage, Vector3 _pos) {		
 		transform.parent = m_oldParent;

@@ -33,17 +33,30 @@ namespace AI {
 		void	LeaveGroup();
 
 		// External interactions
+		void ReceiveDamage(float _damage);
+
 		void LockInCage();
 		void UnlockFromCage();
 
 		void Drown();
+
+		bool CanBeBitten();
+		float biteResistance { get; }
+		HoldPreyPoint[] holdPreyPoints { get; }
+
 		void Bite();
 		void BeginSwallowed(Transform _transform, bool rewardPlayer);
+		void EndSwallowed(Transform _transform);
 		void BiteAndHold();
+		void ReleaseHold();
+
+		Quaternion GetDyingFixRot();
+
 		bool Burn(Transform _transform);
 
 		void SetVelocity(Vector3 _v);
 
+		bool IsDead();
 		bool IsDying();
 
 	}

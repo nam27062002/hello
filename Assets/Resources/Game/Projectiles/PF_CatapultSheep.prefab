@@ -49,11 +49,14 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4329582163582088}
-  - component: {fileID: 114999596680096840}
+  - component: {fileID: 114518533810459924}
+  - component: {fileID: 114826213901103138}
+  - component: {fileID: 114380405714978822}
+  - component: {fileID: 114947380596267484}
   - component: {fileID: 54037777246095102}
   - component: {fileID: 136793907546751736}
   - component: {fileID: 136156041293190920}
-  m_Layer: 16
+  m_Layer: 25
   m_Name: PF_CatapultSheep
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -512,7 +515,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1158475915581136}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 344.88434, y: 27.165806, z: 13.675221}
+  m_LocalPosition: {x: -146.41963, y: 8.13199, z: -0.01}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 4970188233702686}
@@ -732,15 +735,15 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1281296141565510}
-  m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: -0.5}
-  m_LocalPosition: {x: 0, y: 0, z: 0.85}
+  m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: -0.38, y: 0, z: -1.135}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4545246608418002}
   - {fileID: 4162676258674594}
   m_Father: {fileID: 4329582163582088}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 261.162, y: -99.362, z: -80.52698}
 --- !u!54 &54037777246095102
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -773,7 +776,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114999596680096840
+--- !u!114 &114380405714978822
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -781,15 +784,73 @@ MonoBehaviour:
   m_GameObject: {fileID: 1158475915581136}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c438c7e1c5e6c4f8fb6807a597924c4e, type: 3}
+  m_Script: {fileID: 11500000, guid: 5dc78035f46ce4e73a5767fdae738d86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damage: 50
+  m_inflammable:
+    m_ashesAsset: 
+    m_burningTime: 0
+    m_dissolveTime: 1.5
+    m_ashExceptions: []
+--- !u!114 &114518533810459924
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1158475915581136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sku: canary_01
+  m_dieOutsideFrustum: 0
+--- !u!114 &114826213901103138
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1158475915581136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69843bc5296534848970ecd538e50246, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_motionType: 2
+  m_speed: 0
+  m_rotationSpeed: 1
+  m_maxTime: 30
+  m_scaleTime: 0.5
+  m_stopAtTarget: 0
+  m_defaultDamage: 50
+  m_damageType: 0
+  m_radius: 0
   m_knockback: 5
-  m_hitParticle: PS_CatapultRock
-  m_speedFactor: 0.75
-  m_rotationSpeedFactor: 1
-  m_onExplodeAudio: Catapult_Impact
+  m_activateOnShoot: []
+  m_onHitParticle:
+    name: PS_CatapultRock
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatParticle:
+    name: PS_Blood_Explosion_Medium
+    path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_stickOnDragonTime: 0
+  m_onHitAudio: Catapult_Impact
+--- !u!114 &114947380596267484
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1158475915581136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0}
+  radius: 2.3632088
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!136 &136156041293190920
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -800,9 +861,9 @@ CapsuleCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.74
-  m_Height: 3
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Height: 2.03
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: -0.51}
 --- !u!136 &136793907546751736
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -813,9 +874,9 @@ CapsuleCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.74
-  m_Height: 3
-  m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Height: 2.19
+  m_Direction: 0
+  m_Center: {x: 0, y: 0, z: -0.57}
 --- !u!137 &137819518653702650
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
