@@ -36,10 +36,12 @@ public class CPQualitySettings : MonoBehaviour
     {
         if (PrefabSettingsOption_IsDirty)
         {
-            PrefabOptions_Update();
-            Messenger.Broadcast(GameEvents.CP_QUALITY_CHANGED);
+            PrefabOptions_Update();            
             PrefabSettingsOption_IsDirty = false;
             FeatureSettingsManager.instance.ApplyCurrentFeatureSetting();
+
+            Messenger.Broadcast(GameEvents.CP_QUALITY_CHANGED);
+            WorldSplitter.Manager_SetLevelsLOD(FeatureSettingsManager.instance.LevelsLOD);
         }
     }
 
