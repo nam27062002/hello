@@ -237,24 +237,43 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// Resets golden egg fragments and collected eggs count as well.
 	/// </summary>
 	public void OnResetPetsRandomly() {
-		/*// Clear equipped pets
+		// Clear equipped pets
 		foreach(DragonData dragon in DragonManager.dragonsByOrder) {
 			for(int i = 0; i < dragon.pets.Count; i++) {
 				UsersManager.currentUser.UnequipPet(dragon.def.sku, i);
 			}
 		}
 
-		// Clear pet collection
+		// Clear pet collection and eggs and fragments
 		UsersManager.currentUser.petCollection.Reset();
-
-		// Clear collected eggs and fragments
 		UsersManager.currentUser.eggsCollected = 0;
 		UsersManager.currentUser.goldenEggFragments = 0;
 		UsersManager.currentUser.goldenEggsCollected = 0;
 
+		// Iterate all the pets list and randomly unlock some of them
+		float unlockChance = 0.5f;
+		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
+		foreach(DefinitionNode petDef in petDefs) {
+			// Unlock?
+			if(Random.value > unlockChance) continue;	// No, try with next pet
+
+			// Unlock!
+			UsersManager.currentUser.petCollection.UnlockPet(petDef.sku);
+
+			// Increase collected eggs (pets come from eggs!)
+			UsersManager.currentUser.eggsCollected++;
+
+			// If special, increase collected golden eggs
+			if(petDef.Get("rarity") == EggReward.RarityToSku(EggReward.Rarity.SPECIAL)) {
+				UsersManager.currentUser.goldenEggsCollected++;
+			}
+		}
+
+		// Initialize current amount of golden fragments to a random value within the limit
+		UsersManager.currentUser.goldenEggFragments = Random.Range(0, EggManager.goldenEggRequiredFragments);
+
 		// Save!
-		PersistenceManager.Save();*/
-		Debug.Log("TODO!!");
+		PersistenceManager.Save();
 	}
 
 	/// <summary>
@@ -263,7 +282,7 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// </summary>
 	public void OnResetSpecialPets() {
 		// Get all special pets
-		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", "special");
+		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", EggReward.RarityToSku(EggReward.Rarity.SPECIAL));
 
 		// Clear equipped pets
 		foreach(DragonData dragon in DragonManager.dragonsByOrder) {
