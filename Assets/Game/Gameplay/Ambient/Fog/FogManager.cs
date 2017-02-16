@@ -5,9 +5,8 @@ using System.Collections.Generic;
 [ExecuteInEditMode]
 public class FogManager : MonoBehaviour
 {
-	// private FogNode[] m_fogNodes;
-	// private List<FogNode> m_usedFogNodes = new List<FogNode>();
-	// private Rect m_getRect = new Rect();
+
+	private int m_maxGradientTextures = 64;
 
 	[System.Serializable]
 	public class FogAttributes
