@@ -14,6 +14,8 @@ namespace AI {
 		T[] GetComponentsInChildren<T>();
 		Transform transform { get; }
 
+		float lastFallDistance { get; }
+
 		// Internal connections
 		void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null);
 		bool GetSignal(Signals.Type _signal);

@@ -65,6 +65,8 @@ namespace AI {
 		public Vector3 velocity			{ get { if (m_enableMotion) return m_motion.velocity; else return Vector3.zero;} }
 		public Vector3 angularVelocity	{ get { if (m_enableMotion) return m_motion.angularVelocity; else return Vector3.zero;} }
 
+		public float lastFallDistance { get { if (m_enableMotion) return m_motion.lastFallDistance; else return 0; } }
+
 		public Transform enemy { 
 			get {
 				if (m_sensor != null && (GetSignal(Signals.Type.Warning) || GetSignal(Signals.Type.Danger))) {
@@ -274,9 +276,9 @@ namespace AI {
 					bool isLatching = dragonEat.IsLatching();
 					bool isGrabbing = dragonEat.IsGrabbing();
 
-					if (isEating || isLatching || isGrabbing) {
+					if (true || isEating || isLatching || isGrabbing) {
 						Vector3 speed = InstanceManager.player.dragonMotion.velocity;
-						m_motion.SetVelocity(speed * 10f);
+						m_motion.SetVelocity(speed);
 						SetSignal(Signals.Type.FallDown, true);					
 					}
 				}
@@ -506,6 +508,8 @@ namespace AI {
 
 
 		public void ReceiveDamage(float _damage) {
+			return;
+
 			if (!IsDead()) {
 				m_entity.Damage(_damage);
 				if (IsDead()) {
@@ -580,8 +584,11 @@ namespace AI {
 			m_isHolded = false;
 			m_motion.position = transform.position;
 			m_edible.ReleaseHold();
-		}
 
+			if (m_enableMotion && m_motion.useGravity) {
+				SetSignal(Signals.Type.FallDown, true);		
+			}
+		}
 
 		public void StartAttackTarget(Transform _transform)
 		{
