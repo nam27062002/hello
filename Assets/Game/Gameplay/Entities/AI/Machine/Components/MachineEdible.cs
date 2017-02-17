@@ -20,7 +20,10 @@ namespace AI {
 			base.Attach (_machine, _entity, _pilot);
 
 			m_biteResistance = m_entity.def.GetAsFloat("biteResistance");
-			m_holdPreyPoints = m_pilot.transform.GetComponentsInChildren<HoldPreyPoint>();
+
+			if (_pilot != null) {
+				m_holdPreyPoints = m_pilot.transform.GetComponentsInChildren<HoldPreyPoint>();
+			}
 		}
 
 		public override void Init() {}
@@ -39,7 +42,7 @@ namespace AI {
 				Reward reward = (m_entity as Entity).GetOnKillReward(false);
 				reward.alcohol = 0;
 				// Dispatch global event
-				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_pilot.transform, reward);
+				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_machine.transform, reward);
 			}
 		}
 

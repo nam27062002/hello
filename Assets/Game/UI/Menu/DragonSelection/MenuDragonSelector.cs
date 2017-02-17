@@ -49,16 +49,18 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData> {
 	/// </summary>
 	private void Start() {
 		// Initialize items list
-		m_items = DragonManager.dragonsByOrder;
+		enableEvents = false;
+		Init(DragonManager.dragonsByOrder);
 
 		// Figure out initial index
 		string selectedSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
 		for(int i = 0; i < m_items.Count; i++) {
 			if(selectedSku == m_items[i].def.sku) {
-				m_selectedIdx = i;
+				SelectItem(i);
 				break;
 			}
 		}
+		enableEvents = true;
 	}
 
 	//------------------------------------------------------------------//
@@ -81,8 +83,9 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData> {
 	/// <summary>
 	/// The selected dragon has been changed.
 	/// </summary>
+	/// <param name="_oldDragon">Data of the previously selected dragon.</param>
 	/// <param name="_newDragon">Data of the new dragon.</param>
-	public void OnSelectedDragonChanged(DragonData _newDragon) {
+	public void OnSelectedDragonChanged(DragonData _oldDragon, DragonData _newDragon) {
 		// Notify game
 		if(_newDragon != null) Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, _newDragon.def.sku);
 	}

@@ -27,14 +27,9 @@ namespace AI {
 		public Vector3 velocity			{ get{ if (m_enableMotion && m_motion != null) return m_motion.velocity; else return Vector3.zero;} }
 		public Vector3 angularVelocity	{ get{ if (m_enableMotion && m_motion != null) return m_motion.angularVelocity; else return Vector3.zero;} }
 
-		public Transform enemy { 
-			get {
-				return null;
-			}
-			set
-			{
-			}
-		}
+		public float lastFallDistance { get { return 0; } }
+
+		public Transform enemy { get { return null; } set { } }
 
 		//---------------------------------------------------------------------------------
 
@@ -158,21 +153,15 @@ namespace AI {
 		public void LockInCage() {}
 		public void UnlockFromCage() {}
 
-		public void ReceiveDamage(float _damage) 
-		{
-			
-		}
+		public void ReceiveDamage(float _damage) {}
 
-		public bool IsDead() {
-			return false;
-		}
+		public bool IsDead() { return false; }
 
-		public bool IsDying()
-		{
-			return false;
-		}
+		public bool IsDying() { return false; }
 
 		public void Drown() { }
+
+		public bool CanBeBitten() { return false; }
 
 		public float biteResistance { get { return 0; }}
 
@@ -180,11 +169,17 @@ namespace AI {
 
 		public void BeginSwallowed(Transform _transform, bool _rewardPlayer) { }
 
-		public List<Transform> holdPreyPoints { get{ return null; } }
+		public void EndSwallowed(Transform _transform) { }
+
+		public HoldPreyPoint[] holdPreyPoints { get { return null; } }
 
 		public void BiteAndHold() { }
 
 		public void ReleaseHold() { }
+
+		public Quaternion GetDyingFixRot() {
+			return Quaternion.identity;
+		}
 
 		public virtual bool Burn(Transform _transform) {
 			

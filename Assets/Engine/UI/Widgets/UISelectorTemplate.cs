@@ -25,20 +25,20 @@ public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHand
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public class ItemEvent : UnityEvent<T> {};
-	public class IndexEvent : UnityEvent<int> {};
+	// Change events
+	public class ItemEvent : UnityEvent<T, T> {};	// _oldItem, _newItem
+	public class IndexEvent : UnityEvent<int, int, bool> {};	// _oldIdx, _newIdx, _looped
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	// Setup
+	[SerializeField] protected bool m_loop = false;
+
 	// Items list
 	[SerializeField] protected List<T> m_items = new List<T>();
 	public List<T> items {
 		get { return m_items; }
-		set { 
-			m_items = value; 
-			SelectItem(m_selectedIdx);	// Will validate that the selected index is still valid
-		}
 	}
 
 	// Selected index
@@ -53,12 +53,32 @@ public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHand
 	}
 
 	// Events
+	private bool m_enableEvents = false;
+	public bool enableEvents {
+		get { return m_enableEvents; }
+		set { m_enableEvents = value; }
+	}
 	public ItemEvent OnSelectionChanged = new ItemEvent();
 	public IndexEvent OnSelectionIndexChanged = new IndexEvent();
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize with a new list of items. Selected item will be resetted to first item in the list.
+	/// </summary>
+	/// <param name="_items">New list of items.</param>
+	public void Init(List<T> _items) {
+		// m_items should never be null
+		if(_items == null) {
+			m_items = new List<T>();
+		} else {
+			m_items = _items;
+		}
+
+		// Reset selection
+		SelectItem(0);
+	}
 
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//
@@ -96,47 +116,68 @@ public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHand
 	/// </summary>
 	/// <param name="_idx">Index of the item to be selected.</param>
 	public void SelectItem(int _idx) {
-		// Clamp index
-		_idx = Mathf.Clamp(_idx, 0, m_items.Count);
-
-		// Store new selected index
-		m_selectedIdx = _idx;
-
-		// Notify
-		OnSelectionChanged.Invoke(m_items[m_selectedIdx]);
-		OnSelectionIndexChanged.Invoke(m_selectedIdx);
+		// Use internal method
+		SelectItemInternal(_idx, false);
 	}
 
 	/// <summary>
 	/// Select next item.
 	/// </summary>
-	/// <param name="_loop">Allow going from last to first item or not.</param>
-	public void SelectNextItem(bool _loop) {
+	public void SelectNextItem() {
 		// Figure out next item's index
+		bool looped = false;
 		int newSelectedIdx = m_selectedIdx + 1;
-		if(newSelectedIdx >= DragonManager.dragonsByOrder.Count) {
-			if(!_loop) return;
+		if(newSelectedIdx >= m_items.Count) {
+			// Loop allowed?
+			if(!m_loop) return;
 			newSelectedIdx = 0;
+			looped = true;
 		}
 
 		// Change selection
-		SelectItem(newSelectedIdx);
+		SelectItemInternal(newSelectedIdx, looped);
 	}
 
 	/// <summary>
 	/// Select previous item.
 	/// </summary>
-	/// <param name="_loop">Allow going from first to last item or not.</param>
-	public void SelectPreviousItem(bool _loop)  {
+	public void SelectPreviousItem()  {
 		// Figure out previous item's index
+		bool looped = false;
 		int newSelectedIdx = m_selectedIdx - 1;
 		if(newSelectedIdx < 0) {
-			if(!_loop) return;
-			newSelectedIdx = DragonManager.dragonsByOrder.Count - 1;
+			// Loop allowed?
+			if(!m_loop) return;
+			newSelectedIdx = m_items.Count - 1;
+			looped = true;
 		}
 
 		// Change selection
-		SelectItem(newSelectedIdx);
+		SelectItemInternal(newSelectedIdx, looped);
+	}
+
+	//------------------------------------------------------------------//
+	// INTERNAL METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Changes item selected to the given one, by item index.
+	/// Index will be clamped to the amount of items.
+	/// </summary>
+	/// <param name="_idx">Index of the item to be selected.</param>
+	/// <param name="_looped">Did we looped when selecting this item?</param>
+	private void SelectItemInternal(int _idx, bool _looped) {
+		// Clamp index
+		_idx = Mathf.Clamp(_idx, 0, m_items.Count);
+
+		// Store new selected index
+		int oldIdx = m_selectedIdx;
+		m_selectedIdx = _idx;
+
+		// Notify (if enabled)
+		if(enableEvents) {
+			OnSelectionChanged.Invoke(GetItem(oldIdx), m_items[m_selectedIdx]);
+			OnSelectionIndexChanged.Invoke(oldIdx, m_selectedIdx, _looped);
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -149,9 +190,9 @@ public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHand
 	public void OnBeginDrag(PointerEventData _event) {
 		// Select next/previous dragon based on drag horizontal direction
 		if(_event.delta.x > 0) {
-			SelectPreviousItem(false);
+			SelectPreviousItem();
 		} else {
-			SelectNextItem(false);
+			SelectNextItem();
 		}
 	}
 

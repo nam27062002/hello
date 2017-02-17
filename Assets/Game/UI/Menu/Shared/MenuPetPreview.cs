@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using DG.Tweening;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -36,15 +37,26 @@ public class MenuPetPreview : MonoBehaviour {
 		"out"
 	};
 
+	private const string RARITY_GLOW_PREFAB_PATH = "UI/Menu/Pets/PF_PetRarityGlow_";	// Attach rarity sku to it
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private string m_sku;
-	public string sku { get { return m_sku; }}
+	public string sku { 
+		get { return m_sku; }
+		set { m_sku = value; }
+	}
+
+	[Comment("Used to attach anything that should follow the pet's animation. Typically the \"Hip\" node.")]
+	[SerializeField] private Transform m_rootNode = null;
+	public Transform rootNode { get { return m_rootNode; }}
 
 	// Internal
 	private Animator m_animator = null;
+	private GameObject m_rarityGlow = null;
+	private Tween m_rarityGlowShowHideTween = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -57,12 +69,76 @@ public class MenuPetPreview : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Kill tween as well
+		if(m_rarityGlowShowHideTween != null) {
+			m_rarityGlowShowHideTween.Kill(false);
+			m_rarityGlowShowHideTween = null;
+		}
+	}
+
+	/// <summary>
 	/// Apply the given animation to the pet's animator.
 	/// </summary>
 	/// <param name="_anim">The animation to be launched.</param>
 	public void SetAnim(Anim _anim) {
 		if(m_animator != null) {
 			m_animator.SetTrigger(ANIM_TRIGGERS[(int)_anim]);
+		}
+	}
+
+	/// <summary>
+	/// Show/Hide rarity glow.
+	/// </summary>
+	/// <param name="_show">Whether to show or hide the rarity glow around the pet.</param>
+	public void ToggleRarityGlow(bool _show) {
+		// Show?
+		if(_show) {
+			// If not yet loaded, do it
+			if(m_rarityGlow == null) {
+				// Get pet definition from sku
+				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_sku);
+				if(petDef == null) return;
+
+				// Load glow for the target rarity
+				GameObject glowPrefab = Resources.Load<GameObject>(RARITY_GLOW_PREFAB_PATH + petDef.Get("rarity"));
+				if(glowPrefab == null) return;	// No glow for this rarity (i.e. common)
+
+				// Create new instance - use root node if available so the glow follows the pet's animation
+				m_rarityGlow = GameObject.Instantiate<GameObject>(glowPrefab);
+				if(rootNode != null) {
+					m_rarityGlow.transform.SetParent(rootNode, false);
+				} else {
+					m_rarityGlow.transform.SetParent(this.transform, false);
+				}
+
+				// Create show/hide animator
+				m_rarityGlowShowHideTween = m_rarityGlow.transform
+					.DOScale(Vector3.zero, 0.15f)
+					.From()
+					.SetEase(Ease.OutBack)
+					.SetAutoKill(false)
+					.Pause();
+			}
+
+			// Launch animation forwards
+			if(m_rarityGlowShowHideTween != null) {
+				m_rarityGlowShowHideTween.PlayForward();
+			} else if(m_rarityGlow != null) {
+				m_rarityGlow.SetActive(true);
+			}
+		} else {
+			// Hiding, ignore if not yet loaded
+			if(m_rarityGlow == null) return;
+
+			// Launch animation backwards
+			if(m_rarityGlowShowHideTween != null) {
+				m_rarityGlowShowHideTween.PlayBackwards();
+			} else if(m_rarityGlow != null) {
+				m_rarityGlow.SetActive(false);
+			}
 		}
 	}
 }

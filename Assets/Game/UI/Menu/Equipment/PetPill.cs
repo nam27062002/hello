@@ -35,6 +35,8 @@ public class PetPill : MonoBehaviour {
 	[Space]
 	[SerializeField] private GameObject m_equippedFrame = null;
 	[SerializeField] private GameObject m_equippedPowerFrame = null;
+	[Space]
+	[SerializeField] private GameObject[] m_rarityDecorations = new GameObject[(int)EggReward.Rarity.COUNT];
 
 	// Internal
 	private DefinitionNode m_def = null;
@@ -107,6 +109,14 @@ public class PetPill : MonoBehaviour {
 		Messenger.RemoveListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
 
+	/// <summary>
+	/// A change has been done in the inspector.
+	/// </summary>
+	private void OnValidate() {
+		// Make sure the rarity array has exactly the same length as rarities in the game.
+		m_rarityDecorations.Resize((int)EggReward.Rarity.COUNT);
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
@@ -127,7 +137,8 @@ public class PetPill : MonoBehaviour {
 
 		// Store definition and some data
 		m_def = _petDef;
-		m_special = (_petDef.Get("rarity") == "special");
+		EggReward.Rarity rarity = EggReward.SkuToRarity(_petDef.Get("rarity"));
+		m_special = (rarity == EggReward.Rarity.SPECIAL);
 
 		// Load preview
 		if(m_preview != null) {
@@ -154,6 +165,14 @@ public class PetPill : MonoBehaviour {
 		m_lockIcon.SetActive(!m_special);
 		m_lockIconSpecial.SetActive(m_special);
 		m_currentLockIconAnim = m_currentLockIcon.GetComponent<Animator>();
+
+		// Rarity icon
+		int rarityInt = (int)rarity;
+		for(int i = 0; i < m_rarityDecorations.Length; i++) {
+			if(m_rarityDecorations[i] != null) {
+				m_rarityDecorations[i].SetActive(i == rarityInt);
+			}
+		}
 
 		// Refresh contextual elements
 		Refresh();
@@ -253,7 +272,7 @@ public class PetPill : MonoBehaviour {
 		PopupController popup = PopupManager.OpenPopupInstant(PopupInfoPet.PATH);
 		PopupInfoPet petPopup = popup.GetComponent<PopupInfoPet>();
 		if(petPopup != null) {
-			petPopup.Refresh(m_def, parentScreen.currentTab.defs);
+			petPopup.Init(m_def, parentScreen.currentTab.defs);
 		}
 	}
 

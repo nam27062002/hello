@@ -3,73 +3,133 @@ using System.Collections;
 using System.Collections.Generic;
 
 [ExecuteInEditMode]
-public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
+public class FogManager : MonoBehaviour
 {
-	public Texture m_fogCurveTexture;
-	// private FogNode[] m_fogNodes;
-	private List<FogNode> m_usedFogNodes = new List<FogNode>();
-	private Rect m_getRect = new Rect();
 
-	public enum FogMode
-	{
-		FogNodes,
-		FogArea
-	};
-	public FogMode m_fogMode = FogMode.FogNodes;
+	private int m_maxGradientTextures = 64;
 
 	[System.Serializable]
-	public class FogResult
+	public class FogAttributes
 	{
-		public Color m_fogColor;
+		public const int TEXTURE_SIZE = 128;
+
+		public Gradient m_fogGradient;
 		public float m_fogStart;
 		public float m_fogEnd;
-		public float m_fogRamp;
-		public void Reset()
+		private Texture2D m_texture;
+		public Texture2D texture{ 
+			get { return m_texture; } 
+			set { m_texture = value; } 
+		}
+
+		public void CreateTexture()
 		{
-			m_fogColor = Color.clear;
-			m_fogStart = 0;
-			m_fogEnd = 0;
-			m_fogRamp = 0;
+			m_texture = new Texture2D(TEXTURE_SIZE,1, TextureFormat.RGBA32, false);
+			m_texture.filterMode = FilterMode.Bilinear;
+			m_texture.wrapMode = TextureWrapMode.Clamp;
+		}
+
+		public void DestroyTexture( bool inmediate = false )
+		{
+			if (m_texture != null )
+			{
+				if ( inmediate )
+					DestroyImmediate( m_texture );
+				else
+					Destroy( m_texture);	
+				m_texture = null;
+			}
+		}
+
+		public void RefreshTexture()
+		{
+			for( int i = 0; i<TEXTURE_SIZE; i++ )
+			{
+				m_texture.SetPixel(i, 0, m_fogGradient.Evaluate( i / (float)TEXTURE_SIZE));
+			}
+			m_texture.Apply(false);
 		}
 	}
 
-	struct FogNodeResult
-	{
-		public FogNode m_node;
-		public float m_distance;
-		public float m_weight;
-		public void Reset()
-		{
-			m_node = null;
-			m_distance = float.MaxValue;
-			m_weight = 0;
-		}
-	};
-	const int NODES_TO_TAKE_INTO_ACCOUNT = 2;
-	FogNodeResult[] m_resultNodes = new FogNodeResult[NODES_TO_TAKE_INTO_ACCOUNT];
+
 	private bool m_ready = false;
 
-	QuadTree<FogNode> m_fogNodes;
-	FogNode[] m_fogNodesArray;
-
-	private bool m_useQuadtree = false;
-
+	public enum FogBlendMode
+	{
+		TEXTURE_APPLY,
+		BLIT
+	};
+	public FogBlendMode m_fogBlendMode;
+	private FogBlendMode m_lastBlendMode;
 
 	// For Area Mode
-	public FogResult m_defaultAreaFog;
-	List<FogArea> m_fogAreaList = new List<FogArea>();
+	public FogAttributes m_defaultAreaFog;
+
+	// Runtime variables
+	List<FogAttributes> m_generatedAttributes = new List<FogAttributes>();
+	List<FogArea> m_activeFogAreaList = new List<FogArea>();
+
 	float m_start;
 	float m_end;
-	Color m_color;
-	float m_rampY;
+	Texture2D m_texture;
+
+	float m_tmpStart;
+	float m_tmpEnd;
+	Texture2D m_tmpTexture;
+
 	bool m_firstTime = true;
 
+	float m_transitionTimer = 0;
+	FogAttributes m_lastSelectedAttributes;
+	FogAttributes m_selectedAttributes = null;
+	bool m_active = false;
+	bool m_updateValues = true;
 
-	FogResult m_tempResult = new FogResult();
+	// Variables for second version
+	private Material m_fogBlendMaterial;
+	private RenderTexture m_blitOrigin;
+	private RenderTexture m_blitDestination;
+	private float m_blitLerpValue = 0;
+	bool m_updateBlitOriginTexture = false;
 
 	void Awake()
 	{
-		Shader.SetGlobalTexture("_FogTexture", m_fogCurveTexture);
+		InstanceManager.fogManager = this;
+
+		m_texture = new Texture2D( FogAttributes.TEXTURE_SIZE,1, TextureFormat.RGBA32, false);
+		m_texture.filterMode = FilterMode.Bilinear;
+		m_texture.wrapMode = TextureWrapMode.Clamp;
+
+		m_tmpTexture = new Texture2D( FogAttributes.TEXTURE_SIZE,1, TextureFormat.RGBA32, false);
+		m_tmpTexture.filterMode = FilterMode.Bilinear;
+		m_tmpTexture.wrapMode = TextureWrapMode.Clamp;
+
+		m_blitDestination = new RenderTexture( FogAttributes.TEXTURE_SIZE, 1, 0);
+		m_blitDestination.filterMode = FilterMode.Bilinear;
+		m_blitDestination.wrapMode = TextureWrapMode.Clamp;
+
+		m_blitOrigin = new RenderTexture( FogAttributes.TEXTURE_SIZE, 1, 0);
+		m_blitOrigin.filterMode = FilterMode.Bilinear;
+		m_blitOrigin.wrapMode = TextureWrapMode.Clamp;
+
+		Shader s = Shader.Find("Hidden/FogBlend");
+		m_fogBlendMaterial = new Material(s);
+		m_fogBlendMaterial.SetTexture("_OriginalTex", m_blitOrigin);
+
+			// Register default attributes
+		CheckTextureAvailability( m_defaultAreaFog );
+
+		m_active = Prefs.GetBoolPlayer(DebugSettings.FOG_MANAGER, true);
+		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+		Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChangedString);
+
+		m_fogBlendMode = (FogBlendMode) Prefs.GetIntPlayer( DebugSettings.FOG_BLEND_TYPE, 0);
+		OnModeChanged();
+
+		if ( !Application.isPlaying )
+		{
+			RefreshFog();
+		}
 	}
 
 	IEnumerator Start()
@@ -83,81 +143,180 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 		}
 
 		// Find all ambient nodes
-		RefillQuadtree();
+		// RefillQuadtree();
 		m_ready = true;
+	}
+
+	void OnDestroy()
+	{
+		InstanceManager.fogManager = null;
+		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+		Messenger.RemoveListener<string>(GameEvents.CP_STRING_CHANGED, Debug_OnChangedString);
+	}
+
+	void Debug_OnChanged( string _key, bool value)
+	{
+		if ( _key == DebugSettings.FOG_MANAGER )
+			m_active = value;
+	}
+
+	void Debug_OnChangedString( string _key )
+	{
+		if ( _key == DebugSettings.FOG_BLEND_TYPE )
+		{
+			m_fogBlendMode = (FogBlendMode) Prefs.GetIntPlayer(_key, 0);
+		}
 	}
 
 	void Update()
 	{
-		switch( m_fogMode )
+		if ( Application.isPlaying && m_active)
 		{
-			case FogMode.FogNodes:
-			{
-				if ( !Application.isPlaying )	
-				{
-					RefillQuadtree();
-					Shader.SetGlobalTexture("_FogTexture", m_fogCurveTexture);
-					m_ready = true;	
-				}
-			}break;
-			case FogMode.FogArea:
-			{
-				if ( Application.isPlaying )	
-				{
-					if ( m_fogAreaList.Count > 0 )
-					{
-						FogArea selectedFogArea = m_fogAreaList.Last<FogArea>();
-						m_tempResult.m_fogStart = selectedFogArea.m_fogStart;
-						m_tempResult.m_fogEnd = selectedFogArea.m_fogEnd;
-						m_tempResult.m_fogColor = selectedFogArea.m_fogColor;
-						m_tempResult.m_fogRamp = selectedFogArea.m_fogRamp;
-					}
-					else
-					{
-						m_tempResult.m_fogStart = m_defaultAreaFog.m_fogStart;
-						m_tempResult.m_fogEnd = m_defaultAreaFog.m_fogEnd;
-						m_tempResult.m_fogColor = m_defaultAreaFog.m_fogColor;
-						m_tempResult.m_fogRamp = m_defaultAreaFog.m_fogRamp;
-					}
+			if ( m_fogBlendMode != m_lastBlendMode )
+				OnModeChanged();
 
-					if ( m_firstTime )
-					{
-						m_firstTime = false;
-						m_start = m_tempResult.m_fogStart;
-						m_end = m_tempResult.m_fogEnd;
-						m_color = m_tempResult.m_fogColor;
-						m_rampY = m_tempResult.m_fogRamp;
-					}
-					else
-					{
-						float delta = Time.deltaTime;
-						m_start = Mathf.Lerp( m_start, m_tempResult.m_fogStart, delta);
-						m_end = Mathf.Lerp( m_end, m_tempResult.m_fogEnd, delta);
-						m_color = Color.Lerp( m_color, m_tempResult.m_fogColor, delta);
-						m_rampY = Mathf.Lerp( m_rampY, m_tempResult.m_fogRamp, delta);
-					}
-					Shader.SetGlobalFloat("_FogStart", m_start);
-					Shader.SetGlobalFloat("_FogEnd", m_end);
-					Shader.SetGlobalColor("_FogColor", m_color);
-					Shader.SetGlobalFloat("_FogRampY", m_rampY);
-				}
-			}break;
+			if ( m_activeFogAreaList.Count > 0 )
+			{
+				FogArea selectedFogArea = m_activeFogAreaList.Last<FogArea>();
+				m_selectedAttributes = selectedFogArea.m_attributes;
+			}
+			else
+			{
+				m_selectedAttributes = m_defaultAreaFog;
+			}
+
+			if (m_lastSelectedAttributes != m_selectedAttributes)
+			{
+				m_lastSelectedAttributes = m_selectedAttributes;
+				m_transitionTimer = 1.0f;
+
+				// Copy destination render texture to original texture
+				m_updateBlitOriginTexture = true;
+			}
+
+			switch( m_fogBlendMode )
+			{
+				case FogBlendMode.TEXTURE_APPLY:
+				{
+					UpdateApplyMode();
+				}break;
+				case FogBlendMode.BLIT:
+				{
+					UpdateBlitMode();
+				}break;
+			}
 		}
-
-
 	}
 
-	void RefillQuadtree()
+	void UpdateApplyMode()
 	{
-		Rect bounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
-		LevelData data = LevelManager.currentLevelData;
-		if(data != null) {
-			bounds = data.bounds;
+		m_updateValues = false;
+		if ( m_firstTime )
+		{
+			m_firstTime = false;
+			m_updateValues = true;
+			SetAsSelectedAttributes();
 		}
-		m_fogNodesArray = FindObjectsOfType(typeof(FogNode)) as FogNode[];
-		m_fogNodes = new QuadTree<FogNode>(bounds.x, bounds.y, bounds.width, bounds.height);
-		for( int i = 0; i<m_fogNodesArray.Length; i++ )
-			m_fogNodes.Insert( m_fogNodesArray[i] );
+		else
+		{
+			if ( m_transitionTimer > 0 )
+			{
+				m_updateValues = true;
+				m_transitionTimer -= Time.deltaTime;
+				if ( m_transitionTimer <= 0 )
+				{
+					SetAsSelectedAttributes();
+				}
+				else
+				{
+					float delta = 1.0f - m_transitionTimer;
+					m_start = Mathf.Lerp( m_tmpStart, m_selectedAttributes.m_fogStart, delta);
+					m_end = Mathf.Lerp( m_tmpEnd, m_selectedAttributes.m_fogEnd, delta);
+					for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )
+					{
+						Color c = Color.Lerp( m_tmpTexture.GetPixel(i,0), m_selectedAttributes.texture.GetPixel(i,0), delta);
+						m_texture.SetPixel( i, 0, c);
+					}
+				}
+			}
+		}
+
+		if ( m_updateValues )
+		{
+			m_texture.Apply(false);
+			Shader.SetGlobalFloat("_FogStart", m_start);
+			Shader.SetGlobalFloat("_FogEnd", m_end);
+			Shader.SetGlobalTexture("_FogTexture", m_texture);
+		}
+	}
+
+	private void SetAsSelectedAttributes()
+	{
+		m_start = m_tmpStart = m_selectedAttributes.m_fogStart;
+		m_end = m_tmpEnd = m_selectedAttributes.m_fogEnd;
+		for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )
+			m_texture.SetPixel(i, 0, m_selectedAttributes.texture.GetPixel(i,0));
+		for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )
+			m_tmpTexture.SetPixel(i, 0, m_selectedAttributes.texture.GetPixel(i,0));
+	}
+
+	void UpdateBlitMode()
+	{
+		if ( Application.isPlaying && m_active && m_fogBlendMode == FogBlendMode.BLIT )
+		{
+			m_updateValues = false;
+			if ( m_firstTime )
+			{
+				m_firstTime = false;
+				m_updateValues = true;
+				EndBlitBlending();
+			}
+			else
+			{
+				if ( m_transitionTimer > 0 )
+				{
+					m_updateValues = true;
+					m_transitionTimer -= Time.deltaTime;
+					if ( m_transitionTimer <= 0 )
+					{
+						EndBlitBlending();
+					}
+					else
+					{
+						float delta = 1.0f - m_transitionTimer;
+						m_start = Mathf.Lerp( m_tmpStart, m_selectedAttributes.m_fogStart, delta);
+						m_end = Mathf.Lerp( m_tmpEnd, m_selectedAttributes.m_fogEnd, delta);
+						m_blitLerpValue = delta;
+					}
+				}
+			}
+		}
+	}
+
+	void OnPreRender()
+	{
+		if ( Application.isPlaying && m_active && m_fogBlendMode == FogBlendMode.BLIT )
+		{
+			if ( m_updateValues )
+			{
+				Shader.SetGlobalFloat("_FogStart", m_start);
+				Shader.SetGlobalFloat("_FogEnd", m_end);
+				m_fogBlendMaterial.SetFloat("_LerpValue" , m_blitLerpValue);
+				if (m_updateBlitOriginTexture)
+				{
+					Graphics.Blit(m_blitDestination, m_blitOrigin);
+				}
+				Graphics.Blit( m_selectedAttributes.texture, m_blitDestination, m_fogBlendMaterial);
+
+			}
+		}
+	}
+
+	private void EndBlitBlending()
+	{
+		m_start = m_tmpStart = m_selectedAttributes.m_fogStart;
+		m_end = m_tmpEnd = m_selectedAttributes.m_fogEnd;
+		m_blitLerpValue = 1;
 	}
 
 	public bool IsReady()
@@ -165,163 +324,113 @@ public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 		return m_ready;
 	}
 
-	public void GetFog( Vector3 position, ref FogResult result )
+
+	public void ActivateArea( FogArea _area )
 	{
-		// FogResult result = new FogResult();
-		result.Reset();
-		// Search closest fog nodes
-		for( int i = 0; i<NODES_TO_TAKE_INTO_ACCOUNT; i++ )
-		{
-			m_resultNodes[i].Reset();
-		}
+		CheckTextureAvailability( _area.m_attributes );
+		m_activeFogAreaList.Add( _area );
+	}
 
-		m_usedFogNodes.Clear();
-
-		Vector2 pos = (Vector2)position;
-		FogNode[] inRangeNodes;
-		if ( m_useQuadtree )
+	public void CheckTextureAvailability( FogManager.FogAttributes _attributes)
+	{
+		if ( _attributes.texture == null )
 		{
-			int sizeMultiplier = 1;
-			float distance;
-			int validNodes = 0;
-			do
+			for( int i = 0; i<m_generatedAttributes.Count; i++ )
 			{
-				validNodes = 0;
-				distance = 100 * sizeMultiplier;
-				m_getRect.size = Vector2.one * distance;
-				m_getRect.center = pos;
-				inRangeNodes = m_fogNodes.GetItemsInRange( m_getRect );
-				// remove nodes not in distance
-				for( int i = 0; i<inRangeNodes.Length; i++ )
+				if ( Equals(m_generatedAttributes[i].m_fogGradient, _attributes.m_fogGradient) )
 				{
-					if ( ((Vector2)inRangeNodes[i].transform.position - pos).sqrMagnitude > (distance * distance) )
-					{
-						inRangeNodes[i] = null;
-					}
-					else
-					{
-						validNodes++;
-					}
-				}
-				sizeMultiplier++;
-			}while( validNodes < NODES_TO_TAKE_INTO_ACCOUNT );
-		}
-		else
-		{
-			inRangeNodes = m_fogNodesArray;
-		}
-		for( int i = 0; i<inRangeNodes.Length; i++ )
-		{
-			if ( inRangeNodes[i] == null )
-				continue;
-
-			Vector2 nodePos = (Vector2)inRangeNodes[i].transform.position;
-			float magnitude = (pos - nodePos).sqrMagnitude;
-			// find empty or farthest
-			int selectedIndex = -1;
-			float farthestValue;
-
-			// Ambient Values
-			farthestValue = 0;
-			for( int j = 0; j<NODES_TO_TAKE_INTO_ACCOUNT; j++ )
-			{
-				if ( m_resultNodes[j].m_node == null)
-				{
-					selectedIndex = j;
+					_attributes.m_fogGradient = m_generatedAttributes[i].m_fogGradient;
+					_attributes.texture = m_generatedAttributes[i].texture;
 					break;
 				}
-				else if ( m_resultNodes[j].m_distance > farthestValue)
+
+			}
+
+			if ( _attributes.texture == null )
+			{
+				_attributes.CreateTexture();
+				_attributes.RefreshTexture();
+
+				FogAttributes newAttributes = new FogAttributes();
+				newAttributes.m_fogGradient = _attributes.m_fogGradient;
+				newAttributes.texture = _attributes.texture;
+				m_generatedAttributes.Add( newAttributes );
+
+				if ( UnityEngine.Debug.isDebugBuild && m_generatedAttributes.Count >= m_maxGradientTextures)
 				{
-					farthestValue = m_resultNodes[j].m_distance;
-					selectedIndex = j;
+					Debug.TaggedLogWarning("Fog Manager", "To many gradient textures");
 				}
-			}
-
-			if ( selectedIndex != -1 && magnitude < m_resultNodes[selectedIndex].m_distance)
-			{
-				m_resultNodes[selectedIndex].m_distance = magnitude;
-				m_resultNodes[selectedIndex].m_node = inRangeNodes[i];
-			}
-		}
-
-		// Now set the weigth
-			// Total Distance
-		float totalDistance = 0;
-		for( int i = 0; i<NODES_TO_TAKE_INTO_ACCOUNT; i++ )
-		{
-			if ( m_resultNodes[i].m_node != null )
-			{
-				totalDistance += m_resultNodes[i].m_distance;
-				m_usedFogNodes.Add(m_resultNodes[i].m_node);
-			}
-		}
-
-			// Inverse Values
-		float totalWeight = 0;
-		for( int i = 0; i<NODES_TO_TAKE_INTO_ACCOUNT; i++ )
-		{
-			if ( m_resultNodes[i].m_node != null )
-			{
-				float w = Mathf.Pow(totalDistance - m_resultNodes[i].m_distance, NODES_TO_TAKE_INTO_ACCOUNT);
-				m_resultNodes[i].m_weight = w;
-				totalWeight += m_resultNodes[i].m_weight;
-			}
-		}
-
-			// Normalize values
-		for( int i = 0; i<NODES_TO_TAKE_INTO_ACCOUNT; i++ )
-		{
-			if ( m_resultNodes[i].m_node != null )
-			{
-				float w = m_resultNodes[i].m_weight / totalWeight;
-				result.m_fogColor += m_resultNodes[i].m_node.m_fogColor * w;
-				result.m_fogStart += m_resultNodes[i].m_node.m_fogStart * w;
-				result.m_fogEnd += m_resultNodes[i].m_node.m_fogEnd * w;
-				result.m_fogRamp += m_resultNodes[i].m_node.m_fogRamp * w;
 			}
 		}
 	}
 
-	void OnDrawGizmos()
+	public bool Equals( Gradient a, Gradient b)
 	{
-#if UNITY_EDITOR
-		// Check if fog node selected
-		if ( m_fogNodesArray != null )
-		for( int i = 0; i<m_fogNodesArray.Length; i++ )
+		if ( a.mode == b.mode && a.alphaKeys.Length == b.alphaKeys.Length && a.colorKeys.Length == b.colorKeys.Length )
 		{
-			if (UnityEditor.Selection.Contains( m_fogNodesArray[i].gameObject ) )
+			for( int i = 0; i<a.alphaKeys.Length; i++ )
 			{
-				DrawGizmos();
-				return;
+				if( !a.alphaKeys[i].Equals(b.alphaKeys[i]))
+				{
+					return false;
+				}
+			}
+
+			for( int i = 0; i<a.colorKeys.Length; i++ )
+			{
+				if( !a.colorKeys[i].Equals(b.colorKeys[i]))
+				{
+					return false;
+				}
 			}
 		}
+		else
+		{
+			return false;
+		}
+		return true;
 
-		if ( UnityEditor.Selection.activeGameObject != null && UnityEditor.Selection.activeGameObject.GetComponent<FogSetter>() != null )
-			DrawGizmos();
-#endif			
+
+	}
+
+	public void DeactivateArea( FogArea _area )
+	{
+		m_activeFogAreaList.Remove( _area );
+	}
+
+
+	void OnModeChanged()
+	{
+		switch( m_fogBlendMode )
+		{
+			case FogBlendMode.TEXTURE_APPLY:
+			{
+			}break;
+			case FogBlendMode.BLIT:
+			{
+				Shader.SetGlobalTexture("_FogTexture", m_blitDestination);
+			}break;
+		}
+		m_lastBlendMode = m_fogBlendMode;
 	}
 
 	void OnDrawGizmosSelected()
 	{
-		DrawGizmos();
+		
+			RefreshFog();
 	}
 
-	void DrawGizmos()
+	void RefreshFog()
 	{
-		for( int i = 0; i<m_fogNodesArray.Length; i++ )
-			m_fogNodesArray[i].CustomGuizmoDraw( m_usedFogNodes.Contains( m_fogNodesArray[i] ) );
+		if ( m_defaultAreaFog.texture == null )
+			m_defaultAreaFog.CreateTexture();
+		m_defaultAreaFog.RefreshTexture();
+
+		if (!Application.isPlaying )
+		{
+			Shader.SetGlobalFloat("_FogStart", m_defaultAreaFog.m_fogStart);
+			Shader.SetGlobalFloat("_FogEnd", m_defaultAreaFog.m_fogEnd);
+			Shader.SetGlobalTexture("_FogTexture", m_defaultAreaFog.texture);
+		}
 	}
-
-
-	public void RegisterFog( FogArea _area )
-	{
-		m_fogAreaList.Add( _area );
-	}
-
-
-	public void UnregisterFog( FogArea _area )
-	{
-		m_fogAreaList.Remove( _area );
-	}
-
 }

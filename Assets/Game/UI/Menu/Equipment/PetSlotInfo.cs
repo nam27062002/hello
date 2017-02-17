@@ -10,6 +10,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
+using System.Collections;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -22,7 +24,7 @@ public class PetSlotInfo : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -31,9 +33,12 @@ public class PetSlotInfo : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_equippedSlotAnim = null;
 	[Space]
 	[SerializeField] private Localizer m_nameText = null;
+	[SerializeField] private Image m_rarityIcon = null;
 
-	// Internal
+	// Internal logic
 	private int m_slotIdx = 0;
+
+	// Internal refs
 	private AttachPoint m_attachPoint = null;
 	private DragonData m_dragonData = null;
 
@@ -44,6 +49,9 @@ public class PetSlotInfo : MonoBehaviour {
 			return m_anim;
 		}
 	}
+
+	// Internal objects
+	private Coroutine m_rarityGlowCoroutine = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -52,7 +60,7 @@ public class PetSlotInfo : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-
+		anim.OnHidePreAnimation.AddListener(OnHidePreAnimation);
 	}
 
 	/// <summary>
@@ -106,7 +114,6 @@ public class PetSlotInfo : MonoBehaviour {
 		// Refresh info
 		if(show) {
 			// Equipped or empty?
-			// [AOC] TODO!! Make it nicer
 			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_dragonData.pets[m_slotIdx]);
 			bool equipped = (petDef != null);
 			m_equippedSlotAnim.Set(equipped, _animate);
@@ -117,9 +124,37 @@ public class PetSlotInfo : MonoBehaviour {
 				// Name
 				m_nameText.Localize(petDef.Get("tidName"));
 
-				// Rarity
-				m_nameText.text.color = UIConstants.GetRarityColor(petDef.Get("rarity"));
+				// Rarity icon
+				string raritySku = petDef.Get("rarity");
+				EggReward.Rarity rarity = EggReward.SkuToRarity(raritySku);
+				m_rarityIcon.sprite = UIConstants.RARITY_ICONS[(int)rarity];
+				m_rarityIcon.gameObject.SetActive(m_rarityIcon.sprite != null);	// Hide if no icon
+
+				// Rarity glow
+				// Delay it to be sure that the DragonEquip component has had time to instantiate the pet
+				// Stop any pending coroutine first!
+				if(m_rarityGlowCoroutine != null) {
+					StopCoroutine(m_rarityGlowCoroutine);
+					m_rarityGlowCoroutine = null;
+				}
+				m_rarityGlowCoroutine = StartCoroutine(LoadRarityGlowDelayed(raritySku));
 			}
+		}
+	}
+
+	/// <summary>
+	/// Coroutine to laod the pet's rarity glow after a delay.
+	/// </summary>
+	/// <returns>Coroutine.</returns>
+	/// <param name="_raritySku">Rarity to be displayed.</param>
+	private IEnumerator LoadRarityGlowDelayed(string _raritySku) {
+		// Wait until the pet preview has been loaded
+		yield return new WaitUntil(() => m_attachPoint.item != null);
+
+		// Show glow
+		MenuPetPreview petPreview = m_attachPoint.item.GetComponent<MenuPetPreview>();
+		if(petPreview != null) {
+			petPreview.ToggleRarityGlow(true);
 		}
 	}
 
@@ -156,5 +191,21 @@ public class PetSlotInfo : MonoBehaviour {
 
 		// Unequip pet! Refresh will be triggered by the screen controller once the unequip is confirmed
 		UsersManager.currentUser.UnequipPet(m_dragonData.def.sku, m_slotIdx);
+	}
+
+	/// <summary>
+	/// The slot is about to be hidden.
+	/// </summary>
+	/// <param name="_anim">The animator that triggered the event.</param>
+	private void OnHidePreAnimation(ShowHideAnimator _anim) {
+		// Toggle pet's rarity glow
+		if(m_attachPoint != null) {
+			if(m_attachPoint.item != null) {
+				MenuPetPreview petPreview = m_attachPoint.item.GetComponent<MenuPetPreview>();
+				if(petPreview != null) {
+					petPreview.ToggleRarityGlow(false);
+				}
+			}
+		}
 	}
 }

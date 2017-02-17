@@ -42,8 +42,11 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 		}
 	}
 
-	public void AttachTo(Transform _parent) {
+	public void AttachTo(Transform _parent) {		
+		AttachTo(_parent, Vector3.zero);
+	}
 
+	public void AttachTo(Transform _parent, Vector3 _offset) {
 		//init stuff
 		Initializable[] components = GetComponents<Initializable>();		
 		foreach (Initializable component in components) {
@@ -55,7 +58,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 
 		//reset transforms, so we don't have any displacement
 		transform.parent = _parent;
-		transform.localPosition = Vector3.zero;
+		transform.localPosition = _offset;
 		transform.localRotation = Quaternion.identity;
 		transform.localScale = Vector3.one;
 
@@ -66,7 +69,11 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 		m_hasBeenShot = false;
 	}
 
-	public void Shoot(Vector3 _target, float _damage = 0f) {
+	public void Shoot(Vector3 _target) {
+		Shoot(_target, m_damage);
+	}
+
+	public void Shoot(Vector3 _target, float _damage) {
 		// m_targetCenter = InstanceManager.player.transform.position;
 
 		if (m_oldParent) {
@@ -80,24 +87,16 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 			Vector3 pos = InstanceManager.player.dragonMotion.head.position;
 			m_pMotion.Shoot(pos);
 		}
-		EndShot( _damage );
+
+		EndShot(_damage);
 	}
 
-	public void ShootAtPosition( Transform _from, float _damage, Vector3 _pos){
-		// m_targetCenter = _pos;
+	public void ShootTowards(Vector3 _direction) {}
+	public void ShootTowards(Vector3 _direction, float _speed) {}
+	public void ShootTowards(Vector3 _direction, float _speed, float _damage) {}
 
-		if (m_oldParent) {
-			transform.parent = m_oldParent;
-			m_oldParent = null;
-		}
-
-		if (m_pMotion) m_pMotion.enabled = true;
-
-		if (m_pMotion != null) {
-			Vector3 pos = _pos;
-			m_pMotion.Shoot(pos);
-		}
-		EndShot( _damage );
+	public void ShootAtPosition(Transform _from, float _damage, Vector3 _pos){
+		Shoot(_pos, _damage);
 	}
 
 	private void EndShot( float _damage )

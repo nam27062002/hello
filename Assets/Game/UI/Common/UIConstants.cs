@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using DG.Tweening;
+using System.Text;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -20,8 +21,25 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	// Common icons in the UISpritesheet atlas
+	public enum IconType {
+		COINS,
+		PC,
+		GOLDEN_FRAGMENTS
+	}
+
+	// Icon alignment type, relative to a text
+	public enum IconAlignment {
+		NONE,
+		LEFT,
+		RIGHT
+	}
+
+	//------------------------------------------------------------------------//
+	// STATIC MEMBERS														  //
+	//------------------------------------------------------------------------//
 	// Text Mesh Pro shortcuts
-	[Separator("Text Mesh Pro shortcuts")]
+	#region TMP_Shortcuts
 	[SerializeField] private string m_tmpSpriteSC = "<sprite name=\"icon_sc\">";
 	public static string TMP_SPRITE_SC {
 		get { return instance.m_tmpSpriteSC; }
@@ -36,9 +54,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string TMP_SPRITE_GOLDEN_EGG_FRAGMENT {
 		get { return instance.m_tmpSpriteGoldenEggFragment; }
 	}
+	#endregion
 
+	// -------------------------------------------------------------------------
 	// Colors
-	[Separator("Colors")]
+	#region Colors
 	[SerializeField] private Color m_coinsTextColor = new Color(1f, 0.8f, 0.1f);
 	public static Color COINS_TEXT_COLOR {
 		get { return instance.m_coinsTextColor; }
@@ -48,30 +68,25 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static Color PC_TEXT_COLOR {
 		get { return instance.m_pcTextColor; }
 	}
+	#endregion
 
-	[Space]
-	[SerializeField] private Color m_rarityCommonColor = new Color(1f, 1f, 1f);		// White
-	public static Color RARITY_COMMON_COLOR {
-		get { return instance.m_rarityCommonColor; }
+	// -------------------------------------------------------------------------
+	// Rarities
+	#region Rarities
+	[SerializeField] private Color[] m_rarityColors = new Color[(int)EggReward.Rarity.COUNT];
+	public static Color[] RARITY_COLORS {
+		get { return instance.m_rarityColors; }
 	}
 
-	[SerializeField] private Color m_rarityRareColor = new Color(0.8f, 1f, 1f);		// Blue-ish
-	public static Color RARITY_RARE_COLOR {
-		get { return instance.m_rarityRareColor; }
+	[SerializeField] private Sprite[] m_rarityIcons = new Sprite[(int)EggReward.Rarity.COUNT];
+	public static Sprite[] RARITY_ICONS {
+		get { return instance.m_rarityIcons; }
 	}
+	#endregion
 
-	[SerializeField] private Color m_rarityEpicColor = new Color(1f, 0.8f, 0.1f);	// Gold
-	public static Color RARITY_EPIC_COLOR {
-		get { return instance.m_rarityEpicColor; }
-	}
-
-	[SerializeField] private Color m_raritySpecialColor = new Color(1f, 0.5f, 0f);	// Orange
-	public static Color RARITY_SPECIAL_COLOR {
-		get { return instance.m_raritySpecialColor; }
-	}
-
+	// -------------------------------------------------------------------------
 	// Asset paths in Resources
-	[Separator("Asset paths in Resources")]
+	#region AssetPaths
 	[SerializeField] private string m_uiSpritesheetPath = "UI/Common/SpriteSheets/UI_spritesheet";
 	public static string UI_SPRITESHEET_PATH {
 		get { return instance.m_uiSpritesheetPath; }
@@ -97,8 +112,15 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_powerMiniIconsPath; }
 	}
 
-	// More colors
-	[Separator("Powerups Colors")]
+	[SerializeField] private string m_mapUpgradesIconsPath = "UI/Metagame/Map/";
+	public static string MAP_UPGRADES_ICONS_PATH {
+		get { return instance.m_mapUpgradesIconsPath; }
+	}
+	#endregion
+
+	// -------------------------------------------------------------------------
+	// Power colors
+	#region PowerColors
 	[SerializeField] private Color m_powerColorHealth = new Color(0.7f, 0.8f, 0.24f);
 	public static Color POWER_COLOR_HEALTH {
 		get { return instance.m_powerColorHealth; }
@@ -193,8 +215,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static Color POWER_COLOR_LOWERDAMAGE {
 		get { return instance.m_powerColorLowerDamage; }
 	}
+	#endregion
 
-	[Separator("Animations")]
+	// -------------------------------------------------------------------------
+	// Open Egg animation setup
+	#region OpenEggAnimSetup
 	[SerializeField] private float m_openEggSpinIntensity = 50f;
 	public static float openEggSpinIntensity {
 		get { return instance.m_openEggSpinIntensity; }
@@ -204,8 +229,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static Ease openEggSpinEase {
 		get { return instance.m_openEggSpinEase;}
 	}
+	#endregion
 
-	[Space]
+	// -------------------------------------------------------------------------
+	// Results animation setup
+	#region ResultsAnimSetup
 	[SerializeField] private float m_resultsIntroDuration = 0.25f;
 	public static float resultsIntroDuration {
 		get { return instance.m_resultsIntroDuration; }
@@ -248,9 +276,16 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static float resultsEggDuration {
 		get { return instance.m_resultsEggDuration; }
 	}
+	#endregion
+
+	//------------------------------------------------------------------------//
+	// NON-STATIC MEMBERS													  //
+	//------------------------------------------------------------------------//
+	// Internal
+	private StringBuilder m_sb = new StringBuilder();
 
     //------------------------------------------------------------------------//
-    // METHODS																  //
+    // STATIC METHODS														  //
     //------------------------------------------------------------------------//
     /// <summary>
     /// Gets the color corresponding to a given rarity.
@@ -258,13 +293,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
     /// <returns>The rarity color.</returns>
     /// <param name="_rarity">The rarity to be checked.</param>
     public static Color GetRarityColor(EggReward.Rarity _rarity) {
-		switch(_rarity) {
-			case EggReward.Rarity.COMMON:	return RARITY_COMMON_COLOR;		break;
-			case EggReward.Rarity.RARE:		return RARITY_RARE_COLOR;		break;
-			case EggReward.Rarity.EPIC:		return RARITY_EPIC_COLOR;		break;
-			case EggReward.Rarity.SPECIAL:	return RARITY_SPECIAL_COLOR;	break;
-		}
-		return Color.white;
+		return RARITY_COLORS[(int)_rarity];
 	}
 
 	/// <summary>
@@ -273,14 +302,8 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	/// <returns>The rarity color.</returns>
 	/// <param name="_raritySku">The rarity to be checcked.</param>
 	public static Color GetRarityColor(string _raritySku) {
-		// Get rarity enum equivalent from def
-		DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, _raritySku);
-		if(rarityDef != null) {
-			return GetRarityColor((EggReward.Rarity)rarityDef.GetAsInt("order"));
-		}
-
-		// Unknown rarity, return white
-		return Color.white;
+		// Get rarity enum equivalent from sku
+		return GetRarityColor(EggReward.SkuToRarity(_raritySku));
 	}
 
 	/// <summary>
@@ -297,5 +320,65 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 
 		// Unknown power, return white
 		return Color.white;
+	}
+		
+	/// <summary>
+	/// Create a composite string consisting of a text and an icon.
+	/// Specially useful for currency counters and price tags.
+	/// </summary>
+	/// <returns>The full string.</returns>
+	/// <param name="_text">Text to be attached, typically a formatted amount. <see cref="StringUtils"/>.</param>
+	/// <param name="_icon">Icon to be attached..</param>
+	/// <param name="_alignment">Position of the icon relative to the text.</param>
+	public static string IconString(string _text, IconType _icon, IconAlignment _alignment) {
+		// Reset string builder
+		instance.m_sb.Length = 0;
+
+		// Figure out icon string
+		string iconString = "";
+		switch(_icon) {
+			case IconType.COINS: {
+				iconString = UIConstants.TMP_SPRITE_SC;
+			} break;
+
+			case IconType.PC: {
+				iconString = UIConstants.TMP_SPRITE_PC;
+			} break;
+
+			case IconType.GOLDEN_FRAGMENTS: {
+				iconString = UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT;
+			} break;
+		}
+
+		// Compose final string with the proper alignment
+		switch(_alignment) {
+			case IconAlignment.NONE: {
+				instance.m_sb.Append(_text);
+			} break;
+
+			case IconAlignment.LEFT: {
+				instance.m_sb.Append(iconString).Append(" ").Append(_text).ToString();
+			} break;
+
+			case IconAlignment.RIGHT: {
+				instance.m_sb.Append(_text).Append(" ").Append(iconString).ToString();
+			} break;
+		}
+
+		// Done!
+		return instance.m_sb.ToString();
+	}
+
+	/// <summary>
+	/// Create a composite string consisting of a number and an icon.
+	/// Specially useful for currency counters and price tags.
+	/// </summary>
+	/// <returns>The full string.</returns>
+	/// <param name="_amount">Number to be attached, will be formatted with the default format using <see cref="StringUtils"/>.</param>
+	/// <param name="_icon">Icon to be attached..</param>
+	/// <param name="_alignment">Position of the icon relative to the text.</param>
+	public static string IconString(long _amount, IconType _icon, IconAlignment _alignment) {
+		// Just use text version with the formatted string
+		return IconString(StringUtils.FormatNumber(_amount), _icon, _alignment);
 	}
 }

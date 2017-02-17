@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Text;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -27,18 +28,12 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 		GOLDEN_FRAGMENTS
 	}
 
-	public enum IconType {
-		NONE,
-		LEFT,
-		RIGHT
-	}
-
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Setup
 	[SerializeField] private Type m_type = Type.COINS;
-	[SerializeField] private IconType m_iconType = IconType.RIGHT;	// Typical HUD top-right counter
+	[SerializeField] private UIConstants.IconAlignment m_alignment = UIConstants.IconAlignment.RIGHT;	// Typical HUD top-right counter
 
 	// References
 	[Space]
@@ -89,38 +84,34 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 	/// </summary>
 	private void UpdateText() {
 		// Select text and icon based on currency
-		string text = "";
-		string iconString = "";
+		// UIConstants does the job for us
 		switch(m_type) {
 			case Type.COINS: {
-				text = StringUtils.FormatNumber(UsersManager.currentUser.coins);
-				iconString = UIConstants.TMP_SPRITE_SC;
+				m_text.text = UIConstants.IconString(
+					UsersManager.currentUser.coins,
+					UIConstants.IconType.COINS, m_alignment
+				);
 			} break;
 
 			case Type.PC: {
-				text = StringUtils.FormatNumber(UsersManager.currentUser.pc);
-				iconString = UIConstants.TMP_SPRITE_PC;
+				m_text.text = UIConstants.IconString(
+					UsersManager.currentUser.pc,
+					UIConstants.IconType.PC, m_alignment
+				);
 			} break;
 
 			case Type.GOLDEN_FRAGMENTS: {
-				this.gameObject.SetActive(!EggManager.allGoldenEggsCollected);	// Hide if all golden eggs have been collected
-				text = LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(EggManager.goldenEggFragments), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments));
-				iconString = UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT;
-			} break;
-		}
+				m_text.text = UIConstants.IconString(
+					LocalizationManager.SharedInstance.Localize(
+						"TID_FRACTION", 
+						StringUtils.FormatNumber(EggManager.goldenEggFragments), 
+						StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments)
+					),
+					UIConstants.IconType.GOLDEN_FRAGMENTS, m_alignment
+				);
 
-		// Apply to textfield based on icon type
-		switch(m_iconType) {
-			case IconType.NONE: {
-				m_text.text = text;
-			} break;
-
-			case IconType.LEFT: {
-				m_text.text = iconString + text;
-			} break;
-
-			case IconType.RIGHT: {
-				m_text.text = text + iconString;
+				// Hide if all golden eggs have been collected (but don't disable, otherwise it will never again be enabled!)
+				this.gameObject.ForceGetComponent<CanvasGroup>().alpha = EggManager.allGoldenEggsCollected ? 0f : 1f;
 			} break;
 		}
 	}

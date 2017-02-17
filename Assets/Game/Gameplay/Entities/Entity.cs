@@ -82,8 +82,7 @@ public class Entity : IEntity {
 		Messenger.AddListener(GameEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
 	}
 
-	void OnDestroy()
-	{
+	void OnDestroy() {
 		Messenger.RemoveListener(GameEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
 	}
 
@@ -157,8 +156,10 @@ public class Entity : IEntity {
     public override void Disable(bool _destroyed) {
 		base.Disable(_destroyed);
 
+		if (m_spawner != null) {
+			m_spawner.RemoveEntity(gameObject, _destroyed);
+		}
 
-		m_spawner.RemoveEntity(gameObject, _destroyed);
         m_spawned = false;		
     }
 

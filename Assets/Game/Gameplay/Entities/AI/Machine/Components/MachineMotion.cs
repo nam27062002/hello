@@ -15,6 +15,13 @@ namespace AI {
 			Back
 		};
 
+		private enum State {
+			FreeMovement = 0,
+			Jump,
+			Grabbed,
+			FreeFall
+		}
+
 		[SerializeField] private bool m_useGravity = false;
 		public bool useGravity { get { return m_useGravity; } set { m_useGravity = value; } }
 		[SerializeField] private bool m_walkOnWalls = false;
@@ -76,6 +83,9 @@ namespace AI {
 		private bool m_isJumping;
 		private float m_heightFromGround;
 
+		private float m_lastFallDistance;
+		public float lastFallDistance { get { return m_lastFallDistance; } }
+
 		private Vector3 m_velocity;
 		public Vector3 velocity { get{  return m_velocity; } }
 		public Vector3 angularVelocity { get{  if (m_rbody != null)return m_rbody.angularVelocity;return Vector3.zero; } }
@@ -97,6 +107,9 @@ namespace AI {
 
 		private Vector3 m_externalVelocity;
 		public Vector3 externalVelocity{ get{ return m_externalVelocity; } set{ m_externalVelocity = value; } }
+
+		private State m_state;
+
 
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		public MachineMotion() {}
@@ -184,6 +197,9 @@ namespace AI {
 
 			m_isJumping = false;
 			m_fallingFromY = -99999f;
+			m_lastFallDistance = 0f;
+
+			m_state = State.FreeMovement;
 
 			//----------------------------------------------------------------------------------
 			m_mouth = m_machineTransform.FindTransformRecursive("Fire_Dummy");
@@ -283,7 +299,6 @@ namespace AI {
 		}
 
 		public override void FixedUpdate() {
-
 			if (m_machine.GetSignal(Signals.Type.Latched)) {
 				m_fallingFromY = -99999f;
 			}
@@ -335,23 +350,25 @@ namespace AI {
 								m_fallingFromY = -99999f;
 							}
 						}
-					} else {
-						bool hasToFallDown = !m_isGrounded && m_heightFromGround > 1f;
-						if (isFallingDown) {
+					} else {						
+						if (isFallingDown) {							
 							if (m_fallingFromY < m_machineTransform.position.y)
 								m_fallingFromY = m_machineTransform.position.y;
 
-							if (!hasToFallDown) {
-								m_machine.SetSignal(Signals.Type.FallDown, false);
+							if (m_isGrounded) {								
 								// check if it has to die > 10 units of distance?
 								float dy = Mathf.Abs(m_machineTransform.position.y - m_fallingFromY);
+								m_lastFallDistance = dy;
+
+								m_machine.SetSignal(Signals.Type.FallDown, false);
+
 								if (dy > 10f) {
 									m_machine.SetSignal(Signals.Type.Destroyed, true);
 								}
 								m_fallingFromY = -99999f;
 							}
 						} else {
-							if (hasToFallDown) {
+							if (!m_isGrounded && m_heightFromGround > 1f) {
 								m_machine.SetSignal(Signals.Type.FallDown, true);
 								m_fallingFromY = m_machineTransform.position.y;
 							}

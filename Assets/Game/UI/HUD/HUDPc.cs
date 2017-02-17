@@ -84,7 +84,7 @@ public class HUDPc : HudWidget {
     // INTERNAL UTILS													//
     //------------------------------------------------------------------//   
     protected override string GetValueAsString() {
-        return UIConstants.TMP_SPRITE_PC + StringUtils.FormatNumber(GetValue());
+		return UIConstants.IconString(GetValue(), UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
     }
 
     private long GetValue() {

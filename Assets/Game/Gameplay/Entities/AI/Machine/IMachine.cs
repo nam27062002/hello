@@ -14,6 +14,8 @@ namespace AI {
 		T[] GetComponentsInChildren<T>();
 		Transform transform { get; }
 
+		float lastFallDistance { get; }
+
 		// Internal connections
 		void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null);
 		bool GetSignal(Signals.Type _signal);
@@ -33,17 +35,30 @@ namespace AI {
 		void	LeaveGroup();
 
 		// External interactions
+		void ReceiveDamage(float _damage);
+
 		void LockInCage();
 		void UnlockFromCage();
 
 		void Drown();
+
+		bool CanBeBitten();
+		float biteResistance { get; }
+		HoldPreyPoint[] holdPreyPoints { get; }
+
 		void Bite();
 		void BeginSwallowed(Transform _transform, bool rewardPlayer);
+		void EndSwallowed(Transform _transform);
 		void BiteAndHold();
+		void ReleaseHold();
+
+		Quaternion GetDyingFixRot();
+
 		bool Burn(Transform _transform);
 
 		void SetVelocity(Vector3 _v);
 
+		bool IsDead();
 		bool IsDying();
 
 	}
