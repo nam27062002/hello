@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 476f90a6cbdac4eb69432e3a345d1c01, type: 3}
-  m_Name: GroundEvadeBrain
+  m_Name: GroundEvadeFallBrain
   m_EditorClassIdentifier: 
   m_states:
   - m_name: Idle
@@ -19,6 +19,11 @@ MonoBehaviour:
   - m_name: Flee
     m_componentAssets:
     - {fileID: 11400000, guid: 4bb307b99c27a43368586bf7abab79bf, type: 2}
+  - m_name: Fall down
+    m_componentAssets: []
+  - m_name: On hit ground
+    m_componentAssets:
+    - {fileID: 11400000, guid: 6020d90484daa470db6214589eaf25ff, type: 2}
   m_transitionData:
   - to: 1
     id: onEnemyInSight
@@ -26,5 +31,14 @@ MonoBehaviour:
   - to: 0
     id: onIdleAlert
     from: 1
+  - to: 3
+    id: OnGround
+    from: 2
+  - to: 1
+    id: onRecover
+    from: 3
+  - to: 2
+    id: onFallDown
+    from: -1
   m_firstState_A: 0
   m_firstState_B: 0

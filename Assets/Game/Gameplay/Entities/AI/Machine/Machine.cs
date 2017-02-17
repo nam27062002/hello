@@ -276,7 +276,7 @@ namespace AI {
 					bool isLatching = dragonEat.IsLatching();
 					bool isGrabbing = dragonEat.IsGrabbing();
 
-					if (true || isEating || isLatching || isGrabbing) {
+					if (isEating || isLatching || isGrabbing) {
 						Vector3 speed = InstanceManager.player.dragonMotion.velocity;
 						m_motion.SetVelocity(speed);
 						SetSignal(Signals.Type.FallDown, true);					
@@ -508,8 +508,6 @@ namespace AI {
 
 
 		public void ReceiveDamage(float _damage) {
-			return;
-
 			if (!IsDead()) {
 				m_entity.Damage(_damage);
 				if (IsDead()) {
