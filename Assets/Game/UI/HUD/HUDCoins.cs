@@ -49,7 +49,7 @@ public class HUDCoins : HudWidget {
     // INTERNAL UTILS													//
     //------------------------------------------------------------------//      
     protected override string GetValueAsString() {
-        return UIConstants.TMP_SPRITE_SC + StringUtils.FormatNumber(GetValue());
+		return UIConstants.IconString(GetValue(), UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
     }
 
     private long GetValue() {
