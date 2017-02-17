@@ -16,6 +16,7 @@ namespace AI {
 
 
 			private OnGroundData m_data;
+			private PreyAnimationEvents m_animEvents;
 
 			private float m_timer;
 
@@ -30,12 +31,19 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<OnGroundData>();
+				m_animEvents = m_pilot.FindComponentRecursive<PreyAnimationEvents>();
 			}
 
-			protected override void OnEnter(State _oldState, object[] _param) {
+			protected override void OnEnter(State _oldState, object[] _param) {				
 				m_timer = m_data.standUpTime;
-				m_pilot.SetMoveSpeed(0f, false);
-				m_pilot.SetBoostSpeed(0f);
+				m_machine.DisableSensor(m_timer);
+				m_pilot.Stop();
+
+				m_animEvents.onStandUp += new PreyAnimationEvents.OnStandUpDelegate(OnStandUp);
+			}
+
+			protected override void OnExit(State _newState) {
+				m_animEvents.onStandUp -= new PreyAnimationEvents.OnStandUpDelegate(OnStandUp);
 			}
 
 			protected override void OnUpdate() {
@@ -44,11 +52,12 @@ namespace AI {
 				if (m_timer <= 0) {
 					if (m_machine.GetSignal(Signals.Type.InWater)) {
 						m_machine.Drown();
-					} else {
-						//SpawnerAreaManager.instance.UpdateAreaAt(m_machine.position, ref m_pilot);
-						Transition(OnRecover);
 					}
 				}
+			}
+
+			private void OnStandUp() {
+				Transition(OnRecover);
 			}
 		}
 	}

@@ -341,6 +341,20 @@ public class ProfilerControlPanelController : MonoBehaviour
     }
     #endregion
 
+    #region
+    public void Occlusion_OnChangedValue(bool newValue)
+    {
+        if (InstanceManager.gameCamera != null)
+        {
+            Camera camera = InstanceManager.gameCamera.GetComponent<Camera>();
+            if (camera != null)
+            {
+                camera.useOcclusionCulling = newValue;
+            }
+        }
+    }
+    #endregion
+
     #region test
     public BossCameraAffector m_bossCameraAffector;    
 

@@ -60,11 +60,11 @@ public class CurrencyButton : AnimatedButton {
 			} break;
 
 			case CurrencyIcon.SC: {
-				_amountText = UIConstants.TMP_SPRITE_SC + _amountText;
+				_amountText = UIConstants.IconString(_amountText, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
 			} break;
 
 			case CurrencyIcon.PC: {
-				_amountText = UIConstants.TMP_SPRITE_PC + _amountText;
+				_amountText = UIConstants.IconString(_amountText, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
 			} break;
 		}
 

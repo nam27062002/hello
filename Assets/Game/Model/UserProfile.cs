@@ -257,6 +257,17 @@ public class UserProfile : UserSaveSystem
 	}
 
 	/// <summary>
+	/// Increases the map level.
+	/// Doesn't perform any check or currency transaction.
+	/// Broadcasts the PROFILE_MAP_UPGRADED event.
+	/// </summary>
+	public void UpgradeMap() {
+		// Just do it!
+		m_mapLevel++;
+		Messenger.Broadcast<int>(GameEvents.PROFILE_MAP_UPGRADED, m_mapLevel);
+	}
+
+	/// <summary>
 	/// Gets the number OF owned dragons.
 	/// </summary>
 	/// <returns>The number owned dragons.</returns>
