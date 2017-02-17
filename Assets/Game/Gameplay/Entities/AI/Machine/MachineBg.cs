@@ -27,6 +27,8 @@ namespace AI {
 		public Vector3 velocity			{ get{ if (m_enableMotion && m_motion != null) return m_motion.velocity; else return Vector3.zero;} }
 		public Vector3 angularVelocity	{ get{ if (m_enableMotion && m_motion != null) return m_motion.angularVelocity; else return Vector3.zero;} }
 
+		public float lastFallDistance { get { return 0; } }
+
 		public Transform enemy { get { return null; } set { } }
 
 		//---------------------------------------------------------------------------------

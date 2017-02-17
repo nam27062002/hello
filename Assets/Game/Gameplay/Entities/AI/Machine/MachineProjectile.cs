@@ -26,6 +26,8 @@ namespace AI {
 		public Vector3 velocity			{ get { return m_projectile.velocity; } }
 		public Vector3 angularVelocity	{ get { return Vector3.zero; } }
 
+		public float lastFallDistance { get { return 0; } }
+
 		public Transform enemy { 
 			get { return null; }
 			set { }
