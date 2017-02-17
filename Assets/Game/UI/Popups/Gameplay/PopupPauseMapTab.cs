@@ -117,6 +117,10 @@ public class PopupPauseMapTab : MonoBehaviour {
 		m_scButtonAnim.Set(priceSC > 0 && pricePC <= 0);
 		m_pcButtonAnim.Set(pricePC > 0);	// Regardless of SC price
 		//m_noPriceAnim.Set(priceSC <= 0 && pricePC <= 0);
+
+		// Map view and lock icon
+		m_mapView.SetActive(UsersManager.currentUser.mapLevel > 0);
+		m_lockGroupAnim.Set(UsersManager.currentUser.mapLevel <= 0);
 	}
 
 	//------------------------------------------------------------------------//
