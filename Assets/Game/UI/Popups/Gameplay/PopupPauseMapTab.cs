@@ -1,4 +1,4 @@
-﻿// GoalsScreenMapPill.cs
+// PopupPauseMapTab.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 17/02/2017.
@@ -16,9 +16,9 @@ using DG.Tweening;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// 
+/// Map tab of the in-game pause popup.
 /// </summary>
-public class GoalsScreenMapPill : MonoBehaviour {
+public class PopupPauseMapTab : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -27,9 +27,15 @@ public class GoalsScreenMapPill : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[Separator("Map Data")]
-	[SerializeField] private Image m_mapImage = null;
+	[Separator("Map Area")]
+	[SerializeField] private GameObject m_mapView = null;
+	[SerializeField] private ShowHideAnimator m_lockGroupAnim = null;
+	[SerializeField] private Animator m_lockIconAnim = null;
+
+	[Separator("Info Area")]
 	[SerializeField] private Localizer m_descriptionText = null;
+	[SerializeField] private ShowHideAnimator m_upgradeAreaAnim = null;
+	[SerializeField] private ShowHideAnimator m_infoAreaAnim = null;
 
 	// Buttons
 	[Separator("Price Tags")]
@@ -38,16 +44,10 @@ public class GoalsScreenMapPill : MonoBehaviour {
 	[Space]
 	[SerializeField] private ShowHideAnimator m_pcButtonAnim = null;
 	[SerializeField] private TextMeshProUGUI m_pcPriceText = null;
-	[Space]
-	[SerializeField] private ShowHideAnimator m_noPriceAnim = null;
-
-	// FX
-	[Separator("FX")]
-	[SerializeField] private ParticleSystem m_upgradeFX = null;
 
 	// Internal
 	private DefinitionNode m_def = null;
-	
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -73,7 +73,7 @@ public class GoalsScreenMapPill : MonoBehaviour {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		
+
 	}
 
 	/// <summary>
@@ -103,9 +103,6 @@ public class GoalsScreenMapPill : MonoBehaviour {
 		// Skip if definition not valid
 		if(m_def == null) return;
 
-		// Icon
-		m_mapImage.sprite = Resources.Load<Sprite>(UIConstants.MAP_UPGRADES_ICONS_PATH + m_def.Get("icon"));
-
 		// Description
 		m_descriptionText.Localize(m_def.Get("tidDesc"));
 
@@ -119,7 +116,7 @@ public class GoalsScreenMapPill : MonoBehaviour {
 		// Buttons visibility
 		m_scButtonAnim.Set(priceSC > 0 && pricePC <= 0);
 		m_pcButtonAnim.Set(pricePC > 0);	// Regardless of SC price
-		m_noPriceAnim.Set(priceSC <= 0 && pricePC <= 0);
+		//m_noPriceAnim.Set(priceSC <= 0 && pricePC <= 0);
 	}
 
 	//------------------------------------------------------------------------//
@@ -186,13 +183,13 @@ public class GoalsScreenMapPill : MonoBehaviour {
 		UpdateDefinition();
 
 		// Trigger FX
-		m_upgradeFX.Stop();
+		/*m_upgradeFX.Stop();
 		m_upgradeFX.Clear();
 		m_upgradeFX.Play();
 
 		// Image animation (to hide sprite swap)
 		m_mapImage.transform.DOKill(true);
-		m_mapImage.transform.DOScale(0f, 0.15f).SetEase(Ease.InBack).SetLoops(2, LoopType.Yoyo).SetAutoKill(true);
+		m_mapImage.transform.DOScale(0f, 0.15f).SetEase(Ease.InBack).SetLoops(2, LoopType.Yoyo).SetAutoKill(true);*/
 
 		// Refresh info after some delay (to sync with animation)
 		DOVirtual.DelayedCall(0.15f, Refresh);

@@ -111,6 +111,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string POWER_MINI_ICONS_PATH {
 		get { return instance.m_powerMiniIconsPath; }
 	}
+
+	[SerializeField] private string m_mapUpgradesIconsPath = "UI/Metagame/Map/";
+	public static string MAP_UPGRADES_ICONS_PATH {
+		get { return instance.m_mapUpgradesIconsPath; }
+	}
 	#endregion
 
 	// -------------------------------------------------------------------------
