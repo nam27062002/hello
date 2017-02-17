@@ -330,4 +330,14 @@ public class CPProgressionCheats : MonoBehaviour {
 	public void OnResetDailyChests() {
 		ChestManager.Reset();
 	}
+
+	/// <summary>
+	/// Reset all map upgrades
+	/// </summary>
+	public void OnResetMapUpgrades() {
+		// Not much to do:
+		UsersManager.currentUser.mapLevel = 0;
+		Messenger.Broadcast<int>(GameEvents.PROFILE_MAP_UPGRADED, 0);
+		PersistenceManager.Save();
+	}
 }
