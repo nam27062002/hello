@@ -27,6 +27,7 @@ public enum GameEvents {
 	// Profile events
 	PROFILE_COINS_CHANGED,		// params: long _oldAmount, long _newAmount
 	PROFILE_PC_CHANGED,			// params: long _oldAmount, long _newAmount
+	PROFILE_MAP_UPGRADED,		// params: int mapLevel
 	
 	// Game logic events
 	GAME_LEVEL_LOADED,			// no params

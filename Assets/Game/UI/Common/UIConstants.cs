@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using DG.Tweening;
+using System.Text;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -19,6 +20,23 @@ using DG.Tweening;
 public class UIConstants : SingletonScriptableObject<UIConstants> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	// Common icons in the UISpritesheet atlas
+	public enum IconType {
+		COINS,
+		PC,
+		GOLDEN_FRAGMENTS
+	}
+
+	// Icon alignment type, relative to a text
+	public enum IconAlignment {
+		NONE,
+		LEFT,
+		RIGHT
+	}
+
+	//------------------------------------------------------------------------//
+	// STATIC MEMBERS														  //
 	//------------------------------------------------------------------------//
 	// Text Mesh Pro shortcuts
 	#region TMP_Shortcuts
@@ -255,6 +273,12 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	}
 	#endregion
 
+	//------------------------------------------------------------------------//
+	// NON-STATIC MEMBERS													  //
+	//------------------------------------------------------------------------//
+	// Internal
+	private StringBuilder m_sb = new StringBuilder();
+
     //------------------------------------------------------------------------//
     // STATIC METHODS														  //
     //------------------------------------------------------------------------//
@@ -291,5 +315,65 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 
 		// Unknown power, return white
 		return Color.white;
+	}
+		
+	/// <summary>
+	/// Create a composite string consisting of a text and an icon.
+	/// Specially useful for currency counters and price tags.
+	/// </summary>
+	/// <returns>The full string.</returns>
+	/// <param name="_text">Text to be attached, typically a formatted amount. <see cref="StringUtils"/>.</param>
+	/// <param name="_icon">Icon to be attached..</param>
+	/// <param name="_alignment">Position of the icon relative to the text.</param>
+	public static string IconString(string _text, IconType _icon, IconAlignment _alignment) {
+		// Reset string builder
+		instance.m_sb.Length = 0;
+
+		// Figure out icon string
+		string iconString = "";
+		switch(_icon) {
+			case IconType.COINS: {
+				iconString = UIConstants.TMP_SPRITE_SC;
+			} break;
+
+			case IconType.PC: {
+				iconString = UIConstants.TMP_SPRITE_PC;
+			} break;
+
+			case IconType.GOLDEN_FRAGMENTS: {
+				iconString = UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT;
+			} break;
+		}
+
+		// Compose final string with the proper alignment
+		switch(_alignment) {
+			case IconAlignment.NONE: {
+				instance.m_sb.Append(_text);
+			} break;
+
+			case IconAlignment.LEFT: {
+				instance.m_sb.Append(iconString).Append(" ").Append(_text).ToString();
+			} break;
+
+			case IconAlignment.RIGHT: {
+				instance.m_sb.Append(_text).Append(" ").Append(iconString).ToString();
+			} break;
+		}
+
+		// Done!
+		return instance.m_sb.ToString();
+	}
+
+	/// <summary>
+	/// Create a composite string consisting of a number and an icon.
+	/// Specially useful for currency counters and price tags.
+	/// </summary>
+	/// <returns>The full string.</returns>
+	/// <param name="_amount">Number to be attached, will be formatted with the default format using <see cref="StringUtils"/>.</param>
+	/// <param name="_icon">Icon to be attached..</param>
+	/// <param name="_alignment">Position of the icon relative to the text.</param>
+	public static string IconString(long _amount, IconType _icon, IconAlignment _alignment) {
+		// Just use text version with the formatted string
+		return IconString(StringUtils.FormatNumber(_amount), _icon, _alignment);
 	}
 }

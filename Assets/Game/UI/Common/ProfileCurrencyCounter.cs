@@ -28,26 +28,17 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 		GOLDEN_FRAGMENTS
 	}
 
-	public enum IconType {
-		NONE,
-		LEFT,
-		RIGHT
-	}
-
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Setup
 	[SerializeField] private Type m_type = Type.COINS;
-	[SerializeField] private IconType m_iconType = IconType.RIGHT;	// Typical HUD top-right counter
+	[SerializeField] private UIConstants.IconAlignment m_alignment = UIConstants.IconAlignment.RIGHT;	// Typical HUD top-right counter
 
 	// References
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_text = null;
 	[SerializeField] private Animator m_anim = null;
-
-	// Internal
-	private StringBuilder m_stringBuilder = new StringBuilder();
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -93,40 +84,34 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 	/// </summary>
 	private void UpdateText() {
 		// Select text and icon based on currency
-		string text = "";
-		string iconString = "";
+		// UIConstants does the job for us
 		switch(m_type) {
 			case Type.COINS: {
-				text = StringUtils.FormatNumber(UsersManager.currentUser.coins);
-				iconString = UIConstants.TMP_SPRITE_SC;
+				m_text.text = UIConstants.IconString(
+					UsersManager.currentUser.coins,
+					UIConstants.IconType.COINS, m_alignment
+				);
 			} break;
 
 			case Type.PC: {
-				text = StringUtils.FormatNumber(UsersManager.currentUser.pc);
-				iconString = UIConstants.TMP_SPRITE_PC;
+				m_text.text = UIConstants.IconString(
+					UsersManager.currentUser.pc,
+					UIConstants.IconType.PC, m_alignment
+				);
 			} break;
 
 			case Type.GOLDEN_FRAGMENTS: {
+				m_text.text = UIConstants.IconString(
+					LocalizationManager.SharedInstance.Localize(
+						"TID_FRACTION", 
+						StringUtils.FormatNumber(EggManager.goldenEggFragments), 
+						StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments)
+					),
+					UIConstants.IconType.GOLDEN_FRAGMENTS, m_alignment
+				);
+
 				// Hide if all golden eggs have been collected (but don't disable, otherwise it will never again be enabled!)
 				this.gameObject.ForceGetComponent<CanvasGroup>().alpha = EggManager.allGoldenEggsCollected ? 0f : 1f;
-				text = LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(EggManager.goldenEggFragments), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments));
-				iconString = UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT;
-			} break;
-		}
-
-		// Apply to textfield based on icon type
-		m_stringBuilder.Length = 0;	// Reset string builder
-		switch(m_iconType) {
-			case IconType.NONE: {
-				m_text.text = text;
-			} break;
-
-			case IconType.LEFT: {
-				m_text.text = m_stringBuilder.Append(iconString).Append(" ").Append(text).ToString();
-			} break;
-
-			case IconType.RIGHT: {
-				m_text.text = m_stringBuilder.Append(text).Append(" ").Append(iconString).ToString();
 			} break;
 		}
 	}
