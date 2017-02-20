@@ -41,6 +41,9 @@ public class ResultsSceneSetup : MonoBehaviour {
 	[Comment("Sort chest slots from left to right, chests will be spawned from the center depending on how many were collected.\nAlways 5 slots, please.", 10)]
 	[SerializeField] private ResultsSceneChestSlot[] m_chestSlots = new ResultsSceneChestSlot[5];
 
+	[Comment("Fog Settings used", 10)]
+	[SerializeField] FogManager.FogAttributes m_fog;
+
 	// Internal
 	private List<ResultsSceneChestSlot> m_rewardedSlots = new List<ResultsSceneChestSlot>();	// The slots that we'll be actually using, sorted in order of appereance
 	private bool m_eggFound = false;
@@ -188,6 +191,9 @@ public class ResultsSceneSetup : MonoBehaviour {
 
 		// Hide dragon slot
 		m_dragonSlot.gameObject.SetActive(false);
+
+		if ( InstanceManager.fogManager != null )
+			InstanceManager.fogManager.ForceAttributes( m_fog );
 	}
 
 	/// <summary>

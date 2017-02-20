@@ -37,6 +37,12 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 
     public void RegisterEntity(Entity _entity)
     {        
+        // If an entity is registered after entities visibility was disabled then we make sure that entity won't be visible
+        if (!Debug_EntitiesVisibility && FeatureSettingsManager.IsProfilerEnabled)
+        {
+            Debug_SetEntityVisible(_entity, Debug_EntitiesVisibility);
+        }
+
         m_entities.Add(_entity);
     }
 
@@ -268,4 +274,66 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 			}  
         }        
     }
+
+    #region debug
+    private bool m_entitiesVisibility = true;
+    public bool Debug_EntitiesVisibility
+    {
+        get
+        {
+            return m_entitiesVisibility;
+        }
+
+        set
+        {
+            m_entitiesVisibility = value;
+
+            int count;
+            if (m_entities != null)
+            {
+                count = m_entities.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    //m_entities[i].gameObject.SetActive( m_entitiesAreEnabled);
+                    Debug_SetEntityVisible(m_entities[i], m_entitiesVisibility);
+                }
+            }
+
+            if (m_entitiesBg != null)
+            {
+                count = m_entitiesBg.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    //m_entitiesBg[i].gameObject.SetActive(m_entitiesAreEnabled);
+                    Debug_SetEntityVisible(m_entitiesBg[i], m_entitiesVisibility);
+                }
+            }
+
+            if (m_cages != null)
+            {
+                count = m_cages.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    //m_cages[i].gameObject.SetActive(m_entitiesAreEnabled);
+                    Debug_SetEntityVisible(m_cages[i], m_entitiesVisibility);
+                }
+            }            
+        }
+    }
+
+    private void Debug_SetEntityVisible(IEntity e, bool value)
+    {
+        if (e != null)
+        {
+            Transform child;
+            Transform t = e.transform;
+            int count = t.childCount;            
+            for (int i = 0; i < count; i++)
+            {
+                child = t.GetChild(i);
+                child.gameObject.SetActive(value);
+            }
+        }
+    }
+    #endregion
 }
