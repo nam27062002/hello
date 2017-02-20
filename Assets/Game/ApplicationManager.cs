@@ -22,19 +22,19 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     /// <summary>
     /// Time in seconds that will force a reauthentication in the social network if the application has been in background longer than this amount of time
     /// </summary>
-    private const int SocialNetworkReauthTime = 120;    
+    private const int SocialNetworkReauthTime = 120;
 
     private static bool m_isAlive = true;
-    public static bool IsAlive { 
-    	get{ return m_isAlive; }
+    public static bool IsAlive {
+        get { return m_isAlive; }
     }
 
     /// <summary>
 	/// Initialization. This method will be called only once regardless the amount of times the user is led to the Loading scene.
 	/// </summary>
 	protected void Awake()
-    {                
-		m_isAlive = true;
+    {
+        m_isAlive = true;
 
         if (FeatureSettingsManager.IsDebugEnabled)
         {
@@ -44,8 +44,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Setting_Init();
 
         Reset();
-        
-        FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);        
+
+        FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);
         SocialFacade.Instance.Init();
         GameServicesFacade.Instance.Init();
 
@@ -57,7 +57,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Messenger.AddListener(GameEvents.GAME_ENDED, Game_OnEnded);
 
         SaveFacade.Instance.OnLoadStarted += OnLoadStarted;
-        SaveFacade.Instance.OnLoadComplete += OnLoadComplete;        
+        SaveFacade.Instance.OnLoadComplete += OnLoadComplete;
 
         // [DGR] NOTIF: Not supported yet
         //NotificationManager.Instance.Init();        
@@ -78,7 +78,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         m_isAlive = false;
     }
 
-	protected  override void OnApplicationQuit()
+    protected override void OnApplicationQuit()
     {
         base.OnApplicationQuit();
         m_isAlive = false;
@@ -93,15 +93,15 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         SaveLoadIsCompleted = false;
         Game_IsInGame = false;
         Game_IsPaused = false;
-        Debug_IsPaused = false;        
+        Debug_IsPaused = false;
     }
 
     public bool NeedsToRestartFlow { get; set; }
 
     private bool SaveLoadIsCompleted { get; set; }
-    
+
     protected void Update()
-    {        
+    {
         // To Debug
         if (Input.GetKeyDown(KeyCode.A))
         {
@@ -148,7 +148,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
             // Test quality settings
             //Debug_TestQualitySettings();
-            // ---------------------------                
+            // ---------------------------         
+
+            // ---------------------------
+            // Test toggling entities visibility
+            //Debug_TestToggleEntitiesVisibility();
+            // ---------------------------         
         }
 
         if (NeedsToRestartFlow)
@@ -197,7 +202,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         if (SaveLoadIsCompleted)
         {
             int currentTime = Globals.GetUnixTimestamp();
-            bool allowGameRestart = true;            
+            bool allowGameRestart = true;
             if ((FlowManager.IsInGameScene() && !Game_IsInGame) || Game_IsPaused)
             {
                 allowGameRestart = false;
@@ -361,7 +366,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     #region device   
     // Time in seconds to wait until the device has to be updated again.
-    public const float DEVICE_NEXT_UPDATE = 0.5f;        
+    public const float DEVICE_NEXT_UPDATE = 0.5f;
 
     /// <summary>
     /// Current resolution
@@ -371,8 +376,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     /// <summary>
     /// Current device orientation
     /// </summary>
-    public DeviceOrientation Device_Orientation { get; private set; }    
-    
+    public DeviceOrientation Device_Orientation { get; private set; }
+
     private IEnumerator Device_Update()
     {
         Device_Resolution = new Vector2(Screen.width, Screen.height);
@@ -384,7 +389,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             if (Device_Resolution.x != Screen.width || Device_Resolution.y != Screen.height)
             {
                 Device_Resolution = new Vector2(Screen.width, Screen.height);
-                Messenger.Broadcast<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, Device_Resolution);                
+                Messenger.Broadcast<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, Device_Resolution);
             }
 
             // Check for an Orientation Change
@@ -412,8 +417,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private bool Debug_IsPaused { get; set; }
 
     private void Debug_RestartFlow()
-    {        
-        NeedsToRestartFlow = true;           
+    {
+        NeedsToRestartFlow = true;
     }
 
     private void Debug_ToggleIsPaused()
@@ -445,7 +450,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     }
 
     private void Debug_TestFeatureSettingsTypeData()
-    {   
+    {
         /*     
         // Int
         string key = FeatureSettings.KEY_INT_TEST;
@@ -481,7 +486,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     public void Debug_TestToggleFrameColor()
     {
         Debug_IsFrameColorOn = !Debug_IsFrameColorOn;
-        Messenger.Broadcast<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, Debug_IsFrameColorOn, DragonBreathBehaviour.Type.Super);        
+        Messenger.Broadcast<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, Debug_IsFrameColorOn, DragonBreathBehaviour.Type.Super);
     }
 
     public void Debug_TestQualitySettings()
@@ -494,7 +499,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private BossCameraAffector Debug_BossCameraAffector { get; set; }
 
     public void Debug_OnToggleBossCameraEffect(BossCameraAffector affector)
-    {    
+    {
         if (affector != null)
         {
             GameCamera gameCamera = InstanceManager.gameCamera;
@@ -512,6 +517,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                     Debug_TimeToEnableBossCameraEffect = 5f;
                 }
             }
+        }
+    }
+
+    private void Debug_TestToggleEntitiesVisibility()
+    {
+        if (EntityManager.instance != null)
+        {
+            EntityManager.instance.Debug_EntitiesVisibility = !EntityManager.instance.Debug_EntitiesVisibility;
         }
     }
     #endregion
