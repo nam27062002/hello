@@ -13,6 +13,8 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	[SerializeField] private GameObject m_colliderHolder;
 	[SerializeField] private GameObject m_view;
 	[SerializeField] private string m_onBreakParticle;
+	[SerializeField] private string m_onBreakSound;
+	[SerializeField] private string m_onCollideSound;
 
 
 	private float m_waitTimer = 0;
@@ -60,10 +62,11 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 
 	private void OnCollisionEnter(Collision collision) {
 		if (collision.transform.CompareTag("Player")) {
-			if (m_currentHits.needBoost) {				
+			if (m_currentHits.needBoost) {
 				if (m_waitTimer <= 0) {
 					GameObject go = collision.transform.gameObject;
 					DragonBoostBehaviour boost = go.GetComponent<DragonBoostBehaviour>();	
+					bool playCollideSound = true;
 					if (boost.IsBoostActive()) 	{
 						DragonMotion dragonMotion = go.GetComponent<DragonMotion>();	// Check speed is enough
 						if (dragonMotion.lastSpeed >= (dragonMotion.absoluteMaxSpeed * 0.85f)) {
@@ -71,9 +74,15 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 							// Check Min Speed
 							m_currentHits.count--;
 							if (m_currentHits.count <= 0)
+							{
 								Break();
+								playCollideSound = false;
+							}
 						}
 					}
+					if ( playCollideSound && !string.IsNullOrEmpty( m_onCollideSound))
+						AudioController.Play(m_onCollideSound);
+				
 				}
 			} else {
 				Break();
@@ -96,6 +105,11 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 		SetCollisionsEnabled(false);
 
 		m_cageSpawner.SetEntitiesFree();
+
+		if ( !string.IsNullOrEmpty(m_onBreakSound) )
+		{
+			AudioController.Play(m_onBreakSound);
+		}
 	}
 
 	private void SetCollisionsEnabled(bool _value) {
