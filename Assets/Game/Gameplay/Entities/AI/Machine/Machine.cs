@@ -67,6 +67,8 @@ namespace AI {
 
 		public float lastFallDistance { get { if (m_enableMotion) return m_motion.lastFallDistance; else return 0; } }
 
+		public bool isKinematic { get {  if (m_enableMotion) return m_motion.isKinematic; else return false; } set { if (m_enableMotion) m_motion.isKinematic = value; } }
+
 		public Transform enemy { 
 			get {
 				if (m_sensor != null && (GetSignal(Signals.Type.Warning) || GetSignal(Signals.Type.Danger))) {

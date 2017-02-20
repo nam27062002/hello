@@ -59,6 +59,11 @@ public class DragonParticleController : MonoBehaviour
 	public Transform m_vacuumAnchor;
 	private ParticleSystem m_vacuumInstance = null;
 
+	[Space]
+	public string m_hiccupParticle;
+	public Transform m_hiccupAnchor = null;
+	private ParticleSystem m_hiccupInstance;
+
 	private Transform _transform;
 	private bool m_insideWater = false;
 	private bool m_alive = true;
@@ -82,6 +87,8 @@ public class DragonParticleController : MonoBehaviour
 
 	void Start () 
 	{
+		DragonAnimationEvents dragonAnimEvents = transform.parent.GetComponentInChildren<DragonAnimationEvents>();
+		
 		// Instantiate Particles (at start so we don't feel any framerate drop during gameplay)
 		m_levelUpInstance = InitParticles(m_levelUp, m_levelUpAnchor);
 		m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
@@ -104,6 +111,7 @@ public class DragonParticleController : MonoBehaviour
 		if ( !string.IsNullOrEmpty(m_waterExitSplash) )
 			ParticleManager.CreatePool(m_waterExitSplash, m_waterSplashFolder);
 
+
 		m_skimmingInstance = InitParticles(m_skimmingParticle, m_skimmingAnchor);
 
 		m_skimmingRay = new Ray();
@@ -117,7 +125,9 @@ public class DragonParticleController : MonoBehaviour
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
 			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/" + m_corpseAsset, 1, true);
 		}
-
+		m_hiccupInstance = InitParticles( m_hiccupParticle, m_hiccupAnchor);
+		if (dragonAnimEvents != null)
+			dragonAnimEvents.onHiccupEvent += OnHiccup;
 	}
 
 	void OnEnable() {
@@ -197,6 +207,17 @@ public class DragonParticleController : MonoBehaviour
 				// Set direction
 			}
 		}
+	}
+
+	private ParticleSystem InitParticles(string particle, Transform _anchor)
+	{
+		ParticleSystem ret = null;
+		GameObject go = Resources.Load<GameObject>( "Particles/" + particle );
+		if ( go != null )
+		{
+			 ret = InitParticles( go,  _anchor);
+		}
+		return ret;
 	}
 
 	private ParticleSystem InitParticles(GameObject _prefab, Transform _anchor)
@@ -391,5 +412,11 @@ public class DragonParticleController : MonoBehaviour
 	{
 		if ( m_vacuumInstance != null )
 			m_vacuumInstance.Stop();
+	}
+
+	private void OnHiccup()
+	{
+		if ( m_hiccupInstance != null )
+			m_hiccupInstance.Play();
 	}
 }

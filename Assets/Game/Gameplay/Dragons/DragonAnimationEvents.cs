@@ -53,6 +53,11 @@ public class DragonAnimationEvents : MonoBehaviour {
 	private float m_startWaterMovementY;
 
 
+	// Drunk attributes
+	public string m_hiccupSound;
+	public delegate void OnHiccupEvent();
+	public OnHiccupEvent onHiccupEvent;
+
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
 		m_bostBehaviour = transform.parent.GetComponent<DragonBoostBehaviour>();
@@ -186,6 +191,14 @@ public class DragonAnimationEvents : MonoBehaviour {
 	{
 		PlaySound( m_hitSound );
 	}
+
+	public void HiccupEvent()
+	{
+		PlaySound( m_hitSound );
+		if ( onHiccupEvent != null)
+			onHiccupEvent();
+	}
+
 
 	private void MuteWindSounds()
 	{
