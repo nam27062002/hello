@@ -9,7 +9,9 @@ public class DragonTint : MonoBehaviour
 	DragonPlayer m_player;
 	DragonHealthBehaviour m_health;
 
-	Renderer[] m_dragonRenderers = null;
+	Renderer[] m_renderers = null;
+	List<Renderer> m_dragonRenderers = new List<Renderer>();
+
 	List<Material> m_materials = new List<Material>();
     List<Shader> m_originalShaders = new List<Shader>();
 	List<Color> m_fresnelColors = new List<Color>();
@@ -49,7 +51,7 @@ public class DragonTint : MonoBehaviour
 		Transform t = transform.FindChild("view");
 		if ( t != null )
 		{
-			m_dragonRenderers = t.GetComponentsInChildren<Renderer>();
+			m_renderers = t.GetComponentsInChildren<Renderer>();
 			GetMaterials();
 		}
 	}
@@ -57,15 +59,18 @@ public class DragonTint : MonoBehaviour
 	void GetMaterials()
 	{
 		m_materials.Clear();
-		if ( m_dragonRenderers != null )
-		for( int i = 0; i<m_dragonRenderers.Length; i++ )
+		if ( m_renderers != null )
+		for( int i = 0; i<m_renderers.Length; i++ )
 		{
-			Material[] mats = m_dragonRenderers[i].materials;
+			Material[] mats = m_renderers[i].materials;
+			bool hasDragonPart = false;
 			for( int j = 0;j<mats.Length; j++ )
 			{
+				
 				string shaderName = mats[j].shader.name;
                 if (shaderName.Contains("Dragon/Wings") || shaderName.Contains("Dragon/Body"))
                 {
+                	hasDragonPart = true;
                     m_materials.Add(mats[j]);
                     m_fresnelColors.Add(mats[j].GetColor("_FresnelColor"));
                     m_originalShaders.Add(mats[j].shader);
@@ -74,6 +79,11 @@ public class DragonTint : MonoBehaviour
 //                  }
                 }
 			}
+			if ( hasDragonPart )
+			{
+				m_dragonRenderers.Add( m_renderers[i] );
+			}
+				
 		}
 	}
 
@@ -223,6 +233,10 @@ public class DragonTint : MonoBehaviour
      	{
      		// Shows corpse
      		m_deathAlpha = 0;
+			for( int i = 0; i<m_dragonRenderers.Count; i++ )
+			{
+				m_dragonRenderers[i].enabled = false;
+			}
      	}
     }
 
@@ -233,6 +247,10 @@ public class DragonTint : MonoBehaviour
             m_materials[i].shader = m_originalShaders[i];
 
 		m_deathAlpha = 1;
+		for( int i = 0; i<m_dragonRenderers.Count; i++ )
+		{
+			m_dragonRenderers[i].enabled = true;
+		}
     }
 
 	private void OnHealthModifierChanged( DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier )
