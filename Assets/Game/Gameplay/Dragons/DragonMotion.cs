@@ -1682,7 +1682,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// </summary>
 	public void StartLatchedOnMovement()
 	{
-		m_latchedOnSpeedMultiplier = 0.4f;
+		m_latchedOnSpeedMultiplier = 0.7f;
 		m_latchedOn = true;
 		m_animator.SetBool("holded", true);
 	}
