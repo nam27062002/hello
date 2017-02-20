@@ -158,7 +158,7 @@ public class Spawner : AbstractSpawner {
             // If we don't have any entity alive, proceed
             if (EntitiesAlive == 0) {
                 // Respawn on cooldown?
-                if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
+                if (m_gameSceneController.elapsedSeconds > m_respawnTime || DebugSettings.ignoreSpawnTime) {
                     // Everything ok! Spawn!
                     return true;
                 }
