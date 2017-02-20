@@ -151,7 +151,7 @@ public class FogManager : MonoBehaviour
 	{
 		InstanceManager.fogManager = null;
 		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
-		Messenger.RemoveListener<string>(GameEvents.CP_STRING_CHANGED, Debug_OnChangedString);
+		Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChangedString);
 	}
 
 	void Debug_OnChanged( string _key, bool value)
