@@ -44,6 +44,18 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		get { return instance.m_fpsCounter; }
 	}
 
+    private bool m_isFpsEnabled;
+    public bool IsFpsEnabled {
+        get {
+            return m_isFpsEnabled;
+        }
+
+        set {
+            m_isFpsEnabled = value;
+            m_fpsCounter.gameObject.SetActive(m_isFpsEnabled);
+        }        
+    }
+
     [SerializeField]
     private TextMeshProUGUI m_entitiesCounter;
 
@@ -105,7 +117,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		// Start disabled
 		m_panel.gameObject.SetActive(false);
 		m_toggleButton.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
-		m_fpsCounter.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
+        IsFpsEnabled = UnityEngine.Debug.isDebugBuild;        
         m_logicUnitsCounter.transform.parent.gameObject.SetActive(UnityEngine.Debug.isDebugBuild && ProfilerSettingsManager.ENABLED);
 
         m_activateTimer = 0;

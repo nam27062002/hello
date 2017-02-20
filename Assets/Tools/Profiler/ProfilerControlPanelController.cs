@@ -133,6 +133,7 @@ public class ProfilerControlPanelController : MonoBehaviour
         }
 
         Checkpoints_Start();
+        FpsCounter_Start();
     }    
 
     void Update()
@@ -351,6 +352,26 @@ public class ProfilerControlPanelController : MonoBehaviour
             {
                 camera.useOcclusionCulling = newValue;
             }
+        }
+    }
+    #endregion
+
+    #region Fps_counter
+    public Toggle m_fpsCounterToggle;
+
+    private void FpsCounter_Start()
+    {
+        if (m_fpsCounterToggle != null && ControlPanel.instance != null)
+        {
+            m_fpsCounterToggle.isOn = ControlPanel.instance.IsFpsEnabled;
+        }
+    }
+
+    public void FpsCounter_OnChangedValue(bool newValue)
+    {
+        if (ControlPanel.instance != null)
+        {
+            ControlPanel.instance.IsFpsEnabled = newValue;
         }
     }
     #endregion
