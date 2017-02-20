@@ -107,4 +107,9 @@ public class QuickDragonSettings : MonoBehaviour {
 	{
 		DragonMotion.m_onWaterCollisionMultiplier = _value;
 	}
+
+	public void SetRespawnTo0( bool _value )
+	{
+		DebugSettings.ignoreSpawnTime = _value;
+	}
 }

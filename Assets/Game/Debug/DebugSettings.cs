@@ -96,6 +96,13 @@ public static class DebugSettings {
 		set { Prefs.SetBoolPlayer(PLAY_TEST, value); }
 	}
 
+	static bool m_ignoreSpawnTime = false;
+	public static bool ignoreSpawnTime{
+		get { return m_ignoreSpawnTime; }
+		set { m_ignoreSpawnTime = value;}
+	}
+
+
     //------------------------------------------------------------------//
     // METHODS															//
     //------------------------------------------------------------------//
