@@ -28,6 +28,7 @@ MonoBehaviour:
     m_componentAssets:
     - {fileID: 11400000, guid: dc38d9cf90c3d49bab291061fb8b1f57, type: 2}
     - {fileID: 11400000, guid: 50a6516fa6c4341ff80660a9ec2e9596, type: 2}
+    - {fileID: 11400000, guid: 95c9d6f9305a24d149105709d5b85b53, type: 2}
   - m_name: Go Back at Home
     m_componentAssets:
     - {fileID: 11400000, guid: b31814d08b4154570a0d89d29f7bc112, type: 2}
@@ -50,6 +51,9 @@ MonoBehaviour:
     m_componentAssets:
     - {fileID: 11400000, guid: a859a47b5965f458cb93d889e9a730e9, type: 2}
     - {fileID: 11400000, guid: 15a25ed0d6b1f46bea5039e70b4c333a, type: 2}
+  - m_name: Dizzy Recover
+    m_componentAssets:
+    - {fileID: 11400000, guid: f5add648be9ed4fea927e8987afbd296, type: 2}
   m_transitionData:
   - to: 1
     id: onRest
@@ -117,9 +121,12 @@ MonoBehaviour:
   - to: 1
     id: onRecover
     from: 9
-  - to: 2
+  - to: 11
     id: onTimeFinished
     from: 10
+  - to: 2
+    id: onTimeFinished
+    from: 11
   - to: 8
     id: onFallDown
     from: -1

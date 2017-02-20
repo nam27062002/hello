@@ -39,11 +39,15 @@ namespace AI {
 				m_machine.DisableSensor(m_timer);
 				m_pilot.Stop();
 
-				m_animEvents.onStandUp += new PreyAnimationEvents.OnStandUpDelegate(OnStandUp);
+				if (m_animEvents != null) {
+					m_animEvents.onStandUp += new PreyAnimationEvents.OnStandUpDelegate(OnStandUp);
+				}
 			}
 
 			protected override void OnExit(State _newState) {
-				m_animEvents.onStandUp -= new PreyAnimationEvents.OnStandUpDelegate(OnStandUp);
+				if (m_animEvents != null) {
+					m_animEvents.onStandUp -= new PreyAnimationEvents.OnStandUpDelegate(OnStandUp);
+				}
 			}
 
 			protected override void OnUpdate() {

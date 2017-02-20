@@ -988,6 +988,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    public static bool IsProfilerEnabled
+    {
+        get
+        {
+            return UnityEngine.Debug.isDebugBuild;
+        }
+    }
+
     public bool IsGlowEffectEnabled
     {
         get
