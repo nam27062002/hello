@@ -79,6 +79,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	// Movement control
 	private Vector3 m_impulse;
+    private Vector3 m_prevImpulse;
+
 	private Vector3 m_direction;
     private Vector3 m_directionWhenBoostPressed;
     private Vector3 m_externalForce;	// Used for wind flows, to be set every frame
@@ -468,6 +470,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.OuterSpace:
 				{
 					m_animator.SetBool("fly down", true);
+                    m_prevImpulse = m_impulse;
+
                     if (!m_outerSpaceUsePhysics)
                     {
                         if (m_state != State.Stunned && m_state != State.Reviving && m_state != State.Latching)
@@ -888,6 +892,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 						}break;
 						case State.OuterSpace:
 						{
+                                    
 							ChangeState( State.OuterSpace );
 						}break;
 						default:
@@ -1143,7 +1148,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
     private void UpdateSpaceMovement(float _deltaTime)
     {
         Vector3 impulse = m_controls.GetImpulse(1);
-        Vector3 origImpulse = impulse;
+        //Vector3 origImpulse = impulse;
         if (boostSpeedMultiplier > 1)
         {
             if (impulse == Vector3.zero)
@@ -1154,6 +1159,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
         else
         {
             m_directionWhenBoostPressed = m_direction;
+            //Debug.LogError("Setting direction");
         }
         //if (impulse != Vector3.zero)
         {
@@ -1171,14 +1177,24 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
            
 
             m_impulse = m_rbody.velocity;
+            if (m_impulse.y > m_prevImpulse.y)
+            {
+                m_impulse.y = m_prevImpulse.y;
+            }
+
             Vector3 impulseCapped = m_impulse;
-            impulseCapped.y = 0;
+            //if (impulseCapped.y < 0)
+                impulseCapped.y = 0;
+            
             float impulseMag = impulseCapped.magnitude;
 
-        
 
-            Vector3 mimpulseback = m_impulse;
+
+            //Vector3 mimpulseback = m_impulse;
             m_impulse += (acceleration * _deltaTime) - (impulseCapped.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
+            //m_impulse += (acceleration * _deltaTime) - (m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
+
+            m_prevImpulse = m_impulse;
 
             m_direction = m_impulse.normalized;
             // m_direction.y = m_rbody.velocity.normalized.y;
@@ -1598,9 +1614,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		// Trigger animation
 		m_animationEventController.OnEnterOuterSpace();
-
-		// Trigger particles (min. speed required)
-		if(m_particleController != null && Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed) {
+        
+        // Trigger particles (min. speed required)
+        if (m_particleController != null && Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed) {
 			m_particleController.OnEnterOuterSpace();
 		}
 
@@ -1797,12 +1813,21 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				// Move down
 				if(m_impulse.y > 0) {
 					//m_impulse.y = 0;
-					m_impulse.y = -1f;
-				}
+					    m_impulse.y = -1f;
+                        m_direction.y = -1f;
+                        if (m_rbody.velocity.y > 0) m_rbody.velocity.Scale(new Vector3(1, -1, 1));
+                    }
+                    //m_impulse.y = 0;
+                    //m_direction.y = 0;
+                    //m_rbody.velocity.Scale(new Vector3(1,0,1));
+                    //Debug.LogError("Collision "+ m_rbody.velocity.y);
 
-				// Smooth bounce effect on X
-				m_impulse.x = -m_impulse.x * 0.05f;
-			} break;
+                    // Smooth bounce effect on X
+                    m_impulse.x = -m_impulse.x * 1.05f;
+                    m_direction.x *= -1f;
+                    m_rbody.velocity.Scale(new Vector3(-1, 1, 1));
+
+            } break;
 
 			default:
 			{
