@@ -38,6 +38,11 @@ namespace AI {
 				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * m_data.speedMultiplier;
 				m_frontDistance = InstanceManager.player.data.GetScaleAtLevel( InstanceManager.player.data.progression.maxLevel) * 6;
 
+				for( int i = 0; i<possibleEntities.Length; i++ )
+				{
+					string entityPrefabPath = IEntity.EntityPrefabsPath + possibleEntities[i];        
+					PoolManager.CreatePool(possibleEntities[i], entityPrefabPath, 1, true);
+				}
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
@@ -48,7 +53,10 @@ namespace AI {
 				if ( !string.IsNullOrEmpty( prefabStr ) )
 				{
 					prey = PoolManager.GetInstance(prefabStr, true);
+					prey.transform.parent = m_machine.transform;
+					prey.transform.position = m_machine.position;
 				}
+
 				m_pilot.SlowDown(false);
 
 				// Start going back to the player
@@ -60,14 +68,14 @@ namespace AI {
 				m_pilot.GoTo(targetPos);
 
 				float magnitude = (targetPos - m_pilot.transform.position).sqrMagnitude;
-				m_pilot.SetMoveSpeed(Mathf.Min( m_speed, magnitude));
-				if ( m_pilot.speed <= 0.1f )
+
+				if ( magnitude <= 1 )
 				{
 					// We are done
 					// leave prey
 					if ( prey != null )
 					{
-							
+						prey.transform.parent = null;
 					}
 					Transition(OnPreyReleased);
 				}
