@@ -1159,7 +1159,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
         else
         {
             m_directionWhenBoostPressed = m_direction;
-            //Debug.LogError("Setting direction");
         }
         //if (impulse != Vector3.zero)
         {
@@ -1813,20 +1812,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				// Move down
 				if(m_impulse.y > 0) {
 					//m_impulse.y = 0;
-					    m_impulse.y = -1f;
-                        m_direction.y = -1f;
-                        if (m_rbody.velocity.y > 0) m_rbody.velocity.Scale(new Vector3(1, -1, 1));
+					
                     }
-                    //m_impulse.y = 0;
-                    //m_direction.y = 0;
-                    //m_rbody.velocity.Scale(new Vector3(1,0,1));
-                    //Debug.LogError("Collision "+ m_rbody.velocity.y);
-
+                    
                     // Smooth bounce effect on X
-                    m_impulse.x = -m_impulse.x * 1.05f;
-                    m_direction.x *= -1f;
-                    m_rbody.velocity.Scale(new Vector3(-1, 1, 1));
-
+                    m_impulse.x = -m_impulse.x * 0.05f;
+                    
             } break;
 
 			default:
