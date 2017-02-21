@@ -27,9 +27,8 @@ namespace AI {
 		[SerializeField] private Range m_railSeparation = new Range(0.5f, 1f);
 		protected override float railSeparation { get { return m_railSeparation.GetRandom(); } }
 
-		[SerializeField] private Range m_speedFactorRange = new Range(1f, 1f);
-		private float m_speedFactor;
-		protected override float speedFactor { get { return m_speedFactor; } }
+		private float m_speedFactor = 1f;
+		public override float speedFactor { get { return m_speedFactor; } set { m_speedFactor = value; } }
 
 
 		//--------------------------------------------------------------------//
@@ -80,7 +79,6 @@ namespace AI {
 			}
 
 			Stop();
-			m_speedFactor = m_speedFactorRange.GetRandom();
 
 			m_target = transform.position;
 			m_slowDown = false;

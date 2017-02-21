@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -153,7 +154,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
             // Test toggling entities visibility
             //Debug_TestToggleEntitiesVisibility();
-            // ---------------------------         
+            // ---------------------------        
+
+            // ---------------------------
+            // Test toggling particles visibility
+            //Debug_TestToggleParticlesVisibility();
+            // ---------------------------        
         }
 
         if (NeedsToRestartFlow)
@@ -527,6 +533,35 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             EntityManager.instance.Debug_EntitiesVisibility = !EntityManager.instance.Debug_EntitiesVisibility;
         }
     }
+
+    private bool m_debugParticlesVisibility = true;
+    public bool Debug_ParticlesVisibility
+    {
+        get
+        {
+            return m_debugParticlesVisibility;
+        }
+
+        set
+        {
+            m_debugParticlesVisibility = value;
+
+            List<ParticleSystem> systems = GameObjectExt.FindObjectsOfType<ParticleSystem>(true);
+            if (systems != null)
+            {
+                int count = systems.Count;                
+                for (int i = 0; i < count; i++)
+                {                    
+                    systems[i].gameObject.SetActive(m_debugParticlesVisibility);                    
+                }
+            }
+        }
+    }
+
+    private void Debug_TestToggleParticlesVisibility()
+    {
+        Debug_ParticlesVisibility = !Debug_ParticlesVisibility;
+    }   
     #endregion
 }
 

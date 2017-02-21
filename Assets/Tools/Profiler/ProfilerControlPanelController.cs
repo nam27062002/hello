@@ -342,7 +342,7 @@ public class ProfilerControlPanelController : MonoBehaviour
     }
     #endregion
 
-    #region
+    #region occlusion
     public void Occlusion_OnChangedValue(bool newValue)
     {
         if (InstanceManager.gameCamera != null)
@@ -382,6 +382,16 @@ public class ProfilerControlPanelController : MonoBehaviour
         if (EntityManager.instance != null)
         {
             EntityManager.instance.Debug_EntitiesVisibility = newValue;
+        }
+    }
+    #endregion
+
+    #region particles_visibility
+    public void ParticlesVisibility_OnChangedValue(bool newValue)
+    {
+        if (ApplicationManager.instance != null)
+        {
+            ApplicationManager.instance.Debug_ParticlesVisibility = newValue;
         }
     }
     #endregion

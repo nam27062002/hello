@@ -32,9 +32,10 @@ public class Spawner : AbstractSpawner {
 	[EntityPrefabListAttribute]
 	[SerializeField] public string m_entityPrefabStr = "";	
 
-	[SerializeField] public RangeInt m_quantity = new RangeInt(1, 1);
-	[SerializeField] public Range	 m_scale = new Range(1f, 1f);
-	[SerializeField] private uint	m_rails = 1;
+	[SerializeField] public RangeInt 	m_quantity = new RangeInt(1, 1);
+	[SerializeField] private Range 		m_speedFactorRange = new Range(1f, 1f);
+	[SerializeField] public Range	 	m_scale = new Range(1f, 1f);
+	[SerializeField] private uint		m_rails = 1;
 
 	[Separator("Activation")]
 	[SerializeField] public DragonTier m_minTier = DragonTier.TIER_0;
@@ -158,7 +159,7 @@ public class Spawner : AbstractSpawner {
             // If we don't have any entity alive, proceed
             if (EntitiesAlive == 0) {
                 // Respawn on cooldown?
-                if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
+                if (m_gameSceneController.elapsedSeconds > m_respawnTime || DebugSettings.ignoreSpawnTime) {
                     // Everything ok! Spawn!
                     return true;
                 }
@@ -202,6 +203,7 @@ public class Spawner : AbstractSpawner {
     }
 
     protected override void OnPilotSpawned(Pilot pilot) {
+		pilot.speedFactor = m_speedFactorRange.GetRandom();
         pilot.SetRail(m_rail, (int)m_rails);
         m_rail = (m_rail + 1) % (int)m_rails;
         pilot.guideFunction = m_guideFunction;

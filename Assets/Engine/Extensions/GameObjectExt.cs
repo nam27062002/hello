@@ -211,14 +211,34 @@ public static class GameObjectExt {
 		return (t == null) ? null : t.gameObject;
 	}
 
-	/// <summary>
-	/// Returns the first component of type T found in any of the child objects named <paramref name="_objName"/>.
-	/// </summary>
-	/// <returns>The first component of type T found in any of the child objects named <paramref name="_objName"/>.</returns>
-	/// <param name="_t">The root transform to look wihtin.</param>
-	/// <param name="_objName">The name to look for</param>
-	/// <typeparam name="T">The type to look for.</typeparam>
-	public static T FindComponentRecursive<T>(this Transform _t, string _objName) where T : Component {
+    /// <summary>
+    /// Use this method to get all loaded objects in the scene of some type, including inactive objects. 
+    /// </summary>
+    /// <param name="_includeInactive">Whether to include inactive objects in the search.</param>
+    public static List<T> FindObjectsOfType<T>(bool _includeInactive) {
+        List<T> results = new List<T>();
+        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++) {
+            var s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+            if (s.isLoaded) {
+                var allGameObjects = s.GetRootGameObjects();
+                for (int j = 0; j < allGameObjects.Length; j++) {
+                    var go = allGameObjects[j];                    
+                    results.AddRange(go.GetComponentsInChildren<T>(_includeInactive));                    
+                }
+            }
+        }
+
+        return results;
+    }
+
+    /// <summary>
+    /// Returns the first component of type T found in any of the child objects named <paramref name="_objName"/>.
+    /// </summary>
+    /// <returns>The first component of type T found in any of the child objects named <paramref name="_objName"/>.</returns>
+    /// <param name="_t">The root transform to look wihtin.</param>
+    /// <param name="_objName">The name to look for</param>
+    /// <typeparam name="T">The type to look for.</typeparam>
+    public static T FindComponentRecursive<T>(this Transform _t, string _objName) where T : Component {
 		// Found!
 		T c = _t.GetComponent<T>();
 		if(_t.name == _objName && c != null) return c;
