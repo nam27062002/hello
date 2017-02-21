@@ -51,7 +51,7 @@ namespace AI {
 		protected virtual float railSeparation { get { return 1f; } }
 
 		// speed and leerping between values, trying to achieve smooth speed changes
-		protected virtual float speedFactor { get { return 1f; } }
+		public virtual float speedFactor { get { return 1f; } set { } }
 
 		private float m_freezeFactor = 1;
 		protected virtual float freezeFactor{ get {return m_freezeFactor;} }
