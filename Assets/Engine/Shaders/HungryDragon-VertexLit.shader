@@ -103,7 +103,7 @@ SubShader {
 		fixed4 frag( v2fff i ) : SV_Target
 		{
 //			SHADOW_CASTER_FRAGMENT(i)
-			return float4(i.pos.z);
+			return i.pos.z;
 		}
 		ENDCG
 	}
