@@ -80,6 +80,8 @@ SubShader {
 		CGPROGRAM
 		#pragma vertex vert
 		#pragma fragment frag
+		#pragma glsl_no_auto_normalization
+		#pragma fragmentoption ARB_precision_hint_fastest
 		#pragma target 2.0
 		#pragma multi_compile_shadowcaster
 		#include "UnityCG.cginc"
@@ -98,12 +100,10 @@ SubShader {
 			return o;
 		}
 
-
 		fixed4 frag( v2fff i ) : SV_Target
 		{
 //			SHADOW_CASTER_FRAGMENT(i)
-			return i.pos.z;
-//			return float4(i.pos.z);
+			return float4(i.pos.z);
 		}
 		ENDCG
 	}
