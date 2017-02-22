@@ -1184,9 +1184,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
             Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
             // stroke's Drag
-           
-
             m_impulse = m_rbody.velocity;
+      
             if (m_impulse.y > m_prevImpulse.y)
             {
                 m_impulse.y = m_prevImpulse.y;
@@ -1202,8 +1201,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
             //Vector3 mimpulseback = m_impulse;
             m_impulse += (acceleration * _deltaTime) - (impulseCapped.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
-            //m_impulse += (acceleration * _deltaTime) - (m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
-
+            
             m_prevImpulse = m_impulse;
 
             m_direction = m_impulse.normalized;
@@ -1821,10 +1819,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 
 			case State.OuterSpace: {
-				// Move down
-				if(m_impulse.y > 0) {
-					//m_impulse.y = 0;
-					
+                    // Move down
+                    if(m_impulse.y < 0) 
+                    {
+					    m_impulse.y = 0;
+                        m_rbody.velocity.Scale(new Vector3(1, 0, 1));
+                        m_prevImpulse.y = 0;
+                        //Debug.LogError("OUTER COL"+ m_prevImpulse.y);
                     }
                     
                     // Smooth bounce effect on X
@@ -1839,7 +1840,35 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	}
 
-	private bool IsAliveState()
+    void OnCollisionStay(Collision collision)
+    {
+        switch (m_state)
+        {
+          
+
+            case State.OuterSpace:
+                {
+                    // Move down
+                    if(m_impulse.y < 0) 
+                    {
+                        m_impulse.y = 0;
+                        m_rbody.velocity.Scale(new Vector3(1, 0, 1));
+                        m_prevImpulse.y = 0;
+                        //Debug.LogError("OUTER COL" + m_prevImpulse.y);
+                    }
+
+                    // Smooth bounce effect on X
+                    m_impulse.x = -m_impulse.x * 0.05f;
+
+                }
+                break;
+
+         
+        }
+
+    }
+
+    private bool IsAliveState()
 	{
 		if (m_state == State.Dead || m_state == State.Reviving )
 			return false;
