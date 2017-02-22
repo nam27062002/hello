@@ -29,6 +29,7 @@ public static partial class CustomEditorStyles {
 				s_commentLabelLeft.fontStyle = FontStyle.Italic;
 				s_commentLabelLeft.normal.textColor = Colors.gray;
 				s_commentLabelLeft.wordWrap = true;
+				s_commentLabelLeft.richText = true;
 			}
 			return s_commentLabelLeft;
 		}
@@ -43,6 +44,17 @@ public static partial class CustomEditorStyles {
 				s_bigSceneLabel.fontSize = 20;
 			}
 			return s_bigSceneLabel;
+		}
+	}
+
+	private static GUIStyle s_richLabel = null;
+	public static GUIStyle richLabel {
+		get {
+			if(s_richLabel == null) {
+				s_richLabel = new GUIStyle(EditorStyles.label);
+				s_richLabel.richText = true;
+			}
+			return s_richLabel;
 		}
 	}
 }

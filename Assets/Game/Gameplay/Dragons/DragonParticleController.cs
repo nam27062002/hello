@@ -130,6 +130,7 @@ public class DragonParticleController : MonoBehaviour
 		// Register events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
+		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 		// Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
@@ -138,6 +139,7 @@ public class DragonParticleController : MonoBehaviour
 	{
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
+		Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
@@ -258,6 +260,13 @@ public class DragonParticleController : MonoBehaviour
 		}
 	}
 
+	void OnPreRevive()
+	{
+		// Instantiate particle
+		GameObject instance = m_petRevive.CreateInstance();
+		instance.transform.position = m_reviveAnchor.position + m_petRevive.offset;
+	}
+
 	void OnRevive(DragonPlayer.ReviveReason reason)
 	{
 		switch( reason )
@@ -268,9 +277,7 @@ public class DragonParticleController : MonoBehaviour
 			}break;
 			case DragonPlayer.ReviveReason.FREE_REVIVE_PET:
 			{
-				// Instantiate particle
-				GameObject instance = m_petRevive.CreateInstance();
-				instance.transform.position = m_dargonMotion.diePosition + m_petRevive.offset;
+				
 			}break;
 		}
 		m_alive = true;

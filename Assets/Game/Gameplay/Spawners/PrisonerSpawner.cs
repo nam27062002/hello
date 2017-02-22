@@ -14,6 +14,7 @@ public class PrisonerSpawner : AbstractSpawner {
 	[SerializeField] private Group[]	m_groups;
 	[SerializeField] private Range		m_scale = new Range(1f, 1f);
 	[SerializeField] private Vector3	m_spawnPosition = Vector3.zero;
+	[SerializeField] private Transform	m_parent;
 	
 	private Transform[] m_parents;
 
@@ -82,15 +83,17 @@ public class PrisonerSpawner : AbstractSpawner {
 
     protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
         Vector3 pos = originPos + m_spawnPosition;
-        if (index > 0)
-        {
+        if (index > 0) {
             pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
         }
 
         Transform t = spawning.transform;
         t.position = pos;
         t.localScale = Vector3.one * m_scale.GetRandom();
-        t.parent = transform;        
+
+		if (m_parent != null) {
+			t.parent = m_parent;
+		}
     }
 
     protected override void OnMachineSpawned(AI.Machine machine) {
@@ -101,6 +104,20 @@ public class PrisonerSpawner : AbstractSpawner {
         m_parents[index] = null;
     }
     //---------------------------------------------------------------------------------------------------------   
+
+	public void UpdatePrisonerTransform(Transform _cage) {
+		Vector3 pos = transform.position + m_spawnPosition;
+
+		pos = _cage.InverseTransformVector(pos);
+		for (int i = 0; i < m_entities.Length; i++) {
+			if (m_entities[i] != null) {
+				m_entities[i].transform.position = pos;
+				m_entities[i].transform.rotation = _cage.rotation;
+			}
+		}
+	}
+
+	//---------------------------------------------------------------------------------------------------------   
 
     public void SetEntitiesFree() {
         for (int i = 0; i < m_entities.Length; i++) {

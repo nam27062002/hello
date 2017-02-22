@@ -54,7 +54,7 @@ public class HUDPc : HudWidget {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
-		Messenger.AddListener(GameEvents.INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
+		Messenger.AddListener(GameEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
 	}
 	
 	/// <summary>
@@ -63,7 +63,7 @@ public class HUDPc : HudWidget {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
-		Messenger.RemoveListener(GameEvents.INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
+		Messenger.RemoveListener(GameEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
 	}
 
     protected override void Update() {
@@ -84,7 +84,7 @@ public class HUDPc : HudWidget {
     // INTERNAL UTILS													//
     //------------------------------------------------------------------//   
     protected override string GetValueAsString() {
-		return UIConstants.IconString(GetValue(), UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+		return UIConstants.GetIconString(GetValue(), UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
     }
 
     private long GetValue() {
