@@ -84,5 +84,5 @@ Shader "Hungry Dragon/Lightmap And VertexColor (Background)"
 			ENDCG
 		}
 	}
-//	Fallback "Hungry Dragon/VertexLit"
+	Fallback "Hungry Dragon/VertexLit"
 }

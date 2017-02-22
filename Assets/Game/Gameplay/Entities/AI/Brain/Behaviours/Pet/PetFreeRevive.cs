@@ -44,7 +44,6 @@ namespace AI {
 					if ( m_executingRevive <= 0 )
 					{
 						InstanceManager.player.ResetStats(true, DragonPlayer.ReviveReason.FREE_REVIVE_PET);	// do it on next update?
-						Messenger.Broadcast(GameEvents.PLAYER_REVIVE, DragonPlayer.ReviveReason.FREE_REVIVE_PET);
 					}
 				}
 			}
