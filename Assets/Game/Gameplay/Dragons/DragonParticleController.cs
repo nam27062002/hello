@@ -54,10 +54,6 @@ public class DragonParticleController : MonoBehaviour
 	[Space]
 	public string m_corpseAsset = "";
 
-	[Space]
-	public ParticleData m_vacuumParticle;
-	public Transform m_vacuumAnchor;
-	private ParticleSystem m_vacuumInstance = null;
 
 	[Space]
 	public string m_hiccupParticle;
@@ -387,31 +383,6 @@ public class DragonParticleController : MonoBehaviour
 					m_bodyParticles[i].m_particleReference.Play();
 			}
 		}
-	}
-
-
-	public void EnableVacuum()
-	{
-		if ( m_vacuumInstance == null )
-		{
-			GameObject go = m_vacuumParticle.CreateInstance();
-			if ( go != null )
-			{
-				m_vacuumInstance = go.GetComponentInChildren<ParticleSystem>();
-				go.transform.parent = m_vacuumAnchor;
-				go.transform.localRotation = Quaternion.identity;
-				go.transform.localPosition = m_vacuumParticle.offset;
-			}
-		}
-
-		if ( m_vacuumInstance != null )
-			m_vacuumInstance.Play();
-	} 
-
-	public void DisableVacuum()
-	{
-		if ( m_vacuumInstance != null )
-			m_vacuumInstance.Stop();
 	}
 
 	private void OnHiccup()
