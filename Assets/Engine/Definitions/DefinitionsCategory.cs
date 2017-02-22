@@ -60,6 +60,7 @@ public class DefinitionsCategory
 	public const string RARITIES = "RARITIES";
 	public const string HUNGRY_LETTERS = "HUNGRY_LETTERS";
 	public const string MAP_UPGRADES = "MAP_UPGRADES";
+	public const string SHOP_PACKS = "SHOP_PACKS";
 
 	// Disguises
 	public const string DISGUISES = "DISGUISES";
