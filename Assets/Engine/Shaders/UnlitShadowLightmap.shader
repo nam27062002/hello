@@ -109,5 +109,5 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 			ENDCG
 		}
 	}
-//	Fallback "Hungry Dragon/VertexLit"
+	Fallback "Hungry Dragon/VertexLit"
 }

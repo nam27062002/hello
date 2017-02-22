@@ -4,6 +4,10 @@ using System;
 namespace AI {
 	[Serializable]
 	public class MachineMotion : MachineComponent {
+
+		public override Type type { get { return Type.Motion; } }
+
+
 		protected static int m_groundMask;
 
 		private enum UpVector {
@@ -194,6 +198,17 @@ namespace AI {
 
 			//----------------------------------------------------------------------------------
 			m_mouth = m_machineTransform.FindTransformRecursive("Fire_Dummy");
+		}
+
+		public void LockInCage() {
+			m_rbody.useGravity = true;
+			m_rbody.freezeRotation = false;	
+		}
+
+		public void UnlockFromCage() {
+			m_rbody.useGravity = false;
+			m_rbody.freezeRotation = true;
+
 		}
 
 		public void SetVelocity(Vector3 _v) {
