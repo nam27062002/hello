@@ -51,6 +51,7 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.RARITIES, new string[]{"Rules/rarityDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.HUNGRY_LETTERS, new string[]{"Rules/hungryLettersDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.MAP_UPGRADES, new string[]{"Rules/mapUpgradesDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.SHOP_PACKS, new string[]{"Rules/shopPacksDefinitions"});
 
 		// Disguises
 		kDefinitionFiles.Add(DefinitionsCategory.DISGUISES, new string[]{"Rules/disguisesDefinitions"});

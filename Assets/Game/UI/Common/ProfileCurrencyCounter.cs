@@ -87,21 +87,21 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 		// UIConstants does the job for us
 		switch(m_type) {
 			case Type.COINS: {
-				m_text.text = UIConstants.IconString(
+				m_text.text = UIConstants.GetIconString(
 					UsersManager.currentUser.coins,
 					UIConstants.IconType.COINS, m_alignment
 				);
 			} break;
 
 			case Type.PC: {
-				m_text.text = UIConstants.IconString(
+				m_text.text = UIConstants.GetIconString(
 					UsersManager.currentUser.pc,
 					UIConstants.IconType.PC, m_alignment
 				);
 			} break;
 
 			case Type.GOLDEN_FRAGMENTS: {
-				m_text.text = UIConstants.IconString(
+				m_text.text = UIConstants.GetIconString(
 					LocalizationManager.SharedInstance.Localize(
 						"TID_FRACTION", 
 						StringUtils.FormatNumber(EggManager.goldenEggFragments), 

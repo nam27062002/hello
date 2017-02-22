@@ -23,6 +23,8 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	//------------------------------------------------------------------------//
 	// Common icons in the UISpritesheet atlas
 	public enum IconType {
+		NONE,
+
 		COINS,
 		PC,
 		GOLDEN_FRAGMENTS
@@ -115,6 +117,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	[SerializeField] private string m_mapUpgradesIconsPath = "UI/Metagame/Map/";
 	public static string MAP_UPGRADES_ICONS_PATH {
 		get { return instance.m_mapUpgradesIconsPath; }
+	}
+
+	[SerializeField] private string m_shopIconsPath = "UI/Metagame/Shop/";
+	public static string SHOP_ICONS_PATH {
+		get { return instance.m_shopIconsPath; }
 	}
 	#endregion
 
@@ -330,7 +337,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	/// <param name="_text">Text to be attached, typically a formatted amount. <see cref="StringUtils"/>.</param>
 	/// <param name="_icon">Icon to be attached..</param>
 	/// <param name="_alignment">Position of the icon relative to the text.</param>
-	public static string IconString(string _text, IconType _icon, IconAlignment _alignment) {
+	public static string GetIconString(string _text, IconType _icon, IconAlignment _alignment) {
 		// Reset string builder
 		instance.m_sb.Length = 0;
 
@@ -348,6 +355,10 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			case IconType.GOLDEN_FRAGMENTS: {
 				iconString = UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT;
 			} break;
+
+			case IconType.NONE: {
+				iconString = string.Empty;
+			} break;
 		}
 
 		// Compose final string with the proper alignment
@@ -357,11 +368,17 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			} break;
 
 			case IconAlignment.LEFT: {
-				instance.m_sb.Append(iconString).Append(" ").Append(_text).ToString();
+				if(!string.IsNullOrEmpty(iconString)) {
+					instance.m_sb.Append(iconString).Append(" ");
+				}
+				instance.m_sb.Append(_text);
 			} break;
 
 			case IconAlignment.RIGHT: {
-				instance.m_sb.Append(_text).Append(" ").Append(iconString).ToString();
+				instance.m_sb.Append(_text);
+				if(!string.IsNullOrEmpty(iconString)) {
+					instance.m_sb.Append(" ").Append(iconString);
+				}
 			} break;
 		}
 
@@ -377,8 +394,35 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	/// <param name="_amount">Number to be attached, will be formatted with the default format using <see cref="StringUtils"/>.</param>
 	/// <param name="_icon">Icon to be attached..</param>
 	/// <param name="_alignment">Position of the icon relative to the text.</param>
-	public static string IconString(long _amount, IconType _icon, IconAlignment _alignment) {
+	public static string GetIconString(long _amount, IconType _icon, IconAlignment _alignment) {
 		// Just use text version with the formatted string
-		return IconString(StringUtils.FormatNumber(_amount), _icon, _alignment);
+		return GetIconString(StringUtils.FormatNumber(_amount), _icon, _alignment);
+	}
+
+	/// <summary>
+	/// Create a composite string consisting of a number and a currency icon.
+	/// Specially useful for currency counters and price tags.
+	/// </summary>
+	/// <returns>The full string.</returns>
+	/// <param name="_amount">Number to be attached, will be formatted with the default format using <see cref="StringUtils"/>.</param>
+	/// <param name="_currency">Displayed currency.</param>
+	/// <param name="_alignment">Position of the icon relative to the text.</param>
+	public static string GetIconString(long _amount, UserProfile.Currency _currency, IconAlignment _alignment) {
+		// Convert currency to icon and use the other constructors
+		return GetIconString(_amount, GetCurrencyIcon(_currency), _alignment);
+	}
+
+	/// <summary>
+	/// Get the icon corresponding to a currency.
+	/// </summary>
+	/// <returns>The currency icon.</returns>
+	/// <param name="_currency">Currency type.</param>
+	public static IconType GetCurrencyIcon(UserProfile.Currency _currency) {
+		switch(_currency) {
+			case UserProfile.Currency.SOFT:				return IconType.COINS;				break;
+			case UserProfile.Currency.HARD:				return IconType.PC;					break;
+			case UserProfile.Currency.GOLDEN_FRAGMENTS:	return IconType.GOLDEN_FRAGMENTS;	break;
+		}
+		return IconType.NONE;
 	}
 }

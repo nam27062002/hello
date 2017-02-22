@@ -9,6 +9,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Globalization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -28,7 +29,8 @@ public class Localizer : MonoBehaviour {
 		UPPER_CASE,
 		LOWER_CASE,
 		REPLACEMENTS_UPPER_CASE,
-		REPLACEMENTS_LOWER_CASE
+		REPLACEMENTS_LOWER_CASE,
+		TITLE_CASE
 	}
 
 	//------------------------------------------------------------------------//
@@ -129,6 +131,7 @@ public class Localizer : MonoBehaviour {
 		switch(m_caseType) {
             case Case.LOWER_CASE: 	localizedString = localizedString.ToLower(LocalizationManager.SharedInstance.Culture);	break;
             case Case.UPPER_CASE: 	localizedString = localizedString.ToUpper(LocalizationManager.SharedInstance.Culture);	break;
+			case Case.TITLE_CASE:	localizedString = LocalizationManager.SharedInstance.Culture.TextInfo.ToTitleCase(localizedString);	break;	// From http://stackoverflow.com/questions/1206019/converting-string-to-title-case
 		}
 
 		// Apply to textfield

@@ -175,7 +175,7 @@ public class HUDRevive : MonoBehaviour {
 	private void OnPlayerKo(DamageType _type) {
 		// Initialize PC cost
 		if ( m_pcText != null )
-			m_pcText.text = UIConstants.IconString((m_freeReviveCount + m_paidReviveCount) + 1, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);	// [AOC] TODO!! Actual revive cost formula
+			m_pcText.text = UIConstants.GetIconString((m_freeReviveCount + m_paidReviveCount) + 1, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);	// [AOC] TODO!! Actual revive cost formula
 
 		// Free revive available?
 		m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && m_freeReviveCount < m_freeRevivesPerGame);

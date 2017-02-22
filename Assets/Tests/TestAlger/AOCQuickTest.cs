@@ -35,9 +35,9 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	public Ease m_ease = Ease.InOutCubic;
-	public GameObject m_target = null;
-	public TextMeshProUGUI m_text = null;
+	[Range(0f, 2f)] public float m_timeScale = 1f;
+	public bool m_ignoreTimeScale = false;
+	private Sequence m_sequence = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -45,21 +45,34 @@ public class AOCQuickTest : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake() {
+	private void Awake() {
 		
 	}
 
 	/// <summary>
 	/// First update call.
 	/// </summary>
-	void Start() {
+	private void Start() {
 		
+	}
+
+	/// <summary>
+	/// Something changed on the inspector.
+	/// </summary>
+	private void OnValidate() {
+		// Apply new timescale
+		Time.timeScale = m_timeScale;
+
+		// Change sequence's ignore timescale flag
+		if(m_sequence != null) {
+			m_sequence.SetUpdate(UpdateType.Normal, m_ignoreTimeScale);
+		}
 	}
 	
 	/// <summary>
 	/// Called once per frame.
 	/// </summary>
-	void Update() {
+	private void Update() {
 		
 	}
 
@@ -67,30 +80,13 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		DOTween.Kill("AOCTEST", true);
-		m_target.transform.DOKill(true);
-
-		Sequence seq = DOTween.Sequence()
-			.AppendInterval(0.5f)
-			.Append(m_target.transform.DOScale(0f, 1f).From().SetEase(Ease.OutBack))
-			//.Join(m_target.transform.DOLocalRotate(m_target.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true).SetAutoKill(false))
-			.Join(DOVirtual.DelayedCall(
-				0.5f,
-				() => {
-					m_target.transform.DOLocalRotate(m_target.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetRecyclable(true);
-				},
-				false
-			))
-			.AppendInterval(1f)
-			.Append(m_target.transform.DOScale(2f, 0.25f).SetLoops(2, LoopType.Yoyo).SetEase(Ease.OutBack))
-			.AppendCallback(() => { 
-				m_text.text = "Sequence ended";
-			})
-			.SetId("AOCTEST");
-		seq.OnUpdate(() => {
-					m_text.text = seq.Elapsed().ToString("#.##") + " (" + seq.ElapsedPercentage().ToString("#.##") + ")\n" 
-						+ seq.Elapsed(false).ToString("#.##") + " (" + seq.ElapsedPercentage(false).ToString("#.##") + ")";
-		});
+		if(m_sequence == null) {
+			m_sequence = DOTween.Sequence()
+				.SetAutoKill(false)
+				.Append(this.transform.DOLocalJump(Vector3.zero, 5f, 3, 3f))
+				.SetUpdate(UpdateType.Normal, m_ignoreTimeScale);
+		}
+		m_sequence.Restart();
 	}
 
 	/// <summary>

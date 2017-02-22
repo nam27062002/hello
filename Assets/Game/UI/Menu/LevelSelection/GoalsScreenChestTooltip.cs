@@ -79,9 +79,9 @@ public class GoalsScreenChestTooltip : MonoBehaviour {
 		m_pcRewardText.gameObject.SetActive(isPC);
 
 		if(isPC) {
-			m_pcRewardText.text = UIConstants.IconString(rewardData.amount, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+			m_pcRewardText.text = UIConstants.GetIconString(rewardData.amount, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
 		} else {
-			m_coinsRewardText.text = UIConstants.IconString(rewardData.amount, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
+			m_coinsRewardText.text = UIConstants.GetIconString(rewardData.amount, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
 		}
 
 		// Do a first refresh!

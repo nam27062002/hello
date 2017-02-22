@@ -343,7 +343,7 @@ public class DisguisesScreenController : MonoBehaviour {
 			// Only if disguise is neither owned nor locked and is purchased with SC
 			if(!isPC && !_pill.owned && !_pill.locked) {
 				// Set price and restart animation
-				m_SCButton.SetAmount(priceSC, CurrencyButton.CurrencyIcon.SC);
+				m_SCButton.SetAmount(priceSC, UserProfile.Currency.SOFT);
 				m_SCButton.animator.RestartShow();
 			} else {
 				m_SCButton.animator.Hide();
@@ -356,7 +356,7 @@ public class DisguisesScreenController : MonoBehaviour {
 			// Only if disguise is neither owned nor locked and is purchased with PC
 			if(isPC && !_pill.owned && !_pill.locked) {
 				// Set price and restart animation
-				m_PCButton.SetAmount(pricePC, CurrencyButton.CurrencyIcon.PC);
+				m_PCButton.SetAmount(pricePC, UserProfile.Currency.HARD);
 				m_PCButton.animator.RestartShow();
 			} else {
 				m_PCButton.animator.Hide();

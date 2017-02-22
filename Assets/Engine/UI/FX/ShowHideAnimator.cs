@@ -425,7 +425,8 @@ public class ShowHideAnimator : MonoBehaviour {
 		// Create new sequence
 		m_sequence = DOTween.Sequence()
 			.SetAutoKill(false)
-			.OnStepComplete(() => { OnSequenceCompleted(); });
+			.OnStepComplete(() => { OnSequenceCompleted(); })
+			.SetUpdate(UpdateType.Normal, true);	// [AOC] Generally we don't want UI animations to be affected by global timeScale. This could be parametrized if needed.
 
 		// Shared parameters
 		TweenParams sharedParams = new TweenParams()
@@ -472,8 +473,6 @@ public class ShowHideAnimator : MonoBehaviour {
 
 		// Insert delay at the beginning of the sequence
 		m_sequence.PrependInterval(m_tweenDelay);
-
-
 	}
 
 	protected virtual void PostDelayCallback()

@@ -36,7 +36,7 @@ public class BuyEggButton : MonoBehaviour {
 	private void OnEnable() {
 		// Set price
 		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_PREMIUM_EGG);
-		m_priceText.text = UIConstants.IconString(eggDef.GetAsLong("pricePC"), UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+		m_priceText.text = UIConstants.GetIconString(eggDef.GetAsLong("pricePC"), UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
 	}
 
 	//------------------------------------------------------------------------//
