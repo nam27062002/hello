@@ -50,6 +50,10 @@ public class PopupCurrencyShop : MonoBehaviour {
 	private List<PopupCurrencyShopPill> m_scPills = new List<PopupCurrencyShopPill>();
 	private List<PopupCurrencyShopPill> m_pcPills = new List<PopupCurrencyShopPill>();
 
+	// HUD management
+	private bool m_hudVisible = false;
+	private ShowHideAnimator m_hudAnimator = null;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -62,6 +66,12 @@ public class PopupCurrencyShop : MonoBehaviour {
 		Debug.Assert(m_pillPrefab != null, "Missing required reference!");
 		Debug.Assert(m_scScrollList != null, "Missing required reference!");
 		Debug.Assert(m_pcScrollList != null, "Missing required reference!");
+
+		// Get some external references for future use
+		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+		if(menuController != null) {
+			m_hudAnimator = menuController.hud.GetComponent<ShowHideAnimator>();
+		}
 
 		// Clear containers
 		m_scScrollList.content.DestroyAllChildren(false);
@@ -150,7 +160,10 @@ public class PopupCurrencyShop : MonoBehaviour {
 		// Reset scroll lists and program initial animation
 		m_scScrollList.horizontalNormalizedPosition = 0f;
 		m_pcScrollList.horizontalNormalizedPosition = 0f;
-		m_pcScrollList.DOHorizontalNormalizedPos(-10f, 0.5f).From().SetEase(Ease.OutCubic).SetDelay(0.25f);
+		m_pcScrollList.DOHorizontalNormalizedPos(-10f, 0.5f).From().SetEase(Ease.OutCubic).SetDelay(0.25f).SetUpdate(true);
+
+		// Hide other currency counters to prevent conflicts
+		Messenger.Broadcast<bool>(GameEvents.UI_TOGGLE_CURRENCY_COUNTERS, false);
 	}
 
 	/// <summary>
@@ -158,5 +171,13 @@ public class PopupCurrencyShop : MonoBehaviour {
 	/// </summary>
 	public void OnOpenPostAnimation() {
 		
+	}
+
+	/// <summary>
+	/// Popup is about to be closed.
+	/// </summary>
+	public void OnClosePreAnimation() {
+		// Restore currency counters
+		Messenger.Broadcast<bool>(GameEvents.UI_TOGGLE_CURRENCY_COUNTERS, true);
 	}
 }
