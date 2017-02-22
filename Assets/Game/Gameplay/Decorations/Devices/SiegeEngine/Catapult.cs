@@ -29,6 +29,7 @@ public class Catapult : SimpleDevice {
 	[SerializeField] private float m_eyeRadius = 5f;
 
 	[SeparatorAttribute]
+	[SerializeField] private float m_damage = 20f;
 	[SerializeField] private float m_tossDelay = 5f;
 	[SerializeField] private string m_ammoName;
 	[SerializeField] private string m_ammoSpawnTransformName;
@@ -176,7 +177,7 @@ public class Catapult : SimpleDevice {
 				Vector3 direction = DirectionFromAngles(m_vAngle + m_extraProjectiles[i].vAngleOffset, 
 														m_hAngle + m_extraProjectiles[i].hAngleOffset);
 
-				catapultAmmo.ShootTowards(direction, m_initialVelocity + m_extraProjectiles[i].initialVelocityOffset);
+				catapultAmmo.ShootTowards(direction, m_initialVelocity + m_extraProjectiles[i].initialVelocityOffset, m_damage);
 
 				m_ammo[i] = null;
 			}
@@ -186,7 +187,7 @@ public class Catapult : SimpleDevice {
 			Projectile catapultAmmo = m_ammo[i].GetComponent<Projectile>();
 			Vector3 direction = DirectionFromAngles(m_vAngle, m_hAngle);
 
-			catapultAmmo.ShootTowards(direction, m_initialVelocity);
+			catapultAmmo.ShootTowards(direction, m_initialVelocity, m_damage);
 
 			m_ammo[i] = null;
 		}

@@ -145,10 +145,6 @@ public class Projectile : MonoBehaviour, IProjectile {
 		m_isStuckOnPlayer = false;
 	}
 
-	public void Shoot(Vector3 _target) {
-		Shoot(_target, m_defaultDamage);
-	}
-
 	public void Shoot(Vector3 _target, float _damage) {
 		m_target = _target;
 
@@ -157,14 +153,6 @@ public class Projectile : MonoBehaviour, IProjectile {
 		m_direction.Normalize();
 
 		DoShoot(m_speed, _damage);
-	}
-
-	public void ShootTowards(Vector3 _direction) {
-		ShootTowards(_direction, m_speed, m_defaultDamage);
-	}
-
-	public void ShootTowards(Vector3 _direction, float _speed) {
-		ShootTowards(_direction, _speed, m_defaultDamage);
 	}
 
 	public void ShootTowards(Vector3 _direction, float _speed, float _damage) {
