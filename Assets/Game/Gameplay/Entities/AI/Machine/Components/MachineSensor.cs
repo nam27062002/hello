@@ -4,6 +4,9 @@ using System;
 namespace AI {
 	[Serializable]
 	public class MachineSensor : MachineComponent {
+
+		public override Type type { get { return Type.Sensor_Player; } }
+
 		[SerializeField] private bool m_senseFire = true;
 		[SerializeField] private float m_sightRadius;
 		[SerializeField] private float m_maxRadius;

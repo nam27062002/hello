@@ -500,11 +500,21 @@ namespace AI {
 		// External interactions
 		public void LockInCage() {
 			m_entity.allowEdible = false;
+
+			if (m_enableMotion) {
+				m_motion.LockInCage();
+			}
+
 			SetSignal(Signals.Type.LockedInCage, true);
 		}
 
 		public void UnlockFromCage() {
 			m_entity.allowEdible = true;
+
+			if (m_enableMotion) {
+				m_motion.UnlockFromCage();
+			}
+
 			SetSignal(Signals.Type.LockedInCage, false);
 		}
 
