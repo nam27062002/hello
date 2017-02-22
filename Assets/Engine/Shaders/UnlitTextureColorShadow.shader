@@ -59,5 +59,5 @@ SubShader {
 		ENDCG
 	}
 }
-//	Fallback "Hungry Dragon/VertexLit"
+	Fallback "Hungry Dragon/VertexLit"
 }
