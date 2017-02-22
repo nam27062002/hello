@@ -73,16 +73,15 @@ Shader "Hungry Dragon/UnderWater"
 				};
 
 
-//				sampler2D _CameraDepthTexture;
 				sampler2D _MainTex;
+				sampler2D _CameraDepthTexture;
 
-//				float4 _CameraDepthTexture_TexelSize;
+				float4 _CameraDepthTexture_TexelSize;
 
 				float4 _MainTex_ST;
 				float4 _MainTex_TexelSize;
 				float4 _ColorBack;
 				float _WaveRadius;
-				sampler2D _BackgroundTexture;
 
 				float _FogFar;
 				float _FogNear;
@@ -108,9 +107,9 @@ Shader "Hungry Dragon/UnderWater"
 
 				fixed4 frag (v2f i) : SV_Target
 				{
-					return fixed4(0.0, 0.0, 0.0, 0.0);
+//					return fixed4(0.0, 0.0, 0.0, 0.0);
 	//				float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).x) * 1.0f;
-					float depth = LinearEyeDepth(tex2Dproj(_BackgroundTexture, (i.scrPos)).w) * 1.0f;
+					float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).x) * 1.0f;
 					float depthR = (depth - i.scrPos.z);
 
 					float lerpFog = 1.0 - clamp((depthR - _FogNear) / (_FogFar - _FogNear), 0.0, 1.0);
@@ -202,8 +201,8 @@ Shader "Hungry Dragon/UnderWater"
 
 				fixed4 frag(v2f i) : SV_Target
 				{
-					return fixed4(0.0, 0.0, 0.0, 0.0);
-					float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).x) * 1.0f;
+//					return fixed4(0.0, 0.0, 0.0, 0.0);
+					float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).w) * 1.0f;
 					float depthR = (depth - i.scrPos.z);
 
 //					float lerpFog = 1.0 - clamp((depthR - _FogNear) / (_FogFar - _FogNear), 0.0, 1.0);

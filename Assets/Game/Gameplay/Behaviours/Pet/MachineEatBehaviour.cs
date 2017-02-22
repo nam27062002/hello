@@ -32,7 +32,7 @@ public class MachineEatBehaviour : EatBehaviour {
 		m_machine = GetComponent<AI.Machine>();
 		if (m_isPet) {
 			m_canLatchOnPlayer = false;	
-			AddToIgnoreList("goodJunk");
+			AddToIgnoreList("badJunk");
 		} else {
 			m_canLatchOnPlayer = true;
 		}
