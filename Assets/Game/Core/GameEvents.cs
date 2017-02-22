@@ -112,7 +112,8 @@ public enum GameEvents {
 	SOCIAL_LOGGED,				// params: bool	
 	
 	// UI events
-	INGAME_PC_FEEDBACK_END,		// no params
+	UI_INGAME_PC_FEEDBACK_END,		// no params
+	UI_TOGGLE_CURRENCY_COUNTERS,	// bool _show
 
 	// Camera events
 	CAMERA_INTRO_DONE,			// no params
