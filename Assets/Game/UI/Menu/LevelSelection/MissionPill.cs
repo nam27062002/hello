@@ -171,12 +171,12 @@ public class MissionPill : MonoBehaviour {
 		}
 
 		// Reward
-		m_activeObj.FindComponentRecursive<TextMeshProUGUI>("RewardText").text = UIConstants.IconString(m_mission.rewardCoins, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
+		m_activeObj.FindComponentRecursive<TextMeshProUGUI>("RewardText").text = UIConstants.GetIconString(m_mission.rewardCoins, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
 
 		// Remove cost
 		// [AOC] The pill might not have it (e.g. in-game pill)
 		TextMeshProUGUI removeCostText = m_activeObj.FindComponentRecursive<TextMeshProUGUI>("TextCost");
-		if(removeCostText != null) removeCostText.text = UIConstants.IconString(m_mission.removeCostPC, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+		if(removeCostText != null) removeCostText.text = UIConstants.GetIconString(m_mission.removeCostPC, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
 
 		// Check if this mission is complete
 		GameObject completedObj = m_activeObj.FindObjectRecursive("CompletedMission");
@@ -280,7 +280,7 @@ public class MissionPill : MonoBehaviour {
 
 		// Skip cost
 		// [AOC] The pill might not have it (e.g. in-game pill)
-		if(m_skipCostText != null) m_skipCostText.text = UIConstants.IconString(m_mission.skipCostPC, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+		if(m_skipCostText != null) m_skipCostText.text = UIConstants.GetIconString(m_mission.skipCostPC, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
 	}
 
 	/// <summary>

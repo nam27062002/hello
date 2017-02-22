@@ -21,12 +21,7 @@ public class CurrencyButton : AnimatedButton {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public enum CurrencyIcon {
-		SC,
-		PC,
-		NONE
-	}
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -40,7 +35,6 @@ public class CurrencyButton : AnimatedButton {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 
-
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
@@ -48,28 +42,13 @@ public class CurrencyButton : AnimatedButton {
 	/// Initialize the button with the given amount text (already formatted) and currency.
 	/// </summary>
 	/// <param name="_amount">The amount to be displayed.</param>
-	/// <param name="_icon">The curency icon to be displayed.</param>
-	public void SetAmount(string _amountText, CurrencyIcon _icon) {
+	/// <param name="_currency">The curency to be displayed.</param>
+	public void SetAmount(string _amountText, UserProfile.Currency _currency) {
 		// Skip if amount text is not set
 		if(m_amountText == null) return;
 
-		// Attach icon string
-		switch(_icon) {
-			case CurrencyIcon.NONE: {
-				// Nothing to do
-			} break;
-
-			case CurrencyIcon.SC: {
-				_amountText = UIConstants.IconString(_amountText, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
-			} break;
-
-			case CurrencyIcon.PC: {
-				_amountText = UIConstants.IconString(_amountText, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
-			} break;
-		}
-
-		// Set text
-		m_amountText.text = _amountText;
+		// Set text (UIConstants makes it easy for us!)
+		m_amountText.text = UIConstants.GetIconString(_amountText, UIConstants.GetCurrencyIcon(_currency), UIConstants.IconAlignment.LEFT);
 	}
 
 	/// <summary>
@@ -77,11 +56,11 @@ public class CurrencyButton : AnimatedButton {
 	/// The amount will be formatted according to current localization settings.
 	/// </summary>
 	/// <param name="_amount">The amount to be displayed.</param>
-	/// <param name="_icon">The curency icon to be displayed.</param>
-	public void SetAmount(float _amount, CurrencyIcon _icon) {
+	/// <param name="_currency">The curency to be displayed.</param>
+	public void SetAmount(float _amount, UserProfile.Currency _currency) {
 		// Format number and call the string method
 		string amountString = StringUtils.FormatNumber(_amount, 0);
-		SetAmount(amountString, _icon);
+		SetAmount(amountString, _currency);
 	}
 
 	//------------------------------------------------------------------------//
