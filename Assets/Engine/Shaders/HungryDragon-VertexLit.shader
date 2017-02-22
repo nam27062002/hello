@@ -68,6 +68,7 @@ SubShader {
 		}
 	}
 */
+
 	// Pass to render object as a shadow caster
 	Pass 
 	{
@@ -79,24 +80,30 @@ SubShader {
 		CGPROGRAM
 		#pragma vertex vert
 		#pragma fragment frag
+		#pragma glsl_no_auto_normalization
+		#pragma fragmentoption ARB_precision_hint_fastest
 		#pragma target 2.0
 		#pragma multi_compile_shadowcaster
 		#include "UnityCG.cginc"
 
-		struct v2f { 
-			V2F_SHADOW_CASTER;
+		struct v2fff { 
+//			V2F_SHADOW_CASTER;
+			float4 pos : SV_POSITION;
 		};
 
-		v2f vert( appdata_base v )
+		v2fff vert( appdata_base v )
 		{
-			v2f o;
-			TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+			v2fff o;
+//			TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+			o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+
 			return o;
 		}
 
-		float4 frag( v2f i ) : SV_Target
+		fixed4 frag( v2fff i ) : SV_Target
 		{
-			SHADOW_CASTER_FRAGMENT(i)
+//			SHADOW_CASTER_FRAGMENT(i)
+			return i.pos.z;
 		}
 		ENDCG
 	}

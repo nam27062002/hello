@@ -5,6 +5,9 @@ using System;
 namespace AI {
 	[Serializable]
 	public class MachineInflammable : MachineComponent {
+
+		public override Type type { get { return Type.Inflammable; } }
+
 		//-----------------------------------------------
 		// Constants
 		//-----------------------------------------------

@@ -12,6 +12,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	[SeparatorAttribute]
 	[SerializeField] private GameObject m_colliderHolder;
 	[SerializeField] private GameObject m_view;
+	[SerializeField] private GameObject[] m_viewDestroyed;
 	[SerializeField] private string m_onBreakParticle;
 	[SerializeField] private string m_onBreakSound;
 	[SerializeField] private string m_onCollideSound;
@@ -45,6 +46,9 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 		m_currentHits.needBoost = originalHits.needBoost;
 
 		m_view.SetActive(true);
+		for (int i = 0; i < m_viewDestroyed.Length; i++) {
+			m_viewDestroyed[i].SetActive(false);
+		}
 		SetCollisionsEnabled(true);
 
 		m_cageSpawner.area = _spawner.area; // cage spawner will share the area defined to spawn the cage.
@@ -58,6 +62,10 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	// Update is called once per frame
 	private void Update() {
 		m_waitTimer -= Time.deltaTime;
+	}
+
+	private void LateUpdate() {
+
 	}
 
 	private void OnCollisionEnter(Collision collision) {
@@ -102,6 +110,9 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 		}
 
 		m_view.SetActive(false);
+		for (int i = 0; i < m_viewDestroyed.Length; i++) {
+			m_viewDestroyed[i].SetActive(true);
+		}
 		SetCollisionsEnabled(false);
 
 		m_cageSpawner.SetEntitiesFree();
