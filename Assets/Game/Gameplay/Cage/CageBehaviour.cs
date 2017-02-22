@@ -64,6 +64,10 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 		m_waitTimer -= Time.deltaTime;
 	}
 
+	private void LateUpdate() {
+
+	}
+
 	private void OnCollisionEnter(Collision collision) {
 		if (collision.transform.CompareTag("Player")) {
 			if (m_currentHits.needBoost) {

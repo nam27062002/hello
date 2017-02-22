@@ -201,14 +201,13 @@ namespace AI {
 		}
 
 		public void LockInCage() {
-			m_rbody.useGravity = true;
-			m_rbody.freezeRotation = false;	
+			m_rbody.isKinematic = true;
+			m_rbody.detectCollisions = false;
 		}
 
 		public void UnlockFromCage() {
-			m_rbody.useGravity = false;
-			m_rbody.freezeRotation = true;
-
+			m_rbody.isKinematic = false;
+			m_rbody.detectCollisions = true;
 		}
 
 		public void SetVelocity(Vector3 _v) {
