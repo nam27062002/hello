@@ -49,6 +49,17 @@ public class FogManager : MonoBehaviour
 			}
 			m_texture.Apply(false);
 		}
+
+		/// <summary>
+		/// WARNING: This only should be done if there is no fog manager
+		/// Fogs the setup. Sets the shaders variables to this fog
+		/// </summary>
+		public void FogSetup()
+		{
+			Shader.SetGlobalFloat("_FogStart", m_fogStart);
+			Shader.SetGlobalFloat("_FogEnd", m_fogEnd);
+			Shader.SetGlobalTexture("_FogTexture", texture);
+		}
 	}
 
 
@@ -423,8 +434,7 @@ public class FogManager : MonoBehaviour
 
 	void OnDrawGizmosSelected()
 	{
-		
-			RefreshFog();
+		RefreshFog();
 	}
 
 	void RefreshFog()
@@ -435,9 +445,7 @@ public class FogManager : MonoBehaviour
 
 		if (!Application.isPlaying )
 		{
-			Shader.SetGlobalFloat("_FogStart", m_defaultAreaFog.m_fogStart);
-			Shader.SetGlobalFloat("_FogEnd", m_defaultAreaFog.m_fogEnd);
-			Shader.SetGlobalTexture("_FogTexture", m_defaultAreaFog.texture);
+			m_defaultAreaFog.FogSetup();
 		}
 	}
 

@@ -61,12 +61,12 @@ namespace LevelEditor {
 			DebugUtils.Assert(controller != null, "Required component!");
 			controller.OnOpenPreAnimation.AddListener(OnOpenPreAnimation);
 
-			Messenger.AddListener(GameEvents.PLAYER_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
+			Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 		}
 
 		void OnDestroy()
 		{
-			Messenger.RemoveListener(GameEvents.PLAYER_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
+			Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 		}
 		
 		/// <summary>

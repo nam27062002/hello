@@ -9,8 +9,10 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -29,14 +31,13 @@ public class PopupCurrencyShop : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed Setup
-	[Separator]
-	[SerializeField] private int m_coinsAmount = 1000;
-	[SerializeField] private int m_pcAmount = 1000;
-
-	// Exposed References
-	[Separator]
-	[SerializeField] private TextMeshProUGUI m_coinsAmountText = null;
-	[SerializeField] private TextMeshProUGUI m_pcAmountText = null;
+	[SerializeField] private TabSystem m_tabs = null;
+	[Space]
+	[SerializeField] private GameObject m_pillPrefab = null;
+	[SerializeField] private ScrollRect m_scScrollList = null;
+	[SerializeField] private ScrollRect m_pcScrollList = null;
+	[Space]
+	[SerializeField] private float[] m_pillRotationSequence = new float[0];
 
 	// Other setup parameters
 	private bool m_closeAfterPurchase = true;
@@ -44,6 +45,14 @@ public class PopupCurrencyShop : MonoBehaviour {
 		get { return m_closeAfterPurchase; }
 		set { m_closeAfterPurchase = value; }
 	}
+
+	// Internal
+	private List<PopupCurrencyShopPill> m_scPills = new List<PopupCurrencyShopPill>();
+	private List<PopupCurrencyShopPill> m_pcPills = new List<PopupCurrencyShopPill>();
+
+	// HUD management
+	private bool m_hudVisible = false;
+	private ShowHideAnimator m_hudAnimator = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -53,43 +62,122 @@ public class PopupCurrencyShop : MonoBehaviour {
 	/// </summary>
 	void Awake() {
 		// Check required fields
-		DebugUtils.Assert(m_coinsAmountText != null, "Missing required reference!");
-		DebugUtils.Assert(m_pcAmountText != null, "Missing required reference!");
+		Debug.Assert(m_tabs != null, "Missing required reference!");
+		Debug.Assert(m_pillPrefab != null, "Missing required reference!");
+		Debug.Assert(m_scScrollList != null, "Missing required reference!");
+		Debug.Assert(m_pcScrollList != null, "Missing required reference!");
+
+		// Get some external references for future use
+		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+		if(menuController != null) {
+			m_hudAnimator = menuController.hud.GetComponent<ShowHideAnimator>();
+		}
+
+		// Clear containers
+		m_scScrollList.content.DestroyAllChildren(false);
+		m_pcScrollList.content.DestroyAllChildren(false);
+
+		// Create pills
+		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.SHOP_PACKS);
+		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
+		for(int i = 0; i < defs.Count; i++) {
+			// Create new instance and initialize it
+			GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab);
+			PopupCurrencyShopPill newPill = newPillObj.GetComponent<PopupCurrencyShopPill>();
+			newPill.InitFromDef(defs[i]);
+
+			// Based on pill's type, add it to corresponding list and container
+			int pillIdx = -1;	// Will be used later on
+			switch(newPill.type) {
+				case UserProfile.Currency.SOFT: {
+					// Store to list and add to parent
+					newPill.transform.SetParentAndReset(m_scScrollList.content);
+					m_scPills.Add(newPill);
+					pillIdx = m_scPills.Count - 1;
+				} break;
+
+				case UserProfile.Currency.HARD: {
+					// Store to list and add to parent
+					newPill.transform.SetParentAndReset(m_pcScrollList.content);
+					m_pcPills.Add(newPill);
+					pillIdx = m_pcPills.Count - 1;
+				} break;
+
+				default: {
+					// Unknown pill type, destroy it and move on
+					GameObject.Destroy(newPillObj);
+					continue;
+				} break;
+			}
+
+			// Apply "random" rotation to the pill
+			if(m_pillRotationSequence.Length > 0 && pillIdx >= 0) {
+				newPill.transform.localRotation = Quaternion.Euler(0f, 0f, m_pillRotationSequence[pillIdx % m_pillRotationSequence.Length]);
+			}
+		}
+
+		// Reset scroll lists and program initial animation
+		m_scScrollList.horizontalNormalizedPosition = 0f;
+		m_pcScrollList.horizontalNormalizedPosition = 0f;
 	}
 	
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	void OnEnable() {
-		// Update textfields
-		m_coinsAmountText.text = StringUtils.FormatNumber(m_coinsAmount);
-		m_pcAmountText.text = StringUtils.FormatNumber(m_pcAmount);
+		// Subscribe to external events
+		Messenger.AddListener<string>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+	}
+
+	/// <summary>
+	/// Component has been disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<string>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
 	}
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
 	/// <summary
-	/// Add coins button.
+	/// Successful purchase.
 	/// </summary>
-	public void OnAddCoins() {
-		// Just do it
-		UsersManager.currentUser.AddCoins(m_coinsAmount);
-		PersistenceManager.Save(true);
-
+	public void OnPurchaseSuccessful(string _productSku) {
 		// Close popup?
 		if(m_closeAfterPurchase) GetComponent<PopupController>().Close(true);
 	}
 
-	/// <summary
-	/// Add PC button.
+	/// <summary>
+	/// The popup is about to be been opened.
 	/// </summary>
-	public void OnAddPC() {
-		// Just do it
-		UsersManager.currentUser.AddPC(m_pcAmount);
-		PersistenceManager.Save(true);
+	public void OnOpenPreAnimation() {
+		// Refresh pills?
 
-		// Close popup?
-		if(m_closeAfterPurchase) GetComponent<PopupController>().Close(true);
+		// Go to initial tab
+		m_tabs.GoToScreen(m_tabs.initialScreen, NavigationScreen.AnimType.NONE);
+
+		// Reset scroll lists and program initial animation
+		m_scScrollList.horizontalNormalizedPosition = 0f;
+		m_pcScrollList.horizontalNormalizedPosition = 0f;
+		m_pcScrollList.DOHorizontalNormalizedPos(-10f, 0.5f).From().SetEase(Ease.OutCubic).SetDelay(0.25f).SetUpdate(true);
+
+		// Hide other currency counters to prevent conflicts
+		Messenger.Broadcast<bool>(GameEvents.UI_TOGGLE_CURRENCY_COUNTERS, false);
+	}
+
+	/// <summary>
+	/// The popup has just been opened.
+	/// </summary>
+	public void OnOpenPostAnimation() {
+		
+	}
+
+	/// <summary>
+	/// Popup is about to be closed.
+	/// </summary>
+	public void OnClosePreAnimation() {
+		// Restore currency counters
+		Messenger.Broadcast<bool>(GameEvents.UI_TOGGLE_CURRENCY_COUNTERS, true);
 	}
 }

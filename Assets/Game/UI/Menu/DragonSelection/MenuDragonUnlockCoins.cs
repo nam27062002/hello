@@ -63,7 +63,7 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 		if(data == null) return;
 
 		// Update price
-		m_priceText.text = UIConstants.IconString(data.def.GetAsLong("unlockPriceCoins"), UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
+		m_priceText.text = UIConstants.GetIconString(data.def.GetAsLong("unlockPriceCoins"), UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
 	}
 
 	/// <summary>

@@ -61,7 +61,7 @@ public class HUDRevive : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
-		Messenger.AddListener(GameEvents.PLAYER_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
+		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 		m_timer.Stop();
 		m_paidReviveCount = 0;
 		m_freeReviveCount = 0;
@@ -82,7 +82,7 @@ public class HUDRevive : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
-		Messenger.RemoveListener(GameEvents.PLAYER_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
+		Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 
 		// Restore timescale
 		Time.timeScale = 1f;
@@ -175,7 +175,7 @@ public class HUDRevive : MonoBehaviour {
 	private void OnPlayerKo(DamageType _type) {
 		// Initialize PC cost
 		if ( m_pcText != null )
-			m_pcText.text = UIConstants.IconString((m_freeReviveCount + m_paidReviveCount) + 1, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);	// [AOC] TODO!! Actual revive cost formula
+			m_pcText.text = UIConstants.GetIconString((m_freeReviveCount + m_paidReviveCount) + 1, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);	// [AOC] TODO!! Actual revive cost formula
 
 		// Free revive available?
 		m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && m_freeReviveCount < m_freeRevivesPerGame);

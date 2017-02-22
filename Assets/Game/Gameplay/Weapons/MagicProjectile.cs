@@ -2,13 +2,14 @@
 using System.Collections;
 
 public class MagicProjectile : MonoBehaviour, IProjectile {
-
-	[SerializeField] private float m_damage = 5f;
+	
 	[SerializeField] private float m_damageDelay = 0f;
 
 	[SerializeField] private EffectSettings m_effect;
 	[SerializeField] private GameObject m_effectIdle;
 	private Transform m_oldParent;
+
+	private float m_damage;
 
 	private bool m_hasBeenShot;
 	private bool m_isDragonHit;
@@ -72,27 +73,25 @@ public class MagicProjectile : MonoBehaviour, IProjectile {
 		m_effectIdle.SetActive(true);
 	}
 
-	public void Shoot(Vector3 _target) {
+	public void Shoot(Vector3 _target, float _damage) {
 		transform.parent = m_oldParent;
 		m_effect.Target = InstanceManager.player.gameObject;
+
+		m_damage = _damage;
 
 		m_effectIdle.SetActive(false);
 		m_effect.gameObject.SetActive(true);
 		m_hasBeenShot = true;
 	}
 
-	public void Shoot(Vector3 _target, float _damage) {
-		Shoot(_target);
-	}
-
-	public void ShootTowards(Vector3 _direction) {}
-	public void ShootTowards(Vector3 _direction, float _speed) {}
 	public void ShootTowards(Vector3 _direction, float _speed, float _damage) {}
 
 	public void ShootAtPosition(Transform _from, float _damage, Vector3 _pos) {		
 		transform.parent = m_oldParent;
 		// m_effect.Target = InstanceManager.player.gameObject;
 		m_effect.MoveVector = _pos - _from.transform.position;
+
+		m_damage = _damage;
 
 		m_effectIdle.SetActive(false);
 		m_effect.gameObject.SetActive(true);

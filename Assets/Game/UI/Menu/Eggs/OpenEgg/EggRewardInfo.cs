@@ -155,7 +155,7 @@ public class EggRewardInfo : MonoBehaviour {
 		// If we've actually completed the egg, show completed info instead
 		bool goldenEggCompleted = (_amount >= EggManager.goldenEggRequiredFragments);
 		if(!goldenEggCompleted) {
-			m_goldenFragmentCounterText.text = UIConstants.IconString(
+			m_goldenFragmentCounterText.text = UIConstants.GetIconString(
 				LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(_amount), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments)),
 				UIConstants.IconType.GOLDEN_FRAGMENTS,
 				UIConstants.IconAlignment.LEFT

@@ -357,23 +357,33 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	void OnEnable() {
 		Messenger.AddListener(GameEvents.PLAYER_DIED, PnPDied);
 		Messenger.AddListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggle);
+		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
 	}
 
 	void OnDisable()
 	{
 		Messenger.RemoveListener(GameEvents.PLAYER_DIED, PnPDied);
 		Messenger.RemoveListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggle);
+		Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
 	}
 
 	private void PnPDied()
 	{
 		m_impulse = Vector3.zero;
+		m_rbody.velocity = m_impulse;
 		m_deadTimer = 1000;
 	}
 
 	private void OnDrunkToggle(bool _active)
 	{
 		m_animator.SetBool("drunk", _active);
+	}
+
+	private void OnPetPreFreeRevive()
+	{
+		m_impulse = Vector3.zero;
+		m_rbody.velocity = m_impulse;
+		m_deadTimer = 1000;
 	}
 
 	private void ChangeState(State _nextState) {
@@ -1725,6 +1735,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	}
 
 	public void Die(){
+		
 		ChangeState(State.Dead);
 	}
 
