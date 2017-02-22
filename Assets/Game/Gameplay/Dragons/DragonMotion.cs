@@ -249,6 +249,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public Current  	current { get; set; }
 
 	private Vector3 m_diePosition;
+	public Vector3 diePosition{ get{return m_diePosition;} }
 	private Vector3 m_revivePosition;
 	private float m_reviveTimer;
 	private const float m_reviveDuration = 1;

@@ -4,7 +4,10 @@ using System.Collections.Generic;
 
 namespace AI {
 	public class MachineEater : MachineComponent {
-		
+
+		public override Type type { get { return Type.Eater; } }
+
+
 		public MachineEater() {}
 
 		public override void Init() {}
