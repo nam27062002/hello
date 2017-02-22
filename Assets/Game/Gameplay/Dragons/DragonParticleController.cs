@@ -274,7 +274,7 @@ public class DragonParticleController : MonoBehaviour
 			{
 				// Instantiate particle
 				GameObject instance = m_petRevive.CreateInstance();
-				instance.transform.position = m_reviveAnchor.position + m_petRevive.offset;
+				instance.transform.position = m_dargonMotion.diePosition + m_petRevive.offset;
 			}break;
 		}
 		m_alive = true;
