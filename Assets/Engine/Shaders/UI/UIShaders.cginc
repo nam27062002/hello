@@ -4,18 +4,22 @@
 #ifndef UI_SHADERS_INCLUDED
 #define UI_SHADERS_INCLUDED
 #include "UnityCG.cginc"
+#include "UnityUI.cginc"
 
 // TYPES ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct appdata_t {
 	fixed4 vertex   : POSITION;
 	fixed4 color    : COLOR;
 	fixed2 texcoord : TEXCOORD0;
+	UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
 struct v2f {
 	fixed4 vertex   : SV_POSITION;
 	fixed4 color    : COLOR;
 	fixed2 texcoord  : TEXCOORD0;
+	float4 worldPosition : TEXCOORD1;
+	UNITY_VERTEX_OUTPUT_STEREO
 };
 
 // PROPERTIES //////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,6 +30,9 @@ uniform fixed _Alpha;
 uniform fixed _SaturationAmount;
 uniform fixed _BrightnessAmount;
 uniform fixed _ContrastAmount;
+
+fixed4 _TextureSampleAdd;
+float4 _ClipRect;
 
 // AUX METHODS /////////////////////////////////////////////////////////////////////////////////////////////
 // Aux method to apply brightness/saturation/contrast factors to a given color
