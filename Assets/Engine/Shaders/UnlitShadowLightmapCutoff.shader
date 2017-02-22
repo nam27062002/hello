@@ -109,5 +109,5 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Cutoff (On Line Decorations)"
 		}
 	}
 
-//	Fallback "Hungry Dragon/VertexLit"
+	Fallback "Hungry Dragon/VertexLit"
 }
