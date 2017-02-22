@@ -63,7 +63,7 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 		if(data == null) return;
 
 		// Update price
-		m_priceText.text = UIConstants.IconString(data.def.GetAsLong("unlockPricePC"), UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+		m_priceText.text = UIConstants.GetIconString(data.def.GetAsLong("unlockPricePC"), UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
 	}
 
 	/// <summary>

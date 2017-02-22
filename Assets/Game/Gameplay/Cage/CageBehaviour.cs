@@ -13,7 +13,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	[SerializeField] private GameObject m_colliderHolder;
 	[SerializeField] private GameObject m_view;
 	[SerializeField] private GameObject[] m_viewDestroyed;
-	[SerializeField] private string m_onBreakParticle;
+	[SerializeField] private ParticleData m_onBreakParticle;
 	[SerializeField] private string m_onBreakSound;
 	[SerializeField] private string m_onCollideSound;
 
@@ -64,6 +64,10 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 		m_waitTimer -= Time.deltaTime;
 	}
 
+	private void LateUpdate() {
+	//	m_cageSpawner.UpdatePrisonerTransform(m_view.transform);
+	}
+
 	private void OnCollisionEnter(Collision collision) {
 		if (collision.transform.CompareTag("Player")) {
 			if (m_currentHits.needBoost) {
@@ -96,13 +100,9 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 
 	private void Break() {
 		// Spawn particle
-		GameObject prefab = Resources.Load("Particles/" + m_onBreakParticle) as GameObject;
-		if (prefab != null) {
-			GameObject go = Instantiate(prefab) as GameObject;
-			if (go != null) {
-				go.transform.position = transform.position;
-				go.transform.rotation = transform.rotation;
-			}
+		if (m_onBreakParticle.IsValid()) {
+			GameObject ps = ParticleManager.Spawn(m_onBreakParticle);
+			ps.transform.position = m_view.transform.TransformPoint(m_onBreakParticle.offset);
 		}
 
 		m_view.SetActive(false);
@@ -113,8 +113,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 
 		m_cageSpawner.SetEntitiesFree();
 
-		if ( !string.IsNullOrEmpty(m_onBreakSound) )
-		{
+		if (!string.IsNullOrEmpty(m_onBreakSound)) {
 			AudioController.Play(m_onBreakSound);
 		}
 	}
