@@ -1382,13 +1382,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecc5931f6726749fe8e6a8a5445eeacb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefabStr: Air/PF_FlyingPig
+  m_entityPrefabStr: 
   m_spawnTime:
     min: 0
     max: 0
   m_spawnAtTransform: {fileID: 4000012877512430}
   m_mustBeChild: 0
   m_lookAtVector: 0
+  m_possibleSpawners:
+  - Air/PF_FlyingPig
 --- !u!135 &135000013338795870
 SphereCollider:
   m_ObjectHideFlags: 1

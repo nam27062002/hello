@@ -27,7 +27,6 @@ namespace AI {
 			private static string OnPreyReleased = "OnPreyReleased";
 
 			PetTakePreyToPlayerData m_data;
-			string[] possibleEntities;
 			float m_speed;
 			float m_frontDistance;
 			EatBehaviour m_eatBehaviour;
@@ -38,20 +37,18 @@ namespace AI {
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<PetTakePreyToPlayerData>();
 
-				possibleEntities = m_data.m_possiblePreyList.Split(new string[] { "," }, StringSplitOptions.None);
 				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * m_data.m_speedMultiplier;
 				m_frontDistance = InstanceManager.player.data.GetScaleAtLevel( InstanceManager.player.data.progression.maxLevel) * 6;
 				m_eatBehaviour = m_machine.GetComponent<EatBehaviour>();
 				m_petDogSpawner = m_machine.GetComponent<PetDogSpawner>();
 				m_transitionParam = new object[1];
-
-				// m_petDogSpawner.AddPossibleSpawner();
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
 				base.OnEnter(_oldState, _param);
 
 				m_eatBehaviour.AdvanceHold(false);
+				m_petDogSpawner.RamdomizeEntity();
 				m_petDogSpawner.Respawn();
 				Pilot p = m_petDogSpawner.operatorPilot;
 				m_spawnedEntity = p.GetComponent<Entity>();
