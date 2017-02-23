@@ -156,7 +156,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 				dragonMotion.AddForce(knockBack);
 			}
 
-			InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType);
+			InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, transform);
 		}
 
 		gameObject.SetActive(false);

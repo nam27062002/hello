@@ -310,7 +310,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	public void Explode(bool _triggeredByPlayer) {
 		// dealing damage
 		if (m_damageType == DamageType.EXPLOSION || m_damageType == DamageType.MINE) {
-			m_explosive.Explode(m_position, m_knockback, _triggeredByPlayer);
+			m_explosive.Explode(transform, m_knockback, _triggeredByPlayer);
 		} else {
 			if (_triggeredByPlayer) {
 				if (m_knockback > 0) {
@@ -323,7 +323,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 					dragonMotion.AddForce(knockBackDirection * m_knockback);
 				}
 
-				InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType);
+				InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, transform);
 			}
 
 			if (m_onHitParticle.IsValid()) {

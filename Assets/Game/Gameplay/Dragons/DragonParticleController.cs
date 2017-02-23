@@ -60,6 +60,12 @@ public class DragonParticleController : MonoBehaviour
 	public Transform m_hiccupAnchor = null;
 	private ParticleSystem m_hiccupInstance;
 
+	[Space]
+	public ParticleData m_shieldParticle;
+	public Transform m_shieldAnchor = null;
+	private ParticleSystem m_shieldInstance;
+
+
 	private Transform _transform;
 	private bool m_insideWater = false;
 	private bool m_alive = true;
@@ -132,7 +138,7 @@ public class DragonParticleController : MonoBehaviour
 		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
 		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
-		// Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
+		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLost);
 	}
 
 	void OnDisable()
@@ -141,6 +147,7 @@ public class DragonParticleController : MonoBehaviour
 		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
 		Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
+		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLost);
 	}
 
 	void Update()
@@ -282,6 +289,17 @@ public class DragonParticleController : MonoBehaviour
 		}
 		m_alive = true;
 		CheckBodyParts();
+	}
+
+	public void OnShieldLost( DamageType _damageType, Transform _tr)
+	{
+		GameObject instance =  m_shieldParticle.CreateInstance();
+		instance.transform.parent = m_shieldAnchor;
+		instance.transform.localPosition = m_shieldParticle.offset;
+		if ( _tr != null )
+		{
+			instance.transform.LookAt( _tr.position );
+		}
 	}
 
 
