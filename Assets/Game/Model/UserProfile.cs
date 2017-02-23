@@ -30,6 +30,17 @@ public class UserProfile : UserSaveSystem
 	// Make sure persistence JSON is formatted equal in all systems!
 	private static readonly System.Globalization.CultureInfo JSON_FORMATTING_CULTURE = System.Globalization.CultureInfo.InvariantCulture;
 
+	public enum Currency {
+		NONE,
+
+		SOFT,
+		HARD,
+		REAL,
+		GOLDEN_FRAGMENTS,
+
+		COUNT
+	};
+
     //------------------------------------------------------------------------//
     // MEMBERS																  //
     //------------------------------------------------------------------------//
@@ -254,6 +265,33 @@ public class UserProfile : UserSaveSystem
 		// Compute new value and dispatch event
 		m_pc += _iAmount;
 		Messenger.Broadcast<long, long>(GameEvents.PROFILE_PC_CHANGED, pc - _iAmount, pc);
+	}
+
+	/// <summary>
+	/// Add any type of currency.
+	/// </summary>
+	/// <param name="_amount">Amount to be added. Negative to subtract.</param>
+	/// <param name="_currency">Currency type.</param>
+	public void AddCurrency(long _amount, Currency _currency) {
+		switch(_currency) {
+			case Currency.SOFT:				AddCoins(_amount);					break;
+			case Currency.HARD:				AddPC(_amount);						break;
+			case Currency.GOLDEN_FRAGMENTS:	goldenEggFragments += (int)_amount;	break;
+		}
+	}
+
+	/// <summary>
+	/// Get current amount of any currency.
+	/// </summary>
+	/// <returns>The current amount of the required currency.</returns>
+	/// <param name="_currency">Currency type.</param>
+	public long GetCurrency(Currency _currency) {
+		switch(_currency) {
+			case Currency.SOFT:				return coins;						break;
+			case Currency.HARD:				return pc;							break;
+			case Currency.GOLDEN_FRAGMENTS:	return (long)goldenEggFragments;	break;
+		}
+		return 0;
 	}
 
 	/// <summary>

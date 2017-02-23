@@ -4,6 +4,8 @@ using System.Collections.Generic;
 namespace AI {
 	public class MachineEdible : MachineComponent {
 
+		public override Type type { get { return Type.Edible; } }
+
 		//-----------------------------------------------
 		//
 		//-----------------------------------------------

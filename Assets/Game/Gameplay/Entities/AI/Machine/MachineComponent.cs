@@ -4,6 +4,17 @@ using UnityEngine;
 namespace AI {
 	public abstract class MachineComponent {
 
+		public enum Type {
+			Motion = 0,
+			Sensor_Enemy,
+			Sensor_Player,
+			Edible,
+			Inflammable,
+			Eater
+		}
+
+		public abstract Type type { get; }
+
 		protected IEntity m_entity;
 		protected IMachine m_machine;
 		protected Pilot m_pilot;

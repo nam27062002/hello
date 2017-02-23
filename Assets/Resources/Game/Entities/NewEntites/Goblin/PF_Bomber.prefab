@@ -1372,13 +1372,10 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_speedFactorRange:
-    min: 0.9
-    max: 1.4
-  m_serializedJson: '[{"projectileName":"PF_Bomb","projectileSpawnTransformName":"Human_R_Weapon_01","damage":40,"consecutiveAttacks":2,"attackDelay":1.5,"retreatTime":0,"stop":false,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":13,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":17,"panicSpeed":20,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
+  m_serializedJson: '[{"projectileName":"PF_Bomb","projectileSpawnTransformName":"Human_R_Weapon_01","damage":8,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":2,"stop":false,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":12,"panicSpeed":14,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
   m_databaseKey: PF_Bomber
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 6
+  m_avoidDistanceAttenuation: 5
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!114 &114385421631409050
@@ -1413,9 +1410,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 0
-    m_sightRadius: 15
-    m_maxRadius: 13
-    m_minRadius: 11
+    m_sightRadius: 9.5
+    m_maxRadius: 7.5
+    m_minRadius: 5.5
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1

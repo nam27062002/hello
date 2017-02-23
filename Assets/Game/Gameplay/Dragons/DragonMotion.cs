@@ -249,6 +249,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public Current  	current { get; set; }
 
 	private Vector3 m_diePosition;
+	public Vector3 diePosition{ get{return m_diePosition;} }
 	private Vector3 m_revivePosition;
 	private float m_reviveTimer;
 	private const float m_reviveDuration = 1;
@@ -356,23 +357,33 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	void OnEnable() {
 		Messenger.AddListener(GameEvents.PLAYER_DIED, PnPDied);
 		Messenger.AddListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggle);
+		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
 	}
 
 	void OnDisable()
 	{
 		Messenger.RemoveListener(GameEvents.PLAYER_DIED, PnPDied);
 		Messenger.RemoveListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggle);
+		Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
 	}
 
 	private void PnPDied()
 	{
 		m_impulse = Vector3.zero;
+		m_rbody.velocity = m_impulse;
 		m_deadTimer = 1000;
 	}
 
 	private void OnDrunkToggle(bool _active)
 	{
 		m_animator.SetBool("drunk", _active);
+	}
+
+	private void OnPetPreFreeRevive()
+	{
+		m_impulse = Vector3.zero;
+		m_rbody.velocity = m_impulse;
+		m_deadTimer = 1000;
 	}
 
 	private void ChangeState(State _nextState) {
@@ -1173,9 +1184,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
             Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
             // stroke's Drag
-           
-
             m_impulse = m_rbody.velocity;
+      
             if (m_impulse.y > m_prevImpulse.y)
             {
                 m_impulse.y = m_prevImpulse.y;
@@ -1191,8 +1201,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
             //Vector3 mimpulseback = m_impulse;
             m_impulse += (acceleration * _deltaTime) - (impulseCapped.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
-            //m_impulse += (acceleration * _deltaTime) - (m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
-
+            
             m_prevImpulse = m_impulse;
 
             m_direction = m_impulse.normalized;
@@ -1726,6 +1735,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	}
 
 	public void Die(){
+		
 		ChangeState(State.Dead);
 	}
 
@@ -1809,10 +1819,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 
 			case State.OuterSpace: {
-				// Move down
-				if(m_impulse.y > 0) {
-					//m_impulse.y = 0;
-					
+                    // Move down
+                    if(m_impulse.y < 0) 
+                    {
+					    m_impulse.y = 0;
+                        m_rbody.velocity.Scale(new Vector3(1, 0, 1));
+                        m_prevImpulse.y = 0;
+                        //Debug.LogError("OUTER COL"+ m_prevImpulse.y);
                     }
                     
                     // Smooth bounce effect on X
@@ -1827,7 +1840,35 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	}
 
-	private bool IsAliveState()
+    void OnCollisionStay(Collision collision)
+    {
+        switch (m_state)
+        {
+          
+
+            case State.OuterSpace:
+                {
+                    // Move down
+                    if(m_impulse.y < 0) 
+                    {
+                        m_impulse.y = 0;
+                        m_rbody.velocity.Scale(new Vector3(1, 0, 1));
+                        m_prevImpulse.y = 0;
+                        //Debug.LogError("OUTER COL" + m_prevImpulse.y);
+                    }
+
+                    // Smooth bounce effect on X
+                    m_impulse.x = -m_impulse.x * 0.05f;
+
+                }
+                break;
+
+         
+        }
+
+    }
+
+    private bool IsAliveState()
 	{
 		if (m_state == State.Dead || m_state == State.Reviving )
 			return false;

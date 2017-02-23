@@ -291,6 +291,11 @@ public class DragonPlayer : MonoBehaviour {
 			if (m_breathBehaviour.IsFuryOn())
 				m_breathBehaviour.RecalculateSize();
 		}
+
+		if ( Input.GetKeyDown(KeyCode.J) )
+		{
+			AddAlcohol(100);
+		}
 	}
 
 	//------------------------------------------------------------------//
