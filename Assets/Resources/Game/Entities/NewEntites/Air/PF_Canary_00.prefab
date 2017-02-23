@@ -197,7 +197,6 @@ GameObject:
   m_Component:
   - component: {fileID: 442350}
   - component: {fileID: 9549138}
-  - component: {fileID: 11407290}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -433,24 +432,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11407290
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 170304}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 372d568832f6644d4b9ca9738dcd76b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_timeToGlide:
-    min: 120
-    max: 180
-  m_allowToGlide: 1
-  m_glidingTime:
-    min: 0.5
-    max: 1
 --- !u!114 &11430714
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -469,9 +450,6 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_speedFactorRange:
-    min: 0.85
-    max: 1.15
   m_serializedJson: '[{"boostSpeed":11,"panicSpeed":12.5,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":0,"separation":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":2,"catchUpSpeed":3,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":2,"catchUpSpeed":3,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Canary_00
   m_preciseDestArrival: 0
@@ -545,7 +523,7 @@ MonoBehaviour:
     m_mass: 10
     m_attackPausesJump: 0
     m_defaultUpVector: 0
-    m_orientationSpeed: 480
+    m_orientationSpeed: 240
     m_faceDirection: 1
     m_useDragonStyleRotation: 0
     m_rollRotation: 1
