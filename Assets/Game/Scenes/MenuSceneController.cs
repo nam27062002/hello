@@ -51,6 +51,9 @@ public class MenuSceneController : SceneController {
 		get { return m_hud; }
 	}
 
+	[SerializeField]
+	private FogManager.FogAttributes m_fogSetup;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -68,7 +71,19 @@ public class MenuSceneController : SceneController {
 		m_selectedLevel = UsersManager.currentUser.currentLevel;		// UserProfile should be loaded and initialized by now
 
 		// Shortcut to screens controller
-		m_screensController = GetComponent<MenuScreensController>();        
+		m_screensController = GetComponent<MenuScreensController>();     
+
+		if (m_fogSetup.texture == null)
+		{
+			m_fogSetup.CreateTexture();
+			m_fogSetup.RefreshTexture();
+		}
+		m_fogSetup.FogSetup();
+	}
+
+	protected override void OnDestroy() {
+		m_fogSetup.DestroyTexture();
+		base.OnDestroy();
 	}
 	
 	/// <summary>
