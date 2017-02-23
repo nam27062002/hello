@@ -64,6 +64,37 @@ public class AssetFinder : EditorWindow {
         }
     }
 
+
+    //------------------------------------------------------------------------//
+    // Find any asset type in Content browser
+    //------------------------------------------------------------------------//
+    static void FindAssetInScene<T>(out T[] assetList) where T : UnityEngine.Object
+    {
+        assetList = Object.FindObjectsOfType(typeof(T)) as T[];
+
+        /*
+                //        string[] fileList = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
+                string typeName = typeof(T).ToString();
+                typeName = typeName.Contains("UnityEngine") ? typeName.Replace("UnityEngine.", "") : typeName;
+                string filter = "t:" + typeName;
+                Debug.Log("filter: " + filter);
+                string[] guids = AssetDatabase.FindAssets(filter);
+
+                foreach (string guid in guids)
+                {
+                    string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+
+                    T asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+
+                    if (asset != null)
+                    {
+                        assetList.Add(asset);
+                    }
+                }
+        */
+    }
+
+
     /// <summary>
     /// Resets all shader keywords stored in materials or material selection
     /// </summary>
@@ -123,7 +154,34 @@ public class AssetFinder : EditorWindow {
 
     }
 
+    [MenuItem("Hungry Dragon/Tools/Find shader in scene")]
+    public static void FindShaderInScene()
+    {
+        Renderer[] renderers;
+        FindAssetInScene<Renderer>(out renderers);
+        bool found = false;
 
+        foreach (Renderer rend in renderers)
+        {
+            Material[] materials = rend.materials;
+            int matID = 0;
+            foreach (Material mat in materials)
+            {
+                if (mat.shader.name == "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow")
+                {
+                    Debug.Log("GameObject:" + rend.gameObject.name);
+                    Debug.Log("MatID" + matID++ + " Name:" + mat.name);
+                    Debug.Log("Shader:" + mat.shader.name);
+                    found = true;
+                }
+            }
+        }
+
+        if (!found)
+        {
+            Debug.Log("No shader instance found of:" + "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow");
+        }
+    }
 
     //------------------------------------------------------------------//
     // METHODS															//
@@ -149,20 +207,6 @@ public class AssetFinder : EditorWindow {
 
 	}
 
-	/// <summary>
-	/// Called 100 times per second on all visible windows.
-	/// </summary>
-	public void Update() {
-		
-	}
-
-	/// <summary>
-	/// OnInspectorUpdate is called at 10 frames per second to give the inspector a chance to update.
-	/// Called less times as if it was OnGUI/Update
-	/// </summary>
-	public void OnInspectorUpdate() {
-		
-	}
 
 	/// <summary>
 	/// Update the inspector window.

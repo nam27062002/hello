@@ -28,12 +28,11 @@ public class PopupPauseMapTab : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[Separator("Map Area")]
-	[SerializeField] private GameObject m_mapView = null;
 	[SerializeField] private ShowHideAnimator m_lockGroupAnim = null;
 	[SerializeField] private Animator m_lockIconAnim = null;
 
 	[Separator("Info Area")]
-	[SerializeField] private Localizer m_descriptionText = null;
+	[SerializeField] private Localizer m_upgradeInfoText = null;
 	[SerializeField] private ShowHideAnimator m_upgradeAreaAnim = null;
 	[SerializeField] private ShowHideAnimator m_infoAreaAnim = null;
 
@@ -44,6 +43,10 @@ public class PopupPauseMapTab : MonoBehaviour {
 	[Space]
 	[SerializeField] private ShowHideAnimator m_pcButtonAnim = null;
 	[SerializeField] private TextMeshProUGUI m_pcPriceText = null;
+
+	// FX
+	[Separator("FX")]
+	[SerializeField] private ParticleSystem m_upgradeFX = null;
 
 	// Internal
 	private DefinitionNode m_def = null;
@@ -103,20 +106,28 @@ public class PopupPauseMapTab : MonoBehaviour {
 		// Skip if definition not valid
 		if(m_def == null) return;
 
-		// Description
-		m_descriptionText.Localize(m_def.Get("tidDesc"));
-
-		// Price tags
+		// Aux vars
+		int mapLevel = UsersManager.currentUser.mapLevel;
 		int priceSC = m_def.GetAsInt("upgradePriceSC");
-		m_scPriceText.text = UIConstants.IconString(priceSC, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
-
 		int pricePC = m_def.GetAsInt("upgradePriceHC");
-		m_pcPriceText.text = UIConstants.IconString(pricePC, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+		bool isMaxed = (priceSC <= 0 && pricePC <= 0);	// If no upgrades are available for purchase, map is maxed out
 
-		// Buttons visibility
-		m_scButtonAnim.Set(priceSC > 0 && pricePC <= 0);
-		m_pcButtonAnim.Set(pricePC > 0);	// Regardless of SC price
-		//m_noPriceAnim.Set(priceSC <= 0 && pricePC <= 0);
+		// Lock icon
+		m_lockGroupAnim.Set(mapLevel <= 0);
+
+		// Upgrade info
+		m_upgradeInfoText.Localize(m_def.Get("tidDesc"));
+		m_upgradeAreaAnim.Set(!isMaxed);
+		m_infoAreaAnim.Set(isMaxed);
+		if(!isMaxed) {
+			// Price tags
+			m_scPriceText.text = UIConstants.GetIconString(priceSC, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
+			m_pcPriceText.text = UIConstants.GetIconString(pricePC, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+
+			// Buttons visibility
+			m_scButtonAnim.Set(priceSC > 0 && pricePC <= 0);
+			m_pcButtonAnim.Set(pricePC > 0);	// Regardless of SC price
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -179,19 +190,33 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// </summary>
 	/// <param name="_newLevel">New map level.</param>
 	public void OnMapUpgraded(int _newLevel) {
+		// Aux vars
+		float refreshDelay = 0.15f;
+
 		// Get new map definition
 		UpdateDefinition();
 
+		// If it's the first upgrade, show nice unlock animation
+		if(_newLevel == 1) {
+			// Launch unlock anim
+			m_lockIconAnim.SetTrigger("unlock");
+			refreshDelay = 1.3f;	// Longer delay
+		}
+
 		// Trigger FX
-		/*m_upgradeFX.Stop();
+		m_upgradeFX.Stop();
 		m_upgradeFX.Clear();
 		m_upgradeFX.Play();
 
-		// Image animation (to hide sprite swap)
-		m_mapImage.transform.DOKill(true);
-		m_mapImage.transform.DOScale(0f, 0.15f).SetEase(Ease.InBack).SetLoops(2, LoopType.Yoyo).SetAutoKill(true);*/
-
 		// Refresh info after some delay (to sync with animation)
-		DOVirtual.DelayedCall(0.15f, Refresh);
+		DOVirtual.DelayedCall(refreshDelay, Refresh);
+	}
+
+	/// <summary>
+	/// Lock icon has been tapped.
+	/// </summary>
+	public void OnLockTap() {
+		// Play simpa animation
+		m_lockIconAnim.SetTrigger("bounce");
 	}
 }

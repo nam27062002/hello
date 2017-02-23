@@ -49,6 +49,17 @@ public class FogManager : MonoBehaviour
 			}
 			m_texture.Apply(false);
 		}
+
+		/// <summary>
+		/// WARNING: This only should be done if there is no fog manager
+		/// Fogs the setup. Sets the shaders variables to this fog
+		/// </summary>
+		public void FogSetup()
+		{
+			Shader.SetGlobalFloat("_FogStart", m_fogStart);
+			Shader.SetGlobalFloat("_FogEnd", m_fogEnd);
+			Shader.SetGlobalTexture("_FogTexture", texture);
+		}
 	}
 
 
@@ -91,6 +102,8 @@ public class FogManager : MonoBehaviour
 	private RenderTexture m_blitDestination;
 	private float m_blitLerpValue = 0;
 	bool m_updateBlitOriginTexture = false;
+	FogAttributes m_forcedAttributes = null;
+	bool m_forceUpdate = false;
 
 	void Awake()
 	{
@@ -151,7 +164,7 @@ public class FogManager : MonoBehaviour
 	{
 		InstanceManager.fogManager = null;
 		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
-		Messenger.RemoveListener<string>(GameEvents.CP_STRING_CHANGED, Debug_OnChangedString);
+		Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChangedString);
 	}
 
 	void Debug_OnChanged( string _key, bool value)
@@ -175,23 +188,26 @@ public class FogManager : MonoBehaviour
 			if ( m_fogBlendMode != m_lastBlendMode )
 				OnModeChanged();
 
-			if ( m_activeFogAreaList.Count > 0 )
+			if (m_forcedAttributes == null)
 			{
-				FogArea selectedFogArea = m_activeFogAreaList.Last<FogArea>();
-				m_selectedAttributes = selectedFogArea.m_attributes;
-			}
-			else
-			{
-				m_selectedAttributes = m_defaultAreaFog;
-			}
+				if ( m_activeFogAreaList.Count > 0)
+				{
+					FogArea selectedFogArea = m_activeFogAreaList.Last<FogArea>();
+					m_selectedAttributes = selectedFogArea.m_attributes;
+				}
+				else
+				{
+					m_selectedAttributes = m_defaultAreaFog;
+				}
 
-			if (m_lastSelectedAttributes != m_selectedAttributes)
-			{
-				m_lastSelectedAttributes = m_selectedAttributes;
-				m_transitionTimer = 1.0f;
+				if (m_lastSelectedAttributes != m_selectedAttributes)
+				{
+					m_lastSelectedAttributes = m_selectedAttributes;
+					m_transitionTimer = 1.0f;
 
-				// Copy destination render texture to original texture
-				m_updateBlitOriginTexture = true;
+					// Copy destination render texture to original texture
+					m_updateBlitOriginTexture = true;
+				}
 			}
 
 			switch( m_fogBlendMode )
@@ -241,8 +257,9 @@ public class FogManager : MonoBehaviour
 			}
 		}
 
-		if ( m_updateValues )
+		if ( m_updateValues || m_forceUpdate)
 		{
+			m_forceUpdate = false;
 			m_texture.Apply(false);
 			Shader.SetGlobalFloat("_FogStart", m_start);
 			Shader.SetGlobalFloat("_FogEnd", m_end);
@@ -297,8 +314,9 @@ public class FogManager : MonoBehaviour
 	{
 		if ( Application.isPlaying && m_active && m_fogBlendMode == FogBlendMode.BLIT )
 		{
-			if ( m_updateValues )
+			if ( m_updateValues || m_forceUpdate)
 			{
+				m_forceUpdate = false;
 				Shader.SetGlobalFloat("_FogStart", m_start);
 				Shader.SetGlobalFloat("_FogEnd", m_end);
 				m_fogBlendMaterial.SetFloat("_LerpValue" , m_blitLerpValue);
@@ -416,8 +434,7 @@ public class FogManager : MonoBehaviour
 
 	void OnDrawGizmosSelected()
 	{
-		
-			RefreshFog();
+		RefreshFog();
 	}
 
 	void RefreshFog()
@@ -428,9 +445,21 @@ public class FogManager : MonoBehaviour
 
 		if (!Application.isPlaying )
 		{
-			Shader.SetGlobalFloat("_FogStart", m_defaultAreaFog.m_fogStart);
-			Shader.SetGlobalFloat("_FogEnd", m_defaultAreaFog.m_fogEnd);
-			Shader.SetGlobalTexture("_FogTexture", m_defaultAreaFog.texture);
+			m_defaultAreaFog.FogSetup();
+		}
+	}
+
+	public void ForceAttributes( FogAttributes _attributes )
+	{
+		m_forcedAttributes = _attributes;
+		m_forceUpdate = true;
+		if ( m_forcedAttributes != null )
+		{
+			CheckTextureAvailability( m_forcedAttributes );
+			m_lastSelectedAttributes = m_selectedAttributes = m_forcedAttributes;
+			m_transitionTimer = 0;
+			m_updateBlitOriginTexture = true;
+			SetAsSelectedAttributes();
 		}
 	}
 }

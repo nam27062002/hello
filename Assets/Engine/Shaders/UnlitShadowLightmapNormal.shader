@@ -157,5 +157,5 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow + Normal Map"
 			ENDCG
 		}
 	}
-//	Fallback "Hungry Dragon/VertexLit"
+	Fallback "Hungry Dragon/VertexLit"
 }

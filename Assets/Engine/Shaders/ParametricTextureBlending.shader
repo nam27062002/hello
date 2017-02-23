@@ -153,5 +153,5 @@ Shader "Hungry Dragon/Parametric Texture Blending + Lightmap And Recieve Shadow"
 			ENDCG
 		}
 	}
-//	Fallback "Hungry Dragon/VertexLit"
+	Fallback "Hungry Dragon/VertexLit"
 }

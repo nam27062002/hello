@@ -79,6 +79,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	// Movement control
 	private Vector3 m_impulse;
+    private Vector3 m_prevImpulse;
+
 	private Vector3 m_direction;
     private Vector3 m_directionWhenBoostPressed;
     private Vector3 m_externalForce;	// Used for wind flows, to be set every frame
@@ -247,6 +249,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public Current  	current { get; set; }
 
 	private Vector3 m_diePosition;
+	public Vector3 diePosition{ get{return m_diePosition;} }
 	private Vector3 m_revivePosition;
 	private float m_reviveTimer;
 	private const float m_reviveDuration = 1;
@@ -354,23 +357,33 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	void OnEnable() {
 		Messenger.AddListener(GameEvents.PLAYER_DIED, PnPDied);
 		Messenger.AddListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggle);
+		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
 	}
 
 	void OnDisable()
 	{
 		Messenger.RemoveListener(GameEvents.PLAYER_DIED, PnPDied);
 		Messenger.RemoveListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggle);
+		Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
 	}
 
 	private void PnPDied()
 	{
 		m_impulse = Vector3.zero;
+		m_rbody.velocity = m_impulse;
 		m_deadTimer = 1000;
 	}
 
 	private void OnDrunkToggle(bool _active)
 	{
 		m_animator.SetBool("drunk", _active);
+	}
+
+	private void OnPetPreFreeRevive()
+	{
+		m_impulse = Vector3.zero;
+		m_rbody.velocity = m_impulse;
+		m_deadTimer = 1000;
 	}
 
 	private void ChangeState(State _nextState) {
@@ -468,6 +481,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.OuterSpace:
 				{
 					m_animator.SetBool("fly down", true);
+                    m_prevImpulse = m_impulse;
+
                     if (!m_outerSpaceUsePhysics)
                     {
                         if (m_state != State.Stunned && m_state != State.Reviving && m_state != State.Latching)
@@ -888,6 +903,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 						}break;
 						case State.OuterSpace:
 						{
+                                    
 							ChangeState( State.OuterSpace );
 						}break;
 						default:
@@ -1143,7 +1159,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
     private void UpdateSpaceMovement(float _deltaTime)
     {
         Vector3 impulse = m_controls.GetImpulse(1);
-        Vector3 origImpulse = impulse;
+        //Vector3 origImpulse = impulse;
         if (boostSpeedMultiplier > 1)
         {
             if (impulse == Vector3.zero)
@@ -1168,17 +1184,25 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
             Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
             // stroke's Drag
-           
-
             m_impulse = m_rbody.velocity;
+      
+            if (m_impulse.y > m_prevImpulse.y)
+            {
+                m_impulse.y = m_prevImpulse.y;
+            }
+
             Vector3 impulseCapped = m_impulse;
-            impulseCapped.y = 0;
+            //if (impulseCapped.y < 0)
+                impulseCapped.y = 0;
+            
             float impulseMag = impulseCapped.magnitude;
 
-        
 
-            Vector3 mimpulseback = m_impulse;
+
+            //Vector3 mimpulseback = m_impulse;
             m_impulse += (acceleration * _deltaTime) - (impulseCapped.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
+            
+            m_prevImpulse = m_impulse;
 
             m_direction = m_impulse.normalized;
             // m_direction.y = m_rbody.velocity.normalized.y;
@@ -1598,9 +1622,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		// Trigger animation
 		m_animationEventController.OnEnterOuterSpace();
-
-		// Trigger particles (min. speed required)
-		if(m_particleController != null && Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed) {
+        
+        // Trigger particles (min. speed required)
+        if (m_particleController != null && Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed) {
 			m_particleController.OnEnterOuterSpace();
 		}
 
@@ -1682,7 +1706,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// </summary>
 	public void StartLatchedOnMovement()
 	{
-		m_latchedOnSpeedMultiplier = 0.4f;
+		m_latchedOnSpeedMultiplier = 0.7f;
 		m_latchedOn = true;
 		m_animator.SetBool("holded", true);
 	}
@@ -1711,6 +1735,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	}
 
 	public void Die(){
+		
 		ChangeState(State.Dead);
 	}
 
@@ -1794,15 +1819,19 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 
 			case State.OuterSpace: {
-				// Move down
-				if(m_impulse.y > 0) {
-					//m_impulse.y = 0;
-					m_impulse.y = -1f;
-				}
-
-				// Smooth bounce effect on X
-				m_impulse.x = -m_impulse.x * 0.05f;
-			} break;
+                    // Move down
+                    if(m_impulse.y < 0) 
+                    {
+					    m_impulse.y = 0;
+                        m_rbody.velocity.Scale(new Vector3(1, 0, 1));
+                        m_prevImpulse.y = 0;
+                        //Debug.LogError("OUTER COL"+ m_prevImpulse.y);
+                    }
+                    
+                    // Smooth bounce effect on X
+                    m_impulse.x = -m_impulse.x * 0.05f;
+                    
+            } break;
 
 			default:
 			{
@@ -1811,7 +1840,35 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	}
 
-	private bool IsAliveState()
+    void OnCollisionStay(Collision collision)
+    {
+        switch (m_state)
+        {
+          
+
+            case State.OuterSpace:
+                {
+                    // Move down
+                    if(m_impulse.y < 0) 
+                    {
+                        m_impulse.y = 0;
+                        m_rbody.velocity.Scale(new Vector3(1, 0, 1));
+                        m_prevImpulse.y = 0;
+                        //Debug.LogError("OUTER COL" + m_prevImpulse.y);
+                    }
+
+                    // Smooth bounce effect on X
+                    m_impulse.x = -m_impulse.x * 0.05f;
+
+                }
+                break;
+
+         
+        }
+
+    }
+
+    private bool IsAliveState()
 	{
 		if (m_state == State.Dead || m_state == State.Reviving )
 			return false;

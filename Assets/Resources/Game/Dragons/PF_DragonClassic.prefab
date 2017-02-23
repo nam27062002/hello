@@ -355,7 +355,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 564.35913, y: 15.690508, z: -2.8907115}
+  m_LocalPosition: {x: 165.66248, y: 75.62125, z: -172.20685}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -734,8 +734,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 477168459df0e4bcea3ead6e758883ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_type: 3
   m_rotateWithObject: 1
-  m_posZ: -10
 --- !u!114 &11434386
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -774,11 +774,8 @@ MonoBehaviour:
   m_waterAirLimitParticle: {fileID: 1000013716686454, guid: 32bd8689eb3e0e048a58b3307803829f,
     type: 2}
   m_corpseAsset: PF_DragonClassicCorpse
-  m_vacuumParticle:
-    name: PS_Vacuum
-    path: 
-    offset: {x: 0, y: 0, z: 0}
-  m_vacuumAnchor: {fileID: 4009912072996094}
+  m_hiccupParticle: Dragon/PS_hiccups
+  m_hiccupAnchor: {fileID: 4000013323394276}
   m_bodyParticles:
   - m_stopInsideWater: 1
     m_stopWhenDead: 1
@@ -4106,7 +4103,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: 0.0098239845, y: -0.7072385, z: 0.0098295435, w: 0.7068385}
+  m_LocalRotation: {x: 0.14259723, y: -0.37356448, z: 0.05823518, w: 0.9147264}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -6400,6 +6397,7 @@ MonoBehaviour:
   m_insideWaterSnapshot: {fileID: 245688877317836546, guid: f9c941808b0b54fa79ff7aae4e1db556,
     type: 2}
   m_waterDeepToSnapshot: 4
+  m_hiccupSound: 
 --- !u!114 &114000014006788526
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7456,7 +7454,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1000013638149328}
   serializedVersion: 5
   lengthInSec: 1
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 0
@@ -10069,7 +10067,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1000013939559234}
   serializedVersion: 5
   lengthInSec: 1
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 0
@@ -12682,7 +12680,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1961371898926140}
   serializedVersion: 5
   lengthInSec: 0.1
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 1
   playOnAwake: 1
@@ -15193,7 +15191,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1498707104239332}
   serializedVersion: 5
   lengthInSec: 0.1
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 1
   playOnAwake: 1
@@ -17704,7 +17702,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1670606737272478}
   serializedVersion: 5
   lengthInSec: 0.1
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 1
   playOnAwake: 1
@@ -20215,7 +20213,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1585369445791734}
   serializedVersion: 5
   lengthInSec: 0.1
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 1
   playOnAwake: 1

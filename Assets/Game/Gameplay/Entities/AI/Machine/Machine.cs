@@ -67,6 +67,8 @@ namespace AI {
 
 		public float lastFallDistance { get { if (m_enableMotion) return m_motion.lastFallDistance; else return 0; } }
 
+		public bool isKinematic { get {  if (m_enableMotion) return m_motion.isKinematic; else return false; } set { if (m_enableMotion) m_motion.isKinematic = value; } }
+
 		public Transform enemy { 
 			get {
 				if (m_sensor != null && (GetSignal(Signals.Type.Warning) || GetSignal(Signals.Type.Danger))) {
@@ -96,6 +98,9 @@ namespace AI {
 		private bool m_freezing = false;
 		private float m_freezingMultiplier = 1;
 
+
+		// Activating
+		UnityEngine.Events.UnityAction m_deactivateCallback;
 		//---------------------------------------------------------------------------------
 
 		// Use this for initialization
@@ -498,11 +503,21 @@ namespace AI {
 		// External interactions
 		public void LockInCage() {
 			m_entity.allowEdible = false;
+
+			if (m_enableMotion) {
+				m_motion.LockInCage();
+			}
+
 			SetSignal(Signals.Type.LockedInCage, true);
 		}
 
 		public void UnlockFromCage() {
 			m_entity.allowEdible = true;
+
+			if (m_enableMotion) {
+				m_motion.UnlockFromCage();
+			}
+
 			SetSignal(Signals.Type.LockedInCage, false);
 		}
 
@@ -665,6 +680,20 @@ namespace AI {
 			if (m_sensor != null) {
 				m_sensor.OnDrawGizmosSelected(transform);
 			}
+		}
+
+		public void Deactivate( float duration, UnityEngine.Events.UnityAction _action)
+		{
+			gameObject.SetActive(false);
+			m_deactivateCallback = _action;
+			Invoke("Activate", duration);
+		}
+
+		void Activate()
+		{
+			gameObject.SetActive(true);
+			if ( m_deactivateCallback != null )
+				m_deactivateCallback();
 		}
 	}
 }

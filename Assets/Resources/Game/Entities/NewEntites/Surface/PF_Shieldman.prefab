@@ -254,7 +254,7 @@ GameObject:
   - component: {fileID: 114460180047881828}
   - component: {fileID: 114579588129599274}
   - component: {fileID: 114761317490976774}
-  - component: {fileID: 114881032751522368}
+  - component: {fileID: 114054803563847368}
   - component: {fileID: 114173085454010408}
   - component: {fileID: 136906253990899090}
   - component: {fileID: 54966217801126632}
@@ -654,7 +654,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1541027869167562}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -8.494334, y: 1.3632617, z: -5.6618447}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4877024723535584}
@@ -1326,6 +1326,60 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114054803563847368
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1541027869167562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9227e4405c34a4cdfacaacbf3c39ad48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_enableMotion: 1
+  m_motion:
+    m_useGravity: 1
+    m_walkOnWalls: 0
+    m_mass: 2.5
+    m_attackPausesJump: 0
+    m_defaultUpVector: 0
+    m_orientationSpeed: 230
+    m_faceDirection: 0
+    m_useDragonStyleRotation: 0
+    m_rollRotation: 0
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 0
+    m_faceUpAngle: 320
+    m_faceDownAngle: 40
+  m_affectedByDragonTrample: 0
+  m_enableSensor: 1
+  m_sensor:
+    m_senseFire: 1
+    m_sightRadius: 18
+    m_maxRadius: 10
+    m_minRadius: 0
+    m_hysteresisOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
+    m_sensorOffset: {x: 0, y: 1.5, z: 0}
+    m_radiusOffset:
+      min: 0.8
+      max: 1.5
+    m_senseDelay:
+      min: 0
+      max: 0.25
+  m_onSpawnSound: 
+  m_rotateToMouth: 3
+  m_inflammable:
+    m_ashesAsset: 
+    m_burningTime: 0
+    m_dissolveTime: 1.5
+    m_ashExceptions: []
+  m_shield: {fileID: 65859403571824876}
+  m_shieldTier: 2
 --- !u!114 &114146689704068128
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1447,58 +1501,6 @@ MonoBehaviour:
     max: 1.25
   m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":6,"arrivalRadius":1,"hasGuardState":true,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":6,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"action":11,"dataType":"AI.Behaviour.ActivateActionData","editorFolded":false}]'
   m_databaseKey: PF_Shieldman
---- !u!114 &114881032751522368
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1541027869167562}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_useGravity: 1
-    m_walkOnWalls: 0
-    m_mass: 2.5
-    m_attackPausesJump: 0
-    m_defaultUpVector: 0
-    m_orientationSpeed: 230
-    m_faceDirection: 0
-    m_useDragonStyleRotation: 0
-    m_rollRotation: 0
-    m_limitHorizontalRotation: 0
-    m_faceLeftAngle: -90
-    m_faceRightAngle: 90
-    m_limitVerticalRotation: 0
-    m_faceUpAngle: 320
-    m_faceDownAngle: 40
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 1
-  m_sensor:
-    m_senseFire: 0
-    m_sightRadius: 18
-    m_maxRadius: 10
-    m_minRadius: 0
-    m_hysteresisOffset: 0
-    m_senseAbove: 1
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 1.5, z: 0}
-    m_radiusOffset:
-      min: 0.8
-      max: 1.5
-    m_senseDelay:
-      min: 0
-      max: 0.25
-  m_onSpawnSound: 
-  m_rotateToMouth: 3
-  m_inflammable:
-    m_ashesAsset: 
-    m_burningTime: 0
-    m_dissolveTime: 1.5
-    m_ashExceptions: []
 --- !u!114 &114924789148968382
 MonoBehaviour:
   m_ObjectHideFlags: 1

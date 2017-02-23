@@ -54,10 +54,11 @@ public class DragonParticleController : MonoBehaviour
 	[Space]
 	public string m_corpseAsset = "";
 
+
 	[Space]
-	public ParticleData m_vacuumParticle;
-	public Transform m_vacuumAnchor;
-	private ParticleSystem m_vacuumInstance = null;
+	public string m_hiccupParticle;
+	public Transform m_hiccupAnchor = null;
+	private ParticleSystem m_hiccupInstance;
 
 	private Transform _transform;
 	private bool m_insideWater = false;
@@ -82,6 +83,8 @@ public class DragonParticleController : MonoBehaviour
 
 	void Start () 
 	{
+		DragonAnimationEvents dragonAnimEvents = transform.parent.GetComponentInChildren<DragonAnimationEvents>();
+		
 		// Instantiate Particles (at start so we don't feel any framerate drop during gameplay)
 		m_levelUpInstance = InitParticles(m_levelUp, m_levelUpAnchor);
 		m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
@@ -104,6 +107,7 @@ public class DragonParticleController : MonoBehaviour
 		if ( !string.IsNullOrEmpty(m_waterExitSplash) )
 			ParticleManager.CreatePool(m_waterExitSplash, m_waterSplashFolder);
 
+
 		m_skimmingInstance = InitParticles(m_skimmingParticle, m_skimmingAnchor);
 
 		m_skimmingRay = new Ray();
@@ -117,13 +121,16 @@ public class DragonParticleController : MonoBehaviour
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
 			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/" + m_corpseAsset, 1, true);
 		}
-
+		m_hiccupInstance = InitParticles( m_hiccupParticle, m_hiccupAnchor);
+		if (dragonAnimEvents != null)
+			dragonAnimEvents.onHiccupEvent += OnHiccup;
 	}
 
 	void OnEnable() {
 		// Register events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
+		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 		// Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
@@ -132,6 +139,7 @@ public class DragonParticleController : MonoBehaviour
 	{
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
+		Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
@@ -199,6 +207,17 @@ public class DragonParticleController : MonoBehaviour
 		}
 	}
 
+	private ParticleSystem InitParticles(string particle, Transform _anchor)
+	{
+		ParticleSystem ret = null;
+		GameObject go = Resources.Load<GameObject>( "Particles/" + particle );
+		if ( go != null )
+		{
+			 ret = InitParticles( go,  _anchor);
+		}
+		return ret;
+	}
+
 	private ParticleSystem InitParticles(GameObject _prefab, Transform _anchor)
 	{
 		if(_prefab == null || _anchor == null) return null;
@@ -241,6 +260,13 @@ public class DragonParticleController : MonoBehaviour
 		}
 	}
 
+	void OnPreRevive()
+	{
+		// Instantiate particle
+		GameObject instance = m_petRevive.CreateInstance();
+		instance.transform.position = m_reviveAnchor.position + m_petRevive.offset;
+	}
+
 	void OnRevive(DragonPlayer.ReviveReason reason)
 	{
 		switch( reason )
@@ -251,9 +277,7 @@ public class DragonParticleController : MonoBehaviour
 			}break;
 			case DragonPlayer.ReviveReason.FREE_REVIVE_PET:
 			{
-				// Instantiate particle
-				GameObject instance = m_petRevive.CreateInstance();
-				instance.transform.position = m_reviveAnchor.position + m_petRevive.offset;
+				
 			}break;
 		}
 		m_alive = true;
@@ -368,28 +392,9 @@ public class DragonParticleController : MonoBehaviour
 		}
 	}
 
-
-	public void EnableVacuum()
+	private void OnHiccup()
 	{
-		if ( m_vacuumInstance == null )
-		{
-			GameObject go = m_vacuumParticle.CreateInstance();
-			if ( go != null )
-			{
-				m_vacuumInstance = go.GetComponentInChildren<ParticleSystem>();
-				go.transform.parent = m_vacuumAnchor;
-				go.transform.localRotation = Quaternion.identity;
-				go.transform.localPosition = m_vacuumParticle.offset;
-			}
-		}
-
-		if ( m_vacuumInstance != null )
-			m_vacuumInstance.Play();
-	} 
-
-	public void DisableVacuum()
-	{
-		if ( m_vacuumInstance != null )
-			m_vacuumInstance.Stop();
+		if ( m_hiccupInstance != null )
+			m_hiccupInstance.Play();
 	}
 }

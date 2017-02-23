@@ -322,10 +322,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_speedFactorRange:
-    min: 1
-    max: 1
-  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":20,"acceleration":400,"dataType":"AI.Behaviour.RocketDashData","editorFolded":false},{"isMine":false,"damage":25,"radius":8,"cameraShakeDuration":1,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":15,"acceleration":30,"dataType":"AI.Behaviour.RocketDashData","editorFolded":false},{"isMine":false,"damage":20,"radius":8,"cameraShakeDuration":1,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
   m_databaseKey: PF_Kamikaze
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
@@ -368,7 +365,7 @@ MonoBehaviour:
   m_exclamationTransform: {fileID: 4561654831339580}
   m_corpseAsset: 
   m_onEatenParticles: []
-  m_onEatenAudio: 
+  m_onEatenAudio: hd_goblin_dead
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
     name: 
@@ -385,9 +382,9 @@ MonoBehaviour:
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onExplosionAudio: Explosion_Big
-  m_onAttackAudio: 
-  m_onScaredAudio: 
-  m_onPanicAudio: 
+  m_onAttackAudio: hd_goblin_kamikaze_attack
+  m_onScaredAudio: hd_goblin_kamikaze_attack
+  m_onPanicAudio: hd_goblin_kamikaze_attack
   m_idleAudio: 
   m_skins: []
 --- !u!114 &114272332680742080

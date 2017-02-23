@@ -119,5 +119,5 @@ Shader "Hungry Dragon/Bumped Diffuse no stencil (Spawners)"
 			ENDCG
 		}
 	}
-//	Fallback "Hungry Dragon/VertexLit"
+	Fallback "Hungry Dragon/VertexLit"
 }

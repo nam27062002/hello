@@ -111,10 +111,10 @@ public class GoalsScreenMapPill : MonoBehaviour {
 
 		// Price tags
 		int priceSC = m_def.GetAsInt("upgradePriceSC");
-		m_scPriceText.text = UIConstants.IconString(priceSC, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
+		m_scPriceText.text = UIConstants.GetIconString(priceSC, UserProfile.Currency.SOFT, UIConstants.IconAlignment.LEFT);
 
 		int pricePC = m_def.GetAsInt("upgradePriceHC");
-		m_pcPriceText.text = UIConstants.IconString(pricePC, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+		m_pcPriceText.text = UIConstants.GetIconString(pricePC, UserProfile.Currency.HARD, UIConstants.IconAlignment.LEFT);
 
 		// Buttons visibility
 		m_scButtonAnim.Set(priceSC > 0 && pricePC <= 0);

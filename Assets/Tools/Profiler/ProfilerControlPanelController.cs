@@ -18,7 +18,7 @@ public class ProfilerControlPanelController : MonoBehaviour
     private const int MAX_NUM_ENTITIES = 200;
     private const int NUM_ENTITIES_PERIOD = 10;
 
-    public GameObject m_prefabOption;     
+    public GameObject m_prefabOption;
 
     void Awake()
     {
@@ -71,7 +71,7 @@ public class ProfilerControlPanelController : MonoBehaviour
             Dictionary<string, ProfilerSettings.SpawnerData> spawnerDatas = settings.SpawnerDatas;
             if (spawnerDatas != null)
             {
-                m_prefabNames = new List<string>();                
+                m_prefabNames = new List<string>();
 
                 TMP_Dropdown.OptionData optionData;
                 foreach (KeyValuePair<string, ProfilerSettings.SpawnerData> pair in spawnerDatas)
@@ -88,12 +88,12 @@ public class ProfilerControlPanelController : MonoBehaviour
                     if (m_prefabOption != null)
                     {
                         Transform thisParent = transform;
-                        GameObject prefabOption = (GameObject)Instantiate(m_prefabOption);                        
+                        GameObject prefabOption = (GameObject)Instantiate(m_prefabOption);
                         if (prefabOption != null)
                         {
-                            prefabOption.transform.parent = thisParent;
+                            prefabOption.transform.SetParent(thisParent);
                             prefabOption.transform.SetLocalScale(1f);
-                            prefabOption.SetActive(true);                            
+                            prefabOption.SetActive(true);
 
                             PrefabLogicUnits_SetLabel(prefabOption.transform, pair.Key);
 
@@ -133,7 +133,8 @@ public class ProfilerControlPanelController : MonoBehaviour
         }
 
         Checkpoints_Start();
-    }    
+        FpsCounter_Start();
+    }
 
     void Update()
     {
@@ -152,7 +153,7 @@ public class ProfilerControlPanelController : MonoBehaviour
             }
 
             PrefabLogicUnits_IsDirty = false;
-        }        
+        }
     }
 
     public void SetNumEntities(int optionId)
@@ -166,7 +167,7 @@ public class ProfilerControlPanelController : MonoBehaviour
         {
             ProfilerSettingsManager.Spawner_Prefab = m_prefabNames[optionId];
         }
-    }    
+    }
 
     #region prefab_logic_units
     private void PrefabLogicUnits_SetLabel(Transform t, string value)
@@ -179,8 +180,8 @@ public class ProfilerControlPanelController : MonoBehaviour
                 int count = labels.Length;
                 for (int i = 0; i < count; i++)
                 {
-                    if (labels[i].name == "Label")                                        
-                    {                        
+                    if (labels[i].name == "Label")
+                    {
                         labels[i].text = value;
                         break;
                     }
@@ -194,7 +195,7 @@ public class ProfilerControlPanelController : MonoBehaviour
 
     #region prefab_sliders
     private Dictionary<string, Slider> m_prefabSliders;
-    
+
     private void PrefabSlider_Add(string prefabName, float logicUnits, GameObject prefabOption)
     {
         Slider slider = prefabOption.GetComponentInChildren<Slider>();
@@ -219,7 +220,7 @@ public class ProfilerControlPanelController : MonoBehaviour
             foreach (KeyValuePair<string, Slider> pair in m_prefabSliders)
             {
                 settings.SetLogicUnits(pair.Key, pair.Value.value);
-            }            
+            }
         }
     }
 
@@ -244,8 +245,8 @@ public class ProfilerControlPanelController : MonoBehaviour
 
             float min = float.MaxValue;
             float diff;
-            float value = LOGIC_UNITS_PERIOD; 
-            
+            float value = LOGIC_UNITS_PERIOD;
+
             TMP_Dropdown.OptionData optionData;
             List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
             for (float i = LOGIC_UNITS_PERIOD; i <= MAX_LOGIC_UNITS; i += LOGIC_UNITS_PERIOD)
@@ -261,8 +262,8 @@ public class ProfilerControlPanelController : MonoBehaviour
                 }
             }
 
-            dropDown.AddOptions(options);            
-            dropDown.value = ((int)(value / LOGIC_UNITS_PERIOD)) - 1;            
+            dropDown.AddOptions(options);
+            dropDown.value = ((int)(value / LOGIC_UNITS_PERIOD)) - 1;
 
             if (m_prefabDropDowns == null)
             {
@@ -312,7 +313,7 @@ public class ProfilerControlPanelController : MonoBehaviour
     public TMP_Dropdown m_checkpoints;
 
     private void Checkpoints_Start()
-    {        
+    {
         if (m_checkpoints != null)
         {
             List<TMP_Dropdown.OptionData> options = null;
@@ -321,19 +322,19 @@ public class ProfilerControlPanelController : MonoBehaviour
             TMP_Dropdown.OptionData optionData;
             options = new List<TMP_Dropdown.OptionData>();
             int count = m_checkpointsPositions.Length;
-            for (int i = 0; i < count; i ++)
+            for (int i = 0; i < count; i++)
             {
                 optionData = new TMP_Dropdown.OptionData();
                 optionData.text = ((ECheckpoint)i).ToString();
                 options.Add(optionData);
             }
 
-            m_checkpoints.AddOptions(options);           
+            m_checkpoints.AddOptions(options);
         }
     }
 
     public void Checkpoints_SetOptionId(int optionId)
-    {        
+    {
         if (InstanceManager.player != null)
         {
             InstanceManager.player.transform.position = m_checkpointsPositions[optionId];
@@ -341,8 +342,62 @@ public class ProfilerControlPanelController : MonoBehaviour
     }
     #endregion
 
+    #region occlusion
+    public void Occlusion_OnChangedValue(bool newValue)
+    {
+        if (InstanceManager.gameCamera != null)
+        {
+            Camera camera = InstanceManager.gameCamera.GetComponent<Camera>();
+            if (camera != null)
+            {
+                camera.useOcclusionCulling = newValue;
+            }
+        }
+    }
+    #endregion
+
+    #region Fps_counter
+    public Toggle m_fpsCounterToggle;
+
+    private void FpsCounter_Start()
+    {
+        if (m_fpsCounterToggle != null && ControlPanel.instance != null)
+        {
+            m_fpsCounterToggle.isOn = ControlPanel.instance.IsFpsEnabled;
+        }
+    }
+
+    public void FpsCounter_OnChangedValue(bool newValue)
+    {
+        if (ControlPanel.instance != null)
+        {
+            ControlPanel.instance.IsFpsEnabled = newValue;
+        }
+    }
+    #endregion
+
+    #region entities_visibility
+    public void EntitiesVisibility_OnChangedValue(bool newValue)
+    {
+        if (EntityManager.instance != null)
+        {
+            EntityManager.instance.Debug_EntitiesVisibility = newValue;
+        }
+    }
+    #endregion
+
+    #region particles_visibility
+    public void ParticlesVisibility_OnChangedValue(bool newValue)
+    {
+        if (ApplicationManager.instance != null)
+        {
+            ApplicationManager.instance.Debug_ParticlesVisibility = newValue;
+        }
+    }
+    #endregion
+
     #region test
-    public BossCameraAffector m_bossCameraAffector;    
+    public BossCameraAffector m_bossCameraAffector;
 
     public void Test_OnToggleDrunkEffect()
     {
@@ -352,15 +407,14 @@ public class ProfilerControlPanelController : MonoBehaviour
     public void Test_OnToggleFrameColorEffect()
     {
         ApplicationManager.instance.Debug_TestToggleFrameColor();
-    }   
+    }
 
     public void Test_OnToggleBossCameraEffect()
-    {        
+    {
         if (m_bossCameraAffector != null)
         {
-            ApplicationManager.instance.Debug_OnToggleBossCameraEffect(m_bossCameraAffector);            
-        }        
+            ApplicationManager.instance.Debug_OnToggleBossCameraEffect(m_bossCameraAffector);
+        }
     }
     #endregion
-
 }

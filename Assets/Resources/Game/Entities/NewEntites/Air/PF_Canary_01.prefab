@@ -39,7 +39,6 @@ GameObject:
   m_Component:
   - component: {fileID: 403616}
   - component: {fileID: 9582972}
-  - component: {fileID: 11425508}
   - component: {fileID: 11421102}
   m_Layer: 0
   m_Name: view
@@ -300,7 +299,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 168360}
-  m_LocalRotation: {x: -0.25353712, y: 0.5587252, z: 0.5541722, w: 0.5625286}
+  m_LocalRotation: {x: -0.2535371, y: 0.5587251, z: 0.55417216, w: 0.56252855}
   m_LocalPosition: {x: -0.08062987, y: -0.021874828, z: 0.043720305}
   m_LocalScale: {x: 0.99999994, y: 1, z: 1.0000001}
   m_Children:
@@ -496,24 +495,6 @@ MonoBehaviour:
   offset: {x: 0.0061873496, y: 0.5710516}
   radius: 0.50606537
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &11425508
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 133768}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 372d568832f6644d4b9ca9738dcd76b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_timeToGlide:
-    min: 120
-    max: 180
-  m_allowToGlide: 1
-  m_glidingTime:
-    min: 0.5
-    max: 1
 --- !u!114 &11444000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -532,7 +513,7 @@ MonoBehaviour:
     m_mass: 10
     m_attackPausesJump: 0
     m_defaultUpVector: 0
-    m_orientationSpeed: 480
+    m_orientationSpeed: 240
     m_faceDirection: 1
     m_useDragonStyleRotation: 0
     m_rollRotation: 1
@@ -584,9 +565,6 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_speedFactorRange:
-    min: 0.9
-    max: 1.2
   m_serializedJson: '[{"boostSpeed":4.5,"panicSpeed":4.5,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":20,"separation":0.9,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":4.5,"catchUpSpeed":4.5,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":4.5,"catchUpSpeed":4.5,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Canary_01
   m_preciseDestArrival: 0

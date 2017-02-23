@@ -38,9 +38,9 @@ public class EggRewardInfo : MonoBehaviour {
 	[SerializeField] private Localizer m_goldenFragmentInfo = null;
 
 	[Separator("Golden Egg Fragments Counter")]
-	[SerializeField] private TextMeshProUGUI m_goldenFragmentCounter = null;
-	[SerializeField] private Localizer m_goldenFragmentToCompleteInfo = null;
-	[SerializeField] private Image m_goldenFragmentCounterIcon = null;
+	[SerializeField] private ShowHideAnimator m_goldenFragmentCounter = null;
+	[SerializeField] private TextMeshProUGUI m_goldenFragmentCounterText = null;
+	[SerializeField] private ShowHideAnimator m_goldenEggCompletedInfo = null;
 	[SerializeField] private ParticleSystem m_goldenFragmentCounterFX = null;
 
 	[Separator("Animation Parameters")]
@@ -109,10 +109,8 @@ public class EggRewardInfo : MonoBehaviour {
 		}
 
 		// Golden egg fragments counter
-		bool givingFragments = _rewardData.fragments > 0;
-		m_goldenFragmentCounter.gameObject.SetActive(givingFragments);
-		m_goldenFragmentCounterIcon.gameObject.SetActive(givingFragments);
-		m_goldenFragmentToCompleteInfo.gameObject.SetActive(givingFragments);
+		m_goldenFragmentCounter.Set(_rewardData.fragments > 0, false);
+		m_goldenEggCompletedInfo.Set(false, false);	// Will be activated after the animation, if needed
 
 		// Duplicated info
 		if(_rewardData.duplicated) {
@@ -154,21 +152,19 @@ public class EggRewardInfo : MonoBehaviour {
 	/// <param name="_animate">Whether to animate or not.</param>
 	private void RefreshGoldenFragmentCounter(int _amount, bool _animate) {
 		// Compose new string
-		// If we've actually completed the egg, use different string
+		// If we've actually completed the egg, show completed info instead
 		bool goldenEggCompleted = (_amount >= EggManager.goldenEggRequiredFragments);
-		string newText = "";
-		if(goldenEggCompleted) {
-			newText = LocalizationManager.SharedInstance.Localize("TID_EGG_GOLDEN_COMPLETED");
-		} else {
-			newText = LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(_amount), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments));
+		if(!goldenEggCompleted) {
+			m_goldenFragmentCounterText.text = UIConstants.GetIconString(
+				LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(_amount), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments)),
+				UIConstants.IconType.GOLDEN_FRAGMENTS,
+				UIConstants.IconAlignment.LEFT
+			);
 		}
 
-		// Set text
-		m_goldenFragmentCounter.text = newText;
-
 		// Set different elements visibility
-		m_goldenFragmentCounterIcon.gameObject.SetActive(!goldenEggCompleted);
-		m_goldenFragmentToCompleteInfo.gameObject.SetActive(!goldenEggCompleted);
+		m_goldenFragmentCounter.Set(!goldenEggCompleted, _animate);
+		m_goldenEggCompletedInfo.Set(goldenEggCompleted, _animate);
 
 		// Animate?
 		if(_animate) {

@@ -77,20 +77,17 @@ public class MapScroller : MonoBehaviour {
 		adjuster.targetCamera = m_camera;
 		adjuster.targetRectTransform = m_scrollRect.viewport;
 
-		// Initialize camera at the same position as the game camera (pointing at the dragon)
-		Vector3 initialPos = Camera.main.transform.position;	// [AOC] Not safe, make sure the main camera exists and it's the game camera
-		initialPos.z = m_camera.transform.position.z;			// Keep Z
-		m_camera.transform.position = initialPos;
-
 		// Refresh sizes
 		RefreshCameraSize();
 
 		// Move camera to current dragon's position
-		// Set initial scroll position based on camera's current position
-		ScrollToWorldPos(m_camera.transform.position);
+		ScrollToPlayer();
 
 		// Detect scroll events
 		m_scrollRect.onValueChanged.AddListener(OnScrollChanged);
+
+		// Subscribe to external events
+		Messenger.AddListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
 	}
 
 	/// <summary>
@@ -106,15 +103,28 @@ public class MapScroller : MonoBehaviour {
 
 		// Stop detecting scroll events
 		m_scrollRect.onValueChanged.RemoveListener(OnScrollChanged);
+
+		// Unsubscribe from external events
+		Messenger.RemoveListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
 	}
 
 	/// <summary>
 	/// Called every frame
 	/// </summary>
 	private void Update() {
+		UpdateZoom();
+	}
+
+	/// <summary>
+	/// Detect and apply zoom.
+	/// </summary>
+	private void UpdateZoom() {
 		// Nothing to do if we don't have all the required elements
 		if(m_camera == null) return;
 		if(m_levelData == null) return;
+
+		// If map is not upgraded, interaction is locked
+		if(UsersManager.currentUser.mapLevel == 0) return;
 
 		// Detect zoom
 		if(m_zoomSpeed > 0f) {
@@ -192,6 +202,11 @@ public class MapScroller : MonoBehaviour {
 		if(m_camera == null) return;
 		if(m_levelData == null) return;
 
+		// If map is locked, don't allow scrolling
+		if(UsersManager.currentUser.mapLevel == 0) {
+			m_scrollRect.normalizedPosition = new Vector2(0f, 1f);	// Inverted Y axis
+		}
+
 		// Content matches level bounds, scrollrect viewport matches camera viewport
 		// Scroll position is the top-left corner of the content rectangle, take in consideration camera size to make the maths
 		m_camera.transform.SetPosX(
@@ -254,6 +269,19 @@ public class MapScroller : MonoBehaviour {
 
 		// Update camera position to match scroll rect's
 		UpdateCameraPosition();
+	}
+
+	/// <summary>
+	/// Scroll camera to player's position.
+	/// </summary>
+	private void ScrollToPlayer() {
+		// Initialize camera at the same position as the game camera (pointing at the dragon)
+		Vector3 initialPos = Camera.main.transform.position;	// [AOC] Not safe, make sure the main camera exists and it's the game camera
+		initialPos.z = m_camera.transform.position.z;			// Keep Z
+		m_camera.transform.position = initialPos;
+
+		// Limit bounds
+		ScrollToWorldPos(initialPos);
 	}
 
 	//------------------------------------------------------------------------//
@@ -336,5 +364,16 @@ public class MapScroller : MonoBehaviour {
 	public void OnPopupClosed(PopupController _popup) {
 		// Re-enable camera (if this component is enabled)
 		EnableCamera(this.isActiveAndEnabled);
+	}
+
+	/// <summary>
+	/// The map has been upgraded.
+	/// </summary>
+	/// <param name="_newLevel">New map level.</param>
+	public void OnMapUpgraded(int _newLevel) {
+		// If it's the first upgrade, scroll to player's position
+		if(_newLevel == 1) {
+			ScrollToPlayer();
+		}
 	}
 }

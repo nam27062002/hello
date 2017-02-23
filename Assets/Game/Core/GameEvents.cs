@@ -63,7 +63,7 @@ public enum GameEvents {
 	PLAYER_STATE_CHANGED,		// params: DragonPlayer.EState _oldState, DragonPlayer.EState _newState
 	PLAYER_KO,					// params: DamageType
 	PLAYER_DIED,				// no params
-	PLAYER_PRE_FREE_REVIVE,			// no params
+	PLAYER_PET_PRE_FREE_REVIVE,			// no params
 	PLAYER_FREE_REVIVE,			// no params
 	PLAYER_REVIVE,				// no params
 
@@ -112,7 +112,8 @@ public enum GameEvents {
 	SOCIAL_LOGGED,				// params: bool	
 	
 	// UI events
-	INGAME_PC_FEEDBACK_END,		// no params
+	UI_INGAME_PC_FEEDBACK_END,		// no params
+	UI_TOGGLE_CURRENCY_COUNTERS,	// bool _show
 
 	// Camera events
 	CAMERA_INTRO_DONE,			// no params

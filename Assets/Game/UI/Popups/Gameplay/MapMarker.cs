@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -21,13 +22,20 @@ public class MapMarker : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public enum Type {
+		CHEST,
+		EGG,
+		LETTER,
+		DECO
+	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] bool m_rotateWithObject = true;
-	[SerializeField] float m_posZ = -10f;	// [AOC] Markers should be displayed over the collisions, so put them in a global Z offset towards the camera
+	[SerializeField] private Type m_type = Type.DECO;
+	[Space]
+	[SerializeField] private bool m_rotateWithObject = true;
 
 	// Store some original properties of the marker
 	private Vector3 m_originalScale = Vector3.one;
@@ -44,6 +52,7 @@ public class MapMarker : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
+		Messenger.AddListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
 	}
 
 	/// <summary>
@@ -73,6 +82,7 @@ public class MapMarker : MonoBehaviour {
 	protected virtual void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
+		Messenger.RemoveListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
 	}
 
 	//------------------------------------------------------------------------//
@@ -82,8 +92,21 @@ public class MapMarker : MonoBehaviour {
 	/// Refresh marker to match the object's position, rotation, scaling, etc.
 	/// </summary>
 	private void UpdateMarker() {
-		// Aux vars
-		Transform parentTransform = transform.parent;
+		// Check visibility based on marker type and level
+		switch(m_type) {
+			case Type.DECO: {
+				this.gameObject.SetActive(UsersManager.currentUser.mapLevel > 0);
+			} break;
+
+			case Type.CHEST:
+			case Type.EGG:
+			case Type.LETTER: {
+				this.gameObject.SetActive(UsersManager.currentUser.mapLevel > 1);
+			} break;
+		}
+
+		// Nothing else to do if not visible
+		if(!this.gameObject.activeSelf) return;
 
 		// Reset position
 		transform.localPosition = Vector3.zero;
@@ -97,7 +120,7 @@ public class MapMarker : MonoBehaviour {
 		if(m_rotateWithObject) {
 			// Black maths magic from HSX
 			// Find out parent's direction and nullify Z component
-			Vector3 dir = parentTransform.forward;
+			Vector3 dir = transform.parent.forward;
 			dir.z = 0.0f;
 
 			// Flip based on direction
@@ -122,9 +145,6 @@ public class MapMarker : MonoBehaviour {
 			// Compensate parent's rotation
 			transform.rotation = Quaternion.identity;
 		}
-
-		// Set global Z pos so it's rendered over the collisions
-		transform.SetPosZ(m_posZ);
 	}
 
 	//------------------------------------------------------------------------//
@@ -139,5 +159,17 @@ public class MapMarker : MonoBehaviour {
 		if(_popup.GetComponent<PopupPause>() != null) {
 			UpdateMarker();
 		}
+	}
+
+	/// <summary>
+	/// Minimap has been upgraded.
+	/// </summary>
+	/// <param name="_newLevel">New minimap level.</param>
+	private void OnMapUpgraded(int _newLevel) {
+		// Update marker will do the job
+		// Add some delay to give time for feedback to show off
+		float delay = 0.25f;
+		if(_newLevel == 1) delay = 1.3f;	// Unlock animation is a bit longer
+		DOVirtual.DelayedCall(delay, UpdateMarker, true);
 	}
 }

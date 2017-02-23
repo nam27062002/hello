@@ -4,6 +4,10 @@ using System;
 namespace AI {
 	[Serializable]
 	public class MachineMotion : MachineComponent {
+
+		public override Type type { get { return Type.Motion; } }
+
+
 		protected static int m_groundMask;
 
 		private enum UpVector {
@@ -14,13 +18,6 @@ namespace AI {
 			Forward,
 			Back
 		};
-
-		private enum State {
-			FreeMovement = 0,
-			Jump,
-			Grabbed,
-			FreeFall
-		}
 
 		[SerializeField] private bool m_useGravity = false;
 		public bool useGravity { get { return m_useGravity; } set { m_useGravity = value; } }
@@ -92,6 +89,8 @@ namespace AI {
 		private Vector3 m_acceleration;
 
 		private Rigidbody m_rbody;
+		public bool isKinematic { get { return m_rbody.isKinematic; } set { m_rbody.isKinematic = value; } }
+
 		private ViewControl m_viewControl;
 		private Transform m_eye; // for aiming purpose
 		private Transform m_mouth;
@@ -107,8 +106,6 @@ namespace AI {
 
 		private Vector3 m_externalVelocity;
 		public Vector3 externalVelocity{ get{ return m_externalVelocity; } set{ m_externalVelocity = value; } }
-
-		private State m_state;
 
 
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -172,7 +169,7 @@ namespace AI {
 			m_velocity = Vector3.zero;
 			m_acceleration = Vector3.zero;
 			m_collisionNormal = Vector3.up;
-			m_direction = Vector3.forward;//(UnityEngine.Random.Range(0f, 1f) < 0.6f)? Vector3.right : Vector3.left;
+			m_direction = Vector3.forward; //(UnityEngine.Random.Range(0f, 1f) < 0.6f)? Vector3.right : Vector3.left;
 			m_groundDirection = Vector3.right;
 
 			if (m_mass < 0f) {
@@ -199,10 +196,18 @@ namespace AI {
 			m_fallingFromY = -99999f;
 			m_lastFallDistance = 0f;
 
-			m_state = State.FreeMovement;
-
 			//----------------------------------------------------------------------------------
 			m_mouth = m_machineTransform.FindTransformRecursive("Fire_Dummy");
+		}
+
+		public void LockInCage() {
+			m_rbody.isKinematic = true;
+			m_rbody.detectCollisions = false;
+		}
+
+		public void UnlockFromCage() {
+			m_rbody.isKinematic = false;
+			m_rbody.detectCollisions = true;
 		}
 
 		public void SetVelocity(Vector3 _v) {

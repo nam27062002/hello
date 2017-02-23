@@ -44,8 +44,9 @@ namespace AI {
 				m_pilot.Stop();
 				m_pilot.PressAction(Pilot.Action.Button_A);
 
-				m_target = param[0] as Transform;
-				m_transitionParam[0] = m_target;
+				m_target = m_machine.enemy;
+				//m_target = param[0] as Transform;
+				//m_transitionParam[0] = m_target;
 			}
 
 			protected override void OnExit(State _newState) {
@@ -60,11 +61,13 @@ namespace AI {
 						Vector3 dir = m_target.position - m_machine.position;
 						dir.y = 0f;
 						m_pilot.SetDirection(dir.normalized);
-					}
-
-					float m = Mathf.Abs(m_machine.position.x - m_target.position.x);
-					if (m > 2f) {
-						Transition(OnPursuitEnemy, m_transitionParam);
+					
+						float m = Mathf.Abs(m_machine.position.x - m_target.position.x);
+						if (m > 2f) {
+							Transition(OnPursuitEnemy/*, m_transitionParam*/);
+						}
+					} else {
+						Transition(OnPursuitEnemy);
 					}
 				}
 			}

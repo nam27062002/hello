@@ -28,6 +28,14 @@ public enum EngineEvents {
 	LANGUAGE_CHANGED,		// no params
 	DEFINITIONS_LOADED,		// no params
 
+	// Store Transactions
+	PURCHASE_SUCCESSFUL,	// string _productSku (TODO: _transactionData? _purchaseId?)
+	PURCHASE_FAILED,		// string _productSku (TODO: _purchaseId?)
+	PURCHASE_CANCELLED,		// string _productSku (TODO: _purchaseId?)
+	PURCHASE_ERROR,			// string _productSku (TODO: _purchaseId?)
+	PURCHASE_FINISHED,		// string _productSku
+	PURCHASE_RECEIVED_PRODUCTS_AVAILABILITY,	// no params
+
 	// Custom Game Events:
 	// This should always be the last element of the EngineEvents enum
 	// Start your custom GameEvents enum with this value (e.g. MY_FIRST_GAME_EVENT = EngineEvents.END)
