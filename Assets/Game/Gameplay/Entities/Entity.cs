@@ -16,6 +16,11 @@ public class Entity : IEntity {
 	public string sku { get { return m_sku; } }
 
 	[SerializeField] private bool m_dieOutsideFrustum = true;
+	public bool dieOutsideFrustum
+	{
+		get{return m_dieOutsideFrustum;}
+		set{m_dieOutsideFrustum = value;}
+	}
 
 	/************/
 

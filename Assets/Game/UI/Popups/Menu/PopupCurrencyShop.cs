@@ -40,7 +40,7 @@ public class PopupCurrencyShop : MonoBehaviour {
 	[SerializeField] private float[] m_pillRotationSequence = new float[0];
 
 	// Other setup parameters
-	private bool m_closeAfterPurchase = true;
+	private bool m_closeAfterPurchase = false;
 	public bool closeAfterPurchase {
 		get { return m_closeAfterPurchase; }
 		set { m_closeAfterPurchase = value; }
@@ -49,10 +49,6 @@ public class PopupCurrencyShop : MonoBehaviour {
 	// Internal
 	private List<PopupCurrencyShopPill> m_scPills = new List<PopupCurrencyShopPill>();
 	private List<PopupCurrencyShopPill> m_pcPills = new List<PopupCurrencyShopPill>();
-
-	// HUD management
-	private bool m_hudVisible = false;
-	private ShowHideAnimator m_hudAnimator = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -66,12 +62,6 @@ public class PopupCurrencyShop : MonoBehaviour {
 		Debug.Assert(m_pillPrefab != null, "Missing required reference!");
 		Debug.Assert(m_scScrollList != null, "Missing required reference!");
 		Debug.Assert(m_pcScrollList != null, "Missing required reference!");
-
-		// Get some external references for future use
-		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
-		if(menuController != null) {
-			m_hudAnimator = menuController.hud.GetComponent<ShowHideAnimator>();
-		}
 
 		// Clear containers
 		m_scScrollList.content.DestroyAllChildren(false);

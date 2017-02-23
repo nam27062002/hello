@@ -53,6 +53,9 @@ public class MenuSceneController : SceneController {
 
 	[SerializeField]
 	private FogManager.FogAttributes m_fogSetup;
+	public FogManager.FogAttributes fogSetup {
+		get { return m_fogSetup; }
+	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -134,6 +137,19 @@ public class MenuSceneController : SceneController {
 		// Let dragon screen do the job
 		MenuDragonScreenController dragonScreen = GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>();
 		dragonScreen.dragonSelector.SetSelectedDragon(_sku);
+	}
+
+	/// <summary>
+	/// Recreate fog texture using current parameters.
+	/// </summary>
+	public void RecreateFogTexture() {
+		if(m_fogSetup.texture != null) {
+			m_fogSetup.DestroyTexture();
+		}
+
+		m_fogSetup.CreateTexture();
+		m_fogSetup.RefreshTexture();
+		m_fogSetup.FogSetup();
 	}
 
 	//------------------------------------------------------------------//
