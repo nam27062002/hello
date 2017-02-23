@@ -57,10 +57,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() 
 	{
-		// Hide menu HUD
-		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceHide(false);
-
-        // Check Facebook/Weibo Connect visibility        
+		// Check Facebook/Weibo Connect visibility        
         Refresh();
 	}
 
@@ -68,24 +65,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-        // [DGR] If this game object has been disabled because the flow is switching scenes then nothing is done, otherwise UsersManager could be recreated during a transition of scenes
-        // causing "Some objects were not cleaned up when closing the scene" error as a consequence of spawning new GameObjects from OnDestroy
-        if (GameSceneManager.instance != null && !GameSceneManager.isLoading)
-        {
-            // Show menu HUD, except if the dragon selection tutorial hasn't yet been completed
-            if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION) && InstanceManager.instance != null || DebugSettings.isPlayTest)	// Ignore for playtests
-            {
-                MenuSceneController menuSceneController = InstanceManager.GetSceneController<MenuSceneController>();
-                if (menuSceneController != null && menuSceneController.hud != null)
-                {
-                    ShowHideAnimator hideAnimator = menuSceneController.hud.GetComponent<ShowHideAnimator>();
-                    if (hideAnimator != null)
-                    {
-                        hideAnimator.ForceShow(false);
-                    }
-                }                
-            }
-        }
+       
 	}
 
 	//------------------------------------------------------------------//
