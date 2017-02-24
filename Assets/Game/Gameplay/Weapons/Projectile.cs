@@ -28,6 +28,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	[SeparatorAttribute("Visual")]
 	[SerializeField] private List<GameObject> m_activateOnShoot = new List<GameObject>();
+	[SerializeField] private ParticleData m_onAttachParticle;
 	[SerializeField] private ParticleData m_onHitParticle;
 	[SerializeField] private ParticleData m_onEatParticle;
 	[SerializeField] private float m_stickOnDragonTime = 0f;
@@ -96,6 +97,10 @@ public class Projectile : MonoBehaviour, IProjectile {
 			}
 		}
 
+		if (m_onAttachParticle.IsValid()) {
+			ParticleManager.CreatePool(m_onAttachParticle, 5);
+		}
+
 		if (m_onEatParticle.IsValid()) {
 			ParticleManager.CreatePool(m_onEatParticle, 5);
 		}
@@ -138,6 +143,13 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 		if (m_explosive != null) {
 			m_explosive.damage = m_defaultDamage;
+		}
+
+		if (m_onAttachParticle.IsValid()) {
+			GameObject go = ParticleManager.Spawn(m_onAttachParticle);
+			go.transform.parent = _parent;
+			go.transform.position = Vector3.zero;
+			go.transform.localPosition = m_onAttachParticle.offset;
 		}
 
 		//wait until the projectil is shot
