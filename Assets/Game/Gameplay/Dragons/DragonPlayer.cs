@@ -291,11 +291,12 @@ public class DragonPlayer : MonoBehaviour {
 			if (m_breathBehaviour.IsFuryOn())
 				m_breathBehaviour.RecalculateSize();
 		}
-
+#if UNITY_EDITOR
 		if ( Input.GetKeyDown(KeyCode.J) )
 		{
 			AddAlcohol(100);
 		}
+#endif
 	}
 
 	//------------------------------------------------------------------//
@@ -565,7 +566,7 @@ public class DragonPlayer : MonoBehaviour {
 		}
 	}
 
-	public void LoseShield( DamageType _type )
+	public void LoseShield( DamageType _type, Transform _origin )
 	{
 		if ( m_shield.ContainsKey( _type ) )
 		{
@@ -584,7 +585,7 @@ public class DragonPlayer : MonoBehaviour {
 			}
 
 			// event shield lost
-			Messenger.Broadcast<DamageType>(GameEvents.PLAYER_LOST_SHIELD, _type);
+			Messenger.Broadcast<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, _type, _origin);
 		}
 	}
 

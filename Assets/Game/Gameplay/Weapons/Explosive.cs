@@ -38,12 +38,12 @@ public class Explosive {
 		m_playerRadiusSqr = sc.radius * sc.radius;
 	}
 
-	public void Explode(Vector3 _at, float _knockback, bool _triggeredByPlayer) {
+	public void Explode(Transform _at, float _knockback, bool _triggeredByPlayer) {
 		DragonPlayer dragon = InstanceManager.player;
 		bool hasPlayerReceivedDamage = _triggeredByPlayer;
 
 		if (!hasPlayerReceivedDamage && m_radiusSqr > 0f) {
-			float dSqr = (dragon.transform.position - _at).sqrMagnitude;
+			float dSqr = (dragon.transform.position - _at.position).sqrMagnitude;
 			float rSqr = m_radiusSqr + m_playerRadiusSqr;
 
 			hasPlayerReceivedDamage = (dSqr <= rSqr);
@@ -51,11 +51,11 @@ public class Explosive {
 
 		if (hasPlayerReceivedDamage) {			
 			if (dragon.HasShield(m_damageType)) {
-				dragon.LoseShield(m_damageType);
+				dragon.LoseShield(m_damageType, _at);
 			} else {
 				DragonHealthBehaviour health = dragon.dragonHealthBehaviour;
 				if (health != null) {
-					health.ReceiveDamage(m_damage, m_damageType);
+					health.ReceiveDamage(m_damage, m_damageType, _at);
 					if (health.IsAlive()) {
 						Messenger.Broadcast<float, float>(GameEvents.CAMERA_SHAKE, m_cameraShakeTime, 0f);
 					}
@@ -63,7 +63,7 @@ public class Explosive {
 					if (_knockback > 0) {
 						DragonMotion dragonMotion = InstanceManager.player.dragonMotion;
 
-						Vector3 knockBackDirection = dragonMotion.transform.position - _at;
+						Vector3 knockBackDirection = dragonMotion.transform.position - _at.position;
 						knockBackDirection.z = 0f;
 						knockBackDirection.Normalize();
 
@@ -75,7 +75,7 @@ public class Explosive {
 
 		if (m_particleData != null) {
 			if (m_particleData.IsValid()) {
-				ParticleManager.Spawn(m_particleData, _at + m_particleData.offset);
+				ParticleManager.Spawn(m_particleData, _at.position + m_particleData.offset);
 			}
 		}
 	}

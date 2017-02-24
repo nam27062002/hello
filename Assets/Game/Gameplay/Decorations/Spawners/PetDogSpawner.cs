@@ -27,7 +27,7 @@ public class PetDogSpawner : AbstractSpawner {
 		get { return m_operatorPilot; }
 	}
 
-	List<string> m_possibleSpawners;
+	public List<string> m_possibleSpawners;
 
     void Awake()
     {
@@ -56,14 +56,11 @@ public class PetDogSpawner : AbstractSpawner {
         UseSpawnManagerTree = false;
         RegisterInSpawnerManager();        
 
-        /*
 		for( int i = 0; i<m_possibleSpawners.Count; i++ )
 		{
 			string entityPrefabPath = IEntity.EntityPrefabsPath + m_possibleSpawners[i];        
 			PoolManager.CreatePool(m_possibleSpawners[i], entityPrefabPath, 1, true);
 		}
-		*/
-		PoolManager.CreatePool(m_entityPrefabStr,  IEntity.EntityPrefabsPath + m_entityPrefabStr, 1, true);
     }
 
     protected override uint GetMaxEntities() {
@@ -77,6 +74,11 @@ public class PetDogSpawner : AbstractSpawner {
     protected override string GetPrefabNameToSpawn(uint index) {
         return m_entityPrefabStr;
     }    
+
+    public void RamdomizeEntity()
+    {
+    	m_entityPrefabStr = m_possibleSpawners[ Random.Range(0, m_possibleSpawners.Count) ];
+    }
 
     protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
         Transform groundSensor = spawning.transform.FindChild("groundSensor");
