@@ -119,6 +119,7 @@ namespace AI {
 				if (m_timer > 0f) {
 					m_timer -= Time.deltaTime;
 				} else {
+					m_eatBehaviour.enabled = true;
 					Vector3 centerPos = m_owner.transform.position;
 
 

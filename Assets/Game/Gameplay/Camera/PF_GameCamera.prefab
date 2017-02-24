@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 114911447019432680}
   - component: {fileID: 114728181362819458}
   - component: {fileID: 114508471609965312}
+  - component: {fileID: 114877917579243700}
   m_Layer: 0
   m_Name: PF_GameCamera
   m_TagString: MainCamera
@@ -59,7 +60,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 5
-  far clip plane: 3500
+  far clip plane: 1000
   field of view: 30
   orthographic: 0
   orthographic size: 685.86615
@@ -510,6 +511,65 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   glowColorMultiplier: {r: 1, g: 0.6161004, b: 0.24264705, a: 1}
+--- !u!114 &114877917579243700
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e221437f2b7a14963b673d7339357cc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fogBlendMode: 0
+  m_defaultAreaFog:
+    m_fogGradient:
+      key0:
+        serializedVersion: 2
+        rgba: 13341263
+      key1:
+        serializedVersion: 2
+        rgba: 1373580588
+      key2:
+        serializedVersion: 2
+        rgba: 2546759456
+      key3:
+        serializedVersion: 2
+        rgba: 16176801
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 6506
+      ctime1: 22374
+      ctime2: 47287
+      ctime3: 63790
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 3967
+      atime1: 59823
+      atime2: 65535
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 4
+      m_NumAlphaKeys: 2
+    m_fogStart: -238.4
+    m_fogEnd: 712.4
 --- !u!114 &114911447019432680
 MonoBehaviour:
   m_ObjectHideFlags: 1

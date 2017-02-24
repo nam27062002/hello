@@ -107,7 +107,7 @@ public class CatapultAmmo : MonoBehaviour {
 				dragonMotion.AddForce(knockBackDirection * m_knockback);
 			}
 
-			InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, DamageType.NORMAL);
+			InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, DamageType.NORMAL, transform);
 		}
 
 		if (!string.IsNullOrEmpty(m_onExplodeAudio))

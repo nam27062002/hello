@@ -58,7 +58,7 @@ public enum GameEvents {
 
 	// Player events
 	PLAYER_DAMAGE_RECEIVED,		// params: float _damage, DamageType _type, Transform _source
-	PLAYER_LOST_SHIELD,			// params: DamageType _type
+	PLAYER_LOST_SHIELD,			// params: DamageType _type, Transform _originTransform
 	PLAYER_HEALTH_MODIFIER_CHANGED,	// params: DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier
 	PLAYER_STATE_CHANGED,		// params: DragonPlayer.EState _oldState, DragonPlayer.EState _newState
 	PLAYER_KO,					// params: DamageType

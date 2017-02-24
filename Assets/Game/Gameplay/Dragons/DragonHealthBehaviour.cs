@@ -132,7 +132,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 				return;
 			if ( m_dragon.HasShield( _type ) )
 			{
-				m_dragon.LoseShield( _type );
+				m_dragon.LoseShield( _type, _source );
 				return;
 			}
 
@@ -161,7 +161,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	/// <param name="_duration">Total duration.</param>
 	/// <param name="_type">Type of damage to be applied. If a DOT of a different type is being applied, type will be override.</param> 
 	/// <param name="_reset">Whether to override current DOT or accumulate it.</param>
-	public void ReceiveDamageOverTime(float _dps, float _duration, DamageType _type, bool _reset = true) {
+	public void ReceiveDamageOverTime(float _dps, float _duration, DamageType _type, Transform _source = null, bool _reset = true) {
 
 		if ( m_dragon.IsInvulnerable() )
 			return;
@@ -172,7 +172,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		}
 		else if ( m_dragon.HasShield( _type ) )
 		{
-			m_dragon.LoseShield( _type );
+			m_dragon.LoseShield( _type ,_source);
 			return;
 		}
 

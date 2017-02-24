@@ -11,7 +11,8 @@ namespace AI {
 			public class PetTakePreyToPlayerData : StateComponentData {
 				[Comment("Comma Separated list", 5)]
 				public string m_possiblePreyList;
-				public float speedMultiplier = 1.5f;
+				public float m_speedMultiplier = 1.5f;
+				public Range m_eatPauseAfterPreyRelease;
 			}
 
 			public override StateComponentData CreateData() {
@@ -26,40 +27,34 @@ namespace AI {
 			private static string OnPreyReleased = "OnPreyReleased";
 
 			PetTakePreyToPlayerData m_data;
-			string[] possibleEntities;
-			GameObject prey;
 			float m_speed;
 			float m_frontDistance;
+			EatBehaviour m_eatBehaviour;
+			PetDogSpawner m_petDogSpawner;
+			Entity m_spawnedEntity;
+			object[] m_transitionParam;
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<PetTakePreyToPlayerData>();
 
-				possibleEntities = m_data.m_possiblePreyList.Split(new string[] { "," }, StringSplitOptions.None);
-				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * m_data.speedMultiplier;
+				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * m_data.m_speedMultiplier;
 				m_frontDistance = InstanceManager.player.data.GetScaleAtLevel( InstanceManager.player.data.progression.maxLevel) * 6;
-
-				for( int i = 0; i<possibleEntities.Length; i++ )
-				{
-					string entityPrefabPath = IEntity.EntityPrefabsPath + possibleEntities[i];        
-					PoolManager.CreatePool(possibleEntities[i], entityPrefabPath, 1, true);
-				}
+				m_eatBehaviour = m_machine.GetComponent<EatBehaviour>();
+				m_petDogSpawner = m_machine.GetComponent<PetDogSpawner>();
+				m_transitionParam = new object[1];
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
 				base.OnEnter(_oldState, _param);
 
-				// Select prey and put on mouth
-				string prefabStr = possibleEntities[  UnityEngine.Random.Range(0, possibleEntities.Length) ];
-				if ( !string.IsNullOrEmpty( prefabStr ) )
-				{
-					prey = PoolManager.GetInstance(prefabStr, true);
-					prey.transform.parent = m_machine.transform;
-					prey.transform.position = m_machine.position;
-				}
-
+				m_eatBehaviour.AdvanceHold(false);
+				m_petDogSpawner.RamdomizeEntity();
+				m_petDogSpawner.Respawn();
+				Pilot p = m_petDogSpawner.operatorPilot;
+				m_spawnedEntity = p.GetComponent<Entity>();
+				m_spawnedEntity.dieOutsideFrustum = false;
 				m_pilot.SlowDown(false);
-
-				// Start going back to the player
+				m_eatBehaviour.StartHold( m_spawnedEntity.GetComponent<AI.IMachine>(), true);
 			}
 
 			protected override void OnUpdate() {
@@ -73,12 +68,21 @@ namespace AI {
 				{
 					// We are done
 					// leave prey
-					if ( prey != null )
+					if ( m_spawnedEntity != null )
 					{
-						prey.transform.parent = null;
+						m_eatBehaviour.EndHold();
+						m_spawnedEntity.dieOutsideFrustum = true;
+						m_spawnedEntity = null;
 					}
-					Transition(OnPreyReleased);
+
+					m_transitionParam[0] = m_data.m_eatPauseAfterPreyRelease.GetRandom();
+					Transition(OnPreyReleased, m_transitionParam);
 				}
+			}
+
+			protected override void OnExit(State _newState){
+				m_eatBehaviour.AdvanceHold(true);
+				m_eatBehaviour.enabled = false;
 			}
 
 		}
