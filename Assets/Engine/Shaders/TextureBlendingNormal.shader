@@ -175,8 +175,7 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 					fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
 
 					col = col + (specular * specMask * i.color * _LightColor0);
-//					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-					HG_DEPTH_ALPHA(i, col)
+					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 
 					return col;
 //					return col + (specular  * _LightColor0);
@@ -185,5 +184,4 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 			ENDCG
 		}
 	}
-	Fallback "Hungry Dragon/VertexLit"
 }

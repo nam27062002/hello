@@ -13,9 +13,6 @@
 #define HG_TRANSFER_DARKEN(o,worldPos) o.darken = clamp( -worldPos.z, 0.0, HG_DARKEN_DISTANCE * 0.8) / HG_DARKEN_DISTANCE;
 #define HG_APPLY_DARKEN(i, col) col = lerp( col, fixed4(0,0,0,1), i.darken);
 
-#define HG_DEPTH_ALPHA(i, o) o.w = i.vertex.z;
-
-#define HG_STENCIL_MASK 5
 //#define DYNAMIC_SHADOWS
 #endif // HUNGRYDRAGON_CG_INCLUDED
     

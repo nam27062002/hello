@@ -105,13 +105,10 @@ Shader "Hungry Dragon/Waterfall"
 
 //					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 //					col *= attenuation;
-//					HG_DEPTH_ALPHA(i, col)
 
 					return col;
 				}
 			ENDCG
 		}
 	}
-	Fallback "Hungry Dragon/VertexLit"
-//	Fallback "Mobile/VertexLit"
 }
