@@ -20,16 +20,11 @@ namespace TMPro.Examples
         public float SpeedMultiplier = 1.0f;
         public float CurveScale = 1.0f;
 
-		private bool m_dirty = true;
-
         void Awake()
         {
             m_TextComponent = gameObject.GetComponent<TMP_Text>();
         }
 
-		void OnEnable() {
-			m_dirty = true;
-		}
 
         void Start()
         {
@@ -68,9 +63,8 @@ namespace TMPro.Examples
             AnimationCurve old_curve = CopyAnimationCurve(VertexCurve);
 
             while (true)
-			{
-				Debug.Log((m_dirty ? "TRUE" : "FALSE"));
-                if (!m_TextComponent.havePropertiesChanged && old_CurveScale == CurveScale && old_curve.keys[1].value == VertexCurve.keys[1].value && !m_dirty)
+            {
+                if (!m_TextComponent.havePropertiesChanged && old_CurveScale == CurveScale && old_curve.keys[1].value == VertexCurve.keys[1].value)
                 {
                     yield return null;
                     continue;
@@ -147,8 +141,6 @@ namespace TMPro.Examples
 
                 // Upload the mesh with the revised information
                 m_TextComponent.UpdateVertexData();
-
-				m_dirty = false;
 
                 yield return new WaitForSeconds(0.025f);
             }

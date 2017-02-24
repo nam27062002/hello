@@ -33,9 +33,9 @@ namespace TMPro.Examples
                     go.transform.position = new Vector3(Random.Range(-95f, 95f), 0.25f, Random.Range(-95f, 95f));
 
                     TextMeshPro textMeshPro = go.AddComponent<TextMeshPro>();
-                    TextContainer textContainer = go.GetComponent<TextContainer>();
-                       
-                    textContainer.isAutoFitting = false;
+
+                    textMeshPro.autoSizeTextContainer = true;
+                    textMeshPro.rectTransform.pivot = new Vector2(0.5f, 0);
 
                     textMeshPro.alignment = TextAlignmentOptions.Bottom;
                     textMeshPro.fontSize = 96;

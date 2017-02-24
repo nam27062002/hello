@@ -204,7 +204,6 @@ SubShader {
 				col = (diffuse + fixed4(i.vLight, 1)) * col * _Tint + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor) + _AmbientAdd; // To use ShaderSH9 better done in vertex shader
 
 				col.w *= _Tint.w;
-//				HG_DEPTH_ALPHA(i, col)
 				return col;
 
 			}
@@ -213,5 +212,4 @@ SubShader {
 
 	
 }
-	Fallback "Hungry Dragon/VertexLit"
 }
