@@ -97,7 +97,9 @@ public class AIPilotEditor : Editor {
                 // [AOC] Let's do nicer visuals than the boring default foldout!
                 Type dataType = kvp.data.GetType();
                 //kvp.folded = !EditorGUILayout.Foldout(!kvp.folded, dataType.Name);
-                if (GUILayout.Button((kvp.folded ? "► " : "▼ ") + dataType.Name, "ShurikenModuleTitle", GUILayout.ExpandWidth(true))) {
+				string behaviorName = dataType.Name.Replace("Data", "");
+				behaviorName = System.Text.RegularExpressions.Regex.Replace(behaviorName, "[A-Z]", " $0").Trim();
+				if (GUILayout.Button((kvp.folded ? "► " : "▼ ") + behaviorName, "ShurikenModuleTitle", GUILayout.ExpandWidth(true))) {
                     kvp.folded = !kvp.folded;
                 }
                 if (!kvp.folded) {
@@ -154,6 +156,9 @@ public class AIPilotEditor : Editor {
 	/// <param name="_f">The field to be displayed.</param>
 	/// <param name="_currentValue">The current value of the field.</param>
 	private object DoField(FieldInfo _f, object _currentValue) {
+
+		string fieldName = System.Text.RegularExpressions.Regex.Replace(_f.Name, "[A-Z]", " $0").Trim();
+
 		// Check field type and use different editor widgets based on that
 		// List
 		if(_currentValue is IList) {
@@ -162,32 +167,32 @@ public class AIPilotEditor : Editor {
 
 		// Enum
 		else if(_f.FieldType.IsEnum) {
-			return EditorGUILayout.EnumPopup(_f.Name, (Enum)_currentValue);
+			return EditorGUILayout.EnumPopup(fieldName, (Enum)_currentValue);
 		}
 
 		// String
 		else if(_f.FieldType == typeof(string)) {
-			return EditorGUILayout.TextField(_f.Name, (string)_currentValue);
+			return EditorGUILayout.TextField(fieldName, (string)_currentValue);
 		}
 
 		// Float
 		else if(_f.FieldType == typeof(float)) {
-			return EditorGUILayout.FloatField(_f.Name, (float)_currentValue);
+			return EditorGUILayout.FloatField(fieldName, (float)_currentValue);
 		}
 
 		// Bool
 		else if(_f.FieldType == typeof(bool)) {
-			return  EditorGUILayout.Toggle(_f.Name, (bool)_currentValue);
+			return  EditorGUILayout.Toggle(fieldName, (bool)_currentValue);
 		}
 
 		// Int
 		else if(_f.FieldType == typeof(int)) {
-			return EditorGUILayout.IntField(_f.Name, (int)_currentValue);
+			return EditorGUILayout.IntField(fieldName, (int)_currentValue);
 		}
 
 		// Double
 		else if(_f.FieldType == typeof(double)) {
-			return EditorGUILayout.DoubleField(_f.Name, (double)_currentValue);
+			return EditorGUILayout.DoubleField(fieldName, (double)_currentValue);
 		}
 
 		// Range
@@ -198,7 +203,7 @@ public class AIPilotEditor : Editor {
 			Range newRange = new Range();
 			EditorGUILayout.BeginHorizontal(); {
 				// Prefix label
-				EditorGUILayout.PrefixLabel(_f.Name);
+				EditorGUILayout.PrefixLabel(fieldName);
 
 				// Reset indent level whithin the horizontal layout
 				int indentLevelBckp = EditorGUI.indentLevel;
@@ -222,7 +227,7 @@ public class AIPilotEditor : Editor {
 
 			EditorGUILayout.BeginHorizontal(); {
 				// Prefix label
-				EditorGUILayout.PrefixLabel(_f.Name);
+				EditorGUILayout.PrefixLabel(fieldName);
 
 				// Reset indent level whithin the horizontal layout
 				int indentLevelBckp = EditorGUI.indentLevel;
@@ -268,7 +273,7 @@ public class AIPilotEditor : Editor {
 
 		// Unknown
 		else {
-			EditorGUILayout.TextField(_f.Name, "type " + _f.FieldType.Name + " not supported");
+			EditorGUILayout.TextField(fieldName, "type " + _f.FieldType.Name + " not supported");
 		}
 		return _currentValue;	// Value not processed
 	}

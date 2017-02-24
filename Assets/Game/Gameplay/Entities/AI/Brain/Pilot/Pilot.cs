@@ -1,27 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 namespace AI {
 	public abstract class Pilot : MonoBehaviour {
 		
+		[Flags]
 		public enum Action {
-			Boost = 0,
-			Stop,
-			Attack,
-			Aim,
-			Bite,
-			Fire,
-			Jump,
-			Avoid,
-			Pursuit,
-			Scared,
-			Latching,
-			Button_A, // "buttons" to manage
-			Button_B, // the specila actions 
-			Button_C, // of the current machine
-			ExclamationMark,
-
-			Count
+			None 				= (1 << 0),
+			Boost 				= (1 << 1),
+			Stop 				= (1 << 2),
+			Attack 				= (1 << 3),
+			Aim 				= (1 << 4),
+			Bite 				= (1 << 5),
+			Fire 				= (1 << 6),
+			Jump 				= (1 << 7),
+			Avoid 				= (1 << 8),
+			Pursuit 			= (1 << 9),
+			Scared 				= (1 << 10),
+			Latching 			= (1 << 11),
+			Button_A 			= (1 << 12), // "buttons" to manage
+			Button_B 			= (1 << 13), // the specila actions 
+			Button_C 			= (1 << 14), // of the current machine
+			ExclamationMark 	= (1 << 15)
 		}
 
 		//----------------------------------------------------------------------------------------------------------------
@@ -46,7 +47,7 @@ namespace AI {
 
 		public IMachine m_machine;
 
-		protected bool[] m_actions;
+		private Action m_actions;
 
 		protected virtual float railSeparation { get { return 1f; } }
 
@@ -103,20 +104,20 @@ namespace AI {
 			m_direction = Vector3.right;
 			m_directionForced = false;
 
-			m_actions = new bool[(int)Action.Count];
+			m_actions = Pilot.Action.None;
 			m_machine = GetComponent<IMachine>();
 		}
 
 		public bool IsActionPressed(Pilot.Action _action) {
-			return m_actions[(int)_action];
+			return (m_actions & _action) != 0;
 		}
 
 		public void PressAction(Pilot.Action _action) {
-			m_actions[(int)_action] = true;
+			m_actions |= _action;
 		}
 
 		public void ReleaseAction(Pilot.Action _action) {
-			m_actions[(int)_action] = false;
+			m_actions &= ~_action;
 		}
 
 		public virtual void OnTrigger(string _trigger, object[] _param = null) {}
@@ -135,7 +136,7 @@ namespace AI {
 			if (!_blend) {
 				m_currentSpeed = m_moveSpeed;
 			}
-			m_actions[(int)Action.Stop] = false;
+			PressAction(Action.Stop);
 		}
 
 		public void SetBoostSpeed(float _boostSpeed, bool _blend = true) {
@@ -143,11 +144,10 @@ namespace AI {
 			if (!_blend) {
 				m_currentSpeed = m_boostSpeed;
 			}
-			m_actions[(int)Action.Stop] = false;
+			ReleaseAction(Action.Stop);
 		}
 
-		public void SetFreezeFactor(float _factor)
-		{
+		public void SetFreezeFactor(float _factor) {
 			m_freezeFactor = _factor;
 		}
 
@@ -157,7 +157,7 @@ namespace AI {
 			m_boostSpeed = 0f;
 			m_impulse = Vector3.zero;
 			m_externalImpulse = Vector3.zero;
-			m_actions[(int)Action.Stop] = true;
+			PressAction(Action.Stop);
 		}
 
 		public void SetDirection(Vector3 _dir, bool _force = false) {
@@ -166,15 +166,18 @@ namespace AI {
 		}
 					
 		public void Scared(bool _enable) {
-			m_actions[(int)Action.Scared] = _enable;
+			if (_enable) PressAction(Action.Scared);
+			else 		 ReleaseAction(Action.Scared);
 		}
 
 		public void Avoid(bool _enable) {
-			m_actions[(int)Action.Avoid] = _enable;
+			if (_enable) PressAction(Action.Avoid);
+			else 		 ReleaseAction(Action.Avoid);
 		}
 
 		public void Pursuit(bool _enable) {
-			m_actions[(int)Action.Pursuit] = _enable;
+			if (_enable) PressAction(Action.Pursuit);
+			else 		 ReleaseAction(Action.Pursuit);
 		}
 
 		public void AddImpulse(Vector3 _externalImpulse) {
@@ -191,6 +194,8 @@ namespace AI {
 				m_currentEnergy = Mathf.Lerp(m_currentEnergy, m_energy, Time.deltaTime * 0.5f);
 				m_boostAvailable = m_currentEnergy > (m_energy * 0.75f);
 			}
+
+			//TODO blend impulses
 		}
 	}
 }
