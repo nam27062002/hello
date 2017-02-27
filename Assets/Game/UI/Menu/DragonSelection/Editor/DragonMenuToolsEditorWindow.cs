@@ -123,12 +123,9 @@ public class DragonMenuToolsEditorWindow : EditorWindow {
 
 			// Reload Dragon Prefabs
 			if(errorCheck) {
-				// Label
-				EditorGUILayout.Space();
-				GUILayout.Label("Reload Dragon Prefabs", CustomEditorStyles.commentLabelLeft);
-
 				// Just the button to do it!
-				if(GUILayout.Button("Do it!")) {
+				EditorGUILayout.Space();
+				if(GUILayout.Button("Reload Dragon Prefabs", GUILayout.Height(50f))) {
 					// Find slots
 					int slotIdx = 0;
 					GameObject slotObj = GameObject.Find("DragonSlot" + slotIdx);
@@ -139,19 +136,11 @@ public class DragonMenuToolsEditorWindow : EditorWindow {
 						slotObj = GameObject.Find("DragonSlot" + slotIdx);
 					}
 
-					// Delete current dragons
-					for(int i = 0; i < slots.Count; i++) {
-						MenuDragonPreview[] toDelete = slots[i].GetComponentsInChildren<MenuDragonPreview>();
-						for(int j = 0; j < toDelete.Length; j++) {
-							GameObject.DestroyImmediate(toDelete[i].gameObject);
-						}
-					}
-
-					// Load dragon definitions
+					// Load dragon definitions and sort them by order
 					List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGONS);
 					DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 
-					// Instantiate dragon prefabs
+					// Load dragon previews!
 					for(int i = 0; i < defs.Count; i++) {
 						// Check enough slots!
 						if(i >= slots.Count) {
@@ -159,11 +148,29 @@ public class DragonMenuToolsEditorWindow : EditorWindow {
 							continue;
 						}
 
-						// Instantiate the prefab and add it as child of the slot
-						GameObject dragonPrefab = Resources.Load<GameObject>(DragonData.MENU_PREFAB_PATH + defs[i].GetAsString("menuPrefab"));
-						GameObject dragonObj = PrefabUtility.InstantiatePrefab(dragonPrefab) as GameObject;
-						dragonObj.transform.SetParent(slots[i].transform, false);
-						dragonObj.name = dragonPrefab.name;	// Remove the "(Clone)" text
+						// If possible, use the MenuDragonLoader objects in each slot to replace current dragon preview by the new one
+						MenuDragonLoader dragonLoader = slots[i].GetComponentInChildren<MenuDragonLoader>();
+						if(dragonLoader != null) {
+							// Change target sku
+							dragonLoader.dragonSku = defs[i].sku;
+
+							// Reload!
+							dragonLoader.mode = MenuDragonLoader.Mode.MANUAL;
+							dragonLoader.RefreshDragon();
+						} else {
+							// Dragon loader not present, instantiate dragon directly
+							// Delete existing previews first
+							MenuDragonPreview[] toDelete = slots[i].GetComponentsInChildren<MenuDragonPreview>();
+							for(int j = 0; j < toDelete.Length; j++) {
+								GameObject.DestroyImmediate(toDelete[j].gameObject);
+							}
+
+							// Instantiate the prefab and add it as child of the slot
+							GameObject dragonPrefab = Resources.Load<GameObject>(DragonData.MENU_PREFAB_PATH + defs[i].GetAsString("menuPrefab"));
+							GameObject dragonObj = PrefabUtility.InstantiatePrefab(dragonPrefab) as GameObject;
+							dragonObj.transform.SetParent(slots[i].transform, false);
+							dragonObj.name = dragonPrefab.name;	// Remove the "(Clone)" text
+						}
 					}
 				}
 			}
