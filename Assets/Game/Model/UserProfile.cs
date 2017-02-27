@@ -172,7 +172,11 @@ public class UserProfile : UserSaveSystem
 	private int m_goldenEggFragments = 0;
 	public int goldenEggFragments {
 		get { return m_goldenEggFragments; }
-		set { m_goldenEggFragments = value; }
+		set { 
+			int oldValue = m_goldenEggFragments;
+			m_goldenEggFragments = value;
+			Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, UserProfile.Currency.GOLDEN_FRAGMENTS, oldValue, m_goldenEggFragments);
+		}
 	}
 
 	private int m_goldenEggsCollected = 0;
@@ -254,17 +258,19 @@ public class UserProfile : UserSaveSystem
 		// Compute new value and dispatch event
 		m_coins += _amount;
 		Messenger.Broadcast<long, long>(GameEvents.PROFILE_COINS_CHANGED, coins - _amount, coins);
+		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, UserProfile.Currency.SOFT, coins - _amount, coins);
 	}
 	
 	/// <summary>
 	/// Add PC.
 	/// </summary>
 	/// <param name="_iAmount">Amount to add. Negative to subtract.</param>
-	public void AddPC(long _iAmount) {
+	public void AddPC(long _amount) {
 		// Skip checks for now
 		// Compute new value and dispatch event
-		m_pc += _iAmount;
-		Messenger.Broadcast<long, long>(GameEvents.PROFILE_PC_CHANGED, pc - _iAmount, pc);
+		m_pc += _amount;
+		Messenger.Broadcast<long, long>(GameEvents.PROFILE_PC_CHANGED, pc - _amount, pc);
+		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, UserProfile.Currency.HARD, pc - _amount, pc);
 	}
 
 	/// <summary>
