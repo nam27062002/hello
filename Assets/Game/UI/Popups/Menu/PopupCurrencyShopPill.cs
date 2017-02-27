@@ -53,7 +53,10 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 	// Internal
 	private UserProfile.Currency m_currency = UserProfile.Currency.REAL;
 	private float m_price = 0f;
-	
+
+	private FGOL.Server.Error m_checkConnectionError;
+	private PopupController m_loadingPopupController;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -136,35 +139,57 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 			long pricePC = (long)m_price;
 			if(UsersManager.currentUser.pc >= pricePC) {
 				UsersManager.currentUser.AddPC(-pricePC);
+
+				// [AOC] TODO!! Real money transaction
+				// Do it instantly for now
+				// Add amount
+				switch(m_type) {
+					case UserProfile.Currency.SOFT: {
+						UsersManager.currentUser.AddCoins(m_def.GetAsLong("amount"));
+					} break;
+
+					case UserProfile.Currency.HARD: {
+						UsersManager.currentUser.AddPC(m_def.GetAsLong("amount"));
+					} break;
+				}
+				// Save persistence
+				PersistenceManager.Save(true);
+				// [AOC] TODO!! Notify game - typically this is done by the store manager, do it properly
+				Messenger.Broadcast<string>(EngineEvents.PURCHASE_SUCCESSFUL, m_def.sku);
 			} else {
 				// Show feedback and interrupt transaction
 				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 				return;
 			}
 		}
-
-		// [AOC] TODO!! Real money transaction
-		// Do it instantly for now
-		// Add amount
-		switch(m_type) {
-			case UserProfile.Currency.SOFT: {
-				UsersManager.currentUser.AddCoins(m_def.GetAsLong("amount"));
-			} break;
-
-			case UserProfile.Currency.HARD: {
-				UsersManager.currentUser.AddPC(m_def.GetAsLong("amount"));
-			} break;
+		else if ( m_currency == UserProfile.Currency.REAL )
+		{
+			m_loadingPopupController = PopupManager.PopupLoading_Open();
+			m_loadingPopupController.OnClosePostAnimation.AddListener( OnConnectionCheck );
+			Authenticator.Instance.CheckConnection(delegate (FGOL.Server.Error connectionError)
+			{
+				m_checkConnectionError = connectionError;
+				m_loadingPopupController.Close(true);
+			});
 		}
+	}
 
-		// If currency is PC, adjust new balance
-		if(m_currency == UserProfile.Currency.HARD) {
-			UsersManager.currentUser.AddPC((long)-m_price);
+	void OnConnectionCheck()
+	{
+		if ( m_checkConnectionError == null )
+		{
+			if ( GameStoreManager.SharedInstance.CanMakePayment() )
+			{
+				GameStoreManager.SharedInstance.Buy( m_def.sku );
+			}	
+			else
+			{
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_CANNOT_PAY"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			}
 		}
-
-		// Save persistence
-		PersistenceManager.Save(true);
-
-		// [AOC] TODO!! Notify game - typically this is done by the store manager, do it properly
-		Messenger.Broadcast<string>(EngineEvents.PURCHASE_SUCCESSFUL, m_def.sku);
+		else
+		{
+			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+		}
 	}
 }
