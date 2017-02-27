@@ -80,6 +80,8 @@ public class PetDogSpawner : AbstractSpawner {
     	m_entityPrefabStr = m_possibleSpawners[ Random.Range(0, m_possibleSpawners.Count) ];
     }
 
+	public override bool SpawnersCheckCurrents(){ return true; }
+
     protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
         Transform groundSensor = spawning.transform.FindChild("groundSensor");
         Transform t = spawning.transform;
