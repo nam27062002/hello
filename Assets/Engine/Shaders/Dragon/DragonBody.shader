@@ -27,6 +27,9 @@ Properties {
 	_SecondLightColor("Second Light Color", Color) = (0.0, 0.0, 0.0, 0.0)
 
 	_StencilMask("Stencil Mask", int) = 10
+
+	[Toggle(ALPHA_AS_DEPTH)] _Alpha_as_depth("Alpha as depth", Float) = 0
+
 }
 
 SubShader {
@@ -54,6 +57,7 @@ SubShader {
 			#pragma glsl_no_auto_normalization
 			#pragma fragmentoption ARB_precision_hint_fastest
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
+			#pragma shader_feature ALPHA_AS_DEPTH
 
 			#include "UnityCG.cginc" 
 			#include "Lighting.cginc"
@@ -199,7 +203,12 @@ SubShader {
 				// fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _Tint + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
 				col = (diffuse + fixed4(i.vLight, 1)) * col * _Tint + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor) + _AmbientAdd; // To use ShaderSH9 better done in vertex shader
 
+				#if defined (ALPHA_AS_DEPTH)
+				HG_DEPTH_ALPHA(i,col)
+				#else
 				UNITY_OPAQUE_ALPHA(col.a); 
+				#endif
+
 				return col; 
 
 			}
@@ -233,4 +242,5 @@ SubShader {
 
 */	
 }
+	Fallback "Hungry Dragon/VertexLit"
 }

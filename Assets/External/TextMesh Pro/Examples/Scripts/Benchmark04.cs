@@ -37,18 +37,18 @@ namespace TMPro.Examples
                 if (SpawnType == 0)
                 {
                     // TextMesh Pro Implementation
-                    GameObject go = new GameObject("Text - " + i + " Pts");
+                    GameObject go = new GameObject("Arial " + i);
 
                     if (lineHeight > orthoSize * 2) return;
 
                     go.transform.position = m_Transform.position + new Vector3(ratio * -orthoSize * 0.975f, orthoSize * 0.975f - lineHeight, 0);
 
                     TextMeshPro textMeshPro = go.AddComponent<TextMeshPro>();
-
+                    TextContainer textContainer = go.GetComponent<TextContainer>();
                     //textMeshPro.fontSharedMaterial = material;
-                    //textMeshPro.font = Resources.Load("Fonts & Materials/LiberationSans SDF", typeof(TextMeshProFont)) as TextMeshProFont;
+                    //textMeshPro.font = Resources.Load("Fonts & Materials/Arial SDF Ortho", typeof(TextMeshProFont)) as TextMeshProFont;
                     //textMeshPro.anchor = AnchorPositions.Left;
-                    textMeshPro.rectTransform.pivot = new Vector2(0, 0.5f);
+                    textContainer.anchorPosition = TextContainerAnchors.Left;
 
                     textMeshPro.enableWordWrapping = false;
                     textMeshPro.extraPadding = true;

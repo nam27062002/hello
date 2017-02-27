@@ -117,54 +117,25 @@ namespace TMPro
         private float m_defaultFontSize;
 
         /// <summary>
-        /// The multiplier used to computer the default Min point size when Text Auto Sizing is used.
+        /// The Default Width of the Rect Transform or Text Container.
         /// </summary>
-        public static float defaultTextAutoSizingMinRatio
+        public static float defaultTextContainerWidth
         {
-            get { return instance.m_defaultAutoSizeMinRatio; }
+            get { return instance.m_defaultTextContainerWidth; }
         }
         [SerializeField]
-        private float m_defaultAutoSizeMinRatio;
+        private float m_defaultTextContainerWidth;
 
         /// <summary>
-        /// The multiplier used to computer the default Max point size when Text Auto Sizing is used.
+        /// The Default Height of the Rect Transform or Text Container.
         /// </summary>
-        public static float defaultTextAutoSizingMaxRatio
+        public static float defaultTextContainerHeight
         {
-            get { return instance.m_defaultAutoSizeMaxRatio; }
+            get { return instance.m_defaultTextContainerHeight; }
         }
         [SerializeField]
-        private float m_defaultAutoSizeMaxRatio;
+        private float m_defaultTextContainerHeight;
 
-        /// <summary>
-        /// The Default Size of the Text Container of a TextMeshPro object.
-        /// </summary>
-        public static Vector2 defaultTextMeshProTextContainerSize
-        {
-            get { return instance.m_defaultTextMeshProTextContainerSize; }
-        }
-        [SerializeField]
-        private Vector2 m_defaultTextMeshProTextContainerSize;
-
-        /// <summary>
-        /// The Default Width of the Text Container of a TextMeshProUI object.
-        /// </summary>
-        public static Vector2 defaultTextMeshProUITextContainerSize
-        {
-            get { return instance.m_defaultTextMeshProUITextContainerSize; }
-        }
-        [SerializeField]
-        private Vector2 m_defaultTextMeshProUITextContainerSize;
-
-        /// <summary>
-        /// Set the size of the text container of newly created text objects to match the size of the text.
-        /// </summary>
-        public static bool autoSizeTextContainer
-        {
-            get { return instance.m_autoSizeTextContainer; }
-        }
-        [SerializeField]
-        private bool m_autoSizeTextContainer;
 
         /// <summary>
         /// Returns the list of Fallback Fonts defined in the TMP Settings file.
@@ -205,17 +176,6 @@ namespace TMPro
         }
         [SerializeField]
         private string m_defaultSpriteAssetPath;
-
-        /// <summary>
-        /// Determines if Emoji support is enabled in the Input Field TouchScreenKeyboard.
-        /// </summary>
-        public static bool enableEmojiSupport
-        {
-            get { return instance.m_enableEmojiSupport; }
-            set { instance.m_enableEmojiSupport = value; }
-        }
-        [SerializeField]
-        private bool m_enableEmojiSupport;
 
         /// <summary>
         /// The Default Style Sheet used by the text objects.

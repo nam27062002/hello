@@ -568,11 +568,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_holdingPlayer = null;
 		m_holdPreyTimer = m_holdDuration;
 
-		if ( grab )
-		{
-			m_grabbingPreyPreviousTransformParent = _prey.transform.parent;
-			_prey.transform.parent = m_mouth;
-		}
+		m_grabbingPreyPreviousTransformParent = _prey.transform.parent;
+		_prey.transform.parent = m_mouth;
 	}
 
 	virtual public void AdvanceHold( bool _advance )

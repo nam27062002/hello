@@ -52,10 +52,12 @@ SubShader {
 			{
 				fixed4 col = tex2D(_MainTex, i.texcoord) * _ColorMultiply + _ColorAdd;
 				UNITY_APPLY_FOG(i.fogCoord, col);
-				UNITY_OPAQUE_ALPHA(col.a);
+//				UNITY_OPAQUE_ALPHA(col.a);
+				HG_DEPTH_ALPHA(i, col)
 				return col;
 			}
 		ENDCG
 	}
 }
+	Fallback "Hungry Dragon/VertexLit"
 }

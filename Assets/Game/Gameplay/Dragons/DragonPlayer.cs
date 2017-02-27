@@ -291,12 +291,11 @@ public class DragonPlayer : MonoBehaviour {
 			if (m_breathBehaviour.IsFuryOn())
 				m_breathBehaviour.RecalculateSize();
 		}
-#if UNITY_EDITOR
+
 		if ( Input.GetKeyDown(KeyCode.J) )
 		{
 			AddAlcohol(100);
 		}
-#endif
 	}
 
 	//------------------------------------------------------------------//
