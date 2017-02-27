@@ -14,7 +14,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &173528
 GameObject:
   m_ObjectHideFlags: 0
@@ -232,6 +232,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_motionType: 0
+  m_chargeTime: 0.4
   m_speed: 20
   m_rotationSpeed: 0
   m_maxTime: 5
@@ -241,8 +242,13 @@ MonoBehaviour:
   m_damageType: 4
   m_radius: 1.5
   m_knockback: 0
-  m_activateOnShoot: []
+  m_activateOnShoot:
+  - {fileID: 120578}
   m_onAttachParticle:
+    name: PS_WitchGlow
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onChargeParticle:
     name: PS_WitchBuildUp
     path: 
     offset: {x: 0, y: 0, z: 0}
@@ -255,6 +261,7 @@ MonoBehaviour:
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_stickOnDragonTime: 0
+  m_dieTime: 1
   m_onHitAudio: 
 --- !u!135 &135834460996156098
 SphereCollider:
