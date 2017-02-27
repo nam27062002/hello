@@ -90,10 +90,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		if(_def == null) return;
 
 		// Init internal vars
-		switch(m_def.Get("type")) {
-			case "sc": m_type = UserProfile.Currency.SOFT; break;
-			case "hc": m_type = UserProfile.Currency.HARD; break;
-		}
+		m_type = GetCurrencyType( m_def );
 
 		// Init visuals
 		// Icon
@@ -116,7 +113,16 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		if(m_price > 0) {	// Real money prevails over HC
 			// [AOC] TODO!! Price should be localized by the store api
 			m_currency = UserProfile.Currency.REAL;
-			m_priceButtons.SetAmount("$" + StringUtils.FormatNumber(m_price, 2), UserProfile.Currency.REAL);
+			if (GameStoreManager.SharedInstance.IsReady())
+			{
+				string localizedPrice =  GameStoreManager.SharedInstance.GetLocalisedPrice( m_def.sku);
+				m_priceButtons.SetAmount( localizedPrice, UserProfile.Currency.REAL);
+			}
+			else
+			{
+				m_priceButtons.SetAmount("$" + StringUtils.FormatNumber(m_price, 2), UserProfile.Currency.REAL);
+			}
+
 		} else {
 			m_currency = UserProfile.Currency.HARD;
 			m_price = m_def.GetAsFloat("priceHC");
@@ -140,20 +146,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 			if(UsersManager.currentUser.pc >= pricePC) {
 				UsersManager.currentUser.AddPC(-pricePC);
 
-				// [AOC] TODO!! Real money transaction
-				// Do it instantly for now
-				// Add amount
-				switch(m_type) {
-					case UserProfile.Currency.SOFT: {
-						UsersManager.currentUser.AddCoins(m_def.GetAsLong("amount"));
-					} break;
-
-					case UserProfile.Currency.HARD: {
-						UsersManager.currentUser.AddPC(m_def.GetAsLong("amount"));
-					} break;
-				}
-				// Save persistence
-				PersistenceManager.Save(true);
+				ApplyShopPack( m_def );
 				// [AOC] TODO!! Notify game - typically this is done by the store manager, do it properly
 				Messenger.Broadcast<string>(EngineEvents.PURCHASE_SUCCESSFUL, m_def.sku);
 			} else {
@@ -172,6 +165,35 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 				m_loadingPopupController.Close(true);
 			});
 		}
+	}
+
+	public static void ApplyShopPack( DefinitionNode def )
+	{	
+		UserProfile.Currency type = GetCurrencyType(def);
+		// Add amount
+		switch(type) {
+			case UserProfile.Currency.SOFT: {
+				UsersManager.currentUser.AddCoins(def.GetAsLong("amount"));
+			} break;
+
+			case UserProfile.Currency.HARD: {
+				UsersManager.currentUser.AddPC(def.GetAsLong("amount"));
+			} break;
+		}
+
+		// Save persistence
+		PersistenceManager.Save(true);
+	}
+
+
+	private static UserProfile.Currency GetCurrencyType( DefinitionNode def )
+	{
+		UserProfile.Currency type = UserProfile.Currency.NONE;
+		switch(def.Get("type")) {
+			case "sc": type = UserProfile.Currency.SOFT; break;
+			case "hc": type = UserProfile.Currency.HARD; break;
+		}
+		return type;
 	}
 
 	void OnConnectionCheck()
