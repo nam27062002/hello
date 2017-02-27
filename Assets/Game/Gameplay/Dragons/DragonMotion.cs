@@ -1157,7 +1157,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
         {
             // http://stackoverflow.com/questions/667034/simple-physics-based-movement
 
-            impulse.y = 0;
+            impulse.Scale(new Vector3(0.75f, 0, 1));
+            //impulse.y = 0;
             //impulse.Normalize();
             Vector3 gravityAcceleration = Vector3.zero;
                 //if (impulse.y < 0) impulse.y *= m_dragonGravityModifier;
@@ -1796,11 +1797,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 			case State.OuterSpace: {
                     // Move down
-                    if(m_impulse.y < 0) 
+                    if(m_impulse.y <= 0) 
                     {
 					    m_impulse.y = 0;
                         m_rbody.velocity.Scale(new Vector3(1, 0, 1));
-                        m_prevImpulse.y = 0;
+                        m_prevImpulse.y = 0.0f;
                         //Debug.LogError("OUTER COL"+ m_prevImpulse.y);
                     }
                     
@@ -1825,16 +1826,26 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
             case State.OuterSpace:
                 {
                     // Move down
-                    if(m_impulse.y < 0) 
+                    if(m_impulse.y <= 0) 
                     {
                         m_impulse.y = 0;
                         m_rbody.velocity.Scale(new Vector3(1, 0, 1));
                         m_prevImpulse.y = 0;
                         //Debug.LogError("OUTER COL" + m_prevImpulse.y);
+                        float velX;
+                        if (m_rbody.velocity.x > 0)
+                        {
+                            velX = Mathf.Max(m_rbody.velocity.x, 1.0f);
+                        }
+                        else
+                        {
+                            velX = Mathf.Min(m_rbody.velocity.x, -1.0f);
+                        }
+                        m_rbody.velocity = new Vector3(velX, m_rbody.velocity.y, m_rbody.velocity.z);
                     }
 
                     // Smooth bounce effect on X
-                    m_impulse.x = -m_impulse.x * 0.05f;
+                    //m_impulse.x = -m_impulse.x * 0.05f;
 
                 }
                 break;
