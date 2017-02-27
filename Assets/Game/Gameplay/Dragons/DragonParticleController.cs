@@ -212,6 +212,15 @@ public class DragonParticleController : MonoBehaviour
 				// Set direction
 			}
 		}
+
+
+#if UNITY_EDITOR
+		if ( Input.GetKeyDown(KeyCode.E))
+		{
+			OnShieldLost( DamageType.MINE, null);
+		}
+#endif
+
 	}
 
 	private ParticleSystem InitParticles(string particle, Transform _anchor)

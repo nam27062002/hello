@@ -43,7 +43,7 @@ namespace TMPro.Examples
                     //go.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
 
                     TextMeshPro textMeshPro = go.AddComponent<TextMeshPro>();
-                    //textMeshPro.FontAsset = Resources.Load("Fonts & Materials/ARIAL SDF 16", typeof(TextMeshProFont)) as TextMeshProFont;
+                    //textMeshPro.FontAsset = Resources.Load("Fonts & Materials/LiberationSans SDF", typeof(TextMeshProFont)) as TextMeshProFont;
                     //textMeshPro.anchor = AnchorPositions.Bottom;
                     textMeshPro.fontSize = 96;
 
