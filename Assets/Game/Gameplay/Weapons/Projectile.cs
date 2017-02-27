@@ -10,10 +10,19 @@ public class Projectile : MonoBehaviour, IProjectile {
 		Parabolic
 	}
 
+	private enum State {
+		Idle = 0,
+		Charging,
+		Shot,
+		Stuck_On_Player,
+		Die
+	}
+
 	//---------------------------------------------------------------------------------------
 
 	[SeparatorAttribute("Motion")]
 	[SerializeField] private MotionType m_motionType = MotionType.Linear;
+	[SerializeField] private float m_chargeTime = 0f;
 	[SerializeField] private float m_speed = 0f;
 	[SerializeField] private float m_rotationSpeed = 0f;
 	[SerializeField] private float m_maxTime = 0f; // 0 infinite
@@ -28,9 +37,12 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	[SeparatorAttribute("Visual")]
 	[SerializeField] private List<GameObject> m_activateOnShoot = new List<GameObject>();
+	[SerializeField] private ParticleData m_onAttachParticle;
+	[SerializeField] private ParticleData m_onChargeParticle;
 	[SerializeField] private ParticleData m_onHitParticle;
 	[SerializeField] private ParticleData m_onEatParticle;
 	[SerializeField] private float m_stickOnDragonTime = 0f;
+	[SerializeField] private float m_dieTime = 0f;
 
 	[SeparatorAttribute("Audio")]
 	[SerializeField] private string m_onHitAudio = "";
@@ -61,10 +73,9 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	private Explosive m_explosive;
 
-	private bool m_hasBeenShot;
-	public bool hasBeenShot { get { return m_hasBeenShot; } }
+	private State m_state;
+	public bool hasBeenShot { get { return m_state == State.Shot; } }
 
-	private bool m_isStuckOnPlayer;
 	private float m_timer;
 
 	private Transform m_oldParent;
@@ -83,8 +94,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 		m_entity = GetComponent<Entity>();
 		m_machine = GetComponent<AI.MachineProjectile>();
 
-		m_hasBeenShot = false;
-		m_isStuckOnPlayer = false;
+		m_state = State.Idle;
 	}
 
 	void Start() {
@@ -94,6 +104,14 @@ public class Projectile : MonoBehaviour, IProjectile {
 			if (m_onHitParticle.IsValid()) {
 				ParticleManager.CreatePool(m_onHitParticle, 5);
 			}
+		}
+
+		if (m_onChargeParticle.IsValid()) {
+			ParticleManager.CreatePool(m_onChargeParticle, 5);
+		}
+
+		if (m_onAttachParticle.IsValid()) {
+			ParticleManager.CreatePool(m_onAttachParticle, 5);
 		}
 
 		if (m_onEatParticle.IsValid()) {
@@ -140,9 +158,15 @@ public class Projectile : MonoBehaviour, IProjectile {
 			m_explosive.damage = m_defaultDamage;
 		}
 
+		if (m_onAttachParticle.IsValid()) {
+			GameObject go = ParticleManager.Spawn(m_onAttachParticle);
+			go.transform.parent = _parent;
+			go.transform.position = Vector3.zero;
+			go.transform.localPosition = m_onAttachParticle.offset;
+		}
+
 		//wait until the projectil is shot
-		m_hasBeenShot = false;
-		m_isStuckOnPlayer = false;
+		m_state = State.Idle;
 	}
 
 	public void Shoot(Vector3 _target, float _damage) {
@@ -157,7 +181,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	public void ShootTowards(Vector3 _direction, float _speed, float _damage) {
 		m_direction = _direction;
-		m_distanceToTarget = 7777f;
+		m_distanceToTarget = float.MaxValue;
 		m_target = m_trasnform.position + m_direction * m_distanceToTarget;
 
 		DoShoot(_speed, _damage);
@@ -192,17 +216,31 @@ public class Projectile : MonoBehaviour, IProjectile {
 			m_activateOnShoot[i].SetActive(true);
 		}
 
-		//
 		m_elapsedTime = 0f;
-		m_timer = m_maxTime;
+		if (m_chargeTime > 0f) {
+			if (m_onChargeParticle.IsValid()) {
+				ParticleManager.Spawn(m_onChargeParticle, m_position);
+			}
 
-		//
-		m_hasBeenShot = true;
+			m_timer = m_chargeTime;
+			m_state = State.Charging;
+
+		} else {
+			m_timer = m_maxTime;
+			m_state = State.Shot;
+		}
+
 	}
 
 	// Update is called once per frame
 	private void Update () {
-		if (m_hasBeenShot) {
+		if (m_state == State.Charging) {
+			m_timer -= Time.deltaTime;
+			if (m_timer <= 0f) {
+				m_timer = 0f;
+				m_state = State.Shot;
+			}
+		} else if (m_state == State.Shot) {
 			if (m_machine == null || !m_machine.IsDying()) {
 				// motion
 				float dt = Time.deltaTime;
@@ -224,20 +262,23 @@ public class Projectile : MonoBehaviour, IProjectile {
 					}
 				}
 			}
-		}
-
-		if (m_isStuckOnPlayer) {
+		} else if (m_state == State.Stuck_On_Player) {
 			m_timer -= Time.deltaTime;
 			if (m_timer <= 0f) {
+				Die();
+			}
+		} else if (m_state == State.Die) {
+			m_timer -= Time.deltaTime;
+			if (m_timer <= 0f) {
+				m_state = State.Idle;
 				gameObject.SetActive(false);
 				PoolManager.ReturnInstance(gameObject);
-				m_isStuckOnPlayer = false;
 			}
 		}
 	}
 
 	private void FixedUpdate () {
-		if (m_hasBeenShot) {
+		if (m_state == State.Shot) {
 			if (m_machine == null || !m_machine.IsDying()) {
 				// motion
 				float dt = Time.fixedDeltaTime * m_scaleTime;
@@ -280,7 +321,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 		}
 	}
 	private void OnTriggerEnter(Collider _other) {
-		if (m_hasBeenShot) {
+		if (m_state == State.Shot) {
 			if (m_machine == null || !m_machine.IsDying()) {
 				if (_other.CompareTag("Player"))  {
 					Explode(true);
@@ -295,7 +336,6 @@ public class Projectile : MonoBehaviour, IProjectile {
 		if (m_onEatParticle.IsValid()) {
 			ParticleManager.Spawn(m_onEatParticle, m_position + m_onEatParticle.offset);
 		}
-		m_hasBeenShot = false;
 
 		if (m_entity != null) {
 			if (EntityManager.instance != null)	{
@@ -303,6 +343,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 			}
 		}
 
+		m_state = State.Idle;
 		gameObject.SetActive(false);
 		PoolManager.ReturnInstance(gameObject);
 	}
@@ -310,7 +351,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	public void Explode(bool _triggeredByPlayer) {
 		// dealing damage
 		if (m_damageType == DamageType.EXPLOSION || m_damageType == DamageType.MINE) {
-			m_explosive.Explode(m_position, m_knockback, _triggeredByPlayer);
+			m_explosive.Explode(transform, m_knockback, _triggeredByPlayer);
 		} else {
 			if (_triggeredByPlayer) {
 				if (m_knockback > 0) {
@@ -323,7 +364,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 					dragonMotion.AddForce(knockBackDirection * m_knockback);
 				}
 
-				InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType);
+				InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, transform);
 			}
 
 			if (m_onHitParticle.IsValid()) {
@@ -334,8 +375,6 @@ public class Projectile : MonoBehaviour, IProjectile {
 		if (!string.IsNullOrEmpty(m_onHitAudio))
 			AudioController.Play(m_onHitAudio, m_trasnform.position);
 		
-		m_hasBeenShot = false;
-
 		if (m_entity != null) {
 			if (EntityManager.instance != null)	{
 				EntityManager.instance.UnregisterEntity(m_entity);
@@ -345,13 +384,12 @@ public class Projectile : MonoBehaviour, IProjectile {
 		if (m_stickOnDragonTime > 0f && _triggeredByPlayer) {
 			StickOnPlayer();
 		} else {
-			gameObject.SetActive(false);
-			PoolManager.ReturnInstance(gameObject);
+			Die();
 		}
 	}
 
 	private void StickOnPlayer() {
-		m_isStuckOnPlayer = true;
+		m_state = State.Stuck_On_Player;
 		m_trasnform.parent = SearchClosestHoldPoint(InstanceManager.player.holdPreyPoints);
 		m_timer = m_stickOnDragonTime;
 	}
@@ -369,5 +407,10 @@ public class Projectile : MonoBehaviour, IProjectile {
 		}
 
 		return holdTransform;
+	}
+
+	private void Die() {
+		m_timer = m_dieTime;
+		m_state = State.Die;
 	}
 }

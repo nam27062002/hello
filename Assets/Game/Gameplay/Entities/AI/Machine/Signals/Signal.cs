@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 
 namespace AI {
 
@@ -32,103 +33,101 @@ namespace AI {
 
 	public class Signals {
 		//---------------------------------
+		[Flags]
 		public enum Type {
-			Leader = 0,
-	        Hungry, 	
-	        Alert, 	
-	        Warning, 
-	        Danger,
-			Critical,
-	        Panic, 	
-	        BackToHome,
-	        Burning, 
-	        Chewing, 
-			Latched,
-			Biting,
-			Latching,
-	        Destroyed, 
-	        Collision,
-	        Trigger,
-			FallDown,
-			InWater,
-			LockedInCage,
-			Invulnerable,
-			Ranged,
-			Melee,
-
-			Count
+			None		= (1 << 0),
+			Leader  	= (1 << 1),
+			Hungry		= (1 << 2), 	
+			Alert		= (1 << 3), 	
+			Warning		= (1 << 4), 
+			Danger		= (1 << 5),
+			Critical	= (1 << 6),
+			Panic		= (1 << 7), 	
+			BackToHome	= (1 << 8),
+			Burning		= (1 << 9), 
+			Chewing		= (1 << 10), 
+			Latched		= (1 << 11),
+			Biting		= (1 << 12),
+			Latching	= (1 << 13),
+			Destroyed	= (1 << 14), 
+			Collision	= (1 << 15),
+			Trigger		= (1 << 16),
+			FallDown	= (1 << 17),
+			InWater		= (1 << 18),
+			LockedInCage= (1 << 19),
+			Invulnerable= (1 << 20),
+			Ranged		= (1 << 21),
+			Melee		= (1 << 22),
 		}
 		//---------------------------------
 
 
-		private bool[] 			m_value;
-		private string[] 		m_onEnableTrigger;
-		private string[]		m_onDisableTrigger;
-		private List<object[]> 	m_params;
+		private Signals.Type	m_value;
+		private Dictionary<Signals.Type, string> 	m_onEnableTrigger;
+		private Dictionary<Signals.Type, string> 	m_onDisableTrigger;
+		private Dictionary<Signals.Type, object[]>  m_params;
 
 		private Machine m_machine;
 
 
 		//---------------------------------
 		public Signals(Machine _machine) {
-			m_value 			= new bool[(int)Type.Count];
-			m_onEnableTrigger 	= new string[(int)Type.Count];
-			m_onDisableTrigger 	= new string[(int)Type.Count];
-			m_params			= new List<object[]>((int)Type.Count);
-
-			for (int i = 0; i < m_value.Length; i++) {
-				m_params.Add(null);
-			}
+			m_value 			= Type.None;
+			m_onEnableTrigger 	= new Dictionary<Signals.Type, string>();
+			m_onDisableTrigger 	= new Dictionary<Signals.Type, string>();
+			m_params			= new Dictionary<Signals.Type, object[]>();
 
 			m_machine = _machine;
 		}
 
 		public void Init() {
-			for (int i = 0; i < m_value.Length; i++) {
-				m_value[i] = false;
-				m_params[i] = null;
-			}
+			m_value = Type.None;
+			m_params.Clear();
 		}
 
 		public void SetValue(Type _signal, bool _value, object[] _params = null) {
-			int index = (int)_signal;
-			if (m_value[index] != _value) {
+			bool enabled = (m_value & _signal) != 0;
+
+			if (enabled != _value) {
 				if (_value == true) {
-					m_params[index] = _params;
-					OnEnable(index);
+					m_value |= _signal;
+
+					m_params[_signal] = _params;
+					OnEnable(_signal);
 				} else {
-					m_params[index] = null;
-					OnDisable(index);
+					m_value &= ~_signal;
+
+					m_params[_signal] = null;
+					OnDisable(_signal);
 				}
-				m_value[index] = _value;
 			}
 		}
 
 		public bool GetValue(Type _signal) {
-			return m_value[(int)_signal];
+			return (m_value & _signal) != 0;
 		}
 
 		public object[] GetParams(Type _signal) {
-			return m_params[(int)_signal];
+			return m_params[_signal];
 		}
 
 		public void SetOnEnableTrigger(Type _signal, string _trigger) {
-			m_onEnableTrigger[(int)_signal] = _trigger;
+			m_onEnableTrigger[_signal] = _trigger;
 		}
 
 		public void SetOnDisableTrigger(Type _signal, string _trigger) {
-			m_onDisableTrigger[(int)_signal] = _trigger;
+			m_onDisableTrigger[_signal] = _trigger;
 		}
 
-		private void OnEnable(int _index) {
-			if (m_onEnableTrigger[_index] != null) {
-				m_machine.OnTrigger(m_onEnableTrigger[_index]);
+		private void OnEnable(Type _signal) {
+			if (m_onEnableTrigger.ContainsKey(_signal)) {
+				m_machine.OnTrigger(m_onEnableTrigger[_signal]);
 			}
 		}
 
-		private void OnDisable(int _index) {
-			if (m_onDisableTrigger[_index] != null) {
-				m_machine.OnTrigger(m_onDisableTrigger[_index]);
+		private void OnDisable(Type _signal) {
+			if (m_onDisableTrigger.ContainsKey(_signal)) {
+				m_machine.OnTrigger(m_onDisableTrigger[_signal]);
 			}
 		}
 	}

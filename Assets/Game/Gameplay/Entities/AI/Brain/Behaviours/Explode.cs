@@ -52,7 +52,7 @@ namespace AI {
 				}
 
 				if (!m_machine.IsDying()) {
-					m_explosive.Explode(m_machine.transform.position, 2f, playerTriggeredExplosion);
+					m_explosive.Explode(m_machine.transform, 2f, playerTriggeredExplosion);
 				}
 
 				m_machine.SetSignal(Signals.Type.Destroyed, true);

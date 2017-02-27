@@ -158,7 +158,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		base.StopAttackTarget();
 	}
 
-	override protected void StartHold(AI.IMachine _prey, bool grab = false) 
+	override public void StartHold(AI.IMachine _prey, bool grab = false) 
 	{
 		base.StartHold(_prey, grab);
 		DragonMotion motion = GetComponent<DragonMotion>();

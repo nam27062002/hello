@@ -68,8 +68,8 @@ namespace AI {
 			protected override void OnExit(State _newState) {
 				m_pilot.ReleaseAction(Pilot.Action.Attack);
 
-				/*if ( m_data.forceFaceToShoot && m_data.faceEnemy )
-					m_pilot.SetDirection( Vector3.zero, false);*/
+				if (m_data.forceFaceToShoot && m_data.faceEnemy)
+					m_pilot.SetDirection(Vector3.zero, false);
 
 				m_animEvents.onAttachProjectile -= new PreyAnimationEvents.OnAttachprojectile(OnAttachProjectile);
 				m_animEvents.onAttackDealDamage -= new PreyAnimationEvents.OnAttackDealDamageDelegate(OnAnimDealDamage);

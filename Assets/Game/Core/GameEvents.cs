@@ -27,6 +27,7 @@ public enum GameEvents {
 	// Profile events
 	PROFILE_COINS_CHANGED,		// params: long _oldAmount, long _newAmount
 	PROFILE_PC_CHANGED,			// params: long _oldAmount, long _newAmount
+	PROFILE_CURRENCY_CHANGED,	// params: UserProfile.Currency _currency, long _oldAmount, long _newAmount
 	PROFILE_MAP_UPGRADED,		// params: int mapLevel
 	
 	// Game logic events
@@ -58,7 +59,7 @@ public enum GameEvents {
 
 	// Player events
 	PLAYER_DAMAGE_RECEIVED,		// params: float _damage, DamageType _type, Transform _source
-	PLAYER_LOST_SHIELD,			// params: DamageType _type
+	PLAYER_LOST_SHIELD,			// params: DamageType _type, Transform _originTransform
 	PLAYER_HEALTH_MODIFIER_CHANGED,	// params: DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier
 	PLAYER_STATE_CHANGED,		// params: DragonPlayer.EState _oldState, DragonPlayer.EState _newState
 	PLAYER_KO,					// params: DamageType

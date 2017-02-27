@@ -234,7 +234,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public AnimationCurve m_introDisplacementCurve;
 	public float m_introStopAnimationDelta = 0.1f;
 
-	private Transform m_preyPreviousTransformParent;
 	private AI.IMachine m_holdPrey = null;
 	private Transform m_holdPreyTransform = null;
 
@@ -734,24 +733,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		if ( m_holdPrey != null )
 		{
-			if (m_grab)
-			{
-				// Rotation
-				Quaternion rot = m_holdPrey.transform.localRotation;
-				m_holdPrey.transform.localRotation = Quaternion.identity;
-				Vector3 holdDirection = m_tongue.InverseTransformDirection(m_holdPreyTransform.forward);
-				Vector3 holdUpDirection = m_tongue.InverseTransformDirection(m_holdPreyTransform.up);
-				// m_holdPrey.transform.localRotation = Quaternion.LookRotation( -holdDirection, holdUpDirection );
-				m_holdPrey.transform.localRotation = Quaternion.Lerp( rot, Quaternion.LookRotation( -holdDirection, holdUpDirection ), Time.deltaTime * 20);
-
-				// Position
-				Vector3 pos = m_holdPrey.transform.localPosition;
-				m_holdPrey.transform.localPosition = Vector3.zero;
-				Vector3 holdPoint = m_tongue.InverseTransformPoint( m_holdPreyTransform.position );
-				// m_holdPrey.transform.localPosition = -holdPoint;
-				m_holdPrey.transform.localPosition = Vector3.Lerp( pos, -holdPoint, Time.deltaTime * 20);
-			}
-			else
+			if (!m_grab)	// if latching
 			{
 				m_latchingTimer += Time.deltaTime;	
 				RotateToDirection( m_holdPreyTransform.forward );
@@ -1175,7 +1157,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
         {
             // http://stackoverflow.com/questions/667034/simple-physics-based-movement
 
-            impulse.y = 0;
+            impulse.Scale(new Vector3(0.75f, 0, 1));
+            //impulse.y = 0;
             //impulse.Normalize();
             Vector3 gravityAcceleration = Vector3.zero;
                 //if (impulse.y < 0) impulse.y *= m_dragonGravityModifier;
@@ -1655,20 +1638,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		// TODO: Calculate hold speed multiplier
 		m_holdSpeedMultiplier = 0.6f;
-
 		m_grab = true;
 		m_holdPrey = prey;
 		m_holdPreyTransform = _holdPreyTransform;
-	
-		m_preyPreviousTransformParent = prey.transform.parent;
-		prey.transform.parent = m_tongue;
-		
 	}
 
 	public void EndGrabMovement()
 	{
 		m_holdSpeedMultiplier = 1;
-		m_holdPrey.transform.parent = m_preyPreviousTransformParent;
 		m_holdPrey = null;
 		m_holdPreyTransform = null;
 		m_grab = false;
@@ -1820,11 +1797,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 			case State.OuterSpace: {
                     // Move down
-                    if(m_impulse.y < 0) 
+                    if(m_impulse.y <= 0) 
                     {
 					    m_impulse.y = 0;
                         m_rbody.velocity.Scale(new Vector3(1, 0, 1));
-                        m_prevImpulse.y = 0;
+                        m_prevImpulse.y = 0.0f;
                         //Debug.LogError("OUTER COL"+ m_prevImpulse.y);
                     }
                     
@@ -1849,16 +1826,26 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
             case State.OuterSpace:
                 {
                     // Move down
-                    if(m_impulse.y < 0) 
+                    if(m_impulse.y <= 0) 
                     {
                         m_impulse.y = 0;
                         m_rbody.velocity.Scale(new Vector3(1, 0, 1));
                         m_prevImpulse.y = 0;
                         //Debug.LogError("OUTER COL" + m_prevImpulse.y);
+                        float velX;
+                        if (m_rbody.velocity.x > 0)
+                        {
+                            velX = Mathf.Max(m_rbody.velocity.x, 1.0f);
+                        }
+                        else
+                        {
+                            velX = Mathf.Min(m_rbody.velocity.x, -1.0f);
+                        }
+                        m_rbody.velocity = new Vector3(velX, m_rbody.velocity.y, m_rbody.velocity.z);
                     }
 
                     // Smooth bounce effect on X
-                    m_impulse.x = -m_impulse.x * 0.05f;
+                    //m_impulse.x = -m_impulse.x * 0.05f;
 
                 }
                 break;

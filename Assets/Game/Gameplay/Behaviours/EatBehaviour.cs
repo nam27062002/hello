@@ -49,6 +49,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 	public Transform holdTransform{ get{ return m_holdTransform; } }
 	protected HoldPreyPoint m_holdPoint;
 	protected bool m_grabbingPrey = false;
+	protected Transform m_grabbingPreyPreviousTransformParent = null;
+	protected bool m_advanceHold = true;
 
 	// Attacking/Targeting
 	protected Transform m_attackTarget = null;
@@ -326,7 +328,32 @@ public abstract class EatBehaviour : MonoBehaviour {
 	void LateUpdate()
 	{
 		if (PreyCount > 0)
+		{
 			UpdateEating();
+		}
+		else if ( m_grabbingPrey && m_holdingPrey != null )
+		{
+			// Update hold movement
+			UpdateGrabMotion();
+		}
+
+	}
+
+	void UpdateGrabMotion()
+	{
+		// Rotation
+		Quaternion rot = m_holdingPrey.transform.localRotation;
+		m_holdingPrey.transform.localRotation = Quaternion.identity;
+		Vector3 holdDirection = m_mouth.InverseTransformDirection(m_holdTransform.forward);
+		Vector3 holdUpDirection = m_mouth.InverseTransformDirection(m_holdTransform.up);
+		m_holdingPrey.transform.localRotation = Quaternion.Lerp( rot, Quaternion.LookRotation( -holdDirection, holdUpDirection ), Time.deltaTime * 20);
+
+		// Position
+		Vector3 pos = m_holdingPrey.transform.localPosition;
+		m_holdingPrey.transform.localPosition = Vector3.zero;
+		Vector3 holdPoint = m_mouth.InverseTransformPoint( m_holdTransform.position );
+		// m_holdPrey.transform.localPosition = -holdPoint;
+		m_holdingPrey.transform.localPosition = Vector3.Lerp( pos, -holdPoint, Time.deltaTime * 20);
 	}
 
 	/// <summary>
@@ -523,7 +550,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// </summary>
 
 	/// Start holding a prey machine
-	virtual protected void StartHold( AI.IMachine _prey, bool grab = false) 
+	virtual public void StartHold( AI.IMachine _prey, bool grab = false) 
 	{
 		m_grabbingPrey = grab;
 		// look for closer hold point
@@ -540,6 +567,17 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_holdingPrey = _prey;
 		m_holdingPlayer = null;
 		m_holdPreyTimer = m_holdDuration;
+
+		if ( grab )
+		{
+			m_grabbingPreyPreviousTransformParent = _prey.transform.parent;
+			_prey.transform.parent = m_mouth;
+		}
+	}
+
+	virtual public void AdvanceHold( bool _advance )
+	{
+		m_advanceHold = _advance;
 	}
 
 	virtual protected void StartLatchOnPlayer( DragonPlayer player )
@@ -586,6 +624,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// </summary>
 	protected virtual void UpdateHoldingPrey()
 	{
+		if (!m_advanceHold)
+			return;
+
 		if (m_holdingBlood <= 0)
 		{
 			StartBlood();
@@ -687,8 +728,13 @@ public abstract class EatBehaviour : MonoBehaviour {
         if ( m_holdingPrey != null)
 		{
 			if ( !m_grabbingPrey && onEndLatching != null)
+			{
 				onEndLatching();
-				
+			}
+			else
+			{
+				m_holdingPrey.transform.parent = m_grabbingPreyPreviousTransformParent;
+			}
 			m_holdingPrey.ReleaseHold();
 			m_holdingPrey.SetVelocity(m_motion.velocity * 2f);
 			m_holdingPrey = null;
