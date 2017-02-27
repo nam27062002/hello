@@ -101,7 +101,7 @@ namespace TMPro
         /// </summary>
         public static void RefreshStyles()
         {
-            instance.LoadStyleDictionaryInternal();
+            s_Instance.LoadStyleDictionaryInternal();
         }
 
 

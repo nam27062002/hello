@@ -116,7 +116,8 @@ SubShader {
 
 
 			HG_APPLY_FOG(i, col);	// Fog
-			UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+//			UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+			HG_DEPTH_ALPHA(i, col);
 
 
 //			float4 skyCol = lerp(_SkyLowColor, _SkyHighColor, clamp(persp, 0.0, 1.0));
@@ -125,4 +126,5 @@ SubShader {
 		ENDCG 
 	}	
 }
+	Fallback "Hungry Dragon/VertexLit"
 }

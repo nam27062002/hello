@@ -88,4 +88,5 @@ Properties
 			ENDCG
 		}
 	}
+//Fallback "VertexLit"	
 }

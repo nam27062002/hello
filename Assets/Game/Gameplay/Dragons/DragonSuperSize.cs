@@ -60,12 +60,11 @@ public class DragonSuperSize : MonoBehaviour {
 				Messenger.Broadcast<bool>( GameEvents.SUPER_SIZE_TOGGLE, false);
 			}
 		}
-#if UNITY_EDITOR
+
 		if ( Input.GetKeyDown(KeyCode.F) )
 		{
 			StartSuperSize();
 		}
-#endif
 	}
 
 	bool IsActive()

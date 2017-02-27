@@ -106,11 +106,13 @@ Shader "Hungry Dragon/Texture Blending Vertex Color + Lightmap And Recieve Shado
 
 					HG_APPLY_DARKEN(i, col);	//darken
 
-					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+//					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+					HG_DEPTH_ALPHA(i, col)
 					return col;
 				}
 			ENDCG
 
 		}
 	}
+	Fallback "Hungry Dragon/VertexLit"
 }

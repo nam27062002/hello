@@ -12,10 +12,10 @@ using System.Collections;
 namespace TMPro.EditorUtilities
 {
 
-    public static class TMP_StyleAssetMenu
+    public static class TMPro_CreateStyleAssetMenu
     {
 
-        [MenuItem("Assets/Create/TextMeshPro/Style Sheet", false, 120)]
+        [MenuItem("Assets/Create/TextMeshPro - Style Sheet", false, 120)]
         public static void CreateTextMeshProObjectPerform()
         {
             string filePath;

@@ -86,10 +86,12 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Transparent (On Line Decoratio
 					col.rgb *= lm;
 					#endif
 
-					HG_APPLY_FOG(i, col);	// Fog
+//					HG_APPLY_FOG(i, col);	// Fog
+					HG_DEPTH_ALPHA(i, col)
 					return col;
 				}
 			ENDCG
 		}
 	}
+	Fallback "Hungry Dragon/VertexLit"
 }

@@ -64,4 +64,6 @@ SubShader {
 		ENDCG
 	}
 }
+	// Pass to render object as a shadow caster
+//	Fallback "VertexLit"
 }

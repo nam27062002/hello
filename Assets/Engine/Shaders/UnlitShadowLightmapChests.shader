@@ -100,7 +100,8 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (Chests)"
 					HG_APPLY_FOG(i, col);	// Fog
 
 
-					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+//					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+					HG_DEPTH_ALPHA(i, col)
 
 					// col = fixed4(1,1,1,1) * i.fogCoord;
 					return col;
@@ -108,4 +109,5 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (Chests)"
 			ENDCG
 		}
 	}
+	Fallback "Hungry Dragon/VertexLit"
 }
