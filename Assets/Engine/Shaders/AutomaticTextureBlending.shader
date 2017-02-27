@@ -102,12 +102,10 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 
 					HG_APPLY_FOG(i, col);	// Fog
 					 
-//					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-					HG_DEPTH_ALPHA(i, col)
+					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 					return col;
 				}
 			ENDCG
 		}
 	}
-	Fallback "Hungry Dragon/VertexLit"
 }

@@ -105,7 +105,7 @@ namespace TMPro.Examples
 
                 bool isCharacterVisible = i >= m_TextComponent.maxVisibleCharacters ||
                                           cInfo.lineNumber >= m_TextComponent.maxVisibleLines ||
-                                          (m_TextComponent.OverflowMode == TextOverflowModes.Page && cInfo.pageNumber + 1 != m_TextComponent.pageToDisplay) ? false : true;
+                                          (m_TextComponent.overflowMode == TextOverflowModes.Page && cInfo.pageNumber + 1 != m_TextComponent.pageToDisplay) ? false : true;
 
                 if (!isCharacterVisible) continue;
 
@@ -190,7 +190,7 @@ namespace TMPro.Examples
 
                     bool isCharacterVisible = characterIndex > m_TextComponent.maxVisibleCharacters ||
                                               currentCharInfo.lineNumber > m_TextComponent.maxVisibleLines ||
-                                             (m_TextComponent.OverflowMode == TextOverflowModes.Page && currentCharInfo.pageNumber + 1 != m_TextComponent.pageToDisplay) ? false : true;
+                                             (m_TextComponent.overflowMode == TextOverflowModes.Page && currentCharInfo.pageNumber + 1 != m_TextComponent.pageToDisplay) ? false : true;
 
                     // Track Max Ascender and Min Descender
                     maxAscender = Mathf.Max(maxAscender, currentCharInfo.ascender);
@@ -296,7 +296,7 @@ namespace TMPro.Examples
 
                     bool isCharacterVisible = characterIndex > m_TextComponent.maxVisibleCharacters ||
                                               currentCharInfo.lineNumber > m_TextComponent.maxVisibleLines ||
-                                             (m_TextComponent.OverflowMode == TextOverflowModes.Page && currentCharInfo.pageNumber + 1 != m_TextComponent.pageToDisplay) ? false : true;
+                                             (m_TextComponent.overflowMode == TextOverflowModes.Page && currentCharInfo.pageNumber + 1 != m_TextComponent.pageToDisplay) ? false : true;
 
                     // Track Max Ascender and Min Descender
                     maxAscender = Mathf.Max(maxAscender, currentCharInfo.ascender);
@@ -381,7 +381,7 @@ namespace TMPro.Examples
 
                 bool isLineVisible = (lineInfo.characterCount == 1 && textInfo.characterInfo[lineInfo.firstCharacterIndex].character == 10) ||
                                       i > m_TextComponent.maxVisibleLines ||
-                                     (m_TextComponent.OverflowMode == TextOverflowModes.Page && textInfo.characterInfo[lineInfo.firstCharacterIndex].pageNumber + 1 != m_TextComponent.pageToDisplay) ? false : true;
+                                     (m_TextComponent.overflowMode == TextOverflowModes.Page && textInfo.characterInfo[lineInfo.firstCharacterIndex].pageNumber + 1 != m_TextComponent.pageToDisplay) ? false : true;
 
                 if (!isLineVisible) continue;
 
@@ -443,9 +443,11 @@ namespace TMPro.Examples
         /// </summary>
         void DrawBounds()
         {
+            Bounds meshBounds = m_TextComponent.bounds;
+            
             // Get Bottom Left and Top Right position of each word
-            Vector3 bottomLeft = m_TextComponent.transform.position - m_TextComponent.bounds.extents + m_TextComponent.bounds.center;
-            Vector3 topRight = m_TextComponent.transform.position + m_TextComponent.bounds.extents + m_TextComponent.bounds.center;
+            Vector3 bottomLeft = m_TextComponent.transform.position + (meshBounds.center - meshBounds.extents);
+            Vector3 topRight = m_TextComponent.transform.position + (meshBounds.center + meshBounds.extents);
 
             DrawRectangle(bottomLeft, topRight, new Color(1, 0.5f, 0));
         }
@@ -455,8 +457,8 @@ namespace TMPro.Examples
         {
             Bounds textBounds = m_TextComponent.textBounds;
 
-            Vector3 bottomLeft = m_TextComponent.transform.position - textBounds.extents + textBounds.center;
-            Vector3 topRight = m_TextComponent.transform.position + textBounds.extents + textBounds.center;
+            Vector3 bottomLeft = m_TextComponent.transform.position + (textBounds.center - textBounds.extents);
+            Vector3 topRight = m_TextComponent.transform.position + (textBounds.center + textBounds.extents);
 
             DrawRectangle(bottomLeft, topRight, new Color(0f, 0.5f, 0.5f));
         }

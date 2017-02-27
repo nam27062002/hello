@@ -64,56 +64,28 @@ Material:
         second: 0
       data:
         first:
-          name: _Stencil
-        second: 0
-      data:
-        first:
-          name: _StencilComp
-        second: 8
-      data:
-        first:
-          name: _StencilOp
-        second: 0
-      data:
-        first:
-          name: _StencilReadMask
-        second: 255
-      data:
-        first:
-          name: _StencilWriteMask
-        second: 255
-      data:
-        first:
-          name: _ColorMask
-        second: 15
-      data:
-        first:
           name: _FaceDilate
         second: .100000001
       data:
         first:
-          name: _OutlineWidth
-        second: .209999993
-      data:
-        first:
-          name: _OutlineSoftness
+          name: _FaceShininess
         second: 0
       data:
         first:
-          name: _GlowOffset
-        second: .432999998
+          name: _UnderlayOffsetX
+        second: .869000018
       data:
         first:
-          name: _GlowInner
-        second: .148000002
+          name: _UnderlayOffsetY
+        second: -1
       data:
         first:
-          name: _GlowOuter
-        second: .158000007
+          name: _UnderlayDilate
+        second: 0
       data:
         first:
-          name: _GlowPower
-        second: .907999992
+          name: _UnderlaySoftness
+        second: 0
       data:
         first:
           name: _WeightNormal
@@ -124,28 +96,12 @@ Material:
         second: .5
       data:
         first:
-          name: _ShaderFlags
+          name: _OutlineWidth
+        second: .209999993
+      data:
+        first:
+          name: _OutlineSoftness
         second: 0
-      data:
-        first:
-          name: _ScaleRatioA
-        second: .909090936
-      data:
-        first:
-          name: _ScaleRatioB
-        second: .818181813
-      data:
-        first:
-          name: _ScaleRatioC
-        second: .818181813
-      data:
-        first:
-          name: _TextureWidth
-        second: 1024
-      data:
-        first:
-          name: _TextureHeight
-        second: 1024
       data:
         first:
           name: _GradientScale
@@ -164,12 +120,96 @@ Material:
         second: 0
       data:
         first:
+          name: _TextureWidth
+        second: 1024
+      data:
+        first:
+          name: _TextureHeight
+        second: 1024
+      data:
+        first:
+          name: _Bevel
+        second: .5
+      data:
+        first:
+          name: _LightAngle
+        second: 3.14159989
+      data:
+        first:
+          name: _GlowOffset
+        second: .432999998
+      data:
+        first:
+          name: _GlowPower
+        second: .907999992
+      data:
+        first:
+          name: _GlowOuter
+        second: .158000007
+      data:
+        first:
+          name: _MaskSoftnessX
+        second: 0
+      data:
+        first:
+          name: _MaskSoftnessY
+        second: 0
+      data:
+        first:
           name: _VertexOffsetX
         second: 0
       data:
         first:
           name: _VertexOffsetY
         second: 0
+      data:
+        first:
+          name: _Stencil
+        second: 0
+      data:
+        first:
+          name: _StencilOp
+        second: 0
+      data:
+        first:
+          name: _StencilComp
+        second: 8
+      data:
+        first:
+          name: _StencilReadMask
+        second: 255
+      data:
+        first:
+          name: _StencilWriteMask
+        second: 255
+      data:
+        first:
+          name: _ShaderFlags
+        second: 0
+      data:
+        first:
+          name: _ScaleRatioA
+        second: .909090936
+      data:
+        first:
+          name: _ScaleRatioB
+        second: .704545438
+      data:
+        first:
+          name: _ScaleRatioC
+        second: .704545438
+      data:
+        first:
+          name: _ColorMask
+        second: 15
+      data:
+        first:
+          name: _OutlineShininess
+        second: 0
+      data:
+        first:
+          name: _GlowInner
+        second: .148000002
       data:
         first:
           name: _FaceUVSpeedX
@@ -188,10 +228,6 @@ Material:
         second: 0
       data:
         first:
-          name: _Bevel
-        second: .5
-      data:
-        first:
           name: _BevelOffset
         second: 0
       data:
@@ -206,10 +242,6 @@ Material:
         first:
           name: _BevelRoundness
         second: 0
-      data:
-        first:
-          name: _LightAngle
-        second: 3.14159989
       data:
         first:
           name: _SpecularPower
@@ -236,38 +268,6 @@ Material:
         second: 0
       data:
         first:
-          name: _UnderlayOffsetX
-        second: .869000018
-      data:
-        first:
-          name: _UnderlayOffsetY
-        second: -1
-      data:
-        first:
-          name: _UnderlayDilate
-        second: 0
-      data:
-        first:
-          name: _UnderlaySoftness
-        second: 0
-      data:
-        first:
-          name: _MaskSoftnessX
-        second: 0
-      data:
-        first:
-          name: _MaskSoftnessY
-        second: 0
-      data:
-        first:
-          name: _FaceShininess
-        second: 0
-      data:
-        first:
-          name: _OutlineShininess
-        second: 0
-      data:
-        first:
           name: _MaskID
         second: 0
     m_Colors:
@@ -285,12 +285,24 @@ Material:
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
+          name: _UnderlayColor
+        second: {r: 1, g: 0, b: 0, a: .5}
+      data:
+        first:
           name: _OutlineColor
         second: {r: 0, g: .255172163, b: 1, a: 1}
       data:
         first:
+          name: _EnvMatrixRotation
+        second: {r: 0, g: 0, b: 0, a: 0}
+      data:
+        first:
           name: _GlowColor
         second: {r: 0, g: 1, b: 0, a: 1}
+      data:
+        first:
+          name: _MaskCoord
+        second: {r: 0, g: 0, b: 100000, a: 100000}
       data:
         first:
           name: _SpecularColor
@@ -303,15 +315,3 @@ Material:
         first:
           name: _ReflectOutlineColor
         second: {r: 0, g: 0, b: 0, a: 1}
-      data:
-        first:
-          name: _EnvMatrixRotation
-        second: {r: 0, g: 0, b: 0, a: 0}
-      data:
-        first:
-          name: _UnderlayColor
-        second: {r: 1, g: 0, b: 0, a: .5}
-      data:
-        first:
-          name: _MaskCoord
-        second: {r: 0, g: 0, b: 100000, a: 100000}

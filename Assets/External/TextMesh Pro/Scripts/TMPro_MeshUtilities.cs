@@ -26,8 +26,48 @@ namespace TMPro
 
 
     /// <summary>
+    /// TMP custom data type to represent 32 bit characters.
+    /// </summary>
+    //public struct TMP_Char
+    //{
+    //    private int m_value;
+
+    //    private TMP_Char(int value)
+    //    {
+    //        this.m_value = value;
+    //    }
+
+    //    private TMP_Char(TMP_Char value)
+    //    {
+    //        this.m_value = (int)value;
+    //    }
+
+    //    public static implicit operator TMP_Char(int value)
+    //    {
+    //        return new TMP_Char(value);
+    //    }
+
+    //    public static implicit operator TMP_Char(char c)
+    //    {
+    //        return new TMP_Char(c);
+    //    }
+
+    //    public static explicit operator int(TMP_Char value)
+    //    {
+    //        return value.m_value;
+    //    }
+
+    //    public override string ToString()
+    //    {
+    //        return m_value.ToString();
+    //    }
+    //}
+
+
+    /// <summary>
     /// Structure containing information about individual text elements (character or sprites).
     /// </summary>
+    //[Serializable]
     public struct TMP_CharacterInfo
     {   
         public char character; // Should be changed to an int to handle UTF 32
@@ -72,6 +112,7 @@ namespace TMPro
         public float aspectRatio;
         public float scale;
         public Color32 color;
+        public Color32 highlightColor;
         public FontStyles style;
         public bool isVisible;
         //public bool isIgnoringAlignment;
@@ -140,6 +181,7 @@ namespace TMPro
         public float ascender;
         public float baseLine;
         public float descender;
+        // public float extents;
     }
 
 
@@ -331,12 +373,18 @@ namespace TMPro
         public TMP_LineInfo lineInfo;
         
         public Color32 vertexColor;
+        public TMP_BasicXmlTagStack basicStyleStack;
         public TMP_XmlTagStack<Color32> colorStack;
+        public TMP_XmlTagStack<Color32> highlightColorStack;
         public TMP_XmlTagStack<float> sizeStack;
+        public TMP_XmlTagStack<float> indentStack;
         public TMP_XmlTagStack<int> fontWeightStack;
         public TMP_XmlTagStack<int> styleStack;
         public TMP_XmlTagStack<int> actionStack;
         public TMP_XmlTagStack<MaterialReference> materialReferenceStack;
+        public TMP_XmlTagStack<TextAlignmentOptions> lineJustificationStack;
+        //public TMP_XmlTagStack<int> spriteAnimationStack;
+        public int spriteAnimationID;
 
         public TMP_FontAsset currentFontAsset;
         public TMP_SpriteAsset currentSpriteAsset;
@@ -365,7 +413,6 @@ namespace TMPro
         public int nameHashCode;
         public TagType valueType;
         public int valueStartIndex;
-        public int valueDecimalIndex;
         public int valueLength;
         public int valueHashCode;
     }

@@ -105,8 +105,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with near darken(On Line Decor
 
 					HG_APPLY_DARKEN(i, col);	//darken
 
-//					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-					HG_DEPTH_ALPHA(i, col)
+					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 
 					// col = fixed4(1,1,1,1) * i.fogCoord;
 					return col;
@@ -114,6 +113,4 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with near darken(On Line Decor
 			ENDCG
 		}
 	}
-		
-	Fallback "Hungry Dragon/VertexLit"
 }

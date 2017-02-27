@@ -121,5 +121,4 @@ Shader "Hungry Dragon/Bumped Diffuse Transparent (Spawners)"
 			ENDCG
 		}
 	}
-	Fallback "Hungry Dragon/VertexLit"
 }
