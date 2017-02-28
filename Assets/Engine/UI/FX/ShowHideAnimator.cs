@@ -24,7 +24,6 @@ using DG.Tweening;
 /// TODO!!
 /// 	- Support for non-symmetric animations
 /// </summary>
-[RequireComponent(typeof(RectTransform))]	// Only for UI objects for now!
 public class ShowHideAnimator : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -100,7 +99,6 @@ public class ShowHideAnimator : MonoBehaviour {
 
 	// Internal references
 	protected CanvasGroup m_canvasGroup = null;	// Not required, if the object has no animator nor a canvas group, it will be automatically added
-	protected RectTransform m_rectTransform = null;
 
 	// Internal
 	protected Sequence m_sequence = null;	// We will reuse the same tween and play it forward/backwards accordingly
@@ -153,8 +151,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	protected virtual void Awake() {
-		// Get external references
-		m_rectTransform = GetComponent<RectTransform>();
+		
 	}
 
 	/// <summary>
@@ -378,11 +375,6 @@ public class ShowHideAnimator : MonoBehaviour {
 			m_sequence = null;
 		}
 
-		// Make sure we have required components
-		if(m_rectTransform == null) {
-			m_rectTransform = GetComponent<RectTransform>();
-		}
-
 		// Clear dirty flag
 		m_isDirty = false;
 
@@ -445,27 +437,27 @@ public class ShowHideAnimator : MonoBehaviour {
 
 			case TweenType.UP: {
 				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(m_rectTransform.DOBlendableLocalMoveBy(Vector3.down * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.down * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
 			} break;
 
 			case TweenType.DOWN: {
 				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(m_rectTransform.DOBlendableLocalMoveBy(Vector3.up * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.up * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
 			} break;
 
 			case TweenType.LEFT: {
 				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(m_rectTransform.DOBlendableLocalMoveBy(Vector3.right * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.right * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
 			} break;
 
 			case TweenType.RIGHT: {
 				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(m_rectTransform.DOBlendableLocalMoveBy(Vector3.left * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.left * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
 			} break;
 
 			case TweenType.SCALE: {
 				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(m_rectTransform.DOScale(m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(transform.DOScale(m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
 			} break;
 		}
 
