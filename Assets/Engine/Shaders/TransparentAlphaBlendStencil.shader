@@ -1,4 +1,4 @@
-﻿Shader "Hungry Dragon/TransparentAlphaBlend(Stencil)"
+﻿Shader "Hungry Dragon/TransparentAlphaBlend"
 {
 	Properties
 	{
@@ -43,5 +43,4 @@
 		}
 	}
 
-	CustomEditor "GlowMaterialInspector"
 }

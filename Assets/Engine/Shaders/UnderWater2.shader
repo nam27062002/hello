@@ -12,19 +12,11 @@ Shader "Hungry Dragon/UnderWater2"
 	Properties 
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_PerspectivePower("Perspective power", float) = 0.5
+		_PerspectivePower("Perspective power", Range(1.0, 10.0)) = 6.0
 		_ColorBack("Background color", color) = (1, 0, 0, 1)
 		_ColorFront("Foreground color", color) = (1, 0, 0, 1)
 
-		_FogFar("Fog far", float) = 1
-		_FogNear("Fog near", float) = 0
-
-		_CausticFar("Caustic far", float) = 1
-		_CausticNear("Caustic near", float) = 0
-
 		_WaveRadius("Wave radius ", Range(0.0, 1.0)) = 0.15
-
-		_CausticSpeed("Caustic speed", float) = 2.0
 
 		_StencilMask("Stencil Mask", int) = 10
 	}
@@ -41,7 +33,7 @@ Shader "Hungry Dragon/UnderWater2"
 			{
 				Ref [_StencilMask]
 				Comp NotEqual
-				Pass DecrWrap//keep
+//				Pass DecrWrap//keep
 			}
 
 			CGPROGRAM
@@ -49,11 +41,7 @@ Shader "Hungry Dragon/UnderWater2"
 				#pragma fragment frag
 				#pragma glsl_no_auto_normalization
 				#pragma fragmentoption ARB_precision_hint_fastest
-				#pragma shader_feature _WATER
-//				#pragma multi_compile_fog
-//				#pragma multi_compile_fwdbase
 
-//				#pragma multi_compile_particles
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
 				#include "HungryDragon.cginc"
@@ -77,10 +65,6 @@ Shader "Hungry Dragon/UnderWater2"
 
 
 				sampler2D _MainTex;
-//				sampler2D _CameraDepthTexture;
-
-//				float4 _CameraDepthTexture_TexelSize;
-
 				float4 _MainTex_ST;
 				float4 _MainTex_TexelSize;
 				float4 _ColorBack;
@@ -88,12 +72,6 @@ Shader "Hungry Dragon/UnderWater2"
 				float _WaveRadius;
 				float _PerspectivePower;
 
-				float _FogFar;
-				float _FogNear;
-				float _CausticFar;
-				float _CausticNear;
-
-				float _CausticSpeed;
 
 				v2f vert (appdata_t v) 
 				{
@@ -105,8 +83,6 @@ Shader "Hungry Dragon/UnderWater2"
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
 					o.scrPos = ComputeScreenPos(o.vertex);
-//					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-//					o.uv = TRANSFORM_TEX(v.uv.xy, _MainTex);
 					o.uv = v.uv.xy;
 
 					o.color = v.color;
@@ -115,26 +91,8 @@ Shader "Hungry Dragon/UnderWater2"
 
 				fixed4 frag (v2f i) : SV_Target
 				{
-//					return i.uv.y;
-//					return fixed4(0.0, 1.0, 0.0, 1.0);
 					float depth =  pow(1.0 - abs(i.uv.y - 1.0), _PerspectivePower);
-	//				float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).x) * 1.0f;
-//					float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).x) * 1.0f;
-					//float depth = clamp(1.0 - pow(abs((i.uv.y * _SurfaceScale) - _SurfaceOffset), 2.0), 0.0, 1.0);
-//				return depth;
 					fixed4 frag = lerp(fixed4(_ColorBack), fixed4(_ColorFront), 1.0 - depth);
-
-					return frag;
-					float2 uv = (i.uv.xy + float2((_Time.y * _CausticSpeed), 0.0)) * float2(1.0 + depth, 1.0);
-
-					//float intensity = tex2D(_MainTex, frac(uv2 * float2(1.0 / persp, 1.0))).x;
-					fixed4 col = tex2D(_MainTex, uv * float2(1.0 / depth, 1.0 / depth) * 0.001).x;
-
-
-//					fixed4 col = tex2D(_MainTex, i.uv.xy * float2(1.0 + depth, 1.0 + depth) * 8.0);
-					col = lerp(col, fixed4(0.0, 0.0, 0.0, 0.0), depth);
-					frag += col;
-
 
 					return frag;
 				}
@@ -151,7 +109,7 @@ Shader "Hungry Dragon/UnderWater2"
 			{
 				Ref [_StencilMask]
 				Comp Equal
-				Pass IncrWrap
+//				Pass IncrWrap
 			}
 
 			CGPROGRAM
@@ -186,10 +144,7 @@ Shader "Hungry Dragon/UnderWater2"
 				float4 _ColorFront;
 				float _PerspectivePower;
 
-				float _CausticFar;
-				float _CausticNear;
 				float _WaveRadius;
-
 
 				v2f vert(appdata_t v)
 				{
@@ -201,7 +156,6 @@ Shader "Hungry Dragon/UnderWater2"
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
 					o.scrPos = ComputeScreenPos(o.vertex);
-//					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 					o.uv = v.uv;
 
 					o.color = v.color;
@@ -210,19 +164,10 @@ Shader "Hungry Dragon/UnderWater2"
 
 				fixed4 frag(v2f i) : SV_Target
 				{
-						float depth = pow(1.0 - abs(i.uv.y - 1.0), _PerspectivePower);
-					//				float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).x) * 1.0f;
-					//					float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).x) * 1.0f;
-					//float depth = clamp(1.0 - pow(abs((i.uv.y * _SurfaceScale) - _SurfaceOffset), 2.0), 0.0, 1.0);
-					//				return depth;
+					float depth = pow(1.0 - abs(i.uv.y - 1.0), _PerspectivePower);
 					fixed4 frag = lerp(fixed4(_ColorBack), fixed4(_ColorFront), 1.0 - depth);
 
 					return frag;
-
-//					float lerpFog = 1.0 - clamp((depthR - _FogNear) / (_FogFar - _FogNear), 0.0, 1.0);
-//					float lerpCaustic = 1.0 - clamp((depthR - _CausticNear) / (_CausticFar - _CausticNear), 0.0, 1.0);
-
-
 				}
 			ENDCG
 		}

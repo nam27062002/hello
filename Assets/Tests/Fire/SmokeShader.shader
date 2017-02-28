@@ -108,7 +108,4 @@
 		}
 	}
 
-//	Fallback "Diffuse"
-	CustomEditor "GlowMaterialInspector"
-
 }

@@ -96,7 +96,4 @@
 			ENDCG
 		}
 	}
-
-CustomEditor "GlowMaterialInspector"
-
 }
