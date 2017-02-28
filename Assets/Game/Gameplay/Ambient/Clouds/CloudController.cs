@@ -59,6 +59,7 @@ public class CloudController : MonoBehaviour {
 	// Internal
 	public List<GameObject> m_clouds = new List<GameObject>();
 	public List<float> m_speeds = new List<float>();
+	public List<SpriteRenderer> m_renderers = new List<SpriteRenderer>();
 	public Range m_xRange = new Range();
 	public Range m_yRange = new Range();
 	public Range m_zRange = new Range();
@@ -142,8 +143,8 @@ public class CloudController : MonoBehaviour {
 		// Aux vars
 		Transform t;
 		Vector3 pos;
-		float zDelta;
-		float speed;
+		float distToEdge;
+		float deltaToEdge;
 		for(int i = 0; i < m_clouds.Count; i++) {
 			// Get references
 			t = m_clouds[i].transform;
@@ -165,6 +166,13 @@ public class CloudController : MonoBehaviour {
 
 			// Apply new position
 			t.position = pos;
+
+			// Fade out at the edges (to avoid popping)
+			if(m_renderers[i] != null) {
+				distToEdge = Mathf.Min(Mathf.Abs(m_xRange.min - pos.x), Mathf.Abs(m_xRange.max - pos.x));	// Distance to closest edge
+				deltaToEdge = Mathf.InverseLerp(0f, 0.1f * m_xRange.distance, distToEdge);	// Scale distToEdge between 0f and 0.1f of the total range
+				m_renderers[i].color = Colors.WithAlpha(m_renderers[i].color, Mathf.Lerp(0f, 1f, deltaToEdge));
+			}
 		}
 	}
 

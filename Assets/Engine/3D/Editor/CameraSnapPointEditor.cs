@@ -84,6 +84,10 @@ public class CameraSnapPointEditor : Editor {
 		m_targetSnapPoint.livePreview = EditorGUILayout.Toggle("Live Preview", m_targetSnapPoint.livePreview);
 		EditorGUILayout.Space();
 
+		// Main toggles
+		m_targetSnapPoint.changePosition = EditorGUILayout.Toggle("Position", m_targetSnapPoint.changePosition);
+		m_targetSnapPoint.changeRotation = EditorGUILayout.Toggle("Rotation", m_targetSnapPoint.changeRotation);
+
 		// Optional values - single line
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("Optional Parameters", CustomEditorStyles.commentLabelLeft);
