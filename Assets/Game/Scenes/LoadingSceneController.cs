@@ -182,7 +182,9 @@ public class LoadingSceneController : SceneController {
 
             Debug.Log("Started Loading Flow");
 
-            PersistenceManager.Load();            
+            PersistenceManager.Load();
+			GameStoreManager.SharedInstance.Initialize();
+
         }
     }
 
