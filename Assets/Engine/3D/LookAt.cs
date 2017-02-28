@@ -96,7 +96,6 @@ public class LookAt : MonoBehaviour {
 			// Make sure lookAtPoint is linked to the object (if any)
 			if(m_lookAtObject != null && m_lookAtObject.transform.hasChanged) {
 				lookAtPointGlobal = m_lookAtObject.position;
-				m_lookAtObject.transform.hasChanged = false;	// Beware that this might cause conflict with other components using the hasChanged flag
 				m_dirty = true;
 			}
 
@@ -105,6 +104,17 @@ public class LookAt : MonoBehaviour {
 				transform.LookAt(lookAtPointGlobal);
 				m_dirty = false;
 			}
+		}
+	}
+
+	/// <summary>
+	/// Update loop after the standard update.
+	/// </summary>
+	public void LateUpdate() {
+		// Clear lookAt object's transform hasChanged flag
+		// We must do it here cause other LookAt components might be using the same LookAt object and depend on its hasChanged flag
+		if(m_lookAtObject != null && m_lookAtObject.transform.hasChanged) {
+			m_lookAtObject.transform.hasChanged = false;
 		}
 	}
 }
