@@ -1,4 +1,4 @@
-﻿Shader "Hungry Dragon/Unlit Diffuse Transparent Two Sided(Glow)"
+﻿Shader "Hungry Dragon/Unlit Diffuse Transparent Two Sided"
 {
 
 	Properties{
@@ -43,7 +43,5 @@
 		}
 
 	}
-
-	CustomEditor "GlowMaterialInspector"
 
 }

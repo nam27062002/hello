@@ -1,4 +1,4 @@
-﻿Shader "Hungry Dragon/TransparentAdditive(Glow)"
+﻿Shader "Hungry Dragon/TransparentAdditive"
 {
 
 	Properties{
@@ -29,7 +29,4 @@
 		}
 
 	}
-
-	CustomEditor "GlowMaterialInspector"
-
 }
