@@ -36,6 +36,7 @@ public class Spawner : AbstractSpawner {
 	[SerializeField] private Range 		m_speedFactorRange = new Range(1f, 1f);
 	[SerializeField] public Range	 	m_scale = new Range(1f, 1f);
 	[SerializeField] private uint		m_rails = 1;
+	[SerializeField] private bool		m_hasGroupBonus = false;
 
 	[Separator("Activation")]
 	[SerializeField] public DragonTier m_minTier = DragonTier.TIER_0;
@@ -83,7 +84,7 @@ public class Spawner : AbstractSpawner {
     
     private int m_rail = 0;
 
-	private float m_flockBonus = 0;
+	private float m_groupBonus = 0;
 
     //-----------------------------------------------    
 
@@ -211,19 +212,19 @@ public class Spawner : AbstractSpawner {
     }   
 
 	protected override void OnAllEntitiesRespawned() {
-		if (m_groupController) {
-			m_flockBonus = m_entities[0].score * EntitiesToSpawn * FLOCK_BONUS_MULTIPLIER;
+		if (m_hasGroupBonus) {
+			m_groupBonus = m_entities[0].score * EntitiesToSpawn * FLOCK_BONUS_MULTIPLIER;
 		} else {
-			m_flockBonus = 0f;
+			m_groupBonus = 0f;
 		}
 	}
 
     protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
         if (_allKilledByPlayer) {
             // check if player has destroyed all the flock
-            if (m_flockBonus > 0) {
+            if (m_groupBonus > 0) {
                 Reward reward = new Reward();
-                reward.score = (int)(m_flockBonus * EntitiesKilled);
+                reward.score = (int)(m_groupBonus * EntitiesKilled);
                 Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _lastEntity.transform, reward);
             }
 

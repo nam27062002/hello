@@ -24,6 +24,7 @@ public enum MenuScreens {
 	PETS,
 	DISGUISES,
 	OPEN_EGG,
+	PHOTO,
 
 	COUNT
 };
@@ -39,11 +40,17 @@ public class MenuScreensController : NavigationScreenSystem {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	// Exposed
+	// There should always be one entry per screen, value can be null
 	[Space]
-	[Comment("There should always be one scene entry per screen, value can be null")]
 	[SerializeField] private MenuScreenScene[] m_scenes = new MenuScreenScene[(int)MenuScreens.COUNT];
 	public MenuScreenScene[] scenes {
 		get { return m_scenes; }
+	}
+
+	[SerializeField] private CameraSnapPoint[] m_cameraSnapPoints = new CameraSnapPoint[(int)MenuScreens.COUNT];
+	public CameraSnapPoint[] cameraSnapPoints {
+		get { return m_cameraSnapPoints; }
 	}
 
 	// Other properties
@@ -51,6 +58,15 @@ public class MenuScreensController : NavigationScreenSystem {
 		get {
 			if(MathUtils.IsBetween(currentScreenIdx, 0, m_scenes.Length)) {
 				return m_scenes[currentScreenIdx]; 
+			}
+			return null;
+		}
+	}
+
+	public CameraSnapPoint currentCameraSnapPoint {
+		get {
+			if(MathUtils.IsBetween(currentScreenIdx, 0, m_cameraSnapPoints.Length)) {
+				return m_cameraSnapPoints[currentScreenIdx]; 
 			}
 			return null;
 		}
@@ -89,11 +105,10 @@ public class MenuScreensController : NavigationScreenSystem {
 		base.Start();
 
 		// Instantly move camera to initial screen snap point
-		MenuScreenScene targetScene = GetScene(m_currentScreenIdx);
-		if(targetScene != null
-		&& targetScene.cameraSnapPoint != null
+		CameraSnapPoint targetSnapPoint = GetCameraSnapPoint(m_currentScreenIdx);
+		if(targetSnapPoint != null
 		&& InstanceManager.sceneController.mainCamera != null) {
-			targetScene.cameraSnapPoint.Apply(InstanceManager.sceneController.mainCamera);
+			targetSnapPoint.Apply(InstanceManager.sceneController.mainCamera);
 		}
 	}
 
@@ -108,6 +123,26 @@ public class MenuScreensController : NavigationScreenSystem {
 	public MenuScreenScene GetScene(int _screenIdx) {
 		if(_screenIdx < 0 || _screenIdx >= (int)MenuScreens.COUNT) return null;
 		return m_scenes[_screenIdx];
+	}
+
+	/// <summary>
+	/// Get the camera snap point linked to a given screen index.
+	/// </summary>
+	/// <returns>The camera snap point linked to the screen with index <paramref name="_screenIdx"/>.<c>null</c> if not defined or provided index not valid.</returns>
+	/// <param name="_screenIdx">The index of the screen whose linked camera snap point we want.</param>
+	public CameraSnapPoint GetCameraSnapPoint(int _screenIdx) {
+		if(_screenIdx < 0 || _screenIdx >= (int)MenuScreens.COUNT) return null;
+		return m_cameraSnapPoints[_screenIdx];
+	}
+
+	/// <summary>
+	/// Override camera snap point linked to a screen.
+	/// </summary>
+	/// <param name="_screenIdx">Index of the screen whose linked camera we want to change.</param>
+	/// <param name="_newSnapPoint">The new snap point to be assigned to the target screen.</param>
+	public void SetCameraSnapPoint(int _screenIdx, CameraSnapPoint _newSnapPoint) {
+		if(_screenIdx < 0 || _screenIdx >= (int)MenuScreens.COUNT) return;
+		m_cameraSnapPoints[_screenIdx] = _newSnapPoint;
 	}
 
 	/// <summary>
@@ -136,22 +171,17 @@ public class MenuScreensController : NavigationScreenSystem {
 	/// <param name="_newScreenIdx">The index of the new screen to go to. Use -1 for NONE.</param>
 	/// <param name="_animType">Optionally force the direction of the animation.</param>
 	override public void GoToScreen(int _newScreenIdx, NavigationScreen.AnimType _animType) {
-		// Store current screen
-		int oldScreenIdx = m_currentScreenIdx;
-
 		// Let parent do its stuff
 		base.GoToScreen(_newScreenIdx, _animType);
 
 		// Perform camera transition (if snap point defined)
-		MenuScreenScene targetScene = GetScene(_newScreenIdx);
-		if(targetScene != null
-		&& targetScene.cameraSnapPoint != null
+		CameraSnapPoint targetSnapPoint = GetCameraSnapPoint(m_currentScreenIdx);
+		if(targetSnapPoint != null
 		&& InstanceManager.sceneController.mainCamera != null) {
 			// Perform camera transition!
 			// Camera snap point makes it easy for us! ^_^
 			TweenParams tweenParams = new TweenParams().SetEase(Ease.InOutCubic);
-			tweenParams.OnComplete(OnCameraTweenCompleted);
-			targetScene.cameraSnapPoint.TweenTo(InstanceManager.sceneController.mainCamera, 0.5f, tweenParams); 
+			targetSnapPoint.TweenTo(InstanceManager.sceneController.mainCamera, 0.5f, tweenParams, OnCameraTweenCompleted); 
 			m_tweening = true;
 		}
 	}

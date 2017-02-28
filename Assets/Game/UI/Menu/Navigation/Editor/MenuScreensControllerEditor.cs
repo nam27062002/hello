@@ -32,6 +32,7 @@ public class MenuScreensControllerEditor : Editor {
 	// Important serialized properties
 	SerializedProperty m_screensProp = null;
 	SerializedProperty m_scenesProp = null;
+	SerializedProperty m_cameraSnapPointsProp = null;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -46,6 +47,7 @@ public class MenuScreensControllerEditor : Editor {
 		// Store important properties
 		m_screensProp = serializedObject.FindProperty("m_screens");
 		m_scenesProp = serializedObject.FindProperty("m_scenes");
+		m_cameraSnapPointsProp = serializedObject.FindProperty("m_cameraSnapPoints");
 	}
 
 	/// <summary>
@@ -58,6 +60,7 @@ public class MenuScreensControllerEditor : Editor {
 		// Clear properties
 		m_screensProp = null;
 		m_scenesProp = null;
+		m_cameraSnapPointsProp = null;
 	}
 
 	/// <summary>
@@ -80,6 +83,7 @@ public class MenuScreensControllerEditor : Editor {
 				// Make sure both screens and scenes array properties have exactly one entry per menu screen
 				m_screensProp.arraySize = (int)MenuScreens.COUNT;
 				m_scenesProp.arraySize = (int)MenuScreens.COUNT;
+				m_cameraSnapPointsProp.arraySize = (int)MenuScreens.COUNT;
 
 				// Group in a foldout
 				EditorGUILayout.Space();
@@ -90,29 +94,41 @@ public class MenuScreensControllerEditor : Editor {
 
 					// Show them nicely formatted
 					for(int i = 0; i < (int)MenuScreens.COUNT; i++) {
-						// Label
-						EditorGUILayout.LabelField(((MenuScreens)(i)).ToString(), EditorStyles.boldLabel);
+						// Label + foldout
+						// Use screen's property to store foldout state
+						SerializedProperty currentScreenProp = m_screensProp.GetArrayElementAtIndex(i);
+						currentScreenProp.isExpanded = EditorGUILayout.Foldout(currentScreenProp.isExpanded, ((MenuScreens)(i)).ToString(), true);
 
-						// Indent in
-						EditorGUI.indentLevel++;
+						// Folded content
+						if(currentScreenProp.isExpanded) {
+							// Indent in
+							EditorGUI.indentLevel++;
 
-						// Screen field
-						EditorGUILayout.PropertyField(m_screensProp.GetArrayElementAtIndex(i), new GUIContent("Screen"));
+							// Screen field
+							EditorGUILayout.PropertyField(m_screensProp.GetArrayElementAtIndex(i), new GUIContent("Screen"));
 
-						// Scene field
-						EditorGUILayout.PropertyField(m_scenesProp.GetArrayElementAtIndex(i), new GUIContent("Scene"));
+							// Scene field
+							EditorGUILayout.PropertyField(m_scenesProp.GetArrayElementAtIndex(i), new GUIContent("Scene"));
 
-						// Indent out
-						EditorGUI.indentLevel--;
+							// Camera snap point field
+							EditorGUILayout.PropertyField(m_cameraSnapPointsProp.GetArrayElementAtIndex(i), new GUIContent("Camera Snap Point (optional)"));
+
+							// Indent out
+							EditorGUI.indentLevel--;
+						}
 					}
 
 					// Indent out
 					EditorGUI.indentLevel--;
 				}
+
+				// Space below
+				EditorGUILayout.Space();
 			}
 
 			// Properties to skip
-			else if(p.name == m_scenesProp.name) {
+			else if(p.name == m_scenesProp.name
+				 || p.name == m_cameraSnapPointsProp.name) {
 				// Do nothing
 			}
 

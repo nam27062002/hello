@@ -25,6 +25,9 @@ public class GameStoreManager
     }
     #endregion
 
+    public virtual void Initialize(){}
+    public virtual bool IsReady(){ return false; }
+	public virtual string GetLocalisedPrice( string sku ){ return ""; }
     public virtual bool CanMakePayment(){ return false; }
     public virtual void Buy( string sku ){}
 

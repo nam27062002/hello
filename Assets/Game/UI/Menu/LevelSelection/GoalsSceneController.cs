@@ -146,7 +146,7 @@ public class GoalsSceneController : MonoBehaviour {
 			cameraAnimator.SnapTo(_data.toScreenIdx);
 		} else {
 			// Set target snap point as the current one for the goals screen
-			goalsScene.cameraSnapPoint = cameraAnimator.snapPoints[_data.toScreenIdx];
+			screensController.SetCameraSnapPoint((int)MenuScreens.GOALS, cameraAnimator.snapPoints[_data.toScreenIdx]);
 		}
 	}
 

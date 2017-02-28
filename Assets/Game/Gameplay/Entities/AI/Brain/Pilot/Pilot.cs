@@ -136,7 +136,7 @@ namespace AI {
 			if (!_blend) {
 				m_currentSpeed = m_moveSpeed;
 			}
-			PressAction(Action.Stop);
+			ReleaseAction(Action.Stop);
 		}
 
 		public void SetBoostSpeed(float _boostSpeed, bool _blend = true) {

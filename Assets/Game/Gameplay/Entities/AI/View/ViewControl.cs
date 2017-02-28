@@ -56,6 +56,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SeparatorAttribute("Eaten")]
 	[SerializeField] private string m_corpseAsset = "";
 	[SerializeField] private List<ParticleData> m_onEatenParticles = new List<ParticleData>();
+	[SerializeField] private ParticleData m_onEatenFrozenParticle;
 	[SerializeField] private string m_onEatenAudio;
 	private AudioObject m_onEatenAudioAO;
 
@@ -200,6 +201,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			m_onEatenParticles.Add(data);
 		}
 
+		if ( !m_onEatenFrozenParticle.IsValid() )
+		{
+			m_onEatenFrozenParticle.name = "PS_IceExplosion";
+			m_onEatenFrozenParticle.path = "Blood/";
+		}
+
 		m_specialAnimations = new bool[(int)SpecialAnims.Count];
 
 		// Preload particles
@@ -209,6 +216,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				ParticleManager.CreatePool(data.name, data.path);
 			}
 		}
+		ParticleManager.CreatePool( m_onEatenFrozenParticle.name, m_onEatenFrozenParticle.path);
 
 		if (m_burnParticle.IsValid()) {
 			ParticleManager.CreatePool(m_burnParticle, 20);
@@ -552,6 +560,18 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 						ft.m_follow = _transform;
 						ft.m_offset = data.offset;
 					}
+				}
+			}
+		}
+
+		if ( m_freezingLevel > 0.1f && m_onEatenFrozenParticle.IsValid())
+		{
+			GameObject go = ParticleManager.Spawn( m_onEatenFrozenParticle, transform.position + m_onEatenFrozenParticle.offset);
+			if (go != null)	{
+				FollowTransform ft = go.GetComponent<FollowTransform>();
+				if (ft != null) {
+					ft.m_follow = _transform;
+					ft.m_offset = m_onEatenFrozenParticle.offset;
 				}
 			}
 		}

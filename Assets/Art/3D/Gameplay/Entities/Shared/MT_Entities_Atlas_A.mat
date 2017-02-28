@@ -6,9 +6,9 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: water
-  m_Shader: {fileID: 4800000, guid: ebf1c8c3901746449bd19566895cc413, type: 3}
-  m_ShaderKeywords: WATER_ON _ALPHAPREMULTIPLY_ON _EMISSION
+  m_Name: MT_Entities_Atlas_A
+  m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
+  m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -40,12 +40,6 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
-        name: _DetailTex
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
         name: _EmissionMap
       second:
         m_Texture: {fileID: 0}
@@ -54,8 +48,8 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: d5eed649fad28f247a3d851ad2f20287, type: 3}
-        m_Scale: {x: 12, y: 5}
+        m_Texture: {fileID: 2800000, guid: 2b99c48ab40274cac860d4e5c89d2211, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
@@ -75,28 +69,13 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _SecondTexture
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
         name: _BumpScale
       second: 1
     - first:
-        name: _CausticFar
-      second: 35
-    - first:
-        name: _CausticIntensity
-      second: 6.4
-    - first:
-        name: _CausticNear
-      second: 2.9
-    - first:
-        name: _CausticSpeed
-      second: 2
+        name: _BumpStrength
+      second: 3
     - first:
         name: _Cutoff
       second: 0.5
@@ -105,13 +84,10 @@ Material:
       second: 1
     - first:
         name: _DstBlend
-      second: 10
+      second: 0
     - first:
-        name: _FogFar
-      second: 64.3
-    - first:
-        name: _FogNear
-      second: -5.2
+        name: _FresnelFactor
+      second: 0.27
     - first:
         name: _GlossMapScale
       second: 1
@@ -122,14 +98,11 @@ Material:
         name: _GlossyReflections
       second: 1
     - first:
-        name: _Invert
-      second: 0
-    - first:
         name: _Metallic
       second: 0
     - first:
         name: _Mode
-      second: 3
+      second: 0
     - first:
         name: _OcclusionStrength
       second: 1
@@ -137,11 +110,11 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
-        name: _PerspectivePower
-      second: 4
-    - first:
         name: _SmoothnessTextureChannel
       second: 0
+    - first:
+        name: _Specular
+      second: 1
     - first:
         name: _SpecularHighlights
       second: 1
@@ -152,33 +125,18 @@ Material:
         name: _StencilMask
       second: 10
     - first:
-        name: _SurfaceOffset
-      second: -0.5
-    - first:
-        name: _SurfaceScale
-      second: 1
-    - first:
         name: _UVSec
       second: 0
     - first:
-        name: _Water
-      second: 0
-    - first:
-        name: _WaveRadius
-      second: 0.12
-    - first:
         name: _ZWrite
-      second: 0
+      second: 1
     m_Colors:
     - first:
         name: _Color
-      second: {r: 0.15700692, g: 0.45837203, b: 0.64705884, a: 0.903}
-    - first:
-        name: _ColorBack
-      second: {r: 0.23048227, g: 0.6397059, b: 0.50950277, a: 0.803}
-    - first:
-        name: _ColorFront
-      second: {r: 0.14203073, g: 0.52205884, b: 0.28617924, a: 0.297}
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _FresnelColor
+      second: {r: 0, g: 0, b: 0, a: 0}
