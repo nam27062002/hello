@@ -350,10 +350,17 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     void OnDestroy()
     {
         Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		RemoveAudios();
     }
 
-    void OnDisable() {
-    	if ( ApplicationManager.IsAlive )
+    public void PreDisable()
+    {
+		RemoveAudios();
+    }
+
+    private void RemoveAudios()
+    {
+		if ( ApplicationManager.IsAlive )
     	{
 	        if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
 				m_idleAudioAO.Stop();
@@ -366,23 +373,15 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			RemoveAudioParent( m_onScaredAudioAO );
 			RemoveAudioParent( m_onPanicAudioAO );
 		}
-	}
+    }
 
 	void RemoveAudioParent(AudioObject ao)
 	{
 		if ( ao != null && ao.transform.parent == transform )
 		{
-			InstanceManager.instance.StartCoroutine( Unparent( ao.transform ));
+			ao.transform.parent = null;		
 		}
 	}
-
-	IEnumerator Unparent( Transform go )
-	{
-		yield return null;
-		go.parent = null;
-		yield return null;
-	}
-
 
     void SetEntityTint(EntityTint value)
     {
