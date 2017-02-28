@@ -167,7 +167,7 @@ public class AssetFinder : EditorWindow {
             int matID = 0;
             foreach (Material mat in materials)
             {
-                if (mat.shader.name == "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow")
+                if (mat.shader.name == "Hungry Dragon/Parametric Texture Blending + Lightmap And Recieve Shadow")
                 {
                     Debug.Log("GameObject:" + rend.gameObject.name);
                     Debug.Log("MatID" + matID++ + " Name:" + mat.name);
@@ -179,7 +179,7 @@ public class AssetFinder : EditorWindow {
 
         if (!found)
         {
-            Debug.Log("No shader instance found of:" + "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow");
+            Debug.Log("No shader instance found of:" + "Hungry Dragon/Parametric Texture Blending + Lightmap And Recieve Shadow");
         }
     }
 

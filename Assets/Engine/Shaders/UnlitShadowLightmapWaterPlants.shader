@@ -40,11 +40,28 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decora
 				#pragma glsl_no_auto_normalization
 				#pragma fragmentoption ARB_precision_hint_fastest
 
+				#define HG_SCENARY
+
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
 //				#include "Lighting.cginc"
 				#include "HungryDragon.cginc"
 
+				#define FOG
+				#define CUSTOM_VERTEXPOSITION
+
+				float _SpeedWave;
+				float4 getCustomVertexPosition(inout appdata_t v)
+				{
+					float hMult = v.vertex.y;
+					//float4 tvertex = v.vertex + float4(sin((_Time.y * hMult * _SpeedWave ) * 0.525) * hMult * 0.08, 0.0, 0.0, 0.0f);
+					float4 tvertex = v.vertex + float4(sin((_Time.y * hMult * _SpeedWave) * 0.525) * hMult * 0.08, 0.0, 0.0, 0.0f);
+					//					tvertex.w = -0.5f;
+					return mul(UNITY_MATRIX_MVP, tvertex);
+				}	
+
+				#include "scenary.cginc"
+/*
 				struct appdata_t {
 					float4 vertex : POSITION;
 					float3 normal : NORMAL;
@@ -111,6 +128,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decora
 					// col = fixed4(1,1,1,1) * i.fogCoord;
 					return col;
 				}
+*/
 			ENDCG
 		}
 	}
