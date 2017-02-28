@@ -56,7 +56,14 @@ public class MenuScreensControllerToolbar {
 				}
 
 				// Advance position
-				rect.x += rect.width;
+				/*rect.x += rect.width;
+
+				// Divide in different rows
+				if((i+1) % 4 == 0) {	// 4 buttons per row
+					rect.x = 5f;
+					rect.y += rect.height;
+				}*/
+				rect.y += rect.height;
 			}
 		} Handles.EndGUI();
 
@@ -82,9 +89,9 @@ public class MenuScreensControllerToolbar {
 			}
 
 			// Move main camera to screen's snap point (if any)
-			MenuScreenScene targetScene = target.GetScene(screenToEdit);
-			if(targetScene != null && targetScene.cameraSnapPoint != null) {
-				targetScene.cameraSnapPoint.Apply(target.GetComponent<MenuSceneController>().mainCamera);
+			CameraSnapPoint targetSnapPoint = target.GetCameraSnapPoint(screenToEdit);
+			if(targetSnapPoint != null) {
+				targetSnapPoint.Apply(target.GetComponent<MenuSceneController>().mainCamera);
 			}
 		}
 	}

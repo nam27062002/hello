@@ -217,6 +217,7 @@ public class CloudControllerEditor : Editor {
 		m_processedProperties.Add("m_zRange");
 		m_processedProperties.Add("m_clouds");
 		m_processedProperties.Add("m_speeds");
+		m_processedProperties.Add("m_renderers");
 
 		// Loop through all serialized properties and process those remaining
 		p = serializedObject.GetIterator();
@@ -370,6 +371,7 @@ public class CloudControllerEditor : Editor {
 			// Store new cloud
 			m_target.m_clouds.Add(cloud);
 			m_target.m_speeds.Add(speed);
+			m_target.m_renderers.Add(cloud.GetComponentInChildren<SpriteRenderer>());
 		}
 
 		// Update object
@@ -387,6 +389,7 @@ public class CloudControllerEditor : Editor {
 		}
 		m_target.m_clouds.Clear();
 		m_target.m_speeds.Clear();
+		m_target.m_renderers.Clear();
 
 		// Make sure clouds container is empty as well
 		if(m_target.m_cloudContainer != null) {

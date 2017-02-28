@@ -9,6 +9,7 @@ namespace AI {
 			public string projectileSpawnTransformName = "";
 
 			public float damage = 5f;
+			public bool canFollowTarget = false;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Ranged")]
@@ -84,9 +85,9 @@ namespace AI {
 			protected override void OnAnimDealDamageExtended() {
 				if (m_projectile != null) {					
 					IProjectile projectile = m_projectile.GetComponent<IProjectile>();
-					if (m_data.forceFaceToShoot) {
+					if (m_data.forceFaceToShoot && !((AttackRangedData)m_data).canFollowTarget) {
 						projectile.ShootAtPosition(m_facingTarget, m_machine.transform.forward, ((AttackRangedData)m_data).damage);
-					}else{
+					} else {
 						projectile.Shoot(InstanceManager.player.dragonMotion.head, m_machine.transform.forward, ((AttackRangedData)m_data).damage);
 					}
 					m_projectile = null;
