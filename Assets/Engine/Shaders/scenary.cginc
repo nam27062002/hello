@@ -27,6 +27,10 @@ struct v2f {
 	HG_FOG_COORDS(1)
 #endif
 
+#ifdef DARKEN
+	HG_DARKEN(8)
+#endif
+
 #ifdef DYNAMIC_SHADOWS
 	LIGHTING_COORDS(2,3)	
 #endif
@@ -84,9 +88,17 @@ v2f vert (appdata_t v)
 
 	o.color = v.color;
 
+#if defined (FOG) || defined (DARKEN) || defined (SPECULAR)
+	float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
+#endif
+
 #ifdef FOG	
-	HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
-#endif	
+	HG_TRANSFER_FOG(o, worldPos);	// Fog
+#endif
+
+#ifdef DARKEN
+	HG_TRANSFER_DARKEN(o, worldPos);
+#endif
 
 #ifdef DYNAMIC_SHADOWS
 	TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
@@ -107,7 +119,7 @@ v2f vert (appdata_t v)
 #endif
 
 #ifdef SPECULAR
-	fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
+//	fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 	// Half View - See: Blinn-Phong
 	float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
 	float3 lightDirection = normalize(_SpecularDir.rgb);
@@ -168,6 +180,10 @@ fixed4 frag (v2f i) : SV_Target
 #ifdef FOG	
 	HG_APPLY_FOG(i, col);	// Fog
 #endif	
+
+#ifdef DARKEN
+	HG_APPLY_DARKEN(i, col);	//darken
+#endif
 
 
 #ifdef NORMALMAP

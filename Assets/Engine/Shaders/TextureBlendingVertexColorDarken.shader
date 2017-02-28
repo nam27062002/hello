@@ -31,6 +31,12 @@ Shader "Hungry Dragon/Texture Blending Vertex Color + Lightmap And Recieve Shado
 				#include "AutoLight.cginc"
 				#include "HungryDragon.cginc"
 
+				#define FOG
+				#define BLEND_TEXTURE
+				#define DARKEN
+
+				#include "scenary.cginc"
+/*
 				struct appdata_t {
 					float4 vertex : POSITION;
 					float2 texcoord : TEXCOORD0;
@@ -109,6 +115,7 @@ Shader "Hungry Dragon/Texture Blending Vertex Color + Lightmap And Recieve Shado
 					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 					return col;
 				}
+*/
 			ENDCG
 
 		}
