@@ -32,7 +32,7 @@ public class AttachPoint : MonoBehaviour {
 
 		AI.Machine machine = m_item.GetComponent<AI.Machine>();
 		if(machine != null) {
-			machine.Spawn(null);
+			machine.Spawn();
 		}
 
 		AI.AIPilot pilot = m_item.GetComponent<AI.AIPilot>();

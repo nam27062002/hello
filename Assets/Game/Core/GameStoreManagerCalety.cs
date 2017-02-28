@@ -10,27 +10,34 @@ public class GameStoreManagerCalety : GameStoreManager
     /// Listener /////////////////////////////////////////////////////////////
 	private class CaletyGameStoreListener : StoreManager.StoreListenerBase
     {
+    	public bool m_isReady = false;
 		public override void onPurchaseCompleted(string sku, JSONNode kReceiptJSON) 
 		{
-			Messenger.Broadcast<string>(EngineEvents.PURCHASE_SUCCESSFUL, PlatormSkuToGameSku( sku ) );
+			string gameSku = PlatformSkuToGameSku( sku );
+			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.SHOP_PACKS, gameSku);
+			if ( def != null )
+			{
+				PopupCurrencyShopPill.ApplyShopPack( def );	
+			}
+			Messenger.Broadcast<string>(EngineEvents.PURCHASE_SUCCESSFUL, gameSku);
 		}
 
 		public override void onPurchaseCancelled(string sku, string strTransactionID) 
 		{
-			Messenger.Broadcast<string>(EngineEvents.PURCHASE_CANCELLED, PlatormSkuToGameSku( sku ) );
+			Messenger.Broadcast<string>(EngineEvents.PURCHASE_CANCELLED, PlatformSkuToGameSku( sku ) );
 		}
 
 		public override void onPurchaseFailed(string sku, string strTransactionID) 
 		{
-			Messenger.Broadcast<string>(EngineEvents.PURCHASE_FAILED, PlatormSkuToGameSku( sku ) );
+			Messenger.Broadcast<string>(EngineEvents.PURCHASE_FAILED, PlatformSkuToGameSku( sku ) );
 		}
 
 		public override void onStoreIsReady() 
 		{
-			
+			m_isReady = true;	
 		}
 
-		private string PlatormSkuToGameSku( string platform_sku )
+		private string PlatformSkuToGameSku( string platform_sku )
 	    {
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinitionByVariable( DefinitionsCategory.SHOP_PACKS, GameStoreManagerCalety.GetPlatformAttribute(), platform_sku);
 			return def.sku;
@@ -47,6 +54,10 @@ public class GameStoreManagerCalety : GameStoreManager
 
 
 	public GameStoreManagerCalety () 
+	{
+	}
+
+	public override void Initialize()
 	{
 		m_storeListener = new CaletyGameStoreListener();
 		StoreManager.SharedInstance.AddListener (m_storeListener);
@@ -76,13 +87,32 @@ public class GameStoreManagerCalety : GameStoreManager
 		DefinitionsManager.SharedInstance.GetDefinitions( DefinitionsCategory.SHOP_PACKS, ref outList);
 		for( int i = 0; i<outList.Count; i++ )
 		{
-			if ( outList[i].GetAsFloat("priceDollars") > 0 )
+			string platformId = outList[i].Get( GetPlatformAttribute());
+			if ( !string.IsNullOrEmpty(platformId) )
 			{
-				skus.Add( outList[i].Get( GetPlatformAttribute()));
+				skus.Add( platformId );
 			}
 		}
 		m_storeSkus = skus.ToArray();
 	}
+
+
+	public override bool IsReady()
+	{
+		return m_storeListener.m_isReady;
+	}
+
+	public override string GetLocalisedPrice( string sku )
+	{
+		string item = GameSkuToPlatformSku( sku );
+		StoreManager.StoreProduct product = StoreManager.SharedInstance.GetStoreProduct( item );
+		if ( product != null )
+		{
+			return product.m_strLocalisedPrice;
+		}
+		return "";
+	}
+
 
 	public override bool CanMakePayment()
 	{
@@ -95,13 +125,23 @@ public class GameStoreManagerCalety : GameStoreManager
 	{
     	if (StoreManager.SharedInstance.CanMakePayments()) 
     	{
-    		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _sku);
-    		if ( def != null )
+    		string item = GameSkuToPlatformSku( _sku );
+			if ( !string.IsNullOrEmpty( item ) )
     		{
-    			string item = def.Get( GetPlatformAttribute() );
 				StoreManager.SharedInstance.RequestProduct (item);
     		}
     	}
+    }
+
+    private string GameSkuToPlatformSku( string gameSku )
+    {
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, gameSku);
+		if ( def != null )
+		{
+			return def.Get( GetPlatformAttribute() );
+
+		}
+		return "";
     }
 
     private static string GetPlatformAttribute()

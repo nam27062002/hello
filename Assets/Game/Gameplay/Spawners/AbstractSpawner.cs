@@ -297,6 +297,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     private void Entities_Create(uint amount) {
         m_entities = new IEntity[amount];        
     }    
+
+	public virtual bool SpawnersCheckCurrents(){ return false; }
     #endregion
 
     #region interface_for_subclasses
