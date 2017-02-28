@@ -84,11 +84,10 @@ namespace AI {
 			protected override void OnAnimDealDamageExtended() {
 				if (m_projectile != null) {					
 					IProjectile projectile = m_projectile.GetComponent<IProjectile>();
-					if ( m_data.forceFaceToShoot ){
-						projectile.ShootAtPosition(m_projectileSpawnPoint, ((AttackRangedData)m_data).damage, m_facingTarget);
+					if (m_data.forceFaceToShoot) {
+						projectile.ShootAtPosition(m_facingTarget, m_machine.transform.forward, ((AttackRangedData)m_data).damage);
 					}else{
-						Vector3 target = InstanceManager.player.dragonMotion.head.position;
-						projectile.Shoot(target, ((AttackRangedData)m_data).damage);
+						projectile.Shoot(InstanceManager.player.dragonMotion.head, m_machine.transform.forward, ((AttackRangedData)m_data).damage);
 					}
 					m_projectile = null;
 				}
