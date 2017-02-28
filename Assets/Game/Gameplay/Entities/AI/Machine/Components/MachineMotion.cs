@@ -359,7 +359,7 @@ namespace AI {
 			if (m_machine.GetSignal(Signals.Type.LockedInCage) || m_pilot.speed <= 0.01f) {
 				m_viewControl.Move(0f);
 			} else {
-				m_viewControl.Move(m_pilot.speed);//m_pilot.impulse.magnitude); //???
+				m_viewControl.Move(m_velocity.magnitude);
 			}
 
 			m_viewControl.Boost(m_pilot.IsActionPressed(Pilot.Action.Boost));
@@ -367,6 +367,12 @@ namespace AI {
 
 			//------
 			Debug.DrawLine(position, position + m_rbody.velocity, Color.yellow);
+
+
+			//
+			Debug.DrawLine(position + upVector, position + upVector + m_groundDirection, Colors.darkGreen);
+			Debug.DrawLine(position + (upVector * 1.5f) + m_groundDirection, position + (upVector * -1.5f) + m_groundDirection, Colors.darkGreen);
+
 		}
 
 		public override void FixedUpdate() {
@@ -599,16 +605,15 @@ namespace AI {
 				}
 
 				m_upVector = normal;
-				m_direction = m_groundDirection;
 				Debug.DrawLine(position, position + m_upVector, Color.cyan);
 			} else {
 				if (m_groundDirection.y > 0.5f || m_groundDirection.y < -0.5f) {
-					if (m_groundDirection.x < 0f) m_groundDirection = Vector3.left;
-					if (m_groundDirection.x > 0f) m_groundDirection = Vector3.right;
+					m_groundDirection = Vector3.right;
 				}
 			}
 
 			m_collisionNormal = normal;
+			//m_direction = m_groundDirection;
 			return hasHit;
 		}
 
@@ -627,18 +632,19 @@ namespace AI {
 			
 				// cast forward
 				RaycastHit hitForward;
-				start = pos + (m_direction * 0.5f) + (_normal * 3f);
-				end = pos + (m_direction * 0.5f) - (_normal * 3f);
+				Vector3 dir = m_direction;
+				dir.z = 0f;
+
+				start = pos + (dir * 0.5f) + (_normal * 3f);
+				end = pos + (dir * 0.5f) - (_normal * 3f);
 
 				Debug.DrawLine(start, end, Color.magenta);
-				if (hasHit && Physics.Linecast(start, end, out hitForward, m_groundMask)) {
-					_normal = (_normal * 0.25f) + (hitForward.normal * 0.75f);
+				if (hasHit && Physics.Linecast(start, end, out hitForward, m_groundMask)) {					
+					_normal = (_normal * 0.5f) + (hitForward.normal * 0.75f);
 					_normal.Normalize();
-
-					_direction = (hitForward.point - hit.point).normalized; // outdate direction using the two hits
-				} else {
-					_direction = m_direction;
 				}
+
+				_direction = Vector3.Cross(Vector3.back, _normal);
 
 				return true;
 			}
