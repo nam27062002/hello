@@ -58,6 +58,10 @@ uniform float _Specular;
 uniform fixed4 _SpecularDir;
 #endif
 
+#ifdef CUTOFF
+uniform float _CutOff;
+#endif
+
 #ifdef FOG
 HG_FOG_VARIABLES
 #endif
@@ -128,6 +132,10 @@ fixed4 frag (v2f i) : SV_Target
 #endif	
 
 	fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
+
+#ifdef CUTOFF
+	clip(col.a - _CutOff);
+#endif
 
 #ifdef SPECULAR
 	float specMask = col.w;

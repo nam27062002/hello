@@ -121,5 +121,4 @@
 		}
 	}
 
-	CustomEditor "GlowMaterialInspector"
 }

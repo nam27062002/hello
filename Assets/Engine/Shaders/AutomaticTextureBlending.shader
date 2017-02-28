@@ -37,8 +37,8 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 
 				#define FOG
 				#define BLEND_TEXTURE
-				#define CUSTOM_VERTEXCOLOR		
 
+				#define CUSTOM_VERTEXCOLOR		
 				float4 getCustomVertexColor(appdata_t v)
 				{
 					return float4(v.color.xyz, 1.0 - dot(mul(float4(v.normal,0), unity_WorldToObject).xyz, float3(0,1,0)));
