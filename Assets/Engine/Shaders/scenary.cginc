@@ -69,7 +69,13 @@ HG_FOG_VARIABLES
 v2f vert (appdata_t v) 
 {
 	v2f o;
+
+#ifdef CUSTOM_VERTEXPOSITION
+	o.vertex = getCustomVertexPosition(v);
+#else
 	o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+#endif
+
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 	
 #ifdef BLEND_TEXTURE	
