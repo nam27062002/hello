@@ -30,6 +30,8 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
+				#define	HG_SCENARY
+
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
 				#include "HungryDragon.cginc"
@@ -56,8 +58,7 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 
 				#define FOG
 				#define BLEND_TEXTURE
-				#define COLOR_OVERLAY
-				
+				#define COLOR_OVERLAY				
 				#include "scenary.cginc"
 
 			ENDCG

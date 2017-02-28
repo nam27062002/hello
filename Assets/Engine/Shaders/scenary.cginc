@@ -1,18 +1,4 @@
 
-struct appdata_t {
-	float4 vertex : POSITION;
-	float2 texcoord : TEXCOORD0;
-	#ifdef LIGHTMAP_ON
-	float4 texcoord1 : TEXCOORD1;
-	#endif
-
-	float4 color : COLOR;
-
-	float3 normal : NORMAL;
-	float4 tangent : TANGENT;
-	
-}; 
-
 struct v2f {
 	float4 vertex : SV_POSITION;
 	half2 texcoord : TEXCOORD0;
@@ -86,7 +72,12 @@ v2f vert (appdata_t v)
 	o.texcoord2 = TRANSFORM_TEX(v.texcoord, _SecondTexture);
 #endif
 
+#ifdef CUSTOM_VERTEXCOLOR
+	o.color = getCustomVertexColor(v);
+#else
 	o.color = v.color;
+#endif
+
 
 #if defined (FOG) || defined (DARKEN) || defined (SPECULAR)
 	float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
@@ -184,7 +175,6 @@ fixed4 frag (v2f i) : SV_Target
 #ifdef DARKEN
 	HG_APPLY_DARKEN(i, col);	//darken
 #endif
-
 
 #ifdef NORMALMAP
 	float4 encodedNormal = tex2D(_NormalTex, i.texcoord);

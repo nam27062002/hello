@@ -27,6 +27,9 @@ Shader "Hungry Dragon/Texture Blending Vertex Color + Lightmap And Recieve Shado
 				#pragma glsl_no_auto_normalization
 				#pragma fragmentoption ARB_precision_hint_fastest
 
+
+				#define	HG_SCENARY
+
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
 				#include "HungryDragon.cginc"
@@ -34,7 +37,6 @@ Shader "Hungry Dragon/Texture Blending Vertex Color + Lightmap And Recieve Shado
 				#define FOG
 				#define BLEND_TEXTURE
 				#define DARKEN
-
 				#include "scenary.cginc"
 /*
 				struct appdata_t {

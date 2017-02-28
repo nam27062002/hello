@@ -27,11 +27,26 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 				#pragma multi_compile_fwdbase
 				#pragma glsl_no_auto_normalization
 				#pragma fragmentoption ARB_precision_hint_fastest
-							
+		
+				#define	HG_SCENARY
+
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
 				#include "HungryDragon.cginc"
 
+
+				#define FOG
+				#define BLEND_TEXTURE
+				#define CUSTOM_VERTEXCOLOR		
+
+				float4 getCustomVertexColor(appdata_t v)
+				{
+					return float4(v.color.xyz, 1.0 - dot(mul(float4(v.normal,0), unity_WorldToObject).xyz, float3(0,1,0)));
+				}
+
+				#include "scenary.cginc"
+
+/*
 				struct appdata_t {
 					float4 vertex : POSITION;
 					float2 texcoord : TEXCOORD0;
@@ -105,6 +120,7 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 					return col;
 				}
+*/
 			ENDCG
 		}
 	}

@@ -34,7 +34,9 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with near darken(On Line Decor
 
 				#pragma glsl_no_auto_normalization
 				#pragma fragmentoption ARB_precision_hint_fastest
-				
+
+				#define HG_SCENARY
+
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
 //				#include "Lighting.cginc"
