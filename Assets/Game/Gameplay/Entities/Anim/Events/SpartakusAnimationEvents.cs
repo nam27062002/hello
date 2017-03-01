@@ -1,16 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SpartakusAnimationEvents : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	//---------------------------------------------------------------------------------------
+
+	public delegate void OnJumpImpulseDelegate();
+	public delegate void OnJumpReceptionDelegate();
+	public delegate void OnDizzyRecoverDelegate();
+
+	//---------------------------------------------------------------------------------------
+
+	public event OnJumpImpulseDelegate 		onJumpImpulse;
+	public event OnJumpReceptionDelegate 	onJumpReception;
+	public event OnDizzyRecoverDelegate 	onDizzyRecover;
+
+	//---------------------------------------------------------------------------------------
+
+	public void OnJumpImpulse() 	{ if (onJumpImpulse   != null) onJumpImpulse();   }
+	public void OnJumpReception()	{ if (onJumpReception != null) onJumpReception(); }
+	public void OnDizzyRecover() 	{ if (onDizzyRecover  != null) onDizzyRecover();  }
 }

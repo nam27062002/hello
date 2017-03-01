@@ -412,6 +412,11 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	private void StickOnPlayer() {
 		m_state = State.Stuck_On_Player;
+
+		for (int i = 0; i < m_activateOnShoot.Count; i++) {
+			m_activateOnShoot[i].SetActive(false);
+		}
+
 		m_trasnform.parent = SearchClosestHoldPoint(InstanceManager.player.holdPreyPoints);
 		m_timer = m_stickOnDragonTime;
 	}
