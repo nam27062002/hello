@@ -63,7 +63,6 @@ namespace AI {
 				m_idleTimer -= Time.deltaTime;
 
 				if (m_idleTimer > 0f) {
-					//Vector3 direction = (m_machine.groundDirection == Vector3.zero)? Vector3.right : m_machine.groundDirection;
 					Vector3 direction = m_machine.groundDirection;
 					direction.z = 0f;
 
@@ -75,15 +74,14 @@ namespace AI {
 						m_sideTimer = m_data.timeToChangeDirection.GetRandom();
 					}
 
-					m_distanceToTarget =  Mathf.Abs(target.x - m_machine.position.x);
+					m_distanceToTarget =  (target - m_machine.position).sqrMagnitude;
 
 					m_pilot.GoTo(target);
 				} else {
 					m_idleTimer = 0f;
 					m_pilot.SlowDown(true);
-
-					float distanceToTarget = Mathf.Abs(m_machine.position.x - m_pilot.target.x);
-					if (distanceToTarget > m_distanceToTarget) {
+					float distanceToTarget = (m_pilot.target - m_machine.position).sqrMagnitude;
+					if (distanceToTarget <= 1f || distanceToTarget > m_distanceToTarget) {
 						Transition(OnRest);
 					}
 					m_distanceToTarget = distanceToTarget;
