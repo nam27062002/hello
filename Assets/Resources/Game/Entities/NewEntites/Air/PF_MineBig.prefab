@@ -61,6 +61,10 @@ MonoBehaviour:
   - name: PF_Mine_Edible
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -111,26 +115,26 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 1
+    m_mass: 3
     m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 120
-    m_faceDirection: 0
+    m_faceDirection: 1
     m_useDragonStyleRotation: 0
     m_rollRotation: 0
-    m_limitHorizontalRotation: 1
+    m_limitHorizontalRotation: 0
     m_faceLeftAngle: -45
     m_faceRightAngle: 45
-    m_limitVerticalRotation: 0
+    m_limitVerticalRotation: 1
     m_faceUpAngle: 320
     m_faceDownAngle: 40
   m_affectedByDragonTrample: 0
-  m_enableSensor: 0
+  m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 0
-    m_maxRadius: 0
-    m_minRadius: 0
+    m_sightRadius: 6
+    m_maxRadius: 4
+    m_minRadius: 2
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1

@@ -104,6 +104,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	protected bool m_scared;
 	protected bool m_panic; //bite and hold state
 	protected bool m_falling;
+	protected bool m_jumping;
 	protected bool m_attack;
 	protected bool m_swim;
 	protected bool m_inSpace;
@@ -350,10 +351,17 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     void OnDestroy()
     {
         Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		RemoveAudios();
     }
 
-    void OnDisable() {
-    	if ( ApplicationManager.IsAlive )
+    public void PreDisable()
+    {
+		RemoveAudios();
+    }
+
+    private void RemoveAudios()
+    {
+		if ( ApplicationManager.IsAlive )
     	{
 	        if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
 				m_idleAudioAO.Stop();
@@ -366,23 +374,15 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			RemoveAudioParent( m_onScaredAudioAO );
 			RemoveAudioParent( m_onPanicAudioAO );
 		}
-	}
+    }
 
 	void RemoveAudioParent(AudioObject ao)
 	{
 		if ( ao != null && ao.transform.parent == transform )
 		{
-			InstanceManager.instance.StartCoroutine( Unparent( ao.transform ));
+			ao.transform.parent = null;		
 		}
 	}
-
-	IEnumerator Unparent( Transform go )
-	{
-		yield return null;
-		go.parent = null;
-		yield return null;
-	}
-
 
     void SetEntityTint(EntityTint value)
     {
@@ -681,6 +681,14 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			m_falling = _falling;
 			m_animator.speed = 1f;
 			m_animator.SetBool("falling", _falling);
+		}
+	}
+
+	public void Jumping(bool _jumping) {
+		if (m_jumping != _jumping) {
+			m_jumping = _jumping;
+			m_animator.speed = 1f;
+			m_animator.SetBool("jump", _jumping);
 		}
 	}
 		

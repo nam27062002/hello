@@ -998,7 +998,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 20
+    m_mass: 3
     m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 240
@@ -1008,15 +1008,15 @@ MonoBehaviour:
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
-    m_limitVerticalRotation: 0
+    m_limitVerticalRotation: 1
     m_faceUpAngle: 340
     m_faceDownAngle: 20
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 12
-    m_maxRadius: 10
+    m_sightRadius: 6
+    m_maxRadius: 4
     m_minRadius: 2
     m_hysteresisOffset: 0
     m_senseAbove: 1
@@ -1088,6 +1088,10 @@ MonoBehaviour:
   m_onEatenParticles:
   - name: PS_Blood_Explosion_Large
     path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: 
+    path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
   m_speedToWaterSplash: 0

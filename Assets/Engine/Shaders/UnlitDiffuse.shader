@@ -1,4 +1,4 @@
-﻿Shader "Hungry Dragon/UnlitDiffuse(Glow)"
+﻿Shader "Hungry Dragon/UnlitDiffuse"
 {
 
 	Properties{
@@ -29,7 +29,5 @@
 		}
 
 	}
-
-	CustomEditor "GlowMaterialInspector"
 
 }

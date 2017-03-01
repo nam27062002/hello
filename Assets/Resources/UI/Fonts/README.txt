@@ -17,8 +17,8 @@ FONT ASSETS:
 			- A value bigger than 5 is suitable for titles, big score numbers, etc.
 		- Atlas Resolution: As small as possible to fit all needed characters. Never bigger than 2048x2048 (mobile limitations)
 		- Character Set (see attached UnicodeRanges.txt file for more info):
-			- Latin: 0000-007F,0080-00FF,0100-017F,0180-024F,2C60-2C7F,A720-A7FF,AB30-AB6F,1E00-1EFF
-			- RU: 0000-007F,0400-04FF,0500-052F
+			- Latin (includes numbers, symbols, punctuation and currencies): 0000-007F,0030-0039,0080-00FF,0100-017F,0180-024F,2C60-2C7F,A720-A7FF,AB30-AB6F,1E00-1EFF,2000-206F,20A0-20CF
+			- RU (fallback for Latin font): 0000-007F,0400-04FF,0500-052F,20A0-20CF
 			- JP, KO, ZH and other asian languages: Use the "Characters from file" option and input your localization file for the target language.
 		- Font Render Mode:
 			- Use Raster while testing (i.e. when determining optimal font size/atlas size)

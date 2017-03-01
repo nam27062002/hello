@@ -5,7 +5,9 @@ namespace AI {
 	namespace Behaviour {
 		[System.Serializable]
 		public class JumpAttackData : StateComponentData {
-			public float jumpVelocity = 20f;
+			public float jumpVelocityV = 15f;
+			public float jumpVelocityH = 5f;
+			public float preJumpTime = 0.1f;
 			public int consecutiveAttacks = 3;
 			public float attackDelay = 0f;
 			public float retreatTime = 0f;
@@ -22,6 +24,7 @@ namespace AI {
 			//-----------------------------------------------------
 			private enum AttackState {
 				Idle = 0,
+				Start_Jump,
 				Attack
 			}
 
@@ -50,6 +53,9 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
+				m_pilot.PressAction(Pilot.Action.Attack);
+				m_machine.SetSignal(Signals.Type.Invulnerable, true);
+
 				if (m_attacksLeft <= 0) 
 					m_attacksLeft =  m_data.consecutiveAttacks;
 				m_timer = 0f;
@@ -59,17 +65,23 @@ namespace AI {
 
 			protected override void OnExit(State _newState) {
 				m_machine.SetSignal(Signals.Type.Invulnerable, false);
+
+				m_pilot.ReleaseAction(Pilot.Action.Attack);
 			}
 
 			protected override void OnUpdate() {
-				if (m_timer > 0) {
-					m_timer -= Time.deltaTime;
-				}
-
 				switch (m_attackState) {
 					case AttackState.Idle:
+						m_timer -= Time.deltaTime;
 						if (m_timer <= 0) {
 							StartAttack();
+						}
+						break;
+
+					case AttackState.Start_Jump:
+						m_timer -= Time.deltaTime;
+						if (m_timer <= 0) {
+							Jump();
 						}
 						break;
 
@@ -83,23 +95,23 @@ namespace AI {
 
 			private void StartAttack() {
 				m_meleeWeapon.enabled = true;
-
-				m_pilot.PressAction(Pilot.Action.Attack);
 				m_pilot.PressAction(Pilot.Action.Jump);
-				m_machine.SetSignal(Signals.Type.Invulnerable, true);
-				m_machine.SetVelocity(Vector3.up * m_data.jumpVelocity);
 
 				m_attacksLeft--;
-				m_timer = m_data.attackDelay;
+				m_timer = m_data.preJumpTime;
 
+				m_attackState = AttackState.Start_Jump;
+			}
+
+			private void Jump() {
+				m_machine.SetVelocity(new Vector3(m_data.jumpVelocityH * m_pilot.direction.x, m_data.jumpVelocityV, 0f));
 				m_attackState = AttackState.Attack;
 			}
 
 			private void EndAttack() {
 				m_meleeWeapon.enabled = false;
+				m_timer = m_data.attackDelay;
 
-				m_machine.SetSignal(Signals.Type.Invulnerable, false);
-				m_pilot.ReleaseAction(Pilot.Action.Attack);
 				m_pilot.Stop();
 
 				if (m_attacksLeft > 0) {
