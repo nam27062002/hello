@@ -189,13 +189,13 @@ cd Calety
 git pull
 cd ..
 
-if $FORCE_VERSION: then
+if $FORCE_VERSION; then
   print_builder "Force Version ${FORCE_VERSION}"
   "${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.SetInternalVersion -version FORCE_VERSION
 fi
 
 # Increase internal version number
-if $INCREASE_VERSION_NUMBER && !$FORCE_VERSION; then
+if [ $INCREASE_VERSION_NUMBER ] && [ !$FORCE_VERSION ] ; then
     print_builder "Increasing internal version number..."
     #set +e  # For some unknown reason, in occasions the Builder.IncreaseMinorVersionNumber causes an error, making the script to stop - Disable exitOnError for this single instruction
     "${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.IncreaseMinorVersionNumber | grep "BUILDER"
