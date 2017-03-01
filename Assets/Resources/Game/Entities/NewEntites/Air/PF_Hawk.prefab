@@ -709,6 +709,10 @@ MonoBehaviour:
   - name: PF_feathers_3D
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -773,7 +777,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 1
+    m_mass: 20
     m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 180
@@ -790,9 +794,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 0
-    m_sightRadius: 9
-    m_maxRadius: 5
-    m_minRadius: 0
+    m_sightRadius: 15
+    m_maxRadius: 12
+    m_minRadius: 5
     m_hysteresisOffset: 0
     m_senseAbove: 0
     m_senseBelow: 1
