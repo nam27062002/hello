@@ -104,6 +104,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	protected bool m_scared;
 	protected bool m_panic; //bite and hold state
 	protected bool m_falling;
+	protected bool m_jumping;
 	protected bool m_attack;
 	protected bool m_swim;
 	protected bool m_inSpace;
@@ -680,6 +681,14 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			m_falling = _falling;
 			m_animator.speed = 1f;
 			m_animator.SetBool("falling", _falling);
+		}
+	}
+
+	public void Jumping(bool _jumping) {
+		if (m_jumping != _jumping) {
+			m_jumping = _jumping;
+			m_animator.speed = 1f;
+			m_animator.SetBool("jump", _jumping);
 		}
 	}
 		

@@ -289,6 +289,7 @@ namespace AI {
 
 				m_isFallingDown = !m_isJumping && m_machine.GetSignal(Signals.Type.FallDown);
 				m_viewControl.Falling(m_isFallingDown);
+				m_viewControl.Jumping(m_isJumping);
 
 				GetCollisionNormal();
 				GetHeightFromGround();
@@ -299,7 +300,7 @@ namespace AI {
 					if (m_fallingFromY <= m_machineTransform.position.y) {
 						m_fallingFromY = m_machineTransform.position.y;
 					} else {
-						if (m_isColliderOnGround) { 
+						if (m_isGrounded) { 
 							m_pilot.ReleaseAction(Pilot.Action.Jump);
 							m_fallingFromY = -99999f;
 						}
