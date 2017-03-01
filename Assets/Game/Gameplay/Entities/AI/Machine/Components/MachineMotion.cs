@@ -23,7 +23,6 @@ namespace AI {
 		public bool useGravity { get { return m_useGravity; } set { m_useGravity = value; } }
 		[SerializeField] private bool m_walkOnWalls = false;
 		[SerializeField] private float m_mass = 1f;
-		[SerializeField] private bool m_attackPausesJump = false;
 
 		[SeparatorAttribute]
 		[SerializeField] private UpVector m_defaultUpVector = UpVector.Up;
@@ -78,6 +77,7 @@ namespace AI {
 		private bool m_isGrounded;
 		private bool m_isColliderOnGround;
 		private bool m_isJumping;
+		private bool m_jumpVelocityApplied;
 		private bool m_isFallingDown;
 		private float m_heightFromGround;
 
@@ -203,6 +203,7 @@ namespace AI {
 			m_machineTransform.rotation = m_rotation;
 
 			m_isJumping = false;
+			m_jumpVelocityApplied = false;
 			m_isFallingDown = false;
 			m_fallingFromY = -99999f;
 			m_lastFallDistance = 0f;
@@ -222,6 +223,9 @@ namespace AI {
 		}
 
 		public void SetVelocity(Vector3 _v) {
+			if (m_isJumping) {
+				m_jumpVelocityApplied = true;
+			}
 			m_velocity = _v;
 		}
 
@@ -297,20 +301,20 @@ namespace AI {
 				m_isGrounded = m_isColliderOnGround || m_heightFromGround < 0.3f;
 
 				if (m_isJumping) {
-					if (m_fallingFromY <= m_machineTransform.position.y) {
-						m_fallingFromY = m_machineTransform.position.y;
-					} else {
-						if (m_isGrounded) { 
+					if (m_jumpVelocityApplied) {
+						if (m_velocity.y < 0f && m_isGrounded) { 
 							m_pilot.ReleaseAction(Pilot.Action.Jump);
+							m_jumpVelocityApplied = false;
 							m_fallingFromY = -99999f;
 						}
 					}
-				} else {						
-					if (m_isFallingDown) {							
+				} else {
+					m_jumpVelocityApplied = false;
+					if (m_isFallingDown) {				
 						if (m_fallingFromY < m_machineTransform.position.y)
 							m_fallingFromY = m_machineTransform.position.y;
 
-						if (m_isGrounded) {								
+						if (m_isGrounded) {
 							// check if it has to die > 10 units of distance?
 							float dy = Mathf.Abs(m_machineTransform.position.y - m_fallingFromY);
 							m_lastFallDistance = dy;
@@ -403,12 +407,8 @@ namespace AI {
 					else 				forceGravity =  Vector3.down * 9.8f * m_mass;
 
 					if (m_isJumping) {
-						if (m_attackPausesJump && m_pilot.IsActionPressed(Pilot.Action.Attack)) {
-							m_rbody.velocity = Vector3.zero;
-						} else {
-							m_velocity += (forceGravity) * Time.fixedDeltaTime;
-							m_rbody.velocity = m_velocity;
-						}
+						m_velocity += (forceGravity) * Time.fixedDeltaTime;
+						m_rbody.velocity = m_velocity;
 					} else if (m_isGrounded || m_walkOnWalls) {
 						UpdateVelocity();
 						m_rbody.velocity = m_velocity + ((forceGravity * 3f) / m_mass) * Time.fixedDeltaTime + m_externalVelocity;
