@@ -172,7 +172,7 @@ UNITY_PARAMS="-batchmode -projectPath \"${PROJECT_PATH}\" -logfile -nographics -
 # Move to project path
 cd "${PROJECT_PATH}"
 
-if $RESET_GIT: then
+if $RESET_GIT; then
   print_builder "Reset Git"
   # Update git
   # Revert changes to modified files.
