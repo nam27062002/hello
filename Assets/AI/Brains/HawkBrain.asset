@@ -24,6 +24,8 @@ MonoBehaviour:
   - m_name: Go Back at Home
     m_componentAssets:
     - {fileID: 11400000, guid: b43802a58baa94c3e8fb9482dd9b136c, type: 2}
+  - m_name: Dead
+    m_componentAssets: []
   m_transitionData:
   - to: 1
     id: onEnemyInSight
@@ -40,5 +42,11 @@ MonoBehaviour:
   - to: 0
     id: onBackAtHome
     from: 2
+  - to: 3
+    id: onBurning
+    from: -1
+  - to: 3
+    id: onChewing
+    from: -1
   m_firstState_A: 0
   m_firstState_B: 0
