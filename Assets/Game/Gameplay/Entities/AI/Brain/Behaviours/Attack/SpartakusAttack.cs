@@ -24,7 +24,7 @@ namespace AI {
 			private enum AttackState {
 				Idle = 0,
 				Attack,
-				Dizzy
+				Dizzy	
 			}
 
 			private SpartakusAnimationEvents m_animEvents;
@@ -102,7 +102,6 @@ namespace AI {
 			}
 
 			private void StartAttack() {
-				m_meleeWeapon.enabled = true;
 				m_pilot.PressAction(Pilot.Action.Jump);
 
 				m_attacksLeft--;
@@ -111,6 +110,8 @@ namespace AI {
 			}
 
 			private void Jump() {
+				m_meleeWeapon.enabled = true;
+
 				Vector3 direction = Vector3.right;
 				if (m_machine.enemy.position.x < m_machine.position.x) {
 					direction = Vector3.left;
