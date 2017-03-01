@@ -7,7 +7,6 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-using UnityEditor;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -25,7 +24,7 @@ public static partial class CustomEditorStyles {
 	public static GUIStyle commentLabelLeft {
 		get {
 			if(s_commentLabelLeft == null) {
-				s_commentLabelLeft = new GUIStyle(EditorStyles.label);
+				s_commentLabelLeft = new GUIStyle(GUI.skin.label);
 				s_commentLabelLeft.fontStyle = FontStyle.Italic;
 				s_commentLabelLeft.normal.textColor = Colors.gray;
 				s_commentLabelLeft.wordWrap = true;
@@ -39,9 +38,10 @@ public static partial class CustomEditorStyles {
 	public static GUIStyle bigSceneLabel {
 		get {
 			if(s_bigSceneLabel == null) {
-				s_bigSceneLabel = new GUIStyle(EditorStyles.boldLabel);
+				s_bigSceneLabel = new GUIStyle(GUI.skin.label);
 				s_bigSceneLabel.normal.textColor = Colors.WithAlpha(Colors.white, 0.5f);
 				s_bigSceneLabel.fontSize = 20;
+				s_bigSceneLabel.fontStyle = FontStyle.Bold;
 			}
 			return s_bigSceneLabel;
 		}
@@ -51,7 +51,7 @@ public static partial class CustomEditorStyles {
 	public static GUIStyle richLabel {
 		get {
 			if(s_richLabel == null) {
-				s_richLabel = new GUIStyle(EditorStyles.label);
+				s_richLabel = new GUIStyle(GUI.skin.label);
 				s_richLabel.richText = true;
 			}
 			return s_richLabel;
