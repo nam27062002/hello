@@ -195,6 +195,11 @@ public class AIPilotEditor : Editor {
 			return EditorGUILayout.DoubleField(fieldName, (double)_currentValue);
 		}
 
+		// Vector 3
+		else if(_f.FieldType == typeof(Vector3)) {
+			return EditorGUILayout.Vector3Field(fieldName, (Vector3)_currentValue);
+		}
+
 		// Range
 		else if(_f.FieldType == typeof(Range)) {
 			// Impossible to use Range's custom editor, so use a horizontal layout instead

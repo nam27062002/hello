@@ -1110,6 +1110,10 @@ MonoBehaviour:
   - name: PS_Blood_Explosion_Small
     path: Blood
     offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: Soldier_Dead
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -1372,7 +1376,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"projectileName":"PF_Bomb","projectileSpawnTransformName":"Human_R_Weapon_01","damage":8,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":2,"stop":false,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":12,"panicSpeed":14,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
+  m_serializedJson: '[{"projectileName":"PF_Bomb","projectileSpawnTransformName":"Human_R_Weapon_01","damage":8,"canFollowTarget":false,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":2,"stop":false,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":12,"panicSpeed":14,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
   m_databaseKey: PF_Bomber
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 5
