@@ -23,10 +23,10 @@ COMMIT_CHANGES=false
 CREATE_TAG=false
   # build config
 BUILD_ANDROID=false
-BUILD_IOS=true
+BUILD_IOS=false
   # versioning
 FORCE_VERSION=false
-INCREASE_VERSION_NUMBER=true
+INCREASE_VERSION_NUMBER=false
 PROJECT_SETTINGS_PUBLIC_VERSION_IOS=false
 PROJECT_SETTINGS_PUBLIC_VERSION_GGP=false
 PROJECT_SETTINGS_PUBLIC_VERSION_AMZ=false
@@ -121,17 +121,11 @@ do
 done;
 
 # Flow Control
-print_step()
-{
-  echo "STEP ${1} of ${TOTAL_STEPS}"
-}
-
 print_builder()
 {
-  echo
-  print_step $CURRENT_STEP
+  echo "STEP ${CURRENT_STEP} of ${TOTAL_STEPS}"
   CURRENT_STEP=$((CURRENT_STEP+1))
-  echo "BUILDER: " + $1
+  echo "BUILDER: ${1}"
 }
 
 # Calculate num of stps
