@@ -210,7 +210,7 @@ VERSION_ID="$(cat outputVersion.txt)"
 echo $VERSION_ID
 rm -f "outputVersion.txt"
 
-// Set public version
+# Set public version
 PUBLIC_VERSION_PARAMS=""
 if $BUILD_IOS;then
   if !$PROJECT_SETTINGS_PUBLIC_VERSION_IOS;then
@@ -331,7 +331,7 @@ if $UPLOAD;then
 fi
 
 # Done!
-END_TIME=$(date "+%s")
+END_TIME=$(date +%s)
 DIFF=$(echo "$END_TIME - $START_TIME" | bc)
 
 print_builder "Done in $(date -j -u -f "%s  ${DIFF} +%Hh %Mm %Ss")!" # -j to not actually set the date, -u for UTC time, -f to specify input format (%s -> seconds)
