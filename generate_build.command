@@ -153,7 +153,7 @@ if $UPLOAD;then
 fi
 
 echo "TOTAL STEPS ${TOTAL_STEPS}"
-CURRENT_STEP=0
+CURRENT_STEP=1
 
 # Other internal vars
 UNITY_APP="/Applications/Unity/Unity.app/Contents/MacOS/Unity"
