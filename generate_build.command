@@ -121,8 +121,8 @@ do
 done;
 
 # Flow Control
-print_builder()
-{
+print_builder() {
+  echo
   echo "STEP ${CURRENT_STEP} of ${TOTAL_STEPS}"
   CURRENT_STEP=$((CURRENT_STEP+1))
   echo "BUILDER: ${1}"
@@ -152,7 +152,7 @@ if $UPLOAD;then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
 
-echo "TOTAL STEPS " + ${TOTAL_STEPS}
+echo "TOTAL STEPS ${TOTAL_STEPS}"
 CURRENT_STEP=0
 
 # Other internal vars
@@ -198,14 +198,14 @@ fi
 if [ $INCREASE_VERSION_NUMBER ] && [ !$FORCE_VERSION ] ; then
     print_builder "Increasing internal version number..."
     #set +e  # For some unknown reason, in occasions the Builder.IncreaseMinorVersionNumber causes an error, making the script to stop - Disable exitOnError for this single instruction
-    "${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.IncreaseMinorVersionNumber | grep "BUILDER"
+    "${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.IncreaseMinorVersionNumber
     #set -e
 fi
 
 # Read internal version number
 # Unity creates a tmp file outputVersion.txt with the version number in it. Read from it and remove it.
 print_builder "Reading internal version number..."
-"${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.OutputVersion | grep "BUILDER"
+"${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.OutputVersion
 VERSION_ID="$(cat outputVersion.txt)"
 echo $VERSION_ID
 rm -f "outputVersion.txt"
@@ -230,14 +230,14 @@ if $BUILD_ANDROID;then
   PUBLIC_VERSION_PARAMS += "${PUBLIC_VERSION_PARAMS} -amz ${PROJECT_SETTINGS_PUBLIC_VERSION_AMZ}";
 fi
 print_builder "Settign public version numbers";
-"${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.SetPublicVersion "${PUBLIC_VERSION_PARAMS}"| grep "BUILDER"
+"${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.SetPublicVersion "${PUBLIC_VERSION_PARAMS}"
 
 # Make sure output dir is exists
 mkdir -p "${OUTPUT_DIR}"    # -p to create all parent hierarchy if needed (and to not exit with error if folder already exists)
 
 # Increase build unique code
 print_builder "Increasing Build Code"
-"${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.IncreaseVersionCodes | grep "BUILDER"
+"${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.IncreaseVersionCodes
 
 # Generate Android build
 if $BUILD_ANDROID; then
@@ -247,11 +247,11 @@ if $BUILD_ANDROID; then
   mkdir -p "${OUTPUT_DIR}/apks/"
 
   # Do it!
-  "${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.GenerateAPK -buildTarget android -outputDir "${OUTPUT_DIR}" | grep "BUILDER"
+  "${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.GenerateAPK -buildTarget android -outputDir "${OUTPUT_DIR}"
 
   // Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
 	print_builder "BUILDER: Reading internal andoird build version number";
-  "${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.OutputAndroidBuildVersion | grep "BUILDER"
+  "${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.OutputAndroidBuildVersion
 	ANDROID_BUILD_VERSION=$(cat \"${PROJECT_PATH}/androidBuildVersion.txt\")"
 	rm -f ""\"${PROJECT_PATH}/androidBuildVersion.txt\"";
 	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_\"$(DATE)\"_b${ANDROID_BUILD_VERSION}.apk";
@@ -265,7 +265,7 @@ if $BUILD_IOS; then
 
     # Generate XCode project
     print_builder "Generating XCode Project"
-    "${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.GenerateXcode -buildTarget ios -outputDir "${OUTPUT_DIR}" | grep "BUILDER"
+    "${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.GenerateXcode -buildTarget ios -outputDir "${OUTPUT_DIR}"
 
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
