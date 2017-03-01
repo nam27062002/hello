@@ -333,7 +333,7 @@ fi
 # Done!
 END_TIME=$(date +%s)
 DIFF=$(echo "$END_TIME - $START_TIME" | bc)
-
-print_builder "Done in $(date -j -u -f "%s  ${DIFF} +%Hh %Mm %Ss")!" # -j to not actually set the date, -u for UTC time, -f to specify input format (%s -> seconds)
+DIFF=$(date -j -u -f %s ${DIFF} +%Hh:%Mm:%Ss)
+print_builder "Done in ${DIFF}!" # -j to not actually set the date, -u for UTC time, -f to specify input format (%s -> seconds)
 
 cd "${INITIAL_PATH}"
