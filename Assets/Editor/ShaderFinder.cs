@@ -74,7 +74,7 @@ public class ShaderFinder : EditorWindow
 
     public enum WhereToSearch { SearchInScene, SearchInAssets };
 
-    public enum TypeOfSearch { ObjectsContainingShadersInList, ObjectNotContainingShadersInList };
+    public enum TypeOfSearch { ObjectsContainingShadersInList, ObjectNotContainingShadersInList, ReplaceShader  };
 
     public enum SavelistSlot { List0, List1, List2, List3, List4, List5 };
 
@@ -181,24 +181,27 @@ public class ShaderFinder : EditorWindow
                 m_checkResults = findShaderInAssets(m_typeOfSearch);
             }
 
-            Debug.Log("Find " + m_checkResults.Length + " results.");
+            Debug.Log("Shader finder found: " + m_checkResults.Length + " results.");
         }
 
         if (m_checkResults != null)
         {
-//            EditorGUILayout.BeginVertical(EditorStyles.textField, GUILayout.Height(1));
+            EditorGUILayout.BeginVertical(EditorStyles.textField);
+            EditorGUILayout.LabelField("Shader finder found: " + m_checkResults.Length + " results.");
+            EditorGUILayout.EndVertical();
+
+//          EditorGUILayout.BeginVertical(EditorStyles.textField, GUILayout.Height(1));
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos, EditorStyles.textField);
             EditorGUILayout.BeginVertical();
             for (int c = 0; c < m_checkResults.Length; c++)
             {
                 AssetFinderResult result = m_checkResults[c];
-
                 EditorGUILayout.LabelField(">" + result.m_gameObjectName + " - Material: " + result.m_materialName + " - Shader: " + result.m_shaderName);
             }
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.EndScrollView();
-//            EditorGUILayout.EndVertical();
+//          EditorGUILayout.EndVertical();
         }
 
     }
@@ -206,7 +209,6 @@ public class ShaderFinder : EditorWindow
     private static readonly string m_keySlotNumber = "ShaderFinder_SlotNumber";
     private static readonly string m_keyListSize = "ShaderFinder_ListSize";
     private static readonly string m_keyListElem = "ShaderFinder_ListElem";
-
 
     void LoadShaderList(string slot, out Shader[] list)
     {
