@@ -8,7 +8,7 @@ INITIAL_PATH="$(pwd)"
 
 # Store script's (project's) absolute path
 # To get an absolute path, dir to it and then use pwd command
-cd "$(dirname $0)"
+cd "$(dirname "$0")"
 SCRIPT_PATH="$(pwd)"
 echo
 echo "BUILDER: Running script from path ${SCRIPT_PATH}"
