@@ -215,7 +215,7 @@ GameObject:
   - component: {fileID: 136000010399633126}
   - component: {fileID: 54000013768810822}
   m_Layer: 21
-  m_Name: PF_Archer_01
+  m_Name: PF_Archer01_Static
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1198,7 +1198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: archer
+  m_sku: archer_static
   m_dieOutsideFrustum: 1
 --- !u!114 &11493306
 MonoBehaviour:
@@ -1214,12 +1214,12 @@ MonoBehaviour:
   m_blendSpeedFactor: 1
   m_energy: 10
   m_energyDrainSec: 1
-  m_brainResource: {fileID: 11400000, guid: 776837644347f4fd1b6fb6868af723eb, type: 2}
+  m_brainResource: {fileID: 11400000, guid: 2658ae5ddcd9c41e59779c17b4252252, type: 2}
   m_railSeparation:
     min: 2
     max: 2
-  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":240,"max":480},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":0,"max":0},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":7,"arrivalRadius":1,"hasGuardState":false,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"timeBeforeBackHome":2,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"projectileName":"PF_Arrow","projectileSpawnTransformName":"Human_R_Weapon_01","damage":10,"canFollowTarget":false,"consecutiveAttacks":2,"attackDelay":0.5,"retreatTime":2,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
-  m_databaseKey: PF_Archer_01
+  m_serializedJson: '[{"restTime":{"min":0,"max":0},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"projectileName":"PF_Arrow","projectileSpawnTransformName":"Human_R_Weapon_01","damage":10,"canFollowTarget":false,"consecutiveAttacks":2,"attackDelay":0.5,"retreatTime":2,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
+  m_databaseKey: PF_Archer01_Static
 --- !u!137 &13708154
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
