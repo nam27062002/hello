@@ -191,11 +191,9 @@ namespace AI {
 					position = hit.point;
 					m_heightFromGround = 0f;
 				}
+			} 
 
-				m_terminalVelocity = Mathf.Sqrt((2f * m_mass * 9.8f) * (Air_Density * 1f * Drag));
-			} else {
-				m_terminalVelocity = 0f;
-			}
+			m_terminalVelocity = Mathf.Sqrt((2f * m_mass * 9.8f) * (Air_Density * 1f * Drag));
 
 			m_rotation = Quaternion.LookRotation(m_direction, m_upVector);
 			m_targetRotation = m_rotation;

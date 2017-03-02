@@ -32,7 +32,7 @@ public class BreakableBehaviour : MonoBehaviour
 		m_initialViewPos = m_view.localPosition;
 	}
 
-	void OnEnabled() {
+	void OnEnable() {
 		m_remainingHits = m_hitCount;
 
 		if (m_wobbler == null)

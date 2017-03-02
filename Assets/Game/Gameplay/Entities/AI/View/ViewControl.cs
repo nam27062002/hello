@@ -205,7 +205,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if ( !m_onEatenFrozenParticle.IsValid() )
 		{
 			m_onEatenFrozenParticle.name = "PS_IceExplosion";
-			m_onEatenFrozenParticle.path = "Blood/";
+			m_onEatenFrozenParticle.path = "";
 		}
 
 		m_specialAnimations = new bool[(int)SpecialAnims.Count];

@@ -1265,7 +1265,6 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 1
-    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 360
     m_faceDirection: 1
@@ -1394,22 +1393,38 @@ MonoBehaviour:
   m_mustBeChild: 0
   m_lookAtVector: 0
   m_possibleSpawners:
-  - Goblin/PF_Kamikaze
-  - Air/PF_OwlBig
-  - Air/PF_Owl
-  - Air/PF_Witch
-  - Air/PF_EnemyBaby
-  - Air/PF_MineSmall_01
-  - Air/PF_MineMedium
-  - Air/PF_HorseFlying
-  - Goblin/PF_Bomber
-  - Surface/PF_RichmanStatic
-  - Surface/PF_HorseStatic
-  - Surface/PF_DrunkenMan
-  - Surface/PF_BakerWoman
-  - Surface/PF_SoldierStatic_01
-  - Surface/PF_Villager_01
-  - Junk/PF_GoodJunkBottle
+  - m_spawnPrefab: Goblin/PF_Kamikaze
+    m_chance: 1
+  - m_spawnPrefab: Air/PF_OwlBig
+    m_chance: 1
+  - m_spawnPrefab: Air/PF_Owl
+    m_chance: 1
+  - m_spawnPrefab: Air/PF_Witch
+    m_chance: 1
+  - m_spawnPrefab: Air/PF_EnemyBaby
+    m_chance: 1
+  - m_spawnPrefab: Air/PF_MineSmall_01
+    m_chance: 1
+  - m_spawnPrefab: Air/PF_MineMedium
+    m_chance: 1
+  - m_spawnPrefab: Air/PF_HorseFlying
+    m_chance: 1
+  - m_spawnPrefab: Goblin/PF_Bomber
+    m_chance: 1
+  - m_spawnPrefab: Surface/PF_RichmanStatic
+    m_chance: 1
+  - m_spawnPrefab: Surface/PF_HorseStatic
+    m_chance: 1
+  - m_spawnPrefab: Surface/PF_DrunkenMan
+    m_chance: 1
+  - m_spawnPrefab: Surface/PF_BakerWoman
+    m_chance: 1
+  - m_spawnPrefab: Surface/PF_SoldierStatic_01
+    m_chance: 1
+  - m_spawnPrefab: Surface/PF_Villager_01
+    m_chance: 1
+  - m_spawnPrefab: Junk/PF_GoodJunkBottle
+    m_chance: 1
 --- !u!135 &135000013338795870
 SphereCollider:
   m_ObjectHideFlags: 1

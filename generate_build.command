@@ -129,7 +129,7 @@ TOTAL_STEPS=8;
 if $RESET_GIT; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
-if [ $FORCE_VERSION ] || [ $INCREASE_VERSION_NUMBER ] ; then
+if [ "$FORCE_VERSION" != false ] || [ $INCREASE_VERSION_NUMBER ] ; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
 if $BUILD_ANDROID;then
@@ -188,13 +188,13 @@ cd ..
 print_builder "Custom Builder Action"
 eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.CustomAction"
 
-if $FORCE_VERSION; then
+if [ "$FORCE_VERSION" != false ]; then
   print_builder "Force Version ${FORCE_VERSION}"
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetInternalVersion -version ${FORCE_VERSION}"
 fi
 
 # Increase internal version number
-if [ $INCREASE_VERSION_NUMBER ] && [ !$FORCE_VERSION ] ; then
+if [ $INCREASE_VERSION_NUMBER ] && [ "$FORCE_VERSION" == false ] ; then
     print_builder "Increasing internal version number..."
     #set +e  # For some unknown reason, in occasions the Builder.IncreaseMinorVersionNumber causes an error, making the script to stop - Disable exitOnError for this single instruction
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.IncreaseMinorVersionNumber"
@@ -212,21 +212,21 @@ rm -f "outputVersion.txt"
 # Set public version
 PUBLIC_VERSION_PARAMS=""
 if $BUILD_IOS;then
-  if ![ $PROJECT_SETTINGS_PUBLIC_VERSION_IOS ];then
+  if [ "$PROJECT_SETTINGS_PUBLIC_VERSION_IOS" != false ];then
       PROJECT_SETTINGS_PUBLIC_VERSION_IOS="${VERSION_ID}"
   fi
-	PUBLIC_VERSION_PARAMS="${PUBLIC_VERSION_PARAMS} -ios ${PROJECT_SETTINGS_PUBLIC_VERSION_IOS}";
+  PUBLIC_VERSION_PARAMS="${PUBLIC_VERSION_PARAMS} -ios ${PROJECT_SETTINGS_PUBLIC_VERSION_IOS}"
 fi
 
 if $BUILD_ANDROID;then
-  if ![ $PROJECT_SETTINGS_PUBLIC_VERSION_GGP ];then
+  if [ "$PROJECT_SETTINGS_PUBLIC_VERSION_GGP" != false ];then
       PROJECT_SETTINGS_PUBLIC_VERSION_GGP="${VERSION_ID}"
   fi
-  if ![ $PROJECT_SETTINGS_PUBLIC_VERSION_AMZ ];then
+  if [ "$PROJECT_SETTINGS_PUBLIC_VERSION_AMZ" != false ];then
       PROJECT_SETTINGS_PUBLIC_VERSION_AMZ="${VERSION_ID}"
   fi
-  PUBLIC_VERSION_PARAMS = "${PUBLIC_VERSION_PARAMS} -ggp ${PROJECT_SETTINGS_PUBLIC_VERSION_GGP}";
-  PUBLIC_VERSION_PARAMS = "${PUBLIC_VERSION_PARAMS} -amz ${PROJECT_SETTINGS_PUBLIC_VERSION_AMZ}";
+  PUBLIC_VERSION_PARAMS="${PUBLIC_VERSION_PARAMS} -ggp ${PROJECT_SETTINGS_PUBLIC_VERSION_GGP}"
+  PUBLIC_VERSION_PARAMS="${PUBLIC_VERSION_PARAMS} -amz ${PROJECT_SETTINGS_PUBLIC_VERSION_AMZ}"
 fi
 print_builder "Settign public version numbers";
 eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetPublicVersion ${PUBLIC_VERSION_PARAMS}"
@@ -246,13 +246,13 @@ if $BUILD_ANDROID; then
   mkdir -p "${OUTPUT_DIR}/apks/"
 
   # Do it!
-  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir ${OUTPUT_DIR} -obb ${GENERATE_OBB}"
+  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir ${OUTPUT_DIR}/apks/ -obb ${GENERATE_OBB}"
 
-  // Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
-	print_builder "BUILDER: Reading internal andoird build version number";
+  # Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
+	print_builder "BUILDER: Reading internal android build version number";
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputAndroidBuildVersion"
-	ANDROID_BUILD_VERSION=$(cat \"${PROJECT_PATH}/androidBuildVersion.txt\")"
-	rm -f ""\"${PROJECT_PATH}/androidBuildVersion.txt\"";
+	ANDROID_BUILD_VERSION="$(cat androidBuildVersion.txt)"
+	rm -f "androidBuildVersion.txt";
 	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_\"$(DATE)\"_b${ANDROID_BUILD_VERSION}";
 fi
 
@@ -264,7 +264,7 @@ if $BUILD_IOS; then
 
     # Generate XCode project
     print_builder "Generating XCode Project"
-    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateXcode -buildTarget ios -outputDir ${OUTPUT_DIR} -obb ${}"
+    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateXcode -buildTarget ios -outputDir ${OUTPUT_DIR}"
 
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
