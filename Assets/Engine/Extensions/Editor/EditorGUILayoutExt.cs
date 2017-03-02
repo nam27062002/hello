@@ -225,11 +225,9 @@ public static class EditorGUILayoutExt {
 
 		// Create a horizontal group
 		EditorGUILayout.BeginHorizontal(); {
-			// Label
-			EditorGUILayout.PrefixLabel(_label);
-
 			// Do toggle property
-			_toggleProp.boolValue = GUILayout.Toggle(_toggleProp.boolValue, GUIContent.none, GUILayout.Width(15f));
+			_toggleProp.boolValue = GUILayout.Toggle(_toggleProp.boolValue, GUIContent.none, GUILayout.Width(10f));
+			EditorGUIUtility.labelWidth -= 10f;	// Compensate Toggle's width
 
 			// Enable/Disable GUI based on toggle value
 			bool wasEnabled = GUI.enabled;
@@ -238,13 +236,14 @@ public static class EditorGUILayoutExt {
 			// Do the property
 			// Use default drawer?
 			if(_customPropertyDrawer == null) {
-				EditorGUILayout.PropertyField(_p, GUIContent.none, true);
+				EditorGUILayout.PropertyField(_p, new GUIContent(_label), true);
 			} else {
 				_customPropertyDrawer(_p);
 			}
 
 			// Restore GUI enabled state
 			GUI.enabled = wasEnabled;
+			EditorGUIUtility.labelWidth += 10f;	// Restore label width
 		} EditorGUILayoutExt.EndHorizontalSafe();
 	}
 

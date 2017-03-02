@@ -21,6 +21,7 @@ using System;
 /// TODO:
 /// - Elastic bounce on limits
 /// - Bounce on limits
+/// - Idle velocity
 /// </summary>
 public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
 	//------------------------------------------------------------------------//
@@ -28,15 +29,47 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	//------------------------------------------------------------------------//
 	[Serializable]
 	public class DragControlEvent : UnityEvent<DragControl> {}
+
+	public enum ClampMode {
+		CLAMP,
+		BOUNCE,
+		LOOP
+	};
+
+	[Serializable]
+	public class ClampSetup {
+		public bool clamp = false;
+		public Range range = new Range(-100f, 100f);
+		public ClampMode mode = ClampMode.CLAMP;
+	};
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed setup
+	[SerializeField] private bool[] m_axisEnabled = new bool[] {true, true};
+
+	public bool horizontal {
+		get { return m_axisEnabled[0]; }
+		set { m_axisEnabled[0] = value; }
+	}
+
+	public bool vertical {
+		get { return m_axisEnabled[1]; }
+		set { m_axisEnabled[1] = value; }
+	}
+
+	[Space]
 	[SerializeField] private float m_sensitivity = 1f;
 	public float sensitivity {
 		get { return m_sensitivity; }
 		set { m_sensitivity = value; }
+	}
+
+	[SerializeField] private Vector2 m_idleVelocity = Vector2.zero;
+	public Vector2 idleVelocity {
+		get { return m_idleVelocity; }
+		set { m_idleVelocity = value; }
 	}
 
 	[SerializeField] private bool m_inertia = true;
@@ -45,48 +78,24 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 		set { m_inertia = value; }
 	}
 
-	[Tooltip("Only used if inertia is active")]
-	[SerializeField] private float m_inertiaDecelerationRate = 0.135f;
-	public float inertiaDecelerationRate {
-		get { return m_inertiaDecelerationRate; }
-		set { m_inertiaDecelerationRate = value; }
+	[Range(0f, 0.99f)] [SerializeField] private float m_inertiaAcceleration = 0.135f;	// Values bigger than 1 would accelerate the value infinitely
+	public float inertiaAcceleration {
+		get { return m_inertiaAcceleration; }
+		set { m_inertiaAcceleration = value; }
 	}
 
-	[Space]
-	[SerializeField] private bool m_clampX = false;
-	public bool clampX {
-		get { return m_clampX; }
-		set {
-			m_clampX = value;
-			ApplyOffset(Vector2.zero);	// Refresh value
-		}
+	// Clamping
+	[SerializeField]
+	private ClampSetup[] m_clampSetup = new ClampSetup[2];	// One per axis
+
+	public ClampSetup clampSetupX {
+		get { return m_clampSetup[0]; }
+		set { m_clampSetup[0] = value; CheckValue(); }
 	}
 
-	[SerializeField] private Range m_xRange = new Range(-100f, 100f);
-	public Range xRange {
-		get { return m_xRange; }
-		set {
-			m_xRange = value;
-			ApplyOffset(Vector2.zero);
-		}
-	}
-
-	[SerializeField] private bool m_clampY = false;
-	public bool clampY {
-		get { return m_clampY; }
-		set {
-			m_clampY = value;
-			ApplyOffset(Vector2.zero);	// Refresh value
-		}
-	}
-
-	[SerializeField] private Range m_yRange = new Range(-100f, 100f);
-	public Range yRange {
-		get { return m_yRange; }
-		set {
-			m_yRange = value;
-			ApplyOffset(Vector2.zero);
-		}
+	public ClampSetup clampSetupY {
+		get { return m_clampSetup[1]; }
+		set { m_clampSetup[1] = value; CheckValue(); }
 	}
 
 	// Events
@@ -160,36 +169,45 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 		// Aux vars
 		float deltaTime = Time.unscaledDeltaTime;
 
-		// If inertia is enabled, update velocity and apply inertia
-		// Except while dragging
-		if(!m_dragging && m_velocity != Vector2.zero) {
+		// While dragging, don't update value (it's done via the drag events)
+		if(m_dragging) {
+			// If inertia is enabled, update velocity for when we stop dragging
+			if(m_inertia) {
+				// Compute based on offset applied by the dragging handler and interpolate with previous velocity for a smoother experience
+				Vector2 newVelocity = (m_value - m_previousValue)/deltaTime;
+				m_velocity = Vector3.Lerp(m_velocity, newVelocity, deltaTime * 10f);
+			}
+		}
+
+		// If we're not dragging, apply velocity
+		else {
 			// Both axis
 			Vector2 offset = Vector2.zero;
 			for(int axis = 0; axis < 2; axis++) {
-				// Only if inertia is enabled
-				if(m_inertia) {
-					// Update velocity and stop when too small
-					m_velocity[axis] *= Mathf.Pow(m_inertiaDecelerationRate, deltaTime);
-					if(Mathf.Abs(m_velocity[axis]) < 1f) {
+				// Skip if axis not enabled
+				if(!m_axisEnabled[axis]) continue;
+
+				// Update velocity while moving
+				if(m_velocity != Vector2.zero) {
+					// If inertia is enabled, update velocity
+					if(m_inertia) {
+						// Stop when too small
+						m_velocity[axis] *= Mathf.Pow(m_inertiaAcceleration, deltaTime);
+						if(Mathf.Abs(m_velocity[axis]) < 1f) {
+							m_velocity[axis] = 0f;
+						}
+					} else {
+						// Inertia disabled, don't move
 						m_velocity[axis] = 0f;
 					}
-
-					// Apply velocity
-					offset[axis] = m_velocity[axis] * deltaTime;
-				} else {
-					m_velocity[axis] = 0f;
 				}
+
+				// Apply velocity, including idle velocity
+				offset[axis] = (m_velocity[axis] + m_idleVelocity[axis]) * deltaTime;
 			}
 
 			// Apply offset
 			ApplyOffset(offset);
-		}
-
-		// While dragging, compute new velocity if inertia is enabled
-		if(m_dragging && m_inertia) {
-			// Compute based on offset applied by the dragging handler and interpolate with previous velocity for a smoother experience
-			Vector2 newVelocity = (m_value - m_previousValue)/deltaTime;
-			m_velocity = Vector3.Lerp(m_velocity, newVelocity, deltaTime * 10f);
 		}
 	}
 
@@ -205,8 +223,10 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	/// </summary>
 	private void OnValidate() {
 		// Cap some values
+		m_axisEnabled.Resize(2);
 		m_sensitivity = Mathf.Max(0f, m_sensitivity);
-		m_inertiaDecelerationRate = Mathf.Max(0f, m_inertiaDecelerationRate);
+		m_inertiaAcceleration = Mathf.Max(0f, m_inertiaAcceleration);
+		m_clampSetup.Resize(2);	// Fixed size!
 	}
 
 	//------------------------------------------------------------------------//
@@ -218,18 +238,63 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	/// </summary>
 	/// <param name="_offset">Unscaled offset to be applied.</param>
 	private void ApplyOffset(Vector2 _offset) {
+		// Not for disabled axis!
+		for(int i = 0; i < 2; i++) {
+			if(!m_axisEnabled[i]) _offset[i] = 0f;
+		}
+
 		// Do it
 		m_previousValue = m_value;
 		m_value += _offset * m_sensitivity;
 
 		// Apply clamping, if any
-		if(m_clampX) m_value.x = m_xRange.Clamp(m_value.x);
-		if(m_clampY) m_value.y = m_yRange.Clamp(m_value.y);
+		for(int i = 0; i < 2; i++) {
+			// Skip if axis disabled
+			if(!m_axisEnabled[i]) continue;
+
+			// Clamp mode?
+			if(m_clampSetup[i].clamp) {
+				switch(m_clampSetup[i].mode) {
+					case ClampMode.CLAMP: {
+						// Stick to edges and clear velocity
+						if(!m_clampSetup[i].range.Contains(m_value[i])) {
+							m_value[i] = m_clampSetup[i].range.Clamp(m_value[i]);
+							m_velocity[i] = 0f;
+						}
+					} break;
+
+					case ClampMode.BOUNCE: {
+						// If we're outside bounds, clamp and reverse velocity
+						if(!m_clampSetup[i].range.Contains(m_value[i])) {
+							m_value[i] = m_clampSetup[i].range.Clamp(m_value[i]);
+							m_velocity[i] *= -1f;
+						}
+					} break;
+
+					case ClampMode.LOOP: {
+						// If we're outside bounds, clamp to opposite limit
+						if(m_value[i] >= m_clampSetup[i].range.max) {
+							m_value[i] = m_clampSetup[i].range.min;
+						} else if(m_value[i] <= m_clampSetup[i].range.min) {
+							m_value[i] = m_clampSetup[i].range.max;
+						}
+					} break;
+				}
+			}
+		}
 
 		// Notify listeners
 		if(m_value != m_previousValue) {
 			OnValueChanged.Invoke(this);
 		}
+	}
+
+	/// <summary>
+	/// Check current value to make sure it fits clamping setup.
+	/// </summary>
+	private void CheckValue() {
+		// Actually is the same as just applying a zero offset
+		ApplyOffset(Vector2.zero);
 	}
 
 	//------------------------------------------------------------------------//
