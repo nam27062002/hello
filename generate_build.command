@@ -111,7 +111,7 @@ do
         SMB_FOLDER=${!i}
     else
         echo "BUILDER: Unknown parameter ${PARAM_NAME}"
-        echo "BUILDER: ${USAGE}""
+        echo "BUILDER: ${USAGE}"
         exit 1
     fi
 done;
