@@ -27,6 +27,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
     - {fileID: 11400000, guid: cdc2a30fcd81a46a88bcf06ba5b18f47, type: 2}
     - {fileID: 11400000, guid: f5add648be9ed4fea927e8987afbd296, type: 2}
+  - m_name: Dead
+    m_componentAssets: []
   m_transitionData:
   - to: 1
     id: onEnemyInRange
@@ -37,5 +39,11 @@ MonoBehaviour:
   - to: 0
     id: onTimeFinished
     from: 2
+  - to: 3
+    id: onBurning
+    from: -1
+  - to: 3
+    id: onChewing
+    from: -1
   m_firstState_A: 0
   m_firstState_B: 0

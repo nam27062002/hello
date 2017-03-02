@@ -8,8 +8,9 @@ OcclusionCullingSettings:
     smallestOccluder: 5
     smallestHole: 0.25
     backfaceThreshold: 100
-  m_SceneGUID: 00000000000000000000000000000000
-  m_OcclusionCullingData: {fileID: 0}
+  m_SceneGUID: 3be0bcec8a2fa4c45bda953cf7895ae7
+  m_OcclusionCullingData: {fileID: 36300000, guid: b5a466048c7f67b4c84a77b4665e16ac,
+    type: 2}
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
@@ -399,6 +400,10 @@ Prefab:
     - target: {fileID: 404440, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
       propertyPath: m_LocalScale.z
       value: 1.2672135
+      objectReference: {fileID: 0}
+    - target: {fileID: 142624, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
@@ -2679,6 +2684,10 @@ Prefab:
       propertyPath: m_Name
       value: barrel_01 (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 142624, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
   m_IsPrefabParent: 0
@@ -3281,7 +3290,7 @@ Prefab:
       objectReference: {fileID: 2100000, guid: 9cbfdb5a217c83748a744f9f20a8012d, type: 2}
     - target: {fileID: 100002, guid: 79397b9ddc6c7714bae5e72ae38a7c6b, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 0
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 100004, guid: 79397b9ddc6c7714bae5e72ae38a7c6b, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -3289,7 +3298,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 79397b9ddc6c7714bae5e72ae38a7c6b, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 0
+      value: 18
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 79397b9ddc6c7714bae5e72ae38a7c6b, type: 3}
@@ -4263,6 +4272,26 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -6.5390005
       objectReference: {fileID: 0}
+    - target: {fileID: 100006, guid: 564a7dd62dba81f41bec23106420fd01, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: 564a7dd62dba81f41bec23106420fd01, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 564a7dd62dba81f41bec23106420fd01, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 564a7dd62dba81f41bec23106420fd01, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100008, guid: 564a7dd62dba81f41bec23106420fd01, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 564a7dd62dba81f41bec23106420fd01, type: 3}
   m_IsPrefabParent: 0
@@ -4325,6 +4354,10 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 4c4248f8e424cf542a865df156bf4ecc, type: 2}
+    - target: {fileID: 100000, guid: b82dd77f21a62a04da43da77af2a4da0, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 16
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b82dd77f21a62a04da43da77af2a4da0, type: 3}
   m_IsPrefabParent: 0
@@ -4464,6 +4497,10 @@ Prefab:
     - target: {fileID: 142624, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
       propertyPath: m_Name
       value: barrel_01 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 142624, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
@@ -4953,6 +4990,10 @@ Prefab:
         type: 2}
       propertyPath: InitialModule.startSize.scalar
       value: 10.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000011695434434, guid: 2af4ccb970e221048a4cbc47da33adf7, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2af4ccb970e221048a4cbc47da33adf7, type: 2}
@@ -5977,6 +6018,10 @@ Prefab:
       propertyPath: m_Name
       value: barrel_01 (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 142624, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
   m_IsPrefabParent: 0
@@ -6167,6 +6212,10 @@ Prefab:
       propertyPath: m_Materials.Array.data[1]
       value: 
       objectReference: {fileID: 2100000, guid: f07b88e6a5db20e458fc0eb0ecde20bc, type: 2}
+    - target: {fileID: 100000, guid: fbada31ceaaf8df42a5cad7c9063c1e6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 16
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: fbada31ceaaf8df42a5cad7c9063c1e6, type: 3}
   m_IsPrefabParent: 0
@@ -7822,6 +7871,10 @@ Prefab:
       propertyPath: m_Name
       value: barrel_01 (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 142624, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
   m_IsPrefabParent: 0
@@ -8340,7 +8393,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 16
   m_IsActive: 1
 --- !u!23 &1245456904
 MeshRenderer:
@@ -10740,6 +10793,10 @@ Prefab:
       propertyPath: m_Name
       value: barrel_01 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 142624, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
   m_IsPrefabParent: 0
@@ -13101,6 +13158,10 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 51.244995
       objectReference: {fileID: 0}
+    - target: {fileID: 197238, guid: daf70a3bd0531ba4c993764800a9047b, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: daf70a3bd0531ba4c993764800a9047b, type: 2}
   m_IsPrefabParent: 0
@@ -14076,6 +14137,50 @@ Prefab:
       propertyPath: m_Name
       value: PF_Boat (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 1762896091469656, guid: a855c2752bab34d1090bc7885da4355e, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 116390, guid: a855c2752bab34d1090bc7885da4355e, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000012404198690, guid: a855c2752bab34d1090bc7885da4355e, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 138210, guid: a855c2752bab34d1090bc7885da4355e, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 145714, guid: a855c2752bab34d1090bc7885da4355e, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 1859096862028510, guid: a855c2752bab34d1090bc7885da4355e, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 1264537559114116, guid: a855c2752bab34d1090bc7885da4355e, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 169340, guid: a855c2752bab34d1090bc7885da4355e, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 1348621898860618, guid: a855c2752bab34d1090bc7885da4355e, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 1482612080482670, guid: a855c2752bab34d1090bc7885da4355e, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 1538306573127326, guid: a855c2752bab34d1090bc7885da4355e, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a855c2752bab34d1090bc7885da4355e, type: 2}
   m_IsPrefabParent: 0
@@ -14156,7 +14261,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &1918718703
 Transform:
@@ -14771,6 +14876,10 @@ Prefab:
     - target: {fileID: 142624, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
       propertyPath: m_Name
       value: barrel_01 (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 142624, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8f9d779e576cfb04c9c9c66477f02445, type: 2}
