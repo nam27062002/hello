@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ReturnParicleAfterFinish : MonoBehaviour {
+public class ReturnParticleAfterFinish : MonoBehaviour {
 
 	private ParticleSystem m_particleSystems;
 	// Use this for initialization
