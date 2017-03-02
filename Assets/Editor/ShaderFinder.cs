@@ -63,11 +63,15 @@ public class ShaderFinder : EditorWindow
 
     // Shader list
     //    public List<Shader> m_shaderList = new List<Shader>();
-    [SerializeField]
-    public Shader[] m_shaderList;
     private SerializedObject m_shaderFinder;
+
+    [SerializeField]
+    public Shader[] m_shaderList = null;
     private SerializedProperty m_propertyShaderList;
 
+    [SerializeField]
+    private Shader m_replaceWithShader = null;
+    private SerializedProperty m_propertyReplaceWithShader;
 
     private bool m_searchScene = true;
 
@@ -102,12 +106,15 @@ public class ShaderFinder : EditorWindow
     {
         m_shaderFinder = new SerializedObject(this);
         m_propertyShaderList = m_shaderFinder.FindProperty("m_shaderList");
+        m_propertyReplaceWithShader = m_shaderFinder.FindProperty("m_replaceWithShader");
 
         string slotNumber;
         slotNumber = EditorPrefs.GetString(m_keySlotNumber, "List0");
         m_saveListSlot = (SavelistSlot)Enum.Parse(typeof(SavelistSlot), slotNumber);
 
-        LoadShaderList("", out m_shaderList);
+        LoadShaderList(m_saveListSlot.ToString(), out m_shaderList);
+
+        DeleteShaderList("");
     }
 
     /// <summary>
@@ -120,11 +127,13 @@ public class ShaderFinder : EditorWindow
 
     private AssetFinderResult[] m_checkResults;
     private Vector2 scrollPos = Vector2.zero;
+
     /// <summary>
     /// Update the inspector window.
     /// </summary>
     public void OnGUI()
     {
+        m_shaderFinder.Update();
         EditorGUILayout.BeginVertical(EditorStyles.textField);
         EditorGUILayout.LabelField("Shader finder can check for used shaders in scene hierarchy or assets folder.");
         m_whereToSearch = (WhereToSearch)EditorGUILayout.EnumPopup(m_whereToSearch);
@@ -159,15 +168,18 @@ public class ShaderFinder : EditorWindow
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.BeginVertical(EditorStyles.textField);
-        m_shaderFinder.Update();
         //        EditorGUILayout.ObjectField(m_propertyShaderList);
         EditorGUILayout.PropertyField(m_propertyShaderList, new GUIContent("Shader list to find:"), true);
 
-        m_shaderFinder.ApplyModifiedProperties();
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.BeginVertical(EditorStyles.textField);
         m_typeOfSearch = (TypeOfSearch)EditorGUILayout.EnumPopup("Search for: ", m_typeOfSearch);
+
+        if (m_typeOfSearch == TypeOfSearch.ReplaceShader)
+        {
+            EditorGUILayout.PropertyField(m_propertyReplaceWithShader, new GUIContent("Replace with shader:"));
+        }
         EditorGUILayout.EndVertical();
 
         if (GUILayout.Button("Check!"))
@@ -181,7 +193,6 @@ public class ShaderFinder : EditorWindow
                 m_checkResults = findShaderInAssets(m_typeOfSearch);
             }
 
-            Debug.Log("Shader finder found: " + m_checkResults.Length + " results.");
         }
 
         if (m_checkResults != null)
@@ -201,9 +212,21 @@ public class ShaderFinder : EditorWindow
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.EndScrollView();
-//          EditorGUILayout.EndVertical();
+
+            if (m_typeOfSearch == TypeOfSearch.ReplaceShader && m_replaceWithShader != null)
+            {
+                EditorGUILayout.BeginVertical(EditorStyles.textField);
+                if (GUILayout.Button("Replace list with shader: " + m_replaceWithShader.name))
+                {
+
+                }
+                EditorGUILayout.EndVertical();
+
+            }
+            //          EditorGUILayout.EndVertical();
         }
 
+        m_shaderFinder.ApplyModifiedProperties();
     }
 
     private static readonly string m_keySlotNumber = "ShaderFinder_SlotNumber";
@@ -277,7 +300,7 @@ public class ShaderFinder : EditorWindow
 
         List<AssetFinderResult> results = new List<AssetFinderResult>();
 
-        bool kindOfSearch = search != TypeOfSearch.ObjectsContainingShadersInList;
+        bool kindOfSearch = (search == TypeOfSearch.ObjectNotContainingShadersInList);
 
         foreach (Renderer rend in renderers)
         {
@@ -303,7 +326,7 @@ public class ShaderFinder : EditorWindow
 
         List<AssetFinderResult> results = new List<AssetFinderResult>();
 
-        bool kindOfSearch = search != TypeOfSearch.ObjectsContainingShadersInList;
+        bool kindOfSearch = (search == TypeOfSearch.ObjectNotContainingShadersInList);
 
         foreach (Material mat in materialList)
         {
