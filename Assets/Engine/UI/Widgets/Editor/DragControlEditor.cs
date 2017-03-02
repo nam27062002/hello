@@ -75,19 +75,42 @@ public class DragControlEditor : Editor {
 				GUI.enabled = wasEnabled;
 			}
 
+			// Axis toggles
+			else if(p.name == "m_axisEnabled") {
+				// Fixed length! One element per axis
+				p.arraySize = 2;
+				for(int i = 0; i < 2; i++) {
+					EditorGUILayout.PropertyField(
+						p.GetArrayElementAtIndex(i),
+						new GUIContent(i == 0 ? "Horizontal" : "Vertical"),
+						true
+					);
+				}
+			}
+
 			// Inertia toggle
 			else if(p.name == "m_inertia") {
-				EditorGUILayoutExt.TogglePropertyField(p, serializedObject.FindProperty("m_inertiaDecelerationRate"), p.displayName);
+				EditorGUILayout.Space();
+				EditorGUILayoutExt.TogglePropertyField(p, serializedObject.FindProperty("m_inertiaAcceleration"), p.displayName);
 			}
 
-			// xRange toggle
-			else if(p.name == "m_clampX") {
-				EditorGUILayoutExt.TogglePropertyField(p, serializedObject.FindProperty("m_xRange"), p.displayName);
-			}
+			// Clamp setup
+			else if(p.name == "m_clampSetup") {
+				// Fixed length! One element per axis
+				EditorGUILayout.Space();
+				p.arraySize = 2;
 
-			// yRange toggle
-			else if(p.name == "m_clampY") {
-				EditorGUILayoutExt.TogglePropertyField(p, serializedObject.FindProperty("m_yRange"), p.displayName);
+				// Toggle group per axis
+				for(int i = 0; i < 2; i++) {
+					SerializedProperty clampProp = p.GetArrayElementAtIndex(i);
+					SerializedProperty toggleProp = clampProp.FindPropertyRelative("clamp");
+					toggleProp.boolValue = EditorGUILayout.BeginToggleGroup("Clamp " + (i == 0 ? "X" : "Y"), toggleProp.boolValue); {
+						EditorGUI.indentLevel++;
+						EditorGUILayout.PropertyField(clampProp.FindPropertyRelative("range"), true);
+						EditorGUILayout.PropertyField(clampProp.FindPropertyRelative("mode"), true);
+						EditorGUI.indentLevel--;
+					} EditorGUILayout.EndToggleGroup();
+				}
 			}
 
 			// Properties we don't want to show
@@ -96,9 +119,9 @@ public class DragControlEditor : Editor {
 			}
 
 			// Properties to ignore (have already been processed together with other properties)
-			else if(p.name == "m_inertiaDecelerationRate"
-				|| p.name == "m_xRange"
-				|| p.name == "m_yRange") {
+			else if(p.name == "m_inertiaAcceleration"
+				|| p.name == "m_clampSetup"
+				|| p.name == "m_axisEnabled") {
 				// Do nothing
 			}
 
