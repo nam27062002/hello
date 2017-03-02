@@ -15,7 +15,7 @@ echo "BUILDER: Running script from path ${SCRIPT_PATH}"
 
 # Default parameters
 PROJECT_PATH="${SCRIPT_PATH}"
-PROJECT_CODE_NAME=""
+PROJECT_CODE_NAME="xx"
   # git config
 BRANCH="develop"
 RESET_GIT=false
@@ -23,6 +23,7 @@ COMMIT_CHANGES=false
 CREATE_TAG=false
   # build config
 BUILD_ANDROID=false
+GENERATE_OBB=false
 BUILD_IOS=false
   # versioning
 FORCE_VERSION=false
@@ -47,11 +48,11 @@ PROVISIONING_PROFILE_UUID="e2a6e917-8663-4459-b97f-6ec3c7e1d3d3" # Get it by rig
 SMB_USER="srv_acc_bcn_jenkins"
 SMB_PASS="Lm0%2956jkR%23Tg"
 
-USAGE="Usage: generate_build.command [-path project_path] [-code project_code] [-b branch_name=develop] [-reset true|false*] [-commit true|false*] [-tag true|false*] \
-      [-android true|false*] [-ios true*|false] \
-      [-version forced_version=] [-increase_version true*|false]  \
+USAGE="Usage: generate_build.command [-path project_path=script_path] [-code project_code=xx] [-b branch_name=develop] [-reset_git] [-commit] [-tag] \
+      [-android][-obb][-ios] \
+      [-version forced_version] [-increase_version]  \
       [-iosPublic iosPublicVersion] [-ggpPublic google_play_public_version] [-amzPublic amazonPublicVersion]  \
-      [-output dirpath=Desktop/builds] [-upload true|false*] [-smbOutput server_folder=]"
+      [-output dirpath=Desktop/builds] [-upload] [-smbOutput server_folder=]"
 
 # Parse parameters
 for ((i=1;i<=$#;i++));
@@ -70,28 +71,24 @@ do
     elif [ "$PARAM_NAME" == "-b" ] ; then
         ((i++))
         BRANCH=${!i}
-    elif [ "$PARAM_NAME" == "-reset" ] ; then
-        ((i++))
-        RESET_GIT=${!i}
+    elif [ "$PARAM_NAME" == "-reset_git" ] ; then
+        RESET_GIT=true
     elif [ "$PARAM_NAME" == "-commit" ]; then
-        ((i++))
-        COMMIT_CHANGES=${!i}
+        COMMIT_CHANGES=true
     elif [ "$PARAM_NAME" == "-tag" ]; then
-        ((i++))
-        CREATE_TAG=${!i}
+        CREATE_TAG=true
 
     elif [ "$PARAM_NAME" == "-android" ]; then
-        ((i++))
-        BUILD_ANDROID=${!i}
+        BUILD_ANDROID=true
+    elif [ "$PARAM_NAME" == "-obb" ]; then
+        GENERATE_OBB=true
     elif [ "$PARAM_NAME" == "-ios" ]; then
-        ((i++))
-        BUILD_IOS=${!i}
+        BUILD_IOS=true
     elif [ "$PARAM_NAME" == "-version" ] ; then
         ((i++))
         FORCE_VERSION=${!i}
     elif [ "$PARAM_NAME" == "-increase_version" ]; then
-        ((i++))
-        INCREASE_VERSION_NUMBER=${!i}
+        INCREASE_VERSION_NUMBER=true
 
     elif [ "$PARAM_NAME" == "-iosPublic" ]; then
         ((i++))
@@ -108,8 +105,7 @@ do
         OUTPUT_DIR=${!i}
 
     elif [ "$PARAM_NAME" == "-upload" ] ; then
-        ((i++))
-        UPLOAD=${!i}
+        UPLOAD=true
     elif [ "$PARAM_NAME" == "-smbOutput" ] ; then
         ((i++))
         SMB_FOLDER=${!i}
@@ -129,7 +125,7 @@ print_builder() {
 }
 
 # Calculate num of stps
-TOTAL_STEPS=7;
+TOTAL_STEPS=8;
 if $RESET_GIT; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
@@ -189,6 +185,9 @@ cd Calety
 git pull
 cd ..
 
+print_builder "Custom Builder Action"
+eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.CustomAction"
+
 if $FORCE_VERSION; then
   print_builder "Force Version ${FORCE_VERSION}"
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetInternalVersion -version ${FORCE_VERSION}"
@@ -247,14 +246,14 @@ if $BUILD_ANDROID; then
   mkdir -p "${OUTPUT_DIR}/apks/"
 
   # Do it!
-  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir ${OUTPUT_DIR}"
+  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir ${OUTPUT_DIR} -obb ${GENERATE_OBB}"
 
   // Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
 	print_builder "BUILDER: Reading internal andoird build version number";
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputAndroidBuildVersion"
 	ANDROID_BUILD_VERSION=$(cat \"${PROJECT_PATH}/androidBuildVersion.txt\")"
 	rm -f ""\"${PROJECT_PATH}/androidBuildVersion.txt\"";
-	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_\"$(DATE)\"_b${ANDROID_BUILD_VERSION}.apk";
+	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_\"$(DATE)\"_b${ANDROID_BUILD_VERSION}";
 fi
 
 # Generate iOS build
@@ -265,7 +264,7 @@ if $BUILD_IOS; then
 
     # Generate XCode project
     print_builder "Generating XCode Project"
-    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateXcode -buildTarget ios -outputDir ${OUTPUT_DIR}"
+    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateXcode -buildTarget ios -outputDir ${OUTPUT_DIR} -obb ${}"
 
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
@@ -322,7 +321,10 @@ if $UPLOAD;then
 
   # Copy APK
   if $BUILD_ANDROID; then
-      cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}" "server/"
+      cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.apk" "server/"
+      if $GENERATE_OBB; then
+        cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.*.obb" "server/"
+      fi
   fi
 
   # Unmount server and remove tmp folder

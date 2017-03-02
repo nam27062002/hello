@@ -1400,7 +1400,6 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 3
-    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 240
     m_faceDirection: 1
@@ -1416,9 +1415,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 0
-    m_sightRadius: 6
-    m_maxRadius: 4
-    m_minRadius: 2
+    m_sightRadius: 8
+    m_maxRadius: 6
+    m_minRadius: 4
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -1517,10 +1516,10 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":10,"panicSpeed":25,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"projectileName":"PF_WitchMagic","projectileSpawnTransformName":"projectile","damage":40,"canFollowTarget":true,"consecutiveAttacks":2,"attackDelay":0,"retreatTime":0,"stop":false,"faceEnemy":true,"faceEnemyY":true,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":14,"panicSpeed":30,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"projectileName":"PF_WitchMagic","projectileSpawnTransformName":"projectile","damage":40,"canFollowTarget":true,"consecutiveAttacks":2,"attackDelay":0,"retreatTime":0,"stop":false,"faceEnemy":true,"faceEnemyY":true,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
   m_databaseKey: PF_Witch
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 6
+  m_avoidDistanceAttenuation: 10
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!137 &13726440
