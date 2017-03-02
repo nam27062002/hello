@@ -248,7 +248,7 @@ if $BUILD_ANDROID; then
   # Do it!
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir ${OUTPUT_DIR} -obb ${GENERATE_OBB}"
 
-  // Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
+  # Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
 	print_builder "BUILDER: Reading internal andoird build version number";
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputAndroidBuildVersion"
 	ANDROID_BUILD_VERSION=$(cat \"${PROJECT_PATH}/androidBuildVersion.txt\")"
