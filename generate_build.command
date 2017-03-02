@@ -264,7 +264,7 @@ if $BUILD_IOS; then
 
     # Generate XCode project
     print_builder "Generating XCode Project"
-    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateXcode -buildTarget ios -outputDir ${OUTPUT_DIR} -obb ${}"
+    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateXcode -buildTarget ios -outputDir ${OUTPUT_DIR}"
 
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
