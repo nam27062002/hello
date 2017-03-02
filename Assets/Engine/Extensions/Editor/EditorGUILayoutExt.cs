@@ -212,6 +212,42 @@ public static class EditorGUILayoutExt {
 		return null;
 	}
 
+	/// <summary>
+	/// Draw a property with a toggle in front of it, storing the toggle value in another given property.
+	/// </summary>
+	/// <param name="_toggleProp">Property used to determine toggle status.</param>
+	/// <param name="_p">Property to be displayed.</param>
+	/// <param name="_label">Label to be displayed.</param>
+	/// <param name="_customPropertyDrawer">Optional method to be invoked instead of the default property drawer for the target property. Must take as parameters the property to be displayed.</param>
+	public static void TogglePropertyField(SerializedProperty _toggleProp, SerializedProperty _p, string _label, Action<SerializedProperty> _customPropertyDrawer = null) {
+		// Toggle property must be boolean!
+		Debug.Assert(_toggleProp.propertyType == SerializedPropertyType.Boolean);
+
+		// Create a horizontal group
+		EditorGUILayout.BeginHorizontal(); {
+			// Label
+			EditorGUILayout.PrefixLabel(_label);
+
+			// Do toggle property
+			_toggleProp.boolValue = GUILayout.Toggle(_toggleProp.boolValue, GUIContent.none, GUILayout.Width(15f));
+
+			// Enable/Disable GUI based on toggle value
+			bool wasEnabled = GUI.enabled;
+			GUI.enabled = _toggleProp.boolValue;
+
+			// Do the property
+			// Use default drawer?
+			if(_customPropertyDrawer == null) {
+				EditorGUILayout.PropertyField(_p, GUIContent.none, true);
+			} else {
+				_customPropertyDrawer(_p);
+			}
+
+			// Restore GUI enabled state
+			GUI.enabled = wasEnabled;
+		} EditorGUILayoutExt.EndHorizontalSafe();
+	}
+
 	//------------------------------------------------------------------//
 	// LAYOUT UTILS														//
 	//------------------------------------------------------------------//
