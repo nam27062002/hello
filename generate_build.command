@@ -49,7 +49,7 @@ SMB_USER="srv_acc_bcn_jenkins"
 SMB_PASS="Lm0%2956jkR%23Tg"
 
 USAGE="Usage: generate_build.command [-path project_path=script_path] [-code project_code=xx] [-b branch_name=develop] [-reset_git] [-commit] [-tag] \
-      [-android][-obb][-ios] \
+      [-android][-obb][-ios][-provisioning uuid] \
       [-version forced_version] [-increase_version]  \
       [-iosPublic iosPublicVersion] [-ggpPublic google_play_public_version] [-amzPublic amazonPublicVersion]  \
       [-output dirpath=Desktop/builds] [-upload] [-smbOutput server_folder=]"
@@ -84,6 +84,10 @@ do
         GENERATE_OBB=true
     elif [ "$PARAM_NAME" == "-ios" ]; then
         BUILD_IOS=true
+    elif [ "$PARAM_NAME" == "-provisioning" ] ; then
+        ((i++))
+        PROVISIONING_PROFILE_UUID=${!i}
+
     elif [ "$PARAM_NAME" == "-version" ] ; then
         ((i++))
         FORCE_VERSION=${!i}

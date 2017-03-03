@@ -27,6 +27,9 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	protected const float IOS_SENSITIVITY_CORRECTION = 0.5f;
+	protected const float ANDROID_SENSITIVITY_CORRECTION = 0.5f;
+
 	[Serializable]
 	public class DragControlEvent : UnityEvent<DragControl> {}
 
@@ -63,7 +66,7 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	[SerializeField] protected float m_sensitivity = 1f;
 	public float sensitivity {
 		get { return m_sensitivity; }
-		set { m_sensitivity = value; }
+		set { m_sensitivity = value; UpdateSensitivityCorrection(); }
 	}
 
 	[SerializeField] protected Vector2 m_idleVelocity = Vector2.zero;
@@ -129,6 +132,9 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 		get { return m_value - m_previousValue; }
 	}
 
+	// Internal
+	protected float m_correctedSensitivity = 1f;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -136,7 +142,8 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	/// Initialization.
 	/// </summary>
 	virtual protected void Awake() {
-
+		// Initialize corrected sensitivity
+		UpdateSensitivityCorrection();
 	}
 
 	/// <summary>
@@ -227,6 +234,9 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 		m_sensitivity = Mathf.Max(0f, m_sensitivity);
 		m_inertiaAcceleration = Mathf.Max(0f, m_inertiaAcceleration);
 		m_clampSetup.Resize(2);	// Fixed size!
+
+		// For when sensitivity is changed during play mode
+		UpdateSensitivityCorrection();
 	}
 
 	//------------------------------------------------------------------------//
@@ -296,6 +306,19 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	virtual protected void CheckValue() {
 		// Actually is the same as just applying a zero offset
 		ApplyOffset(Vector2.zero);
+	}
+
+	/// <summary>
+	/// Updates the sensitivity correction based on platform.
+	/// Should be called every time sensitivity is changed.
+	/// </summary>
+	private void UpdateSensitivityCorrection() {
+		// Compute corrected sensitivity
+		switch(Application.platform) {
+			case RuntimePlatform.IPhonePlayer:	m_correctedSensitivity = m_sensitivity * IOS_SENSITIVITY_CORRECTION;		break;
+			case RuntimePlatform.Android:		m_correctedSensitivity = m_sensitivity * ANDROID_SENSITIVITY_CORRECTION;	break;
+			default:							m_correctedSensitivity = m_sensitivity;										break;
+		}
 	}
 
 	//------------------------------------------------------------------------//
