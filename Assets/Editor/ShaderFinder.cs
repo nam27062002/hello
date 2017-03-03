@@ -12,7 +12,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using System.Collections.Generic;
 using System.IO;
-using System;
+//using System;
 
 
 //----------------------------------------------------------------------//
@@ -27,18 +27,21 @@ public class ShaderFinder : EditorWindow
     // CONSTANTS														//
     //------------------------------------------------------------------//
 
+    private static readonly string m_keySlotNumber = "ShaderFinder_SlotNumber";
+    private static readonly string m_keyListSize = "ShaderFinder_ListSize";
+    private static readonly string m_keyListElem = "ShaderFinder_ListElem";
 
     public class AssetFinderResult
     {
-        public string m_gameObjectName;
-        public string m_materialName;
-        public string m_shaderName;
+        public GameObject m_gameObject;
+        public Material m_material;
+        public Shader m_shader;
 
-        public AssetFinderResult(string gameobject, string materialName, string shaderName)
+        public AssetFinderResult(GameObject gameobject, Material materialName, Shader shaderName)
         {
-            m_gameObjectName = gameobject;
-            m_materialName = materialName;
-            m_shaderName = shaderName;
+            m_gameObject = gameobject;
+            m_material = materialName;
+            m_shader = shaderName;
         }
     }
 
@@ -93,7 +96,6 @@ public class ShaderFinder : EditorWindow
     /// Opens the window.
     /// </summary>
     [MenuItem("Tools/Shader Finder")]
-
     public static void OpenWindow()
     {
         instance.Show();
@@ -110,11 +112,9 @@ public class ShaderFinder : EditorWindow
 
         string slotNumber;
         slotNumber = EditorPrefs.GetString(m_keySlotNumber, "List0");
-        m_saveListSlot = (SavelistSlot)Enum.Parse(typeof(SavelistSlot), slotNumber);
+        m_saveListSlot = (SavelistSlot)System.Enum.Parse(typeof(SavelistSlot), slotNumber);
 
         LoadShaderList(m_saveListSlot.ToString(), out m_shaderList);
-
-        DeleteShaderList("");
     }
 
     /// <summary>
@@ -124,6 +124,15 @@ public class ShaderFinder : EditorWindow
     {
 
     }
+
+
+    private void SelectObject(Object obj)
+    {
+        Object[] selection = new Object[1];
+        selection[0] = obj;
+        Selection.objects = selection;
+    }
+
 
     private AssetFinderResult[] m_checkResults;
     private Vector2 scrollPos = Vector2.zero;
@@ -146,13 +155,14 @@ public class ShaderFinder : EditorWindow
         if (GUI.changed)
         {
             EditorPrefs.SetString(m_keySlotNumber, m_saveListSlot.ToString());
+            LoadShaderList(m_saveListSlot.ToString(), out m_shaderList);
         }
-
+/*
         if (GUILayout.Button("Load list"))
         {
             LoadShaderList(m_saveListSlot.ToString(), out m_shaderList);
         }
-
+*/
         if (GUILayout.Button("Save list"))
         {
             string slotName = m_saveListSlot.ToString();
@@ -168,9 +178,7 @@ public class ShaderFinder : EditorWindow
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.BeginVertical(EditorStyles.textField);
-        //        EditorGUILayout.ObjectField(m_propertyShaderList);
         EditorGUILayout.PropertyField(m_propertyShaderList, new GUIContent("Shader list to find:"), true);
-
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.BeginVertical(EditorStyles.textField);
@@ -195,10 +203,19 @@ public class ShaderFinder : EditorWindow
 
         }
 
-        if (m_checkResults != null)
+        if (m_checkResults != null && m_checkResults.Length > 0)
         {
+            bool gameObjectsInList = m_checkResults[0].m_gameObject != null;
+            float buttonWidth = (position.size.x - 40.0f) * (gameObjectsInList ? 0.33333f : 0.5f);
             EditorGUILayout.BeginVertical(EditorStyles.textField);
             EditorGUILayout.LabelField("Shader finder found: " + m_checkResults.Length + " results.");
+            EditorGUILayout.BeginHorizontal();
+            if (gameObjectsInList) {
+                EditorGUILayout.LabelField("GameObject", EditorStyles.textField, GUILayout.Width(buttonWidth));
+            }
+            EditorGUILayout.LabelField("Material", EditorStyles.textField, GUILayout.Width(buttonWidth));
+            EditorGUILayout.LabelField("Shader", EditorStyles.textField, GUILayout.Width(buttonWidth));
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
 
 //          EditorGUILayout.BeginVertical(EditorStyles.textField, GUILayout.Height(1));
@@ -206,8 +223,23 @@ public class ShaderFinder : EditorWindow
             EditorGUILayout.BeginVertical();
             for (int c = 0; c < m_checkResults.Length; c++)
             {
+                EditorGUILayout.BeginHorizontal();
                 AssetFinderResult result = m_checkResults[c];
-                EditorGUILayout.LabelField(">" + result.m_gameObjectName + " - Material: " + result.m_materialName + " - Shader: " + result.m_shaderName);
+                if (result.m_gameObject != null && GUILayout.Button(result.m_gameObject.name, GUILayout.Width(buttonWidth)))
+                {
+                    SelectObject(result.m_gameObject);
+                }
+                if (GUILayout.Button(result.m_material.name, GUILayout.Width(buttonWidth)))
+                {
+                    SelectObject(result.m_material);
+                }
+                if (GUILayout.Button(result.m_shader.name, GUILayout.Width(buttonWidth)))
+                {
+                    SelectObject(result.m_shader);
+                }
+
+                //                EditorGUILayout.LabelField(">" + ((result.m_gameObject != null) ? result.m_gameObject.name: "") + " - Material: " + result.m_material.name + " - Shader: " + result.m_shader.name);
+                EditorGUILayout.EndHorizontal();
             }
             EditorGUILayout.EndVertical();
 
@@ -218,7 +250,11 @@ public class ShaderFinder : EditorWindow
                 EditorGUILayout.BeginVertical(EditorStyles.textField);
                 if (GUILayout.Button("Replace list with shader: " + m_replaceWithShader.name))
                 {
-
+                    if (EditorUtility.DisplayDialog("Replace list with shader", "Warning! You can't UNDO this action. Are you sure?", "Go ahead!", "May be later..."))
+                    {
+                        replaceMaterialShader(ref m_checkResults, ref m_replaceWithShader);
+//                        m_checkResults = null;
+                    }
                 }
                 EditorGUILayout.EndVertical();
 
@@ -228,10 +264,6 @@ public class ShaderFinder : EditorWindow
 
         m_shaderFinder.ApplyModifiedProperties();
     }
-
-    private static readonly string m_keySlotNumber = "ShaderFinder_SlotNumber";
-    private static readonly string m_keyListSize = "ShaderFinder_ListSize";
-    private static readonly string m_keyListElem = "ShaderFinder_ListElem";
 
     void LoadShaderList(string slot, out Shader[] list)
     {
@@ -304,13 +336,13 @@ public class ShaderFinder : EditorWindow
 
         foreach (Renderer rend in renderers)
         {
-            Material[] materials = rend.materials;
+            Material[] materials = rend.sharedMaterials;
             foreach (Material mat in materials)
             {
                 bool result = checkForShadersInMaterial(mat) ^ kindOfSearch;
                 if (result)
                 {
-                    results.Add(new AssetFinderResult(rend.gameObject.name, mat.name, mat.shader.name));
+                    results.Add(new AssetFinderResult(rend.gameObject, mat, mat.shader));
                 }
             }
         }
@@ -321,22 +353,47 @@ public class ShaderFinder : EditorWindow
 
     public AssetFinderResult[] findShaderInAssets(TypeOfSearch search)
     {
-        List<Material> materialList;
+        Material[] materialList;
         AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
 
         List<AssetFinderResult> results = new List<AssetFinderResult>();
 
         bool kindOfSearch = (search == TypeOfSearch.ObjectNotContainingShadersInList);
 
-        foreach (Material mat in materialList)
+        for (int c = 0; c < materialList.Length; c++)
+//      foreach (Material mat in materialList)
         {
-            bool result = checkForShadersInMaterial(mat) ^ kindOfSearch;
+            bool result = checkForShadersInMaterial(materialList[c]) ^ kindOfSearch;
             if (result)
             {
-                results.Add(new AssetFinderResult("", mat.name, mat.shader.name));
+                results.Add(new AssetFinderResult(null, materialList[c], materialList[c].shader));
             }
         }
 
         return results.ToArray();
+    }
+
+
+    public void replaceMaterialShader(ref AssetFinderResult[] materialList, ref Shader replaceWithShader)
+    {
+        Dictionary<string, AssetFinderResult> mapList = new Dictionary<string, AssetFinderResult>();
+        for (int c = 0; c < materialList.Length; c++)
+        {
+            AssetFinderResult res = materialList[c];
+            mapList[res.m_material.name] = res;
+        }
+
+        foreach (KeyValuePair<string, AssetFinderResult> pair in mapList)
+        {
+            pair.Value.m_material.shader = replaceWithShader;
+            EditorUtility.SetDirty(pair.Value.m_material);
+        }
+
+        materialList = new AssetFinderResult[mapList.Count];
+        mapList.Values.CopyTo(materialList, 0);
+
+        AssetDatabase.SaveAssets();
+
+
     }
 }
