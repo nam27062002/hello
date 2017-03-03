@@ -159,7 +159,7 @@ GameObject:
   - component: {fileID: 22437780}
   - component: {fileID: 11429674}
   - component: {fileID: 11419772}
-  - component: {fileID: 114452703540024320}
+  - component: {fileID: 114392117346052460}
   m_Layer: 0
   m_Name: PF_OpenEggScreen
   m_TagString: Untagged
@@ -495,7 +495,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b058f69ef77694990963f634220a2e57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_name: photo
+  m_name: openegg
   m_allowBackToThisScreen: 0
 --- !u!114 &11434358
 MonoBehaviour:
@@ -920,7 +920,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.0078125, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22441232
@@ -5645,6 +5645,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 0
+--- !u!114 &114392117346052460
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 164792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 828e5f0fdec2a4b39b2a2906a0368dfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tapInfoText: {fileID: 11498908}
+  m_backButton: {fileID: 1000010898280064}
+  m_buyEggButton: {fileID: 1000011810738156}
+  m_callToActionButton: {fileID: 176220}
+  m_callToActionText: {fileID: 11474140}
+  m_finalPanel: {fileID: 114000011555794320}
+  m_rewardInfo: {fileID: 114651686107442888}
+  m_openAnimationDelay: 1.75
+  m_finalPanelDelay: 0
+  m_finalPanelDelayWhenFragmentsGiven: 2
+  m_finalPanelDelayWhenCoinsGiven: 1
+  m_goldenEggOpenDelay: 3
 --- !u!114 &114404760902037898
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5931,17 +5954,6 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &114452703540024320
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 164792}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66577787925344029a2c4877d6939da9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114460446177537702
 MonoBehaviour:
   m_ObjectHideFlags: 1
