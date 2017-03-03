@@ -250,7 +250,7 @@ if $BUILD_ANDROID; then
   mkdir -p "${OUTPUT_DIR}/apks/"
 
   # Do it!
-  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir ${OUTPUT_DIR}/apks/ -obb ${GENERATE_OBB}"
+  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB}"
 
   # Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
 	print_builder "BUILDER: Reading internal android build version number";
