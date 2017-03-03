@@ -38,6 +38,9 @@ public class DragControlEditor : Editor {
 	private void OnEnable() {
 		// Get target object
 		m_targetDragControl = target as DragControl;
+
+		// We want to repaint the inspector constantly so value gets updated
+		EditorApplication.update += Repaint;
 	}
 
 	/// <summary>
@@ -46,6 +49,9 @@ public class DragControlEditor : Editor {
 	private void OnDisable() {
 		// Clear target object
 		m_targetDragControl = null;
+
+		// We want to repaint the inspector constantly so value gets updated
+		EditorApplication.update -= Repaint;
 	}
 
 	/// <summary>
@@ -62,21 +68,29 @@ public class DragControlEditor : Editor {
 		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
 		serializedObject.Update();
 
+		// Show some disabled properties (just for info) at the top
+		{
+			// Disable
+			GUI.enabled = false;
+				
+			// Unity's "script" field
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"), true);
+
+			// And just for debugging, show current value as well
+			EditorGUILayout.Vector2Field("Value", m_targetDragControl.value);
+
+			// Restore enabled flag
+			EditorGUILayout.Space();
+			GUI.enabled = wasEnabled;
+		}
+
 		// Loop through all serialized properties and work with special ones
 		SerializedProperty p = serializedObject.GetIterator();
 		p.Next(true);	// To get first element
 		do {
 			// Properties requiring special treatment
-			// Unity's "script" property
-			if(p.name == "m_Script") {
-				// Draw the property, disabled
-				GUI.enabled = false;
-				EditorGUILayout.PropertyField(p, true);
-				GUI.enabled = wasEnabled;
-			}
-
 			// Axis toggles
-			else if(p.name == "m_axisEnabled") {
+			if(p.name == "m_axisEnabled") {
 				// Fixed length! One element per axis
 				p.arraySize = 2;
 				for(int i = 0; i < 2; i++) {
@@ -114,7 +128,8 @@ public class DragControlEditor : Editor {
 			}
 
 			// Properties we don't want to show
-			else if(p.name == "m_ObjectHideFlags") {
+			else if(p.name == "m_Script"
+				|| p.name == "m_ObjectHideFlags") {
 				// Do nothing
 			}
 

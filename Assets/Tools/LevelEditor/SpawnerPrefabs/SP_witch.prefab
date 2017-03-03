@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 11451560}
   - component: {fileID: 114000012118004404}
   m_Layer: 0
-  m_Name: SP_witch
+  m_Name: SP_Witch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60,10 +60,14 @@ MonoBehaviour:
   m_quantity:
     min: 1
     max: 1
+  m_speedFactorRange:
+    min: 1
+    max: 1
   m_scale:
     min: 1.5
     max: 1.5
   m_rails: 1
+  m_hasGroupBonus: 0
   m_minTier: 0
   m_activationChance: 100
   m_activationTriggers: []
@@ -76,6 +80,7 @@ MonoBehaviour:
     min: 1
     max: 2
   m_maxSpawns: 0
+  m_checkCurrents: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

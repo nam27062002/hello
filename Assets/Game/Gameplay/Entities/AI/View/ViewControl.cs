@@ -92,7 +92,6 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	//-----------------------------------------------
 	private Entity m_entity;
-	private bool m_isGolden;
 	protected Animator m_animator;
 	protected float m_disableAnimatorTimer;
 
@@ -292,10 +291,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			m_animator.speed = 1f;
 		}
 
-		if (m_entity != null) {			
-			m_isGolden = m_entity.isGolden;
-
+		if (m_entity != null) {
 			Material altMaterial = null;
+
             if (m_skins.Count > 0) {				
 				for (int i = 0; i < m_skins.Count; i++) {
 					float rnd = UnityEngine.Random.Range(0f, 100f);
@@ -336,12 +334,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			if (!string.IsNullOrEmpty(m_idleAudio))	{
 				m_idleAudioAO = AudioController.Play( m_idleAudio, transform);
 			}
-		} else {
-			m_isGolden = false;
 		}
 
 		DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
-		CheckTint(m_isGolden, dragonBreath.IsFuryOn(), dragonBreath.type);
+		CheckTint(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
 
 		m_dragonBoost = InstanceManager.player.dragonBoostBehaviour;
     }
@@ -418,7 +414,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
     void OnFuryToggled(bool _active, DragonBreathBehaviour.Type _type)
     {
-		CheckTint(m_isGolden, _active, _type);
+		CheckTint(IsEntityGolden(), _active, _type);
     }
 
     /// <summary>
@@ -504,9 +500,16 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         else if ( m_wasFreezing )
         {
 			DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
-			CheckTint(m_isGolden, dragonBreath.IsFuryOn(), dragonBreath.type);
+			CheckTint(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
         	m_wasFreezing = false;
         }
+    }
+
+    bool IsEntityGolden()
+    {
+    	if ( m_entity != null )
+    		return m_entity.isGolden;
+    	return false;
     }
 
 	// Queries
@@ -804,7 +807,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				GameObject corpse = PoolManager.GetInstance(m_corpseAsset, true);
 				corpse.transform.CopyFrom(transform);
 
-				corpse.GetComponent<Corpse>().Spawn(m_entity.isGolden, m_dragonBoost.IsBoostActive());
+				corpse.GetComponent<Corpse>().Spawn(IsEntityGolden(), m_dragonBoost.IsBoostActive());
 			}
 		}
 

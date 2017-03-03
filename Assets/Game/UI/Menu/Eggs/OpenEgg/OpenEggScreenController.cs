@@ -44,6 +44,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 	[Separator("Rewards")]
 	[SerializeField] private EggRewardInfo m_rewardInfo = null;
+	[SerializeField] private DragControlRotation m_rewardDragController = null;
 
 	[Separator("Animation Parameters")]
 	[SerializeField] private float m_openAnimationDelay = 1.75f;
@@ -188,6 +189,10 @@ public class OpenEggScreenController : MonoBehaviour {
 				// Get scene controller and initialize
 				m_scene = menuScene.GetComponent<OpenEggSceneController>();
 				if(m_scene != null) {
+					// Initialize
+					m_scene.InitReferences(m_rewardDragController);
+
+					// Subscribe to listeners
 					m_scene.OnIntroFinished.AddListener(OnIntroFinished);
 					m_scene.OnEggOpenFinished.AddListener(OnEggOpenFinished);
 				}
@@ -267,6 +272,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		m_scene.LaunchRewardAnim();
 
 		// Initialize and launch 2D info animation
+		m_rewardInfo.gameObject.SetActive(true);
 		m_rewardInfo.InitAndAnimate(rewardData);
 	}
 

@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -50,6 +51,13 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed setup
+	[SerializeField] protected Transform m_target = null;
+	public Transform target {
+		get { return m_target; }
+		set { InitFromTarget(value, false); }
+	}
+
+	[Space]
 	[SerializeField] protected bool[] m_axisEnabled = new bool[] {true, true};
 
 	public bool horizontal {
@@ -81,7 +89,7 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 		set { m_inertia = value; }
 	}
 
-	[Range(0f, 0.99f)] [SerializeField] protected float m_inertiaAcceleration = 0.135f;	// Values bigger than 1 would accelerate the value infinitely
+	[Range(0f, 0.99f)] [SerializeField] protected float m_inertiaAcceleration = 0.01f;	// Values bigger than 1 would accelerate the value infinitely
 	public float inertiaAcceleration {
 		get { return m_inertiaAcceleration; }
 		set { m_inertiaAcceleration = value; }
@@ -105,6 +113,20 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	[Space]
 	public DragControlEvent OnValueChanged = new DragControlEvent();
 
+	// Auto-restore value
+	[Space]
+	[SerializeField] protected bool m_restoreOnDisable = true;
+	public bool restoreOnDisable {
+		get { return m_restoreOnDisable; }
+		set { m_restoreOnDisable = value; }
+	}
+
+	[SerializeField] protected float m_restoreDuration = 0.25f;
+	public float restoreDuration {
+		get { return m_restoreDuration; }
+		set { m_restoreDuration = value; }
+	}
+
 	// Public Logic
 	protected Vector2 m_velocity = Vector2.zero;
 	public Vector2 velocity { 
@@ -120,7 +142,7 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	protected Vector2 m_value = Vector2.zero;
 	public Vector2 value {
 		get { return m_value; }
-		set { m_value = value; CheckValue(); }
+		set { SetValue(value); }
 	}
 
 	protected Vector2 m_previousValue = Vector2.zero;
@@ -134,6 +156,7 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
 	// Internal
 	protected float m_correctedSensitivity = 1f;
+	private Vector2 m_originalValue = Vector2.zero;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -160,13 +183,19 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 		// Stop any active movement
 		m_velocity = Vector2.zero;
 		m_dragging = false;
+
+		// Initial setup
+		InitFromTarget(target, true);
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	virtual protected void OnDisable() {
-
+		// Restore original value?
+		if(m_restoreOnDisable) {
+			RestoreOriginalValue();
+		}
 	}
 
 	/// <summary>
@@ -254,10 +283,43 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 		}
 
 		// Do it
+		SetValue(m_value + _offset);
+	}
+
+	/// <summary>
+	/// Set a new value. Value will be clamped and treated and, if different than 
+	/// previous value, it will be applied too.
+	/// </summary>
+	/// <param name="_newValue">New value.</param>
+	/// <param name="_force">Force applying the new value regardless of whether it's different from previous value.</param>
+	virtual protected void SetValue(Vector2 _newValue, bool _force = false) {
+		// Save previous and new values
 		m_previousValue = m_value;
-		m_value += _offset * m_sensitivity;
+		m_value = _newValue;
 
 		// Apply clamping, if any
+		ApplyClamp();
+
+		// Notify listeners
+		if(m_value != m_previousValue || _force) {
+			ApplyValue();	// Internal notification
+			OnValueChanged.Invoke(this);	// External
+		}
+	}
+
+	/// <summary>
+	/// Check current value to make sure it fits clamping setup.
+	/// </summary>
+	virtual protected void CheckValue() {
+		// Actually is the same as just applying our current value
+		SetValue(m_value);
+	}
+
+	/// <summary>
+	/// Apply clamping to the current value.
+	/// </summary>
+	virtual protected void ApplyClamp() {
+		// Just do it
 		for(int i = 0; i < 2; i++) {
 			// Skip if axis disabled
 			if(!m_axisEnabled[i]) continue;
@@ -292,20 +354,6 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 				}
 			}
 		}
-
-		// Notify listeners
-		if(m_value != m_previousValue) {
-			ApplyValue();	// Internal notification
-			OnValueChanged.Invoke(this);	// External
-		}
-	}
-
-	/// <summary>
-	/// Check current value to make sure it fits clamping setup.
-	/// </summary>
-	virtual protected void CheckValue() {
-		// Actually is the same as just applying a zero offset
-		ApplyOffset(Vector2.zero);
 	}
 
 	/// <summary>
@@ -322,6 +370,67 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	}
 
 	//------------------------------------------------------------------------//
+	// ORIGINAL VALUE MANAGEMENT											  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Intitialize the drag controller with the given target.
+	/// </summary>
+	/// <param name="_target">New target.</param>
+	/// <param name="_force">Do all the initialization even if the target is the same as the current one.</param>
+	public void InitFromTarget(Transform _target, bool _force) {
+		// If we have a valid target already, reset it to its original position (if the flag says so)
+		// Only if we're active!
+		if(isActiveAndEnabled && m_restoreOnDisable) {
+			RestoreOriginalValue();
+		}
+
+		// Store target
+		Transform oldTarget = m_target;
+		m_target = _target;
+
+		// Nothing else to do if new target is not valid
+		if(m_target == null) return;
+
+		// Extra stuff only if the target is different than the current one (or forced)
+		// Otherwise we would be overriding original values
+		if(m_target != oldTarget || _force) {
+			// Initialize drag control with current target value
+			// Don't use property to avoid re-applying the value to the target!
+			m_value = GetValueFromTarget();
+
+			// Store target's original value
+			m_originalValue = m_value;
+
+			// Make sure value is within bounds
+			CheckValue();
+		}
+	}
+
+	/// <summary>
+	/// Restore original value of the target.
+	/// Doesn't check the flag nor the state of the component.
+	/// </summary>
+	/// <param name="_animate">Whether to animate or not.</param>
+	public void RestoreOriginalValue(bool _animate = true) {
+		// Target must be valid
+		if(m_target == null) return;
+
+		// Animated?
+		if(m_restoreDuration > 0f && _animate) {
+			DOTween.To(
+				() => { return value; }, 			// Getter
+				(_v) => { SetValue(_v, true); },	// Setter
+				m_originalValue, 
+				m_restoreDuration
+			)
+			.SetUpdate(true)
+			.SetEase(Ease.InOutQuad);
+		} else {
+			SetValue(m_originalValue, true);
+		}
+	}
+
+	//------------------------------------------------------------------------//
 	// VIRTUAL METHODS														  //
 	// To be implemented by heirs if needed.								  //
 	//------------------------------------------------------------------------//
@@ -330,6 +439,15 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	/// </summary>
 	virtual protected void ApplyValue() {
 		// To be implemented by heirs.
+	}
+
+	/// <summary>
+	/// Get the current value from target.
+	/// </summary>
+	/// <returns>The current value from target.</returns>
+	virtual protected Vector2 GetValueFromTarget() {
+		// To be implemented by heirs.
+		return Vector2.zero;
 	}
 
 	//------------------------------------------------------------------------//
@@ -352,8 +470,8 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	/// </summary>
 	/// <param name="_event">Data related to the event.</param>
 	public void OnDrag(PointerEventData _event) {
-		// Directly apply offset
-		ApplyOffset(_event.delta);
+		// Apply offset with sensitivity corrected based on platform
+		ApplyOffset(_event.delta * m_correctedSensitivity);
 	}
 
 	/// <summary>

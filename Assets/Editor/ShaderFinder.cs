@@ -206,7 +206,7 @@ public class ShaderFinder : EditorWindow
         if (m_checkResults != null && m_checkResults.Length > 0)
         {
             bool gameObjectsInList = m_checkResults[0].m_gameObject != null;
-            float buttonWidth = (position.size.x - 25.0f) * (gameObjectsInList ? 0.33333f : 0.5f);
+            float buttonWidth = (position.size.x - 40.0f) * (gameObjectsInList ? 0.33333f : 0.5f);
             EditorGUILayout.BeginVertical(EditorStyles.textField);
             EditorGUILayout.LabelField("Shader finder found: " + m_checkResults.Length + " results.");
             EditorGUILayout.BeginHorizontal();
@@ -223,8 +223,10 @@ public class ShaderFinder : EditorWindow
             EditorGUILayout.BeginVertical();
             for (int c = 0; c < m_checkResults.Length; c++)
             {
-                EditorGUILayout.BeginHorizontal();
                 AssetFinderResult result = m_checkResults[c];
+                if (result.m_material == null) continue;
+                EditorGUILayout.BeginHorizontal();
+
                 if (result.m_gameObject != null && GUILayout.Button(result.m_gameObject.name, GUILayout.Width(buttonWidth)))
                 {
                     SelectObject(result.m_gameObject);
@@ -336,7 +338,7 @@ public class ShaderFinder : EditorWindow
 
         foreach (Renderer rend in renderers)
         {
-            Material[] materials = rend.materials;
+            Material[] materials = rend.sharedMaterials;
             foreach (Material mat in materials)
             {
                 bool result = checkForShadersInMaterial(mat) ^ kindOfSearch;
@@ -361,7 +363,6 @@ public class ShaderFinder : EditorWindow
         bool kindOfSearch = (search == TypeOfSearch.ObjectNotContainingShadersInList);
 
         for (int c = 0; c < materialList.Length; c++)
-//      foreach (Material mat in materialList)
         {
             bool result = checkForShadersInMaterial(materialList[c]) ^ kindOfSearch;
             if (result)
