@@ -223,8 +223,10 @@ public class ShaderFinder : EditorWindow
             EditorGUILayout.BeginVertical();
             for (int c = 0; c < m_checkResults.Length; c++)
             {
-                EditorGUILayout.BeginHorizontal();
                 AssetFinderResult result = m_checkResults[c];
+                if (result.m_material == null) continue;
+                EditorGUILayout.BeginHorizontal();
+
                 if (result.m_gameObject != null && GUILayout.Button(result.m_gameObject.name, GUILayout.Width(buttonWidth)))
                 {
                     SelectObject(result.m_gameObject);
@@ -361,7 +363,6 @@ public class ShaderFinder : EditorWindow
         bool kindOfSearch = (search == TypeOfSearch.ObjectNotContainingShadersInList);
 
         for (int c = 0; c < materialList.Length; c++)
-//      foreach (Material mat in materialList)
         {
             bool result = checkForShadersInMaterial(materialList[c]) ^ kindOfSearch;
             if (result)
