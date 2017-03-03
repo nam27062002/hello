@@ -8,7 +8,6 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -24,46 +23,34 @@ public class DragControlRotation : DragControl {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	[SerializeField] private Transform m_target = null;
-	public Transform target {
-		get { return m_target; }
-		set { InitFromTarget(value, false); }
-	}
 
-	[Space]
-	[SerializeField] private bool m_restoreOnDisable = true;
-	[SerializeField] private float m_restoreDuration = 0.25f;
-
-	// Internal
-	private Quaternion m_originalRotation = Quaternion.identity;
-	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	override protected void OnEnable() {
-		base.OnEnable();
-
-		// Initial setup
-		InitFromTarget(target, true);
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	override protected void OnDisable() {
-		// Restore original value?
-		if(m_restoreOnDisable) {
-			RestoreOriginalValue();
-		}
-
-		base.OnDisable();
-	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Convert from value units to rotation.
+	/// </summary>
+	/// <returns>The to rotation equivalent to the input value.</returns>
+	/// <param name="_value">The value to be converted.</param>
+	public Quaternion ValueToRotation(Vector2 _value) {
+		return Quaternion.Euler(0f, -_value.x, _value.y);
+	}
+
+	/// <summary>
+	/// Convert from rotation units to value.
+	/// </summary>
+	/// <returns>The value equivalent to the input rotation.</returns>
+	/// <param name="_q">The rotation to be converted.</param>
+	public Vector2 RotationToValue(Quaternion _q) {
+		return new Vector2(-_q.eulerAngles.y, _q.eulerAngles.z);
+	}
+
+	//------------------------------------------------------------------------//
+	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Do whatever needed to apply the value.
@@ -71,56 +58,36 @@ public class DragControlRotation : DragControl {
 	override protected void ApplyValue() {
 		// Ignore if target not valid
 		if(m_target == null) return;
-
-		// Apply value as a rotation
-		m_target.localRotation = Quaternion.Euler(0f, -m_value.x, m_value.y);
+		m_target.localRotation = ValueToRotation(m_value);
 	}
 
 	/// <summary>
-	/// Intitialize the drag controller with the given target.
+	/// Get the current value from target.
 	/// </summary>
-	/// <param name="_target">New target.</param>
-	/// <param name="_force">Do all the initialization even if the target is the same as the current one.</param>
-	private void InitFromTarget(Transform _target, bool _force) {
-		// If we have a valid target already, reset it to its original position (if the flag says so)
-		// Only if we're active!
-		if(isActiveAndEnabled && m_restoreOnDisable) {
-			RestoreOriginalValue();
-		}
-
-		// Store target
-		Transform oldTarget = m_target;
-		m_target = _target;
-
-		// Nothing else to do if new target is not valid
-		if(m_target == null) return;
-
-		// Extra stuff only if the target is different than the current one (or forced)
-		// Otherwise we would be overriding original values
-		if(m_target != oldTarget || _force) {
-			// Store target's original rotation
-			m_originalRotation = m_target.localRotation;
-
-			// Initialize drag control with current target value
-			value = new Vector2(-m_originalRotation.eulerAngles.y, m_originalRotation.eulerAngles.z);
-		}
+	/// <returns>The current value from target.</returns>
+	override protected Vector2 GetValueFromTarget() {
+		// Ignore if target not valid
+		if(m_target == null) return Vector2.zero;
+		return RotationToValue(m_target.localRotation);
 	}
 
 	/// <summary>
-	/// Restore original value of the target.
-	/// Doesn't check the flag nor the state of the component.
+	/// Apply clamping to the current value.
+	/// Override to keep the value looping through the range [0-360]
 	/// </summary>
-	private void RestoreOriginalValue() {
-		// Target must be valid
-		if(m_target == null) return;
+	override protected void ApplyClamp() {
+		// Apply default clamping
+		base.ApplyClamp();
 
-		// Animated?
-		if(m_restoreDuration > 0f) {
-			m_target.DOLocalRotateQuaternion(m_originalRotation, m_restoreDuration)
-				.SetUpdate(true)
-				.SetEase(Ease.InOutQuad);
-		} else {
-			m_target.localRotation = m_originalRotation;
+		// Loop rotation values
+		for(int i = 0; i < 2; i++) {
+			// Keep it in the range [-180, 180] so we take the shortest way when restoring original value
+			m_value[i] = m_value[i] % 360f;
+			if(m_value[i] < -180f) {
+				m_value[i] += 360f;
+			} else if(m_value[i] > 180f) {
+				m_value[i] -= 360f;
+			}
 		}
 	}
 
