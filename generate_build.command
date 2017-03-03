@@ -257,7 +257,7 @@ if $BUILD_ANDROID; then
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputAndroidBuildVersion"
 	ANDROID_BUILD_VERSION="$(cat androidBuildVersion.txt)"
 	rm -f "androidBuildVersion.txt";
-	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_$(DATE)_b${ANDROID_BUILD_VERSION}";
+	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}";
 fi
 
 # Generate iOS build
