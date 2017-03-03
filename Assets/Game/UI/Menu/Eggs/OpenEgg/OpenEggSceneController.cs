@@ -29,6 +29,9 @@ public class OpenEggSceneController : MonoBehaviour {
 	[Separator("Anchors")]
 	[SerializeField] private Transform m_eggAnchor = null;
 	[SerializeField] private Transform m_rewardAnchor = null;
+	public Transform rewardAnchor {
+		get { return m_rewardAnchor; }
+	}
 
 	[Separator("VFX")]
 	[SerializeField] private ParticleSystem m_explosionFX = null;
@@ -52,6 +55,9 @@ public class OpenEggSceneController : MonoBehaviour {
 
 	// Internal
 	private GameObject m_rewardView = null;
+	public GameObject rewardView {
+		get { return m_rewardView; }
+	}
 
 	private EggView m_eggView = null;
 	public EggView eggView {
@@ -62,6 +68,8 @@ public class OpenEggSceneController : MonoBehaviour {
 		get { return (m_eggView == null) ? null : m_eggView.eggData; }
 	}
 
+	// Other references that must be set from script
+	private DragControlRotation m_dragController = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -70,20 +78,6 @@ public class OpenEggSceneController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Create infinite rotation tween for all fragments
-		for(int i = 0; i < m_goldenFragments.Length; i++) {
-			if(m_goldenFragments[i] != null) {
-				// Make it blendable so we can add other rotation animations to it
-				m_goldenFragments[i].transform.DOBlendableRotateBy(Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetRecyclable(true).Pause();	// Start paused
-			}
-		}
-
-		// Create infinite rotation tween for coins reward
-		if(m_coinsReward != null) {
-			// Make it blendable so we can add other rotation animations to it
-			m_coinsReward.transform.DOBlendableRotateBy(Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetRecyclable(true).Pause();	// Start paused
-		}
-
 		// Don't show anything
 		Clear();
 	}
@@ -137,11 +131,16 @@ public class OpenEggSceneController : MonoBehaviour {
 			}
 		}
 
+		// Unlink any transform from the drag controller
+		SetDragTarget(null);
+
+		// Destroy egg view
 		if(m_eggView != null) {
 			GameObject.Destroy(m_eggView.gameObject);
 			m_eggView = null;
 		}
 
+		// Hide golden fragments view
 		for(int i = 0; i < m_goldenFragments.Length; i++) {
 			if(m_goldenFragments[i] != null) {
 				// Pause rotation animation (to stop updating it)
@@ -150,17 +149,20 @@ public class OpenEggSceneController : MonoBehaviour {
 			}
 		}
 
+		// Hide coins fragments view
 		if(m_coinsReward != null) {
 			// Pause rotation animation (to stop updating it)
 			m_coinsReward.transform.DOPause();
 			m_coinsReward.SetActive(false);
 		}
 
+		// Destroy reward view
 		if(m_rewardView != null) {
 			GameObject.Destroy(m_rewardView);
 			m_rewardView = null;
 		}
 
+		// Stop all FX
 		if(m_godRaysFX != null) {
 			m_godRaysFX.StopFX();
 		}
@@ -178,6 +180,15 @@ public class OpenEggSceneController : MonoBehaviour {
 		if(m_explosionFX != null) {
 			m_explosionFX.Stop(true);
 		}
+	}
+
+	/// <summary>
+	/// Initialize some external references that can't be linked via inspector.
+	/// Should be called asap before actually launching any animation.
+	/// </summary>
+	/// <param name="_dragController">Drag controller to be used for rewards.</param>
+	public void InitReferences(DragControlRotation _dragController) {
+		m_dragController = _dragController;
 	}
 
 	/// <summary>
@@ -283,6 +294,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		EggReward rewardData = eggData.rewardData;
 		DefinitionNode rewardDef = eggData.rewardData.def;
 		Sequence seq = DOTween.Sequence();
+		Vector2 baseIdleVelocity = m_dragController.idleVelocity;
 
 		// Create a fake reward view
 		switch(rewardData.type) {
@@ -290,7 +302,7 @@ public class OpenEggSceneController : MonoBehaviour {
 				// Show a 3D preview of the pet
 				m_rewardView = new GameObject("RewardView");
 				m_rewardView.transform.SetParentAndReset(m_rewardAnchor);	// Attach it to the anchor and reset transformation
-				m_rewardView.transform.DOBlendableRotateBy(Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetRecyclable(true);	// Infinite rotation!
+				//m_rewardView.transform.DOBlendableRotateBy(Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetRecyclable(true);	// Infinite rotation!
 
 				// Use a PetLoader to simplify things
 				MenuPetLoader loader = m_rewardView.AddComponent<MenuPetLoader>();
@@ -300,6 +312,9 @@ public class OpenEggSceneController : MonoBehaviour {
 				// Animate it
 				seq.AppendInterval(0.05f);	// Initial delay
 				seq.Append(m_rewardView.transform.DOScale(0f, 0.5f).From().SetRecyclable(true).SetEase(Ease.OutBack));
+
+				// Make it target of the drag controller
+				seq.AppendCallback(() => { SetDragTarget(m_rewardView.transform); });
 			} break;
 		}
 
@@ -318,11 +333,18 @@ public class OpenEggSceneController : MonoBehaviour {
 			replacementRewardView.transform.DORestart();
 
 			// 2. Reward acceleration
-			seq.Append(m_rewardView.transform.DOBlendableRotateBy(Vector3.up * 720f, 1f, RotateMode.FastBeyond360).SetEase(Ease.InCubic));
+			// Make it compatible with the drag controller!
+			seq.Append(DOTween.To(
+				() => { return baseIdleVelocity; },	// Getter
+				(Vector2 _v) => { m_dragController.idleVelocity = _v; },	// Setter
+				Vector2.Scale(baseIdleVelocity, new Vector2(100f, 1f)),	// Final value
+				1f)	// Duration
+				.SetEase(Ease.InCubic)
+			);
 
 			// 3. Show VFX to cover the swap
 			// We want it to launch a bit before doing the swap. To do so, use a combination of InserCallback() with the sequence's current duration.
-			seq.InsertCallback(seq.Duration() - 0.25f, () => {
+			seq.InsertCallback(seq.Duration() - 0.15f, () => {
 				if(m_goldenFragmentsSwapFX != null) {
 					m_goldenFragmentsSwapFX.Clear();
 					m_goldenFragmentsSwapFX.Play(true);
@@ -334,12 +356,22 @@ public class OpenEggSceneController : MonoBehaviour {
 				// Swap reward view with golden egg
 				m_rewardView.SetActive(false);
 				replacementRewardView.SetActive(true);
+
+				// Make it target of the drag controller
+				SetDragTarget(replacementRewardView.transform);
 			});
 
 			// 5. Replacement reward initial inertia and scale up
-			// We can mix it with the infinite rotation animation thanks to the Blendable tween type! ^_^
-			seq.Append(replacementRewardView.transform.DOBlendableRotateBy(Vector3.up * 720f, 2f, RotateMode.FastBeyond360).SetEase(Ease.OutCubic));
-			seq.Join(replacementRewardView.transform.DOScale(0f, 1f).From().SetEase(Ease.OutBack));
+			// Make it compatible with the drag controller!
+			seq.Append(replacementRewardView.transform.DOScale(0f, 1f).From().SetEase(Ease.OutBack));
+			seq.Join(DOTween.To(
+				() => { return baseIdleVelocity; },	// Getter
+				(Vector2 _v) => { m_dragController.idleVelocity = _v; },	// Setter
+				Vector2.Scale(baseIdleVelocity, new Vector2(100f, 1f)),	// Final value
+				2f)	// Duration
+				.From()
+				.SetEase(Ease.OutCubic)
+			);
 		}
 
 		// Show reward godrays
@@ -351,6 +383,24 @@ public class OpenEggSceneController : MonoBehaviour {
 			// Show with some delay to sync with pet's animation
 			seq.Insert(0.15f, m_godRaysFX.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
 		}
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Define a transform as target of the drag controller.
+	/// </summary>
+	/// <param name="_target">The new target.</param>
+	private void SetDragTarget(Transform _target) {
+		// Drag controller must be valid
+		if(m_dragController == null) return;
+
+		// Just do it!
+		m_dragController.target = _target;
+
+		// Enable/Disable based on new target
+		m_dragController.gameObject.SetActive(_target != null);
 	}
 
 	//------------------------------------------------------------------------//
