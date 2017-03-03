@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 11434966}
   - component: {fileID: 114000013542127144}
   m_Layer: 0
-  m_Name: SP_HorseStaticPath_0
+  m_Name: SP_Horse_Static
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -66,14 +66,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefabStr: Surface/PF_HorseStatic
+  m_entityPrefabStr: Surface/PF_Horse_Static
   m_quantity:
+    min: 1
+    max: 1
+  m_speedFactorRange:
     min: 1
     max: 1
   m_scale:
     min: 1.35
     max: 1.4
   m_rails: 1
+  m_hasGroupBonus: 0
   m_minTier: 0
   m_activationChance: 100
   m_activationTriggers: []
@@ -86,3 +90,4 @@ MonoBehaviour:
     min: 1
     max: 2
   m_maxSpawns: 0
+  m_checkCurrents: 0

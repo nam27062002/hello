@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 136000011137730962}
   - component: {fileID: 54000012226456332}
   m_Layer: 21
-  m_Name: PF_Richman
+  m_Name: PF_RichMan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1094,7 +1094,6 @@ MonoBehaviour:
     m_useGravity: 1
     m_walkOnWalls: 0
     m_mass: 2.5
-    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 230
     m_faceDirection: 0
@@ -1157,6 +1156,10 @@ MonoBehaviour:
   - name: PS_Blood_Explosion_Medium
     path: Blood
     offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: hd_villager_dead
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -1198,7 +1201,7 @@ MonoBehaviour:
     min: 1.5
     max: 1.5
   m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":10,"checkDragonPositionTime":0.5,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":true},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":0,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
-  m_databaseKey: PF_Richman
+  m_databaseKey: PF_RichMan
 --- !u!114 &114000013571211304
 MonoBehaviour:
   m_ObjectHideFlags: 1

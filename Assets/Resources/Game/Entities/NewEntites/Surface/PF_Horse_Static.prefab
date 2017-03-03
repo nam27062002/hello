@@ -197,7 +197,7 @@ GameObject:
   - component: {fileID: 136000011044019352}
   - component: {fileID: 54000013725969172}
   m_Layer: 21
-  m_Name: PF_HorseStatic
+  m_Name: PF_Horse_Static
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -999,7 +999,6 @@ MonoBehaviour:
     m_useGravity: 1
     m_walkOnWalls: 0
     m_mass: 2.5
-    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 230
     m_faceDirection: 0
@@ -1012,7 +1011,7 @@ MonoBehaviour:
     m_faceUpAngle: 320
     m_faceDownAngle: 40
   m_affectedByDragonTrample: 0
-  m_enableSensor: 1
+  m_enableSensor: 0
   m_sensor:
     m_senseFire: 1
     m_sightRadius: 18
@@ -1081,7 +1080,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_serializedJson: '[{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false}]'
-  m_databaseKey: PF_HorseStatic
+  m_databaseKey: PF_Horse_Static
 --- !u!114 &11485410
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1108,6 +1107,10 @@ MonoBehaviour:
   m_onEatenParticles:
   - name: PS_Blood_Explosion_Large
     path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: 
+    path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: hd_horse_dead
   m_speedToWaterSplash: 0
