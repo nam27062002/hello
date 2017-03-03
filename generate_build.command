@@ -250,7 +250,7 @@ if $BUILD_ANDROID; then
   mkdir -p "${OUTPUT_DIR}/apks/"
 
   # Do it!
-  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir ${OUTPUT_DIR}/apks/ -obb ${GENERATE_OBB}"
+  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB}"
 
   # Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
 	print_builder "BUILDER: Reading internal android build version number";
@@ -263,8 +263,8 @@ fi
 # Generate iOS build
 if $BUILD_IOS; then
     # Make sure output dirs exist
-    mkdir -p "\"${OUTPUT_DIR}/archives/\""
-    mkdir -p "\"${OUTPUT_DIR}/ipas/\""
+    mkdir -p "${OUTPUT_DIR}/archives/"
+    mkdir -p "${OUTPUT_DIR}/ipas/"
 
     # Generate XCode project
     print_builder "Generating XCode Project"
@@ -274,7 +274,7 @@ if $BUILD_IOS; then
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
     ARCHIVE_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}.xcarchive"
     STAGE_IPA_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}.ipa"
-    PROJECT_NAME="\"${OUTPUT_DIR}/xcode/Unity-iPhone.xcodeproj\""
+    PROJECT_NAME="${OUTPUT_DIR}/xcode/Unity-iPhone.xcodeproj"
 
     # Generate Archive
     print_builder "Cleaning XCode build"
@@ -282,13 +282,13 @@ if $BUILD_IOS; then
 
     print_builder "Archiving"
     # Since the archiving process has a lot of verbose (and XCode doesn't allow us to regulate it), show only the relevant lines
-    xcodebuild archive -project "${PROJECT_NAME}" -configuration Release -scheme "Unity-iPhone" -archivePath "\"${OUTPUT_DIR}/archives/${ARCHIVE_FILE}\"" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}"
+    xcodebuild archive -project "${PROJECT_NAME}" -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}"
 
     # Generate IPA file
     print_builder "Exporting IPA"
-    rm -f "\"${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}\""    # just in case
-    xcodebuild -exportArchive -archivePath "\"${OUTPUT_DIR}/archives/${ARCHIVE_FILE}\"" -exportPath "\"${OUTPUT_DIR}/ipas/\"" -exportOptionsPlist "\"${OUTPUT_DIR}/xcode/Info.plist\""
-    mv -f "\"${OUTPUT_DIR}/ipas/Unity-iPhone.ipa\"" "\"${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}\""
+    rm -f "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}"    # just in case
+    xcodebuild -exportArchive -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" -exportPath "${OUTPUT_DIR}/ipas/" -exportOptionsPlist "${OUTPUT_DIR}/xcode/Info.plist"
+    mv -f "${OUTPUT_DIR}/ipas/Unity-iPhone.ipa" "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}"
 fi
 
 # Commit project changes
