@@ -15,11 +15,11 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 7
   m_Fog: 1
-  m_FogColor: {r: 0.6109429, g: 0.7762767, b: 0.8308824, a: 1}
+  m_FogColor: {r: 0.24264705, g: 0, b: 0, a: 1}
   m_FogMode: 1
   m_FogDensity: 0.03
-  m_LinearFogStart: 50
-  m_LinearFogEnd: 600
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 250
   m_AmbientSkyColor: {r: 0.6838235, g: 0.6768882, b: 0.58326125, a: 1}
   m_AmbientEquatorColor: {r: 0.0684, g: 0.075, b: 0.0798, a: 0.6}
   m_AmbientGroundColor: {r: 0.0282, g: 0.025800003, b: 0.021000002, a: 0.6}
@@ -4464,6 +4464,10 @@ Prefab:
       propertyPath: m_SizeDelta.x
       value: 699.16003
       objectReference: {fileID: 0}
+    - target: {fileID: 1959211364025848, guid: 0e3b6ba6946bc457683c3217f50c536e, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0e3b6ba6946bc457683c3217f50c536e, type: 2}
   m_IsPrefabParent: 0
@@ -4712,8 +4716,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 1
-  far clip plane: 500
+  near clip plane: 4
+  far clip plane: 100
   field of view: 35
   orthographic: 0
   orthographic size: 5
@@ -4744,8 +4748,8 @@ Transform:
   m_PrefabParentObject: {fileID: 401268, guid: 0280d778025d84730bf116d20103adff, type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1031089505}
-  m_LocalRotation: {x: 0.057406727, y: 0.00000014647718, z: -0.000000008422665, w: 0.99835086}
-  m_LocalPosition: {x: 59.999996, y: 1.5, z: -3}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -150, y: 106.9, z: 22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1466441107}
@@ -5042,7 +5046,7 @@ Prefab:
     - target: {fileID: 224000013578416706, guid: 641a149f0c87545119ddcb9cf63cf971,
         type: 2}
       propertyPath: m_SizeDelta.x
-      value: 242
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224000013578416706, guid: 641a149f0c87545119ddcb9cf63cf971,
         type: 2}
@@ -5062,17 +5066,17 @@ Prefab:
     - target: {fileID: 224111419116641650, guid: 641a149f0c87545119ddcb9cf63cf971,
         type: 2}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224111419116641650, guid: 641a149f0c87545119ddcb9cf63cf971,
         type: 2}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224111419116641650, guid: 641a149f0c87545119ddcb9cf63cf971,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -75
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224111419116641650, guid: 641a149f0c87545119ddcb9cf63cf971,
         type: 2}
@@ -5082,7 +5086,7 @@ Prefab:
     - target: {fileID: 224111419116641650, guid: 641a149f0c87545119ddcb9cf63cf971,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224000013578416706, guid: 641a149f0c87545119ddcb9cf63cf971,
         type: 2}
@@ -5157,29 +5161,6 @@ Prefab:
         type: 2}
       propertyPath: m_SizeDelta.x
       value: -697.42004
-      objectReference: {fileID: 0}
-    - target: {fileID: 114867976558110758, guid: 641a149f0c87545119ddcb9cf63cf971,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 164792, guid: 641a149f0c87545119ddcb9cf63cf971, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000013522047796, guid: 641a149f0c87545119ddcb9cf63cf971,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114229332708808062, guid: 641a149f0c87545119ddcb9cf63cf971,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 22461724, guid: 641a149f0c87545119ddcb9cf63cf971, type: 2}
-      propertyPath: m_SizeDelta.x
-      value: 888.68
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 641a149f0c87545119ddcb9cf63cf971, type: 2}
