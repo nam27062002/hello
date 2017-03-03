@@ -320,24 +320,23 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			}
 
 			// Show PC Trail?
-			if(m_entity.isPC) {
+			if (m_entity.isPC) {
 				// Get an effect instance from the pool
 				m_pcTrail = ParticleManager.Spawn("PS_EntityPCTrail", Vector3.zero, "Rewards");
 				// Put it in the view's hierarchy so it follows the entity
-				if(m_pcTrail != null) {
+				if (m_pcTrail != null) {
 					m_pcTrail.transform.SetParent(transform);
 					m_pcTrail.transform.localPosition = Vector3.zero;
 				}
 			}
 
-			if (!string.IsNullOrEmpty(m_idleAudio))
-			{
+			if (!string.IsNullOrEmpty(m_idleAudio))	{
 				m_idleAudioAO = AudioController.Play( m_idleAudio, transform);
 			}
 		}
 
 		DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
-		CheckTint( dragonBreath.IsFuryOn(), dragonBreath.type);
+		CheckTint(m_entity.isGolden, dragonBreath.IsFuryOn(), dragonBreath.type);
 
 		m_dragonBoost = InstanceManager.player.dragonBoostBehaviour;
     }
@@ -414,7 +413,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
     void OnFuryToggled(bool _active, DragonBreathBehaviour.Type _type)
     {
-        CheckTint( _active, _type);
+		CheckTint(m_entity.isGolden, _active, _type);
     }
 
     /// <summary>
@@ -439,10 +438,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     }
 
 
-	void CheckTint( bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None )
+	void CheckTint(bool _isGolden, bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None )
     {
     	EntityTint _tint = ViewControl.EntityTint.NORMAL;
-    	if ( _furyActive ) 
+		if ( _isGolden || _furyActive )
     	{
 			if ( IsBurnableByPlayer(_type) )
 			{	
@@ -500,16 +499,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         else if ( m_wasFreezing )
         {
 			DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
-        	CheckTint( dragonBreath.IsFuryOn(), dragonBreath.type);
+			CheckTint(m_entity.isGolden, dragonBreath.IsFuryOn(), dragonBreath.type);
         	m_wasFreezing = false;
         }
-
-        /*
-        if (m_lastType != DragonBreathBehaviour.Type.None || (m_entity != null && m_entity.isGolden))
-        {
-            EntityTint(true);
-        }
-        */
     }
 
 	// Queries
