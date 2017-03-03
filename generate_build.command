@@ -49,7 +49,7 @@ SMB_USER="srv_acc_bcn_jenkins"
 SMB_PASS="Lm0%2956jkR%23Tg"
 
 USAGE="Usage: generate_build.command [-path project_path=script_path] [-code project_code=xx] [-b branch_name=develop] [-reset_git] [-commit] [-tag] \
-      [-android][-obb][-ios] \
+      [-android][-obb][-ios][-provisioning uuid] \
       [-version forced_version] [-increase_version]  \
       [-iosPublic iosPublicVersion] [-ggpPublic google_play_public_version] [-amzPublic amazonPublicVersion]  \
       [-output dirpath=Desktop/builds] [-upload] [-smbOutput server_folder=]"
@@ -84,6 +84,10 @@ do
         GENERATE_OBB=true
     elif [ "$PARAM_NAME" == "-ios" ]; then
         BUILD_IOS=true
+    elif [ "$PARAM_NAME" == "-provisioning" ] ; then
+        ((i++))
+        PROVISIONING_PROFILE_UUID=${!i}
+
     elif [ "$PARAM_NAME" == "-version" ] ; then
         ((i++))
         FORCE_VERSION=${!i}
@@ -246,13 +250,13 @@ if $BUILD_ANDROID; then
   mkdir -p "${OUTPUT_DIR}/apks/"
 
   # Do it!
-  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir ${OUTPUT_DIR} -obb ${GENERATE_OBB}"
+  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir ${OUTPUT_DIR}/apks/ -obb ${GENERATE_OBB}"
 
   # Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
-	print_builder "BUILDER: Reading internal andoird build version number";
+	print_builder "BUILDER: Reading internal android build version number";
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputAndroidBuildVersion"
-	ANDROID_BUILD_VERSION=$(cat \"${PROJECT_PATH}/androidBuildVersion.txt\")"
-	rm -f ""\"${PROJECT_PATH}/androidBuildVersion.txt\"";
+	ANDROID_BUILD_VERSION="$(cat androidBuildVersion.txt)"
+	rm -f "androidBuildVersion.txt";
 	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_\"$(DATE)\"_b${ANDROID_BUILD_VERSION}";
 fi
 
@@ -264,7 +268,7 @@ if $BUILD_IOS; then
 
     # Generate XCode project
     print_builder "Generating XCode Project"
-    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateXcode -buildTarget ios -outputDir ${OUTPUT_DIR} -obb ${}"
+    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateXcode -buildTarget ios -outputDir ${OUTPUT_DIR}"
 
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")

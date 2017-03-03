@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System;
@@ -20,13 +21,15 @@ using System;
 /// No transformation is actually performed, subscribe to events to apply custom transformations.
 /// TODO:
 /// - Elastic bounce on limits
-/// - Bounce on limits
-/// - Idle velocity
 /// </summary>
+[RequireComponent(typeof(Graphic))]
 public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	protected const float IOS_SENSITIVITY_CORRECTION = 0.5f;
+	protected const float ANDROID_SENSITIVITY_CORRECTION = 0.5f;
+
 	[Serializable]
 	public class DragControlEvent : UnityEvent<DragControl> {}
 
@@ -47,7 +50,7 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed setup
-	[SerializeField] private bool[] m_axisEnabled = new bool[] {true, true};
+	[SerializeField] protected bool[] m_axisEnabled = new bool[] {true, true};
 
 	public bool horizontal {
 		get { return m_axisEnabled[0]; }
@@ -60,25 +63,25 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	}
 
 	[Space]
-	[SerializeField] private float m_sensitivity = 1f;
+	[SerializeField] protected float m_sensitivity = 1f;
 	public float sensitivity {
 		get { return m_sensitivity; }
-		set { m_sensitivity = value; }
+		set { m_sensitivity = value; UpdateSensitivityCorrection(); }
 	}
 
-	[SerializeField] private Vector2 m_idleVelocity = Vector2.zero;
+	[SerializeField] protected Vector2 m_idleVelocity = Vector2.zero;
 	public Vector2 idleVelocity {
 		get { return m_idleVelocity; }
 		set { m_idleVelocity = value; }
 	}
 
-	[SerializeField] private bool m_inertia = true;
+	[SerializeField] protected bool m_inertia = true;
 	public bool inertia {
 		get { return m_inertia; }
 		set { m_inertia = value; }
 	}
 
-	[Range(0f, 0.99f)] [SerializeField] private float m_inertiaAcceleration = 0.135f;	// Values bigger than 1 would accelerate the value infinitely
+	[Range(0f, 0.99f)] [SerializeField] protected float m_inertiaAcceleration = 0.135f;	// Values bigger than 1 would accelerate the value infinitely
 	public float inertiaAcceleration {
 		get { return m_inertiaAcceleration; }
 		set { m_inertiaAcceleration = value; }
@@ -86,7 +89,7 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
 	// Clamping
 	[SerializeField]
-	private ClampSetup[] m_clampSetup = new ClampSetup[2];	// One per axis
+	protected ClampSetup[] m_clampSetup = new ClampSetup[2];	// One per axis
 
 	public ClampSetup clampSetupX {
 		get { return m_clampSetup[0]; }
@@ -103,24 +106,24 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	public DragControlEvent OnValueChanged = new DragControlEvent();
 
 	// Public Logic
-	private Vector2 m_velocity = Vector2.zero;
+	protected Vector2 m_velocity = Vector2.zero;
 	public Vector2 velocity { 
 		get { return m_velocity; } 
 		set { m_velocity = value; } 
 	}
 
-	private bool m_dragging = false;
+	protected bool m_dragging = false;
 	public bool dragging {
 		get { return m_dragging; }
 	}
 
-	private Vector2 m_value = Vector2.zero;
+	protected Vector2 m_value = Vector2.zero;
 	public Vector2 value {
 		get { return m_value; }
-		set { m_value = value; }
+		set { m_value = value; CheckValue(); }
 	}
 
-	private Vector2 m_previousValue = Vector2.zero;
+	protected Vector2 m_previousValue = Vector2.zero;
 	public Vector2 previousValue {
 		get { return m_previousValue; }
 	}
@@ -129,27 +132,31 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 		get { return m_value - m_previousValue; }
 	}
 
+	// Internal
+	protected float m_correctedSensitivity = 1f;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
-
+	virtual protected void Awake() {
+		// Initialize corrected sensitivity
+		UpdateSensitivityCorrection();
 	}
 
 	/// <summary>
 	/// First update call.
 	/// </summary>
-	private void Start() {
+	virtual protected void Start() {
 
 	}
 
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
-	private void OnEnable() {
+	virtual protected void OnEnable() {
 		// Stop any active movement
 		m_velocity = Vector2.zero;
 		m_dragging = false;
@@ -158,14 +165,14 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
-	private void OnDisable() {
+	virtual protected void OnDisable() {
 
 	}
 
 	/// <summary>
 	/// Called every frame, at the end of the frame.
 	/// </summary>
-	private void LateUpdate() {
+	virtual protected void LateUpdate() {
 		// Aux vars
 		float deltaTime = Time.unscaledDeltaTime;
 
@@ -214,19 +221,22 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	private void OnDestroy() {
+	virtual protected void OnDestroy() {
 
 	}
 
 	/// <summary>
 	/// A value has changed in the editor.
 	/// </summary>
-	private void OnValidate() {
+	virtual protected void OnValidate() {
 		// Cap some values
 		m_axisEnabled.Resize(2);
 		m_sensitivity = Mathf.Max(0f, m_sensitivity);
 		m_inertiaAcceleration = Mathf.Max(0f, m_inertiaAcceleration);
 		m_clampSetup.Resize(2);	// Fixed size!
+
+		// For when sensitivity is changed during play mode
+		UpdateSensitivityCorrection();
 	}
 
 	//------------------------------------------------------------------------//
@@ -237,7 +247,7 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	/// Sensitivity will be applied to given offset.
 	/// </summary>
 	/// <param name="_offset">Unscaled offset to be applied.</param>
-	private void ApplyOffset(Vector2 _offset) {
+	virtual protected void ApplyOffset(Vector2 _offset) {
 		// Not for disabled axis!
 		for(int i = 0; i < 2; i++) {
 			if(!m_axisEnabled[i]) _offset[i] = 0f;
@@ -285,16 +295,41 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
 		// Notify listeners
 		if(m_value != m_previousValue) {
-			OnValueChanged.Invoke(this);
+			ApplyValue();	// Internal notification
+			OnValueChanged.Invoke(this);	// External
 		}
 	}
 
 	/// <summary>
 	/// Check current value to make sure it fits clamping setup.
 	/// </summary>
-	private void CheckValue() {
+	virtual protected void CheckValue() {
 		// Actually is the same as just applying a zero offset
 		ApplyOffset(Vector2.zero);
+	}
+
+	/// <summary>
+	/// Updates the sensitivity correction based on platform.
+	/// Should be called every time sensitivity is changed.
+	/// </summary>
+	private void UpdateSensitivityCorrection() {
+		// Compute corrected sensitivity
+		switch(Application.platform) {
+			case RuntimePlatform.IPhonePlayer:	m_correctedSensitivity = m_sensitivity * IOS_SENSITIVITY_CORRECTION;		break;
+			case RuntimePlatform.Android:		m_correctedSensitivity = m_sensitivity * ANDROID_SENSITIVITY_CORRECTION;	break;
+			default:							m_correctedSensitivity = m_sensitivity;										break;
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// VIRTUAL METHODS														  //
+	// To be implemented by heirs if needed.								  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Do whatever needed to apply the value.
+	/// </summary>
+	virtual protected void ApplyValue() {
+		// To be implemented by heirs.
 	}
 
 	//------------------------------------------------------------------------//
