@@ -336,7 +336,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 		DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
-		CheckTint(m_entity.isGolden, dragonBreath.IsFuryOn(), dragonBreath.type);
+		CheckTint(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
 
 		m_dragonBoost = InstanceManager.player.dragonBoostBehaviour;
     }
@@ -413,7 +413,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
     void OnFuryToggled(bool _active, DragonBreathBehaviour.Type _type)
     {
-		CheckTint(m_entity.isGolden, _active, _type);
+		CheckTint(IsEntityGolden(), _active, _type);
     }
 
     /// <summary>
@@ -499,9 +499,16 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         else if ( m_wasFreezing )
         {
 			DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
-			CheckTint(m_entity.isGolden, dragonBreath.IsFuryOn(), dragonBreath.type);
+			CheckTint(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
         	m_wasFreezing = false;
         }
+    }
+
+    bool IsEntityGolden()
+    {
+    	if ( m_entity != null )
+    		return m_entity.isGolden;
+    	return false;
     }
 
 	// Queries
@@ -799,7 +806,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				GameObject corpse = PoolManager.GetInstance(m_corpseAsset, true);
 				corpse.transform.CopyFrom(transform);
 
-				corpse.GetComponent<Corpse>().Spawn(m_entity.isGolden, m_dragonBoost.IsBoostActive());
+				corpse.GetComponent<Corpse>().Spawn(IsEntityGolden(), m_dragonBoost.IsBoostActive());
 			}
 		}
 
