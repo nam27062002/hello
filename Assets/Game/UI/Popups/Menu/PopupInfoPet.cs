@@ -29,6 +29,8 @@ public class PopupInfoPet : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private UIScene3DLoader m_preview = null;
+	[SerializeField] private DragControlRotation m_rotationController = null;
+	[Space]
 	[SerializeField] private Localizer m_nameText = null;
 	[SerializeField] private Localizer m_infoText = null;
 	[SerializeField] private PowerTooltip m_powerInfo = null;
@@ -109,11 +111,17 @@ public class PopupInfoPet : MonoBehaviour {
 
 		// Load 3D preview
 		if(m_petLoader == null) {
-			// Find and start infinite rotation
+			// Find it 
 			m_petLoader = m_preview.scene.FindComponentRecursive<MenuPetLoader>();
-			m_petLoader.gameObject.transform.DOLocalRotate(m_petLoader.gameObject.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetRecyclable(true);
 		}
 		if(m_petLoader != null) {
+			// Assign it as target of the rotation drag controller
+			if(m_rotationController != null) {
+				// Reset value
+				m_rotationController.target = m_petLoader.transform;
+				m_rotationController.RestoreOriginalValue();
+			}
+
 			// Load target pet!
 			m_petLoader.Load(petDef.sku);
 			//m_petLoader.petInstance.SetAnim(MenuPetPreview.Anim.IDLE);	// [AOC] TODO!! Pose the pet

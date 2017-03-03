@@ -8,6 +8,8 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System;
 using System.Collections;
@@ -35,9 +37,8 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	[Range(0f, 2f)] public float m_timeScale = 1f;
-	public bool m_ignoreTimeScale = false;
-	private Sequence m_sequence = null;
+	[SerializeField] private Transform m_target = null;
+	[SerializeField] private DragControl m_dragControl = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -46,7 +47,8 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		
+		m_dragControl.value = new Vector2(-m_target.localRotation.eulerAngles.y, m_target.localRotation.eulerAngles.z);
+		m_dragControl.OnValueChanged.AddListener(OnDragValueChanged);
 	}
 
 	/// <summary>
@@ -60,13 +62,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Something changed on the inspector.
 	/// </summary>
 	private void OnValidate() {
-		// Apply new timescale
-		Time.timeScale = m_timeScale;
-
-		// Change sequence's ignore timescale flag
-		if(m_sequence != null) {
-			m_sequence.SetUpdate(UpdateType.Normal, m_ignoreTimeScale);
-		}
+		
 	}
 	
 	/// <summary>
@@ -80,13 +76,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		if(m_sequence == null) {
-			m_sequence = DOTween.Sequence()
-				.SetAutoKill(false)
-				.Append(this.transform.DOLocalJump(Vector3.zero, 5f, 3, 3f))
-				.SetUpdate(UpdateType.Normal, m_ignoreTimeScale);
-		}
-		m_sequence.Restart();
+
 	}
 
 	/// <summary>
@@ -94,5 +84,18 @@ public class AOCQuickTest : MonoBehaviour {
 	/// </summary>
 	private void OnDrawGizmos() {
 		
+	}
+
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// The drag control's value has changed.
+	/// </summary>
+	/// <param name="_control">Control that triggered the event.</param>
+	private void OnDragValueChanged(DragControl _control) {
+		//Debug.Log(_control.dragging + " | " + _control.value.ToString() + " | " + _control.velocity);
+		//m_target.Rotate(0f, -_control.offset.x, _control.offset.y, Space.Self);
+		m_target.localRotation = Quaternion.Euler(0f, -_control.value.x, _control.value.y);
 	}
 }

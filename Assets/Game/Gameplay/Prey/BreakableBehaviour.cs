@@ -32,7 +32,7 @@ public class BreakableBehaviour : MonoBehaviour
 		m_initialViewPos = m_view.localPosition;
 	}
 
-	void OnEnabled() {
+	void OnEnable() {
 		m_remainingHits = m_hitCount;
 
 		if (m_wobbler == null)
@@ -61,17 +61,21 @@ public class BreakableBehaviour : MonoBehaviour
 				} else {
 					// Message : You need boost!
 					Messenger.Broadcast(GameEvents.BREAK_OBJECT_NEED_TURBO);
-					Shake();
+
 				}
 			} else {
 				// Message: You need a bigger dragon
 				Messenger.Broadcast(GameEvents.BREAK_OBJECT_BIGGER_DRAGON);
 				value *= 0.5f;
-				Shake();
 			}
 
-			if (m_remainingHits <= 0) {
+			if (m_remainingHits <= 0) 
+			{
 				Break(pushVector);
+			}
+			else
+			{
+				Shake();
 			}
 		}
 	}

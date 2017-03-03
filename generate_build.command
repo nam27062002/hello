@@ -8,14 +8,14 @@ INITIAL_PATH="$(pwd)"
 
 # Store script's (project's) absolute path
 # To get an absolute path, dir to it and then use pwd command
-cd "$(dirname $0)"
+cd "$(dirname "$0")"
 SCRIPT_PATH="$(pwd)"
 echo
 echo "BUILDER: Running script from path ${SCRIPT_PATH}"
 
 # Default parameters
 PROJECT_PATH="${SCRIPT_PATH}"
-PROJECT_CODE_NAME=""
+PROJECT_CODE_NAME="xx"
   # git config
 BRANCH="develop"
 RESET_GIT=false
@@ -23,6 +23,7 @@ COMMIT_CHANGES=false
 CREATE_TAG=false
   # build config
 BUILD_ANDROID=false
+GENERATE_OBB=false
 BUILD_IOS=false
   # versioning
 FORCE_VERSION=false
@@ -47,11 +48,11 @@ PROVISIONING_PROFILE_UUID="e2a6e917-8663-4459-b97f-6ec3c7e1d3d3" # Get it by rig
 SMB_USER="srv_acc_bcn_jenkins"
 SMB_PASS="Lm0%2956jkR%23Tg"
 
-USAGE="Usage: generate_build.command [-path project_path] [-code project_code] [-b branch_name=develop] [-reset true|false*] [-commit true|false*] [-tag true|false*] \
-      [-android true|false*] [-ios true*|false] \
-      [-version forced_version=] [-increase_version true*|false]  \
+USAGE="Usage: generate_build.command [-path project_path=script_path] [-code project_code=xx] [-b branch_name=develop] [-reset_git] [-commit] [-tag] \
+      [-android][-obb][-ios][-provisioning uuid] \
+      [-version forced_version] [-increase_version]  \
       [-iosPublic iosPublicVersion] [-ggpPublic google_play_public_version] [-amzPublic amazonPublicVersion]  \
-      [-output dirpath=Desktop/builds] [-upload true|false*] [-smbOutput server_folder=]"
+      [-output dirpath=Desktop/builds] [-upload] [-smbOutput server_folder=]"
 
 # Parse parameters
 for ((i=1;i<=$#;i++));
@@ -70,28 +71,28 @@ do
     elif [ "$PARAM_NAME" == "-b" ] ; then
         ((i++))
         BRANCH=${!i}
-    elif [ "$PARAM_NAME" == "-reset" ] ; then
-        ((i++))
-        RESET_GIT=${!i}
+    elif [ "$PARAM_NAME" == "-reset_git" ] ; then
+        RESET_GIT=true
     elif [ "$PARAM_NAME" == "-commit" ]; then
-        ((i++))
-        COMMIT_CHANGES=${!i}
+        COMMIT_CHANGES=true
     elif [ "$PARAM_NAME" == "-tag" ]; then
-        ((i++))
-        CREATE_TAG=${!i}
+        CREATE_TAG=true
 
     elif [ "$PARAM_NAME" == "-android" ]; then
-        ((i++))
-        BUILD_ANDROID=${!i}
+        BUILD_ANDROID=true
+    elif [ "$PARAM_NAME" == "-obb" ]; then
+        GENERATE_OBB=true
     elif [ "$PARAM_NAME" == "-ios" ]; then
+        BUILD_IOS=true
+    elif [ "$PARAM_NAME" == "-provisioning" ] ; then
         ((i++))
-        BUILD_IOS=${!i}
+        PROVISIONING_PROFILE_UUID=${!i}
+
     elif [ "$PARAM_NAME" == "-version" ] ; then
         ((i++))
         FORCE_VERSION=${!i}
     elif [ "$PARAM_NAME" == "-increase_version" ]; then
-        ((i++))
-        INCREASE_VERSION_NUMBER=${!i}
+        INCREASE_VERSION_NUMBER=true
 
     elif [ "$PARAM_NAME" == "-iosPublic" ]; then
         ((i++))
@@ -108,14 +109,13 @@ do
         OUTPUT_DIR=${!i}
 
     elif [ "$PARAM_NAME" == "-upload" ] ; then
-        ((i++))
-        UPLOAD=${!i}
+        UPLOAD=true
     elif [ "$PARAM_NAME" == "-smbOutput" ] ; then
         ((i++))
         SMB_FOLDER=${!i}
     else
-        echo "Unknown parameter ${PARAM_NAME}"
-        echo $USAGE
+        echo "BUILDER: Unknown parameter ${PARAM_NAME}"
+        echo "BUILDER: ${USAGE}"
         exit 1
     fi
 done;
@@ -129,11 +129,11 @@ print_builder() {
 }
 
 # Calculate num of stps
-TOTAL_STEPS=7;
+TOTAL_STEPS=8;
 if $RESET_GIT; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
-if [ $FORCE_VERSION ] || [ $INCREASE_VERSION_NUMBER ] ; then
+if [ "$FORCE_VERSION" != false ] || [ $INCREASE_VERSION_NUMBER ] ; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
 if $BUILD_ANDROID;then
@@ -189,13 +189,16 @@ cd Calety
 git pull
 cd ..
 
-if $FORCE_VERSION; then
+print_builder "Custom Builder Action"
+eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.CustomAction"
+
+if [ "$FORCE_VERSION" != false ]; then
   print_builder "Force Version ${FORCE_VERSION}"
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetInternalVersion -version ${FORCE_VERSION}"
 fi
 
 # Increase internal version number
-if [ $INCREASE_VERSION_NUMBER ] && [ !$FORCE_VERSION ] ; then
+if [ $INCREASE_VERSION_NUMBER ] && [ "$FORCE_VERSION" == false ] ; then
     print_builder "Increasing internal version number..."
     #set +e  # For some unknown reason, in occasions the Builder.IncreaseMinorVersionNumber causes an error, making the script to stop - Disable exitOnError for this single instruction
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.IncreaseMinorVersionNumber"
@@ -213,21 +216,21 @@ rm -f "outputVersion.txt"
 # Set public version
 PUBLIC_VERSION_PARAMS=""
 if $BUILD_IOS;then
-  if ![ $PROJECT_SETTINGS_PUBLIC_VERSION_IOS ];then
+  if [ "$PROJECT_SETTINGS_PUBLIC_VERSION_IOS" != false ];then
       PROJECT_SETTINGS_PUBLIC_VERSION_IOS="${VERSION_ID}"
   fi
-	PUBLIC_VERSION_PARAMS="${PUBLIC_VERSION_PARAMS} -ios ${PROJECT_SETTINGS_PUBLIC_VERSION_IOS}";
+  PUBLIC_VERSION_PARAMS="${PUBLIC_VERSION_PARAMS} -ios ${PROJECT_SETTINGS_PUBLIC_VERSION_IOS}"
 fi
 
 if $BUILD_ANDROID;then
-  if ![ $PROJECT_SETTINGS_PUBLIC_VERSION_GGP ];then
+  if [ "$PROJECT_SETTINGS_PUBLIC_VERSION_GGP" != false ];then
       PROJECT_SETTINGS_PUBLIC_VERSION_GGP="${VERSION_ID}"
   fi
-  if ![ $PROJECT_SETTINGS_PUBLIC_VERSION_AMZ ];then
+  if [ "$PROJECT_SETTINGS_PUBLIC_VERSION_AMZ" != false ];then
       PROJECT_SETTINGS_PUBLIC_VERSION_AMZ="${VERSION_ID}"
   fi
-  PUBLIC_VERSION_PARAMS = "${PUBLIC_VERSION_PARAMS} -ggp ${PROJECT_SETTINGS_PUBLIC_VERSION_GGP}";
-  PUBLIC_VERSION_PARAMS = "${PUBLIC_VERSION_PARAMS} -amz ${PROJECT_SETTINGS_PUBLIC_VERSION_AMZ}";
+  PUBLIC_VERSION_PARAMS="${PUBLIC_VERSION_PARAMS} -ggp ${PROJECT_SETTINGS_PUBLIC_VERSION_GGP}"
+  PUBLIC_VERSION_PARAMS="${PUBLIC_VERSION_PARAMS} -amz ${PROJECT_SETTINGS_PUBLIC_VERSION_AMZ}"
 fi
 print_builder "Settign public version numbers";
 eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetPublicVersion ${PUBLIC_VERSION_PARAMS}"
@@ -247,14 +250,14 @@ if $BUILD_ANDROID; then
   mkdir -p "${OUTPUT_DIR}/apks/"
 
   # Do it!
-  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir ${OUTPUT_DIR}"
+  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB}"
 
-  // Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
-	print_builder "BUILDER: Reading internal andoird build version number";
+  # Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
+	print_builder "BUILDER: Reading internal android build version number";
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputAndroidBuildVersion"
-	ANDROID_BUILD_VERSION=$(cat \"${PROJECT_PATH}/androidBuildVersion.txt\")"
-	rm -f ""\"${PROJECT_PATH}/androidBuildVersion.txt\"";
-	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_\"$(DATE)\"_b${ANDROID_BUILD_VERSION}.apk";
+	ANDROID_BUILD_VERSION="$(cat androidBuildVersion.txt)"
+	rm -f "androidBuildVersion.txt";
+	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_\"$(DATE)\"_b${ANDROID_BUILD_VERSION}";
 fi
 
 # Generate iOS build
@@ -265,7 +268,7 @@ if $BUILD_IOS; then
 
     # Generate XCode project
     print_builder "Generating XCode Project"
-    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateXcode -buildTarget ios -outputDir ${OUTPUT_DIR}"
+    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateXcode -buildTarget ios -outputDir \"${OUTPUT_DIR}\""
 
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
@@ -322,7 +325,10 @@ if $UPLOAD;then
 
   # Copy APK
   if $BUILD_ANDROID; then
-      cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}" "server/"
+      cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.apk" "server/"
+      if $GENERATE_OBB; then
+        cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.*.obb" "server/"
+      fi
   fi
 
   # Unmount server and remove tmp folder

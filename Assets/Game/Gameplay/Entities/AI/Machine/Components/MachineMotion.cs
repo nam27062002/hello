@@ -191,11 +191,9 @@ namespace AI {
 					position = hit.point;
 					m_heightFromGround = 0f;
 				}
+			} 
 
-				m_terminalVelocity = Mathf.Sqrt((2f * m_mass * 9.8f) * (Air_Density * 1f * Drag));
-			} else {
-				m_terminalVelocity = 0f;
-			}
+			m_terminalVelocity = Mathf.Sqrt((2f * m_mass * 9.8f) * (Air_Density * 1f * Drag));
 
 			m_rotation = Quaternion.LookRotation(m_direction, m_upVector);
 			m_targetRotation = m_rotation;
@@ -254,6 +252,10 @@ namespace AI {
 
 
 		public override void Update() {
+			if (m_machine.GetSignal(Signals.Type.Latched)) {
+				m_fallingFromY = -99999f;
+			}
+
 			if (m_pilot.IsActionPressed(Pilot.Action.Stop)) {
 				Stop();
 			}
@@ -280,60 +282,64 @@ namespace AI {
 				m_viewControl.Panic(false, m_machine.GetSignal(Signals.Type.Burning));
 			}
 
-			//--------------
-			//ground, gravity and free falls
-			if (m_useGravity) {
-				bool isJumpingAlt = m_pilot.IsActionPressed(Pilot.Action.Jump);
-				if (m_isJumping != isJumpingAlt) {
-					if (isJumpingAlt) {
-						m_fallingFromY = m_machineTransform.position.y;
-					}
-					m_isJumping = isJumpingAlt;
-				}
 
-				m_isFallingDown = !m_isJumping && m_machine.GetSignal(Signals.Type.FallDown);
-				m_viewControl.Falling(m_isFallingDown);
-				m_viewControl.Jumping(m_isJumping);
-
-				GetCollisionNormal();
-				GetHeightFromGround();
-
-				m_isGrounded = m_isColliderOnGround || m_heightFromGround < 0.3f;
-
-				if (m_isJumping) {
-					if (m_jumpVelocityApplied) {
-						if (m_velocity.y < 0f && m_isGrounded) { 
-							m_pilot.ReleaseAction(Pilot.Action.Jump);
-							m_jumpVelocityApplied = false;
-							m_fallingFromY = -99999f;
-						}
-					}
-				} else {
-					m_jumpVelocityApplied = false;
-					if (m_isFallingDown) {				
-						if (m_fallingFromY < m_machineTransform.position.y)
+			if (!m_machine.GetSignal(Signals.Type.LockedInCage)) {
+				//--------------
+				//ground, gravity and free falls
+				if (m_useGravity) {
+					bool isJumpingAlt = m_pilot.IsActionPressed(Pilot.Action.Jump);
+					if (m_isJumping != isJumpingAlt) {
+						if (isJumpingAlt) {
 							m_fallingFromY = m_machineTransform.position.y;
+						}
+						m_isJumping = isJumpingAlt;
+					}
 
-						if (m_isGrounded) {
-							// check if it has to die > 10 units of distance?
-							float dy = Mathf.Abs(m_machineTransform.position.y - m_fallingFromY);
-							m_lastFallDistance = dy;
+					m_isFallingDown = !m_isJumping && m_machine.GetSignal(Signals.Type.FallDown);
+					m_viewControl.Falling(m_isFallingDown);
+					m_viewControl.Jumping(m_isJumping);
 
-							m_machine.SetSignal(Signals.Type.FallDown, false);
+					GetCollisionNormal();
+					GetHeightFromGround();
 
-							if (dy > 10f) {
-								m_machine.SetSignal(Signals.Type.Destroyed, true);
+					m_isGrounded = m_isColliderOnGround || m_heightFromGround < 0.3f;
+
+					if (m_isJumping) {
+						if (m_jumpVelocityApplied) {
+							if (m_velocity.y < 0f && m_isGrounded) { 
+								m_pilot.ReleaseAction(Pilot.Action.Jump);
+								m_jumpVelocityApplied = false;
+								m_fallingFromY = -99999f;
 							}
-							m_fallingFromY = -99999f;
 						}
 					} else {
-						if (!m_isGrounded && m_heightFromGround > 1f) {
-							m_machine.SetSignal(Signals.Type.FallDown, true);
-							m_fallingFromY = m_machineTransform.position.y;
+						m_jumpVelocityApplied = false;
+						if (m_isFallingDown) {				
+							if (m_fallingFromY < m_machineTransform.position.y)
+								m_fallingFromY = m_machineTransform.position.y;
+
+							if (m_isGrounded) {
+								// check if it has to die > 10 units of distance?
+								float dy = Mathf.Abs(m_machineTransform.position.y - m_fallingFromY);
+								m_lastFallDistance = dy;
+
+								m_machine.SetSignal(Signals.Type.FallDown, false);
+
+								if (dy > 10f) {
+									m_machine.SetSignal(Signals.Type.Destroyed, true);
+								}
+								m_fallingFromY = -99999f;
+							}
+						} else {
+							if (!m_isGrounded && m_heightFromGround > 1f) {
+								m_machine.SetSignal(Signals.Type.FallDown, true);
+								m_fallingFromY = m_machineTransform.position.y;
+							}
 						}
 					}
 				}
 			}
+
 			//--------------
 			// machine should face the same direction it is moving
 			UpdateOrientation();
@@ -381,10 +387,6 @@ namespace AI {
 		}
 
 		public override void FixedUpdate() {
-			if (m_machine.GetSignal(Signals.Type.Latched)) {
-				m_fallingFromY = -99999f;
-			}
-
 			Signals.Type test = Signals.Type.Biting | Signals.Type.Latching | Signals.Type.Panic | Signals.Type.Latched | Signals.Type.LockedInCage;
 			if (m_machine.GetSignal(test)) {	
 				return;
@@ -417,8 +419,13 @@ namespace AI {
 						Vector3 forceDrag = -m_velocity.normalized * 0.25f * Air_Density * Drag * 1f * Mathf.Pow(m_velocity.magnitude, 2f) / m_mass;
 						m_acceleration = (forceGravity + forceDrag) * 1.5f;
 
+						float terminalVelocity = m_terminalVelocity;
+						if (m_machine.GetSignal(Signals.Type.InWater)) {
+							terminalVelocity *= 0.5f;
+						}
+
 						m_velocity += m_acceleration * Time.fixedDeltaTime;
-						m_velocity = Vector3.ClampMagnitude(m_velocity, m_terminalVelocity) + m_externalVelocity;
+						m_velocity = Vector3.ClampMagnitude(m_velocity, terminalVelocity) + m_externalVelocity;
 						m_rbody.velocity = m_velocity;
 					}
 				} else {
@@ -433,9 +440,7 @@ namespace AI {
 				m_latchBlending += Time.deltaTime;
 				Vector3 mouthOffset = (position - m_mouth.position);
 				position = Vector3.Lerp(position, m_pilot.target + mouthOffset, m_latchBlending);
-			}
-			else
-			{
+			} else {
 				m_latchBlending = 0;
 			}
 
