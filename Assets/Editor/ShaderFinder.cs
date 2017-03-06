@@ -271,13 +271,19 @@ public class ShaderFinder : EditorWindow
     {
         int listSize = EditorPrefs.GetInt(m_keyListSize + slot, 0);
 
-        list = new Shader[listSize];
+        //        list = new Shader[listSize];
+        List<Shader> localList = new List<Shader>();
 
         for (int c = 0; c < listSize; c++)
         {
             string shaderName = EditorPrefs.GetString(m_keyListElem + slot + c, "");
-            list[c] = Shader.Find(shaderName);
+            Shader tempShader = Shader.Find(shaderName);
+            if (tempShader != null)
+            {
+                localList.Add(tempShader);
+            }
         }
+        list = localList.ToArray();
 
     }
 
@@ -341,6 +347,11 @@ public class ShaderFinder : EditorWindow
             Material[] materials = rend.sharedMaterials;
             foreach (Material mat in materials)
             {
+                if (mat == null)
+                {
+                    Debug.Log("Object: " + rend.gameObject + " has a null Material!");
+                    continue;
+                }
                 bool result = checkForShadersInMaterial(mat) ^ kindOfSearch;
                 if (result)
                 {
