@@ -10,10 +10,10 @@ GameObject:
   - component: {fileID: 465982}
   - component: {fileID: 11497858}
   - component: {fileID: 11466406}
-  - component: {fileID: 11440164}
   - component: {fileID: 11479988}
+  - component: {fileID: 11440164}
   m_Layer: 0
-  m_Name: SP_Fish_generic_03
+  m_Name: SP_Crocodile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,14 +43,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefabStr: Water/PF_Fish_Generic_03
+  m_entityPrefabStr: Water/PF_Crocodile
   m_quantity:
-    min: 12
-    max: 12
+    min: 1
+    max: 1
+  m_speedFactorRange:
+    min: 1
+    max: 1
   m_scale:
-    min: 0.8
-    max: 1.2
-  m_rails: 4
+    min: 2
+    max: 2
+  m_rails: 3
+  m_hasGroupBonus: 0
   m_minTier: 0
   m_activationChance: 100
   m_activationTriggers: []
@@ -63,6 +67,7 @@ MonoBehaviour:
     min: 1
     max: 2
   m_maxSpawns: 0
+  m_checkCurrents: 0
 --- !u!114 &11466406
 MonoBehaviour:
   m_ObjectHideFlags: 1

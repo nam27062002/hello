@@ -43,6 +43,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	[SeparatorAttribute("Animation blending")]
 	[SerializeField] private bool m_hasNavigationLayer = false;
+	public bool hasNavigationLayer { get { return m_hasNavigationLayer; } }
 	[SerializeField] private bool m_hasRotationLayer = false;
 
 	[SeparatorAttribute("Special Actions Animations")] // map a special action from the pilot to a specific animation.
