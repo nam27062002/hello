@@ -10,6 +10,7 @@ GameObject:
   - component: {fileID: 495994}
   - component: {fileID: 19851978}
   - component: {fileID: 19971804}
+  - component: {fileID: 114993563671300622}
   m_Layer: 0
   m_Name: PS_Bubbles_Loop
   m_TagString: Untagged
@@ -24,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 105258}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 8.621536, y: -1.3044724, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -85,7 +86,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1221007120
+  randomSeed: 306416143
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -2555,8 +2556,8 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: bee837ce5b4f8e64b9017c95729f6254, type: 2}
-  - {fileID: 0}
+  - {fileID: 2100000, guid: bbaa16a330a135b48965a68b8df78279, type: 2}
+  - {fileID: 2100000, guid: bbaa16a330a135b48965a68b8df78279, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2602,3 +2603,16 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 105258}
   m_IsPrefabParent: 1
+--- !u!114 &114993563671300622
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 105258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scale: 1
+  m_useDragonSize: 1
