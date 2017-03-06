@@ -160,6 +160,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // Test toggling particles visibility
             //Debug_TestToggleParticlesVisibility();
             // ---------------------------        
+
+            // ---------------------------
+            // Test toggling particles culling
+            Debug_TestToggleParticlesCulling();
+            // ---------------------------        
         }
 
         if (NeedsToRestartFlow)
@@ -562,6 +567,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         Debug_ParticlesVisibility = !Debug_ParticlesVisibility;
     }   
+
+    private bool Debug_PlayParticlesCulling { get; set; }    
+
+    private void Debug_TestToggleParticlesCulling()
+    {
+        Debug_PlayParticlesCulling = !Debug_PlayParticlesCulling;
+        CustomParticlesCulling.Manager_SimulateForAll(Debug_PlayParticlesCulling, !Debug_PlayParticlesCulling);        
+    }
     #endregion
 }
 
