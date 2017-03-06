@@ -32,7 +32,7 @@ GameObject:
   - component: {fileID: 136000014076394934}
   - component: {fileID: 54000010612556682}
   m_Layer: 23
-  m_Name: PF_Tropical_fish
+  m_Name: PF_TropicalFish
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -161,6 +161,10 @@ MonoBehaviour:
   m_corpseAsset: 
   m_onEatenParticles:
   - name: PS_Blood_Explosion_Fish_Small
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
@@ -297,7 +301,6 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 1
-    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 170
     m_faceDirection: 1
