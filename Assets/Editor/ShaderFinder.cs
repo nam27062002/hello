@@ -12,6 +12,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using System.Collections.Generic;
 using System.IO;
+using SimpleJSON;
 //using System;
 
 
@@ -174,6 +175,17 @@ public class ShaderFinder : EditorWindow
             DeleteShaderList(m_saveListSlot.ToString());
         }
 
+        if (GUILayout.Button("Import list"))
+        {
+            importShaderList(out m_shaderList);
+        }
+
+        if (GUILayout.Button("Export list"))
+        {
+            exportShaderList(ref m_shaderList);
+        }
+
+
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
 
@@ -265,6 +277,58 @@ public class ShaderFinder : EditorWindow
         }
 
         m_shaderFinder.ApplyModifiedProperties();
+    }
+
+
+    void importShaderList(out Shader[] list)
+    {
+        List<Shader> tempList = new List<Shader>();
+
+        string path = EditorUtility.OpenFilePanel("Shaderlist", Directory.GetCurrentDirectory() + "\\Assets\\Editor\\ShaderLists", "shaderList");
+        if (path.Length != 0)
+        {
+//            JSONNode node = JSONNode.LoadFromFile(path);
+            JSONNode node = JSONNode.LoadFromFile(path);
+            JSONArray array = node["ShaderList"].AsArray;
+            for (int c = 0; c < array.Count; c++)
+            {
+                Shader tempShader = Shader.Find(array[c]);
+                if (tempShader != null)
+                {
+                    tempList.Add(tempShader);
+                }
+            }
+        }
+
+        list = tempList.ToArray();
+    }
+
+    void exportShaderList(ref Shader[] list)
+    {
+        string path = EditorUtility.SaveFilePanel("Shaderlist", Directory.GetCurrentDirectory() + "\\Assets\\Editor\\ShaderLists", "default", "shaderList");
+        if (path.Length != 0)
+        {
+            JSONNode jsonData = new JSONClass();
+
+            SimpleJSON.JSONArray shaderList = new SimpleJSON.JSONArray();
+            foreach (Shader shader in list)
+            {
+                shaderList.Add(shader.name);
+            }
+
+            jsonData.Add("ShaderList", shaderList);
+
+            jsonData.SaveToFile(path);
+
+/*
+            node.Add(m_keyListSize, list.Length.ToString());
+            for (int c = 0; c < list.Length; c++)
+            {
+                node.Add(m_keyListElem)
+            }
+*/
+        }
+
     }
 
     void LoadShaderList(string slot, out Shader[] list)
