@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Halo_D
-  m_Shader: {fileID: 4800000, guid: 8bbb9a5a1eb1fd34782fcbd0eee9d342, type: 3}
+  m_Shader: {fileID: 4800000, guid: 752de70dd3618402daea83508ee5cdd5, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -104,8 +104,14 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
+        name: _Shininess
+      second: 0.078125
+    - first:
         name: _SmoothnessTextureChannel
       second: 0
+    - first:
+        name: _SpecIntensity
+      second: 0.5
     - first:
         name: _SpecularHighlights
       second: 1
@@ -120,8 +126,17 @@ Material:
       second: 1
     m_Colors:
     - first:
+        name: _AmbientColor
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
         name: _Color
       second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _LightColor
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _LightDir
+      second: {r: 1, g: 1, b: 1, a: 1}
