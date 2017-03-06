@@ -38,9 +38,6 @@ public class DragControlEditor : Editor {
 	private void OnEnable() {
 		// Get target object
 		m_targetDragControl = target as DragControl;
-
-		// We want to repaint the inspector constantly so value gets updated
-		EditorApplication.update += Repaint;
 	}
 
 	/// <summary>
@@ -49,9 +46,6 @@ public class DragControlEditor : Editor {
 	private void OnDisable() {
 		// Clear target object
 		m_targetDragControl = null;
-
-		// We want to repaint the inspector constantly so value gets updated
-		EditorApplication.update -= Repaint;
 	}
 
 	/// <summary>
@@ -155,5 +149,13 @@ public class DragControlEditor : Editor {
 	/// </summary>
 	public void OnSceneGUI() {
 		// Scene-related stuff
+	}
+
+	/// <summary>
+	/// This editor requires constant repaint, so override check function.
+	/// </summary>
+	/// <returns><c>true</c>, if constant repaint is required, <c>false</c> otherwise.</returns>
+	public override bool RequiresConstantRepaint() {
+		return true;
 	}
 }
