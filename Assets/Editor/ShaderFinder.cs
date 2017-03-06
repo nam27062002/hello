@@ -12,6 +12,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using System.Collections.Generic;
 using System.IO;
+using SimpleJSON;
 //using System;
 
 
@@ -174,11 +175,64 @@ public class ShaderFinder : EditorWindow
             DeleteShaderList(m_saveListSlot.ToString());
         }
 
+        if (GUILayout.Button("Import list"))
+        {
+            importShaderList(out m_shaderList);
+        }
+
+        if (GUILayout.Button("Export list"))
+        {
+            exportShaderList(ref m_shaderList);
+        }
+
+
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.BeginVertical(EditorStyles.textField);
-        EditorGUILayout.PropertyField(m_propertyShaderList, new GUIContent("Shader list to find:"), true);
+        if (EditorGUILayout.PropertyField(m_propertyShaderList, new GUIContent("Shader list to find:")))
+        {
+            for (int c = 0; c < m_propertyShaderList.arraySize; c++)
+            {
+                EditorGUILayout.BeginHorizontal();
+                SerializedProperty elementProperty = m_propertyShaderList.GetArrayElementAtIndex(c);
+                EditorGUILayout.PropertyField(elementProperty, new GUIContent(""), true);
+
+                if (c < 1)
+                {
+                    GUI.enabled = false;
+                }
+                if (GUILayout.Button("up", GUILayout.Width(50.0f)))
+                {
+                    m_propertyShaderList.MoveArrayElement(c, c - 1);
+                }
+                GUI.enabled = true;
+
+                if (c >= m_propertyShaderList.arraySize - 1)
+                {
+                    GUI.enabled = false;
+                }
+
+                if (GUILayout.Button("down", GUILayout.Width(50.0f)))
+                {
+                    m_propertyShaderList.MoveArrayElement(c, c + 1);
+                }
+                GUI.enabled = true;
+
+                if (GUILayout.Button("del", GUILayout.Width(50.0f)))
+                {
+                    m_propertyShaderList.DeleteArrayElementAtIndex(c);
+                }
+
+
+                EditorGUILayout.EndHorizontal();
+
+            }
+            if (GUILayout.Button("Add shader to list"))
+            {
+                m_propertyShaderList.arraySize = m_propertyShaderList.arraySize + 1;
+            }
+        }
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.BeginVertical(EditorStyles.textField);
@@ -265,6 +319,58 @@ public class ShaderFinder : EditorWindow
         }
 
         m_shaderFinder.ApplyModifiedProperties();
+    }
+
+
+    void importShaderList(out Shader[] list)
+    {
+        List<Shader> tempList = new List<Shader>();
+
+        string path = EditorUtility.OpenFilePanel("Shaderlist", Directory.GetCurrentDirectory() + "\\Assets\\Editor\\ShaderLists", "shaderList");
+        if (path.Length != 0)
+        {
+//            JSONNode node = JSONNode.LoadFromFile(path);
+            JSONNode node = JSONNode.LoadFromFile(path);
+            JSONArray array = node["ShaderList"].AsArray;
+            for (int c = 0; c < array.Count; c++)
+            {
+                Shader tempShader = Shader.Find(array[c]);
+                if (tempShader != null)
+                {
+                    tempList.Add(tempShader);
+                }
+            }
+        }
+
+        list = tempList.ToArray();
+    }
+
+    void exportShaderList(ref Shader[] list)
+    {
+        string path = EditorUtility.SaveFilePanel("Shaderlist", Directory.GetCurrentDirectory() + "\\Assets\\Editor\\ShaderLists", "default", "shaderList");
+        if (path.Length != 0)
+        {
+            JSONNode jsonData = new JSONClass();
+
+            SimpleJSON.JSONArray shaderList = new SimpleJSON.JSONArray();
+            foreach (Shader shader in list)
+            {
+                shaderList.Add(shader.name);
+            }
+
+            jsonData.Add("ShaderList", shaderList);
+
+            jsonData.SaveToFile(path);
+
+/*
+            node.Add(m_keyListSize, list.Length.ToString());
+            for (int c = 0; c < list.Length; c++)
+            {
+                node.Add(m_keyListElem)
+            }
+*/
+        }
+
     }
 
     void LoadShaderList(string slot, out Shader[] list)
