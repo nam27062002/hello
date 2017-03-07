@@ -37,8 +37,15 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	[SerializeField] private Transform m_target = null;
-	[SerializeField] private DragControl m_dragControl = null;
+	[SerializeField] private GameObject m_spinner = null;
+	[SerializeField] private UI3DScaler m_container = null;
+
+	[FileListAttribute("Resources/UI/Menu/Dragons", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
+	[SerializeField] private string[] m_resourcesList = new string[0];
+
+	private ResourceRequest m_loadingRequest = null;
+	private GameObject m_instance = null;
+	private int m_resIdx = 0;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -47,15 +54,18 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		m_dragControl.value = new Vector2(-m_target.localRotation.eulerAngles.y, m_target.localRotation.eulerAngles.z);
-		m_dragControl.OnValueChanged.AddListener(OnDragValueChanged);
+		
 	}
 
 	/// <summary>
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		
+		// Hide spinner
+		if(m_spinner) m_spinner.SetActive(false);
+
+		// Load first dragon
+		OnTestButton();
 	}
 
 	/// <summary>
@@ -69,33 +79,63 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Called once per frame.
 	/// </summary>
 	private void Update() {
-		
+		// If we're loading, wait for the loading process to end
+		if(m_loadingRequest != null) {
+			if(m_loadingRequest.isDone) {
+				// Done! Instantiate loaded asset
+				m_instance = GameObject.Instantiate<GameObject>((GameObject)m_loadingRequest.asset, m_container.transform, false);
+				if(m_instance != null) {
+					m_instance.SetLayerRecursively(m_container.gameObject.layer);
+					m_container.Refresh(true, true);
+				}
+
+				// Hide spinner
+				m_spinner.SetActive(false);
+
+				// Drop loading request
+				m_loadingRequest = null;
+			}
+		}
 	}
 
 	/// <summary>
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
+		// Ignore if not playing or not enabled
+		if(!Application.isPlaying || !isActiveAndEnabled) {
+			Debug.LogError("Only while playing!"); return;
+		}
 
+		// If we have something loaded, destroy it
+		if(m_instance != null) {
+			GameObject.Destroy(m_instance);
+			m_instance = null;
+		}
+
+		// Ignore if resources list is empty
+		if(m_resourcesList.Length <= 0) return;
+
+		// We don't care if we're already loading another asset, it will be ignored once done loading
+		string path = m_resourcesList[m_resIdx];
+		m_resIdx = (m_resIdx + 1) % m_resourcesList.Length;
+		m_loadingRequest = Resources.LoadAsync<GameObject>(path);
+
+		// Show spinner
+		if(m_loadingRequest != null && m_spinner != null) {
+			m_spinner.SetActive(true);
+		}
 	}
 
 	/// <summary>
 	/// 
 	/// </summary>
 	private void OnDrawGizmos() {
-		
+
 	}
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// The drag control's value has changed.
-	/// </summary>
-	/// <param name="_control">Control that triggered the event.</param>
-	private void OnDragValueChanged(DragControl _control) {
-		//Debug.Log(_control.dragging + " | " + _control.value.ToString() + " | " + _control.velocity);
-		//m_target.Rotate(0f, -_control.offset.x, _control.offset.y, Space.Self);
-		m_target.localRotation = Quaternion.Euler(0f, -_control.value.x, _control.value.y);
-	}
+
 }
