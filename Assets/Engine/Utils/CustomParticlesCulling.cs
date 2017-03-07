@@ -34,6 +34,16 @@ public class CustomParticlesCulling : MonoBehaviour
             Manager_Items = new List<CustomParticlesCulling>();
         }
 
+        if (Manager_Items.Count >= MANAGER_MAX_ITEMS)
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                Debug.LogError("Too many particle systems to cull");
+            }
+
+            return;
+        }
+
         item.CullingIndex = Manager_Items.Count;
         Manager_Items.Add(item);
 
@@ -41,7 +51,7 @@ public class CustomParticlesCulling : MonoBehaviour
         {
             Manager_BoundingSpheres = new BoundingSphere[MANAGER_MAX_ITEMS];
         }
-
+        
         Manager_BoundingSpheres[Manager_Items.Count - 1] = item.BoundingSphere;
 
         if (Manager_CullingGroup == null)
