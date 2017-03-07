@@ -26,9 +26,11 @@ public class ProfilerToolController : MonoBehaviour
                 spawner.m_quantity.min = ProfilerSettingsManager.Spawner_NumEntities;
                 spawner.m_quantity.max = ProfilerSettingsManager.Spawner_NumEntities;
                 string prefabName = ProfilerSettingsManager.Spawner_Prefab;
-                if (!string.IsNullOrEmpty(prefabName))
-                {
-                    spawner.m_entityPrefabStr = prefabName;
+                if (!string.IsNullOrEmpty(prefabName)) 
+				{
+					spawner.m_entityPrefabList = new Spawner.EntityPrefab[1];
+					spawner.m_entityPrefabList[0].name = prefabName;
+					spawner.m_entityPrefabList[0].chance = 100;
                 }
             }
         }	    
