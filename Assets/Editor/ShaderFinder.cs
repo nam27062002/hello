@@ -202,7 +202,7 @@ public class ShaderFinder : EditorWindow
                 {
                     GUI.enabled = false;
                 }
-                if (GUILayout.Button("up", GUILayout.Width(50.0f)))
+                if (GUILayout.Button("/\\", GUILayout.Width(50.0f)))
                 {
                     m_propertyShaderList.MoveArrayElement(c, c - 1);
                 }
@@ -213,13 +213,13 @@ public class ShaderFinder : EditorWindow
                     GUI.enabled = false;
                 }
 
-                if (GUILayout.Button("down", GUILayout.Width(50.0f)))
+                if (GUILayout.Button("\\/", GUILayout.Width(50.0f)))
                 {
                     m_propertyShaderList.MoveArrayElement(c, c + 1);
                 }
                 GUI.enabled = true;
 
-                if (GUILayout.Button("del", GUILayout.Width(50.0f)))
+                if (GUILayout.Button("-", GUILayout.Width(50.0f)))
                 {
                     m_propertyShaderList.DeleteArrayElementAtIndex(c);
                 }
