@@ -132,5 +132,7 @@ namespace AI {
 		}
 
 		public void SetVelocity(Vector3 _v) {}
+
+		public virtual void LogicUpdate(){}
 	}
 }

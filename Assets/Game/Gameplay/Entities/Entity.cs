@@ -80,7 +80,8 @@ public class Entity : IEntity {
 	private static float m_powerUpXpMultiplier = 0;	// XP power up multiplier
 
 	/************/
-	void Awake() {
+	protected virtual void Awake() {
+		base.Awake();
 		// [AOC] Obtain the definition and initialize important data
 		InitFromDef();
 		m_bounds = GetComponentInChildren<CircleArea2D>();
@@ -249,6 +250,7 @@ public class Entity : IEntity {
     // Update is called once per frame
     public override void LogicUpdate() { 
     //void Update () {
+    	base.LogicUpdate();
         if (m_spawned) {
             m_checkOnScreenTimer -= Time.deltaTime;
             if (m_checkOnScreenTimer <= 0) {

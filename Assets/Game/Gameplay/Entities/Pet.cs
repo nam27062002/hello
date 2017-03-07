@@ -13,7 +13,8 @@ public class Pet : IEntity {
 	public string sku { get { return m_sku; } }
 
 
-	void Awake() {
+	protected virtual void Awake() {
+		base.Awake();
 		InitFromDef();
 	}
 
