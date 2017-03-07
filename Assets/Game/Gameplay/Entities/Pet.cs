@@ -24,6 +24,11 @@ public class Pet : IEntity {
 		m_maxHealth = 1f;
 	}
 
+	void Update()
+	{
+		base.LogicUpdate();
+	}
+
 	override public bool CanBeSmashed()
 	{
 		return false;
