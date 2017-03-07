@@ -301,7 +301,7 @@ namespace AI {
 		//-----------------------------------------------------------
 
 		// Update is called once per frame
-		protected virtual void Update() {
+		public virtual void LogicUpdate() {
 			if (!IsDead()) {
 				if (m_willPlaySpawnSound) {
 					if (m_entity.isOnScreen) {
