@@ -67,11 +67,11 @@ namespace AI {
 		private Dictionary<Signals.Type, string> 	m_onDisableTrigger;
 		private Dictionary<Signals.Type, object[]>  m_params;
 
-		private Machine m_machine;
+		private IMachine m_machine;
 
 
 		//---------------------------------
-		public Signals(Machine _machine) {
+		public Signals(IMachine _machine) {
 			m_value 			= Type.None;
 			m_onEnableTrigger 	= new Dictionary<Signals.Type, string>();
 			m_onDisableTrigger 	= new Dictionary<Signals.Type, string>();
