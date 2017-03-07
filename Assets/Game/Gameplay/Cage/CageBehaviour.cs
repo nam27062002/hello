@@ -60,7 +60,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	}
 
 	// Update is called once per frame
-	private void Update() {
+	public void LogicUpdate() {
 		m_waitTimer -= Time.deltaTime;
 	}
 

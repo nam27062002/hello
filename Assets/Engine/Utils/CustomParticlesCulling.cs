@@ -5,17 +5,26 @@ public class CustomParticlesCulling : MonoBehaviour
 {
     #region manager
     // This region is responsible for managing all CustomParticlesCulling instances which will be updated just when needed
-    
+
+    // Max amount of items that the manager can manage
+    private const int MANAGER_MAX_ITEMS = 200;
+
+    private static BoundingSphere[] Manager_BoundingSpheres { get; set; }   
+
     private static CullingGroup Manager_CullingGroup;
 
-    private static List<CustomParticlesCulling> Manager_Items { get; set; }
+    private static List<CustomParticlesCulling> Manager_Items { get; set; }        
 
     public static void Manager_OnDestroy()
     {
         if (Manager_CullingGroup != null)
         {
             Manager_CullingGroup.Dispose();
+            Manager_CullingGroup = null;
         }
+
+        Manager_Items = null;
+        Manager_BoundingSpheres = null;
     }
 
     private static void Manager_AddItem(CustomParticlesCulling item)
@@ -25,95 +34,97 @@ public class CustomParticlesCulling : MonoBehaviour
             Manager_Items = new List<CustomParticlesCulling>();
         }
 
-        Manager_Items.Add(item);       
+        item.CullingIndex = Manager_Items.Count;
+        Manager_Items.Add(item);
+
+        if (Manager_BoundingSpheres == null)
+        {
+            Manager_BoundingSpheres = new BoundingSphere[MANAGER_MAX_ITEMS];
+        }
+
+        Manager_BoundingSpheres[Manager_Items.Count - 1] = item.BoundingSphere;
+
+        if (Manager_CullingGroup == null)
+        {
+            Manager_CullingGroup = new CullingGroup();
+            Manager_CullingGroup.targetCamera = Camera.main;
+            Manager_CullingGroup.SetBoundingSpheres(Manager_BoundingSpheres);            
+            Manager_CullingGroup.onStateChanged += Manager_OnStateChanged;
+        }
+
+        Manager_CullingGroup.SetBoundingSphereCount(Manager_Items.Count);
+
+        if (!Manager_IsVisible(item.CullingIndex) && !item.IsPaused)
+        {
+            item.Pause();
+        }
     }
 
     private static void Manager_RemoveItem(CustomParticlesCulling item)
     {
         if (Manager_Items != null && Manager_Items.Contains(item))
         {
+            int index = Manager_Items.IndexOf(item);
             Manager_Items.Remove(item);
+
+            int end = Manager_Items.Count;
+            for (int i = index; i < end; i++)
+            {
+                Manager_Items[i].CullingIndex = i;
+                Manager_BoundingSpheres[i] = Manager_BoundingSpheres[i + 1];
+            }
+
+            if (Manager_CullingGroup != null)
+            {
+                Manager_CullingGroup.SetBoundingSphereCount(Manager_Items.Count);
+            }
         }
     }    
 
-    private static void Manager_UpdateItem(CustomParticlesCulling item, EEvent e)
+    private static void Manager_UpdateItem(CustomParticlesCulling item, bool isVisible)
     {
-        if (item != null && e != EEvent.None)
+        if (item != null)
         {
-            switch (e)
+            if (isVisible && item.IsPaused)
             {
-                case EEvent.HasBecomeVisible:
-                    item.UpdateState(true, false);                   
-                    break;
-
-                case EEvent.HasBecomeInvisible:
-                    item.UpdateState(false, true);                    
-                    break;
+                item.Resume();
             }
+            else if (!isVisible && !item.IsPaused)
+            {
+                item.Pause();
+            }            
         }
     }
 
     private static void Manager_OnStateChanged(CullingGroupEvent evt)
     {
         if (Manager_Items != null && evt.index < Manager_Items.Count)
-        {
-            EEvent newEvent = EEvent.None;
+        {                       
             if (evt.hasBecomeVisible)
             {
-                newEvent = EEvent.HasBecomeVisible;
+                Manager_UpdateItem(Manager_Items[evt.index], true);
             }
             else if (evt.hasBecomeInvisible)
             {
-                newEvent = EEvent.HasBecomeInvisible;
-            }
-
-            if (newEvent != EEvent.None)
-            {                
-                Manager_UpdateItem(Manager_Items[evt.index], newEvent);                                
-            }
+                Manager_UpdateItem(Manager_Items[evt.index], false);
+            }           
         }
     }
 
     public static void Manager_NotifyGameStarted()
     {
-        int count = 0;
-        if (Manager_Items != null && Manager_Items.Count > 0)
-        {
-            count = Manager_Items.Count;
-        }
-
-        // Checks if it hasn't been initialized yet
-        if (Manager_CullingGroup == null)
-        {
-            if (count > 0)
-            {
-                Manager_CullingGroup = new CullingGroup();
-                Manager_CullingGroup.targetCamera = Camera.main;
-                
-                BoundingSphere[] bSpheres = new BoundingSphere[count];
-                for (int i = 0; i < count; i++)
-                {
-                    Manager_Items[i].CullingIndex = i;
-                    bSpheres[i] = new BoundingSphere(Manager_Items[i].m_cullingCenter.position, Manager_Items[i].m_cullingRadius);
-                }
-
-                Manager_CullingGroup.SetBoundingSpheres(bSpheres);
-                Manager_CullingGroup.SetBoundingSphereCount(count);
-                Manager_CullingGroup.onStateChanged += Manager_OnStateChanged;
-            }
-        }
-        
+        /*        
         for (int i = 0; i < count; i++)
         {
             if (Manager_CullingGroup.IsVisible(i))
             {                
-                Manager_UpdateItem(Manager_Items[i], EEvent.HasBecomeVisible);
+                Manager_UpdateItem(Manager_Items[i], true);
             }
             else
             {                
-                Manager_UpdateItem(Manager_Items[i], EEvent.HasBecomeInvisible);
+                Manager_UpdateItem(Manager_Items[i], false);
             }
-        }
+        }*/
     }  
 
     public static void Manager_SimulateForAll(bool hasBecomeVisible, bool hasBecomeInvisible)
@@ -137,7 +148,7 @@ public class CustomParticlesCulling : MonoBehaviour
         }
 
         return returnValue;
-    }    
+    }           
     #endregion
 
     public Transform m_cullingCenter;
@@ -147,16 +158,11 @@ public class CustomParticlesCulling : MonoBehaviour
     /// Parent of all particle systems. If null then this.gameObject is used instead
     /// </summary>
     public GameObject m_parent;
-    private List<ParticleSystem> m_particleSystems;
-
-    private enum EEvent
-    {
-        None,
-        HasBecomeVisible,
-        HasBecomeInvisible
-    };       
+    private List<ParticleSystem> m_particleSystems;    
 
     public int CullingIndex { get; set; }
+
+    private BoundingSphere BoundingSphere { get; set; }
 
     void Start()
     {
@@ -183,10 +189,57 @@ public class CustomParticlesCulling : MonoBehaviour
             {
                 m_particleSystems.Add(systems[i]);               
             }
-                        
+
+            BoundingSphere = new BoundingSphere(m_cullingCenter.position, m_cullingRadius);
+
             Manager_AddItem(this);
         }         
-    }         
+    }
+
+    public bool IsPaused { get; set; }
+
+    public bool IsVisible()
+    {
+        return Manager_IsVisible(CullingIndex);
+    }
+
+    public void Pause()
+    {
+        if (!IsPaused)
+        {
+            IsPaused = true;
+
+            int count = m_particleSystems.Count;
+            for (int i = 0; i < count; i++)
+            {
+                // Checks if the particle system is currently active because the inactive ones were registered too just in case 
+                // they are enabled after the game started
+                if (m_particleSystems[i] != null && m_particleSystems[i].gameObject.activeSelf)
+                {
+                    m_particleSystems[i].Pause();                    
+                }
+            }
+        }
+    }
+    
+    public void Resume()
+    {
+        if (IsPaused)
+        {
+            IsPaused = false;
+
+            int count = m_particleSystems.Count;
+            for (int i = 0; i < count; i++)
+            {
+                // Checks if the particle system is currently active because the inactive ones were registered too just in case 
+                // they are enabled after the game started
+                if (m_particleSystems[i] != null && m_particleSystems[i].gameObject.activeSelf)
+                {
+                    m_particleSystems[i].Play();
+                }
+            }
+        }
+    }
 
     public void UpdateState(bool hasBecomeVisible, bool hasBecomeInvisible)
     {
@@ -215,12 +268,7 @@ public class CustomParticlesCulling : MonoBehaviour
                 }
             }
         }
-    }
-
-    public bool IsVisible()
-    {
-        return Manager_IsVisible(CullingIndex);
-    }
+    }    
 
     void OnDestroy()
     {       

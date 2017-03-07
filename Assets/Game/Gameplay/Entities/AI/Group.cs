@@ -27,13 +27,14 @@ namespace AI {
 			m_leader = -1; // there is no one in charge of this flock
 			m_members = new List<IMachine>();     
 
-			m_offsetIndex = new int[100];
-			for (int i = 0; i < 100; i++) {
+			int size = 100;
+			m_offsetIndex = new int[size];
+			for (int i = 0; i < size; i++) {
 				m_offsetIndex[i] = i;
 			}
 
 			if (m_offsetsSunflower == null) {
-				CreateOffsets(100);
+				CreateOffsets(size);
 			}
 
 			m_formation = Formation.SunFlower;

@@ -71,7 +71,7 @@ namespace AI {
 		//
 
 		// Update is called once per frame
-		void Update() {
+		public virtual void LogicUpdate() {
 			if (m_enableMotion) m_motion.Update();
 		}
 

@@ -15,8 +15,8 @@ namespace AI {
 			}
 		}
 
-		protected override void Update() {
-			base.Update();
+		public override void LogicUpdate() {
+			base.LogicUpdate();
 
 			// m_impulse = Vector3.zero;
 
