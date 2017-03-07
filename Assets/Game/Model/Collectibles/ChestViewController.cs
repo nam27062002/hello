@@ -46,7 +46,9 @@ public class ChestViewController : MonoBehaviour {
 	// Internal
 	private Animator m_animator = null;
 	private GameObject[] m_rewardViews = null;
-	
+    
+    public CustomParticlesCulling CustomParticlesCulling { get; set; }    
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -144,6 +146,12 @@ public class ChestViewController : MonoBehaviour {
 		if(_active) {
 			_fx.gameObject.SetActive(true);
 			_fx.Play();
+
+            // If it has a CustomParticlesCulling assigned then it checks if it's invisible, if so then it has to pause the effect
+            if (CustomParticlesCulling != null && !CustomParticlesCulling.IsVisible())
+            {
+                _fx.Pause();
+            }
 		} else {
 			_fx.Stop();
 			_fx.gameObject.SetActive(false);

@@ -522,7 +522,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: starling_01
+  m_sku: Starling_Flock
   m_dieOutsideFrustum: 1
 --- !u!114 &11439036
 MonoBehaviour:
@@ -557,7 +557,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_serializedJson: '[{"speed":7,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"changeLeaderTime":10,"separation":1.3,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"boostSpeed":10,"panicSpeed":12,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":7,"catchUpSpeed":7,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
-  m_databaseKey: PF_Starling
+  m_databaseKey: PF_Starling_Flock
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 7
   m_avoidCollisions: 1
@@ -585,12 +585,12 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles:
-  - name: PF_feathers_3D_noblood_blue
+  m_onEatenParticle:
+    name: PF_feathers_3D_noblood_blue
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenFrozenParticle:
-    name: 
+    name: PF_feathers_3D_noblood_icy
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
