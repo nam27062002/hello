@@ -1198,7 +1198,10 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles: []
+  m_onEatenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onEatenFrozenParticle:
     name: 
     path: 
@@ -1397,13 +1400,13 @@ MonoBehaviour:
     m_chance: 1
   - m_spawnPrefab: Air/PF_OwlBig
     m_chance: 1
-  - m_spawnPrefab: Air/PF_Owl
+  - m_spawnPrefab: Air/PF_OwlSmall
     m_chance: 1
   - m_spawnPrefab: Air/PF_Witch
     m_chance: 1
-  - m_spawnPrefab: Air/PF_EnemyBaby
+  - m_spawnPrefab: Air/PF_EnemyTier0
     m_chance: 1
-  - m_spawnPrefab: Air/PF_MineSmall_01
+  - m_spawnPrefab: Air/PF_MineSmall
     m_chance: 1
   - m_spawnPrefab: Air/PF_MineMedium
     m_chance: 1
@@ -1419,9 +1422,9 @@ MonoBehaviour:
     m_chance: 1
   - m_spawnPrefab: Surface/PF_BakerWoman
     m_chance: 1
-  - m_spawnPrefab: Surface/PF_SoldierStatic_01
+  - m_spawnPrefab: Surface/PF_Soldier01_Static
     m_chance: 1
-  - m_spawnPrefab: Surface/PF_Villager_01
+  - m_spawnPrefab: Surface/PF_Villager01
     m_chance: 1
   - m_spawnPrefab: Junk/PF_GoodJunkBottle
     m_chance: 1
