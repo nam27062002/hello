@@ -100,6 +100,7 @@ public class DragonEquip : MonoBehaviour {
 		if ( def == null)
 		{
 			def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, m_dragonSku + "_0");	
+			if(def == null) return;
 		}
 		SetSkin( def.Get("skin") );
 
