@@ -96,7 +96,7 @@ public class PrisonerSpawner : AbstractSpawner {
 		}
     }
 
-    protected override void OnMachineSpawned(AI.Machine machine) {
+	protected override void OnMachineSpawned(AI.IMachine machine) {
         machine.LockInCage();
     }
 

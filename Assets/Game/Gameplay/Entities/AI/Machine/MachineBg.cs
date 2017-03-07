@@ -48,7 +48,7 @@ namespace AI {
 			m_motion.Init();
 		}
 
-		public void OnTrigger(string _trigger) {
+		public void OnTrigger(string _trigger, object[] _param = null) {
 			if (m_pilot != null) {
 				m_pilot.OnTrigger(_trigger);
 			}
@@ -71,7 +71,7 @@ namespace AI {
 		//
 
 		// Update is called once per frame
-		void Update() {
+		public virtual void LogicUpdate() {
 			if (m_enableMotion) m_motion.Update();
 		}
 

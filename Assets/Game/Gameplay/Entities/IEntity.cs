@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
@@ -36,6 +37,18 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 	public virtual int score { get { return 0; } }
 
+	protected List<ISpawnable> m_otherSpawners = new List<ISpawnable>();
+
+	protected virtual void Awake() {
+		ISpawnable[] spawners = GetComponents<ISpawnable>();
+		ISpawnable thisSpawn = this as ISpawnable;
+		for( int i = 0; i<spawners.Length; i++ )
+		{
+			if ( spawners[i] != thisSpawn )
+				m_otherSpawners.Add( spawners[i] );
+				
+		}
+	}
 	public virtual void Spawn(ISpawner _spawner) {
 		m_health = m_maxHealth;
 
@@ -55,7 +68,13 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		gameObject.SetActive(false);
 	}
 
-    public virtual void LogicUpdate() {}
+    public virtual void LogicUpdate() 
+    {
+    	for( int i = 0; i<m_otherSpawners.Count; i++ )
+    	{
+			m_otherSpawners[i].LogicUpdate();
+    	}
+    }
     public virtual bool CanDieOutsideFrustrum() { return true; }
 
 	public virtual CircleArea2D circleArea { get{ return null; } }

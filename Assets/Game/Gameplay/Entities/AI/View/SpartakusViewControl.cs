@@ -31,8 +31,8 @@ public class SpartakusViewControl : ViewControl {
 		}
 	}
 
-	protected override void Update() {
-		base.Update();
+	public override void LogicUpdate() {
+		base.LogicUpdate();
 
 		if (m_timer > 0f) {
 			m_timer -= Time.deltaTime;
