@@ -20,7 +20,7 @@ public class PetDogSpawner : AbstractSpawner {
 	[SerializeField] private LookAtVector m_lookAtVector;
 	//-------------------------------------------------------------------	
 
-	private Machine m_operator;
+	private IMachine m_operator;
 	private Pilot m_operatorPilot;
 	public Pilot operatorPilot
 	{
@@ -138,7 +138,7 @@ public class PetDogSpawner : AbstractSpawner {
 		t.localScale = Vector3.one;
     }
 
-    protected override void OnMachineSpawned(AI.Machine machine) {
+    protected override void OnMachineSpawned(AI.IMachine machine) {
         m_operator = machine;
     }
 
