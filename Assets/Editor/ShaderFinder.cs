@@ -151,6 +151,7 @@ public class ShaderFinder : EditorWindow
 
         EditorGUILayout.BeginVertical(EditorStyles.textField);
         EditorGUILayout.BeginHorizontal();
+        GUI.changed = false;
         m_saveListSlot = (SavelistSlot)EditorGUILayout.EnumPopup("List slot: ", m_saveListSlot);
 
         if (GUI.changed)
