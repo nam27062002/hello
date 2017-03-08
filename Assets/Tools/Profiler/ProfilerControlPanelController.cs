@@ -386,12 +386,27 @@ public class ProfilerControlPanelController : MonoBehaviour
     }
     #endregion
 
-    #region particles_visibility
-    public void ParticlesVisibility_OnChangedValue(bool newValue)
+    #region particles
+    public void Particles_VisibilityOnChangedValue(bool newValue)
     {
         if (ApplicationManager.instance != null)
         {
             ApplicationManager.instance.Debug_ParticlesVisibility = newValue;
+        }
+    }
+
+    public void Particles_StateOnChangedValue(int option)
+    {
+        ApplicationManager.instance.Debug_SetParticlesState(option);
+    }
+    #endregion
+
+    #region ground
+    public void Ground_VisibleOnChangedValue(bool newValue)
+    {
+        if (ApplicationManager.instance != null)
+        {
+            ApplicationManager.instance.Debug_GroundVisibility = newValue;
         }
     }
     #endregion

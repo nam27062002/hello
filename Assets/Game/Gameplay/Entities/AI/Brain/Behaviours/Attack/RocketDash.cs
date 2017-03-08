@@ -5,6 +5,7 @@ namespace AI {
 	namespace Behaviour {
 		[System.Serializable]
 		public class RocketDashData : StateComponentData {
+			public float lightUpTime = 1.5f;
 			public float speed = 0f;
 			public float acceleration = 0f;
 			public string attackPoint;
@@ -117,7 +118,7 @@ namespace AI {
 					switch (_newState) {
 						case RocketState.LightUp:
 							m_pilot.Stop();
-							m_lightUpTimer = 0.75f;
+							m_lightUpTimer = m_data.lightUpTime;
 							m_pilot.PressAction(Pilot.Action.Button_A);
 							m_pilot.PressAction(Pilot.Action.ExclamationMark);
 							break;

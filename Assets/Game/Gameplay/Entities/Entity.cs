@@ -248,9 +248,9 @@ public class Entity : IEntity {
     /*****************/
 
     // Update is called once per frame
-    public override void LogicUpdate() { 
+    public override void CustomUpdate() { 
     //void Update () {
-    	base.LogicUpdate();
+		base.CustomUpdate();
         if (m_spawned) {
             m_checkOnScreenTimer -= Time.deltaTime;
             if (m_checkOnScreenTimer <= 0) {

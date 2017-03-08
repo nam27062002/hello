@@ -26,7 +26,12 @@ public class Pet : IEntity {
 
 	void Update()
 	{
-		base.LogicUpdate();
+		base.CustomUpdate();
+	}
+
+	void FixedUpdate()
+	{
+		base.CustomFixedUpdate();
 	}
 
 	override public bool CanBeSmashed()

@@ -301,7 +301,7 @@ namespace AI {
 		//-----------------------------------------------------------
 
 		// Update is called once per frame
-		public virtual void LogicUpdate() {
+		public virtual void CustomUpdate() {
 			if (!IsDead()) {
 				if (m_willPlaySpawnSound) {
 					if (m_entity.isOnScreen) {
@@ -325,7 +325,7 @@ namespace AI {
 				CheckForCurrents();
 		}
 
-		protected virtual void FixedUpdate() {
+		public virtual void CustomFixedUpdate() {
 			if (!IsDead()) {
 				if (m_motion != null) {
 					if (m_regionManager == null) {

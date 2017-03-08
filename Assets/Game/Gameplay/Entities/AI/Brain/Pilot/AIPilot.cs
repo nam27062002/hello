@@ -127,8 +127,8 @@ namespace AI {
 			m_slowDown = _value;
 		}
 
-		public override void LogicUpdate() {
-			base.LogicUpdate();
+		public override void CustomUpdate() {
+			base.CustomUpdate();
 
 			// state machine updates
 			if (m_brain != null) {

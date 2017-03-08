@@ -67,5 +67,7 @@ namespace AI {
 		bool IsDead();
 		bool IsDying();
 
+		void CustomFixedUpdate();
+
 	}
 }
