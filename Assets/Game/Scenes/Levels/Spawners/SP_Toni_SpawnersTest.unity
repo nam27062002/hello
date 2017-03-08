@@ -180,7 +180,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 29869387}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 135.8, y: 5.4, z: 0}
+  m_LocalPosition: {x: 106.2, y: 20.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1191974494}
@@ -3749,15 +3749,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_entityPrefabList:
-  - name: Air/PF_Canary04_Flock
+  - name: Goblin/PF_Kamikaze
     chance: 100
-  - name: Air/PF_Starling_Flock
-    chance: 100
-  - name: Air/PF_Crow_Flock
-    chance: 50
   m_quantity:
-    min: 10
-    max: 10
+    min: 1
+    max: 1
   m_speedFactorRange:
     min: 1
     max: 1
@@ -3771,8 +3767,8 @@ MonoBehaviour:
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
-    min: 40
-    max: 45
+    min: 0
+    max: 0
   m_homePosMethod: 0
   m_homePosDistance:
     min: 1
