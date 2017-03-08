@@ -1,8 +1,17 @@
 ﻿using UnityEngine;
-using System;
 using System.Collections;
 
 public class Catapult : SimpleDevice {
+	[System.Serializable]
+	public class AmmoPrefab {
+		public string name = "";
+		public float chance = 100;
+
+		public AmmoPrefab() {
+			name = "";
+			chance = 100;
+		}
+	}
 
 	private enum State {		
 		Reload = 0,
@@ -10,7 +19,7 @@ public class Catapult : SimpleDevice {
 		Toss
 	}
 
-	[Serializable]
+	[System.Serializable]
 	private class ExtraToss {
 		public float vAngleOffset = 0f;
 		public float hAngleOffset = 0f;
@@ -31,7 +40,7 @@ public class Catapult : SimpleDevice {
 	[SeparatorAttribute]
 	[SerializeField] private float m_damage = 20f;
 	[SerializeField] private float m_tossDelay = 5f;
-	[SerializeField] private string m_ammoName;
+	[SerializeField] private AmmoPrefab[] m_ammoList = new AmmoPrefab[1];
 	[SerializeField] private string m_ammoSpawnTransformName;
 
 	[SeparatorAttribute("Audio")]
@@ -61,8 +70,32 @@ public class Catapult : SimpleDevice {
 	// Use this for initialization
 	void Start () {
 		m_ammo = new GameObject[m_extraProjectiles.Length + 1];
-		GameObject projectilePrefab = Resources.Load<GameObject>("Game/Projectiles/" + m_ammoName);
-		PoolManager.CreatePool(projectilePrefab, 3, true);
+
+		float probFactor = 0;
+		for (int i = 0; i < m_ammoList.Length; i++) {
+			probFactor += m_ammoList[i].chance;
+		}
+
+		if (probFactor > 0f) {
+			probFactor = 100f / probFactor;
+			for (int i = 0; i < m_ammoList.Length; i++) {
+				m_ammoList[i].chance *= probFactor;
+
+				GameObject projectilePrefab = Resources.Load<GameObject>("Game/Projectiles/" + m_ammoList[i].name);
+				PoolManager.CreatePool(projectilePrefab, 3, true);
+			}
+
+			//sort probs
+			for (int i = 0; i < m_ammoList.Length; i++) {
+				for (int j = 0; j < m_ammoList.Length - i - 1; j++) {
+					if (m_ammoList[j].chance > m_ammoList[j + 1].chance) {
+						AmmoPrefab temp = m_ammoList[j];
+						m_ammoList[j] = m_ammoList[j + 1];
+						m_ammoList[j + 1] = temp;
+					}
+				}
+			}
+		}
 
 		FindAmmoSpawnTransform();
 
@@ -144,10 +177,12 @@ public class Catapult : SimpleDevice {
 	}
 
 	private void OnLoadAmmo() {
+		string ammoName = GetAmmoName();
+
 		int i;
 		for (i = 0; i < m_ammo.Length - 1; i++) {
 			if (m_ammo[i] == null) {
-				m_ammo[i] = PoolManager.GetInstance(m_ammoName);
+				m_ammo[i] = PoolManager.GetInstance(ammoName);
 
 				Projectile catapultAmmo = m_ammo[i].GetComponent<Projectile>();
 				catapultAmmo.AttachTo(m_ammoTransform, m_ammoTransform.rotation * m_extraProjectiles[i].initialPositionOffset);
@@ -155,7 +190,7 @@ public class Catapult : SimpleDevice {
 		}
 
 		if (m_ammo[i] == null) {
-			m_ammo[i] = PoolManager.GetInstance(m_ammoName);
+			m_ammo[i] = PoolManager.GetInstance(ammoName);
 
 			Projectile catapultAmmo = m_ammo[i].GetComponent<Projectile>();
 			catapultAmmo.AttachTo(m_ammoTransform, m_ammoTransform.rotation * m_initialPosition);
@@ -167,6 +202,24 @@ public class Catapult : SimpleDevice {
 		m_operatorSpawner.OperatorDoIdle();
 
 		m_state = State.Loaded;
+	}
+
+	private string GetAmmoName() {
+		float rand = Random.Range(0f, 100f);
+		float prob = 0;
+		int i = 0;
+
+		for (i = 0; i < m_ammoList.Length - 1; i++) {
+			prob += m_ammoList[i].chance;
+
+			if (rand <= prob) {
+				break;
+			} 
+
+			rand -= prob;
+		}
+
+		return m_ammoList[i].name;
 	}
 
 	private void OnToss() {
