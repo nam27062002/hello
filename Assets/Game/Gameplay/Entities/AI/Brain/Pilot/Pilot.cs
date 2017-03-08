@@ -186,7 +186,7 @@ namespace AI {
 
 		public virtual void Spawn(ISpawner _spawner) {}
 
-		public virtual void LogicUpdate() {
+		public virtual void CustomUpdate() {
 			if (m_boostAvailable && IsActionPressed(Action.Boost)) {
 				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_boostSpeed, Time.deltaTime * m_blendSpeedFactor);
 				m_currentEnergy = Mathf.Lerp(m_currentEnergy, 0f, Time.deltaTime * m_energyDrainSec);

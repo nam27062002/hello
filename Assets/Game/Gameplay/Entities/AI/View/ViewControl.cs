@@ -470,7 +470,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     	}
     }
 
-    public virtual void LogicUpdate() {
+    public virtual void CustomUpdate() {
 		if (m_animator != null) {
 			if (m_disableAnimatorTimer > 0) {
 				m_disableAnimatorTimer -= Time.deltaTime;
