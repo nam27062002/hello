@@ -128,11 +128,11 @@ public class Spawner : AbstractSpawner {
 				// adjust probabilities
 				float probFactor = 0;
 				for (int i = 0; i < m_entityPrefabList.Length; i++) {
-					probFactor = m_entityPrefabList[i].chance;
+					probFactor += m_entityPrefabList[i].chance;
 				}
-				probFactor = 100f / probFactor;
 
-				if (probFactor > 0f) {					
+				if (probFactor > 0f) {
+					probFactor = 100f / probFactor;
 					for (int i = 0; i < m_entityPrefabList.Length; i++) {
 						m_entityPrefabList[i].chance *= probFactor;
 					}
