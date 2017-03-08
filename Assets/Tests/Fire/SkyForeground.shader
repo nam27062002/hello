@@ -134,7 +134,7 @@
 				intensity += tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed * 2.0, 0.1))).x;
 				i.uv.x += 0.15;
 				intensity += tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed * 2.5, 0.2))).x;
-
+				intensity *= 0.25;
 				//				float alfa = clamp((intensity / (_AlphaThreshold / _ColorSteps)) - 1.0, 0.0, 1.0);
 //				fixed4 cloudsC = fixed4(alfa, alfa, alfa, 1.0) * _Tint;
 				fixed4 cloudsC = lerp(_BackgroundColor, _Tint, intensity);
@@ -144,7 +144,7 @@
 				//				clip(colf.a - 0.1);
 				//colf += mon * _MoonColor;
 //				cloudsC = max(cloudsC, moonC);
-				cloudsC.w = smoothstep(0.0, 0.1, intensity) * (1.0 - pow(abs(i.uv.y - 0.5) * 2.0, _CloudPower));
+				cloudsC.w = smoothstep(0.0, 0.25, intensity * (1.0 - pow(abs(i.uv.y - 0.5) * 2.0, _CloudPower)));
 //				cloudsC.w = intensity;
 				return cloudsC;
 				//return lerp(moonC, cloudsC, alfa * 1.0);
