@@ -42,7 +42,7 @@ public class SpiderViewControl : ViewControl {
 
 
 	// Update is called once per frame
-	public override void LogicUpdate() {
+	public override void CustomUpdate() {
 		if (m_hanging) {
 			m_web.SetPosition(1, m_spinneret.position);
 
@@ -62,7 +62,7 @@ public class SpiderViewControl : ViewControl {
 			}
 		}
 
-		base.LogicUpdate();
+		base.CustomUpdate();
 	}
 
 	protected override void OnSpecialAnimationEnter(SpecialAnims _anim) {

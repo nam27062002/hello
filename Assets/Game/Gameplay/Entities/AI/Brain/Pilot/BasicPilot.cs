@@ -5,8 +5,8 @@ namespace AI {
 
 		[SerializeField] private bool m_updateMachinePos = true;
 
-		public override void LogicUpdate() {
-			base.LogicUpdate();
+		public override void CustomUpdate() {
+			base.CustomUpdate();
 
 			// this machine won't use impulse while moving around
 			m_impulse = Vector3.zero;
