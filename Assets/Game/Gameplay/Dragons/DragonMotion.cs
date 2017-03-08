@@ -1551,7 +1551,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		return m_state == State.InsideWater;
 	}
 
-	public void StartWaterMovement( Collider _other )
+    public bool IsInSpace()
+    {
+        return m_state == State.OuterSpace;
+    }
+
+    public void StartWaterMovement( Collider _other )
 	{
 		// m_waterMovementModifier = 0;
 		m_waterDeepLimit = false;
