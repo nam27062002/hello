@@ -1157,7 +1157,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
         {
             // http://stackoverflow.com/questions/667034/simple-physics-based-movement
 
-            impulse.Scale(new Vector3(0.75f, 0, 1));
+            impulse.Scale(new Vector3(0.5f, 0, 1));
             //impulse.y = 0;
             //impulse.Normalize();
             Vector3 gravityAcceleration = Vector3.zero;
