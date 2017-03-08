@@ -371,7 +371,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 193748}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.584, y: 0.25, z: -1.538}
+  m_LocalPosition: {x: 0, y: 0.25, z: -1.538}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 431226}
@@ -666,6 +666,8 @@ Transform:
   - {fileID: 488014}
   - {fileID: 4000012015477780}
   - {fileID: 481560}
+  - {fileID: 4420679020847378}
+  - {fileID: 4498650966777440}
   m_Father: {fileID: 414586}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -861,12 +863,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71011e82423ab49ada052e344c2f1209, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_levelUp: {fileID: 0}
+  m_levelUp: {fileID: 1000011303966220, guid: c13c434e69a19af419fa213079f8660c, type: 2}
   m_levelUpAnchor: {fileID: 488014}
   m_revive: {fileID: 1000013542236594, guid: 82956920db58f3446a7b0e159de4e931, type: 2}
-  m_reviveAnchor: {fileID: 481560}
+  m_reviveAnchor: {fileID: 4779497968445476}
   m_petRevive:
-    name: 
+    name: PS_ReviveFromPet
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_bubbles: {fileID: 105258, guid: f3cddb62f324a4668b40f72b9be4eb4e, type: 2}
@@ -876,24 +878,38 @@ MonoBehaviour:
     type: 2}
   m_cloudTrailAnchor: {fileID: 481560}
   m_minSpeedEnterSplash: 0
-  m_waterEnterSplash: PS_Dive
+  m_waterEnterSplash: PS_DiveIn
   m_minSpeedExitSplash: 0
-  m_waterExitSplash: PS_Dive
+  m_waterExitSplash: PS_DiveOut
   m_waterSplashFolder: Water
-  m_skimmingParticle: {fileID: 0}
-  m_skimmingAnchor: {fileID: 0}
-  m_minSpeedSkimming: 1
-  m_skimmingDistance: 1
-  m_waterAirLimitParticle: {fileID: 0}
-  m_corpseAsset: 
-  m_hiccupParticle: 
-  m_hiccupAnchor: {fileID: 0}
+  m_skimmingParticle: {fileID: 1000010018702160, guid: b942671f031124e12ad02e4b82ec7f2e,
+    type: 2}
+  m_skimmingAnchor: {fileID: 4498650966777440}
+  m_minSpeedSkimming: 0
+  m_skimmingDistance: 3
+  m_waterAirLimitParticle: {fileID: 1000013716686454, guid: 32bd8689eb3e0e048a58b3307803829f,
+    type: 2}
+  m_corpseAsset: PF_DragonClassicCorpse
+  m_hiccupParticle: Dragon/PS_hiccups
+  m_hiccupAnchor: {fileID: 4156866738902808}
   m_shieldParticle:
-    name: 
+    name: Dragon/PS_BreakingShield
     path: 
     offset: {x: 0, y: 0, z: 0}
-  m_shieldAnchor: {fileID: 0}
-  m_bodyParticles: []
+  m_shieldAnchor: {fileID: 490078}
+  m_bodyParticles:
+  - m_stopInsideWater: 1
+    m_stopWhenDead: 1
+    m_particleReference: {fileID: 198840186382173374, guid: edc4299711f4f48b9a786d62b3acc503,
+      type: 2}
+  - m_stopInsideWater: 1
+    m_stopWhenDead: 1
+    m_particleReference: {fileID: 198775608734170154, guid: edc4299711f4f48b9a786d62b3acc503,
+      type: 2}
+  - m_stopInsideWater: 1
+    m_stopWhenDead: 1
+    m_particleReference: {fileID: 198044272892404402, guid: edc4299711f4f48b9a786d62b3acc503,
+      type: 2}
 --- !u!114 &11438592
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2190,6 +2206,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1632466152114222
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4498650966777440}
+  m_Layer: 12
+  m_Name: SkimmingAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1638977035221262
 GameObject:
   m_ObjectHideFlags: 1
@@ -2276,6 +2307,21 @@ GameObject:
   - component: {fileID: 4767532696751820}
   m_Layer: 0
   m_Name: Dragon_LLeg_Platform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1706185326641552
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4779497968445476}
+  m_Layer: 12
+  m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2504,6 +2550,22 @@ GameObject:
   - component: {fileID: 4462719122448114}
   m_Layer: 0
   m_Name: Dragon_R_Up_EyeLead
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1970556544219656
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4420679020847378}
+  - component: {fileID: 114184688112312872}
+  m_Layer: 12
+  m_Name: LookAtCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3015,6 +3077,20 @@ Transform:
   m_Father: {fileID: 4125433749395556}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4420679020847378
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1970556544219656}
+  m_LocalRotation: {x: 0.0102935275, y: 0.74058515, z: -0.011347681, w: 0.67178786}
+  m_LocalPosition: {x: 0, y: 0, z: -1.79}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4779497968445476}
+  m_Father: {fileID: 490078}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4462719122448114
 Transform:
   m_ObjectHideFlags: 1
@@ -3067,6 +3143,19 @@ Transform:
   m_Father: {fileID: 4635263207444070}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4498650966777440
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1632466152114222}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.41, z: -3.09}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 490078}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!4 &4504893984641970
 Transform:
   m_ObjectHideFlags: 1
@@ -3375,6 +3464,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4790778484674584}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4779497968445476
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1706185326641552}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0, z: 5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4420679020847378}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4784997686694924
 Transform:
@@ -5042,6 +5144,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_RLeg_4
   m_parentRoot: {fileID: 414586}
+--- !u!114 &114184688112312872
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1970556544219656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ba1c905da34946d68ce50345b05e48f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114196481107426598
 MonoBehaviour:
   m_ObjectHideFlags: 1
