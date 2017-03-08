@@ -223,7 +223,7 @@ public class Spawner : AbstractSpawner {
 	}    
 
 	protected override string GetPrefabNameToSpawn(uint index) {
-		int rand = Random.Range(0, 100);
+		float rand = Random.Range(0f, 100f);
 		float prob = 0;
 		int i = 0;
 
@@ -232,7 +232,9 @@ public class Spawner : AbstractSpawner {
 
 			if (rand <= prob) {
 				break;
-			}
+			} 
+
+			rand -= prob;
 		}
 
 		return m_entityPrefabList[i].name;
