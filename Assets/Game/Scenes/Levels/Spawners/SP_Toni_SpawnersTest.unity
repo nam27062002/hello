@@ -3680,8 +3680,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1278345148}
   - component: {fileID: 1278345151}
-  - component: {fileID: 1278345150}
   - component: {fileID: 1278345149}
+  - component: {fileID: 1278345150}
   m_Layer: 0
   m_Name: Muliple spawner
   m_TagString: Untagged
@@ -3696,7 +3696,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1278345147}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -201, y: 29, z: 0}
+  m_LocalPosition: {x: 135.2, y: 29, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 883113615}
@@ -3722,12 +3722,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1278345147}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0}
-  radius: 23.373476
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+  m_guideFunction: 0
+  m_innerRadius: 10
+  m_outterRadius: 20
+  m_targetDistance: 5
+  m_depthAmplitude: 0
+  m_depthFrequency: 0
+  m_scale: {x: 1, y: 1, z: 1}
+  m_rotation: {x: 0, y: 0, z: 0}
+  m_boundsScale: {x: 0, y: 0, z: 0}
+  m_forcePreview: 0
+  m_previewStep: 0.1
+  m_previewMaxTime: 60
 --- !u!114 &1278345151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3744,6 +3753,8 @@ MonoBehaviour:
     chance: 100
   - name: Air/PF_Starling_Flock
     chance: 100
+  - name: Air/PF_Crow_Flock
+    chance: 50
   m_quantity:
     min: 10
     max: 10
