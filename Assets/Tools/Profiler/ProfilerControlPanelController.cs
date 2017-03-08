@@ -294,20 +294,27 @@ public class ProfilerControlPanelController : MonoBehaviour
     #region checkpoints
     private enum ECheckpoint
     {
+		StartingPoint,
+		WoodsCabins,
+		WoodsLeaves,
         Castle,
         Tunnel,
         Dungeons,
         Caves,
-        Bridge
+        Bridge,
     }
 
     private Vector3[] m_checkpointsPositions = new Vector3[]
     {
+		new Vector3(-180, 119, 0f),
+		new Vector3(137, 51, 0f),
+		new Vector3(280, 42, 0f),
         new Vector3(598, -3, 0f),
         new Vector3(598, -46, 0f),
         new Vector3(566, -62, 0f),
         new Vector3(522, -61, 0f),
         new Vector3(460, -11, 0f),
+
     };
 
     public TMP_Dropdown m_checkpoints;
