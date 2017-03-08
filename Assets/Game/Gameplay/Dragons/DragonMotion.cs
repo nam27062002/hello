@@ -176,6 +176,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private const float m_waterGravityMultiplier = 3.5f;
 	private Vector3 m_waterEnterPosition;
 	private bool m_insideWater = false;
+	private bool m_outterSpace = false;
 	private float m_recoverTimer;
 
 	private bool m_canMoveInsideWater = false;
@@ -1742,7 +1743,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// <param name="_other">Other.</param>
 	void OnTriggerEnter(Collider _other)
 	{
-		if ( _other.CompareTag("Water") )
+		if ( _other.CompareTag("Water") && !m_insideWater)
 		{
 			// Check direction?
 			m_waterEnterPosition = transform.position;
@@ -1760,8 +1761,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_animator.SetBool("swim", true);
 			}
 		}
-		else if ( _other.CompareTag("Space") )
+		else if ( _other.CompareTag("Space") && !m_outterSpace)
 		{
+			m_outterSpace = true;
 			if (IsAliveState())
 			{
 				StartSpaceMovement();
@@ -1773,7 +1775,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	void OnTriggerExit( Collider _other )
 	{
-		if ( _other.CompareTag("Water") )
+		if ( _other.CompareTag("Water") && m_insideWater)
 		{
 			m_insideWater = false;
 			// Disable Bubbles
@@ -1787,8 +1789,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_animator.SetBool("swim", false);
 			}
 		}
-		else if ( _other.CompareTag("Space") )
+		else if ( _other.CompareTag("Space") && m_outterSpace )
 		{
+			m_outterSpace = false;
 			if (IsAliveState())
 			{
 				EndSpaceMovement();
