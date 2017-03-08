@@ -143,8 +143,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8aa2aecfe88da48e8b391e33aa7cb815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
@@ -157,8 +157,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_guideFunction: 0
   m_innerRadius: 5
   m_outterRadius: 10
@@ -180,9 +180,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_entityPrefabStr: Air/PF_Canary_Intro
+  m_Name:
+  m_EditorClassIdentifier:
+  m_entityPrefabList:
+  - name: Air/PF_Canary_Intro
+    chance: 100
   m_quantity:
     min: 1
     max: 1
@@ -193,6 +195,7 @@ MonoBehaviour:
     min: 1
     max: 1.2
   m_rails: 1
+  m_hasGroupBonus: 0
   m_minTier: 0
   m_activationChance: 100
   m_activationTriggers: []
@@ -205,6 +208,7 @@ MonoBehaviour:
     min: 1
     max: 2
   m_maxSpawns: 1
+  m_checkCurrents: 0
 --- !u!114 &114000012156341726
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -214,8 +218,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8aa2aecfe88da48e8b391e33aa7cb815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
@@ -228,8 +232,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8aa2aecfe88da48e8b391e33aa7cb815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_positionLock: 000000
   m_rotationLock: 010101
   m_scaleLock: 010101
@@ -242,9 +246,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_entityPrefabStr: Air/PF_Canary_Intro
+  m_Name:
+  m_EditorClassIdentifier:
+  m_entityPrefabList:
+  - name: Air/PF_Canary_Intro
+    chance: 100
   m_quantity:
     min: 1
     max: 1
@@ -255,6 +261,7 @@ MonoBehaviour:
     min: 1
     max: 1.2
   m_rails: 1
+  m_hasGroupBonus: 0
   m_minTier: 0
   m_activationChance: 100
   m_activationTriggers: []
@@ -267,6 +274,7 @@ MonoBehaviour:
     min: 1
     max: 2
   m_maxSpawns: 1
+  m_checkCurrents: 0
 --- !u!114 &114000012947272202
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -276,9 +284,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_entityPrefabStr: Air/PF_Canary_Static
+  m_Name:
+  m_EditorClassIdentifier:
+  m_entityPrefabList:
+  - name: Air/PF_Canary_Static
+    chance: 100
   m_quantity:
     min: 1
     max: 1
@@ -289,6 +299,7 @@ MonoBehaviour:
     min: 0.9
     max: 1.1
   m_rails: 1
+  m_hasGroupBonus: 0
   m_minTier: 0
   m_activationChance: 100
   m_activationTriggers: []
@@ -301,6 +312,7 @@ MonoBehaviour:
     min: 1
     max: 2
   m_maxSpawns: 1
+  m_checkCurrents: 0
 --- !u!114 &114000013066830938
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -310,8 +322,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_guideFunction: 0
   m_innerRadius: 5
   m_outterRadius: 10
