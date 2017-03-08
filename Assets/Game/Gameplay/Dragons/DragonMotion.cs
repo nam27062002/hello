@@ -294,7 +294,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 
 		m_rbody = GetComponent<Rigidbody>();
-		m_groundCollider = GetComponentInChildren<SphereCollider>();
+
+		// Find ground collider
+		Transform ground = transform.FindTransformRecursive("ground");
+		if ( ground != null )
+		{
+			m_groundCollider = ground.GetComponent<SphereCollider>();
+		}
+		if ( m_groundCollider == null )
+		{
+			m_groundCollider = GetComponentInChildren<SphereCollider>();
+		}
+
 		m_eatBehaviour = GetComponent<DragonEatBehaviour>();
 		m_height = 10f;
 

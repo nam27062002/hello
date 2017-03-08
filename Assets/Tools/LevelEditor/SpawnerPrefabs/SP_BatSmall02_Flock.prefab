@@ -10,7 +10,7 @@ GameObject:
   - component: {fileID: 413654}
   - component: {fileID: 11415666}
   - component: {fileID: 11483310}
-  - component: {fileID: 114000011334553896}
+  - component: {fileID: 114947778382327778}
   m_Layer: 0
   m_Name: SP_BatSmall02_Flock
   m_TagString: Untagged
@@ -94,7 +94,7 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 112636}
   m_IsPrefabParent: 1
---- !u!114 &114000011334553896
+--- !u!114 &114947778382327778
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -102,9 +102,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 112636}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
+  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0}
-  size: {x: 14.42638, y: 5.6111493}
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+  m_circular: 1
+  m_smoothRadius: 0.5
+  m_points:
+  - {x: -1, y: 0, z: 0}
+  - {x: 1, y: 0, z: 0}

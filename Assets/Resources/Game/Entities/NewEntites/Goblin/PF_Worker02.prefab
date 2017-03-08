@@ -265,7 +265,7 @@ GameObject:
   - component: {fileID: 114678768962758026}
   - component: {fileID: 114421048350009022}
   - component: {fileID: 54343284643111368}
-  - component: {fileID: 135314701990622198}
+  - component: {fileID: 136725702178012024}
   m_Layer: 21
   m_Name: PF_Worker02
   m_TagString: Untagged
@@ -601,7 +601,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1341144563950862}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.6758599, y: -0.22626737, z: 0}
+  m_LocalPosition: {x: -4.074303, y: -4.4891763, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4485446435810134}
@@ -828,7 +828,7 @@ Transform:
   m_GameObject: {fileID: 1901980552524818}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.79, z: -0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.35, y: 1.35, z: 1.35}
   m_Children:
   - {fileID: 4427449521081142}
   - {fileID: 4897329164316404}
@@ -886,7 +886,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1154218429783266}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: -0.966, z: 0.167}
+  m_LocalPosition: {x: -0, y: -0.761, z: 0.167}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4064013338647004}
@@ -995,7 +995,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1976966908196792}
   m_LocalRotation: {x: 0.33227244, y: -0.62416863, z: -0.33227825, w: 0.62417936}
-  m_LocalPosition: {x: -0, y: 0.384, z: 0.104}
+  m_LocalPosition: {x: -0, y: 0.935, z: 0.104}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4547845198620856}
@@ -1169,7 +1169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -0.0019307137, y: 0.035833597}
+  offset: {x: 0.0029478073, y: 0.27489161}
   radius: 0.9683907
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114447161797909514
@@ -1347,8 +1347,8 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 1.36, z: 0}
---- !u!135 &135314701990622198
-SphereCollider:
+--- !u!136 &136725702178012024
+CapsuleCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -1356,9 +1356,10 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.05
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.5
+  m_Height: 2.24
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.3, z: 0}
 --- !u!137 &137479144536964690
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
