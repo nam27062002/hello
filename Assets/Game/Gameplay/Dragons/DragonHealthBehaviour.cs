@@ -23,9 +23,11 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	// health drain
 	private float m_healthDrainPerSecond;
 	private float m_healthDrainAmpPerSecond;
+    // health drain in space
+    private float m_healthDrainPerSecondInSpace;
 
-	// Damage Multiplier for buffs
-	private float m_damageMultiplier;
+    // Damage Multiplier for buffs
+    private float m_damageMultiplier;
 
 	// Damage over time
 	private List<DOT> m_dots = new List<DOT>();
@@ -63,8 +65,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_healthDrainAmpPerSecond = m_dragon.data.def.GetAsFloat("healthDrainAmpPerSecond"); // 0.005
 		m_sessionStartHealthDrainTime = m_dragon.data.def.GetAsFloat("sessionStartHealthDrainTime"); // 45
 		m_sessionStartHealthDrainModifier = m_dragon.data.def.GetAsFloat("sessionStartHealthDrainModifier");// 0.5
+        m_healthDrainPerSecondInSpace = m_dragon.data.def.GetAsFloat("healthDrainSpacePlus");
 
-		m_damageMultiplier = 0;
+        m_damageMultiplier = 0;
 
 		//
 		m_damageAnimState = Animator.StringToHash("Damage");
@@ -218,7 +221,13 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		if (includeHealthDrainAmp)
 		{
 			damage = damage + (damage * (m_gameController.elapsedSeconds * m_healthDrainAmpPerSecond));
-		}
+
+            //Add Space Drain 
+            if (m_dragon.dragonMotion.IsInSpace())
+            {
+                damage = damage + m_healthDrainPerSecondInSpace;
+            }
+        }
 
 		// Apply health modifier
 		// float healthFraction = m_dragon.healthFraction;
