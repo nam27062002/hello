@@ -1,29 +1,28 @@
-﻿Shader "Hungry Dragon/WindShader2"
+﻿Shader "Hungry Dragon/SkyForeground"
 {
 	Properties
 	{
-		_MainTex ("Noise", 2D) = "white" {}
-		_NoiseTex2("Noise2", 2D) = "white" {}
-		_NoiseTex3("Noise3", 2D) = "white" {}
-
-		_Speed("Fire Speed", Float) = 1.0				// Fire speed
-		_IOffset("Intensity Offset", Range(0.0, 0.2)) = 0.0							//intensity offset in noise texture
-		_IPower("Intensity Power", Range(0.01, 10.0)) = 0.001							//intensity offset in noise texture
-		_BackgroundColor("BackGround color", Color) = (.5, .5, .5, 1)
+		_CloudTex ("Cloud tex", 2D) = "white" {}
 		_Tint("Clouds color", Color) = (.5, .5, .5, 1)
+		_Speed("Cloud speed", Float) = 1.0
+		_CloudPower("Cloud power", Range(1.0, 10.0)) = 1.0
+
 		_MoonPos("Moon position", Vector) = (0.0, 0.0, 0.0)
 		_MoonRadius("Moon radius", Float) = 0.1			//
 		_MoonColor("Moon color", Color) = (0.75, 0.25, 0.0, 1.0)			//
-		_StarsPInches("Stars per inches", Range(1, 100)) = 4
+		_BackgroundColor("Background color", Color) = (0.0, 0.0, 0.0, 0.0)
 
+		_NoiseTex("Noise tex", 2D) = "white" {}
+		_StarsPInches("Stars per inches", Range(1, 100)) = 4
 	}
 
 	SubShader
 	{
-		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" }
+//		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" }
+		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
 		LOD 100
 //		Blend SrcAlpha One
-//		Blend SrcAlpha OneMinusSrcAlpha
+		Blend SrcAlpha OneMinusSrcAlpha
 //		Blend One OneMinusSrcColor
 
 
@@ -63,27 +62,22 @@
 			struct v2f
 			{
 				float2 uv : TEXCOORD0;
-				float2 uv2 : TEXCOORD1;
 				//				UNITY_FOG_COORDS(1)
 				float4 vCol : COLOR;
 				float4 vertex : SV_POSITION;
 			};
 
-			sampler2D _MainTex;
-			float4  _MainTex_ST;
-			sampler2D _NoiseTex2;
-			float4  _NoiseTex2_ST;
-			sampler2D _NoiseTex3;
-			float4  _NoiseTex3_ST;
-
+			sampler2D _CloudTex;
+			float4  _CloudTex_ST;
+			sampler2D _NoiseTex;
 			float	_Speed;
-			float	_IOffset;
-			float	_IPower;
-			float4	_BackgroundColor;
+			float	_CloudPower;
+
 			float4	_Tint;
 			float2	_MoonPos;
 			float	_MoonRadius;
 			float4	_MoonColor;
+			float4	_BackgroundColor;
 			float	_StarsPInches;
 
 			v2f vert (appdata v)
@@ -91,8 +85,7 @@
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.vCol = v.color;
-				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				o.uv2 = TRANSFORM_TEX(v.uv2, _NoiseTex2);
+				o.uv = TRANSFORM_TEX(v.uv, _CloudTex);
 				return o;
 			}			
 
@@ -118,7 +111,7 @@
 //				intensity = tex2D(_MainTex, (i.uv.xy + float2(_Time.y * _Speed * persp, 0.0))).x;
 				float2 si = floor(uv * _StarsPInches) / _StarsPInches;
 //				float2 so = float2(tex2D(_MainTex, si + _Time.yy).x , tex2D(_NoiseTex2, si + _Time.yy).x) / _StarsPInches;
-				float2 so = tex2D(_NoiseTex3, si).xy;
+				float2 so = tex2D(_NoiseTex, si).xy;
 //				float2 so = hash22(si);
 				float2 d = (si + so / _StarsPInches) - uv;
 
@@ -129,30 +122,31 @@
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float persp = 1.0;
-				float st = star(i.uv);
+//				return fixed4(i.uv.y, i.uv.y, i.uv.y, 1.0);
+//				float st = star(i.uv);
 				i.uv.x -= 0.5;
-				float mon = moon(i.uv, _MoonPos, _MoonRadius);
-				i.uv.x *= ((1.0 - i.uv.y) + 0.5);
-				float intensity = tex2D(_MainTex, (i.uv.xy + float2(_Time.y * _Speed * persp, 0.0))).x;
-				float s = sin(i.uv.x * 5.0 + _Time.y * _Speed * 5.0);
-				float c = cos(i.uv.y * 5.0 + _Time.y * _Speed * 7.0);
-				float2x2 mr = float2x2(s, c, -c, s);
-				intensity += tex2D(_NoiseTex2, (i.uv.yx + float2(_Time.y * _Speed * 0.555 * persp, 0.0) + mul(mr, float2((1.0 - intensity) * _IOffset, intensity * _IOffset)))).x;// +pow(i.uv.y, 3.0);
-
-
+//				float mon = moon(i.uv, _MoonPos, _MoonRadius);
+//				i.uv.x *= ((1.0 - i.uv.y) + 0.5);
+				float intensity = tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed, 0.0))).x;
+				i.uv.x += 0.35;
+				intensity += tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed * 1.5, 0.3))).x;
+				i.uv.x += 0.25;
+				intensity += tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed * 2.0, 0.1))).x;
+				i.uv.x += 0.15;
+				intensity += tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed * 2.5, 0.2))).x;
+				intensity *= 0.25;
 				//				float alfa = clamp((intensity / (_AlphaThreshold / _ColorSteps)) - 1.0, 0.0, 1.0);
-				float alfa = clamp(1.0 - (intensity * pow(i.uv.y, _IPower)), 0.0, 1.0);// +mon;
-//				float alfa = intensity;
-																  //				fixed4 colf = fixed4(alfa, alfa, alfa, alfa * _Alpha) * i.vCol * _Tint * i.uv.y;
 //				fixed4 cloudsC = fixed4(alfa, alfa, alfa, 1.0) * _Tint;
-				fixed4 cloudsC = lerp(_BackgroundColor, _Tint, alfa);
+				fixed4 cloudsC = lerp(_BackgroundColor, _Tint, intensity);
 //				return cloudsC;
 
-				fixed4 moonC = fixed4(max(mon, st) * _MoonColor.xyz, 1.0);
+//				fixed4 moonC = fixed4(max(mon, st) * _MoonColor.xyz, 1.0);
 				//				clip(colf.a - 0.1);
 				//colf += mon * _MoonColor;
-				return max(cloudsC, moonC);
+//				cloudsC = max(cloudsC, moonC);
+				cloudsC.w = smoothstep(0.0, 0.25, intensity * (1.0 - pow(abs(i.uv.y - 0.5) * 2.0, _CloudPower)));
+//				cloudsC.w = intensity;
+				return cloudsC;
 				//return lerp(moonC, cloudsC, alfa * 1.0);
 			}
 

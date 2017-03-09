@@ -6,11 +6,11 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: fog_tirilla_alpha
-  m_Shader: {fileID: 4800000, guid: 5fc2a9b292d3745c496325a40d68dcfe, type: 3}
+  m_Name: lambert2
+  m_Shader: {fileID: 4800000, guid: 87e6fe19d163bc443910dc94823f7d3a, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 3500
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -20,6 +20,12 @@ Material:
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _CloudTex
+      second:
+        m_Texture: {fileID: 2800000, guid: 84747f2265baf9f46817091e418957e0, type: 3}
+        m_Scale: {x: 20, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _DetailAlbedoMap
@@ -48,11 +54,17 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 3bbffda80b9f317408bde73207158c86, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _NoiseTex
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -73,6 +85,9 @@ Material:
     - first:
         name: _BumpScale
       second: 1
+    - first:
+        name: _CloudPower
+      second: 5.1
     - first:
         name: _Cutoff
       second: 0.5
@@ -98,11 +113,17 @@ Material:
         name: _Mode
       second: 0
     - first:
+        name: _MoonRadius
+      second: 0.1
+    - first:
         name: _OcclusionStrength
       second: 1
     - first:
         name: _Parallax
       second: 0.02
+    - first:
+        name: _PerspectivePower
+      second: 6
     - first:
         name: _SmoothnessTextureChannel
       second: 0
@@ -110,18 +131,48 @@ Material:
         name: _SpecularHighlights
       second: 1
     - first:
+        name: _Speed
+      second: 0.02
+    - first:
         name: _SrcBlend
       second: 1
     - first:
+        name: _StarsPInches
+      second: 4
+    - first:
+        name: _StencilMask
+      second: 10
+    - first:
         name: _UVSec
       second: 0
+    - first:
+        name: _WaveRadius
+      second: 0.15
     - first:
         name: _ZWrite
       second: 1
     m_Colors:
     - first:
+        name: _BackgroundColor
+      second: {r: 0.12941177, g: 0.3137255, b: 0.7568628, a: 0}
+    - first:
         name: _Color
-      second: {r: 0.8, g: 0.8, b: 0.8, a: 1}
+      second: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - first:
+        name: _ColorBack
+      second: {r: 1, g: 0, b: 0, a: 1}
+    - first:
+        name: _ColorFront
+      second: {r: 1, g: 0, b: 0, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _MoonColor
+      second: {r: 0.75, g: 0.25, b: 0, a: 1}
+    - first:
+        name: _MoonPos
+      second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _Tint
+      second: {r: 1, g: 1, b: 1, a: 1}
