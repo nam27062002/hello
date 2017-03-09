@@ -114,7 +114,8 @@ Shader "Hungry Dragon/Bumped Diffuse Transparent (Spawners)"
 
 				// col = (diffuse + fixed4(UNITY_LIGHTMODEL_AMBIENT.rgb,1)) * col + specular * _LightColor0;
 				col = ((diffuse + fixed4(i.vLight, 1)) * col + (fresnel * _FresnelColor)) * _Tint;
-				col.a = clamp(_Tint.a + fresnel * _Tint.a, 0.0, 1.0);
+//				col.a = clamp(_Tint.a + fresnel * _Tint.a, 0.0, 1.0);
+				col.a = clamp((col.a + fresnel), 0.0, 1.0);
 
 				return col;
 			}

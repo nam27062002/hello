@@ -7,13 +7,8 @@
 		_Speed("Cloud speed", Float) = 1.0
 		_CloudPower("Cloud power", Range(1.0, 10.0)) = 1.0
 
-		_MoonPos("Moon position", Vector) = (0.0, 0.0, 0.0)
-		_MoonRadius("Moon radius", Float) = 0.1			//
-		_MoonColor("Moon color", Color) = (0.75, 0.25, 0.0, 1.0)			//
 		_BackgroundColor("Background color", Color) = (0.0, 0.0, 0.0, 0.0)
 
-		_NoiseTex("Noise tex", 2D) = "white" {}
-		_StarsPInches("Stars per inches", Range(1, 100)) = 4
 	}
 
 	SubShader
@@ -74,11 +69,7 @@
 			float	_CloudPower;
 
 			float4	_Tint;
-			float2	_MoonPos;
-			float	_MoonRadius;
-			float4	_MoonColor;
 			float4	_BackgroundColor;
-			float	_StarsPInches;
 
 			v2f vert (appdata v)
 			{
@@ -88,38 +79,6 @@
 				o.uv = TRANSFORM_TEX(v.uv, _CloudTex);
 				return o;
 			}			
-
-			half moon(float2 uv, float2 sunPos, float radius)
-			{
-				float2 dv = uv - sunPos;
-				float d = dot(dv, dv);
-				half r = 1.0 - smoothstep(radius, radius + 0.0025, d);
-				dv = uv - (sunPos + sin(_Time.y) * 0.075);
-				d = dot(dv, dv);
-				r -= 1.0 - smoothstep(radius, radius + 0.0025, d);
-				return clamp(r, 0.0, 1.0);
-			}
-
-			float2 hash22(float2 uv)
-			{
-				return frac(sin(uv * float2(361424.0, 51675.0)) * float2(23234434.0, 3463247.0));
-			}
-
-			half star(float2 uv)
-			{
-//				float intensity = tex2D(_MainTex, (i.uv.xy + float2(_Time.y * _Speed * persp, 0.0))).x;
-//				intensity = tex2D(_MainTex, (i.uv.xy + float2(_Time.y * _Speed * persp, 0.0))).x;
-				float2 si = floor(uv * _StarsPInches) / _StarsPInches;
-//				float2 so = float2(tex2D(_MainTex, si + _Time.yy).x , tex2D(_NoiseTex2, si + _Time.yy).x) / _StarsPInches;
-				float2 so = tex2D(_NoiseTex, si).xy;
-//				float2 so = hash22(si);
-				float2 d = (si + so / _StarsPInches) - uv;
-
-//				return clamp((1.0 - smoothstep(0.00000, 0.00002, dot(d, d) * (so.x + so.y) * 4.0)) * so.x, 0.0, 1.0);
-				return (1.0 - smoothstep(0.00000, 0.00002, dot(d, d) * (so.x + so.y) * 4.0)) * so.x;
-			}
-
-
 			fixed4 frag (v2f i) : SV_Target
 			{
 //				return fixed4(i.uv.y, i.uv.y, i.uv.y, 1.0);
