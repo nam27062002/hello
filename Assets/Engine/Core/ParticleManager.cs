@@ -5,7 +5,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	// Pool of pools! :D
 	private Dictionary<string, Pool> m_particlePools = new Dictionary<string, Pool>();
 
-	public static void CreatePool(ParticleData particle, int _size = 10)
+	public static void CreatePool(ParticleData particle, int _size = 5)
 	{
 		CreatePool( particle.name, particle.path, _size);
 	}
@@ -16,7 +16,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// <param name="_prefabName">Identifier. Must match the name of the prefab to be used.</param>
 	/// <param name="_path">Optional resources path of the prefab to be considerd if no pool with the given ID is found. Folder name within the Resources/Particles/ folder, excluding prefab name (e.g. "Game/Effects")</param>
 	/// <param name="_size">Size of the pool.</param>
-	public static void CreatePool(string _prefabName, string _folderPath = "", int _size = 10) {
+	public static void CreatePool(string _prefabName, string _folderPath = "", int _size = 5) {
 		if (!instance.m_particlePools.ContainsKey(_prefabName)) {
 			// [AOC] Small hack for retrocompatibility
 			if (!string.IsNullOrEmpty(_folderPath)) {
@@ -117,7 +117,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// </summary>
 	/// <param name="_prefab">The prefab to be used to create the pool.</param>
 	/// <param name="_size">Size of the pool.</param>
-	private static void CreatePool(GameObject _prefab, int _size = 10) {
+	private static void CreatePool(GameObject _prefab, int _size = 5) {
 		// Ignore if given prefab is not valid
 		if (_prefab == null) return;
 

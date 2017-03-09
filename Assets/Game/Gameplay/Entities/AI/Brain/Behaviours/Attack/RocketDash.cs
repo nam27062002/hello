@@ -57,6 +57,7 @@ namespace AI {
 
 				m_pilot.SetMoveSpeed(m_data.speed, false);
 				m_pilot.SlowDown(false);
+				m_machine.FaceDirection(true);
 
 				m_rocketState = RocketState.None;
 				ChangeState(RocketState.LightUp);
@@ -67,6 +68,8 @@ namespace AI {
 				m_pilot.ReleaseAction(Pilot.Action.Button_B);
 				m_pilot.ReleaseAction(Pilot.Action.ExclamationMark);
 				m_machine.SetSignal(Signals.Type.Invulnerable, false);
+
+				m_machine.FaceDirection(false);
 			}
 
 			protected override void OnUpdate() {

@@ -9,7 +9,8 @@ public class Cage : IEntity {
 	private bool m_wasDestroyed;
 
 	//
-	void Awake() {
+	protected override void Awake() {
+		base.Awake();
 		m_maxHealth = 1f;
 	}
 

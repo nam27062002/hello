@@ -233,7 +233,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 
 			count = m_cages.Count - 1;
 			// for (i = 0; i < count; i++)
-			for( i = count; i>=0; i-- )
+			for( i = count; i >= 0; i-- )
 			{
 				m_cages[i].CustomUpdate();
 			}
