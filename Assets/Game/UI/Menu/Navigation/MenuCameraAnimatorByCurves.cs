@@ -16,7 +16,10 @@ using System.Collections.Generic;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// 3D camera control to follow a path defined by 2 bézier curves (pos and lookat).
+/// Will use two paths defined by Bézier curves (pos and lookAt) to control
+/// camera control points via path followers.
+/// It won't actually change the camera, but the camera snap points linked to both
+/// path followers.
 /// </summary>
 public class MenuCameraAnimatorByCurves : MonoBehaviour {
 	//------------------------------------------------------------------//
@@ -48,11 +51,6 @@ public class MenuCameraAnimatorByCurves : MonoBehaviour {
 		set { m_animEase = value; }
 	}
 
-	// Target scene
-	[Space(10)]
-	[Tooltip("The animator will only work when the active 3D scene matches this one")]
-	[SerializeField] private MenuScreenScene m_targetScene = null;
-
 	// Solo-properties
 	// Delta and snap point are stored in the camera path to avoid keeping control of multiple vars
 	public float delta {
@@ -75,9 +73,6 @@ public class MenuCameraAnimatorByCurves : MonoBehaviour {
 		}
 	}
 
-	// Internal references
-	private MenuScreensController m_menuScreensController = null;
-
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -94,8 +89,7 @@ public class MenuCameraAnimatorByCurves : MonoBehaviour {
 	/// First update call
 	/// </summary>
 	private void Start() {
-		// Store reference to menu screens controller for faster access
-		m_menuScreensController = InstanceManager.GetSceneController<MenuSceneController>().screensController;
+		
 	}
 
 	/// <summary>
@@ -117,22 +111,6 @@ public class MenuCameraAnimatorByCurves : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		
-	}
-
-	/// <summary>
-	/// Update loop.
-	/// </summary>
-	private void Update() {
-		// If we're at one of the target screens, snap camera to curves
-		// [AOC] A bit dirty, but best way I can think of right now (and gacha is waiting)
-		if(m_menuScreensController.currentScene == m_targetScene) {
-			// Only if camera is not already moving!
-			if(!m_menuScreensController.tweening) {
-				// Move camera! ^_^
-				InstanceManager.sceneController.mainCamera.transform.position = m_cameraPath.position;
-				InstanceManager.sceneController.mainCamera.transform.LookAt(m_lookAtPath.position);
-			}
-		}
 	}
 
 	//------------------------------------------------------------------//

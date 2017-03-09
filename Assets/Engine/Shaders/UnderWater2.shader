@@ -152,7 +152,7 @@ Shader "Hungry Dragon/UnderWater2"
 					float sinX = sin((v.vertex.x * 22.1f) + _Time.y) + sin((v.vertex.x * 42.2f) + _Time.y * 5.7f) + sin((v.vertex.z * 62.2f) + _Time.y * 6.52f);
 					float sinY = sin((v.vertex.z * 35.0f) + _Time.y) + sin((v.vertex.z * 65.3f) + _Time.y * 5.7f) + sin((v.vertex.x * 21.2f) + _Time.y * 6.52f);
 					float moveVertex = 1.0;// step(0.0, v.vertex.y);
-					v.vertex.y += (sinX + sinY) * _WaveRadius * moveVertex * v.color.w;
+					v.vertex.y += (sinX + sinY) * _WaveRadius * moveVertex * (1.0 - v.color.w);
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
 					o.scrPos = ComputeScreenPos(o.vertex);

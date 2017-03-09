@@ -5,6 +5,7 @@ namespace AI {
 	namespace Behaviour {
 		[System.Serializable]
 		public class RocketDashData : StateComponentData {
+			public float lightUpTime = 1.5f;
 			public float speed = 0f;
 			public float acceleration = 0f;
 			public string attackPoint;
@@ -56,6 +57,7 @@ namespace AI {
 
 				m_pilot.SetMoveSpeed(m_data.speed, false);
 				m_pilot.SlowDown(false);
+				m_machine.FaceDirection(true);
 
 				m_rocketState = RocketState.None;
 				ChangeState(RocketState.LightUp);
@@ -66,6 +68,8 @@ namespace AI {
 				m_pilot.ReleaseAction(Pilot.Action.Button_B);
 				m_pilot.ReleaseAction(Pilot.Action.ExclamationMark);
 				m_machine.SetSignal(Signals.Type.Invulnerable, false);
+
+				m_machine.FaceDirection(false);
 			}
 
 			protected override void OnUpdate() {
@@ -117,7 +121,7 @@ namespace AI {
 					switch (_newState) {
 						case RocketState.LightUp:
 							m_pilot.Stop();
-							m_lightUpTimer = 0.75f;
+							m_lightUpTimer = m_data.lightUpTime;
 							m_pilot.PressAction(Pilot.Action.Button_A);
 							m_pilot.PressAction(Pilot.Action.ExclamationMark);
 							break;

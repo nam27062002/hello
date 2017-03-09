@@ -13,18 +13,15 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Transparent (On Line Decoratio
 	}
 
 	SubShader {
-		Tags { "RenderType"="Transparent" "Queue"="Transparent"}
+		Tags { "RenderType"="Transparent" "Queue"="Transparent" "LightMode" = "ForwardBase" }
 		ZWrite Off
 		Blend SrcAlpha OneMinusSrcAlpha 
 		LOD 100
 		
 		Pass {  
-			Tags { "LightMode" = "ForwardBase" }
-
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-//				#pragma multi_compile_fog
 				#pragma multi_compile_fwdbase
 				#pragma glsl_no_auto_normalization
 				#pragma fragmentoption ARB_precision_hint_fastest

@@ -9,10 +9,12 @@ public class Corpse : MonoBehaviour {
 		public Vector3 localScale;
 		public Quaternion localRotation;
 	}
+
 	//------------------------------------
 	[SerializeField] private float m_fadeDelay = 0.5f;
 	[SerializeField] private float m_fadeTime = 1f;
 	[SerializeField] private float m_forceExplosion = 175f;
+	[SerializeField] private Transform m_view;
 	[SerializeField] private ParticleData m_blood;
 	[SerializeField] private Transform[] m_bloodPoints;
 
@@ -36,8 +38,7 @@ public class Corpse : MonoBehaviour {
 		m_materials = new List<Material>();
 		m_defaultTints = new List<Color>();
 
-		Transform view = transform.FindChild("view");
-		m_gibs = view.GetComponentsInChildren<Rigidbody>();
+		m_gibs = m_view.GetComponentsInChildren<Rigidbody>();
 
 		for (int i = 0; i < m_gibs.Length; i++) {
 			SimpleTransform t = new SimpleTransform();
@@ -51,7 +52,7 @@ public class Corpse : MonoBehaviour {
 			m_forceDirection.Add(dir);
 		}
 
-		Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
+		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
 		for (int i = 0; i < renderers.Length; i++) {
 			Material[] materials = renderers[i].materials;
 			for (int m = 0; m < materials.Length; m++) {
@@ -76,14 +77,12 @@ public class Corpse : MonoBehaviour {
 
 			for (int i = 0; i < m_gibs.Length; i++) {
 				m_gibs[i].transform.position = Vector3.zero;
-				m_gibs[i].transform.rotation = Quaternion.identity;
 
 				m_gibs[i].transform.localPosition = m_originalTransforms[i].localPosition;
 				m_gibs[i].transform.localRotation = m_originalTransforms[i].localRotation;
 				m_gibs[i].transform.localScale = m_originalTransforms[i].localScale;
 
 				m_gibs[i].position = m_gibs[i].transform.position;
-				m_gibs[i].rotation = Quaternion.identity;
 				m_gibs[i].velocity = Vector3.zero;
 
 				m_gibs[i].AddForce(m_forceDirection[i] * m_forceExplosion * forceFactor, ForceMode.Impulse);
@@ -124,17 +123,13 @@ public class Corpse : MonoBehaviour {
 	{
 		Color tint = Color.white;
 		for (int i = 0; i < m_materials.Count; i++) {
-			if (m_materials[i].name.Contains("body"))
-			{
+			if (m_materials[i].name.Contains("body")) {
 				m_materials[i].mainTexture = bodyTexture;
-			}
-			else if (m_materials[i].name.Contains("wings"))
-			{
+			} else if (m_materials[i].name.Contains("wings")) {
 				m_materials[i].mainTexture = wingsTexture;
 			}
 		}
 	}
-
 
 	void Update() {
 		if (m_spawned) {

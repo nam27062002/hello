@@ -45,13 +45,12 @@ public class GameStoreManagerCalety : GameStoreManager
     }
 	#endregion
 
-	const string IOS_ATTRIBUTE = "ios";
-	const string ANDROID_ATTRIBUTE = "android";
+	const string IOS_ATTRIBUTE = "apple";
+	const string GOOGLE_ATTRIBUTE = "google";
+	const string AMAZON_ATTRIBUTE = "amazon";
 
 	CaletyGameStoreListener m_storeListener;
 	string[] m_storeSkus;
-
-
 
 	public GameStoreManagerCalety () 
 	{
@@ -149,7 +148,19 @@ public class GameStoreManagerCalety : GameStoreManager
 		#if UNITY_IOS
 			return IOS_ATTRIBUTE;
 		#elif UNITY_ANDROID
-			return ANDROID_ATTRIBUTE;
+			CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+	        if(settingsInstance != null)
+	        {
+	            if (settingsInstance.m_iAndroidMarketSelected == CaletyConstants.MARKET_GOOGLE_PLAY)
+	            {
+					return GOOGLE_ATTRIBUTE;
+	            }
+	            else if (settingsInstance.m_iAndroidMarketSelected == CaletyConstants.MARKET_AMAZON)
+	            {
+					return AMAZON_ATTRIBUTE;
+	            }
+	        }
+			return GOOGLE_ATTRIBUTE;
 		#endif
     	return "";
     }

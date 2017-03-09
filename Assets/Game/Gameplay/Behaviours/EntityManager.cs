@@ -217,22 +217,50 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
         if (m_entities != null)
         {
             int i;
-            int count = m_entities.Count;
-            for (i = 0; i < count; i++)
+            int count = m_entities.Count - 1;
+            // for (i = 0; i < count; i++)
+            for( i = count; i >= 0; i--)
             {
-                m_entities[i].LogicUpdate();
+                m_entities[i].CustomUpdate();
             }
 
-            count = m_entitiesBg.Count;
-            for (i = 0; i < count; i++)
+            count = m_entitiesBg.Count - 1;
+            // for (i = 0; i < count; i++)
+			for (i = count; i >= 0; i--)
             {
-                m_entitiesBg[i].LogicUpdate();
+                m_entitiesBg[i].CustomUpdate();
             }
 
-			count = m_cages.Count;
-			for (i = 0; i < count; i++)
+			count = m_cages.Count - 1;
+			// for (i = 0; i < count; i++)
+			for( i = count; i >= 0; i-- )
 			{
-				m_cages[i].LogicUpdate();
+				m_cages[i].CustomUpdate();
+			}
+        }
+    }
+
+    void FixedUpdate()
+    {
+		if (m_entities != null)
+        {
+            int i;
+            int count = m_entities.Count - 1;
+            for( i = count; i >= 0; i--)
+            {
+                m_entities[i].CustomFixedUpdate();
+            }
+
+            count = m_entitiesBg.Count - 1;
+			for (i = count; i >= 0; i--)
+            {
+				m_entitiesBg[i].CustomFixedUpdate();
+            }
+
+			count = m_cages.Count - 1;
+			for( i = count; i>=0; i-- )
+			{
+				m_cages[i].CustomFixedUpdate();
 			}
         }
     }

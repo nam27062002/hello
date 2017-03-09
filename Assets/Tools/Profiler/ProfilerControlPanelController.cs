@@ -294,20 +294,27 @@ public class ProfilerControlPanelController : MonoBehaviour
     #region checkpoints
     private enum ECheckpoint
     {
+		StartingPoint,
+		WoodsCabins,
+		WoodsLeaves,
         Castle,
         Tunnel,
         Dungeons,
         Caves,
-        Bridge
+        Bridge,
     }
 
     private Vector3[] m_checkpointsPositions = new Vector3[]
     {
+		new Vector3(-180, 119, 0f),
+		new Vector3(137, 51, 0f),
+		new Vector3(280, 42, 0f),
         new Vector3(598, -3, 0f),
         new Vector3(598, -46, 0f),
         new Vector3(566, -62, 0f),
         new Vector3(522, -61, 0f),
         new Vector3(460, -11, 0f),
+
     };
 
     public TMP_Dropdown m_checkpoints;
@@ -386,12 +393,27 @@ public class ProfilerControlPanelController : MonoBehaviour
     }
     #endregion
 
-    #region particles_visibility
-    public void ParticlesVisibility_OnChangedValue(bool newValue)
+    #region particles
+    public void Particles_VisibilityOnChangedValue(bool newValue)
     {
         if (ApplicationManager.instance != null)
         {
             ApplicationManager.instance.Debug_ParticlesVisibility = newValue;
+        }
+    }
+
+    public void Particles_StateOnChangedValue(int option)
+    {
+        ApplicationManager.instance.Debug_SetParticlesState(option);
+    }
+    #endregion
+
+    #region ground
+    public void Ground_VisibleOnChangedValue(bool newValue)
+    {
+        if (ApplicationManager.instance != null)
+        {
+            ApplicationManager.instance.Debug_GroundVisibility = newValue;
         }
     }
     #endregion

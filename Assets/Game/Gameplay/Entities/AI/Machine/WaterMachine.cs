@@ -27,7 +27,7 @@ namespace AI {
 			base.Spawn(_spawner);
 		}
 
-		protected override void Update() {
+		public override void CustomUpdate() {
 			bool isInsideWater = GetSignal(Signals.Type.InWater);
 
 			switch (m_state) {
@@ -60,7 +60,7 @@ namespace AI {
 					break;
 			}
 
-			base.Update();
+			base.CustomUpdate();
 		}
 	}
 }

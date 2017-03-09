@@ -138,8 +138,12 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles:
-  - name: 
+  m_onEatenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
@@ -175,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: coin
+  m_sku: GoodJunkCoin
   m_dieOutsideFrustum: 1
 --- !u!114 &114000013463915632
 MonoBehaviour:
@@ -193,7 +197,6 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 1
-    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 120
     m_faceDirection: 1

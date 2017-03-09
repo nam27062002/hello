@@ -44,14 +44,14 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 			#endif
 
 			#if MEDIUM_DETAIL_ON
-			#define RIM
-			#define BUMP
+//			#define RIM
+//			#define BUMP
 			#endif
 
 			#if HI_DETAIL_ON
-			#define RIM
-			#define BUMP
-			#define SPEC
+//			#define RIM
+//			#define BUMP
+//			#define SPEC
 			#endif
 
 //			#define BUMP

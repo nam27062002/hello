@@ -34,7 +34,7 @@ public class CollectibleChest : MonoBehaviour {
 	[SerializeField] private GameObject m_mapMarker = null;
 
 	// Internal
-	private ChestViewController m_chestView = null;
+	private ChestViewController m_chestView = null;   
 
 	// Logic
 	private Chest m_chestData = null;
@@ -60,7 +60,8 @@ public class CollectibleChest : MonoBehaviour {
 		GameObject chestObj = GameObject.Instantiate<GameObject>(chestPrefab);
 		chestObj.transform.SetParent(this.transform, false);
 		m_chestView = chestObj.GetComponentInChildren<ChestViewController>();
-	}
+        m_chestView.CustomParticlesCulling = gameObject.GetComponentInChildren<CustomParticlesCulling>();        
+    }
 
 	/// <summary>
 	/// First update call.

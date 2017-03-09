@@ -160,6 +160,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // Test toggling particles visibility
             //Debug_TestToggleParticlesVisibility();
             // ---------------------------        
+
+            // ---------------------------
+            // Test toggling particles culling
+            Debug_TestToggleParticlesCulling();
+            // ---------------------------        
         }
 
         if (NeedsToRestartFlow)
@@ -561,7 +566,101 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private void Debug_TestToggleParticlesVisibility()
     {
         Debug_ParticlesVisibility = !Debug_ParticlesVisibility;
+    }
+
+    private enum EDebugParticlesState
+    {
+        Playing,
+        Paused,
+        Stopped
+    }
+
+    private EDebugParticlesState m_debugParticlesState = EDebugParticlesState.Playing;
+    private EDebugParticlesState Debug_ParticlesState
+    {
+        get
+        {
+            return m_debugParticlesState;
+        }
+
+        set
+        {
+            m_debugParticlesState = value;
+             
+            List<ParticleSystem> systems = GameObjectExt.FindObjectsOfType<ParticleSystem>(true);
+            if (systems != null)
+            {
+                int count = systems.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    switch (m_debugParticlesState)
+                    {
+                        case EDebugParticlesState.Playing:
+                            systems[i].Play();
+                            break;
+
+                        case EDebugParticlesState.Paused:
+                            systems[i].Pause();
+                            break;
+
+                        case EDebugParticlesState.Stopped:
+                            systems[i].Stop();
+                            break;
+
+                    }                   
+                }
+            }
+        }
     }   
+
+    public void Debug_SetParticlesState(int option)
+    {
+        EDebugParticlesState state = (EDebugParticlesState)option;
+        Debug_ParticlesState = state;
+    }
+
+    private bool Debug_PlayParticlesCulling { get; set; }    
+
+    private void Debug_TestToggleParticlesCulling()
+    {
+        Debug_PlayParticlesCulling = !Debug_PlayParticlesCulling;
+        CustomParticlesCulling.Manager_SimulateForAll(Debug_PlayParticlesCulling, !Debug_PlayParticlesCulling);        
+    }
+
+    private bool m_debug_GroundVisibility = true;
+    public bool Debug_GroundVisibility
+    {
+        get
+        {
+            return m_debug_GroundVisibility;
+        }
+
+        set
+        {
+            m_debug_GroundVisibility = value;
+
+            GameCamera gameCamera = InstanceManager.gameCamera;
+            if (gameCamera != null)
+            {
+                Camera camera = gameCamera.GetComponent<Camera>();
+                if (camera != null)
+                {
+                    int newMask = camera.cullingMask;
+                    int groundVisibleLayer = LayerMask.NameToLayer("GroundVisible");
+                    if (m_debug_GroundVisibility)
+                    {
+                        newMask |= 1 << groundVisibleLayer;
+                    }
+                    else
+                    {
+                        newMask &= ~(1 << groundVisibleLayer);
+                    }
+
+                    camera.cullingMask = newMask;
+                }                
+            }            
+        }
+    }    
     #endregion
 }
 

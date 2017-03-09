@@ -155,6 +155,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4317121346608186}
+  - component: {fileID: 95538465794568676}
+  - component: {fileID: 114689184543424384}
+  - component: {fileID: 114254713554736416}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -695,8 +698,6 @@ GameObject:
   - component: {fileID: 114596843481681700}
   - component: {fileID: 114643282663011192}
   - component: {fileID: 114869025050082016}
-  - component: {fileID: 95630566544016850}
-  - component: {fileID: 114151732799416460}
   - component: {fileID: 114781860970078206}
   - component: {fileID: 136364977207463478}
   - component: {fileID: 54335462114796102}
@@ -823,7 +824,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1858296077792500}
   m_LocalRotation: {x: 0.33227244, y: -0.62416863, z: -0.33227825, w: 0.62417936}
-  m_LocalPosition: {x: -0, y: 0.384, z: 0.104}
+  m_LocalPosition: {x: -0, y: 0.999, z: 0.104}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4530552762469766}
@@ -850,7 +851,7 @@ Transform:
   m_GameObject: {fileID: 1224587383944852}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.796, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.35, y: 1.35, z: 1.35}
   m_Children:
   - {fileID: 4175524861969108}
   - {fileID: 4559323961222754}
@@ -1032,7 +1033,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1954520714969992}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 3.009, y: -5.101, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4317121346608186}
@@ -1092,7 +1093,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1780640676140554}
   m_LocalRotation: {x: -7.628689e-10, y: 0.9998477, z: -0.017452406, w: -0.00000004370473}
-  m_LocalPosition: {x: 0, y: -0.696, z: 0}
+  m_LocalPosition: {x: 0, y: -0.742, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4534541583550050}
@@ -1468,34 +1469,23 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!95 &95630566544016850
+--- !u!95 &95538465794568676
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1954520714969992}
+  m_GameObject: {fileID: 1224587383944852}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 02cca3fe64b994915aa1c4df395f8fee, type: 3}
   m_Controller: {fileID: 9100000, guid: f23c4ae1d96f34e0085225f890178eda, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114151732799416460
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1954520714969992}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114239498478891972
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1507,7 +1497,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ee45223b4af4374bf6c562470c1498, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_knockback: 5
+  m_knockback: 0
+--- !u!114 &114254713554736416
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1224587383944852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb866604ce485468bb7f9031694a351b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114596843481681700
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1526,7 +1527,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 2.75
-  m_serializedJson: '[{"restTime":{"min":0.5,"max":1},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"damage":15,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"speed":3,"arrivalRadius":1,"hasGuardState":true,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"timeBeforeBackHome":0.25,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":2,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"seconds":2,"dataType":"AI.Behaviour.TimerAData","editorFolded":false},{"action":8192,"dataType":"AI.Behaviour.ActivateActionData","editorFolded":false},{"seconds":1.75,"dataType":"AI.Behaviour.TimerBData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":0.5,"max":1},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"speed":3,"arrivalRadius":1,"hasGuardState":true,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"timeBeforeBackHome":0.25,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":2,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"jumpVelocityV":15,"jumpVelocityH":1,"consecutiveAttacks":3,"dizzyTime":3,"retreatTime":7,"dataType":"AI.Behaviour.SpartakusAttackData","editorFolded":false}]'
   m_databaseKey: PF_Spartakus
 --- !u!114 &114643282663011192
 MonoBehaviour:
@@ -1544,7 +1545,6 @@ MonoBehaviour:
     m_useGravity: 1
     m_walkOnWalls: 0
     m_mass: 2.5
-    m_attackPausesJump: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 230
     m_faceDirection: 0
@@ -1556,12 +1556,12 @@ MonoBehaviour:
     m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-  m_affectedByDragonTrample: 1
+  m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 10
-    m_maxRadius: 3.31
+    m_sightRadius: 12
+    m_maxRadius: 4
     m_minRadius: 0
     m_hysteresisOffset: 0
     m_senseAbove: 1
@@ -1580,6 +1580,17 @@ MonoBehaviour:
     m_burningTime: 0
     m_dissolveTime: 1.5
     m_ashExceptions: []
+--- !u!114 &114689184543424384
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1224587383944852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114781860970078206
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1592,7 +1603,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0.0000001937151, y: 0.17936477}
-  radius: 0.76966566
+  radius: 1.0508804
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114788765800248734
 MonoBehaviour:
@@ -1626,11 +1637,18 @@ MonoBehaviour:
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
   m_animA: 
-  m_animB: Dizzy
+  m_animB: dizzy
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles: []
+  m_onEatenParticle:
+    name: PS_Blood_Explosion_Small
+    path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: PS_IceExplosionSmall
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: hd_goblin_dead
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -1689,7 +1707,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: spartakus
+  m_sku: Spartakus
   m_dieOutsideFrustum: 1
 --- !u!135 &135799558269336548
 SphereCollider:
@@ -1713,9 +1731,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
-  m_Height: 1.73
+  m_Height: 2.24
   m_Direction: 1
-  m_Center: {x: 0, y: 0.06, z: 0}
+  m_Center: {x: 0, y: 0.3, z: 0}
 --- !u!137 &137337948578507452
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

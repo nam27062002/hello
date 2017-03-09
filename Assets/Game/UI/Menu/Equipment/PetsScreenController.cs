@@ -15,7 +15,7 @@ using System.Collections.Generic;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// 
+/// Main controller for the pets menu screen.
 /// </summary>
 public class PetsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//

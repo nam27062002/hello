@@ -1399,8 +1399,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 6
-    m_attackPausesJump: 0
+    m_mass: 3
     m_defaultUpVector: 0
     m_orientationSpeed: 240
     m_faceDirection: 1
@@ -1416,9 +1415,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 0
-    m_sightRadius: 15
-    m_maxRadius: 13
-    m_minRadius: 6
+    m_sightRadius: 8
+    m_maxRadius: 6
+    m_minRadius: 4
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -1447,7 +1446,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: witch
+  m_sku: Witch
   m_dieOutsideFrustum: 1
 --- !u!114 &11483728
 MonoBehaviour:
@@ -1472,9 +1471,12 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles: []
+  m_onEatenParticle:
+    name: PS_Blood_Green_Small
+    path: Blood
+    offset: {x: 0, y: 0, z: 0}
   m_onEatenFrozenParticle:
-    name: 
+    name: PS_IceExplosion
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
@@ -1517,10 +1519,10 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":10,"panicSpeed":25,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"projectileName":"PF_WitchMagic","projectileSpawnTransformName":"projectile","damage":40,"canFollowTarget":true,"consecutiveAttacks":2,"attackDelay":0,"retreatTime":0,"stop":false,"faceEnemy":true,"faceEnemyY":true,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":14,"panicSpeed":30,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"projectileName":"PF_WitchMagic","projectileSpawnTransformName":"projectile","damage":40,"canFollowTarget":true,"consecutiveAttacks":2,"attackDelay":0,"retreatTime":0,"stop":false,"faceEnemy":true,"faceEnemyY":true,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
   m_databaseKey: PF_Witch
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 6
+  m_avoidDistanceAttenuation: 10
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!137 &13726440

@@ -41,8 +41,8 @@ public class UINotification : ShowHideAnimator {
 		m_idleSequence = DOTween.Sequence()
 			.SetLoops(-1, LoopType.Restart)
 			.AppendInterval(1.5f)
-			.Append(m_rectTransform.DOScale(1.25f, 0.15f).SetEase(Ease.InCubic))
-			.Append(m_rectTransform.DOScale(1f, 1f).SetEase(Ease.OutBounce))
+			.Append(transform.DOScale(1.25f, 0.15f).SetEase(Ease.InCubic))
+			.Append(transform.DOScale(1f, 1f).SetEase(Ease.OutBounce))
 			.Pause();
 	}
 

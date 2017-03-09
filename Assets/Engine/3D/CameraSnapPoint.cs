@@ -57,7 +57,15 @@ public class CameraSnapPoint : MonoBehaviour {
 	public Color gizmoColor = new Color(0f, 1f, 1f, 0.25f);
 
 	// Internal references
-	private LookAt m_lookAtPoint = null;
+	private LookAt m_lookAt = null;
+	public LookAt lookAtData {
+		get {
+			if(m_lookAt == null) {
+				m_lookAt = GetComponent<LookAt>();
+			}
+			return m_lookAt;
+		}
+	}
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -66,7 +74,7 @@ public class CameraSnapPoint : MonoBehaviour {
 	/// Get references.
 	/// </summary>
 	void Awake() {
-		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAt>();
+		
 	}
 
 	/// <summary>
@@ -76,17 +84,14 @@ public class CameraSnapPoint : MonoBehaviour {
 		// Ignore if gizmos disabled
 		if(!drawGizmos) return;
 
-		// Make sure lookAtPoint reference is valid
-		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAt>();
-
 		// LookAt line
 		Gizmos.color = Colors.WithAlpha(Colors.cyan, 0.75f);
-		Gizmos.DrawLine(m_lookAtPoint.transform.position, m_lookAtPoint.lookAtPointGlobal);
+		Gizmos.DrawLine(lookAtData.transform.position, lookAtData.lookAtPointGlobal);
 
 		// Position and lookAt points
 		Gizmos.color = Colors.WithAlpha(Colors.red, 0.75f);
-		Gizmos.DrawSphere(m_lookAtPoint.transform.position, 0.5f);
-		Gizmos.DrawSphere(m_lookAtPoint.lookAtPointGlobal, 0.5f);
+		Gizmos.DrawSphere(lookAtData.transform.position, 0.5f);
+		Gizmos.DrawSphere(lookAtData.lookAtPointGlobal, 0.5f);
 
 		// Camera frustum
 		// If not defined, use main camera values in a different color
@@ -127,11 +132,10 @@ public class CameraSnapPoint : MonoBehaviour {
 	public void Apply(Camera _cam) {
 		// Check params
 		if(_cam == null) return;
-		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAt>();
 
 		// Camera position and orientation
-		if(changePosition) _cam.transform.position = m_lookAtPoint.transform.position;
-		if(changeRotation) _cam.transform.LookAt(m_lookAtPoint.lookAtPointGlobal);
+		if(changePosition) _cam.transform.position = lookAtData.transform.position;
+		if(changeRotation) _cam.transform.LookAt(lookAtData.lookAtPointGlobal);
 
 		// Camera params
 		if(changeFov) _cam.fieldOfView = fov;
@@ -158,7 +162,6 @@ public class CameraSnapPoint : MonoBehaviour {
 		// Check params
 		if(_cam == null) return null;
 		if(_params == null) return null;
-		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAt>();
 
 		// [AOC] Make sure tweens are autokilled and recyclable, so we do a "pooling" of this tween type, avoiding creating memory garbage
 		string tweenId = GetTweenId(_cam);
@@ -175,16 +178,13 @@ public class CameraSnapPoint : MonoBehaviour {
 			.SetRecyclable(true)
 			.SetAutoKill(true)
 			.SetId(tweenId);
-		if(_onComplete != null) {
-			seq.OnComplete(_onComplete);
-		}
-
+		
 		// Camera position and orientation
 		if(changePosition){
-			seq.Join(_cam.transform.DOMove(m_lookAtPoint.transform.position, _duration).SetAs(_params));
+			seq.Join(_cam.transform.DOMove(lookAtData.transform.position, _duration).SetAs(_params));
 		}
 		if(changeRotation) {
-			seq.Join(_cam.transform.DORotateQuaternion(m_lookAtPoint.transform.rotation, _duration).SetAs(_params));
+			seq.Join(_cam.transform.DORotateQuaternion(lookAtData.transform.rotation, _duration).SetAs(_params));
 		}
 
 		// Camera params
@@ -236,6 +236,11 @@ public class CameraSnapPoint : MonoBehaviour {
 				fogEnd, _duration
 			).SetAs(_params));
 		}
+
+		// Attach custom OnComplete callback
+		seq.OnComplete(() => {
+			if(_onComplete != null) _onComplete();
+		});
 
 		return seq;
 	}

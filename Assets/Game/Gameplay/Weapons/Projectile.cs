@@ -217,7 +217,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 		m_lastPosition = m_position;
 		m_startPosition = m_position;
 
-		Vector3 newDir = Vector3.RotateTowards(Vector3.forward, m_direction, 2f * Mathf.PI, 0.0f);
+		Vector3 newDir = Vector3.RotateTowards(Vector3.forward, -m_direction, 2f * Mathf.PI, 0.0f);
 		m_trasnform.rotation = Quaternion.AngleAxis(90f, newDir) * Quaternion.LookRotation(newDir);
 
 		//
@@ -412,6 +412,11 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	private void StickOnPlayer() {
 		m_state = State.Stuck_On_Player;
+
+		for (int i = 0; i < m_activateOnShoot.Count; i++) {
+			m_activateOnShoot[i].SetActive(false);
+		}
+
 		m_trasnform.parent = SearchClosestHoldPoint(InstanceManager.player.holdPreyPoints);
 		m_timer = m_stickOnDragonTime;
 	}

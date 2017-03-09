@@ -27,6 +27,7 @@ namespace AI {
 			private float m_idleTimer;
 			private float m_sideTimer;
 
+			private float m_distanceToTarget;
 
 
 			public override StateComponentData CreateData() {
@@ -62,11 +63,10 @@ namespace AI {
 				m_idleTimer -= Time.deltaTime;
 
 				if (m_idleTimer > 0f) {
-					Vector3 direction = (m_machine.groundDirection == Vector3.zero)? Vector3.right : m_machine.groundDirection;
+					Vector3 direction = m_machine.groundDirection;
 					direction.z = 0f;
 
 					Vector3 target = m_machine.position + direction * m_side * 1.5f;
-					m_side = 1; // we'll keep walking in the same direction
 
 					m_sideTimer -= Time.deltaTime;
 					if (m_sideTimer <= 0 || ShouldChangeDirection(target)) {
@@ -74,15 +74,17 @@ namespace AI {
 						m_sideTimer = m_data.timeToChangeDirection.GetRandom();
 					}
 
+					m_distanceToTarget =  (target - m_machine.position).sqrMagnitude;
+
 					m_pilot.GoTo(target);
 				} else {
 					m_idleTimer = 0f;
 					m_pilot.SlowDown(true);
-
-					float m = Mathf.Abs(m_machine.position.x - m_pilot.target.x);
-					if (m < 2f) {
+					float distanceToTarget = (m_pilot.target - m_machine.position).sqrMagnitude;
+					if (distanceToTarget <= 1f || distanceToTarget > m_distanceToTarget) {
 						Transition(OnRest);
 					}
+					m_distanceToTarget = distanceToTarget;
 				}
 			}
 

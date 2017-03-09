@@ -22,8 +22,8 @@ namespace AI {
 		}
 
 
-		protected override void Update() {
-			base.Update();
+		public override void CustomUpdate() {
+			base.CustomUpdate();
 			if ( !m_phoenixActive )
 			{
 				if ( m_pilot.IsActionPressed(Pilot.Action.Fire))

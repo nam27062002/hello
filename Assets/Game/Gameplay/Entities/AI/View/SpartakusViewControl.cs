@@ -27,12 +27,12 @@ public class SpartakusViewControl : ViewControl {
 	protected override void OnSpecialAnimationExit(SpecialAnims _anim) {
 		switch(_anim) {
 			case SpecialAnims.A: break;
-			case SpecialAnims.B: m_timer = 1.5f; break;
+			case SpecialAnims.B: m_timer = 2.5f; break;
 		}
 	}
 
-	protected override void Update() {
-		base.Update();
+	public override void CustomUpdate() {
+		base.CustomUpdate();
 
 		if (m_timer > 0f) {
 			m_timer -= Time.deltaTime;

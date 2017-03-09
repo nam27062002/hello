@@ -67,7 +67,7 @@ public class ViewControlBg : MonoBehaviour, ISpawnable {
 		m_animator.speed = 1f;
 	}
 
-	protected virtual void Update() {
+	public virtual void CustomUpdate() {
 		if (m_hasNavigationLayer) {
 			m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, 3f * Time.deltaTime, 0.2f);
 			m_animator.SetFloat("direction X", m_currentBlendX);

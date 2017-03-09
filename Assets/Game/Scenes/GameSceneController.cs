@@ -131,11 +131,11 @@ public class GameSceneController : GameSceneControllerBase {
 	/// </summary>
 	private void Update() {
 		// Skip if paused
-		if(m_paused) return;
+		if(m_paused) return;        
 
-		// [AOC] Editor utility: open pause popup
-		#if UNITY_EDITOR
-		if(Input.GetKeyDown(KeyCode.P)) {
+        // [AOC] Editor utility: open pause popup
+        #if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.P)) {
 			PopupManager.OpenPopupInstant(PopupPause.PATH);
 		}
 		else if (Input.GetKeyDown(KeyCode.I))
@@ -235,7 +235,9 @@ public class GameSceneController : GameSceneControllerBase {
 		// Call parent
 		base.OnDestroy();
 
-		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+        CustomParticlesCulling.Manager_OnDestroy();
+
+        Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 	}
 
 	//------------------------------------------------------------------//
@@ -348,8 +350,11 @@ public class GameSceneController : GameSceneControllerBase {
 				ChestManager.OnLevelLoaded();
 				EggManager.SelectCollectibleEgg();
 
-				// Notify the game
-				Messenger.Broadcast(GameEvents.GAME_STARTED);
+                // Once the level is loaded completely particles can be culled
+                CustomParticlesCulling.Manager_NotifyGameStarted();
+
+                // Notify the game
+                Messenger.Broadcast(GameEvents.GAME_STARTED);
 			} break;
 
 			case EStates.COUNTDOWN: {

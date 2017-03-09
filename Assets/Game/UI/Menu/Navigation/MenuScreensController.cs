@@ -105,10 +105,21 @@ public class MenuScreensController : NavigationScreenSystem {
 		base.Start();
 
 		// Instantly move camera to initial screen snap point
-		CameraSnapPoint targetSnapPoint = GetCameraSnapPoint(m_currentScreenIdx);
-		if(targetSnapPoint != null
-		&& InstanceManager.sceneController.mainCamera != null) {
-			targetSnapPoint.Apply(InstanceManager.sceneController.mainCamera);
+		if(currentCameraSnapPoint != null) {
+			currentCameraSnapPoint.Apply(InstanceManager.sceneController.mainCamera);
+		}
+	}
+
+	/// <summary>
+	/// Update loop.
+	/// </summary>
+	private void Update() {
+		// Enforce camera position to current snap point
+		// Only if camera is not already moving!
+		if(!m_tweening) {
+			if(currentCameraSnapPoint != null) {
+				currentCameraSnapPoint.Apply(InstanceManager.sceneController.mainCamera);
+			}
 		}
 	}
 

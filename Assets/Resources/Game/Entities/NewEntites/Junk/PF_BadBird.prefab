@@ -456,8 +456,12 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles:
-  - name: PF_feathers_3D_noblood_orange
+  m_onEatenParticle:
+    name: PF_feathers_3D_noblood_orange
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: PF_feathers_3D_noblood_icy
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
@@ -493,7 +497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: badJunk
+  m_sku: BadBird
   m_dieOutsideFrustum: 1
 --- !u!114 &11424068
 MonoBehaviour:
@@ -520,12 +524,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_enableMotion: 1
+  m_enableMotion: 0
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 10
-    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 480
     m_faceDirection: 1
@@ -593,16 +596,16 @@ MonoBehaviour:
   m_blendSpeedFactor: 1
   m_energy: 15
   m_energyDrainSec: 5
-  m_brainResource: {fileID: 11400000, guid: 304158c95287142fb9790e7a5f470070, type: 2}
+  m_brainResource: {fileID: 0}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":0.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"changeLeaderTime":0,"separation":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":0,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"changeLeaderTime":0,"separation":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
   m_databaseKey: PF_BadBird
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 3.5
-  m_avoidCollisions: 1
-  m_avoidWater: 1
+  m_avoidCollisions: 0
+  m_avoidWater: 0
 --- !u!137 &13761280
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

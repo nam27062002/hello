@@ -803,7 +803,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: canary_01
+  m_sku: Sheep
   m_dieOutsideFrustum: 0
 --- !u!114 &114826213901103138
 MonoBehaviour:
@@ -817,6 +817,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_motionType: 2
+  m_chargeTime: 0
   m_speed: 0
   m_rotationSpeed: 1
   m_maxTime: 30
@@ -827,6 +828,14 @@ MonoBehaviour:
   m_radius: 0
   m_knockback: 5
   m_activateOnShoot: []
+  m_onAttachParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onChargeParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onHitParticle:
     name: PS_CatapultRock
     path: 
@@ -835,7 +844,9 @@ MonoBehaviour:
     name: PS_Blood_Explosion_Medium
     path: Blood
     offset: {x: 0, y: 0, z: 0}
+  m_missHitSpawnsParticle: 1
   m_stickOnDragonTime: 0
+  m_dieTime: 0
   m_onHitAudio: Catapult_Impact
 --- !u!114 &114947380596267484
 MonoBehaviour:
