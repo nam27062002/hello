@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -19,15 +20,21 @@ public class MenuScreenActivator : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	public enum Mode {
+		SHOW_ON_TARGET_SCREENS,
+		HIDE_ON_TARGET_SCREENS
+	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed setup
-	[SerializeField] private MenuScreens m_screen = MenuScreens.NONE;
+	[SerializeField] private Mode m_mode = Mode.SHOW_ON_TARGET_SCREENS;
+	[SerializeField] private List<MenuScreens> m_screens = new List<MenuScreens>();
 
 	// Internal
 	private MenuScreensController m_screensController = null;
+	private ShowHideAnimator m_animator = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -36,7 +43,8 @@ public class MenuScreenActivator : MonoBehaviour {
 	/// Initialiation.
 	/// </summary>
 	private void Awake() {
-		
+		// If we have an animator, store reference to it
+		m_animator = GetComponent<ShowHideAnimator>();
 	}
 
 	/// <summary>
@@ -68,11 +76,27 @@ public class MenuScreenActivator : MonoBehaviour {
 		// Check whether active screen is the target one
 		if(m_screensController == null) return;
 
-		// Special case if NONE
-		if(m_screen == MenuScreens.NONE) {
-			gameObject.SetActive(true);
+		// Is the current screen in the list?
+		MenuScreens currentScreen = (MenuScreens)m_screensController.currentScreenIdx;
+		bool isScreenOnTheList = m_screens.IndexOf(currentScreen) >= 0;
+
+		// Determine visibility
+		bool show = true;
+		switch(m_mode) {
+			case Mode.SHOW_ON_TARGET_SCREENS: {
+				show = isScreenOnTheList;
+			} break;
+
+			case Mode.HIDE_ON_TARGET_SCREENS: {
+				show = !isScreenOnTheList;
+			} break;
+		}
+
+		// Apply visibility
+		if(m_animator != null) {
+			m_animator.ForceSet(show);
 		} else {
-			gameObject.SetActive(m_screensController.currentScene == m_screensController.GetScene((int)m_screen));
+			gameObject.SetActive(show);
 		}
 	}
 
