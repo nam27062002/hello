@@ -85,7 +85,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	//This may be a machine
 	private Entity m_entity;
 	private AI.MachineProjectile m_machine;
-
+	private Collider m_hitCollider;
 
 	//-------------------------------------------------------------------------------------
 
@@ -343,6 +343,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	private void OnTriggerEnter(Collider _other) {
 		if (m_state == State.Shot) {
 			if (m_machine == null || !m_machine.IsDying()) {
+				m_hitCollider = _other;
 				if (_other.CompareTag("Player"))  {
 					Explode(true);
 				} else if ((((1 << _other.gameObject.layer) & LayerMask.GetMask("Ground", "GroundVisible")) > 0)) {
@@ -404,20 +405,20 @@ public class Projectile : MonoBehaviour, IProjectile {
 		}
 
 		if (m_stickOnDragonTime > 0f && _triggeredByPlayer) {
-			StickOnPlayer();
+			StickOnCollider();
 		} else {
 			Die();
 		}
 	}
 
-	private void StickOnPlayer() {
+	private void StickOnCollider() {
 		m_state = State.Stuck_On_Player;
 
 		for (int i = 0; i < m_activateOnShoot.Count; i++) {
 			m_activateOnShoot[i].SetActive(false);
 		}
 
-		m_trasnform.parent = SearchClosestHoldPoint(InstanceManager.player.holdPreyPoints);
+		m_trasnform.parent = m_hitCollider.transform;
 		m_timer = m_stickOnDragonTime;
 	}
 
