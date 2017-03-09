@@ -30,6 +30,7 @@ public class DestructibleDecoration : Initializable {
 
 	private GameObject m_view;
 	private GameObject m_viewDestroyed;
+	private Corpse     m_corpse;
 
 	private AutoSpawnBehaviour m_autoSpawner;
 	private BoxCollider m_collider;
@@ -100,6 +101,7 @@ public class DestructibleDecoration : Initializable {
 			} else {
 				m_viewDestroyed = transform.FindChild("view_burned").gameObject; // maybe, we'll need another game object, for now we use the burned one
 			}
+			m_corpse = m_viewDestroyed.GetComponent<Corpse>();
 			m_colliderCenter = m_collider.center;
 
 			if (m_zone == ZoneManager.Zone.Zone1) {
@@ -212,9 +214,10 @@ public class DestructibleDecoration : Initializable {
 						m_autoSpawner.StartRespawn();
 						m_view.SetActive(false);
 						m_viewDestroyed.SetActive(true);
+						if (m_corpse != null) {
+							m_corpse.Spawn(false, false);
+						}
 						m_spawned = false;
-
-
 					}
 				}
 			}
