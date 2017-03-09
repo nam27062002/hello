@@ -1,4 +1,4 @@
-﻿// CanvasScaleCompensator.cs
+﻿// UI3DScaler.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 13/02/2017.
