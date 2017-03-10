@@ -154,7 +154,7 @@ public class CameraSnapPoint : MonoBehaviour {
 	/// Respects the change flags.
 	/// </summary>
 	/// <returns>The generated tween sequence.</returns>
-	/// <param name="_cam">The camera to be tweened.</param>
+	/// <param name="_cam">The camera to be tweened.</param>la
 	/// <param name="_duration">Tween duration, same considerations as in any DGTween.</param>
 	/// <param name="_params">Animation parameters.</param>
 	/// <param name="_onComplete">Optional function to be called upon completing the tween.</param>
@@ -177,7 +177,8 @@ public class CameraSnapPoint : MonoBehaviour {
 		Sequence seq = DOTween.Sequence()
 			.SetRecyclable(true)
 			.SetAutoKill(true)
-			.SetId(tweenId);
+			.SetId(tweenId)
+			.SetTarget(_cam);
 		
 		// Camera position and orientation
 		if(changePosition){
@@ -242,6 +243,7 @@ public class CameraSnapPoint : MonoBehaviour {
 			if(_onComplete != null) _onComplete();
 		});
 
+		seq.Restart(true);
 		return seq;
 	}
 
