@@ -60,7 +60,7 @@ do
     PARAM_NAME=${!i}
     if [ "$PARAM_NAME" == "--help" ] ; then
         echo $USAGE
-        exit 1
+        exit 0
     elif [ "$PARAM_NAME" == "-path" ] ; then
         ((i++))
         PROJECT_PATH=${!i}
@@ -340,3 +340,4 @@ DIFF=$(date -j -u -f %s ${DIFF} +%Hh:%Mm:%Ss)
 print_builder "Done in ${DIFF}!" # -j to not actually set the date, -u for UTC time, -f to specify input format (%s -> seconds)
 
 cd "${INITIAL_PATH}"
+exit 0
