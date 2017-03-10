@@ -7,6 +7,7 @@ namespace AI {
 		public class SpartakusAttackData : StateComponentData {
 			public float jumpVelocityV = 15f;
 			public float jumpVelocityH = 5f;
+			public float damage = 5f;
 			public int consecutiveAttacks = 3;
 			public float dizzyTime = 0f;
 			public float retreatTime = 0f;
@@ -52,6 +53,7 @@ namespace AI {
 
 				m_data = m_pilot.GetComponentData<SpartakusAttackData>();
 				m_meleeWeapon = m_pilot.FindComponentRecursive<MeleeWeapon>();
+				m_meleeWeapon.damage = m_data.damage;
 				m_meleeWeapon.enabled = false;
 			}
 
