@@ -479,6 +479,9 @@ public class PolyMesh : MonoBehaviour {
 	/// Raises the draw gizmos event.
 	/// </summary>
 	void OnDrawGizmos() {
+
+		showNormals = true;
+
 		if(showOutline) {
 			Gizmos.color = Color.magenta;
 			float depth = -pinkMeshOffset * transform.lossyScale.z;
@@ -495,8 +498,10 @@ public class PolyMesh : MonoBehaviour {
 
 				Gizmos.DrawLine(point1, point2);
 				if(showNormals) {
+					Gizmos.color = Color.yellow;
 					Vector3 n = Vector3.Cross(Vector3.forward, point2 - point1).normalized;
 					Gizmos.DrawLine((point1 + point2) / 2.0f, (n * 3.0f) + (point1 + point2) / 2.0f);
+					Gizmos.color = Color.magenta;
 				}
 			}
 			int last = points.Count - 1;
@@ -505,8 +510,10 @@ public class PolyMesh : MonoBehaviour {
 				Vector3 endPoint = new Vector3(points[0].x, points[0].y, points[0].z - depth);
 				Gizmos.DrawLine(startPoint, endPoint);
 				if(showNormals) {
+					Gizmos.color = Color.yellow;
 					Vector3 n = Vector3.Cross(Vector3.forward, endPoint - startPoint).normalized;
 					Gizmos.DrawLine((startPoint + endPoint) / 2.0f, (n * 3.0f) + (startPoint + endPoint) / 2.0f);
+					Gizmos.color = Color.magenta;
 				}
 			}
 		}
