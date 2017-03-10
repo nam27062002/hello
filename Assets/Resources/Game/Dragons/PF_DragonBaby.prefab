@@ -543,7 +543,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 119186}
   m_LocalRotation: {x: -0.21031931, y: -0, z: -0, w: 0.97763276}
-  m_LocalPosition: {x: 0, y: -0.197, z: -4.057}
+  m_LocalPosition: {x: 0, y: -0.176, z: -3.914}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 431226}
@@ -709,7 +709,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.67, z: 1.57}
+  m_Size: {x: 0.57, y: 0.61, z: 1.57}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &11408926
 MonoBehaviour:
@@ -1758,8 +1758,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4957019498477180}
-  - component: {fileID: 65327380842375184}
   - component: {fileID: 114988125153512114}
+  - component: {fileID: 135632681806578016}
   m_Layer: 12
   m_Name: hit_head
   m_TagString: Player
@@ -3083,7 +3083,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1970556544219656}
-  m_LocalRotation: {x: 0.0102935275, y: 0.74058515, z: -0.011347681, w: 0.67178786}
+  m_LocalRotation: {x: 0.016445795, y: 0.7982061, z: -0.021814395, w: 0.60176474}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3737,18 +3737,6 @@ BoxCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1050702794613796}
-  m_Material: {fileID: 13400000, guid: d06b7a7d5a93548118434f079ec35f7f, type: 2}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!65 &65327380842375184
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1276305707243850}
   m_Material: {fileID: 13400000, guid: d06b7a7d5a93548118434f079ec35f7f, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
@@ -5305,6 +5293,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 414586}
+--- !u!135 &135632681806578016
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1276305707243850}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.55
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!137 &137481061222759094
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

@@ -70,6 +70,20 @@ public class MenuCameraAnimatorBySnapPoints : MonoBehaviour {
 		Debug.Assert(m_snapPoints.Count > 0, "At least one snap point required");
 	}
 
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		
+	}
+
+	/// <summary>
+	/// Component has been disabled.
+	/// </summary>
+	private void OnDisable() {
+
+	}
+
 	//------------------------------------------------------------------//
 	// OTHER METHODS													//
 	//------------------------------------------------------------------//
