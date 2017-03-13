@@ -21,6 +21,8 @@ namespace AI {
 
 		//--------------------------------------------------
 		private Vector3 m_groundNormal;
+		private Vector3 m_groundDirection;
+		public Vector3 groundDirection { get { return m_groundDirection; } }
 
 		private bool m_onGround;
 		private float m_heightFromGround;
@@ -34,28 +36,13 @@ namespace AI {
 			m_onGround = false;
 
 			//find the nearest wall and use that up vector
-			RaycastHit[] hit = new RaycastHit[4];
-			bool[] hasHit = new bool[4];
+			FindUpVector();
 
-			hasHit[0] = Physics.Raycast(position, Vector3.down * 5f, out hit[0], GROUND_MASK);
-			hasHit[1] = Physics.Raycast(position, Vector3.up * 5f,	 out hit[1], GROUND_MASK);
-			hasHit[2] = Physics.Raycast(position, Vector3.right * 5f,out hit[2], GROUND_MASK);
-			hasHit[3] = Physics.Raycast(position, Vector3.left * 5f, out hit[3], GROUND_MASK);
-
-			float d = 99999f;
-			for (int i = 0; i < 4; i++) {
-				if (hasHit[i]) {
-					if (hit[i].distance < d) {
-						d = hit[i].distance;
-
-						m_upVector = hit[i].normal;
-						position = hit[i].point;
-
-						m_heightFromGround = 0f;
-						m_onGround = true;
-					}
-				}
+			if (!m_onGround) {
+				m_machine.SetSignal(Signals.Type.FallDown, true);
 			}
+
+			m_groundDirection = Vector3.Cross(Vector3.back, m_upVector);
 
 			m_subState = SubState.Idle;
 			m_nextSubState = SubState.Idle;
@@ -76,24 +63,17 @@ namespace AI {
 
 			m_direction = m_pilot.direction;
 
-			if (!m_pilot.IsActionPressed(Pilot.Action.Stop)) {
-				m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;
-			}
-
 			switch (m_subState) {
 				case SubState.Idle:
 					if (m_pilot.speed > 0.01f) {
 						m_nextSubState = SubState.Move;
 					}
-
-					GetGroundNormal();
 					break;
 
 				case SubState.Move:
 					if (m_pilot.speed <= 0.01f) {
 						m_nextSubState = SubState.Idle;
 					}
-
 					GetGroundNormal();
 					break;
 			}
@@ -112,6 +92,15 @@ namespace AI {
 
 			// ----------------------------- gravity :3
 			m_rbody.velocity = m_velocity + (-m_groundNormal * 9.8f * 3f * Time.fixedDeltaTime) + m_externalVelocity;
+		}
+
+		protected override void ExtendedUpdateFreeFall() {
+			GetGroundNormal();
+			if (m_onGround) {
+				m_machine.SetSignal(Signals.Type.FallDown, false);
+				FindUpVector();
+				m_nextSubState = SubState.Idle;
+			}
 		}
 
 		protected override void UpdateOrientation() {
@@ -135,7 +124,7 @@ namespace AI {
 			}
 
 			RaycastHit hit;
-			if (Physics.SphereCast(pos, 1f, -m_upVector, out hit, 6f, GROUND_MASK)) {				
+			if (Physics.Raycast(pos, -m_upVector, out hit, 6f, GROUND_MASK)) {				
 				normal = (hit.normal * 0.75f) + (m_groundNormal * 0.25f);
 				normal.Normalize();
 				m_heightFromGround = hit.distance - 3f;
@@ -147,7 +136,32 @@ namespace AI {
 			m_groundNormal = normal;
 			m_upVector = normal;
 
-			m_viewControl.Height(m_heightFromGround);
+			m_groundDirection = Vector3.Cross(Vector3.back, m_upVector);
+		}
+
+		private void FindUpVector() {
+			RaycastHit[] hit = new RaycastHit[4];
+			bool[] hasHit = new bool[4];
+
+			hasHit[0] = Physics.Raycast(position, Vector3.down * 5f, out hit[0], GROUND_MASK);
+			hasHit[1] = Physics.Raycast(position, Vector3.up * 5f,	 out hit[1], GROUND_MASK);
+			hasHit[2] = Physics.Raycast(position, Vector3.right * 5f,out hit[2], GROUND_MASK);
+			hasHit[3] = Physics.Raycast(position, Vector3.left * 5f, out hit[3], GROUND_MASK);
+
+			float d = 99999f;
+			for (int i = 0; i < 4; i++) {
+				if (hasHit[i]) {
+					if (hit[i].distance < d) {
+						d = hit[i].distance;
+
+						m_upVector = hit[i].normal;
+						position = hit[i].point;
+
+						m_heightFromGround = 0f;
+						m_onGround = true;
+					}
+				}
+			}
 		}
 
 		private void ChangeState() {
@@ -176,7 +190,5 @@ namespace AI {
 		protected override void ExtendedAttach() {}
 
 		protected override void OnSetVelocity() {}
-
-		protected override void ExtendedUpdateFreeFall() { }	
 	}
 }

@@ -106,7 +106,7 @@ namespace AI {
 		//---------------------------------------------------------------------------------
 
 		// Use this for initialization
-		void Awake() {
+		protected virtual void Awake() {
 			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
 
 			m_entity = GetComponent<IEntity>();

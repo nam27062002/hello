@@ -2580,6 +2580,7 @@ MonoBehaviour:
   m_skimmingSound: 
   m_insideWaterSnapshot: {fileID: 0}
   m_waterDeepToSnapshot: 0
+  m_hiccupSound: 
 --- !u!114 &114000011637225726
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2603,7 +2604,14 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles: []
+  m_onEatenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -2640,14 +2648,12 @@ MonoBehaviour:
   m_blendSpeedFactor: 10
   m_energy: 10
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: 8e7937c1090aa41a3bc11138b5ffedcc, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_speedFactorRange:
-    min: 1
-    max: 1
-  m_serializedJson: '[{"speedMultiplier":1.5,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"speedMultiplier":3,"chaseTimeout":1000,"cooldown":{"min":0,"max":0},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"action":5,"dataType":"AI.Behaviour.ActivateActionData","editorFolded":false},{"dragonSizeRangeMultipier":20,"dataType":"AI.Behaviour.PetSearchBurnTargetData","editorFolded":false}]'
+  m_serializedJson: '[{"speedMultiplier":1.5,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"speedMultiplier":3,"chaseTimeout":1000,"cooldown":{"min":0,"max":0},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"action":64,"dataType":"AI.Behaviour.ActivateActionData","editorFolded":false},{"dragonSizeRangeMultipier":20,"dataType":"AI.Behaviour.PetSearchBurnTargetData","editorFolded":false}]'
   m_databaseKey: PF_PetPhoenix
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -2730,6 +2736,7 @@ MonoBehaviour:
   m_skimmingSound: 
   m_insideWaterSnapshot: {fileID: 0}
   m_waterDeepToSnapshot: 0
+  m_hiccupSound: 
 --- !u!114 &114674282589081980
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2757,7 +2764,6 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 1
-    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 360
     m_faceDirection: 1
@@ -2993,7 +2999,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1291484319880162}
   serializedVersion: 5
   lengthInSec: 0.5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -5558,7 +5564,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1320567416356056}
   serializedVersion: 5
   lengthInSec: 2
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -8195,7 +8201,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1534470124664140}
   serializedVersion: 5
   lengthInSec: 3
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -10724,7 +10730,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1803333080410256}
   serializedVersion: 5
   lengthInSec: 1
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
