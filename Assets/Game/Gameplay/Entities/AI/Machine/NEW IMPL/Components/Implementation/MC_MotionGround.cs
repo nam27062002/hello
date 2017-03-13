@@ -24,6 +24,8 @@ namespace AI {
 
 		//--------------------------------------------------
 		private Vector3 m_groundNormal;
+		private Vector3 m_groundDirection;
+		public Vector3 groundDirection { get { return m_groundDirection; } }
 
 		private bool m_onGround;
 		private float m_heightFromGround;
@@ -163,6 +165,11 @@ namespace AI {
 
 			m_onGround = m_heightFromGround < 0.3f;
 			m_groundNormal = normal;
+
+			m_groundDirection = Vector3.Cross(Vector3.back, m_upVector);
+			if (m_groundDirection.y > 0.5f || m_groundDirection.y < -0.5f) {
+				m_groundDirection = Vector3.right;
+			}
 
 			m_viewControl.Height(m_heightFromGround);
 		}

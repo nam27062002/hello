@@ -9,6 +9,7 @@ namespace AI {
 
 		public override Vector3 position		{ get { return m_wallWalkingMotion.position; } set { m_wallWalkingMotion.position = value; } }
 		public override Vector3 direction 		{ get { return m_wallWalkingMotion.direction; } }
+		public override Vector3 groundDirection	{ get { return m_wallWalkingMotion.groundDirection; } }
 		public override Vector3 upVector 		{ get { return m_wallWalkingMotion.upVector; } set { m_wallWalkingMotion.upVector = value; } }
 		public override Vector3 velocity		{ get { return m_wallWalkingMotion.velocity; } }
 		public override Vector3 angularVelocity	{ get { return m_wallWalkingMotion.angularVelocity; } }
