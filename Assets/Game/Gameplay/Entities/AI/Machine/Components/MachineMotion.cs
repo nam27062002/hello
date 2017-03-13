@@ -147,10 +147,10 @@ namespace AI {
 				RaycastHit[] hit = new RaycastHit[4];
 				bool[] hasHit = new bool[4];
 
-				hasHit[0] = Physics.Linecast(position, position + Vector3.down * 5f, out hit[0], m_groundMask);
-				hasHit[1] = Physics.Linecast(position, position + Vector3.up * 5f,	 out hit[1], m_groundMask);
-				hasHit[2] = Physics.Linecast(position, position + Vector3.right * 5f,out hit[2], m_groundMask);
-				hasHit[3] = Physics.Linecast(position, position + Vector3.left * 5f, out hit[3], m_groundMask);
+				hasHit[0] = Physics.Raycast(position, Vector3.down * 5f, out hit[0], m_groundMask);
+				hasHit[1] = Physics.Raycast(position, Vector3.up * 5f,	 out hit[1], m_groundMask);
+				hasHit[2] = Physics.Raycast(position, Vector3.right * 5f,out hit[2], m_groundMask);
+				hasHit[3] = Physics.Raycast(position, Vector3.left * 5f, out hit[3], m_groundMask);
 
 				float d = 99999f;
 				for (int i = 0; i < 4; i++) {

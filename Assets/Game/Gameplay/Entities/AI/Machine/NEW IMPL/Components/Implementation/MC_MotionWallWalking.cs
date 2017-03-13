@@ -3,15 +3,12 @@ using System;
 
 namespace AI {
 	[Serializable]
-	public sealed class MC_MotionGround : MC_Motion {
+	public sealed class MC_MotionWallWalking : MC_Motion {
 
 		//--------------------------------------------------
 		private enum SubState {
 			Idle = 0,
-			Move,
-			Jump_Start,
-			Jump_Up,
-			Jump_Down
+			Move
 		};
 
 
@@ -36,13 +33,28 @@ namespace AI {
 		protected override void ExtendedInit() {
 			m_onGround = false;
 
-			GetGroundNormal();
-			RaycastHit hit;
-			bool hasHit = Physics.Raycast(position + m_upVector * 0.1f, -m_groundNormal, out hit, 5f, GROUND_MASK);
-			if (hasHit) {
-				position = hit.point;
-				m_heightFromGround = 0f;
-				m_onGround = true;
+			//find the nearest wall and use that up vector
+			RaycastHit[] hit = new RaycastHit[4];
+			bool[] hasHit = new bool[4];
+
+			hasHit[0] = Physics.Raycast(position, Vector3.down * 5f, out hit[0], GROUND_MASK);
+			hasHit[1] = Physics.Raycast(position, Vector3.up * 5f,	 out hit[1], GROUND_MASK);
+			hasHit[2] = Physics.Raycast(position, Vector3.right * 5f,out hit[2], GROUND_MASK);
+			hasHit[3] = Physics.Raycast(position, Vector3.left * 5f, out hit[3], GROUND_MASK);
+
+			float d = 99999f;
+			for (int i = 0; i < 4; i++) {
+				if (hasHit[i]) {
+					if (hit[i].distance < d) {
+						d = hit[i].distance;
+
+						m_upVector = hit[i].normal;
+						position = hit[i].point;
+
+						m_heightFromGround = 0f;
+						m_onGround = true;
+					}
+				}
 			}
 
 			m_subState = SubState.Idle;
@@ -75,37 +87,14 @@ namespace AI {
 					}
 
 					GetGroundNormal();
-					if (m_heightFromGround > 1f) {
-						m_machine.SetSignal(Signals.Type.FallDown, true);
-					}
 					break;
 
 				case SubState.Move:
-					if (m_pilot.IsActionPressed(Pilot.Action.Jump)) {
-						m_nextSubState = SubState.Jump_Start;
-					} else if (m_pilot.speed <= 0.01f) {
+					if (m_pilot.speed <= 0.01f) {
 						m_nextSubState = SubState.Idle;
 					}
 
 					GetGroundNormal();
-					if (m_heightFromGround > 1f) {
-						m_machine.SetSignal(Signals.Type.FallDown, true);
-					}
-					break;
-
-				case SubState.Jump_Start:
-					if (m_velocity.y > 0f) {
-						m_nextSubState = SubState.Jump_Up;
-					}
-					break;
-
-				case SubState.Jump_Up:
-					if (m_velocity.y < 0f) {
-						m_nextSubState = SubState.Jump_Down;
-					}
-					break;
-
-				case SubState.Jump_Down:
 					break;
 			}
 		}
@@ -122,15 +111,7 @@ namespace AI {
 			}
 
 			// ----------------------------- gravity :3
-			m_rbody.velocity = m_velocity + (Vector3.down * 9.8f * 3f * Time.fixedDeltaTime) + m_externalVelocity;
-		}
-
-		protected override void ExtendedUpdateFreeFall() {
-			GetGroundNormal();
-			if (m_onGround) {
-				m_machine.SetSignal(Signals.Type.FallDown, false);
-				m_nextSubState = SubState.Idle;
-			}
+			m_rbody.velocity = m_velocity + (-m_groundNormal * 9.8f * 3f * Time.fixedDeltaTime) + m_externalVelocity;
 		}
 
 		protected override void UpdateOrientation() {
@@ -143,7 +124,7 @@ namespace AI {
 		}
 
 		private void GetGroundNormal() {
-			Vector3 normal = Vector3.up;
+			Vector3 normal = m_upVector;
 			Vector3 pos = position + (m_upVector * 3f);
 
 			if (m_subState == SubState.Move) {
@@ -155,7 +136,8 @@ namespace AI {
 
 			RaycastHit hit;
 			if (Physics.SphereCast(pos, 1f, -m_upVector, out hit, 6f, GROUND_MASK)) {				
-				normal = hit.normal;
+				normal = (hit.normal * 0.75f) + (m_groundNormal * 0.25f);
+				normal.Normalize();
 				m_heightFromGround = hit.distance - 3f;
 			} else {
 				m_heightFromGround = 100f;
@@ -163,6 +145,7 @@ namespace AI {
 
 			m_onGround = m_heightFromGround < 0.3f;
 			m_groundNormal = normal;
+			m_upVector = normal;
 
 			m_viewControl.Height(m_heightFromGround);
 		}
@@ -175,16 +158,6 @@ namespace AI {
 				case SubState.Move:
 					Stop();
 					break;
-
-				case SubState.Jump_Start:
-					break;
-
-				case SubState.Jump_Up:
-					break;
-
-				case SubState.Jump_Down:
-					Stop();
-					break;
 			}
 
 			switch (m_nextSubState) {
@@ -192,16 +165,6 @@ namespace AI {
 					break;
 
 				case SubState.Move:
-					break;
-
-				case SubState.Jump_Start:
-					Stop();
-					break;
-
-				case SubState.Jump_Up:
-					break;
-
-				case SubState.Jump_Down:
 					break;
 			}
 
@@ -213,5 +176,7 @@ namespace AI {
 		protected override void ExtendedAttach() {}
 
 		protected override void OnSetVelocity() {}
+
+		protected override void ExtendedUpdateFreeFall() { }	
 	}
 }
