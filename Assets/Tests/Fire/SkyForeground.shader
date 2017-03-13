@@ -83,9 +83,11 @@
 			{
 //				return fixed4(i.uv.y, i.uv.y, i.uv.y, 1.0);
 //				float st = star(i.uv);
-				i.uv.x -= 0.5;
+//				i.uv.x -= 0.5;
 //				float mon = moon(i.uv, _MoonPos, _MoonRadius);
 //				i.uv.x *= ((1.0 - i.uv.y) + 0.5);
+				float vy = i.uv.y;
+				i.uv *= 0.5;
 				float intensity = tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed, 0.0))).x;
 				i.uv.x += 0.35;
 				intensity += tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed * 1.5, 0.3))).x;
@@ -103,7 +105,7 @@
 				//				clip(colf.a - 0.1);
 				//colf += mon * _MoonColor;
 //				cloudsC = max(cloudsC, moonC);
-				cloudsC.w = smoothstep(0.0, 0.25, intensity * (1.0 - pow(abs(i.uv.y - 0.5) * 2.0, _CloudPower)));
+				cloudsC.w = smoothstep(0.0, 0.25, intensity * (1.0 - pow(abs(vy - 0.5) * 2.0, _CloudPower)));
 //				cloudsC.w = intensity;
 				return cloudsC;
 				//return lerp(moonC, cloudsC, alfa * 1.0);

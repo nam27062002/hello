@@ -519,6 +519,41 @@ public class PolyMesh : MonoBehaviour {
 		}
 	}
 
+	void ReCenterGameObject() 
+	{
+		// Compute geometrical center among all of the mesh's points
+		Vector3 center = Vector3.zero;
+		for(int i = 0; i < keyPoints.Count; i++) {
+			center += keyPoints[i];
+		}
+		center /= keyPoints.Count;
+
+		// Center is in local coords, so matches the offset we must apply to both object's position and all keypoints
+		// Apply to keypoints
+		for(int i = 0; i < keyPoints.Count; i++) {
+			keyPoints[i] -= center;
+		}
+
+		// Rebuild the mesh
+		BuildMesh();
+
+		// Change object's position
+		transform.localPosition += center;
+	}
+
+	public void NormalizeMesh()
+	{
+		for(int i = 0; i < keyPoints.Count; i++) {
+			keyPoints[i] = transform.TransformPoint(keyPoints[i]);
+		}
+		transform.localRotation = Quaternion.identity;
+		transform.localScale = Vector3.one;
+		for(int i = 0; i < keyPoints.Count; i++) {
+			keyPoints[i] = transform.InverseTransformPoint(keyPoints[i]);
+		}
+		ReCenterGameObject();
+	}
+
 	/// <summary>
 	/// Merges the meshes.
 	/// </summary>
