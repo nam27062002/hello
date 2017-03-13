@@ -25,7 +25,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 	// Use this for initialization
 	void Start () {		
 		if (m_explosionParticle.IsValid()) {
-			ParticleManager.CreatePool(m_explosionParticle, 5);
+			ParticleManager.CreatePool(m_explosionParticle);
 		}
 
 		m_pMotion = GetComponent<ProjectileMotion>();	

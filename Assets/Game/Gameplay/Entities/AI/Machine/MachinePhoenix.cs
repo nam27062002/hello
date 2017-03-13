@@ -14,12 +14,19 @@ namespace AI {
 		public ParticleData m_onFireParticle;
 		public ParticleData m_onFireEndsParticle;
 
+		protected override void Awake()
+		{
+			base.Awake();
+			Deactivate();
+		}
+
 		public override void Spawn(ISpawner _spawner) {
 			base.Spawn(_spawner);
 
 			// Set not fire view
 			Deactivate();
 		}
+
 
 
 		public override void CustomUpdate() {

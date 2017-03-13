@@ -29,8 +29,7 @@ public class DragonBreath2 : MonoBehaviour
 
     public string m_collisionFirePrefab;
     public float m_collisionFireDelay = 0.5f;
-    public int m_collisionEmiters = 10;
-
+    
     public string m_groundLayer;
     public string[] m_enemyLayers;
 
@@ -57,7 +56,7 @@ public class DragonBreath2 : MonoBehaviour
     // Use this for initialization
     void Start () 
 	{
-        ParticleManager.CreatePool(m_collisionFirePrefab, "Fire&Destruction/_PrefabsWIP/FireEffects/", m_collisionEmiters);
+        ParticleManager.CreatePool(m_collisionFirePrefab, "Fire&Destruction/_PrefabsWIP/FireEffects/");
 
         Transform t = transform;
         m_whipEnd = t.FindTransformRecursive("WhipEnd");
