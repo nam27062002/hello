@@ -543,9 +543,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 4.5
-    m_maxRadius: 2.5
-    m_minRadius: 1
+    m_sightRadius: 9
+    m_maxRadius: 5
+    m_minRadius: 2
     m_hysteresisOffset: 1
     m_senseAbove: 1
     m_senseBelow: 1
@@ -577,14 +577,15 @@ MonoBehaviour:
   m_blendSpeedFactor: 0.5
   m_energy: 2
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: 35a662e89e7a340ab9f035ee4612930b, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"boostSpeed":10,"panicSpeed":12,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":5,"separation":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":1,"catchUpSpeed":1,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":1,"catchUpSpeed":1,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"boostSpeed":4,"panicSpeed":5,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":5,"separation":0.7,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":2,"catchUpSpeed":3,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":2,"catchUpSpeed":3,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Canary03_Flock
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 50
+  m_avoidDistanceAttenuation: 3
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!137 &13761280

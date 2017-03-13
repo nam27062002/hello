@@ -407,7 +407,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 114680}
-  m_LocalRotation: {x: -0.25353712, y: 0.5587252, z: 0.5541722, w: 0.5625286}
+  m_LocalRotation: {x: -0.2535371, y: 0.5587251, z: 0.55417216, w: 0.56252855}
   m_LocalPosition: {x: -0.08062987, y: -0.021874828, z: 0.043720305}
   m_LocalScale: {x: 0.99999994, y: 1, z: 1.0000001}
   m_Children:
@@ -443,17 +443,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 0.5
-  m_energy: 10
-  m_energyDrainSec: 5
+  m_blendSpeedFactor: 10
+  m_energy: 2
+  m_energyDrainSec: 2
+  m_energyRecoverSec: 0.1
   m_brainResource: {fileID: 11400000, guid: 35a662e89e7a340ab9f035ee4612930b, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"boostSpeed":11,"panicSpeed":12.5,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":0,"separation":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":2,"catchUpSpeed":3,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":2,"catchUpSpeed":3,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"boostSpeed":2,"panicSpeed":25,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":0,"separation":0.7,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":2,"catchUpSpeed":3,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":2,"catchUpSpeed":3,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Canary04_Flock
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 12
+  m_avoidDistanceAttenuation: 100
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!114 &11439040
@@ -526,7 +527,7 @@ MonoBehaviour:
     m_walkOnWalls: 0
     m_mass: 10
     m_defaultUpVector: 0
-    m_orientationSpeed: 240
+    m_orientationSpeed: 340
     m_faceDirection: 1
     m_useDragonStyleRotation: 0
     m_rollRotation: 1
@@ -540,9 +541,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 4.5
-    m_maxRadius: 2.5
-    m_minRadius: 1
+    m_sightRadius: 5
+    m_maxRadius: 5
+    m_minRadius: 5
     m_hysteresisOffset: 1
     m_senseAbove: 1
     m_senseBelow: 1
@@ -552,7 +553,7 @@ MonoBehaviour:
       max: 1.1
     m_senseDelay:
       min: 0
-      max: 1
+      max: 0
   m_onSpawnSound: 
   m_rotateToMouth: 0
   m_inflammable:
