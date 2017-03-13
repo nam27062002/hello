@@ -2182,6 +2182,88 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 416572, guid: a22ffc88489d1e24bb1e39eee1f0cf62, type: 2}
   m_PrefabInternal: {fileID: 787292314}
+--- !u!1 &828282467
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 828282468}
+  - component: {fileID: 828282470}
+  - component: {fileID: 828282469}
+  m_Layer: 0
+  m_Name: wall spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &828282468
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 828282467}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 127.03, y: 11.63, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 883113615}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &828282469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 828282467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: -2.4511223, y: 2.6391013}
+  size: {x: 25.76345, y: 12.977231}
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!114 &828282470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 828282467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_entityPrefabList:
+  - name: Surface/PF_SpiderRed_NEW
+    chance: 100
+  m_quantity:
+    min: 1
+    max: 1
+  m_speedFactorRange:
+    min: 1
+    max: 1
+  m_scale:
+    min: 1
+    max: 1
+  m_rails: 1
+  m_hasGroupBonus: 0
+  m_minTier: 0
+  m_activationChance: 100
+  m_activationTriggers: []
+  m_deactivationTriggers: []
+  m_spawnTime:
+    min: 0
+    max: 0
+  m_homePosMethod: 1
+  m_homePosDistance:
+    min: 1
+    max: 2
+  m_maxSpawns: 0
+  m_checkCurrents: 0
 --- !u!1 &838485058
 GameObject:
   m_ObjectHideFlags: 0
@@ -2304,6 +2386,7 @@ Transform:
   - {fileID: 1925450808}
   - {fileID: 1278345148}
   - {fileID: 2061600067}
+  - {fileID: 828282468}
   m_Father: {fileID: 1117695729}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7031,7 +7114,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2061600067
 Transform:
   m_ObjectHideFlags: 0
