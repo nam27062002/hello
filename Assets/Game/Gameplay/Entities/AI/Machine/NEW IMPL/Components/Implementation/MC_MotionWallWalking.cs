@@ -21,6 +21,8 @@ namespace AI {
 
 		//--------------------------------------------------
 		private Vector3 m_groundNormal;
+		private Vector3 m_groundDirection;
+		public Vector3 groundDirection { get { return m_groundDirection; } }
 
 		private bool m_onGround;
 		private float m_heightFromGround;
@@ -39,6 +41,8 @@ namespace AI {
 			if (!m_onGround) {
 				m_machine.SetSignal(Signals.Type.FallDown, true);
 			}
+
+			m_groundDirection = Vector3.Cross(Vector3.back, m_upVector);
 
 			m_subState = SubState.Idle;
 			m_nextSubState = SubState.Idle;
@@ -59,10 +63,6 @@ namespace AI {
 
 			m_direction = m_pilot.direction;
 
-			if (!m_pilot.IsActionPressed(Pilot.Action.Stop)) {
-				m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;
-			}
-
 			switch (m_subState) {
 				case SubState.Idle:
 					if (m_pilot.speed > 0.01f) {
@@ -74,11 +74,7 @@ namespace AI {
 					if (m_pilot.speed <= 0.01f) {
 						m_nextSubState = SubState.Idle;
 					}
-
 					GetGroundNormal();
-					if (!m_onGround) {
-						//m_machine.SetSignal(Signals.Type.FallDown, true);
-					}
 					break;
 			}
 		}
@@ -140,7 +136,7 @@ namespace AI {
 			m_groundNormal = normal;
 			m_upVector = normal;
 
-			m_viewControl.Height(m_heightFromGround);
+			m_groundDirection = Vector3.Cross(Vector3.back, m_upVector);
 		}
 
 		private void FindUpVector() {
