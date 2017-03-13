@@ -56,9 +56,12 @@ public class DragonData {
 	[SerializeField] private DragonProgression m_progression = null;	// Will be exposed via a custom editor
 	public DragonProgression progression { get { return m_progression; }}
 
-	// Level-dependant stats
+	// Stats
 	private Range m_healthRange = new Range();
 	public float maxHealth { get { return GetMaxHealthAtLevel(progression.level); }}
+
+	private float m_baseEnergy = 0f;
+	public float baseEnergy { get { return m_baseEnergy; }}
 
 	private Range m_scaleRange = new Range(1f, 1f);
 	public float scale { get { return GetScaleAtLevel(progression.level); }}
@@ -94,8 +97,9 @@ public class DragonData {
 		// Progression
 		m_progression = new DragonProgression(this);
 
-		// Level-dependant stats
+		// Stats
 		m_healthRange = m_def.GetAsRange("health");
+		m_baseEnergy = m_def.GetAsFloat("energyBase");
 		m_scaleRange = m_def.GetAsRange("scale");
 
 		// Items
