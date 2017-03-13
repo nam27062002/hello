@@ -75,6 +75,21 @@ public class AssetFinder : EditorWindow {
         assetList = Object.FindObjectsOfType(typeof(T)) as T[];
     }
 
+    /// <summary>
+    /// Resets all shader keywords stored in materials or material selection
+    /// </summary>
+    /// 
+/*
+    [MenuItem("Hungry Dragon/Tools/Material keyword reset")]
+    public static void SceneStaticBatchingDisable()
+    {
+        GameObject[] gameobjList;
+        FindAssetInScene<GameObject>(out gameobjList);
+        foreach (GameObject obj in gameobjList)
+        {
+        }
+    }
+*/
 
     /// <summary>
     /// Resets all shader keywords stored in materials or material selection
