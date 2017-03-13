@@ -96,22 +96,27 @@ public class UI3DScaler : MonoBehaviour {
 
 		// Update according to setup
 		Refresh(m_constantUpdateBounds, m_constantUpdateRect);
+		bool validBounds = (m_thisScaledBounds.size.x > 0f && m_thisScaledBounds.size.y > 0f);
 
 		// Draw target's bounds
-		Gizmos.matrix = Matrix4x4.identity;
-		Gizmos.color = m_targetBoundsColor;
-		Gizmos.DrawCube(m_thisScaledBounds.center, m_thisScaledBounds.size);
+		if(validBounds) {
+			Gizmos.matrix = Matrix4x4.identity;
+			Gizmos.color = m_targetBoundsColor;
+			Gizmos.DrawCube(m_thisScaledBounds.center, m_thisScaledBounds.size);
+		}
 
 		// Draw rect bounds
 		Gizmos.matrix = Matrix4x4.identity;
 		Gizmos.color = m_rectBoundsColor;
 		Gizmos.DrawCube(m_rectBounds.center, m_rectBounds.size);
 
-		Gizmos.color = Color.magenta;
-		Gizmos.DrawLine(m_thisScaledBounds.center, m_rectBounds.center);
+		if(validBounds) {
+			Gizmos.color = Color.magenta;
+			Gizmos.DrawLine(m_thisScaledBounds.center, m_rectBounds.center);
 
-		Gizmos.color = Color.cyan;
-		Gizmos.DrawLine(m_thisScaledBounds.center, m_thisScaledBounds.center + m_offset);
+			Gizmos.color = Color.cyan;
+			Gizmos.DrawLine(m_thisScaledBounds.center, m_thisScaledBounds.center + m_offset);
+		}
 	}
 
 	//------------------------------------------------------------------------//

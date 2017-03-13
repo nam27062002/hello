@@ -42,12 +42,12 @@ public class UI3DLoader : MonoBehaviour {
 		get { return m_loadingRequest; }
 	}
 
-	private GameObject m_instance = null;
-	public GameObject instance {
-		get { return m_instance; }
+	private GameObject m_loadedInstance = null;
+	public GameObject loadedInstance {
+		get { return m_loadedInstance; }
 	}
 
-	private GameObject m_loadingInstance = null;
+	private GameObject m_loadingSymbol = null;
 
 	// Events
 	public UI3DLoaderEvent OnLoadingComplete = new UI3DLoaderEvent();
@@ -84,9 +84,9 @@ public class UI3DLoader : MonoBehaviour {
 			m_loadingRequest = null;
 		}
 
-		if(m_instance != null) {
-			GameObject.Destroy(m_instance);
-			m_instance = null;
+		if(m_loadedInstance != null) {
+			GameObject.Destroy(m_loadedInstance);
+			m_loadedInstance = null;
 		}
 
 		// Destroy loading icon
@@ -101,10 +101,10 @@ public class UI3DLoader : MonoBehaviour {
 		if(m_loadingRequest != null) {
 			if(m_loadingRequest.isDone) {
 				// Done! Instantiate loaded asset
-				m_instance = GameObject.Instantiate<GameObject>((GameObject)m_loadingRequest.asset, m_container.transform, false);
-				if(m_instance != null) {
+				m_loadedInstance = GameObject.Instantiate<GameObject>((GameObject)m_loadingRequest.asset, m_container.transform, false);
+				if(m_loadedInstance != null) {
 					// Apply layer
-					m_instance.SetLayerRecursively(m_container.gameObject.layer);
+					m_loadedInstance.SetLayerRecursively(m_container.gameObject.layer);
 
 					// Refresh the scaler
 					if(m_scaler != null) {
@@ -117,6 +117,9 @@ public class UI3DLoader : MonoBehaviour {
 
 				// Notify subscribers
 				OnLoadingComplete.Invoke(this);
+
+				// Loading request done!
+				m_loadingRequest = null;
 			}
 		}
 	}
@@ -132,9 +135,9 @@ public class UI3DLoader : MonoBehaviour {
 	/// <returns>The async resources request started. Same as accessing the loadingRequest property.</returns>
 	public ResourceRequest Load() {
 		// If we have something loaded, destroy it
-		if(m_instance != null) {
-			GameObject.Destroy(m_instance);
-			m_instance = null;
+		if(m_loadedInstance != null) {
+			GameObject.Destroy(m_loadedInstance);
+			m_loadedInstance = null;
 		}
 
 		// We don't care if we're already loading another asset, it will be ignored once done loading
@@ -153,17 +156,17 @@ public class UI3DLoader : MonoBehaviour {
 	private void ShowLoading(bool _show) {
 		if(_show) {
 			// If loading icon not instantiated, do it now
-			if(m_loadingInstance != null) {
+			if(m_loadingSymbol == null) {
 				if(m_loadingPrefab != null) {
-					m_loadingInstance = GameObject.Instantiate<GameObject>(m_loadingPrefab, this.transform, false);
+					m_loadingSymbol = GameObject.Instantiate<GameObject>(m_loadingPrefab, this.transform, false);
 				}
 			} else {
-				m_loadingInstance.SetActive(true);
+				m_loadingSymbol.SetActive(true);
 			}
 		} else {
-			if(m_loadingInstance != null) {
-				GameObject.Destroy(m_loadingInstance);
-				m_loadingInstance = null;
+			if(m_loadingSymbol != null) {
+				GameObject.Destroy(m_loadingSymbol);
+				m_loadingSymbol = null;
 			}
 		}
 	}
