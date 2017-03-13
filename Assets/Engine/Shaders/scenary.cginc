@@ -158,18 +158,9 @@ fixed4 frag (v2f i) : SV_Target
 	// Sof Light with vertex color 
 	// http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html
 	// https://en.wikipedia.org/wiki/Relative_luminance
-	float luminance = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
-	if ( luminance > 0.5 )
-	{
-		fixed4 one = fixed4(1,1,1,1);
-		// col = one- (one-col) * (1-(i.color-fixed4(0.5,0.5,0.5,0.5)));	// Soft Light
-		col = one - 2 * (one-i.color) * (one-col);	// Overlay
-	}
-	else
-	{
-		// col = col * (i.color + fixed4(0.5,0.5,0.5,0.5));	// Soft Light
-		col = 2 * i.color * col;	// Overlay
-	}
+	float luminance = step(0.5, 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b);
+	fixed4 one = fixed4(1, 1, 1, 1);
+	col = (2.0 * i.color * col) * (1.0 - luminance) + (one - 2.0 * (one - i.color) * (one - col)) * luminance;
 #endif	
 
 #ifdef DYNAMIC_SHADOWS
