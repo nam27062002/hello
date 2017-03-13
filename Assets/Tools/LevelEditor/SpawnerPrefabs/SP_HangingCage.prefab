@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4365441779090628}
   - component: {fileID: 114916986523162584}
-  - component: {fileID: 114210895079512852}
   m_Layer: 0
   m_Name: SP_HangingCage
   m_TagString: Untagged
@@ -41,20 +40,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114210895079512852
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1994336879722882}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0, y: -1.06}
-  size: {x: 1.2364502, y: 1.873292}
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114916986523162584
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -89,7 +74,7 @@ MonoBehaviour:
     max: 450
   m_homePosMethod: 0
   m_homePosDistance:
-    min: 1
-    max: 2
+    min: 0
+    max: 0
   m_maxSpawns: 0
   m_checkCurrents: 0
