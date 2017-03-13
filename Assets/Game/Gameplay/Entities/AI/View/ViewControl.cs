@@ -228,14 +228,14 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_specialAnimations = new bool[(int)SpecialAnims.Count];
 
 		if (m_burnParticle.IsValid()) {
-			ParticleManager.CreatePool(m_burnParticle, 20);
+			ParticleManager.CreatePool(m_burnParticle);
 		}
 
 		if (m_explosionParticles.IsValid()) {
 			ParticleManager.CreatePool(m_explosionParticles);
 		}
 
-		ParticleManager.CreatePool("PS_EntityPCTrail", "Rewards", 5);
+		ParticleManager.CreatePool("PS_EntityPCTrail", "Rewards");
 
         Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
     }

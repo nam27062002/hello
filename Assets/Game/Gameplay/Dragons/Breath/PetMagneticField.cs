@@ -16,7 +16,7 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 	void Start () 
 	{
 		if (m_explosionParticle.IsValid()) {
-			ParticleManager.CreatePool(m_explosionParticle, 5);
+			ParticleManager.CreatePool(m_explosionParticle);
 		}
 		m_colliderMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "WaterPreys", "GroundPreys", "AirPreys");
 

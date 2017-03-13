@@ -1,13 +1,38 @@
+//#define PRINT_POOLS
+
 using UnityEngine;
 using System.Collections.Generic;
+
+#if PRINT_POOLS
+	using System;
+	using System.IO;
+#endif
 
 public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	// Pool of pools! :D
 	private Dictionary<string, Pool> m_particlePools = new Dictionary<string, Pool>();
+	private Dictionary<string, int> m_poolSize = new Dictionary<string, int>();
 
-	public static void CreatePool(ParticleData particle, int _size = 5)
+
+	#if PRINT_POOLS
+		string fileName = "ParticleManager.txt";
+		float time = 10f;
+		void Update() {
+			time -= Time.deltaTime;
+			if (time <= 0f) {
+				StreamWriter sw = new StreamWriter(fileName, false);
+				foreach (KeyValuePair<string, Pool> pair in m_particlePools) {
+					sw.WriteLine(pair.Key + ": " + pair.Value.Size());
+				}
+				sw.Close();
+				time = 10f;
+			}
+		}
+	#endif
+
+	public static void CreatePool(ParticleData particle)
 	{
-		CreatePool( particle.name, particle.path, _size);
+		CreatePool( particle.name, particle.path);
 	}
 
 	/// <summary>
@@ -16,7 +41,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// <param name="_prefabName">Identifier. Must match the name of the prefab to be used.</param>
 	/// <param name="_path">Optional resources path of the prefab to be considerd if no pool with the given ID is found. Folder name within the Resources/Particles/ folder, excluding prefab name (e.g. "Game/Effects")</param>
 	/// <param name="_size">Size of the pool.</param>
-	public static void CreatePool(string _prefabName, string _folderPath = "", int _size = 5) {
+	public static void CreatePool(string _prefabName, string _folderPath = "") {
 		if (!instance.m_particlePools.ContainsKey(_prefabName)) {
 			// [AOC] Small hack for retrocompatibility
 			if (!string.IsNullOrEmpty(_folderPath)) {
@@ -24,7 +49,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 			}
 
 			GameObject prefab = (GameObject)Resources.Load("Particles/" + _folderPath + _prefabName);
-			CreatePool(prefab, _size);
+			CreatePool(prefab);
 		}
 	}
 
@@ -117,7 +142,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// </summary>
 	/// <param name="_prefab">The prefab to be used to create the pool.</param>
 	/// <param name="_size">Size of the pool.</param>
-	private static void CreatePool(GameObject _prefab, int _size = 5) {
+	private static void CreatePool(GameObject _prefab) {
 		// Ignore if given prefab is not valid
 		if (_prefab == null) return;
 
@@ -125,7 +150,25 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		if (instance.m_particlePools.ContainsKey(_prefab.name)) return;
 
 		// Do it!
-		Pool pool = new Pool(_prefab, instance.transform, _size, false, true);
+		#if PRINT_POOLS
+		Pool pool = new Pool(_prefab, instance.transform, 1, true, true);
+		#else
+		if (instance.m_poolSize.Count == 0f) {
+			List<DefinitionNode> poolSize = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS);
+			for (int i = 0; i < poolSize.Count; i++) {
+				instance.m_poolSize.Add(poolSize[i].sku, poolSize[i].GetAsInt("poolSize"));
+			}
+		}
+
+		int size = 1;
+		if (instance.m_poolSize.ContainsKey(_prefab.name)) {
+			size = instance.m_poolSize[_prefab.name];
+		} else {
+			Debug.LogError("[ParticleManager] system " + _prefab.name + " not found in definitions. Cretaing only 1 instance.");
+		}
+		Pool pool = new Pool(_prefab, instance.transform, size, false, true);
+		#endif
+
 		instance.m_particlePools.Add(_prefab.name, pool);
 	}
 
@@ -153,6 +196,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 
             instance.m_particlePools.Clear();
         }
+		instance.m_poolSize.Clear();
 	}
 
 	/// <summary>

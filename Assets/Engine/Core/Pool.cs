@@ -41,6 +41,10 @@ public class Pool {
 		m_canGrow = _canGrow;
 	}
 
+	public int Size() {
+		return (m_freeObjects.Count + m_notFreeObjects.Count);
+	}
+
 	/// <summary>
 	/// Manually destroy all created instances. No need to call it for scene changes, 
 	/// since scene hierarchy is already cleared.
