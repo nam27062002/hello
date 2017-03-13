@@ -73,9 +73,8 @@ public class MenuScreensController : NavigationScreenSystem {
 	}
 
 	// Use it to track actual screen changes
-	private bool m_tweening = false;
 	public bool tweening {
-		get { return m_tweening; }
+		get { return DOTween.IsTweening(InstanceManager.sceneController.mainCamera); }
 	}
 
 	//------------------------------------------------------------------//
@@ -116,7 +115,7 @@ public class MenuScreensController : NavigationScreenSystem {
 	private void Update() {
 		// Enforce camera position to current snap point
 		// Only if camera is not already moving!
-		if(!m_tweening) {
+		if(!tweening) {
 			if(currentCameraSnapPoint != null) {
 				currentCameraSnapPoint.Apply(InstanceManager.sceneController.mainCamera);
 			}
@@ -192,8 +191,7 @@ public class MenuScreensController : NavigationScreenSystem {
 			// Perform camera transition!
 			// Camera snap point makes it easy for us! ^_^
 			TweenParams tweenParams = new TweenParams().SetEase(Ease.InOutCubic);
-			targetSnapPoint.TweenTo(InstanceManager.sceneController.mainCamera, 0.5f, tweenParams, OnCameraTweenCompleted); 
-			m_tweening = true;
+			targetSnapPoint.TweenTo(InstanceManager.sceneController.mainCamera, 0.5f, tweenParams, OnCameraTweenCompleted);
 		}
 	}
 
@@ -205,6 +203,6 @@ public class MenuScreensController : NavigationScreenSystem {
 	/// Use it to track actual screen changes.
 	/// </summary>
 	private void OnCameraTweenCompleted() {
-		m_tweening = false;
+		// Nothing to do for now
 	}
 }

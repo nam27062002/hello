@@ -157,7 +157,7 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	/// <param name="_evtData">Event data.</param>
 	private void OnMenuScreenChanged(NavigationScreenSystem.ScreenChangedEventData _evtData) {
 		// If the new screen is not the dragon selection screen, hide all dragons except the selected one
-		// To prevent watching the head/tail of the previous/next dragons in pets/disguises/photo screens.
+		// To prevent seeing the head/tail of the previous/next dragons in pets/disguises/photo screens.
 		bool showAll = (_evtData.toScreenIdx == (int)MenuScreens.DRAGON_SELECTION);
 		foreach(KeyValuePair<string, MenuDragonSlot> kvp in m_dragonSlots) {
 			// Use slot's ShowHideAnimator
