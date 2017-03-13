@@ -32,10 +32,12 @@ public class ParticleScaler : MonoBehaviour
 	
 	void ScaleParticle( ParticleSystem ps, float scale)
 	{
-		ps.startSize *= scale;
-		ps.gravityModifier *= scale;
-		ps.startSpeed *= scale;
-		ps.startLifetime *= scale;
+		ParticleSystem.MainModule mainModule = ps.main;
+		mainModule.startSizeMultiplier *= scale;
+		mainModule.gravityModifierMultiplier *= scale;
+		mainModule.startSpeedMultiplier *= scale;
+		mainModule.startLifetimeMultiplier *= scale;
+		// ps.main = mainModule;
 	}
 	
 }
