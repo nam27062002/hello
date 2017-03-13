@@ -428,7 +428,7 @@ public class HUDMessage : MonoBehaviour {
 			text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_NEED_BIGGER_DRAGON");
 		} else {
 			// Use tier icon
-			text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_NEED_TIER_DRAGON", "<sprite name=\"" + tierDef.Get("icon") + "\">");
+			text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_NEED_TIER_DRAGON", UIConstants.GetSpriteTag(tierDef.Get("icon")));
 		}
 
 		// If already visible and trying to eat the same entity, don't restart the animation

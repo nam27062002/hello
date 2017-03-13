@@ -425,4 +425,20 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		}
 		return IconType.NONE;
 	}
+
+	/// <summary>
+	/// Create a sprite tag to be inserted in a TMPro text.
+	/// </summary>
+	/// <returns>The full tag with the given sprite: "<sprite name="_spriteName">".</returns>
+	/// <param name="_spriteName">ID of the sprite we want to show. Same ID as in the UI spritesheet asset.</param>
+	public static string GetSpriteTag(string _spriteName) {
+		// Clear stringbuilder
+		instance.m_sb.Length = 0;
+
+		// Do the composition
+		instance.m_sb.Append("<sprite name=\"").Append(_spriteName).Append("\">");
+
+		// Done!
+		return instance.m_sb.ToString();
+	}
 }
