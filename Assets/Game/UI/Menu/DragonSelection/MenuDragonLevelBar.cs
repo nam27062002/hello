@@ -57,4 +57,16 @@ public class MenuDragonLevelBar : DragonXPBar {
 		// Refresh after some delay to let the animation finish
 		Refresh(_sku, 0.25f);
 	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Info button has been pressed.
+	/// </summary>
+	public void OnInfoButton() {
+		// Open the dragon info popup and initialize it with the current dragon's data
+		PopupDragonInfo popup = PopupManager.OpenPopupInstant(PopupDragonInfo.PATH).GetComponent<PopupDragonInfo>();
+		popup.Init(m_dragonData);
+	}
 }

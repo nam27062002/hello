@@ -19,6 +19,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Popup to display information of a dragon / dragon tier.
 /// </summary>
+[RequireComponent(typeof(PopupController))]
 public class PopupDragonInfo : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -38,25 +39,37 @@ public class PopupDragonInfo : MonoBehaviour {
 
 	// Edibles/Destructibles layout
 	[Separator]
-	[SerializeField] private Transform m_edibleContainer = null;
-	[SerializeField] private Transform m_destructibleContainer = null;
-	[Comment("One per tier!")]
+	[SerializeField] private Transform m_layoutContainer = null;
 	[FileListAttribute("Resources/UI/Popups/DragonInfoLayouts", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] private string[] m_layoutPrefabs = new string[(int)DragonTier.COUNT];
 	[Space]
 	[SerializeField] private float m_timeBetweenLoaders = 0.5f;	// From FGOL
 	[SerializeField] private int m_framesBetweenLoaders = 5;	// From FGOL
 
+	// Other setup
+	[Separator]
+	[SerializeField] private Color m_highlightTextColor = Color.yellow;
+	[SerializeField] private Color m_fireRushTextColor = Colors.orange;
+
 	// Internal
 	private GameObject m_layoutInstance = null;
 	private UI3DLoader[] m_loaders = null;
 	private int m_loaderIdx = 0;
-
-	// Internal
+	private bool m_openAnimFinished = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	private void Awake() {
+		// Subscribe to popup controller events
+		PopupController popup = GetComponent<PopupController>();
+		popup.OnOpenPostAnimation.AddListener(OnOpenPostAnimation);
+		popup.OnClosePreAnimation.AddListener(OnClosePreAnimation);
+	}
+
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
@@ -103,43 +116,44 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// <summary>
 	/// Initialize the popup with the given dragon info.
 	/// </summary>
-	/// <param name="_dragonSku">Sku of the dragon whose info we want to display.</param>
-	public void Init(string _dragonSku) {
-		//		__/\\\\\\\\\\\\\\\________/\\\\\________/\\\\\\\\\\\\___________/\\\\\___________/\\\_________/\\\____
-		//		 _\///////\\\/////_______/\\\///\\\_____\/\\\////////\\\_______/\\\///\\\_______/\\\\\\\_____/\\\\\\\__
-		//		  _______\/\\\__________/\\\/__\///\\\___\/\\\______\//\\\____/\\\/__\///\\\____/\\\\\\\\\___/\\\\\\\\\_
-		//		   _______\/\\\_________/\\\______\//\\\__\/\\\_______\/\\\___/\\\______\//\\\__\//\\\\\\\___\//\\\\\\\__
-		//		    _______\/\\\________\/\\\_______\/\\\__\/\\\_______\/\\\__\/\\\_______\/\\\___\//\\\\\_____\//\\\\\___
-		//		     _______\/\\\________\//\\\______/\\\___\/\\\_______\/\\\__\//\\\______/\\\_____\//\\\_______\//\\\____
-		//		      _______\/\\\_________\///\\\__/\\\_____\/\\\_______/\\\____\///\\\__/\\\________\///_________\///_____
-		//		       _______\/\\\___________\///\\\\\/______\/\\\\\\\\\\\\/_______\///\\\\\/__________/\\\_________/\\\____
-		//		        _______\///______________\/////________\////////////___________\/////___________\///_________\///_____
-
-		// Get dragon data!
-		DragonData data = DragonManager.GetDragonData(_dragonSku);
-		if(data == null) return;
+	/// <param name="_dragonData">Data of the dragon whose info we want to display.</param>
+	public void Init(DragonData _dragonData) {
+		// Ignore if dragon data not valid
+		if(_dragonData == null) return;
 
 		// Tier icon
+		string tierIcon = _dragonData.tierDef.GetAsString("icon");
+		m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierIcon);
 
 		// Dragon name
+		m_dragonNameText.Localize(_dragonData.def.Get("tidName"));
 
 		// HP
+		m_healthText.text = StringUtils.FormatNumber(_dragonData.maxHealth, 0);
 
 		// Boost
+		m_energyText.text = StringUtils.FormatNumber(_dragonData.baseEnergy, 0);
 
 		// Tier description
+		// %U0 dragons can equip <color=%U1>%U2 pets</color> and give a <color=%U1>%U3</color> 
+		// multiplier during <color=%U4>Fire Rush</color>
+		m_tierInfoText.Localize("TID_DRAGON_INFO_TIER_DESCRIPTION", 
+			UIConstants.GetSpriteTag(tierIcon),
+			m_highlightTextColor.ToHexString("#"),
+			StringUtils.FormatNumber(_dragonData.pets.Count),	// Dragon data has as many slots as defined for this dragon
+			"x" + StringUtils.FormatNumber(_dragonData.def.GetAsFloat("furyScoreMultiplier", 2), 0),
+			m_fireRushTextColor.ToHexString("#")
+		);
 
-		// Edible layout corresponding to this dragon's tier
-		LoadLayout(data.tier);
-
-		// Destructible layout
+		// Edible/destructible layout corresponding to this dragon's tier
+		LoadLayout(_dragonData.tier);
 	}
 
 	/// <summary>
 	/// Loads the layout linked to the given tier.
 	/// </summary>
 	/// <param name="_tier">Tier whose layout we want.</param>
-	public void LoadLayout(DragonTier _tier) {
+	private void LoadLayout(DragonTier _tier) {
 		// If we already have a layout loaded, destroy it
 		if(m_layoutInstance != null) {
 			GameObject.Destroy(m_layoutInstance);
@@ -152,18 +166,21 @@ public class PopupDragonInfo : MonoBehaviour {
 		if(layoutPrefab == null) return;
 
 		// Create instance!
-		m_layoutInstance = GameObject.Instantiate<GameObject>(layoutPrefab, this.transform, false);
+		m_layoutInstance = GameObject.Instantiate<GameObject>(layoutPrefab, m_layoutContainer, false);
 		if(m_layoutInstance == null) return;
 
 		// Apply some extra properties
-		m_layoutInstance.SetLayerRecursively(this.gameObject.layer);
+		m_layoutInstance.SetLayerRecursively(m_layoutContainer.gameObject.layer);
 
 		// Find out all loaders within the newly instantiated layout
 		m_loaders = m_layoutInstance.GetComponentsInChildren<UI3DLoader>();
 
-		// Start loading asynchronously!
+		// Perpare for asynchronous loading!
+		// If the popup's not open, wait until the open animiation has finished
 		m_loaderIdx = 0;
-		StartCoroutine(StartLoader(m_loaderIdx));
+		if(m_openAnimFinished) {
+			StartCoroutine(StartLoader(m_loaderIdx));
+		};
 	}
 
 	/// <summary>
@@ -174,9 +191,9 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// <param name="_idx">Index of the loader to be started.</param>
 	private IEnumerator StartLoader(int _idx) {
 		// Do some checks
-		if(m_loaders == null) yield return null;
-		if(_idx < 0 || _idx >= m_loaders.Length) yield return null;
-		if(m_loaders[_idx] == null) yield return null;
+		if(m_loaders == null) yield break;
+		if(_idx < 0 || _idx >= m_loaders.Length) yield break;
+		if(m_loaders[_idx] == null) yield break;
 
 		// Wait a little bit before actually loading
 		yield return new WaitForSeconds(m_timeBetweenLoaders);
@@ -197,8 +214,9 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// </summary>
 	/// <param name="_loader">The loader that triggered the event.</param>
 	public void OnLoaderCompleted(UI3DLoader _loader) {
-		// Get loaded instance and clean it up so it works properly on the menus
-
+		// Do any initialization required in the loaded 3D object
+		//_loader.loadedInstance;
+		// [AOC] Nothing to do for now
 
 		// Remove listener
 		_loader.OnLoadingComplete.RemoveListener(OnLoaderCompleted);
@@ -206,5 +224,23 @@ public class PopupDragonInfo : MonoBehaviour {
 		// Start next loader
 		m_loaderIdx++;
 		StartCoroutine(StartLoader(m_loaderIdx));
+	}
+
+	/// <summary>
+	/// The open animation has finished.
+	/// </summary>
+	public void OnOpenPostAnimation() {
+		// Update flag
+		m_openAnimFinished = true;
+
+		// Start loading! (We don't do it earlier because popup's animation could affect the 3D scalers.
+		StartCoroutine(StartLoader(m_loaderIdx));
+	}
+
+	/// <summary>
+	/// The close animation is about to start.
+	/// </summary>
+	public void OnClosePreAnimation() {
+		m_openAnimFinished = false;
 	}
 }
