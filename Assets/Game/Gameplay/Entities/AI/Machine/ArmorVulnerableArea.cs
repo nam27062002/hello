@@ -13,7 +13,7 @@ public class ArmorVulnerableArea : MonoBehaviour {
 
 	void Start() {
 		if (m_hitParticle.IsValid()) {
-			ParticleManager.CreatePool(m_hitParticle, 10);
+			ParticleManager.CreatePool(m_hitParticle);
 		}
 	}
 

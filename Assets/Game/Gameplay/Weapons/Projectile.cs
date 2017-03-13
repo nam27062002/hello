@@ -104,13 +104,13 @@ public class Projectile : MonoBehaviour, IProjectile {
 			m_explosive = new Explosive(false, m_defaultDamage, m_radius, 0f, m_onHitParticle);
 		} else {
 			if (m_onHitParticle.IsValid()) {
-				ParticleManager.CreatePool(m_onHitParticle, 5);
+				ParticleManager.CreatePool(m_onHitParticle);
 			}
 		}
 
-		if (m_onChargeParticle.IsValid()) 	ParticleManager.CreatePool(m_onChargeParticle, 5);
-		if (m_onAttachParticle.IsValid()) 	ParticleManager.CreatePool(m_onAttachParticle, 5);
-		if (m_onEatParticle.IsValid()) 		ParticleManager.CreatePool(m_onEatParticle, 5);
+		if (m_onChargeParticle.IsValid()) 	ParticleManager.CreatePool(m_onChargeParticle);
+		if (m_onAttachParticle.IsValid()) 	ParticleManager.CreatePool(m_onAttachParticle);
+		if (m_onEatParticle.IsValid()) 		ParticleManager.CreatePool(m_onEatParticle);
 	}
 
 	void OnDisable() {

@@ -46,8 +46,8 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	/// </summary>
 	private void OnLevelLoaded() {
 
-		PoolManager.CreatePool((GameObject)Resources.Load("Particles/PF_FireProc"), 25, true);
-		ParticleManager.CreatePool("SmokeParticle", "", 25);
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/PF_FireProc"), 10, true);
+		ParticleManager.CreatePool("SmokeParticle", "");
 
 		// Create and populate QuadTree
 		// Get map bounds!

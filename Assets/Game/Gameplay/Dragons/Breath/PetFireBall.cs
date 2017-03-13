@@ -22,7 +22,7 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 		m_area = GetComponent<CircleArea2D>();
 		m_rect = new Rect();
 		if (m_explosionParticle.IsValid()) {
-			ParticleManager.CreatePool(m_explosionParticle, 5);
+			ParticleManager.CreatePool(m_explosionParticle);
 		}
 		m_colliderMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "WaterPreys", "GroundPreys", "AirPreys");
 
