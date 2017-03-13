@@ -40,8 +40,11 @@ namespace AI {
 		//--------------------------------------------------
 
 		private Transform m_machineTransform;
+		private Transform m_eye; // for aiming purpose
 		private Transform m_mouth;
 		private Transform m_groundSensor;
+
+		private bool m_hasEye;
 
 		protected ViewControl 	m_viewControl;
 		protected Rigidbody		m_rbody;
@@ -94,6 +97,10 @@ namespace AI {
 			m_viewControl = m_machine.GetComponent<ViewControl>();
 
 			m_machineTransform = m_machine.transform;
+
+			m_eye = m_machineTransform.FindChild("eye");
+			m_hasEye = m_eye != null;
+
 			m_groundSensor = m_machineTransform.FindChild("groundSensor");
 			if (m_groundSensor == null) {
 				m_groundSensor = m_machineTransform;
@@ -165,6 +172,8 @@ namespace AI {
 
 					m_viewControl.Move(m_pilot.speed);
 
+					UpdateAttack();
+
 					if (m_viewControl.hasNavigationLayer) {
 						m_viewControl.NavigationLayer(m_pilot.impulse);
 					}
@@ -191,6 +200,15 @@ namespace AI {
 
 			m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
 			m_machineTransform.rotation = m_rotation;
+
+			// Check if targeting to bend through that direction
+			if (m_attackTarget) {
+				Vector3 dir = m_attackTarget.position - position;
+				dir.Normalize();
+				m_viewControl.NavigationLayer(dir);	
+			} else {
+				m_viewControl.NavigationLayer(m_pilot.impulse);	
+			}
 
 			m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
 
@@ -234,6 +252,58 @@ namespace AI {
 				m_latchBlending += Time.deltaTime;
 				Vector3 mouthOffset = (position - m_mouth.position);
 				position = Vector3.Lerp(position, m_pilot.target + mouthOffset, m_latchBlending);
+			}
+		}
+
+		private void UpdateAttack() {
+			if (m_hasEye && m_pilot.IsActionPressed(Pilot.Action.Aim)) {
+				UpdateAim();
+			}
+
+			if (m_pilot.IsActionPressed(Pilot.Action.Attack) && m_viewControl.canAttack()) {
+				// start attack!
+				m_viewControl.Attack(m_machine.GetSignal(Signals.Type.Melee), m_machine.GetSignal(Signals.Type.Ranged));
+			} else {
+				if (m_viewControl.hasAttackEnded()) {					
+					m_pilot.ReleaseAction(Pilot.Action.Attack);
+				}
+
+				if (!m_pilot.IsActionPressed(Pilot.Action.Attack)) {
+					m_viewControl.StopAttack();
+				}
+			}
+		}
+
+		private void UpdateAim() {			
+			Transform target = m_machine.enemy;
+			if (target != null) {
+				Vector3 targetDir = target.position - m_eye.position;
+				targetDir.z = 0f;
+
+				targetDir.Normalize();
+				Vector3 cross = Vector3.Cross(targetDir, Vector3.right);
+				float aim = cross.z * -1;
+
+				//between aim [0.9 - 1 - 0.9] we'll rotate the model
+				//for testing purpose, it'll go from 90 to 270 degrees and back. Aim value 1 is 180 degrees of rotation
+				float absAim = Mathf.Abs(aim);
+
+				float angleSide = 90f;
+				if (targetDir.x < 0) {
+					angleSide = 270f;
+				}
+				float angle = angleSide;
+
+				if (absAim >= 0.6f) {
+					angle = (((absAim - 0.6f) / (1f - 0.6f)) * (180f - angleSide)) + angleSide;
+				}
+
+				// face target
+				m_targetRotation = Quaternion.Euler(0, angle, 0);
+				m_pilot.SetDirection(m_targetRotation * Vector3.forward, true);
+
+				// blend between attack directions
+				m_viewControl.Aim(aim);
 			}
 		}
 

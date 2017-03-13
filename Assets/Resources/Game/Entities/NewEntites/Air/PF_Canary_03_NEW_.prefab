@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 114112857828593614}
   - component: {fileID: 135334162023885474}
   - component: {fileID: 54996517154420880}
-  - component: {fileID: 114684688231492204}
+  - component: {fileID: 114456378545398976}
   m_Layer: 22
   m_Name: PF_Canary_03_NEW_
   m_TagString: Untagged
@@ -335,7 +335,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1476648043496242}
-  m_LocalRotation: {x: -0.25353712, y: 0.5587252, z: 0.5541722, w: 0.5625286}
+  m_LocalRotation: {x: -0.2535371, y: 0.5587251, z: 0.55417216, w: 0.56252855}
   m_LocalPosition: {x: -0.08062987, y: -0.021874828, z: 0.043720305}
   m_LocalScale: {x: 0.99999994, y: 1, z: 1.0000001}
   m_Children:
@@ -481,8 +481,8 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles:
-  - name: PF_feathers_3D_noblood_orange
+  m_onEatenParticle:
+    name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenFrozenParticle:
@@ -535,7 +535,7 @@ MonoBehaviour:
   m_avoidDistanceAttenuation: 50
   m_avoidCollisions: 1
   m_avoidWater: 1
---- !u!114 &114684688231492204
+--- !u!114 &114456378545398976
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -543,12 +543,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1078745301202124}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91e40970ac8a0488ab7347acde654093, type: 3}
+  m_Script: {fileID: 11500000, guid: 3085e02792f6243cc9d8323aba91b804, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_mass: 10
+  m_affectedByDragonTrample: 0
+  m_enableSensor: 1
+  m_sensor:
+    m_senseFire: 1
+    m_sightRadius: 6
+    m_maxRadius: 3
+    m_minRadius: 1.5
+    m_hysteresisOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
+    m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
+    m_senseDelay:
+      min: 0.25
+      max: 1.25
+  m_inflammable:
+    m_ashesAsset: 
+    m_burningTime: 0
+    m_dissolveTime: 1.5
+    m_ashExceptions: []
+  m_onSpawnSound: 
+  m_rotateToMouth: 0
+  m_airMotion:
+    m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 240
     m_dragonStyleRotation: 0
@@ -560,30 +583,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 1
-  m_sensor:
-    m_senseFire: 1
-    m_sightRadius: 0
-    m_maxRadius: 0
-    m_minRadius: 0
-    m_hysteresisOffset: 0
-    m_senseAbove: 1
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 0, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0.25
-      max: 1.25
-  m_onSpawnSound: 
-  m_rotateToMouth: 0
-  m_inflammable:
-    m_ashesAsset: 
-    m_burningTime: 0
-    m_dissolveTime: 1.5
-    m_ashExceptions: []
 --- !u!114 &114891455744503392
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -595,7 +594,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: canary_04
+  m_sku: Canary03_Flock
   m_dieOutsideFrustum: 1
 --- !u!114 &114963657916465906
 MonoBehaviour:
