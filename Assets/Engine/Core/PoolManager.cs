@@ -1,10 +1,50 @@
 using UnityEngine;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
 public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
+	private class PoolRequest {
+		public int size;
+		public string path;
+	}
 
+	// Entity Pools requests (delayed pool manager)
+	private Dictionary<string, PoolRequest> m_poolRequests = new Dictionary<string, PoolRequest>();
 	private Dictionary<string, Pool> m_pools = new Dictionary<string, Pool>();
+
+	/// <summary>
+	/// Request a pool. Stores a pool request, it'll be created later loading the level.
+	/// </summary>
+	/// <param name="_prefabName">Prefab name. Id to ask for this resource.</param>
+	/// <param name="_prefabPath">Prefab path. Resources path without the prefab name.</param>
+	/// <param name="_size">Final pool size.</param>
+	public static void RequestPool(string _prefabName, string _prefabPath, int _size) {
+		PoolRequest pr = null;
+
+		if (instance.m_poolRequests.ContainsKey(_prefabName)) {
+			pr = instance.m_poolRequests[_prefabName];
+			if (pr.size < _size) 
+				pr.size = _size;
+		} else {
+			pr = new PoolRequest();
+			pr.path = _prefabPath;
+			pr.size = _size;
+		}
+
+		instance.m_poolRequests[_prefabName] = pr;
+	}
+
+	public static void BuildPools() {
+		List<string> keys = new List<string>(instance.m_poolRequests.Keys);
+
+		for (int i = 0; i < keys.Count; i++) {
+			PoolRequest pr = instance.m_poolRequests[keys[i]];
+			CreatePool(keys[i], pr.path, pr.size, true); // should it grow?
+		}
+
+		instance.m_poolRequests.Clear();
+	}
 
 	/// <summary>
 	/// Default pool creation. Will be created as child of the Singleton GameObject.
@@ -29,8 +69,8 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	/// <summary>
 	/// Creates the pool. Creates a pool for the resource _prefabPath with the id _prefabName. With an initial size _initSize. It can grow if _canGrow
 	/// </summary>
-	/// <param name="_prefabName">Prefab name. Id to ask for this resource</param>
-	/// <param name="_prefabPath">Prefab path. Resources path</param>
+	/// <param name="_prefabName">Prefab name. Id to ask for this resource.</param>
+	/// <param name="_prefabPath">Prefab path. Resources path without the prefab name.</param>
 	/// <param name="_initSize">Init size.</param>
 	/// <param name="_canGrow">If set to <c>true</c> can grow.</param>
 	public static void CreatePool(string _prefabName, string _prefabPath, int _initSize = 10, bool _canGrow = true) {
@@ -46,15 +86,15 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	/// <param name="_container">Container.</param>
 	/// <param name="_initSize">Init size.</param>
 	/// <param name="_canGrow">If set to <c>true</c> can grow.</param>
-	public static void CreatePool(string _prefabName, string _prefabPath, Transform _container, int _initSize = 10, bool _canGrow = true) {
+	private static void CreatePool(string _prefabName, string _prefabPath, Transform _container, int _initSize = 10, bool _canGrow = true) {
 		// Skip if the pool already exists
 		if (!instance.m_pools.ContainsKey(_prefabName)) {
-			GameObject go = Resources.Load<GameObject>(_prefabPath);
+			GameObject go = Resources.Load<GameObject>(_prefabPath + _prefabName);
 			if (go != null) {
 				Pool pool = new Pool(go, _container, _initSize, _canGrow, _container == instance.transform);	// [AOC] Create new container if given container is the Pool Manager.
 				instance.m_pools.Add(_prefabName, pool);
 			} else {
-				Debug.LogError("Can't create a pool for: " + _prefabPath);
+				Debug.LogError("Can't create a pool for: " + _prefabPath + _prefabName);
 			}
 		}
 	}

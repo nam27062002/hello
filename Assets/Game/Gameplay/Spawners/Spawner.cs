@@ -174,8 +174,7 @@ public class Spawner : AbstractSpawner {
 		if (m_rails == 0) m_rails = 1;
 
 		for (int i = 0; i < m_entityPrefabList.Length; i++) {
-			string entityPrefabPath = IEntity.EntityPrefabsPath + m_entityPrefabList[i].name;
-			PoolManager.CreatePool(m_entityPrefabList[i].name, entityPrefabPath, Mathf.Max(15, m_entities.Length), true);
+			PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, m_entities.Length);
 		}
 
 		// Get external references

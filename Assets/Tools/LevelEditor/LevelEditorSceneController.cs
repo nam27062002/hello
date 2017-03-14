@@ -138,6 +138,9 @@ namespace LevelEditor {
 		/// Do all the necessary stuff to start a game.
 		/// </summary>
 		private void StartGame() {
+			// Build Pools
+			PoolManager.BuildPools();
+
 			// Reset dragon stats
 			InstanceManager.player.ResetStats(false);
 

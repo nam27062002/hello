@@ -64,7 +64,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 
 		m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
 		
-		PoolManager.CreatePool(m_entityPrefabStr, IEntity.EntityPrefabsPath + m_entityPrefabStr, (int)GetMaxEntities(), true);        
+		PoolManager.RequestPool(m_entityPrefabStr, IEntity.EntityPrefabsPath, (int)GetMaxEntities());        
     }
 
     protected override uint GetMaxEntities() {

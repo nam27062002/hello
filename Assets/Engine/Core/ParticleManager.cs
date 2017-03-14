@@ -13,7 +13,6 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	private Dictionary<string, Pool> m_particlePools = new Dictionary<string, Pool>();
 	private Dictionary<string, int> m_poolSize = new Dictionary<string, int>();
 
-
 	#if PRINT_POOLS
 		string fileName = "ParticleManager.txt";
 		float time = 10f;

@@ -120,8 +120,7 @@ public class SpawnerBg : AbstractSpawner {
 
         if (m_rails == 0) m_rails = 1;
 
-        m_entityPrefabPath = IEntity.EntityPrefabsPath + m_entityPrefabStr;
-        PoolManager.CreatePool(m_entityPrefabStr, m_entityPrefabPath, Mathf.Max(15, m_entities.Length), true);
+		PoolManager.RequestPool(m_entityPrefabStr, IEntity.EntityPrefabsPath, m_entities.Length);
 
         m_newCamera = Camera.main.GetComponent<GameCamera>();
 

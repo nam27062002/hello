@@ -333,6 +333,9 @@ public class GameSceneController : GameSceneControllerBase {
 				// Delete loading task
 				m_levelLoadingTasks = null;
 
+				// Build Pools
+				PoolManager.BuildPools();
+
 				// Init game camera
 				InstanceManager.gameCamera.Init();
 
