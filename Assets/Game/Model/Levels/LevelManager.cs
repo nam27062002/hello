@@ -179,19 +179,21 @@ public class LevelManager : Singleton<LevelManager> {
 		// #endif
 	}
 
-	public static void SwitchArea( string nextArea )
+	public static AsyncOperation[] SwitchArea( string nextArea )
 	{
+		AsyncOperation[] ret = null;
 		if ( m_currentArea != nextArea )
 		{
 			// Unload current area scenes
 			UnloadCurrentArea();
 
 			// Load new area scenes
-			LoadArea( nextArea );
-
-			// Clean pools? only from current area scenes
+			ret = LoadArea( nextArea ).ToArray();
 
 		}
+		return ret;
 	}
+
+
 
 }

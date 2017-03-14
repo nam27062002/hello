@@ -10,7 +10,11 @@ public class AreaPortal : MonoBehaviour {
 	{
 		if ( _other.CompareTag("Player") )
 		{
-			GameSceneManager.instance.SwitchArea( m_areaPortal );
+			GameSceneController gameController = InstanceManager.GetSceneController<GameSceneController>();
+			if ( gameController != null )
+			{
+				gameController.SwitchArea( m_areaPortal );
+			}
 		}
 	}
 

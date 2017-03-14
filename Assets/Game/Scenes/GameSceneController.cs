@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -459,4 +460,46 @@ public class GameSceneController : GameSceneControllerBase {
 	{
 		ChangeState(EStates.RUNNING);
 	}
+
+
+	public void SwitchArea( string _nextArea )
+    {
+		
+    	AsyncOperation[] loadingOperations = LevelManager.SwitchArea( _nextArea);
+    	if ( loadingOperations != null )
+    	{
+			PoolManager.Clear(false);
+			for(int i = 0; i < loadingOperations.Length; i++) {
+				loadingOperations[i].allowSceneActivation = false;
+			}
+			StartCoroutine( WaitTasksFinished(loadingOperations));
+		}
+    }
+
+    // Test to load new areas
+	IEnumerator WaitTasksFinished( AsyncOperation[] operations )
+	{
+		bool done = false;
+		while (!done)
+		{
+			done = true;
+			for( int i = 0; i<operations.Length; i++ )	
+			{
+				done = done && operations[i].progress >= 0.9f;
+			}
+			if (!done)
+			{
+				yield return null;
+			}
+		}
+		for( int i = 0; i<operations.Length; i++ )	
+		{
+			operations[i].allowSceneActivation = true;
+		}
+		yield return null;
+		PoolManager.BuildPools();
+
+
+	}
+
 }

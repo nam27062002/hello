@@ -118,13 +118,7 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
         else if (_forceScene) {
             instance.ChangeState(ESceneState.RESET);
         }
-    }        	
-
-    public void SwitchArea( string _nextArea )
-    {
-    	LevelManager.SwitchArea( _nextArea);
     }
-
 
 
 	/// <summary>
