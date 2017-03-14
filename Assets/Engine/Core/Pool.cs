@@ -20,7 +20,7 @@ public class Pool {
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
-	public Pool(GameObject _prefab, Transform _parent, int _initSize, bool _canGrow, bool _createContainer, bool _temporary = true) {
+	public Pool(GameObject _prefab, Transform _parent, int _initSize, bool _canGrow, bool _createContainer, bool _temporary) {
 		m_prefab = _prefab;
 
 		// Create a new container or use parent transform as a container?

@@ -165,7 +165,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		} else {
 			Debug.LogError("[ParticleManager] system " + _prefab.name + " not found in definitions. Cretaing only 1 instance.");
 		}
-		Pool pool = new Pool(_prefab, instance.transform, size, false, true);
+		Pool pool = new Pool(_prefab, instance.transform, size, false, true, true);
 		#endif
 
 		instance.m_particlePools.Add(_prefab.name, pool);

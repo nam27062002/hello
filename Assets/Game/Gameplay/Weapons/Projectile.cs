@@ -154,9 +154,11 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 		if (m_onAttachParticle.IsValid()) {
 			GameObject go = ParticleManager.Spawn(m_onAttachParticle);
-			go.transform.parent = _parent;
-			go.transform.position = Vector3.zero;
-			go.transform.localPosition = m_onAttachParticle.offset;
+			if (go != null) {
+				go.transform.parent = _parent;
+				go.transform.position = Vector3.zero;
+				go.transform.localPosition = m_onAttachParticle.offset;
+			}
 		}
 
 		//wait until the projectil is shot

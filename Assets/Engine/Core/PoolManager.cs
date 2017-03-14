@@ -76,7 +76,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	/// </summary>
 	public static void CreatePool(GameObject _prefab, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
 		// Use alternative function
-		CreatePool(_prefab, instance.transform, _initSize, _canGrow);
+		CreatePool(_prefab, instance.transform, _initSize, _canGrow, _temporay);
 	}
 
 	/// <summary>
@@ -86,7 +86,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	public static void CreatePool(GameObject _prefab, Transform _container, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
 		// Skip if the pool already exists
 		if(!instance.m_pools.ContainsKey(_prefab.name)) {
-			Pool pool = new Pool(_prefab, _container, _initSize, _canGrow, _container == instance.transform);	// [AOC] Create new container if given container is the Pool Manager.
+			Pool pool = new Pool(_prefab, _container, _initSize, _canGrow, _container == instance.transform, _temporay);	// [AOC] Create new container if given container is the Pool Manager.
 			instance.m_pools.Add(_prefab.name, pool);
 		}
 	}
@@ -100,7 +100,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	/// <param name="_canGrow">If set to <c>true</c> can grow.</param>
 	public static void CreatePool(string _prefabName, string _prefabPath, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
 		// Use alternative function
-		CreatePool(_prefabName, _prefabPath, instance.transform, _initSize, _canGrow);
+		CreatePool(_prefabName, _prefabPath, instance.transform, _initSize, _canGrow, _temporay);
 	}
 
 	/// <summary>

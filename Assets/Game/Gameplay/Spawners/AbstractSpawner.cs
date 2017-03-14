@@ -112,15 +112,20 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
             long start = sm_watch.ElapsedMilliseconds;
             while (EntitiesAlive < EntitiesToSpawn) {
                 prefabName = GetPrefabNameToSpawn(EntitiesAlive);
-                go = PoolManager.GetInstance(prefabName, !UseProgressiveRespawn);                
-				go.transform.position = transform.position;
-				OnCreateInstance(EntitiesAlive, go);
-                m_entities[EntitiesAlive] = go.GetComponent<IEntity>();                                  
-                EntitiesAlive++;
+                go = PoolManager.GetInstance(prefabName, !UseProgressiveRespawn);
 
-                if (ProfilerSettingsManager.ENABLED) {
-                    SpawnerManager.AddToTotalLogicUnits(1, prefabName);
-                }
+				if (go == null) {
+					break;
+				} else {
+					go.transform.position = transform.position;
+					OnCreateInstance(EntitiesAlive, go);
+	                m_entities[EntitiesAlive] = go.GetComponent<IEntity>();                                  
+	                EntitiesAlive++;
+
+	                if (ProfilerSettingsManager.ENABLED) {
+	                    SpawnerManager.AddToTotalLogicUnits(1, prefabName);
+	                }
+				}
 
                 if (m_useProgressiveRespawn && sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
                     break;
