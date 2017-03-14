@@ -133,7 +133,7 @@ TOTAL_STEPS=8;
 if $RESET_GIT; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
-if [ "$FORCE_VERSION" != false ] || [ $INCREASE_VERSION_NUMBER ] ; then
+if [ "$FORCE_VERSION" != false ] || [ "$INCREASE_VERSION_NUMBER" == true ] ; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
 if $BUILD_ANDROID;then
@@ -198,7 +198,7 @@ if [ "$FORCE_VERSION" != false ]; then
 fi
 
 # Increase internal version number
-if [ $INCREASE_VERSION_NUMBER ] && [ "$FORCE_VERSION" == false ] ; then
+if [ "$INCREASE_VERSION_NUMBER" == true ] && [ "$FORCE_VERSION" == false ] ; then
     print_builder "Increasing internal version number..."
     #set +e  # For some unknown reason, in occasions the Builder.IncreaseMinorVersionNumber causes an error, making the script to stop - Disable exitOnError for this single instruction
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.IncreaseMinorVersionNumber"
