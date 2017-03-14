@@ -36,7 +36,12 @@ namespace LevelEditor {
 		// Current level - one level for each tab
 		private List<Level>[] m_activeLevels = new List<Level>[(int)LevelEditorSettings.Mode.COUNT];
 		public List<Level> activeLevels { 
-			get { return m_activeLevels[(int)LevelEditor.settings.selectedMode]; }
+			get { 
+					if ( LevelEditor.settings.selectedMode < LevelEditorSettings.Mode.COUNT )
+						return m_activeLevels[(int)LevelEditor.settings.selectedMode]; 
+					else 
+						return null;
+				}
 			set { m_activeLevels[(int)LevelEditor.settings.selectedMode] = value; }
 		}	
 
@@ -439,7 +444,18 @@ namespace LevelEditor {
 
 			foreach(KeyValuePair<string, DefinitionNode> kvp in defs) {
 				m_levelsSkuList.Add(kvp.Key);
-				options.Add(kvp.Key + " (" + kvp.Value.Get("spawnersScene") + ", " + kvp.Value.Get("collisionScene") + ", " + kvp.Value.Get("artScene") + ")");
+				string id = kvp.Key + " (" + kvp.Value.Get("common");
+
+				int areaIndex = 1;
+				string areaString = kvp.Value.Get("area"+areaIndex);
+				while(!string.IsNullOrEmpty(areaString))
+				{
+					id += areaString;
+					areaIndex++;
+					areaString = kvp.Value.Get("area"+areaIndex);
+				}
+				id += ")";
+				options.Add(id);
 			}
 
 			// Show selection popup
@@ -457,35 +473,58 @@ namespace LevelEditor {
 
 			LevelEditorSettings.Mode oldMode = LevelEditor.settings.selectedMode;
 
-			LevelEditor.settings.selectedMode = LevelEditorSettings.Mode.SPAWNERS;
-			List<string> spawnersScene = def.GetAsList<string>("spawnersScene");
-			for( int i = 0; i<spawnersScene.Count; i++ )
+			List<string> commonScene = def.GetAsList<string>("common");
+			for( int i = 0; i<commonScene.Count; i++ )
 			{
-				OnLoadLevel( spawnersScene[i] + ".unity" );
+				LevelEditor.settings.selectedMode = GetModeByName( commonScene[i]);
+				OnLoadLevel( commonScene[i] + ".unity" );
 			}
 
-			LevelEditor.settings.selectedMode = LevelEditorSettings.Mode.COLLISION;
-			List<string> collisionScene = def.GetAsList<string>("collisionScene");
-			for( int i = 0; i<collisionScene.Count; i++ )
-			{
-				OnLoadLevel( collisionScene[i] + ".unity");
-			}
 
-			LevelEditor.settings.selectedMode = LevelEditorSettings.Mode.SOUND;
-			List<string> soundScene = def.GetAsList<string>("soundScene");
-			for( int i = 0; i<soundScene.Count; i++ )
+			List<string> areaScenes = new List<string>();
+			int areaIndex = 1;
+			bool _continue = false;
+			do
 			{
-				OnLoadLevel( soundScene[i] + ".unity");
-			}
-
-			LevelEditor.settings.selectedMode = LevelEditorSettings.Mode.ART;
-			List<string> artScene = def.GetAsList<string>("artScene");
-			for( int i = 0; i<artScene.Count; i++ )
-			{
-				OnLoadLevel( artScene[i] + ".unity");
-			}
+				areaScenes.Clear();
+				areaScenes = def.GetAsList<string>("area"+areaIndex);
+				_continue = false;
+				for( int i = 0;i<areaScenes.Count; i++ )
+				{
+					if (!string.IsNullOrEmpty(areaScenes[i]))
+					{
+						_continue = true;
+						LevelEditor.settings.selectedMode = GetModeByName( areaScenes[i]);
+						OnLoadLevel( areaScenes[i] + ".unity" );	
+					}
+				}
+				areaIndex++;
+			}while( _continue );
 
 			LevelEditor.settings.selectedMode = oldMode;
+		}
+
+		LevelEditorSettings.Mode GetModeByName( string name )
+		{
+			LevelEditorSettings.Mode mode = LevelEditorSettings.Mode.COUNT;
+			string lower = name.ToLower();
+			if ( lower.StartsWith("art_") )
+			{
+				mode = LevelEditorSettings.Mode.ART;
+			}
+			else if ( lower.StartsWith("sp_") )
+			{
+				mode = LevelEditorSettings.Mode.SPAWNERS;
+			}
+			else if (lower.StartsWith("so_"))
+			{
+				mode = LevelEditorSettings.Mode.SOUND;
+			}
+			else if ( lower.StartsWith("co_") )
+			{
+				mode = LevelEditorSettings.Mode.COLLISION;
+			}
+			return mode;
 		}
 
 		/// <summary>

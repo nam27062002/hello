@@ -120,6 +120,13 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
         }
     }        	
 
+    public void SwitchArea( string _nextArea )
+    {
+    	LevelManager.SwitchArea( _nextArea);
+    }
+
+
+
 	/// <summary>
 	/// Specially for debugging, force the name of the current scene.
 	/// Doesn't do any flow change, only sets internal vars.
