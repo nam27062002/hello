@@ -101,6 +101,7 @@
 				i.uv.x += 0.3;
 				intensity += tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed * 2.5, 0.2))).x;
 				intensity *= 0.25;
+//				intensity *= 0.5;
 				//				float alfa = clamp((intensity / (_AlphaThreshold / _ColorSteps)) - 1.0, 0.0, 1.0);
 //				fixed4 cloudsC = fixed4(alfa, alfa, alfa, 1.0) * _Tint;
 				fixed4 cloudsC = lerp(_BackgroundColor, _Tint, intensity);

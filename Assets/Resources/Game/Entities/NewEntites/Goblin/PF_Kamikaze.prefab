@@ -1254,17 +1254,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
-  m_energy: 10
+  m_blendSpeedFactor: 5
+  m_energy: 2
   m_energyDrainSec: 1
+  m_energyRecoverSec: 0.1
   m_brainResource: {fileID: 11400000, guid: f939edea44668469281698be0cacaaf2, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"lightUpTime":0.9,"speed":15,"acceleration":30,"dataType":"AI.Behaviour.RocketDashData","editorFolded":false},{"isMine":false,"damage":20,"radius":8,"cameraShakeDuration":1,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"lightUpTime":1,"speed":10,"acceleration":30,"dataType":"AI.Behaviour.RocketDashData","editorFolded":false},{"isMine":false,"damage":20,"radius":8,"cameraShakeDuration":0.7,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
   m_databaseKey: PF_Kamikaze
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 2
+  m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!114 &114151275997144362
@@ -1391,8 +1392,8 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 12
-    m_maxRadius: 4
+    m_sightRadius: 10
+    m_maxRadius: 5
     m_minRadius: 0
     m_hysteresisOffset: 1
     m_senseAbove: 1
