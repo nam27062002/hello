@@ -1015,14 +1015,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
-  m_energy: 6
+  m_blendSpeedFactor: 15
+  m_energy: 4
   m_energyDrainSec: 1
+  m_energyRecoverSec: 0.25
   m_brainResource: {fileID: 11400000, guid: fcba6844efb2f4ff6b18023d9b2856d4, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":7,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":15,"panicSpeed":18,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":5,"separation":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":7,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":10,"panicSpeed":14,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":5,"separation":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
   m_databaseKey: PF_FlyingPig
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 27
@@ -1059,9 +1060,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 15
-    m_maxRadius: 12
-    m_minRadius: 5
+    m_sightRadius: 14
+    m_maxRadius: 11
+    m_minRadius: 4
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
