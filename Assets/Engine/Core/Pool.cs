@@ -13,11 +13,14 @@ public class Pool {
 	
 	private bool m_canGrow;
 	private bool m_dontDestroyContainer;
+
+	private bool m_temporary;
+	public bool isTemporary { get { return m_temporary; } }
 	
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
-	public Pool(GameObject _prefab, Transform _parent, int _initSize, bool _canGrow, bool _createContainer) {
+	public Pool(GameObject _prefab, Transform _parent, int _initSize, bool _canGrow, bool _createContainer, bool _temporary = true) {
 		m_prefab = _prefab;
 
 		// Create a new container or use parent transform as a container?
@@ -39,6 +42,8 @@ public class Pool {
 			m_freeObjects.Enqueue( go );
 		}
 		m_canGrow = _canGrow;
+
+		m_temporary = _temporary;
 	}
 
 	public int Size() {
