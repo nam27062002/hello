@@ -79,17 +79,21 @@ public class AssetFinder : EditorWindow {
     /// Resets all shader keywords stored in materials or material selection
     /// </summary>
     /// 
-/*
-    [MenuItem("Hungry Dragon/Tools/Material keyword reset")]
+
+    [MenuItem("Hungry Dragon/Tools/Static Batching disable")]
     public static void SceneStaticBatchingDisable()
     {
         GameObject[] gameobjList;
         FindAssetInScene<GameObject>(out gameobjList);
+        Undo.RecordObjects(gameobjList, "Disable static batching");
         foreach (GameObject obj in gameobjList)
         {
+            StaticEditorFlags staticFlags = GameObjectUtility.GetStaticEditorFlags(obj);
+            staticFlags &= ~(StaticEditorFlags.BatchingStatic | StaticEditorFlags.NavigationStatic | StaticEditorFlags.OffMeshLinkGeneration | StaticEditorFlags.ReflectionProbeStatic);
+            GameObjectUtility.SetStaticEditorFlags(obj, staticFlags);
         }
     }
-*/
+
 
     /// <summary>
     /// Resets all shader keywords stored in materials or material selection

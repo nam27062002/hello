@@ -40,11 +40,16 @@ public class PopupDragonInfo : MonoBehaviour {
 	// Edibles/Destructibles layout
 	[Separator]
 	[SerializeField] private Transform m_layoutContainer = null;
+	public Transform layoutContainer { get { return m_layoutContainer; }}
 	[FileListAttribute("Resources/UI/Popups/DragonInfoLayouts", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] private string[] m_layoutPrefabs = new string[(int)DragonTier.COUNT];
 	[Space]
 	[SerializeField] private float m_timeBetweenLoaders = 0.5f;	// From FGOL
 	[SerializeField] private int m_framesBetweenLoaders = 5;	// From FGOL
+	[Space]
+	[SerializeField] private Shader m_entitiesPreviewShader = null;
+	[SerializeField] [Range(0f, 5f)] private float m_fresnelFactor = 3f;
+	[SerializeField] private Color m_fresnelColor = Color.gray;
 
 	// Other setup
 	[Separator]
@@ -108,6 +113,15 @@ public class PopupDragonInfo : MonoBehaviour {
 	private void OnValidate() {
 		// Layouts array has fixed size
 		m_layoutPrefabs.Resize((int)DragonTier.COUNT);
+
+		// If playing, update fresnel values for all loaded entities
+		if(Application.isPlaying) {
+			if(m_loaders != null) {
+				for(int i = 0; i < m_loaders.Length; i++) {
+					UpdateShaders(m_loaders[i].loadedInstance);	// Nothing will happen if null
+				}
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -203,7 +217,46 @@ public class PopupDragonInfo : MonoBehaviour {
 
 		// Start loading!
 		m_loaders[_idx].OnLoadingComplete.AddListener(OnLoaderCompleted);
-		m_loaders[_idx].Load();
+		m_loaders[_idx].LoadAsync();
+	}
+
+	/// <summary>
+	/// Apply the entities shaders modifications to the given game object.
+	/// </summary>
+	/// <param name="_go">Target game object.</param>
+	private void UpdateShaders(GameObject _go) {
+		// Ignore if object not valid
+		if(_go == null) return;
+
+		// Find all renderers in the target game object
+		Material m = null;
+		string fresnelFactorID;
+		string fresnelColorID;
+		Renderer[] renderers = _go.GetComponentsInChildren<Renderer>();
+		for(int i = 0; i < renderers.Length; i++) {
+			for(int j = 0; j < renderers[i].materials.Length; j++) {
+				// Shorter notation for clearer code
+				m = renderers[i].materials[j];
+
+				// Default IDs
+				fresnelFactorID = "_FresnelFactor";
+				fresnelColorID = "_FresnelColor";
+
+				// If the material doesn't have fresnel properties, replace by default material
+				if(!m.HasProperty(fresnelFactorID) || !m.HasProperty(fresnelColorID)) {
+					// Except dragon materials, which have their own special names
+					if(m.shader.name.Contains("/Dragon/")) {	// [AOC] Hacky as hell!
+						fresnelFactorID = "_Fresnel";
+					} else {
+						m.shader = m_entitiesPreviewShader;
+					}
+				}
+
+				// Everything ok! Apply fresnel
+				m.SetFloat(fresnelFactorID, m_fresnelFactor);
+				m.SetColor(fresnelColorID, m_fresnelColor);
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -215,8 +268,15 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// <param name="_loader">The loader that triggered the event.</param>
 	public void OnLoaderCompleted(UI3DLoader _loader) {
 		// Do any initialization required in the loaded 3D object
-		//_loader.loadedInstance;
-		// [AOC] Nothing to do for now
+		// Basically remove all components that depend on in-game stuff
+		// Let's go hardcore and actually remove ALL components
+		MonoBehaviour[] components = _loader.loadedInstance.GetComponents<MonoBehaviour>();
+		for(int i = 0; i < components.Length; i++) {
+			GameObject.Destroy(components[i]);
+		}
+
+		// Update materials shaders so the prefab is properly rendered in the UI
+		UpdateShaders(_loader.loadedInstance);
 
 		// Remove listener
 		_loader.OnLoadingComplete.RemoveListener(OnLoaderCompleted);
