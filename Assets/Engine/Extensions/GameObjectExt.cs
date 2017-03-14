@@ -124,13 +124,31 @@ public static class GameObjectExt {
 	/// </summary>
 	/// <returns>The bounds of the object, in world coords.</returns>
 	/// <param name="_rootObj">The object whose bounds we want.</param>
-	public static Bounds ComputeRendererBounds(this GameObject _rootObj) {
+	/// <param name="_ignoreParticleSystems">Whether to include or not particle systems in the whole Bounds composition.</param>
+	public static Bounds ComputeRendererBounds(this GameObject _rootObj, bool _ignoreParticleSystems) {
 		// Get all renderers in the target object
 		Renderer[] renderers = _rootObj.GetComponentsInChildren<Renderer>();
 		if(renderers.Length > 0) {
-			Bounds b = renderers[0].bounds;
-			for(int i = 1; i < renderers.Length; i++) {
-				b.Encapsulate(renderers[i].bounds);
+			bool initialized = false;
+			Bounds b = new Bounds();
+			for(int i = 0; i < renderers.Length; i++) {
+				// Ignore PS?
+				if(_ignoreParticleSystems && renderers[i].GetComponent<ParticleSystem>() != null) {
+					continue;
+				}
+
+				// Ignore if disabled as well
+				if(!renderers[i].enabled) {
+					continue;
+				}
+
+				// First bound found?
+				if(!initialized) {
+					b = renderers[i].bounds;
+					initialized = true;
+				} else {
+					b.Encapsulate(renderers[i].bounds);
+				}
 			}
 			return b;
 		}

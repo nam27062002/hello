@@ -34,9 +34,16 @@ public class UI3DScaler : MonoBehaviour {
 	// Exposed
 	[Tooltip("Reference rect transform which will determine the size and position of this object.")]
 	[SerializeField] private RectTransform m_rectTransform = null;
+
 	[SerializeField] private FitType m_fitType = FitType.FIT;
+	public FitType fitType {
+		get { return m_fitType; }
+		set { m_fitType = value; }
+	}
+
 	[Tooltip("Activate only if the scaler's size is prompt to change during gameplay. No need for other basic transformations such as position, rotation or scale.")]
 	[SerializeField] private bool m_constantUpdateRect = true;
+
 	[Tooltip("Activate only if the 3D object's bounds will change oftenly. Quite expensive, don't toggle it unless really needed.")]
 	[SerializeField] private bool m_constantUpdateBounds = false;
 
@@ -53,6 +60,7 @@ public class UI3DScaler : MonoBehaviour {
 	private Vector3 m_offset = Vector3.zero;
 	private Bounds m_rectBounds = default(Bounds);
 	private Vector3[] m_rectCorners = new Vector3[4];
+	private Quaternion m_oldRotation = Quaternion.identity;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -132,13 +140,17 @@ public class UI3DScaler : MonoBehaviour {
 		// Make sure we have all the required stuff
 		if(m_rectTransform == null) return;
 
-		// Reset scale and position
+		// Reset transformation
 		transform.localScale = Vector3.one;
 		transform.localPosition = Vector3.zero;
 
+		// Ignore rotation to compute bounds, otherwise the projection will depend on the rotation.
+		m_oldRotation = transform.localRotation;
+		transform.localRotation = Quaternion.identity;
+
 		// Find out world space bounds for this object with the position and scale reset
 		if(_updateBounds) {
-			m_thisOriginalBounds = this.gameObject.ComputeRendererBounds();	// World
+			m_thisOriginalBounds = this.gameObject.ComputeRendererBounds(true);	// World
 			m_offset = this.transform.position - m_thisOriginalBounds.center;
 		}
 		m_thisScaledBounds = m_thisOriginalBounds;
@@ -168,6 +180,7 @@ public class UI3DScaler : MonoBehaviour {
 
 		// Don't do anything if bounds are 0
 		if(m_thisScaledBounds.size.x == 0f || m_thisScaledBounds.size.y == 0f) {
+			this.transform.localRotation = m_oldRotation;
 			return;	// Would cause a div/0 error
 		}
 
@@ -198,6 +211,9 @@ public class UI3DScaler : MonoBehaviour {
 				}
 			} break;
 		}
+
+		// Restore rotation
+		this.transform.localRotation = m_oldRotation;
 
 		// Apply new scale factor! (and update bounds)
 		m_thisScaledBounds.size = Vector2.Scale(m_thisOriginalBounds.size, m_scaleFactor);

@@ -40,9 +40,11 @@ public class PopupDragonInfo : MonoBehaviour {
 	// Edibles/Destructibles layout
 	[Separator]
 	[SerializeField] private Transform m_layoutContainer = null;
+	public Transform layoutContainer { get { return m_layoutContainer; }}
 	[FileListAttribute("Resources/UI/Popups/DragonInfoLayouts", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] private string[] m_layoutPrefabs = new string[(int)DragonTier.COUNT];
 	[Space]
+	[SerializeField] private Shader m_entitiesPreviewShader = null;
 	[SerializeField] private float m_timeBetweenLoaders = 0.5f;	// From FGOL
 	[SerializeField] private int m_framesBetweenLoaders = 5;	// From FGOL
 
@@ -203,7 +205,7 @@ public class PopupDragonInfo : MonoBehaviour {
 
 		// Start loading!
 		m_loaders[_idx].OnLoadingComplete.AddListener(OnLoaderCompleted);
-		m_loaders[_idx].Load();
+		m_loaders[_idx].LoadAsync();
 	}
 
 	//------------------------------------------------------------------------//
@@ -215,8 +217,20 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// <param name="_loader">The loader that triggered the event.</param>
 	public void OnLoaderCompleted(UI3DLoader _loader) {
 		// Do any initialization required in the loaded 3D object
-		//_loader.loadedInstance;
-		// [AOC] Nothing to do for now
+		// Basically remove all components that depend on in-game stuff
+		// Let's go hardcore and actually remove ALL components
+		MonoBehaviour[] components = _loader.loadedInstance.GetComponents<MonoBehaviour>();
+		for(int i = 0; i < components.Length; i++) {
+			GameObject.Destroy(components[i]);
+		}
+
+		// Replace materials shaders so the prefab is properly rendered in the UI
+		if(m_entitiesPreviewShader != null) {
+			Renderer[] renderers = _loader.loadedInstance.GetComponentsInChildren<Renderer>();
+			for(int i = 0; i < renderers.Length; i++) {
+				renderers[i].material.shader = m_entitiesPreviewShader;
+			}
+		}
 
 		// Remove listener
 		_loader.OnLoadingComplete.RemoveListener(OnLoaderCompleted);
