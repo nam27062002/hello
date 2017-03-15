@@ -45,6 +45,8 @@ namespace AI {
 			private float m_actionPointTimer;
 			private float m_panicTimer;
 
+			private object[] m_params;
+					
 
 			public override StateComponentData CreateData() {
 				return new FleeToAPData();
@@ -60,6 +62,8 @@ namespace AI {
 				m_machine.SetSignal(Signals.Type.Alert, true);
 
 				m_target = m_machine.position;
+
+				m_params = new object[1];
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
@@ -72,6 +76,8 @@ namespace AI {
 				m_timeStuck = 0f;
 
 				m_lastPos = m_machine.transform.position;
+
+				m_params[0] = null;
 
 				m_fleeState = FleeState.Flee;
 			}
@@ -100,7 +106,8 @@ namespace AI {
 							action = ap.GetDefaultAction();
 						}
 
-						if (action != null) {							
+						if (action != null) {
+							m_params[0] = action;
 							if (action.id == Actions.Id.Home) {
 								Transition(OnGoBackHome);
 								return;
@@ -116,7 +123,7 @@ namespace AI {
 				}
 
 				if (ap != null) {
-					Transition(OnActionPoint);
+					Transition(OnActionPoint, m_params);
 				} else {
 					Vector3 direction = m_machine.direction;
 					bool warning = m_machine.GetSignal(Signals.Type.Warning);
