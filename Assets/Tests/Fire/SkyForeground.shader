@@ -9,6 +9,7 @@
 		_CloudThreshold("Cloud threshold", Range(0.0, 0.5)) = 0.25
 
 		_BackgroundColor("Background color", Color) = (0.0, 0.0, 0.0, 0.0)
+		_FogColor("Fog Color", Color) = (0.4, 0.4, 0.4, 1.0)
 
 	}
 
@@ -63,6 +64,7 @@
 				//				UNITY_FOG_COORDS(1)
 				float4 vCol : COLOR;
 				float4 vertex : SV_POSITION;
+				float depth : TEXCOORD1;
 			};
 
 			sampler2D _CloudTex;
@@ -74,6 +76,7 @@
 
 			float4	_Tint;
 			float4	_BackgroundColor;
+			float4	_FogColor;
 
 			v2f vert (appdata v)
 			{
@@ -81,40 +84,22 @@
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.vCol = v.color;
 				o.uv = TRANSFORM_TEX(v.uv, _CloudTex);
+				o.depth = mul(unity_ObjectToWorld, v.vertex).z;
+
 				return o;
 			}			
 			fixed4 frag (v2f i) : SV_Target
 			{
-//				return fixed4(i.uv.y, i.uv.y, i.uv.y, 1.0);
-//				float st = star(i.uv);
-//				i.uv.x -= 0.5;
-//				float mon = moon(i.uv, _MoonPos, _MoonRadius);
-//				i.uv.x *= ((1.0 - i.uv.y) + 0.5);
 				float vy = i.uv.y / _CloudTex_ST.y;
-//				float vy = i.uv.y;
-//							i.uv *= 4.0;
 				float intensity = tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed, 0.0))).x;
 				i.uv.x += 0.4;
 				intensity += tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed * 1.5, 0.3))).x;
-				i.uv.x += 0.2;
-				intensity += tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed * 2.0, 0.1))).x;
-				i.uv.x += 0.3;
-				intensity += tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed * 2.5, 0.2))).x;
-				intensity *= 0.25;
-//				intensity *= 0.5;
-				//				float alfa = clamp((intensity / (_AlphaThreshold / _ColorSteps)) - 1.0, 0.0, 1.0);
-//				fixed4 cloudsC = fixed4(alfa, alfa, alfa, 1.0) * _Tint;
+				intensity *= 0.5;
 				fixed4 cloudsC = lerp(_BackgroundColor, _Tint, intensity);
-//				return cloudsC;
+				cloudsC = lerp(cloudsC, _FogColor, clamp((i.depth - 1.0) / 40.0, 0.0, 1.0) * 0.5);
 
-//				fixed4 moonC = fixed4(max(mon, st) * _MoonColor.xyz, 1.0);
-				//				clip(colf.a - 0.1);
-				//colf += mon * _MoonColor;
-//				cloudsC = max(cloudsC, moonC);
 				cloudsC.w = smoothstep(0.0, _CloudThreshold, intensity * (1.0 - pow(abs(vy - 0.5) * 2.0, _CloudPower)));
-//				cloudsC.w = intensity;
 				return cloudsC;
-				//return lerp(moonC, cloudsC, alfa * 1.0);
 			}
 
 			ENDCG

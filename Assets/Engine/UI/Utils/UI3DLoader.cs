@@ -30,9 +30,20 @@ public class UI3DLoader : MonoBehaviour {
 	[FileListAttribute("Resources", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] private string m_resourcePath = "";
 	[SerializeField] private bool m_loadOnAwake = false;
+
 	[Space]
 	[SerializeField] private Transform m_container = null;
+	public Transform container {
+		get { return m_container; }
+		set { m_container = value; } 
+	}
+
 	[SerializeField] private UI3DScaler m_scaler = null;
+	public UI3DScaler scaler {
+		get { return m_scaler; }
+		set { m_scaler = value; }
+	}
+
 	[Space]
 	[SerializeField] private GameObject m_loadingPrefab = null;
 

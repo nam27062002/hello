@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -25,11 +26,12 @@ public class PopupDragonInfo : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/PF_PopupDragonInfo";
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[Separator("UI Elements")]
 	[SerializeField] private Image m_tierIcon = null;
 	[SerializeField] private Localizer m_dragonNameText = null;
 	[Space]
@@ -38,7 +40,7 @@ public class PopupDragonInfo : MonoBehaviour {
 	[SerializeField] private Localizer m_tierInfoText = null;
 
 	// Edibles/Destructibles layout
-	[Separator]
+	[Separator("Entities Layout")]
 	[SerializeField] private Transform m_layoutContainer = null;
 	public Transform layoutContainer { get { return m_layoutContainer; }}
 	[FileListAttribute("Resources/UI/Popups/DragonInfoLayouts", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
@@ -51,8 +53,16 @@ public class PopupDragonInfo : MonoBehaviour {
 	[SerializeField] [Range(0f, 5f)] private float m_fresnelFactor = 3f;
 	[SerializeField] private Color m_fresnelColor = Color.gray;
 
+	// Scrolling
+	[Separator("Scrolling")]
+	[SerializeField] private GameObject m_panel = null;
+	[SerializeField] private GameObject m_arrows = null;
+	[SerializeField] private PopupDragonInfoScroller m_scroller = null;
+	[SerializeField] private float m_scrollAnimOffset = 1000f;
+	[SerializeField] private float m_scrollAnimDuration = 0.25f;
+
 	// Other setup
-	[Separator]
+	[Separator("Other Setup")]
 	[SerializeField] private Color m_highlightTextColor = Color.yellow;
 	[SerializeField] private Color m_fireRushTextColor = Colors.orange;
 
@@ -60,7 +70,12 @@ public class PopupDragonInfo : MonoBehaviour {
 	private GameObject m_layoutInstance = null;
 	private UI3DLoader[] m_loaders = null;
 	private int m_loaderIdx = 0;
+	private IEnumerator m_loaderDelayCoroutine = null;
+
+	// Scroll anim
 	private bool m_openAnimFinished = false;
+	private DragonTier m_loadedTier = DragonTier.COUNT;
+	private Sequence m_scrollSequence = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -79,14 +94,14 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		
+		m_scroller.OnSelectionIndexChanged.AddListener(OnDragonChanged);
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		
+		m_scroller.OnSelectionIndexChanged.RemoveListener(OnDragonChanged);
 	}
 
 	/// <summary>
@@ -114,18 +129,22 @@ public class PopupDragonInfo : MonoBehaviour {
 		// Layouts array has fixed size
 		m_layoutPrefabs.Resize((int)DragonTier.COUNT);
 
-		// If playing, update fresnel values for all loaded entities
+		// Only while playing
 		if(Application.isPlaying) {
+			// Update fresnel values for all loaded entities
 			if(m_loaders != null) {
 				for(int i = 0; i < m_loaders.Length; i++) {
 					UpdateShaders(m_loaders[i].loadedInstance);	// Nothing will happen if null
 				}
 			}
+
+			// Re-create scroll animation sequence
+			RecreateScrollSequence();
 		}
 	}
 
 	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
+	// SCROLLING CONTROL													  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Initialize the popup with the given dragon info.
@@ -135,34 +154,130 @@ public class PopupDragonInfo : MonoBehaviour {
 		// Ignore if dragon data not valid
 		if(_dragonData == null) return;
 
-		// Tier icon
-		string tierIcon = _dragonData.tierDef.GetAsString("icon");
-		m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierIcon);
+		// If the scroller is not initialized, do it now
+		if(m_scroller.items.Count == 0) {
+			// Disable selection change events
+			m_scroller.enableEvents = false;
 
-		// Dragon name
-		m_dragonNameText.Localize(_dragonData.def.Get("tidName"));
+			// Init list of dragons to scroll around
+			m_scroller.Init(DragonManager.dragonsByOrder);
 
-		// HP
-		m_healthText.text = StringUtils.FormatNumber(_dragonData.maxHealth, 0);
+			// Select target def
+			m_scroller.SelectItem(_dragonData);
 
-		// Boost
-		m_energyText.text = StringUtils.FormatNumber(_dragonData.baseEnergy, 0);
+			// Set arrows visibility
+			m_arrows.SetActive(m_scroller.items.Count > 1);	// At least 2 dragons
 
-		// Tier description
-		// %U0 dragons can equip <color=%U1>%U2 pets</color> and give a <color=%U1>%U3</color> 
-		// multiplier during <color=%U4>Fire Rush</color>
-		m_tierInfoText.Localize("TID_DRAGON_INFO_TIER_DESCRIPTION", 
-			UIConstants.GetSpriteTag(tierIcon),
-			m_highlightTextColor.ToHexString("#"),
-			StringUtils.FormatNumber(_dragonData.pets.Count),	// Dragon data has as many slots as defined for this dragon
-			"x" + StringUtils.FormatNumber(_dragonData.def.GetAsFloat("furyScoreMultiplier", 2), 0),
-			m_fireRushTextColor.ToHexString("#")
-		);
+			// Restore selection change events
+			m_scroller.enableEvents = true;
+		}
 
-		// Edible/destructible layout corresponding to this dragon's tier
-		LoadLayout(_dragonData.tier);
+		// Initialize with currently selected dragon
+		Refresh();
 	}
 
+	/// <summary>
+	/// Refresh the popup with the info from the currently selected dragon (in the scroller).
+	/// </summary>
+	private void Refresh() {
+		// Only if current data is valid
+		DragonData dragonData = m_scroller.selectedItem;
+		if(dragonData == null) return;
+
+		// Dragon name
+		m_dragonNameText.Localize(dragonData.def.Get("tidName"));
+
+		// HP
+		m_healthText.text = StringUtils.FormatNumber(dragonData.maxHealth, 0);
+
+		// Boost
+		m_energyText.text = StringUtils.FormatNumber(dragonData.baseEnergy, 0);
+
+		// Tier data (only if different than the last loaded)
+		if(m_loadedTier != dragonData.tier) {
+			// Tier icon
+			string tierIcon = dragonData.tierDef.GetAsString("icon");
+			m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierIcon);
+		
+			// Tier description
+			// %U0 dragons can equip <color=%U1>%U2 pets</color> and give a <color=%U1>%U3</color> 
+			// multiplier during <color=%U4>Fire Rush</color>
+			m_tierInfoText.Localize("TID_DRAGON_INFO_TIER_DESCRIPTION", 
+				UIConstants.GetSpriteTag(tierIcon),
+				m_highlightTextColor.ToHexString("#"),
+				StringUtils.FormatNumber(dragonData.pets.Count),	// Dragon data has as many slots as defined for this dragon
+				"x" + StringUtils.FormatNumber(dragonData.def.GetAsFloat("furyScoreMultiplier", 2), 0),
+				m_fireRushTextColor.ToHexString("#")
+			);
+
+			// Edible/destructible layout corresponding to this dragon's tier
+			LoadLayout(dragonData.tier);
+
+			// Store new tier
+			m_loadedTier = dragonData.tier;
+		}
+	}
+
+	/// <summary>
+	/// Launch the scroll animation in the target direction.
+	/// The popup's info will be refreshed with currently selected item on the "invisible" frame.
+	/// </summary>
+	/// <param name="_backwards">Left or right?</param>
+	private void LaunchScrollAnim(bool _backwards) {
+		// If not already programmed, do it now
+		if(m_scrollSequence == null) {
+			RecreateScrollSequence();
+		}
+
+		// Launch the animation in the proper direction
+		if(_backwards) {
+			m_scrollSequence.Goto(m_scrollSequence.Duration());
+			m_scrollSequence.PlayBackwards();
+		} else {
+			m_scrollSequence.Goto(0f);
+			m_scrollSequence.PlayForward();
+		}
+
+		// Stop any loaders (we don't want any instantiation while scale is not 1)
+		ToggleLoaders();
+	}
+
+	/// <summary>
+	/// Creates scroll sequence.
+	/// Kills any existing sequence.
+	/// </summary>
+	private void RecreateScrollSequence() {
+		// If a sequence already exists, kill it
+		if(m_scrollSequence != null) {
+			m_scrollSequence.Kill(true);
+			m_scrollSequence = null;
+		}
+
+		// Do it!
+		m_scrollSequence = DOTween.Sequence()
+			// Out
+			.Append(m_panel.transform.DOLocalMoveX(-m_scrollAnimOffset, m_scrollAnimDuration).SetEase(Ease.InCubic))
+			.Join(m_panel.transform.DOScale(0f, m_scrollAnimDuration).SetEase(Ease.InExpo))
+
+			// Refresh once hidden
+			.AppendCallback(Refresh)
+
+			// In
+			.Append(m_panel.transform.DOLocalMoveX(m_scrollAnimOffset, 0.01f))	// [AOC] Super-dirty: super-fast teleport to new position, no other way than via tween
+			.Append(m_panel.transform.DOLocalMoveX(0f, m_scrollAnimDuration).SetEase(Ease.OutCubic))
+			.Join(m_panel.transform.DOScale(1f, m_scrollAnimDuration).SetEase(Ease.OutExpo))
+
+			// Start paused
+			.SetAutoKill(false)
+			.Pause()
+			.OnStepComplete(() => {
+				ToggleLoaders();
+			});
+	}
+
+	//------------------------------------------------------------------------//
+	// LOADERS CONTROL														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Loads the layout linked to the given tier.
 	/// </summary>
@@ -189,12 +304,20 @@ public class PopupDragonInfo : MonoBehaviour {
 		// Find out all loaders within the newly instantiated layout
 		m_loaders = m_layoutInstance.GetComponentsInChildren<UI3DLoader>();
 
-		// Perpare for asynchronous loading!
-		// If the popup's not open, wait until the open animiation has finished
+		// Prepare for asynchronous loading!
+		// If a delayed loading is already running, stop it
+		if(m_loaderDelayCoroutine != null) {
+			StopCoroutine(m_loaderDelayCoroutine);
+			m_loaderDelayCoroutine = null;
+		}
+
+		// Start loading!
 		m_loaderIdx = 0;
-		if(m_openAnimFinished) {
-			StartCoroutine(StartLoader(m_loaderIdx));
-		};
+		m_loaderDelayCoroutine = StartLoader(m_loaderIdx);
+		StartCoroutine(m_loaderDelayCoroutine);
+
+		// Check loaders
+		ToggleLoaders();
 	}
 
 	/// <summary>
@@ -218,6 +341,22 @@ public class PopupDragonInfo : MonoBehaviour {
 		// Start loading!
 		m_loaders[_idx].OnLoadingComplete.AddListener(OnLoaderCompleted);
 		m_loaders[_idx].LoadAsync();
+	}
+
+	/// <summary>
+	/// Automatically enable/disable loaders depending on the popup's animation.
+	/// Prevents instantiations while scale is not 1.
+	/// </summary>
+	private void ToggleLoaders() {
+		bool sequencePlaying = (m_scrollSequence != null && m_scrollSequence.IsPlaying());
+		bool toggle = (m_openAnimFinished && !sequencePlaying);
+
+		if(m_loaders != null) {
+			for(int i = 0; i < m_loaders.Length; i++) {
+				// If the behaviour is not updated, it will never be instantiated
+				m_loaders[i].enabled = toggle;
+			}
+		}
 	}
 
 	/// <summary>
@@ -247,7 +386,15 @@ public class PopupDragonInfo : MonoBehaviour {
 					// Except dragon materials, which have their own special names
 					if(m.shader.name.Contains("/Dragon/")) {	// [AOC] Hacky as hell!
 						fresnelFactorID = "_Fresnel";
-					} else {
+					} 
+
+					// And transparent material, used for glows and some other VFX
+					else if(m.shader.name.Contains("Transparent")) {
+						// Nothing to do
+					}
+
+					// Standard material, replace it
+					else {
 						m.shader = m_entitiesPreviewShader;
 					}
 				}
@@ -278,12 +425,19 @@ public class PopupDragonInfo : MonoBehaviour {
 		// Update materials shaders so the prefab is properly rendered in the UI
 		UpdateShaders(_loader.loadedInstance);
 
+		// If the prefab has any LookAtMainCamera component (billboards), override it to look at popup's canvas camera
+		LookAtMainCamera[] lookAtMainCameraComponents = _loader.loadedInstance.GetComponentsInChildren<LookAtMainCamera>();
+		for(int i = 0; i < lookAtMainCameraComponents.Length; i++) {
+			lookAtMainCameraComponents[i].overrideCamera = PopupManager.canvas.worldCamera;
+		}
+
 		// Remove listener
 		_loader.OnLoadingComplete.RemoveListener(OnLoaderCompleted);
 
 		// Start next loader
 		m_loaderIdx++;
-		StartCoroutine(StartLoader(m_loaderIdx));
+		m_loaderDelayCoroutine = StartLoader(m_loaderIdx);
+		StartCoroutine(m_loaderDelayCoroutine);
 	}
 
 	/// <summary>
@@ -293,8 +447,8 @@ public class PopupDragonInfo : MonoBehaviour {
 		// Update flag
 		m_openAnimFinished = true;
 
-		// Start loading! (We don't do it earlier because popup's animation could affect the 3D scalers.
-		StartCoroutine(StartLoader(m_loaderIdx));
+		// Check loaders
+		ToggleLoaders();
 	}
 
 	/// <summary>
@@ -302,5 +456,37 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// </summary>
 	public void OnClosePreAnimation() {
 		m_openAnimFinished = false;
+	}
+
+	/// <summary>
+	/// New dragon selected!
+	/// </summary>
+	/// <param name="_oldIdx">Previous selected dragon index.</param>
+	/// <param name="_newIdx">New selected dragon index.</param>
+	/// <param name="_looped">Have we looped to do the new selection?
+	public void OnDragonChanged(int _oldIdx, int _newIdx, bool _looped) {
+		// Ignore if animating
+		//if(m_scrollSequence != null && m_scrollSequence.IsPlaying()) return;
+
+		// Figure out animation direction and launch it!
+		bool backwards = _oldIdx > _newIdx;
+		if(_looped) backwards = !backwards;	// Reverse animation direction if a loop was completed
+		LaunchScrollAnim(backwards);
+	}
+
+	/// <summary>
+	/// Scroll to next dragon!
+	/// </summary>
+	public void OnNextDragon() {
+		// UISelector will do it for us
+		m_scroller.SelectNextItem();
+	}
+
+	/// <summary>
+	/// Scroll to previous dragon!
+	/// </summary>
+	public void OnPreviousDragon() {
+		// UISelector will do it for us
+		m_scroller.SelectPreviousItem();
 	}
 }

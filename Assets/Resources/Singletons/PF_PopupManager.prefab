@@ -5,12 +5,12 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 224: {fileID: 22485352}
-  - 223: {fileID: 22304956}
-  - 114: {fileID: 11497994}
-  - 114: {fileID: 11450782}
+  - component: {fileID: 22485352}
+  - component: {fileID: 22304956}
+  - component: {fileID: 11497994}
+  - component: {fileID: 11450782}
   m_Layer: 5
   m_Name: PopupsCanvas
   m_TagString: Untagged
@@ -23,10 +23,10 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 468822}
-  - 114: {fileID: 11409790}
+  - component: {fileID: 468822}
+  - component: {fileID: 11409790}
   m_Layer: 0
   m_Name: PF_PopupManager
   m_TagString: Untagged
@@ -39,11 +39,11 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 469512}
-  - 20: {fileID: 2056622}
-  - 92: {fileID: 9253826}
+  - component: {fileID: 469512}
+  - component: {fileID: 2056622}
+  - component: {fileID: 9253826}
   m_Layer: 0
   m_Name: PopupsCamera
   m_TagString: Untagged
@@ -58,13 +58,14 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 147000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -500, y: -500, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 469512}
   - {fileID: 22485352}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &469512
 Transform:
   m_ObjectHideFlags: 1
@@ -77,6 +78,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 468822}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &2056622
 Camera:
   m_ObjectHideFlags: 1
@@ -130,6 +132,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_canvas: {fileID: 22304956}
+  m_openedPopups: []
+  m_closedPopups: []
 --- !u!114 &11450782
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -182,6 +186,7 @@ Canvas:
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -197,6 +202,7 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 468822}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
