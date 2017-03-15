@@ -139,7 +139,7 @@ namespace LevelEditor {
 		/// </summary>
 		private void StartGame() {
 			// Build Pools
-			PoolManager.BuildPools();
+			PoolManager.Build();
 
 			// Reset dragon stats
 			InstanceManager.player.ResetStats(false);
