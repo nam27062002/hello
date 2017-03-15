@@ -35,7 +35,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 		instance.m_poolRequests[_prefabName] = pr;
 	}
 
-	public static void BuildPools() {
+	public static void Build() {
 		List<string> keys = new List<string>(instance.m_poolRequests.Keys);
 
 		for (int i = 0; i < keys.Count; i++) {
@@ -46,22 +46,24 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 		instance.m_poolRequests.Clear();
 	}
 
-	public static void Rebuild()
-	{
+	public static void Rebuild() {
 		List<string> keys;
 
 		// First eliminate non using prefabs and reduce bigger than need pools
 		keys = new List<string>(instance.m_pools.Keys);
 		for (int i = 0; i < keys.Count; i++) {
-			if (instance.m_pools[ keys[i] ].isTemporary)
-			{
-				if ( !instance.m_poolRequests.ContainsKey(keys[i]) ){
-					instance.m_pools[ keys[i] ].Clear();
+			Pool p = instance.m_pools[keys[i]];
+
+			if (p.isTemporary) {
+				if (instance.m_poolRequests.ContainsKey(keys[i])) {
+					PoolRequest pr = instance.m_poolRequests[keys[i]];
+
+					if (pr.size < p.Size()) {
+						p.Resize(pr.size);
+					}
+				} else {
+					p.Clear();
 					instance.m_pools.Remove(keys[i]);
-				}
-				else if (instance.m_poolRequests[ keys[i] ].size < instance.m_pools[ keys[i] ].Size())
-				{
-					instance.m_pools[ keys[i] ].Resize( instance.m_poolRequests[keys[i]].size );
 				}
 			}
 		}
@@ -71,13 +73,18 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 		// Increase and Add new prefabs
 		keys = new List<string>(instance.m_poolRequests.Keys);
 		for (int i = 0; i < keys.Count; i++) {
-			if ( !instance.m_pools.ContainsKey(keys[i]) ){
+			PoolRequest pr = instance.m_poolRequests[keys[i]];
+
+			if (instance.m_pools.ContainsKey(keys[i])) {
+				Pool p = instance.m_pools[keys[i]];
+			
+				if (pr.size > p.Size()) {
+					// increase size
+					p.Resize(pr.size);
+				}
+			} else {
 				// Create pool
-				PoolRequest pr = instance.m_poolRequests[keys[i]];
 				CreatePool(keys[i], pr.path, pr.size, true, true); // should it grow?
-			}else if (instance.m_poolRequests[keys[i]].size > instance.m_pools[ keys[i] ].Size()){
-				// increase size
-				instance.m_pools[ keys[i] ].Resize(instance.m_poolRequests[keys[i]].size);
 			}
 		}
 

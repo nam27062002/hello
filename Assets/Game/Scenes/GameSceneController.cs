@@ -335,7 +335,7 @@ public class GameSceneController : GameSceneControllerBase {
 				m_levelLoadingTasks = null;
 
 				// Build Pools
-				PoolManager.BuildPools();
+				PoolManager.Build();
 
 				// Init game camera
 				InstanceManager.gameCamera.Init();
@@ -402,6 +402,7 @@ public class GameSceneController : GameSceneControllerBase {
 				for(int i = 0; i < m_levelLoadingTasks.Length; i++) {
 					m_levelLoadingTasks[i].allowSceneActivation = true;
 				}
+
 			} break;
 
 			case EStates.COUNTDOWN: {
@@ -464,18 +465,19 @@ public class GameSceneController : GameSceneControllerBase {
 
 	public void SwitchArea( string _nextArea )
     {
-		SpawnerManager.instance.DisableSpawners();
+		Messenger.Broadcast(GameEvents.GAME_AREA_EXIT);
+
     	AsyncOperation[] loadingOperations = LevelManager.SwitchArea( _nextArea);
     	if ( loadingOperations != null )
     	{
 			for(int i = 0; i < loadingOperations.Length; i++) {
 				loadingOperations[i].allowSceneActivation = false;
 			}
-			StartCoroutine( WaitTasksFinished(loadingOperations));
+			StartCoroutine(WaitTasksFinished(loadingOperations));
 		}
 		else
 		{
-			SpawnerManager.instance.EnableSpawners();
+			Debug.LogError("Nothing to load while switching Areas");
 		}
     }
 
@@ -500,8 +502,9 @@ public class GameSceneController : GameSceneControllerBase {
 			operations[i].allowSceneActivation = true;
 		}
 		yield return null;
+
 		PoolManager.Rebuild();
-		SpawnerManager.instance.EnableSpawners();
+		Messenger.Broadcast(GameEvents.GAME_AREA_ENTER);
 	}
 
 }
