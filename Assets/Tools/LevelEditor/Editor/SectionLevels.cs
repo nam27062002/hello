@@ -451,6 +451,11 @@ namespace LevelEditor {
 		{
 			string sku = m_levelsSkuList[id];
 
+			// Store level data of the new level
+			LevelEditor.settings.levelSku = sku;
+			EditorUtility.SetDirty(LevelEditor.settings);
+			AssetDatabase.SaveAssets();
+
 			UnloadAllLevels();
 
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVELS, sku);

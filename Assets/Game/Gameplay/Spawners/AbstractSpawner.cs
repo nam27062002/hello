@@ -58,7 +58,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     }
 
     public void Initialize() {
-        m_rect = new Rect((Vector2)transform.position, Vector2.zero);
+		m_rect = new Rect((Vector2)transform.position, Vector2.one * 2f);
         Entities_Create(GetMaxEntities());
 
         EntitiesAlive = 0;
