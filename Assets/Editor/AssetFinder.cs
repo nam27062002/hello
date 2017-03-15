@@ -85,6 +85,7 @@ public class AssetFinder : EditorWindow {
     {
         GameObject[] gameobjList;
         FindAssetInScene<GameObject>(out gameobjList);
+        Undo.RecordObjects(gameobjList, "Disable static batching");
         foreach (GameObject obj in gameobjList)
         {
             StaticEditorFlags staticFlags = GameObjectUtility.GetStaticEditorFlags(obj);

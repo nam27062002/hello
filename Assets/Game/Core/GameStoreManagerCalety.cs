@@ -61,7 +61,7 @@ public class GameStoreManagerCalety : GameStoreManager
 		m_storeListener = new CaletyGameStoreListener();
 		StoreManager.SharedInstance.AddListener (m_storeListener);
 		CacheStoreSkus();	    
-		StoreManager.SharedInstance.Initialise (ref m_storeSkus);
+		StoreManager.SharedInstance.Initialise (ref m_storeSkus, true);
 		#if UNITY_ANDROID && !UNITY_EDITOR
 	        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 	        if(settingsInstance != null)
