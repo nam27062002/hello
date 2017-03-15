@@ -46,6 +46,44 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 		instance.m_poolRequests.Clear();
 	}
 
+	public static void Rebuild()
+	{
+		List<string> keys;
+
+		// First eliminate non using prefabs and reduce bigger than need pools
+		keys = new List<string>(instance.m_pools.Keys);
+		for (int i = 0; i < keys.Count; i++) {
+			if (instance.m_pools[ keys[i] ].isTemporary)
+			{
+				if ( !instance.m_poolRequests.ContainsKey(keys[i]) ){
+					instance.m_pools[ keys[i] ].Clear();
+					instance.m_pools.Remove(keys[i]);
+				}
+				else if (instance.m_poolRequests[ keys[i] ].size < instance.m_pools[ keys[i] ].Size())
+				{
+					instance.m_pools[ keys[i] ].Resize( instance.m_poolRequests[keys[i]].size );
+				}
+			}
+		}
+
+		Resources.UnloadUnusedAssets();
+
+		// Increase and Add new prefabs
+		keys = new List<string>(instance.m_poolRequests.Keys);
+		for (int i = 0; i < keys.Count; i++) {
+			if ( !instance.m_pools.ContainsKey(keys[i]) ){
+				// Create pool
+				PoolRequest pr = instance.m_poolRequests[keys[i]];
+				CreatePool(keys[i], pr.path, pr.size, true, true); // should it grow?
+			}else if (instance.m_poolRequests[keys[i]].size > instance.m_pools[ keys[i] ].Size()){
+				// increase size
+				instance.m_pools[ keys[i] ].Resize(instance.m_poolRequests[keys[i]].size);
+			}
+		}
+
+		instance.m_poolRequests.Clear();
+	}
+
 	/// <summary>
 	/// Will destroy all the pools and loose reference to any created instances.
 	/// Additionally they can be deleted from the scene.

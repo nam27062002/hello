@@ -468,7 +468,6 @@ public class GameSceneController : GameSceneControllerBase {
     	AsyncOperation[] loadingOperations = LevelManager.SwitchArea( _nextArea);
     	if ( loadingOperations != null )
     	{
-			PoolManager.Clear(false);
 			for(int i = 0; i < loadingOperations.Length; i++) {
 				loadingOperations[i].allowSceneActivation = false;
 			}
@@ -501,7 +500,7 @@ public class GameSceneController : GameSceneControllerBase {
 			operations[i].allowSceneActivation = true;
 		}
 		yield return null;
-		PoolManager.BuildPools();
+		PoolManager.Rebuild();
 		SpawnerManager.instance.EnableSpawners();
 	}
 

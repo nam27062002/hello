@@ -133,7 +133,7 @@ Transform:
   m_Children:
   - {fileID: 1368682892}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1271445894
 GameObject:
@@ -145,7 +145,7 @@ GameObject:
   - component: {fileID: 1271445896}
   - component: {fileID: 1271445895}
   m_Layer: 0
-  m_Name: GameObject (1)
+  m_Name: Wtiches
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -181,8 +181,8 @@ MonoBehaviour:
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
-    min: 40
-    max: 45
+    min: 0
+    max: 0
   m_homePosMethod: 0
   m_homePosDistance:
     min: 1
@@ -196,7 +196,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1271445894}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 98.9, y: 7.2942076, z: -0.40625}
+  m_LocalPosition: {x: 127.53, y: 7.2942076, z: -0.40625}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -230,6 +230,86 @@ Transform:
   - {fileID: 1889360272}
   m_Father: {fileID: 773906751}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1824688214
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1824688217}
+  - component: {fileID: 1824688216}
+  - component: {fileID: 1824688215}
+  m_Layer: 0
+  m_Name: Canary
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1824688215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1824688214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_formation: 0
+--- !u!114 &1824688216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1824688214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_entityPrefabList:
+  - name: Air/PF_Canary01_Flock
+    chance: 100
+  m_quantity:
+    min: 25
+    max: 25
+  m_speedFactorRange:
+    min: 1
+    max: 1
+  m_scale:
+    min: 1
+    max: 1
+  m_rails: 1
+  m_hasGroupBonus: 0
+  m_minTier: 0
+  m_activationChance: 100
+  m_activationTriggers: []
+  m_deactivationTriggers: []
+  m_spawnTime:
+    min: 0
+    max: 0
+  m_homePosMethod: 0
+  m_homePosDistance:
+    min: 1
+    max: 2
+  m_maxSpawns: 0
+  m_checkCurrents: 0
+--- !u!4 &1824688217
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1824688214}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 127.37, y: -6.1, z: -0.40625}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1889360271
 GameObject:
