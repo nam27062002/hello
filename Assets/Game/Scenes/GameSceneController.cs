@@ -464,7 +464,7 @@ public class GameSceneController : GameSceneControllerBase {
 
 	public void SwitchArea( string _nextArea )
     {
-		
+		SpawnerManager.instance.DisableSpawners();
     	AsyncOperation[] loadingOperations = LevelManager.SwitchArea( _nextArea);
     	if ( loadingOperations != null )
     	{
@@ -473,6 +473,10 @@ public class GameSceneController : GameSceneControllerBase {
 				loadingOperations[i].allowSceneActivation = false;
 			}
 			StartCoroutine( WaitTasksFinished(loadingOperations));
+		}
+		else
+		{
+			SpawnerManager.instance.EnableSpawners();
 		}
     }
 
@@ -498,8 +502,7 @@ public class GameSceneController : GameSceneControllerBase {
 		}
 		yield return null;
 		PoolManager.BuildPools();
-
-
+		SpawnerManager.instance.EnableSpawners();
 	}
 
 }
