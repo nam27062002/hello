@@ -55,6 +55,8 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
     private System.Diagnostics.Stopwatch m_watch = new System.Diagnostics.Stopwatch();
 
+    private Dictionary<int, AbstractSpawnerData> m_spanwersData = new Dictionary<int, AbstractSpawnerData>();
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
@@ -320,6 +322,12 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 			}
 		}
 		_spawner.Initialize();
+
+		// if I have data about this _spawner tell it to load
+		if (m_spanwersData.ContainsKey( _spawner.GetSpawnerID() ))
+		{
+			_spawner.Load( m_spanwersData[ _spawner.GetSpawnerID() ] );
+		}
 	}
 
 	/// <summary>
@@ -327,6 +335,22 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	/// </summary>
 	/// <param name="_spawner">The spawner to be removed.</param>
 	public void Unregister(ISpawner _spawner, bool _removeFromTree) {
+
+		// resave _spanwer info
+		if (m_spanwersData.ContainsKey( _spawner.GetSpawnerID() ))
+		{
+			AbstractSpawnerData data = m_spanwersData[ _spawner.GetSpawnerID() ];
+			_spawner.Save( ref data);
+		}
+		else
+		{
+			AbstractSpawnerData data = _spawner.Save();
+			if ( data != null )
+			{
+				m_spanwersData.Add( _spawner.GetSpawnerID(), data);
+			}
+		}
+
 		m_spawners.Remove(_spawner);
 		if(m_spawnersTreeNear != null && _removeFromTree) {
 			if (_spawner.transform.position.z < FAR_LAYER_Z) {

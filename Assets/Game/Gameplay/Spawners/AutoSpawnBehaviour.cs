@@ -169,4 +169,13 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	public virtual bool SpawnersCheckCurrents(){ return false; }
 
 	public void DrawStateGizmos() {}
+
+
+	#region save_spawner_state
+	public virtual void AssignSpawnerID(int id){}
+	public virtual int GetSpawnerID(){return -1;}
+	public virtual AbstractSpawnerData Save(){return null;}
+	public virtual void Save( ref AbstractSpawnerData _data){}
+	public virtual void Load(AbstractSpawnerData _data){}
+	#endregion
 }

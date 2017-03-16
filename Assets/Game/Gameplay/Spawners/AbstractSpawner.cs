@@ -8,6 +8,9 @@
 /// </summary>
 public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 {
+	
+	[SerializeField] protected int m_id = -1;
+
     /// <summary>
     /// When <c>true</c> the spawner will be told to respawn only when its area is inside camera respawn area. When <c>false</c> respawning will be managed by another controller
     /// </summary>
@@ -28,7 +31,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
         set { m_useProgressiveRespawn = value; }
     }
 
-    protected enum EState
+    public enum EState
     {
         Init = 0,
         Respawning,
@@ -343,4 +346,32 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     protected virtual void OnForceRemoveEntities() {}
     public virtual void DrawStateGizmos() {}
     #endregion
+
+
+	#region save_spawner_state
+	public virtual void AssignSpawnerID(int id)
+	{
+		m_id = id;
+	}
+	public virtual int GetSpawnerID()
+	{
+		return m_id;
+	}
+	public virtual AbstractSpawnerData Save()
+	{
+		AbstractSpawnerData data = new AbstractSpawnerData();
+		Save( ref data );
+		return data;
+	}
+	public virtual void Save( ref AbstractSpawnerData _data)
+	{
+		_data.m_entitiesKilled = EntitiesKilled;
+		_data.m_entitiesToSpawn = EntitiesToSpawn;
+	}
+	public virtual void Load(AbstractSpawnerData _data)
+	{
+		EntitiesKilled = _data.m_entitiesKilled;
+		EntitiesToSpawn = _data.m_entitiesToSpawn;
+	}
+	#endregion
 }

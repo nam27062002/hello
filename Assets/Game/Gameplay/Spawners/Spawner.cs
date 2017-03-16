@@ -193,8 +193,12 @@ public class Spawner : AbstractSpawner {
 	}
 
 	protected override bool CanRespawnExtended() {
+		if (m_maxSpawns > 0 && m_respawnCount >= m_maxSpawns)
+		{
+			m_readyToBeDisabled = true;
+		}
 		// If we can spawn, do it
-		if (CanSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
+		else if (CanSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 			// If we don't have any entity alive, proceed
 			if (EntitiesAlive == 0) {
 				// Respawn on cooldown?
@@ -280,7 +284,7 @@ public class Spawner : AbstractSpawner {
 			}
 
 			m_respawnCount++;
-			if (m_maxSpawns > 0 && m_respawnCount == m_maxSpawns) {
+			if (m_maxSpawns > 0 && m_respawnCount >= m_maxSpawns) {
 				m_readyToBeDisabled = true;
 			} else {
 				// Program the next spawn time
@@ -437,4 +441,37 @@ public class Spawner : AbstractSpawner {
 		v.z = 0f;
 		return v;
 	}    
+
+
+
+
+	#region save_spawner_state
+	override public AbstractSpawnerData Save()
+	{
+		AbstractSpawnerData data = new SpawnerData() as AbstractSpawnerData;
+		Save( ref data );
+		return data;
+	}
+	override public void Save( ref AbstractSpawnerData _data)
+	{
+		base.Save(ref _data);
+		SpawnerData spData = _data as SpawnerData;
+		if (spData != null)
+		{
+			spData.m_respawnCount = m_respawnCount;
+			spData.m_respawnTime = m_respawnTime;
+		}
+	}
+	override public void Load(AbstractSpawnerData _data)
+	{
+		base.Load(_data);
+		SpawnerData spData = _data as SpawnerData;
+		if (spData != null)
+		{
+			m_respawnCount = spData.m_respawnCount;
+			m_respawnTime = spData.m_respawnTime;
+		}
+
+	}
+	#endregion
 }
