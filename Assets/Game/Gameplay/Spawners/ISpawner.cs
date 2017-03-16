@@ -18,7 +18,6 @@ public interface ISpawner : IQuadTreeItem {
 	Quaternion rotation { get; }
 
 #region save_spawner_state
-	void AssignSpawnerID(int id);
 	int GetSpawnerID();
 	AbstractSpawnerData Save();
 	void Save( ref AbstractSpawnerData _data);

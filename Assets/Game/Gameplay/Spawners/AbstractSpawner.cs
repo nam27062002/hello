@@ -8,9 +8,6 @@
 /// </summary>
 public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 {
-	
-	[SerializeField] protected int m_id = -1;
-
     /// <summary>
     /// When <c>true</c> the spawner will be told to respawn only when its area is inside camera respawn area. When <c>false</c> respawning will be managed by another controller
     /// </summary>
@@ -349,13 +346,9 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 
 
 	#region save_spawner_state
-	public virtual void AssignSpawnerID(int id)
-	{
-		m_id = id;
-	}
 	public virtual int GetSpawnerID()
 	{
-		return m_id;
+		return transform.position.GetHashCode() ^ name.GetHashCode();
 	}
 	public virtual AbstractSpawnerData Save()
 	{

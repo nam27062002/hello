@@ -122,6 +122,8 @@ public class SpawnerEditor : Editor {
 			}
 		} while(p.NextVisible(false));		// Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
 
+		EditorGUILayout.LabelField("Id: " + m_targetSpawner.GetSpawnerID());
+
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties();
 
