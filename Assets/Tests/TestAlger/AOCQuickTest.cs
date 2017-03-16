@@ -15,6 +15,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using DG.Tweening;
 using TMPro;
 
@@ -29,7 +30,7 @@ using UnityEditor;
 /// 
 /// </summary>
 //[ExecuteInEditMode]
-public class AOCQuickTest : MonoBehaviour {
+public class AOCQuickTest : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -37,15 +38,15 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	[SerializeField] private GameObject m_spinner = null;
-	[SerializeField] private UI3DScaler m_container = null;
+	[SerializeField] private float m_dragThreshold = 50f;
+	[SerializeField] private int m_frameCountThreshold = 20;
+	[SerializeField] private bool m_enableMousEvents = true;
 
-	[FileListAttribute("Resources/UI/Menu/Dragons", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
-	[SerializeField] private string[] m_resourcesList = new string[0];
+	private bool m_clickDetection = false;
+	private Vector3 m_mouseDownPos = Vector3.zero;
+	private int m_downFramesCount = 0;
 
-	private ResourceRequest m_loadingRequest = null;
-	private GameObject m_instance = null;
-	private int m_resIdx = 0;
+	[SerializeField] private PhysicsRaycaster m_raycaster = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -61,11 +62,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		// Hide spinner
-		if(m_spinner) m_spinner.SetActive(false);
-
-		// Load first dragon
-		OnTestButton();
+		
 	}
 
 	/// <summary>
@@ -79,52 +76,43 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Called once per frame.
 	/// </summary>
 	private void Update() {
-		// If we're loading, wait for the loading process to end
-		if(m_loadingRequest != null) {
-			if(m_loadingRequest.isDone) {
-				// Done! Instantiate loaded asset
-				m_instance = GameObject.Instantiate<GameObject>((GameObject)m_loadingRequest.asset, m_container.transform, false);
-				if(m_instance != null) {
-					m_instance.SetLayerRecursively(m_container.gameObject.layer);
-					m_container.Refresh(true, true);
-				}
-
-				// Hide spinner
-				m_spinner.SetActive(false);
-
-				// Drop loading request
-				m_loadingRequest = null;
-			}
-		}
+		
 	}
 
 	/// <summary>
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		// Ignore if not playing or not enabled
-		if(!Application.isPlaying || !isActiveAndEnabled) {
-			Debug.LogError("Only while playing!"); return;
+		StringBuilder sb = new StringBuilder();
+		CustomInputModule inputModule = EventSystem.current.currentInputModule as CustomInputModule;
+
+		List<RaycastResult> results = new List<RaycastResult>();
+		EventSystem.current.RaycastAll(inputModule.lastPointerEventData, results);
+		sb.AppendLine("New raycast results (" + results.Count + " results)");
+		for(int i = 0; i < results.Count; i++) {
+			sb.AppendLine("\t" + results[i].gameObject.name);
 		}
+		Debug.Log(sb.ToString());
+		sb.Length = 0;
 
-		// If we have something loaded, destroy it
-		if(m_instance != null) {
-			GameObject.Destroy(m_instance);
-			m_instance = null;
+		results = inputModule.lastRaycastResults;
+		sb.AppendLine("Last raycast results from custom input module (" + results.Count + " results)");
+		for(int i = 0; i < results.Count; i++) {
+			sb.AppendLine("\t" + results[i].gameObject.name);
 		}
+		Debug.Log(sb.ToString());
+		sb.Length = 0;
 
-		// Ignore if resources list is empty
-		if(m_resourcesList.Length <= 0) return;
-
-		// We don't care if we're already loading another asset, it will be ignored once done loading
-		string path = m_resourcesList[m_resIdx];
-		m_resIdx = (m_resIdx + 1) % m_resourcesList.Length;
-		m_loadingRequest = Resources.LoadAsync<GameObject>(path);
-
-		// Show spinner
-		if(m_loadingRequest != null && m_spinner != null) {
-			m_spinner.SetActive(true);
+		CustomEventSystem customEventSystem = (CustomEventSystem)EventSystem.current;
+		if(customEventSystem != null) {
+			results = customEventSystem.lastRaycastResults;
+			sb.AppendLine("Last raycast results from custom event system! (" + results.Count + " results)");
+			for(int i = 0; i < results.Count; i++) {
+				sb.AppendLine("\t" + results[i].gameObject.name);
+			}
 		}
+		Debug.Log(sb.ToString());
+		sb.Length = 0;
 	}
 
 	/// <summary>
@@ -137,5 +125,65 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// OnMouseUpAsButton is only called when the mouse is released over the same 
+	/// GUIElement or Collider as it was pressed.
+	/// </summary>
+	public void OnPointerDown(PointerEventData _eventData) {
+		//Debug.Log(this.name + " DOWN!");
+	}
 
+	/// <summary>
+	/// OnMouseUpAsButton is only called when the mouse is released over the same 
+	/// GUIElement or Collider as it was pressed.
+	/// </summary>
+	public void OnPointerClick(PointerEventData _eventData) {
+		Debug.Log(this.name + " CLICK!");
+	}
+
+	/// <summary>
+	/// OnMouseUpAsButton is only called when the mouse is released over the same 
+	/// GUIElement or Collider as it was pressed.
+	/// </summary>
+	public void OnPointerUp(PointerEventData _eventData) {
+		//Debug.Log(this.name + " UP!");
+	}
+
+
+	public void OnMouseDown() {
+		if(!m_enableMousEvents) return;
+
+		Debug.Log("MOUSE DOWN!");
+		m_clickDetection = true;
+		m_mouseDownPos = Input.mousePosition;
+		m_downFramesCount = 0;
+	}
+
+	public void OnMouseDrag() {
+		if(!m_enableMousEvents) return;
+
+		Debug.Log("MOUSE DRAG! " + (Input.mousePosition - m_mouseDownPos).sqrMagnitude.ToString());
+		if(m_clickDetection) {
+			m_downFramesCount++;
+			if((Input.mousePosition - m_mouseDownPos).sqrMagnitude > m_dragThreshold || m_downFramesCount > m_frameCountThreshold) {
+				m_clickDetection = false;
+			}
+		}
+	}
+
+	public void OnMouseUp() {
+		if(!m_enableMousEvents) return;
+
+		Debug.Log("MOUSE UP!");
+		if(m_clickDetection) {
+			Debug.Log("-------------------> CLICK DETECTED!");
+			m_clickDetection = false;
+		}
+	}
+
+	public void OnMouseUpAsButton() {
+		if(!m_enableMousEvents) return;
+
+		Debug.Log("MOUSE CLICK!");
+	}
 }

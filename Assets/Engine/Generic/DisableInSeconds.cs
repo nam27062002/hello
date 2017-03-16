@@ -28,6 +28,12 @@ public class DisableInSeconds : MonoBehaviour {
 //		m_coroutineRunning = false;
 	}
 
+	void OnDisable() {
+		if (m_activeTime > 0f) {
+			Disable();
+		}
+	}
+
 	void Update() {
 
 		m_activeTimer -= Time.deltaTime;

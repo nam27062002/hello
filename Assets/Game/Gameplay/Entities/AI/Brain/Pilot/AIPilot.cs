@@ -132,7 +132,9 @@ namespace AI {
 
 			// state machine updates
 			if (m_brain != null) {
-				m_brain.Update();
+				if (!(m_machine.IsDead() || m_machine.IsDying())) {
+					m_brain.Update();
+				}
 			}
 		}
 
