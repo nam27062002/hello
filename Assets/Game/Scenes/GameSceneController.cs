@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -36,6 +37,16 @@ public class GameSceneController : GameSceneControllerBase {
 		FINISHED
 	};
 
+	bool m_switchingArea = false;
+	string m_nextArea = "";
+	public enum SwitchingAreaSate
+	{
+		UNLOADING_SCENES,
+		LOADING_SCENES,
+		ACTIVATING_SCENES
+	};
+	SwitchingAreaSate m_switchState;
+	private List<AsyncOperation> m_switchingAreaTasks;
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -203,6 +214,69 @@ public class GameSceneController : GameSceneControllerBase {
 			case EStates.RUNNING: {
 				// Update running time
 				m_elapsedSeconds += Time.deltaTime;
+				if ( m_switchingArea )
+				{
+					switch( m_switchState )
+					{
+						case SwitchingAreaSate.UNLOADING_SCENES:
+						{
+							bool done = true;
+							if ( m_switchingAreaTasks != null )
+							{
+								for( int i = 0; i<m_switchingAreaTasks.Count && done; i++ )
+								{
+									if ( !m_switchingAreaTasks[i].isDone )
+									{
+										done = false;
+									}
+								}
+							}
+
+							if (done)
+							{
+								m_switchingAreaTasks = LevelManager.LoadArea(m_nextArea);
+								if ( m_switchingAreaTasks != null )
+								{
+									for(int i = 0; i < m_switchingAreaTasks.Count; i++) {
+										m_switchingAreaTasks[i].allowSceneActivation = false;
+									}
+								}
+								m_switchState = SwitchingAreaSate.LOADING_SCENES;
+							}
+						}break;
+						case SwitchingAreaSate.LOADING_SCENES:
+						{
+							bool done = true;
+							if ( m_switchingAreaTasks != null )
+							{
+								for( int i = 0; i<m_switchingAreaTasks.Count && done; i++ )	
+								{
+									done = m_switchingAreaTasks[i].progress >= 0.9f;
+								}
+							}
+
+							if ( done )
+							{
+								if ( m_switchingAreaTasks != null )
+								{
+									for( int i = 0; i<m_switchingAreaTasks.Count; i++ )	
+									{
+										m_switchingAreaTasks[i].allowSceneActivation = true;
+									}
+								}
+								m_switchState = SwitchingAreaSate.ACTIVATING_SCENES;
+
+							}
+						}break;
+						case SwitchingAreaSate.ACTIVATING_SCENES:
+						{
+							PoolManager.Rebuild();
+							Messenger.Broadcast(GameEvents.GAME_AREA_ENTER);
+							m_switchingArea = false;
+						}break;
+					}
+				}
+
 			} break;
 
 			case EStates.FINISHED: {
@@ -465,22 +539,18 @@ public class GameSceneController : GameSceneControllerBase {
 
 	public void SwitchArea( string _nextArea )
     {
-		Messenger.Broadcast(GameEvents.GAME_AREA_EXIT);
-
-    	AsyncOperation[] loadingOperations = LevelManager.SwitchArea( _nextArea);
-    	if ( loadingOperations != null )
+    	if ( LevelManager.currentArea != _nextArea )
     	{
-			for(int i = 0; i < loadingOperations.Length; i++) {
-				loadingOperations[i].allowSceneActivation = false;
-			}
-			StartCoroutine(WaitTasksFinished(loadingOperations));
-		}
-		else
-		{
-			Debug.LogError("Nothing to load while switching Areas");
+			Messenger.Broadcast(GameEvents.GAME_AREA_EXIT);
+			m_switchingArea = true;
+			m_nextArea = _nextArea;
+			m_switchState = SwitchingAreaSate.UNLOADING_SCENES;
+			m_switchingAreaTasks = LevelManager.UnloadCurrentArea();
 		}
     }
 
+
+    /*
     // Test to load new areas
 	IEnumerator WaitTasksFinished( AsyncOperation[] operations )
 	{
@@ -506,5 +576,6 @@ public class GameSceneController : GameSceneControllerBase {
 		PoolManager.Rebuild();
 		Messenger.Broadcast(GameEvents.GAME_AREA_ENTER);
 	}
+	*/
 
 }

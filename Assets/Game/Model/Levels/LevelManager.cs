@@ -27,6 +27,9 @@ public class LevelManager : Singleton<LevelManager> {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	private static string m_currentArea = "";
+	public static string currentArea{
+		get{ return m_currentArea; }
+	}
 	private static List<string> m_currentAreaScenes = new List<string>();
 
 	// Shortcut to get the data of the currently selected level
@@ -132,7 +135,7 @@ public class LevelManager : Singleton<LevelManager> {
 	}
 
 
-	private static List<AsyncOperation> LoadArea( string area )
+	public static List<AsyncOperation> LoadArea( string area )
 	{
 		List<AsyncOperation> loadingTasks = new List<AsyncOperation>();
 		AsyncOperation loadingTask = null;
@@ -149,7 +152,7 @@ public class LevelManager : Singleton<LevelManager> {
 		return loadingTasks;
 	}
 
-	private static List<AsyncOperation> UnloadCurrentArea()
+	public static List<AsyncOperation> UnloadCurrentArea()
 	{
 		List<AsyncOperation> loadingTasks = new List<AsyncOperation>();
 		AsyncOperation loadingTask = null;
