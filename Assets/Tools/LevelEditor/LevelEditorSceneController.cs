@@ -138,6 +138,8 @@ namespace LevelEditor {
 		/// Do all the necessary stuff to start a game.
 		/// </summary>
 		private void StartGame() {
+			LevelManager.SetCurrentLevel(LevelEditor.settings.levelSku);
+
 			// Reset dragon stats
 			InstanceManager.player.ResetStats(false);
 

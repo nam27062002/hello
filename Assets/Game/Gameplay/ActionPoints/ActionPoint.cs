@@ -37,7 +37,8 @@ public class ActionPoint : MonoBehaviour, IQuadTreeItem {
 		Gizmos.DrawWireSphere(transform.position, m_radius);
 
 		Gizmos.color = Colors.red;
-		Gizmos.DrawCube(transform.position + Vector3.up * (1f + m_radius), new Vector3(1f, 0.4f, 0.4f));
-		Gizmos.DrawCube(transform.position + Vector3.up * (1f + m_radius), new Vector3(0.4f, 1f, 0.4f));
+		Gizmos.DrawWireCube(transform.position + Vector3.up * (1f + m_radius), new Vector3(1f, 0.4f, 0.4f));
+		Gizmos.DrawWireCube(transform.position + Vector3.up * (1f + m_radius), new Vector3(0.4f, 1f, 0.4f));
+		Gizmos.DrawWireCube(transform.position + Vector3.up * (1f + m_radius), new Vector3(0.4f, 0.4f, 1f));
 	}
 }

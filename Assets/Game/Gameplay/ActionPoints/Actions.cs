@@ -24,12 +24,14 @@ public class Actions {
 		Panic = 0,
 		Jump,
 		GoOn,
-		Home
+		Hide,
+		Home,
 	}
 
 	[SerializeField] private Action m_panic = new Action(Actions.Id.Panic, false);
 	[SerializeField] private Action m_jump 	= new Action(Actions.Id.Jump, false);
 	[SerializeField] private Action m_goOn = new Action(Actions.Id.GoOn, true);
+	[SerializeField] private Action m_hide = new Action(Actions.Id.Hide, false);
 	private Action m_home = new Action(Actions.Id.Home, true);
 
 
@@ -48,6 +50,10 @@ public class Actions {
 
 		if (m_goOn.active && _entityActions.m_goOn.active) {
 			availableActions.Add(m_goOn);
+		}
+
+		if (m_hide.active && _entityActions.m_hide.active) {
+			availableActions.Add(m_hide);
 		}
 
 		//----------------------------------------------------
