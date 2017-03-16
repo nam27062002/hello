@@ -528,7 +528,7 @@ public class GameCamera : MonoBehaviour
 		// safety check to avoid duplicates (it should not happen anyway).
 		if(!m_bossCamAffectors.Contains(bca))
 		{			
-			if(bca.frameWidthIncrement > m_largestBossFrameIncrement)
+			if(bca.frameWidthIncrement > m_largestBossFrameIncrement || m_largestBoss == null)
 			{
 				m_largestBoss = bca;
 				m_largestBossFrameIncrement = bca.frameWidthIncrement;
@@ -549,12 +549,13 @@ public class GameCamera : MonoBehaviour
 			// update the largest boss data if necessary.
 			if(m_largestBoss == bca)
 			{
-				m_largestBoss = null;
-				m_largestBossFrameIncrement = 0f;
-				m_frameLargestBossWithPlayer = false;				
 				if(m_bossCamAffectors.Count > 0)
 				{
-					for(int i = 0; i < m_bossCamAffectors.Count; i++)
+					m_largestBoss = m_bossCamAffectors[0];
+					m_largestBossFrameIncrement = m_bossCamAffectors[0].frameWidthIncrement;
+					m_frameLargestBossWithPlayer = m_bossCamAffectors[0].frameMeAndPlayer;
+
+					for(int i = 1; i < m_bossCamAffectors.Count; i++)
 					{
 						if(m_bossCamAffectors[i].frameWidthIncrement > m_largestBossFrameIncrement)
 						{
@@ -563,6 +564,12 @@ public class GameCamera : MonoBehaviour
 							m_frameLargestBossWithPlayer = m_bossCamAffectors[i].frameMeAndPlayer;
 						}
 					}
+				}
+				else
+				{
+					m_largestBoss = null;
+					m_largestBossFrameIncrement = 0;
+					m_frameLargestBossWithPlayer = false;
 				}
 			}
 			// update the other boss related variables.

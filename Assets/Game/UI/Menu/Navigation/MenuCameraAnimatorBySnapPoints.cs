@@ -70,6 +70,20 @@ public class MenuCameraAnimatorBySnapPoints : MonoBehaviour {
 		Debug.Assert(m_snapPoints.Count > 0, "At least one snap point required");
 	}
 
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		
+	}
+
+	/// <summary>
+	/// Component has been disabled.
+	/// </summary>
+	private void OnDisable() {
+
+	}
+
 	//------------------------------------------------------------------//
 	// OTHER METHODS													//
 	//------------------------------------------------------------------//
@@ -99,13 +113,13 @@ public class MenuCameraAnimatorBySnapPoints : MonoBehaviour {
 		// Camera snap point makes it easy for us! ^_^
 		if(_animate) {
 			TweenParams tweenParams = new TweenParams().SetEase(m_tweenEase);
-			targetPoint.TweenTo(targetCam, m_tweenDuration, tweenParams);
+			targetPoint.TweenTo(targetCam, m_tweenDuration, tweenParams, null);
 		} else {
 			targetPoint.Apply(targetCam);
 		}
 
 		// Update current scene's camera snap point!
-		m_menuScreensController.currentScene.cameraSnapPoint = targetPoint;
+		m_menuScreensController.SetCameraSnapPoint(m_menuScreensController.currentScreenIdx, targetPoint);
 	}
 
 	/// <summary>

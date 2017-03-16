@@ -23,6 +23,8 @@ MonoBehaviour:
   - m_name: Attack
     m_componentAssets:
     - {fileID: 11400000, guid: dc38d9cf90c3d49bab291061fb8b1f57, type: 2}
+  - m_name: Dead
+    m_componentAssets: []
   m_transitionData:
   - to: 1
     id: onRest
@@ -39,5 +41,11 @@ MonoBehaviour:
   - to: 0
     id: onOutOfRange
     from: 2
+  - to: 3
+    id: onBurning
+    from: -1
+  - to: 3
+    id: onChewing
+    from: -1
   m_firstState_A: 0
   m_firstState_B: 0

@@ -16,7 +16,7 @@ public class ParticleTrigger : MonoBehaviour {
 
 	void Start()
 	{
-		ParticleManager.CreatePool( m_particle, 2 );
+		ParticleManager.CreatePool(m_particle);
 		m_collider = GetComponent<Collider>();
 	}
 

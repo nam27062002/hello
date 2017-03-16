@@ -14,6 +14,7 @@ public class AutoParenter : MonoBehaviour {
 	[SerializeField] private string m_parentName;
 	[FormerlySerializedAs("m_lookAtRoot")]
 	[SerializeField] private Transform m_parentRoot;
+	[SerializeField] private bool m_worldPositionStays = true;
 
 	void Awake() {
 		if (!string.IsNullOrEmpty(m_parentName)) {
@@ -28,7 +29,7 @@ public class AutoParenter : MonoBehaviour {
                 string parentObjName = t.name;
                 Debug.LogError(string.Format("Can't find transform for {0} on object {1}", m_parentName, parentObjName));
 			} else {
-				t.SetParent(p, true);
+				t.SetParent(p, m_worldPositionStays);
 			}
 		}
 

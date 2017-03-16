@@ -1399,10 +1399,9 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 6
-    m_attackPausesJump: 0
+    m_mass: 3
     m_defaultUpVector: 0
-    m_orientationSpeed: 120
+    m_orientationSpeed: 240
     m_faceDirection: 1
     m_useDragonStyleRotation: 0
     m_rollRotation: 1
@@ -1410,15 +1409,15 @@ MonoBehaviour:
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
     m_limitVerticalRotation: 1
-    m_faceUpAngle: 355
-    m_faceDownAngle: 5
+    m_faceUpAngle: 345
+    m_faceDownAngle: 15
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 0
-    m_sightRadius: 15
-    m_maxRadius: 13
-    m_minRadius: 11
+    m_sightRadius: 7
+    m_maxRadius: 5
+    m_minRadius: 3
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -1447,7 +1446,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: witch
+  m_sku: Witch
   m_dieOutsideFrustum: 1
 --- !u!114 &11483728
 MonoBehaviour:
@@ -1460,9 +1459,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 0.1
-  m_runSpeed: 6
-  m_minPlaybakSpeed: 0.5
+  m_walkSpeed: 13
+  m_runSpeed: 17
+  m_minPlaybakSpeed: 1
   m_maxPlaybakSpeed: 1.5
   m_onBoostMaxPlaybackSpeed: 0
   m_hasNavigationLayer: 1
@@ -1472,7 +1471,14 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles: []
+  m_onEatenParticle:
+    name: PS_Blood_Green_Small
+    path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: PS_IceExplosion
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -1506,17 +1512,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
-  m_energy: 10
+  m_blendSpeedFactor: 15
+  m_energy: 2
   m_energyDrainSec: 1
+  m_energyRecoverSec: 0.2
   m_brainResource: {fileID: 11400000, guid: 51430fe07f0e141f99deacb67d7c126c, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":13,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":17,"panicSpeed":20,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"projectileName":"PF_LightningStrike","projectileSpawnTransformName":"projectile","damage":40,"consecutiveAttacks":2,"attackDelay":0,"retreatTime":0,"stop":false,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":14,"panicSpeed":30,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"projectileName":"PF_WitchMagic","projectileSpawnTransformName":"projectile","damage":40,"canFollowTarget":true,"consecutiveAttacks":2,"attackDelay":0,"retreatTime":0,"stop":false,"faceEnemy":true,"faceEnemyY":true,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
   m_databaseKey: PF_Witch
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 6
+  m_avoidDistanceAttenuation: 10
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!137 &13726440

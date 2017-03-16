@@ -5,34 +5,23 @@ using UnityEngine.Audio;
 public class AmbientSoundArea : MonoBehaviour 
 {
 	public string m_ambientSound;	
-	//public AudioMixerSnapshot m_onEnterSnapshot;
+	private bool m_playerInside = false;
 
 	void OnTriggerEnter( Collider other)
 	{
-		if ( other.CompareTag("Player") )	
+		if ( other.CompareTag("Player") && !m_playerInside)	
 		{
+			m_playerInside = true;
             InstanceManager.musicController.Ambience_Play(m_ambientSound, gameObject);
-			
-            /*
-			if (m_onEnterSnapshot != null)
-			{
-				InstanceManager.musicController.RegisterSnapshot( m_onEnterSnapshot );
-			}*/
-				
 		}
 	}
 
 	void OnTriggerExit( Collider other)
 	{
-		if ( other.CompareTag("Player") )	
+		if ( other.CompareTag("Player") && m_playerInside)	
 		{
+			m_playerInside = false;
             InstanceManager.musicController.Ambience_Stop(m_ambientSound, gameObject);
-
-            /*
-			if (m_onEnterSnapshot != null)
-			{
-				InstanceManager.musicController.UnregisterSnapshot( m_onEnterSnapshot );
-			}*/
         }
 	}    
 }

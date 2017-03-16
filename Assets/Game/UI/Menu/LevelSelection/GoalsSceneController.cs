@@ -140,13 +140,12 @@ public class GoalsSceneController : MonoBehaviour {
 		// If the goals screen is active, animate camera to the target snap point
 		// Otherwise just mark target snap point as the current one
 		MenuScreensController screensController = InstanceManager.GetSceneController<MenuSceneController>().screensController;
-		MenuScreenScene goalsScene = screensController.GetScene((int)MenuScreens.GOALS);
-		if(screensController.currentScene == goalsScene) {
+		if(screensController.currentScreenIdx == (int)MenuScreens.GOALS) {
 			// Animate camera to target snap point
 			cameraAnimator.SnapTo(_data.toScreenIdx);
 		} else {
 			// Set target snap point as the current one for the goals screen
-			goalsScene.cameraSnapPoint = cameraAnimator.snapPoints[_data.toScreenIdx];
+			screensController.SetCameraSnapPoint((int)MenuScreens.GOALS, cameraAnimator.snapPoints[_data.toScreenIdx]);
 		}
 	}
 

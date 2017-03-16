@@ -29,6 +29,8 @@ public class CameraSnapPointEditor : Editor {
 	private Camera m_editionCamera = null;
 	private Camera m_customTargetCamera = null;
 
+	private SerializedProperty m_livePreviewProp = null;
+
 	//------------------------------------------------------------------//
 	// METHODS															//
 	//------------------------------------------------------------------//
@@ -36,7 +38,9 @@ public class CameraSnapPointEditor : Editor {
 	/// Editor enabled.
 	/// </summary>
 	public void OnEnable() {
+		// Store target and some interesting properties
 		m_targetSnapPoint = (CameraSnapPoint)target;
+		m_livePreviewProp = serializedObject.FindProperty("livePreview");
 
 		// Create a temp camera to preview during edition
 		if(m_editionCamera == null) {
@@ -48,28 +52,38 @@ public class CameraSnapPointEditor : Editor {
 			} else {
 				camObj = new GameObject();
 				m_editionCamera = camObj.AddComponent<Camera>();
-				m_editionCamera.depth = int.MaxValue;
+				m_editionCamera.depth = 100;
 			}
 			camObj.name = "CameraSnapPointPreview";
 			camObj.hideFlags = HideFlags.DontSave;
-			camObj.SetActive(m_targetSnapPoint.livePreview);
-
-			m_targetSnapPoint.Apply(m_editionCamera);
-
-			UnityEditorInternal.InternalEditorUtility.RepaintAllViews();	// HACKS! http://answers.unity3d.com/questions/449407/how-to-manually-update-gameview.html
 		}
+
+		// Initialize live preview
+		UpdateLivePreview();
+
+		// We want the live preview to be constantly updated!
+		EditorApplication.update += Update;
 	}
 
 	/// <summary>
 	/// Editor disabled.
 	/// </summary>
 	public void OnDisable() {
+		// Destroy preview camera
 		if(m_editionCamera != null) {
 			GameObject.DestroyImmediate(m_editionCamera.gameObject);
 			m_editionCamera = null;
 		}
 
-		UnityEditorInternal.InternalEditorUtility.RepaintAllViews();	// HACKS! http://answers.unity3d.com/questions/449407/how-to-manually-update-gameview.html
+		// Clear references
+		m_livePreviewProp = null;
+		m_targetSnapPoint = null;
+
+		// Make sure all views are updated
+		UpdateLivePreview();
+
+		// Unsubscribe from external events
+		EditorApplication.update -= Update;
 	}
 
 	/// <summary>
@@ -83,6 +97,10 @@ public class CameraSnapPointEditor : Editor {
 		// Live preview enabled?
 		m_targetSnapPoint.livePreview = EditorGUILayout.Toggle("Live Preview", m_targetSnapPoint.livePreview);
 		EditorGUILayout.Space();
+
+		// Main toggles
+		m_targetSnapPoint.changePosition = EditorGUILayout.Toggle("Position", m_targetSnapPoint.changePosition);
+		m_targetSnapPoint.changeRotation = EditorGUILayout.Toggle("Rotation", m_targetSnapPoint.changeRotation);
 
 		// Optional values - single line
 		EditorGUILayout.Space();
@@ -176,14 +194,6 @@ public class CameraSnapPointEditor : Editor {
 		if(EditorGUI.EndChangeCheck()) {
 			serializedObject.ApplyModifiedProperties();
 		}
-
-		// Live preview, if enabled
-		if(m_editionCamera != null) {
-			m_editionCamera.gameObject.SetActive(m_targetSnapPoint.livePreview);
-			if(m_targetSnapPoint.livePreview) {
-				m_targetSnapPoint.Apply(m_editionCamera);
-			}
-		}
 	}
 
 	/// <summary>
@@ -191,5 +201,31 @@ public class CameraSnapPointEditor : Editor {
 	/// </summary>
 	public void OnSceneGUI() {
 		
+	}
+
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
+	public void Update() {
+		UpdateLivePreview();
+	}
+
+	/// <summary>
+	/// Updates the live preview.
+	/// </summary>
+	private void UpdateLivePreview() {
+		// Live preview, if enabled
+		if(m_editionCamera != null && m_livePreviewProp != null) {
+			//m_editionCamera.gameObject.SetActive(m_targetSnapPoint.livePreview);
+			m_editionCamera.gameObject.SetActive(m_livePreviewProp.boolValue);
+			if(m_livePreviewProp.boolValue) {
+				// Update edition camera
+				m_editionCamera.depth = 100;	// Make sure camera has priority
+				m_targetSnapPoint.Apply(m_editionCamera);
+			}
+		}
+
+		// Make sure all views are up to date
+		UnityEditorInternal.InternalEditorUtility.RepaintAllViews();	// HACKS! http://answers.unity3d.com/questions/449407/how-to-manually-update-gameview.html
 	}
 }

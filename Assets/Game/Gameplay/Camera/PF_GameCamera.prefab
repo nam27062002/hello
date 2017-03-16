@@ -15,11 +15,9 @@ GameObject:
   - component: {fileID: 11486938}
   - component: {fileID: 11447402}
   - component: {fileID: 114000011327172364}
-  - component: {fileID: 114795868151240438}
   - component: {fileID: 114000011558897754}
   - component: {fileID: 114911447019432680}
   - component: {fileID: 114728181362819458}
-  - component: {fileID: 114508471609965312}
   - component: {fileID: 114877917579243700}
   m_Layer: 0
   m_Name: PF_GameCamera
@@ -73,7 +71,7 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
-  m_OcclusionCulling: 0
+  m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
   m_StereoMirrorMode: 0
@@ -459,18 +457,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TurnSpeed: 10
   m_MoveSpeed: 10
---- !u!114 &114508471609965312
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 101152}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76fd4e07d22412d4fb93d78cedcd3859, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_material: {fileID: 2100000, guid: 7bd9f635119683c489c66cffa13eedb5, type: 2}
 --- !u!114 &114728181362819458
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -488,29 +474,6 @@ MonoBehaviour:
   m_shader: {fileID: 4800000, guid: dd36d0c2ae0fac84dbb7ef8e357fcb03, type: 3}
   m_TexelOffset: 2
   m_LensOffset: 0.5
---- !u!114 &114795868151240438
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 101152}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52f78e93835bdf04eb5ad39ac500b342, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  glowMaterial: {fileID: 2100000, guid: 384a7936c98fd0a4c8bb8f336aafe16f, type: 2}
-  glowReplaceShader: {fileID: 4800000, guid: 0d7c5cc6776db14459960ae53cb4ce35, type: 3}
-  glowMode: 0
-  blendMode: 2
-  downsampleSize: 32
-  blurIterations: 8
-  blurSpread: 0.25
-  glowStrength: 0.85
-  ignoreLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  glowColorMultiplier: {r: 1, g: 0.6161004, b: 0.24264705, a: 1}
 --- !u!114 &114877917579243700
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -82,6 +82,16 @@ public class Builder : MonoBehaviour
 		if(string.IsNullOrEmpty(outputDir)) {
 			outputDir = Application.dataPath.Substring(0, Application.dataPath.IndexOf("Assets"));	// Default output dir is the project's folder
 		}
+
+		bool obbValue = false;
+		string generateObbs = GetArg("-obb");
+		if ( generateObbs != null )
+		{
+			bool.TryParse( generateObbs, out obbValue);
+		}
+		PlayerSettings.Android.useAPKExpansionFiles = obbValue;
+
+
 		string date = System.DateTime.Now.ToString("yyyyMMdd");
 		string stagePath = System.IO.Path.Combine(outputDir, m_apkName + "_" + GameSettings.internalVersion + "_" + date + "_b" + PlayerSettings.Android.bundleVersionCode + ".apk");	// Should be something like ouputDir/hd_2.4.3_20160826_b12421.apk
 
@@ -286,26 +296,12 @@ public class Builder : MonoBehaviour
 		sw2.Close();
 	}
 
-	/// <summary>
-	/// Start a process.
-	/// </summary>
-	/// <param name="_command">The process to be started.</param>
-	/// <param name="_args">Parmeters line.</param>
-	private static void RunProcess(string _command, string _args = "") {
-		// Setup start info
-		Process process = new Process();
-		process.StartInfo.FileName = _command;
-		process.StartInfo.Arguments = _args;
-
-		process.StartInfo.RedirectStandardError = false;
-		process.StartInfo.RedirectStandardOutput = false;
-		process.StartInfo.RedirectStandardInput = false;
-		process.StartInfo.UseShellExecute = true;
-
-		// Run the process and wait until it finishes
-		process.Start();
-		process.WaitForExit();
+	// This action will be used to make custom project stuff. Like generating lightmaps or splitting scenes
+	public static void CustomAction()
+	{
+		UnityEngine.Debug.Log("Custom Action");
 	}
+
 
 	/// <summary>
 	/// Print a message to the output terminal. Attach BUILDER prefix to make it 

@@ -14,7 +14,7 @@ using System.Collections.Generic;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 namespace AI {
-	public abstract class AIPilot : Pilot, ISpawnable, ISerializationCallbackReceiver {
+	public abstract class AIPilot : Pilot, ISerializationCallbackReceiver {
 		protected static int m_groundMask;
 		protected static int m_groundWaterMask;
 
@@ -127,8 +127,8 @@ namespace AI {
 			m_slowDown = _value;
 		}
 
-		protected override void Update() {
-			base.Update();
+		public override void CustomUpdate() {
+			base.CustomUpdate();
 
 			// state machine updates
 			if (m_brain != null) {

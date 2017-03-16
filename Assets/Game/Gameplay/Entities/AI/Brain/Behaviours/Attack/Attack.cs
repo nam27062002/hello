@@ -68,8 +68,7 @@ namespace AI {
 			protected override void OnExit(State _newState) {
 				m_pilot.ReleaseAction(Pilot.Action.Attack);
 
-				/*if ( m_data.forceFaceToShoot && m_data.faceEnemy )
-					m_pilot.SetDirection( Vector3.zero, false);*/
+				m_pilot.SetDirection(m_pilot.direction, false);
 
 				m_animEvents.onAttachProjectile -= new PreyAnimationEvents.OnAttachprojectile(OnAttachProjectile);
 				m_animEvents.onAttackDealDamage -= new PreyAnimationEvents.OnAttackDealDamageDelegate(OnAnimDealDamage);
@@ -99,6 +98,7 @@ namespace AI {
 								} else {
 									dir = m_machine.position - m_machine.enemy.position;
 								}
+							
 								Vector3 pilotDir = m_pilot.transform.forward;
 								if ( Mathf.Abs( Vector2.Angle( dir, pilotDir)) > m_data.maxFacingAngle ){
 									startAttack = false;
@@ -109,6 +109,7 @@ namespace AI {
 								}
 
 							}
+
 							if (startAttack)
 								StartAttack();
 						}

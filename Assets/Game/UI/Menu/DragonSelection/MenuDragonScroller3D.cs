@@ -39,7 +39,7 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	}
 
 	// Dragon previews
-	private Dictionary<string, MenuDragonPreview> m_dragonPreviews = new Dictionary<string, MenuDragonPreview>();
+	private Dictionary<string, MenuDragonSlot> m_dragonSlots = new Dictionary<string, MenuDragonSlot>();
 
 	// Internal refs
 	private MenuScreensController m_menuScreensController = null;
@@ -52,10 +52,10 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Find and store dragon preview references
-		MenuDragonPreview[] dragonPreviews = GetComponentsInChildren<MenuDragonPreview>();
-		for(int i = 0; i < dragonPreviews.Length; i++) {
+		MenuDragonSlot[] dragonSlots = GetComponentsInChildren<MenuDragonSlot>();
+		for(int i = 0; i < dragonSlots.Length; i++) {
 			// Add it into the map
-			m_dragonPreviews[dragonPreviews[i].sku] = dragonPreviews[i];
+			m_dragonSlots[dragonSlots[i].dragonPreview.sku] = dragonSlots[i];
 		}
 
 		// Subscribe to external events
@@ -68,6 +68,7 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	private void Start() {
 		// Store reference to menu screens controller for faster access
 		m_menuScreensController = InstanceManager.GetSceneController<MenuSceneController>().screensController;
+		m_menuScreensController.OnScreenChanged.AddListener(OnMenuScreenChanged);
 
 		// Find game object linked to currently selected dragon
 		FocusDragon(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon, false);
@@ -79,6 +80,7 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		m_menuScreensController.OnScreenChanged.RemoveListener(OnMenuScreenChanged);
 	}
 
 	//------------------------------------------------------------------//
@@ -109,19 +111,21 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	public MenuDragonPreview GetDragonPreview(string _sku) {
 		// Try to get it from the dictionary
 		MenuDragonPreview ret = null;
-		m_dragonPreviews.TryGetValue(_sku, out ret);
+		MenuDragonSlot slot = null;
+		m_dragonSlots.TryGetValue(_sku, out slot);
+		if(slot != null) ret = slot.dragonPreview;
 
 		// If not found on the dictionary, try to find it in the hierarchy
 		if(ret == null) {
 			// We have need to check all the dragons anyway, so update them all
-			MenuDragonPreview[] dragonPreviews = GetComponentsInChildren<MenuDragonPreview>();
-			for(int i = 0; i < dragonPreviews.Length; i++) {
+			MenuDragonSlot[] dragonSlots = GetComponentsInChildren<MenuDragonSlot>();
+			for(int i = 0; i < dragonSlots.Length; i++) {
 				// Add it into the map
-				m_dragonPreviews[dragonPreviews[i].sku] = dragonPreviews[i];
+				m_dragonSlots[dragonSlots[i].dragonPreview.sku] = dragonSlots[i];
 
 				// Is it the one we're looking for?
-				if(dragonPreviews[i].sku == _sku) {
-					ret = dragonPreviews[i];
+				if(dragonSlots[i].dragonPreview.sku == _sku) {
+					ret = dragonSlots[i].dragonPreview;
 				}
 			}
 		}
@@ -144,6 +148,21 @@ public class MenuDragonScroller3D : MonoBehaviour {
 			FocusDragon(_sku, true);
 		} else {
 			FocusDragon(_sku, false);
+		}
+	}
+
+	/// <summary>
+	/// The active screen on the menu has changed.
+	/// </summary>
+	/// <param name="_evtData">Event data.</param>
+	private void OnMenuScreenChanged(NavigationScreenSystem.ScreenChangedEventData _evtData) {
+		// If the new screen is not the dragon selection screen, hide all dragons except the selected one
+		// To prevent seeing the head/tail of the previous/next dragons in pets/disguises/photo screens.
+		bool showAll = (_evtData.toScreenIdx == (int)MenuScreens.DRAGON_SELECTION);
+		foreach(KeyValuePair<string, MenuDragonSlot> kvp in m_dragonSlots) {
+			// Use slot's ShowHideAnimator
+			// Show always if it's the selected dragon!
+			kvp.Value.animator.Set(showAll || kvp.Key == InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
 		}
 	}
 }

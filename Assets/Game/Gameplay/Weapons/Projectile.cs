@@ -6,14 +6,23 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	private enum MotionType {
 		Linear = 0,
-		Projectile,
+		Homing,
 		Parabolic
+	}
+
+	private enum State {
+		Idle = 0,
+		Charging,
+		Shot,
+		Stuck_On_Player,
+		Die
 	}
 
 	//---------------------------------------------------------------------------------------
 
 	[SeparatorAttribute("Motion")]
 	[SerializeField] private MotionType m_motionType = MotionType.Linear;
+	[SerializeField] private float m_chargeTime = 0f;
 	[SerializeField] private float m_speed = 0f;
 	[SerializeField] private float m_rotationSpeed = 0f;
 	[SerializeField] private float m_maxTime = 0f; // 0 infinite
@@ -28,9 +37,13 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	[SeparatorAttribute("Visual")]
 	[SerializeField] private List<GameObject> m_activateOnShoot = new List<GameObject>();
+	[SerializeField] private ParticleData m_onAttachParticle;
+	[SerializeField] private ParticleData m_onChargeParticle;
 	[SerializeField] private ParticleData m_onHitParticle;
 	[SerializeField] private ParticleData m_onEatParticle;
+	[SerializeField] private bool m_missHitSpawnsParticle = true;
 	[SerializeField] private float m_stickOnDragonTime = 0f;
+	[SerializeField] private float m_dieTime = 0f;
 
 	[SeparatorAttribute("Audio")]
 	[SerializeField] private string m_onHitAudio = "";
@@ -38,12 +51,13 @@ public class Projectile : MonoBehaviour, IProjectile {
 	//---------------------------------------------------------------------------------------
 
 	private Vector3 m_startPosition;
-
+	private Vector3 m_lastPosition;
 	private Vector3 m_position;
 	public Vector3 position { get { return m_position; } }
 
-	private Vector3 m_target;
-	public Vector3 target { get { return m_target; } }
+	private Transform m_target;
+	private Vector3 m_targetPosition;
+	public Vector3 target { get { return m_targetPosition; } }
 
 	private Vector3 m_direction;
 	public Vector3 direction { get { return m_direction; } }
@@ -61,10 +75,9 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	private Explosive m_explosive;
 
-	private bool m_hasBeenShot;
-	public bool hasBeenShot { get { return m_hasBeenShot; } }
+	private State m_state;
+	public bool hasBeenShot { get { return m_state == State.Shot; } }
 
-	private bool m_isStuckOnPlayer;
 	private float m_timer;
 
 	private Transform m_oldParent;
@@ -72,7 +85,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	//This may be a machine
 	private Entity m_entity;
 	private AI.MachineProjectile m_machine;
-
+	private Collider m_hitCollider;
 
 	//-------------------------------------------------------------------------------------
 
@@ -83,8 +96,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 		m_entity = GetComponent<Entity>();
 		m_machine = GetComponent<AI.MachineProjectile>();
 
-		m_hasBeenShot = false;
-		m_isStuckOnPlayer = false;
+		m_state = State.Idle;
 	}
 
 	void Start() {
@@ -92,13 +104,13 @@ public class Projectile : MonoBehaviour, IProjectile {
 			m_explosive = new Explosive(false, m_defaultDamage, m_radius, 0f, m_onHitParticle);
 		} else {
 			if (m_onHitParticle.IsValid()) {
-				ParticleManager.CreatePool(m_onHitParticle, 5);
+				ParticleManager.CreatePool(m_onHitParticle);
 			}
 		}
 
-		if (m_onEatParticle.IsValid()) {
-			ParticleManager.CreatePool(m_onEatParticle, 5);
-		}
+		if (m_onChargeParticle.IsValid()) 	ParticleManager.CreatePool(m_onChargeParticle);
+		if (m_onAttachParticle.IsValid()) 	ParticleManager.CreatePool(m_onAttachParticle);
+		if (m_onEatParticle.IsValid()) 		ParticleManager.CreatePool(m_onEatParticle);
 	}
 
 	void OnDisable() {
@@ -140,15 +152,24 @@ public class Projectile : MonoBehaviour, IProjectile {
 			m_explosive.damage = m_defaultDamage;
 		}
 
+		if (m_onAttachParticle.IsValid()) {
+			GameObject go = ParticleManager.Spawn(m_onAttachParticle);
+			go.transform.parent = _parent;
+			go.transform.position = Vector3.zero;
+			go.transform.localPosition = m_onAttachParticle.offset;
+		}
+
 		//wait until the projectil is shot
-		m_hasBeenShot = false;
-		m_isStuckOnPlayer = false;
+		m_state = State.Idle;
 	}
 
-	public void Shoot(Vector3 _target, float _damage) {
+	public void Shoot(Transform _target, Vector3 _direction, float _damage) {
 		m_target = _target;
+		m_targetPosition = m_target.position;
 
-		m_direction = m_target - m_trasnform.position;
+		if (m_motionType == MotionType.Homing) 	m_direction = _direction;
+		else 									m_direction = _target.position - m_trasnform.position;
+
 		m_distanceToTarget = m_direction.sqrMagnitude;
 		m_direction.Normalize();
 
@@ -157,18 +178,29 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	public void ShootTowards(Vector3 _direction, float _speed, float _damage) {
 		m_direction = _direction;
-		m_distanceToTarget = 7777f;
-		m_target = m_trasnform.position + m_direction * m_distanceToTarget;
+
+		m_distanceToTarget = float.MaxValue;
+		m_targetPosition = m_trasnform.position + m_direction * m_distanceToTarget;
+		m_target = null;
 
 		DoShoot(_speed, _damage);
 	}
 
-	// change this
-	public void ShootAtPosition(Transform _from, float _damage, Vector3 _pos) {
-		Shoot(_pos, _damage);
+	// Shoots At world position _pos
+	public void ShootAtPosition(Vector3 _target, Vector3 _direction, float _damage) {
+		m_target = null;
+		m_targetPosition = _target;
+
+		if (m_motionType == MotionType.Homing) 	m_direction = _direction;
+		else 									m_direction = _target - m_trasnform.position;
+
+		m_distanceToTarget = m_direction.sqrMagnitude;
+		m_direction.Normalize();
+
+		DoShoot(m_speed, _damage);
 	}
 
-	private void DoShoot(float _speed, float _damage) {		
+	private void DoShoot(float _speed, float _damage) {
 		if (m_oldParent) {
 			m_trasnform.parent = m_oldParent;
 			m_oldParent = null;
@@ -176,12 +208,13 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 		m_damage = _damage;
 		if (m_explosive != null) {
-			m_explosive.damage = m_damage;		
+			m_explosive.damage = m_damage;
 		}
 
 		m_velocity = m_direction * _speed;
 
 		m_position = m_trasnform.position;
+		m_lastPosition = m_position;
 		m_startPosition = m_position;
 
 		Vector3 newDir = Vector3.RotateTowards(Vector3.forward, -m_direction, 2f * Mathf.PI, 0.0f);
@@ -192,17 +225,31 @@ public class Projectile : MonoBehaviour, IProjectile {
 			m_activateOnShoot[i].SetActive(true);
 		}
 
-		//
 		m_elapsedTime = 0f;
-		m_timer = m_maxTime;
+		if (m_chargeTime > 0f) {
+			if (m_onChargeParticle.IsValid()) {
+				ParticleManager.Spawn(m_onChargeParticle, m_position);
+			}
 
-		//
-		m_hasBeenShot = true;
+			m_timer = m_chargeTime;
+			m_state = State.Charging;
+
+		} else {
+			m_timer = m_maxTime;
+			m_state = State.Shot;
+		}
+
 	}
 
 	// Update is called once per frame
 	private void Update () {
-		if (m_hasBeenShot) {
+		if (m_state == State.Charging) {
+			m_timer -= Time.deltaTime;
+			if (m_timer <= 0f) {
+				m_timer = 0f;
+				m_state = State.Shot;
+			}
+		} else if (m_state == State.Shot) {
 			if (m_machine == null || !m_machine.IsDying()) {
 				// motion
 				float dt = Time.deltaTime;
@@ -223,53 +270,67 @@ public class Projectile : MonoBehaviour, IProjectile {
 						return;
 					}
 				}
-			}
-		}
 
-		if (m_isStuckOnPlayer) {
+				if (m_motionType != MotionType.Linear) {
+					if (m_position != m_lastPosition) {
+						Vector3 dir = m_position - m_lastPosition;
+						dir.Normalize();
+						dir = Vector3.RotateTowards(Vector3.forward, -dir, 2f * Mathf.PI, 0.0f);
+						m_trasnform.rotation = Quaternion.AngleAxis(90f, dir) * Quaternion.LookRotation(dir);
+					}
+				}
+
+				if (m_rotationSpeed > 0f) {
+					m_trasnform.rotation = Quaternion.AngleAxis(m_elapsedTime * 240f * m_rotationSpeed, m_trasnform.up) * m_trasnform.rotation;
+				}
+			}
+		} else if (m_state == State.Stuck_On_Player) {
 			m_timer -= Time.deltaTime;
 			if (m_timer <= 0f) {
+				Die();
+			}
+		} else if (m_state == State.Die) {
+			m_timer -= Time.deltaTime;
+			if (m_timer <= 0f) {
+				m_state = State.Idle;
 				gameObject.SetActive(false);
 				PoolManager.ReturnInstance(gameObject);
-				m_isStuckOnPlayer = false;
 			}
 		}
 	}
 
 	private void FixedUpdate () {
-		if (m_hasBeenShot) {
+		if (m_state == State.Shot) {
 			if (m_machine == null || !m_machine.IsDying()) {
 				// motion
 				float dt = Time.fixedDeltaTime * m_scaleTime;
 				m_elapsedTime += dt;
+
+				m_lastPosition = m_position;
 
 				switch (m_motionType) {
 					case MotionType.Linear:
 						m_position += m_velocity * dt;
 						break;
 
-					case MotionType.Projectile:
-						break;
+					case MotionType.Homing: {
+							m_position += m_velocity * dt;
+							//m_direction = Vector3.Lerp(m_direction, (m_target.position - m_position).normalized, 0.1f / dt);
 
-					case MotionType.Parabolic: {
-							Vector3 lastPosition = m_position;
-							m_position = m_startPosition + (m_velocity + Vector3.down * 0.5f * 9.8f * m_elapsedTime) * m_elapsedTime;
-
-							Vector3 dir = m_position - lastPosition;
-							dir.Normalize();
-							dir = Vector3.RotateTowards(Vector3.forward, -dir, 2f * Mathf.PI, 0.0f);
-							m_trasnform.rotation = Quaternion.AngleAxis(90f, dir) * Quaternion.LookRotation(dir);
+							Vector3 impulse = (m_target.position - m_position).normalized * m_speed;
+							impulse = (impulse - m_velocity) / 25f; //mass
+							m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_speed);
 						} break;
+
+					case MotionType.Parabolic: 
+						m_position = m_startPosition + (m_velocity + Vector3.down * 0.5f * 9.8f * m_elapsedTime) * m_elapsedTime;
+						break;
 				}
 				m_trasnform.position = m_position;
 
-				if (m_rotationSpeed > 0f) {
-					m_trasnform.rotation = Quaternion.AngleAxis(m_elapsedTime * 240f * m_rotationSpeed, m_trasnform.up) * m_trasnform.rotation;
-				}
-
 				// impact checks
 				if (m_stopAtTarget) {
-					float distanceToTarget = (m_target - m_position).sqrMagnitude;
+					float distanceToTarget = (m_targetPosition - m_position).sqrMagnitude;
 					if (distanceToTarget > m_distanceToTarget) {
 						Explode(false);
 						return;
@@ -280,8 +341,9 @@ public class Projectile : MonoBehaviour, IProjectile {
 		}
 	}
 	private void OnTriggerEnter(Collider _other) {
-		if (m_hasBeenShot) {
+		if (m_state == State.Shot) {
 			if (m_machine == null || !m_machine.IsDying()) {
+				m_hitCollider = _other;
 				if (_other.CompareTag("Player"))  {
 					Explode(true);
 				} else if ((((1 << _other.gameObject.layer) & LayerMask.GetMask("Ground", "GroundVisible")) > 0)) {
@@ -295,7 +357,6 @@ public class Projectile : MonoBehaviour, IProjectile {
 		if (m_onEatParticle.IsValid()) {
 			ParticleManager.Spawn(m_onEatParticle, m_position + m_onEatParticle.offset);
 		}
-		m_hasBeenShot = false;
 
 		if (m_entity != null) {
 			if (EntityManager.instance != null)	{
@@ -303,6 +364,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 			}
 		}
 
+		m_state = State.Idle;
 		gameObject.SetActive(false);
 		PoolManager.ReturnInstance(gameObject);
 	}
@@ -326,16 +388,16 @@ public class Projectile : MonoBehaviour, IProjectile {
 				InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, transform);
 			}
 
-			if (m_onHitParticle.IsValid()) {
-				ParticleManager.Spawn(m_onHitParticle, m_position + m_onHitParticle.offset);
+			if (m_missHitSpawnsParticle || _triggeredByPlayer) {
+				if (m_onHitParticle.IsValid()) {
+					ParticleManager.Spawn(m_onHitParticle, m_position + m_onHitParticle.offset);
+				}
 			}
 		}
 
 		if (!string.IsNullOrEmpty(m_onHitAudio))
 			AudioController.Play(m_onHitAudio, m_trasnform.position);
 		
-		m_hasBeenShot = false;
-
 		if (m_entity != null) {
 			if (EntityManager.instance != null)	{
 				EntityManager.instance.UnregisterEntity(m_entity);
@@ -343,16 +405,20 @@ public class Projectile : MonoBehaviour, IProjectile {
 		}
 
 		if (m_stickOnDragonTime > 0f && _triggeredByPlayer) {
-			StickOnPlayer();
+			StickOnCollider();
 		} else {
-			gameObject.SetActive(false);
-			PoolManager.ReturnInstance(gameObject);
+			Die();
 		}
 	}
 
-	private void StickOnPlayer() {
-		m_isStuckOnPlayer = true;
-		m_trasnform.parent = SearchClosestHoldPoint(InstanceManager.player.holdPreyPoints);
+	private void StickOnCollider() {
+		m_state = State.Stuck_On_Player;
+
+		for (int i = 0; i < m_activateOnShoot.Count; i++) {
+			m_activateOnShoot[i].SetActive(false);
+		}
+
+		m_trasnform.parent = m_hitCollider.transform;
 		m_timer = m_stickOnDragonTime;
 	}
 
@@ -369,5 +435,10 @@ public class Projectile : MonoBehaviour, IProjectile {
 		}
 
 		return holdTransform;
+	}
+
+	private void Die() {
+		m_timer = m_dieTime;
+		m_state = State.Die;
 	}
 }

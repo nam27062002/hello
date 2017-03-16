@@ -30,7 +30,10 @@ namespace AI {
 		public abstract void Update();
 		public virtual void FixedUpdate() {}
 
+		//--------------------------------------------------
 		// Debug
+		//--------------------------------------------------
 		public virtual void OnDrawGizmosSelected(Transform _go) {}
+		//--------------------------------------------------
 	}
 }

@@ -37,7 +37,7 @@ namespace TMPro
             {
                 if (s_defaultFontAsset == null)
                 {
-                    s_defaultFontAsset = Resources.Load<TMP_FontAsset>("Fonts & Materials/ARIAL SDF");
+                    s_defaultFontAsset = Resources.Load<TMP_FontAsset>("Fonts & Materials/LiberationSans SDF");
                 }
 
                 return s_defaultFontAsset;
@@ -339,12 +339,23 @@ namespace TMPro
             m_fontInfo.TabWidth = m_characterDictionary[9].xAdvance;
 
             // Set Cap Height
-            if (m_fontInfo.CapHeight == 0 && m_characterDictionary.ContainsKey(65))
-                m_fontInfo.CapHeight = m_characterDictionary[65].yOffset;
+            if (m_fontInfo.CapHeight == 0 && m_characterDictionary.ContainsKey(72))
+                m_fontInfo.CapHeight = m_characterDictionary[72].yOffset;
 
             // Adjust Font Scale for compatibility reasons
             if (m_fontInfo.Scale == 0)
                 m_fontInfo.Scale = 1.0f;
+
+            // Set Strikethrough Offset (if needed)
+            if (m_fontInfo.strikethrough == 0)
+                m_fontInfo.strikethrough = m_fontInfo.CapHeight / 2.5f;
+
+            // Set Padding value for legacy font assets.
+            if (m_fontInfo.Padding == 0)
+            {
+                if (material.HasProperty(ShaderUtilities.ID_GradientScale))
+                    m_fontInfo.Padding = material.GetFloat(ShaderUtilities.ID_GradientScale) - 1;
+            }
 
             // Populate Dictionary with Kerning Information
             m_kerningDictionary = new Dictionary<int, KerningPair>();
@@ -372,9 +383,23 @@ namespace TMPro
             // Compute Hashcode for the material name
             materialHashCode = TMP_TextUtilities.GetSimpleHashCode(material.name);
 
+            // Unload font atlas texture
+            //ShaderUtilities.GetShaderPropertyIDs();
+            //Resources.UnloadAsset(material.GetTexture(ShaderUtilities.ID_MainTex));
 
             // Initialize Font Weights if needed
             //InitializeFontWeights();
+        }
+
+
+        /// <summary>
+        /// Function to sort the list of glyphs.
+        /// </summary>
+        public void SortGlyphs()
+        {
+            if (m_glyphInfoList == null || m_glyphInfoList.Count == 0) return;
+
+            m_glyphInfoList = m_glyphInfoList.OrderBy(item => item.id).ToList();
         }
 
 
@@ -434,7 +459,7 @@ namespace TMPro
                 // Check Font Asset Fallback fonts.
                 if (fallbackFontAssets != null && fallbackFontAssets.Count > 0)
                 {
-                    for (int i = 0; i < fallbackFontAssets.Count; i++)
+                    for (int i = 0; i < fallbackFontAssets.Count && fallbackFontAssets[i] != null; i++)
                     {
                         if (fallbackFontAssets[i].characterDictionary != null && fallbackFontAssets[i].characterDictionary.ContainsKey(character))
                             return true;
@@ -444,7 +469,7 @@ namespace TMPro
                 // Check general fallback font assets.
                 if (TMP_Settings.fallbackFontAssets != null && TMP_Settings.fallbackFontAssets.Count > 0)
                 {
-                    for (int i = 0; i < TMP_Settings.fallbackFontAssets.Count; i++)
+                    for (int i = 0; i < TMP_Settings.fallbackFontAssets.Count && TMP_Settings.fallbackFontAssets[i] != null; i++)
                     {
                         if (TMP_Settings.fallbackFontAssets[i].characterDictionary != null && TMP_Settings.fallbackFontAssets[i].characterDictionary.ContainsKey(character))
                             return true;
@@ -481,6 +506,26 @@ namespace TMPro
                 return true;
 
             return false;
+        }
+
+
+        /// <summary>
+        /// Function to check if certain characters exists in the font asset. Function returns false if any characters are missing.
+        /// </summary>
+        /// <param name="text">String containing the characters to check</param>
+        /// <returns></returns>
+        public bool HasCharacters(string text)
+        {
+            if (m_characterDictionary == null)
+                return false;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (!m_characterDictionary.ContainsKey(text[i]))
+                    return false;
+            }
+
+            return true;
         }
 
 

@@ -13,7 +13,8 @@ public class Pet : IEntity {
 	public string sku { get { return m_sku; } }
 
 
-	void Awake() {
+	protected virtual void Awake() {
+		base.Awake();
 		InitFromDef();
 	}
 
@@ -21,6 +22,16 @@ public class Pet : IEntity {
 		// Get the definition
 		m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, sku);
 		m_maxHealth = 1f;
+	}
+
+	void Update()
+	{
+		base.CustomUpdate();
+	}
+
+	void FixedUpdate()
+	{
+		base.CustomFixedUpdate();
 	}
 
 	override public bool CanBeSmashed()

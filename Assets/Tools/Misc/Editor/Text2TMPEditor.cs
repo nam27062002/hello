@@ -80,7 +80,7 @@ public class Text2TMPEditor : Editor {
 			_tmpText.alignment = alignment;
 			_tmpText.color = color;
 			_tmpText.enableWordWrapping = enableWordWrapping;
-			_tmpText.OverflowMode = overflowMode;
+			_tmpText.overflowMode = overflowMode;
 			_tmpText.text = text;
 			_tmpText.richText = richText;
 		}

@@ -108,16 +108,16 @@ SubShader {
 //			float intensity2 = tex2D(_DetailTex, (i.uv2.xy + float2(_Time.y * _Speed * 0.555, 0.0) + mul(mr, float2((1.0 - intensity) * _IOffset, intensity * _IOffset)))).x;// +pow(i.uv.y, 3.0);
 			float intensity2 = tex2D(_DetailTex, uv2).x;// +pow(i.uv.y, 3.0);
 
-//			fixed4 col = (intensity + intensity2) * 0.666;
-			fixed4 col = 1.0 - (1.0 - intensity) * (1.0 - intensity2);
-			float4 skyCol = lerp(_SkyLowColor, _SkyHighColor, clamp(persp, 0.0, 1.0));
+//			fixed4 col = 1.0 - (1.0 - intensity) * (1.0 - intensity2);
+			intensity = 1.0 - (1.0 - intensity) * (1.0 - intensity2);
+
+			float4 skyCol = lerp(_SkyLowColor, _SkyHighColor, clamp(intensity, 0.0, 1.0));
 //			col = 1.0 - (1.0 - col) * (1.0 - skyCol);
-			col = col + skyCol;
+			fixed4 col = skyCol;
 
 
 			HG_APPLY_FOG(i, col);	// Fog
-//			UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-			HG_DEPTH_ALPHA(i, col);
+			UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 
 
 //			float4 skyCol = lerp(_SkyLowColor, _SkyHighColor, clamp(persp, 0.0, 1.0));
@@ -126,5 +126,4 @@ SubShader {
 		ENDCG 
 	}	
 }
-	Fallback "Hungry Dragon/VertexLit"
 }

@@ -71,7 +71,7 @@ namespace TMPro.Examples
                 //m_textMeshPro.fontColor = new Color32(255, 255, 255, 255);
 
                 m_material01 = m_textMeshPro.font.material;
-                m_material02 = Resources.Load("Fonts & Materials/ARIAL SDF BEVEL", typeof(Material)) as Material; // Make sure the IMPACT SDF exists before calling this...  
+                m_material02 = Resources.Load("Fonts & Materials/LiberationSans SDF - BEVEL", typeof(Material)) as Material; // Make sure the IMPACT SDF exists before calling this...  
 
 
             }
@@ -86,7 +86,7 @@ namespace TMPro.Examples
                 }
                 else
                 {
-                    //m_textMesh.font = Resources.Load("Fonts/ARIAL", typeof(Font)) as Font;               
+                    //m_textMesh.font = Resources.Load("Fonts/ARIAL", typeof(Font)) as Font;
                     //m_textMesh.renderer.sharedMaterial = m_textMesh.font.material;
                 }
 

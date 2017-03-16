@@ -14,6 +14,12 @@ namespace AI {
 		public ParticleData m_onFireParticle;
 		public ParticleData m_onFireEndsParticle;
 
+		protected override void Awake()
+		{
+			base.Awake();
+			Deactivate();
+		}
+
 		public override void Spawn(ISpawner _spawner) {
 			base.Spawn(_spawner);
 
@@ -22,8 +28,9 @@ namespace AI {
 		}
 
 
-		protected override void Update() {
-			base.Update();
+
+		public override void CustomUpdate() {
+			base.CustomUpdate();
 			if ( !m_phoenixActive )
 			{
 				if ( m_pilot.IsActionPressed(Pilot.Action.Fire))

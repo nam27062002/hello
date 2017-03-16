@@ -8,6 +8,8 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
+using System;
 using TMPro;
 
 //----------------------------------------------------------------------------//
@@ -30,6 +32,18 @@ public class NumberTextAnimator : MonoBehaviour {
 	public float duration {
 		get { return m_duration; }
 		set { m_duration = value; }
+	}
+
+	// Custom actions and events
+	[SerializeField] private Action<NumberTextAnimator> m_customTextSetter = null;
+	public Action<NumberTextAnimator> CustomTextSetter {
+		get { return m_customTextSetter; }
+		set { m_customTextSetter = value; }
+	}
+
+	[SerializeField] private UnityEvent m_onFinished = new UnityEvent();
+	public UnityEvent OnFinished {
+		get { return m_onFinished; }
 	}
 
 	// References
@@ -79,8 +93,8 @@ public class NumberTextAnimator : MonoBehaviour {
 
 			// If value has changed, update textfield
 			if(newValue != m_currentValue) {
-				ApplyValue(newValue);
 				m_currentValue = newValue;
+				ApplyValue(newValue);
 			}
 		}
 	}
@@ -126,7 +140,17 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// </summary>
 	/// <param name="_value">The value to be applied.</param>
 	private void ApplyValue(long _value) {
-		// Just do it
-		m_targetTxt.text = StringUtils.FormatNumber(_value);
+		// If a custom function is defined, invoke it
+		// Otherwise just use default formatting
+		if(m_customTextSetter != null) {
+			m_customTextSetter(this);
+		} else {
+			m_targetTxt.text = StringUtils.FormatNumber(_value);
+		}
+
+		// If it's the target value, notify listeners
+		if(_value == m_finalValue) {
+			OnFinished.Invoke();
+		}
 	}
 }

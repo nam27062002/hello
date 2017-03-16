@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 114932787969347766}
   - component: {fileID: 114612147288115278}
   m_Layer: 0
-  m_Name: SP_Shieldman
+  m_Name: SP_ShieldMan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -81,23 +81,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefabStr: Surface/PF_Shieldman
+  m_entityPrefabList:
+  - name: Surface/PF_Shieldman
+    chance: 100
   m_quantity:
+    min: 1
+    max: 1
+  m_speedFactorRange:
     min: 1
     max: 1
   m_scale:
     min: 1
     max: 1
   m_rails: 1
+  m_hasGroupBonus: 0
   m_minTier: 0
   m_activationChance: 100
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
-    min: 0
-    max: 0
+    min: 250
+    max: 250
   m_homePosMethod: 1
   m_homePosDistance:
-    min: 1
-    max: 2
+    min: 0
+    max: 0
   m_maxSpawns: 0
+  m_checkCurrents: 0

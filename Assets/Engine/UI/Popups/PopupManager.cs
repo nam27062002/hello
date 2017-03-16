@@ -32,6 +32,9 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	//------------------------------------------------------------------//
 	// Use our own canvas for practicity.
 	[SerializeField] private Canvas m_canvas = null;
+	public static Canvas canvas {
+		get { return instance.m_canvas; }
+	}
 
 	// Queues - Expose just for debug purposes
 	[SerializeField] private Queue<ResourceRequest> m_loadingQueue = new Queue<ResourceRequest>();

@@ -67,26 +67,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefabStr: Monster/PF_Troll
+  m_entityPrefabList:
+  - name: Monster/PF_Troll
+    chance: 100
   m_quantity:
+    min: 1
+    max: 1
+  m_speedFactorRange:
     min: 1
     max: 1
   m_scale:
     min: 1
     max: 1
   m_rails: 1
+  m_hasGroupBonus: 0
   m_minTier: 0
   m_activationChance: 100
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
-    min: 120
-    max: 150
+    min: 220
+    max: 220
   m_homePosMethod: 1
   m_homePosDistance:
-    min: 1
-    max: 2
+    min: 0
+    max: 0
   m_maxSpawns: 0
+  m_checkCurrents: 0
 --- !u!114 &114782560297025342
 MonoBehaviour:
   m_ObjectHideFlags: 1

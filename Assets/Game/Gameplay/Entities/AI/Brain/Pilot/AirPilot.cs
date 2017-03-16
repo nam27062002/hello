@@ -44,8 +44,8 @@ namespace AI {
 			m_collisionNormal = Vector3.up;
 		}
 
-		protected override void Update() {
-			base.Update();
+		public override void CustomUpdate() {
+			base.CustomUpdate();
 
 			// calculate impulse to reach our target
 			m_lastImpulse = m_impulse;

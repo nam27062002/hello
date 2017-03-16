@@ -57,10 +57,6 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	public Color drawColor = Color.white;
 	public bool lockZ = false;	// Whether to allow editing the Z value of the points or not - useful for 2D curves
 
-	#if UNITY_EDITOR
-	private static GUIStyle s_sceneLabelStyle = null;
-	#endif
-
 	/// <summary>
 	/// Control points of the curve.
 	/// </summary>
@@ -663,13 +659,6 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 		if(!isActiveAndEnabled) return;
 
 		#if UNITY_EDITOR
-		// Make sure custom label style is initialized
-		if(s_sceneLabelStyle == null) {
-			s_sceneLabelStyle = new GUIStyle(EditorStyles.boldLabel);
-			s_sceneLabelStyle.normal.textColor = Colors.WithAlpha(Colors.white, 0.5f);
-			s_sceneLabelStyle.fontSize = 20;
-		}
-
 		// Draw line
 		Handles.color = drawColor;
 		Vector3[] sampledPoints = new Vector3[m_sampledSegments.Count];
@@ -701,7 +690,7 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 			}
 
 			// Label
-			Handles.Label(p.globalPosition, i.ToString(), s_sceneLabelStyle);
+			Handles.Label(p.globalPosition, i.ToString(), CustomEditorStyles.bigSceneLabel);
 		}
 		#endif
 	}

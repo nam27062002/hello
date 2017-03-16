@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4116535471618292}
   - component: {fileID: 114527574069856934}
-  - component: {fileID: 114648570156813094}
   m_Layer: 0
   m_Name: SP_BadBird
   m_TagString: Untagged
@@ -52,46 +51,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefabStr: Junk/PF_BadBird
+  m_entityPrefabList:
+  - name: Junk/PF_BadBird
+    chance: 100
   m_quantity:
+    min: 1
+    max: 1
+  m_speedFactorRange:
     min: 1
     max: 1
   m_scale:
     min: 1
     max: 1
   m_rails: 1
+  m_hasGroupBonus: 0
   m_minTier: 0
   m_activationChance: 100
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
-    min: 0
-    max: 0
+    min: 190
+    max: 190
   m_homePosMethod: 0
   m_homePosDistance:
     min: 0
     max: 1
   m_maxSpawns: 0
---- !u!114 &114648570156813094
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1173430028000500}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_guideFunction: 0
-  m_innerRadius: 10
-  m_outterRadius: 20
-  m_targetDistance: 5
-  m_depthAmplitude: 1
-  m_depthFrequency: 3
-  m_scale: {x: 1, y: 1, z: 1}
-  m_rotation: {x: 0, y: 0, z: 0}
-  m_boundsScale: {x: 0, y: 0, z: 0}
-  m_forcePreview: 0
-  m_previewStep: 0.1
-  m_previewMaxTime: 60
+  m_checkCurrents: 0

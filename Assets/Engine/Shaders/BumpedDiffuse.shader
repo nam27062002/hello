@@ -44,14 +44,14 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 			#endif
 
 			#if MEDIUM_DETAIL_ON
-			#define RIM
-			#define BUMP
+//			#define RIM
+//			#define BUMP
 			#endif
 
 			#if HI_DETAIL_ON
-			#define RIM
-			#define BUMP
-			#define SPEC
+//			#define RIM
+//			#define BUMP
+//			#define SPEC
 			#endif
 
 //			#define BUMP
@@ -150,12 +150,10 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 //				col = (diffuse + fixed4(i.vLight, 1)) * col;
 //				col = lerp(col, _FresnelColor, fresnel * _FresnelColor.a * 4.0);
 
-//				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-				HG_DEPTH_ALPHA(i, col)
+				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 				return col;
 			}
 			ENDCG
 		}
 	}
-	Fallback "Hungry Dragon/VertexLit"
 }

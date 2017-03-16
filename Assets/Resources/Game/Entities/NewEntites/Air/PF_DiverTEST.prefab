@@ -1106,9 +1106,13 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles:
-  - name: PS_Blood_Explosion_Small
+  m_onEatenParticle:
+    name: PS_Blood_Explosion_Small
     path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: PS_IceExplosion
+    path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: Soldier_Dead
   m_speedToWaterSplash: 0
@@ -1143,7 +1147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: archer
+  m_sku: Bomber
   m_dieOutsideFrustum: 1
 --- !u!137 &13708154
 SkinnedMeshRenderer:
@@ -1368,11 +1372,12 @@ MonoBehaviour:
   m_blendSpeedFactor: 1
   m_energy: 10
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: 51430fe07f0e141f99deacb67d7c126c, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"projectileName":"PF_Arrow","projectileSpawnTransformName":"Human_R_Weapon_01","damage":8,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":2,"stop":false,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":3,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":7,"panicSpeed":9,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
+  m_serializedJson: '[{"projectileName":"PF_Arrow","projectileSpawnTransformName":"Human_R_Weapon_01","damage":8,"canFollowTarget":false,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":2,"stop":false,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":3,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":7,"panicSpeed":9,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
   m_databaseKey: PF_DiverTEST
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 5
@@ -1393,8 +1398,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 6
-    m_attackPausesJump: 0
+    m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 120
     m_faceDirection: 1
@@ -1410,9 +1414,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 0
-    m_sightRadius: 7
-    m_maxRadius: 5
-    m_minRadius: 3
+    m_sightRadius: 10
+    m_maxRadius: 8
+    m_minRadius: 4
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1

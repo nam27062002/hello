@@ -20,8 +20,7 @@ public class FireBreathDynamic : MonoBehaviour
         [SerializeField]
         public string m_CollisionPrefab;
         public float m_CollisionDelay;
-        public int m_CollisionEmiters;
-
+        
         [HideInInspector, SerializeField]
         public int m_iCollisionLayerMask;
         [HideInInspector, SerializeField]
@@ -151,8 +150,7 @@ public class FireBreathDynamic : MonoBehaviour
             }
 
             ParticleManager.CreatePool(m_collisionPrefabs[i].m_CollisionPrefab,
-                                       m_collisionPrefabs[i].m_CollisionPrefabPath,
-                                       m_collisionPrefabs[i].m_CollisionEmiters);
+                                       m_collisionPrefabs[i].m_CollisionPrefabPath);
 
         }
 

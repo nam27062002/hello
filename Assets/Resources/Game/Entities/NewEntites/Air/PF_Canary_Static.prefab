@@ -408,7 +408,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 114680}
-  m_LocalRotation: {x: -0.2535371, y: 0.5587251, z: 0.55417216, w: 0.56252855}
+  m_LocalRotation: {x: -0.25353712, y: 0.5587252, z: 0.5541722, w: 0.5625286}
   m_LocalPosition: {x: -0.08062987, y: -0.021874828, z: 0.043720305}
   m_LocalScale: {x: 0.99999994, y: 1, z: 1.0000001}
   m_Children:
@@ -465,6 +465,7 @@ MonoBehaviour:
   m_blendSpeedFactor: 1
   m_energy: 10
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 0}
   m_railSeparation:
     min: 0.5
@@ -498,8 +499,12 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles:
-  - name: PF_feathers_3D_noblood_yellow
+  m_onEatenParticle:
+    name: PF_feathers_3D_noblood_yellow
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: PF_feathers_3D_noblood_icy
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
@@ -540,7 +545,6 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 1
-    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 170
     m_faceDirection: 1
@@ -587,7 +591,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: canary_01
+  m_sku: Canary01_Flock
   m_dieOutsideFrustum: 1
 --- !u!137 &13794388
 SkinnedMeshRenderer:

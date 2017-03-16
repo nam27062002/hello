@@ -404,7 +404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: mine_02
+  m_sku: MineMedium
   m_dieOutsideFrustum: 1
 --- !u!114 &114271306518064158
 MonoBehaviour:
@@ -429,8 +429,12 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles:
-  - name: PF_Mine_Edible
+  m_onEatenParticle:
+    name: PF_Mine_Edible
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
@@ -469,6 +473,7 @@ MonoBehaviour:
   m_blendSpeedFactor: 1
   m_energy: 10
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: 91d304c73d1dd42ca947fb91474a6252, type: 2}
   m_railSeparation:
     min: 0.5
@@ -508,26 +513,25 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 1
-    m_attackPausesJump: 0
+    m_mass: 3
     m_defaultUpVector: 0
     m_orientationSpeed: 120
-    m_faceDirection: 0
+    m_faceDirection: 1
     m_useDragonStyleRotation: 0
     m_rollRotation: 0
-    m_limitHorizontalRotation: 1
+    m_limitHorizontalRotation: 0
     m_faceLeftAngle: -45
     m_faceRightAngle: 45
-    m_limitVerticalRotation: 0
+    m_limitVerticalRotation: 1
     m_faceUpAngle: 320
     m_faceDownAngle: 40
   m_affectedByDragonTrample: 0
   m_enableSensor: 0
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 0
-    m_maxRadius: 0
-    m_minRadius: 0
+    m_sightRadius: 6
+    m_maxRadius: 4
+    m_minRadius: 2
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1

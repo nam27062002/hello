@@ -20,6 +20,10 @@ namespace TMPro.Examples
         public bool isStatic;
 
         private TMP_Text m_text;
+
+        //private TMP_InputField m_inputfield;
+
+
         private const string k_label = "The count is <#0080ff>{0}</color>";
         private int count;
 
@@ -33,10 +37,10 @@ namespace TMPro.Examples
                 m_text = GetComponent<TextMeshProUGUI>() ?? gameObject.AddComponent<TextMeshProUGUI>();
 
             // Load a new font asset and assign it to the text object.
-            m_text.font = Resources.Load<TMP_FontAsset>("Fonts & Materials/IMPACT SDF");
+            m_text.font = Resources.Load<TMP_FontAsset>("Fonts & Materials/Anton SDF");
 
             // Load a new material preset which was created with the context menu duplicate.
-            m_text.fontSharedMaterial = Resources.Load<Material>("Fonts & Materials/IMPACT SDF - Drop Shadow");
+            m_text.fontSharedMaterial = Resources.Load<Material>("Fonts & Materials/Anton SDF - Drop Shadow");
 
             // Set the size of the font.
             m_text.fontSize = 120;
@@ -46,7 +50,7 @@ namespace TMPro.Examples
 
             // Get the preferred width and height based on the supplied width and height as opposed to the actual size of the current text container.
             Vector2 size = m_text.GetPreferredValues(Mathf.Infinity, Mathf.Infinity);
-            
+
             // Set the size of the RectTransform based on the new calculated values.
             m_text.rectTransform.sizeDelta = new Vector2(size.x, size.y);
         }

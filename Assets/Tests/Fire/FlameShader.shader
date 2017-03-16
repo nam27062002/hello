@@ -109,8 +109,4 @@
 			ENDCG
 		}
 	}
-
-//	Fallback "Diffuse"
-	CustomEditor "GlowMaterialInspector"
-
 }

@@ -20,15 +20,27 @@ public class PetDogSpawner : AbstractSpawner {
 	[SerializeField] private LookAtVector m_lookAtVector;
 	//-------------------------------------------------------------------	
 
-	private Machine m_operator;
+	private IMachine m_operator;
 	private Pilot m_operatorPilot;
 	public Pilot operatorPilot
 	{
 		get { return m_operatorPilot; }
 	}
 
-	public List<string> m_possibleSpawners;
+	[System.Serializable]
+	public class SpawnerChances
+	{
+		public string m_spawnPrefab;
+		public float m_chance = 1;
+		public SpawnerChances()
+		{
+			m_spawnPrefab = "";
+			m_chance = 1;
+		}
+	}
 
+	public List<SpawnerChances> m_possibleSpawners;
+	private float m_maxChance;
     void Awake()
     {
         m_operator = null;
@@ -58,8 +70,20 @@ public class PetDogSpawner : AbstractSpawner {
 
 		for( int i = 0; i<m_possibleSpawners.Count; i++ )
 		{
-			string entityPrefabPath = IEntity.EntityPrefabsPath + m_possibleSpawners[i];        
-			PoolManager.CreatePool(m_possibleSpawners[i], entityPrefabPath, 1, true);
+			string prefab = m_possibleSpawners[i].m_spawnPrefab;
+			string entityPrefabPath = IEntity.EntityPrefabsPath + prefab;
+			PoolManager.CreatePool(prefab, entityPrefabPath, 1, true);
+		}
+
+		CalculateMaxChance();
+    }
+
+    private void CalculateMaxChance()
+    {
+    	m_maxChance = 0;
+		for( int i = 0; i<m_possibleSpawners.Count; i++ )
+		{
+			m_maxChance += m_possibleSpawners[i].m_chance;
 		}
     }
 
@@ -77,8 +101,23 @@ public class PetDogSpawner : AbstractSpawner {
 
     public void RamdomizeEntity()
     {
-    	m_entityPrefabStr = m_possibleSpawners[ Random.Range(0, m_possibleSpawners.Count) ];
+   #if UNITY_EDITOR
+   		CalculateMaxChance();
+   #endif
+		float chance = Random.Range(0.0f, m_maxChance);
+		float currentChance = 0;
+		for( int i = 0; i<m_possibleSpawners.Count; i++ )
+		{
+			currentChance += m_possibleSpawners[i].m_chance;
+			if (chance <= currentChance )
+			{
+				m_entityPrefabStr = m_possibleSpawners[ i ].m_spawnPrefab;
+				break;
+			}
+		}
     }
+
+	public override bool SpawnersCheckCurrents(){ return true; }
 
     protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
         Transform groundSensor = spawning.transform.FindChild("groundSensor");
@@ -99,7 +138,7 @@ public class PetDogSpawner : AbstractSpawner {
 		t.localScale = Vector3.one;
     }
 
-    protected override void OnMachineSpawned(AI.Machine machine) {
+    protected override void OnMachineSpawned(AI.IMachine machine) {
         m_operator = machine;
     }
 

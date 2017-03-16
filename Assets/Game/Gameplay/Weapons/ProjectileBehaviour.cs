@@ -25,7 +25,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 	// Use this for initialization
 	void Start () {		
 		if (m_explosionParticle.IsValid()) {
-			ParticleManager.CreatePool(m_explosionParticle, 5);
+			ParticleManager.CreatePool(m_explosionParticle);
 		}
 
 		m_pMotion = GetComponent<ProjectileMotion>();	
@@ -69,13 +69,14 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 		m_hasBeenShot = false;
 	}
 
-	public void Shoot(Vector3 _target) {
-		Shoot(_target, m_damage);
+	public void Shoot(Transform _target, Vector3 _direction, float _damage) {
+		// m_targetCenter = InstanceManager.player.transform.position;
+		ShootAtPosition(_target.position, _direction, _damage);
 	}
 
-	public void Shoot(Vector3 _target, float _damage) {
-		// m_targetCenter = InstanceManager.player.transform.position;
+	public void ShootTowards(Vector3 _direction, float _speed, float _damage) {}
 
+	public void ShootAtPosition(Vector3 _target, Vector3 _direction, float _damage) {
 		if (m_oldParent) {
 			transform.parent = m_oldParent;
 			m_oldParent = null;
@@ -91,14 +92,6 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 		EndShot(_damage);
 	}
 
-	public void ShootTowards(Vector3 _direction) {}
-	public void ShootTowards(Vector3 _direction, float _speed) {}
-	public void ShootTowards(Vector3 _direction, float _speed, float _damage) {}
-
-	public void ShootAtPosition(Transform _from, float _damage, Vector3 _pos){
-		Shoot(_pos, _damage);
-	}
-
 	private void EndShot( float _damage )
 	{
 		m_damage = _damage;
@@ -111,8 +104,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 
 	void Update() {
 		if (m_hasBeenShot) {
-			if (InstanceManager.gameCamera != null)
-			{
+			if (InstanceManager.gameCamera != null) {
 				bool rem = InstanceManager.gameCamera.IsInsideDeactivationArea( transform.position );
 				if (rem)
 					Explode(false);	

@@ -1726,7 +1726,6 @@ MonoBehaviour:
     m_useGravity: 1
     m_walkOnWalls: 0
     m_mass: 5
-    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 60
     m_faceDirection: 0
@@ -1811,9 +1810,13 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: PF_TrollCorpse
-  m_onEatenParticles:
-  - name: PS_Blood_Explosion_Large
+  m_onEatenParticle:
+    name: PS_Blood_Explosion_Large
     path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: PS_IceExplosion
+    path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: hd_troll_dead
   m_speedToWaterSplash: 0
@@ -1892,7 +1895,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: troll
+  m_sku: Troll
   m_dieOutsideFrustum: 1
 --- !u!114 &114887832156207672
 MonoBehaviour:

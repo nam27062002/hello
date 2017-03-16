@@ -456,8 +456,12 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles:
-  - name: PF_feathers_3D_noblood_green
+  m_onEatenParticle:
+    name: PF_feathers_3D_noblood_green
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: PF_feathers_3D_noblood_icy
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
@@ -530,7 +534,6 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 1
-    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 120
     m_faceDirection: 1
@@ -580,6 +583,7 @@ MonoBehaviour:
   m_blendSpeedFactor: 1
   m_energy: 4
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: fcba6844efb2f4ff6b18023d9b2856d4, type: 2}
   m_railSeparation:
     min: 0.5
@@ -601,7 +605,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: canary_02
+  m_sku: Canary02_Flock
   m_dieOutsideFrustum: 1
 --- !u!137 &13718272
 SkinnedMeshRenderer:

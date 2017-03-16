@@ -80,7 +80,8 @@ public class Entity : IEntity {
 	private static float m_powerUpXpMultiplier = 0;	// XP power up multiplier
 
 	/************/
-	void Awake() {
+	protected virtual void Awake() {
+		base.Awake();
 		// [AOC] Obtain the definition and initialize important data
 		InitFromDef();
 		m_bounds = GetComponentInChildren<CircleArea2D>();
@@ -159,8 +160,10 @@ public class Entity : IEntity {
     }
 
     public override void Disable(bool _destroyed) {
+		ViewControl vControl = GetComponent<ViewControl>();
+		if ( vControl != null )
+			vControl.PreDisable();
 		base.Disable(_destroyed);
-
 		if (m_spawner != null) {
 			m_spawner.RemoveEntity(gameObject, _destroyed);
 		}
@@ -245,8 +248,9 @@ public class Entity : IEntity {
     /*****************/
 
     // Update is called once per frame
-    public override void LogicUpdate() { 
+    public override void CustomUpdate() { 
     //void Update () {
+		base.CustomUpdate();
         if (m_spawned) {
             m_checkOnScreenTimer -= Time.deltaTime;
             if (m_checkOnScreenTimer <= 0) {

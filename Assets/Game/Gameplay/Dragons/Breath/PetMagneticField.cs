@@ -16,7 +16,7 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 	void Start () 
 	{
 		if (m_explosionParticle.IsValid()) {
-			ParticleManager.CreatePool(m_explosionParticle, 5);
+			ParticleManager.CreatePool(m_explosionParticle);
 		}
 		m_colliderMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "WaterPreys", "GroundPreys", "AirPreys");
 
@@ -66,7 +66,13 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 		m_hasBeenShot = false;
 	}
 
-	public void Shoot(Vector3 _target) {
+	public void Shoot(Transform _target, Vector3 _direction, float _damage) {
+		ShootAtPosition(_target.position, _direction, _damage);
+	}
+
+	public void ShootTowards(Vector3 _direction, float _speed, float _damage) {}
+
+	public void ShootAtPosition(Vector3 _target, Vector3 _direction, float _damage) {
 		if (m_oldParent) {
 			transform.parent = m_oldParent;
 			m_oldParent = null;
@@ -76,19 +82,8 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 			m_pMotion.enabled = true;
 			m_pMotion.Shoot(_target);
 		}
+
 		m_hasBeenShot = true;
-	}
-
-	public void Shoot(Vector3 _target, float _damage) {
-		Shoot(_target);
-	}
-
-	public void ShootTowards(Vector3 _direction) {}
-	public void ShootTowards(Vector3 _direction, float _speed) {}
-	public void ShootTowards(Vector3 _direction, float _speed, float _damage) {}
-
-	public void ShootAtPosition(Transform _from, float _damage, Vector3 _pos) {
-		Shoot(_pos);
 	}
 
 	void OnCollisionEnter( Collision _collision )

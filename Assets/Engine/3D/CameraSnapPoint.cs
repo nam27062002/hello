@@ -8,6 +8,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using DG.Tweening;
+using System;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -26,6 +27,10 @@ public class CameraSnapPoint : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed parameters
+	// Position/Rotation toggles
+	public bool changePosition = true;
+	public bool changeRotation = true;
+
 	// Optional Parameters
 	public bool changeFov = true;
 	public float fov = 60;
@@ -48,10 +53,19 @@ public class CameraSnapPoint : MonoBehaviour {
 
 	// Editor Settings
 	public bool livePreview = true;
+	public bool drawGizmos = true;
 	public Color gizmoColor = new Color(0f, 1f, 1f, 0.25f);
 
 	// Internal references
-	private LookAt m_lookAtPoint = null;
+	private LookAt m_lookAt = null;
+	public LookAt lookAtData {
+		get {
+			if(m_lookAt == null) {
+				m_lookAt = GetComponent<LookAt>();
+			}
+			return m_lookAt;
+		}
+	}
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -60,24 +74,24 @@ public class CameraSnapPoint : MonoBehaviour {
 	/// Get references.
 	/// </summary>
 	void Awake() {
-		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAt>();
+		
 	}
 
 	/// <summary>
 	/// Draw scene gizmos.
 	/// </summary>
 	private void OnDrawGizmos() {
-		// Make sure lookAtPoint reference is valid
-		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAt>();
+		// Ignore if gizmos disabled
+		if(!drawGizmos) return;
 
 		// LookAt line
 		Gizmos.color = Colors.WithAlpha(Colors.cyan, 0.75f);
-		Gizmos.DrawLine(m_lookAtPoint.transform.position, m_lookAtPoint.lookAtPointGlobal);
+		Gizmos.DrawLine(lookAtData.transform.position, lookAtData.lookAtPointGlobal);
 
 		// Position and lookAt points
 		Gizmos.color = Colors.WithAlpha(Colors.red, 0.75f);
-		Gizmos.DrawSphere(m_lookAtPoint.transform.position, 0.5f);
-		Gizmos.DrawSphere(m_lookAtPoint.lookAtPointGlobal, 0.5f);
+		Gizmos.DrawSphere(lookAtData.transform.position, 0.5f);
+		Gizmos.DrawSphere(lookAtData.lookAtPointGlobal, 0.5f);
 
 		// Camera frustum
 		// If not defined, use main camera values in a different color
@@ -118,11 +132,10 @@ public class CameraSnapPoint : MonoBehaviour {
 	public void Apply(Camera _cam) {
 		// Check params
 		if(_cam == null) return;
-		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAt>();
 
-		// Camera position
-		_cam.transform.position = m_lookAtPoint.transform.position;
-		_cam.transform.LookAt(m_lookAtPoint.lookAtPointGlobal);
+		// Camera position and orientation
+		if(changePosition) _cam.transform.position = lookAtData.transform.position;
+		if(changeRotation) _cam.transform.LookAt(lookAtData.lookAtPointGlobal);
 
 		// Camera params
 		if(changeFov) _cam.fieldOfView = fov;
@@ -140,14 +153,15 @@ public class CameraSnapPoint : MonoBehaviour {
 	/// Tween also current render settings.
 	/// Respects the change flags.
 	/// </summary>
-	/// <param name="_cam">The camera to be tweened.</param>
+	/// <returns>The generated tween sequence.</returns>
+	/// <param name="_cam">The camera to be tweened.</param>la
 	/// <param name="_duration">Tween duration, same considerations as in any DGTween.</param>
 	/// <param name="_params">Animation parameters.</param>
-	public void TweenTo(Camera _cam, float _duration, TweenParams _params) {
+	/// <param name="_onComplete">Optional function to be called upon completing the tween.</param>
+	public Sequence TweenTo(Camera _cam, float _duration, TweenParams _params, TweenCallback _onComplete = null) {
 		// Check params
-		if(_cam == null) return;
-		if(_params == null) return;
-		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAt>();
+		if(_cam == null) return null;
+		if(_params == null) return null;
 
 		// [AOC] Make sure tweens are autokilled and recyclable, so we do a "pooling" of this tween type, avoiding creating memory garbage
 		string tweenId = GetTweenId(_cam);
@@ -159,59 +173,78 @@ public class CameraSnapPoint : MonoBehaviour {
 		// [AOC] This obviously won't work when animating multiple cameras with the same name at the same time, but it's a rare case which we don't care about right now
 		DOTween.Kill(tweenId);
 
-		// Camera position
-		_cam.transform.DOMove(m_lookAtPoint.transform.position, _duration).SetAs(_params);
-		_cam.transform.DORotateQuaternion(m_lookAtPoint.transform.rotation, _duration).SetAs(_params);
+		// Create a whole sequence to keep all the tweens together
+		Sequence seq = DOTween.Sequence()
+			.SetRecyclable(true)
+			.SetAutoKill(true)
+			.SetId(tweenId)
+			.SetTarget(_cam);
+		
+		// Camera position and orientation
+		if(changePosition){
+			seq.Join(_cam.transform.DOMove(lookAtData.transform.position, _duration).SetAs(_params));
+		}
+		if(changeRotation) {
+			seq.Join(_cam.transform.DORotateQuaternion(lookAtData.transform.rotation, _duration).SetAs(_params));
+		}
 
 		// Camera params
 		if(changeFov) {
-			DOTween.To(
+			seq.Join(DOTween.To(
 				() => { return _cam.fieldOfView; },
 				(_newValue) => { _cam.fieldOfView = _newValue; },
 				fov, _duration
-			).SetAs(_params);
+			).SetAs(_params));
 		}
 
 		if(changeNear) {
-			DOTween.To(
+			seq.Join(DOTween.To(
 				() => { return _cam.nearClipPlane; },
 				(_newValue) => { _cam.nearClipPlane = _newValue; },
 				near, _duration
-			).SetAs(_params);
+			).SetAs(_params));
 		}
 
 		if(changeFar) {
-			DOTween.To(
+			seq.Join(DOTween.To(
 				() => { return _cam.farClipPlane; },
 				(_newValue) => { _cam.farClipPlane = _newValue; },
 				far, _duration
-			).SetAs(_params);
+			).SetAs(_params));
 		}
 
 		// Fog params
 		if(changeFogColor) {
-			DOTween.To(
+			seq.Join(DOTween.To(
 				() => { return RenderSettings.fogColor; },
 				(_newValue) => { RenderSettings.fogColor = _newValue; },
 				fogColor, _duration
-			).SetAs(_params);
+			).SetAs(_params));
 		}
 
 		if(changeFogStart) {
-			DOTween.To(
+			seq.Join(DOTween.To(
 				() => { return RenderSettings.fogStartDistance; },
 				(_newValue) => { RenderSettings.fogStartDistance = _newValue; },
 				fogStart, _duration
-			).SetAs(_params);
+			).SetAs(_params));
 		}
 
 		if(changeFogEnd) {
-			DOTween.To(
+			seq.Join(DOTween.To(
 				() => { return RenderSettings.fogEndDistance; },
 				(_newValue) => { RenderSettings.fogEndDistance = _newValue; },
 				fogEnd, _duration
-			).SetAs(_params);
+			).SetAs(_params));
 		}
+
+		// Attach custom OnComplete callback
+		seq.OnComplete(() => {
+			if(_onComplete != null) _onComplete();
+		});
+
+		seq.Restart(true);
+		return seq;
 	}
 
 	//------------------------------------------------------------------//

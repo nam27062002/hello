@@ -101,7 +101,6 @@ SubShader
 
 			// Apply Fog
 			UNITY_APPLY_FOG(i.fogCoord, col);
-			HG_DEPTH_ALPHA(i, col)
 
 			return col;
 		}
@@ -111,6 +110,4 @@ SubShader
 	
 	
 }
-
-	Fallback "Hungry Dragon/VertexLit"
 }

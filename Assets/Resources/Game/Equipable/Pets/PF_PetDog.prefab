@@ -1198,7 +1198,14 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles: []
+  m_onEatenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -1239,7 +1246,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speedMultiplier":1.5,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"speedMultiplier":1.5,"chaseTimeout":2,"cooldown":{"min":3,"max":6},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"possiblePreyList":"Air/PF_FlyingPig","speedMultiplier":1.5,"eatPauseAfterPreyRelease":{"min":2,"max":3},"dataType":"AI.Behaviour.PetTakePreyToPlayer+PetTakePreyToPlayerData","editorFolded":false},{"waitingTime":{"min":0,"max":1},"dataType":"AI.Behaviour.PetWaitDeactivated+PetWaitDeactivatedData","editorFolded":false},{"ignoreNotListedUnits":false,"dragonSizeRangeMultiplier":10,"preferedRangeMultiplier":2,"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"timeSecondAction":{"min":5,"max":10},"dataType":"AI.Behaviour.PetDecideDogActionData","editorFolded":false}]'
+  m_serializedJson: '[{"speedMultiplier":1.5,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"speedMultiplier":1.5,"chaseTimeout":2,"cooldown":{"min":3,"max":6},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"possiblePreyList":"Air/PF_FlyingPig","speedMultiplier":1,"eatPauseAfterPreyRelease":{"min":2,"max":3},"dataType":"AI.Behaviour.PetTakePreyToPlayer+PetTakePreyToPlayerData","editorFolded":false},{"waitingTime":{"min":0,"max":1},"dataType":"AI.Behaviour.PetWaitDeactivated+PetWaitDeactivatedData","editorFolded":false},{"ignoreNotListedUnits":false,"dragonSizeRangeMultiplier":10,"preferedRangeMultiplier":2,"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"timeSecondAction":{"min":5,"max":10},"dataType":"AI.Behaviour.PetDecideDogActionData","editorFolded":false}]'
   m_databaseKey: PF_PetDog
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -1261,7 +1268,6 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 1
-    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 360
     m_faceDirection: 1
@@ -1390,7 +1396,38 @@ MonoBehaviour:
   m_mustBeChild: 0
   m_lookAtVector: 0
   m_possibleSpawners:
-  - Air/PF_FlyingPig
+  - m_spawnPrefab: Goblin/PF_Kamikaze
+    m_chance: 1
+  - m_spawnPrefab: Air/PF_OwlBig
+    m_chance: 1
+  - m_spawnPrefab: Air/PF_OwlSmall
+    m_chance: 1
+  - m_spawnPrefab: Air/PF_Witch
+    m_chance: 1
+  - m_spawnPrefab: Air/PF_EnemyTier0
+    m_chance: 1
+  - m_spawnPrefab: Air/PF_MineSmall
+    m_chance: 1
+  - m_spawnPrefab: Air/PF_MineMedium
+    m_chance: 1
+  - m_spawnPrefab: Air/PF_HorseFlying
+    m_chance: 1
+  - m_spawnPrefab: Goblin/PF_Bomber
+    m_chance: 1
+  - m_spawnPrefab: Surface/PF_RichmanStatic
+    m_chance: 1
+  - m_spawnPrefab: Surface/PF_HorseStatic
+    m_chance: 1
+  - m_spawnPrefab: Surface/PF_DrunkenMan
+    m_chance: 1
+  - m_spawnPrefab: Surface/PF_BakerWoman
+    m_chance: 1
+  - m_spawnPrefab: Surface/PF_Soldier01_Static
+    m_chance: 1
+  - m_spawnPrefab: Surface/PF_Villager01
+    m_chance: 1
+  - m_spawnPrefab: Junk/PF_GoodJunkBottle
+    m_chance: 1
 --- !u!135 &135000013338795870
 SphereCollider:
   m_ObjectHideFlags: 1

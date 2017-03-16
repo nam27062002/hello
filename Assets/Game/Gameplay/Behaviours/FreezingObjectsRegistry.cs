@@ -42,7 +42,7 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
 
 	public void Unregister( Transform tr )
 	{
-		for( int i = m_registry.Count -1 ;i>0; i-- )
+		for( int i = m_registry.Count -1 ;i>=0; i-- )
 		{
 			if ( m_registry[i].m_transform == tr )
 			{

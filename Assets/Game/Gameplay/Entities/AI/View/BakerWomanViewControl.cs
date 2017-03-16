@@ -12,7 +12,7 @@ public class BakerWomanViewControl : ViewControl {
 		base.Awake();
 
 		if (m_flourParticles.IsValid()) {
-			ParticleManager.CreatePool(m_flourParticles, 2);
+			ParticleManager.CreatePool(m_flourParticles);
 		}
 	}
 

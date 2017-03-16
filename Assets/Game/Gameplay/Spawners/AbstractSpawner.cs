@@ -58,7 +58,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     }
 
     public void Initialize() {
-        m_rect = new Rect((Vector2)transform.position, Vector2.zero);
+		m_rect = new Rect((Vector2)transform.position, Vector2.one * 2f);
         Entities_Create(GetMaxEntities());
 
         EntitiesAlive = 0;
@@ -172,11 +172,11 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
                 entity.Spawn(this); // lets spawn Entity component first
             }
 
-            AI.Machine machine = spawning.GetComponent<AI.Machine>();
+			AI.IMachine machine = spawning.GetComponent<AI.IMachine>();
             if (machine != null) {
                 machine.Spawn(this);
                 OnMachineSpawned(machine);
-            }
+			}
 
             AI.AIPilot pilot = spawning.GetComponent<AI.AIPilot>();
             if (pilot != null) {
@@ -297,6 +297,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     private void Entities_Create(uint amount) {
         m_entities = new IEntity[amount];        
     }    
+
+	public virtual bool SpawnersCheckCurrents(){ return false; }
     #endregion
 
     #region interface_for_subclasses
@@ -328,7 +330,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     protected abstract string GetPrefabNameToSpawn(uint index);
     protected virtual void OnCreateInstance(uint index, GameObject go) {}    
     protected virtual void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {}
-    protected virtual void OnMachineSpawned(AI.Machine machine) {}
+	protected virtual void OnMachineSpawned(AI.IMachine machine) {}
     protected virtual void OnPilotSpawned(AI.Pilot pilot) {}
     protected virtual void OnAllEntitiesRespawned() {}    
     protected virtual void OnRemoveEntity(GameObject _entity, int index) {}

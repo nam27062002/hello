@@ -30,7 +30,8 @@ public class Decoration : IEntity {
 
 
 	//-----------------------------------------------------
-	void Awake() {
+	protected virtual void Awake() {
+		base.Awake();
 		InitFromDef();
 	}
 

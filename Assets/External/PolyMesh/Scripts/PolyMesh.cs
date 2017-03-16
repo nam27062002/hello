@@ -479,6 +479,9 @@ public class PolyMesh : MonoBehaviour {
 	/// Raises the draw gizmos event.
 	/// </summary>
 	void OnDrawGizmos() {
+
+		showNormals = true;
+
 		if(showOutline) {
 			Gizmos.color = Color.magenta;
 			float depth = -pinkMeshOffset * transform.lossyScale.z;
@@ -495,8 +498,10 @@ public class PolyMesh : MonoBehaviour {
 
 				Gizmos.DrawLine(point1, point2);
 				if(showNormals) {
+					Gizmos.color = Color.yellow;
 					Vector3 n = Vector3.Cross(Vector3.forward, point2 - point1).normalized;
 					Gizmos.DrawLine((point1 + point2) / 2.0f, (n * 3.0f) + (point1 + point2) / 2.0f);
+					Gizmos.color = Color.magenta;
 				}
 			}
 			int last = points.Count - 1;
@@ -505,11 +510,48 @@ public class PolyMesh : MonoBehaviour {
 				Vector3 endPoint = new Vector3(points[0].x, points[0].y, points[0].z - depth);
 				Gizmos.DrawLine(startPoint, endPoint);
 				if(showNormals) {
+					Gizmos.color = Color.yellow;
 					Vector3 n = Vector3.Cross(Vector3.forward, endPoint - startPoint).normalized;
 					Gizmos.DrawLine((startPoint + endPoint) / 2.0f, (n * 3.0f) + (startPoint + endPoint) / 2.0f);
+					Gizmos.color = Color.magenta;
 				}
 			}
 		}
+	}
+
+	void ReCenterGameObject() 
+	{
+		// Compute geometrical center among all of the mesh's points
+		Vector3 center = Vector3.zero;
+		for(int i = 0; i < keyPoints.Count; i++) {
+			center += keyPoints[i];
+		}
+		center /= keyPoints.Count;
+
+		// Center is in local coords, so matches the offset we must apply to both object's position and all keypoints
+		// Apply to keypoints
+		for(int i = 0; i < keyPoints.Count; i++) {
+			keyPoints[i] -= center;
+		}
+
+		// Rebuild the mesh
+		BuildMesh();
+
+		// Change object's position
+		transform.localPosition += center;
+	}
+
+	public void NormalizeMesh()
+	{
+		for(int i = 0; i < keyPoints.Count; i++) {
+			keyPoints[i] = transform.TransformPoint(keyPoints[i]);
+		}
+		transform.localRotation = Quaternion.identity;
+		transform.localScale = Vector3.one;
+		for(int i = 0; i < keyPoints.Count; i++) {
+			keyPoints[i] = transform.InverseTransformPoint(keyPoints[i]);
+		}
+		ReCenterGameObject();
 	}
 
 	/// <summary>

@@ -28,6 +28,7 @@ public class DefinitionsCategory
 	// General
 	public const string LOCALIZATION = "LOCALIZATION";
 	public const string SETTINGS = "SETTINGS";		// Contains several xml files with different signatures: gameSettings, dragonSettings, initialSettings,...
+	public const string PARTICLE_MANAGER_SETTINGS = "PARTICLE_MANAGER_SETTINGS";
 
 	// Progression
 	public const string LEVELS = "LEVELS";

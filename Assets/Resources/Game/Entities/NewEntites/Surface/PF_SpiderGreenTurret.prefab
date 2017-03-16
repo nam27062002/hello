@@ -91,9 +91,13 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles:
-  - name: PS_Blood_Green_Small
+  m_onEatenParticle:
+    name: PS_Blood_Green_Small
     path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: PS_IceExplosionSmall
+    path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
@@ -149,7 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: spider_ranged
+  m_sku: SpiderGreenTurret
   m_dieOutsideFrustum: 1
 --- !u!114 &11444444
 MonoBehaviour:
@@ -169,7 +173,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":2.5,"idleChance":0.1,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"projectileName":"PF_SpiderPoison","projectileSpawnTransformName":"spinneret","damage":10,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":2,"stop":true,"faceEnemy":true,"faceEnemyY":true,"facing":-1,"forceFaceToShoot":true,"maxFacingAngle":10,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2.5,"idleChance":0.1,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"projectileName":"PF_SpiderPoison","projectileSpawnTransformName":"spinneret","damage":10,"canFollowTarget":false,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":2,"stop":true,"faceEnemy":true,"faceEnemyY":true,"facing":-1,"forceFaceToShoot":true,"maxFacingAngle":10,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
   m_databaseKey: PF_SpiderGreenTurret
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
@@ -191,7 +195,6 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 2.5
-    m_attackPausesJump: 0
     m_defaultUpVector: 5
     m_orientationSpeed: 120
     m_faceDirection: 0

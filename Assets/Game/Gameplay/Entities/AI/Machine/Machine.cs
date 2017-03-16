@@ -92,6 +92,8 @@ namespace AI {
 		// Currents
 		private RegionManager 	m_regionManager;
 		public Current			current { get; set; }
+		private bool m_checkCurrents = false;
+		public bool checkCurrents{ get{return m_checkCurrents;} set{ m_checkCurrents = value; } }
 		private Vector3		m_externalForces;	// Mostly for currents
 
 		// Freezing
@@ -104,7 +106,7 @@ namespace AI {
 		//---------------------------------------------------------------------------------
 
 		// Use this for initialization
-		void Awake() {
+		protected virtual void Awake() {
 			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
 
 			m_entity = GetComponent<IEntity>();
@@ -166,7 +168,8 @@ namespace AI {
 			LeaveGroup();
 		}
 
-		public virtual void Spawn(ISpawner _spawner) {
+		public virtual void Spawn()
+		{
 			if (m_signals!= null) 
 				m_signals.Init();
 
@@ -185,6 +188,11 @@ namespace AI {
 			if (m_collider != null) m_collider.enabled = true;
 
 			m_willPlaySpawnSound = !string.IsNullOrEmpty( m_onSpawnSound );
+		}
+
+		public virtual void Spawn(ISpawner _spawner) {
+			Spawn();
+			m_checkCurrents = _spawner.SpawnersCheckCurrents();
 		}
 
 		public void OnTrigger(string _trigger, object[] _param = null) {
@@ -292,7 +300,7 @@ namespace AI {
 		//-----------------------------------------------------------
 
 		// Update is called once per frame
-		protected virtual void Update() {
+		public virtual void CustomUpdate() {
 			if (!IsDead()) {
 				if (m_willPlaySpawnSound) {
 					if (m_entity.isOnScreen) {
@@ -312,15 +320,16 @@ namespace AI {
 				m_viewControl.ShowExclamationMark(m_pilot.IsActionPressed(Pilot.Action.ExclamationMark));
 			}
 			m_inflammable.Update();
+			if (m_checkCurrents)
+				CheckForCurrents();
 		}
 
-		protected virtual void FixedUpdate() {
+		public virtual void CustomFixedUpdate() {
 			if (!IsDead()) {
 				if (m_enableMotion) {
 					if (m_regionManager == null) {
 						m_regionManager = RegionManager.Instance;
 					}
-					CheckForCurrents();
 					CheckFreeze();
 					m_motion.FixedUpdate();
 				}

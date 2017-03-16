@@ -17,6 +17,8 @@ using UnityEngine.Events;
 /// Simple behaviour to enable/disable a game object based on the amount of popups opened.
 /// Useful to hide things that are rendered on top of the popups canvas such as 
 /// particles, custom cameras, other canvases...
+/// If a show/hide animator is defined, it will be used instead of directly 
+/// activating/deactivating the object.
 /// </summary>
 public class DisableOnPopup : MonoBehaviour {
 	//------------------------------------------------------------------------//
@@ -26,12 +28,18 @@ public class DisableOnPopup : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Optional animator to be used
+	[Comment("Optional animator to be used instead of directly activating/deactivating the GameObject.")]
+	[SerializeField] private ShowHideAnimator m_animator = null;
+
 	// Additional actions to be executed upon popup opening/closing
+	[Space]
+	[Comment("Additional actions to be executed upon popup opening/closing")]
 	[SerializeField] private UnityEvent m_onPopupOpened = new UnityEvent();
 	[SerializeField] private UnityEvent m_onAllPopupsClosed = new UnityEvent();
 
-	// Internal logic
-	bool m_pendingActivation = false;
+	// Internal
+	private bool m_pendingActivation = false;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -66,7 +74,13 @@ public class DisableOnPopup : MonoBehaviour {
 		if(!gameObject.activeSelf) return;
 
 		// Disable this object
-		gameObject.SetActive(false);
+		if(m_animator != null) {
+			m_animator.ForceHide();
+		} else {
+			gameObject.SetActive(false);
+		}
+
+		// Set flag
 		m_pendingActivation = true;
 
 		// Execute all aditional actions
@@ -81,8 +95,14 @@ public class DisableOnPopup : MonoBehaviour {
 		// If there are no more popups opened and activation was pending, re-enable the game object
 		if(m_pendingActivation && PopupManager.openPopupsCount <= 0) {
 			// Reset flag
-			gameObject.SetActive(true);
 			m_pendingActivation = false;
+
+			// Enable the object
+			if(m_animator != null) {
+				m_animator.ForceShow();
+			} else {
+				gameObject.SetActive(true);
+			}
 
 			// Execute all aditional actions
 			m_onAllPopupsClosed.Invoke();

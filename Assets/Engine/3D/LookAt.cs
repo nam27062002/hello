@@ -89,22 +89,51 @@ public class LookAt : MonoBehaviour {
 	// METHODS															//
 	//------------------------------------------------------------------//
 	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	public void OnEnable() {
+		m_dirty = true;
+	}
+
+	/// <summary>
 	/// Update loop.
 	/// </summary>
 	public void Update() {
-		if(isActiveAndEnabled) {
-			// Make sure lookAtPoint is linked to the object (if any)
-			if(m_lookAtObject != null && m_lookAtObject.transform.hasChanged) {
-				lookAtPointGlobal = m_lookAtObject.position;
-				m_lookAtObject.transform.hasChanged = false;	// Beware that this might cause conflict with other components using the hasChanged flag
-				m_dirty = true;
-			}
+		// Only if active!
+		if(!isActiveAndEnabled) return;
 
-			// If cahnges occurred, modify our own rotation
-			if(m_dirty) {
-				transform.LookAt(lookAtPointGlobal);
-				m_dirty = false;
-			}
+		// Make sure lookAtPoint is linked to the object (if any)
+		if(m_lookAtObject != null && m_lookAtObject.transform.hasChanged) {
+			lookAtPointGlobal = m_lookAtObject.position;
+			m_dirty = true;
 		}
+
+		// Check also that the object transform hasn't change
+		if(this.transform.hasChanged) {
+			m_dirty = true;
+		}
+
+		// If cahnges occurred, modify our own rotation
+		if(m_dirty) {
+			transform.LookAt(lookAtPointGlobal);
+			m_dirty = false;
+		}
+	}
+
+	/// <summary>
+	/// Update loop after the standard update.
+	/// </summary>
+	public void LateUpdate() {
+		// Only if active!
+		if(!isActiveAndEnabled) return;
+
+		// Clear lookAt object's transform hasChanged flag
+		// We must do it here cause other LookAt components might be using the same LookAt object and depend on its hasChanged flag
+		if(m_lookAtObject != null && m_lookAtObject.transform.hasChanged) {
+			m_lookAtObject.transform.hasChanged = false;
+		}
+
+		// Clear transform's hasChanged flag
+		this.transform.hasChanged = false;
 	}
 }

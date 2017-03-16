@@ -10,6 +10,7 @@ public interface ISpawner : IQuadTreeItem {
 	bool Respawn(); //return true if it respawned completelly
 	void RemoveEntity(GameObject _entity, bool _killedByPlayer);
 	void DrawStateGizmos();
+	bool SpawnersCheckCurrents();
 
 	AreaBounds area { get; }
 	IGuideFunction guideFunction { get; }

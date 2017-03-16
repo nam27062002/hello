@@ -9,6 +9,7 @@ public class FogArea : MonoBehaviour
 	public FogManager.FogAttributes m_attributes;
 	public bool m_drawInside = false;
 	public Vector3 m_startScale;
+	private bool m_playerInside = false;
 	void Start()
 	{
 		m_fogManager = FindObjectOfType<FogManager>();
@@ -27,8 +28,9 @@ public class FogArea : MonoBehaviour
 
 	void OnTriggerEnter( Collider other)
 	{
-		if ( other.CompareTag("Player") )	
+		if ( other.CompareTag("Player") && !m_playerInside)	
 		{
+			m_playerInside = true;
 			m_fogManager.ActivateArea( this );
 			transform.localScale = m_startScale * m_insideScale;
 		}
@@ -36,8 +38,9 @@ public class FogArea : MonoBehaviour
 
 	void OnTriggerExit( Collider other)
 	{
-		if ( other.CompareTag("Player") )	
+		if ( other.CompareTag("Player") && m_playerInside)	
 		{
+			m_playerInside = false;
 			m_fogManager.DeactivateArea( this );
 			transform.localScale = m_startScale;
 		}

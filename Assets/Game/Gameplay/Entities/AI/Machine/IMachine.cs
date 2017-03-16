@@ -13,13 +13,19 @@ namespace AI {
 		T GetComponent<T>();
 		T[] GetComponentsInChildren<T>();
 		Transform transform { get; }
+		GameObject gameObject { get; }
 
 		float lastFallDistance { get; }
+
+		//
+		void Spawn(ISpawner _spawner);
 
 		// Internal connections
 		void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null);
 		bool GetSignal(Signals.Type _signal);
 		object[] GetSignalParams(Signals.Type _signal);
+
+		void OnTrigger(string _trigger, object[] _param = null);
 
 		void DisableSensor(float _seconds);
 
@@ -60,6 +66,8 @@ namespace AI {
 
 		bool IsDead();
 		bool IsDying();
+
+		void CustomFixedUpdate();
 
 	}
 }

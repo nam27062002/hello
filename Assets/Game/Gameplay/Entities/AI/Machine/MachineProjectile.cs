@@ -52,6 +52,8 @@ namespace AI {
 			m_inflammable.Init();
 		}
 
+		public void OnTrigger(string _trigger, object[] _param = null) {}
+			
 		// Update is called once per frame
 		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params) {
 			if (_signal == Signals.Type.Destroyed) {
@@ -130,5 +132,9 @@ namespace AI {
 		}
 
 		public void SetVelocity(Vector3 _v) {}
+
+		public virtual void CustomUpdate(){}
+
+		public virtual void CustomFixedUpdate(){}
 	}
 }

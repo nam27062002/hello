@@ -26,6 +26,7 @@ namespace TMPro.EditorUtilities
             TextMeshPro textMeshPro = go.AddComponent<TextMeshPro>();
             textMeshPro.text = "Sample text";
             textMeshPro.alignment = TextAlignmentOptions.TopLeft;
+            //textMeshPro.rectTransform.sizeDelta = new Vector2(20, 5);
 
             Undo.RegisterCreatedObjectUndo((Object)go, "Create " + go.name);
 
@@ -74,7 +75,7 @@ namespace TMPro.EditorUtilities
             GameObject contextObject = command.context as GameObject;
             if (contextObject == null)
             {
-                goRectTransform.sizeDelta = new Vector2(200f, 50f);
+                //goRectTransform.sizeDelta = new Vector2(200f, 50f);
                 GameObjectUtility.SetParentAndAlign(go, canvas.gameObject);
 
                 TextMeshProUGUI textMeshPro = go.AddComponent<TextMeshProUGUI>();
@@ -98,7 +99,7 @@ namespace TMPro.EditorUtilities
                 }
                 else
                 {
-                    goRectTransform.sizeDelta = new Vector2(200f, 50f);
+                    //goRectTransform.sizeDelta = new Vector2(200f, 50f);
 
                     GameObjectUtility.SetParentAndAlign(go, contextObject);
 
@@ -114,9 +115,11 @@ namespace TMPro.EditorUtilities
             {
                 GameObject eventObject = new GameObject("EventSystem", typeof(EventSystem));
                 eventObject.AddComponent<StandaloneInputModule>();
-#if !(UNITY_5_3 || UNITY_5_4)
-                eventObject.AddComponent<TouchInputModule>();
-#endif
+                #if UNITY_5_3_OR_NEWER
+                    // Nothing
+                #else
+                    eventObject.AddComponent<TouchInputModule>();
+                #endif
                 Undo.RegisterCreatedObjectUndo(eventObject, "Create " + eventObject.name);
             }
 
@@ -268,9 +271,11 @@ namespace TMPro.EditorUtilities
                 GameObjectUtility.SetParentAndAlign(eventSystem, parent);
                 esys = eventSystem.AddComponent<EventSystem>();
                 eventSystem.AddComponent<StandaloneInputModule>();
-#if !(UNITY_5_3 || UNITY_5_4)
+            #if UNITY_5_3_OR_NEWER
+                // Nothing
+            #else
                 eventSystem.AddComponent<TouchInputModule>();
-#endif
+            #endif
 
                 Undo.RegisterCreatedObjectUndo(eventSystem, "Create " + eventSystem.name);
             }

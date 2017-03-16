@@ -416,7 +416,14 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles: []
+  m_onEatenParticle:
+    name: PF_Mine_Edible
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -450,12 +457,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_enableMotion: 0
+  m_enableMotion: 1
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 1
-    m_attackPausesJump: 0
+    m_mass: 3
     m_defaultUpVector: 0
     m_orientationSpeed: 120
     m_faceDirection: 1
@@ -471,9 +477,9 @@ MonoBehaviour:
   m_enableSensor: 0
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 0
-    m_maxRadius: 0
-    m_minRadius: 0
+    m_sightRadius: 6
+    m_maxRadius: 4
+    m_minRadius: 2
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -534,7 +540,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: mine_02
+  m_sku: MineMedium
   m_dieOutsideFrustum: 1
 --- !u!114 &114772094923774810
 MonoBehaviour:
@@ -550,6 +556,7 @@ MonoBehaviour:
   m_blendSpeedFactor: 1
   m_energy: 10
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: 01e097987dda34dae88639be166bccba, type: 2}
   m_railSeparation:
     min: 0.5

@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4886435056940780}
   - component: {fileID: 114178207563639364}
-  - component: {fileID: 114156449755397778}
+  - component: {fileID: 114272322471464030}
   m_Layer: 0
   m_Name: SP_PufferBird
   m_TagString: Untagged
@@ -41,29 +41,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114156449755397778
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1276736636910630}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_guideFunction: 0
-  m_innerRadius: 10
-  m_outterRadius: 20
-  m_targetDistance: 5
-  m_depthAmplitude: 1
-  m_depthFrequency: 3
-  m_scale: {x: 1, y: 1, z: 1}
-  m_rotation: {x: 0, y: 0, z: 0}
-  m_boundsScale: {x: 0, y: 0, z: 0}
-  m_forcePreview: 0
-  m_previewStep: 0.1
-  m_previewMaxTime: 60
 --- !u!114 &114178207563639364
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -75,23 +52,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefabStr: Air/PF_PufferBird
+  m_entityPrefabList:
+  - name: Air/PF_PufferBird
+    chance: 100
   m_quantity:
+    min: 1
+    max: 1
+  m_speedFactorRange:
     min: 1
     max: 1
   m_scale:
     min: 1
     max: 1
   m_rails: 1
+  m_hasGroupBonus: 0
   m_minTier: 0
   m_activationChance: 100
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
-    min: 0
-    max: 0
+    min: 220
+    max: 220
   m_homePosMethod: 0
   m_homePosDistance:
     min: 0
     max: 1
   m_maxSpawns: 0
+  m_checkCurrents: 0
+--- !u!114 &114272322471464030
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1276736636910630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_circular: 1
+  m_smoothRadius: 0.5
+  m_points:
+  - {x: -1, y: 0, z: 0}
+  - {x: 1, y: 0, z: 0}

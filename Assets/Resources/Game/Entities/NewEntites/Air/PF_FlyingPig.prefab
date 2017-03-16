@@ -870,7 +870,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 107828}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 141.99326, y: 62.063274, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 413220}
@@ -947,7 +947,14 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles: []
+  m_onEatenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -981,7 +988,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: gemPig
+  m_sku: FlyingPig
   m_dieOutsideFrustum: 1
 --- !u!114 &11439290
 MonoBehaviour:
@@ -1008,14 +1015,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
-  m_energy: 6
+  m_blendSpeedFactor: 15
+  m_energy: 4
   m_energyDrainSec: 1
+  m_energyRecoverSec: 0.25
   m_brainResource: {fileID: 11400000, guid: fcba6844efb2f4ff6b18023d9b2856d4, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":7,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":15,"panicSpeed":18,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":5,"separation":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":7,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":10,"panicSpeed":14,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":5,"separation":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
   m_databaseKey: PF_FlyingPig
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 27
@@ -1037,7 +1045,6 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 20
-    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 240
     m_faceDirection: 1
@@ -1053,9 +1060,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 15
-    m_maxRadius: 12
-    m_minRadius: 5
+    m_sightRadius: 14
+    m_maxRadius: 11
+    m_minRadius: 4
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -1086,7 +1093,7 @@ SkinnedMeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 169f6817552da4b7ea2a103114048205, type: 2}
+  - {fileID: 2100000, guid: b1ca8a5bdbdae49469e7aa714c2dc1e2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

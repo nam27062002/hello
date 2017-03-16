@@ -1166,8 +1166,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 2.5
-    m_attackPausesJump: 1
+    m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 360
     m_faceDirection: 1
@@ -1183,9 +1182,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 0
-    m_sightRadius: 7
-    m_maxRadius: 5
-    m_minRadius: 3
+    m_sightRadius: 14
+    m_maxRadius: 10
+    m_minRadius: 6
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -1239,7 +1238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: crocodrile
+  m_sku: Crocodile
   m_dieOutsideFrustum: 1
 --- !u!114 &114510909212338278
 MonoBehaviour:
@@ -1264,8 +1263,12 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: PF_CrocodileCorpse
-  m_onEatenParticles:
-  - name: PS_Blood_Explosion_Fish_Small
+  m_onEatenParticle:
+    name: PS_Blood_Explosion_Fish_Small
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: PS_IceExplosionSmall
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 

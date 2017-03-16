@@ -118,6 +118,45 @@ public static class GameObjectExt {
 		_t.localScale = _localScale;
 	}
 
+	/// <summary>
+	/// Computes the max bounds of the game object and all of its children using
+	/// their renderers.
+	/// </summary>
+	/// <returns>The bounds of the object, in world coords.</returns>
+	/// <param name="_rootObj">The object whose bounds we want.</param>
+	/// <param name="_ignoreParticleSystems">Whether to include or not particle systems in the whole Bounds composition.</param>
+	public static Bounds ComputeRendererBounds(this GameObject _rootObj, bool _ignoreParticleSystems) {
+		// Get all renderers in the target object
+		Renderer[] renderers = _rootObj.GetComponentsInChildren<Renderer>();
+		if(renderers.Length > 0) {
+			bool initialized = false;
+			Bounds b = new Bounds();
+			for(int i = 0; i < renderers.Length; i++) {
+				// Ignore PS?
+				if(_ignoreParticleSystems && renderers[i].GetComponent<ParticleSystem>() != null) {
+					continue;
+				}
+
+				// Ignore if disabled as well
+				if(!renderers[i].enabled) {
+					continue;
+				}
+
+				// First bound found?
+				if(!initialized) {
+					b = renderers[i].bounds;
+					initialized = true;
+				} else {
+					b.Encapsulate(renderers[i].bounds);
+				}
+			}
+			return b;
+		}
+
+		// No renderers found
+		return default(Bounds);
+	}
+
 	//------------------------------------------------------------------//
 	// HIERARCHY NAVIGATION HELPERS										//
 	// Imported from Hungry Dragon										//

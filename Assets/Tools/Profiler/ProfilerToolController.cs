@@ -26,9 +26,10 @@ public class ProfilerToolController : MonoBehaviour
                 spawner.m_quantity.min = ProfilerSettingsManager.Spawner_NumEntities;
                 spawner.m_quantity.max = ProfilerSettingsManager.Spawner_NumEntities;
                 string prefabName = ProfilerSettingsManager.Spawner_Prefab;
-                if (!string.IsNullOrEmpty(prefabName))
-                {
-                    spawner.m_entityPrefabStr = prefabName;
+                if (!string.IsNullOrEmpty(prefabName)) 
+				{
+					spawner.m_entityPrefabList[0].name = prefabName;
+					spawner.m_entityPrefabList[0].chance = 100;
                 }
             }
         }	    
@@ -49,8 +50,13 @@ public class ProfilerToolController : MonoBehaviour
         Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);        
     }
 
+	void Update() {
+		InstanceManager.player.dragonEatBehaviour.eatingEntitiesEnabled = false;
+	}
+
     void OnLevelLoaded()
     {
+		
         /*Spawner spawner = m_spawner.GetComponent<Spawner>();
         if (spawner != null)
         {            

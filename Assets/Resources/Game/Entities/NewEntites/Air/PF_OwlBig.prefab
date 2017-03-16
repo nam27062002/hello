@@ -413,14 +413,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
-  m_energy: 5
+  m_blendSpeedFactor: 20
+  m_energy: 3
   m_energyDrainSec: 1
+  m_energyRecoverSec: 0.25
   m_brainResource: {fileID: 11400000, guid: fcba6844efb2f4ff6b18023d9b2856d4, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":13,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":15,"panicSpeed":18,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":5,"separation":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":13,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":15,"panicSpeed":20,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":5,"separation":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
   m_databaseKey: PF_OwlBig
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 15
@@ -449,8 +450,12 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles:
-  - name: PF_feathers_3D
+  m_onEatenParticle:
+    name: PF_feathers_3D
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: PS_IceExplosion
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
@@ -486,7 +491,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: owl_big
+  m_sku: OwlBig
   m_dieOutsideFrustum: 1
 --- !u!114 &11485456
 MonoBehaviour:
@@ -517,8 +522,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 4
-    m_attackPausesJump: 0
+    m_mass: 3
     m_defaultUpVector: 0
     m_orientationSpeed: 120
     m_faceDirection: 1
@@ -534,9 +538,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 14
-    m_maxRadius: 9
-    m_minRadius: 4
+    m_sightRadius: 6
+    m_maxRadius: 4
+    m_minRadius: 2
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -545,8 +549,8 @@ MonoBehaviour:
       min: 0.9
       max: 1.1
     m_senseDelay:
-      min: 0.5
-      max: 1
+      min: 0
+      max: 0
   m_onSpawnSound: 
   m_rotateToMouth: 0
   m_inflammable:

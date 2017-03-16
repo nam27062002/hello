@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 
 namespace AI {
-	public abstract class Pilot : MonoBehaviour {
+	public abstract class Pilot : MonoBehaviour, ISpawnable {
 		
 		[Flags]
 		public enum Action {
@@ -30,6 +30,7 @@ namespace AI {
 		[SerializeField] private float m_blendSpeedFactor = 1f;
 		[SerializeField] private float m_energy = 10f;
 		[SerializeField] private float m_energyDrainSec = 1f;
+		[SerializeField] private float m_energyRecoverSec = 1f;
 
 		protected AreaBounds m_area;
 		public AreaBounds area { get { return m_area; } set { m_area = value; } }
@@ -136,7 +137,7 @@ namespace AI {
 			if (!_blend) {
 				m_currentSpeed = m_moveSpeed;
 			}
-			PressAction(Action.Stop);
+			ReleaseAction(Action.Stop);
 		}
 
 		public void SetBoostSpeed(float _boostSpeed, bool _blend = true) {
@@ -184,14 +185,16 @@ namespace AI {
 			m_externalImpulse += _externalImpulse;
 		}
 
-		protected virtual void Update() {
+		public virtual void Spawn(ISpawner _spawner) {}
+
+		public virtual void CustomUpdate() {
 			if (m_boostAvailable && IsActionPressed(Action.Boost)) {
 				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_boostSpeed, Time.deltaTime * m_blendSpeedFactor);
 				m_currentEnergy = Mathf.Lerp(m_currentEnergy, 0f, Time.deltaTime * m_energyDrainSec);
 				m_boostAvailable = m_currentEnergy > 0.1f;
 			} else {
 				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_moveSpeed, Time.deltaTime * m_blendSpeedFactor);
-				m_currentEnergy = Mathf.Lerp(m_currentEnergy, m_energy, Time.deltaTime * 0.5f);
+				m_currentEnergy = Mathf.Lerp(m_currentEnergy, m_energy, Time.deltaTime * m_energyRecoverSec);
 				m_boostAvailable = m_currentEnergy > (m_energy * 0.75f);
 			}
 

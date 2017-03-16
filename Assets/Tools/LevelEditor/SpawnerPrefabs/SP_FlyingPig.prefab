@@ -42,14 +42,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefabStr: Air/PF_FlyingPig
+  m_entityPrefabList:
+  - name: Air/PF_FlyingPig
+    chance: 100
   m_quantity:
+    min: 1
+    max: 1
+  m_speedFactorRange:
     min: 1
     max: 1
   m_scale:
     min: 1
     max: 1
   m_rails: 1
+  m_hasGroupBonus: 0
   m_minTier: 0
   m_activationChance: 100
   m_activationTriggers: []
@@ -62,6 +68,7 @@ MonoBehaviour:
     min: 1
     max: 2
   m_maxSpawns: 0
+  m_checkCurrents: 0
 --- !u!114 &11451506
 MonoBehaviour:
   m_ObjectHideFlags: 1

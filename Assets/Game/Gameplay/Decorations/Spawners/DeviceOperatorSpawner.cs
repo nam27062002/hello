@@ -20,7 +20,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	//-------------------------------------------------------------------	
 
 	private GameCamera m_newCamera;
-	private Machine m_operator;
+	private IMachine m_operator;
 	private Pilot m_operatorPilot;
 
 	private float m_respawnTime;
@@ -109,7 +109,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 		t.localScale = Vector3.one;
     }
 
-    protected override void OnMachineSpawned(AI.Machine machine) {
+	protected override void OnMachineSpawned(AI.IMachine machine) {
         m_operator = machine;
     }
 
