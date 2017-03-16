@@ -32,7 +32,12 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 	// Chests and chest getters
 	// All chests, not sorted
 	public static Chest[] dailyChests {
-		get { return instance.m_user.dailyChests; }
+		get { 
+			if(IsReady()) {
+				return instance.m_user.dailyChests;
+			}
+			return new Chest[0];
+		}
 	}
 
 	// Chest sorted by state (COLLECTED -> PENDING_REWARD -> NOT_COLLECTED -> INIT)
@@ -62,8 +67,18 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 
 	// Reset timer
 	public static DateTime resetTimestamp {
-		get { return instance.m_user.dailyChestsResetTimestamp; }
-		private set { instance.m_user.dailyChestsResetTimestamp = value; }
+		get {
+			if(IsReady()) {
+				return instance.m_user.dailyChestsResetTimestamp; 
+			}
+			return DateTime.Now;
+		}
+
+		private set { 
+			if(IsReady()) {
+				instance.m_user.dailyChestsResetTimestamp = value;
+			}
+		}
 	}
 
 	public static TimeSpan timeToReset {
