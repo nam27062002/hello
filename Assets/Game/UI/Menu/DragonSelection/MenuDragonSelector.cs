@@ -9,6 +9,8 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -16,7 +18,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Select the current dragon in the menu screen.
 /// </summary>
-public class MenuDragonSelector : UISelectorTemplate<DragonData> {
+public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickHandler {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -102,6 +104,53 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData> {
 		MenuDragonPreview dragonPreview = _newSelectedPoint.GetComponentInChildren<MenuDragonPreview>();
 		if(dragonPreview != null) {
 			SetSelectedDragon(dragonPreview.sku);
+		}
+	}
+
+	/// <summary>
+	/// OnMouseUpAsButton is only called when the mouse is released over the same 
+	/// GUIElement or Collider as it was pressed.
+	/// </summary>
+	public void OnPointerClick(PointerEventData _eventData) {
+		// Find all object intersecting with the raycast, looking for dragons and pets
+		List<RaycastResult> results = new List<RaycastResult>();
+		EventSystem.current.RaycastAll(_eventData, results);
+
+		// Ignore if there is only one hit (that's ourselves)
+		if(results.Count <= 1) return;
+			
+		// Find pets and dragons!
+		MenuScreens targetScreen = MenuScreens.NONE;
+		for(int i = 0; i < results.Count; i++) {
+			// Is it a pet?
+			// Look for pets first, since pets are children of dragons and looking for dragons will result in a false positive!
+			if(results[i].gameObject.FindComponentInParents<MenuPetPreview>() != null) {
+				// Yes! Go to the pet screen
+				targetScreen = MenuScreens.PETS;
+				break;
+			}
+
+			// Is it a dragon?
+			else if(results[i].gameObject.FindComponentInParents<MenuDragonPreview>() != null) {
+				// Yes! Go to the disguises screen
+				targetScreen = MenuScreens.DISGUISES;
+				break;
+			}
+		}
+
+		// Go to the target screen, if any
+		if(targetScreen != MenuScreens.NONE) {
+			// Check conditions
+			MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+
+			// a) Current dragon is owned
+			if(!DragonManager.GetDragonData(menuController.selectedDragon).isOwned) return;
+
+			// b) Camera is not tweening (scrolling between dragons)
+			if(menuController.screensController.tweening) return;
+
+			// Everything ok! Go to the disguises screen
+			menuController.screensController.GoToScreen((int)targetScreen);
 		}
 	}
 }

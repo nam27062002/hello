@@ -355,14 +355,17 @@ public class ViewControl : MonoBehaviour, ISpawnable {
             Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
         }
     */
-    void OnDestroy()
-    {
+    void OnDestroy() {
         Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		RemoveAudios();
     }
 
-    public void PreDisable()
-    {
+    public void PreDisable() {
+		if (m_pcTrail != null) {
+			ParticleManager.ReturnInstance(m_pcTrail);
+			m_pcTrail = null;
+		}
+
 		RemoveAudios();
     }
 
