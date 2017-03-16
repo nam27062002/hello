@@ -21,7 +21,7 @@ using System.Collections.Generic;
 /// Simpler implementation than a full-featured scroll list.
 /// Since it's a generic class, it can't be used directly, requires an implementation for specific types.
 /// </summary>
-public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHandler {
+public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -34,6 +34,7 @@ public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHand
 	//------------------------------------------------------------------//
 	// Setup
 	[SerializeField] protected bool m_loop = false;
+	[SerializeField] [Range(0f, 1000f)] protected float m_minDragDistance = 50f;
 
 	// Items list
 	[SerializeField] protected List<T> m_items = new List<T>();
@@ -60,6 +61,9 @@ public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHand
 	}
 	public ItemEvent OnSelectionChanged = new ItemEvent();
 	public IndexEvent OnSelectionIndexChanged = new IndexEvent();
+
+	// Internal
+	private bool m_dragProcessed = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -188,12 +192,8 @@ public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHand
 	/// </summary>
 	/// <param name="_event">Data related to the event</param>
 	public void OnBeginDrag(PointerEventData _event) {
-		// Select next/previous dragon based on drag horizontal direction
-		if(_event.delta.x > 0) {
-			SelectPreviousItem();
-		} else {
-			SelectNextItem();
-		}
+		// Reset drag flag
+		m_dragProcessed = false;
 	}
 
 	/// <summary>
@@ -201,7 +201,31 @@ public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHand
 	/// </summary>
 	/// <param name="_event">Data related to the event.</param>
 	public void OnDrag(PointerEventData _event) {
-		// Nothing to do, but the OnBeginDrag event doesn't work if we don't implement the IDragHandler interface -_-
+		// Only if we haven't already changed selection in this drag iteration
+		if(!m_dragProcessed) {
+			// Select next/previous dragon based on drag horizontal direction and distance
+			float dragDistance = _event.position.x - _event.pressPosition.x;
+			if(Mathf.Abs(dragDistance) > m_minDragDistance) {
+				// Determine selection direction
+				if(dragDistance > 0) {
+					SelectPreviousItem();
+				} else {
+					SelectNextItem();
+				}
+
+				// Prevent any more item changes in this drag iteration
+				m_dragProcessed = true;
+			}
+		}
+	}
+
+	/// <summary>
+	/// The input has finished dragging over this element.
+	/// </summary>
+	/// <param name="_event">Data related to the event</param>
+	public void OnEndDrag(PointerEventData _event) {
+		// Reset drag flag
+		m_dragProcessed = false;
 	}
 }
 
