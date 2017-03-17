@@ -724,7 +724,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224437510726433192}
   - component: {fileID: 114354686323644434}
-  - component: {fileID: 114271404750599066}
+  - component: {fileID: 114646928387865342}
   m_Layer: 5
   m_Name: BtnPhoto
   m_TagString: Untagged
@@ -1211,19 +1211,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114271404750599066
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1982793440901748}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc67d1baf3f6149389cd7f3bc2e161a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_mode: 0
-  m_screens: 010000000300000004000000
 --- !u!114 &114307795833372686
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1435,6 +1422,25 @@ MonoBehaviour:
   m_lockIfLocked: 1
   m_lockIfAvailable: 1
   m_lockIfOwned: 0
+--- !u!114 &114646928387865342
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1982793440901748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_hideForDragons: 0
+  m_targetDragonSku: 
+  m_showIfLocked: 0
+  m_showIfAvailable: 0
+  m_showIfOwned: 1
+  m_mode: 0
+  m_screens: 010000000300000004000000
+  m_restartShowAnimation: 0
 --- !u!114 &114657093804068674
 MonoBehaviour:
   m_ObjectHideFlags: 1
