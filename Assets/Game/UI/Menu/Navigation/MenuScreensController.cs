@@ -54,6 +54,10 @@ public class MenuScreensController : NavigationScreenSystem {
 	}
 
 	// Other properties
+	public MenuScreens currentMenuScreen {
+		get { return (MenuScreens)currentScreenIdx; }
+	}
+
 	public MenuScreenScene currentScene {
 		get {
 			if(MathUtils.IsBetween(currentScreenIdx, 0, m_scenes.Length)) {
@@ -70,11 +74,6 @@ public class MenuScreensController : NavigationScreenSystem {
 			}
 			return null;
 		}
-	}
-
-	// Use it to track actual screen changes
-	public bool tweening {
-		get { return DOTween.IsTweening(InstanceManager.sceneController.mainCamera); }
 	}
 
 	//------------------------------------------------------------------//
@@ -107,6 +106,9 @@ public class MenuScreensController : NavigationScreenSystem {
 		if(currentCameraSnapPoint != null) {
 			currentCameraSnapPoint.Apply(InstanceManager.sceneController.mainCamera);
 		}
+
+		// Start menu music!
+		//AudioController.PlayMusic("");
 	}
 
 	/// <summary>
@@ -114,8 +116,8 @@ public class MenuScreensController : NavigationScreenSystem {
 	/// </summary>
 	private void Update() {
 		// Enforce camera position to current snap point
-		// Only if camera is not already moving!
-		if(!tweening) {
+		// Only if camera is not being animated!
+		if(!InstanceManager.menuSceneController.isTweening) {
 			if(currentCameraSnapPoint != null) {
 				currentCameraSnapPoint.Apply(InstanceManager.sceneController.mainCamera);
 			}

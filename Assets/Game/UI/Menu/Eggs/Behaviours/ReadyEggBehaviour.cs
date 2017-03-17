@@ -36,7 +36,7 @@ public class ReadyEggBehaviour : MonoBehaviour, IPointerClickHandler {
 	/// </summary>
 	private void Start() {
 		// If we are not at the menu scene, disable this component
-		MenuSceneController sceneController = InstanceManager.GetSceneController<MenuSceneController>();
+		MenuSceneController sceneController = InstanceManager.menuSceneController;
 		if(sceneController == null) {
 			this.enabled = false;
 			return;

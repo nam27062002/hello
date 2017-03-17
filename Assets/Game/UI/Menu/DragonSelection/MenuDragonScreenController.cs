@@ -24,28 +24,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Shortcuts to important elements
-	// Dragon selector
-	private MenuDragonSelector m_dragonSelector = null;
-	public MenuDragonSelector dragonSelector {
-		get {
-			if(m_dragonSelector == null) {
-				m_dragonSelector = this.FindComponentRecursive<MenuDragonSelector>();
-			}
-			return m_dragonSelector;
-		}
-	}
-
-	// Dragon scroller
-	private MenuDragonScroller3D m_dragonScroller3D = null;
-	public MenuDragonScroller3D dragonScroller3D {
-		get {
-			if(m_dragonScroller3D == null) {
-				m_dragonScroller3D = InstanceManager.GetSceneController<MenuSceneController>().GetScreenScene(MenuScreens.DRAGON_SELECTION).FindComponentRecursive<MenuDragonScroller3D>();
-			}
-			return m_dragonScroller3D;
-		}
-	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -75,17 +53,19 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// <param name="_event">Event data.</param>
 	private void OnNavigationScreenChanged(NavigationScreenSystem.ScreenChangedEventData _event) {
 		// Only if it comes from the main screen navigation system
-		if(_event.dispatcher != InstanceManager.GetSceneController<MenuSceneController>().screensController) return;
+		if(_event.dispatcher != InstanceManager.menuSceneController.screensController) return;
 
-		// If leaving this screen, remove "new" flag from eggs
+		// If leaving this screen
 		if(_event.fromScreenIdx == (int)MenuScreens.DRAGON_SELECTION) {
-            PersistenceManager.Save(true);
-
+			// Remove "new" flag from incubating eggs
 			for(int i = 0; i < EggManager.INVENTORY_SIZE; i++) {
 				if(EggManager.inventory[i] != null) {
 					EggManager.inventory[i].isNew = false;
 				}
 			}
+
+			// Save persistence to store current dragon
+			PersistenceManager.Save(true);
 		}
 	}
 }

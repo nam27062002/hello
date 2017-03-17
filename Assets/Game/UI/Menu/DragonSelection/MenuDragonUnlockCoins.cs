@@ -42,7 +42,7 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
 		
 		// Do a first refresh
-		Refresh(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
+		Refresh(InstanceManager.menuSceneController.selectedDragon);
 	}
 
 	/// <summary>
@@ -71,7 +71,7 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 	/// </summary>
 	public void OnUnlock() {
 		// Unlock dragon
-		DragonData data = DragonManager.GetDragonData(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
+		DragonData data = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
 		long priceCoins = data.def.GetAsLong("unlockPriceCoins");
 		if(UsersManager.currentUser.coins >= priceCoins) {
 			UsersManager.currentUser.AddCoins(-priceCoins);

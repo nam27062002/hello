@@ -88,7 +88,7 @@ namespace LevelEditor {
 			scoreLabel.text = StringUtils.FormatNumber(RewardManager.score);
 			
 			// Set time - format to MM:SS
-			LevelEditorSceneController game = InstanceManager.GetSceneController<LevelEditorSceneController>();
+			LevelEditorSceneController game = InstanceManager.gameSceneControllerBase as LevelEditorSceneController;
 			timeLabel.text = TimeUtils.FormatTime(game.elapsedSeconds, TimeUtils.EFormat.ABBREVIATIONS, 2, TimeUtils.EPrecision.MINUTES);
 			
 			// Set initial coins

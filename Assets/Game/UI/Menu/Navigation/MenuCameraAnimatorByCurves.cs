@@ -73,6 +73,14 @@ public class MenuCameraAnimatorByCurves : MonoBehaviour {
 		}
 	}
 
+	public bool isTweening {
+		get { 
+			// Either path is tweening
+			return (m_cameraPath != null && m_cameraPath.isTweening) 
+			|| (m_lookAtPath != null && m_lookAtPath.isTweening); 
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//

@@ -60,8 +60,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get external references
-		MenuDragonScreenController screenController = InstanceManager.GetSceneController<MenuSceneController>().GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>(); 
-		m_scroller = screenController.dragonScroller3D;
+		m_scroller = InstanceManager.menuSceneController.dragonScroller;
 
 		// Subscribe to external events. We want to receive these events even when disabled, so do it in the Awake/Destroy instead of the OnEnable/OnDisable.
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
@@ -153,7 +152,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 			InputLocker.Lock();
 
 			// Hide HUD and UI
-			InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceHide(false);
+			InstanceManager.menuSceneController.hud.GetComponent<ShowHideAnimator>().ForceHide(false);
 			if(m_uiCanvasGroup != null) m_uiCanvasGroup.alpha = 0;
 
 			// Instant scroll to first dragon
@@ -176,7 +175,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 			InputLocker.Unlock();
 
 			// Show UI back
-			InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceShow(true);
+			InstanceManager.menuSceneController.hud.GetComponent<ShowHideAnimator>().ForceShow(true);
 			if(m_uiCanvasGroup != null) m_uiCanvasGroup.DOFade(1f, 0.25f);
 
 			// Control vars
@@ -194,7 +193,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	/// <param name="_event">Event data.</param>
 	public void OnScreenChanged(NavigationScreenSystem.ScreenChangedEventData _event) {
 		// Only if it comes from the main screen navigation system
-		if(_event.dispatcher != InstanceManager.GetSceneController<MenuSceneController>().screensController) return;
+		if(_event.dispatcher != InstanceManager.menuSceneController.screensController) return;
 
 		// If leaving the dragon selection screen, force the tutorial to stop (shouldn't happen)
 		if(_event.toScreenIdx != (int)MenuScreens.DRAGON_SELECTION) {

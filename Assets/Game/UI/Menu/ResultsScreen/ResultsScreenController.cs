@@ -107,7 +107,7 @@ public class ResultsScreenController : MonoBehaviour {
 			if(CPResultsScreenTest.testEnabled) {
 				return CPResultsScreenTest.timeValue;
 			} else {
-				return InstanceManager.GetSceneController<GameSceneController>().elapsedSeconds;
+				return InstanceManager.gameSceneControllerBase.elapsedSeconds;
 			}
 		}
 	}

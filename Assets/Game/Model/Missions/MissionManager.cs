@@ -102,7 +102,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	private void Update() 
 	{
-		bool gaming = InstanceManager.GetSceneController<GameSceneController>() != null;
+		bool gaming = InstanceManager.gameSceneController != null;
 		if(m_user != null) m_user.userMissions.CheckActivation(!gaming);
 
 		// Propagate to registered listeners

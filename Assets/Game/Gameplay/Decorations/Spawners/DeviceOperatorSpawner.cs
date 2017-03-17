@@ -62,7 +62,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 
 		m_respawnTime = -1;
 
-		m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
+		m_gameSceneController = InstanceManager.gameSceneControllerBase;
 		
 		PoolManager.CreatePool(m_entityPrefabStr, IEntity.EntityPrefabsPath + m_entityPrefabStr, (int)GetMaxEntities(), true);        
     }

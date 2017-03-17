@@ -254,7 +254,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		// Multipliers
 		instance.SetScoreMultiplier(0);
 
-		instance.m_sceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
+		instance.m_sceneController = InstanceManager.gameSceneControllerBase;
 		instance.ParseSurvivalBonus( InstanceManager.player.data.tierDef.sku );
 
 		instance.m_isHighScore = false;

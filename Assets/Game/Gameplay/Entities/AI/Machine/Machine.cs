@@ -532,9 +532,10 @@ namespace AI {
 
 
 		public void ReceiveDamage(float _damage) {
-			if (!IsDead()) {
+			if (!IsDead()) {				
 				m_entity.Damage(_damage);
 				if (IsDead()) {
+					LeaveGroup();
 					if (m_enableMotion) m_motion.Stop();
 				}
 			}

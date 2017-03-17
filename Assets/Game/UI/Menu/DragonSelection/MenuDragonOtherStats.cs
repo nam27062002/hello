@@ -43,7 +43,7 @@ public class MenuDragonOtherStats : MonoBehaviour {
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
 		
 		// Do a first refresh
-		Refresh(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
+		Refresh(InstanceManager.menuSceneController.selectedDragon);
 	}
 	
 	/// <summary>

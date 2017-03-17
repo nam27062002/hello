@@ -60,7 +60,7 @@ public class PopupPause : MonoBehaviour {
 	/// </summary>
 	public void OnOpenPreAnimation() {
 		// Pause the game
-		GameSceneController gameController = InstanceManager.GetSceneController<GameSceneController>();
+		GameSceneController gameController = InstanceManager.gameSceneController;
 		if(gameController != null) {
 			gameController.PauseGame(true);
 		}
@@ -87,9 +87,8 @@ public class PopupPause : MonoBehaviour {
 	/// </summary>
 	public void OnClosePostAnimation() {
 		// Resume game
-		GameSceneController gameController = InstanceManager.GetSceneController<GameSceneController>();
-		if(gameController != null) {
-			gameController.PauseGame(false);
+		if(InstanceManager.gameSceneController != null) {
+			InstanceManager.gameSceneController.PauseGame(false);
 		}
 	}
 

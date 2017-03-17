@@ -126,7 +126,7 @@ public class MenuDragonPaginator : TabSystem {
 
 		// Find out and select initial tab
 		// Luckily, tier indexes match the order of the buttons, so we can do this really fast
-		string selectedSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
+		string selectedSku = InstanceManager.menuSceneController.selectedDragon;
 		DragonData selectedDragon = DragonManager.GetDragonData(selectedSku);
 		if(selectedDragon != null) {
 			GoToScreen((int)selectedDragon.tier, NavigationScreen.AnimType.NONE);
@@ -156,8 +156,7 @@ public class MenuDragonPaginator : TabSystem {
 			// Does this dragon belong to the target tier?
 			if(DragonManager.dragonsByOrder[i].tier == _tier) {
 				// Yes!! Select it and return
-				MenuDragonScreenController screenController = InstanceManager.GetSceneController<MenuSceneController>().GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>();
-				screenController.dragonSelector.SelectItem(i);
+				InstanceManager.menuSceneController.dragonSelector.SelectItem(i);
 				return;
 			}
 		}

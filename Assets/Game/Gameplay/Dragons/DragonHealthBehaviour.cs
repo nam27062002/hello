@@ -58,7 +58,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	void Start() {
 		
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
-		m_gameController = InstanceManager.GetSceneController<GameSceneControllerBase>();
+		m_gameController = InstanceManager.gameSceneControllerBase;
 
 		// Shark related values
 		m_healthDrainPerSecond = m_dragon.data.def.GetAsFloat("healthDrain");

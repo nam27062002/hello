@@ -156,7 +156,7 @@ public class IncubatorTutorial : MonoBehaviour {
 	/// <param name="_event">Event data.</param>
 	public void OnScreenChanged(NavigationScreenSystem.ScreenChangedEventData _event) {
 		// Only if it comes from the main screen navigation system
-		if(_event.dispatcher != InstanceManager.GetSceneController<MenuSceneController>().screensController) return;
+		if(_event.dispatcher != InstanceManager.menuSceneController.screensController) return;
 
 		// If leaving the incubator screen, stop the tutorial
 		if(_event.toScreenIdx != (int)MenuScreens.DRAGON_SELECTION) {

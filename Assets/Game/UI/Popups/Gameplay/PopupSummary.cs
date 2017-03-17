@@ -70,8 +70,7 @@ public class PopupSummary : MonoBehaviour {
 		scoreAnimator.SetValue(0, 0);
 		
 		// Set time - format to MM:SS
-		GameSceneController game = InstanceManager.GetSceneController<GameSceneController>();
-		timeLabel.text = TimeUtils.FormatTime(game.elapsedSeconds, TimeUtils.EFormat.ABBREVIATIONS, 2, TimeUtils.EPrecision.MINUTES);
+		timeLabel.text = TimeUtils.FormatTime(InstanceManager.gameSceneControllerBase.elapsedSeconds, TimeUtils.EFormat.ABBREVIATIONS, 2, TimeUtils.EPrecision.MINUTES);
 		
 		// Set initial coins
 		coinsAnimator.SetValue(0, 0);

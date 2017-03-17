@@ -56,7 +56,7 @@ public class GoalsScreenChestTooltip : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Get anchor ref
-		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+		MenuSceneController menuController = InstanceManager.menuSceneController;
 		MenuScreenScene scene = menuController.screensController.GetScene((int)MenuScreens.GOALS);
 		GoalsSceneController goalScene = scene.GetComponent<GoalsSceneController>();
 		m_3dAnchor = goalScene.chestSlots[m_chestIdx].uiAnchor;
