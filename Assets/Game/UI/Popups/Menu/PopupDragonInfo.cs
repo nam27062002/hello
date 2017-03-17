@@ -56,7 +56,8 @@ public class PopupDragonInfo : MonoBehaviour {
 	// Scrolling
 	[Separator("Scrolling")]
 	[SerializeField] private GameObject m_panel = null;
-	[SerializeField] private GameObject m_arrows = null;
+	[SerializeField] private GameObject m_arrowPrevious = null;
+	[SerializeField] private GameObject m_arrowNext = null;
 	[SerializeField] private PopupDragonInfoScroller m_scroller = null;
 	[SerializeField] private float m_scrollAnimOffset = 1000f;
 	[SerializeField] private float m_scrollAnimDuration = 0.25f;
@@ -165,9 +166,6 @@ public class PopupDragonInfo : MonoBehaviour {
 			// Select target def
 			m_scroller.SelectItem(_dragonData);
 
-			// Set arrows visibility
-			m_arrows.SetActive(m_scroller.items.Count > 1);	// At least 2 dragons
-
 			// Restore selection change events
 			m_scroller.enableEvents = true;
 		}
@@ -216,6 +214,10 @@ public class PopupDragonInfo : MonoBehaviour {
 			// Store new tier
 			m_loadedTier = dragonData.tier;
 		}
+
+		// Arrows visibility
+		m_arrowNext.SetActive(m_scroller.selectedIdx < m_scroller.items.Count - 1);	// Hide for last item in the list
+		m_arrowPrevious.SetActive(m_scroller.selectedIdx > 0);	// Hide for first item in the list
 	}
 
 	/// <summary>

@@ -61,7 +61,7 @@ public class HUDTime : MonoBehaviour {
 	/// </summary>
 	private void UpdateTime() {
 
-		long elapsedSeconds = (long)InstanceManager.GetSceneController<GameSceneControllerBase>().elapsedSeconds;
+		long elapsedSeconds = (long)InstanceManager.gameSceneControllerBase.elapsedSeconds;
 		if(elapsedSeconds != m_lastSecondsPrinted) {		
 			// Do it!
 			// Both for game and level editor

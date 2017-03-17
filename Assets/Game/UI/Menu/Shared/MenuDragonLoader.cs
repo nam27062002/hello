@@ -162,7 +162,7 @@ public class MenuDragonLoader : MonoBehaviour {
 				// Toggle pets
 				DragonEquip equip = m_dragonInstance.GetComponent<DragonEquip>();
 				if(equip != null) {
-					equip.TogglePets(m_showPets);
+					equip.TogglePets(m_showPets, false);
 				}
 
 				// Remove fresnel if required
@@ -183,7 +183,7 @@ public class MenuDragonLoader : MonoBehaviour {
 		// Load different dragons based on mode
 		switch(m_mode) {
 			case Mode.CURRENT_DRAGON:	LoadDragon(UsersManager.currentUser.currentDragon);	break;
-			case Mode.SELECTED_DRAGON:	LoadDragon(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);	break;
+			case Mode.SELECTED_DRAGON:	LoadDragon(InstanceManager.menuSceneController.selectedDragon);	break;
 			case Mode.MANUAL:			LoadDragon(m_dragonSku);	break;
 		}
 	}

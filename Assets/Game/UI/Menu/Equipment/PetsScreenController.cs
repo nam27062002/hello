@@ -147,7 +147,7 @@ public class PetsScreenController : MonoBehaviour {
 		this.gameObject.SetActive(true);
 
 		// Store reference to target dragon data for faster access
-		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+		MenuSceneController menuController = InstanceManager.menuSceneController;
 		m_dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 
 		// Initialize all tabs one by one
@@ -161,7 +161,7 @@ public class PetsScreenController : MonoBehaviour {
 			m_slotInfos = this.GetComponentsInChildren<PetSlotInfo>();
 		}
 		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.PETS);
-		MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller3D>().GetDragonPreview(m_dragonData.def.sku);
+		MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller>().GetDragonPreview(m_dragonData.def.sku);
 		for(int i = 0; i < m_slotInfos.Length; i++) {
 			m_slotInfos[i].Init(i, dragonPreview);
 		}

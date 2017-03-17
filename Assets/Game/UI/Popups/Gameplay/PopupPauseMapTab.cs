@@ -51,6 +51,11 @@ public class PopupPauseMapTab : MonoBehaviour {
 	// Internal
 	private DefinitionNode m_def = null;
 
+	// Cache some data
+	private int m_pricePC = 0;
+	private int m_priceSC = 0;
+	private bool m_isMaxed = false;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -69,7 +74,8 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		Refresh();
+		RefreshLockIcon();
+		RefreshInfoSection();
 	}
 
 	/// <summary>
@@ -97,36 +103,39 @@ public class PopupPauseMapTab : MonoBehaviour {
 		// Get current upgrade definition and store it
 		m_def = DefinitionsManager.SharedInstance.GetDefinition("map_upgrade_" + UsersManager.currentUser.mapLevel);
 		Debug.Assert(m_def != null, "Map Upgrade definition for level " + UsersManager.currentUser.mapLevel + " wasn't found!", this);
+
+		// Cache some data
+		m_priceSC = m_def.GetAsInt("upgradePriceSC");
+		m_pricePC = m_def.GetAsInt("upgradePriceHC");
+		m_isMaxed = (m_priceSC <= 0 && m_pricePC <= 0);	// If no upgrades are available for purchase, map is maxed out
 	}
 
 	/// <summary>
-	/// Refresh the pill with info of the current map upgrade.
+	/// Refresh lock icon.
 	/// </summary>
-	public void Refresh() {
+	private void RefreshLockIcon() {
 		// Skip if definition not valid
 		if(m_def == null) return;
 
-		// Aux vars
-		int mapLevel = UsersManager.currentUser.mapLevel;
-		int priceSC = m_def.GetAsInt("upgradePriceSC");
-		int pricePC = m_def.GetAsInt("upgradePriceHC");
-		bool isMaxed = (priceSC <= 0 && pricePC <= 0);	// If no upgrades are available for purchase, map is maxed out
-
 		// Lock icon
-		m_lockGroupAnim.Set(mapLevel <= 0);
+		m_lockGroupAnim.Set(UsersManager.currentUser.mapLevel <= 0);
+	}
 
-		// Upgrade info
+	/// <summary>
+	/// Refresh info section.
+	/// </summary>
+	private void RefreshInfoSection() {
 		m_upgradeInfoText.Localize(m_def.Get("tidDesc"));
-		m_upgradeAreaAnim.Set(!isMaxed);
-		m_infoAreaAnim.Set(isMaxed);
-		if(!isMaxed) {
+		m_upgradeAreaAnim.Set(!m_isMaxed);
+		m_infoAreaAnim.Set(m_isMaxed);
+		if(!m_isMaxed) {
 			// Price tags
-			m_scPriceText.text = UIConstants.GetIconString(priceSC, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
-			m_pcPriceText.text = UIConstants.GetIconString(pricePC, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+			m_scPriceText.text = UIConstants.GetIconString(m_priceSC, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
+			m_pcPriceText.text = UIConstants.GetIconString(m_pricePC, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
 
 			// Buttons visibility
-			m_scButtonAnim.Set(priceSC > 0 && pricePC <= 0);
-			m_pcButtonAnim.Set(pricePC > 0);	// Regardless of SC price
+			m_scButtonAnim.Set(m_priceSC > 0 && m_pricePC <= 0);
+			m_pcButtonAnim.Set(m_pricePC > 0);	// Regardless of SC price
 		}
 	}
 
@@ -191,7 +200,7 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// <param name="_newLevel">New map level.</param>
 	public void OnMapUpgraded(int _newLevel) {
 		// Aux vars
-		float refreshDelay = 0.15f;
+		float lockRefreshDelay = 0.15f;
 
 		// Get new map definition
 		UpdateDefinition();
@@ -200,7 +209,7 @@ public class PopupPauseMapTab : MonoBehaviour {
 		if(_newLevel == 1) {
 			// Launch unlock anim
 			m_lockIconAnim.SetTrigger("unlock");
-			refreshDelay = 1.3f;	// Longer delay
+			lockRefreshDelay = 1.3f;	// Longer delay
 		}
 
 		// Trigger FX
@@ -208,8 +217,11 @@ public class PopupPauseMapTab : MonoBehaviour {
 		m_upgradeFX.Clear();
 		m_upgradeFX.Play();
 
-		// Refresh info after some delay (to sync with animation)
-		DOVirtual.DelayedCall(refreshDelay, Refresh);
+		// Refresh info fast
+		DOVirtual.DelayedCall(0.15f, RefreshInfoSection);
+
+		// Refresh lock icon after some delay (to sync with animation)
+		DOVirtual.DelayedCall(lockRefreshDelay, RefreshLockIcon);
 	}
 
 	/// <summary>

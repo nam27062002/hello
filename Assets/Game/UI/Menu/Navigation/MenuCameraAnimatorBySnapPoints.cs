@@ -53,7 +53,7 @@ public class MenuCameraAnimatorBySnapPoints : MonoBehaviour {
 	private MenuScreensController menuScreensController {
 		get {
 			if(m_menuScreensController == null) {
-				m_menuScreensController = InstanceManager.GetSceneController<MenuSceneController>().screensController;
+				m_menuScreensController = InstanceManager.menuSceneController.screensController;
 			}
 			return m_menuScreensController;
 		}

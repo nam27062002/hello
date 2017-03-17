@@ -25,10 +25,11 @@ public class ShowHideAnimatorEditor : Editor {
 	// Info field
 	private static readonly string INFO = 
 		"- Tween type determines the \"show\" direction. \"hide\" will be the reversed tween.\n" +
-		"- To use CUSTOM, add as many DOTweenAnimation components as desired and link them to the corresponding arrays.\n" +
+		"- Use NONE to just activate/deactivate the gameObject.\n" +
 		"- Use IDLE to delay the instant show/hide of the object (for example when waiting for other animations to finish).\n" +
+		"- To use CUSTOM, add as many DOTweenAnimation components as desired and link them to the corresponding arrays.\n" +
+		"- To use ANIMATOR, an animator with the following triggers must be assigned: \"show\", \"hide\", \"instantShow\" and \"instantHide\".\n" +
 		"- Use the \"value\" parameter to tune the animation (e.g. offset for move tweens, scale factor for the scale tweens, initial alpha for fade tweens).\n" +
-		"- All tween-related parameters will be ignored if an animator is defined.\n" +
 		"- Talk to the programming team if you wish to add a different tween type or extra parameters.\n";
 
 	//------------------------------------------------------------------//
@@ -64,7 +65,25 @@ public class ShowHideAnimatorEditor : Editor {
 		serializedObject.Update();
 
 		// Animation type selector
-		DoProperty("m_tweenType");
+		// Add extra comments in some special types
+		SerializedProperty p = DoProperty("m_tweenType");
+		switch((ShowHideAnimator.TweenType)p.enumValueIndex) {
+			case ShowHideAnimator.TweenType.NONE: {
+				EditorGUILayout.LabelField("Use NONE to just activate/deactivate the gameObject", CustomEditorStyles.commentLabelLeft);
+			} break;
+
+			case ShowHideAnimator.TweenType.CUSTOM: {
+				EditorGUILayout.LabelField("To use CUSTOM, add as many DOTweenAnimation components as desired and link them to the corresponding arrays.", CustomEditorStyles.commentLabelLeft);
+			} break;
+
+			case ShowHideAnimator.TweenType.ANIMATOR: {
+				EditorGUILayout.LabelField("To use ANIMATOR, an animator with the following triggers must be assigned: \"show\", \"hide\", \"instantShow\" and \"instantHide\"", CustomEditorStyles.commentLabelLeft);
+			} break;
+
+			case ShowHideAnimator.TweenType.IDLE: {
+				EditorGUILayout.LabelField("Use IDLE to delay the instant show/hide of the object (for example when waiting for other animations to finish).", CustomEditorStyles.commentLabelLeft);
+			} break;
+		}
 
 		// Depending on select animation mode, show different setup parameters
 		EditorGUILayout.Space();
@@ -174,8 +193,9 @@ public class ShowHideAnimatorEditor : Editor {
 	//------------------------------------------------------------------//
 	// INTERNAL METHODS													//
 	//------------------------------------------------------------------//
-	private void DoProperty(string _id) {
+	private SerializedProperty DoProperty(string _id) {
 		SerializedProperty p = serializedObject.FindProperty(_id);
 		if(p != null) EditorGUILayout.PropertyField(p, true);
+		return p;
 	}
 }

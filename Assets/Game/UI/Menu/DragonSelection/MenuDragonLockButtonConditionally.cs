@@ -55,7 +55,7 @@ public class MenuDragonLockButtonConditionally : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Apply for the first time with currently selected dragon
-		Apply(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
+		Apply(InstanceManager.menuSceneController.selectedDragon);
 	}
 	
 	/// <summary>
@@ -116,7 +116,7 @@ public class MenuDragonLockButtonConditionally : MonoBehaviour {
 	/// <param name="_data">The data of the acquired dragon.</param>
 	public void OnDragonAcquired(DragonData _data) {
 		// It should be the selected dragon, but check anyway
-		if(_data.def.sku != InstanceManager.GetSceneController<MenuSceneController>().selectedDragon) {
+		if(_data.def.sku != InstanceManager.menuSceneController.selectedDragon) {
 			return;
 		}
 

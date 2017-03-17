@@ -81,7 +81,7 @@ public class MissionObjectiveSurviveTime : MissionObjective {
 	/// </summary>
 	private void OnUpdate() {
 		// Only if a game is running
-		GameSceneController game = InstanceManager.GetSceneController<GameSceneController>();
+		GameSceneController game = InstanceManager.gameSceneController;
 		if(game != null && game.state == GameSceneController.EStates.RUNNING) {
 			currentValue += Time.deltaTime;
 		}

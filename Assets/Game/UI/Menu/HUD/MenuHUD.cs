@@ -85,13 +85,13 @@ public class MenuHUD : MonoBehaviour {
 			if(InstanceManager.instance == null) return;
 
 			// 4. Menu ready?
-			MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+			MenuSceneController menuController = InstanceManager.menuSceneController;
 			if(menuController == null || menuController.screensController == null) return;
 
 			// Everything ok! Update visibility
 			// Toggle hud's visibility based on current menu screen
 			bool show = true;
-			switch((MenuScreens)menuController.screensController.currentScreenIdx) {
+			switch(menuController.screensController.currentMenuScreen) {
 				// Screens where we don't want the hud to be visible
 				case MenuScreens.PLAY: {
 					show = false;

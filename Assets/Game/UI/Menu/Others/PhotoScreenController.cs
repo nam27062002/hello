@@ -104,7 +104,7 @@ public class PhotoScreenController : MonoBehaviour {
 		}
 
 		// Hide HUD as well
-		InstanceManager.GetSceneController<MenuSceneController>().hud.gameObject.SetActive(false);
+		InstanceManager.menuSceneController.hud.gameObject.SetActive(false);
 
 		// Wait until the end of the frame so the "hide" is actually applied
 		yield return new WaitForEndOfFrame();
@@ -138,7 +138,7 @@ public class PhotoScreenController : MonoBehaviour {
 		}
 
 		// Restore HUD as well
-		InstanceManager.GetSceneController<MenuSceneController>().hud.gameObject.SetActive(true);
+		InstanceManager.menuSceneController.hud.gameObject.SetActive(true);
 
 		// Open "Share" popup
 		PopupPhotoShare popup = PopupManager.OpenPopupInstant(PopupPhotoShare.PATH).GetComponent<PopupPhotoShare>();
@@ -154,7 +154,7 @@ public class PhotoScreenController : MonoBehaviour {
 	/// <param name="_animator">The animator that triggered the event.</param>
 	public void OnShowPreAnimation(ShowHideAnimator _animator) {
 		// Aux vars
-		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+		MenuSceneController menuController = InstanceManager.menuSceneController;
 		DragonData dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 
 		// Initialize dragon info
@@ -164,7 +164,7 @@ public class PhotoScreenController : MonoBehaviour {
 
 		// Initialize drag controller with current dragon preview
 		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.PHOTO);
-		MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller3D>().GetDragonPreview(menuController.selectedDragon);
+		MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller>().GetDragonPreview(menuController.selectedDragon);
 		m_dragController.target = dragonPreview.transform;
 	}
 

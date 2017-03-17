@@ -54,7 +54,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 			SpawnerManager.instance.Register(this, true);
 
 			m_newCamera = Camera.main.GetComponent<GameCamera>();
-			m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
+			m_gameSceneController = InstanceManager.gameSceneControllerBase;
 
 			GameObject view = transform.FindChild("view").gameObject;
 			m_bounds = view.GetComponentInChildren<Renderer>().bounds;

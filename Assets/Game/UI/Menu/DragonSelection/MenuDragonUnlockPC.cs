@@ -42,7 +42,7 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
 		
 		// Do a first refresh
-		Refresh(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
+		Refresh(InstanceManager.menuSceneController.selectedDragon);
 	}
 	
 	/// <summary>
@@ -73,7 +73,7 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	{
 
 		// Unlock dragon
-		DragonData data = DragonManager.GetDragonData(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
+		DragonData data = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
 		long pricePC = data.def.GetAsLong("unlockPricePC");
 		if(UsersManager.currentUser.pc >= pricePC) {
 			UsersManager.currentUser.AddPC(-pricePC);

@@ -39,7 +39,7 @@ public class CollectibleEgg : MonoBehaviour {
 
 	[Space]
 	[SerializeField] private GameObject m_view = null;
-	[SerializeField] private GameObject m_mapMarker = null;
+	[SerializeField] private MapMarker m_mapMarker = null;
 
 	[Space]
 	[SerializeField] private ParticleSystem m_idleFX = null;
@@ -98,10 +98,11 @@ public class CollectibleEgg : MonoBehaviour {
 		GetComponent<Collider>().enabled = false;
 
 		// Disable map marker
-		if(m_mapMarker != null) m_mapMarker.SetActive(false);
+		if(m_mapMarker != null) m_mapMarker.showMarker = false;
 
 		// Launch FX
 		m_idleFX.Stop();
+		m_idleFX.gameObject.SetActive(false);	// [AOC] There seems to be some kind of bug where the particles stay on screen. Disable the game object to be 100% sure they are not visible.
 		m_collectFX.Play();
 
 		// Disable view after a delay

@@ -13,7 +13,8 @@ namespace AI {
 			Latching,
 			Locked,
 			Panic,
-			FreeFall
+			FreeFall,
+			StandUp
 		};
 
 		private enum UpVector {
@@ -43,6 +44,7 @@ namespace AI {
 		private Transform m_eye; // for aiming purpose
 		private Transform m_mouth;
 		private Transform m_groundSensor;
+		private PreyAnimationEvents m_animEvents;
 
 		private bool m_hasEye;
 
@@ -79,6 +81,7 @@ namespace AI {
 
 		private float m_latchBlending = 0f;
 
+		private float m_timer;
 
 		private State m_state;
 		private State m_nextState;
@@ -104,6 +107,11 @@ namespace AI {
 			m_groundSensor = m_machineTransform.FindChild("groundSensor");
 			if (m_groundSensor == null) {
 				m_groundSensor = m_machineTransform;
+			}
+
+			m_animEvents = m_pilot.FindComponentRecursive<PreyAnimationEvents>();
+			if (m_animEvents != null) { //TODO: should we remove this when the entity is disabled?
+				m_animEvents.onStandUp += new PreyAnimationEvents.OnStandUpDelegate(OnStandUp);
 			}
 
 			m_mouth = null;
@@ -151,7 +159,7 @@ namespace AI {
 		}
 
 		public void Stop() {
-			if (m_state == State.Free) {
+			if (m_state != State.FreeFall) {
 				m_velocity = Vector3.zero;
 				m_rbody.velocity = Vector3.zero;
 				m_rbody.angularVelocity = Vector3.zero;
@@ -195,6 +203,13 @@ namespace AI {
 
 				case State.FreeFall:
 					ExtendedUpdateFreeFall();
+					break;
+
+				case State.StandUp:
+					m_timer -= Time.deltaTime;
+					if (m_timer <= 0f) {
+						OnStandUp();
+					}
 					break;
 			}
 
@@ -307,17 +322,29 @@ namespace AI {
 			}
 		}
 
-		private void CheckState() {
-			bool cantMove = m_machine.GetSignal(Signals.Type.Biting | Signals.Type.Latching | Signals.Type.LockedInCage | Signals.Type.Panic | Signals.Type.FallDown);
-
-			if (!cantMove) {
+		private void OnStandUp() {
+			if (m_state == State.StandUp) {
 				m_nextState = State.Free;
-			} else {
-				if 		(m_machine.GetSignal(Signals.Type.Panic)) 		 m_nextState = State.Panic;
-				else if	(m_machine.GetSignal(Signals.Type.FallDown)) 	 m_nextState = State.FreeFall;
-				else if (m_machine.GetSignal(Signals.Type.Biting)) 		 m_nextState = State.Biting;
-				else if (m_machine.GetSignal(Signals.Type.Latching)) 	 m_nextState = State.Latching;
-				else if (m_machine.GetSignal(Signals.Type.LockedInCage)) m_nextState = State.Locked;
+			}
+		}
+
+		private void CheckState() {
+			if (m_state != State.StandUp) {
+				bool cantMove = m_machine.GetSignal(Signals.Type.Biting | Signals.Type.Latching | Signals.Type.LockedInCage | Signals.Type.Panic | Signals.Type.FallDown);
+
+				if (!cantMove) {
+					if (m_state == State.FreeFall) {
+						m_nextState = State.StandUp;
+					} else {
+						m_nextState = State.Free;
+					}
+				} else {
+					if 		(m_machine.GetSignal(Signals.Type.Panic)) 		 m_nextState = State.Panic;
+					else if	(m_machine.GetSignal(Signals.Type.FallDown)) 	 m_nextState = State.FreeFall;
+					else if (m_machine.GetSignal(Signals.Type.Biting)) 		 m_nextState = State.Biting;
+					else if (m_machine.GetSignal(Signals.Type.Latching)) 	 m_nextState = State.Latching;
+					else if (m_machine.GetSignal(Signals.Type.LockedInCage)) m_nextState = State.Locked;
+				}
 			}
 		}
 
@@ -345,13 +372,15 @@ namespace AI {
 					break;
 
 				case State.FreeFall:					
-					Stop();
 					m_viewControl.Falling(false);
 					break;
 			}
 
+			// change state
+			m_state = m_nextState;
+
 			// Enter next state
-			switch (m_nextState) {
+			switch (m_state) {
 				case State.Free:
 					break;
 
@@ -373,9 +402,12 @@ namespace AI {
 				case State.FreeFall:
 					m_viewControl.Falling(true);
 					break;
-			}
 
-			m_state = m_nextState;
+				case State.StandUp:
+					Stop();
+					m_timer = 2f; // fallback timer, if we don't have an event in our animations
+					break;
+			}
 		}
 
 		//--------------------------------------------------

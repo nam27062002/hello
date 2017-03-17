@@ -71,7 +71,7 @@ public class AmbientManager : MonoBehaviour
 	{
 		if ( Application.isPlaying )
 		{
-			while( !InstanceManager.GetSceneController<GameSceneControllerBase>().IsLevelLoaded())
+			while( !InstanceManager.gameSceneControllerBase.IsLevelLoaded())
 			{
 				yield return null;
 			}

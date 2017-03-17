@@ -28,17 +28,34 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 		set { if(instance != null) instance.m_sceneController = value; }
 	}
 
-	// Only during game scene, reference to the dragon
-	private DragonPlayer m_player = null;	// DEPRECATED
-	public static DragonPlayer player {
-		get { return instance.m_player; }
-		set { if(instance != null) instance.m_player = value; }
-	}
-
 	private MusicController m_musicController = null;
 	public static MusicController musicController{
 		get { return instance.m_musicController; }
 		set { if(instance != null) instance.m_musicController = value; }
+	}
+
+	//------------------------------------------------------------------//
+	// ONLY IN MENU SCENE												//
+	//------------------------------------------------------------------//
+	public static MenuSceneController menuSceneController {
+		get { return instance.m_sceneController as MenuSceneController; }
+	}
+
+	//------------------------------------------------------------------//
+	// ONLY IN GAME SCENE												//
+	//------------------------------------------------------------------//
+	public static GameSceneControllerBase gameSceneControllerBase {
+		get { return instance.m_sceneController as GameSceneControllerBase; }
+	}
+
+	public static GameSceneController gameSceneController {
+		get { return instance.m_sceneController as GameSceneController; }
+	}
+
+	private DragonPlayer m_player = null;	// DEPRECATED
+	public static DragonPlayer player {
+		get { return instance.m_player; }
+		set { if(instance != null) instance.m_player = value; }
 	}
 
 	private GameCamera m_gameCamera = null;
@@ -78,13 +95,5 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 	//------------------------------------------------------------------//
 	// PUBLIC STATIC METHODS											//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Obtain the current scene controller casted to the desired type.
-	/// </summary>
-	/// <returns>The casted scene controller. <c>null</c> if the current scene controller is not of the requested type.</returns>
-	/// <typeparam name="T">The actual type of the current scene controller. Must inherit from SceneController.</typeparam>
-	public static T GetSceneController<T>() where T : SceneController {
-		return sceneController as T;
-	}
 }
 

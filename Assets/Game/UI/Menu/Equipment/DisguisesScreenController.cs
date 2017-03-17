@@ -126,7 +126,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		/*Canvas canvas = GetComponentInParent<Canvas>();
 		Vector3 viewportPos = canvas.worldCamera.WorldToViewportPoint(m_dragonUIPos.position);
 
-		Camera camera = InstanceManager.GetSceneController<MenuSceneController>().screensController.camera;
+		Camera camera = InstanceManager.menuSceneController.screensController.camera;
 		viewportPos.z = m_depth;
 		m_previewAnchor.position = camera.ViewportToWorldPoint(viewportPos);
 		m_dragonRotationArrowsPos.position = camera.ViewportToWorldPoint(viewportPos) + Vector3.down;*/
@@ -165,7 +165,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// </summary>
 	public void Initialize() {
 		// Aux vars
-		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+		MenuSceneController menuController = InstanceManager.menuSceneController;
 
 		// Store current dragon
 		m_dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
@@ -176,7 +176,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Find the 3D dragon preview
 		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.DISGUISES);
 		if(scene3D != null) {
-			MenuDragonPreview preview = scene3D.GetComponent<MenuDragonScroller3D>().GetDragonPreview(m_dragonData.def.sku);
+			MenuDragonPreview preview = scene3D.GetComponent<MenuDragonScroller>().GetDragonPreview(m_dragonData.def.sku);
 			if(preview != null) m_previewAnchor = preview.transform;
 			//m_dragonRotationArrowsPos = scene.transform.FindChild("Arrows");
 		}
@@ -267,6 +267,12 @@ public class DisguisesScreenController : MonoBehaviour {
 	public void OnShowPreAnimation(ShowHideAnimator _animator) {
 		// Refresh with initial data!
 		Initialize();
+
+		// Hide pets on the current dragon preview
+		DragonEquip equip = InstanceManager.menuSceneController.selectedDragonPreview.GetComponent<DragonEquip>();
+		if(equip != null) {
+			equip.TogglePets(false, true);
+		}
 	}
 
 	/// <summary>
@@ -276,6 +282,12 @@ public class DisguisesScreenController : MonoBehaviour {
 	public void OnHidePostAnimation(ShowHideAnimator _animator) {
 		// Make sure screens are properly finalized
 		Finalize();
+
+		// Restore pets on the current dragon preview
+		DragonEquip equip = InstanceManager.menuSceneController.selectedDragonPreview.GetComponent<DragonEquip>();
+		if(equip != null) {
+			equip.TogglePets(true, true);
+		}
 	}
 
 	/// <summary>

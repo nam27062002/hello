@@ -180,7 +180,7 @@ public class Spawner : AbstractSpawner {
 
 		// Get external references
 		// Spawners are only used in the game and level editor scenes, so we can be sure that game scene controller will be present
-		m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
+		m_gameSceneController = InstanceManager.gameSceneControllerBase;
 
 		m_area = GetArea();
 

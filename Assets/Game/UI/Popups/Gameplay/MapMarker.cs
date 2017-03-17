@@ -37,6 +37,16 @@ public class MapMarker : MonoBehaviour {
 	[Space]
 	[SerializeField] private bool m_rotateWithObject = true;
 
+	// Whether to show the marker or not (i.e. set to false when egg has been collected)
+	private bool m_showMarker = true;
+	public bool showMarker {
+		get { return m_showMarker; }
+		set {
+			m_showMarker = value;
+			UpdateMarker();
+		}
+	}
+
 	// Store some original properties of the marker
 	private Vector3 m_originalScale = Vector3.one;
 
@@ -95,13 +105,13 @@ public class MapMarker : MonoBehaviour {
 		// Check visibility based on marker type and level
 		switch(m_type) {
 			case Type.DECO: {
-				this.gameObject.SetActive(UsersManager.currentUser.mapLevel > 0);
+				this.gameObject.SetActive(showMarker && UsersManager.currentUser.mapLevel > 0);
 			} break;
 
 			case Type.CHEST:
 			case Type.EGG:
 			case Type.LETTER: {
-				this.gameObject.SetActive(UsersManager.currentUser.mapLevel > 1);
+				this.gameObject.SetActive(showMarker && UsersManager.currentUser.mapLevel > 1);
 			} break;
 		}
 

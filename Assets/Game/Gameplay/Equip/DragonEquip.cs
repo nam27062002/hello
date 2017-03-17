@@ -238,7 +238,7 @@ public class DragonEquip : MonoBehaviour {
 			// Get equipable object!
 			m_attachPoints[attachPointIdx].EquipPet(newInstance.GetComponent<Equipable>());
 
-			// Apply pets visibility
+			// Apply current pets visibility
 			m_attachPoints[attachPointIdx].item.gameObject.SetActive(m_showPets);
 		}
 	}
@@ -247,7 +247,8 @@ public class DragonEquip : MonoBehaviour {
 	/// Show/Hide the pets. Useful specially on the menus.
 	/// </summary>
 	/// <param name="_show">Whether to show or not the pets.</param>
-	public void TogglePets(bool _show) {
+	/// <param name="_animate">Animation or instant?</param>
+	public void TogglePets(bool _show, bool _animate) {
 		// Store value
 		m_showPets = _show;
 
@@ -255,7 +256,36 @@ public class DragonEquip : MonoBehaviour {
 		for(int i = (int)Equipable.AttachPoint.Pet_1; i < (int)Equipable.AttachPoint.Pet_5; i++) {
 			if(m_attachPoints[i] != null) {
 				if(m_attachPoints[i].item != null) {
-					m_attachPoints[i].item.gameObject.SetActive(m_showPets);
+					GameObject item = m_attachPoints[i].gameObject;
+					if(_animate) {
+						// Launch the right animation
+						/*MenuPetPreview pet = m_attachPoints[i].item.GetComponent<MenuPetPreview>();
+						if(_show) {
+							m_attachPoints[i].item.gameObject.SetActive(true);
+							pet.SetAnim(MenuPetPreview.Anim.IN);
+						} else {
+							// Program a delayed disable of the item (to give some time to see the anim)
+							pet.SetAnim(MenuPetPreview.Anim.OUT);
+							DOVirtual.DelayedCall(0.3f, () => { pet.gameObject.SetActive(false); }, false);
+						}*/
+
+						// Animation is too slow, better do it with a tween
+						// [AOC] TODO!! Add some particles?
+						DOTween.Kill(item, true);
+						Sequence seq = DOTween.Sequence();
+						if(_show) {
+							item.SetActive(true);
+							item.transform.localScale = Vector3.zero;
+							seq.Append(item.transform.DOScale(1f, 0.15f).SetEase(Ease.OutBack));
+						} else {
+							seq.Append(item.transform.DOScale(0f, 0.15f).SetEase(Ease.InBack));
+							seq.AppendCallback(() => item.SetActive(false));
+						}
+						seq.SetTarget(item);
+						seq.Play();
+					} else {
+						item.SetActive(m_showPets);
+					}
 				}
 			}
 		}

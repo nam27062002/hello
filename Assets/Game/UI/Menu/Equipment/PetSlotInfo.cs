@@ -177,7 +177,7 @@ public class PetSlotInfo : MonoBehaviour {
 		if(m_dragonData == null) return;
 
 		// Select equipped pet (tell the pets screen controller to do so)
-		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+		MenuSceneController menuController = InstanceManager.menuSceneController;
 		PetsScreenController petsScreen = menuController.GetScreen(MenuScreens.PETS).GetComponent<PetsScreenController>();
 		petsScreen.ScrollToPet(m_dragonData.pets[m_slotIdx]);
 	}
