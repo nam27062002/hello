@@ -42,7 +42,7 @@ public class HUDSpeed : MonoBehaviour {
 
 	IEnumerator Start() 
 	{
-		while( !InstanceManager.gameSceneController.IsLevelLoaded())
+		while( !InstanceManager.gameSceneControllerBase.IsLevelLoaded())
 		{
 			yield return null;
 		}
