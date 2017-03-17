@@ -69,12 +69,12 @@ public class MenuSceneController : SceneController {
 	}
 
 	// Dragon scroller - responsible to scroll the camera through the dragons
-	private MenuDragonScroller3D m_dragonScroller = null;
-	public MenuDragonScroller3D dragonScroller {
+	private MenuDragonScroller m_dragonScroller = null;
+	public MenuDragonScroller dragonScroller {
 		get {
 			if(m_dragonScroller == null) {
 				// Use FindComponentRecursive rather than GetComponentInChildren to include inactive objects in the search
-				m_dragonScroller = GetScreenScene(MenuScreens.DRAGON_SELECTION).FindComponentRecursive<MenuDragonScroller3D>();
+				m_dragonScroller = GetScreenScene(MenuScreens.DRAGON_SELECTION).FindComponentRecursive<MenuDragonScroller>();
 			}
 			return m_dragonScroller;
 		}

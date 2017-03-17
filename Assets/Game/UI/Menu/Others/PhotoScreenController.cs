@@ -164,7 +164,7 @@ public class PhotoScreenController : MonoBehaviour {
 
 		// Initialize drag controller with current dragon preview
 		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.PHOTO);
-		MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller3D>().GetDragonPreview(menuController.selectedDragon);
+		MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller>().GetDragonPreview(menuController.selectedDragon);
 		m_dragController.target = dragonPreview.transform;
 	}
 

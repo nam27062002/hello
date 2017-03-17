@@ -176,7 +176,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Find the 3D dragon preview
 		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.DISGUISES);
 		if(scene3D != null) {
-			MenuDragonPreview preview = scene3D.GetComponent<MenuDragonScroller3D>().GetDragonPreview(m_dragonData.def.sku);
+			MenuDragonPreview preview = scene3D.GetComponent<MenuDragonScroller>().GetDragonPreview(m_dragonData.def.sku);
 			if(preview != null) m_previewAnchor = preview.transform;
 			//m_dragonRotationArrowsPos = scene.transform.FindChild("Arrows");
 		}

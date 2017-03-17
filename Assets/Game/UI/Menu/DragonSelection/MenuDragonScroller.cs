@@ -19,7 +19,7 @@ using System.Collections.Generic;
 /// Show the currently selected dragon in the menu screen.
 /// </summary>
 [RequireComponent(typeof(MenuCameraAnimatorByCurves))]
-public class MenuDragonScroller3D : MonoBehaviour {
+public class MenuDragonScroller : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//

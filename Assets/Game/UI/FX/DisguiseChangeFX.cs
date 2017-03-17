@@ -30,7 +30,7 @@ public class DisguiseChangeFX : MonoBehaviour {
 	private GameObject m_fxInstance = null;
 
 	// Internal references
-	private MenuDragonScroller3D m_dragonScroller = null;
+	private MenuDragonScroller m_dragonScroller = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -98,7 +98,7 @@ public class DisguiseChangeFX : MonoBehaviour {
 			// If dragon scroller hasn't yet been found, look for it
 			if(m_dragonScroller == null) {
 				MenuScreenScene scene3D = InstanceManager.menuSceneController.GetScreenScene(MenuScreens.DISGUISES);
-				m_dragonScroller = scene3D.GetComponent<MenuDragonScroller3D>();
+				m_dragonScroller = scene3D.GetComponent<MenuDragonScroller>();
 			}
 
 			// Apply scale according to target dragon's preview

@@ -45,7 +45,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	[SerializeField] private CanvasGroup m_uiCanvasGroup = null;
 
 	// Internal references
-	private MenuDragonScroller3D m_scroller = null;
+	private MenuDragonScroller m_scroller = null;
 
 	// Internal logic
 	private DeltaTimer m_timer = new DeltaTimer();
