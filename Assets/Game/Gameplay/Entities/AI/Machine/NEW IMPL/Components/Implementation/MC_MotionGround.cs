@@ -28,6 +28,7 @@ namespace AI {
 		public Vector3 groundDirection { get { return m_groundDirection; } }
 
 		private bool m_onGround;
+		private bool m_colliderOnGround;
 		private float m_heightFromGround;
 
 		private SubState m_subState;
@@ -49,14 +50,6 @@ namespace AI {
 
 			m_subState = SubState.Idle;
 			m_nextSubState = SubState.Idle;
-		}
-
-		public override void OnCollisionGroundEnter() {
-			m_onGround = true;
-		}
-
-		public override void OnCollisionGroundExit() {
-			m_onGround = false;
 		}
 
 		protected override void ExtendedUpdate() {
@@ -148,15 +141,8 @@ namespace AI {
 			Vector3 normal = Vector3.up;
 			Vector3 pos = position + (m_upVector * 3f);
 
-			if (m_subState == SubState.Move) {
-				// we'll check forward
-				Vector3 dir = m_direction;
-				dir.z = 0f;
-				pos += dir * 0.5f;
-			}
-
-			RaycastHit hit;
-			if (Physics.SphereCast(pos, 1f, -m_upVector, out hit, 6f, GROUND_MASK)) {				
+			RaycastHit hit;		
+			if (Physics.Raycast(pos, -m_upVector, out hit, 6f, GROUND_MASK)) {
 				normal = hit.normal;
 				m_heightFromGround = hit.distance - 3f;
 			} else {

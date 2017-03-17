@@ -83,11 +83,12 @@ MonoBehaviour:
   m_blendSpeedFactor: 1
   m_energy: 10
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: af593a7751e074e42b7091f92be97d92, type: 2}
   m_railSeparation:
     min: 2
     max: 2.75
-  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":3},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":7,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.5,"actions":{"panic":{"id":0,"active":true},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":1.5,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":3},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":7,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.5,"actions":{"panic":{"id":0,"active":true},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"hide":{"id":3,"active":false},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":1.5,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
   m_databaseKey: PF_Villager01_NEW
 --- !u!114 &11449904
 MonoBehaviour:
@@ -137,9 +138,9 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles:
-  - name: PS_Blood_Explosion_Medium
-    path: Blood
+  m_onEatenParticle:
+    name: 
+    path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenFrozenParticle:
     name: 
@@ -178,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: villager_01
+  m_sku: Villager01
   m_dieOutsideFrustum: 1
 --- !u!1001 &100100000
 Prefab:
@@ -1226,6 +1227,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Spine1
   m_parentRoot: {fileID: 475722}
+  m_worldPositionStays: 1
 --- !u!114 &114000012861185118
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1239,6 +1241,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Pelvis
   m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
 --- !u!114 &114000013918191104
 MonoBehaviour:
   m_ObjectHideFlags: 1
