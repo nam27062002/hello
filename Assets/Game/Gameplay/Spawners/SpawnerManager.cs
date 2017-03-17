@@ -381,7 +381,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		for (int i = 0; i < m_spawners.Count; i++) {
 			m_spawners[i].Clear();
 		}
-		m_selectedSpawners.Clear();        
+		m_selectedSpawners.Clear();
     }
 
 	//------------------------------------------------------------------------//
@@ -431,8 +431,11 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		m_newCamera = gameCamera.GetComponent<GameCamera>();
         if (m_newCamera != null)        
             m_newCameraTransform = m_newCamera.transform;
+		OnAreaEnter();
+	}
 
-        // Create and populate QuadTree
+	private void OnAreaEnter() {
+		// Create and populate QuadTree
         // Get map bounds!
         Rect bounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
 		LevelData data = LevelManager.currentLevelData;
@@ -442,10 +445,6 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		m_spawnersTreeNear = new QuadTree<ISpawner>(bounds.x, bounds.y, bounds.width, bounds.height);
 		m_spawnersTreeFar = new QuadTree<ISpawner>(bounds.x, bounds.y, bounds.width, bounds.height);
 
-		OnAreaEnter();
-	}
-
-	private void OnAreaEnter() {
 		for(int i = 0; i < m_spawners.Count; i++) {
 			if (m_spawners[i].transform.position.z < FAR_LAYER_Z) {
 				m_spawnersTreeNear.Insert(m_spawners[i]);
@@ -472,9 +471,19 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		EnableSpawners();
 	}
 
+
 	private void OnAreaExit() {
 		m_selectedSpawners.Clear();
+		for( int i = m_spawners.Count-1; i>=0; i-- )
+		{
+			ISpawner _sp = m_spawners[i];
+			Unregister( _sp, false);
+			_sp.ForceRemoveEntities();
+		}
 		m_spawners.Clear();
+
+		m_spawnersTreeNear = null;
+		m_spawnersTreeFar = null;
 
 		DisableSpawners();
 	}

@@ -270,9 +270,21 @@ public class GameSceneController : GameSceneControllerBase {
 						}break;
 						case SwitchingAreaSate.ACTIVATING_SCENES:
 						{
-							PoolManager.Rebuild();
-							Messenger.Broadcast(GameEvents.GAME_AREA_ENTER);
-							m_switchingArea = false;
+							bool done = true;
+							if ( m_switchingAreaTasks != null )
+							{
+								for( int i = 0; i<m_switchingAreaTasks.Count && done; i++ )	
+								{
+									done = m_switchingAreaTasks[i].isDone;
+								}
+							}
+
+							if ( done )
+							{
+								PoolManager.Rebuild();
+								Messenger.Broadcast(GameEvents.GAME_AREA_ENTER);
+								m_switchingArea = false;
+							}
 						}break;
 					}
 				}
@@ -539,7 +551,7 @@ public class GameSceneController : GameSceneControllerBase {
 
 	public void SwitchArea( string _nextArea )
     {
-    	if ( LevelManager.currentArea != _nextArea )
+    	if ( LevelManager.currentArea != _nextArea && !m_switchingArea)
     	{
 			Messenger.Broadcast(GameEvents.GAME_AREA_EXIT);
 			m_switchingArea = true;
