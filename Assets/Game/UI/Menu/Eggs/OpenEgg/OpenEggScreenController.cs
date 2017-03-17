@@ -152,7 +152,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Hide HUD and buttons
 		bool animate = this.gameObject.activeInHierarchy;	// If the screen is not visible, don't animate
-		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceHide(animate);
+		InstanceManager.menuSceneController.hud.GetComponent<ShowHideAnimator>().ForceHide(animate);
 		m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide(animate);
 		m_finalPanel.ForceHide(animate);
 
@@ -182,7 +182,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	private void ValidateReferences() {
 		// 3d scene for this screen
 		if(m_scene == null) {
-			MenuSceneController sceneController = InstanceManager.GetSceneController<MenuSceneController>();
+			MenuSceneController sceneController = InstanceManager.menuSceneController;
 			Debug.Assert(sceneController != null, "This component must be only used in the menu scene!");
 			MenuScreenScene menuScene = sceneController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
 			if(menuScene != null) {
@@ -235,7 +235,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	private void LaunchRewardAnimation() {
 		// Show HUD
-		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();
+		InstanceManager.menuSceneController.hud.GetComponent<ShowHideAnimator>().Show();
 
 		// Aux vars
 		EggReward rewardData = m_scene.eggData.rewardData;
@@ -359,7 +359,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// <param name="_event">Event data.</param>
 	private void OnNavigationScreenChanged(NavigationScreenSystem.ScreenChangedEventData _event) {
 		// Only if it comes from the main screen navigation system
-		if(_event.dispatcher != InstanceManager.GetSceneController<MenuSceneController>().screensController) return;
+		if(_event.dispatcher != InstanceManager.menuSceneController.screensController) return;
 
 		// If leaving this screen, launch all the hide animations that are not automated
 		if(_event.fromScreenIdx == (int)MenuScreens.OPEN_EGG) {
@@ -370,7 +370,7 @@ public class OpenEggScreenController : MonoBehaviour {
 			if(m_scene != null) m_scene.Clear();
 
 			// Restore HUD
-			InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();
+			InstanceManager.menuSceneController.hud.GetComponent<ShowHideAnimator>().Show();
 		}
 
 		// If entering this screen, force some show/hide animations that conflict with automated ones

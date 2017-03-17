@@ -42,7 +42,7 @@ public class PopupPauseOptionsTab : MonoBehaviour {
 	public void OnClosePostAnimation() {
 		// End the game?
 		if(m_endGame) {
-			GameSceneController gameController = InstanceManager.GetSceneController<GameSceneController>();
+			GameSceneController gameController = InstanceManager.gameSceneController;
 			if(gameController != null) {
 				gameController.EndGame();
 			}

@@ -50,7 +50,7 @@ public class HUDCountdown : MonoBehaviour {
 		m_anim = GetComponent<Animator>();
 		DebugUtils.Assert(m_anim != null, "Required component!");
 
-		m_scene = InstanceManager.GetSceneController<GameSceneController>();
+		m_scene = InstanceManager.gameSceneController;
 		DebugUtils.Assert(m_scene != null, "Game scene controller could not be found!");
 
 		// Start hidden

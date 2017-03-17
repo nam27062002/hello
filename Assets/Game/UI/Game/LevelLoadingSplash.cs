@@ -52,7 +52,7 @@ public class LevelLoadingSplash : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		m_sceneController = InstanceManager.GetSceneController<GameSceneController>();
+		m_sceneController = InstanceManager.gameSceneController;
 
 		// Show!
 		GetComponent<ShowHideAnimator>().ForceShow(false);

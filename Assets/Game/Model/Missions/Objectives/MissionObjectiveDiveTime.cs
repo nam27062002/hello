@@ -83,7 +83,7 @@ public class MissionObjectiveDiveTime : MissionObjective {
 	/// </summary>
 	private void OnUpdate() {
 		// Only if a game is running
-		GameSceneController game = InstanceManager.GetSceneController<GameSceneController>();
+		GameSceneController game = InstanceManager.gameSceneController;
 		if(game != null && game.state == GameSceneController.EStates.RUNNING) {
 			// Is the dragon underwater?
 			if(m_diving) {

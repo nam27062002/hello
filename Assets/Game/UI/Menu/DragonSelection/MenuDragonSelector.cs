@@ -55,7 +55,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 		Init(DragonManager.dragonsByOrder);
 
 		// Figure out initial index
-		string selectedSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
+		string selectedSku = InstanceManager.menuSceneController.selectedDragon;
 		for(int i = 0; i < m_items.Count; i++) {
 			if(selectedSku == m_items[i].def.sku) {
 				SelectItem(i);
@@ -141,13 +141,16 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 		// Go to the target screen, if any
 		if(targetScreen != MenuScreens.NONE) {
 			// Check conditions
-			MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+			MenuSceneController menuController = InstanceManager.menuSceneController;
 
 			// a) Current dragon is owned
 			if(!DragonManager.GetDragonData(menuController.selectedDragon).isOwned) return;
 
 			// b) Camera is not tweening (scrolling between dragons)
-			if(menuController.screensController.tweening) return;
+			if(menuController.isTweening) return;
+
+			// c) We're not scrolling between dragons
+			if(menuController.dragonScroller.cameraAnimator.isTweening) return;
 
 			// Everything ok! Go to the disguises screen
 			menuController.screensController.GoToScreen((int)targetScreen);

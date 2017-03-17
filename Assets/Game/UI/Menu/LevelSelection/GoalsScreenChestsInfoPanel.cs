@@ -42,7 +42,7 @@ public class GoalsScreenChestsInfoPanel : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Get anchor ref (if any)
-		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+		MenuSceneController menuController = InstanceManager.menuSceneController;
 		if(menuController != null) {
 			MenuScreenScene scene = menuController.screensController.GetScene((int)MenuScreens.GOALS);
 			if(scene != null) {

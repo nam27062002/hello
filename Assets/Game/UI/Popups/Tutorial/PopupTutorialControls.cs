@@ -45,7 +45,7 @@ public class PopupTutorialControls : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get references
-		m_sceneController = InstanceManager.GetSceneController<GameSceneController>();
+		m_sceneController = InstanceManager.gameSceneController;
 
 		// Cache localized string to avoid doing the translation every frame
 		m_localizedLoadingString = LocalizationManager.SharedInstance.Localize("TID_GEN_LOADING");

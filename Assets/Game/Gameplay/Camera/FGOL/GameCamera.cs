@@ -293,7 +293,7 @@ public class GameCamera : MonoBehaviour
 	/*
 	IEnumerator Start() 
 	{
-		while( !InstanceManager.GetSceneController<GameSceneControllerBase>().IsLevelLoaded())
+		while( !InstanceManager.gameSceneController.IsLevelLoaded())
 		{
 			yield return null;
 		}
@@ -306,7 +306,7 @@ public class GameCamera : MonoBehaviour
 		{
 			m_touchControls = gameInputObj.GetComponent<TouchControlsDPad>();
 		}
-		LevelEditor.LevelEditorSceneController editor = InstanceManager.GetSceneController<LevelEditor.LevelEditorSceneController>();
+		LevelEditor.LevelEditorSceneController editor = InstanceManager.gameSceneControllerBase as LevelEditor.LevelEditorSceneController;
 		if ( editor != null )
 		{
 			if (LevelEditor.LevelEditor.settings.useIntro)

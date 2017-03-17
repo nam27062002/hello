@@ -97,7 +97,7 @@ public class DisguiseChangeFX : MonoBehaviour {
 
 			// If dragon scroller hasn't yet been found, look for it
 			if(m_dragonScroller == null) {
-				MenuScreenScene scene3D = InstanceManager.GetSceneController<MenuSceneController>().GetScreenScene(MenuScreens.DISGUISES);
+				MenuScreenScene scene3D = InstanceManager.menuSceneController.GetScreenScene(MenuScreens.DISGUISES);
 				m_dragonScroller = scene3D.GetComponent<MenuDragonScroller3D>();
 			}
 

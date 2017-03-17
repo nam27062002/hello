@@ -67,11 +67,11 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Store reference to menu screens controller for faster access
-		m_menuScreensController = InstanceManager.GetSceneController<MenuSceneController>().screensController;
+		m_menuScreensController = InstanceManager.menuSceneController.screensController;
 		m_menuScreensController.OnScreenChanged.AddListener(OnMenuScreenChanged);
 
 		// Find game object linked to currently selected dragon
-		FocusDragon(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon, false);
+		FocusDragon(InstanceManager.menuSceneController.selectedDragon, false);
 	}
 
 	/// <summary>
@@ -162,7 +162,7 @@ public class MenuDragonScroller3D : MonoBehaviour {
 		foreach(KeyValuePair<string, MenuDragonSlot> kvp in m_dragonSlots) {
 			// Use slot's ShowHideAnimator
 			// Show always if it's the selected dragon!
-			kvp.Value.animator.Set(showAll || kvp.Key == InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
+			kvp.Value.animator.Set(showAll || kvp.Key == InstanceManager.menuSceneController.selectedDragon);
 		}
 	}
 }

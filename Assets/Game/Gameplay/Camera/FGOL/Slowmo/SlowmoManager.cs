@@ -59,7 +59,7 @@ public class SlowmoManager : MonoBehaviour
 	{
 		// let's initialize so that the first time will always happen (also if happens at 0s after the level has been loaded).
 		m_startCooldownTime = -m_cooldown - 1f;
-		m_game = InstanceManager.GetSceneController<GameSceneController>();
+		m_game = InstanceManager.gameSceneController;
 	}
 
 	protected void OnApplicationQuit()

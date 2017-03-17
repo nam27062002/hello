@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using DG.Tweening;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -23,28 +24,9 @@ public class MenuSceneController : SceneController {
 	public static readonly string NAME = "SC_Menu";
 
 	//------------------------------------------------------------------//
-	// MEMBERS															//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-
-
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
-	private string m_selectedDragon = "";
-	public string selectedDragon {
-		get { return m_selectedDragon; }
-	}
-
-	private string m_selectedLevel = "";
-	public string selectedLevel {
-		get { return m_selectedLevel; }
-	}
-
-	private MenuScreensController m_screensController = null;
-	public MenuScreensController screensController {
-		get { return m_screensController; }
-	}
-
+	// Exposed members
 	[Separator()]
 	[SerializeField] private MenuHUD m_hud = null;
 	public MenuHUD hud {
@@ -55,6 +37,60 @@ public class MenuSceneController : SceneController {
 	private FogManager.FogAttributes m_fogSetup;
 	public FogManager.FogAttributes fogSetup {
 		get { return m_fogSetup; }
+	}
+
+	// Temp vars
+	private string m_selectedDragon = "";
+	public string selectedDragon {
+		get { return m_selectedDragon; }
+	}
+
+	private string m_selectedLevel = "";
+	public string selectedLevel {
+		get { return m_selectedLevel; }
+	}
+
+	// Shortcuts to interesting elements of the menu
+	// Screens controller
+	private MenuScreensController m_screensController = null;
+	public MenuScreensController screensController {
+		get { return m_screensController; }
+	}
+
+	// Dragon selector - responsible to set selected dragon
+	private MenuDragonSelector m_dragonSelector = null;
+	public MenuDragonSelector dragonSelector {
+		get {
+			if(m_dragonSelector == null) {
+				m_dragonSelector = GetScreen(MenuScreens.DRAGON_SELECTION).FindComponentRecursive<MenuDragonSelector>();
+			}
+			return m_dragonSelector;
+		}
+	}
+
+	// Dragon scroller - responsible to scroll the camera through the dragons
+	private MenuDragonScroller3D m_dragonScroller = null;
+	public MenuDragonScroller3D dragonScroller {
+		get {
+			if(m_dragonScroller == null) {
+				// Use FindComponentRecursive rather than GetComponentInChildren to include inactive objects in the search
+				m_dragonScroller = GetScreenScene(MenuScreens.DRAGON_SELECTION).FindComponentRecursive<MenuDragonScroller3D>();
+			}
+			return m_dragonScroller;
+		}
+	}
+
+	// Current dragon 3D preview
+	public MenuDragonPreview selectedDragonPreview {
+		get { return dragonScroller.GetDragonPreview(selectedDragon); }
+	}
+
+	// Is the camera moving around?
+	public bool isTweening {
+		get {
+			// Check direct tweens on the camera only
+			return DOTween.IsTweening(mainCamera);
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -134,9 +170,8 @@ public class MenuSceneController : SceneController {
 	/// </summary>
 	/// <param name="_sku">The sku of the dragon we want to be the current one.</param>
 	public void SetSelectedDragon(string _sku) {
-		// Let dragon screen do the job
-		MenuDragonScreenController dragonScreen = GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>();
-		dragonScreen.dragonSelector.SetSelectedDragon(_sku);
+		// Let the dragon selector do the job
+		dragonSelector.SetSelectedDragon(_sku);
 	}
 
 	/// <summary>

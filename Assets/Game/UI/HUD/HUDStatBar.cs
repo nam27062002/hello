@@ -95,7 +95,7 @@ public class HUDStatBar : MonoBehaviour {
 
 	IEnumerator Start()
 	{
-		while( !InstanceManager.GetSceneController<GameSceneControllerBase>().IsLevelLoaded())
+		while( !InstanceManager.gameSceneController.IsLevelLoaded())
 		{
 			yield return null;
 		}

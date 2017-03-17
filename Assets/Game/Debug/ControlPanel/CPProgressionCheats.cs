@@ -126,7 +126,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		if(!CheckScene()) return;
 
 		// Get current selected dragon data
-		string selectedDragonSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
+		string selectedDragonSku = InstanceManager.menuSceneController.selectedDragon;
 		DragonData data = DragonManager.GetDragonData(selectedDragonSku);
 		if(!data.isOwned) {
 			UIFeedbackText.CreateAndLaunch("Only for owned dragons!", new Vector2(0.5f, 0.5f), ControlPanel.panel.parent as RectTransform, "CPFeedbackText");

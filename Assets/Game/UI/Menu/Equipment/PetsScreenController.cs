@@ -147,7 +147,7 @@ public class PetsScreenController : MonoBehaviour {
 		this.gameObject.SetActive(true);
 
 		// Store reference to target dragon data for faster access
-		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+		MenuSceneController menuController = InstanceManager.menuSceneController;
 		m_dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 
 		// Initialize all tabs one by one
