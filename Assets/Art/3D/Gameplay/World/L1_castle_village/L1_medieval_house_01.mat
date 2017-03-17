@@ -6,11 +6,11 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: island_rock_texture_tile_01
-  m_Shader: {fileID: 4800000, guid: 52c5ffafd0b8d7745b23aaf4e3254094, type: 3}
+  m_Name: L1_medieval_house_01
+  m_Shader: {fileID: 4800000, guid: 8303da806b99a45bcbaf8904f9f40c9a, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2000
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -48,17 +48,11 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 6048d8669d888784f83d18b5088ee0b0, type: 3}
-        m_Scale: {x: 5, y: 5}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MetallicGlossMap
-      second:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 0c4efc15b4855854fa51fc9d996cc17c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
-        name: _NormalTex
+        name: _MetallicGlossMap
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -75,12 +69,6 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _SecondTexture
-      second:
-        m_Texture: {fileID: 2800000, guid: 0421fdf77331d4608994040bf0edfcce, type: 3}
-        m_Scale: {x: 3, y: 3}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
         name: _BumpScale
@@ -95,11 +83,14 @@ Material:
         name: _DstBlend
       second: 0
     - first:
+        name: _EmissionScaleUI
+      second: 0
+    - first:
         name: _FogEnd
-      second: 1500
+      second: 100
     - first:
         name: _FogStart
-      second: -9.2
+      second: 0
     - first:
         name: _Glossiness
       second: 0.5
@@ -110,17 +101,11 @@ Material:
         name: _Mode
       second: 0
     - first:
-        name: _NormalStrength
-      second: 3
-    - first:
         name: _OcclusionStrength
       second: 1
     - first:
         name: _Parallax
       second: 0.02
-    - first:
-        name: _Specular
-      second: 3
     - first:
         name: _SrcBlend
       second: 1
@@ -133,13 +118,13 @@ Material:
     m_Colors:
     - first:
         name: _Color
-      second: {r: 1, g: 1, b: 1, a: 1}
+      second: {r: 0.588, g: 0.588, b: 0.588, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
-        name: _FogColor
-      second: {r: 0.37889272, g: 0.46233138, b: 0.7058823, a: 0.781}
+        name: _EmissionColorUI
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
-        name: _SpecularDir
-      second: {r: 0, g: 0, b: -1, a: 0}
+        name: _FogColor
+      second: {r: 0, g: 0, b: 0, a: 0}
