@@ -267,6 +267,12 @@ public class DisguisesScreenController : MonoBehaviour {
 	public void OnShowPreAnimation(ShowHideAnimator _animator) {
 		// Refresh with initial data!
 		Initialize();
+
+		// Hide pets on the current dragon preview
+		DragonEquip equip = InstanceManager.menuSceneController.selectedDragonPreview.GetComponent<DragonEquip>();
+		if(equip != null) {
+			equip.TogglePets(false, true);
+		}
 	}
 
 	/// <summary>
@@ -276,6 +282,12 @@ public class DisguisesScreenController : MonoBehaviour {
 	public void OnHidePostAnimation(ShowHideAnimator _animator) {
 		// Make sure screens are properly finalized
 		Finalize();
+
+		// Restore pets on the current dragon preview
+		DragonEquip equip = InstanceManager.menuSceneController.selectedDragonPreview.GetComponent<DragonEquip>();
+		if(equip != null) {
+			equip.TogglePets(true, true);
+		}
 	}
 
 	/// <summary>

@@ -162,7 +162,7 @@ public class MenuDragonLoader : MonoBehaviour {
 				// Toggle pets
 				DragonEquip equip = m_dragonInstance.GetComponent<DragonEquip>();
 				if(equip != null) {
-					equip.TogglePets(m_showPets);
+					equip.TogglePets(m_showPets, false);
 				}
 
 				// Remove fresnel if required
