@@ -378,11 +378,11 @@ public class ShowHideAnimator : MonoBehaviour {
 		// Clear dirty flag
 		m_isDirty = false;
 
-		// If animator is defined, we won't use tweens
-		if(m_animator != null) return;
-		
 		// If using no animation at all, we're done
 		if(m_tweenType == TweenType.NONE) return;
+
+		// If using animator, we won't use tweens
+		if(m_tweenType == TweenType.ANIMATOR) return;
 
 		// If using a custom set of tweens, add listeners to them and return
 		if(m_tweenType == TweenType.CUSTOM) {
