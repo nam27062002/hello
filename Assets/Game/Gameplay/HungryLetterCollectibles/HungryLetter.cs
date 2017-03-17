@@ -84,6 +84,7 @@ public class HungryLetter : MonoBehaviour
 	public void ChangeLayers()
 	{
 		// change the layers.
+		// We want to keep particles and everyhing in the default layer, move only the actual letter!
 		gameObject.layer = LayerMask.NameToLayer("Default");
 		m_mesh.layer = LayerMask.NameToLayer("UI");
 	}
