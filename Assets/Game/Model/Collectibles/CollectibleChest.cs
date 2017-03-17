@@ -31,7 +31,7 @@ public class CollectibleChest : MonoBehaviour {
 	public DragonTier requiredTier { get { return m_requiredTier; }}
 
 	[Space]
-	[SerializeField] private GameObject m_mapMarker = null;
+	[SerializeField] private MapMarker m_mapMarker = null;
 
 	// Internal
 	private ChestViewController m_chestView = null;   
@@ -96,7 +96,7 @@ public class CollectibleChest : MonoBehaviour {
 		GetComponent<Collider>().enabled = false;
 
 		// Disable map marker
-		if(m_mapMarker != null) m_mapMarker.SetActive(false);
+		if(m_mapMarker != null) m_mapMarker.showMarker = false;
 
 		// Open chest and launch FX
 		// Figure out reward type to show the proper FX
