@@ -167,8 +167,12 @@ public class Mission {
 	/// <returns>The amount of coins to be given upon completing the mission.</returns>
 	private int ComputeRewardCoins() {
 		// [AOC] Formula defined in the missionsDragonRelativeMetrics table
-		int ownedDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
-		return (int)((float)MissionManager.maxRewardPerDifficulty[(int)difficulty] * (float)ownedDragons);
+		/*int ownedDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
+		return (int)((float)MissionManager.maxRewardPerDifficulty[(int)difficulty] * (float)ownedDragons);*/
+
+		// [AOC] As of 17/03/2017, use max owned dragon rather than total amount of owned dragons
+		int maxOwnedDragon = DragonManager.biggestOwnedDragon.def.GetAsInt("order");	// 0..N-1
+		return (int)((float)MissionManager.maxRewardPerDifficulty[(int)difficulty] * (float)(maxOwnedDragon + 1));
 	}
 
 	/// <summary>
