@@ -53,6 +53,7 @@ public static class DebugSettings {
 	public const string SHOW_MISSING_TIDS				        = "SHOW_MISSING_TIDS";
 
 	public const string MENU_DISGUISES_AUTO_EQUIP		        = "MENU_DISGUISES_AUTO_EQUIP";
+	public const string MENU_ENABLE_SHORTCUTS					= "MENU_ENABLE_SHORTCUTS";
 
 	public const string PLAY_TEST						        = "PLAY_TEST";
 

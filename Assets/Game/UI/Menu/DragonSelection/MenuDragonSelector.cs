@@ -112,6 +112,9 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 	/// GUIElement or Collider as it was pressed.
 	/// </summary>
 	public void OnPointerClick(PointerEventData _eventData) {
+		// Only if enabled!
+		if(!Prefs.GetBoolPlayer(DebugSettings.MENU_ENABLE_SHORTCUTS)) return;
+
 		// Find all object intersecting with the raycast, looking for dragons and pets
 		List<RaycastResult> results = new List<RaycastResult>();
 		EventSystem.current.RaycastAll(_eventData, results);
