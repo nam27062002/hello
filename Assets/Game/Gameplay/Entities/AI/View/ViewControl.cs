@@ -189,12 +189,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         }
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
-			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/" + m_corpseAsset, 3, true);
+			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/", 3, true);
 		}
 
 		m_isExclamationMarkOn = false;
 		if (m_exclamationTransform != null) {
-			PoolManager.CreatePool("PF_ExclamationMark", "Game/Entities/PF_ExclamationMark", 3, true);
+			PoolManager.CreatePool("PF_ExclamationMark", "Game/Entities/", 3, true);
 		}
 
 		// particle management
@@ -218,7 +218,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				m_onEatenFrozenParticle.name = "PS_IceExplosion";
 				m_onEatenFrozenParticle.path = "";
 			}
-			ParticleManager.CreatePool( m_onEatenFrozenParticle.name, m_onEatenFrozenParticle.path);
+			ParticleManager.CreatePool(m_onEatenFrozenParticle.name, m_onEatenFrozenParticle.path);
 		}
 		else
 		{

@@ -14,6 +14,12 @@ public class Cage : IEntity {
 		m_maxHealth = 1f;
 	}
 
+	void OnDestroy() {
+		if (EntityManager.instance != null) {
+			EntityManager.instance.UnregisterEntityCage(this);
+		}
+	}
+
 	//
 	public override void Spawn(ISpawner _spawner) {		
 		m_spawner = _spawner;

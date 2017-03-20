@@ -50,7 +50,7 @@ public class PrisonerSpawner : AbstractSpawner {
 			for (int e = 0; e < m_groups[g].m_entityPrefabsStr.Length; e++) {
                 prefabName = m_groups[g].m_entityPrefabsStr[e];
                 
-                PoolManager.CreatePool(prefabName, IEntity.EntityPrefabsPath + prefabName, 1, true);                
+				PoolManager.RequestPool(prefabName, IEntity.EntityPrefabsPath, 1);                
 			}
 		}
 

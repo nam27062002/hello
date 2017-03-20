@@ -125,7 +125,7 @@ public class DragonParticleController : MonoBehaviour
 			m_waterAirLimitInstance = InitParticles( m_waterAirLimitParticle, m_dragonEat.mouth);
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
-			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/" + m_corpseAsset, 1, true);
+			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/", 1, true, false);
 		}
 		m_hiccupInstance = InitParticles( m_hiccupParticle, m_hiccupAnchor);
 		if (dragonAnimEvents != null)

@@ -64,18 +64,18 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			if(m_scoreFeedbackContainer != null) {
 				parent = m_scoreFeedbackContainer.transform;
 			}
-			PoolManager.CreatePool(m_scoreFeedbackPrefab, parent, m_scoreFeedbackMax);
+			PoolManager.CreatePool(m_scoreFeedbackPrefab, parent, m_scoreFeedbackMax, true, false);
 		}
 
 		// Coins
 		if(m_coinsFeedbackPrefab != null) {
-			PoolManager.CreatePool(m_coinsFeedbackPrefab, m_coinsFeedbackMax);
+			PoolManager.CreatePool(m_coinsFeedbackPrefab, m_coinsFeedbackMax, true, false);
 		}
 
 		// PC
 		if(m_pcFeedbackPrefab != null) {
 			// Use a dedicated camera as parent, that way the feedback will be positioned relative to the viewport
-			PoolManager.CreatePool(m_pcFeedbackPrefab, m_3dFeedbackContainer.transform, 2, false);
+			PoolManager.CreatePool(m_pcFeedbackPrefab, m_3dFeedbackContainer.transform, 2, false, false);
 		}
 
 		// Kill Feedback
@@ -84,7 +84,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			if(m_killFeedbackContainer != null) {
 				parent = m_killFeedbackContainer.transform;
 			}
-			PoolManager.CreatePool(m_killFeedbackPrefab, parent, m_killFeedbackMax, false);
+			PoolManager.CreatePool(m_killFeedbackPrefab, parent, m_killFeedbackMax, false, false);
 		}
 			
 		// Flock Bonus
@@ -93,7 +93,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			if(m_scoreFeedbackContainer != null) {
 				parent = m_scoreFeedbackContainer.transform;
 			}
-			PoolManager.CreatePool(m_flockBonusFeedbackPrefab, parent, m_flockBonusFeedbackMax);
+			PoolManager.CreatePool(m_flockBonusFeedbackPrefab, parent, m_flockBonusFeedbackMax, true, false);
 		}
 
 		// Escape
@@ -103,7 +103,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			if(m_escapeFeedbackContainer != null) {
 				parent = m_escapeFeedbackContainer.transform;
 			}
-			PoolManager.CreatePool(m_escapedFeedbackPrefab, parent, m_escapedFeedbackMax, false);
+			PoolManager.CreatePool(m_escapedFeedbackPrefab, parent, m_escapedFeedbackMax, false, false);
 		}
 
         Cache_Init();
