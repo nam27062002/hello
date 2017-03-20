@@ -124,7 +124,8 @@ public class LevelManager : Singleton<LevelManager> {
 		// Load area by dragon
 		m_currentArea = def.Get(UsersManager.currentUser.currentDragon);
 		List<AsyncOperation> areaOperations = LoadArea( m_currentArea );
-		loadingTasks.AddRange( areaOperations );
+		if ( areaOperations != null )
+			loadingTasks.AddRange( areaOperations );
 
 		// Disable auto-scene activation: activating the scenes abuses the CPU, causing fps drops. Since we want the loading screen to be fluid, we will activate all the scene at once when the loading is finished.
 		for(int i = 0; i < loadingTasks.Count; i++) {
