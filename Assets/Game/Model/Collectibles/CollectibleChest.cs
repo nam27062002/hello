@@ -56,7 +56,7 @@ public class CollectibleChest : MonoBehaviour {
 		this.gameObject.tag = TAG;
 
 		// Instantiate the actual chest
-		GameObject chestPrefab = Resources.Load<GameObject>(ChestViewController.PREFAB_PATH);
+		GameObject chestPrefab = Resources.Load<GameObject>(ChestViewController.PREFAB_PATH_GAME);
 		GameObject chestObj = GameObject.Instantiate<GameObject>(chestPrefab);
 		chestObj.transform.SetParent(this.transform, false);
 		m_chestView = chestObj.GetComponentInChildren<ChestViewController>();
