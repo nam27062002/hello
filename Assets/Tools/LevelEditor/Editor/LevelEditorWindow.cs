@@ -254,7 +254,7 @@ namespace LevelEditor {
 			EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true)); {
 				// Mode selector
 				LevelEditorSettings.Mode newMode = (LevelEditorSettings.Mode)GUILayout.Toolbar((int)LevelEditor.settings.selectedMode, new string[] {"SPAWNERS", "COLLISION", "ART", "SOUND" }, GUILayout.Height(50));
-				if(newMode != LevelEditor.settings.selectedMode) {
+				if(newMode != LevelEditor.settings.selectedMode && newMode < LevelEditorSettings.Mode.COUNT) {
 					// Mode changed! Do whatever needed
 					LevelEditor.settings.selectedMode = newMode;
 					LevelEditor.settings.selectedTab = 0;	// Reset selected tab

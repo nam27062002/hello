@@ -16,4 +16,19 @@ public interface ISpawner : IQuadTreeItem {
 	IGuideFunction guideFunction { get; }
 	Transform transform { get; }
 	Quaternion rotation { get; }
+
+#region save_spawner_state
+	int GetSpawnerID();
+	AbstractSpawnerData Save();
+	void Save( ref AbstractSpawnerData _data);
+	void Load( AbstractSpawnerData _data);
+#endregion
+	// Abstract
+	// EntitiesKilled
+	// EntitiesToSpawn
+
+	// Spawner
+	// m_respawnCount
+	// m_respawnTime
+
 }

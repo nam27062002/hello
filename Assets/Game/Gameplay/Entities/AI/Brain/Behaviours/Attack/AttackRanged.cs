@@ -33,8 +33,7 @@ namespace AI {
 				m_projectileSpawnPoint = m_pilot.FindTransformRecursive(((AttackRangedData)m_data).projectileSpawnTransformName);
 			
 				// create a projectile from resources (by name) and save it into pool
-				GameObject projectilePrefab = Resources.Load<GameObject>("Game/Projectiles/" + ((AttackRangedData)m_data).projectileName);
-				PoolManager.CreatePool(projectilePrefab, 2, true);
+				PoolManager.CreatePool(((AttackRangedData)m_data).projectileName, "Game/Projectiles/", 2, true);
 
 				m_viewControl = m_pilot.GetComponent<ViewControl>();
 

@@ -26,6 +26,12 @@ public class LevelManager : Singleton<LevelManager> {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
+	private static string m_currentArea = "";
+	public static string currentArea{
+		get{ return m_currentArea; }
+	}
+	private static List<string> m_currentAreaScenes = new List<string>();
+
 	// Shortcut to get the data of the currently selected level
 	private static LevelData m_currentLevelData = null;
 	public static LevelData currentLevelData {
@@ -106,47 +112,19 @@ public class LevelManager : Singleton<LevelManager> {
 		List<AsyncOperation> loadingTasks = new List<AsyncOperation>();
 		AsyncOperation loadingTask = null;
 
-		// Spawners
-		List<string> spawnersScenes = def.GetAsList<string>("spawnersScene");
-		for( int i = 0; i<spawnersScenes.Count; i++ )
+		// Common Scenes
+		List<string> commonScenes = def.GetAsList<string>("common");
+		for( int i = 0; i<commonScenes.Count; i++ )
 		{
-			loadingTask = SceneManager.LoadSceneAsync(spawnersScenes[i], LoadSceneMode.Additive);
-			if(DebugUtils.SoftAssert(loadingTask != null, "The spawners scene " + spawnersScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
+			loadingTask = SceneManager.LoadSceneAsync(commonScenes[i], LoadSceneMode.Additive);
+			if(DebugUtils.SoftAssert(loadingTask != null, "The common scene " + commonScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
 				loadingTasks.Add(loadingTask);
 			}	
 		}
-
-		// Collision
-		List<string> collisionScenes = def.GetAsList<string>("collisionScene");
-		for( int i = 0; i<collisionScenes.Count; i++ )
-		{
-			loadingTask = SceneManager.LoadSceneAsync(collisionScenes[i], LoadSceneMode.Additive);
-			if(DebugUtils.SoftAssert(loadingTask != null, "The collision scene " + collisionScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
-				loadingTasks.Add(loadingTask);
-			}
-		}
-
-		// Sound
-		List<string> soundScenes = def.GetAsList<string>("soundScene");
-		for( int i = 0; i<soundScenes.Count; i++ )
-		{
-			if ( !string.IsNullOrEmpty( soundScenes[i]) ){
-				loadingTask = SceneManager.LoadSceneAsync(soundScenes[i], LoadSceneMode.Additive);
-				if(DebugUtils.SoftAssert(loadingTask != null, "The sound scene " + soundScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
-					loadingTasks.Add(loadingTask);
-				}
-			}
-		}
-
-		// Art
-		List<string> artScenes = def.GetAsList<string>("artScene");
-		for( int i = 0; i<artScenes.Count; i++ )
-		{
-			loadingTask = SceneManager.LoadSceneAsync(artScenes[i], LoadSceneMode.Additive);
-			if(DebugUtils.SoftAssert(loadingTask != null, "The art scene " + artScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)"))  {
-				loadingTasks.Add(loadingTask);
-			}
-		}
+		// Load area by dragon
+		m_currentArea = def.Get(UsersManager.currentUser.currentDragon);
+		List<AsyncOperation> areaOperations = LoadArea( m_currentArea );
+		loadingTasks.AddRange( areaOperations );
 
 		// Disable auto-scene activation: activating the scenes abuses the CPU, causing fps drops. Since we want the loading screen to be fluid, we will activate all the scene at once when the loading is finished.
 		for(int i = 0; i < loadingTasks.Count; i++) {
@@ -155,6 +133,40 @@ public class LevelManager : Singleton<LevelManager> {
 		
 		return loadingTasks.ToArray();
 	}
+
+
+	public static List<AsyncOperation> LoadArea( string area )
+	{
+		List<AsyncOperation> loadingTasks = new List<AsyncOperation>();
+		AsyncOperation loadingTask = null;
+		DefinitionNode def = m_currentLevelData.def;
+		m_currentArea = area;
+		m_currentAreaScenes = def.GetAsList<string>(m_currentArea);
+		for( int i = 0; i<m_currentAreaScenes.Count && !string.IsNullOrEmpty( m_currentAreaScenes[i] ); i++ )
+		{
+			loadingTask = SceneManager.LoadSceneAsync(m_currentAreaScenes[i], LoadSceneMode.Additive);
+			if(DebugUtils.SoftAssert(loadingTask != null, "The spawners scene " + m_currentAreaScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
+				loadingTasks.Add(loadingTask);
+			}	
+		}
+		return loadingTasks;
+	}
+
+	public static List<AsyncOperation> UnloadCurrentArea()
+	{
+		List<AsyncOperation> loadingTasks = new List<AsyncOperation>();
+		AsyncOperation loadingTask = null;
+		for( int i = 0;i< m_currentAreaScenes.Count; i++ )
+		{
+			loadingTask = SceneManager.UnloadSceneAsync(m_currentAreaScenes[i]);
+			if ( loadingTask != null )
+				loadingTasks.Add(loadingTask);
+		}
+		m_currentAreaScenes.Clear();
+		m_currentArea = "";
+		return loadingTasks;
+	}
+
 
 	/// <summary>
 	/// Make sure the active scene is the one marked as "activeScene" in the current level definition.
@@ -165,8 +177,26 @@ public class LevelManager : Singleton<LevelManager> {
 	{
 		// [AOC] For some reason, the lightning settings of the Art scene makes the OSX Editor to crash
 		// #if !UNITY_EDITOR_OSX
-		Scene scene = SceneManager.GetSceneByName(m_currentLevelData.def.GetAsString("activeScene"));
+		Scene scene = SceneManager.GetSceneByName(m_currentLevelData.def.GetAsString(m_currentArea + "Active"));
 		SceneManager.SetActiveScene(scene);
 		// #endif
 	}
+
+	public static AsyncOperation[] SwitchArea( string nextArea )
+	{
+		AsyncOperation[] ret = null;
+		if ( m_currentArea != nextArea )
+		{
+			// Unload current area scenes
+			UnloadCurrentArea();
+
+			// Load new area scenes
+			ret = LoadArea( nextArea ).ToArray();
+
+		}
+		return ret;
+	}
+
+
+
 }

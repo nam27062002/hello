@@ -22,7 +22,7 @@ public class ContentManager
 		// kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, );
 
 		// Progression
-		kDefinitionFiles.Add(DefinitionsCategory.LEVELS, new string[]{"Rules/levelDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.LEVELS, new string[]{"Rules/levelDefinitions2"});
 		kDefinitionFiles.Add(DefinitionsCategory.MISSIONS, new string[]{"Rules/missionDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.MISSION_TYPES, new string[]{"Rules/missionTypeDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.MISSION_DIFFICULTIES, new string[]{"Rules/missionDifficultyDefinitions"});

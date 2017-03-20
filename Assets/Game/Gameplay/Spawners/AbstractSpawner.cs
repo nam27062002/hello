@@ -28,7 +28,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
         set { m_useProgressiveRespawn = value; }
     }
 
-    protected enum EState
+    public enum EState
     {
         Init = 0,
         Respawning,
@@ -112,15 +112,20 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
             long start = sm_watch.ElapsedMilliseconds;
             while (EntitiesAlive < EntitiesToSpawn) {
                 prefabName = GetPrefabNameToSpawn(EntitiesAlive);
-                go = PoolManager.GetInstance(prefabName, !UseProgressiveRespawn);                
-				go.transform.position = transform.position;
-				OnCreateInstance(EntitiesAlive, go);
-                m_entities[EntitiesAlive] = go.GetComponent<IEntity>();                                  
-                EntitiesAlive++;
+                go = PoolManager.GetInstance(prefabName, !UseProgressiveRespawn);
 
-                if (ProfilerSettingsManager.ENABLED) {
-                    SpawnerManager.AddToTotalLogicUnits(1, prefabName);
-                }
+				if (go == null) {
+					break;
+				} else {
+					go.transform.position = transform.position;
+					OnCreateInstance(EntitiesAlive, go);
+	                m_entities[EntitiesAlive] = go.GetComponent<IEntity>();                                  
+	                EntitiesAlive++;
+
+	                if (ProfilerSettingsManager.ENABLED) {
+	                    SpawnerManager.AddToTotalLogicUnits(1, prefabName);
+	                }
+				}
 
                 if (m_useProgressiveRespawn && sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
                     break;
@@ -338,4 +343,28 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     protected virtual void OnForceRemoveEntities() {}
     public virtual void DrawStateGizmos() {}
     #endregion
+
+
+	#region save_spawner_state
+	public virtual int GetSpawnerID()
+	{
+		return transform.position.GetHashCode() ^ name.GetHashCode();
+	}
+	public virtual AbstractSpawnerData Save()
+	{
+		AbstractSpawnerData data = new AbstractSpawnerData();
+		Save( ref data );
+		return data;
+	}
+	public virtual void Save( ref AbstractSpawnerData _data)
+	{
+		_data.m_entitiesKilled = EntitiesKilled;
+		_data.m_entitiesToSpawn = EntitiesToSpawn;
+	}
+	public virtual void Load(AbstractSpawnerData _data)
+	{
+		EntitiesKilled = _data.m_entitiesKilled;
+		EntitiesToSpawn = _data.m_entitiesToSpawn;
+	}
+	#endregion
 }

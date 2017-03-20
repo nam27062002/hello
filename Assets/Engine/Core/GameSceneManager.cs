@@ -118,7 +118,8 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
         else if (_forceScene) {
             instance.ChangeState(ESceneState.RESET);
         }
-    }        	
+    }
+
 
 	/// <summary>
 	/// Specially for debugging, force the name of the current scene.

@@ -55,6 +55,8 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
     private System.Diagnostics.Stopwatch m_watch = new System.Diagnostics.Stopwatch();
 
+    private Dictionary<int, AbstractSpawnerData> m_spanwersData = new Dictionary<int, AbstractSpawnerData>();
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
@@ -82,6 +84,8 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
     private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnAreaEnter);
+		Messenger.AddListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
 		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
@@ -91,6 +95,8 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.RemoveListener(GameEvents.GAME_AREA_ENTER, OnAreaEnter);
+		Messenger.RemoveListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
 		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}        
 
@@ -316,6 +322,12 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 			}
 		}
 		_spawner.Initialize();
+
+		// if I have data about this _spawner tell it to load
+		if (m_spanwersData.ContainsKey( _spawner.GetSpawnerID() ))
+		{
+			_spawner.Load( m_spanwersData[ _spawner.GetSpawnerID() ] );
+		}
 	}
 
 	/// <summary>
@@ -323,6 +335,22 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	/// </summary>
 	/// <param name="_spawner">The spawner to be removed.</param>
 	public void Unregister(ISpawner _spawner, bool _removeFromTree) {
+
+		// resave _spanwer info
+		if (m_spanwersData.ContainsKey( _spawner.GetSpawnerID() ))
+		{
+			AbstractSpawnerData data = m_spanwersData[ _spawner.GetSpawnerID() ];
+			_spawner.Save( ref data);
+		}
+		else
+		{
+			AbstractSpawnerData data = _spawner.Save();
+			if ( data != null )
+			{
+				m_spanwersData.Add( _spawner.GetSpawnerID(), data);
+			}
+		}
+
 		m_spawners.Remove(_spawner);
 		if(m_spawnersTreeNear != null && _removeFromTree) {
 			if (_spawner.transform.position.z < FAR_LAYER_Z) {
@@ -353,7 +381,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		for (int i = 0; i < m_spawners.Count; i++) {
 			m_spawners[i].Clear();
 		}
-		m_selectedSpawners.Clear();        
+		m_selectedSpawners.Clear();
     }
 
 	//------------------------------------------------------------------------//
@@ -403,8 +431,11 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		m_newCamera = gameCamera.GetComponent<GameCamera>();
         if (m_newCamera != null)        
             m_newCameraTransform = m_newCamera.transform;
+		OnAreaEnter();
+	}
 
-        // Create and populate QuadTree
+	private void OnAreaEnter() {
+		// Create and populate QuadTree
         // Get map bounds!
         Rect bounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
 		LevelData data = LevelManager.currentLevelData;
@@ -413,6 +444,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		}
 		m_spawnersTreeNear = new QuadTree<ISpawner>(bounds.x, bounds.y, bounds.width, bounds.height);
 		m_spawnersTreeFar = new QuadTree<ISpawner>(bounds.x, bounds.y, bounds.width, bounds.height);
+
 		for(int i = 0; i < m_spawners.Count; i++) {
 			if (m_spawners[i].transform.position.z < FAR_LAYER_Z) {
 				m_spawnersTreeNear.Insert(m_spawners[i]);
@@ -435,26 +467,40 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 				} while (iterations < 100 && !item.Respawn());
 			}
 		}
+
+		EnableSpawners();
+	}
+
+
+	private void OnAreaExit() {
+		m_selectedSpawners.Clear();
+		for( int i = m_spawners.Count-1; i>=0; i-- )
+		{
+			ISpawner _sp = m_spawners[i];
+			Unregister( _sp, false);
+			_sp.ForceRemoveEntities();
+		}
+		m_spawners.Clear();
+
+		m_spawnersTreeNear = null;
+		m_spawnersTreeFar = null;
+
+		DisableSpawners();
 	}
 
 	/// <summary>
 	/// The game has ended.
 	/// </summary>
 	private void OnGameEnded() {
+		OnAreaExit();
+
 		// Clear QuadTree
 		m_spawnersTreeNear = null;
 		m_spawnersTreeFar = null;
-		m_selectedSpawners.Clear();        
-        DisableSpawners();
-		m_spawners.Clear();        
-
 
         // Drop camera references
         m_newCamera = null;
-        m_newCameraTransform = null;
-
-		// Make sure manager is disabled
-		m_enabled = false;       
+        m_newCameraTransform = null;    
     }
 
 #region debug

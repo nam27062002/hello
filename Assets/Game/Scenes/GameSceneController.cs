@@ -9,6 +9,8 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -35,6 +37,16 @@ public class GameSceneController : GameSceneControllerBase {
 		FINISHED
 	};
 
+	bool m_switchingArea = false;
+	string m_nextArea = "";
+	public enum SwitchingAreaSate
+	{
+		UNLOADING_SCENES,
+		LOADING_SCENES,
+		ACTIVATING_SCENES
+	};
+	SwitchingAreaSate m_switchState;
+	private List<AsyncOperation> m_switchingAreaTasks;
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -202,6 +214,81 @@ public class GameSceneController : GameSceneControllerBase {
 			case EStates.RUNNING: {
 				// Update running time
 				m_elapsedSeconds += Time.deltaTime;
+				if ( m_switchingArea )
+				{
+					switch( m_switchState )
+					{
+						case SwitchingAreaSate.UNLOADING_SCENES:
+						{
+							bool done = true;
+							if ( m_switchingAreaTasks != null )
+							{
+								for( int i = 0; i<m_switchingAreaTasks.Count && done; i++ )
+								{
+									if ( !m_switchingAreaTasks[i].isDone )
+									{
+										done = false;
+									}
+								}
+							}
+
+							if (done)
+							{
+								m_switchingAreaTasks = LevelManager.LoadArea(m_nextArea);
+								if ( m_switchingAreaTasks != null )
+								{
+									for(int i = 0; i < m_switchingAreaTasks.Count; i++) {
+										m_switchingAreaTasks[i].allowSceneActivation = false;
+									}
+								}
+								m_switchState = SwitchingAreaSate.LOADING_SCENES;
+							}
+						}break;
+						case SwitchingAreaSate.LOADING_SCENES:
+						{
+							bool done = true;
+							if ( m_switchingAreaTasks != null )
+							{
+								for( int i = 0; i<m_switchingAreaTasks.Count && done; i++ )	
+								{
+									done = m_switchingAreaTasks[i].progress >= 0.9f;
+								}
+							}
+
+							if ( done )
+							{
+								if ( m_switchingAreaTasks != null )
+								{
+									for( int i = 0; i<m_switchingAreaTasks.Count; i++ )	
+									{
+										m_switchingAreaTasks[i].allowSceneActivation = true;
+									}
+								}
+								m_switchState = SwitchingAreaSate.ACTIVATING_SCENES;
+
+							}
+						}break;
+						case SwitchingAreaSate.ACTIVATING_SCENES:
+						{
+							bool done = true;
+							if ( m_switchingAreaTasks != null )
+							{
+								for( int i = 0; i<m_switchingAreaTasks.Count && done; i++ )	
+								{
+									done = m_switchingAreaTasks[i].isDone;
+								}
+							}
+
+							if ( done )
+							{
+								PoolManager.Rebuild();
+								Messenger.Broadcast(GameEvents.GAME_AREA_ENTER);
+								m_switchingArea = false;
+							}
+						}break;
+					}
+				}
+
 			} break;
 
 			case EStates.FINISHED: {
@@ -333,6 +420,9 @@ public class GameSceneController : GameSceneControllerBase {
 				// Delete loading task
 				m_levelLoadingTasks = null;
 
+				// Build Pools
+				PoolManager.Build();
+
 				// Init game camera
 				InstanceManager.gameCamera.Init();
 
@@ -398,6 +488,7 @@ public class GameSceneController : GameSceneControllerBase {
 				for(int i = 0; i < m_levelLoadingTasks.Length; i++) {
 					m_levelLoadingTasks[i].allowSceneActivation = true;
 				}
+
 			} break;
 
 			case EStates.COUNTDOWN: {
@@ -456,4 +547,47 @@ public class GameSceneController : GameSceneControllerBase {
 	{
 		ChangeState(EStates.RUNNING);
 	}
+
+
+	public void SwitchArea( string _nextArea )
+    {
+    	if ( LevelManager.currentArea != _nextArea && !m_switchingArea)
+    	{
+			Messenger.Broadcast(GameEvents.GAME_AREA_EXIT);
+			m_switchingArea = true;
+			m_nextArea = _nextArea;
+			m_switchState = SwitchingAreaSate.UNLOADING_SCENES;
+			m_switchingAreaTasks = LevelManager.UnloadCurrentArea();
+		}
+    }
+
+
+    /*
+    // Test to load new areas
+	IEnumerator WaitTasksFinished( AsyncOperation[] operations )
+	{
+		bool done = false;
+		while (!done)
+		{
+			done = true;
+			for( int i = 0; i<operations.Length; i++ )	
+			{
+				done = done && operations[i].progress >= 0.9f;
+			}
+			if (!done)
+			{
+				yield return null;
+			}
+		}
+		for( int i = 0; i<operations.Length; i++ )	
+		{
+			operations[i].allowSceneActivation = true;
+		}
+		yield return null;
+
+		PoolManager.Rebuild();
+		Messenger.Broadcast(GameEvents.GAME_AREA_ENTER);
+	}
+	*/
+
 }

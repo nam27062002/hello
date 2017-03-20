@@ -11,6 +11,11 @@ public class EntityBg : IEntity
 	private ISpawner m_spawner;
 
 	/************/
+	void OnDestroy() {
+		if (EntityManager.instance != null) {
+			EntityManager.instance.UnregisterEntityBg(this);
+		}
+	}
 
 	public override void Disable(bool _destroyed) 
 	{

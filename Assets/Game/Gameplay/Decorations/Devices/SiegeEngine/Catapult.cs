@@ -80,9 +80,7 @@ public class Catapult : SimpleDevice {
 			probFactor = 100f / probFactor;
 			for (int i = 0; i < m_ammoList.Length; i++) {
 				m_ammoList[i].chance *= probFactor;
-
-				GameObject projectilePrefab = Resources.Load<GameObject>("Game/Projectiles/" + m_ammoList[i].name);
-				PoolManager.CreatePool(projectilePrefab, 3, true);
+				PoolManager.RequestPool(m_ammoList[i].name, "Game/Projectiles/", 3);
 			}
 
 			//sort probs
