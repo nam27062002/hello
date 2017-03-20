@@ -479,9 +479,6 @@ public class PolyMesh : MonoBehaviour {
 	/// Raises the draw gizmos event.
 	/// </summary>
 	void OnDrawGizmos() {
-
-		showNormals = true;
-
 		if(showOutline) {
 			Gizmos.color = Color.magenta;
 			float depth = -pinkMeshOffset * transform.lossyScale.z;
