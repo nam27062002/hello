@@ -910,8 +910,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 		
 		m_rbody.angularVelocity = m_angularVelocity;
-
-		m_lastSpeed = (transform.position - m_lastPosition).magnitude / Time.fixedDeltaTime;
+		if ( FeatureSettingsManager.IsDebugEnabled )
+		{
+			m_lastSpeed = (transform.position - m_lastPosition).magnitude / Time.fixedDeltaTime;
+		}
 
 		if ( m_state != State.Intro)
 		{
@@ -919,6 +921,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			position.z = 0f;
 			transform.position = position;
 		}
+
+		Vector3 rewardDistance = RewardManager.distance;
+		Vector3 diff = transform.position-m_lastPosition;
+		rewardDistance.x += Mathf.Abs( diff.x );
+		rewardDistance.y += Mathf.Abs( diff.y );
+		rewardDistance.z += Mathf.Abs( diff.z );
+		RewardManager.distance = rewardDistance;
+
 
 		m_lastPosition = transform.position;
 	}

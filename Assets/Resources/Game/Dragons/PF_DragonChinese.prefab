@@ -681,7 +681,7 @@ Rigidbody:
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 8
   m_CollisionDetection: 0
 --- !u!65 &6565196
@@ -835,8 +835,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 477168459df0e4bcea3ead6e758883ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_type: 3
   m_rotateWithObject: 1
-  m_posZ: -10
 --- !u!114 &11434386
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -873,11 +873,13 @@ MonoBehaviour:
   m_skimmingDistance: 1
   m_waterAirLimitParticle: {fileID: 0}
   m_corpseAsset: 
-  m_vacuumParticle:
+  m_hiccupParticle: 
+  m_hiccupAnchor: {fileID: 0}
+  m_shieldParticle:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
-  m_vacuumAnchor: {fileID: 0}
+  m_shieldAnchor: {fileID: 0}
   m_bodyParticles: []
 --- !u!114 &11438592
 MonoBehaviour:
@@ -948,6 +950,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &11442174
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1023,6 +1026,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Fire_Dummy
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &11457052
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3441,6 +3445,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Spine
   m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
 --- !u!114 &114000011158683094
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3454,6 +3459,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Tail3
   m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
 --- !u!114 &114000011697174064
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4769,3 +4775,4 @@ MonoBehaviour:
   m_insideWaterSnapshot: {fileID: 245688877317836546, guid: f9c941808b0b54fa79ff7aae4e1db556,
     type: 2}
   m_waterDeepToSnapshot: 4
+  m_hiccupSound: 
