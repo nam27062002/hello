@@ -583,7 +583,7 @@ Rigidbody:
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 8
   m_CollisionDetection: 0
 --- !u!65 &6565196
@@ -863,6 +863,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &11442174
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5070,6 +5071,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Tail5
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114000010314816638
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5094,6 +5096,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_RLeg_4
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114000010463477452
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5105,6 +5108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba1c905da34946d68ce50345b05e48f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_overrideCamera: {fileID: 0}
 --- !u!114 &114000010716745568
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5129,6 +5133,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Tail6
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114000010816463694
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6384,6 +6389,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Tail1
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114000012705948140
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6433,6 +6439,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Chest
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114000012860912386
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6457,6 +6464,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114000013143387984
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6481,6 +6489,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Tail4
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114000013461850916
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6533,6 +6542,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Neck1
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114000014111386674
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6546,6 +6556,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Chest
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114000014186287668
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6559,6 +6570,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Tail1
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114258700555348566
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6594,6 +6606,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Spine
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114629232949719882
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6607,6 +6620,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Fire_Dummy
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114679044384173678
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6620,6 +6634,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Tail6
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114716584482961184
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6633,6 +6648,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114722522708905430
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6646,6 +6662,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114735237819701946
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6659,6 +6676,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Chest
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114771975389375840
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6672,6 +6690,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!135 &135424120263109766
 SphereCollider:
   m_ObjectHideFlags: 1
