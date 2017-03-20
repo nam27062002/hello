@@ -110,7 +110,7 @@ public class DragonEquip : MonoBehaviour {
 		{
 			if ( !string.IsNullOrEmpty(bodyParts[i]) )
 			{
-				GameObject prefabObj = Resources.Load<GameObject>("Game/Equipable/Items/" + bodyParts[i]);
+				GameObject prefabObj = Resources.Load<GameObject>("Game/Equipable/Items/" + m_dragonSku + "/" + bodyParts[i]);
 				if ( prefabObj != null )
 				{
 					GameObject objInstance = Instantiate<GameObject>(prefabObj);

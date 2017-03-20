@@ -10,6 +10,8 @@ public class Equipable : MonoBehaviour {
 		Pet_4,
 		Pet_5,
 		Head_1,
+		Neck_1,
+		Mouth_1,
 
 		Count
 	};
