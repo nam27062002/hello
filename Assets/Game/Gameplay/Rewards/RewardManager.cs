@@ -143,6 +143,24 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		get { return instance.m_initialCollectedChests; }
 	}
 
+	//  Kill count used for the goals
+	private Dictionary<string, int> m_killCount = new Dictionary<string, int>();
+	public static Dictionary<string, int> killCount{
+		get{ return instance.m_killCount; }
+	}
+
+	// Distance moved by the player
+	private Vector3 m_distance;
+	public static Vector3 distance{
+		get{return instance.m_distance;}
+		set{instance.m_distance = value;}
+	}
+
+	public static float traveledDistance{
+		get{ return instance.m_distance.magnitude; }
+	}
+
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -205,6 +223,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
 		// Check survival bonus
 		CheckSurvivalBonus();
+
 	}
 
 	/// <summary>
@@ -270,6 +289,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
 		// Chests
 		instance.m_initialCollectedChests = ChestManager.collectedAndPendingChests;
+
+		instance.m_killCount.Clear();
 	}
 
 	/// <summary>
@@ -461,6 +482,21 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// <param name="_entity">The entity that has been killed.</param>
 	/// <param name="_reward">The reward linked to this event.</param>
 	private void OnKill(Transform _entity, Reward _reward) {
+
+		if (!string.IsNullOrEmpty(_reward.origin))
+		{
+			if ( m_killCount.ContainsKey( _reward.origin ) )
+			{
+				m_killCount[ _reward.origin ]++;
+			}
+			else
+			{
+				m_killCount.Add( _reward.origin, 1);
+			}	
+
+			Debug.Log("Kills " + _reward.origin + " " + m_killCount[ _reward.origin ]);
+		}
+
 		// Add the reward
 		ApplyReward(_reward, _entity);
 
