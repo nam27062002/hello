@@ -188,6 +188,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private bool m_insideWater = false;
 	private bool m_outterSpace = false;
 	private bool m_changingArea = false;
+	private string m_destinationArea = "";
 	private Assets.Code.Game.Spline.BezierSpline m_followingSpline;
 	private float m_followingClosestT;
 	private int m_followingClosestStep;
@@ -965,12 +966,21 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					{
 						Stop();
 						// Wait pets and dragon to stop eating
-						bool noeating = false;
-						// NOTE: no eating and not beign latched on!
+						bool noeating = true;
+						// no eating and not beign latched on!
+						if ( m_eatBehaviour.IsEating() || m_eatBehaviour.IsLatching() || m_eatBehaviour.IsGrabbing() || m_latchedOn)
+						{
+							noeating = false;
+						}
+						if ( noeating )
+						{
+							// Check pets
+						}
+
 
 						if ( noeating )
 						{
-							// InstanceManager.gameSceneController.SwitchArea("");
+							InstanceManager.gameSceneController.SwitchArea(m_destinationArea);
 							m_changeAreaState = ChangeAreaState.Loading_Next_Area;
 						}
 					}break;
@@ -1820,6 +1830,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_changingArea = true;
 			// Start moving through Spline
 			m_followingSpline = _other.GetComponent<Assets.Code.Game.Spline.BezierSpline>();
+			m_destinationArea = _other.GetComponent<AreaPortal>().m_areaPortal;
 			ChangeState(State.ChangingArea);
 		}
 		
