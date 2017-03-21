@@ -47,41 +47,24 @@
 					float4 vertex : POSITION;
 					fixed4 color : COLOR;
 					float2 texcoord : TEXCOORD0;
-//				#ifdef SOFTPARTICLES_ON
-//					float4 projPos : TEXCOORD1;
-//				#endif
 				};
 
 				float4 _MainTex_ST;
-//				uniform half4 _GlowColor;
-//				uniform half4 _GlowColorMult;
-
 
 				v2f vert(appdata_t v)
 				{
 					v2f o;
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-//				#ifdef SOFTPARTICLES_ON
-//					o.projPos = ComputeScreenPos(o.vertex);
-//					COMPUTE_EYEDEPTH(o.projPos.z);
-//				#endif
 					o.color = v.color;
 					o.texcoord = TRANSFORM_TEX(v.texcoord,_MainTex);
 					return o;
 				}
 
-				sampler2D _CameraDepthTexture;
-				float _InvFade;
+//				sampler2D _CameraDepthTexture;
+//				float _InvFade;
 
 				fixed4 frag(v2f i) : COLOR
 				{
-//				#ifdef SOFTPARTICLES_ON
-//					float sceneZ = LinearEyeDepth(UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.projPos))));
-//					float partZ = i.projPos.z;
-//					float fade = saturate(_InvFade * (sceneZ - partZ));
-//					i.color.a *= fade;
-//				#endif
-
 					half4 prev = i.color * tex2D(_MainTex, i.texcoord);
 					prev.rgb *= prev.a;
 					return prev;
@@ -89,7 +72,7 @@
 				ENDCG
 			}
 		}
-
+/*
 		// ---- Dual texture cards
 		SubShader
 		{
@@ -106,7 +89,6 @@
 				}
 			}
 		}
-//	}
 
 		// ---- Single texture cards (does not do particle colors)
 		SubShader
@@ -119,6 +101,6 @@
 				}
 			}
 		}
+*/
 	}
-
 }
