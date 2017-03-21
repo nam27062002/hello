@@ -104,13 +104,22 @@ public class DragonEquip : MonoBehaviour {
 		}
 		SetSkin( def.Get("skin") );
 
+		// Remove old body parts
+		for( int i = 0; i<m_attachPoints.Length; i++ )
+		{
+			if ( i > (int) Equipable.AttachPoint.Pet_5 && m_attachPoints[i] != null)
+			{
+				m_attachPoints[i].Unequip(true);
+			}
+		}
+
 		// Now body parts!
 		List<string> bodyParts = def.GetAsList<string>("body_parts");
 		for( int i = 0; i<bodyParts.Count; i++ )
 		{
 			if ( !string.IsNullOrEmpty(bodyParts[i]) )
 			{
-				GameObject prefabObj = Resources.Load<GameObject>("Game/Equipable/Items/" + bodyParts[i]);
+				GameObject prefabObj = Resources.Load<GameObject>("Game/Equipable/Items/" + m_dragonSku + "/" + bodyParts[i]);
 				if ( prefabObj != null )
 				{
 					GameObject objInstance = Instantiate<GameObject>(prefabObj);

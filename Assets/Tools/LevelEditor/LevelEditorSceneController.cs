@@ -140,6 +140,8 @@ namespace LevelEditor {
 		private void StartGame() {
 			LevelManager.SetCurrentLevel(LevelEditor.settings.levelSku);
 
+			PoolManager.Build();
+
 			// Reset dragon stats
 			InstanceManager.player.ResetStats(false);
 

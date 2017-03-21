@@ -53,5 +53,7 @@ public class AttachPoint : MonoBehaviour {
 		m_item = _accesory;
 		m_item.transform.parent = transform;
 		m_item.transform.localPosition = Vector3.zero;
+		m_item.transform.localScale = Vector3.one;
+		m_item.transform.localRotation = Quaternion.identity;
 	}
 }

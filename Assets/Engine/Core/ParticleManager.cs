@@ -13,7 +13,6 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	private Dictionary<string, Pool> m_particlePools = new Dictionary<string, Pool>();
 	private Dictionary<string, int> m_poolSize = new Dictionary<string, int>();
 
-
 	#if PRINT_POOLS
 		string fileName = "ParticleManager.txt";
 		float time = 10f;
@@ -166,7 +165,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		} else {
 			Debug.LogError("[ParticleManager] system " + _prefab.name + " not found in definitions. Cretaing only 1 instance.");
 		}
-		Pool pool = new Pool(_prefab, instance.transform, size, false, true);
+		Pool pool = new Pool(_prefab, instance.transform, size, false, true, true);
 		#endif
 
 		instance.m_particlePools.Add(_prefab.name, pool);

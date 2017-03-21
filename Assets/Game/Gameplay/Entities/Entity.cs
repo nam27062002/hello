@@ -89,6 +89,9 @@ public class Entity : IEntity {
 	}
 
 	void OnDestroy() {
+		if (EntityManager.instance != null) {
+			EntityManager.instance.UnregisterEntity(this);
+		}
 		Messenger.RemoveListener(GameEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
 	}
 

@@ -23,11 +23,11 @@ public class ChestViewController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	public const string PREFAB_PATH = "UI/Metagame/Chests/PF_ChestView";
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Exposed references
-	[SerializeField] private ParticleSystem m_glowFX = null;
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Exposed references
+    [SerializeField] private ParticleSystem m_glowFX = null;
 	[SerializeField] private ParticleSystem m_openFX = null;
 	[SerializeField] private ParticleSystem m_dustFX = null;
 

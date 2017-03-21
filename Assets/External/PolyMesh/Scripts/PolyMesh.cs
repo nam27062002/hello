@@ -480,7 +480,7 @@ public class PolyMesh : MonoBehaviour {
 	/// </summary>
 	void OnDrawGizmos() {
 
-		showNormals = true;
+		showNormals = false;
 
 		if(showOutline) {
 			Gizmos.color = Color.magenta;
