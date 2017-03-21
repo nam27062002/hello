@@ -12,7 +12,7 @@ namespace AI {
 		public class Home : StateComponent {		
 			
 			[StateTransitionTrigger]
-			private static string OnBackAtHome = "onBackAtHome";
+			protected static string OnBackAtHome = "onBackAtHome";
 
 
 			private HomeData m_data;

@@ -79,6 +79,7 @@ namespace AI {
 				m_machine.SetSignal(Signals.Type.Invulnerable, false);
 				m_pilot.ReleaseAction(Pilot.Action.Attack);
 				m_pilot.ReleaseAction(Pilot.Action.Button_B);
+				m_pilot.ReleaseAction(Pilot.Action.Jump);
 
 				m_pilot.SetDirection(m_pilot.direction, false);
 			}
