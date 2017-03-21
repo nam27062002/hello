@@ -51,9 +51,10 @@ namespace AI {
 		protected ViewControl 	m_viewControl;
 		protected Rigidbody		m_rbody;
 
-		public Vector3 position { 
-			get { return m_groundSensor.position; } 
-			set { m_machineTransform.position = value + (m_machineTransform.position - m_groundSensor.position); } 
+		private Vector3 m_groundSensorOffset;
+		public Vector3 position {
+			get { return m_groundSensor.position; }
+			set { m_machineTransform.position = value + m_groundSensorOffset; }
 		}
 
 		private Quaternion m_rotation;
@@ -71,7 +72,7 @@ namespace AI {
 		public Vector3 angularVelocity { get {  if (m_rbody != null) return m_rbody.angularVelocity; return Vector3.zero; } }
 
 		protected Vector3 m_externalVelocity;
-		public Vector3 externalVelocity{ get{ return m_externalVelocity; } set{ m_externalVelocity = value; } }
+		public Vector3 externalVelocity{ get { return m_externalVelocity; } set { m_externalVelocity = value; } }
 
 		private float   m_terminalVelocity;
 		private Vector3 m_acceleration;
@@ -93,7 +94,7 @@ namespace AI {
 			GROUND_MASK = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
 
 			m_rbody = m_machine.GetComponent<Rigidbody>();
-			if (m_rbody != null) {// entities should not interpolate
+			if (m_rbody != null) { // entities should not interpolate
 				m_rbody.interpolation = RigidbodyInterpolation.None;
 			}
 
@@ -128,6 +129,8 @@ namespace AI {
 				case UpVector.Forward: 	m_upVector = Vector3.forward; 	break;
 				case UpVector.Back: 	m_upVector = Vector3.back;		break;
 			}
+
+			m_groundSensorOffset = (m_machineTransform.position - m_groundSensor.position);
 
 			m_direction = Vector3.forward;
 			m_velocity = Vector3.zero;

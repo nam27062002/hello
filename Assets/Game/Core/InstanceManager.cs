@@ -23,7 +23,7 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 	//------------------------------------------------------------------//
 	// Current scene controller, cast it to the right one for the active scene
 	private SceneController m_sceneController = null;
-	public static SceneController sceneController { 
+	public static SceneController sceneController {
 		get { return instance.m_sceneController; }
 		set { if(instance != null) instance.m_sceneController = value; }
 	}

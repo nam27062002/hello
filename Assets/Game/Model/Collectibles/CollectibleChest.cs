@@ -55,12 +55,8 @@ public class CollectibleChest : MonoBehaviour {
 		// Also make sure the object has the right tag
 		this.gameObject.tag = TAG;
 
-		// Instantiate the actual chest
-		GameObject chestPrefab = Resources.Load<GameObject>(ChestViewController.PREFAB_PATH_GAME);
-		GameObject chestObj = GameObject.Instantiate<GameObject>(chestPrefab);
-		chestObj.transform.SetParent(this.transform, false);
-		m_chestView = chestObj.GetComponentInChildren<ChestViewController>();
-        m_chestView.CustomParticlesCulling = gameObject.GetComponentInChildren<CustomParticlesCulling>();        
+		m_chestView = this.gameObject.GetComponentInChildren<ChestViewController>();
+        m_chestView.CustomParticlesCulling = this.gameObject.GetComponentInChildren<CustomParticlesCulling>();        
     }
 
 	/// <summary>

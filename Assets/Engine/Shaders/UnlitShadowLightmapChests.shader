@@ -42,6 +42,8 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (Chests)"
 				#include "HungryDragon.cginc"
 
 				#define FOG
+				#define OPAQUEALPHA
+
 				#include "scenary.cginc"
 
 			ENDCG

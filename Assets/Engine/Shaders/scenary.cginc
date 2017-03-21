@@ -195,6 +195,8 @@ fixed4 frag (v2f i) : SV_Target
 	col = col + (specular * specMask * i.color * _LightColor0);
 #endif	
 
+#ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+#endif
 	return col;
 }

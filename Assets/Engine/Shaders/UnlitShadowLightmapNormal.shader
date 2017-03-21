@@ -51,6 +51,8 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow + Normal Map"
 				#endif
 
 				#define FOG
+				#define OPAQUEALPHA
+
 				#include "scenary.cginc"
 
 			ENDCG

@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 namespace AI {
+	[Serializable]
 	public class MachineEdible : MachineComponent {
 
 		public override Type type { get { return Type.Edible; } }

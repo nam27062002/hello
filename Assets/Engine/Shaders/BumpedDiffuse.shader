@@ -6,9 +6,10 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-		_Specular( "Specular", float ) = 1
-		_BumpStrength("Bump Strength", float) = 3
-		_FresnelFactor("Fresnel factor", Range(0.0, 5.0)) = 0.27
+		_NormalTex("Normal", 2D) = "white" {}
+		_SpecularPower( "Specular power", float ) = 1
+		_NormalStrength("Normal Strength", float) = 3
+		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
 		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 		_StencilMask("Stencil Mask", int) = 10
 	}
@@ -36,6 +37,8 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 			#pragma fragmentoption ARB_precision_hint_fastest
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
+			#define HG_ENTITIES
+
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"
@@ -44,18 +47,20 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 			#endif
 
 			#if MEDIUM_DETAIL_ON
-//			#define RIM
-//			#define BUMP
+//			#define NORMALMAP
+			#define FRESNEL
 			#endif
 
 			#if HI_DETAIL_ON
-//			#define RIM
-//			#define BUMP
-//			#define SPEC
+//			#define NORMALMAP
+//			#define SPECULAR
+			#define FRESNEL
 			#endif
 
-//			#define BUMP
+			#include "entities.cginc"
 
+//			#define BUMP
+/*
 			struct appdata
 			{
 				float4 vertex : POSITION;
@@ -82,9 +87,9 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 			uniform sampler2D _MainTex;
 			uniform float4 _MainTex_ST;
 			uniform float4 _MainTex_TexelSize;
-			uniform float _Specular;
+			uniform float _SpecularPower;
 			uniform float _BumpStrength;
-			uniform float _FresnelFactor;
+			uniform float _FresnelPower;
 			uniform float4 _FresnelColor;
 
 			v2f vert (appdata v)
@@ -143,16 +148,17 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 
 //     			fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
 //				fixed fresnel = pow(max(dot(normalDirection, i.viewDir), 0), _FresnelFactor);
-				fixed fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelFactor), 0.0, 1.0);
+				fixed fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelPower), 0.0, 1.0);
 
      			// col = (diffuse + fixed4(UNITY_LIGHTMODEL_AMBIENT.rgb,1)) * col + specular * _LightColor0;
-				col = (diffuse + fixed4(i.vLight, 1)) * col + /*(specular * _LightColor0) + */(fresnel * _FresnelColor);
+				col = (diffuse + fixed4(i.vLight, 1)) * col + (fresnel * _FresnelColor);
 //				col = (diffuse + fixed4(i.vLight, 1)) * col;
 //				col = lerp(col, _FresnelColor, fresnel * _FresnelColor.a * 4.0);
 
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 				return col;
 			}
+*/
 			ENDCG
 		}
 	}
