@@ -33,6 +33,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 				#include "HungryDragon.cginc"
 
 				#define FOG
+				#define OPAQUEALPHA
 				#include "scenary.cginc"
 			ENDCG
 		}

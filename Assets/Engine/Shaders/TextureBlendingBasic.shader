@@ -31,7 +31,9 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow"
 				#include "HungryDragon.cginc"
 
 				#define FOG
-				#define BLEND_TEXTURE								
+				#define BLEND_TEXTURE
+				#define OPAQUEALPHA
+
 				#include "scenary.cginc"
 
 			ENDCG

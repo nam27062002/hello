@@ -12,6 +12,8 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
 		_SecondTexture ("Second Texture (RGB)", 2D) = "white" {}
+//		_WaveRadius("Wave Radius", float) = 4.5
+//		_WavePhase("Wave phase", float) = 4.0
 	}
 
 	SubShader {
@@ -19,7 +21,7 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 		LOD 100
 		
 		Pass {  
-			Tags { "LightMode" = "ForwardBase" }
+			Tags { "LightMode" = "ForwardBase"}
 
 			CGPROGRAM
 				#pragma vertex vert
@@ -43,7 +45,19 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 				{
 					return float4(v.color.xyz, 1.0 - dot(mul(float4(v.normal,0), unity_WorldToObject).xyz, float3(0,1,0)));
 				}
+/*
+				#define CUSTOM_VERTEXPOSITION
 
+				uniform float _WaveRadius;
+				uniform float _WavePhase;
+
+				float4 getCustomVertexPosition(inout appdata_t v)
+				{
+					float3 incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.xyz * _WavePhase)) * 0.5) * _WaveRadius;
+					float4 tvertex = v.vertex + float4(v.normal, 0.0) * (incWave.x + incWave.y + incWave.z) * 0.33333;
+					return mul(UNITY_MATRIX_MVP, tvertex);
+				}
+*/
 				#include "scenary.cginc"
 
 			ENDCG

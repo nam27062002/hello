@@ -12,7 +12,7 @@ namespace AI {
 		public class HomeSenseDragon : StateComponent {		
 			
 			[StateTransitionTrigger]
-			private static string OnBackAtHome = "onBackAtHome";
+			protected static string OnBackAtHome = "onBackAtHome";
 
 
 			private HomeSenseDragonData m_data;

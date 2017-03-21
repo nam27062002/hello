@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: MAT_canary_Bg
-  m_Shader: {fileID: 4800000, guid: 0ed3d43683af3480697ba676e01215f3, type: 3}
+  m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -95,6 +95,9 @@ Material:
         name: _FogStart
       second: 0
     - first:
+        name: _FresnelFactor
+      second: 0.27
+    - first:
         name: _Glossiness
       second: 0.5
     - first:
@@ -116,6 +119,9 @@ Material:
         name: _SrcBlend
       second: 1
     - first:
+        name: _StencilMask
+      second: 10
+    - first:
         name: _UVSec
       second: 0
     - first:
@@ -134,3 +140,6 @@ Material:
     - first:
         name: _FogColor
       second: {r: 0.4852941, g: 0.7231235, b: 1, a: 1}
+    - first:
+        name: _FresnelColor
+      second: {r: 0, g: 0, b: 0, a: 0}

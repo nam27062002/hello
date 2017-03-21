@@ -1,7 +1,8 @@
 ﻿// SMBTemplate.cs
+// @projectName
 // 
-// Created by Alger Ortín Castellví on DD/MM/2017.
-// Copyright (c) 2017 Ubisoft. All rights reserved.
+// Created by @author on @dd/@mm/@yyyy.
+// Copyright (c) @yyyy Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
