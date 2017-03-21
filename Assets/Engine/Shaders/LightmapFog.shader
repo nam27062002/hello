@@ -5,7 +5,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Simple Lightmap & fog" 
+Shader "Hungry Dragon/Lightmap and fog" 
 {
 	Properties 
 	{
