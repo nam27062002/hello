@@ -81,7 +81,7 @@ namespace AI {
 					m_idleTimer = 0f;
 					m_pilot.SlowDown(true);
 					float distanceToTarget = (m_pilot.target - m_machine.position).sqrMagnitude;
-					if (distanceToTarget <= 1f || distanceToTarget > m_distanceToTarget) {
+					if (distanceToTarget <= 2f || distanceToTarget > m_distanceToTarget) {
 						Transition(OnRest);
 					}
 					m_distanceToTarget = distanceToTarget;

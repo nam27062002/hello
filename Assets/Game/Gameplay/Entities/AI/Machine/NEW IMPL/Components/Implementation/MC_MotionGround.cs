@@ -52,14 +52,6 @@ namespace AI {
 			m_nextSubState = SubState.Idle;
 		}
 
-		public override void OnCollisionGroundEnter() {
-			//m_onGround = true;
-		}
-
-		public override void OnCollisionGroundExit() {
-		//	m_onGround = false;
-		}
-
 		protected override void ExtendedUpdate() {
 			if (m_nextSubState != m_subState) {
 				ChangeState();
@@ -73,13 +65,10 @@ namespace AI {
 
 			switch (m_subState) {
 				case SubState.Idle:
-					if (m_pilot.speed > 0.01f) {
+					if (m_pilot.IsActionPressed(Pilot.Action.Jump)) {
+						m_nextSubState = SubState.Jump_Start;
+					} else if (m_pilot.speed > 0.01f) {
 						m_nextSubState = SubState.Move;
-					}
-
-					GetGroundNormal();
-					if (m_heightFromGround > 1f) {
-						m_machine.SetSignal(Signals.Type.FallDown, true);
 					}
 					break;
 
@@ -89,17 +78,9 @@ namespace AI {
 					} else if (m_pilot.speed <= 0.01f) {
 						m_nextSubState = SubState.Idle;
 					}
-
-					GetGroundNormal();
-					if (m_heightFromGround > 1f) {
-						m_machine.SetSignal(Signals.Type.FallDown, true);
-					}
 					break;
 
 				case SubState.Jump_Start:
-					if (m_velocity.y > 0f) {
-						m_nextSubState = SubState.Jump_Up;
-					}
 					break;
 
 				case SubState.Jump_Up:
@@ -109,23 +90,35 @@ namespace AI {
 					break;
 
 				case SubState.Jump_Down:
+					GetGroundNormal();
+					if (m_onGround) {
+						m_pilot.ReleaseAction(Pilot.Action.Jump);
+						m_nextSubState = SubState.Idle;
+					}
 					break;
 			}
 		}
 
 		protected override void ExtendedFixedUpdate() {
-			if (m_subState > SubState.Idle) {
-				if (m_mass != 1f) {
-					Vector3 impulse = (m_pilot.impulse - m_velocity);
-					impulse /= m_mass;
-					m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_pilot.speed);
-				} else {
-					m_velocity = m_pilot.impulse;
-				}
-			}
+			if (m_subState >= SubState.Jump_Start && m_subState <= SubState.Jump_Down) {
+				// ----------------------------- gravity :3
+				m_velocity += Vector3.down * 9.8f * Time.fixedDeltaTime;
+				m_rbody.velocity = m_velocity;
+			} else {
+				if (m_subState > SubState.Idle) {				
+					if (m_mass != 1f) {
+						Vector3 impulse = (m_pilot.impulse - m_velocity);
+						impulse /= m_mass;
+						m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_pilot.speed);
+					} else {
+						m_velocity = m_pilot.impulse;
+					}
 
-			// ----------------------------- gravity :3
-			m_rbody.velocity = m_velocity + (Vector3.down * 9.8f * 3f * Time.fixedDeltaTime) + m_externalVelocity;
+					m_rbody.velocity = m_velocity + m_externalVelocity;
+				}
+
+				m_rbody.AddForce(Vector3.down * 9.8f * 10f, ForceMode.Acceleration);
+			}
 		}
 
 		protected override void ExtendedUpdateFreeFall() {
@@ -145,13 +138,21 @@ namespace AI {
 			}
 		}
 
-		private void GetGroundNormal() {
+		protected override void OnSetVelocity() {
+			if (m_subState == SubState.Jump_Start) {
+				m_nextSubState = SubState.Jump_Up;
+			}
+		}
+
+		private Vector3 GetGroundNormal() {
 			Vector3 normal = Vector3.up;
+			Vector3 hitPos = position;
 			Vector3 pos = position + (m_upVector * 3f);
 
 			RaycastHit hit;		
 			if (Physics.Raycast(pos, -m_upVector, out hit, 6f, GROUND_MASK)) {
 				normal = hit.normal;
+				hitPos = hit.point;
 				m_heightFromGround = hit.distance - 3f;
 			} else {
 				m_heightFromGround = 100f;
@@ -166,6 +167,8 @@ namespace AI {
 			}
 
 			m_viewControl.Height(m_heightFromGround);
+
+			return hitPos;
 		}
 
 		private void ChangeState() {
@@ -184,6 +187,7 @@ namespace AI {
 					break;
 
 				case SubState.Jump_Down:
+					m_viewControl.Jumping(false);
 					Stop();
 					break;
 			}
@@ -196,6 +200,7 @@ namespace AI {
 					break;
 
 				case SubState.Jump_Start:
+					m_viewControl.Jumping(true);
 					Stop();
 					break;
 
@@ -213,6 +218,7 @@ namespace AI {
 		//--------------------------------------------------
 		protected override void ExtendedAttach() {}
 
-		protected override void OnSetVelocity() {}
+		public override void OnCollisionGroundEnter() {}
+		public override void OnCollisionGroundExit() {}
 	}
 }
