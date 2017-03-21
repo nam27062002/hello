@@ -37,8 +37,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		Latching,
 		Dead,
 		Reviving,
+		ChangingArea,
 		None,
 	};
+
+	public enum ChangeAreaState
+	{
+		Enter,
+		Wait_End_Eating,
+		Loading_Next_Area,
+		Exit
+	};
+	ChangeAreaState m_changeAreaState;
 
 	public static float m_waterImpulseMultiplier = 0.75f;
 	public static float m_onWaterCollisionMultiplier = 0.5f;
@@ -177,6 +187,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private Vector3 m_waterEnterPosition;
 	private bool m_insideWater = false;
 	private bool m_outterSpace = false;
+	private bool m_changingArea = false;
+	private Assets.Code.Game.Spline.BezierSpline m_followingSpline;
+	private float m_followingClosestT;
+	private int m_followingClosestStep;
 	private float m_recoverTimer;
 
 	private bool m_canMoveInsideWater = false;
@@ -369,6 +383,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		Messenger.AddListener(GameEvents.PLAYER_DIED, PnPDied);
 		Messenger.AddListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggle);
 		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
+		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnGameAreaEnter);
 	}
 
 	void OnDisable()
@@ -376,6 +391,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		Messenger.RemoveListener(GameEvents.PLAYER_DIED, PnPDied);
 		Messenger.RemoveListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggle);
 		Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
+		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnGameAreaEnter);
 	}
 
 	private void PnPDied()
@@ -395,6 +411,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_impulse = Vector3.zero;
 		m_rbody.velocity = m_impulse;
 		m_deadTimer = 1000;
+	}
+
+	private void OnGameAreaEnter()
+	{
+		if ( m_changingArea && m_changeAreaState == ChangeAreaState.Loading_Next_Area )
+		{
+			m_changeAreaState = ChangeAreaState.Exit;
+		}
 	}
 
 	private void ChangeState(State _nextState) {
@@ -439,6 +463,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.Reviving:
 				{
 					m_rbody.detectCollisions = true;
+				}break;
+				case State.ChangingArea:
+				{
+					// if fury not active
+					m_eatBehaviour.ResumeEating();
+					Messenger.Broadcast(GameEvents.PLAYER_ENTERING_AREA);
 				}break;
 			}
 
@@ -546,6 +576,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 						m_direction = Vector3.left;
 					}
 
+				}break;
+				case State.ChangingArea:
+				{
+					m_changeAreaState = ChangeAreaState.Enter;
+					m_eatBehaviour.PauseEating();
+
+					// Send event to tell pets we are leaging the area
+					Messenger.Broadcast(GameEvents.PLAYER_LEAVING_AREA);
 				}break;
 			}
 
@@ -810,7 +848,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		switch (m_state) {
 			case State.Idle:
 				UpdateIdleMovement(Time.fixedDeltaTime);
-				// UpdateMovement();
 				break;
 
 			case State.Fly:
@@ -907,6 +944,56 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					}
 				}
 			}break;
+			case State.ChangingArea:
+			{
+				switch( m_changeAreaState )
+				{	
+					case ChangeAreaState.Enter:
+					{
+						m_followingSpline.GetClosestPointToPoint( transform.position, 100, out m_followingClosestT, out m_followingClosestStep);
+						m_followingClosestT += 0.1f;	// Add dragon speed?
+						if ( m_followingClosestT >= 0.5f )
+						{
+							m_followingClosestT = 0.5f;
+							m_changeAreaState = ChangeAreaState.Wait_End_Eating;
+							Stop();
+						}
+						Vector3 target = m_followingSpline.GetPoint( m_followingClosestT );
+						UpdateMovementToPoint( Time.fixedDeltaTime, target );
+					}break;
+					case ChangeAreaState.Wait_End_Eating:
+					{
+						Stop();
+						// Wait pets and dragon to stop eating
+						bool noeating = false;
+						// NOTE: no eating and not beign latched on!
+
+						if ( noeating )
+						{
+							// InstanceManager.gameSceneController.SwitchArea("");
+							m_changeAreaState = ChangeAreaState.Loading_Next_Area;
+						}
+					}break;
+					case ChangeAreaState.Loading_Next_Area:
+					{
+						Stop();
+						// Waiting for Game Area Enter event
+					}break;
+					case ChangeAreaState.Exit:
+					{
+						m_followingSpline.GetClosestPointToPoint( transform.position, 100, out m_followingClosestT, out m_followingClosestStep);
+						if ( m_followingClosestT >= 0.99f )
+						{
+							// Exit eating
+							ChangeState( State.Fly );
+						}
+						m_followingClosestT += 0.1f;	// Add dragon speed?
+						Vector3 target = m_followingSpline.GetPoint( m_followingClosestT );
+						UpdateMovementToPoint( Time.fixedDeltaTime, target );
+					}break;
+				}
+
+			}break;
 		}
 		
 		m_rbody.angularVelocity = m_angularVelocity;
@@ -933,6 +1020,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_lastPosition = transform.position;
 	}
 
+	private void UpdateMovementToPoint( float _deltaTime, Vector3 targetPoint )
+	{
+		Vector3 impulse = (targetPoint - transform.position).normalized;
+		UpdateMovementImpulse( _deltaTime, impulse);
+	}
+
 	//------------------------------------------------------------------//
 	// INTERNAL UTILS													//
 	//------------------------------------------------------------------//
@@ -951,8 +1044,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
             impulse.x = drunkX * impulse.x;
             impulse.y = drunkY * impulse.y;
 		}
+		UpdateMovementImpulse( _deltaTime, impulse);
+	}
 
-        if (boostSpeedMultiplier > 1)
+	private void UpdateMovementImpulse( float _deltaTime, Vector3 impulse)
+	{
+		if (boostSpeedMultiplier > 1)
         {
             if (impulse == Vector3.zero)
             {
@@ -990,8 +1087,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 			m_direction = m_impulse.normalized;
 			RotateToDirection( impulse );
-
-
 		}
 		else
 		{
@@ -1048,48 +1143,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		return ((src * factor) + (dst * dt)) / (factor + dt);
 	}
 
-    /*
-    private void UpdateMovement() 
-	{
-		Vector3 impulse = m_controls.GetImpulse(1); 
-		if ( impulse != Vector3.zero )
-		{
-			// http://stackoverflow.com/questions/667034/simple-physics-based-movement
-
-			// bool ignoreGravity = OverWaterMovement( ref impulse );
-			bool ignoreGravity = false;
-
-			// v_max = a/f
-			// t_max = 5/f
-
-			float gravity = 0;
-			if (!ignoreGravity)
-				gravity = 9.81f * m_dragonGravityModifier;
-			Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
-			acceleration += impulse * m_dargonAcceleration * GetTargetSpeedMultiplier() * m_dragonMass;	// User Force
-
-			// stroke's Drag
-			m_impulse = m_rbody.velocity;
-			float impulseMag = m_impulse.magnitude;
-
-			m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
-
-			m_direction = m_impulse.normalized;
-			RotateToDirection( impulse );
-
-
-		}
-		else
-		{
-			ComputeImpulseToZero();
-			ChangeState( State.Idle );
-		}
-
-		ApplyExternalForce();
-
-		m_rbody.velocity = m_impulse;
-	}
-*/
 	private void UpdateWaterMovement( float _deltaTime )
 	{
 		Vector3 impulse = m_controls.GetImpulse(1);
@@ -1097,8 +1150,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		{
 			impulse = -impulse;
 		}
+		UpdateWaterMovementImpulse(_deltaTime, impulse);
+    }
 
-        if (impulse.y < 0) impulse.y *= m_inverseGravityWater;
+	private void UpdateWaterMovementImpulse( float _deltaTime, Vector3 impulse )
+	{
+		if (impulse.y < 0) impulse.y *= m_inverseGravityWater;
 
 		Vector3 gravityAcceleration = Vector3.up * 9.81f * m_dragonWaterGravityModifier * m_waterGravityMultiplier;   // Gravity
         Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass * m_accWaterFactor;
@@ -1133,31 +1190,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}
 			}
         }
-
-        /*
-
-		if ( impulse.y > 0 )
-		{
-			m_waterMovementModifier = Mathf.Lerp( m_waterMovementModifier, 1, Time.deltaTime);
-		}
-		else if (impulse.y == 0)
-		{
-			m_waterMovementModifier = Mathf.Lerp( m_waterMovementModifier, 0.25f, Time.deltaTime);
-		}
-		else
-		{
-			m_waterMovementModifier = Mathf.Lerp( m_waterMovementModifier, 0.0f, Time.deltaTime);
-		}
-
-		m_impulse = m_rbody.velocity;
-		m_impulse.y += m_parabolicMovementValue * Time.deltaTime;
-		m_impulse.x += m_dargonAcceleration * 0.75f * impulse.x * Time.deltaTime;
-
-		m_direction = m_impulse.normalized;
-		RotateToDirection( m_direction );
-		m_rbody.velocity = m_impulse;
-		*/
-    }
+	}
 
 
     private void UpdateSpaceMovement(float _deltaTime)
@@ -1484,7 +1517,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// Stop dragon's movement
 	/// </summary>
 	public void Stop() {
-		m_rbody.velocity = Vector3.zero;
+		m_impulse = Vector3.zero;
+		m_rbody.velocity = m_impulse;
+		m_direction = m_impulse.normalized;
 	}
 		
 	public void AddForce(Vector3 _force) {
@@ -1780,6 +1815,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_previousState = State.OuterSpace;
 			}
 		}
+		else if ( _other.CompareTag("AreaChange") && !m_changingArea)
+		{
+			m_changingArea = true;
+			// Start moving through Spline
+			m_followingSpline = _other.GetComponent<Assets.Code.Game.Spline.BezierSpline>();
+			ChangeState(State.ChangingArea);
+		}
 		
 	}
 
@@ -1808,7 +1850,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_previousState = State.Idle;
 			}
 		}
-		
+		else if ( _other.CompareTag("AreaChange") && m_changingArea)
+		{
+			m_changingArea = false;
+		}
+
 	}
 
 	void OnCollisionEnter(Collision collision) 
