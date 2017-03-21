@@ -5,8 +5,8 @@ Shader "Hungry Dragon/Bumped Diffuse Transparent (Spawners)"
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-		_Specular( "Specular", float ) = 1
-		_FresnelFactor("Fresnel factor", Range(0.0, 5.0)) = 0.27
+		_SpecularPower( "Specular power", float ) = 1
+		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
 		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 		_Tint( "Tint", color) = (1, 1, 1, 1)
 	}
@@ -20,15 +20,25 @@ Shader "Hungry Dragon/Bumped Diffuse Transparent (Spawners)"
 
 		Pass
 		{
-//			Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			
+			#pragma glsl_no_auto_normalization
+			#pragma fragmentoption ARB_precision_hint_fastest
+			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
+
+			#define HG_ENTITIES
+
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"
 
+			#define FRESNEL
+			#define TINT
+
+			#include "entities.cginc"
+
+/*
 			struct appdata
 			{
 				float4 vertex : POSITION;
@@ -78,13 +88,7 @@ Shader "Hungry Dragon/Bumped Diffuse Transparent (Spawners)"
 				//				o.halfDir = normalize(lightDirection + viewDirection);
 				o.viewDir = viewDirection;
 
-				// To calculate tangent world
-				float4x4 modelMatrix = unity_ObjectToWorld;
-				float4x4 modelMatrixInverse = unity_WorldToObject;
-				o.tangentWorld = normalize(mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
-				o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
-				o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
-
+				o.normalWorld = normal;
 				return o;
 			}
 			
@@ -93,18 +97,7 @@ Shader "Hungry Dragon/Bumped Diffuse Transparent (Spawners)"
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, i.uv);
 
-				float heightSampleCenter = col.a;
-
-				float heightSampleRight = tex2D(_MainTex, i.uv + float2(_MainTex_TexelSize.x, 0)).a;
-
-				float heightSampleUp = tex2D(_MainTex, i.uv + float2(0, _MainTex_TexelSize.y)).a;
-
-				float sampleDeltaRight = heightSampleRight - heightSampleCenter;
-				float sampleDeltaUp = heightSampleUp - heightSampleCenter;
-
-				float3 encodedNormal = cross(float3(1, 0, sampleDeltaRight * _BumpStrength), float3(0, 1, sampleDeltaUp * _BumpStrength));
-				float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
-				float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
+				float3 normalDirection = i.normalWorld;
 
 //     			float3 normalDirection = i.normal;
 
@@ -119,6 +112,7 @@ Shader "Hungry Dragon/Bumped Diffuse Transparent (Spawners)"
 
 				return col;
 			}
+*/
 			ENDCG
 		}
 	}
