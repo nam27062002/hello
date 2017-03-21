@@ -17,21 +17,33 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 7aa033b6c69294a3f8ba3952e042d3c8, type: 2}
     - {fileID: 11400000, guid: 7839f107e7c594c41adbf472f9d60afc, type: 2}
     - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
   - m_name: Shooting
     m_componentAssets:
     - {fileID: 11400000, guid: ac358085d83df4a548bcc228537390aa, type: 2}
     - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
   - m_name: Pursuit
     m_componentAssets:
     - {fileID: 11400000, guid: 75e7e5d09e8f4494880db15927231748, type: 2}
     - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
   - m_name: Decide
     m_componentAssets:
     - {fileID: 11400000, guid: 8458e183d02934114b38edf9169da59c, type: 2}
     - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
+  - m_name: ChangingArea
+    m_componentAssets:
+    - {fileID: 11400000, guid: 7aa033b6c69294a3f8ba3952e042d3c8, type: 2}
+    - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
   m_transitionData:
   - to: 3
     id: onEnemyTargeted
+    from: 0
+  - to: 4
+    id: onAreaChangeStart
     from: 0
   - to: 0
     id: onTooFarAway
@@ -42,11 +54,17 @@ MonoBehaviour:
   - to: 0
     id: onOutOfRange
     from: 1
+  - to: 4
+    id: onAreaChangeStart
+    from: 1
   - to: 2
     id: onDefaultAction
     from: 3
   - to: 1
     id: onTimedAction
+    from: 3
+  - to: 4
+    id: onAreaChangeStart
     from: 3
   - to: 0
     id: onCollisionDetected
@@ -57,5 +75,11 @@ MonoBehaviour:
   - to: 0
     id: onEnemyOutOfSight
     from: 2
+  - to: 4
+    id: onAreaChangeStart
+    from: 2
+  - to: 0
+    id: onAreaChangeEnd
+    from: 4
   m_firstState_A: 0
   m_firstState_B: 0
