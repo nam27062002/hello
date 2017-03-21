@@ -22,7 +22,6 @@ public class ChestViewController : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string PREFAB_PATH = "UI/Metagame/Chests/PF_ChestView";
-    public const string PREFAB_PATH_GAME = "UI/Metagame/Chests/PF_ChestViewGame";
 
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
