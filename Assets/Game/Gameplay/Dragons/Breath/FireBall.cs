@@ -67,7 +67,7 @@ public class FireBall : MonoBehaviour
 		{
 			//if (CanBurn(preys[i]) || m_type == Type.Super) 
 			{
-				AI.MachineOld machine =  preys[i].GetComponent<AI.MachineOld>();
+				AI.IMachine machine =  preys[i].machine;
 				if (machine != null) {
 					machine.Burn(transform);
 				}

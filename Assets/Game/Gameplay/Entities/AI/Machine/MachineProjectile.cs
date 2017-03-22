@@ -132,6 +132,7 @@ namespace AI {
 		}
 
 		public void SetVelocity(Vector3 _v) {}
+		public void AddExternalForce(Vector3 _f) {}
 
 		public virtual void CustomUpdate(){}
 

@@ -40,7 +40,6 @@ namespace AI {
 		Group 	GetGroup();
 		void	LeaveGroup();
 
-		// External interactions
 		void ReceiveDamage(float _damage);
 
 		void LockInCage();
@@ -63,6 +62,7 @@ namespace AI {
 		bool Burn(Transform _transform);
 
 		void SetVelocity(Vector3 _v);
+		void AddExternalForce(Vector3 _f);
 
 		bool IsDead();
 		bool IsDying();

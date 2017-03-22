@@ -30,9 +30,9 @@ public class AttachPoint : MonoBehaviour {
 		m_item = _pet;
 		m_item.transform.position = transform.position;
 
-		AI.MachineOld machine = m_item.GetComponent<AI.MachineOld>();
+		AI.IMachine machine = m_item.GetComponent<AI.IMachine>();
 		if(machine != null) {
-			machine.Spawn();
+			machine.Spawn(null);
 		}
 
 		AI.AIPilot pilot = m_item.GetComponent<AI.AIPilot>();

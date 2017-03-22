@@ -117,11 +117,9 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 		}
 
 		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_area.center, m_area.radius * 3);
-		for (int i = 0; i < preys.Length; i++) 
-		{
-			if ( preys[i].IsBurnable(m_fireTier))
-			{
-				AI.MachineOld machine =  preys[i].GetComponent<AI.MachineOld>();
+		for (int i = 0; i < preys.Length; i++) {
+			if (preys[i].IsBurnable(m_fireTier)) {
+				AI.IMachine machine =  preys[i].machine;
 				if (machine != null) {
 					machine.Burn(transform);
 				}
