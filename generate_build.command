@@ -280,7 +280,7 @@ if $BUILD_IOS; then
     xcodebuild clean -project "${PROJECT_NAME}" -configuration Release -alltargets
 
     print_builder "Archiving"
-    # Since the archiving process has a lot of verbose (and XCode doesn't allow us to regulate it), show only the relevant lines
+    rm -f "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}"    # just in case
     xcodebuild archive -project "${PROJECT_NAME}" -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}"
 
     # Generate IPA file
