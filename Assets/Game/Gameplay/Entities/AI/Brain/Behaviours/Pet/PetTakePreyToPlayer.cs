@@ -51,10 +51,17 @@ namespace AI {
 				m_petDogSpawner.RamdomizeEntity();
 				m_petDogSpawner.Respawn();
 				Pilot p = m_petDogSpawner.operatorPilot;
-				m_spawnedEntity = p.GetComponent<Entity>();
-				m_spawnedEntity.dieOutsideFrustum = false;
-				m_pilot.SlowDown(false);
-				m_eatBehaviour.StartHold( m_spawnedEntity.GetComponent<AI.IMachine>(), true);
+				if ( p != null)
+				{
+					m_spawnedEntity = p.GetComponent<Entity>();
+					m_spawnedEntity.dieOutsideFrustum = false;
+					m_pilot.SlowDown(false);
+					m_eatBehaviour.StartHold( m_spawnedEntity.GetComponent<AI.IMachine>(), true);
+				}
+				else
+				{
+					Debug.TaggedLogError( "PetDog", "No not get pilot on" + m_petDogSpawner.GetSelectedPrefabStr());
+				}
 			}
 
 			protected override void OnUpdate() {
@@ -62,19 +69,26 @@ namespace AI {
 				targetPos += InstanceManager.player.dragonMotion.direction * m_frontDistance;
 				m_pilot.GoTo(targetPos);
 
-				float magnitude = (targetPos - m_pilot.transform.position).sqrMagnitude;
-
-				if ( magnitude <= 1 )
+				if ( m_spawnedEntity != null )
 				{
-					// We are done
-					// leave prey
-					if ( m_spawnedEntity != null )
+					float magnitude = (targetPos - m_pilot.transform.position).sqrMagnitude;
+					if ( magnitude <= 1 )
 					{
-						m_eatBehaviour.EndHold();
-						m_spawnedEntity.dieOutsideFrustum = true;
-						m_spawnedEntity = null;
-					}
+						// We are done
+						// leave prey
+						if ( m_spawnedEntity != null )
+						{
+							m_eatBehaviour.EndHold();
+							m_spawnedEntity.dieOutsideFrustum = true;
+							m_spawnedEntity = null;
+						}
 
+						m_transitionParam[0] = m_data.m_eatPauseAfterPreyRelease.GetRandom();
+						Transition(OnPreyReleased, m_transitionParam);
+					}
+				}
+				else
+				{
 					m_transitionParam[0] = m_data.m_eatPauseAfterPreyRelease.GetRandom();
 					Transition(OnPreyReleased, m_transitionParam);
 				}
