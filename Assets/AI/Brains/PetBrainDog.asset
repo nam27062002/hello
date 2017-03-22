@@ -18,20 +18,29 @@ MonoBehaviour:
     - {fileID: 11400000, guid: cc35a48828b4849c2896582f0cd5ef2c, type: 2}
     - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
     - {fileID: 11400000, guid: 39a8b035e2dec4066adc75cc047ba640, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
   - m_name: Leaving
     m_componentAssets:
     - {fileID: 11400000, guid: 6f682064e3b3f47bca6e4913a63cbe6d, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
   - m_name: Pursuit
     m_componentAssets:
     - {fileID: 11400000, guid: 75e7e5d09e8f4494880db15927231748, type: 2}
     - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
   - m_name: Return
     m_componentAssets:
     - {fileID: 11400000, guid: d6a44af36ca5a4be8b75c9d22c0ae3d0, type: 2}
     - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
   - m_name: Deactivated
     m_componentAssets:
     - {fileID: 11400000, guid: 13da02bf49c944855be6834c9e04ce41, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
+  - m_name: ChangingArea
+    m_componentAssets:
+    - {fileID: 11400000, guid: 7aa033b6c69294a3f8ba3952e042d3c8, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
   m_transitionData:
   - to: 2
     id: onEnemyInRange
@@ -39,8 +48,14 @@ MonoBehaviour:
   - to: 1
     id: onTimedAction
     from: 0
+  - to: 5
+    id: onAreaChangeStart
+    from: 0
   - to: 0
     id: OnPreyReleased
+    from: 3
+  - to: 5
+    id: onAreaChangeStart
     from: 3
   - to: 0
     id: onCollisionDetected
@@ -51,11 +66,23 @@ MonoBehaviour:
   - to: 0
     id: onEnemyOutOfSight
     from: 2
+  - to: 5
+    id: onAreaChangeStart
+    from: 2
   - to: 3
     id: OnReactivated
+    from: 4
+  - to: 5
+    id: onAreaChangeStart
     from: 4
   - to: 4
     id: onOutOfScreen
     from: 1
+  - to: 5
+    id: onAreaChangeStart
+    from: 1
+  - to: 0
+    id: onAreaChangeEnd
+    from: 5
   m_firstState_A: 0
   m_firstState_B: 0

@@ -13,6 +13,12 @@ namespace AI {
 			[StateTransitionTrigger]
 			public static string onAreaChangeEnd = "onAreaChangeEnd";
 
+			private MachineEatBehaviour m_eatBehaviour;
+			protected override void OnInitialise()
+			{
+				m_eatBehaviour = m_pilot.GetComponent<MachineEatBehaviour>();
+			}
+
 			protected override void OnEnter(State _oldState, object[] _param) 
 			{
 				Messenger.AddListener(GameEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
@@ -25,13 +31,21 @@ namespace AI {
 				Messenger.RemoveListener(GameEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 			}
 
-			void OnEnteringArea()
+			void OnLeavingArea()
 			{
+				if ( m_eatBehaviour != null )	
+				{
+					m_eatBehaviour.PauseEating();
+				}
 				Transition( onAreaChangeStart );
 			}
 
-			void OnLeavingArea()
+			void OnEnteringArea()
 			{
+				if ( m_eatBehaviour != null )	
+				{
+					m_eatBehaviour.ResumeEating();
+				}
 				Transition( onAreaChangeEnd );
 			}
 		}
