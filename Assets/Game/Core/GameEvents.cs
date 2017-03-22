@@ -69,6 +69,8 @@ public enum GameEvents {
 	PLAYER_PET_PRE_FREE_REVIVE,			// no params
 	PLAYER_FREE_REVIVE,			// no params
 	PLAYER_REVIVE,				// no params
+	PLAYER_LEAVING_AREA,		// no params
+	PLAYER_ENTERING_AREA,		// no params
 
 	// Collectible events
 	CHEST_COLLECTED,			// params: Chest _chest
