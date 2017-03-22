@@ -26,12 +26,14 @@ public class Pet : IEntity {
 	{
 		Messenger.AddListener(GameEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 		Messenger.AddListener(GameEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+		Messenger.AddListener(GameEvents.GAME_ENDED, OnEnded);
 	}
 
 	void OnDisable()
 	{
 		Messenger.RemoveListener(GameEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 		Messenger.RemoveListener(GameEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnEnded);
 	}
 
 	void OnEnteringArea()
@@ -48,6 +50,11 @@ public class Pet : IEntity {
 		{
 			m_eatBehaviour.ResumeEating();
 		}
+	}
+
+	void OnEnded()
+	{
+		gameObject.SetActive(false);
 	}
 
 	private void InitFromDef() {
