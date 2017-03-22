@@ -1,4 +1,4 @@
-#!/bin/Bash
+#!/bin/bash
 # This script generates Android (apk) and iOS (ipa) builds with a given setup
 
 # Bash setup
@@ -133,7 +133,7 @@ TOTAL_STEPS=8;
 if $RESET_GIT; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
-if [ "$FORCE_VERSION" != false ] || [ "$INCREASE_VERSION_NUMBER" == true ] ; then
+if [ "$FORCE_VERSION" != false -o "$INCREASE_VERSION_NUMBER" == true ]; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
 if $BUILD_ANDROID;then
@@ -151,7 +151,6 @@ fi
 if $UPLOAD;then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
-
 echo "TOTAL STEPS ${TOTAL_STEPS}"
 CURRENT_STEP=1
 
