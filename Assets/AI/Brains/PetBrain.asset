@@ -17,13 +17,23 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 7aa033b6c69294a3f8ba3952e042d3c8, type: 2}
     - {fileID: 11400000, guid: cc35a48828b4849c2896582f0cd5ef2c, type: 2}
     - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
   - m_name: Pursuit
     m_componentAssets:
     - {fileID: 11400000, guid: 75e7e5d09e8f4494880db15927231748, type: 2}
     - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
+  - m_name: ChangingArea
+    m_componentAssets:
+    - {fileID: 11400000, guid: 7aa033b6c69294a3f8ba3952e042d3c8, type: 2}
+    - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
   m_transitionData:
   - to: 1
     id: onEnemyInRange
+    from: 0
+  - to: 2
+    id: onAreaChangeStart
     from: 0
   - to: 0
     id: onEnemyOutOfSight
@@ -34,5 +44,11 @@ MonoBehaviour:
   - to: 0
     id: onChaseTimeout
     from: 1
+  - to: 2
+    id: onAreaChangeStart
+    from: 1
+  - to: 0
+    id: onAreaChangeEnd
+    from: 2
   m_firstState_A: 0
   m_firstState_B: 0

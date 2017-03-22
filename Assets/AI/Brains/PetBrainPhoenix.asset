@@ -17,6 +17,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 7aa033b6c69294a3f8ba3952e042d3c8, type: 2}
     - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
     - {fileID: 11400000, guid: a1cd5ba9c4b194e039053a04b96f1fcd, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
   - m_name: Searching
     m_componentAssets:
     - {fileID: 11400000, guid: a1cd5ba9c4b194e039053a04b96f1fcd, type: 2}
@@ -24,12 +25,25 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 15a25ed0d6b1f46bea5039e70b4c333a, type: 2}
     - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
     - {fileID: 11400000, guid: 7aa033b6c69294a3f8ba3952e042d3c8, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
   - m_name: Chasing
     m_componentAssets:
     - {fileID: 11400000, guid: a1cd5ba9c4b194e039053a04b96f1fcd, type: 2}
     - {fileID: 11400000, guid: 75e7e5d09e8f4494880db15927231748, type: 2}
     - {fileID: 11400000, guid: 15a25ed0d6b1f46bea5039e70b4c333a, type: 2}
     - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
+  - m_name: ChangingArea
+    m_componentAssets:
+    - {fileID: 11400000, guid: 7aa033b6c69294a3f8ba3952e042d3c8, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
+    - {fileID: 11400000, guid: a1cd5ba9c4b194e039053a04b96f1fcd, type: 2}
+  - m_name: ChangingAreaFire
+    m_componentAssets:
+    - {fileID: 11400000, guid: 7aa033b6c69294a3f8ba3952e042d3c8, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
+    - {fileID: 11400000, guid: a1cd5ba9c4b194e039053a04b96f1fcd, type: 2}
+    - {fileID: 11400000, guid: 15a25ed0d6b1f46bea5039e70b4c333a, type: 2}
   m_transitionData:
   - to: 0
     id: onFuryOff
@@ -39,6 +53,9 @@ MonoBehaviour:
     from: 1
   - to: 1
     id: onFuryOn
+    from: 0
+  - to: 3
+    id: onAreaChangeStart
     from: 0
   - to: 0
     id: onFuryOff
@@ -52,5 +69,17 @@ MonoBehaviour:
   - to: 1
     id: onChaseTimeout
     from: 2
+  - to: 0
+    id: onAreaChangeEnd
+    from: 3
+  - to: 4
+    id: onFuryOn
+    from: 3
+  - to: 3
+    id: onFuryOff
+    from: 4
+  - to: 1
+    id: onAreaChangeEnd
+    from: 4
   m_firstState_A: 0
   m_firstState_B: 0
