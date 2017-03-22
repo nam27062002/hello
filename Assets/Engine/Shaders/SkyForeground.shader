@@ -96,7 +96,7 @@
 				intensity += tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed * 1.5, 0.3))).x;
 				intensity *= 0.5;
 				fixed4 cloudsC = lerp(_BackgroundColor, _Tint, intensity);
-				cloudsC = lerp(cloudsC, _FogColor, clamp((i.depth - 1.0) / 40.0, 0.0, 1.0) * 0.5);
+//				cloudsC = lerp(cloudsC, _FogColor, clamp((i.depth - 1.0) / 40.0, 0.0, 1.0) * 0.5);
 
 				cloudsC.w = smoothstep(0.0, _CloudThreshold, intensity * (1.0 - pow(abs(vy - 0.5) * 2.0, _CloudPower)));
 				return cloudsC;

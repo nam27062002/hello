@@ -445,6 +445,7 @@ namespace AI {
 			}
 
 		}
+
 		private void UpdateVelocity() {
 			// "Physics" updates
 			Vector3 impulse = (m_pilot.impulse - m_velocity);
@@ -457,13 +458,12 @@ namespace AI {
 			}
 		}
 
-
 		private void UpdateAttack() {
 			if (m_pilot.IsActionPressed(Pilot.Action.Attack) && m_viewControl.canAttack()) {
 				// start attack!
 				m_viewControl.Attack(m_machine.GetSignal(Signals.Type.Melee), m_machine.GetSignal(Signals.Type.Ranged));
 			} else {
-				if (m_viewControl.hasAttackEnded()) {					
+				if (m_viewControl.hasAttackEnded()) {
 					m_pilot.ReleaseAction(Pilot.Action.Attack);
 				}
 
@@ -508,14 +508,14 @@ namespace AI {
 			}
 		}
 
-		private void UpdateOrientation() {				
+		private void UpdateOrientation() {
 			if (m_walkOnWalls) {
 				if (m_direction != Vector3.zero) {
 					m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 				}
 			} else if (m_machine.GetSignal(Signals.Type.FallDown)) {
 				m_targetRotation = Quaternion.LookRotation(m_direction, m_collisionNormal);
-			} else if (m_faceDirection && m_pilot.speed > 0.01f) {				
+			} else if (m_faceDirection && m_pilot.speed > 0.01f) {
 				m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 
 				if (m_rollRotation) {
