@@ -26,7 +26,7 @@ namespace AI {
 
 			protected PursuitToHoldData m_data;
 
-			protected AI.Machine m_targetMachine;
+			protected AI.MachineOld m_targetMachine;
 			protected Entity m_targetEntity;
 			protected DragonPlayer m_player;
 			protected float m_timer;
@@ -75,7 +75,7 @@ namespace AI {
 				if ( param != null && param.Length > 0 )
 				{
 					toLookAt = param[0] as Transform;
-					m_targetMachine = toLookAt.GetComponent<Machine>();
+					m_targetMachine = toLookAt.GetComponent<MachineOld>();
 					m_targetEntity = toLookAt.GetComponent<Entity>();
 					m_player = toLookAt.GetComponent<DragonPlayer>();
 				}

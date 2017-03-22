@@ -28,7 +28,7 @@ namespace AI {
 
 			private Transform m_holdTransform;
 			private Transform m_originalParent;
-			private Machine m_myMachine;
+			private MachineOld m_myMachine;
 
 			//--------------------------------------------------------
 			public override StateComponentData CreateData() {
@@ -41,7 +41,7 @@ namespace AI {
 
 			protected override void OnInitialise() {
 
-				m_myMachine = m_pilot.GetComponent<AI.Machine>();
+				m_myMachine = m_pilot.GetComponent<AI.MachineOld>();
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 
 				m_eatBehaviour.onEndLatching += OnEndLatchingEvent;

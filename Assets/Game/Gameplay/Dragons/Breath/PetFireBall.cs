@@ -121,7 +121,7 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 		{
 			if ( preys[i].IsBurnable(m_fireTier))
 			{
-				AI.Machine machine =  preys[i].GetComponent<AI.Machine>();
+				AI.MachineOld machine =  preys[i].GetComponent<AI.MachineOld>();
 				if (machine != null) {
 					machine.Burn(transform);
 				}

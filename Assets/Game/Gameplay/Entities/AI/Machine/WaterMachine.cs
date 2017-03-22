@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace AI {
-	public class WaterMachine : Machine {
+	public class WaterMachine : MachineOld {
 
 		private enum State {
 			Swim = 0,

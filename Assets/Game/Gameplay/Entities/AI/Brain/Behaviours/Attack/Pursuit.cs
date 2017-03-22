@@ -32,7 +32,7 @@ namespace AI {
 
 			protected PursuitData m_data;
 			protected Transform m_target;
-			protected AI.Machine m_targetMachine;
+			protected AI.MachineOld m_targetMachine;
 			protected Entity m_targetEntity;
 
 			private PursuitState m_pursuitState;
@@ -66,7 +66,7 @@ namespace AI {
 				{
 					m_target = param[0] as Transform;
 					if ( m_target )
-						m_targetMachine = m_target.GetComponent<Machine>();
+						m_targetMachine = m_target.GetComponent<MachineOld>();
 					if ( m_target )
 						m_targetEntity = m_target.GetComponent<Entity>();
 				}
@@ -77,7 +77,7 @@ namespace AI {
 						m_target = m_machine.enemy;
 					}
 
-					m_targetMachine = m_machine.enemy.GetComponent<Machine>();
+					m_targetMachine = m_machine.enemy.GetComponent<MachineOld>();
 					m_targetEntity = m_machine.enemy.GetComponent<Entity>();
 				}
 

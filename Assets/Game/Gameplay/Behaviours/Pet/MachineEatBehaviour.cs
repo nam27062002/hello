@@ -14,12 +14,12 @@ public class MachineEatBehaviour : EatBehaviour {
 	[SerializeField] private bool m_canMultipleLatchOnPlayer = false;
 	public override bool canMultipleLatchOnPlayer { get { return m_canMultipleLatchOnPlayer; } }
 
-	private AI.Machine m_machine;
+	private AI.MachineOld m_machine;
 
 	override protected void Awake() {
 
 		base.Awake();
-		m_motion = GetComponent<AI.Machine>();
+		m_motion = GetComponent<AI.MachineOld>();
 		m_tier = m_eaterTier;
 		m_eatSpeedFactor = 0.5f;	// [AOC] HARDCODED!!
 		m_canHold = false;
@@ -29,7 +29,7 @@ public class MachineEatBehaviour : EatBehaviour {
 		m_holdDuration = 10;
 		SetupHoldParametersForTier( DragonData.TierToSku( m_eaterTier));
 
-		m_machine = GetComponent<AI.Machine>();
+		m_machine = GetComponent<AI.MachineOld>();
 		if (m_isPet) {
 			m_canLatchOnPlayer = false;	
 			AddToIgnoreList("badJunk");
@@ -126,7 +126,7 @@ public class MachineEatBehaviour : EatBehaviour {
 
 	override protected void OnDrawGizmos() {
 		if ( m_motion == null )
-			m_motion = GetComponent<AI.Machine>();
+			m_motion = GetComponent<AI.MachineOld>();
 		base.OnDrawGizmos();
 	}
 }

@@ -266,7 +266,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 			{
 				if (prey.IsBurnable()) {
 					if (prey.IsBurnable(m_tier) || m_type == Type.Super) {
-						AI.Machine machine =  m_checkEntities[i].GetComponent<AI.Machine>();
+						AI.MachineOld machine =  m_checkEntities[i].GetComponent<AI.MachineOld>();
 						if (machine != null) {
 							machine.Burn(transform);
 						}

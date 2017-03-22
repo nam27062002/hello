@@ -26,7 +26,7 @@ public class MagnetArea : MonoBehaviour {
 			Entity prey = m_checkEntities[i];
 			if (prey.IsEdible(m_magnetTier))
 			{
-				AI.Machine machine = prey.GetComponent<AI.Machine>();
+				AI.MachineOld machine = prey.GetComponent<AI.MachineOld>();
 				if (machine != null) 
 				{
 					Vector3 dir = pos - machine.position;

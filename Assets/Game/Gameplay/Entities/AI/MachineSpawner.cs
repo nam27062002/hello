@@ -14,7 +14,7 @@ public class MachineSpawner : MonoBehaviour {
 		for (int i = 0; i < spawns; i++) {
 			GameObject go = GameObject.Instantiate(machine);
 			go.transform.position = Random.insideUnitSphere;
-			AI.Machine m = go.GetComponent<AI.Machine>();
+			AI.MachineOld m = go.GetComponent<AI.MachineOld>();
 			m.EnterGroup(ref flock);
 		}
 	}

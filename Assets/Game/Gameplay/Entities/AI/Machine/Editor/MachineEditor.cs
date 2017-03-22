@@ -17,7 +17,7 @@ using AI;
 /// <summary>
 /// Custom editor for the MonoBehaviourTemplate class.
 /// </summary>
-[CustomEditor(typeof(Machine), true)]	// True to be used by heir classes as well
+[CustomEditor(typeof(MachineOld), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
 public class MachineEditor : Editor {
 	//------------------------------------------------------------------------//
@@ -29,7 +29,7 @@ public class MachineEditor : Editor {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Casted target object
-	Machine m_targetMachine = null;
+	MachineOld m_targetMachine = null;
 
 	// Store a reference of interesting properties for faster access
 	SerializedProperty m_motionProp = null;
@@ -43,7 +43,7 @@ public class MachineEditor : Editor {
 	/// </summary>
 	private void OnEnable() {
 		// Get target object
-		m_targetMachine = target as Machine;
+		m_targetMachine = target as MachineOld;
 
 		// Store a reference of interesting properties for faster access
 		m_motionProp = serializedObject.FindProperty("m_motion");

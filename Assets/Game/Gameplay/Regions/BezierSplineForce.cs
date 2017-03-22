@@ -17,7 +17,7 @@ namespace Assets.Code.Game.Spline
 
             public GameObject obj;
 
-			public AI.Machine objMachine;
+			public AI.MachineOld objMachine;
 			public DragonMotion objDragon;
 
             public float magnitude;
@@ -42,7 +42,7 @@ namespace Assets.Code.Game.Spline
                 obj = _obj;
 				magnitude = _magnitude;
 				t = 0.0f;
-				objMachine = obj.GetComponent<AI.Machine>();
+				objMachine = obj.GetComponent<AI.MachineOld>();
 				objDragon = obj.GetComponent<DragonMotion>();
 
 				//Control variables to properly apply decreasing force to the object after exiting the current ( prevents stopping abruptedly )
