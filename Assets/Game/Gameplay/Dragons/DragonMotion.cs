@@ -67,6 +67,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	[SerializeField] private float m_capDownRotationAngle = 60.0f;
 	[SerializeField] private float m_noGlideAngle = 50.0f;
 
+	public class PetsEatingTest
+	{
+		public bool m_eating = false;
+	}
+
 	protected Rigidbody m_rbody;
 	public Rigidbody rbody
 	{
@@ -947,6 +952,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 			case State.ChangingArea:
 			{
+				// TODO (miguel): Improve this part of code, specially questioning pets if they are eating
 				switch( m_changeAreaState )
 				{	
 					case ChangeAreaState.Enter:
@@ -975,13 +981,23 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 						if ( noeating )
 						{
 							// Check pets
+							PetsEatingTest test = new PetsEatingTest();
+							Messenger.Broadcast<DragonMotion.PetsEatingTest>(GameEvents.PLAYER_ASK_PETS_EATING, test);
+							noeating = !test.m_eating;
 						}
 
 
 						if ( noeating )
 						{
-							InstanceManager.gameSceneController.SwitchArea(m_destinationArea);
-							m_changeAreaState = ChangeAreaState.Loading_Next_Area;
+							if ( !string.IsNullOrEmpty( m_destinationArea) )
+							{
+								InstanceManager.gameSceneController.SwitchArea(m_destinationArea);
+								m_changeAreaState = ChangeAreaState.Loading_Next_Area;
+							}
+							else
+							{
+								m_changeAreaState = ChangeAreaState.Exit;
+							}
 						}
 					}break;
 					case ChangeAreaState.Loading_Next_Area:

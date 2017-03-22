@@ -23,12 +23,27 @@ namespace AI {
 			{
 				Messenger.AddListener(GameEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 				Messenger.AddListener(GameEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+
+				Messenger.AddListener<DragonMotion.PetsEatingTest>(GameEvents.PLAYER_ASK_PETS_EATING, OnEatingQuestion);
 			}
 
 			protected override void OnExit(State _newState)
 			{
 				Messenger.RemoveListener(GameEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 				Messenger.RemoveListener(GameEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+
+				Messenger.RemoveListener<DragonMotion.PetsEatingTest>(GameEvents.PLAYER_ASK_PETS_EATING, OnEatingQuestion);
+			}
+
+			void OnEatingQuestion( DragonMotion.PetsEatingTest eating )
+			{
+				if ( m_eatBehaviour != null )
+				{
+					if ( m_eatBehaviour.IsEating() || m_eatBehaviour.IsLatching() || m_eatBehaviour.IsGrabbing() )
+					{
+						eating.m_eating = true;
+					}
+				}
 			}
 
 			void OnLeavingArea()
