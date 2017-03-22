@@ -37,10 +37,9 @@ namespace AI {
 				// Deactivate pet
 				Machine m = (m_machine as Machine);
 				m.Deactivate( m_timer, Activate );
-
 			}
 
-			protected void Activate( )
+			protected void Activate()
 			{
 				Transition( OnReactivated );
 			}

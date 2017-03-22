@@ -153,15 +153,18 @@ fixed4 frag (v2f i) : SV_Target
 //					float l = clamp(col.a + (i.color.a * 2.0) - 1.0, 0.0, 1.0);
 	col = lerp( col2, col, l);
 #endif	
-	
-#ifdef COLOR_OVERLAY	
+
+#if defined (COLOR_OVERLAY)
 	// Sof Light with vertex color 
 	// http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html
 	// https://en.wikipedia.org/wiki/Relative_luminance
 	float luminance = step(0.5, 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b);
 	fixed4 one = fixed4(1, 1, 1, 1);
 	col = (2.0 * i.color * col) * (1.0 - luminance) + (one - 2.0 * (one - i.color) * (one - col)) * luminance;
+#elif defined (COLOR_ADDITIVE)
+	col += i.color;
 #endif	
+
 
 #ifdef DYNAMIC_SHADOWS
 	float attenuation = LIGHT_ATTENUATION(i);	// Shadow
@@ -195,6 +198,8 @@ fixed4 frag (v2f i) : SV_Target
 	col = col + (specular * specMask * i.color * _LightColor0);
 #endif	
 
+#ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+#endif
 	return col;
 }

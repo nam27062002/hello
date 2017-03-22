@@ -12,10 +12,28 @@ public class Pet : IEntity {
 	[SerializeField] private string m_sku;
 	public string sku { get { return m_sku; } }
 
-
-	protected virtual void Awake() {
+	protected override void Awake() {
 		base.Awake();
 		InitFromDef();
+	}
+
+
+
+	void OnEnable()
+	{
+		Messenger.AddListener(GameEvents.GAME_ENDED, OnEnded);
+	}
+
+	void OnDisable()
+	{
+		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnEnded);
+	}
+
+
+
+	void OnEnded()
+	{
+		gameObject.SetActive(false);
 	}
 
 	private void InitFromDef() {

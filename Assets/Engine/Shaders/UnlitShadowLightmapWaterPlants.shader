@@ -49,6 +49,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decora
 
 				#define FOG
 				#define CUSTOM_VERTEXPOSITION
+				#define OPAQUEALPHA
 
 				float _SpeedWave;
 				float4 getCustomVertexPosition(inout appdata_t v)

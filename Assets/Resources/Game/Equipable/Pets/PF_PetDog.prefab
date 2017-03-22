@@ -1242,6 +1242,7 @@ MonoBehaviour:
   m_blendSpeedFactor: 10
   m_energy: 10
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: 4f812763403ad494e8dd0c3478ded54d, type: 2}
   m_railSeparation:
     min: 0.5
@@ -1410,17 +1411,11 @@ MonoBehaviour:
     m_chance: 1
   - m_spawnPrefab: Air/PF_MineMedium
     m_chance: 1
-  - m_spawnPrefab: Air/PF_HorseFlying
+  - m_spawnPrefab: Air/SP_FlyingPig
+    m_chance: 4
+  - m_spawnPrefab: Goblin/PF_Goblin_Bomber
     m_chance: 1
-  - m_spawnPrefab: Goblin/PF_Bomber
-    m_chance: 1
-  - m_spawnPrefab: Surface/PF_RichmanStatic
-    m_chance: 1
-  - m_spawnPrefab: Surface/PF_HorseStatic
-    m_chance: 1
-  - m_spawnPrefab: Surface/PF_DrunkenMan
-    m_chance: 1
-  - m_spawnPrefab: Surface/PF_BakerWoman
+  - m_spawnPrefab: Surface/PF_Horse
     m_chance: 1
   - m_spawnPrefab: Surface/PF_Soldier01_Static
     m_chance: 1

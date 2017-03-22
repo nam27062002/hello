@@ -167,7 +167,7 @@ namespace AI {
 					m_collisionAvoidFactor = 10f;
 					m_collisionNormal = Vector3.up;
 					m_collisionNormal.z = 0f;
-				} else if (Physics.Linecast(transform.position, transform.position + (m_direction * distanceCheck), out ground, layerMask)) {
+				} else if (Physics.Linecast(m_machine.position, m_machine.position + (m_direction * distanceCheck), out ground, layerMask)) {
 					// 2- calc a big force to move away from the ground	
 					m_collisionAvoidFactor = (distanceCheck / ground.distance) * 5f;
 					m_collisionNormal = ground.normal;

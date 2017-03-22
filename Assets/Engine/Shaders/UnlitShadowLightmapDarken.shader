@@ -45,6 +45,8 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with near darken(On Line Decor
 
 				#define FOG
 				#define DARKEN
+				#define OPAQUEALPHA
+
 				#include "scenary.cginc"
 
 			ENDCG

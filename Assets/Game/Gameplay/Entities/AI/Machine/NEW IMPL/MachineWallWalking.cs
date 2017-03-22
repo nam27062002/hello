@@ -19,6 +19,10 @@ namespace AI {
 			base.Awake();
 		}
 
+		public override void UseGravity(bool _value) { 
+			m_wallWalkingMotion.checkCollisions = _value;
+		}
+
 		//
 		protected override void OnReleaseHold() {
 			SetSignal(Signals.Type.FallDown, true);

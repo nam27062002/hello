@@ -69,6 +69,9 @@ public enum GameEvents {
 	PLAYER_PET_PRE_FREE_REVIVE,			// no params
 	PLAYER_FREE_REVIVE,			// no params
 	PLAYER_REVIVE,				// no params
+	PLAYER_LEAVING_AREA,		// no params
+	PLAYER_ENTERING_AREA,		// no params
+	PLAYER_ASK_PETS_EATING,		// DragonMotion.PetsEatingTest. If one pets is still eating should put the attribute to true to let know the dragon it still cannot change area
 
 	// Collectible events
 	CHEST_COLLECTED,			// params: Chest _chest
