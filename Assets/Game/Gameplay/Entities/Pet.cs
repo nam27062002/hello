@@ -12,10 +12,42 @@ public class Pet : IEntity {
 	[SerializeField] private string m_sku;
 	public string sku { get { return m_sku; } }
 
+	private MachineEatBehaviour m_eatBehaviour;
 
-	protected virtual void Awake() {
+	protected override void Awake() {
 		base.Awake();
 		InitFromDef();
+		m_eatBehaviour = GetComponent<MachineEatBehaviour>();
+	}
+
+
+
+	void OnEnable()
+	{
+		Messenger.AddListener(GameEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
+		Messenger.AddListener(GameEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+	}
+
+	void OnDisable()
+	{
+		Messenger.RemoveListener(GameEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
+		Messenger.RemoveListener(GameEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+	}
+
+	void OnEnteringArea()
+	{
+		if ( m_eatBehaviour != null )	
+		{
+			m_eatBehaviour.PauseEating();
+		}
+	}
+
+	void OnLeavingArea()
+	{
+		if ( m_eatBehaviour != null )	
+		{
+			m_eatBehaviour.ResumeEating();
+		}
 	}
 
 	private void InitFromDef() {
