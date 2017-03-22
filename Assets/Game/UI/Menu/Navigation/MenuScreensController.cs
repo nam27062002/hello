@@ -108,7 +108,7 @@ public class MenuScreensController : NavigationScreenSystem {
 		}
 
 		// Start menu music!
-		//AudioController.PlayMusic("");
+		AudioController.PlayMusic("hd_menu_music");
 	}
 
 	/// <summary>
