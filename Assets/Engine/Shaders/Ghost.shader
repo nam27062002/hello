@@ -1,26 +1,31 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
-Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
+Shader "Hungry Dragon/Ghost (Spawners)"
 {
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_NormalTex("Normal", 2D) = "white" {}
+		_AlphaTex("Alpha", 2D) = "white" {}
 		_SpecularPower( "Specular power", float ) = 1
 		_NormalStrength("Normal Strength", float) = 3
 		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
 		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
+		_Tint("Tint color (RGB)", Color) = (1, 1, 1, 0)
+		_WaveRadius("Wave Radius", float) = 1.5
+		_WavePhase("Wave phase", float) = 1.0
 		_StencilMask("Stencil Mask", int) = 10
 	}
 	SubShader
 	{
 		Pass
 		{
-			Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase"}
-			Cull Back
-
-			ZWrite on
+			Tags{ "Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "Opaque" }
+//			ZWrite Off
+			Blend SrcAlpha OneMinusSrcAlpha
+			Cull off
+			ColorMask RGBA
 
 			Stencil
 			{
@@ -48,14 +53,38 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 
 			#if MEDIUM_DETAIL_ON
 			#define NORMALMAP
-			#define FRESNEL
+			#define SPECULAR
+			//			#define FRESNEL
 			#endif
 
 			#if HI_DETAIL_ON
 			#define NORMALMAP
-//			#define SPECULAR
-			#define FRESNEL
+			#define SPECULAR
+//			#define FRESNEL
 			#endif
+
+			#define CUSTOM_ALPHA
+
+
+			#define CUSTOM_VERTEXPOSITION
+
+			uniform float _WaveRadius;
+			uniform float _WavePhase;
+
+			float4 getCustomVertexPosition(inout appdata_t v)
+			{
+				float4 normal = normalize(v.vertex);
+				float wvc = v.color.w;
+				float3 incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * (1.0 - v.color.x) * wvc;
+				float4 tvertex = v.vertex + float4(v.normal, 0.0) * ((incWave.x + incWave.y + incWave.z) * 0.33333);
+				return mul(UNITY_MATRIX_MVP, tvertex);
+			}
+
+			#define CUSTOM_TINT
+			float4 getCustomTint(float4 col, float4 tint, float4 vcolor)
+			{
+				return lerp(col, col * tint, vcolor.w);
+			}
 
 			#include "entities.cginc"
 
