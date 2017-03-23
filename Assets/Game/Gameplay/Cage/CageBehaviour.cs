@@ -102,7 +102,9 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 		// Spawn particle
 		if (m_onBreakParticle.IsValid()) {
 			GameObject ps = ParticleManager.Spawn(m_onBreakParticle);
-			ps.transform.position = m_view.transform.TransformPoint(m_onBreakParticle.offset);
+			if (ps != null) {
+				ps.transform.position = m_view.transform.TransformPoint(m_onBreakParticle.offset);
+			}
 		}
 
 		m_view.SetActive(false);

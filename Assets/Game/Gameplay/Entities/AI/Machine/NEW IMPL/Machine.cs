@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Assets.Code.Game.Currents;
 
 namespace AI {
-	public class MachineGeneric : MonoBehaviour, IMachine, ISpawnable, IAttacker, MotionInterface {	
+	public class Machine : MonoBehaviour, IMachine, ISpawnable, IAttacker, IMotion {	
 		public static int GROUND_MASK;
 
 		public enum RotateToMouthType {
@@ -20,6 +20,7 @@ namespace AI {
 		[SerializeField] private bool m_affectedByDragonTrample = false;
 
 		[SeparatorAttribute("Components")]
+		protected MC_Motion m_motion = null; // basic machine doesn't have a motion component
 		[SerializeField] private bool m_enableSensor = true;
 		[SerializeField] protected MachineSensor m_sensor = new MachineSensor();
 		[SerializeField] protected MachineEdible m_edible = new MachineEdible();
@@ -47,7 +48,7 @@ namespace AI {
 
 		private Group m_group; // this will be a reference
 
-		protected MC_Motion m_motion;
+
 
 
 		private bool m_willPlaySpawnSound;
@@ -100,6 +101,8 @@ namespace AI {
 		// Activating
 		UnityEngine.Events.UnityAction m_deactivateCallback;
 		//---------------------------------------------------------------------------------
+
+
 
 		// Use this for initialization
 		protected virtual void Awake() {
@@ -169,7 +172,7 @@ namespace AI {
 		}
 
 		public virtual void Spawn() {
-			if (m_signals!= null) 
+			if (m_signals != null) 
 				m_signals.Init();
 
 			if (m_motion != null) 
@@ -276,7 +279,7 @@ namespace AI {
 		}
 
 		void OnTriggerStay(Collider _other) {
-			if (m_affectedByDragonTrample) {
+			if (m_motion != null && m_affectedByDragonTrample) {
 				// lets check if dragon is trampling this entity
 				if (!GetSignal(Signals.Type.FallDown) && 
 					!GetSignal(Signals.Type.Latched) &&

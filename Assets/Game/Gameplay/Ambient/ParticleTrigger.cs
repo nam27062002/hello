@@ -40,8 +40,7 @@ public class ParticleTrigger : MonoBehaviour {
 	{
 		Vector3 position = m_collider.ClosestPointOnBounds( other.transform.position);
 		GameObject go = ParticleManager.Spawn(m_particle, position);
-		if ( go != null)
-		{
+		if (go != null) {
 			go.transform.rotation = other.transform.rotation;
 		}
 	}

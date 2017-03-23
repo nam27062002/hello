@@ -18,7 +18,7 @@ using Assets.Code.Game.Currents;
 /// <summary>
 /// Main control of the dragon movement.
 /// </summary>
-public class DragonMotion : MonoBehaviour, MotionInterface {
+public class DragonMotion : MonoBehaviour, IMotion {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//

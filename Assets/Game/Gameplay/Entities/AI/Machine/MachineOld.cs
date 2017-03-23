@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Assets.Code.Game.Currents;
 
 namespace AI {
-	public class MachineOld : MonoBehaviour, IMachine, ISpawnable, IAttacker, MotionInterface {	
+	public class MachineOld : MonoBehaviour, IMachine, ISpawnable, IAttacker, IMotion {	
 		protected static int m_groundMask;
 
 		public enum RotateToMouthType
@@ -192,7 +192,9 @@ namespace AI {
 
 		public virtual void Spawn(ISpawner _spawner) {
 			Spawn();
-			m_checkCurrents = _spawner.SpawnersCheckCurrents();
+			if (_spawner != null) {
+				m_checkCurrents = _spawner.SpawnersCheckCurrents();
+			}
 		}
 
 		public void OnTrigger(string _trigger, object[] _param = null) {

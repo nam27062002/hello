@@ -40,8 +40,8 @@ public class Spawner : AbstractSpawner {
 	// Properties
 	//-----------------------------------------------
 	[Separator("Entity")]	
-	[CommentAttribute("The entities will spawn on the coordinates of the Spawner, and will move inside the defined area.")]
-	//[SerializeField] public string m_entityPrefabStr = "";	
+	[CommentAttribute("The entities will spawn on the coordinates of the Spawner, and will move inside the defined area. The spawner can create instances of multiple prefabs, spawning mixed groups (mix entities = true) or random groups each spawn (mix entities = false).")]
+	[SerializeField] private bool m_mixEntities = false;
 	[SerializeField] public EntityPrefab[] m_entityPrefabList = new EntityPrefab[1];
 
 	[SerializeField] public RangeInt 	m_quantity = new RangeInt(1, 1);
@@ -76,7 +76,9 @@ public class Spawner : AbstractSpawner {
 
 	//-----------------------------------------------
 	// Attributes
-	//-----------------------------------------------	
+	//-----------------------------------------------
+	private int m_prefabIndex;
+
 	protected EntityGroupController m_groupController;		
 
 	private float m_respawnTime;
@@ -190,6 +192,8 @@ public class Spawner : AbstractSpawner {
 		}
 
 		m_guideFunction = GetComponent<IGuideFunction>();
+
+		m_prefabIndex = GetPrefabIndex();
 	}
 
 	protected override bool CanRespawnExtended() {
@@ -225,10 +229,22 @@ public class Spawner : AbstractSpawner {
 		return (EntitiesKilled == EntitiesToSpawn) ? (uint)m_quantity.GetRandom() : EntitiesToSpawn - EntitiesKilled;
 	}    
 
+	protected override void OnPrepareRespawning() {
+		m_prefabIndex = GetPrefabIndex();
+	}
+
 	protected override string GetPrefabNameToSpawn(uint index) {
+		if (m_mixEntities) {
+			m_prefabIndex = GetPrefabIndex();
+		}
+
+		return m_entityPrefabList[m_prefabIndex].name;
+	}
+
+	private int GetPrefabIndex() {
+		int i = 0;
 		float rand = Random.Range(0f, 100f);
 		float prob = 0;
-		int i = 0;
 
 		for (i = 0; i < m_entityPrefabList.Length - 1; i++) {
 			prob += m_entityPrefabList[i].chance;
@@ -240,7 +256,7 @@ public class Spawner : AbstractSpawner {
 			rand -= prob;
 		}
 
-		return m_entityPrefabList[i].name;
+		return i;
 	}
 
 	protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {

@@ -17,9 +17,9 @@ using AI;
 /// <summary>
 /// Custom editor for the MonoBehaviourTemplate class.
 /// </summary>
-[CustomEditor(typeof(MachineGeneric), true)]	// True to be used by heir classes as well
+[CustomEditor(typeof(Machine), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
-public class MachineGenericEditor : Editor {
+	public class MachineEditor : Editor {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
