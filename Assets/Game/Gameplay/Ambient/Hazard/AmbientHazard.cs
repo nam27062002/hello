@@ -284,11 +284,11 @@ public class AmbientHazard : MonoBehaviour {
 		if(m_view != null) m_view.SetActive(_visible);
 
 		// Particles
-		if(m_visible) {
+		if (m_visible) {
 			// If particles are not created, do it now
-			if(m_particlesObj == null && m_particlesPrefab != null) {
+			if (m_particlesObj == null && m_particlesPrefab != null) {
 				m_particlesObj = ParticleManager.Spawn(m_particlesPrefab);
-				if(m_particlesObj != null) {
+				if (m_particlesObj != null) {
 					// As children of ourselves
 					// Particle system should already be created to match the zero position
 					m_particlesObj.transform.SetParentAndReset(this.transform);
@@ -300,7 +300,7 @@ public class AmbientHazard : MonoBehaviour {
 			}
 		} else {
 			// Return them to the pool
-			if(m_particlesObj != null) {
+			if (m_particlesObj != null) {
 				ParticleManager.ReturnInstance(m_particlesObj);
 				m_particlesObj = null;
 			}
