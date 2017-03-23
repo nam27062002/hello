@@ -19,7 +19,7 @@ using AI;
 /// </summary>
 [CustomEditor(typeof(MachineWallWalking), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
-public class MachineWallWalkingEditor : MachineGenericEditor {
+public class MachineWallWalkingEditor : MachineEditor {
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
