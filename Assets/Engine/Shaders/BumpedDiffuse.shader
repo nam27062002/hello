@@ -53,7 +53,7 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 
 			#if HI_DETAIL_ON
 			#define NORMALMAP
-			#define SPECULAR
+//			#define SPECULAR
 			#define FRESNEL
 			#endif
 

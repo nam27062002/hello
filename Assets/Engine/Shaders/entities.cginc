@@ -126,7 +126,7 @@ fixed4 frag(v2f i) : SV_Target
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 #elif defined (CUSTOM_ALPHA)
 
-	#define TEX_ALPHA_SCALE 4.0
+	#define TEX_ALPHA_SCALE 2.0
 
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 	float st = smoothstep(0.1, 0.8, i.uv.y);
