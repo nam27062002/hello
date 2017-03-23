@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace AI {
-	public interface IMachine : MotionInterface {
+	public interface IMachine : IMotion {
 
 		Vector3 eye			{ get; }
 		Vector3 target		{ get; }

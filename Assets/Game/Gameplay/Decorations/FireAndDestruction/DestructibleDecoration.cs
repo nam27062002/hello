@@ -154,8 +154,10 @@ public class DestructibleDecoration : Initializable {
 						ContactPoint contact = _other.contacts[0];
 						if (m_feddbackParticle != "") {
 							GameObject ps = ParticleManager.Spawn(m_feddbackParticle, contact.point - (m_collider.center - m_colliderCenter));
-							if (m_particleFaceDragonDirection) {
-								FaceDragon(ps);
+							if (ps != null) {
+								if (m_particleFaceDragonDirection) {
+									FaceDragon(ps);
+								}
 							}
 						}
 					}
@@ -179,9 +181,10 @@ public class DestructibleDecoration : Initializable {
 								particlePosition.x -= m_collider.size.x * 0.5f;
 							}
 							GameObject ps = ParticleManager.Spawn(m_feddbackParticle, particlePosition);
-
-							if (m_particleFaceDragonDirection) {
-								FaceDragon(ps);
+							if (ps != null) {
+								if (m_particleFaceDragonDirection) {
+									FaceDragon(ps);
+								}
 							}
 						}
 
@@ -190,9 +193,10 @@ public class DestructibleDecoration : Initializable {
 					} else {
 						if (m_destroyParticle != "") {
 							GameObject ps = ParticleManager.Spawn(m_destroyParticle, transform.position);
-
-							if (m_particleFaceDragonDirection) {
-								FaceDragon(ps);
+							if (ps != null) {
+								if (m_particleFaceDragonDirection) {
+									FaceDragon(ps);
+								}
 							}
 						}
 
@@ -240,9 +244,10 @@ public class DestructibleDecoration : Initializable {
 
 						if ( m_feddbackParticle != "") {
 							GameObject ps = ParticleManager.Spawn(m_feddbackParticle, particlePosition);
-
-							if (m_particleFaceDragonDirection) {
-								FaceDragon(ps);
+							if (ps != null) {
+								if (m_particleFaceDragonDirection) {
+									FaceDragon(ps);
+								}
 							}
 						}
 

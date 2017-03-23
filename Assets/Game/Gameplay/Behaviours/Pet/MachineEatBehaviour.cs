@@ -19,7 +19,7 @@ public class MachineEatBehaviour : EatBehaviour {
 	override protected void Awake() {
 
 		base.Awake();
-		m_motion = GetComponent<MotionInterface>();
+		m_motion = GetComponent<IMotion>();
 		m_tier = m_eaterTier;
 		m_eatSpeedFactor = 0.5f;	// [AOC] HARDCODED!!
 		m_canHold = false;

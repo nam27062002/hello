@@ -19,7 +19,7 @@ using AI;
 /// </summary>
 [CustomEditor(typeof(MachineAir), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
-public class MachineAirEditor : MachineGenericEditor {
+public class MachineAirEditor : MachineEditor {
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
