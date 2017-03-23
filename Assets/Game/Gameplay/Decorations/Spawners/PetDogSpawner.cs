@@ -97,6 +97,11 @@ public class PetDogSpawner : AbstractSpawner {
         return m_entityPrefabStr;
     }    
 
+    public string GetSelectedPrefabStr()
+    {
+    	return m_entityPrefabStr;
+    }
+
     public void RamdomizeEntity()
     {
    #if UNITY_EDITOR

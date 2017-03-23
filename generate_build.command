@@ -1,4 +1,4 @@
-#!/bin/Bash
+#!/bin/bash
 # This script generates Android (apk) and iOS (ipa) builds with a given setup
 
 # Bash setup
@@ -133,7 +133,7 @@ TOTAL_STEPS=8;
 if $RESET_GIT; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
-if [ "$FORCE_VERSION" != false ] || [ "$INCREASE_VERSION_NUMBER" == true ] ; then
+if [ "$FORCE_VERSION" != false -o "$INCREASE_VERSION_NUMBER" == true ]; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
 if $BUILD_ANDROID;then
@@ -151,7 +151,6 @@ fi
 if $UPLOAD;then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
-
 echo "TOTAL STEPS ${TOTAL_STEPS}"
 CURRENT_STEP=1
 
@@ -281,7 +280,7 @@ if $BUILD_IOS; then
     xcodebuild clean -project "${PROJECT_NAME}" -configuration Release -alltargets
 
     print_builder "Archiving"
-    # Since the archiving process has a lot of verbose (and XCode doesn't allow us to regulate it), show only the relevant lines
+    rm -f "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}"    # just in case
     xcodebuild archive -project "${PROJECT_NAME}" -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}"
 
     # Generate IPA file

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AI {
-	public class MachineArmored : Machine {
+	public class MachineArmored : MachineOld {
 		[SeparatorAttribute("Armor")]
 		[SerializeField] private HitsPerDragonTier m_armorDurabilityPerTier;
 

@@ -192,9 +192,9 @@ namespace AI {
 			}
 		}
 
+		public void AddExternalForce(Vector3 _f) {}
+
 		// Debug
-		void OnDrawGizmosSelected() {
-			
-		}
+		void OnDrawGizmosSelected() {}
 	}
 }

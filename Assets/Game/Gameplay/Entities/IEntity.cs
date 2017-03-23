@@ -39,15 +39,15 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 	protected List<ISpawnable> m_otherSpawnables = new List<ISpawnable>();
 	protected AI.IMachine m_machine;
+	public AI.IMachine machine { get { return m_machine; } }
+
 
 	protected virtual void Awake() {
 		ISpawnable[] spawners = GetComponents<ISpawnable>();
 		ISpawnable thisSpawn = this as ISpawnable;
-		for( int i = 0; i<spawners.Length; i++ )
-		{
-			if ( spawners[i] != thisSpawn )
-				m_otherSpawnables.Add( spawners[i] );
-				
+		for (int i = 0; i < spawners.Length; i++) {
+			if (spawners[i] != thisSpawn)
+				m_otherSpawnables.Add(spawners[i]);				
 		}
 		m_machine = GetComponent<AI.IMachine>();
 	}

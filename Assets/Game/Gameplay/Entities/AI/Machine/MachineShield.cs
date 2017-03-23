@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AI {
-	public class MachineShield : Machine {
+	public class MachineShield : MachineOld {
 		[SeparatorAttribute("Shield")]
 		[SerializeField] private Collider m_shield;
 		[CommentAttribute("Shield will block dragon and fire from tier equal or lower than this.")]

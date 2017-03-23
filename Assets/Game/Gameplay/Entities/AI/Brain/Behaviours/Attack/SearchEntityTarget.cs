@@ -92,7 +92,7 @@ namespace AI {
 						Entity entity = m_checkEntities[e];
 						bool inSearchButNotEat = m_searchButNoEatList.Contains( entity.sku);
 						if (inSearchButNotEat || m_preferedEntities.Contains(entity.sku)) {
-							Machine machine = entity.GetComponent<Machine>();
+							MachineOld machine = entity.GetComponent<MachineOld>();
 							if (machine != null && !machine.isPetTarget) {
 								if (inSearchButNotEat || machine.CanBeBitten()) {
 									// Check if physics reachable
@@ -114,7 +114,7 @@ namespace AI {
 					m_numCheckEntities = EntityManager.instance.GetOverlapingEntities(m_machine.position, m_data.sightRadius, m_checkEntities);
 					for (int e = 0; e < m_numCheckEntities; e++) {
 						Entity entity = m_checkEntities[e];
-						Machine machine = entity.GetComponent<Machine>();
+						MachineOld machine = entity.GetComponent<MachineOld>();
 						EatBehaviour.SpecialEatAction specialAction = m_eatBehaviour.GetSpecialEatAction( entity.sku );
 
 						if (entity.IsEdible() 

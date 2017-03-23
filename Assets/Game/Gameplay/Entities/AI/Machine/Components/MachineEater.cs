@@ -22,7 +22,7 @@ namespace AI {
 		}
 
 		private IMachine GetEdible(float _radiusSqr) {
-			Machine[] machines = GameObject.FindObjectsOfType<Machine>() as Machine[];
+			MachineOld[] machines = GameObject.FindObjectsOfType<MachineOld>() as MachineOld[];
 
 			for (int i = 0 ; i < machines.Length; i++) { 
 				if (machines[i] != m_machine) {

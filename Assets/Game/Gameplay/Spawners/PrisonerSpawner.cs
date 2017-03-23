@@ -125,7 +125,7 @@ public class PrisonerSpawner : AbstractSpawner {
                 m_entities[i].transform.parent = m_parents[i];
 
                 // change state in machine
-                m_entities[i].GetComponent<AI.IMachine>().UnlockFromCage();
+				m_entities[i].machine.UnlockFromCage();
 				m_entities[i] = null;
             }
         }
