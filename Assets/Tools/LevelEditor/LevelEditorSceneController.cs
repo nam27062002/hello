@@ -116,6 +116,8 @@ namespace LevelEditor {
 						sp.IntroSpawn(InstanceManager.player.data.def.sku);
 				}
 
+				// Notify listeners
+				Messenger.Broadcast(GameEvents.GAME_UPDATED);
 			}
 		}
 
