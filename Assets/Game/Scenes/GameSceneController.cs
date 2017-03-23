@@ -214,6 +214,8 @@ public class GameSceneController : GameSceneControllerBase {
 			case EStates.RUNNING: {
 				// Update running time
 				m_elapsedSeconds += Time.deltaTime;
+
+				// Dynamic loading
 				if ( m_switchingArea )
 				{
 					switch( m_switchState )
@@ -289,6 +291,8 @@ public class GameSceneController : GameSceneControllerBase {
 					}
 				}
 
+				// Notify listeners
+				Messenger.Broadcast(GameEvents.GAME_UPDATED);
 			} break;
 
 			case EStates.FINISHED: {
