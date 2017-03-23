@@ -19,7 +19,7 @@ using AI;
 /// </summary>
 [CustomEditor(typeof(MachineOld), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
-public class MachineEditor : Editor {
+public class MachineOldEditor : Editor {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//

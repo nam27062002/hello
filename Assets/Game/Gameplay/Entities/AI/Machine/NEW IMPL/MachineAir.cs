@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AI {
-	public class MachineAir : MachineGeneric {
+	public class MachineAir : Machine {
 
 		[SerializeField] protected MC_MotionAir m_airMotion = new MC_MotionAir();
 

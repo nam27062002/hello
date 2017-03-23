@@ -73,7 +73,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		get{ return m_mouth; }
 	}
 
-	protected MotionInterface m_motion;
+	protected IMotion m_motion;
 
 	private List<GameObject> m_bloodEmitter;
 

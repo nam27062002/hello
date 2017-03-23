@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Assets.Code.Game.Currents;
 
 namespace AI {
-	public class MachineOld : MonoBehaviour, IMachine, ISpawnable, IAttacker, MotionInterface {	
+	public class MachineOld : MonoBehaviour, IMachine, ISpawnable, IAttacker, IMotion {	
 		protected static int m_groundMask;
 
 		public enum RotateToMouthType

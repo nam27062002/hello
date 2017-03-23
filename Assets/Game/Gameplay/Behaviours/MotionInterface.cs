@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public interface MotionInterface {
+public interface IMotion {
 	Vector3 position 		{ get; set; }
 	Vector3 direction 		{ get; }
 	Vector3 groundDirection { get; }
