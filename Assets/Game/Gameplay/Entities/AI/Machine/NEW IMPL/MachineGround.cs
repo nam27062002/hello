@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AI {
-	public class MachineGround : MachineGeneric {		
+	public class MachineGround : Machine {		
 		[SerializeField] protected MC_MotionGround m_groundMotion = new MC_MotionGround();
 
 		public override Vector3 position		{ get { return m_groundMotion.position; } set { m_groundMotion.position = value; } }

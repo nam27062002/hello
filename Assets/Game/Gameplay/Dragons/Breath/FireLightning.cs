@@ -183,7 +183,7 @@ public class FireLightning : DragonBreathBehaviour {
 		for (int i = 0; i < preys.Length; i++) 
 		{
 			if (preys[i].IsBurnable(m_tier) || m_type == Type.Super) {
-				AI.Machine machine =  preys[i].GetComponent<AI.Machine>();
+				AI.IMachine machine =  preys[i].machine;
 				if (machine != null) {					
 					machine.Burn(transform);					
 				}

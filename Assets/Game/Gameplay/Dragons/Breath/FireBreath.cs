@@ -288,7 +288,7 @@ public class FireBreath : DragonBreathBehaviour {
 			if ((prey.circleArea != null && Overlaps((CircleAreaBounds)prey.circleArea.bounds)) || IsInsideArea(prey.transform.position)) 
 			{
 				if (prey.IsBurnable(m_tier) || m_type == Type.Super) {
-					AI.Machine machine =  m_checkEntities[i].GetComponent<AI.Machine>();
+					AI.IMachine machine =  m_checkEntities[i].machine;
 					if (machine != null) {
 						machine.Burn(transform);
 					}

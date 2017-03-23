@@ -133,7 +133,7 @@ namespace AI {
 							bool inSearchButNotEat = m_searchButNoEatList.Contains( entity.sku );
 							if ( inSearchButNotEat || m_preferedEntities.Contains(entity.sku) )
 							{
-								Machine machine = entity.GetComponent<Machine>();
+								MachineOld machine = entity.GetComponent<MachineOld>();
 								if ( machine != null && !machine.isPetTarget)
 								{
 									if ( inSearchButNotEat || machine.CanBeBitten() )
@@ -161,7 +161,7 @@ namespace AI {
 						for (int e = 0; e < m_numCheckEntities; e++) 
 						{
 							Entity entity = m_checkEntities[e];
-							Machine machine = entity.GetComponent<Machine>();
+							MachineOld machine = entity.GetComponent<MachineOld>();
 							EatBehaviour.SpecialEatAction specialAction = m_eatBehaviour.GetSpecialEatAction( entity.sku );
 							if (
 								entity.IsEdible() && specialAction != EatBehaviour.SpecialEatAction.CannotEat && entity.IsEdible( m_eaterTier ) && machine != null && machine.CanBeBitten() && !machine.isPetTarget

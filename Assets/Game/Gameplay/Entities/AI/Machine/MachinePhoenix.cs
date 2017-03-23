@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AI {
-	public class MachinePhoenix : Machine {
+	public class MachinePhoenix : MachineOld {
 
 		bool m_phoenixActive = false;
 		public GameObject m_fire;

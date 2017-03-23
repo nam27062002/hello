@@ -9,8 +9,10 @@ public class Cloud : MonoBehaviour {
 		if ( player != null && other is SphereCollider)
 		{
 			GameObject go = ParticleManager.Spawn("CloudSmoke", player.transform.position);
-			go.transform.rotation = player.transform.rotation;
-			go.transform.Rotate( -90, 0, 0, Space.Self);
+			if (go != null) {
+				go.transform.rotation = player.transform.rotation;
+				go.transform.Rotate( -90, 0, 0, Space.Self);
+			}
 		}
 	}
 

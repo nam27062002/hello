@@ -56,7 +56,7 @@ namespace AI {
 					m_spawnedEntity = p.GetComponent<Entity>();
 					m_spawnedEntity.dieOutsideFrustum = false;
 					m_pilot.SlowDown(false);
-					m_eatBehaviour.StartHold( m_spawnedEntity.GetComponent<AI.IMachine>(), true);
+					m_eatBehaviour.StartHold( m_spawnedEntity.machine, true);
 				}
 				else
 				{

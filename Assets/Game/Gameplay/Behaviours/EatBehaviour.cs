@@ -73,7 +73,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		get{ return m_mouth; }
 	}
 
-	protected MotionInterface m_motion;
+	protected IMotion m_motion;
 
 	private List<GameObject> m_bloodEmitter;
 
@@ -897,7 +897,7 @@ public abstract class EatBehaviour : MonoBehaviour {
                             // Makes sure that it won't exceed the max limit
                             if (numPreysToEat < maxPreysToEat)
                             {
-                                AI.IMachine machine = entity.GetComponent<AI.IMachine>();
+								AI.IMachine machine = entity.machine;
                                 if ( machine.CanBeBitten() )
                                 {
                                     m_preysToEat[numPreysToEat] = machine;
@@ -914,7 +914,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 					{
 						if (_canHold)
 						{
-							AI.IMachine machine = entity.GetComponent<AI.IMachine>();
+							AI.IMachine machine = entity.machine;
 							if ( machine.CanBeBitten() )
 							{
 								preyToHold = machine;

@@ -107,21 +107,13 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 	public void Explode( bool _hitsDragon )
 	{
 		if (m_explosionParticle.IsValid()) {
-			GameObject explosion = ParticleManager.Spawn( m_explosionParticle, transform.position);
-			/*
-			if (explosion) {
-				explosion.transform.localScale = Vector3.one * m_scaleRange.GetRandom();			
-				explosion.transform.Rotate(0, 0, m_rotationRange.GetRandom());
-			}
-			*/
+			ParticleManager.Spawn( m_explosionParticle, transform.position);
 		}
 
 		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_area.center, m_area.radius * 3);
-		for (int i = 0; i < preys.Length; i++) 
-		{
-			if ( preys[i].IsBurnable(m_fireTier))
-			{
-				AI.Machine machine =  preys[i].GetComponent<AI.Machine>();
+		for (int i = 0; i < preys.Length; i++) {
+			if (preys[i].IsBurnable(m_fireTier)) {
+				AI.IMachine machine =  preys[i].machine;
 				if (machine != null) {
 					machine.Burn(transform);
 				}

@@ -19,7 +19,7 @@ using AI;
 /// </summary>
 [CustomEditor(typeof(Machine), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
-public class MachineEditor : Editor {
+	public class MachineEditor : Editor {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -28,12 +28,13 @@ public class MachineEditor : Editor {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Casted target object
-	Machine m_targetMachine = null;
-
 	// Store a reference of interesting properties for faster access
-	SerializedProperty m_motionProp = null;
-	SerializedProperty m_sensorProp = null;
+	protected SerializedProperty m_motionProp 	 = null;
+
+	private SerializedProperty m_sensorProp 	 = null;
+	private SerializedProperty m_edibleProp 	 = null;
+	private SerializedProperty m_inflammableProp = null;
+	private SerializedProperty m_enableSensorProp= null;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -41,24 +42,23 @@ public class MachineEditor : Editor {
 	/// <summary>
 	/// The editor has been enabled - target object selected.
 	/// </summary>
-	private void OnEnable() {
-		// Get target object
-		m_targetMachine = target as Machine;
-
+	protected virtual void OnEnable() {
 		// Store a reference of interesting properties for faster access
-		m_motionProp = serializedObject.FindProperty("m_motion");
-		m_sensorProp = serializedObject.FindProperty("m_sensor");
+		m_sensorProp 		= serializedObject.FindProperty("m_sensor");
+		m_edibleProp		= serializedObject.FindProperty("m_edible");
+		m_inflammableProp 	= serializedObject.FindProperty("m_inflammable");
+		m_enableSensorProp	= serializedObject.FindProperty("m_enableSensor");
 	}
 
 	/// <summary>
 	/// The editor has been disabled - target object unselected.
 	/// </summary>
 	private void OnDisable() {
-		// Clear target object
-		m_targetMachine = null;
-
-		m_motionProp = null;
-		m_sensorProp = null;
+		m_motionProp 	  = null;
+		m_sensorProp 	  = null;
+		m_edibleProp 	  = null;
+		m_inflammableProp = null;
+		m_enableSensorProp= null;
 	}
 
 	/// <summary>
@@ -72,34 +72,31 @@ public class MachineEditor : Editor {
 		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
 		serializedObject.Update();
 
+		//print components
+		EditorGUILayoutExt.Separator(new SeparatorAttribute("Components"));
+
+		EditorGUI.indentLevel++; {
+			EditorGUILayout.PropertyField(m_motionProp, true);
+			EditorGUILayout.PropertyField(m_edibleProp, true);
+			EditorGUILayout.PropertyField(m_inflammableProp, true);
+		} EditorGUI.indentLevel--;
+
+		m_enableSensorProp.boolValue = EditorGUILayout.ToggleLeft(m_enableSensorProp.displayName, m_enableSensorProp.boolValue);
+		if (m_enableSensorProp.boolValue) {// If active, draw activation triggers
+			EditorGUI.indentLevel++; {
+				EditorGUILayout.PropertyField(m_sensorProp, true);
+			} EditorGUI.indentLevel--;
+		}
+		
+		EditorGUILayoutExt.Separator(new SeparatorAttribute());
+		//
+
 		// Loop through all serialized properties and work with special ones
 		SerializedProperty p = serializedObject.GetIterator();
 		p.Next(true);	// To get first element
 		do {
-			// Properties requiring special treatment
-			if (p.name == "m_enableMotion") {
-				// Draw the property
-				p.boolValue = EditorGUILayout.ToggleLeft(p.displayName, p.boolValue);
-
-				// If active, draw activation triggers
-				if (p.boolValue) {
-					// Draw activation properties
-					EditorGUI.indentLevel++; {
-						EditorGUILayout.PropertyField(m_motionProp, true);
-					} EditorGUI.indentLevel--;
-				}
-			} else if (p.name == "m_enableSensor") {
-				// Draw the property
-				p.boolValue = EditorGUILayout.ToggleLeft(p.displayName, p.boolValue);
-
-				// If active, draw activation triggers
-				if (p.boolValue) {
-					// Draw activation properties
-					EditorGUI.indentLevel++; {
-						EditorGUILayout.PropertyField(m_sensorProp, true);
-					} EditorGUI.indentLevel--;
-				}
-			} else if (p.name == m_motionProp.name || p.name == m_sensorProp.name) {
+			if (p.name == m_motionProp.name || p.name == m_edibleProp.name || p.name == m_inflammableProp.name
+			||  p.name == m_enableSensorProp.name || p.name == m_sensorProp.name) {
 				// do nothing
 			} else {
 				// Default

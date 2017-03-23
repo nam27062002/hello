@@ -35,7 +35,7 @@ namespace AI {
 				m_timer = m_data.m_waitingTime.GetRandom();
 
 				// Deactivate pet
-				Machine m = (m_machine as Machine);
+				MachineOld m = (m_machine as MachineOld);
 				m.Deactivate( m_timer, Activate );
 			}
 

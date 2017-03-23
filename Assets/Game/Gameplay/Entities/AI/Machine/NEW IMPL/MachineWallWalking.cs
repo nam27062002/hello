@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AI {
-	public class MachineWallWalking : MachineGeneric {
+	public class MachineWallWalking : Machine {
 
 		[SerializeField] protected MC_MotionWallWalking m_wallWalkingMotion = new MC_MotionWallWalking();
 

@@ -14,12 +14,12 @@ public class MachineEatBehaviour : EatBehaviour {
 	[SerializeField] private bool m_canMultipleLatchOnPlayer = false;
 	public override bool canMultipleLatchOnPlayer { get { return m_canMultipleLatchOnPlayer; } }
 
-	private AI.Machine m_machine;
+	private AI.MachineOld m_machine;
 
 	override protected void Awake() {
 
 		base.Awake();
-		m_motion = GetComponent<AI.Machine>();
+		m_motion = GetComponent<IMotion>();
 		m_tier = m_eaterTier;
 		m_eatSpeedFactor = 0.5f;	// [AOC] HARDCODED!!
 		m_canHold = false;
@@ -29,7 +29,7 @@ public class MachineEatBehaviour : EatBehaviour {
 		m_holdDuration = 10;
 		SetupHoldParametersForTier( DragonData.TierToSku( m_eaterTier));
 
-		m_machine = GetComponent<AI.Machine>();
+		m_machine = GetComponent<AI.MachineOld>();
 		if (m_isPet) {
 			m_canLatchOnPlayer = false;	
 			AddToIgnoreList("badJunk");
@@ -59,16 +59,14 @@ public class MachineEatBehaviour : EatBehaviour {
 		// Start attack animation
 		// Tell vie to play eat event!
 
-		if ( m_machine )
-		{
+		if (m_machine != null) {
 			m_machine.StartAttackTarget(_transform);
 		}
 	}
 
 	public override void StopAttackTarget()
 	{
-		if ( m_attackTarget != null )
-		{
+		if (m_attackTarget != null) {
 			m_machine.StopAttackTarget();
 		}
 		base.StopAttackTarget();
@@ -83,7 +81,7 @@ public class MachineEatBehaviour : EatBehaviour {
 
 
     protected override void EatExtended(PreyData preyData) {         
-		if ( m_machine )
+		if ( m_machine != null)
 		{
 			// Start Eating Animation!
 			m_machine.StartEating();
@@ -96,7 +94,6 @@ public class MachineEatBehaviour : EatBehaviour {
 		if (PreyCount <= 0 && m_machine)
 			m_machine.StopEating();
 	}
-
 
 	// find mouth transform 
 	protected override void MouthCache() 
@@ -122,11 +119,5 @@ public class MachineEatBehaviour : EatBehaviour {
 		{
 			base.MouthCache();
 		}
-	}
-
-	override protected void OnDrawGizmos() {
-		if ( m_motion == null )
-			m_motion = GetComponent<AI.Machine>();
-		base.OnDrawGizmos();
 	}
 }
