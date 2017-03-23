@@ -34,29 +34,64 @@ public class TemplatesMenu {
 	/// <summary>
 	/// Different template menu entries
 	/// </summary>
-	[MenuItem("Assets/Create/C# Script Templates/Custom Editor")]
-	public static void CreateCustomEditor() {
-		CreateTemplateWindow.ShowWindow("Editor/CustomEditorTemplate");
+	[MenuItem("Assets/Create/C# Script Templates/Class", false, 1)]
+	public static void CreateClass() {
+		CreateFromTemplate("ClassTemplate");
 	}
 
-	[MenuItem("Assets/Create/C# Script Templates/Extended Property Drawer")]
-	public static void CreateExtendedPropertyDrawer() {
-		CreateTemplateWindow.ShowWindow("Editor/ExtendedPropertyDrawerTemplate");
-	}
-
-	[MenuItem("Assets/Create/C# Script Templates/Editor Window")]
-	public static void CreateEditorWindow() {
-		CreateTemplateWindow.ShowWindow("Editor/EditorWindowTemplate");
-	}
-
-	[MenuItem("Assets/Create/C# Script Templates/MonoBehaviour")]
+	[MenuItem("Assets/Create/C# Script Templates/MonoBehaviour", false, 2)]
 	public static void CreateMonoBehaviour() {
-		CreateTemplateWindow.ShowWindow("MonoBehaviourTemplate");
+		CreateFromTemplate("MonoBehaviourTemplate");
 	}
 
-	[MenuItem("Assets/Create/C# Script Templates/Sub State Machine")]
+	[MenuItem("Assets/Create/C# Script Templates/Custom Editor", false, 51)]
+	public static void CreateCustomEditor() {
+		CreateFromTemplate("Editor/CustomEditorTemplate");
+	}
+
+	[MenuItem("Assets/Create/C# Script Templates/Editor Window", false, 52)]
+	public static void CreateEditorWindow() {
+		CreateFromTemplate("Editor/EditorWindowTemplate");
+	}
+
+	[MenuItem("Assets/Create/C# Script Templates/Extended Property Drawer", false, 53)]
+	public static void CreateExtendedPropertyDrawer() {
+		CreateFromTemplate("Editor/ExtendedPropertyDrawerTemplate");
+	}
+
+	[MenuItem("Assets/Create/C# Script Templates/Sub State Machine", false, 101)]
 	public static void CreateSMB() {
-		CreateTemplateWindow.ShowWindow("SMBTemplate");
+		CreateFromTemplate("SMBTemplate");
+	}
+
+	//------------------------------------------------------------------//
+
+	[MenuItem("Assets/Smart Duplicate", false, 1)]
+	public static void SmartDuplicate() {
+		string selectedFilePath = AssetDatabase.GetAssetPath(Selection.activeObject);
+		CreateTemplateWindow.ShowWindow(selectedFilePath);
+	}
+
+	/// <summary>
+	/// Validate the SmartDuplicate option.
+	/// Only for text files.
+	/// </summary>
+	/// <returns>Whether the SmartDuplicate action can be used or not.</returns>
+	[MenuItem("Assets/Smart Duplicate", true, 1)]
+	static bool SmartDuplicateValidation() {
+		// Only if selected file is a text asset
+		return Selection.activeObject is TextAsset;
+	}
+
+	//------------------------------------------------------------------//
+	// INTERNAL METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Create a duplicate from one of the known templates.
+	/// </summary>
+	/// <param name="_templateName">The path of the template, starting at TEMPLATES_FOLDER and excluding extension (i.e. Editor/CustomEditorTemplate).</param>
+	private static void CreateFromTemplate(string _templateName) {
+		CreateTemplateWindow.ShowWindow(TEMPLATES_FOLDER + _templateName + ".cs");
 	}
 
 	//------------------------------------------------------------------//
@@ -85,23 +120,28 @@ public class TemplatesMenu {
 			set { EditorPrefs.SetString("EditorTemplates.ProjectName", value); }
 		}
 
+		// Internal
+		private bool m_initialFocusPending = false;
+
 		//------------------------------------------------------------------//
 		// METHODS															//
 		//------------------------------------------------------------------//
 		/// <summary>
 		/// Opens the window.
 		/// </summary>
-		/// <param name="_templatePath">The path of the template, starting at TEMPLATES_FOLDER and excluding extension (i.e. Editor/CustomEditorTemplate).</param>
-		public static CreateTemplateWindow ShowWindow(string _templatePath) {//string _message, string _initialText) {
+		/// <param name="_templatePath">The path of the template, starting with "Assets/" and including extension (i.e. Assets/Tools/Templates/Editor/CustomEditorTemplate.cs).</param>
+		public static CreateTemplateWindow ShowWindow(string _templatePath) {
 			// Get window!
 			CreateTemplateWindow window = EditorWindow.GetWindow<CreateTemplateWindow>(true);
-			window.titleContent = new GUIContent("Create new " + _templatePath);
 
 			// Init parameters
-			window.m_templatePath = TEMPLATES_FOLDER + _templatePath + ".cs";
+			window.m_templatePath = _templatePath;
 			window.m_templateName = Path.GetFileNameWithoutExtension(window.m_templatePath);
 			window.m_newName = "New" + window.m_templateName;
 			window.ValidateName();
+
+			// Windows title
+			window.titleContent = new GUIContent("Create new " + window.m_templateName);
 
 			// Set window size
 			window.minSize = new Vector2(400f, 100f);
@@ -114,12 +154,20 @@ public class TemplatesMenu {
 		}
 
 		/// <summary>
+		/// Window has been opened.
+		/// </summary>
+		private void OnEnable() {
+			m_initialFocusPending = true;
+		}
+
+		/// <summary>
 		/// 
 		/// </summary>
 		private void OnGUI() {
 			// Class name
 			EditorGUILayout.Space();
 			EditorGUI.BeginChangeCheck();
+			GUI.SetNextControlName("NameTextfield");
 			m_newName = EditorGUILayout.TextField("New Class name", m_newName);
 			if(EditorGUI.EndChangeCheck()) {
 				// Apply validation
@@ -141,19 +189,36 @@ public class TemplatesMenu {
 
 				// Cancel
 				if(GUILayout.Button("Cancel")) {
-					// Just close the dialog
-					Close();
-					GUIUtility.ExitGUI();	// Interrupt OnGUI properly
+					OnCancel();
 				}
 
 				// Ok
 				if(GUILayout.Button("Ok!")) {
-					// Create the file and close the dialog
-					CreateNewFile();
-					Close();
-					GUIUtility.ExitGUI();	// Interrupt OnGUI properly
+					OnSumbit();
 				}
 			} EditorGUILayout.EndHorizontal();
+
+			// If initial focus is pending, do it now
+			if(m_initialFocusPending) {
+				EditorGUI.FocusTextInControl("NameTextfield");
+				m_initialFocusPending = false;
+			}
+
+			// Capture Enter and Escape keys for fast submit/cancel
+			switch(Event.current.type) {
+				case EventType.keyDown: {
+					switch(Event.current.keyCode) {
+						case KeyCode.Return:
+						case KeyCode.KeypadEnter: {
+							OnSumbit();	
+						} break;
+
+						case KeyCode.Escape: {
+							OnCancel();
+						} break;
+					}
+				} break;
+			}
 		}
 
 		/// <summary>
@@ -183,9 +248,17 @@ public class TemplatesMenu {
 				return;
 			}
 
+			// Show progress bar
+			string progressBarTitle = "Creating new file " + m_newName + "...";
+			string progressBarMessage = "Cloning from " + m_templatePath + "\nto " + targetPath;
+			EditorUtility.DisplayProgressBar(progressBarTitle, progressBarMessage, 0f);
+
 			// Make sure database is ok
 			AssetDatabase.Refresh();
 			AssetDatabase.SaveAssets();
+
+			// Update progress bar
+			EditorUtility.DisplayProgressBar(progressBarTitle, progressBarMessage, 0.33f);
 
 			// Open new asset
 			TextAsset newAsset = AssetDatabase.LoadMainAssetAtPath(targetPath) as TextAsset;
@@ -209,14 +282,23 @@ public class TemplatesMenu {
 				AssetDatabase.SaveAssets();
 				AssetDatabase.Refresh();
 
+				// Update progress bar
+				EditorUtility.DisplayProgressBar(progressBarTitle, progressBarMessage, 0.66f);
+
 				// Highlight and select new object
 				Selection.activeObject = newAsset;
 				EditorGUIUtility.PingObject(newAsset);
+
+				// Update progress bar
+				EditorUtility.DisplayProgressBar(progressBarTitle, progressBarMessage, 1f);
 
 				// Open in editor
 				// We need to reload the asset -_-
 				newAsset = AssetDatabase.LoadMainAssetAtPath(targetPath) as TextAsset;
 				AssetDatabase.OpenAsset(newAsset);
+
+				// Hide progress bar
+				EditorUtility.ClearProgressBar();
 			}
 		}
 
@@ -226,6 +308,28 @@ public class TemplatesMenu {
 		private void ValidateName() {
 			// Make sure it's a valid Class name
 			m_newName = m_newName.GenerateValidIdentifier();
+		}
+
+		//------------------------------------------------------------------//
+		// CALLBACKS														//
+		//------------------------------------------------------------------//
+		/// <summary>
+		/// The cancel button has been pressed.
+		/// </summary>
+		private void OnCancel() {
+			// Just close the dialog
+			Close();
+			GUIUtility.ExitGUI();	// Interrupt OnGUI properly
+		}
+
+		/// <summary>
+		/// The submit button has been pressed.
+		/// </summary>
+		private void OnSumbit() {
+			// Create the file and close the dialog
+			CreateNewFile();
+			Close();
+			GUIUtility.ExitGUI();	// Interrupt OnGUI properly
 		}
 	}
 }
