@@ -37,6 +37,7 @@
 	{
 		float4 vertex : POSITION;
 		float2 uv : TEXCOORD0;
+		float4 color : COLOR;
 		float3 normal : NORMAL;
 		float4 tangent : TANGENT;
 	};

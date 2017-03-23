@@ -36,7 +36,6 @@ struct v2f {
 	float3 halfDir : TEXCOORD7;
 #endif	
 
-
 };
 
 sampler2D _MainTex;
