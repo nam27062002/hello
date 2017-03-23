@@ -192,7 +192,9 @@ namespace AI {
 
 		public virtual void Spawn(ISpawner _spawner) {
 			Spawn();
-			m_checkCurrents = _spawner.SpawnersCheckCurrents();
+			if (_spawner != null) {
+				m_checkCurrents = _spawner.SpawnersCheckCurrents();
+			}
 		}
 
 		public void OnTrigger(string _trigger, object[] _param = null) {
