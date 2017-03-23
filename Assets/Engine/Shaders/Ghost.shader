@@ -54,7 +54,7 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 			#if MEDIUM_DETAIL_ON
 			#define NORMALMAP
 			#define SPECULAR
-			//			#define FRESNEL
+//			#define FRESNEL
 			#endif
 
 			#if HI_DETAIL_ON
