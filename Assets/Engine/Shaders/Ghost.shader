@@ -21,7 +21,7 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 	{
 		Pass
 		{
-			Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+			Tags{ "Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "Opaque" }
 //			ZWrite Off
 			Blend SrcAlpha OneMinusSrcAlpha
 			Cull off
@@ -53,12 +53,13 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 
 			#if MEDIUM_DETAIL_ON
 			#define NORMALMAP
-//			#define FRESNEL
+			#define SPECULAR
+			//			#define FRESNEL
 			#endif
 
 			#if HI_DETAIL_ON
 			#define NORMALMAP
-//			#define SPECULAR
+			#define SPECULAR
 //			#define FRESNEL
 			#endif
 
