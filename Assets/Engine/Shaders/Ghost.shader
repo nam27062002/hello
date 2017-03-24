@@ -32,8 +32,8 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 			Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 			ZWrite on
 			Blend SrcAlpha OneMinusSrcAlpha
-			Cull off
-//			ColorMask RGBA
+//			Cull off
+			ColorMask RGBA
 
 			Stencil
 			{
