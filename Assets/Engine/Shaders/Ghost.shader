@@ -15,6 +15,7 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 		_Tint("Tint color (RGB)", Color) = (1, 1, 1, 0)
 		_WaveRadius("Wave Radius", float) = 1.5
 		_WavePhase("Wave phase", float) = 1.0
+		_AlphaMSKScale("Alpha mask scale", Range(0.5, 8.0)) = 3.0
 		_StencilMask("Stencil Mask", int) = 10
 	}
 	SubShader
@@ -53,13 +54,13 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 
 			#if MEDIUM_DETAIL_ON
 			#define NORMALMAP
-			#define SPECULAR
+//			#define SPECULAR
 //			#define FRESNEL
 			#endif
 
 			#if HI_DETAIL_ON
 			#define NORMALMAP
-			#define SPECULAR
+//			#define SPECULAR
 //			#define FRESNEL
 			#endif
 
@@ -83,7 +84,7 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 			#define CUSTOM_TINT
 			float4 getCustomTint(float4 col, float4 tint, float4 vcolor)
 			{
-				return lerp(col, col * tint, vcolor.w);
+				return lerp(col, col + tint, vcolor.w);
 			}
 
 			#include "entities.cginc"
