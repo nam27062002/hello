@@ -36,7 +36,6 @@ struct v2f {
 	float3 halfDir : TEXCOORD7;
 #endif	
 
-
 };
 
 sampler2D _MainTex;
@@ -132,7 +131,6 @@ v2f vert (appdata_t v)
 
 fixed4 frag (v2f i) : SV_Target
 {	
-
 #ifdef DEBUG
 	return fixed4(1.0, 0.0, 1.0, 1.0);
 #endif	

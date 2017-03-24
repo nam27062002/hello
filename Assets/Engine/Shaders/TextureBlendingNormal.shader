@@ -43,15 +43,11 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 				#if MEDIUM_DETAIL_ON
 				#define NORMALMAP
 
-				#define BUMP
 				#endif
 
 				#if HI_DETAIL_ON
 				#define NORMALMAP
 				#define SPECULAR
-
-				#define BUMP
-				#define SPEC
 
 				#endif
 

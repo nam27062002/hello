@@ -12,8 +12,8 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
 		_SecondTexture ("Second Texture (RGB)", 2D) = "white" {}
-//		_WaveRadius("Wave Radius", float) = 4.5
-//		_WavePhase("Wave phase", float) = 4.0
+//		_WaveRadius("Wave Radius", float) = 1.5
+//		_WavePhase("Wave phase", float) = 1.0
 	}
 
 	SubShader {
