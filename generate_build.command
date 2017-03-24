@@ -281,7 +281,7 @@ if $BUILD_IOS; then
     security unlock-keychain -p Ubisoft001
 
     print_builder "Archiving"
-    rm -f "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}"    # just in case
+    rm -rf "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}"    # just in case
     xcodebuild archive -project "${PROJECT_NAME}" -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}"
 
     # Generate IPA file
