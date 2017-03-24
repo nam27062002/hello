@@ -76,7 +76,7 @@ using AI;
 		EditorGUILayoutExt.Separator(new SeparatorAttribute("Components"));
 
 		EditorGUI.indentLevel++; {
-			EditorGUILayout.PropertyField(m_motionProp, true);
+			if (m_motionProp != null) EditorGUILayout.PropertyField(m_motionProp, true);
 			EditorGUILayout.PropertyField(m_edibleProp, true);
 			EditorGUILayout.PropertyField(m_inflammableProp, true);
 		} EditorGUI.indentLevel--;
@@ -94,9 +94,11 @@ using AI;
 		// Loop through all serialized properties and work with special ones
 		SerializedProperty p = serializedObject.GetIterator();
 		p.Next(true);	// To get first element
+
 		do {
-			if (p.name == m_motionProp.name || p.name == m_edibleProp.name || p.name == m_inflammableProp.name
-			||  p.name == m_enableSensorProp.name || p.name == m_sensorProp.name) {
+			if (p.name == "m_ObjectHideFlags" || p.name == "m_Script") {
+				// do nothing
+			} else if ((m_motionProp != null && p.name == m_motionProp.name) || p.name == m_edibleProp.name || p.name == m_inflammableProp.name || p.name == m_enableSensorProp.name || p.name == m_sensorProp.name) {
 				// do nothing
 			} else {
 				// Default

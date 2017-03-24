@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4658928853664522}
   - component: {fileID: 114790596522833880}
-  - component: {fileID: 114650223625565700}
+  - component: {fileID: 114735516776990068}
   - component: {fileID: 114311415021949368}
   - component: {fileID: 114771277628690562}
   - component: {fileID: 114656578000673320}
@@ -340,7 +340,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1521003462356860}
-  m_LocalRotation: {x: -0.44281, y: 0.44413513, z: 0.5502217, w: 0.55128884}
+  m_LocalRotation: {x: -0.035335515, y: -0.30847293, z: 0.6362739, w: 0.7062233}
   m_LocalPosition: {x: 0.25748837, y: 0, z: 0.0002573445}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -487,7 +487,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1054743084792962}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: 356.915, y: 63.11679, z: 0}
+  m_LocalPosition: {x: -1.0859823, y: -1.5424323, z: 2.9763842}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4499394028430274}
@@ -513,7 +513,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1256061252104246}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0.00000012852253, y: 0.00000025331977, z: 0.00000009406359,
+    w: 1}
   m_LocalPosition: {x: -0.000001321216, y: -0.0000006859992, z: 0.00000043374314}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children: []
@@ -601,6 +602,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba1c905da34946d68ce50345b05e48f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_overrideCamera: {fileID: 0}
 --- !u!114 &114311415021949368
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -665,58 +667,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba1c905da34946d68ce50345b05e48f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114650223625565700
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1054743084792962}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_useGravity: 0
-    m_walkOnWalls: 0
-    m_mass: 20
-    m_defaultUpVector: 0
-    m_orientationSpeed: 120
-    m_faceDirection: 0
-    m_useDragonStyleRotation: 0
-    m_rollRotation: 0
-    m_limitHorizontalRotation: 1
-    m_faceLeftAngle: -45
-    m_faceRightAngle: 45
-    m_limitVerticalRotation: 0
-    m_faceUpAngle: -45
-    m_faceDownAngle: 45
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 0
-  m_sensor:
-    m_senseFire: 1
-    m_sightRadius: 15
-    m_maxRadius: 12
-    m_minRadius: 5
-    m_hysteresisOffset: 0
-    m_senseAbove: 1
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 0, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0.25
-      max: 1.25
-  m_onSpawnSound: 
-  m_rotateToMouth: 0
-  m_inflammable:
-    m_ashesAsset: 
-    m_burningTime: 0
-    m_dissolveTime: 1.5
-    m_ashExceptions:
-    - {fileID: 23085329791705994}
+  m_overrideCamera: {fileID: 0}
 --- !u!114 &114656578000673320
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -731,6 +682,57 @@ MonoBehaviour:
   offset: {x: -0.010741293, y: 0.7304182}
   radius: 0.032824516
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!114 &114735516776990068
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1054743084792962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3085e02792f6243cc9d8323aba91b804, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_affectedByDragonTrample: 0
+  m_enableSensor: 1
+  m_sensor:
+    m_senseFire: 1
+    m_sightRadius: 14
+    m_maxRadius: 11
+    m_minRadius: 4
+    m_hysteresisOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
+    m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
+    m_senseDelay:
+      min: 0
+      max: 0.5
+  m_edible:
+    m_rotateToMouth: 0
+  m_inflammable:
+    m_ashesAsset: 
+    m_burningTime: 0
+    m_dissolveTime: 1.5
+    m_ashExceptions:
+    - {fileID: 23085329791705994}
+  m_onSpawnSound: 
+  m_rotateToMouth: 0
+  m_airMotion:
+    m_mass: 20
+    m_defaultUpVector: 0
+    m_orientationSpeed: 120
+    m_dragonStyleRotation: 0
+    m_faceDirection: 0
+    m_rollRotation: 0
+    m_limitHorizontalRotation: 1
+    m_faceLeftAngle: -45
+    m_faceRightAngle: 45
+    m_limitVerticalRotation: 0
+    m_faceUpAngle: 340
+    m_faceDownAngle: 20
 --- !u!114 &114771277628690562
 MonoBehaviour:
   m_ObjectHideFlags: 1

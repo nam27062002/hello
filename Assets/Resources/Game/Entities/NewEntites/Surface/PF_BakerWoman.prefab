@@ -10,7 +10,7 @@ GameObject:
   - component: {fileID: 475722}
   - component: {fileID: 11484900}
   - component: {fileID: 11441020}
-  - component: {fileID: 11476190}
+  - component: {fileID: 114659110705643162}
   - component: {fileID: 114101063565773426}
   - component: {fileID: 11449904}
   - component: {fileID: 136000011231704714}
@@ -84,11 +84,12 @@ MonoBehaviour:
   m_blendSpeedFactor: 1
   m_energy: 10
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: 5a0786dd5cdbd4948a22302fb8798cdc, type: 2}
   m_railSeparation:
     min: 2
     max: 2.75
-  m_serializedJson: '[{"speed":3,"timeToIdle":{"min":2,"max":5},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":0,"max":2},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":7,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.5,"actions":{"panic":{"id":0,"active":true},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":false},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":7,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"damage":3,"consecutiveAttacks":5,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"action":4096,"time":2.7,"duration":0,"dataType":"AI.Behaviour.ActivateActionPeriodicallyData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":3,"timeToIdle":{"min":2,"max":5},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":0,"max":2},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":7,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.5,"actions":{"panic":{"id":0,"active":true},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":false},"hide":{"id":3,"active":false},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":7,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"damage":3,"consecutiveAttacks":5,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"action":4096,"time":2.7,"duration":0,"dataType":"AI.Behaviour.ActivateActionPeriodicallyData","editorFolded":false}]'
   m_databaseKey: PF_BakerWoman
 --- !u!114 &11449904
 MonoBehaviour:
@@ -115,57 +116,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11476190
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 131698}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_useGravity: 1
-    m_walkOnWalls: 0
-    m_mass: 1
-    m_defaultUpVector: 0
-    m_orientationSpeed: 120
-    m_faceDirection: 0
-    m_useDragonStyleRotation: 0
-    m_rollRotation: 0
-    m_limitHorizontalRotation: 0
-    m_faceLeftAngle: -90
-    m_faceRightAngle: 90
-    m_limitVerticalRotation: 0
-    m_faceUpAngle: 320
-    m_faceDownAngle: 40
-  m_affectedByDragonTrample: 1
-  m_enableSensor: 1
-  m_sensor:
-    m_senseFire: 1
-    m_sightRadius: 10
-    m_maxRadius: 4
-    m_minRadius: 0
-    m_hysteresisOffset: 0
-    m_senseAbove: 1
-    m_senseBelow: 0
-    m_sensorOffset: {x: 0, y: 1.58, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0
-      max: 0
-  m_onSpawnSound: 
-  m_rotateToMouth: 3
-  m_inflammable:
-    m_ashesAsset: 
-    m_burningTime: 0
-    m_dissolveTime: 1.5
-    m_ashExceptions: []
 --- !u!114 &11484900
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -532,6 +482,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: view
   m_parentRoot: {fileID: 475722}
+  m_worldPositionStays: 1
 --- !u!114 &114004513915355870
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -545,6 +496,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: view
   m_parentRoot: {fileID: 475722}
+  m_worldPositionStays: 1
 --- !u!114 &114101063565773426
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -626,6 +578,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_knockback: 0
+  m_timeBetweenHits: 0.5
 --- !u!114 &114582487419629330
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -639,6 +592,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: view
   m_parentRoot: {fileID: 475722}
+  m_worldPositionStays: 1
+--- !u!114 &114659110705643162
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 131698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10c1375cf9650469c8d15ff09560af8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_affectedByDragonTrample: 0
+  m_enableSensor: 1
+  m_sensor:
+    m_senseFire: 1
+    m_sightRadius: 16
+    m_maxRadius: 4
+    m_minRadius: 0
+    m_hysteresisOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
+    m_sensorOffset: {x: 0, y: 1.5, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
+    m_senseDelay:
+      min: 0
+      max: 0
+  m_edible:
+    m_rotateToMouth: 3
+  m_inflammable:
+    m_ashesAsset: 
+    m_burningTime: 0
+    m_dissolveTime: 1.5
+    m_ashExceptions: []
+  m_onSpawnSound: 
+  m_rotateToMouth: 3
+  m_groundMotion:
+    m_mass: 1
+    m_defaultUpVector: 0
+    m_orientationSpeed: 120
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
 --- !u!136 &136000011231704714
 CapsuleCollider:
   m_ObjectHideFlags: 1

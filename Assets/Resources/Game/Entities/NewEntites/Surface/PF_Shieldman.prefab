@@ -1372,6 +1372,8 @@ MonoBehaviour:
       max: 0.25
   m_onSpawnSound: 
   m_rotateToMouth: 3
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -1457,6 +1459,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Soldier_Spine1
   m_parentRoot: {fileID: 4100654238070392}
+  m_worldPositionStays: 1
 --- !u!114 &114460180047881828
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1498,6 +1501,7 @@ MonoBehaviour:
   m_blendSpeedFactor: 1
   m_energy: 10
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: c90f297689df0448aa95098df895daa7, type: 2}
   m_railSeparation:
     min: 2
