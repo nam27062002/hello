@@ -65,15 +65,21 @@ namespace AI {
 
 			switch (m_subState) {
 				case SubState.Idle:
-					if (m_pilot.IsActionPressed(Pilot.Action.Jump)) {
+					GetGroundNormal();
+					if (!m_onGround) {
+						m_machine.SetSignal(Signals.Type.FallDown, true);
+					} else if (m_pilot.IsActionPressed(Pilot.Action.Jump)) {
 						m_nextSubState = SubState.Jump_Start;
-					} else if (m_pilot.speed > 0.01f) {
+					} else if (m_pilot.speed > 0.01f) {						
 						m_nextSubState = SubState.Move;
 					}
 					break;
 
 				case SubState.Move:
-					if (m_pilot.IsActionPressed(Pilot.Action.Jump)) {
+					GetGroundNormal();
+					if (!m_onGround) {
+						m_machine.SetSignal(Signals.Type.FallDown, true);
+					} else if (m_pilot.IsActionPressed(Pilot.Action.Jump)) {
 						m_nextSubState = SubState.Jump_Start;
 					} else if (m_pilot.speed <= 0.01f) {
 						m_nextSubState = SubState.Idle;
