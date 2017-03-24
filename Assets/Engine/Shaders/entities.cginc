@@ -20,6 +20,11 @@ struct v2f
 	float3 tangentWorld : TANGENT;
 	float3 binormalWorld : TEXCOORD5;
 #endif
+
+#ifdef CUSTOM_ALPHA
+	float height : TEXCOORD3;
+#endif 
+
 };
 
 uniform sampler2D _MainTex;
@@ -91,6 +96,10 @@ v2f vert(appdata_t v)
 
 	o.color = v.color;
 
+#ifdef CUSTOM_ALPHA
+	o.height = v.vertex.y;
+#endif
+
 	return o;
 }
 
@@ -124,27 +133,31 @@ fixed4 frag(v2f i) : SV_Target
 	col += fresnel * _FresnelColor;
 #endif
 
+
+#if defined (TINT)
+	col += _Tint;
+#elif defined (CUSTOM_TINT)
+	col = getCustomTint(col, _Tint, i.color);
+#endif
+
+
 #if defined (OPAQUEALPHA)
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 #elif defined (CUSTOM_ALPHA)
 
 //	#define TEX_ALPHA_SCALE 3.0
 
-	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-	float st = smoothstep(0.1, 0.8, i.uv.y);
+//	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+	float st = smoothstep(0.2, 0.45, i.uv.y);
+//	return st;
 //	float s1 = 0.5 + sin(_Time.y * 5.0) * 0.45;
 //	float s2 = 0.5 + sin(_Time.y * 8.0) * 0.45;
-	float2 off = float2(0.0, _Time.y * 0.25);
+	float2 off = float2(0.3333, _Time.y * 0.25);
 	float alpha = tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off).w;
 	alpha += tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off * 2.0).w;
 	alpha *= 0.35;
+	col.a = clamp(st + alpha, 0.0, 1.0);
 	clip(st + alpha - 0.5);
-#endif
-
-#if defined (TINT)
-	col += _Tint;
-#elif defined (CUSTOM_TINT)
-	col = getCustomTint(col, _Tint, i.color);
 #endif
 	return col;
 }
