@@ -216,24 +216,23 @@ rm -f "outputVersion.txt"
 PUBLIC_VERSION_PARAMS=""
 if $BUILD_IOS;then
   if [ "$PROJECT_SETTINGS_PUBLIC_VERSION_IOS" != false ];then
-      PROJECT_SETTINGS_PUBLIC_VERSION_IOS="${VERSION_ID}"
+    PUBLIC_VERSION_PARAMS="${PUBLIC_VERSION_PARAMS} -ios ${PROJECT_SETTINGS_PUBLIC_VERSION_IOS}"
   fi
-  PUBLIC_VERSION_PARAMS="${PUBLIC_VERSION_PARAMS} -ios ${PROJECT_SETTINGS_PUBLIC_VERSION_IOS}"
 fi
 
 if $BUILD_ANDROID;then
   if [ "$PROJECT_SETTINGS_PUBLIC_VERSION_GGP" != false ];then
-      PROJECT_SETTINGS_PUBLIC_VERSION_GGP="${VERSION_ID}"
+    PUBLIC_VERSION_PARAMS="${PUBLIC_VERSION_PARAMS} -ggp ${PROJECT_SETTINGS_PUBLIC_VERSION_GGP}"
   fi
   if [ "$PROJECT_SETTINGS_PUBLIC_VERSION_AMZ" != false ];then
-      PROJECT_SETTINGS_PUBLIC_VERSION_AMZ="${VERSION_ID}"
+    PUBLIC_VERSION_PARAMS="${PUBLIC_VERSION_PARAMS} -amz ${PROJECT_SETTINGS_PUBLIC_VERSION_AMZ}"
   fi
-  PUBLIC_VERSION_PARAMS="${PUBLIC_VERSION_PARAMS} -ggp ${PROJECT_SETTINGS_PUBLIC_VERSION_GGP}"
-  PUBLIC_VERSION_PARAMS="${PUBLIC_VERSION_PARAMS} -amz ${PROJECT_SETTINGS_PUBLIC_VERSION_AMZ}"
 fi
-print_builder "Settign public version numbers";
-eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetPublicVersion ${PUBLIC_VERSION_PARAMS}"
 
+if [ "$PUBLIC_VERSION_PARAMS" != "" ]; then
+    print_builder "Settign public version numbers";
+    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetPublicVersion ${PUBLIC_VERSION_PARAMS}"
+fi
 # Make sure output dir is exists
 mkdir -p "${OUTPUT_DIR}"    # -p to create all parent hierarchy if needed (and to not exit with error if folder already exists)
 
