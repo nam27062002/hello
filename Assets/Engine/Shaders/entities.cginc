@@ -132,11 +132,11 @@ fixed4 frag(v2f i) : SV_Target
 
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 	float st = smoothstep(0.1, 0.8, i.uv.y);
-	float s1 = 0.5 + sin(_Time.y * 5.0) * 0.45;
-	float s2 = 0.5 + sin(_Time.y * 8.0) * 0.45;
-	float2 off = float2(_Time.y * 0.25, 0.0);
-	float alpha = tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off.xy).w;
-	alpha += tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off.yx).w;
+//	float s1 = 0.5 + sin(_Time.y * 5.0) * 0.45;
+//	float s2 = 0.5 + sin(_Time.y * 8.0) * 0.45;
+	float2 off = float2(0.0, _Time.y * 0.25);
+	float alpha = tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off).w;
+	alpha += tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off * 2.0).w;
 	alpha *= 0.35;
 	clip(st + alpha - 0.5);
 #endif

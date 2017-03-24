@@ -74,10 +74,14 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 
 			float4 getCustomVertexPosition(inout appdata_t v)
 			{
-				float4 normal = normalize(v.vertex);
+//				float4 normal = v.vertex;
+//				normal.y = 0.0f;
+//				normal = normalize(normal);
 				float wvc = v.color.w;
-				float3 incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * (1.0 - v.color.x) * wvc;
-				float4 tvertex = v.vertex + float4(v.normal, 0.0) * ((incWave.x + incWave.y + incWave.z) * 0.33333);
+//				float3 incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * (1.0 - v.color.x) * wvc;
+				float incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * (1.0 - v.color.x) * wvc;
+//				float4 tvertex = v.vertex + float4(normal.xyz, 0.0) * ((incWave.x + incWave.y + incWave.z) * 0.33333);
+				float4 tvertex = v.vertex + float4(v.normal, 0.0) * incWave;
 				return mul(UNITY_MATRIX_MVP, tvertex);
 			}
 
