@@ -39,25 +39,6 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private Version m_internalVersion = new Version(0, 1, 0);
 	public static Version internalVersion { get { return instance.m_internalVersion; }}
 
-	[Comment("Public version number displayed in the stores, used by the players to identify different application updates\nFormat X.Y where:\n    - X: Arbitrary, only changed on major game change (usually never)\n        - 0 during Preproduction/Production\n        - [1..N] at Soft/WW Launch\n    - Y: Increased for every push to the app store [1..N]", 10f)]
-	[SerializeField] private string m_publicVersioniOS = "0.1";
-	public static string publicVersioniOS { 
-		get { return instance.m_publicVersioniOS; }
-		set { instance.m_publicVersioniOS = value; }
-	}
-
-	[SerializeField] private string m_publicVersionGGP = "0.1";
-	public static string publicVersionGGP { 
-		get { return instance.m_publicVersionGGP; }
-		set { instance.m_publicVersionGGP = value; }
-	}
-
-	[SerializeField] private string m_publicVersionAmazon = "0.1";
-	public static string publicVersionAmazon { 
-		get { return instance.m_publicVersionAmazon; }
-		set { instance.m_publicVersionAmazon = value; }
-	}
-
 	//------------------------------------------------------------------//
 	// SINGLETON STATIC METHODS											//
 	//------------------------------------------------------------------//

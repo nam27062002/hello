@@ -32,6 +32,11 @@ PROJECT_SETTINGS_PUBLIC_VERSION_IOS=false
 PROJECT_SETTINGS_PUBLIC_VERSION_GGP=false
 PROJECT_SETTINGS_PUBLIC_VERSION_AMZ=false
 
+INCREASE_VERSION_CODE_NUMBER=false
+PROJECT_SETTINGS_VERSION_CODE_IOS=false
+PROJECT_SETTINGS_VERSION_CODE_GGP=false
+PROJECT_SETTINGS_VERSION_CODE_AMZ=false
+
 OUTPUT_DIR="${HOME}/Desktop/builds"
   # upload config
 UPLOAD=false
@@ -52,6 +57,7 @@ USAGE="Usage: generate_build.command [-path project_path=script_path] [-code pro
       [-android][-obb][-ios][-provisioning uuid] \
       [-version forced_version] [-increase_version]  \
       [-iosPublic iosPublicVersion] [-ggpPublic google_play_public_version] [-amzPublic amazonPublicVersion]  \
+      [-increase_VCodes] [-iosVCode ios_version_code] [-ggpVCode google_play_version_code] [-amzVCode amazon_version_code]  \
       [-output dirpath=Desktop/builds] [-upload] [-smbOutput server_folder=]"
 
 # Parse parameters
@@ -103,6 +109,18 @@ do
     elif [ "$PARAM_NAME" == "-amzPublic" ]; then
         ((i++))
         PROJECT_SETTINGS_PUBLIC_VERSION_AMZ=${!i}
+
+    elif [ "$PARAM_NAME" == "-increase_VCodes" ]; then
+        INCREASE_VERSION_CODE_NUMBER=true
+    elif [ "$PARAM_NAME" == "-iosVCode" ]; then
+        ((i++))
+        PROJECT_SETTINGS_VERSION_CODE_IOS=${!i}
+    elif [ "$PARAM_NAME" == "-ggpVCode" ] ; then
+        ((i++))
+        PROJECT_SETTINGS_VERSION_CODE_GGP=${!i}
+    elif [ "$PARAM_NAME" == "-amzVCode" ]; then
+        ((i++))
+        PROJECT_SETTINGS_VERSION_CODE_AMZ=${!i}
 
     elif [ "$PARAM_NAME" == "-output" ] ; then
         ((i++))
@@ -237,8 +255,32 @@ fi
 mkdir -p "${OUTPUT_DIR}"    # -p to create all parent hierarchy if needed (and to not exit with error if folder already exists)
 
 # Increase build unique code
-print_builder "Increasing Build Code"
-eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.IncreaseVersionCodes"
+if [ "$INCREASE_VERSION_CODE_NUMBER" != false ]; then
+    print_builder "Increasing Version Code"
+    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.IncreaseVersionCodes"
+fi
+
+# Set version code
+PUBLIC_VERSION_CODE_PARAMS=""
+if $BUILD_IOS;then
+  if [ "$PROJECT_SETTINGS_VERSION_CODE_IOS" != false ];then
+    PUBLIC_VERSION_CODE_PARAMS="${PUBLIC_VERSION_CODE_PARAMS} -ios ${PROJECT_SETTINGS_VERSION_CODE_IOS}"
+  fi
+fi
+
+if $BUILD_ANDROID;then
+  if [ "$PROJECT_SETTINGS_VERSION_CODE_GGP" != false ];then
+    PUBLIC_VERSION_CODE_PARAMS="${PUBLIC_VERSION_CODE_PARAMS} -ggp ${PROJECT_SETTINGS_VERSION_CODE_GGP}"
+  fi
+  if [ "$PROJECT_SETTINGS_VERSION_CODE_AMZ" != false ];then
+    PUBLIC_VERSION_CODE_PARAMS="${PUBLIC_VERSION_CODE_PARAMS} -amz ${PROJECT_SETTINGS_VERSION_CODE_AMZ}"
+  fi
+fi
+
+if [ "$PUBLIC_VERSION_CODE_PARAMS" != "" ]; then
+    print_builder "Settign version code numbers";
+    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetVersionCode ${PUBLIC_VERSION_PARAMS}"
+fi
 
 # Generate Android build
 if $BUILD_ANDROID; then
