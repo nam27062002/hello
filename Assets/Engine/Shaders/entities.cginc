@@ -35,6 +35,7 @@ uniform float _NormalStrength;
 #ifdef CUSTOM_ALPHA
 uniform sampler2D _AlphaTex;
 uniform float4 _AlphaTex_ST;
+uniform float _AlphaMSKScale;
 #endif
 
 #ifdef SPECULAR
@@ -97,6 +98,7 @@ fixed4 frag(v2f i) : SV_Target
 {
 	// sample the texture
 	fixed4 col = tex2D(_MainTex, i.uv);
+	fixed specMask = col.a;
 
 #ifdef NORMALMAP
 	// Calc normal from detail texture normal and tangent world
@@ -112,7 +114,7 @@ fixed4 frag(v2f i) : SV_Target
 	col *= diffuse + fixed4(i.vLight, 1);
 
 #ifdef SPECULAR
-	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower);
+	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower) * specMask;
 	col += specular * _LightColor0;
 #endif
 //				fixed fresnel = pow(max(dot(normalDirection, i.viewDir), 0), _FresnelFactor);
@@ -126,21 +128,21 @@ fixed4 frag(v2f i) : SV_Target
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 #elif defined (CUSTOM_ALPHA)
 
-	#define TEX_ALPHA_SCALE 3.0
+//	#define TEX_ALPHA_SCALE 3.0
 
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 	float st = smoothstep(0.1, 0.8, i.uv.y);
-	float s1 = 0.5 + sin(_Time.y * 5.0) * 0.45;
-	float s2 = 0.5 + sin(_Time.y * 8.0) * 0.45;
-	float2 off = float2(_Time.y * 0.25, 0.0);
-	float alpha = tex2D(_AlphaTex, (i.uv * TEX_ALPHA_SCALE) + off.xy).w;
-	alpha += tex2D(_AlphaTex, (i.uv * TEX_ALPHA_SCALE) + off.yx).w;
+//	float s1 = 0.5 + sin(_Time.y * 5.0) * 0.45;
+//	float s2 = 0.5 + sin(_Time.y * 8.0) * 0.45;
+	float2 off = float2(0.0, _Time.y * 0.25);
+	float alpha = tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off).w;
+	alpha += tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off * 2.0).w;
 	alpha *= 0.35;
 	clip(st + alpha - 0.5);
 #endif
 
 #if defined (TINT)
-	col *= _Tint;
+	col += _Tint;
 #elif defined (CUSTOM_TINT)
 	col = getCustomTint(col, _Tint, i.color);
 #endif

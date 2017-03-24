@@ -15,6 +15,7 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 		_Tint("Tint color (RGB)", Color) = (1, 1, 1, 0)
 		_WaveRadius("Wave Radius", float) = 1.5
 		_WavePhase("Wave phase", float) = 1.0
+		_AlphaMSKScale("Alpha mask scale", Range(0.5, 8.0)) = 3.0
 		_StencilMask("Stencil Mask", int) = 10
 	}
 	SubShader
@@ -53,13 +54,13 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 
 			#if MEDIUM_DETAIL_ON
 			#define NORMALMAP
-			#define SPECULAR
+//			#define SPECULAR
 //			#define FRESNEL
 			#endif
 
 			#if HI_DETAIL_ON
 			#define NORMALMAP
-			#define SPECULAR
+//			#define SPECULAR
 //			#define FRESNEL
 			#endif
 
@@ -73,17 +74,21 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 
 			float4 getCustomVertexPosition(inout appdata_t v)
 			{
-				float4 normal = normalize(v.vertex);
+//				float4 normal = v.vertex;
+//				normal.y = 0.0f;
+//				normal = normalize(normal);
 				float wvc = v.color.w;
-				float3 incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * (1.0 - v.color.x) * wvc;
-				float4 tvertex = v.vertex + float4(v.normal, 0.0) * ((incWave.x + incWave.y + incWave.z) * 0.33333);
+//				float3 incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * (1.0 - v.color.x) * wvc;
+				float incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * (1.0 - v.color.x) * wvc;
+//				float4 tvertex = v.vertex + float4(normal.xyz, 0.0) * ((incWave.x + incWave.y + incWave.z) * 0.33333);
+				float4 tvertex = v.vertex + float4(v.normal, 0.0) * incWave;
 				return mul(UNITY_MATRIX_MVP, tvertex);
 			}
 
 			#define CUSTOM_TINT
 			float4 getCustomTint(float4 col, float4 tint, float4 vcolor)
 			{
-				return lerp(col, col * tint, vcolor.w);
+				return lerp(col, col + tint, vcolor.w);
 			}
 
 			#include "entities.cginc"
