@@ -16,6 +16,7 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 		_WaveRadius("Wave Radius", float) = 1.5
 		_WavePhase("Wave phase", float) = 1.0
 		_AlphaMSKScale("Alpha mask scale", Range(0.5, 8.0)) = 3.0
+		_AlphaMSKOffset("Alpha mask offset", float) = 0.1
 		_StencilMask("Stencil Mask", int) = 10
 	}
 	SubShader

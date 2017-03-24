@@ -41,6 +41,7 @@ uniform float _NormalStrength;
 uniform sampler2D _AlphaTex;
 uniform float4 _AlphaTex_ST;
 uniform float _AlphaMSKScale;
+uniform float _AlphaMSKOffset;
 #endif
 
 #ifdef SPECULAR
@@ -148,7 +149,7 @@ fixed4 frag(v2f i) : SV_Target
 //	#define TEX_ALPHA_SCALE 3.0
 
 //	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-	float st = smoothstep(0.2, 0.45, i.uv.y);
+	float st = smoothstep(_AlphaMSKOffset - 0.1, _AlphaMSKOffset, i.height);
 //	return st;
 //	float s1 = 0.5 + sin(_Time.y * 5.0) * 0.45;
 //	float s2 = 0.5 + sin(_Time.y * 8.0) * 0.45;
