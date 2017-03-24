@@ -5,6 +5,8 @@ struct v2f
 	float4 vertex : SV_POSITION;
 	float3 vLight : TEXCOORD2;
 
+	float4 color : COLOR;
+
 #ifdef SPECULAR
 	float3 halfDir : TEXCOORD7;
 #endif	
@@ -30,6 +32,11 @@ uniform float4 _NormalTex_ST;
 uniform float _NormalStrength;
 #endif
 
+#ifdef CUSTOM_ALPHA
+uniform sampler2D _AlphaTex;
+uniform float4 _AlphaTex_ST;
+#endif
+
 #ifdef SPECULAR
 uniform float _SpecularPower;
 #endif
@@ -39,7 +46,7 @@ uniform float _FresnelPower;
 uniform float4 _FresnelColor;
 #endif
 
-#ifdef TINT
+#if defined (TINT) || defined (CUSTOM_TINT)
 uniform float4 _Tint;
 #endif
 
@@ -47,18 +54,21 @@ uniform float4 _Tint;
 v2f vert(appdata_t v)
 {
 	v2f o;
+
+#ifdef CUSTOM_VERTEXPOSITION
+	o.vertex = getCustomVertexPosition(v);
+#else
 	o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+#endif
+
 	o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 	float3 normal = UnityObjectToWorldNormal(v.normal);
 	o.vLight = ShadeSH9(float4(normal, 1.0));
 
 	// To calculate tangent world
-	float4x4 modelMatrix = unity_ObjectToWorld;
-	float4x4 modelMatrixInverse = unity_WorldToObject;
-
 #ifdef NORMALMAP
-	o.tangentWorld = normalize(mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
-	o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
+	o.tangentWorld = normalize(mul(unity_ObjectToWorld, float4(v.tangent.xyz, 0.0)).xyz);
+	o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
 	o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
 #else
 	o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
@@ -77,6 +87,8 @@ v2f vert(appdata_t v)
 #ifdef FRESNEL
 	o.viewDir = viewDirection;
 #endif
+
+	o.color = v.color;
 
 	return o;
 }
@@ -110,12 +122,27 @@ fixed4 frag(v2f i) : SV_Target
 	col += fresnel * _FresnelColor;
 #endif
 
-#ifdef OPAQUEALPHA
+#if defined (OPAQUEALPHA)
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+#elif defined (CUSTOM_ALPHA)
+
+	#define TEX_ALPHA_SCALE 3.0
+
+	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+	float st = smoothstep(0.1, 0.8, i.uv.y);
+	float s1 = 0.5 + sin(_Time.y * 5.0) * 0.45;
+	float s2 = 0.5 + sin(_Time.y * 8.0) * 0.45;
+	float2 off = float2(_Time.y * 0.25, 0.0);
+	float alpha = tex2D(_AlphaTex, (i.uv * TEX_ALPHA_SCALE) + off.xy).w;
+	alpha += tex2D(_AlphaTex, (i.uv * TEX_ALPHA_SCALE) + off.yx).w;
+	alpha *= 0.35;
+	clip(st + alpha - 0.5);
 #endif
 
-#ifdef TINT
+#if defined (TINT)
 	col *= _Tint;
+#elif defined (CUSTOM_TINT)
+	col = getCustomTint(col, _Tint, i.color);
 #endif
 	return col;
 }

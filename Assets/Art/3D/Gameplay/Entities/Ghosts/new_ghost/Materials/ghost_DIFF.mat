@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: ghost_DIFF
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: 36a28fe944442094e95d5e61f314f21a, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -15,6 +15,12 @@ Material:
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
+    - first:
+        name: _AlphaTex
+      second:
+        m_Texture: {fileID: 2800000, guid: bea143927d813f642848cbe4c6a064f7, type: 3}
+        m_Scale: {x: 8, y: 8}
+        m_Offset: {x: 0, y: 0}
     - first:
         name: _BumpMap
       second:
@@ -58,6 +64,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
+        name: _NormalTex
+      second:
+        m_Texture: {fileID: 2800000, guid: cbaa90e716f4da84b90116671316e61f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
         name: _OcclusionMap
       second:
         m_Texture: {fileID: 0}
@@ -83,6 +95,9 @@ Material:
         name: _DstBlend
       second: 0
     - first:
+        name: _FresnelPower
+      second: 5
+    - first:
         name: _GlossMapScale
       second: 1
     - first:
@@ -98,6 +113,9 @@ Material:
         name: _Mode
       second: 0
     - first:
+        name: _NormalStrength
+      second: 1
+    - first:
         name: _OcclusionStrength
       second: 1
     - first:
@@ -110,11 +128,23 @@ Material:
         name: _SpecularHighlights
       second: 1
     - first:
+        name: _SpecularPower
+      second: 16.78
+    - first:
         name: _SrcBlend
       second: 1
     - first:
+        name: _StencilMask
+      second: 10
+    - first:
         name: _UVSec
       second: 0
+    - first:
+        name: _WavePhase
+      second: 8
+    - first:
+        name: _WaveRadius
+      second: 0.1
     - first:
         name: _ZWrite
       second: 1
@@ -125,3 +155,9 @@ Material:
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _FresnelColor
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _Tint
+      second: {r: 0.29330617, g: 1, b: 0.2352941, a: 1}

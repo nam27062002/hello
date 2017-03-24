@@ -47,12 +47,12 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 			#endif
 
 			#if MEDIUM_DETAIL_ON
-//			#define NORMALMAP
+			#define NORMALMAP
 			#define FRESNEL
 			#endif
 
 			#if HI_DETAIL_ON
-//			#define NORMALMAP
+			#define NORMALMAP
 //			#define SPECULAR
 			#define FRESNEL
 			#endif
