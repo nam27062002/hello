@@ -147,13 +147,33 @@ print_builder() {
 }
 
 # Calculate num of stps
-TOTAL_STEPS=8;
+TOTAL_STEPS=5;
 if $RESET_GIT; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
-if [ "$FORCE_VERSION" != false -o "$INCREASE_VERSION_NUMBER" == true ]; then
+if [ "$FORCE_VERSION" != false ]; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
+if ["$INCREASE_VERSION_NUMBER" == true ]; then
+  TOTAL_STEPS=$((TOTAL_STEPS+1));
+fi
+
+if ["$INCREASE_VERSION_CODE_NUMBER" == true ]; then
+  TOTAL_STEPS=$((TOTAL_STEPS+1));
+fi
+
+if ["$PROJECT_SETTINGS_PUBLIC_VERSION_IOS"!=false -o "$PROJECT_SETTINGS_PUBLIC_VERSION_GGP"!=false -o "$PROJECT_SETTINGS_PUBLIC_VERSION_AMZ"!=false];then
+  if [$BUILD_IOS -o $BUILD_ANDROID]; then
+    TOTAL_STEPS=$((TOTAL_STEPS+1));
+  fi
+fi
+
+if ["$PROJECT_SETTINGS_VERSION_CODE_IOS"!=false -o "$PROJECT_SETTINGS_VERSION_CODE_AMZ"!=false -o "$PROJECT_SETTINGS_VERSION_CODE_AMZ"!=false];then
+  if [$BUILD_IOS -o $BUILD_ANDROID]; then
+    TOTAL_STEPS=$((TOTAL_STEPS+1));
+  fi
+fi
+
 if $BUILD_ANDROID;then
   TOTAL_STEPS=$((TOTAL_STEPS+2));
 fi
@@ -215,7 +235,7 @@ if [ "$FORCE_VERSION" != false ]; then
 fi
 
 # Increase internal version number
-if [ "$INCREASE_VERSION_NUMBER" == true ] && [ "$FORCE_VERSION" == false ] ; then
+if [ "$INCREASE_VERSION_NUMBER" == true ]; then
     print_builder "Increasing internal version number..."
     #set +e  # For some unknown reason, in occasions the Builder.IncreaseMinorVersionNumber causes an error, making the script to stop - Disable exitOnError for this single instruction
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.IncreaseMinorVersionNumber"
