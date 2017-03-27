@@ -10,8 +10,8 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 		_AlphaTex("Alpha", 2D) = "white" {}
 		_SpecularPower( "Specular power", float ) = 1
 		_NormalStrength("Normal Strength", float) = 3
-		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
-		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
+//		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
+//		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 		_Tint("Tint color (RGB)", Color) = (1, 1, 1, 0)
 		_WaveRadius("Wave Radius", float) = 1.5
 		_WavePhase("Wave phase", float) = 1.0
@@ -30,10 +30,11 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 //			ColorMask RGBA
 
 //			Tags{ "Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "Opaque" }
-			Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+			Tags{ "Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 			ZWrite on
+			Cull back
+			Lighting Off
 			Blend SrcAlpha OneMinusSrcAlpha
-//			Cull off
 			ColorMask RGBA
 
 			Stencil
@@ -62,19 +63,17 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 
 			#if MEDIUM_DETAIL_ON
 			#define NORMALMAP
-//			#define SPECULAR
+			#define SPECULAR
 //			#define FRESNEL
 			#endif
 
 			#if HI_DETAIL_ON
 			#define NORMALMAP
-//			#define SPECULAR
+			#define SPECULAR
 //			#define FRESNEL
 			#endif
 
 			#define CUSTOM_ALPHA
-
-
 			#define CUSTOM_VERTEXPOSITION
 
 			uniform float _WaveRadius;
@@ -82,21 +81,22 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 
 			float4 getCustomVertexPosition(inout appdata_t v)
 			{
-//				float4 normal = v.vertex;
-//				normal.y = 0.0f;
-//				normal = normalize(normal);
-				float wvc = v.color.w;
+				float3 normal = v.vertex;
+				normal.y = 0.0f;
+				normal = normalize(normal);
+//				float wvc = (1.0 - v.color.x) * v.color.w;	//vc.a = Wave intensity ; 
+				float wvc = (1.0 - v.color.x);	//vc.a = Wave intensity ; 
 //				float3 incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * (1.0 - v.color.x) * wvc;
-				float incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * (1.0 - v.color.x) * wvc;
+				float incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * wvc;
 //				float4 tvertex = v.vertex + float4(normal.xyz, 0.0) * ((incWave.x + incWave.y + incWave.z) * 0.33333);
-				float4 tvertex = v.vertex + float4(v.normal, 0.0) * incWave;
+				float4 tvertex = v.vertex + float4(normal, 0.0) * incWave;
 				return mul(UNITY_MATRIX_MVP, tvertex);
 			}
 
 			#define CUSTOM_TINT
 			float4 getCustomTint(float4 col, float4 tint, float4 vcolor)
 			{
-				float4 col2 = col + tint;
+				float4 col2 = col * tint;
 //				col2.w = 0.0f;
 				return lerp(col, col2, vcolor.w);
 			}
