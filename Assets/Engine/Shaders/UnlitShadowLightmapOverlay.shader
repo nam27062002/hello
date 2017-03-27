@@ -1,25 +1,23 @@
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
 // Unlit shader, with shadows
 // - no lighting
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow + darken" 
+Shader "Hungry Dragon/Lightmap And Recieve Shadow + vertex color overlay (On Line Decorations)" 
 {
 	Properties 
 	{
-		_MainTex ("Base (RGBA)", 2D) = "white" {}
-		_SecondTexture ("Second Texture (RGB)", 2D) = "white" {}
-
+		_MainTex ("Base (RGB)", 2D) = "white" {}
 	}
 
 	SubShader {
-		Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase" }
+		Tags { "RenderType"="Opaque" "Queue"="Geometry" "LightMode"="ForwardBase" }
 		LOD 100
 		
-		Pass {  
+		Pass {		
+
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
@@ -27,19 +25,19 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow + darken"
 				#pragma glsl_no_auto_normalization
 				#pragma fragmentoption ARB_precision_hint_fastest
 
-
-				#define	HG_SCENARY
+				#define HG_SCENARY
 
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
+//				#include "Lighting.cginc"
 				#include "HungryDragon.cginc"
 
 				#define FOG
-				#define BLEND_TEXTURE
-				#define DARKEN
+				#define COLOR_OVERLAY
+				#define OPAQUEALPHA
+
 				#include "scenary.cginc"
 			ENDCG
-
 		}
 	}
 }

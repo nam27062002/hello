@@ -6,19 +6,37 @@ using System.Collections;
 public class ParticleScaler : MonoBehaviour 
 {
 
+	public enum ScaleOrigin
+	{
+		DRAGON_SIZE,
+		TRANSFORM_SCALE,
+		ATTRIBUTE_SCALE,
+	};
+
+	public ScaleOrigin m_scaleOrigin = ScaleOrigin.DRAGON_SIZE;
+
 	public float m_scale = 1;
-	public bool m_useDragonSize;
+	public Transform m_transform;
+
 	// Use this for initialization
 	void Start () 
 	{
-		if (m_useDragonSize)
+		switch( m_scaleOrigin )
 		{
-			Scale( InstanceManager.player.data.scale );
+			case ScaleOrigin.DRAGON_SIZE:
+			{
+				Scale( InstanceManager.player.data.scale );	
+			}break;
+			case ScaleOrigin.TRANSFORM_SCALE:
+			{
+				Scale( m_transform.localScale.x );
+			}break;
+			case ScaleOrigin.ATTRIBUTE_SCALE:
+			{
+				Scale( m_scale );
+			}break;
 		}
-		else
-		{
-			Scale( m_scale );
-		}
+
 	}
 
 	void Scale( float scale )

@@ -351,6 +351,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4836742894737102}
   - component: {fileID: 95855796238386306}
+  - component: {fileID: 114124125222963794}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -1288,6 +1289,17 @@ MonoBehaviour:
     max: 2.75
   m_serializedJson: '[{"speed":2,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":3},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":9,"checkDragonPositionTime":1,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":true},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"hide":{"id":3,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":0,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
   m_databaseKey: PF_WorkerWife
+--- !u!114 &114124125222963794
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1498475450091864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114318947788272720
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1409,7 +1421,6 @@ MonoBehaviour:
     m_dissolveTime: 1.5
     m_ashExceptions: []
   m_onSpawnSound: 
-  m_rotateToMouth: 3
   m_groundMotion:
     m_mass: 2.5
     m_defaultUpVector: 0
