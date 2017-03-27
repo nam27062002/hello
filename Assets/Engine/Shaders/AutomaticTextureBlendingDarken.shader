@@ -6,7 +6,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow + Darken" 
+Shader "Hungry Dragon/Scenary/Automatic Texture Blending + Lightmap + Darken" 
 {
 	Properties 
 	{
