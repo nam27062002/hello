@@ -13,7 +13,22 @@ public class CustomParticlesCulling : MonoBehaviour
 
     private static CullingGroup Manager_CullingGroup;
 
-    private static List<CustomParticlesCulling> Manager_Items { get; set; }        
+    private static List<CustomParticlesCulling> Manager_Items { get; set; }
+
+    private static bool smManagerIsEnabled = true;
+
+    public static bool Manager_IsEnabled
+    {
+        get
+        {
+            return smManagerIsEnabled;
+        }
+
+        set
+        {
+            smManagerIsEnabled = value;
+        }
+    }
 
     public static void Manager_OnDestroy()
     {
@@ -29,44 +44,47 @@ public class CustomParticlesCulling : MonoBehaviour
 
     private static void Manager_AddItem(CustomParticlesCulling item)
     {
-        if (Manager_Items == null)
+        if (Manager_IsEnabled)
         {
-            Manager_Items = new List<CustomParticlesCulling>();
-        }
-
-        if (Manager_Items.Count >= MANAGER_MAX_ITEMS)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
+            if (Manager_Items == null)
             {
-                Debug.LogError("Too many particle systems to cull");
+                Manager_Items = new List<CustomParticlesCulling>();
             }
 
-            return;
-        }
+            if (Manager_Items.Count >= MANAGER_MAX_ITEMS)
+            {
+                if (FeatureSettingsManager.IsDebugEnabled)
+                {
+                    Debug.LogError("Too many particle systems to cull");
+                }
 
-        item.CullingIndex = Manager_Items.Count;
-        Manager_Items.Add(item);
+                return;
+            }
 
-        if (Manager_BoundingSpheres == null)
-        {
-            Manager_BoundingSpheres = new BoundingSphere[MANAGER_MAX_ITEMS];
-        }
-        
-        Manager_BoundingSpheres[Manager_Items.Count - 1] = item.BoundingSphere;
+            item.CullingIndex = Manager_Items.Count;
+            Manager_Items.Add(item);
 
-        if (Manager_CullingGroup == null)
-        {
-            Manager_CullingGroup = new CullingGroup();
-            Manager_CullingGroup.targetCamera = Camera.main;
-            Manager_CullingGroup.SetBoundingSpheres(Manager_BoundingSpheres);            
-            Manager_CullingGroup.onStateChanged += Manager_OnStateChanged;
-        }
+            if (Manager_BoundingSpheres == null)
+            {
+                Manager_BoundingSpheres = new BoundingSphere[MANAGER_MAX_ITEMS];
+            }
 
-        Manager_CullingGroup.SetBoundingSphereCount(Manager_Items.Count);
+            Manager_BoundingSpheres[Manager_Items.Count - 1] = item.BoundingSphere;
 
-        if (!Manager_IsVisible(item.CullingIndex) && !item.IsPaused)
-        {
-            item.Pause();
+            if (Manager_CullingGroup == null)
+            {
+                Manager_CullingGroup = new CullingGroup();
+                Manager_CullingGroup.targetCamera = Camera.main;
+                Manager_CullingGroup.SetBoundingSpheres(Manager_BoundingSpheres);
+                Manager_CullingGroup.onStateChanged += Manager_OnStateChanged;
+            }
+
+            Manager_CullingGroup.SetBoundingSphereCount(Manager_Items.Count);
+
+            if (!Manager_IsVisible(item.CullingIndex) && !item.IsPaused)
+            {
+                item.Pause();
+            }
         }
     }
 
