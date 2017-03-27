@@ -50,6 +50,8 @@ namespace AI {
 				m_onGround = true;
 			}
 
+			m_gravity = Vector3.zero;
+
 			m_subState = SubState.Idle;
 			m_nextSubState = SubState.Idle;
 		}
@@ -168,11 +170,11 @@ namespace AI {
 				m_heightFromGround = 100f;
 			}
 
-			if (m_heightFromGround < 0.1f) {
+			if (m_heightFromGround < 0.3f) {
 				m_gravity = Vector3.zero;
 			}
 
-			m_onGround = m_heightFromGround < 0.3f;
+			m_onGround = m_heightFromGround < 1f;
 			m_groundNormal = normal;
 
 			m_groundDirection = Vector3.Cross(Vector3.back, m_upVector);
