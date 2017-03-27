@@ -136,6 +136,11 @@ public class ProfilerControlPanelController : MonoBehaviour
         FpsCounter_Start();
     }
 
+    void OnEnable()
+    {
+        Scene_OnEnable();
+    }
+
     void Update()
     {
         if (PrefabLogicUnits_IsDirty)
@@ -406,6 +411,19 @@ public class ProfilerControlPanelController : MonoBehaviour
     {
         ApplicationManager.instance.Debug_SetParticlesState(option);
     }
+
+    public void Particles_PlayerVisibilityOnChangedValue(bool newValue)
+    {
+        if (ApplicationManager.instance != null)
+        {
+            ApplicationManager.instance.Debug_PlayerParticlesVisibility = newValue;
+        }
+    }
+
+    public void Particles_CustomCullingIsEnabledOnChangedValue(bool newValue)
+    {
+        CustomParticlesCulling.Manager_IsEnabled = newValue;
+    }
     #endregion
 
     #region ground
@@ -437,6 +455,31 @@ public class ProfilerControlPanelController : MonoBehaviour
         {
             ApplicationManager.instance.Debug_OnToggleBossCameraEffect(m_bossCameraAffector);
         }
+    }
+    #endregion
+
+    #region Scene
+    public TMP_Text mSceneGoToMemoryText;
+
+    private void Scene_OnEnable()
+    {     
+        if (mSceneGoToMemoryText != null)
+        {
+            mSceneGoToMemoryText.transform.parent.gameObject.SetActive(false);
+            if (GameSceneManager.nextScene == ProfilerMemoryController.NAME)
+            {
+                mSceneGoToMemoryText.text = "Go To Menu";
+            }
+            else
+            {
+                mSceneGoToMemoryText.text = "Go To Memory Scene";
+            }
+        }
+    }
+
+    public void Scene_OnGoToMemorySceneClicked()
+    {
+        ApplicationManager.instance.Debug_ToggleProfilerScene();
     }
     #endregion
 }
