@@ -18,12 +18,12 @@ public class FogArea : MonoBehaviour
 		{
 			m_fogManager.CheckTextureAvailability(m_attributes);
 		}
+		Messenger.AddListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
 	}
 
 	void OnDestroy()
 	{
-		if ( m_attributes.texture != null )
-			m_attributes.DestroyTexture();
+		Messenger.RemoveListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
 	}
 
 	void OnTriggerEnter( Collider other)
@@ -46,10 +46,30 @@ public class FogArea : MonoBehaviour
 		}
 	}
 
+	void OnAreaExit()
+	{
+		if (!m_playerInside)
+		{
+			// Fog manager will clean all textures so we lose our reference to it
+			m_attributes.texture = null;
+		}
+	}
+
 	void OnDrawGizmosSelected()
 	{
 		if ( m_attributes.texture == null )
-			m_attributes.CreateTexture();
+		{
+			// m_attributes.CreateTexture();
+			if (m_fogManager == null )
+			{
+				m_fogManager = FindObjectOfType<FogManager>();
+			}
+			if ( m_fogManager != null )
+			{
+				m_fogManager.CheckTextureAvailability( m_attributes, true);
+			}
+		}
+			
 		m_attributes.RefreshTexture();
 
 		if (!Application.isPlaying )

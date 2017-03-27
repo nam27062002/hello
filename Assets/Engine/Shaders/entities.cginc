@@ -3,7 +3,6 @@ struct v2f
 {
 	float2 uv : TEXCOORD0;
 	float4 vertex : SV_POSITION;
-	float3 vLight : TEXCOORD2;
 
 	float4 color : COLOR;
 
@@ -70,7 +69,6 @@ v2f vert(appdata_t v)
 
 	o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 	float3 normal = UnityObjectToWorldNormal(v.normal);
-	o.vLight = ShadeSH9(float4(normal, 1.0));
 
 	// To calculate tangent world
 #ifdef NORMALMAP
@@ -121,9 +119,16 @@ fixed4 frag(v2f i) : SV_Target
 #endif
 
 	fixed4 diffuse = max(0,dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
-	col *= diffuse + fixed4(i.vLight, 1);
+	col *= diffuse;
+
+#if defined (TINT)
+	col += _Tint;
+#elif defined (CUSTOM_TINT)
+	col = getCustomTint(col, _Tint, i.color);
+#endif
 
 #ifdef SPECULAR
+//	specMask = 1.0;
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower) * specMask;
 	col += specular * _LightColor0;
 #endif
@@ -132,13 +137,6 @@ fixed4 frag(v2f i) : SV_Target
 #ifdef FRESNEL
 	fixed fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelPower), 0.0, 1.0);
 	col += fresnel * _FresnelColor;
-#endif
-
-
-#if defined (TINT)
-	col += _Tint;
-#elif defined (CUSTOM_TINT)
-	col = getCustomTint(col, _Tint, i.color);
 #endif
 
 
