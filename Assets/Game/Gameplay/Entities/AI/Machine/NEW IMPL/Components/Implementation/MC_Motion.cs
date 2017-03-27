@@ -374,7 +374,7 @@ namespace AI {
 					m_viewControl.Panic(false, m_machine.GetSignal(Signals.Type.Burning));					
 					break;
 
-				case State.FreeFall:					
+				case State.FreeFall:			
 					m_viewControl.Falling(false);
 					break;
 			}
