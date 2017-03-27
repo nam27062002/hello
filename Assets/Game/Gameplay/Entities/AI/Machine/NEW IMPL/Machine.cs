@@ -475,7 +475,6 @@ namespace AI {
 
 
 		public void ReceiveDamage(float _damage) {
-			return;
 			if (!IsDead()) {
 				m_entity.Damage(_damage);
 				if (IsDead()) {
