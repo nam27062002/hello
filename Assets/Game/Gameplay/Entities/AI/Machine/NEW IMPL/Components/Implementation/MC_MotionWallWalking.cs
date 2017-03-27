@@ -66,7 +66,7 @@ namespace AI {
 			FindUpVector();
 
 			if (!m_onGround) {
-				m_machine.SetSignal(Signals.Type.FallDown, true);
+				FreeFall();
 			}
 
 			m_groundDirection = Vector3.Cross(Vector3.back, m_upVector);
