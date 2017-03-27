@@ -770,6 +770,7 @@ GameObject:
   - component: {fileID: 4275142651916304}
   - component: {fileID: 198339639954208950}
   - component: {fileID: 199653055477777642}
+  - component: {fileID: 114034872661822402}
   m_Layer: 0
   m_Name: PS_FireAura
   m_TagString: Untagged
@@ -932,6 +933,7 @@ GameObject:
   - component: {fileID: 4730510048177874}
   - component: {fileID: 198634269761918622}
   - component: {fileID: 199942962547828720}
+  - component: {fileID: 114749189899725200}
   m_Layer: 0
   m_Name: Sparkles
   m_TagString: Untagged
@@ -1839,7 +1841,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1607190107314336}
-  m_LocalRotation: {x: -0.033695877, y: 0.6956988, z: 0.032704055, w: 0.7167973}
+  m_LocalRotation: {x: -0.14988339, y: -0.4364673, z: -0.07399891, w: 0.8840563}
   m_LocalPosition: {x: 0, y: -0.23, z: -0.11}
   m_LocalScale: {x: 8, y: 8, z: 8}
   m_Children:
@@ -2179,7 +2181,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1341313886595646}
-  m_LocalRotation: {x: -0.033695877, y: 0.6956988, z: 0.032704055, w: 0.7167973}
+  m_LocalRotation: {x: -0.14988333, y: -0.4364673, z: -0.07399887, w: 0.8840563}
   m_LocalPosition: {x: 0.000000014901161, y: -0.22999954, z: -0.110000625}
   m_LocalScale: {x: 6, y: 6, z: 6}
   m_Children:
@@ -2685,6 +2687,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: pet_0
+--- !u!114 &114034872661822402
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1320567416356056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 0
+  m_scale: 1
+  m_transform: {fileID: 0}
 --- !u!114 &114361397547265102
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2698,6 +2714,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Pet_Hip
   m_parentRoot: {fileID: 4000012877512430}
+  m_worldPositionStays: 1
 --- !u!114 &114398525925297784
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2748,6 +2765,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba1c905da34946d68ce50345b05e48f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_overrideCamera: {fileID: 0}
 --- !u!114 &114687268252911206
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2810,6 +2828,20 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+--- !u!114 &114749189899725200
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1534470124664140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 0
+  m_scale: 1
+  m_transform: {fileID: 0}
 --- !u!114 &114860669569164406
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2821,6 +2853,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba1c905da34946d68ce50345b05e48f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_overrideCamera: {fileID: 0}
 --- !u!114 &114871587501049214
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3046,7 +3079,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1145695216
+  randomSeed: 1461735209
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -5611,7 +5644,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1415014757
+  randomSeed: -1516277867
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -8248,7 +8281,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 866504325
+  randomSeed: -138211988
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10777,7 +10810,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1575227471
+  randomSeed: 1045224375
   InitialModule:
     serializedVersion: 3
     enabled: 1

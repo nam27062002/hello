@@ -11,10 +11,12 @@ namespace AI {
 		[SerializeField] private bool m_faceDirection = true;
 		[SerializeField] private bool m_rollRotation = false;
 
+		[SeparatorAttribute]
 		[SerializeField] private bool m_limitHorizontalRotation = false;
 		[SerializeField] private float m_faceLeftAngle = -90f;
 		[SerializeField] private float m_faceRightAngle = 90f;
 
+		[SeparatorAttribute]
 		[SerializeField] private bool m_limitVerticalRotation = false;
 		[SerializeField] private float m_faceUpAngle = 320f;
 		[SerializeField] private float m_faceDownAngle = 40f;

@@ -31,7 +31,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -191.39673, y: 117.05395, z: -8.878634}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4624877008560594}
@@ -342,6 +342,7 @@ GameObject:
   - component: {fileID: 4506802823568628}
   - component: {fileID: 198375106767263046}
   - component: {fileID: 199360271220368574}
+  - component: {fileID: 114906187260630886}
   m_Layer: 0
   m_Name: Glow
   m_TagString: Untagged
@@ -479,6 +480,7 @@ GameObject:
   - component: {fileID: 4495379824290328}
   - component: {fileID: 198030743028125982}
   - component: {fileID: 199985450511511954}
+  - component: {fileID: 114662489245332346}
   m_Layer: 0
   m_Name: PetGlow
   m_TagString: Untagged
@@ -1283,7 +1285,14 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles: []
+  m_onEatenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_onEatenFrozenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -1320,12 +1329,10 @@ MonoBehaviour:
   m_blendSpeedFactor: 10
   m_energy: 10
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: 480a72de5b063486897c9e59d51c4c1a, type: 2}
   m_railSeparation:
     min: 0.5
-    max: 1
-  m_speedFactorRange:
-    min: 1
     max: 1
   m_serializedJson: '[{"speedMultiplier":2,"chaseTimeout":2,"cooldown":{"min":3,"max":6},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"speedMultiplier":1.5,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"ignoreNotListedUnits":false,"dragonSizeRangeMultiplier":10,"preferedRangeMultiplier":2,"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false}]'
   m_databaseKey: PF_PetAngel
@@ -1349,7 +1356,6 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 1
-    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 360
     m_faceDirection: 1
@@ -1473,6 +1479,21 @@ MonoBehaviour:
   m_skimmingSound: 
   m_insideWaterSnapshot: {fileID: 0}
   m_waterDeepToSnapshot: 0
+  m_hiccupSound: 
+--- !u!114 &114662489245332346
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1676933279617092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 0
+  m_scale: 1
+  m_transform: {fileID: 0}
 --- !u!114 &114777468743188714
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1486,6 +1507,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: 
   m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
+--- !u!114 &114906187260630886
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1462401058596250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 0
+  m_scale: 1
+  m_transform: {fileID: 0}
 --- !u!135 &135000013338795870
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -1625,7 +1661,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -118178351
+  randomSeed: 1386109866
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -4154,7 +4190,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -84339763
+  randomSeed: -1035263879
   InitialModule:
     serializedVersion: 3
     enabled: 1

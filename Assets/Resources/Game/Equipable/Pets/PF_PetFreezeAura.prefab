@@ -31,7 +31,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -4.24}
+  m_LocalPosition: {x: -192.26096, y: 119.616005, z: 0.46294117}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000012877512430}
@@ -627,6 +627,7 @@ GameObject:
   - component: {fileID: 4913908095995308}
   - component: {fileID: 198529415220640984}
   - component: {fileID: 199442402296262042}
+  - component: {fileID: 114500649846589098}
   m_Layer: 0
   m_Name: Snowflake
   m_TagString: Untagged
@@ -644,6 +645,7 @@ GameObject:
   - component: {fileID: 4110331141879304}
   - component: {fileID: 198568685669508854}
   - component: {fileID: 199170345222365994}
+  - component: {fileID: 114341548986590374}
   m_Layer: 0
   m_Name: Mist
   m_TagString: Untagged
@@ -1277,6 +1279,7 @@ MonoBehaviour:
   m_skimmingSound: 
   m_insideWaterSnapshot: {fileID: 0}
   m_waterDeepToSnapshot: 0
+  m_hiccupSound: 
 --- !u!114 &114000011637225726
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1300,7 +1303,10 @@ MonoBehaviour:
   m_animC: 
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
-  m_onEatenParticles: []
+  m_onEatenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onEatenFrozenParticle:
     name: 
     path: 
@@ -1341,12 +1347,10 @@ MonoBehaviour:
   m_blendSpeedFactor: 10
   m_energy: 10
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: 550b5677d4a794d71b31727a72933cc6, type: 2}
   m_railSeparation:
     min: 0.5
-    max: 1
-  m_speedFactorRange:
-    min: 1
     max: 1
   m_serializedJson: '[{"ignoreNotListedUnits":false,"dragonSizeRangeMultiplier":10,"preferedRangeMultiplier":2,"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"speedMultiplier":2,"chaseTimeout":0,"cooldown":{"min":0,"max":1},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"speedMultiplier":1.5,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false}]'
   m_databaseKey: PF_PetFreezeAura
@@ -1370,7 +1374,6 @@ MonoBehaviour:
     m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 1
-    m_attackPausesJump: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 360
     m_faceDirection: 1
@@ -1470,6 +1473,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Pet_Hip
   m_parentRoot: {fileID: 4176563354005508}
+  m_worldPositionStays: 1
+--- !u!114 &114341548986590374
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1217634647805904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 0
+  m_scale: 1
+  m_transform: {fileID: 0}
+--- !u!114 &114500649846589098
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1051681359177688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 0
+  m_scale: 1
+  m_transform: {fileID: 0}
 --- !u!114 &114864880920350470
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1574,7 +1606,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1051681359177688}
   serializedVersion: 5
   lengthInSec: 3
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -1621,7 +1653,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1648479283
+  randomSeed: 952232408
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -4139,7 +4171,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1217634647805904}
   serializedVersion: 5
   lengthInSec: 2
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -4186,7 +4218,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -425974396
+  randomSeed: -2042351164
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6704,7 +6736,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1361314938793410}
   serializedVersion: 5
   lengthInSec: 5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -6751,7 +6783,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1846560084
+  randomSeed: 1756620964
   InitialModule:
     serializedVersion: 3
     enabled: 1

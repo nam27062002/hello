@@ -241,7 +241,7 @@ GameObject:
   - component: {fileID: 471064}
   - component: {fileID: 11438448}
   - component: {fileID: 11456858}
-  - component: {fileID: 11482668}
+  - component: {fileID: 114674344583441840}
   - component: {fileID: 11407270}
   - component: {fileID: 11436980}
   - component: {fileID: 136000013736614776}
@@ -634,6 +634,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_knockback: 0
+  m_timeBetweenHits: 0.5
 --- !u!114 &11407270
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -672,6 +673,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Eagle_Legs_Palms
   m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
 --- !u!114 &11431294
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -763,57 +765,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sku: Hawk
   m_dieOutsideFrustum: 1
---- !u!114 &11482668
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 182380}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_useGravity: 0
-    m_walkOnWalls: 0
-    m_mass: 20
-    m_defaultUpVector: 0
-    m_orientationSpeed: 180
-    m_faceDirection: 1
-    m_useDragonStyleRotation: 0
-    m_rollRotation: 1
-    m_limitHorizontalRotation: 0
-    m_faceLeftAngle: -90
-    m_faceRightAngle: 90
-    m_limitVerticalRotation: 1
-    m_faceUpAngle: 340
-    m_faceDownAngle: 20
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 1
-  m_sensor:
-    m_senseFire: 0
-    m_sightRadius: 9
-    m_maxRadius: 5
-    m_minRadius: 3
-    m_hysteresisOffset: 0
-    m_senseAbove: 0
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: -0.84, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0
-      max: 0
-  m_onSpawnSound: 
-  m_rotateToMouth: 0
-  m_inflammable:
-    m_ashesAsset: 
-    m_burningTime: 0
-    m_dissolveTime: 1.5
-    m_ashExceptions: []
 --- !u!137 &13703098
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -898,6 +849,56 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &114674344583441840
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 182380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3085e02792f6243cc9d8323aba91b804, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_affectedByDragonTrample: 0
+  m_enableSensor: 1
+  m_sensor:
+    m_senseFire: 1
+    m_sightRadius: 11
+    m_maxRadius: 5
+    m_minRadius: 3
+    m_hysteresisOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
+    m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
+    m_senseDelay:
+      min: 0
+      max: 0
+  m_edible:
+    m_rotateToMouth: 0
+  m_inflammable:
+    m_ashesAsset: 
+    m_burningTime: 0
+    m_dissolveTime: 1.5
+    m_ashExceptions: []
+  m_onSpawnSound: 
+  m_rotateToMouth: 0
+  m_airMotion:
+    m_mass: 20
+    m_defaultUpVector: 0
+    m_orientationSpeed: 180
+    m_dragonStyleRotation: 0
+    m_faceDirection: 1
+    m_rollRotation: 1
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -45
+    m_faceRightAngle: 45
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 340
+    m_faceDownAngle: 20
 --- !u!136 &136000013736614776
 CapsuleCollider:
   m_ObjectHideFlags: 1

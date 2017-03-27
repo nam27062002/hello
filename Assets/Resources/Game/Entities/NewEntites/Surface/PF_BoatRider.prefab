@@ -10,7 +10,7 @@ GameObject:
   - component: {fileID: 475722}
   - component: {fileID: 11484900}
   - component: {fileID: 114725765332829656}
-  - component: {fileID: 11476190}
+  - component: {fileID: 114710334297497454}
   - component: {fileID: 11459890}
   - component: {fileID: 11449904}
   - component: {fileID: 136000011231704714}
@@ -147,57 +147,6 @@ MonoBehaviour:
   m_onPanicAudio: hd_villager_scream
   m_idleAudio: 
   m_skins: []
---- !u!114 &11476190
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 131698}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_enableMotion: 0
-  m_motion:
-    m_useGravity: 1
-    m_walkOnWalls: 0
-    m_mass: 2.5
-    m_defaultUpVector: 0
-    m_orientationSpeed: 230
-    m_faceDirection: 0
-    m_useDragonStyleRotation: 0
-    m_rollRotation: 0
-    m_limitHorizontalRotation: 0
-    m_faceLeftAngle: -90
-    m_faceRightAngle: 90
-    m_limitVerticalRotation: 0
-    m_faceUpAngle: 320
-    m_faceDownAngle: 40
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 0
-  m_sensor:
-    m_senseFire: 1
-    m_sightRadius: 0
-    m_maxRadius: 0
-    m_minRadius: 0
-    m_hysteresisOffset: 0
-    m_senseAbove: 1
-    m_senseBelow: 0
-    m_sensorOffset: {x: 0, y: 0.86, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 1.5
-      max: 3.5
-  m_onSpawnSound: 
-  m_rotateToMouth: 3
-  m_inflammable:
-    m_ashesAsset: 
-    m_burningTime: 0
-    m_dissolveTime: 1.5
-    m_ashExceptions: []
 --- !u!114 &11484900
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1256,6 +1205,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Spine1
   m_parentRoot: {fileID: 475722}
+  m_worldPositionStays: 1
 --- !u!114 &114000012861185118
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1269,6 +1219,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Pelvis
   m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
 --- !u!114 &114000013918191104
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1287,6 +1238,43 @@ MonoBehaviour:
   m_onTriggerEnter: 1
   m_onTriggerStay: 1
   m_onTriggerExit: 1
+--- !u!114 &114710334297497454
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 131698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91e40970ac8a0488ab7347acde654093, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_affectedByDragonTrample: 0
+  m_enableSensor: 0
+  m_sensor:
+    m_senseFire: 1
+    m_sightRadius: 0
+    m_maxRadius: 0
+    m_minRadius: 0
+    m_hysteresisOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
+    m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
+    m_senseDelay:
+      min: 0.25
+      max: 1.25
+  m_edible:
+    m_rotateToMouth: 3
+  m_inflammable:
+    m_ashesAsset: 
+    m_burningTime: 0
+    m_dissolveTime: 1.5
+    m_ashExceptions: []
+  m_onSpawnSound: 
+  m_rotateToMouth: 0
 --- !u!114 &114725765332829656
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1301,6 +1289,7 @@ MonoBehaviour:
   m_blendSpeedFactor: 1
   m_energy: 1
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 0}
   m_railSeparation:
     min: 0.5
