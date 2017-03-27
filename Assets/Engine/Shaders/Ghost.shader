@@ -97,7 +97,7 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 			float4 getCustomTint(float4 col, float4 tint, float4 vcolor)
 			{
 				float4 col2 = col + tint;
-				col2.w = 0.0f;
+//				col2.w = 0.0f;
 				return lerp(col, col2, vcolor.w);
 			}
 
