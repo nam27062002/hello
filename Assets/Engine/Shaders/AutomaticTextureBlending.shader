@@ -45,6 +45,7 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 				{
 					return float4(v.color.xyz, 1.0 - dot(mul(float4(v.normal,0), unity_WorldToObject).xyz, float3(0,1,0)));
 				}
+
 /*
 				#define CUSTOM_VERTEXPOSITION
 

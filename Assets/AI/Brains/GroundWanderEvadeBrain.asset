@@ -26,8 +26,7 @@ MonoBehaviour:
   - m_name: Fall down
     m_componentAssets: []
   - m_name: On hit ground
-    m_componentAssets:
-    - {fileID: 11400000, guid: 6020d90484daa470db6214589eaf25ff, type: 2}
+    m_componentAssets: []
   - m_name: At Action Point
     m_componentAssets:
     - {fileID: 11400000, guid: 0b2979f264b4247bbbb9776a76223711, type: 2}
@@ -68,9 +67,6 @@ MonoBehaviour:
     id: onIdleAlert
     from: 2
   - to: 7
-    id: onRecover
-    from: 4
-  - to: 7
     id: onCalm
     from: 5
   - to: 1
@@ -94,7 +90,7 @@ MonoBehaviour:
   - to: 3
     id: onFallDown
     from: -1
-  - to: 4
+  - to: 7
     id: OnGround
     from: -1
   m_firstState_A: 1

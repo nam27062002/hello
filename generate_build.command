@@ -147,13 +147,29 @@ print_builder() {
 }
 
 # Calculate num of stps
-TOTAL_STEPS=8;
+TOTAL_STEPS=5;
 if $RESET_GIT; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
-if [ "$FORCE_VERSION" != false -o "$INCREASE_VERSION_NUMBER" == true ]; then
+if [ "$FORCE_VERSION" != false ]; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
+if [ "$INCREASE_VERSION_NUMBER" == true ]; then
+  TOTAL_STEPS=$((TOTAL_STEPS+1));
+fi
+
+if [ "$INCREASE_VERSION_CODE_NUMBER" == true ]; then
+  TOTAL_STEPS=$((TOTAL_STEPS+1));
+fi
+
+if [ "$BUILD_IOS" == true -a "$PROJECT_SETTINGS_PUBLIC_VERSION_IOS" != false ] || ( "$BUILD_ANDROID" == true  && [ "$PROJECT_SETTINGS_PUBLIC_VERSION_GGP" != false -o "$PROJECT_SETTINGS_PUBLIC_VERSION_AMZ" != false ] );then
+  TOTAL_STEPS=$((TOTAL_STEPS+1));
+fi
+
+if [ "$BUILD_IOS" == true -a "$PROJECT_SETTINGS_VERSION_CODE_IOS" != false ] || ( "$BUILD_ANDROID" == true  && [ "$PROJECT_SETTINGS_VERSION_CODE_GGP" != false -o "$PROJECT_SETTINGS_VERSION_CODE_AMZ" != false ] );then
+  TOTAL_STEPS=$((TOTAL_STEPS+1));
+fi
+
 if $BUILD_ANDROID;then
   TOTAL_STEPS=$((TOTAL_STEPS+2));
 fi
@@ -215,7 +231,7 @@ if [ "$FORCE_VERSION" != false ]; then
 fi
 
 # Increase internal version number
-if [ "$INCREASE_VERSION_NUMBER" == true ] && [ "$FORCE_VERSION" == false ] ; then
+if [ "$INCREASE_VERSION_NUMBER" == true ]; then
     print_builder "Increasing internal version number..."
     #set +e  # For some unknown reason, in occasions the Builder.IncreaseMinorVersionNumber causes an error, making the script to stop - Disable exitOnError for this single instruction
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.IncreaseMinorVersionNumber"
@@ -261,25 +277,25 @@ if [ "$INCREASE_VERSION_CODE_NUMBER" != false ]; then
 fi
 
 # Set version code
-PUBLIC_VERSION_CODE_PARAMS=""
+VERSION_CODE_PARAMS=""
 if $BUILD_IOS;then
   if [ "$PROJECT_SETTINGS_VERSION_CODE_IOS" != false ];then
-    PUBLIC_VERSION_CODE_PARAMS="${PUBLIC_VERSION_CODE_PARAMS} -ios ${PROJECT_SETTINGS_VERSION_CODE_IOS}"
+    VERSION_CODE_PARAMS="${VERSION_CODE_PARAMS} -ios ${PROJECT_SETTINGS_VERSION_CODE_IOS}"
   fi
 fi
 
 if $BUILD_ANDROID;then
   if [ "$PROJECT_SETTINGS_VERSION_CODE_GGP" != false ];then
-    PUBLIC_VERSION_CODE_PARAMS="${PUBLIC_VERSION_CODE_PARAMS} -ggp ${PROJECT_SETTINGS_VERSION_CODE_GGP}"
+    VERSION_CODE_PARAMS="${VERSION_CODE_PARAMS} -ggp ${PROJECT_SETTINGS_VERSION_CODE_GGP}"
   fi
   if [ "$PROJECT_SETTINGS_VERSION_CODE_AMZ" != false ];then
-    PUBLIC_VERSION_CODE_PARAMS="${PUBLIC_VERSION_CODE_PARAMS} -amz ${PROJECT_SETTINGS_VERSION_CODE_AMZ}"
+    VERSION_CODE_PARAMS="${VERSION_CODE_PARAMS} -amz ${PROJECT_SETTINGS_VERSION_CODE_AMZ}"
   fi
 fi
 
-if [ "$PUBLIC_VERSION_CODE_PARAMS" != "" ]; then
+if [ "$VERSION_CODE_PARAMS" != "" ]; then
     print_builder "Settign version code numbers";
-    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetVersionCode ${PUBLIC_VERSION_PARAMS}"
+    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetVersionCode ${VERSION_CODE_PARAMS}"
 fi
 
 # Generate Android build

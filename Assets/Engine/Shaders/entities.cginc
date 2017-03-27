@@ -156,7 +156,7 @@ fixed4 frag(v2f i) : SV_Target
 	float2 off = float2(0.3333, _Time.y * 0.25);
 	float alpha = tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off).w;
 	alpha += tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off * 2.0).w;
-	alpha *= 0.35;
+	alpha *= 0.55;
 	col.a = clamp(st + alpha, 0.0, 1.0);
 	clip(st + alpha - 0.5);
 #endif
