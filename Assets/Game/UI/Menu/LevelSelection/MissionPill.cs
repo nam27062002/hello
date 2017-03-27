@@ -36,7 +36,6 @@ public class MissionPill : MonoBehaviour {
 	
 	// References - keep references to objects that are often accessed
 	[Separator]
-	[SerializeField] private GameObject m_lockedObj = null;
 	[SerializeField] private GameObject m_cooldownObj = null;
 	[SerializeField] private GameObject m_activeObj = null;
 
@@ -64,7 +63,6 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Check required references
-		Debug.Assert(m_lockedObj != null, "Required reference!");
 		Debug.Assert(m_cooldownObj != null, "Required reference!");
 		Debug.Assert(m_activeObj != null, "Required reference!");
 
@@ -137,13 +135,11 @@ public class MissionPill : MonoBehaviour {
 		if(mission == null) return;
 
 		// Select which object should be visible
-		m_lockedObj.SetActive(m_mission.state == Mission.State.LOCKED);
 		m_cooldownObj.SetActive(m_mission.state == Mission.State.COOLDOWN || m_mission.state == Mission.State.ACTIVATION_PENDING);
 		m_activeObj.SetActive(m_mission.state == Mission.State.ACTIVE);
 
 		// Update visuals
 		switch(m_mission.state) {
-			case Mission.State.LOCKED: 				RefreshLocked(); 			break;
 			case Mission.State.COOLDOWN: 			RefreshCooldown(); 			break;
 			case Mission.State.ACTIVATION_PENDING: 	RefreshActivationPending(); break;
 			case Mission.State.ACTIVE: 				RefreshActive(); 			break;
@@ -302,25 +298,6 @@ public class MissionPill : MonoBehaviour {
 
 		// Difficulty
 		RefreshDifficulty(m_cooldownObj.FindComponentRecursive<Localizer>("DifficultyText"), true);
-	}
-
-	/// <summary>
-	/// Refresh the locked state object.
-	/// </summary>
-	private void RefreshLocked() {
-		// Text
-		int dragonsOwned = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
-		int remainingDragonsToUnlock = MissionManager.dragonsToUnlock[(int)m_missionDifficulty] - dragonsOwned;
-		if(remainingDragonsToUnlock == 1) {
-			m_lockedObj.FindComponentRecursive<Localizer>("LockedText").Localize("TID_MISSIONS_UNLOCK_REQUIREMENT_SINGULAR");
-			m_lockedObj.FindComponentRecursive<Localizer>("WarningText").Localize("TID_MISSIONS_UNLOCK_NEED_DRAGONS_SINGULAR");
-		} else {
-			m_lockedObj.FindComponentRecursive<Localizer>("LockedText").Localize("TID_MISSIONS_UNLOCK_REQUIREMENT_PLURAL", StringUtils.FormatNumber(remainingDragonsToUnlock));
-			m_lockedObj.FindComponentRecursive<Localizer>("WarningText").Localize("TID_MISSIONS_UNLOCK_NEED_DRAGONS_PLURAL", StringUtils.FormatNumber(remainingDragonsToUnlock));
-		}
-
-		// Difficulty
-		RefreshDifficulty(m_lockedObj.FindComponentRecursive<Localizer>("DifficultyText"), false);
 	}
 
 	/// <summary>
