@@ -28,6 +28,8 @@ namespace AI {
 		private Vector3 m_groundDirection;
 		public Vector3 groundDirection { get { return m_groundDirection; } }
 
+		private Vector3 m_gravity;
+
 		private bool m_onGround;
 		private float m_heightFromGround;
 
@@ -71,6 +73,8 @@ namespace AI {
 
 			m_groundDirection = Vector3.Cross(Vector3.back, m_upVector);
 
+			m_gravity = Vector3.zero;
+
 			m_subState = SubState.Idle;
 			m_nextSubState = SubState.Idle;
 		}
@@ -107,7 +111,15 @@ namespace AI {
 		}
 
 		protected override void ExtendedFixedUpdate() {
-			if (m_subState > SubState.Idle) {
+			if (m_checkCollisions) {
+				m_gravity += -m_groundNormal * GRAVITY * Time.fixedDeltaTime;
+			} else {
+				m_gravity = Vector3.zero;
+			}
+
+			if (m_subState == SubState.Idle) {
+				m_rbody.velocity = m_gravity;
+			} else {
 				if (m_mass != 1f) {
 					Vector3 impulse = (m_pilot.impulse - m_velocity);
 					impulse /= m_mass;
@@ -116,8 +128,7 @@ namespace AI {
 					m_velocity = m_pilot.impulse;
 				}
 
-				m_rbody.velocity = m_velocity + m_externalVelocity;
-				m_rbody.AddForce(-m_groundNormal * 9.8f * 10f, ForceMode.Acceleration);
+				m_rbody.velocity = m_velocity + m_externalVelocity + m_gravity;
 			}
 		}
 
@@ -150,7 +161,7 @@ namespace AI {
 					// we'll check forward
 					Vector3 dir = m_direction;
 					dir.z = 0f;
-					pos += dir * 0.5f;
+					pos += dir * 0.15f;
 				}
 
 				RaycastHit hit;
@@ -160,6 +171,10 @@ namespace AI {
 					m_heightFromGround = hit.distance - 3f;
 				} else {
 					m_heightFromGround = 100f;
+				}
+
+				if (m_heightFromGround < 0.3f) {
+					m_gravity = Vector3.zero;
 				}
 
 				m_onGround = m_heightFromGround < 0.3f;
