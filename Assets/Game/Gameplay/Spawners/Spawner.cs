@@ -120,7 +120,7 @@ public class Spawner : AbstractSpawner {
 	protected override void OnStart() {
 		float rnd = Random.Range(0f, 100f);
 
-		if (InstanceManager.player.data.tier >= m_minTier) {
+		if (InstanceManager.player != null && InstanceManager.player.data.tier >= m_minTier) {
 			if (m_entityPrefabList != null && m_entityPrefabList.Length > 0 && rnd <= m_activationChance) {
 
 				if (m_quantity.max < m_quantity.min) {
