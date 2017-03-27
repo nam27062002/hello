@@ -10,6 +10,8 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow with near darken(On Line Decor
 	Properties 
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
+		_DarkenPosition("Darken position",  float) = 0.0
+		_DarkenDistance("Darken distance",  float) = 20.0
 		_StencilMask("Stencil Mask", int) = 10
 	}
 

@@ -65,6 +65,12 @@ uniform float _CutOff;
 HG_FOG_VARIABLES
 #endif
 
+#ifdef DARKEN
+uniform float _DarkenPosition;
+uniform float _DarkenDistance;
+#endif
+
+
 v2f vert (appdata_t v) 
 {
 	v2f o;
