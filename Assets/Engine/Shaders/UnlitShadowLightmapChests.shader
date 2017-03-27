@@ -5,7 +5,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Lightmap And Recieve Shadow (Chests)" 
+Shader "Hungry Dragon/Scenary/Diffuse + Lightmap (Chests)" 
 {
 	Properties 
 	{

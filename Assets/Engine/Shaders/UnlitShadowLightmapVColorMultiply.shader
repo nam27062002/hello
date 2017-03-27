@@ -5,7 +5,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Lightmap And Recieve Shadow + vertex color overlay (On Line Decorations)" 
+Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + vertex color multiply" 
 {
 	Properties 
 	{
@@ -33,7 +33,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow + vertex color overlay (On Lin
 				#include "HungryDragon.cginc"
 
 				#define FOG
-				#define COLOR_OVERLAY
+				#define COLOR_MULTIPLY
 				#define OPAQUEALPHA
 
 				#include "scenary.cginc"
