@@ -6,14 +6,14 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow" 
+Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow + Darken" 
 {
 	Properties 
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
 		_SecondTexture ("Second Texture (RGB)", 2D) = "white" {}
-//		_WaveRadius("Wave Radius", float) = 1.5
-//		_WavePhase("Wave phase", float) = 1.0
+		_DarkenPosition("Darken position",  float) = 0.0
+		_DarkenDistance("Darken distance",  float) = 20.0
 	}
 
 	SubShader {
@@ -46,6 +46,7 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 					return float4(v.color.xyz, 1.0 - dot(mul(float4(v.normal,0), unity_WorldToObject).xyz, float3(0,1,0)));
 				}
 
+				#define DARKEN
 /*
 				#define CUSTOM_VERTEXPOSITION
 
