@@ -26,6 +26,9 @@ class InputDialog : EditorWindow {
 	public Action OnCancel = null;
 	public Func<string, string> OnValidate = null;
 
+	// Internal
+	private bool m_initialFocusPending = false;
+
 	//------------------------------------------------------------------//
 	// METHODS															//
 	//------------------------------------------------------------------//
@@ -51,6 +54,14 @@ class InputDialog : EditorWindow {
 	}
 
 	/// <summary>
+	/// Window has been opened.
+	/// </summary>
+	private void OnEnable() {
+		m_initialFocusPending = true;
+	}
+
+
+	/// <summary>
 	/// 
 	/// </summary>
 	private void OnGUI() {
@@ -62,6 +73,7 @@ class InputDialog : EditorWindow {
 
 		// Input text
 		EditorGUI.BeginChangeCheck();
+		GUI.SetNextControlName("InputTextfield");
 		m_text = EditorGUILayout.TextField(m_text);
 		if(EditorGUI.EndChangeCheck()) {
 			// If a validation function is defined, apply it now
@@ -77,22 +89,65 @@ class InputDialog : EditorWindow {
 
 			// Cancel
 			if(GUILayout.Button("Cancel")) {
-				if(OnCancel != null) OnCancel();
-
-				Close();
-				GUIUtility.ExitGUI();	// ??
+				OnCancelButton();
 			}
 
 			// Ok
 			if(GUILayout.Button("Ok")) {
-				if(OnAccept != null) OnAccept(m_text);
-
-				Close();
-				GUIUtility.ExitGUI();	// ??
+				OnSumbitButton();
 			}
 		} EditorGUILayout.EndHorizontal();
 
 		// Vertically centered
 		GUILayout.FlexibleSpace();
+
+		// If initial focus is pending, do it now
+		if(m_initialFocusPending) {
+			EditorGUI.FocusTextInControl("InputTextfield");
+			m_initialFocusPending = false;
+		}
+
+		// Capture Enter and Escape keys for fast submit/cancel
+		switch(Event.current.type) {
+			case EventType.keyDown: {
+				switch(Event.current.keyCode) {
+					case KeyCode.Return:
+					case KeyCode.KeypadEnter: {
+						OnSumbitButton();	
+					} break;
+
+					case KeyCode.Escape: {
+						OnCancelButton();
+					} break;
+				}
+			} break;
+		}
+	}
+
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// The cancel button has been pressed.
+	/// </summary>
+	private void OnCancelButton() {
+		// Invoke external callbacks
+		if(OnCancel != null) OnCancel();
+
+		// Close the dialog
+		Close();
+		GUIUtility.ExitGUI();	// Interrupt OnGUI properly
+	}
+
+	/// <summary>
+	/// The submit button has been pressed.
+	/// </summary>
+	private void OnSumbitButton() {
+		// Invoke external callbacks
+		if(OnAccept != null) OnAccept(m_text);
+
+		// Close the dialog
+		Close();
+		GUIUtility.ExitGUI();	// Interrupt OnGUI properly
 	}
 }

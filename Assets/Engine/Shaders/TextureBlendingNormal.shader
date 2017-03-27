@@ -5,7 +5,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Recieve Shadow + Normal Map" 
+Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Overlay + Normal Map" 
 {
 	Properties 
 	{

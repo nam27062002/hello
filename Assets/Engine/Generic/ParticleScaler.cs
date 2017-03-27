@@ -6,19 +6,37 @@ using System.Collections;
 public class ParticleScaler : MonoBehaviour 
 {
 
+	public enum ScaleOrigin
+	{
+		DRAGON_SIZE,
+		TRANSFORM_SCALE,
+		ATTRIBUTE_SCALE,
+	};
+
+	public ScaleOrigin m_scaleOrigin = ScaleOrigin.DRAGON_SIZE;
+
 	public float m_scale = 1;
-	public bool m_useDragonSize;
+	public Transform m_transform;
+
 	// Use this for initialization
 	void Start () 
 	{
-		if (m_useDragonSize)
+		switch( m_scaleOrigin )
 		{
-			Scale( InstanceManager.player.data.scale );
+			case ScaleOrigin.DRAGON_SIZE:
+			{
+				Scale( InstanceManager.player.data.scale );	
+			}break;
+			case ScaleOrigin.TRANSFORM_SCALE:
+			{
+				Scale( m_transform.localScale.x );
+			}break;
+			case ScaleOrigin.ATTRIBUTE_SCALE:
+			{
+				Scale( m_scale );
+			}break;
 		}
-		else
-		{
-			Scale( m_scale );
-		}
+
 	}
 
 	void Scale( float scale )
@@ -37,7 +55,56 @@ public class ParticleScaler : MonoBehaviour
 		mainModule.gravityModifierMultiplier *= scale;
 		mainModule.startSpeedMultiplier *= scale;
 		mainModule.startLifetimeMultiplier *= scale;
-		// ps.main = mainModule;
+
+		ParticleSystem.ShapeModule shape = ps.shape;
+		switch( shape.shapeType )
+		{
+			case ParticleSystemShapeType.Sphere:
+			case ParticleSystemShapeType.SphereShell:
+			{
+				shape.radius *= scale;
+			}break;
+			case ParticleSystemShapeType.Hemisphere:
+			case ParticleSystemShapeType.HemisphereShell:
+			{
+				shape.radius *= scale;
+			}break;
+			case ParticleSystemShapeType.Cone:
+			case ParticleSystemShapeType.ConeShell:
+			case ParticleSystemShapeType.ConeVolume:
+			case ParticleSystemShapeType.ConeVolumeShell:
+			{	
+				shape.radius *= scale;
+				shape.length *= scale;
+			}break;
+			case ParticleSystemShapeType.Box:
+			case ParticleSystemShapeType.BoxShell:
+			case ParticleSystemShapeType.BoxEdge:
+			{
+				shape.box *= scale;
+			}break;
+			case ParticleSystemShapeType.Mesh:
+			{
+				shape.meshScale *= scale;
+			}break;
+			case ParticleSystemShapeType.MeshRenderer:
+			{
+				shape.meshScale *= scale;
+			}break;
+			case ParticleSystemShapeType.SkinnedMeshRenderer:
+			{
+				shape.meshScale *= scale;
+			}break;
+			case ParticleSystemShapeType.CircleEdge:
+			case ParticleSystemShapeType.Circle:
+			{
+				shape.radius *= scale;
+			}break;
+			case ParticleSystemShapeType.SingleSidedEdge:
+			{
+				shape.radius *= scale;
+			}break;
+		}
 	}
 	
 }
