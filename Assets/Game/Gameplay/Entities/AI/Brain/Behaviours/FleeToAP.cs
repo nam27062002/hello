@@ -162,14 +162,15 @@ namespace AI {
 
 							if (m_pilot.speed >= m_pilot.moveSpeed * 0.5f) {
 								float dSqr = (m_machine.transform.position - m_lastPos).sqrMagnitude;
-								if (dSqr < 0.005f) {
+								if (dSqr < 0.001f) {
 									m_timeStuck += Time.deltaTime;
 								} else {
 									m_timeStuck = 0;	
 								}
 								m_lastPos = m_machine.transform.position;
 
-								if (m_timeStuck > 0.75f) {
+								if (m_timeStuck > 1f) {
+									Debug.Log("[" + m_pilot.name + "] Can't move!");
 									ChangeState(FleeState.Panic);
 								}
 							}
