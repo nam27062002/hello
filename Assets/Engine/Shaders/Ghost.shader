@@ -7,16 +7,19 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_NormalTex("Normal", 2D) = "white" {}
+		_NormalStrength("Normal Strength", float) = 3
 		_AlphaTex("Alpha", 2D) = "white" {}
 		_SpecularPower( "Specular power", float ) = 1
-		_NormalStrength("Normal Strength", float) = 3
-//		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
-//		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
+		_SpecularColor("Specular color (RGB)", Color) = (0, 0, 0, 0)
+		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
+		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
+		_AmbientColor("Ambient color (RGB)", Color) = (0.25, 0.25, 0.25, 1.0)
+
 		_Tint("Tint color (RGB)", Color) = (1, 1, 1, 0)
 		_WaveRadius("Wave Radius", float) = 1.5
 		_WavePhase("Wave phase", float) = 1.0
 		_AlphaMSKScale("Alpha mask scale", Range(0.5, 8.0)) = 3.0
-		_AlphaMSKOffset("Alpha mask offset", float) = 0.1
+		_AlphaMSKOffset("Alpha mask offset", Range(-0.3, 0.3)) = 0.0
 		_StencilMask("Stencil Mask", int) = 10
 	}
 	SubShader
