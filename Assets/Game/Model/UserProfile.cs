@@ -102,7 +102,11 @@ public class UserProfile : UserSaveSystem
 	[SerializeField] private int m_gamesPlayed = 0;
 	public int gamesPlayed {
 		get { return m_gamesPlayed; }
-		set { m_gamesPlayed = value; }
+		set {
+			// Mark tutorial as completed if > 0
+			m_gamesPlayed = value;
+			SetTutorialStepCompleted(TutorialStep.FIRST_RUN, m_gamesPlayed > 0);
+		}
 	}
 
 	[SerializeField] private long m_highScore = 0;
@@ -359,10 +363,16 @@ public class UserProfile : UserSaveSystem
 		// Special case for NONE: ignore
 		if(_step == TutorialStep.INIT) return;
 
+		bool wasCompleted = IsTutorialStepCompleted(_step);
 		if(_completed) {
 			m_tutorialStep |= _step;
 		} else {
 			m_tutorialStep &= ~_step;
+		}
+
+		// Notify game (only if value has changed)
+		if(wasCompleted != _completed) {
+			Messenger.Broadcast(GameEvents.TUTORIAL_STEP_TOGGLED, _step, _completed);
 		}
 	}
 
