@@ -110,12 +110,18 @@ namespace AI {
 		}
 
 		protected override void ExtendedFixedUpdate() {
+			Vector3 gv = Vector3.down * GRAVITY * Time.fixedDeltaTime;
+
 			if (m_subState >= SubState.Jump_Start && m_subState <= SubState.Jump_Down) {
 				// ----------------------------- gravity :3
-				m_velocity += Vector3.down * GRAVITY * Time.fixedDeltaTime;
+				m_velocity += gv;
 				m_rbody.velocity = m_velocity;
 			} else {
-				m_gravity += Vector3.down * GRAVITY * 10f * Time.fixedDeltaTime;
+				if (m_groundDirection.y < 0f) {
+					gv *= 15f;
+				}
+
+				m_gravity += gv;
 
 				if (m_subState == SubState.Idle) {
 					m_rbody.velocity = m_gravity;
@@ -170,7 +176,7 @@ namespace AI {
 				m_heightFromGround = 100f;
 			}
 
-			if (m_heightFromGround < 0.3f) {
+			if (m_heightFromGround < 0.05f) {
 				m_gravity = Vector3.zero;
 			}
 
