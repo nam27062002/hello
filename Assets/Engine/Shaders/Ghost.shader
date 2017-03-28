@@ -32,7 +32,7 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 //			ColorMask RGBA
 
 //			Tags{ "Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "Opaque" }
-			Tags{ "Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+			Tags{ "Queue" = "Transparent+10" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 			ZWrite on
 			Cull back
 //			Lighting Off
