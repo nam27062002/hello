@@ -1639,6 +1639,7 @@ GameObject:
   - component: {fileID: 11455378}
   - component: {fileID: 9502222}
   - component: {fileID: 114000010809026402}
+  - component: {fileID: 114569733326081522}
   m_Layer: 5
   m_Name: BtnMissions
   m_TagString: Untagged
@@ -18174,10 +18175,10 @@ RectTransform:
   m_Father: {fileID: 22435310}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 799, y: -75}
+  m_SizeDelta: {x: 0, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22493498
 RectTransform:
@@ -19376,6 +19377,7 @@ GameObject:
   - component: {fileID: 114410740175411166}
   - component: {fileID: 95380377308090324}
   - component: {fileID: 114257651439037788}
+  - component: {fileID: 114358113204044056}
   m_Layer: 5
   m_Name: BtnMap
   m_TagString: Untagged
@@ -27658,6 +27660,18 @@ MonoBehaviour:
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
+--- !u!114 &114358113204044056
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1178053128254578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 737a1a1ab5eb94825945691d146c286a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetSteps: 80000000
 --- !u!114 &114365806335274978
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -28498,6 +28512,18 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114569733326081522
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 190760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 737a1a1ab5eb94825945691d146c286a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetSteps: 80000000
 --- !u!114 &114589945797999314
 MonoBehaviour:
   m_ObjectHideFlags: 1
