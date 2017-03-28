@@ -48,9 +48,6 @@ public class PopupPauseMapTab : MonoBehaviour {
 	[Separator("FX")]
 	[SerializeField] private ParticleSystem m_upgradeFX = null;
 
-	// Internal
-	private DefinitionNode m_def = null;
-
 	// Cache some data
 	private int m_pricePC = 0;
 	private int m_priceSC = 0;
@@ -100,13 +97,7 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// Gets the map upgrade definition corresponding to the user's current upgrade level.
 	/// </summary>
 	private void UpdateDefinition() {
-		// Get current upgrade definition and store it
-		m_def = DefinitionsManager.SharedInstance.GetDefinition("map_upgrade_" + 0);
-		Debug.Assert(m_def != null, "Map Upgrade definition for level " + 0 + " wasn't found!", this);
-
 		// Cache some data
-		m_priceSC = m_def.GetAsInt("upgradePriceSC");
-		m_pricePC = m_def.GetAsInt("upgradePriceHC");
 		m_isMaxed = (m_priceSC <= 0 && m_pricePC <= 0);	// If no upgrades are available for purchase, map is maxed out
 	}
 
@@ -114,9 +105,6 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// Refresh lock icon.
 	/// </summary>
 	private void RefreshLockIcon() {
-		// Skip if definition not valid
-		if(m_def == null) return;
-
 		// Lock icon
 		m_lockGroupAnim.Set(!UsersManager.currentUser.mapUnlocked);
 	}
@@ -125,7 +113,6 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// Refresh info section.
 	/// </summary>
 	private void RefreshInfoSection() {
-		m_upgradeInfoText.Localize(m_def.Get("tidDesc"));
 		m_upgradeAreaAnim.Set(!m_isMaxed);
 		m_infoAreaAnim.Set(m_isMaxed);
 		if(!m_isMaxed) {
@@ -146,11 +133,8 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// The upgrade with SC button has been pressed.
 	/// </summary>
 	public void OnUpgradeWithSC() {
-		// Ignore if definition not valid
-		if(m_def == null) return;
-
 		// Validate it's actually a SC upgrade
-		int costSC = m_def.GetAsInt("upgradePriceSC");
+		int costSC = 0;
 		if(costSC <= 0) return;
 
 		// Make sure we have enough PC to remove the mission
@@ -172,11 +156,8 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// The upgrade with PC button has been pressed.
 	/// </summary>
 	public void OnUpgradeWithPC() {
-		// Ignore if definition not valid
-		if(m_def == null) return;
-
 		// Validate it's actually a PC upgrade
-		int costPC = m_def.GetAsInt("upgradePriceHC");
+		int costPC = 0;
 		if(costPC <= 0) return;
 
 		// Make sure we have enough PC to remove the mission
