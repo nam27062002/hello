@@ -215,10 +215,15 @@ public class UserProfile : UserSaveSystem
 	}
 
 	// Map upgrades
-	private int m_mapLevel = 0;
-	public int mapLevel {
-		get { return m_mapLevel; }
-		set { m_mapLevel = value; }
+	private DateTime m_mapResetTimestamp;
+	public DateTime mapResetTimestamp {
+		get{ return m_mapResetTimestamp; }
+		set{ m_mapResetTimestamp = value; }
+	}
+
+	public bool mapUnlocked {
+		// Map is unlocked as long as the timestamp hasn't expired
+		get { return m_mapResetTimestamp > DateTime.UtcNow; }
 	}
 
     //------------------------------------------------------------------------//
@@ -306,13 +311,16 @@ public class UserProfile : UserSaveSystem
 
 	/// <summary>
 	/// Increases the map level.
-	/// Doesn't perform any check or currency transaction.
-	/// Broadcasts the PROFILE_MAP_UPGRADED event.
+	/// Doesn't perform any check or currency transaction, resets timer.
+	/// Broadcasts the PROFILE_MAP_UNLOCKED event.
 	/// </summary>
-	public void UpgradeMap() {
-		// Just do it!
-		m_mapLevel++;
-		Messenger.Broadcast<int>(GameEvents.PROFILE_MAP_UPGRADED, m_mapLevel);
+	public void UnlockMap() {
+		// Reset timer to the start of the following day, in local time zone
+		// [AOC] Small trick to figure out the start of a day, from http://stackoverflow.com/questions/3362959/datetime-now-first-and-last-minutes-of-the-day
+		DateTime tomorrow = DateTime.Now.AddDays(1);	// Using local time zone to compute tomorrow's date
+		m_mapResetTimestamp = tomorrow.Date.ToUniversalTime();	// Work in UTC
+		//m_mapResetTimestamp = DateTime.Now.AddSeconds(30).ToUniversalTime();	// [AOC] Testing purposes
+		Messenger.Broadcast(GameEvents.PROFILE_MAP_UNLOCKED);
 	}
 
 	/// <summary>
@@ -420,7 +428,7 @@ public class UserProfile : UserSaveSystem
         }
         else
         {
-            m_saveTimestamp = DateTime.Now;
+            m_saveTimestamp = DateTime.UtcNow;
         }
 
         // Economy
@@ -570,11 +578,11 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Map upgrades
-		key = "mapLevel";
-		if(profile.ContainsKey(key)) {
-			m_mapLevel = profile[key].AsInt;
+		key = "mapResetTimestamp";
+		if(_data.ContainsKey(key)) {
+			m_mapResetTimestamp = DateTime.Parse(_data["mapResetTimestamp"], JSON_FORMATTING_CULTURE);
 		} else {
-			m_mapLevel = 0;
+			m_mapResetTimestamp = DateTime.UtcNow;	// Already expired
 		}
 	}
 
@@ -708,7 +716,7 @@ public class UserProfile : UserSaveSystem
 		data.Add("dailyRemoveMissionAdUses", m_dailyRemoveMissionAdUses.ToString(JSON_FORMATTING_CULTURE));
 
 		// Map upgrades
-		profile.Add("mapLevel", m_mapLevel.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("mapResetTimestamp", m_mapResetTimestamp.ToString(JSON_FORMATTING_CULTURE));
 
 		// Return it
 		return data;

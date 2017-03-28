@@ -336,8 +336,7 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// </summary>
 	public void OnResetMapUpgrades() {
 		// Not much to do:
-		UsersManager.currentUser.mapLevel = 0;
-		Messenger.Broadcast<int>(GameEvents.PROFILE_MAP_UPGRADED, 0);
+		UsersManager.currentUser.mapResetTimestamp = System.DateTime.UtcNow;	// Already expired
 		PersistenceManager.Save();
 	}
 }

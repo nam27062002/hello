@@ -67,7 +67,7 @@ public class PopupPauseMapTab : MonoBehaviour {
 		UpdateDefinition();
 
 		// Subscribe to external events
-		Messenger.AddListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
+		Messenger.AddListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
 	}
 
 	/// <summary>
@@ -90,7 +90,7 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
+		Messenger.RemoveListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
 	}
 
 	//------------------------------------------------------------------------//
@@ -101,8 +101,8 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// </summary>
 	private void UpdateDefinition() {
 		// Get current upgrade definition and store it
-		m_def = DefinitionsManager.SharedInstance.GetDefinition("map_upgrade_" + UsersManager.currentUser.mapLevel);
-		Debug.Assert(m_def != null, "Map Upgrade definition for level " + UsersManager.currentUser.mapLevel + " wasn't found!", this);
+		m_def = DefinitionsManager.SharedInstance.GetDefinition("map_upgrade_" + 0);
+		Debug.Assert(m_def != null, "Map Upgrade definition for level " + 0 + " wasn't found!", this);
 
 		// Cache some data
 		m_priceSC = m_def.GetAsInt("upgradePriceSC");
@@ -118,7 +118,7 @@ public class PopupPauseMapTab : MonoBehaviour {
 		if(m_def == null) return;
 
 		// Lock icon
-		m_lockGroupAnim.Set(UsersManager.currentUser.mapLevel <= 0);
+		m_lockGroupAnim.Set(!UsersManager.currentUser.mapUnlocked);
 	}
 
 	/// <summary>
@@ -157,7 +157,7 @@ public class PopupPauseMapTab : MonoBehaviour {
 		if(UsersManager.currentUser.coins >= costSC) {
 			// Do it!
 			UsersManager.currentUser.AddCoins(-costSC);
-			UsersManager.currentUser.UpgradeMap();
+			UsersManager.currentUser.UnlockMap();
 			PersistenceManager.Save();
 		} else {
 			// Open shop popup
@@ -183,7 +183,7 @@ public class PopupPauseMapTab : MonoBehaviour {
 		if(UsersManager.currentUser.pc >= costPC) {
 			// Do it!
 			UsersManager.currentUser.AddPC(-costPC);
-			UsersManager.currentUser.UpgradeMap();
+			UsersManager.currentUser.UnlockMap();
 			PersistenceManager.Save();
 		} else {
 			// Open shop popup
@@ -197,8 +197,7 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// <summary>
 	/// The map has been upgraded.
 	/// </summary>
-	/// <param name="_newLevel">New map level.</param>
-	public void OnMapUpgraded(int _newLevel) {
+	public void OnMapUnlocked() {
 		// Aux vars
 		float lockRefreshDelay = 0.15f;
 
@@ -206,11 +205,11 @@ public class PopupPauseMapTab : MonoBehaviour {
 		UpdateDefinition();
 
 		// If it's the first upgrade, show nice unlock animation
-		if(_newLevel == 1) {
+		/*if(_newLevel == 1) {
 			// Launch unlock anim
 			m_lockIconAnim.SetTrigger("unlock");
 			lockRefreshDelay = 1.3f;	// Longer delay
-		}
+		}*/
 
 		// Trigger FX
 		m_upgradeFX.Stop();
