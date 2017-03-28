@@ -6,9 +6,9 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-		_NormalTex("Normal", 2D) = "white" {}
-		_SpecularPower( "Specular power", float ) = 1
-		_NormalStrength("Normal Strength", float) = 3
+//		_NormalTex("Normal", 2D) = "white" {}
+//		_SpecularPower( "Specular power", float ) = 1
+//		_NormalStrength("Normal Strength", float) = 3
 		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
 		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 		_StencilMask("Stencil Mask", int) = 10
@@ -47,12 +47,12 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 			#endif
 
 			#if MEDIUM_DETAIL_ON
-			#define NORMALMAP
+//			#define NORMALMAP
 			#define FRESNEL
 			#endif
 
 			#if HI_DETAIL_ON
-			#define NORMALMAP
+//			#define NORMALMAP
 //			#define SPECULAR
 			#define FRESNEL
 			#endif
