@@ -29,6 +29,7 @@ public enum GameEvents {
 	PROFILE_PC_CHANGED,			// params: long _oldAmount, long _newAmount
 	PROFILE_CURRENCY_CHANGED,	// params: UserProfile.Currency _currency, long _oldAmount, long _newAmount
 	PROFILE_MAP_UPGRADED,		// params: int mapLevel
+	TUTORIAL_STEP_TOGGLED,		// params: TutorialStep _step, bool _completed
 	
 	// Game logic events
 	GAME_LEVEL_LOADED,			// no params
