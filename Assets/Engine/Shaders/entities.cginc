@@ -53,8 +53,6 @@ uniform float _FresnelPower;
 uniform float4 _FresnelColor;
 #endif
 
-uniform float4 _AmbientColor;
-
 #if defined (TINT) || defined (CUSTOM_TINT)
 uniform float4 _Tint;
 #endif
@@ -114,6 +112,7 @@ fixed4 frag(v2f i) : SV_Target
 //	fixed specMask = col.a;
 	fixed specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
 	fixed emmisiveMask = col.a;
+//	col.a = 1.0;
 
 #ifdef NORMALMAP
 	// Calc normal from detail texture normal and tangent world
@@ -134,9 +133,7 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 unlitColor = col;
 
 	fixed4 diffuse = max(0,dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
-	col *= diffuse + _AmbientColor;
-//	col += _AmbientColor;
-
+	col *= diffuse;
 
 #ifdef SPECULAR
 //	specMask = 1.0;
@@ -163,12 +160,12 @@ fixed4 frag(v2f i) : SV_Target
 //	return st;
 //	float s1 = 0.5 + sin(_Time.y * 5.0) * 0.45;
 //	float s2 = 0.5 + sin(_Time.y * 8.0) * 0.45;
-	float2 off = float2(0.3333, _Time.y * 0.15);
+	float2 off = float2(0.3333, _Time.y * 0.75);
 	float alpha = tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off).w;
 //	alpha += tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off * 2.0).w;
 //	alpha *= 0.55;
 	col.a = clamp(st + alpha, 0.0, 1.0);
-	//clip(st + alpha - 0.5);
+//	clip(st + alpha - 0.1);
 #endif
 	return col;
 }
