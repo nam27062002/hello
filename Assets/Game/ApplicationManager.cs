@@ -177,8 +177,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------        
 
             // ---------------------------
-            // Test toggling profiler scene
-            //Debug_ToggleProfilerScene();
+            // Test toggling profiler memory scene
+            //Debug_ToggleProfilerMemoryScene();
+            // ---------------------------
+
+            // ---------------------------
+            // Test togling profiler load scenes scene
+            //Debug_ToggleProfilerLoadScenesScene();
             // ---------------------------
         }
 
@@ -716,7 +721,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         CustomParticlesCulling.Manager_IsEnabled = !CustomParticlesCulling.Manager_IsEnabled;
     }
 
-    public void Debug_ToggleProfilerScene()
+    public void Debug_ToggleProfilerMemoryScene()
     {
         if (GameSceneManager.nextScene == ProfilerMemoryController.NAME)
         {
@@ -724,7 +729,24 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         }
         else
         {
-            FlowManager.GoToProfilerMemory();
+            FlowManager.GoToProfilerMemoryScene();
+        }
+    }
+
+    private void Debug_LoadProfilerScenesScene()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(ProfilerLoadScenesController.NAME);
+    }
+
+    public void Debug_ToggleProfilerLoadScenesScene()
+    {
+        if (GameSceneManager.nextScene == ProfilerLoadScenesController.NAME)
+        {
+            FlowManager.GoToMenu();
+        }
+        else
+        {
+            Debug_LoadProfilerScenesScene();
         }
     }
     #endregion

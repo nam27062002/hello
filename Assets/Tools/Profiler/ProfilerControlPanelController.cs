@@ -479,7 +479,8 @@ public class ProfilerControlPanelController : MonoBehaviour
 
     public void Scene_OnGoToMemorySceneClicked()
     {
-        ApplicationManager.instance.Debug_ToggleProfilerScene();
+        //ApplicationManager.instance.Debug_ToggleProfilerMemoryScene();
+       ApplicationManager.instance.Debug_ToggleProfilerLoadScenesScene();
     }
     #endregion
 }

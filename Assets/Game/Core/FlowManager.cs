@@ -61,13 +61,22 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 		GameSceneManager.SwitchScene(GameSceneController.NAME);
 	}
 
-    public static void GoToProfilerMemory()
+    public static void GoToProfilerMemoryScene()
     {
         // Skip if next scene is already menu
         if (GameSceneManager.nextScene == ProfilerMemoryController.NAME) return;
 
         // Change scene
         GameSceneManager.SwitchScene(ProfilerMemoryController.NAME);
+    }
+
+    public static void GoToProfilerLoadScenesScene()
+    {
+        // Skip if next scene is already menu
+        if (GameSceneManager.nextScene == ProfilerLoadScenesController.NAME) return;
+
+        // Change scene
+        GameSceneManager.SwitchScene(ProfilerLoadScenesController.NAME);        
     }
 
     /// <summary>

@@ -3,7 +3,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class ProfilerLoadScenesController : MonoBehaviour
-{  
+{
+    public const string NAME = "SC_ProfilerLoadScenes";
+
     public List<string> m_scenesAreaToLoad;
 
     public List<string> m_ScenesCommonToLoad;
