@@ -5,7 +5,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + vertex color multiply" 
+Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Vertex Color Multiply" 
 {
 	Properties 
 	{
