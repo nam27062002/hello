@@ -82,6 +82,9 @@ public class ShowHideAnimator : MonoBehaviour {
 	[SerializeField] protected float m_tweenDelay = 0f;
 	public float tweenDelay { get { return m_tweenDelay; }}
 
+	[SerializeField] protected bool m_ignoreTimeScale = true;			// [AOC] Generally we don't want UI animations to be affected by global timeScale
+	public bool ignoreTimeScale { get { return m_ignoreTimeScale; }}
+
 	// Custom tweens
 	[SerializeField] protected DOTweenAnimation[] m_showTweens = new DOTweenAnimation[0];
 	[SerializeField] protected DOTweenAnimation[] m_hideTweens = new DOTweenAnimation[0];
@@ -118,7 +121,12 @@ public class ShowHideAnimator : MonoBehaviour {
 				if(gameObject.activeSelf) {
 					m_state = State.VISIBLE;
 				} else {
-					m_state = State.HIDDEN;
+					// Use ForceHide to move to the end of the sequence!
+					if(Application.isPlaying) {
+						ForceHide(false, true);
+					} else {
+						m_state = State.HIDDEN;
+					}
 				}
 			}
 			return m_state == State.VISIBLE; 
@@ -176,7 +184,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	protected virtual void Update() {
 		// Update delay timer!
 		if(m_delaying) {
-			m_delayTimer -= Time.deltaTime;
+			m_delayTimer -= (m_ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime);	// Ignoring time scale?
 			if(m_delayTimer <= 0f) {
 				// Delay timer should only be active if we're showing with animation
 				LaunchShowAnimation(true);
@@ -418,7 +426,7 @@ public class ShowHideAnimator : MonoBehaviour {
 		m_sequence = DOTween.Sequence()
 			.SetAutoKill(false)
 			.OnStepComplete(() => { OnSequenceCompleted(); })
-			.SetUpdate(UpdateType.Normal, true);	// [AOC] Generally we don't want UI animations to be affected by global timeScale. This could be parametrized if needed.
+			.SetUpdate(UpdateType.Normal, m_ignoreTimeScale);
 
 		// Shared parameters
 		TweenParams sharedParams = new TweenParams()
