@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: cgfxShader1
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Name: island_rock_texture_04
+  m_Shader: {fileID: 4800000, guid: a7c23385c11e34103a67aded6dd7cc66, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -48,8 +48,8 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 6048d8669d888784f83d18b5088ee0b0, type: 3}
+        m_Scale: {x: 3, y: 3}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
@@ -69,6 +69,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - first:
+        name: _SecondTexture
+      second:
+        m_Texture: {fileID: 2800000, guid: 0421fdf77331d4608994040bf0edfcce, type: 3}
+        m_Scale: {x: 2, y: 2}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
         name: _BumpScale
@@ -77,20 +83,26 @@ Material:
         name: _Cutoff
       second: 0.5
     - first:
+        name: _DarkenDistance
+      second: 20
+    - first:
+        name: _DarkenPosition
+      second: 0
+    - first:
         name: _DetailNormalMapScale
       second: 1
     - first:
         name: _DstBlend
       second: 0
     - first:
-        name: _GlossMapScale
-      second: 1
+        name: _FogEnd
+      second: 1500
+    - first:
+        name: _FogStart
+      second: -9.2
     - first:
         name: _Glossiness
       second: 0.5
-    - first:
-        name: _GlossyReflections
-      second: 1
     - first:
         name: _Metallic
       second: 0
@@ -103,12 +115,6 @@ Material:
     - first:
         name: _Parallax
       second: 0.02
-    - first:
-        name: _SmoothnessTextureChannel
-      second: 0
-    - first:
-        name: _SpecularHighlights
-      second: 1
     - first:
         name: _SrcBlend
       second: 1
@@ -125,3 +131,6 @@ Material:
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _FogColor
+      second: {r: 0.37889272, g: 0.46233138, b: 0.7058823, a: 0.781}

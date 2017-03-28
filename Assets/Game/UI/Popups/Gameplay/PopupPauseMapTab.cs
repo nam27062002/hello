@@ -48,9 +48,6 @@ public class PopupPauseMapTab : MonoBehaviour {
 	[Separator("FX")]
 	[SerializeField] private ParticleSystem m_upgradeFX = null;
 
-	// Internal
-	private DefinitionNode m_def = null;
-
 	// Cache some data
 	private int m_pricePC = 0;
 	private int m_priceSC = 0;
@@ -67,7 +64,7 @@ public class PopupPauseMapTab : MonoBehaviour {
 		UpdateDefinition();
 
 		// Subscribe to external events
-		Messenger.AddListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
+		Messenger.AddListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
 	}
 
 	/// <summary>
@@ -90,7 +87,7 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
+		Messenger.RemoveListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
 	}
 
 	//------------------------------------------------------------------------//
@@ -100,13 +97,7 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// Gets the map upgrade definition corresponding to the user's current upgrade level.
 	/// </summary>
 	private void UpdateDefinition() {
-		// Get current upgrade definition and store it
-		m_def = DefinitionsManager.SharedInstance.GetDefinition("map_upgrade_" + UsersManager.currentUser.mapLevel);
-		Debug.Assert(m_def != null, "Map Upgrade definition for level " + UsersManager.currentUser.mapLevel + " wasn't found!", this);
-
 		// Cache some data
-		m_priceSC = m_def.GetAsInt("upgradePriceSC");
-		m_pricePC = m_def.GetAsInt("upgradePriceHC");
 		m_isMaxed = (m_priceSC <= 0 && m_pricePC <= 0);	// If no upgrades are available for purchase, map is maxed out
 	}
 
@@ -114,18 +105,14 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// Refresh lock icon.
 	/// </summary>
 	private void RefreshLockIcon() {
-		// Skip if definition not valid
-		if(m_def == null) return;
-
 		// Lock icon
-		m_lockGroupAnim.Set(UsersManager.currentUser.mapLevel <= 0);
+		m_lockGroupAnim.Set(!UsersManager.currentUser.mapUnlocked);
 	}
 
 	/// <summary>
 	/// Refresh info section.
 	/// </summary>
 	private void RefreshInfoSection() {
-		m_upgradeInfoText.Localize(m_def.Get("tidDesc"));
 		m_upgradeAreaAnim.Set(!m_isMaxed);
 		m_infoAreaAnim.Set(m_isMaxed);
 		if(!m_isMaxed) {
@@ -146,18 +133,15 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// The upgrade with SC button has been pressed.
 	/// </summary>
 	public void OnUpgradeWithSC() {
-		// Ignore if definition not valid
-		if(m_def == null) return;
-
 		// Validate it's actually a SC upgrade
-		int costSC = m_def.GetAsInt("upgradePriceSC");
+		int costSC = 0;
 		if(costSC <= 0) return;
 
 		// Make sure we have enough PC to remove the mission
 		if(UsersManager.currentUser.coins >= costSC) {
 			// Do it!
 			UsersManager.currentUser.AddCoins(-costSC);
-			UsersManager.currentUser.UpgradeMap();
+			UsersManager.currentUser.UnlockMap();
 			PersistenceManager.Save();
 		} else {
 			// Open shop popup
@@ -172,18 +156,15 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// The upgrade with PC button has been pressed.
 	/// </summary>
 	public void OnUpgradeWithPC() {
-		// Ignore if definition not valid
-		if(m_def == null) return;
-
 		// Validate it's actually a PC upgrade
-		int costPC = m_def.GetAsInt("upgradePriceHC");
+		int costPC = 0;
 		if(costPC <= 0) return;
 
 		// Make sure we have enough PC to remove the mission
 		if(UsersManager.currentUser.pc >= costPC) {
 			// Do it!
 			UsersManager.currentUser.AddPC(-costPC);
-			UsersManager.currentUser.UpgradeMap();
+			UsersManager.currentUser.UnlockMap();
 			PersistenceManager.Save();
 		} else {
 			// Open shop popup
@@ -197,8 +178,7 @@ public class PopupPauseMapTab : MonoBehaviour {
 	/// <summary>
 	/// The map has been upgraded.
 	/// </summary>
-	/// <param name="_newLevel">New map level.</param>
-	public void OnMapUpgraded(int _newLevel) {
+	public void OnMapUnlocked() {
 		// Aux vars
 		float lockRefreshDelay = 0.15f;
 
@@ -206,11 +186,11 @@ public class PopupPauseMapTab : MonoBehaviour {
 		UpdateDefinition();
 
 		// If it's the first upgrade, show nice unlock animation
-		if(_newLevel == 1) {
+		/*if(_newLevel == 1) {
 			// Launch unlock anim
 			m_lockIconAnim.SetTrigger("unlock");
 			lockRefreshDelay = 1.3f;	// Longer delay
-		}
+		}*/
 
 		// Trigger FX
 		m_upgradeFX.Stop();
