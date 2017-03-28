@@ -169,7 +169,7 @@ public class ResultsScreenChestsPill : ResultsScreenCarouselPill {
 
 		// Text
 		if(m_timerText != null) {
-			m_timerText.text = TimeUtils.FormatTime(timeToReset.TotalSeconds, TimeUtils.EFormat.DIGITS, 3);
+			m_timerText.text = TimeUtils.FormatTime(timeToReset.TotalSeconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
 		}
 
 		// Bar

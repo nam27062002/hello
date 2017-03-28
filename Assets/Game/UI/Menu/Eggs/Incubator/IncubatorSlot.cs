@@ -118,7 +118,7 @@ public class IncubatorSlot : MonoBehaviour {
 			m_incubationTimeSlider.normalizedValue = targetEgg.incubationProgress;
 
 			// Timer text
-			m_incubationTimeText.text = TimeUtils.FormatTime(targetEgg.incubationRemaining.TotalSeconds, TimeUtils.EFormat.DIGITS, 3);
+			m_incubationTimeText.text = TimeUtils.FormatTime(targetEgg.incubationRemaining.TotalSeconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
 
 			// Skip PC cost - only when changed
 			int costPC = targetEgg.GetIncubationSkipCostPC();

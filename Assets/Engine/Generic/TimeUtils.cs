@@ -85,78 +85,85 @@ public class TimeUtils {
 	/// <param name="_eFormat">The output format.</param>
 	/// <param name="_iNumFields">The amount of fields to be displayed (e.g. 4220s: 2 fields -> "1h 10m"; 3 fields -> "1h 10m 20s")</param>
 	/// <param name="_ePrecision">Maximum time unit to be displayed (e.g. 4220s: precision >= HOURS -> "1h 10m 20s"; precision MINUTES -> "70m 20s")</param>
-	public static string FormatTime(double _fSeconds, EFormat _eFormat, int _iNumFields, EPrecision _ePrecision = EPrecision.YEARS) {
+	/// <param name="_forcePrecision">Force the given precision, showing left-side zeroes (e.g. "03:25" -> "00:03:25)"</param></param>
+	public static string FormatTime(double _seconds, EFormat _format, int _numFields, EPrecision _precision = EPrecision.YEARS, bool _forcePrecision = false) {
 		// 1. If seconds amount is negative, convert to positive to do all the maths and restore sign afterwards
-		bool bIsNegative = false;
-		if(_fSeconds < 0) {
-			bIsNegative = true;
-			_fSeconds *= -1;
+		bool isNegative = false;
+		if(_seconds < 0) {
+			isNegative = true;
+			_seconds *= -1;
 		}
 		
 		// 2. Round up seconds
-		ulong iSeconds = (ulong)(_fSeconds + 0.5f);
+		ulong seconds = (ulong)(_seconds + 0.5f);
 		
 		// 3. Compute the amount of each precision field, starting with the defined precision
 		ulong[] precisionValues = new ulong[(int)EPrecision.COUNT];
-		for(int i = (int)_ePrecision; i < (int)EPrecision.COUNT; i++) {
-			precisionValues[i] = iSeconds/SECONDS_IN_PRECISION[i];
-			iSeconds -= precisionValues[i] * SECONDS_IN_PRECISION[i];
+		for(int i = (int)_precision; i < (int)EPrecision.COUNT; i++) {
+			precisionValues[i] = seconds/SECONDS_IN_PRECISION[i];
+			seconds -= precisionValues[i] * SECONDS_IN_PRECISION[i];
 		}
 		
-		// 4. Find first and last values to be used, combining precision, number of fields, and ignoring 0 values
-		// 4.1. First index: find first non-0 index starting at the given precision
-		int iFirstIdx = (int)EPrecision.SECONDS;	// Default precision if all values are 0
-		for(int i = (int)_ePrecision; i < precisionValues.Length; i++) {
-			if(precisionValues[i] != 0) {
-				iFirstIdx = i;	// Store precision
-				break;	// Break loop
+		// 4. Find first and last values to be used, combining precision, number of fields, and ignoring 0 values (unless precision is forced)
+		// 4.1. First index: is precision forced?
+		int firstIdx = (int)EPrecision.SECONDS;	// Default precision
+		if(_forcePrecision) {
+			// Yes!! Start at given precision, even if it's 0
+			firstIdx = (int)_precision;
+		} else {
+			// No! Find first non-0 precision index starting at the given precision
+			for(int i = (int)_precision; i < precisionValues.Length; i++) {
+				if(precisionValues[i] != 0) {
+					firstIdx = i;	// Store precision (first non-zero value, starting at given precision)
+					break;	// Break loop
+				}
 			}
 		}
 		
-		// 4.2. Last index: if enough fields, initial precision + _iNumFields, otherwise go up to max precision
-		int iLastIdx = Math.Min(iFirstIdx + _iNumFields, precisionValues.Length);
+		// 4.2. Last index: if enough fields, initial precision + _numFields, otherwise go up to max precision
+		int lastIdx = Math.Min(firstIdx + _numFields, precisionValues.Length);
 		
 		// 5. Do the formatting depending on selected format
-		ulong iVal;
+		ulong val;
 		StringWriter writer = new StringWriter();
 
 		// If the amount was originally negative, insert negative sign
-		if(bIsNegative) writer.Write("-");
+		if(isNegative) writer.Write("-");
 
 		// Do the rest
-		int iAddedFields = 0;
-		for(int i = iFirstIdx; i < iLastIdx; i++) {
+		int addedFieldsCount = 0;
+		for(int i = firstIdx; i < lastIdx; i++) {
 			// Get value
-			iVal = precisionValues[i];
+			val = precisionValues[i];
 			
 			// Do the formatting
-			switch(_eFormat) {
+			switch(_format) {
 				case EFormat.WORDS:
 				case EFormat.ABBREVIATIONS:
 				case EFormat.ABBREVIATIONS_WITHOUT_0_VALUES: {
 					// Special case if not including 0 values
-					if(_eFormat == EFormat.ABBREVIATIONS_WITHOUT_0_VALUES && iVal == 0) {
-						// Skip if value is 0, unless it's the only field standing
-						if(!(i == iLastIdx - 1 && iAddedFields == 0)) {
+					if(_format == EFormat.ABBREVIATIONS_WITHOUT_0_VALUES && val == 0) {
+						// Skip if value is 0, unless it's the only field standing or forced
+						if(!(i == lastIdx - 1 && addedFieldsCount == 0) && !_forcePrecision) {
 							continue;
 						}
 					}
 					
 					// Insert space if not the first field
-					if(i != iFirstIdx) {
+					if(i != firstIdx) {
 						writer.Write(" ");
 					}
 					
 					// Insert field value, properly formatted
-					writer.Write(StringUtils.FormatNumber(iVal));
+					writer.Write(StringUtils.FormatNumber(val));
 
 					// Increase counter
-					iAddedFields++;
+					addedFieldsCount++;
 					
 					// Insert field name, abbreviation, singular or plural
-					if(_eFormat == EFormat.ABBREVIATIONS || _eFormat == EFormat.ABBREVIATIONS_WITHOUT_0_VALUES) {
+					if(_format == EFormat.ABBREVIATIONS || _format == EFormat.ABBREVIATIONS_WITHOUT_0_VALUES) {
 						writer.Write(LocalizationManager.SharedInstance.Localize(TIDS_ABBREVIATED[i]));
-					} else if(iVal == 1) {
+					} else if(val == 1) {
 						writer.Write(" ");
                         writer.Write(LocalizationManager.SharedInstance.Localize(TIDS_SINGULAR[i]));
 					} else {
@@ -169,17 +176,17 @@ public class TimeUtils {
 					// Specification says "YYYY:DD HH:MM:SS"
 					// Put value properly formatted
 					if(i == (int)EPrecision.YEARS) {
-						writer.Write(StringUtils.FormatNumber(iVal, 4, false));
+						writer.Write(StringUtils.FormatNumber(val, 4, false));
 					} else {
-						writer.Write(StringUtils.FormatNumber(iVal, 2, false));
+						writer.Write(StringUtils.FormatNumber(val, 2, false));
 					}
 
 					// Increase counter
-					iAddedFields++;
+					addedFieldsCount++;
 					
 					// Put separator where needed
 					// No separator for the last field
-					if(i < iLastIdx - 1) {
+					if(i < lastIdx - 1) {
 						switch((EPrecision)i) {
 							case EPrecision.YEARS:
 							case EPrecision.HOURS:

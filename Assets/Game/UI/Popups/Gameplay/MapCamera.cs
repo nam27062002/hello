@@ -37,9 +37,6 @@ public class MapCamera : MonoBehaviour {
 			return m_camera;
 		}
 	}
-
-	// Internal
-	int m_originalLayerMask = 0;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -48,38 +45,19 @@ public class MapCamera : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Store original layer mask and initialize layer mask according to current map level
-		m_originalLayerMask = camera.cullingMask;
-		SetLayerMask(UsersManager.currentUser.mapLevel);
-
-		// Subscribe to external events
-		Messenger.AddListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
+		
 	}
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
 	protected void OnDestroy() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
+		
 	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Apply the layer mask corresponding to a given map upgrade level.
-	/// </summary>
-	/// <param name="_mapLevel">Map level.</param>
-	private void SetLayerMask(int _mapLevel) {
-		// If map is locked, show nothing
-		if(_mapLevel == 0) {
-			camera.cullingMask = 0;
-		} else {
-			camera.cullingMask = m_originalLayerMask;
-		}
-	}
-
 	#if UNITY_EDITOR
 	/// <summary>
 	/// Draw gizmos to help debugging.
@@ -123,15 +101,5 @@ public class MapCamera : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Minimap has been upgraded.
-	/// </summary>
-	/// <param name="_newLevel">New minimap level.</param>
-	private void OnMapUpgraded(int _newLevel) {
-		// Update rendering layers
-		// Add some delay to give time for feedback to show off
-		float delay = 0.25f;
-		if(_newLevel == 1) delay = 1.5f;	// Unlock animation is a bit longer
-		DOVirtual.DelayedCall(delay, () => SetLayerMask(_newLevel), true);
-	}
+
 }

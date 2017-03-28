@@ -62,7 +62,7 @@ public class MapMarker : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.AddListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
+		Messenger.AddListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
 	}
 
 	/// <summary>
@@ -92,7 +92,7 @@ public class MapMarker : MonoBehaviour {
 	protected virtual void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.RemoveListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
+		Messenger.RemoveListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
 	}
 
 	//------------------------------------------------------------------------//
@@ -105,13 +105,13 @@ public class MapMarker : MonoBehaviour {
 		// Check visibility based on marker type and level
 		switch(m_type) {
 			case Type.DECO: {
-				this.gameObject.SetActive(showMarker && UsersManager.currentUser.mapLevel > 0);
+				this.gameObject.SetActive(showMarker);
 			} break;
 
 			case Type.CHEST:
 			case Type.EGG:
 			case Type.LETTER: {
-				this.gameObject.SetActive(showMarker && UsersManager.currentUser.mapLevel > 1);
+				this.gameObject.SetActive(showMarker && UsersManager.currentUser.mapUnlocked);
 			} break;
 		}
 
@@ -174,12 +174,9 @@ public class MapMarker : MonoBehaviour {
 	/// <summary>
 	/// Minimap has been upgraded.
 	/// </summary>
-	/// <param name="_newLevel">New minimap level.</param>
-	private void OnMapUpgraded(int _newLevel) {
+	private void OnMapUnlocked() {
 		// Update marker will do the job
 		// Add some delay to give time for feedback to show off
-		float delay = 0.25f;
-		if(_newLevel == 1) delay = 1.3f;	// Unlock animation is a bit longer
-		DOVirtual.DelayedCall(delay, UpdateMarker, true);
+		DOVirtual.DelayedCall(0.25f, UpdateMarker, true);
 	}
 }
