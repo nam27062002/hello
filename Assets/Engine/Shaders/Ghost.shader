@@ -13,7 +13,6 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 		_SpecularColor("Specular color (RGB)", Color) = (0, 0, 0, 0)
 		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
 		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
-		_AmbientColor("Ambient color (RGB)", Color) = (0.25, 0.25, 0.25, 1.0)
 
 		_Tint("Tint color (RGB)", Color) = (1, 1, 1, 0)
 		_WaveRadius("Wave Radius", float) = 1.5
@@ -36,9 +35,9 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 			Tags{ "Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 			ZWrite on
 			Cull back
-			Lighting Off
+//			Lighting Off
 			Blend SrcAlpha OneMinusSrcAlpha
-			ColorMask RGBA
+//			ColorMask RGBA
 
 			Stencil
 			{
@@ -67,16 +66,17 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 			#if MEDIUM_DETAIL_ON
 			#define NORMALMAP
 			#define SPECULAR
-//			#define FRESNEL
+			#define FRESNEL
 			#endif
 
 			#if HI_DETAIL_ON
 			#define NORMALMAP
 			#define SPECULAR
-//			#define FRESNEL
+			#define FRESNEL
 			#endif
 
 			#define CUSTOM_ALPHA
+
 			#define CUSTOM_VERTEXPOSITION
 
 			uniform float _WaveRadius;
@@ -89,7 +89,6 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 				normal = normalize(normal);
 //				float wvc = (1.0 - v.color.x) * v.color.w;	//vc.a = Wave intensity ; 
 				float wvc = (1.0 - v.color.x);	//vc.a = Wave intensity ; 
-//				float3 incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * (1.0 - v.color.x) * wvc;
 				float incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * wvc;
 //				float4 tvertex = v.vertex + float4(normal.xyz, 0.0) * ((incWave.x + incWave.y + incWave.z) * 0.33333);
 				float4 tvertex = v.vertex + float4(normal, 0.0) * incWave;
