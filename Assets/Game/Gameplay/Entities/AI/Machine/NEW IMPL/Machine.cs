@@ -5,15 +5,6 @@ using Assets.Code.Game.Currents;
 namespace AI {
 	public class Machine : MonoBehaviour, IMachine, ISpawnable, IAttacker, IMotion {	
 		public static int GROUND_MASK;
-
-		public enum RotateToMouthType {
-			No,				// does not have any special rotation applied while being eaten
-			TailFirst,		// rotates to be swallowed tail first - use with swallow shader
-			HeadFirst,		// rotates to be swallowed head first - "
-			ClosestFirst,	// rotates to swallow either head or tail first, whichever is closer - "
-			Sideways,		// turns sideways - use when breaking into corpse chunks with centre chunk staying in mouth
-		};
-
 		/**************/
 		/*			  */
 		/**************/
@@ -30,12 +21,6 @@ namespace AI {
 		[SerializeField] private string m_onSpawnSound = "";
 		// [SerializeField] private string m_onEatenSound = "";
 
-		[SeparatorAttribute("Other")]
-		[SerializeField] private RotateToMouthType m_rotateToMouth;
-		public RotateToMouthType rotateToMouth{
-			get { return m_rotateToMouth; }
-			set { m_rotateToMouth = value; }
-		}
 
 		protected Transform m_transform;
 		protected IEntity m_entity = null;
@@ -48,8 +33,10 @@ namespace AI {
 
 		private Group m_group; // this will be a reference
 
-
-
+		public MachineEdible.RotateToMouthType rotateToMouth {
+			get { return m_edible.rotateToMouth; }
+			set { m_edible.rotateToMouth = value; }
+		}
 
 		private bool m_willPlaySpawnSound;
 
@@ -335,11 +322,13 @@ namespace AI {
 						m_regionManager = RegionManager.Instance;
 					}
 					CheckFreeze();
+
+					m_motion.externalVelocity = m_externalForces;
+					m_externalForces = Vector3.zero;
+
 					m_motion.FixedUpdate();
 				}
 			}
-			m_motion.externalVelocity = m_externalForces;
-			m_externalForces = Vector3.zero;
 		}
 
 		protected virtual void LateUpdate() {
@@ -486,7 +475,6 @@ namespace AI {
 
 
 		public void ReceiveDamage(float _damage) {
-			return;
 			if (!IsDead()) {
 				m_entity.Damage(_damage);
 				if (IsDead()) {
@@ -532,7 +520,7 @@ namespace AI {
 		public float biteResistance { get { return m_edible.biteResistance; } }
 
 		public void Bite() {
-			if (m_edible != null && !IsDead()) {
+			if (!IsDead()) {
 				m_edible.Bite();
 				m_viewControl.Bite(m_transform);
 			}
@@ -584,29 +572,8 @@ namespace AI {
 
 		// Get the local rot that this thing should try to rotate towards if it is set to
 		// try to align to head-first etc.
-		public virtual Quaternion GetDyingFixRot() {
-			Quaternion result = Quaternion.identity;
-
-			if (m_rotateToMouth == RotateToMouthType.No)
-				return result;
-
-			if (m_rotateToMouth == RotateToMouthType.Sideways) {
-				float diff = Quaternion.Angle(m_transform.localRotation, Quaternion.AngleAxis(90.0f, Vector3.up));
-				float rot = (diff > 90.0f) ? 270.0f : 90.0f;
-				result = Quaternion.AngleAxis(rot, Vector3.up);
-			} else {
-				bool headFirst = (m_rotateToMouth == RotateToMouthType.HeadFirst);
-				if (m_rotateToMouth == RotateToMouthType.ClosestFirst) {
-					Transform trParent = m_transform.parent;	// null check on this to handle case of attacker being deleted or something
-					if ((trParent != null) && trParent.InverseTransformDirection(m_transform.right).x < 0.0f)
-						headFirst = true;
-				}
-				result = headFirst ? Quaternion.AngleAxis(180.0f, Vector3.up) : Quaternion.identity;
-			}
-
-			result = result * Quaternion.AngleAxis(90f, Vector3.forward);
-
-			return result;
+		public Quaternion GetDyingFixRot() {
+			return m_edible.GetDyingFixRot();
 		}
 
 		public virtual bool Burn(Transform _transform) {

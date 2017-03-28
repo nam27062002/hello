@@ -5,7 +5,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Lightmap And Recieve Shadow Cutoff (On Line Decorations)" 
+Shader "Hungry Dragon/Scenary/Diffuse + LightMap + AlphaCutoff (cutoff vegetation)" 
 {
 	Properties 
 	{

@@ -3,7 +3,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Texture Blending Additive + Lightmap And Recieve Shadow" 
+Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Additive" 
 {
 	Properties 
 	{

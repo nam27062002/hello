@@ -9,7 +9,7 @@ GameObject:
   m_Component:
   - component: {fileID: 443304}
   - component: {fileID: 11410284}
-  - component: {fileID: 11456748}
+  - component: {fileID: 114768301738930188}
   - component: {fileID: 11400102}
   - component: {fileID: 11451040}
   - component: {fileID: 11441542}
@@ -30,10 +30,10 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 138364}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: 1, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4427137000007464}
+  - {fileID: 4521043133028824}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -61,11 +61,11 @@ MonoBehaviour:
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
   m_onEatenParticle:
-    name: PS_Blood_Explosion_Small
-    path: Blood/
-    offset: {x: 0, y: 0, z: -10}
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onEatenFrozenParticle:
-    name: PS_IceExplosion
+    name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
@@ -142,58 +142,6 @@ MonoBehaviour:
   m_avoidDistanceAttenuation: 5
   m_avoidCollisions: 0
   m_avoidWater: 0
---- !u!114 &11456748
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 138364}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_useGravity: 0
-    m_walkOnWalls: 0
-    m_mass: 20
-    m_defaultUpVector: 0
-    m_orientationSpeed: 120
-    m_faceDirection: 0
-    m_useDragonStyleRotation: 0
-    m_rollRotation: 0
-    m_limitHorizontalRotation: 1
-    m_faceLeftAngle: -45
-    m_faceRightAngle: 45
-    m_limitVerticalRotation: 0
-    m_faceUpAngle: -45
-    m_faceDownAngle: 45
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 0
-  m_sensor:
-    m_senseFire: 1
-    m_sightRadius: 15
-    m_maxRadius: 12
-    m_minRadius: 5
-    m_hysteresisOffset: 0
-    m_senseAbove: 1
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 0, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0.25
-      max: 1.25
-  m_onSpawnSound: 
-  m_rotateToMouth: 0
-  m_inflammable:
-    m_ashesAsset: 
-    m_burningTime: 0
-    m_dissolveTime: 1.5
-    m_ashExceptions:
-    - {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -205,43 +153,43 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 138364}
   m_IsPrefabParent: 1
---- !u!1 &1876267383612594
+--- !u!1 &1716661553604998
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4427137000007464}
-  - component: {fileID: 33641143764944846}
-  - component: {fileID: 23401489515823344}
-  - component: {fileID: 95151928362338472}
+  - component: {fileID: 4521043133028824}
+  - component: {fileID: 33332301361449420}
+  - component: {fileID: 23183578167774468}
+  - component: {fileID: 95450552088073986}
   m_Layer: 0
-  m_Name: view
+  m_Name: ghost_second_version
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4427137000007464
+--- !u!4 &4521043133028824
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1876267383612594}
+  m_GameObject: {fileID: 1716661553604998}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children: []
   m_Father: {fileID: 443304}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &23401489515823344
+--- !u!23 &23183578167774468
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1876267383612594}
+  m_GameObject: {fileID: 1716661553604998}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -267,12 +215,12 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
---- !u!33 &33641143764944846
+--- !u!33 &33332301361449420
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1876267383612594}
+  m_GameObject: {fileID: 1716661553604998}
   m_Mesh: {fileID: 4300002, guid: 9b1b9dc1cc782f045889304d6e2e6bf3, type: 3}
 --- !u!54 &54000010377718392
 Rigidbody:
@@ -286,16 +234,16 @@ Rigidbody:
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 120
   m_CollisionDetection: 0
---- !u!95 &95151928362338472
+--- !u!95 &95450552088073986
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1876267383612594}
+  m_GameObject: {fileID: 1716661553604998}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 9b1b9dc1cc782f045889304d6e2e6bf3, type: 3}
   m_Controller: {fileID: 0}
@@ -306,6 +254,56 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114768301738930188
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 138364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3085e02792f6243cc9d8323aba91b804, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_affectedByDragonTrample: 0
+  m_enableSensor: 1
+  m_sensor:
+    m_senseFire: 1
+    m_sightRadius: 14
+    m_maxRadius: 11
+    m_minRadius: 4
+    m_hysteresisOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
+    m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
+    m_senseDelay:
+      min: 0
+      max: 0.5
+  m_edible:
+    m_rotateToMouth: 0
+  m_inflammable:
+    m_ashesAsset: 
+    m_burningTime: 0
+    m_dissolveTime: 1.5
+    m_ashExceptions:
+    - {fileID: 0}
+  m_onSpawnSound: 
+  m_airMotion:
+    m_mass: 20
+    m_defaultUpVector: 0
+    m_orientationSpeed: 120
+    m_dragonStyleRotation: 0
+    m_faceDirection: 0
+    m_rollRotation: 0
+    m_limitHorizontalRotation: 1
+    m_faceLeftAngle: -45
+    m_faceRightAngle: 45
+    m_limitVerticalRotation: 0
+    m_faceUpAngle: 340
+    m_faceDownAngle: 20
 --- !u!135 &135000010864404190
 SphereCollider:
   m_ObjectHideFlags: 1

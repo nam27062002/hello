@@ -1610,6 +1610,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Soldier_Neck
   m_parentRoot: {fileID: 4856057368377466}
+  m_worldPositionStays: 1
 --- !u!114 &114246830796204986
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1623,6 +1624,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Soldier_L_Upperarm
   m_parentRoot: {fileID: 4856057368377466}
+  m_worldPositionStays: 1
 --- !u!114 &114254740084036980
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1636,6 +1638,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Soldier_L_Calf
   m_parentRoot: {fileID: 4856057368377466}
+  m_worldPositionStays: 1
 --- !u!114 &114279754018899894
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1660,6 +1663,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Soldier_R_Calf
   m_parentRoot: {fileID: 4856057368377466}
+  m_worldPositionStays: 1
 --- !u!114 &114461317624475802
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1684,6 +1688,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Soldier_R_Forearm
   m_parentRoot: {fileID: 4856057368377466}
+  m_worldPositionStays: 1
 --- !u!114 &114540644071866762
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1697,6 +1702,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Soldier_Spine1
   m_parentRoot: {fileID: 4889497157332238}
+  m_worldPositionStays: 1
 --- !u!114 &114544284418125734
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1710,6 +1716,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Sword_01
   m_parentRoot: {fileID: 4856057368377466}
+  m_worldPositionStays: 1
 --- !u!114 &114605653605623280
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1756,6 +1763,8 @@ MonoBehaviour:
       max: 0
   m_onSpawnSound: 
   m_rotateToMouth: 0
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 2
@@ -1787,6 +1796,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Soldier_Spine2
   m_parentRoot: {fileID: 4856057368377466}
+  m_worldPositionStays: 1
 --- !u!114 &114707265918811848
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1871,6 +1881,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_knockback: 12
+  m_timeBetweenHits: 0.5
 --- !u!114 &114874567745410300
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1884,6 +1895,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Soldier_Spine2
   m_parentRoot: {fileID: 4856057368377466}
+  m_worldPositionStays: 1
 --- !u!114 &114883298474649214
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1927,6 +1939,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Soldier_L_Forearm
   m_parentRoot: {fileID: 4856057368377466}
+  m_worldPositionStays: 1
 --- !u!114 &114940713762393002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1940,6 +1953,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Soldier_R_Upperarm
   m_parentRoot: {fileID: 4856057368377466}
+  m_worldPositionStays: 1
 --- !u!114 &114942837333358150
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1954,6 +1968,7 @@ MonoBehaviour:
   m_blendSpeedFactor: 0.5
   m_energy: 10
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: 3cd87b86bb6114016ac1664f93dfbd8a, type: 2}
   m_railSeparation:
     min: 2

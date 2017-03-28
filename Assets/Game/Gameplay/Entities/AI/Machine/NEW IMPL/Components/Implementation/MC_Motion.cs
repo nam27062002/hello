@@ -273,6 +273,11 @@ namespace AI {
 			}
 		}
 
+		public void FreeFall() {
+			m_machine.SetSignal(Signals.Type.FallDown, true);
+			m_nextState = State.FreeFall;
+		}
+
 		private void UpdateAttack() {
 			if (m_hasEye && m_pilot.IsActionPressed(Pilot.Action.Aim)) {
 				UpdateAim();
@@ -374,7 +379,7 @@ namespace AI {
 					m_viewControl.Panic(false, m_machine.GetSignal(Signals.Type.Burning));					
 					break;
 
-				case State.FreeFall:					
+				case State.FreeFall:			
 					m_viewControl.Falling(false);
 					break;
 			}

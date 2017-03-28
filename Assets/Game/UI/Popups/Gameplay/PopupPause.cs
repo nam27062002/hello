@@ -33,6 +33,17 @@ public class PopupPause : MonoBehaviour {
 		COUNT
 	}
 
+	// Shortcut to tabs system
+	private TabSystem m_tabs = null;
+	private TabSystem tabs {
+		get {
+			if(m_tabs == null) {
+				m_tabs = GetComponent<TabSystem>();
+			}
+			return m_tabs;
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -52,6 +63,25 @@ public class PopupPause : MonoBehaviour {
 		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnd);
 	}
 
+	/// <summary>
+	/// Go to a specific tab in the popup.
+	/// </summary>
+	/// <param name="_tab">Target tab.</param>
+	public void GoToTab(Tabs _tab) {
+		// Is the popup open?
+		PopupController popup = GetComponent<PopupController>();
+		if(popup.isOpen) {
+			// Go to target screen
+			tabs.GoToScreen((int)_tab);
+		} else {
+			// Set as initial screen (in case tab system wasn't already started)
+			tabs.SetInitialScreen((int)_tab);
+
+			// Go to target screen without animation
+			tabs.GoToScreen((int)_tab, NavigationScreen.AnimType.NONE);
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -66,12 +96,11 @@ public class PopupPause : MonoBehaviour {
 		}
 
 		// Hide the tabs during the first run (tutorial)
-		if(UsersManager.currentUser.gamesPlayed < 1 && SceneManager.GetActiveScene().name != "SC_Popups") {
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN) && SceneManager.GetActiveScene().name != "SC_Popups") {
 			// Get the tab system component
-			TabSystem tabs = GetComponent<TabSystem>();
 			if(tabs != null) {
 				// Set options tab as initial screen
-				tabs.initialScreen = tabs.GetScreen((int)Tabs.OPTIONS);
+				tabs.SetInitialScreen((int)Tabs.OPTIONS);
 				//tabs.GoToScreen((int)Tabs.OPTIONS, NavigationScreen.AnimType.NONE);
 
 				// Hide all buttons
@@ -79,6 +108,12 @@ public class PopupPause : MonoBehaviour {
 					tabs.m_tabButtons[i].gameObject.SetActive(false);
 				}
 			}
+		}
+
+		// [AOC] TEMP!!
+		// Hide all buttons (testing HUD buttons)
+		for(int i = 0; i < tabs.m_tabButtons.Count; i++) {
+			tabs.m_tabButtons[i].gameObject.SetActive(false);
 		}
 	}
 

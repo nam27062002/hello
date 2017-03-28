@@ -163,8 +163,28 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             // ---------------------------
             // Test toggling particles culling
-            Debug_TestToggleParticlesCulling();
+            //Debug_TestToggleParticlesCulling();
             // ---------------------------        
+
+            // ---------------------------
+            // Test toggling player particles visibility
+            //Debug_TestTogglePlayerParticlesVisibility();
+            // ---------------------------        
+
+            // ---------------------------
+            // Test toggling player particles visibility
+            //Debug_TestToggleCustomParticlesCullingEnabled();
+            // ---------------------------        
+
+            // ---------------------------
+            // Test toggling profiler memory scene
+            //Debug_ToggleProfilerMemoryScene();
+            // ---------------------------
+
+            // ---------------------------
+            // Test togling profiler load scenes scene
+            //Debug_ToggleProfilerLoadScenesScene();
+            // ---------------------------
         }
 
         if (NeedsToRestartFlow)
@@ -660,7 +680,75 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 }                
             }            
         }
-    }    
+    }
+
+
+    private bool m_debug_PlayerParticlesVisibility = true;
+    public bool Debug_PlayerParticlesVisibility
+    {
+        get
+        {
+            return m_debug_PlayerParticlesVisibility;
+        }
+
+        set
+        {
+            m_debug_PlayerParticlesVisibility = value;
+
+            DragonPlayer player = InstanceManager.player;
+            if (player != null)
+            {
+                ParticleSystem[] systems = player.GetComponentsInChildren<ParticleSystem>(true);
+                if (systems != null)
+                {
+                    int count = systems.Length;
+                    for (int i = 0; i < count; i++)
+                    {
+                        systems[i].gameObject.SetActive(m_debug_PlayerParticlesVisibility);
+                    }
+                }
+            }
+        }
+    }
+
+    private void Debug_TestTogglePlayerParticlesVisibility()
+    {
+        Debug_PlayerParticlesVisibility = !Debug_PlayerParticlesVisibility;
+    }
+
+    private void Debug_TestToggleCustomParticlesCullingEnabled()
+    {
+        CustomParticlesCulling.Manager_IsEnabled = !CustomParticlesCulling.Manager_IsEnabled;
+    }
+
+    public void Debug_ToggleProfilerMemoryScene()
+    {
+        if (GameSceneManager.nextScene == ProfilerMemoryController.NAME)
+        {
+            FlowManager.GoToMenu();
+        }
+        else
+        {
+            FlowManager.GoToProfilerMemoryScene();
+        }
+    }
+
+    private void Debug_LoadProfilerScenesScene()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(ProfilerLoadScenesController.NAME);
+    }
+
+    public void Debug_ToggleProfilerLoadScenesScene()
+    {
+        if (GameSceneManager.nextScene == ProfilerLoadScenesController.NAME)
+        {
+            FlowManager.GoToMenu();
+        }
+        else
+        {
+            Debug_LoadProfilerScenesScene();
+        }
+    }
     #endregion
 }
 

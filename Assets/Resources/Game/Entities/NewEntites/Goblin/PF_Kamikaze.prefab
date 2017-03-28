@@ -456,7 +456,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4359037457365340}
   - component: {fileID: 114151275997144362}
-  - component: {fileID: 114517831184497146}
+  - component: {fileID: 114500513935871358}
   - component: {fileID: 114041918052272936}
   - component: {fileID: 114152825529454246}
   - component: {fileID: 54867483832359824}
@@ -1347,6 +1347,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Goblin_Fish
   m_parentRoot: {fileID: 4800865497189160}
+  m_worldPositionStays: 1
 --- !u!114 &114272332680742080
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1361,7 +1362,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   radius: 1.1779222
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &114517831184497146
+--- !u!114 &114500513935871358
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1369,31 +1370,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1688677885518720}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
+  m_Script: {fileID: 11500000, guid: 3085e02792f6243cc9d8323aba91b804, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_useGravity: 0
-    m_walkOnWalls: 0
-    m_mass: 2.5
-    m_defaultUpVector: 0
-    m_orientationSpeed: 320
-    m_faceDirection: 1
-    m_useDragonStyleRotation: 0
-    m_rollRotation: 1
-    m_limitHorizontalRotation: 0
-    m_faceLeftAngle: -90
-    m_faceRightAngle: 90
-    m_limitVerticalRotation: 0
-    m_faceUpAngle: 320
-    m_faceDownAngle: 40
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
     m_sightRadius: 10
-    m_maxRadius: 5
+    m_maxRadius: 9
     m_minRadius: 0
     m_hysteresisOffset: 1
     m_senseAbove: 1
@@ -1403,15 +1388,30 @@ MonoBehaviour:
       min: 0.9
       max: 1.1
     m_senseDelay:
-      min: 0
-      max: 0
-  m_onSpawnSound: 
-  m_rotateToMouth: 0
+      min: 0.5
+      max: 1
+  m_edible:
+    m_rotateToMouth: 3
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
     m_dissolveTime: 1.5
     m_ashExceptions: []
+  m_onSpawnSound: 
+  m_rotateToMouth: 3
+  m_airMotion:
+    m_mass: 2.5
+    m_defaultUpVector: 0
+    m_orientationSpeed: 320
+    m_dragonStyleRotation: 0
+    m_faceDirection: 1
+    m_rollRotation: 1
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 0
+    m_faceUpAngle: 320
+    m_faceDownAngle: 40
 --- !u!114 &114831779209655764
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1425,6 +1425,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Goblin_Wick
   m_parentRoot: {fileID: 4800865497189160}
+  m_worldPositionStays: 1
 --- !u!135 &135483071828693612
 SphereCollider:
   m_ObjectHideFlags: 1

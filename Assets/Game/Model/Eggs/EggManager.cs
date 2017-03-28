@@ -297,7 +297,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 			// Grab a random one from the list and define it as active egg
 			// Don't enable egg during the first run
 			GameObject eggObj = null;
-			if(UsersManager.currentUser.gamesPlayed > 0) { 
+			if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) { 
 				eggObj = filteredEggs.GetRandomValue();
 				instance.m_collectibleEgg = eggObj.GetComponent<CollectibleEgg>();
 			}

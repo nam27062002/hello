@@ -10,21 +10,31 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 		_AlphaTex("Alpha", 2D) = "white" {}
 		_SpecularPower( "Specular power", float ) = 1
 		_NormalStrength("Normal Strength", float) = 3
-		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
-		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
+//		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
+//		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 		_Tint("Tint color (RGB)", Color) = (1, 1, 1, 0)
 		_WaveRadius("Wave Radius", float) = 1.5
 		_WavePhase("Wave phase", float) = 1.0
+		_AlphaMSKScale("Alpha mask scale", Range(0.5, 8.0)) = 3.0
+		_AlphaMSKOffset("Alpha mask offset", float) = 0.1
 		_StencilMask("Stencil Mask", int) = 10
 	}
 	SubShader
 	{
 		Pass
 		{
-			Tags{ "Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "Opaque" }
-//			ZWrite Off
+
+//			Tags{ "Queue" = "Transparent+20" "IgnoreProjector" = "True" "RenderType" = "GlowTransparent" }
+//			Blend SrcAlpha OneMinusSrcAlpha
+//			Cull off Lighting Off ZWrite off Fog{ Color(0,0,0,0) }
+//			ColorMask RGBA
+
+//			Tags{ "Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "Opaque" }
+			Tags{ "Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+			ZWrite on
+			Cull back
+			Lighting Off
 			Blend SrcAlpha OneMinusSrcAlpha
-			Cull off
 			ColorMask RGBA
 
 			Stencil
@@ -64,8 +74,6 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 			#endif
 
 			#define CUSTOM_ALPHA
-
-
 			#define CUSTOM_VERTEXPOSITION
 
 			uniform float _WaveRadius;
@@ -73,121 +81,28 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 
 			float4 getCustomVertexPosition(inout appdata_t v)
 			{
-				float4 normal = normalize(v.vertex);
-				float wvc = v.color.w;
-				float3 incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * (1.0 - v.color.x) * wvc;
-				float4 tvertex = v.vertex + float4(v.normal, 0.0) * ((incWave.x + incWave.y + incWave.z) * 0.33333);
+				float3 normal = v.vertex;
+				normal.y = 0.0f;
+				normal = normalize(normal);
+//				float wvc = (1.0 - v.color.x) * v.color.w;	//vc.a = Wave intensity ; 
+				float wvc = (1.0 - v.color.x);	//vc.a = Wave intensity ; 
+//				float3 incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * (1.0 - v.color.x) * wvc;
+				float incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * wvc;
+//				float4 tvertex = v.vertex + float4(normal.xyz, 0.0) * ((incWave.x + incWave.y + incWave.z) * 0.33333);
+				float4 tvertex = v.vertex + float4(normal, 0.0) * incWave;
 				return mul(UNITY_MATRIX_MVP, tvertex);
 			}
 
 			#define CUSTOM_TINT
 			float4 getCustomTint(float4 col, float4 tint, float4 vcolor)
 			{
-				return lerp(col, col * tint, vcolor.w);
+				float4 col2 = col * tint;
+//				col2.w = 0.0f;
+				return lerp(col, col2, vcolor.w);
 			}
 
 			#include "entities.cginc"
 
-//			#define BUMP
-/*
-			struct appdata
-			{
-				float4 vertex : POSITION;
-				float2 uv : TEXCOORD0;
-				float3 normal : NORMAL;
-				float4 tangent : TANGENT;
-			};
-
-			struct v2f
-			{
-				float2 uv : TEXCOORD0;
-				float4 vertex : SV_POSITION;
-				float3 vLight : TEXCOORD2;
-
-				float3 viewDir : VECTOR;
-//				float3 halfDir : VECTOR;
-		        float3 normalWorld : TEXCOORD4;
-				#ifdef BUMP
-				float3 tangentWorld : TANGENT;  
-		        float3 binormalWorld : TEXCOORD5;
-				#endif
-			};
-
-			uniform sampler2D _MainTex;
-			uniform float4 _MainTex_ST;
-			uniform float4 _MainTex_TexelSize;
-			uniform float _SpecularPower;
-			uniform float _BumpStrength;
-			uniform float _FresnelPower;
-			uniform float4 _FresnelColor;
-
-			v2f vert (appdata v)
-			{
-				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
-				float3 normal = UnityObjectToWorldNormal(v.normal);
-				o.vLight = ShadeSH9(float4(normal, 1.0));
-
-				// Half View - See: Blinn-Phong
-				float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
-//				float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
-//				o.halfDir = normalize(lightDirection + viewDirection);
-				o.viewDir = viewDirection;
-
-				// To calculate tangent world
-	            float4x4 modelMatrix = unity_ObjectToWorld;
-     			float4x4 modelMatrixInverse = unity_WorldToObject;
-				#ifdef BUMP
-	            o.tangentWorld = normalize( mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
-     			o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
-     			o.binormalWorld = normalize( cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
-				#else
-				o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
-				#endif
-
-				return o;
-			}
-
-			fixed4 frag (v2f i) : SV_Target
-			{
-				// sample the texture
-				fixed4 col = tex2D(_MainTex, i.uv);
-
-				#ifdef BUMP
-				// Calc normal from detail texture normal and tangent world
-				float heightSampleCenter = col.a;
-
-	            float heightSampleRight = tex2D(_MainTex, i.uv + float2(_MainTex_TexelSize.x, 0) ).a;
-
-	            float heightSampleUp = tex2D (_MainTex, i.uv + float2(0, _MainTex_TexelSize.y)).a;
-	     
-	            float sampleDeltaRight = heightSampleRight - heightSampleCenter;
-	            float sampleDeltaUp = heightSampleUp - heightSampleCenter;
-
-	            float3 encodedNormal = cross(float3(1, 0, sampleDeltaRight * _BumpStrength ),float3(0, 1, sampleDeltaUp * _BumpStrength));
-	            float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
-     			float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
-				#else
-				float3 normalDirection = i.normalWorld;
-				#endif
-
-     			fixed4 diffuse = max(0,dot( normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
-
-//     			fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
-//				fixed fresnel = pow(max(dot(normalDirection, i.viewDir), 0), _FresnelFactor);
-				fixed fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelPower), 0.0, 1.0);
-
-     			// col = (diffuse + fixed4(UNITY_LIGHTMODEL_AMBIENT.rgb,1)) * col + specular * _LightColor0;
-				col = (diffuse + fixed4(i.vLight, 1)) * col + (fresnel * _FresnelColor);
-//				col = (diffuse + fixed4(i.vLight, 1)) * col;
-//				col = lerp(col, _FresnelColor, fresnel * _FresnelColor.a * 4.0);
-
-				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-				return col;
-			}
-*/
 			ENDCG
 		}
 	}

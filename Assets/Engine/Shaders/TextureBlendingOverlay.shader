@@ -3,7 +3,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow" 
+Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Overlay" 
 {
 	Properties 
 	{
@@ -32,6 +32,8 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow"
 				#define FOG
 				#define BLEND_TEXTURE
 				#define COLOR_OVERLAY
+				#define OPAQUEALPHA
+
 //				#define DEBUG								
 				#include "scenary.cginc"
 
