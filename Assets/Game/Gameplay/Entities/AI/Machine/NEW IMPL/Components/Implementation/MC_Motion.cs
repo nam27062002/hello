@@ -267,9 +267,11 @@ namespace AI {
 
 		public void LateUpdate() {
 			if (m_state == State.Latching) {
-				m_latchBlending += Time.deltaTime;
-				Vector3 mouthOffset = (position - m_mouth.position);
-				position = Vector3.Lerp(position, m_pilot.target + mouthOffset, m_latchBlending);
+				if (m_machine.GetSignal(Signals.Type.Latching)) {
+					m_latchBlending += Time.deltaTime;
+					Vector3 mouthOffset = (m_machineTransform.position - m_mouth.position);
+					m_machineTransform.position = Vector3.Lerp(m_machineTransform.position, m_pilot.target + mouthOffset, m_latchBlending);
+				}
 			}
 		}
 
@@ -367,6 +369,9 @@ namespace AI {
 					break;
 
 				case State.Latching:
+					Stop();
+					m_rbody.isKinematic = false;
+					m_rbody.detectCollisions = true;	
 					m_latchBlending = 0f;
 					break;
 
@@ -396,6 +401,8 @@ namespace AI {
 					break;
 
 				case State.Latching:
+					m_rbody.isKinematic = true;
+					m_rbody.detectCollisions = false;
 					break;
 
 				case State.Locked:
