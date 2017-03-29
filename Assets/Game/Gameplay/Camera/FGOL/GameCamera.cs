@@ -1146,8 +1146,7 @@ public class GameCamera : MonoBehaviour
     private FastBounds2D[] m_bounds = new FastBounds2D[2];
     private float[] m_depth = new float[2];
 
-    void UpdateBounds()
-	{
+	void UpdateBounds() {
 		m_unityCamera.fieldOfView = m_fov;
 		
 		float z = -m_position.z;
@@ -1186,7 +1185,6 @@ public class GameCamera : MonoBehaviour
 			#endif
 		}
 
-
 		float expand = 0;
 
 		m_activationMinNear.Set( m_screenWorldBounds );
@@ -1215,54 +1213,41 @@ public class GameCamera : MonoBehaviour
 	// Going to try these non-static for now in case somehow we end up needing multiple cameras.  And when we inevitably don't, and are
 	// trying desperately to improve framerate at the end of the project, they can be put back to static.
 	// The same goes for having screenWorldBounds as a public static variable.
-	public bool IsPointOnScreen2D(Vector3 pos)
-	{
+	public bool IsPointOnScreen2D(Vector3 pos) {
 		return m_screenWorldBounds.Contains(ref pos);
 	}
-	public bool IsPointOnScreen2D(ref Vector3 pos)
-	{		
+
+	public bool IsPointOnScreen2D(ref Vector3 pos) {		
 		return m_screenWorldBounds.Contains(pos);
 	}
-	public bool IsPointOnScreen2D(float x, float y)
-	{
+
+	public bool IsPointOnScreen2D(float x, float y) {
 		return m_screenWorldBounds.Contains(x, y);
 	}
 
 
 	// Same tests from Dragon Camera
-	public bool IsInsideActivationMinArea(Vector3 _point) {		
-		_point.z = 0;
+	public bool IsInsideActivationMinArea(Vector3 _point) {
 		return m_activationMinNear.Contains(_point);
 	}
 
 	public bool IsInsideActivationMinArea(Bounds _bounds) {
-		Vector3 center = _bounds.center;
-		center.z = 0;
-		_bounds.center = center;
 		return m_activationMinNear.Intersects(_bounds);
 	}
 
 	public bool IsInsideActivationMaxArea(Vector3 _point) {
-		_point.z = 0;
 		return m_activationMaxNear.Contains(_point);
 	}
 
 	public bool IsInsideActivationMaxArea(Bounds _bounds) {
-		Vector3 center = _bounds.center;
-		center.z = 0;
-		_bounds.center = center;
 		return m_activationMaxNear.Intersects(_bounds);
 	}
 
-	public bool IsInsideActivationArea(Vector3 _point) {		
-		_point.z = 0;
+	public bool IsInsideActivationArea(Vector3 _point) {
 		return !m_activationMinNear.Contains(_point) && m_activationMaxNear.Contains(_point);
 	}
 
 	public bool IsInsideActivationArea(Bounds _bounds) {
-		Vector3 center = _bounds.center;
-		center.z = 0;
-		_bounds.center = center;
 		return !m_activationMinNear.Intersects(_bounds) && m_activationMaxNear.Intersects(_bounds);
 	}
 
@@ -1270,20 +1255,15 @@ public class GameCamera : MonoBehaviour
 		return m_backgroundWorldBounds.Contains(_point);
 	}
 
-	public bool IsInsideBackgroundActivationArea(Bounds _bounds) 
-	{
+	public bool IsInsideBackgroundActivationArea(Bounds _bounds) {
 		return m_backgroundWorldBounds.Intersects(_bounds);
 	}
 
-	public bool IsInsideDeactivationArea(Vector3 _point) {
-		_point.z = 0;
+	public bool IsInsideDeactivationArea(Vector3 _point) {		
 		return !m_deactivation.Contains(_point);
 	}
 
-	public bool IsInsideDeactivationArea(Bounds _bounds) {
-		Vector3 center = _bounds.center;
-		center.z = 0;
-		_bounds.center = center;
+	public bool IsInsideDeactivationArea(Bounds _bounds) {		
 		return !m_deactivation.Intersects(_bounds);
 	}
 
@@ -1295,26 +1275,17 @@ public class GameCamera : MonoBehaviour
 		return !m_backgroundWorldBounds.Intersects(_bounds);
 	}
 
-
-	public bool IsInsideFrustrum( Vector3 _point)
-	{
-		_point.z = 0;
+	public bool IsInsideFrustrum(Vector3 _point) {
 		return m_screenWorldBounds.Contains(_point);
 	}
 
-	public bool IsInsideFrustrum( Bounds _bounds)
-	{
-		Vector3 center = _bounds.center;
-		center.z = 0;
-		_bounds.center = center;
+	public bool IsInsideFrustrum(Bounds _bounds) {
 		return m_screenWorldBounds.Intersects(_bounds);
 	}
 
-    private bool HasBoss()
-    {
+    private bool HasBoss() {
         bool returnValue = m_haveBoss;
-        if (returnValue)
-        {
+        if (returnValue) {
             // Check if the feature is enabled
             returnValue = FeatureSettingsManager.instance.IsBossZoomOutEnabled;
         }
@@ -1322,18 +1293,11 @@ public class GameCamera : MonoBehaviour
         return returnValue;
     }
 
-
-
-
-
 	public void NotifySlowmoActivation(bool active, float frameWidthDecrement = 0f)
 	{
-		if(active)
-		{
+		if(active) {
 			m_frameWidthDecrement = frameWidthDecrement;
-		}
-		else
-		{
+		} else {
 			m_frameWidthDecrement = 0f;
 		}
 		m_hasSlowmo = active;
@@ -1343,15 +1307,13 @@ public class GameCamera : MonoBehaviour
     // Debug															//
     //------------------------------------------------------------------//
     void OnDrawGizmos() {
-		if (!Application.isPlaying) 
-		{
+		if (!Application.isPlaying) {
 			if (m_unityCamera == null )
 				m_unityCamera = GetComponent<Camera>();
 			UpdateBounds();
 		}
 
-		if ( enabled )
-		{
+		if (enabled) {
 			Vector3 center;
 			Vector3 size;
 
