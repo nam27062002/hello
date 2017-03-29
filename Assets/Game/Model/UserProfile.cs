@@ -317,9 +317,19 @@ public class UserProfile : UserSaveSystem
 	public void UnlockMap() {
 		// Reset timer to the start of the following day, in local time zone
 		// [AOC] Small trick to figure out the start of a day, from http://stackoverflow.com/questions/3362959/datetime-now-first-and-last-minutes-of-the-day
-		DateTime tomorrow = DateTime.Now.AddDays(1);	// Using local time zone to compute tomorrow's date
-		m_mapResetTimestamp = tomorrow.Date.ToUniversalTime();	// Work in UTC
-		//m_mapResetTimestamp = DateTime.Now.AddSeconds(30).ToUniversalTime();	// [AOC] Testing purposes
+		//DateTime tomorrow = DateTime.Now.AddDays(1);	// Using local time zone to compute tomorrow's date
+		//m_mapResetTimestamp = tomorrow.Date.ToUniversalTime();	// Work in UTC
+
+		// [AOC] Testing purposes
+		//m_mapResetTimestamp = DateTime.Now.AddSeconds(30).ToUniversalTime();
+
+		// [AOC] Fuck it! Easier implementation, fixed timer from the moment you unlock the map
+		DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+		if(gameSettingsDef != null) {
+			m_mapResetTimestamp = DateTime.UtcNow.AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
+		} else {
+			m_mapResetTimestamp = DateTime.UtcNow.AddHours(24);	// Default timer just in case
+		}
 		Messenger.Broadcast(GameEvents.PROFILE_MAP_UNLOCKED);
 	}
 
