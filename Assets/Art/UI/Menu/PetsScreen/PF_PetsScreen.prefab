@@ -5486,6 +5486,8 @@ GameObject:
   - component: {fileID: 114686870030277728}
   - component: {fileID: 114499117013145730}
   - component: {fileID: 114914718358370572}
+  - component: {fileID: 114762979417195482}
+  - component: {fileID: 95056193756684396}
   m_Layer: 5
   m_Name: InfoButton
   m_TagString: Untagged
@@ -5519,7 +5521,7 @@ Animator:
   m_GameObject: {fileID: 1000013495442844}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7792039d631e847e2803661befb86acb, type: 2}
+  m_Controller: {fileID: 22100000, guid: f956742a46b17447982cd55f5c8698a4, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5536,7 +5538,7 @@ Animator:
   m_GameObject: {fileID: 1000010529391996}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 04fde761d8968c54c99dfc298c63bbf2, type: 2}
+  m_Controller: {fileID: 22100000, guid: 7cd8bb118fa9f43739f98bfd803f383b, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5553,7 +5555,7 @@ Animator:
   m_GameObject: {fileID: 1000013678473386}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7792039d631e847e2803661befb86acb, type: 2}
+  m_Controller: {fileID: 22100000, guid: f956742a46b17447982cd55f5c8698a4, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5570,7 +5572,7 @@ Animator:
   m_GameObject: {fileID: 1000010096641868}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7792039d631e847e2803661befb86acb, type: 2}
+  m_Controller: {fileID: 22100000, guid: f956742a46b17447982cd55f5c8698a4, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5587,7 +5589,7 @@ Animator:
   m_GameObject: {fileID: 1000010819079646}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7792039d631e847e2803661befb86acb, type: 2}
+  m_Controller: {fileID: 22100000, guid: f956742a46b17447982cd55f5c8698a4, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5604,7 +5606,7 @@ Animator:
   m_GameObject: {fileID: 1000011876470568}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 04fde761d8968c54c99dfc298c63bbf2, type: 2}
+  m_Controller: {fileID: 22100000, guid: 1087ed1b273354bbcae3c2b697c6147e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5621,7 +5623,24 @@ Animator:
   m_GameObject: {fileID: 1000011861400280}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7792039d631e847e2803661befb86acb, type: 2}
+  m_Controller: {fileID: 22100000, guid: f956742a46b17447982cd55f5c8698a4, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+--- !u!95 &95056193756684396
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1992520411593328}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 22100000, guid: 1087ed1b273354bbcae3c2b697c6147e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5689,7 +5708,7 @@ Animator:
   m_GameObject: {fileID: 1768442641876284}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 04fde761d8968c54c99dfc298c63bbf2, type: 2}
+  m_Controller: {fileID: 22100000, guid: 1087ed1b273354bbcae3c2b697c6147e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5866,6 +5885,7 @@ MonoBehaviour:
   m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -6940,6 +6960,7 @@ MonoBehaviour:
   m_tweenValue: 300
   m_tweenEase: 9
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -7148,6 +7169,7 @@ MonoBehaviour:
   m_tweenValue: 1
   m_tweenEase: 27
   m_tweenDelay: 0
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -7971,6 +7993,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -8015,6 +8038,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.5
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -8178,6 +8202,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.5
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -8385,6 +8410,7 @@ MonoBehaviour:
   m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0.25
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -8429,6 +8455,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -9075,6 +9102,7 @@ MonoBehaviour:
   m_tweenValue: 1.5
   m_tweenEase: 27
   m_tweenDelay: 0
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -9310,6 +9338,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -9452,6 +9481,7 @@ MonoBehaviour:
   m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0.25
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -9807,6 +9837,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -10635,6 +10666,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -10924,6 +10956,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 6
   m_tweenDelay: 0
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -10968,6 +11001,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -11039,6 +11073,7 @@ MonoBehaviour:
   m_tweenValue: 200
   m_tweenEase: 27
   m_tweenDelay: 0
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -11204,6 +11239,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.5
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -11722,6 +11758,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 6
   m_tweenDelay: 0
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -11766,6 +11803,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -11810,6 +11848,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -12132,6 +12171,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 6
   m_tweenDelay: 0
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -12270,6 +12310,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.5
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -12448,6 +12489,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 6
   m_tweenDelay: 0
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -12816,6 +12858,7 @@ MonoBehaviour:
   m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -12994,6 +13037,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.5
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -13640,6 +13684,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 6
   m_tweenDelay: 0
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -13840,6 +13885,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -14265,6 +14311,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -15521,6 +15568,7 @@ MonoBehaviour:
   m_tweenValue: 1.5
   m_tweenEase: 27
   m_tweenDelay: 0
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -15619,6 +15667,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -15664,7 +15713,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -15715,6 +15764,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -15960,6 +16010,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 6
   m_tweenDelay: 0
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -16062,6 +16113,7 @@ MonoBehaviour:
   m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0.25
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -16106,6 +16158,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.5
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -16240,6 +16293,7 @@ MonoBehaviour:
   m_tweenValue: 1.5
   m_tweenEase: 27
   m_tweenDelay: 0
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -16311,6 +16365,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.5
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -16559,6 +16614,23 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114762979417195482
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1992520411593328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorMultiply: {r: 1, g: 1, b: 1, a: 1}
+  colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  alpha: 1
+  brightness: 0
+  saturation: 0
+  contrast: 0
 --- !u!114 &114766178442220256
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -16588,6 +16660,7 @@ MonoBehaviour:
   m_tweenValue: 1.5
   m_tweenEase: 27
   m_tweenDelay: 0
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -16730,6 +16803,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.5
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -17076,6 +17150,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.5
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -17622,6 +17697,7 @@ MonoBehaviour:
   m_tweenValue: 200
   m_tweenEase: 27
   m_tweenDelay: 0
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -17752,6 +17828,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -17841,6 +17918,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.5
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -18399,6 +18477,7 @@ MonoBehaviour:
   m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0.25
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -18983,6 +19062,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -19027,6 +19107,7 @@ MonoBehaviour:
   m_tweenValue: 0
   m_tweenEase: 27
   m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -19120,6 +19201,7 @@ MonoBehaviour:
   m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0.25
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -19276,6 +19358,7 @@ MonoBehaviour:
   m_tweenValue: 1.5
   m_tweenEase: 27
   m_tweenDelay: 0
+  m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
@@ -53072,7 +53155,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 220}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224123062516810696
 RectTransform:
@@ -54556,7 +54639,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 220}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224418364691304288
 RectTransform:
@@ -55245,10 +55328,10 @@ RectTransform:
   m_Father: {fileID: 224456192359145342}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 125, y: -559.5}
-  m_SizeDelta: {x: 220, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224524353682010532
 RectTransform:
@@ -57064,10 +57147,10 @@ RectTransform:
   m_Father: {fileID: 224456192359145342}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 125, y: -186.5}
-  m_SizeDelta: {x: 220, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224838915545647406
 RectTransform:
