@@ -300,6 +300,7 @@ public class ProfilerControlPanelController : MonoBehaviour
     private enum ECheckpoint
     {
 		StartingPoint,
+        FloatingRock,
 		WoodsCabins,
 		WoodsLeaves,
         Castle,
@@ -312,7 +313,8 @@ public class ProfilerControlPanelController : MonoBehaviour
     private Vector3[] m_checkpointsPositions = new Vector3[]
     {
 		new Vector3(-180, 119, 0f),
-		new Vector3(137, 51, 0f),
+        new Vector3(-174, 75, 0f),
+        new Vector3(137, 51, 0f),
 		new Vector3(280, 42, 0f),
         new Vector3(598, -3, 0f),
         new Vector3(598, -46, 0f),
