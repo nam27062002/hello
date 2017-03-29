@@ -56,6 +56,23 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         }        
     }
 
+	[SerializeField] private TextMeshProUGUI m_memoryLabel;
+	public static TextMeshProUGUI memoryLabel {
+		get { return instance.m_memoryLabel; }
+	}
+	private bool m_showMemoryUsage;
+    public bool ShowMemoryUsage {
+        get {
+			return m_showMemoryUsage;
+        }
+
+        set {
+			m_showMemoryUsage = value;
+            // Activate labels to show memory usage
+			m_memoryLabel.gameObject.SetActive(true);
+        }        
+    }
+
     [SerializeField]
     private TextMeshProUGUI m_entitiesCounter;
 
@@ -134,6 +151,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		for( int i = 0; i<m_NumDeltaTimes; i++ )
 			m_DeltaTimes[i] = initValue;
 	}
+
 
 	protected void Update()
 	{

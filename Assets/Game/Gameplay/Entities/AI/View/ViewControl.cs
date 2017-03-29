@@ -360,7 +360,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		RemoveAudios();
     }
 
-    public void PreDisable() {
+    public virtual void PreDisable() {
 		if (m_pcTrail != null) {
 			ParticleManager.ReturnInstance(m_pcTrail);
 			m_pcTrail = null;
