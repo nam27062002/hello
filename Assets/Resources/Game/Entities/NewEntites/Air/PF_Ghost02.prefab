@@ -76,7 +76,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1886297939477500}
   m_LocalRotation: {x: 0.00000003090862, y: -0.7071068, z: -0.7071068, w: -0.00000003090862}
-  m_LocalPosition: {x: 0.019999996, y: 0.78, z: -0.18}
+  m_LocalPosition: {x: 0.019999996, y: 0.62, z: -0.18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4817761504735950}
@@ -102,7 +102,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1590119342891000}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: 1, y: 0, z: 0}
+  m_LocalPosition: {x: -1.23, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4571006164382760}
@@ -206,7 +206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_affectedByDragonTrample: 0
-  m_enableSensor: 1
+  m_enableSensor: 0
   m_sensor:
     m_senseFire: 1
     m_sightRadius: 14
@@ -228,8 +228,7 @@ MonoBehaviour:
     m_ashesAsset: 
     m_burningTime: 0
     m_dissolveTime: 1.5
-    m_ashExceptions:
-    - {fileID: 0}
+    m_ashExceptions: []
   m_onSpawnSound: 
   m_airMotion:
     m_mass: 20
@@ -239,8 +238,8 @@ MonoBehaviour:
     m_faceDirection: 0
     m_rollRotation: 0
     m_limitHorizontalRotation: 1
-    m_faceLeftAngle: -45
-    m_faceRightAngle: 45
+    m_faceLeftAngle: -65
+    m_faceRightAngle: 65
     m_limitVerticalRotation: 0
     m_faceUpAngle: 340
     m_faceDownAngle: 20
@@ -414,7 +413,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 824071172
+  randomSeed: -1124816426
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -587,7 +586,7 @@ ParticleSystem:
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.40392157, b: 0.40392157, a: 1}
+      maxColor: {r: 1, g: 0.41568628, b: 0.40392157, a: 1}
       minMaxState: 0
     startSize:
       scalar: 2.35
@@ -828,7 +827,7 @@ ParticleSystem:
     size3D: 0
     rotation3D: 0
     gravityModifier:
-      scalar: 0.2
+      scalar: 0.17
       maxCurve:
         serializedVersion: 2
         m_Curve:
