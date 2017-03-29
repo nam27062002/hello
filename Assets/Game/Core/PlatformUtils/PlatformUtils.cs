@@ -42,4 +42,12 @@ public abstract class PlatformUtils
 	
 	// Replaces Social.ReportProgress in iOS because it doesn't work 
 	public virtual void ReportProgress( string achievementId, double progress) {}
+
+	// Returns current memory usage in MB
+	public virtual ulong getResidentMemory(){return 0;}
+	// Returns max memory usage in MB
+	public virtual ulong getMaxResidentMemory(){return 0;}
+
+
+	public virtual string[] GetCommandLineArgs(){ return System.Environment.GetCommandLineArgs(); }
 }

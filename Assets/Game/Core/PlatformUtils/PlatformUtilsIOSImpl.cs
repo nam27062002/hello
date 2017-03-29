@@ -141,6 +141,45 @@ public class PlatformUtilsIOSImpl : PlatformUtils
 			IOsReportAchievement( achievementId, progress );
 		}
 	}
+
+
+	[DllImport ("__Internal")] private static extern ulong IOsGetResidentMemory();
+	public override ulong getResidentMemory()
+	{
+		if ( Application.platform == RuntimePlatform.IPhonePlayer )
+		{
+			return IOsGetResidentMemory();
+		}
+
+		return 0;
+	}
+
+	[DllImport ("__Internal")] private static extern ulong IOsGetMaxResidentMemory();
+	public override ulong getMaxResidentMemory()
+	{
+		if ( Application.platform == RuntimePlatform.IPhonePlayer )
+		{
+			return IOsGetMaxResidentMemory();
+		}
+
+		return 0;
+	}
+
+	static string[] s_localParams = null;
+	[DllImport ("__Internal")] private static extern string IOsGetCommandLineArgs();
+	public override string[] GetCommandLineArgs()
+	{
+		if ( Application.platform == RuntimePlatform.IPhonePlayer )
+		{
+			if ( s_localParams == null )
+			{
+				string _params = IOsGetCommandLineArgs();
+				s_localParams = _params.Split('#');
+			}
+			return s_localParams;
+		}
+		return System.Environment.GetCommandLineArgs();
+	}
 	
 }
 #endif
