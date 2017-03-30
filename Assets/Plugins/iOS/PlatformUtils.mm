@@ -201,7 +201,7 @@ extern "C"
         std::string ret = "";
         for (NSString* element in arguments)
         {
-            ret += element.UTF8String + "#";
+            ret += std::string(element.UTF8String) + "#";
         }
         return stringCopy( ret.c_str() );
     }

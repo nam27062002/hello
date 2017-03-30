@@ -59,7 +59,6 @@ public class FogArea : MonoBehaviour
 	{
 		if ( m_attributes.texture == null )
 		{
-			// m_attributes.CreateTexture();
 			if (m_fogManager == null )
 			{
 				m_fogManager = FindObjectOfType<FogManager>();
@@ -67,6 +66,10 @@ public class FogArea : MonoBehaviour
 			if ( m_fogManager != null )
 			{
 				m_fogManager.CheckTextureAvailability( m_attributes, true);
+			}
+			else
+			{
+				m_attributes.CreateTexture();	
 			}
 		}
 			

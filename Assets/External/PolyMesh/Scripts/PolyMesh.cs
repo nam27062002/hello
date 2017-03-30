@@ -351,13 +351,8 @@ public class PolyMesh : MonoBehaviour {
 		;
 		
 		//Update collider after the mesh is updated
-        if (meshCollider != null)
-        {
-            meshCollider.sharedMesh = null;
-            meshCollider.sharedMesh = mesh;
-        }
-        //		UpdateCollider(points, triangles);
-    }
+		UpdateCollider(points, triangles);
+	}
 
 	/// <summary>
 	/// Updates the collider.
