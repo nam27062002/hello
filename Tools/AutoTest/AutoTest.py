@@ -46,7 +46,7 @@ tree.write( scheme_file )
 # Build call
 xcode_build_call = "xcodebuild clean install -alltargets -project " + xcode_folder + "/Unity-iPhone.xcodeproj" + " -destination 'platform=iOS,id=" + device_id + "'"
 print xcode_build_call
-os.system( xcode_build_call )
+# os.system( xcode_build_call )
 
 # Test call
 xcode_test_call = "xcodebuild test -project " + xcode_folder + "/Unity-iPhone.xcodeproj" + " -scheme Unity-iPhone -destination 'platform=iOS,id=" + device_id + "'"
