@@ -51,6 +51,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SerializeField] private string m_animB = "";
 	[SerializeField] private string m_animC = "";
 
+	[SeparatorAttribute("Jump")]
+	[SerializeField] private ParticleData m_jumpImpulseData;
+	[SerializeField] private ParticleData m_jumpFallLinesData;
+	[SerializeField] private ParticleData m_jumpGroundDustData;
+
 	[SeparatorAttribute("Exclamation Mark")]
 	[SerializeField] private Transform m_exclamationTransform;
 
@@ -192,6 +197,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/", 3, true);
 		}
 
+		if (m_jumpImpulseData.IsValid()) 	ParticleManager.CreatePool(m_jumpImpulseData);
+		if (m_jumpFallLinesData.IsValid()) 	ParticleManager.CreatePool(m_jumpFallLinesData);
+		if (m_jumpGroundDustData.IsValid())	ParticleManager.CreatePool(m_jumpGroundDustData);
+
 		m_isExclamationMarkOn = false;
 		if (m_exclamationTransform != null) {
 			PoolManager.CreatePool("PF_ExclamationMark", "Game/Entities/", 3, true);
@@ -209,8 +218,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			ParticleManager.CreatePool(m_onEatenParticle.name, m_onEatenParticle.path);
 		}
 
-		if ( m_onEatenParticle.name.ToLower().Contains("blood") )
-		{
+		if (m_onEatenParticle.name.ToLower().Contains("blood")) {
 			m_useFrozenParticle = true;
 			// only create if on eaten particle is blood
 			if ( !m_onEatenFrozenParticle.IsValid())
@@ -696,6 +704,27 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			m_jumping = _jumping;
 			m_animator.speed = 1f;
 			m_animator.SetBool("jump", _jumping);
+		}
+	}
+
+	public virtual void OnJumpImpulse(Vector3 _pos) {
+		if (m_jumpImpulseData.IsValid()) {
+			ParticleManager.Spawn(m_jumpImpulseData, _pos);
+		}
+	}
+
+	public void OnJumpFallDown(Vector3 _pos) {
+		if (m_jumpFallLinesData.IsValid()) {
+			GameObject ps = ParticleManager.Spawn(m_jumpFallLinesData, _pos);
+			if (ps != null) {
+				ps.transform.parent = transform;
+			}
+		}
+	}
+
+	public void OnJumpHitGround(Vector3 _pos) {
+		if (m_jumpGroundDustData.IsValid()) {
+			ParticleManager.Spawn(m_jumpGroundDustData, _pos);
 		}
 	}
 		
