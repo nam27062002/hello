@@ -14,10 +14,10 @@ project_file = xcode_folder + "/Unity-iPhone.xcodeproj/project.pbxproj"
 # SIGNING TO MANUAL
 # Read in the file
 with open(project_file, 'r') as file :
-  filedata = file.read()
+  original_project_file = file.read()
 # Replace the target string
 # filedata = filedata.replace('ProvisioningStyle = Automatic;', 'ProvisioningStyle = Manual;')
-filedata = filedata.replace('DEVELOPMENT_TEAM = "";', 'DEVELOPMENT_TEAM = '+team_id+';')
+filedata = original_project_file.replace('DEVELOPMENT_TEAM = "";', 'DEVELOPMENT_TEAM = '+team_id+';')
 # Write the file out again
 with open(project_file, 'w') as file:
   file.write(filedata)
@@ -44,9 +44,9 @@ tree.write( scheme_file )
 # dev_team_attribute = " DEVELOPMENT_TEAM=" + team
 
 # Build call
-xcode_build_call = "xcodebuild clean install -alltargets -project " + xcode_folder + "/Unity-iPhone.xcodeproj" + " -destination 'platform=iOS,id=" + device_id + "'"
-print xcode_build_call
-os.system( xcode_build_call )
+# xcode_build_call = "xcodebuild clean install -alltargets -project " + xcode_folder + "/Unity-iPhone.xcodeproj" + " -destination 'platform=iOS,id=" + device_id + "'"
+# print xcode_build_call
+# os.system( xcode_build_call )
 
 # Test call
 xcode_test_call = "xcodebuild test -project " + xcode_folder + "/Unity-iPhone.xcodeproj" + " -scheme Unity-iPhone -destination 'platform=iOS,id=" + device_id + "'"
@@ -58,12 +58,5 @@ arguments.remove(test_argument)
 tree.write( scheme_file )
 
 # REVER SINGING STYLE
-# Read in the file
-with open(project_file, 'r') as file :
-  filedata = file.read()
-# Replace the target string
-# filedata = filedata.replace('ProvisioningStyle = Manual;', 'ProvisioningStyle = Automatic;')
-filedata = filedata.replace('DEVELOPMENT_TEAM = Y3J3C97LQ8;', 'DEVELOPMENT_TEAM = "";')
-# Write the file out again
 with open(project_file, 'w') as file:
-  file.write(filedata)
+  file.write(original_project_file)

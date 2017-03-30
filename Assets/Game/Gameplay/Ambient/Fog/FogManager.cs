@@ -75,6 +75,7 @@ public class FogManager : MonoBehaviour
 
 	// For Area Mode
 	public FogAttributes m_defaultAreaFog;
+	public float m_transitionDuration = 1.0f;
 
 	// Runtime variables
 	List<FogAttributes> m_generatedAttributes = new List<FogAttributes>();
@@ -234,7 +235,7 @@ public class FogManager : MonoBehaviour
 				if (m_lastSelectedAttributes != m_selectedAttributes)
 				{
 					m_lastSelectedAttributes = m_selectedAttributes;
-					m_transitionTimer = 1.0f;
+					m_transitionTimer = m_transitionDuration;
 
 					// Copy destination render texture to original texture
 					m_updateBlitOriginTexture = true;
@@ -276,7 +277,7 @@ public class FogManager : MonoBehaviour
 				}
 				else
 				{
-					float delta = 1.0f - m_transitionTimer;
+					float delta = 1.0f - (m_transitionTimer / m_transitionDuration);
 					m_start = Mathf.Lerp( m_tmpStart, m_selectedAttributes.m_fogStart, delta);
 					m_end = Mathf.Lerp( m_tmpEnd, m_selectedAttributes.m_fogEnd, delta);
 					for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )

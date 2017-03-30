@@ -509,6 +509,35 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
         if (m_spanwersData != null) {
             m_spanwersData.Clear();
         }             
+    }   
+
+    private void ForceResetSpawners() {
+        if (m_spawners != null) {
+            int count = m_spawners.Count;
+            for (int i = 0; i < count; i++) {
+                m_spawners[i].ForceReset();
+            }
+        }
+
+        if (m_spawning != null) {
+            m_spawning.Clear();
+        }
+
+        if (m_spanwersData != null) {
+            m_spanwersData.Clear();
+        }
+    }
+
+    public void ForceRespawn() {
+        ForceResetSpawners();
+
+        if (m_spawners != null) {
+            int count = m_spawners.Count;
+            for (int i = 0; i < count; i++)
+            {
+                m_spawning.Add(m_spawners[i]);               
+            }            
+        }                       
     }
 
 #region debug
