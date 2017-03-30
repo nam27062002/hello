@@ -142,7 +142,6 @@ namespace AI {
 		protected override void ExtendedUpdateFreeFall() {
 			GetGroundNormal(0.3f);
 			if (m_onGround) {
-				m_viewControl.OnJumpHitGround(position);
 				m_machine.SetSignal(Signals.Type.FallDown, false);
 				m_nextSubState = SubState.Idle;
 			}
@@ -230,11 +229,9 @@ namespace AI {
 					break;
 
 				case SubState.Jump_Up:
-					m_viewControl.OnJumpImpulse(position);
 					break;
 
 				case SubState.Jump_Down:
-					m_viewControl.OnJumpFallDown(position);
 					break;
 			}
 
