@@ -99,8 +99,12 @@ public class DragonPlayer : MonoBehaviour {
 
 
 	// Interaction
+	private bool m_playable = true;
 	public bool playable {
 		set {
+			// Store new value
+			m_playable = value;
+
 			// Enable/disable all the components that make the dragon playable
 			// Add as many as needed
 			GetComponent<DragonControlPlayer>().enabled = value;	// Move around
@@ -108,6 +112,8 @@ public class DragonPlayer : MonoBehaviour {
 			GetComponent<DragonHealthBehaviour>().enabled = value;	// Receive damage
 			GetComponent<DragonBoostBehaviour>().enabled = value;	// Boost
 		}
+
+		get { return m_playable; }
 	}
 
 	// References

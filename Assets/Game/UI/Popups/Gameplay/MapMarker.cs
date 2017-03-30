@@ -111,7 +111,10 @@ public class MapMarker : MonoBehaviour {
 			case Type.CHEST:
 			case Type.EGG:
 			case Type.LETTER: {
-				this.gameObject.SetActive(showMarker && UsersManager.currentUser.mapUnlocked);
+				// [AOC] If the map timer runs out during the game, we let the player enjoy the unlocked map for the whole run
+				//       That's why we check the GameSceneController rather than the user profile
+				Debug.Log(this.name + " (" + m_type + "): " + showMarker + ", " + InstanceManager.gameSceneControllerBase.mapUnlocked);
+				this.gameObject.SetActive(showMarker && InstanceManager.gameSceneControllerBase.mapUnlocked);
 			} break;
 		}
 
@@ -165,8 +168,8 @@ public class MapMarker : MonoBehaviour {
 	/// </summary>
 	/// <param name="_popup">The popup that has just been opened.</param>
 	private void OnPopupOpened(PopupController _popup) {
-		// If it's the pause popup, refresh marker
-		if(_popup.GetComponent<PopupPause>() != null) {
+		// If it's the map/pause popup, refresh marker
+		if(_popup.GetComponent<PopupMap>() != null || _popup.GetComponent<PopupPause>() != null) {
 			UpdateMarker();
 		}
 	}

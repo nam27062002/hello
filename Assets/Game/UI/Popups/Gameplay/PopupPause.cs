@@ -18,8 +18,8 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// Temp popup to show active missions during the game.
 /// </summary>
-[RequireComponent(typeof(PopupController))]
-public class PopupPause : MonoBehaviour {
+
+public class PopupPause : PopupPauseBase {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -48,29 +48,12 @@ public class PopupPause : MonoBehaviour {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-		// This popup won't be destroyed during the whole game, but we want to destroy it upon game ending
-		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnd);
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-		// Unsubscribe to external events
-		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnd);
-	}
-
-	/// <summary>
 	/// Go to a specific tab in the popup.
 	/// </summary>
 	/// <param name="_tab">Target tab.</param>
 	public void GoToTab(Tabs _tab) {
 		// Is the popup open?
-		PopupController popup = GetComponent<PopupController>();
-		if(popup.isOpen) {
+		if(m_popup.isOpen) {
 			// Go to target screen
 			tabs.GoToScreen((int)_tab);
 		} else {
@@ -88,12 +71,9 @@ public class PopupPause : MonoBehaviour {
 	/// <summary>
 	/// Open animation is about to start.
 	/// </summary>
-	public void OnOpenPreAnimation() {
-		// Pause the game
-		GameSceneController gameController = InstanceManager.gameSceneController;
-		if(gameController != null) {
-			gameController.PauseGame(true);
-		}
+	override public void OnOpenPreAnimation() {
+		// Call parent
+		base.OnOpenPreAnimation();
 
 		// Hide the tabs during the first run (tutorial)
 		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN) && SceneManager.GetActiveScene().name != "SC_Popups") {
@@ -115,23 +95,5 @@ public class PopupPause : MonoBehaviour {
 		for(int i = 0; i < tabs.m_tabButtons.Count; i++) {
 			tabs.m_tabButtons[i].gameObject.SetActive(false);
 		}
-	}
-
-	/// <summary>
-	/// Close animation has finished.
-	/// </summary>
-	public void OnClosePostAnimation() {
-		// Resume game
-		if(InstanceManager.gameSceneController != null) {
-			InstanceManager.gameSceneController.PauseGame(false);
-		}
-	}
-
-	/// <summary>
-	/// The game has eneded.
-	/// </summary>
-	private void OnGameEnd() {
-		// Destroy this popup
-		GameObject.Destroy(this.gameObject);
 	}
 }
