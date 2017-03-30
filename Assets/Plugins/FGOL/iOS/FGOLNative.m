@@ -486,6 +486,20 @@ int _GetMemoryUsage()
         return -1;
 }
 
+// Get user memory
+int _GetMaxMemoryUsage()
+{
+    struct task_basic_info info;
+    mach_msg_type_number_t size = sizeof(info);
+    kern_return_t kerr = task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t) &info, &size);
+    
+    if(kerr == KERN_SUCCESS)
+        return (int) info.resident_size_max;
+    else
+        return -1;
+}
+
+
 long _GetMaxDeviceMemory()
 {
     long long total = [NSProcessInfo processInfo].physicalMemory;

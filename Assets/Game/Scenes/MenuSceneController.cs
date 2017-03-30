@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using DG.Tweening;
+using System.Collections;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -118,6 +119,18 @@ public class MenuSceneController : SceneController {
 			m_fogSetup.RefreshTexture();
 		}
 		m_fogSetup.FogSetup();
+	}
+
+	protected IEnumerator Start()
+	{
+		yield return new WaitForSeconds(5.0f);
+		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
+		{
+			// Select dragon classic and go to play
+			OnDragonSelected("dragon_classic");
+			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INVULNERABLE, true);
+			OnPlayButton();
+		}
 	}
 
 	protected override void OnDestroy() {

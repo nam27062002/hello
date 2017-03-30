@@ -83,13 +83,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     protected void Start()
     {
 
-		if ( HasArg("-start_test") )
+		// if ( HasArg("-start_test") )
 		{	
 			// Start Testing game!
 			// ControlPanel.instance.ShowMemoryUsage = true;
 				// Tell control panel to show memory
 			m_appMode = Mode.TEST;
-			Debug.Log("START_TEST!!!!!!!!!!!!!!!!!!!!");
 		}
 
         StartCoroutine(Device_Update());
@@ -97,12 +96,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
 	private bool HasArg(string _argName) 
 	{
-		Debug.TaggedLog("TEST", "Command Line Args");
 		string[] args = PlatformUtils.Instance.GetCommandLineArgs();
 		if ( args != null )
 		{
 			for(int i = 0; i < args.Length; i++) {
-				Debug.TaggedLog("TEST", args[i]);
 				if(args[i] == _argName) {
 					return true;
 				}

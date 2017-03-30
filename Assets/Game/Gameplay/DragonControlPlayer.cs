@@ -8,12 +8,25 @@ public class DragonControlPlayer : DragonControl {
     JoystickControls    joystickControls = null;
     bool joystickMoving = false;
 
+	private Assets.Code.Game.Spline.BezierSpline m_followingSpline;
+
     // Use this for initialization
     void Start () {
 		GameObject gameInputObj = GameObject.Find("PF_GameInput");
 		if(gameInputObj != null) {
 			touchControls = gameInputObj.GetComponent<TouchControlsDPad>();
             joystickControls = gameInputObj.GetComponent<JoystickControls>();
+        }
+
+        if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
+        {
+        	// Search path
+			// m_followingSpline = ;
+			GameObject go = GameObject.Find("TestPath");
+			if (go != null)
+			{
+				m_followingSpline = go.GetComponent<Assets.Code.Game.Spline.BezierSpline>();
+			}
         }
 	}
 
@@ -40,6 +53,12 @@ public class DragonControlPlayer : DragonControl {
 	
 	// Update is called once per frame
 	void Update () {
+		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST && m_followingSpline != null)
+		{
+			moving = true;
+			action = true;
+			return;
+		}
         // Update touch controller
         if (touchControls != null) {
 			touchControls.UpdateTouchControls();
@@ -59,6 +78,20 @@ public class DragonControlPlayer : DragonControl {
     }
 
 	override public Vector3 GetImpulse(float desiredVelocity){
+
+		// if app mode is test -> input something else?
+		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST && m_followingSpline != null)
+		{
+			float m_followingClosestT;
+			int m_followingClosestStep;
+			m_followingSpline.GetClosestPointToPoint( transform.position, 100, out m_followingClosestT, out m_followingClosestStep);
+			m_followingClosestT += 0.01f;
+			Vector3 target = m_followingSpline.GetPoint( m_followingClosestT );
+			target.z = 0;
+			Vector3 move = target - transform.position;
+			return move.normalized * desiredVelocity;
+		}	
+
 #if UNITY_EDITOR
         if (joystickControls != null && joystickMoving)
         {

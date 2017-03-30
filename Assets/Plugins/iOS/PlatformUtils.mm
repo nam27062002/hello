@@ -152,35 +152,6 @@ extern "C"
         }
     }
     
-    unsigned long IOsGetResidentMemory()
-    {
-        struct mach_task_basic_info info;
-        mach_msg_type_number_t size = MACH_TASK_BASIC_INFO_COUNT;
-        kern_return_t kerr = task_info(mach_task_self(),
-                                       MACH_TASK_BASIC_INFO,
-                                       (task_info_t)&info,
-                                       &size);
-        
-        if( kerr == KERN_SUCCESS ) {
-            return  info.resident_size / 1048576;
-        }
-        return 0;
-    }
-    
-    unsigned long IOsGetMaxResidentMemory()
-    {
-        struct mach_task_basic_info info;
-        mach_msg_type_number_t size = MACH_TASK_BASIC_INFO_COUNT;
-        kern_return_t kerr = task_info(mach_task_self(),
-                                       MACH_TASK_BASIC_INFO,
-                                       (task_info_t)&info,
-                                       &size);
-        
-        if( kerr == KERN_SUCCESS ) {
-            return  info.resident_size_max / 1048576;
-        }
-        return 0;
-    }
     
     
     unsigned long IOsFreeMemory()
