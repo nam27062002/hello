@@ -128,7 +128,6 @@ public class MenuSceneController : SceneController {
 		{
 			// Select dragon classic and go to play
 			OnDragonSelected("dragon_classic");
-			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INVULNERABLE, true);
 			OnPlayButton();
 		}
 	}

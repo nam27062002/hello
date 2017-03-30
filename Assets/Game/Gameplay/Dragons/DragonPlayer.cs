@@ -219,6 +219,12 @@ public class DragonPlayer : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+
+		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
+		{
+			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INVULNERABLE, true);
+			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INFINITE_BOOST, true);
+		}
 	}
 
 	void OnDestroy()

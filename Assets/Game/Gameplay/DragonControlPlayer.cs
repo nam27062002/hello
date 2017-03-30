@@ -9,6 +9,7 @@ public class DragonControlPlayer : DragonControl {
     bool joystickMoving = false;
 
 	private Assets.Code.Game.Spline.BezierSpline m_followingSpline;
+	private int m_testDirecton = 1;
 
     // Use this for initialization
     void Start () {
@@ -85,7 +86,14 @@ public class DragonControlPlayer : DragonControl {
 			float m_followingClosestT;
 			int m_followingClosestStep;
 			m_followingSpline.GetClosestPointToPoint( transform.position, 100, out m_followingClosestT, out m_followingClosestStep);
-			m_followingClosestT += 0.01f;
+			if ( (m_followingClosestT >= 1.0f && m_testDirecton > 0) || (m_followingClosestT <= 0f && m_testDirecton < 0))
+			{
+				// What to do?
+				m_testDirecton *= -1;
+			}
+
+			m_followingClosestT += 0.01f * m_testDirecton;
+
 			Vector3 target = m_followingSpline.GetPoint( m_followingClosestT );
 			target.z = 0;
 			Vector3 move = target - transform.position;
