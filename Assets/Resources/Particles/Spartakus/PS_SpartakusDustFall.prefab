@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4820813930817792}
   - component: {fileID: 198965099853797044}
   - component: {fileID: 199549090141543242}
+  - component: {fileID: 114117895065755182}
   m_Layer: 0
   m_Name: PS_SpartakusDustFall
   m_TagString: Untagged
@@ -35,12 +36,26 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1533237772226816}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 56.03888, y: -20.006285, z: 0}
   m_LocalScale: {x: 0.7407408, y: 0.7407411, z: 0.7407411}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114117895065755182
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1533237772226816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activeTime: 1
+  m_returnTo: 1
+  m_disableOnInvisible: 1
 --- !u!198 &198965099853797044
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -96,7 +111,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1686953298
+  randomSeed: 224810777
   InitialModule:
     serializedVersion: 3
     enabled: 1

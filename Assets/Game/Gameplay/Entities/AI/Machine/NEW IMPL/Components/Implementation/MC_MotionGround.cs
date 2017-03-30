@@ -41,7 +41,7 @@ namespace AI {
 		protected override void ExtendedInit() {
 			m_onGround = false;
 
-			GetGroundNormal();
+			GetGroundNormal(0.3f);
 			RaycastHit hit;
 			bool hasHit = Physics.Raycast(position + m_upVector * 0.1f, -m_groundNormal, out hit, 5f, GROUND_MASK);
 			if (hasHit) {
@@ -69,7 +69,7 @@ namespace AI {
 
 			switch (m_subState) {
 				case SubState.Idle:
-					GetGroundNormal();
+					GetGroundNormal(1f);
 					if (!m_onGround) {
 						FreeFall();
 					} else if (m_pilot.IsActionPressed(Pilot.Action.Jump)) {
@@ -80,7 +80,7 @@ namespace AI {
 					break;
 
 				case SubState.Move:
-					GetGroundNormal();
+					GetGroundNormal(1f);
 					if (!m_onGround) {
 						FreeFall();
 					} else if (m_pilot.IsActionPressed(Pilot.Action.Jump)) {
@@ -100,7 +100,7 @@ namespace AI {
 					break;
 
 				case SubState.Jump_Down:
-					GetGroundNormal();
+					GetGroundNormal(0.3f);
 					if (m_onGround) {
 						m_pilot.ReleaseAction(Pilot.Action.Jump);
 						m_nextSubState = SubState.Idle;
@@ -117,7 +117,7 @@ namespace AI {
 				m_velocity += gv;
 				m_rbody.velocity = m_velocity;
 			} else {
-				if (m_groundDirection.y < 0f) {
+				if (m_groundDirection.y < -0.25f) {
 					gv *= 15f;
 				}
 
@@ -140,8 +140,9 @@ namespace AI {
 		}
 
 		protected override void ExtendedUpdateFreeFall() {
-			GetGroundNormal();
+			GetGroundNormal(0.3f);
 			if (m_onGround) {
+				m_viewControl.OnJumpHitGround(position);
 				m_machine.SetSignal(Signals.Type.FallDown, false);
 				m_nextSubState = SubState.Idle;
 			}
@@ -157,12 +158,12 @@ namespace AI {
 		}
 
 		protected override void OnSetVelocity() {
-			if (m_subState == SubState.Jump_Start) {
+			if (m_subState == SubState.Jump_Start) {				
 				m_nextSubState = SubState.Jump_Up;
 			}
 		}
 
-		private Vector3 GetGroundNormal() {
+		private Vector3 GetGroundNormal(float _onGroundHeight) {
 			Vector3 normal = Vector3.up;
 			Vector3 hitPos = position;
 			Vector3 pos = position + (m_upVector * 3f);
@@ -180,7 +181,7 @@ namespace AI {
 				m_gravity = Vector3.zero;
 			}
 
-			m_onGround = m_heightFromGround < 1f;
+			m_onGround = m_heightFromGround < _onGroundHeight;
 			m_groundNormal = normal;
 
 			m_groundDirection = Vector3.Cross(Vector3.back, m_upVector);
@@ -194,6 +195,7 @@ namespace AI {
 		}
 
 		private void ChangeState() {
+			// leave current state
 			switch (m_subState) {
 				case SubState.Idle:
 					break;
@@ -214,6 +216,7 @@ namespace AI {
 					break;
 			}
 
+			// enter next state
 			switch (m_nextSubState) {
 				case SubState.Idle:
 					break;
@@ -221,15 +224,17 @@ namespace AI {
 				case SubState.Move:
 					break;
 
-				case SubState.Jump_Start:
+				case SubState.Jump_Start:					
 					m_viewControl.Jumping(true);
 					Stop();
 					break;
 
 				case SubState.Jump_Up:
+					m_viewControl.OnJumpImpulse(position);
 					break;
 
 				case SubState.Jump_Down:
+					m_viewControl.OnJumpFallDown(position);
 					break;
 			}
 
