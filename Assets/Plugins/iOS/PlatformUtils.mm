@@ -7,6 +7,7 @@
 
 #include <string>
 #include <inttypes.h>
+#import <mach/mach.h>
 
 using namespace std;
 
@@ -149,6 +150,60 @@ extern "C"
                  }
              }];
         }
+    }
+    
+    unsigned long IOsGetResidentMemory()
+    {
+        struct mach_task_basic_info info;
+        mach_msg_type_number_t size = MACH_TASK_BASIC_INFO_COUNT;
+        kern_return_t kerr = task_info(mach_task_self(),
+                                       MACH_TASK_BASIC_INFO,
+                                       (task_info_t)&info,
+                                       &size);
+        
+        if( kerr == KERN_SUCCESS ) {
+            return  info.resident_size / 1048576;
+        }
+        return 0;
+    }
+    
+    unsigned long IOsGetMaxResidentMemory()
+    {
+        struct mach_task_basic_info info;
+        mach_msg_type_number_t size = MACH_TASK_BASIC_INFO_COUNT;
+        kern_return_t kerr = task_info(mach_task_self(),
+                                       MACH_TASK_BASIC_INFO,
+                                       (task_info_t)&info,
+                                       &size);
+        
+        if( kerr == KERN_SUCCESS ) {
+            return  info.resident_size_max / 1048576;
+        }
+        return 0;
+    }
+    
+    
+    unsigned long IOsFreeMemory()
+    {
+        mach_port_t host_port = mach_host_self();
+        mach_msg_type_number_t host_size = sizeof(vm_statistics_data_t) / sizeof(integer_t);
+        vm_size_t pagesize;
+        vm_statistics_data_t vm_stat;
+        
+        host_page_size(host_port, &pagesize);
+        (void) host_statistics(host_port, HOST_VM_INFO, (host_info_t)&vm_stat, &host_size);
+        return vm_stat.free_count * pagesize;
+    }
+    
+    char* IOsGetCommandLineArgs()
+    {
+        NSArray<NSString *>* arguments = [[NSProcessInfo processInfo] arguments];
+        std::string ret = "";
+        for (NSString* element in arguments)
+        {
+            ret += std::string(element.UTF8String) + "#";
+        }
+        return stringCopy( ret.c_str() );
     }
 }
 

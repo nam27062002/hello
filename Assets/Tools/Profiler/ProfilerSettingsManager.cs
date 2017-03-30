@@ -28,7 +28,7 @@ public class ProfilerSettingsManager
             LoadFromResources(spawnerNames);
 
             // Loads settings from cache
-            LoadFromCache(spawnerNames);
+           // LoadFromCache(spawnerNames);
 
             // If there's no settings in cache then it's created out of settings in resources
             if (SettingsCached == null && SettingsResources != null)

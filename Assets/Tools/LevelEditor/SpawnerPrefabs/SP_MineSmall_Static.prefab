@@ -8,7 +8,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 447832}
-  - component: {fileID: 11451506}
   - component: {fileID: 11448584}
   m_Layer: 0
   m_Name: SP_MineSmall_Static
@@ -41,6 +40,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_mixEntities: 0
   m_entityPrefabList:
   - name: Air/PF_MineSmall_Static
     chance: 100
@@ -68,20 +68,6 @@ MonoBehaviour:
     max: 0
   m_maxSpawns: 0
   m_checkCurrents: 0
---- !u!114 &11451506
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 177470}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aa2aecfe88da48e8b391e33aa7cb815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_positionLock: 000001
-  m_rotationLock: 010101
-  m_scaleLock: 010101
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

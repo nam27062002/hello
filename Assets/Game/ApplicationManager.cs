@@ -30,6 +30,18 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         get { return m_isAlive; }
     }
 
+    public enum Mode
+    {
+    	PLAY,
+    	TEST
+    };
+    private Mode m_appMode = Mode.PLAY;
+    public Mode appMode
+    {
+    	get{ return m_appMode; }
+    }
+
+
     /// <summary>
 	/// Initialization. This method will be called only once regardless the amount of times the user is led to the Loading scene.
 	/// </summary>
@@ -70,8 +82,34 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     protected void Start()
     {
+
+		if ( HasArg("-start_test") )
+		{	
+			// Start Testing game!
+			// ControlPanel.instance.ShowMemoryUsage = true;
+				// Tell control panel to show memory
+			m_appMode = Mode.TEST;
+			Debug.Log("START_TEST!!!!!!!!!!!!!!!!!!!!");
+		}
+
         StartCoroutine(Device_Update());
     }
+
+	private bool HasArg(string _argName) 
+	{
+		Debug.TaggedLog("TEST", "Command Line Args");
+		string[] args = PlatformUtils.Instance.GetCommandLineArgs();
+		if ( args != null )
+		{
+			for(int i = 0; i < args.Length; i++) {
+				Debug.TaggedLog("TEST", args[i]);
+				if(args[i] == _argName) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
     protected override void OnDestroy()
     {
