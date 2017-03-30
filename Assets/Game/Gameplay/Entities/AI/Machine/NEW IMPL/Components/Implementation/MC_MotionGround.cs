@@ -41,7 +41,7 @@ namespace AI {
 		protected override void ExtendedInit() {
 			m_onGround = false;
 
-			GetGroundNormal();
+			GetGroundNormal(0.3f);
 			RaycastHit hit;
 			bool hasHit = Physics.Raycast(position + m_upVector * 0.1f, -m_groundNormal, out hit, 5f, GROUND_MASK);
 			if (hasHit) {
