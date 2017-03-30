@@ -391,6 +391,38 @@ AnimatorStateMachine:
   m_ExitPosition: {x: 552, y: 648, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: 110289266}
+--- !u!114 &114100042980664884
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81848bdf9b24e4763a38ac4195ac4088, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_particleSystemData:
+    name: PS_SpartakusFallLines
+    path: Spartakus
+    offset: {x: 0, y: 0, z: 0}
+  m_attach: 1
+--- !u!114 &114401413056349078
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81848bdf9b24e4763a38ac4195ac4088, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_particleSystemData:
+    name: PS_SpartakusDustImpulse
+    path: Spartakus
+    offset: {x: 0, y: 0, z: 0}
+  m_attach: 0
 --- !u!114 &114429121040374292
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -406,6 +438,38 @@ MonoBehaviour:
   m_idleTriggerTime:
     min: 4
     max: 6
+--- !u!114 &114473655492018008
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81848bdf9b24e4763a38ac4195ac4088, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_particleSystemData:
+    name: PS_SpartakusSlash
+    path: Spartakus
+    offset: {x: 0, y: 0, z: 0}
+  m_attach: 1
+--- !u!114 &114960986364325006
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81848bdf9b24e4763a38ac4195ac4088, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_particleSystemData:
+    name: PS_SpartakusDustFall
+    path: Spartakus
+    offset: {x: 0, y: 0, z: 0}
+  m_attach: 0
 --- !u!1101 &1101000010178919916
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1534,7 +1598,8 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 1101076062450596666}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 114100042980664884}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1558,7 +1623,9 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 1101788706433048456}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 114401413056349078}
+  - {fileID: 114473655492018008}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1660,7 +1727,8 @@ AnimatorState:
   - {fileID: 1101689673782100240}
   - {fileID: 1101488245810300690}
   - {fileID: 1101933299089421990}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 114960986364325006}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1

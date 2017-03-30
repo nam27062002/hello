@@ -5,6 +5,7 @@ public interface ISpawner : IQuadTreeItem {
 	void Initialize();
     void Clear();
     void ForceRemoveEntities();
+    void ForceReset(); // Used for debug purpose    
         
     bool CanRespawn();
 	bool Respawn(); //return true if it respawned completelly
