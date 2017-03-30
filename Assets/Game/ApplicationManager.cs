@@ -83,7 +83,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     protected void Start()
     {
 
-		// if ( HasArg("-start_test") )
+		if (HasArg("-start_test"))
 		{	
 			// Start Testing game!
 			// ControlPanel.instance.ShowMemoryUsage = true;
