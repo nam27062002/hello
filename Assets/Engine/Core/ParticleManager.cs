@@ -29,8 +29,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		}
 	#endif
 
-	public static void CreatePool(ParticleData particle)
-	{
+	public static void CreatePool(ParticleData particle) {
 		CreatePool( particle.name, particle.path);
 	}
 
