@@ -54,8 +54,7 @@ public class GameHUD : MonoBehaviour {
 	/// Callback for the map button.
 	/// </summary>
 	public void OnMapButton() {
-		PopupController pausePopup = PopupManager.OpenPopupInstant(PopupPause.PATH);
-		pausePopup.GetComponent<PopupPause>().GoToTab(PopupPause.Tabs.MAP);
+		PopupManager.OpenPopupInstant(PopupMap.PATH);
 	}
 
 	/// <summary>

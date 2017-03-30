@@ -122,8 +122,9 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
     }
 
     public void ForceRemoveEntities() {}
+    public void ForceReset() {}
 
-	public void StartRespawn() {
+    public void StartRespawn() {
 		// Program the next spawn time
 		m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime;
 		m_state = State.Respawning;

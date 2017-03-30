@@ -91,6 +91,10 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 		instance.m_poolRequests.Clear();
 	}
 
+    public static bool ContainsPool(string _prefab) {
+        return instance.m_pools.ContainsKey(_prefab);
+    }
+
 	/// <summary>
 	/// Will destroy all the pools and loose reference to any created instances.
 	/// Additionally they can be deleted from the scene.
@@ -168,6 +172,13 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 			}
 		}
 	}
+
+    public static void ResizePool(string _prefabName, int _newSize) {        
+        if (instance.m_pools.ContainsKey(_prefabName)) {
+            Pool pool = instance.m_pools[_prefabName];
+            pool.Resize(_newSize);
+        }
+    }
 
 
 	/// <summary>

@@ -6,9 +6,6 @@ public class SpartakusViewControl : ViewControl {
 	[SeparatorAttribute("Dizzy")]
 	[SerializeField] private GameObject m_stars;
 
-	[SeparatorAttribute("Effects")]
-	[SerializeField] private ParticleData m_slashData;
-
 
 	private float m_timer;
 
@@ -17,22 +14,8 @@ public class SpartakusViewControl : ViewControl {
 	public override void Spawn(ISpawner _spawner) {
 		base.Spawn(_spawner);
 
-		if (m_slashData.IsValid()) {
-			ParticleManager.CreatePool(m_slashData);
-		}
-
 		m_stars.SetActive(false);
 		m_timer = 0f;
-	}
-
-	public override void OnJumpImpulse(Vector3 _pos) {
-		base.OnJumpImpulse(_pos);
-		if (m_slashData.IsValid()) {
-			GameObject ps = ParticleManager.Spawn(m_slashData, _pos);
-			if (ps != null) {
-				ps.transform.parent = transform;
-			}
-		}
 	}
 
 	protected override void OnSpecialAnimationEnter(SpecialAnims _anim) {

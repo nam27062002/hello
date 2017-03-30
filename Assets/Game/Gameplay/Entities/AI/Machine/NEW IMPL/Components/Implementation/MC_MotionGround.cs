@@ -117,15 +117,14 @@ namespace AI {
 				m_velocity += gv;
 				m_rbody.velocity = m_velocity;
 			} else {
-				if (m_groundDirection.y < -0.25f) {
+				if (m_groundDirection.y < 0f && m_direction.x > 0f
+				||  m_groundDirection.y > 0f && m_direction.x < 0f) {
 					gv *= 15f;
 				}
 
 				m_gravity += gv;
 
-				if (m_subState == SubState.Idle) {
-					m_rbody.velocity = m_gravity;
-				} else {
+				if (m_subState != SubState.Idle) {					
 					if (m_mass != 1f) {
 						Vector3 impulse = (m_pilot.impulse - m_velocity);
 						impulse /= m_mass;
@@ -134,7 +133,7 @@ namespace AI {
 						m_velocity = m_pilot.impulse;
 					}
 
-					m_rbody.velocity = m_velocity + m_externalVelocity + m_gravity;
+					m_rbody.velocity = Vector3.ClampMagnitude(m_velocity + m_externalVelocity + m_gravity, m_terminalVelocity);
 				}
 			}
 		}
@@ -142,7 +141,6 @@ namespace AI {
 		protected override void ExtendedUpdateFreeFall() {
 			GetGroundNormal(0.3f);
 			if (m_onGround) {
-				m_viewControl.OnJumpHitGround(position);
 				m_machine.SetSignal(Signals.Type.FallDown, false);
 				m_nextSubState = SubState.Idle;
 			}
@@ -177,7 +175,7 @@ namespace AI {
 				m_heightFromGround = 100f;
 			}
 
-			if (m_heightFromGround < 0.05f) {
+			if (m_heightFromGround < 0.3f) {
 				m_gravity = Vector3.zero;
 			}
 
@@ -230,11 +228,9 @@ namespace AI {
 					break;
 
 				case SubState.Jump_Up:
-					m_viewControl.OnJumpImpulse(position);
 					break;
 
 				case SubState.Jump_Down:
-					m_viewControl.OnJumpFallDown(position);
 					break;
 			}
 

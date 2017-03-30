@@ -217,6 +217,11 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
         OnForceRemoveEntities();
     }    
 
+    public void ForceReset() {
+        ForceRemoveEntities();
+        Initialize();        
+    }    
+
     public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
         int index = -1;
         for (int i = 0; i < EntitiesToSpawn && index == -1; i++) {

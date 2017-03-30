@@ -331,7 +331,7 @@ public class GameSceneController : GameSceneControllerBase {
 
         CustomParticlesCulling.Manager_OnDestroy();
 
-        Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+        Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 	}
 
 	//------------------------------------------------------------------//

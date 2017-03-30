@@ -271,6 +271,12 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 					rewardSku = instance.m_rewardDropRate.GetLabel(UnityEngine.Random.Range(0, instance.m_rewardDropRate.numElements));		// Pick one random element without taking probabilities in account
 				} while(rewardSku == "pet_special");
 			} break;
+
+			case CPGachaTest.RewardChanceMode.FORCED_PET_SKU: {
+				// Depends on target pet rarity!
+				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, CPGachaTest.forcedPetSku);
+				rewardSku = "pet_" + petDef.GetAsString("rarity");	// [AOC] Super-duper-dirty xD
+			} break;
 		}
 		return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, rewardSku);
 	}

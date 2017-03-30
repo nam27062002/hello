@@ -208,6 +208,11 @@ public class ResultsScreenController : MonoBehaviour {
 
 			case State.FINISHED: {
 				// Do nothing
+				if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
+				{
+					// Bo back to the menu
+					TryGoToMenu();
+				}
 			} break;
 		}
 	}

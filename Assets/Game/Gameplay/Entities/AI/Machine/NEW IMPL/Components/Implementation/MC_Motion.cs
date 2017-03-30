@@ -74,7 +74,7 @@ namespace AI {
 		protected Vector3 m_externalVelocity;
 		public Vector3 externalVelocity{ get { return m_externalVelocity; } set { m_externalVelocity = value; } }
 
-		private float   m_terminalVelocity;
+		protected float m_terminalVelocity;
 		private Vector3 m_acceleration;
 
 		private Transform m_attackTarget = null;
@@ -361,8 +361,7 @@ namespace AI {
 		private void ChangeState() {
 			// Leave current state
 			switch (m_state) {
-				case State.Free:
-					Stop();
+				case State.Free:					
 					break;
 
 				case State.Biting:
