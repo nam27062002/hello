@@ -8,7 +8,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 465982}
-  - component: {fileID: 11497858}
   - component: {fileID: 11440164}
   - component: {fileID: 11466406}
   - component: {fileID: 11479988}
@@ -43,6 +42,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_mixEntities: 0
   m_entityPrefabList:
   - name: Water/PF_Fish01_Generic
     chance: 100
@@ -105,20 +105,6 @@ MonoBehaviour:
   m_forcePreview: 0
   m_previewStep: 0.1
   m_previewMaxTime: 32.8
---- !u!114 &11497858
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 115584}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aa2aecfe88da48e8b391e33aa7cb815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_positionLock: 000001
-  m_rotationLock: 010101
-  m_scaleLock: 010101
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
