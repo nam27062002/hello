@@ -135,6 +135,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		m_panel.gameObject.SetActive(false);
 		m_toggleButton.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
         IsFpsEnabled = UnityEngine.Debug.isDebugBuild;        
+        ShowMemoryUsage = UnityEngine.Debug.isDebugBuild;
         m_logicUnitsCounter.transform.parent.gameObject.SetActive(UnityEngine.Debug.isDebugBuild && ProfilerSettingsManager.ENABLED);
 
         m_activateTimer = 0;
@@ -218,6 +219,13 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 				m_fpsCounter.color = FPS_THRESHOLD_COLOR_1;
 				m_fpsCounter.text = NEGATIVE_STRING_AS_STRING;
 			}
+		}
+
+		if (m_showMemoryUsage)
+		{
+			int mb = FGOL.Plugins.Native.NativeBinding.Instance.GetMemoryUsage() / (1024*1024);
+			int maxMb = FGOL.Plugins.Native.NativeBinding.Instance.GetMaxMemoryUsage()/ (1024*1024);
+			m_memoryLabel.text = mb + "/" + maxMb;
 		}
 
         if (m_entitiesCounter != null && ProfilerSettingsManager.ENABLED)
