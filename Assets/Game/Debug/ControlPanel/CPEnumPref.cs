@@ -150,7 +150,7 @@ public class CPEnumPref : CPPrefBase {
 	public void OnValueChanged(int _newValueIdx) {
 		if(m_enumValues != null) {
 			Prefs.SetIntPlayer(id, _newValueIdx);
-			Messenger.Broadcast<string, int>(GameEvents.CP_STRING_CHANGED, id, m_enumValues[_newValueIdx]);
+			Messenger.Broadcast<string, int>(GameEvents.CP_ENUM_CHANGED, id, m_enumValues[_newValueIdx]);
 			Messenger.Broadcast<string>(GameEvents.CP_PREF_CHANGED, id);
 		}
 	}
