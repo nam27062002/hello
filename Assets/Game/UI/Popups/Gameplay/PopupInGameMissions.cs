@@ -15,11 +15,11 @@ using UnityEngine;
 /// <summary>
 /// In-game map popup.
 /// </summary>
-public class PopupMap : PopupPauseBase {
+public class PopupInGameMissions : PopupPauseBase {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/PF_PopupMap";
+	public const string PATH = "UI/Popups/PF_PopupInGameMissions";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
