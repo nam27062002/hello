@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
 /// <summary>
 /// This class is responsible for returning a report with statistics about the footprint in memory of a set of game objects.
@@ -257,7 +255,7 @@ public class AssetMemoryProfiler
     private string GetAssetPath(UnityEngine.Object go)
     {
 #if UNITY_EDITOR
-        return AssetDatabase.GetAssetPath(go);
+        return UnityEditor.AssetDatabase.GetAssetPath(go);
 #else
 	    return "/PathUnknown/" + go.name;
 #endif
