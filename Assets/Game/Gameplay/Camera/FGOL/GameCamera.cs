@@ -21,6 +21,7 @@ public class GameCamera : MonoBehaviour
 	private const float			m_frameWidthDefault = 20.0f;
 	private const float			m_frameWidthBoss = 40.0f; // TEMP boss cam just zooms out
     private const float         m_frameWidthBoost = 30.0f;
+	private const float         m_frameWidthFury = 30.0f;
 
     // camera zoom blending values for bosses
     private float               m_zBlendRateBoss = 20.0f;
@@ -186,6 +187,7 @@ public class GameCamera : MonoBehaviour
 		get{ return m_lastFrameWidthModifier; } 
 	}
 
+	private bool m_fury = false;
 
 
 	enum BossCamMode
@@ -275,7 +277,7 @@ public class GameCamera : MonoBehaviour
         InstanceManager.gameCamera = this;
 
 		// Subscribe to external events
-		// Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		// Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		// Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
@@ -363,7 +365,7 @@ public class GameCamera : MonoBehaviour
 	}
 
 	void OnDestroy() {
-		// Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		// Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		// Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 		Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
@@ -408,7 +410,12 @@ public class GameCamera : MonoBehaviour
 
     private void UpdateUseDampCamera() {
         m_useDampCamera = Prefs.GetBoolPlayer(DebugSettings.NEW_CAMERA_SYSTEM);
-    }		      
+    }		    
+
+	private void OnFury(bool _active, DragonBreathBehaviour.Type _type)
+	{
+		m_fury = _active;
+	}
 
     private void CountDownEnded()
 	{
@@ -707,11 +714,16 @@ public class GameCamera : MonoBehaviour
             bool hasBoss = HasBoss();
             if (m_targetMachine != null)
 	        {
-	            // MachineFish machineFish = m_targetObject.GetComponent<MachineFish>();
-	            if(/*(machineFish != null) &&*/ !hasBoss)
+	            if(!hasBoss)
 	            {
-	                // frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, machineFish.howFast);
-					frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
+	            	if ( m_fury )	
+	            	{
+	            		frameWidth = m_frameWidthFury;
+	            	}
+	            	else
+	            	{
+						frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
+					}
 	            }
 	        }
 			frameWidth += m_frameWidthIncrement;
