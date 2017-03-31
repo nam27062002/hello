@@ -168,8 +168,8 @@ public class MapMarker : MonoBehaviour {
 	/// </summary>
 	/// <param name="_popup">The popup that has just been opened.</param>
 	private void OnPopupOpened(PopupController _popup) {
-		// If it's the map/pause popup, refresh marker
-		if(_popup.GetComponent<PopupMap>() != null || _popup.GetComponent<PopupPause>() != null) {
+		// If it's the map popup, refresh marker
+		if(_popup.GetComponent<PopupInGameMap>() != null) {
 			UpdateMarker();
 		}
 	}

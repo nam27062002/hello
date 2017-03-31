@@ -73,7 +73,7 @@ public class HUDMissionCompletedNotification : MonoBehaviour {
 	/// <param name="_popup">The popup that triggered the event.</param>
 	public void OnPopupOpened(PopupController _popup) {
 		// If it's the in-game missions popup, hide the notification
-		if(_popup.GetComponent<PopupPause>() != null) {
+		if(_popup.GetComponent<PopupInGameMissions>() != null) {
 			m_notification.Hide();
 		}
 	}
