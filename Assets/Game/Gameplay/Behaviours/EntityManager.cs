@@ -295,7 +295,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 			// Inverse loop because the current entity could be deleted from the list if it's disabled
 			for (i = count - 1; i > -1; i--)
 			{
-				if (m_cages[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_cages[i].machine.position))
+				if (m_cages[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_cages[i].transform.position)) //cages don't have machine
 				{
 					m_cages[i].Disable(false);                    
 				}
