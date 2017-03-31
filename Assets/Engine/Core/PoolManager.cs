@@ -12,6 +12,13 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	// Entity Pools requests (delayed pool manager)
 	private Dictionary<string, PoolRequest> m_poolRequests = new Dictionary<string, PoolRequest>();
 	private Dictionary<string, Pool> m_pools = new Dictionary<string, Pool>();
+	private List<Pool> m_iterator = new List<Pool>();
+
+	void Update() {
+		for (int i = 0; i < m_iterator.Count; i++) {
+			m_iterator[i].Update();
+		}
+	}
 
 	/// <summary>
 	/// Request a pool. Stores a pool request, it'll be created later loading the level.
@@ -63,6 +70,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 					}
 				} else {
 					p.Clear();
+					instance.m_iterator.Remove(instance.m_pools[keys[i]]);
 					instance.m_pools.Remove(keys[i]);
 				}
 			}
@@ -113,6 +121,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 					Pool pool = instance.m_pools[keys[i]];
 					if (pool.isTemporary) {
 						pool.Clear();
+						instance.m_iterator.Remove(instance.m_pools[keys[i]]);
 						instance.m_pools.Remove(keys[i]);
 					}
 				}
@@ -137,6 +146,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 		if(!instance.m_pools.ContainsKey(_prefab.name)) {
 			Pool pool = new Pool(_prefab, _container, _initSize, _canGrow, _container == instance.transform, _temporay);	// [AOC] Create new container if given container is the Pool Manager.
 			instance.m_pools.Add(_prefab.name, pool);
+			instance.m_iterator.Add(pool);
 		}
 	}
 
@@ -167,6 +177,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 			if (go != null) {
 				Pool pool = new Pool(go, _container, _initSize, _canGrow, _container == instance.transform, _temporay);	// [AOC] Create new container if given container is the Pool Manager.
 				instance.m_pools.Add(_prefabName, pool);
+				instance.m_iterator.Add(pool);
 			} else {
 				Debug.LogError("Can't create a pool for: " + _prefabPath + _prefabName);
 			}

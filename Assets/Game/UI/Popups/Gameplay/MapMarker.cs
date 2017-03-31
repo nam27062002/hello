@@ -113,7 +113,6 @@ public class MapMarker : MonoBehaviour {
 			case Type.LETTER: {
 				// [AOC] If the map timer runs out during the game, we let the player enjoy the unlocked map for the whole run
 				//       That's why we check the GameSceneController rather than the user profile
-				Debug.Log(this.name + " (" + m_type + "): " + showMarker + ", " + InstanceManager.gameSceneControllerBase.mapUnlocked);
 				this.gameObject.SetActive(showMarker && InstanceManager.gameSceneControllerBase.mapUnlocked);
 			} break;
 		}
