@@ -286,6 +286,9 @@ public class MapScroller : MonoBehaviour {
 
 		// Apply to camera component
 		m_camera.enabled = _enable;
+
+		// Do the same with scroll rect
+		m_scrollRect.viewport.gameObject.SetActive(_enable);
 	}
 
 	//------------------------------------------------------------------------//
