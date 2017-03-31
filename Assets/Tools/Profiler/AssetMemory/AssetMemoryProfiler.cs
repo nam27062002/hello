@@ -176,7 +176,7 @@ public class AssetMemoryProfiler
 
                 foreach (var texDef in knownTextures)
                 {
-                    Texture texture = ren.sharedMaterial.GetTexture(texDef.Key);
+                    /*Texture texture = ren.sharedMaterial.GetTexture(texDef.Key);
                     if (texture != null)
                     {
                         AssetInformationStruct diffuse = new AssetInformationStruct();
@@ -192,7 +192,7 @@ public class AssetMemoryProfiler
 #endif
 
                         info.AddChild(diffuse);
-                    }
+                    }*/
                 }
 
             }
@@ -263,7 +263,6 @@ public class AssetMemoryProfiler
 
     public static int CalculateTextureSizeBytes(Texture tTexture)
     {
-
         int tWidth = tTexture.width;
         int tHeight = tTexture.height;
         if (tTexture is Texture2D)
