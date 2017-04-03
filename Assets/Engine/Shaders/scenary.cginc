@@ -184,14 +184,6 @@ fixed4 frag (v2f i) : SV_Target
 	col.rgb *= lm;
 #endif
 
-#ifdef FOG	
-	HG_APPLY_FOG(i, col);	// Fog
-#endif	
-
-#ifdef DARKEN
-	HG_APPLY_DARKEN(i, col);	//darken
-#endif
-
 #ifdef NORMALMAP
 	float4 encodedNormal = tex2D(_NormalTex, i.texcoord);
 	float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
@@ -205,6 +197,16 @@ fixed4 frag (v2f i) : SV_Target
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
 	col = col + (specular * specMask * i.color * _LightColor0);
 #endif	
+
+
+#ifdef FOG	
+	HG_APPLY_FOG(i, col);	// Fog
+#endif	
+
+#ifdef DARKEN
+	HG_APPLY_DARKEN(i, col);	//darken
+#endif
+
 
 #ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
