@@ -551,6 +551,11 @@ namespace AI {
 			return GetSignal(AI.Signals.Type.Chewing) || GetSignal(AI.Signals.Type.Burning);
 		}
 
+		public bool IsFreezing()
+		{
+			return m_freezing;
+		}
+
 
 		public virtual bool CanBeBitten()
 		{
