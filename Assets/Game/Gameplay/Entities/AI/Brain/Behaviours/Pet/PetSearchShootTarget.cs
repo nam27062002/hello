@@ -84,7 +84,7 @@ namespace AI {
 					for (int e = 0; e < m_numCheckEntities; e++) 
 					{
 						Entity entity = m_checkEntities[e];
-						MachineOld machine = entity.GetComponent<MachineOld>();
+						Machine machine = entity.GetComponent<Machine>();
 						if (machine != null && machine.CanBeBitten() && !machine.isPetTarget )
 						{
 							bool isViable = false;

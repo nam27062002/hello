@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: island_rock_diff_tile_01
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Name: dragon_devil_body
+  m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -18,7 +18,7 @@ Material:
     - first:
         name: _BumpMap
       second:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: c0df2be7978b25b4d8412cde518b354e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -40,6 +40,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
+        name: _DetailTex
+      second:
+        m_Texture: {fileID: 2800000, guid: c1ebdc903ca345a46a8df43bf15faddd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
         name: _EmissionMap
       second:
         m_Texture: {fileID: 0}
@@ -48,7 +54,7 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 54c5e4468ccd55845884c143f83efcc3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -69,7 +75,16 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - first:
+        name: _ReflectionMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
+    - first:
+        name: _Alpha_as_depth
+      second: 0
     - first:
         name: _BumpScale
       second: 1
@@ -83,14 +98,17 @@ Material:
         name: _DstBlend
       second: 0
     - first:
-        name: _GlossMapScale
-      second: 1
+        name: _EmissionScaleUI
+      second: 0
+    - first:
+        name: _Fresnel
+      second: 10
     - first:
         name: _Glossiness
       second: 0.5
     - first:
-        name: _GlossyReflections
-      second: 1
+        name: _InnerLightAdd
+      second: 2
     - first:
         name: _Metallic
       second: 0
@@ -104,14 +122,20 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
-        name: _SmoothnessTextureChannel
-      second: 0
+        name: _ReflectionAmount
+      second: 0.152
     - first:
-        name: _SpecularHighlights
-      second: 1
+        name: _SecondLightIntensity
+      second: 0.47
+    - first:
+        name: _SpecExponent
+      second: 9.61
     - first:
         name: _SrcBlend
       second: 1
+    - first:
+        name: _StencilMask
+      second: 10
     - first:
         name: _UVSec
       second: 0
@@ -120,8 +144,35 @@ Material:
       second: 1
     m_Colors:
     - first:
+        name: _AmbientAdd
+      second: {r: 0.03676468, g: 0.014508252, b: 0.002432957, a: 0}
+    - first:
         name: _Color
-      second: {r: 1, g: 1, b: 1, a: 1}
+      second: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
+    - first:
+        name: _ColorAdd
+      second: {r: 0, g: 0, b: 0, a: 0}
+    - first:
+        name: _ColorMultiply
+      second: {r: 0.8308824, g: 0.81255406, b: 0.81255406, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _EmissionColorUI
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _FresnelColor
+      second: {r: 0.44290656, g: 0.45455194, b: 0.4705882, a: 1}
+    - first:
+        name: _InnerLightColor
+      second: {r: 0.78676474, g: 0.3268345, b: 0.028925154, a: 1}
+    - first:
+        name: _SecondLightColor
+      second: {r: 0.38570502, g: 0.5609922, b: 0.9044118, a: 0}
+    - first:
+        name: _SecondLightDir
+      second: {r: 0.82, g: -2.75, b: 2.67, a: 0.45}
+    - first:
+        name: _Tint
+      second: {r: 1, g: 1, b: 1, a: 1}

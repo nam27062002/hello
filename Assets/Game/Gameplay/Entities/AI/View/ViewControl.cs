@@ -741,6 +741,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			m_animator.SetBool("eat", false);
 	}
 
+	public void Impact() {
+		m_animator.SetTrigger("impact");
+	}
+
 	public void EnterWater(Collider _other, Vector3 impulse) {
 		CreateSplash( _other, Mathf.Abs(impulse.y) );
 	}

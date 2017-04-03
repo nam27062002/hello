@@ -25,8 +25,8 @@ GameObject:
   - component: {fileID: 114771277628690562}
   - component: {fileID: 114656578000673320}
   - component: {fileID: 54529919355492390}
-  - component: {fileID: 135812225135952606}
   - component: {fileID: 135742546578343426}
+  - component: {fileID: 136659751836869184}
   m_Layer: 16
   m_Name: PF_Ghost03
   m_TagString: Untagged
@@ -133,7 +133,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1054743084792962}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: 1, y: 0, z: 0}
+  m_LocalPosition: {x: -15.690791, y: 47.25454, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4547286402241202}
@@ -375,10 +375,10 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.69
-  m_Center: {x: 0, y: 1.29, z: 0}
---- !u!135 &135812225135952606
-SphereCollider:
+  m_Radius: 0.7
+  m_Center: {x: 0, y: 0.6, z: 0}
+--- !u!136 &136659751836869184
+CapsuleCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -386,9 +386,10 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.8
-  m_Center: {x: 0, y: 2.21, z: 0}
+  m_Radius: 0.81
+  m_Height: 2.89
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &198639911383545996
 ParticleSystem:
   m_ObjectHideFlags: 1

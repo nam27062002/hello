@@ -49,8 +49,7 @@ public class MemoryEntitiesController : MonoBehaviour {
     // Use this for initialization
     private void Start() {
         m_profiler = new AssetMemoryProfiler();
-
-        /*
+       
         m_timerUI.minValue = 0f;
 		m_memoryAll.minValue = 0f;
 		m_memoryMesh.minValue = 0f;
@@ -61,8 +60,7 @@ public class MemoryEntitiesController : MonoBehaviour {
 		m_memoryAll.maxValue = MAX_MEMORY;
 		m_memoryMesh.maxValue = MAX_MEMORY;
 		m_memoryTextures.maxValue = MAX_MEMORY;
-		m_memoryAnimations.maxValue = MAX_MEMORY;
-        */
+		m_memoryAnimations.maxValue = MAX_MEMORY;        
 
 		m_timer = 10f;
 	}
@@ -90,10 +88,10 @@ public class MemoryEntitiesController : MonoBehaviour {
         m_timerUI.value = m_timer;
         
 
-        if (Input.GetKeyDown(KeyCode.A)) {
+        /*if (Input.GetKeyDown(KeyCode.A)) {
             OnReset();
             GetPrefabsFromScene();
-        }
+        }*/
     }
 
 	private void OnReset() {
@@ -111,7 +109,13 @@ public class MemoryEntitiesController : MonoBehaviour {
     }
 
 	private void GetPrefabsFromScene() {
-		Object[] gos = GameObject.FindObjectsOfType(typeof(Entity));
+		Entity[] gos;
+
+		if (Application.isPlaying) {
+			gos = PoolManager.instance.GetComponentsInChildren<Entity>(true);
+		} else {
+			gos = GameObjectExt.FindObjectsOfType<Entity>(true).ToArray();
+		}
 
         GameObject go;
 		for (int i = 0; i < gos.Length; i++) {
