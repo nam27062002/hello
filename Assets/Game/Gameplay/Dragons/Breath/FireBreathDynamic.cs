@@ -119,7 +119,7 @@ public class FireBreathDynamic : MonoBehaviour
 //            iVelocityModule.curveMultiplier = value ? 2.0f : 0.7f;
             iVelocityModule.curveMultiplier = value ? 0.975f : 0.975f;
         }
-        Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
+        // Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
     }
 
 
