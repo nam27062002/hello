@@ -176,7 +176,7 @@ public class AssetMemoryProfiler
 
                 foreach (var texDef in knownTextures)
                 {
-                    /*Texture texture = ren.sharedMaterial.GetTexture(texDef.Key);
+                    Texture texture = ren.sharedMaterial.GetTexture(texDef.Key);
                     if (texture != null)
                     {
                         AssetInformationStruct diffuse = new AssetInformationStruct();
@@ -188,11 +188,11 @@ public class AssetMemoryProfiler
 #if UNITY_EDITOR
                         diffuse.Size = CalculateTextureSizeBytes(texture);
 #else
-					    diffuse.Size = UnityEngine.Profiler.GetRuntimeMemorySize(texture);
+						diffuse.Size = UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(texture);
 #endif
 
                         info.AddChild(diffuse);
-                    }*/
+                    }
                 }
 
             }
