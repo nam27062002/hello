@@ -222,7 +222,7 @@ namespace AI {
 
 		//-----------------------------------------------------------
 		// Physics Collisions and Triggers
-		void OnCollisionEnter(Collision _collision) {
+		protected virtual void OnCollisionEnter(Collision _collision) {
 			object[] _params = new object[1]{_collision};
 			OnTrigger(SignalTriggers.OnCollisionEnter, _params);
 			SetSignal(Signals.Type.Collision, true, _params);
