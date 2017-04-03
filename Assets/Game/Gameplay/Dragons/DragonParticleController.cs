@@ -308,6 +308,9 @@ public class DragonParticleController : MonoBehaviour
 		if ( _tr != null )
 		{
 			instance.transform.LookAt( _tr.position );
+			instance.transform.Rotate( -Vector3.forward * 90, Space.Self);
+			instance.transform.Rotate( -Vector3.up * 90, Space.Self);
+
 		}
 	}
 

@@ -5,7 +5,7 @@ using UnityEngine;
 public class DragonSmashingBall : MonoBehaviour {
 
 	void OnCollisionEnter(Collision _collision) {
-		AI.MachineOld machine = _collision.collider.GetComponentInChildren<AI.MachineOld>();
+		AI.Machine machine = _collision.collider.GetComponentInChildren<AI.Machine>();
 		if ( machine != null && machine.CanBeSmashed() )
 		{
 			// check it's not a pet

@@ -133,7 +133,7 @@ namespace AI {
 							bool inSearchButNotEat = m_searchButNoEatList.Contains( entity.sku );
 							if ( inSearchButNotEat || m_preferedEntities.Contains(entity.sku) )
 							{
-								MachineOld machine = entity.GetComponent<MachineOld>();
+								Machine machine = entity.GetComponent<Machine>();
 								if ( machine != null && !machine.isPetTarget)
 								{
 									if ( inSearchButNotEat || machine.CanBeBitten() )
