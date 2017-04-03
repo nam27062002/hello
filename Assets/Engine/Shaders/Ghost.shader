@@ -75,6 +75,7 @@ Shader "Hungry Dragon/Ghost (Spawners)"
 			#define FRESNEL
 			#endif
 
+			#define EMISSIVE
 			#define CUSTOM_ALPHA
 
 			#define CUSTOM_VERTEXPOSITION

@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_MineBig
-  m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
+  m_Shader: {fileID: 4800000, guid: 0062837f20654ed4381d2a7620b0cbf9, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -95,6 +95,9 @@ Material:
         name: _FresnelFactor
       second: 5
     - first:
+        name: _FresnelPower
+      second: 0.27
+    - first:
         name: _GlossMapScale
       second: 1
     - first:
@@ -128,6 +131,9 @@ Material:
         name: _SpecularHighlights
       second: 1
     - first:
+        name: _SpecularPower
+      second: 1
+    - first:
         name: _SrcBlend
       second: 1
     - first:
@@ -148,7 +154,10 @@ Material:
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
         name: _FresnelColor
-      second: {r: 0.75, g: 0.59866756, b: 0.1875, a: 0}
+      second: {r: 0, g: 0, b: 0, a: 0}
+    - first:
+        name: _SpecularColor
+      second: {r: 0, g: 0, b: 0, a: 0}
     - first:
         name: _SpecularDir
       second: {r: 0, g: 0, b: -1, a: 0}

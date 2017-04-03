@@ -74,12 +74,12 @@ v2f vert(appdata_t v)
 	// To calculate tangent world
 #ifdef NORMALMAP
 	o.tangentWorld = normalize(mul(unity_ObjectToWorld, float4(v.tangent.xyz, 0.0)).xyz);
-	o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
-//	o.normalWorld = normal;
+//	o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
+	o.normalWorld = normal;
 	o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
 #else
-	o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
-//	o.normalWorld = normal;
+//	o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
+	o.normalWorld = normal;
 #endif
 
 	float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
@@ -111,7 +111,9 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 col = tex2D(_MainTex, i.uv);
 //	fixed specMask = col.a;
 	fixed specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
+#ifdef EMISSIVE
 	fixed emmisiveMask = col.a;
+#endif
 //	col.a = 1.0;
 
 #ifdef NORMALMAP
@@ -147,7 +149,9 @@ fixed4 frag(v2f i) : SV_Target
 	col += fresnel * _FresnelColor;
 #endif
 
+#ifdef EMISSIVE
 	col = lerp(col, unlitColor, emmisiveMask);
+#endif
 
 #if defined (OPAQUEALPHA)
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque

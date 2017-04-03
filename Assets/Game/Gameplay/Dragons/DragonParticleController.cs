@@ -304,10 +304,14 @@ public class DragonParticleController : MonoBehaviour
 	{
 		GameObject instance =  m_shieldParticle.CreateInstance();
 		instance.transform.parent = m_shieldAnchor;
+		instance.transform.localScale = Vector3.one * InstanceManager.player.data.scale;
 		instance.transform.localPosition = m_shieldParticle.offset;
 		if ( _tr != null )
 		{
 			instance.transform.LookAt( _tr.position );
+			instance.transform.Rotate( -Vector3.forward * 90, Space.Self);
+			instance.transform.Rotate( -Vector3.up * 90, Space.Self);
+
 		}
 	}
 

@@ -29,6 +29,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	public float eatDistanceSqr { get { return (m_eatDistance * transform.localScale.x) * (m_eatDistance * transform.localScale.x); } }
 	[SerializeField] protected ParticleData m_holdingBloodParticle = new ParticleData( "PS_Blood_Explosion_Medium", "Blood", Vector3.zero);
+	[SerializeField] protected ParticleData m_holdingFreezeParticle = new ParticleData( "PS_IceExplosionSmall", "", Vector3.zero);
 
     private static int maxPreysSoFar = 0;
     private const int MAX_PREYS = 40; // Max amount of preys allowed to be eaten simultaneously
@@ -76,6 +77,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected IMotion m_motion;
 
 	private List<GameObject> m_bloodEmitter;
+	private List<GameObject> m_freezeEmitter;
 
 	public string m_burpSound = "";
 	// public AudioSource m_burpAudio;
@@ -155,6 +157,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// Use this for initialization
 	protected virtual void Awake () {		
         m_bloodEmitter = new List<GameObject>();
+        m_freezeEmitter = new List<GameObject>();
 
 		MouthCache();
 		m_holdStunTime = 0.5f;
@@ -323,6 +326,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 
 		UpdateBlood();        
+		UpdateFreezing();
 	}
 
 	void LateUpdate()
@@ -630,6 +634,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if (m_holdingBlood <= 0)
 		{
 			StartBlood();
+			if ( m_holdingPrey.IsFreezing() ){
+				StartFreezing();
+			}
 		}
 		else
 		{
@@ -972,6 +979,23 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_holdingBlood = 0.5f;
 	}
 
+	private void StartFreezing(){
+		Vector3 bloodPos = m_mouth.position;
+		bloodPos.z = -50f;
+		GameObject go = ParticleManager.Spawn(m_holdingFreezeParticle, bloodPos + m_holdingFreezeParticle.offset);
+		if ( go != null )
+		{
+			FollowTransform ft = go.GetComponent<FollowTransform>();
+			if (ft != null)
+			{
+				ft.m_follow = m_mouth;
+				ft.m_offset = m_holdingFreezeParticle.offset;
+			}
+				
+		}
+		m_freezeEmitter.Add(go);
+	}
+
 	private void UpdateBlood() {
 		if (m_bloodEmitter.Count > 0) {
 			bool empty = true;
@@ -993,6 +1017,26 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 	}
 
+	private void UpdateFreezing() {
+		if (m_freezeEmitter.Count > 0) {
+			bool empty = true;
+			Vector3 bloodPos = m_mouth.position;
+			//bloodPos.z = 0f;
+
+			for (int i = 0; i < m_freezeEmitter.Count; i++) {
+				if (m_freezeEmitter[i] != null && m_freezeEmitter[i].activeInHierarchy) {
+					m_freezeEmitter[i].transform.position = bloodPos;
+					empty = false;
+				} else {
+					m_bloodEmitter[i] = null;
+				}
+			}
+
+			if (empty) {
+				m_freezeEmitter.Clear();
+			}
+		}
+	}
 
 	/// On kill function over prey. Eating or holding
 	private void StartSwallow(AI.IMachine _prey) {

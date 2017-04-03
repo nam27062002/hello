@@ -27,6 +27,18 @@ public class ScoreMultiplier {
 }
 
 /// <summary>
+/// Aux class representing survival bonus data.
+/// </summary>
+public class SurvivalBonusData {
+	public int survivedMinutes = 0;
+	public float bonusPerMinute = 0f;
+	public SurvivalBonusData(int _mins, float _bonus) {
+		survivedMinutes = _mins;
+		bonusPerMinute = _bonus;
+	}
+}
+
+/// <summary>
 /// Global rewards controller. Keeps current game score, coins earned, etc.
 /// Singleton class, access it via its static methods.
 /// </summary>
@@ -115,9 +127,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	}
 
 	// Survival Bonus Data
-	List<Dictionary<string, int>> m_survivalBonus = new List<Dictionary<string, int>>();
+	List<SurvivalBonusData> m_survivalBonus = new List<SurvivalBonusData>();
 	int m_lastAwardedSurvivalBonusMinute = -1;
-	private GameSceneControllerBase m_sceneController;
 
 	// Highscore
 	private bool m_isHighScore;
@@ -160,6 +171,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		get{ return instance.m_distance.magnitude; }
 	}
 
+	// Shortcuts
+	private GameSceneControllerBase m_sceneController;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -274,7 +287,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		instance.SetScoreMultiplier(0);
 
 		instance.m_sceneController = InstanceManager.gameSceneControllerBase;
-		instance.ParseSurvivalBonus( InstanceManager.player.data.tierDef.sku );
+		instance.ParseSurvivalBonus();
 
 		instance.m_isHighScore = false;
 
@@ -393,83 +406,65 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// <summary>
 	/// Checks the survival bonus.
 	/// </summary>
-	private void CheckSurvivalBonus()
-	{
-		//Check if a survival minute has passed and show the notification to the user!
-		float elapsedTime = GameTime();
-		int elapsedMinutes = (int)Math.Floor(elapsedTime / 60);
-
-		if( elapsedMinutes > m_lastAwardedSurvivalBonusMinute )
-		{
-			foreach(Dictionary<string, int> data in m_survivalBonus)
-			{
-				if( elapsedMinutes == data["minMinutes"] )
-				{
-					m_lastAwardedSurvivalBonusMinute = elapsedMinutes;
-
-					// Trigger event so HUD can show an event!
-					Messenger.Broadcast(GameEvents.SURVIVAL_BONUS_ACHIEVED);
-
-					break;
-				}
-			}
+	private void CheckSurvivalBonus() {
+		// Show feedback to the user every minute
+		int elapsedMinutes = (int)Math.Floor(GameTime() / 60f);
+		if(elapsedMinutes > m_lastAwardedSurvivalBonusMinute) {
+			// Trigger event so HUD can show an event!
+			Messenger.Broadcast(GameEvents.SURVIVAL_BONUS_ACHIEVED);
+			m_lastAwardedSurvivalBonusMinute = elapsedMinutes;
 		}
 	}
-
 
 	/// <summary>
 	/// Parses the survival bonus. It fills m_survivalBonus
 	/// </summary>
-	private void ParseSurvivalBonus( string tier )
-	{
-		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinitionByVariable( DefinitionsCategory.SURVIVAL_BONUS , "tier", tier);
-
-		List<int> minutes = def.GetAsList<int>("minutes");
-		List<int> coins = def.GetAsList<int>("coins");
-
-		DebugUtils.Assert( minutes.Count == coins.Count, "Minues and Coins for tier " + tier + " don't match");
-
+	private void ParseSurvivalBonus() {
+		// Get latest content
+		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.SURVIVAL_BONUS);
 		m_survivalBonus.Clear();
-		for(int i = 0; i < minutes.Count; i++)
-		{
-			m_survivalBonus.Add(new Dictionary<string, int>
-				{
-					{ "minMinutes", minutes[i] },
-					{ "coins", coins[i] },
-				});
+		for(int i = 0; i < defs.Count; i++) {
+			// Add entries
+			m_survivalBonus.Add(
+				new SurvivalBonusData(
+					defs[i].GetAsInt("survivedMinutes"), 
+					defs[i].GetAsFloat("bonusPerMinute")
+				)
+			);
 		}
 
-		m_survivalBonus.Sort(delegate(Dictionary<string, int> a, Dictionary<string, int> b)
-			{
-				return a["minMinutes"] - b["minMinutes"];
-			});
+		// Sort by minutes
+		m_survivalBonus.Sort(
+			(SurvivalBonusData _a, SurvivalBonusData _b) => {
+				return _a.survivedMinutes.CompareTo(_b.survivedMinutes);
+			}
+		);
 	}
 
 	/// <summary>
 	/// Calculates the survival bonus at the end of the game
 	/// </summary>
-	/// <returns>The survival bonus.</returns>
-	public int CalculateSurvivalBonus()
-	{
-		//Survival bonus is awarded for every block of 10 seconds the user has survived
+	/// <returns>The total amount of coins rewarded by the survival bonus.</returns>
+	public int CalculateSurvivalBonus() {
+		// Find out the bonus percentage of coins earned per minute
 		float elapsedTime = GameTime();
 		int elapsedMinutes = (int)Math.Floor(elapsedTime / 60);
-		int elapsedBlocks = (int)Math.Floor(elapsedTime / 10);
 
-		int coinsPerBlock = 0;
-
-		var iterator = m_survivalBonus.GetEnumerator();
-		while(iterator.MoveNext())
-		{
-			Dictionary<string, int> data = iterator.Current;
-			if(elapsedMinutes >= data["minMinutes"])
-			{
-				coinsPerBlock = data["coins"];
+		// Find the bonus linked to the total amount of minutes
+		// List is sorted
+		float bonusCoinsPerMinute = 0f;
+		for(int i = 0; i < m_survivalBonus.Count; i++) {
+			if(elapsedMinutes >= m_survivalBonus[i].survivedMinutes) {
+				// Store new bonus
+				bonusCoinsPerMinute = m_survivalBonus[i].bonusPerMinute;
+			} else {
+				// Break loop!
+				break;
 			}
 		}
 
-		int survivalBonus = (int)Math.Floor(elapsedBlocks * coinsPerBlock * 1.0f); // TODO (miguel); m_accessorySurvivalBonusMultiplier
-		return survivalBonus;
+		// Compute total amount of bonus coins
+		return Mathf.FloorToInt((float)coins * (float)elapsedMinutes * bonusCoinsPerMinute);
 	}
 
 	//------------------------------------------------------------------//

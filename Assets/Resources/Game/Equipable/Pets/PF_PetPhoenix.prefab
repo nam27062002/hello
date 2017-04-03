@@ -30,7 +30,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 4.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4897437064355290}
@@ -720,7 +720,6 @@ GameObject:
   - component: {fileID: 4154966873562340}
   - component: {fileID: 33610703152325418}
   - component: {fileID: 23659922899563640}
-  - component: {fileID: 95313931924916728}
   m_Layer: 0
   m_Name: OpenCone (1)
   m_TagString: Untagged
@@ -839,7 +838,7 @@ GameObject:
   - component: {fileID: 95144398328074758}
   - component: {fileID: 114860669569164406}
   m_Layer: 0
-  m_Name: OpenCone (1)
+  m_Name: OpenCone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1841,7 +1840,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1607190107314336}
-  m_LocalRotation: {x: -0.14988339, y: -0.4364673, z: -0.07399891, w: 0.8840563}
+  m_LocalRotation: {x: 0.04186565, y: 0.6672611, z: -0.03761347, w: 0.7426945}
   m_LocalPosition: {x: 0, y: -0.23, z: -0.11}
   m_LocalScale: {x: 8, y: 8, z: 8}
   m_Children:
@@ -2181,9 +2180,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1341313886595646}
-  m_LocalRotation: {x: -0.14988333, y: -0.4364673, z: -0.07399887, w: 0.8840563}
+  m_LocalRotation: {x: 0.04186567, y: 0.66726106, z: -0.03761349, w: 0.74269456}
   m_LocalPosition: {x: 0.000000014901161, y: -0.22999954, z: -0.110000625}
-  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children:
   - {fileID: 4154966873562340}
   m_Father: {fileID: 424588}
@@ -2478,23 +2477,6 @@ Animator:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1341313886595646}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 2b7268a8fcdae2149ba50c12fe29fa3d, type: 3}
-  m_Controller: {fileID: 9100000, guid: 88487e464385b6444aaabcabd7c39425, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
---- !u!95 &95313931924916728
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1227223857927026}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 2b7268a8fcdae2149ba50c12fe29fa3d, type: 3}
   m_Controller: {fileID: 9100000, guid: 88487e464385b6444aaabcabd7c39425, type: 2}
@@ -2812,6 +2794,8 @@ MonoBehaviour:
       max: 1.25
   m_onSpawnSound: 
   m_rotateToMouth: 0
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -3079,7 +3063,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1461735209
+  randomSeed: 1538722032
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -5644,7 +5628,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1516277867
+  randomSeed: -1863418970
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -8281,7 +8265,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: -138211988
+  randomSeed: -1551914165
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10810,7 +10794,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1045224375
+  randomSeed: -1546046606
   InitialModule:
     serializedVersion: 3
     enabled: 1

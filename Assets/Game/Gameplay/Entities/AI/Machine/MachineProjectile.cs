@@ -84,6 +84,7 @@ namespace AI {
 		// 
 		public bool IsDying() { return m_beingEaten || m_beingBurned; }
 		public bool IsDead() { return IsDying(); }
+		public bool IsFreezing() { return false; }
 
 		public void Drown() {}
 
