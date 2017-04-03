@@ -1173,7 +1173,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90a8dcc19fcdf47c48738f4a9245cade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_particleTrails: []
+  m_particleTrails:
+  - {fileID: 198362083909565918}
 --- !u!114 &11483596
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2122,7 +2123,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1555281845239496
 GameObject:
   m_ObjectHideFlags: 1
@@ -3093,7 +3094,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1970556544219656}
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalRotation: {x: -0.105807655, y: 0.5607043, z: 0.072524935, w: 0.81801933}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -4024,6 +4025,10 @@ MonoBehaviour:
   m_holdingBloodParticle:
     name: PS_Blood_Explosion_Medium
     path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_holdingFreezeParticle:
+    name: PS_IceExplosionSmall
+    path: 
     offset: {x: 0, y: 0, z: 0}
   m_burpSound: 
   m_canEatEntities: 1
