@@ -21,6 +21,7 @@ namespace FGOL.Plugins.Native
 	    [DllImport("__Internal")] private static extern string _GetUserLocation();
 		[DllImport("__Internal")] private static extern string _GetUserCountryISO();
 		[DllImport("__Internal")] private static extern int _GetMemoryUsage();
+		[DllImport("__Internal")] private static extern int _GetMaxMemoryUsage();
         [DllImport("__Internal")] private static extern void _DontBackupDirectory(string directory);
 
         [DllImport("__Internal")] private static extern bool _IsIPodMusicPlaying();
@@ -114,6 +115,11 @@ namespace FGOL.Plugins.Native
 		public int GetMemoryUsage()
 		{
 			return _GetMemoryUsage();
+		}
+
+		public int GetMaxMemoryUsage()
+		{
+			return _GetMaxMemoryUsage();
 		}
 
 		public long GetMaxHeapMemory()

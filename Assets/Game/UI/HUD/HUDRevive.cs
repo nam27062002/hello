@@ -120,6 +120,9 @@ public class HUDRevive : MonoBehaviour {
 	/// The revive button has been clicked.
 	/// </summary>
 	public void OnRevive() {
+		// Make sure timer hasn't finished!
+		if(m_timer.IsFinished()) return;
+
 		// Perform transaction
 		// If not enough funds, pause timer and open PC shop popup
 		long costPC = m_paidReviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
@@ -160,6 +163,9 @@ public class HUDRevive : MonoBehaviour {
 	/// The free revive button has been clicked.
 	/// </summary>
 	public void OnFreeRevive() {
+		// Make sure timer hasn't finished!
+		if(m_timer.IsFinished()) return;
+
 		// [AOC] TODO!! Show a video ad!
 		// Open placeholder popup
 		PopupController popup = PopupManager.OpenPopupInstant(PopupAdRevive.PATH);

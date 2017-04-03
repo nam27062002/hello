@@ -201,7 +201,8 @@ public class ResultsSceneSetup : MonoBehaviour {
 	/// </summary>
 	public void LaunchDragonAnim() {
 		// Launch gold mountain animation
-		m_goldMountainAnimator.SetTrigger("Intro");
+        if (m_goldMountainAnimator != null)
+		    m_goldMountainAnimator.SetTrigger("Intro");
 
 		// Show and trigger dragon animation
 		m_dragonSlot.gameObject.SetActive(true);

@@ -74,7 +74,7 @@ namespace AI {
 		protected Vector3 m_externalVelocity;
 		public Vector3 externalVelocity{ get { return m_externalVelocity; } set { m_externalVelocity = value; } }
 
-		private float   m_terminalVelocity;
+		protected float m_terminalVelocity;
 		private Vector3 m_acceleration;
 
 		private Transform m_attackTarget = null;
@@ -267,10 +267,17 @@ namespace AI {
 
 		public void LateUpdate() {
 			if (m_state == State.Latching) {
-				m_latchBlending += Time.deltaTime;
-				Vector3 mouthOffset = (position - m_mouth.position);
-				position = Vector3.Lerp(position, m_pilot.target + mouthOffset, m_latchBlending);
+				if (m_machine.GetSignal(Signals.Type.Latching)) {
+					m_latchBlending += Time.deltaTime;
+					Vector3 mouthOffset = (m_machineTransform.position - m_mouth.position);
+					m_machineTransform.position = Vector3.Lerp(m_machineTransform.position, m_pilot.target + mouthOffset, m_latchBlending);
+				}
 			}
+		}
+
+		public void FreeFall() {
+			m_machine.SetSignal(Signals.Type.FallDown, true);
+			m_nextState = State.FreeFall;
 		}
 
 		private void UpdateAttack() {
@@ -354,14 +361,16 @@ namespace AI {
 		private void ChangeState() {
 			// Leave current state
 			switch (m_state) {
-				case State.Free:
-					Stop();
+				case State.Free:					
 					break;
 
 				case State.Biting:
 					break;
 
 				case State.Latching:
+					Stop();
+					m_rbody.isKinematic = false;
+					m_rbody.detectCollisions = true;	
 					m_latchBlending = 0f;
 					break;
 
@@ -391,6 +400,8 @@ namespace AI {
 					break;
 
 				case State.Latching:
+					m_rbody.isKinematic = true;
+					m_rbody.detectCollisions = false;
 					break;
 
 				case State.Locked:

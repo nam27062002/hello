@@ -174,6 +174,9 @@ namespace LevelEditor {
 			m_elapsedSeconds = 0;
 
 			m_started = true;
+
+			// Notify the game
+			Messenger.Broadcast(GameEvents.GAME_STARTED);
 		}
 
 		//------------------------------------------------------------------//

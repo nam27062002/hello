@@ -120,7 +120,7 @@ public class Spawner : AbstractSpawner {
 	protected override void OnStart() {
 		float rnd = Random.Range(0f, 100f);
 
-		if (InstanceManager.player.data.tier >= m_minTier) {
+		if (InstanceManager.player != null && InstanceManager.player.data.tier >= m_minTier) {
 			if (m_entityPrefabList != null && m_entityPrefabList.Length > 0 && rnd <= m_activationChance) {
 
 				if (m_quantity.max < m_quantity.min) {
@@ -439,18 +439,18 @@ public class Spawner : AbstractSpawner {
 
 	protected Vector3 RandomStartDisplacement(int _index)	{
 		Vector3 v = Vector3.zero;
-
-		float d = m_homePosDistance.distance;
-		int s = (_index % 2 == 0)? -1 : 1;
-		_index = Mathf.FloorToInt((_index * s) / 2f) + s;
+		float dAngle = (2f * Mathf.PI) / EntitiesToSpawn;
+		float distance = m_homePosDistance.distance;
+		float randomDistance = Random.Range(distance * 0.5f, distance);
 
 		switch (m_homePosMethod) {
 			case SpawnPointSeparation.Sphere:
-				v = Random.onUnitSphere * _index * (m_homePosDistance.min + Random.Range(-d * 0.5f, d * 0.5f));
+				v.x = randomDistance * 0.5f * Mathf.Cos(dAngle * _index);
+				v.y = randomDistance * 0.5f * Mathf.Sin(dAngle * _index);
 				break;
 
 			case SpawnPointSeparation.Line:
-				v = Vector3.right * _index * (m_homePosDistance.min + Random.Range(-d * 0.5f, d * 0.5f));
+				v = Vector3.right * m_homePosDistance.GetRandom();
 				break;
 		}
 

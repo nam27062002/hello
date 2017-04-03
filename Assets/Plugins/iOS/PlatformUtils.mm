@@ -7,6 +7,7 @@
 
 #include <string>
 #include <inttypes.h>
+#import <mach/mach.h>
 
 using namespace std;
 
@@ -149,6 +150,31 @@ extern "C"
                  }
              }];
         }
+    }
+    
+    
+    
+    unsigned long IOsFreeMemory()
+    {
+        mach_port_t host_port = mach_host_self();
+        mach_msg_type_number_t host_size = sizeof(vm_statistics_data_t) / sizeof(integer_t);
+        vm_size_t pagesize;
+        vm_statistics_data_t vm_stat;
+        
+        host_page_size(host_port, &pagesize);
+        (void) host_statistics(host_port, HOST_VM_INFO, (host_info_t)&vm_stat, &host_size);
+        return vm_stat.free_count * pagesize;
+    }
+    
+    char* IOsGetCommandLineArgs()
+    {
+        NSArray<NSString *>* arguments = [[NSProcessInfo processInfo] arguments];
+        std::string ret = "";
+        for (NSString* element in arguments)
+        {
+            ret += std::string(element.UTF8String) + "#";
+        }
+        return stringCopy( ret.c_str() );
     }
 }
 

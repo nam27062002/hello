@@ -75,6 +75,7 @@ public class FogManager : MonoBehaviour
 
 	// For Area Mode
 	public FogAttributes m_defaultAreaFog;
+	public float m_transitionDuration = 1.0f;
 
 	// Runtime variables
 	List<FogAttributes> m_generatedAttributes = new List<FogAttributes>();
@@ -135,6 +136,7 @@ public class FogManager : MonoBehaviour
 		m_active = Prefs.GetBoolPlayer(DebugSettings.FOG_MANAGER, true);
 		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 		Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChangedString);
+		Messenger.AddListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
 
 		m_fogBlendMode = (FogBlendMode) Prefs.GetIntPlayer( DebugSettings.FOG_BLEND_TYPE, 0);
 		OnModeChanged();
@@ -165,6 +167,7 @@ public class FogManager : MonoBehaviour
 		InstanceManager.fogManager = null;
 		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 		Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChangedString);
+		Messenger.RemoveListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
 	}
 
 	void Debug_OnChanged( string _key, bool value)
@@ -178,6 +181,35 @@ public class FogManager : MonoBehaviour
 		if ( _key == DebugSettings.FOG_BLEND_TYPE )
 		{
 			m_fogBlendMode = (FogBlendMode) Prefs.GetIntPlayer(_key, 0);
+		}
+	}
+
+	void OnAreaExit()
+	{
+		// Clean all for areas?
+		for(int i = m_generatedAttributes.Count - 1; i>=0; i-- )
+		{
+			if ( m_generatedAttributes[i] != m_defaultAreaFog )
+			{
+				bool toDestroy = true;
+				// if this generated is not from the activated area list
+				for( int j = 0; j<m_activeFogAreaList.Count && !toDestroy; j++ )
+				{
+					// if we are using it we dont destory it
+					if ( m_generatedAttributes[i].texture == m_activeFogAreaList[j].m_attributes.texture )
+					{
+						toDestroy = false;
+					}
+				}
+
+				if ( toDestroy )
+				{
+					// Destroy Texture and remove attributes
+					m_generatedAttributes[i].DestroyTexture();
+					m_generatedAttributes[i].texture = null;
+					m_generatedAttributes.RemoveAt(i);
+				}
+			}
 		}
 	}
 
@@ -203,7 +235,7 @@ public class FogManager : MonoBehaviour
 				if (m_lastSelectedAttributes != m_selectedAttributes)
 				{
 					m_lastSelectedAttributes = m_selectedAttributes;
-					m_transitionTimer = 1.0f;
+					m_transitionTimer = m_transitionDuration;
 
 					// Copy destination render texture to original texture
 					m_updateBlitOriginTexture = true;
@@ -245,7 +277,7 @@ public class FogManager : MonoBehaviour
 				}
 				else
 				{
-					float delta = 1.0f - m_transitionTimer;
+					float delta = 1.0f - (m_transitionTimer / m_transitionDuration);
 					m_start = Mathf.Lerp( m_tmpStart, m_selectedAttributes.m_fogStart, delta);
 					m_end = Mathf.Lerp( m_tmpEnd, m_selectedAttributes.m_fogEnd, delta);
 					for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )
@@ -349,19 +381,21 @@ public class FogManager : MonoBehaviour
 		m_activeFogAreaList.Add( _area );
 	}
 
-	public void CheckTextureAvailability( FogManager.FogAttributes _attributes)
+	public void CheckTextureAvailability( FogManager.FogAttributes _attributes, bool forceNew = false)
 	{
 		if ( _attributes.texture == null )
 		{
-			for( int i = 0; i<m_generatedAttributes.Count; i++ )
+			if (!forceNew)
 			{
-				if ( Equals(m_generatedAttributes[i].m_fogGradient, _attributes.m_fogGradient) )
+				for( int i = 0; i<m_generatedAttributes.Count; i++ )
 				{
-					_attributes.m_fogGradient = m_generatedAttributes[i].m_fogGradient;
-					_attributes.texture = m_generatedAttributes[i].texture;
-					break;
+					if ( Equals(m_generatedAttributes[i].m_fogGradient, _attributes.m_fogGradient) )
+					{
+						_attributes.m_fogGradient = m_generatedAttributes[i].m_fogGradient;
+						_attributes.texture = m_generatedAttributes[i].texture;
+						break;
+					}
 				}
-
 			}
 
 			if ( _attributes.texture == null )

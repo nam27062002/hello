@@ -62,7 +62,7 @@ public class MapMarker : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.AddListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
+		Messenger.AddListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
 	}
 
 	/// <summary>
@@ -92,7 +92,7 @@ public class MapMarker : MonoBehaviour {
 	protected virtual void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.RemoveListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
+		Messenger.RemoveListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
 	}
 
 	//------------------------------------------------------------------------//
@@ -105,13 +105,15 @@ public class MapMarker : MonoBehaviour {
 		// Check visibility based on marker type and level
 		switch(m_type) {
 			case Type.DECO: {
-				this.gameObject.SetActive(showMarker && UsersManager.currentUser.mapLevel > 0);
+				this.gameObject.SetActive(showMarker);
 			} break;
 
 			case Type.CHEST:
 			case Type.EGG:
 			case Type.LETTER: {
-				this.gameObject.SetActive(showMarker && UsersManager.currentUser.mapLevel > 1);
+				// [AOC] If the map timer runs out during the game, we let the player enjoy the unlocked map for the whole run
+				//       That's why we check the GameSceneController rather than the user profile
+				this.gameObject.SetActive(showMarker && InstanceManager.gameSceneControllerBase.mapUnlocked);
 			} break;
 		}
 
@@ -165,8 +167,8 @@ public class MapMarker : MonoBehaviour {
 	/// </summary>
 	/// <param name="_popup">The popup that has just been opened.</param>
 	private void OnPopupOpened(PopupController _popup) {
-		// If it's the pause popup, refresh marker
-		if(_popup.GetComponent<PopupPause>() != null) {
+		// If it's the map popup, refresh marker
+		if(_popup.GetComponent<PopupInGameMap>() != null) {
 			UpdateMarker();
 		}
 	}
@@ -174,12 +176,9 @@ public class MapMarker : MonoBehaviour {
 	/// <summary>
 	/// Minimap has been upgraded.
 	/// </summary>
-	/// <param name="_newLevel">New minimap level.</param>
-	private void OnMapUpgraded(int _newLevel) {
+	private void OnMapUnlocked() {
 		// Update marker will do the job
 		// Add some delay to give time for feedback to show off
-		float delay = 0.25f;
-		if(_newLevel == 1) delay = 1.3f;	// Unlock animation is a bit longer
-		DOVirtual.DelayedCall(delay, UpdateMarker, true);
+		DOVirtual.DelayedCall(0.25f, UpdateMarker, true);
 	}
 }

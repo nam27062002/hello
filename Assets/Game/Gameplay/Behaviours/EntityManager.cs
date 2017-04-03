@@ -275,7 +275,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             // Inverse loop because the current entity could be deleted from the list if it's disabled
             for (i = count - 1; i > -1; i--)
             {
-                if (m_entities[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_entities[i].transform.position))
+				if (m_entities[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_entities[i].machine.position))
                 {
                     m_entities[i].Disable(false);                                                            
                 }
@@ -285,7 +285,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             // Inverse loop because the current entity could be deleted from the list if it's disabled
             for (i = count - 1; i > -1; i--)
             {
-                if (m_entitiesBg[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_entitiesBg[i].transform.position))
+				if (m_entitiesBg[i].CanDieOutsideFrustrum() && camera.IsInsideBackgroundActivationArea(m_entitiesBg[i].machine.position))
                 {
                     m_entitiesBg[i].Disable(false);                    
                 }
@@ -295,7 +295,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 			// Inverse loop because the current entity could be deleted from the list if it's disabled
 			for (i = count - 1; i > -1; i--)
 			{
-				if (m_cages[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_cages[i].transform.position))
+				if (m_cages[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_cages[i].transform.position)) //cages don't have machine
 				{
 					m_cages[i].Disable(false);                    
 				}

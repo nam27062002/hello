@@ -85,9 +85,6 @@ public class MapScroller : MonoBehaviour {
 
 		// Detect scroll events
 		m_scrollRect.onValueChanged.AddListener(OnScrollChanged);
-
-		// Subscribe to external events
-		Messenger.AddListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
 	}
 
 	/// <summary>
@@ -103,9 +100,6 @@ public class MapScroller : MonoBehaviour {
 
 		// Stop detecting scroll events
 		m_scrollRect.onValueChanged.RemoveListener(OnScrollChanged);
-
-		// Unsubscribe from external events
-		Messenger.RemoveListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
 	}
 
 	/// <summary>
@@ -122,9 +116,6 @@ public class MapScroller : MonoBehaviour {
 		// Nothing to do if we don't have all the required elements
 		if(m_camera == null) return;
 		if(m_levelData == null) return;
-
-		// If map is not upgraded, interaction is locked
-		if(UsersManager.currentUser.mapLevel == 0) return;
 
 		// Detect zoom
 		if(m_zoomSpeed > 0f) {
@@ -201,11 +192,6 @@ public class MapScroller : MonoBehaviour {
 		// Make it safe
 		if(m_camera == null) return;
 		if(m_levelData == null) return;
-
-		// If map is locked, don't allow scrolling
-		if(UsersManager.currentUser.mapLevel == 0) {
-			m_scrollRect.normalizedPosition = new Vector2(0f, 1f);	// Inverted Y axis
-		}
 
 		// Content matches level bounds, scrollrect viewport matches camera viewport
 		// Scroll position is the top-left corner of the content rectangle, take in consideration camera size to make the maths
@@ -300,6 +286,9 @@ public class MapScroller : MonoBehaviour {
 
 		// Apply to camera component
 		m_camera.enabled = _enable;
+
+		// Do the same with scroll rect
+		m_scrollRect.viewport.gameObject.SetActive(_enable);
 	}
 
 	//------------------------------------------------------------------------//
@@ -364,16 +353,5 @@ public class MapScroller : MonoBehaviour {
 	public void OnPopupClosed(PopupController _popup) {
 		// Re-enable camera (if this component is enabled)
 		EnableCamera(this.isActiveAndEnabled);
-	}
-
-	/// <summary>
-	/// The map has been upgraded.
-	/// </summary>
-	/// <param name="_newLevel">New map level.</param>
-	public void OnMapUpgraded(int _newLevel) {
-		// If it's the first upgrade, scroll to player's position
-		if(_newLevel == 1) {
-			ScrollToPlayer();
-		}
 	}
 }

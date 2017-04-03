@@ -30,6 +30,18 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         get { return m_isAlive; }
     }
 
+    public enum Mode
+    {
+    	PLAY,
+    	TEST
+    };
+    private Mode m_appMode = Mode.PLAY;
+    public Mode appMode
+    {
+    	get{ return m_appMode; }
+    }
+
+
     /// <summary>
 	/// Initialization. This method will be called only once regardless the amount of times the user is led to the Loading scene.
 	/// </summary>
@@ -70,8 +82,31 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     protected void Start()
     {
+
+		if (HasArg("-start_test"))
+		{	
+			// Start Testing game!
+			// ControlPanel.instance.ShowMemoryUsage = true;
+				// Tell control panel to show memory
+			m_appMode = Mode.TEST;
+		}
+
         StartCoroutine(Device_Update());
     }
+
+	private bool HasArg(string _argName) 
+	{
+		string[] args = PlatformUtils.Instance.GetCommandLineArgs();
+		if ( args != null )
+		{
+			for(int i = 0; i < args.Length; i++) {
+				if(args[i] == _argName) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
     protected override void OnDestroy()
     {
@@ -177,8 +212,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------        
 
             // ---------------------------
-            // Test toggling profiler scene
-            //Debug_ToggleProfilerScene();
+            // Test toggling profiler memory scene
+            //Debug_ToggleProfilerMemoryScene();
+            // ---------------------------
+
+            // ---------------------------
+            // Test togling profiler load scenes scene
+            //Debug_ToggleProfilerLoadScenesScene();
             // ---------------------------
         }
 
@@ -716,7 +756,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         CustomParticlesCulling.Manager_IsEnabled = !CustomParticlesCulling.Manager_IsEnabled;
     }
 
-    public void Debug_ToggleProfilerScene()
+    public void Debug_ToggleProfilerMemoryScene()
     {
         if (GameSceneManager.nextScene == ProfilerMemoryController.NAME)
         {
@@ -724,7 +764,24 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         }
         else
         {
-            FlowManager.GoToProfilerMemory();
+            FlowManager.GoToProfilerMemoryScene();
+        }
+    }
+
+    private void Debug_LoadProfilerScenesScene()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(ProfilerLoadScenesController.NAME);
+    }
+
+    public void Debug_ToggleProfilerLoadScenesScene()
+    {
+        if (GameSceneManager.nextScene == ProfilerLoadScenesController.NAME)
+        {
+            FlowManager.GoToMenu();
+        }
+        else
+        {
+            Debug_LoadProfilerScenesScene();
         }
     }
     #endregion

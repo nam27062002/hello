@@ -124,7 +124,7 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 		GameObject[] chestSpawners = GameObject.FindGameObjectsWithTag(CollectibleChest.TAG);	// Finding by tag is much faster than finding by type
 		if(chestSpawners.Length > 0) {
 			// Special case: chests are disabled during the very first run!
-			if(instance.m_user.gamesPlayed <= 0) {
+			if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
 				for(int i = 0; i < chestSpawners.Length; i++) {
 					GameObject.Destroy(chestSpawners[i]);
 				}

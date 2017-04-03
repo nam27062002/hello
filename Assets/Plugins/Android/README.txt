@@ -1,0 +1,1 @@
+Folder for Android plugins, don't delete this file please!

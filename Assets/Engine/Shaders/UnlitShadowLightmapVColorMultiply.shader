@@ -5,7 +5,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + vertex color multiply" 
+Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Vertex Color Multiply" 
 {
 	Properties 
 	{
@@ -33,7 +33,7 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + vertex color multiply"
 				#include "HungryDragon.cginc"
 
 				#define FOG
-				#define COLOR_MULTIPLY
+				#define COLOR_MODULATE
 				#define OPAQUEALPHA
 
 				#include "scenary.cginc"

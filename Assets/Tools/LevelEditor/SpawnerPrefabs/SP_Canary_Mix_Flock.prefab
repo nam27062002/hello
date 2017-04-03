@@ -8,7 +8,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 494148}
-  - component: {fileID: 11461888}
   - component: {fileID: 11478514}
   - component: {fileID: 11451096}
   - component: {fileID: 114000011502344174}
@@ -43,7 +42,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_mixEntities: 0
+  m_mixEntities: 1
   m_entityPrefabList:
   - name: Air/PF_Canary01_Flock
     chance: 25
@@ -60,8 +59,8 @@ MonoBehaviour:
     min: 1
     max: 1
   m_scale:
-    min: 0.9
-    max: 1.1
+    min: 1
+    max: 1
   m_rails: 4
   m_hasGroupBonus: 1
   m_minTier: 0
@@ -69,28 +68,14 @@ MonoBehaviour:
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
-    min: 120
-    max: 150
+    min: 180
+    max: 180
   m_homePosMethod: 0
   m_homePosDistance:
     min: 1
     max: 2
   m_maxSpawns: 0
   m_checkCurrents: 0
---- !u!114 &11461888
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 194974}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aa2aecfe88da48e8b391e33aa7cb815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_positionLock: 000001
-  m_rotationLock: 010101
-  m_scaleLock: 010101
 --- !u!114 &11478514
 MonoBehaviour:
   m_ObjectHideFlags: 1

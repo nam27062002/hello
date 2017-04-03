@@ -148,7 +148,7 @@ public class GameSceneController : GameSceneControllerBase {
         // [AOC] Editor utility: open pause popup
         #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.P)) {
-			PopupManager.OpenPopupInstant(PopupPause.PATH);
+			PopupManager.OpenPopupInstant(PopupInGameSettings.PATH);
 		}
 		else if (Input.GetKeyDown(KeyCode.I))
 		{
@@ -297,10 +297,10 @@ public class GameSceneController : GameSceneControllerBase {
 					m_timer -= Time.deltaTime;
 					if(m_timer <= 0) {
 						// Disable dragon and entities!
-						InstanceManager.player.gameObject.SetActive(false);						
+						InstanceManager.player.gameObject.SetActive(false);
 
-                        // Clear pools to save memory as entities don't need to be shown in the results screen
-                        PoolManager.Clear(true);
+                        // Clear pools to save memory for the results screen
+                        ClearGame();
 
                         // Enable Results screen and move the camera to that position
                         if (m_resultsScene != null) {
@@ -312,19 +312,26 @@ public class GameSceneController : GameSceneControllerBase {
 		}
 	}
 
+    /// <summary>
+    /// Clears stuff used by the game (RUNNING state)
+    /// </summary>
+    private void ClearGame() {        
+        PoolManager.Clear(true);        
+    }
+
 	/// <summary>
 	/// Destructor.
 	/// </summary>
 	override protected void OnDestroy() {
-		// Clear pools
-		PoolManager.Clear(true);
+        // Clear the game just in case the user leaves the scene without following the usual flow (through the results screen)
+        ClearGame();
 
-		// Call parent
-		base.OnDestroy();
+        // Call parent
+        base.OnDestroy();
 
         CustomParticlesCulling.Manager_OnDestroy();
 
-        Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+        Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 	}
 
 	//------------------------------------------------------------------//

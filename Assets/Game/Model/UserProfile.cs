@@ -102,7 +102,11 @@ public class UserProfile : UserSaveSystem
 	[SerializeField] private int m_gamesPlayed = 0;
 	public int gamesPlayed {
 		get { return m_gamesPlayed; }
-		set { m_gamesPlayed = value; }
+		set {
+			// Mark tutorial as completed if > 0
+			m_gamesPlayed = value;
+			SetTutorialStepCompleted(TutorialStep.FIRST_RUN, m_gamesPlayed > 0);
+		}
 	}
 
 	[SerializeField] private long m_highScore = 0;
@@ -211,10 +215,15 @@ public class UserProfile : UserSaveSystem
 	}
 
 	// Map upgrades
-	private int m_mapLevel = 0;
-	public int mapLevel {
-		get { return m_mapLevel; }
-		set { m_mapLevel = value; }
+	private DateTime m_mapResetTimestamp;
+	public DateTime mapResetTimestamp {
+		get{ return m_mapResetTimestamp; }
+		set{ m_mapResetTimestamp = value; }
+	}
+
+	public bool mapUnlocked {
+		// Map is unlocked as long as the timestamp hasn't expired
+		get { return m_mapResetTimestamp > DateTime.UtcNow; }
 	}
 
     //------------------------------------------------------------------------//
@@ -302,13 +311,26 @@ public class UserProfile : UserSaveSystem
 
 	/// <summary>
 	/// Increases the map level.
-	/// Doesn't perform any check or currency transaction.
-	/// Broadcasts the PROFILE_MAP_UPGRADED event.
+	/// Doesn't perform any check or currency transaction, resets timer.
+	/// Broadcasts the PROFILE_MAP_UNLOCKED event.
 	/// </summary>
-	public void UpgradeMap() {
-		// Just do it!
-		m_mapLevel++;
-		Messenger.Broadcast<int>(GameEvents.PROFILE_MAP_UPGRADED, m_mapLevel);
+	public void UnlockMap() {
+		// Reset timer to the start of the following day, in local time zone
+		// [AOC] Small trick to figure out the start of a day, from http://stackoverflow.com/questions/3362959/datetime-now-first-and-last-minutes-of-the-day
+		//DateTime tomorrow = DateTime.Now.AddDays(1);	// Using local time zone to compute tomorrow's date
+		//m_mapResetTimestamp = tomorrow.Date.ToUniversalTime();	// Work in UTC
+
+		// [AOC] Testing purposes
+		//m_mapResetTimestamp = DateTime.Now.AddSeconds(30).ToUniversalTime();
+
+		// [AOC] Fuck it! Easier implementation, fixed timer from the moment you unlock the map
+		DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+		if(gameSettingsDef != null) {
+			m_mapResetTimestamp = DateTime.UtcNow.AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
+		} else {
+			m_mapResetTimestamp = DateTime.UtcNow.AddHours(24);	// Default timer just in case
+		}
+		Messenger.Broadcast(GameEvents.PROFILE_MAP_UNLOCKED);
 	}
 
 	/// <summary>
@@ -359,10 +381,16 @@ public class UserProfile : UserSaveSystem
 		// Special case for NONE: ignore
 		if(_step == TutorialStep.INIT) return;
 
+		bool wasCompleted = IsTutorialStepCompleted(_step);
 		if(_completed) {
 			m_tutorialStep |= _step;
 		} else {
 			m_tutorialStep &= ~_step;
+		}
+
+		// Notify game (only if value has changed)
+		if(wasCompleted != _completed) {
+			Messenger.Broadcast(GameEvents.TUTORIAL_STEP_TOGGLED, _step, _completed);
 		}
 	}
 
@@ -410,7 +438,7 @@ public class UserProfile : UserSaveSystem
         }
         else
         {
-            m_saveTimestamp = DateTime.Now;
+            m_saveTimestamp = DateTime.UtcNow;
         }
 
         // Economy
@@ -560,11 +588,11 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Map upgrades
-		key = "mapLevel";
-		if(profile.ContainsKey(key)) {
-			m_mapLevel = profile[key].AsInt;
+		key = "mapResetTimestamp";
+		if(_data.ContainsKey(key)) {
+			m_mapResetTimestamp = DateTime.Parse(_data["mapResetTimestamp"], JSON_FORMATTING_CULTURE);
 		} else {
-			m_mapLevel = 0;
+			m_mapResetTimestamp = DateTime.UtcNow;	// Already expired
 		}
 	}
 
@@ -698,7 +726,7 @@ public class UserProfile : UserSaveSystem
 		data.Add("dailyRemoveMissionAdUses", m_dailyRemoveMissionAdUses.ToString(JSON_FORMATTING_CULTURE));
 
 		// Map upgrades
-		profile.Add("mapLevel", m_mapLevel.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("mapResetTimestamp", m_mapResetTimestamp.ToString(JSON_FORMATTING_CULTURE));
 
 		// Return it
 		return data;

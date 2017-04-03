@@ -335,30 +335,30 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	/// </summary>
 	/// <param name="_spawner">The spawner to be removed.</param>
 	public void Unregister(ISpawner _spawner, bool _removeFromTree) {
+        if (m_spawners.Contains(_spawner))
+        {
+            // resave _spanwer info
+            if (m_spanwersData.ContainsKey(_spawner.GetSpawnerID())) {
+                AbstractSpawnerData data = m_spanwersData[_spawner.GetSpawnerID()];
+                _spawner.Save(ref data);
+            }
+            else {
+                AbstractSpawnerData data = _spawner.Save();
+                if (data != null) {
+                    m_spanwersData.Add(_spawner.GetSpawnerID(), data);
+                }
+            }
 
-		// resave _spanwer info
-		if (m_spanwersData.ContainsKey( _spawner.GetSpawnerID() ))
-		{
-			AbstractSpawnerData data = m_spanwersData[ _spawner.GetSpawnerID() ];
-			_spawner.Save( ref data);
-		}
-		else
-		{
-			AbstractSpawnerData data = _spawner.Save();
-			if ( data != null )
-			{
-				m_spanwersData.Add( _spawner.GetSpawnerID(), data);
-			}
-		}
-
-		m_spawners.Remove(_spawner);
-		if(m_spawnersTreeNear != null && _removeFromTree) {
-			if (_spawner.transform.position.z < FAR_LAYER_Z) {
-				m_spawnersTreeNear.Remove(_spawner);
-			} else { 
-				m_spawnersTreeFar.Remove(_spawner);
-			}
-		}
+            m_spawners.Remove(_spawner);
+            if (m_spawnersTreeNear != null && _removeFromTree) {
+                if (_spawner.transform.position.z < FAR_LAYER_Z) {
+                    m_spawnersTreeNear.Remove(_spawner);
+                }
+                else {
+                    m_spawnersTreeFar.Remove(_spawner);
+                }
+            }
+        }
 	}
 
 	/// <summary>
@@ -500,7 +500,44 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
         // Drop camera references
         m_newCamera = null;
-        m_newCameraTransform = null;    
+        m_newCameraTransform = null;  
+        
+        if (m_spawners != null) {
+            m_spawners.Clear();
+        }
+
+        if (m_spanwersData != null) {
+            m_spanwersData.Clear();
+        }             
+    }   
+
+    private void ForceResetSpawners() {
+        if (m_spawners != null) {
+            int count = m_spawners.Count;
+            for (int i = 0; i < count; i++) {
+                m_spawners[i].ForceReset();
+            }
+        }
+
+        if (m_spawning != null) {
+            m_spawning.Clear();
+        }
+
+        if (m_spanwersData != null) {
+            m_spanwersData.Clear();
+        }
+    }
+
+    public void ForceRespawn() {
+        ForceResetSpawners();
+
+        if (m_spawners != null) {
+            int count = m_spawners.Count;
+            for (int i = 0; i < count; i++)
+            {
+                m_spawning.Add(m_spawners[i]);               
+            }            
+        }                       
     }
 
 #region debug

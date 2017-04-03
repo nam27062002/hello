@@ -6,6 +6,7 @@ public class SpartakusViewControl : ViewControl {
 	[SeparatorAttribute("Dizzy")]
 	[SerializeField] private GameObject m_stars;
 
+
 	private float m_timer;
 
 

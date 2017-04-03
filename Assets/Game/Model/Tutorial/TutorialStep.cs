@@ -31,5 +31,6 @@ public enum TutorialStep {
 	EGG_INCUBATOR				= 1 << 4,
 	CHEST_REWARD				= 1 << 5,
 	EGG_INCUBATOR_SKIP_TIMER 	= 1 << 6,
-	ALL					= ~(0)		// http://stackoverflow.com/questions/7467722/how-to-set-all-bits-of-enum-flag
+	FIRST_RUN					= 1 << 7,
+	ALL							= ~(0)		// http://stackoverflow.com/questions/7467722/how-to-set-all-bits-of-enum-flag
 }

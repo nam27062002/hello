@@ -27,6 +27,8 @@ namespace AI {
 		private Vector3 m_groundDirection;
 		public Vector3 groundDirection { get { return m_groundDirection; } }
 
+		private Vector3 m_gravity;
+
 		private bool m_onGround;
 		private bool m_colliderOnGround;
 		private float m_heightFromGround;
@@ -39,7 +41,7 @@ namespace AI {
 		protected override void ExtendedInit() {
 			m_onGround = false;
 
-			GetGroundNormal();
+			GetGroundNormal(0.3f);
 			RaycastHit hit;
 			bool hasHit = Physics.Raycast(position + m_upVector * 0.1f, -m_groundNormal, out hit, 5f, GROUND_MASK);
 			if (hasHit) {
@@ -47,6 +49,8 @@ namespace AI {
 				m_heightFromGround = 0f;
 				m_onGround = true;
 			}
+
+			m_gravity = Vector3.zero;
 
 			m_subState = SubState.Idle;
 			m_nextSubState = SubState.Idle;
@@ -65,9 +69,9 @@ namespace AI {
 
 			switch (m_subState) {
 				case SubState.Idle:
-					GetGroundNormal();
+					GetGroundNormal(1f);
 					if (!m_onGround) {
-						m_machine.SetSignal(Signals.Type.FallDown, true);
+						FreeFall();
 					} else if (m_pilot.IsActionPressed(Pilot.Action.Jump)) {
 						m_nextSubState = SubState.Jump_Start;
 					} else if (m_pilot.speed > 0.01f) {						
@@ -76,9 +80,9 @@ namespace AI {
 					break;
 
 				case SubState.Move:
-					GetGroundNormal();
+					GetGroundNormal(1f);
 					if (!m_onGround) {
-						m_machine.SetSignal(Signals.Type.FallDown, true);
+						FreeFall();
 					} else if (m_pilot.IsActionPressed(Pilot.Action.Jump)) {
 						m_nextSubState = SubState.Jump_Start;
 					} else if (m_pilot.speed <= 0.01f) {
@@ -96,7 +100,7 @@ namespace AI {
 					break;
 
 				case SubState.Jump_Down:
-					GetGroundNormal();
+					GetGroundNormal(0.3f);
 					if (m_onGround) {
 						m_pilot.ReleaseAction(Pilot.Action.Jump);
 						m_nextSubState = SubState.Idle;
@@ -106,12 +110,21 @@ namespace AI {
 		}
 
 		protected override void ExtendedFixedUpdate() {
+			Vector3 gv = Vector3.down * GRAVITY * Time.fixedDeltaTime;
+
 			if (m_subState >= SubState.Jump_Start && m_subState <= SubState.Jump_Down) {
 				// ----------------------------- gravity :3
-				m_velocity += Vector3.down * 9.8f * Time.fixedDeltaTime;
+				m_velocity += gv;
 				m_rbody.velocity = m_velocity;
 			} else {
-				if (m_subState > SubState.Idle) {				
+				if (m_groundDirection.y < 0f && m_direction.x > 0f
+				||  m_groundDirection.y > 0f && m_direction.x < 0f) {
+					gv *= 15f;
+				}
+
+				m_gravity += gv;
+
+				if (m_subState != SubState.Idle) {					
 					if (m_mass != 1f) {
 						Vector3 impulse = (m_pilot.impulse - m_velocity);
 						impulse /= m_mass;
@@ -120,15 +133,13 @@ namespace AI {
 						m_velocity = m_pilot.impulse;
 					}
 
-					m_rbody.velocity = m_velocity + m_externalVelocity;
+					m_rbody.velocity = Vector3.ClampMagnitude(m_velocity + m_externalVelocity + m_gravity, m_terminalVelocity);
 				}
-
-				m_rbody.AddForce(Vector3.down * 9.8f * 10f, ForceMode.Acceleration);
 			}
 		}
 
 		protected override void ExtendedUpdateFreeFall() {
-			GetGroundNormal();
+			GetGroundNormal(0.3f);
 			if (m_onGround) {
 				m_machine.SetSignal(Signals.Type.FallDown, false);
 				m_nextSubState = SubState.Idle;
@@ -145,12 +156,12 @@ namespace AI {
 		}
 
 		protected override void OnSetVelocity() {
-			if (m_subState == SubState.Jump_Start) {
+			if (m_subState == SubState.Jump_Start) {				
 				m_nextSubState = SubState.Jump_Up;
 			}
 		}
 
-		private Vector3 GetGroundNormal() {
+		private Vector3 GetGroundNormal(float _onGroundHeight) {
 			Vector3 normal = Vector3.up;
 			Vector3 hitPos = position;
 			Vector3 pos = position + (m_upVector * 3f);
@@ -164,7 +175,11 @@ namespace AI {
 				m_heightFromGround = 100f;
 			}
 
-			m_onGround = m_heightFromGround < 0.3f;
+			if (m_heightFromGround < 0.3f) {
+				m_gravity = Vector3.zero;
+			}
+
+			m_onGround = m_heightFromGround < _onGroundHeight;
 			m_groundNormal = normal;
 
 			m_groundDirection = Vector3.Cross(Vector3.back, m_upVector);
@@ -178,6 +193,7 @@ namespace AI {
 		}
 
 		private void ChangeState() {
+			// leave current state
 			switch (m_subState) {
 				case SubState.Idle:
 					break;
@@ -198,6 +214,7 @@ namespace AI {
 					break;
 			}
 
+			// enter next state
 			switch (m_nextSubState) {
 				case SubState.Idle:
 					break;
@@ -205,7 +222,7 @@ namespace AI {
 				case SubState.Move:
 					break;
 
-				case SubState.Jump_Start:
+				case SubState.Jump_Start:					
 					m_viewControl.Jumping(true);
 					Stop();
 					break;

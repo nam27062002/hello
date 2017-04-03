@@ -209,8 +209,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			ParticleManager.CreatePool(m_onEatenParticle.name, m_onEatenParticle.path);
 		}
 
-		if ( m_onEatenParticle.name.ToLower().Contains("blood") )
-		{
+		if (m_onEatenParticle.name.ToLower().Contains("blood")) {
 			m_useFrozenParticle = true;
 			// only create if on eaten particle is blood
 			if ( !m_onEatenFrozenParticle.IsValid())
@@ -360,7 +359,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		RemoveAudios();
     }
 
-    public void PreDisable() {
+    public virtual void PreDisable() {
 		if (m_pcTrail != null) {
 			ParticleManager.ReturnInstance(m_pcTrail);
 			m_pcTrail = null;

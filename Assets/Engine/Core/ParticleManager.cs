@@ -12,25 +12,30 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	// Pool of pools! :D
 	private Dictionary<string, Pool> m_particlePools = new Dictionary<string, Pool>();
 	private Dictionary<string, int> m_poolSize = new Dictionary<string, int>();
+	private List<Pool> m_iterator = new List<Pool>();
 
-	#if PRINT_POOLS
-		string fileName = "ParticleManager.txt";
-		float time = 10f;
-		void Update() {
-			time -= Time.deltaTime;
-			if (time <= 0f) {
-				StreamWriter sw = new StreamWriter(fileName, false);
-				foreach (KeyValuePair<string, Pool> pair in m_particlePools) {
-					sw.WriteLine(pair.Key + ": " + pair.Value.Size());
+	void Update() {
+		#if PRINT_POOLS
+			string fileName = "ParticleManager.txt";
+			float time = 10f;			
+				time -= Time.deltaTime;
+				if (time <= 0f) {
+					StreamWriter sw = new StreamWriter(fileName, false);
+					foreach (KeyValuePair<string, Pool> pair in m_particlePools) {
+						sw.WriteLine(pair.Key + ": " + pair.Value.Size());
+					}
+					sw.Close();
+					time = 10f;
 				}
-				sw.Close();
-				time = 10f;
 			}
-		}
-	#endif
+		#endif
 
-	public static void CreatePool(ParticleData particle)
-	{
+		for (int i = 0; i < m_iterator.Count; i++) {
+			m_iterator[i].Update();
+		}
+	}
+
+	public static void CreatePool(ParticleData particle) {
 		CreatePool( particle.name, particle.path);
 	}
 
@@ -169,6 +174,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		#endif
 
 		instance.m_particlePools.Add(_prefab.name, pool);
+		instance.m_iterator.Add(pool);
 	}
 
 	/// <summary>
@@ -194,6 +200,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
             }
 
             instance.m_particlePools.Clear();
+			instance.m_iterator.Clear();
         }
 		instance.m_poolSize.Clear();
 	}

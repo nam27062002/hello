@@ -25,6 +25,7 @@ namespace FGOL.Plugins.Native
 
 		// General info
 		int GetMemoryUsage();
+		int GetMaxMemoryUsage();
 		long GetMaxHeapMemory();
 		long GetUsedHeapMemory();
 		long GetMaxDeviceMemory();

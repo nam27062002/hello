@@ -55,7 +55,56 @@ public class ParticleScaler : MonoBehaviour
 		mainModule.gravityModifierMultiplier *= scale;
 		mainModule.startSpeedMultiplier *= scale;
 		mainModule.startLifetimeMultiplier *= scale;
-		// ps.main = mainModule;
+
+		ParticleSystem.ShapeModule shape = ps.shape;
+		switch( shape.shapeType )
+		{
+			case ParticleSystemShapeType.Sphere:
+			case ParticleSystemShapeType.SphereShell:
+			{
+				shape.radius *= scale;
+			}break;
+			case ParticleSystemShapeType.Hemisphere:
+			case ParticleSystemShapeType.HemisphereShell:
+			{
+				shape.radius *= scale;
+			}break;
+			case ParticleSystemShapeType.Cone:
+			case ParticleSystemShapeType.ConeShell:
+			case ParticleSystemShapeType.ConeVolume:
+			case ParticleSystemShapeType.ConeVolumeShell:
+			{	
+				shape.radius *= scale;
+				shape.length *= scale;
+			}break;
+			case ParticleSystemShapeType.Box:
+			case ParticleSystemShapeType.BoxShell:
+			case ParticleSystemShapeType.BoxEdge:
+			{
+				shape.box *= scale;
+			}break;
+			case ParticleSystemShapeType.Mesh:
+			{
+				shape.meshScale *= scale;
+			}break;
+			case ParticleSystemShapeType.MeshRenderer:
+			{
+				shape.meshScale *= scale;
+			}break;
+			case ParticleSystemShapeType.SkinnedMeshRenderer:
+			{
+				shape.meshScale *= scale;
+			}break;
+			case ParticleSystemShapeType.CircleEdge:
+			case ParticleSystemShapeType.Circle:
+			{
+				shape.radius *= scale;
+			}break;
+			case ParticleSystemShapeType.SingleSidedEdge:
+			{
+				shape.radius *= scale;
+			}break;
+		}
 	}
 	
 }
