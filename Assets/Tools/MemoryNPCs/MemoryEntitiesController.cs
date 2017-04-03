@@ -109,7 +109,13 @@ public class MemoryEntitiesController : MonoBehaviour {
     }
 
 	private void GetPrefabsFromScene() {
-		Object[] gos = GameObject.FindObjectsOfType(typeof(Entity));
+		Entity[] gos;
+
+		if (Application.isPlaying) {
+			gos = PoolManager.instance.GetComponentsInChildren<Entity>(true);
+		} else {
+			gos = GameObjectExt.FindObjectsOfType<Entity>(true).ToArray();
+		}
 
         GameObject go;
 		for (int i = 0; i < gos.Length; i++) {
