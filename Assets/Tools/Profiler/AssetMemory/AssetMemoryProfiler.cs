@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
 /// <summary>
 /// This class is responsible for returning a report with statistics about the footprint in memory of a set of game objects.
@@ -178,7 +176,7 @@ public class AssetMemoryProfiler
 
                 foreach (var texDef in knownTextures)
                 {
-                    Texture texture = ren.sharedMaterial.GetTexture(texDef.Key);
+                    /*Texture texture = ren.sharedMaterial.GetTexture(texDef.Key);
                     if (texture != null)
                     {
                         AssetInformationStruct diffuse = new AssetInformationStruct();
@@ -194,7 +192,7 @@ public class AssetMemoryProfiler
 #endif
 
                         info.AddChild(diffuse);
-                    }
+                    }*/
                 }
 
             }
@@ -257,7 +255,7 @@ public class AssetMemoryProfiler
     private string GetAssetPath(UnityEngine.Object go)
     {
 #if UNITY_EDITOR
-        return AssetDatabase.GetAssetPath(go);
+        return UnityEditor.AssetDatabase.GetAssetPath(go);
 #else
 	    return "/PathUnknown/" + go.name;
 #endif
@@ -265,7 +263,6 @@ public class AssetMemoryProfiler
 
     public static int CalculateTextureSizeBytes(Texture tTexture)
     {
-
         int tWidth = tTexture.width;
         int tHeight = tTexture.height;
         if (tTexture is Texture2D)
