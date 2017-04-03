@@ -159,6 +159,8 @@ namespace AI {
 
 		public bool IsDying() { return false; }
 
+		public bool IsFreezing() { return false; }
+
 		public void Drown() { }
 
 		public bool CanBeBitten() { return false; }
