@@ -117,11 +117,11 @@ v2f vert (appdata_t v)
 #ifdef NORMALMAP																		// To calculate tangent world
 	float4x4 modelMatrix = unity_ObjectToWorld;
 	float4x4 modelMatrixInverse = unity_WorldToObject;
-	o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
+	o.normalWorld = UnityObjectToWorldNormal(v.normal);
 	o.tangentWorld = normalize(mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
 	o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
 #else
-	o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
+	o.normalWorld = UnityObjectToWorldNormal(v.normal);
 #endif
 
 #ifdef SPECULAR
