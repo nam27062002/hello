@@ -6,34 +6,61 @@ using SimpleJSON;
 public class ProfilerToolController : MonoBehaviour
 {    
     public GameObject m_spawnersRoot;
+    private Spawner[] m_spawners;
 
-	// Use this for initialization
-	void Awake ()
+    private int m_spawnerNumEntities;
+    private string m_spawnerPrefab;
+
+    // Use this for initialization
+    void Awake ()
     {
-        Spawner[] spawners = m_spawnersRoot.GetComponentsInChildren<Spawner>();        
-        if (spawners != null)
+        m_spawners = m_spawnersRoot.GetComponentsInChildren<Spawner>();        
+        if (m_spawners != null)
         {
             if (!ProfilerSettingsManager.IsLoaded)
             {
                 ProfilerSettingsManager.Load(null);
             }
 
-            Spawner spawner;
-            int count = spawners.Length;
-            for (int i = 0; i < count; i++)
-            {
-                spawner = spawners[i];
-                spawner.m_quantity.min = ProfilerSettingsManager.Spawner_NumEntities;
-                spawner.m_quantity.max = ProfilerSettingsManager.Spawner_NumEntities;
-                string prefabName = ProfilerSettingsManager.Spawner_Prefab;
-                if (!string.IsNullOrEmpty(prefabName)) 
-				{
-					spawner.m_entityPrefabList[0].name = prefabName;
-					spawner.m_entityPrefabList[0].chance = 100;
-                }
-            }
+            Setup();
         }	    
 	}
+
+    private void Setup()
+    {
+        if (m_spawners != null)
+        {
+            m_spawnerPrefab = ProfilerSettingsManager.Spawner_Prefab;
+            m_spawnerNumEntities = ProfilerSettingsManager.Spawner_NumEntities;
+            if (!string.IsNullOrEmpty(m_spawnerPrefab))
+            {                
+                if (PoolManager.ContainsPool(m_spawnerPrefab))
+                {
+                    PoolManager.ResizePool(m_spawnerPrefab, m_spawnerNumEntities);
+                }
+                else
+                {
+                    PoolManager.CreatePool(m_spawnerPrefab, "Game/Entities/NewEntites/", m_spawnerNumEntities);
+                }
+
+                Spawner spawner;
+                int count = m_spawners.Length;
+                for (int i = 0; i < count; i++)
+                {
+                    spawner = m_spawners[i];
+                    spawner.m_quantity.min = m_spawnerNumEntities;
+                    spawner.m_quantity.max = m_spawnerNumEntities;
+                    if (!string.IsNullOrEmpty(m_spawnerPrefab))
+                    {
+                        spawner.m_entityPrefabList[0].name = m_spawnerPrefab;
+                        spawner.m_entityPrefabList[0].chance = 100;                        
+                    }
+
+                    spawner.Initialize();
+                }
+            }            
+        }            
+    }
 
     private void OnEnable()
     {
@@ -50,9 +77,20 @@ public class ProfilerToolController : MonoBehaviour
         Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);        
     }
 
-	void Update() {
-		InstanceManager.player.dragonEatBehaviour.eatingEntitiesEnabled = false;
-	}
+    void Update()
+    {
+        InstanceManager.player.dragonEatBehaviour.eatingEntitiesEnabled = false;
+
+        if (
+            m_spawnerNumEntities != ProfilerSettingsManager.Spawner_NumEntities
+            || m_spawnerPrefab != ProfilerSettingsManager.Spawner_Prefab
+            || Input.GetKeyDown(KeyCode.A)
+           )
+        {            
+            SpawnerManager.instance.ForceRespawn();
+            Setup();
+        }
+    }
 
     void OnLevelLoaded()
     {

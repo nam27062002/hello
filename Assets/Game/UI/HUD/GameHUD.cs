@@ -46,24 +46,21 @@ public class GameHUD : MonoBehaviour {
     /// </summary>
     public void OnPauseButton() {
 		// Open pause popup
-		PopupController pausePopup = PopupManager.OpenPopupInstant(PopupPause.PATH);
-		pausePopup.GetComponent<PopupPause>().GoToTab(PopupPause.Tabs.OPTIONS);
+		PopupManager.OpenPopupInstant(PopupInGameSettings.PATH);
 	}
 
 	/// <summary>
 	/// Callback for the map button.
 	/// </summary>
 	public void OnMapButton() {
-		PopupController pausePopup = PopupManager.OpenPopupInstant(PopupPause.PATH);
-		pausePopup.GetComponent<PopupPause>().GoToTab(PopupPause.Tabs.MAP);
+		PopupManager.OpenPopupInstant(PopupInGameMap.PATH);
 	}
 
 	/// <summary>
 	/// Callback for the missions button.
 	/// </summary>
 	public void OnMissionsButton() {
-		PopupController pausePopup = PopupManager.OpenPopupInstant(PopupPause.PATH);
-		pausePopup.GetComponent<PopupPause>().GoToTab(PopupPause.Tabs.MISSIONS);
+		PopupManager.OpenPopupInstant(PopupInGameMissions.PATH);
 	}
 
 #region debug

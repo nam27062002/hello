@@ -1008,7 +1008,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					case ChangeAreaState.Exit:
 					{
 						m_followingSpline.GetClosestPointToPoint( transform.position, 100, out m_followingClosestT, out m_followingClosestStep);
-						if ( m_followingClosestT >= 0.99f )
+						if ( m_followingClosestT >= 1.0f )
 						{
 							// Exit eating
 							ChangeState( State.Fly );

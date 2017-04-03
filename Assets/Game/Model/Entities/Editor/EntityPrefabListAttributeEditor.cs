@@ -36,6 +36,19 @@ public class EntityPrefabListAttributeEditor : ExtendedPropertyDrawer {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
+	void BuildPrefabList() {
+		// Create the prefab name list
+		m_prefabNames = new List<string>();
+		string[] files = Directory.GetFiles(m_prefabsPath, "*.prefab", SearchOption.AllDirectories);
+		foreach (string f in files) 
+		{
+			string name = f.Substring(m_prefabsPath.Length);
+			name = name.Substring(0, name.Length - (".prefab").Length);
+			name = name.Replace("\\", "/");	// [AOC] Unify dir separator character between Windows and OSX!
+			m_prefabNames.Add(name);
+		}
+	}
+
 	/// <summary>
 	/// A change has occurred in the inspector, draw the property and store new values.
 	/// Use the m_pos member as position reference and update it using AdvancePos() method.
@@ -54,35 +67,23 @@ public class EntityPrefabListAttributeEditor : ExtendedPropertyDrawer {
 		// Obtain the attribute
 		EntitySkuListAttribute attr = attribute as EntitySkuListAttribute;
 
-		// Create the prefab name list
-		m_prefabNames = new List<string>();
-		string[] files = Directory.GetFiles(m_prefabsPath, "*.prefab", SearchOption.AllDirectories);
-		foreach (string f in files) 
-		{
-			string name = f.Substring(m_prefabsPath.Length);
-			name = name.Substring(0, name.Length - (".prefab").Length);
-			name = name.Replace("\\", "/");	// [AOC] Unify dir separator character between Windows and OSX!
-			m_prefabNames.Add( name );
+		if (m_prefabNames == null) {
+			BuildPrefabList();
 		}
-
-		// var filePaths : String[] = Directory.GetFiles("C:/Users/Altair-X/Music/","*.mp3");
 
 		// Find out current selected value
 		// If current value was not found, force it to first value if "NONE" allowed or first non-category value if not allowed
 		int selectedIdx = m_prefabNames.FindIndex(_sku => _property.stringValue.Equals(_sku, StringComparison.Ordinal));
-		if ( selectedIdx < 0 ) 
-		{
+		if (selectedIdx < 0) {
 			selectedIdx = 0;
-			_property.stringValue = m_prefabNames[selectedIdx];
+			OnPreafabSelected(0);
 		}
 
-		// Display the property
-		// Show button using the popup style with the current value
+		EditorGUI.BeginChangeCheck();
 		m_pos.height = EditorStyles.popup.lineHeight + 5;	// [AOC] Default popup field height + some margin
-		Rect contentPos = EditorGUI.PrefixLabel(m_pos, _label);
-		if(GUI.Button(contentPos, m_prefabNames[selectedIdx], EditorStyles.popup)) {
-			m_targetProperty = _property;
-			SelectionPopupWindow.Show(m_prefabNames.ToArray(), OnPreafabSelected);
+		selectedIdx = EditorGUI.Popup(m_pos, "Path", selectedIdx, m_prefabNames.ToArray());
+		if (EditorGUI.EndChangeCheck()) {
+			OnPreafabSelected(selectedIdx);
 		}
 
 		// Leave room for next property drawer

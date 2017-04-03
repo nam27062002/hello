@@ -17,9 +17,10 @@ using System;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// 
+/// UI controller for the map upgrading.
+/// Reused in both the goals screen and the in-game map popup.
 /// </summary>
-public class GoalsScreenMapPill : MonoBehaviour {
+public class MapUpgradeController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -44,6 +45,18 @@ public class GoalsScreenMapPill : MonoBehaviour {
 	// Internal
 	private long m_unlockPricePC = 0;
 	private bool m_wasUnlocked = false;	// Lock state in last frame, used to track end of timer
+
+	// [AOC] If the map timer runs out during the game, we let the player enjoy the unlocked map for the whole run
+	//		 That's why we check the game scene controller if available, otherwise take it directly from the user's profile
+	private bool isUnlocked {
+		get {
+			if(InstanceManager.gameSceneControllerBase != null) {
+				return InstanceManager.gameSceneControllerBase.mapUnlocked;
+			} else {
+				return UsersManager.currentUser.mapUnlocked;
+			}
+		}
+	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -60,11 +73,14 @@ public class GoalsScreenMapPill : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+		// Initialize internal vars
+		m_wasUnlocked = isUnlocked;
+
 		// Find out unlock price
 		m_unlockPricePC = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings").GetAsLong("miniMapHCCost");
 
 		// Refresh visuals!
-		Refresh();
+		Refresh(false);
 	}
 
 	/// <summary>
@@ -72,15 +88,15 @@ public class GoalsScreenMapPill : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// If unlocked, refresh timer
-		if(UsersManager.currentUser.mapUnlocked) {
+		if(isUnlocked) {
 			m_wasUnlocked = true;
 			RefreshTimer();
 		}
 
-		// First frame it's locked, refresh (show unlock buttons)
+		// First frame it's locked after the timer run out, refresh (show unlock buttons)
 		else if(m_wasUnlocked) {
 			m_wasUnlocked = false;
-			Refresh();
+			Refresh(true);
 		}
 	}
 
@@ -105,21 +121,26 @@ public class GoalsScreenMapPill : MonoBehaviour {
 	/// <summary>
 	/// Refresh the pill with info of the current map upgrade.
 	/// </summary>
-	public void Refresh() {
+	/// <param name="_animate">Whether to animate or not (useful for initialization).</param>
+	public void Refresh(bool _animate) {
 		// Aux vars
-		bool isLocked = !UsersManager.currentUser.mapUnlocked;
+		bool isLocked = !isUnlocked;
 
 		// Groups visibility
-		m_lockedGroupAnim.Set(isLocked);
-		m_unlockedGroupAnim.Set(!isLocked);
+		if(m_lockedGroupAnim != null) m_lockedGroupAnim.ForceSet(isLocked, _animate);
+		if(m_unlockedGroupAnim != null) m_unlockedGroupAnim.ForceSet(!isLocked, _animate);
 
 		// Depending on lock state
 		if(isLocked) {
 			// Price tag
-			m_pcPriceText.text = UIConstants.GetIconString(m_unlockPricePC, UserProfile.Currency.HARD, UIConstants.IconAlignment.LEFT);
+			if(m_pcPriceText != null) {
+				m_pcPriceText.text = UIConstants.GetIconString(m_unlockPricePC, UserProfile.Currency.HARD, UIConstants.IconAlignment.LEFT);
+			}
 
 			// Ad revive - turn off when offline
-			m_unlockWithAddBtn.SetActive(Application.internetReachability != NetworkReachability.NotReachable);
+			if(m_unlockWithAddBtn != null) {
+				m_unlockWithAddBtn.SetActive(Application.internetReachability != NetworkReachability.NotReachable);
+			}
 		} else {
 			// Timer
 			RefreshTimer();
@@ -130,6 +151,9 @@ public class GoalsScreenMapPill : MonoBehaviour {
 	/// Update the timer text.
 	/// </summary>
 	private void RefreshTimer() {
+		// Check required stuff
+		if(m_timerText == null) return;
+
 		// Countdown format
 		TimeSpan timeToReset = UsersManager.currentUser.mapResetTimestamp - DateTime.UtcNow;
 		m_timerText.text = TimeUtils.FormatTime(timeToReset.TotalSeconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
@@ -143,7 +167,7 @@ public class GoalsScreenMapPill : MonoBehaviour {
 	/// </summary>
 	public void OnUnlockWithAd() {
 		// Ignore if map is already unlocked
-		if(UsersManager.currentUser.mapUnlocked) return;
+		if(isUnlocked) return;
 
 		// Ignore if offline
 		if(Application.internetReachability == NetworkReachability.NotReachable) {
@@ -163,7 +187,7 @@ public class GoalsScreenMapPill : MonoBehaviour {
 	/// </summary>
 	public void OnUnlockWithPC() {
 		// Ignore if map is already unlocked
-		if(UsersManager.currentUser.mapUnlocked) return;
+		if(isUnlocked) return;
 
 		// Make sure we have enough PC to remove the mission
 		if(UsersManager.currentUser.pc >= m_unlockPricePC) {
@@ -194,12 +218,14 @@ public class GoalsScreenMapPill : MonoBehaviour {
 	/// </summary>
 	public void OnMapUnlocked() {
 		// Trigger FX
-		m_unlockFX.Stop();
-		m_unlockFX.Clear();
-		m_unlockFX.Play();
+		if(m_unlockFX != null) {
+			m_unlockFX.Stop();
+			m_unlockFX.Clear();
+			m_unlockFX.Play();
+		}
 
 		// Refresh info after some delay (to sync with animation)
 		//DOVirtual.DelayedCall(0.25f, Refresh);
-		Refresh();
+		Refresh(true);
 	}
 }

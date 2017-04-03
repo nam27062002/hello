@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections.Generic;
 using TMPro;
 
 //----------------------------------------------------------------------------//
@@ -27,7 +28,8 @@ public class CPGachaTest : MonoBehaviour {
 		SAME_PROBABILITY,
 		COMMON_ONLY,
 		RARE_ONLY,
-		EPIC_ONLY
+		EPIC_ONLY,
+		FORCED_PET_SKU
 	};
 
 	public enum DuplicateMode {
@@ -49,6 +51,12 @@ public class CPGachaTest : MonoBehaviour {
 		set { Prefs.SetIntPlayer(DUPLICATE_MODE, (int)value); }
 	}
 
+	public const string FORCED_PET_SKU = "FORCED_PET_SKU";
+	public static string forcedPetSku {
+		get { return Prefs.GetStringPlayer(FORCED_PET_SKU, ""); }
+		set { Prefs.SetStringPlayer(FORCED_PET_SKU, value); }
+	}
+
 	//------------------------------------------------------------------------//
 	// EXPOSED MEMBERS														  //
 	//------------------------------------------------------------------------//
@@ -56,6 +64,10 @@ public class CPGachaTest : MonoBehaviour {
 	[Space]
 	[SerializeField] private CPEnumPref m_rewardChanceDropdown = null;
 	[SerializeField] private CPEnumPref m_duplicateDropdown = null;
+	[SerializeField] private TMP_Dropdown m_petSkuDropdown = null;
+
+	// Internal
+	private List<DefinitionNode> m_petDefs = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -64,6 +76,9 @@ public class CPGachaTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		// Init pets dropdown
+		m_petSkuDropdown.onValueChanged.AddListener(OnPetValueChanged);
+
 		// Subscribe to changed events
 		m_rewardChanceDropdown.InitFromEnum(REWARD_CHANCE_MODE, typeof(RewardChanceMode), 0);
 		m_duplicateDropdown.InitFromEnum(DUPLICATE_MODE, typeof(DuplicateMode), 0);
@@ -73,8 +88,16 @@ public class CPGachaTest : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Make sure all values ar updated
+		// Make sure all values are updated
 		Refresh();
+	}
+
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
+	private void Update() {
+		// Only enable forced pet sku dropdown if the right mode is chosen
+		m_petSkuDropdown.interactable = (rewardChanceMode == RewardChanceMode.FORCED_PET_SKU);
 	}
 
 	/// <summary>
@@ -83,9 +106,67 @@ public class CPGachaTest : MonoBehaviour {
 	private void Refresh() {
 		m_rewardChanceDropdown.Refresh();
 		m_duplicateDropdown.Refresh();
+
+		// Initialize pets dropdown
+		m_petSkuDropdown.ClearOptions();
+		m_petDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
+		if(m_petDefs.Count > 0) {
+			// Content ready! Init dropdown
+			int selectedIdx = -1;
+			string currentValue = forcedPetSku;
+			for(int i = 0; i < m_petDefs.Count; i++) {
+				// Add poption
+				m_petSkuDropdown.options.Add(
+					new TMP_Dropdown.OptionData(
+						m_petDefs[i].GetLocalized("tidName")
+					)
+				);
+
+				// Is it the current one?
+				if(m_petDefs[i].sku == currentValue) {
+					selectedIdx = i;
+				}
+			}
+
+			// If no pet was selected, use first one
+			if(selectedIdx < 0) {
+				selectedIdx = 0;
+				forcedPetSku = m_petDefs[selectedIdx].sku;
+			}
+
+			// Set selection
+			m_petSkuDropdown.value = selectedIdx;
+
+			// [AOC] Dropdown seems to be bugged -_-
+			if(m_petSkuDropdown.options.Count > 0) {
+				m_petSkuDropdown.captionText.text = m_petSkuDropdown.options[m_petSkuDropdown.value].text;
+			} else {
+				m_petSkuDropdown.captionText.text = "";
+			}
+		} else {
+			// Content not ready, try again on next "Refresh" call
+			m_petDefs = null;
+		}
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		m_petSkuDropdown.onValueChanged.RemoveListener(OnPetValueChanged);
 	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// A new option has been picked on the dropdown.
+	/// </summary>
+	public void OnPetValueChanged(int _newValueIdx) {
+		if(m_petDefs != null) {
+			forcedPetSku = m_petDefs[_newValueIdx].sku;
+			Messenger.Broadcast<string, string>(GameEvents.CP_STRING_CHANGED, FORCED_PET_SKU, m_petDefs[_newValueIdx].sku);
+			Messenger.Broadcast<string>(GameEvents.CP_PREF_CHANGED, FORCED_PET_SKU);
+		}
+	}
 }

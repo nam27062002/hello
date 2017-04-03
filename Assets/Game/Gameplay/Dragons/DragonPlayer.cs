@@ -99,8 +99,12 @@ public class DragonPlayer : MonoBehaviour {
 
 
 	// Interaction
+	private bool m_playable = true;
 	public bool playable {
 		set {
+			// Store new value
+			m_playable = value;
+
 			// Enable/disable all the components that make the dragon playable
 			// Add as many as needed
 			GetComponent<DragonControlPlayer>().enabled = value;	// Move around
@@ -108,6 +112,8 @@ public class DragonPlayer : MonoBehaviour {
 			GetComponent<DragonHealthBehaviour>().enabled = value;	// Receive damage
 			GetComponent<DragonBoostBehaviour>().enabled = value;	// Boost
 		}
+
+		get { return m_playable; }
 	}
 
 	// References
@@ -213,6 +219,12 @@ public class DragonPlayer : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+
+		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
+		{
+			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INVULNERABLE, true);
+			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INFINITE_BOOST, true);
+		}
 	}
 
 	void OnDestroy()

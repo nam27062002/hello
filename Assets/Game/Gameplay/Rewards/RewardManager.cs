@@ -494,7 +494,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 				m_killCount.Add( _reward.origin, 1);
 			}	
 
-			Debug.Log("Kills " + _reward.origin + " " + m_killCount[ _reward.origin ]);
+			//Debug.Log("Kills " + _reward.origin + " " + m_killCount[ _reward.origin ]);
 		}
 
 		// Add the reward
