@@ -757,8 +757,8 @@ GameObject:
   - component: {fileID: 114284423639274618}
   - component: {fileID: 95746076533300936}
   - component: {fileID: 114417853574658846}
-  - component: {fileID: 114850898375542106}
   - component: {fileID: 114990302246463252}
+  - component: {fileID: 114887333280576092}
   m_Layer: 5
   m_Name: ButtonArea
   m_TagString: Untagged
@@ -1268,6 +1268,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_popupPath: UI/Popups/PF_PopupInfoMap
+  OnPopupInit:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!114 &114053891566198168
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1576,7 +1581,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114850898375542106}
+      - m_Target: {fileID: 0}
         m_MethodName: OpenPopup
         m_Mode: 6
         m_Arguments:
@@ -3876,18 +3881,6 @@ MonoBehaviour:
   m_timerText: {fileID: 114247811121730906}
   m_unlockWithAddBtn: {fileID: 1821691054362030}
   m_unlockFX: {fileID: 198329733756648840}
---- !u!114 &114850898375542106
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1761458508330492}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d677588cf25b47fe84f2f773daf1f23, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_popupPath: UI/Popups/PF_PopupCurrencyShop
 --- !u!114 &114859101325672844
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3932,6 +3925,24 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114887333280576092
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1761458508330492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4afd2f9c0b1de47b7887b93befc56667, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_popupPath: UI/Popups/PF_PopupCurrencyShop
+  OnPopupInit:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  m_mode: 0
 --- !u!114 &114890326134285096
 MonoBehaviour:
   m_ObjectHideFlags: 1
