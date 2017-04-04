@@ -79,6 +79,7 @@ public class UIScene3D : MonoBehaviour {
 
 		// Create a new render texture and set it as the camera render target
 		m_renderTexture = new RenderTexture(512, 512, 24, RenderTextureFormat.ARGB32);	// Might need a bigger one
+        m_renderTexture.useMipMap = false;  //Black pets fix
 		m_renderTexture.Create();
 		m_camera.targetTexture = m_renderTexture;
 	}
