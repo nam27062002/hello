@@ -223,18 +223,18 @@ public class HungryDragonEditorMenu {
 		// Show it
 		window.Show();	// In this case we actually want the window to be closed when losing focus so the temp object created to display savegames is properly destroyed
 	}
-
+    
     /// <summary>
-	/// Add menu item to be open the persistence profiles editor.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Profiler Settings", false, 51)]
-    public static void ShowProfilerWindow()
+    /// Add menu item to be open the persistence profiles editor.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Profiler/NPCs Settings", false, 51)]
+    public static void ShowNpcsSettingsManagerWindow()
     {
         // Show existing window instance. If one doesn't exist, make one.
         ProfilerEditorWindow window = ProfilerEditorWindow.instance;
 
         // Setup window
-        window.titleContent = new GUIContent("Profiler Settings");
+        window.titleContent = new GUIContent("NPCs Settings");
         window.minSize = new Vector2(ProfilerEditorWindow.SPACING + ProfilerEditorWindow.PROFILE_LIST_COLUMN_WIDTH + ProfilerEditorWindow.PROFILE_VIEW_COLUMN_WIDTH + ProfilerEditorWindow.SPACING, ProfilerEditorWindow.MIN_WINDOW_HEIGHT); // Fixed width, arbitrary minimum
         window.maxSize = new Vector2(window.minSize.x, float.PositiveInfinity);                     // Fixed width, limitless        
 
