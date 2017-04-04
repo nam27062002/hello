@@ -6,6 +6,8 @@ struct v2f
 
 	float4 color : COLOR;
 
+	float3 vLight : TEXCOORD2;
+
 #ifdef SPECULAR
 	float3 halfDir : TEXCOORD7;
 #endif	
@@ -70,6 +72,7 @@ v2f vert(appdata_t v)
 
 	o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 	float3 normal = UnityObjectToWorldNormal(v.normal);
+	o.vLight = ShadeSH9(float4(normal, 1.0));
 
 	// To calculate tangent world
 #ifdef NORMALMAP
@@ -135,7 +138,7 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 unlitColor = col;
 
 	fixed4 diffuse = max(0,dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
-	col *= diffuse;
+	col *= diffuse + float4(i.vLight, 0.0f);
 
 #ifdef SPECULAR
 //	specMask = 1.0;
