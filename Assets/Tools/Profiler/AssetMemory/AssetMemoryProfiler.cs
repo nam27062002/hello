@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using SimpleJSON;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 /// <summary>
@@ -135,7 +137,13 @@ public class AssetMemoryProfiler
     {
         AnalyzeAnimations(go, ref info);
         AnalyzeMeshes(go, ref info);
-        AnalyzeTexture(go, ref info);
+
+#if UNITY_EDITOR
+        //AnalyzeTextureFromEditor(go, ref info);
+        AnalyzeTextureFromShadersSettings(go, ref info);
+#else
+        AnalyzeTextureFromShadersSettings(go, ref info);        
+#endif
 
         foreach (Transform child in go.GetComponentInChildren<Transform>())
         {
@@ -145,44 +153,66 @@ public class AssetMemoryProfiler
         }
     }
 
-    private void AnalyzeTexture(GameObject go, ref AssetInformationStruct info)
+    private void AnalyzeTextureFromEditor(GameObject go, ref AssetInformationStruct info)
     {
+        Shader shader;
+        Texture texture;
+        string subtype;
+        int propertiesCount;
         Renderer[] renderers = go.GetComponents<Renderer>();
         foreach (Renderer ren in renderers)
         {
             if (ren.sharedMaterial != null)
             {
-                Dictionary<string, string> knownTextures = new Dictionary<string, string>
-                    {
-                        {"_MainTex",    "Diffuse" },
-                        {"_BumpMap",    "Normal" },
-                        {"_NormalMap",  "Normal" },
-                        {"_NM",         "Normal" },
-                        {"_Noise",      "TextureOther" },
-                        {"_SphereMap",  "TextureOther" },
-                        {"_DetailNormalMap", "TextureOther" },
-                        {"_ParallaxMap", "TextureOther" },
-                        {"_OcclusionMap", "TextureOther" },
-                        {"_EmissionMap", "TextureOther" },
-                        {"_DetailMask", "TextureOther" },
-                        {"_DetailAlbedoMap", "TextureOther" },
-                        {"_MetallicGlossMap", "TextureOther" },
-                        {"_Caustic", "TextureOther" },
-                        {"_EmissiveTex", "TextureOther" },
-                        {"_Cube", "TextureOther" },
-                        {"_Spots", "TextureOther" },
-                        {"_EmisColor", "TextureOther" },
-                    };
+                shader = ren.sharedMaterial.shader;
 
-                foreach (var texDef in knownTextures)
+                propertiesCount = UnityEditor.ShaderUtil.GetPropertyCount(shader);
+                for (int i = 0; i < propertiesCount; i++)                    
                 {
-                    Texture texture = ren.sharedMaterial.GetTexture(texDef.Key);
+                    if (UnityEditor.ShaderUtil.GetPropertyType(shader, i) == UnityEditor.ShaderUtil.ShaderPropertyType.TexEnv)
+                    {
+                        subtype = UnityEditor.ShaderUtil.GetPropertyName(shader, i);
+                        texture = ren.sharedMaterial.GetTexture(subtype);
+                        if (texture != null)
+                        {
+                            AssetInformationStruct diffuse = new AssetInformationStruct();
+                            diffuse.Name = texture.name;
+                            diffuse.Type = AssetMemoryGlobals.EAssetType.Texture;
+                            diffuse.Subtype = subtype;
+                            diffuse.Path = GetAssetPath(texture);
+
+#if UNITY_EDITOR
+                            diffuse.Size = CalculateTextureSizeBytes(texture);
+#else
+						    diffuse.Size = UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(texture);
+#endif
+
+                            info.AddChild(diffuse);
+                        }
+                    }
+                }
+            }                       
+        }
+    }
+   
+    private void AnalyzeTextureFromShadersSettings(GameObject go, ref AssetInformationStruct info)
+    {
+        Renderer[] renderers = go.GetComponents<Renderer>();
+        List<string> textureNames;        
+        foreach (Renderer ren in renderers)
+        {
+            if (ren.sharedMaterial != null)
+            {
+                textureNames = ShadersSettings_GetTextureNames(ren.sharedMaterial.shader.name);
+                foreach (var texDef in textureNames)
+                {
+                    Texture texture = ren.sharedMaterial.GetTexture(texDef);
                     if (texture != null)
                     {
                         AssetInformationStruct diffuse = new AssetInformationStruct();
                         diffuse.Name = texture.name;
                         diffuse.Type = AssetMemoryGlobals.EAssetType.Texture;
-                        diffuse.Subtype = texDef.Value;
+                        diffuse.Subtype = texDef;
                         diffuse.Path = GetAssetPath(texture);
 
 #if UNITY_EDITOR
@@ -199,7 +229,7 @@ public class AssetMemoryProfiler
         }
 
         //Resources.UnloadUnusedAssets();
-    }
+    }   
 
     private void AnalyzeAnimations(GameObject go, ref AssetInformationStruct info)
     {
@@ -224,6 +254,7 @@ public class AssetMemoryProfiler
                 anim.name, UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(anim));            
             info.AddChild(aa);                       
         }
+
     }
 
     private void AnalyzeMeshes(GameObject go, ref AssetInformationStruct info)
@@ -346,4 +377,135 @@ public class AssetMemoryProfiler
 
         return 0;
     }
+
+#region shaders_settings
+    private const string SHADERS_SETTINGS_FILE = "shadersSettings";
+    private const string SHADER_SETTINGS_ATT_ID = "id";
+    private const string SHADER_SETTINGS_ATT_PROPERTIES = "properties";
+
+    private static Dictionary<string, List<string>> m_shadersSettingsProperties;
+
+    private static string ShadersSettings_GetFileNameFullPath()
+    {
+        return Application.dataPath + "/Resources/Profiler/" + SHADERS_SETTINGS_FILE + ".json";
+    }
+
+    public static void ShadersSettings_Reset()
+    {
+        if (m_shadersSettingsProperties != null)
+        {
+            m_shadersSettingsProperties.Clear();
+        }
+    }
+
+    private static void ShadersSettings_LoadFromFile()
+    {
+        ShadersSettings_Reset();
+
+        if (m_shadersSettingsProperties == null)
+        {
+            m_shadersSettingsProperties = new Dictionary<string, List<string>>();
+        }
+
+        TextAsset textAsset = (TextAsset)Resources.Load("Profiler/" + SHADERS_SETTINGS_FILE, typeof(TextAsset)); ;
+        if (textAsset == null)
+        {
+            Debug.LogError("Could not load text asset " + SHADERS_SETTINGS_FILE);
+        }
+        else
+        {            
+            JSONNode data = JSONNode.Parse(textAsset.text);
+            if (data != null)
+            {
+                // Spawners
+                if (data.ContainsKey(SHADERS_SETTINGS_FILE))
+                {
+                    JSONArray shaders = data[SHADERS_SETTINGS_FILE] as JSONArray;
+                    if (shaders != null)
+                    {
+                        string propertiesList;
+                        string[] tokens;
+                        List<string> properties;
+                        int count = shaders.Count;                       
+                        for (int i = 0; i < count; i++)
+                        {
+                            propertiesList = shaders[i][SHADER_SETTINGS_ATT_PROPERTIES];
+                            properties = new List<string>();
+                            if (propertiesList != null)
+                            {
+                                tokens = propertiesList.Split(',');
+                                for (int j = 0; j < tokens.Length; j++)
+                                {
+                                    properties.Add(tokens[j]);
+                                }
+                            }
+
+                            m_shadersSettingsProperties.Add(shaders[i][SHADER_SETTINGS_ATT_ID], properties);
+                        }
+                    }
+                }
+            }
+        }        
+    }
+
+    public static void ShadersSettings_SaveToFile(Dictionary<string, List<string>> data)
+    {        
+        // Create new object, initialize and return it
+        JSONClass jsonCollection = new JSONClass();        
+        JSONArray root = new JSONArray();
+        if (data != null)
+        {
+            foreach (KeyValuePair<string, List<string>> pair in data)
+            {
+                root.Add(ShadersSettings_ToEntryJSON(pair.Key, pair.Value));
+            }
+        }
+
+        jsonCollection.Add(SHADERS_SETTINGS_FILE, root);
+
+        string content = jsonCollection.ToString();
+        ShadersSettings_SaveToFile(content);
+
+        // Cache is deleted so the new information will be taken into consideration
+        ShadersSettings_Reset();
+    }
+
+    private static JSONNode ShadersSettings_ToEntryJSON(string id, List<string> properties)
+    {
+        string propertiesString = "";
+        if (properties != null)
+        {
+            int count = properties.Count;          
+            for (int i = 0; i < count; i++)
+            {
+                if (i > 0)
+                {
+                    propertiesString += ",";
+                }
+
+                propertiesString += properties[i];
+            }
+        }
+
+        JSONNode returnValue = new JSONClass();
+        returnValue.Add(SHADER_SETTINGS_ATT_ID, id);
+        returnValue.Add(SHADER_SETTINGS_ATT_PROPERTIES, propertiesString);
+        return returnValue;
+    }
+
+    private static void ShadersSettings_SaveToFile(string content)
+    {
+        File.WriteAllText(ShadersSettings_GetFileNameFullPath(), content);
+    }
+
+    private static List<string> ShadersSettings_GetTextureNames(string shaderName)
+    {
+        if (m_shadersSettingsProperties == null)
+        {
+            ShadersSettings_LoadFromFile();
+        }
+
+        return (m_shadersSettingsProperties.ContainsKey(shaderName)) ? m_shadersSettingsProperties[shaderName] : null;               
+    }
+#endregion
 }
