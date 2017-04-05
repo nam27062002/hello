@@ -49,9 +49,12 @@ public class Pool {
 	}
 
 	public void Update() {
+#if UNITY_EDITOR
 		if (m_returnObjects.Count > 0) {
 			Debug.Log(m_returnObjects.Count);
 		}
+#endif
+
 		while (m_returnObjects.Count > 0) {
 			GameObject go = m_returnObjects.Dequeue();
 			go.transform.SetParent(m_containerObj.transform);		// Return particle system to pool's hierarchy
