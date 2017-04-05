@@ -1,6 +1,7 @@
 
 # Activate a destination
-activate application "Xcode"
+delay 10
+# activate application "Xcode"
 tell application "System Events"
 	tell process "Xcode"
 		# log title of menu items of menu 1 of menu item "Destination" of menu 1 of menu bar item "Product" of menu bar 1

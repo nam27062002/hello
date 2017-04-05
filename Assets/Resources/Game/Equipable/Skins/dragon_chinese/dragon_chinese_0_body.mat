@@ -18,7 +18,7 @@ Material:
     - first:
         name: _BumpMap
       second:
-        m_Texture: {fileID: 2800000, guid: fe452f39c13284c89aa949d3d28b0979, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -42,7 +42,7 @@ Material:
     - first:
         name: _DetailTex
       second:
-        m_Texture: {fileID: 2800000, guid: 0318404b239d84abcb0c9c327bf5643c, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -54,7 +54,7 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 72e6499756c6247e58f5f61829473463, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0381cc2ceed254ff6870d36aed4db141, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -71,6 +71,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     - first:
         name: _ParallaxMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _ReflectionMap
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -113,11 +119,17 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
+        name: _ReflectionAmount
+      second: 0
+    - first:
         name: _SpecExponent
       second: 4.5
     - first:
         name: _SrcBlend
       second: 1
+    - first:
+        name: _StencilMask
+      second: 10
     - first:
         name: _UVSec
       second: 0
@@ -149,3 +161,12 @@ Material:
     - first:
         name: _InnerLightColor
       second: {r: 0.252, g: 0.116, b: 0, a: 1}
+    - first:
+        name: _SecondLightColor
+      second: {r: 0, g: 0, b: 0, a: 0}
+    - first:
+        name: _SecondLightDir
+      second: {r: 0, g: 0, b: -1, a: 0}
+    - first:
+        name: _Tint
+      second: {r: 1, g: 1, b: 1, a: 1}
