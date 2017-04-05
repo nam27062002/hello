@@ -139,8 +139,8 @@ public class AssetMemoryProfiler
         AnalyzeMeshes(go, ref info);
 
 #if UNITY_EDITOR
-        //AnalyzeTextureFromEditor(go, ref info);
-        AnalyzeTextureFromShadersSettings(go, ref info);
+        AnalyzeTextureFromEditor(go, ref info);
+        //AnalyzeTextureFromShadersSettings(go, ref info);
 #else
         AnalyzeTextureFromShadersSettings(go, ref info);        
 #endif
@@ -152,7 +152,9 @@ public class AssetMemoryProfiler
             info.AddChild(cc);
         }
     }
+		
 
+#if UNITY_EDITOR
     private void AnalyzeTextureFromEditor(GameObject go, ref AssetInformationStruct info)
     {
         Shader shader;
@@ -181,11 +183,7 @@ public class AssetMemoryProfiler
                             diffuse.Subtype = subtype;
                             diffuse.Path = GetAssetPath(texture);
 
-#if UNITY_EDITOR
                             diffuse.Size = CalculateTextureSizeBytes(texture);
-#else
-						    diffuse.Size = UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(texture);
-#endif
 
                             info.AddChild(diffuse);
                         }
@@ -194,6 +192,7 @@ public class AssetMemoryProfiler
             }                       
         }
     }
+#endif
    
     private void AnalyzeTextureFromShadersSettings(GameObject go, ref AssetInformationStruct info)
     {
