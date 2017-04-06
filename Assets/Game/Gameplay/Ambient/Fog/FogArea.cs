@@ -10,6 +10,9 @@ public class FogArea : MonoBehaviour
 	public bool m_drawInside = false;
 	public Vector3 m_startScale;
 	private bool m_playerInside = false;
+
+	public float m_enterTransitionDuration = 1.6f;
+	public float m_exitTransitionDuration = 1.6f;
 	void Start()
 	{
 		m_fogManager = FindObjectOfType<FogManager>();

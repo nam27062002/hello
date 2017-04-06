@@ -94,6 +94,7 @@ public class FogManager : MonoBehaviour
 	float m_transitionTimer = 0;
 	FogAttributes m_lastSelectedAttributes;
 	FogAttributes m_selectedAttributes = null;
+	FogArea m_lastSelectedArea = null;
 	bool m_active = false;
 	bool m_updateValues = true;
 
@@ -222,20 +223,31 @@ public class FogManager : MonoBehaviour
 
 			if (m_forcedAttributes == null)
 			{
+				float transitionDuration = 0;
 				if ( m_activeFogAreaList.Count > 0)
 				{
 					FogArea selectedFogArea = m_activeFogAreaList.Last<FogArea>();
 					m_selectedAttributes = selectedFogArea.m_attributes;
+					transitionDuration = selectedFogArea.m_enterTransitionDuration;
+					m_lastSelectedArea = selectedFogArea;
 				}
 				else
 				{
 					m_selectedAttributes = m_defaultAreaFog;
+					if ( m_lastSelectedArea != null )
+					{
+						transitionDuration = m_lastSelectedArea.m_exitTransitionDuration;
+					}
+					else
+					{
+						transitionDuration = 1.6f;
+					}
 				}
 
 				if (m_lastSelectedAttributes != m_selectedAttributes)
 				{
 					m_lastSelectedAttributes = m_selectedAttributes;
-					m_transitionTimer = m_transitionDuration;
+					m_transitionTimer = m_transitionDuration = transitionDuration;
 
 					// Copy destination render texture to original texture
 					m_updateBlitOriginTexture = true;
@@ -332,7 +344,7 @@ public class FogManager : MonoBehaviour
 					}
 					else
 					{
-						float delta = 1.0f - m_transitionTimer;
+						float delta = 1.0f - (m_transitionTimer / m_transitionDuration);
 						m_start = Mathf.Lerp( m_tmpStart, m_selectedAttributes.m_fogStart, delta);
 						m_end = Mathf.Lerp( m_tmpEnd, m_selectedAttributes.m_fogEnd, delta);
 						m_blitLerpValue = delta;
