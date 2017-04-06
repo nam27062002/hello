@@ -43,7 +43,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Shaders_CurrentKey = null;
         State = EState.WaitingForRules;        
 
-        m_deviceQualityManager = new DeviceQualityManager();       
+        m_deviceQualityManager = new DeviceQualityManager();
+
+        InitDefaultValues();    
+    }
+
+    private void InitDefaultValues()
+    {
+        IsFogOnDemandEnabled = !IsDebugEnabled;
     }
 
     protected override void OnDestroy()
@@ -1051,6 +1058,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_DECO_SPAWNERS);
         }
     }
+
+    public bool IsFogOnDemandEnabled { get; set; }    
     #endregion
 
     #region log

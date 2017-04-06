@@ -137,24 +137,11 @@ public class CustomParticlesCulling : MonoBehaviour
                 Manager_UpdateItem(Manager_Items[evt.index], false);
             }           
         }
-    }
+    }      
 
-    public static void Manager_NotifyGameStarted()
-    {
-        /*        
-        for (int i = 0; i < count; i++)
-        {
-            if (Manager_CullingGroup.IsVisible(i))
-            {                
-                Manager_UpdateItem(Manager_Items[i], true);
-            }
-            else
-            {                
-                Manager_UpdateItem(Manager_Items[i], false);
-            }
-        }*/
-    }  
-
+    /// <summary>
+    /// Used just for debug purposes
+    /// </summary>    
     public static void Manager_SimulateForAll(bool hasBecomeVisible, bool hasBecomeInvisible)
     {
         if (Manager_Items != null)

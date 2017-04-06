@@ -75,6 +75,38 @@ public class AssetMemoryProfiler
         }
     }
 
+    public void AddTexture(Texture texture, string label, string name)
+    {
+        if (texture != null)
+        {
+            AssetInformationStruct info = new AssetInformationStruct(name, AssetMemoryGlobals.EAssetType.Other, null, 0);
+            AssetMemoryGlobals.GoExtended goEx = new AssetMemoryGlobals.GoExtended(null, label, info);
+            Gos.Add(goEx);
+
+            AddTexture(texture, "RenderTexture", ref info);            
+        }
+    }
+
+    private void AddTexture(Texture texture, string subtype, ref AssetInformationStruct info)
+    {        
+        if (texture != null)
+        {            
+            AssetInformationStruct diffuse = new AssetInformationStruct();
+            diffuse.Name = texture.name;
+            diffuse.Type = AssetMemoryGlobals.EAssetType.Texture;
+            diffuse.Subtype = subtype;
+            diffuse.Path = GetAssetPath(texture);
+
+#if UNITY_EDITOR
+            diffuse.Size = CalculateTextureSizeBytes(texture);
+#else
+            diffuse.Size = UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(texture);
+#endif            
+
+            info.AddChild(diffuse);
+        }
+    }
+
     public long GetGoSize(GameObject go)
     {
         long returnValue = 0;
@@ -175,18 +207,7 @@ public class AssetMemoryProfiler
                     {
                         subtype = UnityEditor.ShaderUtil.GetPropertyName(shader, i);
                         texture = ren.sharedMaterial.GetTexture(subtype);
-                        if (texture != null)
-                        {
-                            AssetInformationStruct diffuse = new AssetInformationStruct();
-                            diffuse.Name = texture.name;
-                            diffuse.Type = AssetMemoryGlobals.EAssetType.Texture;
-                            diffuse.Subtype = subtype;
-                            diffuse.Path = GetAssetPath(texture);
-
-                            diffuse.Size = CalculateTextureSizeBytes(texture);
-
-                            info.AddChild(diffuse);
-                        }
+                        AddTexture(texture, subtype, ref info);                        
                     }
                 }
             }                       
@@ -206,22 +227,7 @@ public class AssetMemoryProfiler
                 foreach (var texDef in textureNames)
                 {
                     Texture texture = ren.sharedMaterial.GetTexture(texDef);
-                    if (texture != null)
-                    {
-                        AssetInformationStruct diffuse = new AssetInformationStruct();
-                        diffuse.Name = texture.name;
-                        diffuse.Type = AssetMemoryGlobals.EAssetType.Texture;
-                        diffuse.Subtype = texDef;
-                        diffuse.Path = GetAssetPath(texture);
-
-#if UNITY_EDITOR
-                        diffuse.Size = CalculateTextureSizeBytes(texture);
-#else
-						diffuse.Size = UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(texture);
-#endif
-
-                        info.AddChild(diffuse);
-                    }
+                    AddTexture(texture, texDef, ref info);
                 }
 
             }
