@@ -70,8 +70,8 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		double coinsToPC = gameSettingsDef.GetAsDouble("missingRessourcesPCperSC");
 
 		// Apply, round and return
-		double pc = _coins * coinsToPC;
-		pc = Math.Round(-pc, MidpointRounding.AwayFromZero);
+		double pc = Mathf.Abs(_coins) * coinsToPC;
+		pc = Math.Round(pc, MidpointRounding.AwayFromZero);
 		return Math.Max(0, (long)pc);
 	}
 }

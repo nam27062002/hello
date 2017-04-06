@@ -143,43 +143,6 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// STATIC UTILS															  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// 
-	/// </summary>
-	public void OnBuyButton() {
-		// Ignore if not properly initialized
-		if(m_def == null) return;
-
-		// If currency is PC, make sure we have enough and adjust new balance
-		if(m_currency == UserProfile.Currency.HARD) {
-			long pricePC = (long)m_price;
-			if(UsersManager.currentUser.pc >= pricePC) {
-				UsersManager.currentUser.AddPC(-pricePC);
-
-				ApplyShopPack( m_def );
-				// [AOC] TODO!! Notify game - typically this is done by the store manager, do it properly
-				Messenger.Broadcast<string>(EngineEvents.PURCHASE_SUCCESSFUL, m_def.sku);
-			} else {
-				// Show feedback and interrupt transaction
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-				return;
-			}
-		}
-		else if ( m_currency == UserProfile.Currency.REAL )
-		{
-			m_loadingPopupController = PopupManager.PopupLoading_Open();
-			m_loadingPopupController.OnClosePostAnimation.AddListener( OnConnectionCheck );
-			Authenticator.Instance.CheckConnection(delegate (FGOL.Server.Error connectionError)
-			{
-				m_checkConnectionError = connectionError;
-#if UNITY_EDITOR
-					m_checkConnectionError = null;
-#endif
-				m_loadingPopupController.Close(true);
-			});
-		}
-	}
-
 	public static void ApplyShopPack( DefinitionNode def )
 	{	
 		UserProfile.Currency type = GetCurrencyType(def);
@@ -260,6 +223,9 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 				Authenticator.Instance.CheckConnection(delegate (FGOL.Server.Error connectionError)
 					{
 						m_checkConnectionError = connectionError;
+					#if UNITY_EDITOR
+						m_checkConnectionError = null;
+					#endif
 						m_loadingPopupController.Close(true);
 					});
 			} break;

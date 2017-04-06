@@ -197,6 +197,8 @@ public class ResourcesFlow {
 				} break;
 
 				case UserProfile.Currency.HARD: {
+					// [AOC] TODO!! Show confirmation popup BEFORE starting missing amount flow
+
 					// Find recommended shop pack for the missing amount
 					m_recommendedPCPackDef = FindRecommendedPCPack(m_missingAmount);
 
@@ -409,7 +411,7 @@ public class ResourcesFlow {
 		// Otherwise buy the missing currency with PC
 		else {
 			// Transaction will do everything! ^_^
-			DoTransaction(true);
+			DoTransaction(false);	// Ask confirmation? No, looks weird after having purchased the gems
 		}
 	}
 
@@ -418,7 +420,7 @@ public class ResourcesFlow {
 	/// </summary>
 	private void OnPCPackPurchased() {
 		// We should have enough PC to complete the transaction now, do it!
-		DoTransaction(true);	// Ask confirmation? I guess so
+		DoTransaction(false);	// Ask confirmation? No, looks weird after having purchased the pack
 	}
 
 	/// <summary>
