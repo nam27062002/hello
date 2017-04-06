@@ -117,6 +117,9 @@ public class PopupCurrencyShop : MonoBehaviour {
 				} break;
 			}
 
+			// Subscribe to purchase events
+			newPill.OnPurchaseSuccess.AddListener(OnPurchaseSuccessful);
+
 			// Apply "random" rotation to the pill
 			if(m_pillRotationSequence.Length > 0 && pillIdx >= 0) {
 				newPill.transform.localRotation = Quaternion.Euler(0f, 0f, m_pillRotationSequence[pillIdx % m_pillRotationSequence.Length]);
@@ -132,16 +135,14 @@ public class PopupCurrencyShop : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener<string>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+		
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+		
 	}
 
 	/// <summary>
@@ -187,7 +188,8 @@ public class PopupCurrencyShop : MonoBehaviour {
 	/// <summary
 	/// Successful purchase.
 	/// </summary>
-	public void OnPurchaseSuccessful(string _productSku) {
+	/// <param name="_pill">The pill that triggered the event</param>
+	public void OnPurchaseSuccessful(PopupCurrencyShopPill _pill) {
 		// Close popup?
 		if(m_closeAfterPurchase) GetComponent<PopupController>().Close(true);
 	}

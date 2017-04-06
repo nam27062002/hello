@@ -332,20 +332,16 @@ public class MissionPill : MonoBehaviour {
 		// Ignore if mission not initialized
 		if(m_mission == null) return;
 
-		// Make sure we have enough PC to remove the mission
-		int costPC = m_mission.removeCostPC;
-		if(UsersManager.currentUser.pc >= costPC) {
-			// Do it!
-			UsersManager.currentUser.AddPC(-costPC);
-			MissionManager.RemoveMission(m_missionDifficulty);
-			PersistenceManager.Save();
-		} else {
-			// Open shop popup
-			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-
-			// Currency popup / Resources flow disabled for now
-            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-		}
+		// Start purchase flow
+		ResourcesFlow purchaseFlow = new ResourcesFlow("REMOVE_MISSION");
+		purchaseFlow.OnSuccess.AddListener(
+			(ResourcesFlow _flow) => {
+				// Just do it
+				MissionManager.RemoveMission(m_missionDifficulty);
+				PersistenceManager.Save();
+			}
+		);
+		purchaseFlow.Begin((long)m_mission.removeCostPC, UserProfile.Currency.HARD, m_mission.def);
 	}
 
 	/// <summary>
@@ -372,20 +368,16 @@ public class MissionPill : MonoBehaviour {
 		// Ignore if mission not initialized
 		if(m_mission == null) return;
 
-		// Make sure we have enough PC to remove the mission
-		int costPC = m_mission.skipCostPC;
-		if(UsersManager.currentUser.pc >= costPC) {
-			// Do it!
-			UsersManager.currentUser.AddPC(-costPC);
-			MissionManager.SkipMission(m_missionDifficulty);
-			PersistenceManager.Save();
-		} else {
-			// Open shop popup
-			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-
-			// Currency popup / Resources flow disabled for now
-            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-		}
+		// Start purchase flow
+		ResourcesFlow purchaseFlow = new ResourcesFlow("SKIP_MISSION");
+		purchaseFlow.OnSuccess.AddListener(
+			(ResourcesFlow _flow) => {
+				// Just do it
+				MissionManager.SkipMission(m_missionDifficulty);
+				PersistenceManager.Save();
+			}
+		);
+		purchaseFlow.Begin((long)m_mission.skipCostPC, UserProfile.Currency.HARD, m_mission.def);
 	}
 
 	/// <summary>

@@ -124,8 +124,32 @@ public class HUDRevive : MonoBehaviour {
 		if(m_timer.IsFinished()) return;
 
 		// Perform transaction
-		// If not enough funds, pause timer and open PC shop popup
+		// Start purchase flow
+		// Use universal finish event to detect both success and failures
+		ResourcesFlow purchaseFlow = new ResourcesFlow("REVIVE");
+		purchaseFlow.OnFinished.AddListener(
+			(ResourcesFlow _flow) => {
+				// Flow successful?
+				if(_flow.successful) {
+					// Do it!
+					m_paidReviveCount++;
+					DoRevive( DragonPlayer.ReviveReason.PAYING );
+					PersistenceManager.Save();
+				} else {
+					// Resume countdown timer!
+					m_timer.Resume();
+				}
+			}
+		);
+
+		// Pause timer and begin flow!
+		m_timer.Stop();
 		long costPC = m_paidReviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
+		purchaseFlow.Begin((long)costPC, UserProfile.Currency.HARD, null);
+
+		// Without resources flow:
+		// If not enough funds, pause timer and open PC shop popup
+		/*long costPC = m_paidReviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
 		if(UsersManager.currentUser.pc >= costPC) {
 			// Perform transaction
 			UsersManager.currentUser.AddPC(-costPC);
@@ -137,25 +161,6 @@ public class HUDRevive : MonoBehaviour {
 		} else {
 			// Currency popup / Resources flow disabled for now
             UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-		}
-
-		// [AOC] TEMP!! Disable currency popup
-		/*
-		else if(m_allowCurrencyPopup) {
-			// Open PC shop popup
-			PopupController popup = PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-			popup.OnClosePostAnimation.AddListener(OnRevive);	// [AOC] Quick'n'dirty: try to revive again, but don't show the popup twice if we're out of currency!
-			m_allowCurrencyPopup = false;
-
-			// Pause timer
-			m_timer.Stop();
-		} else {
-			// Currency popup closed, no funds purchased
-			// If player tries to revive again, show popup
-			m_allowCurrencyPopup = true;
-
-			// Resume timer
-			m_timer.Resume();
 		}*/
 	}
 
