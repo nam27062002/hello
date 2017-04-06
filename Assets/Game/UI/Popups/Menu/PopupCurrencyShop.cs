@@ -27,15 +27,32 @@ public class PopupCurrencyShop : MonoBehaviour {
 	//------------------------------------------------------------------//
 	public static readonly string PATH = "UI/Popups/PF_PopupCurrencyShop";
 
+	public enum Mode {
+		DEFAULT,
+		SC_ONLY,
+		PC_ONLY
+	};
+
+	public enum Tabs {
+		PC,
+		SC
+	};
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed Setup
+	[SerializeField] private GameObject m_tabButtons = null;
 	[SerializeField] private TabSystem m_tabs = null;
+	public TabSystem tabs {
+		get { return m_tabs; }
+	}
+
 	[Space]
 	[SerializeField] private GameObject m_pillPrefab = null;
 	[SerializeField] private ScrollRect m_scScrollList = null;
 	[SerializeField] private ScrollRect m_pcScrollList = null;
+
 	[Space]
 	[SerializeField] private float[] m_pillRotationSequence = new float[0];
 
@@ -100,6 +117,9 @@ public class PopupCurrencyShop : MonoBehaviour {
 				} break;
 			}
 
+			// Subscribe to purchase events
+			newPill.OnPurchaseSuccess.AddListener(OnPurchaseSuccessful);
+
 			// Apply "random" rotation to the pill
 			if(m_pillRotationSequence.Length > 0 && pillIdx >= 0) {
 				newPill.transform.localRotation = Quaternion.Euler(0f, 0f, m_pillRotationSequence[pillIdx % m_pillRotationSequence.Length]);
@@ -115,16 +135,51 @@ public class PopupCurrencyShop : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener<string>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+		
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+		
+	}
+
+	/// <summary>
+	/// Initialize the popup with the requested mode. Should be called before opening the popup.
+	/// </summary>
+	/// <param name="_mode">Target mode.</param>
+	public void Init(Mode _mode) {
+		// Refresh pills?
+
+		// Reset scroll lists
+		m_scScrollList.horizontalNormalizedPosition = 0f;
+		m_pcScrollList.horizontalNormalizedPosition = 0f;
+
+		// If required, hide tab buttons
+		m_tabButtons.SetActive(_mode == Mode.DEFAULT);
+
+		// Select initial tab and scroll list
+		NavigationScreen initialTab = m_tabs.initialScreen;
+		ScrollRect initialList = m_pcScrollList;
+		switch(_mode) {
+			case Mode.SC_ONLY: {
+				initialTab = m_tabs.GetScreen((int)Tabs.SC);
+				initialList = m_scScrollList;
+			} break;
+
+			case Mode.PC_ONLY:
+			case Mode.DEFAULT: {	// By default show PC tab
+				initialTab = m_tabs.GetScreen((int)Tabs.PC);
+				initialList = m_pcScrollList;
+			} break;
+		}
+
+		// Go to initial tab
+		m_tabs.GoToScreen(initialTab, NavigationScreen.AnimType.NONE);
+
+		// Program initial scroll list animation
+		initialList.DOHorizontalNormalizedPos(-10f, 0.5f).From().SetEase(Ease.OutCubic).SetDelay(0.25f).SetUpdate(true);
 	}
 
 	//------------------------------------------------------------------//
@@ -133,7 +188,8 @@ public class PopupCurrencyShop : MonoBehaviour {
 	/// <summary
 	/// Successful purchase.
 	/// </summary>
-	public void OnPurchaseSuccessful(string _productSku) {
+	/// <param name="_pill">The pill that triggered the event</param>
+	public void OnPurchaseSuccessful(PopupCurrencyShopPill _pill) {
 		// Close popup?
 		if(m_closeAfterPurchase) GetComponent<PopupController>().Close(true);
 	}
@@ -142,16 +198,6 @@ public class PopupCurrencyShop : MonoBehaviour {
 	/// The popup is about to be been opened.
 	/// </summary>
 	public void OnOpenPreAnimation() {
-		// Refresh pills?
-
-		// Go to initial tab
-		m_tabs.GoToScreen(m_tabs.initialScreen, NavigationScreen.AnimType.NONE);
-
-		// Reset scroll lists and program initial animation
-		m_scScrollList.horizontalNormalizedPosition = 0f;
-		m_pcScrollList.horizontalNormalizedPosition = 0f;
-		m_pcScrollList.DOHorizontalNormalizedPos(-10f, 0.5f).From().SetEase(Ease.OutCubic).SetDelay(0.25f).SetUpdate(true);
-
 		// Hide other currency counters to prevent conflicts
 		Messenger.Broadcast<bool>(GameEvents.UI_TOGGLE_CURRENCY_COUNTERS, false);
 	}

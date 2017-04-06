@@ -420,50 +420,33 @@ public class DisguisesScreenController : MonoBehaviour {
 		bool isPC = pricePC > priceSC;
 
 		// Perform transaction
-		bool success = false;
+		// Get price and start purchase flow
+		ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_DISGUISE");
+		purchaseFlow.OnSuccess.AddListener(
+			(ResourcesFlow _flow) => {
+				// Unlock it!
+				m_wardrobe.UnlockDisguise(_flow.itemDef.sku);
+
+				// Reload selected pill
+				m_selectedPill.Load(m_selectedPill.def, false, true, m_selectedPill.icon.sprite);
+
+				// Save!
+				PersistenceManager.Save(true);
+
+				// Show some nice FX
+				// Let's re-select the skin for now
+				DisguisePill pill = m_selectedPill;
+				m_selectedPill = null;
+				OnPillClicked(pill);
+
+				// Instantly equip it!
+				OnEquipButton();
+			}
+		);
 		if(isPC) {
-			if(UsersManager.currentUser.pc >= pricePC) {
-				// Perform transaction
-				UsersManager.currentUser.AddPC(-pricePC);
-				success = true;
-			} else {
-				// Open PC shop popup
-				// Currency popup / Resources flow disabled for now
-				//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-			}
+			purchaseFlow.Begin(pricePC, UserProfile.Currency.HARD, m_selectedPill.def);
 		} else {
-			if(UsersManager.currentUser.coins >= priceSC) {
-				// Perform transaction
-				UsersManager.currentUser.AddCoins(-priceSC);
-				success = true;
-			} else {
-				// Open SC shop popup
-				// Currency popup / Resources flow disabled for now
-				//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_SC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-			}
-		}
-
-		// Unlock the disguise
-		if(success) {
-			// Unlock it!
-			m_wardrobe.UnlockDisguise(m_selectedPill.def.sku);
-
-			// Reload selected pill
-			m_selectedPill.Load(m_selectedPill.def, false, true, m_selectedPill.icon.sprite);
-
-			// Save!
-			PersistenceManager.Save(true);
-
-			// Show some nice FX
-			// Let's re-select the skin for now
-			DisguisePill pill = m_selectedPill;
-			m_selectedPill = null;
-			OnPillClicked(pill);
-
-			// Instantly equip it!
-			OnEquipButton();
+			purchaseFlow.Begin(priceSC, UserProfile.Currency.SOFT, m_selectedPill.def);
 		}
 	}
 

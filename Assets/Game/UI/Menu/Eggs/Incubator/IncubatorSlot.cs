@@ -196,21 +196,17 @@ public class IncubatorSlot : MonoBehaviour {
 		// Just in case
 		if(targetEgg == null) return;
 
-		// Resources check
-		long pricePC = (long)targetEgg.GetIncubationSkipCostPC();
-		if(UsersManager.currentUser.pc >= pricePC) {
-			// Instantly finish current incubation
-			if(targetEgg.SkipIncubation()) {
-				UsersManager.currentUser.AddPC(-pricePC);
-				PersistenceManager.Save();
+		// Start purchase flow
+		ResourcesFlow purchaseFlow = new ResourcesFlow("SKIP_EGG_INCUBATION");
+		purchaseFlow.OnSuccess.AddListener(
+			(ResourcesFlow _flow) => {
+				// Instantly finish current incubation
+				if(targetEgg.SkipIncubation()) {
+					PersistenceManager.Save();
+				}
 			}
-		} else {
-			// Open PC shop popup
-			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-
-			// Currency popup / Resources flow disabled for now
-			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-		}
+		);
+		purchaseFlow.Begin((long)targetEgg.GetIncubationSkipCostPC(), UserProfile.Currency.HARD, targetEgg.def);
 	}
 
 	/// <summary>
