@@ -13,5 +13,5 @@ python ModifyProject.py "${xcode_folder}"
 
 open -a Xcode "${xcode_folder}/Unity-iPhone.xcodeproj"
 sleep 10s
-osascript AutoRun.applescript
+./AutoRun.applescript
 cd "${INITIAL_PATH}"
