@@ -7,8 +7,8 @@ Properties {
 	_BumpMap ("Normal Map (RGB)", 2D) = "white" {}
 	_DetailTex ("Detail (RGB)", 2D) = "white" {} // r -> inner light, g -> specular
 
-	_ReflectionMap("Reflection Map", Cube) = "white" {}
-	_ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.0
+//	_ReflectionMap("Reflection Map", Cube) = "white" {}
+//	_ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.0
 
 	_Tint ("Color Multiply", Color) = (1,1,1,1)
 	_ColorAdd ("Color Add", Color) = (0,0,0,0)
