@@ -1,6 +1,5 @@
 
 # Activate a destination
-delay 10
 # activate application "Xcode"
 tell application "System Events"
 	tell process "Xcode"
