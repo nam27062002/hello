@@ -1152,7 +1152,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 1.5
     max: 1.5
-  m_serializedJson: '[{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":1,"checkDragonPositionTime":2,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":false},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"hide":{"id":3,"active":false},"home":{"id":4,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":0,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":10,"checkDragonPositionTime":0.5,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":true},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"hide":{"id":3,"active":false},"home":{"id":4,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":0,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
   m_databaseKey: PF_RichMan_Static
 --- !u!114 &114000013571211304
 MonoBehaviour:
@@ -1198,8 +1198,8 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 18
-    m_maxRadius: 16
+    m_sightRadius: 8
+    m_maxRadius: 6
     m_minRadius: 0
     m_hysteresisOffset: 0
     m_senseAbove: 1
