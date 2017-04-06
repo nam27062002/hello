@@ -115,13 +115,20 @@ public class GameStoreManagerCalety : GameStoreManager
 
 	public override bool CanMakePayment()
 	{
+#if UNITY_EDITOR
+		return true;
+#else
 		return StoreManager.SharedInstance.CanMakePayments();
+#endif	
 	}
     
 
 
 	public override void Buy( string _sku )
 	{
+#if UNITY_EDITOR
+		StoreManager.SharedInstance.StartCoroutine( SimulatePurchase(_sku) );
+#else
     	if (StoreManager.SharedInstance.CanMakePayments()) 
     	{
     		string item = GameSkuToPlatformSku( _sku );
@@ -130,6 +137,14 @@ public class GameStoreManagerCalety : GameStoreManager
 				StoreManager.SharedInstance.RequestProduct (item);
     		}
     	}
+#endif
+    }
+
+    IEnumerator SimulatePurchase( string _sku)
+    {
+    	yield return new WaitForSeconds( 0.25f );
+		string item = GameSkuToPlatformSku( _sku );
+    	m_storeListener.onPurchaseCompleted( item, "", null);
     }
 
     private string GameSkuToPlatformSku( string gameSku )

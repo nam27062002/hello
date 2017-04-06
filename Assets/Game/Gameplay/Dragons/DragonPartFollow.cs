@@ -6,6 +6,7 @@ public class DragonPartFollow : MonoBehaviour {
 
 	
 	public Transform m_root;
+	public List<string> m_partsNames;
 	public List<Transform> m_parts;
 	public float springSpeed = 1.0f;
 	private class PartInfo
@@ -23,6 +24,21 @@ public class DragonPartFollow : MonoBehaviour {
 	{
 		if ( m_root == null )
 			m_root = transform;
+
+		m_parts = new List<Transform>();
+		for (int m = 0; m < m_partsNames.Count; m++) {
+			Transform tr = m_root.FindTransformRecursive(m_partsNames[m]);
+			if (tr)
+			{
+				m_parts.Add( tr );
+			}
+			else
+			{
+				Debug.LogError("Cannot find "+ m_partsNames[m] );
+			}
+		}
+
+
 		m_startScale = m_root.lossyScale.x;
 		m_partInfos = new List<PartInfo>();
 		for( int i = 0; i<m_parts.Count; i++ )

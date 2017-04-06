@@ -162,6 +162,9 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 			Authenticator.Instance.CheckConnection(delegate (FGOL.Server.Error connectionError)
 			{
 				m_checkConnectionError = connectionError;
+#if UNITY_EDITOR
+					m_checkConnectionError = null;
+#endif
 				m_loadingPopupController.Close(true);
 			});
 		}
