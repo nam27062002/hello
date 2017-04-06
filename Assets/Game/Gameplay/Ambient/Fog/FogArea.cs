@@ -14,7 +14,7 @@ public class FogArea : MonoBehaviour
 	{
 		m_fogManager = FindObjectOfType<FogManager>();
 		m_startScale = transform.localScale;
-		if ( UnityEngine.Debug.isDebugBuild )
+		if ( !FeatureSettingsManager.instance.IsFogOnDemandEnabled )
 		{
 			m_fogManager.CheckTextureAvailability(m_attributes);
 		}
