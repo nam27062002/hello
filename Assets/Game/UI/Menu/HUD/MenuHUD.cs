@@ -121,10 +121,15 @@ public class MenuHUD : MonoBehaviour {
 	/// </summary>
 	public void OpenCurrencyShopPopup() {
 		// Just do it
-		PopupController popup = PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+		PopupController popup = PopupManager.LoadPopup(PopupCurrencyShop.PATH);
 
 		// In this particular case we want to allow several purchases in a row, so don't auto-close popup
-		popup.GetComponent<PopupCurrencyShop>().closeAfterPurchase = false;
+		PopupCurrencyShop shopPopup = popup.GetComponent<PopupCurrencyShop>();
+		shopPopup.closeAfterPurchase = false;
+		shopPopup.Init(PopupCurrencyShop.Mode.DEFAULT);
+
+		// Open popup!
+		popup.Open();
 
 		// Currency popup / Resources flow disabled for now
 		//UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);

@@ -46,27 +46,19 @@ public class BuyEggButton : MonoBehaviour {
 	/// The button has been pressed.
 	/// </summary>
 	public void OnBuyEgg() {
-
 		// Get price and start purchase flow
 		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_PREMIUM_EGG);
-		long pricePC = eggDef.GetAsLong("pricePC");
-		if(UsersManager.currentUser.pc >= pricePC) {
-			// Perform transaction
-			UsersManager.currentUser.AddPC(-pricePC);
-			PersistenceManager.Save(true);
+		ResourcesFlow purchaseFlow = new ResourcesFlow("BUY_EGG");
+		purchaseFlow.OnSuccess.AddListener(
+			(ResourcesFlow _flow) => {
+				// Create a new egg instance
+				Egg purchasedEgg = Egg.CreateFromDef(_flow.itemDef);
+				purchasedEgg.ChangeState(Egg.State.READY);	// Already ready for collection!
 
-			// Create a new egg instance
-			Egg purchasedEgg = Egg.CreateFromDef(eggDef);
-			purchasedEgg.ChangeState(Egg.State.READY);	// Already ready for collection!
-
-			// Start open egg flow
-			InstanceManager.sceneController.GetComponent<MenuScreensController>().StartOpenEggFlow(purchasedEgg);
-		} else {
-			// Open PC shop popup
-			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-
-			// Currency popup / Resources flow disabled for now
-			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-		}
+				// Start open egg flow
+				InstanceManager.sceneController.GetComponent<MenuScreensController>().StartOpenEggFlow(purchasedEgg);
+			}
+		);
+		purchaseFlow.Begin(eggDef.GetAsLong("pricePC"), UserProfile.Currency.HARD, eggDef);
 	}
 }

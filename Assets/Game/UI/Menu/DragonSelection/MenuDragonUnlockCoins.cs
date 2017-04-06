@@ -70,18 +70,15 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 	/// The unlock button has been pressed.
 	/// </summary>
 	public void OnUnlock() {
-		// Unlock dragon
-		DragonData data = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
-		long priceCoins = data.def.GetAsLong("unlockPriceCoins");
-		if(UsersManager.currentUser.coins >= priceCoins) {
-			UsersManager.currentUser.AddCoins(-priceCoins);
-			data.Acquire();
-			PersistenceManager.Save();
-		} else {
-			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-
-			// Currency popup / Resources flow disabled for now
-            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_SC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-		}
+		// Get price and start purchase flow
+		DragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+		ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_DRAGON_COINS");
+		purchaseFlow.OnSuccess.AddListener(
+			(ResourcesFlow _flow) => {
+				// Just acquire target dragon!
+				dragonData.Acquire();
+			}
+		);
+		purchaseFlow.Begin(dragonData.def.GetAsLong("unlockPriceCoins"), UserProfile.Currency.SOFT, dragonData.def);
 	}
 }

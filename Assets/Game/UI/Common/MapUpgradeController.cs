@@ -189,19 +189,16 @@ public class MapUpgradeController : MonoBehaviour {
 		// Ignore if map is already unlocked
 		if(isUnlocked) return;
 
-		// Make sure we have enough PC to remove the mission
-		if(UsersManager.currentUser.pc >= m_unlockPricePC) {
-			// Do it!
-			UsersManager.currentUser.AddPC(-m_unlockPricePC);
-			UsersManager.currentUser.UnlockMap();
-			PersistenceManager.Save();
-		} else {
-			// Open shop popup
-			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-
-			// Currency popup / Resources flow disabled for now
-			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-		}
+		// Start purchase flow
+		ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_MAP");
+		purchaseFlow.OnSuccess.AddListener(
+			(ResourcesFlow _flow) => {
+				// Just do it
+				UsersManager.currentUser.UnlockMap();
+				PersistenceManager.Save();
+			}
+		);
+		purchaseFlow.Begin(m_unlockPricePC, UserProfile.Currency.HARD, null);
 	}
 
 	/// <summary>

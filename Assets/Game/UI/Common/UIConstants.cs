@@ -369,7 +369,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 
 			case IconAlignment.LEFT: {
 				if(!string.IsNullOrEmpty(iconString)) {
-					instance.m_sb.Append(iconString).Append(" ");
+					instance.m_sb.Append(iconString);//.Append(" ");
 				}
 				instance.m_sb.Append(_text);
 			} break;
@@ -377,7 +377,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			case IconAlignment.RIGHT: {
 				instance.m_sb.Append(_text);
 				if(!string.IsNullOrEmpty(iconString)) {
-					instance.m_sb.Append(" ").Append(iconString);
+					instance.m_sb/*.Append(" ")*/.Append(iconString);
 				}
 			} break;
 		}
