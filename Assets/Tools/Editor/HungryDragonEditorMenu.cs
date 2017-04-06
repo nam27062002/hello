@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -225,16 +226,61 @@ public class HungryDragonEditorMenu {
 	}
 
     /// <summary>
-	/// Add menu item to be open the persistence profiles editor.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Profiler Settings", false, 51)]
-    public static void ShowProfilerWindow()
+    /// Add menu item to generate the shaders properties file, which is used by the memory profiler to obtain the set of textures used by a game object
+    /// </summary>
+    [MenuItem("Hungry Dragon/Profiler/Generate shaders properties file", false, 51)]
+    public static void Profiler_GenerateShadersPropertiesFile()
+    {         
+        Debug.Log("Generating shaders properties file");
+
+        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
+
+        Dictionary<string, List<string>> data = new Dictionary<string, List<string>>();
+        List<string> properties;
+        Material[] materialList;
+        AssetFinder.FindAssetInContent<Material>(System.IO.Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+
+        Shader shader;        
+        int count = materialList.Length;
+        int propertiesCount;
+        string propertyName;
+        for (int c = 0; c < count; c++)
+        {
+            shader = materialList[c].shader;
+
+            if (!data.ContainsKey(shader.name))
+            {
+                properties = new List<string>();
+                propertiesCount = UnityEditor.ShaderUtil.GetPropertyCount(shader);
+                for (int i = 0; i < propertiesCount; i++)
+                {
+                    if (UnityEditor.ShaderUtil.GetPropertyType(shader, i) == UnityEditor.ShaderUtil.ShaderPropertyType.TexEnv)
+                    {
+                        propertyName = UnityEditor.ShaderUtil.GetPropertyName(shader, i);
+                        properties.Add(propertyName);
+                    }
+                }
+
+                data.Add(shader.name, properties);
+            }                                         
+        }
+
+        AssetMemoryProfiler.ShadersSettings_SaveToFile(data);
+
+        AssetDatabase.SaveAssets();        
+    }
+
+    /// <summary>
+    /// Add menu item to be open the npcs settings manager editor.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Profiler/NPCs Settings", false, 51)]
+    public static void ShowNpcsSettingsManagerWindow()
     {
         // Show existing window instance. If one doesn't exist, make one.
         ProfilerEditorWindow window = ProfilerEditorWindow.instance;
 
         // Setup window
-        window.titleContent = new GUIContent("Profiler Settings");
+        window.titleContent = new GUIContent("NPCs Settings");
         window.minSize = new Vector2(ProfilerEditorWindow.SPACING + ProfilerEditorWindow.PROFILE_LIST_COLUMN_WIDTH + ProfilerEditorWindow.PROFILE_VIEW_COLUMN_WIDTH + ProfilerEditorWindow.SPACING, ProfilerEditorWindow.MIN_WINDOW_HEIGHT); // Fixed width, arbitrary minimum
         window.maxSize = new Vector2(window.minSize.x, float.PositiveInfinity);                     // Fixed width, limitless        
 

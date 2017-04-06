@@ -796,6 +796,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				Vector3 deltaPosition = Vector3.Lerp( m_suction.position, m_holdPreyTransform.position, m_latchingTimer * 8);	// Mouth should be moving and orienting
 				// Vector3 deltaPosition = m_holdPreyTransform.position;
 				transform.position += deltaPosition - m_suction.position;
+				m_impulse = Vector3.zero;
 			}
 		}
 	}

@@ -56,8 +56,10 @@ public class EntityPrefabListAttributeEditor : ExtendedPropertyDrawer {
 	/// <param name="_property">The property we're drawing.</param>
 	/// <param name="_label">The label of the property.</param>
 	override protected void OnGUIImpl(SerializedProperty _property, GUIContent _label) {
+		m_targetProperty = _property;
+
 		// Check field type
-		if(_property.propertyType != SerializedPropertyType.String) {
+		if (_property.propertyType != SerializedPropertyType.String) {
 			m_pos.height = EditorStyles.largeLabel.lineHeight;
 			EditorGUI.LabelField(m_pos, _label.text, "ERROR! EntityPrefabList attribute can only be applied to string properties!");
 			AdvancePos();

@@ -86,7 +86,7 @@ namespace AI {
 
 						if ( entity.IsBurnable() && ( entity.IsBurnable(m_tier) || InstanceManager.player.breathBehaviour.type == DragonBreathBehaviour.Type.Super ) )
 						{
-							MachineOld machine = entity.GetComponent<MachineOld>();
+							Machine machine = entity.GetComponent<Machine>();
 							if ( machine != null && machine.CanBeBitten() )
 							{
 								// Check if physics reachable

@@ -42,8 +42,8 @@ GameObject:
   - component: {fileID: 114719402969299000}
   - component: {fileID: 114336454134011498}
   - component: {fileID: 54625767117686674}
-  - component: {fileID: 135298214764248918}
   - component: {fileID: 135773916826474874}
+  - component: {fileID: 136561335226086704}
   m_Layer: 16
   m_Name: PF_Ghost02
   m_TagString: Untagged
@@ -133,7 +133,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1590119342891000}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: -1.23, y: 0, z: 0}
+  m_LocalPosition: {x: -18.727024, y: 47.081863, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4571006164382760}
@@ -359,24 +359,12 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":0.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"damage":11,"duration":1.5,"dataType":"AI.Behaviour.CurseData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":0.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"damage":11,"duration":2,"dataType":"AI.Behaviour.CurseData","editorFolded":false}]'
   m_databaseKey: PF_Ghost02
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 5
   m_avoidCollisions: 0
   m_avoidWater: 0
---- !u!135 &135298214764248918
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1590119342891000}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.8
-  m_Center: {x: 0, y: 2.21, z: 0}
 --- !u!135 &135773916826474874
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -387,8 +375,21 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.69
-  m_Center: {x: 0, y: 1.29, z: 0}
+  m_Radius: 0.7
+  m_Center: {x: 0, y: 0.6, z: 0}
+--- !u!136 &136561335226086704
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1590119342891000}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.81
+  m_Height: 2.89
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &198193302833083662
 ParticleSystem:
   m_ObjectHideFlags: 1

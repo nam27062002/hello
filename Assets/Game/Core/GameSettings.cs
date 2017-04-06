@@ -58,4 +58,20 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		pc = Math.Round(pc, MidpointRounding.AwayFromZero);
 		return Mathf.Max(1, (int)pc);	// At least 1
 	}
+
+	/// <summary>
+	/// Compute the PC equivalent of a given amount of coins.
+	/// </summary>
+	/// <returns>The PC worth for <paramref name="_coins"/> amount of coins.</returns>
+	/// <param name="_coins">Amount of coins to be evaluated.</param>
+	public static long ComputePCForCoins(long _coins) {
+		// Get conversion factor from definition
+		DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+		double coinsToPC = gameSettingsDef.GetAsDouble("missingRessourcesPCperSC");
+
+		// Apply, round and return
+		double pc = Mathf.Abs(_coins) * coinsToPC;
+		pc = Math.Round(pc, MidpointRounding.AwayFromZero);
+		return Math.Max(0, (long)pc);
+	}
 }

@@ -9,8 +9,24 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1691231456262506}
+  m_RootGameObject: {fileID: 1517358061018596}
   m_IsPrefabParent: 1
+--- !u!1 &1517358061018596
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4109042710246754}
+  - component: {fileID: 114188870627203998}
+  m_Layer: 0
+  m_Name: PS_SoldierSlash02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1691231456262506
 GameObject:
   m_ObjectHideFlags: 0
@@ -21,7 +37,6 @@ GameObject:
   - component: {fileID: 4472788299496400}
   - component: {fileID: 198025375235839168}
   - component: {fileID: 199113204107018332}
-  - component: {fileID: 114188870627203998}
   m_Layer: 0
   m_Name: PS_SoldierSlash02
   m_TagString: Untagged
@@ -29,17 +44,31 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &4109042710246754
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1517358061018596}
+  m_LocalRotation: {x: -0.0008965265, y: -0.000043614622, z: 0.048590966, w: -0.9988184}
+  m_LocalPosition: {x: -24.84, y: 44.96, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4472788299496400}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0.10300001, y: -0.19700001, z: -5.57}
 --- !u!4 &4472788299496400
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1691231456262506}
-  m_LocalRotation: {x: -0.0008965265, y: -0.000043614622, z: 0.048590966, w: -0.9988184}
-  m_LocalPosition: {x: 142.88176, y: 7.8381553, z: -5.54}
+  m_LocalRotation: {x: -0, y: -0, z: -0.0000000018487611, w: 1}
+  m_LocalPosition: {x: 0, y: 5, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 4109042710246754}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0.10300001, y: -0.19700001, z: -5.57}
 --- !u!114 &114188870627203998
@@ -47,7 +76,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1691231456262506}
+  m_GameObject: {fileID: 1517358061018596}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
@@ -63,14 +92,14 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1691231456262506}
   serializedVersion: 5
-  lengthInSec: 1.55
+  lengthInSec: 0.2
   simulationSpeed: 1
   looping: 0
   prewarm: 0
   playOnAwake: 1
   autoRandomSeed: 1
   startDelay:
-    scalar: 0
+    scalar: 0.55
     maxCurve:
       serializedVersion: 2
       m_Curve:
@@ -111,12 +140,12 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1518327962
+  randomSeed: -1794440622
   InitialModule:
     serializedVersion: 3
     enabled: 1
     startLifetime:
-      scalar: 0.25
+      scalar: 0.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -287,7 +316,7 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       minMaxState: 0
     startSize:
-      scalar: 5
+      scalar: 7.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -689,15 +718,15 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 0.5
-          inSlope: 0.5
-          outSlope: 0.5
+          value: 0.7191781
+          inSlope: 0.28082192
+          outSlope: 0.28082192
           tangentMode: 34
         - serializedVersion: 2
           time: 1
           value: 1
-          inSlope: 0.5
-          outSlope: 0.5
+          inSlope: 0.28082192
+          outSlope: 0.28082192
           tangentMode: 34
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -881,7 +910,7 @@ ParticleSystem:
         m_RotationOrder: 4
       minMaxState: 0
     curve:
-      scalar: -18.849556
+      scalar: -26.17994
       maxCurve:
         serializedVersion: 2
         m_Curve:

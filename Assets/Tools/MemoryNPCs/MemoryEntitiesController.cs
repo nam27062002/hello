@@ -41,11 +41,16 @@ public class MemoryEntitiesController : MonoBehaviour {
 
 	private float m_timer;
 
-	//---------------------------------------
+    //---------------------------------------
+    private AssetMemoryProfiler m_profiler;
 
-	// Use this for initialization
-	private void Start() {
-		m_timerUI.minValue = 0f;
+    //---------------------------------------
+
+    // Use this for initialization
+    private void Start() {
+        m_profiler = new AssetMemoryProfiler();
+       
+        m_timerUI.minValue = 0f;
 		m_memoryAll.minValue = 0f;
 		m_memoryMesh.minValue = 0f;
 		m_memoryTextures.minValue = 0f;
@@ -55,7 +60,7 @@ public class MemoryEntitiesController : MonoBehaviour {
 		m_memoryAll.maxValue = MAX_MEMORY;
 		m_memoryMesh.maxValue = MAX_MEMORY;
 		m_memoryTextures.maxValue = MAX_MEMORY;
-		m_memoryAnimations.maxValue = MAX_MEMORY;
+		m_memoryAnimations.maxValue = MAX_MEMORY;        
 
 		m_timer = 10f;
 	}
@@ -73,15 +78,21 @@ public class MemoryEntitiesController : MonoBehaviour {
         Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);        
     }
 
-	private void Update() {
-		m_timer -= Time.deltaTime;
-		if (m_timer <= 0f) {
-			OnReset();
-			GetPrefabsFromScene();
-		}
+    private void Update() {
+        m_timer -= Time.deltaTime;
+        if (m_timer <= 0f) {
+            OnReset();
+            GetPrefabsFromScene();
+        }
 
-		m_timerUI.value = m_timer;
-	}
+        m_timerUI.value = m_timer;
+        
+
+        /*if (Input.GetKeyDown(KeyCode.A)) {
+            OnReset();
+            GetPrefabsFromScene();
+        }*/
+    }
 
 	private void OnReset() {
 		m_memory = 0f;
@@ -93,25 +104,37 @@ public class MemoryEntitiesController : MonoBehaviour {
 
 		m_timer = 10f;
 		m_timerUI.value = m_timer;
-	}
+
+        m_profiler.Reset();
+    }
 
 	private void GetPrefabsFromScene() {
-		Object[] gos = GameObject.FindObjectsOfType(typeof(Entity));
+		Entity[] gos;
 
-		for (int i = 0; i < gos.Length; i++) {
-			//gos[i]
-			float mem = 2f;
-			float mesh = 0.5f;
-			float animation = 1f;
-			float texture = 0.5f;
-
-			m_memory += mem;
-			m_meshes += mesh;
-			m_animations += animation;
-			m_textures += texture;
+		if (Application.isPlaying) {
+			gos = PoolManager.instance.GetComponentsInChildren<Entity>(true);
+		} else {
+			gos = GameObjectExt.FindObjectsOfType<Entity>(true).ToArray();
 		}
 
-		UpdateUI();
+        GameObject go;
+		for (int i = 0; i < gos.Length; i++) {
+            go = (gos[i] as Entity).gameObject;
+            m_profiler.AddGo(go, "NPCs");           
+		}               
+                
+        float mesh = BytesToMegaBytes(m_profiler.GetSizePerType(AssetMemoryGlobals.EAssetType.Mesh));
+        float animation = BytesToMegaBytes(m_profiler.GetSizePerType(AssetMemoryGlobals.EAssetType.Animation));
+        float texture = BytesToMegaBytes(m_profiler.GetSizePerType(AssetMemoryGlobals.EAssetType.Texture));
+        float other = BytesToMegaBytes(m_profiler.GetSizePerType(AssetMemoryGlobals.EAssetType.Other));
+        float total = BytesToMegaBytes(m_profiler.GetSize());                
+
+        m_memory += total;
+        m_meshes += mesh;
+        m_animations += animation;
+        m_textures += texture;
+
+        UpdateUI();
 	}
 
 	private void UpdateUI() {
@@ -120,13 +143,17 @@ public class MemoryEntitiesController : MonoBehaviour {
 		m_memoryTextures.value = m_textures;
 		m_memoryAnimations.value = m_animations;
 
-		m_memoryAllText.text = m_memory + "/" + MAX_MEMORY + " MB";
-		m_memoryMeshText.text = m_meshes + " MB";
-		m_memoryTexturesText.text = m_textures + " MB";
-		m_memoryAnimationsText.text = m_animations + " MB";
+		m_memoryAllText.text = m_memory.ToString("F2") + "/" + MAX_MEMORY + " MB";
+		m_memoryMeshText.text = m_meshes.ToString("F2") + " MB";
+		m_memoryTexturesText.text = m_textures.ToString("F2") + " MB";
+		m_memoryAnimationsText.text = m_animations.ToString("F2") + " MB";
 	}
 
 	private void OnLevelLoaded() {
 		OnReset();
+    }
+
+    private float BytesToMegaBytes(long bytes) {
+        return bytes / (1024f * 1024f);
     }
 }

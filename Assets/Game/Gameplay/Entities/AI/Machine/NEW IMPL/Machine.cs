@@ -82,6 +82,10 @@ namespace AI {
 
 		// Freezing
 		private bool m_freezing = false;
+		public bool freezing
+		{
+			get{ return m_freezing; }
+		}
 		private float m_freezingMultiplier = 1;
 
 
@@ -489,6 +493,11 @@ namespace AI {
 
 		public bool IsDying() {
 			return GetSignal(AI.Signals.Type.Chewing) || GetSignal(AI.Signals.Type.Burning);
+		}
+
+		public bool IsFreezing()
+		{
+			return m_freezing;
 		}
 
 

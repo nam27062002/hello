@@ -10,6 +10,7 @@ public class Pool {
 
 	private Queue<GameObject> m_freeObjects;
 	private HashSet<GameObject> m_notFreeObjects;
+	private Queue<GameObject> m_returnObjects;
 	
 	private bool m_canGrow;
 	private bool m_dontDestroyContainer;
@@ -35,6 +36,7 @@ public class Pool {
 
 		m_freeObjects = new Queue<GameObject>();
 		m_notFreeObjects = new HashSet<GameObject>();
+		m_returnObjects = new Queue<GameObject>();
 
 		for( int i = 0; i<_initSize; i++ )
 		{
@@ -44,6 +46,20 @@ public class Pool {
 		m_canGrow = _canGrow;
 
 		m_temporary = _temporary;
+	}
+
+	public void Update() {
+#if UNITY_EDITOR
+		if (m_returnObjects.Count > 0) {
+			Debug.Log(m_returnObjects.Count);
+		}
+#endif
+
+		while (m_returnObjects.Count > 0) {
+			GameObject go = m_returnObjects.Dequeue();
+			go.transform.SetParent(m_containerObj.transform);		// Return particle system to pool's hierarchy
+			m_freeObjects.Enqueue(go);
+		}
 	}
 
 	public int Size() {
@@ -58,55 +74,52 @@ public class Pool {
 		// Destroy all the created instances
 		// Destroying the container is enough, but we don't want to do that if the container wasn't created by us
 
-		if ( m_dontDestroyContainer )
-		{
-			while( m_freeObjects.Count > 0)
-			{
+		if (m_dontDestroyContainer) {
+			while(m_freeObjects.Count > 0) {
 				GameObject go = m_freeObjects.Dequeue();
-				GameObject.Destroy( go );
+				GameObject.Destroy(go);
 			}
-			foreach( GameObject go in m_notFreeObjects)
-				GameObject.Destroy( go );
-		}
-		else
-		{
-			GameObject.Destroy( m_containerObj );
+
+			foreach(GameObject go in m_notFreeObjects) {
+				GameObject.Destroy(go);
+			}
+
+			while(m_returnObjects.Count > 0) {
+				GameObject go = m_returnObjects.Dequeue();
+				GameObject.Destroy(go);
+			}
+		} else {
+			GameObject.Destroy(m_containerObj);
 		}
 
 		m_freeObjects.Clear();
 		m_notFreeObjects.Clear();
+		m_returnObjects.Clear();
 		m_containerObj = null;
 	}
 	
-	public GameObject Get(bool _activate)
-	{			
-		if ( m_freeObjects.Count <= 0 && m_canGrow)
-		{
-			m_freeObjects.Enqueue( Instantiate() );
+	public GameObject Get(bool _activate) {			
+		if (m_freeObjects.Count <= 0 && m_canGrow) {
+			m_freeObjects.Enqueue(Instantiate());
 		}
 
-		if ( m_freeObjects.Count > 0)
-		{
+		if (m_freeObjects.Count > 0) {
 			GameObject go = m_freeObjects.Dequeue();
             if (_activate) go.SetActive(true);
             m_notFreeObjects.Add( go );
 			return go;
 		}
+
 		return null;
 	}
 
-	public void Return( GameObject go)
-	{
+	public void Return(GameObject go) {
 		// In debug check!
-		if ( m_notFreeObjects.Contains(go) )
-		{
-			m_notFreeObjects.Remove( go );
-			go.transform.SetParent(m_containerObj.transform);		// Return particle system to pool's hierarchy
-			go.SetActive( false );
-			m_freeObjects.Enqueue( go );
-		}
-		else
-		{
+		if (m_notFreeObjects.Contains(go)) {
+			m_notFreeObjects.Remove(go);
+			go.SetActive(false);
+			m_returnObjects.Enqueue(go); // delayed return
+		} else {
 			// Debug.LogError("Object " + go.name + "doesn't belong to pool " + m_containerObj.name);
 		}
 	}
@@ -151,7 +164,6 @@ public class Pool {
 				toDestroy--;
 			}
 		}
-
 		// Bigger than current size?
 		else if(sizeDiff > 0) {
 			// Create as many objects as needed
@@ -161,8 +173,7 @@ public class Pool {
 		}
 	}
 
-	private GameObject Instantiate()
-	{
+	private GameObject Instantiate() {
 		GameObject inst = GameObject.Instantiate(m_prefab);					
 		inst.name = m_prefab.name;
 		inst.transform.SetParent(m_containerObj.transform, false);

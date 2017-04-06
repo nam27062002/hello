@@ -1,4 +1,4 @@
-﻿// PopupCurrencyShopPill.cs
+// PopupCurrencyShopPill.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 21/02/2017.
@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using TMPro;
 using DG.Tweening;
 
@@ -22,6 +23,8 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	// Parametrized event
+	public class CurrencyShopPillEvent : UnityEvent<PopupCurrencyShopPill> { }
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -50,12 +53,17 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		get { return m_type; }
 	}
 
+	// Events
+	public CurrencyShopPillEvent OnPurchaseSuccess = new CurrencyShopPillEvent();
+	public CurrencyShopPillEvent OnPurchaseError = new CurrencyShopPillEvent();
+
 	// Internal
 	private UserProfile.Currency m_currency = UserProfile.Currency.REAL;
 	private float m_price = 0f;
 
 	private FGOL.Server.Error m_checkConnectionError;
 	private PopupController m_loadingPopupController;
+	private bool m_awaitingPurchaseConfirmation = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -105,13 +113,15 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		m_bonusAmountText.Localize("TID_SHOP_BONUS_AMOUNT", StringUtils.MultiplierToPercentage(bonusAmount));	// 15% extra
 
 		// Best value
-		m_bestValueObj.SetActive(m_def.GetAsBool("bestValue", false));
+		if(m_bestValueObj != null) {
+			m_bestValueObj.SetActive(m_def.GetAsBool("bestValue", false));
+		}
 
 		// Price
 		// Figure out currency first
 		m_price = m_def.GetAsFloat("priceDollars");		// [AOC] TODO!! Price should be provided by the store api
 		if(m_price > 0) {	// Real money prevails over HC
-			// [AOC] TODO!! Price should be localized by the store api
+			// Price should be localized by the store api
 			m_currency = UserProfile.Currency.REAL;
 			if (GameStoreManager.SharedInstance.IsReady())
 			{
@@ -131,42 +141,8 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 	}
 
 	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
+	// STATIC UTILS															  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// The buy button has been pressed.
-	/// </summary>
-	public void OnBuyButton() {
-		// Ignore if not properly initialized
-		if(m_def == null) return;
-
-		// If currency is PC, make sure we have enough and adjust new balance
-		if(m_currency == UserProfile.Currency.HARD) {
-			long pricePC = (long)m_price;
-			if(UsersManager.currentUser.pc >= pricePC) {
-				UsersManager.currentUser.AddPC(-pricePC);
-
-				ApplyShopPack( m_def );
-				// [AOC] TODO!! Notify game - typically this is done by the store manager, do it properly
-				Messenger.Broadcast<string>(EngineEvents.PURCHASE_SUCCESSFUL, m_def.sku);
-			} else {
-				// Show feedback and interrupt transaction
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-				return;
-			}
-		}
-		else if ( m_currency == UserProfile.Currency.REAL )
-		{
-			m_loadingPopupController = PopupManager.PopupLoading_Open();
-			m_loadingPopupController.OnClosePostAnimation.AddListener( OnConnectionCheck );
-			Authenticator.Instance.CheckConnection(delegate (FGOL.Server.Error connectionError)
-			{
-				m_checkConnectionError = connectionError;
-				m_loadingPopupController.Close(true);
-			});
-		}
-	}
-
 	public static void ApplyShopPack( DefinitionNode def )
 	{	
 		UserProfile.Currency type = GetCurrencyType(def);
@@ -185,7 +161,11 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		PersistenceManager.Save(true);
 	}
 
-
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
+	/// <param name="def"></param>
 	private static UserProfile.Currency GetCurrencyType( DefinitionNode def )
 	{
 		UserProfile.Currency type = UserProfile.Currency.NONE;
@@ -196,22 +176,137 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		return type;
 	}
 
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The buy button has been pressed.
+	/// </summary>
+	public void OnBuyButton() {
+		// Ignore if not properly initialized
+		if(m_def == null) return;
+
+		// Depends on currency
+		switch(m_currency) {
+			case UserProfile.Currency.HARD: {
+				// Make sure we have enough and adjust new balance
+				// Resources flow makes it easy for us!
+				ResourcesFlow purchaseFlow = new ResourcesFlow("SHOP_COINS_PACK");
+				purchaseFlow.OnSuccess.AddListener(
+					(ResourcesFlow _flow) => {
+						ApplyShopPack(_flow.itemDef);
+
+						// Trigger message
+						OnPurchaseSuccess.Invoke(this);
+					}
+				);
+				purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, m_def);
+
+				// Without resources flow:
+				/*long pricePC = (long)m_price;
+				if(UsersManager.currentUser.pc >= pricePC) {
+					UsersManager.currentUser.AddPC(-pricePC);
+					ApplyShopPack( m_def );
+
+					// Trigger message
+					OnPurchaseSuccess.Invoke(this);
+				} else {
+					// Show feedback
+					UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+				}*/
+			} break;
+
+			case UserProfile.Currency.REAL: {
+				// Start real money transaction flow
+				m_loadingPopupController = PopupManager.PopupLoading_Open();
+				m_loadingPopupController.OnClosePostAnimation.AddListener( OnConnectionCheck );
+				Authenticator.Instance.CheckConnection(delegate (FGOL.Server.Error connectionError)
+					{
+						m_checkConnectionError = connectionError;
+					#if UNITY_EDITOR
+						m_checkConnectionError = null;
+					#endif
+						m_loadingPopupController.Close(true);
+					});
+			} break;
+		}
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
 	void OnConnectionCheck()
 	{
 		if ( m_checkConnectionError == null )
 		{
 			if ( GameStoreManager.SharedInstance.CanMakePayment() )
 			{
+				TrackPurchaseResult(true);
 				GameStoreManager.SharedInstance.Buy( m_def.sku );
 			}	
 			else
 			{
+				OnPurchaseError.Invoke(this);
 				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_CANNOT_PAY"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 			}
 		}
 		else
 		{
+			OnPurchaseError.Invoke(this);
 			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+		}
+	}
+
+	/// <summary>
+	/// Tell the pill whether to track purchases or not.
+	/// </summary>
+	/// <param name="_track">Track purchases?.</param>
+	private void TrackPurchaseResult(bool _track) {
+		// Skip if same state
+		if(_track == m_awaitingPurchaseConfirmation) return;
+
+		// Store new state
+		m_awaitingPurchaseConfirmation = _track;
+
+		// Update listeners
+		if(_track) {
+			Messenger.AddListener<string>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+			Messenger.AddListener<string>(EngineEvents.PURCHASE_ERROR, OnPurchaseFailed);
+			Messenger.AddListener<string>(EngineEvents.PURCHASE_FAILED, OnPurchaseFailed);
+		} else {
+			Messenger.RemoveListener<string>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+			Messenger.RemoveListener<string>(EngineEvents.PURCHASE_ERROR, OnPurchaseFailed);
+			Messenger.RemoveListener<string>(EngineEvents.PURCHASE_FAILED, OnPurchaseFailed);
+		}
+	}
+
+	/// <summary>
+	/// Real money transaction has succeeded.
+	/// </summary>
+	/// <param name="_sku">Sku of the purchased item.</param>
+	private void OnPurchaseSuccessful(string _sku) {
+		// Is it this one?
+		if(_sku == m_def.sku) {
+			// Stop tracking
+			TrackPurchaseResult(false);
+
+			// Notify listeners
+			OnPurchaseSuccess.Invoke(this);
+		}
+	}
+
+	/// <summary>
+	/// Real money transaction has failed.
+	/// </summary>
+	/// <param name="_sku">Sku of the item to be purchased.</param>
+	private void OnPurchaseFailed(string _sku) {
+		// Is it this one?
+		if(_sku == m_def.sku) {
+			// Stop tracking
+			TrackPurchaseResult(false);
+
+			// Notify listeners
+			OnPurchaseError.Invoke(this);
 		}
 	}
 }

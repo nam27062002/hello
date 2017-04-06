@@ -24,8 +24,6 @@ public class ProfilerMemoryController : MonoBehaviour
 
             Resources.UnloadUnusedAssets();
             System.GC.Collect();
-
-            Debug.Log("System.GC-Collect");
         }
 
         TouchState touchState = GameInput.CheckTouchState(0);
@@ -41,7 +39,13 @@ public class ProfilerMemoryController : MonoBehaviour
                 Prefabs_AdvanceCurrentIndex();
                 Gos_Load(sm_prefabsCatalog[Prefabs_CurrentIndex]);
             }
-        }       
+        }   
+
+		if(MemoryProfiler_NeedsToTakeASample) 
+		{
+			MemoryProfiler_TakeASample();
+			MemoryProfiler_NeedsToTakeASample = false;
+		}
 	}
 
     #region quality
@@ -49,12 +53,12 @@ public class ProfilerMemoryController : MonoBehaviour
 
     private void Quality_ApplyIndex(int qualityIndex)
     {
-        if (qualityIndex != Quality_CurrentIndex)
+        /*if (qualityIndex != Quality_CurrentIndex)
         {
             Quality_CurrentIndex = qualityIndex;
             QualitySettings.SetQualityLevel(Quality_CurrentIndex);
             Debug.Log(">> qualityIndex = " + qualityIndex);
-        }
+        }*/
     }
     #endregion
 
@@ -149,6 +153,8 @@ public class ProfilerMemoryController : MonoBehaviour
                         Destroy(components[i]);
                     }
                 }
+
+				MemoryProfiler_NeedsToTakeASample = true;
             }
         }
     }
@@ -163,4 +169,44 @@ public class ProfilerMemoryController : MonoBehaviour
         }
     }
     #endregion
+
+	#region memory_profiler
+	private AssetMemoryProfiler m_memoryProfiler;
+
+	private bool MemoryProfiler_NeedsToTakeASample { get; set; }
+
+	private void MemoryProfiler_TakeASample() 
+	{
+		if(m_memoryProfiler == null) 
+		{
+			m_memoryProfiler = new AssetMemoryProfiler();
+		} 
+		else 
+		{
+			m_memoryProfiler.Reset();
+		}
+
+		m_memoryProfiler.AddGo(Gos_Go, "Npc");
+		long textures = m_memoryProfiler.GetSizePerType(AssetMemoryGlobals.EAssetType.Texture);
+		long animations = m_memoryProfiler.GetSizePerType(AssetMemoryGlobals.EAssetType.Animation);
+		long meshes = m_memoryProfiler.GetSizePerType(AssetMemoryGlobals.EAssetType.Mesh);
+		long other = m_memoryProfiler.GetSizePerType(AssetMemoryGlobals.EAssetType.Other);
+		long total = m_memoryProfiler.GetSize();
+
+		Debug.Log("");
+		Debug.Log("--------------------------------");
+		Debug.Log("Go: " + Gos_Go.name);
+		Debug.Log("textures: " + BytesToMegaBytes(textures));
+		Debug.Log("animations: " + BytesToMegaBytes(animations));
+		Debug.Log("meshes: " + BytesToMegaBytes(meshes));
+		Debug.Log("other: " + BytesToMegaBytes(other));
+		Debug.Log("TOTAL: " + BytesToMegaBytes(total));
+		Debug.Log("--------------------------------");
+	}
+
+	private float BytesToMegaBytes(long bytes) 
+	{
+		return bytes / (1024f * 1024f);
+	}
+	#endregion
 }
