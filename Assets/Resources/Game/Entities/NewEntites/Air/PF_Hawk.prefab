@@ -657,7 +657,7 @@ MonoBehaviour:
   m_serializedJson: '[{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":16,"acceleration":15,"damage":25,"retreatTime":5,"attackPoint":"attack_4","dataType":"AI.Behaviour.ChargeData","editorFolded":false},{"boostSpeed":10,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"timeBeforeBackHome":0.5,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false}]'
   m_databaseKey: PF_Hawk
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 3.5
+  m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!114 &11422592
@@ -864,9 +864,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 11
-    m_maxRadius: 5
-    m_minRadius: 3
+    m_sightRadius: 7
+    m_maxRadius: 4
+    m_minRadius: 2
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -885,7 +885,6 @@ MonoBehaviour:
     m_dissolveTime: 1.5
     m_ashExceptions: []
   m_onSpawnSound: 
-  m_rotateToMouth: 0
   m_airMotion:
     m_mass: 20
     m_defaultUpVector: 0

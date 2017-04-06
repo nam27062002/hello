@@ -18,6 +18,9 @@ public class ParticleScaler : MonoBehaviour
 	public float m_scale = 1;
 	public Transform m_transform;
 
+	public bool m_scaleLifetime = false;
+	public bool m_scaleAllChildren = true;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -43,9 +46,21 @@ public class ParticleScaler : MonoBehaviour
 	{	
 		m_scale = scale;
 		// transform.localScale *= scale;
-		ParticleSystem[] childs = gameObject.GetComponentsInChildren<ParticleSystem>(true);
-		foreach( ParticleSystem p in childs )
-			ScaleParticle( p, scale );
+		if ( m_scaleAllChildren )
+		{
+			ParticleSystem[] childs = gameObject.GetComponentsInChildren<ParticleSystem>(true);
+			foreach( ParticleSystem p in childs )
+				ScaleParticle( p, scale );
+		}
+		else
+		{
+			ParticleSystem particle =  GetComponent<ParticleSystem>();
+			if (particle)
+			{
+				ScaleParticle( particle, scale );
+			}
+		}
+
 	}
 	
 	void ScaleParticle( ParticleSystem ps, float scale)
@@ -54,7 +69,8 @@ public class ParticleScaler : MonoBehaviour
 		mainModule.startSizeMultiplier *= scale;
 		mainModule.gravityModifierMultiplier *= scale;
 		mainModule.startSpeedMultiplier *= scale;
-		mainModule.startLifetimeMultiplier *= scale;
+		if (m_scaleLifetime)
+			mainModule.startLifetimeMultiplier *= scale;
 
 		ParticleSystem.ShapeModule shape = ps.shape;
 		switch( shape.shapeType )
