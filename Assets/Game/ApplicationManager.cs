@@ -47,6 +47,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 	/// </summary>
 	protected void Awake()
     {
+        // Frame rate forced to 30 fps to make the experience in editor as similar to the one on device as possible
+#if UNITY_EDITOR
+        QualitySettings.vSyncCount = 0;  // VSync must be disabled
+        Application.targetFrameRate = 30;
+#endif
+
         m_isAlive = true;
 
         if (FeatureSettingsManager.IsDebugEnabled)
