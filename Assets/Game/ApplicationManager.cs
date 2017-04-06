@@ -68,6 +68,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         SocialFacade.Instance.Init();
         GameServicesFacade.Instance.Init();
 
+
         SocialManager.Instance.Init();
 
         // This class needs to know whether or not the user is in the middle of a game
@@ -78,8 +79,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         SaveFacade.Instance.OnLoadStarted += OnLoadStarted;
         SaveFacade.Instance.OnLoadComplete += OnLoadComplete;
 
-        // [DGR] NOTIF: Not supported yet
-        //NotificationManager.Instance.Init();        
+        Notifications_Init();
 
         // [DGR] GAME_VALIDATOR: Not supported yet
         // GameValidator gv = new GameValidator();
@@ -225,6 +225,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
             // Test togling profiler load scenes scene
             //Debug_ToggleProfilerLoadScenesScene();
+            // ---------------------------
+
+            // ---------------------------
+            // Test schedule notification
+            Debug_ScheduleNotification();
             // ---------------------------
         }
 
@@ -482,6 +487,58 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             yield return new WaitForSeconds(DEVICE_NEXT_UPDATE);
         }
+    }
+    #endregion
+
+    #region memory_profiler
+    private bool m_memoryProfilerIsEnabled = false;
+    private bool MemoryProfiler_IsEnabled
+    {
+        get
+        {
+            return m_memoryProfilerIsEnabled;
+        }
+
+        set
+        {
+            if (m_memoryProfilerIsEnabled != value)
+            {
+                m_memoryProfilerIsEnabled = value;
+                if (m_memoryProfilerIsEnabled)
+                {
+                    MemoryProfiler_Enable();
+                }
+                else
+                {
+                    MemoryProfiler_Disable();
+                }
+            }
+        }
+    }
+
+    private void MemoryProfiler_Enable()
+    {
+        // Disabled to make sure that all textures in the level are loaded
+        FeatureSettingsManager.instance.IsFogOnDemandEnabled = false;
+    }
+
+    private void MemoryProfiler_Disable()
+    {        
+        FeatureSettingsManager.instance.IsFogOnDemandEnabled = true;
+    }
+    #endregion
+
+    #region
+    private void Notifications_Init()
+    {        
+        NotificationsManager.SharedInstance.Initialise();
+
+        // [DGR] TODO: icons has to be created and located in the right folder
+#if UNITY_ANDROID
+        NotificationsManager.SharedInstance.SetNotificationIcons ("", "push_notifications", 0xFFFF0000); 
+#endif
+
+        NotificationsManager.SharedInstance.SetNotificationsEnabled(true);
     }
     #endregion
 
@@ -789,6 +846,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             Debug_LoadProfilerScenesScene();
         }
+    }
+
+    public void Debug_ScheduleNotification()
+    {
+        NotificationsManager.SharedInstance.ScheduleNotification("sku.not.01", "A ver que pasa...", "Action", 5);
     }
     #endregion
 }
