@@ -10,11 +10,14 @@ public class FogArea : MonoBehaviour
 	public bool m_drawInside = false;
 	public Vector3 m_startScale;
 	private bool m_playerInside = false;
+
+	public float m_enterTransitionDuration = 1.6f;
+	public float m_exitTransitionDuration = 1.6f;
 	void Start()
 	{
 		m_fogManager = FindObjectOfType<FogManager>();
 		m_startScale = transform.localScale;
-		if ( UnityEngine.Debug.isDebugBuild )
+		if ( !FeatureSettingsManager.instance.IsFogOnDemandEnabled )
 		{
 			m_fogManager.CheckTextureAvailability(m_attributes);
 		}

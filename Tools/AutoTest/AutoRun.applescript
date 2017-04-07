@@ -1,4 +1,4 @@
-
+#!/usr/bin/osascript
 # Activate a destination
 # activate application "Xcode"
 tell application "System Events"

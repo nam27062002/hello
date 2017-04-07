@@ -57,6 +57,7 @@ public class DragonPartFollow : MonoBehaviour {
 				newPart.m_distance = dir.magnitude;
 				newPart.m_direction = dir.normalized;
 			}
+			newPart.m_direction = Quaternion.Inverse( m_parts[i].rotation ) * newPart.m_direction;
 			newPart.m_previousPos = m_parts[i].position;
 
 			m_partInfos.Add( newPart );
