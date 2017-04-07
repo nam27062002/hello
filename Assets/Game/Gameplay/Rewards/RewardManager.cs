@@ -307,14 +307,13 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	}
 
 	/// <summary>
-	/// Adds the current rewards to the user profile. To be called at the end of 
-	/// the game, for example.
+	/// Adds the final rewards to the user profile. To be called at the end of 
+	/// the game.
 	/// </summary>
-	public static void ApplyRewardsToProfile() {
-		// Just do it :)
-		UsersManager.currentUser.AddCoins(instance.m_coins);
+	public static void ApplyEndOfGameRewards() {
+		// Coins, PC and XP are applied in real time during gameplay
+		// Apply the rest of rewards
 		UsersManager.currentUser.AddCoins(instance.CalculateSurvivalBonus());
-		UsersManager.currentUser.AddPC(instance.m_pc);
 	}
 
 	//------------------------------------------------------------------//
@@ -343,9 +342,11 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
 		// Coins
 		instance.m_coins += _reward.coins;
+		UsersManager.currentUser.AddCoins(_reward.coins);
 
 		// PC
 		instance.m_pc += _reward.pc;
+		UsersManager.currentUser.AddPC(_reward.pc);
 
 		// XP
 		InstanceManager.player.data.progression.AddXp(_reward.xp, true);
