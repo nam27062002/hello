@@ -94,6 +94,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	// Movement control
 	private Vector3 m_impulse;
+	private float m_impulseMagnitude = 0;
     private Vector3 m_prevImpulse;
 
 	private Vector3 m_direction;
@@ -1043,6 +1044,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		rewardDistance.z += Mathf.Abs( diff.z );
 		RewardManager.distance = rewardDistance;
 
+		m_impulseMagnitude = m_impulse.magnitude;
 
 		m_lastPosition = transform.position;
 	}
@@ -1609,7 +1611,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	public float howFast
 	{
 		get{ 
-			float f =m_impulse.magnitude / absoluteMaxSpeed;
+			float f = m_impulseMagnitude / absoluteMaxSpeed;
 			return Mathf.Clamp01(f);
 		}
 	}

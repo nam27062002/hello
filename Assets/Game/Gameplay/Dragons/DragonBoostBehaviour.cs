@@ -17,10 +17,6 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private bool m_active;
 	private bool m_ready;
 
-	public List<ParticleSystem> m_particleTrails;
-
-
-	private bool m_trailsActive = false;
 	private bool m_insideWater = false;
 
 	// Cache content data
@@ -60,8 +56,6 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_boostMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
 		m_energyRequiredToBoost = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
 		m_energyRequiredToBoost *= m_dragon.data.def.GetAsFloat("energyMax");
-
-		DeactivateTrails();
 	}
 
 	void OnEnable() {
@@ -112,7 +106,6 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		}
 	}
 
-
 	private void StartBoost() 
 	{
 		m_active = true;
@@ -147,38 +140,13 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_ready = true;
 	}
 
-	public void ActivateTrails()
-	{
-		m_trailsActive = true;
-        if (!m_insideWater)
-        {
-			for( int i = 0; i<m_particleTrails.Count; i++ )
-			{
-	            m_particleTrails[i].Play();
-			}
-        }
-	}
 
-	public void DeactivateTrails()
-	{
-		m_trailsActive = false;
-		for( int i = 0; i<m_particleTrails.Count; i++ )
-		{
-            m_particleTrails[i].Stop();
-		}
-	}
 
 	void OnTriggerEnter(Collider _other)
 	{
 		if ( _other.CompareTag("Water") && !m_insideWater)
 		{
 			m_insideWater = true;
-			// if trails active then activate bubles
-			if ( m_trailsActive )
-			{
-				DeactivateTrails();
-				m_trailsActive = true;
-			}
 		}
 
 	}
@@ -188,11 +156,6 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		if ( _other.CompareTag("Water") && m_insideWater)
 		{
 			m_insideWater = false;
-			// if trails active
-			if ( m_trailsActive )
-			{
-				ActivateTrails();
-			}
 		}
 	}
 }
