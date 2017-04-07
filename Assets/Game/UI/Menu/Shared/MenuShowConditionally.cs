@@ -269,8 +269,11 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// </summary>
 	/// <param name="_data">The event's data.</param>
 	public void OnScreenChanged(NavigationScreenSystem.ScreenChangedEventData _data) {
-		// Refresh
-		Apply(targetDragonSku, currentMenuScreen, true, false);
+		// Is it the main menu screen system?
+		if(_data.dispatcher == InstanceManager.menuSceneController.screensController) {
+			// Refresh
+			Apply(targetDragonSku, currentMenuScreen, true, false);
+		}
 	}
 
 	/// <summary>
