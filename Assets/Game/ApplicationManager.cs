@@ -406,39 +406,58 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     // This region is responsible for managing option settings such as sound
 
     private const string SETTINGS_SOUND_KEY = "sound";
+	private const string SETTINGS_MUSIC_KEY = "music";
 
     private bool m_settingsSoundIsEnabled;
+	private bool m_settingsMusicIsEnabled;
 
     private void Setting_Init()
     {
         // Sound is disabled by default
         Settings_SetSoundIsEnabled(PlayerPrefs.GetInt(SETTINGS_SOUND_KEY, 0) > 0, false);
+		Settings_SetMusicIsEnabled(PlayerPrefs.GetInt(SETTINGS_MUSIC_KEY, 0) > 0, false);
     }
 
-    public bool Settings_GetSoundIsEnabled()
-    {
-        return m_settingsSoundIsEnabled;
-    }
+	public bool Settings_GetSoundIsEnabled() {
+		return m_settingsSoundIsEnabled;
+	}
 
-    private void Settings_SetSoundIsEnabled(bool value, bool persist)
-    {
-        m_settingsSoundIsEnabled = value;
+	public bool Settings_GetMusicIsEnabled() {
+		return m_settingsMusicIsEnabled;
+	}
 
-        // TODO: To use AudioManager instead
-        AudioListener.pause = !m_settingsSoundIsEnabled;
+	private void Settings_SetSoundIsEnabled(bool value, bool persist) {
+		m_settingsSoundIsEnabled = value;
 
-        if (persist)
-        {
-            int intValue = (m_settingsSoundIsEnabled) ? 1 : 0;
-            PlayerPrefs.SetInt(SETTINGS_SOUND_KEY, intValue);
-            PlayerPrefs.Save();
-        }
-    }
+		// TODO: To use AudioManager instead
+		AudioListener.pause = !m_settingsSoundIsEnabled;
 
-    public void Settings_ToggleSoundIsEnabled()
-    {
-        Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
-    }
+		if(persist) {
+			int intValue = (m_settingsSoundIsEnabled) ? 1 : 0;
+			PlayerPrefs.SetInt(SETTINGS_SOUND_KEY, intValue);
+			PlayerPrefs.Save();
+		}
+	}
+
+	private void Settings_SetMusicIsEnabled(bool value, bool persist) {
+		m_settingsMusicIsEnabled = value;
+
+		// TODO: To use AudioManager instead
+
+		if(persist) {
+			int intValue = (m_settingsMusicIsEnabled) ? 1 : 0;
+			PlayerPrefs.SetInt(SETTINGS_MUSIC_KEY, intValue);
+			PlayerPrefs.Save();
+		}
+	}
+
+	public void Settings_ToggleSoundIsEnabled() {
+		Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
+	}
+
+	public void Settings_ToggleMusicIsEnabled() {
+		Settings_SetMusicIsEnabled(!Settings_GetMusicIsEnabled(), true);
+	}
     #endregion
 
     #region device   

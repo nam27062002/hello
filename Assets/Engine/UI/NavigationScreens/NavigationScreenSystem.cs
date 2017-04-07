@@ -158,6 +158,15 @@ public class NavigationScreenSystem : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Navigate to the target screen without animation.
+	/// Use an int to be able to directly connect buttons to it.
+	/// </summary>
+	/// <param name="_newScreenIdx">The index of the new screen to go to. Use -1 for NONE.</param>
+	virtual public void GoToScreenInstant(int _newScreenIdx) {
+		GoToScreen(_newScreenIdx, NavigationScreen.AnimType.NONE);
+	}
+
+	/// <summary>
 	/// Navigate to the target screen. Use an int to be able to directly connect buttons to it.
 	/// </summary>
 	/// <param name="_newScreenIdx">The index of the new screen to go to. Use -1 for NONE.</param>

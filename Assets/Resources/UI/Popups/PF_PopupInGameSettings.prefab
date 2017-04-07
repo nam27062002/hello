@@ -104,8 +104,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224644536315732164}
-  - component: {fileID: 114046099377316102}
-  - component: {fileID: 114780869778531520}
   m_Layer: 5
   m_Name: Sound
   m_TagString: Untagged
@@ -384,6 +382,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224299479066903876}
+  - component: {fileID: 114895307943669324}
   m_Layer: 5
   m_Name: Sound/Music
   m_TagString: Untagged
@@ -703,8 +702,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224078239370293764}
-  - component: {fileID: 114468531353830490}
-  - component: {fileID: 114589819116004808}
   m_Layer: 5
   m_Name: Music
   m_TagString: Untagged
@@ -956,7 +953,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114046099377316102}
+      - m_Target: {fileID: 0}
         m_MethodName: OnToggleChanged
         m_Mode: 1
         m_Arguments:
@@ -969,18 +966,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114046099377316102
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1104623596179264}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd045592e204123419ba2290006118a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_slider: {fileID: 114030708211202168}
 --- !u!114 &114052868880109486
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1931,18 +1916,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114468531353830490
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1804694023695708}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd045592e204123419ba2290006118a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_slider: {fileID: 114724205032489064}
 --- !u!114 &114545376492818284
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2104,24 +2077,6 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &114589819116004808
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1804694023695708}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1679637790, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreLayout: 0
-  m_MinWidth: -1
-  m_MinHeight: -1
-  m_PreferredWidth: 1000
-  m_PreferredHeight: 100
-  m_FlexibleWidth: -1
-  m_FlexibleHeight: -1
 --- !u!114 &114600899592184788
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2278,7 +2233,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114046099377316102}
+      - m_Target: {fileID: 0}
         m_MethodName: OnToggleChanged
         m_Mode: 1
         m_Arguments:
@@ -2386,24 +2341,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114780869778531520
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1104623596179264}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1679637790, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreLayout: 0
-  m_MinWidth: -1
-  m_MinHeight: -1
-  m_PreferredWidth: 1000
-  m_PreferredHeight: 100
-  m_FlexibleWidth: -1
-  m_FlexibleHeight: -1
 --- !u!114 &114788570674140020
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2768,6 +2705,19 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114895307943669324
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1375144613913990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd045592e204123419ba2290006118a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_soundSlider: {fileID: 114030708211202168}
+  m_musicSlider: {fileID: 114724205032489064}
 --- !u!114 &114897436486652152
 MonoBehaviour:
   m_ObjectHideFlags: 1
