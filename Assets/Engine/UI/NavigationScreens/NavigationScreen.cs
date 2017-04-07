@@ -90,7 +90,7 @@ public class NavigationScreen : MonoBehaviour {
 		for(int i = 0; i < animators.Length; i++) {
 			// Skip ourselves
 			if(animators[i] == m_showHideAnimator) continue;
-			animators[i].ForceShow(useAnim);
+			animators[i].RestartShow();
 		}
 	}
 	
