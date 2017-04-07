@@ -104,7 +104,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224644536315732164}
-  - component: {fileID: 114046099377316102}
   m_Layer: 5
   m_Name: Sound
   m_TagString: Untagged
@@ -383,6 +382,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224299479066903876}
+  - component: {fileID: 114895307943669324}
   m_Layer: 5
   m_Name: Sound/Music
   m_TagString: Untagged
@@ -702,7 +702,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224078239370293764}
-  - component: {fileID: 114468531353830490}
   m_Layer: 5
   m_Name: Music
   m_TagString: Untagged
@@ -954,7 +953,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114046099377316102}
+      - m_Target: {fileID: 0}
         m_MethodName: OnToggleChanged
         m_Mode: 1
         m_Arguments:
@@ -967,18 +966,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114046099377316102
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1104623596179264}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd045592e204123419ba2290006118a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_slider: {fileID: 114030708211202168}
 --- !u!114 &114052868880109486
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1041,7 +1028,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 114228034003595926}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -1149,7 +1136,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 114087982012026010}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -1929,18 +1916,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114468531353830490
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1804694023695708}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd045592e204123419ba2290006118a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_slider: {fileID: 114724205032489064}
 --- !u!114 &114545376492818284
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2258,7 +2233,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114046099377316102}
+      - m_Target: {fileID: 0}
         m_MethodName: OnToggleChanged
         m_Mode: 1
         m_Arguments:
@@ -2730,6 +2705,19 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114895307943669324
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1375144613913990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd045592e204123419ba2290006118a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_soundSlider: {fileID: 114030708211202168}
+  m_musicSlider: {fileID: 114724205032489064}
 --- !u!114 &114897436486652152
 MonoBehaviour:
   m_ObjectHideFlags: 1
