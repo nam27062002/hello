@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 4607189395598642}
   - component: {fileID: 198639911383545996}
   - component: {fileID: 199050690768042958}
+  - component: {fileID: 114853525407881998}
   m_Layer: 0
   m_Name: ghost_smoke
   m_TagString: Untagged
@@ -365,6 +366,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sku: Ghost03
   m_dieOutsideFrustum: 1
+--- !u!114 &114853525407881998
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1062864764038140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 1
+  m_scale: 1
+  m_transform: {fileID: 4658928853664522}
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 2
+  m_resetFirst: 1
 --- !u!135 &135742546578343426
 SphereCollider:
   m_ObjectHideFlags: 1
