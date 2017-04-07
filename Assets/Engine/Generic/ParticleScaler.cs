@@ -26,6 +26,7 @@ public class ParticleScaler : MonoBehaviour
 		START,
 		ENABLE,
 		AFTER_ENABLE,
+		MANUALLY
 	}
 	public WhenScale m_whenScale;
 
@@ -44,14 +45,19 @@ public class ParticleScaler : MonoBehaviour
 	}
 	protected Dictionary<ParticleSystem, PSDataRegistry> m_orignialData = new Dictionary<ParticleSystem, PSDataRegistry>();
 
-	// Use this for initialization
-	void Start () 
+	void Awake()
 	{
 		if ( m_resetFirst )
 		{
 			// Save original data
 			SaveOriginalData();
 		}
+	}
+
+
+	// Use this for initialization
+	void Start () 
+	{
 		if ( m_whenScale == WhenScale.START )
 			DoScale();
 	}
