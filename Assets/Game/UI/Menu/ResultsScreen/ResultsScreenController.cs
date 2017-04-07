@@ -397,7 +397,7 @@ public class ResultsScreenController : MonoBehaviour {
 			UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;
 
 			// Apply rewards to user profile
-			RewardManager.ApplyRewardsToProfile();
+			RewardManager.ApplyEndOfGameRewards();
 
 			// Process Missions: give rewards and generate new missions replacing those completed
 			MissionManager.ProcessMissions();

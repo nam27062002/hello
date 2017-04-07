@@ -120,6 +120,8 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Instantiate a popup from a given prefab.
+	/// If there is already an instance of the same prefab in the closed popups list,
+	/// it will be reused rather than creating a new one.
 	/// </summary>
 	/// <returns>The new instance of the popup's game object.</returns>
 	/// <param name="_prefab">The prefab of the popup.</param>
@@ -146,6 +148,9 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 			controller = popupObj.GetComponent<PopupController>();
 			DebugUtils.Assert(controller != null, "Couldn't find the PopupController component in the popup " + popupObj.name + ".\nAll popups managed by the manager must have a PopupController.");
 		}
+
+		// Make sure the popup appears on top
+		controller.transform.SetAsLastSibling();
 
 		// Return the newly created object
 		return controller;
