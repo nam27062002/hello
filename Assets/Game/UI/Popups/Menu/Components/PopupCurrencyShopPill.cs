@@ -30,7 +30,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private Image m_icon = null;
+	[SerializeField] private RectTransform m_iconContainer = null;
 
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_amountText = null;
@@ -102,7 +102,10 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 
 		// Init visuals
 		// Icon
-		m_icon.sprite = Resources.Load<Sprite>(UIConstants.SHOP_ICONS_PATH + _def.Get("icon"));
+		// Destroy any existing icon
+		m_iconContainer.DestroyAllChildren(false);
+		GameObject iconPrefab = Resources.Load<GameObject>(UIConstants.SHOP_ICONS_PATH + _def.Get("icon"));
+		GameObject.Instantiate(iconPrefab, m_iconContainer, false);
 
 		// Amount
 		m_amountText.text = UIConstants.GetIconString(m_def.GetAsInt("amount"), m_type, UIConstants.IconAlignment.LEFT);
