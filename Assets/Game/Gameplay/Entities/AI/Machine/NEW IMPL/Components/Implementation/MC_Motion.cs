@@ -276,6 +276,7 @@ namespace AI {
 		}
 
 		public void FreeFall() {
+			m_viewControl.Height(100f);
 			m_machine.SetSignal(Signals.Type.FallDown, true);
 			m_nextState = State.FreeFall;
 		}
@@ -349,8 +350,8 @@ namespace AI {
 						m_nextState = State.Free;
 					}
 				} else {
-					if 		(m_machine.GetSignal(Signals.Type.Panic)) 		 m_nextState = State.Panic;
-					else if	(m_machine.GetSignal(Signals.Type.FallDown)) 	 m_nextState = State.FreeFall;
+					if		(m_machine.GetSignal(Signals.Type.FallDown)) 	 m_nextState = State.FreeFall;
+					else if (m_machine.GetSignal(Signals.Type.Panic)) 		 m_nextState = State.Panic;
 					else if (m_machine.GetSignal(Signals.Type.Biting)) 		 m_nextState = State.Biting;
 					else if (m_machine.GetSignal(Signals.Type.Latching)) 	 m_nextState = State.Latching;
 					else if (m_machine.GetSignal(Signals.Type.LockedInCage)) m_nextState = State.Locked;
