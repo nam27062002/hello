@@ -1,6 +1,6 @@
-
+#!/usr/bin/osascript
 # Activate a destination
-activate application "Xcode"
+# activate application "Xcode"
 tell application "System Events"
 	tell process "Xcode"
 		# log title of menu items of menu 1 of menu item "Destination" of menu 1 of menu bar item "Product" of menu bar 1

@@ -47,6 +47,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 	/// </summary>
 	protected void Awake()
     {
+        // Frame rate forced to 30 fps to make the experience in editor as similar to the one on device as possible
+#if UNITY_EDITOR
+        QualitySettings.vSyncCount = 0;  // VSync must be disabled
+        Application.targetFrameRate = 30;
+#endif
+
         m_isAlive = true;
 
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -62,6 +68,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         SocialFacade.Instance.Init();
         GameServicesFacade.Instance.Init();
 
+
         SocialManager.Instance.Init();
 
         // This class needs to know whether or not the user is in the middle of a game
@@ -72,8 +79,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         SaveFacade.Instance.OnLoadStarted += OnLoadStarted;
         SaveFacade.Instance.OnLoadComplete += OnLoadComplete;
 
-        // [DGR] NOTIF: Not supported yet
-        //NotificationManager.Instance.Init();        
+        Notifications_Init();
 
         // [DGR] GAME_VALIDATOR: Not supported yet
         // GameValidator gv = new GameValidator();
@@ -219,6 +225,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
             // Test togling profiler load scenes scene
             //Debug_ToggleProfilerLoadScenesScene();
+            // ---------------------------
+
+            // ---------------------------
+            // Test schedule notification
+            Debug_ScheduleNotification();
             // ---------------------------
         }
 
@@ -395,39 +406,58 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     // This region is responsible for managing option settings such as sound
 
     private const string SETTINGS_SOUND_KEY = "sound";
+	private const string SETTINGS_MUSIC_KEY = "music";
 
     private bool m_settingsSoundIsEnabled;
+	private bool m_settingsMusicIsEnabled;
 
     private void Setting_Init()
     {
         // Sound is disabled by default
         Settings_SetSoundIsEnabled(PlayerPrefs.GetInt(SETTINGS_SOUND_KEY, 0) > 0, false);
+		Settings_SetMusicIsEnabled(PlayerPrefs.GetInt(SETTINGS_MUSIC_KEY, 0) > 0, false);
     }
 
-    public bool Settings_GetSoundIsEnabled()
-    {
-        return m_settingsSoundIsEnabled;
-    }
+	public bool Settings_GetSoundIsEnabled() {
+		return m_settingsSoundIsEnabled;
+	}
 
-    private void Settings_SetSoundIsEnabled(bool value, bool persist)
-    {
-        m_settingsSoundIsEnabled = value;
+	public bool Settings_GetMusicIsEnabled() {
+		return m_settingsMusicIsEnabled;
+	}
 
-        // TODO: To use AudioManager instead
-        AudioListener.pause = !m_settingsSoundIsEnabled;
+	private void Settings_SetSoundIsEnabled(bool value, bool persist) {
+		m_settingsSoundIsEnabled = value;
 
-        if (persist)
-        {
-            int intValue = (m_settingsSoundIsEnabled) ? 1 : 0;
-            PlayerPrefs.SetInt(SETTINGS_SOUND_KEY, intValue);
-            PlayerPrefs.Save();
-        }
-    }
+		// TODO: To use AudioManager instead
+		AudioListener.pause = !m_settingsSoundIsEnabled;
 
-    public void Settings_ToggleSoundIsEnabled()
-    {
-        Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
-    }
+		if(persist) {
+			int intValue = (m_settingsSoundIsEnabled) ? 1 : 0;
+			PlayerPrefs.SetInt(SETTINGS_SOUND_KEY, intValue);
+			PlayerPrefs.Save();
+		}
+	}
+
+	private void Settings_SetMusicIsEnabled(bool value, bool persist) {
+		m_settingsMusicIsEnabled = value;
+
+		// TODO: To use AudioManager instead
+
+		if(persist) {
+			int intValue = (m_settingsMusicIsEnabled) ? 1 : 0;
+			PlayerPrefs.SetInt(SETTINGS_MUSIC_KEY, intValue);
+			PlayerPrefs.Save();
+		}
+	}
+
+	public void Settings_ToggleSoundIsEnabled() {
+		Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
+	}
+
+	public void Settings_ToggleMusicIsEnabled() {
+		Settings_SetMusicIsEnabled(!Settings_GetMusicIsEnabled(), true);
+	}
     #endregion
 
     #region device   
@@ -476,6 +506,58 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             yield return new WaitForSeconds(DEVICE_NEXT_UPDATE);
         }
+    }
+    #endregion
+
+    #region memory_profiler
+    private bool m_memoryProfilerIsEnabled = false;
+    private bool MemoryProfiler_IsEnabled
+    {
+        get
+        {
+            return m_memoryProfilerIsEnabled;
+        }
+
+        set
+        {
+            if (m_memoryProfilerIsEnabled != value)
+            {
+                m_memoryProfilerIsEnabled = value;
+                if (m_memoryProfilerIsEnabled)
+                {
+                    MemoryProfiler_Enable();
+                }
+                else
+                {
+                    MemoryProfiler_Disable();
+                }
+            }
+        }
+    }
+
+    private void MemoryProfiler_Enable()
+    {
+        // Disabled to make sure that all textures in the level are loaded
+        FeatureSettingsManager.instance.IsFogOnDemandEnabled = false;
+    }
+
+    private void MemoryProfiler_Disable()
+    {        
+        FeatureSettingsManager.instance.IsFogOnDemandEnabled = true;
+    }
+    #endregion
+
+    #region
+    private void Notifications_Init()
+    {        
+        NotificationsManager.SharedInstance.Initialise();
+
+        // [DGR] TODO: icons has to be created and located in the right folder
+#if UNITY_ANDROID
+        NotificationsManager.SharedInstance.SetNotificationIcons ("", "push_notifications", 0xFFFF0000); 
+#endif
+
+        NotificationsManager.SharedInstance.SetNotificationsEnabled(true);
     }
     #endregion
 
@@ -783,6 +865,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             Debug_LoadProfilerScenesScene();
         }
+    }
+
+    public void Debug_ScheduleNotification()
+    {
+        NotificationsManager.SharedInstance.ScheduleNotification("sku.not.01", "A ver que pasa...", "Action", 5);
     }
     #endregion
 }

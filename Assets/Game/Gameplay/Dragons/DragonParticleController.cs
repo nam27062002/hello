@@ -87,6 +87,14 @@ public class DragonParticleController : MonoBehaviour
 	[Space]
 	public List<BodyParticle> m_bodyParticles = new List<BodyParticle>();
 
+	[Space]
+	// trails stuff
+	bool m_trailsActive = false;
+	bool m_playinTrails = false;
+	ParticleSystem m_trailsInstance;
+	public ParticleData m_trailsParticle;
+	public Transform m_trailsAnchor;
+
 	void Start () 
 	{
 		DragonAnimationEvents dragonAnimEvents = transform.parent.GetComponentInChildren<DragonAnimationEvents>();
@@ -130,6 +138,16 @@ public class DragonParticleController : MonoBehaviour
 		m_hiccupInstance = InitParticles( m_hiccupParticle, m_hiccupAnchor);
 		if (dragonAnimEvents != null)
 			dragonAnimEvents.onHiccupEvent += OnHiccup;
+
+		if ( m_trailsParticle.IsValid() )
+		{
+			GameObject go = m_trailsParticle.CreateInstance();
+			go.transform.parent = m_trailsAnchor;
+			go.transform.localPosition = Vector3.zero + m_trailsParticle.offset;
+			go.transform.localScale = Vector3.one;
+			go.transform.localRotation = Quaternion.identity;
+			m_trailsInstance = go.GetComponent<ParticleSystem>();
+		}
 	}
 
 	void OnEnable() {
@@ -212,6 +230,31 @@ public class DragonParticleController : MonoBehaviour
 				// Set direction
 			}
 		}
+
+		if ( m_trailsActive )
+		{
+			if (!m_playinTrails)
+			{
+				if (!m_insideWater && m_dargonMotion.howFast > 0.85f )	// Check speed
+				{
+					PlayTrails();
+				}
+			}
+			else if ( m_insideWater )
+			{
+				// Stop
+				StopTrails();
+			}
+		}
+		else
+		{
+			if ( m_playinTrails )
+			{
+				// Stop
+				StopTrails();
+			}
+		}
+
 
 
 #if UNITY_EDITOR
@@ -428,4 +471,31 @@ public class DragonParticleController : MonoBehaviour
 		if ( m_hiccupInstance != null )
 			m_hiccupInstance.Play();
 	}
+
+	#region boost_trails
+	void PlayTrails()
+	{
+		if (m_trailsInstance)
+			m_trailsInstance.Play();
+		m_playinTrails = true;
+	}
+
+	void StopTrails()
+	{
+		if (m_trailsInstance)
+			m_trailsInstance.Stop();
+		m_playinTrails = false;
+	}
+
+	public void ActivateTrails()
+	{
+		m_trailsActive = true;
+	}
+
+	public void DeactivateTrails()
+	{
+		m_trailsActive = false;
+	}
+
+	#endregion
 }

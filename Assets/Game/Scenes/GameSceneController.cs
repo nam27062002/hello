@@ -445,10 +445,7 @@ public class GameSceneController : GameSceneControllerBase {
 
 				// Spawn collectibles
 				ChestManager.OnLevelLoaded();
-				EggManager.SelectCollectibleEgg();
-
-                // Once the level is loaded completely particles can be culled
-                CustomParticlesCulling.Manager_NotifyGameStarted();
+				EggManager.SelectCollectibleEgg();                
 
                 // Notify the game
                 Messenger.Broadcast(GameEvents.GAME_STARTED);

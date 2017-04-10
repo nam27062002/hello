@@ -71,19 +71,15 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	/// </summary>
 	public void OnUnlock() 
 	{
-
-		// Unlock dragon
-		DragonData data = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
-		long pricePC = data.def.GetAsLong("unlockPricePC");
-		if(UsersManager.currentUser.pc >= pricePC) {
-			UsersManager.currentUser.AddPC(-pricePC);
-			data.Acquire();
-			PersistenceManager.Save();
-		} else {
-			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-
-			// Currency popup / Resources flow disabled for now
-            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-		}
+		// Get price and start purchase flow
+		DragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+		ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_DRAGON_PC");
+		purchaseFlow.OnSuccess.AddListener(
+			(ResourcesFlow _flow) => {
+				// Just acquire target dragon!
+				dragonData.Acquire();
+			}
+		);
+		purchaseFlow.Begin(dragonData.def.GetAsLong("unlockPricePC"), UserProfile.Currency.HARD, dragonData.def);
 	}
 }

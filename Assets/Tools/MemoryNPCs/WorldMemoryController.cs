@@ -182,7 +182,8 @@ public class WorldMemoryController : MonoBehaviour {
 			AnalizeDragon();
 			AnalizePets();
 			AnalizeNPCs();
-			SumAllMem();
+            AnalizeWorld();
+            SumAllMem();
 
 			UpdateUI();
         }
@@ -214,7 +215,7 @@ public class WorldMemoryController : MonoBehaviour {
 	private void AnalizeDragon() {
 		m_profiler.Reset(); //???
 
-		m_profiler.AddGo(InstanceManager.player.gameObject, "Dragon"); 
+        if (InstanceManager.player != null) m_profiler.AddGo(InstanceManager.player.gameObject, "Dragon"); 
 
 		ProfilerToData(m_dragonMemory);
 	}
@@ -240,7 +241,31 @@ public class WorldMemoryController : MonoBehaviour {
 		ProfilerToData(m_npcsMemory);
 	}
 
-	private void ProfilerToData(MemoryData _data) {
+    private void AnalizeWorld() {
+        string label = "World";
+
+        m_profiler.Reset();
+
+        FogManager fogManager = InstanceManager.fogManager;
+        if (fogManager != null) {
+            FogManager.FogAttributes attributes = fogManager.m_defaultAreaFog;
+            if (attributes != null) {
+                m_profiler.AddTexture(attributes.texture, label, "FogAreaTexture");                
+            }
+
+            List<FogManager.FogAttributes> attributesList = fogManager.m_generatedAttributes;
+            if (attributesList != null) {
+                int count = attributesList.Count;
+                for (int i = 0; i < count; i++) {
+                    m_profiler.AddTexture(attributesList[i].texture, label, "FogAreaTexture");
+                }
+            }
+        }       
+
+        ProfilerToData(m_worldMemory);
+    }
+
+    private void ProfilerToData(MemoryData _data) {
 		float mesh = BytesToMegaBytes(m_profiler.GetSizePerType(AssetMemoryGlobals.EAssetType.Mesh));
 		float animation = BytesToMegaBytes(m_profiler.GetSizePerType(AssetMemoryGlobals.EAssetType.Animation));
 		float texture = BytesToMegaBytes(m_profiler.GetSizePerType(AssetMemoryGlobals.EAssetType.Texture));
