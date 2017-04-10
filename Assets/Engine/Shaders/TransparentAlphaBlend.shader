@@ -4,13 +4,19 @@
 	{
 		_TintColor("Tint Color", Color) = (0.5,0.5,0.5,0.5)
 		_MainTex("Particle Texture", 2D) = "white" {}
+		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
+
 	}
 
 	Category
 	{
 		Tags{ "Queue" = "Transparent+20" "IgnoreProjector" = "True" "RenderType" = "GlowTransparent" }
 		Blend SrcAlpha OneMinusSrcAlpha
-		Cull Off Lighting Off ZWrite Off Fog{ Color(0,0,0,0) }
+		Cull Off
+		Lighting Off
+		ZWrite Off
+		Fog{ Color(0,0,0,0) }
+		ZTest[_ZTest]
 
 
 		BindChannels

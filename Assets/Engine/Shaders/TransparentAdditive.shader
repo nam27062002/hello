@@ -3,7 +3,7 @@
 
 	Properties{
 		_MainTex("Particle Texture", 2D) = "white" {}
-//		_InvFade("Soft Particles Factor", Range(0.01,3.0)) = 1.0
+		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}
 
 	Category{
@@ -11,7 +11,11 @@
 		Blend SrcAlpha One
 
 		//		AlphaTest Greater .01
-		Cull Off Lighting Off ZWrite Off Fog{ Color(0,0,0,0) }
+		Cull Off
+		Lighting Off
+		ZWrite Off
+		Fog{ Color(0,0,0,0) }
+		ZTest [_ZTest]
 
 		BindChannels{
 			Bind "Color", color
