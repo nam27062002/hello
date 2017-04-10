@@ -19,6 +19,7 @@ namespace AI {
 			private PreyAnimationEvents m_animEvents;
 
 			private float m_timer;
+			private float m_timeOut;
 
 
 			public override StateComponentData CreateData() {
@@ -42,6 +43,8 @@ namespace AI {
 				if (m_animEvents != null) {
 					m_animEvents.onStandUp += new PreyAnimationEvents.OnStandUpDelegate(OnStandUp);
 				}
+
+				m_timeOut = 3f;
 			}
 
 			protected override void OnExit(State _newState) {
@@ -57,6 +60,11 @@ namespace AI {
 					if (m_machine.GetSignal(Signals.Type.InWater)) {
 						m_machine.Drown();
 					}
+				}
+
+				m_timeOut -= Time.deltaTime;
+				if (m_timeOut <= 0f) {
+					OnStandUp();
 				}
 			}
 
