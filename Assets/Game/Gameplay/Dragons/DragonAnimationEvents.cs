@@ -4,7 +4,6 @@ using UnityEngine.Audio;
 public class DragonAnimationEvents : MonoBehaviour {
 
 	private DragonAttackBehaviour m_attackBehaviour;
-	private DragonBoostBehaviour m_bostBehaviour;
 	private DragonParticleController m_particleController;
 	public string m_wingsIdleSound;
 	private AudioObject m_wingsIdleSoundAO;
@@ -60,7 +59,6 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
-		m_bostBehaviour = transform.parent.GetComponent<DragonBoostBehaviour>();
 		m_particleController = transform.parent.GetComponentInChildren<DragonParticleController>();
 		m_animator = GetComponent<Animator>();
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
@@ -130,7 +128,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void TurboLoopStart()
 	{
-		m_bostBehaviour.ActivateTrails();
+		m_particleController.ActivateTrails();
 		if ( !string.IsNullOrEmpty( m_wingsWindSound))
 		{
 			m_wingsWindSoundAO = AudioController.Play( m_wingsWindSound, transform);
@@ -139,7 +137,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void TurboLoopEnd()
 	{
-		m_bostBehaviour.DeactivateTrails();
+		m_particleController.DeactivateTrails();
 		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
 		{
 			m_wingsWindSoundAO.Stop();

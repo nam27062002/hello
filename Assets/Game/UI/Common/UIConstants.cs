@@ -123,6 +123,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string SHOP_ICONS_PATH {
 		get { return instance.m_shopIconsPath; }
 	}
+
+	[SerializeField] private string m_languageIconsPath = "UI/Metagame/Settings/";
+	public static string LANGUAGE_ICONS_PATH {
+		get { return instance.m_languageIconsPath; }
+	}
 	#endregion
 
 	// -------------------------------------------------------------------------
