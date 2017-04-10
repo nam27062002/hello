@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: rock_nature_background
+  m_Name: No Name
   m_Shader: {fileID: 4800000, guid: a7c23385c11e34103a67aded6dd7cc66, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
@@ -48,17 +48,11 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 3aea78d5dea7b8744a93df2bf6d5ad43, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 6048d8669d888784f83d18b5088ee0b0, type: 3}
+        m_Scale: {x: 5, y: 5}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _NormalTex
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -89,6 +83,12 @@ Material:
         name: _Cutoff
       second: 0.5
     - first:
+        name: _DarkenDistance
+      second: 20
+    - first:
+        name: _DarkenPosition
+      second: 0
+    - first:
         name: _DetailNormalMapScale
       second: 1
     - first:
@@ -110,9 +110,6 @@ Material:
         name: _Mode
       second: 0
     - first:
-        name: _NormalStrength
-      second: 3
-    - first:
         name: _OcclusionStrength
       second: 1
     - first:
@@ -121,9 +118,6 @@ Material:
     - first:
         name: _SmoothnessTextureChannel
       second: 0
-    - first:
-        name: _Specular
-      second: 3
     - first:
         name: _SpecularHighlights
       second: 1
@@ -139,10 +133,7 @@ Material:
     m_Colors:
     - first:
         name: _Color
-      second: {r: 0.8, g: 0.8, b: 0.8, a: 1}
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _SpecularDir
-      second: {r: 0, g: 0, b: -1, a: 0}
