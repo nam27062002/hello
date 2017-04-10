@@ -13,7 +13,7 @@ public class FireBallBreath : DragonBreathBehaviour {
 	// Use this for initialization
 	override protected void ExtendedStart() {
 
-		//PoolManager.CreatePool(m_fireBallPrefab);
+		PoolManager.CreatePool(m_fireBallPrefab);
 
 		m_dragonMotion = GetComponent<DragonMotion>();
 		m_mouthTransform = m_dragonMotion.tongue;
