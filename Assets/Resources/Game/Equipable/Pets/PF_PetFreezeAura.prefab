@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 114000013672329336}
   - component: {fileID: 114000012669857030}
   - component: {fileID: 114000011716939334}
-  - component: {fileID: 114000012488899708}
+  - component: {fileID: 114498724998349100}
   - component: {fileID: 11448730}
   - component: {fileID: 114000011637225726}
   - component: {fileID: 54000013371132386}
@@ -1358,57 +1358,6 @@ MonoBehaviour:
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
   m_avoidWater: 0
---- !u!114 &114000012488899708
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 112168}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_useGravity: 0
-    m_walkOnWalls: 0
-    m_mass: 1
-    m_defaultUpVector: 0
-    m_orientationSpeed: 360
-    m_faceDirection: 1
-    m_useDragonStyleRotation: 0
-    m_rollRotation: 0
-    m_limitHorizontalRotation: 0
-    m_faceLeftAngle: -90
-    m_faceRightAngle: 90
-    m_limitVerticalRotation: 1
-    m_faceUpAngle: 320
-    m_faceDownAngle: 40
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 0
-  m_sensor:
-    m_senseFire: 1
-    m_sightRadius: 0
-    m_maxRadius: 0
-    m_minRadius: 0
-    m_hysteresisOffset: 0
-    m_senseAbove: 1
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 0, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0.25
-      max: 1.25
-  m_onSpawnSound: 
-  m_rotateToMouth: 0
-  m_inflammable:
-    m_ashesAsset: 
-    m_burningTime: 0
-    m_dissolveTime: 1.5
-    m_ashExceptions: []
 --- !u!114 &114000012669857030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1441,6 +1390,10 @@ MonoBehaviour:
   m_holdingBloodParticle:
     name: PS_Blood_Explosion_Medium
     path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_holdingFreezeParticle:
+    name: PS_IceExplosionSmall
+    path: 
     offset: {x: 0, y: 0, z: 0}
   m_burpSound: 
   m_canEatEntities: 1
@@ -1488,6 +1441,59 @@ MonoBehaviour:
   m_scaleOrigin: 0
   m_scale: 1
   m_transform: {fileID: 0}
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 0
+  m_resetFirst: 0
+--- !u!114 &114498724998349100
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3085e02792f6243cc9d8323aba91b804, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_affectedByDragonTrample: 0
+  m_enableSensor: 0
+  m_sensor:
+    m_senseFire: 1
+    m_sightRadius: 0
+    m_maxRadius: 0
+    m_minRadius: 0
+    m_hysteresisOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
+    m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
+    m_senseDelay:
+      min: 0.25
+      max: 1.25
+  m_edible:
+    m_rotateToMouth: 0
+  m_inflammable:
+    m_ashesAsset: 
+    m_burningTime: 0
+    m_dissolveTime: 1.5
+    m_ashExceptions: []
+  m_onSpawnSound: 
+  m_airMotion:
+    m_mass: 1
+    m_defaultUpVector: 0
+    m_orientationSpeed: 360
+    m_dragonStyleRotation: 0
+    m_faceDirection: 1
+    m_rollRotation: 0
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 320
+    m_faceDownAngle: 40
 --- !u!114 &114500649846589098
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1502,6 +1508,10 @@ MonoBehaviour:
   m_scaleOrigin: 0
   m_scale: 1
   m_transform: {fileID: 0}
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 0
+  m_resetFirst: 0
 --- !u!114 &114864880920350470
 MonoBehaviour:
   m_ObjectHideFlags: 1
