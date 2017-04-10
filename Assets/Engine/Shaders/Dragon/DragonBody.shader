@@ -7,7 +7,10 @@
 Shader "Hungry Dragon/Dragon/Body" {
 Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
+
 	_BumpMap ("Normal Map (RGB)", 2D) = "white" {}
+	_NormalStrenght("Normal Strenght", float) = 1.0
+
 	_DetailTex ("Detail (RGB)", 2D) = "white" {} // r -> inner light, g -> specular
 /*
 	_ReflectionMap("Reflection Map", Cube) = "white" {}
@@ -84,6 +87,8 @@ SubShader {
 				float4 tangent : TANGENT;
 			};
 
+			#include "dragon.cginc"
+/*
 			struct v2f {
 				float4 vertex : SV_POSITION;
 				half2 texcoord : TEXCOORD0;
@@ -203,34 +208,8 @@ SubShader {
 				return col; 
 
 			}
+*/
 		ENDCG
 	}
-
-
-/*
-	//Occlusion
-	Pass{
-
-		Stencil
-		{
-			Ref [_StencilMask]
-			Comp notequal
-			Pass Replace
-			ZFail keep
-		}
-
-		ztest greater
-		ZWrite Off
-
-//		lighting off
-
-		SetTexture[_MainTex]{
-			constantColor (0, 0, 0, 0)
-			combine constant * primary
-		}
-
-	}
-
-*/	
 }
 }
