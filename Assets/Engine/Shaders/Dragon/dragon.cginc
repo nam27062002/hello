@@ -6,7 +6,7 @@ struct v2f {
 	// float3 halfDir : VECTOR;
 	float3 vLight : TEXCOORD1;
 	float3 normalWorld : TEXCOORD3;
-#ifdef BUMP
+#ifdef NORMALMAP
 	float3 tangentWorld : TEXCOORD2;
 	float3 binormalWorld : TEXCOORD4;
 #endif
@@ -21,7 +21,7 @@ float4 _MainTex_ST;
 sampler2D _DetailTex;
 float4 _DetailTex_ST;
 
-#ifdef BUMP
+#ifdef NORMALMAP
 sampler2D _BumpMap;
 float	_NormalStrenght;
 #endif
@@ -61,7 +61,7 @@ v2f vert(appdata_t v)
 	o.viewDir = viewDirection;
 
 	// To calculate tangent world
-#ifdef BUMP
+#ifdef NORMALMAP
 	o.tangentWorld = UnityObjectToWorldNormal(v.tangent);
 	o.normalWorld = normal;
 	o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
@@ -76,7 +76,7 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 main = tex2D(_MainTex, i.texcoord);
 	fixed4 detail = tex2D(_DetailTex, i.texcoord);
 
-#ifdef BUMP
+#ifdef NORMALMAP
 	float3 encodedNormal = UnpackNormal(tex2D(_BumpMap, i.texcoord));
 	encodedNormal.z *= _NormalStrenght;
 	float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
@@ -92,8 +92,13 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 diffuse = max(0,dot(normalDirection, light0Direction)) * _LightColor0;
 	diffuse += max(0, dot(normalDirection, light1Direction)) * _SecondLightColor;
 
+#ifdef FRESNEL
 	// Fresnel
 	float fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _Fresnel), 0.0, 1.0);
+
+#else
+	float fresnel = 0.0f;
+#endif
 
 	// Specular
 
@@ -102,6 +107,7 @@ fixed4 frag(v2f i) : SV_Target
 	float specularLight = pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
 	halfDir = normalize(i.viewDir + light1Direction);
 	specularLight += pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
+
 #else
 	float specularLight = 0.0;
 #endif
