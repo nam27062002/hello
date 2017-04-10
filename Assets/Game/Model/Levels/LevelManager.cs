@@ -38,6 +38,8 @@ public class LevelManager : Singleton<LevelManager> {
 		get { return m_currentLevelData; }
 	}
 
+	private static List<string> m_toSplitScenes = new List<string>();
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -89,6 +91,9 @@ public class LevelManager : Singleton<LevelManager> {
 
 		// Load new data
 		m_currentLevelData = GetLevelData(_sku);
+
+		m_toSplitScenes = m_currentLevelData.def.GetAsList<string>("split");
+
 	}
 
 	/// <summary>
@@ -116,7 +121,9 @@ public class LevelManager : Singleton<LevelManager> {
 		List<string> commonScenes = def.GetAsList<string>("common");
 		for( int i = 0; i<commonScenes.Count; i++ )
 		{
-			loadingTask = SceneManager.LoadSceneAsync(commonScenes[i], LoadSceneMode.Additive);
+			// TODO: Check if is splitted to use different name
+			string sceneName = GetRealSceneName(commonScenes[i]);
+			loadingTask = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 			if(DebugUtils.SoftAssert(loadingTask != null, "The common scene " + commonScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
 				loadingTasks.Add(loadingTask);
 			}	
@@ -145,7 +152,8 @@ public class LevelManager : Singleton<LevelManager> {
 		m_currentAreaScenes = def.GetAsList<string>(m_currentArea);
 		for( int i = 0; i<m_currentAreaScenes.Count && !string.IsNullOrEmpty( m_currentAreaScenes[i] ); i++ )
 		{
-			loadingTask = SceneManager.LoadSceneAsync(m_currentAreaScenes[i], LoadSceneMode.Additive);
+			string sceneName = GetRealSceneName(m_currentAreaScenes[i]);
+			loadingTask = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 			if(DebugUtils.SoftAssert(loadingTask != null, "The spawners scene " + m_currentAreaScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
 				loadingTasks.Add(loadingTask);
 			}	
@@ -198,6 +206,30 @@ public class LevelManager : Singleton<LevelManager> {
 		return ret;
 	}
 
+
+	private static string GetRealSceneName( string sceneName )
+	{
+		if (m_toSplitScenes.Contains( sceneName ))
+		{
+			switch( FeatureSettingsManager.instance.LevelsLOD )
+			{	
+				default:
+				case FeatureSettings.ELevel3Values.low:
+				{
+					sceneName += "_low";
+				}break;
+				case FeatureSettings.ELevel3Values.mid:
+				{
+					sceneName += "_medium";
+				}break;
+				case FeatureSettings.ELevel3Values.high:
+				{
+					sceneName += "_high";
+				}break;
+			}
+		}
+		return sceneName;
+	}
 
 
 }
