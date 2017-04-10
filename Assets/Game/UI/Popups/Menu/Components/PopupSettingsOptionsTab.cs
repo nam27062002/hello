@@ -70,25 +70,6 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		m_googlePlayGroup.SetActive(false);	// [AOC] TODO!!
     }
 
-	/// <summary>
-	/// Do all the required actions to change to a target language.
-	/// </summary>
-	/// <param name="_languageSku">Language sku.</param>
-	private void SetLanguage(string _languageSku) {
-		// Change localization!
-		if(LocalizationManager.SharedInstance.SetLanguage(_languageSku)) {
-			// Store new language
-			PlayerPrefs.SetString(PopupSettings.KEY_SETTINGS_LANGUAGE, _languageSku);
-
-			// [AOC] If the setting is enabled, replace missing TIDs for english ones
-			if(!Prefs.GetBoolPlayer(DebugSettings.SHOW_MISSING_TIDS, false)) {
-				LocalizationManager.SharedInstance.FillEmptyTids("lang_english");
-			}
-		}
-
-		Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
-	}
-
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
