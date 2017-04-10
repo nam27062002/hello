@@ -16,12 +16,13 @@ public class PopupSettingsOptionsTab : MonoBehaviour
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
     // Exposed
-    [SerializeField]
-    private Localizer m_languageText = null;
+    [SerializeField] private GameObject m_languagePillPrefab = null;
+	[SerializeField] private SnappingScrollRect m_languageScrollList = null;
+	[Space]
+	[SerializeField] private GameObject m_googlePlayGroup = null;
 
     // Internal
-    private List<DefinitionNode> m_languageDefs;
-    private int m_selectedIdx = -1;
+	private List<PopupSettingsLanguagePill> m_pills = new List<PopupSettingsLanguagePill>();
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -29,36 +30,44 @@ public class PopupSettingsOptionsTab : MonoBehaviour
     /// <summary>
     /// Initialization.
     /// </summary>
-    public void Awake()
-    {
-        // Check required params
-        Debug.Assert(m_languageText != null, "Required field");
+    public void Awake() {
+		// Clear all content of the scroll list (used to do the layout)
+		m_languageScrollList.content.DestroyAllChildren(false);
 
-        // Cache language definitions and init with selected language
-        // [AOC] TODO!! Exclude languages marked to be excluded based on platform
-        m_languageDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.LOCALIZATION, "iOS", "true");
-        DefinitionsManager.SharedInstance.SortByProperty(ref m_languageDefs, "order", DefinitionsManager.SortType.NUMERIC);
+		// Cache language definitions, exluding those not supported by current platform
+		List<DefinitionNode> languageDefs = null;
+		if(Application.platform == RuntimePlatform.Android) {
+			languageDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.LOCALIZATION, "android", "true");
+		} else if(Application.platform == RuntimePlatform.IPhonePlayer) {
+			languageDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.LOCALIZATION, "iOS", "true");
+		} else {
+			languageDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.LOCALIZATION);
+		}
 
-        // Find current language
-        for (int i = 0; i < m_languageDefs.Count; i++)
-        {
-            if (m_languageDefs[i].sku == LocalizationManager.SharedInstance.GetCurrentLanguageSKU())
-            {
-                m_selectedIdx = i;
-                break;
-            }
-        }
+		// Sort definitions by "order" field, create a pill for each language and init with selected language
+		DefinitionsManager.SharedInstance.SortByProperty(ref languageDefs, "order", DefinitionsManager.SortType.NUMERIC);
+		string currentLangSku = LocalizationManager.SharedInstance.GetCurrentLanguageSKU();
+		PopupSettingsLanguagePill initialPill = null;
+		for(int i = 0; i < languageDefs.Count; i++) {
+			// Create and initialize pill
+			GameObject pillObj = GameObject.Instantiate<GameObject>(m_languagePillPrefab, m_languageScrollList.content.transform, false);
+			PopupSettingsLanguagePill pill = pillObj.GetComponent<PopupSettingsLanguagePill>();
+			pill.InitFromDef(languageDefs[i]);
+			m_pills.Add(pill);
 
-        // Update text
-        RefreshText();
-    }
+			// Is it the selected one?
+			if(languageDefs[i].sku == currentLangSku) {
+				initialPill = pill;
+			}
+		}
 
-    /// <summary>
-    /// Update textfield with currently selected language
-    /// </summary>
-    private void RefreshText()
-    {
-        m_languageText.Localize(m_languageDefs[m_selectedIdx].Get("tidName"));  // [AOC] CHECK!! Each language in its own language
+		// Select initial pill
+		if(initialPill != null) {
+			m_languageScrollList.SelectPoint(initialPill.GetComponent<ScrollRectSnapPoint>(), false);
+		}
+
+		// Disable google play group if not available
+		m_googlePlayGroup.SetActive(false);	// [AOC] TODO!!
     }
 
 	/// <summary>
@@ -67,8 +76,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	/// <param name="_languageSku">Language sku.</param>
 	private void SetLanguage(string _languageSku) {
 		// Change localization!
-		if (LocalizationManager.SharedInstance.SetLanguage(_languageSku))
-		{
+		if(LocalizationManager.SharedInstance.SetLanguage(_languageSku)) {
 			// Store new language
 			PlayerPrefs.SetString(PopupSettings.KEY_SETTINGS_LANGUAGE, _languageSku);
 
@@ -79,37 +87,30 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		}
 
 		Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
-
-		// Update text!
-		RefreshText();
 	}
 
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
-    /// <summary>
-    /// Select previous language.
-    /// </summary>
-    public void OnSelectPreviousLanguage()
-    {
-        // Change selected index
-        m_selectedIdx--;
-        if (m_selectedIdx < 0) m_selectedIdx = m_languageDefs.Count - 1;
+	/// <summary>
+	/// A new pill has been selected on the snapping scroll list.
+	/// </summary>
+	/// <param name="_selectedPoint">Selected point.</param>
+	public void OnSelectionChanged(ScrollRectSnapPoint _selectedPoint) {
+		// Find selected language
+		DefinitionNode newLangDef = _selectedPoint.GetComponent<PopupSettingsLanguagePill>().def;
 
-        // Do it!
-		SetLanguage(m_languageDefs[m_selectedIdx].sku);
-    }
+		// Change localization!
+		if(LocalizationManager.SharedInstance.SetLanguage(newLangDef.sku)) {
+			// Store new language
+			PlayerPrefs.SetString(PopupSettings.KEY_SETTINGS_LANGUAGE, newLangDef.sku);
 
-    /// <summary>
-    /// Select next language.
-    /// </summary>
-    public void OnSelectNextLanguage()
-    {
-        // Change selected index
-        m_selectedIdx++;
-        if (m_selectedIdx >= m_languageDefs.Count) m_selectedIdx = 0;
+			// [AOC] If the setting is enabled, replace missing TIDs for english ones
+			if(!Prefs.GetBoolPlayer(DebugSettings.SHOW_MISSING_TIDS, false)) {
+				LocalizationManager.SharedInstance.FillEmptyTids("lang_english");
+			}
+		}
 
-		// Do it!
-		SetLanguage(m_languageDefs[m_selectedIdx].sku);
-    }
+		Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
+	}
 }
