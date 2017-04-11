@@ -51,12 +51,12 @@ Shader "Hungry Dragon/Mine (Spawners)"
 
 			#if MEDIUM_DETAIL_ON
 			#define NORMALMAP
-//			#define SPECULAR
+			#define SPECULAR
 			#endif
 
 			#if HI_DETAIL_ON
 			#define NORMALMAP
-//			#define SPECULAR
+			#define SPECULAR
 			#endif
 
 //			#define NORMALMAP
