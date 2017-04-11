@@ -63,7 +63,7 @@ namespace AI {
 				m_animEvents.onDizzyRecover  += new SpartakusAnimationEvents.OnDizzyRecoverDelegate(DizzyRecover);
 
 				m_pilot.PressAction(Pilot.Action.Attack);
-				m_machine.SetSignal(Signals.Type.Invulnerable, true);
+				m_machine.SetSignal(Signals.Type.InvulnerableBite, true);
 
 				if (m_attacksLeft <= 0) 
 					m_attacksLeft = m_data.consecutiveAttacks;
@@ -76,7 +76,7 @@ namespace AI {
 				m_animEvents.onJumpReception -= new SpartakusAnimationEvents.OnJumpReceptionDelegate(EndAttack);
 				m_animEvents.onDizzyRecover  -= new SpartakusAnimationEvents.OnDizzyRecoverDelegate(DizzyRecover);
 
-				m_machine.SetSignal(Signals.Type.Invulnerable, false);
+				m_machine.SetSignal(Signals.Type.InvulnerableBite, false);
 				m_pilot.ReleaseAction(Pilot.Action.Attack);
 				m_pilot.ReleaseAction(Pilot.Action.Button_B);
 				m_pilot.ReleaseAction(Pilot.Action.Jump);
@@ -136,7 +136,7 @@ namespace AI {
 					}
 				} else {
 					m_pilot.PressAction(Pilot.Action.Button_B);
-					m_machine.SetSignal(Signals.Type.Invulnerable, false);
+					m_machine.SetSignal(Signals.Type.InvulnerableBite, false);
 
 					m_timer = m_data.dizzyTime;
 

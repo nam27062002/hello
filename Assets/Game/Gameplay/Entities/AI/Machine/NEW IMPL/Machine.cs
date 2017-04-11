@@ -150,6 +150,12 @@ namespace AI {
 			m_signals.SetOnEnableTrigger(Signals.Type.Invulnerable, SignalTriggers.OnInvulnerable);
 			m_signals.SetOnDisableTrigger(Signals.Type.Invulnerable, SignalTriggers.OnVulnerable);
 
+			m_signals.SetOnEnableTrigger(Signals.Type.InvulnerableBite, SignalTriggers.OnInvulnerable);
+			m_signals.SetOnDisableTrigger(Signals.Type.InvulnerableBite, SignalTriggers.OnVulnerable);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.InvulnerableFire, SignalTriggers.OnInvulnerable);
+			m_signals.SetOnDisableTrigger(Signals.Type.InvulnerableFire, SignalTriggers.OnVulnerable);
+
 			m_externalForces = Vector3.zero;
 		}
 
@@ -214,12 +220,9 @@ namespace AI {
 				m_viewControl.Burn(m_inflammable.burningTime);
 				if (m_motion != null) m_motion.Stop();
 				if (m_collider != null) m_collider.enabled = false;
-			} else if (_trigger == SignalTriggers.OnInvulnerable) {
-				m_entity.allowEdible = false;
-				m_entity.allowBurnable = false;
-			} else if (_trigger == SignalTriggers.OnVulnerable) {
-				m_entity.allowEdible = true;
-				m_entity.allowBurnable = true;
+			} else if (_trigger == SignalTriggers.OnInvulnerable || _trigger == SignalTriggers.OnVulnerable) {
+				m_entity.allowEdible = !(m_signals.GetValue(Signals.Type.Invulnerable) || m_signals.GetValue(Signals.Type.InvulnerableBite));
+				m_entity.allowBurnable = !(m_signals.GetValue(Signals.Type.Invulnerable) || m_signals.GetValue(Signals.Type.InvulnerableFire));
 			}
 		}
 
