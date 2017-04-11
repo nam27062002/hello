@@ -161,7 +161,7 @@ namespace AI {
 						for (int e = 0; e < m_numCheckEntities; e++) 
 						{
 							Entity entity = m_checkEntities[e];
-							MachineOld machine = entity.GetComponent<MachineOld>();
+							IMachine machine = entity.machine;
 							EatBehaviour.SpecialEatAction specialAction = m_eatBehaviour.GetSpecialEatAction( entity.sku );
 							if (
 								entity.IsEdible() && specialAction != EatBehaviour.SpecialEatAction.CannotEat && entity.IsEdible( m_eaterTier ) && machine != null && machine.CanBeBitten() && !machine.isPetTarget

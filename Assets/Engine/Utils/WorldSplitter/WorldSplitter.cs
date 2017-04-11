@@ -51,13 +51,10 @@ public class WorldSplitter : MonoBehaviour
 
     void Start()
     {
-        if (FeatureSettingsManager.IsDebugEnabled)
+        Manager_RegisterWorldSplitter(this);
+        if (FeatureSettingsManager.instance.IsReady())
         {
-            Manager_RegisterWorldSplitter(this);
-            if (FeatureSettingsManager.instance.IsReady())
-            {
-                SetLevelsLOD(FeatureSettingsManager.instance.LevelsLOD);
-            }
+            SetLevelsLOD(FeatureSettingsManager.instance.LevelsLOD);
         }
     }
 
