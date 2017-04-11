@@ -12,6 +12,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Globalization;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -109,7 +110,7 @@ public class MiniTrackingEngine : Singleton<MiniTrackingEngine> {
 			fileWriter = File.AppendText(path);
 		}
 
-			// Check for errors
+		// Check for errors
 		if(fileWriter == null) {
 			Debug.LogError("Unable to open file " + path);
 			return;
@@ -118,12 +119,26 @@ public class MiniTrackingEngine : Singleton<MiniTrackingEngine> {
 		// Increase event counter
 		instance.m_sessionEventCount++;
 
+		// Attach default parameters
+		List<TrackingParam> paramsList = new List<TrackingParam>();
+		paramsList.Add(new TrackingParam("timestamp", DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)));
+		paramsList.Add(new TrackingParam("platform", Application.platform.ToString()));
+		paramsList.Add(new TrackingParam("device", SystemInfo.deviceModel));
+		paramsList.Add(new TrackingParam("version", GameSettings.internalVersion.ToString()));
+		paramsList.Add(new TrackingParam("user_id", instance.m_userID));
+		paramsList.Add(new TrackingParam("session_nb", instance.m_sessionNb.ToString(CultureInfo.InvariantCulture)));
+		paramsList.Add(new TrackingParam("session_event_idx", instance.m_sessionEventCount.ToString(CultureInfo.InvariantCulture)));
+		paramsList.Add(new TrackingParam("event_id", _eventID));
+
+		// Add extra parameters
+		paramsList.AddRange(_params);
+
 		// Do it!
-		fileWriter.WriteLine(CreateEventString(_eventID, _params));
+		fileWriter.WriteLine(CreateEventString(paramsList));
 		fileWriter.Close();
 
 		// Debug
-		LogEvent(_eventID, _params);
+		LogEvent(_eventID, paramsList);
 	}
 
 	//------------------------------------------------------------------------//
@@ -134,9 +149,8 @@ public class MiniTrackingEngine : Singleton<MiniTrackingEngine> {
 	/// User ID, timestamp and session number are automatically added.
 	/// </summary>
 	/// <returns>The event string.</returns>
-	/// <param name="_eventID">Event I.</param>
 	/// <param name="_params">Parameters.</param>
-	private static string CreateEventString(string _eventID, TrackingParam[] _params) {
+	private static string CreateEventString(List<TrackingParam> _params) {
 		// If string builder is not created, do it now
 		if(instance.m_stringBuilder == null) {
 			instance.m_stringBuilder = new StringBuilder();
@@ -146,27 +160,15 @@ public class MiniTrackingEngine : Singleton<MiniTrackingEngine> {
 		// Clear it
 		instance.m_stringBuilder.Length = 0;
 
-		// Attach common info
-		instance.m_stringBuilder
-			.Append(DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)).Append(";")
-			.Append(Application.platform.ToString()).Append(";")
-			.Append(SystemInfo.deviceModel).Append(";")
-			.Append(GameSettings.internalVersion).Append(";")
-			.Append(instance.m_userID).Append(";")
-			.Append(instance.m_sessionNb.ToString(CultureInfo.InvariantCulture)).Append(";")
-			.Append(instance.m_sessionEventCount.ToString(CultureInfo.InvariantCulture)).Append(";")
-			.Append(_eventID).Append(";")
-		;
-
-		// Params
-		for(int i = 0; i < _params.Length; i++) {
+		// Attach rest of the params
+		for(int i = 0; i < _params.Count; i++) {
 			instance.m_stringBuilder.Append(_params[i].ToString(false)).Append(";");
 		}
 
-		// Param labels
-		for(int i = 0; i < _params.Length; i++) {
+		// Last special parameter containing all the labels for each parameter
+		for(int i = 0; i < _params.Count; i++) {
 			instance.m_stringBuilder.Append(_params[i].id);
-			if(i < _params.Length - 1) {
+			if(i < _params.Count - 1) {
 				instance.m_stringBuilder.Append(",");	// Comma separated
 			}
 		}
@@ -181,7 +183,7 @@ public class MiniTrackingEngine : Singleton<MiniTrackingEngine> {
 	/// <returns>The event string.</returns>
 	/// <param name="_eventID">Event I.</param>
 	/// <param name="_params">Parameters.</param>
-	private static void LogEvent(string _eventID, TrackingParam[] _params) {
+	private static void LogEvent(string _eventID, List<TrackingParam> _params) {
 		// If string builder is not created, do it now
 		if(instance.m_stringBuilder == null) {
 			instance.m_stringBuilder = new StringBuilder();
@@ -191,29 +193,11 @@ public class MiniTrackingEngine : Singleton<MiniTrackingEngine> {
 		// Clear it
 		instance.m_stringBuilder.Length = 0;
 
-		// Attach common info
-		instance.m_stringBuilder
-			.Append("<b>").Append(_eventID).AppendLine("</b>")
-			.Append("Timestamp: ")
-			.AppendLine(DateTime.UtcNow.ToString(CultureInfo.InvariantCulture))
-			.Append("Platform: ")
-			.AppendLine(Application.platform.ToString())
-			.Append("Device: ")
-			.AppendLine(SystemInfo.deviceModel)
-			.Append("Version: ")
-			.AppendLine(GameSettings.internalVersion.ToString())
-			.Append("UserID: ")
-			.AppendLine(instance.m_userID)
-			.Append("Session Nb: ")
-			.AppendLine(instance.m_sessionNb.ToString(CultureInfo.InvariantCulture))
-			.Append("Session Event Idx: ")
-			.AppendLine(instance.m_sessionEventCount.ToString(CultureInfo.InvariantCulture))
-			.Append("Event ID: ")
-			.AppendLine(_eventID)
-		;
+		// Attach event ID
+		instance.m_stringBuilder.Append("<b>").Append(_eventID).AppendLine("</b>");
 
 		// Params
-		for(int i = 0; i < _params.Length; i++) {
+		for(int i = 0; i < _params.Count; i++) {
 			instance.m_stringBuilder.AppendLine(_params[i].ToString(true));
 		}
 
