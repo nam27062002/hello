@@ -59,7 +59,7 @@ public class HUDRevive : MonoBehaviour {
 		m_animator = GetComponent<ShowHideAnimator>();
 
 		// Subscribe to external events
-		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 		m_timer.Stop();
@@ -80,7 +80,7 @@ public class HUDRevive : MonoBehaviour {
 	/// </summary>
 	void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 		Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 
@@ -183,7 +183,7 @@ public class HUDRevive : MonoBehaviour {
 	/// <summary>
 	/// The player is KO.
 	/// </summary>
-	private void OnPlayerKo(DamageType _type) {
+	private void OnPlayerKo(DamageType _type, Transform _source) {
 		// Initialize PC cost
 		if ( m_pcText != null )
 			m_pcText.text = UIConstants.GetIconString((m_freeReviveCount + m_paidReviveCount) + 1, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);	// [AOC] TODO!! Actual revive cost formula

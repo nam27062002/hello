@@ -55,7 +55,7 @@ public class HUDPc : HudWidget {
 		// Subscribe to external events
 		Messenger.AddListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
 		Messenger.AddListener(GameEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
-		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);	// Show during revive
+		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);	// Show during revive
 		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 	}
 	
@@ -66,7 +66,7 @@ public class HUDPc : HudWidget {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
 		Messenger.RemoveListener(GameEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
-		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 	}
 
@@ -139,7 +139,7 @@ public class HUDPc : HudWidget {
 	/// <summary>
 	/// The player is KO.
 	/// </summary>
-	private void OnPlayerKo(DamageType _type) {
+	private void OnPlayerKo(DamageType _type, Transform _source) {
 		// Show with total current amount of PC
 		UpdateValue(UsersManager.currentUser.pc, false);
 

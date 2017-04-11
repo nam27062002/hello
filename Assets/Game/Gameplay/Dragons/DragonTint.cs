@@ -90,7 +90,7 @@ public class DragonTint : MonoBehaviour
 	void OnEnable() 
 	{
 		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
-		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 	}
@@ -99,7 +99,7 @@ public class DragonTint : MonoBehaviour
 	{
 		// Unsubscribe from external events
 		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
-		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 	}
@@ -223,7 +223,7 @@ public class DragonTint : MonoBehaviour
 		m_caveColor = c;
 	}
 
-	private void OnPlayerKo( DamageType _type )
+	private void OnPlayerKo( DamageType _type, Transform _source )
 	{
         // Switch body material to wings
         for (int i = 0; i < m_materials.Count; i++) 
