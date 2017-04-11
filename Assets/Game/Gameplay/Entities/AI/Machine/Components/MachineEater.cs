@@ -22,16 +22,6 @@ namespace AI {
 		}
 
 		private IMachine GetEdible(float _radiusSqr) {
-			MachineOld[] machines = GameObject.FindObjectsOfType<MachineOld>() as MachineOld[];
-
-			for (int i = 0 ; i < machines.Length; i++) { 
-				if (machines[i] != m_machine) {
-					float dSqr = Vector2.SqrMagnitude(m_machine.position - machines[i].position);
-					if (dSqr < _radiusSqr) {
-						return machines[i];
-					}
-				}
-			}
 
 			return null;
 		}

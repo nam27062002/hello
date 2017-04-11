@@ -61,8 +61,7 @@ namespace AI {
 					return null;
 				}
 			}
-			set
-			{
+			set {
 				if (m_sensor != null)
 					m_sensor.enemy = value;
 			}
@@ -70,7 +69,7 @@ namespace AI {
 
 		bool m_isHolded = false;	// if machine being holded
 		bool m_isPetTarget = false;
-		public bool isPetTarget{ get{ return m_isPetTarget;} set { m_isPetTarget = value; } }
+		public bool isPetTarget { get { return m_isPetTarget; } set { m_isPetTarget = value; } }
 
 
 		// Currents
@@ -162,13 +161,13 @@ namespace AI {
 			LeaveGroup();
 		}
 
-		public virtual void Spawn() {
+		public virtual void Spawn(ISpawner _spawner) {
 			if (m_signals != null) 
 				m_signals.Init();
 
 			if (m_motion != null) 
 				m_motion.Init();
-		
+
 			if (m_enableSensor) {
 				m_sensor.Init();
 				if (InstanceManager.player != null)	{
@@ -183,13 +182,22 @@ namespace AI {
 				m_collider.enabled = true;
 
 			m_willPlaySpawnSound = !string.IsNullOrEmpty(m_onSpawnSound);
-		}
 
-		public virtual void Spawn(ISpawner _spawner) {
-			Spawn();
 			if (_spawner != null) {
 				m_checkCurrents = _spawner.SpawnersCheckCurrents();
 			}
+		}
+
+		public void Deactivate( float duration, UnityEngine.Events.UnityAction _action) {
+			gameObject.SetActive(false);
+			m_deactivateCallback = _action;
+			Invoke("Activate", duration);
+		}
+
+		public void Activate() {
+			gameObject.SetActive(true);
+			if (m_deactivateCallback != null)
+				m_deactivateCallback();
 		}
 
 		public void OnTrigger(string _trigger, object[] _param = null) {
@@ -217,7 +225,7 @@ namespace AI {
 
 		//-----------------------------------------------------------
 		// Physics Collisions and Triggers
-		void OnCollisionEnter(Collision _collision) {
+		protected virtual void OnCollisionEnter(Collision _collision) {
 			object[] _params = new object[1]{_collision};
 			OnTrigger(SignalTriggers.OnCollisionEnter, _params);
 			SetSignal(Signals.Type.Collision, true, _params);
@@ -609,18 +617,6 @@ namespace AI {
 			if (m_sensor != null) {
 				m_sensor.OnDrawGizmosSelected(m_transform);
 			}
-		}
-
-		public void Deactivate( float duration, UnityEngine.Events.UnityAction _action) {
-			gameObject.SetActive(false);
-			m_deactivateCallback = _action;
-			Invoke("Activate", duration);
-		}
-
-		void Activate() {
-			gameObject.SetActive(true);
-			if (m_deactivateCallback != null)
-				m_deactivateCallback();
 		}
 	}
 }
