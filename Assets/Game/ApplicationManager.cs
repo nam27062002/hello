@@ -88,7 +88,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     protected void Start()
     {
-
 		if (HasArg("-start_test"))
 		{	
 			// Start Testing game!
@@ -96,6 +95,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 				// Tell control panel to show memory
 			m_appMode = Mode.TEST;
 		}
+
+        // Subscribe to external events
+        Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, Debug_OnLevelReset);
+        Messenger.AddListener(GameEvents.GAME_ENDED, Debug_OnLevelReset);
 
         StartCoroutine(Device_Update());
     }
@@ -229,7 +232,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             // ---------------------------
             // Test schedule notification
-            Debug_ScheduleNotification();
+            //Debug_ScheduleNotification();
             // ---------------------------
         }
 
@@ -676,6 +679,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         }
     }
 
+    private ParticleSystem[] m_debugParticles;
     private bool m_debugParticlesVisibility = true;
     public bool Debug_ParticlesVisibility
     {
@@ -686,15 +690,19 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         set
         {
-            m_debugParticlesVisibility = value;
-
-            List<ParticleSystem> systems = GameObjectExt.FindObjectsOfType<ParticleSystem>(true);
-            if (systems != null)
+            if (m_debugParticlesVisibility && !value)
             {
-                int count = systems.Count;                
+                m_debugParticles = GameObject.FindObjectsOfType<ParticleSystem>();
+            }
+
+            m_debugParticlesVisibility = value;
+                        
+            if (m_debugParticles != null)
+            {
+                int count = m_debugParticles.Length;                
                 for (int i = 0; i < count; i++)
-                {                    
-                    systems[i].gameObject.SetActive(m_debugParticlesVisibility);                    
+                {
+                    m_debugParticles[i].gameObject.SetActive(m_debugParticlesVisibility);                    
                 }
             }
         }
@@ -724,10 +732,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             m_debugParticlesState = value;
              
-            List<ParticleSystem> systems = GameObjectExt.FindObjectsOfType<ParticleSystem>(true);
+            ParticleSystem[] systems = GameObject.FindObjectsOfType<ParticleSystem>();
             if (systems != null)
             {
-                int count = systems.Count;
+                int count = systems.Length;
                 for (int i = 0; i < count; i++)
                 {
                     switch (m_debugParticlesState)
@@ -800,7 +808,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     }
 
 
-    private bool m_debug_PlayerParticlesVisibility = true;
+    private bool m_debug_PlayerParticlesVisibility = true;    
     public bool Debug_PlayerParticlesVisibility
     {
         get
@@ -870,6 +878,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     public void Debug_ScheduleNotification()
     {
         NotificationsManager.SharedInstance.ScheduleNotification("sku.not.01", "A ver que pasa...", "Action", 5);
+    }
+
+    private void Debug_OnLevelReset()
+    {
+        m_debugParticles = null;
+        m_debugParticlesVisibility = true;
     }
     #endregion
 }
