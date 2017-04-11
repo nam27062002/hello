@@ -29,7 +29,11 @@ namespace AI {
 
 		public float lastFallDistance { get { return 0; } }
 
+		public bool isKinematic{ get { return false; } set { } }
+
 		public Transform enemy { get { return null; } set { } }
+
+		public bool isPetTarget{ get { return false;} set { } }
 
 		//---------------------------------------------------------------------------------
 
@@ -43,10 +47,12 @@ namespace AI {
 			LeaveGroup();
 		}
 
-		public void Spawn(ISpawner _spawner) 
-		{
+		public void Spawn(ISpawner _spawner) {
 			m_motion.Init();
 		}
+
+		public void Activate() {}
+		public void Deactivate( float duration, UnityEngine.Events.UnityAction _action) {}
 
 		public void OnTrigger(string _trigger, object[] _param = null) {
 			if (m_pilot != null) {

@@ -13,6 +13,7 @@ namespace AI {
 		private bool m_beingEaten;
 		private bool m_beingBurned;
 
+
 		//---------------------------------------------------------------------------------
 		public Vector3 position { 	get { return transform.position;  } 
 									set { transform.position = value; } 
@@ -28,10 +29,10 @@ namespace AI {
 
 		public float lastFallDistance { get { return 0; } }
 
-		public Transform enemy { 
-			get { return null; }
-			set { }
-		}
+		public bool isKinematic	{ get { return false; } set { } }
+		public Transform enemy  { get { return null; }  set { } }
+		public bool isPetTarget { get { return false;}  set { } }
+
 
 		//---------------------------------------------------------------------------------
 
@@ -51,6 +52,9 @@ namespace AI {
 			m_beingBurned = false;
 			m_inflammable.Init();
 		}
+
+		public void Activate() {}
+		public void Deactivate( float duration, UnityEngine.Events.UnityAction _action) {}
 
 		public void OnTrigger(string _trigger, object[] _param = null) {}
 			

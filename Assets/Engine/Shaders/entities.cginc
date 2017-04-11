@@ -117,7 +117,14 @@ fixed4 frag(v2f i) : SV_Target
 #ifdef EMISSIVE
 	fixed emmisiveMask = col.a;
 #endif
-//	col.a = 1.0;
+
+#if defined (TINT)
+	col.xyz *= _Tint.xyz;
+#elif defined (CUSTOM_TINT)
+	col = getCustomTint(col, _Tint, i.color);
+#endif
+
+	fixed4 unlitColor = col;
 
 #ifdef NORMALMAP
 	// Calc normal from detail texture normal and tangent world
@@ -128,14 +135,6 @@ fixed4 frag(v2f i) : SV_Target
 #else
 	float3 normalDirection = i.normalWorld;
 #endif
-
-#if defined (TINT)
-	col += _Tint;
-#elif defined (CUSTOM_TINT)
-	col = getCustomTint(col, _Tint, i.color);
-#endif
-
-	fixed4 unlitColor = col;
 
 	fixed4 diffuse = max(0,dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
 	col *= diffuse + float4(i.vLight, 0.0f);
@@ -158,21 +157,17 @@ fixed4 frag(v2f i) : SV_Target
 
 #if defined (OPAQUEALPHA)
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+
 #elif defined (CUSTOM_ALPHA)
-
-//	#define TEX_ALPHA_SCALE 3.0
-
-//	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 	float st = smoothstep(_AlphaMSKOffset - 0.3, _AlphaMSKOffset, i.height);
-//	return st;
-//	float s1 = 0.5 + sin(_Time.y * 5.0) * 0.45;
-//	float s2 = 0.5 + sin(_Time.y * 8.0) * 0.45;
 	float2 off = float2(0.333, _Time.y * 0.75);
 	float alpha = tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off).w;
-//	alpha += tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off * 2.0).w;
-//	alpha *= 0.55;
 	col.a = clamp(st + alpha, 0.0, 1.0) * (st);
 	//clip(st + alpha - 0.1);
+
+#elif defined (TINT) || defined (CUSTOM_TINT)
+	col.a *= _Tint.a;
+
 #endif
 	return col;
 }

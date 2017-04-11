@@ -706,7 +706,7 @@ namespace AI {
 			Invoke("Activate", duration);
 		}
 
-		void Activate()
+		public void Activate()
 		{
 			gameObject.SetActive(true);
 			if ( m_deactivateCallback != null )
