@@ -2683,6 +2683,10 @@ MonoBehaviour:
   m_scaleOrigin: 0
   m_scale: 1
   m_transform: {fileID: 0}
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 0
+  m_resetFirst: 0
 --- !u!114 &114361397547265102
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2759,22 +2763,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c151f2f948280407e8ed77eac6c66e15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_useGravity: 0
-    m_walkOnWalls: 0
-    m_mass: 1
-    m_defaultUpVector: 0
-    m_orientationSpeed: 360
-    m_faceDirection: 1
-    m_useDragonStyleRotation: 0
-    m_rollRotation: 0
-    m_limitHorizontalRotation: 0
-    m_faceLeftAngle: -90
-    m_faceRightAngle: 90
-    m_limitVerticalRotation: 1
-    m_faceUpAngle: 320
-    m_faceDownAngle: 40
   m_affectedByDragonTrample: 0
   m_enableSensor: 0
   m_sensor:
@@ -2792,8 +2780,6 @@ MonoBehaviour:
     m_senseDelay:
       min: 0.25
       max: 1.25
-  m_onSpawnSound: 
-  m_rotateToMouth: 0
   m_edible:
     m_rotateToMouth: 0
   m_inflammable:
@@ -2801,6 +2787,20 @@ MonoBehaviour:
     m_burningTime: 0
     m_dissolveTime: 1.5
     m_ashExceptions: []
+  m_onSpawnSound: 
+  m_airMotion:
+    m_mass: 1
+    m_defaultUpVector: 0
+    m_orientationSpeed: 360
+    m_dragonStyleRotation: 0
+    m_faceDirection: 1
+    m_rollRotation: 0
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 320
+    m_faceDownAngle: 40
   m_fire: {fileID: 1371148990655892}
   m_view: {fileID: 1807455591130590}
   m_viewWhenBurning: {fileID: 1000014122255018}
@@ -2826,6 +2826,10 @@ MonoBehaviour:
   m_scaleOrigin: 0
   m_scale: 1
   m_transform: {fileID: 0}
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 0
+  m_resetFirst: 0
 --- !u!114 &114860669569164406
 MonoBehaviour:
   m_ObjectHideFlags: 1
