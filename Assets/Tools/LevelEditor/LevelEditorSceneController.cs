@@ -80,7 +80,7 @@ namespace LevelEditor {
 		private void OnEnable() {
 			// Subscribe to external events
 			Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
-			Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
+			Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		}
 		
 		/// <summary>
@@ -92,7 +92,7 @@ namespace LevelEditor {
 
 			// Unsubscribe from external events
 			Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
-			Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
+			Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		}
 
 		/// <summary>
@@ -185,7 +185,7 @@ namespace LevelEditor {
 		/// <summary>
 		/// The player is ko.
 		/// </summary>
-		private void OnPlayerKo(DamageType _type) {
+		private void OnPlayerKo(DamageType _type, Transform _source) {
 			// Just open summary popup for now
 			Time.timeScale = 0.0f;	// Pause game
 			PopupManager.OpenPopupInstant(PopupLevelEditorSummary.PATH);

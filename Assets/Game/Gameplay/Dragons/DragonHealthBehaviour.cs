@@ -82,7 +82,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		// Check power ups 
 		drain = drain - drain * m_drainReduceModifier / 100.0f;
 
-		m_dragon.AddLife(-drain * Time.deltaTime);
+		m_dragon.AddLife(-drain * Time.deltaTime, DamageType.DRAIN, null);
 
 		// Apply damage over time
 		// Reverse iterating since we will be removing them from the list when expired
@@ -100,7 +100,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 		#if DEBUG
 			if ( Input.GetKeyDown( KeyCode.M) )
-				m_dragon.AddLife( -m_dragon.health );
+				m_dragon.AddLife( -m_dragon.health, DamageType.NONE, null );
 		#endif
 	}
 
@@ -150,7 +150,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 			// Apply damage
 			float damage = GetModifiedDamageForCurrentHealth(_amount);
-			m_dragon.AddLife(-damage, _type);
+			m_dragon.AddLife(-damage, _type, _source);
 
 			// Notify game
 			Messenger.Broadcast<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, _amount, _type, _source);

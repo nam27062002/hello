@@ -354,7 +354,9 @@ public class DragonPlayer : MonoBehaviour {
 	/// Add/remove health to the dragon.
 	/// </summary>
 	/// <param name="_offset">The amount of health to be added/removed.</param>
-	public void AddLife(float _offset, DamageType _type = DamageType.NONE) {
+	/// <param name="_type">Type of damage, if any.</param>
+	/// <param name="_source">Source of the damage, if any.</param>
+	public void AddLife(float _offset, DamageType _type, Transform _source) {
 		// If invulnerable and taking damage, don't apply
 		if(IsInvulnerable() && _offset < 0) return;
 
@@ -382,8 +384,8 @@ public class DragonPlayer : MonoBehaviour {
 			// If I have an angel pet and aura still playing
 			else
 			{
-				// Send global even
-				Messenger.Broadcast<DamageType>(GameEvents.PLAYER_KO, _type);	// Reason
+				// Send global event
+				Messenger.Broadcast<DamageType, Transform>(GameEvents.PLAYER_KO, _type, _source);	// Reason
 
 				// Clear any health modifiers
 				m_currentHealthModifier = null;

@@ -132,7 +132,7 @@ namespace AI {
 
 			m_groundSensorOffset = (m_machineTransform.position - m_groundSensor.position);
 
-			m_direction = Vector3.forward;
+			m_direction = Vector3.back;
 			m_velocity = Vector3.zero;
 			m_acceleration = Vector3.zero;
 

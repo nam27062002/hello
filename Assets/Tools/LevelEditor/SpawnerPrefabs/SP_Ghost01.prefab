@@ -10,6 +10,8 @@ GameObject:
   - component: {fileID: 416572}
   - component: {fileID: 11484492}
   - component: {fileID: 114000010812324944}
+  - component: {fileID: 114530742511416408}
+  - component: {fileID: 114746050982734580}
   m_Layer: 0
   m_Name: SP_Ghost01
   m_TagString: Untagged
@@ -96,3 +98,38 @@ MonoBehaviour:
     max: 0
   m_maxSpawns: 0
   m_checkCurrents: 0
+--- !u!114 &114530742511416408
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 154690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_guideFunction: 1
+  m_innerRadius: 4
+  m_outterRadius: 2
+  m_targetDistance: 1.7
+  m_depthAmplitude: 0
+  m_depthFrequency: 0
+  m_scale: {x: 1, y: 1, z: 1}
+  m_rotation: {x: 5.22, y: 0, z: 0}
+  m_boundsScale: {x: 2, y: 2, z: 2}
+  m_forcePreview: 0
+  m_previewStep: 0.1
+  m_previewMaxTime: 60
+--- !u!114 &114746050982734580
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 154690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_formation: 0

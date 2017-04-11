@@ -793,14 +793,15 @@ public abstract class EatBehaviour : MonoBehaviour {
 			float dot = Vector3.Dot(heading, dir);
 			if ( dot > 0)
 			{
-				SphereCollider sc = InstanceManager.player.dragonMotion.groundCollider;
-
-				// Check arc
-				Vector3 circleCenter = sc.transform.TransformPoint(sc.center);
-				circleCenter.z = 0;
-				if (MathUtils.TestCircleVsArc( arcOrigin, arcAngle, arcRadius, dir, circleCenter, sc.radius))
+				bool found = false;
+				List<Collider> hitColliders = InstanceManager.player.dragonMotion.hitColliders;
+				for( int i = 0; i<hitColliders.Count && !found; i++ )
 				{
-					StartAttackTarget( sc.transform );
+					if (MathUtils.TestArcVsBounds( arcOrigin, arcAngle, arcRadius, dir, hitColliders[i].bounds))
+					{
+						StartAttackTarget( InstanceManager.player.transform);
+						found = true;
+					}
 				}
 			}
 		}
@@ -828,7 +829,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 						// Check arc
 						Vector3 circleCenter = entity.circleArea.center;
 						circleCenter.z = 0;
-						if (MathUtils.TestCircleVsArc( arcOrigin, arcAngle, arcRadius, dir, circleCenter, entity.circleArea.radius))
+						if (MathUtils.TestArcVsCircle( arcOrigin, arcAngle, arcRadius, dir, circleCenter, entity.circleArea.radius))
 						{
 							StartAttackTarget( entity.transform );
 							break;
