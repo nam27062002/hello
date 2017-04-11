@@ -23,7 +23,7 @@ namespace AI {
 
 			protected AttackSelectorData m_data;
 
-			protected AI.MachineOld m_targetMachine;
+			protected AI.IMachine m_targetMachine;
 			protected Entity m_targetEntity;
 			protected DragonPlayer m_player;
 			protected float m_timer;
