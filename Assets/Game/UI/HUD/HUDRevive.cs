@@ -43,8 +43,6 @@ public class HUDRevive : MonoBehaviour {
 	private ShowHideAnimator m_animator = null;
 
 	// Internal logic
-	private int m_paidReviveCount = 0;
-	private int m_freeReviveCount = 0;
 	private DeltaTimer m_timer = new DeltaTimer();
 	private bool m_allowCurrencyPopup = true;
 
@@ -63,8 +61,6 @@ public class HUDRevive : MonoBehaviour {
 		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 		m_timer.Stop();
-		m_paidReviveCount = 0;
-		m_freeReviveCount = 0;
 	}
 
 	/// <summary>
@@ -132,7 +128,7 @@ public class HUDRevive : MonoBehaviour {
 				// Flow successful?
 				if(_flow.successful) {
 					// Do it!
-					m_paidReviveCount++;
+					RewardManager.paidReviveCount++;
 					DoRevive( DragonPlayer.ReviveReason.PAYING );
 					PersistenceManager.Save();
 				} else {
@@ -144,7 +140,7 @@ public class HUDRevive : MonoBehaviour {
 
 		// Pause timer and begin flow!
 		m_timer.Stop();
-		long costPC = m_paidReviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
+		long costPC = RewardManager.paidReviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
 		purchaseFlow.Begin((long)costPC, UserProfile.Currency.HARD, null);
 
 		// Without resources flow:
@@ -186,10 +182,10 @@ public class HUDRevive : MonoBehaviour {
 	private void OnPlayerKo(DamageType _type, Transform _source) {
 		// Initialize PC cost
 		if ( m_pcText != null )
-			m_pcText.text = UIConstants.GetIconString((m_freeReviveCount + m_paidReviveCount) + 1, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);	// [AOC] TODO!! Actual revive cost formula
+			m_pcText.text = UIConstants.GetIconString((RewardManager.freeReviveCount + RewardManager.paidReviveCount) + 1, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);	// [AOC] TODO!! Actual revive cost formula
 
 		// Free revive available?
-		m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && m_freeReviveCount < m_freeRevivesPerGame);
+		m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && RewardManager.freeReviveCount < m_freeRevivesPerGame);
 
 		// Reset timer and control vars
 		m_timer.Start(m_reviveAvailableSecs * 1000);
@@ -229,7 +225,7 @@ public class HUDRevive : MonoBehaviour {
 	/// </summary>
 	private void OnAdClosed() {
 		// Do it!
-		m_freeReviveCount++;
+		RewardManager.freeReviveCount++;
 		DoRevive( DragonPlayer.ReviveReason.AD );
 	}
 }
