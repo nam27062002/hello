@@ -25,13 +25,17 @@ public static class WorldSplitterTool
 		{WorldSplitterQuality.High, "_high" },
 	};
 
-	public static readonly List<string> m_knownScenes = new List<string>
-	{
-		"Medieval",
-	};
 
 	public static readonly string RegularScenesPath = "Assets/Game/Scenes/Levels/Art/Art_";
 	public static readonly string SpawnerScenesPath = "Assets/Game/Scenes/Levels/Spawners/SP_";
+	public const string LevelsPath = "Assets/Game/Scenes/Levels/";
+
+	public static readonly List<string> m_knownScenes = new List<string>
+	{
+		LevelsPath + "Art/ART_Particles",
+	};
+
+
 
 	public static void SplitAllScenes()
 	{
@@ -49,6 +53,7 @@ public static class WorldSplitterTool
 	/// </summary>
 	public static void SplitSceneQuality(string name, WorldSplitterQuality quality)
 	{
+	/*
 		string inputPathWorld = RegularScenesPath + name + ".unity";
 		string outputPathWorld = RegularScenesPath + name + m_variationNames[quality] + ".unity";
 
@@ -68,6 +73,16 @@ public static class WorldSplitterTool
 		ProcessCurrentScene(quality);
 		EditorApplication.SaveScene(outputPathSpawner);
 #endif
+*/
+
+		string inputPathWorld = name + ".unity";
+		string outputPathWorld = name + m_variationNames[quality] + ".unity";
+
+		Debug.Log(string.Format("Spliting scene: {0} -> {1}", inputPathWorld, outputPathWorld));
+
+		EditorApplication.OpenScene(inputPathWorld);
+		ProcessCurrentScene(quality);
+		EditorApplication.SaveScene(outputPathWorld);
 	}
 
 	static void ProcessCurrentScene(WorldSplitterQuality quality)

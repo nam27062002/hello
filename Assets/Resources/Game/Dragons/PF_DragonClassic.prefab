@@ -84,6 +84,8 @@ GameObject:
   - component: {fileID: 114000012469074318}
   - component: {fileID: 114000010816463694}
   - component: {fileID: 114258700555348566}
+  - component: {fileID: 114730087366958304}
+  - component: {fileID: 114741804896727982}
   m_Layer: 12
   m_Name: PF_DragonClassic
   m_TagString: Player
@@ -355,7 +357,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 165.66248, y: 75.62125, z: -172.20685}
+  m_LocalPosition: {x: 282.50446, y: 121.63672, z: -96.88671}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -4105,7 +4107,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: -0.0028908965, y: 0.7991958, z: 0.0038439173, w: 0.60105157}
+  m_LocalRotation: {x: -0.69372463, y: 0.12949924, z: 0.12895195, w: 0.6966689}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -6608,6 +6610,26 @@ MonoBehaviour:
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+--- !u!114 &114730087366958304
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120086}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48f0dabda9d774437bbff41bb90ad77d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathSound: 
+  m_superBreathSound: 
+  m_segmentLength: 0.5
+  m_segmentWidth: 0.1
+  m_maxAmplitude: 1
+  m_rayMaterial: {fileID: 2100000, guid: ace24007b0d9ee641bd5e7fe83440f8d, type: 2}
+  m_length: 6
+  m_particleStartPrefab: {fileID: 0}
+  m_particleEndPrefab: {fileID: 0}
 --- !u!114 &114735237819701946
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6622,6 +6644,21 @@ MonoBehaviour:
   m_parentName: Dragon_Chest
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+--- !u!114 &114741804896727982
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120086}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abfdff7c0ca724eac918dbab82ee87d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathSound: 
+  m_superBreathSound: 
+  m_fireBallPrefab: {fileID: 107994, guid: da447faeac9384d1387a7629de42640c, type: 2}
+  m_timeBetweenFires: 1
 --- !u!114 &114771975389375840
 MonoBehaviour:
   m_ObjectHideFlags: 1

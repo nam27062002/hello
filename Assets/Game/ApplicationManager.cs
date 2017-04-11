@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 /// <summary>
 /// This class is responsible for handling stuff related to the whole application in a high level. For example if an analytics event has to be sent when the application is paused or resumed
@@ -60,7 +61,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             DebugSettings.Init();
         }
 
-        Setting_Init();
+
 
         Reset();
 
@@ -88,6 +89,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     protected void Start()
     {
+		Setting_Init();
+
 		if (HasArg("-start_test"))
 		{	
 			// Start Testing game!
@@ -414,8 +417,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private bool m_settingsSoundIsEnabled;
 	private bool m_settingsMusicIsEnabled;
 
+	private AudioMixer m_audioMixer;
+
     private void Setting_Init()
     {
+    	m_audioMixer = AudioController.Instance.AudioObjectPrefab.GetComponent<AudioSource>().outputAudioMixerGroup.audioMixer;
         // Sound is disabled by default
         Settings_SetSoundIsEnabled(PlayerPrefs.GetInt(SETTINGS_SOUND_KEY, 0) > 0, false);
 		Settings_SetMusicIsEnabled(PlayerPrefs.GetInt(SETTINGS_MUSIC_KEY, 0) > 0, false);
@@ -432,8 +438,16 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 	private void Settings_SetSoundIsEnabled(bool value, bool persist) {
 		m_settingsSoundIsEnabled = value;
 
-		// TODO: To use AudioManager instead
-		AudioListener.pause = !m_settingsSoundIsEnabled;
+		if ( value )
+		{
+			m_audioMixer.SetFloat("SfxVolume", 0);
+			m_audioMixer.SetFloat("Sfx2DVolume", 0);
+		}
+		else
+		{
+			m_audioMixer.SetFloat("SfxVolume", -80);
+			m_audioMixer.SetFloat("Sfx2DVolume", -80);
+		}
 
 		if(persist) {
 			int intValue = (m_settingsSoundIsEnabled) ? 1 : 0;
@@ -445,7 +459,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 	private void Settings_SetMusicIsEnabled(bool value, bool persist) {
 		m_settingsMusicIsEnabled = value;
 
-		// TODO: To use AudioManager instead
+		if ( value )
+		{
+			m_audioMixer.SetFloat("MusicVolume", 0);
+		}
+		else
+		{
+			m_audioMixer.SetFloat("MusicVolume", -80);
+		}
 
 		if(persist) {
 			int intValue = (m_settingsMusicIsEnabled) ? 1 : 0;

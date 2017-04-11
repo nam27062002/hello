@@ -2,10 +2,7 @@
 {
 	Properties{
 		_MainTex("Particle Texture", 2D) = "white" {}
-//		_InvFade("Soft Particles Factor", Range(0.01,3.0)) = 1.0
-
-//		_GlowColor("Glow Color", Color) = (1, 1, 1, 1)
-//		_GlowColorMult("Glow Color Multiplier", Color) = (1, 1, 1, 1)
+		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}
 
 	Category{
@@ -13,7 +10,12 @@
 //		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 		Blend One OneMinusSrcColor
 		ColorMask RGB
-		Cull Off Lighting Off ZWrite Off Fog{ Color(0,0,0,0) }
+		Cull Off
+		Lighting Off
+		ZWrite Off
+		Fog{ Color(0,0,0,0) }
+		ZTest[_ZTest]
+
 		BindChannels{
 			Bind "Color", color
 			Bind "Vertex", vertex

@@ -51,7 +51,7 @@ namespace AI {
 				m_pilot.SetMoveSpeed(m_data.speed); //TODO
 
 				float m = (m_machine.position - m_target).sqrMagnitude;
-				float d = m_data.speed * Time.deltaTime;
+				float d = m_pilot.speed * Time.deltaTime;
 
 				if (m_data.alwaysSlowdown || m_goToIdle) {
 					d = 2f; 
@@ -82,7 +82,7 @@ namespace AI {
 				}
 
 				if (m_data.speed > 0f) {
-					m_timer = (m_machine.position - m_target).magnitude / m_data.speed;
+					m_timer = (m_machine.position - m_target).magnitude / m_pilot.speed;
 				} else {
 					m_timer = 1f;
 				}

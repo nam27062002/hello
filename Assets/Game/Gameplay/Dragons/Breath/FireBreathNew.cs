@@ -59,7 +59,7 @@ public class FireBreathNew : DragonBreathBehaviour {
     private bool m_waterMode = false;
     private float m_waterY = 0;
 
-    private float m_lengthPowerUpMultiplier = 0;
+
 
     override protected void ExtendedStart() {
 
@@ -114,10 +114,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 		}
     }
 
-    public void AddPowerUpLengthMultiplier(float value)
-    {
-		m_lengthPowerUpMultiplier += value;
-    }
+  
 
     override public bool IsInsideArea(Vector2 _point) { 
 	
@@ -331,7 +328,8 @@ public class FireBreathNew : DragonBreathBehaviour {
 		if ( _other.CompareTag("Water") )
 		{
 			m_insideWater = true;
-			m_waterY = m_mouthTransform.position.y;
+			if ( m_mouthTransform )
+				m_waterY = m_mouthTransform.position.y;
 			m_waterMode = true;
 			ShowWaterMode();
 		}
