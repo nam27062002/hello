@@ -84,7 +84,7 @@ namespace AI {
 
 				if (m_timer == 1f) {
 					float m = (m_machine.position - m_target).sqrMagnitude;
-					float d = m_data.speed * Time.deltaTime;
+					float d = m_pilot.speed * Time.deltaTime;
 					if (m < d * d) {
 						m_pilot.Stop();
 
@@ -147,7 +147,7 @@ namespace AI {
 				Debug.DrawLine(last, m_pointB, Colors.pink, 0.5f);
 				length += (last - m_pointB).magnitude;
 
-				m_timeSpeed = (length / m_data.speed);
+				m_timeSpeed = (length / m_pilot.speed);
 
 				m_timer = 0f;
 				m_pilot.SlowDown(false);

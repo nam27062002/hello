@@ -3,19 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AI {
-	public class MachinePhoenix : MachineOld {
+	public class MachinePhoenix : MachineAir {
+		//--------------------------------------------------
+		[SeparatorAttribute("Phoenix Effects")]
+		[SerializeField] private GameObject m_fire;
 
-		bool m_phoenixActive = false;
-		public GameObject m_fire;
+		[SerializeField] private GameObject m_view;
+		[SerializeField] private GameObject m_viewWhenBurning;
 
-		public GameObject m_view;
-		public GameObject m_viewWhenBurning;
+		[SerializeField] private ParticleData m_onFireParticle;
+		[SerializeField] private ParticleData m_onFireEndsParticle;
 
-		public ParticleData m_onFireParticle;
-		public ParticleData m_onFireEndsParticle;
 
-		protected override void Awake()
-		{
+		//--------------------------------------------------
+		private bool m_phoenixActive = false;
+
+
+		//--------------------------------------------------
+		protected override void Awake() {
 			base.Awake();
 			Deactivate();
 		}
@@ -27,30 +32,23 @@ namespace AI {
 			Deactivate();
 		}
 
-
-
 		public override void CustomUpdate() {
 			base.CustomUpdate();
-			if ( !m_phoenixActive )
-			{
-				if ( m_pilot.IsActionPressed(Pilot.Action.Fire))
-				{	
+
+			if (!m_phoenixActive) {
+				if (m_pilot.IsActionPressed(Pilot.Action.Fire)) {	
 					// Activate Phoenix Mode!!
 					Activate();
 				}
-			}
-			else
-			{
-				if ( !m_pilot.IsActionPressed(Pilot.Action.Fire))
-				{
+			} else {
+				if (!m_pilot.IsActionPressed(Pilot.Action.Fire)) {
 					// Deactivate Phoenix Mode
 					Deactivate();
 				}
 			}
 		}
 
-		private void Activate()
-		{
+		private void Activate() {
 			m_phoenixActive = true;
 
 			m_view.SetActive(false);
@@ -60,8 +58,7 @@ namespace AI {
 			m_viewWhenBurning.SetActive(true);
 		}
 
-		private void Deactivate()
-		{
+		private void Deactivate() {
 			m_phoenixActive = false;
 
 			m_view.SetActive(true);

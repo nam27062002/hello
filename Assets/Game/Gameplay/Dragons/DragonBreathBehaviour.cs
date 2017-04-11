@@ -92,6 +92,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	private float m_checkNodeFireTime = 0.25f;
 	private float m_fireNodeTimer = 0;
 
+	protected float m_lengthPowerUpMultiplier = 0;
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -425,4 +427,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		}
 	}
 
+
+	public void AddPowerUpLengthMultiplier(float value)
+    {
+		m_lengthPowerUpMultiplier += value;
+    }
 }
