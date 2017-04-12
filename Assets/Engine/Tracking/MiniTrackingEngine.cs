@@ -56,14 +56,21 @@ public class MiniTrackingEngine : Singleton<MiniTrackingEngine> {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Tracking session vars
 	private string m_userID = null;
 	private int m_sessionNb = -1;
 	private int m_sessionEventCount = 0;
 
+	// Aux vars
 	private StringBuilder m_stringBuilder = null;
 
+	// Others
+	public static string filePath {
+		get { return Application.persistentDataPath + "/miniTracking.csv"; }
+	}
+
 	//------------------------------------------------------------------------//
-	// GENEROC METHODS														  //
+	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 
 	//------------------------------------------------------------------------//
@@ -103,7 +110,7 @@ public class MiniTrackingEngine : Singleton<MiniTrackingEngine> {
 
 		// If file is not yet created, do it now!
 		StreamWriter fileWriter = null;
-		string path = Application.persistentDataPath + "/miniTracking.csv";
+		string path = filePath;
 		if(!File.Exists(path)) {
 			fileWriter = File.CreateText(path);
 		} else {
@@ -139,6 +146,33 @@ public class MiniTrackingEngine : Singleton<MiniTrackingEngine> {
 
 		// Debug
 		LogEvent(_eventID, paramsList);
+	}
+
+	/// <summary>
+	/// Delete tracking file. Use with caution! All tracking data will be lost!
+	/// </summary>
+	public static void DeleteTrackingFile() {
+		string path = filePath;
+		if(File.Exists(path)) {
+			File.Delete(path);
+		}
+	}
+
+	/// <summary>
+	/// Get all the content from the tracking file.
+	/// Careful, might be quite large!
+	/// </summary>
+	/// <returns>The tracking file content.</returns>
+	public static string ReadTrackingFile() {
+		// Nothing to do if file doesn't exist
+		string path = filePath;
+		if(!File.Exists(path)) return "";
+
+		// Open file for reading and return its content
+		StreamReader reader = File.OpenText(path);
+		string res = reader.ReadToEnd();
+		reader.Close();
+		return res;
 	}
 
 	//------------------------------------------------------------------------//
