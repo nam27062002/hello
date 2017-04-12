@@ -37,7 +37,11 @@ public class InflammableDecoration : Initializable {
 
 
 	// Use this for initialization
-	void Start() {		
+	void Start() {
+		m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
+
+		PoolManager.RequestPool("PF_FireProc", "Particles/", m_fireNodes.Length);
+		ParticleManager.CreatePool("SmokeParticle", "");
 	}
 
 	/// <summary>
@@ -64,7 +68,6 @@ public class InflammableDecoration : Initializable {
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_operatorSpawner = GetComponent<DeviceOperatorSpawner>();
 		m_viewBurned = transform.FindChild("view_burned").gameObject;
-		m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
 		m_collider = GetComponent<BoxCollider>();
 
 		/*
