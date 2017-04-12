@@ -17,6 +17,7 @@ public interface ISpawner : IQuadTreeItem {
 	IGuideFunction guideFunction { get; }
 	Transform transform { get; }
 	Quaternion rotation { get; }
+	Vector3 homePosition { get; }
 
 #region save_spawner_state
 	int GetSpawnerID();
