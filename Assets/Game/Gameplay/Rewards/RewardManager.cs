@@ -91,9 +91,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		set { instance.m_currentFireRushMultiplier = value; }
 	}
 
-
 	public static float currentScoreMultiplier{
-		get{ return instance.m_scoreMultipliers[instance.m_currentScoreMultiplierIndex].multiplier * instance.m_currentFireRushMultiplier; }
+		get{ return currentScoreMultiplierData.multiplier * instance.m_currentFireRushMultiplier; }
 	}
 
 	public static ScoreMultiplier defaultScoreMultiplier {
@@ -118,6 +117,18 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	[SerializeField] private float m_scoreMultiplierTimer = -1;
 	public static float scoreMultiplierTimer {
 		get { return instance.m_scoreMultiplierTimer; }
+	}
+
+	// For tracking purposes, max score multiplier reached during the run
+	private float m_maxScoreMultiplier;
+	public static float maxScoreMultiplier {
+		get { return instance.m_maxScoreMultiplier; }
+	}
+
+	// For tracking purposes, max score multiplier reached during the run without considering fire rush multiplier bonus
+	private float m_maxBaseScoreMultiplier;
+	public static float maxBaseScoreMultiplier {
+		get { return instance.m_maxBaseScoreMultiplier; }
 	}
 
 	[SerializeField] private float m_burnCoinsMultiplier = 1;
@@ -171,6 +182,30 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		get{ return instance.m_distance.magnitude; }
 	}
 
+	// Revive tracking
+	private int m_freeReviveCount = 0;
+	public static int freeReviveCount {
+		get { return instance.m_freeReviveCount; }
+		set { instance.m_freeReviveCount = value; }
+	}
+
+	private int m_paidReviveCount = 0;
+	public static int paidReviveCount {
+		get { return instance.m_paidReviveCount; }
+		set { instance.m_paidReviveCount = value; }
+	}
+
+	// Other tracking vars
+	private string m_deathSource = "";
+	public static string deathSource {
+		get { return instance.m_deathSource; }
+	}
+
+	private DamageType m_deathType = DamageType.NORMAL;
+	public static DamageType deathType {
+		get { return instance.m_deathType; }
+	}
+
 	// Shortcuts
 	private GameSceneControllerBase m_sceneController;
 
@@ -196,6 +231,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		Messenger.AddListener<Reward>(GameEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRush);
+		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
@@ -211,6 +247,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		Messenger.RemoveListener<Reward>(GameEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRush);
+		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
@@ -285,6 +322,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
 		// Multipliers
 		instance.SetScoreMultiplier(0);
+		instance.m_currentFireRushMultiplier = 1f;
+		instance.m_maxBaseScoreMultiplier = currentScoreMultiplier;
+		instance.m_maxScoreMultiplier = currentScoreMultiplier;
 
 		instance.m_sceneController = InstanceManager.gameSceneControllerBase;
 		instance.ParseSurvivalBonus();
@@ -303,7 +343,12 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		// Chests
 		instance.m_initialCollectedChests = ChestManager.collectedAndPendingChests;
 
+		// Tracking vars
 		instance.m_killCount.Clear();
+		instance.m_freeReviveCount = 0;
+		instance.m_paidReviveCount = 0;
+		instance.m_deathSource = "";
+		instance.m_deathType = DamageType.NORMAL;
 	}
 
 	/// <summary>
@@ -380,6 +425,10 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		// Dispatch game event (only if actually changing)
 		if(old != currentScoreMultiplierData) {
 			Messenger.Broadcast<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, currentScoreMultiplierData, m_currentFireRushMultiplier);
+
+			// [AOC] Update tracking vars
+			instance.m_maxScoreMultiplier = Mathf.Max(instance.m_maxScoreMultiplier, currentScoreMultiplier);
+			instance.m_maxBaseScoreMultiplier = Mathf.Max(instance.m_maxBaseScoreMultiplier, currentScoreMultiplierData.multiplier);
 		}
 	}
 	
@@ -532,6 +581,27 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	private void OnFuryRush(bool toggle, DragonBreathBehaviour.Type type )
 	{
 		Messenger.Broadcast<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, currentScoreMultiplierData, m_currentFireRushMultiplier);
+
+		// [AOC] Update tracking vars
+		instance.m_maxScoreMultiplier = Mathf.Max(instance.m_maxScoreMultiplier, currentScoreMultiplier);
+		instance.m_maxBaseScoreMultiplier = Mathf.Max(instance.m_maxBaseScoreMultiplier, currentScoreMultiplierData.multiplier);
+	}
+
+	/// <summary>
+	/// The player is KO.
+	/// </summary>
+	/// <param name="_type">Damage type causing the death.</param>
+	/// <param name="_source">Optional source of damage.</param>
+	private void OnPlayerKo(DamageType _type, Transform _source) {
+		// Store death cause
+		instance.m_deathType = _type;
+		instance.m_deathSource = "";
+		if(_source != null) {
+			Entity entity = _source.GetComponent<Entity>();
+			if(entity != null) {
+				instance.m_deathSource = entity.sku;
+			}
+		}
 	}
 
 	/// <summary>

@@ -25,7 +25,7 @@ namespace AI {
 
 			protected PetChaseTargetData m_data;
 			protected Transform m_target;
-			protected AI.MachineOld m_targetMachine;
+			protected AI.IMachine m_targetMachine;
 			protected Entity m_targetEntity;
 			protected MachineEatBehaviour m_eatBehaviour;
 			protected float m_timer;
@@ -63,10 +63,10 @@ namespace AI {
 				if ( param != null && param.Length > 0 )
 				{
 					m_target = param[0] as Transform;
-					if ( m_target )
-						m_targetMachine = m_target.GetComponent<MachineOld>();
-					if ( m_target )
+					if ( m_target ) {
 						m_targetEntity = m_target.GetComponent<Entity>();
+						m_targetMachine = m_targetEntity.machine;
+					}
 				}
 
 				if (m_target == null && m_machine.enemy != null) {
@@ -75,8 +75,8 @@ namespace AI {
 						m_target = m_machine.enemy;
 					}
 
-					m_targetMachine = m_machine.enemy.GetComponent<MachineOld>();
 					m_targetEntity = m_machine.enemy.GetComponent<Entity>();
+					m_targetMachine = m_targetEntity.machine;
 				}
 
 				if ( m_targetMachine != null )

@@ -56,7 +56,6 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 
 			#define FRESNEL
 
-
 			#include "entities.cginc"
 			ENDCG
 		}

@@ -24,7 +24,7 @@ namespace AI {
 			base.Spawn(_spawner);
 		}
 
-		protected virtual void OnCollisionEnter(Collision _collision) {
+		protected override void OnCollisionEnter(Collision _collision) {
 			base.OnCollisionEnter(_collision);
 
 			if (m_gameSceneController.elapsedSeconds > m_hitTime) {

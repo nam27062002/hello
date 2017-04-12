@@ -102,7 +102,7 @@ namespace AI {
                 m_target = m_homePosition;
             } else {
                 m_area = _spawner.area;
-				m_homePosition = transform.position;
+				m_homePosition = _spawner.transform.position;
 				m_guideFunction = _spawner.guideFunction;
 				m_target = m_homePosition;
 			}

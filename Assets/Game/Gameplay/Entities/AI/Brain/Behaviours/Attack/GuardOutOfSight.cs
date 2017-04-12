@@ -55,9 +55,11 @@ namespace AI {
 					Transition(OnEnemyInRange);
 				} else {
 					if (m_machine.enemy != null) {
-						Vector3 dir = m_machine.enemy.position - m_machine.position;
-						dir.y = 0f;
-						m_pilot.SetDirection(dir.normalized);
+						if (m_machine.enemy.position.x < m_machine.position.x) {
+							m_pilot.SetDirection(Vector3.left);
+						} else {
+							m_pilot.SetDirection(Vector3.right);
+						}
 					}
 
 					m_timer -= Time.deltaTime;

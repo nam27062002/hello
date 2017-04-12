@@ -131,7 +131,7 @@ public class DragonEatBehaviour : EatBehaviour {
 
 	void OnEntityEaten(Transform t, Reward reward) {
 		if (reward.health >= 0) {
-			m_dragon.AddLife(m_dragonHealth.GetBoostedHp(reward.origin, reward.health));
+			m_dragon.AddLife(m_dragonHealth.GetBoostedHp(reward.origin, reward.health), DamageType.NONE, t);
 		} else {
 			m_dragonHealth.ReceiveDamage(Mathf.Abs(reward.health), DamageType.NORMAL, t, true);
 		}
@@ -177,8 +177,8 @@ public class DragonEatBehaviour : EatBehaviour {
 
 	override protected void UpdateHoldingPrey()
 	{
+		m_dragon.AddLife( m_holdHealthGainRate * Time.deltaTime, DamageType.NONE, m_holdingPrey.transform );
 		base.UpdateHoldingPrey();
-		m_dragon.AddLife( m_holdHealthGainRate * Time.deltaTime );
 	}
 
 	override public void EndHold()

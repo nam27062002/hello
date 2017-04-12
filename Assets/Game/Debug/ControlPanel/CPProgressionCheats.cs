@@ -69,8 +69,14 @@ public class CPProgressionCheats : MonoBehaviour {
         // We need to load the default persistence in order to make UserManager.currentUser load the default data
         FGOL.Save.SaveGameManager.Instance.Load(Authenticator.Instance.User);
 
+		// Backup all preferences that must be kept between resets
+		int resetProgressCount = PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0);
+
         // Reset all preferences
         PlayerPrefs.DeleteAll();
+
+		// Restore preferences that must be kept between resets
+		PlayerPrefs.SetInt("RESET_PROGRESS_COUNT", resetProgressCount + 1);
 
 		// If required, tutorial will be auto-completed next time we reload the profile
 		Prefs.SetBoolPlayer("skipTutorialCheat", _skipTutorial);
