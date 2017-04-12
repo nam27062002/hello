@@ -349,25 +349,6 @@ if $BUILD_IOS; then
     mv -f "${OUTPUT_DIR}/ipas/Unity-iPhone.ipa" "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}"
 fi
 
-# Commit project changes
-if $COMMIT_CHANGES;then
-  print_builder "Committing changes"
-  git add "${SCRIPT_PATH}/Assets/Resources/Singletons/GameSettings.asset"
-  git add "${SCRIPT_PATH}/Assets/Resources/CaletySettings.asset"
-  git add "${SCRIPT_PATH}/ProjectSettings/ProjectSettings.asset"
-  git commit -m "Automatic Build. Version ${VERSION_ID}."
-  git push origin "${BRANCH}"
-
-  # Create Git tag
-  if $CREATE_TAG; then
-      print_builder "Pushing Tag ${VERSION_ID}"
-      set +e  # Don't exit script on error
-      git tag "${VERSION_ID}"
-      git push origin "${VERSION_ID}"
-      set -e
-  fi
-fi
-
 if $UPLOAD;then
   # Upload to Samba server
   print_builder "Sending to server"
@@ -389,6 +370,25 @@ if $UPLOAD;then
   # Unmount server and remove tmp folder
   umount server
   rmdir server
+fi
+
+# Commit project changes
+if $COMMIT_CHANGES;then
+  print_builder "Committing changes"
+  git add "${SCRIPT_PATH}/Assets/Resources/Singletons/GameSettings.asset"
+  git add "${SCRIPT_PATH}/Assets/Resources/CaletySettings.asset"
+  git add "${SCRIPT_PATH}/ProjectSettings/ProjectSettings.asset"
+  git commit -m "Automatic Build. Version ${VERSION_ID}."
+  git push origin "${BRANCH}"
+
+  # Create Git tag
+  if $CREATE_TAG; then
+      print_builder "Pushing Tag ${VERSION_ID}"
+      set +e  # Don't exit script on error
+      git tag "${VERSION_ID}"
+      git push origin "${VERSION_ID}"
+      set -e
+  fi
 fi
 
 # Done!
