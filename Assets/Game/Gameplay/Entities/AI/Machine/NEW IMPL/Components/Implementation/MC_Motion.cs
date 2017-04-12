@@ -84,6 +84,8 @@ namespace AI {
 
 		private float m_timer;
 
+		private DragonMotion m_dragon;
+
 		private State m_state;
 		private State m_nextState;
 
@@ -132,7 +134,7 @@ namespace AI {
 
 			m_groundSensorOffset = (m_machineTransform.position - m_groundSensor.position);
 
-			m_direction = Vector3.forward;
+			m_direction = Vector3.back;
 			m_velocity = Vector3.zero;
 			m_acceleration = Vector3.zero;
 
@@ -150,6 +152,9 @@ namespace AI {
 
 			m_rotation = Quaternion.LookRotation(m_direction, m_upVector);
 			m_targetRotation = m_rotation;
+
+			//----------------------------------------------------------------------------------
+			m_dragon = InstanceManager.player.dragonMotion;
 
 			//----------------------------------------------------------------------------------
 			m_state = State.Free;
@@ -198,6 +203,10 @@ namespace AI {
 					break;
 
 				case State.Locked:
+					m_direction = m_dragon.position - m_machine.position;
+					m_direction.y = 0f;
+					m_direction.Normalize();
+					m_targetRotation = Quaternion.LookRotation(m_direction + Vector3.back * 0.1f, m_upVector);
 					break;
 
 				case State.Panic:
@@ -350,11 +359,11 @@ namespace AI {
 						m_nextState = State.Free;
 					}
 				} else {
-					if		(m_machine.GetSignal(Signals.Type.FallDown)) 	 m_nextState = State.FreeFall;
+					if 		(m_machine.GetSignal(Signals.Type.LockedInCage)) m_nextState = State.Locked;
+					else if	(m_machine.GetSignal(Signals.Type.FallDown)) 	 m_nextState = State.FreeFall;
 					else if (m_machine.GetSignal(Signals.Type.Panic)) 		 m_nextState = State.Panic;
 					else if (m_machine.GetSignal(Signals.Type.Biting)) 		 m_nextState = State.Biting;
 					else if (m_machine.GetSignal(Signals.Type.Latching)) 	 m_nextState = State.Latching;
-					else if (m_machine.GetSignal(Signals.Type.LockedInCage)) m_nextState = State.Locked;
 				}
 			}
 		}
@@ -377,7 +386,8 @@ namespace AI {
 
 				case State.Locked:
 					m_rbody.isKinematic = false;
-					m_rbody.detectCollisions = true;					
+					m_rbody.detectCollisions = true;	
+					m_viewControl.Scared(false);
 					break;
 
 				case State.Panic:
@@ -408,6 +418,8 @@ namespace AI {
 				case State.Locked:
 					m_rbody.isKinematic = true;
 					m_rbody.detectCollisions = false;
+					Stop();
+					m_viewControl.Scared(true);
 					break;
 
 				case State.Panic:

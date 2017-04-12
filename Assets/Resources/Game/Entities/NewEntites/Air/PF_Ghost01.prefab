@@ -30,7 +30,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 138364}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: -21.878372, y: 47.355267, z: 0}
+  m_LocalPosition: {x: 4.2541857, y: 0.3132553, z: -2.6606321}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4521043133028824}
@@ -133,11 +133,11 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
-  m_brainResource: {fileID: 11400000, guid: f2bd5eecf5cd9480dac5dfd8f1d2cd56, type: 2}
+  m_brainResource: {fileID: 11400000, guid: 8abf7adf253e448d7bb15e811b8dcad7, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":0.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"damage":7,"duration":1.5,"dataType":"AI.Behaviour.CurseData","editorFolded":false}]'
+  m_serializedJson: '[{"damage":7,"duration":1.5,"dataType":"AI.Behaviour.CurseData","editorFolded":false},{"speed":0.25,"catchUpSpeed":0.6,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false},{"separation":5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":0.2,"catchUpSpeed":0.5,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Ghost01
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 5
@@ -382,12 +382,15 @@ MonoBehaviour:
     m_ashesAsset: 
     m_burningTime: 0
     m_dissolveTime: 1.5
-    m_ashExceptions: []
+    m_ashExceptions:
+    - {fileID: 199241708395920724}
+    - {fileID: 199582676413079912}
+    - {fileID: 199015009984204708}
   m_onSpawnSound: 
   m_airMotion:
     m_mass: 20
     m_defaultUpVector: 0
-    m_orientationSpeed: 30
+    m_orientationSpeed: 60
     m_dragonStyleRotation: 0
     m_faceDirection: 0
     m_rollRotation: 0

@@ -9,7 +9,6 @@
 		_CloudThreshold("Cloud threshold", Range(0.0, 0.5)) = 0.25
 
 		_BackgroundColor("Background color", Color) = (0.0, 0.0, 0.0, 0.0)
-		_FogColor("Fog Color", Color) = (0.4, 0.4, 0.4, 1.0)
 
 	}
 
@@ -76,7 +75,6 @@
 
 			float4	_Tint;
 			float4	_BackgroundColor;
-			float4	_FogColor;
 
 			v2f vert (appdata v)
 			{
@@ -96,9 +94,8 @@
 				intensity += tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed * 1.5, 0.3))).x;
 				intensity *= 0.5;
 				fixed4 cloudsC = lerp(_BackgroundColor, _Tint, intensity);
-//				cloudsC = lerp(cloudsC, _FogColor, clamp((i.depth - 1.0) / 40.0, 0.0, 1.0) * 0.5);
 
-				cloudsC.w = smoothstep(0.0, _CloudThreshold, intensity * (1.0 - pow(abs(vy - 0.5) * 2.0, _CloudPower)));
+				cloudsC.w = smoothstep(0.0, _CloudThreshold, intensity * (1.0 - pow(abs(vy - 0.5) * 2.0, _CloudPower))) * _Tint.w;
 				return cloudsC;
 			}
 

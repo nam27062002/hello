@@ -365,7 +365,7 @@ public class ResourcesFlow {
 		// Definitions are sorted, should be easy to find the right pack!
 		for(int i = 0; i < m_pcPackDefinitions.Count; i++) {
 			// Is it the first pack covering our target amount?
-			if(m_pcPackDefinitions[i].GetAsLong("amount") > _pcAmount) {
+			if(m_pcPackDefinitions[i].GetAsLong("amount") >= _pcAmount) {
 				// Yes!! Return it
 				return m_pcPackDefinitions[i];
 			}

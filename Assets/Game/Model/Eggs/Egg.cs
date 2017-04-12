@@ -175,7 +175,12 @@ public class Egg {
 
 				// Dispatch game event
 				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_STARTED, this);
-			} break;
+
+                NotificationsManager.SharedInstance.ScheduleNotification("sku.not.01", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_EGG_HATCHED"), "Action", (int)(incubationMinutes*60));
+
+
+                }
+                break;
 
 			// Opening
 			case State.OPENING: {
