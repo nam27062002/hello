@@ -220,6 +220,21 @@ public class AssetFinder : EditorWindow {
     /// <summary>
     /// Resets all shader keywords stored in materials or material selection
     /// </summary>
+    /// 
+    public static int checkRepeatedName(ref Spawner[] spawnerList, string name)
+    {
+        int count = 0;
+        foreach (Spawner obj in spawnerList)
+        {
+            if (obj.gameObject.name == name)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
     [MenuItem("Hungry Dragon/Tools/Spawners rename")]
     public static void SceneSpawnersRename()
     {
@@ -236,8 +251,16 @@ public class AssetFinder : EditorWindow {
                 if (prefab != null)
                 {
                     string prefabName = prefab.name;
-                    prefabName = prefabName + "_" + ((activation != null) ? activation.value.ToString("C5") : "00000") + "_" + ((deactivation != null) ? deactivation.value.ToString("C5") : "00000");
-                    Debug.Log("Object name: " + obj.gameObject.name + " - Prefab name: " + prefab.name);
+                    prefabName = prefabName + "_" + ((activation != null) ? activation.value.ToString() : "0") + "_" + ((deactivation != null) ? deactivation.value.ToString() : "0");
+                    /*
+                                        int count = checkRepeatedName(ref spawnerList, prefabName);
+                                        if (count > 0)
+                                        {
+                                            prefabName 
+                                        }
+                    */
+                    //                    Debug.Log("Object name: " + obj.gameObject.name + " - Prefab name: " + prefab.name);
+                    obj.gameObject.name = prefabName;
                 }
             }
 
