@@ -105,7 +105,7 @@ public class HUDStatBar : MonoBehaviour {
 		if ( m_type == Type.Health )
 		{
 			// Check remaining lives to show more health Icons!
-			Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
+			Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 			Messenger.AddListener(GameEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
 			RefreshIcons();
 		}
@@ -130,7 +130,7 @@ public class HUDStatBar : MonoBehaviour {
 	{
 		if ( m_type == Type.Health )
 		{
-			Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
+			Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 			Messenger.RemoveListener(GameEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
 		}
 		else if (m_type == Type.Energy)
@@ -300,7 +300,7 @@ public class HUDStatBar : MonoBehaviour {
 		return 0.01f;
 	}
 
-	void OnPlayerKo(DamageType _type)
+	void OnPlayerKo(DamageType _type, Transform _source)
 	{
 		RefreshIcons();
 	}
