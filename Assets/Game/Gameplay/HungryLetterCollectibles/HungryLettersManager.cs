@@ -203,21 +203,25 @@ public class HungryLettersManager : MonoBehaviour
 
 	private void Spawn()
 	{
+		DragonTier dragonTier = InstanceManager.player.data.tier;
 		// create a list of available indexes for the positions that can be used to spawn the letters.
 		List<int> easyAvailablePositionIndexes = new List<int>();
 		for(int i = 0; i < m_easySpawnerPoints.Count; i++)
 		{
-			easyAvailablePositionIndexes.Add(i);
+			if ( m_easySpawnerPoints[i].m_minTier <= dragonTier )
+				easyAvailablePositionIndexes.Add(i);
 		}
 		List<int> normalAvailablePositionIndexes = new List<int>();
 		for(int i = 0; i < m_normalSpawnerPoints.Count; i++)
 		{
-			normalAvailablePositionIndexes.Add(i);
+			if ( m_normalSpawnerPoints[i].m_minTier <= dragonTier )
+				normalAvailablePositionIndexes.Add(i);
 		}
 		List<int> hardAvailablePositionIndexes = new List<int>();
 		for(int i = 0; i < m_hardSpawnerPoints.Count; i++)
 		{
-			hardAvailablePositionIndexes.Add(i);
+			if ( m_hardSpawnerPoints[i].m_minTier <= dragonTier )
+				hardAvailablePositionIndexes.Add(i);
 		}
 		HungryLettersPlaceholder placeholder = null;
 		int pickedPositionIndex = -1;
@@ -228,6 +232,7 @@ public class HungryLettersManager : MonoBehaviour
 			// safety check for not being stuck in a infinite loop...
 			if(easyAvailablePositionIndexes.Count == 0 && hardAvailablePositionIndexes.Count == 0 && normalAvailablePositionIndexes.Count == 0)
 			{
+				Debug.TaggedLogError("HungryLetterManager", "No available position");
 				return;
 			}
 			// we have some available positions, then, let's go !!
