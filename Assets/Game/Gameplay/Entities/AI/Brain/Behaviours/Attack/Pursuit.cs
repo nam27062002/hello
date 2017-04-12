@@ -77,7 +77,7 @@ namespace AI {
 					}
 
 					m_targetEntity = m_machine.enemy.GetComponent<Entity>();
-					m_targetMachine = m_targetEntity.machine;
+					m_targetMachine = m_machine.enemy.GetComponent<IMachine>();
 				}
 
 				m_pursuitState = PursuitState.Move_Towards;

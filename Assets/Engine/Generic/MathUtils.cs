@@ -134,7 +134,7 @@ public class MathUtils {
 	 * This is only approximate.
 	 * Note: Ensure the arcCentreLine is a normalised vector
 	 */
-	public static bool TestCircleVsArc(Vector3 arcCentre, float arcAngle, float arcRadius, Vector3 arcCentreLine, Vector3 circleCentre, float circleRadius)
+	public static bool TestArcVsCircle(Vector3 arcCentre, float arcAngle, float arcRadius, Vector3 arcCentreLine, Vector3 circleCentre, float circleRadius)
 	{
 		Vector3 disp = circleCentre - arcCentre;
 		if(disp.sqrMagnitude <= (arcRadius + circleRadius) * (arcRadius + circleRadius))
@@ -152,6 +152,49 @@ public class MathUtils {
 		return false;
 	}
 
+	public static bool TestArcVsBounds( Vector3 arcCenter, float arcAngle, float arcRadius, Vector3 arcCenterLine, Bounds bounds )
+	{
+		bool ret = false;
+		Vector3 closestPoint = bounds.ClosestPoint( arcCenter);
+		if ( closestPoint == arcCenter )
+		{
+			ret = true;
+		}
+		else
+		{
+			Vector3 closestPointVector = closestPoint - arcCenter;
+			float distSqr = closestPointVector.sqrMagnitude;
+			if ( distSqr <= arcRadius * arcRadius )
+			{
+				float halfAngle = arcAngle / 2.0f;
+				if (Vector2.Angle( arcCenterLine, closestPointVector ) <= halfAngle)
+				{
+					ret = true;
+				}
+				else
+				{
+					Ray r = new Ray();
+					r.origin = arcCenter;
+					r.direction =  arcCenterLine.RotateXYDegrees(halfAngle);
+					float distance;
+					if ( bounds.IntersectRay(r, out distance) )
+					{
+						ret = distance <= arcRadius;
+					}
+					if (!ret)
+					{
+						r.direction =  arcCenterLine.RotateXYDegrees(-halfAngle);
+						if (bounds.IntersectRay(r, out distance))
+						{
+							ret = distance <= arcRadius;		
+						}
+					}
+				}
+			}
+		}
+		
+		return ret;
+	}
 
 	/// <summary>
 	/// Gets the bezier point.

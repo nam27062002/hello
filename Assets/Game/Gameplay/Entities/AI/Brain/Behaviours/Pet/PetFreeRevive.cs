@@ -10,11 +10,11 @@ namespace AI {
 
 
 			PetFreeRevive(){
-				Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnFreeRevive);
+				Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnFreeRevive);
 			}
 
 			~PetFreeRevive(){
-				Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnFreeRevive);
+				Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnFreeRevive);
 			}
 
 			private bool m_revive = true;
@@ -48,7 +48,7 @@ namespace AI {
 				}
 			}
 
-			void OnFreeRevive( DamageType _type ){
+			void OnFreeRevive( DamageType _type, Transform _source ){
 				if (  m_revive && InstanceManager.player != null && !InstanceManager.player.IsAlive() ){
 					// Free Revive!
 					// and tell view to lose aura

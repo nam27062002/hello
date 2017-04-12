@@ -78,12 +78,12 @@ namespace AI {
 
 				m_elapsedTime = 0f;
 
-				m_machine.SetSignal(Signals.Type.Invulnerable, true);
+				m_machine.SetSignal(Signals.Type.InvulnerableBite, true);
 				m_pilot.PressAction(Pilot.Action.Button_A);
 			}
 
 			protected override void OnExit(State _newState) {
-				m_machine.SetSignal(Signals.Type.Invulnerable, false);
+				m_machine.SetSignal(Signals.Type.InvulnerableBite, false);
 				m_pilot.ReleaseAction(Pilot.Action.Button_A);
 				m_pilot.ReleaseAction(Pilot.Action.Attack);
 

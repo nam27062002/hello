@@ -14,16 +14,20 @@ MonoBehaviour:
   m_states:
   - m_name: Wander
     m_componentAssets:
-    - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
+    - {fileID: 11400000, guid: 4e6f24a384dda4869ba539208f499717, type: 2}
     - {fileID: 11400000, guid: f108278378c454c55bf61b21322ed73a, type: 2}
-  - m_name: Dead
-    m_componentAssets: []
+    - {fileID: 11400000, guid: 3e3d3d36ab0174e08807e4ff6fc8d3c7, type: 2}
+  - m_name: Follow Leader
+    m_componentAssets:
+    - {fileID: 11400000, guid: a1225d795ea974fcf8f0cea5e3ae6843, type: 2}
+    - {fileID: 11400000, guid: f108278378c454c55bf61b21322ed73a, type: 2}
+    - {fileID: 11400000, guid: 3e3d3d36ab0174e08807e4ff6fc8d3c7, type: 2}
   m_transitionData:
   - to: 1
-    id: onBurning
-    from: -1
-  - to: 1
-    id: onChewing
-    from: -1
-  m_firstState_A: 0
-  m_firstState_B: 0
+    id: onLeaderDemoted
+    from: 0
+  - to: 0
+    id: onLeaderPromoted
+    from: 1
+  m_firstState_A: 1
+  m_firstState_B: 1

@@ -13,7 +13,6 @@ public class PrisonerSpawner : AbstractSpawner {
 	[SeparatorAttribute("Spawn")]
 	[SerializeField] private Group[]	m_groups;
 	[SerializeField] private Range		m_scale = new Range(1f, 1f);
-	[SerializeField] private Vector3	m_spawnPosition = Vector3.zero;
 	[SerializeField] private Transform	m_parent;
 	
 	private Transform[] m_parents;
@@ -26,6 +25,8 @@ public class PrisonerSpawner : AbstractSpawner {
 
     private AreaBounds m_areaBounds = new RectAreaBounds(Vector3.zero, Vector3.one);
     public override AreaBounds area { get { return m_areaBounds; } set { m_areaBounds = value; } }
+
+	public override Vector3 homePosition { get { if (m_parent != null) return m_parent.position; else return transform.position; } }
 
 	private void Awake() {
 		// Progressive respawn disabled because it respawns only one instance and it's triggered by CageBehaviour which is not prepared to loop until Respawn returns true
@@ -49,7 +50,6 @@ public class PrisonerSpawner : AbstractSpawner {
         for (int g = 0; g < m_groups.Length; g++) {			
 			for (int e = 0; e < m_groups[g].m_entityPrefabsStr.Length; e++) {
                 prefabName = m_groups[g].m_entityPrefabsStr[e];
-                
 				PoolManager.RequestPool(prefabName, IEntity.EntityPrefabsPath, 1);                
 			}
 		}
@@ -82,43 +82,26 @@ public class PrisonerSpawner : AbstractSpawner {
     }
 
     protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
-        Vector3 pos = originPos + m_spawnPosition;
-        if (index > 0) {
-            pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
-        }
-
-        Transform t = spawning.transform;
-        t.position = pos;
+        Transform t = spawning.transform;        
         t.localScale = Vector3.one * m_scale.GetRandom();
 
 		if (m_parent != null) {
 			t.parent = m_parent;
+			t.localPosition = Vector3.zero;
 		}
     }
 
 	protected override void OnMachineSpawned(AI.IMachine machine) {
         machine.LockInCage();
+		machine.position = m_parent.position;
     }
 
     protected override void OnRemoveEntity(GameObject _entity, int index) {        
         m_parents[index] = null;
     }
-    //---------------------------------------------------------------------------------------------------------   
-
-	public void UpdatePrisonerTransform(Transform _cage) {
-		Vector3 pos = transform.position + m_spawnPosition;
-
-		pos = _cage.InverseTransformVector(pos);
-		for (int i = 0; i < m_entities.Length; i++) {
-			if (m_entities[i] != null) {
-				m_entities[i].transform.position = pos;
-				m_entities[i].transform.rotation = _cage.rotation;
-			}
-		}
-	}
+    
 
 	//---------------------------------------------------------------------------------------------------------   
-
     public void SetEntitiesFree() {
         for (int i = 0; i < m_entities.Length; i++) {
             if (m_entities[i] != null) {
@@ -139,8 +122,10 @@ public class PrisonerSpawner : AbstractSpawner {
 
     //
     void OnDrawGizmosSelected() {
-        Gizmos.color = Colors.coral;
-        Gizmos.DrawSphere(transform.position + m_spawnPosition, 0.5f);
+		if (m_parent != null) {
+	        Gizmos.color = Colors.coral;
+			Gizmos.DrawSphere(m_parent.position, 0.5f);
+		}
     }
 
     //-------------------------------------------------------------------
