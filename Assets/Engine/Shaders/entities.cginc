@@ -148,8 +148,8 @@ fixed4 frag(v2f i) : SV_Target
 
 #ifdef FRESNEL
 	fixed fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelPower), 0.0, 1.0) * _FresnelColor.w;
-//	col += fresnel * _FresnelColor;
-	col.xyz = lerp(col, _FresnelColor, fresnel).xyz;
+	col += fresnel * _FresnelColor;
+//	col.xyz = lerp(col, _FresnelColor, fresnel).xyz;
 
 #endif
 
