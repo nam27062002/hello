@@ -217,6 +217,38 @@ public class AssetFinder : EditorWindow {
 
     }
 
+    /// <summary>
+    /// Resets all shader keywords stored in materials or material selection
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Spawners rename")]
+    public static void SceneSpawnersRename()
+    {
+        Spawner[] spawnerList;
+        FindAssetInScene<Spawner>(out spawnerList);
+        Undo.RecordObjects(spawnerList, "Disable static batching");
+        foreach (Spawner obj in spawnerList)
+        {
+            Spawner.SpawnCondition activation = (obj.activationTriggers.Length > 0 && obj.activationTriggers[0].type == Spawner.SpawnCondition.Type.XP) ? obj.activationTriggers[0] : null;
+            Spawner.SpawnCondition deactivation = (obj.deactivationTriggers.Length > 0 && obj.deactivationTriggers[0].type == Spawner.SpawnCondition.Type.XP) ? obj.deactivationTriggers[0] : null;
+            if (activation != null || deactivation != null)
+            {
+                Object prefab = EditorUtility.GetPrefabParent(obj.gameObject);
+                if (prefab != null)
+                {
+                    string prefabName = prefab.name;
+                    prefabName = prefabName + "_" + ((activation != null) ? activation.value.ToString("C5") : "00000") + "_" + ((deactivation != null) ? deactivation.value.ToString("C5") : "00000");
+                    Debug.Log("Object name: " + obj.gameObject.name + " - Prefab name: " + prefab.name);
+                }
+            }
+
+//            StaticEditorFlags staticFlags = GameObjectUtility.GetStaticEditorFlags(obj);
+//            staticFlags &= ~(StaticEditorFlags.BatchingStatic | StaticEditorFlags.NavigationStatic | StaticEditorFlags.OffMeshLinkGeneration | StaticEditorFlags.ReflectionProbeStatic);
+//            GameObjectUtility.SetStaticEditorFlags(obj, staticFlags);
+        }
+    }
+
+
+
     //------------------------------------------------------------------//
     // METHODS															//
     //------------------------------------------------------------------//

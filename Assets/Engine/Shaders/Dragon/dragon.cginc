@@ -76,6 +76,10 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 main = tex2D(_MainTex, i.texcoord);
 	fixed4 detail = tex2D(_DetailTex, i.texcoord);
 
+#ifdef CUTOUT
+	clip(main.a - 0.2);
+#endif
+
 #ifdef NORMALMAP
 	float3 encodedNormal = UnpackNormal(tex2D(_BumpMap, i.texcoord));
 	encodedNormal.z *= _NormalStrenght;
