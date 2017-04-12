@@ -315,6 +315,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     public virtual AreaBounds area { get; set; }
 	public Quaternion rotation { get { return transform.rotation; } }
 
+	public virtual Vector3 homePosition { get { return transform.position; } }
+
     protected virtual void RegisterInEntityManager(IEntity e)
     {
         if (EntityManager.instance != null)
