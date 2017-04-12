@@ -147,7 +147,10 @@ public class CPTrackingSettings : MonoBehaviour {
 
 		try {
 			smtpServer.Send(mail);
+			UIFeedbackText.CreateAndLaunch("Email successfully sent!", new Vector2(0.5f, 0.5f), ControlPanel.panel.parent as RectTransform, "CPFeedbackText");
 		} catch(Exception _e) {
+			UIFeedbackText feedback = UIFeedbackText.CreateAndLaunch("Error sending mail!\n" + _e.Message, new Vector2(0.5f, 0.5f), ControlPanel.panel.parent as RectTransform, "CPFeedbackText");
+			feedback.text.color = Colors.red;
 			Debug.Log(_e.Message);
 			Debug.Log(_e.GetBaseException());
 		}

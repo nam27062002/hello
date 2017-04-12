@@ -69,7 +69,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         set {
 			m_showMemoryUsage = value;
             // Activate labels to show memory usage
-			m_memoryLabel.gameObject.SetActive(true);
+			m_memoryLabel.gameObject.SetActive(m_showMemoryUsage);
         }        
     }
 
