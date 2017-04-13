@@ -7,8 +7,7 @@ namespace AI {
 		/*			  */
 		/**************/
 		[SerializeField] private bool m_enableMotion = true; // TODO: find a way to dynamically add this components
-		[SerializeField] private MachineMotion m_motion = new MachineMotion();
-		[SerializeField] private Range m_railSeparation = new Range(0.5f, 1f);
+		[SerializeField] private MC_MotionAir m_motion = new MC_MotionAir();
 
 		private Pilot m_pilot = null;
 
@@ -28,11 +27,8 @@ namespace AI {
 		public Vector3 angularVelocity	{ get{ if (m_enableMotion && m_motion != null) return m_motion.angularVelocity; else return Vector3.zero;} }
 
 		public float lastFallDistance { get { return 0; } }
-
 		public bool isKinematic{ get { return false; } set { } }
-
 		public Transform enemy { get { return null; } set { } }
-
 		public bool isPetTarget{ get { return false;} set { } }
 
 		//---------------------------------------------------------------------------------
@@ -97,19 +93,11 @@ namespace AI {
 			return null;
 		}
 
-		public void DisableSensor(float _seconds) { }
+		public void DisableSensor(float _seconds) {}
 
-		public void UseGravity(bool _value) {
-			if (m_motion != null) {
-				m_motion.useGravity = _value;
-			}
-		}
+		public void UseGravity(bool _value) {}
 
-		public void CheckCollisions(bool _value) {
-			if (m_motion != null) {
-				m_motion.checkCollisions = _value;
-			}
-		}
+		public void CheckCollisions(bool _value) {}
 
 		public void FaceDirection(bool _value) {
 			if (m_motion != null) {

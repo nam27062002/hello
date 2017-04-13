@@ -1082,7 +1082,6 @@ GameObject:
   - component: {fileID: 387488244}
   - component: {fileID: 387488247}
   - component: {fileID: 387488246}
-  - component: {fileID: 387488245}
   m_Layer: 0
   m_Name: mine spawner
   m_TagString: Untagged
@@ -1103,22 +1102,6 @@ Transform:
   m_Father: {fileID: 883113615}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &387488245
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 387488243}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_circular: 1
-  m_smoothRadius: 1.04
-  m_points:
-  - {x: -8.5299835, y: -1.1986809, z: 0}
-  - {x: 7.314392, y: -1.2404804, z: 0}
 --- !u!114 &387488246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1146,7 +1129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Air/PF_MineMedium
+  - name: Air/PF_LionBird
     chance: 100
   m_quantity:
     min: 1
@@ -2763,7 +2746,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &860254263
 Transform:
   m_ObjectHideFlags: 0
@@ -8150,7 +8133,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2061600066}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 122.3, y: 24.1, z: 0}
+  m_LocalPosition: {x: 127.7, y: 2.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 883113615}
@@ -8167,8 +8150,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -2.9881973, y: -10.923485}
-  size: {x: 44.023605, y: 34.921318}
+  offset: {x: -0.17930984, y: -0.067417145}
+  size: {x: 26.562782, y: 26.87416}
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &2061600069
 MonoBehaviour:
@@ -8183,7 +8166,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Surface/PF_Villager01
+  - name: Surface/PF_Archer02_Static
     chance: 100
   m_quantity:
     min: 1

@@ -21,16 +21,17 @@ namespace AI {
 			// m_impulse = Vector3.zero;
 
 			if (speed > 0.01f) {
-				TransformTarget();				 
+				//TransformTarget();				 
 
-				Vector3 v = m_target - transform.position;	
+				Vector3 v = m_target - m_machine.position;	
 				v = v.normalized * speed;
 				if (m_slowDown) {
 					Util.MoveTowardsVector3WithDamping(ref m_impulse, ref v, 32f * Time.deltaTime, 8.0f);
 				} else {
 					m_impulse = v;
 				}
-				Debug.DrawLine(transform.position, transform.position + m_impulse, Color.white);
+				Debug.DrawLine(m_machine.position, m_machine.position + m_impulse, Color.white);
+				Debug.DrawLine(m_machine.position, m_target, Colors.coral);
 
 				if (!m_directionForced) {// behaviours are overriding the actual direction of this machine
 					if (m_impulse.x >= 0) {
