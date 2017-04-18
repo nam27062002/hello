@@ -152,6 +152,17 @@ public class MathUtils {
 		return false;
 	}
 
+	public static bool TestArcVsPoint(Vector3 arcCentre, float arcAngle, float arcRadius, Vector3 arcCentreLine, Vector3 point)
+	{
+		Vector3 disp = point - arcCentre;
+		if(disp.sqrMagnitude <= (arcRadius * arcRadius))
+		{
+			return Vector2.Angle( arcCentreLine, disp) <= (arcAngle / 2.0f);
+		}
+		return false;
+	}
+
+
 	public static bool TestArcVsBounds( Vector3 arcCenter, float arcAngle, float arcRadius, Vector3 arcCenterLine, Bounds bounds )
 	{
 		bool ret = false;
