@@ -26,8 +26,11 @@ public class MapScroller : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed members
 	[SerializeField] private ScrollRect m_scrollRect = null;
+	[Space]
+	[InfoBox("Zoom units represent how many world units fit in the map camera's viewport (vertically)")]
+	[SerializeField] private float m_initialZoom = 100f;
+	[SerializeField] private Range m_zoomRange = new Range(40f, 400f);
 	[SerializeField] [Range(0, 1f)] private float m_zoomSpeed = 0.5f;
-	[SerializeField] private float m_minZoom = 20f;
 
 	// Internal references
 	private Camera m_camera = null;
@@ -37,6 +40,25 @@ public class MapScroller : MonoBehaviour {
 	private Vector2 m_cameraHalfSize = Vector2.one;
 	private Vector2 m_contentSize = Vector2.one;
 	private bool m_popupAnimating = false;
+
+	// Public properties
+	// Absolute zoom value
+	public float zoom {
+		get {
+			if(m_camera != null) {
+				return m_camera.orthographicSize * 2f;	// orthographicSize is half the viewport's height!
+			} else {
+				return m_initialZoom; 
+			}
+		}
+		set { SetZoom(value); }
+	}
+
+	// Zoom percentage relative to initial zoom
+	public float zoomFactor {
+		get { return m_initialZoom/zoom; }
+		set { SetZoom(1f/value * m_initialZoom); }
+	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -77,14 +99,32 @@ public class MapScroller : MonoBehaviour {
 		adjuster.targetCamera = m_camera;
 		adjuster.targetRectTransform = m_scrollRect.viewport;
 
-		// Refresh sizes
-		RefreshCameraSize();
+		// Set initial zoom or keep zoom level between openings?
+		if(Prefs.GetBoolPlayer(DebugSettings.MAP_ZOOM_RESET, true)) {
+			SetZoom(m_initialZoom); 
+		}
 
-		// Move camera to current dragon's position
-		ScrollToPlayer();
+		// Move camera to current dragon's position or keep scroll position between openings?
+		if(Prefs.GetBoolPlayer(DebugSettings.MAP_POSITION_RESET, true)) {
+			ScrollToPlayer();
+		}
 
 		// Detect scroll events
 		m_scrollRect.onValueChanged.AddListener(OnScrollChanged);
+	}
+
+	/// <summary>
+	/// First update call.
+	/// </summary>
+	private void Start() {
+		// Set initial zoom
+		SetZoom(m_initialZoom);
+
+		// Refresh sizes
+		RefreshScrollSize();
+
+		// Move camera to current dragon's position
+		ScrollToPlayer();
 	}
 
 	/// <summary>
@@ -117,17 +157,21 @@ public class MapScroller : MonoBehaviour {
 		if(m_camera == null) return;
 		if(m_levelData == null) return;
 
+		// Check for debug override
+		float zoomSpeed = Prefs.GetFloatPlayer(DebugSettings.MAP_ZOOM_SPEED, m_zoomSpeed);
+
 		// Detect zoom
-		if(m_zoomSpeed > 0f) {
+		if(zoomSpeed > 0f) {
 			// Aux vars
 			bool zoomChanged = false;
+			float newZoom = zoom;
 
 			// In editor, use mouse wheel
 			#if UNITY_EDITOR
 			// If mouse wheel has been scrolled
 			if(Input.mouseScrollDelta.sqrMagnitude > Mathf.Epsilon) {
 				// Change orthographic size based on mouse wheel
-				m_camera.orthographicSize += Input.mouseScrollDelta.y * m_zoomSpeed;
+				newZoom += Input.mouseScrollDelta.y * zoomSpeed;
 
 				// Mark dirty
 				zoomChanged = true;
@@ -154,23 +198,16 @@ public class MapScroller : MonoBehaviour {
 				float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
 
 				// ... change the orthographic size based on the change in distance between the touches.
-				m_camera.orthographicSize += deltaMagnitudeDiff * m_zoomSpeed;
+				newZoom += deltaMagnitudeDiff * zoomSpeed;
 				
 				// Mark dirty
 				zoomChanged = true;
 			}
 			#endif
 
-			// Perform some common stuff if zoom was changed
+			// Apply the zoom change!
 			if(zoomChanged) {
-				// Make sure the orthographic size is within limits
-				m_camera.orthographicSize = Mathf.Clamp(m_camera.orthographicSize, m_minZoom, m_levelData.bounds.height/2f);	// orthographicSize is half the viewport's height!
-
-				// Refresh scroll rect's sizes to match new camera viewport
-				RefreshCameraSize();
-
-				// Update camera position so it doesn't go out of bounds
-				ScrollToWorldPos(m_camera.transform.position);
+				SetZoom(newZoom);
 			}
 		}
 	}
@@ -185,6 +222,38 @@ public class MapScroller : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Set the target amount of zoom.
+	/// Will be clamped based on zoomRange and map limits.
+	/// Will be ignored if required vars are not initialized.
+	/// </summary>
+	/// <param name="_zoom">New zoom level. World units to fit in the camera's vertical viewport.</param>
+	private void SetZoom(float _zoom) {
+		// Check required params
+		if(m_camera == null) return;
+		if(m_levelData == null) return;
+
+		// Make sure new zoom level is within limits
+		float newOrthoSize = Mathf.Clamp(
+			_zoom,
+			m_zoomRange.min,
+			Mathf.Min(m_zoomRange.max, m_levelData.bounds.height)	// Never bigger than level's boundaries!
+		);
+		newOrthoSize /= 2f;	// orthographicSize is half the viewport's height!
+
+		// Apply new zoom level
+		m_camera.orthographicSize = newOrthoSize;
+
+		// Refresh scroll rect's sizes to match new camera viewport
+		RefreshScrollSize();
+
+		// Update camera position so it doesn't go out of bounds
+		ScrollToWorldPos(m_camera.transform.position);
+
+		// Notify game! (map markers)
+		Messenger.Broadcast<float>(GameEvents.UI_MAP_ZOOM_CHANGED, zoomFactor);
+	}
+
 	/// <summary>
 	/// Update the camera position in the world to match the position of the scroll rect content.
 	/// </summary>
@@ -212,9 +281,9 @@ public class MapScroller : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Update camera size and scroll components size.
+	/// Update scroll components size based on new camera size.
 	/// </summary>
-	private void RefreshCameraSize() {
+	private void RefreshScrollSize() {
 		// Make it safe
 		if(m_camera == null) return;
 		if(m_levelData == null) return;

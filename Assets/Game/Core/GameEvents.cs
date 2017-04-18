@@ -121,6 +121,7 @@ public enum GameEvents {
 	// UI events
 	UI_INGAME_PC_FEEDBACK_END,		// no params
 	UI_TOGGLE_CURRENCY_COUNTERS,	// bool _show
+	UI_MAP_ZOOM_CHANGED,			// float _zoomFactor (percentage relative to initial zoom level (0.5x, 1x, 2x, etc, the smaller the closer)
 
 	// Camera events
 	CAMERA_INTRO_DONE,			// no params

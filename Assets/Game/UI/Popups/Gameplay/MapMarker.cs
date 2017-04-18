@@ -49,6 +49,7 @@ public class MapMarker : MonoBehaviour {
 
 	// Store some original properties of the marker
 	private Vector3 m_originalScale = Vector3.one;
+	private float m_zoomScaleFactor = 1f;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -63,6 +64,7 @@ public class MapMarker : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
 		Messenger.AddListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Messenger.AddListener<float>(GameEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
 	}
 
 	/// <summary>
@@ -93,6 +95,7 @@ public class MapMarker : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
 		Messenger.RemoveListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Messenger.RemoveListener<float>(GameEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
 	}
 
 	//------------------------------------------------------------------------//
@@ -124,9 +127,13 @@ public class MapMarker : MonoBehaviour {
 		transform.localPosition = Vector3.zero;
 
 		// Compensate parent's scale factor (i.e. if parent is a dragon, which scales with level, or if parent has a non-linear scale)
-		//Vector3 parentScale = parentTransform.lossyScale;
-		//transform.localScale = new Vector3(m_originalScale.x / parentScale.x, m_originalScale.y / parentScale.y, m_originalScale.z / parentScale.z);
-		transform.localScale = new Vector3(m_originalScale.x, m_originalScale.y, 1f);	// [AOC] Don't like it, plust Z scale should always be 1
+		// Also apply minimap's zoom correction so markers keep a constant size
+		Vector3 parentScale = transform.parent.lossyScale;	// Global scale of the parent
+		transform.localScale = new Vector3(
+			m_originalScale.x / parentScale.x / m_zoomScaleFactor, // If smaller zoom (closer), make marker bigger and vice-versa
+			m_originalScale.y / parentScale.y / m_zoomScaleFactor, 
+			1f	// We don't care about Z scaling
+		);
 
 		// Apply parent's rotation - only in the XY plane
 		if(m_rotateWithObject) {
@@ -180,5 +187,17 @@ public class MapMarker : MonoBehaviour {
 		// Update marker will do the job
 		// Add some delay to give time for feedback to show off
 		DOVirtual.DelayedCall(0.25f, UpdateMarker, true);
+	}
+
+	/// <summary>
+	/// The zoom has changed in the minimap.
+	/// </summary>
+	/// <param name="_zoomFactor">Percentage relative to initial zoom level (0.5x, 1x, 2x, etc, the smaller the closer.</param>
+	private void OnMapZoomChanged(float _zoomFactor) {
+		// Update zoom correction factor
+		m_zoomScaleFactor = _zoomFactor;
+
+		// Refresh marker
+		UpdateMarker();
 	}
 }
