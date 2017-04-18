@@ -1576,10 +1576,13 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_direction = m_impulse.normalized;
 	}
 		
-	public void AddForce(Vector3 _force) {
+	public void AddForce(Vector3 _force, bool isDamage = true) {
 		if ( m_dragon.IsInvulnerable() )
 			return;
-		m_animator.SetTrigger("damage");
+		if ( isDamage )
+		{
+			m_animator.SetTrigger("damage");
+		}
 		m_impulse = _force;
 		if ( IsAliveState() )
 			ChangeState(State.Stunned);
