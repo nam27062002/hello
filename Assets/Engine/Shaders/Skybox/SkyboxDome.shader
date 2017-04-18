@@ -5,6 +5,9 @@ Shader "Hungry Dragon/Skybox/Dome Skybox" {
 Properties {
 	_MainTex ("Base layer (RGB)", 2D) = "white" {}
 	_DetailTex ("2nd layer (RGB)", 2D) = "white" {}
+	_DetailOffset("Initial detail offset:", Vector) = (0.0, 0.0, 0.0, 0.0)
+	_UpColor("Up Color", Color) = (1.0, 1.0, 1.0, 1.0)
+	_DownColor("Down Color", Color) = (1.0, 1.0, 1.0, 1.0)
 }
 
 SubShader {
@@ -14,8 +17,7 @@ SubShader {
 	ZWrite Off
 	
 	LOD 100
-	
-		
+			
 	CGINCLUDE
 	#pragma multi_compile LIGHTMAP_OFF LIGHTMAP_ON
 	#include "UnityCG.cginc"
@@ -26,6 +28,10 @@ SubShader {
 
 	float4 _MainTex_ST;
 	float4 _DetailTex_ST;
+
+	float2 _DetailOffset;
+	float4 _UpColor;
+	float4 _DownColor;
 
 	HG_FOG_VARIABLES
 
@@ -39,7 +45,8 @@ SubShader {
 		float4 pos : SV_POSITION;
 		float2 uv : TEXCOORD0;
 		float2 uv2 : TEXCOORD1;
-		HG_FOG_COORDS(2)
+		float  height : TEXCOORD2;
+		HG_FOG_COORDS(3)
 	};
 
 	
@@ -48,6 +55,7 @@ SubShader {
 		v2f o;
 		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 		o.uv = TRANSFORM_TEX(v.texcoord.xy,_MainTex); 
+		o.height = v.texcoord.y;
 		o.uv2 = TRANSFORM_TEX(v.texcoord.xy,_DetailTex);
 		HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
 		return o;
@@ -64,13 +72,21 @@ SubShader {
 		{
 			
 			fixed4 tex = tex2D (_MainTex, i.uv);
-			fixed4 tex2 = tex2D (_DetailTex, i.uv2);
+			fixed4 tex2 = tex2D (_DetailTex, i.uv2 + _DetailOffset);
 			
 
 			fixed4 one = fixed4(1,1,1,1);
 			fixed4 col = one - (one-tex) * (one-tex2);
 
+			float4 grad = lerp(_DownColor, _UpColor, i.height * 1.0);
+
+//			return grad;
+
 			HG_APPLY_FOG(i, col);	// Fog
+
+			col *= grad;
+
+
 			UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 
 			return col;
