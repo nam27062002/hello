@@ -282,8 +282,8 @@ public class WorldMemoryController : MonoBehaviour {
     private void AnalizePerType()
     {
         //List<GameObject> all = new List<GameObject>();
-        List<GameObject> all = GameObjectExt.FindAllObjectsInScene(true);
-        /*for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+        /*List<GameObject> all = GameObjectExt.FindAllObjectsInScene(true);
+        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
         {
             var s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
             if (s.isLoaded)
@@ -304,7 +304,7 @@ public class WorldMemoryController : MonoBehaviour {
                 go = (gos[i] as Entity).gameObject;
                 all.Add(go);
             }
-        }*/
+        }
 
         //all.Add(PoolManager.instance.gameObject);
         //all.Add(ParticleManager.instance.gameObject);
@@ -323,6 +323,7 @@ public class WorldMemoryController : MonoBehaviour {
 
         string texturesFile = "AssetMemoryAnalysis_Textures";
         AssetMemoryProfilerPrinter.Print(texturesFile, data, AssetMemoryPrinterSortType.HighToLow);
+        */
 
         /*Texture[] texturesResources = Resources.FindObjectsOfTypeAll(typeof(Texture)) as Texture[];
         int count = texturesResources.Length;
@@ -378,6 +379,7 @@ public class WorldMemoryController : MonoBehaviour {
         List<Decoration> decorations = new List<Decoration>();
         List<ParticleSystem> psystems = new List<ParticleSystem>();
 
+        /*
         List<GameObject> gos = GameObjectExt.FindAllObjectsInScene(true);
         if (gos != null)
         {
@@ -420,6 +422,7 @@ public class WorldMemoryController : MonoBehaviour {
         ProfilerToData(m_petsMemory);
         ProfilerToData(m_npcsMemory);
         ProfilerToData(m_particlesMemory);
+        */
     }
 
     private void RemoveGoAndChildren(List<GameObject> allGos, GameObject goToRemove)
