@@ -45,6 +45,11 @@ uniform samplerCUBE _ReflectionMap;
 uniform float _ReflectionAmount;
 #endif
 
+#ifdef AUTOINNERLIGHT
+uniform float _InnerLightWavePhase;
+uniform float _InnerLightWaveSpeed;
+#endif
+
 v2f vert(appdata_t v)
 {
 	v2f o;
@@ -133,7 +138,13 @@ fixed4 frag(v2f i) : SV_Target
 #endif
 
 	// Inner lights
+#ifdef AUTOINNERLIGHT
+	float2 wave = (i.texcoord * _InnerLightWavePhase) + float2(_Time.y * _InnerLightWaveSpeed, _Time.y * _InnerLightWaveSpeed * 0.33333);
+//	fixed4 selfIlluminate = (col * (detail.r * _InnerLightColor)) * abs(cos(wave.x) * sin(_Time.y) ) * 4.0;
+	fixed4 selfIlluminate = col * (detail.r * ((cos(wave.x) + 1.0) * 0.5) * ((sin(_Time.y) + 1.0) * 0.5)) * 1.0;
+#else
 	fixed4 selfIlluminate = (col * (detail.r * _InnerLightAdd * _InnerLightColor));
+#endif
 	// fixed4 col = (diffuse + fixeW4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _Tint + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
 	col = (diffuse + fixed4(i.vLight, 0.0)) * col * _Tint + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor) + _AmbientAdd; // To use ShaderSH9 better done in vertex shader
 
