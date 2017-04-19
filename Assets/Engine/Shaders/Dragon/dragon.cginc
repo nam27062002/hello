@@ -139,9 +139,12 @@ fixed4 frag(v2f i) : SV_Target
 
 	// Inner lights
 #ifdef AUTOINNERLIGHT
-	float2 wave = (i.texcoord * _InnerLightWavePhase) + float2(_Time.y * _InnerLightWaveSpeed, _Time.y * _InnerLightWaveSpeed * 0.33333);
-//	fixed4 selfIlluminate = (col * (detail.r * _InnerLightColor)) * abs(cos(wave.x) * sin(_Time.y) ) * 4.0;
-	fixed4 selfIlluminate = col * (detail.r * ((cos(wave.x) + 1.0) * 0.5) * ((sin(_Time.y) + 1.0) * 0.5)) * 1.0;
+	float wave = (i.texcoord.x * _InnerLightWavePhase) + (_Time.y * _InnerLightWaveSpeed);
+	fixed satMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
+//	satMask *= detail.r *(((cos(wave.x) + 1.0) * 0.5) * ((sin(_Time.y) + 1.0) * 0.5)) * 10.0;
+	satMask *= detail.r * ((cos(wave) + 1.0) * 0.5) * ((sin(_Time.y * _InnerLightWaveSpeed) + 1.0) * 0.5) * 15.0;
+	fixed4 selfIlluminate = lerp(fixed4(0.0, 0.0, 0.0, 0.0), _InnerLightColor, satMask);
+
 #else
 	fixed4 selfIlluminate = (col * (detail.r * _InnerLightAdd * _InnerLightColor));
 #endif
