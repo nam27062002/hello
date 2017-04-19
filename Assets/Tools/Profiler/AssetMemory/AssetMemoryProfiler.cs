@@ -8,11 +8,15 @@ using UnityEngine;
 /// Two game objects that share the same assets won't double the total amount of memory consumed.
 /// </summary>
 public class AssetMemoryProfiler
-{
+{    
     /// <summary>
     /// List of game objects to take into consideration for the analysis.
     /// </summary>
     public List<AssetMemoryGlobals.GoExtended> Gos;
+
+    private Dictionary<string, List<AssetMemoryGlobals.GoExtended>> GosPerLabel;
+
+    public List<string> Labels { get; set; }
 
     private bool ContainsGo(GameObject go)
     {
@@ -43,9 +47,19 @@ public class AssetMemoryProfiler
         {
             Gos.Clear();
         }
+
+        if (Labels != null)
+        {
+            Labels.Clear();
+        }
+
+        if (GosPerLabel != null)
+        {
+            GosPerLabel.Clear();
+        }
     }
 
-    public void AddGo(GameObject go, string label, string path="")
+    public void AddGo(GameObject go, string label="", string path="")
     {
         if (Gos == null)
         {
@@ -55,12 +69,34 @@ public class AssetMemoryProfiler
         // Makes sure that go hasn't been registered yet
         if (!ContainsGo(go))
         {
-            AssetInformationStruct info = new AssetInformationStruct(go.name, AssetMemoryGlobals.EAssetType.Other, path, UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(go));
+            AssetInformationStruct info = new AssetInformationStruct(go, go.name, AssetMemoryGlobals.EAssetType.Other, path, UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(go));
             AssetMemoryGlobals.GoExtended goEx= new AssetMemoryGlobals.GoExtended(go, label, info);
             Gos.Add(goEx);
 
             AnalyzeObject(go, ref info);
-        }
+
+            if (Labels == null)
+            {
+                Labels = new List<string>();
+            }
+
+            if (!Labels.Contains(label))
+            {
+                Labels.Add(label);
+            }
+
+            if (GosPerLabel == null)
+            {
+                GosPerLabel = new Dictionary<string, List<AssetMemoryGlobals.GoExtended>>();
+            }
+
+            if (!GosPerLabel.ContainsKey(label))
+            {
+                GosPerLabel.Add(label, new List<AssetMemoryGlobals.GoExtended>());
+            }
+
+            GosPerLabel[label].Add(goEx);
+        }       
     }
 
     public void RemoveGo(GameObject go)
@@ -70,39 +106,154 @@ public class AssetMemoryProfiler
             AssetMemoryGlobals.GoExtended goEx = GetGoExtended(go);
             if (goEx != null)
             {
+                if (GosPerLabel != null && GosPerLabel.ContainsKey(goEx.Label))
+                {
+                    GosPerLabel[goEx.Label].Remove(goEx);
+                    if (GosPerLabel[goEx.Label].Count == 0)
+                    {
+                        GosPerLabel.Remove(goEx.Label);
+                        Labels.Remove(goEx.Label);
+                    }
+                }
+
                 Gos.Remove(goEx);
             }
-        }
+        }        
+    }
+        
+    public void MoveGoToLabel(GameObject go, string label)
+    {
+        if (GosPerLabel != null)
+        {            
+            foreach (KeyValuePair<string, List<AssetMemoryGlobals.GoExtended>> pair in GosPerLabel)
+            {
+                if (pair.Key != label)
+                {
+                    if (Label_ContainsGo(pair.Key, go))
+                    {
+                        Label_RemoveGo(pair.Key, go);
+                    }
+                }
+            }
+
+            if (!Label_ContainsGo(label, go))
+            {
+                AddGo(go, label);
+            }
+        }        
     }
 
-    public void AddTexture(Texture texture, string label, string name)
+    private bool Label_ContainsGo(string label, GameObject go)
+    {
+        bool returnValue = false;
+
+        if (GosPerLabel != null && GosPerLabel.ContainsKey(label))
+        {
+            List<AssetMemoryGlobals.GoExtended> gos = GosPerLabel[label];            
+            if (gos != null)
+            {
+                int count = gos.Count;
+                for (int i = 0; i < count && !returnValue; i++)
+                {
+                    if (gos[i].Contains(go))
+                    {
+                        returnValue = true;
+                    }
+                }
+            }
+        }
+
+        return returnValue;
+    }
+
+    private void Label_RemoveGo(string label, GameObject go)
+    {
+        if (GosPerLabel != null && GosPerLabel.ContainsKey(label))
+        {
+            List<AssetMemoryGlobals.GoExtended> gos = GosPerLabel[label];
+            if (gos != null)
+            {                
+                for (int i = 0; i < gos.Count;)
+                {
+                    if (gos[i].Contains(go))
+                    {
+                        gos[i].RemoveGo(go);                        
+                    }
+
+                    if (gos[i].Go == go)
+                    {                        
+                        RemoveGo(go);                     
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+            }
+        }
+    }        
+
+    public List<AssetMemoryGlobals.GoExtended> GetGosPerLabel(string label)
+    {
+        List<AssetMemoryGlobals.GoExtended> returnValue = null;
+        if (GosPerLabel != null && GosPerLabel.ContainsKey(label))
+        {
+            returnValue = GosPerLabel[label];
+        }
+
+        return returnValue;
+    }
+
+    public void AddTexture(GameObject go, Texture texture, string label, string name)
     {
         if (texture != null)
         {
-            AssetInformationStruct info = new AssetInformationStruct(name, AssetMemoryGlobals.EAssetType.Other, null, 0);
+            if (Gos == null)
+            {
+                Gos = new List<AssetMemoryGlobals.GoExtended>();
+            }
+
+            AssetInformationStruct info = new AssetInformationStruct(go, name, AssetMemoryGlobals.EAssetType.Other, null, 0);
             AssetMemoryGlobals.GoExtended goEx = new AssetMemoryGlobals.GoExtended(null, label, info);
             Gos.Add(goEx);
 
-            AddTexture(texture, "RenderTexture", ref info);            
+            if (GosPerLabel == null)
+            {
+                GosPerLabel = new Dictionary<string, List<AssetMemoryGlobals.GoExtended>>();
+            }
+
+            if (Labels == null)
+            {
+                Labels = new List<string>();
+            }
+
+            if (!Labels.Contains(label))
+            {
+                Labels.Add(label);
+            }
+
+            if (!GosPerLabel.ContainsKey(label))
+            {
+                GosPerLabel.Add(label, new List<AssetMemoryGlobals.GoExtended>());
+            }
+
+            GosPerLabel[label].Add(goEx);
+
+            AddTexture(go, texture, "RenderTexture", ref info);            
         }
     }
 
-    private void AddTexture(Texture texture, string subtype, ref AssetInformationStruct info)
+    private void AddTexture(GameObject go, Texture texture, string subtype, ref AssetInformationStruct info)
     {        
         if (texture != null)
-        {            
-            AssetInformationStruct diffuse = new AssetInformationStruct();
-            diffuse.Name = texture.name;
-            diffuse.Type = AssetMemoryGlobals.EAssetType.Texture;
-            diffuse.Subtype = subtype;
-            diffuse.Path = GetAssetPath(texture);
-
+        {
+            int size = 0;
 #if UNITY_EDITOR
-            diffuse.Size = CalculateTextureSizeBytes(texture);
+            size = CalculateTextureSizeBytes(texture);
 #else
-            diffuse.Size = UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(texture);
-#endif            
-
+            size = UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(texture);
+#endif           
+            AssetInformationStruct diffuse = new AssetInformationStruct(go, texture.name, AssetMemoryGlobals.EAssetType.Texture, GetAssetPath(texture), size);            
             info.AddChild(diffuse);
         }
     }
@@ -129,36 +280,95 @@ public class AssetMemoryProfiler
         }
 
         return returnValue;
-    }
+    }   
 
-    public long GetSize()
+    /// <summary>
+    /// Returns the memory size taken up by the game objects registered regardless their asset type
+    /// </summary>
+    /// <param name="label">If <c>null</c> then all game objects are taken into consideration. A non null value returns the memory size taken up only by game objects labelled with <c>label</c></param>
+    /// <returns></returns>
+    public long GetSize(string label=null)
     {
         long returnValue = 0;
         if (Gos != null)
         {
             List<string> assetPaths = new List<string>();
 
-            int count = Gos.Count;
-            for (int i = 0; i < count; i++)
+            List<AssetMemoryGlobals.GoExtended> gos = null;
+            if (label == null)
             {
-                returnValue += Gos[i].Info.GetSize(assetPaths);
+                gos = Gos;
+            }
+            else if (GosPerLabel != null && GosPerLabel.ContainsKey(label))
+            {
+                gos = GosPerLabel[label];
+            }
+
+            if (gos != null)
+            {
+                int count = gos.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    returnValue += gos[i].Info.GetSize(assetPaths);
+                }
             }
         }
 
         return returnValue;
     }
 
-    public long GetSizePerType(AssetMemoryGlobals.EAssetType type)
+    public long GetSizePerType(AssetMemoryGlobals.EAssetType type, string label=null)
     {
         long returnValue = 0;
         if (Gos != null)
         {
             List<string> assetPaths = new List<string>();
 
-            int count = Gos.Count;
-            for (int i = 0; i < count; i++)
+            List<AssetMemoryGlobals.GoExtended> gos = null;
+            if (label == null)
             {
-                returnValue += Gos[i].Info.GetSizePerType(type, assetPaths);
+                gos = Gos;
+            }
+            else if (GosPerLabel != null && GosPerLabel.ContainsKey(label))
+            {
+                gos = GosPerLabel[label];
+            }
+
+            if (gos != null)
+            {
+                int count = gos.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    returnValue += gos[i].Info.GetSizePerType(type, assetPaths);
+                }
+            }
+        }
+
+        return returnValue;
+    }
+
+    public Dictionary<string, long> GetDetailedSizePerType(AssetMemoryGlobals.EAssetType type, string label = null)
+    {
+        Dictionary<string, long> returnValue = new Dictionary<string, long>();
+        if (Gos != null)
+        {            
+            List<AssetMemoryGlobals.GoExtended> gos = null;
+            if (label == null)
+            {
+                gos = Gos;
+            }
+            else if (GosPerLabel != null && GosPerLabel.ContainsKey(label))
+            {
+                gos = GosPerLabel[label];
+            }
+
+            if (gos != null)
+            {
+                int count = gos.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    gos[i].Info.GetDetailedSizePerType(type, returnValue);                    
+                }
             }
         }
 
@@ -177,12 +387,20 @@ public class AssetMemoryProfiler
         AnalyzeTextureFromShadersSettings(go, ref info);        
 #endif
 
-        foreach (Transform child in go.GetComponentInChildren<Transform>())
+        ParticleSystem p = go.GetComponent<ParticleSystem>();
+        if (p != null)
         {
-            AssetInformationStruct cc = new AssetInformationStruct(child.gameObject.name, AssetMemoryGlobals.EAssetType.Other);
+            AssetInformationStruct aa = new AssetInformationStruct(go, p.name, AssetMemoryGlobals.EAssetType.ParticleSystem,
+                null, UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(p));
+            info.AddChild(aa);
+        }
+
+        /*foreach (Transform child in go.GetComponentInChildren<Transform>())
+        {
+            AssetInformationStruct cc = new AssetInformationStruct(child.gameObject, child.gameObject.name, AssetMemoryGlobals.EAssetType.Other, "", UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(child.gameObject));
             AnalyzeObject(child.gameObject, ref cc);
             info.AddChild(cc);
-        }
+        }*/
     }
 		
 
@@ -207,7 +425,7 @@ public class AssetMemoryProfiler
                     {
                         subtype = UnityEditor.ShaderUtil.GetPropertyName(shader, i);
                         texture = ren.sharedMaterial.GetTexture(subtype);
-                        AddTexture(texture, subtype, ref info);                        
+                        AddTexture(go, texture, subtype, ref info);                        
                     }
                 }
             }                       
@@ -227,7 +445,7 @@ public class AssetMemoryProfiler
                 foreach (var texDef in textureNames)
                 {
                     Texture texture = ren.sharedMaterial.GetTexture(texDef);
-                    AddTexture(texture, texDef, ref info);
+                    AddTexture(go, texture, texDef, ref info);
                 }
 
             }
@@ -245,7 +463,7 @@ public class AssetMemoryProfiler
             {
                 foreach (AnimationClip anim in animator.runtimeAnimatorController.animationClips)
                 {
-                    AssetInformationStruct aa = new AssetInformationStruct(anim.name, AssetMemoryGlobals.EAssetType.Animation, 
+                    AssetInformationStruct aa = new AssetInformationStruct(go, anim.name, AssetMemoryGlobals.EAssetType.Animation, 
                         GetAssetPath(anim), UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(anim));                    
                     info.AddChild(aa);
                 }
@@ -255,7 +473,7 @@ public class AssetMemoryProfiler
         Animation[] anims = go.GetComponents<Animation>();
         foreach (Animation anim in anims)
         {                
-            AssetInformationStruct aa = new AssetInformationStruct(anim.name, AssetMemoryGlobals.EAssetType.Animation, 
+            AssetInformationStruct aa = new AssetInformationStruct(go, anim.name, AssetMemoryGlobals.EAssetType.Animation, 
                 anim.name, UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(anim));            
             info.AddChild(aa);                       
         }
@@ -270,7 +488,7 @@ public class AssetMemoryProfiler
         {
             if (mrender.sharedMesh != null)
             {
-                AssetInformationStruct aa = new AssetInformationStruct(mrender.sharedMesh.name, AssetMemoryGlobals.EAssetType.Mesh,
+                AssetInformationStruct aa = new AssetInformationStruct(go, mrender.sharedMesh.name, AssetMemoryGlobals.EAssetType.Mesh,
                     GetAssetPath(mrender.sharedMesh), UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(mrender.sharedMesh));                
                 info.AddChild(aa);                
             }
@@ -281,7 +499,7 @@ public class AssetMemoryProfiler
         {
             if (mrender.sharedMesh != null)
             {
-                AssetInformationStruct aa = new AssetInformationStruct(mrender.sharedMesh.name, AssetMemoryGlobals.EAssetType.Mesh,
+                AssetInformationStruct aa = new AssetInformationStruct(go, mrender.sharedMesh.name, AssetMemoryGlobals.EAssetType.Mesh,
                     GetAssetPath(mrender.sharedMesh), UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(mrender.sharedMesh));               
                 info.AddChild(aa);                
             }

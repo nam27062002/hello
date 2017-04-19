@@ -8,6 +8,7 @@ Properties {
 	_DetailOffset("Initial detail offset:", Vector) = (0.0, 0.0, 0.0, 0.0)
 	_UpColor("Up Color", Color) = (1.0, 1.0, 1.0, 1.0)
 	_DownColor("Down Color", Color) = (1.0, 1.0, 1.0, 1.0)
+	_SatThreshold("Saturation threshold", Range(0.0, 1.0)) = 0.5
 }
 
 SubShader {
@@ -32,6 +33,8 @@ SubShader {
 	float2 _DetailOffset;
 	float4 _UpColor;
 	float4 _DownColor;
+
+	float	_SatThreshold;
 
 	HG_FOG_VARIABLES
 
@@ -78,14 +81,22 @@ SubShader {
 			fixed4 one = fixed4(1,1,1,1);
 			fixed4 col = one - (one-tex) * (one-tex2);
 
-			float4 grad = lerp(_DownColor, _UpColor, i.height * 1.0);
+			fixed sat = smoothstep(_SatThreshold, 1.0, 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b);
+
+			float4 grad = lerp(_DownColor, _UpColor, i.height);
+//			return grad;
+
+			col = lerp(grad, col, sat);
+
+			float4 colbackup = col;
 
 //			return grad;
 
 			HG_APPLY_FOG(i, col);	// Fog
 
-			col *= grad;
-
+//			col = lerp(colbackup, col, _DownColor.w);
+			col = lerp(colbackup, col, fogCol.w * _DownColor.w);
+			
 
 			UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 

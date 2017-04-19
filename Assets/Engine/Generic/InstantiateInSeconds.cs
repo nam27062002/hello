@@ -59,7 +59,7 @@ public class InstantiateInSeconds : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Timer!
-		if(m_delay >= 0f) {
+		if(m_delay > 0f) {
 			m_delay -= Time.deltaTime;
 			if(m_delay <= 0f) {
 				DoInstantiate();
@@ -76,7 +76,7 @@ public class InstantiateInSeconds : MonoBehaviour {
 	private void DoInstantiate() {
 		// Use ourselves as parent if not defined
 		Transform parent = m_targetParent == null ? this.transform : m_targetParent;
-		GameObject.Instantiate(m_prefab, m_targetParent, false);
+		GameObject.Instantiate(m_prefab, parent, false);
 	}
 
 	//------------------------------------------------------------------------//

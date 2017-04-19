@@ -85,11 +85,13 @@ namespace AI {
 				EntityManager.instance.UnregisterEntity(m_entity as Entity);
 		}
 
-		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer) {			
+		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer, bool _isPlayer) {			
 			if (_rewardsPlayer) {
 				// Get the reward to be given from the entity
 				Reward reward = (m_entity as Entity).GetOnKillReward(false);
-				reward.alcohol = 0;
+				if (!_isPlayer){
+					reward.alcohol = 0;
+				}
 				// Dispatch global event
 				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_machine.transform, reward);
 			}
