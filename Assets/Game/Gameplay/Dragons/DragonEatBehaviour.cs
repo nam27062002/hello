@@ -136,7 +136,8 @@ public class DragonEatBehaviour : EatBehaviour {
 			m_dragonHealth.ReceiveDamage(Mathf.Abs(reward.health), DamageType.NORMAL, t, true);
 		}
 		m_dragon.AddEnergy(reward.energy);
-		m_dragon.AddAlcohol(reward.alcohol);
+		if (reward.alcohol != 0)
+			m_dragon.AddAlcohol(reward.alcohol);
 	}
 
 	void OnMultiplierLost()
