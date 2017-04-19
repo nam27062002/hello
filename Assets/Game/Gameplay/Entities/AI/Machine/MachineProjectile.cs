@@ -109,8 +109,8 @@ namespace AI {
 			}
 		}
 
-		public void BeginSwallowed(Transform _transform, bool _rewardPlayer) {
-			m_edible.BeingSwallowed(_transform, _rewardPlayer); 
+		public void BeginSwallowed(Transform _transform, bool _rewardPlayer, bool _isPlayer) {
+			m_edible.BeingSwallowed(_transform, _rewardPlayer, _isPlayer); 
 		}
 
 		public void EndSwallowed(Transform _transform) {
