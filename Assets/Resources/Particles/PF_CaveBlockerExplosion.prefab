@@ -53,6 +53,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000011245915980}
+  - component: {fileID: 114181903769363302}
   m_Layer: 0
   m_Name: PF_CaveBlockerExplosion
   m_TagString: Untagged
@@ -132,6 +133,20 @@ Transform:
   m_Father: {fileID: 4000011245915980}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -9.52, y: -90.00001, z: 90.00001}
+--- !u!114 &114181903769363302
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013285233744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activeTime: 2
+  m_returnTo: 1
+  m_disableOnInvisible: 1
 --- !u!198 &198000010531247240
 ParticleSystem:
   m_ObjectHideFlags: 1
