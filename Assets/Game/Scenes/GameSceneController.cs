@@ -148,7 +148,7 @@ public class GameSceneController : GameSceneControllerBase {
         // [AOC] Editor utility: open pause popup
         #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.P)) {
-			PopupManager.OpenPopupInstant(PopupInGameSettings.PATH);
+			PopupManager.OpenPopupInstant(PopupInGameMap.PATH);
 		}
 		else if (Input.GetKeyDown(KeyCode.I))
 		{
@@ -420,7 +420,8 @@ public class GameSceneController : GameSceneControllerBase {
 		// Actions to perform when leaving the current state
 		switch(m_state) {
 			case EStates.LOADING_LEVEL: {
-				// Nothing to do
+				// Initialize level's map
+				InitLevelMap();
 			} break;
 
 			case EStates.ACTIVATING_LEVEL: {
