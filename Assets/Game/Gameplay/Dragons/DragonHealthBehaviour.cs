@@ -70,7 +70,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
         m_damageMultiplier = 0;
 
 		//
-		m_damageAnimState = Animator.StringToHash("Damage");
+		m_damageAnimState = Animator.StringToHash("BaseLayer.Damage");
 	}
 		
 	// Update is called once per frame
@@ -242,7 +242,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		if ( m_animator != null )
 		{
 			AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
-			if (stateInfo.shortNameHash != m_damageAnimState) { // not working
+			if (stateInfo.shortNameHash != m_damageAnimState) {
 				m_animator.SetTrigger("damage");// receive damage?
 			}
 		}
