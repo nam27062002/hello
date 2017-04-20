@@ -6410,6 +6410,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: 
   m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
 --- !u!114 &114352189702019248
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6568,6 +6569,8 @@ MonoBehaviour:
       max: 0.25
   m_onSpawnSound: 
   m_rotateToMouth: 3
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -6593,6 +6596,10 @@ MonoBehaviour:
   m_holdingBloodParticle:
     name: PS_Blood_Explosion_Medium
     path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_holdingFreezeParticle:
+    name: PS_IceExplosionSmall
+    path: 
     offset: {x: 0, y: 0, z: 0}
   m_burpSound: 
   m_canEatEntities: 1
@@ -6772,8 +6779,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4286374655
-  m_fontColor: {r: 1, g: 0.8862745, b: 0.4862745, a: 1}
+    rgba: 4285429408
+  m_fontColor: {r: 0.627451, g: 0.4627451, b: 0.43137255, a: 1}
   m_enableVertexGradient: 0
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
@@ -6930,6 +6937,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Soldier_Spine1
   m_parentRoot: {fileID: 4537575669683328}
+  m_worldPositionStays: 1
 --- !u!114 &114709000700192378
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7094,7 +7102,10 @@ MonoBehaviour:
   m_tierNoTurboBreak: 0
   m_hitCount: 1
   m_destroyOnBreak: 1
-  m_onBreakParticle: PF_CaveBlockerExplosion
+  m_onBreakParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBreakAudio: Rocks
   m_view: {fileID: 4796231979967396}
 --- !u!114 &114901521297759232
@@ -7184,6 +7195,8 @@ MonoBehaviour:
       max: 0
   m_onSpawnSound: 
   m_rotateToMouth: 3
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -7217,8 +7230,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4286374655
-  m_fontColor: {r: 1, g: 0.8862745, b: 0.4862745, a: 1}
+    rgba: 4285363616
+  m_fontColor: {r: 0.628, g: 0.46273685, b: 0.42968422, a: 1}
   m_enableVertexGradient: 0
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
@@ -39444,7 +39457,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.0979309, y: -19.948477}
+  m_AnchoredPosition: {x: -1.0979309, y: -19.948456}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224413400612382132
@@ -39463,7 +39476,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000030517578, y: 34.125015}
+  m_AnchoredPosition: {x: -0.000045776367, y: 34.125046}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224502318328564866

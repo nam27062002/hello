@@ -37,6 +37,8 @@ public class PopupDragonInfo : MonoBehaviour {
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_healthText = null;
 	[SerializeField] private TextMeshProUGUI m_energyText = null;
+	[Space]
+	[SerializeField] private Image m_tierIcon = null;
 	[SerializeField] private Localizer m_tierInfoText = null;
 
 	// Edibles/Destructibles layout
@@ -196,7 +198,7 @@ public class PopupDragonInfo : MonoBehaviour {
 		if(m_loadedTier != dragonData.tier) {
 			// Tier icon
 			string tierIcon = dragonData.tierDef.GetAsString("icon");
-			//m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierIcon);
+			m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierIcon);
 
 			// Tier description
 			// %U0 dragons can equip <color=%U1>%U2 pets</color> and give a <color=%U1>%U3</color> 
@@ -381,7 +383,7 @@ public class PopupDragonInfo : MonoBehaviour {
 				m = renderers[i].materials[j];
 
 				// Default IDs
-				fresnelFactorID = "_FresnelFactor";
+				fresnelFactorID = "_FresnelPower";
 				fresnelColorID = "_FresnelColor";
 
 				// If the material doesn't have fresnel properties, replace by default material

@@ -11225,6 +11225,8 @@ MonoBehaviour:
       max: 0
   m_onSpawnSound: 
   m_rotateToMouth: 3
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -11331,6 +11333,8 @@ MonoBehaviour:
       max: 1
   m_onSpawnSound: 
   m_rotateToMouth: 3
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -11490,6 +11494,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Spine1
   m_parentRoot: {fileID: 4352899780863152}
+  m_worldPositionStays: 1
 --- !u!114 &114081676118526244
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11831,6 +11836,8 @@ MonoBehaviour:
       max: 0
   m_onSpawnSound: 
   m_rotateToMouth: 3
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -11872,6 +11879,10 @@ MonoBehaviour:
   m_holdingBloodParticle:
     name: PS_Blood_Explosion_Medium
     path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_holdingFreezeParticle:
+    name: PS_IceExplosionSmall
+    path: 
     offset: {x: 0, y: 0, z: 0}
   m_burpSound: 
   m_canEatEntities: 1
@@ -12107,6 +12118,8 @@ MonoBehaviour:
       max: 0.5
   m_onSpawnSound: 
   m_rotateToMouth: 3
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -12337,6 +12350,13 @@ MonoBehaviour:
   m_onTriggerEnter: 1
   m_onTriggerStay: 1
   m_onTriggerExit: 1
+  m_onMouseDown: 0
+  m_onMouseDrag: 0
+  m_onMouseUp: 0
+  m_onMouseUpAsButton: 0
+  m_onMouseEnter: 0
+  m_onMouseExit: 0
+  m_onMouseOver: 0
 --- !u!114 &114466130779054124
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12368,6 +12388,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Bat_Tail_1
   m_parentRoot: {fileID: 4573517227394238}
+  m_worldPositionStays: 1
 --- !u!114 &114474193233650714
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12467,6 +12488,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Goblin_Pelvis
   m_parentRoot: {fileID: 4882841463984538}
+  m_worldPositionStays: 1
 --- !u!114 &114502008205811340
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12480,6 +12502,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Spine1
   m_parentRoot: {fileID: 4136145322046558}
+  m_worldPositionStays: 1
 --- !u!114 &114506115308965206
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12544,6 +12567,8 @@ MonoBehaviour:
       max: 1
   m_onSpawnSound: 
   m_rotateToMouth: 3
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -12636,8 +12661,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4286374655
-  m_fontColor: {r: 1, g: 0.8862745, b: 0.4862745, a: 1}
+    rgba: 4285429408
+  m_fontColor: {r: 0.627451, g: 0.4627451, b: 0.43137255, a: 1}
   m_enableVertexGradient: 0
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
@@ -12823,6 +12848,8 @@ MonoBehaviour:
       max: 1
   m_onSpawnSound: 
   m_rotateToMouth: 0
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -12841,6 +12868,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Goblin_Ribcage
   m_parentRoot: {fileID: 4882841463984538}
+  m_worldPositionStays: 1
 --- !u!114 &114704679483318706
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12856,7 +12884,10 @@ MonoBehaviour:
   m_tierNoTurboBreak: 0
   m_hitCount: 1
   m_destroyOnBreak: 1
-  m_onBreakParticle: PF_CaveBlockerExplosion
+  m_onBreakParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBreakAudio: Rocks
   m_view: {fileID: 4184490869579342}
 --- !u!114 &114720681896447494
@@ -12958,6 +12989,8 @@ MonoBehaviour:
       max: 0.5
   m_onSpawnSound: 
   m_rotateToMouth: 0
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -12976,6 +13009,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: 
   m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
 --- !u!114 &114735449581112392
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13035,6 +13069,13 @@ MonoBehaviour:
   m_onTriggerEnter: 1
   m_onTriggerStay: 1
   m_onTriggerExit: 1
+  m_onMouseDown: 0
+  m_onMouseDrag: 0
+  m_onMouseUp: 0
+  m_onMouseUpAsButton: 0
+  m_onMouseEnter: 0
+  m_onMouseExit: 0
+  m_onMouseOver: 0
 --- !u!114 &114765729115217374
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13248,6 +13289,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Pelvis
   m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
 --- !u!114 &114921548915234370
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13488,6 +13530,8 @@ MonoBehaviour:
       max: 0
   m_onSpawnSound: 
   m_rotateToMouth: 0
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -13521,8 +13565,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4286374655
-  m_fontColor: {r: 1, g: 0.8862745, b: 0.4862745, a: 1}
+    rgba: 4285363616
+  m_fontColor: {r: 0.628, g: 0.46273685, b: 0.42968422, a: 1}
   m_enableVertexGradient: 0
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
@@ -46195,7 +46239,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000987221, y: 13.026808}
+  m_AnchoredPosition: {x: -0.0024612644, y: 13.026804}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224037239219110648
@@ -46310,7 +46354,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00016401403, y: 6.2824736}
+  m_AnchoredPosition: {x: -0.0022392056, y: 6.282319}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224147379786769756
@@ -46330,7 +46374,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -20}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -20.620617, y: 40.05413}
+  m_AnchoredPosition: {x: -20.620607, y: 40.05412}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224186460995482744
@@ -46406,7 +46450,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: -140, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.005198201, y: -64.48323}
+  m_AnchoredPosition: {x: 0.0051977383, y: -64.48323}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224413400612382132
@@ -46425,7 +46469,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.24421838, y: -2.3894322}
+  m_AnchoredPosition: {x: -0.24168631, y: -2.3894188}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224432464807154352
@@ -46444,7 +46488,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.0446378, y: -21.543009}
+  m_AnchoredPosition: {x: -1.0466555, y: -21.543097}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224454884897058284
@@ -46463,7 +46507,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.87638813, y: -37.076}
+  m_AnchoredPosition: {x: 0.87666637, y: -37.07597}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224463467601954708
@@ -46501,7 +46545,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0015509726, y: -10.477375}
+  m_AnchoredPosition: {x: -0.00017767883, y: -10.477434}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224493577306309516
