@@ -34,6 +34,15 @@ namespace AI {
 			protected override void OnEnter(State oldState, object[] param) {
 				m_timer = m_data.restTime.GetRandom();
 				m_pilot.SetMoveSpeed(0, false);
+
+				Vector3 dir = Vector3.back;
+				if (m_pilot.direction.x >= 0f) 
+					dir.x = Random.Range(0.1f, 1f);
+				else 
+					dir.x = Random.Range(-1f, -0.1f);
+				dir.Normalize();
+
+				m_pilot.SetDirection(dir);
 			}
 
 			protected override void OnUpdate() {

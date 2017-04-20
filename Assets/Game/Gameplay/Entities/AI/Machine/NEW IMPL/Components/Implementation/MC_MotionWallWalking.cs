@@ -79,11 +79,15 @@ namespace AI {
 			m_nextSubState = SubState.Idle;
 		}
 
-		public override void OnCollisionGroundEnter() {
+		public override void OnCollisionGroundEnter(Collision _collision) {
 			m_onGround = true;
 		}
 
-		public override void OnCollisionGroundExit() {
+		public override void OnCollisionGroundStay(Collision _collision) {
+			m_onGround = true;
+		}
+
+		public override void OnCollisionGroundExit(Collision _collision) {
 			m_onGround = false;
 		}
 

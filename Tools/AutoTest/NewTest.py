@@ -33,11 +33,9 @@ scheme_file = os.path.abspath(xcode_folder + "/Unity-iPhone.xcodeproj/xcsharedda
 tree = ET.parse(scheme_file)
 root = tree.getroot()
 for arguments in root.findall(".//CommandLineArguments"):
-	arg = arguments.find("CommandLineArgument[@argument='-start_test']")
-	if arg is None:
-		test_argument = ET.SubElement(arguments,"CommandLineArgument")
-		test_argument.set("argument", "-start_test")
-		test_argument.set("isEnabled", "YES")
+	test_argument = ET.SubElement(arguments,"CommandLineArgument")
+	test_argument.set("argument", "-start_test")
+	test_argument.set("isEnabled", "YES")
 tree.write( scheme_file )
 
 # END ADD TEST ARGUMENT

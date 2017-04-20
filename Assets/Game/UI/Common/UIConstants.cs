@@ -123,6 +123,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string SHOP_ICONS_PATH {
 		get { return instance.m_shopIconsPath; }
 	}
+
+	[SerializeField] private string m_languageIconsPath = "UI/Metagame/Settings/";
+	public static string LANGUAGE_ICONS_PATH {
+		get { return instance.m_languageIconsPath; }
+	}
 	#endregion
 
 	// -------------------------------------------------------------------------
@@ -369,7 +374,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 
 			case IconAlignment.LEFT: {
 				if(!string.IsNullOrEmpty(iconString)) {
-					instance.m_sb.Append(iconString).Append(" ");
+					instance.m_sb.Append(iconString);//.Append(" ");
 				}
 				instance.m_sb.Append(_text);
 			} break;
@@ -377,7 +382,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			case IconAlignment.RIGHT: {
 				instance.m_sb.Append(_text);
 				if(!string.IsNullOrEmpty(iconString)) {
-					instance.m_sb.Append(" ").Append(iconString);
+					instance.m_sb/*.Append(" ")*/.Append(iconString);
 				}
 			} break;
 		}

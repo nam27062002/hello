@@ -81,7 +81,7 @@ public abstract class HudWidget : MonoBehaviour
 
     protected bool NeedsToPlayAnim { get; set; }
     private bool NeedsToPrintValue { get; set; }
-    private long Value { get; set; }
+    protected long Value { get; set; }
     
     protected abstract string GetValueAsString();
 

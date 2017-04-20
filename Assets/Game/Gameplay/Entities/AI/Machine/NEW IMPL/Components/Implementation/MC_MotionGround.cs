@@ -4,6 +4,8 @@ using System;
 namespace AI {
 	[Serializable]
 	public sealed class MC_MotionGround : MC_Motion {
+		//--------------------------------------------------
+		private static float FREE_FALL_THRESHOLD = 0.35f;
 
 		//--------------------------------------------------
 		private enum SubState {
@@ -33,6 +35,8 @@ namespace AI {
 		private bool m_colliderOnGround;
 		private float m_heightFromGround;
 
+		private float m_fallTimer;
+
 		private SubState m_subState;
 		private SubState m_nextSubState;
 
@@ -51,6 +55,7 @@ namespace AI {
 			}
 
 			m_gravity = Vector3.zero;
+			m_fallTimer = FREE_FALL_THRESHOLD;
 
 			m_subState = SubState.Idle;
 			m_nextSubState = SubState.Idle;
@@ -69,21 +74,15 @@ namespace AI {
 
 			switch (m_subState) {
 				case SubState.Idle:
-					GetGroundNormal(1f);
-					if (!m_onGround) {
-						FreeFall();
-					} else if (m_pilot.IsActionPressed(Pilot.Action.Jump)) {
+					if (m_pilot.IsActionPressed(Pilot.Action.Jump)) {
 						m_nextSubState = SubState.Jump_Start;
 					} else if (m_pilot.speed > 0.01f) {						
 						m_nextSubState = SubState.Move;
 					}
 					break;
 
-				case SubState.Move:
-					GetGroundNormal(1f);
-					if (!m_onGround) {
-						FreeFall();
-					} else if (m_pilot.IsActionPressed(Pilot.Action.Jump)) {
+				case SubState.Move:					
+					if (m_pilot.IsActionPressed(Pilot.Action.Jump)) {
 						m_nextSubState = SubState.Jump_Start;
 					} else if (m_pilot.speed <= 0.01f) {
 						m_nextSubState = SubState.Idle;
@@ -100,12 +99,23 @@ namespace AI {
 					break;
 
 				case SubState.Jump_Down:
-					GetGroundNormal(0.3f);
 					if (m_onGround) {
 						m_pilot.ReleaseAction(Pilot.Action.Jump);
 						m_nextSubState = SubState.Idle;
 					}
 					break;
+			}
+
+			if (m_subState <= SubState.Move) {
+				if (!m_onGround) {
+					m_fallTimer -= Time.deltaTime;
+					if (m_fallTimer <= 0f) {
+						FreeFall();
+						m_fallTimer = FREE_FALL_THRESHOLD;
+					}
+				}
+
+				m_onGround = false;
 			}
 		}
 
@@ -117,14 +127,16 @@ namespace AI {
 				m_velocity += gv;
 				m_rbody.velocity = m_velocity;
 			} else {
-				if (m_groundDirection.y < 0f && m_direction.x > 0f
-				||  m_groundDirection.y > 0f && m_direction.x < 0f) {
-					gv *= 15f;
+				if (m_groundDirection.y < -0.25f && m_direction.x > 0f
+				||  m_groundDirection.y > 0.25f && m_direction.x < 0f) {
+					gv *= 25f * Mathf.Abs(m_groundDirection.y);
 				}
 
 				m_gravity += gv;
 
-				if (m_subState != SubState.Idle) {					
+				if (m_subState == SubState.Idle) {
+					m_rbody.velocity = Vector3.ClampMagnitude(m_gravity, m_terminalVelocity);
+				} else {
 					if (m_mass != 1f) {
 						Vector3 impulse = (m_pilot.impulse - m_velocity);
 						impulse /= m_mass;
@@ -133,13 +145,17 @@ namespace AI {
 						m_velocity = m_pilot.impulse;
 					}
 
+					//lets clamp velocity while entity is turning around
+					/*float angle = AngleBetweenRotTargetRot();
+					float factor = (((angle - 180f) / (0f - 180f)) * (1f - 0.25f)) + 0.25f;
+					m_velocity *= factor;*/
+
 					m_rbody.velocity = Vector3.ClampMagnitude(m_velocity + m_externalVelocity + m_gravity, m_terminalVelocity);
 				}
 			}
 		}
 
-		protected override void ExtendedUpdateFreeFall() {
-			GetGroundNormal(0.3f);
+		protected override void ExtendedUpdateFreeFall() {			
 			if (m_onGround) {
 				m_machine.SetSignal(Signals.Type.FallDown, false);
 				m_nextSubState = SubState.Idle;
@@ -182,10 +198,7 @@ namespace AI {
 			m_onGround = m_heightFromGround < _onGroundHeight;
 			m_groundNormal = normal;
 
-			m_groundDirection = Vector3.Cross(Vector3.back, m_upVector);
-			if (m_groundDirection.y > 0.5f || m_groundDirection.y < -0.5f) {
-				m_groundDirection = Vector3.right;
-			}
+			m_groundDirection = Vector3.Cross(Vector3.back, m_groundNormal);
 
 			m_viewControl.Height(m_heightFromGround);
 
@@ -209,6 +222,7 @@ namespace AI {
 					break;
 
 				case SubState.Jump_Down:
+					m_onGround = true;
 					m_viewControl.Jumping(false);
 					Stop();
 					break;
@@ -222,7 +236,8 @@ namespace AI {
 				case SubState.Move:
 					break;
 
-				case SubState.Jump_Start:					
+				case SubState.Jump_Start:
+					m_onGround = true;
 					m_viewControl.Jumping(true);
 					Stop();
 					break;
@@ -241,7 +256,33 @@ namespace AI {
 		//--------------------------------------------------
 		protected override void ExtendedAttach() {}
 
-		public override void OnCollisionGroundEnter() {}
-		public override void OnCollisionGroundExit() {}
+		public override void OnCollisionGroundEnter(Collision _collision) {
+			OnCollisionGroundStay(_collision);
+		}
+
+		public override void OnCollisionGroundStay(Collision _collision) {
+			for (int i = 0; i < _collision.contacts.Length; i++) {
+				Vector3 hitPoint = _collision.contacts[i].point;
+				float error = (hitPoint - position).sqrMagnitude;
+
+				if (error <= 0.3f) {					
+					m_groundNormal = _collision.contacts[i].normal;
+					m_groundDirection = Vector3.Cross(Vector3.back, m_groundNormal);
+
+					m_gravity = Vector3.zero;
+					m_fallTimer = FREE_FALL_THRESHOLD;
+
+					m_viewControl.Height(0f);
+
+					m_onGround = true;
+					break;
+				}
+			}
+		}
+
+		public override void OnCollisionGroundExit(Collision _collision) {
+			m_onGround = false;
+			m_viewControl.Height(100f);
+		}
 	}
 }

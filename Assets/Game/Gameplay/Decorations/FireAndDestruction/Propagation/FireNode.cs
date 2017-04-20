@@ -45,7 +45,6 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private State m_nextState;
 
 
-
 	// Use this for initialization
 	void Start () {
 		m_bounds = new Bounds(transform.position, Vector3.one * m_hitRadius * 2f);

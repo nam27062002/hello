@@ -69,7 +69,7 @@ namespace AI {
 					Transition(OnRest);
 				} else {
 					float m = (m_machine.position - m_target).sqrMagnitude;
-					float d = Mathf.Min(2f, m_data.speed);
+					float d = Mathf.Min(2f, m_pilot.speed);
 
 					if (m < d * d) {
 						m_path.SetDirection(m_pathDirection);

@@ -87,6 +87,14 @@ public class DragonParticleController : MonoBehaviour
 	[Space]
 	public List<BodyParticle> m_bodyParticles = new List<BodyParticle>();
 
+	[Space]
+	// trails stuff
+	bool m_trailsActive = false;
+	bool m_playinTrails = false;
+	ParticleSystem m_trailsInstance;
+	public ParticleData m_trailsParticle;
+	public Transform m_trailsAnchor;
+
 	void Start () 
 	{
 		DragonAnimationEvents dragonAnimEvents = transform.parent.GetComponentInChildren<DragonAnimationEvents>();
@@ -130,12 +138,22 @@ public class DragonParticleController : MonoBehaviour
 		m_hiccupInstance = InitParticles( m_hiccupParticle, m_hiccupAnchor);
 		if (dragonAnimEvents != null)
 			dragonAnimEvents.onHiccupEvent += OnHiccup;
+
+		if ( m_trailsParticle.IsValid() )
+		{
+			GameObject go = m_trailsParticle.CreateInstance();
+			go.transform.parent = m_trailsAnchor;
+			go.transform.localPosition = Vector3.zero + m_trailsParticle.offset;
+			go.transform.localScale = Vector3.one;
+			go.transform.localRotation = Quaternion.identity;
+			m_trailsInstance = go.GetComponent<ParticleSystem>();
+		}
 	}
 
 	void OnEnable() {
 		// Register events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
+		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnKo);
 		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLost);
@@ -144,7 +162,7 @@ public class DragonParticleController : MonoBehaviour
 	void OnDisable()
 	{
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
+		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnKo);
 		Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLost);
@@ -213,6 +231,31 @@ public class DragonParticleController : MonoBehaviour
 			}
 		}
 
+		if ( m_trailsActive )
+		{
+			if (!m_playinTrails)
+			{
+				if (!m_insideWater && m_dargonMotion.howFast > 0.85f )	// Check speed
+				{
+					PlayTrails();
+				}
+			}
+			else if ( m_insideWater )
+			{
+				// Stop
+				StopTrails();
+			}
+		}
+		else
+		{
+			if ( m_playinTrails )
+			{
+				// Stop
+				StopTrails();
+			}
+		}
+
+
 
 #if UNITY_EDITOR
 		if ( Input.GetKeyDown(KeyCode.E))
@@ -253,7 +296,7 @@ public class DragonParticleController : MonoBehaviour
 		m_waterDepth = data.scale + m_waterDepthIncrease;
 	}
 
-	void OnKo( DamageType type )
+	void OnKo( DamageType type , Transform _source)
 	{
 		m_alive = false;	
 		CheckBodyParts();
@@ -428,4 +471,31 @@ public class DragonParticleController : MonoBehaviour
 		if ( m_hiccupInstance != null )
 			m_hiccupInstance.Play();
 	}
+
+	#region boost_trails
+	void PlayTrails()
+	{
+		if (m_trailsInstance)
+			m_trailsInstance.Play();
+		m_playinTrails = true;
+	}
+
+	void StopTrails()
+	{
+		if (m_trailsInstance)
+			m_trailsInstance.Stop();
+		m_playinTrails = false;
+	}
+
+	public void ActivateTrails()
+	{
+		m_trailsActive = true;
+	}
+
+	public void DeactivateTrails()
+	{
+		m_trailsActive = false;
+	}
+
+	#endregion
 }

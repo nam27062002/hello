@@ -41,7 +41,7 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap (Chests)"
 //				#include "Lighting.cginc"
 				#include "HungryDragon.cginc"
 
-				#define FOG
+//				#define FOG
 				#define OPAQUEALPHA
 
 				#include "scenary.cginc"

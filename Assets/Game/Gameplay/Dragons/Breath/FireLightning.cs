@@ -34,7 +34,6 @@ public class FireLightning : DragonBreathBehaviour {
 
 	Transform m_mouthTransform;
 	Transform m_headTransform;
-	Vector3 m_dir;
 
 	int m_groundMask;
 	int m_waterMask;
@@ -95,13 +94,21 @@ public class FireLightning : DragonBreathBehaviour {
 	// Use this for initialization
 	override protected void ExtendedStart () 
 	{
-		m_particleStart = (GameObject)Object.Instantiate(m_particleStartPrefab);
-		m_particleStart.transform.localPosition = Vector3.zero;
-		m_particleStart.gameObject.SetActive(true);
-		
-		m_particleEnd = (GameObject)Object.Instantiate(m_particleStartPrefab);
-		m_particleEnd.transform.localPosition = Vector3.zero;
-		m_particleEnd.gameObject.SetActive(true);
+		if ( m_particleStartPrefab )
+			m_particleStart = (GameObject)Object.Instantiate(m_particleStartPrefab);
+		if ( m_particleStart )
+		{
+			m_particleStart.transform.localPosition = Vector3.zero;
+			m_particleStart.gameObject.SetActive(true);
+		}
+
+		if ( m_particleEndPrefab )
+			m_particleEnd = (GameObject)Object.Instantiate(m_particleEndPrefab);
+		if ( m_particleEnd )
+		{
+			m_particleEnd.transform.localPosition = Vector3.zero;
+			m_particleEnd.gameObject.SetActive(true);
+		}
 
 		m_mouthTransform = GetComponent<DragonMotion>().tongue;
 		m_headTransform = GetComponent<DragonMotion>().head;
@@ -136,12 +143,12 @@ public class FireLightning : DragonBreathBehaviour {
 
 	override protected void Breath()
 	{
-		m_dir = m_mouthTransform.position - m_headTransform.position;
-		m_dir.z = 0f;
-		m_dir.Normalize();
+		m_direction = -m_mouthTransform.right;
+		m_direction.Normalize();
 
 		Vector3 p1 = m_mouthTransform.position;
-		m_particleStart.transform.position = m_mouthTransform.position;
+		if ( m_particleStart )
+			m_particleStart.transform.position = m_mouthTransform.position;
 
 		Vector3 p2;
 
@@ -153,7 +160,7 @@ public class FireLightning : DragonBreathBehaviour {
 		}
 		else
 		{
-			if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+m_dir*length, out ground, m_waterMask))
+			if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+(Vector3)m_direction*length, out ground, m_waterMask))
 			{
 				float addition = (length - ground.distance); // distance enering water
 				// length += addition;	// We double it
@@ -165,21 +172,22 @@ public class FireLightning : DragonBreathBehaviour {
 			}
 		}
 
-		if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+m_dir*m_currentLength, out ground, m_groundMask)){
+		if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+(Vector3)m_direction*m_currentLength, out ground, m_groundMask)){
 			p2 = ground.point;
 			m_actualLength = ground.distance;
 		}else{
-			p2 =  m_mouthTransform.position+m_dir*m_currentLength;
+			p2 =  m_mouthTransform.position+(Vector3)m_direction*m_currentLength;
 			m_actualLength = m_currentLength;
 		}
 
-		m_particleEnd.transform.position = p2;
+		if ( m_particleEnd )
+			m_particleEnd.transform.position = p2;
 
 		for(int i=0;i<m_rays.Length;i++)
 			m_rays[i].Draw(p1,p2);
 
 		// Look entities to damage!
-		Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_dir, m_maxAmplitude, m_actualLength);
+		Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_maxAmplitude, m_actualLength);
 		for (int i = 0; i < preys.Length; i++) 
 		{
 			if (preys[i].IsBurnable(m_tier) || m_type == Type.Super) {
@@ -205,24 +213,42 @@ public class FireLightning : DragonBreathBehaviour {
 	override protected void BeginFury( Type _type ) 
 	{
 		base.BeginFury( _type );
-		m_particleStart.transform.position = m_mouthTransform.position;
-		m_dir = m_mouthTransform.position - m_headTransform.position;
-		m_dir.z = 0f;
-		m_dir.Normalize();
-		m_particleEnd.transform.position = m_mouthTransform.position+m_dir*m_length;
-		
-		m_particleStart.gameObject.SetActive(true);
-		m_particleEnd.gameObject.SetActive(true);
+		if ( m_particleStart )
+		{
+			m_particleStart.transform.position = m_mouthTransform.position;
+			m_particleStart.gameObject.SetActive(true);
+		}
+
+		m_direction = -m_mouthTransform.right;
+		m_direction.Normalize();
+
+		if ( m_particleEnd )
+		{
+			m_particleEnd.transform.position = m_mouthTransform.position+(Vector3)m_direction*m_length;
+			m_particleEnd.gameObject.SetActive(true);
+		}
 
 		for(int i=0;i<m_rays.Length;i++)
 			m_rays[i].Hide ();
 	}
 
+	override public void RecalculateSize()
+    {
+    	if ( m_dragon )
+    	{
+			float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
+			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
+	        m_length *= transform.localScale.x;
+		}
+    }
+
 	override protected void EndFury() 
 	{
 		base.EndFury();
-		m_particleStart.gameObject.SetActive(false);
-		m_particleEnd.gameObject.SetActive(false);
+		if ( m_particleStart )
+			m_particleStart.gameObject.SetActive(false);
+		if ( m_particleEnd )
+			m_particleEnd.gameObject.SetActive(false);
 		for(int i=0;i<m_rays.Length;i++)
 			m_rays[i].Hide ();
 
@@ -233,7 +259,7 @@ public class FireLightning : DragonBreathBehaviour {
 		if (m_isFuryOn) 
 		{
 			Gizmos.color = Color.magenta;
-			Gizmos.DrawLine( m_mouthTransform.position, m_mouthTransform.position + m_dir * m_actualLength );
+			Gizmos.DrawLine( m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_actualLength );
 		}
 	}
 
@@ -242,7 +268,7 @@ public class FireLightning : DragonBreathBehaviour {
 		if (m_isFuryOn) 
 		{
 			float halfAmplitude = m_maxAmplitude/2.0f;
-			float angle = Mathf.Atan2( m_dir.y, m_dir.x);
+			float angle = Mathf.Atan2( m_direction.y, m_direction.x);
 
 			Vector2 inversePos = _point - (Vector2)m_mouthTransform.position;
 			inversePos = inversePos.RotateRadians( -angle );

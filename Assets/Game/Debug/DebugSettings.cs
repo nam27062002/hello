@@ -57,6 +57,10 @@ public static class DebugSettings {
 
 	public const string PLAY_TEST						        = "PLAY_TEST";
 
+	public const string MAP_ZOOM_SPEED							= "MAP_ZOOM_SPEED";
+	public const string MAP_ZOOM_RESET							= "MAP_ZOOM_RESET";
+	public const string MAP_POSITION_RESET						= "MAP_POSITION_RESET";
+
     //------------------------------------------------------------------//
     // PROPERTIES														//
     //------------------------------------------------------------------//

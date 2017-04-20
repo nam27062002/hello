@@ -9,7 +9,7 @@ public class BreakableBehaviour : MonoBehaviour
 	[SerializeField] private int m_hitCount = 1;
 	[SerializeField] private bool m_destroyOnBreak = true;
 
-	[SerializeField] private string m_onBreakParticle;
+	[SerializeField] private ParticleData m_onBreakParticle;
 	[SerializeField] private string m_onBreakAudio;
 
 	[SerializeField] Transform m_view;
@@ -28,7 +28,10 @@ public class BreakableBehaviour : MonoBehaviour
 	void Start() {
 		if (m_view == null)
 			m_view = transform.FindChild("view");
-		
+
+		if (m_onBreakParticle.IsValid()) {
+			ParticleManager.CreatePool(m_onBreakParticle.name, m_onBreakParticle.path);
+		}	
 		m_initialViewPos = m_view.localPosition;
 	}
 
@@ -81,13 +84,20 @@ public class BreakableBehaviour : MonoBehaviour
 	}
 
 	void Break(Vector3 pushVector) {
+
 		// Spawn particle
-		GameObject prefab = Resources.Load("Particles/" + m_onBreakParticle) as GameObject;
-		if (prefab != null) {
-			GameObject go = Instantiate(prefab) as GameObject;
-			if (go != null) {
-				go.transform.position = transform.position;
-				go.transform.rotation = transform.rotation;
+		if (m_onBreakParticle.IsValid())
+		{
+			GameObject go = ParticleManager.Spawn(m_onBreakParticle, transform.position);
+			if (go != null)
+			{
+				go.transform.rotation = transform.rotation;	
+				ParticleScaler scaler = go.GetComponentInChildren<ParticleScaler>();
+				if ( scaler != null )
+				{
+					scaler.m_scale = transform.lossyScale.x;
+					scaler.DoScale();
+				}
 			}
 		}
 
@@ -96,11 +106,10 @@ public class BreakableBehaviour : MonoBehaviour
 		DragonMotion dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
 		if (pushVector != Vector3.zero) {
 			pushVector *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude, 2f));
-			dragonMotion.AddForce( pushVector );
+			dragonMotion.AddForce( pushVector, false );
 		}
-		else {
-			dragonMotion.NoDamageImpact();
-		}
+		dragonMotion.NoDamageImpact();
+		
 
 		// Destroy
 		gameObject.SetActive(false);

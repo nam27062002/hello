@@ -86,14 +86,19 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	DragonControl			m_controls;
 	DragonAnimationEvents 	m_animationEventController;
 	DragonParticleController m_particleController;
-	SphereCollider 			m_groundCollider;
+	SphereCollider 			m_mainGroundCollider;
+	List<Collider> 			m_groundColliders = new List<Collider>();
+	List<Collider>			m_hitColliders = new List<Collider>();
+	public List<Collider> hitColliders
+	{
+		get{ return m_hitColliders; }
+	}
 	DragonEatBehaviour		m_eatBehaviour;
-
-	public SphereCollider groundCollider { get { return m_groundCollider; } } 
 
 
 	// Movement control
 	private Vector3 m_impulse;
+	private float m_impulseMagnitude = 0;
     private Vector3 m_prevImpulse;
 
 	private Vector3 m_direction;
@@ -316,15 +321,33 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		m_rbody = GetComponent<Rigidbody>();
 
+		int playerLayer = LayerMask.NameToLayer("Player");
+		int groundLayer = LayerMask.NameToLayer("PlayerGround");
+		Collider[] colliders = GetComponentsInChildren<Collider>();
+		for( int i = 0; i<colliders.Length; i++ )
+		{
+			int colliderLayer = colliders[i].gameObject.layer;
+			if ( colliderLayer == playerLayer)
+			{
+				// hitting collider
+				m_hitColliders.Add( colliders[i] );
+			}
+			else if ( colliderLayer == groundLayer )
+			{
+				// groundLayer
+				m_groundColliders.Add( colliders[i]);
+			}
+		}
+
 		// Find ground collider
 		Transform ground = transform.FindTransformRecursive("ground");
 		if ( ground != null )
 		{
-			m_groundCollider = ground.GetComponent<SphereCollider>();
+			m_mainGroundCollider = ground.GetComponent<SphereCollider>();
 		}
-		if ( m_groundCollider == null )
+		if ( m_mainGroundCollider == null )
 		{
-			m_groundCollider = GetComponentInChildren<SphereCollider>();
+			m_mainGroundCollider = GetComponentInChildren<SphereCollider>();
 		}
 
 		m_eatBehaviour = GetComponent<DragonEatBehaviour>();
@@ -460,7 +483,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
  				}break;
 				case State.Latching:
 				{
-					m_groundCollider.enabled = true;
+					// Disable all ground colliders
+					for(int i = 0; i<m_groundColliders.Count; i++)
+						m_groundColliders[i].enabled = true;
 				}break;
 				case State.Dead:
 				{
@@ -555,7 +580,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				}break;
 				case State.Latching:
 				{
-					m_groundCollider.enabled = false;
+					for( int i = 0; i<m_groundColliders.Count; i++ )
+						m_groundColliders[i].enabled = false;
 					m_latchingTimer = 0;
 				}break;
 				case State.Dead:
@@ -1043,6 +1069,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		rewardDistance.z += Mathf.Abs( diff.z );
 		RewardManager.distance = rewardDistance;
 
+		m_impulseMagnitude = m_impulse.magnitude;
 
 		m_lastPosition = transform.position;
 	}
@@ -1405,7 +1432,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		if ( m_deadTimer < 1.5f * Time.timeScale )
 		{
 			Vector3 gravityAcceleration = Vector3.up * 9.81f * m_dragonGravityModifier * m_waterGravityMultiplier * m_deadGravityMultiplier;   // Gravity
-			if ( transform.position.y > (m_waterEnterPosition.y - m_groundCollider.radius))
+			if ( transform.position.y > (m_waterEnterPosition.y - m_mainGroundCollider.radius))
 				gravityAcceleration -= gravityAcceleration;
 
 			Vector3 acceleration = gravityAcceleration;	// Gravity
@@ -1549,10 +1576,13 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_direction = m_impulse.normalized;
 	}
 		
-	public void AddForce(Vector3 _force) {
+	public void AddForce(Vector3 _force, bool isDamage = true) {
 		if ( m_dragon.IsInvulnerable() )
 			return;
-		m_animator.SetTrigger("damage");
+		if ( isDamage )
+		{
+			m_animator.SetTrigger("damage");
+		}
 		m_impulse = _force;
 		if ( IsAliveState() )
 			ChangeState(State.Stunned);
@@ -1609,7 +1639,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	public float howFast
 	{
 		get{ 
-			float f =m_impulse.magnitude / absoluteMaxSpeed;
+			float f = m_impulseMagnitude / absoluteMaxSpeed;
 			return Mathf.Clamp01(f);
 		}
 	}
@@ -1964,6 +1994,5 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			return false;
 		return true;
 	}
-
 }
 

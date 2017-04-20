@@ -594,9 +594,9 @@ namespace AI {
 			}
 		}
 
-		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer) {
+		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, bool _isPlayer) {
 			m_viewControl.BeginSwallowed(_transform);
-			m_edible.BeingSwallowed(_transform, _rewardsPlayer);
+			m_edible.BeingSwallowed(_transform, _rewardsPlayer, _isPlayer);
 		}
 
 		public void EndSwallowed(Transform _transform){
@@ -706,7 +706,7 @@ namespace AI {
 			Invoke("Activate", duration);
 		}
 
-		void Activate()
+		public void Activate()
 		{
 			gameObject.SetActive(true);
 			if ( m_deactivateCallback != null )

@@ -111,7 +111,8 @@ namespace AI {
 
 		protected override void OnSetVelocity() {}
 
-		public override void OnCollisionGroundEnter() {}
-		public override void OnCollisionGroundExit() {}
+		public override void OnCollisionGroundEnter(Collision _collision) {}
+		public override void OnCollisionGroundStay(Collision _collision) {}
+		public override void OnCollisionGroundExit(Collision _collision) {}
 	}
 }

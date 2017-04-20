@@ -396,8 +396,12 @@ public class ResultsScreenController : MonoBehaviour {
 			// Update global stats
 			UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;
 
+			// Local mini-tracking event!
+			// Before applying the rewards!
+			EndOfGameTracking();
+
 			// Apply rewards to user profile
-			RewardManager.ApplyRewardsToProfile();
+			RewardManager.ApplyEndOfGameRewards();
 
 			// Process Missions: give rewards and generate new missions replacing those completed
 			MissionManager.ProcessMissions();
@@ -418,6 +422,72 @@ public class ResultsScreenController : MonoBehaviour {
 		}
 
 		return false;
+	}
+
+	/// <summary>
+	/// Send the end of game tracking events.
+	/// </summary>
+	private void EndOfGameTracking() {
+		// Pre-process chests
+		int chestsFound = 0;
+		int totalCollectedChests = ChestManager.collectedChests;
+		long chestsCoinsReward = 0;
+		for(int i = 0; i < ChestManager.NUM_DAILY_CHESTS; i++) {
+			if(ChestManager.dailyChests[i].state == Chest.State.PENDING_REWARD) {
+				// Count chest
+				chestsFound++;
+				totalCollectedChests++;
+
+				// Find out reward
+				Chest.RewardData rewardData = ChestManager.GetRewardData(totalCollectedChests);
+				if(rewardData != null && rewardData.type == Chest.RewardType.SC) {
+					chestsCoinsReward += (long)rewardData.amount;
+				}
+			}
+		}
+
+		// Pre-process missions
+		bool[] missionCompleted = new bool[(int)Mission.Difficulty.COUNT];
+		int [] missionReward = new int[(int)Mission.Difficulty.COUNT];
+		for(int i = 0; i < missionCompleted.Length; i++) {
+			Mission m = MissionManager.GetMission((Mission.Difficulty)i);
+			if(m != null && m.state == Mission.State.ACTIVE && m.objective.isCompleted) {
+				missionCompleted[i] = true;
+				missionReward[i] = m.rewardCoins;
+			} else {
+				missionCompleted[i] = false;
+				missionReward[i] = 0;
+			}
+		}
+
+		// Do it!
+		MiniTrackingEngine.TrackEvent(
+			"GAME_ENDED", 
+			new TrackingParam("run_nb", UsersManager.currentUser.gamesPlayed),
+			new TrackingParam("time_played", time),
+			new TrackingParam("sc_collected", coins),
+			new TrackingParam("sc_survival_bonus", survivalBonus),
+			new TrackingParam("sc_mission_1", missionReward[0]),
+			new TrackingParam("sc_mission_2", missionReward[1]),
+			new TrackingParam("sc_mission_3", missionReward[2]),
+			new TrackingParam("sc_chests", chestsCoinsReward),
+			new TrackingParam("hc_collected", RewardManager.pc),
+			new TrackingParam("death_cause", RewardManager.deathSource),
+			new TrackingParam("death_type", RewardManager.deathType),
+			new TrackingParam("chests_found", chestsFound),
+			new TrackingParam("egg_found", (EggManager.collectibleEgg != null && EggManager.collectibleEgg.collected)),
+			new TrackingParam("score_total", score),
+			new TrackingParam("highest_multiplier", RewardManager.maxScoreMultiplier),
+			new TrackingParam("highest_base_multiplier", RewardManager.maxBaseScoreMultiplier),
+			new TrackingParam("hc_revive_used", RewardManager.paidReviveCount),
+			new TrackingParam("ad_revive_used", RewardManager.freeReviveCount),
+			new TrackingParam("xp_earn", RewardManager.xp),
+			new TrackingParam("current_dragon", UsersManager.currentUser.currentDragon),
+			new TrackingParam("current_level", DragonManager.currentDragon.progression.level),
+			new TrackingParam("mission1_completed", missionCompleted[0]),
+			new TrackingParam("mission2_completed", missionCompleted[1]),
+			new TrackingParam("mission3_completed", missionCompleted[2])
+		);
 	}
 
 	//------------------------------------------------------------------//

@@ -65,7 +65,7 @@ public enum GameEvents {
 	PLAYER_LOST_SHIELD,			// params: DamageType _type, Transform _originTransform
 	PLAYER_HEALTH_MODIFIER_CHANGED,	// params: DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier
 	PLAYER_STATE_CHANGED,		// params: DragonPlayer.EState _oldState, DragonPlayer.EState _newState
-	PLAYER_KO,					// params: DamageType
+	PLAYER_KO,					// params: DamageType _type, Transform _source
 	PLAYER_DIED,				// no params
 	PLAYER_PET_PRE_FREE_REVIVE,			// no params
 	PLAYER_FREE_REVIVE,			// no params
@@ -121,6 +121,7 @@ public enum GameEvents {
 	// UI events
 	UI_INGAME_PC_FEEDBACK_END,		// no params
 	UI_TOGGLE_CURRENCY_COUNTERS,	// bool _show
+	UI_MAP_ZOOM_CHANGED,			// float _zoomFactor (percentage relative to initial zoom level (0.5x, 1x, 2x, etc, the smaller the closer)
 
 	// Camera events
 	CAMERA_INTRO_DONE,			// no params

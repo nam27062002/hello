@@ -4,21 +4,26 @@ using System.Collections.Generic;
 namespace AI {
 	public interface IMachine : IMotion {
 
-		Vector3 eye			{ get; }
-		Vector3 target		{ get; }
-		Vector3 upVector	{ get; set; }
-		Transform enemy 	{ get; set; } 
+		Vector3 	eye			{ get; }
+		Vector3 	target		{ get; }
+		Vector3 	upVector	{ get; set; }
+		Transform 	enemy 		{ get; set; } 
+		bool 		isPetTarget	{ get; set; }
 
 		// Monobehaviour methods
 		T GetComponent<T>();
 		T[] GetComponentsInChildren<T>();
-		Transform transform { get; }
-		GameObject gameObject { get; }
+		Transform transform 	{ get; }
+		GameObject gameObject 	{ get; }
 
-		float lastFallDistance { get; }
-
+		float lastFallDistance 	{ get; }
+		bool isKinematic 		{ get; set; }
+			
 		//
 		void Spawn(ISpawner _spawner);
+		void Activate();
+		void Deactivate(float duration, UnityEngine.Events.UnityAction _action);
+
 
 		// Internal connections
 		void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null);
@@ -52,7 +57,7 @@ namespace AI {
 		HoldPreyPoint[] holdPreyPoints { get; }
 
 		void Bite();
-		void BeginSwallowed(Transform _transform, bool rewardPlayer);
+		void BeginSwallowed(Transform _transform, bool rewardPlayer, bool isPlayer);
 		void EndSwallowed(Transform _transform);
 		void BiteAndHold();
 		void ReleaseHold();
