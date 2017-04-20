@@ -8,15 +8,18 @@ public class Actions {
 	public class Action {
 		[HideInInspector] public Id id;
 		[SerializeField] public bool active;
+		[SerializeField] public float probability;
 
 		public Action() {
 			id = Actions.Id.Panic;
 			active = false;
+			probability = 1;
 		}
 
-		public Action(Id _id, bool _active) {
+		public Action(Id _id, bool _active, float _probability) {
 			id = _id;
 			active = _active;
+			probability = _probability;
 		}
 	}
 
@@ -28,12 +31,11 @@ public class Actions {
 		Home,
 	}
 
-	[SerializeField] private Action m_panic = new Action(Actions.Id.Panic, false);
-	[SerializeField] private Action m_jump 	= new Action(Actions.Id.Jump, false);
-	[SerializeField] private Action m_goOn = new Action(Actions.Id.GoOn, true);
-	[SerializeField] private Action m_hide = new Action(Actions.Id.Hide, false);
-	private Action m_home = new Action(Actions.Id.Home, true);
-
+	[SerializeField] private Action m_panic = new Action(Actions.Id.Panic, false, 1);
+	[SerializeField] private Action m_jump 	= new Action(Actions.Id.Jump, false, 1);
+	[SerializeField] private Action m_goOn = new Action(Actions.Id.GoOn, true, 1);
+	[SerializeField] private Action m_hide = new Action(Actions.Id.Hide, false, 1);
+	private Action m_home = new Action(Actions.Id.Home, true, 1);
 
 	//
 
@@ -56,8 +58,22 @@ public class Actions {
 			availableActions.Add(m_hide);
 		}
 
-		//----------------------------------------------------
-		return availableActions.GetRandomValue();
+		if ( availableActions.Count > 0 ) {
+			float totalProbability = 0;
+			for( int i = 0; i<availableActions.Count; i++ )
+				totalProbability += availableActions[i].probability;
+			float rand = UnityEngine.Random.Range(0.0f, totalProbability - Mathf.Epsilon);
+			for( int i = 0; i<availableActions.Count; i++ )
+			{
+				Action act = availableActions[i];
+				if ( rand < act.probability){
+					return availableActions[i];
+				}
+				rand -= act.probability;
+			}
+		}
+		return null;
+
 	}
 
 	public Action GetDefaultAction() {

@@ -88,6 +88,7 @@ public class FogManager : MonoBehaviour
 	float m_tmpStart;
 	float m_tmpEnd;
 	Texture2D m_tmpTexture;
+	bool m_updateTmpTexture = false;
 
 	bool m_firstTime = true;
 
@@ -251,6 +252,7 @@ public class FogManager : MonoBehaviour
 
 					// Copy destination render texture to original texture
 					m_updateBlitOriginTexture = true;
+					m_updateTmpTexture = true;
 				}
 			}
 
@@ -279,6 +281,11 @@ public class FogManager : MonoBehaviour
 		}
 		else
 		{
+			if (m_updateTmpTexture)
+			{
+				for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )
+					m_tmpTexture.SetPixel(i, 0, m_texture.GetPixel(i,0));
+			}
 			if ( m_transitionTimer > 0 )
 			{
 				m_updateValues = true;
@@ -300,6 +307,8 @@ public class FogManager : MonoBehaviour
 				}
 			}
 		}
+
+		m_updateTmpTexture = false;
 
 		if ( m_updateValues || m_forceUpdate)
 		{

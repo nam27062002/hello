@@ -85,7 +85,7 @@ namespace AI {
 								Transition(OnEnemyInRange, m_transitionParam);
 							} else {
 								if (m_data.hasGuardState) {
-									float m = Mathf.Abs(m_machine.eye.x - m_target.position.x);
+									float m = Mathf.Abs(m_machine.position.x - m_target.position.x);
 									onGuardArea = m <= 2f;
 								}
 
@@ -97,11 +97,11 @@ namespace AI {
 								Vector3 direction = m_machine.groundDirection;
 								direction.z = 0f;
 
-								if (m_target.position.x < m_machine.eye.x) {
+								if (m_target.position.x < m_machine.position.x) {
 									direction *= -1;
 								}
 
-								Vector3 target = m_machine.eye + direction * m_data.speed;
+								Vector3 target = m_machine.position + direction * m_data.speed;
 								m_pilot.GoTo(target);
 							}
 						}
@@ -111,11 +111,11 @@ namespace AI {
 							Vector3 direction = m_machine.groundDirection;
 							direction.z = 0f;
 
-							if (m_target.position.x > m_machine.eye.x) {
+							if (m_target.position.x > m_machine.position.x) {
 								direction *= -1;
 							}
 
-							Vector3 target = m_machine.eye + direction * m_data.speed;
+							Vector3 target = m_machine.position + direction * m_data.speed;
 							m_pilot.GoTo(target);
 						} else {
 							ChangeState(PursuitState.Move_Towards);

@@ -45,6 +45,11 @@ uniform samplerCUBE _ReflectionMap;
 uniform float _ReflectionAmount;
 #endif
 
+#ifdef AUTOINNERLIGHT
+uniform float _InnerLightWavePhase;
+uniform float _InnerLightWaveSpeed;
+#endif
+
 v2f vert(appdata_t v)
 {
 	v2f o;
@@ -75,6 +80,10 @@ fixed4 frag(v2f i) : SV_Target
 {
 	fixed4 main = tex2D(_MainTex, i.texcoord);
 	fixed4 detail = tex2D(_DetailTex, i.texcoord);
+
+#ifdef CUTOUT
+	clip(main.a - 0.2);
+#endif
 
 #ifdef NORMALMAP
 	float3 encodedNormal = UnpackNormal(tex2D(_BumpMap, i.texcoord));
@@ -129,7 +138,18 @@ fixed4 frag(v2f i) : SV_Target
 #endif
 
 	// Inner lights
+#ifdef AUTOINNERLIGHT
+	float wave = (i.texcoord.x * _InnerLightWavePhase) + (_Time.y * _InnerLightWaveSpeed);
+	fixed satMask = (0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b) * detail.r;
+	satMask = lerp(satMask, 1.0, detail.b);
+	//	satMask *= detail.r *(((cos(wave.x) + 1.0) * 0.5) * ((sin(_Time.y) + 1.0) * 0.5)) * 10.0;
+	fixed blink = lerp((sin(_Time.y * _InnerLightWavePhase) + 1.0) * 0.5, (cos(wave) + 1.0) * 0.5, detail.b);
+	satMask *= blink * 10.0;
+	fixed4 selfIlluminate = lerp(fixed4(0.0, 0.0, 0.0, 0.0), _InnerLightColor, satMask);
+
+#else
 	fixed4 selfIlluminate = (col * (detail.r * _InnerLightAdd * _InnerLightColor));
+#endif
 	// fixed4 col = (diffuse + fixeW4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _Tint + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
 	col = (diffuse + fixed4(i.vLight, 0.0)) * col * _Tint + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor) + _AmbientAdd; // To use ShaderSH9 better done in vertex shader
 

@@ -57,7 +57,7 @@ namespace AI {
 		HoldPreyPoint[] holdPreyPoints { get; }
 
 		void Bite();
-		void BeginSwallowed(Transform _transform, bool rewardPlayer);
+		void BeginSwallowed(Transform _transform, bool rewardPlayer, bool isPlayer);
 		void EndSwallowed(Transform _transform);
 		void BiteAndHold();
 		void ReleaseHold();

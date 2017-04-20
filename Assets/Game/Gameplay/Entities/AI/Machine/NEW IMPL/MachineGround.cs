@@ -8,6 +8,7 @@ namespace AI {
 
 		public override Vector3 position		{ get { return m_groundMotion.position; } set { m_groundMotion.position = value; } }
 		public override Vector3 direction 		{ get { return m_groundMotion.direction; } }
+		public override Vector3 groundDirection	{ get { return m_groundMotion.groundDirection; } }
 		public override Vector3 upVector 		{ get { return m_groundMotion.upVector; } set { m_groundMotion.upVector = value; } }
 		public override Vector3 velocity		{ get { return m_groundMotion.velocity; } }
 		public override Vector3 angularVelocity	{ get { return m_groundMotion.angularVelocity; } }

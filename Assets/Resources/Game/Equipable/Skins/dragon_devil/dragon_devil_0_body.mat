@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_devil_0_body
-  m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
+  m_Shader: {fileID: 4800000, guid: 1b06faa56f07da048b78ad837c3cbb04, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -18,7 +18,7 @@ Material:
     - first:
         name: _BumpMap
       second:
-        m_Texture: {fileID: 2800000, guid: fe452f39c13284c89aa949d3d28b0979, type: 3}
+        m_Texture: {fileID: 2800000, guid: 73c9a86eabafe4cb3b463da490bf0926, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -42,7 +42,7 @@ Material:
     - first:
         name: _DetailTex
       second:
-        m_Texture: {fileID: 2800000, guid: 0318404b239d84abcb0c9c327bf5643c, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2bdaa8789bfac4e7cbb044010b99b427, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -54,7 +54,7 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: bf27ea98257ae4b85853f60a2a9f4f47, type: 3}
+        m_Texture: {fileID: 2800000, guid: 91269a503285d446d96fa287bd6b3a8b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -93,7 +93,7 @@ Material:
       second: 0
     - first:
         name: _Fresnel
-      second: 3.81
+      second: 10
     - first:
         name: _Glossiness
       second: 0.5
@@ -101,11 +101,20 @@ Material:
         name: _InnerLightAdd
       second: 0
     - first:
+        name: _InnerLightWavePhase
+      second: 16
+    - first:
+        name: _InnerLightWaveSpeed
+      second: 4
+    - first:
         name: _Metallic
       second: 0
     - first:
         name: _Mode
       second: 0
+    - first:
+        name: _NormalStrenght
+      second: 1
     - first:
         name: _OcclusionStrength
       second: 1
@@ -119,6 +128,9 @@ Material:
         name: _SrcBlend
       second: 1
     - first:
+        name: _StencilMask
+      second: 10
+    - first:
         name: _UVSec
       second: 0
     - first:
@@ -127,7 +139,7 @@ Material:
     m_Colors:
     - first:
         name: _AmbientAdd
-      second: {r: 0.21323532, g: 0.050173014, b: 0.050173014, a: 0}
+      second: {r: 0.058823526, g: 0.027270013, b: 0.0030276808, a: 0}
     - first:
         name: _Color
       second: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
@@ -145,7 +157,16 @@ Material:
       second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _FresnelColor
-      second: {r: 0.38235295, g: 0.3782745, b: 0.35423875, a: 1}
+      second: {r: 0, g: 0, b: 0, a: 1}
     - first:
         name: _InnerLightColor
-      second: {r: 0.252, g: 0.116, b: 0, a: 1}
+      second: {r: 0.254, g: 0.115, b: 0, a: 1}
+    - first:
+        name: _SecondLightColor
+      second: {r: 0, g: 0, b: 0, a: 0}
+    - first:
+        name: _SecondLightDir
+      second: {r: 0, g: 0, b: -1, a: 0}
+    - first:
+        name: _Tint
+      second: {r: 1, g: 1, b: 1, a: 1}

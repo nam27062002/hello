@@ -285,9 +285,15 @@ namespace AI {
 		}
 
 		public void FreeFall() {
-			m_viewControl.Height(100f);
-			m_machine.SetSignal(Signals.Type.FallDown, true);
-			m_nextState = State.FreeFall;
+			if (m_state != State.FreeFall && m_state != State.StandUp) {
+				m_viewControl.Height(100f);
+				m_machine.SetSignal(Signals.Type.FallDown, true);
+				m_nextState = State.FreeFall;
+			}
+		}
+
+		protected float AngleBetweenRotTargetRot() {
+			return Quaternion.Angle(m_rotation, m_targetRotation);
 		}
 
 		private void UpdateAttack() {
@@ -450,8 +456,9 @@ namespace AI {
 		protected abstract void UpdateOrientation();
 		protected abstract void OnSetVelocity();
 
-		public abstract void OnCollisionGroundEnter();
-		public abstract void OnCollisionGroundExit();
+		public abstract void OnCollisionGroundEnter(Collision _collision);
+		public abstract void OnCollisionGroundStay(Collision _collision);
+		public abstract void OnCollisionGroundExit(Collision _collision);
 		//--------------------------------------------------
 	}
 }

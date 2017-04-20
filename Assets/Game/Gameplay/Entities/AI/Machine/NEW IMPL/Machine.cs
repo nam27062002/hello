@@ -235,7 +235,15 @@ namespace AI {
 
 			if (m_motion != null) {
 				if (((1 << _collision.gameObject.layer) & GROUND_MASK) != 0) {
-					m_motion.OnCollisionGroundEnter();
+					m_motion.OnCollisionGroundEnter(_collision);
+				}
+			}
+		}
+
+		void OnCollisionStay(Collision _collision) {
+			if (m_motion != null) {
+				if (((1 << _collision.gameObject.layer) & GROUND_MASK) != 0) {
+					m_motion.OnCollisionGroundStay(_collision);
 				}
 			}
 		}
@@ -243,7 +251,7 @@ namespace AI {
 		void OnCollisionExit(Collision _collision) {
 			if (m_motion != null) {
 				if (((1 << _collision.gameObject.layer) & GROUND_MASK) != 0) {
-					m_motion.OnCollisionGroundExit();
+					m_motion.OnCollisionGroundExit(_collision);
 				}
 			}
 
@@ -548,9 +556,9 @@ namespace AI {
 			}
 		}
 
-		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer) {
+		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, bool _isPlayer) {
 			m_viewControl.BeginSwallowed(_transform);
-			m_edible.BeingSwallowed(_transform, _rewardsPlayer);
+			m_edible.BeingSwallowed(_transform, _rewardsPlayer, _isPlayer);
 		}
 
 		public void EndSwallowed(Transform _transform){

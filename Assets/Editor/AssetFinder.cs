@@ -217,6 +217,68 @@ public class AssetFinder : EditorWindow {
 
     }
 
+    /// <summary>
+    /// Resets all shader keywords stored in materials or material selection
+    /// </summary>
+    /// 
+    public static int checkRepeatedName(ref Spawner[] spawnerList, string name)
+    {
+        int count = 0;
+        foreach (Spawner obj in spawnerList)
+        {
+            if (obj.gameObject.name == name)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public static int checkTriggerArray(Spawner.SpawnCondition[] triggerArray)
+    {
+        if (triggerArray.Length > 0)
+        {
+            for (int c = 0; c < triggerArray.Length; c++)
+            {
+                if (triggerArray[c].type == Spawner.SpawnCondition.Type.XP)
+                {
+                    return c;
+                }
+            }
+        }
+        return -1;
+    }
+
+
+    [MenuItem("Hungry Dragon/Tools/Spawners rename")]
+    public static void SceneSpawnersRename()
+    {
+        Spawner[] spawnerList;
+        FindAssetInScene<Spawner>(out spawnerList);
+        Undo.RecordObjects(spawnerList, "Disable static batching");
+        foreach (Spawner obj in spawnerList)
+        {
+            int activationCheck = checkTriggerArray(obj.activationTriggers);
+            int deactivationCheck = checkTriggerArray(obj.deactivationTriggers);
+
+            Spawner.SpawnCondition activation = (activationCheck >= 0) ? obj.activationTriggers[activationCheck] : null;
+            Spawner.SpawnCondition deactivation = (deactivationCheck >= 0) ? obj.deactivationTriggers[deactivationCheck] : null;
+            Object prefab = EditorUtility.GetPrefabParent(obj.gameObject);
+            if (prefab != null)
+            {
+                string prefabName = prefab.name;
+                if (activation != null || deactivation != null)
+                {
+                    prefabName = prefabName + "_" + ((activation != null) ? activation.value.ToString() : "0") + "_" + ((deactivation != null) ? deactivation.value.ToString() : "0");
+                }
+                obj.gameObject.name = prefabName;
+            }
+        }
+    }
+
+
+
     //------------------------------------------------------------------//
     // METHODS															//
     //------------------------------------------------------------------//
