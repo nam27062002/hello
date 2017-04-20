@@ -37,9 +37,12 @@ public class ResultsScreenXPBar : DragonXPBar {
 	[Separator("FX")]
 	[SerializeField] private ParticleSystem m_receiveFX = null;
 	[SerializeField] private ParticleSystem m_levelUpFX = null;
-	[SerializeField] private GameObject m_dragonUnlockBG = null;
+
+	[Separator("Next Dragon")]
+	[SerializeField] private GameObject m_nextDragonRoot = null;
+	[SerializeField] private Image m_nextDragonIcon = null;
 	[SerializeField] private GameObject m_dragonUnlockFX = null;
-	[SerializeField] private UIScene3DLoader m_nextDragonScene3DLoader = null;
+	[SerializeField] private GameObject m_lockIcon = null;
 
 	[Separator("Disguises")]
 	[SerializeField] private GameObject m_disguisesContainer = null;
@@ -118,15 +121,10 @@ public class ResultsScreenXPBar : DragonXPBar {
 
 		// Load and pose next dragon's preview
 		if(m_nextDragonData != null) {
-			MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
-			if(dragonLoader != null) {
-				dragonLoader.LoadDragon(m_nextDragonData.def.sku);
-				dragonLoader.dragonInstance.SetAnim(MenuDragonPreview.Anim.IDLE);
-				m_dragonUnlockBG.SetActive(true);
-			}
+			m_nextDragonIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.DISGUISE_ICONS_PATH + m_nextDragonData.def.sku, "icon_disguise_0");	// [AOC] HARDCODED!!
+			m_nextDragonRoot.SetActive(true);
 		} else {
-			m_dragonUnlockBG.SetActive(false);
-			m_nextDragonScene3DLoader.gameObject.SetActive(false);
+			m_nextDragonRoot.SetActive(false);
 		}
 
 		// Compute initial and target deltas and levels
@@ -207,6 +205,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 			m_nextDragonLocked = m_nextDragonData != null ? m_nextDragonData.isLocked : false;
 		}
 		m_dragonUnlockFX.SetActive(false);
+		m_lockIcon.SetActive(false);
 
 		// Initialize info text
 		// Special case for last dragon
@@ -295,9 +294,8 @@ public class ResultsScreenXPBar : DragonXPBar {
 	/// Launches the dragon unlock animation.
 	/// </summary>
 	private void LaunchDragonUnlockAnimation() {
-		// Prepare for animation
+		/*// Prepare for animation
 		m_dragonUnlockFX.SetActive(true);
-		m_dragonUnlockFX.transform.localScale = Vector3.zero;
 
 		// Animation
 		DOTween.Sequence()
@@ -305,7 +303,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 			.SetId(this)
 			.AppendInterval(0.25f * UIConstants.resultsDragonUnlockSpeedMultiplier)
 
-			// Scale up
+			// Scale icon up
 			.Append(m_dragonUnlockFX.transform.DOScale(1f, 0.25f * UIConstants.resultsDragonUnlockSpeedMultiplier).SetEase(Ease.OutBack))
 
 			// Change bar text as well
@@ -330,18 +328,52 @@ public class ResultsScreenXPBar : DragonXPBar {
 			})
 
 			// Go!!!
+			.Play();*/
+
+		// Show lock icon
+		m_lockIcon.SetActive(true);
+
+		// Program animation
+		DOTween.Sequence()
+			// Initial Pause
+			.SetId(this)
+			.AppendInterval(0.25f)
+
+			// Lock break animation
+			.AppendCallback(() => {
+				m_lockIcon.GetComponent<Animator>().SetTrigger("unlock");
+			})
+
+			// Let animation finish
+			.AppendInterval(1f)	// Sync with animation
+
+			// Trigger banner animation
+			.AppendCallback(() => {
+				// Show
+				m_dragonUnlockFX.SetActive(true);
+
+				// Update text with the name of the unlocked dragon
+				Localizer unlockText = m_dragonUnlockFX.FindComponentRecursive<Localizer>("UnlockText");
+				if(unlockText != null) unlockText.Localize("TID_RESULTS_DRAGON_UNLOCKED", m_nextDragonData.def.GetLocalized("tidName"));
+
+				// Launch animation
+				m_dragonUnlockFX.GetComponent<Animator>().SetTrigger("in");
+			})
+
+			// Change bar text
+			.AppendCallback(() => {
+				if(m_infoText != null) {
+					m_infoText.Localize("TID_RESULTS_DRAGON_UNLOCKED", m_nextDragonData.def.GetLocalized("tidName"));
+				}
+			})
+
+			// Disable invisible objects once the sequence is completed
+			.OnComplete(() => {
+				m_lockIcon.SetActive(false);
+			})
+
+			// Go!!!
 			.Play();
-
-		// Update text with the name of the unlocked dragon
-		Localizer unlockText = m_dragonUnlockFX.FindComponentRecursive<Localizer>("UnlockText");
-		if(unlockText != null) unlockText.Localize("TID_RESULTS_DRAGON_UNLOCKED", m_nextDragonData.def.GetLocalized("tidName"));
-
-		// Play cool dragon animation!
-		/*MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
-		if(dragonLoader != null) {
-			dragonLoader.LoadDragon(m_nextDragonData.def.sku);
-			dragonLoader.dragonInstance.SetAnim(MenuDragonPreview.Anim.UNLOCKED);
-		}*/
 	}
 
 	/// <summary>
