@@ -163,7 +163,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 			length = m_length * m_superFuryLengthMultiplier;
 
 		float angularSpeed = m_motion.angularVelocity.magnitude;
-		Debug.Log("Angular: " + angularSpeed);
+		// Debug.Log("Angular: " + angularSpeed);
 		m_arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
 
 		Vector3 flamesUpDir = Vector3.up;
@@ -188,6 +188,8 @@ public class FireBreathNew : DragonBreathBehaviour {
 		}
 
 		m_frame = (m_frame + 1) % 4;
+
+		m_bounds2D.Set( m_mouthTransform.position.x - m_actualLength, m_mouthTransform.position.y - m_actualLength, m_actualLength * 2, m_actualLength * 2);
 
 		//--------------------------------------------------------------------------------------------
 		// try to burn things!!!
