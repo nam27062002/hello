@@ -83,15 +83,12 @@ public class DragonMapMarker : MapMarker {
 		m_iconRoot.position = iconPos;
 
 		// Compute look direction from the actual icon position to the real reference position
-		Vector3 dir = targetPos - iconPos;
-		dir.z = 0.0f;
+		Vector3 diff = targetPos - iconPos;
+		diff.z = 0.0f;
 
 		// Arrow
-		if((viewportTopLeft.x < 0f 
-			|| viewportTopLeft.y < 0f 
-			|| viewportBotRight.x > 1f 
-			|| viewportBotRight.y > 1f)
-			&& (dir.sqrMagnitude > m_arrowSqrDistanceThreshold)) {
+		// Show only when far away from the marker!
+		if(diff.sqrMagnitude > m_arrowSqrDistanceThreshold) {
 			// We're outside limits, show arrow
 			m_iconRoot.gameObject.SetActive(true);
 
@@ -108,8 +105,8 @@ public class DragonMapMarker : MapMarker {
 
 			// Compute rotation angle
 			// Correct range
-			float angle = Vector3.Angle(dir, Vector3.right);
-			if(dir.y < 0) {
+			float angle = Vector3.Angle(diff, Vector3.right);
+			if(diff.y < 0) {
 				angle = -angle;
 			}
 
