@@ -156,6 +156,9 @@ namespace LevelEditor {
 			// Init game camera
 			InstanceManager.gameCamera.Init();
 
+			// Instantiate map prefab
+			InitLevelMap();
+
 			// Simulate level loaded
 			Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);
 

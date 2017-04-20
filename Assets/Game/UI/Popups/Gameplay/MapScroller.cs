@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -41,6 +42,10 @@ public class MapScroller : MonoBehaviour {
 	private Vector2 m_contentSize = Vector2.one;
 	private bool m_popupAnimating = false;
 
+	// Animations
+	private Tweener m_zoomTween = null;
+	private Tweener m_scrollTween = null;
+
 	// Public properties
 	// Absolute zoom value
 	public float zoom {
@@ -70,16 +75,9 @@ public class MapScroller : MonoBehaviour {
 		// Check required fields
 		Debug.Assert(m_scrollRect != null, "Required field not initialized!");
 
-		// Get current level's data
+		// Get current level's data and map camera
 		m_levelData = LevelManager.currentLevelData;
-
-		// Create an instance of the map camera from the level's data prefab
-		Debug.Assert(m_levelData.mapPrefab != null, "The loaded level doesn't have a Map prefab assigned, minimap will be disabled.");
-		if(m_levelData.mapPrefab != null) {
-			GameObject mapObj = Instantiate<GameObject>(m_levelData.mapPrefab);
-			m_camera = mapObj.GetComponentInChildren<MapCamera>().camera;
-			Debug.Assert(m_camera != null, "The object holding the LevelMapData doesn't have a Camera component");
-		}
+		m_camera = InstanceManager.mapCamera.camera;
 	}
 
 	/// <summary>
@@ -111,6 +109,9 @@ public class MapScroller : MonoBehaviour {
 
 		// Detect scroll events
 		m_scrollRect.onValueChanged.AddListener(OnScrollChanged);
+
+		// Subscribe to external events
+		Messenger.AddListener<float>(GameEvents.UI_MAP_CENTER_TO_DRAGON, OnCenterToDragon);
 	}
 
 	/// <summary>
@@ -140,6 +141,9 @@ public class MapScroller : MonoBehaviour {
 
 		// Stop detecting scroll events
 		m_scrollRect.onValueChanged.RemoveListener(OnScrollChanged);
+
+		// Unsubscribe from external events
+		Messenger.RemoveListener<float>(GameEvents.UI_MAP_CENTER_TO_DRAGON, OnCenterToDragon);
 	}
 
 	/// <summary>
@@ -217,18 +221,102 @@ public class MapScroller : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// [AOC] Instantiated map prefab should be destroyed with the scene, so don't do anything
+
+		// Destroy tweens
+		if(m_scrollTween != null) {
+			m_scrollTween.Kill(false);
+			m_scrollTween = null;
+		}
+
+		if(m_zoomTween != null) {
+			m_zoomTween.Kill(false);
+			m_zoomTween = null;
+		}
 	}
 
 	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
+	// PUBLIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Scroll camera to player's position.
+	/// </summary>
+	/// <param name="_speed">Optional animation speed (units/sec). Use 0 for none.</param>
+	public void ScrollToPlayer(float _speed = 0f) {
+		// Move camera to the same position as the game camera (which is pointing at the dragon)
+		Vector3 initialPos = InstanceManager.gameSceneControllerBase.mainCamera.transform.position;
+		initialPos.z = m_camera.transform.position.z;			// Keep Z
+
+		// Limit bounds and set camera position
+		ScrollToWorldPos(initialPos, _speed);
+	}
+
+	/// <summary>
+	/// Move map to a given world position.
+	/// No animation, snapped to limits.
+	/// </summary>
+	/// <param name="_pos">The position to scroll to (in world coords).</param>
+	/// <param name="_speed">Optional animation speed (units/sec). Use 0 for none.</param>
+	public void ScrollToWorldPos(Vector3 _pos, float _speed = 0f) {
+		// Make it safe
+		if(m_levelData == null) return;
+
+		// Ideally the ScrollRect will already snap to edges
+		// Scroll position is the top-left corner of the content relative to the bottom-left corner of the viewport rectangle, take in consideration camera size to make the maths
+		Vector2 targetNormalizedPos = new Vector2(
+			// Horizontal
+			Mathf.InverseLerp(
+				m_levelData.bounds.xMin + m_cameraHalfSize.x, 
+				m_levelData.bounds.xMax - m_cameraHalfSize.x, 
+				_pos.x
+			),
+
+			// Vertical
+			Mathf.InverseLerp(
+				m_levelData.bounds.yMin + m_cameraHalfSize.y, 
+				m_levelData.bounds.yMax - m_cameraHalfSize.y, 
+				_pos.y
+			)
+		);
+
+		// Stop any running tween
+		if(m_scrollTween != null) m_scrollTween.Pause();
+
+		// Animate?
+		if(_speed > 0f) {
+			// If tween is not yet created, do it now
+			// Otherwise change start and end values and restart
+			if(m_scrollTween == null) {
+				m_scrollTween = m_scrollRect.DONormalizedPos(targetNormalizedPos, _speed)
+					.SetAutoKill(false)
+					.SetUpdate(UpdateType.Normal, true)	// Ignore timescale (game is paused in map popup)
+					.SetEase(Ease.OutCubic)
+					.SetSpeedBased(true)				// Speed based to look good with any distance
+					.OnUpdate(
+						() => {
+							UpdateCameraPosition(); 	// Make camera follow
+						}
+					);
+			} else {
+				m_scrollTween.ChangeValues(m_scrollRect.normalizedPosition, targetNormalizedPos, _speed);
+			}
+
+			// Launch animation!
+			m_scrollTween.Restart();
+		} else {
+			// Do it instantly!
+			m_scrollRect.normalizedPosition = targetNormalizedPos;	// Apply target position
+			UpdateCameraPosition();	// Update camera position to match scroll rect's
+		}
+	}
+
 	/// <summary>
 	/// Set the target amount of zoom.
 	/// Will be clamped based on zoomRange and map limits.
 	/// Will be ignored if required vars are not initialized.
 	/// </summary>
 	/// <param name="_zoom">New zoom level. World units to fit in the camera's vertical viewport.</param>
-	private void SetZoom(float _zoom) {
+	/// <param name="_speed">Optional animation speed (units/sec). Use 0 for none.</param>
+	public void SetZoom(float _zoom, float _speed = 0f) {
 		// Check required params
 		if(m_camera == null) return;
 		if(m_levelData == null) return;
@@ -241,19 +329,44 @@ public class MapScroller : MonoBehaviour {
 		);
 		newOrthoSize /= 2f;	// orthographicSize is half the viewport's height!
 
-		// Apply new zoom level
-		m_camera.orthographicSize = newOrthoSize;
+		// Stop any running tween
+		if(m_zoomTween != null) m_zoomTween.Pause();
 
-		// Refresh scroll rect's sizes to match new camera viewport
-		RefreshScrollSize();
+		// Animate?
+		if(_speed > 0f) {
+			// If tween is not yet created, do it now
+			// Otherwise change start and end values and restart
+			if(m_zoomTween == null) {
+				m_zoomTween = m_camera.DOOrthoSize(newOrthoSize, _speed)
+					.SetAutoKill(false)
+					.SetUpdate(UpdateType.Normal, true)	// Ignore timescale (game is paused in map popup)
+					.SetEase(Ease.OutCubic)
+					.SetSpeedBased(true)				// Speed based to look good with any distance
+					.OnUpdate(
+						() => {
+							RefreshScrollSize();							// Refresh scroll rect's sizes to match new camera viewport
+							ScrollToWorldPos(m_camera.transform.position);	// Update camera position so it doesn't go out of bounds
+							Messenger.Broadcast<float>(GameEvents.UI_MAP_ZOOM_CHANGED, zoomFactor);	// Notify game! (map markers)
+						}
+					);
+			} else {
+				m_zoomTween.ChangeValues(m_camera.orthographicSize, newOrthoSize, _speed);
+			}
 
-		// Update camera position so it doesn't go out of bounds
-		ScrollToWorldPos(m_camera.transform.position);
-
-		// Notify game! (map markers)
-		Messenger.Broadcast<float>(GameEvents.UI_MAP_ZOOM_CHANGED, zoomFactor);
+			// Launch animation!
+			m_zoomTween.Restart();
+		} else {
+			// Do it instantly!
+			m_camera.orthographicSize = newOrthoSize;		// Apply new zoom level
+			RefreshScrollSize();							// Refresh scroll rect's sizes to match new camera viewport
+			ScrollToWorldPos(m_camera.transform.position);	// Update camera position so it doesn't go out of bounds
+			Messenger.Broadcast<float>(GameEvents.UI_MAP_ZOOM_CHANGED, zoomFactor);	// Notify game! (map markers)
+		}
 	}
 
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Update the camera position in the world to match the position of the scroll rect content.
 	/// </summary>
@@ -301,48 +414,6 @@ public class MapScroller : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Move map to a given world position.
-	/// No animation, snapped to limits.
-	/// </summary>
-	/// <param name="_pos">The position to scroll to (in world coords).</param>
-	private void ScrollToWorldPos(Vector3 _pos) {
-		// Make it safe
-		if(m_levelData == null) return;
-
-		// Ideally the ScrollRect will already snap to edges
-		// Scroll position is the top-left corner of the content rectangle, take in consideration camera size to make the maths
-		m_scrollRect.horizontalNormalizedPosition = Mathf.InverseLerp(
-			m_levelData.bounds.xMin + m_cameraHalfSize.x, 
-			m_levelData.bounds.xMax - m_cameraHalfSize.x, 
-			_pos.x
-		);
-		m_scrollRect.verticalNormalizedPosition = Mathf.InverseLerp(
-			m_levelData.bounds.yMin + m_cameraHalfSize.y, 
-			m_levelData.bounds.yMax - m_cameraHalfSize.y, 
-			_pos.y
-		);
-
-		// Update camera position to match scroll rect's
-		UpdateCameraPosition();
-	}
-
-	/// <summary>
-	/// Scroll camera to player's position.
-	/// </summary>
-	private void ScrollToPlayer() {
-		// Initialize camera at the same position as the game camera (pointing at the dragon)
-		Vector3 initialPos = Camera.main.transform.position;	// [AOC] Not safe, make sure the main camera exists and it's the game camera
-		initialPos.z = m_camera.transform.position.z;			// Keep Z
-		m_camera.transform.position = initialPos;
-
-		// Limit bounds
-		ScrollToWorldPos(initialPos);
-	}
-
-	//------------------------------------------------------------------------//
-	// INTERNAL																  //
-	//------------------------------------------------------------------------//
-	/// <summary>
 	/// Perform all the necessary actions to enable/disable map camera rendering.
 	/// </summary>
 	/// <param name="_enable">Wether to enable or disable the map camera.</param>
@@ -368,6 +439,12 @@ public class MapScroller : MonoBehaviour {
 	/// </summary>
 	/// <param name="_scrollPos">The new position.</param>
 	private void OnScrollChanged(Vector2 _scrollPos) {
+		// Interrupt any tween!
+		// [AOC] Can't do it, OnScrollChanged is called when the tween changes the scroll pos :(
+		//		 We could do a specialization of Unity's ScrollRect component with exposed events for the BeginDrag, Drag and EndDrag events, but it's not worth for now
+		//		 Another alternative could be to just watch for input touches (anywhere in the screen) and stop the tween there, but again it's not worth the extra work
+		//if(m_scrollTween != null) m_scrollTween.Pause();
+
 		// Update camera!
 		UpdateCameraPosition();
 	}
@@ -422,5 +499,30 @@ public class MapScroller : MonoBehaviour {
 	public void OnPopupClosed(PopupController _popup) {
 		// Re-enable camera (if this component is enabled)
 		EnableCamera(this.isActiveAndEnabled);
+	}
+
+	/// <summary>
+	/// Test button to zoom in.
+	/// </summary>
+	/// <param name="_speed">Zoom speed.</param>
+	public void OnZoomIn(float _speed) {
+		SetZoom(m_zoomRange.min, _speed);
+	}
+
+	/// <summary>
+	/// Test button to zoom out.
+	/// </summary>
+	/// <param name="_speed">Zoom speed.</param>
+	public void OnZoomOut(float _speed) {
+		SetZoom(m_zoomRange.max, _speed);
+	}
+
+	/// <summary>
+	/// A game component has requested to scroll to the player.
+	/// </summary>
+	/// <param name="_speed">Scroll speed.</param>
+	private void OnCenterToDragon(float _speed) {
+		// Just do it!
+		ScrollToPlayer(_speed);
 	}
 }
