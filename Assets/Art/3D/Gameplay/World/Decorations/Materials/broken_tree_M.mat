@@ -6,10 +6,10 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: test_clouds_tiled_1024
-  m_Shader: {fileID: 4800000, guid: eaf8e116eee894bb1874b0a5bc8bc445, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
+  m_Name: broken_tree_M
+  m_Shader: {fileID: 4800000, guid: 8303da806b99a45bcbaf8904f9f40c9a, type: 3}
+  m_ShaderKeywords: _EMISSION
+  m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
@@ -40,12 +40,6 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
-        name: _DetailTex
-      second:
-        m_Texture: {fileID: 2800000, guid: ab2de3b8c43247b4b87901ecb6027cbe, type: 3}
-        m_Scale: {x: 2.2, y: 0.25}
-        m_Offset: {x: 0.04064, y: 0.02797}
-    - first:
         name: _EmissionMap
       second:
         m_Texture: {fileID: 0}
@@ -54,9 +48,9 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 656c946e7b49f774396e04de91020456, type: 3}
-        m_Scale: {x: 7.22, y: 1}
-        m_Offset: {x: -0.28, y: 1}
+        m_Texture: {fileID: 2800000, guid: 7250f31437a74834892456e422301cd7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
       second:
@@ -75,6 +69,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - first:
+        name: _SecondTexture
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
         name: _BumpScale
@@ -89,6 +89,12 @@ Material:
         name: _DstBlend
       second: 0
     - first:
+        name: _FogEnd
+      second: 100
+    - first:
+        name: _FogStart
+      second: 0
+    - first:
         name: _GlossMapScale
       second: 1
     - first:
@@ -97,9 +103,6 @@ Material:
     - first:
         name: _GlossyReflections
       second: 1
-    - first:
-        name: _IOffset
-      second: 0.112
     - first:
         name: _Metallic
       second: 0
@@ -113,17 +116,11 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
-        name: _SatThreshold
-      second: 0
-    - first:
         name: _SmoothnessTextureChannel
       second: 0
     - first:
         name: _SpecularHighlights
       second: 1
-    - first:
-        name: _Speed
-      second: 0.005
     - first:
         name: _SrcBlend
       second: 1
@@ -135,26 +132,11 @@ Material:
       second: 1
     m_Colors:
     - first:
-        name: _CamPos
-      second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
         name: _Color
-      second: {r: 0.8, g: 0.8, b: 0.8, a: 1}
-    - first:
-        name: _DetailOffset
-      second: {r: 2.44, g: -0.2, b: 0, a: 0}
-    - first:
-        name: _DownColor
-      second: {r: 0.39705884, g: 1, b: 0.9750506, a: 0.428}
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
-        name: _SkyHighColor
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _SkyLowColor
-      second: {r: 0.37254903, g: 0.7137255, b: 1, a: 1}
-    - first:
-        name: _UpColor
-      second: {r: 0.09051762, g: 0, b: 0.77205884, a: 1}
+        name: _FogColor
+      second: {r: 0, g: 0, b: 0, a: 0}
