@@ -150,6 +150,7 @@ public class MapScroller : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
+		UpdateCameraPosition();
 		UpdateZoom();
 	}
 
@@ -444,9 +445,6 @@ public class MapScroller : MonoBehaviour {
 		//		 We could do a specialization of Unity's ScrollRect component with exposed events for the BeginDrag, Drag and EndDrag events, but it's not worth for now
 		//		 Another alternative could be to just watch for input touches (anywhere in the screen) and stop the tween there, but again it's not worth the extra work
 		//if(m_scrollTween != null) m_scrollTween.Pause();
-
-		// Update camera!
-		UpdateCameraPosition();
 	}
 
 	/// <summary>
