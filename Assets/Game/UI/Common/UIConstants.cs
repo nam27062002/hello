@@ -269,11 +269,6 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_resultsXPBarMinMaxDuration; }
 	}
 
-	[SerializeField] private float m_resultsDragonUnlockSpeedMultiplier = 1f;
-	public static float resultsDragonUnlockSpeedMultiplier {
-		get { return instance.m_resultsDragonUnlockSpeedMultiplier; }
-	}
-
 	[SerializeField] private float m_resultsChestsAndEggMinDuration = 1f;
 	public static float resultsChestsAndEggMinDuration {
 		get { return instance.m_resultsChestsAndEggMinDuration; }
