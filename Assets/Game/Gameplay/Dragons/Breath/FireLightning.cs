@@ -5,8 +5,9 @@ using System.Collections.Generic;
 public class FireLightning : DragonBreathBehaviour {
 
 	public float m_segmentLength = 25f; 
-	public float m_segmentWidth = 5f; 
-	public float m_maxAmplitude = 50f; 
+	public float m_segmentInitialWidth = 5f;
+    public float m_segmentFinalWidth = 5f;
+    public float m_maxAmplitude = 50f; 
 
 	public Material m_rayMaterial;
 
@@ -49,17 +50,19 @@ public class FireLightning : DragonBreathBehaviour {
 		public float m_amplitude;
 		public float m_segmentLength;
 	
-		public Lightning(float rayWidth, Color color,float numSegments, Material rayMaterial)
-		{
-			GameObject obj = new GameObject();
+//		public Lightning(float rayWidth, Color color,float numSegments, Material rayMaterial)
+        public Lightning(float iniRayWidth, float endRayWidth, Color color, float numSegments, Material rayMaterial)
+        {
+            GameObject obj = new GameObject();
 			obj.name = "RaySegment";
 			obj.transform.parent = GameObject.Find ("InstanceManager").transform;
 			m_line = obj.AddComponent<LineRenderer>();
 			m_line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            m_line.textureMode = LineTextureMode.Tile;
 			m_line.receiveShadows = false;
-			m_line.SetWidth( rayWidth, rayWidth);
+			m_line.SetWidth(iniRayWidth, endRayWidth);
 			m_line.SetColors(color,color);
-			m_line.material = rayMaterial;
+			m_line.material = new Material(rayMaterial);
 			m_line.enabled = false; 
 		}
 
@@ -81,6 +84,7 @@ public class FireLightning : DragonBreathBehaviour {
 			}
 			m_line.SetPosition( numSegments, end );
 
+            m_line.material.SetColor("_RayColor", Random.ColorHSV(0.0f, 1.0f, 0.5f, 1.0f, 0.75f, 1.0f));
 		}
 
 		public void Hide()
@@ -117,13 +121,13 @@ public class FireLightning : DragonBreathBehaviour {
 		m_waterMask = LayerMask.GetMask("Water");
 
 
-		m_rays[0] = new Lightning(m_segmentWidth, Color.white, m_length/m_segmentLength,m_rayMaterial);
+		m_rays[0] = new Lightning(m_segmentInitialWidth, m_segmentFinalWidth, Color.white, m_length/m_segmentLength,m_rayMaterial);
 		m_rays[0].m_segmentLength = m_segmentLength;
 
-		m_rays[1] = new Lightning(m_segmentWidth*0.5f, Color.grey, m_length/m_segmentLength,m_rayMaterial);
+		m_rays[1] = new Lightning(m_segmentInitialWidth * 0.5f, m_segmentFinalWidth * 0.5f, Color.grey, m_length/m_segmentLength,m_rayMaterial);
 		m_rays[1].m_segmentLength = m_segmentLength;
 
-		m_rays[2] = new Lightning(m_segmentWidth*0.25f, new Color(0.25f,0.25f,0.25f,1f), m_length/m_segmentLength,m_rayMaterial);
+		m_rays[2] = new Lightning(m_segmentInitialWidth * 0.25f, m_segmentFinalWidth * 0.25f, new Color(0.25f,0.25f,0.25f,1f), m_length/m_segmentLength,m_rayMaterial);
 		m_rays[2].m_segmentLength = m_segmentLength;
 
 		SetAmplitude( m_maxAmplitude );

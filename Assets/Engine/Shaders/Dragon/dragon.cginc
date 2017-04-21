@@ -73,6 +73,10 @@ v2f vert(appdata_t v)
 #else
 	o.normalWorld = normal;
 #endif
+
+#ifdef DOUBLESIDED
+	o.normalWorld *= sign(dot(o.normalWorld, o.viewDir));
+#endif
 	return o;
 }
 
