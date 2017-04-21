@@ -301,6 +301,8 @@ public class ProfilerControlPanelController : MonoBehaviour
     {
 		StartingPoint,
         FloatingRock,
+        HangingBridge,
+        VineBigLeaf,
 		WoodsCabins,
 		WoodsLeaves,
         Castle,
@@ -314,6 +316,8 @@ public class ProfilerControlPanelController : MonoBehaviour
     {
 		new Vector3(-180, 119, 0f),
         new Vector3(-174, 75, 0f),
+        new Vector3(-132, -21, 0f),
+        new Vector3(-285, 45, 0f),
         new Vector3(137, 51, 0f),
 		new Vector3(280, 42, 0f),
         new Vector3(598, -3, 0f),
