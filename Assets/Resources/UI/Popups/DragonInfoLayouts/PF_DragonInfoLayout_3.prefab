@@ -2918,7 +2918,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1650441152685820}
-  m_LocalRotation: {x: -0.5186477, y: 0.5161394, z: 0.4833219, w: 0.48062944}
+  m_LocalRotation: {x: -0.47053984, y: 0.32799816, z: 0.6264321, w: 0.5278185}
   m_LocalPosition: {x: 0.25748837, y: -0, z: 0.000257387}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3196,8 +3196,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1453024431981340}
-  m_LocalRotation: {x: -0.000000029802326, y: 0.000000089406974, z: -0.000000029802326,
-    w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.000001321216, y: -0.0000006859992, z: 0.00000043374314}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children: []
@@ -5479,6 +5478,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: 
   m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
 --- !u!114 &114028857437649856
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5497,6 +5497,10 @@ MonoBehaviour:
   m_holdingBloodParticle:
     name: PS_Blood_Explosion_Medium
     path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_holdingFreezeParticle:
+    name: PS_IceExplosionSmall
+    path: 
     offset: {x: 0, y: 0, z: 0}
   m_burpSound: 
   m_canEatEntities: 1
@@ -5541,7 +5545,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.44705886, g: 0.3254902, b: 0.3019608, a: 1}
+  m_Color: {r: 0.52205884, g: 0.3708983, b: 0.34164146, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -5689,6 +5693,8 @@ MonoBehaviour:
       max: 1.25
   m_onSpawnSound: 
   m_rotateToMouth: 0
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -5710,7 +5716,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
-  m_brainResource: {fileID: 11400000, guid: f2bd5eecf5cd9480dac5dfd8f1d2cd56, type: 2}
+  m_brainResource: {fileID: 0}
   m_railSeparation:
     min: 0.5
     max: 1
@@ -5767,6 +5773,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba1c905da34946d68ce50345b05e48f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_overrideCamera: {fileID: 0}
 --- !u!114 &114343629828592330
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5810,6 +5817,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba1c905da34946d68ce50345b05e48f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_overrideCamera: {fileID: 0}
 --- !u!114 &114421996645219584
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5874,6 +5882,8 @@ MonoBehaviour:
       max: 0
   m_onSpawnSound: 
   m_rotateToMouth: 3
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -5948,14 +5958,14 @@ MonoBehaviour:
   m_text: Now Destructible
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
-  m_sharedMaterial: {fileID: 2100000, guid: 3a0143e13882843f48da7c1fdc74ce06, type: 2}
+  m_sharedMaterial: {fileID: 2140630, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4286374655
-  m_fontColor: {r: 1, g: 0.8862745, b: 0.4862745, a: 1}
+    rgba: 4285429408
+  m_fontColor: {r: 0.627451, g: 0.4627451, b: 0.43137255, a: 1}
   m_enableVertexGradient: 0
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
@@ -6216,7 +6226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.44705886, g: 0.3254902, b: 0.3019608, a: 1}
+  m_Color: {r: 0.52205884, g: 0.3708983, b: 0.34164146, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -6374,7 +6384,10 @@ MonoBehaviour:
   m_tierNoTurboBreak: 0
   m_hitCount: 1
   m_destroyOnBreak: 1
-  m_onBreakParticle: PF_CaveBlockerExplosion
+  m_onBreakParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBreakAudio: Rocks
   m_view: {fileID: 4477284389828826}
 --- !u!114 &114930925952126254
@@ -6412,14 +6425,14 @@ MonoBehaviour:
   m_text: Now Edible
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
-  m_sharedMaterial: {fileID: 2100000, guid: 3a0143e13882843f48da7c1fdc74ce06, type: 2}
+  m_sharedMaterial: {fileID: 2140630, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4286374655
-  m_fontColor: {r: 1, g: 0.8862745, b: 0.4862745, a: 1}
+    rgba: 4285363616
+  m_fontColor: {r: 0.628, g: 0.46273685, b: 0.42968422, a: 1}
   m_enableVertexGradient: 0
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
@@ -38687,7 +38700,7 @@ RectTransform:
   m_GameObject: {fileID: 1668267457052054}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0.000030517578}
-  m_LocalScale: {x: 64.258385, y: 64.258385, z: 64.258385}
+  m_LocalScale: {x: 0.08224285, y: 0.08224285, z: 0.08224285}
   m_Children:
   - {fileID: 4962115066532076}
   m_Father: {fileID: 224116699413527940}
@@ -38695,7 +38708,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00036621094, y: -101.74507}
+  m_AnchoredPosition: {x: 0, y: -100.00988}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224345976603190656
@@ -38706,7 +38719,7 @@ RectTransform:
   m_GameObject: {fileID: 1545605866021918}
   m_LocalRotation: {x: 0.079183504, y: -0.44907162, z: -0.15454355, w: 0.87645936}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 20.346704, y: 20.346704, z: 20.346704}
+  m_LocalScale: {x: 0.026493076, y: 0.026493076, z: 0.026493076}
   m_Children:
   - {fileID: 4694196891370236}
   - {fileID: 4621633552798830}
@@ -38715,7 +38728,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -20}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -20.62061, y: 40.054146}
+  m_AnchoredPosition: {x: -20.62171, y: 40.054058}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224413400612382132
@@ -38726,7 +38739,7 @@ RectTransform:
   m_GameObject: {fileID: 1582260704575616}
   m_LocalRotation: {x: 0, y: 0.81915206, z: 0, w: 0.57357645}
   m_LocalPosition: {x: 0, y: 0, z: -0.000030517578}
-  m_LocalScale: {x: 106.74015, y: 106.74015, z: 106.74015}
+  m_LocalScale: {x: 0.13898498, y: 0.13898498, z: 0.13898498}
   m_Children:
   - {fileID: 4602678773529270}
   m_Father: {fileID: 224925082016888350}
@@ -38734,7 +38747,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000030517578, y: 32.51085}
+  m_AnchoredPosition: {x: -0.000030517578, y: 32.51262}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224502318328564866
