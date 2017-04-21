@@ -7,6 +7,7 @@
 		_RayPhase ("Ray phase", Range(0.001, 10.0)) = 0.5
 		_RaySpeed("Ray speed", Range(0.001, 10.0)) = 0.5
 		_RayColor("Ray color", Color) = (0.0, 1.0, 1.0, 1.0)
+		_RayOffset("Ray offset", float) = 0.0
 	}
 	SubShader
 	{
@@ -48,6 +49,7 @@
 			float _RayWidth;
 			float _RayPhase;
 			float _RaySpeed;
+			float _RayOffset;
 			float4 _RayColor;
 
 			v2f vert (appdata v)
@@ -64,7 +66,7 @@
 
 				// sample the texture
 //				fixed4 col = tex2D(_MainTex, i.uv);
-				float s = (sin(i.uv.x * _RayPhase + _Time.y * _RaySpeed) + 1.0) * 0.5;
+				float s = ((sin(_RayOffset + (i.uv.x * _RayPhase) + (_Time.y * _RaySpeed)) * (1.0 - _RayWidth)) + 1.0) * 0.5;
 				s = 1.0 - smoothstep(0, _RayWidth, abs(s - i.uv.y));				
 				return s * _RayColor;
 			}
