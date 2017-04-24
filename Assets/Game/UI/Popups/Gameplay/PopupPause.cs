@@ -95,6 +95,15 @@ public class PopupPause : PopupPauseBase {
 	}
 
 	/// <summary>
+	/// Dragon info button has been pressed.
+	/// </summary>
+	public void OnDragonInfoButton() {
+		// Open the dragon info popup and initialize it with the current dragon's data
+		PopupDragonInfo popup = PopupManager.OpenPopupInstant(PopupDragonInfo.PATH).GetComponent<PopupDragonInfo>();
+		popup.Init(DragonManager.currentDragon);
+	}
+
+	/// <summary>
 	/// Close animation has finished.
 	/// </summary>
 	public void OnClosePostAnimation() {
