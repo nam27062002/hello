@@ -98,6 +98,11 @@ public class FireLightning : DragonBreathBehaviour {
 		{
 				m_line.enabled = false;
 		}
+
+        public void Destroy()
+        {
+            DestroyObject(m_line.gameObject);
+        }
 	}
 
 
@@ -147,7 +152,18 @@ public class FireLightning : DragonBreathBehaviour {
 		m_insideWater = false;
 	}
 
-	public void SetAmplitude( float amplitude )
+    void OnDestroy()
+    {
+        m_rays[0].Destroy();
+        m_rays[0] = null;
+        m_rays[1].Destroy();
+        m_rays[1] = null;
+        m_rays[2].Destroy();
+        m_rays[2] = null;
+        print("FireLightning destroy!!!!");
+    }
+
+    public void SetAmplitude( float amplitude )
 	{
 		m_maxAmplitude = amplitude;
 		m_rays[0].m_amplitude = m_maxAmplitude*0.25f;
