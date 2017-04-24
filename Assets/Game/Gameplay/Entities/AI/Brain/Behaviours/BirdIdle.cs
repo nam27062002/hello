@@ -26,6 +26,7 @@ namespace AI {
 
 
 			private bool m_avoidCollisionsRestoreValue;
+			private bool m_avoidWaterRestoreValue;
 
 			private BirdIdleData m_data;
 			private IdleState m_idleState;
@@ -46,6 +47,7 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<BirdIdleData>();
 
 				m_avoidCollisionsRestoreValue = m_pilot.avoidCollisions;
+				m_avoidWaterRestoreValue = m_pilot.avoidWater;
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {				
@@ -61,6 +63,7 @@ namespace AI {
 				}
 					
 				m_pilot.avoidCollisions = false;
+				m_pilot.avoidWater = false;
 
 				if (Physics.Linecast(start, end, out hit, m_groundMask)) {
 					m_restPoint = hit.point;
@@ -88,6 +91,7 @@ namespace AI {
 
 			protected override void OnExit(State _newState) {
 				m_pilot.avoidCollisions = m_avoidCollisionsRestoreValue;
+				m_pilot.avoidWater = m_avoidWaterRestoreValue;
 			}
 
 			protected override void OnUpdate() {

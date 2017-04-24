@@ -30,6 +30,7 @@ public class SpawnerEditor : Editor {
 	private Spawner m_targetSpawner = null;
 
 	// Store a reference of interesting properties for faster access
+	private SerializedProperty m_maxTierProp = null;
 	private SerializedProperty m_activationTriggersProp = null;
 	private SerializedProperty m_deactivationTriggersProp = null;
 
@@ -49,6 +50,7 @@ public class SpawnerEditor : Editor {
 		m_targetSpawner = target as Spawner;
 
 		// Store a reference of interesting properties for faster access
+		m_maxTierProp = serializedObject.FindProperty("m_maxTier");
 		m_activationTriggersProp = serializedObject.FindProperty("m_activationTriggers");
 		m_deactivationTriggersProp = serializedObject.FindProperty("m_deactivationTriggers");
 
@@ -87,7 +89,14 @@ public class SpawnerEditor : Editor {
 		p.Next(true);	// To get first element
 		do {
 			// Properties requiring special treatment
-			if(p.name == m_activationTriggersProp.name) {
+			if (p.name == m_maxTierProp.name) {
+
+			} else if (p.name == "m_checkMaxTier") {
+				EditorGUILayout.PropertyField(p, true);
+				if (p.boolValue) {	
+					EditorGUILayout.PropertyField(m_maxTierProp, true);
+				}
+			} else if(p.name == m_activationTriggersProp.name) {
 				// Draw activation properties
 				EditorGUI.BeginChangeCheck();
 				EditorGUILayout.PropertyField(m_activationTriggersProp, true);
