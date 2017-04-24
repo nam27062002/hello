@@ -110,7 +110,7 @@ namespace AI {
 					}
 
 					if (m_targetTransform != null) {
-						m_pointB = m_targetTransform.position + dragon.dragonMotion.direction * dragon.dragonMotion.lastSpeed * 1f; //half a second
+						m_pointB = m_targetTransform.position + dragon.dragonMotion.velocity * 1f; //half a second
 					} else {
 						m_pointB = m_machine.position + (m_pilot.direction * 5f);
 					}
