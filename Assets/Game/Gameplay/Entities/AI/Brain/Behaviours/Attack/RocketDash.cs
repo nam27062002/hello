@@ -138,7 +138,7 @@ namespace AI {
 								}
 
 								if (target != null) {
-									m_target = target.position + dragon.dragonMotion.direction * dragon.dragonMotion.lastSpeed * 0.5f; //half a second
+									m_target = target.position + dragon.dragonMotion.velocity * 0.5f; //half a second
 								} else {
 									m_target = m_machine.position + (m_pilot.direction * 5f);
 								}
