@@ -10,7 +10,6 @@ GameObject:
   - component: {fileID: 416572}
   - component: {fileID: 11484492}
   - component: {fileID: 114000010812324944}
-  - component: {fileID: 114721797887050788}
   m_Layer: 0
   m_Name: SP_Ghost02
   m_TagString: Untagged
@@ -82,9 +81,11 @@ MonoBehaviour:
   m_scale:
     min: 0.8
     max: 1.1
-  m_rails: 3
+  m_rails: 0
   m_hasGroupBonus: 0
   m_minTier: 0
+  m_maxTier: 4
+  m_checkMaxTier: 0
   m_activationChance: 100
   m_activationTriggers: []
   m_deactivationTriggers: []
@@ -97,15 +98,3 @@ MonoBehaviour:
     max: 0
   m_maxSpawns: 0
   m_checkCurrents: 0
---- !u!114 &114721797887050788
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 154690}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_formation: 0
