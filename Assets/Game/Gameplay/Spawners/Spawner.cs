@@ -52,6 +52,7 @@ public class Spawner : AbstractSpawner {
 
 	[Separator("Activation")]
 	[SerializeField] public DragonTier m_minTier = DragonTier.TIER_0;
+	[SerializeField] public DragonTier m_maxTier = DragonTier.TIER_4;
 
 	[Tooltip("Spawners may not be present on every run (percentage).")]
 	[SerializeField][Range(0f, 100f)] public float m_activationChance = 100f;
@@ -119,8 +120,9 @@ public class Spawner : AbstractSpawner {
 
 	protected override void OnStart() {
 		float rnd = Random.Range(0f, 100f);
+		DragonTier playerTier = InstanceManager.player.data.tier;
 
-		if (InstanceManager.player != null && InstanceManager.player.data.tier >= m_minTier) {
+		if (InstanceManager.player != null && playerTier >= m_minTier && playerTier <= m_maxTier) {
 			if (m_entityPrefabList != null && m_entityPrefabList.Length > 0 && rnd <= m_activationChance) {
 
 				if (m_quantity.max < m_quantity.min) {
