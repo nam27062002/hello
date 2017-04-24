@@ -73,7 +73,10 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 		int selectedIdx = 0;
 		if(!String.IsNullOrEmpty(_property.stringValue)) {
 			for(int i = 0; i < m_files.Count; i++) {
-				if(m_files[i] != null && m_files[i].FullName.Contains(_property.stringValue)) {
+				if(m_files[i] == null) continue;
+
+				// [AOC] Windows uses backward slashes, which Unity doesn't recognize
+				if(StringUtils.SafePath(m_files[i].FullName).Contains(StringUtils.SafePath(_property.stringValue))) {
 					selectedIdx = i;
 					break;
 				}
