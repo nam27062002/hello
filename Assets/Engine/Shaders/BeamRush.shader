@@ -26,9 +26,10 @@
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			// make fog work
-			#pragma multi_compile_fog
-			
+			#pragma multi_compile_fwdbase
+			#pragma glsl_no_auto_normalization
+			#pragma fragmentoption ARB_precision_hint_fastest
+
 			#include "UnityCG.cginc"
 
 			struct appdata
@@ -44,8 +45,6 @@
 				float4 vertex : SV_POSITION;
 			};
 
-//			sampler2D _MainTex;
-//			float4 _MainTex_ST;
 			float _RayWidth;
 			float _RayPhase;
 			float _RaySpeed;
@@ -56,18 +55,14 @@
 			{
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = v.uv; // TRANSFORM_TEX(v.uv, _MainTex);
-//				UNITY_TRANSFER_FOG(o,o.vertex);
+				o.uv = v.uv;
 				return o;
 			}
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-
-				// sample the texture
-//				fixed4 col = tex2D(_MainTex, i.uv);
 				float s = ((sin(_RayOffset + (i.uv.x * _RayPhase) + (_Time.y * _RaySpeed)) * (1.0 - _RayWidth)) + 1.0) * 0.5;
-				s = 1.0 - smoothstep(0, _RayWidth, abs(s - i.uv.y));				
+				s = 1.0 - smoothstep(0, _RayWidth, abs(s - i.uv.y));
 				return s * _RayColor;
 			}
 			ENDCG
