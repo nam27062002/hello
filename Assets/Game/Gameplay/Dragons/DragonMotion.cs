@@ -1632,6 +1632,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		get { return m_impulse; }
 	}
 
+	public float speed{
+		get { return m_impulseMagnitude; }
+	}
+
 	public Vector3 angularVelocity{
 		get  { return m_rbody.angularVelocity; }
 	}
