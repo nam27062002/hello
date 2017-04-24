@@ -8,6 +8,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 416572}
+  - component: {fileID: 11484492}
   - component: {fileID: 114000010812324944}
   - component: {fileID: 114620328571453304}
   m_Layer: 0
@@ -30,6 +31,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &11484492
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 154690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_circular: 1
+  m_smoothRadius: 0.5
+  m_points:
+  - {x: -0.8424225, y: 0.4177246, z: 0}
+  - {x: 0.84339905, y: -0.7615204, z: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -68,7 +85,6 @@ MonoBehaviour:
   m_rails: 3
   m_hasGroupBonus: 0
   m_minTier: 0
-  m_maxTier: 4
   m_activationChance: 100
   m_activationTriggers: []
   m_deactivationTriggers: []
