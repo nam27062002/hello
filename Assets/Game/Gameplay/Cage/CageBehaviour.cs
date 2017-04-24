@@ -77,7 +77,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 					bool playCollideSound = true;
 					if (boost.IsBoostActive()) 	{
 						DragonMotion dragonMotion = go.GetComponent<DragonMotion>();	// Check speed is enough
-						if (dragonMotion.lastSpeed >= (dragonMotion.absoluteMaxSpeed * 0.85f)) {
+						if (dragonMotion.howFast >= 0.85f) {
 							m_waitTimer = 0.5f;
 							// Check Min Speed
 							m_currentHits.count--;
