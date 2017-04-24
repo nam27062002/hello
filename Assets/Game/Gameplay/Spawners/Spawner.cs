@@ -51,8 +51,9 @@ public class Spawner : AbstractSpawner {
 	[SerializeField] private bool		m_hasGroupBonus = false;
 
 	[Separator("Activation")]
-	[SerializeField] public DragonTier m_minTier = DragonTier.TIER_0;
-	[SerializeField] public DragonTier m_maxTier = DragonTier.TIER_4;
+	[SerializeField] private DragonTier m_minTier = DragonTier.TIER_0;
+	[SerializeField] private DragonTier m_maxTier = DragonTier.TIER_4;
+	[SerializeField] private bool	    m_checkMaxTier = false;
 
 	[Tooltip("Spawners may not be present on every run (percentage).")]
 	[SerializeField][Range(0f, 100f)] public float m_activationChance = 100f;
@@ -122,7 +123,12 @@ public class Spawner : AbstractSpawner {
 		float rnd = Random.Range(0f, 100f);
 		DragonTier playerTier = InstanceManager.player.data.tier;
 
-		if (InstanceManager.player != null && playerTier >= m_minTier && playerTier <= m_maxTier) {
+		bool enabledByTier = playerTier >= m_minTier;
+		if (enabledByTier && m_checkMaxTier) {
+			enabledByTier = (playerTier <= m_maxTier);
+		}
+
+		if (InstanceManager.player != null && enabledByTier) {			
 			if (m_entityPrefabList != null && m_entityPrefabList.Length > 0 && rnd <= m_activationChance) {
 
 				if (m_quantity.max < m_quantity.min) {
