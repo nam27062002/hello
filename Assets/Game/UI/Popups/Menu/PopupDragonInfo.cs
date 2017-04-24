@@ -32,11 +32,13 @@ public class PopupDragonInfo : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Separator("UI Elements")]
-	[SerializeField] private Image m_tierIcon = null;
+	[SerializeField] private Image m_dragonIcon = null;
 	[SerializeField] private Localizer m_dragonNameText = null;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_healthText = null;
 	[SerializeField] private TextMeshProUGUI m_energyText = null;
+	[Space]
+	[SerializeField] private Image m_tierIcon = null;
 	[SerializeField] private Localizer m_tierInfoText = null;
 
 	// Edibles/Destructibles layout
@@ -182,8 +184,9 @@ public class PopupDragonInfo : MonoBehaviour {
 		DragonData dragonData = m_scroller.selectedItem;
 		if(dragonData == null) return;
 
-		// Dragon name
+		// Dragon name and icon
 		m_dragonNameText.Localize(dragonData.def.Get("tidName"));
+		m_dragonIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.DISGUISE_ICONS_PATH + dragonData.def.sku, "icon_disguise_0");	// [AOC] HARDCODED!!
 
 		// HP
 		m_healthText.text = StringUtils.FormatNumber(dragonData.maxHealth, 0);
@@ -196,7 +199,7 @@ public class PopupDragonInfo : MonoBehaviour {
 			// Tier icon
 			string tierIcon = dragonData.tierDef.GetAsString("icon");
 			m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierIcon);
-		
+
 			// Tier description
 			// %U0 dragons can equip <color=%U1>%U2 pets</color> and give a <color=%U1>%U3</color> 
 			// multiplier during <color=%U4>Fire Rush</color>
@@ -380,7 +383,7 @@ public class PopupDragonInfo : MonoBehaviour {
 				m = renderers[i].materials[j];
 
 				// Default IDs
-				fresnelFactorID = "_FresnelFactor";
+				fresnelFactorID = "_FresnelPower";
 				fresnelColorID = "_FresnelColor";
 
 				// If the material doesn't have fresnel properties, replace by default material

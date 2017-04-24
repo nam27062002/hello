@@ -120,8 +120,9 @@ public enum GameEvents {
 	
 	// UI events
 	UI_INGAME_PC_FEEDBACK_END,		// no params
-	UI_TOGGLE_CURRENCY_COUNTERS,	// bool _show
-	UI_MAP_ZOOM_CHANGED,			// float _zoomFactor (percentage relative to initial zoom level (0.5x, 1x, 2x, etc, the smaller the closer)
+	UI_TOGGLE_CURRENCY_COUNTERS,	// params: bool _show
+	UI_MAP_ZOOM_CHANGED,			// params: float _zoomFactor (percentage relative to initial zoom level (0.5x, 1x, 2x, etc, the smaller the closer)
+	UI_MAP_CENTER_TO_DRAGON,		// Request centering the map to the dragon! params: float _scrollSpeed (use <= 0 for instant)
 
 	// Camera events
 	CAMERA_INTRO_DONE,			// no params

@@ -1050,7 +1050,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		}
 		
 		m_rbody.angularVelocity = m_angularVelocity;
-		if ( FeatureSettingsManager.IsDebugEnabled )
+		// if ( FeatureSettingsManager.IsDebugEnabled )
 		{
 			m_lastSpeed = (transform.position - m_lastPosition).magnitude / Time.fixedDeltaTime;
 		}
@@ -1630,6 +1630,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		
 	public Vector3 velocity {
 		get { return m_impulse; }
+	}
+
+	public float speed{
+		get { return m_impulseMagnitude; }
 	}
 
 	public Vector3 angularVelocity{

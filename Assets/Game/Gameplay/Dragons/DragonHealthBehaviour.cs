@@ -242,7 +242,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		if ( m_animator != null )
 		{
 			AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
-			if (stateInfo.shortNameHash != m_damageAnimState) {
+			if (stateInfo.fullPathHash != m_damageAnimState) {
 				m_animator.SetTrigger("damage");// receive damage?
 			}
 		}

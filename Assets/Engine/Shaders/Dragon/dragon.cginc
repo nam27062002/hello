@@ -73,6 +73,10 @@ v2f vert(appdata_t v)
 #else
 	o.normalWorld = normal;
 #endif
+
+#ifdef DOUBLESIDED
+	o.normalWorld *= sign(dot(o.normalWorld, o.viewDir));
+#endif
 	return o;
 }
 
@@ -144,7 +148,7 @@ fixed4 frag(v2f i) : SV_Target
 	satMask = lerp(satMask, 1.0, detail.b);
 	//	satMask *= detail.r *(((cos(wave.x) + 1.0) * 0.5) * ((sin(_Time.y) + 1.0) * 0.5)) * 10.0;
 	fixed blink = lerp((sin(_Time.y * _InnerLightWavePhase) + 1.0) * 0.5, (cos(wave) + 1.0) * 0.5, detail.b);
-	satMask *= blink * 2.0;
+	satMask *= blink * 10.0;
 	fixed4 selfIlluminate = lerp(fixed4(0.0, 0.0, 0.0, 0.0), _InnerLightColor, satMask);
 
 #else

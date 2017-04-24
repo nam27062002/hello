@@ -8915,7 +8915,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1886681254954162}
-  m_LocalRotation: {x: -0.25353712, y: 0.5587252, z: 0.5541722, w: 0.5625286}
+  m_LocalRotation: {x: -0.2535371, y: 0.5587251, z: 0.55417216, w: 0.56252855}
   m_LocalPosition: {x: -0.08062987, y: -0.021874828, z: 0.043720305}
   m_LocalScale: {x: 0.99999994, y: 1, z: 1.0000001}
   m_Children:
@@ -11225,6 +11225,8 @@ MonoBehaviour:
       max: 0
   m_onSpawnSound: 
   m_rotateToMouth: 3
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -11331,6 +11333,8 @@ MonoBehaviour:
       max: 1
   m_onSpawnSound: 
   m_rotateToMouth: 3
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -11462,7 +11466,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.44705886, g: 0.3254902, b: 0.3019608, a: 1}
+  m_Color: {r: 0.52205884, g: 0.3708983, b: 0.34164146, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -11490,6 +11494,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Spine1
   m_parentRoot: {fileID: 4352899780863152}
+  m_worldPositionStays: 1
 --- !u!114 &114081676118526244
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11831,6 +11836,8 @@ MonoBehaviour:
       max: 0
   m_onSpawnSound: 
   m_rotateToMouth: 3
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -11872,6 +11879,10 @@ MonoBehaviour:
   m_holdingBloodParticle:
     name: PS_Blood_Explosion_Medium
     path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_holdingFreezeParticle:
+    name: PS_IceExplosionSmall
+    path: 
     offset: {x: 0, y: 0, z: 0}
   m_burpSound: 
   m_canEatEntities: 1
@@ -12107,6 +12118,8 @@ MonoBehaviour:
       max: 0.5
   m_onSpawnSound: 
   m_rotateToMouth: 3
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -12337,6 +12350,13 @@ MonoBehaviour:
   m_onTriggerEnter: 1
   m_onTriggerStay: 1
   m_onTriggerExit: 1
+  m_onMouseDown: 0
+  m_onMouseDrag: 0
+  m_onMouseUp: 0
+  m_onMouseUpAsButton: 0
+  m_onMouseEnter: 0
+  m_onMouseExit: 0
+  m_onMouseOver: 0
 --- !u!114 &114466130779054124
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12368,6 +12388,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Bat_Tail_1
   m_parentRoot: {fileID: 4573517227394238}
+  m_worldPositionStays: 1
 --- !u!114 &114474193233650714
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12467,6 +12488,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Goblin_Pelvis
   m_parentRoot: {fileID: 4882841463984538}
+  m_worldPositionStays: 1
 --- !u!114 &114502008205811340
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12480,6 +12502,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Spine1
   m_parentRoot: {fileID: 4136145322046558}
+  m_worldPositionStays: 1
 --- !u!114 &114506115308965206
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12544,6 +12567,8 @@ MonoBehaviour:
       max: 1
   m_onSpawnSound: 
   m_rotateToMouth: 3
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -12630,14 +12655,14 @@ MonoBehaviour:
   m_text: Now Destructible
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
-  m_sharedMaterial: {fileID: 2100000, guid: 3a0143e13882843f48da7c1fdc74ce06, type: 2}
+  m_sharedMaterial: {fileID: 2140630, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4286374655
-  m_fontColor: {r: 1, g: 0.8862745, b: 0.4862745, a: 1}
+    rgba: 4285429408
+  m_fontColor: {r: 0.627451, g: 0.4627451, b: 0.43137255, a: 1}
   m_enableVertexGradient: 0
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
@@ -12823,6 +12848,8 @@ MonoBehaviour:
       max: 1
   m_onSpawnSound: 
   m_rotateToMouth: 0
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -12841,6 +12868,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Goblin_Ribcage
   m_parentRoot: {fileID: 4882841463984538}
+  m_worldPositionStays: 1
 --- !u!114 &114704679483318706
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12856,7 +12884,10 @@ MonoBehaviour:
   m_tierNoTurboBreak: 0
   m_hitCount: 1
   m_destroyOnBreak: 1
-  m_onBreakParticle: PF_CaveBlockerExplosion
+  m_onBreakParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBreakAudio: Rocks
   m_view: {fileID: 4184490869579342}
 --- !u!114 &114720681896447494
@@ -12958,6 +12989,8 @@ MonoBehaviour:
       max: 0.5
   m_onSpawnSound: 
   m_rotateToMouth: 0
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -12976,6 +13009,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: 
   m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
 --- !u!114 &114735449581112392
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13002,7 +13036,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.44705886, g: 0.3254902, b: 0.3019608, a: 1}
+  m_Color: {r: 0.52205884, g: 0.3708983, b: 0.34164146, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -13035,6 +13069,13 @@ MonoBehaviour:
   m_onTriggerEnter: 1
   m_onTriggerStay: 1
   m_onTriggerExit: 1
+  m_onMouseDown: 0
+  m_onMouseDrag: 0
+  m_onMouseUp: 0
+  m_onMouseUpAsButton: 0
+  m_onMouseEnter: 0
+  m_onMouseExit: 0
+  m_onMouseOver: 0
 --- !u!114 &114765729115217374
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13248,6 +13289,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Pelvis
   m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
 --- !u!114 &114921548915234370
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13488,6 +13530,8 @@ MonoBehaviour:
       max: 0
   m_onSpawnSound: 
   m_rotateToMouth: 0
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
@@ -13515,14 +13559,14 @@ MonoBehaviour:
   m_text: Now Edible
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
-  m_sharedMaterial: {fileID: 2100000, guid: 3a0143e13882843f48da7c1fdc74ce06, type: 2}
+  m_sharedMaterial: {fileID: 2140630, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4286374655
-  m_fontColor: {r: 1, g: 0.8862745, b: 0.4862745, a: 1}
+    rgba: 4285363616
+  m_fontColor: {r: 0.628, g: 0.46273685, b: 0.42968422, a: 1}
   m_enableVertexGradient: 0
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
@@ -46187,7 +46231,7 @@ RectTransform:
   m_GameObject: {fileID: 1295761903309334}
   m_LocalRotation: {x: 0, y: 0.8479555, z: 0, w: 0.5300674}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 42.772224, y: 42.772224, z: 42.772224}
+  m_LocalScale: {x: 0.05569342, y: 0.05569342, z: 0.05569342}
   m_Children:
   - {fileID: 4528396769211158}
   m_Father: {fileID: 224128597096869350}
@@ -46195,7 +46239,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000987221, y: 13.026808}
+  m_AnchoredPosition: {x: -0.002323935, y: 13.026945}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224037239219110648
@@ -46302,7 +46346,7 @@ RectTransform:
   m_GameObject: {fileID: 1698586937624114}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 84.95611, y: 84.95611, z: 84.95611}
+  m_LocalScale: {x: 0.110619925, y: 0.110619925, z: 0.110619925}
   m_Children:
   - {fileID: 4858204039943652}
   m_Father: {fileID: 224063896902935222}
@@ -46310,7 +46354,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00016401403, y: 6.2824736}
+  m_AnchoredPosition: {x: -0.0018043293, y: 6.282859}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224147379786769756
@@ -46321,7 +46365,7 @@ RectTransform:
   m_GameObject: {fileID: 1749953820481998}
   m_LocalRotation: {x: 0.11741682, y: -0.66590345, z: -0.12793367, w: 0.7255474}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 20.346704, y: 20.346704, z: 20.346704}
+  m_LocalScale: {x: 0.02649308, y: 0.02649308, z: 0.02649308}
   m_Children:
   - {fileID: 4584406248217116}
   - {fileID: 4518195707902462}
@@ -46330,7 +46374,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -20}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -20.620617, y: 40.05413}
+  m_AnchoredPosition: {x: -20.621708, y: 40.054077}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224186460995482744
@@ -46398,7 +46442,7 @@ RectTransform:
   m_GameObject: {fileID: 1217062176794336}
   m_LocalRotation: {x: 0, y: 0.9396927, z: 0, w: -0.34202015}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 180.31686, y: 180.31686, z: 180.31686}
+  m_LocalScale: {x: 0.23478757, y: 0.23478757, z: 0.23478757}
   m_Children:
   - {fileID: 4199304429713752}
   m_Father: {fileID: 224644269510195300}
@@ -46406,7 +46450,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: -140, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.005198201, y: -64.48323}
+  m_AnchoredPosition: {x: 0.000025007892, y: -64.48358}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224413400612382132
@@ -46417,7 +46461,7 @@ RectTransform:
   m_GameObject: {fileID: 1582260704575616}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 159.62173, y: 159.62173, z: 159.62173}
+  m_LocalScale: {x: 0.20784076, y: 0.20784076, z: 0.20784076}
   m_Children:
   - {fileID: 4136145322046558}
   m_Father: {fileID: 224925082016888350}
@@ -46425,7 +46469,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.24421838, y: -2.3894322}
+  m_AnchoredPosition: {x: -0.24299112, y: -2.3859823}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224432464807154352
@@ -46436,7 +46480,7 @@ RectTransform:
   m_GameObject: {fileID: 1655966961861500}
   m_LocalRotation: {x: 0, y: 0.83843297, z: 0, w: 0.5450047}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 80.22192, y: 80.22192, z: 80.22192}
+  m_LocalScale: {x: 0.10445295, y: 0.10445295, z: 0.10445295}
   m_Children:
   - {fileID: 4695810093898068}
   m_Father: {fileID: 224860100176181556}
@@ -46444,7 +46488,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.0446378, y: -21.543009}
+  m_AnchoredPosition: {x: -1.0448099, y: -21.54355}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224454884897058284
@@ -46455,7 +46499,7 @@ RectTransform:
   m_GameObject: {fileID: 1319738532263436}
   m_LocalRotation: {x: 0, y: 0.9211854, z: 0, w: -0.38912398}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 56.720936, y: 56.720936, z: 56.720936}
+  m_LocalScale: {x: 0.07385539, y: 0.07385539, z: 0.07385539}
   m_Children:
   - {fileID: 4241274550015812}
   m_Father: {fileID: 224298275718794310}
@@ -46463,7 +46507,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.87638813, y: -37.076}
+  m_AnchoredPosition: {x: 0.87849814, y: -37.07638}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224463467601954708
@@ -46493,7 +46537,7 @@ RectTransform:
   m_GameObject: {fileID: 1417131727459794}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 84.887344, y: 84.887344, z: 84.887344}
+  m_LocalScale: {x: 0.110530406, y: 0.110530406, z: 0.110530406}
   m_Children:
   - {fileID: 4671320697346590}
   m_Father: {fileID: 224248060669156570}
@@ -46501,7 +46545,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0015509726, y: -10.477375}
+  m_AnchoredPosition: {x: -0.0037939455, y: -10.477364}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224493577306309516
@@ -46690,7 +46734,7 @@ RectTransform:
   m_GameObject: {fileID: 1524697186554056}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 151.47293, y: 151.47293, z: 151.47293}
+  m_LocalScale: {x: 0.19722776, y: 0.19722776, z: 0.19722776}
   m_Children:
   - {fileID: 4352899780863152}
   m_Father: {fileID: 224463467601954708}
@@ -46698,6 +46742,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0000019073486, y: -4.82679}
+  m_AnchoredPosition: {x: -0.0000019073486, y: -4.8290863}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}

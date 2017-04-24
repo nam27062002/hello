@@ -77,6 +77,8 @@ SubShader {
 		#define SPEC
 		#endif
 
+		#define CUTOUT
+		#define DOUBLESIDED
 		#define AUTOINNERLIGHT
 
 		struct appdata_t {
