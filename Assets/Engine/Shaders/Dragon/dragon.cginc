@@ -45,6 +45,11 @@ uniform samplerCUBE _ReflectionMap;
 uniform float _ReflectionAmount;
 #endif
 
+#ifdef AUTOINNERLIGHT
+uniform float _InnerLightWavePhase;
+uniform float _InnerLightWaveSpeed;
+#endif
+
 v2f vert(appdata_t v)
 {
 	v2f o;
@@ -67,6 +72,10 @@ v2f vert(appdata_t v)
 	o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
 #else
 	o.normalWorld = normal;
+#endif
+
+#ifdef DOUBLESIDED
+	o.normalWorld *= sign(dot(o.normalWorld, o.viewDir));
 #endif
 	return o;
 }
@@ -133,7 +142,18 @@ fixed4 frag(v2f i) : SV_Target
 #endif
 
 	// Inner lights
+#ifdef AUTOINNERLIGHT
+	float wave = (i.texcoord.x * _InnerLightWavePhase) + (_Time.y * _InnerLightWaveSpeed);
+	fixed satMask = (0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b) * detail.r;
+	satMask = lerp(satMask, 1.0, detail.b);
+	//	satMask *= detail.r *(((cos(wave.x) + 1.0) * 0.5) * ((sin(_Time.y) + 1.0) * 0.5)) * 10.0;
+	fixed blink = lerp((sin(_Time.y * _InnerLightWavePhase) + 1.0) * 0.5, (cos(wave) + 1.0) * 0.5, detail.b);
+	satMask *= blink * 10.0;
+	fixed4 selfIlluminate = lerp(fixed4(0.0, 0.0, 0.0, 0.0), _InnerLightColor, satMask);
+
+#else
 	fixed4 selfIlluminate = (col * (detail.r * _InnerLightAdd * _InnerLightColor));
+#endif
 	// fixed4 col = (diffuse + fixeW4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _Tint + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
 	col = (diffuse + fixed4(i.vLight, 0.0)) * col * _Tint + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor) + _AmbientAdd; // To use ShaderSH9 better done in vertex shader
 

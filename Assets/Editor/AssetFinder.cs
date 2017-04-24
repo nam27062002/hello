@@ -235,6 +235,22 @@ public class AssetFinder : EditorWindow {
         return count;
     }
 
+    public static int checkTriggerArray(Spawner.SpawnCondition[] triggerArray)
+    {
+        if (triggerArray.Length > 0)
+        {
+            for (int c = 0; c < triggerArray.Length; c++)
+            {
+                if (triggerArray[c].type == Spawner.SpawnCondition.Type.XP)
+                {
+                    return c;
+                }
+            }
+        }
+        return -1;
+    }
+
+
     [MenuItem("Hungry Dragon/Tools/Spawners rename")]
     public static void SceneSpawnersRename()
     {
@@ -243,30 +259,21 @@ public class AssetFinder : EditorWindow {
         Undo.RecordObjects(spawnerList, "Disable static batching");
         foreach (Spawner obj in spawnerList)
         {
-            Spawner.SpawnCondition activation = (obj.activationTriggers.Length > 0 && obj.activationTriggers[0].type == Spawner.SpawnCondition.Type.XP) ? obj.activationTriggers[0] : null;
-            Spawner.SpawnCondition deactivation = (obj.deactivationTriggers.Length > 0 && obj.deactivationTriggers[0].type == Spawner.SpawnCondition.Type.XP) ? obj.deactivationTriggers[0] : null;
-            if (activation != null || deactivation != null)
-            {
-                Object prefab = EditorUtility.GetPrefabParent(obj.gameObject);
-                if (prefab != null)
-                {
-                    string prefabName = prefab.name;
-                    prefabName = prefabName + "_" + ((activation != null) ? activation.value.ToString() : "0") + "_" + ((deactivation != null) ? deactivation.value.ToString() : "0");
-                    /*
-                                        int count = checkRepeatedName(ref spawnerList, prefabName);
-                                        if (count > 0)
-                                        {
-                                            prefabName 
-                                        }
-                    */
-                    //                    Debug.Log("Object name: " + obj.gameObject.name + " - Prefab name: " + prefab.name);
-                    obj.gameObject.name = prefabName;
-                }
-            }
+            int activationCheck = checkTriggerArray(obj.activationTriggers);
+            int deactivationCheck = checkTriggerArray(obj.deactivationTriggers);
 
-//            StaticEditorFlags staticFlags = GameObjectUtility.GetStaticEditorFlags(obj);
-//            staticFlags &= ~(StaticEditorFlags.BatchingStatic | StaticEditorFlags.NavigationStatic | StaticEditorFlags.OffMeshLinkGeneration | StaticEditorFlags.ReflectionProbeStatic);
-//            GameObjectUtility.SetStaticEditorFlags(obj, staticFlags);
+            Spawner.SpawnCondition activation = (activationCheck >= 0) ? obj.activationTriggers[activationCheck] : null;
+            Spawner.SpawnCondition deactivation = (deactivationCheck >= 0) ? obj.deactivationTriggers[deactivationCheck] : null;
+            Object prefab = EditorUtility.GetPrefabParent(obj.gameObject);
+            if (prefab != null)
+            {
+                string prefabName = prefab.name;
+                if (activation != null || deactivation != null)
+                {
+                    prefabName = prefabName + "_" + ((activation != null) ? activation.value.ToString() : "0") + "_" + ((deactivation != null) ? deactivation.value.ToString() : "0");
+                }
+                obj.gameObject.name = prefabName;
+            }
         }
     }
 

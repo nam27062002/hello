@@ -26,6 +26,10 @@ MonoBehaviour:
     - {fileID: 11400000, guid: b43802a58baa94c3e8fb9482dd9b136c, type: 2}
   - m_name: Dead
     m_componentAssets: []
+  - m_name: PreWander
+    m_componentAssets:
+    - {fileID: 11400000, guid: f5add648be9ed4fea927e8987afbd296, type: 2}
+    - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
   m_transitionData:
   - to: 1
     id: onEnemyInSight
@@ -42,11 +46,14 @@ MonoBehaviour:
   - to: 0
     id: onBackAtHome
     from: 2
+  - to: 0
+    id: onTimeFinished
+    from: 4
   - to: 3
     id: onBurning
     from: -1
   - to: 3
     id: onChewing
     from: -1
-  m_firstState_A: 0
-  m_firstState_B: 0
+  m_firstState_A: 4
+  m_firstState_B: 4

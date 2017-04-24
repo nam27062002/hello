@@ -45,8 +45,13 @@ public class ActionsEditor : ExtendedPropertyDrawer {
 	override protected void OnGUIImpl(SerializedProperty _property, GUIContent _label) {
 		SerializedProperty pId = m_rootProperty.FindPropertyRelative("id");
 		SerializedProperty pActive = m_rootProperty.FindPropertyRelative("active");
-
 		DrawToggleLeftAndAdvance(m_rootProperty.displayName, pActive);
+		if ( pActive.boolValue )
+		{
+			SerializedProperty pProbability = m_rootProperty.FindPropertyRelative("probability");
+			pProbability.floatValue = EditorGUI.FloatField(m_pos, "\tProbability", pProbability.floatValue);
+			AdvancePos();
+		}
 	}
 
 	/// <summary>

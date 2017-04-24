@@ -18,12 +18,12 @@ public class FireBreathNew : DragonBreathBehaviour {
 		}
 	}
 
-	[SerializeField] private AnimationCurve m_sizeCurve = AnimationCurve.Linear(0, 0, 1, 3f);	// Will be used by the inspector to easily setup the values for each level
-	public AnimationCurve curve
-	{
-		get { return m_sizeCurve; }
-		set	{ m_sizeCurve = value; }
-	}
+	// Arc detection values
+	private const float m_minAngularSpeed = 0;
+	private const float m_maxAngularSpeed = 10;
+	private const float m_minArcAngle = 45;
+	private const float m_maxArcAngle = 90;
+	private float m_arcAngle = 50;
 
     [Header("Particle")]
 
@@ -31,15 +31,6 @@ public class FireBreathNew : DragonBreathBehaviour {
 	private int m_noPlayerMask;
 
 	private Transform m_mouthTransform;
-
-	private Vector2 m_directionP;
-
-	private Vector2 m_triP0;
-	private Vector2 m_triP1;
-	private Vector2 m_triP2;
-
-	private Vector2 m_sphCenter;
-	private float m_sphRadius;
 
 	private float m_area;
 
@@ -59,6 +50,7 @@ public class FireBreathNew : DragonBreathBehaviour {
     private bool m_waterMode = false;
     private float m_waterY = 0;
 
+    private DragonMotion m_motion;
 
 
     override protected void ExtendedStart() {
@@ -84,12 +76,8 @@ public class FireBreathNew : DragonBreathBehaviour {
 		m_noPlayerMask = ~LayerMask.GetMask("Player");
 
         m_actualLength = m_length;
-
-        m_sphCenter = m_mouthTransform.position;
-		m_sphRadius = 0;
-
+       
 		m_direction = Vector2.zero;
-		m_directionP = Vector2.zero;
 
 		m_frame = 0;
 
@@ -98,7 +86,7 @@ public class FireBreathNew : DragonBreathBehaviour {
         dragonFlameSuperInstance.EnableFlame(false);
         dragonFlameSuperInstance.gameObject.SetActive(false);
 
-        //		m_light = null;
+		m_motion = GetComponent<DragonMotion>();
     }
 
     override public void RecalculateSize()
@@ -120,7 +108,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 	
 		if (m_isFuryOn) {
 			if (m_bounds2D.Contains(_point)) {
-				return IsInsideTriangle( _point );
+				return MathUtils.TestArcVsPoint( m_mouthTransform.position, m_arcAngle, m_actualLength, m_direction, _point);
 			}
 		}
 
@@ -131,25 +119,11 @@ public class FireBreathNew : DragonBreathBehaviour {
 	{
 		if (m_isFuryOn) 
 		{
-			if (_circle.Overlaps(m_bounds2D)) 
-			{
-				if (IsInsideTriangle( _circle.center ))
-				{
-					return true;
-				}
-				return ( _circle.OverlapsSegment( m_triP0, m_triP1 ) || _circle.OverlapsSegment( m_triP1, m_triP2 ) || _circle.OverlapsSegment( m_triP2, m_triP0 ) );
-			}
+			Vector3 center = _circle.center;
+			center.z = 0;
+			return MathUtils.TestArcVsCircle( m_mouthTransform.position, m_arcAngle, m_actualLength, m_direction, center, _circle.radius);
 		}
 		return false;
-	}
-
-	private bool IsInsideTriangle( Vector2 _point )
-	{
-		float sign = m_area < 0 ? -1 : 1;
-		float s = (m_triP0.y * m_triP2.x - m_triP0.x * m_triP2.y + (m_triP2.y - m_triP0.y) * _point.x + (m_triP0.x - m_triP2.x) * _point.y) * sign;
-		float t = (m_triP0.x * m_triP1.y - m_triP0.y * m_triP1.x + (m_triP0.y - m_triP1.y) * _point.x + (m_triP1.x - m_triP0.x) * _point.y) * sign;
-		
-		return s > 0 && t > 0 && (s + t) < 2 * m_area * sign;
 	}
 
 	override protected void BeginFury(Type _type) 
@@ -183,22 +157,22 @@ public class FireBreathNew : DragonBreathBehaviour {
     {
         m_direction = -m_mouthTransform.right;
 		m_direction.Normalize();
-		m_directionP.Set(m_direction.y, -m_direction.x);
 
         float length = m_length;
 		if ( m_type == Type.Super )
 			length = m_length * m_superFuryLengthMultiplier;
 
+		float angularSpeed = m_motion.angularVelocity.magnitude;
+		// Debug.Log("Angular: " + angularSpeed);
+		m_arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
+
 		Vector3 flamesUpDir = Vector3.up;
-		bool hitingWater = false;
 		if (m_frame == 0) {
 			// Raycast to ground
 			RaycastHit ground;				
 			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * length, out ground, m_groundMask)) 
 			{
 				m_actualLength = ground.distance;
-				if ( ground.collider.CompareTag("Water") )
-					hitingWater = true;
 			} 
 			else 
 			{				
@@ -211,51 +185,17 @@ public class FireBreathNew : DragonBreathBehaviour {
 				flamesUpDir.Normalize();
 
 			}
-
-
 		}
-		{
-			// Pre-Calculate Triangle: wider bounding triangle to make burning easier
-			m_triP0 = m_mouthTransform.position;
-			m_triP1 = m_triP0 + m_direction * m_actualLength - m_directionP * m_sizeCurve.Evaluate(1) * transform.localScale.x * 0.5f;
-			m_triP2 = m_triP0 + m_direction * m_actualLength + m_directionP * m_sizeCurve.Evaluate(1) * transform.localScale.x * 0.5f;
-			m_area = (-m_triP1.y * m_triP2.x + m_triP0.y * (-m_triP1.x + m_triP2.x) + m_triP0.x * (m_triP1.y - m_triP2.y) + m_triP1.x * m_triP2.y) * 0.5f;
-
-			// Circumcenter
-			float c = ((m_triP0.x + m_triP1.x) * 0.5f) + ((m_triP0.y + m_triP1.y) * 0.5f) * ((m_triP0.y - m_triP1.y) / (m_triP0.x - m_triP1.x));
-			float d = ((m_triP2.x + m_triP1.x) * 0.5f) + ((m_triP2.y + m_triP1.y) * 0.5f) * ((m_triP2.y - m_triP1.y) / (m_triP2.x - m_triP1.x)); 
-
-			m_sphCenter.y = (d - c) / (((m_triP2.y - m_triP1.y) / (m_triP2.x - m_triP1.x)) - ((m_triP0.y - m_triP1.y) / (m_triP0.x - m_triP1.x)));
-			m_sphCenter.x = c - m_sphCenter.y * ((m_triP0.y - m_triP1.y) / (m_triP0.x - m_triP1.x));
-
-			m_sphRadius = (m_sphCenter - m_triP1).magnitude;
-
-			m_bounds2D.Set(m_sphCenter.x - m_sphRadius, m_sphCenter.y - m_sphRadius, m_sphRadius * 2f, m_sphRadius * 2f);
-		}
-
-		// Spawn particles
-		if ( hitingWater )	// if hitting water => show steam
-		{
-			
-		}
-
-//		float lerpT = 0.15f;
-
-		//Vector3 pos = new Vector3(m_triP0.x, m_triP0.y, -8f);
-//		m_light.transform.position = m_triP0; //Vector3.Lerp(m_light.transform.position, pos, 1f);
-
-		float angle = Vector3.Angle(Vector3.right, m_direction);
-		if (m_direction.y > 0) angle *= -1;
-//		m_light.transform.localRotation = Quaternion.Lerp(m_light.transform.localRotation, Quaternion.AngleAxis(angle, Vector3.back), lerpT);
 
 		m_frame = (m_frame + 1) % 4;
 
+		m_bounds2D.Set( m_mouthTransform.position.x - m_actualLength, m_mouthTransform.position.y - m_actualLength, m_actualLength * 2, m_actualLength * 2);
 
 		//--------------------------------------------------------------------------------------------
 		// try to burn things!!!
 		// search for preys!
 		// Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_sphCenter, m_sphRadius);
-		m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_sphCenter, m_sphRadius, m_checkEntities);
+		m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_mouthTransform.position, m_actualLength, m_checkEntities);
 		for (int i = 0; i < m_numCheckEntities; i++) 
 		{
 			Entity prey = m_checkEntities[i];
@@ -302,11 +242,14 @@ public class FireBreathNew : DragonBreathBehaviour {
 		if (m_isFuryOn) {
 			Gizmos.color = Color.magenta;
 
-			Gizmos.DrawLine(m_triP0, m_triP1);
-			Gizmos.DrawLine(m_triP1, m_triP2);
-			Gizmos.DrawLine(m_triP2, m_triP0);
-
-			Gizmos.DrawWireSphere(m_sphCenter, m_sphRadius);
+			// Arc Drawing
+			Vector3 dir = m_direction;
+			Gizmos.DrawWireSphere(m_mouthTransform.position, m_actualLength);
+			Debug.DrawLine(m_mouthTransform.position, m_mouthTransform.position + dir * m_actualLength);
+			Vector3 dUp = dir.RotateXYDegrees(m_arcAngle/2.0f);
+			Debug.DrawLine( m_mouthTransform.position, m_mouthTransform.position + (dUp * m_actualLength));
+			Vector3 dDown = dir.RotateXYDegrees(-m_arcAngle/2.0f);
+			Debug.DrawLine( m_mouthTransform.position, m_mouthTransform.position + (dDown * m_actualLength));
 
 			Gizmos.color = Color.green;
 			switch(m_type)
