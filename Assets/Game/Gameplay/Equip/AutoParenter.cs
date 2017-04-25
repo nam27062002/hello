@@ -12,6 +12,10 @@ using UnityEngine.Serialization;
 public class AutoParenter : MonoBehaviour {
 	
 	[SerializeField] private string m_parentName;
+	public string parentName
+	{
+		get{ return m_parentName; }
+	}
 	[FormerlySerializedAs("m_lookAtRoot")]
 	[SerializeField] private Transform m_parentRoot;
 	[SerializeField] private bool m_worldPositionStays = true;
@@ -35,5 +39,7 @@ public class AutoParenter : MonoBehaviour {
 
 		Destroy(this);
 	}
+
+
 
 }
