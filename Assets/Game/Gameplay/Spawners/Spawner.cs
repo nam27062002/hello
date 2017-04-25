@@ -31,6 +31,15 @@ public class Spawner : AbstractSpawner {
 		public float value = 0f;
 	}
 
+	[System.Serializable]
+	public class SpawnKillCondition {
+		[EntityCategoryListAttribute]
+		public string category;
+
+		[NumericRange(0f)]	// Force positive value
+		public float value = 0f;
+	}
+
 	public enum SpawnPointSeparation {
 		Sphere = 0,
 		Line
@@ -61,6 +70,9 @@ public class Spawner : AbstractSpawner {
 	[Tooltip("Start spawning when any of the activation conditions is triggered.\nIf empty, the spawner will be activated at the start of the game.")]
 	[SerializeField] public SpawnCondition[] m_activationTriggers;
 	public SpawnCondition[] activationTriggers { get { return m_activationTriggers; }}
+
+	[SerializeField] public SpawnKillCondition[] m_activationKillTriggers;
+	public SpawnKillCondition[] activationKillTriggers { get { return m_activationKillTriggers; } }
 
 	[Tooltip("Stop spawning when any of the deactivation conditions is triggered.\nLeave empty for infinite spawning.")]
 	[SerializeField] private SpawnCondition[] m_deactivationTriggers;
@@ -360,7 +372,7 @@ public class Spawner : AbstractSpawner {
 		if(State != EState.Respawning) return false;
 
 		// Check start conditions
-		bool startConditionsOk = (m_activationTriggers.Length == 0);	// If there are no activation triggers defined, the spawner will be considered ready
+		bool startConditionsOk = (m_activationTriggers.Length == 0) && (m_activationKillTriggers.Length == 0);	// If there are no activation triggers defined, the spawner will be considered ready
 		for(int i = 0; i < m_activationTriggers.Length; i++) {
 			// Is this condition satisfied?
 			switch(m_activationTriggers[i].type) {
@@ -376,6 +388,10 @@ public class Spawner : AbstractSpawner {
 			// If one of the conditions has already triggered, no need to keep checking
 			// [AOC] This would be useful if we had a lot of conditions to check, but it will usually be just one and we would be adding an extra instruction for nothing, so let's keep it commented for now
 			// if(startConditionsOk) break;
+		}
+
+		for (int i = 0; i < m_activationKillTriggers.Length; i++) {
+			startConditionsOk |= RewardManager.categoryKillCount[m_activationKillTriggers[i].category] >= m_activationKillTriggers[i].value;
 		}
 
 		// If start conditions aren't met, we can't spawn, no need to check anything else
