@@ -143,6 +143,10 @@ public class Spawner : AbstractSpawner {
 		if (InstanceManager.player != null && enabledByTier) {			
 			if (m_entityPrefabList != null && m_entityPrefabList.Length > 0 && rnd <= m_activationChance) {
 
+				if (m_activationKillTriggers == null) {
+					m_activationKillTriggers = new SpawnKillCondition[0];
+				}
+
 				if (m_quantity.max < m_quantity.min) {
 					m_quantity.min = m_quantity.max;
 				}                			
