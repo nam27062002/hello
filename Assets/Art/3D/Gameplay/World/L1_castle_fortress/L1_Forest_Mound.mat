@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: MT_Grass01
-  m_Shader: {fileID: 4800000, guid: 8303da806b99a45bcbaf8904f9f40c9a, type: 3}
+  m_Name: L1_Forest_Mound
+  m_Shader: {fileID: 4800000, guid: 2911511b6e61ba84dbc8fe3044619160, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -48,7 +48,7 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 0421fdf77331d4608994040bf0edfcce, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6048d8669d888784f83d18b5088ee0b0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -69,6 +69,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - first:
+        name: _SecondTexture
+      second:
+        m_Texture: {fileID: 2800000, guid: 0421fdf77331d4608994040bf0edfcce, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
         name: _BumpScale
@@ -83,14 +89,11 @@ Material:
         name: _DstBlend
       second: 0
     - first:
-        name: _EmissionScaleUI
-      second: 0
-    - first:
         name: _FogEnd
-      second: 100
+      second: 1500
     - first:
         name: _FogStart
-      second: 0
+      second: -9.2
     - first:
         name: _Glossiness
       second: 0.5
@@ -123,8 +126,5 @@ Material:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
-        name: _EmissionColorUI
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
         name: _FogColor
-      second: {r: 0, g: 0, b: 0, a: 0}
+      second: {r: 0.37889272, g: 0.46233138, b: 0.7058823, a: 0.781}
