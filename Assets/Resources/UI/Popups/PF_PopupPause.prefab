@@ -492,6 +492,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224072656389337068}
   - component: {fileID: 222545605016608412}
+  - component: {fileID: 114103871782759690}
   - component: {fileID: 114093443502529388}
   m_Layer: 5
   m_Name: TextMeshPro Text
@@ -675,6 +676,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224727232972385074}
   - component: {fileID: 222125365358653974}
+  - component: {fileID: 114016180779586294}
   - component: {fileID: 114819458092391966}
   m_Layer: 5
   m_Name: TextMeshPro Text
@@ -983,6 +985,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224190468228503212}
   - component: {fileID: 222357842758949458}
+  - component: {fileID: 114252337086248602}
   - component: {fileID: 114548096100937474}
   m_Layer: 5
   m_Name: TextMeshPro Text
@@ -2497,6 +2500,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224888653223305028}
   - component: {fileID: 222704122483571110}
+  - component: {fileID: 114890826326942280}
   - component: {fileID: 114127565842315570}
   m_Layer: 5
   m_Name: TextMeshPro Text
@@ -5063,6 +5067,20 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114016180779586294
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1161209676443342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_FAQ_FIRE_RUSH_DESCRIPTION
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114023338960043302
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6260,8 +6278,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: TID_SAVE_CLOUD_BUTT_SYNCSAVE
-  m_caseType: 0
+  m_tid: TID_FAQ_FIRE_RUSH_INFO
+  m_caseType: 1
   m_replacements: []
 --- !u!114 &114097201323831542
 MonoBehaviour:
@@ -6340,6 +6358,20 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114103871782759690
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1130402103074868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_FAQ_DRAGON_DESCRIPTION
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114106718061053924
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7848,8 +7880,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: TID_SAVE_CLOUD_BUTT_SYNCSAVE
-  m_caseType: 0
+  m_tid: TID_FAQ_MAP_INFO
+  m_caseType: 1
   m_replacements: []
 --- !u!114 &114243221035562466
 MonoBehaviour:
@@ -7922,6 +7954,20 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
+--- !u!114 &114252337086248602
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1245648454180344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_FAQ_CONTROLS_DESCRIPTION
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114256007327946180
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9395,7 +9441,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: -1
+  m_MinWidth: 80
   m_MinHeight: -1
   m_PreferredWidth: 80
   m_PreferredHeight: -1
@@ -10105,8 +10151,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: TID_SAVE_CLOUD_BUTT_SYNCSAVE
-  m_caseType: 0
+  m_tid: TID_FAQ_DRAGONS_INFO
+  m_caseType: 1
   m_replacements: []
 --- !u!114 &114381079566398350
 MonoBehaviour:
@@ -14852,7 +14898,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: TID_PAUSE_TAB_OPTIONS_TITLE
+  m_tid: TID_SETTINGS_TAB_OPTIONS
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114750812068463546
@@ -16033,8 +16079,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: TID_SAVE_CLOUD_BUTT_SYNCSAVE
-  m_caseType: 0
+  m_tid: TID_FAQ_CONTROLS_INFO
+  m_caseType: 1
   m_replacements: []
 --- !u!114 &114816892152988284
 MonoBehaviour:
@@ -16734,7 +16780,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: -1
+  m_MinWidth: 80
   m_MinHeight: -1
   m_PreferredWidth: 80
   m_PreferredHeight: -1
@@ -16985,6 +17031,20 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
+--- !u!114 &114890826326942280
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1576418330583588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_FAQ_MAP_DESCRIPTION
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114891123496438452
 MonoBehaviour:
   m_ObjectHideFlags: 1
