@@ -1877,7 +1877,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				m_previousState = State.OuterSpace;
 			}
 		}
-		else if ( _other.CompareTag("AreaChange") && !m_changingArea)
+		else if ( _other.CompareTag("AreaChange") && !m_changingArea && InstanceManager.gameSceneController != null )
 		{
 			m_changingArea = true;
 			// Start moving through Spline
