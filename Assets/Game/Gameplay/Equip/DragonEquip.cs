@@ -134,7 +134,142 @@ public class DragonEquip : MonoBehaviour {
 			}
 		}
 
+		/*
+		// THIS IS JUST A TEST! - DO NOT DELETE FOR THE MOMMENT
+		Transform view = transform.FindChild("view");
+		if(view != null) {
+			SkinnedMeshRenderer skinMesh = view.GetComponentInChildren<SkinnedMeshRenderer>();
+			List<MeshFilter> meshFilters = new List<MeshFilter>();
+			List<string> meshAnchors = new List<string>();
+
+			for( int i = 0; i<m_attachPoints.Length; i++ )
+			{
+				if ( m_attachPoints[i] != null && m_attachPoints[i].item != null && m_attachPoints[i].item.attachPoint > Equipable.AttachPoint.Pet_5 && m_attachPoints[i].item.attachPoint < Equipable.AttachPoint.Count)
+				{
+					// its something!
+					MeshFilter mfilter = m_attachPoints[i].item.GetComponentInChildren<MeshFilter>();
+					if ( mfilter != null )
+					{
+						mfilter.gameObject.SetActive(false);
+						meshFilters.Add( mfilter );
+						meshAnchors.Add( m_attachPoints[i].GetComponent<AutoParenter>().parentName );
+					}
+				}
+			}
+
+			skinMesh.sharedMesh = CustomCombine( skinMesh, meshFilters, meshAnchors);
+		}
+		*/
+
 	}
+
+
+	Mesh CustomCombine( SkinnedMeshRenderer skinnedMesh, List<MeshFilter> parts, List<string> bonesAnchors)
+	{
+			// Bone Weigth
+		List<BoneWeight> boneWeights = new List<BoneWeight>();
+		boneWeights.AddRange( skinnedMesh.sharedMesh.boneWeights );
+
+			// bind poses
+		List<Matrix4x4> bindposes = new List<Matrix4x4>();
+		for( int i = 0; i < skinnedMesh.bones.Length; i++ ) {
+			bindposes.Add( skinnedMesh.bones[i].worldToLocalMatrix );
+        }
+
+        	// uvs
+        	/*
+		List<Vector2> uvs = new List<Vector2>();
+        uvs.AddRange( skinnedMesh.sharedMesh.uv );
+        */
+
+        	// Textures
+        List<Texture2D> mainTexture = new List<Texture2D>();
+        mainTexture.Add( skinnedMesh.material.mainTexture as Texture2D);
+		List<Texture2D> normalTexture = new List<Texture2D>();
+		normalTexture.Add( skinnedMesh.material.GetTexture("_BumpMap") as Texture2D);
+		List<Texture2D> specialTexture = new List<Texture2D>();
+		specialTexture.Add( skinnedMesh.material.GetTexture("_DetailTex") as Texture2D );
+
+        Transform[] bones = skinnedMesh.bones;
+		for( int i = 0; i<parts.Count; i++ )
+		{
+			MeshFilter part = parts[i];
+
+			// Check if materials are different
+			Renderer r = part.GetComponent<Renderer>();
+			mainTexture.Add( r.material.mainTexture as Texture2D );
+
+			// Search proper bone
+			bool found = false;
+			string boneId = bonesAnchors[i];
+			BoneWeight bWeight = new BoneWeight();
+			for( int j = 0; j<bones.Length && !found; j++ )
+        	{
+				if ( bones[j].name.CompareTo( boneId ) == 0)
+        		{
+        			bWeight.boneIndex0 = j;
+        			bWeight.weight0 = 1;
+        			found = true;
+        		}
+        	}
+        	// Add weights
+			for( int j = 0; j<part.mesh.vertexCount; j++ ) 
+			{
+	    		boneWeights.Add(bWeight);
+			}
+
+			// uvs.AddRange( combine[x].mesh.uv );
+		}
+
+		CombineInstance[] combine = new CombineInstance[ parts.Count + 1];
+		int[] meshIndex = new int[parts.Count + 1];
+
+		combine[0].mesh = skinnedMesh.sharedMesh;
+		combine[0].transform = skinnedMesh.transform.localToWorldMatrix;
+		meshIndex[0] = skinnedMesh.sharedMesh.vertexCount;
+
+		for( int i = 0; i<parts.Count; i++ )
+		{
+			combine[i+1].mesh = parts[i].sharedMesh;
+			combine[i+1].transform = parts[i].transform.localToWorldMatrix;
+			meshIndex[i+1] = parts[i].sharedMesh.vertexCount;
+		}
+
+
+		Mesh _newMesh = new Mesh();
+		_newMesh.CombineMeshes(combine, true, true);
+		_newMesh.boneWeights = boneWeights.ToArray();
+		_newMesh.bindposes = bindposes.ToArray();
+		// _newMesh.uv = uvs.ToArray();
+
+			// Reshape UVs
+		Texture2D baseTexture = mainTexture[0];
+		Texture2D skinnedMeshAtlas = new Texture2D( baseTexture.width, baseTexture.height, baseTexture.format, baseTexture.mipmapCount > 0);
+		Rect[] packingResult = skinnedMeshAtlas.PackTextures( mainTexture.ToArray(), 0 );
+
+		Vector2[] originalUVs = _newMesh.uv;
+        Vector2[] atlasUVs = new Vector2[originalUVs.Length];
+ 
+        int rectIndex = 0;
+        int vertTracker = 0;
+        for( int i = 0; i < atlasUVs.Length; i++ ) {
+            atlasUVs[i].x = Mathf.Lerp( packingResult[rectIndex].xMin, packingResult[rectIndex].xMax, originalUVs[i].x );
+            atlasUVs[i].y = Mathf.Lerp( packingResult[rectIndex].yMin, packingResult[rectIndex].yMax, originalUVs[i].y );            
+ 
+            if( i >= meshIndex[rectIndex] + vertTracker ) {                
+                vertTracker += meshIndex[rectIndex];
+                rectIndex++;                
+            }
+        }
+        _newMesh.uv = atlasUVs;
+        skinnedMesh.material.mainTexture = skinnedMeshAtlas;
+
+		return _newMesh;
+	} 
+
+
+
+
 
 	/// <summary>
 	/// Sets the skin of the dragon. Performs the actual texture swap.
