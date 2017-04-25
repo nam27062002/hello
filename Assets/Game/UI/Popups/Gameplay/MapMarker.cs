@@ -49,8 +49,8 @@ public class MapMarker : MonoBehaviour {
 	}
 
 	// Store some original properties of the marker
-	private Vector3 m_originalScale = Vector3.one;
-	private float m_zoomScaleFactor = 1f;
+	protected Vector3 m_originalScale = Vector3.one;
+	protected float m_zoomScaleFactor = 1f;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
