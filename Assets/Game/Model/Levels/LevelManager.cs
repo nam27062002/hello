@@ -154,7 +154,7 @@ public class LevelManager : Singleton<LevelManager> {
 		{
 			string sceneName = GetRealSceneName(m_currentAreaScenes[i]);
 			loadingTask = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-			if(DebugUtils.SoftAssert(loadingTask != null, "The spawners scene " + m_currentAreaScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
+			if(DebugUtils.SoftAssert(loadingTask != null, "The scene " + m_currentAreaScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
 				loadingTasks.Add(loadingTask);
 			}	
 		}

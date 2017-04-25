@@ -498,6 +498,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				case State.ChangingArea:
 				{
 					// if fury not active
+					m_changingArea = false;
 					m_eatBehaviour.ResumeEating();
 					Messenger.Broadcast(GameEvents.PLAYER_ENTERING_AREA);
 				}break;
@@ -1876,7 +1877,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				m_previousState = State.OuterSpace;
 			}
 		}
-		else if ( _other.CompareTag("AreaChange") && !m_changingArea)
+		else if ( _other.CompareTag("AreaChange") && !m_changingArea && InstanceManager.gameSceneController != null )
 		{
 			m_changingArea = true;
 			// Start moving through Spline
@@ -1912,10 +1913,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				m_previousState = State.Idle;
 			}
 		}
+		/*
 		else if ( _other.CompareTag("AreaChange") && m_changingArea)
 		{
 			m_changingArea = false;
 		}
+		*/
 
 	}
 
