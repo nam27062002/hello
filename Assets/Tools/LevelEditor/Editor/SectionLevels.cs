@@ -450,7 +450,7 @@ namespace LevelEditor {
 				string areaString = kvp.Value.Get("area"+areaIndex);
 				while(!string.IsNullOrEmpty(areaString))
 				{
-					id += areaString;
+					id += ";" + areaString;
 					areaIndex++;
 					areaString = kvp.Value.Get("area"+areaIndex);
 				}
