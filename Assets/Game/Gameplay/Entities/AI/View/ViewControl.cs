@@ -540,8 +540,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_exclamationTransform != null && m_isExclamationMarkOn != _value) {
 			if (_value) {
 				m_exclamationMarkOn = PoolManager.GetInstance("PF_ExclamationMark");
-				FollowTransform ft = m_exclamationMarkOn.GetComponent<FollowTransform>();
-				ft.m_follow = m_exclamationTransform;
+				if ( m_exclamationMarkOn )
+				{
+					FollowTransform ft = m_exclamationMarkOn.GetComponent<FollowTransform>();
+					ft.m_follow = m_exclamationTransform;
+				}
 			} else {
 				PoolManager.ReturnInstance(m_exclamationMarkOn);
 				m_exclamationMarkOn = null;
