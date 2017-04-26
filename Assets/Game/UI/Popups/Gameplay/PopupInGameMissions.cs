@@ -19,7 +19,7 @@ public class PopupInGameMissions : PopupPauseBase {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/PF_PopupInGameMissions";
+	public const string PATH = "UI/Popups/InGame/PF_PopupInGameMissions";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

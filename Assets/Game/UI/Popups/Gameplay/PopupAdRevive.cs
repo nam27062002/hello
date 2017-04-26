@@ -22,7 +22,7 @@ public class PopupAdRevive : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/PF_PopupAdRevive";
+	public static readonly string PATH = "UI/Popups/InGame/PF_PopupAdRevive";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

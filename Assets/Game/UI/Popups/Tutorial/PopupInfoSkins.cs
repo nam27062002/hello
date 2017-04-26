@@ -1,24 +1,23 @@
-// PopupSettings.cs
+// PopupInfoSkins.cs
 // 
-// Created by Alger Ortín Castellví on 11/04/2016.
-// Copyright (c) 2016 Ubisoft. All rights reserved.
+// Created by Alger Ortín Castellví on 25/04/2017.
+// Copyright (c) 2017 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Pause popup.
+/// Tiers info popup.
 /// </summary>
 [RequireComponent(typeof(PopupController))]
-public class PopupSettings : MonoBehaviour {
+public class PopupInfoSkins : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/Menu/PF_PopupSettings";
-
-    public const string KEY_SETTINGS_LANGUAGE = "SETTINGS_LANGUAGE";
+	public static readonly string PATH = "UI/Popups/Tutorial/PF_PopupInfoSkins";
 }
