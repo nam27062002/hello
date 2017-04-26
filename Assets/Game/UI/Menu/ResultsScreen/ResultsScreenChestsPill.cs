@@ -59,8 +59,8 @@ public class ResultsScreenChestsPill : ResultsScreenCarouselPill {
 	/// </summary>
 	/// <returns><c>true</c> if the pill must be displayed on the carousel, <c>false</c> otherwise.</returns>
 	public override bool MustBeDisplayed() {
-		// Always display for now
-		return true;
+		// Always display except for the first run!
+		return UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN);
 	}
 
 	/// <summary>
