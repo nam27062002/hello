@@ -9,9 +9,9 @@ GameObject:
   m_Component:
   - component: {fileID: 443304}
   - component: {fileID: 11410284}
-  - component: {fileID: 114768301738930188}
+  - component: {fileID: 114388696739840102}
   - component: {fileID: 11400102}
-  - component: {fileID: 11451040}
+  - component: {fileID: 114487487468086076}
   - component: {fileID: 11441542}
   - component: {fileID: 54000010377718392}
   - component: {fileID: 135000010864404190}
@@ -118,31 +118,6 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   radius: 1
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &11451040
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 138364}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
-  m_energy: 10
-  m_energyDrainSec: 1
-  m_energyRecoverSec: 1
-  m_brainResource: {fileID: 11400000, guid: 590111f57a62ae1448c942fac85818f0, type: 2}
-  m_railSeparation:
-    min: 0.5
-    max: 1
-  m_serializedJson: '[{"damage":7,"duration":1.5,"dataType":"AI.Behaviour.CurseData","editorFolded":false}]'
-  m_databaseKey: PF_Ghost01_Static
-  m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 5
-  m_avoidCollisions: 0
-  m_avoidWater: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -348,7 +323,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114768301738930188
+--- !u!114 &114388696739840102
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -356,16 +331,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 138364}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3085e02792f6243cc9d8323aba91b804, type: 3}
+  m_Script: {fileID: 11500000, guid: 91e40970ac8a0488ab7347acde654093, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_affectedByDragonTrample: 0
   m_enableSensor: 0
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 14
-    m_maxRadius: 11
-    m_minRadius: 4
+    m_sightRadius: 0
+    m_maxRadius: 0
+    m_minRadius: 0
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -374,32 +349,38 @@ MonoBehaviour:
       min: 0.9
       max: 1.1
     m_senseDelay:
-      min: 0
-      max: 0.5
+      min: 0.25
+      max: 1.25
   m_edible:
     m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
     m_dissolveTime: 1.5
-    m_ashExceptions:
-    - {fileID: 199241708395920724}
-    - {fileID: 199582676413079912}
-    - {fileID: 199015009984204708}
+    m_ashExceptions: []
   m_onSpawnSound: 
-  m_airMotion:
-    m_mass: 20
-    m_defaultUpVector: 0
-    m_orientationSpeed: 60
-    m_dragonStyleRotation: 0
-    m_faceDirection: 0
-    m_rollRotation: 0
-    m_limitHorizontalRotation: 1
-    m_faceLeftAngle: -65
-    m_faceRightAngle: 65
-    m_limitVerticalRotation: 0
-    m_faceUpAngle: 340
-    m_faceDownAngle: 20
+--- !u!114 &114487487468086076
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 138364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15a7ea52045474df5be461e18d5c4f2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_blendSpeedFactor: 1
+  m_energy: 10
+  m_energyDrainSec: 1
+  m_energyRecoverSec: 1
+  m_brainResource: {fileID: 11400000, guid: 590111f57a62ae1448c942fac85818f0, type: 2}
+  m_railSeparation:
+    min: 0.5
+    max: 1
+  m_serializedJson: '[{"damage":7,"duration":1.5,"dataType":"AI.Behaviour.CurseData","editorFolded":false}]'
+  m_databaseKey: PF_Ghost01_Static
+  m_updateMachinePos: 1
 --- !u!114 &114976298989030400
 MonoBehaviour:
   m_ObjectHideFlags: 1

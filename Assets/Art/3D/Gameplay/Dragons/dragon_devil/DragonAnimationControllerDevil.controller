@@ -230,7 +230,9 @@ AnimatorController:
     - serializedVersion: 2
       m_State: {fileID: 1102864088356646350}
       m_Motion: {fileID: 7400000, guid: 91049a2edcf8b46a692c1bb6a5a21e7d, type: 2}
-    m_Behaviours: []
+    m_Behaviours:
+    - m_State: {fileID: 110268428}
+      m_StateMachineBehaviours: []
     m_BlendingMode: 1
     m_SyncedLayerIndex: 4
     m_DefaultWeight: 1
@@ -2030,7 +2032,8 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 110181402}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 114015042556282156}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -2491,17 +2494,17 @@ AnimatorStateMachine:
   m_EntryTransitions: []
   m_StateMachineTransitions:
     data:
-      first: {fileID: 110744362}
-      second:
-      - {fileID: 110929258}
-      - {fileID: 110942138}
-      - {fileID: 1109881904104509242}
-    data:
       first: {fileID: 110773352}
       second:
       - {fileID: 110951316}
       - {fileID: 110915420}
       - {fileID: 1109695044031442812}
+    data:
+      first: {fileID: 110744362}
+      second:
+      - {fileID: 110929258}
+      - {fileID: 110942138}
+      - {fileID: 1109881904104509242}
     data:
       first: {fileID: 1107209423932037938}
       second:
@@ -3015,6 +3018,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 250b7783a83b1480d92aecc3b4a80466, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114015042556282156
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab1b07fd33e7240299cde3d7efb23480, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114613797786300426

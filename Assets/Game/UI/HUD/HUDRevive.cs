@@ -180,6 +180,12 @@ public class HUDRevive : MonoBehaviour {
 	/// The player is KO.
 	/// </summary>
 	private void OnPlayerKo(DamageType _type, Transform _source) {
+		// No revive available during the tutorial! Kill the dragon
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
+			Messenger.Broadcast(GameEvents.PLAYER_DIED);
+			return;
+		}
+
 		// Initialize PC cost
 		if ( m_pcText != null )
 			m_pcText.text = UIConstants.GetIconString((RewardManager.freeReviveCount + RewardManager.paidReviveCount) + 1, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);	// [AOC] TODO!! Actual revive cost formula

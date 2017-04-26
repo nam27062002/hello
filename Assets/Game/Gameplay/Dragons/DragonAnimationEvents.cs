@@ -12,6 +12,9 @@ public class DragonAnimationEvents : MonoBehaviour {
 	private AudioObject m_wingsFlyingSoundAO;
 
 	public string m_eatSound;
+	public string m_eatHoldSound;
+	private AudioObject m_eatHoldSoundAO;
+	private static int EAT_HOLD_HASH = Animator.StringToHash("EatHold");
 
 	public string m_wingsWindSound;
 	private AudioObject m_wingsWindSoundAO;
@@ -66,6 +69,11 @@ public class DragonAnimationEvents : MonoBehaviour {
 		m_eventsRegistered = true;
 		// m_animator.SetBool( "starving", true);
 
+		StartEndStateMachineBehaviour[] behaviours = m_animator.GetBehaviours<StartEndStateMachineBehaviour>();
+		for( int i = 0; i<behaviours.Length; i++ ){
+			behaviours[i].onStateEnter += onStateEnter;
+			behaviours[i].onStateExit += onStateExit;
+		}
 	}
 
 	void OnDisable() {
@@ -300,6 +308,37 @@ public class DragonAnimationEvents : MonoBehaviour {
 	{
 		if ( m_particleController != null )
 			m_particleController.OnNoAirBubbles();
+	}
+
+	void onStateEnter( int stateNameHash )
+	{
+		if( stateNameHash == EAT_HOLD_HASH)
+		{
+			OnStartEatHold();
+		}
+	}
+
+	void onStateExit( int stateNameHash )
+	{
+		if( stateNameHash == EAT_HOLD_HASH)
+		{
+			OnEndEatHold();
+		}
+	}
+
+	void OnStartEatHold()
+	{
+		if (!string.IsNullOrEmpty( m_eatHoldSound ))
+		{
+			m_eatHoldSoundAO = AudioController.Play(m_eatHoldSound, transform);
+		}
+	}
+	void OnEndEatHold()
+	{
+		if (m_eatHoldSoundAO != null && m_eatHoldSoundAO.IsPlaying())
+		{
+			m_eatHoldSoundAO.Stop();
+		}
 	}
 
 }

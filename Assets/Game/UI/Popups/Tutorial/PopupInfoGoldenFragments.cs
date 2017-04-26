@@ -19,5 +19,5 @@ public class PopupInfoGoldenFragments : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/Tutorial/PF_PopupInfoGoldenFragments";
+	public const string PATH = "UI/Popups/Tutorial/PF_PopupInfoGoldenFragments";
 }
