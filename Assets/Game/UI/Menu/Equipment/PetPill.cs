@@ -23,6 +23,7 @@ public class PetPill : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	private static readonly Color LOCKED_COLOR = new Color(0.5f, 0.5f, 0.5f);
+	private const string TUTORIAL_HIGHLIGHT_PREFAB_PATH = "UI/Metagame/Pets/PF_PetPillTutorialFX";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -46,6 +47,8 @@ public class PetPill : MonoBehaviour {
 
 	private GameObject m_currentLockIcon = null;
 	private Animator m_currentLockIconAnim = null;
+
+	private GameObject m_tutorialHighlightFX = null;
 
 	// Shortcuts
 	private PetCollection petCollection {
@@ -221,6 +224,19 @@ public class PetPill : MonoBehaviour {
 	/// </summary>
 	public void LaunchUnlockAnim() {
 		m_currentLockIconAnim.SetTrigger("unlock");
+
+		// If equip tutorial is not yet completed, show highlight around the pill!
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PETS_EQUIP)) {
+			// Give enough time for the unlock animation to finish
+			DOVirtual.DelayedCall(
+				1f, 	// Sync with animation!
+				() => {
+					// Instantiate highlight prefab
+					GameObject prefab = Resources.Load<GameObject>(PetPill.TUTORIAL_HIGHLIGHT_PREFAB_PATH);
+					m_tutorialHighlightFX = GameObject.Instantiate<GameObject>(prefab, this.transform, false);
+				}
+			);
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -289,6 +305,16 @@ public class PetPill : MonoBehaviour {
 		// Check whether it affects this pill
 		if(m_slot == _slotIdx || _newPetSku == m_def.sku) {
 			Refresh();
+
+			// If we were showing a highlight around this pill, remove it
+			if(m_tutorialHighlightFX != null) {
+				// Destroy and lose reference
+				GameObject.Destroy(m_tutorialHighlightFX);
+				m_tutorialHighlightFX = null;
+
+				// Mark pet equip tutorial as completed
+				UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.PETS_EQUIP, true);
+			}
 		}
 	}
 }

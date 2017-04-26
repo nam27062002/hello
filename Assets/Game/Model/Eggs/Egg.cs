@@ -279,8 +279,8 @@ public class Egg {
 		// Remove it from the inventory (if appliable)
 		EggManager.RemoveEggFromInventory(this);
 
-		// If tutorial wasn't completed, do it now
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR)) {
+		// If it's a standard egg, mark tutorial as completed
+		if(def.sku == SKU_STANDARD_EGG) {
 			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR, true);
 		}
 
