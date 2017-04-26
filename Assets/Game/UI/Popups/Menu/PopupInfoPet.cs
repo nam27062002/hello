@@ -22,7 +22,7 @@ public class PopupInfoPet : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/PF_PopupInfoPet";
+	public const string PATH = "UI/Popups/Tutorial/PF_PopupInfoPet";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
