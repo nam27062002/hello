@@ -25,7 +25,7 @@ public class PopupCurrencyShop : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/PF_PopupCurrencyShop";
+	public const string PATH = "UI/Popups/ResourcesFlow/PF_PopupCurrencyShop";
 
 	public enum Mode {
 		DEFAULT,

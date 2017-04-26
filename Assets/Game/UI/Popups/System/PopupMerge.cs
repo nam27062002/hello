@@ -7,7 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(PopupController))]
 public class PopupMerge : MonoBehaviour 
 {
-	public static readonly string PATH = "UI/Popups/PF_PopupMerge";
+	public const string PATH = "UI/Popups/Message/PF_PopupMerge";
 
 	public PopupMergeProfilePill m_leftPill;
 	public PopupMergeProfilePill m_rightPill;

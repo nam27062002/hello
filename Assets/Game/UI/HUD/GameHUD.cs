@@ -46,7 +46,7 @@ public class GameHUD : MonoBehaviour {
     /// </summary>
     public void OnPauseButton() {
 		// Open pause popup
-		PopupManager.OpenPopupInstant(PopupInGameSettings.PATH);
+		PopupManager.OpenPopupInstant(PopupPause.PATH);
 	}
 
 	/// <summary>

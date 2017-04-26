@@ -19,7 +19,7 @@ public class PopupInGameSettings : PopupPauseBase {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/PF_PopupInGameSettings";
+	public const string PATH = "UI/Popups/InGame/PF_PopupInGameSettings";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

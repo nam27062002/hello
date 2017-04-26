@@ -58,6 +58,7 @@ public class DestructibleDecoration : Initializable {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnLevelLoaded);
 	}
 
 	/// <summary>
@@ -66,6 +67,7 @@ public class DestructibleDecoration : Initializable {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.RemoveListener(GameEvents.GAME_AREA_ENTER, OnLevelLoaded);
 	}
 
 	/// <summary>

@@ -20,7 +20,7 @@ public class PopupPhotoShare : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/PF_PopupPhotoShare";
+	public const string PATH = "UI/Popups/Menu/PF_PopupPhotoShare";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

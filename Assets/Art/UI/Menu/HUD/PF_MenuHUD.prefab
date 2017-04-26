@@ -648,10 +648,10 @@ GameObject:
   - component: {fileID: 114657093804068674}
   - component: {fileID: 114246271287690552}
   - component: {fileID: 114483434674905174}
-  - component: {fileID: 114830603854755284}
   - component: {fileID: 114125074436789768}
   - component: {fileID: 95659141319760942}
   - component: {fileID: 114557291697530422}
+  - component: {fileID: 114318912823716092}
   m_Layer: 5
   m_Name: BtnOptions
   m_TagString: Untagged
@@ -1193,6 +1193,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 114318912823716092}
+        m_MethodName: OpenPopup
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114268500104851686
@@ -1223,6 +1234,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 209494c2b00754b30832eae0b23ce88f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114318912823716092
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1035320168908218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d677588cf25b47fe84f2f773daf1f23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_popupPath: UI/Popups/Menu/PF_PopupSettings
+  OnPopupInit:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!114 &114354686323644434
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1576,19 +1604,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
---- !u!114 &114830603854755284
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1035320168908218}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c615e9e12f1be4d60bebd602a7599d30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_popupPath: UI/Popups/PF_PopupSettings
-  m_popup: {fileID: 0}
 --- !u!114 &114878958081106640
 MonoBehaviour:
   m_ObjectHideFlags: 1

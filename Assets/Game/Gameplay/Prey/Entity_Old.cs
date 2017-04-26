@@ -117,6 +117,7 @@ public class Entity_Old : Initializable {
 		// m_reward.fury = m_def.GetAsFloat("rewardFury");
 		m_reward.xp = m_def.GetAsFloat("rewardXp");
 		m_reward.origin = m_def.Get("sku");
+		m_reward.category = m_def.Get("category");
 
 		// Simple data
 		m_goldenChance = m_def.GetAsFloat("goldenChance");
