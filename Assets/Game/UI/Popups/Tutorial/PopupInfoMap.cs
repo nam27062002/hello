@@ -19,5 +19,5 @@ public class PopupInfoMap : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/Tutorial/PF_PopupInfoMap";
+	public const string PATH = "UI/Popups/Tutorial/PF_PopupInfoMap";
 }

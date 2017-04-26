@@ -19,5 +19,5 @@ public class PopupInfoFireRush : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/Tutorial/PF_PopupInfoFireRush";
+	public const string PATH = "UI/Popups/Tutorial/PF_PopupInfoFireRush";
 }
