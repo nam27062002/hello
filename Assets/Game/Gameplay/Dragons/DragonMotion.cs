@@ -1879,11 +1879,15 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		}
 		else if ( _other.CompareTag("AreaChange") && !m_changingArea && InstanceManager.gameSceneController != null )
 		{
-			m_changingArea = true;
-			// Start moving through Spline
-			m_followingSpline = _other.GetComponent<Assets.Code.Game.Spline.BezierSpline>();
-			m_destinationArea = _other.GetComponent<AreaPortal>().m_areaPortal;
-			ChangeState(State.ChangingArea);
+			string destinationArea = _other.GetComponent<AreaPortal>().m_areaPortal;
+			if ( LevelManager.currentArea != destinationArea )
+			{
+				m_changingArea = true;
+				// Start moving through Spline
+				m_followingSpline = _other.GetComponent<Assets.Code.Game.Spline.BezierSpline>();
+				m_destinationArea = destinationArea;
+				ChangeState(State.ChangingArea);
+			}
 		}
 		
 	}
