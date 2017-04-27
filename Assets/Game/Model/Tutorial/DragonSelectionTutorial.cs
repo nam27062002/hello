@@ -130,7 +130,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					m_scroller.FocusDragon(UsersManager.currentUser.currentDragon, true);
 
 					// Show tier info popup
-					PopupManager.OpenPopupInstant(PopupInfoTiers.PATH);
+					DOVirtual.DelayedCall(0.25f, () => PopupManager.OpenPopupInstant(PopupInfoTiers.PATH));
 
 					// Update tutorial flag and save persistence
 					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.DRAGON_SELECTION);
