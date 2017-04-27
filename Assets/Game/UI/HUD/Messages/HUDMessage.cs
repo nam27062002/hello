@@ -157,7 +157,7 @@ public class HUDMessage : MonoBehaviour {
 
 		switch(m_type) {
 			case Type.BOOST_REMINDER: {
-					if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
+					if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BOOST)) {
 						m_boostReminderTime = m_boostReminderTriggerTime;
 						m_boostReminderIntervalTime = m_boostReminderTime;
 						m_messageDuration = m_idleDuration * 0.5f;
@@ -258,6 +258,9 @@ public class HUDMessage : MonoBehaviour {
 							TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();							
 							text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_TUTO_BOOST_SUCCESS");
 							Show();
+
+							// Mark tutorial as completed!
+							UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.BOOST, true);
 						}
 						m_hasEverPerformedAction = true;
 					}
@@ -266,9 +269,11 @@ public class HUDMessage : MonoBehaviour {
 					m_timeSinceLastBoostReminder += Time.deltaTime;
 					if (m_timeSinceLastBoostReminder >= m_boostReminderTime) {
 						// Show feedback!
-						Show();
-						m_timeSinceLastBoostReminder = 0f;
-						m_boostReminderTime = m_boostReminderIntervalTime;
+						// Don't reset timers if it couldn't be shown! Will be displayed asap
+						if(Show()) {
+							m_timeSinceLastBoostReminder = 0f;
+							m_boostReminderTime = m_boostReminderIntervalTime;
+						}
 					}
 				}
 			break;
@@ -285,18 +290,19 @@ public class HUDMessage : MonoBehaviour {
 	/// If this message is linked to a HUDMessageSystem, it will check whether it 
 	/// can be shown or not based on priorities vs other messages in the same system.
 	/// </summary>
-	virtual public void Show() {
+	/// <returns>Whether the message could be displayed or not (HUDMessageSystem priorities).</returns>
+	virtual public bool Show() {
 		// If already active, decide how to proceed
 		bool force = false;
 		if(m_visible) {
 			switch(m_repeatType) {
 				case RepeatType.IGNORE: {
-					return; 
+					return true; 
 				} break;
 
 				case RepeatType.RESTART_TIMER: {
 					m_timer = m_messageDuration;
-					return;
+					return true;
 				} break;
 
 				case RepeatType.RESTART_ANIM: {
@@ -308,7 +314,7 @@ public class HUDMessage : MonoBehaviour {
 		// Request to attached system (if any)
 		if(!force && m_messageSystem != null) {
 			// If show not authorized, don't do anything
-			if(!m_messageSystem.RequestShow(this)) return;
+			if(!m_messageSystem.RequestShow(this)) return false;
 		}
 
 		// All checks passed! Show the message
@@ -324,6 +330,8 @@ public class HUDMessage : MonoBehaviour {
 
 		// Notify
 		OnShow.Invoke(this);
+
+		return true;
 	}
 
 	/// <summary>
