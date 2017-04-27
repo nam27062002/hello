@@ -338,7 +338,7 @@ public class PopupDragonInfo : MonoBehaviour {
 		if(m_loaders[_idx] == null) yield break;
 
 		// Wait a little bit before actually loading
-		yield return new WaitForSeconds(m_timeBetweenLoaders);
+		yield return new WaitForSecondsRealtime(m_timeBetweenLoaders);
 		for(int i = 0; i < m_framesBetweenLoaders; ++i) {
 			yield return new WaitForEndOfFrame();
 		}

@@ -142,7 +142,7 @@ public class GameStoreManagerCalety : GameStoreManager
 
     IEnumerator SimulatePurchase( string _sku)
     {
-    	yield return new WaitForSeconds( 0.25f );
+		yield return new WaitForSecondsRealtime( 0.25f );
 		string item = GameSkuToPlatformSku( _sku );
     	m_storeListener.onPurchaseCompleted( item, "", null);
     }

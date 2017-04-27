@@ -351,7 +351,7 @@ public class PopupMessage : MonoBehaviour
 
     System.Collections.IEnumerator Test_CloseAutomatically(float waitTime)
     {
-        yield return new WaitForSeconds(waitTime);
+        yield return new WaitForSecondsRealtime(waitTime);
         Close();
     }
 

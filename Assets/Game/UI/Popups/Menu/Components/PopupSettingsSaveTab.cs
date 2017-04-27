@@ -777,7 +777,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     #region utils
     System.Collections.IEnumerator DelayedCall(float waitTime, Action callback)
     {
-        yield return new WaitForSeconds(waitTime);
+        yield return new WaitForSecondsRealtime(waitTime);
         callback();
     }
     #endregion
