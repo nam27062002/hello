@@ -47,6 +47,7 @@ public class GameSceneController : GameSceneControllerBase {
 	};
 	SwitchingAreaSate m_switchState;
 	private List<AsyncOperation> m_switchingAreaTasks;
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -54,6 +55,11 @@ public class GameSceneController : GameSceneControllerBase {
 	[SerializeField] private ResultsSceneController m_resultsScene;
 	public ResultsSceneController resultsScene {
 		get { return m_resultsScene; }
+	}
+
+	[SerializeField] private LevelLoadingSplash m_loadingScreen = null;
+	public LevelLoadingSplash loadingScreen {
+		get { return m_loadingScreen; }
 	}
 
 	// Countdown
@@ -140,6 +146,18 @@ public class GameSceneController : GameSceneControllerBase {
 	override protected void Awake() {
 		// Call parent
 		base.Awake();
+
+		// Make sure loading screen is visible
+		m_loadingScreen.gameObject.SetActive(true);
+		m_loadingScreen.GetComponent<ShowHideAnimator>().ForceShow(false);
+
+		// Check whether the tutorial popup must be displayed
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)
+			|| DebugSettings.isPlayTest) {
+			// Open popup
+			PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);
+			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
+		}
 
 		// Load the dragon
 		DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
@@ -494,15 +512,6 @@ public class GameSceneController : GameSceneControllerBase {
 
 				// Initialize minimum loading time as well
 				m_timer = MIN_LOADING_TIME;
-
-				// Check whether the tutorial popup must be displayed
-				if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)
-				|| DebugSettings.isPlayTest) {
-					// Open popup
-					PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);
-					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
-					PersistenceManager.Save();
-				}
 			} break;
 
 			case EStates.ACTIVATING_LEVEL: {
