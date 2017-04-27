@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.Events;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -27,6 +28,7 @@ public class PopupLauncher : MonoBehaviour {
 	// Exposed setup
 	[FileList("Resources/UI/Popups", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] protected string m_popupPath = "";
+	[SerializeField] protected float m_delay = 0f;
 
 	// Internal
 	protected PopupController m_popup = null;
@@ -105,9 +107,12 @@ public class PopupLauncher : MonoBehaviour {
 	/// Invokes the OnPopupInit event.
 	/// </summary>
 	private void OpenPopupInternal() {
+		// Load the popup
 		m_popup = PopupManager.LoadPopup(m_popupPath);
 		OnPopupInit.Invoke();
-		m_popup.Open();
+
+		// Open (apply delay)
+		DOVirtual.DelayedCall(m_delay, () => m_popup.Open());
 	}
 
 	//------------------------------------------------------------------------//
