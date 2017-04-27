@@ -67,38 +67,38 @@ public class FGOLNative {
 	public static FGOLNative init(Activity a) {
 		return new FGOLNative(a);
 	}
-	
+
 	public static Activity activity;
-	
+
 	//fgn is used externally, so we hide the warnings
 	@SuppressWarnings("unused")
 	private FGN fgn;
-	
+
 	public FGOLNative(Activity a) {
 		activity = a;
 		System.out.println("FGOLNative initialised with activity " + a);
 	}
 
-	public int getNumGamepads() 
+	public int getNumGamepads()
 	{
 		int gamePads = 0;
 
 		int[] deviceIds = InputDevice.getDeviceIds();
-		for (int i = 0; i < deviceIds.length; i++) 
+		for (int i = 0; i < deviceIds.length; i++)
 		{
-			InputDevice device = getInputDeviceSafe(deviceIds[i]);				
-			if (device != null && isGamepad(device)) 
+			InputDevice device = getInputDeviceSafe(deviceIds[i]);
+			if (device != null && isGamepad(device))
 			{
 				gamePads++;
 			}
 		}
-		
+
 		return gamePads;
 	}
 
 	private boolean isGamepad(InputDevice inputDevice)
 	{
-		if (inputDevice != null) 
+		if (inputDevice != null)
 		{
 			int hasFlags = InputDevice.SOURCE_GAMEPAD | InputDevice.SOURCE_JOYSTICK;
 			return (inputDevice.getSources() & hasFlags) == hasFlags;
@@ -106,7 +106,7 @@ public class FGOLNative {
 
 		return false;
 	}
-	
+
 	private static InputDevice getInputDeviceSafe(int deviceId)
 	{
 		InputDevice device = null;
@@ -120,14 +120,14 @@ public class FGOLNative {
 			//"java.lang.RuntimeException: Could not get input device information"
 			device = null;
 		}
-		
+
 		return device;
 	}
-	
+
 	public void initFGN(final String filename) {
-		
+
 		try {
-			
+
 			Runnable runnable = new Runnable() {
 	            public void run() {
 	            	try {
@@ -137,15 +137,15 @@ public class FGOLNative {
 	        		}
 	            }
 			};
-			
+
 			activity.runOnUiThread(runnable);
-			
+
 		} catch (Exception e) {
 			System.out.println("initFGN: " + e.toString());
 		}
 	}
 
-	
+
 	public String GetAPKPath(String packageName)
 	{
 		PackageManager pm = activity.getPackageManager();
@@ -164,15 +164,15 @@ public class FGOLNative {
 		}
 		return null;
 	}
-	
+
 	public String GetCurrentAPKPath()
 	{
 		Log.d("FGOLNative", "APK Path of current package is " + activity.getPackageCodePath());
 		return activity.getPackageCodePath();
 	}
-	
+
 	public String GetBundleVersion() {
-		
+
 		try {
 			PackageManager manager = activity.getPackageManager();
 			if (manager!=null)
@@ -183,44 +183,44 @@ public class FGOLNative {
 		} catch (Exception e) {
 			System.out.println("GetBundleVersion() ERROR:" + e.toString());
 		}
-		
+
 		return null;
 	}
-	
 
-	// Do not call this function from the main thread. Otherwise, 
+
+	// Do not call this function from the main thread. Otherwise,
 	// an IllegalStateException will be thrown.
-	public String GetAdvertisingIdentifier() 
+	public String GetAdvertisingIdentifier()
 	{
 		Info adInfo = null;
-		try 
+		try
 		{
 			adInfo = AdvertisingIdClient.getAdvertisingIdInfo(activity);
 			return adInfo.getId();
-		} 
+		}
 		catch (Exception e)
 		{
 			System.out.println("GetAdvertisingIDError" + e.toString());
 			return "Unknown";
 		}
 	}
-	
-	public boolean IsLimitAdTrackingEnabled() 
+
+	public boolean IsLimitAdTrackingEnabled()
 	{
 		Info adInfo = null;
-		try 
+		try
 		{
 			adInfo = AdvertisingIdClient.getAdvertisingIdInfo(activity);
 			return adInfo.isLimitAdTrackingEnabled();
-		} 
+		}
 		catch (Exception e)
 		{
 			return false;
 		}
 	}
-	
+
 	public String GetUniqueDeviceIdentifier() { // note this will be null if device does not have a SIM card
-		
+
 		try {
 			TelephonyManager mgr = (TelephonyManager)activity.getSystemService(Context.TELEPHONY_SERVICE);
 			if (mgr != null)
@@ -228,22 +228,22 @@ public class FGOLNative {
 		} catch (Exception e) {
 			System.out.println("GetUniqueDeviceIdentifier() ERROR:" + e.toString());
 		}
-		
+
 		return null;
 	}
-	
+
 	public String GetAndroidID() { // unique device identifier, won't change unless device is factory reset
 		try {
 			return Secure.getString(activity.getContentResolver(),Secure.ANDROID_ID);
 		} catch (Exception e) {
 			System.out.println("GetAndroidID() ERROR:" + e.toString());
 		}
-		
+
 		return null;
 	}
-	
+
 	public String GetMACAddress() { // semi-unique identifier, can be null if WiFi turned off when device booted or device has no WiFi
-		
+
 		try {
 			WifiManager mgr = (WifiManager)activity.getSystemService(Context.WIFI_SERVICE);
 			if (mgr != null) {
@@ -259,14 +259,14 @@ public class FGOLNative {
 		} catch (Exception e) {
 			System.out.println("GetMACAddress() ERROR:" + e.toString());
 		}
-		
+
 		return null;
 	}
-	
+
 	public void ShowMessageBox(final String title, final String message, final int msg_id) {
-		
+
 		try {
-			
+
 			Runnable runnable = new Runnable() {
 	            public void run() {
 	            	try {
@@ -290,21 +290,21 @@ public class FGOLNative {
 	        		}
                  }
 			};
-			
+
 			activity.runOnUiThread(runnable);
-			
+
 			System.out.println("ShowMessageBox: " + title + " msg=" + message);
-			
+
 		} catch (Exception e) {
 			System.out.println("ShowMessageBoxWithButtons: " + e.toString());
 		}
 	}
-	
+
 	public void ShowMessageBoxWithButtons(final String title, final String message, final String ok_button, final String cancel_button, final int msg_id) {
-		
+
 		try {
 			System.out.println("ShowMessageBoxWithButtons: " + title + " msg=" + message);
-			
+
 			Runnable runnable = new Runnable() {
 	            public void run() {
 	            	try {
@@ -337,32 +337,32 @@ public class FGOLNative {
 	        		}
 	              }
 			};
-			
+
 			activity.runOnUiThread(runnable);
-			
+
 		} catch (Exception e) {
 			System.out.println("ShowMessageBoxWithButtons: " + e.toString());
 		}
 	}
-	
-	
+
+
 	public static void openURL(String URL) {
 		Intent i = new Intent(Intent.ACTION_VIEW);
 		i.setData(Uri.parse(URL));
 		activity.startActivity(i);
 	}
-	
+
 	public String getUserLocation() {
-		
+
 		String countryCode = null;
-		
+
 		try {
 			TelephonyManager tm = (TelephonyManager)activity.getSystemService(Context.TELEPHONY_SERVICE);
 		    countryCode = tm.getSimCountryIso();
 		} catch (Exception e) {
 			System.out.println("getUserLocation: SIM " + e.toString());
 		}
-		
+
 		// what if no sim card?
 	    if (countryCode==null || countryCode.equals("")) {
 	    	try {
@@ -371,15 +371,15 @@ public class FGOLNative {
 				System.out.println("getUserLocation: Locale " + e.toString());
 			}
 	    }
-	    
+
 	    // check we got something...
 	    if (countryCode==null || countryCode.equals("")) {
 	    	countryCode = "XX"; // give up!
 	    }
-	    
+
 	    return countryCode;
 	}
-	
+
 	public boolean isAppInstalled(String packageName) {
 	    PackageManager pm = activity.getPackageManager();
 	    boolean installed = false;
@@ -391,7 +391,7 @@ public class FGOLNative {
 	    }
 	    return installed;
 	}
-	
+
 	public String getAppVersion(String packageName) {
 	    PackageManager pm = activity.getPackageManager();
 	    try {
@@ -401,14 +401,14 @@ public class FGOLNative {
 	       return "NA";
 	    }
 	}
-	
+
 	//This won't work with android N as it was deprecated
 	/*public static String getInstallReferrer() {
 		SharedPreferences prefs = activity.getSharedPreferences("FGOLNative", Context.MODE_MULTI_PROCESS);
 		if (prefs.contains("referrer")) {
 			return prefs.getString("referrer", null);
 		} else {
-			return null;  
+			return null;
 		}
 	}*/
 
@@ -419,39 +419,39 @@ public class FGOLNative {
         List<AppTask> tasks = activityManager.getAppTasks();
 
 		System.out.println("Starting Task search: " + activityName);
-        for (int i=0;i < tasks.size(); i++) 
+        for (int i=0;i < tasks.size(); i++)
         {
 			System.out.println("Task search: " + tasks.get(i).getTaskInfo().origActivity.getPackageName());
-            if (tasks.get(i).getTaskInfo().origActivity.getPackageName().equalsIgnoreCase(activityName)) 
-                return true;                                  
+            if (tasks.get(i).getTaskInfo().origActivity.getPackageName().equalsIgnoreCase(activityName))
+                return true;
         }
         return false;
     }
-	
+
 	public static int GetNumCertificates()
 	{
-		try 
+		try
 		{
 			PackageInfo packageInfo = activity.getPackageManager().getPackageInfo(
-					activity.getPackageName(), 
+					activity.getPackageName(),
 					PackageManager.GET_SIGNATURES);
-			
+
 			return packageInfo.signatures.length;
 		}
-		catch (Exception e) 
+		catch (Exception e)
 		{
 			//requesting signatures from APK failed'
 			Log.e("FGOLNative", "GetNumCertificates failed with exception: " + e.toString());
 			return 0;
 		}
 	}
-	
+
 	public static String GetCertificateSignatureSHA(int index)
 	{
-		try 
+		try
 		{
 			PackageInfo packageInfo = activity.getPackageManager().getPackageInfo(
-					activity.getPackageName(), 
+					activity.getPackageName(),
 					PackageManager.GET_SIGNATURES);
 			if (index >= packageInfo.signatures.length)
 			{
@@ -463,11 +463,11 @@ public class FGOLNative {
 				Signature signature = packageInfo.signatures[index];
 				MessageDigest md = MessageDigest.getInstance("SHA");
 				md.update(signature.toByteArray());
-				
+
 				byte[] publicKey = md.digest();
 
                 StringBuffer hexString = new StringBuffer();
-                for (int i=0;i<publicKey.length;i++) 
+                for (int i=0;i<publicKey.length;i++)
                 {
                 	if (i!= 0)
                 	{
@@ -478,19 +478,19 @@ public class FGOLNative {
                     	hexString.append("0");
                     hexString.append(appendString);
                 }
-                
+
 				Log.d("FGOLNative", "Cert signature " + index + ": "+ hexString.toString().toUpperCase());
 				return hexString.toString().toUpperCase();
 			}
-		} 
-		catch (Exception e) 
+		}
+		catch (Exception e)
 		{
 			//requesting signatures from APK failed'
 			Log.e("FGOLNative", "Requesting cert signatures from APK failed with exception");
 			return "";
 		}
 	}
-	
+
 	public static boolean HasPermission(String permission)
 	{
 		int permissionCheck = ContextCompat.checkSelfPermission(activity, permission);
@@ -500,7 +500,7 @@ public class FGOLNative {
 		}
 		return false;
 	}
-	
+
 	public static boolean IsAndroidTVDevice()
 	{
 		UiModeManager uiModeManager = (UiModeManager) activity.getSystemService(Context.UI_MODE_SERVICE);
@@ -510,7 +510,7 @@ public class FGOLNative {
 			return false;
 		}
 	}
-	
+
 	//http://developer.android.com/reference/android/support/v4/app/ActivityCompat.html#shouldShowRequestPermissionRationale(android.app.Activity, java.lang.String)
 	public static void TryShowPermissionExplanation(final String permissions, final String messageTitle, final String messageInfo)
 	{
@@ -518,7 +518,7 @@ public class FGOLNative {
         //split dat array
 		String[] permissionRequestArray = permissions.split(",");
 		ArrayList<String> permissionRequiredArray = new ArrayList<String>();
-		
+
 		for(int i=0; i<permissionRequestArray.length; i++)
 		{
 			if (HasPermission(permissionRequestArray[i]))
@@ -537,7 +537,7 @@ public class FGOLNative {
 			//all permissions are already granted, go home Jimmy
 			return;
 		}
-		
+
 		//now we gotta request permissions, lol
 		final String[] permissionsToRequest = permissionRequiredArray.toArray(new String[permissionRequiredArray.size()]);
         System.out.println("ShowPermissionExplanation: " + messageTitle + " msg=" + messageInfo);
@@ -559,7 +559,7 @@ public class FGOLNative {
                                 {
                                     dialog.cancel();
                                 	activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-                                    ActivityCompat.requestPermissions(activity, permissionsToRequest, PermissionRequestID);                                   
+                                    ActivityCompat.requestPermissions(activity, permissionsToRequest, PermissionRequestID);
                                 }
                             });
                         AppCompatDialog alertdialog = builder.create();
@@ -578,7 +578,7 @@ public class FGOLNative {
             System.out.println("ShowMessageBoxWithButtons: " + e.toString());
         }
     }
-	
+
 	public static String GetConnectionType ()
 	{
         ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -612,54 +612,54 @@ public class FGOLNative {
         }
         return "Unknown";
 	}
-	
+
 	public static String GetGameLanguageISO()
 	{
 	    return Locale.getDefault().getLanguage();
 	}
-	
+
 	public static String GetUserCountryISO()
 	{
         return activity.getResources().getConfiguration().locale.getCountry();
 	}
-		
+
 	public static String GetExternalStorageLocation()
 	{
 		String result = "";
-	
+
 		try
 		{
-			result =  activity.getExternalFilesDir(null).getAbsolutePath();	
+			result =  activity.getExternalFilesDir(null).getAbsolutePath();
 		}
 		catch(Exception e)
 		{
 			System.out.println("Cannot retrieve external files directory" + e.toString());
 		}
-		
+
 		return result;
 	}
-	
+
 	public static String GetExpansionFileLocation()
 	{
 		String result = "";
-		
+
 		try
 		{
-			result = activity.getObbDir().getAbsolutePath();	
+			result = activity.getObbDir().getAbsolutePath();
 		}
 		catch(Exception e)
 		{
 			System.out.println("Cannot retrieve obb files directory" + e.toString());
 		}
-		
+
 		return result;
 	}
-	
+
 	public static void AttemptToRestoreFilesFromInternalToExternal()
 	{
 		Log.d("FGOLConsoleSaveRecovery", "Starting");
 		//firstly, do any save files exist in External Storage?
-		File extDir = new File(GetExternalStorageLocation());        
+		File extDir = new File(GetExternalStorageLocation());
 		File extFiles[] = extDir.listFiles();
 		boolean foundSave = false;
 		for (int i=0; i< extFiles.length; i++)
@@ -675,7 +675,7 @@ public class FGOLNative {
 			Log.d("FGOLConsoleSaveRecovery", "No Save File");
 			//does the internal directory contain saves?
 			String internalDirectory = activity.getFilesDir().getAbsolutePath();
-			File intDir = new File(internalDirectory);        
+			File intDir = new File(internalDirectory);
 			File intFiles[] = intDir.listFiles();
 			boolean timeToCopy = false;
 			for (int i=0; i< intFiles.length; i++)
@@ -695,7 +695,7 @@ public class FGOLNative {
 				{
 					extFiles[i].delete();
 				}
-				
+
 				//now copy all from int to ext
 				for (int i=0; i< intFiles.length; i++)
 				{
@@ -715,43 +715,61 @@ public class FGOLNative {
 	}
 
 	// Calculates memory usage in runtime
-	// Using Process file is actually much faster than querying MemoryInfo through Android activity
-	private java.io.RandomAccessFile randomAccessFile = null;
 	public int GetMemoryUsage()
+	{
+		return GetStatusIntValue("VmSize:") * 1024;	// from kb to bytes
+	}
+	// Calculates memory peak in runtime
+	public int GetMaxMemoryUsage()
+	{
+			return GetStatusIntValue("VmPeak:") * 1024;	// from kb to bytes
+	}
+
+	private java.io.RandomAccessFile randomAccessFile = null;
+	private int GetStatusIntValue(String _field)
 	{
 		try
 		{
 			// Try to create the process file if it doesn't exists
 			if(randomAccessFile == null)
 			{
-				randomAccessFile = new java.io.RandomAccessFile("/proc/" + android.os.Process.myPid() + "/stat", "r");
+				randomAccessFile = new java.io.RandomAccessFile("/proc/" + android.os.Process.myPid() + "/status", "r");
 			}
-			
-			if(randomAccessFile != null)
+
+			// Search VmPeak
+			if (randomAccessFile != null)
 			{
 				randomAccessFile.seek(0);
-	            return Integer.parseInt(randomAccessFile.readLine().split(" ")[23]);
+				String str = "";
+				do {
+					str = randomAccessFile.readLine();
+					if (str.startsWith(_field))
+					{
+						str = str.substring( _field.length() );
+						str = str.trim();
+						return Integer.parseInt(str.split(" ")[0]);
+					}
+				} while ( str != "" );
 			}
 		}
 		catch(Exception e)
 		{
-			System.out.println("Memory Usage Exception" + e.toString());
+			System.out.println("GetStatusIntValue Exception " + e.toString());
 		}
-			
 		return 0;
 	}
-	
+
 	// Get total memory using MemoryInfo - alternative method to GetMemoryUsage()
 	public int GetTotalMemoryPSS()
 	{
 		int result = -1;
-		
+
 		try
 		{
 			MemoryInfo memoryInfo = new MemoryInfo();
 			ActivityManager activityManager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
 			activityManager.getMemoryInfo(memoryInfo);
-			
+
 			int processId = android.os.Process.myPid();
 			android.os.Debug.MemoryInfo[] mi = activityManager.getProcessMemoryInfo(new int[]{processId});
 			result = mi[0].getTotalPss();
@@ -763,19 +781,19 @@ public class FGOLNative {
 
 		return result;
 	}
-	
+
 	// Get max allowed memory on device
 	public long GetMaxHeapMemory()
 	{
 		return Runtime.getRuntime().maxMemory();
 	}
-	
+
 	// Get total used heap memory
 	public long GetUsedHeapMemory()
 	{
 		return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 	}
-	
+
 	// Get max device memory (total RAM memory)
 	public long GetMaxDeviceMemory()
 	{
@@ -784,7 +802,7 @@ public class FGOLNative {
 		activityManager.getMemoryInfo(memoryInfo);
 		return memoryInfo.totalMem;
 	}
-	
+
 	// Get total available memory
 	public long GetAvailableDeviceMemory()
 	{
@@ -793,7 +811,7 @@ public class FGOLNative {
 		activityManager.getMemoryInfo(memoryInfo);
 		return memoryInfo.availMem;
 	}
-	
+
 	// Get memory threshold (reserved for OS)
 	public long GetDeviceMemoryThreshold()
 	{
@@ -802,13 +820,13 @@ public class FGOLNative {
 		activityManager.getMemoryInfo(memoryInfo);
 		return memoryInfo.threshold;
 	}
-	
+
 	// Cached spinner values
 	private RotateAnimation m_rotateAnimation;					// Rotate animation which is added to the spinner
 	private LinearLayout 	m_spinnerLayout;					// Spinner layout, will be null until ToggleSpinner is called for the first time
 	private final int		REFERENCE_SCREEN_HEIGHT = 1080;		// Reference screen size for spinner size calculation
 	private final float		SPINNER_SCALE = 2.0f;				// Scale to apply to source image, it's cheaper than having larger image in res
-	private final int		ROTATION_DURATION = 1500; 			// 360 rotation in milliseconds	
+	private final int		ROTATION_DURATION = 1500; 			// 360 rotation in milliseconds
 	// Native loading indicator on top of Unity activity (doesn't pause Unity activity)
 	// Usage - replace spinner.png file in drawable folder
 	// IN bool enable - show or hide the spinner
@@ -818,7 +836,7 @@ public class FGOLNative {
 		try
 		{
 			Runnable runnable = new Runnable() {
-			public void run() 
+			public void run()
 			{
 				// Get screen size (doesn't report virtual buttons area)
 				DisplayMetrics screenMetrics = new DisplayMetrics();
@@ -832,42 +850,42 @@ public class FGOLNative {
 				{
 					activity.getWindowManager().getDefaultDisplay().getMetrics(screenMetrics);
 				}
-				
+
 				// Create spinner layout if it didn't exist
 				if(m_spinnerLayout == null)
 				{
 					ImageView spinnerImage = new ImageView(activity);
 					spinnerImage.setImageResource(R.drawable.spinner);
-					
+
 					// Set size based on screen height compared to target resolution height
 					// Keep image aspect ratio based on height
 					final Options opt = new BitmapFactory.Options();
 					opt.inJustDecodeBounds = true;
-					BitmapFactory.decodeResource(activity.getResources(), R.drawable.spinner, opt);		
+					BitmapFactory.decodeResource(activity.getResources(), R.drawable.spinner, opt);
 					int targetHeight = (int)(SPINNER_SCALE * opt.outHeight * (float)screenMetrics.heightPixels / REFERENCE_SCREEN_HEIGHT);
-					int targetWidth = (int)(SPINNER_SCALE * (float)targetHeight / opt.outHeight * opt.outWidth);	
+					int targetWidth = (int)(SPINNER_SCALE * (float)targetHeight / opt.outHeight * opt.outWidth);
 					System.out.println("Spinner Width = " + targetWidth + " Spinner Height = " + targetHeight);
 					spinnerImage.setLayoutParams(new LinearLayout.LayoutParams(targetWidth, targetHeight));
-					
+
 					// Create animation
 					m_rotateAnimation = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
 					m_rotateAnimation.setInterpolator(new LinearInterpolator());
-					m_rotateAnimation.setRepeatCount(Animation.INFINITE);	
+					m_rotateAnimation.setRepeatCount(Animation.INFINITE);
 					// In milliseconds
 					m_rotateAnimation.setDuration(ROTATION_DURATION);
-					
+
 					// Add the image to the view and apply animation
 					m_spinnerLayout = new LinearLayout(activity);
 					m_spinnerLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 					m_spinnerLayout.addView(spinnerImage, 0);
 				}
-				
+
 				ImageView spinner = (ImageView)m_spinnerLayout.getChildAt(0);
-				
+
 				// Set image position + set alignment to center of the image rather than top left
 				int marginLeft = (int)((x * screenMetrics.widthPixels - spinner.getLayoutParams().width / 2));
 				int marginTop = (int)((y * screenMetrics.heightPixels - spinner.getLayoutParams().height / 2));
-				
+
 				// Make sure the spinner is fully within screen bounds
 				if(marginLeft < 0)
 				{
@@ -885,11 +903,11 @@ public class FGOLNative {
 				{
 					marginTop = screenMetrics.heightPixels - spinner.getLayoutParams().height;
 				}
-				
+
 				//System.out.println("Spinner Input X = " + x + " Spinner Input Y = " + y);
 				//System.out.println("Spinner Margin Left = " + marginLeft + " Spinner Margin Top = " + marginTop);
 				((LinearLayout.LayoutParams)spinner.getLayoutParams()).setMargins(marginLeft, marginTop, 0, 0);
-					
+
 				if(enable)
 				{
 					// Add the view only if it's not already displayed
@@ -898,8 +916,8 @@ public class FGOLNative {
 					{
 						// For some reason animation getting removed after removing the view, therefore we assign it every time we show the spinner
 						m_spinnerLayout.getChildAt(0).setAnimation(m_rotateAnimation);
-						
-						activity.addContentView(m_spinnerLayout, m_spinnerLayout.getLayoutParams());	
+
+						activity.addContentView(m_spinnerLayout, m_spinnerLayout.getLayoutParams());
 					}
 				}
 				else
@@ -912,7 +930,7 @@ public class FGOLNative {
 					}
 				}
 			}};
-			
+
 			activity.runOnUiThread(runnable);
 		}
 		catch(Exception e)
@@ -920,7 +938,7 @@ public class FGOLNative {
 			System.out.println("Exception toggling loading spinner :: Exception = " +e.toString());
 		}
 	}
-	
+
 	/*
 	 * Gets publicly writable documents directory.
 	 */
@@ -974,18 +992,18 @@ public class FGOLNative {
 		}
 		return 0;
 	}
-	
+
 	private static final String CHECK_OP_NO_THROW = "checkOpNoThrow";
 	private static final String OP_POST_NOTIFICATION = "OP_POST_NOTIFICATION";
-	
+
 	public boolean GetPushDisabledByOSStatus()
 	{
-		try 
+		try
 		{
 			//	Does not work due to v4 support 24.0.0+ requirements (GPGS uses 23 so we cant' update)
 			//Context appContext = activity.getApplicationContext();
 			//return !NotificationManagerCompat.from(appContext).areNotificationsEnabled();
-			
+
 			Context appContext = activity.getApplicationContext();
 			AppOpsManager mAppOps = (AppOpsManager) appContext.getSystemService(Context.APP_OPS_SERVICE);
 
@@ -1007,29 +1025,29 @@ public class FGOLNative {
 		}
 		return false;
 	}
-	
-	//	Checks if app bundle with passed ID is present and if we can read its version 
+
+	//	Checks if app bundle with passed ID is present and if we can read its version
 	//	Returns NULL in any fail case, version only if it can be read
 	public String GetInstalledAppVersion(String appID)
 	{
 		String toReturn = null;
-		
-		try 
+
+		try
 		{
 			Context appContext = activity.getApplicationContext();
 			PackageInfo pinfo = appContext.getPackageManager().getPackageInfo(appID, 0);
 			int verCode = pinfo.versionCode;
 			String verName = pinfo.versionName;
-			
+
 			System.out.println("FGOLNative: Got verCode: " + verCode + " verName: " + verName);
-			
+
 			return verName;
 		}
 		catch (Exception e)
 		{
 			System.out.println("FGOLNative: Exception while trying to get installed app version: " + e.toString());
 		}
-		
+
 		return toReturn;
 	}
 }
