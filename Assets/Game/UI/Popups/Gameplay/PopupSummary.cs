@@ -22,7 +22,7 @@ public class PopupSummary : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/PF_PopupSummary";
+	public const string PATH = "UI/Popups/PF_PopupSummary";
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//

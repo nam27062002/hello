@@ -150,25 +150,28 @@ public class MapScroller : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
-		UpdateCameraPosition();
-		UpdateZoom();
+		// Don't scroll while zooming (zooming logic already updates the position)
+		bool zoomChanged = UpdateZoom();
+		if(!zoomChanged) {
+			UpdateCameraPosition();
+		}
 	}
 
 	/// <summary>
 	/// Detect and apply zoom.
 	/// </summary>
-	private void UpdateZoom() {
+	private bool UpdateZoom() {
 		// Nothing to do if we don't have all the required elements
-		if(m_camera == null) return;
-		if(m_levelData == null) return;
+		if(m_camera == null) return false;
+		if(m_levelData == null) return false;
 
 		// Check for debug override
 		float zoomSpeed = Prefs.GetFloatPlayer(DebugSettings.MAP_ZOOM_SPEED, m_zoomSpeed);
 
 		// Detect zoom
+		bool zoomChanged = false;
 		if(zoomSpeed > 0f) {
 			// Aux vars
-			bool zoomChanged = false;
 			float newZoom = zoom;
 
 			// In editor, use mouse wheel
@@ -192,8 +195,10 @@ public class MapScroller : MonoBehaviour {
 				Touch touchOne = Input.GetTouch(1);
 
 				// Find the position in the previous frame of each touch.
-				Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
-				Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+				//Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+				//Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+				Vector2 touchZeroPrevPos = touchZero.position - FixTouchDelta(touchZero);
+				Vector2 touchOnePrevPos = touchOne.position - FixTouchDelta(touchOne);
 
 				// Find the magnitude of the vector (the distance) between the touches in each frame.
 				float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
@@ -210,11 +215,42 @@ public class MapScroller : MonoBehaviour {
 			}
 			#endif
 
-			// Apply the zoom change!
+			// Disable scrolling while zooming to prevent weird behaviours
+			m_scrollRect.horizontal = !zoomChanged;
+			m_scrollRect.vertical = !zoomChanged;
+
+			// Has zoom changed?
 			if(zoomChanged) {
+				// Disable scrolling while zooming to prevent weird behaviours
+				m_scrollRect.StopMovement();
+
+				// Apply the zoom change!
 				SetZoom(newZoom);
 			}
 		}
+
+		return zoomChanged;
+	}
+
+	/// <summary>
+	/// Compute the touch delta to be screen-independent.
+	/// http://answers.unity3d.com/questions/209030/android-touch-variation-correction.html
+	/// </summary>
+	/// <returns>The corrected touch delta.</returns>
+	/// <param name="_touch">Touch.</param>
+	public Vector2 FixTouchDelta(Touch _touch) {
+		// From Unity's doc:
+		// The absolute position of the touch is recorded periodically and available 
+		// in the position property. The deltaPosition value is a Vector2 that represents 
+		// the difference between the touch position recorded on the most recent update and 
+		// that recorded on the previous update. The deltaTime value gives the time that 
+		// elapsed between the previous and current updates; you can calculate the touch's 
+		// speed of motion by dividing deltaPosition.magnitude by deltaTime.
+		float dt = Time.unscaledDeltaTime / _touch.deltaTime;
+		if(float.IsNaN(dt) || float.IsInfinity(dt)) {
+			dt = 1.0f;
+		}
+		return _touch.deltaPosition * dt;
 	}
 
 	/// <summary>

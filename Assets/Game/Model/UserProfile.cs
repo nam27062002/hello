@@ -106,6 +106,7 @@ public class UserProfile : UserSaveSystem
 			// Mark tutorial as completed if > 0
 			m_gamesPlayed = value;
 			SetTutorialStepCompleted(TutorialStep.FIRST_RUN, m_gamesPlayed > 0);
+			SetTutorialStepCompleted(TutorialStep.SECOND_RUN, m_gamesPlayed > 1);
 		}
 	}
 

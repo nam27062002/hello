@@ -22,6 +22,9 @@ public class DragonEatBehaviour : EatBehaviour {
 		get { return m_sizeUpEatSpeedFactor; }
 		set { m_sizeUpEatSpeedFactor = value; }
 	}
+
+	private DragonMotion m_dragonMotion;
+
     //--------------
 
     override protected void Awake()
@@ -37,7 +40,8 @@ public class DragonEatBehaviour : EatBehaviour {
 		m_dragon = GetComponent<DragonPlayer>();
 		m_dragonBoost = m_dragon.dragonBoostBehaviour;
 		m_dragonHealth = m_dragon.dragonHealthBehaviour;
-		m_motion = GetComponent<DragonMotion>();
+		m_dragonMotion = GetComponent<DragonMotion>();
+		m_motion = m_dragonMotion;
 
 		m_tier = m_dragon.data.tier;
 		m_eatSpeedFactor = m_dragon.data.def.GetAsFloat("eatSpeedFactor");
@@ -162,14 +166,13 @@ public class DragonEatBehaviour : EatBehaviour {
 	override public void StartHold(AI.IMachine _prey, bool grab = false) 
 	{
 		base.StartHold(_prey, grab);
-		DragonMotion motion = GetComponent<DragonMotion>();
 		if ( grab )
 		{
-			motion.StartGrabPreyMovement(m_holdingPrey, m_holdTransform);
+			m_dragonMotion.StartGrabPreyMovement(m_holdingPrey, m_holdTransform);
 		}
 		else
 		{
-			motion.StartLatchMovement(m_holdingPrey, m_holdTransform);
+			m_dragonMotion.StartLatchMovement(m_holdingPrey, m_holdTransform);
 		}
 
 		m_animator.SetBool("eatHold", true);
@@ -185,14 +188,13 @@ public class DragonEatBehaviour : EatBehaviour {
 	override public void EndHold()
 	{
 		base.EndHold();
-		DragonMotion motion = GetComponent<DragonMotion>();
 		if ( m_grabbingPrey )
 		{
-			motion.EndGrabMovement();
+			m_dragonMotion.EndGrabMovement();
 		}
 		else
 		{
-			motion.EndLatchMovement();
+			m_dragonMotion.EndLatchMovement();
 		}
 
 		m_animator.SetBool("eatHold", false);        

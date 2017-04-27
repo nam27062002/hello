@@ -191,7 +191,7 @@ public class FogManager : MonoBehaviour
 		// Clean all for areas?
 		for(int i = m_generatedAttributes.Count - 1; i>=0; i-- )
 		{
-			if ( m_generatedAttributes[i] != m_defaultAreaFog )
+			if ( m_generatedAttributes[i].texture != m_defaultAreaFog.texture )
 			{
 				bool toDestroy = true;
 				// if this generated is not from the activated area list

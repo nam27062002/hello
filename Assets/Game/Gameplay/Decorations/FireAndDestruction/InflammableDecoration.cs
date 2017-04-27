@@ -34,8 +34,6 @@ public class InflammableDecoration : Initializable {
 	private Decoration m_entity;
 	public string sku { get { return m_entity.sku; } }
 
-
-
 	// Use this for initialization
 	void Start() {
 		m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
@@ -50,6 +48,7 @@ public class InflammableDecoration : Initializable {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnLevelLoaded);
 	}
 
 	/// <summary>
@@ -58,12 +57,14 @@ public class InflammableDecoration : Initializable {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.RemoveListener(GameEvents.GAME_AREA_ENTER, OnLevelLoaded);
 	}
 
 	/// <summary>
 	/// A new level was loaded.
 	/// </summary>
 	private void OnLevelLoaded() {
+		
 		m_entity = GetComponent<Decoration>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_operatorSpawner = GetComponent<DeviceOperatorSpawner>();

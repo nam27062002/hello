@@ -88,9 +88,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_damageBase: 5
   m_damageMultiplier: 1
-  m_damageDuration: 0.5
-  m_damageType: 6
-  m_knockBackIntensity: 2
+  m_damageDuration: 0.25
+  m_damageType: 1
+  m_knockBackIntensity: 0
   m_visualActivationRadius: 0
   m_initialState: 2
   m_initialDelay: 0
@@ -106,6 +106,7 @@ MonoBehaviour:
   m_coneRotation: {x: 0, y: 0, z: 0}
   m_coneLength: 2
   m_coneArc: 45
+  m_animEvents: {fileID: 0}
   m_visualActivationRadiusSqr: 0
 --- !u!114 &114995655168398052
 MonoBehaviour:
@@ -2889,8 +2890,8 @@ ParticleSystem:
         m_Mode: 0
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
-      minColor: {r: 0.9764706, g: 0.79607844, b: 0.6313726, a: 1}
-      maxColor: {r: 0.80784315, g: 0.59607846, b: 0.56078434, a: 1}
+      minColor: {r: 0.05882353, g: 0.05490196, b: 0.050980393, a: 1}
+      maxColor: {r: 0.22745098, g: 0.21176471, b: 0.21176471, a: 1}
       minMaxState: 2
     startSize:
       scalar: 2.5

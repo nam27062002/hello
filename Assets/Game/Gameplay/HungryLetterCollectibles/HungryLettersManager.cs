@@ -203,6 +203,11 @@ public class HungryLettersManager : MonoBehaviour
 
 	private void Spawn()
 	{
+		// [AOC] Skip if doing the first run tutorial!
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
+			return;
+		}
+
 		DragonTier dragonTier = InstanceManager.player.data.tier;
 		// create a list of available indexes for the positions that can be used to spawn the letters.
 		List<int> easyAvailablePositionIndexes = new List<int>();

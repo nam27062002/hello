@@ -20,6 +20,8 @@ public struct Reward  {
 
 	public string origin;
 
+	public string category;
+
 
 	//--------------------------------------------------------------------------//
 	// OPERATORS																//
@@ -41,6 +43,7 @@ public struct Reward  {
 		newReward.xp = _r1.xp + _r2.xp;
 		newReward.alcohol = _r1.alcohol + _r2.alcohol;
 		newReward.origin = _r1.origin + _r2.origin;
+		newReward.category = "Misc";
 		return newReward;
 	}
 
@@ -61,6 +64,7 @@ public struct Reward  {
 		newReward.alcohol = _r1.alcohol - _r2.alcohol;
 		newReward.xp = _r1.xp - _r2.xp;
 		newReward.origin = "-";
+		newReward.category = "Misc";
 		return newReward;
 	}
 
@@ -81,6 +85,7 @@ public struct Reward  {
 		newReward.alcohol = _r1.alcohol * _r2.alcohol;
 		newReward.xp = _r1.xp * _r2.xp;
 		newReward.origin = "*";
+		newReward.category = "Misc";
 		return newReward;
 	}
 
@@ -101,6 +106,7 @@ public struct Reward  {
 		newReward.xp = _r1.xp / _r2.xp;
 		newReward.alcohol = _r1.alcohol / _r2.alcohol;
 		newReward.origin = "/";
+		newReward.category = "Misc";
 		return newReward;
 	}
 
@@ -124,6 +130,7 @@ public struct Reward  {
 		newReward.xp = _r1.xp + _amount;
 		newReward.alcohol = _r1.alcohol + _amount;
 		newReward.origin = _r1.origin;
+		newReward.category = _r1.category;
 		return newReward;
 	}
 
@@ -144,6 +151,7 @@ public struct Reward  {
 		newReward.xp = _r1.xp * _factor;
 		newReward.alcohol = _r1.alcohol * _factor;
 		newReward.origin = _r1.origin;
+		newReward.category = _r1.category;
 		return newReward;
 	}
 }

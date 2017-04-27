@@ -8,9 +8,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 416572}
-  - component: {fileID: 11484492}
   - component: {fileID: 114000010812324944}
-  - component: {fileID: 114721797887050788}
+  - component: {fileID: 114761392284472496}
+  - component: {fileID: 114752050018116158}
   m_Layer: 0
   m_Name: SP_Ghost02
   m_TagString: Untagged
@@ -31,22 +31,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &11484492
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 154690}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_circular: 1
-  m_smoothRadius: 0.5
-  m_points:
-  - {x: -0.8424225, y: 0.4177246, z: 0}
-  - {x: 0.84339905, y: -0.7615204, z: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -77,14 +61,16 @@ MonoBehaviour:
     min: 1
     max: 1
   m_speedFactorRange:
-    min: 1
+    min: 0.8
     max: 1
   m_scale:
     min: 0.8
     max: 1.1
-  m_rails: 3
+  m_rails: 0
   m_hasGroupBonus: 0
   m_minTier: 0
+  m_maxTier: 4
+  m_checkMaxTier: 0
   m_activationChance: 100
   m_activationTriggers: []
   m_deactivationTriggers: []
@@ -97,7 +83,30 @@ MonoBehaviour:
     max: 0
   m_maxSpawns: 0
   m_checkCurrents: 0
---- !u!114 &114721797887050788
+--- !u!114 &114752050018116158
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 154690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_guideFunction: 0
+  m_innerRadius: 4
+  m_outterRadius: 2
+  m_targetDistance: 1
+  m_depthAmplitude: 0
+  m_depthFrequency: 0
+  m_scale: {x: 1, y: 1, z: 1}
+  m_rotation: {x: 0, y: 0, z: 0}
+  m_boundsScale: {x: 0, y: 0, z: 0}
+  m_forcePreview: 0
+  m_previewStep: 0.1
+  m_previewMaxTime: 60
+--- !u!114 &114761392284472496
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}

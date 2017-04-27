@@ -112,6 +112,7 @@ public class Entity : IEntity {
 
 		m_reward.alcohol = m_def.GetAsFloat("alcohol",0);
 		m_reward.origin = m_def.Get("sku");
+		m_reward.category = m_def.Get("category");
 
 		// Simple data
 		m_goldenChance = m_def.GetAsFloat("goldenChance");

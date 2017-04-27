@@ -85,7 +85,7 @@ public class PopupMessage : MonoBehaviour
         return sm_config;
     }
 
-    public static readonly string PATH = "UI/Popups/Message/PF_PopupMessage";
+    public const string PATH = "UI/Popups/Message/PF_PopupMessage";
 
     [SerializeField]
     private Localizer m_titleText;

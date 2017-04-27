@@ -92,9 +92,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	}
 
     void OnDestroy() {
-        if (SpawnerManager.instance != null) {
-            SpawnerManager.instance.Unregister(this, true);
-        }
+		if (SpawnerManager.isInstanceCreated)
+            SpawnerManager.instance.Unregister(this, false);
     }
 
 	/// <summary>
