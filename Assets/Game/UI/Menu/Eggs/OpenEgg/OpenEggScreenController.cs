@@ -58,6 +58,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 	// Internal
 	private State m_state = State.IDLE;
+	private bool m_tutorialCompletedPending = false;
 
 	// FX
 	private GameObject m_flashFX = null;
@@ -322,6 +323,10 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_scene.eggData == null) return;
 		if(m_scene.eggData.state != Egg.State.COLLECTED) return;
 
+		// Mark reward tutorial as completed
+		// [AOC] Delay it until the screen animation has finished so we don't see elements randomly appearing!
+		m_tutorialCompletedPending = true;
+
 		// Depending on opened egg's reward, perform different actions
 		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
 		switch(m_scene.eggData.rewardData.type) {
@@ -377,6 +382,18 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(_event.fromScreenIdx == (int)MenuScreens.OPEN_EGG) {
 			// At this point automated ones have already been launched, so we override them
 			m_tapInfoText.GetComponent<ShowHideAnimator>().Hide(false);
+		}
+	}
+
+	/// <summary>
+	/// Navigation screen animation has finished.
+	/// Must be connected in the inspector.
+	/// </summary>
+	public void OnClosePostAnimation() {
+		// If the tutorial was completed, update flag now!
+		if(m_tutorialCompletedPending) {
+			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_REWARD, true);
+			m_tutorialCompletedPending = false;
 		}
 	}
 }

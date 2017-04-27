@@ -8,6 +8,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Collections;
 
 //----------------------------------------------------------------------------//
@@ -97,13 +98,21 @@ public class SelectableButton : MonoBehaviour {
 		bool willBeInteractable = _selected ? false : !_stayDisabled;	// Disabled if selected or forced by flag
 		button.interactable = willBeInteractable;
 
+		// Reset selection state (so the proper transition is triggered)
+		if(m_selected != _selected) {
+			if(_selected) {
+				button.OnSelect(new BaseEventData(EventSystem.current));
+			} else {
+				button.OnDeselect(new BaseEventData(EventSystem.current));
+			}
+		}
+
 		// Consume trigger to reset animation state
 		if(button.transition == Selectable.Transition.Animation) {
 			// button.animator.ResetTrigger(m_transitionAnimationTrigger);
-			if ( _selected)
+			if(_selected) {
 				button.animator.SetTrigger("Selected");
-			else
-			{
+			} else {
 				button.animator.SetTrigger("Normal");
 				button.animator.ResetTrigger("Highlighted");
 				button.animator.ResetTrigger("Selected");

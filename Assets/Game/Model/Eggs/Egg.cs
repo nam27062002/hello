@@ -206,7 +206,7 @@ public class Egg {
 		if(!isIncubating) return 0;
 
 		// Skip is free during the tutorial
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER)) return 0;
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR)) return 0;
 
 		// Just use standard time/pc formula
 		return GameSettings.ComputePCForTime(incubationRemaining);
@@ -279,9 +279,9 @@ public class Egg {
 		// Remove it from the inventory (if appliable)
 		EggManager.RemoveEggFromInventory(this);
 
-		// If tutorial wasn't completed, do it now
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER)) {
-			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER, true);
+		// If it's a standard egg, mark tutorial as completed
+		if(def.sku == SKU_STANDARD_EGG) {
+			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR, true);
 		}
 
 		// Increase collected eggs counter

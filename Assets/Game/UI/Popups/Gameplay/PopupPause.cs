@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -19,11 +20,30 @@ public class PopupPause : PopupPauseBase {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/PF_PopupPause";
-	
+	public const string PATH = "UI/Popups/InGame/PF_PopupPause";
+
+	public enum Tabs {
+		MISSIONS,
+		OPTIONS,
+		FAQ,
+
+		COUNT
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Shortcut to tabs system
+	private TabSystem m_tabs = null;
+	private TabSystem tabs {
+		get {
+			if(m_tabs == null) {
+				m_tabs = GetComponent<TabSystem>();
+			}
+			return m_tabs;
+		}
+	}
+
 	// Internal
 	private bool m_endGame = false;
 	
@@ -35,9 +55,6 @@ public class PopupPause : PopupPauseBase {
 	/// </summary>
 	override protected void Awake() {
 		base.Awake();
-
-		// Listen to animation events
-		m_popup.OnClosePostAnimation.AddListener(OnClosePostAnimation);
 	}
 
 	/// <summary>
@@ -104,14 +121,38 @@ public class PopupPause : PopupPauseBase {
 	}
 
 	/// <summary>
+	/// Open animation is about to start.
+	/// </summary>
+	override public void OnOpenPreAnimation() {
+		// Call parent
+		base.OnOpenPreAnimation();
+
+		// Hide the mission tab during the first run (tutorial)
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN) && SceneManager.GetActiveScene().name != "SC_Popups") {
+			// Get the tab system component
+			if(tabs != null) {
+				// Set options tab as initial screen
+				tabs.SetInitialScreen((int)Tabs.OPTIONS);
+				//tabs.GoToScreen((int)Tabs.OPTIONS, NavigationScreen.AnimType.NONE);
+
+				// Hide unwanted buttons
+				tabs.m_tabButtons[(int)Tabs.MISSIONS].gameObject.SetActive(false);
+			}
+		}
+	}
+
+
+	/// <summary>
 	/// Close animation has finished.
 	/// </summary>
-	public void OnClosePostAnimation() {
+	override public void OnClosePostAnimation() {
+		// Call parent
+		base.OnClosePostAnimation();
+
 		// End the game?
 		if(m_endGame) {
-			GameSceneController gameController = InstanceManager.gameSceneController;
-			if(gameController != null) {
-				gameController.EndGame();
+			if(InstanceManager.gameSceneController != null) {
+				InstanceManager.gameSceneController.EndGame();
 			}
 		}
 	}

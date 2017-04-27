@@ -89,10 +89,10 @@ GameObject:
   - component: {fileID: 11474324}
   - component: {fileID: 11475520}
   - component: {fileID: 11426308}
-  - component: {fileID: 11414326}
   - component: {fileID: 8234368}
   - component: {fileID: 114701641872127172}
   - component: {fileID: 95939361295935630}
+  - component: {fileID: 114280885226940274}
   m_Layer: 5
   m_Name: BtnOptions
   m_TagString: Untagged
@@ -389,19 +389,6 @@ MonoBehaviour:
   optionalRotationMode: 0
   optionalScrambleMode: 0
   optionalString: 
---- !u!114 &11414326
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 175260}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c615e9e12f1be4d60bebd602a7599d30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_popupPath: UI/Popups/PF_PopupSettings
-  m_popup: {fileID: 0}
 --- !u!114 &11424148
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -932,6 +919,17 @@ MonoBehaviour:
       - m_Target: {fileID: 8234368}
         m_MethodName: Play
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 114280885226940274}
+        m_MethodName: OpenPopup
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2422,6 +2420,23 @@ MonoBehaviour:
   m_canvasRenderer: {fileID: 222282826203955460}
   m_TextComponent: {fileID: 114000011496549108}
   m_materialReferenceIndex: 1
+--- !u!114 &114280885226940274
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 175260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d677588cf25b47fe84f2f773daf1f23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_popupPath: UI/Popups/Menu/PF_PopupSettings
+  OnPopupInit:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!114 &114322483184903746
 MonoBehaviour:
   m_ObjectHideFlags: 1

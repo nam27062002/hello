@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -19,12 +20,20 @@ public class ShowOnTutorialStep : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private enum Mode {
+		GAME_OBJECT_ACTIVATION,
+		SELECTABLE_INTERACTABLE,
+		CANVAS_GROUP_INTERACTABLE
+	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed setup
-	[Tooltip("Won't be shown until all target steps are completed")]
+	[SerializeField] private Mode m_mode = Mode.GAME_OBJECT_ACTIVATION;
+	[SerializeField] private bool m_reverseMode = false;
+
+	[Comment("Won't be activated until all target steps are completed")]
 	[SerializeField] private TutorialStep[] m_targetSteps;
 	
 	//------------------------------------------------------------------------//
@@ -62,16 +71,44 @@ public class ShowOnTutorialStep : MonoBehaviour {
 		}
 
 		// Check whether all target states are completed
+		bool toggle = true;
 		for(int i = 0; i < m_targetSteps.Length; i++) {
 			// If a single step is not completed, disable object and return
 			if(!UsersManager.currentUser.IsTutorialStepCompleted(m_targetSteps[i])) {
-				this.gameObject.SetActive(false);
-				return;
+				toggle = false;
+				break;	// No need to keep looping
 			}
 		}
 
-		// All steps completed! Activate object
-		this.gameObject.SetActive(true);
+		// Reverse mode?
+		if(m_reverseMode) toggle = !toggle;
+
+		// All steps completed! Apply to object based on mode
+		switch(m_mode) {
+			case Mode.GAME_OBJECT_ACTIVATION: {
+				this.gameObject.SetActive(toggle);
+			} break;
+
+			case Mode.SELECTABLE_INTERACTABLE: {
+				// Requires a Selectable component
+				Selectable selectable = this.GetComponent<Selectable>();
+				if(selectable != null) {
+					selectable.interactable = toggle;
+				} else {
+					Debug.LogError("<color=red>SELECTABLE NOT FOUND</color>");
+				}
+			} break;
+
+			case Mode.CANVAS_GROUP_INTERACTABLE: {
+				// Requires a Selectable component
+				CanvasGroup canvasGroup = this.GetComponent<CanvasGroup>();
+				if(canvasGroup != null) {
+					canvasGroup.interactable = toggle;
+				} else {
+					Debug.LogError("<color=red>CANVAS GROUP NOT FOUND</color>");
+				}
+			} break;
+		}
 	}
 
 	//------------------------------------------------------------------------//

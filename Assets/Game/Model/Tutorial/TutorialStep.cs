@@ -25,12 +25,21 @@ using System;
 [Flags]
 public enum TutorialStep {
 	INIT						= 1 << 0,
+
 	FIRST_PLAY_SCREEN			= 1 << 1,
 	CONTROLS_POPUP				= 1 << 2,
-	DRAGON_SELECTION			= 1 << 3,
-	EGG_INCUBATOR				= 1 << 4,
-	CHEST_REWARD				= 1 << 5,
-	EGG_INCUBATOR_SKIP_TIMER 	= 1 << 6,
-	FIRST_RUN					= 1 << 7,
+	BOOST						= 1 << 3,	// TODO!!
+	FIRST_RUN					= 1 << 4,
+
+	DRAGON_SELECTION			= 1 << 5,
+	MISSIONS_INFO				= 1 << 6,
+	SECOND_RUN					= 1 << 7,
+
+	EGG_INCUBATOR				= 1 << 8,
+	EGG_REWARD					= 1 << 9,
+	PETS_INFO					= 1 << 10,
+	PETS_EQUIP					= 1 << 11,
+	SKINS_INFO					= 1 << 12,
+
 	ALL							= ~(0)		// http://stackoverflow.com/questions/7467722/how-to-set-all-bits-of-enum-flag
 }

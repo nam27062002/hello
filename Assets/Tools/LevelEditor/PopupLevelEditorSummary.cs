@@ -25,7 +25,7 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
-		public static readonly string PATH = "PF_PopupLevelEditorSummary";
+		public const string PATH = "PF_PopupLevelEditorSummary";
 
 		public enum Result {
 			NONE,

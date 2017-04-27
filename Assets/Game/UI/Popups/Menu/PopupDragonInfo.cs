@@ -25,7 +25,7 @@ public class PopupDragonInfo : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/PF_PopupDragonInfo";
+	public const string PATH = "UI/Popups/Menu/PF_PopupDragonInfo";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -45,7 +45,7 @@ public class PopupDragonInfo : MonoBehaviour {
 	[Separator("Entities Layout")]
 	[SerializeField] private Transform m_layoutContainer = null;
 	public Transform layoutContainer { get { return m_layoutContainer; }}
-	[FileListAttribute("Resources/UI/Popups/DragonInfoLayouts", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
+	[FileListAttribute("Resources/UI/Popups/Menu/DragonInfoLayouts", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] private string[] m_layoutPrefabs = new string[(int)DragonTier.COUNT];
 	[Space]
 	[SerializeField] private float m_timeBetweenLoaders = 0.5f;	// From FGOL
