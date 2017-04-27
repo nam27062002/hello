@@ -638,12 +638,17 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				animSpeedFactor = m_maxPlaybakSpeed;
 			}
 
-			m_animator.SetFloat("speed", blendFactor);
 			m_moving = true;
-			m_animator.speed = Mathf.Lerp(m_animator.speed, animSpeedFactor, Time.deltaTime * 2f);
+
+			if (m_animator != null) {
+				m_animator.SetFloat("speed", blendFactor);
+				m_animator.speed = Mathf.Lerp(m_animator.speed, animSpeedFactor, Time.deltaTime * 2f);
+			}
 		} else {
 			m_moving = false;
-			m_animator.speed = Mathf.Lerp(m_animator.speed, 1f, Time.deltaTime * 2f);
+			if (m_animator != null) {
+				m_animator.speed = Mathf.Lerp(m_animator.speed, 1f, Time.deltaTime * 2f);
+			}
 		}
 	}
 

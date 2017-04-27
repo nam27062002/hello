@@ -32,7 +32,6 @@ namespace AI {
 		private Vector3 m_gravity;
 
 		private bool m_onGround;
-		private bool m_colliderOnGround;
 		private float m_heightFromGround;
 
 		private float m_fallTimer;

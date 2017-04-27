@@ -92,7 +92,7 @@ public class PrisonerSpawner : AbstractSpawner {
     }
 
 	protected override void OnMachineSpawned(AI.IMachine machine) {
-        machine.LockInCage();
+        machine.EnterDevice(true);
 		machine.position = m_parent.position;
     }
 
@@ -108,7 +108,7 @@ public class PrisonerSpawner : AbstractSpawner {
                 m_entities[i].transform.parent = m_parents[i];
 
                 // change state in machine
-				m_entities[i].machine.UnlockFromCage();
+				m_entities[i].machine.LeaveDevice(true);
 				m_entities[i] = null;
             }
         }
