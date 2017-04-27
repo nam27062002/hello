@@ -47,8 +47,8 @@ namespace AI {
 
 		void ReceiveDamage(float _damage);
 
-		void LockInCage();
-		void UnlockFromCage();
+		void EnterDevice(bool _isCage);
+		void LeaveDevice(bool _isCage);
 
 		void Drown();
 

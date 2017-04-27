@@ -512,8 +512,8 @@ namespace AI {
 		}
 
 		// External interactions
-		public void LockInCage() {
-			m_entity.allowEdible = false;
+		public void EnterDevice(bool _isCage) {
+			m_entity.allowEdible = !_isCage;
 
 			if (m_enableMotion) {
 				m_motion.LockInCage();
@@ -522,8 +522,8 @@ namespace AI {
 			SetSignal(Signals.Type.LockedInCage, true);
 		}
 
-		public void UnlockFromCage() {
-			m_entity.allowEdible = true;
+		public void LeaveDevice(bool _isCage) {
+			m_entity.allowEdible = !_isCage;
 
 			if (m_enableMotion) {
 				m_motion.UnlockFromCage();
