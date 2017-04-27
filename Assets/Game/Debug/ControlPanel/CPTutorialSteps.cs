@@ -50,6 +50,9 @@ public class CPTutorialSteps : MonoBehaviour {
 		// Fill container, creating a step group for every tutorial step
 		// Enum class makes it easy for us!
 		foreach(TutorialStep step in Enum.GetValues(typeof(TutorialStep))) {
+			// Skip ALL and INIT steps
+			if(step == TutorialStep.INIT || step == TutorialStep.ALL) continue;
+
 			// Create a new toggle object and store it
 			StepToggle newToggle = new StepToggle();
 			newToggle.step = step;
@@ -157,5 +160,51 @@ public class CPTutorialSteps : MonoBehaviour {
 				break;
 			}
 		}
+	}
+
+	/// <summary>
+	/// Toggle all steps.
+	/// </summary>
+	public void OnToggleAll() {
+		// Figure out whether to toggle on or off
+		int completedCount = 0;
+		for(int i = 0; i < m_toggles.Count; i++) {
+			if(UsersManager.currentUser.IsTutorialStepCompleted(m_toggles[i].step)) {
+				completedCount++;
+			}
+		}
+
+		// Figure out new value
+		bool newValue = true;
+
+		// 3 cases:
+		// 1) All completed
+		if(completedCount == m_toggles.Count) {
+			// Un-complete them
+			newValue = false;
+		}
+
+		// 2) None completed
+		else if(completedCount == 0) {
+			// Complete them
+			newValue = true;
+		}
+
+		// 3) Mixed: change to the state with more steps
+		else {
+			if(completedCount > m_toggles.Count/2) {
+				// Most of them completed: complete the rest
+				newValue = true;
+			} else {
+				// Most of them uncompleted: un-complete the rest
+				newValue = false;
+			}
+		}
+
+		// Apply new value
+		for(int i = 0; i < m_toggles.Count; i++) {
+			UsersManager.currentUser.SetTutorialStepCompleted(m_toggles[i].step, newValue);
+		}
+		PersistenceManager.Save();
 	}
 }

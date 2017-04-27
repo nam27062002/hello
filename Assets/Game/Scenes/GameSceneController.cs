@@ -104,6 +104,23 @@ public class GameSceneController : GameSceneControllerBase {
 		}
 	}
 
+	public float levelActivationProgress {
+		get {
+			if(state == EStates.LOADING_LEVEL || state == EStates.ACTIVATING_LEVEL) {
+				if(m_levelLoadingTasks == null) return 1f;	// Shouldn't be null at this state
+				float progress = 0f;
+				for(int i = 0; i < m_levelLoadingTasks.Length; i++) {
+					progress += m_levelLoadingTasks[i].progress;
+				}
+				return Mathf.Min(progress/m_levelLoadingTasks.Length, 1f - Mathf.Max(m_timer/MIN_LOADING_TIME, 0f));	// Either progress or fake timer
+			} else if(state > EStates.ACTIVATING_LEVEL) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+	}
+
 	// For the tutorial
 	private bool m_startWhenLoaded = true;
 	public bool startWhenLoaded {
@@ -181,9 +198,8 @@ public class GameSceneController : GameSceneControllerBase {
 					m_timer -= Time.deltaTime;
 				}
 
-				// Change state only if allowed, otherwise it will be manually done
 				if(levelLoadingProgress >= 1) {
-					if(m_startWhenLoaded) ChangeState(EStates.ACTIVATING_LEVEL);
+					ChangeState(EStates.ACTIVATING_LEVEL);
 				}
 			} break;
 
@@ -196,6 +212,7 @@ public class GameSceneController : GameSceneControllerBase {
 				}
 
 				if(allDone) {
+					// Change state only if allowed, otherwise it will be manually done
 					if(m_startWhenLoaded) ChangeState(EStates.COUNTDOWN);
 				}
 			} break;
