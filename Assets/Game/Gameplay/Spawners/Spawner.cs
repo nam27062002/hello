@@ -395,7 +395,11 @@ public class Spawner : AbstractSpawner {
 		}
 
 		for (int i = 0; i < m_activationKillTriggers.Length; i++) {
-			startConditionsOk |= RewardManager.categoryKillCount[m_activationKillTriggers[i].category] >= m_activationKillTriggers[i].value;
+			string cat = m_activationKillTriggers[i].category;
+
+			if (RewardManager.categoryKillCount.ContainsKey(cat)) {
+				startConditionsOk |= RewardManager.categoryKillCount[cat] >= m_activationKillTriggers[i].value;
+			}
 		}
 
 		// If start conditions aren't met, we can't spawn, no need to check anything else
