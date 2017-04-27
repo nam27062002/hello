@@ -436,6 +436,12 @@ public class PopupDragonInfo : MonoBehaviour {
 			lookAtMainCameraComponents[i].overrideCamera = PopupManager.canvas.worldCamera;
 		}
 
+		// Make all animators within the prefab work with unscaled time so the popup works properly even with the game paused
+		Animator[] animators = _loader.loadedInstance.GetComponentsInChildren<Animator>();
+		for(int i = 0; i < animators.Length; i++) {
+			animators[i].updateMode = AnimatorUpdateMode.UnscaledTime;
+		}
+
 		// Remove listener
 		_loader.OnLoadingComplete.RemoveListener(OnLoaderCompleted);
 
