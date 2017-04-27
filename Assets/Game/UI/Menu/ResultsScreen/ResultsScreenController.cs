@@ -393,6 +393,9 @@ public class ResultsScreenController : MonoBehaviour {
 
 		// Nothing else to show, go back to the menu!
 		else {
+			// Show loading screen
+			InstanceManager.gameSceneController.loadingScreen.GetComponent<ShowHideAnimator>().ForceShow(false);
+
 			// Update global stats
 			UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;
 

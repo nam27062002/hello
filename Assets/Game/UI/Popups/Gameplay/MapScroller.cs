@@ -41,6 +41,7 @@ public class MapScroller : MonoBehaviour {
 	private Vector2 m_cameraHalfSize = Vector2.one;
 	private Vector2 m_contentSize = Vector2.one;
 	private bool m_popupAnimating = false;
+	private int m_popupCount = 0;
 
 	// Animations
 	private Tweener m_zoomTween = null;
@@ -498,6 +499,7 @@ public class MapScroller : MonoBehaviour {
 	public void OnOpenPostAnimation() {
 		// Enable camera
 		m_popupAnimating = false;
+		m_popupCount = 0;
 		EnableCamera(this.isActiveAndEnabled);
 
 		// Subscribe to other popups opening
@@ -522,6 +524,9 @@ public class MapScroller : MonoBehaviour {
 	/// </summary>
 	/// <param name="_popup">The popup.</param>
 	public void OnPopupOpened(PopupController _popup) {
+		// Increase stack count
+		m_popupCount++;
+
 		// Disable camera
 		EnableCamera(false);
 	}
@@ -531,8 +536,13 @@ public class MapScroller : MonoBehaviour {
 	/// </summary>
 	/// <param name="_popup">The popup.</param>
 	public void OnPopupClosed(PopupController _popup) {
-		// Re-enable camera (if this component is enabled)
-		EnableCamera(this.isActiveAndEnabled);
+		// Decrease stack count
+		m_popupCount--;
+
+		// If all popups have been closed, re-enable camera (if this component is enabled)
+		if(m_popupCount == 0) {
+			EnableCamera(this.isActiveAndEnabled);
+		}
 	}
 
 	/// <summary>

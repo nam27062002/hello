@@ -338,7 +338,7 @@ public class PopupDragonInfo : MonoBehaviour {
 		if(m_loaders[_idx] == null) yield break;
 
 		// Wait a little bit before actually loading
-		yield return new WaitForSeconds(m_timeBetweenLoaders);
+		yield return new WaitForSecondsRealtime(m_timeBetweenLoaders);
 		for(int i = 0; i < m_framesBetweenLoaders; ++i) {
 			yield return new WaitForEndOfFrame();
 		}
@@ -434,6 +434,12 @@ public class PopupDragonInfo : MonoBehaviour {
 		LookAtMainCamera[] lookAtMainCameraComponents = _loader.loadedInstance.GetComponentsInChildren<LookAtMainCamera>();
 		for(int i = 0; i < lookAtMainCameraComponents.Length; i++) {
 			lookAtMainCameraComponents[i].overrideCamera = PopupManager.canvas.worldCamera;
+		}
+
+		// Make all animators within the prefab work with unscaled time so the popup works properly even with the game paused
+		Animator[] animators = _loader.loadedInstance.GetComponentsInChildren<Animator>();
+		for(int i = 0; i < animators.Length; i++) {
+			animators[i].updateMode = AnimatorUpdateMode.UnscaledTime;
 		}
 
 		// Remove listener

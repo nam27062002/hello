@@ -488,13 +488,13 @@ namespace AI {
 		}
 
 		// External interactions
-		public void LockInCage() {
-			m_entity.allowEdible = false;
+		public void EnterDevice(bool _isCage) {
+			m_entity.allowEdible = !_isCage;
 			SetSignal(Signals.Type.LockedInCage, true);
 		}
 
-		public void UnlockFromCage() {
-			m_entity.allowEdible = true;
+		public void LeaveDevice(bool _isCage) {
+			m_entity.allowEdible = !_isCage;
 			SetSignal(Signals.Type.LockedInCage, false);
 		}
 
@@ -516,8 +516,7 @@ namespace AI {
 			return GetSignal(AI.Signals.Type.Chewing) || GetSignal(AI.Signals.Type.Burning);
 		}
 
-		public bool IsFreezing()
-		{
+		public bool IsFreezing() {
 			return m_freezing;
 		}
 

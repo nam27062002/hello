@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class ArmorVulnerableArea : MonoBehaviour {
 
-	[SerializeField] private AI.MachineArmored m_machine;
+	[SerializeField] private GameObject m_machineRoot;
 	[SerializeField] private float m_timeBetweenAttaks = 1f;
 	[SerializeField] private ParticleData m_hitParticle;
 
-
+	private IArmored m_machine;
 	private float m_timer;
 
 	void Start() {
+		m_machine = m_machineRoot.GetComponent<IArmored>();
+
 		if (m_hitParticle.IsValid()) {
 			ParticleManager.CreatePool(m_hitParticle);
 		}
@@ -39,7 +41,6 @@ public class ArmorVulnerableArea : MonoBehaviour {
 				if (m_hitParticle.IsValid()) {
 					ParticleManager.Spawn(m_hitParticle, transform.position + m_hitParticle.offset);
 				}
-
 
 				m_timer = m_timeBetweenAttaks;
 			}
