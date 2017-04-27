@@ -5,14 +5,14 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 423890}
-  - 33: {fileID: 3310342}
-  - 23: {fileID: 2333072}
-  - 95: {fileID: 9518240}
+  - component: {fileID: 423890}
+  - component: {fileID: 3310342}
+  - component: {fileID: 2333072}
+  - component: {fileID: 9518240}
   m_Layer: 0
-  m_Name: PF_PumpkinLamp_02b
+  m_Name: PF_pumpking_house_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,12 +25,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 159302}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 223.98885, y: 3.4608166, z: 2.061652}
+  m_LocalPosition: {x: 147.03406, y: 219.8848, z: 22.406654}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &2333072
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -44,8 +44,10 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 7bb3098e1731d6848be18b6210d0990b, type: 2}
-  m_SubsetIndices: 
+  - {fileID: 2100000, guid: 8f794f695fbceec42988ad2d55510e15, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
@@ -53,7 +55,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_SelectedWireframeHidden: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -66,7 +68,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 159302}
-  m_Mesh: {fileID: 4300000, guid: ac1d2ef315c5e654db29544ccc23434f, type: 3}
+  m_Mesh: {fileID: 4300002, guid: 5317717281cf9dc4abda6c0cdadda450, type: 3}
 --- !u!95 &9518240
 Animator:
   serializedVersion: 3
