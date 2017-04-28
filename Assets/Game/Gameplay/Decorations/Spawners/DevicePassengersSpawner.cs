@@ -46,11 +46,10 @@ public class DevicePassengersSpawner : AbstractSpawner {
     private AreaBounds m_areaBounds = new RectAreaBounds(Vector3.zero, Vector3.one);
     public override AreaBounds area { get { return m_areaBounds; } set { m_areaBounds = value; } }
 
-    protected override void OnStart() {
+	protected override void OnInitialize() {
         // Progressive respawn disabled because it respawns only one instance and it's triggered by Catapult which is not prepared to loop until Respawn returns true
         UseProgressiveRespawn = false;        
-        UseSpawnManagerTree = false;        
-        RegisterInSpawnerManager();        
+        UseSpawnManagerTree = false; 
 
 		if (m_entityPrefabList != null && m_entityPrefabList.Length > 0) {
 			if (m_quantity.max < m_quantity.min) {
@@ -84,9 +83,6 @@ public class DevicePassengersSpawner : AbstractSpawner {
 					PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, m_entities.Length);
 				}
 
-				RegisterInSpawnerManager();
-				SpawnerAreaManager.instance.Register(this);
-
 				gameObject.SetActive(false);
 
 				return;
@@ -95,7 +91,7 @@ public class DevicePassengersSpawner : AbstractSpawner {
     }
 
     protected override uint GetMaxEntities() {
-		return (uint)m_quantity.GetRandom();
+		return (uint)m_quantity.max;
     }
 
     protected override bool CanRespawnExtended() {        
@@ -103,7 +99,7 @@ public class DevicePassengersSpawner : AbstractSpawner {
     }
 
     protected override uint GetEntitiesAmountToRespawn() {        
-        return GetMaxEntities();
+		return (uint)m_quantity.GetRandom();
     }        
 
 	protected override string GetPrefabNameToSpawn(uint index) {		

@@ -160,10 +160,12 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		Pool pool = new Pool(_prefab, instance.transform, 1, true, true, true);
 		#else
 		if (instance.m_poolSize.Count == 0f) {
-			string category = "PARTICLE_MANAGER_SETTINGS_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea;
-			List<DefinitionNode> poolSize = DefinitionsManager.SharedInstance.GetDefinitionsList(category.ToUpper());
-			for (int i = 0; i < poolSize.Count; i++) {
-				instance.m_poolSize.Add(poolSize[i].sku, poolSize[i].GetAsInt("poolSize"));
+			if (LevelManager.currentLevelData != null) {
+				string category = "PARTICLE_MANAGER_SETTINGS_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea;
+				List<DefinitionNode> poolSize = DefinitionsManager.SharedInstance.GetDefinitionsList(category.ToUpper());
+				for (int i = 0; i < poolSize.Count; i++) {
+					instance.m_poolSize.Add(poolSize[i].sku, poolSize[i].GetAsInt("poolSize"));
+				}
 			}
 		}
 
