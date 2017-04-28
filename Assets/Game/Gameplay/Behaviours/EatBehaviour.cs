@@ -283,7 +283,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	public bool IsGrabbing()
 	{
-		return m_grabbingPrey;
+		return m_grabbingPrey && m_holdingPrey != null;
 	}
 
 	// Update is called once per frame
