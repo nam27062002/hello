@@ -26,10 +26,17 @@ public class TutorialPopupTrigger : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private TutorialStep m_targetStep = TutorialStep.INIT;
+	[SerializeField] private bool m_checkOnEnable = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		if(m_checkOnEnable) Check();
+	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
