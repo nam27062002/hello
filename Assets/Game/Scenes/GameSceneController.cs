@@ -315,7 +315,7 @@ public class GameSceneController : GameSceneControllerBase {
 							}
 
 							if ( done )
-							{
+							{								
 								PoolManager.Rebuild();
 								Messenger.Broadcast(GameEvents.GAME_AREA_ENTER);
 								m_switchingArea = false;
@@ -350,7 +350,8 @@ public class GameSceneController : GameSceneControllerBase {
     /// <summary>
     /// Clears stuff used by the game (RUNNING state)
     /// </summary>
-    private void ClearGame() {        
+    private void ClearGame() {
+		ParticleManager.Clear();
         PoolManager.Clear(true);        
     }
 
@@ -584,6 +585,7 @@ public class GameSceneController : GameSceneControllerBase {
     {
     	if ( LevelManager.currentArea != _nextArea && !m_switchingArea)
     	{
+			ParticleManager.Clear();
 			Messenger.Broadcast(GameEvents.GAME_AREA_EXIT);
 			m_switchingArea = true;
 			m_nextArea = _nextArea;
