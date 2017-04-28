@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
-using UnityEditor;
 using Object = UnityEngine.Object;
 
 public class MemoryProfiler
@@ -450,8 +449,8 @@ public class MemoryProfiler
     private bool GO_IsAPrefab(GameObject go)
     {        
 #if UNITY_EDITOR
-        PrefabType prefabType = PrefabUtility.GetPrefabType(go);
-        return prefabType == PrefabType.Prefab || prefabType == PrefabType.ModelPrefab;
+        UnityEditor.PrefabType prefabType = UnityEditor.PrefabUtility.GetPrefabType(go);
+        return prefabType == UnityEditor.PrefabType.Prefab || prefabType == UnityEditor.PrefabType.ModelPrefab;
 #else
         return string.IsNullOrEmpty(go.scene.name);
 #endif
