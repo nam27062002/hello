@@ -8,7 +8,7 @@ public class MemorySampleCollection : AbstractMemorySample
     public MemorySampleCollection(string name, MemorySample.ESizeStrategy sizeStrategoy)
     {
         Name = name;
-
+        SizeStrategy = sizeStrategoy;
     }
 
     public override void Clear()

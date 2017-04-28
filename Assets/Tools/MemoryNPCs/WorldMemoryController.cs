@@ -321,7 +321,6 @@ public class WorldMemoryController : MonoBehaviour {
         }
     }
 
-
     private void UpdateUIWithSample(MemorySampleCollection sample) {
         if (m_memoryDatas != null && sample != null) {                        
             int count = m_memoryDatas.Count;
@@ -440,6 +439,11 @@ public class WorldMemoryController : MonoBehaviour {
     private void CategorySet_OnValueChanged(int newValue) {
         if (m_categorySetNames != null && newValue > -1 && newValue < m_categorySetNames.Count) {
             CategorySet_SetName(m_categorySetNames[newValue]);
+
+            // If a sample was taken then we need to take another one to make the UI show the latest information
+            if (m_sample != null) {
+                TakeASample();
+            }
             TakeASample();
         } else {
             Debug.LogError("Not valid index for category set: " + newValue);
@@ -505,21 +509,24 @@ public class WorldMemoryController : MonoBehaviour {
 
     private void SizeStrategy_OnValueChanged(int newValue) {
         if (m_sizeStrategyValues != null && newValue > -1 && newValue < m_sizeStrategyValues.Count) {
-            SizeStrategy_SetValue(m_sizeStrategyValues[newValue]);
-            if (m_sample != null) {
-                m_sample.SizeStrategy = m_sizeStrategyValues[newValue];
-                UpdateUIWithSample(m_sample);
-            }
+            SizeStrategy_SetValue(m_sizeStrategyValues[newValue]);            
         } else {
             Debug.LogError("Not valid index for size strategy: " + newValue);
         }
     }
 
     private void SizeStrategy_SetValue(MemorySample.ESizeStrategy value) {
-        if (m_memoryProfiler.SizeStrategy != value) {            
+        if (m_memoryProfiler.SizeStrategy != value) {                    
             if (m_sizeStrategy != null && m_sizeStrategyValues != null) {
                 m_sizeStrategy.value = m_sizeStrategyValues.IndexOf(value);
-            }            
+
+                m_memoryProfiler.SizeStrategy = value;
+            }
+
+            if (m_sample != null) {
+                m_sample.SizeStrategy = value;
+                UpdateUIWithSample(m_sample);
+            }
         }
     }   
     #endregion
