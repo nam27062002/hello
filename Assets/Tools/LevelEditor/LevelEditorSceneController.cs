@@ -125,6 +125,7 @@ namespace LevelEditor {
 		override protected void OnDestroy() {
 			// Clear pools
 			FirePropagationManager.DestroyInstance();
+			ParticleManager.Clear();
 			PoolManager.Clear(true);
 
 			// Call parent

@@ -6,6 +6,9 @@
 #include "UnityCG.cginc"
 #include "UnityUI.cginc"
 
+// Soft Mask Support
+#include "Assets/External/SoftMask/Shaders/SoftMask.cginc" 
+
 // TYPES ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct appdata_t {
 	fixed4 vertex   : POSITION;
@@ -20,6 +23,11 @@ struct v2f {
 	fixed2 texcoord  : TEXCOORD0;
 	float4 worldPosition : TEXCOORD1;
 	UNITY_VERTEX_OUTPUT_STEREO
+
+	// Soft Mask Support
+        // The number in braces determines what TEXCOORDn Soft Mask may use
+        // (it required only one TEXCOORD).
+        SOFTMASK_COORDS(2)
 };
 
 // PROPERTIES //////////////////////////////////////////////////////////////////////////////////////////////
