@@ -203,7 +203,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			if ( !m_isFuryPaused )
 			{
 				// Don't decrease fury if cheating
-				if(!cheating) 
+				if(!cheating && !m_dragon.changingArea)
 				{
 					m_currentRemainingFuryDuration -= Time.deltaTime;
 				}

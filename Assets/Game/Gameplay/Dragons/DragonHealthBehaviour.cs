@@ -84,17 +84,20 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 		m_dragon.AddLife(-drain * Time.deltaTime, DamageType.DRAIN, null);
 
-		// Apply damage over time
-		// Reverse iterating since we will be removing them from the list when expired
-		for(int i = m_dots.Count - 1; i >= 0; i--) {
-			// Apply damage
-			float damage = GetModifiedDamageForCurrentHealth(m_dots[i].dps);
-			ReceiveDamage(damage * Time.deltaTime, m_dots[i].type, null, false);		// No hit animation!
+		// Apply damage over time if not changing area
+		if ( !m_dragon.changingArea )
+		{
+			// Reverse iterating since we will be removing them from the list when expired
+			for(int i = m_dots.Count - 1; i >= 0; i--) {
+				// Apply damage
+				float damage = GetModifiedDamageForCurrentHealth(m_dots[i].dps);
+				ReceiveDamage(damage * Time.deltaTime, m_dots[i].type, null, false);		// No hit animation!
 
-			// Update timer and check for dot finish
-			m_dots[i].timer -= Time.deltaTime;
-			if(m_dots[i].timer <= 0) {
-				m_dots.RemoveAt(i);
+				// Update timer and check for dot finish
+				m_dots[i].timer -= Time.deltaTime;
+				if(m_dots[i].timer <= 0) {
+					m_dots.RemoveAt(i);
+				}
 			}
 		}
 

@@ -197,7 +197,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	private Vector3 m_waterEnterPosition;
 	private bool m_insideWater = false;
 	private bool m_outterSpace = false;
-	private bool m_changingArea = false;
 	private string m_destinationArea = "";
 	private Assets.Code.Game.Spline.BezierSpline m_followingSpline;
 	private float m_followingClosestT;
@@ -444,7 +443,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	private void OnGameAreaEnter()
 	{
-		if ( m_changingArea && m_changeAreaState == ChangeAreaState.Loading_Next_Area )
+		if ( m_dragon.changingArea && m_changeAreaState == ChangeAreaState.Loading_Next_Area )
 		{
 			m_changeAreaState = ChangeAreaState.Exit;
 		}
@@ -498,7 +497,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				case State.ChangingArea:
 				{
 					// if fury not active
-					m_changingArea = false;
+					m_dragon.changingArea = false;
 					m_eatBehaviour.ResumeEating();
 					Messenger.Broadcast(GameEvents.PLAYER_ENTERING_AREA);
 				}break;
@@ -1877,12 +1876,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				m_previousState = State.OuterSpace;
 			}
 		}
-		else if ( _other.CompareTag("AreaChange") && !m_changingArea && InstanceManager.gameSceneController != null )
+		else if ( _other.CompareTag("AreaChange") && !m_dragon.changingArea && InstanceManager.gameSceneController != null )
 		{
 			string destinationArea = _other.GetComponent<AreaPortal>().m_areaPortal;
 			if ( LevelManager.currentArea != destinationArea )
 			{
-				m_changingArea = true;
+				m_dragon.changingArea = true;
 				// Start moving through Spline
 				m_followingSpline = _other.GetComponent<Assets.Code.Game.Spline.BezierSpline>();
 				m_destinationArea = destinationArea;
@@ -1918,9 +1917,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			}
 		}
 		/*
-		else if ( _other.CompareTag("AreaChange") && m_changingArea)
+		else if ( _other.CompareTag("AreaChange") && m_dragon.changingArea)
 		{
-			m_changingArea = false;
+			m_dragon.changingArea = false;
 		}
 		*/
 
