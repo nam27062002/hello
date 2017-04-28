@@ -27,6 +27,8 @@ For Each CurrentSpawner In SpawnersFolder.Files
 				If contentSku <> "" Then
 					currentContentInfo = contentInfo(contentSku)
 					currentSpawnerInfo = Replace(contentSku + ";" + currentSpawnerInfo + ";" + currentContentInfo + vbCrLf," ","")
+				Else
+					currentSpawnerInfo = Replace("-" + ";" + currentSpawnerInfo + ";" + vbCrLf," ","")
 				End If
 				objOutputFile.Write(currentSpawnerInfo)
 			End If
