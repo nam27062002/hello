@@ -172,12 +172,13 @@ public class ProfilerMemoryController : MonoBehaviour
 
 	#region memory_profiler
 	private AssetMemoryProfiler m_memoryProfiler;
+    private MemoryProfiler m_memoryProfilerExtra;
 
 	private bool MemoryProfiler_NeedsToTakeASample { get; set; }
 
 	private void MemoryProfiler_TakeASample() 
 	{
-		if(m_memoryProfiler == null) 
+		/*if(m_memoryProfiler == null) 
 		{
 			m_memoryProfiler = new AssetMemoryProfiler();
 		} 
@@ -202,6 +203,14 @@ public class ProfilerMemoryController : MonoBehaviour
 		Debug.Log("other: " + BytesToMegaBytes(other));
 		Debug.Log("TOTAL: " + BytesToMegaBytes(total));
 		Debug.Log("--------------------------------");
+        */
+
+        if (m_memoryProfilerExtra == null)
+        {
+            m_memoryProfilerExtra = new MemoryProfiler();
+        }
+
+       // m_memoryProfilerExtra.TakeASample();
 	}
 
 	private float BytesToMegaBytes(long bytes) 

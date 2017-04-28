@@ -2,23 +2,18 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using System.IO;
-using SimpleJSON;
 
 public class WorldMemoryController : MonoBehaviour { 
-	//---------------------------------------
-	private const float MAX_MEMORY_BUDGET = 40f;
-	private const float MAX_MEMORY_DRAGON = 15f;
-	private const float MAX_MEMORY_PETS = 10f;
-	private const float MAX_MEMORY_NPCS = 35f;
-	private const float MAX_MEMORY_WORLD = 45f;
-	private const float MAX_MEMORY_DECORATIONS = 5f;
-	private const float MAX_MEMORY_PARTICLES = 25f;
 
 	//---------------------------------------
 	[System.Serializable]
 	public class UIContainers {
-		[SerializeField] private GameObject root;
+        private static Color COLOR_NORMAL = Color.white;
+        private static Color COLOR_OVERFLOW = Color.red;
+
+        [SerializeField] private GameObject root;
+
+        private TMP_Text nameText;
 
 		private Slider allSlider;
 		private TMP_Text allText;
@@ -45,32 +40,40 @@ public class WorldMemoryController : MonoBehaviour {
         private float m_maxMem;
 
 		//---------------------------------------
-		public void Setup(float _maxValue) {
-			m_maxMem = _maxValue;
+		public void Setup(string name, float _maxValue) {			
+            if (allSlider == null) {
+                nameText = root.FindComponentRecursive<TMP_Text>("NameText");
 
-			allSlider = root.FindComponentRecursive<Slider>("AllMemSlider");
-			allText = root.FindComponentRecursive<TMP_Text>("AllMemText");
+                allSlider = root.FindComponentRecursive<Slider>("AllMemSlider");
+                allText = root.FindComponentRecursive<TMP_Text>("AllMemText");
 
-			meshSlider = root.FindComponentRecursive<Slider>("MeshMemSlider");
-			meshText = root.FindComponentRecursive<TMP_Text>("MeshMemText");
+                meshSlider = root.FindComponentRecursive<Slider>("MeshMemSlider");
+                meshText = root.FindComponentRecursive<TMP_Text>("MeshMemText");
 
-			textureSlider = root.FindComponentRecursive<Slider>("TextureMemSlider");
-			textureText = root.FindComponentRecursive<TMP_Text>("TextureMemText");
+                textureSlider = root.FindComponentRecursive<Slider>("TextureMemSlider");
+                textureText = root.FindComponentRecursive<TMP_Text>("TextureMemText");
 
-			animationsSlider = root.FindComponentRecursive<Slider>("AnimationMemSlider");
-			animationsText = root.FindComponentRecursive<TMP_Text>("AnimationMemText");
+                animationsSlider = root.FindComponentRecursive<Slider>("AnimationMemSlider");
+                animationsText = root.FindComponentRecursive<TMP_Text>("AnimationMemText");
 
-            particlesSlider = root.FindComponentRecursive<Slider>("ParticlesMemSlider");
-            particlesText = root.FindComponentRecursive<TMP_Text>("ParticlesMemText");
+                particlesSlider = root.FindComponentRecursive<Slider>("ParticlesMemSlider");
+                particlesText = root.FindComponentRecursive<TMP_Text>("ParticlesMemText");
 
-            audioSlider = root.FindComponentRecursive<Slider>("AudioMemSlider");
-            audioText = root.FindComponentRecursive<TMP_Text>("AudioMemText");
+                audioSlider = root.FindComponentRecursive<Slider>("AudioMemSlider");
+                audioText = root.FindComponentRecursive<TMP_Text>("AudioMemText");
 
-            otherSlider = root.FindComponentRecursive<Slider>("OtherMemSlider");
-            otherText = root.FindComponentRecursive<TMP_Text>("OtherMemText");
+                otherSlider = root.FindComponentRecursive<Slider>("OtherMemSlider");
+                otherText = root.FindComponentRecursive<TMP_Text>("OtherMemText");
+            }
+
+            m_maxMem = _maxValue;            
 
             allSlider.minValue = 0f;
 			allSlider.maxValue = _maxValue;
+
+            if (nameText != null) {
+                nameText.text = name;
+            }
 
 			if (meshSlider != null) {
 				meshSlider.minValue = 0f;
@@ -104,8 +107,15 @@ public class WorldMemoryController : MonoBehaviour {
         }
 
         public void Update(MemoryData _data) {
+            bool overflow = (_data.all > m_maxMem) ;            
+
+            if (nameText != null) {
+                nameText.color = (overflow) ? COLOR_OVERFLOW : COLOR_NORMAL;
+            }
+
 			allSlider.value = _data.all;
 			allText.text = _data.all.ToString("F2") + "/" + m_maxMem + " MB";
+            allText.color = (overflow) ? COLOR_OVERFLOW : COLOR_NORMAL;
 
 			if (meshSlider != null) {
 				meshSlider.value = _data.mesh;
@@ -136,6 +146,10 @@ public class WorldMemoryController : MonoBehaviour {
                 otherSlider.value = _data.other;
                 otherText.text = _data.other.ToString("F2") + " MB";
             }
+        }
+
+        public void SetIsVisible(bool isVisible) {
+            root.SetActive(isVisible);
         }
 	}
 
@@ -169,76 +183,89 @@ public class WorldMemoryController : MonoBehaviour {
                    " audio = " + audio + " other = " + other + 
                    " TOTAL = " + all;
         }
-	}
+	}   
 	    
 	//---------------------------------------
 	[SerializeField] private Slider m_timerUI;
-	[SeparatorAttribute]
-	[SerializeField] private UIContainers m_memoryUI;
-	[SerializeField] private UIContainers m_dragonUI;
-	[SerializeField] private UIContainers m_petsUI;
-	[SerializeField] private UIContainers m_npcsUI;
-	[SerializeField] private UIContainers m_worldUI;
-	[SerializeField] private UIContainers m_decorationsUI;
-	[SerializeField] private UIContainers m_particleSystemsUI;
+    [SeparatorAttribute]
 
-	//---------------------------------------
-	private List<string> m_prefabNames;
+    [SerializeField]
+    private UIContainers m_memoryTotal;
 
-	private MemoryData m_memory;
-	private MemoryData m_dragonMemory;
-	private MemoryData m_petsMemory;
-	private MemoryData m_npcsMemory;
-	private MemoryData m_worldMemory;
-	private MemoryData m_decorationsMemory;
-	private MemoryData m_particlesMemory;
+    [SerializeField]
+    private UIContainers[] m_containers;
 
-	private float m_timer;
+    //---------------------------------------	
 
+    private MemoryData m_totalMemoryData;
+    private List<MemoryData> m_memoryDatas;
+
+    private float m_timer;
+
+    public Button m_takeSampleButton;
+
+    //---------------------------------------    
+    private HDMemoryProfiler m_memoryProfiler;
+    private MemorySampleCollection m_sample;
     //---------------------------------------
-    private AssetMemoryProfiler m_profiler;
-    private AssetMemoryProfilerPrinter m_profilerPrinter;
-    private MemoryProfiler m_memoryProfilerExtra;
-
-
-    //---------------------------------------
-    private const string LABEL_HUD = "Hud";
-    private const string LABEL_DRAGON = "Dragon";
-    private const string LABEL_PETS = "Pets";
-    private const string LABEL_NPCS = "NPCS";
-    private const string LABEL_WORLD = "World";
-    private const string LABEL_SOUND = "Sound";
-    private const string LABEL_PARTICLES = "Particles";
-
 
     // Use this for initialization
-    private void Start() {
-        m_profiler = new AssetMemoryProfiler();
-        m_profilerPrinter = new AssetMemoryProfilerPrinter(m_profiler);
-        m_memoryProfilerExtra = new MemoryProfiler();
+    private void Start() {       
+        m_memoryProfiler = new HDMemoryProfiler();
 
         m_timerUI.minValue = 0f;
 		m_timerUI.maxValue = 10f;
 
-		m_memory = new MemoryData(null);
-		m_dragonMemory = new MemoryData(LABEL_DRAGON);
-		m_petsMemory = new MemoryData(LABEL_PETS);
-		m_npcsMemory = new MemoryData(LABEL_NPCS);
-		m_worldMemory = new MemoryData(LABEL_WORLD);
-		//m_decorationsMemory = new MemoryData();
-		m_particlesMemory = new MemoryData(LABEL_PARTICLES);
+        if (m_takeSampleButton != null)
+        {
+            m_takeSampleButton.onClick.AddListener(TakeASample);
+        }
 
-		//TODO setup all containers
-		m_memoryUI.Setup(MAX_MEMORY_BUDGET);
-		m_dragonUI.Setup(MAX_MEMORY_DRAGON);
-		m_petsUI.Setup(MAX_MEMORY_PETS);
-		m_npcsUI.Setup(MAX_MEMORY_NPCS);
-		m_worldUI.Setup(MAX_MEMORY_WORLD);
-		m_decorationsUI.Setup(MAX_MEMORY_DECORATIONS);
-		m_particleSystemsUI.Setup(MAX_MEMORY_PARTICLES);
+        CategorySet_Setup();
+        SizeStrategy_Setup();
 
-		OnReset();
-	}
+        OnReset();        
+    }
+
+    private void OnDestroy() {
+        if (m_takeSampleButton != null) {
+            m_takeSampleButton.onClick.RemoveListener(TakeASample);
+        }
+
+        CategorySet_OnDestroy();
+        SizeStrategy_OnDestroy();
+    }
+
+    public void Setup(MemoryProfiler.CategorySet categorySet) {
+        m_totalMemoryData = new MemoryData("all");
+
+        if (m_containers != null && categorySet != null) {
+            if (categorySet.CategoryConfigs != null) {
+                int containersCount = m_containers.Length;
+                int configsCount = categorySet.CategoryConfigs.Count;
+                if (containersCount < configsCount) {
+                    Debug.LogError("Not enouth containers");
+                } else {                    
+                    m_memoryDatas = new List<MemoryData>();
+
+                    for (int i = 0; i < configsCount; i++) {
+                        m_memoryDatas.Add(new MemoryData(categorySet.CategoryConfigs[i].Name));
+                        m_containers[i].Setup(categorySet.CategoryConfigs[i].Name, categorySet.CategoryConfigs[i].MaxMemory);
+                        m_containers[i].SetIsVisible(true);
+                    }
+
+                    for (int i = configsCount; i < containersCount; i++) {
+                        m_containers[i].SetIsVisible(false);
+                    }
+                }
+            }
+        }
+
+        if (m_memoryTotal != null) {
+            m_memoryTotal.Setup("memory usage", categorySet.TotalMaxMemory);
+            m_memoryTotal.SetIsVisible(true);
+        }        
+    }
 
     private void OnEnable() {
         // Subscribe to external events
@@ -254,275 +281,110 @@ public class WorldMemoryController : MonoBehaviour {
     }
 
     private void Update() {
-        if (FlowManager.IsInGameScene()) {
+        /*if (FlowManager.IsInGameScene()) {
             m_timer -= Time.deltaTime;
             if (m_timer <= 0f) {
-                OnReset();
-
-                //AnalizePerConcept();
-                //AnalizePerType();
-                m_memoryProfilerExtra.TakeASample();
-
-                SumAllMem();
-
-                UpdateUI();
+                TakeASample();                
             }
 
             m_timerUI.value = m_timer;
-        }
-
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            //OnReset();
-            //GetPrefabsFromScene();
-            m_profilerPrinter.Print("AssetMemoryAnalysis", AssetMemoryPrinterFormatType.XML, AssetMemoryPrinterSortType.HighToLow, true);
-        }
+        } */       
     }
 
-    private void AnalizePerType()
-    {
-        //List<GameObject> all = new List<GameObject>();
-        /*List<GameObject> all = GameObjectExt.FindAllObjectsInScene(true);
-        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
-        {
-            var s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
-            if (s.isLoaded)
-            {                
-                var allGameObjects = s.GetRootGameObjects();
-                for (int j = 0; j < allGameObjects.Length; j++)
-                {                    
-                    all.Add(allGameObjects[j]);
-                }
-            }
-        }*/
-
-        /*Entity[] gos = PoolManager.instance.GetComponentsInChildren<Entity>(true);
-        if (gos != null) {
-            int count = gos.Length;
-            GameObject go;
-            for (int i = 0; i < count; i++) {
-                go = (gos[i] as Entity).gameObject;
-                all.Add(go);
-            }
+    public void TakeASample() {
+        // Disables the button so the user can't click again until the current sample has been processed
+        if (m_takeSampleButton != null) {
+            m_takeSampleButton.enabled = false;
         }
 
-        //all.Add(PoolManager.instance.gameObject);
-        //all.Add(ParticleManager.instance.gameObject);
+        OnReset();
 
-        AnalizeWorld(all);
-        ProfilerToData(m_worldMemory);
-
-        long total = 0;        
-        Dictionary<string, long> textures = m_profiler.GetDetailedSizePerType(AssetMemoryGlobals.EAssetType.Texture);
-        List<AssetMemoryGlobals.AssetMemoryRawData> data = new List<AssetMemoryGlobals.AssetMemoryRawData>();
-        foreach (KeyValuePair<string, long> pair in textures)
-        {
-            total += pair.Value;
-            data.Add(new AssetMemoryGlobals.AssetMemoryRawData(pair.Key, pair.Value));            
-        }
-
-        string texturesFile = "AssetMemoryAnalysis_Textures";
-        AssetMemoryProfilerPrinter.Print(texturesFile, data, AssetMemoryPrinterSortType.HighToLow);
-        */
-
-        /*Texture[] texturesResources = Resources.FindObjectsOfTypeAll(typeof(Texture)) as Texture[];
-        int count = texturesResources.Length;
-        for (int i = 0; i < count; i++)
-        {
-            if (texturesResources[i])
-            // Resources.FindObjectsOfTypeAll() also returns internal stuff so we need to be extra careful about the game ojects returned by this
-            // function
-            if (go.hideFlags == HideFlags.NotEditable || go.hideFlags == HideFlags.HideAndDontSave)
-                continue;
-        }
-
-        Debug.Log("Count = " + texturesResources.Length);
-        */
-    }
-
-    private void AnalizePerConcept()
-    {
-        List<GameObject> dragon = new List<GameObject>();
-        List<GameObject> pets = new List<GameObject>();
-        List<GameObject> npcs = new List<GameObject>();
-        List<GameObject> hud = new List<GameObject>();
-        List<GameObject> world = new List<GameObject>();
-        List<GameObject> particles = new List<GameObject>();
-
-        string name;
-        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
-        {
-            var s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
-            if (s.isLoaded)
-            {
-                var allGameObjects = s.GetRootGameObjects();
-                for (int j = 0; j < allGameObjects.Length; j++)
+        if (m_memoryDatas != null) {
+            m_sample = m_memoryProfiler.Scene_TakeASampleWithCategories(m_categorySetName) as MemorySampleCollection;
+            if (m_sample != null) {
+                int count = m_memoryDatas.Count;
+                for (int i = 0; i < count; i++)
                 {
-                    name = allGameObjects[j].name;
-                    if (name == "UIRoot" || name == "ResultsScene")
-                    {
-                        hud.Add(allGameObjects[j]);
-                    }
-                    else if (name == "Player")
-                    {
-                        dragon.Add(allGameObjects[j]);
-                    }
-                    else
-                    {
-                        world.Add(allGameObjects[j]);
-                    }
+                    MemoryData mData = m_memoryDatas[i];
+                    SampleToData(m_sample.GetSample(mData.label) as MemorySample, mData);                   
                 }
             }
+
+            m_totalMemoryData.all = BytesToMegaBytes(m_sample.GetTotalMemorySize());
+
+            UpdateUI();
         }
 
-        List<Entity> entities = new List<Entity>();
-        List<Decoration> decorations = new List<Decoration>();
-        List<ParticleSystem> psystems = new List<ParticleSystem>();
-
-        /*
-        List<GameObject> gos = GameObjectExt.FindAllObjectsInScene(true);
-        if (gos != null)
-        {
-            int count = gos.Count;
-            for (int i = 0; i < count; i++)
-            {
-                entities.AddRange(gos[i].GetComponentsInChildren<Entity>(true));
-                decorations.AddRange(gos[i].GetComponentsInChildren<Decoration>(true));
-                psystems.AddRange(gos[i].GetComponentsInChildren<ParticleSystem>(true));
-            }
-
-            count = entities.Count;
-            for (int i = 0; i < count; i++)
-            {
-                npcs.Add(entities[i].gameObject);
-            }
-
-            count = decorations.Count;
-            for (int i = 0; i < count; i++)
-            {
-                if (!npcs.Contains(decorations[i].gameObject))
-                    npcs.Add(decorations[i].gameObject);
-            }
-
-            count = psystems.Count;
-            for (int i = 0; i < count; i++)
-            {
-                particles.Add(psystems[i].gameObject);
-            }
-        }
-
-        AnalizeWorld(world);
-        Analize(dragon, LABEL_DRAGON);
-        Analize(pets, LABEL_PETS);
-        Analize(npcs, LABEL_NPCS);
-        Analize(particles, LABEL_PARTICLES);
-
-        ProfilerToData(m_worldMemory);
-        ProfilerToData(m_dragonMemory);
-        ProfilerToData(m_petsMemory);
-        ProfilerToData(m_npcsMemory);
-        ProfilerToData(m_particlesMemory);
-        */
-    }
-
-    private void RemoveGoAndChildren(List<GameObject> allGos, GameObject goToRemove)
-    {
-        if (allGos != null && goToRemove != null)
-        {
-
+        // Enables the button again as the operation has been performed completely
+        if (m_takeSampleButton != null) {
+            m_takeSampleButton.enabled = true;
         }
     }
 
-	private void OnReset() {
-		m_memory.Reset();	
-		m_dragonMemory.Reset();
-		m_petsMemory.Reset();
-		m_npcsMemory.Reset();
-		m_worldMemory.Reset();
-		//m_decorationsMemory.Reset();
-		m_particlesMemory.Reset();
+
+    private void UpdateUIWithSample(MemorySampleCollection sample) {
+        if (m_memoryDatas != null && sample != null) {                        
+            int count = m_memoryDatas.Count;
+            for (int i = 0; i < count; i++)
+            {
+                MemoryData mData = m_memoryDatas[i];
+                SampleToData(sample.GetSample(mData.label) as MemorySample, mData);
+            }            
+
+            m_totalMemoryData.all = BytesToMegaBytes(sample.GetTotalMemorySize());
+
+            UpdateUI();
+        }
+    }
+
+	private void OnReset() {      
+        if (m_memoryDatas != null) {
+            int count = m_memoryDatas.Count;
+            for (int i = 0; i < count; i++) {
+                m_memoryDatas[i].Reset();
+            }
+        }
 
 		UpdateUI();
 
 		m_timer = 10f;
 		m_timerUI.value = m_timer;
 
-        m_profiler.Reset();        
+        m_memoryProfiler.Clear();      
     }
+	    
+    private void SampleToData(MemorySample sample, MemoryData data) {
+        if (sample != null && data != null) {
+            sample.TypeGroups_Apply(m_memoryProfiler.GameTypeGroups);
+            float mesh = BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(HDMemoryProfiler.GAME_TYPE_GROUPS_MESHES));
+            float animation = BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(HDMemoryProfiler.GAME_TYPE_GROUPS_ANIMATIONS));
+            float texture = BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(HDMemoryProfiler.GAME_TYPE_GROUPS_TEXTURES));
+            float particles = BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(HDMemoryProfiler.GAME_TYPE_GROUPS_PARTICLES));
+            float audio = BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(HDMemoryProfiler.GAME_TYPE_GROUPS_AUDIO));
+            float other = BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(MemorySample.TYPE_GROUPS_OTHER));
+            float total = BytesToMegaBytes(sample.GetTotalMemorySize());
 
-	private void SumAllMem() {
-		m_memory.all += m_dragonMemory.all + m_petsMemory.all + m_npcsMemory.all + m_worldMemory.all /*+ m_decorationsMemory.all*/ + m_particlesMemory.all;
-	}	
-
-    private void Analize(List<GameObject> gos, string label) {
-        if (gos != null) {
-            int count = gos.Count;
-            for (int i = 0; i < count; i++) {
-                m_profiler.MoveGoToLabel(gos[i], label);
-            }
-        }        
-    }
-
-    private void AnalizeWorld(List<GameObject> gos) {       
-        string label = LABEL_WORLD;
-
-        FogManager fogManager = InstanceManager.fogManager;
-        if (fogManager != null) {
-            FogManager.FogAttributes attributes = fogManager.m_defaultAreaFog;
-            if (attributes != null) {
-                m_profiler.AddTexture(null, attributes.texture, label, "FogAreaTexture");                
-            }
-
-            List<FogManager.FogAttributes> attributesList = fogManager.m_generatedAttributes;
-            if (attributesList != null) {
-                int count = attributesList.Count;
-                for (int i = 0; i < count; i++) {
-                    m_profiler.AddTexture(null, attributesList[i].texture, label, "FogAreaTexture");
-                }
-            }
-        }       
-
-        if (gos != null) {
-            int count = gos.Count;
-            for (int i = 0; i < count; i++) {
-                m_profiler.AddGo(gos[i], LABEL_WORLD);
-            }
-        }        
-    }
-
-    private void ProfilerToData(MemoryData _data) {
-        string label = _data.label;
-		float mesh = BytesToMegaBytes(m_profiler.GetSizePerType(AssetMemoryGlobals.EAssetType.Mesh, label));
-		float animation = BytesToMegaBytes(m_profiler.GetSizePerType(AssetMemoryGlobals.EAssetType.Animation, label));
-		float texture = BytesToMegaBytes(m_profiler.GetSizePerType(AssetMemoryGlobals.EAssetType.Texture, label));
-		float particles = BytesToMegaBytes(m_profiler.GetSizePerType(AssetMemoryGlobals.EAssetType.ParticleSystem, label));
-        float other = BytesToMegaBytes(m_profiler.GetSizePerType(AssetMemoryGlobals.EAssetType.Other, label));
-        float total = BytesToMegaBytes(m_profiler.GetSize(label));                
-
-		_data.all += total; //should we add the "other" value?
-		_data.mesh += mesh;
-		_data.texture += texture;
-		_data.animations += animation;
-        _data.particles += particles;
-        _data.other += other;
+            data.all = total; //should we add the "other" value?
+            data.mesh = mesh;
+            data.texture = texture;
+            data.animations = animation;
+            data.particles = particles;
+            data.audio = audio;
+            data.other = other;
+        }
     }
 
 	private void UpdateUI() {
-		m_memoryUI.Update(m_memory);
-		m_dragonUI.Update(m_dragonMemory);
-		m_petsUI.Update(m_petsMemory);
-		m_npcsUI.Update(m_npcsMemory);
-		m_worldUI.Update(m_worldMemory);
-		//m_decorationsUI.Update(m_decorationsMemory);
-		m_particleSystemsUI.Update(m_particlesMemory);
+        if (m_totalMemoryData != null && m_memoryTotal != null) {
+            m_memoryTotal.Update(m_totalMemoryData);
+        }
 
-        Debug.Log("Memory: " + m_memory.ToString());
-        Debug.Log("Dragon: " + m_dragonMemory.ToString());
-        Debug.Log("Pets: " + m_petsMemory.ToString());
-        Debug.Log("Npcs: " + m_npcsMemory.ToString());
-        Debug.Log("World: " + m_worldMemory.ToString());
-        //Debug.Log("Decorations: " + m_decorationsMemory.ToString());
-        Debug.Log("Particles: " + m_particleSystemsUI.ToString());
+        if (m_memoryDatas != null && m_containers != null) {
+            int count = m_memoryDatas.Count;
+            for (int i = 0; i < count; i++) {
+                m_containers[i].Update(m_memoryDatas[i]);
+            }                
+        }       
     }
 
 	private void OnLevelLoaded() {
@@ -536,4 +398,129 @@ public class WorldMemoryController : MonoBehaviour {
     private float BytesToKiloBytes(long bytes) {
         return bytes / (1024f);
     }
+
+    #region categorySet
+    [SerializeField]
+    public TMP_Dropdown m_categorySet;
+
+    private string m_categorySetName;
+    private List<string> m_categorySetNames;
+
+    private void CategorySet_Setup() {        
+        // Options for the prefab drop down have to be created        
+        if (m_categorySet != null) {
+            m_categorySet.ClearOptions();
+
+            List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
+
+            TMP_Dropdown.OptionData optionData;
+            m_categorySetNames = m_memoryProfiler.CategorySet_GetNames();
+            int count = m_categorySetNames.Count;
+            for (int i = 0; i < count; i++) {                                
+                optionData = new TMP_Dropdown.OptionData();
+                optionData.text = m_categorySetNames[i];
+                options.Add(optionData);                               
+            }
+
+            m_categorySet.AddOptions(options);
+
+            m_categorySet.onValueChanged.AddListener(CategorySet_OnValueChanged);
+        }                
+
+        // We set the default category set
+        CategorySet_SetName(HDMemoryProfiler.CATEGORY_SET_NAME_GAME_1_LEVEL);
+    }
+
+    private void CategorySet_OnDestroy() {
+        if (m_categorySet != null) {
+            m_categorySet.onValueChanged.RemoveListener(CategorySet_OnValueChanged);
+        }
+    }
+
+    private void CategorySet_OnValueChanged(int newValue) {
+        if (m_categorySetNames != null && newValue > -1 && newValue < m_categorySetNames.Count) {
+            CategorySet_SetName(m_categorySetNames[newValue]);
+            TakeASample();
+        } else {
+            Debug.LogError("Not valid index for category set: " + newValue);
+        }
+    }
+
+    private void CategorySet_SetName(string categorySetName)
+    {
+        if (categorySetName != m_categorySetName) {
+            m_categorySetName = categorySetName;
+
+            if (m_categorySet != null && m_categorySetNames != null) {
+                m_categorySet.value = m_categorySetNames.IndexOf(m_categorySetName);
+            }
+
+            Setup(m_memoryProfiler.CategorySet_Get(m_categorySetName));
+        }
+    }
+    #endregion
+
+    #region sizeStrategy
+    [SerializeField]
+    public TMP_Dropdown m_sizeStrategy;
+    
+    private List<MemorySample.ESizeStrategy> m_sizeStrategyValues;
+
+    private void SizeStrategy_Setup() {
+        // Options for the prefab drop down have to be created        
+        if (m_sizeStrategy != null) {
+            m_sizeStrategy.ClearOptions();
+
+            List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
+
+            TMP_Dropdown.OptionData optionData;
+
+            m_sizeStrategyValues = new List<MemorySample.ESizeStrategy>();
+            foreach (var value in System.Enum.GetValues(typeof(MemorySample.ESizeStrategy))) {
+                m_sizeStrategyValues.Add((MemorySample.ESizeStrategy)value);
+            }
+            
+            int count = m_sizeStrategyValues.Count;
+            for (int i = 0; i < count; i++) {
+                optionData = new TMP_Dropdown.OptionData();
+                optionData.text = m_sizeStrategyValues[i].ToString();
+                options.Add(optionData);
+            }
+
+            m_sizeStrategy.AddOptions(options);
+
+            m_sizeStrategy.onValueChanged.AddListener(SizeStrategy_OnValueChanged);
+        }
+
+        // We set the default size strategy
+        SizeStrategy_SetValue(MemorySample.ESizeStrategy.DeviceFull);
+    }
+
+
+    private void SizeStrategy_OnDestroy() {
+        if (m_categorySet != null) {
+            m_categorySet.onValueChanged.RemoveListener(SizeStrategy_OnValueChanged);
+        }
+    }
+
+    private void SizeStrategy_OnValueChanged(int newValue) {
+        if (m_sizeStrategyValues != null && newValue > -1 && newValue < m_sizeStrategyValues.Count) {
+            SizeStrategy_SetValue(m_sizeStrategyValues[newValue]);
+            if (m_sample != null) {
+                m_sample.SizeStrategy = m_sizeStrategyValues[newValue];
+                UpdateUIWithSample(m_sample);
+            }
+        } else {
+            Debug.LogError("Not valid index for size strategy: " + newValue);
+        }
+    }
+
+    private void SizeStrategy_SetValue(MemorySample.ESizeStrategy value) {
+        if (m_memoryProfiler.SizeStrategy != value) {            
+            if (m_sizeStrategy != null && m_sizeStrategyValues != null) {
+                m_sizeStrategy.value = m_sizeStrategyValues.IndexOf(value);
+            }            
+        }
+    }   
+    #endregion
 }
