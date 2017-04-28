@@ -321,6 +321,7 @@ public class WorldMemoryController : MonoBehaviour {
         }
     }
 
+
     private void UpdateUIWithSample(MemorySampleCollection sample) {
         if (m_memoryDatas != null && sample != null) {                        
             int count = m_memoryDatas.Count;
