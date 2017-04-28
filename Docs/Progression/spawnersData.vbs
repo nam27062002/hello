@@ -6,6 +6,7 @@ Dim objShell
 Public spawner
 Public prefab
 Public prefabFile
+Public damage
 
 
 Set objFSO 				= CreateObject("Scripting.FileSystemObject")
@@ -26,9 +27,9 @@ For Each CurrentSpawner In SpawnersFolder.Files
 				contentSku = entityInfo()
 				If contentSku <> "" Then
 					currentContentInfo = contentInfo(contentSku)
-					currentSpawnerInfo = Replace(contentSku + ";" + currentSpawnerInfo + ";" + currentContentInfo + vbCrLf," ","")
+					currentSpawnerInfo = Replace(contentSku + ";" + currentSpawnerInfo + ";" + currentContentInfo + ";" + damage + vbCrLf," ","")
 				Else
-					currentSpawnerInfo = Replace("-" + ";" + currentSpawnerInfo + ";" + vbCrLf," ","")
+					currentSpawnerInfo = Replace("-" + ";" + currentSpawnerInfo + ";" + damage + vbCrLf," ","")
 				End If
 				objOutputFile.Write(currentSpawnerInfo)
 			End If
@@ -46,7 +47,7 @@ Function spawnerInfo()
 		prefabFolder = Replace(objInputFile.ReadLine,"- name: ","")
 		aux = Replace(Replace(prefabFolder,"/","\")," ","")
 		prefabFile = "D:\Projects\HungryDragon\Assets\Resources\Game\Entities\NewEntites\"+ aux + ".prefab"
-		prefab  = Replace(Replace(Replace(Replace(Replace(Replace(Replace(prefabFolder,"Surface/",""),"Junk/",""),"Air/",""),"Goblin/",""),"Water/",""),"Monster/",""),"Cage/","")
+		prefab  = Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(prefabFolder,"Surface/",""),"Junk/",""),"Air/",""),"Goblin/",""),"Water/",""),"Monster/",""),"Cage/",""),"Vehicles/","")
 	End If			
 	substrToFind = "m_spawnTime:"
 	If foundStrMatch(tmpStr,substrToFind) = true Then
@@ -61,13 +62,21 @@ End Function
 Function entityInfo()
 	Set EntityFile = objFSO.OpenTextFile(prefabFile)
 	substrToFind = "m_sku:"
+	substrToFind_1 = "damage"
 	entityInfo = ""
+	damage = "-"
+	content_sku = ""
 	Do until EntityFile.AtEndOfStream
 		tmpStr = EntityFile.ReadLine
+		If foundStrMatch(tmpStr,substrToFind_1) = true Then
+			pos = InStr(tmpStr, substrToFind_1)
+			damage = Replace(Replace(Replace(Mid(tmpStr,pos+8,3),Chr(34),"")," ",""),",","")
+		End If		
 		If foundStrMatch(tmpStr,substrToFind) = true Then
-			entityInfo = Replace(Replace(tmpStr,"m_sku:","")," ","")
+			content_sku = Replace(Replace(tmpStr,"m_sku:","")," ","")
 		End If
 	Loop
+	entityInfo = content_sku
 End Function
 
 Function contentInfo(contentSku)
