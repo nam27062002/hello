@@ -79,6 +79,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	public bool hasBeenShot { get { return m_state == State.Shot; } }
 
 	private float m_timer;
+	private float m_homingTimer;
 
 	private Transform m_oldParent;
 
@@ -227,6 +228,8 @@ public class Projectile : MonoBehaviour, IProjectile {
 			m_activateOnShoot[i].SetActive(true);
 		}
 
+		m_homingTimer = 0.25f;
+
 		m_elapsedTime = 0f;
 		if (m_chargeTime > 0f) {
 			if (m_onChargeParticle.IsValid()) {
@@ -240,7 +243,6 @@ public class Projectile : MonoBehaviour, IProjectile {
 			m_timer = m_maxTime;
 			m_state = State.Shot;
 		}
-
 	}
 
 	// Update is called once per frame
@@ -317,11 +319,15 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 					case MotionType.Homing: {
 							m_position += m_velocity * dt;
-							//m_direction = Vector3.Lerp(m_direction, (m_target.position - m_position).normalized, 0.1f / dt);
 
-							Vector3 impulse = (m_target.position - m_position).normalized * m_speed;
-							impulse = (impulse - m_velocity) / 25f; //mass
-							m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_speed);
+							m_homingTimer -= Time.deltaTime;
+							if (m_homingTimer <= 0f) {
+								m_homingTimer = 0f;
+
+								Vector3 impulse = (m_target.position - m_position).normalized * m_speed;
+								impulse = (impulse - m_velocity) / 25f; //mass
+								m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_speed);
+							}
 						} break;
 
 					case MotionType.Parabolic: 
