@@ -753,7 +753,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			if (onEndLatching != null)
 				onEndLatching();
 		}
-
+		m_grabbingPrey = false;
 		m_holdTransform = null;
 		if ( m_holdPoint != null )
 			m_holdPoint.holded = false;
