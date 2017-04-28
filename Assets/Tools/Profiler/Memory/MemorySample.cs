@@ -4,397 +4,505 @@ using System.Xml;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class MemorySample
-{
-    public class TextureDetails : IEquatable<TextureDetails>
+public class MemorySample : AbstractMemorySample
+{   
+    public class ObjectDetails
     {
-        public bool isCubeMap;
-        public int memSize; // in bytes
-        public Texture texture;
-        public TextureFormat format;
-        public int mipMapCount;
-        public List<Object> FoundInMaterials = new List<Object>();
-        public List<Object> FoundInRenderers = new List<Object>();
-        public List<Object> FoundInAnimators = new List<Object>();
-        public List<Object> FoundInScripts = new List<Object>();
-        public List<Object> FoundInGraphics = new List<Object>();
-        public bool isSky;
-        public bool instance;
-        public bool isgui;
-      
-        public bool Equals(TextureDetails other)
+        // in bytes
+        public int MemSize { get; set; }
+        public Object Obj { get; set; }
+        public string Type { get; set; }
+
+        public ObjectDetails(Object o, ESizeStrategy sizeStrategy)
         {
-            return texture != null && other.texture != null &&
-                texture.GetNativeTexturePtr() == other.texture.GetNativeTexturePtr();
+            Obj = o;
+            Type = o.GetType().Name;
+            CalculateSize(sizeStrategy);
         }
 
-        public override int GetHashCode()
+        public void CalculateSize(ESizeStrategy sizeStrategy)
         {
-            return (int)texture.GetNativeTexturePtr();
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as TextureDetails);
-        }
-    };
-
-    public class MeshDetails
-    {
-        public int memSize; // in bytes
-        
-        private Mesh mesh;
-        public Mesh Mesh
-        {
-            get { return mesh; }
-            set
+            if (Obj != null)
             {
-                mesh = value;
-                memSize = UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(mesh);
+                MemSize = UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(Obj);
+
+                if (sizeStrategy != ESizeStrategy.Profiler)
+                {
+                    if (Obj is Texture)
+                    {
+                        MemSize = CalculateTextureSizeBytes(Obj as Texture);
+                    }
+                }                
             }
         }
 
-        public List<GameObject> FoundInGos = new List<GameObject>();
-        public List<MeshFilter> FoundInMeshFilters = new List<MeshFilter>();
-        public List<SkinnedMeshRenderer> FoundInSkinnedMeshRenderer = new List<SkinnedMeshRenderer>();
-
-        public bool instance;
-
-        public MeshDetails()
+        private static int GetBitsPerPixel(TextureFormat format)
         {
-            instance = false;
-        }
-    };
-
-    private List<TextureDetails> ActiveTextures { get; set; }
-    private List<MeshDetails> ActiveMeshDetails { get; set; }
-
-    // In bytes
-    private long TotalTextureMemory { get; set; }
-
-    // In bytes
-    private long TotalMeshMemory { get; set; }
-
-    public MemorySample()
-    {
-        Reset();
-    }
-
-    public void Reset()
-    {
-        if (ActiveTextures == null)
-        {
-            ActiveTextures = new List<TextureDetails>();
-        }
-        else
-        {
-            ActiveTextures.Clear();
-        }
-
-        TotalTextureMemory = 0;
-
-        if (ActiveMeshDetails == null)
-        {
-            ActiveMeshDetails = new List<MeshDetails>();
-        }
-        else
-        {
-            ActiveMeshDetails.Clear();
-        }
-
-        TotalMeshMemory = 0;
-    }
-
-    public void AddTexture(Texture t)
-    {
-        // Makes sure that the texture hasn't been added yet to avoid duplicated textures
-        TextureDetails tDetails = GetTextureDetail(t);
-        if (!ActiveTextures.Contains(tDetails))
-        {
-            ActiveTextures.Add(tDetails);
-        }
-    }
-
-    public void AddMesh(Mesh m)
-    {
-        // Makes sure that the mesh hasn't been added yet to avoid duplicated meshes
-        MeshDetails mDetails = FindMeshDetails(m);
-        if (mDetails == null)
-        {
-            mDetails = new MeshDetails();
-            mDetails.Mesh = m;
-            ActiveMeshDetails.Add(mDetails);
-        }
-    }
-
-    public void CalculateStats()
-    {
-        TotalTextureMemory = 0;
-        if (ActiveTextures != null)
-        {
-            // Sorts textures by size
-            ActiveTextures.Sort(delegate (TextureDetails details1, TextureDetails details2) { return details2.memSize - details1.memSize; });
-
-            foreach (TextureDetails tTextureDetails in ActiveTextures)
+            switch (format)
             {
-                TotalTextureMemory += tTextureDetails.memSize;
-            }
-        }
-
-        TotalMeshMemory = 0;
-        if (ActiveMeshDetails != null)
-        {
-            foreach (MeshDetails tMeshDetails in ActiveMeshDetails)
-            {
-                TotalMeshMemory += tMeshDetails.memSize;
-            }
-        }
-    }
-
-    private const string PARAM_ASSETS = "Assets";
-    private const string PARAM_TEXTURES = "Textures";
-    private const string PARAM_TEXTURE = "Texture";
-    private const string PARAM_MESHES = "Meshes";
-    private const string PARAM_MESH = "Mesh";
-    private const string PARAM_SIZE = "size";
-    private const string PARAM_AMOUNT = "amount";
-
-    public XmlNode ToXML()    
-    {
-        XmlDocument xmlDoc = new XmlDocument();
-        XmlNode rootNode = xmlDoc.CreateElement(PARAM_ASSETS);
-        xmlDoc.AppendChild(rootNode);
-
-
-        //
-        // Textures
-        //
-        XmlNode itemNode = xmlDoc.CreateElement(PARAM_TEXTURES);
-        rootNode.AppendChild(itemNode);        
-        XmlAttribute attribute = xmlDoc.CreateAttribute(PARAM_SIZE);
-        attribute.Value = FormatSizeString(TotalTextureMemory);
-        itemNode.Attributes.Append(attribute);
-        attribute = xmlDoc.CreateAttribute(PARAM_AMOUNT);
-        attribute.Value = ((ActiveTextures != null) ? ActiveTextures.Count : 0) +"";
-        itemNode.Attributes.Append(attribute);        
-
-        if (ActiveTextures != null)
-        {
-            XmlNode node;
-            int count = ActiveTextures.Count;
-            for (int i = 0; i < count; i++)
-            {
-                node = xmlDoc.CreateElement(PARAM_TEXTURE);
-                attribute = xmlDoc.CreateAttribute(PARAM_SIZE);
-                attribute.Value = FormatSizeString(ActiveTextures[i].memSize);
-                node.Attributes.Append(attribute);
-                node.InnerText = ActiveTextures[i].texture.name;
-                itemNode.AppendChild(node);
-            }
-        }
-
-        //
-        // Meshes
-        //
-        itemNode = xmlDoc.CreateElement(PARAM_MESHES);
-        rootNode.AppendChild(itemNode);                
-        attribute = xmlDoc.CreateAttribute(PARAM_SIZE);
-        attribute.Value = FormatSizeString(TotalMeshMemory);
-        itemNode.Attributes.Append(attribute);
-        attribute = xmlDoc.CreateAttribute(PARAM_AMOUNT);
-        attribute.Value = ((ActiveMeshDetails != null) ? ActiveMeshDetails.Count : 0) + "";
-        itemNode.Attributes.Append(attribute);
-        
-        /*if (ActiveMeshDetails != null)
-        {
-            XmlNode node;
-            int count = ActiveMeshDetails.Count;
-            for (int i = 0; i < count; i++)
-            {
-                node = xmlDoc.CreateElement(PARAM_MESH);
-                attribute = xmlDoc.CreateAttribute(PARAM_SIZE);
-                attribute.Value = FormatSizeString(ActiveMeshDetails[i].memSize);
-                node.Attributes.Append(attribute);
-                node.InnerText = ActiveMeshDetails[i].Mesh.name;
-                itemNode.AppendChild(node);
-            }
-        }*/
-
-        //xmlDoc.Save("test-doc.xml");
-        return xmlDoc;
-    }
-
-    private string FormatSizeString(long bytes)
-    {
-        float memSizeKB = bytes / 1024.0f;
-        if (memSizeKB < 1024f) return "" + memSizeKB + "k";
-        else
-        {
-            float memSizeMB = ((float)memSizeKB) / 1024.0f;
-            return memSizeMB.ToString("0.00") + "Mb";
-        }
-    }
-
-    private TextureDetails FindTextureDetails(Texture tTexture)
-    {
-        foreach (TextureDetails tTextureDetails in ActiveTextures)
-        {
-            if (tTextureDetails.texture == tTexture) return tTextureDetails;
-        }
-        return null;
-
-    }
-
-    private TextureDetails GetTextureDetail(Texture tTexture)
-    {
-        TextureDetails tTextureDetails = FindTextureDetails(tTexture);
-        if (tTextureDetails == null)
-        {
-            tTextureDetails = new TextureDetails();
-            tTextureDetails.texture = tTexture;
-            tTextureDetails.isCubeMap = tTexture is Cubemap;
-
-            int memSize = CalculateTextureSizeBytes(tTexture);
-
-            TextureFormat tFormat = TextureFormat.RGBA32;
-            int tMipMapCount = 1;
-            if (tTexture is Texture2D)
-            {
-                tFormat = (tTexture as Texture2D).format;
-                tMipMapCount = (tTexture as Texture2D).mipmapCount;
-            }
-            if (tTexture is Cubemap)
-            {
-                tFormat = (tTexture as Cubemap).format;
-                memSize = 8 * tTexture.height * tTexture.width;
-            }
-            if (tTexture is Texture2DArray)
-            {
-                tFormat = (tTexture as Texture2DArray).format;
-                tMipMapCount = 10;
-            }
-
-            tTextureDetails.memSize = memSize;
-            tTextureDetails.format = tFormat;
-            tTextureDetails.mipMapCount = tMipMapCount;
-
-        }
-
-        return tTextureDetails;
-    }
-
-    private int GetBitsPerPixel(TextureFormat format)
-    {
-        switch (format)
-        {
-            case TextureFormat.Alpha8: //	 Alpha-only texture format.
-                return 8;
-            case TextureFormat.ARGB4444: //	 A 16 bits/pixel texture format. Texture stores color with an alpha channel.
-                return 16;
-            case TextureFormat.RGBA4444: //	 A 16 bits/pixel texture format.
-                return 16;
-            case TextureFormat.RGB24:   // A color texture format.
-                return 24;
-            case TextureFormat.RGBA32:  //Color with an alpha channel texture format.
-                return 32;
-            case TextureFormat.ARGB32:  //Color with an alpha channel texture format.
-                return 32;
-            case TextureFormat.RGB565:  //	 A 16 bit color texture format.
-                return 16;
-            case TextureFormat.DXT1:    // Compressed color texture format.
-                return 4;
-            case TextureFormat.DXT5:    // Compressed color with alpha channel texture format.
-                return 8;
-            /*
-			case TextureFormat.WiiI4:	// Wii texture format.
-			case TextureFormat.WiiI8:	// Wii texture format. Intensity 8 bit.
-			case TextureFormat.WiiIA4:	// Wii texture format. Intensity + Alpha 8 bit (4 + 4).
-			case TextureFormat.WiiIA8:	// Wii texture format. Intensity + Alpha 16 bit (8 + 8).
-			case TextureFormat.WiiRGB565:	// Wii texture format. RGB 16 bit (565).
-			case TextureFormat.WiiRGB5A3:	// Wii texture format. RGBA 16 bit (4443).
-			case TextureFormat.WiiRGBA8:	// Wii texture format. RGBA 32 bit (8888).
-			case TextureFormat.WiiCMPR:	//	 Compressed Wii texture format. 4 bits/texel, ~RGB8A1 (Outline alpha is not currently supported).
-				return 0;  //Not supported yet
-			*/
-            case TextureFormat.PVRTC_RGB2://	 PowerVR (iOS) 2 bits/pixel compressed color texture format.
-                return 2;
-            case TextureFormat.PVRTC_RGBA2://	 PowerVR (iOS) 2 bits/pixel compressed with alpha channel texture format
-                return 2;
-            case TextureFormat.PVRTC_RGB4://	 PowerVR (iOS) 4 bits/pixel compressed color texture format.
-                return 4;
-            case TextureFormat.PVRTC_RGBA4://	 PowerVR (iOS) 4 bits/pixel compressed with alpha channel texture format
-                return 4;
-            case TextureFormat.ETC_RGB4://	 ETC (GLES2.0) 4 bits/pixel compressed RGB texture format.
-                return 4;
-            case TextureFormat.ATC_RGB4://	 ATC (ATITC) 4 bits/pixel compressed RGB texture format.
-                return 4;
-            case TextureFormat.ATC_RGBA8://	 ATC (ATITC) 8 bits/pixel compressed RGB texture format.
-                return 8;
-            case TextureFormat.BGRA32://	 Format returned by iPhone camera
-                return 32;
+                case TextureFormat.Alpha8: //	 Alpha-only texture format.
+                    return 8;
+                case TextureFormat.ARGB4444: //	 A 16 bits/pixel texture format. Texture stores color with an alpha channel.
+                    return 16;
+                case TextureFormat.RGBA4444: //	 A 16 bits/pixel texture format.
+                    return 16;
+                case TextureFormat.RGB24:   // A color texture format.
+                    return 24;
+                case TextureFormat.RGBA32:  //Color with an alpha channel texture format.
+                    return 32;
+                case TextureFormat.ARGB32:  //Color with an alpha channel texture format.
+                    return 32;
+                case TextureFormat.RGB565:  //	 A 16 bit color texture format.
+                    return 16;
+                case TextureFormat.DXT1:    // Compressed color texture format.
+                    return 4;
+                case TextureFormat.DXT5:    // Compressed color with alpha channel texture format.
+                    return 8;
+                /*
+                case TextureFormat.WiiI4:	// Wii texture format.
+                case TextureFormat.WiiI8:	// Wii texture format. Intensity 8 bit.
+                case TextureFormat.WiiIA4:	// Wii texture format. Intensity + Alpha 8 bit (4 + 4).
+                case TextureFormat.WiiIA8:	// Wii texture format. Intensity + Alpha 16 bit (8 + 8).
+                case TextureFormat.WiiRGB565:	// Wii texture format. RGB 16 bit (565).
+                case TextureFormat.WiiRGB5A3:	// Wii texture format. RGBA 16 bit (4443).
+                case TextureFormat.WiiRGBA8:	// Wii texture format. RGBA 32 bit (8888).
+                case TextureFormat.WiiCMPR:	//	 Compressed Wii texture format. 4 bits/texel, ~RGB8A1 (Outline alpha is not currently supported).
+                    return 0;  //Not supported yet
+                */
+                case TextureFormat.PVRTC_RGB2://	 PowerVR (iOS) 2 bits/pixel compressed color texture format.
+                    return 2;
+                case TextureFormat.PVRTC_RGBA2://	 PowerVR (iOS) 2 bits/pixel compressed with alpha channel texture format
+                    return 2;
+                case TextureFormat.PVRTC_RGB4://	 PowerVR (iOS) 4 bits/pixel compressed color texture format.
+                    return 4;
+                case TextureFormat.PVRTC_RGBA4://	 PowerVR (iOS) 4 bits/pixel compressed with alpha channel texture format
+                    return 4;
+                case TextureFormat.ETC_RGB4://	 ETC (GLES2.0) 4 bits/pixel compressed RGB texture format.
+                    return 4;
+                case TextureFormat.ATC_RGB4://	 ATC (ATITC) 4 bits/pixel compressed RGB texture format.
+                    return 4;
+                case TextureFormat.ATC_RGBA8://	 ATC (ATITC) 8 bits/pixel compressed RGB texture format.
+                    return 8;
+                case TextureFormat.BGRA32://	 Format returned by iPhone camera
+                    return 32;
 #if !UNITY_5
 			case TextureFormat.ATF_RGB_DXT1://	 Flash-specific RGB DXT1 compressed color texture format.
 			case TextureFormat.ATF_RGBA_JPG://	 Flash-specific RGBA JPG-compressed color texture format.
 			case TextureFormat.ATF_RGB_JPG://	 Flash-specific RGB JPG-compressed color texture format.
 			return 0; //Not supported yet  
 #endif
+            }
+            return 0;
         }
-        return 0;
+
+        private static int CalculateTextureSizeBytes(Texture tTexture)
+        {
+            int tWidth = tTexture.width;
+            int tHeight = tTexture.height;
+            if (tTexture is Texture2D)
+            {
+                Texture2D tTex2D = tTexture as Texture2D;
+                int bitsPerPixel = GetBitsPerPixel(tTex2D.format);
+                int mipMapCount = tTex2D.mipmapCount;
+                int mipLevel = 1;
+                int tSize = 0;
+                while (mipLevel <= mipMapCount)
+                {
+                    tSize += tWidth * tHeight * bitsPerPixel / 8;
+                    tWidth = tWidth / 2;
+                    tHeight = tHeight / 2;
+                    mipLevel++;
+                }
+                return tSize;
+            }
+            if (tTexture is Texture2DArray)
+            {
+                Texture2DArray tTex2D = tTexture as Texture2DArray;
+                int bitsPerPixel = GetBitsPerPixel(tTex2D.format);
+                int mipMapCount = 10;
+                int mipLevel = 1;
+                int tSize = 0;
+                while (mipLevel <= mipMapCount)
+                {
+                    tSize += tWidth * tHeight * bitsPerPixel / 8;
+                    tWidth = tWidth / 2;
+                    tHeight = tHeight / 2;
+                    mipLevel++;
+                }
+                return tSize * ((Texture2DArray)tTex2D).depth;
+            }
+            if (tTexture is Cubemap)
+            {
+                Cubemap tCubemap = tTexture as Cubemap;
+                int bitsPerPixel = GetBitsPerPixel(tCubemap.format);
+                return tWidth * tHeight * 6 * bitsPerPixel / 8;
+            }
+            return 0;
+        }
+    }        
+       
+    private Dictionary<string, List<ObjectDetails>> Objects { get; set; }
+
+    private List<Type> UNIQUE_TYPES = new List<Type>()
+    {
+        typeof(Texture),
+        typeof(Sprite),
+        typeof(Shader),
+        typeof(Avatar),
+        typeof(Mesh),
+        typeof(AnimationClip),
+        typeof(Animator),
+        typeof(AudioClip)
+    };
+
+    public MemorySample(string name, ESizeStrategy sizeStrategy)
+    {
+        Clear();
+
+        Name = name;
+        SizeStrategy = sizeStrategy;        
     }
 
-    private int CalculateTextureSizeBytes(Texture tTexture)
+    public override void Clear()
     {
+        TypeGroups_Clear();
+        Name = null;      
+    }   
 
-        int tWidth = tTexture.width;
-        int tHeight = tTexture.height;
-        if (tTexture is Texture2D)
-        {
-            Texture2D tTex2D = tTexture as Texture2D;
-            int bitsPerPixel = GetBitsPerPixel(tTex2D.format);
-            int mipMapCount = tTex2D.mipmapCount;
-            int mipLevel = 1;
-            int tSize = 0;
-            while (mipLevel <= mipMapCount)
-            {
-                tSize += tWidth * tHeight * bitsPerPixel / 8;
-                tWidth = tWidth / 2;
-                tHeight = tHeight / 2;
-                mipLevel++;
-            }
-            return tSize;
+    public void AddObject(Object o)
+    {
+        if (o != null)
+        {            
+            Type type = o.GetType();
+            AddGeneric(type.Name, o, UNIQUE_TYPES.Contains(type));
         }
-        if (tTexture is Texture2DArray)
+    }    
+
+    private void AddGeneric(string typeName, Object o, bool unique)
+    {
+        if (Objects == null)
         {
-            Texture2DArray tTex2D = tTexture as Texture2DArray;
-            int bitsPerPixel = GetBitsPerPixel(tTex2D.format);
-            int mipMapCount = 10;
-            int mipLevel = 1;
-            int tSize = 0;
-            while (mipLevel <= mipMapCount)
-            {
-                tSize += tWidth * tHeight * bitsPerPixel / 8;
-                tWidth = tWidth / 2;
-                tHeight = tHeight / 2;
-                mipLevel++;
-            }
-            return tSize * ((Texture2DArray)tTex2D).depth;
+            Objects = new Dictionary<string, List<ObjectDetails>>();
         }
-        if (tTexture is Cubemap)
+        
+        if (!Objects.ContainsKey(typeName))
         {
-            Cubemap tCubemap = tTexture as Cubemap;
-            int bitsPerPixel = GetBitsPerPixel(tCubemap.format);
-            return tWidth * tHeight * 6 * bitsPerPixel / 8;
+            Objects.Add(typeName, new List<ObjectDetails>());
         }
-        return 0;
+
+        bool goAhead = false;
+        if (unique)
+        {
+            ObjectDetails oDetails = FindObjectDetails(typeName, o);
+            goAhead = (oDetails == null);
+        }
+        else
+        {
+            goAhead = true;
+        }
+
+        if (goAhead)
+        {
+            ObjectDetails oDetails = new ObjectDetails(o, SizeStrategy);
+            Objects[typeName].Add(oDetails);
+        }
     }
 
-    private MeshDetails FindMeshDetails(Mesh tMesh)
+    public void Analyze()
     {
-        foreach (MeshDetails tMeshDetails in ActiveMeshDetails)
+        if (Objects != null)
         {
-            if (tMeshDetails.Mesh.GetInstanceID() == tMesh.GetInstanceID()) return tMeshDetails;
+            foreach (KeyValuePair<string, List<ObjectDetails>> pair in Objects)
+            {
+                SortObjectDetailsList(pair.Value);                
+            }
+        }       
+    }
+
+    private void SortObjectDetailsList(List<ObjectDetails> list)
+    {
+        list.Sort(delegate (ObjectDetails details1, ObjectDetails details2) { return details2.MemSize - details1.MemSize; });
+    }
+
+    public long GetMemorySizePerType(string type)
+    {
+        return GetMemorySizePerTypeInObjects(type, Objects);
+    }
+
+    public long GetMemorySizePerTypeGroup(string type)
+    {
+        return GetMemorySizePerTypeInObjects(type, TypeGroups_Objects);        
+    }
+
+    private long GetMemorySizePerTypeInObjects(string type, Dictionary<string, List<ObjectDetails>> objects)
+    {
+        long returnValue = 0;        
+        if (objects != null && objects.ContainsKey(type))
+        {
+            int count = objects[type].Count;
+            for (int i = 0; i < count; i++)
+            {
+                returnValue += objects[type][i].MemSize;
+            }
         }
+
+        return returnValue;
+    }
+
+    public override long GetTotalMemorySize()
+    {
+        long returnValue = 0;
+        foreach (KeyValuePair<string, List<ObjectDetails>> pair in Objects)
+        {
+            returnValue += GetMemorySizePerType(pair.Key);
+        }
+
+        return returnValue;
+    }
+    
+    private ObjectDetails FindObjectDetails(string type, Object o)
+    {
+        if (Objects != null && Objects.ContainsKey(type))
+        {
+            foreach (ObjectDetails details in Objects[type])
+            {                
+                if (details.Obj == o) return details;
+            }
+        }
+
         return null;
+    }    
 
+    #region type_groups
+    // This region is responsible for classifying the sample in type groups, for example: Texture2D and Sprite are assigned to the same group "Textures".
+    // This way the sample will be easier to read
+
+    public const string TYPE_GROUPS_OTHER = "Other";
+
+    private Dictionary<string, List<string>> TypeGroups { get; set; }
+
+    private Dictionary<string, List<ObjectDetails>> TypeGroups_Objects { get; set; }    
+
+    public void TypeGroups_Clear()
+    {
+        TypeGroups = null;
+
+        if (TypeGroups_Objects != null)
+        {
+            TypeGroups_Objects.Clear();
+        }
     }
+
+    public void TypeGroups_Apply(Dictionary<string, List<string>> typeGroups)
+    {
+        TypeGroups_Clear();
+
+        TypeGroups = TypeGroups;
+
+        if (Objects != null)
+        {
+            if (TypeGroups_Objects == null)
+            {
+                TypeGroups_Objects = new Dictionary<string, List<ObjectDetails>>();
+            }
+
+            List<string> typesProcessed = new List<string>();
+            List<ObjectDetails> objectDetailsList;
+            int objectsCount;
+            if (typeGroups != null)
+            {
+                string typeToProcess;
+                int typeGroupsCount;
+                foreach (KeyValuePair<string, List<string>> pair in typeGroups)
+                {
+                    objectDetailsList = new List<ObjectDetails>();
+                    TypeGroups_Objects.Add(pair.Key, objectDetailsList);
+                    
+                    typeGroupsCount = pair.Value.Count;
+                    for (int i = 0; i < typeGroupsCount; i++)
+                    {
+                        typeToProcess = pair.Value[i];
+                        if (Objects.ContainsKey(typeToProcess))
+                        {
+                            typesProcessed.Add(typeToProcess);
+
+                            objectsCount = Objects[typeToProcess].Count;
+                            for (int j = 0; j < objectsCount; j++)
+                            {
+                                objectDetailsList.Add(Objects[typeToProcess][j]);
+                            }
+                        }
+                    }                
+                                        
+                    SortObjectDetailsList(objectDetailsList);                    
+                }
+
+                // Loops through all types so the ones that haven't been included in any type group will be assigned to TYPE_GROUPS_OTHER type group
+                objectDetailsList = new List<ObjectDetails>();
+                TypeGroups_Objects.Add(TYPE_GROUPS_OTHER, objectDetailsList);
+                foreach (KeyValuePair<string, List<ObjectDetails>> pair in Objects)
+                {
+                    if (!typesProcessed.Contains(pair.Key))
+                    {
+                        objectsCount = pair.Value.Count;
+                        for (int i = 0; i < objectsCount; i++)
+                        {
+                            objectDetailsList.Add(pair.Value[i]);
+                        }
+                    }
+                }
+                
+                SortObjectDetailsList(objectDetailsList);                
+            }            
+        }
+    }
+
+    public List<ObjectDetails> TypeGroups_GetObjectDetails(string typeGroup)
+    {
+        List<ObjectDetails> returnValue = null;
+        if (TypeGroups_Objects != null && TypeGroups_Objects.ContainsKey(typeGroup))
+        {
+            returnValue = TypeGroups_Objects[typeGroup];
+        }
+
+        return returnValue;
+    }    
+    #endregion
+
+    #region size
+    protected override void Size_Recalculate()
+    {
+        // Size has to be calculated again
+        if (Objects != null)
+        {
+            int count;
+            foreach (KeyValuePair<string, List<ObjectDetails>> pair in Objects)
+            {
+                count = pair.Value.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    if (pair.Value[i].Obj != null)
+                    {
+                        pair.Value[i].CalculateSize(SizeStrategy);
+                    }
+                }
+
+                SortObjectDetailsList(pair.Value);
+            }
+        }
+
+        if (TypeGroups_Objects != null)
+        {
+            // These lists need to be sorted again since the size might have affected to the order                    
+            foreach (KeyValuePair<string, List<ObjectDetails>> pair in TypeGroups_Objects)
+            {
+                // We don't need to recalculate the size because it was already done above since Objects and TypeGroups_Objects store the same
+                // objects           
+                SortObjectDetailsList(pair.Value);
+            }
+        }
+    }
+    #endregion
+
+    #region xml    
+    private long Xml_AddObjectDetailsList(XmlDocument xmlDoc, XmlNode rootNode, List<ObjectDetails> list, string listName, bool includeDetails)
+    {
+        XmlNode itemNode = xmlDoc.CreateElement(listName);
+        rootNode.AppendChild(itemNode);
+
+        long memSize = 0;
+        XmlNode node;
+        XmlAttribute attribute;
+        int count = list.Count;
+        for (int i = 0; i < count; i++)
+        {
+            memSize += list[i].MemSize;
+
+            if (includeDetails)
+            {
+                node = xmlDoc.CreateElement(list[i].Type);
+                node.InnerText = list[i].Obj.name;
+                itemNode.AppendChild(node);
+
+                attribute = xmlDoc.CreateAttribute(XML_PARAM_SIZE);
+                attribute.Value = FormatSizeString(list[i].MemSize);
+                node.Attributes.Append(attribute);
+            }
+        }
+
+        attribute = xmlDoc.CreateAttribute(XML_PARAM_SIZE);
+        attribute.Value = FormatSizeString(memSize);
+        itemNode.Attributes.Append(attribute);
+        attribute = xmlDoc.CreateAttribute(XML_PARAM_AMOUNT);
+        attribute.Value = count + "";
+        itemNode.Attributes.Append(attribute);
+
+        return memSize;
+    }
+
+    /// <summary>
+    /// Returns a <c>XmlNode</c> that contains all assets stored in this sample.
+    /// </summary>
+    /// <param name="typeGroups">If <c>null</c> the assets are classified by their type. It a non <c>null</c> value is passed then the types of the assets are classified
+    /// in the typeGroups passed as a parameter</param>
+    /// <returns></returns>
+    public override XmlNode ToXML(XmlDocument xmlDoc = null, XmlNode rootNode = null, Dictionary<string, List<string>> typeGroups=null)
+    {
+        Dictionary<string, List<ObjectDetails>> objects;
+        if (typeGroups != null)
+        {
+            TypeGroups_Apply(typeGroups);
+            objects = TypeGroups_Objects;
+        }
+        else
+        {
+            objects = Objects;
+        }
+
+        // Header
+        if (xmlDoc == null)
+        {
+            xmlDoc = new XmlDocument();
+        }        
+
+        XmlNode thisRootNode = xmlDoc.CreateElement(XML_PARAM_SAMPLE);        
+        if (rootNode != null)
+        {
+            rootNode.AppendChild(thisRootNode);
+        }
+        else
+        {
+            xmlDoc.AppendChild(thisRootNode);
+        }
+
+        XmlAttribute attribute = xmlDoc.CreateAttribute(XML_PARAM_NAME);
+        attribute.Value = Name;
+        thisRootNode.Attributes.Append(attribute);
+        attribute = xmlDoc.CreateAttribute(XML_PARAM_SIZE_STRATEGY);
+        attribute.Value = SizeStrategy.ToString();
+        thisRootNode.Attributes.Append(attribute);
+
+        long totalMemory = 0;
+        if (objects != null)
+        {
+            long memSize;
+            foreach (KeyValuePair<string, List<ObjectDetails>> typeList in objects)
+            {
+                memSize = Xml_AddObjectDetailsList(xmlDoc, thisRootNode, typeList.Value, typeList.Key, typeList.Key != TYPE_GROUPS_OTHER);
+                totalMemory += memSize;
+            }
+        }
+
+        // Total memory taken up by all assets is set as an attribute of the header
+        attribute = xmlDoc.CreateAttribute(XML_PARAM_SIZE);
+        attribute.Value = FormatSizeString(totalMemory);
+        thisRootNode.Attributes.Append(attribute);
+
+        return xmlDoc;
+    }
+
+    public override void FromXML(XmlNode xml)
+    {
+    }
+    #endregion
 }
