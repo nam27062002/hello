@@ -57,6 +57,9 @@ namespace AI {
 			set { m_machineTransform.position = value + m_groundSensorOffset; }
 		}
 
+		private Vector3 m_lastPosition;
+		public Vector3 lastPosition { get { return m_lastPosition; } }
+
 		private Quaternion m_rotation;
 		protected Quaternion m_targetRotation;
 
@@ -282,6 +285,8 @@ namespace AI {
 					m_machineTransform.position = Vector3.Lerp(m_machineTransform.position, m_pilot.target + mouthOffset, m_latchBlending);
 				}
 			}
+
+			m_lastPosition = position;
 		}
 
 		public void FreeFall() {

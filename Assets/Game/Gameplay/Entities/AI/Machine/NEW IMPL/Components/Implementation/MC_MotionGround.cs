@@ -50,6 +50,7 @@ namespace AI {
 			if (hasHit) {
 				position = hit.point;
 				m_heightFromGround = 0f;
+				m_viewControl.Height(0f);
 				m_onGround = true;
 			}
 
@@ -154,8 +155,21 @@ namespace AI {
 			}
 		}
 
-		protected override void ExtendedUpdateFreeFall() {			
+		protected override void ExtendedUpdateFreeFall() {
+			m_fallTimer -= Time.deltaTime;
+			if (m_fallTimer <= 0f) {
+				m_heightFromGround = 0f;
+				m_viewControl.Height(0f);
+				m_onGround = true;
+			} else {
+				float dY = Mathf.Abs(lastPosition.y - position.y);
+				if (dY > Mathf.Epsilon) {
+					m_fallTimer = FREE_FALL_THRESHOLD;
+				}
+			}
+
 			if (m_onGround) {
+				m_fallTimer = FREE_FALL_THRESHOLD;
 				m_machine.SetSignal(Signals.Type.FallDown, false);
 				m_nextSubState = SubState.Idle;
 			}
@@ -221,6 +235,8 @@ namespace AI {
 					break;
 
 				case SubState.Jump_Down:
+					m_heightFromGround = 0f;
+					m_viewControl.Height(0f);
 					m_onGround = true;
 					m_viewControl.Jumping(false);
 					Stop();
@@ -236,6 +252,8 @@ namespace AI {
 					break;
 
 				case SubState.Jump_Start:
+					m_heightFromGround = 0f;
+					m_viewControl.Height(0f);
 					m_onGround = true;
 					m_viewControl.Jumping(true);
 					Stop();
@@ -271,6 +289,7 @@ namespace AI {
 					m_gravity = Vector3.zero;
 					m_fallTimer = FREE_FALL_THRESHOLD;
 
+					m_heightFromGround = 0f;
 					m_viewControl.Height(0f);
 
 					m_onGround = true;
@@ -281,6 +300,7 @@ namespace AI {
 
 		public override void OnCollisionGroundExit(Collision _collision) {
 			m_onGround = false;
+			m_heightFromGround = 100f;
 			m_viewControl.Height(100f);
 		}
 	}
