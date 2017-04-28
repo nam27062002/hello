@@ -53,6 +53,7 @@ public class HUDMessage : MonoBehaviour {
 		BREAK_OBJECT_NEED_TURBO,
 		SHIELD_POISON_LOST,
 		SHIELD_MINE_LOST,
+		DRUNK
 	}
 
 	// How to react with consecutive triggers
@@ -197,6 +198,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.EGG_INVENTORY_FULL:	Messenger.AddListener<CollectibleEgg>(GameEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
 			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.AddListener(GameEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.AddListener(GameEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
+			case Type.DRUNK:				Messenger.AddListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
 		}
 	}
 
@@ -224,6 +226,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.EGG_INVENTORY_FULL:	Messenger.RemoveListener<CollectibleEgg>(GameEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
 			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.RemoveListener(GameEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.RemoveListener(GameEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
+			case Type.DRUNK:				Messenger.RemoveListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
 		}
 	}
 
@@ -547,5 +550,13 @@ public class HUDMessage : MonoBehaviour {
 	void OnBreakObjectNeedTurbo()
 	{
 		Show();
+	}
+
+	/// <summary>
+	/// Drunk state has changed.
+	/// </summary>
+	/// <param name="_isDrunk">Whether the player is drunk or not.</param>
+	private void OnDrunkToggled(bool _isDrunk) {
+		if(_isDrunk) Show();
 	}
 }
