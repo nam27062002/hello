@@ -1244,6 +1244,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				}
 			}
         }
+
+		ApplyExternalForce();
 	}
 
 
