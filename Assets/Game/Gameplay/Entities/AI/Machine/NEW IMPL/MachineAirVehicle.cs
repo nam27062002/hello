@@ -7,13 +7,13 @@ namespace AI {
 		[SeparatorAttribute("Armor")]
 		[SerializeField] private HitsPerDragonTier m_armorDurabilityPerTier;
 
-		private DevicePassengersSpawner m_operatorSpawner;	
+		private DevicePassengersSpawner m_passengersSpawner;	
 		private Hit m_armorDurability = new Hit();
 
 
 		protected override void Awake() {
-			m_operatorSpawner = GetComponent<DevicePassengersSpawner>();
-			m_operatorSpawner.Initialize();
+			m_passengersSpawner = GetComponent<DevicePassengersSpawner>();
+			m_passengersSpawner.Initialize();
 			base.Awake();
 		}
 
@@ -25,8 +25,8 @@ namespace AI {
 			m_armorDurability.count = originalHits.count;
 			m_armorDurability.needBoost = originalHits.needBoost;
 
-			m_operatorSpawner.Respawn();
-			m_operatorSpawner.PassengersEnterDevice();
+			m_passengersSpawner.Respawn();
+			m_passengersSpawner.PassengersEnterDevice();
 
 			base.Spawn(_spawner);
 		}
@@ -36,7 +36,7 @@ namespace AI {
 				if (!m_armorDurability.needBoost || _boost) {
 					m_armorDurability.count--;
 					if (m_armorDurability.count <= 0) {
-						m_operatorSpawner.PassengersLeaveDevice();
+						m_passengersSpawner.PassengersLeaveDevice();
 						SetSignal(Signals.Type.Destroyed, true);
 					}
 					return true;
@@ -52,7 +52,7 @@ namespace AI {
 
 		public override bool Burn(Transform _transform) {			
 			if (base.Burn(_transform)) {				
-				m_operatorSpawner.PassengersBurn();
+				m_passengersSpawner.PassengersBurn();
 				return true;
 			}
 

@@ -23,6 +23,12 @@ Shader "Custom/UI/UIImage" {
 		_ColorMask ("Color Mask", Float) = 15
 
 		[Toggle(UNITY_UI_ALPHACLIP)] _UseUIAlphaClip ("Use Alpha Clip", Float) = 0
+
+		 // Soft Mask support
+	        // Soft Mask determines that shader supports soft masking by presence of this
+	        // property. All other properties listed in SoftMask.shader aren't required
+	        // to include here. 
+	        _SoftMask("Mask", 2D) = "white" {}
 	}
 
 	SubShader {
@@ -59,6 +65,9 @@ Shader "Custom/UI/UIImage" {
 			#include "UIShaders.cginc"
 
 			#pragma multi_compile __ UNITY_UI_ALPHACLIP
+
+			// Soft Mask Support
+            		#pragma multi_compile __ SOFTMASK_SIMPLE SOFTMASK_SLICED SOFTMASK_TILED
 			
 			// VERTEX SHADER ///////////////////////////////////////////////////////////////////////////////////////////
 			v2f vert(appdata_t IN) {
@@ -70,8 +79,11 @@ Shader "Custom/UI/UIImage" {
 				OUT.color = IN.color;
 				OUT.texcoord = IN.texcoord;
 
-								// [AOC] Apply color modifications
+				// [AOC] Apply color modifications
 				ApplyVertexColorModifiers(OUT.color);
+
+				// Soft Mask Support
+				SOFTMASK_CALCULATE_COORDS(OUT, IN.vertex)
 				
 				// Done!
 				return OUT;
@@ -84,6 +96,9 @@ Shader "Custom/UI/UIImage" {
 				
 				// Extra modifiers
 				ApplyFragmentColorModifiers(c);
+
+				// Soft Mask Support
+				c.a *= SOFTMASK_GET_MASK(IN);
 
 				// Apply clipping
 				c.a *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);

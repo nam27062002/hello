@@ -53,11 +53,14 @@ public class DragonSuperSize : MonoBehaviour {
 	{
 		if ( m_timer > 0 )	
 		{
-			m_timer -= Time.deltaTime;
-			if ( m_timer <= 0 ) 
+			if (!m_dragon.changingArea)
 			{
-				EndSuperSize();
-				Messenger.Broadcast<bool>( GameEvents.SUPER_SIZE_TOGGLE, false);
+				m_timer -= Time.deltaTime;
+				if ( m_timer <= 0 ) 
+				{
+					EndSuperSize();
+					Messenger.Broadcast<bool>( GameEvents.SUPER_SIZE_TOGGLE, false);
+				}
 			}
 		}
 #if UNITY_EDITOR
