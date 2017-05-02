@@ -51,6 +51,12 @@ namespace AI {
 		protected ViewControl 	m_viewControl;
 		protected Rigidbody		m_rbody;
 
+		public Quaternion orientation { 
+			get { return m_rotation; }
+			set { m_targetRotation = m_rotation = value;
+				m_machineTransform.rotation = m_rotation; }
+		}
+
 		private Vector3 m_groundSensorOffset;
 		public Vector3 position {
 			get { return m_groundSensor.position; }
@@ -186,15 +192,17 @@ namespace AI {
 
 			switch (m_state) {
 				case State.Free:
-					ExtendedUpdate();
-					UpdateOrientation();
+					if (!m_viewControl.isHitAnimOn()) {
+						ExtendedUpdate();
+						UpdateOrientation();
 
-					m_viewControl.Move(m_pilot.speed);
+						m_viewControl.Move(m_pilot.speed);
 
-					UpdateAttack();
+						UpdateAttack();
 
-					if (m_viewControl.hasNavigationLayer) {
-						m_viewControl.NavigationLayer(m_pilot.impulse);
+						if (m_viewControl.hasNavigationLayer) {
+							m_viewControl.NavigationLayer(m_pilot.impulse);
+						}
 					}
 					break;
 

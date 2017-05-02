@@ -7,6 +7,7 @@ namespace AI {
 
 		[SerializeField] protected MC_MotionWallWalking m_wallWalkingMotion = new MC_MotionWallWalking();
 
+		public override Quaternion orientation 	{ get { return m_wallWalkingMotion.orientation; } set { m_wallWalkingMotion.orientation = value; } }
 		public override Vector3 position		{ get { return m_wallWalkingMotion.position; } set { m_wallWalkingMotion.position = value; } }
 		public override Vector3 direction 		{ get { return m_wallWalkingMotion.direction; } }
 		public override Vector3 groundDirection	{ get { return m_wallWalkingMotion.groundDirection; } }

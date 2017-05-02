@@ -250,7 +250,12 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		string rewardSku = "";
 		switch(CPGachaTest.rewardChanceMode) {
 			case CPGachaTest.RewardChanceMode.DEFAULT: {
-				rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
+				// [AOC] Force common pet during tutorial
+				if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
+					rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
+				} else {
+					rewardSku = "pet_common";
+				}
 			} break;
 
 			case CPGachaTest.RewardChanceMode.COMMON_ONLY: {
