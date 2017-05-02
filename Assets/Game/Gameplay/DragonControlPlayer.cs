@@ -1,21 +1,30 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DragonControlPlayer : DragonControl {
+public class DragonControlPlayer : MonoBehaviour {
 
+	[HideInInspector] public bool moving = false;
+	[HideInInspector] public bool action = false;
 
 	TouchControlsDPad	touchControls = null;
     JoystickControls    joystickControls = null;
-    bool joystickMoving = false;
+    bool 				joystickMoving = false;
+    TiltControls		tiltControls = null;
+    bool 				tiltMoving = false;
 
 	private Assets.Code.Game.Spline.BezierSpline m_followingSpline;
 	private int m_testDirecton = 1;
+
+
 
     // Use this for initialization
     void Start () {
 		GameObject gameInputObj = GameObject.Find("PF_GameInput");
 		if(gameInputObj != null) {
 			touchControls = gameInputObj.GetComponent<TouchControlsDPad>();
+			// tiltControls = gameInputObj.GetComponent<TiltControls>();
+			if ( tiltControls != null )
+				tiltControls.Calibrate();
             joystickControls = gameInputObj.GetComponent<JoystickControls>();
         }
 
@@ -34,22 +43,36 @@ public class DragonControlPlayer : DragonControl {
 	void OnEnable() {
 		if(touchControls != null) {
 			touchControls.enabled = true;
-#if UNITY_EDITOR
-            joystickControls.enabled = true;
-#endif
         }
+
+        if ( tiltControls != null )
+        	tiltControls.enabled = true;
+
+#if UNITY_EDITOR
+		if ( joystickControls != null )
+			joystickControls.enabled = true;
+#endif
+
     }
 
 	void OnDisable() {
 		if(touchControls != null) {
 			touchControls.SetTouchObjRendering(false);
 			touchControls.enabled = false;
-			moving = false;
-			action = false;
+		
+        }
+
+        if ( tiltControls != null )
+			tiltControls.enabled = false;
+
 #if UNITY_EDITOR
+		if ( joystickControls != null )
             joystickControls.enabled = false;
 #endif
-        }
+
+		moving = false;
+		action = false;
+
     }
 	
 	// Update is called once per frame
@@ -67,6 +90,15 @@ public class DragonControlPlayer : DragonControl {
 			moving = touchControls.CurrentTouchState != TouchState.none;
 			action = touchControls.touchAction;
 		}
+
+		if ( tiltControls != null )
+		{
+			tiltControls.UpdateTiltControls();
+			tiltMoving = tiltControls.IsMoving();
+			moving = moving || tiltMoving;
+			action = action || tiltControls.getAction();
+
+		}
 #if UNITY_EDITOR
         if (joystickControls != null)
         {
@@ -76,9 +108,13 @@ public class DragonControlPlayer : DragonControl {
             action = action || joystickControls.getAction();
         }
 #endif
+
+	
     }
 
-	override public Vector3 GetImpulse(float desiredVelocity){
+	public void GetImpulse(float desiredVelocity, ref Vector3 impulse){
+
+		impulse = Vector3.zero;
 
 		// if app mode is test -> input something else?
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST && m_followingSpline != null)
@@ -97,22 +133,37 @@ public class DragonControlPlayer : DragonControl {
 			Vector3 target = m_followingSpline.GetPoint( m_followingClosestT );
 			target.z = 0;
 			Vector3 move = target - transform.position;
-			return move.normalized * desiredVelocity;
+			impulse = move.normalized * desiredVelocity;
 		}	
 
 #if UNITY_EDITOR
         if (joystickControls != null && joystickMoving)
         {
              joystickControls.CalcSharkDesiredVelocity(desiredVelocity);
-             return new Vector3(joystickControls.SharkDesiredVel.x, joystickControls.SharkDesiredVel.y, 0f);
+			impulse.x = joystickControls.SharkDesiredVel.x;
+			impulse.y = joystickControls.SharkDesiredVel.y;
+			impulse.z = 0;
+			return;
         }
 #endif
+		if ( tiltControls != null && tiltMoving )
+        {
+        	tiltControls.CalcSharkDesiredVelocity( desiredVelocity );
+			impulse.x = tiltControls.SharkDesiredVel.x;
+			impulse.y = tiltControls.SharkDesiredVel.y;
+			impulse.z = 0;
+			return;
+        }
+
         if (touchControls != null && moving)
         {
             touchControls.CalcSharkDesiredVelocity(desiredVelocity);
-            return new Vector3(touchControls.SharkDesiredVel.x, touchControls.SharkDesiredVel.y, 0f);
-        }          
+			impulse.x = touchControls.SharkDesiredVel.x;
+			impulse.y = touchControls.SharkDesiredVel.y;
+			impulse.z = 0;
+			return;
+        }
 
-        return Vector3.zero;
+
     } 
 }

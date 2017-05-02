@@ -11,7 +11,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	private DragonPlayer 	m_dragon;
 	private DragonMotion 	m_motion;
-	private DragonControl 	m_controls;
+	private DragonControlPlayer 	m_controls;
 	private Animator 		m_animator;
 
 	private bool m_active;
@@ -44,7 +44,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	void Awake () {
 		m_dragon = GetComponent<DragonPlayer>();	
 		m_motion = GetComponent<DragonMotion>();
-		m_controls = GetComponent<DragonControl>();
+		m_controls = GetComponent<DragonControlPlayer>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 
 		m_active = false;
