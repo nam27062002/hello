@@ -62,9 +62,10 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 //				float s = ((sin(_RayOffset + (i.uv.x * _RayPhase) + (_Time.y * _RaySpeed)) * (1.0 - _RayWidth)) + 1.0) * 0.5;
-				float m = fmod(floor(i.uv.x * _RayPhase), 2.0);
-				float f = frac(i.uv.x * _RayPhase);
-				float s = lerp(f, 1.0f - f, m);
+				float t = abs(_RayOffset + (i.uv.x * _RayPhase) - (_Time.y * _RaySpeed));
+				float m = fmod(floor(t), 2.0);
+				float f = frac(t);
+				float s = lerp(f, 1.0 - f, m);
 
 				s = 1.0 - smoothstep(0, _RayWidth, abs(s - i.uv.y));
 				return s * _RayColor;
