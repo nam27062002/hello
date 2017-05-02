@@ -10,7 +10,7 @@ namespace AI {
 			public float duration = 1f;
 		}
 		
-		[CreateAssetMenu(menuName = "Behaviour/Activate Action Periodically")]
+		[CreateAssetMenu(menuName = "Behaviour/Actions/Activate Action Periodically")]
 		public class ActivateActionPeriodically : StateComponent {
 
 			private ActivateActionPeriodicallyData m_data;

@@ -8,7 +8,7 @@ namespace AI {
 			public Pilot.Action action = Pilot.Action.Boost;
 		}
 		
-		[CreateAssetMenu(menuName = "Behaviour/Activate Action")]
+		[CreateAssetMenu(menuName = "Behaviour/Actions/Activate Action")]
 		public class ActivateAction : StateComponent {
 
 			private ActivateActionData m_data;

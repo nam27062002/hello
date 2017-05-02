@@ -54,6 +54,8 @@ namespace AI {
 
 		private bool m_willPlaySpawnSound;
 
+		public virtual Quaternion orientation 	{ get { return transform.rotation; } set { transform.rotation = value; } }
+
 		public Vector3 position			{ 	get { if (m_enableMotion) return m_motion.position; else return transform.position; } 
 											set { if (m_enableMotion) m_motion.position = value; else transform.position = value; } }
 
