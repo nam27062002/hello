@@ -77,10 +77,12 @@ namespace AI {
 					if (m_pursuitState == PursuitState.Move_Towards) {
 						if (m_machine.GetSignal(Signals.Type.Critical)) {
 							ChangeState(PursuitState.Move_Away);
-						} else {							
+						} else {
 							bool onGuardArea = false;
 
 							if (m_machine.GetSignal(Signals.Type.Danger)) {
+								if (m_target.position.x < m_machine.position.x) m_pilot.SetDirection(Vector3.left, true);
+								else 											m_pilot.SetDirection(Vector3.right, true);
 								m_transitionParam[0] = m_target;
 								Transition(OnEnemyInRange, m_transitionParam);
 							} else {
@@ -90,6 +92,8 @@ namespace AI {
 								}
 
 								if (onGuardArea) {
+									if (m_target.position.x < m_machine.position.x) m_pilot.SetDirection(Vector3.left, true);
+									else 											m_pilot.SetDirection(Vector3.right, true);
 									m_transitionParam[0] = m_target;
 									Transition(OnEnemyInGuardArea, m_transitionParam);
 								}

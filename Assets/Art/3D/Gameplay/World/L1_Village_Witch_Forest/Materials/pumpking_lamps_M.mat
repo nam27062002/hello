@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: pumpking_lamps_M
-  m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
+  m_Shader: {fileID: 4800000, guid: 8303da806b99a45bcbaf8904f9f40c9a, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -98,6 +98,9 @@ Material:
         name: _FogStart
       second: 0
     - first:
+        name: _FresnelPower
+      second: 0
+    - first:
         name: _GlossMapScale
       second: 1
     - first:
@@ -131,6 +134,9 @@ Material:
         name: _SrcBlend
       second: 1
     - first:
+        name: _StencilMask
+      second: 10
+    - first:
         name: _UVSec
       second: 0
     - first:
@@ -146,3 +152,6 @@ Material:
     - first:
         name: _FogColor
       second: {r: 0, g: 0, b: 0, a: 0}
+    - first:
+        name: _FresnelColor
+      second: {r: 1, g: 1, b: 1, a: 0}

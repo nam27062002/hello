@@ -144,8 +144,8 @@ namespace AI {
 		}
 
 		// External interactions
-		public void LockInCage() {}
-		public void UnlockFromCage() {}
+		public void EnterDevice(bool _isCage) {}
+		public void LeaveDevice(bool _isCage) {}
 
 		public void ReceiveDamage(float _damage) {}
 

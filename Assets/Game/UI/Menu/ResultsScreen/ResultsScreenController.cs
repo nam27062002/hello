@@ -393,6 +393,9 @@ public class ResultsScreenController : MonoBehaviour {
 
 		// Nothing else to show, go back to the menu!
 		else {
+			// Show loading screen
+			InstanceManager.gameSceneController.loadingScreen.GetComponent<ShowHideAnimator>().ForceShow(false);
+
 			// Update global stats
 			UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;
 
@@ -411,6 +414,9 @@ public class ResultsScreenController : MonoBehaviour {
 
 			// Process collectible egg
 			EggManager.ProcessCollectibleEgg();
+
+			// Process unlocked skins for current dragon
+			UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(DragonManager.currentDragon);
 
 			// Save persistence
 			PersistenceManager.Save(true);

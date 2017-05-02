@@ -166,7 +166,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 				pos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 			}
 
-			if (pos.x < (Screen.width * 0.1f) && pos.y < (Screen.height * 0.1f))
+			if (pos.x < (Screen.width * 0.2f) && pos.y < (Screen.height * 0.2f))
 			{
                 m_activateTimer += Time.unscaledDeltaTime;
 				if ( m_activateTimer > m_activationTime )

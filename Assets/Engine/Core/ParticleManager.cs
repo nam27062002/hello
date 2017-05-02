@@ -14,20 +14,22 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	private Dictionary<string, int> m_poolSize = new Dictionary<string, int>();
 	private List<Pool> m_iterator = new List<Pool>();
 
+	private float m_printTimer = 10f;
+
 	void Update() {
-		#if PRINT_POOLS
-			string fileName = "ParticleManager.txt";
-			float time = 10f;			
-				time -= Time.deltaTime;
-				if (time <= 0f) {
-					StreamWriter sw = new StreamWriter(fileName, false);
-					foreach (KeyValuePair<string, Pool> pair in m_particlePools) {
-						sw.WriteLine(pair.Key + ": " + pair.Value.Size());
-					}
-					sw.Close();
-					time = 10f;
-				}
+		#if PRINT_POOLS						
+		m_printTimer -= Time.deltaTime;
+		if (m_printTimer <= 0f) {
+			string fileName = "PM_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea + ".xml";
+			StreamWriter sw = new StreamWriter(fileName, false);
+			sw.WriteLine("<Definitions>");
+			foreach (KeyValuePair<string, Pool> pair in m_particlePools) {
+				sw.WriteLine("<Definition sku=\"" + pair.Key + "\" poolSize=\"" + pair.Value.Size() + "\"/>");
 			}
+			sw.WriteLine("</Definitions>");
+			sw.Close();
+			m_printTimer = 10f;
+		}
 		#endif
 
 		for (int i = 0; i < m_iterator.Count; i++) {
@@ -155,12 +157,15 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 
 		// Do it!
 		#if PRINT_POOLS
-		Pool pool = new Pool(_prefab, instance.transform, 1, true, true);
+		Pool pool = new Pool(_prefab, instance.transform, 1, true, true, true);
 		#else
 		if (instance.m_poolSize.Count == 0f) {
-			List<DefinitionNode> poolSize = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS);
-			for (int i = 0; i < poolSize.Count; i++) {
-				instance.m_poolSize.Add(poolSize[i].sku, poolSize[i].GetAsInt("poolSize"));
+			if (LevelManager.currentLevelData != null) {
+				string category = "PARTICLE_MANAGER_SETTINGS_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea;
+				List<DefinitionNode> poolSize = DefinitionsManager.SharedInstance.GetDefinitionsList(category.ToUpper());
+				for (int i = 0; i < poolSize.Count; i++) {
+					instance.m_poolSize.Add(poolSize[i].sku, poolSize[i].GetAsInt("poolSize"));
+				}
 			}
 		}
 

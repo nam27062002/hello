@@ -159,6 +159,11 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
         Vector3 startPosition = transform.position;
         while (EntitiesSpawned < EntitiesToSpawn) {            
             GameObject spawning = m_entities[EntitiesSpawned].gameObject;
+
+			Transform spawningTransform = spawning.transform;
+			spawningTransform.rotation = Quaternion.identity;
+			spawningTransform.localRotation = Quaternion.identity;
+
             if (!spawning.activeSelf) {
                 spawning.SetActive(true);
             }

@@ -83,7 +83,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	FlyLoopBehaviour		m_flyLoopBehaviour;
 	DragonPlayer			m_dragon;
 	// DragonHealthBehaviour	m_health;
-	DragonControl			m_controls;
+	DragonControlPlayer			m_controls;
 	DragonAnimationEvents 	m_animationEventController;
 	DragonParticleController m_particleController;
 	SphereCollider 			m_mainGroundCollider;
@@ -197,7 +197,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	private Vector3 m_waterEnterPosition;
 	private bool m_insideWater = false;
 	private bool m_outterSpace = false;
-	private bool m_changingArea = false;
 	private string m_destinationArea = "";
 	private Assets.Code.Game.Spline.BezierSpline m_followingSpline;
 	private float m_followingClosestT;
@@ -297,7 +296,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_flyLoopBehaviour	= m_animator.GetBehaviour<FlyLoopBehaviour>();
 		m_dragon			= GetComponent<DragonPlayer>();
 		// m_health			= GetComponent<DragonHealthBehaviour>();
-		m_controls 			= GetComponent<DragonControl>();
+		m_controls 			= GetComponent<DragonControlPlayer>();
 		m_animationEventController = GetComponentInChildren<DragonAnimationEvents>();
 		m_particleController = GetComponentInChildren<DragonParticleController>();
 		Transform sensors	= transform.FindChild("sensors").transform; 
@@ -444,7 +443,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	private void OnGameAreaEnter()
 	{
-		if ( m_changingArea && m_changeAreaState == ChangeAreaState.Loading_Next_Area )
+		if ( m_dragon.changingArea && m_changeAreaState == ChangeAreaState.Loading_Next_Area )
 		{
 			m_changeAreaState = ChangeAreaState.Exit;
 		}
@@ -498,7 +497,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				case State.ChangingArea:
 				{
 					// if fury not active
-					m_changingArea = false;
+					m_dragon.changingArea = false;
 					m_eatBehaviour.ResumeEating();
 					Messenger.Broadcast(GameEvents.PLAYER_ENTERING_AREA);
 				}break;
@@ -1089,7 +1088,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	/// </summary>
 	private void UpdateMovement( float _deltaTime) 
 	{
-		Vector3 impulse = m_controls.GetImpulse(1);
+		Vector3 impulse = Vector3.zero;
+		m_controls.GetImpulse(1, ref impulse);
 
 		if ( m_dragon.IsDrunk() )
 		{
@@ -1200,7 +1200,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	private void UpdateWaterMovement( float _deltaTime )
 	{
-		Vector3 impulse = m_controls.GetImpulse(1);
+		Vector3 impulse = Vector3.zero;
+		m_controls.GetImpulse(1, ref impulse);
 		if ( m_dragon.IsDrunk() )
 		{
 			impulse = -impulse;
@@ -1245,12 +1246,15 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				}
 			}
         }
+
+		ApplyExternalForce();
 	}
 
 
     private void UpdateSpaceMovement(float _deltaTime)
     {
-        Vector3 impulse = m_controls.GetImpulse(1);
+        Vector3 impulse = Vector3.zero;
+        m_controls.GetImpulse(1, ref impulse);
         //Vector3 origImpulse = impulse;
         if (boostSpeedMultiplier > 1)
         {
@@ -1320,8 +1324,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
     private void UpdateParabolicMovement( float _deltaTime, float sign, float distance)
 	{
-		// Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_currentSpeedMultiplier * Time.deltaTime * 0.1f);
-		Vector3 impulse = m_controls.GetImpulse(_deltaTime * GetTargetForceMultiplier());
+		Vector3 impulse = Vector3.zero;
+		m_controls.GetImpulse(_deltaTime * GetTargetForceMultiplier(), ref impulse);
 
 		// check collision with ground, only down?
 		float moveValue = sign * (m_parabolicMovementConstant + ( m_parabolicMovementAdd * distance ));
@@ -1877,12 +1881,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				m_previousState = State.OuterSpace;
 			}
 		}
-		else if ( _other.CompareTag("AreaChange") && !m_changingArea && InstanceManager.gameSceneController != null )
+		else if ( _other.CompareTag("AreaChange") && !m_dragon.changingArea && InstanceManager.gameSceneController != null )
 		{
 			string destinationArea = _other.GetComponent<AreaPortal>().m_areaPortal;
 			if ( LevelManager.currentArea != destinationArea )
 			{
-				m_changingArea = true;
+				m_dragon.changingArea = true;
 				// Start moving through Spline
 				m_followingSpline = _other.GetComponent<Assets.Code.Game.Spline.BezierSpline>();
 				m_destinationArea = destinationArea;
@@ -1918,9 +1922,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			}
 		}
 		/*
-		else if ( _other.CompareTag("AreaChange") && m_changingArea)
+		else if ( _other.CompareTag("AreaChange") && m_dragon.changingArea)
 		{
-			m_changingArea = false;
+			m_dragon.changingArea = false;
 		}
 		*/
 

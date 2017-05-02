@@ -283,7 +283,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	public bool IsGrabbing()
 	{
-		return m_grabbingPrey;
+		return m_grabbingPrey && m_holdingPrey != null;
 	}
 
 	// Update is called once per frame
@@ -753,7 +753,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			if (onEndLatching != null)
 				onEndLatching();
 		}
-
+		m_grabbingPrey = false;
 		m_holdTransform = null;
 		if ( m_holdPoint != null )
 			m_holdPoint.holded = false;

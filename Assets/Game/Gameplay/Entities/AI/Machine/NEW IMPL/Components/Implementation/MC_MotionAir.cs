@@ -10,6 +10,7 @@ namespace AI {
 		[SerializeField] private bool m_dragonStyleRotation = false;
 		[SerializeField] private bool m_faceDirection = true;
 		[SerializeField] private bool m_rollRotation = false;
+		[SerializeField] private float m_rollAngle = 35f;
 
 		[SeparatorAttribute]
 		[SerializeField] private bool m_limitHorizontalRotation = false;
@@ -54,12 +55,13 @@ namespace AI {
 				if (m_rollRotation) {
 					float angle = Vector3.Angle(Vector3.right, m_direction);
 
-					if		(angle > 10f && angle < 90f) 	angle = Mathf.Min(35f, angle);
-					else if (angle > 90f && angle < 170f) 	angle = Mathf.Min(35f, 180f - angle);
-					else 									angle = 0f;
+					if (angle < 10f || angle > 170f) {
+						angle = 0f;
+					} else {
+						if (angle >= 90f) 
+							angle = 180f - angle;
 
-					if (m_direction.x < 0f && m_direction.z > 0f ||  m_direction.x > 0f && m_direction.z < 0f) {
-						angle *= -1;
+						angle = ((angle - 10f) / (90f - 10f)) * (m_rollAngle - 0f) + 0f;
 					}
 
 					m_targetRotation = Quaternion.AngleAxis(angle, m_direction) * m_targetRotation;

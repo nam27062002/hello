@@ -305,6 +305,8 @@ public class ProfilerControlPanelController : MonoBehaviour
         VineBigLeaf,
 		WoodsCabins,
 		WoodsLeaves,
+        TunnelVillageCastle,
+        TunnelCastleVillage,
         Castle,
         Tunnel,
         Dungeons,
@@ -320,6 +322,8 @@ public class ProfilerControlPanelController : MonoBehaviour
         new Vector3(-285, 45, 0f),
         new Vector3(137, 51, 0f),
 		new Vector3(280, 42, 0f),
+        new Vector3(360, 69, 0f),
+        new Vector3(414, 68, 0f),
         new Vector3(598, -3, 0f),
         new Vector3(598, -46, 0f),
         new Vector3(566, -62, 0f),
@@ -471,7 +475,7 @@ public class ProfilerControlPanelController : MonoBehaviour
     {     
         if (mSceneGoToMemoryText != null)
         {
-            mSceneGoToMemoryText.transform.parent.gameObject.SetActive(false);
+            /*mSceneGoToMemoryText.transform.parent.gameObject.SetActive(false);
             if (GameSceneManager.nextScene == ProfilerMemoryController.NAME)
             {
                 mSceneGoToMemoryText.text = "Go To Menu";
@@ -479,14 +483,16 @@ public class ProfilerControlPanelController : MonoBehaviour
             else
             {
                 mSceneGoToMemoryText.text = "Go To Memory Scene";
-            }
+            }*/
+            mSceneGoToMemoryText.text = "Send Notif";
         }
     }
 
     public void Scene_OnGoToMemorySceneClicked()
     {
         //ApplicationManager.instance.Debug_ToggleProfilerMemoryScene();
-       ApplicationManager.instance.Debug_ToggleProfilerLoadScenesScene();
+        //ApplicationManager.instance.Debug_ToggleProfilerLoadScenesScene();
+        ApplicationManager.instance.Debug_ScheduleNotification();
     }
     #endregion
 }

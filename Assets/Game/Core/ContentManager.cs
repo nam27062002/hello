@@ -18,7 +18,8 @@ public class ContentManager
 		// Settings
 		kDefinitionFiles.Add(DefinitionsCategory.LOCALIZATION, new string[]{"Rules/localizationDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, new string[]{"Rules/gameSettings", "Rules/dragonSettings", "Rules/initialSettings"});
-		kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS, new string[]{"Rules/particleManager"});
+		kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[]{"Rules/PM_level_0_area1"});
+		kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[]{"Rules/PM_level_0_area2"});
 		// kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, );
 
 		// Progression
