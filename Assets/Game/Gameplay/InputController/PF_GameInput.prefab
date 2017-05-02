@@ -5,12 +5,13 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 481480}
-  - 114: {fileID: 11407390}
-  - 114: {fileID: 11460204}
-  - 114: {fileID: 114000012863333618}
+  - component: {fileID: 481480}
+  - component: {fileID: 11407390}
+  - component: {fileID: 11460204}
+  - component: {fileID: 114000012863333618}
+  - component: {fileID: 114432848181361590}
   m_Layer: 5
   m_Name: PF_GameInput
   m_TagString: Untagged
@@ -27,10 +28,10 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &11407390
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -60,7 +61,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_boostWithRadiusCheck: 0
   m_boostWithSecondTouch: 1
-  m_boostWithHardPush: 0
   touchAction: 0
   m_dpadObj: {fileID: 0}
   m_dpadDotObj: {fileID: 0}
@@ -86,3 +86,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33e18b5a18ff5f149b0ddf5c59366a73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114432848181361590
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad6800246bc7440d483eea1e61297791, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_touchAction: 0

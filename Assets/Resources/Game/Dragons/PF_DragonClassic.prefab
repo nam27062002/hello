@@ -6093,6 +6093,7 @@ MonoBehaviour:
   m_wingsIdleSound: Dragon_Idle_Flaps
   m_wingsFlyingSound: Dragon_Flaps
   m_eatSound: Dragon_Eat
+  m_eatHoldSound: 
   m_wingsWindSound: Dragon_wind_boost
   m_wingsStrongFlap: Dragon_Strong_Flap
   m_levelUpSound: Level_Up
@@ -6271,9 +6272,35 @@ MonoBehaviour:
   m_segmentLength: 0.5
   m_segmentInitialWidth: 0.5
   m_segmentFinalWidth: 3
-  m_maxAmplitude: 1
+  m_maxAmplitude: 0.5
+  m_shapeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0.0018435837
+      value: 0.093747824
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.39524525
+      value: 0.7362197
+      inSlope: 1.2293458
+      outSlope: 1.2293458
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.9981564
+      value: 0.29413402
+      inSlope: -0.7416894
+      outSlope: -0.7416894
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  m_widthMultiplier: 2
   m_offsetRays: 2.0943952
   m_rayMaterial: {fileID: 2100000, guid: b9b6ff8aa13cc56479ce02cd514ba4cd, type: 2}
+  m_numRays: 3
   m_length: 6
   m_particleStartPrefab: {fileID: 0}
   m_particleEndPrefab: {fileID: 0}
