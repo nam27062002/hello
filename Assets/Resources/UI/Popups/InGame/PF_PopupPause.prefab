@@ -3317,6 +3317,8 @@ GameObject:
   - component: {fileID: 114098870267928816}
   - component: {fileID: 114042344992474892}
   - component: {fileID: 95130005032957424}
+  - component: {fileID: 114672363309467644}
+  - component: {fileID: 114327276220032744}
   m_Layer: 5
   m_Name: DragonInfoBtn
   m_TagString: Untagged
@@ -8124,6 +8126,19 @@ MonoBehaviour:
   brightness: 0
   saturation: 0
   contrast: 0
+--- !u!114 &114327276220032744
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1857206006582254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e54eb46b60cc4ca48a5193ecd538ed8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetDragon: 0
+  m_dragonSku: 
 --- !u!114 &114332083342104484
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9620,10 +9635,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_popupPath: UI/Popups/Tutorial/PF_PopupInfoFireRush
+  m_delay: 0
   OnPopupInit:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+    m_TypeName: PopupLauncher+PopupEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
 --- !u!114 &114454970369389806
 MonoBehaviour:
@@ -11479,10 +11495,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_popupPath: UI/Popups/Tutorial/PF_PopupInfoControls
+  m_delay: 0
   OnPopupInit:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+    m_TypeName: PopupLauncher+PopupEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
 --- !u!114 &114571693758009202
 MonoBehaviour:
@@ -11971,10 +11988,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_popupPath: UI/Popups/ResourcesFlow/PF_PopupCurrencyShop
+  m_delay: 0
   OnPopupInit:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+    m_TypeName: PopupLauncher+PopupEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
 --- !u!114 &114624775716161510
 MonoBehaviour:
@@ -12204,10 +12222,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_popupPath: UI/Popups/Tutorial/PF_PopupInfoMap
+  m_delay: 0
   OnPopupInit:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+    m_TypeName: PopupLauncher+PopupEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
 --- !u!114 &114655856715360134
 MonoBehaviour:
@@ -12387,6 +12406,35 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
+--- !u!114 &114672363309467644
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1857206006582254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d677588cf25b47fe84f2f773daf1f23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_popupPath: UI/Popups/Menu/PF_PopupDragonInfo
+  m_delay: 0
+  OnPopupInit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1857206006582254}
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: PopupLauncher+PopupEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!114 &114673335132453892
 MonoBehaviour:
   m_ObjectHideFlags: 1
