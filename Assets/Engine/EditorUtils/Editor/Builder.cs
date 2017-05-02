@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -353,5 +355,79 @@ public class Builder : MonoBehaviour
 		string prefix = "BUILDER> ";
 		_msg = _msg.Replace("\n", "\n" + prefix);
 		UnityEngine.Debug.Log(prefix + _msg);
+	}
+
+
+	private static readonly string ASSETS_DIR = "Assets/Game/Scenes/Levels";
+	// [MenuItem ("Build/Bake Occlusion")]
+	public static void BakeOcclusion()
+	{
+		// Load proper scenes
+		ContentManager.InitContent(true);
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVELS, "level_0");
+		List<string> levels = def.GetAsList<string>("common");
+
+		int areaIndex = 1;
+		List<string> areaList = def.GetAsList<string>("area"+areaIndex);
+		while(areaList.Count > 0 && !string.IsNullOrEmpty(areaList[0]) )
+		{
+			for(int i = 0; i<areaList.Count; i++)
+			{
+				if(!string.IsNullOrEmpty( areaList[i] ))
+				{
+					levels.Add(areaList[i]);
+				}
+			}	
+			areaIndex++;
+			areaList = def.GetAsList<string>("area"+areaIndex);
+		}
+
+		for( int i = 0; i<levels.Count; i++ )
+		{
+			string path = ASSETS_DIR;
+			string levelName = levels[i];
+			string lower = levelName.ToLower();
+			if ( lower.StartsWith("so_") )
+			{
+				path += "/Sound/" + levelName;
+			}
+			else if ( lower.StartsWith("sp_") )
+			{
+				path += "/Spawners/" + levelName;
+			}
+			else if ( lower.StartsWith("co_") )
+			{
+				path += "/Collision/" + levelName;
+			}
+			else if ( lower.StartsWith("art_") )
+			{
+				path += "/Art/" + levelName;
+			}
+			path += ".unity";
+			if ( i == 0 )
+			{
+				EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
+			}
+			else
+			{
+				EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+			}
+		}
+
+		// Set active scene
+		string _currentArea = "area1";
+		Scene scene = SceneManager.GetSceneByName(def.GetAsString(_currentArea + "Active"));
+		SceneManager.SetActiveScene(scene);
+
+		// Bake Occlusion
+		UnityEditor.StaticOcclusionCulling.Compute();
+
+			// Wait bake occlusion to end
+		while( UnityEditor.StaticOcclusionCulling.isRunning )
+		{
+			System.Threading.Thread.Sleep(1);
+		}
+
+		// Save Data ?
 	}
 }
