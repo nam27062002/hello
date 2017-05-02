@@ -415,6 +415,9 @@ public class ResultsScreenController : MonoBehaviour {
 			// Process collectible egg
 			EggManager.ProcessCollectibleEgg();
 
+			// Process unlocked skins for current dragon
+			UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(DragonManager.currentDragon);
+
 			// Save persistence
 			PersistenceManager.Save(true);
 
