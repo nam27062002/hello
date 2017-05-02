@@ -152,7 +152,7 @@ public class TiltControls : MonoBehaviour
 	public bool Calibrate()
 	{
 		// Get the current tilt reading and make this the centred/calibrated position.
-		UpdateRawTilt();
+		UpdateRawTilt(false);
 
 		// If we tried to calibrate in a dodgy position, we'll just have to leave it untouched.  It's up to the caller
 		// to check the dodgyCalibratePosition flag and handle that situation in its own way.
@@ -176,7 +176,7 @@ public class TiltControls : MonoBehaviour
         }
     }
 
-	private void UpdateRawTilt()
+	private void UpdateRawTilt( bool doFilter = true )
 	{
 		// get raw acceleration values from sensor
 		float ax = Input.acceleration.x;
@@ -189,10 +189,19 @@ public class TiltControls : MonoBehaviour
 		ay = -temp;
 
 		// filter the input values
-		float filter = m_tiltFilter;
-		Util.FilterValue(ref ax, ref m_lastAccX, filter);
-		Util.FilterValue(ref ay, ref m_lastAccY, filter);
-		Util.FilterValue(ref az, ref m_lastAccZ, filter);
+		if (doFilter)
+		{
+			float filter = m_tiltFilter;
+			Util.FilterValue(ref ax, ref m_lastAccX, filter);
+			Util.FilterValue(ref ay, ref m_lastAccY, filter);
+			Util.FilterValue(ref az, ref m_lastAccZ, filter);
+		}
+		else
+		{
+			m_lastAccX = ax;
+			m_lastAccY = ay;
+			m_lastAccZ = az;
+		}
 
 		// normalize
 		float len = Mathf.Sqrt(ax*ax + ay*ay + az*az);
