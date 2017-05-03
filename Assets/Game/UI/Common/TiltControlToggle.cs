@@ -1,8 +1,8 @@
-﻿// SoundSettingsToggle.cs
+// TiltControlToggle.cs
 // Hungry Dragon
 // 
-// Created by David Germade on 15th September 2016.
-// Copyright (c) 2016 Ubisoft. All rights reserved.
+// Created by Alger Ortín Castellví on 03/05/2017.
+// Copyright (c) 2017 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
@@ -14,9 +14,9 @@ using UnityEngine.UI;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// This class can be used to use a slider as a toggle for enabling/disabling the sound on settings popup.
+/// This class can be used to use a slider as a toggle for enabling/disabling the tilt control.
 /// </summary>
-public class SoundSettingsToggle : MonoBehaviour {
+public class TiltControlToggle : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -25,8 +25,7 @@ public class SoundSettingsToggle : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed members
-	[SerializeField] private Slider m_soundSlider;
-	[SerializeField] private Slider m_musicSlider;
+	[SerializeField] private Slider m_tiltControlSlider = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -46,16 +45,10 @@ public class SoundSettingsToggle : MonoBehaviour {
 	/// Update slider's values from settings.
 	/// </summary>
 	private void Refresh() {
-		if(ApplicationManager.instance.Settings_GetSound()) {
-			m_soundSlider.value = m_soundSlider.maxValue;
+		if(ApplicationManager.instance.Settings_GetTiltControl()) {
+			m_tiltControlSlider.value = m_tiltControlSlider.maxValue;
 		} else {
-			m_soundSlider.value = m_soundSlider.minValue;
-		}
-
-		if(ApplicationManager.instance.Settings_GetMusic()) {
-			m_musicSlider.value = m_musicSlider.maxValue;
-		} else {
-			m_musicSlider.value = m_musicSlider.minValue;
+			m_tiltControlSlider.value = m_tiltControlSlider.minValue;
 		}
 	}
 
@@ -63,33 +56,13 @@ public class SoundSettingsToggle : MonoBehaviour {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	///The sound slider has been toggled.
+	/// The tilt control slider has been toggled.
 	/// </summary>
-	public void OnSoundToggleChanged() {
-		bool viewIsEnabled = m_soundSlider.value == m_soundSlider.maxValue;
-		bool isEnabled = ApplicationManager.instance.Settings_GetSound();
+	public void OnTiltControlToggleChanged() {
+		bool viewIsEnabled = m_tiltControlSlider.value == m_tiltControlSlider.maxValue;
+		bool isEnabled = ApplicationManager.instance.Settings_GetTiltControl();
 		if(isEnabled != viewIsEnabled) {
-			ApplicationManager.instance.Settings_ToggleSoundIsEnabled();
-			if(isEnabled) {
-				// AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
-			}
-
-			Refresh();
-		}
-	}
-
-	/// <summary>
-	/// The music slider has been toggled.
-	/// </summary>
-	public void OnMusicToggleChanged() {
-		bool viewIsEnabled = m_musicSlider.value == m_musicSlider.maxValue;
-		bool isEnabled = ApplicationManager.instance.Settings_GetMusic();
-		if(isEnabled != viewIsEnabled) {
-			ApplicationManager.instance.Settings_ToggleMusicIsEnabled();
-			if(isEnabled) {
-				// AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
-			}
-
+			ApplicationManager.instance.Settings_ToggleTiltControl();
 			Refresh();
 		}
 	}

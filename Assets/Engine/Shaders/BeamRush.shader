@@ -7,7 +7,6 @@
 		_RayPhase ("Ray phase", Range(0.001, 10.0)) = 0.5
 		_RaySpeed("Ray speed", Range(0.001, 10.0)) = 0.5
 		_RayColor("Ray color", Color) = (0.0, 1.0, 1.0, 1.0)
-		_RayOffset("Ray offset", float) = 0.0
 	}
 	SubShader
 	{
@@ -59,10 +58,11 @@
 				return o;
 			}
 			
+			#define INITOFFSET 0.5
 			fixed4 frag (v2f i) : SV_Target
 			{
 //				float s = ((sin(_RayOffset + (i.uv.x * _RayPhase) + (_Time.y * _RaySpeed)) * (1.0 - _RayWidth)) + 1.0) * 0.5;
-				float t = abs(_RayOffset + (i.uv.x * _RayPhase) - (_Time.y * _RaySpeed));
+				float t = abs(INITOFFSET + (i.uv.x * _RayPhase) - (_Time.y * _RaySpeed));
 				float m = fmod(floor(t), 2.0);
 				float f = frac(t);
 				float s = lerp(f, 1.0 - f, m);

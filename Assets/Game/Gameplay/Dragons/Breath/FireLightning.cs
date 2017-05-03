@@ -6,7 +6,7 @@ public class FireLightning : DragonBreathBehaviour {
 
 	public float m_segmentLength = 25f; 
     public float m_maxAmplitude = 1.0f;
-    public AnimationCurve m_shapeCurve = new AnimationCurve();
+    public AnimationCurve m_widthCurve = new AnimationCurve();
     public float m_widthMultiplier = 1.0f;
 
     public float m_offsetRays = 0.5f;
@@ -50,13 +50,11 @@ public class FireLightning : DragonBreathBehaviour {
 
 	class Lightning{
 
-		LineRenderer m_line;
+		public LineRenderer m_line;
 
 		public float m_amplitude;
 		public float m_segmentLength;
         public float m_initOffset;
-        public float m_widthMultiplier;
-        public float m_seed;
 
         //		public Lightning(float rayWidth, Color color,float numSegments, Material rayMaterial)
         public Lightning(Color color, Material rayMaterial, AnimationCurve shapeCurve)
@@ -100,7 +98,6 @@ public class FireLightning : DragonBreathBehaviour {
 
 //            m_line.material.SetColor("_RayColor", Random.ColorHSV(0.0f, 1.0f, 0.5f, 1.0f, 0.75f, 1.0f));
 //            m_line.material.SetFloat("_RayOffset", m_initOffset);
-            m_line.widthMultiplier = m_widthMultiplier;
 
         }
 
@@ -171,10 +168,10 @@ public class FireLightning : DragonBreathBehaviour {
             float offStep = 1.0f / (float)m_numRays;
             for (int c = 0; c < m_rays.Length; c++)
             {
-                m_rays[c] = new Lightning(Color.gray, m_rayMaterial, m_shapeCurve);
+                m_rays[c] = new Lightning(Color.gray, m_rayMaterial, m_widthCurve);
 
                 m_rays[c].m_segmentLength = m_segmentLength;
-                m_rays[0].m_initOffset = offStep * c;
+                m_rays[0].m_initOffset = offStep * (float)c;
 
             }
 
@@ -217,15 +214,26 @@ public class FireLightning : DragonBreathBehaviour {
         }
 	}
 
-    public void SetWidthMultiplier( float multiplier)
+    public void SetWidthCurve(AnimationCurve curve)
     {
-        m_widthMultiplier = multiplier;
-
         if (m_rays != null)
         {
             for (int c = 0; c < m_rays.Length; c++)
             {
-                m_rays[c].m_widthMultiplier = multiplier;
+                m_rays[c].m_line.widthCurve = curve;
+            }
+        }
+
+    }
+
+
+    public void SetWidthMultiplier( float multiplier)
+    {
+        if (m_rays != null)
+        {
+            for (int c = 0; c < m_rays.Length; c++)
+            {
+                m_rays[c].m_line.widthMultiplier = multiplier;
             }
         }
 
@@ -282,6 +290,7 @@ public class FireLightning : DragonBreathBehaviour {
 			m_rays[i].Draw(p1,p2);
 
         SetWidthMultiplier(m_widthMultiplier);
+        SetWidthCurve(m_widthCurve);
 
 		// Look entities to damage!
 		Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_maxAmplitude, m_actualLength);
