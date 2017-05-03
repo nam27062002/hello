@@ -495,7 +495,7 @@ namespace AI {
 		}
 
 		public void LeaveDevice(bool _isCage) {
-			m_entity.allowEdible = !_isCage;
+			m_entity.allowEdible = true;
 			SetSignal(Signals.Type.LockedInCage, false);
 		}
 
