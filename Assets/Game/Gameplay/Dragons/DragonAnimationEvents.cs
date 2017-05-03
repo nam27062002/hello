@@ -154,6 +154,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void WingsIdleSound()
 	{
+		// tell particle controller
+		m_particleController.WingsEvent();
 		if (!string.IsNullOrEmpty(m_wingsIdleSound))
 		{
 			m_wingsIdleSoundAO = AudioController.Play(m_wingsIdleSound, transform);
@@ -162,6 +164,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void WingsFlyingSound()
 	{
+		// tell particle controller
+		m_particleController.WingsEvent();
 		if (!string.IsNullOrEmpty(m_wingsFlyingSound))
 		{
 			m_wingsFlyingSoundAO = AudioController.Play(m_wingsFlyingSound, transform);
@@ -170,6 +174,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void StrongFlap()
 	{
+		// tell particle controller
+		m_particleController.WingsEvent();
 		if (!string.IsNullOrEmpty(m_wingsStrongFlap))
 		{
 			m_wingsStrongFlapAO = AudioController.Play(m_wingsStrongFlap, transform);

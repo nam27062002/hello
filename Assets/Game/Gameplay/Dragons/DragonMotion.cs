@@ -140,6 +140,25 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	private int m_groundMask;
 	/** Distance from the nearest ground collision below the dragon. The maximum distance checked is 10. */
 	private float m_height;
+	public float height
+	{
+		get { return m_height; }
+	}
+	private bool m_closeToGround = false;
+	public bool closeToGround
+	{
+		get{ return m_closeToGround; }
+	}
+	private Vector3 m_lastGroundHit = Vector3.zero;
+	public Vector3 lastGroundHit
+	{
+		get{ return m_lastGroundHit; }
+	}
+	private Vector3 m_lastGroundHitNormal = Vector3.zero;
+	public Vector3 lastGroundHitNormal
+	{
+		get{ return m_lastGroundHitNormal; }
+	}
 
 	struct Sensors {
 		public Transform top;
@@ -546,7 +565,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				case State.ExitingWater:
 				{
 					m_recoverTimer = m_insideWaterRecoveryTime;
-                    m_accWaterFactor = 2.0f;
+                    m_accWaterFactor = 1.0f;
 
                 }
                     break;
@@ -878,6 +897,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	/// Called once per frame at regular intervals.
 	/// </summary>
 	void FixedUpdate() {
+		m_closeToGround = false;
 		switch (m_state) {
 			case State.Idle:
 				UpdateIdleMovement(Time.fixedDeltaTime);
@@ -1104,6 +1124,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	private void UpdateMovementImpulse( float _deltaTime, Vector3 impulse)
 	{
+		CheckGround( out m_raycastHit);
 		if (boostSpeedMultiplier > 1)
         {
             if (impulse == Vector3.zero)
@@ -1351,7 +1372,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		Vector3 oldDirection = m_direction;
 		CheckGround( out m_raycastHit);
-		if (m_height < 2f * transform.localScale.y) { // dragon will fly up to avoid mesh intersection
+		if ( m_closeToGround ) { // dragon will fly up to avoid mesh intersection
 			
 			// Vector3 impulse = Vector3.up * m_speedValue * 0.1f;			
 			Vector3 impulse = Vector3.up * 1 * 0.1f;			
@@ -1378,8 +1399,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		ApplyExternalForce();
 
-
-
 		m_rbody.velocity = m_impulse;
 	}
 
@@ -1392,7 +1411,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		Vector3 oldDirection = m_direction;
 		CheckGround( out m_raycastHit);
-		if (m_height >= 2f * transform.localScale.y) { // dragon will fly up to avoid mesh intersection
+		if (!m_closeToGround) { // dragon will fly up to avoid mesh intersection
 
 			m_deadTimer += _deltaTime;
 			m_impulse = m_rbody.velocity;
@@ -1546,14 +1565,19 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		Vector3 leftSensor  = m_sensor.bottom.position;
 		hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, m_groundMask);
 
+		bool ret = false;
 		if (hit_L) {
 			float d = _leftHit.distance;
-			m_height = d;
-			return (d <= 1f);
+			m_height = d * transform.localScale.y;
+			m_closeToGround = m_height < 1f;
+			m_lastGroundHit = _leftHit.point;
+			m_lastGroundHitNormal = _leftHit.normal;
+			ret = (d <= 1f);
 		} else {
-			m_height = 10f;
-			return false;
+			m_height = 100f;
+			m_closeToGround = false;
 		}
+		return ret;
 	}
 
 	private bool CheckCeiling(out RaycastHit _leftHit) {
