@@ -40,6 +40,7 @@ namespace AI {
 
 		private bool m_willPlaySpawnSound;
 
+		public virtual Quaternion orientation 	{ get { return m_transform.rotation; } set { m_transform.rotation = value; } }
 		public virtual Vector3 position			{ get { return m_transform.position; } set { m_transform.position = value; } }
 		public virtual Vector3 direction 		{ get { return Vector3.zero; } }
 		public virtual Vector3 groundDirection	{ get { return Vector3.right; } }
@@ -498,6 +499,9 @@ namespace AI {
 			SetSignal(Signals.Type.LockedInCage, false);
 		}
 
+		public void ReceiveHit() {
+			m_viewControl.Hit();
+		}
 
 		public void ReceiveDamage(float _damage) {
 			if (!IsDead()) {

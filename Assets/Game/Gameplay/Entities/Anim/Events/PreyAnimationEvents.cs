@@ -8,6 +8,7 @@ public class PreyAnimationEvents : MonoBehaviour {
 	public delegate void OnAttackEndDelegate();
 	public delegate void OnEatDelegate();
 	public delegate void OnStandUpDelegate();
+	public delegate void OnHitEndDelegate();
 
 	public event OnAttachprojectile 		onAttachProjectile;
 	public event OnAttackStartDelegate 		onAttackStart;
@@ -15,6 +16,7 @@ public class PreyAnimationEvents : MonoBehaviour {
 	public event OnAttackEndDelegate 		onAttackEnd;
 	public event OnEatDelegate 				onEat;
 	public event OnStandUpDelegate			onStandUp;
+	public event OnHitEndDelegate			onHitEnd;
 
 	// To avoid blend trees to fire the same event twice in one frame we will use a flag
 	// For the moment we use attack start flag for the archer
@@ -59,6 +61,12 @@ public class PreyAnimationEvents : MonoBehaviour {
 	public void OnStandUpEvent() {
 		if (onStandUp != null) {
 			onStandUp();
+		}
+	}
+
+	public void HitEnd() {
+		if (onHitEnd != null) {
+			onHitEnd();
 		}
 	}
 }
