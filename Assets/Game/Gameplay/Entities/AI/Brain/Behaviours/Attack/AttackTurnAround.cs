@@ -49,11 +49,15 @@ namespace AI {
 				m_targetRotation = Quaternion.LookRotation(m_targetDirection, m_machine.upVector);				   
 
 				m_animEvents.onAttackDealDamage += new PreyAnimationEvents.OnAttackDealDamageDelegate(OnAnimDealDamage);
+				m_animEvents.onEnableWeapon 	+= new PreyAnimationEvents.OnEnableWeaponDelegate(OnEnableWeapon);
+				m_animEvents.onDisableWeapon 	+= new PreyAnimationEvents.OnDisableWeaponDelegate(OnDisableWeapon);
 				m_animEvents.onAttackEnd 		+= new PreyAnimationEvents.OnAttackEndDelegate(OnAnimEnd);
 			}
 
 			protected override void OnExit(State _newState) {
 				m_animEvents.onAttackDealDamage -= new PreyAnimationEvents.OnAttackDealDamageDelegate(OnAnimDealDamage);
+				m_animEvents.onEnableWeapon 	-= new PreyAnimationEvents.OnEnableWeaponDelegate(OnEnableWeapon);
+				m_animEvents.onDisableWeapon 	-= new PreyAnimationEvents.OnDisableWeaponDelegate(OnDisableWeapon);
 				m_animEvents.onAttackEnd 		-= new PreyAnimationEvents.OnAttackEndDelegate(OnAnimEnd);
 
 				m_pilot.Stop();
@@ -61,11 +65,19 @@ namespace AI {
 
 			private void OnAnimDealDamage() {
 				m_meleeWeapon.damage = m_data.damage;
+				OnEnableWeapon();
+			}
+
+			private void OnEnableWeapon() {
 				m_meleeWeapon.enabled = true;
 			}
 
-			private void OnAnimEnd() {
+			private void OnDisableWeapon() {
 				m_meleeWeapon.enabled = false;
+			}
+
+			private void OnAnimEnd() {
+				OnDisableWeapon();
 				m_pilot.SetDirection(m_targetDirection, true);
 				m_machine.orientation = m_targetRotation;
 				Transition(OnTurnAroundEnd);
