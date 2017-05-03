@@ -371,6 +371,8 @@ public class HungryDragonEditorMenu
     }
 
     #region memory_profiler
+    private static string MEMORY_PROFILER_PATH = "profiler/develop/";
+
     private static HDMemoryProfiler smMemoryProfiler;
 
     private static HDMemoryProfiler MemoryProfiler_MP {
@@ -409,7 +411,7 @@ public class HungryDragonEditorMenu
             Dictionary<string, List<string>> typeGroups = MemoryProfiler_MP.GameTypeGroups;
             string xml = sample.ToXML(null, null, typeGroups).OuterXml;           
             Debug.Log(xml);
-            File.WriteAllText("memorySampleFromGO", xml);
+            File.WriteAllText(MEMORY_PROFILER_PATH + "memorySampleFromGO", xml);
         }
     }   
 
@@ -452,7 +454,7 @@ public class HungryDragonEditorMenu
        
         string xml = sample.ToXML(null, null, MemoryProfiler_MP.GameTypeGroups).OuterXml;
         Debug.Log(xml);
-        File.WriteAllText("memorySampleFromScene", xml);
+        File.WriteAllText(MEMORY_PROFILER_PATH + "memorySampleFromScene", xml);
     }
     #endregion
 }
