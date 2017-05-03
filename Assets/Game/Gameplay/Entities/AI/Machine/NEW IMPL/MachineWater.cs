@@ -13,6 +13,7 @@ namespace AI {
 		[SerializeField] protected MC_MotionWater m_waterMotion = new MC_MotionWater();
 		[SerializeField] private bool m_spawnsInsideWater = true;
 
+		public override Quaternion orientation 	{ get { return m_waterMotion.orientation; } set { m_waterMotion.orientation = value; } }
 		public override Vector3 position		{ get { return m_waterMotion.position; } set { m_waterMotion.position = value; } }
 		public override Vector3 direction 		{ get { return m_waterMotion.direction; } }
 		public override Vector3 upVector 		{ get { return m_waterMotion.upVector; } set { m_waterMotion.upVector = value; } }

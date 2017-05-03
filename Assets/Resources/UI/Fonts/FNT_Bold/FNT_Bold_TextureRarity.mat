@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: FNT_Bold_TextureRarity
   m_Shader: {fileID: 4800000, guid: dca26082f9cb439469295791d9f76fe5, type: 3}
-  m_ShaderKeywords: GLOW_ON OUTLINE_ON
+  m_ShaderKeywords: GLOW_ON OUTLINE_ON UNDERLAY_ON
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -142,7 +142,7 @@ Material:
       second: 0.5104167
     - first:
         name: _ScaleRatioC
-      second: 0.5104167
+      second: 0.25520834
     - first:
         name: _ScaleX
       second: 1
@@ -178,16 +178,16 @@ Material:
       second: 1024
     - first:
         name: _UnderlayDilate
-      second: -0.333
+      second: 1
     - first:
         name: _UnderlayOffsetX
-      second: 0
+      second: -0.34
     - first:
         name: _UnderlayOffsetY
-      second: 0
+      second: -1
     - first:
         name: _UnderlaySoftness
-      second: 0.983
+      second: 0
     - first:
         name: _VertexOffsetX
       second: 0
@@ -230,4 +230,4 @@ Material:
       second: {r: 1, g: 0.49411768, b: 0, a: 1}
     - first:
         name: _UnderlayColor
-      second: {r: 0.71323526, g: 0.71038234, b: 0.7027465, a: 1}
+      second: {r: 0.16862746, g: 0.1764706, b: 0.15686275, a: 1}

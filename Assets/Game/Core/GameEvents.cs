@@ -135,7 +135,10 @@ public enum GameEvents {
 
     // Device events
     DEVICE_RESOLUTION_CHANGED,  // params: Vector2 _newResolution
-    DEVICE_ORIENTATION_CHANGED  // params: DeviceOrientation _newOrientation
+    DEVICE_ORIENTATION_CHANGED,  // params: DeviceOrientation _newOrientation
+
+    // Settigns events
+    TILT_CONTROL_TOGGLE,		// params: Bool _useTile
 }
 
 //------------------------------------------------------------------------//

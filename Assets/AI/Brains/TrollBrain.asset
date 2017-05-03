@@ -29,8 +29,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: dc38d9cf90c3d49bab291061fb8b1f57, type: 2}
   - m_name: Go Back at Home
     m_componentAssets:
-    - {fileID: 11400000, guid: b31814d08b4154570a0d89d29f7bc112, type: 2}
-    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
+    - {fileID: 11400000, guid: e297899b9d2164e92b9b43ae98ec9b5f, type: 2}
   - m_name: Guard Out Of Range
     m_componentAssets:
     - {fileID: 11400000, guid: 9f822a57e0f754c25bac67c6de963f75, type: 2}
@@ -51,6 +50,7 @@ MonoBehaviour:
   - m_name: Attack Turn Around
     m_componentAssets:
     - {fileID: 11400000, guid: 4ff017f8974854a15ba30e9820fce650, type: 2}
+    - {fileID: 11400000, guid: 0fa32a071409f485f8adab2901f9c578, type: 2}
   m_transitionData:
   - to: 1
     id: onRest
@@ -70,11 +70,8 @@ MonoBehaviour:
   - to: 0
     id: onMove
     from: 1
-  - to: 2
+  - to: 5
     id: onOutOfRange
-    from: 3
-  - to: 2
-    id: onCritical
     from: 3
   - to: 10
     id: onMaxAttacks
@@ -103,13 +100,13 @@ MonoBehaviour:
   - to: 10
     id: onEnemyInRange
     from: 6
-  - to: 4
+  - to: 1
     id: onCalmDown
     from: 6
   - to: 10
     id: onEnemyInRange
     from: 7
-  - to: 4
+  - to: 1
     id: onCalmDown
     from: 7
   - to: 1

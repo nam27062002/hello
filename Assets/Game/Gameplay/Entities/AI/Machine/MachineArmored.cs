@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AI {
-	public class MachineArmored : MachineOld, IArmored {
+	public class MachineArmored : MachineGround, IArmored {
 		[SeparatorAttribute("Armor")]
 		[SerializeField] private HitsPerDragonTier m_armorDurabilityPerTier;
 
@@ -24,6 +24,7 @@ namespace AI {
 		public bool ReduceDurability(bool _boost) {
 			if (m_armorDurability.count > 0) {
 				if (!m_armorDurability.needBoost || _boost) {
+					ReceiveHit();
 					m_armorDurability.count--;
 					if (m_armorDurability.count <= 0) {
 						SetSignal(Signals.Type.Destroyed, true);

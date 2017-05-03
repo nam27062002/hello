@@ -7,6 +7,7 @@ namespace AI {
 
 		[SerializeField] protected MC_MotionAir m_airMotion = new MC_MotionAir();
 
+		public override Quaternion orientation 	{ get { return m_airMotion.orientation; } set { m_airMotion.orientation = value; } }
 		public override Vector3 position		{ get { return m_airMotion.position; } set { m_airMotion.position = value; } }
 		public override Vector3 direction 		{ get { return m_airMotion.direction; } }
 		public override Vector3 upVector 		{ get { return m_airMotion.upVector; } set { m_airMotion.upVector = value; } }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 public interface IMotion {
+	Quaternion orientation 	{ get; set; }
 	Vector3 position 		{ get; set; }
 	Vector3 direction 		{ get; }
 	Vector3 groundDirection { get; }
