@@ -488,7 +488,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 	private void Settings_SetTiltControl(bool value, bool persist) {
 		m_settingsTiltControl = value;
 
-		// Do here any action to perform when setting is toggled
+		Messenger.Broadcast<bool>(GameEvents.TILT_CONTROL_TOGGLE, m_settingsTiltControl);
 
 		if(persist) {
 			int intValue = (m_settingsTiltControl) ? 1 : 0;
