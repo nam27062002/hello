@@ -6,6 +6,8 @@ public class PreyAnimationEvents : MonoBehaviour {
 	public delegate void OnAttackStartDelegate();
 	public delegate void OnAttackDealDamageDelegate();
 	public delegate void OnAttackEndDelegate();
+	public delegate void OnEnableWeaponDelegate();
+	public delegate void OnDisableWeaponDelegate();
 	public delegate void OnEatDelegate();
 	public delegate void OnStandUpDelegate();
 	public delegate void OnHitEndDelegate();
@@ -14,6 +16,8 @@ public class PreyAnimationEvents : MonoBehaviour {
 	public event OnAttackStartDelegate 		onAttackStart;
 	public event OnAttackDealDamageDelegate onAttackDealDamage;
 	public event OnAttackEndDelegate 		onAttackEnd;
+	public event OnEnableWeaponDelegate		onEnableWeapon;
+	public event OnDisableWeaponDelegate	onDisableWeapon;
 	public event OnEatDelegate 				onEat;
 	public event OnStandUpDelegate			onStandUp;
 	public event OnHitEndDelegate			onHitEnd;
@@ -50,6 +54,18 @@ public class PreyAnimationEvents : MonoBehaviour {
 			m_attackEndFlag = false;
 			if (onAttackEnd != null)
 				onAttackEnd();
+		}
+	}
+
+	public void EnableWeapon() {
+		if (onEnableWeapon != null) {
+			onEnableWeapon();
+		}
+	}
+
+	public void DisableWeapon() {
+		if (onDisableWeapon != null) {
+			onDisableWeapon();
 		}
 	}
 

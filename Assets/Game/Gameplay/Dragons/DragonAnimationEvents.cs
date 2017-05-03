@@ -136,7 +136,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void TurboLoopStart()
 	{
-		m_particleController.ActivateTrails();
+		if ( m_particleController )
+			m_particleController.ActivateTrails();
 		if ( !string.IsNullOrEmpty( m_wingsWindSound))
 		{
 			m_wingsWindSoundAO = AudioController.Play( m_wingsWindSound, transform);
@@ -145,7 +146,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void TurboLoopEnd()
 	{
-		m_particleController.DeactivateTrails();
+		if ( m_particleController )
+			m_particleController.DeactivateTrails();
 		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
 		{
 			m_wingsWindSoundAO.Stop();
@@ -154,6 +156,9 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void WingsIdleSound()
 	{
+		// tell particle controller
+		if ( m_particleController )
+			m_particleController.WingsEvent();
 		if (!string.IsNullOrEmpty(m_wingsIdleSound))
 		{
 			m_wingsIdleSoundAO = AudioController.Play(m_wingsIdleSound, transform);
@@ -162,6 +167,9 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void WingsFlyingSound()
 	{
+		// tell particle controller
+		if ( m_particleController )
+			m_particleController.WingsEvent();
 		if (!string.IsNullOrEmpty(m_wingsFlyingSound))
 		{
 			m_wingsFlyingSoundAO = AudioController.Play(m_wingsFlyingSound, transform);
@@ -170,6 +178,9 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void StrongFlap()
 	{
+		// tell particle controller
+		if ( m_particleController )
+			m_particleController.WingsEvent();
 		if (!string.IsNullOrEmpty(m_wingsStrongFlap))
 		{
 			m_wingsStrongFlapAO = AudioController.Play(m_wingsStrongFlap, transform);
