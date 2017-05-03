@@ -58,7 +58,7 @@
 				return o;
 			}
 			
-			#define INITOFFSET 0.5
+			#define INITOFFSET 1.0
 			fixed4 frag (v2f i) : SV_Target
 			{
 //				float s = ((sin(_RayOffset + (i.uv.x * _RayPhase) + (_Time.y * _RaySpeed)) * (1.0 - _RayWidth)) + 1.0) * 0.5;
