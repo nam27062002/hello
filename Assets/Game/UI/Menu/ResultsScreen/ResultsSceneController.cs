@@ -31,23 +31,23 @@ public class ResultsSceneController : MonoBehaviour {
 
 	[Space]
 	[Tooltip("Default scene setup prefab to be used in levels where no setup can be found.")]
-	[SerializeField] private GameObject m_defaultSetupPrefab = null;
+	[SerializeField] private GameObject m_defaultSetupPrefab = null;   
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    private void Awake() {
 		// Disable results UI
 		m_resultsUI.SetActive(false);
-	}
+	}    
 
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
+    /// <summary>
+    /// Destructor.
+    /// </summary>
+    private void OnDestroy() {
 		
 	}
 
@@ -58,10 +58,7 @@ public class ResultsSceneController : MonoBehaviour {
 	/// Pick a random results scene setup from the art scene and initializes camera,
 	/// dragon and UI.
 	/// </summary>
-	public void Show() {
-		// Turn off main camera
-		m_mainCamera.gameObject.SetActive(false);
-
+	public void Show() {		
 		// Define results scene camera as main one
 
 
