@@ -87,7 +87,10 @@ public class ResultsSceneController : MonoBehaviour {
 
 		// Make sure no slow motion was inherited!
 		Time.timeScale = 1f;
-	}
+
+        // Start music!
+        AudioController.PlayMusic("hd_results_music");
+    }
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
