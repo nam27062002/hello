@@ -1,21 +1,34 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DragonControlPlayer : DragonControl {
+public class DragonControlPlayer : MonoBehaviour {
 
+	[HideInInspector] public bool moving = false;
+	[HideInInspector] public bool action = false;
 
 	TouchControlsDPad	touchControls = null;
+
     JoystickControls    joystickControls = null;
-    bool joystickMoving = false;
+    bool 				joystickMoving = false;
+
+    TiltControls		tiltControls = null;
+    bool 				tiltMoving = false;
+
+    bool 				m_useTiltControl = false;
 
 	private Assets.Code.Game.Spline.BezierSpline m_followingSpline;
 	private int m_testDirecton = 1;
+
+
 
     // Use this for initialization
     void Start () {
 		GameObject gameInputObj = GameObject.Find("PF_GameInput");
 		if(gameInputObj != null) {
 			touchControls = gameInputObj.GetComponent<TouchControlsDPad>();
+			tiltControls = gameInputObj.GetComponent<TiltControls>();
+			if ( tiltControls != null )
+				tiltControls.Calibrate();
             joystickControls = gameInputObj.GetComponent<JoystickControls>();
         }
 
@@ -29,27 +42,63 @@ public class DragonControlPlayer : DragonControl {
 				m_followingSpline = go.GetComponent<Assets.Code.Game.Spline.BezierSpline>();
 			}
         }
+        m_useTiltControl = ApplicationManager.instance.Settings_GetTiltControl();
+        SetupInputs();
+		Messenger.AddListener<bool>(GameEvents.TILT_CONTROL_TOGGLE, OnTiltToggled);
+	}
+
+	void OnDestroy()
+	{
+		Messenger.RemoveListener<bool>(GameEvents.TILT_CONTROL_TOGGLE, OnTiltToggled);
+	}
+
+	void OnTiltToggled( bool _useTilt )
+	{
+		m_useTiltControl = _useTilt;
+		if ( tiltControls && _useTilt )
+		{
+			tiltControls.Calibrate();
+		}
 	}
 
 	void OnEnable() {
+		SetupInputs();
+    }
+
+    void SetupInputs()
+    {
 		if(touchControls != null) {
-			touchControls.enabled = true;
-#if UNITY_EDITOR
-            joystickControls.enabled = true;
-#endif
+			touchControls.enabled = !m_useTiltControl;
+			touchControls.SetTouchObjRendering(!m_useTiltControl);
         }
+
+        if ( tiltControls != null )
+			tiltControls.enabled = m_useTiltControl;
+
+#if UNITY_EDITOR
+		if ( joystickControls != null )
+			joystickControls.enabled = true;
+#endif
     }
 
 	void OnDisable() {
 		if(touchControls != null) {
 			touchControls.SetTouchObjRendering(false);
 			touchControls.enabled = false;
-			moving = false;
-			action = false;
+		
+        }
+
+        if ( tiltControls != null )
+			tiltControls.enabled = false;
+
 #if UNITY_EDITOR
+		if ( joystickControls != null )
             joystickControls.enabled = false;
 #endif
-        }
+
+		moving = false;
+		action = false;
+
     }
 	
 	// Update is called once per frame
@@ -60,13 +109,28 @@ public class DragonControlPlayer : DragonControl {
 			action = true;
 			return;
 		}
-        // Update touch controller
-        if (touchControls != null) {
-			touchControls.UpdateTouchControls();
 
-			moving = touchControls.CurrentTouchState != TouchState.none;
-			action = touchControls.touchAction;
+		moving = false;
+		action = false;
+
+		if (!m_useTiltControl)
+		{
+			if (touchControls != null) 
+			{
+				touchControls.UpdateTouchControls();
+
+				moving = touchControls.CurrentTouchState != TouchState.none;
+				action = touchControls.touchAction;
+			}	
 		}
+		else if (tiltControls != null )
+		{
+			tiltControls.UpdateTiltControls();
+			tiltMoving = tiltControls.IsMoving();
+			moving = moving || tiltMoving;
+			action = action || tiltControls.getAction();
+		}
+
 #if UNITY_EDITOR
         if (joystickControls != null)
         {
@@ -76,9 +140,13 @@ public class DragonControlPlayer : DragonControl {
             action = action || joystickControls.getAction();
         }
 #endif
+
+	
     }
 
-	override public Vector3 GetImpulse(float desiredVelocity){
+	public void GetImpulse(float desiredVelocity, ref Vector3 impulse){
+
+		impulse = Vector3.zero;
 
 		// if app mode is test -> input something else?
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST && m_followingSpline != null)
@@ -97,22 +165,35 @@ public class DragonControlPlayer : DragonControl {
 			Vector3 target = m_followingSpline.GetPoint( m_followingClosestT );
 			target.z = 0;
 			Vector3 move = target - transform.position;
-			return move.normalized * desiredVelocity;
+			impulse = move.normalized * desiredVelocity;
 		}	
 
 #if UNITY_EDITOR
         if (joystickControls != null && joystickMoving)
         {
-             joystickControls.CalcSharkDesiredVelocity(desiredVelocity);
-             return new Vector3(joystickControls.SharkDesiredVel.x, joystickControls.SharkDesiredVel.y, 0f);
+       		joystickControls.CalcSharkDesiredVelocity(desiredVelocity);
+			impulse.x = joystickControls.SharkDesiredVel.x;
+			impulse.y = joystickControls.SharkDesiredVel.y;
+			impulse.z = 0;
+			return;
         }
 #endif
-        if (touchControls != null && moving)
-        {
-            touchControls.CalcSharkDesiredVelocity(desiredVelocity);
-            return new Vector3(touchControls.SharkDesiredVel.x, touchControls.SharkDesiredVel.y, 0f);
-        }          
-
-        return Vector3.zero;
+		if (!m_useTiltControl)
+		{
+			if (touchControls != null && moving)
+	        {
+	            touchControls.CalcSharkDesiredVelocity(desiredVelocity);
+				impulse.x = touchControls.SharkDesiredVel.x;
+				impulse.y = touchControls.SharkDesiredVel.y;
+				impulse.z = 0;
+	        }
+		}
+		else if (tiltControls != null && tiltMoving)
+		{
+			tiltControls.CalcSharkDesiredVelocity( desiredVelocity );
+			impulse.x = tiltControls.SharkDesiredVel.x;
+			impulse.y = tiltControls.SharkDesiredVel.y;
+			impulse.z = 0;
+		}
     } 
 }

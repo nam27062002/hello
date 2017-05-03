@@ -413,30 +413,40 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private const string SETTINGS_SOUND_KEY = "sound";
 	private const string SETTINGS_MUSIC_KEY = "music";
+	private const string SETTINGS_TILT_CONTROL_KEY = "tilt_control";
 
-    private bool m_settingsSoundIsEnabled;
-	private bool m_settingsMusicIsEnabled;
+	private bool m_settingsSound;
+	private bool m_settingsMusic;
+	private bool m_settingsTiltControl;
 
 	private AudioMixer m_audioMixer;
 
     private void Setting_Init()
     {
     	m_audioMixer = AudioController.Instance.AudioObjectPrefab.GetComponent<AudioSource>().outputAudioMixerGroup.audioMixer;
-        // Sound is disabled by default
-        Settings_SetSoundIsEnabled(PlayerPrefs.GetInt(SETTINGS_SOUND_KEY, 0) > 0, false);
-		Settings_SetMusicIsEnabled(PlayerPrefs.GetInt(SETTINGS_MUSIC_KEY, 0) > 0, false);
+        
+		// Sound is disabled by default
+        Settings_SetSound(PlayerPrefs.GetInt(SETTINGS_SOUND_KEY, 0) > 0, false);
+		Settings_SetMusic(PlayerPrefs.GetInt(SETTINGS_MUSIC_KEY, 0) > 0, false);
+
+		// Tilt control is disabled by default
+		Settings_SetTiltControl(PlayerPrefs.GetInt(SETTINGS_TILT_CONTROL_KEY, 0) > 0, false);
     }
 
-	public bool Settings_GetSoundIsEnabled() {
-		return m_settingsSoundIsEnabled;
+	public bool Settings_GetSound() {
+		return m_settingsSound;
 	}
 
-	public bool Settings_GetMusicIsEnabled() {
-		return m_settingsMusicIsEnabled;
+	public bool Settings_GetMusic() {
+		return m_settingsMusic;
 	}
 
-	private void Settings_SetSoundIsEnabled(bool value, bool persist) {
-		m_settingsSoundIsEnabled = value;
+	public bool Settings_GetTiltControl() {
+		return m_settingsTiltControl;
+	}
+
+	private void Settings_SetSound(bool value, bool persist) {
+		m_settingsSound = value;
 
 		if ( value )
 		{
@@ -450,14 +460,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 		}
 
 		if(persist) {
-			int intValue = (m_settingsSoundIsEnabled) ? 1 : 0;
+			int intValue = (m_settingsSound) ? 1 : 0;
 			PlayerPrefs.SetInt(SETTINGS_SOUND_KEY, intValue);
 			PlayerPrefs.Save();
 		}
 	}
 
-	private void Settings_SetMusicIsEnabled(bool value, bool persist) {
-		m_settingsMusicIsEnabled = value;
+	private void Settings_SetMusic(bool value, bool persist) {
+		m_settingsMusic = value;
 
 		if ( value )
 		{
@@ -469,18 +479,34 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 		}
 
 		if(persist) {
-			int intValue = (m_settingsMusicIsEnabled) ? 1 : 0;
+			int intValue = (m_settingsMusic) ? 1 : 0;
 			PlayerPrefs.SetInt(SETTINGS_MUSIC_KEY, intValue);
 			PlayerPrefs.Save();
 		}
 	}
 
+	private void Settings_SetTiltControl(bool value, bool persist) {
+		m_settingsTiltControl = value;
+
+		Messenger.Broadcast<bool>(GameEvents.TILT_CONTROL_TOGGLE, m_settingsTiltControl);
+
+		if(persist) {
+			int intValue = (m_settingsTiltControl) ? 1 : 0;
+			PlayerPrefs.SetInt(SETTINGS_TILT_CONTROL_KEY, intValue);
+			PlayerPrefs.Save();
+		}
+	}
+
 	public void Settings_ToggleSoundIsEnabled() {
-		Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
+		Settings_SetSound(!Settings_GetSound(), true);
 	}
 
 	public void Settings_ToggleMusicIsEnabled() {
-		Settings_SetMusicIsEnabled(!Settings_GetMusicIsEnabled(), true);
+		Settings_SetMusic(!Settings_GetMusic(), true);
+	}
+
+	public void Settings_ToggleTiltControl() {
+		Settings_SetTiltControl(!Settings_GetTiltControl(), true);
 	}
     #endregion
 
@@ -601,7 +627,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private void Debug_TestToggleSound()
     {
-        Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
+        Settings_SetSound(!Settings_GetSound(), true);
     }
 
     private void Debug_TestEggsCollected()

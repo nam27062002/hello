@@ -35,7 +35,7 @@ namespace AI {
 
 			private float m_timer;
 
-			private PreyAnimationEvents m_animEvents;
+			protected PreyAnimationEvents m_animEvents;
 
 			protected Vector3 m_facingTarget = Vector3.zero;
 			public Vector3 facingTarget { get{ return m_facingTarget; }}
@@ -68,7 +68,7 @@ namespace AI {
 			protected override void OnExit(State _newState) {
 				m_pilot.ReleaseAction(Pilot.Action.Attack);
 
-				m_pilot.SetDirection(m_pilot.direction, false);
+				m_pilot.SetDirection(m_machine.direction, false);
 
 				m_animEvents.onAttachProjectile -= new PreyAnimationEvents.OnAttachprojectile(OnAttachProjectile);
 				m_animEvents.onAttackDealDamage -= new PreyAnimationEvents.OnAttackDealDamageDelegate(OnAnimDealDamage);

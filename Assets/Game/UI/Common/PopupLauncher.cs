@@ -21,6 +21,7 @@ public class PopupLauncher : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	[System.Serializable] public class PopupEvent : UnityEvent<PopupController> { };
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -39,7 +40,7 @@ public class PopupLauncher : MonoBehaviour {
 	private bool m_pendingOpening = false;
 
 	// Events
-	public UnityEvent OnPopupInit = new UnityEvent();	// Invoked every time right before the popup is opened (and after it's loaded)
+	public PopupEvent OnPopupInit = new PopupEvent();	// Invoked every time right before the popup is opened (and after it's loaded)
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -109,7 +110,7 @@ public class PopupLauncher : MonoBehaviour {
 	private void OpenPopupInternal() {
 		// Load the popup
 		m_popup = PopupManager.LoadPopup(m_popupPath);
-		OnPopupInit.Invoke();
+		OnPopupInit.Invoke(m_popup);
 
 		// Open (apply delay)
 		DOVirtual.DelayedCall(m_delay, () => m_popup.Open());
