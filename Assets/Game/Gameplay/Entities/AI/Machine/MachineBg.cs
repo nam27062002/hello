@@ -13,7 +13,7 @@ namespace AI {
 
 		private Group m_group; // this will be a reference
 
-
+		public virtual Quaternion orientation 	{ get { return transform.rotation; } set { transform.rotation = value; } }
 		public Vector3 position { 	get { if (m_enableMotion && m_motion != null) return m_motion.position; else return transform.position; } 
 									set { if (m_enableMotion && m_motion != null) m_motion.position = value; else transform.position = value; } 
 		}
