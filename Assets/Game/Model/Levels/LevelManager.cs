@@ -159,9 +159,9 @@ public class LevelManager : Singleton<LevelManager> {
 			}	
 		}
 		return loadingTasks;
-	}
+	}   
 
-	public static List<AsyncOperation> UnloadCurrentArea()
+    public static List<AsyncOperation> UnloadCurrentArea()
 	{
 		List<AsyncOperation> loadingTasks = new List<AsyncOperation>();
 		AsyncOperation loadingTask = null;
@@ -231,5 +231,57 @@ public class LevelManager : Singleton<LevelManager> {
 		return sceneName;
 	}
 
+    /// <summary>
+    /// Returns a list with the name of the scenes belonging to the area passed as a parameter.
+    /// </summary>    
+    public static List<string> GetOnlyAreaScenesList(string area)
+    {
+        List<string> returnValue = new List<string>();
 
+        DefinitionNode def = m_currentLevelData.def;
+        m_currentArea = area;
+        m_currentAreaScenes = def.GetAsList<string>(m_currentArea);
+        for (int i = 0; i < m_currentAreaScenes.Count && !string.IsNullOrEmpty(m_currentAreaScenes[i]); i++)
+        {
+            string sceneName = GetRealSceneName(m_currentAreaScenes[i]);
+            returnValue.Add(sceneName);
+        }
+
+        return returnValue;
+    }
+
+    /// <summary>
+    /// Returns a list with the name of the scenes common to all areas
+    /// </summary>
+    /// <returns></returns>
+    public static List<string> GetCommonScenesList()
+    {
+        List<string> returnValue = new List<string>();
+
+        DefinitionNode def = m_currentLevelData.def;
+
+        // Common Scenes
+        List<string> commonScenes = def.GetAsList<string>("common");
+        for (int i = 0; i < commonScenes.Count; i++)
+        {
+            string sceneName = GetRealSceneName(commonScenes[i]);
+            returnValue.Add(sceneName);
+        }
+
+        return returnValue;
+    }
+
+    public static List<string> GetAllArenaScenesList(string area)
+    {
+        List<string> returnValue = GetCommonScenesList();
+        List<string> onlyAreaScenes = GetOnlyAreaScenesList(area);
+
+        int count = onlyAreaScenes.Count;
+        for (int i = 0; i < count; i++)
+        {
+            returnValue.Add(onlyAreaScenes[i]);
+        }
+
+        return returnValue;
+    }
 }
