@@ -95,6 +95,10 @@ public class DragonParticleController : MonoBehaviour
 	public ParticleData m_trailsParticle;
 	public Transform m_trailsAnchor;
 
+	[Space]
+	public ParticleData m_landingParticle;
+	ParticleSystem m_landingInstance;
+
 	void Start () 
 	{
 		DragonAnimationEvents dragonAnimEvents = transform.parent.GetComponentInChildren<DragonAnimationEvents>();
@@ -147,6 +151,12 @@ public class DragonParticleController : MonoBehaviour
 			go.transform.localScale = Vector3.one;
 			go.transform.localRotation = Quaternion.identity;
 			m_trailsInstance = go.GetComponent<ParticleSystem>();
+		}
+
+		if ( m_landingParticle.IsValid() )
+		{
+			GameObject go = m_landingParticle.CreateInstance();
+			m_landingInstance = go.GetComponent<ParticleSystem>();
 		}
 	}
 
@@ -498,4 +508,14 @@ public class DragonParticleController : MonoBehaviour
 	}
 
 	#endregion
+
+	public void WingsEvent()
+	{
+		if ( m_dargonMotion.height <= 2 && m_landingInstance)
+		{
+			m_landingInstance.transform.position = m_dargonMotion.lastGroundHit;
+			m_landingInstance.Play();
+		}
+	}
+
 }
