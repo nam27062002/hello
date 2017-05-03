@@ -595,8 +595,18 @@ public class GameSceneController : GameSceneControllerBase {
                     }
                 }
 
-                // Scenes used by the area currently loaded
-                List<string> scenesToUnload = LevelManager.GetAllArenaScenesList(LevelManager.currentArea);                                   
+                // All area scenes currently loaded can be unloaded except the spawner ones since the eggs are stored there and the results
+                // screen needs to show whether or not the user has collected any eggs
+                List<string> scenesToUnload = LevelManager.GetAllArenaScenesList(LevelManager.currentArea);
+                string[] tokens;
+                for (int i = 0; i < scenesToUnload.Count;) {
+                    tokens = scenesToUnload[i].Split('_');
+                    if (tokens.Length > 1 && tokens[0] == "SP")
+                        scenesToUnload.RemoveAt(i);
+                    else
+                        i++;
+                }
+                                                     
                 List<string> scenesToLoad = new List<string>();
                 scenesToLoad.Add(ResultsScreenController.NAME);
                 m_switchAsyncScenes.Perform(scenesToUnload, scenesToLoad, true, OnResultsSceneLoaded);
