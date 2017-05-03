@@ -22,6 +22,8 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	private Hit m_currentHits;
 	private DragonTier m_tier;
 
+	private bool m_broken;
+
 	private PrisonerSpawner m_cageSpawner;
 
 
@@ -53,6 +55,8 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 
 		m_cageSpawner.area = _spawner.area; // cage spawner will share the area defined to spawn the cage.
 		m_cageSpawner.Respawn();
+
+		m_broken = false;
 	}
 
 	void OnDisable() {
@@ -69,31 +73,33 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	}
 
 	private void OnCollisionEnter(Collision collision) {
-		if (collision.transform.CompareTag("Player")) {
-			if (m_currentHits.needBoost) {
-				if (m_waitTimer <= 0) {
-					GameObject go = collision.transform.gameObject;
-					DragonBoostBehaviour boost = go.GetComponent<DragonBoostBehaviour>();	
-					bool playCollideSound = true;
-					if (boost.IsBoostActive()) 	{
-						DragonMotion dragonMotion = go.GetComponent<DragonMotion>();	// Check speed is enough
-						if (dragonMotion.howFast >= 0.85f) {
-							m_waitTimer = 0.5f;
-							// Check Min Speed
-							m_currentHits.count--;
-							if (m_currentHits.count <= 0)
-							{
-								Break();
-								playCollideSound = false;
+		if (!m_broken) {
+			if (collision.transform.CompareTag("Player")) {
+				if (m_currentHits.needBoost) {
+					if (m_waitTimer <= 0) {
+						GameObject go = collision.transform.gameObject;
+						DragonBoostBehaviour boost = go.GetComponent<DragonBoostBehaviour>();	
+						bool playCollideSound = true;
+						if (boost.IsBoostActive()) 	{
+							DragonMotion dragonMotion = go.GetComponent<DragonMotion>();	// Check speed is enough
+							if (dragonMotion.howFast >= 0.85f) {
+								m_waitTimer = 0.5f;
+								// Check Min Speed
+								m_currentHits.count--;
+								if (m_currentHits.count <= 0)
+								{
+									Break();
+									playCollideSound = false;
+								}
 							}
 						}
+						if ( playCollideSound && !string.IsNullOrEmpty( m_onCollideSound))
+							AudioController.Play(m_onCollideSound);
+					
 					}
-					if ( playCollideSound && !string.IsNullOrEmpty( m_onCollideSound))
-						AudioController.Play(m_onCollideSound);
-				
+				} else {
+					Break();
 				}
-			} else {
-				Break();
 			}
 		}
 	}
@@ -118,6 +124,8 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 		if (!string.IsNullOrEmpty(m_onBreakSound)) {
 			AudioController.Play(m_onBreakSound);
 		}
+
+		m_broken = true;
 	}
 
 	private void SetCollisionsEnabled(bool _value) {
