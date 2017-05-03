@@ -53,7 +53,7 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
-				m_pilot.SetMoveSpeed(m_data.speed, false);
+				m_pilot.Stop();
 				m_pilot.SlowDown(true);
 
 				m_target = null;
@@ -84,6 +84,8 @@ namespace AI {
 								if (m_target.position.x < m_machine.position.x) m_pilot.SetDirection(Vector3.left, true);
 								else 											m_pilot.SetDirection(Vector3.right, true);
 								m_transitionParam[0] = m_target;
+
+								m_pilot.Stop();
 								Transition(OnEnemyInRange, m_transitionParam);
 							} else {
 								if (m_data.hasGuardState) {
@@ -95,22 +97,28 @@ namespace AI {
 									if (m_target.position.x < m_machine.position.x) m_pilot.SetDirection(Vector3.left, true);
 									else 											m_pilot.SetDirection(Vector3.right, true);
 									m_transitionParam[0] = m_target;
+								
+									m_pilot.Stop();
 									Transition(OnEnemyInGuardArea, m_transitionParam);
+								} else {
+									m_pilot.SetMoveSpeed(m_data.speed, false);
+
+									Vector3 direction = m_machine.groundDirection;
+									direction.z = 0f;
+
+									if (m_target.position.x < m_machine.position.x) {
+										direction *= -1;
+									}
+
+									Vector3 target = m_machine.position + direction * m_data.speed;
+									m_pilot.GoTo(target);
 								}
-
-								Vector3 direction = m_machine.groundDirection;
-								direction.z = 0f;
-
-								if (m_target.position.x < m_machine.position.x) {
-									direction *= -1;
-								}
-
-								Vector3 target = m_machine.position + direction * m_data.speed;
-								m_pilot.GoTo(target);
 							}
 						}
 					} else if (m_pursuitState == PursuitState.Move_Away) {
 						if (m_machine.GetSignal(Signals.Type.Critical)) {
+							m_pilot.SetMoveSpeed(m_data.speed, false);
+
 							// Player is inside our Critical area and we can't attack it from here, me should move back a bit
 							Vector3 direction = m_machine.groundDirection;
 							direction.z = 0f;
