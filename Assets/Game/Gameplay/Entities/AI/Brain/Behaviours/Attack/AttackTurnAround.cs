@@ -52,6 +52,7 @@ namespace AI {
 				m_animEvents.onEnableWeapon 	+= new PreyAnimationEvents.OnEnableWeaponDelegate(OnEnableWeapon);
 				m_animEvents.onDisableWeapon 	+= new PreyAnimationEvents.OnDisableWeaponDelegate(OnDisableWeapon);
 				m_animEvents.onAttackEnd 		+= new PreyAnimationEvents.OnAttackEndDelegate(OnAnimEnd);
+				m_animEvents.onInterrupt 		+= new PreyAnimationEvents.OnInterruptDelegate(OnAnimEnd);
 			}
 
 			protected override void OnExit(State _newState) {
@@ -59,6 +60,7 @@ namespace AI {
 				m_animEvents.onEnableWeapon 	-= new PreyAnimationEvents.OnEnableWeaponDelegate(OnEnableWeapon);
 				m_animEvents.onDisableWeapon 	-= new PreyAnimationEvents.OnDisableWeaponDelegate(OnDisableWeapon);
 				m_animEvents.onAttackEnd 		-= new PreyAnimationEvents.OnAttackEndDelegate(OnAnimEnd);
+				m_animEvents.onInterrupt 		-= new PreyAnimationEvents.OnInterruptDelegate(OnAnimEnd);
 
 				m_pilot.Stop();
 			}
