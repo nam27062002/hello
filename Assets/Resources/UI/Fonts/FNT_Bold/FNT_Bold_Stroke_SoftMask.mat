@@ -7,10 +7,10 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: FNT_Bold_Stroke_SoftMask
-  m_Shader: {fileID: 4800000, guid: cafd18099dfc0114896e0a8b277b81b6, type: 3}
+  m_Shader: {fileID: 4800000, guid: 120c12f9d4af91f4787ad711fcd2735c, type: 3}
   m_ShaderKeywords: OUTLINE_ON
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -36,7 +36,7 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 28398996152450102, guid: 8ea6cf986662c4e6f942e88850b31e64,
+        m_Texture: {fileID: 28138677677925436, guid: 8ea6cf986662c4e6f942e88850b31e64,
           type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -48,6 +48,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     - first:
         name: _OutlineTex
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _SoftMask
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -111,11 +117,20 @@ Material:
         name: _LightAngle
       second: 3.1416
     - first:
+        name: _MaskEdgeSoftness
+      second: 0.01
+    - first:
+        name: _MaskInverse
+      second: 0
+    - first:
         name: _MaskSoftnessX
       second: 0
     - first:
         name: _MaskSoftnessY
       second: 0
+    - first:
+        name: _MaskWipeControl
+      second: 0.5
     - first:
         name: _OutlineSoftness
       second: 0
@@ -216,6 +231,9 @@ Material:
     - first:
         name: _MaskCoord
       second: {r: 0, g: 0, b: 10000, a: 10000}
+    - first:
+        name: _MaskEdgeColor
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _OutlineColor
       second: {r: 0.24313726, g: 0.23137255, b: 0.19215687, a: 1}

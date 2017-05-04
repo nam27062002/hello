@@ -4,10 +4,11 @@ using DG.Tweening;
 using TMPro;
 
 public class ResultsScreenController : MonoBehaviour {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
-	private enum State {
+    //------------------------------------------------------------------//
+    // CONSTANTS														//
+    //------------------------------------------------------------------//
+    public const string NAME = "SC_ResultsScreen";
+    private enum State {
 		INIT,
 		WAIT_INTRO,
 		INTRO,
@@ -39,10 +40,10 @@ public class ResultsScreenController : MonoBehaviour {
 	[Separator]
 	[SerializeField] private ShowHideAnimator m_popupAnimator = null;
 	[SerializeField] private ShowHideAnimator m_bottomBarAnimator = null;
-	[SerializeField] private ShowHideAnimator m_unlockBarAnimator = null;
+	[SerializeField] private ShowHideAnimator m_unlockBarAnimator = null;    
 
-	// References
-	private ResultsSceneSetup m_scene = null;
+    // References
+    private ResultsSceneSetup m_scene = null;
 
 	// Internal
 	private State m_state = State.INIT;
@@ -131,7 +132,7 @@ public class ResultsScreenController : MonoBehaviour {
 		Debug.Assert(m_carousel != null, "Required field not initialized!");
 	}
 
-	/// <summary>
+    /// <summary>
 	/// Component enabled.
 	/// </summary>
 	private void OnEnable() {
@@ -393,8 +394,8 @@ public class ResultsScreenController : MonoBehaviour {
 
 		// Nothing else to show, go back to the menu!
 		else {
-			// Show loading screen
-			InstanceManager.gameSceneController.loadingScreen.GetComponent<ShowHideAnimator>().ForceShow(false);
+            // Show loading screen
+            InstanceManager.gameSceneController.ShowLoadingScreen(false);
 
 			// Update global stats
 			UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;
@@ -415,8 +416,18 @@ public class ResultsScreenController : MonoBehaviour {
 			// Process collectible egg
 			EggManager.ProcessCollectibleEgg();
 
+			// Process unlocked skins for current dragon
+			UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(DragonManager.currentDragon);
+
 			// Save persistence
 			PersistenceManager.Save(true);
+
+			// If a new dragon was unlocked, tell the menu to show the dragon unlocked screen first!
+			if(m_unlockBar.newDragonUnlocked) {
+				//GameVars.menuInitialScreen = MenuScreens.DRAGON_UNLOCK;
+				//GameVars.menuInitialDragon = m_unlockBar.nextDragonData.def.sku;
+				GameVars.unlockedDragonSku = m_unlockBar.nextDragonData.def.sku;
+			}
 
 			// Go back to main menu
 			FlowManager.GoToMenu();

@@ -187,7 +187,6 @@ public class DragonEatBehaviour : EatBehaviour {
 
 	override public void EndHold()
 	{
-		base.EndHold();
 		if ( m_grabbingPrey )
 		{
 			m_dragonMotion.EndGrabMovement();
@@ -196,8 +195,8 @@ public class DragonEatBehaviour : EatBehaviour {
 		{
 			m_dragonMotion.EndLatchMovement();
 		}
-
 		m_animator.SetBool("eatHold", false);        
+		base.EndHold();
 	}
 
 	override public bool IsBoosting(){

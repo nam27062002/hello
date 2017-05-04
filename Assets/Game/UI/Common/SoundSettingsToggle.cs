@@ -46,13 +46,13 @@ public class SoundSettingsToggle : MonoBehaviour {
 	/// Update slider's values from settings.
 	/// </summary>
 	private void Refresh() {
-		if(ApplicationManager.instance.Settings_GetSoundIsEnabled()) {
+		if(ApplicationManager.instance.Settings_GetSound()) {
 			m_soundSlider.value = m_soundSlider.maxValue;
 		} else {
 			m_soundSlider.value = m_soundSlider.minValue;
 		}
 
-		if(ApplicationManager.instance.Settings_GetMusicIsEnabled()) {
+		if(ApplicationManager.instance.Settings_GetMusic()) {
 			m_musicSlider.value = m_musicSlider.maxValue;
 		} else {
 			m_musicSlider.value = m_musicSlider.minValue;
@@ -67,7 +67,7 @@ public class SoundSettingsToggle : MonoBehaviour {
 	/// </summary>
 	public void OnSoundToggleChanged() {
 		bool viewIsEnabled = m_soundSlider.value == m_soundSlider.maxValue;
-		bool isEnabled = ApplicationManager.instance.Settings_GetSoundIsEnabled();
+		bool isEnabled = ApplicationManager.instance.Settings_GetSound();
 		if(isEnabled != viewIsEnabled) {
 			ApplicationManager.instance.Settings_ToggleSoundIsEnabled();
 			if(isEnabled) {
@@ -83,7 +83,7 @@ public class SoundSettingsToggle : MonoBehaviour {
 	/// </summary>
 	public void OnMusicToggleChanged() {
 		bool viewIsEnabled = m_musicSlider.value == m_musicSlider.maxValue;
-		bool isEnabled = ApplicationManager.instance.Settings_GetMusicIsEnabled();
+		bool isEnabled = ApplicationManager.instance.Settings_GetMusic();
 		if(isEnabled != viewIsEnabled) {
 			ApplicationManager.instance.Settings_ToggleMusicIsEnabled();
 			if(isEnabled) {

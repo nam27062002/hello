@@ -7,7 +7,6 @@ using System.Collections.Generic;
 public class ViewControl : MonoBehaviour, ISpawnable {
 
 	public static Color GOLD_TINT = new Color(255.0f / 255.0f, 161 / 255.0f, 0, 255.0f / 255.0f);
-//    public static Color GOLD_TINT = new Color(255.0f / 255.0f, 207.0f / 255.0f, 0.0f / 255.0f, 255.0f / 255.0f) * 2.0f;
     public static Color FREEZE_TINT = new Color(0.0f / 255.0f, 200.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f);
     public static float FREEZE_TIME = 1.0f;
 
@@ -114,6 +113,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	protected bool m_moving;
 	protected bool m_attackingTarget;
 
+	private bool m_hitAnimOn;
+
 	private bool m_isExclamationMarkOn;
 	private GameObject m_exclamationMarkOn;
 
@@ -151,10 +152,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			m_animator.logWarnings = false;
 
 		m_animEvents = transform.FindComponentRecursive<PreyAnimationEvents>();
-		if ( m_animEvents != null){
+		if (m_animEvents != null) {
 			m_animEvents.onAttackStart += animEventsOnAttackStart;
 			m_animEvents.onAttackEnd += animEventsOnAttackEnd;
 			m_animEvents.onAttackDealDamage += animEventsOnAttackDealDamage;
+			m_animEvents.onHitEnd += OnHitAnimEnd;
 		}
 
         // Load gold material
@@ -190,12 +192,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         }
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
-			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/", 3, true);
+			PoolManager.RequestPool(m_corpseAsset, "Game/Corpses/", 3);
 		}
 
 		m_isExclamationMarkOn = false;
 		if (m_exclamationTransform != null) {
-			PoolManager.CreatePool("PF_ExclamationMark", "Game/Entities/", 3, true);
+			PoolManager.RequestPool("PF_ExclamationMark", "Game/Entities/", 3);
 		}
 
 		// particle management
@@ -213,15 +215,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_onEatenParticle.name.ToLower().Contains("blood")) {
 			m_useFrozenParticle = true;
 			// only create if on eaten particle is blood
-			if ( !m_onEatenFrozenParticle.IsValid())
-			{
+			if (!m_onEatenFrozenParticle.IsValid()) {
 				m_onEatenFrozenParticle.name = "PS_IceExplosion";
 				m_onEatenFrozenParticle.path = "";
 			}
 			ParticleManager.CreatePool(m_onEatenFrozenParticle.name, m_onEatenFrozenParticle.path);
-		}
-		else
-		{
+		} else {
 			m_useFrozenParticle = false;
 		}
 
@@ -241,19 +240,17 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     }
 
 	void Start() {
-		if (m_animator != null)
-		{ 
+		if (m_animator != null) { 
 			StartEndMachineBehaviour[] behaviours = m_animator.GetBehaviours<StartEndMachineBehaviour>();
 			for( int i = 0; i<behaviours.Length; i++ ){
 				behaviours[i].onStart += onStartAnim;
 				behaviours[i].onEnd += onEndAnim;
 			}
 		}
-
     }
 
 	protected virtual void animEventsOnAttackStart() {
-		if ( !string.IsNullOrEmpty( m_onAttackAudio ) )
+		if (!string.IsNullOrEmpty(m_onAttackAudio))
 			m_onAttackAudioAO = AudioController.Play( m_onAttackAudio, transform );
 	}
 
@@ -278,6 +275,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			animEventsOnAttackEnd();
 		}
 	}
+
+	protected virtual void OnHitAnimEnd() {
+		m_hitAnimOn = false;
+	}
 	//
 
 	public virtual void Spawn(ISpawner _spawner) {
@@ -289,6 +290,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_swim = false;
 		m_inSpace = false;
 		m_moving = false;
+		m_hitAnimOn = false;
 		m_attackingTarget = false;
 
 		m_isExclamationMarkOn = false;
@@ -527,6 +529,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		return !string.IsNullOrEmpty(m_corpseAsset);
 	}
 
+	public bool isHitAnimOn() {
+		return m_hitAnimOn;
+	}
+
 	public bool canAttack() {
 		return !m_attack;
 	}
@@ -689,6 +695,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				m_animator.SetBool("holded", _panic);
 			}
 		}
+	}
+
+	public void Hit() {
+		m_hitAnimOn = true;
+		m_animator.SetTrigger("hit");
 	}
 
 	public void Falling(bool _falling) {
