@@ -159,6 +159,11 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		get { return instance.m_dragonInitialLevelProgress; }
 	}
 
+	private bool m_nextDragonLocked = false;
+	public static bool nextDragonLocked {
+		get { return instance.m_nextDragonLocked; }
+	}
+
 	// Chests - store chest progression at the beginning of the game
 	private int m_initialCollectedChests = 0;
 	public static int initialCollectedChests {
@@ -340,9 +345,18 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		if(DragonManager.currentDragon != null) {
 			instance.m_dragonInitialLevel = DragonManager.currentDragon.progression.level;
 			instance.m_dragonInitialLevelProgress = DragonManager.currentDragon.progression.progressCurrentLevel;
+
+			// Next dragon locked?
+			DragonData nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
+			if(nextDragonData != null) {
+				instance.m_nextDragonLocked = nextDragonData.isLocked;
+			} else {
+				instance.m_nextDragonLocked = false;
+			}
 		} else {
 			instance.m_dragonInitialLevel = 1;
 			instance.m_dragonInitialLevelProgress = 0;
+			instance.m_nextDragonLocked = false;
 		}
 
 		// Chests
