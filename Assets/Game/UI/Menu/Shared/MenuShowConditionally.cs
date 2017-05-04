@@ -43,24 +43,26 @@ public class MenuShowConditionally : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Config
-	[Separator("Dragon-based visibility")]
-	
-	[Comment("Higher priority than ownership status (unless set to IGNORE)")]
+	// Dragon-based visibility
+	[SerializeField] private bool m_checkSelectedDragon = false;
+
+	[Comment("<color=orange>PER DRAGON ORDER:</color> Higher priority than ownership status (unless set to IGNORE)")]
 	[SerializeField] private HideForDragons m_hideForDragons = HideForDragons.IGNORE;
 
-	[Comment("Ownership of the target dragon", 5f)]
-	[Comment("Leave target dragon sku empty to use the current selected dragon on the menu as target.")]
+	[Comment("<color=orange>PER DRAGON OWNERSHIP:</color> Ownership of the target dragon", 5f)]
+	[Comment("Leave target dragon sku empty to use the current <color=green>selected</color> dragon on the menu as target.")]
 	[SkuList(DefinitionsCategory.DRAGONS, true)]
 	[SerializeField] private string m_targetDragonSku = "";
 	[SerializeField] private bool m_showIfLocked = false;
 	[SerializeField] private bool m_showIfAvailable = false;
 	[SerializeField] private bool m_showIfOwned = true;
 
-	[Separator("Screen-based visibility")]
+	// Screen-based visibility
+	[SerializeField] private bool m_checkScreens = false;
 	[SerializeField] private ScreenVisibilityMode m_mode = ScreenVisibilityMode.HIDE_ON_TARGET_SCREENS;
 	[SerializeField] private List<MenuScreens> m_screens = new List<MenuScreens>();
 
-	[Separator("Animation options")]
+	// Animation options
 	[SerializeField] private bool m_restartShowAnimation = false;
 
 	// Internal references
@@ -142,6 +144,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// <returns>Whether the visibility checks are passed or not with the given parameters.</returns>
 	/// <param name="_dragonSku">Dragon sku to be considered.</param>
 	public bool CheckDragon(string _dragonSku) {
+		// Skip if dragon check disabled
+		if(!m_checkSelectedDragon) return true;
+
 		// Check whether the object should be visible or not
 		bool show = false;
 		DragonData dragon = DragonManager.GetDragonData(_dragonSku);
@@ -177,6 +182,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// <returns>Whether the visibility checks are passed or not with the given parameters.</returns>
 	/// <param name="_screen">Menu screen to be considered.</param>
 	public bool CheckScreen(MenuScreens _screen) {
+		// Skip if screen check disabled
+		if(!m_checkScreens) return true;
+
 		// Is screen in the list?
 		bool isScreenOnTheList = m_screens.IndexOf(_screen) >= 0;
 
@@ -230,7 +238,7 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// <param name="_useAnims">Whether to animate or not.</param>
 	/// <param name="_resetAnim">Optionally force the animation to be played, even if going to the same state.</param>
 	private void Apply(string _dragonSku, MenuScreens _screen, bool _useAnims, bool _resetAnim) {
-		Apply(Check(_dragonSku, _screen), true, m_restartShowAnimation);
+		Apply(Check(_dragonSku, _screen), _useAnims, m_restartShowAnimation);
 	}
 
 	//------------------------------------------------------------------//
@@ -241,6 +249,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">The sku of the newly selected dragon.</param>
 	public void OnDragonSelected(string _sku) {
+		// Ignore if component not enabled
+		if(!this.enabled) return;
+
 		// Just update visibility
 		Apply(
 			string.IsNullOrEmpty(m_targetDragonSku) ? _sku : m_targetDragonSku,	// MenuSceneController.selectedDragon is not necessarily updated yet
@@ -254,6 +265,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// </summary>
 	/// <param name="_data">The data of the acquired dragon.</param>
 	public void OnDragonAcquired(DragonData _data) {
+		// Ignore if component not enabled
+		if(!this.enabled) return;
+
 		// Is it our target dragon?
 		// It should be the selected dragon, but check anyway
 		if(_data.def.sku != targetDragonSku) {
@@ -269,6 +283,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// </summary>
 	/// <param name="_data">The event's data.</param>
 	public void OnScreenChanged(NavigationScreenSystem.ScreenChangedEventData _data) {
+		// Ignore if component not enabled
+		if(!this.enabled) return;
+
 		// Is it the main menu screen system?
 		if(_data.dispatcher == InstanceManager.menuSceneController.screensController) {
 			// Refresh

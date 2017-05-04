@@ -90,6 +90,13 @@ public class DragonUnlockScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Show/Hide menu HUD.
+	/// </summary>
+	/// <param name="_show">Show or hide?</param>
+	public void ToggleHUD(bool _show) {
+		InstanceManager.menuSceneController.hud.animator.Set(_show);
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -126,6 +133,9 @@ public class DragonUnlockScreen : MonoBehaviour {
 				m_newPreysAnimator.ForceHide(false);
 			}
 		}
+
+		// Hide HUD
+		ToggleHUD(false);
 	}
 
 	/// <summary>

@@ -153,7 +153,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Hide HUD and buttons
 		bool animate = this.gameObject.activeInHierarchy;	// If the screen is not visible, don't animate
-		InstanceManager.menuSceneController.hud.GetComponent<ShowHideAnimator>().ForceHide(animate);
+		InstanceManager.menuSceneController.hud.animator.ForceHide(animate);
 		m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide(animate);
 		m_finalPanel.ForceHide(animate);
 
@@ -236,7 +236,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	private void LaunchRewardAnimation() {
 		// Show HUD
-		InstanceManager.menuSceneController.hud.GetComponent<ShowHideAnimator>().Show();
+		InstanceManager.menuSceneController.hud.animator.Show();
 
 		// Aux vars
 		EggReward rewardData = m_scene.eggData.rewardData;
@@ -375,7 +375,7 @@ public class OpenEggScreenController : MonoBehaviour {
 			if(m_scene != null) m_scene.Clear();
 
 			// Restore HUD
-			InstanceManager.menuSceneController.hud.GetComponent<ShowHideAnimator>().Show();
+			InstanceManager.menuSceneController.hud.animator.Show();
 		}
 
 		// If entering this screen, force some show/hide animations that conflict with automated ones

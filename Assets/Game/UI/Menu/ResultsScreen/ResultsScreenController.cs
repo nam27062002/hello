@@ -421,6 +421,13 @@ public class ResultsScreenController : MonoBehaviour {
 			// Save persistence
 			PersistenceManager.Save(true);
 
+			// If a new dragon was unlocked, tell the menu to show the dragon unlocked screen first!
+			if(m_unlockBar.newDragonUnlocked) {
+				//GameVars.menuInitialScreen = MenuScreens.DRAGON_UNLOCK;
+				//GameVars.menuInitialDragon = m_unlockBar.nextDragonData.def.sku;
+				GameVars.unlockedDragonSku = m_unlockBar.nextDragonData.def.sku;
+			}
+
 			// Go back to main menu
 			FlowManager.GoToMenu();
 

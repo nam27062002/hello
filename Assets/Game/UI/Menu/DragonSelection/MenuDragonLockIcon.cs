@@ -25,7 +25,8 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	[SerializeField] private DOTweenAnimation m_tween = null;
+	[SerializeField] private Animator m_animator = null;
+	public Animator animator { get { return m_animator; }}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -38,7 +39,7 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		Debug.Assert(m_tween != null, "Required component missing!");
+		Debug.Assert(m_animator != null, "Required component missing!");
 	}
 
 	//------------------------------------------------------------------------//
@@ -49,8 +50,8 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 	/// </summary>
 	/// <param name="_event">Data related to the event.</param>
 	public void OnPointerClick(PointerEventData _event) {
-		// Trigger animation
-		m_tween.DORestart();
+		// Trigger bounce animation
+		m_animator.SetTrigger("bounce");
 
 		// Propagate event to parent hierarchy (we don't want to capture the event)
 		// From https://coeurdecode.com/2015/10/20/bubbling-events-in-unity/ <3

@@ -40,6 +40,20 @@ public class GameVars : UbiBCN.SingletonMonoBehaviour<GameVars> {
 		set { instance.m_menuInitialScreen = value; }
 	}
 
+	[Comment("Dragon to select when loading the menu scene. Will be reset after applied. If not defined, current dragon will be used.")]
+	[SerializeField] private string m_menuInitialDragon = "";
+	public static string menuInitialDragon {
+		get { return instance.m_menuInitialDragon; }
+		set { instance.m_menuInitialDragon = value; }
+	}
+
+	[Comment("Dragon unlocked")]
+	[SerializeField] private string m_unlockedDragonSku = "";
+	public static string unlockedDragonSku {
+		get { return instance.m_unlockedDragonSku; }
+		set { instance.m_unlockedDragonSku = value; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//

@@ -155,7 +155,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 			InputLocker.Lock();
 
 			// Hide HUD and UI
-			InstanceManager.menuSceneController.hud.GetComponent<ShowHideAnimator>().ForceHide(false);
+			InstanceManager.menuSceneController.hud.animator.ForceHide(false);
 			if(m_uiCanvasGroup != null) m_uiCanvasGroup.alpha = 0;
 
 			// Instant scroll to first dragon
@@ -178,7 +178,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 			InputLocker.Unlock();
 
 			// Show UI back
-			InstanceManager.menuSceneController.hud.GetComponent<ShowHideAnimator>().ForceShow(true);
+			InstanceManager.menuSceneController.hud.animator.ForceShow(true);
 			if(m_uiCanvasGroup != null) m_uiCanvasGroup.DOFade(1f, 0.25f);
 
 			// Control vars
