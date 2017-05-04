@@ -106,12 +106,12 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_superFuryCoinsMultiplier = settings.GetAsFloat("superFuryCoinsMultiplier", 1.2f);
 		m_superFuryDamageMultiplier = settings.GetAsFloat("superFuryDamageMultiplier", 1.2f);
 		m_superFuryLengthMultiplier = settings.GetAsFloat("superFuryLengthMultiplier", 1.2f);
+
+		m_dragon = GetComponent<DragonPlayer>();
 	}
 
 	void Start() 
 	{
-
-		m_dragon = GetComponent<DragonPlayer>();
 		m_healthBehaviour = GetComponent<DragonHealthBehaviour>();
 		m_attackBehaviour = GetComponent<DragonAttackBehaviour>();		
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
