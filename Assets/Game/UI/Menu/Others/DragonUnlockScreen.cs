@@ -111,7 +111,10 @@ public class DragonUnlockScreen : MonoBehaviour {
 		DragonData dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 
 		// Initialize dragon info
-		if(m_dragonName != null) m_dragonName.Localize(dragonData.def.GetAsString("tidName"));
+		//if(m_dragonName != null) m_dragonName.Localize(dragonData.def.GetAsString("tidName"));
+		if(m_dragonName != null) {
+			m_dragonName.Localize("TID_RESULTS_DRAGON_UNLOCKED", dragonData.def.GetLocalized("tidName"));
+		}
 		if(m_dragonDesc != null) m_dragonDesc.Localize(dragonData.def.GetAsString("tidDesc"));
 		if(m_dragonTierIcon != null) m_dragonTierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, dragonData.tierDef.GetAsString("icon"));
 		if(m_healthText != null) m_healthText.text = StringUtils.FormatNumber(dragonData.maxHealth, 0);
