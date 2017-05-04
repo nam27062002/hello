@@ -120,16 +120,8 @@ public class ResultsScreenXPBar : DragonXPBar {
 			m_barSeparators[i].slider = m_auxBar;
 		}
 
-		// Find out next dragon to unlock
-		// New design states that it's just the dragon following the one we played with
-		// None if we played with the last dragon
-		m_nextDragonData = null;
-		int order = m_dragonData.def.GetAsInt("order");
-		if(order < DragonManager.dragonsByOrder.Count - 1) {	// Exclude if playing with last dragon
-			m_nextDragonData = DragonManager.dragonsByOrder[order + 1];
-		}
-
 		// Load and pose next dragon's preview
+		m_nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
 		if(m_nextDragonData != null) {
 			m_nextDragonIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.DISGUISE_ICONS_PATH + m_nextDragonData.def.sku, "icon_disguise_0");	// [AOC] HARDCODED!!
 			m_nextDragonRoot.SetActive(true);
@@ -212,7 +204,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 		if(CPResultsScreenTest.testEnabled) {
 			m_nextDragonLocked = m_nextDragonData != null ? CPResultsScreenTest.nextDragonLocked : false;
 		} else {
-			m_nextDragonLocked = m_nextDragonData != null ? m_nextDragonData.isLocked : false;
+			m_nextDragonLocked = m_nextDragonData != null ? RewardManager.nextDragonLocked : false;	// We must use the lock state BEFORE starting the game, otherwise the DragonData will be marked as already available!
 		}
 		m_dragonUnlockFX.SetActive(false);
 		m_lockIcon.SetActive(false);

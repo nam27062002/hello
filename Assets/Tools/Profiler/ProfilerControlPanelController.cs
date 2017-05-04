@@ -299,19 +299,26 @@ public class ProfilerControlPanelController : MonoBehaviour
     #region checkpoints
     private enum ECheckpoint
     {
-		StartingPoint,
-        FloatingRock,
-        HangingBridge,
-        VineBigLeaf,
-		WoodsCabins,
-		WoodsLeaves,
-        TunnelVillageCastle,
-        TunnelCastleVillage,
-        Castle,
-        Tunnel,
-        Dungeons,
-        Caves,
-        Bridge,
+        //---------------------- Village area ----------------------
+        Village_StartingPoint,
+        Village_FloatingRock,
+        Village_HangingBridge,
+        Village_VineBigLeaf,
+		Village_WoodsCabins,
+		Village_WoodsLeaves,
+        Village_Witches_Woods,
+        Village_TunnelToCastle,
+
+        //---------------------- Castle area ----------------------
+        Castle_TunnelToVillage,
+        Castle_Castle,
+        Castle_Tunnel,
+        Castle_Dungeons,
+        Castle_Caves,
+        Castle_Bridge,
+
+        //---------------------- Dark area ----------------------
+        Dark_Woods
     }
 
     private Vector3[] m_checkpointsPositions = new Vector3[]
@@ -322,6 +329,7 @@ public class ProfilerControlPanelController : MonoBehaviour
         new Vector3(-285, 45, 0f),
         new Vector3(137, 51, 0f),
 		new Vector3(280, 42, 0f),
+        new Vector3(-394, -54, 0f),
         new Vector3(360, 69, 0f),
         new Vector3(414, 68, 0f),
         new Vector3(598, -3, 0f),
