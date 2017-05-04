@@ -192,12 +192,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         }
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
-			PoolManager.RequestPool(m_corpseAsset, "Game/Corpses/", 3);
+			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/", 3, true);
 		}
 
 		m_isExclamationMarkOn = false;
 		if (m_exclamationTransform != null) {
-			PoolManager.RequestPool("PF_ExclamationMark", "Game/Entities/", 3);
+			PoolManager.CreatePool("PF_ExclamationMark", "Game/Entities/", 3, true);
 		}
 
 		// particle management
@@ -835,9 +835,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			if (!string.IsNullOrEmpty(m_corpseAsset)) {
 				// spawn corpse
 				GameObject corpse = PoolManager.GetInstance(m_corpseAsset, true);
-				corpse.transform.CopyFrom(transform);
-
-				corpse.GetComponent<Corpse>().Spawn(IsEntityGolden(), m_dragonBoost.IsBoostActive());
+				if (corpse != null) {
+					corpse.transform.CopyFrom(transform);
+					corpse.GetComponent<Corpse>().Spawn(IsEntityGolden(), m_dragonBoost.IsBoostActive());
+				}
 			}
 		}
 
