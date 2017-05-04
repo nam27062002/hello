@@ -4,8 +4,8 @@
 	{
 //		_MainTex ("Texture", 2D) = "white" {}
 		_RayWidth ("Ray width", Range(0.001, 2.0)) = 0.5
-		_RayPhase ("Ray phase", Range(0.001, 10.0)) = 0.5
-		_RaySpeed("Ray speed", Range(0.001, 10.0)) = 0.5
+		_RayPhase ("Ray phase", Range(0.0, 10.0)) = 0.5
+		_RaySpeed("Ray speed", Range(0.0, 10.0)) = 0.5
 		_RayColor("Ray color", Color) = (0.0, 1.0, 1.0, 1.0)
 	}
 	SubShader

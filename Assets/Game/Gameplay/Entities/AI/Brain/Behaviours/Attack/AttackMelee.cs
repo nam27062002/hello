@@ -36,6 +36,9 @@ namespace AI {
 				m_meleeWeapon.damage = ((AttackMeleeData)m_data).damage;
 				m_meleeWeapon.enabled = false;
 
+				m_animEvents.onEnableWeapon += new PreyAnimationEvents.OnEnableWeaponDelegate(OnEnableWeapon);
+				m_animEvents.onDisableWeapon += new PreyAnimationEvents.OnDisableWeaponDelegate(OnDisableWeapon);
+
 				m_machine.SetSignal(Signals.Type.Melee, true);
 			}
 
@@ -43,14 +46,25 @@ namespace AI {
 				base.OnExit(_newState);
 				m_meleeWeapon.enabled = false;
 
+				m_animEvents.onEnableWeapon -= new PreyAnimationEvents.OnEnableWeaponDelegate(OnEnableWeapon);
+				m_animEvents.onDisableWeapon -= new PreyAnimationEvents.OnDisableWeaponDelegate(OnDisableWeapon);
+
 				m_machine.SetSignal(Signals.Type.Melee, false);
 			}
 
 			protected override void OnAnimDealDamageExtended() {
-				m_meleeWeapon.enabled = true;
+				OnEnableWeapon();
 			}
 
 			protected override void OnAnimEndExtended() {
+				OnDisableWeapon();
+			}
+
+			private void OnEnableWeapon() {
+				m_meleeWeapon.enabled = true;
+			}
+
+			private void OnDisableWeapon() {
 				m_meleeWeapon.enabled = false;
 			}
 		}
