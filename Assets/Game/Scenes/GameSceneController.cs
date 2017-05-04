@@ -272,7 +272,10 @@ public class GameSceneController : GameSceneControllerBase {
 							}
 
 							if (done)
-							{                                
+							{
+                                Resources.UnloadUnusedAssets();
+                                System.GC.Collect();
+                                                                  
                                 m_switchingAreaTasks = LevelManager.LoadArea(m_nextArea);                                
 								if ( m_switchingAreaTasks != null )
 								{
