@@ -192,12 +192,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         }
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
-			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/", 3, true);
+			PoolManager.RequestPool(m_corpseAsset, "Game/Corpses/", 3);
 		}
 
 		m_isExclamationMarkOn = false;
 		if (m_exclamationTransform != null) {
-			PoolManager.CreatePool("PF_ExclamationMark", "Game/Entities/", 3, true);
+			PoolManager.RequestPool("PF_ExclamationMark", "Game/Entities/", 3);
 		}
 
 		// particle management
