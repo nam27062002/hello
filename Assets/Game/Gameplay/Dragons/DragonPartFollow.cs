@@ -20,8 +20,9 @@ public class DragonPartFollow : MonoBehaviour {
 	public Vector3 m_upDir = Vector3.up;
 	private float m_startScale;
 	// Use this for initialization
-	void Start () 
+	IEnumerator Start () 
 	{
+		yield return null;
 		if ( m_root == null )
 			m_root = transform;
 		m_startScale = m_root.lossyScale.x;

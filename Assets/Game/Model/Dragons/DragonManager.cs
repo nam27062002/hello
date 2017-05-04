@@ -91,6 +91,40 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	}
 
 	/// <summary>
+	/// Get the data of the dragon positioned before a specific one.
+	/// </summary>
+	/// <returns>The previous dragon data. <c>null</c> if first dragon.</returns>
+	/// <param name="_sku">Target dragon.</param>
+	public static DragonData GetPreviousDragonData(string _sku) {
+		// Just check order
+		DragonData data = GetDragonData(_sku);
+		int order = data.def.GetAsInt("order");
+		if(order > 0) {	// Exclude if first dragon
+			return DragonManager.dragonsByOrder[order - 1];
+		}
+
+		// Not found! Probably last dragon
+		return null;
+	}
+
+	/// <summary>
+	/// Get the data of the dragon following a specific one.
+	/// </summary>
+	/// <returns>The next dragon data. <c>null</c> if last dragon.</returns>
+	/// <param name="_sku">Target dragon.</param>
+	public static DragonData GetNextDragonData(string _sku) {
+		// Just check order
+		DragonData data = GetDragonData(_sku);
+		int order = data.def.GetAsInt("order");
+		if(order < DragonManager.dragonsByOrder.Count - 1) {	// Exclude if last dragon
+			return DragonManager.dragonsByOrder[order + 1];
+		}
+
+		// Not found! Probably last dragon
+		return null;
+	}
+
+	/// <summary>
 	/// Get all the dragons at a given tier.
 	/// </summary>
 	/// <returns>The data of the dragons at the given tier.</returns>
