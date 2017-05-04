@@ -189,7 +189,7 @@ public class EggReward {
 					else if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
 						do {
 							m_itemDef = petDefs.GetRandomValue();
-						} while(!m_itemDef.GetAsBool("inFirstGatcha"));
+						} while(!m_itemDef.GetAsBool("startingPool"));
 					} 
 
 					// Default behaviour: random pet of the target rarity
