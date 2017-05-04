@@ -33,6 +33,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	[SerializeField] private NavigationShowHideAnimator m_arrowsAnim = null;
 	[Space]
 	[SerializeField] private float m_initialDelay = 1f;
+	[SerializeField] private float m_scrollDuration = 1f;
 	[SerializeField] private float m_unlockAnimDuration = 1f;
 
 	//------------------------------------------------------------------------//
@@ -73,7 +74,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 				DragonData nextDragonData = DragonManager.dragonsByOrder[order + 1];
 				if(nextDragonData != null) {
 					InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);
-					DOVirtual.DelayedCall(1f, () => { LaunchUnlockAnim(nextDragonData.def.sku, m_initialDelay); });
+					DOVirtual.DelayedCall(1f, () => { LaunchUnlockAnim(nextDragonData.def.sku, m_initialDelay, m_scrollDuration); });
 				}
 			}
 		}
@@ -87,34 +88,36 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// Launch the unlock animation!
 	/// </summary>
 	/// <param name="_unlockedDragonSku">Unlocked dragon sku.</param>
-	/// <param name="_initialDelay">Initial delay before launching the unlock animation. Use it to sync with scrolling to target dragon.</param>
-	public void LaunchUnlockAnim(string _unlockedDragonSku, float _initialDelay) {
-		// Clean screen
-		// Don't disable elements, otherwise they won't be enabled on the next screen change!
-		m_bottomBarAnim.ForceHide(true, false);
-		m_unlockButtonsAnim.ForceHide(true, false);
-		m_arrowsAnim.ForceHide(true, false);
-		InstanceManager.menuSceneController.hud.animator.ForceHide(true, false);
-
+	/// <param name="_initialDelay">Initial delay before launching the unlock animation.</param>
+	/// <param name="_scrollDuration">Use it to sync with scrolling to target dragon.</param>
+	public void LaunchUnlockAnim(string _unlockedDragonSku, float _initialDelay, float _scrollDuration) {
 		// Program lock animation sequence
 		DOTween.Sequence()
 			.AppendCallback(() => {
 				// Lock all input
 				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, true);
+			})
+			.AppendInterval(Mathf.Max(0.1f, _initialDelay))	// Avoid 0 duration
+			.AppendCallback(() => {
+				// Navigate to target dragon (should be next dragon)
+				InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(_unlockedDragonSku);
+			})
+			.AppendInterval(Mathf.Max(0.1f, _scrollDuration))	// Sync with dragon scroll duration. Avoid 0 duration, otherwise lock animator gets broken
+			.AppendCallback(() => {
+				// Clean screen
+				// Don't disable elements, otherwise they won't be enabled on the next screen change!
+				m_bottomBarAnim.ForceHide(true, false);
+				m_unlockButtonsAnim.ForceHide(true, false);
+				m_arrowsAnim.ForceHide(true, false);
+				InstanceManager.menuSceneController.hud.animator.ForceHide(true, false);
 
 				// Prepare lock icon animation
 				// Disable normal behaviour
 				m_lockIcon.GetComponent<MenuShowConditionally>().enabled = false;
 				m_lockIcon.GetComponent<ShowHideAnimator>().RestartShow();
-				m_lockIcon.animator.SetTrigger("idle");
 
-				// Navigate to target dragon (should be next dragon)
-				InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(_unlockedDragonSku);
-			})
-			.AppendInterval(Mathf.Max(0.1f, _initialDelay))	// Sync with dragon scroll duration. Avoid 0 duration, otherwise lock animator gets broken
-			.AppendCallback(() => {
 				// Show icon unlock animation
-				m_lockIcon.animator.ResetTrigger("idle");	// Just in case initial delay is 0, both triggers would be set at the same frame and animation wouldn't work
+				//m_lockIcon.animator.ResetTrigger("idle");	// Just in case initial delay is 0, both triggers would be set at the same frame and animation wouldn't work
 				m_lockIcon.animator.SetTrigger("unlock");
 			})
 			.AppendInterval(m_unlockAnimDuration)
@@ -144,7 +147,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// If a dragon was just unlocked, prepare a nice unlock animation sequence!
 		if(!string.IsNullOrEmpty(GameVars.unlockedDragonSku)) {
 			// Do anim!
-			LaunchUnlockAnim(GameVars.unlockedDragonSku, m_initialDelay);
+			LaunchUnlockAnim(GameVars.unlockedDragonSku, m_initialDelay, m_scrollDuration);
 
 			// Reset flag
 			GameVars.unlockedDragonSku = string.Empty;
