@@ -90,6 +90,13 @@ public class DragonUnlockScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Show/Hide menu HUD.
+	/// </summary>
+	/// <param name="_show">Show or hide?</param>
+	public void ToggleHUD(bool _show) {
+		InstanceManager.menuSceneController.hud.animator.Set(_show);
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -104,7 +111,9 @@ public class DragonUnlockScreen : MonoBehaviour {
 		DragonData dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 
 		// Initialize dragon info
-		if(m_dragonName != null) m_dragonName.Localize(dragonData.def.GetAsString("tidName"));
+		if(m_dragonName != null) {
+			m_dragonName.Localize("TID_DRAGON_UNLOCK", dragonData.def.GetLocalized("tidName"));
+		}
 		if(m_dragonDesc != null) m_dragonDesc.Localize(dragonData.def.GetAsString("tidDesc"));
 		if(m_dragonTierIcon != null) m_dragonTierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, dragonData.tierDef.GetAsString("icon"));
 		if(m_healthText != null) m_healthText.text = StringUtils.FormatNumber(dragonData.maxHealth, 0);
@@ -126,6 +135,9 @@ public class DragonUnlockScreen : MonoBehaviour {
 				m_newPreysAnimator.ForceHide(false);
 			}
 		}
+
+		// Hide HUD
+		ToggleHUD(false);
 	}
 
 	/// <summary>

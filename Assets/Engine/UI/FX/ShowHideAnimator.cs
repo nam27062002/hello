@@ -47,7 +47,7 @@ public class ShowHideAnimator : MonoBehaviour {
 		ANIMATOR
 	}
 
-	protected enum State {
+	public enum State {
 		INIT,
 		VISIBLE,
 		HIDDEN
@@ -132,6 +132,7 @@ public class ShowHideAnimator : MonoBehaviour {
 			return m_state == State.VISIBLE; 
 		}
 	}
+	public State state { get { return m_state; }}
 
 	// Public properties
 	// Sequence delta, only for sequence animations

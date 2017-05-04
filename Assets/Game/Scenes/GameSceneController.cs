@@ -52,12 +52,7 @@ public class GameSceneController : GameSceneControllerBase {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] private ResultsSceneController m_resultsScene;
-	public ResultsSceneController resultsScene {
-		get { return m_resultsScene; }
-	}
-
+	// Exposed	
 	[SerializeField] private LevelLoadingSplash m_loadingScreen = null;
 	public LevelLoadingSplash loadingScreen {
 		get { return m_loadingScreen; }
@@ -277,7 +272,10 @@ public class GameSceneController : GameSceneControllerBase {
 							}
 
 							if (done)
-							{                                
+							{
+                                Resources.UnloadUnusedAssets();
+                                System.GC.Collect();
+                                                                  
                                 m_switchingAreaTasks = LevelManager.LoadArea(m_nextArea);                                
 								if ( m_switchingAreaTasks != null )
 								{
@@ -350,16 +348,7 @@ public class GameSceneController : GameSceneControllerBase {
                 m_switchAsyncScenes.Update();
             } break;
 		}
-	}
-    
-    /*
-    private void GoToResultsScene() {
-        // Enable Results screen and move the camera to that position
-        if (m_resultsScene != null) {
-            m_resultsScene.Show();
-        }
-    }
-    */   
+	}       
 
     /// <summary>
     /// Clears stuff used by the game (RUNNING state)

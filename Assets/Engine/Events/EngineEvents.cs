@@ -36,6 +36,9 @@ public enum EngineEvents {
 	PURCHASE_FINISHED,		// string _productSku
 	PURCHASE_RECEIVED_PRODUCTS_AVAILABILITY,	// no params
 
+	// UI Events
+	UI_LOCK_INPUT,			// bool _lock
+
 	// Custom Game Events:
 	// This should always be the last element of the EngineEvents enum
 	// Start your custom GameEvents enum with this value (e.g. MY_FIRST_GAME_EVENT = EngineEvents.END)

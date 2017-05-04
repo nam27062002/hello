@@ -68,6 +68,16 @@ public class ResultsScreenXPBar : DragonXPBar {
 	private bool m_nextDragonLocked = true;	// Is the next dragon locked or has it been already unlocked using PC?
 	private DragonData m_nextDragonData = null;
 
+	// Some public properties
+	public DragonData nextDragonData {
+		get { return m_nextDragonData; }
+	}
+
+	public bool newDragonUnlocked {	// Is next dragon unlocked in this run?
+		// Only if next dragon was locked, obviously! And max xp delta reached :)
+		get { return m_targetDelta >= 1f && m_nextDragonLocked; }
+	}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -472,7 +482,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 	/// </summary>
 	public void OnXPAnimEnd() {
 		// If we reached max delta, a dragon has been unlocked!
-		if(m_targetDelta >= 1f && m_nextDragonLocked) {
+		if(newDragonUnlocked) {
 			// Only if next dragon was locked, obviously!
 			LaunchDragonUnlockAnimation();
 		}

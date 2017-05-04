@@ -104,9 +104,6 @@ public class MenuSceneController : SceneController {
 		// Call parent
 		base.Awake();
 
-		// Initialize selected dragon getting the one from the profile
-		m_selectedDragon = UsersManager.currentUser.currentDragon;	// UserProfile should be loaded and initialized by now
-
 		// Initialize the selected level in a similar fashion
 		m_selectedLevel = UsersManager.currentUser.currentLevel;		// UserProfile should be loaded and initialized by now
 
@@ -119,6 +116,17 @@ public class MenuSceneController : SceneController {
 			m_fogSetup.RefreshTexture();
 		}
 		m_fogSetup.FogSetup();
+
+		// Define initial selected dragon
+		if(string.IsNullOrEmpty(GameVars.menuInitialDragon)) {
+			// Default behaviour: Last dragon used
+			m_selectedDragon = UsersManager.currentUser.currentDragon;	// UserProfile should be loaded and initialized by now
+		} else {
+			// Forced dragon
+			//SetSelectedDragon(GameVars.menuInitialDragon);
+			m_selectedDragon = GameVars.menuInitialDragon;
+			GameVars.menuInitialDragon = string.Empty;	// Reset var
+		}
 	}
 
 	protected IEnumerator Start()
