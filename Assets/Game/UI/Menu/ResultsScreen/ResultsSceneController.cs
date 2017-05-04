@@ -77,7 +77,7 @@ public class ResultsSceneController : MonoBehaviour {
 
 		// Activate and initialize UI, turn off Game UI
 		// [AOC] TODO!! Nicer transition
-		m_gameUI.SetActive(false);
+		//m_gameUI.SetActive(false);
 		m_resultsUI.SetActive(true);
 		ResultsScreenController controller = m_resultsUI.GetComponentInChildren<ResultsScreenController>();
 		if(controller != null) {
