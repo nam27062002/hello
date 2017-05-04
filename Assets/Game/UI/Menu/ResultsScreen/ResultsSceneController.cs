@@ -25,8 +25,7 @@ public class ResultsSceneController : MonoBehaviour {
 	// Exposed references
 	[SerializeField] private Camera m_mainCamera;
 
-	[Space]
-	[SerializeField] private GameObject m_gameUI;
+	[Space]	
 	[SerializeField] private GameObject m_resultsUI;
 
 	[Space]
@@ -76,8 +75,7 @@ public class ResultsSceneController : MonoBehaviour {
 		ResultsSceneSetup targetSetup = newSetupObj.GetComponent<ResultsSceneSetup>();
 
 		// Activate and initialize UI, turn off Game UI
-		// [AOC] TODO!! Nicer transition
-		//m_gameUI.SetActive(false);
+		// [AOC] TODO!! Nicer transition		
 		m_resultsUI.SetActive(true);
 		ResultsScreenController controller = m_resultsUI.GetComponentInChildren<ResultsScreenController>();
 		if(controller != null) {
