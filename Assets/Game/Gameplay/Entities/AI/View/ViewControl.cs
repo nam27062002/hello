@@ -192,12 +192,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         }
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
-			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/", 3, true);
+			ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
 		}
 
 		m_isExclamationMarkOn = false;
 		if (m_exclamationTransform != null) {
-			PoolManager.CreatePool("PF_ExclamationMark", "Game/Entities/", 3, true);
+			ParticleManager.CreatePool("PF_ExclamationMark");
 		}
 
 		// particle management
@@ -545,14 +545,13 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	public void ShowExclamationMark(bool _value) {
 		if (m_exclamationTransform != null && m_isExclamationMarkOn != _value) {
 			if (_value) {
-				m_exclamationMarkOn = PoolManager.GetInstance("PF_ExclamationMark");
-				if ( m_exclamationMarkOn )
-				{
+				m_exclamationMarkOn = ParticleManager.Spawn("PF_ExclamationMark");
+				if (m_exclamationMarkOn) {
 					FollowTransform ft = m_exclamationMarkOn.GetComponent<FollowTransform>();
 					ft.m_follow = m_exclamationTransform;
 				}
 			} else {
-				PoolManager.ReturnInstance(m_exclamationMarkOn);
+				ParticleManager.ReturnInstance(m_exclamationMarkOn);
 				m_exclamationMarkOn = null;
 			}
 
@@ -699,7 +698,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	public void Hit() {
 		m_hitAnimOn = true;
-		m_animator.SetTrigger("hit");
+		//m_animator.SetTrigger("hit");
+		m_animator.Play("Damage");
 	}
 
 	public void Falling(bool _falling) {
@@ -834,7 +834,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (!_burned) {
 			if (!string.IsNullOrEmpty(m_corpseAsset)) {
 				// spawn corpse
-				GameObject corpse = PoolManager.GetInstance(m_corpseAsset, true);
+				GameObject corpse = ParticleManager.Spawn(m_corpseAsset, Vector3.zero, "Corpses/");
 				if (corpse != null) {
 					corpse.transform.CopyFrom(transform);
 					corpse.GetComponent<Corpse>().Spawn(IsEntityGolden(), m_dragonBoost.IsBoostActive());
