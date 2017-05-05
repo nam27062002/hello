@@ -53,18 +53,21 @@ public class GameSceneController : GameSceneControllerBase {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed	
-	[SerializeField] private LevelLoadingSplash m_loadingScreen = null;
-	public LevelLoadingSplash loadingScreen {
-		get { return m_loadingScreen; }
-	}
-
+	[Space]
     [SerializeField] private GameObject m_uiRoot = null;
     public GameObject uiRoot
     {
         get { return m_uiRoot; }
     }
 
-    // Countdown
+	[SerializeField] private ShowHideAnimator m_gameUIAnimator = null;
+
+	[SerializeField] private LevelLoadingSplash m_loadingScreen = null;
+	public LevelLoadingSplash loadingScreen {
+		get { return m_loadingScreen; }
+	}
+    
+	// Countdown
     public float countdown {
 		get {
 			if(state == EStates.COUNTDOWN) {
@@ -632,12 +635,18 @@ public class GameSceneController : GameSceneControllerBase {
             }
 
             loadingScreen.GetComponent<ShowHideAnimator>().ForceShow(animate);
+
+			// Hide HUD
+			if(m_gameUIAnimator != null) m_gameUIAnimator.ForceHide(animate);
         }
     }
 
     public void HideLoadingScreen() {
         if (loadingScreen != null) {           
             loadingScreen.GetComponent<ShowHideAnimator>().ForceHide();
+
+			// Show HUD
+			if(m_gameUIAnimator != null) m_gameUIAnimator.ForceShow();
         }
     }
 

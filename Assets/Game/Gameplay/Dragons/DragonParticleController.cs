@@ -513,7 +513,8 @@ public class DragonParticleController : MonoBehaviour
 	{
 		if ( m_dargonMotion.height <= 2 && m_landingInstance)
 		{
-			m_landingInstance.transform.position = m_dargonMotion.lastGroundHit;
+			Vector3 disp = transform.rotation * m_landingParticle.offset;
+			m_landingInstance.transform.position = m_dargonMotion.lastGroundHit + disp;
 			m_landingInstance.Play();
 		}
 	}
