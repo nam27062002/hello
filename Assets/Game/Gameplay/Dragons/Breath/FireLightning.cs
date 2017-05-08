@@ -12,6 +12,7 @@ public class FireLightning : DragonBreathBehaviour {
     public float m_offsetRays = 0.5f;
 	public Material m_rayMaterial;
 
+    public int m_numRays = 1;
 
     public float m_maxAmplitude2 = 1.0f;
     public AnimationCurve m_widthCurve2 = new AnimationCurve();
@@ -19,8 +20,9 @@ public class FireLightning : DragonBreathBehaviour {
     public float m_offsetRays2 = 0.5f;
     public Material m_rayMaterial2;
 
+    public int m_numRays2 = 1;
 
-    public int m_numRays = 3;
+
     private int m_numRaysOld = -1;
 
 	// Test
@@ -56,7 +58,7 @@ public class FireLightning : DragonBreathBehaviour {
     Lightning[] m_rays2 = null;// new Lightning[3];
 
 
-    class Lightning
+    public class Lightning
     {
 
 		public LineRenderer m_line;
@@ -171,17 +173,21 @@ public class FireLightning : DragonBreathBehaviour {
     {
         if (m_numRays != m_numRaysOld)
         {
-            destroyRays();
-                
+            destroyRays(m_rays);
+            destroyRays(m_rays2);
+
             m_rays = new Lightning[m_numRays];
-            m_rays2 = new Lightning[m_numRays];
+            m_rays2 = new Lightning[m_numRays2];
             float offStep = 1.0f / (float)m_numRays;
             for (int c = 0; c < m_rays.Length; c++)
             {
                 m_rays[c] = new Lightning(Color.gray, m_rayMaterial, m_widthCurve);
                 m_rays[c].m_segmentLength = m_segmentLength;
                 m_rays[c].m_initOffset = offStep * (float)c;
+            }
 
+            for (int c = 0; c < m_rays2.Length; c++)
+            {
                 m_rays2[c] = new Lightning(Color.gray, m_rayMaterial2, m_widthCurve2);
                 m_rays2[c].m_segmentLength = m_segmentLength;
                 m_rays2[c].m_initOffset = offStep * (float)c;
@@ -191,90 +197,63 @@ public class FireLightning : DragonBreathBehaviour {
         }
     }
 
-    void destroyRays()
+    static void destroyRays(Lightning[] rays)
     {
-        if (m_rays != null)
+        if (rays != null)
         {
-            for (int c = 0; c < m_rays.Length; c++)
+            for (int c = 0; c < rays.Length; c++)
             {
-                m_rays[c].Destroy();
-                m_rays[c] = null;
-                m_rays2[c].Destroy();
-                m_rays2[c] = null;
+                rays[c].Destroy();
+                rays[c] = null;
             }
         }
-
-        m_rays = null;
-        m_rays2 = null;
+        rays = null;
     }
 
 
     void OnDestroy()
     {
-        destroyRays();
-        
+        destroyRays(m_rays);
+        destroyRays(m_rays2);
+
         print("FireLightning destroy!!!!");
     }
 
-    public void SetAmplitude( float amplitude, bool raySet )
+    static public void SetAmplitude(Lightning[] rays, float amplitude)
 	{
 //		m_maxAmplitude = amplitude;
 
-        if (m_rays != null)
+        if (rays != null)
         {
-            for (int c = 0; c < m_rays.Length; c++)
+            for (int c = 0; c < rays.Length; c++)
             {
-                if (raySet)
-                {
-                    m_rays2[c].m_amplitude = amplitude;
-                }
-                else
-                {
-                    m_rays[c].m_amplitude = amplitude;
-                }
+                rays[c].m_amplitude = amplitude;
             }
         }
 	}
 
 
 
-    public void SetWidthCurve(AnimationCurve curve, bool raySet)
+    public void SetWidthCurve(Lightning[] rays, AnimationCurve curve)
     {
-        if (m_rays != null)
+        if (rays != null)
         {
-            for (int c = 0; c < m_rays.Length; c++)
+            for (int c = 0; c < rays.Length; c++)
             {
-                if (raySet)
-                {
-                    m_rays2[c].m_line.widthCurve = curve;
-                }
-                else
-                {
-                    m_rays[c].m_line.widthCurve = curve;
-                }
+                rays[c].m_line.widthCurve = curve;
             }
         }
-
     }
 
-
-    public void SetWidthMultiplier( float multiplier, bool raySet)
+    public void SetWidthMultiplier(Lightning[] rays, float multiplier)
     {
-        if (m_rays != null)
+        if (rays != null)
         {
-            for (int c = 0; c < m_rays.Length; c++)
+            for (int c = 0; c < rays.Length; c++)
             {
-                if (raySet)
-                {
-                    m_rays2[c].m_line.widthMultiplier = multiplier;
-                }
-                else
-                {
-                    m_rays[c].m_line.widthMultiplier = multiplier;
-                }
+                rays[c].m_line.widthMultiplier = multiplier;
             }
         }
-
     }
 
     override protected void Breath()
@@ -293,8 +272,8 @@ public class FireLightning : DragonBreathBehaviour {
 
 
         updateRays();
-        SetAmplitude(m_maxAmplitude, false);
-        SetAmplitude(m_maxAmplitude2, true);
+        SetAmplitude(m_rays, m_maxAmplitude);
+        SetAmplitude(m_rays2, m_maxAmplitude2);
 
         if ( m_insideWater )
 		{
@@ -328,14 +307,18 @@ public class FireLightning : DragonBreathBehaviour {
 		for(int i=0;i<m_rays.Length;i++)
         {
             m_rays[i].Draw(p1, p2);
+        }
+
+        for (int i = 0; i < m_rays2.Length; i++)
+        {
             m_rays2[i].Draw(p1, p2);
         }
 
-        SetWidthMultiplier(m_widthMultiplier, false);
-        SetWidthMultiplier(m_widthMultiplier2, true);
+        SetWidthMultiplier(m_rays, m_widthMultiplier);
+        SetWidthMultiplier(m_rays2, m_widthMultiplier2);
 
-        SetWidthCurve(m_widthCurve, false);
-        SetWidthCurve(m_widthCurve2, true);
+        SetWidthCurve(m_rays, m_widthCurve);
+        SetWidthCurve(m_rays2, m_widthCurve2);
 
         // Look entities to damage!
         Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_maxAmplitude, m_actualLength);

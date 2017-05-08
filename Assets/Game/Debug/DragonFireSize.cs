@@ -59,10 +59,10 @@ public class DragonFireSize : MonoBehaviour {
 					m_fireBreath.curve = m_size;
 			}
 
-			if ( m_fireLightning != null)
-			{
-				m_fireLightning.SetAmplitude( _size, true );
-			}
+//			if ( m_fireLightning != null)
+//			{
+//				m_fireLightning.SetAmplitude( _size, true );
+//			}
 		}
 	}
 
