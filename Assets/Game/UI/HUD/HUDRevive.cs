@@ -19,7 +19,6 @@ using TMPro;
 /// <summary>
 /// Revive logic and UI controller.
 /// </summary>
-[RequireComponent(typeof(ShowHideAnimator))]
 public class HUDRevive : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -33,18 +32,19 @@ public class HUDRevive : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_pcText = null;
 	[SerializeField] private GameObject m_freeReviveButton = null;
 
+	// Other references
+	[Space]
+	[SerializeField] private ShowHideAnimator m_animator = null;
+
 	// Exposed setup
 	[Space]
-	[SerializeField] private float m_reviveAvailableSecs = 5f;	// [AOC] TODO!! From content
+	[SerializeField] private float m_reviveAvailableSecs = 5f;
+	[SerializeField] private float m_deathAnimDuration = 4f;
 	[SerializeField] private int m_freeRevivesPerGame = 2;	// [AOC] TODO!! From content
 	[SerializeField] private int m_minGamesBeforeFreeReviveAvailable = 3;	// [AOC] TODO!! From content
 
-	// Internal references
-	private ShowHideAnimator m_animator = null;
-
 	// Internal logic
 	private DeltaTimer m_timer = new DeltaTimer();
-	private bool m_allowCurrencyPopup = true;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -53,9 +53,6 @@ public class HUDRevive : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-		// Get references
-		m_animator = GetComponent<ShowHideAnimator>();
-
 		// Subscribe to external events
 		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
@@ -180,26 +177,32 @@ public class HUDRevive : MonoBehaviour {
 	/// The player is KO.
 	/// </summary>
 	private void OnPlayerKo(DamageType _type, Transform _source) {
-		// No revive available during the tutorial! Kill the dragon
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
-			Messenger.Broadcast(GameEvents.PLAYER_DIED);
-			return;
+		// No revive available during the tutorial! Kill the dragon after some delay
+		bool tutorialCompleted = UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN);
+
+		// Init some stuff
+		float duration = 0f;
+		if(tutorialCompleted) {
+			// Timer
+			duration = m_reviveAvailableSecs;
+
+			// Initialize PC cost
+			if(m_pcText != null) {
+				m_pcText.text = UIConstants.GetIconString((RewardManager.freeReviveCount + RewardManager.paidReviveCount) + 1, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);	// [AOC] TODO!! Actual revive cost formula
+			}
+
+			// Free revive available?
+			m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && RewardManager.freeReviveCount < m_freeRevivesPerGame);
+
+			// Show!
+			if(m_animator != null) m_animator.Show();
+		} else {
+			// Timer
+			duration = m_deathAnimDuration;
 		}
 
-		// Initialize PC cost
-		if ( m_pcText != null )
-			m_pcText.text = UIConstants.GetIconString((RewardManager.freeReviveCount + RewardManager.paidReviveCount) + 1, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);	// [AOC] TODO!! Actual revive cost formula
-
-		// Free revive available?
-		m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && RewardManager.freeReviveCount < m_freeRevivesPerGame);
-
-		// Reset timer and control vars
-		m_timer.Start(m_reviveAvailableSecs * 1000);
-		m_allowCurrencyPopup = true;
-
-		// Show!
-		if ( m_animator != null )
-			m_animator.Show();
+		// Reset timer
+		m_timer.Start(duration * 1000);
 
 		// Slow motion
 		Time.timeScale = 0.25f;
