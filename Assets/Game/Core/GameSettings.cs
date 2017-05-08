@@ -72,6 +72,6 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		// Apply, round and return
 		double pc = Mathf.Abs(_coins) * coinsToPC;
 		pc = Math.Round(pc, MidpointRounding.AwayFromZero);
-		return Math.Max(0, (long)pc);
+		return Math.Max(1, (long)pc);	// At least 1
 	}
 }
