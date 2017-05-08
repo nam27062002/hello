@@ -56,7 +56,7 @@ public class MonoBehaviourTemplate : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Called every frame
+	/// Called every frame.
 	/// </summary>
 	private void Update() {
 
