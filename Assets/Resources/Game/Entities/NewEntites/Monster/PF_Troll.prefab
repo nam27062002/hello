@@ -538,7 +538,6 @@ GameObject:
   - component: {fileID: 4324929205792548}
   - component: {fileID: 198695169191614514}
   - component: {fileID: 199953484593278260}
-  - component: {fileID: 114512139337307624}
   m_Layer: 0
   m_Name: PS_Troll
   m_TagString: Untagged
@@ -1559,7 +1558,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1280568003522936}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.033, z: 0}
+  m_LocalPosition: {x: 126.20283, y: 1.4348568, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4011093325883150}
@@ -1826,20 +1825,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114512139337307624
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1604143201559374}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_activeTime: 1
-  m_returnTo: 1
-  m_disableOnInvisible: 1
 --- !u!114 &114544284418125734
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2009,6 +1994,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_knockback: 12
   m_timeBetweenHits: 0.5
+  m_trail: {fileID: 114973253395767282}
+  m_trailParticles:
+  - {fileID: 1604143201559374}
 --- !u!114 &114874567745410300
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7243,7 +7231,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -343021418
+  randomSeed: 1161029863
   InitialModule:
     serializedVersion: 3
     enabled: 1
