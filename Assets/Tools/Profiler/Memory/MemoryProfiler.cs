@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 
 public class MemoryProfiler
 {          
-    public void Clear()
+    public void Clear(bool clearAnalysis)
     {       
         if (All_MemorySample != null)
         {
@@ -17,7 +17,7 @@ public class MemoryProfiler
         }
 
         Scene_Clear();
-        GO_Clear();
+        GO_Clear(clearAnalysis);
     }    
 
     #region size
@@ -117,8 +117,20 @@ public class MemoryProfiler
     /// <summary>
     /// Takes a single sample with all Objects in the scene 
     /// </summary>
-    public virtual AbstractMemorySample Scene_TakeASample()
+    public virtual AbstractMemorySample Scene_TakeASample(bool reuseAnalysis)
     {
+        // Analysing every single game object in a scene is a really heavy process so if analyzeObjects is false and there's information
+        // stored from a previous analysis then this heavy process is not performed again
+        if (reuseAnalysis && GO_IsAnalysisEmpty())
+        {
+            reuseAnalysis = false;            
+        }
+        
+        if (!reuseAnalysis)
+        {
+            GO_ClearAnalysis();
+        }
+
         MemorySample returnValue = new MemorySample(SCENE_SAMPLE_NAME, SizeStrategy);
 
         if (Scene_GOs != null)
@@ -126,19 +138,34 @@ public class MemoryProfiler
             int count;            
             List<Object> dependencies = new List<Object>();
             foreach (KeyValuePair<string, List<GameObject>> pair in Scene_GOs)
-            {                                
+            {                
                 count = pair.Value.Count;
                 for (int i = 0; i < count; i++)
                 {
-                    GO_AnalyzeGO(pair.Value[i], ref dependencies);
-                }
-            }
+                    dependencies = null;
 
-            count = dependencies.Count;
-            for (int i = 0; i < count; i++)
-            {
-                returnValue.AddObject(dependencies[i]);
-            }
+                    if (reuseAnalysis)
+                    {
+                        dependencies = GO_GetAnalysis(pair.Value[i]);
+                    }
+
+                    if (dependencies == null)
+                    {
+                        dependencies = new List<Object>();
+                        GO_AnalyzeGO(pair.Value[i], ref dependencies);
+                        GO_AddAnalysis(pair.Value[i], dependencies);
+                    }                    
+
+                    if (dependencies != null)
+                    {
+                        int jCount = dependencies.Count;
+                        for (int j = 0; j < jCount; j++)
+                        {
+                            returnValue.AddObject(dependencies[j]);
+                        }                        
+                    }
+                }
+            }            
 
             returnValue.Analyze();
         }
@@ -146,35 +173,65 @@ public class MemoryProfiler
         return returnValue;
     }
 
+    public virtual AbstractMemorySample Scene_TakeAGameSample(bool reuseAnalysis)
+    {
+        return Scene_TakeASample(reuseAnalysis);
+    }
+
     /// <summary>
     /// Takes a sample of every category
     /// </summary>
-    public virtual AbstractMemorySample Scene_TakeASampleWithCategories(string categorySetName)
+    public virtual AbstractMemorySample Scene_TakeAGameSampleWithCategories(bool reuseAnalysis, string categorySetName)
     {
+        // Analysing every single game object in a scene is a really heavy process so if analyzeObjects is false and there's information
+        // stored from a previous analysis then this heavy process is not performed again
+        if (reuseAnalysis && GO_IsAnalysisEmpty())
+        {
+            reuseAnalysis = false;
+        }
+        
+        if (!reuseAnalysis)
+        {
+            GO_ClearAnalysis();
+        }
+
         MemorySampleCollection returnValue = new MemorySampleCollection(SCENE_SAMPLE_NAME, SizeStrategy);
 
         if (Scene_GOs != null)
         {
             int count;
             MemorySample sample;
-            List<Object> dependencies = new List<Object>();
+            List<Object> dependencies;
             foreach (KeyValuePair<string, List<GameObject>> pair in Scene_GOs)
-            {
-                dependencies.Clear();
-
+            {                
                 sample = new MemorySample(pair.Key, SizeStrategy);
                 returnValue.AddSample(pair.Key, sample);
                 count = pair.Value.Count;
                 for (int i = 0; i < count; i++)
                 {
-                    GO_AnalyzeGO(pair.Value[i], ref dependencies);
-                }
+                    dependencies = null;
 
-                count = dependencies.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    sample.AddObject(dependencies[i]);
-                }
+                    if (reuseAnalysis)
+                    {
+                        dependencies = GO_GetAnalysis(pair.Value[i]);
+                    }
+
+                    if (dependencies == null)
+                    {
+                        dependencies = new List<Object>();
+                        GO_AnalyzeGO(pair.Value[i], ref dependencies);
+                        GO_AddAnalysis(pair.Value[i], dependencies);
+                    }
+
+                    if (dependencies != null)
+                    {
+                        int jCount = dependencies.Count;
+                        for (int j = 0; j < jCount; j++)
+                        {
+                            sample.AddObject(dependencies[j]);
+                        }                        
+                    }                   
+                }               
 
                 sample.Analyze();
             }
@@ -192,11 +249,16 @@ public class MemoryProfiler
     /// </summary>
     private List<string> GO_BannedGOs;
 
-    private void GO_Clear()
+    private void GO_Clear(bool clearAnalysis)
     {
         if (GO_BannedGOs != null)
         {
             GO_BannedGOs.Clear();
+        }
+
+        if (clearAnalysis)
+        {
+            GO_ClearAnalysis();
         }
     }
 
@@ -501,6 +563,49 @@ public class MemoryProfiler
                 }
             }
         }
+    }
+
+    private Dictionary<GameObject, List<Object>> GO_Analysis { get; set; }
+
+    private void GO_AddAnalysis(GameObject go, List<Object> dependencies)
+    {
+        if (GO_Analysis == null)
+        {
+            GO_Analysis = new Dictionary<GameObject, List<Object>>();
+        }
+
+        if (GO_Analysis.ContainsKey(go))
+        {
+            GO_Analysis[go] = dependencies;
+        }
+        else
+        {
+            GO_Analysis.Add(go, dependencies);
+        }
+    }
+
+    private void GO_ClearAnalysis()
+    {
+        if (GO_Analysis != null)
+        {
+            GO_Analysis.Clear();
+        }
+    }
+
+    private List<Object> GO_GetAnalysis(GameObject go)
+    {
+        List<Object> returnValue = null;
+        if (GO_Analysis != null && GO_Analysis.ContainsKey(go))
+        {
+            returnValue = GO_Analysis[go];
+        }
+
+        return returnValue;
+    }
+
+    private bool GO_IsAnalysisEmpty()
+    {
+        return GO_Analysis == null || GO_Analysis.Count == 0;
     }
 #endif
 
