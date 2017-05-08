@@ -5,13 +5,20 @@ using System.Collections.Generic;
 public class FireLightning : DragonBreathBehaviour {
 
 	public float m_segmentLength = 25f; 
+
     public float m_maxAmplitude = 1.0f;
     public AnimationCurve m_widthCurve = new AnimationCurve();
     public float m_widthMultiplier = 1.0f;
-
     public float m_offsetRays = 0.5f;
-
 	public Material m_rayMaterial;
+
+
+    public float m_maxAmplitude2 = 1.0f;
+    public AnimationCurve m_widthCurve2 = new AnimationCurve();
+    public float m_widthMultiplier2 = 1.0f;
+    public float m_offsetRays2 = 0.5f;
+    public Material m_rayMaterial2;
+
 
     public int m_numRays = 3;
     private int m_numRaysOld = -1;
@@ -46,9 +53,11 @@ public class FireLightning : DragonBreathBehaviour {
 	bool m_insideWater;
 
     Lightning[] m_rays = null;// new Lightning[3];
+    Lightning[] m_rays2 = null;// new Lightning[3];
 
 
-	class Lightning{
+    class Lightning
+    {
 
 		public LineRenderer m_line;
 
@@ -165,14 +174,17 @@ public class FireLightning : DragonBreathBehaviour {
             destroyRays();
                 
             m_rays = new Lightning[m_numRays];
+            m_rays2 = new Lightning[m_numRays];
             float offStep = 1.0f / (float)m_numRays;
             for (int c = 0; c < m_rays.Length; c++)
             {
                 m_rays[c] = new Lightning(Color.gray, m_rayMaterial, m_widthCurve);
-
                 m_rays[c].m_segmentLength = m_segmentLength;
-                m_rays[0].m_initOffset = offStep * (float)c;
+                m_rays[c].m_initOffset = offStep * (float)c;
 
+                m_rays2[c] = new Lightning(Color.gray, m_rayMaterial2, m_widthCurve2);
+                m_rays2[c].m_segmentLength = m_segmentLength;
+                m_rays2[c].m_initOffset = offStep * (float)c;
             }
 
             m_numRaysOld = m_numRays;
@@ -187,10 +199,13 @@ public class FireLightning : DragonBreathBehaviour {
             {
                 m_rays[c].Destroy();
                 m_rays[c] = null;
+                m_rays2[c].Destroy();
+                m_rays2[c] = null;
             }
         }
 
         m_rays = null;
+        m_rays2 = null;
     }
 
 
@@ -201,39 +216,62 @@ public class FireLightning : DragonBreathBehaviour {
         print("FireLightning destroy!!!!");
     }
 
-    public void SetAmplitude( float amplitude )
+    public void SetAmplitude( float amplitude, bool raySet )
 	{
-		m_maxAmplitude = amplitude;
+//		m_maxAmplitude = amplitude;
 
         if (m_rays != null)
         {
             for (int c = 0; c < m_rays.Length; c++)
             {
-                m_rays[c].m_amplitude = m_maxAmplitude;
+                if (raySet)
+                {
+                    m_rays2[c].m_amplitude = amplitude;
+                }
+                else
+                {
+                    m_rays[c].m_amplitude = amplitude;
+                }
             }
         }
 	}
 
-    public void SetWidthCurve(AnimationCurve curve)
+
+
+    public void SetWidthCurve(AnimationCurve curve, bool raySet)
     {
         if (m_rays != null)
         {
             for (int c = 0; c < m_rays.Length; c++)
             {
-                m_rays[c].m_line.widthCurve = curve;
+                if (raySet)
+                {
+                    m_rays2[c].m_line.widthCurve = curve;
+                }
+                else
+                {
+                    m_rays[c].m_line.widthCurve = curve;
+                }
             }
         }
 
     }
 
 
-    public void SetWidthMultiplier( float multiplier)
+    public void SetWidthMultiplier( float multiplier, bool raySet)
     {
         if (m_rays != null)
         {
             for (int c = 0; c < m_rays.Length; c++)
             {
-                m_rays[c].m_line.widthMultiplier = multiplier;
+                if (raySet)
+                {
+                    m_rays2[c].m_line.widthMultiplier = multiplier;
+                }
+                else
+                {
+                    m_rays[c].m_line.widthMultiplier = multiplier;
+                }
             }
         }
 
@@ -255,7 +293,8 @@ public class FireLightning : DragonBreathBehaviour {
 
 
         updateRays();
-        SetAmplitude(m_maxAmplitude);
+        SetAmplitude(m_maxAmplitude, false);
+        SetAmplitude(m_maxAmplitude2, true);
 
         if ( m_insideWater )
 		{
@@ -287,13 +326,19 @@ public class FireLightning : DragonBreathBehaviour {
 			m_particleEnd.transform.position = p2;
 
 		for(int i=0;i<m_rays.Length;i++)
-			m_rays[i].Draw(p1,p2);
+        {
+            m_rays[i].Draw(p1, p2);
+            m_rays2[i].Draw(p1, p2);
+        }
 
-        SetWidthMultiplier(m_widthMultiplier);
-        SetWidthCurve(m_widthCurve);
+        SetWidthMultiplier(m_widthMultiplier, false);
+        SetWidthMultiplier(m_widthMultiplier2, true);
 
-		// Look entities to damage!
-		Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_maxAmplitude, m_actualLength);
+        SetWidthCurve(m_widthCurve, false);
+        SetWidthCurve(m_widthCurve2, true);
+
+        // Look entities to damage!
+        Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_maxAmplitude, m_actualLength);
 		for (int i = 0; i < preys.Length; i++) 
 		{
 			if (preys[i].IsBurnable(m_tier) || m_type == Type.Super) {

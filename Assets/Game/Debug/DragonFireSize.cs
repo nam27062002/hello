@@ -61,7 +61,7 @@ public class DragonFireSize : MonoBehaviour {
 
 			if ( m_fireLightning != null)
 			{
-				m_fireLightning.SetAmplitude( _size );
+				m_fireLightning.SetAmplitude( _size, true );
 			}
 		}
 	}
