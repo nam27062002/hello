@@ -63,6 +63,12 @@ public class PopupCurrencyShop : MonoBehaviour {
 		set { m_closeAfterPurchase = value; }
 	}
 
+	// Data
+	private List<DefinitionNode> m_packsPurchased = new List<DefinitionNode>();
+	public List<DefinitionNode> packsPurchased {
+		get { return m_packsPurchased; }
+	}
+
 	// Internal
 	private List<PopupCurrencyShopPill> m_scPills = new List<PopupCurrencyShopPill>();
 	private List<PopupCurrencyShopPill> m_pcPills = new List<PopupCurrencyShopPill>();
@@ -189,9 +195,12 @@ public class PopupCurrencyShop : MonoBehaviour {
 	/// Successful purchase.
 	/// </summary>
 	/// <param name="_pill">The pill that triggered the event</param>
-	public void OnPurchaseSuccessful(PopupCurrencyShopPill _pill) {
+	private void OnPurchaseSuccessful(PopupCurrencyShopPill _pill) {
+		// Add to purchased packs list
+		m_packsPurchased.Add(_pill.def);
+
 		// Close popup?
-		if(m_closeAfterPurchase) GetComponent<PopupController>().Close(true);
+		if(m_closeAfterPurchase) GetComponent<PopupController>().Close(false);
 	}
 
 	/// <summary>
@@ -200,6 +209,9 @@ public class PopupCurrencyShop : MonoBehaviour {
 	public void OnOpenPreAnimation() {
 		// Hide other currency counters to prevent conflicts
 		Messenger.Broadcast<bool>(GameEvents.UI_TOGGLE_CURRENCY_COUNTERS, false);
+
+		// Reset packs purchased list
+		m_packsPurchased.Clear();
 	}
 
 	/// <summary>
