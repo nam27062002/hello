@@ -92,6 +92,14 @@ public class IncubatorSlot : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+		// Initialize all animators hidden
+		if(m_emptySlotAnim != null)			m_emptySlotAnim.ForceHide(false);
+		if(m_pendingIncubationAnim != null)	m_pendingIncubationAnim.ForceHide(false);
+		if(m_incubatingAnim != null)		m_incubatingAnim.ForceHide(false);
+		if(m_readyAnim != null)				m_readyAnim.ForceHide(false);
+		if(m_glowAnim != null)				m_glowAnim.ForceHide(false);
+		if(m_emptyInfoAnim != null)			m_emptyInfoAnim.ForceHide(false);
+
 		// Make sure we're updated
 		Refresh();
 

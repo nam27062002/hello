@@ -147,6 +147,27 @@ public class DragonProgression : SerializableClass {
 	}
 
 	/// <summary>
+	/// Sets the global xp to a target delta.
+	/// </summary>
+	/// <param name="_delta">Global xp delta.</param>
+	public void SetXp_DEBUG(float _xp) {
+		// Set XP
+		m_xp = Mathf.Clamp(_xp, 0f, levelsXP[maxLevel]);
+
+		// Update level
+		int newLevel = GetLevelFromXp(m_xp);
+		if(newLevel > m_level) {
+			LevelUp();
+		} else if(newLevel < m_level) {
+			// "Level Down", which is not possible in normal gameplay so we have to do it manually
+			while(m_level > newLevel) {
+				m_level--;
+				Messenger.Broadcast<DragonData>(GameEvents.DRAGON_LEVEL_UP, m_owner);
+			}
+		}
+	}
+
+	/// <summary>
 	/// Obtain the first level corresponding to a given XP value.
 	/// </summary>
 	/// <returns>The first level matching the given XP value.</returns>

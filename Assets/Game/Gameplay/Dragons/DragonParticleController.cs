@@ -137,7 +137,7 @@ public class DragonParticleController : MonoBehaviour
 			m_waterAirLimitInstance = InitParticles( m_waterAirLimitParticle, m_dragonEat.mouth);
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
-			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/", 1, true, false);
+			ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
 		}
 		m_hiccupInstance = InitParticles( m_hiccupParticle, m_hiccupAnchor);
 		if (dragonAnimEvents != null)
@@ -320,7 +320,7 @@ public class DragonParticleController : MonoBehaviour
 	{
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
 			// spawn corpse
-			GameObject corpse = PoolManager.GetInstance(m_corpseAsset, true);
+			GameObject corpse = ParticleManager.Spawn(m_corpseAsset, Vector3.zero, "Corpse/");
 			corpse.transform.CopyFrom(transform);
 			Corpse c = corpse.GetComponent<Corpse>();
 			c.Spawn(false, false);

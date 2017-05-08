@@ -20,12 +20,19 @@ public class DragonPartFollow : MonoBehaviour {
 	public Vector3 m_upDir = Vector3.up;
 	private float m_startScale;
 	// Use this for initialization
-	IEnumerator Start () 
+	void Start () 
 	{
-		yield return null;
+		DragonPartFollowSetup();
+	}
+
+	void DragonPartFollowSetup()
+	{
 		if ( m_root == null )
 			m_root = transform;
 		m_startScale = m_root.lossyScale.x;
+		// Safe
+		if ( Mathf.Abs( m_startScale ) <= Mathf.Epsilon )	
+			return;
 
 		PartInfo newPart = new PartInfo();
 		Vector3 dir = Vector3.zero;
@@ -65,8 +72,10 @@ public class DragonPartFollow : MonoBehaviour {
 
 	void LateUpdate () 
 	{
-		float scale = (m_root.lossyScale.x / m_startScale);
 		PartInfo partInfo;
+		if ( m_numParts != m_partsNames.Count )
+			DragonPartFollowSetup();
+		float scale = (m_root.lossyScale.x / m_startScale);
 		for( int i = 0; i<m_numParts; i++ )
 		{
 			Transform follow;
