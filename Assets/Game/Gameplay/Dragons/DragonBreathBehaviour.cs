@@ -6,8 +6,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Constants
 	//-----------------------------------------------
-	private const float MaxGoldRushCompletitionPercentageForConsecutiveRushes = 0.5f; // max 50%.
-	private const float AdditionalGoldRushCompletitionPercentageForConsecutiveRushes = 0.05f;
+	private float MaxGoldRushCompletitionPercentageForConsecutiveRushes = 0.5f; // max 50%.
+	private float AdditionalGoldRushCompletitionPercentageForConsecutiveRushes = 0.05f;
 
 	//-----------------------------------------------
 	// Attributes
@@ -106,6 +106,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_superFuryCoinsMultiplier = settings.GetAsFloat("superFuryCoinsMultiplier", 1.2f);
 		m_superFuryDamageMultiplier = settings.GetAsFloat("superFuryDamageMultiplier", 1.2f);
 		m_superFuryLengthMultiplier = settings.GetAsFloat("superFuryLengthMultiplier", 1.2f);
+
+		DefinitionNode gameSettings = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+		MaxGoldRushCompletitionPercentageForConsecutiveRushes = gameSettings.GetAsFloat("MaxGoldRushCompletitionPercentageForConsecutiveRushes");
+		AdditionalGoldRushCompletitionPercentageForConsecutiveRushes = gameSettings.GetAsFloat("AdditionalGoldRushCompletitionPercentageForConsecutiveRushes");
 
 		m_dragon = GetComponent<DragonPlayer>();
 	}
