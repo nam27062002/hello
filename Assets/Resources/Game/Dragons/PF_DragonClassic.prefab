@@ -307,7 +307,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -406.62906, y: 132.7426, z: -49.272346}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -3763,7 +3763,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalRotation: {x: -0.094701715, y: 0.7410235, z: 0.10695853, w: 0.6561065}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -6025,7 +6025,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 41f134506f4047e4ba8f3a04e30e7152, type: 3}
   m_Name: 
@@ -6295,7 +6295,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 48f0dabda9d774437bbff41bb90ad77d, type: 3}
   m_Name: 
@@ -6303,7 +6303,7 @@ MonoBehaviour:
   m_breathSound: 
   m_superBreathSound: 
   m_segmentLength: 0.5
-  m_maxAmplitude: 0.5
+  m_maxAmplitude: 0
   m_widthCurve:
     serializedVersion: 2
     m_Curve:
@@ -6316,20 +6316,44 @@ MonoBehaviour:
     - serializedVersion: 2
       time: 1
       value: 0
-      inSlope: -1.8428572
-      outSlope: -1.8428572
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  m_widthMultiplier: 2
-  m_offsetRays: 2.0943952
+  m_widthMultiplier: 1
+  m_offsetRays: 2
   m_rayMaterial: {fileID: 2100000, guid: b9b6ff8aa13cc56479ce02cd514ba4cd, type: 2}
   m_numRays: 1
-  m_length: 20
+  m_maxAmplitude2: 0.25
+  m_widthCurve2:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  m_widthMultiplier2: 1
+  m_offsetRays2: 0.5
+  m_rayMaterial2: {fileID: 2100000, guid: adc2e2b7b4c93384fa7832413a25dfaa, type: 2}
+  m_numRays2: 2
+  m_length: 19.300001
   m_particleStartPrefab: {fileID: 1640325906173098, guid: 7eb001a62292aff43b15c99ff7130d4f,
     type: 2}
-  m_particleEndPrefab: {fileID: 0}
+  m_particleEndPrefab: {fileID: 1212766883835268, guid: dda51534af76ce745a66d49feaa56263,
+    type: 2}
 --- !u!114 &114735237819701946
 MonoBehaviour:
   m_ObjectHideFlags: 1

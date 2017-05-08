@@ -74,6 +74,10 @@ SubShader {
 
 			#endif
 
+			#define CUTOUT
+			#define DOUBLESIDED
+
+			#define REFL
 
 			struct appdata_t {
 				float4 vertex : POSITION;
