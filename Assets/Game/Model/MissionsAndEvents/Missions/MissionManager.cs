@@ -31,27 +31,23 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	// Exposed Setup
 	[Comment("Mission Required Dragons To Unlock")]
 	[SerializeField] private int[] m_dragonsToUnlock = new int[(int)Mission.Difficulty.COUNT];
-
 	public static int[] dragonsToUnlock { get { return instance.m_dragonsToUnlock; } }
 
 	[Comment("Mission Cooldowns (minutes)")]
-	[SerializeField] private int[] m_cooldownPerDifficulty = new int[(int)Mission.Difficulty.COUNT];
-	// minutes
+	[SerializeField] private int[] m_cooldownPerDifficulty = new int[(int)Mission.Difficulty.COUNT];	// minutes
 
 	[Comment("Mission Reward Formula")]
 	[SerializeField] private int[] m_maxRewardPerDifficulty = new int[(int)Mission.Difficulty.COUNT];
-
 	public static int[] maxRewardPerDifficulty { get { return instance.m_maxRewardPerDifficulty; } }
 
 	[Comment("Remove Mission PC Cost Formula")]
 	[SerializeField] private float m_removeMissionPCCoefA = 0.5f;
-
 	public static float removeMissionPCCoefA { get { return instance.m_removeMissionPCCoefA; } }
 
 	[SerializeField] private float m_removeMissionPCCoefB = 1f;
-
 	public static float removeMissionPCCoefB { get { return instance.m_removeMissionPCCoefB; } }
 
+	// Internal
 	private UserProfile m_user;
 
 	//------------------------------------------------------------------//
@@ -190,7 +186,10 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 		Messenger.Broadcast<Mission>(GameEvents.MISSION_SKIPPED, GetMission(_difficulty));
 	}
 
-
+	/// <summary>
+	/// Setup current user.
+	/// </summary>
+	/// <param name="user">User.</param>
 	public static void SetupUser(UserProfile user) {
 		instance.m_user = user;
 	}
