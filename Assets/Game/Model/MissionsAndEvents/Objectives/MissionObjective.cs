@@ -50,25 +50,22 @@ public class MissionObjective : TrackingObjectiveBase {
 		// Single run?
 		m_singleRun = _singleRun;
 
-		// Figure out description TID:
-		// If the mission has a dedicated TID, use it
-		// Otherwise use type's default TID, checking whether it's a single run objective or not
-		string tid = _missionDef.GetAsString("tidDesc");
-		if(string.IsNullOrEmpty(tid)) {
-			// Different default tids for single and multi run
-			if(m_singleRun) {
-				tid = _typeDef.GetAsString("tidDescSingleRun");
-			} else {
-				tid = _typeDef.GetAsString("tidDescMultiRun");
-			}
+		// Find out description TID
+		// Different description for single and multi run
+		string tidDesc = string.Empty;
+		if(m_singleRun) {
+			tidDesc = _typeDef.GetAsString("tidDescSingleRun");
+		} else {
+			tidDesc = _typeDef.GetAsString("tidDescMultiRun");
 		}
 
 		// Use parent's initializer
 		Init(
 			TrackerBase.CreateTracker(_typeDef.sku, _missionDef.GetAsList<string>("params")),		// Create the tracker based on mission type
 			_targetValue,
-			tid,
-			_typeDef
+			_typeDef,
+			tidDesc,
+			_missionDef.Get("tidObjective")	// Does this mission have a custom target TID? (i.e. "Birds", "Archers", etc.)
 		);
 	}
 
