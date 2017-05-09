@@ -40,18 +40,14 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
-
-				m_eatBehaviour.onEndLatching += OnEndLatchingEvent;
-
 				m_data = m_pilot.GetComponentData<LatchData>();
 				m_eatBehaviour.holdDamage = m_data.damage;
 				m_eatBehaviour.holdDuration = m_data.duration;
-
+				m_eatBehaviour.onEndLatching += OnEndLatchingEvent;
 				base.OnInitialise();
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
-
 				base.OnEnter(oldState, param);
 
 				// Get Target!
