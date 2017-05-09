@@ -31,21 +31,26 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	// Exposed Setup
 	[Comment("Mission Required Dragons To Unlock")]
 	[SerializeField] private int[] m_dragonsToUnlock = new int[(int)Mission.Difficulty.COUNT];
-	public static int[] dragonsToUnlock { get { return instance.m_dragonsToUnlock; }}
+
+	public static int[] dragonsToUnlock { get { return instance.m_dragonsToUnlock; } }
 
 	[Comment("Mission Cooldowns (minutes)")]
-	[SerializeField] private int[] m_cooldownPerDifficulty = new int[(int)Mission.Difficulty.COUNT];	// minutes
+	[SerializeField] private int[] m_cooldownPerDifficulty = new int[(int)Mission.Difficulty.COUNT];
+	// minutes
 
 	[Comment("Mission Reward Formula")]
 	[SerializeField] private int[] m_maxRewardPerDifficulty = new int[(int)Mission.Difficulty.COUNT];
-	public static int[] maxRewardPerDifficulty { get { return instance.m_maxRewardPerDifficulty; }}
+
+	public static int[] maxRewardPerDifficulty { get { return instance.m_maxRewardPerDifficulty; } }
 
 	[Comment("Remove Mission PC Cost Formula")]
 	[SerializeField] private float m_removeMissionPCCoefA = 0.5f;
-	public static float removeMissionPCCoefA { get { return instance.m_removeMissionPCCoefA; }}
+
+	public static float removeMissionPCCoefA { get { return instance.m_removeMissionPCCoefA; } }
 
 	[SerializeField] private float m_removeMissionPCCoefB = 1f;
-	public static float removeMissionPCCoefB { get { return instance.m_removeMissionPCCoefB; }}
+
+	public static float removeMissionPCCoefB { get { return instance.m_removeMissionPCCoefB; } }
 
 	private UserProfile m_user;
 
@@ -55,8 +60,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() 
-	{
+	private void Awake() {
 		// Initialize internal values from content
 		List<DefinitionNode> difficultyDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSION_DIFFICULTIES);
 		for(int i = 0; i < difficultyDefs.Count; i++) {
@@ -75,26 +79,23 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// <summary>
 	/// Scriptable object has been enabled.
 	/// </summary>
-	private void OnEnable() 
-	{
+	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-    }
+	}
 
 	/// <summary>
 	/// Scriptable object has been disabled.
 	/// </summary>
-	private void OnDisable() 
-	{
+	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-    }
+	}
 
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() 
-	{
+	private void Update() {
 		bool gaming = InstanceManager.gameSceneController != null;
 		if(m_user != null) m_user.userMissions.CheckActivation(!gaming);
 	}
@@ -125,19 +126,17 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// Gets the cooldown per difficulty in minutes
 	/// </summary>
 	/// <returns>The cooldown per difficulty.</returns>
-	public static int GetCooldownPerDifficulty( Mission.Difficulty _difficulty )
-	{
+	public static int GetCooldownPerDifficulty(Mission.Difficulty _difficulty) {
 		// No cooldown during PlayTest
 		if(DebugSettings.isPlayTest) {
 			return 0;
 		} else {
-			return instance.m_cooldownPerDifficulty[ (int)_difficulty ];
+			return instance.m_cooldownPerDifficulty[(int)_difficulty];
 		}
 	}
 
-	public static int GetDragonsRequiredToUnlickMissionDifficulty( Mission.Difficulty _difficulty )
-	{
-		return instance.m_dragonsToUnlock[ (int)_difficulty ];
+	public static int GetDragonsRequiredToUnlickMissionDifficulty(Mission.Difficulty _difficulty) {
+		return instance.m_dragonsToUnlock[(int)_difficulty];
 	}
 
 	/// <summary>
@@ -146,8 +145,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	/// <returns>The mission with the given difficulty.</returns>
 	/// <param name="_difficulty">The difficulty of the mission to be returned.</param>
-	public static Mission GetMission(Mission.Difficulty _difficulty) 
-	{
+	public static Mission GetMission(Mission.Difficulty _difficulty) {
 		return instance.m_user.userMissions.GetMission(_difficulty);
 	}
 
@@ -158,11 +156,10 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// Process active missions:
 	/// Give rewards for those completed and replace them by newly generated missions.
 	/// </summary>
-	public static void ProcessMissions() 
-	{
+	public static void ProcessMissions() {
 		// Check all missions
 		int coins = instance.m_user.userMissions.ProcessMissions();
-		instance.m_user.AddCoins( coins );
+		instance.m_user.AddCoins(coins);
 	}
 
 	/// <summary>
@@ -172,8 +169,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// this method using the Mission.removeCostPC property.
 	/// </summary>
 	/// <param name="_difficulty">The difficulty of the mission to be removed.</param>
-	public static void RemoveMission(Mission.Difficulty _difficulty) 
-	{
+	public static void RemoveMission(Mission.Difficulty _difficulty) {
 		instance.m_user.userMissions.RemoveMission(_difficulty);
 
 		// Dispatch global event
@@ -188,16 +184,14 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// Nothing will happen if the mission is not on Cooldown state.
 	/// </summary>
 	/// <param name="_difficulty">The difficulty of the mission to be skipped.</param>
-	public static void SkipMission(Mission.Difficulty _difficulty) 
-	{
-		instance.m_user.userMissions.SkipMission( _difficulty );
+	public static void SkipMission(Mission.Difficulty _difficulty) {
+		instance.m_user.userMissions.SkipMission(_difficulty);
 		// Dispatch global event
 		Messenger.Broadcast<Mission>(GameEvents.MISSION_SKIPPED, GetMission(_difficulty));
 	}
 
 
-	public static void SetupUser( UserProfile user )
-	{
+	public static void SetupUser(UserProfile user) {
 		instance.m_user = user;
 	}
 
@@ -208,8 +202,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// A new dragon has been acquired.
 	/// </summary>
 	/// <param name="_dragon">The dragon that has just been acquired.</param>
-	private void OnDragonAcquired(DragonData _dragon) 
-	{
+	private void OnDragonAcquired(DragonData _dragon) {
 		int ownedDragons = UsersManager.currentUser.GetNumOwnedDragons();
 		UsersManager.currentUser.userMissions.ownedDragons = ownedDragons;
 		UsersManager.currentUser.userMissions.UnlockByDragonsNumber();
