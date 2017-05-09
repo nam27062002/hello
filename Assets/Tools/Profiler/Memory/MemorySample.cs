@@ -31,6 +31,16 @@ public class MemorySample : AbstractMemorySample
                     if (Obj is Texture)
                     {
                         MemSize = CalculateTextureSizeBytes(Obj as Texture);
+                        switch (sizeStrategy)
+                        {
+                            case ESizeStrategy.DeviceHalf:
+                                MemSize /= 4;
+                                break;
+
+                            case ESizeStrategy.DeviceQuarter:
+                                MemSize /= 16;
+                                break;
+                        }
                     }
                 }                
             }
@@ -144,15 +154,17 @@ public class MemorySample : AbstractMemorySample
     private Dictionary<string, List<ObjectDetails>> Objects { get; set; }
 
     private List<Type> UNIQUE_TYPES = new List<Type>()
-    {
-        typeof(Texture),
-        typeof(Sprite),
-        typeof(Shader),
-        typeof(Avatar),
-        typeof(Mesh),
+    {        
         typeof(AnimationClip),
         typeof(Animator),
-        typeof(AudioClip)
+        typeof(AudioClip),
+        typeof(Avatar),
+        typeof(Material),
+        typeof(Mesh),
+        typeof(Shader),
+        typeof(Sprite),
+        typeof(Texture),
+        typeof(Texture2D)
     };
 
     public MemorySample(string name, ESizeStrategy sizeStrategy)
@@ -172,7 +184,7 @@ public class MemorySample : AbstractMemorySample
     public void AddObject(Object o)
     {
         if (o != null)
-        {            
+        {          
             Type type = o.GetType();
             AddGeneric(type.Name, o, UNIQUE_TYPES.Contains(type));
         }
@@ -188,7 +200,7 @@ public class MemorySample : AbstractMemorySample
         if (!Objects.ContainsKey(typeName))
         {
             Objects.Add(typeName, new List<ObjectDetails>());
-        }
+        }      
 
         bool goAhead = false;
         if (unique)
