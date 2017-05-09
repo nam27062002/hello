@@ -5,13 +5,22 @@ using System.Collections.Generic;
 public class InflammableDecoration : Initializable {
 
 	[SerializeField] private float m_burningTime;
-	[CommentAttribute("Add an explosion effect when this object is burned out.")]
-	[SerializeField] private ParticleData m_explosionParticle;
+	[SerializeField] private ParticleData m_feedbackParticle;
+	// PF_FireHit
+	[SerializeField] private bool m_feedbackParticleMatchDirection = false;
+	[SerializeField] private ParticleData m_burnParticle;
+	//PF_FireProc
+	[SerializeField] private ParticleData m_disintegrateParticle;
 	[SerializeField] private string m_ashesAsset;
+
+	[SeparatorAttribute("Fire Nodes auto setup")]
+	[SerializeField] private int m_boxelSize = 2;
+	[SerializeField] private float m_hitRadius = 1.5f;
 
 
 	// private ZoneManager m_zoneManager;
 	// private ZoneManager.ZoneEffect m_zoneEffect;
+	private FireNodeSetup m_fireNodeSetup;
 
 	private GameObject m_view;
 	private GameObject m_viewBurned;
@@ -32,15 +41,17 @@ public class InflammableDecoration : Initializable {
 	private Material m_ashMaterial;
 
 	private Decoration m_entity;
+
 	public string sku { get { return m_entity.sku; } }
 
 	// Use this for initialization
 	void Awake() {
 		m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
 
-		PoolManager.RequestPool("PF_FireProc", "Particles/", m_fireNodes.Length);
 		ParticleManager.CreatePool("SmokeParticle", "");
-		ParticleManager.CreatePool(m_explosionParticle);
+		ParticleManager.CreatePool(m_feedbackParticle);
+		ParticleManager.CreatePool(m_burnParticle);
+		ParticleManager.CreatePool(m_disintegrateParticle);
 	}
 
 	/// <summary>
@@ -93,22 +104,22 @@ public class InflammableDecoration : Initializable {
 			Destroy(this);
 		} else {
 		*/
-			m_destructibleBehaviour = GetComponent<DestructibleDecoration>();
-			m_view = transform.FindChild("view").gameObject;
-			m_burned = false;
-			m_isBurning = false;
+		m_destructibleBehaviour = GetComponent<DestructibleDecoration>();
+		m_view = transform.FindChild("view").gameObject;
+		m_burned = false;
+		m_isBurning = false;
 
-			for (int i = 0; i < m_fireNodes.Length; i++) {
-				m_fireNodes[i].Init(m_entity);
-			}
-			m_startPosition = transform.position;
+		for (int i = 0; i < m_fireNodes.Length; i++) {
+			m_fireNodes[i].Init(m_entity, m_burnParticle, m_feedbackParticle, m_feedbackParticleMatchDirection, m_hitRadius);
+		}
+		m_startPosition = transform.position;
 
-			Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
-			for (int i = 0; i < renderers.Length; i++) {
-				m_originalMaterials[ renderers[i] ] = renderers[i].materials;
-			}
-			m_ashMaterial = new Material(Resources.Load ("Game/Assets/Materials/RedBurnToAshes") as Material);
-			m_ashMaterial.renderQueue = 3000;// Force transparent
+		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
+		for (int i = 0; i < renderers.Length; i++) {
+			m_originalMaterials[renderers[i]] = renderers[i].materials;
+		}
+		m_ashMaterial = new Material(Resources.Load("Game/Assets/Materials/RedBurnToAshes") as Material);
+		m_ashMaterial.renderQueue = 3000;// Force transparent
 		// }
 	}
 
@@ -160,7 +171,8 @@ public class InflammableDecoration : Initializable {
 			if (m_timer.IsFinished()) {
 				m_view.SetActive(false);
 				m_autoSpawner.StartRespawn();
-				if (m_collider) m_collider.enabled = false;
+				if (m_collider)
+					m_collider.enabled = false;
 			}
 		} else {
 			m_isBurning = false;
@@ -187,15 +199,16 @@ public class InflammableDecoration : Initializable {
 				
 				ZoneManager.ZoneEffect effect = InstanceManager.zoneManager.GetFireEffectCode(m_entity, lastBurnTier);
 				if (effect == ZoneManager.ZoneEffect.L) {
-					if (m_explosionParticle.IsValid()) {
-						ParticleManager.Spawn(m_explosionParticle, transform.position + m_explosionParticle.offset);
+					if (m_disintegrateParticle.IsValid()) {
+						ParticleManager.Spawn(m_disintegrateParticle, transform.position + m_disintegrateParticle.offset);
 					}
 				}
 				
 				m_autoSpawner.StartRespawn();
 				m_view.SetActive(false);
 				m_viewBurned.SetActive(true);
-				if (m_collider) m_collider.enabled = false;
+				if (m_collider)
+					m_collider.enabled = false;
 			} else {
 				if (m_isBurning) {
 					if (m_destructibleBehaviour != null) {
@@ -219,7 +232,7 @@ public class InflammableDecoration : Initializable {
 		}
 	}
 
-	void ResetViewMaterials() {
+	private void ResetViewMaterials() {
 		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
 		for (int i = 0; i < renderers.Length; i++) {
 			if (m_originalMaterials.ContainsKey(renderers[i])) {
@@ -228,13 +241,12 @@ public class InflammableDecoration : Initializable {
 		}
 	}
 
-	void SwitchViewToDissolve() {
+	private void SwitchViewToDissolve() {
 		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
 		for (int i = 0; i < renderers.Length; i++) {
 			if (m_originalMaterials.ContainsKey(renderers[i])) {
 				Material[] materials = renderers[i].materials;
-				for (int m = 0; m < materials.Length; m++) 
-				{
+				for (int m = 0; m < materials.Length; m++) {
 					m_ashMaterial.SetTexture("_MainTex", materials[m].mainTexture);
 					materials[m] = m_ashMaterial;
 				}
@@ -252,12 +264,25 @@ public class InflammableDecoration : Initializable {
 		}
 	}
 
+	public void SetupFireNodes() {
+		if (m_fireNodeSetup == null) {
+			m_fireNodeSetup = new FireNodeSetup();
+		}
+
+		m_fireNodeSetup.Init(transform);
+		m_fireNodeSetup.Build(m_boxelSize);
+	}
+
 	void OnDrawGizmosSelected() {
 		if (m_fireNodes != null) {
 			Gizmos.color = Color.magenta;
 			for (int i = 0; i < m_fireNodes.Length; i++) {
 				Gizmos.DrawSphere(m_fireNodes[i].transform.position, 0.25f);
 			}
+		}
+
+		if (m_fireNodeSetup != null) {
+			m_fireNodeSetup.OnDrawGizmosSelected();
 		}
 	}
 }
