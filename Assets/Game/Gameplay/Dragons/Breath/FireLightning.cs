@@ -58,6 +58,7 @@ public class FireLightning : DragonBreathBehaviour {
 	int m_waterMask;
 	bool m_insideWater;
     float m_timeNPCCollisionCurrent = 0.0f;
+    Transform m_preyTransform = null;
 
     Lightning[] m_rays = null;// new Lightning[3];
     Lightning[] m_rays2 = null;// new Lightning[3];
@@ -301,7 +302,6 @@ public class FireLightning : DragonBreathBehaviour {
         SetAmplitude(m_rays2, m_maxAmplitude2);
 
         bool isGround = false;
-        Vector3 NPCEffectPosition = Vector3.zero;
 
         if ( m_insideWater )
 		{
@@ -364,8 +364,7 @@ public class FireLightning : DragonBreathBehaviour {
 				AI.IMachine machine =  preys[i].machine;
 				if (machine != null) {					
 					machine.Burn(transform);
-                    Vector3 npos = preys[i].transform.position - m_mouthTransform.position;
-                    NPCEffectPosition = m_mouthTransform.position + (-m_mouthTransform.right * Vector3.Dot(-m_mouthTransform.right, npos));
+                    m_preyTransform = preys[i].transform;
                     m_timeNPCCollisionCurrent = m_timeNPCCollision;
 				}
 			}
@@ -378,8 +377,16 @@ public class FireLightning : DragonBreathBehaviour {
 
         if (m_particleNPCCollision)
         {
-            m_particleNPCCollision.gameObject.SetActive(m_timeNPCCollisionCurrent > 0.0f);
-            m_particleNPCCollision.transform.position = NPCEffectPosition;
+            bool showNPCCollision = m_timeNPCCollisionCurrent > 0.0f;
+            m_particleNPCCollision.gameObject.SetActive(showNPCCollision);
+            if (m_preyTransform != null)
+            {
+                Vector3 npos = m_preyTransform.position - m_mouthTransform.position;
+                Vector3 NPCEffectPosition = m_mouthTransform.position + (-m_mouthTransform.right * Vector3.Dot(-m_mouthTransform.right, npos));
+                NPCEffectPosition.z -= 2.0f;
+                m_particleNPCCollision.transform.position = NPCEffectPosition;
+
+            }
 
         }
 
