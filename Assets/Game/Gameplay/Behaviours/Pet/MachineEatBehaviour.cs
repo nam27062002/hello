@@ -14,6 +14,12 @@ public class MachineEatBehaviour : EatBehaviour {
 	[SerializeField] private bool m_canMultipleLatchOnPlayer = false;
 	public override bool canMultipleLatchOnPlayer { get { return m_canMultipleLatchOnPlayer; } }
 
+	[SerializeField] private float m_damageOnBitePlayer = 10;
+	public float damageOnBitePlayer
+	{
+		get{ return m_damageOnBitePlayer; }
+	}
+
 	private IAttacker m_attacker;
 	private AI.IMachine m_machine;
 
@@ -28,7 +34,7 @@ public class MachineEatBehaviour : EatBehaviour {
 		m_limitEatingValue = 1;
 		m_isPlayer = false;
 		m_holdDuration = 10;
-		SetupHoldParametersForTier( DragonData.TierToSku( m_eaterTier));
+		SetupHoldParametersForTier( DragonData.TierToSku(m_eaterTier));
 
 		m_machine = GetComponent<AI.IMachine>();
 		m_attacker = GetComponent<IAttacker>();
@@ -38,6 +44,7 @@ public class MachineEatBehaviour : EatBehaviour {
 			AddToIgnoreList("badJunk");
 		} else {
 			m_canLatchOnPlayer = true;
+			m_canBitePlayer = false;
 		}
 
 		// Check if view has eat event
@@ -122,5 +129,10 @@ public class MachineEatBehaviour : EatBehaviour {
 		{
 			base.MouthCache();
 		}
+	}
+
+	protected override float GetBitePlayerDamage()
+	{
+		return m_damageOnBitePlayer;
 	}
 }
