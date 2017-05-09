@@ -800,8 +800,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011021108524}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 351.30374, y: 30.750618, z: 21.50377}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 270.2, y: 0.1783104, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000011630354828}
@@ -1041,7 +1041,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_burningTime: 6
-  m_explosionParticle: 
+  m_explosionParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_ashesAsset: 
 --- !u!114 &114000011749396012
 MonoBehaviour:
@@ -1135,8 +1138,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_entityPrefabStr: Surface/PF_Catapulter
   m_spawnTime:
-    min: 40
-    max: 45
+    min: 120
+    max: 120
   m_spawnAtTransform: {fileID: 4000011589043504}
   m_mustBeChild: 0
   m_lookAtVector: 3
