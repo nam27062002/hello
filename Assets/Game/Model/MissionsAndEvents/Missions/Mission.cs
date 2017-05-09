@@ -57,7 +57,11 @@ public class Mission {
 	public DefinitionNode typeDef { get { return m_typeDef; }}
 
 	// Data shortcuts
-	public Difficulty difficulty { get { return (Difficulty)m_def.GetAsInt("difficulty"); }}
+	private Difficulty m_difficulty = Difficulty.COUNT;
+	public Difficulty difficulty {
+		get { return m_difficulty; }
+		set { m_difficulty = value; }
+	}
 
 	// Objective
 	private MissionObjective m_objective = null;
@@ -115,6 +119,7 @@ public class Mission {
 		}
 		
 		m_def = null;
+		m_typeDef = null;
 	}
 
 	/// <summary>

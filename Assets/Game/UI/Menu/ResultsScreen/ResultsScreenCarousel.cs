@@ -169,6 +169,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 							Random.Range(missionDef.GetAsInt("objectiveBaseQuantityMin"), missionDef.GetAsInt("objectiveBaseQuantityMax")),
 							Random.value < 0.5f	// 50% chace
 						);
+						targetMission.difficulty = Mission.Difficulty.MEDIUM;
 
 						// Mark mission as completed
 						targetMission.objective.enabled = true;

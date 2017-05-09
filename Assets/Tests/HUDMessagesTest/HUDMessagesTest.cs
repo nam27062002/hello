@@ -107,6 +107,7 @@ public class HUDMessagesTest : MonoBehaviour {
 					Random.Range(missionDef.GetAsInt("objectiveBaseQuantityMin"), missionDef.GetAsInt("objectiveBaseQuantityMax")),
 					Random.value < 0.5f	// 50% chace
 				);
+				m.difficulty = Mission.Difficulty.MEDIUM;
 				Messenger.Broadcast<Mission>(GameEvents.MISSION_COMPLETED, m);
 			} break;
 

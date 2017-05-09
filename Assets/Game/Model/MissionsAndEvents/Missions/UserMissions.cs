@@ -153,6 +153,8 @@ public class UserMissions {
 	/// <returns>The newly created mission.</returns>
 	/// <param name="_difficulty">The difficulty slot where to create the new mission.</param>
 	private Mission GenerateNewMission(Mission.Difficulty _difficulty) {
+		Debug.Log("<color=green>GENERATING NEW MISSION " + _difficulty + "</color>");
+
 		// Terminate any mission at the requested slot
 		ClearMission(_difficulty);
 
@@ -188,6 +190,8 @@ public class UserMissions {
 			}
 		}
 
+		Debug.Log("Selected Type: " + selectedTypeDef.sku);
+
 		// 3. Get all mission definitions matching the selected type
 		List<DefinitionNode> missionDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.MISSIONS, "type", selectedTypeDef.sku);
 
@@ -214,17 +218,22 @@ public class UserMissions {
 			}
 		}
 
+		Debug.Log("Selected Mission: " + selectedMissionDef.sku);
+
 		// 5. Compute target value based on mission min/max range
 		targetValue = UnityEngine.Random.Range(
 			selectedMissionDef.GetAsFloat("objectiveBaseQuantityMin"),
 			selectedMissionDef.GetAsFloat("objectiveBaseQuantityMax")
 		);
 
+		Debug.Log("Target Value: " + targetValue + " [" + selectedMissionDef.GetAsInt("objectiveBaseQuantityMin") + ", " + selectedMissionDef.GetAsInt("objectiveBaseQuantityMax") + "]");
+
 		// 6. Compute and apply modifiers to the target value
 		// 6.1. Dragon modifier
 		DefinitionNode dragonModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);	// Matching sku
 		if(dragonModifierDef != null) {
 			targetValue *= dragonModifierDef.GetAsFloat("quantityModifier");
+			Debug.Log("Dragon Modifier " + dragonModifierDef.GetAsFloat("quantityModifier") + "\nTarget Value: " + targetValue);
 		}
 
 		// 6.2. Difficulty modifier
@@ -232,6 +241,7 @@ public class UserMissions {
 		DefinitionNode difficultyModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, difficultyDef.sku);
 		if(difficultyModifierDef != null) {
 			targetValue *= difficultyModifierDef.GetAsFloat("quantityModifier");
+			Debug.Log("Difficulty Modifier " + difficultyModifierDef.GetAsFloat("quantityModifier") + "\nTarget Value: " + targetValue);
 		}
 
 		// 6.3. Single run modifier
@@ -244,14 +254,18 @@ public class UserMissions {
 				DefinitionNode singleRunModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, "single_run");
 				if(singleRunModifierDef != null) {
 					targetValue *= singleRunModifierDef.GetAsFloat("quantityModifier");
+					Debug.Log("Single Run Modifier " + singleRunModifierDef.GetAsFloat("quantityModifier") + "\nTarget Value: " + targetValue);
 				}
 			}
 		}
 
 		// 6.4. Round final value
 		targetValue = Mathf.Round(targetValue);
+		Debug.Log("<color=lime>Final Target Value: " + targetValue + "</color>");
+
 		// 7. We got everything we need! Create the new mission
 		Mission newMission = new Mission();
+		newMission.difficulty = _difficulty;
 		newMission.InitWithParams(selectedMissionDef, selectedTypeDef, targetValue, singleRun);
 		m_missions[(int)_difficulty] = newMission;
 
@@ -317,12 +331,14 @@ public class UserMissions {
 			// If there is no data for this mission, generate a new one
 			if(i >= activeMissions.Count || activeMissions[i] == null || activeMissions[i]["sku"] == "") {
 				GenerateNewMission((Mission.Difficulty)i);
-			}
-			else {
+			} else {
 				// If the mission was not created, create an empty one now and load its data from persistence
 				if(m_missions[i] == null) {
 					m_missions[i] = new Mission();
 				}
+
+				// Make sure mission has the right difficulty assigned
+				m_missions[i].difficulty = (Mission.Difficulty)i;
 				
 				// Load data into the target mission
 				bool success = m_missions[i].Load(activeMissions[i]);
