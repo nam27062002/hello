@@ -252,6 +252,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4836021601490414}
   - component: {fileID: 95289798630724812}
+  - component: {fileID: 114741441519738280}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -694,6 +695,7 @@ MonoBehaviour:
   m_isPet: 0
   m_isAquatic: 0
   m_canMultipleLatchOnPlayer: 1
+  m_damageOnBitePlayer: 10
 --- !u!114 &114034267683096242
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -744,6 +746,17 @@ MonoBehaviour:
     m_limitVerticalRotation: 1
     m_faceUpAngle: 320
     m_faceDownAngle: 40
+--- !u!114 &114741441519738280
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1065879218030262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!135 &135000011093771074
 SphereCollider:
   m_ObjectHideFlags: 1

@@ -58,15 +58,14 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		gameObject.SetActive(false);
 	}
 
-	public void Setup(ParticleData _burnParticle, ParticleData _feedbackParticle, bool _feedbackParticleMatchDirection, float _hitRadius) {
+	public void Init(Decoration _decoration, ParticleData _burnParticle, ParticleData _feedbackParticle, bool _feedbackParticleMatchDirection, float _hitRadius) {		
+		m_decoration = _decoration;
+
 		m_burnParticle = _burnParticle;
 		m_feedbackParticle = _feedbackParticle;
 		m_feedbackParticleMatchDirection = _feedbackParticleMatchDirection;
 		m_hitRadius = _hitRadius;
-	}
 
-	public void Init(Decoration _decoration) {		
-		m_decoration = _decoration;
 		Reset();
 
 		FirePropagationManager.Insert(this);
