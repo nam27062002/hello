@@ -44,6 +44,12 @@ public class HDMemoryProfiler : MemoryProfiler
             }
         }
 
+        GameObject singletons = GameObject.Find("Singletons");
+        if (singletons != null)
+        {
+            Scene_AddGO(key, singletons);
+        }
+
         return base.Scene_TakeASample(reuseAnalysis);        
     }
 

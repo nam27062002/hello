@@ -432,12 +432,12 @@ public class MemoryProfiler
 
     private void GO_AnalyzeProperty(object o, PropertyInfo property, ref List<Object> list)
     {
-        if (property.PropertyType.IsSubclassOf(typeof(UnityEngine.Object)) &&
+        Type propertyType = property.PropertyType;
+        if ((GO_IsMemberACollection(propertyType) || property.PropertyType.IsSubclassOf(typeof(UnityEngine.Object))) &&
             !property.IsDefined(typeof(ObsoleteAttribute), true) &&         // Accessing properties marked as obsolete by Unity triggers an exception
-             property.Name != "material" && property.Name != "materials" && // Accessing material or materials properties triggers an exception                    
-             property.Name != "mesh")                                       // Accessing mesh triggers an exception                    
-        { 
-            Type propertyType = property.PropertyType;
+            property.Name != "material" && property.Name != "materials" &&  // Accessing material or materials properties triggers an exception                    
+            property.Name != "mesh")                                        // Accessing mesh triggers an exception                   
+        {             
             object value = property.GetValue(o, null);
             if (value != null)
             {
@@ -448,7 +448,7 @@ public class MemoryProfiler
                     {
                         foreach (var item in propertyList)
                         {
-                            PropertyInfo[]properties = item.GetType().GetProperties(GO_BINDING_FLAGS);
+                            /*PropertyInfo[]properties = item.GetType().GetProperties(GO_BINDING_FLAGS);
                             if (properties != null)
                             {
                                 int fieldsCount = properties.Length;
@@ -456,7 +456,8 @@ public class MemoryProfiler
                                 {
                                     GO_AnalyzeProperty(item, properties[j], ref list);
                                 }
-                            }
+                            }*/
+                            GO_AnalyzeMember(item, ref list);
                         }
                     }
                 }

@@ -30,7 +30,7 @@ public class DragonFireSize : MonoBehaviour {
 			m_fireLightning = InstanceManager.player.GetComponent<FireLightning>();
 			if ( m_fireLightning )
 			{
-				m_sizeValue = m_fireLightning.m_maxAmplitude;
+				m_sizeValue = m_fireLightning.m_maxAmplitude2;
 				m_slider.value = m_sizeValue;
 			}
 		}
@@ -61,7 +61,7 @@ public class DragonFireSize : MonoBehaviour {
 
 			if ( m_fireLightning != null)
 			{
-				m_fireLightning.SetAmplitude( _size, true );
+                m_fireLightning.m_maxAmplitude2 = _size;
 			}
 		}
 	}

@@ -136,19 +136,19 @@ fixed4 frag(v2f i) : SV_Target
 	float3 normalDirection = i.normalWorld;
 #endif
 
-	fixed4 diffuse = max(0,dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
-	col *= diffuse + float4(i.vLight, 0.0f);
+	fixed3 diffuse = max(0,dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0.xyz;
+	col.xyz *= diffuse + i.vLight;
 
 #ifdef SPECULAR
 //	specMask = 1.0;
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower) * specMask;
-	col += specular * (col + _SpecularColor * 2.0);
+	col.xyz += specular * (col.xyz + _SpecularColor.xyz * 2.0);
 #endif
 //				fixed fresnel = pow(max(dot(normalDirection, i.viewDir), 0), _FresnelFactor);
 
 #ifdef FRESNEL
 	fixed fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelPower), 0.0, 1.0) * _FresnelColor.w;
-	col += fresnel * _FresnelColor;
+	col.xyz += fresnel * _FresnelColor.xyz;
 //	col.xyz = lerp(col, _FresnelColor, fresnel).xyz;
 
 #endif
