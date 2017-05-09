@@ -99,8 +99,14 @@ public class HUDMessagesTest : MonoBehaviour {
 
 			case 4:	{
 				Mission m = new Mission();
-				List<DefinitionNode> missions = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSIONS);
-				m.InitFromDefinition(missions.GetRandomValue());
+				List<DefinitionNode> missionDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSIONS);
+				DefinitionNode missionDef = missionDefs.GetRandomValue();
+				m.InitWithParams(
+					missionDef,
+					DefinitionsManager.SharedInstance.GetDefinition(missionDef.Get("type"), DefinitionsCategory.MISSION_TYPES),
+					Random.Range(missionDef.GetAsInt("objectiveBaseQuantityMin"), missionDef.GetAsInt("objectiveBaseQuantityMax")),
+					Random.value < 0.5f	// 50% chace
+				);
 				Messenger.Broadcast<Mission>(GameEvents.MISSION_COMPLETED, m);
 			} break;
 

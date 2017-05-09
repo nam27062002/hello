@@ -130,6 +130,16 @@ public class TrackerBase {
 			case "dive":			return new TrackerDiveDistance();
 			case "dive_time":		return new TrackerDiveTime();
 			case "fire_rush":		return new TrackerFireRush();
+
+			// Collect is quite special: depending on first parameter, create one of the existing trackers
+			case "collect": {
+				if(_params.Count < 1) return null;
+				switch(_params[0]) {
+					case "coins":	return new TrackerGold();
+					//case "eggs":	return new TrackerGold();		// [AOC] TODO!!
+					//case "chests":	return new TrackerGold();	// [AOC] TODO!!
+				}
+			} break;
 		}
 
 		// Unrecoginzed mission type, aborting

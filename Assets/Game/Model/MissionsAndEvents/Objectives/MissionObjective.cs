@@ -37,18 +37,18 @@ public class MissionObjective : TrackingObjectiveBase {
 	// METHODS															//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Constructor from a mission definition.
+	/// Parametrized constructor.
 	/// </summary>
 	/// <param name="_missionDef">The mission definition used to initialize this objective.</param>
-	public MissionObjective(DefinitionNode _missionDef) {
+	/// <param name="_typeDef">The mission type definition.</param>
+	/// <param name="_targetValue">Target value.</param>
+	/// <param name="_singleRun">Is it a single run mission?</param>
+	public MissionObjective(DefinitionNode _missionDef, DefinitionNode _typeDef, float _targetValue, bool _singleRun) {
 		// Check params
 		Debug.Assert(_missionDef != null);
 
-		// Get type definition
-		DefinitionNode typeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, _missionDef.GetAsString("typeSku"));
-
-		// Sinlge run?
-		m_singleRun = _missionDef.GetAsBool("singleRun");
+		// Single run?
+		m_singleRun = _singleRun;
 
 		// Figure out description TID:
 		// If the mission has a dedicated TID, use it
@@ -57,18 +57,18 @@ public class MissionObjective : TrackingObjectiveBase {
 		if(string.IsNullOrEmpty(tid)) {
 			// Different default tids for single and multi run
 			if(m_singleRun) {
-				tid = typeDef.GetAsString("tidDescSingleRun");
+				tid = _typeDef.GetAsString("tidDescSingleRun");
 			} else {
-				tid = typeDef.GetAsString("tidDescMultiRun");
+				tid = _typeDef.GetAsString("tidDescMultiRun");
 			}
 		}
 
 		// Use parent's initializer
 		Init(
-			TrackerBase.CreateTracker(typeDef.sku, _missionDef.GetAsList<string>("parameters")),		// Create the tracker based on mission type
-			_missionDef.GetAsFloat("targetValue"),
+			TrackerBase.CreateTracker(_typeDef.sku, _missionDef.GetAsList<string>("parameters")),		// Create the tracker based on mission type
+			_targetValue,
 			tid,
-			typeDef
+			_typeDef
 		);
 	}
 
