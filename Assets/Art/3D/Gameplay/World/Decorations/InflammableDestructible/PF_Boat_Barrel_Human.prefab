@@ -708,9 +708,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_breathHitParticle: PS_NotBurnable_WoodToon
-  m_hitParticleMatchDirection: 0
-  m_hitRadius: 1
 --- !u!114 &114202444314581614
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -734,9 +731,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_breathHitParticle: PS_NotBurnable_WoodToon
-  m_hitParticleMatchDirection: 0
-  m_hitRadius: 1
 --- !u!114 &114332718522942828
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -750,6 +744,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Master
   m_parentRoot: {fileID: 4898226069875320}
+  m_worldPositionStays: 1
 --- !u!114 &114387952179252866
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -763,6 +758,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Master
   m_parentRoot: {fileID: 4898226069875320}
+  m_worldPositionStays: 1
 --- !u!114 &114495245310309992
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -776,6 +772,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Master
   m_parentRoot: {fileID: 4898226069875320}
+  m_worldPositionStays: 1
 --- !u!114 &114595609044164220
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -789,6 +786,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Master
   m_parentRoot: {fileID: 4898226069875320}
+  m_worldPositionStays: 1
 --- !u!114 &114655920848182570
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -819,8 +817,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_burningTime: 5
-  m_explosionParticle: 
+  m_feedbackParticle:
+    name: PF_FireHit
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_feedbackParticleMatchDirection: 0
+  m_burnParticle:
+    name: PF_FireProc
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_disintegrateParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_ashesAsset: 
+  m_boxelSize: 2
+  m_hitRadius: 1.5
 --- !u!114 &114780464952693806
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -834,6 +846,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Master
   m_parentRoot: {fileID: 4898226069875320}
+  m_worldPositionStays: 1
 --- !u!114 &114866848346208686
 MonoBehaviour:
   m_ObjectHideFlags: 1

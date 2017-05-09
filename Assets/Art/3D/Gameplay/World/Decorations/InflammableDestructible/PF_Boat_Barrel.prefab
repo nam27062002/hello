@@ -589,8 +589,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_burningTime: 5
-  m_explosionParticle: 
+  m_feedbackParticle:
+    name: PF_FireHit
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_feedbackParticleMatchDirection: 0
+  m_burnParticle:
+    name: PF_FireProc
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_disintegrateParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_ashesAsset: 
+  m_boxelSize: 2
+  m_hitRadius: 1.5
 --- !u!114 &114112770822411334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -634,6 +648,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Master
   m_parentRoot: {fileID: 4094244680475466}
+  m_worldPositionStays: 1
 --- !u!114 &114636839619598264
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -647,6 +662,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Master
   m_parentRoot: {fileID: 4094244680475466}
+  m_worldPositionStays: 1
 --- !u!114 &114717036301677878
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -658,9 +674,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_breathHitParticle: PS_NotBurnable_WoodToon
-  m_hitParticleMatchDirection: 0
-  m_hitRadius: 1
 --- !u!114 &114782969730886674
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -674,6 +687,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Master
   m_parentRoot: {fileID: 4094244680475466}
+  m_worldPositionStays: 1
 --- !u!114 &114822189994626010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -685,9 +699,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_breathHitParticle: PS_NotBurnable_WoodToon
-  m_hitParticleMatchDirection: 0
-  m_hitRadius: 1
 --- !u!114 &114959056942107236
 MonoBehaviour:
   m_ObjectHideFlags: 1
