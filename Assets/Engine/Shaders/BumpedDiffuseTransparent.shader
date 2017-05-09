@@ -5,7 +5,6 @@ Shader "Hungry Dragon/Bumped Diffuse Transparent (Spawners)"
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-		_SpecularPower( "Specular power", float ) = 1
 		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
 		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 		_Tint( "Tint", color) = (1, 1, 1, 1)
