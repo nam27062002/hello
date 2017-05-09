@@ -45,6 +45,8 @@ public class FireLightning : DragonBreathBehaviour {
 	public Object m_particleEndPrefab;
     public Object m_particleNPCCollisionPrefab;
 
+    public float m_timeNPCCollision = 1.0f;
+
     GameObject m_particleStart;
 	GameObject m_particleEnd;
     GameObject m_particleNPCCollision;
@@ -55,6 +57,7 @@ public class FireLightning : DragonBreathBehaviour {
 	int m_groundMask;
 	int m_waterMask;
 	bool m_insideWater;
+    float m_timeNPCCollisionCurrent = 0.0f;
 
     Lightning[] m_rays = null;// new Lightning[3];
     Lightning[] m_rays2 = null;// new Lightning[3];
@@ -161,21 +164,23 @@ public class FireLightning : DragonBreathBehaviour {
 		m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
 		m_waterMask = LayerMask.GetMask("Water");
 
-/*
-		m_rays[0] = new Lightning(m_segmentInitialWidth, m_segmentFinalWidth, Color.white, m_rayMaterial, m_shapeCurve);
-		m_rays[0].m_segmentLength = m_segmentLength;
-        m_rays[0].m_initOffset = 0.0f;
+        /*
+                m_rays[0] = new Lightning(m_segmentInitialWidth, m_segmentFinalWidth, Color.white, m_rayMaterial, m_shapeCurve);
+                m_rays[0].m_segmentLength = m_segmentLength;
+                m_rays[0].m_initOffset = 0.0f;
 
-        m_rays[1] = new Lightning(m_segmentInitialWidth, m_segmentFinalWidth, Color.grey, m_rayMaterial, m_shapeCurve);
-		m_rays[1].m_segmentLength = m_segmentLength;
-        m_rays[1].m_initOffset = m_offsetRays;
+                m_rays[1] = new Lightning(m_segmentInitialWidth, m_segmentFinalWidth, Color.grey, m_rayMaterial, m_shapeCurve);
+                m_rays[1].m_segmentLength = m_segmentLength;
+                m_rays[1].m_initOffset = m_offsetRays;
 
-        m_rays[2] = new Lightning(m_segmentInitialWidth, m_segmentFinalWidth, new Color(0.25f,0.25f,0.25f,1f), m_rayMaterial, m_shapeCurve);
-		m_rays[2].m_segmentLength = m_segmentLength;
-        m_rays[2].m_initOffset = m_offsetRays * 2.0f;
-*/
+                m_rays[2] = new Lightning(m_segmentInitialWidth, m_segmentFinalWidth, new Color(0.25f,0.25f,0.25f,1f), m_rayMaterial, m_shapeCurve);
+                m_rays[2].m_segmentLength = m_segmentLength;
+                m_rays[2].m_initOffset = m_offsetRays * 2.0f;
+        */
 
-		m_actualLength = m_length;
+        m_timeNPCCollisionCurrent = m_timeNPCCollision;
+
+        m_actualLength = m_length;
 		m_currentLength = m_length;
 		m_insideWater = false;
 	}
@@ -295,7 +300,7 @@ public class FireLightning : DragonBreathBehaviour {
         SetAmplitude(m_rays, m_maxAmplitude);
         SetAmplitude(m_rays2, m_maxAmplitude2);
 
-        bool isGround = false, isNPC = false;
+        bool isGround = false;
         Vector3 NPCEffectPosition = Vector3.zero;
 
         if ( m_insideWater )
@@ -361,7 +366,7 @@ public class FireLightning : DragonBreathBehaviour {
 					machine.Burn(transform);
                     Vector3 npos = preys[i].transform.position - m_mouthTransform.position;
                     NPCEffectPosition = m_mouthTransform.position + (-m_mouthTransform.right * Vector3.Dot(-m_mouthTransform.right, npos));
-                    isNPC = true;
+                    m_timeNPCCollisionCurrent = m_timeNPCCollision;
 				}
 			}
 			/*
@@ -373,13 +378,15 @@ public class FireLightning : DragonBreathBehaviour {
 
         if (m_particleNPCCollision)
         {
-            m_particleNPCCollision.gameObject.SetActive(isNPC);
+            m_particleNPCCollision.gameObject.SetActive(m_timeNPCCollisionCurrent > 0.0f);
             m_particleNPCCollision.transform.position = NPCEffectPosition;
 
         }
 
+        m_timeNPCCollisionCurrent -= Time.deltaTime;
 
-		m_bounds2D.center = m_mouthTransform.position;
+
+        m_bounds2D.center = m_mouthTransform.position;
 		m_bounds2D.width = Mathf.Max( m_actualLength, m_maxAmplitude);
 		m_bounds2D.height = Mathf.Max( m_actualLength, m_maxAmplitude);
 	}
