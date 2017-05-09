@@ -43,11 +43,13 @@ public class FireLightning : DragonBreathBehaviour {
 
 	public Object m_particleStartPrefab;
 	public Object m_particleEndPrefab;
-	
-	GameObject m_particleStart;
-	GameObject m_particleEnd;
+    public Object m_particleNPCCollisionPrefab;
 
-	Transform m_mouthTransform;
+    GameObject m_particleStart;
+	GameObject m_particleEnd;
+    GameObject m_particleNPCCollision;
+
+    Transform m_mouthTransform;
 	Transform m_headTransform;
 
 	int m_groundMask;
@@ -144,7 +146,16 @@ public class FireLightning : DragonBreathBehaviour {
 			m_particleEnd.gameObject.SetActive(true);
 		}
 
-		m_mouthTransform = transform.FindTransformRecursive("Rays_Dummy");
+        if (m_particleNPCCollisionPrefab)
+            m_particleNPCCollision = (GameObject)Object.Instantiate(m_particleNPCCollisionPrefab);
+        if (m_particleNPCCollision)
+        {
+            m_particleNPCCollision.transform.localPosition = Vector3.zero;
+            m_particleNPCCollision.gameObject.SetActive(true);
+        }
+
+
+        m_mouthTransform = transform.FindTransformRecursive("Rays_Dummy");
 		m_headTransform = GetComponent<DragonMotion>().head;
 
 		m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
@@ -232,8 +243,6 @@ public class FireLightning : DragonBreathBehaviour {
         }
 	}
 
-
-
     public void SetWidthCurve(Lightning[] rays, AnimationCurve curve)
     {
         if (rays != null)
@@ -252,6 +261,17 @@ public class FireLightning : DragonBreathBehaviour {
             for (int c = 0; c < rays.Length; c++)
             {
                 rays[c].m_line.widthMultiplier = multiplier;
+            }
+        }
+    }
+
+    public void HideRays(Lightning[] rays)
+    {
+        if (rays != null)
+        {
+            for (int c = 0; c < rays.Length; c++)
+            {
+                rays[c].Hide();
             }
         }
     }
@@ -275,7 +295,8 @@ public class FireLightning : DragonBreathBehaviour {
         SetAmplitude(m_rays, m_maxAmplitude);
         SetAmplitude(m_rays2, m_maxAmplitude2);
 
-        bool isGround = false;
+        bool isGround = false, isNPC = false;
+        Vector3 NPCEffectPosition = Vector3.zero;
 
         if ( m_insideWater )
 		{
@@ -331,13 +352,16 @@ public class FireLightning : DragonBreathBehaviour {
         SetWidthCurve(m_rays2, m_widthCurve2);
 
         // Look entities to damage!
-        Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_maxAmplitude, m_actualLength);
+        Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_maxAmplitude2, m_actualLength);
 		for (int i = 0; i < preys.Length; i++) 
 		{
 			if (preys[i].IsBurnable(m_tier) || m_type == Type.Super) {
 				AI.IMachine machine =  preys[i].machine;
 				if (machine != null) {					
-					machine.Burn(transform);					
+					machine.Burn(transform);
+                    Vector3 npos = preys[i].transform.position - m_mouthTransform.position;
+                    NPCEffectPosition = m_mouthTransform.position + (-m_mouthTransform.right * Vector3.Dot(-m_mouthTransform.right, npos));
+                    isNPC = true;
 				}
 			}
 			/*
@@ -346,6 +370,14 @@ public class FireLightning : DragonBreathBehaviour {
 			}
 			*/	
 		}
+
+        if (m_particleNPCCollision)
+        {
+            m_particleNPCCollision.gameObject.SetActive(isNPC);
+            m_particleNPCCollision.transform.position = NPCEffectPosition;
+
+        }
+
 
 		m_bounds2D.center = m_mouthTransform.position;
 		m_bounds2D.width = Mathf.Max( m_actualLength, m_maxAmplitude);
@@ -372,8 +404,8 @@ public class FireLightning : DragonBreathBehaviour {
 			m_particleEnd.gameObject.SetActive(true);
 		}
 
-		for(int i=0;i<m_rays.Length;i++)
-			m_rays[i].Hide ();
+        HideRays(m_rays);
+        HideRays(m_rays2);
 	}
 
 	override public void RecalculateSize()
@@ -393,13 +425,14 @@ public class FireLightning : DragonBreathBehaviour {
 			m_particleStart.gameObject.SetActive(false);
 		if ( m_particleEnd )
 			m_particleEnd.gameObject.SetActive(false);
-		for(int i=0;i<m_rays.Length;i++)
-			m_rays[i].Hide ();
 
-	}
+        HideRays(m_rays);
+        HideRays(m_rays2);
+
+    }
 
 
-	void OnDrawGizmos() {
+    void OnDrawGizmos() {
 		if (m_isFuryOn) 
 		{
 			Gizmos.color = Color.magenta;
