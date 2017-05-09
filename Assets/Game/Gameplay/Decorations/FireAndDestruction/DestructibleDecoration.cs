@@ -224,6 +224,10 @@ public class DestructibleDecoration : Initializable {
 							m_corpse.Spawn(false, false);
 						}
 						m_spawned = false;
+
+						// [AOC] Notify game!
+						Reward reward = new Reward();	// [AOC] TODO!! Should decorations have a reward?
+						Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_DESTROYED, transform, reward);
 					}
 				}
 			}

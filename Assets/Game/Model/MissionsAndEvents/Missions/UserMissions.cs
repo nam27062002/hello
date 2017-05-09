@@ -189,8 +189,7 @@ public class UserMissions {
 				break;	// No need to keep looping
 			}
 		}
-
-		Debug.Log("Selected Type: " + selectedTypeDef.sku);
+		Debug.Log("\tSelected Type: <color=yellow>" + selectedTypeDef.sku + "</color>");
 
 		// 3. Get all mission definitions matching the selected type
 		List<DefinitionNode> missionDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.MISSIONS, "type", selectedTypeDef.sku);
@@ -217,51 +216,53 @@ public class UserMissions {
 				break;	// No need to keep looping
 			}
 		}
+		Debug.Log("\tSelected Mission: <color=yellow>" + selectedMissionDef.sku + "</color>");
 
-		Debug.Log("Selected Mission: " + selectedMissionDef.sku);
+		// 5. If mission type supports single run mode, choose randomly whether to use it or not
+		bool singleRun = false;
+		if(selectedTypeDef.GetAsBool("canBeDuringOneRun")) {
+			// Single run? 50% chance
+			singleRun = UnityEngine.Random.value < 0.5f;	// 50% chance
+		}
+		Debug.Log("\tSingle run?: <color=yellow>" + singleRun + "</color>");
 
 		// 5. Compute target value based on mission min/max range
 		targetValue = UnityEngine.Random.Range(
 			selectedMissionDef.GetAsFloat("objectiveBaseQuantityMin"),
 			selectedMissionDef.GetAsFloat("objectiveBaseQuantityMax")
 		);
-
-		Debug.Log("Target Value: " + targetValue + " [" + selectedMissionDef.GetAsInt("objectiveBaseQuantityMin") + ", " + selectedMissionDef.GetAsInt("objectiveBaseQuantityMax") + "]");
+		Debug.Log("\tTarget Value:  <color=yellow>" + targetValue + "</color> [" + selectedMissionDef.GetAsInt("objectiveBaseQuantityMin") + ", " + selectedMissionDef.GetAsInt("objectiveBaseQuantityMax") + "]");
 
 		// 6. Compute and apply modifiers to the target value
+		float totalModifier = 0f;	// Modifiers are additive
+
 		// 6.1. Dragon modifier
 		DefinitionNode dragonModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);	// Matching sku
 		if(dragonModifierDef != null) {
-			targetValue *= dragonModifierDef.GetAsFloat("quantityModifier");
-			Debug.Log("Dragon Modifier " + dragonModifierDef.GetAsFloat("quantityModifier") + "\nTarget Value: " + targetValue);
+			totalModifier += dragonModifierDef.GetAsFloat("quantityModifier");
+			Debug.Log("\tDragon Modifier " + dragonModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
 		}
 
 		// 6.2. Difficulty modifier
 		DefinitionNode difficultyDef = MissionManager.GetDifficultyDef(_difficulty);
 		DefinitionNode difficultyModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, difficultyDef.sku);
 		if(difficultyModifierDef != null) {
-			targetValue *= difficultyModifierDef.GetAsFloat("quantityModifier");
-			Debug.Log("Difficulty Modifier " + difficultyModifierDef.GetAsFloat("quantityModifier") + "\nTarget Value: " + targetValue);
+			totalModifier += difficultyModifierDef.GetAsFloat("quantityModifier");
+			Debug.Log("\tDifficulty Modifier " + difficultyModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
 		}
 
 		// 6.3. Single run modifier
-		// If mission type supports single run mode, choose randomly whether to use it or not
-		bool singleRun = false;
-		if(selectedTypeDef.GetAsBool("canBeDuringOneRun")) {
-			// Single run? 50% chance
-			singleRun = UnityEngine.Random.value < 0.5f;	// 50% chance
-			if(singleRun) {
-				DefinitionNode singleRunModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, "single_run");
-				if(singleRunModifierDef != null) {
-					targetValue *= singleRunModifierDef.GetAsFloat("quantityModifier");
-					Debug.Log("Single Run Modifier " + singleRunModifierDef.GetAsFloat("quantityModifier") + "\nTarget Value: " + targetValue);
-				}
+		if(singleRun) {
+			DefinitionNode singleRunModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, "single_run");
+			if(singleRunModifierDef != null) {
+				totalModifier += singleRunModifierDef.GetAsFloat("quantityModifier");
+				Debug.Log("\tSingle Run Modifier " + singleRunModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
 			}
 		}
 
-		// 6.4. Round final value
-		targetValue = Mathf.Round(targetValue);
-		Debug.Log("<color=lime>Final Target Value: " + targetValue + "</color>");
+		// 6.4. Apply modifier and round final value
+		targetValue = Mathf.Round(targetValue * totalModifier);
+		Debug.Log("\t<color=lime>Final Target Value: " + targetValue + "</color>");
 
 		// 7. We got everything we need! Create the new mission
 		Mission newMission = new Mission();

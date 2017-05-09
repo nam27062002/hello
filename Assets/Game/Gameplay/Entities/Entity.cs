@@ -13,7 +13,7 @@ public class Entity : IEntity {
 	// Exposed to inspector
 	[EntitySkuList]
 	[SerializeField] private string m_sku;
-	public string sku { get { return m_sku; } }
+	public override string sku { get { return m_sku; } }
 
 	[SerializeField] private bool m_dieOutsideFrustum = true;
 	public bool dieOutsideFrustum

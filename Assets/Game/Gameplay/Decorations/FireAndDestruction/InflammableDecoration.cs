@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -207,8 +207,11 @@ public class InflammableDecoration : Initializable {
 				m_autoSpawner.StartRespawn();
 				m_view.SetActive(false);
 				m_viewBurned.SetActive(true);
-				if (m_collider)
-					m_collider.enabled = false;
+				if (m_collider) m_collider.enabled = false;
+
+				// [AOC] Notify game!
+				Reward reward = new Reward();	// [AOC] TODO!! Should decorations have a reward?
+				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, reward);
 			} else {
 				if (m_isBurning) {
 					if (m_destructibleBehaviour != null) {
