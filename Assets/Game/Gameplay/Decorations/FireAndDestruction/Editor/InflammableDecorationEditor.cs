@@ -3,12 +3,16 @@ using UnityEngine;
 using System.Collections.Generic;
 
 [CustomEditor(typeof(InflammableDecoration))]
-public class InflammableDecorationEditor : Editor {
+public class InflammableDecorationEditor : Editor {	
 	static private bool m_editFireNodes;
 	static private List<Transform> m_fireNodes;
 	static private List<GameObject> m_fireParticles;
 
+	private InflammableDecoration m_component;
+
+
 	public void Awake() {
+		m_component = target as InflammableDecoration;
 		m_editFireNodes = false;
 	}
 
@@ -25,7 +29,12 @@ public class InflammableDecorationEditor : Editor {
 	public override void OnInspectorGUI() {
 		DrawDefaultInspector();
 
-		EditorGUILayoutExt.Separator(new SeparatorAttribute("Fire Nodes"));
+		EditorGUILayoutExt.Separator(new SeparatorAttribute("Fire Nodes Setup"));
+
+		if (GUILayout.Button("Build")) {
+			m_component.SetupFireNodes();
+		}
+
 		if (m_editFireNodes == false) {
 			if (GUILayout.Button("Show")) {
 				GetFireNodesData();
@@ -54,9 +63,8 @@ public class InflammableDecorationEditor : Editor {
 
 	private void GetFireNodesData() {
 		GameObject prefab = (GameObject)Resources.Load("Particles/PF_FireNewProc");
-		InflammableDecoration targetGO = (InflammableDecoration)target;
 
-		FireNode[] nodes = targetGO.transform.GetComponentsInChildren<FireNode>();
+		FireNode[] nodes = m_component.transform.GetComponentsInChildren<FireNode>();
 		for (int i = 0; i < nodes.Length; i++) {
 			m_fireNodes.Add(nodes[i].transform);
 
