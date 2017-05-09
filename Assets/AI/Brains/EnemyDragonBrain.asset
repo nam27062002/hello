@@ -32,13 +32,14 @@ MonoBehaviour:
     m_componentAssets:
     - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
     - {fileID: 11400000, guid: cdc2a30fcd81a46a88bcf06ba5b18f47, type: 2}
-    - {fileID: 11400000, guid: e76be2bec77bd450d8b35540a4488860, type: 2}
+    - {fileID: 11400000, guid: a859a47b5965f458cb93d889e9a730e9, type: 2}
   - m_name: AttackSelector
     m_componentAssets:
     - {fileID: 11400000, guid: 7551f65623e804881bf17f8681e8547e, type: 2}
   - m_name: Attack
     m_componentAssets:
-    - {fileID: 11400000, guid: 3c6b1177666d44adeb3c237171fff7ef, type: 2}
+    - {fileID: 11400000, guid: 3ff23bd6dcc5240d09e52388bceb9084, type: 2}
+    - {fileID: 11400000, guid: effe47a6fdedf48a386094b6a32c1e2b, type: 2}
   - m_name: Search NPCs
     m_componentAssets:
     - {fileID: 11400000, guid: cc35a48828b4849c2896582f0cd5ef2c, type: 2}
@@ -47,10 +48,6 @@ MonoBehaviour:
   - m_name: Pursuit and Eat NPC
     m_componentAssets:
     - {fileID: 11400000, guid: f5cc6480ff41f4e6f842e5981c3f9a54, type: 2}
-  - m_name: PreWander
-    m_componentAssets:
-    - {fileID: 11400000, guid: f5add648be9ed4fea927e8987afbd296, type: 2}
-    - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
   m_transitionData:
   - to: 0
     id: onMove
@@ -95,7 +92,10 @@ MonoBehaviour:
     id: onEnemyBiggerTier
     from: 5
   - to: 4
-    id: onDashEnd
+    id: onPlayerBitted
+    from: 6
+  - to: 0
+    id: onEnemyOutOfSight
     from: 6
   - to: 8
     id: onEnemyInRange
@@ -112,8 +112,5 @@ MonoBehaviour:
   - to: 0
     id: onEnemyOutOfSight
     from: 8
-  - to: 0
-    id: onTimeFinished
-    from: 9
-  m_firstState_A: 9
-  m_firstState_B: 9
+  m_firstState_A: 8
+  m_firstState_B: 8

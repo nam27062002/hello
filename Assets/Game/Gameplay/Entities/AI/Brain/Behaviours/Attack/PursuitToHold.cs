@@ -57,12 +57,13 @@ namespace AI {
 
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 				m_eatBehaviour.enabled = false;
-				m_eatBehaviour.onJawsClosed += OnBiteKillEvent;
+
 
 				m_mouth = m_machine.transform.FindTransformRecursive("Fire_Dummy");
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
+				
 				m_pilot.SetMoveSpeed(m_data.speed);
 				m_pilot.SlowDown(false);
 
@@ -85,6 +86,9 @@ namespace AI {
 				}
 
 				m_eatBehaviour.enabled = true;
+				m_eatBehaviour.onJawsClosed += OnBiteKillEvent;
+				m_eatBehaviour.canLatchOnPlayer = true;
+				m_eatBehaviour.canBitePlayer = false;
 				m_enemyInRange = false;
 				m_timer = 0;
 				m_timeOut = m_data.timeout.GetRandom();
@@ -95,6 +99,8 @@ namespace AI {
 			protected override void OnExit(State _newState) {
 				//m_pilot.ReleaseAction(Pilot.Action.Button_A);
 				m_enemyInRange = false;
+				m_eatBehaviour.onJawsClosed -= OnBiteKillEvent;
+				m_eatBehaviour.enabled = false;
 			}
 
 			void OnBiteKillEvent()
