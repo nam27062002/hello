@@ -1,4 +1,4 @@
-﻿// MissionObjective.cs
+﻿// GlobalEventObjective.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 30/11/2015.
@@ -18,8 +18,8 @@ using System;
 /// Parent class for all mission objective types.
 /// </summary>
 [Serializable]
-public class MissionObjective {
-	//------------------------------------------------------------------//
+public class GlobalEventObjective {
+	/*//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 
@@ -62,7 +62,7 @@ public class MissionObjective {
 	/// Protected constructor, only to be used by heirs.
 	/// </summary>
 	/// <param name="_parentMission">The mission this objective belongs to.</param>
-	protected MissionObjective(Mission _parentMission) {
+	protected GlobalEventObjective(Mission _parentMission) {
 		// Store parent mission ref
 		m_parentMission = _parentMission;
 
@@ -220,20 +220,20 @@ public class MissionObjective {
 	/// </summary>
 	/// <returns>A new objective. <c>null</c> if the type was not recognized.</returns>
 	/// <param name="_parentMission">The mission where the new objective will belong.</param>
-	public static MissionObjective Create(Mission _parentMission) {
+	public static GlobalEventObjective Create(Mission _parentMission) {
 		// Create a new objective based on mission type
 		switch(_parentMission.def.GetAsString("typeSku")) {
-			case "score":			return new MissionObjectiveScore(_parentMission);
-			case "gold":			return new MissionObjectiveGold(_parentMission);
-			case "survive_time":	return new MissionObjectiveSurviveTime(_parentMission);
-			case "kill":			return new MissionObjectiveKill(_parentMission);
-			case "burn":			return new MissionObjectiveBurn(_parentMission);
-			case "dive":			return new MissionObjectiveDive(_parentMission);
-			case "dive_time":		return new MissionObjectiveDiveTime(_parentMission);
-			case "fire_rush":		return new MissionObjectiveFireRush(_parentMission);
+			case "score":			return new GlobalEventObjectiveScore(_parentMission);
+			case "gold":			return new GlobalEventObjectiveGold(_parentMission);
+			case "survive_time":	return new GlobalEventObjectiveSurviveTime(_parentMission);
+			case "kill":			return new GlobalEventObjectiveKill(_parentMission);
+			case "burn":			return new GlobalEventObjectiveBurn(_parentMission);
+			case "dive":			return new GlobalEventObjectiveDive(_parentMission);
+			case "dive_time":		return new GlobalEventObjectiveDiveTime(_parentMission);
+			case "fire_rush":		return new GlobalEventObjectiveFireRush(_parentMission);
 		}
 
 		// Unrecoginzed mission type, aborting
 		return null;
-	}
+	}*/
 }

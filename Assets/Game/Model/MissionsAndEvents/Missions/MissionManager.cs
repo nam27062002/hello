@@ -49,11 +49,6 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 
 	private UserProfile m_user;
 
-	// Delegates
-	// Delegate meant for objectives needing an update() call
-	public delegate void OnUpdateDelegate();
-	public static OnUpdateDelegate OnUpdate = delegate() { };	// Default initialization to avoid null reference when invoking. Add as many listeners as you want to this specific event by using the += syntax
-	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -84,7 +79,6 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	{
 		// Subscribe to external events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-        Messenger.AddListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);
     }
 
 	/// <summary>
@@ -94,7 +88,6 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	{
 		// Unsubscribe from external events
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-        Messenger.RemoveListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);
     }
 
 	/// <summary>
@@ -104,9 +97,6 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	{
 		bool gaming = InstanceManager.gameSceneController != null;
 		if(m_user != null) m_user.userMissions.CheckActivation(!gaming);
-
-		// Propagate to registered listeners
-		OnUpdate();
 	}
 
 	//------------------------------------------------------------------//
@@ -224,12 +214,4 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 		UsersManager.currentUser.userMissions.ownedDragons = ownedDragons;
 		UsersManager.currentUser.userMissions.UnlockByDragonsNumber();
 	}
-
-    /// <summary>
-	/// A mission has been completed by the user.
-	/// </summary>
-	/// <param name="_mission">The mision that has just been completed.</param>
-    private void OnMissionCompleted(Mission _mission)
-    {        
-    }
 }

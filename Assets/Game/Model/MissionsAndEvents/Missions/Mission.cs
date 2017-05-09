@@ -100,7 +100,7 @@ public class Mission {
 		}
 
 		// Create and initialize new objective
-		m_objective = MissionObjective.Create(this);
+		m_objective = new MissionObjective(m_def);
 		m_objective.OnObjectiveComplete.AddListener(OnObjectiveComplete);
 	}
 
@@ -221,7 +221,7 @@ public class Mission {
 		// Restore objective
 		if(m_objective != null) 
 		{
-			m_objective.currentValue = _data["currentValue"].AsFloat;
+			m_objective.tracker.SetValue(_data["currentValue"].AsFloat, false);
 			m_objective.enabled = (m_state == State.ACTIVE);
 		}
 
