@@ -7,7 +7,7 @@ public class ZoneManager : MonoBehaviour {
 		None = 0,
 		S, // feedback
 		M, // burn / destroy with KB or collide 
-		L  // explode / destroy
+		L  // disintegrate
 	};
 
 	public enum Zone {
@@ -27,45 +27,36 @@ public class ZoneManager : MonoBehaviour {
 
 
 	//----------------------------------------------------------------------------------------------------------------------------------------------------------//
-	void Awake()
-	{
+	void Awake() {
 		InstanceManager.zoneManager = this;	
 	}
 
-	void OnDestroy()
-	{
-		if ( ApplicationManager.IsAlive )
+	void OnDestroy() {
+		if (ApplicationManager.IsAlive)
 			InstanceManager.zoneManager = null;		
 	}
 
 	public ZoneEffect GetFireEffectCode(Decoration _deco, DragonTier _tier) {
 		if (_deco.isBurnable) {
-			Zone zone = GetZone(_deco.transform.position.z);
-
-			if (zone != Zone.None) {
-				if (_tier >= _deco.minTierBurn) {
-					return ZoneEffect.M; // should burn?
-				} else if (_tier >= _deco.minTierBurnFeedback) {
-					return ZoneEffect.S; // should give feedback?
-				}
+			if (_tier >= _deco.minTierDisintegrate) {
+				return ZoneEffect.L;
+			} else if (_tier >= _deco.minTierBurn) {
+				return ZoneEffect.M;
+			} else if (_tier >= _deco.minTierBurnFeedback) {
+				return ZoneEffect.S;
 			}
 		}
-
 		return ZoneEffect.None;
 	}
 
 	public ZoneEffect GetDestructionEffectCode(Decoration _deco, DragonTier _tier) {		
-		Zone zone = GetZone(_deco.transform.position.z);
-
-		if (zone != Zone.None) {
-
-			if (_tier >= _deco.minTierDestruction) {
-				return ZoneEffect.M; // should be destroyed
-			} else if (_tier >= _deco.minTierDestructionFeedback) {
-				return ZoneEffect.S; // should give feedback?
-			}
+		if (_tier >= _deco.minTierDisintegrate) {
+			return ZoneEffect.L;
+		} else if (_tier >= _deco.minTierDestruction) {
+			return ZoneEffect.M;
+		} else if (_tier >= _deco.minTierDestructionFeedback) {
+			return ZoneEffect.S;
 		}
-
 		return ZoneEffect.None;
 	}
 
@@ -78,7 +69,6 @@ public class ZoneManager : MonoBehaviour {
 				return Zone.Zone2;
 			}
 		}
-
 		return Zone.None;
 	}
 
@@ -86,7 +76,7 @@ public class ZoneManager : MonoBehaviour {
 	void OnDrawGizmosSelected() {
 		Rect mapBounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
 		LevelData data = LevelManager.currentLevelData;
-		if(data != null) {
+		if (data != null) {
 			mapBounds = data.bounds;
 		}
 

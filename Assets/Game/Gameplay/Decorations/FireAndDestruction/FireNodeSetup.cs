@@ -5,6 +5,10 @@ using UnityEngine;
 public class FireNodeSetup : MonoBehaviour {
 
 	[SerializeField] private int m_boxelSize = 2;
+	[SeparatorAttribute]
+	[SerializeField] private string m_breathHitParticle = "PF_FireHit";
+	[SerializeField] private bool m_hitParticleMatchDirection = false;
+	[SerializeField] private float m_hitRadius = 1.5f;
 
 
 	private MeshFilter	 m_meshFilter;
@@ -17,8 +21,8 @@ public class FireNodeSetup : MonoBehaviour {
 
 	// Use this for initialization
 	public void Init() {
-		m_meshFilter = GetComponent<MeshFilter>();
-		m_meshRenderer = GetComponent<MeshRenderer>();
+		m_meshFilter = transform.FindComponentRecursive<MeshFilter>();
+		m_meshRenderer = transform.FindComponentRecursive<MeshRenderer>();
 
 		m_boxels = null;
 	}
@@ -27,6 +31,12 @@ public class FireNodeSetup : MonoBehaviour {
 		m_boxels = null;
 
 		Bounds bounds = m_meshRenderer.bounds;
+		float maxSize = Mathf.Max(bounds.size.x, Mathf.Max(bounds.size.y, bounds.size.z));
+		int size = Mathf.CeilToInt(maxSize / m_boxelSize);
+		if (size > 20) {
+			m_boxelSize = Mathf.CeilToInt(maxSize / 20);
+		}
+
 		int sizeX = Mathf.CeilToInt(bounds.size.x / m_boxelSize);
 		int sizeY = Mathf.CeilToInt(bounds.size.y / m_boxelSize);
 		int sizeZ = Mathf.CeilToInt(bounds.size.z / m_boxelSize);
@@ -109,16 +119,17 @@ public class FireNodeSetup : MonoBehaviour {
 					if (m_boxels[x, y, z].Count > 0) {
 						List<Vector3> boxel = m_boxels[x, y, z];
 
-						Vector3 position = GetBoxelCenter(x, y, z);
+						Vector3 position = Vector3.zero;
 						for (int i = 0; i < boxel.Count; i++) {
 							position += boxel[i];
 						}
-						position /= (boxel.Count + 1);
+						position /= boxel.Count;
 
-						GameObject fireNode = new GameObject("FireNode");
-						fireNode.AddComponent<FireNode>();
+						GameObject fireNodeObj = new GameObject("FireNode");
+						FireNode fireNode = fireNodeObj.AddComponent<FireNode>();
 						fireNode.transform.position = position;
 						fireNode.transform.SetParent(fireNodes, true);
+						fireNode.Setup(m_breathHitParticle, m_hitParticleMatchDirection, m_hitRadius);
 					}
 				}
 			}
@@ -147,10 +158,12 @@ public class FireNodeSetup : MonoBehaviour {
 			Gizmos.DrawWireCube(m_center, m_size * m_boxelSize);
 		}
 
-		Vector3[] vertices = m_meshFilter.sharedMesh.vertices;
+		if (m_meshFilter != null) {
+			Vector3[] vertices = m_meshFilter.sharedMesh.vertices;
 
-		for (int v = 0; v < vertices.Length; v++) {			
-			Gizmos.DrawCube(transform.TransformVector(vertices[v]) + transform.position, Vector3.one * 0.1f);
+			for (int v = 0; v < vertices.Length; v++) {			
+				Gizmos.DrawCube(transform.TransformVector(vertices[v]) + transform.position, Vector3.one * 0.1f);
+			}
 		}
 	}
 }

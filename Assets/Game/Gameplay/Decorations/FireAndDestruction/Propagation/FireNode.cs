@@ -60,6 +60,12 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		gameObject.SetActive(false);
 	}
 
+	public void Setup(string _hitParticle, bool _matchDirection, float _hitRadius) {
+		m_breathHitParticle = _hitParticle;
+		m_hitParticleMatchDirection = _matchDirection;
+		m_hitRadius = _hitRadius;
+	}
+
 	public void Init(Decoration _decoration) {		
 		m_decoration = _decoration;
 		Reset();
@@ -99,8 +105,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 	public void Burn(Vector2 _direction, bool _dragonBreath, DragonTier _tier) {
 		if (m_state == State.Extinguished) {
-
-			ZoneManager.ZoneEffect effect = InstanceManager.zoneManager.GetFireEffectCode( m_decoration, _tier);
+			ZoneManager.ZoneEffect effect = InstanceManager.zoneManager.GetFireEffectCode(m_decoration, _tier);
 			m_lastBurnTier = _tier;
 
 			if (effect >= ZoneManager.ZoneEffect.M) {

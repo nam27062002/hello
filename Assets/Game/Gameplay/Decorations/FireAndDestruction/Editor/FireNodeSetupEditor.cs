@@ -27,9 +27,6 @@ public class FireNodeSetupEditor : Editor {
 			if (m_boxelSizeProp.intValue < 1) {
 				m_boxelSizeProp.intValue = 1;
 			}
-
-			m_component.Init();
-			m_component.Build();
 		}
 
 		EditorGUILayoutExt.Separator(new SeparatorAttribute("Fire Nodes Auto Setup"));

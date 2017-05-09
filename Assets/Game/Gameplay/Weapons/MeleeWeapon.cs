@@ -6,8 +6,12 @@ public class MeleeWeapon : MonoBehaviour {
 	[SerializeField] private float m_knockback = 0;
 	[SerializeField] private float m_timeBetweenHits = 0.5f;
 
+	[SeparatorAttribute("Trail effect")]
+	[SerializeField] private Xft.XWeaponTrail m_trail;
+	[SerializeField] private ParticleSystem[] m_trailParticles = new ParticleSystem[0];
+
+
 	private Collider m_weapon;
-	private TrailRenderer m_trail;
 
 	private float m_damage;
 	public float damage { set { m_damage = value; } }
@@ -18,7 +22,6 @@ public class MeleeWeapon : MonoBehaviour {
 
 	void Awake() {
 		m_weapon = GetComponent<Collider>();
-		m_trail = GetComponentInChildren<TrailRenderer>();
 	}
 
 	void OnEnable() {
@@ -27,12 +30,27 @@ public class MeleeWeapon : MonoBehaviour {
 
 		m_timer = 0;
 		m_timerPosition = 0.25f;
-		if (m_trail) m_trail.enabled = true;
+
+		if (m_trail) m_trail.Activate();
+		for (int i = 0; i < m_trailParticles.Length; i++) {
+			m_trailParticles[i].Clear();
+			ParticleSystem.EmissionModule em = m_trailParticles[i].emission;
+			em.enabled = true;
+			m_trailParticles[i].Play();
+		}
 	}
 
 	void OnDisable() {
 		m_weapon.enabled = false;
-		if (m_trail) m_trail.enabled = false;
+
+		if (m_trail) m_trail.Deactivate();
+		for (int i = 0; i < m_trailParticles.Length; i++) {
+			ParticleSystem.EmissionModule em = m_trailParticles[i].emission;
+			if (em.enabled && m_trailParticles[i].loop) {
+				em.enabled = false;
+				m_trailParticles[i].Stop();
+			}
+		}
 	}
 
 	void Update() {

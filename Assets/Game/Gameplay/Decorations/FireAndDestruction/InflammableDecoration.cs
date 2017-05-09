@@ -6,7 +6,7 @@ public class InflammableDecoration : Initializable {
 
 	[SerializeField] private float m_burningTime;
 	[CommentAttribute("Add an explosion effect when this object is burned out.")]
-	[SerializeField] private string m_explosionParticle = "";
+	[SerializeField] private ParticleData m_explosionParticle;
 	[SerializeField] private string m_ashesAsset;
 
 
@@ -35,11 +35,12 @@ public class InflammableDecoration : Initializable {
 	public string sku { get { return m_entity.sku; } }
 
 	// Use this for initialization
-	void Start() {
+	void Awake() {
 		m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
 
 		PoolManager.RequestPool("PF_FireProc", "Particles/", m_fireNodes.Length);
 		ParticleManager.CreatePool("SmokeParticle", "");
+		ParticleManager.CreatePool(m_explosionParticle);
 	}
 
 	/// <summary>
@@ -63,8 +64,7 @@ public class InflammableDecoration : Initializable {
 	/// <summary>
 	/// A new level was loaded.
 	/// </summary>
-	private void OnLevelLoaded() {
-		
+	private void OnLevelLoaded() {		
 		m_entity = GetComponent<Decoration>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_operatorSpawner = GetComponent<DeviceOperatorSpawner>();
@@ -184,16 +184,19 @@ public class InflammableDecoration : Initializable {
 				if (m_operatorSpawner != null && !m_operatorSpawner.IsOperatorDead()) {
 					m_operatorSpawner.OperatorBurn();
 				}
-
-				if (m_explosionParticle != "") {
-					ParticleManager.Spawn(m_explosionParticle, transform.position + Vector3.back * 3f);
+				
+				ZoneManager.ZoneEffect effect = InstanceManager.zoneManager.GetFireEffectCode(m_entity, lastBurnTier);
+				if (effect == ZoneManager.ZoneEffect.L) {
+					if (m_explosionParticle.IsValid()) {
+						ParticleManager.Spawn(m_explosionParticle, transform.position + m_explosionParticle.offset);
+					}
 				}
-
+				
 				m_autoSpawner.StartRespawn();
 				m_view.SetActive(false);
 				m_viewBurned.SetActive(true);
 				if (m_collider) m_collider.enabled = false;
-			}else{
+			} else {
 				if (m_isBurning) {
 					if (m_destructibleBehaviour != null) {
 						m_destructibleBehaviour.enabled = false;

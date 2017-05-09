@@ -395,16 +395,16 @@ public class HungryDragonEditorMenu
             MemoryProfiler_SampleFromAll.Clear();
         }
 
-        MemoryProfiler_MP.Clear();                        
+        MemoryProfiler_MP.Clear(true);                        
     }   
 
     [MenuItem("Hungry Dragon/Profiler/Memory/Take a sample from game object", false, 51)]
     public static void MemoryProfiler_TakeAsampleFromGO() {
-        MemoryProfiler_MP.Clear();
+        MemoryProfiler_MP.Clear(true);
 
         GameObject go = GameObject.Find("PF_DragonBaby");
         if (go != null) {
-            MemorySample.ESizeStrategy sizeStrategy = MemorySample.ESizeStrategy.DeviceFull;
+            MemorySample.ESizeStrategy sizeStrategy = MemorySample.ESizeStrategy.Profiler;
             AbstractMemorySample sample = MemoryProfiler_MP.GO_TakeASample(go, null, sizeStrategy);
 
             //Dictionary<string, List<string>> typeGroups = null;
@@ -428,33 +428,45 @@ public class HungryDragonEditorMenu
 
     [MenuItem("Hungry Dragon/Profiler/Memory/Take a sample from scene", false, 51)]
     public static void MemoryProfiler_TakeAsampleFromScene()
-    {        
-        MemoryProfiler_TakeAsampleFromSceneInternal(false);
-    }
-
-    [MenuItem("Hungry Dragon/Profiler/Memory/Take a sample from scene with categories", false, 51)]
-    public static void MemoryProfiler_TakeAsampleFromSceneWithCategories()
     {
-        MemoryProfiler_TakeAsampleFromSceneInternal(true);
+        MemoryProfiler_Clear();
+
+        AbstractMemorySample sample = MemoryProfiler_MP.Scene_TakeASample(false);
+        
+        string xml = sample.ToXML(null, null, MemoryProfiler_MP.GameTypeGroups).OuterXml;
+        Debug.Log(xml);
+        File.WriteAllText(MEMORY_PROFILER_PATH + "memorySampleFromScene", xml);
     }
 
-    private static void MemoryProfiler_TakeAsampleFromSceneInternal(bool withCategories)
+    [MenuItem("Hungry Dragon/Profiler/Memory/Take a sample from game", false, 51)]
+    public static void MemoryProfiler_TakeASampleFromGame()
+    {
+        MemoryProfiler_TakeASampleFromGameInternal(false);
+    }
+
+    [MenuItem("Hungry Dragon/Profiler/Memory/Take a sample from game with categories", false, 51)]
+    public static void MemoryProfiler_TakeASampleFromGameWithCategories()
+    {
+        MemoryProfiler_TakeASampleFromGameInternal(true);
+    }
+
+    private static void MemoryProfiler_TakeASampleFromGameInternal(bool withCategories)
     {
         MemoryProfiler_Clear();               
 
         AbstractMemorySample sample;
         if (withCategories)
         {
-            sample = MemoryProfiler_MP.Scene_TakeASampleWithCategories(HDMemoryProfiler.CATEGORY_SET_NAME_GAME);
+            sample = MemoryProfiler_MP.Scene_TakeAGameSampleWithCategories(false, HDMemoryProfiler.CATEGORY_SET_NAME_GAME);
         }
         else
         {
-            sample = MemoryProfiler_MP.Scene_TakeASample();
+            sample = MemoryProfiler_MP.Scene_TakeAGameSample(false);
         }
        
         string xml = sample.ToXML(null, null, MemoryProfiler_MP.GameTypeGroups).OuterXml;
         Debug.Log(xml);
-        File.WriteAllText(MEMORY_PROFILER_PATH + "memorySampleFromScene", xml);
+        File.WriteAllText(MEMORY_PROFILER_PATH + "memorySampleFromGame", xml);
     }
     #endregion
 }
