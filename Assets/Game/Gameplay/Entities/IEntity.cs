@@ -27,6 +27,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 	protected DefinitionNode m_def;
 	public 	  DefinitionNode def { get { return m_def; } }
+	public virtual string sku { get { return string.Empty; }}
 
 	// Health
 	protected float m_maxHealth;

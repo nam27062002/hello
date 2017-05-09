@@ -278,8 +278,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_burningTime: 1
-  m_explosionParticle: PS_SplintersWheat
+  m_feedbackParticle:
+    name: PF_FireHit
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_feedbackParticleMatchDirection: 0
+  m_burnParticle:
+    name: PF_FireProc
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_disintegrateParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_ashesAsset: 
+  m_boxelSize: 2
+  m_hitRadius: 1.5
 --- !u!114 &11474300
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -303,9 +317,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_breathHitParticle: PS_SplintersWheat
-  m_hitParticleMatchDirection: 0
-  m_hitRadius: 1.26
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -342,6 +353,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zone1Interaction: 0
   m_knockBackStrength: 0
+  m_particleFaceDragonDirection: 0
   m_feddbackParticle: PS_SplintersWheat
   m_destroyParticle: PS_SplintersWheat
   m_onDestroyAudio: Strew_Destroyed

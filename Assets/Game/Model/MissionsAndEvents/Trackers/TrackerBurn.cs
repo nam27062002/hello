@@ -47,49 +47,6 @@ public class TrackerBurn : TrackerBase {
 	}
 
 	//------------------------------------------------------------------------//
-	// PARENT OVERRIDES														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Localizes and formats the description according to this tracker's type
-	/// (i.e. "Eat 52 birds", "Dive 500m", "Survive 10 minutes").
-	/// </summary>
-	/// <returns>The localized and formatted description for this tracker's type.</returns>
-	/// <param name="_tid">Description TID to be formatted.</param>
-	/// <param name="_targetValue">Target value.</param>
-	override public string FormatDescription(string _tid, float _targetValue) {
-		// Replace with the target amount and type
-		string typeStr = "";
-
-		// Any type
-		if(m_targetSkus.Count == 0) {
-			typeStr = LocalizationManager.SharedInstance.Localize("TID_MISSION_OBJECTIVE_ENEMIES");
-		}
-
-		// Next types
-		for(int i = 0; i < m_targetSkus.Count; i++) {
-			// Comma separated list except the first and last one in the list
-			if(i > 0) {
-				if(i == m_targetSkus.Count - 1) {
-					typeStr += LocalizationManager.SharedInstance.Localize("TID_GEN_LIST_SEPARATOR_OR");
-				} else {
-					typeStr += LocalizationManager.SharedInstance.Localize("TID_GEN_LIST_SEPARATOR");
-				}
-			}
-
-			// Add type name
-			DefinitionNode targetDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, m_targetSkus[0]);
-			if(targetDef != null) {
-				typeStr = targetDef.GetLocalized("tidName");
-			} else {
-				typeStr = m_targetSkus[i];
-			}
-		}
-
-		// Compose full text and return
-		return LocalizationManager.SharedInstance.Localize(_tid, FormatValue(_targetValue), typeStr);
-	}
-
-	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
@@ -103,7 +60,7 @@ public class TrackerBurn : TrackerBase {
 			currentValue++;
 		} else {
 			// Is it one of the target types?
-			Entity prey = _entity.GetComponent<Entity>();
+			IEntity prey = _entity.GetComponent<IEntity>();
 			if(prey != null) {
 				if(m_targetSkus.Contains(prey.sku)) {
 					// Found!

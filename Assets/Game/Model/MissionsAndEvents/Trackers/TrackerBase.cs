@@ -69,10 +69,17 @@ public class TrackerBase {
 	/// </summary>
 	/// <returns>The localized and formatted description for this tracker's type.</returns>
 	/// <param name="_tid">Description TID to be formatted.</param>
-	/// <param name="_targetValue">Target value.</param>
-	public virtual string FormatDescription(string _tid, float _targetValue) {
-		// Default: just attach formatted value to the given tid and localize
-		return LocalizationManager.SharedInstance.Localize(_tid, FormatValue(_targetValue));
+	/// <param name="_targetValue">Target value. Will be placed at the %U0 replacement slot.</param>
+	/// <param name="_replacements">Other optional replacements, starting at %U1.</param>
+	public virtual string FormatDescription(string _tid, float _targetValue, params string[] _replacements) {
+		// Default: localize with the formatted value, then replace one by one the optional replacements
+		string res = LocalizationManager.SharedInstance.Localize(_tid, FormatValue(_targetValue));
+		if(_replacements != null) {
+			for(int i = 0; i < _replacements.Length; i++) {
+				res.Replace("%U" + (i+1).ToString(), _replacements[i]);	// %U1 -> _replacements[0], %U2 -> _replacements[1], etc.
+			}
+		}
+		return res;
 	}
 
 	/// <summary>
@@ -130,7 +137,7 @@ public class TrackerBase {
 			case "dive":			return new TrackerDiveDistance();
 			case "dive_time":		return new TrackerDiveTime();
 			case "fire_rush":		return new TrackerFireRush();
-			case "destroy":			return new TrackerBurn(_params);	// [AOC] TODO!!
+			case "destroy":			return new TrackerDestroy(_params);
 
 			// Collect is quite special: depending on first parameter, create one of the existing trackers
 			case "collect": {

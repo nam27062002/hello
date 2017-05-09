@@ -33,10 +33,12 @@ public class MeleeWeapon : MonoBehaviour {
 
 		if (m_trail) m_trail.Activate();
 		for (int i = 0; i < m_trailParticles.Length; i++) {
-			m_trailParticles[i].Clear();
-			ParticleSystem.EmissionModule em = m_trailParticles[i].emission;
-			em.enabled = true;
-			m_trailParticles[i].Play();
+			if (m_trailParticles[i] != null) {
+				m_trailParticles[i].Clear();
+				ParticleSystem.EmissionModule em = m_trailParticles[i].emission;
+				em.enabled = true;
+				m_trailParticles[i].Play();
+			}
 		}
 	}
 
@@ -45,10 +47,12 @@ public class MeleeWeapon : MonoBehaviour {
 
 		if (m_trail) m_trail.Deactivate();
 		for (int i = 0; i < m_trailParticles.Length; i++) {
-			ParticleSystem.EmissionModule em = m_trailParticles[i].emission;
-			if (em.enabled && m_trailParticles[i].loop) {
-				em.enabled = false;
-				m_trailParticles[i].Stop();
+			if (m_trailParticles[i] != null) {
+				ParticleSystem.EmissionModule em = m_trailParticles[i].emission;
+				if (em.enabled && m_trailParticles[i].loop) {
+					em.enabled = false;
+					m_trailParticles[i].Stop();
+				}
 			}
 		}
 	}
