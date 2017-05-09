@@ -432,12 +432,12 @@ public class MemoryProfiler
 
     private void GO_AnalyzeProperty(object o, PropertyInfo property, ref List<Object> list)
     {
-        if (property.PropertyType.IsSubclassOf(typeof(UnityEngine.Object)) &&
+        Type propertyType = property.PropertyType;
+        if ((GO_IsMemberACollection(propertyType) || property.PropertyType.IsSubclassOf(typeof(UnityEngine.Object))) &&
             !property.IsDefined(typeof(ObsoleteAttribute), true) &&         // Accessing properties marked as obsolete by Unity triggers an exception
-             property.Name != "material" && property.Name != "materials" && // Accessing material or materials properties triggers an exception                    
-             property.Name != "mesh")                                       // Accessing mesh triggers an exception                    
-        { 
-            Type propertyType = property.PropertyType;
+            property.Name != "material" && property.Name != "materials" &&  // Accessing material or materials properties triggers an exception                    
+            property.Name != "mesh")                                        // Accessing mesh triggers an exception                   
+        {             
             object value = property.GetValue(o, null);
             if (value != null)
             {
@@ -448,7 +448,7 @@ public class MemoryProfiler
                     {
                         foreach (var item in propertyList)
                         {
-                            PropertyInfo[]properties = item.GetType().GetProperties(GO_BINDING_FLAGS);
+                            /*PropertyInfo[]properties = item.GetType().GetProperties(GO_BINDING_FLAGS);
                             if (properties != null)
                             {
                                 int fieldsCount = properties.Length;
@@ -456,7 +456,8 @@ public class MemoryProfiler
                                 {
                                     GO_AnalyzeProperty(item, properties[j], ref list);
                                 }
-                            }
+                            }*/
+                            GO_AnalyzeMember(item, ref list);
                         }
                     }
                 }
@@ -535,6 +536,49 @@ public class MemoryProfiler
         }                
     }
 
+	private Dictionary<GameObject, List<Object>> GO_Analysis { get; set; }
+
+	private void GO_AddAnalysis(GameObject go, List<Object> dependencies)
+	{
+		if (GO_Analysis == null)
+		{
+			GO_Analysis = new Dictionary<GameObject, List<Object>>();
+		}
+
+		if (GO_Analysis.ContainsKey(go))
+		{
+			GO_Analysis[go] = dependencies;
+		}
+		else
+		{
+			GO_Analysis.Add(go, dependencies);
+		}
+	}
+
+	private void GO_ClearAnalysis()
+	{
+		if (GO_Analysis != null)
+		{
+			GO_Analysis.Clear();
+		}
+	}
+
+	private List<Object> GO_GetAnalysis(GameObject go)
+	{
+		List<Object> returnValue = null;
+		if (GO_Analysis != null && GO_Analysis.ContainsKey(go))
+		{
+			returnValue = GO_Analysis[go];
+		}
+
+		return returnValue;
+	}
+
+	private bool GO_IsAnalysisEmpty()
+	{
+		return GO_Analysis == null || GO_Analysis.Count == 0;
+	}
+
 #if UNITY_EDITOR
     private void GO_AddTexturesFromMaterialInEditor(Material material, ref List<Object> list)
     {
@@ -563,50 +607,7 @@ public class MemoryProfiler
                 }
             }
         }
-    }
-
-    private Dictionary<GameObject, List<Object>> GO_Analysis { get; set; }
-
-    private void GO_AddAnalysis(GameObject go, List<Object> dependencies)
-    {
-        if (GO_Analysis == null)
-        {
-            GO_Analysis = new Dictionary<GameObject, List<Object>>();
-        }
-
-        if (GO_Analysis.ContainsKey(go))
-        {
-            GO_Analysis[go] = dependencies;
-        }
-        else
-        {
-            GO_Analysis.Add(go, dependencies);
-        }
-    }
-
-    private void GO_ClearAnalysis()
-    {
-        if (GO_Analysis != null)
-        {
-            GO_Analysis.Clear();
-        }
-    }
-
-    private List<Object> GO_GetAnalysis(GameObject go)
-    {
-        List<Object> returnValue = null;
-        if (GO_Analysis != null && GO_Analysis.ContainsKey(go))
-        {
-            returnValue = GO_Analysis[go];
-        }
-
-        return returnValue;
-    }
-
-    private bool GO_IsAnalysisEmpty()
-    {
-        return GO_Analysis == null || GO_Analysis.Count == 0;
-    }
+    }		    
 #endif
 
     private void AnalyzeTextureFromShadersSettings(Material material, ref List<Object> list)

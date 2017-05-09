@@ -65,8 +65,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013194196898}
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: 0, y: 0.13, z: -3.29}
+  m_LocalRotation: {x: 1, y: -0, z: -0, w: -0.00000004371139}
+  m_LocalPosition: {x: 0, y: -2.41, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000010079648758}
@@ -146,7 +146,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1387886782
+  randomSeed: 1329828686
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -307,8 +307,8 @@ ParticleSystem:
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
       minColor: {r: 0.84705883, g: 0.47058824, b: 1, a: 0.5019608}
-      maxColor: {r: 1, g: 0.6, b: 0.5019608, a: 0.5019608}
-      minMaxState: 2
+      maxColor: {r: 1, g: 1, b: 1, a: 0.5019608}
+      minMaxState: 0
     startSize:
       scalar: 1.5
       maxCurve:
@@ -347,15 +347,9 @@ ParticleSystem:
           inSlope: 0
           outSlope: 0
           tangentMode: 0
-        - serializedVersion: 2
-          time: 1
-          value: 1
-          inSlope: 0
-          outSlope: 0
-          tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
-        m_RotationOrder: 4
+        m_RotationOrder: 0
       minCurve:
         serializedVersion: 2
         m_Curve:
@@ -365,16 +359,10 @@ ParticleSystem:
           inSlope: 0
           outSlope: 0
           tangentMode: 0
-        - serializedVersion: 2
-          time: 1
-          value: 0
-          inSlope: 0
-          outSlope: 0
-          tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
-        m_RotationOrder: 4
-      minMaxState: 0
+        m_RotationOrder: 0
+      minMaxState: 3
     startSizeZ:
       scalar: 1
       maxCurve:
@@ -386,15 +374,9 @@ ParticleSystem:
           inSlope: 0
           outSlope: 0
           tangentMode: 0
-        - serializedVersion: 2
-          time: 1
-          value: 1
-          inSlope: 0
-          outSlope: 0
-          tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
-        m_RotationOrder: 4
+        m_RotationOrder: 0
       minCurve:
         serializedVersion: 2
         m_Curve:
@@ -404,16 +386,10 @@ ParticleSystem:
           inSlope: 0
           outSlope: 0
           tangentMode: 0
-        - serializedVersion: 2
-          time: 1
-          value: 0
-          inSlope: 0
-          outSlope: 0
-          tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
-        m_RotationOrder: 4
-      minMaxState: 0
+        m_RotationOrder: 0
+      minMaxState: 3
     startRotationX:
       scalar: 0
       maxCurve:
@@ -2759,7 +2735,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1062787544
+  randomSeed: 1471492533
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -2919,9 +2895,9 @@ ParticleSystem:
         m_Mode: 0
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
-      minColor: {r: 0.84705883, g: 0.47058824, b: 1, a: 0.2509804}
-      maxColor: {r: 1, g: 0.6, b: 0.5019608, a: 0.2509804}
-      minMaxState: 2
+      minColor: {r: 1, g: 1, b: 1, a: 0.2509804}
+      maxColor: {r: 1, g: 1, b: 1, a: 0.5019608}
+      minMaxState: 0
     startSize:
       scalar: 1.5
       maxCurve:
@@ -2929,7 +2905,7 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 0.6666667
+          value: 0.33333334
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -3121,7 +3097,7 @@ ParticleSystem:
         m_RotationOrder: 4
       minMaxState: 0
     randomizeRotationDirection: 0
-    maxNumParticles: 1000
+    maxNumParticles: 90
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -3167,7 +3143,7 @@ ParticleSystem:
     serializedVersion: 3
     enabled: 1
     type: 4
-    radius: 1.5
+    radius: 1
     angle: 5
     length: 3
     boxX: 1
@@ -5382,7 +5358,7 @@ ParticleSystemRenderer:
   m_MaxParticleSize: 0.5
   m_CameraVelocityScale: 0
   m_VelocityScale: 0
-  m_LengthScale: -5
+  m_LengthScale: -4
   m_SortingFudge: 0
   m_NormalDirection: 1
   m_RenderAlignment: 0

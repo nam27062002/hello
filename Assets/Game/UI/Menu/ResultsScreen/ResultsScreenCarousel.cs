@@ -161,8 +161,15 @@ public class ResultsScreenCarousel : MonoBehaviour {
 					if(numCheatMissions > missionIdx) {
 						// Yes! Create a fake temp mission
 						List<DefinitionNode> missionDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSIONS);
+						DefinitionNode missionDef = missionDefs.GetRandomValue();
 						targetMission = new Mission();
-						targetMission.InitFromDefinition(missionDefs.GetRandomValue());
+						targetMission.InitWithParams(
+							missionDef,
+							DefinitionsManager.SharedInstance.GetDefinition(missionDef.Get("type"), DefinitionsCategory.MISSION_TYPES),
+							Random.Range(missionDef.GetAsInt("objectiveBaseQuantityMin"), missionDef.GetAsInt("objectiveBaseQuantityMax")),
+							Random.value < 0.5f	// 50% chace
+						);
+						targetMission.difficulty = Mission.Difficulty.MEDIUM;
 
 						// Mark mission as completed
 						targetMission.objective.enabled = true;
