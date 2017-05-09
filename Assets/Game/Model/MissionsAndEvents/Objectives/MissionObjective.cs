@@ -65,7 +65,7 @@ public class MissionObjective : TrackingObjectiveBase {
 
 		// Use parent's initializer
 		Init(
-			TrackerBase.CreateTracker(_typeDef.sku, _missionDef.GetAsList<string>("parameters")),		// Create the tracker based on mission type
+			TrackerBase.CreateTracker(_typeDef.sku, _missionDef.GetAsList<string>("params")),		// Create the tracker based on mission type
 			_targetValue,
 			tid,
 			_typeDef

@@ -216,8 +216,8 @@ public class UserMissions {
 
 		// 5. Compute target value based on mission min/max range
 		targetValue = UnityEngine.Random.Range(
-			selectedMissionDef.GetAsInt("objectiveBaseQuantityMin"),
-			selectedMissionDef.GetAsInt("objectiveBaseQuantityMax")
+			selectedMissionDef.GetAsFloat("objectiveBaseQuantityMin"),
+			selectedMissionDef.GetAsFloat("objectiveBaseQuantityMax")
 		);
 
 		// 6. Compute and apply modifiers to the target value
@@ -248,6 +248,8 @@ public class UserMissions {
 			}
 		}
 
+		// 6.4. Round final value
+		targetValue = Mathf.Round(targetValue);
 		// 7. We got everything we need! Create the new mission
 		Mission newMission = new Mission();
 		newMission.InitWithParams(selectedMissionDef, selectedTypeDef, targetValue, singleRun);

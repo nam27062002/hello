@@ -74,7 +74,7 @@ public abstract class TrackingObjectiveBase {
 	/// <param name="_tidDesc">TID corresponding to the objective's description.</param>
 	protected virtual void Init(TrackerBase _tracker, float _targetValue, string _tidDesc, DefinitionNode _typeDef) {
 		// Check some required parameters
-		Debug.Assert(_tracker != null);
+		Debug.Assert(_tracker != null, "Invalid Tracker!");
 
 		// Init tracker
 		m_tracker = _tracker;
