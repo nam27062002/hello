@@ -275,6 +275,8 @@ public class FireLightning : DragonBreathBehaviour {
         SetAmplitude(m_rays, m_maxAmplitude);
         SetAmplitude(m_rays2, m_maxAmplitude2);
 
+        bool isGround = false;
+
         if ( m_insideWater )
 		{
 			m_currentLength = Mathf.Lerp(m_currentLength, m_length * 2f, Time.deltaTime * 2);
@@ -286,8 +288,9 @@ public class FireLightning : DragonBreathBehaviour {
 				float addition = (length - ground.distance); // distance enering water
 				// length += addition;	// We double it
 				m_currentLength = Mathf.Lerp( m_currentLength, m_length + addition, Time.deltaTime * 2);
-			}
-			else
+                isGround = true;
+            }
+            else
 			{
 				m_currentLength = Mathf.Lerp( m_currentLength, m_length, Time.deltaTime * 2);
 			}
@@ -296,15 +299,22 @@ public class FireLightning : DragonBreathBehaviour {
 		if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+(Vector3)m_direction*m_currentLength, out ground, m_groundMask)){
 			p2 = ground.point;
 			m_actualLength = ground.distance;
-		}else{
+            isGround = true;
+        }
+        else
+        {
 			p2 =  m_mouthTransform.position+(Vector3)m_direction*m_currentLength;
 			m_actualLength = m_currentLength;
 		}
 
 		if ( m_particleEnd )
-			m_particleEnd.transform.position = p2;
+        {
+            m_particleEnd.gameObject.SetActive(isGround);
+            m_particleEnd.transform.position = p2;
 
-		for(int i=0;i<m_rays.Length;i++)
+        }
+
+        for (int i=0;i<m_rays.Length;i++)
         {
             m_rays[i].Draw(p1, p2);
         }
