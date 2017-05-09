@@ -24,9 +24,14 @@ public class ContentManager
 
 		// Progression
 		kDefinitionFiles.Add(DefinitionsCategory.LEVELS, new string[]{"Rules/levelDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.MISSIONS, new string[]{"Rules/missionDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.MISSIONS, new string[]{"Rules/missionsDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.MISSION_TYPES, new string[]{"Rules/missionTypeDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.MISSION_DIFFICULTIES, new string[]{"Rules/missionDifficultyDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.MISSION_MODIFIERS, new string[]{
+			"Rules/missionDifficultyModifiersDefinitions",
+			"Rules/missionDragonModifiersDefinitions",
+			"Rules/missionOtherModifiersDefinitions"
+		});
 
 		// Dragons
 		kDefinitionFiles.Add(DefinitionsCategory.DRAGONS, new string[]{"Rules/dragonDefinitions"});

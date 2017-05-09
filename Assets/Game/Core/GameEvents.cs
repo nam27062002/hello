@@ -38,6 +38,7 @@ public enum GameEvents {
 	GAME_COUNTDOWN_ENDED,		// no params
 	GAME_AREA_ENTER,			// no params 
 	GAME_AREA_EXIT,				// no params
+	GAME_UPDATED,				// no params
 	GAME_PAUSED,				// params: bool _paused
 	GAME_ENDED,					// no params
 	REWARD_APPLIED,				// params: Reward _reward, Transform _entity
