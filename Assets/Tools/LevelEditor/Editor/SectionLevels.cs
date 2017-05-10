@@ -485,6 +485,19 @@ namespace LevelEditor {
 				OnLoadLevel( commonScene[i] + ".unity" );
 			}
 
+			List<string> editorOnlyScenes = def.GetAsList<string>("levelEditor");
+			for( int i = 0; i<editorOnlyScenes.Count; i++ )
+			{
+				LevelEditor.settings.selectedMode = GetModeByName( editorOnlyScenes[i]);
+				OnLoadLevel( editorOnlyScenes[i] + ".unity" );
+			}
+
+			List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
+			for( int i = 0; i<gameplayWip.Count; i++ )
+			{
+				LevelEditor.settings.selectedMode = GetModeByName( gameplayWip[i]);
+				OnLoadLevel( gameplayWip[i] + ".unity" );
+			}
 
 			List<string> areaScenes = new List<string>();
 			int areaIndex = 1;

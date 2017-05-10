@@ -806,12 +806,13 @@ public abstract class EatBehaviour : MonoBehaviour {
 			if ( dot > 0)
 			{
 				bool found = false;
-				List<Collider> hitColliders = InstanceManager.player.dragonMotion.hitColliders;
-				for( int i = 0; i<hitColliders.Count && !found; i++ )
+				Collider[] hitColliders = InstanceManager.player.dragonMotion.hitColliders;
+				int size = InstanceManager.player.dragonMotion.hitCollidersSize;
+				for( int i = 0; i<size && !found; i++ )
 				{
 					if (MathUtils.TestArcVsBounds( arcOrigin, arcAngle, arcRadius, dir, hitColliders[i].bounds))
 					{
-						StartAttackTarget( InstanceManager.player.transform);
+						StartAttackTarget(InstanceManager.player.transform);
 						found = true;
 					}
 				}
