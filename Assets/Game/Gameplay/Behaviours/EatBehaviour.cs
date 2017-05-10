@@ -257,31 +257,33 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	protected virtual void OnDisable()
     {
-        if (m_prey != null && ApplicationManager.IsAlive)
-        {
-            int count = m_prey.Length;
-            for (int i = 0; i < count; i++)
-            {
-                if (m_prey[i].prey != null)
-                {
-                    PreyData prey = m_prey[i];
-                    prey.prey.transform.parent = prey.startParent;
-                    if ( prey.absorbTimer > 0 )
-						StartSwallow(m_prey[i].prey);
-                    EndSwallow(m_prey[i].prey);
-                    prey.prey = null;
-                    prey.startParent = null;
-                }
-            }
+		if (ApplicationManager.IsAlive)
+		{
+	        if (m_prey != null)
+	        {
+	            int count = m_prey.Length;
+	            for (int i = 0; i < count; i++)
+	            {
+	                if (m_prey[i].prey != null)
+	                {
+	                    PreyData prey = m_prey[i];
+	                    prey.prey.transform.parent = prey.startParent;
+	                    if ( prey.absorbTimer > 0 )
+							StartSwallow(m_prey[i].prey);
+	                    EndSwallow(m_prey[i].prey);
+	                    prey.prey = null;
+	                    prey.startParent = null;
+	                }
+	            }
+	            PreyCount = 0;
+	        }	
 
-            PreyCount = 0;
-
-            if ( IsLatching() || IsGrabbing() )
+			if ( IsLatching() || IsGrabbing() )
 				EndHold();
 
 			if ( m_attackTarget != null )
-				StopAttackTarget();
-        }		
+				StopAttackTarget();	
+        }
 	}
 
 	public bool IsEating() {
