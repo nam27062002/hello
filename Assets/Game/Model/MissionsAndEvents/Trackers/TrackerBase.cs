@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -72,14 +73,15 @@ public class TrackerBase {
 	/// <param name="_targetValue">Target value. Will be placed at the %U0 replacement slot.</param>
 	/// <param name="_replacements">Other optional replacements, starting at %U1.</param>
 	public virtual string FormatDescription(string _tid, float _targetValue, params string[] _replacements) {
-		// Default: localize with the formatted value, then replace one by one the optional replacements
-		string res = LocalizationManager.SharedInstance.Localize(_tid, FormatValue(_targetValue));
-		if(_replacements != null) {
-			for(int i = 0; i < _replacements.Length; i++) {
-				res.Replace("%U" + (i+1).ToString(), _replacements[i]);	// %U1 -> _replacements[0], %U2 -> _replacements[1], etc.
-			}
+		// Default: Add the formatted value to the replacements array and localize
+		// No need if there are no replacements
+		if(_replacements == null || _replacements.Length == 0) {
+			return LocalizationManager.SharedInstance.Localize(_tid, FormatValue(_targetValue));
+		} else {
+			List<string> replacementsList = _replacements.ToList();
+			replacementsList.Insert(0, FormatValue(_targetValue));
+			return LocalizationManager.SharedInstance.Localize(_tid, replacementsList.ToArray());
 		}
-		return res;
 	}
 
 	/// <summary>
@@ -144,8 +146,8 @@ public class TrackerBase {
 				if(_params.Count < 1) return null;
 				switch(_params[0]) {
 					case "coins":	return new TrackerGold();
-					case "eggs":	return new TrackerGold();		// [AOC] TODO!!
-					case "chests":	return new TrackerGold();	// [AOC] TODO!!
+					case "eggs":	return new TrackerEggs();
+					case "chests":	return new TrackerChests();
 				}
 			} break;
 		}

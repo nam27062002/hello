@@ -231,7 +231,7 @@ public class UserMissions {
 			selectedMissionDef.GetAsFloat("objectiveBaseQuantityMin"),
 			selectedMissionDef.GetAsFloat("objectiveBaseQuantityMax")
 		);
-		Debug.Log("\tTarget Value:  <color=yellow>" + targetValue + "</color> [" + selectedMissionDef.GetAsInt("objectiveBaseQuantityMin") + ", " + selectedMissionDef.GetAsInt("objectiveBaseQuantityMax") + "]");
+		Debug.Log("\tTarget Value:  <color=yellow>" + targetValue + "</color> [" + selectedMissionDef.GetAsFloat("objectiveBaseQuantityMin") + ", " + selectedMissionDef.GetAsFloat("objectiveBaseQuantityMax") + "]");
 
 		// 6. Compute and apply modifiers to the target value
 		float totalModifier = 0f;	// Modifiers are additive
