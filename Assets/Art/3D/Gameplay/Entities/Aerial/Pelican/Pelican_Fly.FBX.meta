@@ -1,34 +1,40 @@
 fileFormatVersion: 2
-guid: 77474315a925f471796fe3314fc0c10d
-timeCreated: 1477489068
+guid: e37fa1d91cd84418c883c7df272e007e
+timeCreated: 1494404711
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: Head
-    100002: Hub
-    100004: Jaw
-    100006: //RootNode
-    100008: Platform
-    100010: PToothFish
-    100012: Tail1
-    100014: Tail2
-    100016: Tail3
-    400000: Head
-    400002: Hub
-    400004: Jaw
-    400006: //RootNode
-    400008: Platform
-    400010: PToothFish
-    400012: Tail1
-    400014: Tail2
-    400016: Tail3
-    4300000: PToothFish
-    7400000: Take 001
+    100000: Pelican
+    100002: PelicaN_
+    100004: PelicaN_BeakDown
+    100006: PelicaN_BeakUP
+    100008: //RootNode
+    100010: PelicaN_Hub
+    100012: PelicaN_LLeg
+    100014: PelicaN_LWing
+    100016: PelicaN_Neck
+    100018: PelicaN_RLeg
+    100020: PelicaN_RWing
+    100022: PelicaN_Tail
+    400000: Pelican
+    400002: PelicaN_
+    400004: PelicaN_BeakDown
+    400006: PelicaN_BeakUP
+    400008: //RootNode
+    400010: PelicaN_Hub
+    400012: PelicaN_LLeg
+    400014: PelicaN_LWing
+    400016: PelicaN_Neck
+    400018: PelicaN_RLeg
+    400020: PelicaN_RWing
+    400022: PelicaN_Tail
+    4300000: Pelican
+    7400000: Pelican_anim
     9500000: //RootNode
-    13700000: PToothFish
+    13700000: Pelican
   materials:
-    importMaterials: 0
+    importMaterials: 1
     materialName: 0
     materialSearch: 1
   animations:
@@ -49,10 +55,10 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Take 001
-      takeName: Take 001
+      name: Pelican_anim
+      takeName: Pelican_anim
       firstFrame: 0
-      lastFrame: 15
+      lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -71,34 +77,33 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events:
-      - time: 0.7092846
-        functionName: EatEvent
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
+      events: []
       transformMask:
       - path: 
         weight: 1
-      - path: Hub
+      - path: Pelican
         weight: 1
-      - path: Hub/Head
+      - path: PelicaN_
         weight: 1
-      - path: Hub/Jaw
+      - path: PelicaN_Hub
         weight: 1
-      - path: Hub/Tail1
+      - path: PelicaN_Hub/PelicaN_LLeg
         weight: 1
-      - path: Hub/Tail1/Tail2
+      - path: PelicaN_Hub/PelicaN_LWing
         weight: 1
-      - path: Hub/Tail1/Tail2/Tail3
+      - path: PelicaN_Hub/PelicaN_Neck
         weight: 1
-      - path: Platform
+      - path: PelicaN_Hub/PelicaN_Neck/PelicaN_BeakDown
         weight: 1
-      - path: PToothFish
+      - path: PelicaN_Hub/PelicaN_Neck/PelicaN_BeakUP
         weight: 1
-      maskType: 0
+      - path: PelicaN_Hub/PelicaN_RLeg
+        weight: 1
+      - path: PelicaN_Hub/PelicaN_RWing
+        weight: 1
+      - path: PelicaN_Hub/PelicaN_Tail
+        weight: 1
+      maskType: 3
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     isReadable: 1
@@ -140,7 +145,7 @@ ModelImporter:
     rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 0
-    skeletonHasParents: 0
+    skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
   humanoidOversampling: 1
