@@ -11,10 +11,10 @@ public class PrisonerSpawner : AbstractSpawner {
 	}
 
 	[SeparatorAttribute("Spawn")]
-	[SerializeField] private Group[]	m_groups;
-	[SerializeField] private Range		m_scale = new Range(1f, 1f);
-	[SerializeField] private Transform	m_parent;
-	
+	[SerializeField] private Group[] m_groups;
+	[SerializeField] private Range m_scale = new Range(1f, 1f);
+	[SerializeField] private Transform[] m_spawnAtTransform;
+		
 	private Transform[] m_parents;
 
     private uint m_maxEntities;	
@@ -26,7 +26,6 @@ public class PrisonerSpawner : AbstractSpawner {
     private AreaBounds m_areaBounds = new RectAreaBounds(Vector3.zero, Vector3.one);
     public override AreaBounds area { get { return m_areaBounds; } set { m_areaBounds = value; } }
 
-	public override Vector3 homePosition { get { if (m_parent != null) return m_parent.position; else return transform.position; } }
 
 	private void Awake() {
 		// Progressive respawn disabled because it respawns only one instance and it's triggered by CageBehaviour which is not prepared to loop until Respawn returns true
@@ -82,18 +81,15 @@ public class PrisonerSpawner : AbstractSpawner {
     }
 
     protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
-        Transform t = spawning.transform;        
-        t.localScale = Vector3.one * m_scale.GetRandom();
-
-		if (m_parent != null) {
-			t.parent = m_parent;
-			t.localPosition = Vector3.zero;
-		}
-    }
+        Transform t = spawning.transform;
+		Transform parent = m_spawnAtTransform[index % m_spawnAtTransform.Length];
+		t.parent = parent;
+		t.localPosition = Vector3.zero;
+		t.localScale = Vector3.one * m_scale.GetRandom();
+	}
 
 	protected override void OnMachineSpawned(AI.IMachine machine) {
         machine.EnterDevice(true);
-		machine.position = m_parent.position;
     }
 
     protected override void OnRemoveEntity(GameObject _entity, int index) {        
@@ -122,9 +118,11 @@ public class PrisonerSpawner : AbstractSpawner {
 
     //
     void OnDrawGizmosSelected() {
-		if (m_parent != null) {
-	        Gizmos.color = Colors.coral;
-			Gizmos.DrawSphere(m_parent.position, 0.5f);
+		Gizmos.color = Colors.coral;
+		for (int i = 0; i < m_spawnAtTransform.Length; i++) {
+			if (m_spawnAtTransform[i] != null) {		        
+				Gizmos.DrawSphere(m_spawnAtTransform[i].position, 0.5f);
+			}
 		}
     }
 

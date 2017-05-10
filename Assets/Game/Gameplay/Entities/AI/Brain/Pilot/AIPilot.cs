@@ -101,7 +101,7 @@ namespace AI {
                 m_guideFunction = null;                
             } else {
                 m_area = _spawner.area;
-				m_homePosition = _spawner.homePosition;
+				m_homePosition = transform.position;
 				m_guideFunction = _spawner.guideFunction;
 			}
 
