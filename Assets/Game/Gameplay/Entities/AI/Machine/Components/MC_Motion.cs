@@ -153,6 +153,9 @@ namespace AI {
 
 			m_terminalVelocity = Mathf.Sqrt((2f * m_mass * GRAVITY) * (AIR_DENSITY * 1f * DRAG));
 
+			m_rbody.isKinematic = false;
+			m_rbody.detectCollisions = true;
+
 			//----------------------------------------------------------------------------------
 			m_mouth = m_machineTransform.FindTransformRecursive("Fire_Dummy");
 
