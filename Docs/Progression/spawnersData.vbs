@@ -66,20 +66,20 @@ End Function
 Function entityInfo()
 	Set EntityFile = objFSO.OpenTextFile(prefabFile)
 	substrToFind = "m_sku:"
-	substrToFind_1 = "damage"
+	substrToFind_1 = "damage"+Chr(34)
 	entityInfo = ""
 	damage = "-"
 	content_sku = ""
 	Do until EntityFile.AtEndOfStream
 		tmpStr = EntityFile.ReadLine
-		If foundStrMatch(tmpStr,substrToFind_1) = true Then
+		If foundStrMatch(tmpStr,substrToFind_1) = true Then	
 			pos = InStr(tmpStr, substrToFind_1)
-			damage = Replace(Replace(Replace(Mid(tmpStr,pos+8,3),Chr(34),"")," ",""),",","")
+			damage = Replace(Replace(Replace(Mid(tmpStr,pos+8,3),Chr(34),"")," ",""),",","")			
 		End If		
 		If foundStrMatch(tmpStr,substrToFind) = true Then
 			content_sku = Replace(Replace(tmpStr,"m_sku:","")," ","")
 		End If
-	Loop
+	Loop	
 	entityInfo = content_sku
 End Function
 
@@ -105,8 +105,8 @@ Function contentInfo(contentSku)
 	Loop
 End function
 
-Function foundStrMatch(tmpStr,substrToFind)
-	If InStr(tmpStr, substrToFind) > 0 Then
+Function foundStrMatch(tmpStr,substrToFind_2)
+	If InStr(tmpStr, substrToFind_2) > 0 Then
 		foundStrMatch = true
 	Else
 		foundStrMatch = false
