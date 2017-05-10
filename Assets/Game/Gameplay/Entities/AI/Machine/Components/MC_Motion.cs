@@ -217,6 +217,9 @@ namespace AI {
 					m_direction = m_dragon.position - m_machine.position;
 					m_direction.y = 0f;
 					m_direction.Normalize();
+
+					UpdateAttack();
+
 					m_targetRotation = Quaternion.LookRotation(m_direction + Vector3.back * 0.1f, m_upVector);
 					break;
 
