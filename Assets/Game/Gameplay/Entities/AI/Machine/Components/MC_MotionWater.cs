@@ -49,8 +49,8 @@ namespace AI {
 		}
 
 		protected override void ExtendedUpdateFreeFall() {
-			if (!m_machine.GetSignal(Signals.Type.InWater)) {
-				m_pilot.SetDirection(Vector3.down, true);
+			m_pilot.SetDirection(Vector3.down, true);
+			if (m_machine.GetSignal(Signals.Type.InWater)) {				
 				m_diveTimer -= Time.deltaTime;
 				if (m_diveTimer <= 0f) {
 					m_pilot.SetDirection(Vector3.down, false);
