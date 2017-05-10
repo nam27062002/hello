@@ -87,11 +87,16 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	DragonAnimationEvents 	m_animationEventController;
 	DragonParticleController m_particleController;
 	SphereCollider 			m_mainGroundCollider;
-	List<Collider> 			m_groundColliders = new List<Collider>();
-	List<Collider>			m_hitColliders = new List<Collider>();
-	public List<Collider> hitColliders
+	Collider[] 				m_groundColliders;
+	Collider[]				m_hitColliders;
+	int m_hitCollidersSize = 0;
+	public Collider[] hitColliders
 	{
 		get{ return m_hitColliders; }
+	}
+	public int hitCollidersSize
+	{
+		get{ return m_hitCollidersSize; }
 	}
 	DragonEatBehaviour		m_eatBehaviour;
 
@@ -166,7 +171,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	};
 	private Sensors m_sensor;
 
-	private List<Transform> m_hitTargets;
+	private Transform[] m_hitTargets;
 
 	private State m_state = State.None;
 	public State state
@@ -215,6 +220,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	private const float m_waterGravityMultiplier = 3.5f;
 	private Vector3 m_waterEnterPosition;
 	private bool m_insideWater = false;
+	public bool insideWater
+	{
+		get{ return m_insideWater; }
+	}
 	private bool m_outterSpace = false;
 	private string m_destinationArea = "";
 	private Assets.Code.Game.Spline.BezierSpline m_followingSpline;
@@ -301,6 +310,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	private float m_latchingTimer;
 
+	private Bounds m_hitBounds;
+	public Bounds hitBounds
+	{
+		get{ return m_hitBounds; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -325,37 +340,43 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		int n = 0;
 		Transform t = null;
 		Transform points = transform.FindChild("points");
-		m_hitTargets = new List<Transform>();
+		List<Transform> hitTargets = new List<Transform>();
 
 		while (true) {
 			t = points.FindChild("attack_" + n);
 			if (t != null) {
-				m_hitTargets.Add(t);
+				hitTargets.Add(t);
 				n++;
 			} else {
 				break;
 			}
 		}
-
+		m_hitTargets = hitTargets.ToArray();
 		m_rbody = GetComponent<Rigidbody>();
 
 		int playerLayer = LayerMask.NameToLayer("Player");
 		int groundLayer = LayerMask.NameToLayer("PlayerGround");
 		Collider[] colliders = GetComponentsInChildren<Collider>();
+		List<Collider> hitColliders = new List<Collider>();
+		List<Collider> groundColliders = new List<Collider>();
 		for( int i = 0; i<colliders.Length; i++ )
 		{
 			int colliderLayer = colliders[i].gameObject.layer;
 			if ( colliderLayer == playerLayer)
 			{
 				// hitting collider
-				m_hitColliders.Add( colliders[i] );
+				hitColliders.Add( colliders[i] );
 			}
 			else if ( colliderLayer == groundLayer )
 			{
 				// groundLayer
-				m_groundColliders.Add( colliders[i]);
+				groundColliders.Add( colliders[i]);
 			}
 		}
+		m_groundColliders = groundColliders.ToArray();
+		m_hitCollidersSize = hitColliders.Count;
+		m_hitColliders = hitColliders.ToArray();
+
 
 		// Find ground collider
 		Transform ground = transform.FindTransformRecursive("ground");
@@ -502,7 +523,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				case State.Latching:
 				{
 					// Disable all ground colliders
-					for(int i = 0; i<m_groundColliders.Count; i++)
+					int size = m_groundColliders.Length;
+					for(int i = 0; i<size; i++)
 						m_groundColliders[i].enabled = true;
 				}break;
 				case State.Dead:
@@ -599,7 +621,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				}break;
 				case State.Latching:
 				{
-					for( int i = 0; i<m_groundColliders.Count; i++ )
+					int size = m_groundColliders.Length;
+					for( int i = 0; i<size; i++ )
 						m_groundColliders[i].enabled = false;
 					m_latchingTimer = 0;
 				}break;
@@ -646,7 +669,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
-
+		// UnityAnalyticsHeatmap.HeatmapEvent.Send( "PlayerPosition", m_transform.position, InstanceManager.gameSceneController.elapsedSeconds);
 		switch (m_state) {
 			case State.Idle:
 				if (m_controls.moving || boostSpeedMultiplier > 1) {
@@ -892,11 +915,24 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		
 	}
 
+	void UpdateHitCollidersBoundingBox()
+	{
+		m_hitBounds.center = m_transform.position;
+		m_hitBounds.size = Vector3.zero;
+		for( int i = 0; i<m_hitCollidersSize; ++i )
+		{
+			m_hitBounds.Encapsulate( m_hitColliders[i].bounds );
+		}
+	}
+
 
 	/// <summary>
 	/// Called once per frame at regular intervals.
 	/// </summary>
 	void FixedUpdate() {
+		// Update hitColliders Bounding box
+		UpdateHitCollidersBoundingBox();
+
 		m_closeToGround = false;
 		switch (m_state) {
 			case State.Idle:
@@ -1626,7 +1662,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		Transform target = transform;
 		float minDistSqr = 999999f;
 
-		for (int i = 0; i < m_hitTargets.Count; i++) {
+		int size = m_hitTargets.Length;
+		for (int i = 0; i < size; i++) {
 			Vector2 v = (_point - m_hitTargets[i].position);
 			float distSqr = v.sqrMagnitude;
 			if (distSqr <= minDistSqr) {
@@ -2037,6 +2074,11 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		if (m_state == State.Dead || m_state == State.Reviving )
 			return false;
 		return true;
+	}
+
+	protected virtual void OnDrawGizmos() {
+		Gizmos.color = Color.red;
+		Gizmos.DrawWireCube( m_hitBounds.center, m_hitBounds.size);
 	}
 }
 

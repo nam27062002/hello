@@ -114,8 +114,12 @@ public abstract class TrackingObjectiveBase {
 	/// </summary>
 	/// <returns>The description properly formatted.</returns>
 	public virtual string GetDescription() {
-		// Default
-		return m_tracker.FormatDescription(m_tidDesc, targetValue, m_tidTarget);
+		// Use replacements?
+		if(string.IsNullOrEmpty(m_tidTarget)) {
+			return m_tracker.FormatDescription(m_tidDesc, targetValue);
+		} else {
+			return m_tracker.FormatDescription(m_tidDesc, targetValue, m_tidTarget);
+		}
 	}
 
 	/// <summary>
