@@ -1,8 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(MeshRenderer))]
 public class WaterMesh : MonoBehaviour 
 {
+    public WaterController m_waterController = null;
 	public float m_cellSize = 5.0f;
 	
 	private Transform m_transform = null;
@@ -87,7 +89,8 @@ public class WaterMesh : MonoBehaviour
         for (int x = 0; x < numVertsX; x++)
         {
             m_vertices[c] = transform.InverseTransformPoint(new Vector3(min.x + (x * m_cellSize), min.y, min.z + (m_cellSize)));
-            m_UV[c] = new Vector2(1.0f * uvspacing * min.y, x * uvspacing);
+//            m_UV[c] = new Vector2(1.0f * uvspacing * min.y, x * uvspacing);
+            m_UV[c] = new Vector2(1.0f, x * uvspacing);
             m_colours[c++] = Color.gray;
         }
 
