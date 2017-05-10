@@ -2969,7 +2969,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &825333722
 Transform:
   m_ObjectHideFlags: 0
@@ -3301,13 +3301,14 @@ GameObject:
   m_Component:
   - component: {fileID: 860254263}
   - component: {fileID: 860254264}
+  - component: {fileID: 860254265}
   m_Layer: 0
   m_Name: cage spawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &860254263
 Transform:
   m_ObjectHideFlags: 0
@@ -3315,7 +3316,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 860254262}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 104.25, y: 24.1, z: 0}
+  m_LocalPosition: {x: 105.2, y: 0.231, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 883113615}
@@ -3334,7 +3335,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Cage/PF_HangingCage
+  - name: Cage/PF_Cage
     chance: 100
   m_quantity:
     min: 1
@@ -3357,12 +3358,26 @@ MonoBehaviour:
   m_spawnTime:
     min: 0
     max: 0
-  m_homePosMethod: 0
+  m_homePosMethod: 1
   m_homePosDistance:
     min: 1
     max: 2
   m_maxSpawns: 0
   m_checkCurrents: 0
+--- !u!114 &860254265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 860254262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0.44519806, y: 4.7678494}
+  size: {x: 30.919594, y: 14.6635275}
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!1 &883113614
 GameObject:
   m_ObjectHideFlags: 0
@@ -9139,7 +9154,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2061600067
 Transform:
   m_ObjectHideFlags: 0
@@ -9180,7 +9195,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Monster/PF_Troll
+  - name: Surface/PF_Archer01
+    chance: 100
+  - name: Surface/PF_Archer02
     chance: 100
   m_quantity:
     min: 1
