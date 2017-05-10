@@ -118,7 +118,7 @@ public abstract class TrackingObjectiveBase {
 		if(string.IsNullOrEmpty(m_tidTarget)) {
 			return m_tracker.FormatDescription(m_tidDesc, targetValue);
 		} else {
-			return m_tracker.FormatDescription(m_tidDesc, targetValue, m_tidTarget);
+			return m_tracker.FormatDescription(m_tidDesc, targetValue, LocalizationManager.SharedInstance.Localize(m_tidTarget));
 		}
 	}
 
