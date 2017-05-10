@@ -28,6 +28,7 @@ public class LevelLoadingSplash : MonoBehaviour {
 	// Exposed
 	[SerializeField] private Slider m_progressBar = null;
 	[Space]
+	[SerializeField] private Image m_dragonIcon = null;
 	[SerializeField] private PowerIcon[] m_powerIcons = null;
 
 	// Internal references
@@ -97,12 +98,15 @@ public class LevelLoadingSplash : MonoBehaviour {
 	private void Initialize() {
 		// Aux vars
 		DragonData currentDragon = DragonManager.GetDragonData(UsersManager.currentUser.currentDragon);
+		DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.diguise);
+
+		// Dragon image
+		m_dragonIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.DISGUISE_ICONS_PATH + currentDragon.def.sku, skinDef.Get("icon"));
 
 		// Powers: skin + pets
 		List<DefinitionNode> powerDefs = new List<DefinitionNode>();
 
 		// Skin
-		DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.diguise);
 		if(skinDef == null) {
 			powerDefs.Add(null);
 		} else {
