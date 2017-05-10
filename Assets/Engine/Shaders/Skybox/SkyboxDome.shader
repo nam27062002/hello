@@ -93,6 +93,7 @@ SubShader {
 
 
 			fixed sat = smoothstep(_SatThreshold, 1.0, 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b);
+//			fixed satMoon = smoothstep(_SatThreshold, 1.0, 0.2126 * tex3.r + 0.7152 * tex3.g + 0.0722 * tex3.b) * 1.0;
 
 			float4 grad = lerp(_DownColor, _UpColor, i.height);
 //			return grad;
@@ -107,7 +108,7 @@ SubShader {
 
 //			col = lerp(colbackup, col, _DownColor.w);
 			col = lerp(colbackup, col, (fogCol.w * _DownColor.w));
-			col = lerp(col, colbackup, clamp(tex3.r * sat, 0.0, 1.0) * _UpColor.w);
+			col = lerp(col, colbackup, clamp(tex3.r, 0.0, 1.0) * _UpColor.w);
 
 
 			UNITY_OPAQUE_ALPHA(col.a);	// Opaque
