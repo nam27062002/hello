@@ -74,8 +74,8 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
     public Entity[] GetEntitiesInRange2D(Vector2 _center, float _radius)
     {
         m_searchList.Clear();
-
-        for (int i = 0; i < m_entities.Count; i++)
+		int size = m_entities.Count;
+        for (int i = 0; i < size; i++)
         {
             Entity e = m_entities[i];
             if (e != null)
@@ -93,7 +93,9 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
     public int GetEntitiesInRange2DNonAlloc(Vector2 _center, float _radius, Entity[] results)
     {
         int numResult = 0;
-        for (int i = 0; i < m_entities.Count && numResult < results.Length; i++)
+		int size = m_entities.Count;
+		int length = results.Length;
+        for (int i = 0; i < size && numResult < length; i++)
         {
             Entity e = m_entities[i];
             if (e != null)
@@ -113,8 +115,8 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
     {
         float minDistSqr = _radius * _radius;
         Entity nearestEntity = null;
-
-        for (int i = 0; i < m_entities.Count; i++)
+		int size = m_entities.Count;
+        for (int i = 0; i < size; ++i)
         {
             Entity e = m_entities[i];
             if (e != null)

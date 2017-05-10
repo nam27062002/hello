@@ -54,6 +54,17 @@ public class RectAreaBounds : AreaBounds {
 		return m_bounds.Contains(_point);
 	}
 
+	public void Encapsulate( Collider[] _colliders)
+	{
+		int size = _colliders.Length;
+		for( int i = 0; i<size; ++i )
+		{
+			m_bounds.Encapsulate(_colliders[i].bounds);
+		}
+		m_size = m_bounds.size;
+		m_extents = m_bounds.extents;
+	} 
+
 	public void DrawGizmo() {		
 		Color color = Color.white;
 		color.a = 0.25f;

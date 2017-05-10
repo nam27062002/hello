@@ -22,11 +22,12 @@ namespace AI {
 		private Transform m_enemy; //enemy should be a Machine.. but dragon doesn't have this component
 		public Transform enemy { 
 			get { return m_enemy; } 
-			set { m_enemy = value; }
+			// set { m_enemy = value; }
 		}
 
 		private float m_radiusOffsetFactor = 1f;
 		private float m_enemyRadiusSqr;
+		private RectAreaBounds m_enemyBounds;
 		private float m_senseTimer;
 
 		private static int s_groundMask;
@@ -48,10 +49,11 @@ namespace AI {
 			s_groundMask = LayerMask.GetMask("Ground", "GroundVisible");			
 		}
 
-		public void SetupEnemy( Transform _tr, float distanceSqr )
+		public void SetupEnemy( Transform _tr, float distanceSqr, RectAreaBounds _enemyBounds )
 		{
 			m_enemy = _tr;
 			m_enemyRadiusSqr = distanceSqr;
+			m_enemyBounds = _enemyBounds;
 		}
 
 		public void Disable(float _seconds) {

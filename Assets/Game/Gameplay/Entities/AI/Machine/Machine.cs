@@ -14,6 +14,10 @@ namespace AI {
 		protected MC_Motion m_motion = null; // basic machine doesn't have a motion component
 		[SerializeField] private bool m_enableSensor = true;
 		[SerializeField] protected MachineSensor m_sensor = new MachineSensor();
+		public MachineSensor sensor
+		{
+			get{ return m_sensor; }
+		}
 		[SerializeField] protected MachineEdible m_edible = new MachineEdible();
 		[SerializeField] protected MachineInflammable m_inflammable = new MachineInflammable();
 
@@ -61,10 +65,6 @@ namespace AI {
 				} else {
 					return null;
 				}
-			}
-			set {
-				if (m_sensor != null)
-					m_sensor.enemy = value;
 			}
 		}
 
@@ -178,7 +178,8 @@ namespace AI {
 			if (m_enableSensor) {
 				m_sensor.Init();
 				if (InstanceManager.player != null)	{
-					m_sensor.SetupEnemy(InstanceManager.player.transform, InstanceManager.player.dragonEatBehaviour.eatDistanceSqr);
+					DragonPlayer player = InstanceManager.player;
+					m_sensor.SetupEnemy(player.transform, player.dragonEatBehaviour.eatDistanceSqr, player.dragonMotion.hitBounds);
 				}
 			}
 
