@@ -18528,7 +18528,7 @@ Transform:
   m_GameObject: {fileID: 1608877175493218}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 3}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_Children: []
   m_Father: {fileID: 4764431363074846}
   m_RootOrder: 1
@@ -22246,8 +22246,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1238096702311580}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.139}
-  m_LocalScale: {x: 16, y: 16, z: 16}
+  m_LocalPosition: {x: 0, y: 0, z: -0.12}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 4764431363074846}
   m_RootOrder: 0
@@ -27332,7 +27332,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   delay: 0
-  duration: 5
+  duration: 8
   easeType: 1
   easeCurve:
     serializedVersion: 2
@@ -27352,7 +27352,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  loopType: 1
+  loopType: 0
   loops: -1
   id: 
   isRelative: 0
@@ -27362,13 +27362,13 @@ MonoBehaviour:
   isActive: 1
   isValid: 1
   target: {fileID: 4658444907590646}
-  animationType: 5
+  animationType: 4
   targetType: 11
   forcedTargetType: 0
   autoPlay: 1
   useTargetAsV3: 0
-  endValueFloat: 8
-  endValueV3: {x: 0, y: 0, z: 0}
+  endValueFloat: 0
+  endValueV3: {x: 0, y: 0, z: -360}
   endValueV2: {x: 0, y: 0}
   endValueColor: {r: 1, g: 1, b: 1, a: 1}
   endValueString: 
@@ -27379,10 +27379,10 @@ MonoBehaviour:
     width: 0
     height: 0
   endValueTransform: {fileID: 0}
-  optionalBool0: 1
+  optionalBool0: 0
   optionalFloat0: 0
   optionalInt0: 0
-  optionalRotationMode: 0
+  optionalRotationMode: 1
   optionalScrambleMode: 0
   optionalString: 
 --- !u!114 &114162484618990708
@@ -31040,12 +31040,12 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1958034501
+  randomSeed: 1228340321
   InitialModule:
     serializedVersion: 3
     enabled: 1
     startLifetime:
-      scalar: 2
+      scalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -31102,7 +31102,7 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 0.2
+          value: 0.6
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -31200,11 +31200,11 @@ ParticleSystem:
         m_Mode: 0
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
-      minColor: {r: 0, g: 1, b: 1, a: 1}
-      maxColor: {r: 0, g: 1, b: 0.54509807, a: 1}
+      minColor: {r: 0, g: 0.7921569, b: 1, a: 1}
+      maxColor: {r: 1, g: 1, b: 1, a: 1}
       minMaxState: 2
     startSize:
-      scalar: 1
+      scalar: 0.6
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -31366,7 +31366,7 @@ ParticleSystem:
         m_RotationOrder: 0
       minMaxState: 3
     randomizeRotationDirection: 0
-    maxNumParticles: 1000
+    maxNumParticles: 48
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -31435,7 +31435,7 @@ ParticleSystem:
     enabled: 1
     serializedVersion: 3
     rateOverTime:
-      scalar: 10
+      scalar: 24
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -34389,8 +34389,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: d4becf364fa5cdd4cb0b3185ca747435, type: 3}
-  m_Color: {r: 0.20588237, g: 0.93427986, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 880093b2add8c1f4c8c0f8c7cb31bcb9, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
 --- !u!212 &212701987106765674
@@ -34704,8 +34704,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 56abad2f8fe494a999463df85da544ed, type: 3}
-  m_Color: {r: 0, g: 1, b: 0.6275861, a: 0.878}
+  m_Sprite: {fileID: 21300000, guid: 880093b2add8c1f4c8c0f8c7cb31bcb9, type: 3}
+  m_Color: {r: 0, g: 0.5034485, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
 --- !u!212 &212826239692528686

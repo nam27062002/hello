@@ -40,7 +40,7 @@ public class SkyLayerController : MonoBehaviour
             m_offset.y = (pos.y - m_center.y) / m_MoveProportion;
             m_material.SetTextureOffset( "_DetailTex", m_offset);
 //            Vector2 pos = (Vector2)m_playerTransform.transform.position;
-            m_material.SetVector("_CamPos", pos);
+//            m_material.SetVector("_CamPos", pos);
 		}
 	}
 }

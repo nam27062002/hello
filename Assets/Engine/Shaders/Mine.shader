@@ -1,7 +1,7 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
-Shader "Hungry Dragon/Mine (Spawners)"
+Shader "Hungry Dragon/NPC/Mine (Spawners)"
 {
 	Properties
 	{

@@ -6,8 +6,7 @@ public class Decoration : IEntity {
 	// Exposed to inspector
 	[DecorationSkuList]
 	[SerializeField] private string m_sku;
-	public string sku { get { return m_sku; } }
-
+	public override string sku { get { return m_sku; } }
 
 	//
 	private bool m_isBurnable;

@@ -1,4 +1,4 @@
-﻿// TemplatesMenu.cs
+// TemplatesMenu.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 11/12/2015.

@@ -405,8 +405,11 @@ public class UserProfile : UserSaveSystem
         string jsonAsString = m_saveData.ToString();
         if (jsonAsString != null)
         {   
-			Debug.Log("LOADING USER PROFILE: " + jsonAsString);
-            JSONNode json = JSON.Parse(jsonAsString);
+			#if UNITY_EDITOR
+			JsonFormatter fmt = new JsonFormatter();
+			Debug.Log("<color=cyan>LOADING USER PROFILE:</color> " + fmt.PrettyPrint(jsonAsString));
+			#endif
+			JSONNode json = JSON.Parse(jsonAsString);
             Load(json);
         }       
     }

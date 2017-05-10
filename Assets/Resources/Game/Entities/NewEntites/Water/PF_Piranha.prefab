@@ -179,6 +179,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4000013483592410}
   - component: {fileID: 95000011245944408}
+  - component: {fileID: 114894503733591168}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -471,6 +472,7 @@ MonoBehaviour:
   m_isPet: 0
   m_isAquatic: 1
   m_canMultipleLatchOnPlayer: 1
+  m_damageOnBitePlayer: 10
 --- !u!114 &114000012500185668
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -605,6 +607,17 @@ MonoBehaviour:
     m_orientationSpeed: 240
     m_spawnsInsideWater: 1
   m_spawnsInsideWater: 1
+--- !u!114 &114894503733591168
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013624737616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!136 &136000012662036426
 CapsuleCollider:
   m_ObjectHideFlags: 1

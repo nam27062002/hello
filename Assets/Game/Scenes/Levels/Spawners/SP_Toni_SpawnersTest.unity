@@ -184,7 +184,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 29869387}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 133.9, y: 19.7, z: 0}
+  m_LocalPosition: {x: -197, y: 24.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1191974494}
@@ -2990,13 +2990,14 @@ GameObject:
   - component: {fileID: 825333722}
   - component: {fileID: 825333724}
   - component: {fileID: 825333723}
+  - component: {fileID: 825333725}
   m_Layer: 0
   m_Name: air spawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &825333722
 Transform:
   m_ObjectHideFlags: 0
@@ -3004,7 +3005,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 825333721}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 172.6, y: 44.2, z: 0}
+  m_LocalPosition: {x: 188.6, y: 44, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 883113615}
@@ -3027,9 +3028,9 @@ MonoBehaviour:
   m_targetDistance: 0
   m_depthAmplitude: 0.5
   m_depthFrequency: 3
-  m_scale: {x: 1, y: 0.63, z: 1}
-  m_rotation: {x: 20.1, y: 0, z: 0}
-  m_boundsScale: {x: 6, y: 12, z: 8}
+  m_scale: {x: 3.86, y: 0.25, z: 1}
+  m_rotation: {x: 90, y: 0, z: 0}
+  m_boundsScale: {x: 5.48, y: 1, z: 7.09}
   m_forcePreview: 1
   m_previewStep: 0.1
   m_previewMaxTime: 60
@@ -3046,11 +3047,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Air/PF_Witch
+  - name: Air/PF_Pelican
     chance: 100
   m_quantity:
-    min: 1
-    max: 1
+    min: 5
+    max: 5
   m_speedFactorRange:
     min: 1
     max: 1
@@ -3075,6 +3076,18 @@ MonoBehaviour:
     max: 2
   m_maxSpawns: 0
   m_checkCurrents: 0
+--- !u!114 &825333725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 825333721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_formation: 1
 --- !u!1 &828282467
 GameObject:
   m_ObjectHideFlags: 0
@@ -3392,7 +3405,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &883113615
 Transform:
   m_ObjectHideFlags: 0
@@ -4713,7 +4726,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1110869601
 Transform:
   m_ObjectHideFlags: 0
@@ -9154,7 +9167,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2061600067
 Transform:
   m_ObjectHideFlags: 0

@@ -1,16 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class FireNodeSetup : MonoBehaviour {
+public class FireNodeSetup {
 
-	[SerializeField] private int m_boxelSize = 2;
-	[SeparatorAttribute]
-	[SerializeField] private string m_breathHitParticle = "PF_FireHit";
-	[SerializeField] private bool m_hitParticleMatchDirection = false;
-	[SerializeField] private float m_hitRadius = 1.5f;
+	private int m_boxelSize = 2;
 
-
+	private Transform	 m_parent;
 	private MeshFilter	 m_meshFilter;
 	private MeshRenderer m_meshRenderer;
 
@@ -20,14 +15,16 @@ public class FireNodeSetup : MonoBehaviour {
 
 
 	// Use this for initialization
-	public void Init() {
-		m_meshFilter = transform.FindComponentRecursive<MeshFilter>();
-		m_meshRenderer = transform.FindComponentRecursive<MeshRenderer>();
+	public void Init(Transform _parent) {
+		m_parent = _parent;
+		m_meshFilter = _parent.FindComponentRecursive<MeshFilter>();
+		m_meshRenderer = _parent.FindComponentRecursive<MeshRenderer>();
 
 		m_boxels = null;
 	}
 	
-	public void Build() {
+	public void Build(int _boxelSize) {
+		m_boxelSize = _boxelSize;
 		m_boxels = null;
 
 		Bounds bounds = m_meshRenderer.bounds;
@@ -62,7 +59,7 @@ public class FireNodeSetup : MonoBehaviour {
 		Vector3[] vertices = m_meshFilter.sharedMesh.vertices;
 
 		for (int v = 0; v < vertices.Length; v++) {			
-			EnableBoxelAt(transform.TransformVector(vertices[v]) + transform.position);
+			EnableBoxelAt(m_parent.transform.TransformVector(vertices[v]) + m_parent.transform.position);
 		}
 	}
 
@@ -101,7 +98,7 @@ public class FireNodeSetup : MonoBehaviour {
 	}
 
 	private void BuildFireNodes() {
-		Transform fireNodes = transform.FindChild("FireNodes");
+		Transform fireNodes = m_parent.transform.FindChild("FireNodes");
 
 		if (fireNodes != null) {
 			fireNodes.parent = null;
@@ -109,7 +106,7 @@ public class FireNodeSetup : MonoBehaviour {
 		}
 
 		GameObject obj = new GameObject("FireNodes");
-		obj.transform.SetParent(transform, false);
+		obj.transform.SetParent(m_parent.transform, false);
 		fireNodes = obj.transform;
 
 		
@@ -129,7 +126,6 @@ public class FireNodeSetup : MonoBehaviour {
 						FireNode fireNode = fireNodeObj.AddComponent<FireNode>();
 						fireNode.transform.position = position;
 						fireNode.transform.SetParent(fireNodes, true);
-						fireNode.Setup(m_breathHitParticle, m_hitParticleMatchDirection, m_hitRadius);
 					}
 				}
 			}
@@ -141,7 +137,7 @@ public class FireNodeSetup : MonoBehaviour {
 		return (offset * m_boxelSize) + (m_center - ((m_size - Vector3.one) * m_boxelSize * 0.5f));
 	}
 
-	void OnDrawGizmosSelected() {
+	public void OnDrawGizmosSelected() {
 		if (m_boxels != null) {
 			Gizmos.color = Colors.slateBlue;
 			for (int x = 0; x < m_size.x; x++) {
@@ -162,7 +158,7 @@ public class FireNodeSetup : MonoBehaviour {
 			Vector3[] vertices = m_meshFilter.sharedMesh.vertices;
 
 			for (int v = 0; v < vertices.Length; v++) {			
-				Gizmos.DrawCube(transform.TransformVector(vertices[v]) + transform.position, Vector3.one * 0.1f);
+				Gizmos.DrawCube(m_parent.transform.TransformVector(vertices[v]) + m_parent.transform.position, Vector3.one * 0.1f);
 			}
 		}
 	}
