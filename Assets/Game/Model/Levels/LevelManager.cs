@@ -129,15 +129,18 @@ public class LevelManager : Singleton<LevelManager> {
 			}	
 		}
 
-		List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
-		for( int i = 0; i<gameplayWip.Count; i++ )
+		if (FeatureSettingsManager.IsWIPScenesEnabled)
 		{
-			// TODO: Check if is splitted to use different name
-			string sceneName = GetRealSceneName(gameplayWip[i]);
-			loadingTask = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-			if(DebugUtils.SoftAssert(loadingTask != null, "The common gameplay scene " + gameplayWip[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
-				loadingTasks.Add(loadingTask);
-			}	
+			List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
+			for( int i = 0; i<gameplayWip.Count; i++ )
+			{
+				// TODO: Check if is splitted to use different name
+				string sceneName = GetRealSceneName(gameplayWip[i]);
+				loadingTask = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+				if(DebugUtils.SoftAssert(loadingTask != null, "The common gameplay scene " + gameplayWip[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
+					loadingTasks.Add(loadingTask);
+				}	
+			}
 		}
 
 
