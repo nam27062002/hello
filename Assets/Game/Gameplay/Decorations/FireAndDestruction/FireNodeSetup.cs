@@ -5,20 +5,40 @@ public class FireNodeSetup {
 
 	private int m_boxelSize = 2;
 
-	private Transform	 m_parent;
-	private MeshFilter	 m_meshFilter;
-	private MeshRenderer m_meshRenderer;
+	private Transform	  m_parent;
+	private List<Vector3> m_vertices;
+	private Bounds 	  	  m_bounds;
 
 	private List<Vector3>[,,] m_boxels;
 	private Vector3 m_size;
-	private Vector3 m_center;
 
 
 	// Use this for initialization
 	public void Init(Transform _parent) {
 		m_parent = _parent;
-		m_meshFilter = _parent.FindComponentRecursive<MeshFilter>();
-		m_meshRenderer = _parent.FindComponentRecursive<MeshRenderer>();
+		m_bounds = new Bounds();
+		m_vertices = new List<Vector3>();
+
+		Renderer[] renderers = _parent.GetComponentsInChildren<Renderer>();
+
+		for (int i = 0; i < renderers.Length; ++i) {
+			Renderer renderer = renderers[i];
+			m_bounds.Encapsulate(renderer.bounds);
+
+			Vector3[] vertices = null;
+			if (renderer.GetType() == typeof(SkinnedMeshRenderer)) {
+				vertices = (renderer as SkinnedMeshRenderer).sharedMesh.vertices;
+			} else if (renderer.GetType() == typeof(MeshRenderer)) {
+				MeshFilter filter = renderer.GetComponent<MeshFilter>();
+				if (filter != null) {
+					vertices = filter.sharedMesh.vertices;
+				}
+			}
+
+			for (int v = 0; v < vertices.Length; ++v) {
+				m_vertices.Add(renderer.transform.TransformPoint(vertices[v]));
+			}
+		}
 
 		m_boxels = null;
 	}
@@ -27,20 +47,18 @@ public class FireNodeSetup {
 		m_boxelSize = _boxelSize;
 		m_boxels = null;
 
-		Bounds bounds = m_meshRenderer.bounds;
-		float maxSize = Mathf.Max(bounds.size.x, Mathf.Max(bounds.size.y, bounds.size.z));
+		float maxSize = Mathf.Max(m_bounds.size.x, Mathf.Max(m_bounds.size.y, m_bounds.size.z));
 		int size = Mathf.CeilToInt(maxSize / m_boxelSize);
 		if (size > 20) {
 			m_boxelSize = Mathf.CeilToInt(maxSize / 20);
 		}
 
-		int sizeX = Mathf.CeilToInt(bounds.size.x / m_boxelSize);
-		int sizeY = Mathf.CeilToInt(bounds.size.y / m_boxelSize);
-		int sizeZ = Mathf.CeilToInt(bounds.size.z / m_boxelSize);
+		int sizeX = Mathf.CeilToInt(m_bounds.size.x / m_boxelSize);
+		int sizeY = Mathf.CeilToInt(m_bounds.size.y / m_boxelSize);
+		int sizeZ = Mathf.CeilToInt(m_bounds.size.z / m_boxelSize);
 
 		m_boxels = new List<Vector3>[sizeX, sizeY, sizeZ];
 		m_size = new Vector3(sizeX, sizeY, sizeZ);
-		m_center = bounds.center;
 
 		for (int x = 0; x < m_size.x; x++) {
 			for (int y = 0; y < m_size.y; y++) {
@@ -56,20 +74,22 @@ public class FireNodeSetup {
 	}
 
 	private void EnableBoxels() {
-		Vector3[] vertices = m_meshFilter.sharedMesh.vertices;
-
-		for (int v = 0; v < vertices.Length; v++) {			
-			EnableBoxelAt(m_parent.transform.TransformVector(vertices[v]) + m_parent.transform.position);
+		for (int v = 0; v < m_vertices.Count; v++) {			
+			EnableBoxelAt(m_vertices[v]);
 		}
 	}
 
 	private void EnableBoxelAt(Vector3 _v) {
-		Vector3 offset = (_v - (m_center - (m_size * m_boxelSize * 0.5f))) / m_boxelSize;
+		Vector3 offset = (_v - (m_bounds.center - (m_size * m_boxelSize * 0.5f))) / m_boxelSize;
 		int x = Mathf.FloorToInt(offset.x);
 		int y = Mathf.FloorToInt(offset.y); 
 		int z = Mathf.FloorToInt(offset.z);
 
-		m_boxels[x, y, z].Add(_v);
+		if (x >= 0 && x < m_size.x && 
+			y >= 0 && y < m_size.y &&
+			z >= 0 && z < m_size.z) {
+			m_boxels[x, y, z].Add(_v);
+		}
 	}
 
 	private void DisableInternalBoxels() {
@@ -123,9 +143,9 @@ public class FireNodeSetup {
 						position /= boxel.Count;
 
 						GameObject fireNodeObj = new GameObject("FireNode");
-						FireNode fireNode = fireNodeObj.AddComponent<FireNode>();
-						fireNode.transform.position = position;
-						fireNode.transform.SetParent(fireNodes, true);
+						fireNodeObj.transform.position = position;
+						fireNodeObj.transform.SetParent(fireNodes, true);
+						fireNodeObj.AddComponent<FireNode>();
 					}
 				}
 			}
@@ -134,7 +154,7 @@ public class FireNodeSetup {
 
 	private Vector3 GetBoxelCenter(int _x, int _y, int _z) {
 		Vector3 offset = new Vector3(_x, _y, _z);
-		return (offset * m_boxelSize) + (m_center - ((m_size - Vector3.one) * m_boxelSize * 0.5f));
+		return (offset * m_boxelSize) + (m_bounds.center - ((m_size - Vector3.one) * m_boxelSize * 0.5f));
 	}
 
 	public void OnDrawGizmosSelected() {
@@ -151,15 +171,11 @@ public class FireNodeSetup {
 			}
 
 			Gizmos.color = Colors.paleYellow;
-			Gizmos.DrawWireCube(m_center, m_size * m_boxelSize);
+			Gizmos.DrawWireCube(m_bounds.center, m_size * m_boxelSize);
 		}
-
-		if (m_meshFilter != null) {
-			Vector3[] vertices = m_meshFilter.sharedMesh.vertices;
-
-			for (int v = 0; v < vertices.Length; v++) {			
-				Gizmos.DrawCube(m_parent.transform.TransformVector(vertices[v]) + m_parent.transform.position, Vector3.one * 0.1f);
-			}
+				
+		for (int v = 0; v < m_vertices.Count; v++) {					
+			Gizmos.DrawCube(m_vertices[v], Vector3.one * 0.1f);
 		}
 	}
 }
