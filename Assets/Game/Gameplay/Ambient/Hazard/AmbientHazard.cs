@@ -308,7 +308,8 @@ public class AmbientHazard : MonoBehaviour {
 			}
 			else if ( m_state == State.IDLE )
 			{
-				m_animator.Play("DEACTIVATE", 0, 1);
+				if(m_animator != null && m_animator.isInitialized)	
+					m_animator.Play("DEACTIVATE", 0, 1);
 			}
 		} else {
 			// Return them to the pool
