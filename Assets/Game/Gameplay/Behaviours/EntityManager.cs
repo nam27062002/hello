@@ -75,7 +75,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
     {
         m_searchList.Clear();
 		int size = m_entities.Count;
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < size; ++i)
         {
             Entity e = m_entities[i];
             if (e != null)
@@ -95,7 +95,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
         int numResult = 0;
 		int size = m_entities.Count;
 		int length = results.Length;
-        for (int i = 0; i < size && numResult < length; i++)
+        for (int i = 0; i < size && numResult < length; ++i)
         {
             Entity e = m_entities[i];
             if (e != null)
@@ -144,7 +144,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
         m_searchList.Clear();
         float halfAmplitude = amplitude / 2.0f;
         float angle = Mathf.Atan2(dir.y, dir.x);
-        for (int i = 0; i < m_entities.Count; i++)
+        for (int i = 0; i < m_entities.Count; ++i)
         {
             Entity e = m_entities[i];
             if (e != null)
@@ -184,7 +184,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
                     end.z = 10;
                     int entities = Physics.OverlapCapsuleNonAlloc(start, end, distance, m_checkEntityColliders, m_entitiesColliderMask);
 
-                    for (int i = 0; i < entities && numEntities < result.Length; i++)
+                    for (int i = 0; i < entities && numEntities < result.Length; ++i)
                     {
                         Entity entity = m_checkEntityColliders[i].attachedRigidbody.GetComponent<Entity>();
                         if (entity != null)
@@ -199,7 +199,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
                 {
                     int entities = Physics.OverlapBoxNonAlloc(position, Vector3.one * distance * 0.5f + Vector3.forward * 10, m_checkEntityColliders, Quaternion.identity, m_entitiesColliderMask);
 
-                    for (int i = 0; i < entities && numEntities < result.Length; i++)
+                    for (int i = 0; i < entities && numEntities < result.Length; ++i)
                     {
                         Entity entity = m_checkEntityColliders[i].attachedRigidbody.GetComponent<Entity>();
                         if (entity != null)
@@ -220,21 +220,21 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
         {
             int i;
             int count = m_entities.Count - 1;
-            // for (i = 0; i < count; i++)
+            // for (i = 0; i < count; ++i)
             for( i = count; i >= 0; i--)
             {
                 m_entities[i].CustomUpdate();
             }
 
             count = m_entitiesBg.Count - 1;
-            // for (i = 0; i < count; i++)
+            // for (i = 0; i < count; ++i)
 			for (i = count; i >= 0; i--)
             {
                 m_entitiesBg[i].CustomUpdate();
             }
 
 			count = m_cages.Count - 1;
-			// for (i = 0; i < count; i++)
+			// for (i = 0; i < count; ++i)
 			for( i = count; i >= 0; i-- )
 			{
 				m_cages[i].CustomUpdate();
@@ -322,7 +322,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             if (m_entities != null)
             {
                 count = m_entities.Count;
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i < count; ++i)
                 {
                     //m_entities[i].gameObject.SetActive( m_entitiesAreEnabled);
                     Debug_SetEntityVisible(m_entities[i], m_entitiesVisibility);
@@ -332,7 +332,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             if (m_entitiesBg != null)
             {
                 count = m_entitiesBg.Count;
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i < count; ++i)
                 {
                     //m_entitiesBg[i].gameObject.SetActive(m_entitiesAreEnabled);
                     Debug_SetEntityVisible(m_entitiesBg[i], m_entitiesVisibility);
@@ -342,7 +342,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             if (m_cages != null)
             {
                 count = m_cages.Count;
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i < count; ++i)
                 {
                     //m_cages[i].gameObject.SetActive(m_entitiesAreEnabled);
                     Debug_SetEntityVisible(m_cages[i], m_entitiesVisibility);
@@ -358,7 +358,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             Transform child;
             Transform t = e.transform;
             int count = t.childCount;            
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < count; ++i)
             {
                 child = t.GetChild(i);
                 child.gameObject.SetActive(value);
