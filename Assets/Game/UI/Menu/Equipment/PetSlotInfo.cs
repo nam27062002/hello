@@ -39,8 +39,18 @@ public class PetSlotInfo : MonoBehaviour {
 	private int m_slotIdx = 0;
 
 	// Internal refs
-	private AttachPoint m_attachPoint = null;
+	private Transform m_attachPoint = null;
 	private DragonData m_dragonData = null;
+
+	private PetsSceneController m_petsScene = null;
+	private PetsSceneController petsScene {
+		get {
+			if(m_petsScene == null) {
+				m_petsScene = InstanceManager.menuSceneController.GetScreenScene(MenuScreens.PETS).GetComponent<PetsSceneController>();
+			}
+			return m_petsScene;
+		}
+	}
 
 	private ShowHideAnimator m_anim = null;
 	public ShowHideAnimator anim {
@@ -73,7 +83,7 @@ public class PetSlotInfo : MonoBehaviour {
 			if(InstanceManager.sceneController.mainCamera != null) {
 				// From http://answers.unity3d.com/questions/799616/unity-46-beta-19-how-to-convert-from-world-space-t.html
 				// We can do it that easily because we've adjusted the containers to match the camera viewport coords
-				Vector2 posScreen = InstanceManager.sceneController.mainCamera.WorldToViewportPoint(m_attachPoint.transform.position);
+				Vector2 posScreen = InstanceManager.sceneController.mainCamera.WorldToViewportPoint(m_attachPoint.position);
 				RectTransform rt = this.transform as RectTransform;
 				rt.anchoredPosition = Vector2.zero;
 				rt.anchorMin = posScreen;
@@ -89,14 +99,12 @@ public class PetSlotInfo : MonoBehaviour {
 	/// Initialize the slot info with a target dragon preview and data.
 	/// </summary>
 	/// <param name="_slotIdx">The pet slot assigned to this info object.</param>
-	/// <param name="_dragonPreview">The 3D preview to link this info to.</param>
-	public void Init(int _slotIdx, MenuDragonPreview _dragonPreview) {
+	public void Init(int _slotIdx) {
 		// Store slot index
 		m_slotIdx = _slotIdx;
 
 		// Get corresponding anchor
-		Equipable.AttachPoint targetPoint = (Equipable.AttachPoint)((int)Equipable.AttachPoint.Pet_1 + m_slotIdx);
-		m_attachPoint = _dragonPreview.GetComponent<DragonEquip>().GetAttachPoint(targetPoint);
+		m_attachPoint = petsScene.petAnchors[_slotIdx];
 	}
 
 	/// <summary>
@@ -149,10 +157,10 @@ public class PetSlotInfo : MonoBehaviour {
 	/// <param name="_raritySku">Rarity to be displayed.</param>
 	private IEnumerator LoadRarityGlowDelayed(string _raritySku) {
 		// Wait until the pet preview has been loaded
-		yield return new WaitUntil(() => m_attachPoint.item != null);
+		yield return new WaitUntil(() => petsScene.petLoaders[m_slotIdx].petInstance != null);
 
 		// Show glow
-		MenuPetPreview petPreview = m_attachPoint.item.GetComponent<MenuPetPreview>();
+		MenuPetPreview petPreview = petsScene.petLoaders[m_slotIdx].petInstance.GetComponent<MenuPetPreview>();
 		if(petPreview != null) {
 			petPreview.ToggleRarityGlow(true);
 		}
@@ -200,8 +208,8 @@ public class PetSlotInfo : MonoBehaviour {
 	private void OnHidePreAnimation(ShowHideAnimator _anim) {
 		// Toggle pet's rarity glow
 		if(m_attachPoint != null) {
-			if(m_attachPoint.item != null) {
-				MenuPetPreview petPreview = m_attachPoint.item.GetComponent<MenuPetPreview>();
+			if(petsScene.petLoaders[m_slotIdx].petInstance != null) {
+				MenuPetPreview petPreview = petsScene.petLoaders[m_slotIdx].petInstance.GetComponent<MenuPetPreview>();
 				if(petPreview != null) {
 					petPreview.ToggleRarityGlow(false);
 				}

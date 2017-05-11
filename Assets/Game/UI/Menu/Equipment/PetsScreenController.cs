@@ -9,8 +9,10 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -27,12 +29,34 @@ public class PetsScreenController : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private TabSystem m_categoryTabs = null;
+	[SerializeField] private GameObject m_pillPrefab = null;
+	[SerializeField] private ScrollRect m_scrollList = null;
+	public ScrollRect scrollList {
+		get { return m_scrollList; }
+	}
+	[SerializeField] private TextMeshProUGUI m_counterText = null;
+
+	[Space]
+	[SerializeField] private float m_pillCreationDelay = 0.05f;
+
+	[Space]
 	[SerializeField] private List<PowerIcon> m_powerIcons = new List<PowerIcon>();
 
-	// Internal
-	private Dictionary<string, PetCategoryTab> m_tabsByCategory = null;
+	// Collections
+	private List<PetPill> m_pills = new List<PetPill>();
+	public List<PetPill> pills {
+		get { return m_pills; }
+	}
+
+	private List<DefinitionNode> m_defs = new List<DefinitionNode>();
+	public List<DefinitionNode> defs {
+		get { return m_defs; }
+	}
+
 	private PetSlotInfo[] m_slotInfos = null;
+	public PetSlotInfo[] slotInfos {
+		get { return m_slotInfos; }
+	}
 
 	// Internal references
 	private NavigationShowHideAnimator m_animator = null;
@@ -42,6 +66,16 @@ public class PetsScreenController : MonoBehaviour {
 				m_animator = GetComponent<NavigationShowHideAnimator>();
 			}
 			return m_animator;
+		}
+	}
+
+	private PetsSceneController m_petsScene = null;
+	private PetsSceneController petsScene {
+		get {
+			if(m_petsScene == null) {
+				m_petsScene = InstanceManager.menuSceneController.GetScreenScene(MenuScreens.PETS).GetComponent<PetsSceneController>();
+			}
+			return m_petsScene;
 		}
 	}
 
@@ -59,13 +93,6 @@ public class PetsScreenController : MonoBehaviour {
 			return m_powerMiniIcons;
 		}
 	}
-
-	// Some public getters
-	public PetCategoryTab currentTab {
-		get {
-			return (PetCategoryTab)m_categoryTabs.currentScreen;
-		}
-	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -77,6 +104,10 @@ public class PetsScreenController : MonoBehaviour {
 		// Subscribe to animator's events
 		animator.OnShowPreAnimation.AddListener(OnShowPreAnimation);
 		animator.OnShowPostAnimation.AddListener(OnShowPostAnimation);
+		animator.OnHidePreAnimation.AddListener(OnHidePreAnimation);
+
+		// Clear all placeholder content from the scroll list
+		m_scrollList.content.DestroyAllChildren(false);
 	}
 
 	/// <summary>
@@ -116,6 +147,7 @@ public class PetsScreenController : MonoBehaviour {
 		// Unsubscribe from animator's events
 		animator.OnShowPreAnimation.RemoveListener(OnShowPreAnimation);
 		animator.OnShowPostAnimation.RemoveListener(OnShowPostAnimation);
+		animator.OnHidePreAnimation.RemoveListener(OnHidePreAnimation);
 	}
 
 	//------------------------------------------------------------------------//
@@ -137,40 +169,47 @@ public class PetsScreenController : MonoBehaviour {
 	/// Setup the screen.
 	/// </summary>
 	public void Initialize() {
-		// If not done yet, fill the tabs dictionary
-		if(m_tabsByCategory == null) {
-			m_tabsByCategory = new Dictionary<string, PetCategoryTab>();
-			for(int i = 0; i < m_categoryTabs.screens.Count; i++) {
-				PetCategoryTab tab = (PetCategoryTab)m_categoryTabs.screens[i];
-				m_tabsByCategory.Add(tab.screenName, tab);	// [AOC] Screen name is set from the editor and it matches the category IDs
-			}
-		}
-
 		// In order to properly initialize everything, object must be active
 		this.gameObject.SetActive(true);
+
+		// If not done yet, load the pet definitions!
+		if(m_defs.Count == 0) {
+			// Get all pet definitions, no filter
+			m_defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
+		}
+
+		// Sort them!
+		// Put owned pets at the beginning of the list, then sort by order
+		m_defs.Sort((DefinitionNode _def1, DefinitionNode _def2) => {
+			bool unlocked1 = UsersManager.currentUser.petCollection.IsPetUnlocked(_def1.sku);
+			bool unlocked2 = UsersManager.currentUser.petCollection.IsPetUnlocked(_def2.sku);
+			if(unlocked1 && !unlocked2) {
+				return -1;
+			} else if(unlocked2 && !unlocked1) {
+				return 1;
+			} else {
+				return _def1.GetAsInt("order").CompareTo(_def2.GetAsInt("order"));
+			}
+		});
 
 		// Store reference to target dragon data for faster access
 		MenuSceneController menuController = InstanceManager.menuSceneController;
 		m_dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
-
-		// Initialize all tabs one by one
-		foreach(KeyValuePair<string, PetCategoryTab> kvp in m_tabsByCategory) {
-			kvp.Value.Init(kvp.Key, m_dragonData);
-		}
 
 		// Slots
 		// Make sure the list is initialized
 		if(m_slotInfos == null) {
 			m_slotInfos = this.GetComponentsInChildren<PetSlotInfo>();
 		}
-		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.PETS);
-		MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller>().GetDragonPreview(m_dragonData.def.sku);
 		for(int i = 0; i < m_slotInfos.Length; i++) {
-			m_slotInfos[i].Init(i, dragonPreview);
+			m_slotInfos[i].Init(i);
 		}
 
 		// Do a first refresh - without animation
 		Refresh(false);
+
+		// Load/show the pills one by one to prevent a massive lag spike (and for a beautiful chain effect ^^)
+		StartCoroutine(ShowPillsAsync());
 	}
 
 	/// <summary>
@@ -181,12 +220,20 @@ public class PetsScreenController : MonoBehaviour {
 		// We must have the data!
 		if(m_dragonData == null) return;
 
+		// Init pets collection counter
+		m_counterText.text = LocalizationManager.SharedInstance.Localize(
+			"TID_FRACTION",
+			StringUtils.FormatNumber(UsersManager.currentUser.petCollection.unlockedPetsCount),
+			StringUtils.FormatNumber(m_defs.Count)
+		);
+
 		// Powers
 		for(int i = 0; i < m_powerIcons.Count; i++) {
 			// 3 possibilities: equipped, not-equipped or invisible
 			if(i < m_dragonData.pets.Count) {
 				// Show
 				m_powerIcons[i].gameObject.SetActive(true);
+				m_powerIcons[i].anim.ForceShow(false);
 
 				// Equipped?
 				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_dragonData.pets[i]);
@@ -215,29 +262,76 @@ public class PetsScreenController : MonoBehaviour {
 	/// <param name="_petSku">Pet sku.</param>
 	/// <param name="_additionalDelay">Add extra delay, mostly to sync with other animations</param>
 	public void ScrollToPet(string _petSku, float _additionalDelay = 0f) {
-		// Only if already initialized
-		if(m_tabsByCategory == null) return;
+		// Find pet's pill
+		for(int i = 0; i < m_pills.Count; i++) {
+			if(m_pills[i].def.sku == _petSku) {
+				PetPill pill = m_pills[i];
 
-		// Find tab where the pet is
-		for(int i = 0; i < m_categoryTabs.screens.Count; i++) {
-			// Does this tab have the target pet?
-			PetCategoryTab tab = (PetCategoryTab)m_categoryTabs.screens[i];
-			PetPill pill = tab.GetPill(_petSku);
-			if(pill != null) {
-				// Found!! Make it the active tab
-				PetCategoryTab previousTab = (PetCategoryTab)m_categoryTabs.currentScreen;
-				m_categoryTabs.GoToScreen(tab);
+				// Prepare unlock anim
+				pill.PrepareUnlockAnim();
 
-				// Scroll to the target pill, adding a small delay if we're changing tabs
-				float delay = _additionalDelay;
-				if(previousTab != tab) {
-					delay += 0.3f;
-				}
-				tab.ScrollToPill(pill, delay);
+				// Kill any existing anim on the scrolllist
+				m_scrollList.DOKill();
+
+				// Scroll to pill!
+				float pillDeltaX = Mathf.InverseLerp(0, m_pills.Count/2f, Mathf.Floor(i/2f));	// scroll list has 2 rows! super-dirty trick
+				m_scrollList.DOHorizontalNormalizedPos(pillDeltaX, 0.15f)
+					.SetDelay(_additionalDelay)
+					.SetEase(Ease.OutQuad)
+					.OnComplete(() => {
+						// Show unlock anim!
+						pill.LaunchUnlockAnim();
+					});
 
 				// We're done! break loop
 				break;
 			}
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Show/load all the pills one by one to prevent a massive Awake lag spike
+	/// (and for a beautiful chain effect ^_^).
+	/// </summary>
+	/// <returns>The coroutine.</returns>
+	private IEnumerator ShowPillsAsync() {
+		// Scroll to the start of the list
+		m_scrollList.normalizedPosition = Vector2.one;
+
+		// Hide all pills
+		for(int i = 0; i < m_pills.Count; i++) {
+			m_pills[i].animator.ForceHide(false);	// Force to interrupt any running hide animation (if the popup was closed and reopened very fast) 
+		}
+
+		// Initialize one pill for each pet
+		for(int i = 0; i < m_defs.Count; i++) {
+			// Interrupt if leaving the screen!
+			if(!isActiveAndEnabled) {
+				yield break;
+			}
+
+			// If we don't have enough pills, instantiate new ones
+			if(i >= m_pills.Count) {
+				// Instantiate pill
+				GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, m_scrollList.content, false);
+				m_pills.Add(newPillObj.GetComponent<PetPill>());
+				m_pills[i].animator.ForceHide(false);	// Start hidden
+
+				// React if the pill is tapped!
+				m_pills[i].OnPillTapped.AddListener(OnPillTapped);
+			}
+
+			// Initialize pill
+			m_pills[i].Init(m_defs[i], m_dragonData);
+
+			// Show with a nice animation
+			m_pills[i].animator.Show();
+
+			// Wait a bit before next pill
+			yield return new WaitForSecondsRealtime(m_pillCreationDelay);
 		}
 	}
 
@@ -249,6 +343,9 @@ public class PetsScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_animator">The animator that triggered the event.</param>
 	public void OnShowPreAnimation(ShowHideAnimator _animator) {
+		// Propagate to scene
+		petsScene.OnShowPreAnimation();
+
 		// Refresh with initial data!
 		Initialize();
 	}
@@ -287,6 +384,15 @@ public class PetsScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Screen is about to be closed.
+	/// </summary>
+	/// <param name="_animator">The animator that triggered the event.</param>
+	public void OnHidePreAnimation(ShowHideAnimator _animator) {
+		// Propagate to scene
+		petsScene.OnHidePreAnimation();
+	}
+
+	/// <summary>
 	/// The pets loadout has changed in the menu.
 	/// </summary>
 	/// <param name="_dragonSku">The dragon whose assigned pets have changed.</param>
@@ -298,5 +404,35 @@ public class PetsScreenController : MonoBehaviour {
 
 		// Save persistence - centralize all pets management persistence in here
 		PersistenceManager.Save();
+	}
+
+	/// <summary>
+	/// A pet pill has been tapped.
+	/// </summary>
+	/// <param name="_pill">The target pill.</param>
+	private void OnPillTapped(PetPill _pill) {
+		// Nothing to do if pet is locked
+		if(_pill.locked) return;
+
+		// If equipped in the target slot, try to unequip
+		if(_pill.equipped) {
+			// Unequip
+			UsersManager.currentUser.UnequipPet(m_dragonData.def.sku, _pill.def.sku);
+		} 
+
+		// Otherwise try to equip to the target slot
+		else {
+			// Equip - find first available slot
+			int newSlot = UsersManager.currentUser.EquipPet(m_dragonData.def.sku, _pill.def.sku);
+
+			// Feedback
+			if(newSlot == -4) {
+				UIFeedbackText text = UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_NO_SLOTS"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// There are no available slots!\nUnequip another pet before equipping this one.
+				text.text.color = Color.red;
+			} else if(newSlot < 0) {
+				UIFeedbackText text = UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("Unknown error!"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// There are no available slots!\nUnequip another pet before equipping this one.
+				text.text.color = Color.red;
+			}
+		}
 	}
 }
