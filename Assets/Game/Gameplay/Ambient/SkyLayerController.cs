@@ -5,9 +5,10 @@ public class SkyLayerController : MonoBehaviour
 {
 
 	public float m_MoveProportion = 1000.0f;
+    public float m_MoveProportion2 = 1000.0f;
 
-	private Material m_material;
-	private Vector2 m_offset = Vector3.zero;
+    private Material m_material;
+//	private Vector2 m_offset = Vector3.zero;
 	private Transform m_playerTransform;
 
 	Vector2 m_center;
@@ -35,12 +36,10 @@ public class SkyLayerController : MonoBehaviour
 		if ( m_playerTransform )
 		{
             Vector2 pos = (Vector2)m_playerTransform.transform.position;
-            // m_material.SetFloat("_Scroll2X", m_scrollSpeed);
-            m_offset.x = (pos.x - m_center.x) / m_MoveProportion;
-            m_offset.y = (pos.y - m_center.y) / m_MoveProportion;
-            m_material.SetTextureOffset( "_DetailTex", m_offset);
-//            Vector2 pos = (Vector2)m_playerTransform.transform.position;
-//            m_material.SetVector("_CamPos", pos);
-		}
-	}
+            Vector2 offset = (pos - m_center) / m_MoveProportion;
+            m_material.SetTextureOffset( "_DetailTex", offset);
+            offset = (pos - m_center) / m_MoveProportion2;
+            m_material.SetTextureOffset( "_MoonTex", offset);
+        }
+    }
 }
