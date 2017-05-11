@@ -49,11 +49,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_rect = new Rect((Vector2)transform.position, Vector2.zero);
 
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
-
 		m_area = new CircleAreaBounds(transform.position, m_hitRadius);
-
-		// get two closets neighbours
-		FindNeighbours();
 
 		gameObject.SetActive(false);
 	}
@@ -78,6 +74,9 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_nextState = m_state;
 		m_lastBreathDirection = Vector3.up;
 
+		if (m_neighbours == null) {
+			FindNeighbours();
+		}
 		SetNeighboursDistance();
 
 		m_canStartSmoke = true;
@@ -266,18 +265,27 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	}
 
 	private void SetNeighboursDistance() {
-		for (int i = 0; i < m_neighbours.Count; i++) {			
+		for (int i = 0; i < m_neighbours.Count; i++) {
 			m_neihboursDistance[i] = Vector3.SqrMagnitude(transform.position - m_neighbours[i].transform.position);
 		}
 	}
 
 
 	//------------------------------------------------------------------------------
-	void OnDrawGizmosSelected() {
-		Gizmos.color = Colors.WithAlpha(Colors.magenta, 0.75f);
+	public void OnDrawGizmosSelected() {
+		Gizmos.color = Colors.WithAlpha(Colors.magenta, 0.5f);
 		Gizmos.DrawSphere(transform.position, 0.5f);
 
 		Gizmos.color = Colors.fuchsia;
 		Gizmos.DrawWireSphere(transform.position, m_hitRadius);
+	
+		if (m_neighbours == null || m_neighbours.Count == 0) {
+			FindNeighbours();
+		}
+
+		for (int i = 0; i < m_neighbours.Count; i++) {
+			Gizmos.color = Colors.WithAlpha(Colors.magenta, 0.15f);
+			Gizmos.DrawSphere(m_neighbours[i].transform.position, 0.5f);
+		}
 	}
 }
