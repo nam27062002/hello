@@ -118,7 +118,7 @@ public class InflammableDecoration : Initializable {
 		for (int i = 0; i < renderers.Length; i++) {
 			m_originalMaterials[renderers[i]] = renderers[i].materials;
 		}
-		m_ashMaterial = new Material(Resources.Load("Game/Assets/Materials/RedBurnToAshes") as Material);
+		m_ashMaterial = new Material(Resources.Load("Game/Materials/RedBurnToAshes") as Material);
 		m_ashMaterial.renderQueue = 3000;// Force transparent
 		// }
 	}
