@@ -1499,6 +1499,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_knockback: 0
   m_timeBetweenHits: 0.25
+  m_trail: {fileID: 0}
+  m_trailParticles: []
 --- !u!114 &114254713554736416
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1618,12 +1620,15 @@ MonoBehaviour:
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onExplosionAudio: 
-  m_onAttackAudio: hd_goblin_spartakus_attack
+  m_onAttackAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
   m_stars: {fileID: 1692376289407162}
+  m_onJumpAttackAudio: hd_goblin_spartakus_attack
+  m_onReceptionAudio: 
+  m_onDizzyAudio: 
 --- !u!114 &114883820889737922
 MonoBehaviour:
   m_ObjectHideFlags: 1

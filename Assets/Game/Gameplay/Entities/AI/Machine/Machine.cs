@@ -179,7 +179,7 @@ namespace AI {
 				m_sensor.Init();
 				if (InstanceManager.player != null)	{
 					DragonPlayer player = InstanceManager.player;
-					m_sensor.SetupEnemy(player.transform, player.dragonEatBehaviour.eatDistanceSqr, player.dragonMotion.hitBounds);
+					m_sensor.SetupEnemy(player.dragonEatBehaviour.mouth, player.dragonEatBehaviour.eatDistanceSqr, player.dragonMotion.hitBounds);
 				}
 			}
 

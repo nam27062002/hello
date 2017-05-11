@@ -20,7 +20,7 @@ namespace AI {
 
 			protected override void OnEnter(State oldState, object[] param) {
 				m_eatBehaviour.enabled = true;
-				m_eatBehaviour.onJawsClosed += OnBiteKillEvent;
+				m_eatBehaviour.onBitePlayer += OnBiteKillEvent;
 				m_eatBehaviour.canLatchOnPlayer = false;
 				m_eatBehaviour.canBitePlayer = true;
 				m_bit = false;
@@ -28,11 +28,10 @@ namespace AI {
 
 			protected override void OnExit(State _newState) {
 				m_eatBehaviour.enabled = false;
-				m_eatBehaviour.onJawsClosed -= OnBiteKillEvent;
+				m_eatBehaviour.onBitePlayer -= OnBiteKillEvent;
 			}
 
-			void OnBiteKillEvent()
-			{
+			void OnBiteKillEvent() {
 				m_bit = true;
 			}
 

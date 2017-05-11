@@ -371,7 +371,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		RemoveAudios();
     }
 
-    private void RemoveAudios()
+    protected virtual void RemoveAudios()
     {
 		if ( ApplicationManager.IsAlive )
     	{
@@ -388,7 +388,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
     }
 
-	void RemoveAudioParent(AudioObject ao)
+	protected void RemoveAudioParent(AudioObject ao)
 	{
 		if ( ao != null && ao.transform.parent == transform )
 		{
