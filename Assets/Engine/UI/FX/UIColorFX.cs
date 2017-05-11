@@ -97,6 +97,15 @@ public class UIColorFX : MonoBehaviour {
 		UpdateValues();
 	}
 
+	/// <summary>
+	/// Reset to default values!
+	/// </summary>
+	public void Reset() {
+		brightness = 0f;
+		saturation = 0f;
+		contrast = 0f;
+	}
+
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//

@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class PetCollection
 {
-
+	//------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES											//
+	//------------------------------------------------------------------//
 	private List<string> m_pets;
+
+	public int unlockedPetsCount {
+		get { return m_pets.Count; }
+	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//

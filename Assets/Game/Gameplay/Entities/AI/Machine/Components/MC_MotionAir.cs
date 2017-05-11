@@ -29,10 +29,10 @@ namespace AI {
 
 		//--------------------------------------------------
 		protected override void ExtendedUpdate() {
-			m_direction = m_pilot.direction;
-
 			if (!m_faceDirection || m_pilot.IsActionPressed(Pilot.Action.Stop)) {
-				m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;
+				m_direction = (m_pilot.direction.x >= 0)? Vector3.right : Vector3.left;
+			} else {
+				m_direction = m_velocity.normalized;//m_pilot.direction;
 			}
 		}
 
