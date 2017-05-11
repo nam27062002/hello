@@ -22,11 +22,12 @@ namespace AI {
 		private Transform m_enemy; //enemy should be a Machine.. but dragon doesn't have this component
 		public Transform enemy { 
 			get { return m_enemy; } 
-			set { m_enemy = value; }
+			// set { m_enemy = value; }
 		}
 
 		private float m_radiusOffsetFactor = 1f;
 		private float m_enemyRadiusSqr;
+		private RectAreaBounds m_enemyBounds;
 		private float m_senseTimer;
 
 		private static int s_groundMask;
@@ -48,10 +49,11 @@ namespace AI {
 			s_groundMask = LayerMask.GetMask("Ground", "GroundVisible");			
 		}
 
-		public void SetupEnemy( Transform _tr, float distanceSqr )
+		public void SetupEnemy( Transform _tr, float distanceSqr, RectAreaBounds _enemyBounds )
 		{
 			m_enemy = _tr;
 			m_enemyRadiusSqr = distanceSqr;
+			m_enemyBounds = _enemyBounds;
 		}
 
 		public void Disable(float _seconds) {
@@ -103,10 +105,9 @@ namespace AI {
 					float sightRadiusIn = fireRadius + (m_sightRadius * m_radiusOffsetFactor);
 					float sightRadiusOut = sightRadiusIn + m_hysteresisOffset;
 
-					Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);
-					distanceSqr = Mathf.Max(0f, vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr);
+					distanceSqr = DistanceSqrToEnemy();
 
-					if (distanceSqr < sightRadiusIn * sightRadiusIn) {
+					if (distanceSqr < sightRadiusIn * sightRadiusIn ) {
 						isInsideSightArea = true;
 						m_senseTimer = m_senseDelay.GetRandom();
 					} else if (distanceSqr > sightRadiusOut * sightRadiusOut) {
@@ -123,8 +124,7 @@ namespace AI {
 						float minRadiusOut = minRadiusIn + m_hysteresisOffset;
 
 						if (distanceSqr == 0f) {
-							Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);
-							distanceSqr = Mathf.Max(0f, vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr);
+							distanceSqr = DistanceSqrToEnemy();
 						}
 
 						if (distanceSqr < m_maxRadius * maxRadiusIn) {
@@ -154,6 +154,19 @@ namespace AI {
 				m_machine.SetSignal(Signals.Type.Danger, 	isInsideMaxArea);
 				m_machine.SetSignal(Signals.Type.Critical, 	isInsideMinArea);
 			}				
+		}
+
+		public float DistanceSqrToEnemy()
+		{
+			Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);
+			float distanceSqr = Mathf.Max(0f, vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr);
+			float minDistance = (m_minRadius * m_radiusOffsetFactor);
+			if (m_enemyBounds != null && (distanceSqr > minDistance * minDistance) )
+			{
+				float distanceToBounds = m_enemyBounds.DistanceSqr( sensorPosition );
+				distanceSqr = Mathf.Min( distanceSqr, distanceToBounds);
+			}
+			return distanceSqr;
 		}
 
 		// Debug
