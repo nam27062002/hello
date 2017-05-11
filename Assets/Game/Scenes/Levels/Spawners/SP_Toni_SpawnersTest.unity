@@ -1756,34 +1756,6 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 443504, guid: f7103fd90e47f7441a87b08c32889fc6, type: 2}
   m_PrefabInternal: {fileID: 489267454}
---- !u!1 &503307257
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 503307258}
-  m_Layer: 0
-  m_Name: Singletons
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &503307258
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 503307257}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &504943193
 Prefab:
   m_ObjectHideFlags: 0
@@ -2990,6 +2962,7 @@ GameObject:
   - component: {fileID: 825333722}
   - component: {fileID: 825333724}
   - component: {fileID: 825333723}
+  - component: {fileID: 825333725}
   m_Layer: 0
   m_Name: air spawner
   m_TagString: Untagged
@@ -3004,7 +2977,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 825333721}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 172.6, y: 44.2, z: 0}
+  m_LocalPosition: {x: 188.6, y: 44, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 883113615}
@@ -3027,9 +3000,9 @@ MonoBehaviour:
   m_targetDistance: 0
   m_depthAmplitude: 0.5
   m_depthFrequency: 3
-  m_scale: {x: 1, y: 0.63, z: 1}
-  m_rotation: {x: 20.1, y: 0, z: 0}
-  m_boundsScale: {x: 6, y: 12, z: 8}
+  m_scale: {x: 3.86, y: 0.25, z: 1}
+  m_rotation: {x: 90, y: 0, z: 0}
+  m_boundsScale: {x: 5.48, y: 1, z: 7.09}
   m_forcePreview: 1
   m_previewStep: 0.1
   m_previewMaxTime: 60
@@ -3046,11 +3019,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Air/PF_Witch
+  - name: Air/PF_Pelican
     chance: 100
   m_quantity:
-    min: 1
-    max: 1
+    min: 5
+    max: 5
   m_speedFactorRange:
     min: 1
     max: 1
@@ -3075,6 +3048,18 @@ MonoBehaviour:
     max: 2
   m_maxSpawns: 0
   m_checkCurrents: 0
+--- !u!114 &825333725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 825333721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_formation: 1
 --- !u!1 &828282467
 GameObject:
   m_ObjectHideFlags: 0
@@ -3316,13 +3301,14 @@ GameObject:
   m_Component:
   - component: {fileID: 860254263}
   - component: {fileID: 860254264}
+  - component: {fileID: 860254265}
   m_Layer: 0
   m_Name: cage spawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &860254263
 Transform:
   m_ObjectHideFlags: 0
@@ -3330,7 +3316,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 860254262}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 104.25, y: 24.1, z: 0}
+  m_LocalPosition: {x: 105.2, y: 0.231, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 883113615}
@@ -3349,7 +3335,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Cage/PF_HangingCage
+  - name: Cage/PF_Cage
     chance: 100
   m_quantity:
     min: 1
@@ -3372,12 +3358,26 @@ MonoBehaviour:
   m_spawnTime:
     min: 0
     max: 0
-  m_homePosMethod: 0
+  m_homePosMethod: 1
   m_homePosDistance:
     min: 1
     max: 2
   m_maxSpawns: 0
   m_checkCurrents: 0
+--- !u!114 &860254265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 860254262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0.44519806, y: 4.7678494}
+  size: {x: 30.919594, y: 14.6635275}
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!1 &883113614
 GameObject:
   m_ObjectHideFlags: 0
@@ -3392,7 +3392,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &883113615
 Transform:
   m_ObjectHideFlags: 0
@@ -4713,7 +4713,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1110869601
 Transform:
   m_ObjectHideFlags: 0
@@ -9195,7 +9195,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Monster/PF_Troll
+  - name: Surface/PF_Archer01
+    chance: 100
+  - name: Surface/PF_Archer02
     chance: 100
   m_quantity:
     min: 1

@@ -153,6 +153,9 @@ namespace AI {
 
 			m_terminalVelocity = Mathf.Sqrt((2f * m_mass * GRAVITY) * (AIR_DENSITY * 1f * DRAG));
 
+			m_rbody.isKinematic = false;
+			m_rbody.detectCollisions = true;
+
 			//----------------------------------------------------------------------------------
 			m_mouth = m_machineTransform.FindTransformRecursive("Fire_Dummy");
 
@@ -217,6 +220,9 @@ namespace AI {
 					m_direction = m_dragon.position - m_machine.position;
 					m_direction.y = 0f;
 					m_direction.Normalize();
+
+					UpdateAttack();
+
 					m_targetRotation = Quaternion.LookRotation(m_direction + Vector3.back * 0.1f, m_upVector);
 					break;
 

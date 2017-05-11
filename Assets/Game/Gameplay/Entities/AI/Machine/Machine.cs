@@ -235,7 +235,7 @@ namespace AI {
 			SetSignal(Signals.Type.Collision, true, _params);
 
 			if (m_motion != null) {
-				if (((1 << _collision.gameObject.layer) & GROUND_MASK) != 0) {
+				if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
 					m_motion.OnCollisionGroundEnter(_collision);
 				}
 			}
@@ -243,7 +243,7 @@ namespace AI {
 
 		void OnCollisionStay(Collision _collision) {
 			if (m_motion != null) {
-				if (((1 << _collision.gameObject.layer) & GROUND_MASK) != 0) {
+				if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
 					m_motion.OnCollisionGroundStay(_collision);
 				}
 			}
@@ -251,7 +251,7 @@ namespace AI {
 
 		void OnCollisionExit(Collision _collision) {
 			if (m_motion != null) {
-				if (((1 << _collision.gameObject.layer) & GROUND_MASK) != 0) {
+				if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
 					m_motion.OnCollisionGroundExit(_collision);
 				}
 			}
