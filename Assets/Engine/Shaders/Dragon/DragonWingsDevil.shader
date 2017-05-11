@@ -4,7 +4,7 @@
 // Custom Dragon Shader.
 // - Detail Texture. R: Inner Light value. G: Spec value.
 
-Shader "Hungry Dragon/Dragon/Wings Devil" {
+Shader "Hungry Dragon/Dragon/Wings Devil (Transparent)" {
 Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 
