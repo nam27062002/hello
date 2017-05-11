@@ -8,14 +8,17 @@ public class DragonTint : MonoBehaviour
 
 	DragonPlayer m_player;
 	DragonHealthBehaviour m_health;
+	DragonMotion m_motion;
 
 	Renderer[] m_renderers = null;
 	List<Renderer> m_dragonRenderers = new List<Renderer>();
 
+	int m_materialsCount = 0;
 	List<Material> m_materials = new List<Material>();
     List<Shader> m_originalShaders = new List<Shader>();
 	List<Color> m_fresnelColors = new List<Color>();
-//	List<Material> m_bodyMaterials = new List<Material>();
+	List<Color> m_innerLightColors = new List<Color>();
+	float m_innerLightColorValue = 1;
 
 	float m_otherColorTimer = 0;
 
@@ -41,12 +44,15 @@ public class DragonTint : MonoBehaviour
 	private bool m_starvingOn = false;
 	private bool m_criticalOn = false;
 
+	public bool m_reduceInnerColorInsideWater = false;
+
 	// Use this for initialization
 	IEnumerator Start () 
 	{
 		m_breath = GetComponent<DragonBreathBehaviour>();
 		m_player = GetComponent<DragonPlayer>();
 		m_health = GetComponent<DragonHealthBehaviour>();
+		m_motion = m_player.dragonMotion;
 		yield return null;
 		Transform t = transform.FindChild("view");
 		if ( t != null )
@@ -73,6 +79,7 @@ public class DragonTint : MonoBehaviour
                 	hasDragonPart = true;
                     m_materials.Add(mats[j]);
                     m_fresnelColors.Add(mats[j].GetColor("_FresnelColor"));
+					m_innerLightColors.Add(mats[j].GetColor("_InnerLightColor"));
                     m_originalShaders.Add(mats[j].shader);
 //					if (shaderName.Contains("Body"))
 //						m_bodyMaterials.Add( mats[j] );
@@ -85,6 +92,7 @@ public class DragonTint : MonoBehaviour
 			}
 				
 		}
+		m_materialsCount = m_materials.Count;
 	}
 
 	void OnEnable() 
@@ -185,18 +193,39 @@ public class DragonTint : MonoBehaviour
 		m_dragonRenderer.material.SetFloat("_NoiseValue", m_shieldValue );
 		*/
 
+		if (m_reduceInnerColorInsideWater)
+		{
+			float value = m_innerLightColorValue;
+			if (m_motion.insideWater)
+			{
+				value -= Time.deltaTime;
+				if ( value < 0.25f )
+					value = 0.25f;
+			}
+			else
+			{
+				value += Time.deltaTime;
+				if (value > 1 )
+					value = 1;
+			}
+			if ( value != m_innerLightColorValue )
+			{
+				m_innerLightColorValue = value;
+				SetInnerLightColorValue(m_innerLightColorValue);
+			}
+		}
+
 	}
 
 	void SetColorMultiply( Color c )
 	{
-		for( int i = 0; i<m_materials.Count; i++ )	
+		for( int i = 0; i<m_materialsCount; ++i )	
 			m_materials[i].SetColor("_Tint", c );
 	}
 
 	void SetFresnelAlpha( float alpha )
 	{
-		
-		for( int i = 0; i<m_materials.Count; i++ )	
+		for( int i = 0; i<m_materialsCount; ++i )	
 		{
 			Color c = m_fresnelColors[i];
 			c.a = alpha;
@@ -208,14 +237,23 @@ public class DragonTint : MonoBehaviour
 	void SetColorAdd( Color c)
 	{
 		c.a = 0;
-		for( int i = 0; i<m_materials.Count; i++ )	
+		for( int i = 0; i<m_materialsCount; ++i )	
 			m_materials[i].SetColor("_ColorAdd", c );
 	}
 
 	void SetInnerLightAdd( float innerValue )
 	{
-		for( int i = 0; i<m_materials.Count; i++ )	
+		for( int i = 0; i<m_materialsCount; ++i )	
 			m_materials[i].SetFloat("_InnerLightAdd", innerValue );
+	}
+
+	void SetInnerLightColorValue( float value )
+	{
+		for( int i = 0; i<m_materialsCount; ++i )	
+		{
+			Color c = m_innerLightColors[i] * value;
+			m_materials[i].SetColor("_InnerLightColor", c );
+		}
 	}
 
 	public void SetCaveColor( Color c )
@@ -226,7 +264,7 @@ public class DragonTint : MonoBehaviour
 	private void OnPlayerKo( DamageType _type, Transform _source )
 	{
         // Switch body material to wings
-        for (int i = 0; i < m_materials.Count; i++) 
+		for (int i = 0; i < m_materialsCount; ++i) 
             m_materials[i].shader = Shader.Find("Hungry Dragon/Dragon/Death");
 
      	if ( _type == DamageType.MINE )
@@ -243,7 +281,7 @@ public class DragonTint : MonoBehaviour
 	private void OnPlayerRevive( DragonPlayer.ReviveReason reason )
 	{
 		// Switch back body materials
-		for( int i = 0; i< m_materials.Count; i++ )
+		for( int i = 0; i< m_materialsCount; ++i )
             m_materials[i].shader = m_originalShaders[i];
 
 		m_deathAlpha = 1;
