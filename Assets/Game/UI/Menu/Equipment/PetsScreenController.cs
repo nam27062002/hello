@@ -412,10 +412,17 @@ public class PetsScreenController : MonoBehaviour {
 	/// <param name="_pill">The target pill.</param>
 	private void OnPillTapped(PetPill _pill) {
 		// Nothing to do if pet is locked
-		if(_pill.locked) return;
+		if(_pill.locked) {
+			// Different feedback if pet is unlocked with golden egg fragments
+			if(_pill.special) {
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO_SPECIAL"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			} else {
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			}
+		}
 
 		// If equipped in the target slot, try to unequip
-		if(_pill.equipped) {
+		else if(_pill.equipped) {
 			// Unequip
 			UsersManager.currentUser.UnequipPet(m_dragonData.def.sku, _pill.def.sku);
 		} 
@@ -428,7 +435,6 @@ public class PetsScreenController : MonoBehaviour {
 			// Feedback
 			if(newSlot == -4) {
 				UIFeedbackText text = UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_NO_SLOTS"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// There are no available slots!\nUnequip another pet before equipping this one.
-				text.text.color = Color.red;
 			} else if(newSlot < 0) {
 				UIFeedbackText text = UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("Unknown error!"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// There are no available slots!\nUnequip another pet before equipping this one.
 				text.text.color = Color.red;

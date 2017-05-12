@@ -276,6 +276,12 @@ public class PetPill : MonoBehaviour {
 	/// The pill has been tapped.
 	/// </summary>
 	public void OnTap() {
+		// If locked, show some feedback
+		if(locked) {
+			// Small animation on the lock icon
+			m_currentLockIconAnim.SetTrigger("bounce");
+		}
+
 		// Propagate the event
 		OnPillTapped.Invoke(this);
 	}
