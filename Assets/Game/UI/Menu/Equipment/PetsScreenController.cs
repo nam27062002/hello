@@ -41,6 +41,7 @@ public class PetsScreenController : MonoBehaviour {
 
 	[Space]
 	[SerializeField] private List<PowerIcon> m_powerIcons = new List<PowerIcon>();
+	[SerializeField] private List<GameObject> m_slotLayouts = new List<GameObject>();
 
 	// Collections
 	private List<PetPill> m_pills = new List<PetPill>();
@@ -251,7 +252,32 @@ public class PetsScreenController : MonoBehaviour {
 		}
 
 		// Slots
+		// Select proper layout based on amount of pets equipped by target dragon
+		GameObject targetLayout = null;
+		int numPets = m_dragonData.pets.Count;
+		for(int i = 0; i < m_slotLayouts.Count; i++) {
+			// Matches the target amount of pets?
+			if(i == numPets - 1) {	// This should do it, provided the layouts list is properly initialized!
+				m_slotLayouts[i].SetActive(true);
+				targetLayout = m_slotLayouts[i];
+			} else {
+				m_slotLayouts[i].SetActive(false);
+			}
+		}
+
+		// Put every slot into position
 		for(int i = 0; i < m_slotInfos.Length; i++) {
+			// Are we using this slot?
+			if(i < numPets) {
+				// Find the anchor matching the slot index
+				Transform anchor = targetLayout.FindTransformRecursive("PetSlotAnchor" + (i+1).ToString());	// [AOC] Quick'n'dirty, probably we should have the anchors indexed somewhere :P
+
+				// Move slot
+				m_slotInfos[i].transform.SetParent(anchor, false);
+				m_slotInfos[i].transform.localPosition = Vector3.zero;
+			}
+
+			// Initialize slot
 			m_slotInfos[i].Refresh(m_dragonData, _animate);
 		}
 	}
