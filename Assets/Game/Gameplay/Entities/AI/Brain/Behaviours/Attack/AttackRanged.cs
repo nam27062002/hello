@@ -35,9 +35,21 @@ namespace AI {
 				// create a projectile from resources (by name) and save it into pool
 				PoolManager.CreatePool(((AttackRangedData)m_data).projectileName, "Game/Projectiles/", 2, true);
 
+				Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnNewGameArea);
+
 				m_viewControl = m_pilot.GetComponent<ViewControl>();
 
 				base.OnInitialise();
+			}
+
+			void OnNewGameArea()
+			{
+				PoolManager.CreatePool(((AttackRangedData)m_data).projectileName, "Game/Projectiles/", 2, true);
+			}
+
+			protected override void OnRemove()
+			{
+				Messenger.RemoveListener(GameEvents.GAME_AREA_ENTER, OnNewGameArea);
 			}
 
 			protected override void StartAttack() 
