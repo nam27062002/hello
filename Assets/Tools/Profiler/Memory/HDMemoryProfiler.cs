@@ -139,7 +139,7 @@ public class HDMemoryProfiler : MemoryProfiler
 
         if (calculateKey)
         {
-            key = CATEGORY_SET_GAME_KEY_EVERYTHING;
+            key = CATEGORY_SET_KEY_LEVEL_NPCS;
         }
 
         if (ParticleManager.instance != null)
