@@ -551,10 +551,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 					ft.m_follow = m_exclamationTransform;
 				}
 			} else {
-				ParticleManager.ReturnInstance(m_exclamationMarkOn);
-				m_exclamationMarkOn = null;
+				if (m_exclamationMarkOn != null) {
+					ParticleManager.ReturnInstance(m_exclamationMarkOn);
+					m_exclamationMarkOn = null;
+				}
 			}
-
 			m_isExclamationMarkOn = _value;
 		}
 	}

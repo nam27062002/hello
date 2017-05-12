@@ -578,7 +578,8 @@ namespace AI {
 
 		public void ReleaseHold() {
 			m_isHolded = false;
-			m_motion.position = m_transform.position;
+			if ( m_motion != null )
+				m_motion.position = m_transform.position;
 			m_edible.ReleaseHold();
 
 			OnReleaseHold();
