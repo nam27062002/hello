@@ -310,11 +310,13 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	private float m_latchingTimer;
 
-	private Bounds m_hitBounds;
-	public Bounds hitBounds
+	private RectAreaBounds m_hitBounds = new RectAreaBounds(Vector3.zero, Vector3.one);
+	public RectAreaBounds hitBounds
 	{
 		get{ return m_hitBounds; }
 	}
+
+	private bool m_trackPosition = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -427,6 +429,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_lastSpeed = 0;
 		m_suction = m_eatBehaviour.suction;
 
+		m_trackPosition = InstanceManager.gameSceneController != null;
 
 		if (m_state == State.None)
 			ChangeState(State.Fly);
@@ -669,7 +672,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
-		// UnityAnalyticsHeatmap.HeatmapEvent.Send( "PlayerPosition", m_transform.position, InstanceManager.gameSceneController.elapsedSeconds);
+		if (m_trackPosition)
+		{
+			UnityAnalyticsHeatmap.HeatmapEvent.Send( "PlayerPosition", m_transform.position, InstanceManager.gameSceneController.elapsedSeconds);
+		}
 		switch (m_state) {
 			case State.Idle:
 				if (m_controls.moving || boostSpeedMultiplier > 1) {
@@ -917,12 +923,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	void UpdateHitCollidersBoundingBox()
 	{
-		m_hitBounds.center = m_transform.position;
-		m_hitBounds.size = Vector3.zero;
-		for( int i = 0; i<m_hitCollidersSize; ++i )
-		{
-			m_hitBounds.Encapsulate( m_hitColliders[i].bounds );
-		}
+		m_hitBounds.UpdateBounds( m_transform.position, Vector3.zero);
+		m_hitBounds.Encapsulate( m_hitColliders );
+
 	}
 
 
@@ -2078,7 +2081,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	protected virtual void OnDrawGizmos() {
 		Gizmos.color = Color.red;
-		Gizmos.DrawWireCube( m_hitBounds.center, m_hitBounds.size);
+		Gizmos.DrawWireCube( m_hitBounds.center, m_hitBounds.bounds.size);
 	}
 }
 

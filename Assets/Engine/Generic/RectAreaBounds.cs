@@ -54,6 +54,44 @@ public class RectAreaBounds : AreaBounds {
 		return m_bounds.Contains(_point);
 	}
 
+	public void Encapsulate( Collider[] _colliders)
+	{
+		int size = _colliders.Length;
+		for( int i = 0; i<size; ++i )
+		{
+			m_bounds.Encapsulate(_colliders[i].bounds);
+		}
+		m_size = m_bounds.size;
+		m_extents = m_bounds.extents;
+	} 
+
+	public float DistanceSqr( Vector3 position)
+	{
+		// Seach closest position
+		float sqDist = 0;
+		Vector3 min = m_bounds.min;
+		Vector3 max = m_bounds.max;
+		if ( position.x < min.x )
+		{
+			sqDist += (min.x - position.x) * (min.x - position.x);
+		}
+		else if ( position.x > max.x )
+		{
+			sqDist += (position.x - max.x) * (position.x - max.x);
+		}
+
+		if ( position.y < min.y )
+		{
+			sqDist += (min.y - position.y) * (min.y - position.y);
+		}
+		else if ( position.y > max.y )
+		{
+			sqDist += (position.y - max.y) * (position.y - max.y);
+		}
+
+		return sqDist;
+	}
+
 	public void DrawGizmo() {		
 		Color color = Color.white;
 		color.a = 0.25f;

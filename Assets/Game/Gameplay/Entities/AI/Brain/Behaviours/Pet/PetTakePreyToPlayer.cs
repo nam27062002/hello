@@ -60,7 +60,7 @@ namespace AI {
 				}
 				else
 				{
-					Debug.TaggedLogError( "PetDog", "No not get pilot on" + m_petDogSpawner.GetSelectedPrefabStr());
+					Debug.TaggedLogError( "PetDog", "No not get pilot on " + m_petDogSpawner.GetSelectedPrefabStr());
 				}
 			}
 

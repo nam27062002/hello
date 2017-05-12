@@ -32,6 +32,10 @@ public class InflammableDecorationEditor : Editor {
 		EditorGUILayoutExt.Separator(new SeparatorAttribute("Fire Nodes Setup"));
 
 		if (GUILayout.Button("Build")) {
+			if (m_editFireNodes == true) {
+				SetFireNodesData();
+				m_editFireNodes = false;
+			}
 			m_component.SetupFireNodes();
 		}
 

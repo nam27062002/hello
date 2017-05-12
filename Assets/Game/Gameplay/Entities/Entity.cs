@@ -80,7 +80,7 @@ public class Entity : IEntity {
 	private static float m_powerUpXpMultiplier = 0;	// XP power up multiplier
 
 	/************/
-	protected virtual void Awake() {
+	protected override void Awake() {
 		base.Awake();
 		// [AOC] Obtain the definition and initialize important data
 		InitFromDef();
