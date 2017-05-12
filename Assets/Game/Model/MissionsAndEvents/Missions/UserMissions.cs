@@ -155,17 +155,26 @@ public class UserMissions {
 	private Mission GenerateNewMission(Mission.Difficulty _difficulty) {
 		Debug.Log("<color=green>GENERATING NEW MISSION " + _difficulty + "</color>");
 
+		// Filter types to prevent repetition
+		// Do it before terminating previous mission so we don't repeat the same mission type we just completed/skipped
+		List<string> typesToIgnore = new List<string>();
+		for(int i = 0; i < m_missions.Length; i++) {
+			if(m_missions[i] != null) typesToIgnore.Add(m_missions[i].typeDef.sku);
+		}
+
 		// Terminate any mission at the requested slot
 		ClearMission(_difficulty);
 
-		// 1. Get available mission types (based on current max dragon tier unlocked)
+		// 1. Get available mission types
 		DragonTier maxTierUnlocked = DragonManager.biggestOwnedDragon.tier;
 		List<DefinitionNode> typeDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSION_TYPES);
 		typeDefs = typeDefs.FindAll(
 			(DefinitionNode _def) => { 
-				return _def.GetAsInt("minTierToUnlock") <= (int)maxTierUnlocked;
+				return (_def.GetAsInt("minTierToUnlock") <= (int)maxTierUnlocked)	// Ignore mission types meant for bigger tiers
+					&& (!typesToIgnore.Contains(_def.sku));							// Prevent repetition
 			}
 		);
+		DebugUtils.Assert(typeDefs.Count > 0, "<color=red>NO VALID MISSION TYPES FOUND!!!!</colo>");	// Just in case
 
 		// 2. Select a type based on definitions weights
 		// 2.1. Compute total weight
