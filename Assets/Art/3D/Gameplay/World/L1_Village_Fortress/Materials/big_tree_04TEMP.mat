@@ -6,25 +6,19 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: ghost_DIFF_5
-  m_Shader: {fileID: 4800000, guid: 36a28fe944442094e95d5e61f314f21a, type: 3}
+  m_Name: big_tree_04TEMP
+  m_Shader: {fileID: 4800000, guid: f493c23147f904dd28c1dbe194f90bd9, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 3070
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
     - first:
-        name: _AlphaTex
-      second:
-        m_Texture: {fileID: 2800000, guid: bea143927d813f642848cbe4c6a064f7, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
         name: _BumpMap
       second:
-        m_Texture: {fileID: 2800000, guid: cbaa90e716f4da84b90116671316e61f, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -54,7 +48,7 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: d9d65ab3c8c35c349b131ba6077b6b76, type: 3}
+        m_Texture: {fileID: 2800000, guid: 62152a92f7c6132498bd99d92611f187, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -66,7 +60,7 @@ Material:
     - first:
         name: _NormalTex
       second:
-        m_Texture: {fileID: 2800000, guid: cbaa90e716f4da84b90116671316e61f, type: 3}
+        m_Texture: {fileID: 2800000, guid: 67dba803f87d6ca49a7a276bd4ee25ba, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -81,13 +75,13 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - first:
+        name: _SecondTexture
+      second:
+        m_Texture: {fileID: 2800000, guid: 0421fdf77331d4608994040bf0edfcce, type: 3}
+        m_Scale: {x: 6, y: 6}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
-    - first:
-        name: _AlphaMSKOffset
-      second: -0.091
-    - first:
-        name: _AlphaMSKScale
-      second: 2
     - first:
         name: _BumpScale
       second: 1
@@ -101,17 +95,17 @@ Material:
         name: _DstBlend
       second: 0
     - first:
-        name: _FresnelPower
-      second: 1.34
+        name: _EmissionScaleUI
+      second: 0
     - first:
-        name: _GlossMapScale
-      second: 1
+        name: _FogEnd
+      second: 100
+    - first:
+        name: _FogStart
+      second: 0
     - first:
         name: _Glossiness
       second: 0.5
-    - first:
-        name: _GlossyReflections
-      second: 1
     - first:
         name: _Metallic
       second: 0
@@ -120,7 +114,7 @@ Material:
       second: 0
     - first:
         name: _NormalStrength
-      second: 1
+      second: 3
     - first:
         name: _OcclusionStrength
       second: 1
@@ -128,48 +122,30 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
-        name: _SmoothnessTextureChannel
-      second: 0
-    - first:
-        name: _SpecularHighlights
-      second: 1
-    - first:
-        name: _SpecularPower
-      second: 4.35
+        name: _Specular
+      second: 3
     - first:
         name: _SrcBlend
       second: 1
     - first:
-        name: _StencilMask
-      second: 10
-    - first:
         name: _UVSec
       second: 0
-    - first:
-        name: _WavePhase
-      second: 10
-    - first:
-        name: _WaveRadius
-      second: 0.1
     - first:
         name: _ZWrite
       second: 1
     m_Colors:
     - first:
-        name: _AmbientColor
-      second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
         name: _Color
-      second: {r: 0.8, g: 0.8, b: 0.8, a: 1}
+      second: {r: 0.588, g: 0.588, b: 0.588, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
-        name: _FresnelColor
-      second: {r: 0.16446799, g: 0.19117647, b: 0.18896611, a: 1}
+        name: _EmissionColorUI
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
-        name: _SpecularColor
-      second: {r: 0.19117647, g: 0.18627104, b: 0.15884516, a: 1}
+        name: _FogColor
+      second: {r: 0, g: 0, b: 0, a: 0}
     - first:
-        name: _Tint
-      second: {r: 0.2205882, g: 0.1800389, b: 0.20940219, a: 0.103}
+        name: _SpecularDir
+      second: {r: 0, g: 0, b: 0, a: 0}

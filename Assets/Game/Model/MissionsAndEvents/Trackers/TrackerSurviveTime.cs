@@ -54,6 +54,18 @@ public class TrackerSurviveTime : TrackerBase {
 		return TimeUtils.FormatTime(_value, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3, TimeUtils.EPrecision.DAYS);
 	}
 
+	/// <summary>
+	/// Round a value according to specific rules defined for every tracker type.
+	/// Typically used for target values.
+	/// </summary>
+	/// <returns>The rounded value.</returns>
+	/// <param name="_targetValue">The original value to be rounded.</param>
+	override public float RoundTargetValue(float _targetValue) {
+		// Time value, round it to 10s multiple
+		_targetValue = MathUtils.Snap(_targetValue, 10f);
+		return base.RoundTargetValue(_targetValue);	// Apply default rounding as well
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
