@@ -202,7 +202,6 @@ public class AssetFinder : EditorWindow {
         {
             string path = AssetDatabase.GetAssetPath(texture);
             TextureImporter textureImporter = AssetImporter.GetAtPath(path) as TextureImporter;
-            textureImporter.mipmapEnabled = false;
                        
             if (EditorUtility.DisplayCancelableProgressBar( "Reimporting texture", path, c / (float)textureList.Length))
             {
@@ -210,7 +209,11 @@ public class AssetFinder : EditorWindow {
                 break;
             }
 
-            AssetDatabase.ImportAsset(path);
+            if (textureImporter.mipmapEnabled)
+            {
+                textureImporter.mipmapEnabled = false;
+                AssetDatabase.ImportAsset(path);
+            }
         }
 
         Debug.Log("list length: " + textureList.Length);
