@@ -12,6 +12,7 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnEnemyInRange = "onEnemyInRange";
 
+
 			private float m_shutdownSensorTime;
 			private float m_timer;
 
