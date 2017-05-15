@@ -295,7 +295,7 @@ public class Spawner : AbstractSpawner {
 	protected override void OnMachineSpawned(IMachine machine) {
 		if (m_groupController) {				
 			machine.EnterGroup(ref m_groupController.flock);
-			machine.position = transform.position + m_groupController.flock.GetOffset(machine, 1f);
+			machine.position = transform.position + m_groupController.flock.GetOffset(machine, 2f);
 		}
 	}
 

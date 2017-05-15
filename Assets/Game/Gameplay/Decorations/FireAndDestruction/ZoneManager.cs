@@ -36,16 +36,15 @@ public class ZoneManager : MonoBehaviour {
 			InstanceManager.zoneManager = null;		
 	}
 
-	public ZoneEffect GetFireEffectCode(Decoration _deco, DragonTier _tier) {
-		if (_deco.isBurnable) {
-			if (_tier >= _deco.minTierDisintegrate) {
-				return ZoneEffect.L;
-			} else if (_tier >= _deco.minTierBurn) {
-				return ZoneEffect.M;
-			} else if (_tier >= _deco.minTierBurnFeedback) {
-				return ZoneEffect.S;
-			}
+	public ZoneEffect GetFireEffectCode(Decoration _deco, DragonTier _tier) {		
+		if (_tier >= _deco.minTierDisintegrate) {
+			return ZoneEffect.L;
+		} else if (_tier >= _deco.minTierBurn) {
+			return ZoneEffect.M;
+		} else if (_tier >= _deco.minTierBurnFeedback) {
+			return ZoneEffect.S;
 		}
+
 		return ZoneEffect.None;
 	}
 
