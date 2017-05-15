@@ -1199,6 +1199,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1392710797467710
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4762466064267498}
+  - component: {fileID: 114983893700204046}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1397459963955248
 GameObject:
   m_ObjectHideFlags: 1
@@ -4569,6 +4585,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4221240845783202}
+  - {fileID: 4762466064267498}
   - {fileID: 4662526147696034}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -4725,7 +4742,7 @@ Transform:
   - {fileID: 4138975775464736}
   - {fileID: 4637226789137660}
   m_Father: {fileID: 4594206893435404}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4665754685612202
 Transform:
@@ -4975,6 +4992,19 @@ Transform:
   - {fileID: 4841913339187002}
   - {fileID: 4165969118649704}
   m_Father: {fileID: 4776894387246908}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4762466064267498
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1392710797467710}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 7.97, y: 0, z: 46.12}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4594206893435404}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4776894387246908
@@ -6579,6 +6609,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sku: pet_7
   m_rootNode: {fileID: 4521743765092804}
+--- !u!114 &114983893700204046
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1392710797467710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b4307df3638f47a29e60f0bc3d5abee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_mode: 1
+  m_dragonSku: 
+  m_anim: 0
+  m_resetDragonScale: 1
+  m_showPets: 0
+  m_removeFresnel: 0
 --- !u!114 &114985406792895768
 MonoBehaviour:
   m_ObjectHideFlags: 1
