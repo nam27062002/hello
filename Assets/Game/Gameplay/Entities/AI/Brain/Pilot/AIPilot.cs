@@ -53,7 +53,7 @@ namespace AI {
 		//--------------------------------------------------------------------//
 		// METHODS															  //
 		//--------------------------------------------------------------------//
-		public override void Spawn(ISpawner _spawner) {
+		public virtual void Spawn(ISpawner _spawner) {
 			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
 			m_groundWaterMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions", "Water");
 
@@ -109,13 +109,6 @@ namespace AI {
 		}
 
 		void OnDisable() {
-		}
-
-		void OnDestroy(){
-			if ( m_brain ){
-				m_brain.OnDestroy();
-			}
-				
 		}
 
 		public override void OnTrigger(string _trigger, object[] _param = null) {

@@ -19,7 +19,10 @@ public class FireNodeSetup {
 		m_bounds = new Bounds();
 		m_vertices = new List<Vector3>();
 
-		Renderer[] renderers = _parent.GetComponentsInChildren<Renderer>();
+		m_bounds.center = _parent.position;
+
+		Transform view = _parent.FindChild("view");
+		Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
 
 		for (int i = 0; i < renderers.Length; ++i) {
 			Renderer renderer = renderers[i];

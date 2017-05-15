@@ -96,17 +96,6 @@ public class TrackerBase {
 	}
 
 	/// <summary>
-	/// Round a value according to specific rules defined for every tracker type.
-	/// Typically used for target values.
-	/// </summary>
-	/// <returns>The rounded value.</returns>
-	/// <param name="_targetValue">The original value to be rounded.</param>
-	public virtual float RoundTargetValue(float _targetValue) {
-		// Default: At least 1, no decimals
-		return Mathf.Max(1f, Mathf.Round(_targetValue));
-	}
-
-	/// <summary>
 	/// Sets a new value and optionally triggers OnValueChanged event.
 	/// </summary>
 	/// <param name="_newValue">The new value to be set.</param>

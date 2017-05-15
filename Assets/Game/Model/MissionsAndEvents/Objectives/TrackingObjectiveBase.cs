@@ -85,7 +85,7 @@ public abstract class TrackingObjectiveBase {
 		m_tracker.OnValueChanged.AddListener(OnValueChanged);
 
 		// Store parameters
-		m_targetValue = m_tracker.RoundTargetValue(_targetValue);	// Round target value using each specific tracker rounding rules!
+		m_targetValue = _targetValue;
 		m_typeDef = _typeDef;
 		m_tidDesc = _tidDesc;
 		m_tidTarget = _tidTarget;

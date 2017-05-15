@@ -198,6 +198,8 @@ public class AssetFinder : EditorWindow {
         FindAssetInContent<Texture2D>(Directory.GetCurrentDirectory() + "\\Assets", out textureList);
 
         float c = 0;
+
+        Debug.Log("Enabled mipmap textures :");
         foreach (Texture2D texture in textureList)
         {
             string path = AssetDatabase.GetAssetPath(texture);
@@ -208,15 +210,18 @@ public class AssetFinder : EditorWindow {
                 EditorUtility.ClearProgressBar();
                 break;
             }
-
-            if (textureImporter.mipmapEnabled)
+            if (textureImporter != null && textureImporter.mipmapEnabled)
             {
                 textureImporter.mipmapEnabled = false;
                 AssetDatabase.ImportAsset(path);
+                Debug.Log(">>> " + path);
+                c++;                   
+
             }
         }
 
-        Debug.Log("list length: " + textureList.Length);
+        EditorUtility.ClearProgressBar();
+        Debug.Log("list length: " + textureList.Length + " Mipmap textures:" + c);
 
     }
 

@@ -39,17 +39,6 @@ public class TrackerGold : TrackerBase {
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Round a value according to specific rules defined for every tracker type.
-	/// Typically used for target values.
-	/// </summary>
-	/// <returns>The rounded value.</returns>
-	/// <param name="_targetValue">The original value to be rounded.</param>
-	override public float RoundTargetValue(float _targetValue) {
-		// Round it to 10 multiple
-		_targetValue = MathUtils.Snap(_targetValue, 10f);
-		return base.RoundTargetValue(_targetValue);	// Apply default rounding as well
-	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
