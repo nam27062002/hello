@@ -18,9 +18,6 @@ namespace AI {
 			private MeleeWeapon m_meleeWeapon;
 			private AttackTurnAroundData m_data;
 
-			private Vector3 m_targetDirection;
-			private Quaternion m_targetRotation;
-
 			private PreyAnimationEvents m_animEvents;
 
 
@@ -42,11 +39,7 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
-				if (m_machine.direction.x > 0)	m_targetDirection = Vector3.left;
-				else 							m_targetDirection = Vector3.right;
-
 				m_pilot.SetMoveSpeed(0);
-				m_targetRotation = Quaternion.LookRotation(m_targetDirection, m_machine.upVector);				   
 
 				m_animEvents.onAttackDealDamage += new PreyAnimationEvents.OnAttackDealDamageDelegate(OnAnimDealDamage);
 				m_animEvents.onEnableWeapon 	+= new PreyAnimationEvents.OnEnableWeaponDelegate(OnEnableWeapon);
@@ -80,8 +73,8 @@ namespace AI {
 
 			private void OnAnimEnd() {
 				OnDisableWeapon();
-				m_pilot.SetDirection(m_targetDirection, true);
-				m_machine.orientation = m_targetRotation;
+				m_machine.orientation = m_machine.orientation * Quaternion.AngleAxis(180f, Vector3.up);
+				m_pilot.SetDirection(m_machine.orientation * Vector3.forward, true);
 				Transition(OnTurnAroundEnd);
 			}
 		}
