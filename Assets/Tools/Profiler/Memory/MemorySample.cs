@@ -23,13 +23,7 @@ public class MemorySample : AbstractMemorySample
         public void CalculateSize(ESizeStrategy sizeStrategy)
         {
             if (Obj != null)
-            {
-				if(Obj is AnimationClip) 
-				{
-					AnimationClip animationClip = Obj as AnimationClip;
-					animationClip.
-				}
-
+            {				
                 MemSize = UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(Obj);
 
                 if (Obj is Texture && sizeStrategy != ESizeStrategy.Profiler)
