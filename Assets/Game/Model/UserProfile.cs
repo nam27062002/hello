@@ -258,7 +258,6 @@ public class UserProfile : UserSaveSystem
 		m_userMissions = new UserMissions();      
     }
 
-
 	/// <summary>
 	/// Add coins.
 	/// </summary>
@@ -545,13 +544,9 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Missions
-		if ( _data.ContainsKey("missions") )
-		{
-			m_userMissions.Load( _data["missions"] );
-			m_userMissions.ownedDragons = GetNumOwnedDragons();
-		}
-		else
-		{
+		if(_data.ContainsKey("missions")) {
+			m_userMissions.Load(_data["missions"]);
+		} else {
 			// Clean missions
 			m_userMissions.ClearAllMissions();
 		}
