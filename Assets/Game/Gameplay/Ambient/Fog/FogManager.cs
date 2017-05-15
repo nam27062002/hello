@@ -247,6 +247,9 @@ public class FogManager : MonoBehaviour
 
 				if (m_lastSelectedAttributes != m_selectedAttributes)
 				{
+					m_tmpStart = m_start;
+					m_tmpEnd = m_end;
+
 					m_lastSelectedAttributes = m_selectedAttributes;
 					m_transitionTimer = m_transitionDuration = transitionDuration;
 

@@ -360,8 +360,11 @@ namespace LevelEditor {
 				if ( m_activeLevels[j] != null )
 				{
 					// Close the scene containing the active level
-					for( int i = 0; i<m_activeLevels[j].Count; i++ )
-						EditorSceneManager.CloseScene(m_activeLevels[j][i].gameObject.scene, true);
+					for( int i = 0; i<m_activeLevels[j].Count; i++ ) {
+						if(m_activeLevels[j][i] != null) {
+							EditorSceneManager.CloseScene(m_activeLevels[j][i].gameObject.scene, true);
+						}
+					}
 					m_activeLevels[j] = null;
 				}
 			}
@@ -481,6 +484,7 @@ namespace LevelEditor {
 			List<string> commonScene = def.GetAsList<string>("common");
 			for( int i = 0; i<commonScene.Count; i++ )
 			{
+				EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading common scenes: " + commonScene[i] + "...", (float)i/(float)commonScene.Count);
 				LevelEditor.settings.selectedMode = GetModeByName( commonScene[i]);
 				OnLoadLevel( commonScene[i] + ".unity" );
 			}
@@ -488,6 +492,7 @@ namespace LevelEditor {
 			List<string> editorOnlyScenes = def.GetAsList<string>("levelEditor");
 			for( int i = 0; i<editorOnlyScenes.Count; i++ )
 			{
+				EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading level editor scenes: " + editorOnlyScenes[i] + "...", (float)i/(float)editorOnlyScenes.Count);
 				LevelEditor.settings.selectedMode = GetModeByName( editorOnlyScenes[i]);
 				OnLoadLevel( editorOnlyScenes[i] + ".unity" );
 			}
@@ -495,6 +500,7 @@ namespace LevelEditor {
 			List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
 			for( int i = 0; i<gameplayWip.Count; i++ )
 			{
+				EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading WIP scenes: " + gameplayWip[i] + "...", (float)i/(float)gameplayWip.Count);
 				LevelEditor.settings.selectedMode = GetModeByName( gameplayWip[i]);
 				OnLoadLevel( gameplayWip[i] + ".unity" );
 			}
@@ -509,6 +515,7 @@ namespace LevelEditor {
 				_continue = false;
 				for( int i = 0;i<areaScenes.Count; i++ )
 				{
+					EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading scenes for Area " + areaIndex + ": " + areaScenes[i] + "...", (float)i/(float)areaScenes.Count);
 					if (!string.IsNullOrEmpty(areaScenes[i]))
 					{
 						_continue = true;
@@ -518,6 +525,12 @@ namespace LevelEditor {
 				}
 				areaIndex++;
 			}while( _continue );
+
+			// Hide progress bar!
+			EditorUtility.ClearProgressBar();
+
+			// Start with collapsed hierarchy
+			HierarchyCollapser.CollapseHierarchy();
 
 			LevelEditor.settings.selectedMode = oldMode;
 		}
