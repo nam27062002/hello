@@ -25,13 +25,6 @@ public class UserMissions {
 	// Active missions
 	// [AOC] Expose it if you want to see current missions content (alternatively switch to debug inspector)
 	private Mission[] m_missions = new Mission[(int)Mission.Difficulty.COUNT];
-
-
-	// Necessary info for the user missions to work
-	private int m_ownedDragons;
-	public int ownedDragons {
-		set { m_ownedDragons = value; }
-	}
     
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -152,71 +145,84 @@ public class UserMissions {
 	/// </summary>
 	/// <returns>The newly created mission.</returns>
 	/// <param name="_difficulty">The difficulty slot where to create the new mission.</param>
-	private Mission GenerateNewMission(Mission.Difficulty _difficulty) {
+	/// <param name="_forceSku">Optional, force a specific mission sku rather than using the procedural engine.</param>
+	private Mission GenerateNewMission(Mission.Difficulty _difficulty, string _forceSku = "") {
 		Debug.Log("<color=green>GENERATING NEW MISSION " + _difficulty + "</color>");
 
 		// Terminate any mission at the requested slot
 		ClearMission(_difficulty);
 
-		// 1. Get available mission types (based on current max dragon tier unlocked)
-		DragonTier maxTierUnlocked = DragonManager.biggestOwnedDragon.tier;
-		List<DefinitionNode> typeDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSION_TYPES);
-		typeDefs = typeDefs.FindAll(
-			(DefinitionNode _def) => { 
-				return _def.GetAsInt("minTierToUnlock") <= (int)maxTierUnlocked;
-			}
-		);
-
-		// 2. Select a type based on definitions weights
-		// 2.1. Compute total weight
-		float totalWeight = 0;
-		float[] weightsArray = new float[typeDefs.Count];	// Store all weights in an array for optimization (avoid repetaedly calling DefinitionNode.GetAsFloat())
-		for(int i = 0; i < typeDefs.Count; i++) {
-			weightsArray[i] = typeDefs[i].GetAsFloat("weight");
-			totalWeight += weightsArray[i];
-		}
-
-		// 2.2. Select a random value [0..totalWeight]
-		// Iterate through elements until the selected value is reached
-		// This should match weighted probability distribution
+		// Aux vars
 		DefinitionNode selectedTypeDef = null;
-		float targetValue = UnityEngine.Random.Range(0f, totalWeight);
-		for(int i = 0; i < typeDefs.Count; i++) {
-			targetValue -= weightsArray[i];
-			if(targetValue <= 0f) {
-				// We reached the target value!
-				selectedTypeDef = typeDefs[i];
-				break;	// No need to keep looping
-			}
-		}
-		Debug.Log("\tSelected Type: <color=yellow>" + selectedTypeDef.sku + "</color>");
-
-		// 3. Get all mission definitions matching the selected type
-		List<DefinitionNode> missionDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.MISSIONS, "type", selectedTypeDef.sku);
-
-		// 4. Select a random mission based on weight (as we just did with the mission type)
-		// 4.1. Compute total weight
-		totalWeight = 0;
-		weightsArray = new float[missionDefs.Count];	// Store all weights in an array for optimization (avoid repetaedly calling DefinitionNode.GetAsFloat())
-		for(int i = 0; i < missionDefs.Count; i++) {
-			weightsArray[i] = missionDefs[i].GetAsFloat("weight");
-			totalWeight += weightsArray[i];
-		}
-
-		// 4.2. Select a random value [0..totalWeight]
-		// Iterate through elements until the selected value is reached
-		// This should match weighted probability distribution
 		DefinitionNode selectedMissionDef = null;
-		targetValue = UnityEngine.Random.Range(0f, totalWeight);
-		for(int i = 0; i < missionDefs.Count; i++) {
-			targetValue -= weightsArray[i];
-			if(targetValue <= 0f) {
-				// We reached the target value!
-				selectedMissionDef = missionDefs[i];
-				break;	// No need to keep looping
+		float targetValue = 0f;
+
+		// If a mission is forced, skip procedural engine
+		if(!string.IsNullOrEmpty(_forceSku)) {
+			// Get forced mission def
+			selectedMissionDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSIONS, _forceSku);
+			selectedTypeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, selectedMissionDef.Get("type"));
+			Debug.Log("\tSelected Type: <color=yellow>" + selectedTypeDef.sku + "</color>");
+			Debug.Log("\tSelected Mission: <color=yellow>" + selectedMissionDef.sku + "</color>");
+		} else {
+			// 1. Get available mission types (based on current max dragon tier unlocked)
+			DragonTier maxTierUnlocked = DragonManager.biggestOwnedDragon.tier;
+			List<DefinitionNode> typeDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSION_TYPES);
+			typeDefs = typeDefs.FindAll(
+				(DefinitionNode _def) => { 
+					return _def.GetAsInt("minTierToUnlock") <= (int)maxTierUnlocked;
+				}
+			);
+
+			// 2. Select a type based on definitions weights
+			// 2.1. Compute total weight
+			float totalWeight = 0f;
+			float[] weightsArray = new float[typeDefs.Count];	// Store all weights in an array for optimization (avoid repetaedly calling DefinitionNode.GetAsFloat())
+			for(int i = 0; i < typeDefs.Count; i++) {
+				weightsArray[i] = typeDefs[i].GetAsFloat("weight");
+				totalWeight += weightsArray[i];
 			}
+
+			// 2.2. Select a random value [0..totalWeight]
+			// Iterate through elements until the selected value is reached
+			// This should match weighted probability distribution
+			targetValue = UnityEngine.Random.Range(0f, totalWeight);
+			for(int i = 0; i < typeDefs.Count; i++) {
+				targetValue -= weightsArray[i];
+				if(targetValue <= 0f) {
+					// We reached the target value!
+					selectedTypeDef = typeDefs[i];
+					break;	// No need to keep looping
+				}
+			}
+			Debug.Log("\tSelected Type: <color=yellow>" + selectedTypeDef.sku + "</color>");
+
+			// 3. Get all mission definitions matching the selected type
+			List<DefinitionNode> missionDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.MISSIONS, "type", selectedTypeDef.sku);
+
+			// 4. Select a random mission based on weight (as we just did with the mission type)
+			// 4.1. Compute total weight
+			totalWeight = 0f;
+			weightsArray = new float[missionDefs.Count];	// Store all weights in an array for optimization (avoid repetaedly calling DefinitionNode.GetAsFloat())
+			for(int i = 0; i < missionDefs.Count; i++) {
+				weightsArray[i] = missionDefs[i].GetAsFloat("weight");
+				totalWeight += weightsArray[i];
+			}
+
+			// 4.2. Select a random value [0..totalWeight]
+			// Iterate through elements until the selected value is reached
+			// This should match weighted probability distribution
+			targetValue = UnityEngine.Random.Range(0f, totalWeight);
+			for(int i = 0; i < missionDefs.Count; i++) {
+				targetValue -= weightsArray[i];
+				if(targetValue <= 0f) {
+					// We reached the target value!
+					selectedMissionDef = missionDefs[i];
+					break;	// No need to keep looping
+				}
+			}
+			Debug.Log("\tSelected Mission: <color=yellow>" + selectedMissionDef.sku + "</color>");
 		}
-		Debug.Log("\tSelected Mission: <color=yellow>" + selectedMissionDef.sku + "</color>");
 
 		// 5. If mission type supports single run mode, choose randomly whether to use it or not
 		bool singleRun = false;
@@ -271,7 +277,7 @@ public class UserMissions {
 		m_missions[(int)_difficulty] = newMission;
 
 		// Check whether the new mission should be locked or not
-		if(m_ownedDragons < MissionManager.GetDragonsRequiredToUnlickMissionDifficulty(_difficulty)) {
+		if(UsersManager.currentUser.GetNumOwnedDragons() < MissionManager.GetDragonsRequiredToUnlockMissionDifficulty(_difficulty)) {
 			newMission.ChangeState(Mission.State.LOCKED);
 		} else {
 			newMission.ChangeState(Mission.State.ACTIVE);	// [AOC] Start active by default, cooldown will be afterwards added if required
@@ -311,11 +317,24 @@ public class UserMissions {
 			// Is the mission locked?
 			if(m_missions[i].state == Mission.State.LOCKED) {
 				// Do we have enough dragons?
-				if(m_ownedDragons >= MissionManager.GetDragonsRequiredToUnlickMissionDifficulty((Mission.Difficulty)i)) {
+				if(UsersManager.currentUser.GetNumOwnedDragons() >= MissionManager.GetDragonsRequiredToUnlockMissionDifficulty((Mission.Difficulty)i)) {
 					m_missions[i].ChangeState(Mission.State.ACTIVE);
 				}
 			}
 		}
+	}
+
+	/// <summary>
+	/// Create the FTUXP missions and mark tutorial step as completed
+	/// </summary>
+	private void GenerateTutorialMissions() {
+		// One for every difficulty!
+		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
+			GenerateNewMission((Mission.Difficulty)i, "ftux" + (i+1).ToString());	// Force sku!
+		}
+
+		// Mark tutorial as completed!
+		UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.FIRST_MISSIONS_GENERATED);
 	}
 
 	//------------------------------------------------------------------//
@@ -326,30 +345,37 @@ public class UserMissions {
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public void Load(SimpleJSON.JSONNode _data) {
-		// Load missions
-		SimpleJSON.JSONArray activeMissions = _data["activeMissions"].AsArray;
-		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
-			// If there is no data for this mission, generate a new one
-			if(i >= activeMissions.Count || activeMissions[i] == null || activeMissions[i]["sku"] == "") {
-				GenerateNewMission((Mission.Difficulty)i);
-			} else {
-				// If the mission was not created, create an empty one now and load its data from persistence
-				if(m_missions[i] == null) {
-					m_missions[i] = new Mission();
-				}
-
-				// Make sure mission has the right difficulty assigned
-				m_missions[i].difficulty = (Mission.Difficulty)i;
-				
-				// Load data into the target mission
-				bool success = m_missions[i].Load(activeMissions[i]);
-
-				// If an error ocurred while loading the mission, generate a new one
-				if(!success) {
+		// Load missions!
+		// Override if tutorial step was not completed
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_MISSIONS_GENERATED)) {
+			// Create special missions
+			GenerateTutorialMissions();
+		} else {
+			// Load missions from persistence object
+			SimpleJSON.JSONArray activeMissions = _data["activeMissions"].AsArray;
+			for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
+				// If there is no data for this mission, generate a new one
+				if(i >= activeMissions.Count || activeMissions[i] == null || activeMissions[i]["sku"] == "") {
 					GenerateNewMission((Mission.Difficulty)i);
+				} else {
+					// If the mission object was not created, create an empty one now and load its data from persistence
+					if(m_missions[i] == null) {
+						m_missions[i] = new Mission();
+					}
+
+					// Make sure mission has the right difficulty assigned
+					m_missions[i].difficulty = (Mission.Difficulty)i;
+					
+					// Load data into the target mission
+					bool success = m_missions[i].Load(activeMissions[i]);
+
+					// If an error ocurred while loading the mission, generate a new one
+					if(!success) {
+						GenerateNewMission((Mission.Difficulty)i);
+					}
 				}
 			}
-		}        
+		}
 	}
 
 	/// <summary>
@@ -357,6 +383,12 @@ public class UserMissions {
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
 	public SimpleJSON.JSONNode Save() {
+		// If tutorial step was not completed, generate tutorial missions if not already done!
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_MISSIONS_GENERATED)) {
+			// Create special missions
+			GenerateTutorialMissions();
+		}
+
 		// Create new object, initialize and return it
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 		

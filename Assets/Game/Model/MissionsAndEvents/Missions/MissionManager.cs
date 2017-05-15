@@ -131,7 +131,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 		}
 	}
 
-	public static int GetDragonsRequiredToUnlickMissionDifficulty(Mission.Difficulty _difficulty) {
+	public static int GetDragonsRequiredToUnlockMissionDifficulty(Mission.Difficulty _difficulty) {
 		return instance.m_dragonsToUnlock[(int)_difficulty];
 	}
 
@@ -203,7 +203,6 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// <param name="_dragon">The dragon that has just been acquired.</param>
 	private void OnDragonAcquired(DragonData _dragon) {
 		int ownedDragons = UsersManager.currentUser.GetNumOwnedDragons();
-		UsersManager.currentUser.userMissions.ownedDragons = ownedDragons;
 		UsersManager.currentUser.userMissions.UnlockByDragonsNumber();
 	}
 }

@@ -9,8 +9,10 @@ public class Decoration : IEntity {
 	public override string sku { get { return m_sku; } }
 
 	//
-	private bool m_isBurnable;
-	public bool  isBurnable { get { return m_isBurnable; } }
+	private Reward m_reward;
+	public Reward reward { get { return m_reward; }}
+
+	private float m_baseRewardScore;
 
 	private int m_burnFeedbackChance;
 	public  int burnFeedbackChance { get { return m_burnFeedbackChance; } }
@@ -33,7 +35,6 @@ public class Decoration : IEntity {
 	//-----------------------------------------------------
 	protected override void Awake() {
 		base.Awake();
-
 		InitFromDef();
 	}
 
@@ -41,8 +42,9 @@ public class Decoration : IEntity {
 		// Get the definition
 		m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DECORATIONS, sku);
 
+		m_reward.score = m_def.GetAsInt("rewardScore");
+
 		// Simple data
-		m_isBurnable 			= m_def.GetAsBool("isBurnable");
 		m_burnFeedbackChance	= m_def.GetAsInt("burnFeedbackChance", 100);
 		m_minTierBurnFeedback 	= (DragonTier)m_def.GetAsInt("minTierBurnFeedback", (int)DragonTier.COUNT);
 		m_minTierBurn			= (DragonTier)m_def.GetAsInt("minTierBurn", (int)DragonTier.COUNT);

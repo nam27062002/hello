@@ -6,10 +6,10 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: MAT_canary_Bg
-  m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
+  m_Name: freddy_sportTapes
+  m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
+  m_ShaderKeywords: _EMISSION
+  m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
@@ -18,7 +18,7 @@ Material:
     - first:
         name: _BumpMap
       second:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 7297525846f6040c2bce72e703c5b5e9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -40,6 +40,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
+        name: _DetailTex
+      second:
+        m_Texture: {fileID: 2800000, guid: 4371ac4f49324475bbd4bac202b923a6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
         name: _EmissionMap
       second:
         m_Texture: {fileID: 0}
@@ -48,7 +54,7 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: ace54c0b34552a54792544f9ba483905, type: 3}
+        m_Texture: {fileID: 2800000, guid: ad1e3d533e4224243a3f74ae51745a2e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -69,13 +75,19 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - first:
+        name: _ReflectionMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
+    - first:
+        name: _Alpha_as_depth
+      second: 0
     - first:
         name: _BumpScale
       second: 1
-    - first:
-        name: _BumpStrength
-      second: 3
     - first:
         name: _Cutoff
       second: 0.5
@@ -86,20 +98,20 @@ Material:
         name: _DstBlend
       second: 0
     - first:
-        name: _EmissionScaleUI
-      second: 0
+        name: _Fresnel
+      second: 5.79
     - first:
-        name: _FogEnd
-      second: 258.36
-    - first:
-        name: _FogStart
-      second: 0
-    - first:
-        name: _FresnelFactor
-      second: 0.27
+        name: _GlossMapScale
+      second: 1
     - first:
         name: _Glossiness
       second: 0.5
+    - first:
+        name: _GlossyReflections
+      second: 1
+    - first:
+        name: _InnerLightAdd
+      second: 0
     - first:
         name: _Metallic
       second: 0
@@ -107,14 +119,26 @@ Material:
         name: _Mode
       second: 0
     - first:
+        name: _NormalStrenght
+      second: 1
+    - first:
         name: _OcclusionStrength
       second: 1
     - first:
         name: _Parallax
       second: 0.02
     - first:
-        name: _Specular
+        name: _ReflectionAmount
       second: 0
+    - first:
+        name: _SmoothnessTextureChannel
+      second: 0
+    - first:
+        name: _SpecExponent
+      second: 3.82
+    - first:
+        name: _SpecularHighlights
+      second: 1
     - first:
         name: _SrcBlend
       second: 1
@@ -129,17 +153,32 @@ Material:
       second: 1
     m_Colors:
     - first:
+        name: _AmbientAdd
+      second: {r: 0.021969333, g: 0.04411763, b: 0.01492214, a: 0}
+    - first:
         name: _Color
-      second: {r: 1, g: 0.9732251, b: 0.029411793, a: 1}
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _ColorAdd
+      second: {r: 0.01145449, g: 0.029411793, b: 0.010813159, a: 0}
+    - first:
+        name: _ColorMultiply
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
-        name: _EmissionColorUI
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _FogColor
-      second: {r: 0.4852941, g: 0.7231235, b: 1, a: 1}
-    - first:
         name: _FresnelColor
+      second: {r: 0.7205882, g: 0.7205882, b: 0.7205882, a: 1}
+    - first:
+        name: _InnerLightColor
+      second: {r: 0.15084344, g: 0.33088237, b: 0.18933451, a: 1}
+    - first:
+        name: _SecondLightColor
       second: {r: 0, g: 0, b: 0, a: 0}
+    - first:
+        name: _SecondLightDir
+      second: {r: 0, g: 0, b: -1, a: 0}
+    - first:
+        name: _Tint
+      second: {r: 1, g: 1, b: 1, a: 1}
