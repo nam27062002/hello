@@ -226,7 +226,11 @@ public class ResourcesFlow {
 		// Depends on currency!
 		switch(m_currency) {
 			case UserProfile.Currency.SOFT: {
-				m_extraPCCost = GameSettings.ComputePCForCoins(m_missingAmount);
+				if(m_missingAmount > 0) {
+					m_extraPCCost = GameSettings.ComputePCForCoins(m_missingAmount);
+				} else {
+					m_extraPCCost = 0;
+				}
 			} break;
 
 			default:{ 

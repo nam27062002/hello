@@ -87,7 +87,7 @@ ModelImporter:
     400076: Pet_Tongue2
     400078: Pet_Tongue3
     400080: Point001
-    7400000: Take 001
+    7400000: Eat_Big
     9500000: //RootNode
   materials:
     importMaterials: 0
@@ -109,7 +109,131 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Eat_Big
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 12
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events:
+      - time: 0.11491443
+        functionName: EatStartEvent
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.50611246
+        functionName: EatEvent
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Pet_Hip
+        weight: 1
+      - path: Pet_Hip/Pet_Head
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_Comisure
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_Jaw
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_Jaw/Pet_Tongue1
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_Jaw/Pet_Tongue1/Pet_Tongue2
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_Jaw/Pet_Tongue1/Pet_Tongue2/Pet_Tongue3
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_L_Down_EyeLead
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_L_Pupil
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_L_Up_EyeLead
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_R_Down_EyeLead
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_R_Pupil
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_R_Up_EyeLead
+        weight: 1
+      - path: Pet_Hip/Pet_L_Leg_Back1
+        weight: 1
+      - path: Pet_Hip/Pet_L_Leg_Back1/Pet_L_Leg_Back2
+        weight: 1
+      - path: Pet_Hip/Pet_L_Leg_Back1/Pet_L_Leg_Back2/Pet_L_Leg_BackAnkle
+        weight: 1
+      - path: Pet_Hip/Pet_L_Leg_Front1
+        weight: 1
+      - path: Pet_Hip/Pet_L_Leg_Front1/Pet_L_Leg_Front2
+        weight: 1
+      - path: Pet_Hip/Pet_L_Leg_Front1/Pet_L_Leg_Front2/Pet_L_Leg_FrontAnkle
+        weight: 1
+      - path: Pet_Hip/Pet_L_Wing1
+        weight: 1
+      - path: Pet_Hip/Pet_L_Wing1/Pet_L_Wing2
+        weight: 1
+      - path: Pet_Hip/Pet_L_Wing1/Pet_L_Wing2/Pet_L_Wing3
+        weight: 1
+      - path: Pet_Hip/Pet_R_Leg_Back1
+        weight: 1
+      - path: Pet_Hip/Pet_R_Leg_Back1/Pet_R_Leg_Back2
+        weight: 1
+      - path: Pet_Hip/Pet_R_Leg_Back1/Pet_R_Leg_Back2/Pet_R_Leg_BackAnkle
+        weight: 1
+      - path: Pet_Hip/Pet_R_Leg_Front1
+        weight: 1
+      - path: Pet_Hip/Pet_R_Leg_Front1/Pet_R_Leg_Front2
+        weight: 1
+      - path: Pet_Hip/Pet_R_Leg_Front1/Pet_R_Leg_Front2/Pet_R_Leg_FrontAnkle
+        weight: 1
+      - path: Pet_Hip/Pet_R_Wing1
+        weight: 1
+      - path: Pet_Hip/Pet_R_Wing1/Pet_R_Wing2
+        weight: 1
+      - path: Pet_Hip/Pet_R_Wing1/Pet_R_Wing2/Pet_R_Wing3
+        weight: 1
+      - path: Pet_Hip/Pet_Tail1
+        weight: 1
+      - path: Pet_Hip/Pet_Tail1/Pet_Tail2
+        weight: 1
+      - path: Pet_Hip/Pet_Tail1/Pet_Tail2/Pet_Tail3
+        weight: 1
+      - path: Pet_L_Leg_BackPlatform
+        weight: 1
+      - path: Pet_L_Leg_FrontPlatform
+        weight: 1
+      - path: Pet_Master
+        weight: 1
+      - path: Pet_R_Leg_BackPlatform
+        weight: 1
+      - path: Pet_R_Leg_FrontPlatform
+        weight: 1
+      - path: Point001
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
