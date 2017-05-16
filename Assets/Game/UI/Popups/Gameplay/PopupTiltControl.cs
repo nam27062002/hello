@@ -1,4 +1,4 @@
-// PopupMap.cs
+// PopupTiltControl.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 15/05/2017.
@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -15,7 +16,8 @@ using UnityEngine;
 /// <summary>
 /// Tilt-control calibration popup.
 /// </summary>
-public class PopupTiltControl : PopupPauseBase {
+[RequireComponent(typeof(PopupController))]
+public class PopupTiltControl : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -24,15 +26,17 @@ public class PopupTiltControl : PopupPauseBase {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	
+	// References
+	[SerializeField] private Slider m_sensitivitySlider = null;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	override protected void Awake() {
-		base.Awake();
+	private void Awake() {
+		
 	}
 
 	/// <summary>
@@ -66,8 +70,8 @@ public class PopupTiltControl : PopupPauseBase {
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	override protected void OnDestroy() {
-		base.OnDestroy();
+	private void OnDestroy() {
+		
 	}
 
 	//------------------------------------------------------------------------//
@@ -77,4 +81,31 @@ public class PopupTiltControl : PopupPauseBase {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The popup is about to be opened.
+	/// </summary>
+	public void OnOpenPreAnimation() {
+		// Initialize slider to current sensitivity value
+		m_sensitivitySlider.value = GameSettings.tiltControlSensitivity;
+	}
+
+	/// <summary>
+	/// Sensitivity slider has changed.
+	/// </summary>
+	/// <param name="_value">New value.</param>
+	public void OnSensitivityValueChanged(float _value) {
+		// Just set new value
+		GameSettings.tiltControlSensitivity = _value;
+	}
+
+	/// <summary>
+	/// Calibrate button has been pressed.
+	/// </summary>
+	public void OnCalibrateButton() {
+		// Open calibration popup
+		PopupManager.OpenPopupInstant(PopupTiltCalibrationAnim.PATH);
+
+		// Popup is actually fake, do the calibration now!
+		Messenger.Broadcast(GameEvents.TILT_CONTROL_CALIBRATE);
+	}
 }
