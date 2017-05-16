@@ -824,12 +824,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 		if (!_eaten) {
-			if (m_explosionParticles.IsValid()) {
-				ParticleManager.Spawn(m_explosionParticles, transform.position + m_explosionParticles.offset);
-			}
-
-			if (!string.IsNullOrEmpty(m_onExplosionAudio))
-				AudioController.Play(m_onExplosionAudio, transform.position);
+			PlayExplosion();
 		}
 
 		if (!_burned) {
@@ -848,6 +843,16 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			ParticleManager.ReturnInstance(m_pcTrail);
 			m_pcTrail = null;
 		}
+	}
+
+	public void PlayExplosion()
+	{
+		if (m_explosionParticles.IsValid()) {
+			ParticleManager.Spawn(m_explosionParticles, transform.position + m_explosionParticles.offset);
+		}
+
+		if (!string.IsNullOrEmpty(m_onExplosionAudio))
+			AudioController.Play(m_onExplosionAudio, transform.position);
 	}
 
 	/// <summary>
