@@ -44,13 +44,31 @@ public class HDMemoryProfiler : MemoryProfiler
             }
         }
 
+        // Searches for singletons
         GameObject singletons = GameObject.Find("Singletons");
         if (singletons != null)
         {
             Scene_AddGO(key, singletons);
         }
 
+        // Lightmaps are added manually
+        Scene_AddLightmaps(key);        
+
         return base.Scene_TakeASample(reuseAnalysis);        
+    }
+
+    private void Scene_AddLightmaps(string key)
+    {        
+        LightmapData[] lightmaps = LightmapSettings.lightmaps;
+        if (lightmaps != null)
+        {
+            int count = lightmaps.Length;
+            for (int i = 0; i < count; i++)
+            {
+                Scene_AddObject(key, lightmaps[i].lightmapLight);
+                Scene_AddObject(key, lightmaps[i].lightmapDir);
+            }
+        }
     }
 
     /// <summary>
@@ -152,8 +170,18 @@ public class HDMemoryProfiler : MemoryProfiler
         {
             go = PoolManager.instance.gameObject;            
             Scene_AddGO(key, go);
-        }        
+        }
 
+
+        // Lightmaps have to be added manually since there's no references in any game object
+        if (calculateKey)
+        {
+            // They are assigned to the art level category
+            key = CATEGORY_SET_KEY_LEVEL_ART;
+        }
+        Scene_AddLightmaps(key);
+
+        // Takes the sample
         AbstractMemorySample sample;
         if (categorySetName != null)
         {
