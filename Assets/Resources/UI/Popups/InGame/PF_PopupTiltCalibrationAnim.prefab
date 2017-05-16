@@ -70,8 +70,10 @@ GameObject:
   m_Component:
   - component: {fileID: 224150901860323898}
   - component: {fileID: 95317902210728334}
+  - component: {fileID: 114184267300191468}
+  - component: {fileID: 114812860710330512}
   m_Layer: 5
-  m_Name: PF_TiltControl_Anim
+  m_Name: PF_PopupTiltCalibrationAnim
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -87,6 +89,7 @@ GameObject:
   - component: {fileID: 224494102842366124}
   - component: {fileID: 222382793533612562}
   - component: {fileID: 114628150314402590}
+  - component: {fileID: 114752351538991116}
   m_Layer: 5
   m_Name: Target_animated
   m_TagString: Untagged
@@ -111,6 +114,25 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114184267300191468
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1392950148690272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da9c21f95a8fc4c9590100f07fc45aad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetObj: {fileID: 1891900783749228}
+  m_finalAnchor: {fileID: 224950715788103164}
+  m_totalDuration: 1.5
+  m_actionRadius: 1000
+  m_iterations:
+    min: 4
+    max: 8
+  m_radiusEase: 8
 --- !u!114 &114628150314402590
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -138,6 +160,65 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114752351538991116
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1891900783749228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorMultiply: {r: 1, g: 1, b: 1, a: 1}
+  colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  alpha: 1
+  brightness: 0
+  saturation: 0
+  contrast: 0
+--- !u!114 &114812860710330512
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1392950148690272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1820e9a192608428285af78b89d1fef0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnOpenPreAnimation:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114184267300191468}
+        m_MethodName: OnOpenPreAnimation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  OnOpenPostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  OnClosePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  OnClosePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!114 &114942491994376478
 MonoBehaviour:
   m_ObjectHideFlags: 1

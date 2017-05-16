@@ -60,7 +60,10 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	public const string TILT_CONTROL_SENSITIVITY = "GAME_SETTINGS_TILT_CONTROL_SENSITIVITY";	// float [0..1], default 0.5f
 	public static float tiltControlSensitivity {
 		get { return Prefs.GetFloatPlayer(TILT_CONTROL_SENSITIVITY, 0.5f); }
-		set { Prefs.SetFloatPlayer(TILT_CONTROL_SENSITIVITY, value); }
+		set {
+			Prefs.SetFloatPlayer(TILT_CONTROL_SENSITIVITY, value);
+			Messenger.Broadcast<float>(GameEvents.TILT_CONTROL_SENSITIVITY_CHANGED, value);
+		}
 	}
 
 	//------------------------------------------------------------------//
