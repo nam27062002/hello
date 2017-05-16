@@ -746,7 +746,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &1886268720958110
 GameObject:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
@@ -754,6 +754,7 @@ GameObject:
   - component: {fileID: 4643293085601780}
   - component: {fileID: 198665252229283634}
   - component: {fileID: 199266833105258014}
+  - component: {fileID: 114681485685476550}
   m_Layer: 0
   m_Name: PS_DustGroundL
   m_TagString: Untagged
@@ -825,7 +826,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &1961672898676810
 GameObject:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
@@ -833,6 +834,7 @@ GameObject:
   - component: {fileID: 4376710976028538}
   - component: {fileID: 198141647715471566}
   - component: {fileID: 199322458756847432}
+  - component: {fileID: 114305694959090704}
   m_Layer: 0
   m_Name: PS_DustGroundR
   m_TagString: Untagged
@@ -1224,12 +1226,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1961672898676810}
-  m_LocalRotation: {x: -0.21794125, y: -0.65968597, z: -0.68718535, w: -0.21234952}
-  m_LocalPosition: {x: -0.534, y: -0.749, z: -0.032}
-  m_LocalScale: {x: 1, y: 1.0000116, z: 1}
+  m_LocalRotation: {x: -0.5, y: -0.5, z: -0.50000006, w: 0.5}
+  m_LocalPosition: {x: 1.1548004, y: -1.0475521, z: -0.5018222}
+  m_LocalScale: {x: 1.2999953, y: 1.3000187, z: 1.2999996}
   m_Children: []
-  m_Father: {fileID: 4990085146792596}
-  m_RootOrder: 0
+  m_Father: {fileID: 4889497157332238}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4405437057529310
 Transform:
@@ -1403,12 +1405,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1886268720958110}
-  m_LocalRotation: {x: -0.2123198, y: -0.6871331, z: -0.65969574, w: -0.21810548}
-  m_LocalPosition: {x: -0.33, y: -0.89, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.50000006, y: -0.49999997, z: -0.50000006, w: 0.50000006}
+  m_LocalPosition: {x: -1.202652, y: -1.0417538, z: -0.8229378}
+  m_LocalScale: {x: 1.2999977, y: 1.3000125, z: 1.2999941}
   m_Children: []
-  m_Father: {fileID: 4863160870820118}
-  m_RootOrder: 0
+  m_Father: {fileID: 4889497157332238}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4668033124170770
 Transform:
@@ -1461,7 +1463,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4889497157332238}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4786410787579920
 Transform:
@@ -1482,7 +1484,7 @@ Transform:
   - {fileID: 4123537405202554}
   - {fileID: 4880726547240966}
   m_Father: {fileID: 4889497157332238}
-  m_RootOrder: 4
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4790515949588382
 Transform:
@@ -1533,8 +1535,7 @@ Transform:
   m_LocalRotation: {x: 0.019323165, y: 0.02032227, z: -0.60971636, w: 0.79212356}
   m_LocalPosition: {x: -1.245155, y: 0, z: 0}
   m_LocalScale: {x: 1.0000017, y: 0.99999845, z: 1.0000004}
-  m_Children:
-  - {fileID: 4643293085601780}
+  m_Children: []
   m_Father: {fileID: 4264444369872202}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -1.4068221, y: -14.675948, z: -67.928986}
@@ -1558,11 +1559,13 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1280568003522936}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -549.03986, y: -96.34793, z: 0}
+  m_LocalPosition: {x: 89.43624, y: 16.146751, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4011093325883150}
   - {fileID: 4493977897749866}
+  - {fileID: 4643293085601780}
+  - {fileID: 4376710976028538}
   - {fileID: 4773829145496330}
   - {fileID: 4968746494951878}
   - {fileID: 4786410787579920}
@@ -1624,7 +1627,7 @@ Transform:
   m_Children:
   - {fileID: 4074008975762130}
   m_Father: {fileID: 4889497157332238}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4979956389039118
 Transform:
@@ -1665,8 +1668,7 @@ Transform:
   m_LocalRotation: {x: -0.019278655, y: -0.020141572, z: -0.6099934, w: 0.79191583}
   m_LocalPosition: {x: -1.2451549, y: 0.000000076293944, z: 0.000000076293944}
   m_LocalScale: {x: 1.0000364, y: 0.9999637, z: 1.0000001}
-  m_Children:
-  - {fileID: 4376710976028538}
+  m_Children: []
   m_Father: {fileID: 4428881494917142}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 1.8082588, y: -2.1587377, z: -98.484505}
@@ -1786,6 +1788,20 @@ MonoBehaviour:
   m_parentName: Troll_L_Calf
   m_parentRoot: {fileID: 4011093325883150}
   m_worldPositionStays: 1
+--- !u!114 &114305694959090704
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1961672898676810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Troll_R_Foot
+  m_parentRoot: {fileID: 4011093325883150}
+  m_worldPositionStays: 1
 --- !u!114 &114434468782048086
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1873,7 +1889,9 @@ MonoBehaviour:
     m_ashesAsset: 
     m_burningTime: 2
     m_dissolveTime: 1.5
-    m_ashExceptions: []
+    m_ashExceptions:
+    - {fileID: 199266833105258014}
+    - {fileID: 199322458756847432}
   m_onSpawnSound: 
   m_groundMotion:
     m_mass: 1
@@ -1907,6 +1925,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Troll_Spine2
+  m_parentRoot: {fileID: 4011093325883150}
+  m_worldPositionStays: 1
+--- !u!114 &114681485685476550
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1886268720958110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Troll_L_Foot
   m_parentRoot: {fileID: 4011093325883150}
   m_worldPositionStays: 1
 --- !u!114 &114707265918811848
@@ -2293,7 +2325,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -18672257
+  randomSeed: -801549765
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -4762,7 +4794,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 807658128
+  randomSeed: 327557697
   InitialModule:
     serializedVersion: 3
     enabled: 1
