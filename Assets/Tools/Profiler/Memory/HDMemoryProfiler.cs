@@ -33,7 +33,9 @@ public class HDMemoryProfiler : MemoryProfiler
         for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
         {
             var s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
-            if (s.isLoaded /*&& s.name == "SC_Game"*/)
+            if (s.isLoaded                 
+                /*&& s.name == "SC_Game"*/
+                )
             {
                 var allGameObjects = s.GetRootGameObjects();
                 for (int j = 0; j < allGameObjects.Length; j++)
@@ -44,13 +46,31 @@ public class HDMemoryProfiler : MemoryProfiler
             }
         }
 
+        // Searches for singletons
         GameObject singletons = GameObject.Find("Singletons");
         if (singletons != null)
         {
             Scene_AddGO(key, singletons);
         }
 
+        // Lightmaps are added manually
+        Scene_AddLightmaps(key);        
+
         return base.Scene_TakeASample(reuseAnalysis);        
+    }
+
+    private void Scene_AddLightmaps(string key)
+    {        
+        LightmapData[] lightmaps = LightmapSettings.lightmaps;
+        if (lightmaps != null)
+        {
+            int count = lightmaps.Length;
+            for (int i = 0; i < count; i++)
+            {
+                Scene_AddObject(key, lightmaps[i].lightmapLight);
+                Scene_AddObject(key, lightmaps[i].lightmapDir);
+            }
+        }
     }
 
     /// <summary>
@@ -135,25 +155,57 @@ public class HDMemoryProfiler : MemoryProfiler
                     }
                 }
             }
-        }
+        }       
 
+        // Singletons
+        GameObject singletons = GameObject.Find("Singletons");
+        if (singletons != null)
+        {
+            if (calculateKey)
+            {
+                // Most particles are used by npcs so they are assigned to LEVEL NPCS category
+                GameObject particleManagerGO = (ParticleManager.instance == null) ? null : ParticleManager.instance.gameObject;
+                if (particleManagerGO != null)
+                {
+                    Scene_AddGO(CATEGORY_SET_KEY_LEVEL_NPCS, particleManagerGO);
+                }                
+
+                // Most game objects in pool manager are npcs so they are assigned to LEVEL NPCS category
+                GameObject poolManagerGO = (PoolManager.instance == null) ? null : PoolManager.instance.gameObject;
+                if (poolManagerGO != null)
+                {
+                    Scene_AddGO(CATEGORY_SET_KEY_LEVEL_NPCS, poolManagerGO);
+                }
+
+                // Loops through the children of the singletons parent because they need to be assigned to different keys
+                Transform t = singletons.transform;
+                int count = t.childCount;                
+                for (int i = 0; i < count; i++)
+                {
+                    go = t.GetChild(i).gameObject;
+                    if (go != particleManagerGO && go != poolManagerGO)
+                    {
+                        Scene_AddGO(CATEGORY_SET_GAME_KEY_HUD, go);
+                    }
+                }
+            }
+            else
+            {
+                // We loop through them because 
+                Scene_AddGO(key, singletons);
+            }            
+        }       
+
+
+        // Lightmaps have to be added manually since there's no references in any game object
         if (calculateKey)
         {
-            key = CATEGORY_SET_KEY_LEVEL_NPCS;
+            // They are assigned to the art level category
+            key = CATEGORY_SET_KEY_LEVEL_ART;
         }
+        Scene_AddLightmaps(key);
 
-        if (ParticleManager.instance != null)
-        {
-            go = ParticleManager.instance.gameObject;            
-            Scene_AddGO(key, go);
-        }
-
-        if (PoolManager.instance != null)
-        {
-            go = PoolManager.instance.gameObject;            
-            Scene_AddGO(key, go);
-        }        
-
+        // Takes the sample
         AbstractMemorySample sample;
         if (categorySetName != null)
         {
