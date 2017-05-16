@@ -86,7 +86,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 								m_waitTimer = 0.5f;
 								// Check Min Speed
 
-								if (m_currentHits > 0) {
+								if (m_currentHits.count > 0) {
 									m_currentHits.count--;
 									if (m_currentHits.count <= 0) {
 										Break();
