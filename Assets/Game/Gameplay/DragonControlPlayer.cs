@@ -42,7 +42,7 @@ public class DragonControlPlayer : MonoBehaviour {
 				m_followingSpline = go.GetComponent<Assets.Code.Game.Spline.BezierSpline>();
 			}
         }
-        m_useTiltControl = ApplicationManager.instance.Settings_GetTiltControl();
+        m_useTiltControl = GameSettings.tiltControlEnabled;
         SetupInputs();
 		Messenger.AddListener<bool>(GameEvents.TILT_CONTROL_TOGGLE, OnTiltToggled);
 	}
