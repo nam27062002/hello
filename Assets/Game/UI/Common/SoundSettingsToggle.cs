@@ -46,13 +46,13 @@ public class SoundSettingsToggle : MonoBehaviour {
 	/// Update slider's values from settings.
 	/// </summary>
 	private void Refresh() {
-		if(ApplicationManager.instance.Settings_GetSound()) {
+		if(GameSettings.soundEnabled) {
 			m_soundSlider.value = m_soundSlider.maxValue;
 		} else {
 			m_soundSlider.value = m_soundSlider.minValue;
 		}
 
-		if(ApplicationManager.instance.Settings_GetMusic()) {
+		if(GameSettings.musicEnabled) {
 			m_musicSlider.value = m_musicSlider.maxValue;
 		} else {
 			m_musicSlider.value = m_musicSlider.minValue;
@@ -67,13 +67,9 @@ public class SoundSettingsToggle : MonoBehaviour {
 	/// </summary>
 	public void OnSoundToggleChanged() {
 		bool viewIsEnabled = m_soundSlider.value == m_soundSlider.maxValue;
-		bool isEnabled = ApplicationManager.instance.Settings_GetSound();
+		bool isEnabled = GameSettings.soundEnabled;
 		if(isEnabled != viewIsEnabled) {
-			ApplicationManager.instance.Settings_ToggleSoundIsEnabled();
-			if(isEnabled) {
-				// AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
-			}
-
+			GameSettings.soundEnabled = viewIsEnabled;
 			Refresh();
 		}
 	}
@@ -83,13 +79,9 @@ public class SoundSettingsToggle : MonoBehaviour {
 	/// </summary>
 	public void OnMusicToggleChanged() {
 		bool viewIsEnabled = m_musicSlider.value == m_musicSlider.maxValue;
-		bool isEnabled = ApplicationManager.instance.Settings_GetMusic();
+		bool isEnabled = GameSettings.musicEnabled;
 		if(isEnabled != viewIsEnabled) {
-			ApplicationManager.instance.Settings_ToggleMusicIsEnabled();
-			if(isEnabled) {
-				// AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
-			}
-
+			GameSettings.musicEnabled = viewIsEnabled;
 			Refresh();
 		}
 	}

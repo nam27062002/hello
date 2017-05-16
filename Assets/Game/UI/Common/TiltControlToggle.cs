@@ -26,6 +26,7 @@ public class TiltControlToggle : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed members
 	[SerializeField] private Slider m_tiltControlSlider = null;
+	[SerializeField] private Button m_calibrateButton = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -45,10 +46,19 @@ public class TiltControlToggle : MonoBehaviour {
 	/// Update slider's values from settings.
 	/// </summary>
 	private void Refresh() {
-		if(ApplicationManager.instance.Settings_GetTiltControl()) {
+		// Aux vars
+		bool isEnabled = GameSettings.tiltControlEnabled;
+
+		// Set toggle
+		if(isEnabled) {
 			m_tiltControlSlider.value = m_tiltControlSlider.maxValue;
 		} else {
 			m_tiltControlSlider.value = m_tiltControlSlider.minValue;
+		}
+
+		// Calibrate button
+		if(m_calibrateButton != null) {
+			m_calibrateButton.interactable = isEnabled;
 		}
 	}
 
@@ -60,10 +70,18 @@ public class TiltControlToggle : MonoBehaviour {
 	/// </summary>
 	public void OnTiltControlToggleChanged() {
 		bool viewIsEnabled = m_tiltControlSlider.value == m_tiltControlSlider.maxValue;
-		bool isEnabled = ApplicationManager.instance.Settings_GetTiltControl();
+		bool isEnabled = GameSettings.tiltControlEnabled;
 		if(isEnabled != viewIsEnabled) {
-			ApplicationManager.instance.Settings_ToggleTiltControl();
+			GameSettings.tiltControlEnabled = viewIsEnabled;
 			Refresh();
 		}
+	}
+
+	/// <summary>
+	/// The calibrate button has been pressed.
+	/// </summary>
+	public void OnCalibrateButton() {
+		// Open the calibration popup
+		PopupManager.OpenPopupInstant(PopupTiltControl.PATH);
 	}
 }
