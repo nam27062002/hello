@@ -74,9 +74,9 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 
 	private void OnCollisionEnter(Collision collision) {
 		if (!m_broken) {
-			if (collision.transform.CompareTag("Player")) {
+			if (collision.transform.CompareTag("Player")) {				
 				if (m_currentHits.needBoost) {
-					if (m_waitTimer <= 0) {
+					if (m_waitTimer <= 0) {						
 						GameObject go = collision.transform.gameObject;
 						DragonBoostBehaviour boost = go.GetComponent<DragonBoostBehaviour>();	
 						bool playCollideSound = true;
@@ -85,11 +85,15 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 							if (dragonMotion.howFast >= 0.85f) {
 								m_waitTimer = 0.5f;
 								// Check Min Speed
-								m_currentHits.count--;
-								if (m_currentHits.count <= 0)
-								{
-									Break();
-									playCollideSound = false;
+
+								if (m_currentHits > 0) {
+									m_currentHits.count--;
+									if (m_currentHits.count <= 0) {
+										Break();
+										playCollideSound = false;
+									}
+								} else {
+									Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, "");
 								}
 							}
 						}
