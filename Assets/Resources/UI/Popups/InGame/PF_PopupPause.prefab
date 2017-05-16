@@ -2913,7 +2913,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224793852569681388}
   - component: {fileID: 114978948794474592}
-  - component: {fileID: 114846198869132040}
   m_Layer: 5
   m_Name: Options
   m_TagString: Untagged
@@ -5352,6 +5351,17 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 114146588413682166}
         m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 114308279202557564}
+        m_MethodName: OnCalibrateButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8174,6 +8184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tiltControlSlider: {fileID: 114662817421467068}
+  m_calibrateButton: {fileID: 114081941532285156}
 --- !u!114 &114310623427715620
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14572,17 +14583,6 @@ MonoBehaviour:
   m_Color: {r: 1, g: 0, b: 0, a: 0.528}
   m_RaycastTarget: 1
   m_gizmoOnlyWhenSelected: 1
---- !u!114 &114846198869132040
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1738079833645188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114846465621062120
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14898,7 +14898,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: TID_PAUSE_TAB_OPTIONS_END_GAME
+  m_tid: TID_BTN_CALIBRATE
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114888456793834248
@@ -18531,8 +18531,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -14, y: -149}
-  m_SizeDelta: {x: 328, y: 140}
+  m_AnchoredPosition: {x: 0, y: -140}
+  m_SizeDelta: {x: 390, y: 140}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224246786916078576
 RectTransform:
@@ -19581,7 +19581,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.00000047683716, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 60}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224465063544404724
@@ -19622,7 +19622,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -0.0000047683716, y: -70}
+  m_AnchoredPosition: {x: 0, y: -70}
   m_SizeDelta: {x: 280, y: 70}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224468657060954242

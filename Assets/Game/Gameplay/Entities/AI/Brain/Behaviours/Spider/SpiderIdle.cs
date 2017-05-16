@@ -126,8 +126,16 @@ namespace AI {
 
 					case IdleState.Normal:
 						m_target = m_startPosition;
-						m_pilot.SetMoveSpeed(0f, false);
-						m_pilot.SetDirection(new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-0.5f, -1f)), true);
+						m_pilot.Stop();
+
+						float side = 1f;
+						if (Random.Range(0f, 1f) > 0.5f) {
+							side = -1f;
+						}
+
+						Quaternion rotation = Quaternion.AngleAxis(side * Random.Range(90f, 180f), m_machine.upVector);
+						Vector3 forward = Vector3.Cross(m_machine.upVector, Vector3.right);
+						m_pilot.SetDirection(rotation * forward, true);
 						break;
 				}
 

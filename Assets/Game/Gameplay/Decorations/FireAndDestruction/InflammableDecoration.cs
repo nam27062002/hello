@@ -77,35 +77,14 @@ public class InflammableDecoration : Initializable {
 	/// </summary>
 	private void OnLevelLoaded() {		
 		m_entity = GetComponent<Decoration>();
+		m_collider = GetComponent<BoxCollider>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_operatorSpawner = GetComponent<DeviceOperatorSpawner>();
-		m_viewBurned = transform.FindChild("view_burned").gameObject;
-		m_collider = GetComponent<BoxCollider>();
-
-		/*
-		m_zoneManager = GameObjectExt.FindComponent<ZoneManager>(true);
-		if (m_zoneManager != null)
-			m_zoneEffect = m_zoneManager.GetFireEffectCode(m_entity, InstanceManager.player.data.tier);
-		else{
-			m_zoneEffect = ZoneManager.ZoneEffect.None;
-			Debug.LogWarning("No Zone Manager");
-		}
-		*/
-
-		/*
-		if (m_zoneEffect == ZoneManager.ZoneEffect.None) {
-			if (m_collider) Destroy(m_collider);
-			for (int i = 0; i < m_fireNodes.Length; i++) {
-				Destroy(m_fireNodes[i].gameObject);
-			}
-			if (m_viewBurned) Destroy(m_viewBurned);
-			Destroy(m_autoSpawner);
-			Destroy(m_entity);
-			Destroy(this);
-		} else {
-		*/
 		m_destructibleBehaviour = GetComponent<DestructibleDecoration>();
+
 		m_view = transform.FindChild("view").gameObject;
+		m_viewBurned = transform.FindChild("view_burned").gameObject;
+
 		m_burned = false;
 		m_isBurning = false;
 
@@ -120,7 +99,6 @@ public class InflammableDecoration : Initializable {
 		}
 		m_ashMaterial = new Material(Resources.Load("Game/Materials/RedBurnToAshes") as Material);
 		m_ashMaterial.renderQueue = 3000;// Force transparent
-		// }
 	}
 
 	public override void Initialize() {
@@ -209,9 +187,8 @@ public class InflammableDecoration : Initializable {
 				m_viewBurned.SetActive(true);
 				if (m_collider) m_collider.enabled = false;
 
-				// [AOC] Notify game!
-				Reward reward = new Reward();	// [AOC] TODO!! Should decorations have a reward?
-				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, reward);
+				// [AOC] Notify game!				
+				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, m_entity.reward);
 			} else {
 				if (m_isBurning) {
 					if (m_destructibleBehaviour != null) {

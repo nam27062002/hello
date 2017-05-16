@@ -83,36 +83,90 @@ public class MemoryProfiler
 
     private const string SCENE_SAMPLE_NAME = "Scene";
 
-    protected Dictionary<string, List<GameObject>> Scene_GOs { get; set; }
+    protected class SceneData
+    {
+        public List<GameObject> GOs { get; set; }
+        public List<Object> Objects { get; set; }
+
+        public void AddObject(Object o)
+        {
+            if (o is GameObject)
+            {
+                AddGO(o as GameObject);
+            }
+            else
+            {
+                if (Objects == null)
+                {
+                    Objects = new List<Object>();
+                }
+
+                if (!Objects.Contains(o))
+                {
+                    Objects.Add(o);
+                }
+            }
+        }
+
+        public void AddGO(GameObject go)
+        {
+            if (GOs == null)
+            {
+                GOs = new List<GameObject>();
+            }
+
+            if (!GOs.Contains(go))
+            {
+                GOs.Add(go);
+            }
+        }        
+    }
+    
+    protected Dictionary<string, SceneData> Scene_Data { get; set; }
 
     private void Scene_Clear()
-    {       
-        if (Scene_GOs != null)
+    {        
+        if (Scene_Data != null)
         {
-            Scene_GOs.Clear();
-        }
+            Scene_Data.Clear();
+        }       
     }
 
     public void Scene_AddGO(string key, GameObject go)
     {
         if (go != null)
         {
-            if (Scene_GOs == null)
+            if (Scene_Data == null)
             {
-                Scene_GOs = new Dictionary<string, List<GameObject>>();
+                Scene_Data = new Dictionary<string, SceneData>();
             }
 
-            if (!Scene_GOs.ContainsKey(key))
+            if (!Scene_Data.ContainsKey(key))
             {
-                Scene_GOs.Add(key, new List<GameObject>());
+                Scene_Data.Add(key, new SceneData());
             }
 
-            if (!Scene_GOs[key].Contains(go))
-            {
-                Scene_GOs[key].Add(go);
-            }
+            Scene_Data[key].AddGO(go);            
         }
-    }   
+    }
+
+    public void Scene_AddObject(string key, Object o)
+    {
+        if (o != null)
+        {
+            if (Scene_Data == null)
+            {
+                Scene_Data = new Dictionary<string, SceneData>();
+            }
+
+            if (!Scene_Data.ContainsKey(key))
+            {
+                Scene_Data.Add(key, new SceneData());
+            }
+
+            Scene_Data[key].AddObject(o);
+        }
+    }
 
     /// <summary>
     /// Takes a single sample with all Objects in the scene 
@@ -132,45 +186,64 @@ public class MemoryProfiler
         }
 
         MemorySample returnValue = new MemorySample(SCENE_SAMPLE_NAME, SizeStrategy);
+        
+        if (Scene_Data != null)
+        {            
+            foreach (KeyValuePair<string, SceneData> pair in Scene_Data)
+            {
+                Scene_AnalyzeSceneData(returnValue, pair.Value, reuseAnalysis);                
+            }
+        }       
 
-        if (Scene_GOs != null)
+        returnValue.Analyze();
+
+        return returnValue;
+    }
+
+    private void Scene_AnalyzeSceneData(MemorySample sample, SceneData sceneData, bool reuseAnalysis)
+    {
+        if (sceneData != null)
         {
-            int count;            
-            List<Object> dependencies = new List<Object>();
-            foreach (KeyValuePair<string, List<GameObject>> pair in Scene_GOs)
-            {                
-                count = pair.Value.Count;
+            if (sceneData.GOs != null)
+            {
+                List<Object> dependencies;
+                int count = sceneData.GOs.Count;
                 for (int i = 0; i < count; i++)
                 {
                     dependencies = null;
 
                     if (reuseAnalysis)
                     {
-                        dependencies = GO_GetAnalysis(pair.Value[i]);
+                        dependencies = GO_GetAnalysis(sceneData.GOs[i]);
                     }
 
                     if (dependencies == null)
                     {
                         dependencies = new List<Object>();
-                        GO_AnalyzeGO(pair.Value[i], ref dependencies);
-                        GO_AddAnalysis(pair.Value[i], dependencies);
-                    }                    
+                        GO_AnalyzeGO(sceneData.GOs[i], ref dependencies);
+                        GO_AddAnalysis(sceneData.GOs[i], dependencies);
+                    }
 
                     if (dependencies != null)
                     {
                         int jCount = dependencies.Count;
                         for (int j = 0; j < jCount; j++)
                         {
-                            returnValue.AddObject(dependencies[j]);
-                        }                        
+                            sample.AddObject(dependencies[j]);
+                        }
                     }
                 }
-            }            
+            }
 
-            returnValue.Analyze();
+            if (sceneData.Objects != null)
+            {
+                int count = sceneData.Objects.Count;
+                for (int j = 0; j < count; j++)
+                {
+                    sample.AddObject(sceneData.Objects[j]);
+                }
+            }
         }
-
-        return returnValue;
     }
 
     public virtual AbstractMemorySample Scene_TakeAGameSample(bool reuseAnalysis)
@@ -197,45 +270,18 @@ public class MemoryProfiler
 
         MemorySampleCollection returnValue = new MemorySampleCollection(SCENE_SAMPLE_NAME, SizeStrategy);
 
-        if (Scene_GOs != null)
-        {
-            int count;
-            MemorySample sample;
-            List<Object> dependencies;
-            foreach (KeyValuePair<string, List<GameObject>> pair in Scene_GOs)
+        MemorySample sample;
+
+        if (Scene_Data != null)
+        {            
+            foreach (KeyValuePair<string, SceneData> pair in Scene_Data)
             {                
                 sample = new MemorySample(pair.Key, SizeStrategy);
                 returnValue.AddSample(pair.Key, sample);
-                count = pair.Value.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    dependencies = null;
-
-                    if (reuseAnalysis)
-                    {
-                        dependencies = GO_GetAnalysis(pair.Value[i]);
-                    }
-
-                    if (dependencies == null)
-                    {
-                        dependencies = new List<Object>();
-                        GO_AnalyzeGO(pair.Value[i], ref dependencies);
-                        GO_AddAnalysis(pair.Value[i], dependencies);
-                    }
-
-                    if (dependencies != null)
-                    {
-                        int jCount = dependencies.Count;
-                        for (int j = 0; j < jCount; j++)
-                        {
-                            sample.AddObject(dependencies[j]);
-                        }                        
-                    }                   
-                }               
-
+                Scene_AnalyzeSceneData(sample, pair.Value, reuseAnalysis);
                 sample.Analyze();
             }
-        }
+        }                
 
         return returnValue;
     }
@@ -308,7 +354,11 @@ public class MemoryProfiler
         {
             list.Add(o);           
 
-            if (o is Animator)
+            if (o is AnimatorOverrideController)
+            {                
+                GO_AddAnimatorOverrideController((o as AnimatorOverrideController), ref list);
+            }
+            else if (o is Animator)
             {
                 GO_AddAnimator(o as Animator, ref list);
             }
@@ -529,14 +579,31 @@ public class MemoryProfiler
     {                
         if (animator.runtimeAnimatorController != null)
         {
-            foreach (AnimationClip anim in animator.runtimeAnimatorController.animationClips)
-            {
-                GO_AddElement(anim, ref list, true);
-            }
+            GO_AddAnimationClips(animator.runtimeAnimatorController.animationClips, ref list);
         }                
     }
 
-	private Dictionary<GameObject, List<Object>> GO_Analysis { get; set; }
+    private void GO_AddAnimatorOverrideController(AnimatorOverrideController animator, ref List<Object> list)
+    {
+        if (animator.runtimeAnimatorController != null)
+        {
+            GO_AddAnimationClips(animator.runtimeAnimatorController.animationClips, ref list);            
+        }
+    }
+
+    private void GO_AddAnimationClips(AnimationClip[] animations, ref List<Object> list)
+    {
+        if (animations != null)
+        {
+            int count = animations.Length;
+            for (int i = 0; i < count; i++)            
+            {
+                GO_AddElement(animations[i], ref list, true);
+            }
+        }
+    }
+
+    private Dictionary<GameObject, List<Object>> GO_Analysis { get; set; }
 
 	private void GO_AddAnalysis(GameObject go, List<Object> dependencies)
 	{

@@ -21,7 +21,7 @@ namespace AI {
 			base.Spawn(_spawner);
 		}
 
-		public bool ReduceDurability(bool _boost) {
+		public bool ReduceDurability(bool _boost) {			
 			if (m_armorDurability.count > 0) {
 				if (!m_armorDurability.needBoost || _boost) {
 					ReceiveHit();
@@ -31,6 +31,9 @@ namespace AI {
 					}
 					return true;
 				}
+			} else {
+				// player can't destroy the armor
+				Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, m_entity.sku);
 			}
 
 			return false;

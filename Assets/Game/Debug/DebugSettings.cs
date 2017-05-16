@@ -107,6 +107,18 @@ public static class DebugSettings {
 		set { m_ignoreSpawnTime = value;}
 	}
 
+	static bool m_spawnChance0 = false;
+	public static bool spawnChance0{
+		get { return m_spawnChance0; }
+		set { m_spawnChance0 = value;}
+	}
+
+	static bool m_spawnChance100 = false;
+	public static bool spawnChance100{
+		get { return m_spawnChance100; }
+		set { m_spawnChance100 = value;}
+	}
+
 
     //------------------------------------------------------------------//
     // METHODS															//
