@@ -26,6 +26,7 @@ namespace PopupEditor {
 		//------------------------------------------------------------------//
 		// MEMBERS AND PROPERTIES											//
 		//------------------------------------------------------------------//
+		[FileList("Resources/UI/Popups", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 		[Comment("This script if for testing purposes, use <color=lightblue><b>PopupLauncher</b></color> instead!")]
 		public string m_popupPath = "";
 		public PopupController m_popup = null;

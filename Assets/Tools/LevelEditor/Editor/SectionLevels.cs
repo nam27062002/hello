@@ -492,17 +492,23 @@ namespace LevelEditor {
 			List<string> editorOnlyScenes = def.GetAsList<string>("levelEditor");
 			for( int i = 0; i<editorOnlyScenes.Count; i++ )
 			{
-				EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading level editor scenes: " + editorOnlyScenes[i] + "...", (float)i/(float)editorOnlyScenes.Count);
-				LevelEditor.settings.selectedMode = GetModeByName( editorOnlyScenes[i]);
-				OnLoadLevel( editorOnlyScenes[i] + ".unity" );
+				if ( !string.IsNullOrEmpty(editorOnlyScenes[i]) )
+				{
+					EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading level editor scenes: " + editorOnlyScenes[i] + "...", (float)i/(float)editorOnlyScenes.Count);
+					LevelEditor.settings.selectedMode = GetModeByName( editorOnlyScenes[i]);
+					OnLoadLevel( editorOnlyScenes[i] + ".unity" );
+				}
 			}
 
 			List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
 			for( int i = 0; i<gameplayWip.Count; i++ )
 			{
-				EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading WIP scenes: " + gameplayWip[i] + "...", (float)i/(float)gameplayWip.Count);
-				LevelEditor.settings.selectedMode = GetModeByName( gameplayWip[i]);
-				OnLoadLevel( gameplayWip[i] + ".unity" );
+				if ( !string.IsNullOrEmpty( gameplayWip[i] ))
+				{
+					EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading WIP scenes: " + gameplayWip[i] + "...", (float)i/(float)gameplayWip.Count);
+					LevelEditor.settings.selectedMode = GetModeByName( gameplayWip[i]);
+					OnLoadLevel( gameplayWip[i] + ".unity" );
+				}
 			}
 
 			List<string> areaScenes = new List<string>();
