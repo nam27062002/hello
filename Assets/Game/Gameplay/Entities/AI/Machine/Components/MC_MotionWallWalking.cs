@@ -68,6 +68,7 @@ namespace AI {
 			FindUpVector();
 
 			if (!m_onGround) {
+				m_upVector = Vector3.up;
 				FreeFall();
 			}
 
