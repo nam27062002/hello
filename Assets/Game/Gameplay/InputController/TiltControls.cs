@@ -1,20 +1,21 @@
-﻿using UnityEngine;
+﻿	using UnityEngine;
 using System.Collections;
 
 
 public class TiltControls : MonoBehaviour
 {
 	// default settings
-	private float       m_defaultTiltSensitivity = 0.5f;
-	private float       m_tiltSensitivityScaleMin = 8.0f;
-    private float       m_tiltSensitivityScaleMax = 16.0f;
-	private float       m_dodgyCalibratePosition = 0.475f;
-	private float       m_tiltFilter = 0.1f;
+	[SerializeField] private float       m_defaultTiltSensitivity = 0.5f;
+	[SerializeField] private float       m_tiltSensitivityScaleMin = 5.0f;
+	[SerializeField] private float       m_tiltSensitivityScaleMax = 100.0f;
+	[SerializeField] private float       m_dodgyCalibratePosition = 0.475f;
+	[SerializeField] private float       m_tiltFilter = 0.1f;
 
 	// vars
 	private bool		m_isDodgyCalibratePosition;	// set if device is tilted to a position where it is illegal to calibrate
-	private float		m_tiltSensitivity;			// 0 = min, 1.0 = max
-
+	private float		m_tiltSensitivity = 0.5f;	// 0 = min, 1.0 = max
+	private float		m_tiltX;					// -1 means steering hard left, 0 is centre, +1 is hard right
+	private float		m_tiltY;					// -1 means pitching up to maximum level, +1 is pitching max down
 
 	private Matrix4x4	m_tiltRaw;					// the tilt orientation as read from the device
 	private Matrix4x4	m_tiltCalibrated;			// the position that we calibrated at
@@ -25,11 +26,45 @@ public class TiltControls : MonoBehaviour
 	private float		m_lastAccY = 0.0f;
 	private float		m_lastAccZ = -1.0f;
 
+	private bool			m_screenFlipped = false;	// set if device has been tilted upside down (by default uses landscape left)
+	private bool			m_orientationLocked = false;
+
 	public bool m_touchAction = false;
 	protected Vector2 m_diffVecNorm = Vector3.zero;
 	protected Vector2 m_sharkDesiredVel = Vector2.zero;
+
+	// [AOC] Debug UI
+	[Space]
+	[SerializeField] private GameObject m_debugUI = null;
+	[SerializeField] private Transform m_debugClampedLine = null;
+	[SerializeField] private Transform m_debugUnclampedLine = null;
+
 	public Vector2 SharkDesiredVel { get { return m_sharkDesiredVel; } }
 
+	/// <summary>
+	/// Awake this instance.
+	/// </summary>
+	private void Awake() {
+		// [AOC] Debug UI
+		if(m_debugUI != null) {
+			m_debugUI.SetActive(Prefs.GetBoolPlayer(DebugSettings.TILT_CONTROL_DEBUG_UI, false));
+		}
+
+		// Subscribe to external events
+		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnControlPanelBoolChanged);
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	private void OnDestroy() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnControlPanelBoolChanged);
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
 	virtual public void Start () {
 		m_tiltSensitivity 		= m_defaultTiltSensitivity;
 
@@ -41,27 +76,41 @@ public class TiltControls : MonoBehaviour
 		Calibrate();
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	void OnEnable() {
 		Calibrate();
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public void UpdateTiltControls()
 	{
 		OnUpdate();
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public void CalcSharkDesiredVelocity(float speed)
 	{
 		m_sharkDesiredVel.x = m_diffVecNorm.x * speed;
 		m_sharkDesiredVel.y = m_diffVecNorm.y * speed;
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public bool getAction()
 	{
 		return m_touchAction;
 	}
 
-
+	/// <summary>
+	/// 
+	/// </summary>
 	public void OnUpdate()
 	{
 		// get current tilt values, corrected for calibration
@@ -77,37 +126,57 @@ public class TiltControls : MonoBehaviour
 		float delta1 = Mathf.Atan2(-vz, vy);
 		delta0 = Util.FixAnglePlusMinusRadians(delta0);
 		delta1 = Util.FixAnglePlusMinusRadians(delta1);
+
 		// convert these angles into +/-1 range, where -1 means -90 degrees and +1 means +90 degrees
-		float tx = delta0 / Mathf.PI;
-		float ty = delta1 / Mathf.PI;
+		m_tiltX = delta0 / Mathf.PI;
+		m_tiltY = delta1 / Mathf.PI;
 
 		// apply a bit of a deadzone to filter out noisy inputs when we're trying to keep the device still
-		float dzLen = Mathf.Sqrt(tx*tx + ty*ty);
+		float dzLen = Mathf.Sqrt(m_tiltX*m_tiltX + m_tiltY*m_tiltY);
 		float deadZone = 0.01f;
-		// scale
-		if(dzLen<deadZone)
-		{
+		if(dzLen<deadZone) {
+			// scale
 			float s = dzLen/deadZone;
-			tx *= s;
-			ty *= s;
+			m_tiltX *= s;
+			m_tiltY *= s;
 		}
 
 		// Tilt range of +/- 1 represents tilting the device by 90 degrees.
 		// We now want to reduce that based on the tilt sensitivity value.
-		// Magnify the tilt values and then clamp to -1 to +1 range.
+		// Magnify the tilt values
 		float sensScale = Mathf.Lerp(m_tiltSensitivityScaleMin, m_tiltSensitivityScaleMax, m_tiltSensitivity);
-		tx *= sensScale;
-		ty *= sensScale;
-		float len = Mathf.Sqrt(tx*tx + ty*ty);	// instead of just clamping to +/-1, get the 2D vector length and clamp if out of range.
-		if(len > 1.0f)							// This way we are clamping the tilt range to a "circle" rather than a "square".
-		{
-			tx /= len;
-			ty /= len;
+		m_tiltX *= sensScale;
+		m_tiltY *= sensScale;
+		float len = Mathf.Sqrt(m_tiltX*m_tiltX + m_tiltY*m_tiltY);
+
+		// [AOC] Debug UI
+		if(m_debugUI != null && m_debugUI.activeSelf) {
+			float zAngle = Vector2.Angle(Vector2.right, new Vector2(m_tiltX, m_tiltY));
+			if(m_tiltY < 0) zAngle *= -1f;
+			m_debugUnclampedLine.localScale = new Vector3(len, 1f, 1f);
+			m_debugUnclampedLine.localRotation = Quaternion.Euler(0f, 0f, zAngle);
+		}
+
+		// Clamp to +/-1 range
+		// instead of just clamping to +/-1, get the 2D vector length and clamp if out of range.
+		// This way we are clamping the tilt range to a "circle" rather than a "square".
+		if(len > 1.0f) {
+			m_tiltX /= len;
+			m_tiltY /= len;
+		}
+
+		// [AOC] Debug UI
+		if(m_debugUI != null && m_debugUI.activeSelf) {
+			len = Mathf.Sqrt(m_tiltX*m_tiltX + m_tiltY*m_tiltY);
+			float zAngle = Vector2.Angle(Vector2.right, new Vector2(m_tiltX, m_tiltY));
+			if(m_tiltY < 0) zAngle *= -1f;
+			m_debugClampedLine.localScale = new Vector3(len, 1f, 1f);
+			m_debugClampedLine.localRotation = Quaternion.Euler(0f, 0f, zAngle);
 		}
 
 		//Get the stick inputs
-		m_diffVecNorm.x = tx;
-		m_diffVecNorm.y = ty;
+		m_diffVecNorm.x = m_tiltX;
+		m_diffVecNorm.y = m_tiltY;
 
         /*
 		if (stick.sqrMagnitude > 1.0f)
@@ -144,11 +213,17 @@ public class TiltControls : MonoBehaviour
 
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public bool IsMoving()
 	{
 		return Mathf.Abs( m_diffVecNorm.x) > float.Epsilon || Mathf.Abs( m_diffVecNorm.y ) > float.Epsilon;
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public bool Calibrate()
 	{
 		// Get the current tilt reading and make this the centred/calibrated position.
@@ -168,14 +243,20 @@ public class TiltControls : MonoBehaviour
         return m_isDodgyCalibratePosition;
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
     public void SetSensitivity(float value)
     {
-        if ((value >= 0.0f) && (value <= 1.0f))
+		if ((value >= 0.0f) && (value <= 1.0f))
         {
-            m_tiltSensitivity = value * 4;
+			m_tiltSensitivity = value;// * 4;
         }
     }
 
+	/// <summary>
+	/// 
+	/// </summary>
 	private void UpdateRawTilt( bool doFilter = true )
 	{
 		// get raw acceleration values from sensor
@@ -261,5 +342,20 @@ public class TiltControls : MonoBehaviour
 		m_tiltRaw.m02 = m20;
 		m_tiltRaw.m12 = m21;
 		m_tiltRaw.m22 = m22;
+	}
+
+	/// <summary>
+	/// A setting has changed in the control panel-
+	/// </summary>
+	/// <param name="_propertyID">The setting ID.</param>
+	/// <param name="_value">The settong's new value.</param>
+	private void OnControlPanelBoolChanged(string _propertyID, bool _value) {
+		// Nothing to do if debug UI not defined
+		if(m_debugUI == null) return;
+
+		// Is it the debug UI property?
+		if(_propertyID == DebugSettings.TILT_CONTROL_DEBUG_UI) {
+			m_debugUI.SetActive(_value);
+		}
 	}
 }

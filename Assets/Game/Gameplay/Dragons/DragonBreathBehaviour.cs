@@ -4,14 +4,12 @@ using System.Collections;
 public class DragonBreathBehaviour : MonoBehaviour {
 
 	//-----------------------------------------------
-	// Constants
+	// Attributes
 	//-----------------------------------------------
 	private float MaxGoldRushCompletitionPercentageForConsecutiveRushes = 0.5f; // max 50%.
 	private float AdditionalGoldRushCompletitionPercentageForConsecutiveRushes = 0.05f;
 
-	//-----------------------------------------------
-	// Attributes
-	//-----------------------------------------------
+
 	protected Rect m_bounds2D;
 	public Rect bounds2D { get { return m_bounds2D; } }
 

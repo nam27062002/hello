@@ -38,6 +38,8 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	[SerializeField] private AnimationCurve m_flashEaseCurve = new AnimationCurve();
+
 	public UnityEvent m_theEvent = new UnityEvent();
 
 	//------------------------------------------------------------------//
@@ -75,7 +77,25 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		
+		AnimationCurve flashEaseCurve = new AnimationCurve();
+		flashEaseCurve.AddKey(0f, 0f);
+		flashEaseCurve.AddKey(0.25f, 1f);
+		flashEaseCurve.AddKey(1f, 0f);
+
+		UIColorFX colorFX = GetComponent<UIColorFX>();
+		DOTween.Sequence()
+			.Append(transform.DOLocalMoveY(300f, 0.25f).SetRelative())
+			.Append(transform.DOLocalMoveY(-300f, 0.25f).SetRelative())
+
+			.Append(colorFX.DOBrightness(0.5f, 0.5f).SetEase(flashEaseCurve))
+			.Join(transform.DOScale(1.25f, 0.5f).SetEase(flashEaseCurve))
+
+			.Play();
+	}
+
+	private float FlashEase(float _time, float _duration, float _overshootOrAmplitude, float _period) {
+		float delta = _time/_duration;
+		return delta;
 	}
 
 	/// <summary>
