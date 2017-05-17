@@ -52,6 +52,7 @@ public static class DebugSettings {
 	public const string TILT_CONTROL_DEBUG_UI					= "TILT_CONTROL_DEBUG_UI";
 
 	public const string SHOW_MISSING_TIDS				        = "SHOW_MISSING_TIDS";
+	public const string LOCALIZATION_DEBUG_MODE			        = "LOCALIZATION_DEBUG_MODE";
 
 	public const string MENU_DISGUISES_AUTO_EQUIP		        = "MENU_DISGUISES_AUTO_EQUIP";
 	public const string MENU_ENABLE_SHORTCUTS					= "MENU_ENABLE_SHORTCUTS";
@@ -149,5 +150,8 @@ public static class DebugSettings {
 
 		key = FOG_BLEND_TYPE;
 		Prefs.SetIntPlayer(key, Prefs.GetIntPlayer(key, 0));
+
+		key = LOCALIZATION_DEBUG_MODE;
+		Prefs.SetIntPlayer(key, Prefs.GetIntPlayer(key, (int)LocalizationManager.DebugMode.NONE));
     }
 }
