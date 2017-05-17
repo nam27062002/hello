@@ -18,13 +18,15 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	[SerializeField] private string m_onCollideSound;
 
 
+	private Cage m_entity;
+
 	private float m_waitTimer = 0;
 	private Hit m_currentHits;
 	private DragonTier m_tier;
 
 	private bool m_broken;
 
-	private PrisonerSpawner m_cageSpawner;
+	private PrisonerSpawner m_prisonerSpawner;
 
 
 
@@ -32,8 +34,9 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	// Methods
 	//-----------------------------------------------
 	void Awake() {
-		m_cageSpawner = GetComponent<PrisonerSpawner>();
-		m_cageSpawner.Initialize();
+		m_entity = GetComponent<Cage>();
+		m_prisonerSpawner = GetComponent<PrisonerSpawner>();
+		m_prisonerSpawner.Initialize();
 
 		m_currentHits = new Hit();
 	}
@@ -53,23 +56,23 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 		}
 		SetCollisionsEnabled(true);
 
-		m_cageSpawner.area = _spawner.area; // cage spawner will share the area defined to spawn the cage.
-		m_cageSpawner.Respawn();
+		m_prisonerSpawner.area = _spawner.area; // cage spawner will share the area defined to spawn the cage.
+		m_prisonerSpawner.Respawn();
 
 		m_broken = false;
 	}
 
 	void OnDisable() {
-		m_cageSpawner.ForceRemoveEntities();
+		m_prisonerSpawner.ForceRemoveEntities();
 	}
 
 	// Update is called once per frame
 	public void CustomUpdate() {
 		m_waitTimer -= Time.deltaTime;
-	}
 
-	private void LateUpdate() {
-	//	m_cageSpawner.UpdatePrisonerTransform(m_view.transform);
+		if (m_prisonerSpawner.AreAllDead()) {
+			m_entity.SetDestroyedByDragon();
+		}
 	}
 
 	private void OnCollisionEnter(Collision collision) {
@@ -123,11 +126,13 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 		}
 		SetCollisionsEnabled(false);
 
-		m_cageSpawner.SetEntitiesFree();
+		m_prisonerSpawner.SetEntitiesFree();
 
 		if (!string.IsNullOrEmpty(m_onBreakSound)) {
 			AudioController.Play(m_onBreakSound);
 		}
+
+		m_entity.SetDestroyedByDragon();
 
 		m_broken = true;
 	}

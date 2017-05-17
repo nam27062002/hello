@@ -46,7 +46,7 @@ public class DisableInSeconds : MonoBehaviour {
                 {
                     ParticleSystem ps = m_particleSystems[i];
                     ParticleSystem.EmissionModule em = ps.emission;
-                    if (em.enabled && m_particleSystems[i].loop)
+					if (em.enabled && m_particleSystems[i].main.loop)
                     {
                         em.enabled = false;
                         ps.Stop();
