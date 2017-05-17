@@ -34,17 +34,18 @@ public class PopupTiltCalibrationAnim : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// References
 	[SerializeField] private GameObject m_targetObj = null;
-	[SerializeField] private Transform m_finalAnchor = null;
+	[SerializeField] private GameObject m_animatedObj = null;
+	[SerializeField] private Localizer m_calibratingInfoText = null;
 
 	// Setup
 	[Space]
+	[SerializeField] private float m_initialDelay = 1f;
 	[SerializeField] private float m_totalDuration = 3f;
-	[SerializeField] private float m_actionRadius = 500f;
-	[SerializeField] private RangeInt m_iterations = new RangeInt(5, 10);
-	[SerializeField] private Ease m_radiusEase = Ease.Linear;
+	[SerializeField] private Ease m_ease = Ease.Linear;
 
-	// Internal
-	private List<Vector3> m_path = new List<Vector3>();
+	[Space]
+	[SerializeField] private Sprite m_targetSprite = null;
+	[SerializeField] private Sprite m_animatedSprite = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -96,27 +97,6 @@ public class PopupTiltCalibrationAnim : MonoBehaviour {
 	/// </summary>
 	private void OnValidate() {
 		m_totalDuration = Mathf.Max(1f, m_totalDuration);
-		m_actionRadius = Mathf.Max(1f, m_actionRadius);
-	}
-
-	/// <summary>
-	/// Draw some debug stuff.
-	/// </summary>
-	private void OnDrawGizmos() {
-		#if UNITY_EDITOR
-		// Draw action area
-		Handles.matrix = m_finalAnchor.localToWorldMatrix;
-		Handles.color = Colors.WithAlpha(Color.green, 0.25f);
-		Handles.DrawSolidDisc(Vector3.zero, Vector3.back, m_actionRadius);
-
-		if(m_path.Count > 0) {
-			Handles.color = Color.red;
-			Handles.DrawAAPolyLine(5f, m_path.ToArray());
-			for(int i = 0; i < m_path.Count; i++) {
-				Handles.DrawSolidDisc(m_path[i], Vector3.back, 5f);
-			}
-		}
-		#endif
 	}
 
 	//------------------------------------------------------------------------//
@@ -130,72 +110,80 @@ public class PopupTiltCalibrationAnim : MonoBehaviour {
 	/// The popup is about to open.
 	/// </summary>
 	public void OnOpenPreAnimation() {
-		// Setup and launch animation
 		// Aux vars
 		AnimationCurve flashEaseCurve = new AnimationCurve();
 		flashEaseCurve.AddKey(0f, 0f);
 		flashEaseCurve.AddKey(0.25f, 1f);
 		flashEaseCurve.AddKey(1f, 0f);
 
+		RectTransform animatedRt = (RectTransform)m_animatedObj.transform;
+		RectTransform targetRt = (RectTransform)m_targetObj.transform;
+
+		// Setup animation
+		if(m_animatedSprite != null) m_animatedObj.GetComponent<Image>().sprite = m_animatedSprite;
+		if(m_targetSprite != null) m_targetObj.GetComponent<Image>().sprite = m_targetSprite;
+
 		// Create sequence
-		//Sequence sq = DOTween.Sequence().SetUpdate(UpdateType.Normal, true);
-		m_path.Clear();
+		Sequence sq = DOTween.Sequence()
+			.SetUpdate(UpdateType.Normal, true);
 
-		// Random position moves, closer to the center everytime
-		int iterations = m_iterations.GetRandom();
-		float radius = m_actionRadius;
-		float speed = m_totalDuration/(float)(iterations - 1);
-		Vector2 pos = Vector2.zero;
-		Vector2 lastPos = Vector2.zero;
-		for(int i = iterations; i >= 0; i--) {
-			// Compute new radius, shorter every time
-			float delta = (float)i/(float)iterations;
-			radius = DOVirtual.EasedValue(0f, m_actionRadius, delta, m_radiusEase);
+		// Initial delay
+		sq.AppendInterval(m_initialDelay);
 
-			// Compute new position at a random angle
-			// At least the radius distance, otherwise movement is too short and looks weird
-			int protectionLoops = 100;
-			do {
-				pos = Random.insideUnitCircle.normalized * radius;
+		// Slowly close animated circle
+		sq.Append(
+			animatedRt.DOSizeDelta(Vector2.one * 1100f, m_totalDuration)
+			.From()
+			.SetEase(m_ease)
+		);
 
-				// At least X or Y to the opposite quadrant
-				if(Mathf.Sign(pos.x) == Mathf.Sign(lastPos.x)
-					&& Mathf.Sign(pos.y) == Mathf.Sign(lastPos.y)) {
-					if(Random.value < 0.5f) {
-						pos.x *= -1f;
-					} else {
-						pos.y *= -1f;
-					}
-				}
+		sq.Join(
+			m_animatedObj.transform.DOLocalRotate(new Vector3(0f, 0f, 180f), m_totalDuration)
+			.From()
+			.SetEase(m_ease)
+		);
 
-				protectionLoops--;
-			} while((pos - lastPos).sqrMagnitude < radius * radius && protectionLoops > 0);
+		// Slowly saturate target circle
+		sq.Join(
+			m_targetObj.GetComponent<UIColorFX>().DOSaturation(-1f, m_totalDuration)
+			.From()
+		);
 
-			// Record pos!
-			lastPos = pos;
-			m_path.Add(new Vector3(pos.x, pos.y, 0f));
-			//Debug.Log("Iteration " + i + " (" + delta + ")\nradius " + radius + ", pos " + pos);
+		sq.Join(
+			m_targetObj.transform.DOLocalRotate(new Vector3(0f, 0f, 180f), m_totalDuration, RotateMode.FastBeyond360)
+			.From()
+			.SetEase(m_ease)
+		);
 
-			// If it's the first iteration, set position immediately
-			if(i == iterations) {
-				m_targetObj.transform.SetLocalPosX(pos.x);
-				m_targetObj.transform.SetLocalPosY(pos.y);
-			}
-		}
+		// Fade by the end of the animation
+		sq.Insert(
+			m_totalDuration * 0.75f,
+			m_animatedObj.GetComponent<Image>().DOFade(0f, m_totalDuration * 0.25f)
+		);
 
-		// Try with a path tween!
-		m_targetObj.transform.DOLocalPath(m_path.ToArray(), m_totalDuration, PathType.CatmullRom, PathMode.Ignore, 10, Color.cyan)
-			.OnComplete(() => {
-				m_targetObj.transform.DOScale(1.25f, 0.4f)
-					.SetEase(flashEaseCurve)
-					.SetUpdate(UpdateType.Normal, true);
+		// Once finished, trigger flash animation (Scale + Brightness)
+		float flashAnimStartTime = m_totalDuration * 0.9f;
+		sq.Insert(
+			flashAnimStartTime,
+			m_targetObj.transform.DOScale(1.5f, 0.4f)
+			.SetEase(flashEaseCurve)
+		);
 
-				m_targetObj.GetComponent<UIColorFX>().DOBrightness(0.5f, 0.4f)
-					.SetEase(flashEaseCurve)
-					.SetUpdate(UpdateType.Normal, true)
-					.OnComplete(() => {	GetComponent<PopupController>().Close(true); });
-			})
-			.SetUpdate(UpdateType.Normal, true)
-			.Play();
+		sq.Insert(
+			flashAnimStartTime,
+			m_targetObj.GetComponent<UIColorFX>().DOBrightness(0.5f, 0.4f)
+			.SetEase(flashEaseCurve)
+		);
+
+		sq.InsertCallback(
+			flashAnimStartTime,
+			() => m_calibratingInfoText.Localize("TID_CALIBRATION_DONE")
+		);
+
+		// Once completed, close popup
+		sq.OnComplete(() => { GetComponent<PopupController>().Close(true); });
+
+		// Launch animation!
+		sq.Play();
 	}
 }
