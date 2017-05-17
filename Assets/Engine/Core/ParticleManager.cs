@@ -133,8 +133,8 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		_system.transform.position = _at;
 
 		// Restart all particle systems within the instance
-		ParticleSystem[] subsystems = _system.GetComponentsInChildren<ParticleSystem>();
-		for (int i = 0; i < subsystems.Length; i++) {
+		List<ParticleSystem> subsystems = _system.transform.FindComponentsRecursive<ParticleSystem>();
+		for (int i = 0; i < subsystems.Count; i++) {
 			subsystems[i].Clear();
 			ParticleSystem.EmissionModule em = subsystems[i].emission;
 			em.enabled = true;

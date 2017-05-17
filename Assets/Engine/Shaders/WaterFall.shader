@@ -11,7 +11,9 @@ Shader "Hungry Dragon/Waterfall"
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_DetailTex("Detail (RGB)", 2D) = "white" {}
 		_BlendTex("Blend (RGB)", 2D) = "white" {}
-		_WaterSpeed("Speed ", Float) = 0.5
+		_WaterSpeed("Speed: ", Float) = 0.5
+		_BackColor("Back Color: ", Color) = (0.0, 0.0, 0.0, 0.0)
+		_StencilMask("Stencil Mask: ", int) = 10
 	}
 
 	SubShader {
@@ -21,9 +23,16 @@ Shader "Hungry Dragon/Waterfall"
 
 		Pass {  
 			Blend SrcAlpha OneMinusSrcAlpha
-			Cull Off
+			Cull back
 			ZWrite On
 //			Fog{ Color(0, 0, 0, 0) }
+
+			Stencil
+			{
+				Ref[_StencilMask]
+				Comp NotEqual
+				//				Pass DecrWrap//keep
+			}
 
 			CGPROGRAM
 				#pragma vertex vert
@@ -57,12 +66,8 @@ Shader "Hungry Dragon/Waterfall"
 					float2 uv : TEXCOORD0;
 					float2 uv2:TEXCOORD1;
 					float4 color : COLOR;
-//					LIGHTING_COORDS(2, 3)
-
 				};
 
-
-//				sampler2D _CameraDepthTexture;
 				sampler2D _MainTex;
 				float4 _MainTex_ST;
 				sampler2D _DetailTex;
@@ -108,6 +113,71 @@ Shader "Hungry Dragon/Waterfall"
 
 					return col;
 				}
+			ENDCG
+		}
+
+
+		Pass{
+			Blend SrcAlpha OneMinusSrcAlpha
+			Cull back
+			ZWrite On
+//			Fog{ Color(0, 0, 0, 0) }
+
+			Stencil
+			{
+				Ref[_StencilMask]
+				Comp Equal
+//				Pass DecrWrap//keep
+			}
+
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+			#pragma multi_compile_fog
+			#pragma multi_compile_fwdbase
+			#pragma glsl_no_auto_normalization
+			#pragma fragmentoption ARB_precision_hint_fastest
+
+//			#pragma multi_compile_particles
+
+			#include "UnityCG.cginc"
+			#include "AutoLight.cginc"
+//			#include "Lighting.cginc"
+			#include "HungryDragon.cginc"
+
+
+			#define CAUSTIC_ANIM_SCALE  4.0f
+			#define CAUSTIC_RADIUS  0.1125f
+
+			struct appdata_t {
+				float4 vertex : POSITION;
+				float2 uv : TEXCOORD0;
+				float2 uv2 : TEXCOORD1;
+				float4 color : COLOR;
+			};
+
+			struct v2f {
+				float4 vertex : SV_POSITION;
+				float4 color : COLOR;
+			};
+
+			fixed4 _BackColor;
+
+			v2f vert(appdata_t v)
+			{
+				v2f o;
+				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.color = v.color;
+				return o;
+			}
+
+			fixed4 frag(v2f i) : SV_Target
+			{
+				fixed4 col = _BackColor;
+				col.a *= 1.0 - i.color.a;
+				return col;
+			}
+
 			ENDCG
 		}
 	}
