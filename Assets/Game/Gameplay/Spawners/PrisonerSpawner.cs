@@ -110,6 +110,16 @@ public class PrisonerSpawner : AbstractSpawner {
         }
     }
 
+	public bool AreAllDead() {
+		for (int i = 0; i < m_entities.Length; i++) {
+			if (m_entities[i] != null) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
     private uint GroupIndexToSpawn { get; set; }
 
     private Vector3 RandomStartDisplacement() {
