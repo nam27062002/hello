@@ -29,8 +29,8 @@ public class ResultsSceneController : MonoBehaviour {
 	[SerializeField] private GameObject m_resultsUI;
 
 	[Space]
-	[Tooltip("Default scene setup prefab to be used in levels where no setup can be found.")]
-	[SerializeField] private GameObject m_defaultSetupPrefab = null;   
+	[Tooltip("Scene setup where the user's dragon has to be set")]
+	[SerializeField] private ResultsSceneSetup m_resultsScenesetup = null;   
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -41,6 +41,11 @@ public class ResultsSceneController : MonoBehaviour {
     private void Awake() {
 		// Disable results UI
 		m_resultsUI.SetActive(false);
+
+        // Make sure it's not visible until Show() is called
+        if (m_resultsScenesetup != null) {
+            m_resultsScenesetup.gameObject.SetActive(false);
+        }
 	}    
 
     /// <summary>
@@ -57,29 +62,17 @@ public class ResultsSceneController : MonoBehaviour {
 	/// Pick a random results scene setup from the art scene and initializes camera,
 	/// dragon and UI.
 	/// </summary>
-	public void Show() {		
-		// Define results scene camera as main one
+	public void Show() {                			
+        if (m_resultsScenesetup != null) {
+            m_resultsScenesetup.gameObject.SetActive(true);
+        }
 
-
-		// Select a random scene setup and instantiate it
-		// Find all scene setup prefabs for the loaded level - we have a special component for that, look for it
-		// If no setup is found (i.e. test levels), use the placeholder prefab
-		GameObject setupPrefab = m_defaultSetupPrefab;
-		LevelData levelData = LevelManager.currentLevelData;
-		if(levelData != null && levelData.resultScenesPrefabs.Length > 0) {
-			setupPrefab = levelData.resultScenesPrefabs.GetRandomValue();
-		}
-
-		// Instantiate the prefab
-		GameObject newSetupObj = GameObject.Instantiate<GameObject>(setupPrefab);
-		ResultsSceneSetup targetSetup = newSetupObj.GetComponent<ResultsSceneSetup>();
-
-		// Activate and initialize UI, turn off Game UI
-		// [AOC] TODO!! Nicer transition		
-		m_resultsUI.SetActive(true);
+        // Activate and initialize UI, turn off Game UI
+        // [AOC] TODO!! Nicer transition		
+        m_resultsUI.SetActive(true);
 		ResultsScreenController controller = m_resultsUI.GetComponentInChildren<ResultsScreenController>();
 		if(controller != null) {
-			controller.Init(targetSetup);
+			controller.Init(m_resultsScenesetup);
 			controller.LaunchAnim();
 		}
 
