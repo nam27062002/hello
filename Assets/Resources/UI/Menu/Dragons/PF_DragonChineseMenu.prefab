@@ -25,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 189342}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 50, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_Children:
   - {fileID: 4078950310267648}
@@ -233,6 +233,23 @@ GameObject:
   m_Name: Dragon_RMoustache_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1136666378364500
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4514846849231902}
+  - component: {fileID: 114179764893400980}
+  - component: {fileID: 114417760552060304}
+  m_Layer: 12
+  m_Name: head
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -517,7 +534,7 @@ GameObject:
   - component: {fileID: 114277627478293982}
   - component: {fileID: 114369325552581466}
   m_Layer: 12
-  m_Name: head
+  m_Name: neck
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -1338,6 +1355,7 @@ Transform:
   - {fileID: 4503763976762708}
   - {fileID: 4479883265010370}
   - {fileID: 4339232916382640}
+  - {fileID: 4514846849231902}
   - {fileID: 4262214185269904}
   m_Father: {fileID: 442300}
   m_RootOrder: 0
@@ -1474,12 +1492,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1304055360722578}
-  m_LocalRotation: {x: -0.1904704, y: -0.011361443, z: 0.9798855, w: 0.058449175}
-  m_LocalPosition: {x: 1.4729598, y: 1.452747, z: 0.59511405}
-  m_LocalScale: {x: 0.80000055, y: 0.80000055, z: 0.8000001}
+  m_LocalRotation: {x: -0.004447287, y: -0.19075726, z: 0.022879673, w: 0.98136055}
+  m_LocalPosition: {x: 1.4729599, y: 1.452747, z: 0.5951141}
+  m_LocalScale: {x: 0.8000001, y: 0.80000013, z: 0.80000013}
   m_Children: []
   m_Father: {fileID: 4078950310267648}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4262473011635614
 Transform:
@@ -1803,6 +1821,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4732894842619012}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4514846849231902
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1136666378364500}
+  m_LocalRotation: {x: -0.1904704, y: -0.011361443, z: 0.9798855, w: 0.058449175}
+  m_LocalPosition: {x: 1.4729598, y: 1.452747, z: 0.59511405}
+  m_LocalScale: {x: 0.80000055, y: 0.80000055, z: 0.8000001}
+  m_Children: []
+  m_Father: {fileID: 4078950310267648}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4532905117336282
 Transform:
@@ -2336,7 +2367,6 @@ MonoBehaviour:
   - Dragon_LMoustache_4
   - Dragon_LMoustache_5
   - Dragon_LMoustache_6
-  m_parts: []
   springSpeed: 10
   m_upDir: {x: 0, y: -90, z: 0}
 --- !u!114 &114152458654549274
@@ -2351,6 +2381,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 3
+--- !u!114 &114179764893400980
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1136666378364500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 5
 --- !u!114 &114217849583610146
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2385,13 +2427,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_point: 5
+  m_point: 6
 --- !u!114 &114369325552581466
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1304055360722578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_Neck1
+  m_parentRoot: {fileID: 442300}
+  m_worldPositionStays: 1
+--- !u!114 &114417760552060304
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1136666378364500}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
@@ -2456,7 +2512,6 @@ MonoBehaviour:
   - Dragon_RMoustache_4
   - Dragon_RMoustache_5
   - Dragon_RMoustache_6
-  m_parts: []
   springSpeed: 10
   m_upDir: {x: 0, y: -90, z: 0}
 --- !u!114 &114874595229306164
@@ -2483,7 +2538,6 @@ MonoBehaviour:
   - Dragon_Tail4
   - Dragon_Tail5
   - Dragon_Tail6
-  m_parts: []
   springSpeed: 7
   m_upDir: {x: 0, y: -90, z: 0}
 --- !u!114 &114917653607987128
