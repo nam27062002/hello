@@ -49,6 +49,7 @@ public static class DebugSettings {
 	public const string DPAD_THRESHOLD 					        = "DPAD_THRESHOLD";
 	public const string DPAD_BREAK_TOLERANCE			        = "DPAD_BREAK_TOLERANCE";
 	public const string DPAD_CLAMP_DOT 					        = "DPAD_CLAMP_DOT";
+	public const string TILT_CONTROL_DEBUG_UI					= "TILT_CONTROL_DEBUG_UI";
 
 	public const string SHOW_MISSING_TIDS				        = "SHOW_MISSING_TIDS";
 
