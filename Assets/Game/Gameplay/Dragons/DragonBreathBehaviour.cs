@@ -214,20 +214,29 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 				switch( m_type )
 				{
-					case Type.Standard:
-					{
-						m_currentFury = m_currentRemainingFuryDuration / m_currentFuryDuration * m_furyMax;
-					}break;
+					case Type.Standard:	{
+							m_currentFury = m_currentRemainingFuryDuration / m_currentFuryDuration * m_furyMax;
+							if (UsersManager.currentUser.superFuryProgression + 1 == m_superFuryMax) {
+								if (m_currentRemainingFuryDuration <= 0.25f) {
+									MegaFireUp();
+								}
+							}
+						}
+						break;
 					case Type.Super:
 					{
-						
-					}break;
+							
+					}
+					break;
 				}
 				
 				// With fury on boost is infinite
 				m_dragon.AddEnergy(m_dragon.energyMax);
 
-				if ( m_currentRemainingFuryDuration <= 0) 
+
+
+
+				if (m_currentRemainingFuryDuration <= 0)
 				{
 					EndFury();
 					m_animator.SetBool("breath", false);
@@ -345,13 +354,12 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		}
 	}
+
 	virtual protected void EndFury() 
 	{
-		switch( m_type )
-		{
-			case Type.Standard:
-			{
-				UsersManager.currentUser.superFuryProgression++;
+		switch (m_type) {
+			case Type.Standard: {
+				MegaFireUp();
 				m_currentFury = 0;
 				m_furyRushesCompleted++;
 
@@ -359,18 +367,17 @@ public class DragonBreathBehaviour : MonoBehaviour {
 					m_breathSoundAO.Stop();
 					m_breathSoundAO = null;
 				}
-			}break;
-			case Type.Super:
-			{
+			} break;
+
+			case Type.Super: {
 				// Set super fury counter to 0
 				UsersManager.currentUser.superFuryProgression = 0;
 
-				if (m_superBreathSoundAO != null && m_superBreathSoundAO.IsPlaying() )
-				{
+				if (m_superBreathSoundAO != null && m_superBreathSoundAO.IsPlaying()) {
 					m_superBreathSoundAO.Stop();
 					m_superBreathSoundAO = null;
 				}
-			}break;
+			} break;
 
 		}
 
@@ -385,14 +392,19 @@ public class DragonBreathBehaviour : MonoBehaviour {
         m_type = Type.None;
 	}
 
+	private void MegaFireUp() {		
+		if (UsersManager.currentUser.superFuryProgression < m_superFuryMax) {
+			UsersManager.currentUser.superFuryProgression++;
+		}
+	}
+
 	/// <summary>
 	/// Add/remove fury to the dragon.
 	/// </summary>
 	/// <param name="_offset">The amount of fury to be added/removed.</param>
 	public void AddFury(float _offset) {
-		if ( !m_isFuryOn )
-		{
-			m_currentFury = Mathf.Clamp( m_currentFury + _offset, 0, m_furyMax);
+		if (!m_isFuryOn) {
+			m_currentFury = Mathf.Clamp(m_currentFury + _offset, 0, m_furyMax);
 		}
 	}
 
