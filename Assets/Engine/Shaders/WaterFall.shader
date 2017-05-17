@@ -49,10 +49,6 @@ Shader "Hungry Dragon/Waterfall"
 //				#include "Lighting.cginc"
 				#include "HungryDragon.cginc"
 
-
-				#define CAUSTIC_ANIM_SCALE  4.0f
-				#define CAUSTIC_RADIUS  0.1125f
-
 				struct appdata_t {
 					float4 vertex : POSITION;
 					float2 uv : TEXCOORD0;
@@ -144,10 +140,6 @@ Shader "Hungry Dragon/Waterfall"
 			#include "AutoLight.cginc"
 //			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"
-
-
-			#define CAUSTIC_ANIM_SCALE  4.0f
-			#define CAUSTIC_RADIUS  0.1125f
 
 			struct appdata_t {
 				float4 vertex : POSITION;
