@@ -49,8 +49,10 @@ public static class DebugSettings {
 	public const string DPAD_THRESHOLD 					        = "DPAD_THRESHOLD";
 	public const string DPAD_BREAK_TOLERANCE			        = "DPAD_BREAK_TOLERANCE";
 	public const string DPAD_CLAMP_DOT 					        = "DPAD_CLAMP_DOT";
+	public const string TILT_CONTROL_DEBUG_UI					= "TILT_CONTROL_DEBUG_UI";
 
 	public const string SHOW_MISSING_TIDS				        = "SHOW_MISSING_TIDS";
+	public const string LOCALIZATION_DEBUG_MODE			        = "LOCALIZATION_DEBUG_MODE";
 
 	public const string MENU_DISGUISES_AUTO_EQUIP		        = "MENU_DISGUISES_AUTO_EQUIP";
 	public const string MENU_ENABLE_SHORTCUTS					= "MENU_ENABLE_SHORTCUTS";
@@ -107,6 +109,18 @@ public static class DebugSettings {
 		set { m_ignoreSpawnTime = value;}
 	}
 
+	static bool m_spawnChance0 = false;
+	public static bool spawnChance0{
+		get { return m_spawnChance0; }
+		set { m_spawnChance0 = value;}
+	}
+
+	static bool m_spawnChance100 = false;
+	public static bool spawnChance100{
+		get { return m_spawnChance100; }
+		set { m_spawnChance100 = value;}
+	}
+
 
     //------------------------------------------------------------------//
     // METHODS															//
@@ -136,5 +150,8 @@ public static class DebugSettings {
 
 		key = FOG_BLEND_TYPE;
 		Prefs.SetIntPlayer(key, Prefs.GetIntPlayer(key, 0));
+
+		key = LOCALIZATION_DEBUG_MODE;
+		Prefs.SetIntPlayer(key, Prefs.GetIntPlayer(key, (int)LocalizationManager.DebugMode.NONE));
     }
 }

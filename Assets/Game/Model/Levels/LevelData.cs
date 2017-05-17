@@ -54,12 +54,7 @@ public class LevelData : ScriptableObject {
 			}
 			return m_mapPrefab;
 		}
-	}
-
-	[SerializeField] private GameObject[] m_resultScenesPrefabs = null;
-	public GameObject[] resultScenesPrefabs {
-		get { return m_resultScenesPrefabs; }
-	}
+	}	
 
 	[Separator("Debug")]
 	[SerializeField] private Color m_boundsColor = Colors.paleYellow;

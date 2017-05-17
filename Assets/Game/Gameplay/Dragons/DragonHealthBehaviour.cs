@@ -297,7 +297,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		float rewardHealth = reward + (reward * m_globalEatingHpBoost) / 100.0f;
 
 		// Check if origin is in power up and give proper boost
-		if ( m_eatingHpBoosts.ContainsKey( origin ) )
+		if ( !string.IsNullOrEmpty( origin ) && m_eatingHpBoosts.ContainsKey( origin ) )
 		{
 			rewardHealth += (reward * m_eatingHpBoosts[origin]) / 100.0f;
 		}

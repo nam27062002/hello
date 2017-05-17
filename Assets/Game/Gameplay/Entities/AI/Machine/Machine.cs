@@ -179,7 +179,7 @@ namespace AI {
 				m_sensor.Init();
 				if (InstanceManager.player != null)	{
 					DragonPlayer player = InstanceManager.player;
-					m_sensor.SetupEnemy(player.transform, player.dragonEatBehaviour.eatDistanceSqr, player.dragonMotion.hitBounds);
+					m_sensor.SetupEnemy(player.dragonEatBehaviour.mouth, player.dragonEatBehaviour.eatDistanceSqr, player.dragonMotion.hitBounds);
 				}
 			}
 
@@ -578,7 +578,8 @@ namespace AI {
 
 		public void ReleaseHold() {
 			m_isHolded = false;
-			m_motion.position = m_transform.position;
+			if ( m_motion != null )
+				m_motion.position = m_transform.position;
 			m_edible.ReleaseHold();
 
 			OnReleaseHold();

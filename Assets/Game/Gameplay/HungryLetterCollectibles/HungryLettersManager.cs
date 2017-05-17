@@ -43,6 +43,9 @@ public class HungryLettersManager : MonoBehaviour
 	[SerializeField]
 	private List<HungryLettersPlaceholder> m_hardSpawnerPoints;
 
+	[SeparatorAttribute("Audio")]
+	[SerializeField]
+	private string m_onCollectSound;
 	//------------------------------------------------------------
 	// Private Variables:
 	//------------------------------------------------------------
@@ -127,7 +130,8 @@ public class HungryLettersManager : MonoBehaviour
 		// TODO: Recover this
 		// HSXAnalyticsManager.Instance.HungryLetterCollected(m_lettersCollected + 1, letter.cachedTransform.position);
 		// play the sfx.
-		AudioController.Play( "AudioManager.Ui.HungryLetter" );	// TODO: AudioManager.Ui.HungryLetter?
+		if ( !string.IsNullOrEmpty(m_onCollectSound) )
+			AudioController.Play( m_onCollectSound );
 		// AudioManager.PlaySfx(AudioManager.Ui.HungryLetter);
 		// place letter in the UI.
 		m_specificLettersCollected[(int)letter.letter] = true;

@@ -9,6 +9,7 @@ namespace AI {
 			public float arrivalRadius = 1f;
 			public string attackPoint;
 			public bool hasGuardState = false;
+			public bool moveAwayOnCritical = true;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Pursuit Ground")]
@@ -75,7 +76,7 @@ namespace AI {
 									
 				if (m_target != null) {
 					if (m_pursuitState == PursuitState.Move_Towards) {
-						if (m_machine.GetSignal(Signals.Type.Critical)) {
+						if (m_data.moveAwayOnCritical && m_machine.GetSignal(Signals.Type.Critical)) {
 							ChangeState(PursuitState.Move_Away);
 						} else {
 							bool onGuardArea = false;

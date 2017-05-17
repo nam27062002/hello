@@ -140,6 +140,8 @@ public enum GameEvents {
 
     // Settigns events
     TILT_CONTROL_TOGGLE,		// params: Bool _useTile
+	TILT_CONTROL_CALIBRATE,		// no params, use to force a tilt calibration (only in-game)
+	TILT_CONTROL_SENSITIVITY_CHANGED	// params: float _sensitivity
 }
 
 //------------------------------------------------------------------------//

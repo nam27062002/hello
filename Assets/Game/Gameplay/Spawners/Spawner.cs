@@ -140,6 +140,15 @@ public class Spawner : AbstractSpawner {
 			enabledByTier = (playerTier <= m_maxTier);
 		}
 
+		if (m_activationChance < 100f) {
+			// check debug 
+			if (DebugSettings.spawnChance0) {
+				rnd = 100f;
+			} else if (DebugSettings.spawnChance100) {
+				rnd = 0f;
+			}
+		}
+
 		if (InstanceManager.player != null && enabledByTier) {			
 			if (m_entityPrefabList != null && m_entityPrefabList.Length > 0 && rnd <= m_activationChance) {
 
@@ -295,7 +304,7 @@ public class Spawner : AbstractSpawner {
 	protected override void OnMachineSpawned(IMachine machine) {
 		if (m_groupController) {				
 			machine.EnterGroup(ref m_groupController.flock);
-			machine.position = transform.position + m_groupController.flock.GetOffset(machine, 1f);
+			machine.position = transform.position + m_groupController.flock.GetOffset(machine, 2f);
 		}
 	}
 

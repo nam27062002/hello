@@ -143,6 +143,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	public delegate void OnEvent();
 	public OnEvent onJawsClosed;
+	public OnEvent onBitePlayer;
 	public OnEvent onEndEating;
 	public OnEvent onEndLatching;
 
@@ -902,6 +903,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 					{
 						// Bite player!!!
 						InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage( GetBitePlayerDamage(), DamageType.NORMAL, transform);
+						if (onBitePlayer != null) {
+							onBitePlayer();
+						}
 					}
 				}
 			}

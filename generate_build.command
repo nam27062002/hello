@@ -47,7 +47,7 @@ SMB_FOLDER="BCNStudio/QA/builds"
 PROVISIONING_PROFILE="XC Ad Hoc: com.ubisoft.hungrydragon.dev"  # Not used, just for reference. Make sure it's downloaded in the build machine (XCode->Preferences->Accounts->View Details)
 SIGNING_ID="iPhone Distribution: Marie Cordon (Y3J3C97LQ8)" # NOT WORKING!!
 #PROVISIONING_PROFILE_UUID="99d18f4a-2a05-4e39-a5da-370321ce140b"
-PROVISIONING_PROFILE_UUID="e2a6e917-8663-4459-b97f-6ec3c7e1d3d3" # Get it by right-click on the target provisioning profile in XCode->Preferences->Accounts->View Details and choosing "Show in Finder" (the UUID is the filename of the selected profile)
+PROVISIONING_PROFILE_UUID="86c9ccf0-d239-45aa-b867-03a91ca719f1" # Get it by right-click on the target provisioning profile in XCode->Preferences->Accounts->View Details and choosing "Show in Finder" (the UUID is the filename of the selected profile)
 
 # SMB Settings
 SMB_USER="srv_acc_bcn_jenkins"

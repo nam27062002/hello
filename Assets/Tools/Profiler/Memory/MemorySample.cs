@@ -5,7 +5,7 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 
 public class MemorySample : AbstractMemorySample
-{   
+{
     public class ObjectDetails
     {
         // in bytes
@@ -23,28 +23,15 @@ public class MemorySample : AbstractMemorySample
         public void CalculateSize(ESizeStrategy sizeStrategy)
         {
             if (Obj != null)
-            {
+            {				
                 MemSize = UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(Obj);
 
-                if (sizeStrategy != ESizeStrategy.Profiler)
+                if (Obj is Texture && sizeStrategy != ESizeStrategy.Profiler)
                 {
-                    if (Obj is Texture)
-                    {
-                        MemSize = CalculateTextureSizeBytes(Obj as Texture);
-                        switch (sizeStrategy)
-                        {
-                            case ESizeStrategy.DeviceHalf:
-                                MemSize /= 4;
-                                break;
-
-                            case ESizeStrategy.DeviceQuarter:
-                                MemSize /= 16;
-                                break;
-                        }
-                    }
-                }                
+                    MemSize = (int)CalculateTextureSizeBytes(Obj as Texture, sizeStrategy);
+                }
             }
-        }
+        }			      
 
         private static int GetBitsPerPixel(TextureFormat format)
         {
@@ -103,7 +90,7 @@ public class MemorySample : AbstractMemorySample
 #endif
             }
             return 0;
-        }
+        }			       
 
         private static int CalculateTextureSizeBytes(Texture tTexture)
         {
@@ -148,8 +135,101 @@ public class MemorySample : AbstractMemorySample
                 return tWidth * tHeight * 6 * bitsPerPixel / 8;
             }
             return 0;
+        }			
+
+        private static float CalculateTextureSizeBytes(Texture tTexture, ESizeStrategy sizeStrategy)
+        {           
+            int tWidth = tTexture.width;
+            int tHeight = tTexture.height;
+            if (tTexture is Texture2D)
+            {
+                Texture2D tTex2D = tTexture as Texture2D;
+				float bitsPerPixel = GetBitsPerPixel(tTexture, tTex2D.format, sizeStrategy);
+
+                int mipMapCount = tTex2D.mipmapCount;
+                int mipLevel = 1;
+                float tSize = 0;
+                while (mipLevel <= mipMapCount)
+                {
+                    tSize += tWidth * tHeight * bitsPerPixel / 8;
+                    tWidth = tWidth / 2;
+                    tHeight = tHeight / 2;
+                    mipLevel++;
+                }
+                return tSize;
+            }
+            if (tTexture is Texture2DArray)
+            {
+                Texture2DArray tTex2D = tTexture as Texture2DArray;
+				float bitsPerPixel = GetBitsPerPixel(tTexture, tTex2D.format, sizeStrategy);
+                int mipMapCount = 10;
+                int mipLevel = 1;
+                float tSize = 0;
+                while (mipLevel <= mipMapCount)
+                {
+                    tSize += tWidth * tHeight * bitsPerPixel / 8;
+                    tWidth = tWidth / 2;
+                    tHeight = tHeight / 2;
+                    mipLevel++;
+                }
+                return tSize * ((Texture2DArray)tTex2D).depth;
+            }
+            if (tTexture is Cubemap)
+            {
+                Cubemap tCubemap = tTexture as Cubemap;
+				float bitsPerPixel = GetBitsPerPixel(tTexture, tCubemap.format, sizeStrategy);
+                return (tWidth * tHeight * 6 * bitsPerPixel) / 8f;
+            }
+            return 0f;
         }
-    }        
+
+		private static bool IsPowerOfTwo(int x)
+		{
+			return (x != 0) && ((x & (x - 1)) == 0);
+		}
+
+		private static float GetBitsPerPixel(Texture texture, TextureFormat format, ESizeStrategy sizeStrategy) 
+		{
+			float returnValue = GetBitsPerPixel(format);
+
+			if (texture.width == texture.height && IsPowerOfTwo(texture.width)) 
+			{			
+				// 1024x1024 non compressed textures tke up all the space according to unity profiler
+				if(texture.width == 1024 && !IsACompressedFormat(format))
+					return returnValue;
+				
+				switch (sizeStrategy)
+				{
+					case ESizeStrategy.DeviceHalf:
+						returnValue /= 4;
+						break;
+
+					case ESizeStrategy.DeviceQuarter:
+						returnValue /= 16;
+						break;
+				}
+			}
+
+			return returnValue;
+		}
+
+		private static List<TextureFormat> CompressedFormats = new List<TextureFormat>
+		{
+			TextureFormat.PVRTC_RGB2,
+			TextureFormat.PVRTC_RGBA2,
+			TextureFormat.PVRTC_RGB4,
+			TextureFormat.PVRTC_RGBA4,
+			TextureFormat.ETC_RGB4,
+			TextureFormat.ATC_RGB4,
+			TextureFormat.ATC_RGBA8
+		};
+
+		private static bool IsACompressedFormat(TextureFormat format)
+		{
+			return CompressedFormats.Contains(format);
+		}
+
+    } 		
        
     private Dictionary<string, List<ObjectDetails>> Objects { get; set; }
 

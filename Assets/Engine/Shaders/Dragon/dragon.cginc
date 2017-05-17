@@ -133,7 +133,7 @@ fixed4 frag(v2f i) : SV_Target
 	fixed specMask = 0.2126 * reflection.r + 0.7152 * reflection.g + 0.0722 * reflection.b;
 
 	//fixed4 reflection = texCUBE(_ReflectionMap, reflect(halfDir, normalDirection));
-	float ref = specMask * _ReflectionAmount;
+	float ref = specMask * _ReflectionAmount * detail.b;
 	col = (1.0 - ref) * main + ref * reflection;
 
 //	col = main * specMask * 1.0;

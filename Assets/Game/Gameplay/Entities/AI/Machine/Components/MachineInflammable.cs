@@ -60,7 +60,7 @@ namespace AI {
 							Material[] materials = new Material[renderer.materials.Length];
 							for (int j = 0; j < renderer.materials.Length; j++) {
 								Material newMat = null;
-								newMat = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);
+								newMat = new Material(Resources.Load ("Game/Materials/BurnToAshes") as Material);
 								newMat.SetTexture("_AlphaMask", m_renderers[i].material.mainTexture);
 								newMat.renderQueue = 3000;
 								materials[j] = newMat;

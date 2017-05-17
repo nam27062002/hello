@@ -371,7 +371,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		RemoveAudios();
     }
 
-    private void RemoveAudios()
+    protected virtual void RemoveAudios()
     {
 		if ( ApplicationManager.IsAlive )
     	{
@@ -388,7 +388,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
     }
 
-	void RemoveAudioParent(AudioObject ao)
+	protected void RemoveAudioParent(AudioObject ao)
 	{
 		if ( ao != null && ao.transform.parent == transform )
 		{
@@ -551,10 +551,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 					ft.m_follow = m_exclamationTransform;
 				}
 			} else {
-				ParticleManager.ReturnInstance(m_exclamationMarkOn);
-				m_exclamationMarkOn = null;
+				if (m_exclamationMarkOn != null) {
+					ParticleManager.ReturnInstance(m_exclamationMarkOn);
+					m_exclamationMarkOn = null;
+				}
 			}
-
 			m_isExclamationMarkOn = _value;
 		}
 	}
@@ -823,12 +824,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 		if (!_eaten) {
-			if (m_explosionParticles.IsValid()) {
-				ParticleManager.Spawn(m_explosionParticles, transform.position + m_explosionParticles.offset);
-			}
-
-			if (!string.IsNullOrEmpty(m_onExplosionAudio))
-				AudioController.Play(m_onExplosionAudio, transform.position);
+			PlayExplosion();
 		}
 
 		if (!_burned) {
@@ -847,6 +843,16 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			ParticleManager.ReturnInstance(m_pcTrail);
 			m_pcTrail = null;
 		}
+	}
+
+	public void PlayExplosion()
+	{
+		if (m_explosionParticles.IsValid()) {
+			ParticleManager.Spawn(m_explosionParticles, transform.position + m_explosionParticles.offset);
+		}
+
+		if (!string.IsNullOrEmpty(m_onExplosionAudio))
+			AudioController.Play(m_onExplosionAudio, transform.position);
 	}
 
 	/// <summary>
