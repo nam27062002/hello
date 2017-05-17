@@ -116,8 +116,10 @@ namespace AI {
 				m_meleeWeapon.enabled = true;
 
 				Vector3 direction = Vector3.right;
-				if (m_machine.enemy.position.x < m_machine.position.x) {
-					direction = Vector3.left;
+				if (m_machine.enemy != null) {
+					if (m_machine.enemy.position.x < m_machine.position.x) {
+						direction = Vector3.left;
+					}
 				}
 				m_pilot.SetDirection(direction, true);
 
