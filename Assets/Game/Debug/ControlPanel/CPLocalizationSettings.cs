@@ -36,6 +36,7 @@ public class CPLocalizationSettings : MonoBehaviour {
 	private void Awake() {
 		// Subscribe to external events
 		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnBoolChanged);
+		Messenger.AddListener<string, int>(GameEvents.CP_ENUM_CHANGED, OnEnumChanged);
 	}
 
 	/// <summary>
@@ -44,6 +45,7 @@ public class CPLocalizationSettings : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe to external events
 		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnBoolChanged);
+		Messenger.RemoveListener<string, int>(GameEvents.CP_ENUM_CHANGED, OnEnumChanged);
 	}
 
 	//------------------------------------------------------------------------//
@@ -69,6 +71,22 @@ public class CPLocalizationSettings : MonoBehaviour {
 				LocalizationManager.SharedInstance.FillEmptyTids("lang_english");
 				Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
 			}
+		}
+	}
+
+	/// <summary>
+	/// An enum preference has been changed on the control panel.
+	/// </summary>
+	/// <param name="_prefId">Pref identifier.</param>
+	/// <param name="_newValue">New value.</param>
+	public void OnEnumChanged(string _prefId, int _newValue) {
+		// Check pref ID
+		if(_prefId == DebugSettings.LOCALIZATION_DEBUG_MODE) {
+			// Set new debug mode to the localization manager
+			LocalizationManager.SharedInstance.debugMode = (LocalizationManager.DebugMode)_newValue;
+
+			// Reload active texts by simulating a language change
+			Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
 		}
 	}
 }
