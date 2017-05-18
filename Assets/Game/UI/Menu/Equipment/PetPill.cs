@@ -42,6 +42,10 @@ public class PetPill : MonoBehaviour {
 	[SerializeField] private GameObject[] m_rarityDecorations = new GameObject[(int)EggReward.Rarity.COUNT];
 	[Space]
 	[SerializeField] private UIColorFX m_frameColorFX = null;
+	public UIColorFX frameColorFX {
+		get { return m_frameColorFX; }
+	}
+
 	[SerializeField] private Color m_lockedColor = new Color(0.5f, 0.5f, 0.5f);
 	[SerializeField] private Color m_equippedColor = Colors.orange;
 
@@ -78,16 +82,6 @@ public class PetPill : MonoBehaviour {
 				m_animator = GetComponent<ShowHideAnimator>();
 			}
 			return m_animator; 
-		}
-	}
-
-	private UIColorFX m_colorFX = null;
-	public UIColorFX colorFX {
-		get { 
-			if(m_colorFX == null) {
-				m_colorFX = GetComponent<UIColorFX>();
-			}
-			return m_colorFX; 
 		}
 	}
 
@@ -134,7 +128,6 @@ public class PetPill : MonoBehaviour {
 		Messenger.AddListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 
 		// Make sure pill is updated
-		if(m_frameColorFX != null) m_frameColorFX.Reset();
 		Refresh();
 	}
 
@@ -156,7 +149,7 @@ public class PetPill : MonoBehaviour {
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
+	//------------------------------------------------------------------------//º	
 	/// <summary>
 	/// Initialize from a given pet definition.
 	/// </summary>

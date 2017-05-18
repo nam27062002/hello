@@ -294,6 +294,9 @@ public class PetsScreenController : MonoBehaviour {
 
 				// React if the pill is tapped!
 				m_pills[i].OnPillTapped.AddListener(OnPillTapped);
+
+				// Keep scroll at 0 when creating new pills (otherwise it scrolls to random position)
+				m_scrollList.horizontalNormalizedPosition = 0f;
 			}
 
 			// Initialize pill
@@ -321,12 +324,14 @@ public class PetsScreenController : MonoBehaviour {
 		// Propagate to scene
 		petsScene.OnShowPreAnimation();
 
+		// Reset scroll lists and program initial animation (except first time, weird scrolling behaviour when instantiating the pills for the first time)
+		m_scrollList.horizontalNormalizedPosition = 0f;
+		if(m_pills.Count > 0) {
+			m_scrollList.DOHorizontalNormalizedPos(-25f, 1f).From().SetEase(Ease.OutCubic).SetDelay(0.3f).SetUpdate(true);
+		}
+
 		// Refresh with initial data!
 		Initialize();
-
-		// Reset scroll lists and program initial animation
-		m_scrollList.horizontalNormalizedPosition = 0f;
-		m_scrollList.DOHorizontalNormalizedPos(-25f, 1f).From().SetEase(Ease.OutCubic).SetDelay(0.3f).SetUpdate(true);
 	}
 
 	/// <summary>
