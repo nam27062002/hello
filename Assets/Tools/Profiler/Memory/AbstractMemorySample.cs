@@ -4,8 +4,10 @@ using System.Xml;
 public abstract class AbstractMemorySample
 {
     protected const string XML_PARAM_SAMPLE = "Sample";
-    protected const string XML_PARAM_NAME = "name";    
+    protected const string XML_PARAM_NAME = "name";
+    protected const string XML_PARAM_ID = "id";
     protected const string XML_PARAM_SIZE = "size";
+    protected const string XML_PARAM_SIZE_RAW = "sizeRaw";
     protected const string XML_PARAM_AMOUNT = "amount";
     protected const string XML_PARAM_SIZE_STRATEGY = "sizeStrategy";
 
@@ -22,7 +24,7 @@ public abstract class AbstractMemorySample
             float memSizeMB = ((float)memSizeKB) / 1024.0f;
             return memSizeMB.ToString("0.00") + "Mb";
         }
-    }
+    }    
 
     public abstract long GetTotalMemorySize();
 
