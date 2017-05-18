@@ -10,7 +10,7 @@ GameObject:
   - component: {fileID: 465822}
   - component: {fileID: 11416102}
   m_Layer: 0
-  m_Name: SP_GoodJunkCoin
+  m_Name: SP_GoodJunkScore
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42,7 +42,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Junk/PF_GoodJunkCoin
+  - name: Junk/PF_GoodJunkScore
     chance: 100
   m_quantity:
     min: 1
@@ -56,8 +56,11 @@ MonoBehaviour:
   m_rails: 1
   m_hasGroupBonus: 0
   m_minTier: 0
+  m_maxTier: 4
+  m_checkMaxTier: 0
   m_activationChance: 100
   m_activationTriggers: []
+  m_activationKillTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
     min: 500

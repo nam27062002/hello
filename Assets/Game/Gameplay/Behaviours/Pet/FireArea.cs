@@ -29,7 +29,7 @@ public class FireArea : MonoBehaviour {
 			for (int i = 0; i < m_numCheckEntities; i++) 
 			{
 				Entity prey = m_checkEntities[i];
-				if ( prey.IsBurnable() && (prey.IsBurnable(m_tier) || InstanceManager.player.breathBehaviour.type == DragonBreathBehaviour.Type.Super))
+				if ( prey.IsBurnable() && (prey.IsBurnable(m_tier) || InstanceManager.player.breathBehaviour.type == DragonBreathBehaviour.Type.Mega))
 				{
 					AI.IMachine machine =  prey.machine;
 					if (machine != null) {

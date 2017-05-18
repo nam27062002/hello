@@ -120,7 +120,7 @@ public class HUDMegaFireRushBar : MonoBehaviour {
 	}
 
 	void OnFuryToggled(bool _active, DragonBreathBehaviour.Type type) {
-		if (type == DragonBreathBehaviour.Type.Super) {			
+		if (type == DragonBreathBehaviour.Type.Mega) {			
 			m_state = State.Active;
 		}
 	}

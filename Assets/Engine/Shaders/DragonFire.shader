@@ -19,7 +19,7 @@
 		Blend SrcAlpha OneMinusSrcAlpha 
 		Cull Off
 		ZWrite Off
-
+/*
 		Stencil
 		{
 			Ref [_StencilMask]
@@ -27,7 +27,7 @@
 			Pass Replace
 			ZFail keep
 		}
-
+*/
 		Pass
 		{
 			CGPROGRAM

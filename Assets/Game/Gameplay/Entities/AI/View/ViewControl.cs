@@ -439,7 +439,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         {
 			switch( _fireType )
 	    	{
-	    		case DragonBreathBehaviour.Type.Super:
+	    		case DragonBreathBehaviour.Type.Mega:
 	    			return m_entity.IsBurnable();
 				case DragonBreathBehaviour.Type.Standard:
 				default:

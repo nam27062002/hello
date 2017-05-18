@@ -11,13 +11,32 @@ public class MemorySample : AbstractMemorySample
         // in bytes
         public int MemSize { get; set; }
         public Object Obj { get; set; }
+        public int InstanceID { get; set; }
+        public string Name { get; set; }
         public string Type { get; set; }
 
+        /// <summary>
+        /// Constructor to be used when the object is available, its used typically when a sample is taken
+        /// </summary>        
         public ObjectDetails(Object o, ESizeStrategy sizeStrategy)
         {
             Obj = o;
+            Name = o.name;
+            InstanceID = o.GetInstanceID();            
             Type = o.GetType().Name;
             CalculateSize(sizeStrategy);
+        }
+
+        /// <summary>
+        /// Constructor to be used when these data are taken from a xml containing a sample
+        /// </summary>        
+        public ObjectDetails(string type, int instanceId, string name, int memSize)
+        {
+            Obj = null;
+            InstanceID = instanceId;
+            Name = name;
+            Type = type;
+            MemSize = memSize;
         }
 
         public void CalculateSize(ESizeStrategy sizeStrategy)
@@ -26,10 +45,25 @@ public class MemorySample : AbstractMemorySample
             {				
                 MemSize = UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(Obj);
 
-                if (Obj is Texture && sizeStrategy != ESizeStrategy.Profiler)
+                if (sizeStrategy != ESizeStrategy.Profiler)
                 {
-                    MemSize = (int)CalculateTextureSizeBytes(Obj as Texture, sizeStrategy);
-                }
+                    if (Obj is Texture)
+                    {
+                        MemSize = (int)CalculateTextureSizeBytes(Obj as Texture, sizeStrategy);
+                    }
+                    else if (Obj is AnimationClip)
+                    {
+                        MemSize = (int)(MemSize * 0.47f);
+                    }
+                    else if (Obj is GameObject)
+                    {
+                        MemSize = (int)(MemSize * 0.622f);
+                    }
+                    else if (Obj is Transform)
+                    {
+                        MemSize = (int)(MemSize * 0.7f);
+                    }
+                }               
             }
         }			      
 
@@ -76,6 +110,10 @@ public class MemorySample : AbstractMemorySample
                     return 4;
                 case TextureFormat.ETC_RGB4://	 ETC (GLES2.0) 4 bits/pixel compressed RGB texture format.
                     return 4;
+                case TextureFormat.ETC2_RGBA1:
+                    return 1;
+                case TextureFormat.ETC2_RGBA8:
+                    return 8;
                 case TextureFormat.ATC_RGB4://	 ATC (ATITC) 4 bits/pixel compressed RGB texture format.
                     return 4;
                 case TextureFormat.ATC_RGBA8://	 ATC (ATITC) 8 bits/pixel compressed RGB texture format.
@@ -300,6 +338,26 @@ public class MemorySample : AbstractMemorySample
         }
     }
 
+    private void AddGeneric(string typeName, int objectId, string objectName, int memSize)
+    {
+        if (Objects == null)
+        {
+            Objects = new Dictionary<string, List<ObjectDetails>>();
+        }
+
+        if (!Objects.ContainsKey(typeName))
+        {
+            Objects.Add(typeName, new List<ObjectDetails>());
+        }
+        
+        ObjectDetails oDetails = FindObjectDetails(typeName, objectId);
+        if (oDetails == null)
+        {
+            oDetails = new ObjectDetails(typeName, objectId, objectName, memSize);
+            Objects[typeName].Add(oDetails);
+        }            
+    }
+
     public void Analyze()
     {
         if (Objects != null)
@@ -313,7 +371,20 @@ public class MemorySample : AbstractMemorySample
 
     private void SortObjectDetailsList(List<ObjectDetails> list)
     {
-        list.Sort(delegate (ObjectDetails details1, ObjectDetails details2) { return details2.MemSize - details1.MemSize; });
+        list.Sort
+        (
+            delegate (ObjectDetails details1, ObjectDetails details2) 
+            {
+                // They are sorted in descent order by their size and alphabetically if they have the same size
+                int returnValue = details2.MemSize - details1.MemSize;
+                if (returnValue == 0)
+                {
+                    returnValue = string.Compare(details1.Name, details2.Name);
+                }
+
+                return returnValue;               
+            }
+        );
     }
 
     public long GetMemorySizePerType(string type)
@@ -363,7 +434,20 @@ public class MemorySample : AbstractMemorySample
         }
 
         return null;
-    }    
+    }
+
+    private ObjectDetails FindObjectDetails(string type, int objectId)
+    {
+        if (Objects != null && Objects.ContainsKey(type))
+        {
+            foreach (ObjectDetails details in Objects[type])
+            {
+                if (details.InstanceID == objectId) return details;
+            }
+        }
+
+        return null;
+    }
 
     #region type_groups
     // This region is responsible for classifying the sample in type groups, for example: Texture2D and Sprite are assigned to the same group "Textures".
@@ -513,11 +597,19 @@ public class MemorySample : AbstractMemorySample
             if (includeDetails)
             {
                 node = xmlDoc.CreateElement(list[i].Type);
-                node.InnerText = list[i].Obj.name;
+                node.InnerText = list[i].Name;
                 itemNode.AppendChild(node);
+
+                attribute = xmlDoc.CreateAttribute(XML_PARAM_ID);
+                attribute.Value = "" + list[i].InstanceID;
+                node.Attributes.Append(attribute);                
 
                 attribute = xmlDoc.CreateAttribute(XML_PARAM_SIZE);
                 attribute.Value = FormatSizeString(list[i].MemSize);
+                node.Attributes.Append(attribute);
+
+                attribute = xmlDoc.CreateAttribute(XML_PARAM_SIZE_RAW);
+                attribute.Value = "" + list[i].MemSize;
                 node.Attributes.Append(attribute);
             }
         }
@@ -525,6 +617,11 @@ public class MemorySample : AbstractMemorySample
         attribute = xmlDoc.CreateAttribute(XML_PARAM_SIZE);
         attribute.Value = FormatSizeString(memSize);
         itemNode.Attributes.Append(attribute);
+
+        attribute = xmlDoc.CreateAttribute(XML_PARAM_SIZE_RAW);
+        attribute.Value = "" + memSize;
+        itemNode.Attributes.Append(attribute);
+
         attribute = xmlDoc.CreateAttribute(XML_PARAM_AMOUNT);
         attribute.Value = count + "";
         itemNode.Attributes.Append(attribute);
@@ -590,11 +687,59 @@ public class MemorySample : AbstractMemorySample
         attribute.Value = FormatSizeString(totalMemory);
         thisRootNode.Attributes.Append(attribute);
 
+        attribute = xmlDoc.CreateAttribute(XML_PARAM_SIZE_RAW);
+        attribute.Value = "" + totalMemory;
+        thisRootNode.Attributes.Append(attribute);
+
         return xmlDoc;
     }
 
     public override void FromXML(XmlNode xml)
     {
+        if (xml != null)
+        {            
+            XmlAttributeCollection attributes = xml.Attributes;
+            if (attributes != null)
+            {
+                Name = attributes[XML_PARAM_NAME].InnerText;
+                string sizeStrategy = attributes[XML_PARAM_SIZE_STRATEGY].InnerText;
+                if (!string.IsNullOrEmpty(sizeStrategy))
+                {
+                    SizeStrategy = (ESizeStrategy)Enum.Parse(typeof(ESizeStrategy), sizeStrategy);
+                }
+            }
+            
+            foreach (XmlNode node in xml.ChildNodes)
+            {
+                FromXMLChild(node);
+            }
+        }
+    }
+
+    private void FromXMLChild(XmlNode node)
+    {
+        if (node.ChildNodes.Count != 0)
+        {
+            foreach (XmlNode child in node.ChildNodes)
+            {
+                FromXMLChild(child);
+            }
+        }
+        else if (node.ParentNode != null)
+        {
+            XmlAttributeCollection attributes = node.ParentNode.Attributes;
+            if (attributes != null)
+            {                
+                string sizeAsString = attributes[XML_PARAM_SIZE_RAW].InnerText;
+                string idAsString = attributes[XML_PARAM_ID].InnerText;
+                string type = node.ParentNode.Name;
+                string name = node.InnerText;
+
+                int size = int.Parse(sizeAsString);
+                int id = int.Parse(idAsString);
+                AddGeneric(type, id, name, size);                
+            }            
+        }
     }
     #endregion
 }
