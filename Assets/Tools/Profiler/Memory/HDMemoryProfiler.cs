@@ -9,6 +9,8 @@ public class HDMemoryProfiler : MemoryProfiler
 {
     public HDMemoryProfiler()
     {
+        SizeStrategy = AbstractMemorySample.ESizeStrategy.DeviceHalf;
+
         // Supported category sets are setup
         CategorySet_Setup();
     }
@@ -50,7 +52,19 @@ public class HDMemoryProfiler : MemoryProfiler
         GameObject singletons = GameObject.Find("Singletons");
         if (singletons != null)
         {
-            Scene_AddGO(key, singletons);
+            UnityEngine.SceneManagement.Scene scene = singletons.scene;
+            if (scene != null)
+            {
+                GameObject[] gos = scene.GetRootGameObjects();
+                if (gos != null)
+                {
+                    int count = gos.Length;
+                    for (int i = 0; i < count; i++)
+                    {
+                        Scene_AddGO(key, gos[i]);
+                    }
+                }
+            }            
         }
 
         // Lightmaps are added manually
@@ -161,6 +175,25 @@ public class HDMemoryProfiler : MemoryProfiler
         GameObject singletons = GameObject.Find("Singletons");
         if (singletons != null)
         {
+            // Loops through all game objects except the one called "Singletons" in DontDestroy scene to add them to the profiler.
+            // "Singletons" game object will be added manually because their children might need to be assigned to different keys
+            UnityEngine.SceneManagement.Scene scene = singletons.scene;
+            if (scene != null)
+            {
+                GameObject[] gos = scene.GetRootGameObjects();
+                if (gos != null)
+                {
+                    int count = gos.Length;
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (gos[i] != singletons)
+                        {
+                            Scene_AddGO(CATEGORY_SET_GAME_KEY_HUD, gos[i]);
+                        }
+                    }
+                }
+            }
+
             if (calculateKey)
             {
                 // Most particles are used by npcs so they are assigned to LEVEL NPCS category

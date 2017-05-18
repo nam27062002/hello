@@ -34,6 +34,8 @@ public class GameCameraDebug : MonoBehaviour {
 	// Internal
 	private Camera m_camera = null;
 	int m_cullingMask = 0;
+
+    int m_collidersMask = 0;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -48,14 +50,22 @@ public class GameCameraDebug : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
 
-		// Initialize by simulating a toggle of the setting
-		OnDebugSettingChanged(DebugSettings.SHOW_COLLISIONS, Prefs.GetBoolPlayer(DebugSettings.SHOW_COLLISIONS));
+
 	}
 
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
+    private void Start()
+    {
+        m_cullingMask = m_camera.cullingMask;
+        m_collidersMask = LayerMask.GetMask("Ground", "GroundVisible", "Player", "AirPreys", "WaterPreys", "MachinePreys", "GroundPreys", "Mines");
+
+        // Initialize by simulating a toggle of the setting
+        OnDebugSettingChanged(DebugSettings.SHOW_COLLISIONS, Prefs.GetBoolPlayer(DebugSettings.SHOW_COLLISIONS));
+    }
+
+    /// <summary>
+    /// Destructor.
+    /// </summary>
+    private void OnDestroy() {
 		// Unsubscribe from external events.
 		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
 	}
@@ -64,8 +74,6 @@ public class GameCameraDebug : MonoBehaviour {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		// Restore default shader
-		m_camera.ResetReplacementShader();
 	}
 
 	/// <summary>
@@ -74,16 +82,7 @@ public class GameCameraDebug : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Backup some camera settings that we don't want to override
-		m_cullingMask = m_camera.cullingMask;
 
-		// Update settings from reference camera
-		m_camera.CopyFrom(m_refCamera);
-		m_camera.SetReplacementShader(m_collisionReplacementShader, "ReplacementShaderID");
-
-		// Restore some settings
-		m_camera.cullingMask = m_cullingMask;
-		m_camera.depth += 1;	// Render on top of the reference camera
-		m_camera.clearFlags = CameraClearFlags.Depth;	// Depth-only, we want to see the reference camera
 	}
 
 	//------------------------------------------------------------------------//
@@ -101,8 +100,9 @@ public class GameCameraDebug : MonoBehaviour {
 	private void OnDebugSettingChanged(string _id, bool _newValue) {
 		// Show collisions cheat?
 		if(_id == DebugSettings.SHOW_COLLISIONS) {
-			// Enable/Disable object
-			this.gameObject.SetActive(_newValue);
-		}
+            // Enable/Disable object
+            Debug.Log("Show Collisions : " + _newValue);
+            m_camera.cullingMask = _newValue ? m_collidersMask: m_cullingMask;
+        }
 	}
 }
