@@ -159,7 +159,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 		m_direction.Normalize();
 
         float length = m_length;
-		if ( m_type == Type.Super )
+		if ( m_type == Type.Mega )
 			length = m_length * m_superFuryLengthMultiplier;
 
 		float angularSpeed = m_motion.angularVelocity.magnitude;
@@ -202,7 +202,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 			if ((prey.circleArea != null && Overlaps((CircleAreaBounds)prey.circleArea.bounds)) || IsInsideArea(prey.transform.position)) 
 			{
 				if (prey.IsBurnable()) {
-					if (prey.IsBurnable(m_tier) || m_type == Type.Super) {
+					if (prey.IsBurnable(m_tier) || m_type == Type.Mega) {
 						AI.IMachine machine =  m_checkEntities[i].machine;
 						if (machine != null) {
 							machine.Burn(transform);
@@ -258,7 +258,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 				{
 					Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length);
 				}break;
-				case Type.Super:
+				case Type.Mega:
 				{
 					Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length * m_superFuryLengthMultiplier);
 				}break;
@@ -289,7 +289,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 				{
 					dragonFlameStandardInstance.SwitchToWaterMode();
 				}break;
-				case Type.Super:
+				case Type.Mega:
 				{
 					dragonFlameSuperInstance.SwitchToWaterMode();
 				}break;
@@ -318,7 +318,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 				{
 					dragonFlameStandardInstance.SwitchToNormalMode();
 				}break;
-				case Type.Super:
+				case Type.Mega:
 				{
 					dragonFlameSuperInstance.SwitchToNormalMode();
 				}break;

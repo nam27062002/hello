@@ -48,7 +48,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	public enum Type
     {
         Standard,
-        Super,
+        Mega,
         None
     };
 
@@ -221,7 +221,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 							}
 						}
 						break;
-					case Type.Super:
+					case Type.Mega:
 					{
 							
 					}
@@ -259,7 +259,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			{
 				if (UsersManager.currentUser.superFuryProgression >= m_superFuryMax)
 				{
-					BeginFury( Type.Super );
+					BeginFury( Type.Mega );
 
 				}
 				else if (m_currentFury >= m_furyMax)
@@ -301,7 +301,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		switch( m_type )
 		{
-			case Type.Super:
+			case Type.Mega:
 			{
 				// Set super gold rush progress
 				m_currentFuryDuration = m_currentRemainingFuryDuration = m_furyDuration * m_superFuryDurationModifier;
@@ -344,7 +344,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				{
 					FirePropagationManager.instance.FireUpNodes( bounds2D, Overlaps, m_dragon.data.tier, direction);
 				}break;
-				case Type.Super:
+				case Type.Mega:
 				{
 					FirePropagationManager.instance.FireUpNodes( bounds2D, Overlaps, DragonTier.COUNT - 1, direction);
 				}break;
@@ -367,7 +367,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				}
 			} break;
 
-			case Type.Super: {
+			case Type.Mega: {
 				// Set super fury counter to 0
 				UsersManager.currentUser.superFuryProgression = 0;
 
@@ -421,7 +421,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	public float GetSuperFuryProgression()
 	{
-		if ( m_isFuryOn && m_type == Type.Super )
+		if ( m_isFuryOn && m_type == Type.Mega )
 		{
 			return m_currentRemainingFuryDuration / m_currentFuryDuration;
 		}
@@ -439,7 +439,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		switch( m_type )
 		{
 			case Type.Standard: if ( m_breathSoundAO != null && m_breathSoundAO.IsPlaying() ) m_breathSoundAO.Pause();break;
-			case Type.Super: if ( m_superBreathSoundAO != null && m_superBreathSoundAO.IsPlaying() ) m_superBreathSoundAO.Pause();break;
+			case Type.Mega: if ( m_superBreathSoundAO != null && m_superBreathSoundAO.IsPlaying() ) m_superBreathSoundAO.Pause();break;
 		}
 	}
 
@@ -449,7 +449,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		switch( m_type )
 		{
 			case Type.Standard: if ( m_breathSoundAO != null && m_breathSoundAO.IsPlaying() ) m_breathSoundAO.Unpause();break;
-			case Type.Super: if ( m_superBreathSoundAO != null && m_superBreathSoundAO.IsPlaying() ) m_superBreathSoundAO.Unpause();break;
+			case Type.Mega: if ( m_superBreathSoundAO != null && m_superBreathSoundAO.IsPlaying() ) m_superBreathSoundAO.Unpause();break;
 		}
 	}
 

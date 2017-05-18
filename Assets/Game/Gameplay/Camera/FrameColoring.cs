@@ -48,7 +48,7 @@ public class FrameColoring : MonoBehaviour
 					m_value = Mathf.Lerp( m_value, 0.69f, Time.deltaTime * 10);
 					m_color = Color.Lerp( m_color, m_fireColor, Time.deltaTime * 10 );
 				}break;
-				case DragonBreathBehaviour.Type.Super:
+				case DragonBreathBehaviour.Type.Mega:
 				{
 					m_value = Mathf.Lerp( m_value, 0.69f, Time.deltaTime * 15);
 					m_color = Color.Lerp( m_color, m_superFireColor, Time.deltaTime * 15 );
