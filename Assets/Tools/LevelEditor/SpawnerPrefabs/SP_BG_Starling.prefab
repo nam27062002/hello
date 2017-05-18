@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1297636072766274}
+  m_IsPrefabParent: 1
+--- !u!1 &1297636072766274
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4275467837364060}
+  - component: {fileID: 114094904323015638}
+  - component: {fileID: 114198647395826646}
+  - component: {fileID: 114836514816483414}
+  m_Layer: 0
+  m_Name: SP_BG_Starling
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4275467837364060
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1297636072766274}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 119.5, y: 15.9, z: 30}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114094904323015638
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1297636072766274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_formation: 0
+--- !u!114 &114198647395826646
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1297636072766274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65f4a608161a34c029c35e08499265f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_entityPrefabStr: Background/PF_BG_Starling
+  m_quantity:
+    min: 6
+    max: 6
+  m_scale:
+    min: 1
+    max: 1.2
+  m_rails: 1
+  m_flockBonus: 0
+  m_activationTriggers: []
+  m_deactivationTriggers: []
+  m_maxSpawns: 0
+--- !u!114 &114836514816483414
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1297636072766274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_guideFunction: 0
+  m_innerRadius: 10
+  m_outterRadius: 20
+  m_targetDistance: 0
+  m_depthAmplitude: 0
+  m_depthFrequency: 0
+  m_scale: {x: 1, y: 1, z: 1}
+  m_rotation: {x: 0, y: 0, z: 0}
+  m_boundsScale: {x: 0, y: 0, z: 0}
+  m_forcePreview: 0
+  m_previewStep: 0.1
+  m_previewMaxTime: 60

@@ -76,7 +76,8 @@ public class AmbientHazard : MonoBehaviour {
 
 	// References
 	[Separator("References")]
-	[SerializeField] private GameObject m_particlesPrefab = null;
+	[SerializeField] private ParticleData m_poisonParticle = null;
+	[SerializeField] private Vector3 m_poisonParticleRotation;
 	// [AOC] Will be pooled
 	[SerializeField] private GameObject m_view = null;
 	// We want the logic to keep running when the object is not visible, so keep the view apart
@@ -281,12 +282,14 @@ public class AmbientHazard : MonoBehaviour {
 		// Particles
 		if (m_visible) {
 			// If particles are not created, do it now
-			if (m_particlesObj == null && m_particlesPrefab != null) {
-				m_particlesObj = ParticleManager.Spawn(m_particlesPrefab);
+			if (m_particlesObj == null && m_poisonParticle.IsValid()) {
+				m_particlesObj = ParticleManager.Spawn(m_poisonParticle);
 				if (m_particlesObj != null) {
 					// As children of ourselves
 					// Particle system should already be created to match the zero position
 					m_particlesObj.transform.SetParentAndReset(this.transform);
+					m_particlesObj.transform.localPosition = m_poisonParticle.offset;
+					m_particlesObj.transform.localEulerAngles = m_poisonParticleRotation;
 
 					// Particles are automatically started when spawned from the pool
 					// Stop them if hazard is not active

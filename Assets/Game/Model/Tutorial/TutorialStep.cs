@@ -42,5 +42,7 @@ public enum TutorialStep {
 	SKINS_INFO					= 1 << 12,
 	CHESTS_INFO					= 1 << 13,
 
+	FIRST_MISSIONS_GENERATED	= 1 << 14,
+
 	ALL							= ~(0)		// http://stackoverflow.com/questions/7467722/how-to-set-all-bits-of-enum-flag
 }

@@ -44,7 +44,7 @@ public class GameSceneControllerBase : SceneController {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	protected virtual void Awake() {
+	protected override void Awake() {
 		// Call parent
 		base.Awake();
 
@@ -57,7 +57,7 @@ public class GameSceneControllerBase : SceneController {
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	protected virtual void OnDestroy() {
+	protected override void OnDestroy() {
 		// Call parent
 		base.OnDestroy();
 

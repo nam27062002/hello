@@ -86,7 +86,7 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 
 		float speedFactor = 0.185f + ((0.125f - 0.185f) * ((m_size - 20f) / (40f - 20f)));
 
-		m_time += _speed * Time.deltaTime * speedFactor*2f;
+		m_time += _speed * Time.deltaTime * speedFactor * 2f;
 		if (UpdateFunction(m_time)) {
 			m_time = 0f;
 		}

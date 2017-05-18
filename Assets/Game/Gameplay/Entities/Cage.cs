@@ -20,16 +20,20 @@ public class Cage : IEntity {
 		}
 	}
 
+	public void SetDestroyedByDragon() {
+		m_wasDestroyed = true;
+	}
+
 	//
 	public override void Spawn(ISpawner _spawner) {		
 		m_spawner = _spawner;
+		m_wasDestroyed = false;
 		m_timer = 0f;
 		base.Spawn(_spawner);
 	}
 
 	//
 	public override void Disable(bool _destroyed) {	
-		m_wasDestroyed = _destroyed;
 		m_timer = 0.25f;
 	}
 

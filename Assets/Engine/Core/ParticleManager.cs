@@ -16,6 +16,16 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 
 	private float m_printTimer = 10f;
 
+	private bool m_useAreaLimits = true;
+
+	void Awake(){
+		// if we are in game we use the limits, otherwise ( Level Editor ), we let pools grow
+		m_useAreaLimits = !(InstanceManager.sceneController is LevelEditor.LevelEditorSceneController);	
+		#if PRINT_POOLS	
+			m_useAreaLimits = false;
+		#endif
+	}
+
 	void Update() {
 		#if PRINT_POOLS						
 		m_printTimer -= Time.deltaTime;
@@ -123,8 +133,8 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		_system.transform.position = _at;
 
 		// Restart all particle systems within the instance
-		ParticleSystem[] subsystems = _system.GetComponentsInChildren<ParticleSystem>();
-		for (int i = 0; i < subsystems.Length; i++) {
+		List<ParticleSystem> subsystems = _system.transform.FindComponentsRecursive<ParticleSystem>();
+		for (int i = 0; i < subsystems.Count; i++) {
 			subsystems[i].Clear();
 			ParticleSystem.EmissionModule em = subsystems[i].emission;
 			em.enabled = true;
@@ -155,28 +165,31 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		// If a pool with the given name already exists, ignore
 		if (instance.m_particlePools.ContainsKey(_prefab.name)) return;
 
-		// Do it!
-		#if PRINT_POOLS
-		Pool pool = new Pool(_prefab, instance.transform, 1, true, true, true);
-		#else
-		if (instance.m_poolSize.Count == 0f) {
-			if (LevelManager.currentLevelData != null) {
-				string category = "PARTICLE_MANAGER_SETTINGS_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea;
-				List<DefinitionNode> poolSize = DefinitionsManager.SharedInstance.GetDefinitionsList(category.ToUpper());
-				for (int i = 0; i < poolSize.Count; i++) {
-					instance.m_poolSize.Add(poolSize[i].sku, poolSize[i].GetAsInt("poolSize"));
+		Pool pool = null;
+		if (instance.m_useAreaLimits)
+		{	
+			if (instance.m_poolSize.Count == 0f) {
+				if (LevelManager.currentLevelData != null) {
+					string category = "PARTICLE_MANAGER_SETTINGS_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea;
+					List<DefinitionNode> poolSize = DefinitionsManager.SharedInstance.GetDefinitionsList(category.ToUpper());
+					for (int i = 0; i < poolSize.Count; i++) {
+						instance.m_poolSize.Add(poolSize[i].sku, poolSize[i].GetAsInt("poolSize"));
+					}
 				}
 			}
-		}
 
-		int size = 1;
-		if (instance.m_poolSize.ContainsKey(_prefab.name)) {
-			size = instance.m_poolSize[_prefab.name];
-		} else {
-			Debug.LogError("[ParticleManager] system " + _prefab.name + " not found in definitions. Cretaing only 1 instance.");
+			int size = 1;
+			if (instance.m_poolSize.ContainsKey(_prefab.name)) {
+				size = instance.m_poolSize[_prefab.name];
+			} else {
+				Debug.LogError("[ParticleManager] system " + _prefab.name + " not found in definitions. Cretaing only 1 instance.");
+			}
+			pool = new Pool(_prefab, instance.transform, size, false, true, true);
 		}
-		Pool pool = new Pool(_prefab, instance.transform, size, false, true, true);
-		#endif
+		else
+		{
+			pool = new Pool(_prefab, instance.transform, 1, true, true, true);	
+		}
 
 		instance.m_particlePools.Add(_prefab.name, pool);
 		instance.m_iterator.Add(pool);

@@ -68,6 +68,7 @@ namespace AI {
 			FindUpVector();
 
 			if (!m_onGround) {
+				m_upVector = Vector3.up;
 				FreeFall();
 			}
 
@@ -77,18 +78,6 @@ namespace AI {
 
 			m_subState = SubState.Idle;
 			m_nextSubState = SubState.Idle;
-		}
-
-		public override void OnCollisionGroundEnter(Collision _collision) {
-			m_onGround = true;
-		}
-
-		public override void OnCollisionGroundStay(Collision _collision) {
-			m_onGround = true;
-		}
-
-		public override void OnCollisionGroundExit(Collision _collision) {
-			m_onGround = false;
 		}
 
 		protected override void ExtendedUpdate() {
@@ -106,7 +95,6 @@ namespace AI {
 					break;
 
 				case SubState.Move:
-					GetGroundNormal();
 					if (m_pilot.speed <= 0.01f) {
 						m_nextSubState = SubState.Idle;
 					}
@@ -136,8 +124,7 @@ namespace AI {
 			}
 		}
 
-		protected override void ExtendedUpdateFreeFall() {
-			GetGroundNormal();
+		protected override void ExtendedUpdateFreeFall() {			
 			if (m_onGround) {
 				m_machine.SetSignal(Signals.Type.FallDown, false);
 				FindUpVector();
@@ -243,5 +230,35 @@ namespace AI {
 		protected override void ExtendedAttach() {}
 
 		protected override void OnSetVelocity() {}
+
+		public override void OnCollisionGroundEnter(Collision _collision) {
+			OnCollisionGroundStay(_collision);
+		}
+
+		public override void OnCollisionGroundStay(Collision _collision) {
+			for (int i = 0; i < _collision.contacts.Length; i++) {
+				Vector3 hitPoint = _collision.contacts[i].point;
+				float error = (hitPoint - position).sqrMagnitude;
+
+				if (error <= 0.3f) {					
+					m_groundNormal = _collision.contacts[i].normal;
+					m_groundDirection = Vector3.Cross(Vector3.back, m_groundNormal);
+
+					m_gravity = Vector3.zero;
+
+					m_heightFromGround = 0f;
+					m_viewControl.Height(0f);
+
+					m_onGround = true;
+					break;
+				}
+			}
+		}
+
+		public override void OnCollisionGroundExit(Collision _collision) {
+			m_onGround = false;
+			m_heightFromGround = 100f;
+			m_viewControl.Height(100f);
+		}
 	}
 }
