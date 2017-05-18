@@ -23,7 +23,6 @@ public class PetPill : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private static readonly Color LOCKED_COLOR = new Color(0.5f, 0.5f, 0.5f);
 	private const string TUTORIAL_HIGHLIGHT_PREFAB_PATH = "UI/Metagame/Pets/PF_PetPillTutorialFX";
 
 	public class PetPillEvent : UnityEvent<PetPill> { }
@@ -41,6 +40,10 @@ public class PetPill : MonoBehaviour {
 	[SerializeField] private GameObject m_equippedPowerFrame = null;
 	[Space]
 	[SerializeField] private GameObject[] m_rarityDecorations = new GameObject[(int)EggReward.Rarity.COUNT];
+	[Space]
+	[SerializeField] private UIColorFX m_frameColorFX = null;
+	[SerializeField] private Color m_lockedColor = new Color(0.5f, 0.5f, 0.5f);
+	[SerializeField] private Color m_equippedColor = Colors.orange;
 
 	// Internal
 	private DefinitionNode m_def = null;
@@ -131,6 +134,7 @@ public class PetPill : MonoBehaviour {
 		Messenger.AddListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 
 		// Make sure pill is updated
+		if(m_frameColorFX != null) m_frameColorFX.Reset();
 		Refresh();
 	}
 
@@ -233,11 +237,13 @@ public class PetPill : MonoBehaviour {
 		m_powerIcon.transform.parent.gameObject.SetActive(!isSpecialAndLocked);
 
 		// Color highlight when equipped
+		m_frameColorFX.brightness = m_locked ? -0.25f : 0f;
+		m_frameColorFX.saturation = m_locked ? -0.25f : 0f;
 		m_equippedFrame.SetActive(equipped);
 		m_equippedPowerFrame.SetActive(equipped);
 
 		// Tone down pet preview when locked for better contrast with the lock icon
-		m_preview.color = m_locked ? LOCKED_COLOR : Color.white;
+		m_preview.color = m_locked ? m_lockedColor : Color.white;
 	}
 
 	/// <summary>

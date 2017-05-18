@@ -40,8 +40,10 @@ public class PetsScreenController : MonoBehaviour {
 	[SerializeField] private float m_pillCreationDelay = 0.05f;
 
 	[Space]
-	[SerializeField] private List<PowerIcon> m_powerIcons = new List<PowerIcon>();
-	[SerializeField] private List<GameObject> m_slotLayouts = new List<GameObject>();
+	[SerializeField] private List<PetSlot> m_petSlots = new List<PetSlot>();
+	public List<PetSlot> petSlots {
+		get { return m_petSlots; }
+	}
 
 	// Collections
 	private List<PetPill> m_pills = new List<PetPill>();
@@ -52,11 +54,6 @@ public class PetsScreenController : MonoBehaviour {
 	private List<DefinitionNode> m_defs = new List<DefinitionNode>();
 	public List<DefinitionNode> defs {
 		get { return m_defs; }
-	}
-
-	private PetSlotInfo[] m_slotInfos = null;
-	public PetSlotInfo[] slotInfos {
-		get { return m_slotInfos; }
 	}
 
 	// Internal references
@@ -198,12 +195,8 @@ public class PetsScreenController : MonoBehaviour {
 		m_dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 
 		// Slots
-		// Make sure the list is initialized
-		if(m_slotInfos == null) {
-			m_slotInfos = this.GetComponentsInChildren<PetSlotInfo>();
-		}
-		for(int i = 0; i < m_slotInfos.Length; i++) {
-			m_slotInfos[i].Init(i);
+		for(int i = 0; i < m_petSlots.Count; i++) {
+			m_petSlots[i].Init(i);
 		}
 
 		// Do a first refresh - without animation
@@ -226,59 +219,12 @@ public class PetsScreenController : MonoBehaviour {
 			"TID_FRACTION",
 			StringUtils.FormatNumber(UsersManager.currentUser.petCollection.unlockedPetsCount),
 			StringUtils.FormatNumber(m_defs.Count)
-		);
-
-		// Powers
-		for(int i = 0; i < m_powerIcons.Count; i++) {
-			// 3 possibilities: equipped, not-equipped or invisible
-			if(i < m_dragonData.pets.Count) {
-				// Show
-				m_powerIcons[i].gameObject.SetActive(true);
-				m_powerIcons[i].anim.ForceShow(false);
-
-				// Equipped?
-				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_dragonData.pets[i]);
-				if(petDef == null) {
-					m_powerIcons[i].InitFromDefinition(null, false, _animate);
-				} else {
-					// Get power definition
-					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
-					m_powerIcons[i].InitFromDefinition(powerDef, false, _animate);
-				}
-			} else {
-				// Instant hide
-				m_powerIcons[i].anim.ForceHide(false);
-			}
-		}
+		) + " unlocked";	// [AOC] HARDCODED!!
 
 		// Slots
-		// Select proper layout based on amount of pets equipped by target dragon
-		GameObject targetLayout = null;
-		int numPets = m_dragonData.pets.Count;
-		for(int i = 0; i < m_slotLayouts.Count; i++) {
-			// Matches the target amount of pets?
-			if(i == numPets - 1) {	// This should do it, provided the layouts list is properly initialized!
-				m_slotLayouts[i].SetActive(true);
-				targetLayout = m_slotLayouts[i];
-			} else {
-				m_slotLayouts[i].SetActive(false);
-			}
-		}
-
-		// Put every slot into position
-		for(int i = 0; i < m_slotInfos.Length; i++) {
-			// Are we using this slot?
-			if(i < numPets) {
-				// Find the anchor matching the slot index
-				Transform anchor = targetLayout.FindTransformRecursive("PetSlotAnchor" + (i+1).ToString());	// [AOC] Quick'n'dirty, probably we should have the anchors indexed somewhere :P
-
-				// Move slot
-				m_slotInfos[i].transform.SetParent(anchor, false);
-				m_slotInfos[i].transform.localPosition = Vector3.zero;
-			}
-
+		for(int i = 0; i < m_petSlots.Count; i++) {
 			// Initialize slot
-			m_slotInfos[i].Refresh(m_dragonData, _animate);
+			m_petSlots[i].Refresh(m_dragonData, _animate);
 		}
 	}
 
@@ -357,7 +303,10 @@ public class PetsScreenController : MonoBehaviour {
 			m_pills[i].animator.Show();
 
 			// Wait a bit before next pill
-			yield return new WaitForSecondsRealtime(m_pillCreationDelay);
+			// Except for the first 5-6 pills, we want to show something!
+			if(i >= 6) {
+				yield return new WaitForSecondsRealtime(m_pillCreationDelay);
+			}
 		}
 	}
 
@@ -374,6 +323,10 @@ public class PetsScreenController : MonoBehaviour {
 
 		// Refresh with initial data!
 		Initialize();
+
+		// Reset scroll lists and program initial animation
+		m_scrollList.horizontalNormalizedPosition = 0f;
+		m_scrollList.DOHorizontalNormalizedPos(-25f, 1f).From().SetEase(Ease.OutCubic).SetDelay(0.3f).SetUpdate(true);
 	}
 
 	/// <summary>
