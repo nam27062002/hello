@@ -493,7 +493,7 @@ public class HUDMessage : MonoBehaviour {
 			// Only trigger with the right type!
 			if(m_type == Type.FIRE_RUSH && _type == DragonBreathBehaviour.Type.Standard) {
 				Show();
-			} else if(m_type == Type.MEGA_FIRE_RUSH && _type == DragonBreathBehaviour.Type.Super) {
+			} else if(m_type == Type.MEGA_FIRE_RUSH && _type == DragonBreathBehaviour.Type.Mega) {
 				Show();
 			}
 		}
