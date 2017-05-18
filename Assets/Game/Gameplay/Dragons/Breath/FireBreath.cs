@@ -154,7 +154,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 
 		float length = m_length;
-		if ( m_type == Type.Super )
+		if ( m_type == Type.Mega )
 			length = m_length * m_superFuryLengthMultiplier;
 
 		Vector3 flamesUpDir = Vector3.up;
@@ -212,7 +212,7 @@ public class FireBreath : DragonBreathBehaviour {
 				{
 					obj = PoolManager.GetInstance(m_flameParticle);
 				}break;
-				case Type.Super:
+				case Type.Mega:
 				{
 					obj = PoolManager.GetInstance(m_superFlameParticle);
 				}break;
@@ -236,7 +236,7 @@ public class FireBreath : DragonBreathBehaviour {
 				{
 					obj = PoolManager.GetInstance(m_flameUpParticle);
 				}break;
-				case Type.Super:
+				case Type.Mega:
 				{
 					obj = PoolManager.GetInstance(m_superFlameUpParticle);
 				}break;
@@ -287,7 +287,7 @@ public class FireBreath : DragonBreathBehaviour {
 			Entity prey = m_checkEntities[i];
 			if ((prey.circleArea != null && Overlaps((CircleAreaBounds)prey.circleArea.bounds)) || IsInsideArea(prey.transform.position)) 
 			{
-				if (prey.IsBurnable(m_tier) || m_type == Type.Super) {
+				if (prey.IsBurnable(m_tier) || m_type == Type.Mega) {
 					AI.IMachine machine =  m_checkEntities[i].machine;
 					if (machine != null) {
 						machine.Burn(transform);
@@ -317,7 +317,7 @@ public class FireBreath : DragonBreathBehaviour {
 				{
 					Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length * 2);
 				}break;
-				case Type.Super:
+				case Type.Mega:
 				{
 					Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length);
 				}break;
