@@ -104,6 +104,10 @@ public class MemorySampleCollection : AbstractMemorySample
         attribute.Value = FormatSizeString(GetTotalMemorySize());
         rootNode.Attributes.Append(attribute);
 
+        attribute = xmlDoc.CreateAttribute(XML_PARAM_SIZE_RAW);
+        attribute.Value = "" + GetTotalMemorySize();
+        rootNode.Attributes.Append(attribute);
+
         return xmlDoc;
     }
 
