@@ -200,7 +200,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 						ApplyShopPack(_flow.itemDef);
 
 						// Trigger message
-						OnPurchaseSuccess.Invoke(this);
+						OnPurchaseSuccessEnd(_flow.itemDef);
 					}
 				);
 				purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, m_def);
@@ -293,9 +293,16 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 			// Stop tracking
 			TrackPurchaseResult(false);
 
-			// Notify listeners
-			OnPurchaseSuccess.Invoke(this);
+			OnPurchaseSuccessEnd(m_def);
 		}
+	}
+
+	private void OnPurchaseSuccessEnd(DefinitionNode _def) {
+		// Notify player
+		UINotificationShop.CreateAndLaunch(GetCurrencyType(_def), _def.GetAsInt("amount"), Vector3.down * 150f, this.GetComponentInParent<Canvas>().transform as RectTransform);
+
+		// Notify listeners
+		OnPurchaseSuccess.Invoke(this);
 	}
 
 	/// <summary>

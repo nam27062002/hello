@@ -418,12 +418,13 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	/// <returns>The currency icon.</returns>
 	/// <param name="_currency">Currency type.</param>
 	public static IconType GetCurrencyIcon(UserProfile.Currency _currency) {
+		IconType icon = IconType.NONE;
 		switch(_currency) {
-			case UserProfile.Currency.SOFT:				return IconType.COINS;				break;
-			case UserProfile.Currency.HARD:				return IconType.PC;					break;
-			case UserProfile.Currency.GOLDEN_FRAGMENTS:	return IconType.GOLDEN_FRAGMENTS;	break;
+			case UserProfile.Currency.SOFT:				icon = IconType.COINS;				break;
+			case UserProfile.Currency.HARD:				icon = IconType.PC;					break;
+			case UserProfile.Currency.GOLDEN_FRAGMENTS:	icon = IconType.GOLDEN_FRAGMENTS;	break;
 		}
-		return IconType.NONE;
+		return icon;
 	}
 
 	/// <summary>

@@ -57,6 +57,7 @@ GameObject:
   - component: {fileID: 114809421437119396}
   - component: {fileID: 114057282602661830}
   - component: {fileID: 114785867577088996}
+  - component: {fileID: 114227282296680330}
   m_Layer: 5
   m_Name: PF_NotificationShop
   m_TagString: Untagged
@@ -156,6 +157,73 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 2
+--- !u!114 &114227282296680330
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1356928686666572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tweenType: 6
+  m_tweenDuration: 1
+  m_tweenValue: 1
+  m_tweenEase: 21
+  m_tweenDelay: 0
+  m_ignoreTimeScale: 1
+  m_showTweens: []
+  m_hideTweens: []
+  m_animator: {fileID: 0}
+  OnShowPreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPostAnimation:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114809421437119396}
+        m_MethodName: OnShowPostAnimation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114809421437119396}
+        m_MethodName: OnHidePostAnimation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114286252208922092
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -362,11 +430,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a995a099438534dbe8181de62c45c84e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_coin: {fileID: 0}
-  m_gem: {fileID: 0}
+  m_timeOnScreen: 2
   m_value: {fileID: 114629245579891174}
-  m_softCurrency: 1
-  m_hardCurrency: 0
 --- !u!114 &114861036565660292
 MonoBehaviour:
   m_ObjectHideFlags: 1
