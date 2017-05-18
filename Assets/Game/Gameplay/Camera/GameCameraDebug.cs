@@ -56,7 +56,7 @@ public class GameCameraDebug : MonoBehaviour {
     private void Start()
     {
         m_cullingMask = m_camera.cullingMask;
-        m_collidersMask = LayerMask.GetMask("Ground", "GroundVisible", "Player");
+        m_collidersMask = LayerMask.GetMask("Ground", "GroundVisible", "Player", "AirPreys", "WaterPreys", "MachinePreys", "GroundPreys", "Mines");
 
         // Initialize by simulating a toggle of the setting
         OnDebugSettingChanged(DebugSettings.SHOW_COLLISIONS, Prefs.GetBoolPlayer(DebugSettings.SHOW_COLLISIONS));
