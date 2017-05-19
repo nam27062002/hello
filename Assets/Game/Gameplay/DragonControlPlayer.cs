@@ -156,6 +156,7 @@ public class DragonControlPlayer : MonoBehaviour {
 			target.z = 0;
 			Vector3 move = target - transform.position;
 			impulse = move.normalized * desiredVelocity;
+			return;
 		}	
 
 		#if UNITY_EDITOR
