@@ -780,7 +780,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			Vector3 pos = transform.position;
 			float waterY =  _other.bounds.center.y + _other.bounds.extents.y;
 			pos.y = waterY;
-			ParticleManager.Spawn(m_waterSplashParticle.name, transform.position + m_waterSplashParticle.offset, m_waterSplashParticle.path);
+			ParticleManager.Spawn(m_waterSplashParticle, transform.position + m_waterSplashParticle.offset);
 		}
 	}
 

@@ -16,7 +16,7 @@ public class HUDMegaFireSlot : MonoBehaviour {
 	[SerializeField] private ParticleData m_consumeParticle;
 
 
-	private Image m_icon;
+	private UIIconFireColors m_icon;
 	private float m_delta;
 
 	private State m_state;
@@ -25,7 +25,7 @@ public class HUDMegaFireSlot : MonoBehaviour {
 
 	// Use this for initialization
 	private void Start () {
-		m_icon = transform.FindComponentRecursive<Image>("Image");
+		m_icon = transform.FindComponentRecursive<UIIconFireColors>("PF_IconFire");
 	}
 
 	public void CreatePools() {
@@ -34,10 +34,7 @@ public class HUDMegaFireSlot : MonoBehaviour {
 	}
 
 	public void Empty() {
-		Color c = m_icon.color;
-		c.a = 0f;
-		m_icon.color = c;
-
+		m_icon.alpha = 0f;
 		m_state = State.Empty;
 	}
 
@@ -51,22 +48,17 @@ public class HUDMegaFireSlot : MonoBehaviour {
 	}
 
 	public void Full() {
-		Color c = m_icon.color;
-		c.a = 1f;
-		m_icon.color = c;
-
+		m_icon.alpha = 1f;
 		m_state = State.Full;
 	}
 
 	public void Consume(float _delta) {
 		if (m_state != State.Empty) {
-			Color c = m_icon.color;
-			c.a = 1f * _delta;
-			m_icon.color = c;
+			m_icon.alpha = 1f * _delta;
 
-			if (c.a <= 0f) {				
+			if (m_icon.alpha <= 0f) {				
 				m_state = State.Empty;
-			} else if (c.a <= 0.25f) {
+			} else if (m_icon.alpha <= 0.25f) {
 				if (m_consumeEffect != null) {
 					m_consumeEffect.GetComponent<DisableInSeconds>().enabled = true;
 					m_consumeEffect = null;
@@ -86,13 +78,11 @@ public class HUDMegaFireSlot : MonoBehaviour {
 	void Update () {		
 		switch (m_state) {
 			case State.Fill: {
-					Color c = m_icon.color;
-					c.a += m_delta * Time.deltaTime;
-					if (c.a >= 1f) {
-						c.a = 1f;
+					m_icon.alpha += m_delta * Time.deltaTime;
+					if (m_icon.alpha >= 1f) {
+						m_icon.alpha = 1f;
 						m_state = State.Full;
 					}
-					m_icon.color = c;
 				} break;
 		}
 	}
