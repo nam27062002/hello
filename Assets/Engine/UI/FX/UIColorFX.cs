@@ -41,7 +41,25 @@ public class UIColorFX : MonoBehaviour {
 	// Custom materials for images and fonts
 	// Unfortunately they can't share the same material since rendering techniques are a bit different
 	private Material m_imageMaterial = null;
+	public Material imageMaterial {
+		get { return m_imageMaterial; }
+		set {
+			m_imageMaterial = value;
+			SetDirty();
+		}
+	}
+
 	private Material m_fontMaterial = null;
+	public Material fontMaterial {
+		get { return m_fontMaterial; }
+		set {
+			m_fontMaterial = value;
+			SetDirty();
+		}
+	}
+
+	// Internal
+	private bool m_dirty = true;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -49,7 +67,7 @@ public class UIColorFX : MonoBehaviour {
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
-	void OnEnable() {
+	private void OnEnable() {
 		// Initialize materials
 		ApplyMaterials();
 	}
@@ -57,12 +75,13 @@ public class UIColorFX : MonoBehaviour {
 	/// <summary>
 	/// Update is called once per frame
 	/// </summary>
-	void Update() {
+	private void Update() {
 		// Detect hierarchy changes
         // We assume that hierarchy is not going to change when the application is running in order to prevent memory from being allocated potencially every tick,
         // however we want to apply the materials in edit time (hierarchy in edit time might change in order to check how a new widget would look like in the hierarchy)
-		if(!Application.isPlaying && transform.hasChanged) {
+		if(!Application.isPlaying && transform.hasChanged || m_dirty) {
 			ApplyMaterials();
+			m_dirty = false;
 		}
 
 		// Keep shaders updated
@@ -72,7 +91,7 @@ public class UIColorFX : MonoBehaviour {
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
-	void OnDisable() {
+	private void OnDisable() {
 		// On editor mode, destroy materials every time we unselect the object.
 		if(!Application.isPlaying) {
 			DestroyMaterials();
@@ -82,7 +101,7 @@ public class UIColorFX : MonoBehaviour {
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	void OnDestroy() {
+	private void OnDestroy() {
 		// Destroy created materials
 		DestroyMaterials();
 	}
@@ -104,6 +123,13 @@ public class UIColorFX : MonoBehaviour {
 		brightness = 0f;
 		saturation = 0f;
 		contrast = 0f;
+	}
+
+	/// <summary>
+	/// Force an refresh on the next update call.
+	/// </summary>
+	public void SetDirty() {
+		m_dirty = true;
 	}
 
 	//------------------------------------------------------------------------//
