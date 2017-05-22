@@ -295,6 +295,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 		m_isExclamationMarkOn = false;
 
+		m_disableAnimatorTimer = 0f;
 		if (m_animator != null) {
 			m_animator.enabled = true;
 			m_animator.speed = 1f;
@@ -479,7 +480,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_animator != null) {
 			if (m_disableAnimatorTimer > 0) {
 				m_disableAnimatorTimer -= Time.deltaTime;
-				if (m_disableAnimatorTimer <= 0) {
+				if (m_disableAnimatorTimer < 0) {
 					m_animator.enabled = false;
 				}
 			}
@@ -779,7 +780,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			Vector3 pos = transform.position;
 			float waterY =  _other.bounds.center.y + _other.bounds.extents.y;
 			pos.y = waterY;
-			ParticleManager.Spawn(m_waterSplashParticle.name, transform.position + m_waterSplashParticle.offset, m_waterSplashParticle.path);
+			ParticleManager.Spawn(m_waterSplashParticle, transform.position + m_waterSplashParticle.offset);
 		}
 	}
 
@@ -898,9 +899,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_animator != null) {
 			m_animator.speed = 1f;
 			m_animator.SetTrigger("burn");
-			m_disableAnimatorTimer = _burnAnimSeconds;
+			m_disableAnimatorTimer = _burnAnimSeconds + 0.1f;
 		} else {
-			m_disableAnimatorTimer = 0f;
+			m_disableAnimatorTimer = 0.1f;
 		}
 	}
 

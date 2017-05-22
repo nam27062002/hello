@@ -90,6 +90,11 @@ namespace AI {
 				bool isInsideMinArea = m_machine.GetSignal(Signals.Type.Critical);
 				bool sense = false;
 
+				m_senseTimer -= Time.deltaTime;
+				if (m_senseTimer <= 0f) {
+					m_senseTimer = 0f;
+				}
+
 				if (m_senseAbove && m_senseBelow) {
 					sense = true;
 				} else if (m_senseAbove) {
@@ -98,31 +103,30 @@ namespace AI {
 					sense = m_enemy.position.y < sensorPosition.y;								
 				}
 
-				float fireRadius = 0f;
-				if (m_senseFire) {
-					if (InstanceManager.player.IsFuryOn() || InstanceManager.player.IsSuperFuryOn()) {
-						fireRadius = InstanceManager.player.breathBehaviour.actualLength;
+				if (sense) {
+					float fireRadius = 0f;
+					if (m_senseFire) {
+						if (InstanceManager.player.IsFuryOn() || InstanceManager.player.IsMegaFuryOn()) {
+							fireRadius = InstanceManager.player.breathBehaviour.actualLength;
+						}
 					}
-				}
 
-				m_senseTimer -= Time.deltaTime;
-				if (m_senseTimer <= 0) {
-					distanceSqr = DistanceSqrToEnemy();
+					if (m_senseTimer <= 0) {
+						distanceSqr = DistanceSqrToEnemy();
 
-					float sightRadiusIn =  m_sightRadiusIn + fireRadius;
-					float sightRadiusOut =  m_sightRadiusOut + fireRadius;
+						float sightRadiusIn =  m_sightRadiusIn + fireRadius;
+						float sightRadiusOut =  m_sightRadiusOut + fireRadius;
 
-					if (distanceSqr < sightRadiusIn * sightRadiusIn ) {
-						isInsideSightArea = true;
-						m_senseTimer = m_senseDelay.GetRandom();
-					} else if (distanceSqr > sightRadiusOut * sightRadiusOut) {
-						isInsideSightArea = false;
-						m_senseTimer = 0f;
+						if (distanceSqr < sightRadiusIn * sightRadiusIn ) {
+							isInsideSightArea = true;
+							m_senseTimer = m_senseDelay.GetRandom();
+						} else if (distanceSqr > sightRadiusOut * sightRadiusOut) {
+							isInsideSightArea = false;
+							m_senseTimer = 0f;
+						}
 					}
-				}
 
-				if (isInsideSightArea) {
-					if (sense) {
+					if (isInsideSightArea) {
 						float maxRadiusIn  = m_maxRadiusIn + fireRadius;
 						float minRadiusIn  = m_minRadiusIn + fireRadius;
 						float maxRadiusOut = m_maxRadiusOut + fireRadius;
@@ -148,11 +152,15 @@ namespace AI {
 							// Check line cast
 							if (Physics.Linecast(sensorPosition, m_enemy.position, s_groundMask)) {
 								isInsideSightArea = false;
-								isInsideMinArea = false;
 								isInsideMaxArea = false;
+								isInsideMinArea = false;
 							}
 						}
 					}
+				} else {
+					isInsideSightArea = false;
+					isInsideMaxArea = false;
+					isInsideMinArea = false;
 				}
 
 				m_machine.SetSignal(Signals.Type.Warning, 	isInsideSightArea);
@@ -177,7 +185,7 @@ namespace AI {
 			float fireRadius = 0f;
 			if (Application.isPlaying) {
 				if (m_senseFire && InstanceManager.player != null) {					
-					if (InstanceManager.player.IsFuryOn() || InstanceManager.player.IsSuperFuryOn()) {
+					if (InstanceManager.player.IsFuryOn() || InstanceManager.player.IsMegaFuryOn()) {
 						fireRadius = InstanceManager.player.breathBehaviour.actualLength;
 					}
 				}

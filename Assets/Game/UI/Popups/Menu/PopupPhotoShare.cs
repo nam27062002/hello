@@ -66,7 +66,8 @@ public class PopupPhotoShare : MonoBehaviour {
 		// Store photo for future use
 		m_photo = _photo;
 
-		CreateScreenshotFile();
+		// DO NOT REMOVE
+		// CreateScreenshotFile();
 
 		// Init image with the photo
 		m_preview.texture = _photo;
@@ -95,7 +96,16 @@ public class PopupPhotoShare : MonoBehaviour {
 	/// </summary>
 	public void OnShareButton() 
 	{
-		string filePath = Application.temporaryCachePath + "/Screenshot.png";
-		PlatformUtils.Instance.ShareImage( filePath, LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION"));
+
+		// [AOC] TODO!! Share Flow
+		UIFeedbackText.CreateAndLaunch(
+			LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"),
+			new Vector2(0.5f, 0.5f),
+			(RectTransform)this.GetComponentInParent<Canvas>().transform
+		);
+
+		// DO NOT REMOVE
+		// string filePath = Application.temporaryCachePath + "/Screenshot.png";
+		// PlatformUtils.Instance.ShareImage( filePath, LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION"));
 	}
 }
