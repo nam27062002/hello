@@ -15,6 +15,7 @@ namespace AI {
 
 			private float m_updateOffsetTimer;
 			private Vector3 m_offset;
+			private float m_fase;
 
 			private bool m_changeFormationOrientation;
 
@@ -52,6 +53,8 @@ namespace AI {
 					m_offset = UnityEngine.Random.insideUnitSphere * m_data.separation;
 				}
 
+				m_fase = Random.Range(0.5f, 4f);
+
 				m_changeFormationOrientation = group != null && (group.formation == Group.Formation.Triangle);
 			}
 
@@ -74,7 +77,12 @@ namespace AI {
 					m_offset = group.GetOffset(m_pilot.m_machine, m_data.separation);
 				}
 
-				m_pilot.GoTo(m_pilot.target + m_offset);
+				// add variation to movement
+				Vector3 offset = m_offset;
+				offset.y += (Mathf.Sin(Time.timeSinceLevelLoad) + Mathf.Cos(Time.timeSinceLevelLoad * m_fase)) * m_data.separation * 0.5f;
+				offset.z += (Mathf.Sin(Time.timeSinceLevelLoad * m_fase) + Mathf.Cos(Time.timeSinceLevelLoad)) * m_data.separation * 0.25f;
+
+				m_pilot.GoTo(m_pilot.target + offset);
 			}
 		}
 	}

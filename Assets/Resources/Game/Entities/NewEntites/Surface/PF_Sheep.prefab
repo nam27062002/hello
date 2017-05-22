@@ -48,8 +48,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0.2}
-  radius: 0.77820224
+  offset: {x: 0, y: 0}
+  radius: 1
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11469952
 MonoBehaviour:
@@ -81,9 +81,9 @@ MonoBehaviour:
   m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: af593a7751e074e42b7091f92be97d92, type: 2}
   m_railSeparation:
-    min: 1.25
-    max: 1.75
-  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":25},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":5,"max":15},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":5,"checkDragonPositionTime":0.5,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":false},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"hide":{"id":3,"active":false},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":3,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
+    min: 2
+    max: 3
+  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":25},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":5,"max":15},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":5,"checkDragonPositionTime":0.5,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":false,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":3,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
   m_databaseKey: PF_Sheep
 --- !u!114 &11485410
 MonoBehaviour:
@@ -116,7 +116,7 @@ MonoBehaviour:
     name: PS_IceExplosionSmall
     path: 
     offset: {x: 0, y: 0, z: 0}
-  m_onEatenAudio: 
+  m_onEatenAudio: hd_sheep_dead
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
     name: 
@@ -134,8 +134,8 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
   m_onExplosionAudio: 
   m_onAttackAudio: 
-  m_onScaredAudio: 
-  m_onPanicAudio: 
+  m_onScaredAudio: hd_sheep_alert
+  m_onPanicAudio: hd_sheep_alert
   m_idleAudio: 
   m_skins:
   - skin: {fileID: 2100000, guid: 5228811cbcc5f44acbfc977a362e93f9, type: 2}
@@ -925,7 +925,7 @@ MonoBehaviour:
     m_senseFire: 1
     m_sightRadius: 18
     m_maxRadius: 16
-    m_minRadius: 0
+    m_minRadius: 8
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1

@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using System.Collections;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -217,7 +218,12 @@ public class UI3DLoader : MonoBehaviour {
 		}
 
 		// The scaler needs refreshing, but do it delayed so the animation has time to initialize
-		Invoke("RefreshScaler", 0.1f);	// [AOC] TODO!! Should be by frames, but then it might not work when not playing
+		// Depending on whether the game is running or not, use frames or seconds
+		if(Application.isPlaying) {
+			StartCoroutine(RefreshScalerDelayed());
+		} else {
+			Invoke("RefreshScaler", 0.1f);
+		}
 
 		// Hide loading icon
 		ShowLoading(false);
@@ -226,9 +232,6 @@ public class UI3DLoader : MonoBehaviour {
 		OnLoadingComplete.Invoke(this);
 	}
 
-	//------------------------------------------------------------------------//
-	// INTERNAL																  //
-	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Force a refresh on the scaler.
 	/// </summary>
@@ -237,6 +240,18 @@ public class UI3DLoader : MonoBehaviour {
 		if(m_scaler != null) {
 			m_scaler.Refresh(true, true);
 		}
+	}
+
+	/// <summary>
+	/// Force a refresh on the scaler after a one frame delay.
+	/// </summary>
+	/// <returns>The scaler delayed.</returns>
+	private IEnumerator RefreshScalerDelayed() {
+		// Wait a single frame then refresh the scaler
+		yield return new WaitForEndOfFrame();
+
+		// Do it! ^^
+		RefreshScaler();
 	}
 
 	//------------------------------------------------------------------------//

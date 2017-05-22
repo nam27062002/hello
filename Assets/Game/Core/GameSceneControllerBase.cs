@@ -44,7 +44,7 @@ public class GameSceneControllerBase : SceneController {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	protected virtual void Awake() {
+	protected override void Awake() {
 		// Call parent
 		base.Awake();
 
@@ -57,7 +57,7 @@ public class GameSceneControllerBase : SceneController {
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	protected virtual void OnDestroy() {
+	protected override void OnDestroy() {
 		// Call parent
 		base.OnDestroy();
 
@@ -70,6 +70,26 @@ public class GameSceneControllerBase : SceneController {
 	public virtual bool IsLevelLoaded()
 	{
 		return true;
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Instantiates the map object corresponding to the current level (LevelManager.currentLevelData)
+	/// and initializes the map camera references in the InstanceManager.
+	/// </summary>
+	protected virtual void InitLevelMap() {
+		// Get current level's data
+		LevelData levelData = LevelManager.currentLevelData;
+
+		// Create an instance of the map camera from the level's data prefab
+		Debug.Assert(levelData.mapPrefab != null, "The loaded level doesn't have a Map prefab assigned, minimap will be disabled.");
+		if(levelData.mapPrefab != null) {
+			GameObject mapObj = Instantiate<GameObject>(levelData.mapPrefab);
+			InstanceManager.mapCamera = mapObj.GetComponentInChildren<MapCamera>();
+			Debug.Assert(InstanceManager.mapCamera != null, "The object holding the LevelMapData doesn't have a Camera component");
+		}
 	}
 
 	//------------------------------------------------------------------------//

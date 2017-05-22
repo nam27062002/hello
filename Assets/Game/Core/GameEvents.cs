@@ -38,6 +38,7 @@ public enum GameEvents {
 	GAME_COUNTDOWN_ENDED,		// no params
 	GAME_AREA_ENTER,			// no params 
 	GAME_AREA_EXIT,				// no params
+	GAME_UPDATED,				// no params
 	GAME_PAUSED,				// params: bool _paused
 	GAME_ENDED,					// no params
 	REWARD_APPLIED,				// params: Reward _reward, Transform _entity
@@ -120,7 +121,9 @@ public enum GameEvents {
 	
 	// UI events
 	UI_INGAME_PC_FEEDBACK_END,		// no params
-	UI_TOGGLE_CURRENCY_COUNTERS,	// bool _show
+	UI_TOGGLE_CURRENCY_COUNTERS,	// params: bool _show
+	UI_MAP_ZOOM_CHANGED,			// params: float _zoomFactor (percentage relative to initial zoom level (0.5x, 1x, 2x, etc, the smaller the closer)
+	UI_MAP_CENTER_TO_DRAGON,		// Request centering the map to the dragon! params: float _scrollSpeed (use <= 0 for instant)
 
 	// Camera events
 	CAMERA_INTRO_DONE,			// no params
@@ -133,7 +136,12 @@ public enum GameEvents {
 
     // Device events
     DEVICE_RESOLUTION_CHANGED,  // params: Vector2 _newResolution
-    DEVICE_ORIENTATION_CHANGED  // params: DeviceOrientation _newOrientation
+    DEVICE_ORIENTATION_CHANGED,  // params: DeviceOrientation _newOrientation
+
+    // Settigns events
+    TILT_CONTROL_TOGGLE,		// params: Bool _useTile
+	TILT_CONTROL_CALIBRATE,		// no params, use to force a tilt calibration (only in-game)
+	TILT_CONTROL_SENSITIVITY_CHANGED	// params: float _sensitivity
 }
 
 //------------------------------------------------------------------------//

@@ -125,6 +125,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4504322237525242}
   - component: {fileID: 95016334164698536}
+  - component: {fileID: 114527031066808832}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -1197,6 +1198,7 @@ MonoBehaviour:
   m_isPet: 0
   m_isAquatic: 1
   m_canMultipleLatchOnPlayer: 1
+  m_damageOnBitePlayer: 10
 --- !u!114 &114363774558584208
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1216,7 +1218,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":1.5,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":20,"panicSpeed":25,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":0,"separation":2,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.5,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":20,"panicSpeed":25,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":2,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
   m_databaseKey: PF_Crocodile_Evade
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 7
@@ -1288,6 +1290,17 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+--- !u!114 &114527031066808832
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1084732164697618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114650032960384754
 MonoBehaviour:
   m_ObjectHideFlags: 1

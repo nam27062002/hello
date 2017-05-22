@@ -10,7 +10,7 @@ public class Pet : IEntity {
 	// Exposed to inspector
 	[PetSkuList]
 	[SerializeField] private string m_sku;
-	public string sku { get { return m_sku; } }
+	public override string sku { get { return m_sku; } }
 
 	protected override void Awake() {
 		base.Awake();

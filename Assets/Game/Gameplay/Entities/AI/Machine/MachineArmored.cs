@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AI {
-	public class MachineArmored : MachineOld {
+	public class MachineArmored : MachineGround, IArmored {
 		[SeparatorAttribute("Armor")]
 		[SerializeField] private HitsPerDragonTier m_armorDurabilityPerTier;
 
@@ -21,15 +21,19 @@ namespace AI {
 			base.Spawn(_spawner);
 		}
 
-		public bool ReduceDurability(bool _boost) {
+		public bool ReduceDurability(bool _boost) {			
 			if (m_armorDurability.count > 0) {
 				if (!m_armorDurability.needBoost || _boost) {
+					ReceiveHit();
 					m_armorDurability.count--;
 					if (m_armorDurability.count <= 0) {
 						SetSignal(Signals.Type.Destroyed, true);
 					}
 					return true;
 				}
+			} else {
+				// player can't destroy the armor
+				Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, m_entity.sku);
 			}
 
 			return false;

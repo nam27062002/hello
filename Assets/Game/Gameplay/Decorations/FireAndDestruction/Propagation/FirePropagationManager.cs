@@ -45,9 +45,6 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	/// A new level was loaded.
 	/// </summary>
 	private void OnLevelLoaded() {
-		PoolManager.RequestPool("PF_FireProc", "Particles/", 10);
-		ParticleManager.CreatePool("SmokeParticle", "");
-
 		// Create and populate QuadTree
 		// Get map bounds!
 		Rect bounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
@@ -97,7 +94,8 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	public static void RemoveBurning( Transform _fireNode) {
 		instance.m_burningFireNodes.Remove(_fireNode);
 		if (instance.m_burningFireNodes.Count <= 0)
-			instance.m_fireNodeAudio.Stop();
+			if (instance.m_fireNodeAudio != null)
+				instance.m_fireNodeAudio.Stop();
 	}
 
 	void Update() {

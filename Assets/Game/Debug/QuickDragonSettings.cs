@@ -112,4 +112,14 @@ public class QuickDragonSettings : MonoBehaviour {
 	{
 		DebugSettings.ignoreSpawnTime = _value;
 	}
+
+	public void SetSpawnChance0( bool _value )
+	{
+		DebugSettings.spawnChance0 = _value;
+	}
+
+	public void SetSpawnChance100( bool _value )
+	{
+		DebugSettings.spawnChance100 = _value;
+	}
 }

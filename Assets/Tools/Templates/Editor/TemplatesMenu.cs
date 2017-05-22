@@ -1,4 +1,4 @@
-﻿// TemplatesMenu.cs
+// TemplatesMenu.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 11/12/2015.
@@ -120,6 +120,11 @@ public class TemplatesMenu {
 			set { EditorPrefs.SetString("EditorTemplates.ProjectName", value); }
 		}
 
+		private bool openInEditor {
+			get { return EditorPrefs.GetBool("EditorTemplates.OpenInEditor", true); }
+			set { EditorPrefs.SetBool("EditorTemplates.OpenInEditor", value); }
+		}
+
 		// Internal
 		private bool m_initialFocusPending = false;
 
@@ -137,14 +142,14 @@ public class TemplatesMenu {
 			// Init parameters
 			window.m_templatePath = _templatePath;
 			window.m_templateName = Path.GetFileNameWithoutExtension(window.m_templatePath);
-			window.m_newName = "New" + window.m_templateName;
+			window.m_newName = window.m_templateName + "New";
 			window.ValidateName();
 
 			// Windows title
 			window.titleContent = new GUIContent("Create new " + window.m_templateName);
 
 			// Set window size
-			window.minSize = new Vector2(400f, 100f);
+			window.minSize = new Vector2(400f, EditorGUIUtility.singleLineHeight * 8);//100f);
 			window.maxSize = window.minSize;	// Not resizeable
 
 			// Show!
@@ -180,6 +185,9 @@ public class TemplatesMenu {
 
 			// Project Name
 			projectName = EditorGUILayout.TextField("Project Name", projectName);
+
+			// Open in editor
+			openInEditor = EditorGUILayout.Toggle("Open in Editor", openInEditor);
 
 			// Buttons
 			EditorGUILayout.Space();
@@ -292,10 +300,12 @@ public class TemplatesMenu {
 				// Update progress bar
 				EditorUtility.DisplayProgressBar(progressBarTitle, progressBarMessage, 1f);
 
-				// Open in editor
-				// We need to reload the asset -_-
-				newAsset = AssetDatabase.LoadMainAssetAtPath(targetPath) as TextAsset;
-				AssetDatabase.OpenAsset(newAsset);
+				// Open in editor (if requested)
+				if(openInEditor) {
+					// We need to reload the asset -_-
+					newAsset = AssetDatabase.LoadMainAssetAtPath(targetPath) as TextAsset;
+					AssetDatabase.OpenAsset(newAsset);
+				}
 
 				// Hide progress bar
 				EditorUtility.ClearProgressBar();

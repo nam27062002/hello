@@ -33,6 +33,7 @@ public class PopupController : MonoBehaviour {
 	// Internal
 	private Animator m_anim = null;
 	private bool m_destroyAfterClose = true;
+	private bool m_reopening = false;
 
 	//------------------------------------------------------------------//
 	// EVENTS															//
@@ -86,13 +87,20 @@ public class PopupController : MonoBehaviour {
 		// Change status
 		m_isOpen = true;
 
-		// Dispatch message
-		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_OPENED, this);
+		// Reopening?
+		if(m_reopening) {
+			// Reset flag
+			m_reopening = false;
+		} else {
+			// Send message
+			Messenger.Broadcast<PopupController>(EngineEvents.POPUP_OPENED, this);
+		}
 
 		// Invoke event
 		OnOpenPreAnimation.Invoke();
 
 		// Launch anim
+		m_anim.ResetTrigger("close");
 		m_anim.SetTrigger("open");
 	}
 
@@ -108,7 +116,24 @@ public class PopupController : MonoBehaviour {
 		OnClosePreAnimation.Invoke();
 
 		// Launch anim
+		m_anim.ResetTrigger("open");
 		m_anim.SetTrigger("close");
+	}
+
+	/// <summary>
+	/// Launch the close and open animation in sequence.
+	/// POPUP_CLOSED and POPUP_OPENED events won't be broadcasted.
+	/// </summary>
+	public void Reopen() {
+		// Toggle reopening flag
+		m_reopening = true;
+
+		// If the popup is opened, close it, otherwise just open it
+		if(m_isOpen) {
+			Close(false);
+		} else {
+			Open();
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -133,12 +158,18 @@ public class PopupController : MonoBehaviour {
 		// Invoke event
 		OnClosePostAnimation.Invoke();
 
-		// Dispatch message
-		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_CLOSED, this);
+		// Reopening?
+		if(m_reopening) {
+			// Launch open animation
+			Open();
+		} else {
+			// Dispatch message
+			Messenger.Broadcast<PopupController>(EngineEvents.POPUP_CLOSED, this);
 
-		// Delete ourselves if required
-		if(m_destroyAfterClose) {
-			GameObject.Destroy(gameObject);
+			// Delete ourselves if required
+			if(m_destroyAfterClose) {
+				GameObject.Destroy(gameObject);
+			}
 		}
 	}
 }

@@ -10,10 +10,8 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
     /// <summary>
     /// Returns the path where the prefabs for entities are stored. It depends on the quality settings
     /// </summary>
-    public static string EntityPrefabsPath
-    {
-        get
-        {
+    public static string EntityPrefabsPath {
+        get {
             // Entities LOD flag has been disabled because it's not really worth it
             //return (FeatureSettingsManager.instance.EntitiesLOD == FeatureSettings.ELevel2Values.low) ? ENTITY_PREFABS_LOW_PATH : ENTITY_PREFABS_PATH;
             return ENTITY_PREFABS_PATH;
@@ -29,6 +27,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 	protected DefinitionNode m_def;
 	public 	  DefinitionNode def { get { return m_def; } }
+	public virtual string sku { get { return string.Empty; }}
 
 	// Health
 	protected float m_maxHealth;
@@ -51,6 +50,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		}
 		m_machine = GetComponent<AI.IMachine>();
 	}
+
 	public virtual void Spawn(ISpawner _spawner) {
 		m_health = m_maxHealth;
 

@@ -70,7 +70,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
         m_damageMultiplier = 0;
 
 		//
-		m_damageAnimState = Animator.StringToHash("Damage");
+		m_damageAnimState = Animator.StringToHash("BaseLayer.Damage");
 	}
 		
 	// Update is called once per frame
@@ -84,17 +84,20 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 		m_dragon.AddLife(-drain * Time.deltaTime, DamageType.DRAIN, null);
 
-		// Apply damage over time
-		// Reverse iterating since we will be removing them from the list when expired
-		for(int i = m_dots.Count - 1; i >= 0; i--) {
-			// Apply damage
-			float damage = GetModifiedDamageForCurrentHealth(m_dots[i].dps);
-			ReceiveDamage(damage * Time.deltaTime, m_dots[i].type, null, false);		// No hit animation!
+		// Apply damage over time if not changing area
+		if ( !m_dragon.changingArea )
+		{
+			// Reverse iterating since we will be removing them from the list when expired
+			for(int i = m_dots.Count - 1; i >= 0; i--) {
+				// Apply damage
+				float damage = GetModifiedDamageForCurrentHealth(m_dots[i].dps);
+				ReceiveDamage(damage * Time.deltaTime, m_dots[i].type, null, false);		// No hit animation!
 
-			// Update timer and check for dot finish
-			m_dots[i].timer -= Time.deltaTime;
-			if(m_dots[i].timer <= 0) {
-				m_dots.RemoveAt(i);
+				// Update timer and check for dot finish
+				m_dots[i].timer -= Time.deltaTime;
+				if(m_dots[i].timer <= 0) {
+					m_dots.RemoveAt(i);
+				}
 			}
 		}
 
@@ -242,7 +245,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		if ( m_animator != null )
 		{
 			AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
-			if (stateInfo.shortNameHash != m_damageAnimState) { // not working
+			if (stateInfo.fullPathHash != m_damageAnimState) {
 				m_animator.SetTrigger("damage");// receive damage?
 			}
 		}
@@ -294,7 +297,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		float rewardHealth = reward + (reward * m_globalEatingHpBoost) / 100.0f;
 
 		// Check if origin is in power up and give proper boost
-		if ( m_eatingHpBoosts.ContainsKey( origin ) )
+		if ( !string.IsNullOrEmpty( origin ) && m_eatingHpBoosts.ContainsKey( origin ) )
 		{
 			rewardHealth += (reward * m_eatingHpBoosts[origin]) / 100.0f;
 		}

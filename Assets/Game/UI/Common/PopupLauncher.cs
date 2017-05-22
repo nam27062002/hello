@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.Events;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -20,6 +21,7 @@ public class PopupLauncher : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	[System.Serializable] public class PopupEvent : UnityEvent<PopupController> { };
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -27,6 +29,7 @@ public class PopupLauncher : MonoBehaviour {
 	// Exposed setup
 	[FileList("Resources/UI/Popups", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] protected string m_popupPath = "";
+	[SerializeField] protected float m_delay = 0f;
 
 	// Internal
 	protected PopupController m_popup = null;
@@ -34,8 +37,10 @@ public class PopupLauncher : MonoBehaviour {
 		get { return m_popup; }
 	}
 
+	private bool m_pendingOpening = false;
+
 	// Events
-	public UnityEvent OnPopupInit = new UnityEvent();	// Invoked every time right before the popup is opened (and after it's loaded)
+	public PopupEvent OnPopupInit = new PopupEvent();	// Invoked every time right before the popup is opened (and after it's loaded)
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -68,22 +73,19 @@ public class PopupLauncher : MonoBehaviour {
 			if(_reload) {
 				// Close and destroy previous popup
 				m_popup.Close(true);
-				m_popup = null;
+				m_pendingOpening = true;	// Wait until the close animation has finished to re-open the popup
 			} else if(m_popup.isOpen) {
 				// Do nothing if already opened
 				return;
 			} else {
 				// Re-open it
-				OnPopupInit.Invoke();
-				m_popup.Open();
+				OpenPopupInternal();
 			}
 		}
 
 		// Popup not opened, load and open it
 		else {
-			m_popup = PopupManager.LoadPopup(m_popupPath);
-			OnPopupInit.Invoke();
-			m_popup.Open();
+			OpenPopupInternal();
 		}
 	}
 
@@ -99,6 +101,22 @@ public class PopupLauncher : MonoBehaviour {
 	}
 
 	//------------------------------------------------------------------------//
+	// INTERNAL																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Gather the popup from the manager and open it.
+	/// Invokes the OnPopupInit event.
+	/// </summary>
+	private void OpenPopupInternal() {
+		// Load the popup
+		m_popup = PopupManager.LoadPopup(m_popupPath);
+		OnPopupInit.Invoke(m_popup);
+
+		// Open (apply delay)
+		DOVirtual.DelayedCall(m_delay, () => m_popup.Open());
+	}
+
+	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
@@ -108,6 +126,12 @@ public class PopupLauncher : MonoBehaviour {
 	protected virtual void OnPopupDestroyed(PopupController _popup) {
 		if(_popup == m_popup) {
 			m_popup = null;
+
+			// Was a re-opening pending?
+			if(m_pendingOpening) {
+				m_pendingOpening = false;
+				OpenPopupInternal();
+			}
 		}
 	}
 }

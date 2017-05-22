@@ -77,6 +77,9 @@ Shader "Hungry Dragon/Dragon/Wings (Transparent)" {
 	//			#define REFL
 				#endif
 
+				#define CUTOUT
+				#define DOUBLESIDED
+
 				struct appdata_t {
 					float4 vertex : POSITION;
 					float2 texcoord : TEXCOORD0;

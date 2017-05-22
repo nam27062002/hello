@@ -194,7 +194,7 @@ GameObject:
   - component: {fileID: 11481650}
   - component: {fileID: 114580188071679350}
   - component: {fileID: 11485410}
-  - component: {fileID: 136000011044019352}
+  - component: {fileID: 135104039131475082}
   - component: {fileID: 54000013725969172}
   m_Layer: 21
   m_Name: PF_Horse
@@ -790,7 +790,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 128698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 144.2431, y: -9.338449, z: 0}
+  m_LocalPosition: {x: 136.52289, y: 17.484205, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 423974}
@@ -1029,7 +1029,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 2.5
-  m_serializedJson: '[{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":17,"checkDragonPositionTime":0.5,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":false},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"hide":{"id":3,"active":false},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":2,"max":4},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":17,"checkDragonPositionTime":0.5,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":false,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":false,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false}]'
   m_databaseKey: PF_Horse
 --- !u!114 &11485410
 MonoBehaviour:
@@ -1249,8 +1249,8 @@ MonoBehaviour:
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
---- !u!136 &136000011044019352
-CapsuleCollider:
+--- !u!135 &135104039131475082
+SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -1258,7 +1258,6 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
+  serializedVersion: 2
   m_Radius: 1.11
-  m_Height: 3.24
-  m_Direction: 2
   m_Center: {x: 0, y: 0.04, z: 0}

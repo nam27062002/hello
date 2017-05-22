@@ -106,11 +106,10 @@ public class BreakableBehaviour : MonoBehaviour
 		DragonMotion dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
 		if (pushVector != Vector3.zero) {
 			pushVector *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude, 2f));
-			dragonMotion.AddForce( pushVector );
+			dragonMotion.AddForce( pushVector, false );
 		}
-		else {
-			dragonMotion.NoDamageImpact();
-		}
+		dragonMotion.NoDamageImpact();
+		
 
 		// Destroy
 		gameObject.SetActive(false);

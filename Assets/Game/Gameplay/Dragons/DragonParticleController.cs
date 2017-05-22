@@ -95,6 +95,10 @@ public class DragonParticleController : MonoBehaviour
 	public ParticleData m_trailsParticle;
 	public Transform m_trailsAnchor;
 
+	[Space]
+	public ParticleData m_landingParticle;
+	ParticleSystem m_landingInstance;
+
 	void Start () 
 	{
 		DragonAnimationEvents dragonAnimEvents = transform.parent.GetComponentInChildren<DragonAnimationEvents>();
@@ -133,7 +137,7 @@ public class DragonParticleController : MonoBehaviour
 			m_waterAirLimitInstance = InitParticles( m_waterAirLimitParticle, m_dragonEat.mouth);
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
-			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/", 1, true, false);
+			ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
 		}
 		m_hiccupInstance = InitParticles( m_hiccupParticle, m_hiccupAnchor);
 		if (dragonAnimEvents != null)
@@ -147,6 +151,12 @@ public class DragonParticleController : MonoBehaviour
 			go.transform.localScale = Vector3.one;
 			go.transform.localRotation = Quaternion.identity;
 			m_trailsInstance = go.GetComponent<ParticleSystem>();
+		}
+
+		if ( m_landingParticle.IsValid() )
+		{
+			GameObject go = m_landingParticle.CreateInstance();
+			m_landingInstance = go.GetComponent<ParticleSystem>();
 		}
 	}
 
@@ -310,7 +320,7 @@ public class DragonParticleController : MonoBehaviour
 	{
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
 			// spawn corpse
-			GameObject corpse = PoolManager.GetInstance(m_corpseAsset, true);
+			GameObject corpse = ParticleManager.Spawn(m_corpseAsset, Vector3.zero, "Corpse/");
 			corpse.transform.CopyFrom(transform);
 			Corpse c = corpse.GetComponent<Corpse>();
 			c.Spawn(false, false);
@@ -498,4 +508,15 @@ public class DragonParticleController : MonoBehaviour
 	}
 
 	#endregion
+
+	public void WingsEvent()
+	{
+		if ( m_dargonMotion.height <= 2 && m_landingInstance)
+		{
+			Vector3 disp = transform.rotation * m_landingParticle.offset;
+			m_landingInstance.transform.position = m_dargonMotion.lastGroundHit + disp;
+			m_landingInstance.Play();
+		}
+	}
+
 }

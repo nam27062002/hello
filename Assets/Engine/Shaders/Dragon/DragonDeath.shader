@@ -36,12 +36,10 @@ Properties {
 SubShader {
 	Tags {"Queue"="Transparent+20" "IgnoreProjector"="True" "RenderType"="Transparent" "LightMode" = "ForwardBase" }
 //	Tags{ "Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout" "LightMode" = "ForwardBase" }
-	ZWrite on
-	Blend SrcAlpha OneMinusSrcAlpha 
 	Cull Off
-//	Cull Front
+	//	Cull Front
 	ColorMask RGBA
-	
+
 	Pass {
 /*
 		Stencil
@@ -52,6 +50,12 @@ SubShader {
 			ZFail keep
 		}
 */
+
+		ztest less
+		ZWrite on
+		Blend SrcAlpha OneMinusSrcAlpha
+
+
 		CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -78,7 +82,8 @@ SubShader {
 
 			#endif
 
-			#define REFL
+			#define CUTOUT
+			#define DOUBLESIDED
 
 			struct appdata_t {
 				float4 vertex : POSITION;

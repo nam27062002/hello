@@ -45,7 +45,7 @@ public class FireBallBreath : DragonBreathBehaviour {
 				{
 					fb.SetBreath( this );
 					fb.Shoot( m_direction);
-					fb.m_speed = m_dragonMotion.lastSpeed + 10;
+					fb.m_speed = m_dragonMotion.speed + 10;
 				}
 			}
 		}

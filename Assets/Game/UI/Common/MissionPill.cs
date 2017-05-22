@@ -159,7 +159,7 @@ public class MissionPill : MonoBehaviour {
 
 		// Progress
 		// Optionally hide progress for singlerun missions
-		bool show = !m_mission.def.GetAsBool("singleRun") || m_showProgressForSingleRunMissions;
+		bool show = !m_mission.objective.singleRun || m_showProgressForSingleRunMissions;
 		m_activeObj.FindObjectRecursive("ProgressGroup").SetActive(show);
 		if(show) {
 			m_activeObj.FindComponentRecursive<Localizer>("ProgressText").Localize("TID_FRACTION", m_mission.objective.GetCurrentValueFormatted(), m_mission.objective.GetTargetValueFormatted());
@@ -259,6 +259,12 @@ public class MissionPill : MonoBehaviour {
 		// Update the timers
 		RefreshCooldownTimers();
 
+		// Info text
+		m_cooldownObj.FindComponentRecursive<Localizer>("CooldownInfoText").Localize("TID_MISSIONS_NEXT_MISSION_IN");
+
+		// Cooldown bar
+		m_cooldownBar.gameObject.SetActive(true);
+
 		// Difficulty
 		RefreshDifficulty(m_cooldownObj.FindComponentRecursive<Localizer>("DifficultyText"), true);
 	}
@@ -284,13 +290,13 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void RefreshActivationPending() {
 		// Info text
-		m_cooldownObj.FindComponentRecursive<TextMeshProUGUI>("CooldownInfoText").text = LocalizationManager.SharedInstance.Localize("TID_MISSIONS_ACTIVATION_PENDING");
+		m_cooldownObj.FindComponentRecursive<Localizer>("CooldownInfoText").Localize("TID_MISSIONS_ACTIVATION_PENDING");
 
 		// Cooldown remaining time
 		m_cooldownText.text = "";
 
 		// Cooldown bar
-		m_cooldownBar.normalizedValue = 1f;
+		m_cooldownBar.gameObject.SetActive(false);
 
 		// Skip cost - shouldn't exist in ACTIVATION_PENDING state, but just in case
 		// [AOC] The pill might not have it (e.g. in-game pill)

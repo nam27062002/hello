@@ -7,14 +7,13 @@ namespace AI {
 		/*			  */
 		/**************/
 		[SerializeField] private bool m_enableMotion = true; // TODO: find a way to dynamically add this components
-		[SerializeField] private MachineMotion m_motion = new MachineMotion();
-		[SerializeField] private Range m_railSeparation = new Range(0.5f, 1f);
+		[SerializeField] private MC_MotionAir m_motion = new MC_MotionAir();
 
 		private Pilot m_pilot = null;
 
 		private Group m_group; // this will be a reference
 
-
+		public virtual Quaternion orientation 	{ get { return transform.rotation; } set { transform.rotation = value; } }
 		public Vector3 position { 	get { if (m_enableMotion && m_motion != null) return m_motion.position; else return transform.position; } 
 									set { if (m_enableMotion && m_motion != null) m_motion.position = value; else transform.position = value; } 
 		}
@@ -22,17 +21,14 @@ namespace AI {
 		public Vector3 eye 				{ get { return transform.position; } }
 		public Vector3 target			{ get { return m_pilot.target; } }
 		public Vector3 direction 		{ get { if (m_enableMotion && m_motion != null) return m_motion.direction; else return Vector3.zero; } }
-		public Vector3 groundDirection 	{ get { return Vector3.zero; } } 
-		public Vector3 upVector  		{ get { if (m_enableMotion && m_motion != null) return m_motion.upVector;  else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
-		public Vector3 velocity			{ get{ if (m_enableMotion && m_motion != null) return m_motion.velocity; else return Vector3.zero;} }
-		public Vector3 angularVelocity	{ get{ if (m_enableMotion && m_motion != null) return m_motion.angularVelocity; else return Vector3.zero;} }
+		public Vector3 groundDirection 	{ get { return Vector3.zero; } }
+		public Vector3 upVector  		{ get { if (m_enableMotion && m_motion != null) return m_motion.upVector; else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
+		public Vector3 velocity			{ get { if (m_enableMotion && m_motion != null) return m_motion.velocity; else return Vector3.zero;} }
+		public Vector3 angularVelocity	{ get { if (m_enableMotion && m_motion != null) return m_motion.angularVelocity; else return Vector3.zero;} }
 
 		public float lastFallDistance { get { return 0; } }
-
 		public bool isKinematic{ get { return false; } set { } }
-
 		public Transform enemy { get { return null; } set { } }
-
 		public bool isPetTarget{ get { return false;} set { } }
 
 		//---------------------------------------------------------------------------------
@@ -97,19 +93,11 @@ namespace AI {
 			return null;
 		}
 
-		public void DisableSensor(float _seconds) { }
+		public void DisableSensor(float _seconds) {}
 
-		public void UseGravity(bool _value) {
-			if (m_motion != null) {
-				m_motion.useGravity = _value;
-			}
-		}
+		public void UseGravity(bool _value) {}
 
-		public void CheckCollisions(bool _value) {
-			if (m_motion != null) {
-				m_motion.checkCollisions = _value;
-			}
-		}
+		public void CheckCollisions(bool _value) {}
 
 		public void FaceDirection(bool _value) {
 			if (m_motion != null) {
@@ -156,8 +144,8 @@ namespace AI {
 		}
 
 		// External interactions
-		public void LockInCage() {}
-		public void UnlockFromCage() {}
+		public void EnterDevice(bool _isCage) {}
+		public void LeaveDevice(bool _isCage) {}
 
 		public void ReceiveDamage(float _damage) {}
 
@@ -175,7 +163,7 @@ namespace AI {
 
 		public void Bite() { }
 
-		public void BeginSwallowed(Transform _transform, bool _rewardPlayer) { }
+		public void BeginSwallowed(Transform _transform, bool _rewardPlayer, bool _isPlayer) { }
 
 		public void EndSwallowed(Transform _transform) { }
 

@@ -299,23 +299,39 @@ public class ProfilerControlPanelController : MonoBehaviour
     #region checkpoints
     private enum ECheckpoint
     {
-		StartingPoint,
-        FloatingRock,
-		WoodsCabins,
-		WoodsLeaves,
-        Castle,
-        Tunnel,
-        Dungeons,
-        Caves,
-        Bridge,
+        //---------------------- Village area ----------------------
+        Village_StartingPoint,
+        Village_FloatingRock,
+        Village_HangingBridge,
+        Village_VineBigLeaf,
+		Village_WoodsCabins,
+		Village_WoodsLeaves,
+        Village_Witches_Woods,
+        Village_TunnelToCastle,
+
+        //---------------------- Castle area ----------------------
+        Castle_TunnelToVillage,
+        Castle_Castle,
+        Castle_Tunnel,
+        Castle_Dungeons,
+        Castle_Caves,
+        Castle_Bridge,
+
+        //---------------------- Dark area ----------------------
+        Dark_Woods
     }
 
     private Vector3[] m_checkpointsPositions = new Vector3[]
     {
 		new Vector3(-180, 119, 0f),
         new Vector3(-174, 75, 0f),
+        new Vector3(-132, -21, 0f),
+        new Vector3(-285, 45, 0f),
         new Vector3(137, 51, 0f),
 		new Vector3(280, 42, 0f),
+        new Vector3(-394, -54, 0f),
+        new Vector3(360, 69, 0f),
+        new Vector3(414, 68, 0f),
         new Vector3(598, -3, 0f),
         new Vector3(598, -46, 0f),
         new Vector3(566, -62, 0f),
@@ -467,7 +483,7 @@ public class ProfilerControlPanelController : MonoBehaviour
     {     
         if (mSceneGoToMemoryText != null)
         {
-            mSceneGoToMemoryText.transform.parent.gameObject.SetActive(false);
+            /*mSceneGoToMemoryText.transform.parent.gameObject.SetActive(false);
             if (GameSceneManager.nextScene == ProfilerMemoryController.NAME)
             {
                 mSceneGoToMemoryText.text = "Go To Menu";
@@ -475,14 +491,16 @@ public class ProfilerControlPanelController : MonoBehaviour
             else
             {
                 mSceneGoToMemoryText.text = "Go To Memory Scene";
-            }
+            }*/
+            mSceneGoToMemoryText.text = "Send Notif";
         }
     }
 
     public void Scene_OnGoToMemorySceneClicked()
     {
         //ApplicationManager.instance.Debug_ToggleProfilerMemoryScene();
-       ApplicationManager.instance.Debug_ToggleProfilerLoadScenesScene();
+        //ApplicationManager.instance.Debug_ToggleProfilerLoadScenesScene();
+        ApplicationManager.instance.Debug_ScheduleNotification();
     }
     #endregion
 }

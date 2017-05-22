@@ -159,6 +159,11 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
         Vector3 startPosition = transform.position;
         while (EntitiesSpawned < EntitiesToSpawn) {            
             GameObject spawning = m_entities[EntitiesSpawned].gameObject;
+
+			Transform spawningTransform = spawning.transform;
+			spawningTransform.rotation = Quaternion.identity;
+			spawningTransform.localRotation = Quaternion.identity;
+
             if (!spawning.activeSelf) {
                 spawning.SetActive(true);
             }
@@ -314,6 +319,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     #region interface_for_subclasses
     public virtual AreaBounds area { get; set; }
 	public Quaternion rotation { get { return transform.rotation; } }
+
+	public virtual Vector3 homePosition { get { return transform.position; } }
 
     protected virtual void RegisterInEntityManager(IEntity e)
     {

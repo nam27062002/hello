@@ -89,7 +89,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     protected void Start()
     {
-		Setting_Init();
+		// Initialize game settings
+		GameSettings.Init();
 
 		if (HasArg("-start_test"))
 		{	
@@ -408,82 +409,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     }
     #endregion
 
-    #region settings
-    // This region is responsible for managing option settings such as sound
-
-    private const string SETTINGS_SOUND_KEY = "sound";
-	private const string SETTINGS_MUSIC_KEY = "music";
-
-    private bool m_settingsSoundIsEnabled;
-	private bool m_settingsMusicIsEnabled;
-
-	private AudioMixer m_audioMixer;
-
-    private void Setting_Init()
-    {
-    	m_audioMixer = AudioController.Instance.AudioObjectPrefab.GetComponent<AudioSource>().outputAudioMixerGroup.audioMixer;
-        // Sound is disabled by default
-        Settings_SetSoundIsEnabled(PlayerPrefs.GetInt(SETTINGS_SOUND_KEY, 0) > 0, false);
-		Settings_SetMusicIsEnabled(PlayerPrefs.GetInt(SETTINGS_MUSIC_KEY, 0) > 0, false);
-    }
-
-	public bool Settings_GetSoundIsEnabled() {
-		return m_settingsSoundIsEnabled;
-	}
-
-	public bool Settings_GetMusicIsEnabled() {
-		return m_settingsMusicIsEnabled;
-	}
-
-	private void Settings_SetSoundIsEnabled(bool value, bool persist) {
-		m_settingsSoundIsEnabled = value;
-
-		if ( value )
-		{
-			m_audioMixer.SetFloat("SfxVolume", 0);
-			m_audioMixer.SetFloat("Sfx2DVolume", 0);
-		}
-		else
-		{
-			m_audioMixer.SetFloat("SfxVolume", -80);
-			m_audioMixer.SetFloat("Sfx2DVolume", -80);
-		}
-
-		if(persist) {
-			int intValue = (m_settingsSoundIsEnabled) ? 1 : 0;
-			PlayerPrefs.SetInt(SETTINGS_SOUND_KEY, intValue);
-			PlayerPrefs.Save();
-		}
-	}
-
-	private void Settings_SetMusicIsEnabled(bool value, bool persist) {
-		m_settingsMusicIsEnabled = value;
-
-		if ( value )
-		{
-			m_audioMixer.SetFloat("MusicVolume", 0);
-		}
-		else
-		{
-			m_audioMixer.SetFloat("MusicVolume", -80);
-		}
-
-		if(persist) {
-			int intValue = (m_settingsMusicIsEnabled) ? 1 : 0;
-			PlayerPrefs.SetInt(SETTINGS_MUSIC_KEY, intValue);
-			PlayerPrefs.Save();
-		}
-	}
-
-	public void Settings_ToggleSoundIsEnabled() {
-		Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
-	}
-
-	public void Settings_ToggleMusicIsEnabled() {
-		Settings_SetMusicIsEnabled(!Settings_GetMusicIsEnabled(), true);
-	}
-    #endregion
-
     #region device   
     // Time in seconds to wait until the device has to be updated again.
     public const float DEVICE_NEXT_UPDATE = 0.5f;
@@ -601,7 +526,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private void Debug_TestToggleSound()
     {
-        Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
+		GameSettings.soundEnabled = !GameSettings.soundEnabled;
     }
 
     private void Debug_TestEggsCollected()
@@ -658,7 +583,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     public void Debug_TestToggleFrameColor()
     {
         Debug_IsFrameColorOn = !Debug_IsFrameColorOn;
-        Messenger.Broadcast<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, Debug_IsFrameColorOn, DragonBreathBehaviour.Type.Super);
+        Messenger.Broadcast<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, Debug_IsFrameColorOn, DragonBreathBehaviour.Type.Mega);
     }
 
     public void Debug_TestQualitySettings()

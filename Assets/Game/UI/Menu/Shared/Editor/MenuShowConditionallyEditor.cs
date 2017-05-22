@@ -55,55 +55,72 @@ public class MenuShowConditionallyEditor : Editor {
 		// Instead of modifying script variables directly, it's advantageous to use the SerializedObject and 
 		// SerializedProperty system to edit them, since this automatically handles private fields, multi-object 
 		// editing, undo, and prefab overrides.
+		SerializedProperty p;
 
 		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
 		serializedObject.Update();
 
-		// Loop through all serialized properties and work with special ones
-		SerializedProperty p = serializedObject.GetIterator();
-		p.Next(true);	// To get first element
-		do {
-			// Properties requiring special treatment
-			// Unity's "script" property
-			if(p.name == "m_Script") {
-				// Draw the property, disabled
-				bool wasEnabled = GUI.enabled;
-				GUI.enabled = false;
-				EditorGUILayout.PropertyField(p, true);
-				GUI.enabled = wasEnabled;
-			}
+		// Unity's "script" property
+		p = serializedObject.FindProperty("m_Script");
+		if(p != null) {
+			// Draw the property, disabled
+			bool wasEnabled = GUI.enabled;
+			GUI.enabled = false;
+			EditorGUILayout.PropertyField(p, true);
+			GUI.enabled = wasEnabled;
+		}
 
-			// Dragon ownership variables
-			else if(p.name == "m_targetDragonSku") {
-				// Disable the whole group if m_hideForDragons property is set to either NONE or ALL
-				SerializedProperty hideForDragonsProp = serializedObject.FindProperty("m_hideForDragons");
-				bool wasEnabled = GUI.enabled;
-				GUI.enabled = (hideForDragonsProp.enumValueIndex != (int)MenuShowConditionally.HideForDragons.NONE) 
-					&& (hideForDragonsProp.enumValueIndex != (int)MenuShowConditionally.HideForDragons.ALL);
+		// Dragon-based visibility
+		// Toggle group
+		p = serializedObject.FindProperty("m_checkSelectedDragon");
+		p.boolValue = EditorGUILayout.ToggleLeft(p.displayName, p.boolValue);
+		if(p.boolValue) {
+			// Indent in
+			EditorGUI.indentLevel++;
 
-				// Draw all ownership properties
-				EditorGUILayout.PropertyField(p, true);
-				EditorGUILayout.PropertyField(serializedObject.FindProperty("m_showIfLocked"), true);
-				EditorGUILayout.PropertyField(serializedObject.FindProperty("m_showIfAvailable"), true);
-				EditorGUILayout.PropertyField(serializedObject.FindProperty("m_showIfOwned"), true);
+			// Disable the whole group if m_hideForDragons property is set to either NONE or ALL
+			SerializedProperty hideForDragonsProp = serializedObject.FindProperty("m_hideForDragons");
+			EditorGUILayout.PropertyField(hideForDragonsProp, true);
+			bool wasEnabled = GUI.enabled;
+			GUI.enabled = wasEnabled
+				&& (hideForDragonsProp.enumValueIndex != (int)MenuShowConditionally.HideForDragons.NONE) 
+				&& (hideForDragonsProp.enumValueIndex != (int)MenuShowConditionally.HideForDragons.ALL);
 
-				// Restore enabled state
-				GUI.enabled = wasEnabled;
-			}
+			// Draw all ownership properties
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_targetDragonSku"), true);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_showIfLocked"), true);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_showIfAvailable"), true);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_showIfOwned"), true);
 
-			// Properties we don't want to show (or that are processed elsewhere)
-			else if(p.name == "m_ObjectHideFlags"
-				|| p.name == "m_showIfLocked"
-				|| p.name == "m_showIfAvailable"
-				|| p.name == "m_showIfOwned") {
-				// Do nothing
-			}
+			// Restore enabled state
+			GUI.enabled = wasEnabled;
 
-			// Default property display
-			else {
-				EditorGUILayout.PropertyField(p, true);
-			}
-		} while(p.NextVisible(false));		// Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
+			// Indent back out
+			EditorGUI.indentLevel--;
+		}
+
+		// Screen-based visibility
+		// Separator
+		EditorGUILayoutExt.Separator();
+
+		// Toggle group
+		p = serializedObject.FindProperty("m_checkScreens");
+		p.boolValue = EditorGUILayout.ToggleLeft(p.displayName, p.boolValue);
+		if(p.boolValue) {
+			// Indent in
+			EditorGUI.indentLevel++;
+
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_mode"), true);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_screens"), true);
+
+			// Indent back out
+			EditorGUI.indentLevel--;
+		}
+
+		// Animation options
+		// Separator
+		EditorGUILayoutExt.Separator();
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("m_restartShowAnimation"), true);
 
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties();

@@ -205,9 +205,7 @@ public class DisguisesScreenController : MonoBehaviour {
 				// Init pill
 				DefinitionNode def = defList[i];
 				Sprite spr = icons[def.GetAsString("icon")];
-				bool locked = (def.GetAsInt("unlockLevel") > m_dragonData.progression.level);
-				bool owned = m_wardrobe.IsDisguiseOwned(def.sku);
-				m_pills[i].Load(def, locked, owned, spr);
+				m_pills[i].Load(def, m_wardrobe.GetSkinState(def.sku), spr);
 
 				// Is it the currently equipped disguise?
 				if(def.sku == currentDisguise) {
@@ -401,6 +399,12 @@ public class DisguisesScreenController : MonoBehaviour {
 			// Notify game
 			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
 		}
+
+		// Remove "new" flag from the skin
+		if(_pill.state == Wardrobe.SkinState.NEW) {
+			m_wardrobe.SetSkinState(_pill.def.sku, Wardrobe.SkinState.AVAILABLE);
+			_pill.SetState(Wardrobe.SkinState.AVAILABLE);
+		}
 	}
 
 	/// <summary>
@@ -421,14 +425,14 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Perform transaction
 		// Get price and start purchase flow
-		ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_DISGUISE");
+		ResourcesFlow purchaseFlow = new ResourcesFlow("ACQUIRE_DISGUISE");
 		purchaseFlow.OnSuccess.AddListener(
 			(ResourcesFlow _flow) => {
-				// Unlock it!
-				m_wardrobe.UnlockDisguise(_flow.itemDef.sku);
+				// Acquire it!
+				m_wardrobe.SetSkinState(_flow.itemDef.sku, Wardrobe.SkinState.OWNED);
 
-				// Reload selected pill
-				m_selectedPill.Load(m_selectedPill.def, false, true, m_selectedPill.icon.sprite);
+				// Change selected pill state
+				m_selectedPill.SetState(Wardrobe.SkinState.OWNED);
 
 				// Save!
 				PersistenceManager.Save(true);
@@ -439,7 +443,7 @@ public class DisguisesScreenController : MonoBehaviour {
 				m_selectedPill = null;
 				OnPillClicked(pill);
 
-				// Instantly equip it!
+				// Immediately equip it!
 				OnEquipButton();
 			}
 		);

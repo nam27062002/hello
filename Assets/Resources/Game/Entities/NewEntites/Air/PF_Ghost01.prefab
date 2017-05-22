@@ -30,7 +30,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 138364}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: -21.878372, y: 47.355267, z: 0}
+  m_LocalPosition: {x: 4.2541857, y: 0.3132553, z: -2.6606321}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4521043133028824}
@@ -115,8 +115,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -0.010741293, y: 0.7304182}
-  radius: 0.032824516
+  offset: {x: 0, y: 0}
+  radius: 1
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11451040
 MonoBehaviour:
@@ -199,8 +199,7 @@ GameObject:
   - component: {fileID: 4521043133028824}
   - component: {fileID: 33332301361449420}
   - component: {fileID: 23183578167774468}
-  - component: {fileID: 95450552088073986}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: ghost_second_version
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -331,23 +330,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 120
   m_CollisionDetection: 0
---- !u!95 &95450552088073986
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1716661553604998}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 9b1b9dc1cc782f045889304d6e2e6bf3, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &114768301738930188
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -382,7 +364,10 @@ MonoBehaviour:
     m_ashesAsset: 
     m_burningTime: 0
     m_dissolveTime: 1.5
-    m_ashExceptions: []
+    m_ashExceptions:
+    - {fileID: 199241708395920724}
+    - {fileID: 199582676413079912}
+    - {fileID: 199015009984204708}
   m_onSpawnSound: 
   m_airMotion:
     m_mass: 20
@@ -391,6 +376,7 @@ MonoBehaviour:
     m_dragonStyleRotation: 0
     m_faceDirection: 0
     m_rollRotation: 0
+    m_rollAngle: 35
     m_limitHorizontalRotation: 1
     m_faceLeftAngle: -65
     m_faceRightAngle: 65

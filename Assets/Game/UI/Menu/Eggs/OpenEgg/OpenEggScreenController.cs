@@ -58,6 +58,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 	// Internal
 	private State m_state = State.IDLE;
+	private bool m_tutorialCompletedPending = false;
 
 	// FX
 	private GameObject m_flashFX = null;
@@ -152,7 +153,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Hide HUD and buttons
 		bool animate = this.gameObject.activeInHierarchy;	// If the screen is not visible, don't animate
-		InstanceManager.menuSceneController.hud.GetComponent<ShowHideAnimator>().ForceHide(animate);
+		InstanceManager.menuSceneController.hud.animator.ForceHide(animate);
 		m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide(animate);
 		m_finalPanel.ForceHide(animate);
 
@@ -235,7 +236,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	private void LaunchRewardAnimation() {
 		// Show HUD
-		InstanceManager.menuSceneController.hud.GetComponent<ShowHideAnimator>().Show();
+		InstanceManager.menuSceneController.hud.animator.Show();
 
 		// Aux vars
 		EggReward rewardData = m_scene.eggData.rewardData;
@@ -322,6 +323,10 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_scene.eggData == null) return;
 		if(m_scene.eggData.state != Egg.State.COLLECTED) return;
 
+		// Mark reward tutorial as completed
+		// [AOC] Delay it until the screen animation has finished so we don't see elements randomly appearing!
+		m_tutorialCompletedPending = true;
+
 		// Depending on opened egg's reward, perform different actions
 		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
 		switch(m_scene.eggData.rewardData.type) {
@@ -370,13 +375,25 @@ public class OpenEggScreenController : MonoBehaviour {
 			if(m_scene != null) m_scene.Clear();
 
 			// Restore HUD
-			InstanceManager.menuSceneController.hud.GetComponent<ShowHideAnimator>().Show();
+			InstanceManager.menuSceneController.hud.animator.Show();
 		}
 
 		// If entering this screen, force some show/hide animations that conflict with automated ones
 		if(_event.fromScreenIdx == (int)MenuScreens.OPEN_EGG) {
 			// At this point automated ones have already been launched, so we override them
 			m_tapInfoText.GetComponent<ShowHideAnimator>().Hide(false);
+		}
+	}
+
+	/// <summary>
+	/// Navigation screen animation has finished.
+	/// Must be connected in the inspector.
+	/// </summary>
+	public void OnClosePostAnimation() {
+		// If the tutorial was completed, update flag now!
+		if(m_tutorialCompletedPending) {
+			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_REWARD, true);
+			m_tutorialCompletedPending = false;
 		}
 	}
 }

@@ -31,6 +31,15 @@ public class Spawner : AbstractSpawner {
 		public float value = 0f;
 	}
 
+	[System.Serializable]
+	public class SpawnKillCondition {
+		[EntityCategoryListAttribute]
+		public string category;
+
+		[NumericRange(0f)]	// Force positive value
+		public float value = 0f;
+	}
+
 	public enum SpawnPointSeparation {
 		Sphere = 0,
 		Line
@@ -51,7 +60,9 @@ public class Spawner : AbstractSpawner {
 	[SerializeField] private bool		m_hasGroupBonus = false;
 
 	[Separator("Activation")]
-	[SerializeField] public DragonTier m_minTier = DragonTier.TIER_0;
+	[SerializeField] private DragonTier m_minTier = DragonTier.TIER_0;
+	[SerializeField] private DragonTier m_maxTier = DragonTier.TIER_4;
+	[SerializeField] private bool	    m_checkMaxTier = false;
 
 	[Tooltip("Spawners may not be present on every run (percentage).")]
 	[SerializeField][Range(0f, 100f)] public float m_activationChance = 100f;
@@ -59,6 +70,9 @@ public class Spawner : AbstractSpawner {
 	[Tooltip("Start spawning when any of the activation conditions is triggered.\nIf empty, the spawner will be activated at the start of the game.")]
 	[SerializeField] public SpawnCondition[] m_activationTriggers;
 	public SpawnCondition[] activationTriggers { get { return m_activationTriggers; }}
+
+	[SerializeField] public SpawnKillCondition[] m_activationKillTriggers;
+	public SpawnKillCondition[] activationKillTriggers { get { return m_activationKillTriggers; } }
 
 	[Tooltip("Stop spawning when any of the deactivation conditions is triggered.\nLeave empty for infinite spawning.")]
 	[SerializeField] private SpawnCondition[] m_deactivationTriggers;
@@ -119,9 +133,28 @@ public class Spawner : AbstractSpawner {
 
 	protected override void OnStart() {
 		float rnd = Random.Range(0f, 100f);
+		DragonTier playerTier = InstanceManager.player.data.tier;
 
-		if (InstanceManager.player != null && InstanceManager.player.data.tier >= m_minTier) {
+		bool enabledByTier = playerTier >= m_minTier;
+		if (enabledByTier && m_checkMaxTier) {
+			enabledByTier = (playerTier <= m_maxTier);
+		}
+
+		if (m_activationChance < 100f) {
+			// check debug 
+			if (DebugSettings.spawnChance0) {
+				rnd = 100f;
+			} else if (DebugSettings.spawnChance100) {
+				rnd = 0f;
+			}
+		}
+
+		if (InstanceManager.player != null && enabledByTier) {			
 			if (m_entityPrefabList != null && m_entityPrefabList.Length > 0 && rnd <= m_activationChance) {
+
+				if (m_activationKillTriggers == null) {
+					m_activationKillTriggers = new SpawnKillCondition[0];
+				}
 
 				if (m_quantity.max < m_quantity.min) {
 					m_quantity.min = m_quantity.max;
@@ -271,7 +304,7 @@ public class Spawner : AbstractSpawner {
 	protected override void OnMachineSpawned(IMachine machine) {
 		if (m_groupController) {				
 			machine.EnterGroup(ref m_groupController.flock);
-			machine.position = transform.position + m_groupController.flock.GetOffset(machine, 1f);
+			machine.position = transform.position + m_groupController.flock.GetOffset(machine, 2f);
 		}
 	}
 
@@ -352,7 +385,7 @@ public class Spawner : AbstractSpawner {
 		if(State != EState.Respawning) return false;
 
 		// Check start conditions
-		bool startConditionsOk = (m_activationTriggers.Length == 0);	// If there are no activation triggers defined, the spawner will be considered ready
+		bool startConditionsOk = (m_activationTriggers.Length == 0) && (m_activationKillTriggers.Length == 0);	// If there are no activation triggers defined, the spawner will be considered ready
 		for(int i = 0; i < m_activationTriggers.Length; i++) {
 			// Is this condition satisfied?
 			switch(m_activationTriggers[i].type) {
@@ -368,6 +401,14 @@ public class Spawner : AbstractSpawner {
 			// If one of the conditions has already triggered, no need to keep checking
 			// [AOC] This would be useful if we had a lot of conditions to check, but it will usually be just one and we would be adding an extra instruction for nothing, so let's keep it commented for now
 			// if(startConditionsOk) break;
+		}
+
+		for (int i = 0; i < m_activationKillTriggers.Length; i++) {
+			string cat = m_activationKillTriggers[i].category;
+
+			if (RewardManager.categoryKillCount.ContainsKey(cat)) {
+				startConditionsOk |= RewardManager.categoryKillCount[cat] >= m_activationKillTriggers[i].value;
+			}
 		}
 
 		// If start conditions aren't met, we can't spawn, no need to check anything else

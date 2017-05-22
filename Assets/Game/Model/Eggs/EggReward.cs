@@ -178,12 +178,22 @@ public class EggReward {
 						m_coins = 9999;
 					}
 				} else {
-					// Get a random pet of the target rarity
-					// [AOC] Unless forcing a specific sku from cheats!
+					// Select a pet from the given rarity
+					// Forcing a specific sku from cheats!
 					if(CPGachaTest.rewardChanceMode == CPGachaTest.RewardChanceMode.FORCED_PET_SKU) {
 						// Get that specific pet!
 						m_itemDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, CPGachaTest.forcedPetSku);
-					} else {
+					} 
+
+					// If tutorial is not completed, choose from a limited pool
+					else if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
+						do {
+							m_itemDef = petDefs.GetRandomValue();
+						} while(!m_itemDef.GetAsBool("startingPool"));
+					} 
+
+					// Default behaviour: random pet of the target rarity
+					else {
 						// Default behaviour
 						m_itemDef = petDefs.GetRandomValue();
 					}

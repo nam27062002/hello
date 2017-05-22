@@ -12,6 +12,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	};
 
 	//-------------------------------------------------------------------
+	[EntityPrefabListAttribute]
 	[SerializeField] private string m_entityPrefabStr;
 	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
 	[SerializeField] private Transform m_spawnAtTransform;
@@ -22,6 +23,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	private GameCamera m_newCamera;
 	private IMachine m_operator;
 	private Pilot m_operatorPilot;
+	private Transform m_operatorParent;
 
 	private float m_respawnTime;
 
@@ -29,17 +31,16 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	private GameSceneControllerBase m_gameSceneController = null;
 	private AutoSpawnBehaviour m_autoSpawner;
 
-    void Awake()
-    {
+    void Awake() {
         m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 
         m_operator = null;
         m_operatorPilot = null;
+		m_operatorParent = null;
     }
 
 	void OnDestroy() {
-		if ( ApplicationManager.IsAlive )
-		{
+		if (ApplicationManager.IsAlive) {
 			ForceRemoveEntities();
 		}
 	}
@@ -94,6 +95,8 @@ public class DeviceOperatorSpawner : AbstractSpawner {
         Transform groundSensor = spawning.transform.FindChild("groundSensor");
         Transform t = spawning.transform;
         
+		m_operatorParent = t.parent;
+
 		if (m_mustBeChild) {
 			t.parent = m_spawnAtTransform;
 			t.localPosition = Vector3.zero;
@@ -151,6 +154,17 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	public void OperatorDoShoot() {
 		m_operatorPilot.PressAction(Pilot.Action.Button_B);
 		m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
+	}
+
+	public void OperatorEnterDevice() {
+		m_operator.EnterDevice(false);
+	}
+
+	public void OperatorLeaveDevice() {		
+		if (m_mustBeChild) {
+			m_operator.transform.parent = m_operatorParent;
+		}
+		m_operator.LeaveDevice(false);
 	}
 
 	public void OperatorBurn() {

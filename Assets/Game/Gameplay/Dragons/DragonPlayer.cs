@@ -160,6 +160,14 @@ public class DragonPlayer : MonoBehaviour {
 	// Internal
 	private float m_invulnerableAfterReviveTimer;
 
+	private bool m_changingArea = false;
+	public bool changingArea
+	{
+		get{ return m_changingArea; }
+		set{ m_changingArea = value; }
+	}
+
+
 	private bool m_superSizeInvulnerable = false;
 	public bool superSizeInvulnerable
 	{
@@ -446,7 +454,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// <returns><c>true</c> if this instance is super fury on; otherwise, <c>false</c>.</returns>
 	public bool IsSuperFuryOn() {
 		
-		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Super;
+		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Mega;
 	}
 
 	/// <summary>
@@ -543,6 +551,8 @@ public class DragonPlayer : MonoBehaviour {
 
 		// During fire, we're invulnerable
 		if(m_breathBehaviour.IsFuryOn()) return true;
+
+		if ( m_changingArea ) return true;
 
 		if ( m_superSizeInvulnerable ) return true;
 		

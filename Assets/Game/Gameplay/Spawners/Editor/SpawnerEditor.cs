@@ -30,11 +30,14 @@ public class SpawnerEditor : Editor {
 	private Spawner m_targetSpawner = null;
 
 	// Store a reference of interesting properties for faster access
+	private SerializedProperty m_maxTierProp = null;
 	private SerializedProperty m_activationTriggersProp = null;
+	private SerializedProperty m_activationKillTriggersProp = null;
 	private SerializedProperty m_deactivationTriggersProp = null;
 
 	// Warning messages
 	private bool m_repeatedActivationTriggerTypeError = false;
+	private bool m_repeatedActivationKillTriggerTypeError = false;
 	private bool m_repeatedDeactivationTriggerTypeError = false;
 	private bool m_incompatibleValuesError = false;
 
@@ -49,7 +52,9 @@ public class SpawnerEditor : Editor {
 		m_targetSpawner = target as Spawner;
 
 		// Store a reference of interesting properties for faster access
+		m_maxTierProp = serializedObject.FindProperty("m_maxTier");
 		m_activationTriggersProp = serializedObject.FindProperty("m_activationTriggers");
+		m_activationKillTriggersProp = serializedObject.FindProperty("m_activationKillTriggers");
 		m_deactivationTriggersProp = serializedObject.FindProperty("m_deactivationTriggers");
 
 		// Do an initial check for errors
@@ -65,6 +70,7 @@ public class SpawnerEditor : Editor {
 
 		// Clear properties
 		m_activationTriggersProp = null;
+		m_activationKillTriggersProp = null;
 		m_deactivationTriggersProp = null;
 	}
 
@@ -87,10 +93,18 @@ public class SpawnerEditor : Editor {
 		p.Next(true);	// To get first element
 		do {
 			// Properties requiring special treatment
-			if(p.name == m_activationTriggersProp.name) {
+			if (p.name == m_maxTierProp.name) {
+
+			} else if (p.name == "m_checkMaxTier") {
+				EditorGUILayout.PropertyField(p, true);
+				if (p.boolValue) {	
+					EditorGUILayout.PropertyField(m_maxTierProp, true);
+				}
+			} else if(p.name == m_activationTriggersProp.name) {
 				// Draw activation properties
 				EditorGUI.BeginChangeCheck();
 				EditorGUILayout.PropertyField(m_activationTriggersProp, true);
+				EditorGUILayout.PropertyField(m_activationKillTriggersProp, true);
 				EditorGUILayout.PropertyField(m_deactivationTriggersProp, true);
 				if(EditorGUI.EndChangeCheck()) {
 					// Check for wrong setups (once the property changes have been applied!)
@@ -102,6 +116,10 @@ public class SpawnerEditor : Editor {
 					EditorGUILayout.HelpBox("Two or more activation triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
 				}
 
+				if(m_repeatedActivationKillTriggerTypeError) {
+					EditorGUILayout.HelpBox("Two or more activation kill triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
+				}
+
 				if(m_repeatedDeactivationTriggerTypeError) {
 					EditorGUILayout.HelpBox("Two or more deactivation triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
 				}
@@ -109,6 +127,10 @@ public class SpawnerEditor : Editor {
 				if(m_incompatibleValuesError) {
 					EditorGUILayout.HelpBox("A deactivation trigger's value is lower than an activation trigger of the same type!\nSpawner will never be active.", MessageType.Error);
 				}
+			}
+
+			else if(p.name == m_activationKillTriggersProp.name) {
+				// Do nothing
 			}
 
 			// Ignore both activation triggers (we're showing them manually)
@@ -162,6 +184,21 @@ public class SpawnerEditor : Editor {
 
 			// Break from outer loop as well
 			if(m_repeatedActivationTriggerTypeError) break;
+		}
+
+		m_repeatedActivationKillTriggerTypeError = false;
+		foreach(Spawner.SpawnKillCondition trigger1 in m_targetSpawner.activationKillTriggers) {
+			foreach(Spawner.SpawnKillCondition trigger2 in m_targetSpawner.activationKillTriggers) {
+				// Start value is higher than end value for the same trigger type
+				if (trigger1 != trigger2
+				&& trigger1.category == trigger2.category) {
+					m_repeatedActivationKillTriggerTypeError = true;
+					break;	// Only show message once! :D
+				}
+			}
+
+			// Break from outer loop as well
+			if(m_repeatedActivationKillTriggerTypeError) break;
 		}
 
 		// Check duplicated deactivation triggers

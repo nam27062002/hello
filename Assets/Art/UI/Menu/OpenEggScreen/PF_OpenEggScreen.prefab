@@ -423,7 +423,18 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114392117346052460}
+        m_MethodName: OnClosePostAnimation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &11427566
@@ -1214,6 +1225,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224000010055679512}
+  - component: {fileID: 114092006556762366}
   m_Layer: 5
   m_Name: LeftAction
   m_TagString: Untagged
@@ -1409,6 +1421,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224000010740472412}
   - component: {fileID: 114000011629909150}
+  - component: {fileID: 114471961672109698}
   m_Layer: 5
   m_Name: EggBuy
   m_TagString: Untagged
@@ -4753,6 +4766,20 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
+--- !u!114 &114092006556762366
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010898280064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 737a1a1ab5eb94825945691d146c286a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_mode: 0
+  m_reverseMode: 0
+  m_targetSteps: 00020000
 --- !u!114 &114094258359920986
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6054,6 +6081,20 @@ MonoBehaviour:
     m_RotationOrder: 0
   m_curveScale: 1
   m_verticalPivot: 0.5
+--- !u!114 &114471961672109698
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011810738156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 737a1a1ab5eb94825945691d146c286a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_mode: 0
+  m_reverseMode: 0
+  m_targetSteps: 00020000
 --- !u!114 &114540968333923062
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10415,10 +10456,10 @@ RectTransform:
   m_Father: {fileID: 224467625482281964}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 251.28998, y: -75}
-  m_SizeDelta: {x: 0, y: 90}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224156742443647808
 RectTransform:

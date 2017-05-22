@@ -687,7 +687,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1737113370020970}
   m_LocalRotation: {x: 0.33227244, y: -0.62416863, z: -0.33227825, w: 0.62417936}
-  m_LocalPosition: {x: -0, y: 1.106, z: 0.104}
+  m_LocalPosition: {x: -0, y: 0.702, z: 0.104}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4007735073947148}
@@ -952,7 +952,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1570781473237008}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 143.68182, y: 1.6731346, z: 0}
+  m_LocalPosition: {x: 118.22374, y: -12.267808, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4836742894737102}
@@ -1149,7 +1149,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 2.75
-  m_serializedJson: '[{"speed":2,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":3},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":9,"checkDragonPositionTime":1,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":true},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"hide":{"id":3,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":0,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":3},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":9,"checkDragonPositionTime":1,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":true,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":0,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
   m_databaseKey: PF_WorkerWife
 --- !u!114 &114124125222963794
 MonoBehaviour:
@@ -1194,6 +1194,13 @@ MonoBehaviour:
   m_onTriggerEnter: 1
   m_onTriggerStay: 1
   m_onTriggerExit: 1
+  m_onMouseDown: 0
+  m_onMouseDrag: 0
+  m_onMouseUp: 0
+  m_onMouseUpAsButton: 0
+  m_onMouseEnter: 0
+  m_onMouseExit: 0
+  m_onMouseOver: 0
 --- !u!114 &114552819647547628
 MonoBehaviour:
   m_ObjectHideFlags: 1

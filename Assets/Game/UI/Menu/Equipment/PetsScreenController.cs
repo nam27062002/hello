@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -75,6 +76,7 @@ public class PetsScreenController : MonoBehaviour {
 	private void Awake() {
 		// Subscribe to animator's events
 		animator.OnShowPreAnimation.AddListener(OnShowPreAnimation);
+		animator.OnShowPostAnimation.AddListener(OnShowPostAnimation);
 	}
 
 	/// <summary>
@@ -113,6 +115,7 @@ public class PetsScreenController : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe from animator's events
 		animator.OnShowPreAnimation.RemoveListener(OnShowPreAnimation);
+		animator.OnShowPostAnimation.RemoveListener(OnShowPostAnimation);
 	}
 
 	//------------------------------------------------------------------------//
@@ -248,11 +251,38 @@ public class PetsScreenController : MonoBehaviour {
 	public void OnShowPreAnimation(ShowHideAnimator _animator) {
 		// Refresh with initial data!
 		Initialize();
+	}
 
+	/// <summary>
+	/// Screen has been opened.
+	/// </summary>
+	/// <param name="_animator">The animator that triggered the event.</param>
+	public void OnShowPostAnimation(ShowHideAnimator _animator) {
 		// If we want to scroll to a pet, do it now
-		if(!string.IsNullOrEmpty(m_initialPetSku)) {
-			ScrollToPet(m_initialPetSku, 0.5f);	// Give enough time for the show animation!
+		bool scrollToPet = !string.IsNullOrEmpty(m_initialPetSku);
+		if(scrollToPet) {
+			ScrollToPet(m_initialPetSku, 0.35f);	// Some extra delay
 			m_initialPetSku = string.Empty;
+		}
+
+		// Should we show the pets info popup?
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PETS_INFO)) {
+			// If we're scrolling to a pet, give enough time to show the pet unlock animation
+			float delay = 0f;
+			if(scrollToPet) {
+				delay += 2f;	// [AOC] Sync with animation
+			}
+
+			// Open popup with delay
+			DOVirtual.DelayedCall(
+				delay, 
+				() => {
+					PopupManager.OpenPopupInstant(PopupInfoPets.PATH);
+				}
+			);
+
+			// Mark tutorial as completed
+			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.PETS_INFO, true);
 		}
 	}
 

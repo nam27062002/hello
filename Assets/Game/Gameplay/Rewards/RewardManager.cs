@@ -159,6 +159,11 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		get { return instance.m_dragonInitialLevelProgress; }
 	}
 
+	private bool m_nextDragonLocked = false;
+	public static bool nextDragonLocked {
+		get { return instance.m_nextDragonLocked; }
+	}
+
 	// Chests - store chest progression at the beginning of the game
 	private int m_initialCollectedChests = 0;
 	public static int initialCollectedChests {
@@ -169,6 +174,11 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	private Dictionary<string, int> m_killCount = new Dictionary<string, int>();
 	public static Dictionary<string, int> killCount{
 		get{ return instance.m_killCount; }
+	}
+
+	private Dictionary<string, int> m_categoryKillCount = new Dictionary<string, int>();
+	public static Dictionary<string, int> categoryKillCount{
+		get{ return instance.m_categoryKillCount; }
 	}
 
 	// Distance moved by the player
@@ -335,9 +345,18 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		if(DragonManager.currentDragon != null) {
 			instance.m_dragonInitialLevel = DragonManager.currentDragon.progression.level;
 			instance.m_dragonInitialLevelProgress = DragonManager.currentDragon.progression.progressCurrentLevel;
+
+			// Next dragon locked?
+			DragonData nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
+			if(nextDragonData != null) {
+				instance.m_nextDragonLocked = nextDragonData.isLocked;
+			} else {
+				instance.m_nextDragonLocked = false;
+			}
 		} else {
 			instance.m_dragonInitialLevel = 1;
 			instance.m_dragonInitialLevelProgress = 0;
+			instance.m_nextDragonLocked = false;
 		}
 
 		// Chests
@@ -345,6 +364,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
 		// Tracking vars
 		instance.m_killCount.Clear();
+		instance.m_categoryKillCount.Clear();
 		instance.m_freeReviveCount = 0;
 		instance.m_paidReviveCount = 0;
 		instance.m_deathSource = "";
@@ -538,6 +558,20 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 			{
 				m_killCount.Add( _reward.origin, 1);
 			}	
+
+			//Debug.Log("Kills " + _reward.origin + " " + m_killCount[ _reward.origin ]);
+		}
+
+		if (!string.IsNullOrEmpty(_reward.category))
+		{			
+			if ( m_categoryKillCount.ContainsKey( _reward.category ) )
+			{
+				m_categoryKillCount[ _reward.category ]++;
+			}
+			else
+			{
+				m_categoryKillCount.Add( _reward.category, 1);
+			}
 
 			//Debug.Log("Kills " + _reward.origin + " " + m_killCount[ _reward.origin ]);
 		}

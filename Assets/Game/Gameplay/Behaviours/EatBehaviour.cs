@@ -89,6 +89,18 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected bool m_isPlayer = true;		// If eating entity is the player
 	protected bool m_rewardsPlayer = false;	
 	protected bool m_canLatchOnPlayer = false;
+	public bool canLatchOnPlayer
+	{
+		get{ return m_canLatchOnPlayer; }
+		set{ m_canLatchOnPlayer = value; }
+	}
+	protected bool m_canBitePlayer = false;
+	public bool canBitePlayer
+	{
+		get{ return m_canBitePlayer; }
+		set{ m_canBitePlayer = value; }
+	}
+
 	public virtual bool canMultipleLatchOnPlayer { get { return false; } }
 
 	[SerializeField] private bool m_canEatEntities = false;
@@ -131,6 +143,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	public delegate void OnEvent();
 	public OnEvent onJawsClosed;
+	public OnEvent onBitePlayer;
 	public OnEvent onEndEating;
 	public OnEvent onEndLatching;
 
@@ -245,31 +258,33 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	protected virtual void OnDisable()
     {
-        if (m_prey != null && ApplicationManager.IsAlive)
-        {
-            int count = m_prey.Length;
-            for (int i = 0; i < count; i++)
-            {
-                if (m_prey[i].prey != null)
-                {
-                    PreyData prey = m_prey[i];
-                    prey.prey.transform.parent = prey.startParent;
-                    if ( prey.absorbTimer > 0 )
-						StartSwallow(m_prey[i].prey);
-                    EndSwallow(m_prey[i].prey);
-                    prey.prey = null;
-                    prey.startParent = null;
-                }
-            }
+		if (ApplicationManager.IsAlive)
+		{
+	        if (m_prey != null)
+	        {
+	            int count = m_prey.Length;
+	            for (int i = 0; i < count; i++)
+	            {
+	                if (m_prey[i].prey != null)
+	                {
+	                    PreyData prey = m_prey[i];
+	                    prey.prey.transform.parent = prey.startParent;
+	                    if ( prey.absorbTimer > 0 )
+							StartSwallow(m_prey[i].prey);
+	                    EndSwallow(m_prey[i].prey);
+	                    prey.prey = null;
+	                    prey.startParent = null;
+	                }
+	            }
+	            PreyCount = 0;
+	        }	
 
-            PreyCount = 0;
-
-            if ( IsLatching() || IsGrabbing() )
+			if ( IsLatching() || IsGrabbing() )
 				EndHold();
 
 			if ( m_attackTarget != null )
-				StopAttackTarget();
-        }		
+				StopAttackTarget();	
+        }
 	}
 
 	public bool IsEating() {
@@ -283,7 +298,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	public bool IsGrabbing()
 	{
-		return m_grabbingPrey;
+		return m_grabbingPrey && m_holdingPrey != null;
 	}
 
 	// Update is called once per frame
@@ -753,7 +768,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			if (onEndLatching != null)
 				onEndLatching();
 		}
-
+		m_grabbingPrey = false;
 		m_holdTransform = null;
 		if ( m_holdPoint != null )
 			m_holdPoint.holded = false;
@@ -788,18 +803,19 @@ public abstract class EatBehaviour : MonoBehaviour {
 		mouthPos.z = 0;
 		Vector3 arcOrigin = mouthPos - (dir * eatDistance);
 
-		if (m_canLatchOnPlayer) {
+		if (m_canLatchOnPlayer || m_canBitePlayer) {
 			Vector3 heading = (InstanceManager.player.transform.position - arcOrigin);
 			float dot = Vector3.Dot(heading, dir);
 			if ( dot > 0)
 			{
 				bool found = false;
-				List<Collider> hitColliders = InstanceManager.player.dragonMotion.hitColliders;
-				for( int i = 0; i<hitColliders.Count && !found; i++ )
+				Collider[] hitColliders = InstanceManager.player.dragonMotion.hitColliders;
+				int size = InstanceManager.player.dragonMotion.hitCollidersSize;
+				for( int i = 0; i<size && !found; i++ )
 				{
 					if (MathUtils.TestArcVsBounds( arcOrigin, arcAngle, arcRadius, dir, hitColliders[i].bounds))
 					{
-						StartAttackTarget( InstanceManager.player.transform);
+						StartAttackTarget(InstanceManager.player.transform);
 						found = true;
 					}
 				}
@@ -862,21 +878,35 @@ public abstract class EatBehaviour : MonoBehaviour {
 		float eatDistance = GetEatDistance();
 		eatDistance = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatDistance, eatDistance * m_angleSpeedMultiplier);
 
-		if (m_canLatchOnPlayer && InstanceManager.player != null)
+		if ((m_canLatchOnPlayer || m_canBitePlayer) && InstanceManager.player != null)
 		{
 			bool canLatch = false;
-			if ( canMultipleLatchOnPlayer && InstanceManager.player.HasFreeHoldPoint())
-				canLatch = true;
-			else
-				canLatch = !InstanceManager.player.BeingLatchedOn();
+			if (m_canLatchOnPlayer)
+			{
+				if ( canMultipleLatchOnPlayer && InstanceManager.player.HasFreeHoldPoint())
+					canLatch = true;
+				else
+					canLatch = !InstanceManager.player.BeingLatchedOn();
+			}
 
-			if ( canLatch )
+			if ( canLatch || m_canBitePlayer)
 			{
 				m_numCheckEntities = Physics.OverlapSphereNonAlloc( m_mouth.position, eatDistance, m_checkPlayer, m_playerColliderMask);
 				if ( m_numCheckEntities > 0 )
 				{
-					// Sart latching on player
-					StartLatchOnPlayer( InstanceManager.player );
+					if ( canLatch )
+					{
+						// Sart latching on player
+						StartLatchOnPlayer( InstanceManager.player );
+					}
+					else
+					{
+						// Bite player!!!
+						InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage( GetBitePlayerDamage(), DamageType.NORMAL, transform);
+						if (onBitePlayer != null) {
+							onBitePlayer();
+						}
+					}
 				}
 			}
 		}
@@ -950,6 +980,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 
 		// m_attackTarget = null;
+	}
+
+	protected virtual float GetBitePlayerDamage()
+	{
+		return 0;
 	}
 
 	/// <summary>
@@ -1040,8 +1075,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	/// On kill function over prey. Eating or holding
-	private void StartSwallow(AI.IMachine _prey) {
-		_prey.BeginSwallowed(m_mouth, m_rewardsPlayer);//( m_mouth );
+	protected void StartSwallow(AI.IMachine _prey) {
+		_prey.BeginSwallowed(m_mouth, m_rewardsPlayer, m_isPlayer);//( m_mouth );
 	}
 
 	private void EndSwallow(AI.IMachine _prey){

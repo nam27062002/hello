@@ -22,7 +22,7 @@ public class PopupTutorialControls : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/PF_PopupTutorialControls";
+	public const string PATH = "UI/Popups/Tutorial/PF_PopupTutorialControls";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -57,10 +57,14 @@ public class PopupTutorialControls : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Show/Hide elements
-		m_loadProgress = m_sceneController.levelLoadingProgress;
+		m_loadProgress = m_sceneController.levelActivationProgress;
 		m_loadingInfo.Set(m_loadProgress < 1f, true);
 		m_playButton.Set(m_loadProgress >= 1f, true);
-		m_loadingTxt.text = System.String.Format(m_localizedLoadingString, StringUtils.FormatNumber(m_loadProgress * 100f, 0));
+		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST && m_loadProgress >= 1)
+		{
+			GetComponent<PopupController>().Close(true);
+		}
+		//m_loadingTxt.text = System.String.Format(m_localizedLoadingString, StringUtils.FormatNumber(m_loadProgress * 100f, 0));
 	}
 
 	//------------------------------------------------------------------------//

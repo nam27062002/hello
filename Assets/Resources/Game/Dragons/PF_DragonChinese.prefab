@@ -74,22 +74,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &127870
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 448874}
-  - component: {fileID: 11432430}
-  m_Layer: 18
-  m_Name: MapMarker
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &128216
 GameObject:
   m_ObjectHideFlags: 1
@@ -162,24 +146,6 @@ GameObject:
   - component: {fileID: 11456354}
   m_Layer: 12
   m_Name: mouth
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &149998
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 485292}
-  - component: {fileID: 21274572}
-  - component: {fileID: 11430736}
-  - component: {fileID: 11457052}
-  m_Layer: 18
-  m_Name: Pulse
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -320,25 +286,9 @@ GameObject:
   - component: {fileID: 11491102}
   - component: {fileID: 11440808}
   m_Layer: 12
-  m_Name: head_1
+  m_Name: neck_1
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &199954
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 443856}
-  - component: {fileID: 21261114}
-  m_Layer: 18
-  m_Name: Icon
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -414,17 +364,17 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 7.1, z: 0}
+  m_LocalPosition: {x: 45.430664, y: 2.7042289, z: -17.073}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
   - {fileID: 470162}
   - {fileID: 431226}
   - {fileID: 490078}
-  - {fileID: 448874}
   - {fileID: 4000010580654418}
   - {fileID: 4459871580272080}
   - {fileID: 4546326248425088}
+  - {fileID: 4992652123397368}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -434,12 +384,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 199086}
-  m_LocalRotation: {x: -0.7058522, y: -0.04210343, z: 0.7058522, w: 0.04210332}
-  m_LocalPosition: {x: 0, y: 0.2759323, z: -0.3642025}
+  m_LocalRotation: {x: -0.01648111, y: -0.7069148, z: 0.016481219, w: 0.7069146}
+  m_LocalPosition: {x: 0, y: 0.27593374, z: -0.3642025}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 470162}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &429346
 Transform:
@@ -475,34 +425,6 @@ Transform:
   m_Father: {fileID: 414586}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &443856
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 199954}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 448874}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &448874
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 127870}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.235, y: -0.799, z: 0}
-  m_LocalScale: {x: 50, y: 50, z: 1}
-  m_Children:
-  - {fileID: 485292}
-  - {fileID: 443856}
-  m_Father: {fileID: 414586}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &449686
 Transform:
   m_ObjectHideFlags: 1
@@ -532,6 +454,7 @@ Transform:
   - {fileID: 414536}
   - {fileID: 411284}
   - {fileID: 495242}
+  - {fileID: 4220516114736006}
   - {fileID: 420968}
   - {fileID: 482386}
   m_Father: {fileID: 414586}
@@ -570,11 +493,11 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 148474}
   m_LocalRotation: {x: -0.69476265, y: -0.13154766, z: 0.6947628, w: 0.13154757}
-  m_LocalPosition: {x: 0, y: -0.016, z: 0.28168058}
+  m_LocalPosition: {x: -0, y: 0.3, z: -0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 470162}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: -90.00001, z: 158.557}
 --- !u!4 &484772
 Transform:
@@ -587,19 +510,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 429346}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &485292
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 149998}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
-  m_LocalScale: {x: 3, y: 3, z: 1}
-  m_Children: []
-  m_Father: {fileID: 448874}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &488014
@@ -687,122 +597,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15467f0022fed4eb987a8de2bafce36d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11430736
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 149998}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d0390bd8b8ffd640b34fe25065ff1df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  updateType: 0
-  isSpeedBased: 0
-  hasOnStart: 0
-  hasOnPlay: 0
-  hasOnUpdate: 0
-  hasOnStepComplete: 0
-  hasOnComplete: 0
-  hasOnTweenCreated: 0
-  onStart:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-  onPlay:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-  onUpdate:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-  onStepComplete:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-  onComplete:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-  onTweenCreated:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-  delay: 0
-  duration: 1
-  easeType: 1
-  easeCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  loopType: 0
-  loops: -1
-  id: 
-  isRelative: 0
-  isFrom: 1
-  isIndependentUpdate: 1
-  autoKill: 1
-  isActive: 1
-  isValid: 1
-  target: {fileID: 485292}
-  animationType: 5
-  targetType: 11
-  forcedTargetType: 0
-  autoPlay: 1
-  useTargetAsV3: 0
-  endValueFloat: 0
-  endValueV3: {x: 0, y: 0, z: 0}
-  endValueV2: {x: 0, y: 0}
-  endValueColor: {r: 1, g: 1, b: 1, a: 1}
-  endValueString: 
-  endValueRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 0
-    height: 0
-  endValueTransform: {fileID: 0}
-  optionalBool0: 1
-  optionalFloat0: 0
-  optionalInt0: 0
-  optionalRotationMode: 0
-  optionalScrambleMode: 0
-  optionalString: 
---- !u!114 &11432430
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 127870}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 477168459df0e4bcea3ead6e758883ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_type: 3
-  m_rotateWithObject: 1
 --- !u!114 &11434386
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -854,6 +648,10 @@ MonoBehaviour:
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_trailsAnchor: {fileID: 4507447752647026}
+  m_landingParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
 --- !u!114 &11438592
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -921,7 +719,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parentName: Dragon_Head
+  m_parentName: Dragon_Neck1
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
 --- !u!114 &11442174
@@ -949,6 +747,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_curseColor: {r: 0, g: 1, b: 0, a: 1}
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
+  m_reduceInnerColorInsideWater: 0
 --- !u!114 &11444004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1000,109 +799,6 @@ MonoBehaviour:
   m_parentName: Fire_Dummy
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
---- !u!114 &11457052
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 149998}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d0390bd8b8ffd640b34fe25065ff1df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  updateType: 0
-  isSpeedBased: 0
-  hasOnStart: 0
-  hasOnPlay: 0
-  hasOnUpdate: 0
-  hasOnStepComplete: 0
-  hasOnComplete: 0
-  hasOnTweenCreated: 0
-  onStart:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-  onPlay:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-  onUpdate:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-  onStepComplete:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-  onComplete:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-  onTweenCreated:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-  delay: 0
-  duration: 1
-  easeType: 1
-  easeCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  loopType: 0
-  loops: -1
-  id: 
-  isRelative: 0
-  isFrom: 0
-  isIndependentUpdate: 1
-  autoKill: 1
-  isActive: 1
-  isValid: 1
-  target: {fileID: 21274572}
-  animationType: 7
-  targetType: 7
-  forcedTargetType: 0
-  autoPlay: 1
-  useTargetAsV3: 0
-  endValueFloat: 0
-  endValueV3: {x: 0, y: 0, z: 0}
-  endValueV2: {x: 0, y: 0}
-  endValueColor: {r: 1, g: 1, b: 1, a: 1}
-  endValueString: 
-  endValueRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 0
-    height: 0
-  endValueTransform: {fileID: 0}
-  optionalBool0: 0
-  optionalFloat0: 0
-  optionalInt0: 0
-  optionalRotationMode: 0
-  optionalScrambleMode: 0
-  optionalString: 
 --- !u!114 &11459072
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1148,7 +844,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_point: 5
+  m_point: 6
 --- !u!135 &13589116
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -1161,76 +857,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.75
   m_Center: {x: 0, y: 0, z: 0}
---- !u!212 &21261114
-SpriteRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 199954}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: fc41f088847d443538434c7321ab2cc2, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
---- !u!212 &21274572
-SpriteRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 149998}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 0abd3b840028844e4ae84580f2416958, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -1431,7 +1057,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4345932641523154}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_R_Up_EyeLead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1446,7 +1072,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4351873212932402}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_LMoustache_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1461,7 +1087,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4343627450189314}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Jaw_Snout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1476,7 +1102,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4186855228701424}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Tail6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1491,7 +1117,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4873374295932380}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_LMoustache_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1506,7 +1132,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4498038659999204}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_RMoustache_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1521,7 +1147,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4097057926429802}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_LMoustache_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1536,7 +1162,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4202665298678108}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Mouth_Down_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1552,7 +1178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4008216561835450}
   - component: {fileID: 137721925482076498}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Chinese_LOW
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1567,7 +1193,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4174905731857122}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Tongue_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1582,7 +1208,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4096411235564234}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Tail5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1597,7 +1223,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4529512986646506}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_R_Down_EyeLead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1627,7 +1253,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4609574834562790}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Hip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1642,7 +1268,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4276998452042776}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_L_Up_EyeLead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1657,7 +1283,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4121088471960850}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_LMoustache_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1672,7 +1298,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4651448895146428}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_RMoustache_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1719,7 +1345,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4825902602013980}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Neck2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1734,7 +1360,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4376155585865560}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Tongue_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1749,7 +1375,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4095828914285724}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Mouth_Up_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1764,7 +1390,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4024138997449662}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Master
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1779,7 +1405,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4653177240189748}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Spine_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1794,7 +1420,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4808003724801180}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_RMoustache_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1809,7 +1435,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4104451737291492}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_LMoustache_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1824,7 +1450,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4490977640164970}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_RLeg_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1839,7 +1465,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4638832575007672}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_RLeg_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1854,7 +1480,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4493720022423524}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Tail1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1869,7 +1495,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4892526017281806}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: SwallowPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1884,7 +1510,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4681416304336824}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_L_Down_EyeLead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1915,7 +1541,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4974671708091658}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_LArm_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1946,7 +1572,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4914038431473024}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_RArm_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1961,7 +1587,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4793004528903894}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_LLeg_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1991,7 +1617,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4111673509131338}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Tail4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2006,7 +1632,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4908020732477756}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_LLeg_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2021,7 +1647,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4783357374833684}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Tail3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2060,6 +1686,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1607162528179532
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4220516114736006}
+  - component: {fileID: 114696917699964296}
+  - component: {fileID: 114944403164882310}
+  m_Layer: 12
+  m_Name: head_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1642425909656562
 GameObject:
   m_ObjectHideFlags: 1
@@ -2068,7 +1711,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4290743031024484}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Tongue_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2083,7 +1726,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4188542300779020}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_RLeg_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2098,7 +1741,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4555058756316072}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Jaw
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2113,7 +1756,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4144747184747088}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: SuctionPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2128,7 +1771,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4345175520921232}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_RMoustache_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2160,7 +1803,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4493820919158734}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_HeadBone004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2177,7 +1820,7 @@ GameObject:
   - component: {fileID: 4459871580272080}
   - component: {fileID: 95658389997278208}
   - component: {fileID: 114897805821753156}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2192,7 +1835,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4717869491587708}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_RMoustache_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2223,7 +1866,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4870286377565352}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_RMoustache_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2238,7 +1881,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4984531385792464}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Mouth_Up_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2253,7 +1896,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4816103817546636}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Chest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2268,7 +1911,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4957916350955924}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2298,8 +1941,24 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4619070918965584}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_RArm_Palm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1876215770199386
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4992652123397368}
+  - component: {fileID: 114427472023750822}
+  m_Layer: 18
+  m_Name: MapMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2313,7 +1972,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4917050866205482}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_LLeg_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2328,7 +1987,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4301277404248062}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Fire_Dummy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2343,7 +2002,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4401542324166662}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Mouth_Comisure
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2358,7 +2017,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4939902132280612}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Spine_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2373,7 +2032,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4510042633672682}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Head_Snout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2388,7 +2047,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4377485329717846}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_R_Eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2403,7 +2062,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4160548076327436}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_RArm_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2418,7 +2077,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4078715969872402}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_LMoustache_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2433,7 +2092,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4920714808625484}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Spine_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2448,7 +2107,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4182064815085660}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_LArm_Palm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2480,7 +2139,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4580865231028338}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_LArm_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2495,7 +2154,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4625343370554170}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Mouth_Down_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2510,7 +2169,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4140409558146364}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Neck1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2525,7 +2184,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4502756567126694}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Head_Ctrl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2540,7 +2199,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4578548483994802}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Dragon_Tail2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2560,7 +2219,7 @@ Transform:
   - {fileID: 4000010637555504}
   - {fileID: 4000011983224448}
   m_Father: {fileID: 414586}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4000010637555504
 Transform:
@@ -2874,6 +2533,19 @@ Transform:
   m_Father: {fileID: 4343627450189314}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4220516114736006
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1607162528179532}
+  m_LocalRotation: {x: -0.7058522, y: -0.04210343, z: 0.7058522, w: 0.04210332}
+  m_LocalPosition: {x: 0, y: 0.2759323, z: -0.3642025}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 470162}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4276998452042776
 Transform:
   m_ObjectHideFlags: 1
@@ -3028,7 +2700,7 @@ Transform:
   - {fileID: 4502756567126694}
   - {fileID: 4024138997449662}
   m_Father: {fileID: 414586}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4473959657163706
 Transform:
@@ -3185,7 +2857,7 @@ Transform:
   - {fileID: 4130696859480310}
   - {fileID: 4838533323366382}
   m_Father: {fileID: 414586}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4555058756316072
 Transform:
@@ -3476,7 +3148,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1470509311117520}
-  m_LocalRotation: {x: 0.0066632368, y: 0.7876468, z: -0.008519484, w: 0.61603224}
+  m_LocalRotation: {x: -0.022521693, y: 0.65464556, z: 0.019519111, w: 0.7553482}
   m_LocalPosition: {x: 0, y: 0, z: -0.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3656,6 +3328,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4957916350955924}
   m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4992652123397368
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1876215770199386}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 414586}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &65387759563457302
 BoxCollider:
@@ -4348,7 +4033,7 @@ MonoBehaviour:
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 1
+      Volume: 0.7
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.1
       MaxInstanceCount: 0
@@ -4901,7 +4586,7 @@ MonoBehaviour:
   _volume: 1
   _currentInspectorSelection:
     currentCategoryIndex: 0
-    currentItemIndex: 12
+    currentItemIndex: 5
     currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
@@ -4958,24 +4643,6 @@ MonoBehaviour:
   m_breathSound: Dragon_Burst Mode
   m_superBreathSound: Dragon_Burst Mode
   m_length: 6
-  m_sizeCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 3
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1
-      value: 3
-      inSlope: 3
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   m_dragonFlameStandard: {fileID: 197018, guid: c14795ad74862da47a6176c0deacb83b,
     type: 2}
   m_dragonFlameSuper: {fileID: 1000013828432286, guid: 381cc7087b9ec7e4f97a52941d03341c,
@@ -5009,7 +4676,6 @@ MonoBehaviour:
   - Dragon_LMoustache_4
   - Dragon_LMoustache_5
   - Dragon_LMoustache_6
-  m_parts: []
   springSpeed: 10
   m_upDir: {x: 0, y: -90, z: 0}
 --- !u!114 &114100482591571702
@@ -5064,9 +4730,34 @@ MonoBehaviour:
   - Dragon_Tail4
   - Dragon_Tail5
   - Dragon_Tail6
-  m_parts: []
   springSpeed: 7
   m_upDir: {x: 0, y: -90, z: 0}
+--- !u!114 &114427472023750822
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1876215770199386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8180520c26cf541b3a9537c7609c595d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_prefab: {fileID: 1908670640234622, guid: 3421d5a81eb724dcf948c6cc7b16ba7b, type: 2}
+  m_targetParent: {fileID: 4992652123397368}
+  m_delay: 0
+--- !u!114 &114696917699964296
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1607162528179532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 5
 --- !u!114 &114740274975619360
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5111,7 +4802,6 @@ MonoBehaviour:
   - Dragon_RMoustache_4
   - Dragon_RMoustache_5
   - Dragon_RMoustache_6
-  m_parts: []
   springSpeed: 10
   m_upDir: {x: 0, y: -90, z: 0}
 --- !u!114 &114889437401122074
@@ -5156,6 +4846,7 @@ MonoBehaviour:
   m_wingsIdleSound: Dragon_Idle_Flaps
   m_wingsFlyingSound: Dragon_Flaps
   m_eatSound: Dragon_Eat
+  m_eatHoldSound: 
   m_wingsWindSound: Dragon_wind_boost
   m_wingsStrongFlap: Dragon_Strong_Flap
   m_levelUpSound: Level_Up
@@ -5170,6 +4861,20 @@ MonoBehaviour:
     type: 2}
   m_waterDeepToSnapshot: 4
   m_hiccupSound: 
+--- !u!114 &114944403164882310
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1607162528179532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_Head
+  m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114953852002885348
 MonoBehaviour:
   m_ObjectHideFlags: 1

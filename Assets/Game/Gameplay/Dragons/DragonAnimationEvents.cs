@@ -12,6 +12,9 @@ public class DragonAnimationEvents : MonoBehaviour {
 	private AudioObject m_wingsFlyingSoundAO;
 
 	public string m_eatSound;
+	public string m_eatHoldSound;
+	private AudioObject m_eatHoldSoundAO;
+	private static int EAT_HOLD_HASH = Animator.StringToHash("EatHold");
 
 	public string m_wingsWindSound;
 	private AudioObject m_wingsWindSoundAO;
@@ -66,6 +69,11 @@ public class DragonAnimationEvents : MonoBehaviour {
 		m_eventsRegistered = true;
 		// m_animator.SetBool( "starving", true);
 
+		StartEndStateMachineBehaviour[] behaviours = m_animator.GetBehaviours<StartEndStateMachineBehaviour>();
+		for( int i = 0; i<behaviours.Length; i++ ){
+			behaviours[i].onStateEnter += onStateEnter;
+			behaviours[i].onStateExit += onStateExit;
+		}
 	}
 
 	void OnDisable() {
@@ -128,7 +136,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void TurboLoopStart()
 	{
-		m_particleController.ActivateTrails();
+		if ( m_particleController )
+			m_particleController.ActivateTrails();
 		if ( !string.IsNullOrEmpty( m_wingsWindSound))
 		{
 			m_wingsWindSoundAO = AudioController.Play( m_wingsWindSound, transform);
@@ -137,7 +146,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void TurboLoopEnd()
 	{
-		m_particleController.DeactivateTrails();
+		if ( m_particleController )
+			m_particleController.DeactivateTrails();
 		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
 		{
 			m_wingsWindSoundAO.Stop();
@@ -146,6 +156,9 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void WingsIdleSound()
 	{
+		// tell particle controller
+		if ( m_particleController )
+			m_particleController.WingsEvent();
 		if (!string.IsNullOrEmpty(m_wingsIdleSound))
 		{
 			m_wingsIdleSoundAO = AudioController.Play(m_wingsIdleSound, transform);
@@ -154,6 +167,9 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void WingsFlyingSound()
 	{
+		// tell particle controller
+		if ( m_particleController )
+			m_particleController.WingsEvent();
 		if (!string.IsNullOrEmpty(m_wingsFlyingSound))
 		{
 			m_wingsFlyingSoundAO = AudioController.Play(m_wingsFlyingSound, transform);
@@ -162,6 +178,9 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void StrongFlap()
 	{
+		// tell particle controller
+		if ( m_particleController )
+			m_particleController.WingsEvent();
 		if (!string.IsNullOrEmpty(m_wingsStrongFlap))
 		{
 			m_wingsStrongFlapAO = AudioController.Play(m_wingsStrongFlap, transform);
@@ -300,6 +319,37 @@ public class DragonAnimationEvents : MonoBehaviour {
 	{
 		if ( m_particleController != null )
 			m_particleController.OnNoAirBubbles();
+	}
+
+	void onStateEnter( int stateNameHash )
+	{
+		if( stateNameHash == EAT_HOLD_HASH)
+		{
+			OnStartEatHold();
+		}
+	}
+
+	void onStateExit( int stateNameHash )
+	{
+		if( stateNameHash == EAT_HOLD_HASH)
+		{
+			OnEndEatHold();
+		}
+	}
+
+	void OnStartEatHold()
+	{
+		if (!string.IsNullOrEmpty( m_eatHoldSound ))
+		{
+			m_eatHoldSoundAO = AudioController.Play(m_eatHoldSound, transform);
+		}
+	}
+	void OnEndEatHold()
+	{
+		if (m_eatHoldSoundAO != null && m_eatHoldSoundAO.IsPlaying())
+		{
+			m_eatHoldSoundAO.Stop();
+		}
 	}
 
 }

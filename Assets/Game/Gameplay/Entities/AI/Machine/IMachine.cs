@@ -7,7 +7,7 @@ namespace AI {
 		Vector3 	eye			{ get; }
 		Vector3 	target		{ get; }
 		Vector3 	upVector	{ get; set; }
-		Transform 	enemy 		{ get; set; } 
+		Transform 	enemy 		{ get; } 
 		bool 		isPetTarget	{ get; set; }
 
 		// Monobehaviour methods
@@ -47,8 +47,8 @@ namespace AI {
 
 		void ReceiveDamage(float _damage);
 
-		void LockInCage();
-		void UnlockFromCage();
+		void EnterDevice(bool _isCage);
+		void LeaveDevice(bool _isCage);
 
 		void Drown();
 
@@ -57,7 +57,7 @@ namespace AI {
 		HoldPreyPoint[] holdPreyPoints { get; }
 
 		void Bite();
-		void BeginSwallowed(Transform _transform, bool rewardPlayer);
+		void BeginSwallowed(Transform _transform, bool rewardPlayer, bool isPlayer);
 		void EndSwallowed(Transform _transform);
 		void BiteAndHold();
 		void ReleaseHold();

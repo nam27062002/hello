@@ -10,12 +10,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		Extinguish
 	};
 
-	[SerializeField] private string m_breathHitParticle = "PF_FireHit";
-	[SerializeField] private bool m_hitParticleMatchDirection = false;
-	[SeparatorAttribute]
-	[SerializeField] private float m_hitRadius = 0f;
-
-
+	private ParticleData m_feedbackParticle;
+	private ParticleData m_burnParticle;
+	private bool m_feedbackParticleMatchDirection = false;
+	private float m_hitRadius = 0f;
 
 	private Bounds m_bounds;
 	private Rect m_rect;
@@ -45,24 +43,25 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private State m_nextState;
 
 
-
 	// Use this for initialization
-	void Start () {
+	void Start() {
 		m_bounds = new Bounds(transform.position, Vector3.one * m_hitRadius * 2f);
 		m_rect = new Rect((Vector2)transform.position, Vector2.zero);
 
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
-
 		m_area = new CircleAreaBounds(transform.position, m_hitRadius);
-
-		// get two closets neighbours
-		FindNeighbours();
 
 		gameObject.SetActive(false);
 	}
 
-	public void Init(Decoration _decoration) {		
+	public void Init(Decoration _decoration, ParticleData _burnParticle, ParticleData _feedbackParticle, bool _feedbackParticleMatchDirection, float _hitRadius) {		
 		m_decoration = _decoration;
+
+		m_burnParticle = _burnParticle;
+		m_feedbackParticle = _feedbackParticle;
+		m_feedbackParticleMatchDirection = _feedbackParticleMatchDirection;
+		m_hitRadius = _hitRadius;
+
 		Reset();
 
 		FirePropagationManager.Insert(this);
@@ -75,6 +74,9 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_nextState = m_state;
 		m_lastBreathDirection = Vector3.up;
 
+		if (m_neighbours == null) {
+			FindNeighbours();
+		}
 		SetNeighboursDistance();
 
 		m_canStartSmoke = true;
@@ -100,8 +102,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 	public void Burn(Vector2 _direction, bool _dragonBreath, DragonTier _tier) {
 		if (m_state == State.Extinguished) {
-
-			ZoneManager.ZoneEffect effect = InstanceManager.zoneManager.GetFireEffectCode( m_decoration, _tier);
+			ZoneManager.ZoneEffect effect = InstanceManager.zoneManager.GetFireEffectCode(m_decoration, _tier);
 			m_lastBurnTier = _tier;
 
 			if (effect >= ZoneManager.ZoneEffect.M) {
@@ -113,8 +114,8 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 			} else {
 				// Dragon can't burn this thing, so lets put a few feedback particles
 				if (_dragonBreath && m_timer <= 0f) {
-					GameObject hitParticle = ParticleManager.Spawn(m_breathHitParticle, transform.position);
-					if (hitParticle != null && m_hitParticleMatchDirection) {
+					GameObject hitParticle = ParticleManager.Spawn(m_feedbackParticle, transform.position);
+					if (hitParticle != null && m_feedbackParticleMatchDirection) {
 						Vector3 angle = (_direction.x < 0)? Vector3.down : Vector3.up;
 
 						hitParticle.transform.rotation = Quaternion.Euler(angle * 90f);
@@ -220,7 +221,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private void StartFireEffect() {
 		FirePropagationManager.InsertBurning(transform);
 		if (m_fireSprite == null) {
-			m_fireSprite = PoolManager.GetInstance("PF_FireProc");
+			m_fireSprite = ParticleManager.Spawn(m_burnParticle);
 
 			if (m_fireSprite != null) {
 				m_fireSprite.GetComponentInChildren<Animator>(false).SetBool("burn", true);
@@ -235,7 +236,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		FirePropagationManager.RemoveBurning(transform);
 		if (m_fireSprite != null) {
 			m_fireSprite.SetActive(false);
-			PoolManager.ReturnInstance(m_fireSprite);
+			ParticleManager.ReturnInstance(m_fireSprite);
 		}
 		m_fireSprite = null;
 	}
@@ -264,18 +265,27 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	}
 
 	private void SetNeighboursDistance() {
-		for (int i = 0; i < m_neighbours.Count; i++) {			
+		for (int i = 0; i < m_neighbours.Count; i++) {
 			m_neihboursDistance[i] = Vector3.SqrMagnitude(transform.position - m_neighbours[i].transform.position);
 		}
 	}
 
 
 	//------------------------------------------------------------------------------
-	void OnDrawGizmosSelected() {
-		Gizmos.color = Colors.WithAlpha(Colors.magenta, 0.75f);
+	public void OnDrawGizmosSelected() {
+		Gizmos.color = Colors.WithAlpha(Colors.magenta, 0.5f);
 		Gizmos.DrawSphere(transform.position, 0.5f);
 
 		Gizmos.color = Colors.fuchsia;
 		Gizmos.DrawWireSphere(transform.position, m_hitRadius);
+	
+		if (m_neighbours == null || m_neighbours.Count == 0) {
+			FindNeighbours();
+		}
+
+		for (int i = 0; i < m_neighbours.Count; i++) {
+			Gizmos.color = Colors.WithAlpha(Colors.magenta, 0.15f);
+			Gizmos.DrawSphere(m_neighbours[i].transform.position, 0.5f);
+		}
 	}
 }

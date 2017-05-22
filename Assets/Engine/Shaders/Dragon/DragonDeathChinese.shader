@@ -4,7 +4,7 @@
 // Custom Dragon Shader.
 // - Detail Texture. R: Inner Light value. G: Spec value.
 
-Shader "Hungry Dragon/Dragon/Death" {
+Shader "Hungry Dragon/Dragon/Death Chinese" {
 Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 	_BumpMap ("Normal Map (RGB)", 2D) = "white" {}
@@ -74,6 +74,10 @@ SubShader {
 
 			#endif
 
+			#define CUTOUT
+			#define DOUBLESIDED
+
+			#define REFL
 
 			struct appdata_t {
 				float4 vertex : POSITION;

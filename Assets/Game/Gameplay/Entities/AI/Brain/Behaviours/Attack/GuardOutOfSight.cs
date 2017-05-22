@@ -54,14 +54,6 @@ namespace AI {
 				if (m_machine.GetSignal(Signals.Type.Danger)) {
 					Transition(OnEnemyInRange);
 				} else {
-					if (m_machine.enemy != null) {
-						if (m_machine.enemy.position.x < m_machine.position.x) {
-							m_pilot.SetDirection(Vector3.left);
-						} else {
-							m_pilot.SetDirection(Vector3.right);
-						}
-					}
-
 					m_timer -= Time.deltaTime;
 					if (m_timer <= 0f) {
 						Transition(OnCalmDown);

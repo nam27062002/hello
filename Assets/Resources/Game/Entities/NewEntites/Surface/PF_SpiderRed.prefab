@@ -43,7 +43,6 @@ GameObject:
   m_Component:
   - component: {fileID: 409022}
   - component: {fileID: 11439598}
-  - component: {fileID: 11432260}
   - component: {fileID: 11474244}
   - component: {fileID: 114111363036002830}
   - component: {fileID: 11409804}
@@ -63,13 +62,14 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 174698}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 9.216885, y: -1.0202848, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000011376339738}
   - {fileID: 485128}
   - {fileID: 485126}
   - {fileID: 4000011703187116}
+  - {fileID: 4290608642360412}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -159,20 +159,6 @@ MonoBehaviour:
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onAttackParticleAnchor: {fileID: 0}
---- !u!114 &11432260
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 174698}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0.026046753, y: 0.74253523}
-  radius: 0.6314559
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11433592
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -213,6 +199,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_knockback: 0
   m_timeBetweenHits: 0.5
+  m_trail: {fileID: 0}
+  m_trailParticles: []
 --- !u!114 &11445436
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -246,7 +234,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"hangDownChance":{"min":1,"max":1},"hangDownDistance":{"min":4,"max":6},"hangDownSpeed":2.5,"restTime":{"min":5,"max":8},"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"damage":25,"consecutiveAttacks":200,"attackDelay":1.5,"retreatTime":5,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":2.5,"timeToIdle":{"min":4,"max":5},"timeToChangeDirection":{"min":5,"max":25},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
+  m_serializedJson: '[{"hangDownChance":{"min":1,"max":1},"hangDownDistance":{"min":4,"max":6},"hangDownSpeed":2.5,"restTime":{"min":5,"max":8},"randomLookAt":true,"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"damage":25,"consecutiveAttacks":200,"attackDelay":1.5,"retreatTime":5,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":2.5,"timeToIdle":{"min":4,"max":5},"timeToChangeDirection":{"min":5,"max":25},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
   m_databaseKey: PF_SpiderRed
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
@@ -759,6 +747,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1891764204760076
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4290608642360412}
+  - component: {fileID: 114415581787907634}
+  - component: {fileID: 114690932551077306}
+  m_Layer: 21
+  m_Name: area
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &4000010271756428
 Transform:
   m_ObjectHideFlags: 1
@@ -1205,6 +1210,19 @@ Transform:
   m_Father: {fileID: 4000010492400218}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4290608642360412
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1891764204760076}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 409022}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &54000012314379416
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -1284,7 +1302,6 @@ MonoBehaviour:
     m_dissolveTime: 1.5
     m_ashExceptions: []
   m_onSpawnSound: 
-  m_rotateToMouth: 0
   m_wallWalkingMotion:
     m_mass: 2.5
     m_defaultUpVector: 0
@@ -1292,6 +1309,34 @@ MonoBehaviour:
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
+--- !u!114 &114415581787907634
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1891764204760076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0.026046753, y: 0.74253523}
+  radius: 0.7339442
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!114 &114690932551077306
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1891764204760076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Spider_Abdomen_2
+  m_parentRoot: {fileID: 4000011376339738}
+  m_worldPositionStays: 1
 --- !u!120 &120000012288428370
 LineRenderer:
   m_ObjectHideFlags: 1

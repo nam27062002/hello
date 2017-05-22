@@ -33,6 +33,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	private Rect m_rect;
 	public Rect boundingRect { get { return m_rect; } }
 	public Quaternion rotation { get { return Quaternion.identity; } }
+	public Vector3 homePosition { get { return transform.position; } }
 
 	private bool m_disableAtFirstUpdate;
 
@@ -91,9 +92,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	}
 
     void OnDestroy() {
-        if (SpawnerManager.instance != null) {
-            SpawnerManager.instance.Unregister(this, true);
-        }
+		if (SpawnerManager.isInstanceCreated)
+            SpawnerManager.instance.Unregister(this, false);
     }
 
 	/// <summary>

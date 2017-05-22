@@ -69,7 +69,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         set {
 			m_showMemoryUsage = value;
             // Activate labels to show memory usage
-			m_memoryLabel.gameObject.SetActive(true);
+			m_memoryLabel.gameObject.SetActive(m_showMemoryUsage);
         }        
     }
 
@@ -166,7 +166,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 				pos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 			}
 
-			if (pos.x < (Screen.width * 0.1f) && pos.y < (Screen.height * 0.1f))
+			// Holding the top-left corner activates the control panel
+			if (pos.x < (Screen.width * 0.15f) && pos.y > (Screen.height * 0.85f))
 			{
                 m_activateTimer += Time.unscaledDeltaTime;
 				if ( m_activateTimer > m_activationTime )

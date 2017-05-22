@@ -15,6 +15,8 @@ namespace AI {
 
 
 		//---------------------------------------------------------------------------------
+		public virtual Quaternion orientation 	{ get { return transform.rotation; } set { transform.rotation = value; } }
+
 		public Vector3 position { 	get { return transform.position;  } 
 									set { transform.position = value; } 
 		}
@@ -82,8 +84,8 @@ namespace AI {
 		// External interactions
 		public void ReceiveDamage(float _damage) {}
 
-		public void LockInCage() 		{}
-		public void UnlockFromCage() 	{}
+		public void EnterDevice(bool _isCage) 	{}
+		public void LeaveDevice(bool _isCage) 	{}
 
 		// 
 		public bool IsDying() { return m_beingEaten || m_beingBurned; }
@@ -109,8 +111,8 @@ namespace AI {
 			}
 		}
 
-		public void BeginSwallowed(Transform _transform, bool _rewardPlayer) {
-			m_edible.BeingSwallowed(_transform, _rewardPlayer); 
+		public void BeginSwallowed(Transform _transform, bool _rewardPlayer, bool _isPlayer) {
+			m_edible.BeingSwallowed(_transform, _rewardPlayer, _isPlayer); 
 		}
 
 		public void EndSwallowed(Transform _transform) {

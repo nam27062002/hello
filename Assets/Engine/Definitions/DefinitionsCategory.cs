@@ -28,13 +28,15 @@ public class DefinitionsCategory
 	// General
 	public const string LOCALIZATION = "LOCALIZATION";
 	public const string SETTINGS = "SETTINGS";		// Contains several xml files with different signatures: gameSettings, dragonSettings, initialSettings,...
-	public const string PARTICLE_MANAGER_SETTINGS = "PARTICLE_MANAGER_SETTINGS";
+	public const string PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1 = "PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1";
+	public const string PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2 = "PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2";
 
 	// Progression
 	public const string LEVELS = "LEVELS";
 	public const string MISSIONS = "MISSIONS";
 	public const string MISSION_TYPES = "MISSION_TYPES";
 	public const string MISSION_DIFFICULTIES = "MISSION_DIFFICULTIES";
+	public const string MISSION_MODIFIERS = "MISSION_MODIFIERS";
 
 	// Dragons
 	public const string DRAGONS = "DRAGONS";

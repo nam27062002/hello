@@ -225,6 +225,16 @@ public class UI3DScaler : MonoBehaviour {
 		this.transform.position = newWorldPos;
 	}
 
+	/// <summary>
+	/// Refresh object's scale to match current canvas and rectTransform.
+	/// Call it for example if you know that object's bounds could've changed.
+	/// Paramterless version to be connected via inspector.
+	/// </summary>
+	public void Refresh() {
+		// Use default parameters
+		Refresh(true, true);
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//

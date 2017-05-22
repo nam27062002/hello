@@ -12,52 +12,37 @@ MonoBehaviour:
   m_Name: MeridaBrain
   m_EditorClassIdentifier: 
   m_states:
-  - m_name: Wander
-    m_componentAssets:
-    - {fileID: 11400000, guid: 80566b1248e834f95a0ab4e9fe88b464, type: 2}
-    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
   - m_name: Idle
     m_componentAssets:
     - {fileID: 11400000, guid: 54603296f3e5a48fea9d81ec91327f69, type: 2}
     - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
+  - m_name: Wander
+    m_componentAssets:
+    - {fileID: 11400000, guid: 80566b1248e834f95a0ab4e9fe88b464, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
   - m_name: Pursuit
     m_componentAssets:
-    - {fileID: 11400000, guid: 3ff23bd6dcc5240d09e52388bceb9084, type: 2}
+    - {fileID: 11400000, guid: 2a0206d483a884f24ae206de699c6a34, type: 2}
     - {fileID: 11400000, guid: 4ff482f51c1524c1cb2792d38d442b72, type: 2}
-  - m_name: Attack Ranged
+  - m_name: Attack Selector
     m_componentAssets:
-    - {fileID: 11400000, guid: ac358085d83df4a548bcc228537390aa, type: 2}
-  - m_name: Go Back at Home
-    m_componentAssets:
-    - {fileID: 11400000, guid: b31814d08b4154570a0d89d29f7bc112, type: 2}
-    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
-  - m_name: Fall down
-    m_componentAssets: []
-  - m_name: Locked in Cage Idle
-    m_componentAssets:
-    - {fileID: 11400000, guid: 54603296f3e5a48fea9d81ec91327f69, type: 2}
-    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
-  - m_name: Locked in Cage Attack
-    m_componentAssets:
-    - {fileID: 11400000, guid: ac358085d83df4a548bcc228537390aa, type: 2}
-  - m_name: Guard Out Of Range
-    m_componentAssets:
-    - {fileID: 11400000, guid: 9f822a57e0f754c25bac67c6de963f75, type: 2}
-  - m_name: Guard Out Of Sight
-    m_componentAssets:
-    - {fileID: 11400000, guid: 1aa6a987737404ae78164d034163a12c, type: 2}
-  - m_name: Guard Out Of Area
-    m_componentAssets:
-    - {fileID: 11400000, guid: 1aa6a987737404ae78164d034163a12c, type: 2}
-  - m_name: On hit ground
-    m_componentAssets:
-    - {fileID: 11400000, guid: 6020d90484daa470db6214589eaf25ff, type: 2}
+    - {fileID: 11400000, guid: 5e7724657ff00429e87f57d7e0efd5ab, type: 2}
   - m_name: Attack Melee
     m_componentAssets:
     - {fileID: 11400000, guid: dc38d9cf90c3d49bab291061fb8b1f57, type: 2}
+  - m_name: Attack Ranged
+    m_componentAssets:
+    - {fileID: 11400000, guid: ac358085d83df4a548bcc228537390aa, type: 2}
+  - m_name: Guard
+    m_componentAssets:
+    - {fileID: 11400000, guid: 1aa6a987737404ae78164d034163a12c, type: 2}
+  - m_name: Go Back at Home
+    m_componentAssets:
+    - {fileID: 11400000, guid: 704d9d1978a5248a79c1e6da271ef659, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
   m_transitionData:
   - to: 1
-    id: onRest
+    id: onMove
     from: 0
   - to: 2
     id: onEnemyInSight
@@ -65,104 +50,62 @@ MonoBehaviour:
   - to: 3
     id: onEnemyInRange
     from: 0
-  - to: 9
-    id: onMaxAttacks
-    from: 3
+  - to: 0
+    id: onRest
+    from: 1
   - to: 2
-    id: onOutOfRange
-    from: 3
-  - to: 12
-    id: onCritical
-    from: 3
+    id: onEnemyInSight
+    from: 1
+  - to: 3
+    id: onEnemyInRange
+    from: 1
   - to: 3
     id: onEnemyInRange
     from: 2
-  - to: 9
-    id: onEnemyOutOfSight
-    from: 2
-  - to: 8
+  - to: 6
     id: onEnemyInGuardArea
     from: 2
-  - to: 10
-    id: onOutsideArea
-    from: 2
-  - to: 12
-    id: onCritical
+  - to: 6
+    id: onEnemyOutOfSight
     from: 2
   - to: 7
+    id: onOutsideArea
+    from: 2
+  - to: 5
+    id: onRanged
+    from: 3
+  - to: 4
+    id: onMelee
+    from: 3
+  - to: 6
+    id: onEnemyOutOfSight
+    from: 3
+  - to: 6
+    id: onMaxAttacks
+    from: 4
+  - to: 6
+    id: onOutOfRange
+    from: 4
+  - to: 6
+    id: onMaxAttacks
+    from: 5
+  - to: 6
+    id: onOutOfRange
+    from: 5
+  - to: 3
     id: onEnemyInRange
     from: 6
-  - to: 6
-    id: onMaxAttacks
-    from: 7
-  - to: 6
-    id: onOutOfRange
-    from: 7
-  - to: 3
-    id: onEnemyInRange
-    from: 8
-  - to: 2
-    id: onPursuitEnemy
-    from: 8
-  - to: 9
-    id: onCalm
-    from: 8
-  - to: 12
-    id: onCritical
-    from: 8
-  - to: 3
-    id: onEnemyInRange
-    from: 9
-  - to: 0
+  - to: 7
     id: onCalmDown
-    from: 9
-  - to: 12
-    id: onCritical
-    from: 9
-  - to: 3
-    id: onEnemyInRange
-    from: 10
-  - to: 4
-    id: onCalmDown
-    from: 10
-  - to: 12
-    id: onCritical
-    from: 10
+    from: 6
   - to: 1
     id: onBackAtHome
-    from: 4
-  - to: 3
-    id: onEnemyInRange
-    from: 4
-  - to: 1
-    id: onRecover
-    from: 11
-  - to: 0
-    id: onMove
-    from: 1
+    from: 7
   - to: 2
     id: onEnemyInSight
-    from: 1
+    from: 7
   - to: 3
     id: onEnemyInRange
-    from: 1
-  - to: 2
-    id: onMaxAttacks
-    from: 12
-  - to: 2
-    id: onOutOfRange
-    from: 12
-  - to: 5
-    id: onFallDown
-    from: -1
-  - to: 11
-    id: OnGround
-    from: -1
-  - to: 6
-    id: onLockedInCage
-    from: -1
-  - to: 1
-    id: onUnlockedFromCage
-    from: -1
+    from: 7
   m_firstState_A: 0
   m_firstState_B: 1

@@ -106,6 +106,7 @@ public class UserProfile : UserSaveSystem
 			// Mark tutorial as completed if > 0
 			m_gamesPlayed = value;
 			SetTutorialStepCompleted(TutorialStep.FIRST_RUN, m_gamesPlayed > 0);
+			SetTutorialStepCompleted(TutorialStep.SECOND_RUN, m_gamesPlayed > 1);
 		}
 	}
 
@@ -257,7 +258,6 @@ public class UserProfile : UserSaveSystem
 		m_userMissions = new UserMissions();      
     }
 
-
 	/// <summary>
 	/// Add coins.
 	/// </summary>
@@ -404,8 +404,11 @@ public class UserProfile : UserSaveSystem
         string jsonAsString = m_saveData.ToString();
         if (jsonAsString != null)
         {   
-			Debug.Log("LOADING USER PROFILE: " + jsonAsString);
-            JSONNode json = JSON.Parse(jsonAsString);
+			#if UNITY_EDITOR
+			JsonFormatter fmt = new JsonFormatter();
+			Debug.Log("<color=cyan>LOADING USER PROFILE:</color> " + fmt.PrettyPrint(jsonAsString));
+			#endif
+			JSONNode json = JSON.Parse(jsonAsString);
             Load(json);
         }       
     }
@@ -541,13 +544,9 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Missions
-		if ( _data.ContainsKey("missions") )
-		{
-			m_userMissions.Load( _data["missions"] );
-			m_userMissions.ownedDragons = GetNumOwnedDragons();
-		}
-		else
-		{
+		if(_data.ContainsKey("missions")) {
+			m_userMissions.Load(_data["missions"]);
+		} else {
 			// Clean missions
 			m_userMissions.ClearAllMissions();
 		}
@@ -900,6 +899,49 @@ public class UserProfile : UserSaveSystem
 
 		// No empty slots found
 		return -4;
+	}
+
+	/// <summary>
+	/// Try to equip the given pet to the first available slot in the target dragon.
+	/// Checks that the pet is actually unlocked, and not already equipped in another slot.
+	/// Also makes sure that there is slots available.
+	/// </summary>
+	/// <returns>
+	/// The index of the slot where the pet was equipped.
+	/// Negative value if pet couldn't be equipped, with the following error codes:
+	/// -1: Unknown dragon sku
+	/// -2: Pet already equipped
+	/// -3: Pet is locked or sku not valid
+	/// -4: Given slot index not valid
+	/// -5: Requested slot is not available
+	/// </returns>
+	/// <param name="_dragonSku">The dragon where we want to attach the pet.</param>
+	/// <param name="_petSku">The pet we want to equip.</param>
+	/// <param name="_slotIdx">Slot where we want to equip the pet.</param>
+	public int EquipPet(string _dragonSku, string _petSku, int _slotIdx) {
+		// Check dragon sku
+		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
+		DragonData dragon = m_dragonsBySku[_dragonSku];
+
+		// Is pet already equipped?
+		if(dragon.pets.Contains(_petSku)) return -2;
+
+		// Is pet unlocked?
+		if(!m_petCollection.IsPetUnlocked(_petSku)) return -3;
+
+		// Is slot index valid?
+		if(_slotIdx < 0 || _slotIdx >= dragon.pets.Count) return -4;
+
+		// Is the requested slot available?
+		if(!string.IsNullOrEmpty(dragon.pets[_slotIdx])) return -5;
+
+		// All checks passed! Equip pet
+		dragon.pets[_slotIdx] = _petSku;
+
+		// Notify game
+		Messenger.Broadcast<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, _dragonSku, _slotIdx, _petSku);
+
+		return _slotIdx;
 	}
 
 	/// <summary>

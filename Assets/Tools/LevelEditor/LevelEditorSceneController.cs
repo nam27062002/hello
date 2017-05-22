@@ -116,6 +116,8 @@ namespace LevelEditor {
 						sp.IntroSpawn(InstanceManager.player.data.def.sku);
 				}
 
+				// Notify listeners
+				Messenger.Broadcast(GameEvents.GAME_UPDATED);
 			}
 		}
 
@@ -125,6 +127,7 @@ namespace LevelEditor {
 		override protected void OnDestroy() {
 			// Clear pools
 			FirePropagationManager.DestroyInstance();
+			ParticleManager.Clear();
 			PoolManager.Clear(true);
 
 			// Call parent
@@ -155,6 +158,9 @@ namespace LevelEditor {
 
 			// Init game camera
 			InstanceManager.gameCamera.Init();
+
+			// Instantiate map prefab
+			InitLevelMap();
 
 			// Simulate level loaded
 			Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);

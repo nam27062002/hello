@@ -172,7 +172,7 @@ namespace FGOL.Plugins.Native
 
 		public int GetMaxMemoryUsage()
 		{
-            return -1;
+			return _fgolnative.Call<int>("GetMaxMemoryUsage");
 		}
 
 		public long GetMaxHeapMemory()

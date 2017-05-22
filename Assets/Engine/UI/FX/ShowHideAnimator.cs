@@ -47,7 +47,7 @@ public class ShowHideAnimator : MonoBehaviour {
 		ANIMATOR
 	}
 
-	protected enum State {
+	public enum State {
 		INIT,
 		VISIBLE,
 		HIDDEN
@@ -132,6 +132,7 @@ public class ShowHideAnimator : MonoBehaviour {
 			return m_state == State.VISIBLE; 
 		}
 	}
+	public State state { get { return m_state; }}
 
 	// Public properties
 	// Sequence delta, only for sequence animations
@@ -262,7 +263,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// </summary>
 	/// <param name="_animate">Whether to use animations or not.</param>
 	/// <param name="_disableAfterAnimation">Whether to disable the object once the animation has finished or not. Only for non-custom tween animations.</param>
-	public virtual void Hide(bool _animate = true, bool _disableAfterAnimation = true) {
+	public virtual void Hide(bool _animate, bool _disableAfterAnimation = true) {
 		// If we're already in the target state, skip (unless dirty, in which case we want to place the animation sequence at the right place)
 		if(!visible && !m_isDirty) return;
 
@@ -291,14 +292,32 @@ public class ShowHideAnimator : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Hide the object. Will be ignored if object is already hidden/hiding.
+	/// Single param version to be able to connect it via inspector.
+	/// </summary>
+	/// <param name="_animate">Whether to use animations or not.</param>
+	public virtual void Hide(bool _animate = true) {
+		Hide(_animate, true);
+	}
+
+	/// <summary>
 	/// Same as hide but overriding current state.
 	/// </summary>
 	/// <param name="_animate">Whether to use animations or not.</param>
 	/// <param name="_disableAfterAnimation">Whether to disable the object once the animation has finished or not. Only for non-custom tween animations.</param>
-	public void ForceHide(bool _animate = true, bool _disableAfterAnimation = true) {
+	public void ForceHide(bool _animate, bool _disableAfterAnimation = true) {
 		// Force state to make sure Hide() call is not skipped
 		m_state = State.VISIBLE;
 		Hide(_animate, _disableAfterAnimation);
+	}
+
+	/// <summary>
+	/// Same as hide but overriding current state.
+	/// Single param version to be able to connect it via inspector.
+	/// </summary>
+	/// <param name="_animate">Whether to use animations or not.</param>
+	public void ForceHide(bool _animate = true) {
+		ForceHide(_animate, true);
 	}
 
 	/// <summary>

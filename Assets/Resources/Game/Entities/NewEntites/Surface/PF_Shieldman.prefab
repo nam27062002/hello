@@ -1298,6 +1298,13 @@ MonoBehaviour:
   m_onTriggerEnter: 0
   m_onTriggerStay: 0
   m_onTriggerExit: 0
+  m_onMouseDown: 0
+  m_onMouseDrag: 0
+  m_onMouseUp: 0
+  m_onMouseUpAsButton: 0
+  m_onMouseEnter: 0
+  m_onMouseExit: 0
+  m_onMouseOver: 0
 --- !u!114 &114579588129599274
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1376,7 +1383,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 3
-  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":6,"arrivalRadius":1,"hasGuardState":true,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":6,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"action":4096,"dataType":"AI.Behaviour.ActivateActionData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":6,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"action":4096,"dataType":"AI.Behaviour.ActivateActionData","editorFolded":false},{"speed":0,"arrivalRadius":1,"hasGuardState":false,"moveAwayOnCritical":true,"dataType":"AI.Behaviour.PursuitGroundData","editorFolded":false}]'
   m_databaseKey: PF_Shieldman
 --- !u!114 &114924789148968382
 MonoBehaviour:
