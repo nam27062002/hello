@@ -135,6 +135,7 @@ public class MenuSceneController : SceneController {
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
 		{
 			// Select dragon classic and go to play
+			DragonManager.GetDragonData("dragon_classic").Acquire();
 			OnDragonSelected("dragon_classic");
 			OnPlayButton();
 		}

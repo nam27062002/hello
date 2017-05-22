@@ -36,30 +36,40 @@ public class GameCameraDebug : MonoBehaviour {
 	int m_cullingMask = 0;
 
     int m_collidersMask = 0;
-	
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    private void Awake() {
 		// Get camera
 		m_camera = GetComponent<Camera>();
 
 		// Subscribe to external events
-		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
+		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChangedShowCollisions);
+        Messenger.AddListener<string, float>(GameEvents.CP_FLOAT_CHANGED, OnDebugSettingChangedResolutionFactor);
 
 
-	}
+    }
+
+    private int m_width = 0;
+    private int m_height = 0;
+
+    public float m_resolutionFactor = 0.25f;
 
     private void Start()
     {
         m_cullingMask = m_camera.cullingMask;
-        m_collidersMask = LayerMask.GetMask("Ground", "GroundVisible", "Player");
+        m_collidersMask = LayerMask.GetMask("Ground", "GroundVisible", "Player", "AirPreys", "WaterPreys", "MachinePreys", "GroundPreys", "Mines");
 
         // Initialize by simulating a toggle of the setting
-        OnDebugSettingChanged(DebugSettings.SHOW_COLLISIONS, Prefs.GetBoolPlayer(DebugSettings.SHOW_COLLISIONS));
+        OnDebugSettingChangedShowCollisions(DebugSettings.SHOW_COLLISIONS, Prefs.GetBoolPlayer(DebugSettings.SHOW_COLLISIONS));
+        OnDebugSettingChangedResolutionFactor(DebugSettings.RESOLUTION_FACTOR, Prefs.GetFloatPlayer(DebugSettings.RESOLUTION_FACTOR));
+
+        m_width = Screen.width;
+        m_height = Screen.height;
     }
 
     /// <summary>
@@ -67,13 +77,14 @@ public class GameCameraDebug : MonoBehaviour {
     /// </summary>
     private void OnDestroy() {
 		// Unsubscribe from external events.
-		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
-	}
+		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChangedShowCollisions);
+        Messenger.RemoveListener<string, float>(GameEvents.CP_FLOAT_CHANGED, OnDebugSettingChangedResolutionFactor);
+    }
 
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
+    /// <summary>
+    /// Component has been disabled.
+    /// </summary>
+    private void OnDisable() {
 	}
 
 	/// <summary>
@@ -81,23 +92,23 @@ public class GameCameraDebug : MonoBehaviour {
 	/// http://docs.unity3d.com/ScriptReference/MonoBehaviour.OnRenderObject.html
 	/// </summary>
 	private void Update() {
-		// Backup some camera settings that we don't want to override
+        // Backup some camera settings that we don't want to override
 
-	}
+    }
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// A debug setting has been changed.
-	/// </summary>
-	/// <param name="_id">ID of the changed setting.</param>
-	/// <param name="_newValue">New value of the setting.</param>
-	private void OnDebugSettingChanged(string _id, bool _newValue) {
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Show Collisions Toggle.
+    /// </summary>
+    /// <param name="_id">ID of the changed setting.</param>
+    /// <param name="_newValue">New value of the setting.</param>
+    private void OnDebugSettingChangedShowCollisions(string _id, bool _newValue) {
 		// Show collisions cheat?
 		if(_id == DebugSettings.SHOW_COLLISIONS) {
             // Enable/Disable object
@@ -105,4 +116,26 @@ public class GameCameraDebug : MonoBehaviour {
             m_camera.cullingMask = _newValue ? m_collidersMask: m_cullingMask;
         }
 	}
+
+    /// <summary>
+    /// A debug setting has been changed.
+    /// </summary>
+    /// <param name="_id">ID of the changed setting.</param>
+    /// <param name="_newValue">New value of the setting.</param>
+    private void OnDebugSettingChangedResolutionFactor(string _id, float _newValue)
+    {
+        // Show collisions cheat?
+        if (_id == DebugSettings.RESOLUTION_FACTOR)
+        {
+
+            int width = (int)((float)m_width * _newValue);
+            int height = (int)((float)m_height * _newValue);
+
+            Screen.SetResolution(width, height, true);
+
+            Debug.Log("Resolution Factor = " + _newValue);
+        }
+    }
+
+
 }

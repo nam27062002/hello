@@ -33,7 +33,8 @@ public static class DebugSettings {
 
     public const string SHOW_XP_BAR			 			        = "SHOW_XP_BAR";
 	public const string SHOW_COLLISIONS					        = "SHOW_COLLISIONS";
-	public const string SHOW_SPEED						        = "SHOW_SPEED";
+    public const string RESOLUTION_FACTOR                       = "RESOLUTION_FACTOR";
+    public const string SHOW_SPEED						        = "SHOW_SPEED";
 
 	public const string NEW_CAMERA_SYSTEM		 		        = "NEW_CAMERA_SYSTEM";    
 
