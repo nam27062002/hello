@@ -70,7 +70,17 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	}
 
 	public static GameObject Spawn(ParticleData particle, Vector3 _at = default(Vector3)){
-		return Spawn( particle.name, _at, particle.path);
+		// If we don't have a pool with the given ID, create it
+		CreatePool(particle.name, particle.path);
+
+		// Get a new system from the pool, spawn it and return it
+		if (instance.m_particlePools.ContainsKey(particle.name)) {
+			GameObject system = instance.m_particlePools[particle.name].Get(true);
+			SpawnSystem(system, particle, _at);
+			return system;
+		}
+
+		return null;
 	}
 
 	/// <summary>
@@ -139,6 +149,47 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 			ParticleSystem.EmissionModule em = subsystems[i].emission;
 			em.enabled = true;
 			subsystems[i].Play();
+		}
+	}
+
+	private static void SpawnSystem(GameObject _system, ParticleData particle, Vector3 _at) {
+		// Skip if system is not valid
+		if (_system == null) return;
+
+		// Reset system's position
+		_system.transform.localPosition = Vector3.zero;
+		_system.transform.position = _at;
+
+		// Restart all particle systems within the instance
+		List<ParticleSystem> subsystems = _system.transform.FindComponentsRecursive<ParticleSystem>();
+		for (int i = 0; i < subsystems.Count; i++) {
+			subsystems[i].Clear();
+
+			if (particle.changeStartColor) {				
+				ParticleSystem.MainModule main = subsystems[i].main;
+				ParticleSystem.MinMaxGradient gradient = main.startColor;
+				gradient.color = particle.startColor;
+				main.startColor = gradient;
+			}
+
+			if (particle.changeColorOvertime) {
+				ParticleSystem.ColorOverLifetimeModule colorOverLifetime = subsystems[i].colorOverLifetime;
+				ParticleSystem.MinMaxGradient gradient = colorOverLifetime.color;
+				gradient.gradient = particle.colorOvertime;
+				colorOverLifetime.color = gradient;
+			}
+
+			ParticleSystem.EmissionModule em = subsystems[i].emission;
+			em.enabled = true;
+			subsystems[i].Play();
+		}
+
+		ParticleScaler scaler = _system.GetComponent<ParticleScaler>();
+		if (scaler != null) {
+			if (scaler.m_scale != particle.scale) {
+				scaler.m_scale = particle.scale;
+				scaler.DoScale();
+			}
 		}
 	}
 
