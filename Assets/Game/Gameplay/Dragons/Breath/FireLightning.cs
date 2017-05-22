@@ -42,14 +42,12 @@ public class FireLightning : DragonBreathBehaviour {
 	private float m_currentLength;
 
 	public Object m_particleStartPrefab;
-	public Object m_particleEndPrefab;
-    public Object m_particleNPCCollisionPrefab;
-
-    public float m_timeNPCCollision = 1.0f;
+	public string m_particleEndPrefab;
+    public int m_EffectCadence = 20;
 
     GameObject m_particleStart;
-	GameObject m_particleEnd;
-    GameObject m_particleNPCCollision;
+//	GameObject m_particleEnd;
+
 
     Transform m_mouthTransform;
 	Transform m_headTransform;
@@ -57,8 +55,6 @@ public class FireLightning : DragonBreathBehaviour {
 	int m_groundMask;
 	int m_waterMask;
 	bool m_insideWater;
-    float m_timeNPCCollisionCurrent = 0.0f;
-    Transform m_preyTransform = null;
 
     Lightning[] m_rays = null;// new Lightning[3];
     Lightning[] m_rays2 = null;// new Lightning[3];
@@ -142,22 +138,19 @@ public class FireLightning : DragonBreathBehaviour {
 			m_particleStart.gameObject.SetActive(true);
 		}
 
-		if ( m_particleEndPrefab )
-			m_particleEnd = (GameObject)Object.Instantiate(m_particleEndPrefab);
-		if ( m_particleEnd )
+/*
+        if (m_particleEndPrefab)
+        {
+            m_particleEnd = (GameObject)Object.Instantiate(m_particleEndPrefab);
+
+        }
+        if ( m_particleEnd )
 		{
 			m_particleEnd.transform.localPosition = Vector3.zero;
 			m_particleEnd.gameObject.SetActive(true);
 		}
-
-        if (m_particleNPCCollisionPrefab)
-            m_particleNPCCollision = (GameObject)Object.Instantiate(m_particleNPCCollisionPrefab);
-        if (m_particleNPCCollision)
-        {
-            m_particleNPCCollision.transform.localPosition = Vector3.zero;
-            m_particleNPCCollision.gameObject.SetActive(true);
-        }
-
+*/
+        ParticleManager.CreatePool(m_particleEndPrefab);
 
         m_mouthTransform = transform.FindTransformRecursive("Rays_Dummy");
 		m_headTransform = GetComponent<DragonMotion>().head;
@@ -179,7 +172,6 @@ public class FireLightning : DragonBreathBehaviour {
                 m_rays[2].m_initOffset = m_offsetRays * 2.0f;
         */
 
-        m_timeNPCCollisionCurrent = m_timeNPCCollision;
 
         m_actualLength = m_length;
 		m_currentLength = m_length;
@@ -333,10 +325,13 @@ public class FireLightning : DragonBreathBehaviour {
 			m_actualLength = m_currentLength;
 		}
 
-		if ( m_particleEnd )
+        if (isGround)
         {
-            m_particleEnd.gameObject.SetActive(isGround);
-            m_particleEnd.transform.position = p2;
+            if (Time.frameCount % m_EffectCadence == 0)
+            {
+                GameObject pEnd = ParticleManager.Spawn(m_particleEndPrefab, p2);
+//              Debug.Log("PS_RayFlash");
+            }
 
         }
 
@@ -364,8 +359,6 @@ public class FireLightning : DragonBreathBehaviour {
 				AI.IMachine machine =  preys[i].machine;
 				if (machine != null) {					
 					machine.Burn(transform);
-                    m_preyTransform = preys[i].transform;
-                    m_timeNPCCollisionCurrent = m_timeNPCCollision;
 				}
 			}
 			/*
@@ -374,7 +367,7 @@ public class FireLightning : DragonBreathBehaviour {
 			}
 			*/	
 		}
-
+/*
         if (m_particleNPCCollision)
         {
             bool showNPCCollision = m_timeNPCCollisionCurrent > 0.0f;
@@ -389,9 +382,7 @@ public class FireLightning : DragonBreathBehaviour {
             }
 
         }
-
-        m_timeNPCCollisionCurrent -= Time.deltaTime;
-
+*/
 
         m_bounds2D.center = m_mouthTransform.position;
 		m_bounds2D.width = Mathf.Max( m_actualLength, m_maxAmplitude);
@@ -412,12 +403,14 @@ public class FireLightning : DragonBreathBehaviour {
 		m_direction = -m_mouthTransform.right;
 		m_direction.Normalize();
 
+
+/*
 		if ( m_particleEnd )
 		{
 			m_particleEnd.transform.position = m_mouthTransform.position+(Vector3)m_direction*m_length;
 			m_particleEnd.gameObject.SetActive(true);
 		}
-
+*/
         HideRays(m_rays);
         HideRays(m_rays2);
 	}
@@ -437,8 +430,11 @@ public class FireLightning : DragonBreathBehaviour {
 		base.EndFury();
 		if ( m_particleStart )
 			m_particleStart.gameObject.SetActive(false);
+
+/*
 		if ( m_particleEnd )
 			m_particleEnd.gameObject.SetActive(false);
+*/
 
         HideRays(m_rays);
         HideRays(m_rays2);
