@@ -224,9 +224,13 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 
 		if (m_showMemoryUsage)
 		{
-			int mb = FGOL.Plugins.Native.NativeBinding.Instance.GetMemoryUsage() / (1024*1024);
-			int maxMb = FGOL.Plugins.Native.NativeBinding.Instance.GetMaxMemoryUsage()/ (1024*1024);
-			m_memoryLabel.text = mb + "/" + maxMb;
+            if ((Time.frameCount % 200) == 0)
+            {
+                // Please don´t call every tick to GetMaxMemoryUsage or your device log will flood everything
+                int mb = FGOL.Plugins.Native.NativeBinding.Instance.GetMemoryUsage() / (1024 * 1024);
+                int maxMb = FGOL.Plugins.Native.NativeBinding.Instance.GetMaxMemoryUsage() / (1024 * 1024);
+                m_memoryLabel.text = mb + "/" + maxMb;
+            }
 		}
 
         if (m_entitiesCounter != null && ProfilerSettingsManager.ENABLED)
