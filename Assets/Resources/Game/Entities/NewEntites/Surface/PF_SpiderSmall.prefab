@@ -25,7 +25,6 @@ GameObject:
   m_Component:
   - component: {fileID: 409022}
   - component: {fileID: 11439598}
-  - component: {fileID: 11432260}
   - component: {fileID: 11474244}
   - component: {fileID: 114459538183732310}
   - component: {fileID: 11409804}
@@ -45,12 +44,13 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 174698}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 11.577253, y: -1.0259451, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000013011180664}
   - {fileID: 485126}
   - {fileID: 4000013414574486}
+  - {fileID: 4751233204867210}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -127,20 +127,6 @@ MonoBehaviour:
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onAttackParticleAnchor: {fileID: 0}
---- !u!114 &11432260
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 174698}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0.003276825, y: 0.34783795}
-  radius: 0.38505262
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11433592
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -688,6 +674,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1476053828700810
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4751233204867210}
+  - component: {fileID: 114680559630513596}
+  - component: {fileID: 114532859846637756}
+  m_Layer: 21
+  m_Name: area
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &4000010247482494
 Transform:
   m_ObjectHideFlags: 1
@@ -1134,6 +1137,19 @@ Transform:
   m_Father: {fileID: 4000012720712442}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4751233204867210
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1476053828700810}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 409022}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &54000013072526688
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -1220,6 +1236,34 @@ MonoBehaviour:
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
+--- !u!114 &114532859846637756
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1476053828700810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Spider_Abdomen_2
+  m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
+--- !u!114 &114680559630513596
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1476053828700810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0.003276825, y: 0.34783795}
+  radius: 0.38505262
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!120 &120000010357201152
 LineRenderer:
   m_ObjectHideFlags: 1

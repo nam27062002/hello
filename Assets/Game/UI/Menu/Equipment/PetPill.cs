@@ -10,6 +10,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using DG.Tweening;
 
 //----------------------------------------------------------------------------//
@@ -24,6 +25,8 @@ public class PetPill : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	private static readonly Color LOCKED_COLOR = new Color(0.5f, 0.5f, 0.5f);
 	private const string TUTORIAL_HIGHLIGHT_PREFAB_PATH = "UI/Metagame/Pets/PF_PetPillTutorialFX";
+
+	public class PetPillEvent : UnityEvent<PetPill> { }
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -81,7 +84,14 @@ public class PetPill : MonoBehaviour {
 	}
 
 	private bool m_special = false;
+	public bool special {
+		get { return m_special; }
+	}
+
 	private DragonData m_dragonData = null;
+
+	// Events
+	public PetPillEvent OnPillTapped = new PetPillEvent();
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -275,6 +285,8 @@ public class PetPill : MonoBehaviour {
 				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_NO_SLOTS"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// There are no available slots!\nUnequip another pet before equipping this one.
 			}
 		}
+		// Propagate the event
+		OnPillTapped.Invoke(this);
 	}
 
 	/// <summary>

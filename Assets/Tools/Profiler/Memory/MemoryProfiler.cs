@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 
 public class MemoryProfiler
 {          
-    public void Clear()
+    public void Clear(bool clearAnalysis)
     {       
         if (All_MemorySample != null)
         {
@@ -17,7 +17,7 @@ public class MemoryProfiler
         }
 
         Scene_Clear();
-        GO_Clear();
+        GO_Clear(clearAnalysis);
     }    
 
     #region size
@@ -83,102 +83,205 @@ public class MemoryProfiler
 
     private const string SCENE_SAMPLE_NAME = "Scene";
 
-    protected Dictionary<string, List<GameObject>> Scene_GOs { get; set; }
+    protected class SceneData
+    {
+        public List<GameObject> GOs { get; set; }
+        public List<Object> Objects { get; set; }
+
+        public void AddObject(Object o)
+        {
+            if (o is GameObject)
+            {
+                AddGO(o as GameObject);
+            }
+            else
+            {
+                if (Objects == null)
+                {
+                    Objects = new List<Object>();
+                }
+
+                if (!Objects.Contains(o))
+                {
+                    Objects.Add(o);
+                }
+            }
+        }
+
+        public void AddGO(GameObject go)
+        {
+            if (GOs == null)
+            {
+                GOs = new List<GameObject>();
+            }
+
+            if (!GOs.Contains(go))
+            {
+                GOs.Add(go);
+            }
+        }        
+    }
+    
+    protected Dictionary<string, SceneData> Scene_Data { get; set; }
 
     private void Scene_Clear()
-    {       
-        if (Scene_GOs != null)
+    {        
+        if (Scene_Data != null)
         {
-            Scene_GOs.Clear();
-        }
+            Scene_Data.Clear();
+        }       
     }
 
     public void Scene_AddGO(string key, GameObject go)
     {
         if (go != null)
         {
-            if (Scene_GOs == null)
+            if (Scene_Data == null)
             {
-                Scene_GOs = new Dictionary<string, List<GameObject>>();
+                Scene_Data = new Dictionary<string, SceneData>();
             }
 
-            if (!Scene_GOs.ContainsKey(key))
+            if (!Scene_Data.ContainsKey(key))
             {
-                Scene_GOs.Add(key, new List<GameObject>());
+                Scene_Data.Add(key, new SceneData());
             }
 
-            if (!Scene_GOs[key].Contains(go))
-            {
-                Scene_GOs[key].Add(go);
-            }
+            Scene_Data[key].AddGO(go);            
         }
-    }   
+    }
+
+    public void Scene_AddObject(string key, Object o)
+    {
+        if (o != null)
+        {
+            if (Scene_Data == null)
+            {
+                Scene_Data = new Dictionary<string, SceneData>();
+            }
+
+            if (!Scene_Data.ContainsKey(key))
+            {
+                Scene_Data.Add(key, new SceneData());
+            }
+
+            Scene_Data[key].AddObject(o);
+        }
+    }
 
     /// <summary>
     /// Takes a single sample with all Objects in the scene 
     /// </summary>
-    public virtual AbstractMemorySample Scene_TakeASample()
+    public virtual AbstractMemorySample Scene_TakeASample(bool reuseAnalysis)
     {
-        MemorySample returnValue = new MemorySample(SCENE_SAMPLE_NAME, SizeStrategy);
-
-        if (Scene_GOs != null)
+        // Analysing every single game object in a scene is a really heavy process so if analyzeObjects is false and there's information
+        // stored from a previous analysis then this heavy process is not performed again
+        if (reuseAnalysis && GO_IsAnalysisEmpty())
         {
-            int count;            
-            List<Object> dependencies = new List<Object>();
-            foreach (KeyValuePair<string, List<GameObject>> pair in Scene_GOs)
-            {                                
-                count = pair.Value.Count;
+            reuseAnalysis = false;            
+        }
+        
+        if (!reuseAnalysis)
+        {
+            GO_ClearAnalysis();
+        }
+
+        MemorySample returnValue = new MemorySample(SCENE_SAMPLE_NAME, SizeStrategy);
+        
+        if (Scene_Data != null)
+        {            
+            foreach (KeyValuePair<string, SceneData> pair in Scene_Data)
+            {
+                Scene_AnalyzeSceneData(returnValue, pair.Value, reuseAnalysis);                
+            }
+        }       
+
+        returnValue.Analyze();
+
+        return returnValue;
+    }
+
+    private void Scene_AnalyzeSceneData(MemorySample sample, SceneData sceneData, bool reuseAnalysis)
+    {
+        if (sceneData != null)
+        {
+            if (sceneData.GOs != null)
+            {
+                List<Object> dependencies;
+                int count = sceneData.GOs.Count;
                 for (int i = 0; i < count; i++)
                 {
-                    GO_AnalyzeGO(pair.Value[i], ref dependencies);
+                    dependencies = null;
+
+                    if (reuseAnalysis)
+                    {
+                        dependencies = GO_GetAnalysis(sceneData.GOs[i]);
+                    }
+
+                    if (dependencies == null)
+                    {
+                        dependencies = new List<Object>();
+                        GO_AnalyzeGO(sceneData.GOs[i], ref dependencies);
+                        GO_AddAnalysis(sceneData.GOs[i], dependencies);
+                    }
+
+                    if (dependencies != null)
+                    {
+                        int jCount = dependencies.Count;
+                        for (int j = 0; j < jCount; j++)
+                        {
+                            sample.AddObject(dependencies[j]);
+                        }
+                    }
                 }
             }
 
-            count = dependencies.Count;
-            for (int i = 0; i < count; i++)
+            if (sceneData.Objects != null)
             {
-                returnValue.AddObject(dependencies[i]);
+                int count = sceneData.Objects.Count;
+                for (int j = 0; j < count; j++)
+                {
+                    sample.AddObject(sceneData.Objects[j]);
+                }
             }
-
-            returnValue.Analyze();
         }
+    }
 
-        return returnValue;
+    public virtual AbstractMemorySample Scene_TakeAGameSample(bool reuseAnalysis)
+    {
+        return Scene_TakeASample(reuseAnalysis);
     }
 
     /// <summary>
     /// Takes a sample of every category
     /// </summary>
-    public virtual AbstractMemorySample Scene_TakeASampleWithCategories(string categorySetName)
+    public virtual AbstractMemorySample Scene_TakeAGameSampleWithCategories(bool reuseAnalysis, string categorySetName)
     {
+        // Analysing every single game object in a scene is a really heavy process so if analyzeObjects is false and there's information
+        // stored from a previous analysis then this heavy process is not performed again
+        if (reuseAnalysis && GO_IsAnalysisEmpty())
+        {
+            reuseAnalysis = false;
+        }
+        
+        if (!reuseAnalysis)
+        {
+            GO_ClearAnalysis();
+        }
+
         MemorySampleCollection returnValue = new MemorySampleCollection(SCENE_SAMPLE_NAME, SizeStrategy);
 
-        if (Scene_GOs != null)
-        {
-            int count;
-            MemorySample sample;
-            List<Object> dependencies = new List<Object>();
-            foreach (KeyValuePair<string, List<GameObject>> pair in Scene_GOs)
-            {
-                dependencies.Clear();
+        MemorySample sample;
 
+        if (Scene_Data != null)
+        {            
+            foreach (KeyValuePair<string, SceneData> pair in Scene_Data)
+            {                
                 sample = new MemorySample(pair.Key, SizeStrategy);
                 returnValue.AddSample(pair.Key, sample);
-                count = pair.Value.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    GO_AnalyzeGO(pair.Value[i], ref dependencies);
-                }
-
-                count = dependencies.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    sample.AddObject(dependencies[i]);
-                }
-
+                Scene_AnalyzeSceneData(sample, pair.Value, reuseAnalysis);
                 sample.Analyze();
             }
-        }
+        }                
 
         return returnValue;
     }
@@ -192,11 +295,16 @@ public class MemoryProfiler
     /// </summary>
     private List<string> GO_BannedGOs;
 
-    private void GO_Clear()
+    private void GO_Clear(bool clearAnalysis)
     {
         if (GO_BannedGOs != null)
         {
             GO_BannedGOs.Clear();
+        }
+
+        if (clearAnalysis)
+        {
+            GO_ClearAnalysis();
         }
     }
 
@@ -246,7 +354,11 @@ public class MemoryProfiler
         {
             list.Add(o);           
 
-            if (o is Animator)
+            if (o is AnimatorOverrideController)
+            {                
+                GO_AddAnimatorOverrideController((o as AnimatorOverrideController), ref list);
+            }
+            else if (o is Animator)
             {
                 GO_AddAnimator(o as Animator, ref list);
             }
@@ -370,12 +482,12 @@ public class MemoryProfiler
 
     private void GO_AnalyzeProperty(object o, PropertyInfo property, ref List<Object> list)
     {
-        if (property.PropertyType.IsSubclassOf(typeof(UnityEngine.Object)) &&
+        Type propertyType = property.PropertyType;
+        if ((GO_IsMemberACollection(propertyType) || property.PropertyType.IsSubclassOf(typeof(UnityEngine.Object))) &&
             !property.IsDefined(typeof(ObsoleteAttribute), true) &&         // Accessing properties marked as obsolete by Unity triggers an exception
-             property.Name != "material" && property.Name != "materials" && // Accessing material or materials properties triggers an exception                    
-             property.Name != "mesh")                                       // Accessing mesh triggers an exception                    
-        { 
-            Type propertyType = property.PropertyType;
+            property.Name != "material" && property.Name != "materials" &&  // Accessing material or materials properties triggers an exception                    
+            property.Name != "mesh")                                        // Accessing mesh triggers an exception                   
+        {             
             object value = property.GetValue(o, null);
             if (value != null)
             {
@@ -386,7 +498,7 @@ public class MemoryProfiler
                     {
                         foreach (var item in propertyList)
                         {
-                            PropertyInfo[]properties = item.GetType().GetProperties(GO_BINDING_FLAGS);
+                            /*PropertyInfo[]properties = item.GetType().GetProperties(GO_BINDING_FLAGS);
                             if (properties != null)
                             {
                                 int fieldsCount = properties.Length;
@@ -394,7 +506,8 @@ public class MemoryProfiler
                                 {
                                     GO_AnalyzeProperty(item, properties[j], ref list);
                                 }
-                            }
+                            }*/
+                            GO_AnalyzeMember(item, ref list);
                         }
                     }
                 }
@@ -466,12 +579,72 @@ public class MemoryProfiler
     {                
         if (animator.runtimeAnimatorController != null)
         {
-            foreach (AnimationClip anim in animator.runtimeAnimatorController.animationClips)
-            {
-                GO_AddElement(anim, ref list, true);
-            }
+            GO_AddAnimationClips(animator.runtimeAnimatorController.animationClips, ref list);
         }                
     }
+
+    private void GO_AddAnimatorOverrideController(AnimatorOverrideController animator, ref List<Object> list)
+    {
+        if (animator.runtimeAnimatorController != null)
+        {
+            GO_AddAnimationClips(animator.runtimeAnimatorController.animationClips, ref list);            
+        }
+    }
+
+    private void GO_AddAnimationClips(AnimationClip[] animations, ref List<Object> list)
+    {
+        if (animations != null)
+        {
+            int count = animations.Length;
+            for (int i = 0; i < count; i++)            
+            {
+                GO_AddElement(animations[i], ref list, true);
+            }
+        }
+    }
+
+    private Dictionary<GameObject, List<Object>> GO_Analysis { get; set; }
+
+	private void GO_AddAnalysis(GameObject go, List<Object> dependencies)
+	{
+		if (GO_Analysis == null)
+		{
+			GO_Analysis = new Dictionary<GameObject, List<Object>>();
+		}
+
+		if (GO_Analysis.ContainsKey(go))
+		{
+			GO_Analysis[go] = dependencies;
+		}
+		else
+		{
+			GO_Analysis.Add(go, dependencies);
+		}
+	}
+
+	private void GO_ClearAnalysis()
+	{
+		if (GO_Analysis != null)
+		{
+			GO_Analysis.Clear();
+		}
+	}
+
+	private List<Object> GO_GetAnalysis(GameObject go)
+	{
+		List<Object> returnValue = null;
+		if (GO_Analysis != null && GO_Analysis.ContainsKey(go))
+		{
+			returnValue = GO_Analysis[go];
+		}
+
+		return returnValue;
+	}
+
+	private bool GO_IsAnalysisEmpty()
+	{
+		return GO_Analysis == null || GO_Analysis.Count == 0;
+	}
 
 #if UNITY_EDITOR
     private void GO_AddTexturesFromMaterialInEditor(Material material, ref List<Object> list)
@@ -501,7 +674,7 @@ public class MemoryProfiler
                 }
             }
         }
-    }
+    }		    
 #endif
 
     private void AnalyzeTextureFromShadersSettings(Material material, ref List<Object> list)

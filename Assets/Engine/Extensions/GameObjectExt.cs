@@ -351,6 +351,29 @@ public static class GameObjectExt {
 	}
 
 	/// <summary>
+	/// Returns the first component of type T found in any of the child objects.
+	/// </summary>
+	/// <returns>The first component of type T found in any of the children objects.</returns>
+	/// <param name="_comp">The root component to look wihtin.</param>
+	/// <typeparam name="T">The type to look for.</typeparam>
+	public static List<T> FindComponentsRecursive<T>(this Transform _t) where T : Component {
+		// Found!
+		List<T> components = new List<T>();
+
+		T c = _t.GetComponent<T>();
+		if (c != null) {
+			components.Add(c);
+		}
+
+		// Not found, iterate children transforms
+		foreach(Transform t in _t) {
+			components.AddRange(t.FindComponentsRecursive<T>());
+		}
+
+		return components;
+	}
+
+	/// <summary>
 	/// Find first component of a given type in game object's parent hirearchy.
 	/// </summary>
 	/// <returns></returns>

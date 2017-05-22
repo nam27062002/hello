@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 114911447019432680}
   - component: {fileID: 114728181362819458}
   - component: {fileID: 114877917579243700}
+  - component: {fileID: 114776725440998684}
   m_Layer: 0
   m_Name: PF_GameCamera
   m_TagString: MainCamera
@@ -474,6 +475,19 @@ MonoBehaviour:
   m_shader: {fileID: 4800000, guid: dd36d0c2ae0fac84dbb7ef8e357fcb03, type: 3}
   m_TexelOffset: 2
   m_LensOffset: 0.5
+--- !u!114 &114776725440998684
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4b1bbe988a964709b8f5fba8860b7c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_refCamera: {fileID: 0}
+  m_collisionReplacementShader: {fileID: 0}
 --- !u!114 &114877917579243700
 MonoBehaviour:
   m_ObjectHideFlags: 1

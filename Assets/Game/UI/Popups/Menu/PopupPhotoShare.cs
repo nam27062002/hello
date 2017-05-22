@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -65,6 +66,8 @@ public class PopupPhotoShare : MonoBehaviour {
 		// Store photo for future use
 		m_photo = _photo;
 
+		CreateScreenshotFile();
+
 		// Init image with the photo
 		m_preview.texture = _photo;
 		m_preview.color = Color.white;	// Removing placeholder color
@@ -73,18 +76,26 @@ public class PopupPhotoShare : MonoBehaviour {
 		m_aspectRatioFitter.aspectRatio = (float)_photo.width/(float)_photo.height;
 	}
 
+	private void CreateScreenshotFile()
+	{
+		byte[] bytes = m_photo.EncodeToPNG();
+		string filePath = Application.temporaryCachePath + "/Screenshot.png";
+		if ( File.Exists(filePath) )
+		{
+			File.Delete(filePath);
+		}
+		File.WriteAllBytes( filePath, bytes);
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Share button has been pressed.
 	/// </summary>
-	public void OnShareButton() {
-		// [AOC] TODO!! Share Flow
-		UIFeedbackText.CreateAndLaunch(
-			LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"),
-			new Vector2(0.5f, 0.5f),
-			(RectTransform)this.GetComponentInParent<Canvas>().transform
-		);
+	public void OnShareButton() 
+	{
+		string filePath = Application.temporaryCachePath + "/Screenshot.png";
+		PlatformUtils.Instance.ShareImage( filePath, LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION"));
 	}
 }

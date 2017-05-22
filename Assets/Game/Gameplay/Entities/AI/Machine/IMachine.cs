@@ -7,7 +7,7 @@ namespace AI {
 		Vector3 	eye			{ get; }
 		Vector3 	target		{ get; }
 		Vector3 	upVector	{ get; set; }
-		Transform 	enemy 		{ get; set; } 
+		Transform 	enemy 		{ get; } 
 		bool 		isPetTarget	{ get; set; }
 
 		// Monobehaviour methods

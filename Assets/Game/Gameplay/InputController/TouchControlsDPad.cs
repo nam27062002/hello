@@ -37,7 +37,7 @@ public class TouchControlsDPad : TouchControls {
 
 	// [AOC] D-Pad setup and logic
 	private Mode m_dPadMode = Mode.FOLLOW_CUSTOM; 
-	private float m_dPadThreshold = 2f;
+	private float m_dPadThreshold = 4f;
 	private float m_dPadSmoothFactor = 0.5f;
 	private float m_dPadBreakTolerance = 0.1f;
 	private bool m_dPadClampDot = true;

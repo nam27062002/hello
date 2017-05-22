@@ -418,7 +418,7 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			m_timer = m_timerDuration = 10;
 		}
-		else if ( type == DragonBreathBehaviour.Type.Super )
+		else if ( type == DragonBreathBehaviour.Type.Mega )
 		{
 			if ( _active )
 			{

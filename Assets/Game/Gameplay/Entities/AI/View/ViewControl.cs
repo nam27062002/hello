@@ -295,6 +295,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 		m_isExclamationMarkOn = false;
 
+		m_disableAnimatorTimer = 0f;
 		if (m_animator != null) {
 			m_animator.enabled = true;
 			m_animator.speed = 1f;
@@ -371,7 +372,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		RemoveAudios();
     }
 
-    private void RemoveAudios()
+    protected virtual void RemoveAudios()
     {
 		if ( ApplicationManager.IsAlive )
     	{
@@ -388,7 +389,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
     }
 
-	void RemoveAudioParent(AudioObject ao)
+	protected void RemoveAudioParent(AudioObject ao)
 	{
 		if ( ao != null && ao.transform.parent == transform )
 		{
@@ -439,7 +440,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         {
 			switch( _fireType )
 	    	{
-	    		case DragonBreathBehaviour.Type.Super:
+	    		case DragonBreathBehaviour.Type.Mega:
 	    			return m_entity.IsBurnable();
 				case DragonBreathBehaviour.Type.Standard:
 				default:
@@ -479,7 +480,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_animator != null) {
 			if (m_disableAnimatorTimer > 0) {
 				m_disableAnimatorTimer -= Time.deltaTime;
-				if (m_disableAnimatorTimer <= 0) {
+				if (m_disableAnimatorTimer < 0) {
 					m_animator.enabled = false;
 				}
 			}
@@ -551,10 +552,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 					ft.m_follow = m_exclamationTransform;
 				}
 			} else {
-				ParticleManager.ReturnInstance(m_exclamationMarkOn);
-				m_exclamationMarkOn = null;
+				if (m_exclamationMarkOn != null) {
+					ParticleManager.ReturnInstance(m_exclamationMarkOn);
+					m_exclamationMarkOn = null;
+				}
 			}
-
 			m_isExclamationMarkOn = _value;
 		}
 	}
@@ -778,7 +780,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			Vector3 pos = transform.position;
 			float waterY =  _other.bounds.center.y + _other.bounds.extents.y;
 			pos.y = waterY;
-			ParticleManager.Spawn(m_waterSplashParticle.name, transform.position + m_waterSplashParticle.offset, m_waterSplashParticle.path);
+			ParticleManager.Spawn(m_waterSplashParticle, transform.position + m_waterSplashParticle.offset);
 		}
 	}
 
@@ -823,12 +825,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 		if (!_eaten) {
-			if (m_explosionParticles.IsValid()) {
-				ParticleManager.Spawn(m_explosionParticles, transform.position + m_explosionParticles.offset);
-			}
-
-			if (!string.IsNullOrEmpty(m_onExplosionAudio))
-				AudioController.Play(m_onExplosionAudio, transform.position);
+			PlayExplosion();
 		}
 
 		if (!_burned) {
@@ -847,6 +844,16 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			ParticleManager.ReturnInstance(m_pcTrail);
 			m_pcTrail = null;
 		}
+	}
+
+	public void PlayExplosion()
+	{
+		if (m_explosionParticles.IsValid()) {
+			ParticleManager.Spawn(m_explosionParticles, transform.position + m_explosionParticles.offset);
+		}
+
+		if (!string.IsNullOrEmpty(m_onExplosionAudio))
+			AudioController.Play(m_onExplosionAudio, transform.position);
 	}
 
 	/// <summary>
@@ -892,9 +899,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_animator != null) {
 			m_animator.speed = 1f;
 			m_animator.SetTrigger("burn");
-			m_disableAnimatorTimer = _burnAnimSeconds;
+			m_disableAnimatorTimer = _burnAnimSeconds + 0.1f;
 		} else {
-			m_disableAnimatorTimer = 0f;
+			m_disableAnimatorTimer = 0.1f;
 		}
 	}
 

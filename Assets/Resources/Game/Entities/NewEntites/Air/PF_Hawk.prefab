@@ -10,7 +10,7 @@ GameObject:
   - component: {fileID: 400704}
   - component: {fileID: 9558306}
   - component: {fileID: 11431294}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25,7 +25,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 445530}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Jaw
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 497182}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_RArm_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,7 +55,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 405482}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,7 +70,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 416762}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Tail_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +85,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 401898}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_LArm_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,7 +100,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 446478}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Legs_Digit_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -115,7 +115,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 419442}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Legs_Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130,7 +130,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 413984}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_LArm_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,7 +145,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 499976}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_LArm_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -160,7 +160,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 473974}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Legs_Palms
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -176,7 +176,7 @@ GameObject:
   m_Component:
   - component: {fileID: 445430}
   - component: {fileID: 13703098}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -209,7 +209,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 452198}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_RArm_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -224,7 +224,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 471000}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Legs_Digit_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -261,7 +261,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 411990}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Legs_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -276,7 +276,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 401984}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -291,7 +291,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 464196}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_RArm_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -306,7 +306,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 429268}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Legs_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -635,6 +635,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_knockback: 0
   m_timeBetweenHits: 0.5
+  m_trail: {fileID: 0}
+  m_trailParticles: []
 --- !u!114 &11407270
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -868,7 +870,7 @@ MonoBehaviour:
     m_maxRadius: 4
     m_minRadius: 2
     m_hysteresisOffset: 0
-    m_senseAbove: 1
+    m_senseAbove: 0
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
     m_radiusOffset:

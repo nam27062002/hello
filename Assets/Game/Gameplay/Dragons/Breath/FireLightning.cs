@@ -5,15 +5,24 @@ using System.Collections.Generic;
 public class FireLightning : DragonBreathBehaviour {
 
 	public float m_segmentLength = 25f; 
+
     public float m_maxAmplitude = 1.0f;
     public AnimationCurve m_widthCurve = new AnimationCurve();
     public float m_widthMultiplier = 1.0f;
-
     public float m_offsetRays = 0.5f;
-
 	public Material m_rayMaterial;
 
-    public int m_numRays = 3;
+    public int m_numRays = 1;
+
+    public float m_maxAmplitude2 = 1.0f;
+    public AnimationCurve m_widthCurve2 = new AnimationCurve();
+    public float m_widthMultiplier2 = 1.0f;
+    public float m_offsetRays2 = 0.5f;
+    public Material m_rayMaterial2;
+
+    public int m_numRays2 = 1;
+
+
     private int m_numRaysOld = -1;
 
 	// Test
@@ -34,21 +43,29 @@ public class FireLightning : DragonBreathBehaviour {
 
 	public Object m_particleStartPrefab;
 	public Object m_particleEndPrefab;
-	
-	GameObject m_particleStart;
-	GameObject m_particleEnd;
+    public Object m_particleNPCCollisionPrefab;
 
-	Transform m_mouthTransform;
+    public float m_timeNPCCollision = 1.0f;
+
+    GameObject m_particleStart;
+	GameObject m_particleEnd;
+    GameObject m_particleNPCCollision;
+
+    Transform m_mouthTransform;
 	Transform m_headTransform;
 
 	int m_groundMask;
 	int m_waterMask;
 	bool m_insideWater;
+    float m_timeNPCCollisionCurrent = 0.0f;
+    Transform m_preyTransform = null;
 
     Lightning[] m_rays = null;// new Lightning[3];
+    Lightning[] m_rays2 = null;// new Lightning[3];
 
 
-	class Lightning{
+    public class Lightning
+    {
 
 		public LineRenderer m_line;
 
@@ -133,27 +150,38 @@ public class FireLightning : DragonBreathBehaviour {
 			m_particleEnd.gameObject.SetActive(true);
 		}
 
-		m_mouthTransform = transform.FindTransformRecursive("Rays_Dummy");
+        if (m_particleNPCCollisionPrefab)
+            m_particleNPCCollision = (GameObject)Object.Instantiate(m_particleNPCCollisionPrefab);
+        if (m_particleNPCCollision)
+        {
+            m_particleNPCCollision.transform.localPosition = Vector3.zero;
+            m_particleNPCCollision.gameObject.SetActive(true);
+        }
+
+
+        m_mouthTransform = transform.FindTransformRecursive("Rays_Dummy");
 		m_headTransform = GetComponent<DragonMotion>().head;
 
 		m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
 		m_waterMask = LayerMask.GetMask("Water");
 
-/*
-		m_rays[0] = new Lightning(m_segmentInitialWidth, m_segmentFinalWidth, Color.white, m_rayMaterial, m_shapeCurve);
-		m_rays[0].m_segmentLength = m_segmentLength;
-        m_rays[0].m_initOffset = 0.0f;
+        /*
+                m_rays[0] = new Lightning(m_segmentInitialWidth, m_segmentFinalWidth, Color.white, m_rayMaterial, m_shapeCurve);
+                m_rays[0].m_segmentLength = m_segmentLength;
+                m_rays[0].m_initOffset = 0.0f;
 
-        m_rays[1] = new Lightning(m_segmentInitialWidth, m_segmentFinalWidth, Color.grey, m_rayMaterial, m_shapeCurve);
-		m_rays[1].m_segmentLength = m_segmentLength;
-        m_rays[1].m_initOffset = m_offsetRays;
+                m_rays[1] = new Lightning(m_segmentInitialWidth, m_segmentFinalWidth, Color.grey, m_rayMaterial, m_shapeCurve);
+                m_rays[1].m_segmentLength = m_segmentLength;
+                m_rays[1].m_initOffset = m_offsetRays;
 
-        m_rays[2] = new Lightning(m_segmentInitialWidth, m_segmentFinalWidth, new Color(0.25f,0.25f,0.25f,1f), m_rayMaterial, m_shapeCurve);
-		m_rays[2].m_segmentLength = m_segmentLength;
-        m_rays[2].m_initOffset = m_offsetRays * 2.0f;
-*/
+                m_rays[2] = new Lightning(m_segmentInitialWidth, m_segmentFinalWidth, new Color(0.25f,0.25f,0.25f,1f), m_rayMaterial, m_shapeCurve);
+                m_rays[2].m_segmentLength = m_segmentLength;
+                m_rays[2].m_initOffset = m_offsetRays * 2.0f;
+        */
 
-		m_actualLength = m_length;
+        m_timeNPCCollisionCurrent = m_timeNPCCollision;
+
+        m_actualLength = m_length;
 		m_currentLength = m_length;
 		m_insideWater = false;
 	}
@@ -162,81 +190,96 @@ public class FireLightning : DragonBreathBehaviour {
     {
         if (m_numRays != m_numRaysOld)
         {
-            destroyRays();
-                
+            destroyRays(m_rays);
+            destroyRays(m_rays2);
+
             m_rays = new Lightning[m_numRays];
+            m_rays2 = new Lightning[m_numRays2];
             float offStep = 1.0f / (float)m_numRays;
             for (int c = 0; c < m_rays.Length; c++)
             {
                 m_rays[c] = new Lightning(Color.gray, m_rayMaterial, m_widthCurve);
-
                 m_rays[c].m_segmentLength = m_segmentLength;
-                m_rays[0].m_initOffset = offStep * (float)c;
+                m_rays[c].m_initOffset = offStep * (float)c;
+            }
 
+            for (int c = 0; c < m_rays2.Length; c++)
+            {
+                m_rays2[c] = new Lightning(Color.gray, m_rayMaterial2, m_widthCurve2);
+                m_rays2[c].m_segmentLength = m_segmentLength;
+                m_rays2[c].m_initOffset = offStep * (float)c;
             }
 
             m_numRaysOld = m_numRays;
         }
     }
 
-    void destroyRays()
+    static void destroyRays(Lightning[] rays)
     {
-        if (m_rays != null)
+        if (rays != null)
         {
-            for (int c = 0; c < m_rays.Length; c++)
+            for (int c = 0; c < rays.Length; c++)
             {
-                m_rays[c].Destroy();
-                m_rays[c] = null;
+                rays[c].Destroy();
+                rays[c] = null;
             }
         }
-
-        m_rays = null;
+        rays = null;
     }
 
 
     void OnDestroy()
     {
-        destroyRays();
-        
+        destroyRays(m_rays);
+        destroyRays(m_rays2);
+
         print("FireLightning destroy!!!!");
     }
 
-    public void SetAmplitude( float amplitude )
+    static public void SetAmplitude(Lightning[] rays, float amplitude)
 	{
-		m_maxAmplitude = amplitude;
+//		m_maxAmplitude = amplitude;
 
-        if (m_rays != null)
+        if (rays != null)
         {
-            for (int c = 0; c < m_rays.Length; c++)
+            for (int c = 0; c < rays.Length; c++)
             {
-                m_rays[c].m_amplitude = m_maxAmplitude;
+                rays[c].m_amplitude = amplitude;
             }
         }
 	}
 
-    public void SetWidthCurve(AnimationCurve curve)
+    public void SetWidthCurve(Lightning[] rays, AnimationCurve curve)
     {
-        if (m_rays != null)
+        if (rays != null)
         {
-            for (int c = 0; c < m_rays.Length; c++)
+            for (int c = 0; c < rays.Length; c++)
             {
-                m_rays[c].m_line.widthCurve = curve;
+                rays[c].m_line.widthCurve = curve;
             }
         }
-
     }
 
-
-    public void SetWidthMultiplier( float multiplier)
+    public void SetWidthMultiplier(Lightning[] rays, float multiplier)
     {
-        if (m_rays != null)
+        if (rays != null)
         {
-            for (int c = 0; c < m_rays.Length; c++)
+            for (int c = 0; c < rays.Length; c++)
             {
-                m_rays[c].m_line.widthMultiplier = multiplier;
+                rays[c].m_line.widthMultiplier = multiplier;
             }
         }
+    }
 
+    public void HideRays(Lightning[] rays)
+    {
+        if (rays != null)
+        {
+            for (int c = 0; c < rays.Length; c++)
+            {
+                rays[c].Hide();
+            }
+        }
     }
 
     override protected void Breath()
@@ -255,7 +298,10 @@ public class FireLightning : DragonBreathBehaviour {
 
 
         updateRays();
-        SetAmplitude(m_maxAmplitude);
+        SetAmplitude(m_rays, m_maxAmplitude);
+        SetAmplitude(m_rays2, m_maxAmplitude2);
+
+        bool isGround = false;
 
         if ( m_insideWater )
 		{
@@ -268,8 +314,9 @@ public class FireLightning : DragonBreathBehaviour {
 				float addition = (length - ground.distance); // distance enering water
 				// length += addition;	// We double it
 				m_currentLength = Mathf.Lerp( m_currentLength, m_length + addition, Time.deltaTime * 2);
-			}
-			else
+                isGround = true;
+            }
+            else
 			{
 				m_currentLength = Mathf.Lerp( m_currentLength, m_length, Time.deltaTime * 2);
 			}
@@ -278,28 +325,47 @@ public class FireLightning : DragonBreathBehaviour {
 		if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+(Vector3)m_direction*m_currentLength, out ground, m_groundMask)){
 			p2 = ground.point;
 			m_actualLength = ground.distance;
-		}else{
+            isGround = true;
+        }
+        else
+        {
 			p2 =  m_mouthTransform.position+(Vector3)m_direction*m_currentLength;
 			m_actualLength = m_currentLength;
 		}
 
 		if ( m_particleEnd )
-			m_particleEnd.transform.position = p2;
+        {
+            m_particleEnd.gameObject.SetActive(isGround);
+            m_particleEnd.transform.position = p2;
 
-		for(int i=0;i<m_rays.Length;i++)
-			m_rays[i].Draw(p1,p2);
+        }
 
-        SetWidthMultiplier(m_widthMultiplier);
-        SetWidthCurve(m_widthCurve);
+        for (int i=0;i<m_rays.Length;i++)
+        {
+            m_rays[i].Draw(p1, p2);
+        }
 
-		// Look entities to damage!
-		Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_maxAmplitude, m_actualLength);
+        for (int i = 0; i < m_rays2.Length; i++)
+        {
+            m_rays2[i].Draw(p1, p2);
+        }
+
+        SetWidthMultiplier(m_rays, m_widthMultiplier);
+        SetWidthMultiplier(m_rays2, m_widthMultiplier2);
+
+        SetWidthCurve(m_rays, m_widthCurve);
+        SetWidthCurve(m_rays2, m_widthCurve2);
+
+        // Look entities to damage!
+        Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_maxAmplitude2, m_actualLength);
 		for (int i = 0; i < preys.Length; i++) 
 		{
-			if (preys[i].IsBurnable(m_tier) || m_type == Type.Super) {
+			if (preys[i].IsBurnable(m_tier) || m_type == Type.Mega) {
 				AI.IMachine machine =  preys[i].machine;
 				if (machine != null) {					
-					machine.Burn(transform);					
+					machine.Burn(transform);
+                    m_preyTransform = preys[i].transform;
+                    m_timeNPCCollisionCurrent = m_timeNPCCollision;
 				}
 			}
 			/*
@@ -309,7 +375,25 @@ public class FireLightning : DragonBreathBehaviour {
 			*/	
 		}
 
-		m_bounds2D.center = m_mouthTransform.position;
+        if (m_particleNPCCollision)
+        {
+            bool showNPCCollision = m_timeNPCCollisionCurrent > 0.0f;
+            m_particleNPCCollision.gameObject.SetActive(showNPCCollision);
+            if (m_preyTransform != null)
+            {
+                Vector3 npos = m_preyTransform.position - m_mouthTransform.position;
+                Vector3 NPCEffectPosition = m_mouthTransform.position + (-m_mouthTransform.right * Vector3.Dot(-m_mouthTransform.right, npos));
+                NPCEffectPosition.z -= 2.0f;
+                m_particleNPCCollision.transform.position = NPCEffectPosition;
+
+            }
+
+        }
+
+        m_timeNPCCollisionCurrent -= Time.deltaTime;
+
+
+        m_bounds2D.center = m_mouthTransform.position;
 		m_bounds2D.width = Mathf.Max( m_actualLength, m_maxAmplitude);
 		m_bounds2D.height = Mathf.Max( m_actualLength, m_maxAmplitude);
 	}
@@ -334,17 +418,17 @@ public class FireLightning : DragonBreathBehaviour {
 			m_particleEnd.gameObject.SetActive(true);
 		}
 
-		for(int i=0;i<m_rays.Length;i++)
-			m_rays[i].Hide ();
+        HideRays(m_rays);
+        HideRays(m_rays2);
 	}
 
 	override public void RecalculateSize()
     {
     	if ( m_dragon )
     	{
-			float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
-			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
-	        m_length *= transform.localScale.x;
+//			float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
+//			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
+//	        m_length *= transform.localScale.x;
 		}
     }
 
@@ -355,13 +439,14 @@ public class FireLightning : DragonBreathBehaviour {
 			m_particleStart.gameObject.SetActive(false);
 		if ( m_particleEnd )
 			m_particleEnd.gameObject.SetActive(false);
-		for(int i=0;i<m_rays.Length;i++)
-			m_rays[i].Hide ();
 
-	}
+        HideRays(m_rays);
+        HideRays(m_rays2);
+
+    }
 
 
-	void OnDrawGizmos() {
+    void OnDrawGizmos() {
 		if (m_isFuryOn) 
 		{
 			Gizmos.color = Color.magenta;

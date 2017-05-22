@@ -104,6 +104,7 @@ fixed4 frag(v2f i) : SV_Target
 	// normalDirection = i.normal;
 	fixed4 diffuse = max(0,dot(normalDirection, light0Direction)) * _LightColor0;
 	diffuse += max(0, dot(normalDirection, light1Direction)) * _SecondLightColor;
+	diffuse.w = 1.0;
 
 #ifdef FRESNEL
 	// Fresnel
@@ -132,7 +133,7 @@ fixed4 frag(v2f i) : SV_Target
 	fixed specMask = 0.2126 * reflection.r + 0.7152 * reflection.g + 0.0722 * reflection.b;
 
 	//fixed4 reflection = texCUBE(_ReflectionMap, reflect(halfDir, normalDirection));
-	float ref = specMask * _ReflectionAmount;
+	float ref = specMask * _ReflectionAmount * detail.b;
 	col = (1.0 - ref) * main + ref * reflection;
 
 //	col = main * specMask * 1.0;
@@ -149,14 +150,19 @@ fixed4 frag(v2f i) : SV_Target
 	//	satMask *= detail.r *(((cos(wave.x) + 1.0) * 0.5) * ((sin(_Time.y) + 1.0) * 0.5)) * 10.0;
 	fixed blink = lerp((sin(_Time.y * _InnerLightWavePhase) + 1.0) * 0.5, (cos(wave) + 1.0) * 0.5, detail.b);
 	satMask *= blink * 10.0;
-	fixed4 selfIlluminate = lerp(fixed4(0.0, 0.0, 0.0, 0.0), _InnerLightColor, satMask);
+	fixed3 selfIlluminate = lerp(fixed3(0.0, 0.0, 0.0), _InnerLightColor.xyz, satMask);
 
 #else
-	fixed4 selfIlluminate = (col * (detail.r * _InnerLightAdd * _InnerLightColor));
+	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz));
 #endif
 	// fixed4 col = (diffuse + fixeW4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _Tint + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
-	col = (diffuse + fixed4(i.vLight, 0.0)) * col * _Tint + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor) + _AmbientAdd; // To use ShaderSH9 better done in vertex shader
+//	col = (diffuse + fixed4(i.vLight, 0.0)) * col * _Tint + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor) + _AmbientAdd; // To use ShaderSH9 better done in vertex shader
+	col.xyz = (diffuse.xyz + i.vLight) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate + (fresnel * _FresnelColor.xyz) + _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
 
+#ifndef CUTOUT
 	UNITY_OPAQUE_ALPHA(col.a);
+#else
+	col.w *= _Tint.w;
+#endif
 	return col;
 }

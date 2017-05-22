@@ -94,7 +94,8 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	public static void RemoveBurning( Transform _fireNode) {
 		instance.m_burningFireNodes.Remove(_fireNode);
 		if (instance.m_burningFireNodes.Count <= 0)
-			instance.m_fireNodeAudio.Stop();
+			if (instance.m_fireNodeAudio != null)
+				instance.m_fireNodeAudio.Stop();
 	}
 
 	void Update() {

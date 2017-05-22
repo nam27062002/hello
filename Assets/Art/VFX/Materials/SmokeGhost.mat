@@ -10,7 +10,7 @@ Material:
   m_Shader: {fileID: 4800000, guid: 7d115b274302b5d46a753301e417a7e7, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 2900
+  m_CustomRenderQueue: 3060
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -21,7 +21,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: a07ec28d5ec740b4496074ed8c29486f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    m_Floats: []
+    m_Floats:
+    - first:
+        name: _ZTest
+      second: 2
     m_Colors:
     - first:
         name: _TintColor

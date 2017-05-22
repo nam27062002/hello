@@ -13,7 +13,7 @@ public class Entity : IEntity {
 	// Exposed to inspector
 	[EntitySkuList]
 	[SerializeField] private string m_sku;
-	public string sku { get { return m_sku; } }
+	public override string sku { get { return m_sku; } }
 
 	[SerializeField] private bool m_dieOutsideFrustum = true;
 	public bool dieOutsideFrustum
@@ -80,7 +80,7 @@ public class Entity : IEntity {
 	private static float m_powerUpXpMultiplier = 0;	// XP power up multiplier
 
 	/************/
-	protected virtual void Awake() {
+	protected override void Awake() {
 		base.Awake();
 		// [AOC] Obtain the definition and initialize important data
 		InitFromDef();

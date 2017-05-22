@@ -224,6 +224,9 @@ public class DestructibleDecoration : Initializable {
 							m_corpse.Spawn(false, false);
 						}
 						m_spawned = false;
+
+						// [AOC] Notify game!
+						Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_DESTROYED, transform, m_entity.reward);
 					}
 				}
 			}

@@ -454,7 +454,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// <returns><c>true</c> if this instance is super fury on; otherwise, <c>false</c>.</returns>
 	public bool IsSuperFuryOn() {
 		
-		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Super;
+		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Mega;
 	}
 
 	/// <summary>

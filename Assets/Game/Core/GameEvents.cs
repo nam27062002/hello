@@ -38,6 +38,7 @@ public enum GameEvents {
 	GAME_COUNTDOWN_ENDED,		// no params
 	GAME_AREA_ENTER,			// no params 
 	GAME_AREA_EXIT,				// no params
+	GAME_UPDATED,				// no params
 	GAME_PAUSED,				// params: bool _paused
 	GAME_ENDED,					// no params
 	REWARD_APPLIED,				// params: Reward _reward, Transform _entity
@@ -139,6 +140,8 @@ public enum GameEvents {
 
     // Settigns events
     TILT_CONTROL_TOGGLE,		// params: Bool _useTile
+	TILT_CONTROL_CALIBRATE,		// no params, use to force a tilt calibration (only in-game)
+	TILT_CONTROL_SENSITIVITY_CHANGED	// params: float _sensitivity
 }
 
 //------------------------------------------------------------------------//

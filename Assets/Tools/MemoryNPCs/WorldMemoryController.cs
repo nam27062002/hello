@@ -224,7 +224,7 @@ public class WorldMemoryController : MonoBehaviour {
         CategorySet_Setup();
         SizeStrategy_Setup();
 
-        OnReset();        
+        OnReset(true);        
     }
 
     private void OnDestroy() {
@@ -292,21 +292,24 @@ public class WorldMemoryController : MonoBehaviour {
     }
 
     public void TakeASample() {
+        TakeASampleInternal(false);
+    }
+
+    private void TakeASampleInternal(bool reuseAnalysis) {
         // Disables the button so the user can't click again until the current sample has been processed
         if (m_takeSampleButton != null) {
             m_takeSampleButton.enabled = false;
         }
 
-        OnReset();
+        OnReset(!reuseAnalysis);
 
         if (m_memoryDatas != null) {
-            m_sample = m_memoryProfiler.Scene_TakeASampleWithCategories(m_categorySetName) as MemorySampleCollection;
+            m_sample = m_memoryProfiler.Scene_TakeAGameSampleWithCategories(reuseAnalysis, m_categorySetName) as MemorySampleCollection;
             if (m_sample != null) {
                 int count = m_memoryDatas.Count;
-                for (int i = 0; i < count; i++)
-                {
+                for (int i = 0; i < count; i++) {
                     MemoryData mData = m_memoryDatas[i];
-                    SampleToData(m_sample.GetSample(mData.label) as MemorySample, mData);                   
+                    SampleToData(m_sample.GetSample(mData.label) as MemorySample, mData);
                 }
             }
 
@@ -336,7 +339,7 @@ public class WorldMemoryController : MonoBehaviour {
         }
     }
 
-	private void OnReset() {      
+	private void OnReset(bool clearAnalysis) {      
         if (m_memoryDatas != null) {
             int count = m_memoryDatas.Count;
             for (int i = 0; i < count; i++) {
@@ -349,7 +352,7 @@ public class WorldMemoryController : MonoBehaviour {
 		m_timer = 10f;
 		m_timerUI.value = m_timer;
 
-        m_memoryProfiler.Clear();      
+        m_memoryProfiler.Clear(clearAnalysis);      
     }
 	    
     private void SampleToData(MemorySample sample, MemoryData data) {
@@ -387,7 +390,7 @@ public class WorldMemoryController : MonoBehaviour {
     }
 
 	private void OnLevelLoaded() {
-		OnReset();
+		OnReset(true);
     }
 
     private float BytesToMegaBytes(long bytes) {
@@ -442,9 +445,8 @@ public class WorldMemoryController : MonoBehaviour {
 
             // If a sample was taken then we need to take another one to make the UI show the latest information
             if (m_sample != null) {
-                TakeASample();
-            }
-            TakeASample();
+                TakeASampleInternal(true);
+            }            
         } else {
             Debug.LogError("Not valid index for category set: " + newValue);
         }

@@ -189,6 +189,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_knockback: 0
   m_timeBetweenHits: 0.5
+  m_trail: {fileID: 0}
+  m_trailParticles: []
 --- !u!114 &11498554
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -208,7 +210,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 3
-  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"damage":40,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":3,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":6,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"speed":7.5,"arrivalRadius":1,"hasGuardState":false,"dataType":"AI.Behaviour.PursuitGroundData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"damage":40,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":3,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":6,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"speed":7.5,"arrivalRadius":1,"hasGuardState":false,"moveAwayOnCritical":true,"dataType":"AI.Behaviour.PursuitGroundData","editorFolded":false}]'
   m_databaseKey: PF_Soldier01
 --- !u!1001 &100100000
 Prefab:
@@ -229,7 +231,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010797659082}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_R_Foot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -244,7 +246,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000013536038090}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_Neck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -259,7 +261,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000012364992442}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_Spine2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -274,7 +276,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010910978962}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_L_Thigh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -289,7 +291,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000012551208888}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_L_Foot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -304,7 +306,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000011762781328}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_R_Palm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -319,7 +321,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000012277998570}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_L_Calf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -334,7 +336,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000014134739882}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_Ribcage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -349,7 +351,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000013967148780}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_L_Fingers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -364,7 +366,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000013634988420}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_L_Upperarm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -379,7 +381,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010070293292}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_Head_Plume
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -394,7 +396,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000011521784366}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_R_Thigh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -409,7 +411,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000012715741352}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -424,7 +426,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010392939806}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_L_Weapon_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -441,7 +443,7 @@ GameObject:
   - component: {fileID: 4000011614955902}
   - component: {fileID: 95000010712065590}
   - component: {fileID: 114000012447317948}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -456,7 +458,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000011459597524}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_R_Calf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -471,7 +473,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000012714772382}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_Spine1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -486,7 +488,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010857815024}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_R_Foot_Fingers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -501,7 +503,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000013724927670}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_Pelvis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -516,7 +518,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000013055816796}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_R_Collarbone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -546,7 +548,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000012561518462}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_R_Weapon_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -563,7 +565,7 @@ GameObject:
   - component: {fileID: 4000013658222562}
   - component: {fileID: 33000011660479996}
   - component: {fileID: 23000011050910622}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sword_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -578,7 +580,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000012734528900}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_L_Forearm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -593,7 +595,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000013667331400}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_R_Fingers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -608,7 +610,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000011363354898}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_R_Upperarm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -623,7 +625,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000013814994662}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_L_Collarbone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -638,7 +640,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010888831386}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_L_Foot_Fingers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -653,7 +655,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000012696312380}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_R_Forearm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -669,7 +671,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4000012969522328}
   - component: {fileID: 137000011392006526}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -684,7 +686,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000011148354362}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_R_Thumb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -699,7 +701,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000013206177792}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_L_Thumb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -731,7 +733,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010599319570}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Soldier_L_Palm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
