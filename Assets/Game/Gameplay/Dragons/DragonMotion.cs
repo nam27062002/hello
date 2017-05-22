@@ -316,7 +316,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		get{ return m_hitBounds; }
 	}
 
-	private bool m_trackPosition = false;
+
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -429,12 +429,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_lastSpeed = 0;
 		m_suction = m_eatBehaviour.suction;
 
-		m_trackPosition = InstanceManager.gameSceneController != null;
-
 		if (m_state == State.None)
 			ChangeState(State.Fly);
 
-		// Add modifiers
+		gameObject.AddComponent<DragonUnityAnalytics>();
 
 	}
 
@@ -672,10 +670,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
-		if (m_trackPosition)
-		{
-			UnityAnalyticsHeatmap.HeatmapEvent.Send( "PlayerPosition", m_transform.position, InstanceManager.gameSceneController.elapsedSeconds);
-		}
+		
 		switch (m_state) {
 			case State.Idle:
 				if (m_controls.moving || boostSpeedMultiplier > 1) {
