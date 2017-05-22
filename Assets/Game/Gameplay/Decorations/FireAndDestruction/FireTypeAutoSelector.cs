@@ -22,25 +22,9 @@ public class FireTypeAutoSelector : MonoBehaviour {
 	[SerializeField] private Renderer[] m_rChangeMaterials;
 
 
-	private ParticleSystem.MinMaxGradient m_fireStartColorGradient;
-	private ParticleSystem.MinMaxGradient m_megaStartColorGradient;
-
-	private ParticleSystem.MinMaxGradient m_fireColorOverTimeGradient;
-	private ParticleSystem.MinMaxGradient m_megaColorOverTimeGradient;
-
-
-	void Awake() {
-		m_fireStartColorGradient = new ParticleSystem.MinMaxGradient(m_fireStartColorA, m_fireStartColorB);
-		m_megaStartColorGradient = new ParticleSystem.MinMaxGradient(m_fireGradient);
-
-		m_fireColorOverTimeGradient = new ParticleSystem.MinMaxGradient(m_megaStartColorA, m_megaStartColorB);
-		m_megaColorOverTimeGradient = new ParticleSystem.MinMaxGradient(m_megaGradient);
-	}
-
-
 	void OnEnable() {
 		if (InstanceManager.player != null) {
-			bool isMega = InstanceManager.player.IsSuperFuryOn();
+			bool isMega = InstanceManager.player.IsMegaFuryOn();
 
 			for (int i = 0; i < m_fireOnly.Length; ++i) {
 				m_fireOnly[i].SetActive(isMega == false);
@@ -52,16 +36,27 @@ public class FireTypeAutoSelector : MonoBehaviour {
 
 			for (int i = 0; i < m_psChangeStartColors.Length; ++i) {
 				ParticleSystem.MainModule main = m_psChangeStartColors[i].main;
+				ParticleSystem.MinMaxGradient color = main.startColor;
 
-				if (isMega) main.startColor = m_megaStartColorGradient;
-				else 		main.startColor = m_fireStartColorGradient;
+				if (isMega) {
+					color.colorMin = m_megaStartColorA;
+					color.colorMax = m_megaStartColorB;
+				} else {
+					color.colorMin = m_fireStartColorA;
+					color.colorMax = m_fireStartColorB;
+				}
+
+				main.startColor = color;
 			}
 
 			for (int i = 0; i < m_psChangeGradientColors.Length; ++i) {
 				ParticleSystem.ColorOverLifetimeModule colorOverLifetime = m_psChangeGradientColors[i].colorOverLifetime;
+				ParticleSystem.MinMaxGradient color = colorOverLifetime.color;
 
-				if (isMega) colorOverLifetime.color = m_megaColorOverTimeGradient;
-				else 		colorOverLifetime.color = m_fireColorOverTimeGradient;
+				if (isMega) color.gradient = m_megaGradient;
+				else 		color.gradient = m_fireGradient;
+
+				colorOverLifetime.color = color;
 			}
 
 			for (int i = 0; i < m_rChangeMaterials.Length; ++i) {
