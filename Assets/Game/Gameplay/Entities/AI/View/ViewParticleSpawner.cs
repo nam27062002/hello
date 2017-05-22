@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewParticleSpanwer : MonoBehaviour {
+public class ViewParticleSpawner : MonoBehaviour {
 	[SerializeField] private Renderer m_view;
 	[SerializeField] private ParticleData[] m_particleDatas;
 
