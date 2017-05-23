@@ -46,6 +46,7 @@ public class FireLightning : DragonBreathBehaviour {
 
     GameObject m_particleStart;
 	GameObject m_particleEnd;
+    ParticleSystem[] m_PSend;
 
     Transform m_mouthTransform;
 	Transform m_headTransform;
@@ -123,7 +124,28 @@ public class FireLightning : DragonBreathBehaviour {
         }
 	}
 
+    void EnableEndBall(bool value)
+    {
+        if (m_PSend != null)
+        {
+            if (value)
+            {
+                if (!m_PSend[1].isPlaying)
+                {
+                    m_PSend[0].Play();
+                    m_PSend[1].Play();
+                    m_PSend[2].Play();
+                }
+            }
+            else
+            {
+                m_PSend[0].Play();
+                m_PSend[1].Stop();
+                m_PSend[2].Stop();
 
+            }
+        }
+    }
 
 	// Use this for initialization
 	override protected void ExtendedStart () 
@@ -138,10 +160,14 @@ public class FireLightning : DragonBreathBehaviour {
 
 		if ( m_particleEndPrefab )
 			m_particleEnd = (GameObject)Object.Instantiate(m_particleEndPrefab);
+
 		if ( m_particleEnd )
 		{
-			m_particleEnd.transform.localPosition = Vector3.zero;
+            m_PSend = m_particleEnd.GetComponentsInChildren<ParticleSystem>();
+
+            m_particleEnd.transform.localPosition = Vector3.zero;
 			m_particleEnd.gameObject.SetActive(true);
+
 		}
 
         m_mouthTransform = transform.FindTransformRecursive("Rays_Dummy");
@@ -318,9 +344,9 @@ public class FireLightning : DragonBreathBehaviour {
 
 		if ( m_particleEnd )
         {
-            m_particleEnd.gameObject.SetActive(isGround);
+            EnableEndBall(isGround);
+//            m_particleEnd.gameObject.SetActive(isGround);
             m_particleEnd.transform.position = p2;
-
         }
 
         for (int i=0;i<m_rays.Length;i++)
