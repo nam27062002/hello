@@ -43,7 +43,9 @@ Shader "Hungry Dragon/Scenary/Automatic Texture Blending + Lightmap + Darken"
 				#define CUSTOM_VERTEXCOLOR		
 				float4 getCustomVertexColor(inout appdata_t v)
 				{
-					return float4(v.color.xyz, 1.0 - dot(mul(float4(v.normal,0), unity_WorldToObject).xyz, float3(0,1,0)));
+//					return float4(v.color.xyz, 1.0 - dot(mul(float4(v.normal,0), unity_WorldToObject).xyz, float3(0,1,0)));
+					return float4(v.color.xyz, 1.0 - dot(UnityObjectToWorldNormal(v.normal), float3(0, 1, 0)));
+
 				}
 
 				#define DARKEN
