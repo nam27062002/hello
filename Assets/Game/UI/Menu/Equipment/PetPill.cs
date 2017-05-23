@@ -23,7 +23,6 @@ public class PetPill : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private static readonly Color LOCKED_COLOR = new Color(0.5f, 0.5f, 0.5f);
 	private const string TUTORIAL_HIGHLIGHT_PREFAB_PATH = "UI/Metagame/Pets/PF_PetPillTutorialFX";
 
 	public class PetPillEvent : UnityEvent<PetPill> { }
@@ -41,6 +40,14 @@ public class PetPill : MonoBehaviour {
 	[SerializeField] private GameObject m_equippedPowerFrame = null;
 	[Space]
 	[SerializeField] private GameObject[] m_rarityDecorations = new GameObject[(int)EggReward.Rarity.COUNT];
+	[Space]
+	[SerializeField] private UIColorFX m_frameColorFX = null;
+	public UIColorFX frameColorFX {
+		get { return m_frameColorFX; }
+	}
+
+	[SerializeField] private Color m_lockedColor = new Color(0.5f, 0.5f, 0.5f);
+	[SerializeField] private Color m_equippedColor = Colors.orange;
 
 	// Internal
 	private DefinitionNode m_def = null;
@@ -65,6 +72,16 @@ public class PetPill : MonoBehaviour {
 				m_parentScreen = this.gameObject.FindComponentInParents<PetsScreenController>();	// Find rather than Get to include inactive objects (this method could be called with the screen disabled)
 			}
 			return m_parentScreen;
+		}
+	}
+
+	private ShowHideAnimator m_animator = null;
+	public ShowHideAnimator animator {
+		get { 
+			if(m_animator == null) {
+				m_animator = GetComponent<ShowHideAnimator>();
+			}
+			return m_animator; 
 		}
 	}
 
@@ -132,7 +149,7 @@ public class PetPill : MonoBehaviour {
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
+	//------------------------------------------------------------------------//º	
 	/// <summary>
 	/// Initialize from a given pet definition.
 	/// </summary>
@@ -213,11 +230,13 @@ public class PetPill : MonoBehaviour {
 		m_powerIcon.transform.parent.gameObject.SetActive(!isSpecialAndLocked);
 
 		// Color highlight when equipped
+		m_frameColorFX.brightness = m_locked ? -0.25f : 0f;
+		m_frameColorFX.saturation = m_locked ? -0.25f : 0f;
 		m_equippedFrame.SetActive(equipped);
 		m_equippedPowerFrame.SetActive(equipped);
 
 		// Tone down pet preview when locked for better contrast with the lock icon
-		m_preview.color = m_locked ? LOCKED_COLOR : Color.white;
+		m_preview.color = m_locked ? m_lockedColor : Color.white;
 	}
 
 	/// <summary>
@@ -258,33 +277,10 @@ public class PetPill : MonoBehaviour {
 	public void OnTap() {
 		// If locked, show some feedback
 		if(locked) {
-			// Different feedback if pet is unlocked with golden egg fragments
-			if(m_special) {
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO_SPECIAL"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-			} else {
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-			}
-
 			// Small animation on the lock icon
 			m_currentLockIconAnim.SetTrigger("bounce");
 		}
 
-		// If equipped, try to unequip
-		else if(equipped) {
-			// Unequip
-			UsersManager.currentUser.UnequipPet(m_dragonData.def.sku, m_def.sku);
-		} 
-
-		// Otherwise try to equip
-		else {
-			// Equip
-			// Refresh will be automatically triggered by the OnPetChanged callback
-			int newSlot = UsersManager.currentUser.EquipPet(m_dragonData.def.sku, m_def.sku);
-			if(newSlot == -4) {
-				// No available slots, show feedback
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_NO_SLOTS"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// There are no available slots!\nUnequip another pet before equipping this one.
-			}
-		}
 		// Propagate the event
 		OnPillTapped.Invoke(this);
 	}
@@ -300,7 +296,7 @@ public class PetPill : MonoBehaviour {
 		PopupController popup = PopupManager.OpenPopupInstant(PopupInfoPet.PATH);
 		PopupInfoPet petPopup = popup.GetComponent<PopupInfoPet>();
 		if(petPopup != null) {
-			petPopup.Init(m_def, parentScreen.currentTab.defs);
+			petPopup.Init(m_def, parentScreen.defs);
 		}
 	}
 

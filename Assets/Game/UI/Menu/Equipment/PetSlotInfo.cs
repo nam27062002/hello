@@ -39,8 +39,17 @@ public class PetSlotInfo : MonoBehaviour {
 	private int m_slotIdx = 0;
 
 	// Internal refs
-	private AttachPoint m_attachPoint = null;
 	private DragonData m_dragonData = null;
+
+	private PetsSceneController m_petsScene = null;
+	private PetsSceneController petsScene {
+		get {
+			if(m_petsScene == null) {
+				m_petsScene = InstanceManager.menuSceneController.GetScreenScene(MenuScreens.PETS).GetComponent<PetsSceneController>();
+			}
+			return m_petsScene;
+		}
+	}
 
 	private ShowHideAnimator m_anim = null;
 	public ShowHideAnimator anim {
@@ -49,6 +58,12 @@ public class PetSlotInfo : MonoBehaviour {
 			return m_anim;
 		}
 	}
+
+	// Attach point logic
+	private Transform m_attachPoint = null;
+	private Camera m_worldCamera = null;
+	private Camera m_uiCamera = null;
+	private Vector3 m_attachPointOriginalPos = Vector3.zero;
 
 	// Internal objects
 	private Coroutine m_rarityGlowCoroutine = null;
@@ -68,18 +83,23 @@ public class PetSlotInfo : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Keep anchored
+		if(isActiveAndEnabled && anim.visible) {
+			KeepAttachPoint();
+		}
+		/*
 		if(isActiveAndEnabled && m_attachPoint != null) {
 			// Get camera and apply the inverse transformation
 			if(InstanceManager.sceneController.mainCamera != null) {
 				// From http://answers.unity3d.com/questions/799616/unity-46-beta-19-how-to-convert-from-world-space-t.html
 				// We can do it that easily because we've adjusted the containers to match the camera viewport coords
-				Vector2 posScreen = InstanceManager.sceneController.mainCamera.WorldToViewportPoint(m_attachPoint.transform.position);
+				Vector2 posScreen = InstanceManager.sceneController.mainCamera.WorldToViewportPoint(m_attachPoint.position);
 				RectTransform rt = this.transform as RectTransform;
 				rt.anchoredPosition = Vector2.zero;
 				rt.anchorMin = posScreen;
 				rt.anchorMax = posScreen;
 			}
 		}
+		*/
 	}
 
 	//------------------------------------------------------------------------//
@@ -89,14 +109,15 @@ public class PetSlotInfo : MonoBehaviour {
 	/// Initialize the slot info with a target dragon preview and data.
 	/// </summary>
 	/// <param name="_slotIdx">The pet slot assigned to this info object.</param>
-	/// <param name="_dragonPreview">The 3D preview to link this info to.</param>
-	public void Init(int _slotIdx, MenuDragonPreview _dragonPreview) {
+	public void Init(int _slotIdx) {
 		// Store slot index
 		m_slotIdx = _slotIdx;
 
 		// Get corresponding anchor
-		Equipable.AttachPoint targetPoint = (Equipable.AttachPoint)((int)Equipable.AttachPoint.Pet_1 + m_slotIdx);
-		m_attachPoint = _dragonPreview.GetComponent<DragonEquip>().GetAttachPoint(targetPoint);
+		m_attachPoint = petsScene.petAnchors[_slotIdx];
+		if(m_attachPoint != null) {
+			m_attachPointOriginalPos = m_attachPoint.position;
+		}
 	}
 
 	/// <summary>
@@ -149,13 +170,40 @@ public class PetSlotInfo : MonoBehaviour {
 	/// <param name="_raritySku">Rarity to be displayed.</param>
 	private IEnumerator LoadRarityGlowDelayed(string _raritySku) {
 		// Wait until the pet preview has been loaded
-		yield return new WaitUntil(() => m_attachPoint.item != null);
+		yield return new WaitUntil(() => petsScene.petLoaders[m_slotIdx].petInstance != null);
 
 		// Show glow
-		MenuPetPreview petPreview = m_attachPoint.item.GetComponent<MenuPetPreview>();
+		MenuPetPreview petPreview = petsScene.petLoaders[m_slotIdx].petInstance.GetComponent<MenuPetPreview>();
 		if(petPreview != null) {
 			petPreview.ToggleRarityGlow(true);
 		}
+	}
+
+	/// <summary>
+	/// Put attached 3D slot matching the position of the slot info in the UI.
+	/// </summary>
+	private void KeepAttachPoint() {
+		// We need an attach point :D
+		if(m_attachPoint == null) return;
+
+		// Get required cameras
+		if(m_worldCamera == null) {
+			m_worldCamera = InstanceManager.sceneController.mainCamera;
+		}
+		if(m_worldCamera == null) return;
+
+		if(m_uiCamera == null) {
+			m_uiCamera = GetComponentInParent<Canvas>().worldCamera;
+		}
+		if(m_uiCamera == null) return;	// Should never happen
+
+		// Apply the inverse transformation!
+		// Based on http://answers.unity3d.com/questions/799616/unity-46-beta-19-how-to-convert-from-world-space-t.html
+		RectTransform rt = this.transform as RectTransform;
+		Vector2 viewportPos = m_uiCamera.WorldToViewportPoint(this.transform.position);
+		Vector3 worldPos = m_worldCamera.ViewportToWorldPoint(new Vector3(viewportPos.x, viewportPos.y, m_attachPointOriginalPos.z));
+		worldPos.z = m_attachPointOriginalPos.z;	// Keep Z distance the same ^^
+		m_attachPoint.position = worldPos;
 	}
 
 	//------------------------------------------------------------------------//
@@ -200,8 +248,8 @@ public class PetSlotInfo : MonoBehaviour {
 	private void OnHidePreAnimation(ShowHideAnimator _anim) {
 		// Toggle pet's rarity glow
 		if(m_attachPoint != null) {
-			if(m_attachPoint.item != null) {
-				MenuPetPreview petPreview = m_attachPoint.item.GetComponent<MenuPetPreview>();
+			if(petsScene.petLoaders[m_slotIdx].petInstance != null) {
+				MenuPetPreview petPreview = petsScene.petLoaders[m_slotIdx].petInstance.GetComponent<MenuPetPreview>();
 				if(petPreview != null) {
 					petPreview.ToggleRarityGlow(false);
 				}

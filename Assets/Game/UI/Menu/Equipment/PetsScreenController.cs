@@ -9,8 +9,10 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -18,6 +20,7 @@ using DG.Tweening;
 /// <summary>
 /// Main controller for the pets menu screen.
 /// </summary>
+[RequireComponent(typeof(PetFilters))]
 public class PetsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -27,21 +30,61 @@ public class PetsScreenController : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private TabSystem m_categoryTabs = null;
-	[SerializeField] private List<PowerIcon> m_powerIcons = new List<PowerIcon>();
+	[SerializeField] private GameObject m_pillPrefab = null;
+	[SerializeField] private ScrollRect m_scrollList = null;
+	public ScrollRect scrollList {
+		get { return m_scrollList; }
+	}
+	[SerializeField] private TextMeshProUGUI m_counterText = null;
 
-	// Internal
-	private Dictionary<string, PetCategoryTab> m_tabsByCategory = null;
-	private PetSlotInfo[] m_slotInfos = null;
+	[Space]
+	[SerializeField] private float m_pillCreationDelay = 0.05f;
+
+	[Space]
+	[SerializeField] private List<PetSlot> m_petSlots = new List<PetSlot>();
+	public List<PetSlot> petSlots {
+		get { return m_petSlots; }
+	}
+
+	// Collections
+	private List<PetPill> m_pills = new List<PetPill>();
+	public List<PetPill> pills {
+		get { return m_pills; }
+	}
+
+	private List<DefinitionNode> m_defs = new List<DefinitionNode>();
+	public List<DefinitionNode> defs {
+		get { return m_defs; }
+	}
 
 	// Internal references
 	private NavigationShowHideAnimator m_animator = null;
-	private NavigationShowHideAnimator animator {
+	public NavigationShowHideAnimator animator {
 		get { 
 			if(m_animator == null) {
 				m_animator = GetComponent<NavigationShowHideAnimator>();
 			}
 			return m_animator;
+		}
+	}
+
+	private PetsSceneController m_petsScene = null;
+	public PetsSceneController petsScene {
+		get {
+			if(m_petsScene == null) {
+				m_petsScene = InstanceManager.menuSceneController.GetScreenScene(MenuScreens.PETS).GetComponent<PetsSceneController>();
+			}
+			return m_petsScene;
+		}
+	}
+
+	private PetFilters m_petFilters = null;
+	public PetFilters petFilters {
+		get {
+			if(m_petFilters == null) {
+				m_petFilters = this.GetComponent<PetFilters>();
+			}
+			return m_petFilters;
 		}
 	}
 
@@ -59,13 +102,6 @@ public class PetsScreenController : MonoBehaviour {
 			return m_powerMiniIcons;
 		}
 	}
-
-	// Some public getters
-	public PetCategoryTab currentTab {
-		get {
-			return (PetCategoryTab)m_categoryTabs.currentScreen;
-		}
-	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -77,6 +113,10 @@ public class PetsScreenController : MonoBehaviour {
 		// Subscribe to animator's events
 		animator.OnShowPreAnimation.AddListener(OnShowPreAnimation);
 		animator.OnShowPostAnimation.AddListener(OnShowPostAnimation);
+		animator.OnHidePreAnimation.AddListener(OnHidePreAnimation);
+
+		// Clear all placeholder content from the scroll list
+		m_scrollList.content.DestroyAllChildren(false);
 	}
 
 	/// <summary>
@@ -116,6 +156,7 @@ public class PetsScreenController : MonoBehaviour {
 		// Unsubscribe from animator's events
 		animator.OnShowPreAnimation.RemoveListener(OnShowPreAnimation);
 		animator.OnShowPostAnimation.RemoveListener(OnShowPostAnimation);
+		animator.OnHidePreAnimation.RemoveListener(OnHidePreAnimation);
 	}
 
 	//------------------------------------------------------------------------//
@@ -137,40 +178,62 @@ public class PetsScreenController : MonoBehaviour {
 	/// Setup the screen.
 	/// </summary>
 	public void Initialize() {
-		// If not done yet, fill the tabs dictionary
-		if(m_tabsByCategory == null) {
-			m_tabsByCategory = new Dictionary<string, PetCategoryTab>();
-			for(int i = 0; i < m_categoryTabs.screens.Count; i++) {
-				PetCategoryTab tab = (PetCategoryTab)m_categoryTabs.screens[i];
-				m_tabsByCategory.Add(tab.screenName, tab);	// [AOC] Screen name is set from the editor and it matches the category IDs
-			}
-		}
-
 		// In order to properly initialize everything, object must be active
 		this.gameObject.SetActive(true);
+
+		// If not done yet, load the pet definitions!
+		if(m_defs.Count == 0) {
+			// Get all pet definitions, no filter
+			m_defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
+		}
+
+		// Sort them!
+		// Cache some data
+		Dictionary<string, int> filterOrder = new Dictionary<string, int>();
+		for(int i = 0; i < petFilters.filterButtons.Length; i++) {
+			filterOrder[petFilters.filterButtons[i].filterName] = i;
+		}
+
+		// Put owned pets at the beginning of the list, then sort by category (following filter buttons order), finally by content order
+		m_defs.Sort((DefinitionNode _def1, DefinitionNode _def2) => {
+			bool unlocked1 = UsersManager.currentUser.petCollection.IsPetUnlocked(_def1.sku);
+			bool unlocked2 = UsersManager.currentUser.petCollection.IsPetUnlocked(_def2.sku);
+			if(unlocked1 && !unlocked2) {
+				return -1;
+			} else if(unlocked2 && !unlocked1) {
+				return 1;
+			} else {
+				// Both pets locked or unlocked: sort by category first (following filter buttons order), by content order afterwards
+				int catOrder1 = filterOrder[_def1.Get("category")];
+				int catOrder2 = filterOrder[_def2.Get("category")];
+				if(catOrder1 < catOrder2) {
+					return -1;
+				} else if(catOrder2 < catOrder1) {
+					return 1;
+				} else {
+					// Both pets of the same category: sort by order
+					return _def1.GetAsInt("order").CompareTo(_def2.GetAsInt("order"));
+				}
+			}
+		});
 
 		// Store reference to target dragon data for faster access
 		MenuSceneController menuController = InstanceManager.menuSceneController;
 		m_dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 
-		// Initialize all tabs one by one
-		foreach(KeyValuePair<string, PetCategoryTab> kvp in m_tabsByCategory) {
-			kvp.Value.Init(kvp.Key, m_dragonData);
+		// Slots
+		for(int i = 0; i < m_petSlots.Count; i++) {
+			m_petSlots[i].Init(i);
 		}
 
-		// Slots
-		// Make sure the list is initialized
-		if(m_slotInfos == null) {
-			m_slotInfos = this.GetComponentsInChildren<PetSlotInfo>();
-		}
-		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.PETS);
-		MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller>().GetDragonPreview(m_dragonData.def.sku);
-		for(int i = 0; i < m_slotInfos.Length; i++) {
-			m_slotInfos[i].Init(i, dragonPreview);
-		}
+		// Reset filters
+		petFilters.ResetFilters();
 
 		// Do a first refresh - without animation
 		Refresh(false);
+
+		// Load/show the pills one by one to prevent a massive lag spike (and for a beautiful chain effect ^^)
+		StartCoroutine(ShowPillsAsync());
 	}
 
 	/// <summary>
@@ -181,31 +244,17 @@ public class PetsScreenController : MonoBehaviour {
 		// We must have the data!
 		if(m_dragonData == null) return;
 
-		// Powers
-		for(int i = 0; i < m_powerIcons.Count; i++) {
-			// 3 possibilities: equipped, not-equipped or invisible
-			if(i < m_dragonData.pets.Count) {
-				// Show
-				m_powerIcons[i].gameObject.SetActive(true);
-
-				// Equipped?
-				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_dragonData.pets[i]);
-				if(petDef == null) {
-					m_powerIcons[i].InitFromDefinition(null, false, _animate);
-				} else {
-					// Get power definition
-					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
-					m_powerIcons[i].InitFromDefinition(powerDef, false, _animate);
-				}
-			} else {
-				// Instant hide
-				m_powerIcons[i].anim.ForceHide(false);
-			}
-		}
+		// Init pets collection counter
+		m_counterText.text = LocalizationManager.SharedInstance.Localize(
+			"TID_FRACTION",
+			StringUtils.FormatNumber(UsersManager.currentUser.petCollection.unlockedPetsCount),
+			StringUtils.FormatNumber(m_defs.Count)
+		) + " unlocked";	// [AOC] HARDCODED!!
 
 		// Slots
-		for(int i = 0; i < m_slotInfos.Length; i++) {
-			m_slotInfos[i].Refresh(m_dragonData, _animate);
+		for(int i = 0; i < m_petSlots.Count; i++) {
+			// Initialize slot
+			m_petSlots[i].Refresh(m_dragonData, _animate);
 		}
 	}
 
@@ -215,28 +264,84 @@ public class PetsScreenController : MonoBehaviour {
 	/// <param name="_petSku">Pet sku.</param>
 	/// <param name="_additionalDelay">Add extra delay, mostly to sync with other animations</param>
 	public void ScrollToPet(string _petSku, float _additionalDelay = 0f) {
-		// Only if already initialized
-		if(m_tabsByCategory == null) return;
+		// Find pet's pill
+		for(int i = 0; i < m_pills.Count; i++) {
+			if(m_pills[i].def.sku == _petSku) {
+				PetPill pill = m_pills[i];
 
-		// Find tab where the pet is
-		for(int i = 0; i < m_categoryTabs.screens.Count; i++) {
-			// Does this tab have the target pet?
-			PetCategoryTab tab = (PetCategoryTab)m_categoryTabs.screens[i];
-			PetPill pill = tab.GetPill(_petSku);
-			if(pill != null) {
-				// Found!! Make it the active tab
-				PetCategoryTab previousTab = (PetCategoryTab)m_categoryTabs.currentScreen;
-				m_categoryTabs.GoToScreen(tab);
+				// Prepare unlock anim
+				pill.PrepareUnlockAnim();
 
-				// Scroll to the target pill, adding a small delay if we're changing tabs
-				float delay = _additionalDelay;
-				if(previousTab != tab) {
-					delay += 0.3f;
-				}
-				tab.ScrollToPill(pill, delay);
+				// Kill any existing anim on the scrolllist
+				m_scrollList.DOKill();
+
+				// Scroll to pill!
+				float pillDeltaX = Mathf.InverseLerp(0, m_pills.Count/2f, Mathf.Floor(i/2f));	// scroll list has 2 rows! super-dirty trick
+				m_scrollList.DOHorizontalNormalizedPos(pillDeltaX, 0.15f)
+					.SetDelay(_additionalDelay)
+					.SetEase(Ease.OutQuad)
+					.OnComplete(() => {
+						// Show unlock anim!
+						pill.LaunchUnlockAnim();
+					});
 
 				// We're done! break loop
 				break;
+			}
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Show/load all the pills one by one to prevent a massive Awake lag spike
+	/// (and for a beautiful chain effect ^_^).
+	/// </summary>
+	/// <returns>The coroutine.</returns>
+	private IEnumerator ShowPillsAsync() {
+		// Scroll to the start of the list
+		m_scrollList.normalizedPosition = Vector2.one;
+
+		// Hide all pills
+		for(int i = 0; i < m_pills.Count; i++) {
+			m_pills[i].animator.ForceHide(false);	// Force to interrupt any running hide animation (if the popup was closed and reopened very fast) 
+		}
+
+		// Initialize one pill for each pet
+		for(int i = 0; i < m_defs.Count; i++) {
+			// Interrupt if leaving the screen!
+			if(!isActiveAndEnabled) {
+				yield break;
+			}
+
+			// If we don't have enough pills, instantiate new ones
+			if(i >= m_pills.Count) {
+				// Instantiate pill
+				GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, m_scrollList.content, false);
+				m_pills.Add(newPillObj.GetComponent<PetPill>());
+				m_pills[i].animator.ForceHide(false);	// Start hidden
+
+				// React if the pill is tapped!
+				m_pills[i].OnPillTapped.AddListener(OnPillTapped);
+
+				// Keep scroll at 0 when creating new pills (otherwise it scrolls to random position)
+				m_scrollList.horizontalNormalizedPosition = 0f;
+			}
+
+			// Initialize pill
+			m_pills[i].Init(m_defs[i], m_dragonData);
+
+			// Show with a nice animation
+			// Check filters to see whether this pet must be shown or not
+			m_pills[i].animator.Set(
+				petFilters.CheckFilter(m_pills[i].def)
+			);
+
+			// Wait a bit before next pill
+			// Except for the first 5-6 pills, we want to show something!
+			if(i >= 6) {
+				yield return new WaitForSecondsRealtime(m_pillCreationDelay);
 			}
 		}
 	}
@@ -249,6 +354,15 @@ public class PetsScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_animator">The animator that triggered the event.</param>
 	public void OnShowPreAnimation(ShowHideAnimator _animator) {
+		// Propagate to scene
+		petsScene.OnShowPreAnimation();
+
+		// Reset scroll lists and program initial animation (except first time, weird scrolling behaviour when instantiating the pills for the first time)
+		m_scrollList.horizontalNormalizedPosition = 0f;
+		if(m_pills.Count > 0) {
+			m_scrollList.DOHorizontalNormalizedPos(-25f, 1f).From().SetEase(Ease.OutCubic).SetDelay(0.3f).SetUpdate(true);
+		}
+
 		// Refresh with initial data!
 		Initialize();
 	}
@@ -287,6 +401,15 @@ public class PetsScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Screen is about to be closed.
+	/// </summary>
+	/// <param name="_animator">The animator that triggered the event.</param>
+	public void OnHidePreAnimation(ShowHideAnimator _animator) {
+		// Propagate to scene
+		petsScene.OnHidePreAnimation();
+	}
+
+	/// <summary>
 	/// The pets loadout has changed in the menu.
 	/// </summary>
 	/// <param name="_dragonSku">The dragon whose assigned pets have changed.</param>
@@ -298,5 +421,41 @@ public class PetsScreenController : MonoBehaviour {
 
 		// Save persistence - centralize all pets management persistence in here
 		PersistenceManager.Save();
+	}
+
+	/// <summary>
+	/// A pet pill has been tapped.
+	/// </summary>
+	/// <param name="_pill">The target pill.</param>
+	private void OnPillTapped(PetPill _pill) {
+		// Nothing to do if pet is locked
+		if(_pill.locked) {
+			// Different feedback if pet is unlocked with golden egg fragments
+			if(_pill.special) {
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO_SPECIAL"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			} else {
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			}
+		}
+
+		// If equipped in the target slot, try to unequip
+		else if(_pill.equipped) {
+			// Unequip
+			UsersManager.currentUser.UnequipPet(m_dragonData.def.sku, _pill.def.sku);
+		} 
+
+		// Otherwise try to equip to the target slot
+		else {
+			// Equip - find first available slot
+			int newSlot = UsersManager.currentUser.EquipPet(m_dragonData.def.sku, _pill.def.sku);
+
+			// Feedback
+			if(newSlot == -4) {
+				UIFeedbackText text = UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_NO_SLOTS"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// There are no available slots!\nUnequip another pet before equipping this one.
+			} else if(newSlot < 0) {
+				UIFeedbackText text = UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("Unknown error!"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// There are no available slots!\nUnequip another pet before equipping this one.
+				text.text.color = Color.red;
+			}
+		}
 	}
 }
