@@ -204,8 +204,10 @@ public class PetsScreenController : MonoBehaviour {
 				return 1;
 			} else {
 				// Both pets locked or unlocked: sort by category first (following filter buttons order), by content order afterwards
-				int catOrder1 = filterOrder[_def1.Get("category")];
-				int catOrder2 = filterOrder[_def2.Get("category")];
+				int catOrder1 = int.MaxValue;
+				int catOrder2 = int.MaxValue;
+				filterOrder.TryGetValue(_def1.Get("category"), out catOrder1);
+				filterOrder.TryGetValue(_def2.Get("category"), out catOrder2);
 				if(catOrder1 < catOrder2) {
 					return -1;
 				} else if(catOrder2 < catOrder1) {
