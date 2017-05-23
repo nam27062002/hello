@@ -43,13 +43,9 @@ public class FireLightning : DragonBreathBehaviour {
 
 	public Object m_particleStartPrefab;
 	public Object m_particleEndPrefab;
-    public Object m_particleNPCCollisionPrefab;
-
-    public float m_timeNPCCollision = 1.0f;
 
     GameObject m_particleStart;
 	GameObject m_particleEnd;
-    GameObject m_particleNPCCollision;
 
     Transform m_mouthTransform;
 	Transform m_headTransform;
@@ -57,8 +53,6 @@ public class FireLightning : DragonBreathBehaviour {
 	int m_groundMask;
 	int m_waterMask;
 	bool m_insideWater;
-    float m_timeNPCCollisionCurrent = 0.0f;
-    Transform m_preyTransform = null;
 
     Lightning[] m_rays = null;// new Lightning[3];
     Lightning[] m_rays2 = null;// new Lightning[3];
@@ -150,15 +144,6 @@ public class FireLightning : DragonBreathBehaviour {
 			m_particleEnd.gameObject.SetActive(true);
 		}
 
-        if (m_particleNPCCollisionPrefab)
-            m_particleNPCCollision = (GameObject)Object.Instantiate(m_particleNPCCollisionPrefab);
-        if (m_particleNPCCollision)
-        {
-            m_particleNPCCollision.transform.localPosition = Vector3.zero;
-            m_particleNPCCollision.gameObject.SetActive(true);
-        }
-
-
         m_mouthTransform = transform.FindTransformRecursive("Rays_Dummy");
 		m_headTransform = GetComponent<DragonMotion>().head;
 
@@ -178,8 +163,6 @@ public class FireLightning : DragonBreathBehaviour {
                 m_rays[2].m_segmentLength = m_segmentLength;
                 m_rays[2].m_initOffset = m_offsetRays * 2.0f;
         */
-
-        m_timeNPCCollisionCurrent = m_timeNPCCollision;
 
         m_actualLength = m_length;
 		m_currentLength = m_length;
@@ -364,8 +347,6 @@ public class FireLightning : DragonBreathBehaviour {
 				AI.IMachine machine =  preys[i].machine;
 				if (machine != null) {					
 					machine.Burn(transform);
-                    m_preyTransform = preys[i].transform;
-                    m_timeNPCCollisionCurrent = m_timeNPCCollision;
 				}
 			}
 			/*
@@ -374,24 +355,6 @@ public class FireLightning : DragonBreathBehaviour {
 			}
 			*/	
 		}
-
-        if (m_particleNPCCollision)
-        {
-            bool showNPCCollision = m_timeNPCCollisionCurrent > 0.0f;
-            m_particleNPCCollision.gameObject.SetActive(showNPCCollision);
-            if (m_preyTransform != null)
-            {
-                Vector3 npos = m_preyTransform.position - m_mouthTransform.position;
-                Vector3 NPCEffectPosition = m_mouthTransform.position + (-m_mouthTransform.right * Vector3.Dot(-m_mouthTransform.right, npos));
-                NPCEffectPosition.z -= 2.0f;
-                m_particleNPCCollision.transform.position = NPCEffectPosition;
-
-            }
-
-        }
-
-        m_timeNPCCollisionCurrent -= Time.deltaTime;
-
 
         m_bounds2D.center = m_mouthTransform.position;
 		m_bounds2D.width = Mathf.Max( m_actualLength, m_maxAmplitude);
