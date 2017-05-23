@@ -23,6 +23,33 @@ public class UIColorFX : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	// Auxiliar class
+	[System.Serializable]
+	public class Setup {
+		// Members
+		public Color colorMultiply = Color.white;
+		public Color colorAdd = new Color(0f, 0f, 0f, 0f);	// Alpha 0!
+
+		[Space]
+		[Range(0f, 1f)] public float alpha = 1f;	// Will be multiplied to the source and tint alpha components
+
+		[Space]
+		[Range(-1f, 1f)] public float brightness = 0f;
+		[Range(-1, 1f)] public float saturation = 0f;
+		[Range(-1, 1)] public float contrast = 0f;
+
+		/// <summary>
+		/// Parametrized constructor.
+		/// </summary>
+		public Setup(Color _multiply, Color _add, float _alpha, float _brightness, float _saturation, float _contrast) {
+			colorMultiply = _multiply;
+			colorAdd = _add;
+			alpha = _alpha;
+			brightness = _brightness;
+			saturation = _saturation;
+			contrast = _contrast;
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -116,6 +143,36 @@ public class UIColorFX : MonoBehaviour {
 		UpdateValues();
 	}
 
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Apply a specific setup to this color FX.
+	/// </summary>
+	/// <param name="_setup">The setup to be applied.</param>
+	public void Apply(Setup _setup) {
+		// Check params
+		if(_setup == null) return;
+
+		// Copy values
+		this.colorMultiply = _setup.colorMultiply;
+		this.colorAdd = _setup.colorAdd;
+
+		this.alpha = _setup.alpha;
+
+		this.brightness = _setup.brightness;
+		this.saturation = _setup.saturation;
+		this.contrast = _setup.contrast;
+
+		// If in edit mode, force an update
+		#if UNITY_EDITOR
+		if(!Application.isPlaying) {
+			SetDirty();
+			Update();
+		}
+		#endif
+	}
+
 	/// <summary>
 	/// Reset to default values!
 	/// </summary>
@@ -123,10 +180,18 @@ public class UIColorFX : MonoBehaviour {
 		brightness = 0f;
 		saturation = 0f;
 		contrast = 0f;
+
+		// If in edit mode, force an update
+		#if UNITY_EDITOR
+		if(!Application.isPlaying) {
+			SetDirty();
+			Update();
+		}
+		#endif
 	}
 
 	/// <summary>
-	/// Force an refresh on the next update call.
+	/// Force an refresh of the materials on the next update call.
 	/// </summary>
 	public void SetDirty() {
 		m_dirty = true;
