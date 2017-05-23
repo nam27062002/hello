@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4906642400672740}
   - component: {fileID: 198633404546712196}
   - component: {fileID: 199857609436390130}
-  - component: {fileID: 114589688599028024}
   m_Layer: 0
   m_Name: PS_RayFlash
   m_TagString: Untagged
@@ -104,20 +103,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114589688599028024
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1212766883835268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_activeTime: 1
-  m_returnTo: 1
-  m_disableOnInvisible: 1
 --- !u!198 &198203646549018648
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -127,7 +112,7 @@ ParticleSystem:
   serializedVersion: 5
   lengthInSec: 0.4
   simulationSpeed: 1
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
   autoRandomSeed: 1
@@ -173,7 +158,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1414268665
+  randomSeed: 79541450
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -2704,7 +2689,7 @@ ParticleSystem:
   serializedVersion: 5
   lengthInSec: 1
   simulationSpeed: 1
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
   autoRandomSeed: 1
@@ -2750,7 +2735,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 495496201
+  randomSeed: -101443059
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -5269,7 +5254,7 @@ ParticleSystem:
   serializedVersion: 5
   lengthInSec: 1
   simulationSpeed: 1
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
   autoRandomSeed: 1
@@ -5315,7 +5300,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 818442770
+  randomSeed: 2039485773
   InitialModule:
     serializedVersion: 3
     enabled: 1
