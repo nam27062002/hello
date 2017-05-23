@@ -20,6 +20,7 @@ using TMPro;
 /// <summary>
 /// Main controller for the pets menu screen.
 /// </summary>
+[RequireComponent(typeof(PetFilters))]
 public class PetsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -58,7 +59,7 @@ public class PetsScreenController : MonoBehaviour {
 
 	// Internal references
 	private NavigationShowHideAnimator m_animator = null;
-	private NavigationShowHideAnimator animator {
+	public NavigationShowHideAnimator animator {
 		get { 
 			if(m_animator == null) {
 				m_animator = GetComponent<NavigationShowHideAnimator>();
@@ -68,12 +69,22 @@ public class PetsScreenController : MonoBehaviour {
 	}
 
 	private PetsSceneController m_petsScene = null;
-	private PetsSceneController petsScene {
+	public PetsSceneController petsScene {
 		get {
 			if(m_petsScene == null) {
 				m_petsScene = InstanceManager.menuSceneController.GetScreenScene(MenuScreens.PETS).GetComponent<PetsSceneController>();
 			}
 			return m_petsScene;
+		}
+	}
+
+	private PetFilters m_petFilters = null;
+	public PetFilters petFilters {
+		get {
+			if(m_petFilters == null) {
+				m_petFilters = this.GetComponent<PetFilters>();
+			}
+			return m_petFilters;
 		}
 	}
 
@@ -177,7 +188,13 @@ public class PetsScreenController : MonoBehaviour {
 		}
 
 		// Sort them!
-		// Put owned pets at the beginning of the list, then sort by order
+		// Cache some data
+		Dictionary<string, int> filterOrder = new Dictionary<string, int>();
+		for(int i = 0; i < petFilters.filterButtons.Length; i++) {
+			filterOrder[petFilters.filterButtons[i].filterName] = i;
+		}
+
+		// Put owned pets at the beginning of the list, then sort by category (following filter buttons order), finally by content order
 		m_defs.Sort((DefinitionNode _def1, DefinitionNode _def2) => {
 			bool unlocked1 = UsersManager.currentUser.petCollection.IsPetUnlocked(_def1.sku);
 			bool unlocked2 = UsersManager.currentUser.petCollection.IsPetUnlocked(_def2.sku);
@@ -186,7 +203,17 @@ public class PetsScreenController : MonoBehaviour {
 			} else if(unlocked2 && !unlocked1) {
 				return 1;
 			} else {
-				return _def1.GetAsInt("order").CompareTo(_def2.GetAsInt("order"));
+				// Both pets locked or unlocked: sort by category first (following filter buttons order), by content order afterwards
+				int catOrder1 = filterOrder[_def1.Get("category")];
+				int catOrder2 = filterOrder[_def2.Get("category")];
+				if(catOrder1 < catOrder2) {
+					return -1;
+				} else if(catOrder2 < catOrder1) {
+					return 1;
+				} else {
+					// Both pets of the same category: sort by order
+					return _def1.GetAsInt("order").CompareTo(_def2.GetAsInt("order"));
+				}
 			}
 		});
 
@@ -198,6 +225,9 @@ public class PetsScreenController : MonoBehaviour {
 		for(int i = 0; i < m_petSlots.Count; i++) {
 			m_petSlots[i].Init(i);
 		}
+
+		// Reset filters
+		petFilters.ResetFilters();
 
 		// Do a first refresh - without animation
 		Refresh(false);
@@ -303,7 +333,10 @@ public class PetsScreenController : MonoBehaviour {
 			m_pills[i].Init(m_defs[i], m_dragonData);
 
 			// Show with a nice animation
-			m_pills[i].animator.Show();
+			// Check filters to see whether this pet must be shown or not
+			m_pills[i].animator.Set(
+				petFilters.CheckFilter(m_pills[i].def)
+			);
 
 			// Wait a bit before next pill
 			// Except for the first 5-6 pills, we want to show something!
