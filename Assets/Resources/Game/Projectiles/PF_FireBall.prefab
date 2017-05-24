@@ -163,7 +163,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
-  radius: 3
+  radius: 1.25
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114228659561106630
 MonoBehaviour:
@@ -176,7 +176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36f0432059e6c43ffbaedba9e35ad590, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_speed: 10
+  m_speed: 40
   m_maxTime: 6
   m_explosionParticle: {fileID: 106872, guid: ba000e406e5d348079b53ab36a4f771c, type: 2}
 --- !u!135 &135834799574460070
@@ -189,7 +189,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 3
+  m_Radius: 1.25
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &198102917321396888
 ParticleSystem:
@@ -198,9 +198,9 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1543462450303928}
   serializedVersion: 5
-  lengthInSec: 0.2
+  lengthInSec: 1
   simulationSpeed: 1
-  looping: 1
+  looping: 0
   prewarm: 0
   playOnAwake: 1
   autoRandomSeed: 0
@@ -2751,9 +2751,9 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1124543638827316}
   serializedVersion: 5
-  lengthInSec: 0.2
+  lengthInSec: 1
   simulationSpeed: 1
-  looping: 1
+  looping: 0
   prewarm: 0
   playOnAwake: 1
   autoRandomSeed: 0
@@ -3125,7 +3125,7 @@ ParticleSystem:
         m_RotationOrder: 0
       minMaxState: 3
     randomizeRotationDirection: 0
-    maxNumParticles: 48
+    maxNumParticles: 96
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -5274,9 +5274,9 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1258663364131856}
   serializedVersion: 5
-  lengthInSec: 0.2
+  lengthInSec: 1
   simulationSpeed: 1
-  looping: 1
+  looping: 0
   prewarm: 0
   playOnAwake: 1
   autoRandomSeed: 0
@@ -5648,7 +5648,7 @@ ParticleSystem:
         m_RotationOrder: 0
       minMaxState: 3
     randomizeRotationDirection: 0
-    maxNumParticles: 48
+    maxNumParticles: 96
     size3D: 0
     rotation3D: 0
     gravityModifier:
