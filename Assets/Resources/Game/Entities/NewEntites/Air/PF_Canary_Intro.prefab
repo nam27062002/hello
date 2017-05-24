@@ -777,7 +777,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":2,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":5,"panicSpeed":8,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":0.85,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":5,"panicSpeed":8,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":0.85,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
   m_databaseKey: PF_Canary_Intro
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 10
@@ -873,8 +873,8 @@ Rigidbody:
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 112
+  m_Interpolate: 0
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &114351589482497164
 MonoBehaviour:
@@ -916,16 +916,16 @@ MonoBehaviour:
     m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 120
-    m_dragonStyleRotation: 0
+    m_dragonStyleRotation: 1
     m_faceDirection: 1
-    m_rollRotation: 1
+    m_rollRotation: 0
     m_rollAngle: 35
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
     m_limitVerticalRotation: 1
-    m_faceUpAngle: 355
-    m_faceDownAngle: 5
+    m_faceUpAngle: 35
+    m_faceDownAngle: 15
 --- !u!135 &135000012938702076
 SphereCollider:
   m_ObjectHideFlags: 1

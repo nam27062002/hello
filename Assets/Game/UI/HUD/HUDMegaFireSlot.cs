@@ -42,7 +42,9 @@ public class HUDMegaFireSlot : MonoBehaviour {
 		m_delta = 1f / 0.25f;
 
 		GameObject go = ParticleManager.Spawn(m_burstParticle);
-		go.transform.SetParent(transform, false);
+		if (go != null) {
+			go.transform.SetParent(transform, false);
+		}
 
 		m_state = State.Fill;
 	}

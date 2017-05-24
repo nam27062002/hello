@@ -80,6 +80,8 @@ public class Spawner : AbstractSpawner {
 
 	[Separator("Respawn")]
 	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
+	[Tooltip("NPCs which always give Premium Currency as reward have a, content based, change to not respawn reduced over kills.")]
+	[SerializeField] private bool m_isPremiumCurrencyNPC = false;
 	[SerializeField] private SpawnPointSeparation m_homePosMethod = SpawnPointSeparation.Sphere;
 	[SerializeField] private Range m_homePosDistance = new Range(1f, 2f);
 
@@ -92,6 +94,10 @@ public class Spawner : AbstractSpawner {
 	// Attributes
 	//-----------------------------------------------
 	private int m_prefabIndex;
+
+	private string[] m_entitySku;
+	private float m_pcProbCoefA;
+	private float m_pcProbCoefB;
 
 	protected EntityGroupController m_groupController;		
 
@@ -149,8 +155,17 @@ public class Spawner : AbstractSpawner {
 			}
 		}
 
-		if (InstanceManager.player != null && enabledByTier) {			
+		if (InstanceManager.player != null && enabledByTier) {
 			if (m_entityPrefabList != null && m_entityPrefabList.Length > 0 && rnd <= m_activationChance) {
+
+				m_entitySku = new string[GetMaxEntities()];
+				for (int i = 0; i < m_entitySku.Length; i++) {
+					m_entitySku[i] = "";
+				}
+
+				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+				m_pcProbCoefA = def.GetAsFloat("flyingPigsProbaCoefA", 1f);
+				m_pcProbCoefB = def.GetAsFloat("flyingPigsProbaCoefB", 1f);
 
 				if (m_activationKillTriggers == null) {
 					m_activationKillTriggers = new SpawnKillCondition[0];
@@ -219,8 +234,7 @@ public class Spawner : AbstractSpawner {
 		m_area = GetArea();
 
 		m_groupController = GetComponent<EntityGroupController>();
-		if (m_groupController)
-		{
+		if (m_groupController) {
 			m_groupController.Init(m_quantity.max);
 		}
 
@@ -240,6 +254,23 @@ public class Spawner : AbstractSpawner {
 			if (EntitiesAlive == 0) {
 				// Respawn on cooldown?
 				if (m_gameSceneController.elapsedSeconds > m_respawnTime || DebugSettings.ignoreSpawnTime) {
+					if (m_isPremiumCurrencyNPC) {
+						float eaten = 1f;
+
+						string key = m_entitySku[m_prefabIndex];
+						if (RewardManager.killCount.ContainsKey(key)) {
+							eaten = RewardManager.killCount[key];
+						}
+
+						float rnd = Random.Range(0f, 1f);
+						float prob = m_pcProbCoefA / (m_pcProbCoefB * eaten);
+
+						if (rnd > prob) {
+							m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
+							return false;
+						}
+					}
+
 					// Everything ok! Spawn!
 					return true;
 				}
@@ -292,7 +323,9 @@ public class Spawner : AbstractSpawner {
 		return i;
 	}
 
-	protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
+	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
+		m_entitySku[index] = spawning.sku;
+
 		if (index > 0) {
 			originPos += RandomStartDisplacement((int)index); // don't let multiple entities spawn on the same point
 		}

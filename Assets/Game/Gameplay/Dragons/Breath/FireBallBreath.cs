@@ -33,19 +33,16 @@ public class FireBallBreath : DragonBreathBehaviour {
 		m_direction = m_dragonMotion.direction;
 
 		m_timer -= Time.deltaTime;
-		if ( m_timer <= 0 )
-		{
+		if (m_timer <= 0) {
 			m_timer += m_timeBetweenFires;
 			// Throw fire ball!!!
-			GameObject go = PoolManager.GetInstance(m_fireBallPrefab.name);
-			if ( go != null )
-			{
+			GameObject go = PoolManager.GetInstance (m_fireBallPrefab.name);
+			if (go != null) {
 				go.transform.position = m_mouthTransform.position;
-				FireBall fb = go.GetComponent<FireBall>();
-				if ( fb != null )
-				{
-					fb.SetBreath( this );
-					fb.Shoot( m_direction);
+				FireBall fb = go.GetComponent<FireBall> ();
+				if (fb != null) {
+					fb.SetBreath (this);
+					fb.Shoot (m_direction);
 					fb.m_speed = m_dragonMotion.speed + m_speedBall;
 				}
 			}

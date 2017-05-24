@@ -178,7 +178,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_speed: 40
   m_maxTime: 6
-  m_explosionParticle: {fileID: 106872, guid: ba000e406e5d348079b53ab36a4f771c, type: 2}
+  m_explosionParticle: 
 --- !u!135 &135834799574460070
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -203,7 +203,7 @@ ParticleSystem:
   looping: 0
   prewarm: 0
   playOnAwake: 1
-  autoRandomSeed: 0
+  autoRandomSeed: 1
   startDelay:
     scalar: 0
     maxCurve:
@@ -641,7 +641,7 @@ ParticleSystem:
     enabled: 1
     serializedVersion: 3
     rateOverTime:
-      scalar: 0
+      scalar: 24
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -680,7 +680,7 @@ ParticleSystem:
         m_RotationOrder: 4
       minMaxState: 0
     rateOverDistance:
-      scalar: 2
+      scalar: 0
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1276,10 +1276,10 @@ ParticleSystem:
       minMaxState: 0
     inWorldSpace: 0
   InheritVelocityModule:
-    enabled: 0
+    enabled: 1
     m_Mode: 1
     m_Curve:
-      scalar: 1
+      scalar: 0.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -3194,7 +3194,7 @@ ParticleSystem:
     enabled: 1
     serializedVersion: 3
     rateOverTime:
-      scalar: 0
+      scalar: 128
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -3233,7 +3233,7 @@ ParticleSystem:
         m_RotationOrder: 4
       minMaxState: 0
     rateOverDistance:
-      scalar: 8
+      scalar: 0
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -3799,10 +3799,10 @@ ParticleSystem:
       minMaxState: 3
     inWorldSpace: 0
   InheritVelocityModule:
-    enabled: 0
+    enabled: 1
     m_Mode: 1
     m_Curve:
-      scalar: 1
+      scalar: 0.6
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -5717,7 +5717,7 @@ ParticleSystem:
     enabled: 1
     serializedVersion: 3
     rateOverTime:
-      scalar: 0
+      scalar: 128
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -5756,7 +5756,7 @@ ParticleSystem:
         m_RotationOrder: 4
       minMaxState: 0
     rateOverDistance:
-      scalar: 8
+      scalar: 0
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -6322,10 +6322,10 @@ ParticleSystem:
       minMaxState: 3
     inWorldSpace: 0
   InheritVelocityModule:
-    enabled: 0
+    enabled: 1
     m_Mode: 1
     m_Curve:
-      scalar: 1
+      scalar: 0.6
       maxCurve:
         serializedVersion: 2
         m_Curve:
