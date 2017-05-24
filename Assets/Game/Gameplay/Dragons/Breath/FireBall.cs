@@ -81,6 +81,12 @@ public class FireBall : MonoBehaviour
 
 		ParticleManager.Spawn("PF_Explosion", transform.position);
 
-		PoolManager.ReturnInstance( gameObject );
+        StartCoroutine(DisableInTime());
+
 	}
+    IEnumerator DisableInTime()
+    {
+        yield return new WaitForSeconds(2);
+        PoolManager.ReturnInstance(gameObject);
+    }
 }
