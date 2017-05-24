@@ -163,7 +163,7 @@ public class Spawner : AbstractSpawner {
 					m_entitySku[i] = "";
 				}
 
-				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS);
+				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
 				m_pcProbCoefA = def.GetAsFloat("flyingPigsProbaCoefA", 1f);
 				m_pcProbCoefB = def.GetAsFloat("flyingPigsProbaCoefB", 1f);
 
