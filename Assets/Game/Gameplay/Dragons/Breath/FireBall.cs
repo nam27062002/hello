@@ -9,13 +9,31 @@ public class FireBall : MonoBehaviour
 
 	public float m_speed;
 	public float m_maxTime;
-	public GameObject m_explosionParticle;
+	public string m_explosionParticle;
 	private DragonBreathBehaviour m_breath;
+	private ParticleSystem[] m_PSbreath;
 
 	// Use this for initialization
 	void Start () 
 	{
 		m_area = GetComponent<CircleArea2D>();
+		m_PSbreath = GetComponentsInChildren<ParticleSystem>();
+	}
+
+	void PlayBreath(bool value)
+	{
+		foreach (ParticleSystem ps in m_PSbreath)
+		{
+			if (value)
+			{
+				ps.Play();
+			}
+			else
+			{
+				ps.Stop();
+			}
+		}
+
 	}
 	
 	// Update is called once per frame
@@ -45,6 +63,7 @@ public class FireBall : MonoBehaviour
 	{
 		m_direction = _direction;
 		m_timer = 0;
+		PlayBreath (true);
 	}
 
 	void OnCollisionEnter( Collision _collision )
@@ -84,15 +103,16 @@ public class FireBall : MonoBehaviour
 		}
 
         m_speed = 0.0f;
-		ParticleManager.Spawn("PF_Explosion", transform.position);
+//		ParticleManager.Spawn(m_explosionParticle, transform.position);
 
 //        PoolManager.ReturnInstance(gameObject);
+		PlayBreath(false);
         StartCoroutine(DisableInTime());
 
 	}
     IEnumerator DisableInTime()
     {
-        yield return new WaitForSeconds(1);
+		yield return new WaitForSeconds(1.0f);
         PoolManager.ReturnInstance(gameObject);
     }
 }
