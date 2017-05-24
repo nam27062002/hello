@@ -79,9 +79,18 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     // Delegate called when the spawner is done with the stuff it had to do
     public System.Action<AbstractSpawner> OnDone { get; set; }
 
+	public bool IsRespawing() {
+		return (State >= EState.Respawning) && (State < EState.Alive);
+	}
+
     public bool CanRespawn() {
         return (State == EState.Respawning) ? CanRespawnExtended() : false;       
     }
+
+	// this spawner will kill its entities if it is outside camera disable area
+	public virtual bool MustCheckCameraBounds() {
+		return false;
+	}
     
     //return true if it respawned completelly
     public bool Respawn() {

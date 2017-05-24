@@ -124,6 +124,11 @@ public class SpawnerStar : AbstractSpawner {
 		ResetSpawnTimer();
 	}
 
+	// this spawner will kill its entities if it is outside camera disable area
+	public override bool MustCheckCameraBounds() {
+		return true;
+	}
+
 	public override void DrawStateGizmos() {
 		switch (State) {
 			case EState.Init: 					Gizmos.color = Color.grey; break;

@@ -50,6 +50,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	private HashSet<ISpawner> m_selectedSpawners = new HashSet<ISpawner>();
     
     public List<ISpawner> m_spawning;
+	private List<ISpawner> m_activeMustCheckCameraBounds;
 
     private float m_lastX, m_lastY;
 
@@ -66,6 +67,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
     private void Awake() {
 		m_spawners = new List<ISpawner>();
 		m_spawning = new List<ISpawner>();
+		m_activeMustCheckCameraBounds = new List<ISpawner>();
 
         if (FeatureSettingsManager.IsDebugEnabled)
             Debug_Awake();
@@ -278,6 +280,10 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
                 }
                 else if (sp.Respawn())
                 {
+					if (sp.MustCheckCameraBounds()) 
+					{
+						m_activeMustCheckCameraBounds.Add(sp);
+					}
                     m_spawning.RemoveAt(0);
                 }
                 if (m_watch.ElapsedMilliseconds - start >= SPAWNING_MAX_TIME)
@@ -286,6 +292,26 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
                 }
             }
         }
+
+		if (m_activeMustCheckCameraBounds.Count > 0) 
+		{
+			for (int i = 0; i < m_activeMustCheckCameraBounds.Count; ++i)
+			{
+				sp = m_activeMustCheckCameraBounds[i];
+
+				if (m_newCamera.IsInsideDeactivationArea(sp.boundingRect))
+				{
+					sp.ForceRemoveEntities();
+					m_activeMustCheckCameraBounds.RemoveAt(i);
+					i++;
+				} 
+				else if (sp.IsRespawing())
+				{
+					m_activeMustCheckCameraBounds.RemoveAt(i);
+					i++;
+				}
+			}
+		}
 	}
 
     private int SortSpawners(ISpawner a, ISpawner b)
