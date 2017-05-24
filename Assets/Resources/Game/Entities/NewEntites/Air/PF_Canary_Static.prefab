@@ -470,7 +470,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":0,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":0,"panicSpeed":0,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":0,"catchUpSpeed":0,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":0,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":0,"panicSpeed":0,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":0,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":0,"catchUpSpeed":0,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Canary_Static
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
@@ -860,7 +860,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &114000010333019328
 MonoBehaviour:
@@ -888,7 +888,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_affectedByDragonTrample: 0
-  m_enableSensor: 0
+  m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
     m_sightRadius: 10
@@ -916,16 +916,16 @@ MonoBehaviour:
     m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 170
-    m_dragonStyleRotation: 0
+    m_dragonStyleRotation: 1
     m_faceDirection: 1
-    m_rollRotation: 1
+    m_rollRotation: 0
     m_rollAngle: 35
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
     m_limitVerticalRotation: 1
-    m_faceUpAngle: 340
-    m_faceDownAngle: 20
+    m_faceUpAngle: 35
+    m_faceDownAngle: 15
 --- !u!135 &135000010285406574
 SphereCollider:
   m_ObjectHideFlags: 1

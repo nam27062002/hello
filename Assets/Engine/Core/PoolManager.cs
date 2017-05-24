@@ -12,6 +12,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	// Entity Pools requests (delayed pool manager)
 	private Dictionary<string, PoolRequest> m_poolRequests = new Dictionary<string, PoolRequest>();
 	private Dictionary<string, Pool> m_pools = new Dictionary<string, Pool>();
+	private Dictionary<Pool, PoolHandler> m_handlers = new Dictionary<Pool, PoolHandler>();
 	private List<Pool> m_iterator = new List<Pool>();
 
 	void Update() {
@@ -70,7 +71,11 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 					}
 				} else {
 					p.Clear();
-					instance.m_iterator.Remove(instance.m_pools[keys[i]]);
+					instance.m_iterator.Remove(p);
+
+					instance.m_handlers[p].Invalidate();
+					instance.m_handlers.Remove(p);
+
 					instance.m_pools.Remove(keys[i]);
 				}
 			}
@@ -121,7 +126,10 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 					Pool pool = instance.m_pools[keys[i]];
 					if (pool.isTemporary) {
 						pool.Clear();
-						instance.m_iterator.Remove(instance.m_pools[keys[i]]);
+
+						instance.m_iterator.Remove(pool);
+						instance.m_handlers[pool].Invalidate();
+						instance.m_handlers.Remove(pool);
 						instance.m_pools.Remove(keys[i]);
 					}
 				}
@@ -132,21 +140,28 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	/// <summary>
 	/// Default pool creation. Will be created as child of the Singleton GameObject.
 	/// </summary>
-	public static void CreatePool(GameObject _prefab, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
+	public static PoolHandler CreatePool(GameObject _prefab, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
 		// Use alternative function
-		CreatePool(_prefab, instance.transform, _initSize, _canGrow, _temporay);
+		return CreatePool(_prefab, instance.transform, _initSize, _canGrow, _temporay);
 	}
 
 	/// <summary>
 	/// Alternative version specifying where to create the pool. All instances will
 	/// be created as children of _container.
 	/// </summary>
-	public static void CreatePool(GameObject _prefab, Transform _container, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
+	public static PoolHandler CreatePool(GameObject _prefab, Transform _container, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
 		// Skip if the pool already exists
-		if(!instance.m_pools.ContainsKey(_prefab.name)) {
+		if (instance.m_pools.ContainsKey(_prefab.name)) {
+			return instance.m_handlers[instance.m_pools[_prefab.name]];
+		} else {
 			Pool pool = new Pool(_prefab, _container, _initSize, _canGrow, _container == instance.transform, _temporay);	// [AOC] Create new container if given container is the Pool Manager.
+			PoolHandler handler = new PoolHandler(pool);
+
 			instance.m_pools.Add(_prefab.name, pool);
+			instance.m_handlers.Add(pool, handler);
 			instance.m_iterator.Add(pool);
+
+			return handler;
 		}
 	}
 
@@ -157,9 +172,9 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	/// <param name="_prefabPath">Prefab path. Resources path without the prefab name.</param>
 	/// <param name="_initSize">Init size.</param>
 	/// <param name="_canGrow">If set to <c>true</c> can grow.</param>
-	public static void CreatePool(string _prefabName, string _prefabPath, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
+	public static PoolHandler CreatePool(string _prefabName, string _prefabPath, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
 		// Use alternative function
-		CreatePool(_prefabName, _prefabPath, instance.transform, _initSize, _canGrow, _temporay);
+		return CreatePool(_prefabName, _prefabPath, instance.transform, _initSize, _canGrow, _temporay);
 	}
 
 	/// <summary>
@@ -170,16 +185,24 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	/// <param name="_container">Container.</param>
 	/// <param name="_initSize">Init size.</param>
 	/// <param name="_canGrow">If set to <c>true</c> can grow.</param>
-	private static void CreatePool(string _prefabName, string _prefabPath, Transform _container, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
+	private static PoolHandler CreatePool(string _prefabName, string _prefabPath, Transform _container, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
 		// Skip if the pool already exists
-		if (!instance.m_pools.ContainsKey(_prefabName)) {
+		if (instance.m_pools.ContainsKey(_prefabName)) {
+			return instance.m_handlers[instance.m_pools[_prefabName]];
+		} else {
 			GameObject go = Resources.Load<GameObject>(_prefabPath + _prefabName);
-			if (go != null) {
+			if (go != null) {				
 				Pool pool = new Pool(go, _container, _initSize, _canGrow, _container == instance.transform, _temporay);	// [AOC] Create new container if given container is the Pool Manager.
+				PoolHandler handler = new PoolHandler(pool);
+
 				instance.m_pools.Add(_prefabName, pool);
+				instance.m_handlers.Add(pool, handler);
 				instance.m_iterator.Add(pool);
+			
+				return handler;
 			} else {
 				Debug.LogError("Can't create a pool for: " + _prefabPath + _prefabName);
+				return null;
 			}
 		}
 	}

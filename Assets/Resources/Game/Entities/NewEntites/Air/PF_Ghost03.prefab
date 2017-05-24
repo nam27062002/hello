@@ -153,13 +153,13 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1054743084792962}
   serializedVersion: 2
-  m_Mass: 25
-  m_Drag: 1
+  m_Mass: 1
+  m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 120
+  m_Interpolate: 0
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &114311415021949368
 MonoBehaviour:
@@ -544,7 +544,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_affectedByDragonTrample: 0
-  m_enableSensor: 1
+  m_enableSensor: 0
   m_sensor:
     m_senseFire: 1
     m_sightRadius: 0
@@ -571,9 +571,9 @@ MonoBehaviour:
   m_airMotion:
     m_mass: 1
     m_defaultUpVector: 0
-    m_orientationSpeed: 120
+    m_orientationSpeed: 60
     m_dragonStyleRotation: 0
-    m_faceDirection: 1
+    m_faceDirection: 0
     m_rollRotation: 0
     m_rollAngle: 35
     m_limitHorizontalRotation: 0
@@ -601,7 +601,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"damage":21,"duration":2.5,"dataType":"AI.Behaviour.CurseData","editorFolded":false},{"speed":0.25,"catchUpSpeed":0.6,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false},{"separation":5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":0.2,"catchUpSpeed":0.5,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"damage":21,"duration":2.5,"dataType":"AI.Behaviour.CurseData","editorFolded":false},{"speed":0.25,"catchUpSpeed":0.6,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false},{"separation":5,"oscillationSpeed":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":0.2,"catchUpSpeed":0.5,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Ghost03
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2

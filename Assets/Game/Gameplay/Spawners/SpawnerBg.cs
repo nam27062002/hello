@@ -159,7 +159,7 @@ public class SpawnerBg : AbstractSpawner {
         return m_entityPrefabStr;
     }    
     
-    protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
+	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
         if (index > 0) {
             originPos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
         }
