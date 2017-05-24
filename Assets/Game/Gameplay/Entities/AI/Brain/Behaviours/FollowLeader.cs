@@ -45,9 +45,7 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				if (m_machine.GetSignal(Signals.Type.Leader)) {
-					Transition(SignalTriggers.OnLeaderPromoted);
-				}
+				CheckPromotion();
 
 				IMachine leader = m_group.leader;
 				if (leader != null) {
@@ -74,6 +72,12 @@ namespace AI {
 							}
 							break;
 					}     
+				}
+			}
+
+			protected virtual void CheckPromotion() {
+				if (m_machine.GetSignal(Signals.Type.Leader)) {
+					Transition(SignalTriggers.OnLeaderPromoted);
 				}
 			}
 

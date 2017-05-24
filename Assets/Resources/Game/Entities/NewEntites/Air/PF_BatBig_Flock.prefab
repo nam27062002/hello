@@ -100,7 +100,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":5,"restUpsideDown":true,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":40,"arrivalRadius":0.25,"timeout":{"min":1,"max":2.5},"onFailShutdown":{"min":4,"max":6},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":0.5,"max":1.5},"damage":8,"duration":0.5,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":10,"panicSpeed":10,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":5,"restUpsideDown":true,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":40,"arrivalRadius":0.25,"timeout":{"min":1,"max":2.5},"onFailShutdown":{"min":4,"max":6},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":0.5,"max":1.5},"damage":8,"duration":0.5,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":10,"panicSpeed":10,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":1,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
   m_databaseKey: PF_BatBig_Flock
   m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 0.75
@@ -886,8 +886,8 @@ Rigidbody:
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 112
+  m_Interpolate: 0
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!95 &95289798630724812
 Animator:

@@ -6,6 +6,7 @@ namespace AI {
 		[System.Serializable]
 		public class FlockData : StateComponentData {			
 			public float separation;
+			public float oscillationSpeed = 1f;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Flock")]
@@ -79,8 +80,10 @@ namespace AI {
 
 				// add variation to movement
 				Vector3 offset = m_offset;
-				offset.y += (Mathf.Sin(Time.timeSinceLevelLoad) + Mathf.Cos(Time.timeSinceLevelLoad * m_fase)) * m_data.separation * 0.5f;
-				offset.z += (Mathf.Sin(Time.timeSinceLevelLoad * m_fase) + Mathf.Cos(Time.timeSinceLevelLoad)) * m_data.separation * 0.25f;
+				if (!m_machine.GetSignal(Signals.Type.Leader) && m_data.oscillationSpeed > 0.05f) {
+					offset.y += m_data.oscillationSpeed * (Mathf.Sin(Time.timeSinceLevelLoad) + Mathf.Cos(Time.timeSinceLevelLoad * m_fase)) * m_data.separation * 0.5f;
+					offset.z += m_data.oscillationSpeed * (Mathf.Sin(Time.timeSinceLevelLoad * m_fase) + Mathf.Cos(Time.timeSinceLevelLoad)) * m_data.separation * 0.25f;
+				}
 
 				m_pilot.GoTo(m_pilot.target + offset);
 			}
