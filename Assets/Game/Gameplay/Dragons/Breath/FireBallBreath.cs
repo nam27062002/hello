@@ -5,6 +5,7 @@ public class FireBallBreath : DragonBreathBehaviour {
 
 	public GameObject m_fireBallPrefab;
 	public float m_timeBetweenFires = 1.0f;
+    public float m_speedBall = 20.0f;
 	private float m_timer;
 
 	private Transform m_mouthTransform;
@@ -45,7 +46,7 @@ public class FireBallBreath : DragonBreathBehaviour {
 				{
 					fb.SetBreath( this );
 					fb.Shoot( m_direction);
-					fb.m_speed = m_dragonMotion.speed + 10;
+					fb.m_speed = m_dragonMotion.speed + m_speedBall;
 				}
 			}
 		}
