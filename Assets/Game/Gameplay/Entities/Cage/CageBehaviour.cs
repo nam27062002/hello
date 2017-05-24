@@ -77,35 +77,38 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 
 	private void OnCollisionEnter(Collision collision) {
 		if (!m_broken) {
-			if (collision.transform.CompareTag("Player")) {				
-				if (m_currentHits.needBoost) {
-					if (m_waitTimer <= 0) {						
-						GameObject go = collision.transform.gameObject;
-						DragonBoostBehaviour boost = go.GetComponent<DragonBoostBehaviour>();	
-						bool playCollideSound = true;
-						if (boost.IsBoostActive()) 	{
-							DragonMotion dragonMotion = go.GetComponent<DragonMotion>();	// Check speed is enough
-							if (dragonMotion.howFast >= 0.85f) {
-								m_waitTimer = 0.5f;
-								// Check Min Speed
-
-								if (m_currentHits.count > 0) {
+			if (collision.transform.CompareTag("Player")) {
+				if (m_currentHits.count > 0) {
+					if (m_currentHits.needBoost) {
+						if (m_waitTimer <= 0) {						
+							GameObject go = collision.transform.gameObject;
+							DragonBoostBehaviour boost = go.GetComponent<DragonBoostBehaviour>();	
+							bool playCollideSound = true;
+							if (boost.IsBoostActive()) 	{
+								DragonMotion dragonMotion = go.GetComponent<DragonMotion>();	// Check speed is enough
+								if (dragonMotion.howFast >= 0.85f) {
+									m_waitTimer = 0.5f;
+									// Check Min Speed
 									m_currentHits.count--;
 									if (m_currentHits.count <= 0) {
 										Break();
 										playCollideSound = false;
 									}
-								} else {
-									Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, "");
 								}
+							} else {
+								// Message : You need boost!
+								Messenger.Broadcast(GameEvents.BREAK_OBJECT_NEED_TURBO);
 							}
+
+							if ( playCollideSound && !string.IsNullOrEmpty( m_onCollideSound))
+								AudioController.Play(m_onCollideSound);
+						
 						}
-						if ( playCollideSound && !string.IsNullOrEmpty( m_onCollideSound))
-							AudioController.Play(m_onCollideSound);
-					
+					} else {
+						Break();
 					}
 				} else {
-					Break();
+					Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, "");
 				}
 			}
 		}

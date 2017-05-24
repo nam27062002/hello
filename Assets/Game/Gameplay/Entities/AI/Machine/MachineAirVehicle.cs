@@ -33,9 +33,8 @@ namespace AI {
 
 		public bool ReduceDurability(bool _boost) {
 			if (m_armorDurability.count > 0 && !GetSignal(Signals.Type.Burning)) {
-				if (!m_armorDurability.needBoost || _boost) {
-
-					if (m_armorDurability.count > 0) {
+				if (m_armorDurability.count > 0) {
+					if (!m_armorDurability.needBoost || _boost) {
 						m_armorDurability.count--;
 						if (m_armorDurability.count <= 0) {
 							m_passengersSpawner.PassengersLeaveDevice();
@@ -43,8 +42,11 @@ namespace AI {
 						}
 						return true;
 					} else {
-						Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, m_entity.sku);
+						// Message : You need boost!
+						Messenger.Broadcast(GameEvents.BREAK_OBJECT_NEED_TURBO);
 					}
+				} else {
+					Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, m_entity.sku);
 				}
 			}
 
