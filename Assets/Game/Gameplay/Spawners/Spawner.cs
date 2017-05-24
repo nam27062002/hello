@@ -96,6 +96,8 @@ public class Spawner : AbstractSpawner {
 	private int m_prefabIndex;
 
 	private string[] m_entitySku;
+	private float m_pcProbCoefA;
+	private float m_pcProbCoefB;
 
 	protected EntityGroupController m_groupController;		
 
@@ -160,6 +162,10 @@ public class Spawner : AbstractSpawner {
 				for (int i = 0; i < m_entitySku.Length; i++) {
 					m_entitySku[i] = "";
 				}
+
+				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS);
+				m_pcProbCoefA = def.GetAsFloat("flyingPigsProbaCoefA", 1f);
+				m_pcProbCoefB = def.GetAsFloat("flyingPigsProbaCoefB", 1f);
 
 				if (m_activationKillTriggers == null) {
 					m_activationKillTriggers = new SpawnKillCondition[0];
@@ -249,8 +255,6 @@ public class Spawner : AbstractSpawner {
 				// Respawn on cooldown?
 				if (m_gameSceneController.elapsedSeconds > m_respawnTime || DebugSettings.ignoreSpawnTime) {
 					if (m_isPremiumCurrencyNPC) {
-						float A = 1f;
-						float B = 1f;
 						float eaten = 1f;
 
 						string key = m_entitySku[m_prefabIndex];
@@ -259,7 +263,7 @@ public class Spawner : AbstractSpawner {
 						}
 
 						float rnd = Random.Range(0f, 1f);
-						float prob = A / (B * eaten);
+						float prob = m_pcProbCoefA / (m_pcProbCoefB * eaten);
 
 						if (rnd > prob) {
 							m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
