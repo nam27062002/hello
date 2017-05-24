@@ -30,6 +30,9 @@ namespace AI {
 						SetSignal(Signals.Type.Destroyed, true);
 					}
 					return true;
+				} else {
+					// Message : You need boost!
+					Messenger.Broadcast(GameEvents.BREAK_OBJECT_NEED_TURBO);
 				}
 			} else {
 				// player can't destroy the armor
