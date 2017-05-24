@@ -1129,6 +1129,10 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 495222, guid: 5cda784c56a681741bbbc4d25b93f57b, type: 2}
   m_PrefabInternal: {fileID: 297857087}
+--- !u!4 &299004971 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 465822, guid: 0caedd86c989f2e41a5c0310ed1df1ce, type: 2}
+  m_PrefabInternal: {fileID: 927348518}
 --- !u!1001 &302525100
 Prefab:
   m_ObjectHideFlags: 0
@@ -1425,6 +1429,7 @@ MonoBehaviour:
   m_spawnTime:
     min: 0
     max: 0
+  m_isPremiumCurrencyNPC: 0
   m_homePosMethod: 1
   m_homePosDistance:
     min: 0
@@ -1484,6 +1489,10 @@ Prefab:
         type: 2}
       propertyPath: m_boundsScale.x
       value: 2.88
+      objectReference: {fileID: 0}
+    - target: {fileID: 1297636072766274, guid: 1a0f180de7ba0465899ad328a47c7c7a, type: 2}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1a0f180de7ba0465899ad328a47c7c7a, type: 2}
@@ -2153,6 +2162,7 @@ MonoBehaviour:
   m_spawnTime:
     min: 0
     max: 0
+  m_isPremiumCurrencyNPC: 0
   m_homePosMethod: 1
   m_homePosDistance:
     min: 1
@@ -2944,6 +2954,82 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 416572, guid: a22ffc88489d1e24bb1e39eee1f0cf62, type: 2}
   m_PrefabInternal: {fileID: 787292314}
+--- !u!1 &795881982
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 795881983}
+  - component: {fileID: 795881985}
+  - component: {fileID: 795881984}
+  m_Layer: 0
+  m_Name: Star Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &795881983
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 795881982}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 143.73, y: 18.14, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 883113615}
+  m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &795881984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 795881982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceea8b92a5b1d4a289874208013f9e0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_entityPrefab: Junk/PF_GoodJunkScore
+  m_quantity: 10
+  m_coinsReward: 10
+  m_spawnTime:
+    min: 0
+    max: 0
+  m_points:
+  - {x: 10.133957, y: -1.4342308, z: 0}
+  - {x: 8.734955, y: 3.2736092, z: 0}
+  - {x: 13.159195, y: 14.986656, z: 0}
+  - {x: 7.0043793, y: 13.468056, z: 0}
+  - {x: 3.5825653, y: 9.938566, z: 0}
+  - {x: 4.630188, y: 5.6525574, z: 0}
+  - {x: -4.8540955, y: -3.5267124, z: 0}
+  - {x: -1.6009979, y: -6.971836, z: 0}
+  - {x: 2.9508514, y: -8.068602, z: 0}
+  - {x: 8.228775, y: -5.2984066, z: 0}
+--- !u!114 &795881985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 795881982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eea47f5599f54e948774badb4a20f4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_minTier: 0
+  m_maxTier: 4
+  m_checkMaxTier: 0
+  m_activationChance: 100
+  m_activationTriggers: []
+  m_activationKillTriggers: []
+  m_deactivationTriggers: []
 --- !u!1001 &806434748
 Prefab:
   m_ObjectHideFlags: 0
@@ -3103,6 +3189,7 @@ MonoBehaviour:
   m_spawnTime:
     min: 0
     max: 0
+  m_isPremiumCurrencyNPC: 0
   m_homePosMethod: 1
   m_homePosDistance:
     min: 1
@@ -3166,7 +3253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Air/PF_BG_Canary
+  - name: Air/PF_BatBig_Flock
     chance: 100
   m_quantity:
     min: 100
@@ -3189,6 +3276,7 @@ MonoBehaviour:
   m_spawnTime:
     min: 0
     max: 0
+  m_isPremiumCurrencyNPC: 0
   m_homePosMethod: 1
   m_homePosDistance:
     min: 0
@@ -3407,6 +3495,7 @@ MonoBehaviour:
   m_spawnTime:
     min: 0
     max: 0
+  m_isPremiumCurrencyNPC: 0
   m_homePosMethod: 1
   m_homePosDistance:
     min: 1
@@ -3464,6 +3553,8 @@ Transform:
   - {fileID: 825333722}
   - {fileID: 1897112739}
   - {fileID: 730807345}
+  - {fileID: 299004971}
+  - {fileID: 795881983}
   m_Father: {fileID: 1117695729}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3700,6 +3791,52 @@ Transform:
 Transform:
   m_PrefabParentObject: {fileID: 466290, guid: e7c201b370e317541aec2554c6dbbd66, type: 2}
   m_PrefabInternal: {fileID: 5108050}
+--- !u!1001 &927348518
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 883113615}
+    m_Modifications:
+    - target: {fileID: 465822, guid: 0caedd86c989f2e41a5c0310ed1df1ce, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 139.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 465822, guid: 0caedd86c989f2e41a5c0310ed1df1ce, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 19.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 465822, guid: 0caedd86c989f2e41a5c0310ed1df1ce, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 465822, guid: 0caedd86c989f2e41a5c0310ed1df1ce, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 465822, guid: 0caedd86c989f2e41a5c0310ed1df1ce, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 465822, guid: 0caedd86c989f2e41a5c0310ed1df1ce, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 465822, guid: 0caedd86c989f2e41a5c0310ed1df1ce, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 465822, guid: 0caedd86c989f2e41a5c0310ed1df1ce, type: 2}
+      propertyPath: m_RootOrder
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 184836, guid: 0caedd86c989f2e41a5c0310ed1df1ce, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 0caedd86c989f2e41a5c0310ed1df1ce, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1001 &929378911
 Prefab:
   m_ObjectHideFlags: 0
@@ -4242,6 +4379,7 @@ MonoBehaviour:
   m_spawnTime:
     min: 0
     max: 0
+  m_isPremiumCurrencyNPC: 0
   m_homePosMethod: 1
   m_homePosDistance:
     min: 0
@@ -4946,6 +5084,7 @@ MonoBehaviour:
   m_spawnTime:
     min: 0
     max: 0
+  m_isPremiumCurrencyNPC: 0
   m_homePosMethod: 1
   m_homePosDistance:
     min: 1
@@ -5054,6 +5193,7 @@ MonoBehaviour:
   m_spawnTime:
     min: 0
     max: 0
+  m_isPremiumCurrencyNPC: 0
   m_homePosMethod: 0
   m_homePosDistance:
     min: 0
@@ -6309,6 +6449,10 @@ Prefab:
         type: 2}
       propertyPath: m_boundsScale.y
       value: 4.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 184836, guid: a31116b03c9145342bcd644437e3e647, type: 2}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a31116b03c9145342bcd644437e3e647, type: 2}
@@ -8064,7 +8208,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1838329166}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 172.6, y: 44.2, z: 0}
+  m_LocalPosition: {x: 166.2, y: 9.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 883113615}
@@ -8106,7 +8250,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Vehicles/PF_GoblinBoat
+  - name: Air/PF_FlyingPig
     chance: 100
   m_quantity:
     min: 1
@@ -8127,8 +8271,9 @@ MonoBehaviour:
   m_activationKillTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
-    min: 0
-    max: 0
+    min: 5
+    max: 5
+  m_isPremiumCurrencyNPC: 1
   m_homePosMethod: 1
   m_homePosDistance:
     min: 1
@@ -9266,7 +9411,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2061600067
 Transform:
   m_ObjectHideFlags: 0
@@ -9330,6 +9475,7 @@ MonoBehaviour:
   m_spawnTime:
     min: 0
     max: 0
+  m_isPremiumCurrencyNPC: 0
   m_homePosMethod: 1
   m_homePosDistance:
     min: 1

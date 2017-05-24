@@ -271,8 +271,8 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
                 sp = m_spawning[0];  
                 
                 // If the spawner is in the deactivation area then its respawning stuff has to be undone as the units respawned would be destroyed anyway             
-                if (m_newCamera.IsInsideDeactivationArea(sp.transform.position))
-                {                    
+				if (m_newCamera.IsInsideDeactivationArea(sp.boundingRect))
+                {
                     sp.ForceRemoveEntities();
                     m_spawning.RemoveAt(0);
                 }

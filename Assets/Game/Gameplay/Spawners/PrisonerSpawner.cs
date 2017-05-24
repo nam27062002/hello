@@ -80,7 +80,7 @@ public class PrisonerSpawner : AbstractSpawner {
         m_parents[index] = go.transform.parent;        
     }
 
-    protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
+	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
         Transform t = spawning.transform;
 		Transform parent = m_spawnAtTransform[index % m_spawnAtTransform.Length];
 		t.parent = parent;
