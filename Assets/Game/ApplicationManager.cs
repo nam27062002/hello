@@ -238,6 +238,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // Test schedule notification
             //Debug_ScheduleNotification();
             // ---------------------------
+
+            // ---------------------------
+            // Test send play test
+            //Debug_OnSendPlayTest();
+            // ---------------------------
         }
 
         if (NeedsToRestartFlow)
@@ -830,6 +835,25 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         m_debugParticles = null;
         m_debugParticlesVisibility = true;
+    }
+
+    private void Debug_OnSendPlayTest()
+    {
+        if (FeatureSettingsManager.instance.IsMiniTrackingEnabled)
+        {
+            MiniTrackingEngine.SendTrackingFile(false,
+            delegate (FGOL.Server.Error error, Dictionary<string, object> response)
+            {
+                if (error == null)
+                {
+                    Debug.Log("Play test tracking sent successfully");
+                }
+                else
+                {
+                    Debug.Log("Error when sending play test tracking");
+                }
+            });
+        }
     }
     #endregion
 }

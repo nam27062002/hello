@@ -175,6 +175,16 @@ public class MiniTrackingEngine : Singleton<MiniTrackingEngine> {
 		return res;
 	}
 
+    /// <summary>
+    /// Send the tracking file to our server.
+    /// </summary>
+    /// <param name="onDone">Callback called once the operation is done. The parameter of this callback states whether or not
+    /// the operation has been performed successfully.</param>
+    public static void SendTrackingFile(bool silent, System.Action<FGOL.Server.Error, Dictionary<string, object>> onDone) {
+        string trackingData = ReadTrackingFile();
+        GameServerManager.SharedInstance.SendPlayTest(silent, instance.m_userID, trackingData, onDone);            
+    }    
+
 	//------------------------------------------------------------------------//
 	// INTERNAL																  //
 	//------------------------------------------------------------------------//
