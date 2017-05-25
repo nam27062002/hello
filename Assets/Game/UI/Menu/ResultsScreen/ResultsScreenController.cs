@@ -474,34 +474,39 @@ public class ResultsScreenController : MonoBehaviour {
 			}
 		}
 
-		// Do it!
-		MiniTrackingEngine.TrackEvent(
-			"GAME_ENDED", 
-			new TrackingParam("run_nb", UsersManager.currentUser.gamesPlayed),
-			new TrackingParam("time_played", time),
-			new TrackingParam("sc_collected", coins),
-			new TrackingParam("sc_survival_bonus", survivalBonus),
-			new TrackingParam("sc_mission_1", missionReward[0]),
-			new TrackingParam("sc_mission_2", missionReward[1]),
-			new TrackingParam("sc_mission_3", missionReward[2]),
-			new TrackingParam("sc_chests", chestsCoinsReward),
-			new TrackingParam("hc_collected", RewardManager.pc),
-			new TrackingParam("death_cause", RewardManager.deathSource),
-			new TrackingParam("death_type", RewardManager.deathType),
-			new TrackingParam("chests_found", chestsFound),
-			new TrackingParam("egg_found", (EggManager.collectibleEgg != null && EggManager.collectibleEgg.collected)),
-			new TrackingParam("score_total", score),
-			new TrackingParam("highest_multiplier", RewardManager.maxScoreMultiplier),
-			new TrackingParam("highest_base_multiplier", RewardManager.maxBaseScoreMultiplier),
-			new TrackingParam("hc_revive_used", RewardManager.paidReviveCount),
-			new TrackingParam("ad_revive_used", RewardManager.freeReviveCount),
-			new TrackingParam("xp_earn", RewardManager.xp),
-			new TrackingParam("current_dragon", UsersManager.currentUser.currentDragon),
-			new TrackingParam("current_level", DragonManager.currentDragon.progression.level),
-			new TrackingParam("mission1_completed", missionCompleted[0]),
-			new TrackingParam("mission2_completed", missionCompleted[1]),
-			new TrackingParam("mission3_completed", missionCompleted[2])
-		);
+        if (FeatureSettingsManager.instance.IsMiniTrackingEnabled) {
+            // Do it!
+            MiniTrackingEngine.TrackEvent(
+                "GAME_ENDED",
+                new TrackingParam("run_nb", UsersManager.currentUser.gamesPlayed),
+                new TrackingParam("time_played", time),
+                new TrackingParam("sc_collected", coins),
+                new TrackingParam("sc_survival_bonus", survivalBonus),
+                new TrackingParam("sc_mission_1", missionReward[0]),
+                new TrackingParam("sc_mission_2", missionReward[1]),
+                new TrackingParam("sc_mission_3", missionReward[2]),
+                new TrackingParam("sc_chests", chestsCoinsReward),
+                new TrackingParam("hc_collected", RewardManager.pc),
+                new TrackingParam("death_cause", RewardManager.deathSource),
+                new TrackingParam("death_type", RewardManager.deathType),
+                new TrackingParam("chests_found", chestsFound),
+                new TrackingParam("egg_found", (EggManager.collectibleEgg != null && EggManager.collectibleEgg.collected)),
+                new TrackingParam("score_total", score),
+                new TrackingParam("highest_multiplier", RewardManager.maxScoreMultiplier),
+                new TrackingParam("highest_base_multiplier", RewardManager.maxBaseScoreMultiplier),
+                new TrackingParam("hc_revive_used", RewardManager.paidReviveCount),
+                new TrackingParam("ad_revive_used", RewardManager.freeReviveCount),
+                new TrackingParam("xp_earn", RewardManager.xp),
+                new TrackingParam("current_dragon", UsersManager.currentUser.currentDragon),
+                new TrackingParam("current_level", DragonManager.currentDragon.progression.level),
+                new TrackingParam("mission1_completed", missionCompleted[0]),
+                new TrackingParam("mission2_completed", missionCompleted[1]),
+                new TrackingParam("mission3_completed", missionCompleted[2])
+            );
+
+            // Tracking is sent silently after every round
+            MiniTrackingEngine.SendTrackingFile(true, null);
+        }
 	}
 
 	//------------------------------------------------------------------//
