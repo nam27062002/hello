@@ -14,14 +14,16 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	private Dictionary<string, int> m_poolSize = new Dictionary<string, int>();
 	private List<Pool> m_iterator = new List<Pool>();
 
+	#if PRINT_POOLS	
 	private float m_printTimer = 10f;
+	#endif
 
 	private bool m_useAreaLimits = true;
 
 	void Awake(){
 		// if we are in game we use the limits, otherwise ( Level Editor ), we let pools grow
-		m_useAreaLimits = !(InstanceManager.sceneController is LevelEditor.LevelEditorSceneController);	
-		#if PRINT_POOLS	
+		m_useAreaLimits = FindObjectOfType<LevelEditor.LevelEditorSceneController>() == null;
+		#if PRINT_POOLS
 			m_useAreaLimits = false;
 		#endif
 	}

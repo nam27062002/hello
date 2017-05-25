@@ -1279,6 +1279,10 @@ public class GameCamera : MonoBehaviour
 		return !m_deactivation.Intersects(_bounds);
 	}
 
+	public bool IsInsideDeactivationArea(Rect _bounds) {		
+		return !m_deactivation.Intersects(_bounds);
+	}
+
 	public bool IsInsideBackgroundDeactivationArea(Vector3 _point) {
 		return !m_backgroundWorldBounds.Contains(_point);
 	}

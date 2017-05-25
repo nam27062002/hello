@@ -422,7 +422,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":5.2,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":8,"panicSpeed":11,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":1.5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":7,"catchUpSpeed":7,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":5.2,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":8,"panicSpeed":11,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":1.5,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":7,"catchUpSpeed":7,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Crow_Flock
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 80
@@ -824,8 +824,8 @@ Rigidbody:
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 112
+  m_Interpolate: 0
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &114585776192089782
 MonoBehaviour:

@@ -28,13 +28,15 @@ namespace AI {
 				base.OnEnter(_oldState, _param);
 
 				m_target = m_pilot.guideFunction.NextPositionAtSpeed(m_pilot.speed);
+				m_pilot.GoTo(m_target);
 			}
 					
 			protected override void OnUpdate() {
 				// Update guide function
 				if (m_pilot.guideFunction != null) {
-					float dsqr = (m_target - m_machine.position).sqrMagnitude;
-					if (dsqr < m_pilot.speed * m_pilot.speed) {
+					float dsqr = (m_pilot.target - m_machine.position).sqrMagnitude;
+					float deltaDSqr = Mathf.Max(1f, m_pilot.speed * m_pilot.speed);
+					if (dsqr < deltaDSqr) {
 						m_target = m_pilot.guideFunction.NextPositionAtSpeed(m_pilot.speed);
 					}
 					m_pilot.GoTo(m_target);
@@ -44,6 +46,8 @@ namespace AI {
 
 				base.OnUpdate();
 			}
+
+			protected override void CheckPromotion() { }
 		}
 	}
 }

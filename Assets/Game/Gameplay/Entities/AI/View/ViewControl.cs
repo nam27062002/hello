@@ -205,7 +205,6 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			// if this entity doesn't have any particles attached, set the standard blood particle
 			m_onEatenParticle.name = "PS_Blood_Explosion_Small";
 			m_onEatenParticle.path = "Blood/";
-			m_onEatenParticle.offset = Vector3.back * 10f;
 		}
 		// Preload particle
 		if (m_onEatenParticle.IsValid()) {

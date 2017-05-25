@@ -62,8 +62,8 @@ MonoBehaviour:
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
   m_onEatenParticle:
-    name: 
-    path: 
+    name: PS_Blood_Green_Small
+    path: Blood
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -373,11 +373,11 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
-  m_brainResource: {fileID: 0}
+  m_brainResource: {fileID: 11400000, guid: 8abf7adf253e448d7bb15e811b8dcad7, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"damage":7,"duration":1.5,"dataType":"AI.Behaviour.CurseData","editorFolded":false},{"speed":0.25,"catchUpSpeed":0.6,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false},{"separation":5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":0.2,"catchUpSpeed":0.5,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"damage":5,"duration":1.5,"dataType":"AI.Behaviour.CurseData","editorFolded":false},{"speed":0.25,"catchUpSpeed":0.6,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false},{"separation":5,"oscillationSpeed":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":0.2,"catchUpSpeed":0.5,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Ghost01
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
@@ -498,13 +498,13 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 138364}
   serializedVersion: 2
-  m_Mass: 25
-  m_Drag: 1
+  m_Mass: 1
+  m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 120
+  m_Interpolate: 0
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &114240507427778114
 MonoBehaviour:
@@ -582,7 +582,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_affectedByDragonTrample: 0
-  m_enableSensor: 1
+  m_enableSensor: 0
   m_sensor:
     m_senseFire: 1
     m_sightRadius: 0
@@ -609,9 +609,9 @@ MonoBehaviour:
   m_airMotion:
     m_mass: 1
     m_defaultUpVector: 0
-    m_orientationSpeed: 120
+    m_orientationSpeed: 60
     m_dragonStyleRotation: 0
-    m_faceDirection: 1
+    m_faceDirection: 0
     m_rollRotation: 0
     m_rollAngle: 35
     m_limitHorizontalRotation: 0
