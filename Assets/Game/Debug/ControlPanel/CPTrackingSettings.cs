@@ -34,20 +34,33 @@ public class CPTrackingSettings : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	[SerializeField] private TMP_InputField m_emailInput = null;
-	
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
+    [SerializeField] private GameObject[] m_trackingGOS = null;    
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Simple email address validator.
-	/// </summary>
-	/// <returns>The corrected e-mail address extracted from the input text.</returns>
-	/// <param name="_emailAddress">Attempted e-mail address.</param>
-	private string ValidateEmail(string _emailAddress) {
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    void Start()
+    {
+        if (!FeatureSettingsManager.instance.IsMiniTrackingEnabled) {
+            if (m_trackingGOS != null) {
+                int count = m_trackingGOS.Length;
+                for (int i = 0; i < count; i++) {
+                    if (m_trackingGOS[i] != null)
+                        m_trackingGOS[i].SetActive(false);
+                }
+            }           
+        }
+    }
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Simple email address validator.
+    /// </summary>
+    /// <returns>The corrected e-mail address extracted from the input text.</returns>
+    /// <param name="_emailAddress">Attempted e-mail address.</param>
+    private string ValidateEmail(string _emailAddress) {
 		// System.Net.Mail provides us with some simple validation, but it could still be including wrong addresses - don't give a sh*t
 		try {
 			_emailAddress = new MailAddress(_emailAddress).Address;
