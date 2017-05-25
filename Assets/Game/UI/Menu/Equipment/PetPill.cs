@@ -57,6 +57,7 @@ public class PetPill : MonoBehaviour {
 
 	private GameObject m_currentLockIcon = null;
 	private Animator m_currentLockIconAnim = null;
+	private bool m_waitingForUnlockAnim = false;
 
 	private GameObject m_tutorialHighlightFX = null;
 
@@ -222,8 +223,10 @@ public class PetPill : MonoBehaviour {
 		m_locked = !petCollection.IsPetUnlocked(m_def.sku);
 		m_slot = UsersManager.currentUser.GetPetSlot(m_dragonData.def.sku, m_def.sku);
 
-		// Lock icon
-		m_currentLockIcon.SetActive(m_locked);
+		// Lock icon (unless waiting for animation)
+		if(!m_waitingForUnlockAnim) {
+			m_currentLockIcon.SetActive(m_locked);
+		}
 
 		// Hide power icon for locked special pets
 		bool isSpecialAndLocked = m_special && m_locked;
@@ -246,13 +249,16 @@ public class PetPill : MonoBehaviour {
 	public void PrepareUnlockAnim() {
 		m_currentLockIcon.SetActive(true);
 		m_currentLockIconAnim.SetTrigger("idle");
+		m_waitingForUnlockAnim = true;
 	}
 
 	/// <summary>
 	/// Show the unlock animation.
 	/// </summary>
 	public void LaunchUnlockAnim() {
+		m_currentLockIcon.SetActive(true);	// Just in case
 		m_currentLockIconAnim.SetTrigger("unlock");
+		m_waitingForUnlockAnim = false;
 
 		// If equip tutorial is not yet completed, show highlight around the pill!
 		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PETS_EQUIP)) {
@@ -266,6 +272,13 @@ public class PetPill : MonoBehaviour {
 				}
 			);
 		}
+	}
+
+	/// <summary>
+	/// Do a short bounce animation on the pill.
+	/// </summary>
+	public void LaunchBounceAnim() {
+		this.transform.DOJump(this.transform.position, 0.15f, 1, 0.25f);
 	}
 
 	//------------------------------------------------------------------------//

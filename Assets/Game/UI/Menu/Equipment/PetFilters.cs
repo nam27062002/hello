@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 
@@ -51,6 +52,7 @@ public class PetFilters : MonoBehaviour {
 	private Dictionary<string, bool> m_activeFilters = new Dictionary<string, bool>();	// Dictionary of <filterName, status>. If a filterName is not on the dictionary, filter is considered off.
 	private bool m_dirty = false;
 	private bool m_ignoreToggleEvents = false;	// Internal control var for when changing a toggle state from code
+	private string m_currentFilter = "";	// Behave as tabs
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -177,6 +179,9 @@ public class PetFilters : MonoBehaviour {
 	/// Toggle all filters on.
 	/// </summary>
 	public void ResetFilters() {
+		// Reset current filter
+		m_currentFilter = string.Empty;
+
 		// Toggle all values on the filters dictionary
 		List<string> keys = new List<string>(m_activeFilters.Keys);		// [AOC] We can't modify the dictionary during a foreach loop (Out of Sync exception). Do this instead!
 		for(int i = 0; i < keys.Count; i++) {
@@ -223,6 +228,9 @@ public class PetFilters : MonoBehaviour {
 				petsScreen.pills[i].animator.Hide(false);
 			}
 		}
+
+		// Put scroll list at the start
+		StartCoroutine(petsScreen.scrollList.ScrollToPositionDelayedFrames(Vector2.zero, 1));
 	}
 
 	/// <summary>
@@ -253,6 +261,8 @@ public class PetFilters : MonoBehaviour {
 		if(m_ignoreToggleEvents) return;
 		if(!isActiveAndEnabled) return;
 
+		// [AOC] FILTERS BEHAVIOUR
+		/*
 		// SPECIAL CASE 1: When all buttons are active and the button is toggled off, do the reverse action:
 		// toggle the rest of buttons off and keep the toggled one active
 		if(!_filterButton.toggle.isOn) {
@@ -300,5 +310,33 @@ public class PetFilters : MonoBehaviour {
 
 		// NORMAL CASE: just update this filter's state
 		SetFilter(_filterButton.filterName, _filterButton.toggle.isOn);
+		*/
+
+		// [AOC] TABS BEHAVIOUR
+		// If the tapped button is the current filter, toggle on all filters
+		if(_filterButton.filterName == m_currentFilter) {
+			// Toggle all filters on
+			List<string> keys = new List<string>(m_activeFilters.Keys);		// [AOC] We can't modify the dictionary during a foreach loop (Out of Sync exception). Do this instead!
+			for(int i = 0; i < keys.Count; i++) {
+				// Activate them all!
+				SetFilter(keys[i], true);
+			}
+
+			// Reset current filter
+			m_currentFilter = string.Empty;
+		}
+
+		// Otherwise make it the only active filter
+		else {
+			// Toggle all filters off except this one
+			List<string> keys = new List<string>(m_activeFilters.Keys);		// [AOC] We can't modify the dictionary during a foreach loop (Out of Sync exception). Do this instead!
+			for(int i = 0; i < keys.Count; i++) {
+				// Activate only target filter 
+				SetFilter(keys[i], keys[i] == _filterButton.filterName);
+			}
+
+			// Store as current filter
+			m_currentFilter = _filterButton.filterName;
+		}
 	}
 }
