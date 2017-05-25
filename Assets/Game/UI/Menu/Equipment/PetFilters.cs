@@ -8,6 +8,8 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.Events;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -27,6 +29,8 @@ public class PetFilters : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	// Events
+	public class PetFiltersEvent : UnityEvent<PetFilters> { }
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -47,6 +51,15 @@ public class PetFilters : MonoBehaviour {
 			return m_petsScreen;
 		}
 	}
+
+	// Cache some data
+	private List<DefinitionNode> m_filteredDefs = new List<DefinitionNode>();
+	public List<DefinitionNode> filteredDefs {
+		get { return m_filteredDefs; }
+	}
+
+	// Events
+	public PetFiltersEvent OnFilterChanged = new PetFiltersEvent();
 
 	// Internal logic
 	private Dictionary<string, bool> m_activeFilters = new Dictionary<string, bool>();	// Dictionary of <filterName, status>. If a filterName is not on the dictionary, filter is considered off.
@@ -163,8 +176,8 @@ public class PetFilters : MonoBehaviour {
 		// Store new value
 		m_activeFilters[_filterName] = _value;
 
-		// Mark as dirty
-		SetDirty();
+		// Update filters internally
+		ApplyFilters();
 	}
 
 	/// <summary>
@@ -194,6 +207,12 @@ public class PetFilters : MonoBehaviour {
 			m_activeFilters[m_filterButtons[i].filterName] = true;
 		}
 
+		// Reset filtered list
+		m_filteredDefs = new List<DefinitionNode>(petsScreen.defs);
+
+		// Notify listeners
+		OnFilterChanged.Invoke(this);
+
 		// Mark as dirty
 		SetDirty();
 	}
@@ -217,7 +236,7 @@ public class PetFilters : MonoBehaviour {
 		float delay = 0f;
 		for(int i = 0; i < petsScreen.pills.Count; i++) {
 			// Should this pill be displayed?
-			show = CheckFilter(petsScreen.pills[i].def);
+			show = m_filteredDefs.Contains(petsScreen.pills[i].def);
 			if(show) {
 				// Restart animation when showing
 				petsScreen.pills[i].animator.tweenDelay = delay;
@@ -247,6 +266,23 @@ public class PetFilters : MonoBehaviour {
 
 		// Restore toggle events
 		m_ignoreToggleEvents = false;
+	}
+
+	/// <summary>
+	/// Update all required internal vars with the latest filter changes.
+	/// Quite costly, use with moderation.
+	/// </summary>
+	private void ApplyFilters() {
+		// Update filtered defs list
+		m_filteredDefs = petsScreen.defs.Where(
+			(_def) => CheckFilter(_def)
+		).ToList();
+
+		// Notify listeners
+		OnFilterChanged.Invoke(this);
+
+		// Mark as dirty
+		SetDirty();
 	}
 
 	//------------------------------------------------------------------------//
@@ -280,7 +316,7 @@ public class PetFilters : MonoBehaviour {
 				List<string> keys = new List<string>(m_activeFilters.Keys);		// [AOC] We can't modify the dictionary during a foreach loop (Out of Sync exception). Do this instead!
 				for(int i = 0; i < keys.Count; i++) {
 					// Activate only target filter 
-					SetFilter(keys[i], keys[i] == _filterButton.filterName);
+					m_activeFilters[keys[i]] = keys[i] == _filterButton.filterName;
 				}
 				return;	// We're done for the special case!
 			}
@@ -302,14 +338,14 @@ public class PetFilters : MonoBehaviour {
 				List<string> keys = new List<string>(m_activeFilters.Keys);		// [AOC] We can't modify the dictionary during a foreach loop (Out of Sync exception). Do this instead!
 				for(int i = 0; i < keys.Count; i++) {
 					// Activate them all!
-					SetFilter(keys[i], true);
+					m_activeFilters[keys[i]] = true;
 				}
 				return;	// We're done for the special case!
 			}
 		}
 
 		// NORMAL CASE: just update this filter's state
-		SetFilter(_filterButton.filterName, _filterButton.toggle.isOn);
+		m_activeFilters[_filterButton.filterName] = _filterButton.toggle.isOn;
 		*/
 
 		// [AOC] TABS BEHAVIOUR
@@ -319,7 +355,7 @@ public class PetFilters : MonoBehaviour {
 			List<string> keys = new List<string>(m_activeFilters.Keys);		// [AOC] We can't modify the dictionary during a foreach loop (Out of Sync exception). Do this instead!
 			for(int i = 0; i < keys.Count; i++) {
 				// Activate them all!
-				SetFilter(keys[i], true);
+				m_activeFilters[keys[i]] = true;
 			}
 
 			// Reset current filter
@@ -332,11 +368,14 @@ public class PetFilters : MonoBehaviour {
 			List<string> keys = new List<string>(m_activeFilters.Keys);		// [AOC] We can't modify the dictionary during a foreach loop (Out of Sync exception). Do this instead!
 			for(int i = 0; i < keys.Count; i++) {
 				// Activate only target filter 
-				SetFilter(keys[i], keys[i] == _filterButton.filterName);
+				m_activeFilters[keys[i]] = (keys[i] == _filterButton.filterName);
 			}
 
 			// Store as current filter
 			m_currentFilter = _filterButton.filterName;
 		}
+
+		// Update filters internally
+		ApplyFilters();
 	}
 }

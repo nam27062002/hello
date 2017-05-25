@@ -313,17 +313,8 @@ public class PetPill : MonoBehaviour {
 		PopupController popup = PopupManager.OpenPopupInstant(PopupInfoPet.PATH);
 		PopupInfoPet petPopup = popup.GetComponent<PopupInfoPet>();
 		if(petPopup != null) {
-			// Apply current filters to the pets definition list
-			// We could cache the filtered list, but cost is not that high and 
-			// it's debatable whether is more often performed a change of filter or a info button tap
-			List<DefinitionNode> filteredList = parentScreen.defs.Where(
-				(_def) => {
-					return parentScreen.petFilters.CheckFilter(_def);
-				}
-			).ToList();
-
 			// Open popup with the filtered list!
-			petPopup.Init(m_def, filteredList);
+			petPopup.Init(m_def, parentScreen.petFilters.filteredDefs);
 		}
 	}
 
