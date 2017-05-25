@@ -1023,6 +1023,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    public bool IsMiniTrackingEnabled
+    {
+        get
+        {
+            return true;
+        }
+    }
+
     public bool IsGlowEffectEnabled
     {
         get
