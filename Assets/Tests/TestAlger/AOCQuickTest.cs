@@ -49,7 +49,8 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		
+		ScrollRect scrollList = GetComponent<ScrollRect>();
+		if(scrollList != null) scrollList.onValueChanged.AddListener(OnScrollListValueChanged);
 	}
 
 	/// <summary>
@@ -125,5 +126,16 @@ public class AOCQuickTest : MonoBehaviour {
 
 	private void SampleCallback2() {
 		Debug.Log("Sample Callback 2");
+	}
+
+	private void OnScrollListValueChanged(Vector2 _newValue) {
+		string color = "lime";
+		if(_newValue.x < Mathf.Epsilon) {
+			color = "red";
+		} else if(_newValue.x > 1 - Mathf.Epsilon) {
+			color = "blue";
+		}
+		ScrollRect scrollList = this.GetComponent<ScrollRect>();
+		Debug.Log("<color=" + color + ">VALUE: (" + _newValue.x + ", " + _newValue.y + ")" + "</color>");
 	}
 }

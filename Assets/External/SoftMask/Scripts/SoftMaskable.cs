@@ -23,7 +23,18 @@ namespace SoftMasking {
                 var newMat = mask.GetReplacement(baseMaterial);
                 replacement = newMat;
                 if (replacement) {
-                    shaderIsNotSupported = false;
+					// [AOC] Quick adaptation to make it compatible with the UIColorFX material replacement.
+					UIColorFX fx = GetComponent<UIColorFX>();
+					if(fx != null) {
+						// Image or font material?
+						if(baseMaterial == fx.imageMaterial) {
+							fx.imageMaterialReplacement = replacement;
+						} else {
+							fx.fontMaterialReplacement = replacement;
+						}
+					}
+
+					shaderIsNotSupported = false;
                     return replacement;
                 }
                 // Warn only if material has non-default UI shader. Otherwise, it seems that
