@@ -185,7 +185,7 @@ public class PetPill : MonoBehaviour {
 			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_def.Get("powerup"));
 			Sprite powerIcon = null;
 			if(powerDef != null) {
-				powerIcon = Resources.Load(UIConstants.POWER_MINI_ICONS_PATH + powerDef.Get("miniIcon"));
+				powerIcon = Resources.Load<Sprite>(UIConstants.POWER_MINI_ICONS_PATH + powerDef.Get("miniIcon"));
 			}
 			m_powerIcon.sprite = powerIcon;	// If null it will look ugly, that way we know we have a miniIcon missing
 		}
