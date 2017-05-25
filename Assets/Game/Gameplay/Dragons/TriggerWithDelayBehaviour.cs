@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BlinkBehaviour : StateMachineBehaviour {
+public class TriggerWithDelayBehaviour : StateMachineBehaviour {
 
 	[SerializeField] private Range m_delay = new Range(2f, 10f);
+	[SerializeField] private string m_trigger = "blink";
 	// private bool m_blinking;
 	private float m_timer;
 
@@ -27,7 +28,7 @@ public class BlinkBehaviour : StateMachineBehaviour {
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		m_timer -= Time.deltaTime;
 		if (m_timer <= 0) {
-			animator.SetTrigger("blink");
+			animator.SetTrigger( m_trigger );
 			m_timer = m_delay.GetRandom();
 		}
 	}
