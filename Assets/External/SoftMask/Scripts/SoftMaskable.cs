@@ -26,8 +26,12 @@ namespace SoftMasking {
 					// [AOC] Quick adaptation to make it compatible with the UIColorFX material replacement.
 					UIColorFX fx = GetComponent<UIColorFX>();
 					if(fx != null) {
-						replacement.name = replacement.name + "_REPLACEMENT";
-						fx.imageMaterial = replacement;
+						// Image or font material?
+						if(baseMaterial == fx.imageMaterial) {
+							fx.imageMaterialReplacement = replacement;
+						} else {
+							fx.fontMaterialReplacement = replacement;
+						}
 					}
 
 					shaderIsNotSupported = false;
