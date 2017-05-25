@@ -40,7 +40,7 @@ public class DragonUnityAnalytics : MonoBehaviour {
 	void Update () {
 		if (m_track)
 		{
-			UnityAnalyticsHeatmap.HeatmapEvent.Send( "PlayerPosition", m_player.position, m_gameSceneController.elapsedSeconds);
+			UnityAnalyticsHeatmap.HeatmapEvent.Send( "PlayerPosition", m_player.position, m_player.position + m_player.forward, m_gameSceneController.elapsedSeconds);
 		}
 	}
 
