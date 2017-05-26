@@ -37,6 +37,12 @@ public class PopupSettingsSupportForMiniTrackingTab : MonoBehaviour
                if (error == null)
                {
                    Debug.Log("Play test tracking sent successfully");
+                   PopupMessage.Config config = PopupMessage.GetConfig();
+                   config.TitleTid = "";
+                   config.MessageTid = "Tracking data sent successfully. Thanks!";
+                   config.ConfirmButtonTid = "TID_GEN_OK";
+                   config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+                   PopupManager.PopupMessage_Open(config);
                }
                else
                {
