@@ -49,6 +49,25 @@ public class TrackerDestroy : TrackerBase {
 	}
 
 	//------------------------------------------------------------------------//
+	// PARENT OVERRIDES														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Round a value according to specific rules defined for every tracker type.
+	/// Typically used for target values.
+	/// </summary>
+	/// <returns>The rounded value.</returns>
+	/// <param name="_targetValue">The original value to be rounded.</param>
+	override public float RoundTargetValue(float _targetValue) {
+		// Round to multiples of 10, except values smaller than 100
+		if(_targetValue > 100f) {
+			_targetValue = MathUtils.Snap(_targetValue, 10f);
+		}
+
+		// Apply default filter
+		return base.RoundTargetValue(_targetValue);
+	}
+
+	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
