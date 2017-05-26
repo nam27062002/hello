@@ -67,6 +67,19 @@ public class MissionObjective : TrackingObjectiveBase {
 			tidDesc,
 			_missionDef.Get("tidObjective")	// Does this mission have a custom target TID? (i.e. "Birds", "Archers", etc.)
 		);
+
+		// Subscribe to external events
+		Messenger.AddListener(GameEvents.GAME_STARTED, OnGameStarted);
+		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
+	}
+
+	/// <summary>
+	/// Destructor
+	/// </summary>
+	~MissionObjective() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(GameEvents.GAME_STARTED, OnGameStarted);
+		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	//------------------------------------------------------------------//

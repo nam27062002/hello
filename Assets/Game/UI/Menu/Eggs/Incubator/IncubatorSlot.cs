@@ -40,7 +40,7 @@ public class IncubatorSlot : MonoBehaviour {
 	[Space]
 	[SerializeField] private Slider m_incubationTimeSlider = null;
 	[SerializeField] private TextMeshProUGUI m_incubationTimeText = null;
-	[SerializeField] private TextMeshProUGUI m_skipCostText = null;
+	[SerializeField] private Localizer m_skipButtonText = null;
 	[SerializeField] private UINotification m_newNotification = null;
 
 	// Show/Hide elements
@@ -136,17 +136,9 @@ public class IncubatorSlot : MonoBehaviour {
 
 				// If cost is 0, use the "free" word instead
 				if(costPC == 0) {
-					m_skipCostText.text = UIConstants.GetIconString(
-						LocalizationManager.SharedInstance.Localize("TID_GEN_EXCLAMATION_EXPRESSION", LocalizationManager.SharedInstance.Localize("TID_GEN_FREE")),
-						UIConstants.IconType.PC,
-						UIConstants.IconAlignment.LEFT
-					);
+					m_skipButtonText.Localize(m_skipButtonText.tid, LocalizationManager.SharedInstance.Localize("TID_GEN_FREE"));
 				} else {
-					m_skipCostText.text = UIConstants.GetIconString(
-						costPC,
-						UIConstants.IconType.PC,
-						UIConstants.IconAlignment.LEFT
-					);
+					m_skipButtonText.Localize(m_skipButtonText.tid, StringUtils.FormatNumber(costPC));
 				}
 			}
 		}

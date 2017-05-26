@@ -73,4 +73,5 @@ public class GameServerManager
     public virtual void UpdateSaveVersion(bool prelimUpdate, Action<Error, Dictionary<string, object>> callback) {}
     public virtual void GetQualitySettings(Action<Error, Dictionary<string, object>> callback) {}
     public virtual void SetQualitySettings(string qualitySettings, Action<Error, Dictionary<string, object>> callback) {}
+    public virtual void SendPlayTest(bool silent, string playTestUserId, string trackingData, Action<Error, Dictionary<string, object>> callback) {}    
 }

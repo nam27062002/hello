@@ -42,7 +42,7 @@ public class MissionPill : MonoBehaviour {
 	// Cooldown group
 	private TextMeshProUGUI m_cooldownText = null;
 	private Slider m_cooldownBar = null;
-	private TextMeshProUGUI m_skipCostText = null;	// Optional
+	private Localizer m_skipCostText = null;	// Optional
 
 	// Data
 	private Mission m_mission = null;
@@ -70,7 +70,7 @@ public class MissionPill : MonoBehaviour {
 		// [AOC] Since cooldown must be refreshed every frame, keep the reference to the objects rather than finding them every time
 		m_cooldownText = m_cooldownObj.FindComponentRecursive<TextMeshProUGUI>("CooldownTimeText");
 		m_cooldownBar = m_cooldownObj.FindComponentRecursive<Slider>("CooldownBar");
-		m_skipCostText = m_cooldownObj.FindComponentRecursive<TextMeshProUGUI>("TextCost");
+		m_skipCostText = m_cooldownObj.FindComponentRecursive<Localizer>("TextCost");
 
 		// Subscribe to external events
 		Messenger.AddListener<Mission>(GameEvents.MISSION_REMOVED, OnMissionRemoved);
@@ -171,8 +171,10 @@ public class MissionPill : MonoBehaviour {
 
 		// Remove cost
 		// [AOC] The pill might not have it (e.g. in-game pill)
-		TextMeshProUGUI removeCostText = m_activeObj.FindComponentRecursive<TextMeshProUGUI>("TextCost");
-		if(removeCostText != null) removeCostText.text = UIConstants.GetIconString(m_mission.removeCostPC, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+		Localizer removeCostText = m_activeObj.FindComponentRecursive<Localizer>("TextCost");
+		if(removeCostText != null) {
+			removeCostText.Localize(removeCostText.tid, StringUtils.FormatNumber(m_mission.removeCostPC));
+		}
 
 		// Check if this mission is complete
 		GameObject completedObj = m_activeObj.FindObjectRecursive("CompletedMission");
@@ -282,7 +284,9 @@ public class MissionPill : MonoBehaviour {
 
 		// Skip cost
 		// [AOC] The pill might not have it (e.g. in-game pill)
-		if(m_skipCostText != null) m_skipCostText.text = UIConstants.GetIconString(m_mission.skipCostPC, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+		if(m_skipCostText != null) {
+			m_skipCostText.Localize(m_skipCostText.tid, StringUtils.FormatNumber(m_mission.skipCostPC));
+		}
 	}
 
 	/// <summary>
@@ -300,7 +304,7 @@ public class MissionPill : MonoBehaviour {
 
 		// Skip cost - shouldn't exist in ACTIVATION_PENDING state, but just in case
 		// [AOC] The pill might not have it (e.g. in-game pill)
-		if(m_skipCostText != null) m_skipCostText.text = "";
+		if(m_skipCostText != null) m_skipCostText.Localize("");
 
 		// Difficulty
 		RefreshDifficulty(m_cooldownObj.FindComponentRecursive<Localizer>("DifficultyText"), true);

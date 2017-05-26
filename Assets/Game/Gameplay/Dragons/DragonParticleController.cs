@@ -310,7 +310,7 @@ public class DragonParticleController : MonoBehaviour
 	{
 		m_alive = false;	
 		CheckBodyParts();
-		if ( type == DamageType.MINE )
+		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE )
 		{
 			SpawnCorpse();
 		}

@@ -8,6 +8,7 @@ public class DragonUnityAnalytics : MonoBehaviour {
 	private Transform m_player;
 	private bool m_track = false;
 	private GameSceneController m_gameSceneController;
+	private float m_timer = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -40,7 +41,12 @@ public class DragonUnityAnalytics : MonoBehaviour {
 	void Update () {
 		if (m_track)
 		{
-			UnityAnalyticsHeatmap.HeatmapEvent.Send( "PlayerPosition", m_player.position, m_player.position + m_player.forward, m_gameSceneController.elapsedSeconds);
+			m_timer -= Time.deltaTime;
+			if ( m_timer <= 0 )
+			{
+				UnityAnalyticsHeatmap.HeatmapEvent.Send( "PlayerPosition", m_player.position, m_player.position + m_player.forward, m_gameSceneController.elapsedSeconds);
+				m_timer = 0.5f;
+			}
 		}
 	}
 

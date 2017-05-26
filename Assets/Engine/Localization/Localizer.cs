@@ -134,6 +134,24 @@ public class Localizer : MonoBehaviour {
 			case Case.TITLE_CASE:	localizedString = LocalizationManager.SharedInstance.Culture.TextInfo.ToTitleCase(localizedString);	break;	// From http://stackoverflow.com/questions/1206019/converting-string-to-title-case
 		}
 
+		// Reverse casing in formatting tags, where mixed-casing is problematic
+		int startIdx = localizedString.IndexOf("<");
+		while(startIdx > -1) {
+			int endIdx = localizedString.IndexOf(">", startIdx);
+			if(endIdx == -1) {
+				// Error, tag unclosed
+				Debug.LogWarning("Sentence error in '" + localizedString + "' . The symbol > wasn't found.");
+				startIdx = -1;	// Break loop
+			} else {
+				// Replace formatting tag with the same tag in lower case
+				string formattingTag = localizedString.Substring(startIdx, endIdx - startIdx);
+				localizedString = localizedString.Replace(formattingTag, formattingTag.ToLowerInvariant());
+
+				// Find next one
+				startIdx = localizedString.IndexOf("<", endIdx);
+			}
+		}
+
 		// Apply to textfield
 		m_text.text = localizedString;
 	}

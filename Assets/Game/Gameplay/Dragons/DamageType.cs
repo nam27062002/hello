@@ -26,5 +26,6 @@ public enum DamageType {
 	EXPLOSION,
 	ARROW,
 	FLOUR,
-	DRAIN
+	DRAIN,
+	BIG_DAMAGE
 }
