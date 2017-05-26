@@ -15,6 +15,7 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 	private bool m_hasBeenShot;
 	private Rect m_rect;
 
+	private PoolHandler m_poolHandler;
 
 	// Use this for initialization
 	void Start () 
@@ -29,6 +30,8 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 		m_pMotion = GetComponent<ProjectileMotion>();	
 		if (m_pMotion) m_pMotion.enabled = false;
 		m_hasBeenShot = false;
+
+		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
 	
 	// Update is called once per frame
@@ -125,7 +128,7 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 		FirePropagationManager.instance.FireUpNodes( m_rect, Overlaps, m_fireTier, Vector3.zero);
 
 		gameObject.SetActive(false);
-		PoolManager.ReturnInstance( gameObject );
+		m_poolHandler.ReturnInstance( gameObject );
 	}
 
 	bool Overlaps( CircleAreaBounds _fireNodeBounds )

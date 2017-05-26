@@ -50,6 +50,8 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	//---------------------------------------------------------------------------------------
 
+	private PoolHandler m_poolHandler;
+
 	private Vector3 m_startPosition;
 	private Vector3 m_lastPosition;
 	private Vector3 m_position;
@@ -112,6 +114,8 @@ public class Projectile : MonoBehaviour, IProjectile {
 		if (m_onChargeParticle.IsValid()) 	ParticleManager.CreatePool(m_onChargeParticle);
 		if (m_onAttachParticle.IsValid()) 	ParticleManager.CreatePool(m_onAttachParticle);
 		if (m_onEatParticle.IsValid()) 		ParticleManager.CreatePool(m_onEatParticle);
+
+		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
 
 	void OnDisable() {
@@ -298,7 +302,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 			if (m_timer <= 0f) {
 				m_state = State.Idle;
 				gameObject.SetActive(false);
-				PoolManager.ReturnInstance(gameObject);
+				m_poolHandler.ReturnInstance(gameObject);
 			}
 		}
 	}
@@ -374,7 +378,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 		m_state = State.Idle;
 		gameObject.SetActive(false);
-		PoolManager.ReturnInstance(gameObject);
+		m_poolHandler.ReturnInstance(gameObject);
 	}
 
 	public void Explode(bool _triggeredByPlayer) {

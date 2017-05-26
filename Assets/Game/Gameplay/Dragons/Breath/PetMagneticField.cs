@@ -11,6 +11,8 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 	private ProjectileMotion m_pMotion;
 	private bool m_hasBeenShot;
 
+	private PoolHandler m_poolHandler;
+
 
 	// Use this for initialization
 	void Start () 
@@ -23,6 +25,8 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 		m_pMotion = GetComponent<ProjectileMotion>();	
 		if (m_pMotion) m_pMotion.enabled = false;
 		m_hasBeenShot = false;
+
+		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
 	
 	// Update is called once per frame
@@ -105,6 +109,6 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 			ParticleManager.Spawn( m_explosionParticle, transform.position);
 		}
 		gameObject.SetActive(false);
-		PoolManager.ReturnInstance( gameObject );
+		m_poolHandler.ReturnInstance(gameObject);
 	}
 }

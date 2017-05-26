@@ -15,6 +15,8 @@ public class PrisonerSpawner : AbstractSpawner {
 	[SerializeField] private Range m_scale = new Range(1f, 1f);
 	[SerializeField] private Transform[] m_spawnAtTransform;
 		
+	private PoolHandler[,] m_poolHandlers;
+
 	private Transform[] m_parents;
 
     private uint m_maxEntities;	
@@ -26,30 +28,31 @@ public class PrisonerSpawner : AbstractSpawner {
     private AreaBounds m_areaBounds = new RectAreaBounds(Vector3.zero, Vector3.one);
     public override AreaBounds area { get { return m_areaBounds; } set { m_areaBounds = value; } }
 
-
-	private void Awake() {
-		// Progressive respawn disabled because it respawns only one instance and it's triggered by CageBehaviour which is not prepared to loop until Respawn returns true
+	void Awake() {
 		UseProgressiveRespawn = false;
 		UseSpawnManagerTree = false;
 
-        m_maxEntities = 0;
-        for (int g = 0; g < m_groups.Length; g++) {
-            m_maxEntities = (uint)Mathf.Max(m_maxEntities, m_groups[g].m_entityPrefabsStr.Length);            
-        }        
+		int maxHandlers = 0;
+		m_maxEntities = 0;
+		for (int g = 0; g < m_groups.Length; g++) {
+			m_maxEntities = (uint)Mathf.Max(m_maxEntities, m_groups[g].m_entityPrefabsStr.Length);
+			maxHandlers = Mathf.Max(maxHandlers, m_groups[g].m_entityPrefabsStr.Length);
+		}
+		m_poolHandlers = new PoolHandler[m_groups.Length, maxHandlers];
 
 		Initialize();
-    }
+	}
 
     protected override uint GetMaxEntities() {
         return m_maxEntities;
     }
 
-    protected override void OnInitialize() {                
+    protected override void OnInitialize() {     		
         string prefabName;
         for (int g = 0; g < m_groups.Length; g++) {			
 			for (int e = 0; e < m_groups[g].m_entityPrefabsStr.Length; e++) {
                 prefabName = m_groups[g].m_entityPrefabsStr[e];
-				PoolManager.RequestPool(prefabName, IEntity.EntityPrefabsPath, 1);                
+				m_poolHandlers[g, e] = PoolManager.RequestPool(prefabName, IEntity.EntityPrefabsPath, 1);                
 			}
 		}
 
@@ -71,6 +74,10 @@ public class PrisonerSpawner : AbstractSpawner {
     protected override uint GetEntitiesAmountToRespawn() {
         return (uint)m_groups[GroupIndexToSpawn].m_entityPrefabsStr.Length;
     }                            
+
+	protected override PoolHandler GetPoolHandler(uint index) {
+		return m_poolHandlers[GroupIndexToSpawn, index];
+	}
 
     protected override string GetPrefabNameToSpawn(uint index) {
         return m_groups[GroupIndexToSpawn].m_entityPrefabsStr[index];

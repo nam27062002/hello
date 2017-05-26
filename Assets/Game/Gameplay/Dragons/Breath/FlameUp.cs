@@ -28,10 +28,14 @@ public class FlameUp : MonoBehaviour
 	Transform m_referenceTransform;
 	Vector3 m_referencePosition;
 	Color m_baseColor;
+
+	private PoolHandler m_poolHandler;
+
 	void Start()
 	{
 		m_renderers = GetComponentsInChildren<SpriteRenderer>();
 		m_baseColor = m_renderers[0].color;
+		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
 
 	void LateUpdate()
@@ -53,7 +57,7 @@ public class FlameUp : MonoBehaviour
 				{
 					state = State.INACTIVE;
 					gameObject.SetActive(false);
-					PoolManager.ReturnInstance(gameObject);
+					m_poolHandler.ReturnInstance(gameObject);
 				}
 				else
 				{

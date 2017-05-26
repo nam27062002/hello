@@ -36,7 +36,6 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	void Awake() {
 		m_entity = GetComponent<Cage>();
 		m_prisonerSpawner = GetComponent<PrisonerSpawner>();
-		m_prisonerSpawner.Initialize();
 
 		m_currentHits = new Hit();
 	}
