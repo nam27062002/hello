@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dragon_reptile_1_body
+  m_Name: disguise_reptilius_1
   m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
@@ -18,7 +18,7 @@ Material:
     - first:
         name: _BumpMap
       second:
-        m_Texture: {fileID: 2800000, guid: 40720e08ce82bc5479c6641cf7a9f14c, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5286363094f526a4da717b919e6d9f72, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -42,7 +42,7 @@ Material:
     - first:
         name: _DetailTex
       second:
-        m_Texture: {fileID: 2800000, guid: 4566f8efba92f4ec1b1236986ed4b294, type: 3}
+        m_Texture: {fileID: 2800000, guid: e03dc7c068626ac42a565b1ef4b3f0d3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -54,7 +54,7 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 6917f201ded670f42b6bb42c8317deef, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2b6f01e7ff3927d48b4ed071e422d8a6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -71,6 +71,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     - first:
         name: _ParallaxMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _ReflectionMap
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -93,7 +99,7 @@ Material:
       second: 0
     - first:
         name: _Fresnel
-      second: 3.81
+      second: 10
     - first:
         name: _Glossiness
       second: 0.5
@@ -116,8 +122,11 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
+        name: _ReflectionAmount
+      second: 0
+    - first:
         name: _SpecExponent
-      second: 4.5
+      second: 6.68
     - first:
         name: _SrcBlend
       second: 1
@@ -133,16 +142,16 @@ Material:
     m_Colors:
     - first:
         name: _AmbientAdd
-      second: {r: 0, g: 0, b: 0, a: 0}
+      second: {r: 0.03676468, g: 0.014508252, b: 0.002432957, a: 0}
     - first:
         name: _Color
       second: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
     - first:
         name: _ColorAdd
-      second: {r: 0.062283732, g: 0.11764705, b: 0.07641092, a: 0}
+      second: {r: 0, g: 0, b: 0, a: 0}
     - first:
         name: _ColorMultiply
-      second: {r: 0.9632353, g: 1, b: 1, a: 1}
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
@@ -151,16 +160,16 @@ Material:
       second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _FresnelColor
-      second: {r: 0.153, g: 0.65160036, b: 0.65160036, a: 1}
+      second: {r: 0.44290656, g: 0.45455194, b: 0.4705882, a: 1}
     - first:
         name: _InnerLightColor
-      second: {r: 0.46756056, g: 0.64491105, b: 0.6911765, a: 1}
+      second: {r: 0, g: 0, b: 0, a: 1}
     - first:
         name: _SecondLightColor
-      second: {r: 0, g: 0, b: 0, a: 0}
+      second: {r: 0.38570502, g: 0.5609922, b: 0.9044118, a: 0}
     - first:
         name: _SecondLightDir
-      second: {r: 0, g: 0, b: -1, a: 0}
+      second: {r: 0.82, g: -2.75, b: 2.67, a: 0.45}
     - first:
         name: _Tint
       second: {r: 1, g: 1, b: 1, a: 1}
