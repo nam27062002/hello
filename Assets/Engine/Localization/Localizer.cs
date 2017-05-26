@@ -28,8 +28,6 @@ public class Localizer : MonoBehaviour {
 		DEFAULT,
 		UPPER_CASE,
 		LOWER_CASE,
-		REPLACEMENTS_UPPER_CASE,
-		REPLACEMENTS_LOWER_CASE,
 		TITLE_CASE
 	}
 
@@ -49,7 +47,7 @@ public class Localizer : MonoBehaviour {
 		set { m_caseType = value; }
 	}
 
-	[SerializeField] string[] m_replacements;
+	[SerializeField] private string[] m_replacements;
 	public string[] replacements {
 		get { return m_replacements; }
 	}
@@ -153,20 +151,6 @@ public class Localizer : MonoBehaviour {
 	private void Localize() {
 		// Just do it
 		if(m_text == null) return;
-
-		if(m_caseType == Case.REPLACEMENTS_LOWER_CASE || m_caseType == Case.REPLACEMENTS_UPPER_CASE) {
-			Debug.Log("<color=red>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</color>");
-		}
-
-		// Process casing first
-		string[] processedReplacements = new string[m_replacements.Length];
-		for(int i = 0; i < m_replacements.Length; i++) {
-			switch(m_caseType) {
-                case Case.REPLACEMENTS_LOWER_CASE: 	processedReplacements[i] = m_replacements[i].ToLower(LocalizationManager.SharedInstance.Culture);	break;
-                case Case.REPLACEMENTS_UPPER_CASE: 	processedReplacements[i] = m_replacements[i].ToUpper(LocalizationManager.SharedInstance.Culture);	break;
-				default: 							processedReplacements[i] = m_replacements[i];								break;
-			}
-		}
 
 		// Perform the localization
         string localizedString = LocalizationManager.SharedInstance.Localize(m_tid, replacements);
