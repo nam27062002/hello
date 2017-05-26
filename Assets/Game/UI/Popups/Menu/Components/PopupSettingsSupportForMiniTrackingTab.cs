@@ -36,13 +36,19 @@ public class PopupSettingsSupportForMiniTrackingTab : MonoBehaviour
            {
                if (error == null)
                {
-
                    Debug.Log("Play test tracking sent successfully");
                }
                else
                {
                    Debug.Log("Error when sending play test tracking");
-               }
+
+                   PopupMessage.Config config = PopupMessage.GetConfig();
+                   config.TitleTid = "ERROR";
+                   config.MessageTid = "Make sure your internet connection is active and try again";                   
+                   config.ConfirmButtonTid = "TID_GEN_OK";
+                   config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;                                   
+                   PopupManager.PopupMessage_Open(config);                       
+               }               
            });        
 	}
 }
