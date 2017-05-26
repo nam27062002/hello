@@ -20,11 +20,12 @@ namespace AI {
 				return typeof(OnMineHitData);
 			}
 
-			private static int m_mineLayer = LayerMask.NameToLayer("Mines");
+			private static int m_mineLayer;
 			private byte m_buttonPressed = 0;
 
 			protected override void OnInitialise() {
 				base.OnInitialise();
+				m_mineLayer = LayerMask.NameToLayer("Mines");
 				m_data = m_pilot.GetComponentData<OnMineHitData>();
 			}
 

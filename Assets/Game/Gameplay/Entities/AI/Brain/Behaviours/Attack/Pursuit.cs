@@ -9,6 +9,7 @@ namespace AI {
 			public float arrivalRadius = 1f;
 			public string attackPoint;
 			public bool hasGuardState = false;
+			public Range timeout = new Range(0,0);
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Pursuit")]
@@ -22,6 +23,9 @@ namespace AI {
 
 			[StateTransitionTrigger]
 			private static string OnEnemyOutOfSight = "onEnemyOutOfSight";
+
+			[StateTransitionTrigger]
+			private static string OnPursuitTimeOut = "onPursuitTimeOut";
 
 
 			private enum PursuitState {
@@ -37,6 +41,9 @@ namespace AI {
 
 			private PursuitState m_pursuitState;
 			private object[] m_transitionParam;
+
+			protected float m_timer;
+			protected float m_timeOut;
 
 			public override StateComponentData CreateData() {
 				return new PursuitData();
@@ -81,6 +88,14 @@ namespace AI {
 				}
 
 				m_pursuitState = PursuitState.Move_Towards;
+
+				m_timer = 0;
+				if ( m_data.timeout.max > 0 ){
+					m_timeOut = m_data.timeout.GetRandom();
+				}else{
+					m_timeOut = -1;
+				}
+					
 			}
 
 			protected override void OnUpdate() {	
@@ -98,7 +113,10 @@ namespace AI {
 									
 				if (m_target != null && m_target.gameObject.activeInHierarchy) {
 
-					if (m_pursuitState == PursuitState.Move_Towards) {
+					m_timer += Time.deltaTime;
+					if (m_timeOut >= 0 && m_timer > m_timeOut) {
+						Transition( OnPursuitTimeOut );
+					} else if (m_pursuitState == PursuitState.Move_Towards) {
 						if (m_machine.GetSignal(Signals.Type.Critical)) {
 							ChangeState(PursuitState.Move_Away);
 						} else {
