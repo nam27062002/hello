@@ -93,6 +93,7 @@ public class MenuPlayScreen : MonoBehaviour {
    
     private void Refresh()
     {
+#if CLOUD_SAVE && (WEIBO || FACEBOOK)
         // By default we consider that the button has to be enabled. Next We check the login state, so it will be disabled if the user's logged in
         m_badge.SetActive(true);
         m_connectButton.interactable = true;
@@ -110,6 +111,9 @@ public class MenuPlayScreen : MonoBehaviour {
             default:
                 break;
         }
+#else
+        m_badge.SetActive(false);
+#endif
     }
    
     //------------------------------------------------------------------//

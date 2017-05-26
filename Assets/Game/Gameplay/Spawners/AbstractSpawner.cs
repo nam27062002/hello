@@ -79,9 +79,18 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     // Delegate called when the spawner is done with the stuff it had to do
     public System.Action<AbstractSpawner> OnDone { get; set; }
 
+	public bool IsRespawing() {
+		return (State >= EState.Respawning) && (State < EState.Alive);
+	}
+
     public bool CanRespawn() {
         return (State == EState.Respawning) ? CanRespawnExtended() : false;       
     }
+
+	// this spawner will kill its entities if it is outside camera disable area
+	public virtual bool MustCheckCameraBounds() {
+		return false;
+	}
     
     //return true if it respawned completelly
     public bool Respawn() {
@@ -163,6 +172,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 			Transform spawningTransform = spawning.transform;
 			spawningTransform.rotation = Quaternion.identity;
 			spawningTransform.localRotation = Quaternion.identity;
+			spawningTransform.localScale = Vector3.one;
 
             if (!spawning.activeSelf) {
                 spawning.SetActive(true);
@@ -172,15 +182,14 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
                 m_guideFunction.ResetTime();
             }
 
-            OnEntitySpawned(spawning, EntitiesSpawned, startPosition);
-
-            EntitiesSpawned++;
-
             IEntity entity = spawning.GetComponent<IEntity>();
             if (entity != null) {
                 RegisterInEntityManager(entity);
                 entity.Spawn(this); // lets spawn Entity component first
+				OnEntitySpawned(entity, EntitiesSpawned, startPosition);
             }
+
+			EntitiesSpawned++;
 
 			AI.IMachine machine = spawning.GetComponent<AI.IMachine>();
             if (machine != null) {
@@ -346,7 +355,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     protected abstract uint GetEntitiesAmountToRespawn();    
     protected abstract string GetPrefabNameToSpawn(uint index);
     protected virtual void OnCreateInstance(uint index, GameObject go) {}    
-    protected virtual void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {}
+	protected virtual void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {}
 	protected virtual void OnMachineSpawned(AI.IMachine machine) {}
     protected virtual void OnPilotSpawned(AI.Pilot pilot) {}
     protected virtual void OnAllEntitiesRespawned() {}    

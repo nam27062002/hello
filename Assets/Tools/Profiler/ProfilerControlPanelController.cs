@@ -307,6 +307,7 @@ public class ProfilerControlPanelController : MonoBehaviour
 		Village_WoodsCabins,
 		Village_WoodsLeaves,
         Village_Witches_Woods,
+        Village_Goblins_City,
         Village_TunnelToCastle,
 
         //---------------------- Castle area ----------------------
@@ -318,11 +319,12 @@ public class ProfilerControlPanelController : MonoBehaviour
         Castle_Bridge,
 
         //---------------------- Dark area ----------------------
-        Dark_Woods
+        //Dark_Woods
     }
 
     private Vector3[] m_checkpointsPositions = new Vector3[]
     {
+        //---------------------- Village area ----------------------
 		new Vector3(-180, 119, 0f),
         new Vector3(-174, 75, 0f),
         new Vector3(-132, -21, 0f),
@@ -330,7 +332,10 @@ public class ProfilerControlPanelController : MonoBehaviour
         new Vector3(137, 51, 0f),
 		new Vector3(280, 42, 0f),
         new Vector3(-394, -54, 0f),
-        new Vector3(360, 69, 0f),
+        new Vector3(-450, 1.78f, 0f),
+        new Vector3(360, 69, 0f),                
+
+        //---------------------- Castle area ----------------------
         new Vector3(414, 68, 0f),
         new Vector3(598, -3, 0f),
         new Vector3(598, -46, 0f),
@@ -338,6 +343,7 @@ public class ProfilerControlPanelController : MonoBehaviour
         new Vector3(522, -61, 0f),
         new Vector3(460, -11, 0f),
 
+        //---------------------- Dark area ----------------------
     };
 
     public TMP_Dropdown m_checkpoints;

@@ -131,6 +131,10 @@ public class MenuSceneController : SceneController {
 
 	protected IEnumerator Start()
 	{
+		// Start loading pet pill's on the background!
+		PetsScreenController petsScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();
+		StartCoroutine(petsScreen.InstantiatePillsAsync());
+
 		yield return new WaitForSeconds(5.0f);
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
 		{

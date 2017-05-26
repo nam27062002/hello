@@ -130,6 +130,15 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		m_state = State.Respawning;
 	}        
 
+	public bool IsRespawing() {
+		return (m_state == State.Respawning);
+	}
+
+	// this spawner will kill its entities if it is outside camera disable area
+	public bool MustCheckCameraBounds() {
+		return false;
+	}
+
     public bool CanRespawn() {
 		if (m_state == State.Respawning) {
 			if (m_spawnConditions != null && m_spawnConditions.IsReadyToBeDisabled(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {

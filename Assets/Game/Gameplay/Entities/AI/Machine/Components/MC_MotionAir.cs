@@ -54,21 +54,6 @@ namespace AI {
 			m_targetRotation = Quaternion.LookRotation(m_direction + Vector3.back * 0.1f, m_upVector);
 
 			if (!m_pilot.IsActionPressed(Pilot.Action.Stop)) {
-				if (m_rollRotation) {
-					float angle = Vector3.Angle(Vector3.right, m_direction);
-
-					if (angle < 10f || angle > 170f) {
-						angle = 0f;
-					} else {
-						if (angle >= 90f) 
-							angle = 180f - angle;
-
-						angle = ((angle - 10f) / (90f - 10f)) * (m_rollAngle - 0f) + 0f;
-					}
-
-					m_targetRotation = Quaternion.AngleAxis(angle, m_direction) * m_targetRotation;
-				}
-
 				if (m_dragonStyleRotation) {
 					float angle = m_direction.ToAngleDegrees();
 					float roll = angle;
@@ -90,6 +75,21 @@ namespace AI {
 						}
 					}
 					m_targetRotation = Quaternion.Euler(eulerRot) * Quaternion.Euler(0f, 90f, 0f);
+				}
+
+				if (m_rollRotation) {
+					float angle = Vector3.Angle(Vector3.right, m_direction);
+
+					if (angle < 10f || angle > 170f) {
+						angle = 0f;
+					} else {
+						if (angle >= 90f) 
+							angle = 180f - angle;
+
+						angle = ((angle - 10f) / (90f - 10f)) * (m_rollAngle - 0f) + 0f;
+					}
+
+					m_targetRotation = Quaternion.AngleAxis(angle, m_direction) * m_targetRotation;
 				}
 			}
 

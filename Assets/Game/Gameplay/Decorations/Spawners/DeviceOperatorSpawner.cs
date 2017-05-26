@@ -91,7 +91,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
         return m_entityPrefabStr;
     }    
 
-    protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
+	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
         Transform groundSensor = spawning.transform.FindChild("groundSensor");
         Transform t = spawning.transform;
         

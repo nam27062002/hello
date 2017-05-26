@@ -64,26 +64,44 @@ public class ShowHideAnimator : MonoBehaviour {
 	// For CUSTOM, add as many DOTweenAnimation components as desired to the target object and put them in the show() and hide() arrays.
 	// For animators, just link the animator to be used. Must have a "show" and "hide" triggers.
 	[SerializeField] protected TweenType m_tweenType = TweenType.NONE;
-	public TweenType tweenType { get { return m_tweenType; }}
+	public TweenType tweenType { 
+		get { return m_tweenType; }
+		set { m_tweenType = value; m_isDirty = true; }
+	}
 
 	// Config
 	// Tween params
 	// All tween-related parameters will be ignored if an animator is defined.
 	// Feel free to add new tween types or extra parameters
 	[SerializeField] protected float m_tweenDuration = 0.25f;
-	public float tweenDuration { get { return m_tweenDuration; }}
+	public float tweenDuration { 
+		get { return m_tweenDuration; }
+		set { m_tweenDuration = value; m_isDirty = true; }
+	}
 
 	[SerializeField] protected float m_tweenValue = 1f;					// Use it to tune the animation (e.g. offset for move tweens, scale factor for the scale tweens, initial alpha for fade tweens).
-	public float tweenValue { get { return m_tweenValue; }}
+	public float tweenValue {
+		get { return m_tweenValue; }
+		set { m_tweenValue = value; m_isDirty = true; }
+	}
 
 	[SerializeField] protected Ease m_tweenEase = Ease.OutBack;
-	public Ease tweenEase { get { return m_tweenEase; }}
+	public Ease tweenEase { 
+		get { return m_tweenEase; }
+		set { m_tweenEase = value; m_isDirty = true; }
+	}
 
 	[SerializeField] protected float m_tweenDelay = 0f;
-	public float tweenDelay { get { return m_tweenDelay; }}
+	public float tweenDelay { 
+		get { return m_tweenDelay; }
+		set { m_tweenDelay = value; m_isDirty = true; }
+	}
 
 	[SerializeField] protected bool m_ignoreTimeScale = true;			// [AOC] Generally we don't want UI animations to be affected by global timeScale
-	public bool ignoreTimeScale { get { return m_ignoreTimeScale; }}
+	public bool ignoreTimeScale { 
+		get { return m_ignoreTimeScale; }
+		set { m_ignoreTimeScale = value; m_isDirty = true; }
+	}
 
 	// Custom tweens
 	[SerializeField] protected DOTweenAnimation[] m_showTweens = new DOTweenAnimation[0];
