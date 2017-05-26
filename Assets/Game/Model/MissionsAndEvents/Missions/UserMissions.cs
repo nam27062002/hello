@@ -126,13 +126,14 @@ public class UserMissions {
 	/// Nothing will happen if the mission is not on Cooldown state.
 	/// </summary>
 	/// <param name="_difficulty">The difficulty of the mission to be skipped.</param>
-	public void SkipMission(Mission.Difficulty _difficulty) {
-		// Get mission and check that is in cooldown state
+	/// <param name="_seconds">Time to skip. Use -1 for the whole cooldown duration.</param>
+	public void SkipMission(Mission.Difficulty _difficulty, float _seconds) {
+		// Get mission and check that it is in cooldown state
 		Mission m = GetMission(_difficulty);
-		if(m == null || m.state != Mission.State.COOLDOWN) return;
+		if(m == null) return;
 
-		// Change mission to Active state
-		m.ChangeState(Mission.State.ACTIVE);
+		// Let mission handle it
+		m.SkipCooldownTimer(_seconds);
 	}
 
 	//------------------------------------------------------------------//

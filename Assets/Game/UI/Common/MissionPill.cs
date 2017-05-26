@@ -269,6 +269,13 @@ public class MissionPill : MonoBehaviour {
 
 		// Difficulty
 		RefreshDifficulty(m_cooldownObj.FindComponentRecursive<Localizer>("DifficultyText"), true);
+
+		// Skip with ad button
+		Localizer skipWithAdText = m_cooldownObj.FindComponentRecursive<Localizer>("TextAd");
+		if(skipWithAdText != null) {
+			// [AOC] TODO!! we don't want to capitalize the replacement
+			skipWithAdText.Localize(skipWithAdText.tid, TimeUtils.FormatTime(Mission.SECONDS_SKIPPED_WITH_AD, TimeUtils.EFormat.ABBREVIATIONS, 1));
+		}
 	}
 
 	/// <summary>
@@ -358,16 +365,37 @@ public class MissionPill : MonoBehaviour {
 	/// Callback for the remove mission button with ads.
 	/// </summary>
 	public void OnFreeRemoveMission(){
-		if ( m_mission == null ) return;
+		if(m_mission == null) return;
 
 		PopupController popup = PopupManager.OpenPopupInstant(PopupAdRevive.PATH);
-		popup.OnClosePostAnimation.AddListener(OnAdClosed);
+		popup.OnClosePostAnimation.AddListener(OnRemoveMissionAdClosed);
 	}
 
-	private void OnAdClosed() {
-
+	/// <summary>
+	/// Ad popup has been closed.
+	/// </summary>
+	private void OnRemoveMissionAdClosed() {
 		UsersManager.currentUser.dailyRemoveMissionAdUses++;
 		MissionManager.RemoveMission(m_missionDifficulty);
+		PersistenceManager.Save();
+	}
+
+	/// <summary>
+	/// The skip time with ad button has been pressed.
+	/// </summary>
+	public void OnSkipTimeWithAd() {
+		if(m_mission == null) return;
+
+		PopupController popup = PopupManager.OpenPopupInstant(PopupAdRevive.PATH);
+		popup.OnClosePostAnimation.AddListener(OnSkipTimeAdClosed);
+	}
+
+	/// <summary>
+	/// Ad popup has been closed.
+	/// </summary>
+	private void OnSkipTimeAdClosed() {
+		// Do it!
+		MissionManager.SkipMission(m_missionDifficulty, Mission.SECONDS_SKIPPED_WITH_AD);		
 		PersistenceManager.Save();
 	}
 
@@ -383,7 +411,7 @@ public class MissionPill : MonoBehaviour {
 		purchaseFlow.OnSuccess.AddListener(
 			(ResourcesFlow _flow) => {
 				// Just do it
-				MissionManager.SkipMission(m_missionDifficulty);
+				MissionManager.SkipMission(m_missionDifficulty, -1f);
 				PersistenceManager.Save();
 			}
 		);

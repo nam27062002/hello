@@ -105,6 +105,46 @@ public class Localizer : MonoBehaviour {
 	}
 
 	//------------------------------------------------------------------------//
+	// STATIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Auxiliar method to apply a specific casing to a given string.
+	/// </summary>
+	/// <returns>The processed string.</returns>
+	/// <param name="_case">Case type to be applied.</param>
+	/// <param name="_text">Text to be processed.</param>
+	public static string ApplyCase(Case _case, string _text) {
+		// Do it!
+		string processedText = _text;
+		switch(_case) {
+			case Case.LOWER_CASE: 	processedText = _text.ToLower(LocalizationManager.SharedInstance.Culture);	break;
+			case Case.UPPER_CASE: 	processedText = _text.ToUpper(LocalizationManager.SharedInstance.Culture);	break;
+			case Case.TITLE_CASE:	processedText = LocalizationManager.SharedInstance.Culture.TextInfo.ToTitleCase(_text);	break;	// From http://stackoverflow.com/questions/1206019/converting-string-to-title-case
+		}
+
+		// Reverse casing in formatting tags, where mixed-casing is problematic
+		int startIdx = processedText.IndexOf("<");
+		while(startIdx > -1) {
+			int endIdx = processedText.IndexOf(">", startIdx);
+			if(endIdx == -1) {
+				// Error, tag unclosed
+				Debug.LogWarning("Sentence error in '" + processedText + "' . The symbol > wasn't found.");
+				startIdx = -1;	// Break loop
+			} else {
+				// Replace formatting tag with the same tag in lower case
+				string formattingTag = processedText.Substring(startIdx, endIdx - startIdx);
+				processedText = processedText.Replace(formattingTag, formattingTag.ToLowerInvariant());
+
+				// Find next one
+				startIdx = processedText.IndexOf("<", endIdx);
+			}
+		}
+
+		// Done!
+		return processedText;
+	}
+
+	//------------------------------------------------------------------------//
 	// INTERNAL UTILS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
@@ -113,6 +153,10 @@ public class Localizer : MonoBehaviour {
 	private void Localize() {
 		// Just do it
 		if(m_text == null) return;
+
+		if(m_caseType == Case.REPLACEMENTS_LOWER_CASE || m_caseType == Case.REPLACEMENTS_UPPER_CASE) {
+			Debug.Log("<color=red>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</color>");
+		}
 
 		// Process casing first
 		string[] processedReplacements = new string[m_replacements.Length];
@@ -127,30 +171,8 @@ public class Localizer : MonoBehaviour {
 		// Perform the localization
         string localizedString = LocalizationManager.SharedInstance.Localize(m_tid, replacements);
 
-		// Process full string
-		switch(m_caseType) {
-            case Case.LOWER_CASE: 	localizedString = localizedString.ToLower(LocalizationManager.SharedInstance.Culture);	break;
-            case Case.UPPER_CASE: 	localizedString = localizedString.ToUpper(LocalizationManager.SharedInstance.Culture);	break;
-			case Case.TITLE_CASE:	localizedString = LocalizationManager.SharedInstance.Culture.TextInfo.ToTitleCase(localizedString);	break;	// From http://stackoverflow.com/questions/1206019/converting-string-to-title-case
-		}
-
-		// Reverse casing in formatting tags, where mixed-casing is problematic
-		int startIdx = localizedString.IndexOf("<");
-		while(startIdx > -1) {
-			int endIdx = localizedString.IndexOf(">", startIdx);
-			if(endIdx == -1) {
-				// Error, tag unclosed
-				Debug.LogWarning("Sentence error in '" + localizedString + "' . The symbol > wasn't found.");
-				startIdx = -1;	// Break loop
-			} else {
-				// Replace formatting tag with the same tag in lower case
-				string formattingTag = localizedString.Substring(startIdx, endIdx - startIdx);
-				localizedString = localizedString.Replace(formattingTag, formattingTag.ToLowerInvariant());
-
-				// Find next one
-				startIdx = localizedString.IndexOf("<", endIdx);
-			}
-		}
+		// Apply casing to full string
+		localizedString = ApplyCase(m_caseType, localizedString);
 
 		// Apply to textfield
 		m_text.text = localizedString;
