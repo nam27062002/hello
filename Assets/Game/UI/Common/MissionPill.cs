@@ -273,8 +273,11 @@ public class MissionPill : MonoBehaviour {
 		// Skip with ad button
 		Localizer skipWithAdText = m_cooldownObj.FindComponentRecursive<Localizer>("TextAd");
 		if(skipWithAdText != null) {
-			// [AOC] TODO!! we don't want to capitalize the replacement
-			skipWithAdText.Localize(skipWithAdText.tid, TimeUtils.FormatTime(Mission.SECONDS_SKIPPED_WITH_AD, TimeUtils.EFormat.ABBREVIATIONS, 1));
+			// [AOC] TODO!! Force the time to be in lower case always
+			skipWithAdText.Localize(
+				skipWithAdText.tid, 
+				TimeUtils.FormatTime(Mission.SECONDS_SKIPPED_WITH_AD, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 1)
+			);
 		}
 	}
 
