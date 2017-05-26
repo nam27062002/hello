@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -110,8 +111,8 @@ public class PetsScreenController : MonoBehaviour {
 		animator.OnShowPostAnimation.AddListener(OnShowPostAnimation);
 		animator.OnHidePreAnimation.AddListener(OnHidePreAnimation);
 
-		// Clear all placeholder content from the scroll list
-		m_scrollList.content.DestroyAllChildren(false);
+		// Subscribe to other events
+		petFilters.OnFilterChanged.AddListener(OnFilterChanged);
 	}
 
 	/// <summary>
@@ -152,6 +153,9 @@ public class PetsScreenController : MonoBehaviour {
 		animator.OnShowPreAnimation.RemoveListener(OnShowPreAnimation);
 		animator.OnShowPostAnimation.RemoveListener(OnShowPostAnimation);
 		animator.OnHidePreAnimation.RemoveListener(OnHidePreAnimation);
+
+		// Unsubscribe from other events
+		petFilters.OnFilterChanged.RemoveListener(OnFilterChanged);
 	}
 
 	//------------------------------------------------------------------------//
@@ -240,13 +244,6 @@ public class PetsScreenController : MonoBehaviour {
 	public void Refresh(bool _animate) {
 		// We must have the data!
 		if(m_dragonData == null) return;
-
-		// Init pets collection counter
-		m_counterText.text = LocalizationManager.SharedInstance.Localize(
-			"TID_FRACTION",
-			StringUtils.FormatNumber(UsersManager.currentUser.petCollection.unlockedPetsCount),
-			StringUtils.FormatNumber(m_defs.Count)
-		) + " unlocked";	// [AOC] HARDCODED!!
 
 		// Slots
 		for(int i = 0; i < m_petSlots.Count; i++) {
@@ -363,10 +360,14 @@ public class PetsScreenController : MonoBehaviour {
 			m_defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
 		}
 
+		// Clear all placeholder content from the scroll list
+		m_scrollList.content.DestroyAllChildren(false);
+		m_pills.Clear();
+
 		// Create a pill for every definition, one per frame
 		// Do more than one per frame
 		int createdThisFrame = 0;
-		for(int i = m_pills.Count; i < m_defs.Count; i++) {		// Only if we don't have enough of them!
+		for(int i = 0; i < m_defs.Count; i++) {		// Only if we don't have enough of them!
 			// Instantiate pill
 			GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, m_scrollList.content, false);
 			m_pills.Add(newPillObj.GetComponent<PetPill>());
@@ -493,6 +494,25 @@ public class PetsScreenController : MonoBehaviour {
 
 		// Save persistence - centralize all pets management persistence in here
 		PersistenceManager.Save();
+	}
+
+	/// <summary>
+	/// The filters have changed.
+	/// </summary>
+	/// <param name="_filters">The filters collection that triggered the event.</param>
+	public void OnFilterChanged(PetFilters _filters) {
+		// Find out unlocked pets in the current filtered list
+		int unlockedCount = _filters.filteredDefs.Where(
+			(_def) => UsersManager.currentUser.petCollection.IsPetUnlocked(_def.sku)
+		).ToList().Count;
+
+		// Refresh counter text
+		m_counterText.text = LocalizationManager.SharedInstance.Localize(
+			"TID_FRACTION",
+			StringUtils.FormatNumber(unlockedCount),
+			StringUtils.FormatNumber(_filters.filteredDefs.Count)
+		) + " unlocked";	// [AOC] HARDCODED!!
+		m_counterText.GetComponent<ShowHideAnimator>().RestartShow();
 	}
 
 	/// <summary>
