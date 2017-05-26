@@ -267,7 +267,7 @@ public class DragonTint : MonoBehaviour
 		for (int i = 0; i < m_materialsCount; ++i) 
             m_materials[i].shader = Shader.Find("Hungry Dragon/Dragon/Death");
 
-     	if ( _type == DamageType.MINE )
+     	if ( _type == DamageType.MINE || _type == DamageType.BIG_DAMAGE)
      	{
      		// Shows corpse
      		m_deathAlpha = 0;

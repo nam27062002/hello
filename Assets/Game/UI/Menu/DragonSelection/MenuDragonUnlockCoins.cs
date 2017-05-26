@@ -21,7 +21,7 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	public TMPro.TextMeshProUGUI m_priceText;
+	public Localizer m_priceText;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -63,7 +63,7 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 		if(data == null) return;
 
 		// Update price
-		m_priceText.text = UIConstants.GetIconString(data.def.GetAsLong("unlockPriceCoins"), UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
+		m_priceText.Localize(m_priceText.tid, StringUtils.FormatNumber(data.def.GetAsLong("unlockPriceCoins")));
 	}
 
 	/// <summary>

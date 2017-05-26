@@ -131,6 +131,11 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 		}
 	}
 
+	/// <summary>
+	/// How many dragons are required to unlock a specific mission difficulty?
+	/// </summary>
+	/// <returns>The amount of owned dragons required to unlock a specific mission difficulty.</returns>
+	/// <param name="_difficulty">Difficulty to query.</param>
 	public static int GetDragonsRequiredToUnlockMissionDifficulty(Mission.Difficulty _difficulty) {
 		return instance.m_dragonsToUnlock[(int)_difficulty];
 	}
