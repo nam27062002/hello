@@ -21,6 +21,8 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 
 	public List<GameObject> m_activateOnShoot = new List<GameObject>();
 
+	private PoolHandler m_poolHandler;
+
 
 	// Use this for initialization
 	void Start () {		
@@ -32,6 +34,8 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 		if (m_pMotion) m_pMotion.enabled = false;
 	
 		m_hasBeenShot = false;
+
+		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
 
 	void OnDisable()
@@ -152,6 +156,6 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 		}
 
 		gameObject.SetActive(false);
-		PoolManager.ReturnInstance(gameObject);
+		m_poolHandler.ReturnInstance(gameObject);
 	}
 }

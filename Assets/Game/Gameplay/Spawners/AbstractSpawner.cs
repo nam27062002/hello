@@ -116,12 +116,13 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
                 sm_watch.Start();
             }
 
-            string prefabName;
+			PoolHandler handler;
             GameObject go;
             long start = sm_watch.ElapsedMilliseconds;
             while (EntitiesAlive < EntitiesToSpawn) {
-                prefabName = GetPrefabNameToSpawn(EntitiesAlive);
-                go = PoolManager.GetInstance(prefabName, !UseProgressiveRespawn);
+				string prefabName = GetPrefabNameToSpawn(EntitiesAlive);
+				handler = GetPoolHandler(EntitiesAlive);
+				go = handler.GetInstance(!UseProgressiveRespawn);
 
 				if (go == null) {
 					break;
@@ -132,7 +133,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 	                EntitiesAlive++;
 
 	                if (ProfilerSettingsManager.ENABLED) {
-	                    SpawnerManager.AddToTotalLogicUnits(1, prefabName);
+						SpawnerManager.AddToTotalLogicUnits(1, prefabName);
 	                }
 				}
 
@@ -251,10 +252,10 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
             }
             EntitiesAlive--;
 
-            string prefabName = GetPrefabNameToSpawn((uint)index);
+			PoolHandler handler = GetPoolHandler((uint)index);
             if (ProfilerSettingsManager.ENABLED)
             {               
-                SpawnerManager.RemoveFromTotalLogicUnits(1, prefabName);
+				SpawnerManager.RemoveFromTotalLogicUnits(1, GetPrefabNameToSpawn(((uint)index)));
             }
 
             // Unregisters the entity            
@@ -263,7 +264,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
             }
 
             // Returns the entity to the pool
-            ReturnEntityToPool(prefabName, _entity);
+			ReturnEntityToPool(handler, _entity);
 
             OnRemoveEntity(_entity, index);
 
@@ -278,12 +279,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
         }
     }
 
-    protected virtual void ReturnEntityToPool(string _prefabName, GameObject _entity) {
-        if (string.IsNullOrEmpty(_prefabName)) {
-            PoolManager.ReturnInstance(_entity);
-        } else {
-            PoolManager.ReturnInstance(_prefabName, _entity);
-        }
+	protected virtual void ReturnEntityToPool(PoolHandler _handler, GameObject _entity) {
+		_handler.ReturnInstance(_entity);
     }
 
     protected void RegisterInSpawnerManager() {
@@ -353,7 +350,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     protected virtual bool CanRespawnExtended() { return true; }
     protected virtual void OnPrepareRespawning() {}
     protected abstract uint GetEntitiesAmountToRespawn();    
-    protected abstract string GetPrefabNameToSpawn(uint index);
+    protected abstract PoolHandler GetPoolHandler(uint index);
+	protected abstract string GetPrefabNameToSpawn(uint index);
     protected virtual void OnCreateInstance(uint index, GameObject go) {}    
 	protected virtual void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {}
 	protected virtual void OnMachineSpawned(AI.IMachine machine) {}

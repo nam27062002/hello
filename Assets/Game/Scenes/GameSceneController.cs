@@ -364,6 +364,7 @@ public class GameSceneController : GameSceneControllerBase {
         if (ApplicationManager.IsAlive) {
             ParticleManager.Clear();
             PoolManager.Clear(true);
+			UIPoolManager.Clear(true);
         }
     }
 

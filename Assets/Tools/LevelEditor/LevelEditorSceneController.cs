@@ -129,6 +129,7 @@ namespace LevelEditor {
 			FirePropagationManager.DestroyInstance();
 			ParticleManager.Clear();
 			PoolManager.Clear(true);
+			UIPoolManager.Clear(true);
 
 			// Call parent
 			base.OnDestroy();

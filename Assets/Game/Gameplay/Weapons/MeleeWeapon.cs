@@ -5,6 +5,7 @@ public class MeleeWeapon : MonoBehaviour {
 
 	[SerializeField] private float m_knockback = 0;
 	[SerializeField] private float m_timeBetweenHits = 0.5f;
+	[SerializeField] private DamageType m_damageType = DamageType.NORMAL;
 
 	[SeparatorAttribute("Trail effect")]
 	[SerializeField] private Xft.XWeaponTrail m_trail;
@@ -82,7 +83,7 @@ public class MeleeWeapon : MonoBehaviour {
 
 				dragonMotion.AddForce(knockBack);
 			}
-			InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, DamageType.NORMAL);
+			InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType);
 			m_timer = m_timeBetweenHits;
 		}
 	}

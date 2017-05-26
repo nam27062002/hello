@@ -19,11 +19,19 @@ public class PoolReturnOnDisable : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+	public enum PoolType {
+		PoolManager = 0,
+		UIPoolManager,
+		ParticleManager
+	};
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	
+	[SerializeField] private PoolType m_returnTo = PoolType.PoolManager;
+
+	private PoolHandler m_poolHandler = null;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -31,7 +39,21 @@ public class PoolReturnOnDisable : MonoBehaviour {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		PoolManager.ReturnInstance(this.gameObject);
+		if (m_poolHandler == null) {
+			GetHandler();
+		}
+
+		if (m_poolHandler != null) {
+			m_poolHandler.ReturnInstance(this.gameObject);
+		}
+	}
+
+	private void GetHandler() {
+		switch (m_returnTo) {
+			case PoolType.PoolManager:		m_poolHandler = PoolManager.GetHandler(gameObject.name); break;
+			case PoolType.UIPoolManager:	m_poolHandler = UIPoolManager.GetHandler(gameObject.name); break;
+			case PoolType.ParticleManager:	break;
+		}
 	}
 
 	//------------------------------------------------------------------------//

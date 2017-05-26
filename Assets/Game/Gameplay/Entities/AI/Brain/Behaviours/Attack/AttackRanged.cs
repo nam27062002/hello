@@ -19,6 +19,8 @@ namespace AI {
 			private Transform m_projectileSpawnPoint;
 			private ViewControl m_viewControl;
 
+			private PoolHandler m_poolHandler;
+
 			public override StateComponentData CreateData() {
 				return new AttackRangedData();
 			}
@@ -33,7 +35,7 @@ namespace AI {
 				m_projectileSpawnPoint = m_pilot.FindTransformRecursive(((AttackRangedData)m_data).projectileSpawnTransformName);
 			
 				// create a projectile from resources (by name) and save it into pool
-				PoolManager.CreatePool(((AttackRangedData)m_data).projectileName, "Game/Projectiles/", 2, true);
+				m_poolHandler = PoolManager.CreatePool(((AttackRangedData)m_data).projectileName, "Game/Projectiles/", 2, true);
 
 				m_viewControl = m_pilot.GetComponent<ViewControl>();
 
@@ -61,7 +63,7 @@ namespace AI {
 				m_pilot.ReleaseAction(Pilot.Action.Aim);
 				if (m_projectile != null) {
 					m_projectile.SetActive(false);
-					PoolManager.ReturnInstance(m_projectile);
+					m_poolHandler.ReturnInstance(m_projectile);
 					m_projectile = null;
 				}
 
@@ -70,7 +72,7 @@ namespace AI {
 
 			protected override void OnAttachProjectileExtended() {	
 				if (m_projectile == null) {
-					m_projectile = PoolManager.GetInstance(((AttackRangedData)m_data).projectileName);
+					m_projectile = m_poolHandler.GetInstance();
 
 					if (m_projectile != null) {
 						IProjectile projectile = m_projectile.GetComponent<IProjectile>();

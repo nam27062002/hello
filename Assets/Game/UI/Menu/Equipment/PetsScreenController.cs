@@ -37,7 +37,7 @@ public class PetsScreenController : MonoBehaviour {
 	public ScrollRect scrollList {
 		get { return m_scrollList; }
 	}
-	[SerializeField] private TextMeshProUGUI m_counterText = null;
+	[SerializeField] private Localizer m_counterText = null;
 
 	[Space]
 	[SerializeField] private float m_pillCreationDelay = 0.025f;
@@ -507,11 +507,11 @@ public class PetsScreenController : MonoBehaviour {
 		).ToList().Count;
 
 		// Refresh counter text
-		m_counterText.text = LocalizationManager.SharedInstance.Localize(
-			"TID_FRACTION",
+		m_counterText.Localize(
+			m_counterText.tid,
 			StringUtils.FormatNumber(unlockedCount),
 			StringUtils.FormatNumber(_filters.filteredDefs.Count)
-		) + " unlocked";	// [AOC] HARDCODED!!
+		);
 		m_counterText.GetComponent<ShowHideAnimator>().RestartShow();
 	}
 

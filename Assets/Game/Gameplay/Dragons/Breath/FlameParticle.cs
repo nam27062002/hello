@@ -28,7 +28,14 @@ public class FlameParticle : MonoBehaviour {
 	
 	
 	State state = State.INACTIVE;
-	
+
+	private PoolHandler m_poolHandler;
+
+	void Start() {
+		m_poolHandler = PoolManager.GetHandler(gameObject.name);
+	}
+
+
 	// Update is called once per frame
 	void LateUpdate () {
 		
@@ -41,7 +48,7 @@ public class FlameParticle : MonoBehaviour {
 			} else {
 				state = State.INACTIVE;
 				gameObject.SetActive(false);
-				PoolManager.ReturnInstance( gameObject );
+				m_poolHandler.ReturnInstance( gameObject );
 			}
 		}
 	}
