@@ -32,6 +32,9 @@ public class UIScene3D : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Exposed setup
+	[SerializeField] private Vector2 m_renderTextureResolution = new Vector2(512f, 512f);
+
 	// References
 	protected Camera m_camera = null;
 	new public Camera camera {
@@ -78,7 +81,7 @@ public class UIScene3D : MonoBehaviour {
 		}
 
 		// Create a new render texture and set it as the camera render target
-		m_renderTexture = new RenderTexture(512, 512, 24, RenderTextureFormat.ARGB32);	// Might need a bigger one
+		m_renderTexture = new RenderTexture((int)m_renderTextureResolution.x, (int)m_renderTextureResolution.y, 24, RenderTextureFormat.ARGB32);	// Might need a bigger one
 		m_renderTexture.Create();
 		m_camera.targetTexture = m_renderTexture;
 	}
