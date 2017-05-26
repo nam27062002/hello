@@ -22,6 +22,7 @@ public class Mission {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	public const float SECONDS_SKIPPED_WITH_AD = 15f * 60f;	// [AOC] MAGIC NUMBER! 15min. Should be on content probably.
 
 	/// <summary>
 	/// Missions shall be grouped by difficulty.
@@ -159,6 +160,24 @@ public class Mission {
 			case State.COOLDOWN: Messenger.Broadcast<Mission>(GameEvents.MISSION_COOLDOWN_FINISHED, this);	break;
 		}
 		Messenger.Broadcast<Mission, State, State>(GameEvents.MISSION_STATE_CHANGED, this, oldState, _newState);
+	}
+
+	/// <summary>
+	/// Skip the cooldown timer a given amount of seconds.
+	/// Mission state wont change, even if cooldown is completed.
+	/// </summary>
+	/// <param name="_seconds">Time to skip. Use -1 for the whole cooldown duration.</param>
+	public void SkipCooldownTimer(float _seconds) {
+		// Nothing to do if mission is not on cooldown
+		if(state != Mission.State.COOLDOWN) return;
+
+		// Full cooldown completion?
+		if(_seconds < 0) {
+			_seconds = (float)cooldownRemaining.TotalSeconds;
+		}
+
+		// Do it!
+		m_cooldownStartTimestamp = m_cooldownStartTimestamp.AddSeconds(-_seconds);	// Simulate that cooldown started earlier than it actually did
 	}
 
 	//------------------------------------------------------------------//
