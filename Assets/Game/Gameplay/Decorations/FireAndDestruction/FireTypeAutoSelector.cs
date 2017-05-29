@@ -22,6 +22,9 @@ public class FireTypeAutoSelector : MonoBehaviour {
 	[SerializeField] private Renderer[] m_rChangeMaterials;
 
 
+	private Material m_fireMaterialInstance;
+	private Material m_megaMaterialInstance;
+
 	void OnEnable() {
 		if (InstanceManager.player != null) {
 			bool isMega = InstanceManager.player.IsMegaFuryOn();
@@ -59,11 +62,20 @@ public class FireTypeAutoSelector : MonoBehaviour {
 				colorOverLifetime.color = color;
 			}
 
-			for (int i = 0; i < m_rChangeMaterials.Length; ++i) {
-				Material[] materials = m_rChangeMaterials[i].materials;
-				for (int m = 0; m < materials.Length; ++m) {
-					if (isMega) materials[m] = m_fireMaterial;
-					else 		materials[m] = m_megaMaterial;
+			if (m_fireMaterial != null && m_megaMaterial != null) {
+
+				if (m_fireMaterialInstance == null) m_fireMaterialInstance = new Material(m_fireMaterial);
+				if (m_megaMaterialInstance == null) m_megaMaterialInstance = new Material(m_megaMaterial);
+
+				m_fireMaterialInstance.SetFloat("_Seed", Random.value);
+				m_megaMaterialInstance.SetFloat("_Seed", Random.value);
+
+				for (int i = 0; i < m_rChangeMaterials.Length; ++i) {
+					Material[] materials = m_rChangeMaterials[i].materials;
+					for (int m = 0; m < materials.Length; ++m) {
+						if (isMega) materials[m] = m_fireMaterialInstance;
+						else 		materials[m] = m_megaMaterialInstance;
+					}
 				}
 			}
 		}

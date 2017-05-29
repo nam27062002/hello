@@ -79,6 +79,14 @@ public class HungryLetter : MonoBehaviour
 		{
 			m_mapMarker.OnUpdateMarkerStatus();
 		}
+
+		m_particle.Play();
+		ParticleSystem.EmissionModule em = m_particle.emission;
+        em.enabled = true;
+		enabled = true;
+		m_collider.enabled = true;
+		ChangeLayersBack();
+		gameObject.transform.localScale = Vector3.one;
 	}
 
 	public void ChangeLayers()
@@ -88,6 +96,13 @@ public class HungryLetter : MonoBehaviour
 		gameObject.layer = LayerMask.NameToLayer("Default");
 		m_mesh.layer = LayerMask.NameToLayer("UI");
 	}
+
+	public void ChangeLayersBack()
+	{
+		gameObject.layer = LayerMask.NameToLayer("Triggers");
+		m_mesh.layer = LayerMask.NameToLayer("Default");
+	}
+
 
 	public HungryLettersManager GetHungryLettersManager( ) {
 		return m_letterManager;
