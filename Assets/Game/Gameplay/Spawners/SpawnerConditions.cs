@@ -52,9 +52,11 @@ public class SpawnerConditions : MonoBehaviour {
 		float rnd = Random.Range(0f, 100f);
 		DragonTier playerTier = InstanceManager.player.data.tier;
 
-		bool enabledByTier = playerTier >= m_minTier;
-		if (enabledByTier && m_checkMaxTier) {
-			enabledByTier = (playerTier <= m_maxTier);
+		bool enabledByTier = false;
+		if (m_checkMaxTier) {
+			enabledByTier = (playerTier >= m_minTier) && (playerTier <= m_maxTier);
+		} else {
+			enabledByTier = (playerTier >= m_minTier);
 		}
 
 		if (m_activationChance < 100f) {
