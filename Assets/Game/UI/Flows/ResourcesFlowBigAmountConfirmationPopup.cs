@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
 
@@ -28,7 +29,8 @@ public class ResourcesFlowBigAmountConfirmationPopup : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed members
 	[SerializeField] private Localizer m_messageText = null;
-	[SerializeField] private TextMeshProUGUI m_amountText = null;
+	[SerializeField] private Localizer m_buttonText = null;
+	[SerializeField] private Toggle m_dontShowAgainToggle = null;
 
 	// Events
 	public UnityEvent OnAccept = new UnityEvent();
@@ -46,14 +48,17 @@ public class ResourcesFlowBigAmountConfirmationPopup : MonoBehaviour {
 	/// </summary>
 	/// <param name="_pcAmount">Amount of PC to spend.</param>
 	public void Init(long _pcAmount) {
-		// Create price tag text
-		string priceTag = UIConstants.GetIconString(_pcAmount, UserProfile.Currency.HARD, UIConstants.IconAlignment.LEFT);
+		// Format price
+		string priceTag = StringUtils.FormatNumber(_pcAmount);
 
 		// Set message text
-		m_messageText.Localize("TID_RESOURCES_FLOW_BIG_AMOUNT_CONFIRMATION_MESSAGE", priceTag);
+		m_messageText.Localize(m_messageText.tid, priceTag);
 
 		// Set amount text
-		m_amountText.text = priceTag;
+		m_buttonText.Localize(m_buttonText.tid, priceTag);
+
+		// Initialize toggle
+		m_dontShowAgainToggle.isOn = !GameSettings.showBigAmountConfirmationPopup;	// Inverse
 	}
 
 	//------------------------------------------------------------------------//
@@ -73,5 +78,14 @@ public class ResourcesFlowBigAmountConfirmationPopup : MonoBehaviour {
 	public void OnCancelButton() {
 		// Managed Externally
 		OnCancel.Invoke();
+	}
+
+	/// <summary>
+	/// The "Don't show again" toggle has been changed.
+	/// </summary>
+	/// <param name="_newValue">New value of the toggle.</param>
+	public void OnDontShowAgainToggled(bool _newValue) {
+		// Store settings
+		GameSettings.showBigAmountConfirmationPopup = !_newValue;	// Inverse!
 	}
 }
