@@ -53,7 +53,7 @@ uniform float _NormalStrength;
 #endif
 
 #ifdef SPECULAR
-uniform float _Specular;
+uniform float _SpecularPower;
 uniform fixed4 _SpecularDir;
 #endif
 
@@ -135,11 +135,16 @@ v2f vert (appdata_t v)
 	return o;
 }
 
+
 fixed4 frag (v2f i) : SV_Target
 {	
 #ifdef DEBUG
 	return fixed4(1.0, 0.0, 1.0, 1.0);
 #endif	
+
+//#ifdef DARKEN
+//	return fixed4(0.0, 0.0, 1.0, 1.0);
+//#endif
 
 	fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
 
@@ -200,7 +205,7 @@ fixed4 frag (v2f i) : SV_Target
 #endif
 
 #ifdef SPECULAR
-	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
+	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower);
 	col = col + (specular * specMask * i.color * _LightColor0);
 #endif	
 
