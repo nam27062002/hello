@@ -331,6 +331,9 @@ public class OpenEggScreenController : MonoBehaviour {
 		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
 		switch(m_scene.eggData.rewardData.type) {
 			case "pet": {
+				// Make sure selected dragon is owned
+				InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
+
 				// Go to the pets screen
 				PetsScreenController petScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();
 				petScreen.Initialize(m_scene.eggData.rewardData.itemDef.sku);
