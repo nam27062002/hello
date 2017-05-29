@@ -1390,7 +1390,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_knockback: 1
   m_timeBetweenHits: 0.5
-  m_damageType: 0
   m_trail: {fileID: 0}
   m_trailParticles: []
 --- !u!114 &114791322292256874
@@ -1417,7 +1416,7 @@ MonoBehaviour:
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
   m_onEatenParticle:
-    name: PS_Blood_Explosion_Small
+    name: PS_Blood_Explosion
     path: Blood
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
@@ -1467,7 +1466,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    scale: 1
+    scale: 0.75
   m_onEatenFrozenParticle:
     name: PS_IceExplosionSmall
     path: 
