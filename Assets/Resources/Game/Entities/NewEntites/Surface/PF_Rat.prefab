@@ -9,7 +9,7 @@ GameObject:
   m_Component:
   - component: {fileID: 458018}
   - component: {fileID: 11469952}
-  - component: {fileID: 11481650}
+  - component: {fileID: 114524764969975804}
   - component: {fileID: 114148115676174714}
   - component: {fileID: 11485410}
   - component: {fileID: 11455198}
@@ -64,27 +64,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sku: Rat
   m_dieOutsideFrustum: 1
---- !u!114 &11481650
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 128698}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56b50cf50e7834c5397a1f060efb7791, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
-  m_energy: 10
-  m_energyDrainSec: 1
-  m_energyRecoverSec: 1
-  m_brainResource: {fileID: 11400000, guid: 538eb56e133744a4aa09733374f137e1, type: 2}
-  m_railSeparation:
-    min: 1.25
-    max: 1.75
-  m_serializedJson: '[{"speed":2.5,"timeToIdle":{"min":5,"max":8},"timeToChangeDirection":{"min":6,"max":7},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false}]'
-  m_databaseKey: PF_Rat
 --- !u!114 &11485410
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1357,12 +1336,37 @@ MonoBehaviour:
     m_ashExceptions: []
   m_onSpawnSound: 
   m_wallWalkingMotion:
-    m_mass: 2.5
+    m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 360
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
+--- !u!114 &114524764969975804
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 128698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_blendSpeedFactor: 10
+  m_energy: 10
+  m_energyDrainSec: 1
+  m_energyRecoverSec: 1
+  m_brainResource: {fileID: 11400000, guid: 538eb56e133744a4aa09733374f137e1, type: 2}
+  m_railSeparation:
+    min: 0.5
+    max: 1
+  m_serializedJson: '[{"speed":2.5,"timeToIdle":{"min":5,"max":8},"timeToChangeDirection":{"min":6,"max":7},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false}]'
+  m_databaseKey: PF_Rat
+  m_preciseDestArrival: 0
+  m_avoidDistanceAttenuation: 2
+  m_avoidCollisions: 0
+  m_avoidWater: 0
 --- !u!136 &136000012050958464
 CapsuleCollider:
   m_ObjectHideFlags: 1
