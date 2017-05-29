@@ -361,11 +361,13 @@ public class HungryLettersManager : MonoBehaviour
 			m_specificLettersCollected[i] = false;
 		}
 
+		/*
 		// destroy the previous letters.
 		for(int i = 0; i < m_instantiatedLetters.Length; i++)
 		{
 			Destroy(m_instantiatedLetters[i]);
 		}
+		*/
 
 		// reset the counter.
 		m_lettersCollected = 0;
@@ -375,7 +377,8 @@ public class HungryLettersManager : MonoBehaviour
 	{
 		Reset();
 		// instantiate the new letters.
-		InstantiateLetters(m_letterPrefabs);
+		// InstantiateLetters(m_letterPrefabs);
+
 		// spawn the new letters.
 		Spawn();
 		// reinitialize the UI.
