@@ -270,7 +270,7 @@ namespace AI {
 			if (_other.CompareTag("Water")) {
 				SetSignal(Signals.Type.InWater, true);
 				m_viewControl.EnterWater( _other, m_pilot.impulse );
-				m_viewControl.StartSwimming();	
+				m_viewControl.StartSwimming();
 			} else if (_other.CompareTag("Space")) {
 				m_viewControl.FlyToSpace();
 			}

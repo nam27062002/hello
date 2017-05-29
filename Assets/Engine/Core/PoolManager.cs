@@ -195,8 +195,10 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 		if (instance != null) {
 			if (_all) {
 				foreach(KeyValuePair<string, PoolContaier> pc in m_pools) {
-					pc.Value.pool.Clear();
-					pc.Value.pool = null;
+					if (pc.Value.pool != null) {
+						pc.Value.pool.Clear();
+						pc.Value.pool = null;
+					}
 				}
 				m_iterator.Clear();
 			} else {
