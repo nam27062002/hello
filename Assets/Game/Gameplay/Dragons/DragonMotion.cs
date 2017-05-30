@@ -1755,8 +1755,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		if ( m_state != State.Latching ) 
 		{
-	        rbody.velocity = rbody.velocity * 2.0f;// m_waterImpulseMultiplier;
-			m_impulse = rbody.velocity;
+			if ( m_impulse.y < 0 )
+			{
+				m_impulse = m_impulse * 2.0f;
+			}
 
 			// Change state
 			ChangeState(State.InsideWater);
