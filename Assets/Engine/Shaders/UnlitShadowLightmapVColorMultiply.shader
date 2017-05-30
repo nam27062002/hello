@@ -33,7 +33,7 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Vertex Color Multiply"
 				#include "HungryDragon.cginc"
 
 				#define FOG
-				#define COLOR_MODULATE
+				#define VERTEXCOLOR_MODULATE
 				#define OPAQUEALPHA
 
 				#include "scenary.cginc"

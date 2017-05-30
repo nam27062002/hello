@@ -9,7 +9,6 @@ namespace AI {
 
 
 		//--------------------------------------------------
-		private State m_state;
 		private float m_diveTimer;
 
 

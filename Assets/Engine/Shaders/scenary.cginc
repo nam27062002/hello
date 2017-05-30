@@ -71,6 +71,15 @@ uniform float _DarkenDistance;
 #endif
 
 
+
+float4 getCustomVertexColor(inout appdata_t v)
+{
+	//					return float4(v.color.xyz, 1.0 - dot(mul(float4(v.normal,0), unity_WorldToObject).xyz, float3(0,1,0)));
+	return float4(v.color.xyz, 1.0 - dot(UnityObjectToWorldNormal(v.normal), float3(0, 1, 0)));
+
+}
+
+
 v2f vert (appdata_t v) 
 {
 	v2f o;
@@ -163,7 +172,7 @@ fixed4 frag (v2f i) : SV_Target
 	col = lerp( col2, col, l);
 #endif	
 
-#if defined (COLOR_OVERLAY)
+#if defined (VERTEXCOLOR_OVERLAY)
 	// Sof Light with vertex color 
 	// http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html
 	// https://en.wikipedia.org/wiki/Relative_luminance
@@ -171,10 +180,10 @@ fixed4 frag (v2f i) : SV_Target
 	fixed4 one = fixed4(1, 1, 1, 1);
 	col = (2.0 * i.color * col) * (1.0 - luminance) + (one - 2.0 * (one - i.color) * (one - col)) * luminance;
 
-#elif defined (COLOR_ADDITIVE)
+#elif defined (VERTEXCOLOR_ADDITIVE)
 	col += i.color;
 
-#elif defined (COLOR_MODULATE)
+#elif defined (VERTEXCOLOR_MODULATE)
 	col *= i.color;
 #endif	
 
