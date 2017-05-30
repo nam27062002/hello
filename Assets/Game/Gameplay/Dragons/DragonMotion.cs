@@ -316,8 +316,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		get{ return m_hitBounds; }
 	}
 
-
-
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -1916,10 +1914,28 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	/// Raises the trigger enter event.
 	/// </summary>
 	/// <param name="_other">Other.</param>
+	// This is done on Dragon Head Trigger now
 	void OnTriggerEnter(Collider _other)
 	{
-		if ( _other.CompareTag("Water") && !m_insideWater)
+		if ( _other.CompareTag("Water") )
 		{
+			OnEnterWaterEvent( _other );
+		}
+		else if ( _other.CompareTag("Space"))
+		{
+			OnEnterSpaceEvent( _other );
+		}
+		else if ( _other.CompareTag("AreaChange")  )
+		{
+			OnAreaChangeEvent( _other );
+		}
+	}
+
+	public void OnEnterWaterEvent( Collider _other )
+	{
+		if (!m_insideWater)
+		{
+			Debug.Log("Enter Water");
 			// Check direction?
 			m_waterEnterPosition = transform.position;
 			m_insideWater = true;
@@ -1936,7 +1952,11 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				m_animator.SetBool("swim", true);
 			}
 		}
-		else if ( _other.CompareTag("Space") && !m_outterSpace)
+	}
+
+	public void OnEnterSpaceEvent(Collider _other)
+	{
+		if (!m_outterSpace)
 		{
 			m_outterSpace = true;
 			if (IsAliveState())
@@ -1945,7 +1965,11 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				m_previousState = State.OuterSpace;
 			}
 		}
-		else if ( _other.CompareTag("AreaChange") && !m_dragon.changingArea && InstanceManager.gameSceneController != null )
+	}
+
+	public void OnAreaChangeEvent(Collider _other)
+	{
+		if ( !m_dragon.changingArea && InstanceManager.gameSceneController != null )
 		{
 			string destinationArea = _other.GetComponent<AreaPortal>().m_areaPortal;
 			if ( LevelManager.currentArea != destinationArea )
@@ -1955,15 +1979,29 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				m_followingSpline = _other.GetComponent<Assets.Code.Game.Spline.BezierSpline>();
 				m_destinationArea = destinationArea;
 				ChangeState(State.ChangingArea);
-			}
+			}	
 		}
-		
 	}
 
+	// This is done on Dragon Head Trigger now
 	void OnTriggerExit( Collider _other )
 	{
-		if ( _other.CompareTag("Water") && m_insideWater)
+		if ( _other.CompareTag("Water") )
 		{
+			OnExitWaterEvent(_other);
+		}
+		else if ( _other.CompareTag("Space") )
+		{
+			OnExitSpaceEvent( _other );
+		}
+	}
+
+
+	public void OnExitWaterEvent(Collider _other)
+	{
+		if (m_insideWater)
+		{
+			Debug.Log("Exit Water");
 			m_insideWater = false;
 			// Disable Bubbles
 			if (IsAliveState() )
@@ -1976,7 +2014,11 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				m_animator.SetBool("swim", false);
 			}
 		}
-		else if ( _other.CompareTag("Space") && m_outterSpace )
+	}
+
+	public void OnExitSpaceEvent( Collider _other )
+	{
+		if (m_outterSpace )
 		{
 			m_outterSpace = false;
 			if (IsAliveState())
@@ -1985,16 +2027,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				m_previousState = State.Idle;
 			}
 		}
-		/*
-		else if ( _other.CompareTag("AreaChange") && m_dragon.changingArea)
-		{
-			m_dragon.changingArea = false;
-		}
-		*/
-
 	}
 
-	void OnCollisionEnter(Collision collision) 
+	public void OnCollisionEnter(Collision collision) 
 	{
 		switch( m_state )
 		{
@@ -2029,12 +2064,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	}
 
-    void OnCollisionStay(Collision collision)
+    public void OnCollisionStay(Collision collision)
     {
         switch (m_state)
         {
-          
-
             case State.OuterSpace:
                 {
                     // Move down
