@@ -119,10 +119,8 @@ public class DragonUnlockScreen : MonoBehaviour {
 		if(m_healthText != null) m_healthText.text = StringUtils.FormatNumber(dragonData.maxHealth, 0);
 		if(m_energyText != null) m_energyText.text = StringUtils.FormatNumber(dragonData.baseEnergy, 0);
 
-		// Initialize drag controller with current dragon preview
-		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.DRAGON_UNLOCK);
-		MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller>().GetDragonPreview(menuController.selectedDragon);
-		if(m_dragController != null) m_dragController.target = dragonPreview.transform;
+		// Disable drag controller
+		if(m_dragController != null) m_dragController.gameObject.SetActive(false);
 
 		// If the unlocked dragon is of different tier as the dragon used to unlocked it, show 'new preys' banner
 		if(m_newPreysAnimator != null) {
@@ -141,10 +139,28 @@ public class DragonUnlockScreen : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// The screen has just finished the open animation.
+	/// </summary>
+	/// <param name="_animator">The animator that triggered the event.</param>
+	public void OnShowPostAnimation(ShowHideAnimator _animator) {
+		// Initialize drag controller with current dragon preview
+		if(m_dragController != null) {
+			MenuSceneController menuController = InstanceManager.menuSceneController;
+			MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.DRAGON_UNLOCK);
+			MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller>().GetDragonPreview(menuController.selectedDragon);
+			m_dragController.gameObject.SetActive(true);
+			m_dragController.target = dragonPreview.transform;
+		}
+	}
+
+	/// <summary>
 	/// Screen is about to close.
 	/// </summary>
 	/// <param name="_animator">The animator that triggered the event.</param>
 	public void OnHidePreAnimation(ShowHideAnimator _animator) {
+		// Disable drag controller
+		m_dragController.gameObject.SetActive(false);
+
 		// Trigger manually managed animators
 		if(m_newPreysAnimator != null) {
 			m_newPreysAnimator.Hide();
