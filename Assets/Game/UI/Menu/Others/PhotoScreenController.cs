@@ -33,6 +33,7 @@ public class PhotoScreenController : MonoBehaviour {
 	[SerializeField] private Image m_dragonTierIcon = null;
 	[Space]
 	[SerializeField] private DragControlRotation m_dragController = null;
+	[SerializeField] private DragControlZoom m_zoomController = null;
 	[SerializeField] private DOTweenAnimation m_flashFX = null;
 	[Space]
 	[SerializeField] private List<GameObject> m_objectsToHide = new List<GameObject>();
@@ -62,7 +63,7 @@ public class PhotoScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-
+		
 	}
 
 	/// <summary>
@@ -162,10 +163,44 @@ public class PhotoScreenController : MonoBehaviour {
 		if(m_dragonDesc != null) m_dragonDesc.Localize(dragonData.def.GetAsString("tidDesc"));
 		if(m_dragonTierIcon != null) m_dragonTierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, dragonData.tierDef.GetAsString("icon"));
 
+		// Disable drag controller
+		m_dragController.gameObject.SetActive(false);
+		m_zoomController.gameObject.SetActive(false);
+	}
+
+	/// <summary>
+	/// The screen has just finished the open animation.
+	/// </summary>
+	/// <param name="_animator">The animator that triggered the event.</param>
+	public void OnShowPostAnimation(ShowHideAnimator _animator) {
+		// Aux vars
+		MenuSceneController menuController = InstanceManager.menuSceneController;
+
 		// Initialize drag controller with current dragon preview
+		m_dragController.gameObject.SetActive(true);
 		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.PHOTO);
 		MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller>().GetDragonPreview(menuController.selectedDragon);
 		m_dragController.target = dragonPreview.transform;
+
+		// Disable camera snap point so we're able to zoom!
+		menuController.screensController.currentCameraSnapPoint.enabled = false;
+
+		// Initialize zoom controller with main camera
+		m_zoomController.gameObject.SetActive(true);
+		m_zoomController.camera = menuController.mainCamera;
+	}
+
+	/// <summary>
+	/// The screen is about to hide.
+	/// </summary>
+	/// <param name="_animator">The animator that triggered the event.</param>
+	public void OnHidePreAnimation(ShowHideAnimator _animator) {
+		// Disable drag controller
+		m_dragController.gameObject.SetActive(false);
+		m_zoomController.gameObject.SetActive(false);
+
+		// Re-enable camera snap point so we're able to zoom!
+		InstanceManager.menuSceneController.screensController.currentCameraSnapPoint.enabled = true;
 	}
 
 	/// <summary>

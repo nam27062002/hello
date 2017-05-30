@@ -18,14 +18,11 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	private float m_printTimer = 10f;
 	#endif
 
-	private bool m_useAreaLimits = true;
-
-	void Awake(){
-		// if we are in game we use the limits, otherwise ( Level Editor ), we let pools grow
-		m_useAreaLimits = FindObjectOfType<LevelEditor.LevelEditorSceneController>() == null;
-		#if PRINT_POOLS
-			m_useAreaLimits = false;
-		#endif
+	private bool m_useDefinitionLimits = false;
+	public bool useDefinitionLimits
+	{
+		get{ return m_useDefinitionLimits; }
+		set{ m_useDefinitionLimits = value; }
 	}
 
 	void Update() {
@@ -219,7 +216,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		if (instance.m_particlePools.ContainsKey(_prefab.name)) return;
 
 		Pool pool = null;
-		if (instance.m_useAreaLimits)
+		if (instance.m_useDefinitionLimits)
 		{	
 			if (instance.m_poolSize.Count == 0f) {
 				if (LevelManager.currentLevelData != null) {

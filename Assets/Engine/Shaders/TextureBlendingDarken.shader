@@ -8,7 +8,7 @@ Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Darken"
 	Properties 
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
-		_SecondTexture ("Second Texture (RGB)", 2D) = "white" {}
+		_SecondTexture("Second Texture (RGB)", 2D) = "white" {}
 		_DarkenPosition("Darken position",  float) = 0.0
 		_DarkenDistance("Darken distance",  float) = 20.0
 	}

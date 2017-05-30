@@ -1805,6 +1805,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4000013761613202}
   - component: {fileID: 114000010637158830}
+  - component: {fileID: 65358208848982860}
   m_Layer: 0
   m_Name: Chest0
   m_TagString: Untagged
@@ -2997,6 +2998,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4000013982114310}
   - component: {fileID: 114000013848108222}
+  - component: {fileID: 65469202643310790}
   m_Layer: 0
   m_Name: Chest4
   m_TagString: Untagged
@@ -3199,6 +3201,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4000012773440798}
   - component: {fileID: 114000012728970506}
+  - component: {fileID: 65097613447470338}
   m_Layer: 0
   m_Name: Chest3
   m_TagString: Untagged
@@ -3215,6 +3218,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4000010587641548}
   - component: {fileID: 114000011919976576}
+  - component: {fileID: 65103604685211936}
   m_Layer: 0
   m_Name: Chest2
   m_TagString: Untagged
@@ -3854,6 +3858,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4000013346862138}
   - component: {fileID: 114000011250743014}
+  - component: {fileID: 65454497311797834}
   m_Layer: 0
   m_Name: Chest1
   m_TagString: Untagged
@@ -16447,6 +16452,66 @@ MeshCollider:
   m_InflateMesh: 0
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: df0f7be7696977d4f93fea00795f9ce4, type: 3}
+--- !u!65 &65097613447470338
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012872733950}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 1.25, z: 1.0000001}
+  m_Center: {x: 0, y: 0.6, z: 0}
+--- !u!65 &65103604685211936
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012875732850}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 1.25, z: 1.0000001}
+  m_Center: {x: 0, y: 0.6, z: 0}
+--- !u!65 &65358208848982860
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011621673002}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 1.25, z: 1.0000001}
+  m_Center: {x: 0, y: 0.6, z: 0}
+--- !u!65 &65454497311797834
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013611206864}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 1.25, z: 1.0000001}
+  m_Center: {x: 0, y: 0.6, z: 0}
+--- !u!65 &65469202643310790
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012660631466}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 1.25, z: 1.0000001}
+  m_Center: {x: 0, y: 0.6, z: 0}
 --- !u!95 &95000010209589852
 Animator:
   serializedVersion: 3
@@ -16892,6 +16957,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_uiAnchor: {fileID: 4000010469538276}
+  m_numJumps: 1
+  m_jumpForce: 0.15
+  m_jumpEase: 6
+  m_jumpDuration: 0.25
 --- !u!114 &114000010713181416
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -16980,6 +17049,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_uiAnchor: {fileID: 4000012726329686}
+  m_numJumps: 1
+  m_jumpForce: 0.15
+  m_jumpEase: 6
+  m_jumpDuration: 0.25
 --- !u!114 &114000011619077402
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -17016,6 +17089,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_uiAnchor: {fileID: 4000011430505304}
+  m_numJumps: 1
+  m_jumpForce: 0.15
+  m_jumpEase: 6
+  m_jumpDuration: 0.25
 --- !u!114 &114000012030917398
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -17352,6 +17429,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_uiAnchor: {fileID: 4000010577713376}
+  m_numJumps: 1
+  m_jumpForce: 0.15
+  m_jumpEase: 6
+  m_jumpDuration: 0.25
 --- !u!114 &114000012920689056
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -17700,6 +17781,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_uiAnchor: {fileID: 4000012053745370}
+  m_numJumps: 1
+  m_jumpForce: 0.15
+  m_jumpEase: 6
+  m_jumpDuration: 0.25
 --- !u!114 &114000014142955400
 MonoBehaviour:
   m_ObjectHideFlags: 1

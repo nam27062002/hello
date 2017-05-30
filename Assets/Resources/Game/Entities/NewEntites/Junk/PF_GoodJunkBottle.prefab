@@ -21,9 +21,10 @@ GameObject:
   - component: {fileID: 4000010793146780}
   - component: {fileID: 114000012930624712}
   - component: {fileID: 114000013989385924}
-  - component: {fileID: 114412202811192532}
   - component: {fileID: 114000010231284240}
-  m_Layer: 22
+  - component: {fileID: 114584224448975534}
+  - component: {fileID: 135386216034871644}
+  m_Layer: 26
   m_Name: PF_GoodJunkBottle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +41,7 @@ GameObject:
   - component: {fileID: 4735683981129810}
   - component: {fileID: 198483632620343654}
   - component: {fileID: 199812039497724142}
-  m_Layer: 22
+  m_Layer: 26
   m_Name: Fire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57,7 +58,7 @@ GameObject:
   - component: {fileID: 4920386857050884}
   - component: {fileID: 198543456801684476}
   - component: {fileID: 199777298088333828}
-  m_Layer: 22
+  m_Layer: 26
   m_Name: Sparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,7 +75,7 @@ GameObject:
   - component: {fileID: 4242977247759652}
   - component: {fileID: 33148226668448768}
   - component: {fileID: 23216579165958474}
-  m_Layer: 22
+  m_Layer: 26
   m_Name: money_cauldron
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -91,7 +92,7 @@ GameObject:
   - component: {fileID: 4683220915791390}
   - component: {fileID: 198292127919309856}
   - component: {fileID: 199438737135935572}
-  m_Layer: 22
+  m_Layer: 26
   m_Name: EmitterFire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,9 +107,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4692774276776710}
-  - component: {fileID: 114603839014139096}
   - component: {fileID: 114795770661837604}
-  m_Layer: 22
+  m_Layer: 26
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 33868898294837558}
   - component: {fileID: 23554058589590944}
   - component: {fileID: 114855312865775284}
-  m_Layer: 22
+  m_Layer: 26
   m_Name: GoldShine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -143,7 +143,7 @@ GameObject:
   - component: {fileID: 4931861617511712}
   - component: {fileID: 198752898047531526}
   - component: {fileID: 199962703555712174}
-  m_Layer: 22
+  m_Layer: 26
   m_Name: FireMask
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -160,7 +160,7 @@ GameObject:
   - component: {fileID: 4342266197331286}
   - component: {fileID: 198454939627604878}
   - component: {fileID: 199215001508403650}
-  m_Layer: 22
+  m_Layer: 26
   m_Name: Sparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -174,7 +174,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012775619424}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -21.058159, y: 47.772568, z: -1.8374529}
+  m_LocalPosition: {x: 0, y: 6.307, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4692774276776710}
@@ -213,7 +213,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1529257536355122}
-  m_LocalRotation: {x: 0.30069643, y: 0.4803083, z: -0.46727732, w: 0.6786292}
+  m_LocalRotation: {x: -0.12087049, y: 0.6131507, z: -0.12730859, w: 0.7702137}
   m_LocalPosition: {x: -0.37999988, y: -0.8840002, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
@@ -243,7 +243,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1472693859828716}
   m_LocalRotation: {x: 0.17539117, y: 0.10692883, z: 0.005962748, w: 0.97865653}
-  m_LocalPosition: {x: 0.0105621815, y: -0.090857446, z: -0.63889194}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4242977247759652}
@@ -696,7 +696,7 @@ MonoBehaviour:
   m_serializedJson: '[]'
   m_databaseKey: PF_GoodJunkBottle
   m_updateMachinePos: 0
---- !u!114 &114412202811192532
+--- !u!114 &114584224448975534
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -704,50 +704,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000012775619424}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91e40970ac8a0488ab7347acde654093, type: 3}
+  m_Script: {fileID: 11500000, guid: 848af6132b2d3441a82709bdf4800127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 0
-  m_sensor:
-    m_senseFire: 1
-    m_sightRadius: 0
-    m_maxRadius: 0
-    m_minRadius: 0
-    m_hysteresisOffset: 0
-    m_senseAbove: 1
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 0, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0.25
-      max: 1.25
   m_edible:
     m_rotateToMouth: 0
-  m_inflammable:
-    m_ashesAsset: 
-    m_burningTime: 0
-    m_dissolveTime: 1.5
-    m_ashExceptions:
-    - {fileID: 199777298088333828}
-    - {fileID: 23554058589590944}
-  m_onSpawnSound: 
---- !u!114 &114603839014139096
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1472693859828716}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: -0.47515506, y: -0.8860228}
-  radius: 1.0641251
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114795770661837604
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -863,6 +824,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_overrideCamera: {fileID: 0}
+--- !u!135 &135386216034871644
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012775619424}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.99
+  m_Center: {x: -0.43, y: -0.79, z: -0.28}
 --- !u!198 &198292127919309856
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -8598,7 +8571,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: -1760548394
+  randomSeed: -555619349
   InitialModule:
     serializedVersion: 3
     enabled: 1

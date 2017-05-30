@@ -48,6 +48,8 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
         // Skip if next scene has already been set
         if (GameSceneManager.nextScene == nextScene) return;
 
+		LevelManager.SetCurrentLevel(null);
+
         // Change scene
         GameSceneManager.SwitchScene(nextScene);
     }

@@ -119,7 +119,7 @@ public class MenuScreensController : NavigationScreenSystem {
 		// Enforce camera position to current snap point
 		// Only if camera is not being animated!
 		if(!InstanceManager.menuSceneController.isTweening) {
-			if(currentCameraSnapPoint != null) {
+			if(currentCameraSnapPoint != null && currentCameraSnapPoint.isActiveAndEnabled) {
 				currentCameraSnapPoint.Apply(InstanceManager.sceneController.mainCamera);
 			}
 		}
