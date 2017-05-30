@@ -95,6 +95,9 @@ public class Spawner : AbstractSpawner {
 	//-----------------------------------------------
 	private int m_prefabIndex;
 
+	private PoolHandler[] m_poolHandlers;
+	private int[] m_poolHandlerIndex;
+
 	private string[] m_entitySku;
 	private float m_pcProbCoefA;
 	private float m_pcProbCoefB;
@@ -141,9 +144,11 @@ public class Spawner : AbstractSpawner {
 		float rnd = Random.Range(0f, 100f);
 		DragonTier playerTier = InstanceManager.player.data.tier;
 
-		bool enabledByTier = playerTier >= m_minTier;
-		if (enabledByTier && m_checkMaxTier) {
-			enabledByTier = (playerTier <= m_maxTier);
+		bool enabledByTier = false;
+		if (m_checkMaxTier) {
+			enabledByTier = (playerTier >= m_minTier) && (playerTier <= m_maxTier);
+		} else {
+			enabledByTier = (playerTier >= m_minTier);
 		}
 
 		if (m_activationChance < 100f) {
@@ -159,8 +164,10 @@ public class Spawner : AbstractSpawner {
 			if (m_entityPrefabList != null && m_entityPrefabList.Length > 0 && rnd <= m_activationChance) {
 
 				m_entitySku = new string[GetMaxEntities()];
+				m_poolHandlerIndex = new int[GetMaxEntities()];
 				for (int i = 0; i < m_entitySku.Length; i++) {
 					m_entitySku[i] = "";
+					m_poolHandlerIndex[i] = 0;
 				}
 
 				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
@@ -223,8 +230,10 @@ public class Spawner : AbstractSpawner {
 
 		if (m_rails == 0) m_rails = 1;
 
+		m_poolHandlers = new PoolHandler[m_entityPrefabList.Length];
+
 		for (int i = 0; i < m_entityPrefabList.Length; i++) {
-			PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, m_entities.Length);
+			m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, m_entities.Length);
 		}
 
 		// Get external references
@@ -297,10 +306,16 @@ public class Spawner : AbstractSpawner {
 		m_prefabIndex = GetPrefabIndex();
 	}
 
+	protected override PoolHandler GetPoolHandler(uint index) {
+		return m_poolHandlers[m_poolHandlerIndex[index]];
+	}
+
 	protected override string GetPrefabNameToSpawn(uint index) {
 		if (m_mixEntities) {
 			m_prefabIndex = GetPrefabIndex();
 		}
+
+		m_poolHandlerIndex[index] = m_prefabIndex;
 
 		return m_entityPrefabList[m_prefabIndex].name;
 	}

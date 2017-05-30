@@ -14,6 +14,8 @@ public class CatapultAmmo : MonoBehaviour {
 	[SeparatorAttribute("Audio")]
 	[SerializeField] private string m_onExplodeAudio = "";
 
+	private PoolHandler m_poolHandler;
+
 	private Transform m_oldParent = null;
 
 	private bool m_hasBeenTossed = false;
@@ -28,8 +30,9 @@ public class CatapultAmmo : MonoBehaviour {
 
 	private float m_elapsedTime;
 
-	void Awake() {
+	void Start() {
 		m_scale = transform.localScale;
+		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
 
 	public void AttachTo(Transform _parent, Vector3 _localPosition) {
@@ -69,7 +72,7 @@ public class CatapultAmmo : MonoBehaviour {
 			if (m_elapsedTime > 30f) {
 				m_hasBeenTossed = false;
 				gameObject.SetActive(false);
-				PoolManager.ReturnInstance(gameObject);
+				m_poolHandler.ReturnInstance(gameObject);
 			}
 		}
 	}
@@ -115,6 +118,6 @@ public class CatapultAmmo : MonoBehaviour {
 
 		m_hasBeenTossed = false;
 		gameObject.SetActive(false);
-		PoolManager.ReturnInstance(gameObject);
+		m_poolHandler.ReturnInstance(gameObject);
 	}
 }

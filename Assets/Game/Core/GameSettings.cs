@@ -66,6 +66,15 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		}
 	}
 
+	//------------------------------------------------------------------------//
+	// UI SETTINGS															  //
+	//------------------------------------------------------------------------//
+	public const string SHOW_BIG_AMOUNT_CONFIRMATION_POPUP = "SHOW_BIG_AMOUNT_CONFIRMATION_POPUP";	// bool, default true
+	public static bool showBigAmountConfirmationPopup {
+		get { return Prefs.GetBoolPlayer(SHOW_BIG_AMOUNT_CONFIRMATION_POPUP, true); }
+		set { Prefs.SetBoolPlayer(SHOW_BIG_AMOUNT_CONFIRMATION_POPUP, value); }
+	}
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//

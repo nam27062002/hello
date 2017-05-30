@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 11451040}
   - component: {fileID: 11441542}
   - component: {fileID: 54000010377718392}
-  - component: {fileID: 135000010864404190}
   - component: {fileID: 136926484593976340}
   m_Layer: 16
   m_Name: PF_Ghost01
@@ -504,7 +503,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &114240507427778114
 MonoBehaviour:
@@ -620,18 +619,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
---- !u!135 &135000010864404190
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 138364}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.7
-  m_Center: {x: 0, y: 0.6, z: 0}
 --- !u!136 &136926484593976340
 CapsuleCollider:
   m_ObjectHideFlags: 1

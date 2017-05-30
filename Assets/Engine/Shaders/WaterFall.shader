@@ -91,7 +91,8 @@ Shader "Hungry Dragon/Waterfall"
 
 				fixed4 frag (v2f i) : SV_Target
 				{
-					float2 anim = float2(0.0, _Time.y * _WaterSpeed);
+					float time = frac(_Time.x);
+					float2 anim = float2(0.0, time * _WaterSpeed * 20.0);
 
 					fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy + anim)) * 1.0f;
 					col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.75)) * 0.5f;
@@ -132,7 +133,7 @@ Shader "Hungry Dragon/Waterfall"
 			#pragma multi_compile_fog
 			#pragma multi_compile_fwdbase
 			#pragma glsl_no_auto_normalization
-			#pragma fragmentoption ARB_precision_hint_fastest
+//			#pragma fragmentoption ARB_precision_hint_fastest
 
 //			#pragma multi_compile_particles
 
@@ -176,7 +177,8 @@ Shader "Hungry Dragon/Waterfall"
 
 			fixed4 frag(v2f i) : SV_Target
 			{
-				float2 anim = float2(0.0, _Time.y * _WaterSpeed);
+				float time = frac(_Time.x);
+				float2 anim = float2(0.0, time * _WaterSpeed * 20.0);
 
 				fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy + anim)) * 1.0f;
 				col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.75)) * 0.5f;
@@ -189,8 +191,6 @@ Shader "Hungry Dragon/Waterfall"
 				fixed3 one = fixed3(1, 1, 1);
 				col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
 				fixed saturate = (col.r + 0.7152 * col.g + 0.0722 * col.b) * col.a * 0.5;
-
-
 
 				fixed4 fcol = _BackColor;
 				fcol.a *= (1.0 - i.color.a) + saturate;

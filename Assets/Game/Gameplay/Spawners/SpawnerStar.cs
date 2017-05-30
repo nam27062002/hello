@@ -18,6 +18,8 @@ public class SpawnerStar : AbstractSpawner {
 	[Separator("Respawn")]
 	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
 
+	private PoolHandler m_poolHandler;
+
 	private float m_respawnTime;
 	private SpawnerConditions m_respawnConditions; 
 	private GameSceneControllerBase m_gameSceneController;
@@ -61,7 +63,7 @@ public class SpawnerStar : AbstractSpawner {
 	protected override void OnInitialize() {
 		m_respawnTime = -1;
 
-		PoolManager.RequestPool(m_entityPrefab, IEntity.EntityPrefabsPath, m_entities.Length);
+		m_poolHandler = PoolManager.RequestPool(m_entityPrefab, IEntity.EntityPrefabsPath, m_entities.Length);
 
 		// Get external references
 		// Spawners are only used in the game and level editor scenes, so we can be sure that game scene controller will be present
@@ -91,6 +93,10 @@ public class SpawnerStar : AbstractSpawner {
 
 	protected override uint GetEntitiesAmountToRespawn() {
 		return m_quantity;
+	}
+
+	protected override PoolHandler GetPoolHandler(uint index) {
+		return m_poolHandler;
 	}
 
 	protected override string GetPrefabNameToSpawn(uint index) {		

@@ -42,7 +42,7 @@ public class MissionPill : MonoBehaviour {
 	// Cooldown group
 	private TextMeshProUGUI m_cooldownText = null;
 	private Slider m_cooldownBar = null;
-	private TextMeshProUGUI m_skipCostText = null;	// Optional
+	private Localizer m_skipCostText = null;	// Optional
 
 	// Data
 	private Mission m_mission = null;
@@ -70,7 +70,7 @@ public class MissionPill : MonoBehaviour {
 		// [AOC] Since cooldown must be refreshed every frame, keep the reference to the objects rather than finding them every time
 		m_cooldownText = m_cooldownObj.FindComponentRecursive<TextMeshProUGUI>("CooldownTimeText");
 		m_cooldownBar = m_cooldownObj.FindComponentRecursive<Slider>("CooldownBar");
-		m_skipCostText = m_cooldownObj.FindComponentRecursive<TextMeshProUGUI>("TextCost");
+		m_skipCostText = m_cooldownObj.FindComponentRecursive<Localizer>("TextCost");
 
 		// Subscribe to external events
 		Messenger.AddListener<Mission>(GameEvents.MISSION_REMOVED, OnMissionRemoved);
@@ -171,8 +171,10 @@ public class MissionPill : MonoBehaviour {
 
 		// Remove cost
 		// [AOC] The pill might not have it (e.g. in-game pill)
-		TextMeshProUGUI removeCostText = m_activeObj.FindComponentRecursive<TextMeshProUGUI>("TextCost");
-		if(removeCostText != null) removeCostText.text = UIConstants.GetIconString(m_mission.removeCostPC, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+		Localizer removeCostText = m_activeObj.FindComponentRecursive<Localizer>("TextCost");
+		if(removeCostText != null) {
+			removeCostText.Localize(removeCostText.tid, StringUtils.FormatNumber(m_mission.removeCostPC));
+		}
 
 		// Check if this mission is complete
 		GameObject completedObj = m_activeObj.FindObjectRecursive("CompletedMission");
@@ -267,6 +269,16 @@ public class MissionPill : MonoBehaviour {
 
 		// Difficulty
 		RefreshDifficulty(m_cooldownObj.FindComponentRecursive<Localizer>("DifficultyText"), true);
+
+		// Skip with ad button
+		Localizer skipWithAdText = m_cooldownObj.FindComponentRecursive<Localizer>("TextAd");
+		if(skipWithAdText != null) {
+			// [AOC] TODO!! Force the time to be in lower case always
+			skipWithAdText.Localize(
+				skipWithAdText.tid, 
+				TimeUtils.FormatTime(Mission.SECONDS_SKIPPED_WITH_AD, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 1)
+			);
+		}
 	}
 
 	/// <summary>
@@ -282,7 +294,9 @@ public class MissionPill : MonoBehaviour {
 
 		// Skip cost
 		// [AOC] The pill might not have it (e.g. in-game pill)
-		if(m_skipCostText != null) m_skipCostText.text = UIConstants.GetIconString(m_mission.skipCostPC, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+		if(m_skipCostText != null) {
+			m_skipCostText.Localize(m_skipCostText.tid, StringUtils.FormatNumber(m_mission.skipCostPC));
+		}
 	}
 
 	/// <summary>
@@ -300,7 +314,7 @@ public class MissionPill : MonoBehaviour {
 
 		// Skip cost - shouldn't exist in ACTIVATION_PENDING state, but just in case
 		// [AOC] The pill might not have it (e.g. in-game pill)
-		if(m_skipCostText != null) m_skipCostText.text = "";
+		if(m_skipCostText != null) m_skipCostText.Localize("");
 
 		// Difficulty
 		RefreshDifficulty(m_cooldownObj.FindComponentRecursive<Localizer>("DifficultyText"), true);
@@ -354,16 +368,37 @@ public class MissionPill : MonoBehaviour {
 	/// Callback for the remove mission button with ads.
 	/// </summary>
 	public void OnFreeRemoveMission(){
-		if ( m_mission == null ) return;
+		if(m_mission == null) return;
 
 		PopupController popup = PopupManager.OpenPopupInstant(PopupAdRevive.PATH);
-		popup.OnClosePostAnimation.AddListener(OnAdClosed);
+		popup.OnClosePostAnimation.AddListener(OnRemoveMissionAdClosed);
 	}
 
-	private void OnAdClosed() {
-
+	/// <summary>
+	/// Ad popup has been closed.
+	/// </summary>
+	private void OnRemoveMissionAdClosed() {
 		UsersManager.currentUser.dailyRemoveMissionAdUses++;
 		MissionManager.RemoveMission(m_missionDifficulty);
+		PersistenceManager.Save();
+	}
+
+	/// <summary>
+	/// The skip time with ad button has been pressed.
+	/// </summary>
+	public void OnSkipTimeWithAd() {
+		if(m_mission == null) return;
+
+		PopupController popup = PopupManager.OpenPopupInstant(PopupAdRevive.PATH);
+		popup.OnClosePostAnimation.AddListener(OnSkipTimeAdClosed);
+	}
+
+	/// <summary>
+	/// Ad popup has been closed.
+	/// </summary>
+	private void OnSkipTimeAdClosed() {
+		// Do it!
+		MissionManager.SkipMission(m_missionDifficulty, Mission.SECONDS_SKIPPED_WITH_AD);		
 		PersistenceManager.Save();
 	}
 
@@ -379,7 +414,7 @@ public class MissionPill : MonoBehaviour {
 		purchaseFlow.OnSuccess.AddListener(
 			(ResourcesFlow _flow) => {
 				// Just do it
-				MissionManager.SkipMission(m_missionDifficulty);
+				MissionManager.SkipMission(m_missionDifficulty, -1f);
 				PersistenceManager.Save();
 			}
 		);

@@ -22,6 +22,7 @@ public class DevicePassengersSpawner : AbstractSpawner {
 	[SerializeField] private bool m_mustBeChild = true;
 	//-------------------------------------------------------------------	
 
+	private PoolHandler[] m_poolHandlers;
 
 	private Transform[] m_parents;
 	private IMachine[] m_machines;
@@ -79,8 +80,9 @@ public class DevicePassengersSpawner : AbstractSpawner {
 					}
 				}
 
+				m_poolHandlers = new PoolHandler[m_entityPrefabList.Length];
 				for (int i = 0; i < m_entityPrefabList.Length; i++) {
-					PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, m_entities.Length);
+					m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, m_entities.Length);
 				}
 
 				gameObject.SetActive(false);
@@ -97,6 +99,10 @@ public class DevicePassengersSpawner : AbstractSpawner {
     protected override bool CanRespawnExtended() {        
         return true;
     }
+
+	protected override PoolHandler GetPoolHandler(uint index) {
+		return m_poolHandlers[index];
+	}
 
     protected override uint GetEntitiesAmountToRespawn() {        
 		return (uint)m_quantity.GetRandom();

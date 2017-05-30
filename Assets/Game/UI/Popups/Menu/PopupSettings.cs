@@ -21,4 +21,19 @@ public class PopupSettings : MonoBehaviour {
 	public const string PATH = "UI/Popups/Menu/PF_PopupSettings";
 
     public const string KEY_SETTINGS_LANGUAGE = "SETTINGS_LANGUAGE";
+
+    [SerializeField]
+    private GameObject m_saveTab;
+
+    void Awake()
+    {
+        if (m_saveTab != null)
+        {
+#if CLOUD_SAVE && (WEIBO || FACEBOOK)
+            m_saveTab.SetActive(true);
+#else
+            m_saveTab.SetActive(false);
+#endif
+        }
+    }
 }

@@ -5,7 +5,8 @@ public class DisableInSeconds : MonoBehaviour {
 
 	public enum PoolType {
 		PoolManager = 0,
-		ParticleManager
+		ParticleManager,
+		UIPoolManager
 	};
 
 	[SerializeField] private float m_activeTime = 1f;
@@ -17,10 +18,18 @@ public class DisableInSeconds : MonoBehaviour {
 //	private bool m_coroutineRunning;
 	private List<ParticleSystem> m_particleSystems;
 
+	private PoolHandler m_poolHandler;
+
 
     void Start() {
 		// lets grab the particle system if it exists. 
 		m_particleSystems = transform.FindComponentsRecursive<ParticleSystem>();
+
+		if (m_returnTo == PoolType.PoolManager) {
+			m_poolHandler = PoolManager.GetHandler(this.gameObject.name);
+		} else if (m_returnTo == PoolType.UIPoolManager) {
+			m_poolHandler = UIPoolManager.GetHandler(this.gameObject.name);
+		}
 	}
 
 	void OnEnable() {
@@ -74,7 +83,8 @@ public class DisableInSeconds : MonoBehaviour {
 	private void Disable() {
 		//gameObject.SetActive(false);
 		switch(m_returnTo) {
-			case PoolType.PoolManager: 		PoolManager.ReturnInstance(gameObject); 	break;
+			case PoolType.PoolManager: 	
+			case PoolType.UIPoolManager:	m_poolHandler.ReturnInstance(gameObject); 	break;
 			case PoolType.ParticleManager: 	ParticleManager.ReturnInstance(gameObject); break;
 		}
 	}
@@ -103,7 +113,7 @@ public class DisableInSeconds : MonoBehaviour {
 	        // we are disabling a particle system
 			for (int i = 0; i < m_particleSystems.Count; i++)
 	        {
-	            if (m_particleSystems[i].loop)
+	            if (m_particleSystems[i].main.loop)
 	            {
 	                ParticleSystem.EmissionModule em = m_particleSystems[i].emission;
 	                em.enabled = false;

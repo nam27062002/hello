@@ -59,7 +59,7 @@ public class Catapult : SimpleDevice {
 	private Animator m_animator;
 	private PreyAnimationEvents m_animEvents;
 
-
+	private PoolHandler[] m_ammoPoolHandlers;
 	private GameObject[] m_ammo;
 	private Transform m_ammoTransform;
 
@@ -70,6 +70,7 @@ public class Catapult : SimpleDevice {
 	// Use this for initialization
 	void Start () {
 		m_ammo = new GameObject[m_extraProjectiles.Length + 1];
+		m_ammoPoolHandlers = new PoolHandler[m_ammoList.Length];
 
 		float probFactor = 0;
 		for (int i = 0; i < m_ammoList.Length; i++) {
@@ -80,7 +81,6 @@ public class Catapult : SimpleDevice {
 			probFactor = 100f / probFactor;
 			for (int i = 0; i < m_ammoList.Length; i++) {
 				m_ammoList[i].chance *= probFactor;
-				PoolManager.RequestPool(m_ammoList[i].name, "Game/Projectiles/", 3);
 			}
 
 			//sort probs
@@ -92,6 +92,10 @@ public class Catapult : SimpleDevice {
 						m_ammoList[j + 1] = temp;
 					}
 				}
+			}
+
+			for (int i = 0; i < m_ammoList.Length; i++) {
+				m_ammoPoolHandlers[i] = PoolManager.RequestPool(m_ammoList[i].name, "Game/Projectiles/", 3);
 			}
 		}
 
@@ -175,12 +179,12 @@ public class Catapult : SimpleDevice {
 	}
 
 	private void OnLoadAmmo() {
-		string ammoName = GetAmmoName();
+		int ammoIndex = GetAmmoIndex();
 
 		int i;
 		for (i = 0; i < m_ammo.Length - 1; i++) {
 			if (m_ammo[i] == null) {
-				m_ammo[i] = PoolManager.GetInstance(ammoName);
+				m_ammo[i] = m_ammoPoolHandlers[ammoIndex].GetInstance();
 
 				Projectile catapultAmmo = m_ammo[i].GetComponent<Projectile>();
 				catapultAmmo.AttachTo(m_ammoTransform, m_ammoTransform.rotation * m_extraProjectiles[i].initialPositionOffset);
@@ -188,7 +192,7 @@ public class Catapult : SimpleDevice {
 		}
 
 		if (m_ammo[i] == null) {
-			m_ammo[i] = PoolManager.GetInstance(ammoName);
+			m_ammo[i] = m_ammoPoolHandlers[ammoIndex].GetInstance();
 
 			Projectile catapultAmmo = m_ammo[i].GetComponent<Projectile>();
 			catapultAmmo.AttachTo(m_ammoTransform, m_ammoTransform.rotation * m_initialPosition);
@@ -202,7 +206,7 @@ public class Catapult : SimpleDevice {
 		m_state = State.Loaded;
 	}
 
-	private string GetAmmoName() {
+	private int GetAmmoIndex() {
 		float rand = Random.Range(0f, 100f);
 		float prob = 0;
 		int i = 0;
@@ -217,7 +221,7 @@ public class Catapult : SimpleDevice {
 			rand -= prob;
 		}
 
-		return m_ammoList[i].name;
+		return i;
 	}
 
 	private void OnToss() {

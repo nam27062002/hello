@@ -13,11 +13,15 @@ public class FireBall : MonoBehaviour
 	private DragonBreathBehaviour m_breath;
 	private ParticleSystem[] m_PSbreath;
 
+	private PoolHandler m_poolHandler;
+
 	// Use this for initialization
 	void Start () 
 	{
 		m_area = GetComponent<CircleArea2D>();
 		m_PSbreath = GetComponentsInChildren<ParticleSystem>();
+
+		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
 
 	void PlayBreath(bool value)
@@ -113,6 +117,6 @@ public class FireBall : MonoBehaviour
     IEnumerator DisableInTime()
     {
 		yield return new WaitForSeconds(1.0f);
-        PoolManager.ReturnInstance(gameObject);
+		m_poolHandler.ReturnInstance(gameObject);
     }
 }

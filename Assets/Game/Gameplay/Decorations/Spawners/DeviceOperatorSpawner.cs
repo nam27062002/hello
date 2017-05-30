@@ -20,6 +20,8 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	[SerializeField] private LookAtVector m_lookAtVector;
 	//-------------------------------------------------------------------	
 
+	private PoolHandler m_poolHandler;
+
 	private GameCamera m_newCamera;
 	private IMachine m_operator;
 	private Pilot m_operatorPilot;
@@ -65,7 +67,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 
 		m_gameSceneController = InstanceManager.gameSceneControllerBase;
 		
-		PoolManager.RequestPool(m_entityPrefabStr, IEntity.EntityPrefabsPath, (int)GetMaxEntities());        
+		m_poolHandler = PoolManager.RequestPool(m_entityPrefabStr, IEntity.EntityPrefabsPath, (int)GetMaxEntities());        
     }
 
     protected override uint GetMaxEntities() {
@@ -86,6 +88,10 @@ public class DeviceOperatorSpawner : AbstractSpawner {
     protected override uint GetEntitiesAmountToRespawn() {        
         return GetMaxEntities();
     }        
+
+	protected override PoolHandler GetPoolHandler(uint index) {
+		return m_poolHandler;
+	}
 
     protected override string GetPrefabNameToSpawn(uint index) {
         return m_entityPrefabStr;

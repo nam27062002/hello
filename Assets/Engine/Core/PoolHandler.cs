@@ -1,16 +1,32 @@
 ﻿using UnityEngine;
 
-public class PoolHandler {
-
+public class PoolHandler {	
 	private Pool m_pool;
 	private bool m_isValid;
 
-	public PoolHandler(Pool _pool) {
-		m_pool = _pool;
-		m_isValid = true;
+
+	//-------------------------------------------------//
+
+	public PoolHandler() {
+		Invalidate();
 	}
 
-	public void Invalidate() { m_isValid = false; }
+	public PoolHandler(Pool _pool) {
+		AssignPool(_pool);
+	}
+
+	public void AssignPool(Pool _pool)	{ 
+		if (_pool != null) {
+			m_isValid = true;  
+			m_pool = _pool;
+		} else {
+			Invalidate();
+		}
+	}
+	public void Invalidate() {
+		m_isValid = false;
+		m_pool = null;  
+	}
 
 	public GameObject GetInstance(bool _activate = true) {
 		if (m_isValid) {
