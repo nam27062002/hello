@@ -84,7 +84,7 @@ Material:
       second: 3
     - first:
         name: _Cutoff
-      second: 0.3
+      second: 0.518
     - first:
         name: _DetailNormalMapScale
       second: 1
@@ -96,7 +96,7 @@ Material:
       second: 0
     - first:
         name: _Fresnel
-      second: 3.81
+      second: 8.45
     - first:
         name: _Glossiness
       second: 0.5
@@ -113,6 +113,9 @@ Material:
         name: _NoiseValue
       second: 0
     - first:
+        name: _NormalStrenght
+      second: 1
+    - first:
         name: _OcclusionStrength
       second: 1
     - first:
@@ -120,10 +123,13 @@ Material:
       second: 0.02
     - first:
         name: _SpecExponent
-      second: 10.05
+      second: 32.3
     - first:
         name: _SrcBlend
       second: 1
+    - first:
+        name: _StencilMask
+      second: 10
     - first:
         name: _UVSec
       second: 0
@@ -131,6 +137,9 @@ Material:
         name: _ZWrite
       second: 0
     m_Colors:
+    - first:
+        name: _AmbientAdd
+      second: {r: 0, g: 0, b: 0, a: 0}
     - first:
         name: _Color
       second: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
@@ -154,4 +163,13 @@ Material:
       second: {r: 1, g: 0, b: 0, a: 0.872}
     - first:
         name: _NoiseColor
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _SecondLightColor
+      second: {r: 0.26666668, g: 0.20000002, b: 0.20000002, a: 0}
+    - first:
+        name: _SecondLightDir
+      second: {r: 0, g: 0, b: -1, a: 0}
+    - first:
+        name: _Tint
       second: {r: 1, g: 1, b: 1, a: 1}
