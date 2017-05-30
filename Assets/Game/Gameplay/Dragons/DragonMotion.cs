@@ -587,7 +587,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				{
 					m_recoverTimer = m_insideWaterRecoveryTime;
                     m_accWaterFactor = 1.0f;
-
                 }
                     break;
 				case State.OuterSpace:
@@ -1935,7 +1934,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	{
 		if (!m_insideWater)
 		{
-			Debug.Log("Enter Water");
 			// Check direction?
 			m_waterEnterPosition = transform.position;
 			m_insideWater = true;
@@ -2001,7 +1999,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	{
 		if (m_insideWater)
 		{
-			Debug.Log("Exit Water");
 			m_insideWater = false;
 			// Disable Bubbles
 			if (IsAliveState() )
