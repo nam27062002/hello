@@ -34,6 +34,9 @@ namespace AI {
 		private bool m_onGround;
 		private float m_heightFromGround;
 
+		private float m_jumpStartY;
+		private float m_jumpUpDistance;
+
 		private float m_fallTimer;
 
 		private SubState m_subState;
@@ -102,6 +105,12 @@ namespace AI {
 					if (m_onGround) {
 						m_pilot.ReleaseAction(Pilot.Action.Jump);
 						m_nextSubState = SubState.Idle;
+					} else {
+						float jumpDownDistance = m_jumpStartY - m_machine.position.y;
+						if (jumpDownDistance > m_jumpUpDistance * 1.25f) {
+							// force to start a free fall
+							FreeFall();
+						}
 					}
 					break;
 			}
@@ -171,6 +180,7 @@ namespace AI {
 			if (m_onGround) {
 				m_fallTimer = FREE_FALL_THRESHOLD;
 				m_machine.SetSignal(Signals.Type.FallDown, false);
+				m_pilot.ReleaseAction(Pilot.Action.Jump);
 				m_nextSubState = SubState.Idle;
 			}
 		}
@@ -252,6 +262,9 @@ namespace AI {
 					break;
 
 				case SubState.Jump_Start:
+					m_jumpStartY = m_machine.position.y;
+					m_jumpUpDistance = 0f;
+
 					m_heightFromGround = 0f;
 					m_viewControl.Height(0f);
 					m_onGround = true;
@@ -262,7 +275,9 @@ namespace AI {
 				case SubState.Jump_Up:
 					break;
 
-				case SubState.Jump_Down:
+				case SubState.Jump_Down:					
+					m_jumpUpDistance = m_machine.position.y - m_jumpStartY;
+					m_jumpStartY = m_machine.position.y;
 					break;
 			}
 
