@@ -1023,6 +1023,17 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    public static bool IsControlPanelEnabled
+    {
+        get
+        {
+            ServerManager.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+            return (kServerConfig != null && kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION &&
+                // Disabled in STAGE too for the play test as the users play in STAGE. TO REMOVE once the play test is done
+                kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_STAGE); 
+        }
+    }
+
     public bool IsMiniTrackingEnabled
     {
         get
