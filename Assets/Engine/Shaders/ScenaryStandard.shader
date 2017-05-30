@@ -9,10 +9,10 @@
 
 		_CutOff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
 
-		[Toggle(FOG)] _EnableFog("Fog", int) = 1.0
-		[Toggle(DARKEN)] _EnableDarken("Darken", int) = 1.0
-		[Toggle(SPECULAR)] _EnableSpecular("Specular", int) = 1.0
-		[Toggle(CUSTOM_VERTEXCOLOR)] _AutomaticBlend("Automatic blend", int) = 1.0
+		[Toggle(FOG)] _EnableFog("Fog", int) = 0.0
+		[Toggle(DARKEN)] _EnableDarken("Darken", int) = 0.0
+		[Toggle(SPECULAR)] _EnableSpecular("Specular", int) = 0.0
+		[Toggle(CUSTOM_VERTEXCOLOR)] _AutomaticBlend("Automatic blend", int) = 0.0
 
 
 		_SpecularPower("Specular Power", float) = 3
@@ -21,7 +21,7 @@
 		_DarkenPosition("Darken position",  float) = 0.0
 		_DarkenDistance("Darken distance",  float) = 20.0
 
-		[KeywordEnum(OVERLAY, ADDITIVE, MODULATE)] VertexColor("Overlay mode", int) = 0
+		[KeywordEnum(NONE, OVERLAY, ADDITIVE, MODULATE)] VertexColor("Overlay mode", int) = 0
 //		[Enum(UV0,0,UV1,1)] _UVSec("UV Set for secondary textures", Float) = 0
 
 		// Blending state
@@ -46,14 +46,14 @@
 			#pragma glsl_no_auto_normalization
 			#pragma fragmentoption ARB_precision_hint_fastest
 
-			#pragma multi_compile __ FOG
-			#pragma multi_compile __ DARKEN
-			#pragma multi_compile __ SPECULAR
-			#pragma multi_compile __ CUSTOM_VERTEXCOLOR
-			#pragma multi_compile __ BLEND_TEXTURE
-			#pragma multi_compile __ NORMALMAP
-			#pragma multi_compile __ CUTOFF
-			#pragma multi_compile __ VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
+			#pragma shader_feature  __ FOG
+			#pragma shader_feature  __ DARKEN
+			#pragma shader_feature  __ SPECULAR
+			#pragma shader_feature  __ CUSTOM_VERTEXCOLOR
+			#pragma shader_feature  __ BLEND_TEXTURE
+			#pragma shader_feature  __ NORMALMAP
+			#pragma shader_feature  __ CUTOFF
+			#pragma shader_feature  __ VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
 
 			#define HG_SCENARY
 
