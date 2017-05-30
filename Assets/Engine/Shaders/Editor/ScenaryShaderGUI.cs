@@ -10,6 +10,7 @@
 using System;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.AnimatedValues;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -102,11 +103,9 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
     bool m_FirstTimeApply = true;
 
-
     //------------------------------------------------------------------------//
     // METHODS																  //
     //------------------------------------------------------------------------//
-
 
     public void FindProperties(MaterialProperty[] props)
     {
@@ -145,6 +144,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
         // Do this before any GUI code has been issued to prevent layout issues in subsequent GUILayout statements (case 780071)
         if (m_FirstTimeApply)
         {
+//            m_animBool.valueChanged.AddListener(Repaint);
             MaterialChanged(material, m_WorkflowMode);
             m_FirstTimeApply = false;
         }
@@ -179,15 +179,15 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         SetMaterialKeywords(material, workflowMode);
 
+/*
         string kwl = "";
         foreach (string kw in material.shaderKeywords)
         {
             kwl += kw + ",";
         }
 
-
-
         Debug.Log("Material keywords: " + kwl);
+*/
     }
 
 
@@ -233,10 +233,12 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 m_MaterialEditor.ShaderProperty(mp_normalStrength, Styles.normalStrengthText);
             }
 
-
             // Blend Texture properties
             m_MaterialEditor.TextureProperty(mp_blendTexture, Styles.blendTextureText);
-            m_MaterialEditor.ShaderProperty(mp_enableAutomaticBlending, Styles.automaticBlendingText);
+            if (material.GetTexture("_SecondTexture") != null)
+            {
+                m_MaterialEditor.ShaderProperty(mp_enableAutomaticBlending, Styles.automaticBlendingText);
+            }
 
             EditorGUILayout.Space();
             GUILayout.Label(Styles.renderOptions, EditorStyles.boldLabel);
@@ -245,15 +247,15 @@ internal class ScenaryShaderGUI : ShaderGUI {
             m_MaterialEditor.ShaderProperty(mp_enableDarken, Styles.darkenText);
             if (material.GetInt("_EnableDarken") != 0)
             {
-                m_MaterialEditor.FloatProperty(mp_darkenPosition, Styles.darkenPositionText);
-                m_MaterialEditor.FloatProperty(mp_darkenDistance, Styles.darkenDistanceText);
+                m_MaterialEditor.ShaderProperty(mp_darkenPosition, Styles.darkenPositionText, 1);
+                m_MaterialEditor.ShaderProperty(mp_darkenDistance, Styles.darkenDistanceText, 1);
             }
 
             m_MaterialEditor.ShaderProperty(mp_enableSpecular, Styles.specularText);
             if (material.GetInt("_EnableSpecular") != 0)
             {
-                m_MaterialEditor.FloatProperty(mp_specularPower, Styles.specularFactorText);
-                m_MaterialEditor.VectorProperty(mp_specularDirection, Styles.specularDirText);
+                m_MaterialEditor.ShaderProperty(mp_specularPower, Styles.specularFactorText, 1);
+                m_MaterialEditor.ShaderProperty(mp_specularDirection, Styles.specularDirText, 1);
             }
 
             m_MaterialEditor.ShaderProperty(mp_overlayColorMode, Styles.overlayColorText);
