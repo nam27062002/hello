@@ -8,6 +8,8 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.EventSystems;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -15,7 +17,7 @@ using UnityEngine;
 /// <summary>
 /// Control a single chest slot in the Goals Screen 3D scene.
 /// </summary>
-public class GoalsSceneChestSlot : MonoBehaviour {
+public class GoalsSceneChestSlot : MonoBehaviour, IPointerClickHandler {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -28,6 +30,13 @@ public class GoalsSceneChestSlot : MonoBehaviour {
 	public Transform uiAnchor {
 		get { return m_uiAnchor; }
 	}
+
+	// Jump setup
+	[Space]
+	[SerializeField] private int m_numJumps = 1;
+	[SerializeField] private float m_jumpForce = 0.15f;
+	[SerializeField] private Ease m_jumpEase = Ease.OutQuad;
+	[SerializeField] private float m_jumpDuration = 0.25f;
 
 	// Internal
 	private ChestViewController m_view = null;
@@ -63,4 +72,15 @@ public class GoalsSceneChestSlot : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// OnMouseUpAsButton is only called when the mouse is released over the same 
+	/// GUIElement or Collider as it was pressed.
+	/// </summary>
+	public void OnPointerClick(PointerEventData _eventData) {
+		// Just do a small bounce animation :D
+		this.transform.DOKill(true);
+		this.transform
+			.DOLocalJump(this.transform.localPosition, m_jumpForce, m_numJumps, m_jumpDuration)
+			.SetEase(m_jumpEase);
+	}
 }

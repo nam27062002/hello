@@ -373,6 +373,7 @@ GameObject:
   - component: {fileID: 222182916936481172}
   - component: {fileID: 114573536556556888}
   - component: {fileID: 114906849566166608}
+  - component: {fileID: 114327898972863632}
   m_Layer: 5
   m_Name: DragController
   m_TagString: Untagged
@@ -459,12 +460,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorMultiply: {r: 1, g: 1, b: 1, a: 1}
-  colorAdd: {r: 0, g: 0, b: 0, a: 0}
-  alpha: 1
-  brightness: 0
-  saturation: 0
-  contrast: 0
+  m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
+  m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_alpha: 1
+  m_brightness: 0
+  m_saturation: 0
+  m_contrast: 0
 --- !u!114 &114032119333924070
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -508,12 +509,34 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   OnShowPostAnimation:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114591507085126800}
+        m_MethodName: OnShowPostAnimation
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePreAnimation:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114591507085126800}
+        m_MethodName: OnHidePreAnimation
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
@@ -878,6 +901,25 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114327898972863632
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1966015719737250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: deb5a5019a2ad4527b7fd600846369b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_camera: {fileID: 0}
+  m_mode: 0
+  m_range:
+    min: -10
+    max: 10
+  m_speed: 0.5
+  m_restoreOnDisable: 1
+  m_restoreDuration: 0.1
 --- !u!114 &114335299349424958
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1207,6 +1249,7 @@ MonoBehaviour:
   m_dragonDesc: {fileID: 114043430337404836}
   m_dragonTierIcon: {fileID: 114118001943062184}
   m_dragController: {fileID: 114906849566166608}
+  m_zoomController: {fileID: 114327898972863632}
   m_flashFX: {fileID: 114175042287350816}
   m_objectsToHide:
   - {fileID: 1359481639596622}
@@ -1248,12 +1291,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorMultiply: {r: 1, g: 1, b: 1, a: 1}
-  colorAdd: {r: 0, g: 0, b: 0, a: 0}
-  alpha: 1
-  brightness: 0
-  saturation: 0
-  contrast: 0
+  m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
+  m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_alpha: 1
+  m_brightness: 0
+  m_saturation: 0
+  m_contrast: 0
 --- !u!114 &114617858563454366
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2161,8 +2204,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 349.5, y: -65}
-  m_SizeDelta: {x: 367, y: 130}
+  m_AnchoredPosition: {x: 349.58002, y: -65}
+  m_SizeDelta: {x: 367.16, y: 130}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224621882420204034
 RectTransform:
@@ -2183,7 +2226,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 50}
-  m_SizeDelta: {x: 699, y: 130}
+  m_SizeDelta: {x: 699.16003, y: 130}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224623282014932368
 RectTransform:
@@ -2200,10 +2243,10 @@ RectTransform:
   m_Father: {fileID: 224770988189369802}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 544.865, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 544.865, y: -75}
+  m_SizeDelta: {x: 0, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224625318353464144
 RectTransform:
@@ -2390,6 +2433,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 631, y: -65}
+  m_AnchoredPosition: {x: 631.16003, y: -65}
   m_SizeDelta: {x: 136, y: 130}
   m_Pivot: {x: 0.5, y: 0.5}
