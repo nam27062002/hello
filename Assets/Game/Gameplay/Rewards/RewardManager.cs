@@ -216,12 +216,20 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		get { return instance.m_deathType; }
 	}
 
-    // Counter for the amount of times the player has diven in water during the session
-    private int m_diveAmount = 0;
-    public static int diveAmount
+    // Counter for the amount of times the player has entered water during the session
+    private int m_enterWaterAmount = 0;
+    public static int enterWaterAmount
     {
-        get { return instance.m_diveAmount; }
+        get { return instance.m_enterWaterAmount; }
     }
+
+    // Counter for the amount of times the player has entered space during the session
+    private int m_enterSpaceAmount = 0;
+    public static int enterSpaceAmount
+    {
+        get { return instance.m_enterSpaceAmount; }
+    }
+
 
     // Shortcuts
     private GameSceneControllerBase m_sceneController;
@@ -254,6 +262,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
         // Required for tracking purposes
         Messenger.AddListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
+        Messenger.AddListener<bool>(GameEvents.INTOSPACE_TOGGLED, OnIntospaceToggled);
     }
 
 	/// <summary>
@@ -274,6 +283,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
         // Required for tracking purposes
         Messenger.RemoveListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
+        Messenger.RemoveListener<bool>(GameEvents.INTOSPACE_TOGGLED, OnIntospaceToggled);
     }
 
 	/// <summary>
@@ -384,8 +394,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		instance.m_paidReviveCount = 0;
 		instance.m_deathSource = "";
 		instance.m_deathType = DamageType.NORMAL;
-        instance.m_diveAmount = 0;
-	}
+        instance.m_enterWaterAmount = 0;
+        instance.m_enterSpaceAmount = 0;
+    }
 
 	/// <summary>
 	/// Adds the final rewards to the user profile. To be called at the end of 
@@ -680,7 +691,18 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
     private  void OnUnderwaterToggled(bool _activated) {
         // The counter is increased only when the player dives into water
         if (_activated) {
-            m_diveAmount++;
+            m_enterWaterAmount++;
         }
     }
+
+    /// <summary>
+	/// The dragon has entered/exit the space.
+	/// </summary>
+	/// <param name="_activated">Whether the dragon has entered or exited the space.</param>
+    private void OnIntospaceToggled(bool _activated) {
+        // The counter is increased only when the player jumps into space
+        if (_activated) {
+            m_enterSpaceAmount++;
+        }
+    }    
 }
