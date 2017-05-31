@@ -209,13 +209,15 @@ public class MiniTrackingEngine : Singleton<MiniTrackingEngine> {
 			instance.m_stringBuilder.Append(_params[i].ToString(false)).Append(";");
 		}
 
-		// Last special parameter containing all the labels for each parameter
-		for(int i = 0; i < _params.Count; i++) {
+        // Last special parameter containing all the labels for each parameter
+        // [DGR] Not included because Hadrian don't want it on the tracking of the playtest
+        /*
+        for (int i = 0; i < _params.Count; i++) {
 			instance.m_stringBuilder.Append(_params[i].id);
 			if(i < _params.Count - 1) {
 				instance.m_stringBuilder.Append(",");	// Comma separated
 			}
-		}
+		}*/
 
 		// Done!
 		return instance.m_stringBuilder.ToString();
