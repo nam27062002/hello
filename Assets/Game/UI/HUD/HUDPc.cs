@@ -86,7 +86,7 @@ public class HUDPc : HudWidget {
     // INTERNAL UTILS													//
     //------------------------------------------------------------------//   
     protected override string GetValueAsString() {
-		return UIConstants.GetIconString(Value, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+		return UIConstants.GetIconString(Value, UIConstants.IconType.PC, UIConstants.IconAlignment.RIGHT);
     }
 
 	/// <summary>

@@ -31,15 +31,23 @@ public class HUDStatBar : MonoBehaviour {
 		SuperFury
 	}
 
+	private const float DAMAGE_BAR_ANIMATION_THRESHOLD = 10f;	// Pixels
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed setup
 	[SerializeField] private Type m_type = Type.Health;
 	[SerializeField] private float m_maxScreenSize = 1300f;
+	[Space]
+	[SerializeField] [Range(0f, 1f)] private float m_damageBarSpeed = 0.2f;	// %/sec
+	[Space]
+	[SerializeField] private Color m_invulnerabilityColor = new Color(1f, 1f, 1f, 0f);
+	[SerializeField] private float m_invulnerabilityFXSpeed = 6f;
 
 	private Slider m_extraBar;
 	private Slider m_baseBar;
+	private Slider m_damageBar;
 	private TextMeshProUGUI m_valueTxt;
 	private GameObject m_icon;
 	private GameObject m_iconAnimated = null;
@@ -55,6 +63,14 @@ public class HUDStatBar : MonoBehaviour {
     private float m_extraBarLastValue = -1f;
     private float m_extraBarLastMaxValue = -1f;
 
+	private float m_damageAnimationThreshold = 0f;
+
+	// Invulnerability FX
+	private bool m_wasInvulnerable = false;
+	private UIColorFX m_baseBarInvulnerableFX = null;
+	private UIColorFX m_extraBarInvulnerableFX = null;
+	private float m_invulnerabilityColorDelta = 0f;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -68,12 +84,20 @@ public class HUDStatBar : MonoBehaviour {
 		m_canvasGroup = GetComponent<CanvasGroup>();
 		Transform child;
 		child = transform.FindChild("ExtraSlider");
-		if ( child != null )
+		if ( child != null ) {
 			m_extraBar = child.GetComponent<Slider>();
+			m_extraBarInvulnerableFX = child.GetComponentInChildren<UIColorFX>();
+		}
 		
 		child = transform.FindChild("BaseSlider");
-		if ( child != null )
+		if ( child != null ) {
 			m_baseBar = child.GetComponent<Slider>();
+			m_baseBarInvulnerableFX = child.GetComponentInChildren<UIColorFX>();
+		}
+
+		child = transform.FindChild("DamageSlider");
+		if ( child != null )
+			m_damageBar = child.GetComponent<Slider>();
 
 		m_valueTxt = gameObject.FindComponentRecursive<TextMeshProUGUI>("TextValue");
 
@@ -178,13 +202,19 @@ public class HUDStatBar : MonoBehaviour {
 					targetValueStep = Mathf.Lerp(m_extraBar.value, targetValue, Time.deltaTime);
 				}
 
+				if (m_damageBar != null) {
+					if (m_damageBar.minValue != 0f)
+						m_damageBar.minValue = 0f;
+
+					if (m_damageBar.maxValue != targetExtraValue)
+						m_damageBar.maxValue = targetExtraValue; // this is the max value with all the bonus
+				}
+
 				//Extra bar                
 				if (m_extraBar != null) {
 					if (m_instantSet) {
                         if (m_extraBar.value != targetValue)
                             m_extraBar.value = targetValue;
-
-						m_instantSet = false;
 					} else {
                         // If going up, animate, otherwise instant set
                         float value = (targetValue > m_extraBar.value) ? targetValueStep : targetValue;                        
@@ -201,13 +231,31 @@ public class HUDStatBar : MonoBehaviour {
 					if (m_instantSet) {
                         if (m_baseBar.value != targetValue)
                             m_baseBar.value = targetValue;
-
-						m_instantSet = false;
 					} else {
                         // If going up, animate, otherwise instant set
                         float value = (targetValue > m_baseBar.value) ? targetValueStep : targetValue;
                         if (m_baseBar.value != value)
                             m_baseBar.value = value;                      
+					}
+				}
+
+				// Damage bar
+				if(m_damageBar != null) {
+					// Target value is the max between the extra bar value and the base var balue
+					targetValue = Mathf.Max(m_extraBar.value, m_baseBar.value);
+
+					if(m_instantSet) {
+						if(m_damageBar.value != targetValue) {
+							m_damageBar.value = targetValue;
+						}
+					} else {
+						// Reverse case: animate when going down only and over a certain threshold
+						if(m_damageBar.value > targetValue + m_damageAnimationThreshold) {
+							// Use normalized value so speed feels right for every dragon
+							m_damageBar.normalizedValue -= m_damageBarSpeed * Time.deltaTime;
+						} else if(m_damageBar.value < targetValue) {
+							m_damageBar.value = targetValue;
+						}
 					}
 				}
                 
@@ -230,6 +278,36 @@ public class HUDStatBar : MonoBehaviour {
                     m_valueTxt.text = String.Format("{0}/{1}",
 					                                StringUtils.FormatNumber(m_extraBarLastValue, 0),
 					                                StringUtils.FormatNumber(m_extraBarLastMaxValue, 0));                    
+				}
+
+				// Invulnerability FX
+				/*if(m_baseBarInvulnerableFX != null && m_extraBarInvulnerableFX != null) {
+					bool applyFX = m_instantSet;
+					if(InstanceManager.player.IsInvulnerable() || DebugSettings.invulnerable) {
+						m_invulnerabilityColorDelta += m_invulnerabilityFXSpeed * Time.deltaTime;
+
+						if(m_invulnerabilityColorDelta >= 1f) {
+							m_invulnerabilityFXSpeed *= -1;
+						} else if(m_invulnerabilityColor.a <= 0f) {
+							m_invulnerabilityFXSpeed *= -1;
+						}
+
+						m_invulnerabilityColorDelta = Mathf.Clamp01(m_invulnerabilityColorDelta);
+
+						m_wasInvulnerable = true;
+						applyFX = true;
+					} else if(m_wasInvulnerable) {
+						m_invulnerabilityColorDelta = 0f;
+						applyFX = true;
+					}
+
+					m_baseBarInvulnerableFX.colorAdd = Color.Lerp(Colors.transparentBlack, m_invulnerabilityColor, m_invulnerabilityColorDelta);
+					m_extraBarInvulnerableFX.colorAdd = m_baseBarInvulnerableFX.colorAdd;
+				}*/
+
+				// Reset instant set flag
+				if(m_instantSet) {
+					m_instantSet = false;
 				}
 			}
 
@@ -261,8 +339,8 @@ public class HUDStatBar : MonoBehaviour {
 		switch (m_type) {
 			case Type.Health: 	return InstanceManager.player.healthMax;
 			case Type.Energy:	return InstanceManager.player.energyMax;
-			case Type.Fury:		return 1;	// [AOC] Furt powerup not yet implemented
-			case Type.SuperFury:return 1;	// [AOC] Furt powerup not yet implemented
+			case Type.Fury:		return 1;	// [AOC] Fury powerup not yet implemented
+			case Type.SuperFury:return 1;	// [AOC] Fury powerup not yet implemented
 		}
 		return 1;
 	}
@@ -273,8 +351,8 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			case Type.Health: 	return InstanceManager.player.healthBase;
 			case Type.Energy:	return InstanceManager.player.energyBase;
-			case Type.Fury:		return 1;	// [AOC] Furt powerup not yet implemented
-			case Type.SuperFury:return 1;	// [AOC] Furt powerup not yet implemented
+			case Type.Fury:		return 1;	// [AOC] Fury powerup not yet implemented
+			case Type.SuperFury:return 1;	// [AOC] Fury powerup not yet implemented
 		}
 		return 1;
 	}
@@ -357,54 +435,30 @@ public class HUDStatBar : MonoBehaviour {
 
 	void ResizeBars()
 	{
+		RectTransform rectTransform = this.transform as RectTransform;
+		Vector2 size = rectTransform.sizeDelta;
 		switch( m_type )
 		{
 			case Type.Energy:
 			case Type.Health:
 			{
-				RectTransform rectTransform = this.transform as RectTransform;
-				Vector2 size = rectTransform.sizeDelta;
 				float fraction = Mathf.Clamp01(GetBaseValue() * GetSizePerUnit());
 				size.x = fraction * m_maxScreenSize;
 				rectTransform.sizeDelta = size;
-
-				// [AOC] Both bars are now anchored to parent and automatically adopt the new size
-				/*
-				if ( m_baseBar != null )
-				{
-					rectTransform = m_baseBar.GetComponent<RectTransform>();
-					size = rectTransform.sizeDelta;
-					fraction = Mathf.Clamp01(GetBaseValue() * GetSizePerUnit());
-					size.x = fraction * m_maxScreenSize;
-					rectTransform.sizeDelta = size;
-				}
-				*/
 			}break;
 
 			case Type.Fury:
 			case Type.SuperFury:
 			{
-				// [AOC] Furt powerup not yet implemented
-				RectTransform rectTransform = this.transform as RectTransform;
-				Vector2 size = rectTransform.sizeDelta;
+				// [AOC] Fury powerup not yet implemented
 				float fraction = GetExtraValue();
 				size.x = fraction * m_maxScreenSize;
 				rectTransform.sizeDelta = size;
-
-				// [AOC] Both bars are now anchored to parent and automatically adopt the new size
-				/*
-				if ( m_baseBar != null )
-				{
-					rectTransform = m_baseBar.GetComponent<RectTransform>();
-					size = rectTransform.sizeDelta;
-					fraction = GetBaseValue();
-					size.x = fraction * m_maxScreenSize;
-					rectTransform.sizeDelta = size;
-				}
-				*/
-
 			}break;
 		}
+
+		// How many units correspond to the minimum threshold in pixels?
+		m_damageAnimationThreshold = DAMAGE_BAR_ANIMATION_THRESHOLD/size.x;
 	}
 
 	private void OnLevelUp(DragonData _data) 
@@ -444,5 +498,4 @@ public class HUDStatBar : MonoBehaviour {
 			else 		 m_particles.Stop();
 		}
 	}
-
 }
