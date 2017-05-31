@@ -97,6 +97,10 @@ public enum GameEvents {
 	MENU_DRAGON_DISGUISE_CHANGE, // params: string _dragonSku
 	MENU_DRAGON_PET_CHANGE,		 // params: string _dragonSku, int _slotIdx, string _newPetSku
 
+	MENU_SCREEN_TRANSITION_REQUESTED,	// params: MenuScreen _from, MenuScreen _to
+	MENU_SCREEN_TRANSITION_START,		// params: MenuScreen _from, MenuScreen _to
+	MENU_SCREEN_TRANSITION_END,			// params: MenuScreen _from, MenuScreen _to
+
 	// Mission events
 	MISSION_COMPLETED,			// params: Mission _mission
 	MISSION_REMOVED,			// params: Mission _newMission
