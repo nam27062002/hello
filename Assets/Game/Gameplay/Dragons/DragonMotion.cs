@@ -1762,7 +1762,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 			// Change state
 			ChangeState(State.InsideWater);
-		}
+		}        
 
 		// Notify game
 		Messenger.Broadcast<bool>(GameEvents.UNDERWATER_TOGGLED, true);
@@ -1807,7 +1807,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			// Change state
 			ChangeState(State.OuterSpace);
 		}
-	}
+
+        // Notify game
+        Messenger.Broadcast<bool>(GameEvents.INTOSPACE_TOGGLED, true);        
+    }
 
 	public void EndSpaceMovement()
 	{
@@ -1823,7 +1826,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		{
 			ChangeState( State.ExitingSpace );
 		}
-	}
+
+        // Notify game
+        Messenger.Broadcast<bool>(GameEvents.INTOSPACE_TOGGLED, false);
+    }
 
 	public void StartGrabPreyMovement(AI.IMachine prey, Transform _holdPreyTransform)
 	{
