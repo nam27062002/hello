@@ -27,7 +27,7 @@ public class ChestViewController : MonoBehaviour {
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
     // Exposed references
-    [SerializeField] private ParticleSystem m_glowFX = null;
+    [SerializeField] private GameObject m_glowFX = null;
 	[SerializeField] private ParticleData m_openParticle = null;
 	// [SerializeField] private ParticleData m_dustParticle = null;
 
@@ -46,8 +46,6 @@ public class ChestViewController : MonoBehaviour {
 	// Internal
 	private Animator m_animator = null;
 	private GameObject[] m_rewardViews = null;
-    
-    public CustomParticlesCulling CustomParticlesCulling { get; set; }    
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -132,10 +130,12 @@ public class ChestViewController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_fx">The system to be toggled.</param>
 	/// <param name="_active">Whether to turn it on or off.</param>
-	private void ToggleFX(ParticleSystem _fx, bool _active) {
+	private void ToggleFX(GameObject _fx, bool _active) {
 		// Ignore if given FX is not valid
 		if(_fx == null) return;
+		_fx.SetActive( _active );
 
+		/*
 		// Activate?
 		if(_active) {
 			_fx.gameObject.SetActive(true);
@@ -150,6 +150,7 @@ public class ChestViewController : MonoBehaviour {
 			_fx.Stop();
 			_fx.gameObject.SetActive(false);
 		}
+		*/
 	}
 
 	//------------------------------------------------------------------------//
