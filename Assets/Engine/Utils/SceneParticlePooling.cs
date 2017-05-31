@@ -85,6 +85,10 @@ public class SceneParticlePooling : MonoBehaviour
             {
                 item.Pause();
             }
+			else if ( Manager_IsVisible(item.CullingIndex) && item.IsPaused )
+			{
+				item.Resume();
+			}
         }
     }
 
@@ -177,7 +181,7 @@ public class SceneParticlePooling : MonoBehaviour
         {
             m_cullingCenter = transform;
         }
-
+        IsPaused = true;
 		BoundingSphere = new BoundingSphere(m_cullingCenter.position, m_cullingRadius);
 		Manager_AddItem(this);
 		ParticleManager.CreatePool(m_particle);
@@ -188,6 +192,18 @@ public class SceneParticlePooling : MonoBehaviour
     public bool IsVisible()
     {
         return Manager_IsVisible(CullingIndex);
+    }
+
+    void OnEnable()
+    {
+		Manager_AddItem(this);
+    }
+
+
+    void OnDisable()
+    {
+    	Pause();
+		Manager_RemoveItem(this);
     }
 
     public void Pause()
