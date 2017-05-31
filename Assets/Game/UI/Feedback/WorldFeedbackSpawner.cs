@@ -131,6 +131,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnDestroyed);
 		Messenger.AddListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.AddListener<Transform, Reward>(GameEvents.STAR_COMBO, OnStarCombo);
 		Messenger.AddListener<Transform>(GameEvents.ENTITY_ESCAPED, OnEscaped);
         Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);        
     }
@@ -145,6 +146,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnDestroyed);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.RemoveListener<Transform, Reward>(GameEvents.STAR_COMBO, OnStarCombo);
 		Messenger.RemoveListener<Transform>(GameEvents.ENTITY_ESCAPED, OnEscaped);
         Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
     }
@@ -317,6 +319,23 @@ public class WorldFeedbackSpawner : MonoBehaviour {
         }           		
 	}
 
+	/// <summary>
+	/// A full group of stars has been eaten.
+	/// </summary>
+	/// <param name="_entity">Entity.</param>
+	/// <param name="_reawrd">Reawrd.</param>
+	private void OnStarCombo(Transform _entity, Reward _reward) {		
+		// Spawn flock feedback bonus, score will be displayed as any other score feedback		
+		string text = LocalizationManager.SharedInstance.Localize("TID_STARS_REWARD");
+
+		// Get an instance from the pool and spawn it!
+		TextCacheItemData itemData = m_cacheDatas[ECacheTypes.FlockBonus].GetCacheItemDataAvailable() as TextCacheItemData;
+		if (itemData != null)
+		{
+			itemData.SpawnText(CacheWatch.ElapsedMilliseconds, _entity.position, text);
+			m_feedbacksQueue.Enqueue(itemData.Controller);
+		}           		
+	}
 
 	private void OnEscaped(Transform _entity) {
 		SpawnEscapedFeedback(_entity);

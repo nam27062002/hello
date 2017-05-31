@@ -48,6 +48,10 @@ public class OpenEggSceneController : MonoBehaviour {
 	[Tooltip("One per rarity, matching order. None for \"special\".")]
 	[SerializeField] private GameObject[] m_goldenFragments = new GameObject[(int)EggReward.Rarity.COUNT];
 
+	[Separator("Others")]
+	[Tooltip("Will replace the camera snap point for the photo screen when doing photos to the egg reward.")]
+	[SerializeField] private CameraSnapPoint m_photoCameraSnapPoint = null;
+
 	// Events
 	[Separator("Events")]
 	public UnityEvent OnIntroFinished = new UnityEvent();
@@ -70,6 +74,7 @@ public class OpenEggSceneController : MonoBehaviour {
 
 	// Other references that must be set from script
 	private DragControlRotation m_dragController = null;
+	private CameraSnapPoint m_originalPhotoCameraSnapPoint = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -78,8 +83,14 @@ public class OpenEggSceneController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		// Store original camera snap point for the photo screen
+		m_originalPhotoCameraSnapPoint = InstanceManager.menuSceneController.screensController.cameraSnapPoints[(int)MenuScreens.PHOTO];
+
 		// Don't show anything
 		Clear();
+
+		// Subscribe to external events
+		Messenger.AddListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 	}
 
 	/// <summary>
@@ -102,6 +113,10 @@ public class OpenEggSceneController : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+
+		// Clean up
 		Clear();
 	}
 
@@ -438,6 +453,31 @@ public class OpenEggSceneController : MonoBehaviour {
 			tapFX.Play(true);
 
 			// Disable smoke FX
+		}
+	}
+
+	/// <summary>
+	/// The menu screen change animation is about to start.
+	/// </summary>
+	/// <param name="_from">Screen we come from.</param>
+	/// <param name="_to">Screen we're going to.</param>
+	private void OnMenuScreenTransitionStart(MenuScreens _from, MenuScreens _to) {
+		// Entering the open egg screen
+		if(_to == MenuScreens.OPEN_EGG) {
+			// Override camera snap point for the photo screen so it looks to our reward
+			InstanceManager.menuSceneController.screensController.cameraSnapPoints[(int)MenuScreens.PHOTO] = m_photoCameraSnapPoint;
+		}
+
+		// Leaving the open egg screen
+		else if(_from == MenuScreens.OPEN_EGG) {
+			// Do some stuff if not going to take a picture of the pet
+			if(_to != MenuScreens.PHOTO) {
+				// Clear the scene
+				Clear();
+
+				// Restore default camera snap point for the photo screen
+				InstanceManager.menuSceneController.screensController.cameraSnapPoints[(int)MenuScreens.PHOTO] = m_originalPhotoCameraSnapPoint;
+			}
 		}
 	}
 }

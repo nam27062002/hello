@@ -186,7 +186,7 @@ public class PopupDragonInfo : MonoBehaviour {
 
 		// Dragon name and icon
 		m_dragonNameText.Localize(dragonData.def.Get("tidName"));
-		m_dragonIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.DISGUISE_ICONS_PATH + dragonData.def.sku, "icon_disguise_0");	// [AOC] HARDCODED!!
+		m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + dragonData.def.sku + "/icon_disguise_0");
 
 		// HP
 		m_healthText.text = StringUtils.FormatNumber(dragonData.maxHealth, 0);

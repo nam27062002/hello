@@ -59,6 +59,7 @@ public enum GameEvents {
 	ENTITY_BURNED,				// params: Transform _entity, Reward _reward
 	ENTITY_DESTROYED,			// params: Transform _entity, Reward _reward
 	FLOCK_EATEN,				// params: Transform _entity, Reward _reward
+	STAR_COMBO,
 	ENTITY_ESCAPED,				// params: Transform _entity
 
 	// Player events
@@ -95,6 +96,10 @@ public enum GameEvents {
 	MENU_DRAGON_CONFIRMED,		 // params: string _confirmedDragonSku	// [AOC] Triggered when the dragon hovered on the menu is valid to be used in gameplay (UserProfile.currentDragon updated)
 	MENU_DRAGON_DISGUISE_CHANGE, // params: string _dragonSku
 	MENU_DRAGON_PET_CHANGE,		 // params: string _dragonSku, int _slotIdx, string _newPetSku
+
+	MENU_SCREEN_TRANSITION_REQUESTED,	// params: MenuScreen _from, MenuScreen _to
+	MENU_SCREEN_TRANSITION_START,		// params: MenuScreen _from, MenuScreen _to
+	MENU_SCREEN_TRANSITION_END,			// params: MenuScreen _from, MenuScreen _to
 
 	// Mission events
 	MISSION_COMPLETED,			// params: Mission _mission
