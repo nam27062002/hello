@@ -216,8 +216,15 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		get { return instance.m_deathType; }
 	}
 
-	// Shortcuts
-	private GameSceneControllerBase m_sceneController;
+    // Counter for the amount of times the player has diven in water during the session
+    private int m_diveAmount = 0;
+    public static int diveAmount
+    {
+        get { return instance.m_diveAmount; }
+    }
+
+    // Shortcuts
+    private GameSceneControllerBase m_sceneController;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -243,7 +250,10 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRush);
 		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
-	}
+
+        // Required for tracking purposes
+        Messenger.AddListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
+    }
 
 	/// <summary>
 	/// The manager has been disabled.
@@ -259,7 +269,10 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRush);
 		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
-	}
+
+        // Required for tracking purposes
+        Messenger.RemoveListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
+    }
 
 	/// <summary>
 	/// Called every frame.
@@ -369,6 +382,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		instance.m_paidReviveCount = 0;
 		instance.m_deathSource = "";
 		instance.m_deathType = DamageType.NORMAL;
+        instance.m_diveAmount = 0;
 	}
 
 	/// <summary>
@@ -656,4 +670,15 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		}
 
 	}
+
+    /// <summary>
+	/// The dragon has entered/exit water.
+	/// </summary>
+	/// <param name="_activated">Whether the dragon has entered or exited the water.</param>
+    private  void OnUnderwaterToggled(bool _activated) {
+        // The counter is increased only when the player dives into water
+        if (_activated) {
+            m_diveAmount++;
+        }
+    }
 }
