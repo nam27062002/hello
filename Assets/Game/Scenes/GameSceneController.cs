@@ -169,6 +169,8 @@ public class GameSceneController : GameSceneControllerBase {
 		// Load the dragon
 		DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
 		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+
+		ParticleManager.instance.useDefinitionLimits = true;
 	}
 
 
@@ -364,6 +366,7 @@ public class GameSceneController : GameSceneControllerBase {
         if (ApplicationManager.IsAlive) {
             ParticleManager.Clear();
             PoolManager.Clear(true);
+			UIPoolManager.Clear(true);
         }
     }
 

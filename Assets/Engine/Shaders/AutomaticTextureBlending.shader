@@ -11,7 +11,7 @@ Shader "Hungry Dragon/Scenary/Automatic Texture Blending + Lightmap"
 	Properties 
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
-		_SecondTexture ("Second Texture (RGB)", 2D) = "white" {}
+		_SecondTexture("Second Texture (RGB)", 2D) = "white" {}
 //		_WaveRadius("Wave Radius", float) = 1.5
 //		_WavePhase("Wave phase", float) = 1.0
 	}
@@ -41,13 +41,6 @@ Shader "Hungry Dragon/Scenary/Automatic Texture Blending + Lightmap"
 				#define BLEND_TEXTURE
 
 				#define CUSTOM_VERTEXCOLOR		
-				float4 getCustomVertexColor(inout appdata_t v)
-				{
-//					return float4(v.color.xyz, 1.0 - dot(mul(float4(v.normal,0), unity_WorldToObject).xyz, float3(0,1,0)));
-					return float4(v.color.xyz, 1.0 - dot(UnityObjectToWorldNormal(v.normal), float3(0, 1, 0)));
-//					UnityObjectToWorldNormal(v.normal)
-				}
-
 /*
 				#define CUSTOM_VERTEXPOSITION
 

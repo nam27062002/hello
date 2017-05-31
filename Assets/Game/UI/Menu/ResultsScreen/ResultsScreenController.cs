@@ -501,7 +501,9 @@ public class ResultsScreenController : MonoBehaviour {
                 new TrackingParam("current_level", DragonManager.currentDragon.progression.level),
                 new TrackingParam("mission1_completed", missionCompleted[0]),
                 new TrackingParam("mission2_completed", missionCompleted[1]),
-                new TrackingParam("mission3_completed", missionCompleted[2])
+                new TrackingParam("mission3_completed", missionCompleted[2]),
+                new TrackingParam("enterWaterAmount", RewardManager.enterWaterAmount),
+                new TrackingParam("enterSpaceAmount", RewardManager.enterSpaceAmount)
             );
 
             // Tracking is sent silently after every round

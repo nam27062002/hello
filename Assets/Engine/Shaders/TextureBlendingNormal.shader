@@ -10,7 +10,7 @@ Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Overlay
 	Properties 
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
-		_SecondTexture ("Second Texture (RGB)", 2D) = "white" {}
+		_SecondTexture("Second Texture (RGB)", 2D) = "white" {}
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
 		_NormalStrength("Normal Strength", float) = 3
 		_Specular("Specular Factor", float) = 3
@@ -54,7 +54,7 @@ Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Overlay
 
 				#define FOG
 				#define BLEND_TEXTURE
-				#define COLOR_OVERLAY				
+				#define VERTEXCOLOR_OVERLAY				
 				#include "scenary.cginc"
 
 			ENDCG

@@ -77,6 +77,9 @@ public class MenuScreensController : NavigationScreenSystem {
 		}
 	}
 
+	// Internal
+	private MenuScreens m_prevScreen = MenuScreens.NONE;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -119,7 +122,7 @@ public class MenuScreensController : NavigationScreenSystem {
 		// Enforce camera position to current snap point
 		// Only if camera is not being animated!
 		if(!InstanceManager.menuSceneController.isTweening) {
-			if(currentCameraSnapPoint != null) {
+			if(currentCameraSnapPoint != null && currentCameraSnapPoint.isActiveAndEnabled) {
 				currentCameraSnapPoint.Apply(InstanceManager.sceneController.mainCamera);
 			}
 		}
@@ -184,8 +187,17 @@ public class MenuScreensController : NavigationScreenSystem {
 	/// <param name="_newScreenIdx">The index of the new screen to go to. Use -1 for NONE.</param>
 	/// <param name="_animType">Optionally force the direction of the animation.</param>
 	override public void GoToScreen(int _newScreenIdx, NavigationScreen.AnimType _animType) {
+		// Store current screen as previous
+		m_prevScreen = (MenuScreens)currentScreenIdx;
+
+		// Notify game a screen transition is about to happen
+		Messenger.Broadcast<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_REQUESTED, m_prevScreen, (MenuScreens)_newScreenIdx);
+
 		// Let parent do its stuff
 		base.GoToScreen(_newScreenIdx, _animType);
+
+		// Notify game a screen transition has just happen and animation is about to start
+		Messenger.Broadcast<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_START, m_prevScreen, (MenuScreens)_newScreenIdx);
 
 		// Perform camera transition (if snap point defined)
 		CameraSnapPoint targetSnapPoint = GetCameraSnapPoint(m_currentScreenIdx);
@@ -195,6 +207,9 @@ public class MenuScreensController : NavigationScreenSystem {
 			// Camera snap point makes it easy for us! ^_^
 			TweenParams tweenParams = new TweenParams().SetEase(Ease.InOutCubic);
 			targetSnapPoint.TweenTo(InstanceManager.sceneController.mainCamera, 0.5f, tweenParams, OnCameraTweenCompleted);
+		} else {
+			// No animation, instantly notify game the screen transition has been completed
+			Messenger.Broadcast<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_END, m_prevScreen, (MenuScreens)_newScreenIdx);
 		}
 	}
 
@@ -206,6 +221,7 @@ public class MenuScreensController : NavigationScreenSystem {
 	/// Use it to track actual screen changes.
 	/// </summary>
 	private void OnCameraTweenCompleted() {
-		// Nothing to do for now
+		// Notify game the screen transition has been completed
+		Messenger.Broadcast<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_END, m_prevScreen, (MenuScreens)this.currentScreenIdx);
 	}
 }

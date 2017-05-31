@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -23,24 +24,51 @@ public class PhotoScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	// Should be set before navigating to the screen
+	public enum Mode {
+		DRAGON = 0,
+		EGG_REWARD,
+
+		COUNT
+	}
+
+	[Serializable]
+	public class ModeSetup {
+		public GameObject uiContainer = null;
+		public DragControlRotation dragControl = null;
+		public DragControlZoom zoomControl = null;
+	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[SerializeField] private ModeSetup[] m_modes = new ModeSetup[(int)Mode.COUNT];
+
+	[Separator("Shared Objects")]
+	[SerializeField] private DOTweenAnimation m_flashFX = null;
+	[SerializeField] private List<GameObject> m_objectsToHide = new List<GameObject>();
+
+	[Separator("Dragon Mode")]
 	[SerializeField] private Localizer m_dragonName = null;
 	[SerializeField] private Localizer m_dragonDesc = null;
 	[SerializeField] private Image m_dragonTierIcon = null;
-	[Space]
-	[SerializeField] private DragControlRotation m_dragController = null;
-	[SerializeField] private DOTweenAnimation m_flashFX = null;
-	[Space]
-	[SerializeField] private List<GameObject> m_objectsToHide = new List<GameObject>();
+
+	// Public properties
+	private Mode m_mode = Mode.DRAGON;
+	public Mode mode {
+		get { return m_mode; }
+		set { SetMode(value); }
+	}
 
 	// Internal
 	private Texture2D m_picture = null;
 	private List<GameObject> m_objectsToShow = new List<GameObject>();
-	
+
+	private ModeSetup currentMode {
+		get { return m_modes[(int)m_mode]; }
+	}
+		
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -48,7 +76,7 @@ public class PhotoScreenController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-
+		SetMode(m_mode);	// Apply initial mode
 	}
 
 	/// <summary>
@@ -62,7 +90,7 @@ public class PhotoScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-
+		
 	}
 
 	/// <summary>
@@ -145,6 +173,24 @@ public class PhotoScreenController : MonoBehaviour {
 		popup.Init(m_picture);
 	}
 
+	/// <summary>
+	/// Change screen mode.
+	/// </summary>
+	/// <param name="_mode">New mode.</param>
+	private void SetMode(Mode _mode) {
+		// Toggle stuff on/off
+		bool active = false;
+		for(int i = 0; i < (int)Mode.COUNT; i++) {
+			active = (i == (int)_mode);
+			if(m_modes[i].uiContainer != null) m_modes[i].uiContainer.SetActive(active);
+			if(m_modes[i].dragControl != null) m_modes[i].dragControl.gameObject.SetActive(active);
+			if(m_modes[i].zoomControl != null) m_modes[i].zoomControl.gameObject.SetActive(active);
+		}
+
+		// Store new mode
+		m_mode = _mode;
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -155,17 +201,71 @@ public class PhotoScreenController : MonoBehaviour {
 	public void OnShowPreAnimation(ShowHideAnimator _animator) {
 		// Aux vars
 		MenuSceneController menuController = InstanceManager.menuSceneController;
-		DragonData dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 
-		// Initialize dragon info
-		if(m_dragonName != null) m_dragonName.Localize(dragonData.def.GetAsString("tidName"));
-		if(m_dragonDesc != null) m_dragonDesc.Localize(dragonData.def.GetAsString("tidDesc"));
-		if(m_dragonTierIcon != null) m_dragonTierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, dragonData.tierDef.GetAsString("icon"));
+		// Initialize elements based on current mode
+		switch(m_mode) {
+			case Mode.DRAGON: {
+				// Initialize dragon info
+				DragonData dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
+				if(m_dragonName != null) m_dragonName.Localize(dragonData.def.GetAsString("tidName"));
+				if(m_dragonDesc != null) m_dragonDesc.Localize(dragonData.def.GetAsString("tidDesc"));
+				if(m_dragonTierIcon != null) m_dragonTierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, dragonData.tierDef.GetAsString("icon"));
+			} break;
 
-		// Initialize drag controller with current dragon preview
-		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.PHOTO);
-		MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller>().GetDragonPreview(menuController.selectedDragon);
-		m_dragController.target = dragonPreview.transform;
+			case Mode.EGG_REWARD: {
+				// Nothing to do for now
+			} break;
+		}
+
+		// Disable drag controller
+		currentMode.dragControl.gameObject.SetActive(false);
+		currentMode.zoomControl.gameObject.SetActive(false);
+	}
+
+	/// <summary>
+	/// The screen has just finished the open animation.
+	/// </summary>
+	/// <param name="_animator">The animator that triggered the event.</param>
+	public void OnShowPostAnimation(ShowHideAnimator _animator) {
+		// Aux vars
+		MenuSceneController menuController = InstanceManager.menuSceneController;
+
+		// Initialize drag controller with a target based on current mode
+		currentMode.dragControl.gameObject.SetActive(true);
+		switch(m_mode) {
+			case Mode.DRAGON: {
+				// Initialize with current dragon preview
+				MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.PHOTO);
+				MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller>().GetDragonPreview(menuController.selectedDragon);
+				currentMode.dragControl.target = dragonPreview.transform;
+			} break;
+
+			case Mode.EGG_REWARD: {
+				// Initialize with egg reward view
+				MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
+				currentMode.dragControl.target = scene3D.GetComponent<OpenEggSceneController>().rewardView.transform;
+			} break;
+		}
+
+		// Disable camera snap point so we're able to zoom!
+		menuController.screensController.currentCameraSnapPoint.enabled = false;
+
+		// Initialize zoom controller with main camera
+		currentMode.zoomControl.gameObject.SetActive(true);
+		currentMode.zoomControl.camera = menuController.mainCamera;
+	}
+
+	/// <summary>
+	/// The screen is about to hide.
+	/// </summary>
+	/// <param name="_animator">The animator that triggered the event.</param>
+	public void OnHidePreAnimation(ShowHideAnimator _animator) {
+		// Disable drag controller
+		currentMode.dragControl.gameObject.SetActive(false);
+		currentMode.zoomControl.gameObject.SetActive(false);
+
+		// Re-enable camera snap point so we're able to zoom!
+		InstanceManager.menuSceneController.screensController.currentCameraSnapPoint.enabled = true;
 	}
 
 	/// <summary>

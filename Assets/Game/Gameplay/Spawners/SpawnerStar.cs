@@ -4,8 +4,6 @@ using UnityEngine;
 
 [RequireComponent(typeof(SpawnerConditions))]
 public class SpawnerStar : AbstractSpawner {
-	private static float GROUP_BONUS_MULTIPLIER = 0.1f;
-
 	[Separator("Entity")]
 	[EntityJunkPrefabListAttribute]
 	[SerializeField] private string m_entityPrefab = "";
@@ -18,10 +16,11 @@ public class SpawnerStar : AbstractSpawner {
 	[Separator("Respawn")]
 	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
 
+	private PoolHandler m_poolHandler;
+
 	private float m_respawnTime;
 	private SpawnerConditions m_respawnConditions; 
 	private GameSceneControllerBase m_gameSceneController;
-	private float m_groupBonus = 0;
 
 	[SerializeField][HideInInspector] private Vector3[] m_points = new Vector3[0];
 	public Vector3[] points { get { return m_points; } set { m_points = value; } }
@@ -61,7 +60,7 @@ public class SpawnerStar : AbstractSpawner {
 	protected override void OnInitialize() {
 		m_respawnTime = -1;
 
-		PoolManager.RequestPool(m_entityPrefab, IEntity.EntityPrefabsPath, m_entities.Length);
+		m_poolHandler = PoolManager.RequestPool(m_entityPrefab, IEntity.EntityPrefabsPath, m_entities.Length);
 
 		// Get external references
 		// Spawners are only used in the game and level editor scenes, so we can be sure that game scene controller will be present
@@ -93,6 +92,10 @@ public class SpawnerStar : AbstractSpawner {
 		return m_quantity;
 	}
 
+	protected override PoolHandler GetPoolHandler(uint index) {
+		return m_poolHandler;
+	}
+
 	protected override string GetPrefabNameToSpawn(uint index) {		
 		return m_entityPrefab;
 	}
@@ -100,18 +103,14 @@ public class SpawnerStar : AbstractSpawner {
 	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {		
 		spawning.transform.position = transform.position + m_points[index]; // set position
 	}
-		
-	protected override void OnAllEntitiesRespawned() {		
-		m_groupBonus = m_coinsReward * EntitiesToSpawn * GROUP_BONUS_MULTIPLIER;
-	}
 
 	protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
 		if (_allKilledByPlayer) {
 			// check if player has destroyed all the flock
-			if (m_groupBonus > 0) {
+			if (m_coinsReward > 0) {
 				Reward reward = new Reward();
-				reward.coins = (int)(m_groupBonus * EntitiesKilled);
-				Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _lastEntity.transform, reward);
+				reward.coins = m_coinsReward;
+				Messenger.Broadcast<Transform, Reward>(GameEvents.STAR_COMBO, _lastEntity.transform, reward);
 			}
 			// Program the next spawn time
 			m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();

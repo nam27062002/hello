@@ -27,9 +27,9 @@ public class ChestViewController : MonoBehaviour {
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
     // Exposed references
-    [SerializeField] private ParticleSystem m_glowFX = null;
-	[SerializeField] private ParticleSystem m_openFX = null;
-	[SerializeField] private ParticleSystem m_dustFX = null;
+    [SerializeField] private GameObject m_glowFX = null;
+	[SerializeField] private ParticleData m_openParticle = null;
+	// [SerializeField] private ParticleData m_dustParticle = null;
 
 	// Exposed setup
 	[Space]
@@ -46,8 +46,6 @@ public class ChestViewController : MonoBehaviour {
 	// Internal
 	private Animator m_animator = null;
 	private GameObject[] m_rewardViews = null;
-    
-    public CustomParticlesCulling CustomParticlesCulling { get; set; }    
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -60,9 +58,7 @@ public class ChestViewController : MonoBehaviour {
 		m_animator = GetComponent<Animator>();
 
 		// Start with all particles stopped
-		ToggleFX(m_openFX, false);
 		ToggleFX(m_glowFX, false);
-		ToggleFX(m_dustFX, false);
 
 		// Get references (from FBX names)
 		// Respect enum name
@@ -70,6 +66,8 @@ public class ChestViewController : MonoBehaviour {
 			this.FindObjectRecursive("Gold"),
 			this.FindObjectRecursive("Gems")
 		};
+
+		ParticleManager.CreatePool(m_openParticle);
 	}
 
 	//------------------------------------------------------------------------//
@@ -109,10 +107,6 @@ public class ChestViewController : MonoBehaviour {
 	/// Launch the close animation.
 	/// </summary>
 	public void Close() {
-		// Stop particles
-		ToggleFX(m_openFX, false);
-		ToggleFX(m_dustFX, false);
-
 		// Launch close animation
 		m_animator.SetTrigger("close");
 	}
@@ -122,9 +116,7 @@ public class ChestViewController : MonoBehaviour {
 	/// </summary>
 	public void ResultsAnim() {
 		// Stop all particles
-		ToggleFX(m_openFX, false);
 		ToggleFX(m_glowFX, false);
-		ToggleFX(m_dustFX, false);
 
 		// Launch animation
 		m_animator.SetTrigger("results_in");
@@ -138,10 +130,12 @@ public class ChestViewController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_fx">The system to be toggled.</param>
 	/// <param name="_active">Whether to turn it on or off.</param>
-	private void ToggleFX(ParticleSystem _fx, bool _active) {
+	private void ToggleFX(GameObject _fx, bool _active) {
 		// Ignore if given FX is not valid
 		if(_fx == null) return;
+		_fx.SetActive( _active );
 
+		/*
 		// Activate?
 		if(_active) {
 			_fx.gameObject.SetActive(true);
@@ -156,6 +150,7 @@ public class ChestViewController : MonoBehaviour {
 			_fx.Stop();
 			_fx.gameObject.SetActive(false);
 		}
+		*/
 	}
 
 	//------------------------------------------------------------------------//
@@ -166,9 +161,15 @@ public class ChestViewController : MonoBehaviour {
 	/// </summary>
 	public void OnLidOpen() {
 		// Launch particle system
-		ToggleFX(m_openFX, true);
-		ToggleFX(m_glowFX, false);
+		// ToggleFX(m_openFX, true);
+		if ( m_openParticle.IsValid() )
+		{
+			GameObject go = ParticleManager.Spawn(m_openParticle, transform.position + m_openParticle.offset );
+			if (go)
+				go.transform.rotation = transform.rotation;
+		}
 
+		ToggleFX(m_glowFX, false);
 		// Notify delegates
 		OnChestOpenEvent.Invoke();
 	}
@@ -180,8 +181,13 @@ public class ChestViewController : MonoBehaviour {
 		// [AOC] TODO!! Play some SFX
 
 		// Play some VFX
-		ToggleFX(m_dustFX, true);
-
+		/*
+		if ( m_dustParticle.IsValid() )
+		{
+			GameObject go = ParticleManager.Spawn(m_dustParticle, transform.position + m_dustParticle.offset );
+			go.transform.rotation = transform.rotation;
+		}
+		*/
 		// Notify delegates
 		OnChestAnimLandedEvent.Invoke();
 	}

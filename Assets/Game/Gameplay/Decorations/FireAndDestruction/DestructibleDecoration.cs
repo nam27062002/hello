@@ -26,7 +26,6 @@ public class DestructibleDecoration : Initializable {
 	[SerializeField] private string m_onFeedbackAudio = "";
 
 
-	private ZoneManager m_zoneManager;
 	private ZoneManager.ZoneEffect m_effect;
 	private ZoneManager.Zone m_zone;
 
@@ -79,18 +78,11 @@ public class DestructibleDecoration : Initializable {
 		m_entity = GetComponent<Decoration>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_collider = GetComponent<BoxCollider>();
+	
+		m_zone = InstanceManager.zoneManager.GetZone(transform.position.z);
+		m_effect = InstanceManager.zoneManager.GetDestructionEffectCode(m_entity, InstanceManager.player.data.tier);
 
-		m_zoneManager = GameObjectExt.FindComponent<ZoneManager>(true);
-		if (m_zoneManager != null) {
-			m_zone = m_zoneManager.GetZone(transform.position.z);
-			m_effect = m_zoneManager.GetDestructionEffectCode(m_entity, InstanceManager.player.data.tier);
-		} else {
-			m_zone = ZoneManager.Zone.None;
-			m_effect = ZoneManager.ZoneEffect.None;
-			Debug.LogWarning("No Zone Manager");
-		}
-
-		if (m_effect == ZoneManager.ZoneEffect.None) {
+		if (m_zone == ZoneManager.Zone.None || m_effect == ZoneManager.ZoneEffect.None) {
 			if (m_collider) Destroy(m_collider);
 			//TODO: find a better way to clean prefabs
 			//if (m_viewDestroyed) Destroy(m_viewDestroyed);

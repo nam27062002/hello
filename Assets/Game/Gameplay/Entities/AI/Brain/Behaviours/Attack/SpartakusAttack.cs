@@ -72,6 +72,8 @@ namespace AI {
 			}
 
 			protected override void OnExit(State _newState) {
+				m_meleeWeapon.enabled = false;
+
 				m_animEvents.onJumpImpulse   -= new SpartakusAnimationEvents.OnJumpImpulseDelegate(Jump);
 				m_animEvents.onJumpReception -= new SpartakusAnimationEvents.OnJumpReceptionDelegate(EndAttack);
 				m_animEvents.onDizzyRecover  -= new SpartakusAnimationEvents.OnDizzyRecoverDelegate(DizzyRecover);

@@ -8,7 +8,7 @@ Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Darken"
 	Properties 
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
-		_SecondTexture ("Second Texture (RGB)", 2D) = "white" {}
+		_SecondTexture("Second Texture (RGB)", 2D) = "white" {}
 		_DarkenPosition("Darken position",  float) = 0.0
 		_DarkenDistance("Darken distance",  float) = 20.0
 	}
@@ -19,26 +19,6 @@ Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Darken"
 		
 		Pass {  
 			CGPROGRAM
-
-/*
-			Every scenary shader has multiple options to combine:
-
-			BLEND_TEXTURE
-			FOG
-			DARKEN
-			DYNAMIC_SHADOWS
-			LIGHTMAP_ON
-			NORMALMAP
-			SPECULAR
-			CUTOFF
-			CUSTOM_VERTEXPOSITION
-			CUSTOM_VERTEXCOLOR
-			COLOR_OVERLAY
-			OPAQUEALPHA
-			DEBUG
-
-
-*/
 
 				#pragma vertex vert
 				#pragma fragment frag

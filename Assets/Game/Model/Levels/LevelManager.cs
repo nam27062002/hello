@@ -89,10 +89,17 @@ public class LevelManager : Singleton<LevelManager> {
 		// Clear current data
 		m_currentLevelData = null;
 
-		// Load new data
-		m_currentLevelData = GetLevelData(_sku);
+		if ( !string.IsNullOrEmpty(_sku) )
+		{
+			// Load new data
+			m_currentLevelData = GetLevelData(_sku);
 
-		m_toSplitScenes = m_currentLevelData.def.GetAsList<string>("split");
+			m_toSplitScenes = m_currentLevelData.def.GetAsList<string>("split");
+		}
+		else
+		{
+			m_toSplitScenes.Clear();
+		}
 
 	}
 

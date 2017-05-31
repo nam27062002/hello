@@ -49,6 +49,8 @@ namespace LevelEditor {
             PersistenceManager.Init();
             PersistenceManager.Load();
 
+            ParticleManager.instance.useDefinitionLimits = false;
+
 			// Load the dragon
             DragonManager.LoadDragon(LevelEditor.settings.testDragon);
             if (InstanceManager.player != null)
@@ -129,6 +131,7 @@ namespace LevelEditor {
 			FirePropagationManager.DestroyInstance();
 			ParticleManager.Clear();
 			PoolManager.Clear(true);
+			UIPoolManager.Clear(true);
 
 			// Call parent
 			base.OnDestroy();

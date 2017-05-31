@@ -28,8 +28,6 @@ public class Localizer : MonoBehaviour {
 		DEFAULT,
 		UPPER_CASE,
 		LOWER_CASE,
-		REPLACEMENTS_UPPER_CASE,
-		REPLACEMENTS_LOWER_CASE,
 		TITLE_CASE
 	}
 
@@ -49,7 +47,7 @@ public class Localizer : MonoBehaviour {
 		set { m_caseType = value; }
 	}
 
-	[SerializeField] string[] m_replacements;
+	[SerializeField] private string[] m_replacements;
 	public string[] replacements {
 		get { return m_replacements; }
 	}
@@ -105,6 +103,46 @@ public class Localizer : MonoBehaviour {
 	}
 
 	//------------------------------------------------------------------------//
+	// STATIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Auxiliar method to apply a specific casing to a given string.
+	/// </summary>
+	/// <returns>The processed string.</returns>
+	/// <param name="_case">Case type to be applied.</param>
+	/// <param name="_text">Text to be processed.</param>
+	public static string ApplyCase(Case _case, string _text) {
+		// Do it!
+		string processedText = _text;
+		switch(_case) {
+			case Case.LOWER_CASE: 	processedText = _text.ToLower(LocalizationManager.SharedInstance.Culture);	break;
+			case Case.UPPER_CASE: 	processedText = _text.ToUpper(LocalizationManager.SharedInstance.Culture);	break;
+			case Case.TITLE_CASE:	processedText = LocalizationManager.SharedInstance.Culture.TextInfo.ToTitleCase(_text);	break;	// From http://stackoverflow.com/questions/1206019/converting-string-to-title-case
+		}
+
+		// Reverse casing in formatting tags, where mixed-casing is problematic
+		int startIdx = processedText.IndexOf("<");
+		while(startIdx > -1) {
+			int endIdx = processedText.IndexOf(">", startIdx);
+			if(endIdx == -1) {
+				// Error, tag unclosed
+				Debug.LogWarning("Sentence error in '" + processedText + "' . The symbol > wasn't found.");
+				startIdx = -1;	// Break loop
+			} else {
+				// Replace formatting tag with the same tag in lower case
+				string formattingTag = processedText.Substring(startIdx, endIdx - startIdx);
+				processedText = processedText.Replace(formattingTag, formattingTag.ToLowerInvariant());
+
+				// Find next one
+				startIdx = processedText.IndexOf("<", endIdx);
+			}
+		}
+
+		// Done!
+		return processedText;
+	}
+
+	//------------------------------------------------------------------------//
 	// INTERNAL UTILS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
@@ -114,43 +152,11 @@ public class Localizer : MonoBehaviour {
 		// Just do it
 		if(m_text == null) return;
 
-		// Process casing first
-		string[] processedReplacements = new string[m_replacements.Length];
-		for(int i = 0; i < m_replacements.Length; i++) {
-			switch(m_caseType) {
-                case Case.REPLACEMENTS_LOWER_CASE: 	processedReplacements[i] = m_replacements[i].ToLower(LocalizationManager.SharedInstance.Culture);	break;
-                case Case.REPLACEMENTS_UPPER_CASE: 	processedReplacements[i] = m_replacements[i].ToUpper(LocalizationManager.SharedInstance.Culture);	break;
-				default: 							processedReplacements[i] = m_replacements[i];								break;
-			}
-		}
-
 		// Perform the localization
         string localizedString = LocalizationManager.SharedInstance.Localize(m_tid, replacements);
 
-		// Process full string
-		switch(m_caseType) {
-            case Case.LOWER_CASE: 	localizedString = localizedString.ToLower(LocalizationManager.SharedInstance.Culture);	break;
-            case Case.UPPER_CASE: 	localizedString = localizedString.ToUpper(LocalizationManager.SharedInstance.Culture);	break;
-			case Case.TITLE_CASE:	localizedString = LocalizationManager.SharedInstance.Culture.TextInfo.ToTitleCase(localizedString);	break;	// From http://stackoverflow.com/questions/1206019/converting-string-to-title-case
-		}
-
-		// Reverse casing in formatting tags, where mixed-casing is problematic
-		int startIdx = localizedString.IndexOf("<");
-		while(startIdx > -1) {
-			int endIdx = localizedString.IndexOf(">", startIdx);
-			if(endIdx == -1) {
-				// Error, tag unclosed
-				Debug.LogWarning("Sentence error in '" + localizedString + "' . The symbol > wasn't found.");
-				startIdx = -1;	// Break loop
-			} else {
-				// Replace formatting tag with the same tag in lower case
-				string formattingTag = localizedString.Substring(startIdx, endIdx - startIdx);
-				localizedString = localizedString.Replace(formattingTag, formattingTag.ToLowerInvariant());
-
-				// Find next one
-				startIdx = localizedString.IndexOf("<", endIdx);
-			}
-		}
+		// Apply casing to full string
+		localizedString = ApplyCase(m_caseType, localizedString);
 
 		// Apply to textfield
 		m_text.text = localizedString;

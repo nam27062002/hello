@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 114487487468086076}
   - component: {fileID: 11441542}
   - component: {fileID: 54000010377718392}
-  - component: {fileID: 135000010864404190}
   - component: {fileID: 136926484593976340}
   m_Layer: 16
   m_Name: PF_Ghost01_Static
@@ -30,7 +29,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 138364}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: -4.78, y: 0, z: 0}
+  m_LocalPosition: {x: -52.943142, y: -52.440662, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4521043133028824}
@@ -356,7 +355,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
-  radius: 5
+  radius: 1.2753754
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!1001 &100100000
 Prefab:
@@ -479,7 +478,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &114388696739840102
 MonoBehaviour:
@@ -603,18 +602,6 @@ MonoBehaviour:
       m_NumColorKeys: 4
       m_NumAlphaKeys: 4
     scale: 1
---- !u!135 &135000010864404190
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 138364}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.7
-  m_Center: {x: 0, y: 0.6, z: 0}
 --- !u!136 &136926484593976340
 CapsuleCollider:
   m_ObjectHideFlags: 1

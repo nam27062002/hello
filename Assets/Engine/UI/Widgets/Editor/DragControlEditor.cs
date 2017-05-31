@@ -121,6 +121,25 @@ public class DragControlEditor : Editor {
 				}
 			}
 
+			// Initial value toggle
+			else if(p.name == "m_forceInitialValue") {
+				EditorGUILayout.Space();
+				p.boolValue = EditorGUILayout.BeginToggleGroup(p.displayName, p.boolValue); {
+					EditorGUI.indentLevel++;
+					EditorGUILayout.PropertyField(serializedObject.FindProperty("m_initialValue"), new GUIContent("Initial Value"), true);
+					EditorGUI.indentLevel--;
+				} EditorGUILayout.EndToggleGroup();
+			}
+
+			// Restore on disable
+			else if(p.name == "m_restoreOnDisable") {
+				p.boolValue = EditorGUILayout.BeginToggleGroup(p.displayName, p.boolValue); {
+					EditorGUI.indentLevel++;
+					EditorGUILayout.PropertyField(serializedObject.FindProperty("m_restoreDuration"), new GUIContent("Duration"), true);
+					EditorGUI.indentLevel--;
+				} EditorGUILayout.EndToggleGroup();
+			}
+
 			// Properties we don't want to show
 			else if(p.name == "m_Script"
 				|| p.name == "m_ObjectHideFlags") {
@@ -130,7 +149,9 @@ public class DragControlEditor : Editor {
 			// Properties to ignore (have already been processed together with other properties)
 			else if(p.name == "m_inertiaAcceleration"
 				|| p.name == "m_clampSetup"
-				|| p.name == "m_axisEnabled") {
+				|| p.name == "m_axisEnabled"
+				|| p.name == "m_initialValue"
+				|| p.name == "m_restoreDuration") {
 				// Do nothing
 			}
 

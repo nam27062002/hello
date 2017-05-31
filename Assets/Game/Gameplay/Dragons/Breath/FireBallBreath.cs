@@ -14,7 +14,7 @@ public class FireBallBreath : DragonBreathBehaviour {
 	// Use this for initialization
 	override protected void ExtendedStart() {
 
-		PoolManager.CreatePool(m_fireBallPrefab);
+		//PoolManager.CreatePool(m_fireBallPrefab);
 
 		m_dragonMotion = GetComponent<DragonMotion>();
 		m_mouthTransform = m_dragonMotion.tongue;
@@ -36,7 +36,7 @@ public class FireBallBreath : DragonBreathBehaviour {
 		if (m_timer <= 0) {
 			m_timer += m_timeBetweenFires;
 			// Throw fire ball!!!
-			GameObject go = PoolManager.GetInstance (m_fireBallPrefab.name);
+			GameObject go = null; //PoolManager.GetInstance (m_fireBallPrefab.name);
 			if (go != null) {
 				go.transform.position = m_mouthTransform.position;
 				FireBall fb = go.GetComponent<FireBall> ();
