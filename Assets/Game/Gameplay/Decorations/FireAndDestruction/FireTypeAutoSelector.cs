@@ -73,9 +73,10 @@ public class FireTypeAutoSelector : MonoBehaviour {
 				for (int i = 0; i < m_rChangeMaterials.Length; ++i) {
 					Material[] materials = m_rChangeMaterials[i].materials;
 					for (int m = 0; m < materials.Length; ++m) {
-						if (isMega) materials[m] = m_fireMaterialInstance;
-						else 		materials[m] = m_megaMaterialInstance;
+						if (isMega) materials[m] = m_megaMaterialInstance;
+						else 		materials[m] = m_fireMaterialInstance;
 					}
+					m_rChangeMaterials[i].materials = materials;
 				}
 			}
 		}

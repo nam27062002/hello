@@ -49,6 +49,8 @@ namespace LevelEditor {
             PersistenceManager.Init();
             PersistenceManager.Load();
 
+            ParticleManager.instance.useDefinitionLimits = false;
+
 			// Load the dragon
             DragonManager.LoadDragon(LevelEditor.settings.testDragon);
             if (InstanceManager.player != null)

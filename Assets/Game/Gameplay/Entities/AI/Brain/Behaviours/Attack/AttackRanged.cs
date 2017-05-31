@@ -34,20 +34,22 @@ namespace AI {
 
 				m_projectileSpawnPoint = m_pilot.FindTransformRecursive(((AttackRangedData)m_data).projectileSpawnTransformName);
 			
+				CreatePool();
+
 				// create a projectile from resources (by name) and save it into pool
-				Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnNewGameArea);
+				Messenger.AddListener(GameEvents.GAME_AREA_ENTER, CreatePool);
 
 				m_viewControl = m_pilot.GetComponent<ViewControl>();
 
 				base.OnInitialise();
 			}
 
-			void OnNewGameArea() {
+			void CreatePool() {
 				m_poolHandler = PoolManager.CreatePool(((AttackRangedData)m_data).projectileName, "Game/Projectiles/", 2, true);
 			}
 
 			protected override void OnRemove() {
-				Messenger.RemoveListener(GameEvents.GAME_AREA_ENTER, OnNewGameArea);
+				Messenger.RemoveListener(GameEvents.GAME_AREA_ENTER, CreatePool);
 			}
 
 			protected override void StartAttack() 

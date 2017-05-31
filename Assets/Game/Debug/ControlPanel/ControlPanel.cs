@@ -141,8 +141,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         m_activateTimer = 0;
 	}
 
-	void Start()
-	{
+	void Start() {
 		// FPS Initialization
 		m_DeltaTimes = new float[ m_NumDeltaTimes ];
 		m_DeltaIndex = 0;
@@ -154,41 +153,35 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	}
 
 
-	protected void Update()
-	{
-		if ( Input.touchCount > 0 || Input.GetMouseButton(0))
-		{
-			Vector2 pos = Vector2.zero;
-			if(Input.touchCount > 0) {
-				Touch t = Input.GetTouch(0);
-				pos = t.position;
-			} else {
-				pos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-			}
+	protected void Update() {
+        if (FeatureSettingsManager.IsControlPanelEnabled) {
+            if (Input.touchCount > 0 || Input.GetMouseButton(0)) {
+                Vector2 pos = Vector2.zero;
+                if (Input.touchCount > 0) {
+                    Touch t = Input.GetTouch(0);
+                    pos = t.position;
+                } else {
+                    pos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                }
 
-			// Holding the top-left corner activates the control panel
-			if (pos.x < (Screen.width * 0.15f) && pos.y > (Screen.height * 0.85f))
-			{
-                m_activateTimer += Time.unscaledDeltaTime;
-				if ( m_activateTimer > m_activationTime )
-				{
-					Toggle();
-					m_activateTimer = 0;
-				}
-				
-			}
-			else
-			{
-				m_activateTimer = 0;
-			}
-		}
-		else
-		{
-			m_activateTimer = 0;
-		}
+                // Holding the top-left corner activates the control panel
+                if (pos.x < (Screen.width * 0.15f) && pos.y > (Screen.height * 0.85f)) {
+                    m_activateTimer += Time.unscaledDeltaTime;
+                    if (m_activateTimer > m_activationTime) {
+                        Toggle();
+                        m_activateTimer = 0;
+                    }
 
-		if ( Input.GetKeyDown(KeyCode.Tab) )
-			Toggle();
+                } else {
+                    m_activateTimer = 0;
+                }
+            } else {
+                m_activateTimer = 0;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Tab))
+                Toggle();
+        }
 
 
 		// Update FPS

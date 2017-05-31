@@ -92,7 +92,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1681037461402496
 GameObject:
   m_ObjectHideFlags: 1
@@ -127,7 +127,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1813256129357700
 GameObject:
   m_ObjectHideFlags: 0
@@ -225,7 +225,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1813256129357700}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 186.20796, y: 0.758, z: -0.007}
+  m_LocalPosition: {x: 115.41, y: 2.55, z: -0.007}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4029419264252262}
@@ -270,8 +270,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1522694383613240}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.01, y: 0.426, z: -0.93}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.009999991, y: 0.17348814, z: -1.0288087}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_Children: []
   m_Father: {fileID: 4106662741651698}
   m_RootOrder: 1
@@ -283,8 +283,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1887992578788812}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.06, y: 0.222, z: 1.43}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.06000007, y: 0.22199988, z: 1.4300004}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_Children: []
   m_Father: {fileID: 4106662741651698}
   m_RootOrder: 0
@@ -536,11 +536,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb53df07d1e6148fcadb69b5a601c7ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_zone1Interaction: 1
+  m_zone1Interaction: 0
   m_knockBackStrength: 0
   m_particleFaceDragonDirection: 0
   m_feedbackParticle:
-    name: 
+    name: PS_C_Splinters
     path: 
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
@@ -642,7 +642,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    scale: 2
+    scale: 1.25
   m_onDestroyAudio: Scaffold_Destroyed
   m_onFeedbackAudio: 
 --- !u!114 &114450842963506534
@@ -680,7 +680,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_burningTime: 5
   m_feedbackParticle:
-    name: PF_FireHit
+    name: PS_C_Splinters
     path: 
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0

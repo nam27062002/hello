@@ -54,7 +54,7 @@ Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Overlay
 
 				#define FOG
 				#define BLEND_TEXTURE
-				#define COLOR_OVERLAY				
+				#define VERTEXCOLOR_OVERLAY				
 				#include "scenary.cginc"
 
 			ENDCG

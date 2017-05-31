@@ -90,15 +90,17 @@ public class OpenEggScreenController : MonoBehaviour {
 			m_flashFX.SetLayerRecursively("UI");
 			m_flashFX.SetActive(false);
 		}
+
+		// Subscribe to external events.
+		Messenger.AddListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.AddListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
 	}
 
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Subscribe to external events.
 		Messenger.AddListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
-		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 		m_rewardInfo.OnAnimFinished.AddListener(OnRewardAnimFinished);
 	}
 
@@ -116,12 +118,8 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Reset state
 		m_state = State.IDLE;
 
-		// Clear 3D scene
-		if(m_scene != null) m_scene.Clear();
-
 		// Unsubscribe to external events.
 		Messenger.RemoveListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
-		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 		m_rewardInfo.OnAnimFinished.RemoveListener(OnRewardAnimFinished);
 	}
 
@@ -129,7 +127,9 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// Destructor
 	/// </summary>
 	private void OnDestroy() {
-		
+		// Unsubscribe from external events
+		Messenger.RemoveListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.RemoveListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
 	}
 
 	//------------------------------------------------------------------//
@@ -235,12 +235,21 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// Launches the animation of the reward components.
 	/// </summary>
 	private void LaunchRewardAnimation() {
-		// Show HUD
-		InstanceManager.menuSceneController.hud.animator.Show();
-
 		// Aux vars
 		EggReward rewardData = m_scene.eggData.rewardData;
 		bool goldenEggCompleted = EggManager.goldenEggCompleted;
+
+		// Show HUD
+		InstanceManager.menuSceneController.hud.animator.Show();
+
+		// Photo button only enabled if reward is not a duplicate!
+		// Only animate if showing
+		ShowHideAnimator photoAnimator = InstanceManager.menuSceneController.hud.photoButton.GetComponent<ShowHideAnimator>();
+		if(rewardData.duplicated) {
+			photoAnimator.ForceHide(false);
+		} else {
+			photoAnimator.Show();
+		}
 
 		// Initialize stuff based on reward type
 		switch(rewardData.type) {
@@ -362,33 +371,6 @@ public class OpenEggScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Navigation screen has changed (animation starts now).
-	/// </summary>
-	/// <param name="_event">Event data.</param>
-	private void OnNavigationScreenChanged(NavigationScreenSystem.ScreenChangedEventData _event) {
-		// Only if it comes from the main screen navigation system
-		if(_event.dispatcher != InstanceManager.menuSceneController.screensController) return;
-
-		// If leaving this screen, launch all the hide animations that are not automated
-		if(_event.fromScreenIdx == (int)MenuScreens.OPEN_EGG) {
-			// Hide reward elements
-			m_rewardInfo.Hide();
-
-			// Clear 3D scene
-			if(m_scene != null) m_scene.Clear();
-
-			// Restore HUD
-			InstanceManager.menuSceneController.hud.animator.Show();
-		}
-
-		// If entering this screen, force some show/hide animations that conflict with automated ones
-		if(_event.fromScreenIdx == (int)MenuScreens.OPEN_EGG) {
-			// At this point automated ones have already been launched, so we override them
-			m_tapInfoText.GetComponent<ShowHideAnimator>().Hide(false);
-		}
-	}
-
-	/// <summary>
 	/// Navigation screen animation has finished.
 	/// Must be connected in the inspector.
 	/// </summary>
@@ -397,6 +379,62 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_tutorialCompletedPending) {
 			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_REWARD, true);
 			m_tutorialCompletedPending = false;
+		}
+	}
+
+	/// <summary>
+	/// The menu screen change animation is about to start.
+	/// </summary>
+	/// <param name="_from">Screen we come from.</param>
+	/// <param name="_to">Screen we're going to.</param>
+	private void OnMenuScreenTransitionStart(MenuScreens _from, MenuScreens _to) {
+		// Leaving this screen
+		if(_from == MenuScreens.OPEN_EGG && _to != MenuScreens.OPEN_EGG) {
+			// Launch all the hide animations that are not automated
+			// Hide reward elements
+			m_rewardInfo.Hide();
+
+			// Restore HUD
+			InstanceManager.menuSceneController.hud.animator.Show();
+
+			// Disable drag control
+			m_rewardDragController.gameObject.SetActive(false);
+
+			// Put photo screen back in dragon mode and restore overriden setup
+			if(_to != MenuScreens.PHOTO) {
+				// Only if not going into it!
+				PhotoScreenController photoScreen = InstanceManager.menuSceneController.GetScreen(MenuScreens.PHOTO).GetComponent<PhotoScreenController>();
+				photoScreen.mode = PhotoScreenController.Mode.DRAGON;
+			}
+		}
+
+		// If entering this screen, force some show/hide animations that conflict with automated ones
+		if(_to == MenuScreens.OPEN_EGG) {
+			// At this point automated ones have already been launched, so we override them
+			m_tapInfoText.GetComponent<ShowHideAnimator>().Hide(false);
+
+			// Put photo screen in EggReward mode and override some setup
+			PhotoScreenController photoScreen = InstanceManager.menuSceneController.GetScreen(MenuScreens.PHOTO).GetComponent<PhotoScreenController>();
+			photoScreen.mode = PhotoScreenController.Mode.EGG_REWARD;
+
+			// Special stuff if coming back from the photo screen
+			if(_from == MenuScreens.PHOTO) {
+				// Restore reward info
+				m_rewardInfo.Show();
+			}
+		}
+	}
+
+	/// <summary>
+	/// The menu screen change animation has finished.
+	/// </summary>
+	/// <param name="_from">Screen we come from.</param>
+	/// <param name="_to">Screen we're going to.</param>
+	private void OnMenuScreenTransitionEnd(MenuScreens _from, MenuScreens _to) {
+		// Entering this screen
+		if(_to == MenuScreens.OPEN_EGG) {
+			// Enable drag control
+			m_rewardDragController.gameObject.SetActive(m_rewardDragController.target != null);
 		}
 	}
 }

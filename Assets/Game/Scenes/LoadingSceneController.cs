@@ -129,7 +129,9 @@ public class LoadingSceneController : SceneController {
 
         if (string.IsNullOrEmpty(strLanguageSku))
         {
-            strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
+			// [AOC] TEMP!! Disable for the playtest, use english instead
+            //strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
+			strLanguageSku = "lang_english";
         }
 
         LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
@@ -150,7 +152,8 @@ public class LoadingSceneController : SceneController {
 		// [AOC] TODO!! Fake timer for now
 		timer += Time.deltaTime;
 		float loadProgress = Mathf.Min(timer/1f, 1f);	// Divide by the amount of seconds to simulate
-		m_loadingTxt.text = System.String.Format("LOADING {0}%", StringUtils.FormatNumber(loadProgress * 100f, 0));
+		//m_loadingTxt.text = System.String.Format("LOADING {0}%", StringUtils.FormatNumber(loadProgress * 100f, 0));
+		m_loadingTxt.text = "Loading";	// Don't show percentage (too techy), don't localize (language data not yet loaded)
 
 		if (m_loadingBar != null)
 			m_loadingBar.normalizedValue = loadProgress;
