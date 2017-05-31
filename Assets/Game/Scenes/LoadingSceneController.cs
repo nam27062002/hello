@@ -129,7 +129,9 @@ public class LoadingSceneController : SceneController {
 
         if (string.IsNullOrEmpty(strLanguageSku))
         {
-            strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
+			// [AOC] TEMP!! Disable for the playtest, use english instead
+            //strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
+			strLanguageSku = "lang_english";
         }
 
         LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
