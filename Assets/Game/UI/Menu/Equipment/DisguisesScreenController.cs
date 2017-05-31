@@ -185,9 +185,6 @@ public class DisguisesScreenController : MonoBehaviour {
 		List<DefinitionNode> defList = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", m_dragonData.def.sku);
 		DefinitionsManager.SharedInstance.SortByProperty(ref defList, "shopOrder", DefinitionsManager.SortType.NUMERIC);
 
-		// Load disguise icons for this dragon
-		Dictionary<string, Sprite> icons = ResourcesExt.LoadSpritesheet(UIConstants.DISGUISE_ICONS_PATH + m_dragonData.def.sku);
-
 		// Hide all the contextual info
 		if(m_powerAnim != null) m_powerAnim.ForceHide(false);
 		if(m_title != null) m_title.showHideAnimator.ForceHide(false);
@@ -200,11 +197,14 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_equippedPill = null;
 		m_selectedPill = null;
 		DisguisePill initialPill = m_pills[0];	// There will always be at least the default pill
+		string disguisesIconPath = UIConstants.DISGUISE_ICONS_PATH + m_dragonData.def.sku + "/";
 		for (int i = 0; i < m_pills.Length; i++) {
 			if (i < defList.Count) {
+				// Load icon sprite for this skin
+				Sprite spr = Resources.Load<Sprite>(disguisesIconPath + defList[i].Get("icon"));
+
 				// Init pill
 				DefinitionNode def = defList[i];
-				Sprite spr = icons[def.GetAsString("icon")];
 				m_pills[i].Load(def, m_wardrobe.GetSkinState(def.sku), spr);
 
 				// Is it the currently equipped disguise?
