@@ -58,14 +58,6 @@ public class CollectibleChest : MonoBehaviour {
 		m_chestView = this.gameObject.GetComponentInChildren<ChestViewController>();
     }
 
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-		// Setup view
-		m_chestView.ShowGlowFX(true);
-	}
-
 	//------------------------------------------------------------------//
 	// OTHER METHODS													//
 	//------------------------------------------------------------------//
@@ -76,11 +68,15 @@ public class CollectibleChest : MonoBehaviour {
 	public void Initialize(Chest _chest) {
 		// Store chest data
 		m_chestData = _chest;
-
-		// If already collected, update visuals
-		if(m_chestData.collected) {
+        
+        // If already collected, update visuals
+        if (m_chestData.collected) {
 			SetCollected();
 		}
+        else
+        {
+            m_chestView.ShowGlowFX(true);
+        }
 	}
 
 	/// <summary>
