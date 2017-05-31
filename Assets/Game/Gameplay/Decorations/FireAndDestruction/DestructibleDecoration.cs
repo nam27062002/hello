@@ -82,7 +82,7 @@ public class DestructibleDecoration : Initializable {
 		m_zone = InstanceManager.zoneManager.GetZone(transform.position.z);
 		m_effect = InstanceManager.zoneManager.GetDestructionEffectCode(m_entity, InstanceManager.player.data.tier);
 
-		if (m_effect == ZoneManager.ZoneEffect.None) {
+		if (m_zone == ZoneManager.Zone.None || m_effect == ZoneManager.ZoneEffect.None) {
 			if (m_collider) Destroy(m_collider);
 			//TODO: find a better way to clean prefabs
 			//if (m_viewDestroyed) Destroy(m_viewDestroyed);
