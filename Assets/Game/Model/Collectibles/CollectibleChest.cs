@@ -56,7 +56,6 @@ public class CollectibleChest : MonoBehaviour {
 		this.gameObject.tag = TAG;
 
 		m_chestView = this.gameObject.GetComponentInChildren<ChestViewController>();
-        m_chestView.CustomParticlesCulling = this.gameObject.GetComponentInChildren<CustomParticlesCulling>();        
     }
 
 	/// <summary>
