@@ -389,7 +389,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// <param name="_to">Screen we're going to.</param>
 	private void OnMenuScreenTransitionStart(MenuScreens _from, MenuScreens _to) {
 		// Leaving this screen
-		if(_from == MenuScreens.OPEN_EGG) {
+		if(_from == MenuScreens.OPEN_EGG && _to != MenuScreens.OPEN_EGG) {
 			// Launch all the hide animations that are not automated
 			// Hide reward elements
 			m_rewardInfo.Hide();
