@@ -245,6 +245,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
 		Messenger.AddListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.AddListener<Transform, Reward>(GameEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.AddListener<Reward>(GameEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRush);
@@ -264,6 +265,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.RemoveListener<Transform, Reward>(GameEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.RemoveListener<Reward>(GameEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRush);
