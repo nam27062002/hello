@@ -22,6 +22,12 @@ public class MenuHUD : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	// Shortcuts
+	[SerializeField] private GameObject m_photoButton = null;
+	public GameObject photoButton {
+		get { return m_photoButton; }
+	}
+
 	// Internal
 	private ShowHideAnimator m_animator = null;
 	public ShowHideAnimator animator {
