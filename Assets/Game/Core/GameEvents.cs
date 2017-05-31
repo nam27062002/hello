@@ -51,7 +51,8 @@ public enum GameEvents {
 	DRUNK_TOGGLED,				// params: bool _isDrunk
 	BIGGER_DRAGON_NEEDED,		// params: DragonTier _requiredTierSku (use COUNT for generic message), string _entitySku
 	UNDERWATER_TOGGLED,			// params: bool _activated
-	BREAK_OBJECT_BIGGER_DRAGON, // no params
+    INTOSPACE_TOGGLED,          // params: bool _activated
+    BREAK_OBJECT_BIGGER_DRAGON, // no params
 	BREAK_OBJECT_NEED_TURBO,	// no params
 
 	// Entity events
