@@ -20,26 +20,6 @@ Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Darken"
 		Pass {  
 			CGPROGRAM
 
-/*
-			Every scenary shader has multiple options to combine:
-
-			BLEND_TEXTURE
-			FOG
-			DARKEN
-			DYNAMIC_SHADOWS
-			LIGHTMAP_ON
-			NORMALMAP
-			SPECULAR
-			CUTOFF
-			CUSTOM_VERTEXPOSITION
-			CUSTOM_VERTEXCOLOR
-			COLOR_OVERLAY
-			OPAQUEALPHA
-			DEBUG
-
-
-*/
-
 				#pragma vertex vert
 				#pragma fragment frag
 				#pragma multi_compile_fwdbase

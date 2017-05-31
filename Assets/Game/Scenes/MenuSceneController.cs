@@ -127,6 +127,8 @@ public class MenuSceneController : SceneController {
 			m_selectedDragon = GameVars.menuInitialDragon;
 			GameVars.menuInitialDragon = string.Empty;	// Reset var
 		}
+
+		ParticleManager.instance.useDefinitionLimits = false;
 	}
 
 	protected IEnumerator Start()

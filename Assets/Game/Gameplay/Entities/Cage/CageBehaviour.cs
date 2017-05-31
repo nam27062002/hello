@@ -23,6 +23,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	private float m_waitTimer = 0;
 	private Hit m_currentHits;
 	private DragonTier m_tier;
+	private DragonTier m_minTierToBreak;
 
 	private bool m_broken;
 
@@ -36,6 +37,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	void Awake() {
 		m_entity = GetComponent<Cage>();
 		m_prisonerSpawner = GetComponent<PrisonerSpawner>();
+		m_minTierToBreak = m_hitsPerTier.GetMinTier();
 
 		m_currentHits = new Hit();
 	}
@@ -107,7 +109,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 						Break();
 					}
 				} else {
-					Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, "");
+					Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, m_minTierToBreak, "");
 				}
 			}
 		}

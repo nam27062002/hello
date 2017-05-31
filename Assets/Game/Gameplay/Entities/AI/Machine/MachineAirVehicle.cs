@@ -9,11 +9,15 @@ namespace AI {
 
 		private DevicePassengersSpawner m_passengersSpawner;	
 		private Hit m_armorDurability = new Hit();
+		private DragonTier m_minTierToBreak;
 
 
 		protected override void Awake() {
 			m_passengersSpawner = GetComponent<DevicePassengersSpawner>();
 			m_passengersSpawner.Initialize();
+
+			m_minTierToBreak = m_armorDurabilityPerTier.GetMinTier();
+
 			base.Awake();
 		}
 
@@ -46,7 +50,7 @@ namespace AI {
 						Messenger.Broadcast(GameEvents.BREAK_OBJECT_NEED_TURBO);
 					}
 				} else {
-					Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, m_entity.sku);
+					Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, m_minTierToBreak, m_entity.sku);
 				}
 			}
 
