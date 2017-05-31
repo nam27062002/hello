@@ -15,6 +15,7 @@ public class Equipable : MonoBehaviour {
 		Chest_1,
 		Spine_1,
 		Tail_1,
+		Tail_2,
 		Count
 	};
 
