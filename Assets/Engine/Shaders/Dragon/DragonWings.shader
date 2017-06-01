@@ -20,7 +20,7 @@ Shader "Hungry Dragon/Dragon/Wings (Transparent)" {
 		_InnerLightColor("Inner Light Color", Color) = (1,1,1,1)
 
 		_SpecExponent("Specular Exponent", float) = 1
-		_Cutoff("Cutoff Level", Range(0, 1)) = 0.5
+		_Cutoff("Cutoff Level", Range(0, 1)) = 0.2
 		_Fresnel("Fresnel factor", Range(0, 10)) = 1.5
 		_FresnelColor("Fresnel Color", Color) = (1,1,1,1)
 		_AmbientAdd("Ambient Add", Color) = (0,0,0,0)

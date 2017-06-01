@@ -50,6 +50,11 @@ uniform float _InnerLightWavePhase;
 uniform float _InnerLightWaveSpeed;
 #endif
 
+#ifdef CUTOUT
+uniform float _Cutoff;
+#endif
+
+
 v2f vert(appdata_t v)
 {
 	v2f o;
@@ -86,7 +91,7 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 detail = tex2D(_DetailTex, i.texcoord);
 
 #ifdef CUTOUT
-	clip(main.a - 0.2);
+	clip(main.a - _Cutoff);
 #endif
 
 #ifdef NORMALMAP
@@ -153,7 +158,14 @@ fixed4 frag(v2f i) : SV_Target
 	fixed3 selfIlluminate = lerp(fixed3(0.0, 0.0, 0.0), _InnerLightColor.xyz, satMask);
 
 #else
-	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz));
+
+#ifdef BLINKLIGHTS
+	float anim = sin(_Time.x * 40.0); // _SinTime.w * 0.5f;
+#else
+	float anim = 1.0;
+#endif
+
+	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz)) * anim;
 #endif
 	// fixed4 col = (diffuse + fixeW4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _Tint + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
 //	col = (diffuse + fixed4(i.vLight, 0.0)) * col * _Tint + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor) + _AmbientAdd; // To use ShaderSH9 better done in vertex shader
