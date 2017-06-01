@@ -159,6 +159,13 @@ public class DragControlZoom : MonoBehaviour {
 				// ... change the zoom value based on the change in distance between the touches.
 				zoomOffset = deltaMagnitudeDiff * zoomSpeed;
 
+				// Apply sensitivity correction based on platform
+				// Compute corrected sensitivity
+				switch(Application.platform) {
+					case RuntimePlatform.IPhonePlayer:	zoomOffset *= DragControl.IOS_SENSITIVITY_CORRECTION;		break;
+					case RuntimePlatform.Android:		zoomOffset *= DragControl.ANDROID_SENSITIVITY_CORRECTION;	break;
+				}
+
 				// Mark dirty
 				zoomChanged = true;
 			}

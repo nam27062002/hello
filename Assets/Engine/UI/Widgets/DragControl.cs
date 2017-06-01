@@ -28,8 +28,8 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	protected const float IOS_SENSITIVITY_CORRECTION = 0.5f;
-	protected const float ANDROID_SENSITIVITY_CORRECTION = 0.5f;
+	public const float IOS_SENSITIVITY_CORRECTION = 0.5f;
+	public const float ANDROID_SENSITIVITY_CORRECTION = 0.5f;
 
 	[Serializable]
 	public class DragControlEvent : UnityEvent<DragControl> {}
