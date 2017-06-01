@@ -25,23 +25,8 @@ internal class ScenaryShaderGUI : ShaderGUI {
     {
         Opaque,
         Cutout,
-        Fade,       // Old school alpha-blending mode, fresnel does not affect amount of transparency
         Transparent // Physically plausible transparency mode, implemented as alpha pre-multiply
     }
-
-    private enum WorkflowMode
-    {
-        Specular,
-        Metallic,
-        Dielectric
-    }
-
-    public enum SmoothnessMapChannel
-    {
-        SpecularMetallicAlpha,
-        AlbedoAlpha,
-    }
-
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
@@ -99,8 +84,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
     MaterialEditor m_MaterialEditor;
     ColorPickerHDRConfig m_ColorPickerHDRConfig = new ColorPickerHDRConfig(0f, 99f, 1 / 99f, 3f);
 
-    WorkflowMode m_WorkflowMode = WorkflowMode.Specular;
-
     bool m_FirstTimeApply = true;
 
     //------------------------------------------------------------------------//
@@ -144,8 +127,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
         // Do this before any GUI code has been issued to prevent layout issues in subsequent GUILayout statements (case 780071)
         if (m_FirstTimeApply)
         {
-//            m_animBool.valueChanged.AddListener(Repaint);
-            MaterialChanged(material, m_WorkflowMode);
+            MaterialChanged(material);
             m_FirstTimeApply = false;
         }
 
@@ -158,26 +140,13 @@ internal class ScenaryShaderGUI : ShaderGUI {
 */
     }
 
-/*
-    bool HasValidEmissiveKeyword(Material material)
-    {
-        // Material animation might be out of sync with the material keyword.
-        // So if the emission support is disabled on the material, but the property blocks have a value that requires it, then we need to show a warning.
-        // (note: (Renderer MaterialPropertyBlock applies its values to emissionColorForRendering))
-        bool hasEmissionKeyword = material.IsKeywordEnabled("_EMISSION");
-        if (!hasEmissionKeyword && ShouldEmissionBeEnabled(material, emissionColorForRendering.colorValue))
-            return false;
-        else
-            return true;
-    }
-*/
-    static void MaterialChanged(Material material, WorkflowMode workflowMode)
+    static void MaterialChanged(Material material)
     {
 //        material.shaderKeywords = null;
 
         SetupMaterialWithBlendMode(material, (BlendMode)material.GetFloat("_Mode"));
 
-        SetMaterialKeywords(material, workflowMode);
+        SetMaterialKeywords(material);
 
 /*
         string kwl = "";
@@ -191,7 +160,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
     }
 
 
-    static void SetMaterialKeywords(Material material, WorkflowMode workflowMode)
+    static void SetMaterialKeywords(Material material)
     {
         // Note: keywords must be based on Material value not on MaterialProperty due to multi-edit & material animation
         // (MaterialProperty value might come from renderer material property block)
@@ -263,7 +232,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
         if (EditorGUI.EndChangeCheck())
         {
             foreach (var obj in mp_blendMode.targets)
-                MaterialChanged((Material)obj, m_WorkflowMode);
+                MaterialChanged((Material)obj);
         }
     }
 
@@ -310,17 +279,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
 //                material.DisableKeyword("_ALPHABLEND_ON");
 //                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
                 material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
-                break;
-            case BlendMode.Fade:
-                material.SetOverrideTag("RenderType", "Transparent");
-                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                material.SetInt("_ZWrite", 0);
-                material.DisableKeyword("CUTOFF");
-//                material.DisableKeyword("_ALPHATEST_ON");
-//                material.EnableKeyword("_ALPHABLEND_ON");
-//                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
                 break;
             case BlendMode.Transparent:
                 material.SetOverrideTag("RenderType", "Transparent");

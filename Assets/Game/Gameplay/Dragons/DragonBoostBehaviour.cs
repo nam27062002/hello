@@ -91,7 +91,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 		if (m_active) {
 			// Don't drain energy if cheat is enabled or dragon fury is on
-			if(!DebugSettings.infiniteBoost && !m_dragon.IsFuryOn() && !m_superSizeInfiniteBoost) {
+			if(IsDraining()) {
                 if (m_insideWater)
                     m_dragon.AddEnergy(-Time.deltaTime * m_energyDrain * 5);
                 else
@@ -129,6 +129,11 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		}
 
 		Messenger.Broadcast<bool>(GameEvents.BOOST_TOGGLED, false);
+	}
+
+	public bool IsDraining() {
+		// Don't drain energy if cheat is enabled or dragon fury is on
+		return !DebugSettings.infiniteBoost && !m_dragon.IsFuryOn() && !m_superSizeInfiniteBoost;
 	}
 
 	public bool IsBoostActive()
