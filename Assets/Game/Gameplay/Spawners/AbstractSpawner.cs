@@ -49,6 +49,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     private static System.Diagnostics.Stopwatch sm_watch;
 
     void Start() {
+		m_rect = new Rect((Vector2)transform.position, Vector2.one * 2f);
+
         OnStart();
     }
 
@@ -57,8 +59,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
             SpawnerManager.instance.Unregister(this, UseSpawnManagerTree);
     }
 
-    public void Initialize() {
-		m_rect = new Rect((Vector2)transform.position, Vector2.one * 2f);
+    public void Initialize() {		
         Entities_Create(GetMaxEntities());
 
         EntitiesAlive = 0;
