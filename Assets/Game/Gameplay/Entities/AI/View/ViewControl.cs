@@ -290,14 +290,14 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_boost = false;
 		m_scared = false;
 		m_panic = false;
-		m_attack = false;
 		m_falling = false;
+		m_jumping = false;
+		m_attack = false;
 		m_swim = false;
 		m_inSpace = false;
 		m_moving = false;
-		m_hitAnimOn = false;
 		m_attackingTarget = false;
-
+		m_hitAnimOn = false;
 		m_isExclamationMarkOn = false;
 
 		m_disableAnimatorTimer = 0f;
