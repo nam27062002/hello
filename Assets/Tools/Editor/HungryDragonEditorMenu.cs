@@ -319,7 +319,7 @@ public class HungryDragonEditorMenu
     public static void OpenScene3() { OpenScene("Assets/Game/Scenes/SC_Game.unity", true); }
 
 	[MenuItem("Hungry Dragon/Scenes/SC_Results", false, 3)]
-	public static void OpenScene4() { OpenScene("Assets/Game/Scenes/SC_Results.unity", false); }
+	public static void OpenScene4() { OpenScene("Assets/Game/Scenes/SC_ResultsScreen.unity", false); }
     
 	[MenuItem("Hungry Dragon/Scenes/SC_Popups", false, 51)]
     public static void OpenScene5() { OpenScene("Assets/Tests/SC_Popups.unity", false); }
