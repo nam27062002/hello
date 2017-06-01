@@ -29,6 +29,9 @@ public class MissionObjective : TrackingObjectiveBase {
 	protected bool m_singleRun = false;
 	public bool singleRun { get { return m_singleRun; }}
 
+	protected Mission m_parentMission = null;
+	public Mission parentMission { get { return m_parentMission; }}
+
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -39,13 +42,17 @@ public class MissionObjective : TrackingObjectiveBase {
 	/// <summary>
 	/// Parametrized constructor.
 	/// </summary>
+	/// <param name="_parentMission">The mission owning this objective.</param>
 	/// <param name="_missionDef">The mission definition used to initialize this objective.</param>
 	/// <param name="_typeDef">The mission type definition.</param>
 	/// <param name="_targetValue">Target value.</param>
 	/// <param name="_singleRun">Is it a single run mission?</param>
-	public MissionObjective(DefinitionNode _missionDef, DefinitionNode _typeDef, float _targetValue, bool _singleRun) {
+	public MissionObjective(Mission _parentMission, DefinitionNode _missionDef, DefinitionNode _typeDef, float _targetValue, bool _singleRun) {
 		// Check params
 		Debug.Assert(_missionDef != null);
+
+		// Store parent mission
+		m_parentMission = _parentMission;
 
 		// Single run?
 		m_singleRun = _singleRun;
@@ -96,6 +103,9 @@ public class MissionObjective : TrackingObjectiveBase {
 
 		// Disable during first game session (tutorial)
 		this.enabled = (UsersManager.currentUser.gamesPlayed > 0);
+
+		// Disable too if mission is not active
+		this.enabled &= m_parentMission.state == Mission.State.ACTIVE;
 	}
 
 	/// <summary>
