@@ -61,34 +61,37 @@ public class SceneParticlePooling : MonoBehaviour
                 return;
             }
 
-            item.CullingIndex = Manager_Items.Count;
-            Manager_Items.Add(item);
-
-            if (Manager_BoundingSpheres == null)
+            if (!Manager_Items.Contains(item))
             {
-                Manager_BoundingSpheres = new BoundingSphere[MANAGER_MAX_ITEMS];
+                item.CullingIndex = Manager_Items.Count;
+                Manager_Items.Add(item);
+
+                if (Manager_BoundingSpheres == null)
+                {
+                    Manager_BoundingSpheres = new BoundingSphere[MANAGER_MAX_ITEMS];
+                }
+
+                Manager_BoundingSpheres[Manager_Items.Count - 1] = item.BoundingSphere;
+
+                if (Manager_CullingGroup == null)
+                {
+                    Manager_CullingGroup = new CullingGroup();
+                    Manager_CullingGroup.targetCamera = Camera.main;
+                    Manager_CullingGroup.SetBoundingSpheres(Manager_BoundingSpheres);
+                    Manager_CullingGroup.onStateChanged += Manager_OnStateChanged;
+                }
+
+                Manager_CullingGroup.SetBoundingSphereCount(Manager_Items.Count);
+
+                if (!Manager_IsVisible(item.CullingIndex) && !item.IsPaused)
+                {
+                    item.Pause();
+                }
+                else if (Manager_IsVisible(item.CullingIndex) && item.IsPaused)
+                {
+                    item.Resume();
+                }
             }
-
-            Manager_BoundingSpheres[Manager_Items.Count - 1] = item.BoundingSphere;
-
-            if (Manager_CullingGroup == null)
-            {
-                Manager_CullingGroup = new CullingGroup();
-                Manager_CullingGroup.targetCamera = Camera.main;
-                Manager_CullingGroup.SetBoundingSpheres(Manager_BoundingSpheres);
-                Manager_CullingGroup.onStateChanged += Manager_OnStateChanged;
-            }
-
-            Manager_CullingGroup.SetBoundingSphereCount(Manager_Items.Count);
-
-            if (!Manager_IsVisible(item.CullingIndex) && !item.IsPaused)
-            {
-                item.Pause();
-            }
-			else if ( Manager_IsVisible(item.CullingIndex) && item.IsPaused )
-			{
-				item.Resume();
-			}
         }
     }
 
@@ -167,24 +170,36 @@ public class SceneParticlePooling : MonoBehaviour
     public int CullingIndex { get; set; }
     private BoundingSphere BoundingSphere { get; set; }
 
+    private bool IsInitialized { get; set; }
+
+    private void Init()
+    {
+        if (!IsInitialized)
+        {
+            IsInitialized = true;
+
+            CullingIndex = -1;
+
+            if (m_parent == null)
+            {
+                m_parent = gameObject;
+            }
+
+            if (m_cullingCenter == null)
+            {
+                m_cullingCenter = transform;
+            }
+            IsPaused = true;
+            BoundingSphere = new BoundingSphere(m_cullingCenter.position, m_cullingRadius);
+
+            ParticleManager.CreatePool(m_particle);
+        }
+    }
 
     void Start()
     {
-        CullingIndex = -1;        
-
-        if (m_parent == null)
-        {
-            m_parent = gameObject;
-        }
-
-        if (m_cullingCenter == null)
-        {
-            m_cullingCenter = transform;
-        }
-        IsPaused = true;
-		BoundingSphere = new BoundingSphere(m_cullingCenter.position, m_cullingRadius);
-		Manager_AddItem(this);
-		ParticleManager.CreatePool(m_particle);
+        Init();
+        Manager_AddItem(this);
     }
 
     public bool IsPaused { get; set; }
@@ -196,14 +211,18 @@ public class SceneParticlePooling : MonoBehaviour
 
     void OnEnable()
     {
-		Manager_AddItem(this);
+        Init();
+        Manager_AddItem(this);
     }
 
 
     void OnDisable()
     {
-    	Pause();
-		Manager_RemoveItem(this);
+        if ( ApplicationManager.IsAlive )
+        { 
+    	    Pause();
+		    Manager_RemoveItem(this);
+        }
     }
 
     public void Pause()
