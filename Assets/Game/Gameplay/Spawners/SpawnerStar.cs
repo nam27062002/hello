@@ -29,7 +29,7 @@ public class SpawnerStar : AbstractSpawner {
 	private AreaBounds m_area;
 	public override AreaBounds area {
 		get {
-			if (m_area == null) {
+			if (m_area == null) {				
 				m_area = new RectAreaBounds(m_rect.center, m_rect.size);
 			} else {
 				m_area.UpdateBounds(m_rect.center, m_rect.size);
@@ -41,7 +41,8 @@ public class SpawnerStar : AbstractSpawner {
 	protected override void OnStart() {
 		m_respawnConditions = GetComponent<SpawnerConditions>();
 
-		if (m_respawnConditions.IsAvailable()) {			
+		if (m_respawnConditions.IsAvailable()) {
+			UpdateBounds();
 			RegisterInSpawnerManager();
 			SpawnerAreaManager.instance.Register(this);
 
