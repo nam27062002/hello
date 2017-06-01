@@ -30,8 +30,8 @@ public class HungryDragonEditorToolbar : EditorWindow {
 	private const float BUTTON_SIZE = 25f;
 	private const float SEPARATOR_SIZE = 10f;
 
-	private const int NUM_BUTTONS = 8;		// Update as needed
-	private const int NUM_SEPARATORS = 1;		// Update as needed
+	private const int NUM_BUTTONS = 10;		// Update as needed
+	private const int NUM_SEPARATORS = 3;		// Update as needed
 
 	//------------------------------------------------------------------------//
 	// STATICS																  //
@@ -116,6 +116,14 @@ public class HungryDragonEditorToolbar : EditorWindow {
 				HungryDragonEditorMenu.OpenScene3();
 			}
 
+			// Results
+			if(GUILayout.Button(new GUIContent("RES", "Results Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				HungryDragonEditorMenu.OpenScene4();
+			}
+
+			// Add a separator
+			GUILayout.Space(SEPARATOR_SIZE);
+
 			// Level Editor
 			if(GUILayout.Button(new GUIContent("LE", "Level Editor"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				HungryDragonEditorMenu.ShowLevelEditorWindow();
@@ -123,7 +131,7 @@ public class HungryDragonEditorToolbar : EditorWindow {
 
 			// Popups
 			if(GUILayout.Button(new GUIContent("P", "Popups Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				HungryDragonEditorMenu.OpenScene4();
+				HungryDragonEditorMenu.OpenScene5();
 			}
 
 			// Add a separator
