@@ -31,7 +31,19 @@ public class HUDStatBar : MonoBehaviour {
 		SuperFury
 	}
 
+	public enum Bars {
+		BASE,
+		EXTRA,
+		DAMAGE,
+
+		COUNT
+	}
+
 	private const float DAMAGE_BAR_ANIMATION_THRESHOLD = 10f;	// Pixels
+
+	private class BarData {
+		public Slider slider = null;
+	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
@@ -40,14 +52,13 @@ public class HUDStatBar : MonoBehaviour {
 	[SerializeField] private Type m_type = Type.Health;
 	[SerializeField] private float m_maxScreenSize = 1300f;
 	[Space]
-	[SerializeField] [Range(0f, 1f)] private float m_damageBarSpeed = 0.2f;	// %/sec
-	[Space]
-	[SerializeField] private Color m_invulnerabilityColor = new Color(1f, 1f, 1f, 0f);
-	[SerializeField] private float m_invulnerabilityFXSpeed = 6f;
+	[SerializeField] [Range(0f, 1f)] private float m_damageBarSpeed = 0.25f;	// %/sec
 
-	private Slider m_extraBar;
-	private Slider m_baseBar;
-	private Slider m_damageBar;
+	private BarData[] m_bars = new BarData[(int)Bars.COUNT];
+	private BarData baseBar { get { return m_bars[(int)Bars.BASE]; } }
+	private BarData extraBar { get { return m_bars[(int)Bars.EXTRA]; } }
+	private BarData damageBar { get { return m_bars[(int)Bars.DAMAGE]; } }
+
 	private TextMeshProUGUI m_valueTxt;
 	private GameObject m_icon;
 	private GameObject m_iconAnimated = null;
@@ -66,10 +77,7 @@ public class HUDStatBar : MonoBehaviour {
 	private float m_damageAnimationThreshold = 0f;
 
 	// Invulnerability FX
-	private bool m_wasInvulnerable = false;
-	private UIColorFX m_baseBarInvulnerableFX = null;
-	private UIColorFX m_extraBarInvulnerableFX = null;
-	private float m_invulnerabilityColorDelta = 0f;
+	private GameObject m_invulnerabilityGlow = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -78,28 +86,27 @@ public class HUDStatBar : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Get external references
-		// m_bar = GetComponentInChildren<Slider>();
-		// m_baseBar;
-		m_canvasGroup = GetComponent<CanvasGroup>();
+		// Aux vars
 		Transform child;
-		child = transform.FindChild("ExtraSlider");
-		if ( child != null ) {
-			m_extraBar = child.GetComponent<Slider>();
-			m_extraBarInvulnerableFX = child.GetComponentInChildren<UIColorFX>();
-		}
-		
-		child = transform.FindChild("BaseSlider");
-		if ( child != null ) {
-			m_baseBar = child.GetComponent<Slider>();
-			m_baseBarInvulnerableFX = child.GetComponentInChildren<UIColorFX>();
+
+		// Initialize bars
+		string[] barNames = { "BaseSlider", "ExtraSlider", "DamageSlider" };
+		for(int i = 0; i < (int)Bars.COUNT; i++) {
+			m_bars[i] = new BarData();
+			child = transform.FindChild(barNames[i]);
+			if(child != null) {
+				m_bars[i].slider = child.GetComponent<Slider>();
+			}
 		}
 
-		child = transform.FindChild("DamageSlider");
-		if ( child != null )
-			m_damageBar = child.GetComponent<Slider>();
-
+		// Other external references
+		m_canvasGroup = GetComponent<CanvasGroup>();
 		m_valueTxt = gameObject.FindComponentRecursive<TextMeshProUGUI>("TextValue");
+
+		child = transform.FindChild("InvulnerabilityGlow");
+		if(child != null) {
+			m_invulnerabilityGlow = child.gameObject;
+		}
 
 		m_particles = gameObject.FindComponentRecursive<ParticleSystem>();
 		if (m_particles != null)
@@ -174,136 +181,187 @@ public class HUDStatBar : MonoBehaviour {
 	private void Update() {
 		if (m_ready) {
 			// Only if player is alive
-			if (InstanceManager.player != null) 
-			{
+			if(InstanceManager.player != null) {
 				// Aux vars
+				Slider targetSlider = null;
 				float targetBaseValue = GetBaseValue();
 				float targetExtraValue = GetExtraValue();
 				float targetValue = GetValue();
 				float targetValueStep = 0f;
                 
-				if (m_baseBar != null) {
-                    if (m_baseBar.minValue != 0f)
-                        m_baseBar.minValue = 0f;
+				// Set base slider min/max
+				targetSlider = baseBar.slider;
+				if(targetSlider != null) {
+					if(targetSlider.minValue != 0f) {
+						targetSlider.minValue = 0f;
+					}
 
-                    if (m_baseBar.maxValue != targetExtraValue)
-                        m_baseBar.maxValue = targetExtraValue;
+					if(targetSlider.maxValue != targetExtraValue) {
+						targetSlider.maxValue = targetExtraValue;
+					}
 
-                    targetValueStep = Mathf.Lerp(m_baseBar.value, targetValue, Time.deltaTime);
-                }
+					targetValueStep = Mathf.Lerp(targetSlider.value, targetValue, Time.deltaTime);
+				}
                 
-				if (m_extraBar != null) {
-                    if (m_extraBar.minValue != 0f)
-                        m_extraBar.minValue = 0f;
+				// Set extra slider min/max
+				targetSlider = extraBar.slider;
+				if(targetSlider != null) {
+					if(targetSlider.minValue != 0f) {
+						targetSlider.minValue = 0f;
+					}
 
-                    if (m_extraBar.maxValue != targetExtraValue)
-                        m_extraBar.maxValue = targetExtraValue; // this is the max value with all the bonus
+					if(targetSlider.maxValue != targetExtraValue) {
+						targetSlider.maxValue = targetExtraValue; // this is the max value with all the bonus
+					}
 
-					targetValueStep = Mathf.Lerp(m_extraBar.value, targetValue, Time.deltaTime);
+					targetValueStep = Mathf.Lerp(targetSlider.value, targetValue, Time.deltaTime);
 				}
 
-				if (m_damageBar != null) {
-					if (m_damageBar.minValue != 0f)
-						m_damageBar.minValue = 0f;
+				// Set damage slider min/max
+				targetSlider = damageBar.slider;
+				if(targetSlider != null) {
+					if(targetSlider.minValue != 0f) {
+						targetSlider.minValue = 0f;
+					}
 
-					if (m_damageBar.maxValue != targetExtraValue)
-						m_damageBar.maxValue = targetExtraValue; // this is the max value with all the bonus
-				}
-
-				//Extra bar                
-				if (m_extraBar != null) {
-					if (m_instantSet) {
-                        if (m_extraBar.value != targetValue)
-                            m_extraBar.value = targetValue;
-					} else {
-                        // If going up, animate, otherwise instant set
-                        float value = (targetValue > m_extraBar.value) ? targetValueStep : targetValue;                        
-                        if (m_extraBar.value != value)
-                            m_extraBar.value = value;						
+					if(targetSlider.maxValue != targetExtraValue) {
+						targetSlider.maxValue = targetExtraValue; // this is the max value with all the bonus
 					}
 				}
 
-				//Base bar
-				if (m_baseBar != null) {
+				// Extra bar value
+				targetSlider = extraBar.slider;
+				if(targetSlider != null) {
+					if(m_instantSet) {
+						if(targetSlider.value != targetValue) {
+							targetSlider.value = targetValue;
+						}
+					} else {
+						// If going up, animate, otherwise instant set
+						float value = (targetValue > targetSlider.value) ? targetValueStep : targetValue;                        
+						if(targetSlider.value != value) {
+							targetSlider.value = value;	
+						}
+					}
+				}
+
+				// Base bar value
+				targetSlider = baseBar.slider;
+				if(targetSlider != null) {
 					targetValue = Mathf.Min(targetValue, targetBaseValue);
 					targetValueStep = Mathf.Min(targetValueStep, targetBaseValue);
 
-					if (m_instantSet) {
-                        if (m_baseBar.value != targetValue)
-                            m_baseBar.value = targetValue;
+					if(m_instantSet) {
+						if(targetSlider.value != targetValue) {
+							targetSlider.value = targetValue;
+						}
 					} else {
-                        // If going up, animate, otherwise instant set
-                        float value = (targetValue > m_baseBar.value) ? targetValueStep : targetValue;
-                        if (m_baseBar.value != value)
-                            m_baseBar.value = value;                      
+						// If going up, animate, otherwise instant set
+						float value = (targetValue > targetSlider.value) ? targetValueStep : targetValue;
+						if(targetSlider.value != value) {
+							targetSlider.value = value;   
+						}
 					}
 				}
 
-				// Damage bar
-				if(m_damageBar != null) {
+				// Damage bar value
+				targetSlider = damageBar.slider;
+				if(targetSlider != null) {
 					// Target value is the max between the extra bar value and the base var balue
-					targetValue = Mathf.Max(m_extraBar.value, m_baseBar.value);
+					targetValue = Mathf.Max(extraBar.slider.value, baseBar.slider.value);
 
 					if(m_instantSet) {
-						if(m_damageBar.value != targetValue) {
-							m_damageBar.value = targetValue;
+						if(targetSlider.value != targetValue) {
+							targetSlider.value = targetValue;
 						}
 					} else {
 						// Reverse case: animate when going down only and over a certain threshold
-						if(m_damageBar.value > targetValue + m_damageAnimationThreshold) {
+						if(targetSlider.value > targetValue + m_damageAnimationThreshold) {
 							// Use normalized value so speed feels right for every dragon
-							m_damageBar.normalizedValue -= m_damageBarSpeed * Time.deltaTime;
-						} else if(m_damageBar.value < targetValue) {
-							m_damageBar.value = targetValue;
+							targetSlider.normalizedValue -= m_damageBarSpeed * Time.deltaTime;
+						} else if(targetSlider.value < targetValue) {
+							targetSlider.value = targetValue;
 						}
 					}
 				}
                 
-				if (m_type == Type.SuperFury || m_type == Type.Fury) {
-					if (m_particles != null) {
-						if (Math.Abs(targetValue - targetValueStep) > 0.001f) {
+				if(m_type == Type.SuperFury || m_type == Type.Fury) {
+					if(m_particles != null) {
+						if(Math.Abs(targetValue - targetValueStep) > 0.001f) {
 							m_particles.Play();
-						} else  {
+						} else {
 							m_particles.Stop();
 						}
 					}
 				}
 
 				// Text
-				if (m_valueTxt != null && 
-                    (m_extraBarLastValue != m_extraBar.value || m_extraBarLastMaxValue != m_extraBar.maxValue)) {
-                    m_extraBarLastValue = m_extraBar.value;
-                    m_extraBarLastMaxValue = m_extraBar.maxValue;
+				if(m_valueTxt != null &&
+				    (m_extraBarLastValue != extraBar.slider.value || m_extraBarLastMaxValue != extraBar.slider.maxValue)) {
+					m_extraBarLastValue = extraBar.slider.value;
+					m_extraBarLastMaxValue = extraBar.slider.maxValue;
 
-                    m_valueTxt.text = String.Format("{0}/{1}",
-					                                StringUtils.FormatNumber(m_extraBarLastValue, 0),
-					                                StringUtils.FormatNumber(m_extraBarLastMaxValue, 0));                    
+					m_valueTxt.text = String.Format("{0}/{1}",
+						StringUtils.FormatNumber(m_extraBarLastValue, 0),
+						StringUtils.FormatNumber(m_extraBarLastMaxValue, 0));                    
 				}
 
 				// Invulnerability FX
-				/*if(m_baseBarInvulnerableFX != null && m_extraBarInvulnerableFX != null) {
-					bool applyFX = m_instantSet;
-					if(InstanceManager.player.IsInvulnerable() || DebugSettings.invulnerable) {
-						m_invulnerabilityColorDelta += m_invulnerabilityFXSpeed * Time.deltaTime;
-
-						if(m_invulnerabilityColorDelta >= 1f) {
-							m_invulnerabilityFXSpeed *= -1;
-						} else if(m_invulnerabilityColor.a <= 0f) {
-							m_invulnerabilityFXSpeed *= -1;
+				if(m_invulnerabilityGlow != null) {
+					// Only Health and Boost bars
+					if(m_type == Type.Health || m_type == Type.Energy) {
+						// Are we invulnerable?
+						bool isInvulnerable = false;
+						if(m_type == Type.Health) {
+							isInvulnerable = InstanceManager.player.IsInvulnerable() || DebugSettings.invulnerable;
+						} else if(m_type == Type.Energy) {
+							isInvulnerable = !InstanceManager.player.dragonBoostBehaviour.IsDraining();
 						}
 
+						m_invulnerabilityGlow.SetActive(isInvulnerable);
+					}
+					/*// Update FX
+					bool applyFX = m_instantSet;
+					if(isInvulnerable) {
+						// Update delta
+						m_invulnerabilityColorDelta += m_invulnerabilityFXSpeed * m_invulnerabilityDirection * Time.deltaTime;
+
+						// Reverse direction if needed
+						if(m_invulnerabilityColorDelta >= 1f) {
+							m_invulnerabilityDirection = -1f;
+						} else if(m_invulnerabilityColorDelta <= 0f) {
+							m_invulnerabilityDirection = 1f;
+						}
+
+						// Clamp
 						m_invulnerabilityColorDelta = Mathf.Clamp01(m_invulnerabilityColorDelta);
 
+						// Update flags
 						m_wasInvulnerable = true;
 						applyFX = true;
 					} else if(m_wasInvulnerable) {
+						// Just apply original color
 						m_invulnerabilityColorDelta = 0f;
 						applyFX = true;
 					}
 
-					m_baseBarInvulnerableFX.colorAdd = Color.Lerp(Colors.transparentBlack, m_invulnerabilityColor, m_invulnerabilityColorDelta);
-					m_extraBarInvulnerableFX.colorAdd = m_baseBarInvulnerableFX.colorAdd;
-				}*/
+					// Apply color!
+					if(applyFX) {
+						if(baseBar.gradient != null) {
+							baseBar.gradient.color1 = Color.Lerp(baseBar.originalColor1, m_invulnerabilityColor, m_invulnerabilityColorDelta);
+							baseBar.gradient.color2 = Color.Lerp(baseBar.originalColor2, m_invulnerabilityColor, m_invulnerabilityColorDelta);
+						} else if(baseBar.image != null) {
+							baseBar.image.color = Color.Lerp(baseBar.originalColor, m_invulnerabilityColor, m_invulnerabilityColorDelta);
+						}
+
+						if(extraBar.gradient != null) {
+							extraBar.gradient.color1 = Color.Lerp(extraBar.originalColor1, m_invulnerabilityColor, m_invulnerabilityColorDelta);
+							extraBar.gradient.color2 = Color.Lerp(extraBar.originalColor2, m_invulnerabilityColor, m_invulnerabilityColorDelta);
+						} else if(extraBar.image != null) {
+							extraBar.image.color = Color.Lerp(extraBar.originalColor, m_invulnerabilityColor, m_invulnerabilityColorDelta);
+						}
+					}*/
+				}
 
 				// Reset instant set flag
 				if(m_instantSet) {
