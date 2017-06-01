@@ -27,7 +27,7 @@ public class ResultsScreenDisguiseFlag : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private Localizer m_nameText = null;
-	[SerializeField] private UIScene3DLoader m_preview = null;
+	[SerializeField] private Image m_previewImage = null;
 
 	// Internal
 	private DefinitionNode m_def = null;
@@ -58,23 +58,8 @@ public class ResultsScreenDisguiseFlag : MonoBehaviour {
 		// Set disguise name
 		m_nameText.Localize(_disguiseDef.Get("tidName"));
 
-		// Load preview
-		MenuDragonLoader dragonLoader = m_preview.scene.FindComponentRecursive<MenuDragonLoader>();
-		if(dragonLoader != null) {
-			// Load dragon
-			dragonLoader.removeFresnel = true;
-			dragonLoader.LoadDragon(_disguiseDef.Get("dragonSku"));
-			dragonLoader.dragonInstance.SetAnim(MenuDragonPreview.Anim.POSE_FLY);
-
-			// Apply disguise
-			DragonEquip eq = dragonLoader.dragonInstance.GetComponent<DragonEquip>();
-			eq.EquipDisguise(_disguiseDef.sku);
-			dragonLoader.dragonInstance.SetFresnelColor(Color.black);
-
-			// Disguise Accesories need to be changed to the correct layer
-			dragonLoader.dragonInstance.gameObject.SetLayerRecursively( dragonLoader.gameObject.layer );
-
-		}
+		// Load icon sprite for this skin
+		m_previewImage.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + _disguiseDef.Get("dragonSku") + "/" + _disguiseDef.Get("icon"));
 
 		// Store definition
 		m_def = _disguiseDef;
