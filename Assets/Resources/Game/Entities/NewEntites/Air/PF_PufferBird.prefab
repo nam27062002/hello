@@ -21,7 +21,8 @@ GameObject:
   - component: {fileID: 4404367102724920}
   - component: {fileID: 137474614361884078}
   - component: {fileID: 95131980649024196}
-  m_Layer: 0
+  - component: {fileID: 135251098510480782}
+  m_Layer: 22
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +43,6 @@ GameObject:
   - component: {fileID: 114245192592415224}
   - component: {fileID: 114648187097529924}
   - component: {fileID: 54219935863866646}
-  - component: {fileID: 135180886180248560}
   - component: {fileID: 136587502423916270}
   m_Layer: 16
   m_Name: PF_PufferBird
@@ -58,7 +58,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1657867716151774}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.83, y: 2.16, z: 0}
+  m_LocalPosition: {x: -118.174515, y: 76.19325, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4404367102724920}
@@ -129,7 +129,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":1.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":2,"panicSpeed":2,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"seconds":3,"dataType":"AI.Behaviour.TimerBData","editorFolded":false},{"seconds":6,"dataType":"AI.Behaviour.TimerAData","editorFolded":false},{"damage":8,"type":0,"delay":1,"dataType":"AI.Behaviour.AttackPassiveData","editorFolded":false},{"action":8,"dataType":"AI.Behaviour.ActivateActionData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.4,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":2,"panicSpeed":2,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"seconds":3,"dataType":"AI.Behaviour.TimerBData","editorFolded":false},{"seconds":6,"dataType":"AI.Behaviour.TimerAData","editorFolded":false},{"damage":8,"type":0,"delay":1,"dataType":"AI.Behaviour.AttackPassiveData","editorFolded":false},{"action":8,"dataType":"AI.Behaviour.ActivateActionData","editorFolded":false}]'
   m_databaseKey: PF_PufferBird
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 4
@@ -505,12 +505,12 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
---- !u!135 &135180886180248560
+--- !u!135 &135251098510480782
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1657867716151774}
+  m_GameObject: {fileID: 1035021252853802}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
