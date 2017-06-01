@@ -71,6 +71,9 @@ public class ResultsScreenDisguiseFlag : MonoBehaviour {
 			eq.EquipDisguise(_disguiseDef.sku);
 			dragonLoader.dragonInstance.SetFresnelColor(Color.black);
 
+			// Disguise Accesories need to be changed to the correct layer
+			dragonLoader.dragonInstance.gameObject.SetLayerRecursively( dragonLoader.gameObject.layer );
+
 		}
 
 		// Store definition
