@@ -274,10 +274,18 @@ public class MissionPill : MonoBehaviour {
 		Localizer skipWithAdText = m_cooldownObj.FindComponentRecursive<Localizer>("TextAd");
 		if(skipWithAdText != null) {
 			// [AOC] TODO!! Force the time to be in lower case always
-			skipWithAdText.Localize(
-				skipWithAdText.tid, 
-				TimeUtils.FormatTime(Mission.SECONDS_SKIPPED_WITH_AD, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 1)
-			);
+			// If the remaining time is lower than skip time, don't put time at all
+			if(m_mission.cooldownRemaining.TotalSeconds < Mission.SECONDS_SKIPPED_WITH_AD) {
+				skipWithAdText.Localize(
+					skipWithAdText.tid, 
+					""
+				);
+			} else {
+				skipWithAdText.Localize(
+					skipWithAdText.tid, 
+					TimeUtils.FormatTime(Mission.SECONDS_SKIPPED_WITH_AD, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 1)
+				);
+			}
 		}
 	}
 
