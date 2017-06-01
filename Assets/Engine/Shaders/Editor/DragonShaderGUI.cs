@@ -15,7 +15,7 @@ using UnityEditor.AnimatedValues;
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
-internal class ScenaryShaderGUI : ShaderGUI {
+internal class DragonShaderGUI : ShaderGUI {
     
     //------------------------------------------------------------------------//
     // CONSTANTS AND ENUMERATORS											  //
@@ -66,51 +66,64 @@ internal class ScenaryShaderGUI : ShaderGUI {
     }
 
     MaterialProperty mp_mainTexture;
-    MaterialProperty mp_blendTexture;
+    MaterialProperty mp_cutOff;
     MaterialProperty mp_normalTexture;
-    MaterialProperty mp_cutoff;
-    MaterialProperty mp_enableSpecular;
-    MaterialProperty mp_enableFog;
-    MaterialProperty mp_enableDarken;
-    MaterialProperty mp_enableAutomaticBlending;
     MaterialProperty mp_normalStrength;
-    MaterialProperty mp_specularPower;
-    MaterialProperty mp_specularDirection;
-    MaterialProperty mp_darkenPosition;
-    MaterialProperty mp_darkenDistance;
+    MaterialProperty mp_detailTexture;
+
+    MaterialProperty mp_tint;
+    MaterialProperty mp_colorAdd;
+    MaterialProperty mp_innerLightAdd;
+    MaterialProperty mp_innerLightColor;
+    MaterialProperty mp_specExponent;
+    MaterialProperty mp_fresnel;
+    MaterialProperty mp_fresnelColor;
+    MaterialProperty mp_ambientAdd;
+    MaterialProperty mp_secondLightDir;
+    MaterialProperty mp_secondLightColor;
+
+    MaterialProperty mp_reflectionMap;
+    MaterialProperty mp_reflectionAmount;
+    MaterialProperty mp_innerLightWavePhase;
+    MaterialProperty mp_innerLightWaveSpeed;
+
     MaterialProperty mp_blendMode;
-    MaterialProperty mp_overlayColorMode;
 
     MaterialEditor m_MaterialEditor;
     ColorPickerHDRConfig m_ColorPickerHDRConfig = new ColorPickerHDRConfig(0f, 99f, 1 / 99f, 3f);
 
     bool m_FirstTimeApply = true;
 
+
     //------------------------------------------------------------------------//
     // METHODS																  //
     //------------------------------------------------------------------------//
-
     public void FindProperties(MaterialProperty[] props)
     {
         mp_mainTexture = FindProperty("_MainTex", props);
-        mp_blendTexture = FindProperty("_SecondTexture", props);
-        mp_normalTexture = FindProperty("_NormalTex", props);
+        mp_cutOff = FindProperty("_Cutoff", props);
+        mp_normalTexture = FindProperty("_BumpMap", props);
+        mp_normalStrength = FindProperty("_NormalStrenght", props);
+        mp_detailTexture = FindProperty("_DetailTex", props);
 
-        mp_cutoff = FindProperty("_CutOff", props);
-        mp_enableSpecular = FindProperty("_EnableSpecular", props);
-        mp_enableFog = FindProperty("_EnableFog", props);
-        mp_enableDarken = FindProperty("_EnableDarken", props);
-        mp_enableAutomaticBlending = FindProperty("_AutomaticBlend", props);
-        mp_normalStrength = FindProperty("_NormalStrength", props);
-        mp_specularPower = FindProperty("_SpecularPower", props);
-        mp_specularDirection = FindProperty("_SpecularDir", props);
-        mp_darkenPosition = FindProperty("_DarkenPosition", props);
-        mp_darkenDistance = FindProperty("_DarkenDistance", props);
+        mp_tint = FindProperty("_Tint", props);
+        mp_colorAdd = FindProperty("_ColorAdd", props);
+        mp_innerLightAdd = FindProperty("_InnerLightAdd", props);
+        mp_innerLightColor = FindProperty("_InnerLightColor", props);
+        mp_specExponent = FindProperty("_SpecExponent", props);
+        mp_fresnel = FindProperty("_Fresnel", props);
+        mp_fresnelColor = FindProperty("_FresnelColor", props);
+        mp_ambientAdd = FindProperty("_AmbientAdd", props);
+        mp_secondLightDir = FindProperty("_SecondLightDir", props);
+        mp_secondLightColor = FindProperty("_SecondLightColor", props);
+
+        mp_reflectionMap = FindProperty("_ReflectionMap", props);
+        mp_reflectionMap = FindProperty("_ReflectionAmount", props);
+        mp_innerLightWavePhase = FindProperty("_InnerLightWavePhase", props);
+        mp_innerLightWaveSpeed = FindProperty("_InnerLightWaveSpeed", props);
 
         mp_blendMode = FindProperty("_Mode", props);
-        mp_overlayColorMode = FindProperty("VertexColor", props);
     }
-
 
     /// <summary>
     /// Draw the inspector.
@@ -148,7 +161,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         SetMaterialKeywords(material);
 
-/*
+
         string kwl = "";
         foreach (string kw in material.shaderKeywords)
         {
@@ -156,7 +169,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
         }
 
         Debug.Log("Material keywords: " + kwl);
-*/
+
     }
 
 
@@ -164,8 +177,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
     {
         // Note: keywords must be based on Material value not on MaterialProperty due to multi-edit & material animation
         // (MaterialProperty value might come from renderer material property block)
-        SetKeyword(material, "NORMALMAP", material.GetTexture("_NormalTex"));
-        SetKeyword(material, "BLEND_TEXTURE", material.GetTexture("_SecondTexture"));
+        SetKeyword(material, "NORMALMAP", material.GetTexture("_BumpMap"));
     }
 
 
@@ -193,41 +205,19 @@ internal class ScenaryShaderGUI : ShaderGUI {
             m_MaterialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
             if (((BlendMode)material.GetFloat("_Mode") == BlendMode.Cutout))
             {
-                m_MaterialEditor.ShaderProperty(mp_cutoff, Styles.alphaCutoffText.text, MaterialEditor.kMiniTextureFieldLabelIndentLevel + 1);
+                m_MaterialEditor.ShaderProperty(mp_cutOff, Styles.alphaCutoffText.text, MaterialEditor.kMiniTextureFieldLabelIndentLevel + 1);
             }
 
             m_MaterialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
-            if (material.GetTexture("_NormalTex") != null)
+            if (material.GetTexture("_BumpMap") != null)
             {
                 m_MaterialEditor.ShaderProperty(mp_normalStrength, Styles.normalStrengthText);
             }
 
-            // Blend Texture properties
-            m_MaterialEditor.TextureProperty(mp_blendTexture, Styles.blendTextureText);
-            if (material.GetTexture("_SecondTexture") != null)
-            {
-                m_MaterialEditor.ShaderProperty(mp_enableAutomaticBlending, Styles.automaticBlendingText);
-            }
 
             EditorGUILayout.Space();
             GUILayout.Label(Styles.renderOptions, EditorStyles.boldLabel);
-            m_MaterialEditor.ShaderProperty(mp_enableFog, Styles.fogText);
 
-            m_MaterialEditor.ShaderProperty(mp_enableDarken, Styles.darkenText);
-            if (material.GetInt("_EnableDarken") != 0)
-            {
-                m_MaterialEditor.ShaderProperty(mp_darkenPosition, Styles.darkenPositionText, 1);
-                m_MaterialEditor.ShaderProperty(mp_darkenDistance, Styles.darkenDistanceText, 1);
-            }
-
-            m_MaterialEditor.ShaderProperty(mp_enableSpecular, Styles.specularText);
-            if (material.GetInt("_EnableSpecular") != 0)
-            {
-                m_MaterialEditor.ShaderProperty(mp_specularPower, Styles.specularFactorText, 1);
-                m_MaterialEditor.ShaderProperty(mp_specularDirection, Styles.specularDirText, 1);
-            }
-
-            m_MaterialEditor.ShaderProperty(mp_overlayColorMode, Styles.overlayColorText);
         }
         if (EditorGUI.EndChangeCheck())
         {
@@ -263,7 +253,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
                 material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
                 material.SetInt("_ZWrite", 1);
-                material.DisableKeyword("CUTOFF");
+                material.DisableKeyword("CUTOUT");
 //                material.DisableKeyword("_ALPHATEST_ON");
 //                material.DisableKeyword("_ALPHABLEND_ON");
 //                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
@@ -274,7 +264,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
                 material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
                 material.SetInt("_ZWrite", 1);
-                material.EnableKeyword("CUTOFF");
+                material.EnableKeyword("CUTOUT");
 //                material.EnableKeyword("_ALPHATEST_ON");
 //                material.DisableKeyword("_ALPHABLEND_ON");
 //                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
@@ -285,7 +275,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
                 material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                 material.SetInt("_ZWrite", 0);
-                material.DisableKeyword("CUTOFF");
+                material.DisableKeyword("CUTOUT");
 //                material.DisableKeyword("_ALPHATEST_ON");
 //                material.DisableKeyword("_ALPHABLEND_ON");
 //                material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
