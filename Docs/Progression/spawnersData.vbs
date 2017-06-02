@@ -100,7 +100,9 @@ Function contentInfo(contentSku)
 			pos = InStr(tmpStr, "edibleFromTier=")
 			edibleTier = Mid(tmpStr, pos+16,1)	
 			edible = Min(latchTier, grabTier, edibleTier)
-			contentInfo = rewardhp + ";" + rewardxp + ";" + edible
+			pos = InStr(tmpStr,"burnableFromTier=")
+			burnableTier = Mid(tmpStr, pos+18,1)
+			contentInfo = rewardhp + ";" + rewardxp + ";" + edible + ";" + burnableTier
 		End If
 	Loop
 End function
