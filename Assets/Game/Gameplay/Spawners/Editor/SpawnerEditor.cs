@@ -152,40 +152,58 @@ public class SpawnerEditor : Editor {
 
 			// Default
 			else {
-
                 if (isRangeRegisteredProperty(p))
                 {
+					SerializedProperty min = p.FindPropertyRelative("min");
+					SerializedProperty max = p.FindPropertyRelative("max");
+					float ovMin = min.floatValue;
+					float ovMax = max.floatValue;
                     EditorGUI.BeginChangeCheck();
                     EditorGUILayout.PropertyField(p, true);
                     if (EditorGUI.EndChangeCheck())
                     {
-                        SerializedProperty min = p.FindPropertyRelative("min");
-                        SerializedProperty max = p.FindPropertyRelative("max");
-                        if (max.floatValue < min.floatValue)
-                        {
-//                            float t = max.floatValue;
-                            max.floatValue = min.floatValue;
-//                            min.floatValue = t;
-                        }
+						if (ovMin != min.floatValue)
+						{
+	                        if (max.floatValue < min.floatValue)
+	                        {
+	                            max.floatValue = min.floatValue;
+	                        }
+						}
+						else
+						{
+							if (max.floatValue < min.floatValue || ovMin == ovMax)
+							{
+								min.floatValue = max.floatValue;
+							}
+						}
                     }
 
                 }
                 else if (isRangeRegisteredProperty(p, true))
                 {
+					SerializedProperty min = p.FindPropertyRelative("min");
+					SerializedProperty max = p.FindPropertyRelative("max");
+					int ovMin = min.intValue;
+					int ovMax = max.intValue;
                     EditorGUI.BeginChangeCheck();
                     EditorGUILayout.PropertyField(p, true);
                     if (EditorGUI.EndChangeCheck())
                     {
-                        SerializedProperty min = p.FindPropertyRelative("min");
-                        SerializedProperty max = p.FindPropertyRelative("max");
-                        if (max.intValue < min.intValue)
-                        {
-//                            int t = max.intValue;
-                            max.intValue = min.intValue;
-//                            min.intValue = t;
-                        }
+						if (ovMin != min.intValue)
+						{
+							if (max.intValue < min.intValue)
+							{
+								max.intValue = min.intValue;
+							}
+						}
+						else
+						{
+							if (max.intValue < min.intValue || ovMin == ovMax)
+							{
+								min.intValue = max.intValue;
+							}
+						}
                     }
-
                 }
                 else if (p.name == m_spawnTimeProp.name)
                 {
