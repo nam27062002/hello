@@ -8,11 +8,12 @@ namespace AI {
 		[SerializeField] private HitsPerDragonTier m_armorDurabilityPerTier;
 
 		private Hit m_armorDurability = new Hit();
-
+		private DragonTier m_minTierToBreak;
 
 		public override void Spawn(ISpawner _spawner) {
 			DragonPlayer player = InstanceManager.player;
 			DragonTier tier = player.GetTierWhenBreaking();
+			m_minTierToBreak = m_armorDurabilityPerTier.GetMinTier();
 
 			Hit originalHits = m_armorDurabilityPerTier.Get(tier);
 			m_armorDurability.count = originalHits.count;
@@ -36,7 +37,7 @@ namespace AI {
 				}
 			} else {
 				// player can't destroy the armor
-				Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, m_entity.sku);
+				Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, m_minTierToBreak, m_entity.sku);
 			}
 
 			return false;

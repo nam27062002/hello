@@ -28,8 +28,8 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	protected const float IOS_SENSITIVITY_CORRECTION = 0.5f;
-	protected const float ANDROID_SENSITIVITY_CORRECTION = 0.5f;
+	public const float IOS_SENSITIVITY_CORRECTION = 0.5f;
+	public const float ANDROID_SENSITIVITY_CORRECTION = 0.5f;
 
 	[Serializable]
 	public class DragControlEvent : UnityEvent<DragControl> {}
@@ -101,31 +101,43 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
 	public ClampSetup clampSetupX {
 		get { return m_clampSetup[0]; }
-		set { m_clampSetup[0] = value; CheckValue(); }
+		set { m_clampSetup[0] = value; SetValue(m_value); }
 	}
 
 	public ClampSetup clampSetupY {
 		get { return m_clampSetup[1]; }
-		set { m_clampSetup[1] = value; CheckValue(); }
+		set { m_clampSetup[1] = value; SetValue(m_value); }
 	}
-
-	// Events
-	[Space]
-	public DragControlEvent OnValueChanged = new DragControlEvent();
 
 	// Auto-restore value
 	[Space]
+	[SerializeField] protected bool m_forceInitialValue = false;
+	public bool forceInitialValue {
+		get { return m_forceInitialValue; }
+		set { m_forceInitialValue = value; }
+	}
+
+	[SerializeField] protected Vector2 m_initialValue = Vector2.zero;
+	public Vector2 initialValue {
+		get { return m_initialValue; }
+		set { m_initialValue = value; }
+	}
+
 	[SerializeField] protected bool m_restoreOnDisable = true;
 	public bool restoreOnDisable {
 		get { return m_restoreOnDisable; }
 		set { m_restoreOnDisable = value; }
 	}
-
+	
 	[SerializeField] protected float m_restoreDuration = 0.25f;
 	public float restoreDuration {
 		get { return m_restoreDuration; }
 		set { m_restoreDuration = value; }
 	}
+	
+	// Events
+	[Space]
+	public DragControlEvent OnValueChanged = new DragControlEvent();
 
 	// Public Logic
 	protected Vector2 m_velocity = Vector2.zero;
@@ -157,6 +169,7 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	// Internal
 	protected float m_correctedSensitivity = 1f;
 	private Vector2 m_originalValue = Vector2.zero;
+	private Tweener m_tween = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -216,7 +229,8 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 		}
 
 		// If we're not dragging, apply velocity
-		else {
+		// Except if animating
+		else if(m_tween == null) {
 			// Both axis
 			Vector2 offset = Vector2.zero;
 			for(int axis = 0; axis < 2; axis++) {
@@ -308,14 +322,6 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	}
 
 	/// <summary>
-	/// Check current value to make sure it fits clamping setup.
-	/// </summary>
-	virtual protected void CheckValue() {
-		// Actually is the same as just applying our current value
-		SetValue(m_value);
-	}
-
-	/// <summary>
 	/// Apply clamping to the current value.
 	/// </summary>
 	virtual protected void ApplyClamp() {
@@ -394,15 +400,15 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 		// Extra stuff only if the target is different than the current one (or forced)
 		// Otherwise we would be overriding original values
 		if(m_target != oldTarget || _force) {
-			// Initialize drag control with current target value
-			// Don't use property to avoid re-applying the value to the target!
+			// Initialize drag control with initial value
+			// Force initial value or use current target value?
 			m_value = GetValueFromTarget();
-
-			// Store target's original value
 			m_originalValue = m_value;
-
-			// Make sure value is within bounds
-			CheckValue();
+			if(m_forceInitialValue) {
+				TweenTo(m_initialValue, 0.25f);
+			} else {
+				SetValue(m_value, true);	// Make sure value is within bounds
+			}
 		}
 	}
 
@@ -417,17 +423,34 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
 		// Animated?
 		if(m_restoreDuration > 0f && _animate) {
-			DOTween.To(
-				() => { return value; }, 			// Getter
-				(_v) => { SetValue(_v, true); },	// Setter
-				m_originalValue, 
-				m_restoreDuration
-			)
-			.SetUpdate(true)
-			.SetEase(Ease.InOutQuad);
+			TweenTo(m_originalValue, m_restoreDuration);
 		} else {
 			SetValue(m_originalValue, true);
 		}
+	}
+
+	/// <summary>
+	/// Tween to a specific value.
+	/// </summary>
+	/// <param name="_value">Target value.</param>
+	/// <param name="_duration">Duration of the tween.</param>
+	public void TweenTo(Vector2 _value, float _duration) {
+		// Kill any existing tween
+		if(m_tween != null) {
+			m_tween.Kill();
+			m_tween = null;
+		}
+
+		// Launch new tween
+		m_tween = DOTween.To(
+			() => { return value; }, 			// Getter
+			(_v) => { SetValue(_v, true); },	// Setter
+			_value, 
+			_duration
+		)
+		.SetUpdate(true)
+		.SetEase(Ease.InOutQuad)
+		.OnComplete(() => { m_tween = null; });
 	}
 
 	//------------------------------------------------------------------------//

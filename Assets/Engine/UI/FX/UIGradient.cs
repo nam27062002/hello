@@ -35,8 +35,22 @@ public class UIGradient : BaseMeshEffect {
 	//------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private Color m_color1 = Colors.white;
+	public Color color1 {
+		get { return m_color1; }
+		set { m_color1 = value; }
+	}
+
 	[SerializeField] private Color m_color2 = Colors.red;
+	public Color color2 {
+		get { return m_color2; }
+		set { m_color2 = value; }
+	}
+
 	[SerializeField] private Direction m_direction = Direction.VERTICAL;
+	public Direction direction {
+		get { return m_direction; }
+		set { m_direction = value; }
+	}
 
 	// Internal
 	private List<UIVertex> m_vertexList;

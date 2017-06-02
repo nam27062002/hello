@@ -101,7 +101,7 @@ public class LevelLoadingSplash : MonoBehaviour {
 		DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.diguise);
 
 		// Dragon image
-		m_dragonIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.DISGUISE_ICONS_PATH + currentDragon.def.sku, skinDef.Get("icon"));
+		m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + currentDragon.def.sku + "/" + skinDef.Get("icon"));
 
 		// Powers: skin + pets
 		List<DefinitionNode> powerDefs = new List<DefinitionNode>();

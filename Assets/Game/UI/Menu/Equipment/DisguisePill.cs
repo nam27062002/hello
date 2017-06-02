@@ -192,7 +192,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 			}
 		} else {
 			// Not owned
-			m_infoText.Localize("TID_DRAGON_GET_NOW");
+			m_infoText.Localize("TID_DISGUISES_GET_NOW");
 			m_infoText.text.color = m_getNowTextColor;
 		}
 	}

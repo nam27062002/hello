@@ -10,6 +10,7 @@
 using System;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.AnimatedValues;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -24,23 +25,8 @@ internal class ScenaryShaderGUI : ShaderGUI {
     {
         Opaque,
         Cutout,
-        Fade,       // Old school alpha-blending mode, fresnel does not affect amount of transparency
         Transparent // Physically plausible transparency mode, implemented as alpha pre-multiply
     }
-
-    private enum WorkflowMode
-    {
-        Specular,
-        Metallic,
-        Dielectric
-    }
-
-    public enum SmoothnessMapChannel
-    {
-        SpecularMetallicAlpha,
-        AlbedoAlpha,
-    }
-
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
@@ -48,23 +34,27 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
     private static class Styles
     {
-        public static GUIContent uvSetLabel = new GUIContent("UV Set");
-        public static GUIContent[] uvSetOptions = new GUIContent[] { new GUIContent("UV channel 0"), new GUIContent("UV channel 1") };
+        public static string mainTextureText = "MainTex";
+        public static string blendTextureText = "Blend Texture";
 
-        public static string emptyTootip = "";
-        public static GUIContent mainTextureText = new GUIContent("MainTex", "Main texture (RGB) and Transparency (A)");
-        public static GUIContent blendTextureText = new GUIContent("Blend Texture", "Blend Texture");
-        public static GUIContent normalTextureText = new GUIContent("Normal Map", "Normal Map");
+        public static string normalTextureText = "Normal Texture";
+        public static string normalStrengthText = "Normal Texture strength";
         public static GUIContent alphaCutoffText = new GUIContent("Alpha Cutoff", "Threshold for alpha cutoff");
 
 //        public static GUIContent fogText = new GUIContent("Fog");
 ///        public static GUIContent darkenText = new GUIContent("Darken");
 
-
         public static string fogText = "Fog";
         public static string darkenText = "Darken";
         public static string specularText = "Specular";
+        public static string automaticBlendingText = "Automatic blending";
+        public static string overlayColorText = "Vertex Color Tint";
 
+        public static string specularFactorText = "Specular factor:";
+        public static string specularDirText = "Specular direction:";
+
+        public static string darkenPositionText = "Darken position:";
+        public static string darkenDistanceText = "Darken distance:";
 
         public static string whiteSpaceString = " ";
         public static string primaryMapsText = "Maps";
@@ -75,33 +65,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
         public static readonly string[] blendNames = Enum.GetNames(typeof(BlendMode));
     }
 
-    /*
-            _Color("Color", Color) = (1,1,1,1)
-            _MainTex("Main Texture", 2D) = "white" {}
-            _SecondTexture("Blend Texture", 2D) = "white" {}
-            _NormalTexture("Blend Texture", 2D) = "white" {}
-
-            _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
-
-            [ToggleOff] _EnableSpecular("Fog", Float) = 1.0
-            [ToggleOff] _EnableFog("Fog", Float) = 1.0
-            [ToggleOff] _EnableDarken("Darken", Float) = 1.0
-
-            _BumpScale("Scale", Float) = 1.0
-            _Specular("Specular Factor", float) = 3
-            _SpecularDir("Specular Dir", Vector) = (0,0,-1,0)
-
-            [Enum(UV0, 0, UV1, 1)] _UVSec("UV Set for secondary textures", Float) = 0
-
-            // Blending state
-            [HideInInspector] _Mode("__mode", Float) = 0.0
-            [HideInInspector] _SrcBlend("__src", Float) = 1.0
-            [HideInInspector] _DstBlend("__dst", Float) = 0.0
-            [HideInInspector] _ZWrite("__zw", Float) = 1.0
-
-            _StencilMask("Stencil Mask", int) = 5
-    */
-    MaterialProperty mp_color;
     MaterialProperty mp_mainTexture;
     MaterialProperty mp_blendTexture;
     MaterialProperty mp_normalTexture;
@@ -109,42 +72,43 @@ internal class ScenaryShaderGUI : ShaderGUI {
     MaterialProperty mp_enableSpecular;
     MaterialProperty mp_enableFog;
     MaterialProperty mp_enableDarken;
+    MaterialProperty mp_enableAutomaticBlending;
     MaterialProperty mp_normalStrength;
     MaterialProperty mp_specularPower;
     MaterialProperty mp_specularDirection;
-    MaterialProperty mp_UVSec;
+    MaterialProperty mp_darkenPosition;
+    MaterialProperty mp_darkenDistance;
     MaterialProperty mp_blendMode;
+    MaterialProperty mp_overlayColorMode;
 
     MaterialEditor m_MaterialEditor;
     ColorPickerHDRConfig m_ColorPickerHDRConfig = new ColorPickerHDRConfig(0f, 99f, 1 / 99f, 3f);
 
-    WorkflowMode m_WorkflowMode = WorkflowMode.Specular;
-
     bool m_FirstTimeApply = true;
-
 
     //------------------------------------------------------------------------//
     // METHODS																  //
     //------------------------------------------------------------------------//
 
-
     public void FindProperties(MaterialProperty[] props)
     {
-        mp_color = FindProperty("_Color", props);
         mp_mainTexture = FindProperty("_MainTex", props);
         mp_blendTexture = FindProperty("_SecondTexture", props);
         mp_normalTexture = FindProperty("_NormalTex", props);
 
-        mp_cutoff = FindProperty("_Cutoff", props);
+        mp_cutoff = FindProperty("_CutOff", props);
         mp_enableSpecular = FindProperty("_EnableSpecular", props);
         mp_enableFog = FindProperty("_EnableFog", props);
         mp_enableDarken = FindProperty("_EnableDarken", props);
+        mp_enableAutomaticBlending = FindProperty("_AutomaticBlend", props);
         mp_normalStrength = FindProperty("_NormalStrength", props);
         mp_specularPower = FindProperty("_SpecularPower", props);
         mp_specularDirection = FindProperty("_SpecularDir", props);
-        mp_UVSec = FindProperty("_UVSec", props);
+        mp_darkenPosition = FindProperty("_DarkenPosition", props);
+        mp_darkenDistance = FindProperty("_DarkenDistance", props);
 
         mp_blendMode = FindProperty("_Mode", props);
+        mp_overlayColorMode = FindProperty("VertexColor", props);
     }
 
 
@@ -163,52 +127,40 @@ internal class ScenaryShaderGUI : ShaderGUI {
         // Do this before any GUI code has been issued to prevent layout issues in subsequent GUILayout statements (case 780071)
         if (m_FirstTimeApply)
         {
-            MaterialChanged(material, m_WorkflowMode);
+            MaterialChanged(material);
             m_FirstTimeApply = false;
         }
 
         ShaderPropertiesGUI(material);
-
+/*
         if (GUILayout.Button("Reset keywords"))
         {
             material.shaderKeywords = null;
         }
+*/
     }
 
-/*
-    bool HasValidEmissiveKeyword(Material material)
-    {
-        // Material animation might be out of sync with the material keyword.
-        // So if the emission support is disabled on the material, but the property blocks have a value that requires it, then we need to show a warning.
-        // (note: (Renderer MaterialPropertyBlock applies its values to emissionColorForRendering))
-        bool hasEmissionKeyword = material.IsKeywordEnabled("_EMISSION");
-        if (!hasEmissionKeyword && ShouldEmissionBeEnabled(material, emissionColorForRendering.colorValue))
-            return false;
-        else
-            return true;
-    }
-*/
-    static void MaterialChanged(Material material, WorkflowMode workflowMode)
+    static void MaterialChanged(Material material)
     {
 //        material.shaderKeywords = null;
 
         SetupMaterialWithBlendMode(material, (BlendMode)material.GetFloat("_Mode"));
 
-        SetMaterialKeywords(material, workflowMode);
+        SetMaterialKeywords(material);
 
+/*
         string kwl = "";
         foreach (string kw in material.shaderKeywords)
         {
             kwl += kw + ",";
         }
 
-
-
         Debug.Log("Material keywords: " + kwl);
+*/
     }
 
 
-    static void SetMaterialKeywords(Material material, WorkflowMode workflowMode)
+    static void SetMaterialKeywords(Material material)
     {
         // Note: keywords must be based on Material value not on MaterialProperty due to multi-edit & material animation
         // (MaterialProperty value might come from renderer material property block)
@@ -238,33 +190,49 @@ internal class ScenaryShaderGUI : ShaderGUI {
             // Primary properties
             GUILayout.Label(Styles.primaryMapsText, EditorStyles.boldLabel);
 
-            m_MaterialEditor.TexturePropertySingleLine(Styles.mainTextureText, mp_mainTexture, mp_color);
+            m_MaterialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
             if (((BlendMode)material.GetFloat("_Mode") == BlendMode.Cutout))
             {
                 m_MaterialEditor.ShaderProperty(mp_cutoff, Styles.alphaCutoffText.text, MaterialEditor.kMiniTextureFieldLabelIndentLevel + 1);
             }
 
-            //            DoSpecularMetallicArea();
-            m_MaterialEditor.TexturePropertySingleLine(Styles.normalTextureText, mp_normalTexture, mp_normalTexture.textureValue != null ? mp_normalStrength : null);
-//            EditorGUI.BeginChangeCheck();
-            m_MaterialEditor.TextureScaleOffsetProperty(mp_mainTexture);
+            m_MaterialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
+            if (material.GetTexture("_NormalTex") != null)
+            {
+                m_MaterialEditor.ShaderProperty(mp_normalStrength, Styles.normalStrengthText);
+            }
 
             // Blend Texture properties
-            m_MaterialEditor.TexturePropertySingleLine(Styles.blendTextureText, mp_blendTexture);
-            m_MaterialEditor.TextureScaleOffsetProperty(mp_blendTexture);
-            //            m_MaterialEditor.ShaderProperty(mp_UVSec, Styles.uvSetLabel.text);
+            m_MaterialEditor.TextureProperty(mp_blendTexture, Styles.blendTextureText);
+            if (material.GetTexture("_SecondTexture") != null)
+            {
+                m_MaterialEditor.ShaderProperty(mp_enableAutomaticBlending, Styles.automaticBlendingText);
+            }
+
             EditorGUILayout.Space();
             GUILayout.Label(Styles.renderOptions, EditorStyles.boldLabel);
             m_MaterialEditor.ShaderProperty(mp_enableFog, Styles.fogText);
-            m_MaterialEditor.ShaderProperty(mp_enableDarken, Styles.darkenText);
-            m_MaterialEditor.ShaderProperty(mp_enableSpecular, Styles.specularText);
-//            if (material.GetInt)
 
+            m_MaterialEditor.ShaderProperty(mp_enableDarken, Styles.darkenText);
+            if (material.GetInt("_EnableDarken") != 0)
+            {
+                m_MaterialEditor.ShaderProperty(mp_darkenPosition, Styles.darkenPositionText, 1);
+                m_MaterialEditor.ShaderProperty(mp_darkenDistance, Styles.darkenDistanceText, 1);
+            }
+
+            m_MaterialEditor.ShaderProperty(mp_enableSpecular, Styles.specularText);
+            if (material.GetInt("_EnableSpecular") != 0)
+            {
+                m_MaterialEditor.ShaderProperty(mp_specularPower, Styles.specularFactorText, 1);
+                m_MaterialEditor.ShaderProperty(mp_specularDirection, Styles.specularDirText, 1);
+            }
+
+            m_MaterialEditor.ShaderProperty(mp_overlayColorMode, Styles.overlayColorText);
         }
         if (EditorGUI.EndChangeCheck())
         {
             foreach (var obj in mp_blendMode.targets)
-                MaterialChanged((Material)obj, m_WorkflowMode);
+                MaterialChanged((Material)obj);
         }
     }
 
@@ -285,63 +253,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         EditorGUI.showMixedValue = false;
     }
-/*
-    void DoEmissionArea(Material material)
-    {
-        bool showHelpBox = !HasValidEmissiveKeyword(material);
-
-        bool hadEmissionTexture = emissionMap.textureValue != null;
-
-        // Texture and HDR color controls
-        m_MaterialEditor.TexturePropertyWithHDRColor(Styles.emissionText, emissionMap, emissionColorForRendering, m_ColorPickerHDRConfig, false);
-
-        // If texture was assigned and color was black set color to white
-        float brightness = emissionColorForRendering.colorValue.maxColorComponent;
-        if (emissionMap.textureValue != null && !hadEmissionTexture && brightness <= 0f)
-            emissionColorForRendering.colorValue = Color.white;
-
-        // Emission for GI?
-        m_MaterialEditor.LightmapEmissionProperty(MaterialEditor.kMiniTextureFieldLabelIndentLevel + 1);
-
-        if (showHelpBox)
-        {
-            EditorGUILayout.HelpBox(Styles.emissiveWarning.text, MessageType.Warning);
-        }
-    }
-*/
-
-    /*
-        void DoSpecularMetallicArea()
-        {
-            bool hasGlossMap = false;
-            if (m_WorkflowMode == WorkflowMode.Specular)
-            {
-                hasGlossMap = specularMap.textureValue != null;
-                m_MaterialEditor.TexturePropertySingleLine(Styles.specularMapText, specularMap, hasGlossMap ? null : specularColor);
-            }
-            else if (m_WorkflowMode == WorkflowMode.Metallic)
-            {
-                hasGlossMap = metallicMap.textureValue != null;
-                m_MaterialEditor.TexturePropertySingleLine(Styles.metallicMapText, metallicMap, hasGlossMap ? null : metallic);
-            }
-
-            bool showSmoothnessScale = hasGlossMap;
-            if (smoothnessMapChannel != null)
-            {
-                int smoothnessChannel = (int)smoothnessMapChannel.floatValue;
-                if (smoothnessChannel == (int)SmoothnessMapChannel.AlbedoAlpha)
-                    showSmoothnessScale = true;
-            }
-
-            int indentation = 2; // align with labels of texture properties
-            m_MaterialEditor.ShaderProperty(showSmoothnessScale ? smoothnessScale : smoothness, showSmoothnessScale ? Styles.smoothnessScaleText : Styles.smoothnessText, indentation);
-
-            ++indentation;
-            if (smoothnessMapChannel != null)
-                m_MaterialEditor.ShaderProperty(smoothnessMapChannel, Styles.smoothnessMapChannelText, indentation);
-        }
-
-    */
 
     public static void SetupMaterialWithBlendMode(Material material, BlendMode blendMode)
     {
@@ -352,6 +263,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
                 material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
                 material.SetInt("_ZWrite", 1);
+                material.DisableKeyword("CUTOFF");
 //                material.DisableKeyword("_ALPHATEST_ON");
 //                material.DisableKeyword("_ALPHABLEND_ON");
 //                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
@@ -362,26 +274,18 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
                 material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
                 material.SetInt("_ZWrite", 1);
+                material.EnableKeyword("CUTOFF");
 //                material.EnableKeyword("_ALPHATEST_ON");
 //                material.DisableKeyword("_ALPHABLEND_ON");
 //                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
                 material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
-                break;
-            case BlendMode.Fade:
-                material.SetOverrideTag("RenderType", "Transparent");
-                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                material.SetInt("_ZWrite", 0);
-//                material.DisableKeyword("_ALPHATEST_ON");
-//                material.EnableKeyword("_ALPHABLEND_ON");
-//                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
                 break;
             case BlendMode.Transparent:
                 material.SetOverrideTag("RenderType", "Transparent");
                 material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
                 material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                 material.SetInt("_ZWrite", 0);
+                material.DisableKeyword("CUTOFF");
 //                material.DisableKeyword("_ALPHATEST_ON");
 //                material.DisableKeyword("_ALPHABLEND_ON");
 //                material.EnableKeyword("_ALPHAPREMULTIPLY_ON");

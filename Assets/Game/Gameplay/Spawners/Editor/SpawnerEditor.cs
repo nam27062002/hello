@@ -35,8 +35,14 @@ public class SpawnerEditor : Editor {
 	private SerializedProperty m_activationKillTriggersProp = null;
 	private SerializedProperty m_deactivationTriggersProp = null;
 
-	// Warning messages
-	private bool m_repeatedActivationTriggerTypeError = false;
+    private SerializedProperty m_quantityProp = null;
+    private SerializedProperty m_speedFactorRangeProp = null;
+    private SerializedProperty m_scaleProp = null;
+    private SerializedProperty m_spawnTimeProp = null;
+
+
+    // Warning messages
+    private bool m_repeatedActivationTriggerTypeError = false;
 	private bool m_repeatedActivationKillTriggerTypeError = false;
 	private bool m_repeatedDeactivationTriggerTypeError = false;
 	private bool m_incompatibleValuesError = false;
@@ -57,8 +63,13 @@ public class SpawnerEditor : Editor {
 		m_activationKillTriggersProp = serializedObject.FindProperty("m_activationKillTriggers");
 		m_deactivationTriggersProp = serializedObject.FindProperty("m_deactivationTriggers");
 
-		// Do an initial check for errors
-		CheckForErrors();
+        m_quantityProp = serializedObject.FindProperty("m_quantity");
+        m_speedFactorRangeProp = serializedObject.FindProperty("m_speedFactorRange");
+        m_scaleProp = serializedObject.FindProperty("m_scale");
+        m_spawnTimeProp = serializedObject.FindProperty("m_spawnTime");
+
+        // Do an initial check for errors
+        CheckForErrors();
 	}
 
 	/// <summary>
@@ -100,7 +111,8 @@ public class SpawnerEditor : Editor {
 				if (p.boolValue) {	
 					EditorGUILayout.PropertyField(m_maxTierProp, true);
 				}
-			} else if(p.name == m_activationTriggersProp.name) {
+            }
+            else if (p.name == m_activationTriggersProp.name) { 
 				// Draw activation properties
 				EditorGUI.BeginChangeCheck();
 				EditorGUILayout.PropertyField(m_activationTriggersProp, true);
@@ -129,19 +141,75 @@ public class SpawnerEditor : Editor {
 				}
 			}
 
-			else if(p.name == m_activationKillTriggersProp.name) {
+            else if (p.name == m_activationKillTriggersProp.name) { 
 				// Do nothing
 			}
 
-			// Ignore both activation triggers (we're showing them manually)
-			else if(p.name == m_deactivationTriggersProp.name) {
+            // Ignore both activation triggers (we're showing them manually)
+            else if (p.name == m_deactivationTriggersProp.name) { 
 				// Do nothing
 			}
 
 			// Default
 			else {
-				EditorGUILayout.PropertyField(p, true);
-			}
+
+                if (isRangeRegisteredProperty(p))
+                {
+                    EditorGUI.BeginChangeCheck();
+                    EditorGUILayout.PropertyField(p, true);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        SerializedProperty min = p.FindPropertyRelative("min");
+                        SerializedProperty max = p.FindPropertyRelative("max");
+                        if (max.floatValue < min.floatValue)
+                        {
+//                            float t = max.floatValue;
+                            max.floatValue = min.floatValue;
+//                            min.floatValue = t;
+                        }
+                    }
+
+                }
+                else if (isRangeRegisteredProperty(p, true))
+                {
+                    EditorGUI.BeginChangeCheck();
+                    EditorGUILayout.PropertyField(p, true);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        SerializedProperty min = p.FindPropertyRelative("min");
+                        SerializedProperty max = p.FindPropertyRelative("max");
+                        if (max.intValue < min.intValue)
+                        {
+//                            int t = max.intValue;
+                            max.intValue = min.intValue;
+//                            min.intValue = t;
+                        }
+                    }
+
+                }
+                else if (p.name == m_spawnTimeProp.name)
+                {
+                    SerializedProperty min = p.FindPropertyRelative("min");
+                    SerializedProperty max = p.FindPropertyRelative("max");
+                    float ovMin = min.floatValue;
+                    float ovMax = max.floatValue;
+                    EditorGUI.BeginChangeCheck();
+                    EditorGUILayout.PropertyField(p, true);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        if (ovMax == max.floatValue && ovMin != min.floatValue)
+                        {
+                            max.floatValue = min.floatValue;
+                        }
+
+
+                    }
+                }
+                else
+                {
+                    EditorGUILayout.PropertyField(p, true);
+                }
+            }
 		} while(p.NextVisible(false));		// Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
 
 		EditorGUILayout.LabelField("Id: " + m_targetSpawner.GetSpawnerID());
@@ -233,4 +301,14 @@ public class SpawnerEditor : Editor {
 			if(m_incompatibleValuesError) break;
 		}
 	}
+
+    /// <summary>
+    /// Checks for specific Range properties
+    /// </summary>
+    /// 
+    bool isRangeRegisteredProperty(SerializedProperty property, bool isInteger = false)
+    {
+        return isInteger ? (property.name == m_quantityProp.name) : (property.name == m_speedFactorRangeProp.name) || (property.name == m_scaleProp.name);// || (property.name == m_spawnTimeProp.name);
+    }
+
 }

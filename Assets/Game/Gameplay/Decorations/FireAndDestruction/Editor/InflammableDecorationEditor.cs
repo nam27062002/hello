@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 [CustomEditor(typeof(InflammableDecoration))]
+[CanEditMultipleObjects]
 public class InflammableDecorationEditor : Editor {	
 	static private bool m_editFireNodes;
 	static private List<Transform> m_fireNodes;

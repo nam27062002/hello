@@ -31,7 +31,7 @@ Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Additiv
 								
 				#define FOG
 				#define BLEND_TEXTURE
-				#define COLOR_ADDITIVE
+				#define VERTEXCOLOR_ADDITIVE
 //				#define DEBUG								
 				#include "scenary.cginc"
 

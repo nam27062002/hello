@@ -106,7 +106,7 @@ public class Mission {
 		}
 
 		// Create and initialize new objective
-		m_objective = new MissionObjective(m_def, m_typeDef, _targetValue, _singleRun);
+		m_objective = new MissionObjective(this, m_def, m_typeDef, _targetValue, _singleRun);
 		m_objective.OnObjectiveComplete.AddListener(OnObjectiveComplete);
 	}
 

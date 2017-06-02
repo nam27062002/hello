@@ -142,6 +142,13 @@ public class EggRewardInfo : MonoBehaviour {
 		animator.SetTrigger("hide");
 	}
 
+	/// <summary>
+	/// Show everything, no setup!
+	/// </summary>
+	public void Show() {
+		animator.SetTrigger("show");
+	}
+
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
