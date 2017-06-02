@@ -1027,7 +1027,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     {
         get
         {
-#if UNITY_EDITOR
+#if UNITY_EDITOR || true
             return true;
 #else
             ServerManager.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
