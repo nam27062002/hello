@@ -72,7 +72,6 @@ namespace AI {
 		}
 
 		public override void Update() {
-			bool isFalling = m_machine.GetSignal(Signals.Type.FallDown) && !m_pilot.IsActionPressed(Pilot.Action.Jump);
 			if (m_machine.GetSignal(Signals.Type.Panic)) {
 				m_machine.SetSignal(Signals.Type.Warning, true);
 				m_machine.SetSignal(Signals.Type.Danger, true);

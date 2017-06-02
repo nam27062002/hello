@@ -7,6 +7,9 @@ namespace AI {
 		[SeparatorAttribute("Armor")]
 		[SerializeField] private HitsPerDragonTier m_armorDurabilityPerTier;
 
+		[SeparatorAttribute("Ground")]
+		[SerializeField] private Collider[] m_ground;
+
 		private DevicePassengersSpawner m_passengersSpawner;	
 		private Hit m_armorDurability = new Hit();
 		private DragonTier m_minTierToBreak;
@@ -32,6 +35,10 @@ namespace AI {
 			m_passengersSpawner.Respawn();
 			m_passengersSpawner.PassengersEnterDevice();
 
+			for (int i = 0; i < m_ground.Length; ++i) {
+				m_ground[i].isTrigger = false;
+			}
+
 			base.Spawn(_spawner);
 		}
 
@@ -42,6 +49,9 @@ namespace AI {
 						m_armorDurability.count--;
 						if (m_armorDurability.count <= 0) {
 							m_passengersSpawner.PassengersLeaveDevice();
+							for (int i = 0; i < m_ground.Length; ++i) {
+								m_ground[i].isTrigger = true;
+							}
 							SetSignal(Signals.Type.Destroyed, true);
 						}
 						return true;

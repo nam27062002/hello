@@ -20,8 +20,10 @@ public class BreakableBehaviour : MonoBehaviour
 
 
 	private Wobbler m_wobbler;
+	private Collider m_collider;
 	private Vector3 m_initialViewPos;
 
+	private float m_destroyTimer;
 
 	//----------------------------------------------------------------------
 
@@ -39,9 +41,28 @@ public class BreakableBehaviour : MonoBehaviour
 		m_remainingHits = m_hitCount;
 
 		if (m_wobbler == null)
-			m_wobbler = GetComponent<Wobbler>();
-
+			m_wobbler = GetComponent<Wobbler>();		
 		m_wobbler.enabled = false;
+
+		if (m_collider == null)
+			m_collider = GetComponent<Collider>();
+		m_collider.isTrigger = false;
+
+		m_view.gameObject.SetActive(true);
+
+		m_destroyTimer = 0f;
+	}
+
+	void Update() {
+		if (m_destroyTimer > 0f) {
+			m_destroyTimer -= Time.deltaTime;
+			if (m_destroyTimer <= 0f) {
+				gameObject.SetActive(false);
+				if (m_destroyOnBreak) {			
+					Destroy(gameObject);
+				}
+			}
+		}
 	}
 
 	void OnCollisionEnter(Collision collision) {
@@ -109,13 +130,13 @@ public class BreakableBehaviour : MonoBehaviour
 			dragonMotion.AddForce( pushVector, false );
 		}
 		dragonMotion.NoDamageImpact();
-		
+
+		// don't destroy them yet, first change the collider to trigger to throw the "on collision exit message"
+		m_collider.isTrigger = true;
+		m_view.gameObject.SetActive(false);
 
 		// Destroy
-		gameObject.SetActive(false);
-		if (m_destroyOnBreak) {			
-			Destroy(gameObject);
-		}
+		m_destroyTimer = 0.15f;
 	}
 
 	public void Shake() {
