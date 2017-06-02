@@ -183,7 +183,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 			m_particleController.WingsEvent();
 		if (!string.IsNullOrEmpty(m_wingsStrongFlap))
 		{
-			m_wingsStrongFlapAO = AudioController.Play(m_wingsStrongFlap, transform, 0.3f);
+			m_wingsStrongFlapAO = AudioController.Play(m_wingsStrongFlap, transform);
 		}
 	}
 

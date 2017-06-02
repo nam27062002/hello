@@ -125,13 +125,12 @@ public class LoadingSceneController : SceneController {
 
     public static void SetSavedLanguage()
     {
+		// Load set language from preferences
         string strLanguageSku = PlayerPrefs.GetString(PopupSettings.KEY_SETTINGS_LANGUAGE);
-
         if (string.IsNullOrEmpty(strLanguageSku))
         {
-			// [AOC] TEMP!! Disable for the playtest, use english instead
-            //strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
-			strLanguageSku = "lang_english";
+			// No language was defined, load default system language
+			strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
         }
 
         LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
