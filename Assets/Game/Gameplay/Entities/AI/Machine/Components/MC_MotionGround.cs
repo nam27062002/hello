@@ -124,7 +124,7 @@ namespace AI {
 					}
 				}
 
-				m_onGround = false;
+				//m_onGround = false;
 			}
 		}
 
@@ -164,19 +164,8 @@ namespace AI {
 			}
 		}
 
-		protected override void ExtendedUpdateFreeFall() {
-			m_fallTimer -= Time.deltaTime;
-			if (m_fallTimer <= 0f) {
-				m_heightFromGround = 0f;
-				m_viewControl.Height(0f);
-				m_onGround = true;
-			} else {
-				float dY = Mathf.Abs(lastPosition.y - position.y);
-				if (dY > Mathf.Epsilon) {
-					m_fallTimer = FREE_FALL_THRESHOLD;
-				}
-			}
 
+		protected override void ExtendedUpdateFreeFall() {
 			if (m_onGround) {
 				m_fallTimer = FREE_FALL_THRESHOLD;
 				m_machine.SetSignal(Signals.Type.FallDown, false);

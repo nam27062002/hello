@@ -533,7 +533,7 @@ namespace AI {
 				return false;
 			if (m_isHolded)
 				return false;
-			if ( m_pilot.IsActionPressed(Pilot.Action.Latching) )
+			if (m_pilot.IsActionPressed(Pilot.Action.Latching))
 				return false;
 
 			return true;
@@ -631,6 +631,9 @@ namespace AI {
 		// Debug
 		void OnDrawGizmosSelected() {
 			if (m_sensor != null) {
+				if (m_transform == null) {
+					m_transform = transform;
+				}
 				m_sensor.OnDrawGizmosSelected(m_transform);
 			}
 		}

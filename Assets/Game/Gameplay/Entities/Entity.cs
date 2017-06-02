@@ -191,12 +191,12 @@ public class Entity : IEntity {
 			newReward.coins = 0;
 		}
 
-		if (_burnt){
+		if (_burnt) {
 			newReward.alcohol = 0;
 		}
 
 		// Give PC?
-		if(!m_isPC) {
+		if (!m_isPC) {
 			newReward.pc = 0;
 		}
 

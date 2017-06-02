@@ -144,7 +144,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	private void SetCollisionsEnabled(bool _value) {
 		Collider[] colliders = m_colliderHolder.GetComponents<Collider>();
 		for (int c = 0; c < colliders.Length; c++) {
-			colliders[c].enabled = _value;
+			colliders[c].isTrigger = !_value;
 		}
 	}
 }
