@@ -1040,7 +1040,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     {
         get
         {
-            return true;
+            // Disabled since it's a temporary tracking that is used only for play test
+            return false;
         }
     }
 
