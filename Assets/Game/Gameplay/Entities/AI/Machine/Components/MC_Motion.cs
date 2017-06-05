@@ -413,6 +413,7 @@ namespace AI {
 					m_rbody.isKinematic = false;
 					m_rbody.detectCollisions = true;	
 					m_viewControl.Scared(false);
+					OnCollisionGroundExit(null);
 					break;
 
 				case State.Panic:

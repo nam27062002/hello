@@ -257,15 +257,12 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		}
 
 		// Coins
-		if(m_coinsFeedbackPrefab != null && _reward.coins > 0) {	// if its no coin
-			if ( _entity == null || _entity.GetComponent<Entity>().sku != "GoodJunkCoin" )	//if already a Coin we don't show feedback
-			{
-	            CacheItemData itemData = m_cacheDatas[ECacheTypes.Coins].GetCacheItemDataAvailable();
-	            if (itemData != null)
-	            {
-	                itemData.Spawn(CacheWatch.ElapsedMilliseconds, worldPos, _reward.score);                
-	            }
-            }           
+		if(m_coinsFeedbackPrefab != null && _reward.coins > 0 && ((_reward.origin != null && _reward.origin.CompareTo("GoodJunkCoin") != 0 && _reward.origin.CompareTo("letter") != 0) || _reward.origin == null )) {	// if its no coin
+            CacheItemData itemData = m_cacheDatas[ECacheTypes.Coins].GetCacheItemDataAvailable();
+            if (itemData != null)
+            {
+                itemData.Spawn(CacheWatch.ElapsedMilliseconds, worldPos, _reward.coins);                
+            }
 		}
 
 		// PC

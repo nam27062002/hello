@@ -14,7 +14,11 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
+	[SeparatorAttribute("Spawner")]
 	[SerializeField] private float m_spawnTime;
+
+	[SeparatorAttribute("Ground")]
+	[SerializeField] private Collider[] m_ground;
 
 
 	private State m_state;
@@ -124,9 +128,14 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
     public void ForceRemoveEntities() {}
     public void ForceReset() {}
 
-    public void StartRespawn() {
+    public void StartRespawn() {		
 		// Program the next spawn time
 		m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime;
+
+		for (int i = 0; i < m_ground.Length; ++i) {
+			m_ground[i].isTrigger = true;
+		}
+
 		m_state = State.Respawning;
 	}        
 
@@ -171,6 +180,11 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		foreach (Initializable component in components) {
 			component.Initialize();
 		}
+
+		for (int i = 0; i < m_ground.Length; ++i) {
+			m_ground[i].isTrigger = false;
+		}
+
 		m_state = State.Idle;
 	}
 

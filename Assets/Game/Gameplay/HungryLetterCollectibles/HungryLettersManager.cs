@@ -73,6 +73,7 @@ public class HungryLettersManager : MonoBehaviour
 	protected void Awake()
 	{
 		Init ();
+		m_reward.origin = "letter";
 	}
 
 	protected void Init(){

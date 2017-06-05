@@ -103,8 +103,14 @@ namespace AI {
 		}
 
 		protected override void ExtendedFixedUpdate() {
+			Vector3 gravityDir = Vector3.down;
+
+			if (m_onGround) {
+				gravityDir = -m_groundNormal;
+			}
+
 			if (m_checkCollisions) {
-				m_gravity += -m_groundNormal * GRAVITY * Time.fixedDeltaTime;
+				m_gravity += gravityDir * GRAVITY * Time.fixedDeltaTime;
 			} else {
 				m_gravity = Vector3.zero;
 			}
@@ -236,27 +242,26 @@ namespace AI {
 		}
 
 		public override void OnCollisionGroundStay(Collision _collision) {
+			Vector3 groundNormal = Vector3.zero;
 			for (int i = 0; i < _collision.contacts.Length; i++) {
-				Vector3 hitPoint = _collision.contacts[i].point;
-				float error = (hitPoint - position).sqrMagnitude;
-
-				if (error <= 0.3f) {					
-					m_groundNormal = _collision.contacts[i].normal;
-					m_groundDirection = Vector3.Cross(Vector3.back, m_groundNormal);
-
-					m_gravity = Vector3.zero;
-
-					m_heightFromGround = 0f;
-					m_viewControl.Height(0f);
-
-					m_onGround = true;
-					break;
-				}
+				groundNormal += _collision.contacts[i].normal;
 			}
+			groundNormal.Normalize();
+			m_groundNormal = m_groundNormal * 0.25f + groundNormal * 0.75f;
+			m_groundNormal.Normalize();
+			m_groundDirection = Vector3.Cross(Vector3.back, m_groundNormal);
+
+			m_gravity = Vector3.zero;
+
+			m_heightFromGround = 0f;
+			m_viewControl.Height(0f);
+
+			m_onGround = true;
 		}
 
 		public override void OnCollisionGroundExit(Collision _collision) {
 			m_onGround = false;
+
 			m_heightFromGround = 100f;
 			m_viewControl.Height(100f);
 		}
