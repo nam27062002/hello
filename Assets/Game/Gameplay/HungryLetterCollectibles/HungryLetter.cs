@@ -51,6 +51,11 @@ public class HungryLetter : MonoBehaviour
 		{
 			return;
 		}
+		if (m_letterManager.IsLetterCollected(m_letter))
+		{
+			return;
+		}
+
 		// notify that this letter has been collected.
 		m_letterManager.LetterCollected(this);
 		// disable the collider.
