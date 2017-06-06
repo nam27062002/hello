@@ -226,7 +226,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 			if (m_fireSprite != null) {
 				m_fireSprite.GetComponentInChildren<Animator>(false).SetBool("burn", true);
 				m_fireSprite.transform.position = transform.position;
-				m_fireSprite.transform.localScale = transform.localScale * Random.Range( 0.55f, 1.45f);
+				m_fireSprite.transform.localScale = transform.localScale * Random.Range( 1.0f, 1.5f);
 				m_fireSprite.transform.localRotation = transform.localRotation;
 			}
 		}
