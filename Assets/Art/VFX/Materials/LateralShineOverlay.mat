@@ -6,12 +6,12 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: ShineRays2Overlay
+  m_Name: LateralShineOverlay
   m_Shader: {fileID: 4800000, guid: e2e52a5da952247b0a2b911f92db4e3c, type: 3}
   m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
     GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -19,13 +19,16 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 7ac2dd90d0765b747839fdf2bc811a6c, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1bf20a26ca2cae449af7673e79305cbe, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
         name: _ZTest
       second: 6
+    - first:
+        name: _emissive
+      second: 1
     m_Colors:
     - first:
         name: _TintColor
