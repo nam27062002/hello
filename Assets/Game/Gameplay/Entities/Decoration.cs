@@ -52,7 +52,8 @@ public class Decoration : IEntity {
 		m_minTierDestructionFeedback 	= (DragonTier)m_def.GetAsInt("minTierDestructionFeedback", (int)DragonTier.COUNT);
 		m_minTierDestruction			= (DragonTier)m_def.GetAsInt("minTierDestruction", (int)DragonTier.COUNT);
 
-		m_minTierDisintegrate = DragonTier.TIER_3;
+		//m_minTierDisintegrate = DragonTier.TIER_3;
+		m_minTierDisintegrate =(DragonTier)m_def.GetAsInt("minTierDisintegrate", (int)DragonTier.COUNT);
 
 		m_maxHealth = 1f;
 	}
