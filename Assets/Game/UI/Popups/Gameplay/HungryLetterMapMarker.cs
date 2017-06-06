@@ -24,6 +24,8 @@ public class HungryLetterMapMarker : MapMarker {
 		bool isLetterCollected = m_hungryLetter.GetHungryLettersManager ().IsLetterCollected ( m_hungryLetter.letter );
 		if ( isLetterCollected )
 			showMarker = false;
+		else
+			showMarker = true;
 	}
 
 	private void OnCollectedHungryLetter( Reward _r )
