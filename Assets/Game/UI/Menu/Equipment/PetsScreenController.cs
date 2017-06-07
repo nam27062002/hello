@@ -134,6 +134,12 @@ public class PetsScreenController : MonoBehaviour {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
+		// Disable all pills to prevent the OnEnable being called on all of them at once next time we enter the screen
+		for(int i = 0; i < m_pills.Count; ++i) {
+			m_pills[i].animator.ForceHide(false);
+			m_pills[i].gameObject.SetActive(false);
+		}
+
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
@@ -233,8 +239,8 @@ public class PetsScreenController : MonoBehaviour {
 		// Do a first refresh - without animation
 		Refresh(false);
 
-		// Show the pills!
-		ShowPills();
+		// Initialize the pills!
+		InitPillsWithDragonData();
 	}
 
 	/// <summary>
@@ -371,7 +377,8 @@ public class PetsScreenController : MonoBehaviour {
 			// Instantiate pill
 			GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, m_scrollList.content, false);
 			m_pills.Add(newPillObj.GetComponent<PetPill>());
-			m_pills[i].animator.ForceHide(false);	// Start hidden
+			m_pills[i].animator.ForceHide(false);	// Start hidden and disabled
+			m_pills[i].gameObject.SetActive(false);
 
 			// React if the pill is tapped!
 			m_pills[i].OnPillTapped.AddListener(OnPillTapped);
@@ -386,14 +393,9 @@ public class PetsScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Show and initialize all the pills, and create new ones if needed.
+	/// Initialize all the pills with current dragon data, and create new ones if needed.
 	/// </summary>
-	private void ShowPills() {
-		// Hide all pills
-		for(int i = 0; i < m_pills.Count; i++) {
-			m_pills[i].animator.ForceHide(false);	// Force to interrupt any running hide animation (if the popup was closed and reopened very fast) 
-		}
-
+	private void InitPillsWithDragonData() {
 		// Initialize one pill for each pet
 		for(int i = 0; i < m_defs.Count; i++) {
 			// If we don't have enough pills, instantiate new ones
@@ -410,14 +412,6 @@ public class PetsScreenController : MonoBehaviour {
 
 			// Initialize pill
 			m_pills[i].Init(m_defs[i], m_dragonData);
-
-			// Show with a nice animation
-			// Check filters to see whether this pet must be shown or not
-			if(petFilters.CheckFilter(m_pills[i].def)) {
-				// Restart animation when showing
-				m_pills[i].animator.tweenDelay = 0f;
-				m_pills[i].animator.RestartShow();
-			}
 		}
 	}
 
