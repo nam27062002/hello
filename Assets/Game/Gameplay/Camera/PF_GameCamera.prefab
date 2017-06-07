@@ -12,12 +12,10 @@ GameObject:
   - component: {fileID: 12481626}
   - component: {fileID: 9212364}
   - component: {fileID: 8136056}
-  - component: {fileID: 11486938}
   - component: {fileID: 11447402}
   - component: {fileID: 114000011327172364}
   - component: {fileID: 114000011558897754}
   - component: {fileID: 114911447019432680}
-  - component: {fileID: 114728181362819458}
   - component: {fileID: 114877917579243700}
   - component: {fileID: 114776725440998684}
   m_Layer: 0
@@ -105,20 +103,6 @@ MonoBehaviour:
   m_superFireColor: {r: 0.042225357, g: 0.52205884, b: 0.3036518, a: 1}
   m_starvingColor: {r: 0.7058823, g: 0, b: 0, a: 1}
   m_material: {fileID: 2100000, guid: 61a60bd291fc348e398d551143f6b9ed, type: 2}
---- !u!114 &11486938
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 101152}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77e0c772f84704359baf1e78af46db60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shader: {fileID: 4800000, guid: e9ba2083ad114a07d000fbfb8d76c639, type: 3}
-  blurAmount: 0.8
-  extraBlur: 0
 --- !u!124 &12481626
 Behaviour:
   m_ObjectHideFlags: 1
@@ -358,6 +342,7 @@ MonoBehaviour:
   m_refCamera: {fileID: 2055932}
   m_collisionReplacementShader: {fileID: 4800000, guid: 13e9ed0c2439a45e483c113bffde0e61,
     type: 3}
+  m_resolutionFactor: 0.25
 --- !u!114 &114000011098854082
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -458,23 +443,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TurnSpeed: 10
   m_MoveSpeed: 10
---- !u!114 &114728181362819458
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 101152}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b2854bce623d0c44978254dab903414, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Tint: {r: 1, g: 1, b: 1, a: 1}
-  m_Tint2: {r: 1, g: 1, b: 1, a: 1}
-  timeDecay: 2
-  m_shader: {fileID: 4800000, guid: dd36d0c2ae0fac84dbb7ef8e357fcb03, type: 3}
-  m_TexelOffset: 2
-  m_LensOffset: 0.5
 --- !u!114 &114776725440998684
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -488,6 +456,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_refCamera: {fileID: 0}
   m_collisionReplacementShader: {fileID: 0}
+  m_resolutionFactor: 0.25
 --- !u!114 &114877917579243700
 MonoBehaviour:
   m_ObjectHideFlags: 1
