@@ -29,8 +29,8 @@ public class HUDMegaFireSlot : MonoBehaviour {
 	}
 
 	public void CreatePools() {
-		ParticleManager.CreatePool(m_burstParticle);
-		ParticleManager.CreatePool(m_consumeParticle);
+		m_burstParticle.CreatePool();
+		m_consumeParticle.CreatePool();
 	}
 
 	public void Empty() {
@@ -41,10 +41,7 @@ public class HUDMegaFireSlot : MonoBehaviour {
 	public void Fill() {
 		m_delta = 1f / 0.25f;
 
-		GameObject go = ParticleManager.Spawn(m_burstParticle);
-		if (go != null) {
-			go.transform.SetParent(transform, false);
-		}
+		m_burstParticle.Spawn(transform);
 
 		m_state = State.Fill;
 	}
@@ -66,9 +63,8 @@ public class HUDMegaFireSlot : MonoBehaviour {
 					m_consumeEffect = null;
 				}
 			} else if (m_state != State.Consume) {
-				m_consumeEffect = ParticleManager.Spawn(m_consumeParticle);
+				m_consumeEffect = m_consumeParticle.Spawn(transform);
 				if (m_consumeEffect != null) {
-					m_consumeEffect.transform.SetParent(transform, false);
 					m_consumeEffect.GetComponent<DisableInSeconds>().enabled = false;
 				}
 				m_state = State.Consume;

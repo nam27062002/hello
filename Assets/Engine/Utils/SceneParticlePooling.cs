@@ -163,6 +163,8 @@ public class SceneParticlePooling : MonoBehaviour
     public Transform m_cullingCenter;
     public float m_cullingRadius = 10;
 
+	private ParticleHandler m_handler;
+
     /// <summary>
     /// Parent of all particle systems. If null then this.gameObject is used instead
     /// </summary>
@@ -192,7 +194,7 @@ public class SceneParticlePooling : MonoBehaviour
             IsPaused = true;
             BoundingSphere = new BoundingSphere(m_cullingCenter.position, m_cullingRadius);
 
-            ParticleManager.CreatePool(m_particle);
+			m_handler = ParticleManager.CreatePool(m_particle);
         }
     }
 
@@ -232,7 +234,7 @@ public class SceneParticlePooling : MonoBehaviour
             IsPaused = true;
 			if ( m_particleInstance != null )
 			{
-				ParticleManager.ReturnInstance( m_particleInstance.gameObject);
+				m_handler.ReturnInstance(m_particleInstance.gameObject);
 				m_particleInstance = null;
 			}
         }
@@ -245,7 +247,7 @@ public class SceneParticlePooling : MonoBehaviour
             IsPaused = false;
 			if ( m_particleInstance == null )
 			{
-				m_particleInstance = ParticleManager.Spawn(m_particle);
+				m_particleInstance = m_handler.Spawn(m_particle);
 				if (m_particleInstance != null) {
 					// As children of ourselves
 					// Particle system should already be created to match the zero position

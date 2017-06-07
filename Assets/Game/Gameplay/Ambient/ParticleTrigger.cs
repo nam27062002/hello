@@ -5,8 +5,7 @@ using UnityEngine;
 public class ParticleTrigger : MonoBehaviour {
 
 	public ParticleData m_particle;
-	public enum TriggerEvent
-	{
+	public enum TriggerEvent {
 		Enter,
 		Exit,
 		Both
@@ -14,9 +13,11 @@ public class ParticleTrigger : MonoBehaviour {
 	public TriggerEvent m_event;
 	private Collider m_collider;
 
-	void Start()
+	private ParticleHandler m_handler;
+
+	void Start() 
 	{
-		ParticleManager.CreatePool(m_particle);
+		m_handler = ParticleManager.CreatePool(m_particle);
 		m_collider = GetComponent<Collider>();
 	}
 
@@ -39,7 +40,7 @@ public class ParticleTrigger : MonoBehaviour {
 	private void SpawnParticle(Collider other)
 	{
 		Vector3 position = m_collider.ClosestPointOnBounds( other.transform.position);
-		GameObject go = ParticleManager.Spawn(m_particle, position);
+		GameObject go = m_handler.Spawn(m_particle, position);
 		if (go != null) {
 			go.transform.rotation = other.transform.rotation;
 		}

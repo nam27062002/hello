@@ -31,7 +31,7 @@ namespace AI {
 		protected override void ExtendedUpdate() {
 			if (!m_faceDirection) {
 				m_direction = (m_pilot.direction.x >= 0)? Vector3.right : Vector3.left;
-			} else if (m_pilot.IsActionPressed(Pilot.Action.Stop)) {
+			} else if (m_pilot.IsActionPressed(Pilot.Action.Stop | Pilot.Action.Attack)) {
 				m_direction = m_pilot.direction;
 			} else {
 				m_direction = m_velocity.normalized;

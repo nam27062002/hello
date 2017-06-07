@@ -22,7 +22,7 @@ public class ViewParticleSpawner : MonoBehaviour {
 		m_particleSytems = new GameObject[m_particleDatas.Length];
 
 		for (int i = 0; i < m_particleDatas.Length; ++i) {
-			ParticleManager.CreatePool(m_particleDatas[i]);
+			m_particleDatas[i].CreatePool();
 		}
 
 		m_spawned = false;
@@ -51,12 +51,7 @@ public class ViewParticleSpawner : MonoBehaviour {
 	
 	void Spawn() {
 		for (int i = 0; i < m_particleDatas.Length; ++i) {
-			m_particleSytems[i] = ParticleManager.Spawn(m_particleDatas[i]);
-			if (m_particleSytems[i] != null) {
-				Transform t = m_particleSytems[i].transform;
-				t.SetParent(m_parent, false);
-				t.localPosition = Vector3.zero;
-			}
+			m_particleSytems[i] = m_particleDatas[i].Spawn(m_parent);
 		}
 
 		m_spawned = true;
@@ -65,7 +60,7 @@ public class ViewParticleSpawner : MonoBehaviour {
 	void Return() {
 		for (int i = 0; i < m_particleSytems.Length; ++i) {
 			if (m_particleSytems[i] != null) {
-				ParticleManager.ReturnInstance(m_particleSytems[i]);
+				m_particleDatas[i].ReturnInstance(m_particleSytems[i]);
 			}
 			m_particleSytems[i] = null;
 		}

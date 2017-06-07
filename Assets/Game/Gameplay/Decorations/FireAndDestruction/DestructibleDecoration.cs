@@ -45,12 +45,11 @@ public class DestructibleDecoration : Initializable {
 
 
 
-
 	//-------------------------------------------------------------------------------------------//
 	// Use this for initialization
 	void Start() {		
-		ParticleManager.CreatePool(m_feedbackParticle);
-		ParticleManager.CreatePool(m_destroyParticle);
+		m_feedbackParticle.CreatePool();
+		m_destroyParticle.CreatePool();
 	}
 
 	/// <summary>
@@ -148,12 +147,11 @@ public class DestructibleDecoration : Initializable {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (_other.contacts.Length > 0) {
 						ContactPoint contact = _other.contacts[0];
-						if (m_feedbackParticle.IsValid()) {
-							GameObject ps = ParticleManager.Spawn (m_feedbackParticle, contact.point - (m_collider.center - m_colliderCenter) + m_feedbackParticle.offset);
-							if (ps != null) {
-								if (m_particleFaceDragonDirection) {
-									FaceDragon(ps);
-								}
+
+						GameObject ps = m_feedbackParticle.Spawn(contact.point - (m_collider.center - m_colliderCenter) + m_feedbackParticle.offset);
+						if (ps != null) {
+							if (m_particleFaceDragonDirection) {
+								FaceDragon(ps);
 							}
 						}
 					}
@@ -167,7 +165,8 @@ public class DestructibleDecoration : Initializable {
 			if (!m_breath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (m_effect == ZoneManager.ZoneEffect.S) {
-						if (m_feedbackParticle.IsValid()) {
+						GameObject ps = m_feedbackParticle.Spawn();
+						if (ps != null) {
 							Vector3 particlePosition = transform.position + m_colliderCenter;
 							particlePosition.y = _other.transform.position.y;
 
@@ -176,23 +175,21 @@ public class DestructibleDecoration : Initializable {
 							} else {
 								particlePosition.x -= m_collider.size.x * 0.5f;
 							}
-							GameObject ps = ParticleManager.Spawn(m_feedbackParticle, particlePosition + m_feedbackParticle.offset);
-							if (ps != null) {
-								if (m_particleFaceDragonDirection) {
-									FaceDragon(ps);
-								}
+
+							ps.transform.position = particlePosition + m_feedbackParticle.offset;
+
+							if (m_particleFaceDragonDirection) {
+								FaceDragon(ps);
 							}
 						}
-
+					
 						if ( !string.IsNullOrEmpty(m_onFeedbackAudio) )
 							AudioController.Play(m_onFeedbackAudio, transform.position + m_colliderCenter);
 					} else {
-						if (m_destroyParticle.IsValid()) {
-							GameObject ps = ParticleManager.Spawn(m_destroyParticle, transform.position + m_destroyParticle.offset);
-							if (ps != null) {
-								if (m_particleFaceDragonDirection) {
-									FaceDragon(ps);
-								}
+						GameObject ps = m_destroyParticle.Spawn(transform.position + m_destroyParticle.offset);
+						if (ps != null) {
+							if (m_particleFaceDragonDirection) {
+								FaceDragon(ps);
 							}
 						}
 
@@ -241,12 +238,10 @@ public class DestructibleDecoration : Initializable {
 							particlePosition.x -= m_collider.size.x * 0.5f;
 						}
 
-						if ( m_feedbackParticle.IsValid()) {
-							GameObject ps = ParticleManager.Spawn(m_feedbackParticle, particlePosition + m_feedbackParticle.offset);
-							if (ps != null) {
-								if (m_particleFaceDragonDirection) {
-									FaceDragon(ps);
-								}
+						GameObject ps = m_feedbackParticle.Spawn(particlePosition + m_feedbackParticle.offset);
+						if (ps != null) {
+							if (m_particleFaceDragonDirection) {
+								FaceDragon(ps);
 							}
 						}
 

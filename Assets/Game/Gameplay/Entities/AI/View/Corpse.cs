@@ -64,6 +64,8 @@ public class Corpse : MonoBehaviour {
 				}
 			}
 		}
+
+		m_blood.CreatePool();
 	}
 
 	void OnDisable() {
@@ -90,7 +92,7 @@ public class Corpse : MonoBehaviour {
 
 			if (!string.IsNullOrEmpty(m_blood.name) && m_bloodPoints != null) {
 				for (int i = 0; i < m_bloodPoints.Length; i++) {
-					GameObject ps = ParticleManager.Spawn(m_blood.name, Vector3.zero, m_blood.path);
+					GameObject ps = m_blood.Spawn();
 
 					if (ps != null) {
 						FollowTransform ft = ps.GetComponent<FollowTransform>();
