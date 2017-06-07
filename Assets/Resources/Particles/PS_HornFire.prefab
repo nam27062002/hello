@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 198283667058192968}
   - component: {fileID: 199781911895058382}
   - component: {fileID: 114659758775824988}
+  - component: {fileID: 114223847754417464}
   m_Layer: 0
   m_Name: PS_HornFire
   m_TagString: Untagged
@@ -42,6 +43,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -134.543, y: -2.1789856, z: -0.0069885254}
+--- !u!114 &114223847754417464
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1742514729165746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114659758775824988
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -55,6 +67,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
 --- !u!198 &198283667058192968
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -63,7 +76,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1742514729165746}
   serializedVersion: 5
   lengthInSec: 0.1
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 1
   playOnAwake: 1

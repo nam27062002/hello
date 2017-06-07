@@ -53,10 +53,12 @@ public class DragonBreath2 : MonoBehaviour
     public Color m_collisionColor;
 
 
+	private ParticleHandler m_collisionFireHandler;
+
     // Use this for initialization
     void Start () 
 	{
-        ParticleManager.CreatePool(m_collisionFirePrefab, "Fire&Destruction/_PrefabsWIP/FireEffects/");
+		m_collisionFireHandler = ParticleManager.CreatePool(m_collisionFirePrefab, "Fire&Destruction/_PrefabsWIP/FireEffects/");
 
         Transform t = transform;
         m_whipEnd = t.FindTransformRecursive("WhipEnd");
@@ -116,7 +118,7 @@ public class DragonBreath2 : MonoBehaviour
         {
             if (Time.time > m_lastTime + m_collisionFireDelay)
             {
-                GameObject colFire = ParticleManager.Spawn(m_collisionFirePrefab, hit.point, "Fire&Destruction/_PrefabsWIP/FireEffects/");
+				GameObject colFire = m_collisionFireHandler.Spawn(null, hit.point);
                 if (colFire != null)
                 {
                     colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);

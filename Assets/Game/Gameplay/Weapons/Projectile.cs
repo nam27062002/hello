@@ -106,14 +106,12 @@ public class Projectile : MonoBehaviour, IProjectile {
 		if (m_damageType == DamageType.EXPLOSION || m_damageType == DamageType.MINE) {
 			m_explosive = new Explosive(false, m_defaultDamage, m_radius, 0f, m_onHitParticle);
 		} else {
-			if (m_onHitParticle.IsValid()) {
-				ParticleManager.CreatePool(m_onHitParticle);
-			}
+			m_onHitParticle.CreatePool();
 		}
 
-		if (m_onChargeParticle.IsValid()) 	ParticleManager.CreatePool(m_onChargeParticle);
-		if (m_onAttachParticle.IsValid()) 	ParticleManager.CreatePool(m_onAttachParticle);
-		if (m_onEatParticle.IsValid()) 		ParticleManager.CreatePool(m_onEatParticle);
+		m_onChargeParticle.CreatePool();
+		m_onAttachParticle.CreatePool();
+		m_onEatParticle.CreatePool();
 
 		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
@@ -157,14 +155,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 			m_explosive.damage = m_defaultDamage;
 		}
 
-		if (m_onAttachParticle.IsValid()) {
-			GameObject go = ParticleManager.Spawn(m_onAttachParticle);
-			if (go != null) {
-				go.transform.parent = _parent;
-				go.transform.position = Vector3.zero;
-				go.transform.localPosition = m_onAttachParticle.offset;
-			}
-		}
+		m_onAttachParticle.Spawn(_parent, m_onAttachParticle.offset);
 
 		//wait until the projectil is shot
 		m_state = State.Idle;
@@ -235,14 +226,11 @@ public class Projectile : MonoBehaviour, IProjectile {
 		m_homingTimer = 0.25f;
 
 		m_elapsedTime = 0f;
-		if (m_chargeTime > 0f) {
-			if (m_onChargeParticle.IsValid()) {
-				ParticleManager.Spawn(m_onChargeParticle, m_position);
-			}
+		if (m_chargeTime > 0f) {			
+			m_onChargeParticle.Spawn(m_position);
 
 			m_timer = m_chargeTime;
 			m_state = State.Charging;
-
 		} else {
 			m_timer = m_maxTime;
 			m_state = State.Shot;
@@ -366,9 +354,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	}
 
 	public void OnEaten() {		
-		if (m_onEatParticle.IsValid()) {
-			ParticleManager.Spawn(m_onEatParticle, m_position + m_onEatParticle.offset);
-		}
+		m_onEatParticle.Spawn(m_position + m_onEatParticle.offset);
 
 		if (m_entity != null) {
 			if (EntityManager.instance != null)	{
@@ -400,10 +386,8 @@ public class Projectile : MonoBehaviour, IProjectile {
 				InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, transform);
 			}
 
-			if (m_missHitSpawnsParticle || _triggeredByPlayer) {
-				if (m_onHitParticle.IsValid()) {
-					ParticleManager.Spawn(m_onHitParticle, m_position + m_onHitParticle.offset);
-				}
+			if (m_missHitSpawnsParticle || _triggeredByPlayer) {				
+				m_onHitParticle.Spawn(m_position + m_onHitParticle.offset);
 			}
 		}
 

@@ -48,6 +48,15 @@ public class MenuDragonLoader : MonoBehaviour {
 		}
 	}
 
+	[SerializeField] private string m_disguiseSku = "";
+	public string disguiseSku {
+		get { return m_disguiseSku; }
+		set {
+			m_disguiseSku = value;
+			RefreshDragon();
+		}
+	}
+
 	[Space]
 	[HideEnumValues(false, true)]
 	[SerializeField] private MenuDragonPreview.Anim m_anim = MenuDragonPreview.Anim.IDLE;
@@ -131,10 +140,19 @@ public class MenuDragonLoader : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Load the dragon with the given sku.
+	/// Load the dragon with the given sku and its default disguise.
 	/// </summary>
 	/// <param name="_sku">The sku of the dragon to be loaded</param>
 	public void LoadDragon(string _sku) {
+		LoadDragon(_sku, string.Empty);
+	}
+
+	/// <summary>
+	/// Load the dragon with the given sku.
+	/// </summary>
+	/// <param name="_sku">The sku of the dragon to be loaded</param>
+	/// <param name="_disguiseSku">The sku of the disguise to be applied to this dragon.</param> 
+	public void LoadDragon(string _sku, string _disguiseSku) {
 		// Unload current dragon if any
 		UnloadDragon();
 
@@ -159,9 +177,13 @@ public class MenuDragonLoader : MonoBehaviour {
 					m_dragonInstance.transform.localScale = Vector3.one;
 				}
 
-				// Toggle pets
+				// Apply equipment
 				DragonEquip equip = m_dragonInstance.GetComponent<DragonEquip>();
 				if(equip != null) {
+					// Apply disguise
+					equip.EquipDisguise(_disguiseSku);
+
+					// Toggle pets
 					equip.TogglePets(m_showPets, false);
 				}
 
@@ -172,8 +194,9 @@ public class MenuDragonLoader : MonoBehaviour {
 			}
 		}
 
-		// Update dragon sku
+		// Update dragon and disguise skus
 		m_dragonSku = _sku;
+		m_disguiseSku = _disguiseSku;
 	}
 
 	/// <summary>
@@ -184,7 +207,7 @@ public class MenuDragonLoader : MonoBehaviour {
 		switch(m_mode) {
 			case Mode.CURRENT_DRAGON:	LoadDragon(UsersManager.currentUser.currentDragon);	break;
 			case Mode.SELECTED_DRAGON:	LoadDragon(InstanceManager.menuSceneController.selectedDragon);	break;
-			case Mode.MANUAL:			LoadDragon(m_dragonSku);	break;
+			case Mode.MANUAL:			LoadDragon(m_dragonSku, m_disguiseSku);	break;
 		}
 	}
 

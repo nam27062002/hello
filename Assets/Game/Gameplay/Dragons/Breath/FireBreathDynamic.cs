@@ -28,6 +28,9 @@ public class FireBreathDynamic : MonoBehaviour
 
 		[SerializeField]
 		public Type m_type;
+
+		[HideInInspector]
+		public ParticleHandler m_handler;
     }
 
 
@@ -101,6 +104,7 @@ public class FireBreathDynamic : MonoBehaviour
 
     private ParticleSystem[] m_particleList;
 
+
     void OnEnable()
     {
         Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
@@ -173,9 +177,8 @@ public class FireBreathDynamic : MonoBehaviour
                 m_collisionPrefabs[i].m_CollisionPrefabPath = "";
             }
 
-            ParticleManager.CreatePool(m_collisionPrefabs[i].m_CollisionPrefab,
-                                       m_collisionPrefabs[i].m_CollisionPrefabPath);
-
+			m_collisionPrefabs[i].m_handler = ParticleManager.CreatePool(m_collisionPrefabs[i].m_CollisionPrefab,
+                                       									 m_collisionPrefabs[i].m_CollisionPrefabPath);
         }
 
         // Cache
@@ -441,7 +444,7 @@ public class FireBreathDynamic : MonoBehaviour
 					}
                     if (spawn && Time.time > m_lastTime + cp.m_CollisionDelay)
                     {
-                        GameObject colFire = ParticleManager.Spawn(cp.m_CollisionPrefab, hit.point, cp.m_CollisionPrefabPath);
+						GameObject colFire = cp.m_handler.Spawn(null, hit.point);
                         if (colFire != null)
                         {
                             colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);
@@ -476,7 +479,7 @@ public class FireBreathDynamic : MonoBehaviour
 						bool spawn = false;
 	                    if (spawn && Time.time > m_lastTime + cp.m_CollisionDelay)
 	                    {
-	                        GameObject colFire = ParticleManager.Spawn(cp.m_CollisionPrefab, hit.point, cp.m_CollisionPrefabPath);
+							GameObject colFire = cp.m_handler.Spawn(null, hit.point);
 	                        if (colFire != null)
 	                        {
 	                            colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);

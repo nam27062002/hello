@@ -55,7 +55,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SerializeField] private Transform m_exclamationTransform;
 
 	[SeparatorAttribute("Eaten")]
-	[SerializeField] private string m_corpseAsset = "";
+	[SerializeField] private string m_corpseAsset;
 	[SerializeField] private ParticleData m_onEatenParticle;
 	[SerializeField] private ParticleData m_onEatenFrozenParticle;
 	private bool m_useFrozenParticle = false;
@@ -118,6 +118,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private bool m_isExclamationMarkOn;
 	private GameObject m_exclamationMarkOn;
 
+	private ParticleHandler m_corpseHandler;
+	private ParticleHandler m_exclamationHandler;
+
 	private float m_desiredBlendX;
 	private float m_desiredBlendY;
 
@@ -125,8 +128,6 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private float m_currentBlendY;
 
 	private bool[] m_specialAnimations;
-
-	private GameObject m_pcTrail = null;
 
 	private PreyAnimationEvents m_animEvents;
 
@@ -195,24 +196,25 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         }
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
-			ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
+			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
 		}
 
 		m_isExclamationMarkOn = false;
 		if (m_exclamationTransform != null) {
-			ParticleManager.CreatePool("PF_ExclamationMark");
+			m_exclamationHandler = ParticleManager.CreatePool("PF_ExclamationMark");
 		}
 
 		// particle management
 		if (!m_onEatenParticle.IsValid()) {
 			// if this entity doesn't have any particles attached, set the standard blood particle
-			m_onEatenParticle.name = "PS_Blood_Explosion_Small";
+			m_onEatenParticle.name = "PS_Blood_Explosion";
 			m_onEatenParticle.path = "Blood/";
 		}
+
 		// Preload particle
-		if (m_onEatenParticle.IsValid()) {
-			ParticleManager.CreatePool(m_onEatenParticle.name, m_onEatenParticle.path);
-		}
+		m_onEatenParticle.CreatePool();
+		m_burnParticle.CreatePool();
+		m_explosionParticles.CreatePool();
 
 		if (m_onEatenParticle.name.ToLower().Contains("blood")) {
 			m_useFrozenParticle = true;
@@ -221,25 +223,15 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				m_onEatenFrozenParticle.name = "PS_IceExplosion";
 				m_onEatenFrozenParticle.path = "";
 			}
-			ParticleManager.CreatePool(m_onEatenFrozenParticle.name, m_onEatenFrozenParticle.path);
+			m_onEatenFrozenParticle.CreatePool();
 		} else {
 			m_useFrozenParticle = false;
 		}
 
 		m_specialAnimations = new bool[(int)SpecialAnims.Count];
 
-		if (m_burnParticle.IsValid()) {
-			ParticleManager.CreatePool(m_burnParticle);
-		}
-
-		if (m_explosionParticles.IsValid()) {
-			ParticleManager.CreatePool(m_explosionParticles);
-		}
-
 		m_fireParticles = new Transform[Mathf.Max(1, m_firePoints.Length)];
 		m_fireParticlesParents = new Transform[m_fireParticles.Length];
-
-		ParticleManager.CreatePool("PS_EntityPCTrail", "Rewards");
 
         Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
     }
@@ -335,17 +327,6 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				}
 			}
 
-			// Show PC Trail?
-			if (m_entity.isPC) {
-				// Get an effect instance from the pool
-				m_pcTrail = ParticleManager.Spawn("PS_EntityPCTrail", Vector3.zero, "Rewards");
-				// Put it in the view's hierarchy so it follows the entity
-				if (m_pcTrail != null) {
-					m_pcTrail.transform.SetParent(transform);
-					m_pcTrail.transform.localPosition = Vector3.zero;
-				}
-			}
-
 			if (!string.IsNullOrEmpty(m_idleAudio))	{
 				m_idleAudioAO = AudioController.Play( m_idleAudio, transform);
 			}
@@ -369,11 +350,6 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     }
 
     public virtual void PreDisable() {
-		if (m_pcTrail != null) {
-			ParticleManager.ReturnInstance(m_pcTrail);
-			m_pcTrail = null;
-		}
-
 		for (int i = 0; i < m_fireParticles.Length; ++i) {
 			if (m_fireParticles[i] != null) {
 				if (((m_firePoints.Length == 0) && (m_fireParticles[i].parent == transform)) ||
@@ -562,21 +538,20 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	public void ShowExclamationMark(bool _value) {
 		if (m_exclamationTransform != null && m_isExclamationMarkOn != _value) {
 			if (_value) {
-				m_exclamationMarkOn = ParticleManager.Spawn("PF_ExclamationMark");
+				m_exclamationMarkOn = m_exclamationHandler.Spawn(null);
 				if (m_exclamationMarkOn) {
 					FollowTransform ft = m_exclamationMarkOn.GetComponent<FollowTransform>();
 					ft.m_follow = m_exclamationTransform;
 				}
 			} else {
 				if (m_exclamationMarkOn != null) {
-					ParticleManager.ReturnInstance(m_exclamationMarkOn);
+					m_exclamationHandler.ReturnInstance(m_exclamationMarkOn);
 					m_exclamationMarkOn = null;
 				}
 			}
 			m_isExclamationMarkOn = _value;
 		}
 	}
-
 
 	//Particles
 	public void SpawnEatenParticlesAt(Transform _transform) {
@@ -586,9 +561,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
                 return;
         }        
 
-		if ( m_freezingLevel > 0.1f && m_useFrozenParticle && m_onEatenFrozenParticle.IsValid())
+		if ( m_freezingLevel > 0.1f && m_useFrozenParticle)
 		{
-			GameObject go = ParticleManager.Spawn( m_onEatenFrozenParticle, transform.position + m_onEatenFrozenParticle.offset);
+			GameObject go = m_onEatenFrozenParticle.Spawn(transform.position + m_onEatenFrozenParticle.offset);
 			if (go != null)	{
 				FollowTransform ft = go.GetComponent<FollowTransform>();
 				if (ft != null) {
@@ -597,9 +572,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				}
 			}
 		}
-		else if ( m_onEatenParticle.IsValid() )
+		else 
 		{
-			GameObject go = ParticleManager.Spawn( m_onEatenParticle, transform.position + m_onEatenParticle.offset);
+			GameObject go = m_onEatenParticle.Spawn(transform.position + m_onEatenParticle.offset);
 			if (go != null)	{
 				FollowTransform ft = go.GetComponent<FollowTransform>();
 				if (ft != null) {
@@ -796,7 +771,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			Vector3 pos = transform.position;
 			float waterY =  _other.bounds.center.y + _other.bounds.extents.y;
 			pos.y = waterY;
-			ParticleManager.Spawn(m_waterSplashParticle, transform.position + m_waterSplashParticle.offset);
+			m_waterSplashParticle.Spawn(transform.position + m_waterSplashParticle.offset);
 		}
 	}
 
@@ -845,28 +820,20 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 		if (!_burned) {
-			if (!string.IsNullOrEmpty(m_corpseAsset)) {
+			if (m_corpseHandler != null) {
 				// spawn corpse
-				GameObject corpse = ParticleManager.Spawn(m_corpseAsset, Vector3.zero, "Corpses/");
+				GameObject corpse = m_corpseHandler.Spawn(null);
 				if (corpse != null) {
 					corpse.transform.CopyFrom(transform);
 					corpse.GetComponent<Corpse>().Spawn(IsEntityGolden(), m_dragonBoost.IsBoostActive());
 				}
 			}
 		}
-
-		// Stop pc trail effect (if any)
-		if (m_pcTrail != null) {
-			ParticleManager.ReturnInstance(m_pcTrail);
-			m_pcTrail = null;
-		}
 	}
 
 	public void PlayExplosion()
 	{
-		if (m_explosionParticles.IsValid()) {
-			ParticleManager.Spawn(m_explosionParticles, transform.position + m_explosionParticles.offset);
-		}
+		m_explosionParticles.Spawn(transform.position + m_explosionParticles.offset);
 
 		if (!string.IsNullOrEmpty(m_onExplosionAudio))
 			AudioController.Play(m_onExplosionAudio, transform.position);
@@ -922,7 +889,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	}
 
 	private void SpawnBurnParticle(Transform _parent, int _index, float _disableInSeconds) {
-		GameObject go = ParticleManager.Spawn(m_burnParticle);
+		GameObject go = m_burnParticle.Spawn();
 		if (go != null) {
 			Transform t = go.transform;
 
