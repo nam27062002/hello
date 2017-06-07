@@ -15,6 +15,7 @@ public class CatapultAmmo : MonoBehaviour {
 	[SerializeField] private string m_onExplodeAudio = "";
 
 	private PoolHandler m_poolHandler;
+	private ParticleHandler m_hitParticleHandler;
 
 	private Transform m_oldParent = null;
 
@@ -33,6 +34,7 @@ public class CatapultAmmo : MonoBehaviour {
 	void Start() {
 		m_scale = transform.localScale;
 		m_poolHandler = PoolManager.GetHandler(gameObject.name);
+		m_hitParticleHandler = ParticleManager.CreatePool(m_hitParticle);
 	}
 
 	public void AttachTo(Transform _parent, Vector3 _localPosition) {
@@ -97,7 +99,7 @@ public class CatapultAmmo : MonoBehaviour {
 	}
 
 	public void Explode(bool _hitDragon) {		
-		ParticleManager.Spawn(m_hitParticle, transform.position);
+		m_hitParticleHandler.Spawn(null, transform.position);
 
 		if (_hitDragon) {
 			if (m_knockback > 0) {

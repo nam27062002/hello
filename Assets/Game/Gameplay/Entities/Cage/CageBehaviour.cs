@@ -39,6 +39,8 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 		m_prisonerSpawner = GetComponent<PrisonerSpawner>();
 		m_minTierToBreak = m_hitsPerTier.GetMinTier();
 
+		m_onBreakParticle.CreatePool();
+
 		m_currentHits = new Hit();
 	}
 
@@ -117,11 +119,9 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 
 	private void Break() {
 		// Spawn particle
-		if (m_onBreakParticle.IsValid()) {
-			GameObject ps = ParticleManager.Spawn(m_onBreakParticle);
-			if (ps != null) {
-				ps.transform.position = m_view.transform.TransformPoint(m_onBreakParticle.offset);
-			}
+		GameObject ps = m_onBreakParticle.Spawn();
+		if (ps != null) {
+			ps.transform.position = m_view.transform.TransformPoint(m_onBreakParticle.offset);
 		}
 
 		m_view.SetActive(false);

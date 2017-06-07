@@ -268,8 +268,40 @@ public class CPProgressionCheats : MonoBehaviour {
                     dragons[i].Acquire();
                 }
             }
+
+			// Save persistence
+			PersistenceManager.Save();
         }
     }
+
+	/// <summary>
+	/// Reset all the dragons.
+	/// </summary>
+	public void OnResetAllDragons() {
+		List<DragonData> dragons = DragonManager.GetDragonsByLockState(DragonData.LockState.ANY);
+		if (dragons != null) {
+			int i;
+			int count = dragons.Count;
+			for (i = 0; i < count; i++) {
+				// Reset dragon data
+				dragons[i].ResetLoadedData();
+
+				// Reset this dragon skins as well
+				List<DefinitionNode> skinDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", dragons[i].def.sku);
+				for(int j = 0; j < skinDefs.Count; ++j) {
+					// Special case: if unlock level is 0, mark it as owned! (probably dragon's default skin)
+					if(skinDefs[j].GetAsInt("unlockLevel") <= 0) {
+						UsersManager.currentUser.wardrobe.SetSkinState(skinDefs[j].sku, Wardrobe.SkinState.OWNED);
+					} else {
+						UsersManager.currentUser.wardrobe.SetSkinState(skinDefs[j].sku, Wardrobe.SkinState.LOCKED);
+					}
+				}
+			}
+
+			// Save persistence
+			PersistenceManager.Save();
+		}
+	}
 
 	/// <summary>
 	/// Unlock all pets.

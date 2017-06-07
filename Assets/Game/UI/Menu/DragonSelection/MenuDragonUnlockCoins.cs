@@ -77,6 +77,9 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 			(ResourcesFlow _flow) => {
 				// Just acquire target dragon!
 				dragonData.Acquire();
+
+				// Throw out some fireworks!
+				InstanceManager.menuSceneController.dragonScroller.LaunchDragonPurchasedFX();
 			}
 		);
 		purchaseFlow.Begin(dragonData.def.GetAsLong("unlockPriceCoins"), UserProfile.Currency.SOFT, dragonData.def);

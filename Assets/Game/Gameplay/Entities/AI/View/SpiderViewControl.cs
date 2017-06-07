@@ -16,30 +16,32 @@ public class SpiderViewControl : ViewControl {
 	private float m_startWebWidth;
 	private bool m_bite = false;
 
-	protected override void Awake()
-	{
+	protected override void Awake() {
 		base.Awake();
+
 		m_startWebWidth = m_web.widthMultiplier;
-		if ( m_onAttackParticle.IsValid()  )
-			ParticleManager.CreatePool( m_onAttackParticle);
+
+		if (m_onAttackParticle.IsValid()) {
+			m_onAttackParticle.CreatePool();
+		}
 	}
 
 	public override void Spawn(ISpawner _spawner) {
 		base.Spawn(_spawner);
+
 		m_web.widthMultiplier = m_startWebWidth;
 		m_hanging = false;
 		m_web.enabled = false;
 		m_bite = false;
 	}
 
-	public override void Bite( Transform _transform)
-	{
+	public override void Bite( Transform _transform) {
 		base.Bite(_transform);
+
 		m_bite = true;
 		m_startBitePos = transform.position;
 		m_startBiteDistance = (m_startBitePos - m_startHangingPos).sqrMagnitude;
 	}
-
 
 	// Update is called once per frame
 	public override void CustomUpdate() {
@@ -47,16 +49,12 @@ public class SpiderViewControl : ViewControl {
 			m_web.SetPosition(1, m_spinneret.position);
 
 			// Check if eating!
-			if ( m_bite )
-			{
+			if (m_bite) {
 				float newBiteDistance = (transform.position - m_startHangingPos).sqrMagnitude;
-				if ( newBiteDistance > m_startBiteDistance ) 
-				{
+				if (newBiteDistance > m_startBiteDistance) {
 					float proportionToStretch = m_startBiteDistance/newBiteDistance;
 					m_web.widthMultiplier = m_startWebWidth * proportionToStretch;
-				}
-				else
-				{
+				} else {
 					m_web.widthMultiplier = m_startWebWidth;
 				}
 			}
@@ -85,11 +83,10 @@ public class SpiderViewControl : ViewControl {
 
 	override protected void animEventsOnAttackDealDamage() {
 		base.animEventsOnAttackDealDamage();
-		if ( m_onAttackParticle.IsValid() )
-		{
-			GameObject go = ParticleManager.Spawn(m_onAttackParticle, m_onAttackParticleAnchor.transform.position);
-			if (go != null)
-			{
+
+		if (m_onAttackParticle.IsValid()) {
+			GameObject go = m_onAttackParticle.Spawn(m_onAttackParticleAnchor.transform.position);
+			if (go != null) {
 				// go.transform.rotation = m_onAttackParticleAnchor.transform.rotation;
 				go.transform.LookAt( attackTargetPosition );
 			}

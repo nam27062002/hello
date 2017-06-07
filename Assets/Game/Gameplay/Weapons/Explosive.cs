@@ -27,9 +27,7 @@ public class Explosive {
 		m_particleData = _particleData;
 
 		if (m_particleData != null) {
-			if (m_particleData.IsValid()) {
-				ParticleManager.CreatePool(m_particleData);
-			}
+			m_particleData.CreatePool();
 		}
 	}
 
@@ -66,10 +64,8 @@ public class Explosive {
 			}
 		}
 
-		if (m_particleData != null) {
-			if (m_particleData.IsValid()) {
-				ParticleManager.Spawn(m_particleData, _at.position + m_particleData.offset);
-			}
+		if (m_particleData != null) {			
+			m_particleData.Spawn(_at.position + m_particleData.offset);
 		}
 	}
 }
