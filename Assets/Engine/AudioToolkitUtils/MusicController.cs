@@ -173,7 +173,7 @@ public class MusicController : MonoBehaviour
             keyToPlay = Ambience_KeyToPlay;
         }           
           
-        if (keyToPlay != Music_CurrentKey)
+		if (keyToPlay != Music_CurrentKey || (Music_CurrentAudioObject != null && Music_CurrentAudioObject.IsPaused(true)))
         {
 			if (Music_CurrentAudioObject != null)
 			{
