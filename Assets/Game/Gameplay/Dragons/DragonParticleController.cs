@@ -111,6 +111,10 @@ public class DragonParticleController : MonoBehaviour
 		// Instantiate Particles (at start so we don't feel any framerate drop during gameplay)
 		m_levelUpInstance = InitParticles(m_levelUp, m_levelUpAnchor);
 		m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
+		if (m_reviveInstance)
+		{
+			m_reviveInstance.gameObject.SetActive(false);
+		}
 		m_bubblesInstance = InitParticles(m_bubbles, m_bubblesAnchor);
 		if ( m_bubblesInstance != null )
 		{
@@ -354,7 +358,9 @@ public class DragonParticleController : MonoBehaviour
 		{
 			default:
 			{
+				m_reviveInstance.gameObject.SetActive(true);
 				m_reviveInstance.Play();
+				StartCoroutine(DeactivateInSeconds(m_reviveInstance.gameObject, 2.0f));
 			}break;
 			case DragonPlayer.ReviveReason.FREE_REVIVE_PET:
 			{
@@ -363,6 +369,12 @@ public class DragonParticleController : MonoBehaviour
 		}
 		m_alive = true;
 		CheckBodyParts();
+	}
+
+	IEnumerator DeactivateInSeconds( GameObject go, float seconds )
+	{
+		yield return new WaitForSeconds(seconds);
+		go.SetActive(false);
 	}
 
 	public void OnShieldLost( DamageType _damageType, Transform _tr)
