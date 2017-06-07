@@ -17,14 +17,15 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 
 	private PoolHandler m_poolHandler;
 
+
 	// Use this for initialization
 	void Start () 
 	{
 		m_area = GetComponent<CircleArea2D>();
 		m_rect = new Rect();
-		if (m_explosionParticle.IsValid()) {
-			ParticleManager.CreatePool(m_explosionParticle);
-		}
+
+		m_explosionParticle.CreatePool();
+
 		m_colliderMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "WaterPreys", "GroundPreys", "AirPreys");
 
 		m_pMotion = GetComponent<ProjectileMotion>();	
@@ -108,10 +109,8 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 	}
 
 	public void Explode( bool _hitsDragon )
-	{
-		if (m_explosionParticle.IsValid()) {
-			ParticleManager.Spawn( m_explosionParticle, transform.position);
-		}
+	{		
+		m_explosionParticle.Spawn(transform.position);
 
 		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_area.center, m_area.radius * 3);
 		for (int i = 0; i < preys.Length; i++) {

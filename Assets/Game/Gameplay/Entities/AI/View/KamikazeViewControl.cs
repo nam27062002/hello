@@ -13,16 +13,13 @@ public class KamikazeViewControl : ViewControl {
 	public override void Spawn(ISpawner _spawner) {
 		base.Spawn(_spawner);
 
-		if (m_jetParticleData.IsValid()) {
-			ParticleManager.CreatePool(m_jetParticleData.name, m_jetParticleData.path);
-		}
-
+		m_jetParticleData.CreatePool();
 		m_jetParticles = null;
 	}
 
 	public override void PreDisable() {
 		if (m_jetParticles != null) {
-			ParticleManager.ReturnInstance(m_jetParticles); 
+			m_jetParticleData.ReturnInstance(m_jetParticles); 
 			m_jetParticles = null; 
 		}
 		base.PreDisable();
@@ -32,12 +29,7 @@ public class KamikazeViewControl : ViewControl {
 		switch(_anim) {
 			case SpecialAnims.A: break;
 			case SpecialAnims.B: 
-				m_jetParticles = ParticleManager.Spawn(m_jetParticleData, Vector3.zero);
-				if (m_jetParticles != null) {
-					m_jetParticles.transform.SetParent(m_jetParticleTransform, false);
-					m_jetParticles.transform.localPosition = Vector3.zero;
-					m_jetParticles.transform.localRotation = Quaternion.identity;
-				}
+				m_jetParticles = m_jetParticleData.Spawn(m_jetParticleTransform);
 				break;
 		}
 	}
@@ -47,7 +39,7 @@ public class KamikazeViewControl : ViewControl {
 			case SpecialAnims.A: break;
 			case SpecialAnims.B: 
 				if (m_jetParticles != null) {
-					ParticleManager.ReturnInstance(m_jetParticles); 
+					m_jetParticleData.ReturnInstance(m_jetParticles); 
 					m_jetParticles = null; 
 				}
 				break;

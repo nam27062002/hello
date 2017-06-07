@@ -19,15 +19,18 @@ using UnityEditor;
 [CustomEditor(typeof(Spawner), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
 public class SpawnerEditor : Editor {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Casted target object
-	private Spawner m_targetSpawner = null;
+    private readonly float INPUTDELAY = 0.5f;
+
+
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Casted target object
+    private Spawner m_targetSpawner = null;
 
 	// Store a reference of interesting properties for faster access
 	private SerializedProperty m_maxTierProp = null;
@@ -47,13 +50,21 @@ public class SpawnerEditor : Editor {
 	private bool m_repeatedDeactivationTriggerTypeError = false;
 	private bool m_incompatibleValuesError = false;
 
-	//------------------------------------------------------------------------//
-	// METHODS																  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// The editor has been enabled - target object selected.
-	/// </summary>
-	private void OnEnable() {
+    // Time of last input
+    private float m_timeOfLastInput;
+
+    public float currentTime
+    {
+        get { return (float)EditorApplication.timeSinceStartup; }
+    }
+
+    //------------------------------------------------------------------------//
+    // METHODS																  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// The editor has been enabled - target object selected.
+    /// </summary>
+    private void OnEnable() {
 		// Get target object
 		m_targetSpawner = target as Spawner;
 
@@ -70,7 +81,10 @@ public class SpawnerEditor : Editor {
 
         // Do an initial check for errors
         CheckForErrors();
-	}
+
+
+        m_timeOfLastInput = 0.0f;
+    }
 
 	/// <summary>
 	/// The editor has been disabled - target object unselected.
@@ -83,7 +97,7 @@ public class SpawnerEditor : Editor {
 		m_activationTriggersProp = null;
 		m_activationKillTriggersProp = null;
 		m_deactivationTriggersProp = null;
-	}
+	}    
 
 	/// <summary>
 	/// Draw the inspector.
@@ -164,18 +178,19 @@ public class SpawnerEditor : Editor {
                     {
 						if (ovMin != min.floatValue)
 						{
-	                        if (max.floatValue < min.floatValue)
+                            if (max.floatValue < min.floatValue)
 	                        {
 	                            max.floatValue = min.floatValue;
 	                        }
-						}
-						else
+                        }
+                        else
 						{
-							if (max.floatValue < min.floatValue || ovMin == ovMax)
+                            if (max.floatValue < min.floatValue || (ovMin == ovMax && ((currentTime - m_timeOfLastInput) < INPUTDELAY)))
 							{
 								min.floatValue = max.floatValue;
+                                m_timeOfLastInput = currentTime;
 							}
-						}
+                        }
                     }
 
                 }
@@ -191,18 +206,19 @@ public class SpawnerEditor : Editor {
                     {
 						if (ovMin != min.intValue)
 						{
-							if (max.intValue < min.intValue)
+                            if (max.intValue < min.intValue)
 							{
 								max.intValue = min.intValue;
 							}
-						}
-						else
+                        }
+                        else
 						{
-							if (max.intValue < min.intValue || ovMin == ovMax)
-							{
+							if (max.intValue < min.intValue || (ovMin == ovMax && ((currentTime - m_timeOfLastInput) < INPUTDELAY)))
+                            {
 								min.intValue = max.intValue;
-							}
-						}
+                                m_timeOfLastInput = currentTime;
+                            }
+                        }
                     }
                 }
                 else if (p.name == m_spawnTimeProp.name)

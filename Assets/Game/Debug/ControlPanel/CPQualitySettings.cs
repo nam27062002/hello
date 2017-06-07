@@ -140,7 +140,7 @@ public class CPQualitySettings : MonoBehaviour
             foreach (KeyValuePair<string, FeatureSettings.Data> pair in datas)
             {
                 key = pair.Key;
-                if (SETTINGS_KEYS_NOT_TO_SHOW.IndexOf(key) == -1)
+				if (SETTINGS_KEYS_NOT_TO_SHOW.IndexOf(key) == -1)
                 {
                     Transform thisParent = transform;
                     GameObject prefabOption = (GameObject)Instantiate(m_prefabOption);

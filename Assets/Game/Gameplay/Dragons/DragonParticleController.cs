@@ -32,8 +32,12 @@ public class DragonParticleController : MonoBehaviour
 	[Space]
 	public float m_minSpeedEnterSplash;
 	public string m_waterEnterSplash;
+	private ParticleHandler m_waterEnterSplashHandler;
+
 	public float m_minSpeedExitSplash;
 	public string m_waterExitSplash;
+	private ParticleHandler m_waterExitSplashHandler;
+
 	public string m_waterSplashFolder = "Water";
 
 	[Space]
@@ -53,7 +57,7 @@ public class DragonParticleController : MonoBehaviour
 
 	[Space]
 	public string m_corpseAsset = "";
-
+	private ParticleHandler m_corpseHandler;
 
 	[Space]
 	public string m_hiccupParticle;
@@ -99,6 +103,7 @@ public class DragonParticleController : MonoBehaviour
 	public ParticleData m_landingParticle;
 	ParticleSystem m_landingInstance;
 
+
 	void Start () 
 	{
 		DragonAnimationEvents dragonAnimEvents = transform.parent.GetComponentInChildren<DragonAnimationEvents>();
@@ -106,6 +111,10 @@ public class DragonParticleController : MonoBehaviour
 		// Instantiate Particles (at start so we don't feel any framerate drop during gameplay)
 		m_levelUpInstance = InitParticles(m_levelUp, m_levelUpAnchor);
 		m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
+		if (m_reviveInstance)
+		{
+			m_reviveInstance.gameObject.SetActive(false);
+		}
 		m_bubblesInstance = InitParticles(m_bubbles, m_bubblesAnchor);
 		if ( m_bubblesInstance != null )
 		{
@@ -121,9 +130,9 @@ public class DragonParticleController : MonoBehaviour
 		_transform = transform;
 
 		if ( !string.IsNullOrEmpty(m_waterEnterSplash) )
-			ParticleManager.CreatePool(m_waterEnterSplash, m_waterSplashFolder);
+			m_waterEnterSplashHandler = ParticleManager.CreatePool(m_waterEnterSplash, m_waterSplashFolder);
 		if ( !string.IsNullOrEmpty(m_waterExitSplash) )
-			ParticleManager.CreatePool(m_waterExitSplash, m_waterSplashFolder);
+			m_waterExitSplashHandler = ParticleManager.CreatePool(m_waterExitSplash, m_waterSplashFolder);
 
 
 		m_skimmingInstance = InitParticles(m_skimmingParticle, m_skimmingAnchor);
@@ -137,7 +146,7 @@ public class DragonParticleController : MonoBehaviour
 			m_waterAirLimitInstance = InitParticles( m_waterAirLimitParticle, m_dragonEat.mouth);
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
-			ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
+			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
 		}
 		m_hiccupInstance = InitParticles( m_hiccupParticle, m_hiccupAnchor);
 		if (dragonAnimEvents != null)
@@ -320,7 +329,7 @@ public class DragonParticleController : MonoBehaviour
 	{
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
 			// spawn corpse
-			GameObject corpse = ParticleManager.Spawn(m_corpseAsset, Vector3.zero, "Corpse/");
+			GameObject corpse = m_corpseHandler.Spawn(null);
 			corpse.transform.CopyFrom(transform);
 			Corpse c = corpse.GetComponent<Corpse>();
 			c.Spawn(false, false);
@@ -349,7 +358,9 @@ public class DragonParticleController : MonoBehaviour
 		{
 			default:
 			{
+				m_reviveInstance.gameObject.SetActive(true);
 				m_reviveInstance.Play();
+				StartCoroutine(DeactivateInSeconds(m_reviveInstance.gameObject, 2.0f));
 			}break;
 			case DragonPlayer.ReviveReason.FREE_REVIVE_PET:
 			{
@@ -358,6 +369,12 @@ public class DragonParticleController : MonoBehaviour
 		}
 		m_alive = true;
 		CheckBodyParts();
+	}
+
+	IEnumerator DeactivateInSeconds( GameObject go, float seconds )
+	{
+		yield return new WaitForSeconds(seconds);
+		go.SetActive(false);
 	}
 
 	public void OnShieldLost( DamageType _damageType, Transform _tr)
@@ -390,7 +407,7 @@ public class DragonParticleController : MonoBehaviour
 
 		if ( m_dargonMotion != null && Mathf.Abs(m_dargonMotion.velocity.y) >= m_minSpeedEnterSplash )
 		{
-			CreateSplash(_other, m_waterEnterSplash);
+			CreateSplash(_other, m_waterEnterSplashHandler);
 			return true;
 		}
 		return false;
@@ -406,19 +423,21 @@ public class DragonParticleController : MonoBehaviour
 
 		if ( m_dargonMotion != null && Mathf.Abs(m_dargonMotion.velocity.y) >= m_minSpeedExitSplash )
 		{
-			CreateSplash(_other, m_waterExitSplash);
+			CreateSplash(_other, m_waterExitSplashHandler);
 			return true;
 		}
 		return false;
 	}
 
-	private void CreateSplash( Collider _other, string particleName )
+	private void CreateSplash( Collider _other, ParticleHandler _handler )
 	{
-		Vector3 pos = _transform.position;
-		float waterY = _other.bounds.center.y + _other.bounds.extents.y;
-		pos.y = waterY;
+		if (_handler != null) {
+			Vector3 pos = _transform.position;
+			float waterY = _other.bounds.center.y + _other.bounds.extents.y;
+			pos.y = waterY;
 
-		ParticleManager.Spawn(particleName, pos, m_waterSplashFolder);
+			_handler.Spawn(null, pos);
+		}
 	}
 
 	public void OnEnterOuterSpace() {

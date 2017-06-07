@@ -186,6 +186,9 @@ public abstract class EatBehaviour : MonoBehaviour {
     protected virtual void Start () {
 		m_eatingEntitiesEnabled = m_canEatEntities;
 
+		m_holdingBloodParticle.CreatePool();
+		m_holdingFreezeParticle.CreatePool();
+
         if (m_canEatEntities) {
             int amount = (m_limitEating) ? m_limitEatingValue : MAX_PREYS;
             m_preysToEat = new AI.IMachine[amount];
@@ -1000,7 +1003,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private void StartBlood(){
 		Vector3 bloodPos = m_mouth.position;
 		bloodPos.z = -50f;
-		GameObject go = ParticleManager.Spawn(m_holdingBloodParticle, bloodPos + m_holdingBloodParticle.offset);
+		GameObject go = m_holdingBloodParticle.Spawn(bloodPos + m_holdingBloodParticle.offset);
 		if ( go != null )
 		{
 			FollowTransform ft = go.GetComponent<FollowTransform>();
@@ -1018,7 +1021,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private void StartFreezing(){
 		Vector3 bloodPos = m_mouth.position;
 		bloodPos.z = -50f;
-		GameObject go = ParticleManager.Spawn(m_holdingFreezeParticle, bloodPos + m_holdingFreezeParticle.offset);
+		GameObject go = m_holdingFreezeParticle.Spawn(bloodPos + m_holdingFreezeParticle.offset);
 		if ( go != null )
 		{
 			FollowTransform ft = go.GetComponent<FollowTransform>();

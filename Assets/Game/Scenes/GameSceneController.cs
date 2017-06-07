@@ -283,7 +283,10 @@ public class GameSceneController : GameSceneControllerBase {
                                 Resources.UnloadUnusedAssets();
                                 System.GC.Collect();
                                                                   
-                                m_switchingAreaTasks = LevelManager.LoadArea(m_nextArea);                                
+                                m_switchingAreaTasks = LevelManager.LoadArea(m_nextArea);
+
+								ParticleManager.PreBuild();
+
 								if ( m_switchingAreaTasks != null )
 								{
 									for(int i = 0; i < m_switchingAreaTasks.Count; i++) {
@@ -524,7 +527,10 @@ public class GameSceneController : GameSceneControllerBase {
 			case EStates.LOADING_LEVEL: {
 				// Start loading current level
 				LevelManager.SetCurrentLevel(UsersManager.currentUser.currentLevel);
+				
 				m_levelLoadingTasks = LevelManager.LoadLevel();
+				
+				ParticleManager.PreBuild();
 
 				// Initialize minimum loading time as well
 				m_timer = MIN_LOADING_TIME;
