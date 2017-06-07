@@ -26,6 +26,7 @@ public class KamikazeViewControl : ViewControl {
 	}
 
 	protected override void OnSpecialAnimationEnter(SpecialAnims _anim) {
+		base.OnSpecialAnimationEnter(_anim);
 		switch(_anim) {
 			case SpecialAnims.A: break;
 			case SpecialAnims.B: 
@@ -35,6 +36,7 @@ public class KamikazeViewControl : ViewControl {
 	}
 
 	protected override void OnSpecialAnimationExit(SpecialAnims _anim) {
+		base.OnSpecialAnimationExit(_anim);
 		switch(_anim) {
 			case SpecialAnims.A: break;
 			case SpecialAnims.B: 
