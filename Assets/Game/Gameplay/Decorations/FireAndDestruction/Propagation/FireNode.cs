@@ -10,8 +10,18 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		Extinguish
 	};
 
+	private Transform m_transform;
+
 	private ParticleData m_feedbackParticle;
+	private ParticleHandler m_feedbackParticleHandler;
+
 	private ParticleData m_burnParticle;
+	private ParticleHandler m_burnParticleHandler;
+
+	private GameObject m_fireSprite;
+
+	private ParticleHandler m_smokeParticleHandler;
+
 	private bool m_feedbackParticleMatchDirection = false;
 	private float m_hitRadius = 0f;
 
@@ -36,7 +46,6 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 	private float m_timer;
 
-	private GameObject m_fireSprite;
 	private GameCamera m_newCamera;
 
 	private State m_state;
@@ -45,11 +54,15 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 	// Use this for initialization
 	void Start() {
-		m_bounds = new Bounds(transform.position, Vector3.one * m_hitRadius * 2f);
-		m_rect = new Rect((Vector2)transform.position, Vector2.zero);
+		m_transform = transform;
+
+		m_bounds = new Bounds(m_transform.position, Vector3.one * m_hitRadius * 2f);
+		m_rect = new Rect((Vector2)m_transform.position, Vector2.zero);
 
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
-		m_area = new CircleAreaBounds(transform.position, m_hitRadius);
+		m_area = new CircleAreaBounds(m_transform.position, m_hitRadius);
+
+		m_smokeParticleHandler = ParticleManager.GetHandler("SmokeParticle");
 
 		gameObject.SetActive(false);
 	}
@@ -58,7 +71,11 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_decoration = _decoration;
 
 		m_burnParticle = _burnParticle;
+		m_burnParticleHandler = ParticleManager.GetHandler(_burnParticle);
+
 		m_feedbackParticle = _feedbackParticle;
+		m_feedbackParticleHandler = ParticleManager.GetHandler(_feedbackParticle);
+
 		m_feedbackParticleMatchDirection = _feedbackParticleMatchDirection;
 		m_hitRadius = _hitRadius;
 
@@ -114,7 +131,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 			} else {
 				// Dragon can't burn this thing, so lets put a few feedback particles
 				if (_dragonBreath && m_timer <= 0f) {
-					GameObject hitParticle = ParticleManager.Spawn(m_feedbackParticle, transform.position);
+					GameObject hitParticle = m_feedbackParticleHandler.Spawn(m_feedbackParticle, m_transform.position);
 					if (hitParticle != null && m_feedbackParticleMatchDirection) {
 						Vector3 angle = (_direction.x < 0)? Vector3.down : Vector3.up;
 
@@ -219,31 +236,33 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	}
 
 	private void StartFireEffect() {
-		FirePropagationManager.InsertBurning(transform);
+		FirePropagationManager.InsertBurning(m_transform);
 		if (m_fireSprite == null) {
-			m_fireSprite = ParticleManager.Spawn(m_burnParticle);
+			m_fireSprite = m_burnParticleHandler.Spawn(m_burnParticle);
 
 			if (m_fireSprite != null) {
 				m_fireSprite.GetComponentInChildren<Animator>(false).SetBool("burn", true);
-				m_fireSprite.transform.position = transform.position;
-				m_fireSprite.transform.localScale = transform.localScale * Random.Range( 0.55f, 1.45f);
-				m_fireSprite.transform.localRotation = transform.localRotation;
+
+				Transform t = m_fireSprite.transform;
+				t.position = m_transform.position;
+				t.localScale = m_transform.localScale * Random.Range(0.9f, 1.1f);
+				t.localRotation = m_transform.localRotation;
 			}
 		}
 	}
 
 	private void StopFireEffect() {
-		FirePropagationManager.RemoveBurning(transform);
+		FirePropagationManager.RemoveBurning(m_transform);
 		if (m_fireSprite != null) {
 			m_fireSprite.SetActive(false);
-			ParticleManager.ReturnInstance(m_fireSprite);
+			m_burnParticleHandler.ReturnInstance(m_fireSprite);
 		}
 		m_fireSprite = null;
 	}
 
 	private void StartSmokeEffect() {
 		if (m_canStartSmoke) {
-			GameObject smoke = ParticleManager.Spawn("SmokeParticle", transform.position);
+			GameObject smoke = m_smokeParticleHandler.Spawn(null, m_transform.position);
 			if (smoke != null)
 				smoke.GetComponent<DisableInSeconds>().activeTime = 2f;
 		}
@@ -254,7 +273,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private void FindNeighbours() {
 		m_neighbours = new List<FireNode>();
 		m_neihboursDistance = new List<float>();
-		FireNode[] nodes = transform.parent.GetComponentsInChildren<FireNode>(true);
+		FireNode[] nodes = m_transform.parent.GetComponentsInChildren<FireNode>(true);
 		
 		for (int i = 0; i < nodes.Length; i++) {
 			if (nodes[i] != null && nodes[i] != this) {
@@ -266,7 +285,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 	private void SetNeighboursDistance() {
 		for (int i = 0; i < m_neighbours.Count; i++) {
-			m_neihboursDistance[i] = Vector3.SqrMagnitude(transform.position - m_neighbours[i].transform.position);
+			m_neihboursDistance[i] = Vector3.SqrMagnitude(m_transform.position - m_neighbours[i].transform.position);
 		}
 	}
 

@@ -67,7 +67,7 @@ public class ChestViewController : MonoBehaviour {
 			this.FindObjectRecursive("Gems")
 		};
 
-		ParticleManager.CreatePool(m_openParticle);
+		m_openParticle.CreatePool();
 	}
 
 	//------------------------------------------------------------------------//
@@ -162,13 +162,10 @@ public class ChestViewController : MonoBehaviour {
 	public void OnLidOpen() {
 		// Launch particle system
 		// ToggleFX(m_openFX, true);
-		if ( m_openParticle.IsValid() )
-		{
-			GameObject go = ParticleManager.Spawn(m_openParticle, transform.position + m_openParticle.offset );
-			if (go)
-				go.transform.rotation = transform.rotation;
-		}
-
+		GameObject go = m_openParticle.Spawn(transform.position + m_openParticle.offset );
+		if (go)
+			go.transform.rotation = transform.rotation;
+		
 		ToggleFX(m_glowFX, false);
 		// Notify delegates
 		OnChestOpenEvent.Invoke();

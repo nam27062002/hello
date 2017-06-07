@@ -39,6 +39,8 @@ namespace AI {
 		private State m_state;
 		private State m_nextState;
 
+		private ParticleHandler m_ashesHandler;
+
 
 		//-----------------------------------------------
 		public MachineInflammable() {}
@@ -73,6 +75,8 @@ namespace AI {
 
 			for( int i = 0; i<m_ashExceptions.Count; i++ )
 				m_ashExceptions[i].enabled = true;
+
+			m_ashesHandler = ParticleManager.CreatePool(m_ashesAsset, "Ashes");
 
 			m_state = State.Idle;
 			m_nextState = State.Idle;
@@ -129,8 +133,8 @@ namespace AI {
 
 		private void ChangeState() {
 			if (m_state == State.Burned) {
-				if (m_ashesAsset.Length > 0) {					
-					GameObject particle = ParticleManager.Spawn(m_ashesAsset, m_renderers[0].transform.position, "Ashes");
+				if (m_ashesHandler != null) {					
+					GameObject particle = m_ashesHandler.Spawn(null, m_renderers[0].transform.position);
 					if (particle != null) {
 						particle.transform.rotation = m_renderers[0].transform.rotation;
 						particle.transform.localScale = m_renderers[0].transform.localScale;

@@ -19,6 +19,7 @@ public class DisableInSeconds : MonoBehaviour {
 	private List<ParticleSystem> m_particleSystems;
 
 	private PoolHandler m_poolHandler;
+	private ParticleHandler m_particleHandler;
 
 
     void Start() {
@@ -27,6 +28,8 @@ public class DisableInSeconds : MonoBehaviour {
 
 		if (m_returnTo == PoolType.PoolManager) {
 			m_poolHandler = PoolManager.GetHandler(this.gameObject.name);
+		} else if (m_returnTo == PoolType.ParticleManager) {
+			m_particleHandler = ParticleManager.GetHandler(this.gameObject.name);
 		} else if (m_returnTo == PoolType.UIPoolManager) {
 			m_poolHandler = UIPoolManager.GetHandler(this.gameObject.name);
 		}
@@ -84,8 +87,12 @@ public class DisableInSeconds : MonoBehaviour {
 		//gameObject.SetActive(false);
 		switch(m_returnTo) {
 			case PoolType.PoolManager: 	
-			case PoolType.UIPoolManager:	m_poolHandler.ReturnInstance(gameObject); 	break;
-			case PoolType.ParticleManager: 	ParticleManager.ReturnInstance(gameObject); break;
+			case PoolType.UIPoolManager:	
+				if (m_poolHandler != null) m_poolHandler.ReturnInstance(gameObject); 		
+				break;
+			case PoolType.ParticleManager: 	
+				if (m_particleHandler != null) m_particleHandler.ReturnInstance(gameObject);
+				break;
 		}
 	}
 /*

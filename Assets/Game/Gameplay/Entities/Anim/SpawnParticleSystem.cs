@@ -10,7 +10,7 @@ public class SpawnParticleSystem : StateMachineBehaviour {
 
 	// Use this for initialization
 	void Start () {	
-		ParticleManager.CreatePool(m_particleSystemData);
+		m_particleSystemData.CreatePool();
 		m_timer = 0f;
 	}
 	
@@ -32,18 +32,7 @@ public class SpawnParticleSystem : StateMachineBehaviour {
 	}
 
 	private void SpawnParticle(Transform _parent) {		
-		GameObject ps = ParticleManager.Spawn(m_particleSystemData);
-		if (ps != null) {
-			ps.transform.localScale = Vector3.one;
-			ps.transform.localRotation = Quaternion.identity;
-			ps.transform.localPosition = Vector3.zero;
-
-			if (m_attach) {
-				ps.transform.SetParent(_parent, false);
-				ps.transform.localPosition = m_particleSystemData.offset;
-			} else {
-				ps.transform.position = _parent.position + m_particleSystemData.offset;
-			}
-		}
+		if (m_attach)	m_particleSystemData.Spawn(_parent);
+		else			m_particleSystemData.Spawn();
 	}
 }
