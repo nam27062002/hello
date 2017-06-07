@@ -83,6 +83,9 @@ namespace LevelEditor {
 
 		[Separator("Group Settings", 20)]
 		public bool[] groupRewardsFolding = new bool[3] { false, false, true };	// Folded status of the group editor rewards
+
+		[Separator("Particle Manager", 20)]
+		public string poolLimit = "unlimited";
 	}
 }
 

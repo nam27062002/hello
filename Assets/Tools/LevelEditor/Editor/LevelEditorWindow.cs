@@ -43,7 +43,8 @@ namespace LevelEditor {
 		private ILevelEditorSection[] m_sections = new ILevelEditorSection[] {
 			new SectionLevels(),
 			new SectionSimulation(),
-			new SectionDragonSpawn()
+			new SectionDragonSpawn(),
+			new SectionParticleManager()
 		};
 
 		// Styles
@@ -70,6 +71,7 @@ namespace LevelEditor {
 		public static SectionLevels sectionLevels { get { return instance.m_sections[0] as SectionLevels; }}
 		public static SectionSimulation sectionSimulation { get { return instance.m_sections[1] as SectionSimulation; }}
 		public static SectionDragonSpawn sectionDragonSpawn { get { return instance.m_sections[2] as SectionDragonSpawn; }}
+		public static SectionParticleManager sectionParticleManager { get { return instance.m_sections[3] as SectionParticleManager; }}
 
 		// Styles shortcut
 		public static Styles styles { get { return instance.m_styles; }}
@@ -267,6 +269,9 @@ namespace LevelEditor {
 
 				// Dragon spawn section
 				sectionDragonSpawn.OnGUI();
+
+				// Particle Manager
+				sectionParticleManager.OnGUI();
 
 				// Simulation section
 				sectionSimulation.OnGUI();
