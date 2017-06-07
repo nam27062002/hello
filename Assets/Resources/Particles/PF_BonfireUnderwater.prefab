@@ -38,6 +38,7 @@ GameObject:
   - component: {fileID: 4000013415704150}
   - component: {fileID: 114000013136993192}
   - component: {fileID: 114000010417885752}
+  - component: {fileID: 114888350993749560}
   m_Layer: 0
   m_Name: PF_BonfireUnderwater
   m_TagString: Untagged
@@ -174,6 +175,7 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 3
+  m_fireMaterial: {fileID: 0}
   m_fireOnly: []
   m_megaStartColorA: {r: 1, g: 1, b: 1, a: 1}
   m_megaStartColorB: {r: 1, g: 1, b: 1, a: 1}
@@ -221,11 +223,24 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 3
+  m_megaMaterial: {fileID: 0}
   m_megaOnly: []
   m_psChangeStartColors:
   - {fileID: 198000011767915482}
   m_psChangeGradientColors:
   - {fileID: 198000011767915482}
+  m_rChangeMaterials: []
+--- !u!114 &114888350993749560
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013377823634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &198000011283015970
 ParticleSystem:
   m_ObjectHideFlags: 1

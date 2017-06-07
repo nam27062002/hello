@@ -79,45 +79,9 @@ public class ParticleHandler {
 			t.localPosition = _at;
 
 			// Restart all particle systems within the instance
-			List<ParticleSystem> subsystems = _system.transform.FindComponentsRecursive<ParticleSystem>();
-			for (int i = 0; i < subsystems.Count; i++) {
-				subsystems[i].Clear();
-
-				ParticleSystem.MainModule main = subsystems[i].main;
-
-				if (_data != null) {
-					if (_data.changeStartColor) {					
-						ParticleSystem.MinMaxGradient gradient = main.startColor;
-						gradient.color = _data.startColor;
-						main.startColor = gradient;
-					}
-
-					if (_data.changeColorOvertime) {
-						ParticleSystem.ColorOverLifetimeModule colorOverLifetime = subsystems[i].colorOverLifetime;
-						ParticleSystem.MinMaxGradient gradient = colorOverLifetime.color;
-						gradient.gradient = _data.colorOvertime;
-						colorOverLifetime.color = gradient;
-					}
-				}
-
-				ParticleSystem.EmissionModule em = subsystems[i].emission;
-				em.enabled = true;
-
-				if (main.prewarm) {
-					subsystems[i].Simulate(1f);
-				}
-
-				subsystems[i].Play();
-			}
-
-			if (_data != null) {
-				ParticleScaler scaler = _system.GetComponent<ParticleScaler>();
-				if (scaler != null) {
-					if (scaler.m_scale != _data.scale) {
-						scaler.m_scale = _data.scale;
-						scaler.DoScale();
-					}
-				}
+			ParticleControl pc = _system.GetComponent<ParticleControl>();
+			if (pc != null) {
+				pc.Play(_data);
 			}
 		}
 	}
