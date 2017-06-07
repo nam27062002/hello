@@ -34,7 +34,9 @@ public class ParticleScaler : MonoBehaviour
 
 	protected struct PSDataRegistry
 	{
-		public float m_startSizeMultiplier;
+		public float m_startSizeXMultiplier;
+		public float m_startSizeYMultiplier;
+		public float m_startSizeZMultiplier;
 		public float m_gravityModifierMultiplier;
 		public float m_startSpeedMultiplier;
 		public float m_startLifetimeMultiplier;
@@ -84,7 +86,18 @@ public class ParticleScaler : MonoBehaviour
 	{
 		PSDataRegistry data = new PSDataRegistry();
 		ParticleSystem.MainModule mainModule = ps.main;
-		data.m_startSizeMultiplier = mainModule.startSizeMultiplier;
+		if ( mainModule.startSize3D )
+		{
+			data.m_startSizeXMultiplier = mainModule.startSizeXMultiplier;
+			data.m_startSizeYMultiplier = mainModule.startSizeYMultiplier;
+			data.m_startSizeZMultiplier = mainModule.startSizeZMultiplier;
+		}
+		else
+		{
+			data.m_startSizeXMultiplier = mainModule.startSizeMultiplier;	
+		}
+
+
 		data.m_gravityModifierMultiplier = mainModule.gravityModifierMultiplier;
 		data.m_startSpeedMultiplier = mainModule.startSpeedMultiplier;
 		data.m_startLifetimeMultiplier = mainModule.startLifetimeMultiplier;
@@ -171,7 +184,16 @@ public class ParticleScaler : MonoBehaviour
 			PSDataRegistry data = m_orignialData[ps];
 
 			ParticleSystem.MainModule mainModule = ps.main;
-			mainModule.startSizeMultiplier = data.m_startSizeMultiplier;
+			if ( mainModule.startSize3D )
+			{
+				mainModule.startSizeXMultiplier = data.m_startSizeXMultiplier;
+				mainModule.startSizeYMultiplier = data.m_startSizeYMultiplier;
+				mainModule.startSizeZMultiplier = data.m_startSizeZMultiplier;
+			}
+			else
+			{
+				mainModule.startSizeMultiplier = data.m_startSizeXMultiplier;
+			}
 			mainModule.gravityModifierMultiplier = data.m_gravityModifierMultiplier;
 			mainModule.startSpeedMultiplier = data.m_startSpeedMultiplier;
 			mainModule.startLifetimeMultiplier = data.m_startLifetimeMultiplier;
@@ -294,7 +316,17 @@ public class ParticleScaler : MonoBehaviour
 	void ScaleParticle( ParticleSystem ps, float scale)
 	{
 		ParticleSystem.MainModule mainModule = ps.main;
-		mainModule.startSizeMultiplier *= scale;
+		if ( mainModule.startSize3D )
+		{
+			mainModule.startSizeXMultiplier *= scale;
+			mainModule.startSizeYMultiplier *= scale;
+			mainModule.startSizeZMultiplier *= scale;
+		}
+		else
+		{
+			mainModule.startSizeMultiplier *= scale;
+		}
+
 		mainModule.gravityModifierMultiplier *= scale;
 		mainModule.startSpeedMultiplier *= scale;
 		if (m_scaleLifetime)

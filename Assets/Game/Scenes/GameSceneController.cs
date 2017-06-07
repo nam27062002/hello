@@ -170,7 +170,7 @@ public class GameSceneController : GameSceneControllerBase {
 		DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
 		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 
-		ParticleManager.instance.useDefinitionLimits = true;
+		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LoadedArea;
 	}
 
 

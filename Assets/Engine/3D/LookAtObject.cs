@@ -25,17 +25,23 @@ public class LookAtObject : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	public GameObject lookAtObject = null;
-	
+	public Transform lookAtObject = null;
+
+    private Transform m_transform;
+
 	//------------------------------------------------------------------//
 	// METHODS															//
 	//------------------------------------------------------------------//
-	/// <summary>
+	void Awake() {
+        m_transform = transform;
+    }
+
+    /// <summary>
 	/// Logic update call.
 	/// </summary>
 	void Update () {
 		if(isActiveAndEnabled && lookAtObject != null) {
-			transform.LookAt(lookAtObject.transform.position);
+			m_transform.LookAt(lookAtObject.position);
 		}
 	}
 }

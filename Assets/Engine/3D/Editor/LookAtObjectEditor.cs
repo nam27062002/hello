@@ -46,7 +46,7 @@ public class LookAtObjectEditor : Editor {
 		DrawDefaultInspector();
 
 		// Allow changing target's position by numbers without having to select the target object
-		lookAtTarget.lookAtObject.transform.position = EditorGUILayout.Vector3Field(GUIContent.none, lookAtTarget.lookAtObject.transform.position);
+		lookAtTarget.lookAtObject.position = EditorGUILayout.Vector3Field(GUIContent.none, lookAtTarget.lookAtObject.position);
 	}
 
 	/// <summary>
@@ -56,9 +56,9 @@ public class LookAtObjectEditor : Editor {
 		if(lookAtTarget != null && lookAtTarget.lookAtObject) {
 			// Draw and get positioning handles on target object
 			if(Tools.pivotRotation == PivotRotation.Global) {
-				lookAtTarget.lookAtObject.transform.position = Handles.PositionHandle(lookAtTarget.lookAtObject.transform.position, Quaternion.identity);
+				lookAtTarget.lookAtObject.position = Handles.PositionHandle(lookAtTarget.lookAtObject.position, Quaternion.identity);
 			} else {
-				lookAtTarget.lookAtObject.transform.position = Handles.PositionHandle(lookAtTarget.lookAtObject.transform.position, lookAtTarget.lookAtObject.transform.rotation);
+				lookAtTarget.lookAtObject.position = Handles.PositionHandle(lookAtTarget.lookAtObject.position, lookAtTarget.lookAtObject.rotation);
 			}
 
 			if(GUI.changed) {
@@ -67,7 +67,7 @@ public class LookAtObjectEditor : Editor {
 
 			// Draw line from the object (camera) to the lookAt for clarity
 			points[0] = lookAtTarget.gameObject.transform.position;
-			points[1] = lookAtTarget.lookAtObject.transform.position;
+			points[1] = lookAtTarget.lookAtObject.position;
 			Handles.color = Color.cyan;
 			Handles.DrawAAPolyLine(4f, points);
 		}

@@ -380,15 +380,15 @@ public class DragonParticleController : MonoBehaviour
 	public void OnShieldLost( DamageType _damageType, Transform _tr)
 	{
 		GameObject instance =  m_shieldParticle.CreateInstance();
-		instance.transform.parent = m_shieldAnchor;
-		instance.transform.localScale = Vector3.one * InstanceManager.player.data.scale;
-		instance.transform.localPosition = m_shieldParticle.offset;
+		Transform t = instance.transform;
+		t.parent = m_shieldAnchor;
+		t.localScale = Vector3.one * InstanceManager.player.data.scale;
+		t.localPosition = m_shieldParticle.offset;
 		if ( _tr != null )
 		{
-			instance.transform.LookAt( _tr.position );
-			instance.transform.Rotate( -Vector3.forward * 90, Space.Self);
-			instance.transform.Rotate( -Vector3.up * 90, Space.Self);
-
+			t.LookAt( _tr.position );
+			t.Rotate( -Vector3.forward * 90, Space.Self);
+			t.Rotate( -Vector3.up * 90, Space.Self);
 		}
 	}
 

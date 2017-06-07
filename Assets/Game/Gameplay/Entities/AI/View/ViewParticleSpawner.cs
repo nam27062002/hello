@@ -28,6 +28,10 @@ public class ViewParticleSpawner : MonoBehaviour {
 		m_spawned = false;
 	}
 
+	void OnDisable() {
+		Return();
+	}
+
 	void Update() {
 		// Show / Hide fire effect if thfis node is inside Camera or not
 		bool isInsideActivationMaxArea = false;
