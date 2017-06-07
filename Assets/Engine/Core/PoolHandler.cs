@@ -23,6 +23,7 @@ public class PoolHandler {
 			Invalidate();
 		}
 	}
+
 	public void Invalidate() {
 		m_isValid = false;
 		m_pool = null;  

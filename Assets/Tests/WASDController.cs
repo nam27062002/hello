@@ -75,7 +75,6 @@ public class WASDController : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
-		bool shift = Input.GetKeyDown(KeyCode.LeftShift);
 		Vector3 offset = Vector3.zero;
 
 		if(Input.GetKey(m_forwardKey)) {
@@ -100,7 +99,7 @@ public class WASDController : MonoBehaviour {
 		}
 
 		// Apply transform
-		if(Input.GetKey(KeyCode.LeftShift)) {
+		if(Input.GetKey(m_rotationModifierKey)) {
 			// To make rotation more intuitive, switch axis around
 			offset = offset * m_rotationSpeed;
 			this.transform.Rotate(

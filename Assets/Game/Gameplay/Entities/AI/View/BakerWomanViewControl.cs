@@ -7,21 +7,16 @@ public class BakerWomanViewControl : ViewControl {
 	[SerializeField] private ParticleData m_flourParticles;
 	[SerializeField] private Transform m_flourSpawnTransform;
 
-
 	protected override void Awake() {
 		base.Awake();
 
-		if (m_flourParticles.IsValid()) {
-			ParticleManager.CreatePool(m_flourParticles);
-		}
+		m_flourParticles.CreatePool();
 	}
 
 	protected override void OnSpecialAnimationEnter(SpecialAnims _anim) {
 		//spawn flour object, particle system	
-		if (m_flourParticles.IsValid()) {			
-			if (m_moving) {
-				ParticleManager.Spawn(m_flourParticles, m_flourSpawnTransform.position);
-			}			
-		}
+		if (m_moving) {
+			m_flourParticles.Spawn(m_flourSpawnTransform.position);
+		}			
 	}
 }

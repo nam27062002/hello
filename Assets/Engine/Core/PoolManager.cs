@@ -194,10 +194,12 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	private void __Clear(bool _all) {
 		if (instance != null) {
 			if (_all) {
-				foreach(KeyValuePair<string, PoolContaier> pc in m_pools) {
-					if (pc.Value.pool != null) {
-						pc.Value.pool.Clear();
-						pc.Value.pool = null;
+				foreach(KeyValuePair<string, PoolContaier> pair in m_pools) {
+					PoolContaier pc = pair.Value;
+					if (pc.pool != null) {
+						pc.pool.Clear();
+						pc.pool = null;
+						pc.handler.Invalidate();
 					}
 				}
 				m_iterator.Clear();
@@ -212,6 +214,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 						m_iterator.Remove(p);
 						container.pool = null;
+						container.handler.Invalidate();
 					}
 				}
 			}

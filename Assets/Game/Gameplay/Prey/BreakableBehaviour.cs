@@ -30,10 +30,9 @@ public class BreakableBehaviour : MonoBehaviour
 	void Start() {
 		if (m_view == null)
 			m_view = transform.FindChild("view");
-
-		if (m_onBreakParticle.IsValid()) {
-			ParticleManager.CreatePool(m_onBreakParticle.name, m_onBreakParticle.path);
-		}	
+		
+		m_onBreakParticle.CreatePool();
+			
 		m_initialViewPos = m_view.localPosition;
 	}
 
@@ -107,21 +106,18 @@ public class BreakableBehaviour : MonoBehaviour
 	void Break(Vector3 pushVector) {
 
 		// Spawn particle
-		if (m_onBreakParticle.IsValid())
+		GameObject go = m_onBreakParticle.Spawn(transform.position);
+		if (go != null)
 		{
-			GameObject go = ParticleManager.Spawn(m_onBreakParticle, transform.position);
-			if (go != null)
+			go.transform.rotation = transform.rotation;	
+			ParticleScaler scaler = go.GetComponentInChildren<ParticleScaler>();
+			if ( scaler != null )
 			{
-				go.transform.rotation = transform.rotation;	
-				ParticleScaler scaler = go.GetComponentInChildren<ParticleScaler>();
-				if ( scaler != null )
-				{
-					scaler.m_scale = transform.lossyScale.x;
-					scaler.DoScale();
-				}
+				scaler.m_scale = transform.lossyScale.x;
+				scaler.DoScale();
 			}
 		}
-
+	
 		AudioController.Play(m_onBreakAudio);
 
 		DragonMotion dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();

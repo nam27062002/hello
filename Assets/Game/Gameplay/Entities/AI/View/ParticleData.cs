@@ -15,6 +15,10 @@ public class ParticleData {
 
 	public float scale = 1f;
 
+	//--------------//
+	private ParticleHandler m_handler;
+	//--------------//
+
 	public ParticleData() {
 		name = "";
 		path = "";
@@ -29,6 +33,9 @@ public class ParticleData {
 
 		// Particle scale
 		scale = 1f;
+
+		//
+		m_handler = null;
 	}
 
 	public ParticleData(string n, string p, Vector3 o) {
@@ -45,6 +52,9 @@ public class ParticleData {
 
 		// Particle scale
 		scale = 1f;
+
+		//
+		m_handler = null;
 	}
 
 	public bool IsValid() {
@@ -55,5 +65,31 @@ public class ParticleData {
 		GameObject go = Resources.Load<GameObject>("Particles/" + path + name);
 		GameObject instance = GameObject.Instantiate(go);
 		return instance;
+	}
+
+	public void CreatePool() {
+		if (IsValid()) {
+			m_handler = ParticleManager.CreatePool(this);
+		}
+	}
+
+	public GameObject Spawn(Vector3 _at = default(Vector3)) {
+		if (m_handler != null) {
+			return m_handler.Spawn(this, _at);
+		}
+		return null;
+	}
+
+	public GameObject Spawn(Transform _parent, Vector3 _offset = default(Vector3)) {
+		if (m_handler != null) {
+			return m_handler.Spawn(this, _parent, _offset);
+		}
+		return null;
+	}
+
+	public void ReturnInstance(GameObject _go) {
+		if (m_handler != null) {
+			m_handler.ReturnInstance(_go);
+		}
 	}
 }

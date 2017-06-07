@@ -102,6 +102,7 @@ public class AmbientHazard : MonoBehaviour {
 
 	// Internal references
 	private GameObject m_particlesObj = null;
+
 	private Collider m_collider = null;
 
 	// Dynamic references
@@ -149,6 +150,8 @@ public class AmbientHazard : MonoBehaviour {
 	private void Awake() {
 		// Initialize internal references
 		m_collider = GetComponent<Collider>();
+
+		m_poisonParticle.CreatePool();
 	}
 
 	/// <summary>
@@ -157,7 +160,7 @@ public class AmbientHazard : MonoBehaviour {
 	private void Start() {
 		if ( m_visualActivationRadius < 0 )
 			m_visualActivationRadius = 40;
-
+		
 		// Always start with the initial delay state, provided there is some initial delay. Otherwise go straight to the initial state.
 		if(m_initialDelay > 0f) {
 			SetState(State.INITIAL_DELAY);
@@ -282,8 +285,8 @@ public class AmbientHazard : MonoBehaviour {
 		// Particles
 		if (m_visible) {
 			// If particles are not created, do it now
-			if (m_particlesObj == null && m_poisonParticle.IsValid()) {
-				m_particlesObj = ParticleManager.Spawn(m_poisonParticle);
+			if (m_particlesObj == null) {
+				m_particlesObj = m_poisonParticle.Spawn();
 				if (m_particlesObj != null) {
 					// As children of ourselves
 					// Particle system should already be created to match the zero position
@@ -317,7 +320,7 @@ public class AmbientHazard : MonoBehaviour {
 		} else {
 			// Return them to the pool
 			if (m_particlesObj != null) {
-				ParticleManager.ReturnInstance(m_particlesObj);
+				m_poisonParticle.ReturnInstance(m_particlesObj);
 				m_particlesObj = null;
 			}
 		}

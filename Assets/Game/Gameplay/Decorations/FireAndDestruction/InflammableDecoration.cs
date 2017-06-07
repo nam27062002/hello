@@ -42,6 +42,10 @@ public class InflammableDecoration : Initializable {
 
 	private Decoration m_entity;
 
+	private ParticleHandler m_disintegrateParticleHandler;
+	private ParticleHandler m_ashesParticleHandler;
+
+
 	public string sku { get { return m_entity.sku; } }
 
 	// Use this for initialization
@@ -51,7 +55,9 @@ public class InflammableDecoration : Initializable {
 		ParticleManager.CreatePool("SmokeParticle", "");
 		ParticleManager.CreatePool(m_feedbackParticle);
 		ParticleManager.CreatePool(m_burnParticle);
-		ParticleManager.CreatePool(m_disintegrateParticle);
+	
+		m_disintegrateParticleHandler 	= ParticleManager.CreatePool(m_disintegrateParticle);
+		m_ashesParticleHandler			= ParticleManager.CreatePool(m_ashesAsset, "Ashes");
 	}
 
 	/// <summary>
@@ -177,8 +183,8 @@ public class InflammableDecoration : Initializable {
 				
 				ZoneManager.ZoneEffect effect = InstanceManager.zoneManager.GetFireEffectCode(m_entity, lastBurnTier);
 				if (effect == ZoneManager.ZoneEffect.L) {
-					if (m_disintegrateParticle.IsValid()) {
-						ParticleManager.Spawn(m_disintegrateParticle, transform.position + m_disintegrateParticle.offset);
+					if (m_disintegrateParticleHandler != null) {
+						m_disintegrateParticleHandler.Spawn(m_disintegrateParticle, transform.position + m_disintegrateParticle.offset);
 					}
 				}
 				
@@ -235,8 +241,8 @@ public class InflammableDecoration : Initializable {
 		}
 		m_ashMaterial.SetFloat("_BurnLevel", 0);
 
-		if (!string.IsNullOrEmpty(m_ashesAsset)) {
-			GameObject particle = ParticleManager.Spawn(m_ashesAsset, m_view.transform.position, "Ashes");
+		if (m_ashesParticleHandler != null) {
+			GameObject particle = m_ashesParticleHandler.Spawn(null, m_view.transform.position);
 			if (particle != null) {
 				particle.transform.rotation = m_view.transform.rotation;
 				particle.transform.localScale = m_view.transform.localScale;
