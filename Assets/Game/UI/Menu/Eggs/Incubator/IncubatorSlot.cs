@@ -136,9 +136,9 @@ public class IncubatorSlot : MonoBehaviour {
 
 				// If cost is 0, use the "free" word instead
 				if(costPC == 0) {
-					m_skipButtonText.Localize(m_skipButtonText.tid, LocalizationManager.SharedInstance.Localize("TID_GEN_FREE"));
+					m_skipButtonText.Localize("TID_INCUBATOR_SKIP_FREE");
 				} else {
-					m_skipButtonText.Localize(m_skipButtonText.tid, StringUtils.FormatNumber(costPC));
+					m_skipButtonText.Localize("TID_INCUBATOR_SKIP_FOR", StringUtils.FormatNumber(costPC));
 				}
 			}
 		}
