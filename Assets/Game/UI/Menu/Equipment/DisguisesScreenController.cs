@@ -445,6 +445,9 @@ public class DisguisesScreenController : MonoBehaviour {
 
 				// Immediately equip it!
 				OnEquipButton();
+
+				// Throw out some fireworks!
+				InstanceManager.menuSceneController.dragonScroller.LaunchDisguisePurchasedFX();
 			}
 		);
 		if(isPC) {
