@@ -32,16 +32,16 @@ public static class ListExt {
 	/// <returns>The zero-based index of the first occurrence of the target item within the array if found; otherwise, <c>–1</c>.</returns>
 	/// <param name="_array">The array to be searched.</param>
 	/// <param name="_target">The object to locate in the array. The value can be <c>null</c> for reference types.</param>
+	/// <typeparam name="T">Type of the array, automatically managed. Must implement the System.IEquatable interface.</typeparam>
 	/// <remarks>
 	/// The array is searched forward starting at the first element and ending at the last element.
 	/// This method performs a linear search; therefore, this method is an O(n) operation, where n is array's Length.
 	/// </remarks>
-	public static int IndexOf(this Array _array, object _target) {
+	public static int IndexOf<T>(this T[] _array, T _value) where T : IEquatable<T> {
 		// Standard linear search
 		for(int i = 0; i < _array.Length; i++) {
-			if(_array.GetValue(i) == _target) return i;
+			if(_array[i].Equals(_value)) return i;
 		}
-
 		return -1;
 	}
 
@@ -67,15 +67,19 @@ public static class ListExt {
 	/// </summary>
 	/// <param name="_array">The array to be shuffled.</param>
 	/// <param name="_seed">Optionally provide a specific seed to the random generator.</param>
-	public static void Shuffle(this Array _array, int _seed = int.MinValue) {
+	/// <typeparam name="T">Type of the array, automatically managed.</typeparam>
+	public static void Shuffle<T>(this T[] _array, int _seed = int.MinValue) {
 		int n = _array.Length;
 		while(n > 1) {  
+			// Find a random position between 0 and n to swap for
 			n--;  
 			if(_seed != int.MinValue) UnityEngine.Random.seed = _seed;
 			int k = UnityEngine.Random.Range(0, n + 1);
-			object value = _array.GetValue(k);
-			_array.SetValue(_array.GetValue(n), k);
-			_array.SetValue(value, n);
+
+			// Swap both values!
+			T tmp = _array[k];
+			_array[k] = _array[n];
+			_array[n] = tmp;
 		}  
 	}
 
@@ -95,10 +99,11 @@ public static class ListExt {
 	/// </summary>
 	/// <returns>A random value from the ones within the array.</returns>
 	/// <param name="_array">The array conatining the candidate values.</param>
-	public static T GetRandomValue<T>(this Array _array) {
+	/// <typeparam name="T">Type of the array, automatically managed.</typeparam>
+	public static T GetRandomValue<T>(this T[] _array) {
 		// Check for empty arrays
 		if(_array.Length == 0) return default(T);
-		return (T)_array.GetValue(UnityEngine.Random.Range(0, _array.Length));
+		return _array[UnityEngine.Random.Range(0, _array.Length)];
 	}
 
 	/// <summary>
@@ -117,10 +122,11 @@ public static class ListExt {
 	/// </summary>
 	/// <param name="_list">The array to be searched.</param>
 	/// <returns>The first element of the array, <c>null</c> if the array is empty.</returns>
-	public static T First<T>(this Array _array) {
+	/// <typeparam name="T">Type of the array, automatically managed.</typeparam>
+	public static T First<T>(this T[] _array) {
 		// Check for empty lists
 		if(_array.Length == 0) return default(T);
-		return (T)_array.GetValue(0);
+		return _array[0];
 	}
 
 	/// <summary>
@@ -139,10 +145,11 @@ public static class ListExt {
 	/// </summary>
 	/// <param name="_list">The array to be searched.</param>
 	/// <returns>The last element of the array, <c>null</c> if the list is empty.</returns>
-	public static T Last<T>(this Array _array) {
+	/// <typeparam name="T">Type of the array, automatically managed.</typeparam>
+	public static T Last<T>(this T[] _array) {
 		// Check for empty lists
 		if(_array.Length == 0) return default(T);
-		return (T)_array.GetValue(_array.Length - 1);
+		return _array[_array.Length - 1];
 	}
 
 	/// <summary>
@@ -162,11 +169,12 @@ public static class ListExt {
 	/// </summary>
 	/// <param name="_array">The array to be casted.</param>
 	/// <returns>A new array with all the elements casted.</returns>
-	public static U[] Cast<U>(this Array _array) {
+	/// <typeparam name="T">Type of the array, automatically managed.</typeparam>
+	public static U[] Cast<T, U>(this T[] _array) where T : IConvertible {
 		// Array.Convert all doesn't seem to work properly with generics (or my brain just can't see it), so do it the old-fashioned way
 		U[] newArray = new U[_array.Length];
 		for(int i = 0; i < _array.Length; i++) {
-			newArray[i] = (U)_array.GetValue(i);
+			newArray[i] = (U)Convert.ChangeType(_array[i], typeof(U));
 		}
 		return newArray;
 	}
