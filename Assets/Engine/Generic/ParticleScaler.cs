@@ -34,6 +34,7 @@ public class ParticleScaler : MonoBehaviour
 
 	protected struct PSDataRegistry
 	{
+		// Main module
 		public float m_startSizeXMultiplier;
 		public float m_startSizeYMultiplier;
 		public float m_startSizeZMultiplier;
@@ -41,9 +42,25 @@ public class ParticleScaler : MonoBehaviour
 		public float m_startSpeedMultiplier;
 		public float m_startLifetimeMultiplier;
 
+		// Shave
 		public float m_shapeSize;
 		public float m_shapeLengthSize;
 		public Vector3 m_boxShapeSize;
+
+		// Velocity Over Lifetime
+		public float m_velocityOverLifetimeX;
+		public float m_velocityOverLifetimeY;
+		public float m_velocityOverLifetimeZ;
+
+		// Limit Velocity Over Lifetime
+		public float m_limitVelocityOverLifetimeX;
+		public float m_limitVelocityOverLifetimeY;
+		public float m_limitVelocityOverLifetimeZ;
+
+		// Force Over Lifetime
+		public float m_forceOverLifetimeX;
+		public float m_forceOverLifetimeY;
+		public float m_forceOverLifetimeZ;
 	}
 	protected Dictionary<ParticleSystem, PSDataRegistry> m_orignialData = new Dictionary<ParticleSystem, PSDataRegistry>();
 
@@ -152,6 +169,28 @@ public class ParticleScaler : MonoBehaviour
 			}break;
 		}
 
+		ParticleSystem.VelocityOverLifetimeModule velocityOverLifetime = ps.velocityOverLifetime;
+		data.m_velocityOverLifetimeX = velocityOverLifetime.xMultiplier;
+		data.m_velocityOverLifetimeY = velocityOverLifetime.yMultiplier;
+		data.m_velocityOverLifetimeZ = velocityOverLifetime.zMultiplier;
+
+		ParticleSystem.LimitVelocityOverLifetimeModule limitVelocityOverLifetime = ps.limitVelocityOverLifetime;
+		if ( limitVelocityOverLifetime.separateAxes ) 
+		{
+			data.m_limitVelocityOverLifetimeX = limitVelocityOverLifetime.limitXMultiplier;
+			data.m_limitVelocityOverLifetimeY = limitVelocityOverLifetime.limitYMultiplier;
+			data.m_limitVelocityOverLifetimeZ = limitVelocityOverLifetime.limitZMultiplier;
+		}
+		else
+		{
+			data.m_limitVelocityOverLifetimeX = limitVelocityOverLifetime.limitMultiplier;
+		}
+
+		ParticleSystem.ForceOverLifetimeModule forceOverLifetime = ps.forceOverLifetime;
+		data.m_forceOverLifetimeX = forceOverLifetime.xMultiplier;
+		data.m_forceOverLifetimeY = forceOverLifetime.yMultiplier;
+		data.m_forceOverLifetimeZ = forceOverLifetime.zMultiplier;
+
 		if ( m_orignialData.ContainsKey( ps ) )
 			m_orignialData[ ps ] = data;
 		else
@@ -247,6 +286,30 @@ public class ParticleScaler : MonoBehaviour
 					shape.radius = data.m_shapeSize;
 				}break;
 			}
+
+			ParticleSystem.VelocityOverLifetimeModule velocityOverLifetime = ps.velocityOverLifetime;
+			velocityOverLifetime.xMultiplier = data.m_velocityOverLifetimeX;
+			velocityOverLifetime.yMultiplier = data.m_velocityOverLifetimeY;
+			velocityOverLifetime.zMultiplier = data.m_velocityOverLifetimeZ;
+
+			ParticleSystem.LimitVelocityOverLifetimeModule limitVelocityOverLifetime = ps.limitVelocityOverLifetime;
+			if ( limitVelocityOverLifetime.separateAxes )
+			{
+				limitVelocityOverLifetime.limitXMultiplier = data.m_limitVelocityOverLifetimeX;
+				limitVelocityOverLifetime.limitYMultiplier = data.m_limitVelocityOverLifetimeY;
+				limitVelocityOverLifetime.limitZMultiplier = data.m_limitVelocityOverLifetimeZ;
+			}
+			else
+			{
+				limitVelocityOverLifetime.limitMultiplier = data.m_limitVelocityOverLifetimeX;
+			}
+
+			ParticleSystem.ForceOverLifetimeModule forceOverLifetime = ps.forceOverLifetime;
+			forceOverLifetime.xMultiplier = data.m_forceOverLifetimeX;
+			forceOverLifetime.yMultiplier = data.m_forceOverLifetimeY;
+			forceOverLifetime.zMultiplier = data.m_forceOverLifetimeZ;
+
+
 		}
 	}
 
@@ -381,6 +444,30 @@ public class ParticleScaler : MonoBehaviour
 				shape.radius *= scale;
 			}break;
 		}
+
+		ParticleSystem.VelocityOverLifetimeModule velocityOverLifetime = ps.velocityOverLifetime;
+		velocityOverLifetime.xMultiplier *= scale;
+		velocityOverLifetime.yMultiplier *= scale;
+		velocityOverLifetime.zMultiplier *= scale;
+
+		ParticleSystem.LimitVelocityOverLifetimeModule limitVelocityOverLifetime = ps.limitVelocityOverLifetime;
+		if (limitVelocityOverLifetime.separateAxes)
+		{
+			limitVelocityOverLifetime.limitXMultiplier *= scale;
+			limitVelocityOverLifetime.limitYMultiplier *= scale;
+			limitVelocityOverLifetime.limitZMultiplier *= scale;	
+		}
+		else
+		{
+			limitVelocityOverLifetime.limitMultiplier *= scale;
+		}
+
+
+		ParticleSystem.ForceOverLifetimeModule forceOverLifetime = ps.forceOverLifetime;
+		forceOverLifetime.xMultiplier *= scale;
+		forceOverLifetime.yMultiplier *= scale;
+		forceOverLifetime.zMultiplier *= scale;
+
 	}
 	
 }
