@@ -54,11 +54,12 @@ public class DragonEquip : MonoBehaviour {
 	{
 		// Get assigned dragon sku - from Player for in-game dragons, from DragonPreview for menu dragons
 		DragonPlayer player = GetComponent<DragonPlayer>();
-		if(player != null) {
+		if(player != null && player.data != null) {
 			m_dragonSku = player.data.def.sku;
 		} else {
 			MenuDragonPreview preview = GetComponent<MenuDragonPreview>();
-			m_dragonSku = preview.sku;
+			if ( preview != null )
+				m_dragonSku = preview.sku;
 		}
 
 		// Store attach points sorted to match AttachPoint enum
@@ -283,7 +284,7 @@ public class DragonEquip : MonoBehaviour {
 	/// Sets the skin of the dragon. Performs the actual texture swap.
 	/// </summary>
 	/// <param name="_name">Name of the skin to be applied.</param>
-	private void SetSkin(string _name) {
+	public void SetSkin(string _name) {
 
 		// Texture change
 		if(_name == null || _name.Equals("default") || _name.Equals("")) {
