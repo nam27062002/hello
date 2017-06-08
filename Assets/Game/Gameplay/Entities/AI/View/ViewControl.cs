@@ -48,7 +48,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	[SeparatorAttribute("Special Actions Animations")] // map a special action from the pilot to a specific animation.
 	[SerializeField] private string m_animA = "";
+	[SerializeField] private string m_animAAudio = "";
+	private AudioObject m_animAAudioGO;
 	[SerializeField] private string m_animB = "";
+	[SerializeField] private string m_animBAudio = "";
+	private AudioObject m_animBAudioGO;
 	[SerializeField] private string m_animC = "";
 
 	[SeparatorAttribute("Exclamation Mark")]
@@ -378,6 +382,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			RemoveAudioParent( m_onEatenAudioAO );
 			RemoveAudioParent( m_onScaredAudioAO );
 			RemoveAudioParent( m_onPanicAudioAO );
+
+			RemoveAudioParent( m_animAAudioGO );
+			RemoveAudioParent( m_animBAudioGO );
 		}
     }
 
@@ -805,8 +812,32 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_specialAnimations[(int)_anim] = _value;
 	}
 
-	protected virtual void OnSpecialAnimationEnter(SpecialAnims _anim) {}
-	protected virtual void OnSpecialAnimationExit(SpecialAnims _anim) {}
+	protected virtual void OnSpecialAnimationEnter(SpecialAnims _anim) {
+		switch( _anim ){
+			case SpecialAnims.A:{
+				if (!string.IsNullOrEmpty( m_animAAudio )){
+					m_animAAudioGO = AudioController.Play( m_animAAudio, transform);
+				}
+			}break;
+			case SpecialAnims.B:{
+				if (!string.IsNullOrEmpty( m_animBAudio )){
+					m_animBAudioGO = AudioController.Play( m_animBAudio, transform);
+				}
+			}break;
+		}
+	}
+	protected virtual void OnSpecialAnimationExit(SpecialAnims _anim) {
+		switch( _anim ){
+			case SpecialAnims.A:{
+				if ( m_animAAudioGO != null && m_animAAudioGO.IsPlaying() && m_animAAudioGO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
+					m_animAAudioGO.Stop();
+			}break;
+			case SpecialAnims.B:{
+				if ( m_animBAudioGO != null && m_animBAudioGO.IsPlaying() && m_animBAudioGO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
+					m_animBAudioGO.Stop();
+			}break;
+		}
+	}
 
 	public void Die(bool _eaten = false, bool _burned = false) {
 		ShowExclamationMark(false);

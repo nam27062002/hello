@@ -18,6 +18,10 @@ public class AutoParenter : MonoBehaviour {
 	}
 	[FormerlySerializedAs("m_lookAtRoot")]
 	[SerializeField] private Transform m_parentRoot;
+	public Transform parentRoot
+	{
+		get{ return m_parentRoot; }
+	}
 	[SerializeField] private bool m_worldPositionStays = true;
 
 	void Awake() {
