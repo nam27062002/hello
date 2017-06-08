@@ -154,7 +154,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 
 				// Do a fun animation on the dragon!
 				// Only owned dragons!
-				if(DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon).isOwned) {
+				if(DragonManager.GetDragonData(dragon.sku).isOwned) {
 					//dragon.SetAnim(MenuDragonPreview.Anim.FUN);
 					dragon.transform.DOKill(true);
 					switch(m_animId) {
