@@ -12,6 +12,7 @@
 		_Seed("Random Seed", Float) = 0.0							//Randomize effect
 		_Alpha("Alpha", Range(0.0, 1.0)) = 1.0	// alpha translucency
 		_NoiseScale("Noise scale:", Range(0.001, 80)) = 1.0
+		_ShaderTime("Shader Time:", Float) = 0.0		//Shader Time
 	}
 
 	SubShader
@@ -61,6 +62,7 @@
 			float	_Seed;
 			float	_Alpha;
 			float	_NoiseScale;
+			float 	_ShaderTime;
 
 			v2f vert (appdata v)
 			{
@@ -117,9 +119,9 @@
 
 //				i.uv.y *= 1.0 - i.uv.y;
 				i.uv -= half2(0.5, 0.5);
-				float t1 = frac(-_Time.y * _Speed);
-				float t2 = frac((-_Time.y * _Speed * 1.5) + 0.333333);
-				float t3 = frac((-_Time.y * _Speed * 3.0) + 0.666666);
+				float t1 = frac(-_ShaderTime * _Speed);
+				float t2 = frac((-_ShaderTime * _Speed * 1.5) + 0.333333);
+				float t3 = frac((-_ShaderTime * _Speed * 3.0) + 0.666666);
 				float i1 = abs(t1 - 0.5) * 2.0;//(0.75 + sin(_Time.y * _Speed) * 0.25);
 				float i2 = abs(t2 - 0.5) * 2.0;//(0.75 + sin((_Time.y * _Speed) + _PI * 0.5) * 0.5);
 				float i3 = abs(t3 - 0.5) * 2.0;//(0.75 + sin((_Time.y * _Speed) + _PI * 0.5) * 0.5);
