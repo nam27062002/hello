@@ -17,7 +17,6 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	[SerializeField] private float m_hitRadius = 1.5f;
 
 
-
 	private FireNodeSetup m_fireNodeSetup;
 
 	private GameObject m_view;
@@ -195,7 +194,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 					if (effect == ZoneManager.ZoneEffect.L) {					
 						//m_disintegrateParticle.Spawn(transform.position + m_disintegrateParticle.offset);
 						for (int i = 0; i < m_fireNodes.Length; i++) {
-							if (i % 2 == 0) {
+							if (i % 2 != 0) {
 								GameObject ex = m_explosionProcHandler.Spawn(null, m_fireNodes[i].transform.position);
 								if (ex != null) {
 									ex.transform.localScale = m_fireNodes[i].transform.localScale * 1.0f;
