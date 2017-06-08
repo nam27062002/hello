@@ -8,6 +8,8 @@ public class Decoration : IEntity {
 	[SerializeField] private string m_sku;
 	public override string sku { get { return m_sku; } }
 
+	[SerializeField] private bool m_disintegrable = true;
+
 	//
 	private Reward m_reward;
 	public Reward reward { get { return m_reward; }}
@@ -52,9 +54,17 @@ public class Decoration : IEntity {
 		m_minTierDestructionFeedback 	= (DragonTier)m_def.GetAsInt("minTierDestructionFeedback", (int)DragonTier.COUNT);
 		m_minTierDestruction			= (DragonTier)m_def.GetAsInt("minTierDestruction", (int)DragonTier.COUNT);
 
-		//m_minTierDisintegrate = DragonTier.TIER_3;
-		m_minTierDisintegrate =(DragonTier)m_def.GetAsInt("minTierDisintegrate", (int)DragonTier.COUNT);
+		if (m_disintegrable) 
+			m_minTierDisintegrate = (DragonTier)m_def.GetAsInt("minTierDisintegrate", (int)DragonTier.COUNT);
+		else
+			m_minTierDisintegrate = DragonTier.COUNT;
 
 		m_maxHealth = 1f;
+	}
+
+
+	//TODO: move this to another place -> maybe a decorations culling manager?
+	void Update() {
+		CustomUpdate();
 	}
 }

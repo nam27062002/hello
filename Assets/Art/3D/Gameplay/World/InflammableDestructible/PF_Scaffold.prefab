@@ -42,7 +42,8 @@ GameObject:
   - component: {fileID: 114000011844506918}
   - component: {fileID: 11401264}
   - component: {fileID: 11408994}
-  m_Layer: 16
+  - component: {fileID: 114600449030803380}
+  m_Layer: 0
   m_Name: PF_Scaffold
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -389,9 +390,9 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_disintegrateParticle:
-    name: PS_D_Splinters
+    name: PS_D_MetalBreaking
     path: 
-    offset: {x: 0, y: 0, z: 0}
+    offset: {x: 0, y: 3, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
@@ -440,7 +441,6 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     scale: 1
-  m_ashesAsset: 
   m_boxelSize: 5
   m_hitRadius: 2
 --- !u!137 &13775170
@@ -510,9 +510,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4879637797625218}
-  - component: {fileID: 114581476192676834}
   m_Layer: 0
-  m_Name: SP_Archer_02Path_0 (8)
+  m_Name: Archer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -839,7 +838,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1071954538713202}
   m_LocalRotation: {x: -0, y: 0.2019952, z: -0, w: 0.97938657}
-  m_LocalPosition: {x: 0.000012677921, y: 6.086957, z: -0.0000041074422}
+  m_LocalPosition: {x: 0.000012677921, y: 4.96, z: -0.0000041074422}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 479000}
@@ -920,6 +919,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: building_small
+  m_disintegrable: 1
 --- !u!114 &114030032614485638
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -964,49 +964,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114581476192676834
+--- !u!114 &114600449030803380
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1071954538713202}
+  m_GameObject: {fileID: 138210}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
+  m_Script: {fileID: 11500000, guid: 106676838ac4d4f99abbdcf3e29b5edb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_mixEntities: 0
-  m_entityPrefabList:
-  - name: Surface/PF_Archer02_Static
-    chance: 100
-  m_quantity:
-    min: 1
-    max: 1
-  m_speedFactorRange:
-    min: 1
-    max: 1
-  m_scale:
-    min: 1
-    max: 1
-  m_rails: 1
-  m_hasGroupBonus: 0
-  m_minTier: 0
-  m_maxTier: 4
-  m_checkMaxTier: 0
-  m_activationChance: 100
-  m_activationTriggers: []
-  m_activationKillTriggers: []
-  m_deactivationTriggers: []
+  m_entityPrefabStr: Surface/PF_Archer02_Static
   m_spawnTime:
     min: 300
     max: 300
-  m_isPremiumCurrencyNPC: 0
-  m_homePosMethod: 1
-  m_homePosDistance:
-    min: 0
-    max: 0
-  m_maxSpawns: 0
-  m_checkCurrents: 0
+  m_spawnAtTransform: {fileID: 4879637797625218}
+  m_mustBeChild: 0
+  m_lookAtVector: 2
 --- !u!114 &114769476543569976
 MonoBehaviour:
   m_ObjectHideFlags: 1
