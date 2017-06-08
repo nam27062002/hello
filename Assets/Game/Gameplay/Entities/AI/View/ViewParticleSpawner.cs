@@ -28,14 +28,20 @@ public class ViewParticleSpawner : MonoBehaviour {
 		m_spawned = false;
 	}
 
+	void OnDisable() {
+		Return();
+	}
+
 	void Update() {
 		// Show / Hide fire effect if thfis node is inside Camera or not
 		bool isInsideActivationMaxArea = false;
 
-		if (m_view != null) {
-			isInsideActivationMaxArea = m_camera.IsInsideFrustrum(m_view.bounds);
-		} else {
-			isInsideActivationMaxArea = m_camera.IsInsideFrustrum(m_parent.position);
+		if(m_camera != null) {
+			if (m_view != null) {
+				isInsideActivationMaxArea = m_camera.IsInsideFrustrum(m_view.bounds);
+			} else {
+				isInsideActivationMaxArea = m_camera.IsInsideFrustrum(m_parent.position);
+			}
 		}
 
 		if (isInsideActivationMaxArea) {

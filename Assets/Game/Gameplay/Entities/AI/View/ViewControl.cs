@@ -374,8 +374,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				// Return parented audio objects if needed
 			RemoveAudioParent( m_idleAudioAO );
 			RemoveAudioParent( m_onAttackAudioAO );
-
 			RemoveAudioParent( m_onEatenAudioAO );
+
 			RemoveAudioParent( m_onScaredAudioAO );
 			RemoveAudioParent( m_onPanicAudioAO );
 		}

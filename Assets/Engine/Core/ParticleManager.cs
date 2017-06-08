@@ -15,6 +15,12 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		public int				size;
 	}
 
+	public enum PoolLimits {
+		Unlimited = 0,
+		LoadedArea,
+		LevelEditor
+	}
+
 	// Pool of pools! :D
 	private Dictionary<string, PoolContainer> m_pools = new Dictionary<string, PoolContainer>();
 	private List<Pool> m_iterator = new List<Pool>();
@@ -23,10 +29,10 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	private float m_printTimer = 10f;
 	#endif
 
-	private bool m_useDefinitionLimits = false;
-	public bool useDefinitionLimits {
-		get { return m_useDefinitionLimits; }
-		set { m_useDefinitionLimits = value; }
+	private PoolLimits m_poolLimits = PoolLimits.Unlimited;
+	public PoolLimits poolLimits {
+		get { return m_poolLimits; }
+		set { m_poolLimits = value; }
 	}
 
 
@@ -102,9 +108,16 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	}
 
 	private void __PreBuild() {
-		if (m_useDefinitionLimits) {
+		if (m_poolLimits != PoolLimits.Unlimited) {
 			if (LevelManager.currentLevelData != null) {
-				string category = "PARTICLE_MANAGER_SETTINGS_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea;
+				string category = "";
+
+				if (m_poolLimits == PoolLimits.LoadedArea) {
+					category = "PARTICLE_MANAGER_SETTINGS_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea;
+				} else if (m_poolLimits == PoolLimits.LevelEditor) {
+					category = LevelEditor.LevelEditor.settings.poolLimit;
+				}
+
 				List<DefinitionNode> poolSize = DefinitionsManager.SharedInstance.GetDefinitionsList(category.ToUpper());
 				for (int i = 0; i < poolSize.Count; i++) {
 					PoolContainer pc = null;
@@ -148,10 +161,10 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 				GameObject go = Resources.Load<GameObject>("Particles/" + _folderPath + _prefabName);
 
 				if (go != null) {
-					if (m_useDefinitionLimits) {
-						container.pool = new Pool(go, instance.transform, container.size, false, true, true);
-					} else {
+					if (m_poolLimits == PoolLimits.Unlimited) {
 						container.pool = new Pool(go, instance.transform, 1, true, true, true);
+					} else {
+						container.pool = new Pool(go, instance.transform, container.size, false, true, true);
 					}
 					m_iterator.Add(container.pool);
 				}

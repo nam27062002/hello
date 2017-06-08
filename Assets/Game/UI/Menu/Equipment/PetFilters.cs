@@ -8,10 +8,13 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
+
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+
 using DG.Tweening;
 
 //----------------------------------------------------------------------------//
@@ -66,6 +69,7 @@ public class PetFilters : MonoBehaviour {
 	private bool m_dirty = false;
 	private bool m_ignoreToggleEvents = false;	// Internal control var for when changing a toggle state from code
 	private string m_currentFilter = "";	// Behave as tabs
+	private Coroutine m_refreshPillsCoroutine = null;	// Pills are enabled asynchronously to prevent peaks of cpu load
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -95,19 +99,16 @@ public class PetFilters : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Skip events
-		m_ignoreToggleEvents = true;
-
 		// Initialize buttons!
+		m_ignoreToggleEvents = true;	// Skip events
 		for(int i = 0; i < m_filterButtons.Length; i++) {
 			// Refresh based on current filter state
 			m_filterButtons[i].toggle.isOn = CheckFilter(m_filterButtons[i].filterName);
 		}
-
-		// Apply current filters
-		RefreshPills();
-		m_dirty = false;
 		m_ignoreToggleEvents = false;
+
+		// Force a refresh of the pills on the next Update
+		m_dirty = true;
 	}
 
 	/// <summary>
@@ -231,25 +232,57 @@ public class PetFilters : MonoBehaviour {
 	/// Show/hide pills based on current filter list.
 	/// </summary>
 	private void RefreshPills() {
-		// Iterate the pills!
-		bool show = false;
-		float delay = 0f;
-		for(int i = 0; i < petsScreen.pills.Count; i++) {
-			// Should this pill be displayed?
-			show = m_filteredDefs.Contains(petsScreen.pills[i].def);
-			if(show) {
-				// Restart animation when showing
-				petsScreen.pills[i].animator.tweenDelay = delay;
-				petsScreen.pills[i].animator.RestartShow();
-				delay += 0.05f;
-			} else {
-				// Don't do animation when hiding
-				petsScreen.pills[i].animator.Hide(false);
-			}
+		// If a coroutine already exists, stop it!
+		if(m_refreshPillsCoroutine != null) {
+			StopCoroutine(m_refreshPillsCoroutine);
+			m_refreshPillsCoroutine = null;
 		}
+
+		// Start the coroutine
+		StartCoroutine(RefreshPillsCoroutine());
+	}
+
+	/// <summary>
+	/// Show/hide pills asynchronously based on current filter list.
+	/// </summary>
+	/// <returns>The coroutine.</returns>
+	private IEnumerator RefreshPillsCoroutine() {
+		// Skip if there are no pills
+		if(petsScreen.pills.Count <= 0) yield return null;
+
+		// Hide all pills
+		for(int i = 0; i < petsScreen.pills.Count; ++i) {
+			// Don't do animation when hiding
+			petsScreen.pills[i].animator.Hide(false);
+		}
+
+		// Readjust the scroll list's content size to fit all filtered pills
+		// [AOC] Usually we would use a content size fitter, but since we're enabling 
+		// the pills with delay, the scrolling logic goes all crazy
+		HorizontalLayoutGroup layout = petsScreen.scrollList.content.GetComponent<HorizontalLayoutGroup>();
+		float pillWidth = petsScreen.pills[0].GetComponent<LayoutElement>().preferredWidth;
+		int numVisiblePills = m_filteredDefs.Count;
+		Vector2 contentSize = petsScreen.scrollList.content.sizeDelta;
+		contentSize.x = layout.padding.left
+			+ pillWidth * numVisiblePills
+			+ layout.spacing * (numVisiblePills - 1) 
+			+ layout.padding.right;
+		petsScreen.scrollList.content.sizeDelta = contentSize;
 
 		// Put scroll list at the start
 		StartCoroutine(petsScreen.scrollList.ScrollToPositionDelayedFrames(Vector2.zero, 1));
+
+		// Show all pills asynchronously so we don't get massive CPU load peaks
+		for(int i = 0; i < petsScreen.pills.Count; i++) {
+			// Only if this pill must be displayed!
+			if(m_filteredDefs.Contains(petsScreen.pills[i].def)) {
+				// Launch show animation
+				petsScreen.pills[i].animator.Show();
+
+				// Wait before doing next pill
+				yield return new WaitForSeconds(0.05f);
+			}
+		}
 	}
 
 	/// <summary>
