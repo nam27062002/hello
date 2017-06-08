@@ -44,6 +44,25 @@ public class AutoParenter : MonoBehaviour {
 		Destroy(this);
 	}
 
+	public void CopyTargetPosAndRot()
+	{
+		if (!string.IsNullOrEmpty(parentName)) {
+			Transform t = transform;
+			Transform p;
+			if (parentRoot == null)
+				p = t.parent.FindTransformRecursive(parentName);
+			else
+				p = parentRoot.FindTransformRecursive(parentName);
+
+			if (p != null) {
+				t.position = p.position;
+				t.rotation = p.rotation;
+			} 
+		}
+	}
+
+
+
 
 
 }
