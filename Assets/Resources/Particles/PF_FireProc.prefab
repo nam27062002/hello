@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4000011725904634}
   - component: {fileID: 114000011166009582}
   - component: {fileID: 114069335191080960}
+  - component: {fileID: 114279088559622632}
   m_Layer: 0
   m_Name: PF_FireProc
   m_TagString: Untagged
@@ -39,7 +40,6 @@ GameObject:
   - component: {fileID: 33000014282011298}
   - component: {fileID: 23000011814843698}
   - component: {fileID: 114000013355048048}
-  - component: {fileID: 95031846244222734}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -112,23 +112,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011913364476}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!95 &95031846244222734
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000011913364476}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 99872ab82b541c340801fbb01f7799aa, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &114000011166009582
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -261,5 +244,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114279088559622632
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010233173726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffa5694eda91647eb8cb359fa67b2af9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
