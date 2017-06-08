@@ -76,7 +76,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SerializeField] private string m_onExplosionAudio;
 
 	[SeparatorAttribute("More Audios")]
-	[SerializeField] private string m_onAttackAudio;
+	[SerializeField] protected string m_onAttackAudio;
 	private AudioObject m_onAttackAudioAO;
 	protected Vector3 m_attackTargetPosition;
 	public Vector3 attackTargetPosition { get{ return m_attackTargetPosition; } set{ m_attackTargetPosition = value; } }
@@ -129,7 +129,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	private bool[] m_specialAnimations;
 
-	private PreyAnimationEvents m_animEvents;
+	protected PreyAnimationEvents m_animEvents;
 
 	private static int ATTACK_HASH = Animator.StringToHash("Attack");
     // private const int ATTACK_HASH = Animator.StringToHash("Attack");
@@ -374,8 +374,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				// Return parented audio objects if needed
 			RemoveAudioParent( m_idleAudioAO );
 			RemoveAudioParent( m_onAttackAudioAO );
-
 			RemoveAudioParent( m_onEatenAudioAO );
+
 			RemoveAudioParent( m_onScaredAudioAO );
 			RemoveAudioParent( m_onPanicAudioAO );
 		}

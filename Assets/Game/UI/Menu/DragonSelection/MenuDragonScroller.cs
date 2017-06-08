@@ -27,6 +27,10 @@ public class MenuDragonScroller : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	// Exposed setup
+	[SerializeField] private GameObject m_dragonPurchasedFX = null;
+	[SerializeField] private GameObject m_disguisePurchasedFX = null;
+
 	// References
 	private MenuCameraAnimatorByCurves m_cameraAnimator = null;
 	public MenuCameraAnimatorByCurves cameraAnimator {
@@ -111,8 +115,7 @@ public class MenuDragonScroller : MonoBehaviour {
 	public MenuDragonPreview GetDragonPreview(string _sku) {
 		// Try to get it from the dictionary
 		MenuDragonPreview ret = null;
-		MenuDragonSlot slot = null;
-		m_dragonSlots.TryGetValue(_sku, out slot);
+		MenuDragonSlot slot = GetDragonSlot(_sku);
 		if(slot != null) ret = slot.dragonPreview;
 
 		// If not found on the dictionary, try to find it in the hierarchy
@@ -130,6 +133,56 @@ public class MenuDragonScroller : MonoBehaviour {
 			}
 		}
 		return ret;
+	}
+
+	/// <summary>
+	/// Get the slot corresponding to a specific dragon.
+	/// </summary>
+	/// <returns>The slot of the requested dragon.</returns>
+	/// <param name="_sku">The sku of the dragon whose slot we want.</param>
+	public MenuDragonSlot GetDragonSlot(string _sku) {
+		// Just get it from the dictionary
+		MenuDragonSlot slot = null;
+		m_dragonSlots.TryGetValue(_sku, out slot);
+		return slot;
+	}
+
+	/// <summary>
+	/// Launches the dragon purchased FX on the selected dragon.
+	/// </summary>
+	public void LaunchDragonPurchasedFX() {
+		// Check required stuff
+		if(m_dragonPurchasedFX == null) return;
+
+		// Find target slot
+		MenuDragonSlot slot = GetDragonSlot(InstanceManager.menuSceneController.selectedDragon);
+		if(slot == null) return;
+
+		// Create a new instance of the FX and put it on the selected dragon slot
+		GameObject newObj = Instantiate<GameObject>(m_dragonPurchasedFX, slot.transform, false);
+
+		// Auto-destroy after the FX has finished
+		DestroyInSeconds destructor = newObj.AddComponent<DestroyInSeconds>();
+		destructor.lifeTime = 9f;	// Sync with FX duration!
+	}
+
+	/// <summary>
+	/// Launches the disguise purchased FX on the selected dragon.
+	/// </summary>
+	public void LaunchDisguisePurchasedFX() {
+		// Check required stuff
+		if(m_disguisePurchasedFX == null) return;
+
+		// Find target slot
+		MenuDragonSlot slot = GetDragonSlot(InstanceManager.menuSceneController.selectedDragon);
+		if(slot == null) return;
+
+		// Create a new instance of the FX and put it on the selected dragon slot
+		GameObject newObj = Instantiate<GameObject>(m_disguisePurchasedFX, slot.transform, false);
+
+		// Auto-destroy after the FX has finished
+		DestroyInSeconds destructor = newObj.AddComponent<DestroyInSeconds>();
+		destructor.lifeTime = 9f;	// Sync with FX duration!
 	}
 
 	//------------------------------------------------------------------//

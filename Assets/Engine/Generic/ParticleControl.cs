@@ -28,7 +28,7 @@ public class ParticleControl : MonoBehaviour {
 		for (int i = 0; i < m_subsystems.Count; i++) {
 			ParticleSystem system = m_subsystems[i];
 
-			system.Clear();
+			system.Clear(false);
 
 			ParticleSystem.MainModule main = system.main;
 
@@ -51,10 +51,10 @@ public class ParticleControl : MonoBehaviour {
 			em.enabled = true;
 
 			if (main.prewarm) {
-				system.Simulate(1f);
+				system.Simulate(1f, false);
 			}
 
-			system.Play();
+			system.Play(false);
 		}
 
 		if (_data != null) {
@@ -83,7 +83,7 @@ public class ParticleControl : MonoBehaviour {
 				system.Stop();
 			}
 
-			if (system.IsAlive()) {
+			if (system.IsAlive(false)) {
 				isAlive = true;
 			}
 		}

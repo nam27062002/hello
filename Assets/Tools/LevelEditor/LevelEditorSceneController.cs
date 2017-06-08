@@ -49,7 +49,11 @@ namespace LevelEditor {
             PersistenceManager.Init();
             PersistenceManager.Load();
 
-            ParticleManager.instance.useDefinitionLimits = false;
+			if (LevelEditor.settings.poolLimit == "unlimited") {
+				ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.Unlimited;
+			} else {
+				ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LevelEditor;
+			}
 
 			// Load the dragon
             DragonManager.LoadDragon(LevelEditor.settings.testDragon);

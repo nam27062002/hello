@@ -16,8 +16,8 @@ public class HUDFading : MonoBehaviour {
 	};
 	private State m_state = State.NONE;
 
-	const float FADE_DURATION = 0.5f;
-	float m_timer = 0;
+	const float FADE_DURATION = 1.0f;
+    float m_startTime = 0.0f;
 	Color m_color = Color.black;
 
 	bool m_skipFrame = false;
@@ -52,25 +52,26 @@ public class HUDFading : MonoBehaviour {
 			m_skipFrame = false;
 			return;
 		}
+
 		switch( m_state )
 		{
 			case State.FADE_OUT:
 			{
-				m_timer += Time.deltaTime;
+				float tim = Time.time - m_startTime;
 
-				float alpha = m_timer / FADE_DURATION;
+				float alpha = tim / FADE_DURATION;
 				if ( alpha > 1.0f )
 					alpha = 1.0f;
 				m_color.a = alpha;
 				m_blackImage.color = m_color;
 
-				if ( m_timer >= FADE_DURATION )
+				if ( tim >= FADE_DURATION )
 				{
 					m_waitingTime = 0;
-					m_timer = FADE_DURATION;
 					m_state = State.WAITING_FADE_IN;
 				}
 			}break;
+
 			case State.WAITING_FADE_IN:
 			{
 				m_waitingTime += Time.deltaTime;
@@ -80,26 +81,35 @@ public class HUDFading : MonoBehaviour {
 					m_text.SetActive(true);
 				}
 			}break;
+
 			case State.FADE_IN:
 			{
-				m_timer -= Time.deltaTime;
-				float alpha = m_timer / FADE_DURATION;
+				float tim = FADE_DURATION - (Time.time - m_startTime);
+				float alpha = tim / FADE_DURATION;
 				if ( alpha <= 0f )
-					alpha = 0f;
+					alpha = 0.0f;
 				m_color.a = alpha;
 				m_blackImage.color = m_color;
-				if ( m_timer <= 0 )
+				if ( tim <= 0 )
 				{
-					m_timer = 0;
 					m_state = State.NONE;
-					enabled = false;
+                    StartCoroutine(DisableInTime());
 				}
 
 			}break;
 		}
 	}
 
-	void PlayerLeavingArea()
+
+    IEnumerator DisableInTime()
+    {
+        yield return new WaitForSeconds(1.0f);
+        m_blackImage.enabled = false;
+        enabled = false;
+    }
+
+
+    void PlayerLeavingArea()
 	{
 		StartFadeOut();
 	}
@@ -113,17 +123,20 @@ public class HUDFading : MonoBehaviour {
 	void StartFadeOut()
 	{
 		enabled = true;
-		m_blackImage.enabled = true;
-		m_state = State.FADE_OUT;
+        m_blackImage.enabled = true;
+        m_startTime = Time.time;
+        m_state = State.FADE_OUT;
 	}
 
 	// Screen to transparent
 	void StartFadeIn()
 	{
 		m_text.SetActive(false);
-		m_skipFrame = true;
+        m_blackImage.enabled = true;
+        m_skipFrame = true;
 		enabled = true;
-		m_state = State.FADE_IN;
+        m_startTime = Time.time;
+        m_state = State.FADE_IN;
 
 	}
 
