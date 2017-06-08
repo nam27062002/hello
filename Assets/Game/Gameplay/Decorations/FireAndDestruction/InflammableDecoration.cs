@@ -198,8 +198,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 							if (i % 2 == 0) {
 								GameObject ex = m_explosionProcHandler.Spawn(null, m_fireNodes[i].transform.position);
 								if (ex != null) {
-									ex.transform.localScale = Vector3.one * 3.5f;
-									ex.GetComponent<ExplosionProcController>().Explode(i * 0.015f);
+									ex.transform.localScale = m_fireNodes[i].transform.localScale * 1.0f;
+									ex.GetComponent<ExplosionProcController>().Explode(i * 0.015f); //delay
 								}
 							}
 						}
