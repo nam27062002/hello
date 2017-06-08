@@ -3,7 +3,7 @@
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-//		_Color ("Color", Color) = (1,1,1,1)
+		_Tint ("Color", Color) = (1,1,1,1)
 //		_Intensity ("Intensity", float) = 1
 	}
 	SubShader
@@ -30,8 +30,8 @@
 			#define RADIUS 0.5
 			#define REVOLUTIONS 1.5
 //			#define WIDTH 0.0125
-			#define WIDTH 0.125
-			#define THRESHOLD 0.0025
+			#define WIDTH 0.175
+			#define THRESHOLD 0.0015
 
 			float spiral(float2 uv, float w, float t)
 			{
@@ -53,9 +53,9 @@
 				//    float rvn = floor((dc + invrr * 0.5) / invrr) / REVOLUTIONS;
 				float rvn = floor(dc / invrr) / rv;
 
-				float rv1 = clamp((rvn * RADIUS) + an * invrr, 0.0, RADIUS + ainvrr);
-				float rv2 = clamp((rvn * RADIUS) + (an * invrr) + invrr, -ainvrr, RADIUS + ainvrr);
-				float rv3 = clamp((rvn * RADIUS) + (an * invrr) - invrr, -ainvrr, RADIUS + ainvrr);
+				float rv1 = clamp((rvn * RADIUS) + an * invrr, -ainvrr, RADIUS + ainvrr);
+				float rv2 = clamp(rv1 + invrr, -ainvrr, RADIUS + ainvrr);
+				float rv3 = clamp(rv1 - invrr, -ainvrr, RADIUS + ainvrr);
 
 				float s = smoothstep(0.0, t, abs(dc - rv1) - w);
 				s *= smoothstep(0.0, t, abs(dc - rv2) - w);
@@ -91,10 +91,10 @@
 			}
 			
 			sampler2D _MainTex;
-			float4 _Tint;
 
 			fixed4 frag (v2f i) : SV_Target
 			{
+//				i.color.a = 1.0f;
 				float w = WIDTH * (1.0 - i.color.a);
 				float t = THRESHOLD * (1.0 - i.color.a);
 				float s = spiral(i.uv, w, t);

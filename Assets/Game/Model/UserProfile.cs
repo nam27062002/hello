@@ -511,6 +511,7 @@ public class UserProfile : UserSaveSystem
 		// Some cheats override profile settings - will be saved with the next Save()
 		if(Prefs.GetBoolPlayer("skipTutorialCheat")) {
 			m_tutorialStep = TutorialStep.ALL;
+			UsersManager.currentUser.gamesPlayed = 5;	// Fake the amount of played games to skip some tutorial steps depending on it
 			Prefs.SetBoolPlayer("skipTutorialCheat", false);
 		}
 

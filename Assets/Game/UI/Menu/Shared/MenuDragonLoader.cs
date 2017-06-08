@@ -180,6 +180,10 @@ public class MenuDragonLoader : MonoBehaviour {
 				// Apply equipment
 				DragonEquip equip = m_dragonInstance.GetComponent<DragonEquip>();
 				if(equip != null) {
+					if ( !Application.isPlaying )
+					{
+						equip.Init();
+					}
 					// Apply disguise (if any)
 					if(!string.IsNullOrEmpty(_disguiseSku)) {
 						equip.EquipDisguise(_disguiseSku);
