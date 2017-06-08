@@ -6,20 +6,20 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	
 	private QuadTree<FireNode> m_fireNodesTree;
 	private List<FireNode> m_fireNodes;
+	private List<FireNode> m_burningFireNodes;
 	private AudioSource m_fireNodeAudio;
 
-	public List<Transform> m_burningFireNodes = new List<Transform>();
 
 	void Awake() {
 		m_fireNodesTree = new QuadTree<FireNode>(-600f, -100f, 1000f, 400f);
 		m_fireNodes = new List<FireNode>();
+		m_burningFireNodes = new List<FireNode>();
 
 		m_fireNodeAudio = gameObject.AddComponent<AudioSource>();
 		m_fireNodeAudio.playOnAwake = false;
 		m_fireNodeAudio.loop = false;
 		m_fireNodeAudio.clip = Resources.Load("audio/sfx/Fire/EnvTrch") as AudioClip;
-		// m_fireNodeAudio.outputAudioMixerGroup
-		// UnityEngine.Audio.AudioMixerGroup
+
 		m_fireNodeAudio.outputAudioMixerGroup = (Resources.Load("audio/SfxMixer") as UnityEngine.Audio.AudioMixer).FindMatchingGroups("Master")[0];
 	}
 
@@ -65,6 +65,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		// Clear QuadTree
 		m_fireNodesTree = null;
 		m_fireNodes.Clear();
+		m_burningFireNodes.Clear();
 	}
 
 	public static void Insert(FireNode _fireNode) {
@@ -81,7 +82,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	/// Inserts the burning. Registers a burning fire node while on fire
 	/// </summary>
 	/// <param name="_fireNode">Fire node.</param>
-	public static void InsertBurning(Transform _fireNode) {
+	public static void InsertBurning(FireNode _fireNode) {
 		instance.m_burningFireNodes.Add( _fireNode );
 		if(!instance.m_fireNodeAudio.isPlaying)
 			instance.m_fireNodeAudio.Play();
@@ -91,7 +92,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	/// Removes the burning fire node from the registered burning list
 	/// </summary>
 	/// <param name="_fireNode">Fire node.</param>
-	public static void RemoveBurning( Transform _fireNode) {
+	public static void RemoveBurning(FireNode _fireNode) {
 		instance.m_burningFireNodes.Remove(_fireNode);
 		if (instance.m_burningFireNodes.Count <= 0)
 			if (instance.m_fireNodeAudio != null)
@@ -106,8 +107,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 
 	public delegate bool CheckMethod( CircleAreaBounds _fireNodeBounds );
 
-	public void FireUpNodes( Rect _rectArea, CheckMethod _checkMethod, DragonTier _tier, Vector3 _direction )
-	{
+	public void FireUpNodes(Rect _rectArea, CheckMethod _checkMethod, DragonTier _tier, Vector3 _direction)	{
 		FireNode[] nodes = m_fireNodesTree.GetItemsInRange(_rectArea);
 		for (int i = 0; i < nodes.Length; i++) {
 			FireNode fireNode = nodes[i];
@@ -116,8 +116,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 			}
 		}
 	}
-
-		
+			
 	// :3
 	void OnDrawGizmosSelected() {
 		if (m_fireNodesTree != null)

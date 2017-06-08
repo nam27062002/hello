@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class InflammableDecoration : Initializable {
+public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 	[SerializeField] private float m_burningTime;
 	[SerializeField] private ParticleData m_feedbackParticle;
@@ -11,15 +11,13 @@ public class InflammableDecoration : Initializable {
 	[SerializeField] private ParticleData m_burnParticle;
 	//PF_FireProc
 	[SerializeField] private ParticleData m_disintegrateParticle;
-	[SerializeField] private string m_ashesAsset;
 
 	[SeparatorAttribute("Fire Nodes auto setup")]
 	[SerializeField] private int m_boxelSize = 2;
 	[SerializeField] private float m_hitRadius = 1.5f;
 
 
-	// private ZoneManager m_zoneManager;
-	// private ZoneManager.ZoneEffect m_zoneEffect;
+
 	private FireNodeSetup m_fireNodeSetup;
 
 	private GameObject m_view;
@@ -42,7 +40,6 @@ public class InflammableDecoration : Initializable {
 
 	private Decoration m_entity;
 
-	private ParticleHandler m_disintegrateParticleHandler;
 	private ParticleHandler m_ashesParticleHandler;
 
 
@@ -52,12 +49,10 @@ public class InflammableDecoration : Initializable {
 	void Awake() {
 		m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
 
-		ParticleManager.CreatePool("SmokeParticle", "");
-		ParticleManager.CreatePool(m_feedbackParticle);
-		ParticleManager.CreatePool(m_burnParticle);
+		m_feedbackParticle.CreatePool();
+		m_burnParticle.CreatePool();
 	
-		m_disintegrateParticleHandler 	= ParticleManager.CreatePool(m_disintegrateParticle);
-		m_ashesParticleHandler			= ParticleManager.CreatePool(m_ashesAsset, "Ashes");
+		m_disintegrateParticle.CreatePool();
 	}
 
 	/// <summary>
@@ -107,7 +102,7 @@ public class InflammableDecoration : Initializable {
 		m_ashMaterial.renderQueue = 3000;// Force transparent
 	}
 
-	public override void Initialize() {
+	public void Spawn(ISpawner _spawner) {
 		enabled = true;
 
 		m_view.SetActive(true);
@@ -131,7 +126,7 @@ public class InflammableDecoration : Initializable {
 	}
 
 	// Update is called once per frame
-	void Update() {
+	public void CustomUpdate() {
 		if (m_autoSpawner == null)
 			return;
 
@@ -162,30 +157,24 @@ public class InflammableDecoration : Initializable {
 			m_isBurning = false;
 			m_burned = true;
 			bool reachedByFire = false;
-			DragonTier lastBurnTier = DragonTier.COUNT;
+			DragonTier breathTier = DragonTier.COUNT;
 
 			for (int i = 0; i < m_fireNodes.Length && !reachedByFire; i++) {
 				FireNode node = m_fireNodes[i];
 				m_isBurning = m_isBurning || node.IsBurning();
 				m_burned = m_burned && node.IsBurning();
 				reachedByFire = node.IsExtinguishing();
-				lastBurnTier = node.lastBurnTier;
+				breathTier = node.breathTier;
 			}
 
 			if (reachedByFire) {
-				for (int i = 0; i < m_fireNodes.Length; i++) {
-					m_fireNodes[i].Burn(Vector2.zero, false, lastBurnTier);
-				}
-
 				if (m_operatorSpawner != null && !m_operatorSpawner.IsOperatorDead()) {
 					m_operatorSpawner.OperatorBurn();
 				}
 				
-				ZoneManager.ZoneEffect effect = InstanceManager.zoneManager.GetFireEffectCode(m_entity, lastBurnTier);
-				if (effect == ZoneManager.ZoneEffect.L) {
-					if (m_disintegrateParticleHandler != null) {
-						m_disintegrateParticleHandler.Spawn(m_disintegrateParticle, transform.position + m_disintegrateParticle.offset);
-					}
+				ZoneManager.ZoneEffect effect = InstanceManager.zoneManager.GetFireEffectCode(m_entity, breathTier);
+				if (effect == ZoneManager.ZoneEffect.L) {					
+					m_disintegrateParticle.Spawn(transform.position + m_disintegrateParticle.offset);
 				}
 				
 				m_autoSpawner.StartRespawn();

@@ -22,13 +22,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 
 	private State m_state;
-	public State state
-	{
-		get
-		{
-			return m_state;
-		}
-	}
+	public State state { get { return m_state; } }
 
 	private float m_respawnTime;
 	private SpawnerConditions m_spawnConditions;
@@ -157,7 +151,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 			} else if (m_spawnConditions == null || m_spawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 				if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
 					bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(m_bounds);
-					//bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(transform.position);	
 					if (isInsideActivationArea) {
 						return true;
 					}
@@ -176,9 +169,9 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	private void Spawn() {
 		gameObject.SetActive(true);
 
-		Initializable[] components = GetComponents<Initializable>();
-		foreach (Initializable component in components) {
-			component.Initialize();
+		ISpawnable[] components = GetComponents<ISpawnable>();
+		foreach (ISpawnable component in components) {
+			component.Spawn(this);
 		}
 
 		for (int i = 0; i < m_ground.Length; ++i) {

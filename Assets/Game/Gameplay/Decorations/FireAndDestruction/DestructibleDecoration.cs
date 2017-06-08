@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DestructibleDecoration : Initializable {
+public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 	private enum InteractionType {
 		Collision = 0,
@@ -124,7 +124,7 @@ public class DestructibleDecoration : Initializable {
 		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
 	}
 
-	public override void Initialize() {
+	public void Spawn(ISpawner _spawner) {
 		enabled = true;
 
 		m_view.SetActive(true);
@@ -140,6 +140,8 @@ public class DestructibleDecoration : Initializable {
 
 		m_collider.enabled = true;
 	}
+
+	public void CustomUpdate() {}
 
 	void OnCollisionEnter(Collision _other) {
 		if (enabled && m_spawned) {
