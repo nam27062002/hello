@@ -87,21 +87,29 @@ public class HUDFading : MonoBehaviour {
 				float tim = FADE_DURATION - (Time.time - m_startTime);
 				float alpha = tim / FADE_DURATION;
 				if ( alpha <= 0f )
-					alpha = 0f;
+					alpha = 0.0f;
 				m_color.a = alpha;
 				m_blackImage.color = m_color;
 				if ( tim <= 0 )
 				{
 					m_state = State.NONE;
-                    m_blackImage.enabled = false;
-                    enabled = false;
+                    StartCoroutine(DisableInTime());
 				}
 
 			}break;
 		}
 	}
 
-	void PlayerLeavingArea()
+
+    IEnumerator DisableInTime()
+    {
+        yield return new WaitForSeconds(1.0f);
+        m_blackImage.enabled = false;
+        enabled = false;
+    }
+
+
+    void PlayerLeavingArea()
 	{
 		StartFadeOut();
 	}

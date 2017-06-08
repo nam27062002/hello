@@ -48,11 +48,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	[SeparatorAttribute("Special Actions Animations")] // map a special action from the pilot to a specific animation.
 	[SerializeField] private string m_animA = "";
-	[SerializeField] private string m_animAAudio = "";
-	private AudioObject m_animAAudioGO;
 	[SerializeField] private string m_animB = "";
-	[SerializeField] private string m_animBAudio = "";
-	private AudioObject m_animBAudioGO;
 	[SerializeField] private string m_animC = "";
 
 	[SeparatorAttribute("Exclamation Mark")]
@@ -80,7 +76,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SerializeField] private string m_onExplosionAudio;
 
 	[SeparatorAttribute("More Audios")]
-	[SerializeField] private string m_onAttackAudio;
+	[SerializeField] protected string m_onAttackAudio;
 	private AudioObject m_onAttackAudioAO;
 	protected Vector3 m_attackTargetPosition;
 	public Vector3 attackTargetPosition { get{ return m_attackTargetPosition; } set{ m_attackTargetPosition = value; } }
@@ -133,7 +129,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	private bool[] m_specialAnimations;
 
-	private PreyAnimationEvents m_animEvents;
+	protected PreyAnimationEvents m_animEvents;
 
 	private static int ATTACK_HASH = Animator.StringToHash("Attack");
     // private const int ATTACK_HASH = Animator.StringToHash("Attack");
@@ -378,13 +374,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				// Return parented audio objects if needed
 			RemoveAudioParent( m_idleAudioAO );
 			RemoveAudioParent( m_onAttackAudioAO );
-
 			RemoveAudioParent( m_onEatenAudioAO );
+
 			RemoveAudioParent( m_onScaredAudioAO );
 			RemoveAudioParent( m_onPanicAudioAO );
-
-			RemoveAudioParent( m_animAAudioGO );
-			RemoveAudioParent( m_animBAudioGO );
 		}
     }
 
@@ -812,32 +805,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_specialAnimations[(int)_anim] = _value;
 	}
 
-	protected virtual void OnSpecialAnimationEnter(SpecialAnims _anim) {
-		switch( _anim ){
-			case SpecialAnims.A:{
-				if (!string.IsNullOrEmpty( m_animAAudio )){
-					m_animAAudioGO = AudioController.Play( m_animAAudio, transform);
-				}
-			}break;
-			case SpecialAnims.B:{
-				if (!string.IsNullOrEmpty( m_animBAudio )){
-					m_animBAudioGO = AudioController.Play( m_animBAudio, transform);
-				}
-			}break;
-		}
-	}
-	protected virtual void OnSpecialAnimationExit(SpecialAnims _anim) {
-		switch( _anim ){
-			case SpecialAnims.A:{
-				if ( m_animAAudioGO != null && m_animAAudioGO.IsPlaying() && m_animAAudioGO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
-					m_animAAudioGO.Stop();
-			}break;
-			case SpecialAnims.B:{
-				if ( m_animBAudioGO != null && m_animBAudioGO.IsPlaying() && m_animBAudioGO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
-					m_animBAudioGO.Stop();
-			}break;
-		}
-	}
+	protected virtual void OnSpecialAnimationEnter(SpecialAnims _anim) {}
+	protected virtual void OnSpecialAnimationExit(SpecialAnims _anim) {}
 
 	public void Die(bool _eaten = false, bool _burned = false) {
 		ShowExclamationMark(false);

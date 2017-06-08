@@ -6,6 +6,8 @@ public class KamikazeViewControl : ViewControl {
 	[SeparatorAttribute("Particles")]
 	[SerializeField] private ParticleData m_jetParticleData;
 	[SerializeField] private Transform m_jetParticleTransform;
+	[SerializeField] private string m_dashAudio = "";
+	private AudioObject m_dashAudioGO;
 
 	private GameObject m_jetParticles;
 
@@ -31,6 +33,9 @@ public class KamikazeViewControl : ViewControl {
 			case SpecialAnims.A: break;
 			case SpecialAnims.B: 
 				m_jetParticles = m_jetParticleData.Spawn(m_jetParticleTransform);
+				if (!string.IsNullOrEmpty( m_dashAudio )){
+					m_dashAudioGO = AudioController.Play( m_dashAudio, transform);
+				}
 				break;
 		}
 	}
@@ -44,7 +49,16 @@ public class KamikazeViewControl : ViewControl {
 					m_jetParticleData.ReturnInstance(m_jetParticles); 
 					m_jetParticles = null; 
 				}
-				break;
+			break;
 		}
 	}
+
+	protected virtual void RemoveAudios()
+    {
+    	base.RemoveAudios();
+		if ( ApplicationManager.IsAlive )
+    	{
+			RemoveAudioParent( m_dashAudioGO );
+		}
+    }
 }

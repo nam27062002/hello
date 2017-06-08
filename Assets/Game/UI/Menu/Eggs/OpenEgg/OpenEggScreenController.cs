@@ -269,6 +269,19 @@ public class OpenEggScreenController : MonoBehaviour {
 		}
 		DOVirtual.DelayedCall(delay, () => { m_finalPanel.Show(); }, false);
 
+		// If it's the first time we're getting golden fragments, show info popup
+		if(rewardData.fragments > 0 && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO)) {
+			// Show popup after some extra delay
+			DOVirtual.DelayedCall(
+				delay + 1.5f, 
+				() => { 
+					PopupManager.OpenPopupInstant(PopupInfoGoldenFragments.PATH);
+					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO, true);
+				}, 
+				false
+			);
+		}
+
 		// Don't show call to action button if the reward is a duplicate
 		m_callToActionButton.SetActive(!rewardData.duplicated);
 
