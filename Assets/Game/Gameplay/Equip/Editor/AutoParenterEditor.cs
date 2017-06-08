@@ -19,19 +19,7 @@ public class AutoParenterEditor : Editor {
         DrawDefaultInspector();
 		if ( GUILayout.Button("Copy Target Position And Rotation") )
 		{
-			if (!string.IsNullOrEmpty(m_target.parentName)) {
-				Transform t = m_target.transform;
-				Transform p;
-				if (m_target.parentRoot == null)
-					p = t.parent.FindTransformRecursive(m_target.parentName);
-				else
-					p = m_target.parentRoot.FindTransformRecursive(m_target.parentName);
-
-				if (p != null) {
-					t.position = p.position;
-					t.rotation = p.rotation;
-				} 
-			}
+			m_target.CopyTargetPosAndRot();
 		}
     }
 }
