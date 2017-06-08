@@ -19,6 +19,11 @@ public class DragonEquip : MonoBehaviour {
 
 	// Internal
 	private string m_dragonSku;
+	public string dragonSku
+	{
+		get{ return m_dragonSku; }
+		set{ m_dragonSku = value; }
+	}
 	private AttachPoint[] m_attachPoints = new AttachPoint[(int)Equipable.AttachPoint.Count];
 	private bool m_showPets = true;
 
@@ -40,6 +45,13 @@ public class DragonEquip : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		Init();
+		// Equip current disguise
+		EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+	}
+
+	public void Init()
+	{
 		// Get assigned dragon sku - from Player for in-game dragons, from DragonPreview for menu dragons
 		DragonPlayer player = GetComponent<DragonPlayer>();
 		if(player != null) {
@@ -54,10 +66,6 @@ public class DragonEquip : MonoBehaviour {
 		for(int i = 0; i < points.Length; i++) {
 			m_attachPoints[(int)points[i].point] = points[i];
 		}
-
-		// Equip current disguise
-		EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
-
 
 	}
 
@@ -285,23 +293,12 @@ public class DragonEquip : MonoBehaviour {
 		m_bodyMaterial = Resources.Load<Material>(SKIN_PATH + m_dragonSku + "/" + _name + "_body");
 		m_wingsMaterial = Resources.Load<Material>(SKIN_PATH + m_dragonSku + "/" + _name + "_wings");
 
-		// [AOC] HACK!! Older dragons still don't have the proper materials ----
-		// 		 To be removed
-		if(m_dragonSku != "dragon_baby" && m_dragonSku != "dragon_classic") {
-			Renderer renderer = transform.FindChild("view").GetComponentInChildren<Renderer>();
-			Material[] materials = renderer.materials;
-			if(materials.Length > 0) materials[0] = m_bodyMaterial;
-			if(materials.Length > 1) materials[1] = m_wingsMaterial;
-			renderer.materials = materials;
-		}
-		// ---------------------------------------------------------------------
-
 		Transform view = transform.FindChild("view");
 		if(view != null) {
 			Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
 			for(int i = 0; i < renderers.Length; i++) {
 				Renderer r = renderers[i];
-				Material[] mats = r.materials;
+				Material[] mats = Application.isPlaying ? r.materials : r.sharedMaterials;
 				for(int j = 0; j < mats.Length; j++) {
 					if(mats[j].shader.name.Contains("Dragon/Wings")) {
 						mats[j] = m_wingsMaterial;
