@@ -204,7 +204,7 @@ public class DragonXPBar : MonoBehaviour {
 
 		// Update text
 		m_levelText.Localize(
-			"TID_LEVEL_ABBR", "\n" +						// [AOC] HARDCODED!! Hardcoded line break 
+			"TID_LEVEL_ABBR",
 			LocalizationManager.SharedInstance.Localize(
 				"TID_FRACTION", 
 				StringUtils.FormatNumber(_currentLevel + 1), 
