@@ -281,6 +281,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		Gizmos.color = Colors.fuchsia;
 		Gizmos.DrawWireSphere(transform.position, m_hitRadius);
 	
+		if (m_transform == null) {
+			m_transform = transform;
+		}
+
 		if (m_neighbours == null || m_neighbours.Count == 0) {
 			FindNeighbours();
 		}
