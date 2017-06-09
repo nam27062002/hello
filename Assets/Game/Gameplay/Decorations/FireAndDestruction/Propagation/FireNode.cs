@@ -233,6 +233,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 			if (go != null) {
 				m_fireSprite = go.GetComponent<FireProcController>();
+				m_fireSprite.transform.localScale = m_transform.localScale;
 
 				if (m_state == State.Spreading) {
 					m_fireSprite.SetPower(m_powerTimer * 6f);				
