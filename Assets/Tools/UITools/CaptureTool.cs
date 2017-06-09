@@ -39,6 +39,7 @@ public abstract class CaptureTool : MonoBehaviour {
 	protected const string PATH_KEY = ".SaveDir";
 	protected const string CROP_KEY = ".Crop";
 
+	protected const string CAMERA_SENSITIVITY_KEY = ".CameraSensitivity";
 	protected const string CAMERA_POS_KEY = ".CameraPos";
 	protected const string CAMERA_ROT_KEY = ".CameraRot";
 	protected const string CAMERA_FOV_KEY = ".CameraFOV";
@@ -75,6 +76,8 @@ public abstract class CaptureTool : MonoBehaviour {
 	[SerializeField] private Camera m_mainCamera = null;
 	[SerializeField] private float m_cameraMoveSpeed = 0.05f;
 	[SerializeField] private float m_cameraRotateSpeed = 0.5f;
+	[SerializeField] private Slider m_cameraSensitivitySlider = null;
+	[SerializeField] private Text m_cameraSensitiviyText = null;
 
 	[Space]
 	[SerializeField] private KeyCode m_cameraLeftKey = KeyCode.A;
@@ -135,6 +138,11 @@ public abstract class CaptureTool : MonoBehaviour {
 		m_mainCamera.transform.eulerAngles = Prefs.GetVector3Editor(GetKey(CAMERA_ROT_KEY), m_mainCamera.transform.eulerAngles);
 		m_mainCamera.fieldOfView = Prefs.GetFloatEditor(GetKey(CAMERA_FOV_KEY), m_mainCamera.fieldOfView);
 
+		// Init camera sensitivity slider
+		m_cameraSensitivitySlider.value = Prefs.GetFloatEditor(GetKey(CAMERA_SENSITIVITY_KEY), 0.5f);
+		OnCameraSensitivityChanged(m_cameraSensitivitySlider.value);
+		m_cameraSensitivitySlider.onValueChanged.AddListener(OnCameraSensitivityChanged);
+
 		// Initialize capture mode list
 		List<string> options = new List<string>((int)CaptureMode.COUNT);
 		for(int i = 0; i < (int)CaptureMode.COUNT; ++i) {
@@ -178,6 +186,7 @@ public abstract class CaptureTool : MonoBehaviour {
 		if(Input.GetKey(m_rotationModifierKey)) {
 			// To make rotation more intuitive, switch axis around
 			offset = offset * m_cameraRotateSpeed;
+			offset = offset * m_cameraSensitivitySlider.value * 2f;	// Scale sensitivity from [0, 1] to [0, 2]
 			m_mainCamera.transform.Rotate(
 				offset.y * m_cameraRotateSpeed * -1f,
 				offset.x * m_cameraRotateSpeed,
@@ -186,6 +195,7 @@ public abstract class CaptureTool : MonoBehaviour {
 			);
 		} else {
 			offset = offset * m_cameraMoveSpeed;
+			offset = offset * m_cameraSensitivitySlider.value * 2f;	// Scale sensitivity from [0, 1] to [0, 2]
 			m_mainCamera.transform.Translate(offset, Space.Self);
 		}
 
@@ -458,5 +468,17 @@ public abstract class CaptureTool : MonoBehaviour {
 	/// <param name="_toggle">Toggled on or off?.</param>
 	public void OnCropToggle(bool _toggle) {
 		Prefs.SetBoolEditor(GetKey(CROP_KEY), _toggle);
+	}
+
+	/// <summary>
+	/// The camera sensitivity slider has changed.
+	/// </summary>
+	/// <param name="_newValue">New value.</param>
+	public void OnCameraSensitivityChanged(float _newValue) {
+		// Store new sensitivity
+		Prefs.SetFloatEditor(GetKey(CAMERA_SENSITIVITY_KEY), _newValue);
+
+		// Update text
+		m_cameraSensitiviyText.text = _newValue.ToString("0.00");
 	}
 }
