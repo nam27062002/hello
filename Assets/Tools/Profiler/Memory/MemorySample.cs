@@ -53,7 +53,7 @@ public class MemorySample : AbstractMemorySample
                     }
                     else if (Obj is AnimationClip)
                     {
-                        MemSize = (int)(MemSize * 0.47f);
+                        MemSize = (int)(MemSize * 0.3384f);
                     }
                     else if (Obj is GameObject)
                     {
