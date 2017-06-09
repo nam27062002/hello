@@ -21,7 +21,7 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	public TMPro.TextMeshProUGUI m_priceText;
+	public Localizer m_priceText;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -63,7 +63,7 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 		if(data == null) return;
 
 		// Update price
-		m_priceText.text = UIConstants.GetIconString(data.def.GetAsLong("unlockPricePC"), UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+		m_priceText.Localize(m_priceText.tid, StringUtils.FormatNumber(data.def.GetAsLong("unlockPricePC")));
 	}
 
 	/// <summary>
@@ -71,19 +71,18 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	/// </summary>
 	public void OnUnlock() 
 	{
+		// Get price and start purchase flow
+		DragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+		ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_DRAGON_PC");
+		purchaseFlow.OnSuccess.AddListener(
+			(ResourcesFlow _flow) => {
+				// Just acquire target dragon!
+				dragonData.Acquire();
 
-		// Unlock dragon
-		DragonData data = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
-		long pricePC = data.def.GetAsLong("unlockPricePC");
-		if(UsersManager.currentUser.pc >= pricePC) {
-			UsersManager.currentUser.AddPC(-pricePC);
-			data.Acquire();
-			PersistenceManager.Save();
-		} else {
-			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-
-			// Currency popup / Resources flow disabled for now
-            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-		}
+				// Show nice animation!
+				InstanceManager.menuSceneController.GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>().LaunchUnlockAnim(dragonData.def.sku, 0.2f, 0.1f);
+			}
+		);
+		purchaseFlow.Begin(dragonData.def.GetAsLong("unlockPricePC"), UserProfile.Currency.HARD, dragonData.def);
 	}
 }

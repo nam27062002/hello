@@ -5,12 +5,12 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Recieve Shadow + Normal Map" 
+Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Overlay + Normal Map" 
 {
 	Properties 
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
-		_SecondTexture ("Second Texture (RGB)", 2D) = "white" {}
+		_SecondTexture("Second Texture (RGB)", 2D) = "white" {}
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
 		_NormalStrength("Normal Strength", float) = 3
 		_Specular("Specular Factor", float) = 3
@@ -43,22 +43,18 @@ Shader "Hungry Dragon/Texture Blending + Vertex Color Overlay + Lightmap And Rec
 				#if MEDIUM_DETAIL_ON
 				#define NORMALMAP
 
-				#define BUMP
 				#endif
 
 				#if HI_DETAIL_ON
 				#define NORMALMAP
 				#define SPECULAR
 
-				#define BUMP
-				#define SPEC
-
 				#endif
 
 
 				#define FOG
 				#define BLEND_TEXTURE
-				#define COLOR_OVERLAY				
+				#define VERTEXCOLOR_OVERLAY				
 				#include "scenary.cginc"
 
 			ENDCG

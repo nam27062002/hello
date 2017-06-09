@@ -53,7 +53,7 @@ namespace AI {
 		//--------------------------------------------------------------------//
 		// METHODS															  //
 		//--------------------------------------------------------------------//
-		public virtual void Spawn(ISpawner _spawner) {
+		public override void Spawn(ISpawner _spawner) {
 			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
 			m_groundWaterMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions", "Water");
 
@@ -98,17 +98,24 @@ namespace AI {
             if (_spawner == null) {
                 m_area = new RectAreaBounds(transform.position, Vector3.one * 2f);
                 m_homePosition = transform.position;
-                m_guideFunction = null;
-                m_target = m_homePosition;
+                m_guideFunction = null;                
             } else {
                 m_area = _spawner.area;
 				m_homePosition = transform.position;
 				m_guideFunction = _spawner.guideFunction;
-				m_target = m_homePosition;
 			}
+
+			m_target = m_homePosition;
 		}
 
 		void OnDisable() {
+		
+		}
+
+		void OnDestroy() {
+			if (m_brain) {
+				m_brain.OnDestroy();
+			}
 		}
 
 		public override void OnTrigger(string _trigger, object[] _param = null) {

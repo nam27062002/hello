@@ -42,24 +42,65 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// <summary>
 	/// Navigate to the menu scene.
 	/// </summary>
-	public static void GoToMenu() {
-		// Skip if next scene is already menu
-		if(GameSceneManager.nextScene == MenuSceneController.NAME) return;
+	public static void GoToMenu() {		
+        string nextScene = MenuSceneController.NAME;
 
-		// Change scene
-		GameSceneManager.SwitchScene(MenuSceneController.NAME);
-	}
+        // Skip if next scene has already been set
+        if (GameSceneManager.nextScene == nextScene) return;
+
+		LevelManager.SetCurrentLevel(null);
+
+        // Change scene
+        GameSceneManager.SwitchScene(nextScene);
+    }
 
 	/// <summary>
 	/// Navigate to the game scene.
 	/// </summary>
 	public static void GoToGame() {
-		// Skip if next scene is already game
-		if(GameSceneManager.nextScene == GameSceneController.NAME) return;
+        string nextScene = GameSceneController.NAME;
 
-		// Change scene
-		GameSceneManager.SwitchScene(GameSceneController.NAME);
+        // Skip if next scene has already been set
+        if (GameSceneManager.nextScene == nextScene) return;
+
+        // Change scene
+        GameSceneManager.SwitchScene(nextScene);       
 	}
+
+    /// <summary>
+	/// Navigate to the results scene.
+	/// </summary>
+	public static void GoToResults() {
+        string nextScene = ResultsScreenController.NAME;
+        
+        // Skip if next scene has already been set
+        if (GameSceneManager.nextScene == nextScene) return;
+
+        // Change scene
+        GameSceneManager.SwitchScene(nextScene);
+    }
+
+    public static void GoToProfilerMemoryScene()
+    {
+        string nextScene = ProfilerMemoryController.NAME;
+
+        // Skip if next scene has already been set
+        if (GameSceneManager.nextScene == nextScene) return;
+
+        // Change scene
+        GameSceneManager.SwitchScene(nextScene);       
+    }
+
+    public static void GoToProfilerLoadScenesScene()
+    {
+        string nextScene = ProfilerLoadScenesController.NAME;
+
+        // Skip if next scene has already been set
+        if (GameSceneManager.nextScene == nextScene) return;
+
+        // Change scene
+        GameSceneManager.SwitchScene(nextScene);            
+    }
 
     /// <summary>
     /// Returns whether or not the flow is in the game scene and it has been completely loaded

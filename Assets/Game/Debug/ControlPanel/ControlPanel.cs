@@ -56,6 +56,23 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         }        
     }
 
+	[SerializeField] private TextMeshProUGUI m_memoryLabel;
+	public static TextMeshProUGUI memoryLabel {
+		get { return instance.m_memoryLabel; }
+	}
+	private bool m_showMemoryUsage;
+    public bool ShowMemoryUsage {
+        get {
+			return m_showMemoryUsage;
+        }
+
+        set {
+			m_showMemoryUsage = value;
+            // Activate labels to show memory usage
+			m_memoryLabel.gameObject.SetActive(m_showMemoryUsage);
+        }        
+    }
+
     [SerializeField]
     private TextMeshProUGUI m_entitiesCounter;
 
@@ -118,13 +135,13 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		m_panel.gameObject.SetActive(false);
 		m_toggleButton.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
         IsFpsEnabled = UnityEngine.Debug.isDebugBuild;        
+        ShowMemoryUsage = UnityEngine.Debug.isDebugBuild;
         m_logicUnitsCounter.transform.parent.gameObject.SetActive(UnityEngine.Debug.isDebugBuild && ProfilerSettingsManager.ENABLED);
 
         m_activateTimer = 0;
 	}
 
-	void Start()
-	{
+	void Start() {
 		// FPS Initialization
 		m_DeltaTimes = new float[ m_NumDeltaTimes ];
 		m_DeltaIndex = 0;
@@ -135,40 +152,36 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 			m_DeltaTimes[i] = initValue;
 	}
 
-	protected void Update()
-	{
-		if ( Input.touchCount > 0 || Input.GetMouseButton(0))
-		{
-			Vector2 pos = Vector2.zero;
-			if(Input.touchCount > 0) {
-				Touch t = Input.GetTouch(0);
-				pos = t.position;
-			} else {
-				pos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-			}
 
-			if (pos.x < (Screen.width * 0.1f) && pos.y < (Screen.height * 0.1f))
-			{
-                m_activateTimer += Time.unscaledDeltaTime;
-				if ( m_activateTimer > m_activationTime )
-				{
-					Toggle();
-					m_activateTimer = 0;
-				}
-				
-			}
-			else
-			{
-				m_activateTimer = 0;
-			}
-		}
-		else
-		{
-			m_activateTimer = 0;
-		}
+	protected void Update() {
+        if (FeatureSettingsManager.IsControlPanelEnabled) {
+            if (Input.touchCount > 0 || Input.GetMouseButton(0)) {
+                Vector2 pos = Vector2.zero;
+                if (Input.touchCount > 0) {
+                    Touch t = Input.GetTouch(0);
+                    pos = t.position;
+                } else {
+                    pos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                }
 
-		if ( Input.GetKeyDown(KeyCode.Tab) )
-			Toggle();
+                // Holding the top-left corner activates the control panel
+                if (pos.x < (Screen.width * 0.15f) && pos.y > (Screen.height * 0.85f)) {
+                    m_activateTimer += Time.unscaledDeltaTime;
+                    if (m_activateTimer > m_activationTime) {
+                        Toggle();
+                        m_activateTimer = 0;
+                    }
+
+                } else {
+                    m_activateTimer = 0;
+                }
+            } else {
+                m_activateTimer = 0;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Tab))
+                Toggle();
+        }
 
 
 		// Update FPS
@@ -200,6 +213,17 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 				m_fpsCounter.color = FPS_THRESHOLD_COLOR_1;
 				m_fpsCounter.text = NEGATIVE_STRING_AS_STRING;
 			}
+		}
+
+		if (m_showMemoryUsage)
+		{
+            if ((Time.frameCount % 200) == 0)
+            {
+                // Please don´t call every tick to GetMaxMemoryUsage or your device log will flood everything
+                int mb = FGOL.Plugins.Native.NativeBinding.Instance.GetMemoryUsage() / (1024 * 1024);
+                int maxMb = FGOL.Plugins.Native.NativeBinding.Instance.GetMaxMemoryUsage() / (1024 * 1024);
+                m_memoryLabel.text = mb + "/" + maxMb;
+            }
 		}
 
         if (m_entitiesCounter != null && ProfilerSettingsManager.ENABLED)

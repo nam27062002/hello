@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -213,31 +215,74 @@ public class Builder : MonoBehaviour
 		// Aux vars
 		bool dirty = false;
 
-		// Try iOS
-		string iosVersion = GetArg("-ios");
-		if(!string.IsNullOrEmpty(iosVersion)) {
-			GameSettings.publicVersioniOS = iosVersion;
-			dirty = true;
-		}
+		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+		if(settingsInstance != null){
+			// Try iOS
+			string iosVersion = GetArg("-ios");
+			if(!string.IsNullOrEmpty(iosVersion)) {
+				settingsInstance.m_strVersionIOS = iosVersion;
+				dirty = true;
+			}
 
-		// Try Google Play
-		string ggpVersion = GetArg("-ggp");
-		if(!string.IsNullOrEmpty(ggpVersion)) {
-			GameSettings.publicVersionGGP = ggpVersion;
-			dirty = true;
-		}
+			// Try Google Play
+			string ggpVersion = GetArg("-ggp");
+			if(!string.IsNullOrEmpty(ggpVersion)) {
+				settingsInstance.m_strVersionAndroidGplay = ggpVersion;
+				dirty = true;
+			}
 
-		// Try Amazon
-		string amzVersion = GetArg("-amz");
-		if(!string.IsNullOrEmpty(amzVersion)) {
-			GameSettings.publicVersionAmazon = amzVersion;
-			dirty = true;
-		}
+			// Try Amazon
+			string amzVersion = GetArg("-amz");
+			if(!string.IsNullOrEmpty(amzVersion)) {
+				settingsInstance.m_strVersionAndroidAmazon = amzVersion;
+				dirty = true;
+			}
 
-		// Save assets
-		if(dirty) {
-			EditorUtility.SetDirty(GameSettings.instance);
-			AssetDatabase.SaveAssets();
+			// Save assets
+			if(dirty) {
+				EditorUtility.SetDirty( settingsInstance );
+				AssetDatabase.SaveAssets();
+			}
+		}
+	}
+
+	/// <summary>
+	/// Manually sets the version codes in a target platform(s).
+	/// Expected arguments: [-ios ios_version_code] [-ggp ggp_version_code] [-amz amz_version_code]
+	/// version code number displayed for the stores
+	/// </summary>
+	private static void SetVersionCode() {
+		// Aux vars
+		bool dirty = false;
+
+		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+		if(settingsInstance != null){
+			// Try iOS
+			string iosVersion = GetArg("-ios");
+			if(!string.IsNullOrEmpty(iosVersion)) {
+				settingsInstance.m_strVersionIOSCode = iosVersion;
+				dirty = true;
+			}
+
+			// Try Google Play
+			string ggpVersion = GetArg("-ggp");
+			if(!string.IsNullOrEmpty(ggpVersion)) {
+				settingsInstance.m_strVersionAndroidGplayCode = ggpVersion;
+				dirty = true;
+			}
+
+			// Try Amazon
+			string amzVersion = GetArg("-amz");
+			if(!string.IsNullOrEmpty(amzVersion)) {
+				settingsInstance.m_strVersionAndroidAmazonCode = amzVersion;
+				dirty = true;
+			}
+
+			// Save assets
+			if(dirty) {
+				EditorUtility.SetDirty( settingsInstance );
+				AssetDatabase.SaveAssets();
+			}
 		}
 	}
 	
@@ -272,13 +317,7 @@ public class Builder : MonoBehaviour
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 		if(settingsInstance != null)
 		{
-			// Make sure version numbers match Game Settings
 			// Public version number displayed in the app store. Should be 1.0 at the first Soft Launch release.
-			// Build code (m_strVersionIOSCode, m_strVersionAndroidGplayCode, m_strVersionAndroidAmazonCode) is increased automatically for each build, don't change it manually
-			settingsInstance.m_strVersionIOS = GameSettings.publicVersioniOS;
-			settingsInstance.m_strVersionAndroidGplay = GameSettings.publicVersionGGP;
-			settingsInstance.m_strVersionAndroidAmazon = GameSettings.publicVersionAmazon;
-
 			CaletySettings.UpdatePlayerSettings( ref settingsInstance );
 		}
 	}
@@ -316,5 +355,79 @@ public class Builder : MonoBehaviour
 		string prefix = "BUILDER> ";
 		_msg = _msg.Replace("\n", "\n" + prefix);
 		UnityEngine.Debug.Log(prefix + _msg);
+	}
+
+
+	private static readonly string ASSETS_DIR = "Assets/Game/Scenes/Levels";
+	// [MenuItem ("Build/Bake Occlusion")]
+	public static void BakeOcclusion()
+	{
+		// Load proper scenes
+		ContentManager.InitContent(true);
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVELS, "level_0");
+		List<string> levels = def.GetAsList<string>("common");
+
+		int areaIndex = 1;
+		List<string> areaList = def.GetAsList<string>("area"+areaIndex);
+		while(areaList.Count > 0 && !string.IsNullOrEmpty(areaList[0]) )
+		{
+			for(int i = 0; i<areaList.Count; i++)
+			{
+				if(!string.IsNullOrEmpty( areaList[i] ))
+				{
+					levels.Add(areaList[i]);
+				}
+			}	
+			areaIndex++;
+			areaList = def.GetAsList<string>("area"+areaIndex);
+		}
+
+		for( int i = 0; i<levels.Count; i++ )
+		{
+			string path = ASSETS_DIR;
+			string levelName = levels[i];
+			string lower = levelName.ToLower();
+			if ( lower.StartsWith("so_") )
+			{
+				path += "/Sound/" + levelName;
+			}
+			else if ( lower.StartsWith("sp_") )
+			{
+				path += "/Spawners/" + levelName;
+			}
+			else if ( lower.StartsWith("co_") )
+			{
+				path += "/Collision/" + levelName;
+			}
+			else if ( lower.StartsWith("art_") )
+			{
+				path += "/Art/" + levelName;
+			}
+			path += ".unity";
+			if ( i == 0 )
+			{
+				EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
+			}
+			else
+			{
+				EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+			}
+		}
+
+		// Set active scene
+		string _currentArea = "area1";
+		Scene scene = SceneManager.GetSceneByName(def.GetAsString(_currentArea + "Active"));
+		SceneManager.SetActiveScene(scene);
+
+		// Bake Occlusion
+		UnityEditor.StaticOcclusionCulling.Compute();
+
+			// Wait bake occlusion to end
+		while( UnityEditor.StaticOcclusionCulling.isRunning )
+		{
+			System.Threading.Thread.Sleep(1);
+		}
+
+		// Save Data ?
 	}
 }

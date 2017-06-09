@@ -21,7 +21,7 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	public TMPro.TextMeshProUGUI m_priceText;
+	public Localizer m_priceText;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -63,25 +63,25 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 		if(data == null) return;
 
 		// Update price
-		m_priceText.text = UIConstants.GetIconString(data.def.GetAsLong("unlockPriceCoins"), UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
+		m_priceText.Localize(m_priceText.tid, StringUtils.FormatNumber(data.def.GetAsLong("unlockPriceCoins")));
 	}
 
 	/// <summary>
 	/// The unlock button has been pressed.
 	/// </summary>
 	public void OnUnlock() {
-		// Unlock dragon
-		DragonData data = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
-		long priceCoins = data.def.GetAsLong("unlockPriceCoins");
-		if(UsersManager.currentUser.coins >= priceCoins) {
-			UsersManager.currentUser.AddCoins(-priceCoins);
-			data.Acquire();
-			PersistenceManager.Save();
-		} else {
-			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+		// Get price and start purchase flow
+		DragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+		ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_DRAGON_COINS");
+		purchaseFlow.OnSuccess.AddListener(
+			(ResourcesFlow _flow) => {
+				// Just acquire target dragon!
+				dragonData.Acquire();
 
-			// Currency popup / Resources flow disabled for now
-            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_SC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-		}
+				// Throw out some fireworks!
+				InstanceManager.menuSceneController.dragonScroller.LaunchDragonPurchasedFX();
+			}
+		);
+		purchaseFlow.Begin(dragonData.def.GetAsLong("unlockPriceCoins"), UserProfile.Currency.SOFT, dragonData.def);
 	}
 }

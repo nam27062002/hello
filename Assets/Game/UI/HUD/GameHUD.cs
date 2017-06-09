@@ -49,6 +49,20 @@ public class GameHUD : MonoBehaviour {
 		PopupManager.OpenPopupInstant(PopupPause.PATH);
 	}
 
+	/// <summary>
+	/// Callback for the map button.
+	/// </summary>
+	public void OnMapButton() {
+		PopupManager.OpenPopupInstant(PopupInGameMap.PATH);
+	}
+
+	/// <summary>
+	/// Callback for the missions button.
+	/// </summary>
+	public void OnMissionsButton() {
+		PopupManager.OpenPopupInstant(PopupInGameMissions.PATH);
+	}
+
 #region debug
     private void Debug_Awake() {
         Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);

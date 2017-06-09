@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -69,10 +70,18 @@ public class TrackerBase {
 	/// </summary>
 	/// <returns>The localized and formatted description for this tracker's type.</returns>
 	/// <param name="_tid">Description TID to be formatted.</param>
-	/// <param name="_targetValue">Target value.</param>
-	public virtual string FormatDescription(string _tid, float _targetValue) {
-		// Default: just attach formatted value to the given tid and localize
-		return LocalizationManager.SharedInstance.Localize(_tid, FormatValue(_targetValue));
+	/// <param name="_targetValue">Target value. Will be placed at the %U0 replacement slot.</param>
+	/// <param name="_replacements">Other optional replacements, starting at %U1.</param>
+	public virtual string FormatDescription(string _tid, float _targetValue, params string[] _replacements) {
+		// Default: Add the formatted value to the replacements array and localize
+		// No need if there are no replacements
+		if(_replacements == null || _replacements.Length == 0) {
+			return LocalizationManager.SharedInstance.Localize(_tid, FormatValue(_targetValue));
+		} else {
+			List<string> replacementsList = _replacements.ToList();
+			replacementsList.Insert(0, FormatValue(_targetValue));
+			return LocalizationManager.SharedInstance.Localize(_tid, replacementsList.ToArray());
+		}
 	}
 
 	/// <summary>
@@ -84,6 +93,17 @@ public class TrackerBase {
 	public virtual string FormatValue(float _value) {
 		// Default: the number as is
 		return StringUtils.FormatNumber(_value, 2);
+	}
+
+	/// <summary>
+	/// Round a value according to specific rules defined for every tracker type.
+	/// Typically used for target values.
+	/// </summary>
+	/// <returns>The rounded value.</returns>
+	/// <param name="_targetValue">The original value to be rounded.</param>
+	public virtual float RoundTargetValue(float _targetValue) {
+		// Default: At least 1, no decimals
+		return Mathf.Max(1f, Mathf.Round(_targetValue));
 	}
 
 	/// <summary>
@@ -130,6 +150,17 @@ public class TrackerBase {
 			case "dive":			return new TrackerDiveDistance();
 			case "dive_time":		return new TrackerDiveTime();
 			case "fire_rush":		return new TrackerFireRush();
+			case "destroy":			return new TrackerDestroy(_params);
+
+			// Collect is quite special: depending on first parameter, create one of the existing trackers
+			case "collect": {
+				if(_params.Count < 1) return null;
+				switch(_params[0]) {
+					case "coins":	return new TrackerGold();
+					case "eggs":	return new TrackerEggs();
+					case "chests":	return new TrackerChests();
+				}
+			} break;
 		}
 
 		// Unrecoginzed mission type, aborting

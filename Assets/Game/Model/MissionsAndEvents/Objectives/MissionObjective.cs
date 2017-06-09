@@ -29,6 +29,9 @@ public class MissionObjective : TrackingObjectiveBase {
 	protected bool m_singleRun = false;
 	public bool singleRun { get { return m_singleRun; }}
 
+	protected Mission m_parentMission = null;
+	public Mission parentMission { get { return m_parentMission; }}
+
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -37,39 +40,53 @@ public class MissionObjective : TrackingObjectiveBase {
 	// METHODS															//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Constructor from a mission definition.
+	/// Parametrized constructor.
 	/// </summary>
+	/// <param name="_parentMission">The mission owning this objective.</param>
 	/// <param name="_missionDef">The mission definition used to initialize this objective.</param>
-	public MissionObjective(DefinitionNode _missionDef) {
+	/// <param name="_typeDef">The mission type definition.</param>
+	/// <param name="_targetValue">Target value.</param>
+	/// <param name="_singleRun">Is it a single run mission?</param>
+	public MissionObjective(Mission _parentMission, DefinitionNode _missionDef, DefinitionNode _typeDef, float _targetValue, bool _singleRun) {
 		// Check params
 		Debug.Assert(_missionDef != null);
 
-		// Get type definition
-		DefinitionNode typeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, _missionDef.GetAsString("typeSku"));
+		// Store parent mission
+		m_parentMission = _parentMission;
 
-		// Sinlge run?
-		m_singleRun = _missionDef.GetAsBool("singleRun");
+		// Single run?
+		m_singleRun = _singleRun;
 
-		// Figure out description TID:
-		// If the mission has a dedicated TID, use it
-		// Otherwise use type's default TID, checking whether it's a single run objective or not
-		string tid = _missionDef.GetAsString("tidDesc");
-		if(string.IsNullOrEmpty(tid)) {
-			// Different default tids for single and multi run
-			if(m_singleRun) {
-				tid = typeDef.GetAsString("tidDescSingleRun");
-			} else {
-				tid = typeDef.GetAsString("tidDescMultiRun");
-			}
+		// Find out description TID
+		// Different description for single and multi run
+		string tidDesc = string.Empty;
+		if(m_singleRun) {
+			tidDesc = _typeDef.GetAsString("tidDescSingleRun");
+		} else {
+			tidDesc = _typeDef.GetAsString("tidDescMultiRun");
 		}
 
 		// Use parent's initializer
 		Init(
-			TrackerBase.CreateTracker(typeDef.sku, _missionDef.GetAsList<string>("parameters")),		// Create the tracker based on mission type
-			_missionDef.GetAsFloat("targetValue"),
-			tid,
-			typeDef
+			TrackerBase.CreateTracker(_typeDef.sku, _missionDef.GetAsList<string>("params")),		// Create the tracker based on mission type
+			_targetValue,
+			_typeDef,
+			tidDesc,
+			_missionDef.Get("tidObjective")	// Does this mission have a custom target TID? (i.e. "Birds", "Archers", etc.)
 		);
+
+		// Subscribe to external events
+		Messenger.AddListener(GameEvents.GAME_STARTED, OnGameStarted);
+		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
+	}
+
+	/// <summary>
+	/// Destructor
+	/// </summary>
+	~MissionObjective() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(GameEvents.GAME_STARTED, OnGameStarted);
+		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	//------------------------------------------------------------------//
@@ -86,6 +103,9 @@ public class MissionObjective : TrackingObjectiveBase {
 
 		// Disable during first game session (tutorial)
 		this.enabled = (UsersManager.currentUser.gamesPlayed > 0);
+
+		// Disable too if mission is not active
+		this.enabled &= m_parentMission.state == Mission.State.ACTIVE;
 	}
 
 	/// <summary>

@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using DG.Tweening;
+using System.Collections;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -103,9 +104,6 @@ public class MenuSceneController : SceneController {
 		// Call parent
 		base.Awake();
 
-		// Initialize selected dragon getting the one from the profile
-		m_selectedDragon = UsersManager.currentUser.currentDragon;	// UserProfile should be loaded and initialized by now
-
 		// Initialize the selected level in a similar fashion
 		m_selectedLevel = UsersManager.currentUser.currentLevel;		// UserProfile should be loaded and initialized by now
 
@@ -118,6 +116,35 @@ public class MenuSceneController : SceneController {
 			m_fogSetup.RefreshTexture();
 		}
 		m_fogSetup.FogSetup();
+
+		// Define initial selected dragon
+		if(string.IsNullOrEmpty(GameVars.menuInitialDragon)) {
+			// Default behaviour: Last dragon used
+			m_selectedDragon = UsersManager.currentUser.currentDragon;	// UserProfile should be loaded and initialized by now
+		} else {
+			// Forced dragon
+			//SetSelectedDragon(GameVars.menuInitialDragon);
+			m_selectedDragon = GameVars.menuInitialDragon;
+			GameVars.menuInitialDragon = string.Empty;	// Reset var
+		}
+
+		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.Unlimited;
+	}
+
+	protected IEnumerator Start()
+	{
+		// Start loading pet pill's on the background!
+		PetsScreenController petsScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();
+		StartCoroutine(petsScreen.InstantiatePillsAsync());
+
+		yield return new WaitForSeconds(5.0f);
+		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
+		{
+			// Select dragon classic and go to play
+			DragonManager.GetDragonData("dragon_classic").Acquire();
+			OnDragonSelected("dragon_classic");
+			OnPlayButton();
+		}
 	}
 
 	protected override void OnDestroy() {

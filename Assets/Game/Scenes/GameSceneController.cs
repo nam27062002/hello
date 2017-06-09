@@ -34,7 +34,8 @@ public class GameSceneController : GameSceneControllerBase {
 		ACTIVATING_LEVEL,
 		COUNTDOWN,
 		RUNNING,
-		FINISHED
+		FINISHED,
+        SHOWING_RESULTS
 	};
 
 	bool m_switchingArea = false;
@@ -47,17 +48,27 @@ public class GameSceneController : GameSceneControllerBase {
 	};
 	SwitchingAreaSate m_switchState;
 	private List<AsyncOperation> m_switchingAreaTasks;
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] private ResultsSceneController m_resultsScene;
-	public ResultsSceneController resultsScene {
-		get { return m_resultsScene; }
-	}
+	// Exposed	
+	[Space]
+    [SerializeField] private GameObject m_uiRoot = null;
+    public GameObject uiRoot
+    {
+        get { return m_uiRoot; }
+    }
 
+	[SerializeField] private ShowHideAnimator m_gameUIAnimator = null;
+
+	[SerializeField] private LevelLoadingSplash m_loadingScreen = null;
+	public LevelLoadingSplash loadingScreen {
+		get { return m_loadingScreen; }
+	}
+    
 	// Countdown
-	public float countdown {
+    public float countdown {
 		get {
 			if(state == EStates.COUNTDOWN) {
 				return m_timer;
@@ -104,6 +115,23 @@ public class GameSceneController : GameSceneControllerBase {
 		}
 	}
 
+	public float levelActivationProgress {
+		get {
+			if(state == EStates.LOADING_LEVEL || state == EStates.ACTIVATING_LEVEL) {
+				if(m_levelLoadingTasks == null) return 1f;	// Shouldn't be null at this state
+				float progress = 0f;
+				for(int i = 0; i < m_levelLoadingTasks.Length; i++) {
+					progress += m_levelLoadingTasks[i].progress;
+				}
+				return Mathf.Min(progress/m_levelLoadingTasks.Length, 1f - Mathf.Max(m_timer/MIN_LOADING_TIME, 0f));	// Either progress or fake timer
+			} else if(state > EStates.ACTIVATING_LEVEL) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+	}
+
 	// For the tutorial
 	private bool m_startWhenLoaded = true;
 	public bool startWhenLoaded {
@@ -113,6 +141,8 @@ public class GameSceneController : GameSceneControllerBase {
 
 	// Internal
 	private float m_timer = -1;	// Misc use
+
+    private SwitchAsyncScenes m_switchAsyncScenes = new SwitchAsyncScenes();
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -124,9 +154,23 @@ public class GameSceneController : GameSceneControllerBase {
 		// Call parent
 		base.Awake();
 
+		// Make sure loading screen is visible
+		m_loadingScreen.gameObject.SetActive(true);
+		m_loadingScreen.GetComponent<ShowHideAnimator>().ForceShow(false);
+
+		// Check whether the tutorial popup must be displayed
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)
+			|| DebugSettings.isPlayTest) {
+			// Open popup
+			PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);
+			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
+		}
+
 		// Load the dragon
 		DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
 		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+
+		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LoadedArea;
 	}
 
 
@@ -148,7 +192,7 @@ public class GameSceneController : GameSceneControllerBase {
         // [AOC] Editor utility: open pause popup
         #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.P)) {
-			PopupManager.OpenPopupInstant(PopupPause.PATH);
+			PopupManager.OpenPopupInstant(PopupInGameMap.PATH);
 		}
 		else if (Input.GetKeyDown(KeyCode.I))
 		{
@@ -181,9 +225,8 @@ public class GameSceneController : GameSceneControllerBase {
 					m_timer -= Time.deltaTime;
 				}
 
-				// Change state only if allowed, otherwise it will be manually done
 				if(levelLoadingProgress >= 1) {
-					if(m_startWhenLoaded) ChangeState(EStates.ACTIVATING_LEVEL);
+					ChangeState(EStates.ACTIVATING_LEVEL);
 				}
 			} break;
 
@@ -196,6 +239,7 @@ public class GameSceneController : GameSceneControllerBase {
 				}
 
 				if(allDone) {
+					// Change state only if allowed, otherwise it will be manually done
 					if(m_startWhenLoaded) ChangeState(EStates.COUNTDOWN);
 				}
 			} break;
@@ -236,7 +280,13 @@ public class GameSceneController : GameSceneControllerBase {
 
 							if (done)
 							{
-								m_switchingAreaTasks = LevelManager.LoadArea(m_nextArea);
+                                Resources.UnloadUnusedAssets();
+                                System.GC.Collect();
+                                                                  
+                                m_switchingAreaTasks = LevelManager.LoadArea(m_nextArea);
+
+								ParticleManager.PreBuild();
+
 								if ( m_switchingAreaTasks != null )
 								{
 									for(int i = 0; i < m_switchingAreaTasks.Count; i++) {
@@ -266,6 +316,7 @@ public class GameSceneController : GameSceneControllerBase {
 										m_switchingAreaTasks[i].allowSceneActivation = true;
 									}
 								}
+
 								m_switchState = SwitchingAreaSate.ACTIVATING_SCENES;
 
 							}
@@ -282,7 +333,7 @@ public class GameSceneController : GameSceneControllerBase {
 							}
 
 							if ( done )
-							{
+							{								
 								PoolManager.Rebuild();
 								Messenger.Broadcast(GameEvents.GAME_AREA_ENTER);
 								m_switchingArea = false;
@@ -299,36 +350,42 @@ public class GameSceneController : GameSceneControllerBase {
 				// Show the summary popup after some delay
 				if(m_timer > 0) {
 					m_timer -= Time.deltaTime;
-					if(m_timer <= 0) {
-						// Disable dragon and entities!
-						InstanceManager.player.gameObject.SetActive(false);						
-
-                        // Clear pools to save memory as entities don't need to be shown in the results screen
-                        PoolManager.Clear(true);
-
-                        // Enable Results screen and move the camera to that position
-                        if (m_resultsScene != null) {
-						    m_resultsScene.Show();
-					    }
+					if(m_timer <= 0) {						
+                        ChangeState(EStates.SHOWING_RESULTS);                        
 					}
 				}
 			} break;
+
+            case EStates.SHOWING_RESULTS: {
+                m_switchAsyncScenes.Update();
+            } break;
 		}
-	}
+	}       
+
+    /// <summary>
+    /// Clears stuff used by the game (RUNNING state)
+    /// </summary>
+    private void ClearGame() {
+        if (ApplicationManager.IsAlive) {
+            ParticleManager.Clear();
+            PoolManager.Clear(true);
+			UIPoolManager.Clear(true);
+        }
+    }
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
 	override protected void OnDestroy() {
-		// Clear pools
-		PoolManager.Clear(true);
+        // Clear the game just in case the user leaves the scene without following the usual flow (through the results screen)
+        ClearGame();
 
-		// Call parent
-		base.OnDestroy();
+        // Call parent
+        base.OnDestroy();
 
         CustomParticlesCulling.Manager_OnDestroy();
 
-        Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+        Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 	}
 
 	//------------------------------------------------------------------//
@@ -417,7 +474,8 @@ public class GameSceneController : GameSceneControllerBase {
 		// Actions to perform when leaving the current state
 		switch(m_state) {
 			case EStates.LOADING_LEVEL: {
-				// Nothing to do
+				// Initialize level's map
+				InitLevelMap();
 			} break;
 
 			case EStates.ACTIVATING_LEVEL: {
@@ -442,10 +500,7 @@ public class GameSceneController : GameSceneControllerBase {
 
 				// Spawn collectibles
 				ChestManager.OnLevelLoaded();
-				EggManager.SelectCollectibleEgg();
-
-                // Once the level is loaded completely particles can be culled
-                CustomParticlesCulling.Manager_NotifyGameStarted();
+				EggManager.SelectCollectibleEgg();                
 
                 // Notify the game
                 Messenger.Broadcast(GameEvents.GAME_STARTED);
@@ -472,19 +527,13 @@ public class GameSceneController : GameSceneControllerBase {
 			case EStates.LOADING_LEVEL: {
 				// Start loading current level
 				LevelManager.SetCurrentLevel(UsersManager.currentUser.currentLevel);
+				
 				m_levelLoadingTasks = LevelManager.LoadLevel();
+				
+				ParticleManager.PreBuild();
 
 				// Initialize minimum loading time as well
 				m_timer = MIN_LOADING_TIME;
-
-				// Check whether the tutorial popup must be displayed
-				if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)
-				|| DebugSettings.isPlayTest) {
-					// Open popup
-					PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);
-					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
-					PersistenceManager.Save();
-				}
 			} break;
 
 			case EStates.ACTIVATING_LEVEL: {
@@ -522,19 +571,105 @@ public class GameSceneController : GameSceneControllerBase {
                 // The time of the play session that has just finished is accumulated to the total amount of time played by the user so far
                 SaveFacade.Instance.timePlayed += (int)m_elapsedSeconds;
 			} break;
-		}
+
+            case EStates.SHOWING_RESULTS: {
+                ShowLoadingScreen(false);
+
+                // Disable dragon and entities!
+                InstanceManager.player.gameObject.SetActive(false);
+
+                // Clear pools to save memory for the results screen
+                ClearGame();
+
+                UnityEngine.SceneManagement.Scene thisScene = gameObject.scene;
+
+                // Destroys all game objects in this game object's scene except:
+                //    -)this game object because if holds some data that the results screen needs to show
+                //    -)The game camera because it has the AudioListener and we don't want Unity to complain about no audio listeners
+                //      in the scene as the results screen is loaded
+                //    -)uiRoot because it contains the loading screen
+                GameObject[] gos = thisScene.GetRootGameObjects();
+                if (gos != null) {
+                    GameObject mainCameraGO = (mainCamera != null) ? mainCamera.gameObject : null;
+                  
+                    int count = gos.Length;
+                    for (int i = 0; i < count; i++) {                        
+                        if (gos[i] != gameObject && gos[i] != mainCameraGO && gos[i] != uiRoot) {                            
+                            Destroy(gos[i]);                                                                                     
+                        }
+                    }
+                }
+
+                // All area scenes currently loaded can be unloaded except the spawner ones since the eggs are stored there and the results
+                // screen needs to show whether or not the user has collected any eggs
+                List<string> scenesToUnload = LevelManager.GetAllArenaScenesList(LevelManager.currentArea);
+                string[] tokens;
+                for (int i = 0; i < scenesToUnload.Count;) {
+                    tokens = scenesToUnload[i].Split('_');
+                    if (tokens.Length > 1 && tokens[0] == "SP")
+                        scenesToUnload.RemoveAt(i);
+                    else
+                        i++;
+                }
+                                                     
+                List<string> scenesToLoad = new List<string>();
+                scenesToLoad.Add(ResultsScreenController.NAME);
+                m_switchAsyncScenes.Perform(scenesToUnload, scenesToLoad, true, OnResultsSceneLoaded);
+            } break;
+        }
 		
 		// Store new state
 		m_state = _newState;
 	}
 
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// The player has died.
-	/// </summary>
-	private void OnPlayerDied() {
+    private void OnResultsSceneLoaded() {        
+        HideLoadingScreen();
+
+        // This scene uiRoot is disabled because the results screen scene's uiRoot is going to be used instead
+        if (uiRoot != null) {
+            uiRoot.SetActive(false);
+        }
+
+        // We don't need it anymore as the results screen scene, which has its own AudioListener, has been loaded completely
+        if (mainCamera != null) {
+            Destroy(mainCamera.gameObject);
+        }
+
+        ResultsSceneController resultsSceneController = FindObjectOfType<ResultsSceneController>();
+        if (resultsSceneController != null) {
+            resultsSceneController.Show();
+        }               
+    }
+
+    public void ShowLoadingScreen(bool animate) {        
+        if (loadingScreen != null) {
+            if (uiRoot != null && !uiRoot.activeSelf) {
+                uiRoot.SetActive(true);                
+            }
+
+            loadingScreen.GetComponent<ShowHideAnimator>().ForceShow(animate);
+
+			// Hide HUD
+			if(m_gameUIAnimator != null) m_gameUIAnimator.ForceHide(animate);
+        }
+    }
+
+    public void HideLoadingScreen() {
+        if (loadingScreen != null) {           
+            loadingScreen.GetComponent<ShowHideAnimator>().ForceHide();
+
+			// Show HUD
+			if(m_gameUIAnimator != null) m_gameUIAnimator.ForceShow();
+        }
+    }
+
+    //------------------------------------------------------------------//
+    // CALLBACKS														//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// The player has died.
+    /// </summary>
+    private void OnPlayerDied() {
 		// End game
 		EndGame();
 
@@ -557,6 +692,7 @@ public class GameSceneController : GameSceneControllerBase {
     {
     	if ( LevelManager.currentArea != _nextArea && !m_switchingArea)
     	{
+			ParticleManager.Clear();
 			Messenger.Broadcast(GameEvents.GAME_AREA_EXIT);
 			m_switchingArea = true;
 			m_nextArea = _nextArea;

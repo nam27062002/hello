@@ -10,20 +10,23 @@ public class FogArea : MonoBehaviour
 	public bool m_drawInside = false;
 	public Vector3 m_startScale;
 	private bool m_playerInside = false;
+
+	public float m_enterTransitionDuration = 1.6f;
+	public float m_exitTransitionDuration = 1.6f;
 	void Start()
 	{
 		m_fogManager = FindObjectOfType<FogManager>();
 		m_startScale = transform.localScale;
-		if ( UnityEngine.Debug.isDebugBuild )
+		if ( !FeatureSettingsManager.instance.IsFogOnDemandEnabled )
 		{
 			m_fogManager.CheckTextureAvailability(m_attributes);
 		}
+		Messenger.AddListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
 	}
 
 	void OnDestroy()
 	{
-		if ( m_attributes.texture != null )
-			m_attributes.DestroyTexture();
+		Messenger.RemoveListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
 	}
 
 	void OnTriggerEnter( Collider other)
@@ -46,10 +49,33 @@ public class FogArea : MonoBehaviour
 		}
 	}
 
+	void OnAreaExit()
+	{
+		if (!m_playerInside)
+		{
+			// Fog manager will clean all textures so we lose our reference to it
+			m_attributes.texture = null;
+		}
+	}
+
 	void OnDrawGizmosSelected()
 	{
 		if ( m_attributes.texture == null )
-			m_attributes.CreateTexture();
+		{
+			if (m_fogManager == null )
+			{
+				m_fogManager = FindObjectOfType<FogManager>();
+			}
+			if ( m_fogManager != null )
+			{
+				m_fogManager.CheckTextureAvailability( m_attributes, true);
+			}
+			else
+			{
+				m_attributes.CreateTexture();	
+			}
+		}
+			
 		m_attributes.RefreshTexture();
 
 		if (!Application.isPlaying )

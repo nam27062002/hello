@@ -21,17 +21,19 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 
 	public List<GameObject> m_activateOnShoot = new List<GameObject>();
 
+	private PoolHandler m_poolHandler;
+
 
 	// Use this for initialization
 	void Start () {		
-		if (m_explosionParticle.IsValid()) {
-			ParticleManager.CreatePool(m_explosionParticle);
-		}
+		m_explosionParticle.CreatePool();
 
 		m_pMotion = GetComponent<ProjectileMotion>();	
 		if (m_pMotion) m_pMotion.enabled = false;
 	
 		m_hasBeenShot = false;
+
+		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
 
 	void OnDisable()
@@ -122,19 +124,17 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 		}
 	}
 
-	public void Explode(bool _hitDragon) {
-		if (m_explosionParticle.IsValid()) {
-			GameObject explosion = ParticleManager.Spawn( m_explosionParticle, transform.position);
-			if (explosion) {
-				// Random position within range
-				// explosion.transform.position = transform.position;
-				// Random scale within range
-				explosion.transform.localScale = Vector3.one * m_scaleRange.GetRandom();			
-				// Random rotation within range
-				explosion.transform.Rotate(0, 0, m_rotationRange.GetRandom());
-			}
+	public void Explode(bool _hitDragon) {		
+		GameObject explosion = m_explosionParticle.Spawn(transform.position);
+		if (explosion) {
+			// Random position within range
+			// explosion.transform.position = transform.position;
+			// Random scale within range
+			explosion.transform.localScale = Vector3.one * m_scaleRange.GetRandom();			
+			// Random rotation within range
+			explosion.transform.Rotate(0, 0, m_rotationRange.GetRandom());
 		}
-
+	
 		if (_hitDragon) {
 			if (m_knockback > 0) {
 				DragonMotion dragonMotion = InstanceManager.player.dragonMotion;
@@ -152,6 +152,6 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 		}
 
 		gameObject.SetActive(false);
-		PoolManager.ReturnInstance(gameObject);
+		m_poolHandler.ReturnInstance(gameObject);
 	}
 }

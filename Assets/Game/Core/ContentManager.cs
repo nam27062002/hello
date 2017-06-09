@@ -18,14 +18,20 @@ public class ContentManager
 		// Settings
 		kDefinitionFiles.Add(DefinitionsCategory.LOCALIZATION, new string[]{"Rules/localizationDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, new string[]{"Rules/gameSettings", "Rules/dragonSettings", "Rules/initialSettings"});
-		kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS, new string[]{"Rules/particleManager"});
+		kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[]{"Rules/PM_level_0_area1"});
+		kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[]{"Rules/PM_level_0_area2"});
 		// kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, );
 
 		// Progression
 		kDefinitionFiles.Add(DefinitionsCategory.LEVELS, new string[]{"Rules/levelDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.MISSIONS, new string[]{"Rules/missionDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.MISSIONS, new string[]{"Rules/missionsDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.MISSION_TYPES, new string[]{"Rules/missionTypeDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.MISSION_DIFFICULTIES, new string[]{"Rules/missionDifficultyDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.MISSION_MODIFIERS, new string[]{
+			"Rules/missionDifficultyModifiersDefinitions",
+			"Rules/missionDragonModifiersDefinitions",
+			"Rules/missionOtherModifiersDefinitions"
+		});
 
 		// Dragons
 		kDefinitionFiles.Add(DefinitionsCategory.DRAGONS, new string[]{"Rules/dragonDefinitions"});
@@ -51,7 +57,6 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.CHEST_REWARDS, new string[]{"Rules/chestRewardDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.RARITIES, new string[]{"Rules/rarityDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.HUNGRY_LETTERS, new string[]{"Rules/hungryLettersDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.MAP_UPGRADES, new string[]{"Rules/mapUpgradesDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.SHOP_PACKS, new string[]{"Rules/shopPacksDefinitions"});
 
 		// Disguises
@@ -121,5 +126,6 @@ public class ContentManager
         }
 
         LocalizationManager.SharedInstance.Initialise (ref kLanguagesData, "lang_english", "Localization");
+		LocalizationManager.SharedInstance.debugMode = (LocalizationManager.DebugMode)PlayerPrefs.GetInt(DebugSettings.LOCALIZATION_DEBUG_MODE);	// [AOC] Initialize localization manager debug mode
 	}
 }

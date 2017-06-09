@@ -127,6 +127,7 @@ public class MusicController : MonoBehaviour
         }
     }
 
+    /*
     private void Music_PlayCurrent(float offset)
     {        
         if (!string.IsNullOrEmpty(Music_CurrentKey) && Music_Lengths.ContainsKey(Music_CurrentKey))
@@ -149,6 +150,7 @@ public class MusicController : MonoBehaviour
             LogError("<" + Music_CurrentKey + " is not a valid music to play");
         }
     }
+    */
 
     private void Music_StopCurrent()
     {
@@ -171,26 +173,26 @@ public class MusicController : MonoBehaviour
             keyToPlay = Ambience_KeyToPlay;
         }           
           
-        if (keyToPlay != Music_CurrentKey)
+		if (keyToPlay != Music_CurrentKey || (Music_CurrentAudioObject != null && Music_CurrentAudioObject.IsPaused(true)))
         {
-            float offset = 0f;
-
-            // All musics have to be in sync
-            if (Music_CurrentAudioObject != null && Music_CurrentAudioObject.primaryAudioSource != null)
-            {
-                offset = Music_OffsetAccummulated + Music_CurrentAudioObject.primaryAudioSource.time;               
-            }
-
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {                
-                Log("Transition " + Music_CurrentKey + " -> " + keyToPlay + " actual offset = " + offset);
-            }
-            
-            //Music_StopCurrent();
-
-            Music_CurrentKey = keyToPlay;            
-
-            Music_PlayCurrent(offset);
+			if (Music_CurrentAudioObject != null)
+			{
+				if (Music_CurrentAudioObject.IsPaused(false))
+				{
+					Music_CurrentKey = keyToPlay;
+					Music_CurrentAudioObject = AudioController.PlayMusic(Music_CurrentKey, m_musicVolume);
+					AudioController.UnpauseMusic( m_musicFadeOut );	
+				}
+				else if ( !Music_CurrentAudioObject.IsPaused(true) )
+				{
+					AudioController.PauseMusic( m_musicFadeOut );
+				}
+			}
+			else
+			{
+				Music_CurrentKey = keyToPlay;
+				Music_CurrentAudioObject = AudioController.PlayMusic(Music_CurrentKey, m_musicVolume);
+			}
         }
     }
     #endregion
@@ -198,9 +200,20 @@ public class MusicController : MonoBehaviour
     #region ambience
     // This region is responsible for playing ambience musics. An ambience music is the music that has to be played instead of the main music in some map areas such as the castle
 
-    private const string AMBIENCE_CATEGORY_MUSIC = "MUSIC";
+	private const string AMBIENCE_CATEGORY_MUSIC = "MUSIC";
     private const string AMBIENCE_CATEGORY_SFX = "SFX";
 
+    struct MusicPlaying
+    {
+    	public GameObject game_object;
+    	public string music_key;
+    	public MusicPlaying(string key, GameObject go )
+    	{
+    		music_key = key;
+    		game_object = go;
+    	}
+    }
+    List<MusicPlaying> m_musicsPlaying;
     private string Ambience_KeyToPlay { get; set; }
 
     /// <summary>
@@ -220,6 +233,10 @@ public class MusicController : MonoBehaviour
             string categoryName = audioItem.category.Name;
             if (categoryName == AMBIENCE_CATEGORY_MUSIC)
             {
+            	// Register object
+				if (m_musicsPlaying == null)
+					m_musicsPlaying = new List<MusicPlaying>();
+				m_musicsPlaying.Add( new MusicPlaying( key, from ) );
                 Ambience_KeyToPlay = key;
             }
             else if (categoryName == AMBIENCE_CATEGORY_SFX)
@@ -246,11 +263,25 @@ public class MusicController : MonoBehaviour
             string categoryName = audioItem.category.Name;
             if (categoryName == AMBIENCE_CATEGORY_MUSIC)
             {
-                // If key is the music that is currently being played then we have to stop playing it
-                if (Ambience_KeyToPlay == key)
+            	// unregister object
+				int count = m_musicsPlaying.Count;
+                for( int i = m_musicsPlaying.Count - 1; i >= 0; --i )
                 {
-                    Ambience_KeyToPlay = null;
-                }                
+                	if ( m_musicsPlaying[i].game_object == from )	
+                	{
+                		m_musicsPlaying.RemoveAt(i);
+                		break;
+                	}
+                }
+				if (m_musicsPlaying.Count > 0)
+				{
+					Ambience_KeyToPlay = m_musicsPlaying[ m_musicsPlaying.Count - 1 ].music_key;
+				}
+				else
+				{
+					Ambience_KeyToPlay = null;
+				}
+				
             }
             else if (categoryName == AMBIENCE_CATEGORY_SFX)
             {

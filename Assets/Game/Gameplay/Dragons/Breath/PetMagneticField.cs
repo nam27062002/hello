@@ -11,18 +11,21 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 	private ProjectileMotion m_pMotion;
 	private bool m_hasBeenShot;
 
+	private PoolHandler m_poolHandler;
+
 
 	// Use this for initialization
 	void Start () 
-	{
-		if (m_explosionParticle.IsValid()) {
-			ParticleManager.CreatePool(m_explosionParticle);
-		}
+	{		
+		m_explosionParticle.CreatePool();
+
 		m_colliderMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "WaterPreys", "GroundPreys", "AirPreys");
 
 		m_pMotion = GetComponent<ProjectileMotion>();	
 		if (m_pMotion) m_pMotion.enabled = false;
 		m_hasBeenShot = false;
+
+		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
 	
 	// Update is called once per frame
@@ -100,11 +103,10 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 	}
 
 	public void Explode( bool _hitsDragon )
-	{
-		if (m_explosionParticle.IsValid()) {
-			ParticleManager.Spawn( m_explosionParticle, transform.position);
-		}
+	{		
+		m_explosionParticle.Spawn(transform.position);
+
 		gameObject.SetActive(false);
-		PoolManager.ReturnInstance( gameObject );
+		m_poolHandler.ReturnInstance(gameObject);
 	}
 }

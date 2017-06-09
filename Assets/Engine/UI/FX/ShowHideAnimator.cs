@@ -47,7 +47,7 @@ public class ShowHideAnimator : MonoBehaviour {
 		ANIMATOR
 	}
 
-	protected enum State {
+	public enum State {
 		INIT,
 		VISIBLE,
 		HIDDEN
@@ -64,23 +64,44 @@ public class ShowHideAnimator : MonoBehaviour {
 	// For CUSTOM, add as many DOTweenAnimation components as desired to the target object and put them in the show() and hide() arrays.
 	// For animators, just link the animator to be used. Must have a "show" and "hide" triggers.
 	[SerializeField] protected TweenType m_tweenType = TweenType.NONE;
-	public TweenType tweenType { get { return m_tweenType; }}
+	public TweenType tweenType { 
+		get { return m_tweenType; }
+		set { m_tweenType = value; m_isDirty = true; }
+	}
 
 	// Config
 	// Tween params
 	// All tween-related parameters will be ignored if an animator is defined.
 	// Feel free to add new tween types or extra parameters
 	[SerializeField] protected float m_tweenDuration = 0.25f;
-	public float tweenDuration { get { return m_tweenDuration; }}
+	public float tweenDuration { 
+		get { return m_tweenDuration; }
+		set { m_tweenDuration = value; m_isDirty = true; }
+	}
 
 	[SerializeField] protected float m_tweenValue = 1f;					// Use it to tune the animation (e.g. offset for move tweens, scale factor for the scale tweens, initial alpha for fade tweens).
-	public float tweenValue { get { return m_tweenValue; }}
+	public float tweenValue {
+		get { return m_tweenValue; }
+		set { m_tweenValue = value; m_isDirty = true; }
+	}
 
 	[SerializeField] protected Ease m_tweenEase = Ease.OutBack;
-	public Ease tweenEase { get { return m_tweenEase; }}
+	public Ease tweenEase { 
+		get { return m_tweenEase; }
+		set { m_tweenEase = value; m_isDirty = true; }
+	}
 
 	[SerializeField] protected float m_tweenDelay = 0f;
-	public float tweenDelay { get { return m_tweenDelay; }}
+	public float tweenDelay { 
+		get { return m_tweenDelay; }
+		set { m_tweenDelay = value; m_isDirty = true; }
+	}
+
+	[SerializeField] protected bool m_ignoreTimeScale = true;			// [AOC] Generally we don't want UI animations to be affected by global timeScale
+	public bool ignoreTimeScale { 
+		get { return m_ignoreTimeScale; }
+		set { m_ignoreTimeScale = value; m_isDirty = true; }
+	}
 
 	// Custom tweens
 	[SerializeField] protected DOTweenAnimation[] m_showTweens = new DOTweenAnimation[0];
@@ -118,12 +139,18 @@ public class ShowHideAnimator : MonoBehaviour {
 				if(gameObject.activeSelf) {
 					m_state = State.VISIBLE;
 				} else {
-					m_state = State.HIDDEN;
+					// Use ForceHide to move to the end of the sequence!
+					if(Application.isPlaying) {
+						ForceHide(false, true);
+					} else {
+						m_state = State.HIDDEN;
+					}
 				}
 			}
 			return m_state == State.VISIBLE; 
 		}
 	}
+	public State state { get { return m_state; }}
 
 	// Public properties
 	// Sequence delta, only for sequence animations
@@ -176,7 +203,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	protected virtual void Update() {
 		// Update delay timer!
 		if(m_delaying) {
-			m_delayTimer -= Time.deltaTime;
+			m_delayTimer -= (m_ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime);	// Ignoring time scale?
 			if(m_delayTimer <= 0f) {
 				// Delay timer should only be active if we're showing with animation
 				LaunchShowAnimation(true);
@@ -254,7 +281,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// </summary>
 	/// <param name="_animate">Whether to use animations or not.</param>
 	/// <param name="_disableAfterAnimation">Whether to disable the object once the animation has finished or not. Only for non-custom tween animations.</param>
-	public virtual void Hide(bool _animate = true, bool _disableAfterAnimation = true) {
+	public virtual void Hide(bool _animate, bool _disableAfterAnimation = true) {
 		// If we're already in the target state, skip (unless dirty, in which case we want to place the animation sequence at the right place)
 		if(!visible && !m_isDirty) return;
 
@@ -283,14 +310,32 @@ public class ShowHideAnimator : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Hide the object. Will be ignored if object is already hidden/hiding.
+	/// Single param version to be able to connect it via inspector.
+	/// </summary>
+	/// <param name="_animate">Whether to use animations or not.</param>
+	public virtual void Hide(bool _animate = true) {
+		Hide(_animate, true);
+	}
+
+	/// <summary>
 	/// Same as hide but overriding current state.
 	/// </summary>
 	/// <param name="_animate">Whether to use animations or not.</param>
 	/// <param name="_disableAfterAnimation">Whether to disable the object once the animation has finished or not. Only for non-custom tween animations.</param>
-	public void ForceHide(bool _animate = true, bool _disableAfterAnimation = true) {
+	public void ForceHide(bool _animate, bool _disableAfterAnimation = true) {
 		// Force state to make sure Hide() call is not skipped
 		m_state = State.VISIBLE;
 		Hide(_animate, _disableAfterAnimation);
+	}
+
+	/// <summary>
+	/// Same as hide but overriding current state.
+	/// Single param version to be able to connect it via inspector.
+	/// </summary>
+	/// <param name="_animate">Whether to use animations or not.</param>
+	public void ForceHide(bool _animate = true) {
+		ForceHide(_animate, true);
 	}
 
 	/// <summary>
@@ -418,7 +463,7 @@ public class ShowHideAnimator : MonoBehaviour {
 		m_sequence = DOTween.Sequence()
 			.SetAutoKill(false)
 			.OnStepComplete(() => { OnSequenceCompleted(); })
-			.SetUpdate(UpdateType.Normal, true);	// [AOC] Generally we don't want UI animations to be affected by global timeScale. This could be parametrized if needed.
+			.SetUpdate(UpdateType.Normal, m_ignoreTimeScale);
 
 		// Shared parameters
 		TweenParams sharedParams = new TweenParams()

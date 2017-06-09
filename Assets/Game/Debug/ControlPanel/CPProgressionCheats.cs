@@ -22,6 +22,11 @@ public class CPProgressionCheats : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public enum CurrencyOperation {
+		ADD,
+		REMOVE,
+		SET
+	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -69,8 +74,14 @@ public class CPProgressionCheats : MonoBehaviour {
         // We need to load the default persistence in order to make UserManager.currentUser load the default data
         FGOL.Save.SaveGameManager.Instance.Load(Authenticator.Instance.User);
 
+		// Backup all preferences that must be kept between resets
+		int resetProgressCount = PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0);
+
         // Reset all preferences
         PlayerPrefs.DeleteAll();
+
+		// Restore preferences that must be kept between resets
+		PlayerPrefs.SetInt("RESET_PROGRESS_COUNT", resetProgressCount + 1);
 
 		// If required, tutorial will be auto-completed next time we reload the profile
 		Prefs.SetBoolPlayer("skipTutorialCheat", _skipTutorial);
@@ -83,39 +94,43 @@ public class CPProgressionCheats : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Set the amount of coins on the profile.
+	/// Read the input textfield and set the amount of a target currency on the profile.
 	/// </summary>
-	public void OnSetCoins() {
+	/// <param name="_currency">Target currency.</param>
+	/// <param name="_operation">Target operation.</param>
+	public void OnSetCurrency(UserProfile.Currency _currency, CurrencyOperation _operation) {
+		// Use longs to allow big numbers
 		// Get amount from linked input field
 		TMP_InputField input = GetComponentInChildren<TMP_InputField>();
 		if(input == null) Debug.Log("Requires a nested Input Field!");
 		long amount = long.Parse(input.text);
 
-		// Update profile - make sure amount is valid
-		// Use longs to allow big numbers
-		long toAdd = System.Math.Max(amount - UsersManager.currentUser.coins, -UsersManager.currentUser.coins);	// Min 0 coins! This will exclude negative amounts :)
-		UsersManager.currentUser.AddCoins(toAdd);
+		// Compute amount to add
+		long toAdd = 0;
+		switch(_operation) {
+			case CurrencyOperation.ADD:		toAdd = amount;		break;
+			case CurrencyOperation.REMOVE:	toAdd = -amount;	break;
+			case CurrencyOperation.SET:		toAdd = amount - UsersManager.currentUser.GetCurrency(_currency);	break;
+		}
+		toAdd = System.Math.Max(toAdd, -UsersManager.currentUser.GetCurrency(_currency));	// Min 0 coins! This will exclude negative amounts :)
+
+		// Update profile
+		UsersManager.currentUser.AddCurrency(toAdd, _currency);
 
 		// Save persistence
 		PersistenceManager.Save();
 	}
 
 	/// <summary>
-	/// Set the amount of PC on the profile.
+	/// Specialized versions to be used as button callbacks.
 	/// </summary>
-	public void OnSetPC() {
-		// Get amount from linked input field
-		TMP_InputField input = GetComponentInChildren<TMP_InputField>();
-		if(input == null) Debug.Log("Requires a nested Input Field!");
-		long amount = long.Parse(input.text);
+	public void OnAddCoins() 	{ OnSetCurrency(UserProfile.Currency.SOFT, CurrencyOperation.ADD); }
+	public void OnRemoveCoins() { OnSetCurrency(UserProfile.Currency.SOFT, CurrencyOperation.REMOVE); }
+	public void OnSetCoins() 	{ OnSetCurrency(UserProfile.Currency.SOFT, CurrencyOperation.SET); }
 
-		// Update profile - make sure amount is valid
-		long toAdd = System.Math.Max(amount - UsersManager.currentUser.pc, -UsersManager.currentUser.pc);	// Min 0 pc! This will exclude negative amounts :)
-		UsersManager.currentUser.AddPC(toAdd);
-
-		// Save persistence
-		PersistenceManager.Save();
-	}
+	public void OnAddPC() 		{ OnSetCurrency(UserProfile.Currency.HARD, CurrencyOperation.ADD); }
+	public void OnRemovePC() 	{ OnSetCurrency(UserProfile.Currency.HARD, CurrencyOperation.REMOVE); }
+	public void OnSetPC() 		{ OnSetCurrency(UserProfile.Currency.HARD, CurrencyOperation.SET); }
 
 	/// <summary>
 	/// Add xp to the currently selected dragon (if owned). Debug purposes only.
@@ -134,9 +149,74 @@ public class CPProgressionCheats : MonoBehaviour {
 		}
 
 		// Add xp
-		float amount = data.progression.GetXpRangeForLevel(data.progression.level).distance * 0.33f;
+		float amount = data.progression.GetXpRangeForLevel(data.progression.level).distance * 0.3f;
 		data.progression.AddXp(amount, true);
 		UIFeedbackText.CreateAndLaunch("+" + amount, new Vector2(0.5f, 0.5f), ControlPanel.panel.parent as RectTransform, "CPFeedbackText");
+
+		// Process unlocked skins for current dragon
+		UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(data);
+
+		// Save persistence
+		PersistenceManager.Save();
+
+		// Simulate a dragon selected event so everything is refreshed
+		Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, selectedDragonSku);
+	}
+
+	/// <summary>
+	/// Initialize XP slider with data from the currently selected dragon.
+	/// </summary>
+	public void OnInitXPSlider() {
+		// Find linked slider
+		Slider slider = GetComponentInChildren<Slider>();
+		if(slider == null) Debug.Log("Requires a nested Slider!");
+
+		// If in the menu and selected dragon is not owned, disable slider
+		DragonData targetDragon = null;
+		if(InstanceManager.menuSceneController != null) {
+			// Get current selected dragon data
+			DragonData data = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+			if(data.isOwned) targetDragon = data;
+		} else {
+			// Not in the menu, use current dragon's data
+			targetDragon = DragonManager.currentDragon;
+		}
+
+		// Disable slider if dragon cannot be changed
+		slider.interactable = (targetDragon != null);
+
+		// Initialize slider
+		if(targetDragon == null) {
+			slider.minValue = 0f;
+			slider.maxValue = 1f;
+			slider.value = 0f;
+		} else {
+			slider.minValue = 0f;
+			slider.maxValue = targetDragon.progression.GetXpRangeForLevel(targetDragon.progression.maxLevel).max;
+			slider.value = targetDragon.progression.xp;
+		}
+	}
+
+	/// <summary>
+	/// Set the global XP for the currently selected dragon (if owned).
+	/// </summary>
+	public void OnSetXPSlider(float _xp) {
+		// If not in the menu, show feedback message and return
+		if(!CheckScene()) return;
+
+		// Get current selected dragon data
+		string selectedDragonSku = InstanceManager.menuSceneController.selectedDragon;
+		DragonData data = DragonManager.GetDragonData(selectedDragonSku);
+		if(!data.isOwned) {
+			UIFeedbackText.CreateAndLaunch("Only for owned dragons!", new Vector2(0.5f, 0.5f), ControlPanel.panel.parent as RectTransform, "CPFeedbackText");
+			return;
+		}
+
+		// Set xp
+		data.progression.SetXp_DEBUG(_xp);
+
+		// Process unlocked skins for current dragon
+		UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(data);
 
 		// Save persistence
 		PersistenceManager.Save();
@@ -188,8 +268,40 @@ public class CPProgressionCheats : MonoBehaviour {
                     dragons[i].Acquire();
                 }
             }
+
+			// Save persistence
+			PersistenceManager.Save();
         }
     }
+
+	/// <summary>
+	/// Reset all the dragons.
+	/// </summary>
+	public void OnResetAllDragons() {
+		List<DragonData> dragons = DragonManager.GetDragonsByLockState(DragonData.LockState.ANY);
+		if (dragons != null) {
+			int i;
+			int count = dragons.Count;
+			for (i = 0; i < count; i++) {
+				// Reset dragon data
+				dragons[i].ResetLoadedData();
+
+				// Reset this dragon skins as well
+				List<DefinitionNode> skinDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", dragons[i].def.sku);
+				for(int j = 0; j < skinDefs.Count; ++j) {
+					// Special case: if unlock level is 0, mark it as owned! (probably dragon's default skin)
+					if(skinDefs[j].GetAsInt("unlockLevel") <= 0) {
+						UsersManager.currentUser.wardrobe.SetSkinState(skinDefs[j].sku, Wardrobe.SkinState.OWNED);
+					} else {
+						UsersManager.currentUser.wardrobe.SetSkinState(skinDefs[j].sku, Wardrobe.SkinState.LOCKED);
+					}
+				}
+			}
+
+			// Save persistence
+			PersistenceManager.Save();
+		}
+	}
 
 	/// <summary>
 	/// Unlock all pets.
@@ -336,8 +448,7 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// </summary>
 	public void OnResetMapUpgrades() {
 		// Not much to do:
-		UsersManager.currentUser.mapLevel = 0;
-		Messenger.Broadcast<int>(GameEvents.PROFILE_MAP_UPGRADED, 0);
+		UsersManager.currentUser.mapResetTimestamp = System.DateTime.UtcNow;	// Already expired
 		PersistenceManager.Save();
 	}
 }

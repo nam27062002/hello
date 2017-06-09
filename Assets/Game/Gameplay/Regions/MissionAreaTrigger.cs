@@ -13,7 +13,7 @@ public class MissionAreaTrigger : MonoBehaviour
         DragonPlayer player = InstanceManager.player;
         if ((player != null) && (other.gameObject == player.gameObject))            
         {
-            if ( !player.IsFuryOn() && !player.IsSuperFuryOn() )
+            if ( !player.IsFuryOn() && !player.IsMegaFuryOn() )
             {
             	// TODO: MALH
                 // EventManager.Instance.TriggerEvent(Events.DisplayMissionAreaName, true, m_areaOasisKey);
@@ -26,7 +26,7 @@ public class MissionAreaTrigger : MonoBehaviour
 		DragonPlayer player = InstanceManager.player;
         if ((player != null) && (other.gameObject == player.gameObject))            
         {
-			if ( !player.IsFuryOn() && !player.IsSuperFuryOn() )
+			if ( !player.IsFuryOn() && !player.IsMegaFuryOn() )
             {
             	// TODO: MALH
                 // EventManager.Instance.TriggerEvent(Events.DisplayMissionAreaName, false, m_areaOasisKey);

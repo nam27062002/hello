@@ -32,8 +32,12 @@ public class DragonParticleController : MonoBehaviour
 	[Space]
 	public float m_minSpeedEnterSplash;
 	public string m_waterEnterSplash;
+	private ParticleHandler m_waterEnterSplashHandler;
+
 	public float m_minSpeedExitSplash;
 	public string m_waterExitSplash;
+	private ParticleHandler m_waterExitSplashHandler;
+
 	public string m_waterSplashFolder = "Water";
 
 	[Space]
@@ -53,7 +57,7 @@ public class DragonParticleController : MonoBehaviour
 
 	[Space]
 	public string m_corpseAsset = "";
-
+	private ParticleHandler m_corpseHandler;
 
 	[Space]
 	public string m_hiccupParticle;
@@ -87,6 +91,19 @@ public class DragonParticleController : MonoBehaviour
 	[Space]
 	public List<BodyParticle> m_bodyParticles = new List<BodyParticle>();
 
+	[Space]
+	// trails stuff
+	bool m_trailsActive = false;
+	bool m_playinTrails = false;
+	ParticleSystem m_trailsInstance;
+	public ParticleData m_trailsParticle;
+	public Transform m_trailsAnchor;
+
+	[Space]
+	public ParticleData m_landingParticle;
+	ParticleSystem m_landingInstance;
+
+
 	void Start () 
 	{
 		DragonAnimationEvents dragonAnimEvents = transform.parent.GetComponentInChildren<DragonAnimationEvents>();
@@ -94,6 +111,10 @@ public class DragonParticleController : MonoBehaviour
 		// Instantiate Particles (at start so we don't feel any framerate drop during gameplay)
 		m_levelUpInstance = InitParticles(m_levelUp, m_levelUpAnchor);
 		m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
+		if (m_reviveInstance)
+		{
+			m_reviveInstance.gameObject.SetActive(false);
+		}
 		m_bubblesInstance = InitParticles(m_bubbles, m_bubblesAnchor);
 		if ( m_bubblesInstance != null )
 		{
@@ -109,9 +130,9 @@ public class DragonParticleController : MonoBehaviour
 		_transform = transform;
 
 		if ( !string.IsNullOrEmpty(m_waterEnterSplash) )
-			ParticleManager.CreatePool(m_waterEnterSplash, m_waterSplashFolder);
+			m_waterEnterSplashHandler = ParticleManager.CreatePool(m_waterEnterSplash, m_waterSplashFolder);
 		if ( !string.IsNullOrEmpty(m_waterExitSplash) )
-			ParticleManager.CreatePool(m_waterExitSplash, m_waterSplashFolder);
+			m_waterExitSplashHandler = ParticleManager.CreatePool(m_waterExitSplash, m_waterSplashFolder);
 
 
 		m_skimmingInstance = InitParticles(m_skimmingParticle, m_skimmingAnchor);
@@ -125,17 +146,33 @@ public class DragonParticleController : MonoBehaviour
 			m_waterAirLimitInstance = InitParticles( m_waterAirLimitParticle, m_dragonEat.mouth);
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
-			PoolManager.CreatePool(m_corpseAsset, "Game/Corpses/", 1, true, false);
+			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
 		}
 		m_hiccupInstance = InitParticles( m_hiccupParticle, m_hiccupAnchor);
 		if (dragonAnimEvents != null)
 			dragonAnimEvents.onHiccupEvent += OnHiccup;
+
+		if ( m_trailsParticle.IsValid() )
+		{
+			GameObject go = m_trailsParticle.CreateInstance();
+			go.transform.parent = m_trailsAnchor;
+			go.transform.localPosition = Vector3.zero + m_trailsParticle.offset;
+			go.transform.localScale = Vector3.one;
+			go.transform.localRotation = Quaternion.identity;
+			m_trailsInstance = go.GetComponent<ParticleSystem>();
+		}
+
+		if ( m_landingParticle.IsValid() )
+		{
+			GameObject go = m_landingParticle.CreateInstance();
+			m_landingInstance = go.GetComponent<ParticleSystem>();
+		}
 	}
 
 	void OnEnable() {
 		// Register events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
+		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnKo);
 		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLost);
@@ -144,7 +181,7 @@ public class DragonParticleController : MonoBehaviour
 	void OnDisable()
 	{
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnKo);
+		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnKo);
 		Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLost);
@@ -213,6 +250,31 @@ public class DragonParticleController : MonoBehaviour
 			}
 		}
 
+		if ( m_trailsActive )
+		{
+			if (!m_playinTrails)
+			{
+				if (!m_insideWater && m_dargonMotion.howFast > 0.85f )	// Check speed
+				{
+					PlayTrails();
+				}
+			}
+			else if ( m_insideWater )
+			{
+				// Stop
+				StopTrails();
+			}
+		}
+		else
+		{
+			if ( m_playinTrails )
+			{
+				// Stop
+				StopTrails();
+			}
+		}
+
+
 
 #if UNITY_EDITOR
 		if ( Input.GetKeyDown(KeyCode.E))
@@ -253,11 +315,11 @@ public class DragonParticleController : MonoBehaviour
 		m_waterDepth = data.scale + m_waterDepthIncrease;
 	}
 
-	void OnKo( DamageType type )
+	void OnKo( DamageType type , Transform _source)
 	{
 		m_alive = false;	
 		CheckBodyParts();
-		if ( type == DamageType.MINE )
+		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE )
 		{
 			SpawnCorpse();
 		}
@@ -267,11 +329,18 @@ public class DragonParticleController : MonoBehaviour
 	{
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
 			// spawn corpse
-			GameObject corpse = PoolManager.GetInstance(m_corpseAsset, true);
+			GameObject corpse = m_corpseHandler.Spawn(null);
 			corpse.transform.CopyFrom(transform);
 			Corpse c = corpse.GetComponent<Corpse>();
 			c.Spawn(false, false);
-			c.SwitchDragonTextures(m_dragonEquip.bodyMaterial.mainTexture, m_dragonEquip.wingsMaterial.mainTexture);
+			Texture body = null;
+			Texture wings = null;
+			if ( m_dragonEquip.bodyMaterial )
+				body = m_dragonEquip.bodyMaterial.mainTexture;
+			// Not all dragons have wings
+			if ( m_dragonEquip.wingsMaterial )
+				wings = m_dragonEquip.wingsMaterial.mainTexture;
+			c.SwitchDragonTextures(body, wings);
 
 		}
 	}
@@ -289,7 +358,9 @@ public class DragonParticleController : MonoBehaviour
 		{
 			default:
 			{
+				m_reviveInstance.gameObject.SetActive(true);
 				m_reviveInstance.Play();
+				StartCoroutine(DeactivateInSeconds(m_reviveInstance.gameObject, 2.0f));
 			}break;
 			case DragonPlayer.ReviveReason.FREE_REVIVE_PET:
 			{
@@ -300,14 +371,24 @@ public class DragonParticleController : MonoBehaviour
 		CheckBodyParts();
 	}
 
+	IEnumerator DeactivateInSeconds( GameObject go, float seconds )
+	{
+		yield return new WaitForSeconds(seconds);
+		go.SetActive(false);
+	}
+
 	public void OnShieldLost( DamageType _damageType, Transform _tr)
 	{
 		GameObject instance =  m_shieldParticle.CreateInstance();
-		instance.transform.parent = m_shieldAnchor;
-		instance.transform.localPosition = m_shieldParticle.offset;
+		Transform t = instance.transform;
+		t.parent = m_shieldAnchor;
+		t.localScale = Vector3.one * InstanceManager.player.data.scale;
+		t.localPosition = m_shieldParticle.offset;
 		if ( _tr != null )
 		{
-			instance.transform.LookAt( _tr.position );
+			t.LookAt( _tr.position );
+			t.Rotate( -Vector3.forward * 90, Space.Self);
+			t.Rotate( -Vector3.up * 90, Space.Self);
 		}
 	}
 
@@ -326,7 +407,7 @@ public class DragonParticleController : MonoBehaviour
 
 		if ( m_dargonMotion != null && Mathf.Abs(m_dargonMotion.velocity.y) >= m_minSpeedEnterSplash )
 		{
-			CreateSplash(_other, m_waterEnterSplash);
+			CreateSplash(_other, m_waterEnterSplashHandler);
 			return true;
 		}
 		return false;
@@ -342,19 +423,21 @@ public class DragonParticleController : MonoBehaviour
 
 		if ( m_dargonMotion != null && Mathf.Abs(m_dargonMotion.velocity.y) >= m_minSpeedExitSplash )
 		{
-			CreateSplash(_other, m_waterExitSplash);
+			CreateSplash(_other, m_waterExitSplashHandler);
 			return true;
 		}
 		return false;
 	}
 
-	private void CreateSplash( Collider _other, string particleName )
+	private void CreateSplash( Collider _other, ParticleHandler _handler )
 	{
-		Vector3 pos = _transform.position;
-		float waterY = _other.bounds.center.y + _other.bounds.extents.y;
-		pos.y = waterY;
+		if (_handler != null) {
+			Vector3 pos = _transform.position;
+			float waterY = _other.bounds.center.y + _other.bounds.extents.y;
+			pos.y = waterY;
 
-		ParticleManager.Spawn(particleName, pos, m_waterSplashFolder);
+			_handler.Spawn(null, pos);
+		}
 	}
 
 	public void OnEnterOuterSpace() {
@@ -424,4 +507,42 @@ public class DragonParticleController : MonoBehaviour
 		if ( m_hiccupInstance != null )
 			m_hiccupInstance.Play();
 	}
+
+	#region boost_trails
+	void PlayTrails()
+	{
+		if (m_trailsInstance)
+			m_trailsInstance.Play();
+		m_playinTrails = true;
+	}
+
+	void StopTrails()
+	{
+		if (m_trailsInstance)
+			m_trailsInstance.Stop();
+		m_playinTrails = false;
+	}
+
+	public void ActivateTrails()
+	{
+		m_trailsActive = true;
+	}
+
+	public void DeactivateTrails()
+	{
+		m_trailsActive = false;
+	}
+
+	#endregion
+
+	public void WingsEvent()
+	{
+		if ( m_dargonMotion.height <= 2 && m_landingInstance)
+		{
+			Vector3 disp = transform.rotation * m_landingParticle.offset;
+			m_landingInstance.transform.position = m_dargonMotion.lastGroundHit + disp;
+			m_landingInstance.Play();
+		}
+	}
+
 }

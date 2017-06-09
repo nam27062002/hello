@@ -3,12 +3,12 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow" 
+Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Overlay" 
 {
 	Properties 
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
-		_SecondTexture ("Second Texture (RGB)", 2D) = "white" {}
+		_SecondTexture("Second Texture (RGB)", 2D) = "white" {}
 	}
 
 	SubShader {
@@ -31,7 +31,9 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow"
 								
 				#define FOG
 				#define BLEND_TEXTURE
-				#define COLOR_OVERLAY
+				#define VERTEXCOLOR_OVERLAY
+				#define OPAQUEALPHA
+
 //				#define DEBUG								
 				#include "scenary.cginc"
 

@@ -36,7 +36,6 @@ struct v2f {
 	float3 halfDir : TEXCOORD7;
 #endif	
 
-
 };
 
 sampler2D _MainTex;
@@ -54,7 +53,7 @@ uniform float _NormalStrength;
 #endif
 
 #ifdef SPECULAR
-uniform float _Specular;
+uniform float _SpecularPower;
 uniform fixed4 _SpecularDir;
 #endif
 
@@ -65,6 +64,21 @@ uniform float _CutOff;
 #ifdef FOG
 HG_FOG_VARIABLES
 #endif
+
+#ifdef DARKEN
+uniform float _DarkenPosition;
+uniform float _DarkenDistance;
+#endif
+
+
+
+float4 getCustomVertexColor(inout appdata_t v)
+{
+	//					return float4(v.color.xyz, 1.0 - dot(mul(float4(v.normal,0), unity_WorldToObject).xyz, float3(0,1,0)));
+	return float4(v.color.xyz, 1.0 - dot(UnityObjectToWorldNormal(v.normal), float3(0, 1, 0)));
+
+}
+
 
 v2f vert (appdata_t v) 
 {
@@ -112,11 +126,11 @@ v2f vert (appdata_t v)
 #ifdef NORMALMAP																		// To calculate tangent world
 	float4x4 modelMatrix = unity_ObjectToWorld;
 	float4x4 modelMatrixInverse = unity_WorldToObject;
-	o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
+	o.normalWorld = UnityObjectToWorldNormal(v.normal);
 	o.tangentWorld = normalize(mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
 	o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
 #else
-	o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
+	o.normalWorld = UnityObjectToWorldNormal(v.normal);
 #endif
 
 #ifdef SPECULAR
@@ -130,12 +144,16 @@ v2f vert (appdata_t v)
 	return o;
 }
 
+
 fixed4 frag (v2f i) : SV_Target
 {	
-
 #ifdef DEBUG
 	return fixed4(1.0, 0.0, 1.0, 1.0);
 #endif	
+
+//#ifdef DARKEN
+//	return fixed4(0.0, 0.0, 1.0, 1.0);
+//#endif
 
 	fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
 
@@ -154,15 +172,19 @@ fixed4 frag (v2f i) : SV_Target
 	col = lerp( col2, col, l);
 #endif	
 
-#if defined (COLOR_OVERLAY)
+#if defined (VERTEXCOLOR_OVERLAY)
 	// Sof Light with vertex color 
 	// http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html
 	// https://en.wikipedia.org/wiki/Relative_luminance
 	float luminance = step(0.5, 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b);
 	fixed4 one = fixed4(1, 1, 1, 1);
 	col = (2.0 * i.color * col) * (1.0 - luminance) + (one - 2.0 * (one - i.color) * (one - col)) * luminance;
-#elif defined (COLOR_ADDITIVE)
+
+#elif defined (VERTEXCOLOR_ADDITIVE)
 	col += i.color;
+
+#elif defined (VERTEXCOLOR_MODULATE)
+	col *= i.color;
 #endif	
 
 
@@ -173,15 +195,13 @@ fixed4 frag (v2f i) : SV_Target
 
 #ifdef LIGHTMAP_ON
 	fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
-	col.rgb *= lm;
-#endif
+	col.rgb *= lm * 1.3;
+/*
+	float luminance = step(0.5, 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b);
+	fixed4 one = fixed4(1, 1, 1, 1);
+	col = (2.0 * i.color * col) * (1.0 - luminance) + (one - 2.0 * (one - i.color) * (one - col)) * luminance;
+*/
 
-#ifdef FOG	
-	HG_APPLY_FOG(i, col);	// Fog
-#endif	
-
-#ifdef DARKEN
-	HG_APPLY_DARKEN(i, col);	//darken
 #endif
 
 #ifdef NORMALMAP
@@ -194,9 +214,19 @@ fixed4 frag (v2f i) : SV_Target
 #endif
 
 #ifdef SPECULAR
-	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _Specular);
+	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower);
 	col = col + (specular * specMask * i.color * _LightColor0);
 #endif	
+
+
+#ifdef FOG	
+	HG_APPLY_FOG(i, col);	// Fog
+#endif	
+
+#ifdef DARKEN
+	HG_APPLY_DARKEN(i, col);	//darken
+#endif
+
 
 #ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque

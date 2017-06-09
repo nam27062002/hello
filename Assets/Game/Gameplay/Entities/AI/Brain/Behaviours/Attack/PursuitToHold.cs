@@ -26,7 +26,7 @@ namespace AI {
 
 			protected PursuitToHoldData m_data;
 
-			protected AI.MachineOld m_targetMachine;
+			protected AI.IMachine m_targetMachine;
 			protected Entity m_targetEntity;
 			protected DragonPlayer m_player;
 			protected float m_timer;
@@ -63,6 +63,7 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
+				
 				m_pilot.SetMoveSpeed(m_data.speed);
 				m_pilot.SlowDown(false);
 
@@ -75,7 +76,7 @@ namespace AI {
 				if ( param != null && param.Length > 0 )
 				{
 					toLookAt = param[0] as Transform;
-					m_targetMachine = toLookAt.GetComponent<MachineOld>();
+					m_targetMachine = toLookAt.GetComponent<IMachine>();
 					m_targetEntity = toLookAt.GetComponent<Entity>();
 					m_player = toLookAt.GetComponent<DragonPlayer>();
 				}
@@ -85,6 +86,8 @@ namespace AI {
 				}
 
 				m_eatBehaviour.enabled = true;
+				m_eatBehaviour.canLatchOnPlayer = true;
+				m_eatBehaviour.canBitePlayer = false;
 				m_enemyInRange = false;
 				m_timer = 0;
 				m_timeOut = m_data.timeout.GetRandom();

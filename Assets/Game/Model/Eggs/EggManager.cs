@@ -250,7 +250,12 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		string rewardSku = "";
 		switch(CPGachaTest.rewardChanceMode) {
 			case CPGachaTest.RewardChanceMode.DEFAULT: {
-				rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
+				// [AOC] Force common pet during tutorial
+				if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
+					rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
+				} else {
+					rewardSku = "pet_common";
+				}
 			} break;
 
 			case CPGachaTest.RewardChanceMode.COMMON_ONLY: {
@@ -270,6 +275,12 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 				do {
 					rewardSku = instance.m_rewardDropRate.GetLabel(UnityEngine.Random.Range(0, instance.m_rewardDropRate.numElements));		// Pick one random element without taking probabilities in account
 				} while(rewardSku == "pet_special");
+			} break;
+
+			case CPGachaTest.RewardChanceMode.FORCED_PET_SKU: {
+				// Depends on target pet rarity!
+				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, CPGachaTest.forcedPetSku);
+				rewardSku = "pet_" + petDef.GetAsString("rarity");	// [AOC] Super-duper-dirty xD
 			} break;
 		}
 		return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, rewardSku);
@@ -297,7 +308,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 			// Grab a random one from the list and define it as active egg
 			// Don't enable egg during the first run
 			GameObject eggObj = null;
-			if(UsersManager.currentUser.gamesPlayed > 0) { 
+			if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) { 
 				eggObj = filteredEggs.GetRandomValue();
 				instance.m_collectibleEgg = eggObj.GetComponent<CollectibleEgg>();
 			}

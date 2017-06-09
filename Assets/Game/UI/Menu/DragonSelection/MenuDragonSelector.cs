@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using DG.Tweening;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -26,6 +27,13 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	// Dragon animation
+	[Separator("Dragon tap animation")]
+	[List("scale", "move", "rotate")]
+	[SerializeField] private string m_animId = "scale";
+	[SerializeField] private float m_animDuration = 1f;
+	[SerializeField] private Vector3 m_animValue = Vector3.one;
+	[SerializeField] private Ease m_animEase = Ease.OutBack;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -112,9 +120,6 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 	/// GUIElement or Collider as it was pressed.
 	/// </summary>
 	public void OnPointerClick(PointerEventData _eventData) {
-		// Only if enabled!
-		if(!Prefs.GetBoolPlayer(DebugSettings.MENU_ENABLE_SHORTCUTS)) return;
-
 		// Find all object intersecting with the raycast, looking for dragons and pets
 		List<RaycastResult> results = new List<RaycastResult>();
 		EventSystem.current.RaycastAll(_eventData, results);
@@ -124,24 +129,55 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 			
 		// Find pets and dragons!
 		MenuScreens targetScreen = MenuScreens.NONE;
+		MenuPetPreview pet = null;
+		MenuDragonPreview dragon = null;
 		for(int i = 0; i < results.Count; i++) {
+			// Get pets and dragons
+			pet = results[i].gameObject.FindComponentInParents<MenuPetPreview>();
+			dragon = results[i].gameObject.FindComponentInParents<MenuDragonPreview>();
+
 			// Is it a pet?
 			// Look for pets first, since pets are children of dragons and looking for dragons will result in a false positive!
-			if(results[i].gameObject.FindComponentInParents<MenuPetPreview>() != null) {
+			if(pet != null) {
 				// Yes! Go to the pet screen
 				targetScreen = MenuScreens.PETS;
+
+				// Do a fun animation on the pet!
+				pet.SetAnim(MenuPetPreview.Anim.IN);
 				break;
 			}
 
 			// Is it a dragon?
-			else if(results[i].gameObject.FindComponentInParents<MenuDragonPreview>() != null) {
+			else if(dragon != null) {
 				// Yes! Go to the disguises screen
 				targetScreen = MenuScreens.DISGUISES;
+
+				// Do a fun animation on the dragon!
+				// Only owned dragons!
+				if(DragonManager.GetDragonData(dragon.sku).isOwned) {
+					//dragon.SetAnim(MenuDragonPreview.Anim.FUN);
+					dragon.transform.DOKill(true);
+					switch(m_animId) {
+						case "scale": {
+							dragon.transform.DOScale(Vector3.Scale(dragon.transform.localScale, m_animValue), m_animDuration).SetEase(m_animEase).SetLoops(2, LoopType.Yoyo);
+						} break;
+
+						case "move": {
+							dragon.transform.DOLocalMove(dragon.transform.localPosition + m_animValue, m_animDuration).SetEase(m_animEase).SetLoops(2, LoopType.Yoyo);
+						} break;
+
+						case "rotate": {
+							dragon.transform.DOBlendableRotateBy(m_animValue, m_animDuration, RotateMode.FastBeyond360).SetEase(m_animEase);
+						} break;
+					}
+				}
 				break;
 			}
 		}
 
 		// Go to the target screen, if any
+		// Only if enabled!
+		if(!Prefs.GetBoolPlayer(DebugSettings.MENU_ENABLE_SHORTCUTS)) return;
 		if(targetScreen != MenuScreens.NONE) {
 			// Check conditions
 			MenuSceneController menuController = InstanceManager.menuSceneController;

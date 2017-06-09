@@ -44,22 +44,22 @@ public class LookAt : MonoBehaviour {
 	}
 
 	public Vector3 lookAtPointRelative {
-		get { return (m_lookAtPointLocal - transform.localPosition); }
-		set { lookAtPointLocal = transform.localPosition + value; }
+		get { return (m_lookAtPointLocal - m_transform.localPosition); }
+		set { lookAtPointLocal = m_transform.localPosition + value; }
 	}
 
 	public Vector3 lookAtPointGlobal {
 		get {
-			if(transform.parent != null) {
-				return transform.parent.TransformPoint(m_lookAtPointLocal);
+			if(m_transform.parent != null) {
+				return m_transform.parent.TransformPoint(m_lookAtPointLocal);
 			} else {
 				return m_lookAtPointLocal;
 			}
-			return transform.TransformPoint(m_lookAtPointLocal); 
+			return m_transform.TransformPoint(m_lookAtPointLocal); 
 		}
 		set {
-			if(transform.parent != null) {
-				lookAtPointLocal = transform.parent.InverseTransformPoint(value); 
+			if(m_transform.parent != null) {
+				lookAtPointLocal = m_transform.parent.InverseTransformPoint(value); 
 			} else {
 				lookAtPointLocal = value;
 			}
@@ -83,11 +83,16 @@ public class LookAt : MonoBehaviour {
 	}
 
 	// Internal
+	private Transform m_transform;
 	private bool m_dirty = true;
 
 	//------------------------------------------------------------------//
 	// METHODS															//
 	//------------------------------------------------------------------//
+	public void Awake() {
+		m_transform = transform;
+	}
+
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
@@ -103,19 +108,19 @@ public class LookAt : MonoBehaviour {
 		if(!isActiveAndEnabled) return;
 
 		// Make sure lookAtPoint is linked to the object (if any)
-		if(m_lookAtObject != null && m_lookAtObject.transform.hasChanged) {
+		if(m_lookAtObject != null && m_lookAtObject.hasChanged) {
 			lookAtPointGlobal = m_lookAtObject.position;
 			m_dirty = true;
 		}
 
 		// Check also that the object transform hasn't change
-		if(this.transform.hasChanged) {
+		if(m_transform.hasChanged) {
 			m_dirty = true;
 		}
 
 		// If cahnges occurred, modify our own rotation
 		if(m_dirty) {
-			transform.LookAt(lookAtPointGlobal);
+			m_transform.LookAt(lookAtPointGlobal);
 			m_dirty = false;
 		}
 	}
@@ -129,11 +134,11 @@ public class LookAt : MonoBehaviour {
 
 		// Clear lookAt object's transform hasChanged flag
 		// We must do it here cause other LookAt components might be using the same LookAt object and depend on its hasChanged flag
-		if(m_lookAtObject != null && m_lookAtObject.transform.hasChanged) {
-			m_lookAtObject.transform.hasChanged = false;
+		if(m_lookAtObject != null && m_lookAtObject.hasChanged) {
+			m_lookAtObject.hasChanged = false;
 		}
 
 		// Clear transform's hasChanged flag
-		this.transform.hasChanged = false;
+		m_transform.hasChanged = false;
 	}
 }

@@ -21,22 +21,7 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnEnemyBiggerTier = "onEnemyBiggerTier";
 
-			protected AttackSelectorData m_data;
-
-			protected AI.MachineOld m_targetMachine;
-			protected Entity m_targetEntity;
-			protected DragonPlayer m_player;
-			protected float m_timer;
-			protected float m_timeOut;
-
-			private EatBehaviour m_eatBehaviour;
-			private Transform m_mouth;
-
-			private bool m_enemyInRange = false;
-
-
-
-			private object[] m_transitionParam;
+			private string m_selectedTransition = "";
 
 			public override StateComponentData CreateData() {
 				return new AttackSelectorData();
@@ -47,30 +32,23 @@ namespace AI {
 			}
 
 			protected override void OnInitialise() {
-				m_data = m_pilot.GetComponentData<AttackSelectorData>();
-				m_transitionParam = new object[1];
-			}
+				AttackSelectorData data = m_pilot.GetComponentData<AttackSelectorData>();
+				m_selectedTransition = OnEnemyBiggerTier;
+				DragonPlayer player = InstanceManager.player;
+				// Get eat behaviour and set correctly
+				if ( data.tier < player.data.tier )
+				{
+					m_selectedTransition = OnEnemySmallerTier;
+				}
+				else if ( data.tier == player.data.tier)
+				{
+					m_selectedTransition = OnEnemyEqualTier;
+				}
 
-			protected override void OnEnter(State oldState, object[] param) 
-			{
-				m_player = InstanceManager.player;
 			}
-
 
 			protected override void OnUpdate() {
-				if ( m_data.tier < m_player.data.tier )
-				{
-					Transition(OnEnemySmallerTier);
-				}
-				else if ( m_data.tier == m_player.data.tier)
-				{
-					Transition( OnEnemyEqualTier );
-				}
-				else
-				{
-					Transition( OnEnemyBiggerTier );
-				}
-				
+				Transition(m_selectedTransition);
 			}
 
 

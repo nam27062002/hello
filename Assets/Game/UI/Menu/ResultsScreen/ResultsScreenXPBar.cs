@@ -37,9 +37,12 @@ public class ResultsScreenXPBar : DragonXPBar {
 	[Separator("FX")]
 	[SerializeField] private ParticleSystem m_receiveFX = null;
 	[SerializeField] private ParticleSystem m_levelUpFX = null;
-	[SerializeField] private GameObject m_dragonUnlockBG = null;
+
+	[Separator("Next Dragon")]
+	[SerializeField] private GameObject m_nextDragonRoot = null;
+	[SerializeField] private Image m_nextDragonIcon = null;
 	[SerializeField] private GameObject m_dragonUnlockFX = null;
-	[SerializeField] private UIScene3DLoader m_nextDragonScene3DLoader = null;
+	[SerializeField] private GameObject m_lockIcon = null;
 
 	[Separator("Disguises")]
 	[SerializeField] private GameObject m_disguisesContainer = null;
@@ -64,6 +67,16 @@ public class ResultsScreenXPBar : DragonXPBar {
 	private bool m_flagsFolded = true;	// By default flags are folded when animation has finished
 	private bool m_nextDragonLocked = true;	// Is the next dragon locked or has it been already unlocked using PC?
 	private DragonData m_nextDragonData = null;
+
+	// Some public properties
+	public DragonData nextDragonData {
+		get { return m_nextDragonData; }
+	}
+
+	public bool newDragonUnlocked {	// Is next dragon unlocked in this run?
+		// Only if next dragon was locked, obviously! And max xp delta reached :)
+		get { return m_targetDelta >= 1f && m_nextDragonLocked; }
+	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -107,26 +120,13 @@ public class ResultsScreenXPBar : DragonXPBar {
 			m_barSeparators[i].slider = m_auxBar;
 		}
 
-		// Find out next dragon to unlock
-		// New design states that it's just the dragon following the one we played with
-		// None if we played with the last dragon
-		m_nextDragonData = null;
-		int order = m_dragonData.def.GetAsInt("order");
-		if(order < DragonManager.dragonsByOrder.Count - 1) {	// Exclude if playing with last dragon
-			m_nextDragonData = DragonManager.dragonsByOrder[order + 1];
-		}
-
 		// Load and pose next dragon's preview
+		m_nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
 		if(m_nextDragonData != null) {
-			MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
-			if(dragonLoader != null) {
-				dragonLoader.LoadDragon(m_nextDragonData.def.sku);
-				dragonLoader.dragonInstance.SetAnim(MenuDragonPreview.Anim.IDLE);
-				m_dragonUnlockBG.SetActive(true);
-			}
+			m_nextDragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + m_nextDragonData.def.sku + "/icon_disguise_0");
+			m_nextDragonRoot.SetActive(true);
 		} else {
-			m_dragonUnlockBG.SetActive(false);
-			m_nextDragonScene3DLoader.gameObject.SetActive(false);
+			m_nextDragonRoot.SetActive(false);
 		}
 
 		// Compute initial and target deltas and levels
@@ -204,9 +204,10 @@ public class ResultsScreenXPBar : DragonXPBar {
 		if(CPResultsScreenTest.testEnabled) {
 			m_nextDragonLocked = m_nextDragonData != null ? CPResultsScreenTest.nextDragonLocked : false;
 		} else {
-			m_nextDragonLocked = m_nextDragonData != null ? m_nextDragonData.isLocked : false;
+			m_nextDragonLocked = m_nextDragonData != null ? RewardManager.nextDragonLocked : false;	// We must use the lock state BEFORE starting the game, otherwise the DragonData will be marked as already available!
 		}
 		m_dragonUnlockFX.SetActive(false);
+		m_lockIcon.SetActive(false);
 
 		// Initialize info text
 		// Special case for last dragon
@@ -295,9 +296,8 @@ public class ResultsScreenXPBar : DragonXPBar {
 	/// Launches the dragon unlock animation.
 	/// </summary>
 	private void LaunchDragonUnlockAnimation() {
-		// Prepare for animation
+		/*// Prepare for animation
 		m_dragonUnlockFX.SetActive(true);
-		m_dragonUnlockFX.transform.localScale = Vector3.zero;
 
 		// Animation
 		DOTween.Sequence()
@@ -305,7 +305,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 			.SetId(this)
 			.AppendInterval(0.25f * UIConstants.resultsDragonUnlockSpeedMultiplier)
 
-			// Scale up
+			// Scale icon up
 			.Append(m_dragonUnlockFX.transform.DOScale(1f, 0.25f * UIConstants.resultsDragonUnlockSpeedMultiplier).SetEase(Ease.OutBack))
 
 			// Change bar text as well
@@ -330,18 +330,52 @@ public class ResultsScreenXPBar : DragonXPBar {
 			})
 
 			// Go!!!
+			.Play();*/
+
+		// Show lock icon
+		m_lockIcon.SetActive(true);
+
+		// Program animation
+		DOTween.Sequence()
+			// Initial Pause
+			.SetId(this)
+			.AppendInterval(0.25f)
+
+			// Lock break animation
+			.AppendCallback(() => {
+				m_lockIcon.GetComponent<Animator>().SetTrigger("unlock");
+			})
+
+			// Let animation finish
+			.AppendInterval(1f)	// Sync with animation
+
+			// Trigger banner animation
+			.AppendCallback(() => {
+				// Show
+				m_dragonUnlockFX.SetActive(true);
+
+				// Update text with the name of the unlocked dragon
+				Localizer unlockText = m_dragonUnlockFX.FindComponentRecursive<Localizer>("UnlockText");
+				if(unlockText != null) unlockText.Localize("TID_RESULTS_DRAGON_UNLOCKED", m_nextDragonData.def.GetLocalized("tidName"));
+
+				// Launch animation
+				m_dragonUnlockFX.GetComponent<Animator>().SetTrigger("in");
+			})
+
+			// Change bar text
+			.AppendCallback(() => {
+				if(m_infoText != null) {
+					m_infoText.Localize("TID_RESULTS_DRAGON_UNLOCKED", m_nextDragonData.def.GetLocalized("tidName"));
+				}
+			})
+
+			// Disable invisible objects once the sequence is completed
+			.OnComplete(() => {
+				m_lockIcon.SetActive(false);
+			})
+
+			// Go!!!
 			.Play();
-
-		// Update text with the name of the unlocked dragon
-		Localizer unlockText = m_dragonUnlockFX.FindComponentRecursive<Localizer>("UnlockText");
-		if(unlockText != null) unlockText.Localize("TID_RESULTS_DRAGON_UNLOCKED", m_nextDragonData.def.GetLocalized("tidName"));
-
-		// Play cool dragon animation!
-		/*MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
-		if(dragonLoader != null) {
-			dragonLoader.LoadDragon(m_nextDragonData.def.sku);
-			dragonLoader.dragonInstance.SetAnim(MenuDragonPreview.Anim.UNLOCKED);
-		}*/
 	}
 
 	/// <summary>
@@ -440,7 +474,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 	/// </summary>
 	public void OnXPAnimEnd() {
 		// If we reached max delta, a dragon has been unlocked!
-		if(m_targetDelta >= 1f && m_nextDragonLocked) {
+		if(newDragonUnlocked) {
 			// Only if next dragon was locked, obviously!
 			LaunchDragonUnlockAnimation();
 		}

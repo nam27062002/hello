@@ -74,6 +74,8 @@ public class SpawnerBg : AbstractSpawner {
 
     private int m_rail = 0;
 
+	private PoolHandler m_poolHandler;
+
 
     //-----------------------------------------------    
 
@@ -120,7 +122,7 @@ public class SpawnerBg : AbstractSpawner {
 
         if (m_rails == 0) m_rails = 1;
 
-		PoolManager.RequestPool(m_entityPrefabStr, IEntity.EntityPrefabsPath, m_entities.Length);
+		m_poolHandler = PoolManager.RequestPool(m_entityPrefabStr, IEntity.EntityPrefabsPath, m_entities.Length);
 
         m_newCamera = Camera.main.GetComponent<GameCamera>();
 
@@ -155,11 +157,15 @@ public class SpawnerBg : AbstractSpawner {
         return (EntitiesKilled == EntitiesToSpawn) ? (uint)m_quantity.GetRandom() : EntitiesToSpawn - EntitiesKilled;        
     }   
 
+	protected override PoolHandler GetPoolHandler(uint index) {
+		return m_poolHandler;
+	}
+
     protected override string GetPrefabNameToSpawn(uint index) {
         return m_entityPrefabStr;
     }    
     
-    protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
+	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
         if (index > 0) {
             originPos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
         }

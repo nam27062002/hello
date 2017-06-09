@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 /// <summary>
 /// This class is responsible for handling stuff related to the whole application in a high level. For example if an analytics event has to be sent when the application is paused or resumed
@@ -30,11 +31,29 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         get { return m_isAlive; }
     }
 
+    public enum Mode
+    {
+    	PLAY,
+    	TEST
+    };
+    private Mode m_appMode = Mode.PLAY;
+    public Mode appMode
+    {
+    	get{ return m_appMode; }
+    }
+
+
     /// <summary>
 	/// Initialization. This method will be called only once regardless the amount of times the user is led to the Loading scene.
 	/// </summary>
 	protected void Awake()
     {
+        // Frame rate forced to 30 fps to make the experience in editor as similar to the one on device as possible
+#if UNITY_EDITOR
+        QualitySettings.vSyncCount = 0;  // VSync must be disabled
+        Application.targetFrameRate = 30;
+#endif
+
         m_isAlive = true;
 
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -42,13 +61,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             DebugSettings.Init();
         }
 
-        Setting_Init();
+
 
         Reset();
 
         FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);
         SocialFacade.Instance.Init();
         GameServicesFacade.Instance.Init();
+
 
         SocialManager.Instance.Init();
 
@@ -60,8 +80,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         SaveFacade.Instance.OnLoadStarted += OnLoadStarted;
         SaveFacade.Instance.OnLoadComplete += OnLoadComplete;
 
-        // [DGR] NOTIF: Not supported yet
-        //NotificationManager.Instance.Init();        
+        Notifications_Init();
 
         // [DGR] GAME_VALIDATOR: Not supported yet
         // GameValidator gv = new GameValidator();
@@ -70,8 +89,37 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     protected void Start()
     {
+		// Initialize game settings
+		GameSettings.Init();
+
+		if (HasArg("-start_test"))
+		{	
+			// Start Testing game!
+			// ControlPanel.instance.ShowMemoryUsage = true;
+				// Tell control panel to show memory
+			m_appMode = Mode.TEST;
+		}
+
+        // Subscribe to external events
+        Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, Debug_OnLevelReset);
+        Messenger.AddListener(GameEvents.GAME_ENDED, Debug_OnLevelReset);
+
         StartCoroutine(Device_Update());
     }
+
+	private bool HasArg(string _argName) 
+	{
+		string[] args = PlatformUtils.Instance.GetCommandLineArgs();
+		if ( args != null )
+		{
+			for(int i = 0; i < args.Length; i++) {
+				if(args[i] == _argName) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
     protected override void OnDestroy()
     {
@@ -163,8 +211,38 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             // ---------------------------
             // Test toggling particles culling
-            Debug_TestToggleParticlesCulling();
+            //Debug_TestToggleParticlesCulling();
             // ---------------------------        
+
+            // ---------------------------
+            // Test toggling player particles visibility
+            //Debug_TestTogglePlayerParticlesVisibility();
+            // ---------------------------        
+
+            // ---------------------------
+            // Test toggling player particles visibility
+            //Debug_TestToggleCustomParticlesCullingEnabled();
+            // ---------------------------        
+
+            // ---------------------------
+            // Test toggling profiler memory scene
+            //Debug_ToggleProfilerMemoryScene();
+            // ---------------------------
+
+            // ---------------------------
+            // Test togling profiler load scenes scene
+            //Debug_ToggleProfilerLoadScenesScene();
+            // ---------------------------
+
+            // ---------------------------
+            // Test schedule notification
+            //Debug_ScheduleNotification();
+            // ---------------------------
+
+            // ---------------------------
+            // Test send play test
+            //Debug_OnSendPlayTest();
+            // ---------------------------
         }
 
         if (NeedsToRestartFlow)
@@ -336,45 +414,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     }
     #endregion
 
-    #region settings
-    // This region is responsible for managing option settings such as sound
-
-    private const string SETTINGS_SOUND_KEY = "sound";
-
-    private bool m_settingsSoundIsEnabled;
-
-    private void Setting_Init()
-    {
-        // Sound is disabled by default
-        Settings_SetSoundIsEnabled(PlayerPrefs.GetInt(SETTINGS_SOUND_KEY, 0) > 0, false);
-    }
-
-    public bool Settings_GetSoundIsEnabled()
-    {
-        return m_settingsSoundIsEnabled;
-    }
-
-    private void Settings_SetSoundIsEnabled(bool value, bool persist)
-    {
-        m_settingsSoundIsEnabled = value;
-
-        // TODO: To use AudioManager instead
-        AudioListener.pause = !m_settingsSoundIsEnabled;
-
-        if (persist)
-        {
-            int intValue = (m_settingsSoundIsEnabled) ? 1 : 0;
-            PlayerPrefs.SetInt(SETTINGS_SOUND_KEY, intValue);
-            PlayerPrefs.Save();
-        }
-    }
-
-    public void Settings_ToggleSoundIsEnabled()
-    {
-        Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
-    }
-    #endregion
-
     #region device   
     // Time in seconds to wait until the device has to be updated again.
     public const float DEVICE_NEXT_UPDATE = 0.5f;
@@ -424,6 +463,58 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     }
     #endregion
 
+    #region memory_profiler
+    private bool m_memoryProfilerIsEnabled = false;
+    private bool MemoryProfiler_IsEnabled
+    {
+        get
+        {
+            return m_memoryProfilerIsEnabled;
+        }
+
+        set
+        {
+            if (m_memoryProfilerIsEnabled != value)
+            {
+                m_memoryProfilerIsEnabled = value;
+                if (m_memoryProfilerIsEnabled)
+                {
+                    MemoryProfiler_Enable();
+                }
+                else
+                {
+                    MemoryProfiler_Disable();
+                }
+            }
+        }
+    }
+
+    private void MemoryProfiler_Enable()
+    {
+        // Disabled to make sure that all textures in the level are loaded
+        FeatureSettingsManager.instance.IsFogOnDemandEnabled = false;
+    }
+
+    private void MemoryProfiler_Disable()
+    {        
+        FeatureSettingsManager.instance.IsFogOnDemandEnabled = true;
+    }
+    #endregion
+
+    #region
+    private void Notifications_Init()
+    {        
+        NotificationsManager.SharedInstance.Initialise();
+
+        // [DGR] TODO: icons has to be created and located in the right folder
+#if UNITY_ANDROID
+        NotificationsManager.SharedInstance.SetNotificationIcons ("", "push_notifications", 0xFFFF0000); 
+#endif
+
+        NotificationsManager.SharedInstance.SetNotificationsEnabled(true);
+    }
+    #endregion
+
     #region debug
     private bool Debug_IsPaused { get; set; }
 
@@ -440,7 +531,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private void Debug_TestToggleSound()
     {
-        Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
+		GameSettings.soundEnabled = !GameSettings.soundEnabled;
     }
 
     private void Debug_TestEggsCollected()
@@ -497,7 +588,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     public void Debug_TestToggleFrameColor()
     {
         Debug_IsFrameColorOn = !Debug_IsFrameColorOn;
-        Messenger.Broadcast<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, Debug_IsFrameColorOn, DragonBreathBehaviour.Type.Super);
+        Messenger.Broadcast<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, Debug_IsFrameColorOn, DragonBreathBehaviour.Type.Mega);
     }
 
     public void Debug_TestQualitySettings()
@@ -539,6 +630,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         }
     }
 
+    private ParticleSystem[] m_debugParticles;
     private bool m_debugParticlesVisibility = true;
     public bool Debug_ParticlesVisibility
     {
@@ -549,15 +641,19 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         set
         {
-            m_debugParticlesVisibility = value;
-
-            List<ParticleSystem> systems = GameObjectExt.FindObjectsOfType<ParticleSystem>(true);
-            if (systems != null)
+            if (m_debugParticlesVisibility && !value)
             {
-                int count = systems.Count;                
+                m_debugParticles = GameObject.FindObjectsOfType<ParticleSystem>();
+            }
+
+            m_debugParticlesVisibility = value;
+                        
+            if (m_debugParticles != null)
+            {
+                int count = m_debugParticles.Length;                
                 for (int i = 0; i < count; i++)
-                {                    
-                    systems[i].gameObject.SetActive(m_debugParticlesVisibility);                    
+                {
+                    m_debugParticles[i].gameObject.SetActive(m_debugParticlesVisibility);                    
                 }
             }
         }
@@ -587,10 +683,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             m_debugParticlesState = value;
              
-            List<ParticleSystem> systems = GameObjectExt.FindObjectsOfType<ParticleSystem>(true);
+            ParticleSystem[] systems = GameObject.FindObjectsOfType<ParticleSystem>();
             if (systems != null)
             {
-                int count = systems.Count;
+                int count = systems.Length;
                 for (int i = 0; i < count; i++)
                 {
                     switch (m_debugParticlesState)
@@ -660,7 +756,105 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 }                
             }            
         }
-    }    
+    }
+
+
+    private bool m_debug_PlayerParticlesVisibility = true;    
+    public bool Debug_PlayerParticlesVisibility
+    {
+        get
+        {
+            return m_debug_PlayerParticlesVisibility;
+        }
+
+        set
+        {
+            m_debug_PlayerParticlesVisibility = value;
+
+            DragonPlayer player = InstanceManager.player;
+            if (player != null)
+            {
+                ParticleSystem[] systems = player.GetComponentsInChildren<ParticleSystem>(true);
+                if (systems != null)
+                {
+                    int count = systems.Length;
+                    for (int i = 0; i < count; i++)
+                    {
+                        systems[i].gameObject.SetActive(m_debug_PlayerParticlesVisibility);
+                    }
+                }
+            }
+        }
+    }
+
+    private void Debug_TestTogglePlayerParticlesVisibility()
+    {
+        Debug_PlayerParticlesVisibility = !Debug_PlayerParticlesVisibility;
+    }
+
+    private void Debug_TestToggleCustomParticlesCullingEnabled()
+    {
+        CustomParticlesCulling.Manager_IsEnabled = !CustomParticlesCulling.Manager_IsEnabled;
+    }
+
+    public void Debug_ToggleProfilerMemoryScene()
+    {
+        if (GameSceneManager.nextScene == ProfilerMemoryController.NAME)
+        {
+            FlowManager.GoToMenu();
+        }
+        else
+        {
+            FlowManager.GoToProfilerMemoryScene();
+        }
+    }
+
+    private void Debug_LoadProfilerScenesScene()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(ProfilerLoadScenesController.NAME);
+    }
+
+    public void Debug_ToggleProfilerLoadScenesScene()
+    {
+        if (GameSceneManager.nextScene == ProfilerLoadScenesController.NAME)
+        {
+            FlowManager.GoToMenu();
+        }
+        else
+        {
+            Debug_LoadProfilerScenesScene();
+        }
+    }
+
+    public void Debug_ScheduleNotification()
+    {
+        NotificationsManager.SharedInstance.ScheduleNotification("sku.not.01", "A ver que pasa...", "Action", 5);
+    }
+
+    private void Debug_OnLevelReset()
+    {
+        m_debugParticles = null;
+        m_debugParticlesVisibility = true;
+    }
+
+    private void Debug_OnSendPlayTest()
+    {
+        if (FeatureSettingsManager.instance.IsMiniTrackingEnabled)
+        {
+            MiniTrackingEngine.SendTrackingFile(false,
+            delegate (FGOL.Server.Error error, Dictionary<string, object> response)
+            {
+                if (error == null)
+                {
+                    Debug.Log("Play test tracking sent successfully");
+                }
+                else
+                {
+                    Debug.Log("Error when sending play test tracking");
+                }
+            });
+        }
+    }
     #endregion
 }
 

@@ -11,7 +11,7 @@ public class ProfilerSettingsManager
     public const bool ENABLED = true;
 #endif             
 
-    private const string PROFILER_SETTINGS_FILE_NAME = "profilerSettings";
+    private const string NPCS_SETTINGS_FILE_NAME = "npcsSettings";
 
     public static ProfilerSettings SettingsCached { get; set; }
     public static ProfilerSettings SettingsResources { get; set; }    
@@ -28,7 +28,7 @@ public class ProfilerSettingsManager
             LoadFromResources(spawnerNames);
 
             // Loads settings from cache
-            LoadFromCache(spawnerNames);
+           // LoadFromCache(spawnerNames);
 
             // If there's no settings in cache then it's created out of settings in resources
             if (SettingsCached == null && SettingsResources != null)
@@ -56,16 +56,16 @@ public class ProfilerSettingsManager
 
     private static string GetResourcesFileNameFullPath()
     {
-        return Application.dataPath + "/Resources/Profiler/" + PROFILER_SETTINGS_FILE_NAME + ".json";
+        return Application.dataPath + "/Resources/Profiler/" + NPCS_SETTINGS_FILE_NAME + ".json";
     }
 
     private static void LoadFromResources(List<string> spawnerNames)
     {
         SettingsResources = new ProfilerSettings();                
-        TextAsset textAsset = (TextAsset)Resources.Load("Profiler/" + PROFILER_SETTINGS_FILE_NAME, typeof(TextAsset)); ;
+        TextAsset textAsset = (TextAsset)Resources.Load("Profiler/" + NPCS_SETTINGS_FILE_NAME, typeof(TextAsset)); ;
         if (textAsset == null)
         {
-            Debug.LogError("Could not load text asset " + PROFILER_SETTINGS_FILE_NAME);
+            Debug.LogError("Could not load text asset " + NPCS_SETTINGS_FILE_NAME);
         }
         else
         {
@@ -112,7 +112,7 @@ public class ProfilerSettingsManager
 
     private static string GetCacheFileNameFullPath()
     {
-        return Application.persistentDataPath + "/" + PROFILER_SETTINGS_FILE_NAME + ".json";
+        return Application.persistentDataPath + "/" + NPCS_SETTINGS_FILE_NAME + ".json";
     }
 
     private static void LoadFromCache(List<string> spawnerNames)

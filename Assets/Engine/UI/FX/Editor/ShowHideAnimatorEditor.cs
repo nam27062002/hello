@@ -91,6 +91,7 @@ public class ShowHideAnimatorEditor : Editor {
 			case ShowHideAnimator.TweenType.ANIMATOR: {
 				DoProperty("m_animator");
 				DoProperty("m_tweenDelay");
+				DoProperty("m_ignoreTimeScale");
 			} break;
 
 			case ShowHideAnimator.TweenType.CUSTOM: {
@@ -105,6 +106,7 @@ public class ShowHideAnimatorEditor : Editor {
 			case ShowHideAnimator.TweenType.IDLE: {
 				DoProperty("m_tweenDuration");
 				DoProperty("m_tweenDelay");
+				DoProperty("m_ignoreTimeScale");
 			} break;
 
 			default: {
@@ -112,6 +114,7 @@ public class ShowHideAnimatorEditor : Editor {
 				DoProperty("m_tweenValue");
 				DoProperty("m_tweenEase");
 				DoProperty("m_tweenDelay");
+				DoProperty("m_ignoreTimeScale");
 			} break;
 		}
 

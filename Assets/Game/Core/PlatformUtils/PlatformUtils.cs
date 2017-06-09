@@ -42,4 +42,6 @@ public abstract class PlatformUtils
 	
 	// Replaces Social.ReportProgress in iOS because it doesn't work 
 	public virtual void ReportProgress( string achievementId, double progress) {}
+
+	public virtual string[] GetCommandLineArgs(){ return System.Environment.GetCommandLineArgs(); }
 }

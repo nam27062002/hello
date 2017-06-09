@@ -40,6 +40,8 @@ public class PetDogSpawner : AbstractSpawner {
 	}
 
 	public List<SpawnerChances> m_possibleSpawners;
+	private PoolHandler[] m_poolHandlers;
+
 	private float m_maxChance;
     void Awake()
     {
@@ -68,9 +70,11 @@ public class PetDogSpawner : AbstractSpawner {
         UseSpawnManagerTree = false;
         RegisterInSpawnerManager();        
 
+		m_poolHandlers = new PoolHandler[m_possibleSpawners.Count];
+
 		for (int i = 0; i<m_possibleSpawners.Count; i++) {
 			string prefab = m_possibleSpawners[i].m_spawnPrefab;
-			PoolManager.RequestPool(prefab, IEntity.EntityPrefabsPath, 1);
+			m_poolHandlers[i] = PoolManager.RequestPool(prefab, IEntity.EntityPrefabsPath, 1);
 		}
 
 		CalculateMaxChance();
@@ -92,6 +96,10 @@ public class PetDogSpawner : AbstractSpawner {
     protected override uint GetEntitiesAmountToRespawn() {        
         return GetMaxEntities();
     }        
+
+	protected override PoolHandler GetPoolHandler(uint index) {
+		return m_poolHandlers[index];
+	}
 
     protected override string GetPrefabNameToSpawn(uint index) {
         return m_entityPrefabStr;
@@ -122,7 +130,7 @@ public class PetDogSpawner : AbstractSpawner {
 
 	public override bool SpawnersCheckCurrents(){ return true; }
 
-    protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
+	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
         Transform groundSensor = spawning.transform.FindChild("groundSensor");
         Transform t = spawning.transform;
         

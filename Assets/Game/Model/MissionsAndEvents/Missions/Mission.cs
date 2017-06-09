@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Globalization;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -21,6 +22,7 @@ public class Mission {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	public const float SECONDS_SKIPPED_WITH_AD = 15f * 60f;	// [AOC] MAGIC NUMBER! 15min. Should be on content probably.
 
 	/// <summary>
 	/// Missions shall be grouped by difficulty.
@@ -56,7 +58,11 @@ public class Mission {
 	public DefinitionNode typeDef { get { return m_typeDef; }}
 
 	// Data shortcuts
-	public Difficulty difficulty { get { return (Difficulty)m_def.GetAsInt("difficulty"); }}
+	private Difficulty m_difficulty = Difficulty.COUNT;
+	public Difficulty difficulty {
+		get { return m_difficulty; }
+		set { m_difficulty = value; }
+	}
 
 	// Objective
 	private MissionObjective m_objective = null;
@@ -83,15 +89,15 @@ public class Mission {
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Initialize this mission using the given definition.
+	/// Initialize the mission with the given parameters
 	/// </summary>
-	/// <param name="_def">The definition to be used.</param>
-	public void InitFromDefinition(DefinitionNode _def) {
-		// Store a reference to the definition
-		m_def = _def;
-
-		// Get the type definition as well
-		m_typeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, m_def.GetAsString("typeSku"));
+	/// <param name="_missionDef">Mission definition.</param>
+	/// <param name="_targetValue">Target value.</param>
+	/// <param name="_singleRun">Is it a single run mission?</param>
+	public void InitWithParams(DefinitionNode _missionDef, DefinitionNode _typeDef, float _targetValue, bool _singleRun) {
+		// Store definitions
+		m_def = _missionDef;
+		m_typeDef = _typeDef;
 
 		// Destroy current objective (if any)
 		if(m_objective != null) {
@@ -100,7 +106,7 @@ public class Mission {
 		}
 
 		// Create and initialize new objective
-		m_objective = new MissionObjective(m_def);
+		m_objective = new MissionObjective(this, m_def, m_typeDef, _targetValue, _singleRun);
 		m_objective.OnObjectiveComplete.AddListener(OnObjectiveComplete);
 	}
 
@@ -114,6 +120,7 @@ public class Mission {
 		}
 		
 		m_def = null;
+		m_typeDef = null;
 	}
 
 	/// <summary>
@@ -153,6 +160,24 @@ public class Mission {
 			case State.COOLDOWN: Messenger.Broadcast<Mission>(GameEvents.MISSION_COOLDOWN_FINISHED, this);	break;
 		}
 		Messenger.Broadcast<Mission, State, State>(GameEvents.MISSION_STATE_CHANGED, this, oldState, _newState);
+	}
+
+	/// <summary>
+	/// Skip the cooldown timer a given amount of seconds.
+	/// Mission state wont change, even if cooldown is completed.
+	/// </summary>
+	/// <param name="_seconds">Time to skip. Use -1 for the whole cooldown duration.</param>
+	public void SkipCooldownTimer(float _seconds) {
+		// Nothing to do if mission is not on cooldown
+		if(state != Mission.State.COOLDOWN) return;
+
+		// Full cooldown completion?
+		if(_seconds < 0) {
+			_seconds = (float)cooldownRemaining.TotalSeconds;
+		}
+
+		// Do it!
+		m_cooldownStartTimestamp = m_cooldownStartTimestamp.AddSeconds(-_seconds);	// Simulate that cooldown started earlier than it actually did
 	}
 
 	//------------------------------------------------------------------//
@@ -209,24 +234,29 @@ public class Mission {
 	/// <returns>Whether the mission was successfully loaded</returns>
 	public bool Load(SimpleJSON.JSONNode _data) {
 		// Read values from persistence object
-		// [AOC] Protection in case mission sku change
+		// [AOC] Protection in case mission skus change
 		DefinitionNode missionDef = MissionManager.GetDef(_data["sku"]);
 		if(missionDef == null) return false;
 
-		InitFromDefinition(missionDef);
+		// Initialize with sotred data
+		InitWithParams(
+			missionDef,
+			DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, missionDef.Get("type")),
+			_data["targetValue"].AsFloat, 
+			_data["singleRun"].AsBool
+		);
 
 		// Restore state
 		m_state = (State)_data["state"].AsInt;
 
 		// Restore objective
-		if(m_objective != null) 
-		{
+		if(m_objective != null) {
 			m_objective.tracker.SetValue(_data["currentValue"].AsFloat, false);
 			m_objective.enabled = (m_state == State.ACTIVE);
 		}
 
 		// Restore cooldown timestamp
-		m_cooldownStartTimestamp = DateTime.Parse( _data["cooldownStartTimestamp"], System.Globalization.CultureInfo.InvariantCulture);
+		m_cooldownStartTimestamp = DateTime.Parse(_data["cooldownStartTimestamp"], CultureInfo.InvariantCulture);
 		return true;
 	}
 	
@@ -242,13 +272,17 @@ public class Mission {
 		if(m_def != null) data.Add("sku", m_def.sku);
 
 		// State
-		data.Add("state",((int)m_state).ToString());
+		data.Add("state", ((int)m_state).ToString(CultureInfo.InvariantCulture));
 
 		// Objective progress
-		if(m_objective != null) data.Add("currentValue", m_objective.currentValue.ToString());
+		if(m_objective != null) {
+			data.Add("currentValue", m_objective.currentValue.ToString(CultureInfo.InvariantCulture));
+			data.Add("targetValue", m_objective.targetValue.ToString(CultureInfo.InvariantCulture));
+			data.Add("singleRun", m_objective.singleRun.ToString(CultureInfo.InvariantCulture));
+		}
 
 		// Cooldown timestamp
-		data.Add("cooldownStartTimestamp", m_cooldownStartTimestamp.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		data.Add("cooldownStartTimestamp", m_cooldownStartTimestamp.ToString(CultureInfo.InvariantCulture));
 		
 		return data;
 	}

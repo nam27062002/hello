@@ -5,7 +5,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decorations)" 
+Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Animated Vertex (Water plants)" 
 {
 	Properties 
 	{
@@ -36,7 +36,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Animated Vertex(On Line Decora
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				#pragma autocompile_fwdbase
+//				#pragma autocompile_fwdbase
 				#pragma glsl_no_auto_normalization
 				#pragma fragmentoption ARB_precision_hint_fastest
 

@@ -38,6 +38,8 @@ public class LevelManager : Singleton<LevelManager> {
 		get { return m_currentLevelData; }
 	}
 
+	private static List<string> m_toSplitScenes = new List<string>();
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -87,8 +89,18 @@ public class LevelManager : Singleton<LevelManager> {
 		// Clear current data
 		m_currentLevelData = null;
 
-		// Load new data
-		m_currentLevelData = GetLevelData(_sku);
+		if ( !string.IsNullOrEmpty(_sku) )
+		{
+			// Load new data
+			m_currentLevelData = GetLevelData(_sku);
+
+			m_toSplitScenes = m_currentLevelData.def.GetAsList<string>("split");
+		}
+		else
+		{
+			m_toSplitScenes.Clear();
+		}
+
 	}
 
 	/// <summary>
@@ -116,11 +128,29 @@ public class LevelManager : Singleton<LevelManager> {
 		List<string> commonScenes = def.GetAsList<string>("common");
 		for( int i = 0; i<commonScenes.Count; i++ )
 		{
-			loadingTask = SceneManager.LoadSceneAsync(commonScenes[i], LoadSceneMode.Additive);
+			// TODO: Check if is splitted to use different name
+			string sceneName = GetRealSceneName(commonScenes[i]);
+			loadingTask = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 			if(DebugUtils.SoftAssert(loadingTask != null, "The common scene " + commonScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
 				loadingTasks.Add(loadingTask);
 			}	
 		}
+
+		if (FeatureSettingsManager.IsWIPScenesEnabled)
+		{
+			List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
+			for( int i = 0; i<gameplayWip.Count; i++ )
+			{
+				// TODO: Check if is splitted to use different name
+				string sceneName = GetRealSceneName(gameplayWip[i]);
+				loadingTask = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+				if(DebugUtils.SoftAssert(loadingTask != null, "The common gameplay scene " + gameplayWip[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
+					loadingTasks.Add(loadingTask);
+				}	
+			}
+		}
+
+
 		// Load area by dragon
 		m_currentArea = def.Get(UsersManager.currentUser.currentDragon);
 		List<AsyncOperation> areaOperations = LoadArea( m_currentArea );
@@ -145,15 +175,16 @@ public class LevelManager : Singleton<LevelManager> {
 		m_currentAreaScenes = def.GetAsList<string>(m_currentArea);
 		for( int i = 0; i<m_currentAreaScenes.Count && !string.IsNullOrEmpty( m_currentAreaScenes[i] ); i++ )
 		{
-			loadingTask = SceneManager.LoadSceneAsync(m_currentAreaScenes[i], LoadSceneMode.Additive);
-			if(DebugUtils.SoftAssert(loadingTask != null, "The spawners scene " + m_currentAreaScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
+			string sceneName = GetRealSceneName(m_currentAreaScenes[i]);
+			loadingTask = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+			if(DebugUtils.SoftAssert(loadingTask != null, "The scene " + m_currentAreaScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
 				loadingTasks.Add(loadingTask);
 			}	
 		}
 		return loadingTasks;
-	}
+	}   
 
-	public static List<AsyncOperation> UnloadCurrentArea()
+    public static List<AsyncOperation> UnloadCurrentArea()
 	{
 		List<AsyncOperation> loadingTasks = new List<AsyncOperation>();
 		AsyncOperation loadingTask = null;
@@ -199,5 +230,88 @@ public class LevelManager : Singleton<LevelManager> {
 	}
 
 
+	private static string GetRealSceneName( string sceneName )
+	{
+		if (m_toSplitScenes.Contains( sceneName ))
+		{
+			switch( FeatureSettingsManager.instance.LevelsLOD )
+			{	
+				default:
+				case FeatureSettings.ELevel3Values.low:
+				{
+					sceneName += "_low";
+				}break;
+				case FeatureSettings.ELevel3Values.mid:
+				{
+					sceneName += "_medium";
+				}break;
+				case FeatureSettings.ELevel3Values.high:
+				{
+					sceneName += "_high";
+				}break;
+			}
+		}
+		return sceneName;
+	}
 
+    /// <summary>
+    /// Returns a list with the name of the scenes belonging to the area passed as a parameter.
+    /// </summary>    
+    public static List<string> GetOnlyAreaScenesList(string area)
+    {
+        List<string> returnValue = new List<string>();
+
+        DefinitionNode def = m_currentLevelData.def;
+        m_currentArea = area;
+        m_currentAreaScenes = def.GetAsList<string>(m_currentArea);
+        for (int i = 0; i < m_currentAreaScenes.Count && !string.IsNullOrEmpty(m_currentAreaScenes[i]); i++)
+        {
+            string sceneName = GetRealSceneName(m_currentAreaScenes[i]);
+            returnValue.Add(sceneName);
+        }
+
+        return returnValue;
+    }
+
+    /// <summary>
+    /// Returns a list with the name of the scenes common to all areas
+    /// </summary>
+    /// <returns></returns>
+    public static List<string> GetCommonScenesList()
+    {
+        List<string> returnValue = new List<string>();
+
+        DefinitionNode def = m_currentLevelData.def;
+
+        // Common Scenes
+        List<string> commonScenes = def.GetAsList<string>("common");
+        for (int i = 0; i < commonScenes.Count; i++)
+        {
+            string sceneName = GetRealSceneName(commonScenes[i]);
+            returnValue.Add(sceneName);
+        }
+
+		List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
+		for (int i = 0; i < gameplayWip.Count; i++)
+        {
+			string sceneName = GetRealSceneName(gameplayWip[i]);
+            returnValue.Add(sceneName);
+        }
+
+        return returnValue;
+    }
+
+    public static List<string> GetAllArenaScenesList(string area)
+    {
+        List<string> returnValue = GetCommonScenesList();
+        List<string> onlyAreaScenes = GetOnlyAreaScenesList(area);
+
+        int count = onlyAreaScenes.Count;
+        for (int i = 0; i < count; i++)
+        {
+            returnValue.Add(onlyAreaScenes[i]);
+        }
+
+        return returnValue;
+    }
 }

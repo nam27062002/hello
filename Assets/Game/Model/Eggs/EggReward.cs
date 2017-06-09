@@ -151,7 +151,14 @@ public class EggReward {
 				List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", raritySku);
 				if(m_rarity == Rarity.SPECIAL) {
 					// Get a random special pet, but make sure it's one we don't have. If we have it, just reroll the dice.
-					m_itemDef = petDefs.GetRandomValue();
+					// [AOC] Unless forcing a specific sku from cheats!
+					if(CPGachaTest.rewardChanceMode == CPGachaTest.RewardChanceMode.FORCED_PET_SKU) {
+						// Get that specific pet!
+						m_itemDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, CPGachaTest.forcedPetSku);
+					} else {
+						// Default behaviour
+						m_itemDef = petDefs.GetRandomValue();
+					}
 
 					// We should never open a special egg when all of them are already collected, but check just in case!
 					if(!EggManager.allGoldenEggsCollected) {
@@ -171,8 +178,25 @@ public class EggReward {
 						m_coins = 9999;
 					}
 				} else {
-					// Get a random pet of the target rarity
-					m_itemDef = petDefs.GetRandomValue();
+					// Select a pet from the given rarity
+					// Forcing a specific sku from cheats!
+					if(CPGachaTest.rewardChanceMode == CPGachaTest.RewardChanceMode.FORCED_PET_SKU) {
+						// Get that specific pet!
+						m_itemDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, CPGachaTest.forcedPetSku);
+					} 
+
+					// If tutorial is not completed, choose from a limited pool
+					else if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
+						do {
+							m_itemDef = petDefs.GetRandomValue();
+						} while(!m_itemDef.GetAsBool("startingPool"));
+					} 
+
+					// Default behaviour: random pet of the target rarity
+					else {
+						// Default behaviour
+						m_itemDef = petDefs.GetRandomValue();
+					}
 
 					// If the pet is already owned, give special egg part or coins instead
 					// Cheat support

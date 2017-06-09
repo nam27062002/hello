@@ -10,7 +10,7 @@ GameObject:
   - component: {fileID: 475722}
   - component: {fileID: 11484900}
   - component: {fileID: 11441020}
-  - component: {fileID: 11476190}
+  - component: {fileID: 114185027437266162}
   - component: {fileID: 11459890}
   - component: {fileID: 11449904}
   - component: {fileID: 136000011231704714}
@@ -46,7 +46,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 176664}
   m_LocalRotation: {x: 0.33227244, y: -0.62416863, z: -0.33227825, w: 0.62417936}
-  m_LocalPosition: {x: 0, y: 1.9212213, z: 0.027838023}
+  m_LocalPosition: {x: 0, y: 0.877, z: 0.027838023}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4000011390334812}
@@ -59,7 +59,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 131698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 135.62068, y: -8.831505, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000011525750744}
@@ -88,7 +88,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 2.75
-  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":3},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":7,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.5,"actions":{"panic":{"id":0,"active":true},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"hide":{"id":3,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":1.5,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":3},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":7,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.5,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":true,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":1.5,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
   m_databaseKey: PF_Villager01
 --- !u!114 &11449904
 MonoBehaviour:
@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 1.5
+  m_walkSpeed: 2
   m_runSpeed: 6
   m_minPlaybakSpeed: 0.5
   m_maxPlaybakSpeed: 2
@@ -139,86 +139,275 @@ MonoBehaviour:
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
   m_onEatenParticle:
-    name: PS_Blood_Explosion_Medium
+    name: PS_Blood_Explosion
     path: Blood
     offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
   m_onEatenFrozenParticle:
     name: PS_IceExplosionSmall
     path: 
     offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
   m_onEatenAudio: hd_villager_dead
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
     offset: {x: 0, y: 1.05, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
   m_onExplosionAudio: 
   m_onAttackAudio: 
   m_onScaredAudio: hd_villager_scream
   m_onPanicAudio: hd_villager_scream
   m_idleAudio: 
   m_skins: []
---- !u!114 &11476190
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 131698}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_useGravity: 1
-    m_walkOnWalls: 0
-    m_mass: 2.5
-    m_defaultUpVector: 0
-    m_orientationSpeed: 230
-    m_faceDirection: 0
-    m_useDragonStyleRotation: 0
-    m_rollRotation: 0
-    m_limitHorizontalRotation: 0
-    m_faceLeftAngle: -90
-    m_faceRightAngle: 90
-    m_limitVerticalRotation: 0
-    m_faceUpAngle: 320
-    m_faceDownAngle: 40
-  m_affectedByDragonTrample: 1
-  m_enableSensor: 1
-  m_sensor:
-    m_senseFire: 1
-    m_sightRadius: 18
-    m_maxRadius: 16
-    m_minRadius: 0
-    m_hysteresisOffset: 0
-    m_senseAbove: 1
-    m_senseBelow: 0
-    m_sensorOffset: {x: 0, y: 0.86, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0.5
-      max: 1
-  m_onSpawnSound: 
-  m_rotateToMouth: 3
-  m_inflammable:
-    m_ashesAsset: 
-    m_burningTime: 0
-    m_dissolveTime: 1.5
-    m_ashExceptions: []
 --- !u!114 &11484900
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -251,7 +440,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000011210258920}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_Pelvis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -266,7 +455,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010492999236}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_R_Fingers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -281,7 +470,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000011872186692}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_L_Palm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -296,7 +485,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010013227008}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_L_Calf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -311,7 +500,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000013708844680}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_L_Upperarm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -326,7 +515,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000013799469704}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_L_Forearm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -343,7 +532,7 @@ GameObject:
   - component: {fileID: 4000011525750744}
   - component: {fileID: 95000010564789882}
   - component: {fileID: 114303516748664334}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -358,7 +547,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010607883968}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_R_Collarbone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -373,7 +562,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010892938610}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -388,7 +577,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000012757115282}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_R_Foot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -403,7 +592,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000011159029778}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_R_Upperarm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -418,7 +607,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010534520810}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_R_Calf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -451,7 +640,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000013047206822}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_Ribcage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -466,7 +655,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000012482522320}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_R_Thigh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -481,7 +670,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000014025673718}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_R_Forearm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -496,7 +685,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000013398511670}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_R_Thumb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -511,7 +700,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000011648250894}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_L_Foot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -541,7 +730,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010165992084}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_Spine1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -556,7 +745,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000012211252720}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_R_Foot_Fingers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -571,7 +760,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010231113406}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_L_Collarbone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -586,7 +775,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000011781610486}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_Spine2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -601,7 +790,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000012545104098}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_R_Palm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -631,7 +820,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000012711743764}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_L_Weapon_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -646,7 +835,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000014092168394}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_L_Thigh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -661,7 +850,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010029262724}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_Neck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -676,7 +865,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000011868894606}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_L_Fingers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -691,7 +880,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000013515719962}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_L_Foot_Fingers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -706,7 +895,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000014093014870}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_L_Weapon_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -721,7 +910,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010084712802}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_L_Thumb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -737,7 +926,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4000010291753824}
   - component: {fileID: 137000011835604038}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: objVillager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -752,7 +941,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010522534316}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_R_Weapon_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -946,7 +1135,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012531856332}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.008, z: 0}
+  m_LocalPosition: {x: 0, y: -0.65, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 436760}
@@ -973,8 +1162,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011021874412}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.008, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: -1.7, z: 0}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 4000011210258920}
   - {fileID: 4000010291753824}
@@ -1100,7 +1289,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013474072868}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.966, z: 0}
+  m_LocalPosition: {x: 0, y: -1.6848, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 475722}
@@ -1278,6 +1467,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Human_Spine1
   m_parentRoot: {fileID: 475722}
+  m_worldPositionStays: 1
 --- !u!114 &114000012861185118
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1290,7 +1480,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Human_Pelvis
-  m_parentRoot: {fileID: 0}
+  m_parentRoot: {fileID: 4000011525750744}
+  m_worldPositionStays: 1
 --- !u!114 &114000013918191104
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1309,6 +1500,56 @@ MonoBehaviour:
   m_onTriggerEnter: 1
   m_onTriggerStay: 1
   m_onTriggerExit: 1
+  m_onMouseDown: 0
+  m_onMouseDrag: 0
+  m_onMouseUp: 0
+  m_onMouseUpAsButton: 0
+  m_onMouseEnter: 0
+  m_onMouseExit: 0
+  m_onMouseOver: 0
+--- !u!114 &114185027437266162
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 131698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10c1375cf9650469c8d15ff09560af8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_affectedByDragonTrample: 1
+  m_enableSensor: 1
+  m_sensor:
+    m_senseFire: 1
+    m_sightRadius: 7
+    m_maxRadius: 6
+    m_minRadius: 0
+    m_hysteresisOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
+    m_sensorOffset: {x: 0, y: 0.86, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
+    m_senseDelay:
+      min: 0.5
+      max: 1
+  m_edible:
+    m_rotateToMouth: 3
+  m_inflammable:
+    m_ashesAsset: 
+    m_burningTime: 0
+    m_dissolveTime: 1.5
+    m_ashExceptions: []
+  m_onSpawnSound: 
+  m_groundMotion:
+    m_mass: 2.5
+    m_defaultUpVector: 0
+    m_orientationSpeed: 230
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
 --- !u!114 &114303516748664334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1329,10 +1570,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.17
-  m_Height: 2.1
+  m_Radius: 0.45
+  m_Height: 3
   m_Direction: 1
-  m_Center: {x: 0, y: 0.05, z: 0}
+  m_Center: {x: 0, y: -0.18, z: 0}
 --- !u!136 &136980106750765216
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -1342,10 +1583,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.43
-  m_Height: 2.1
+  m_Radius: 0.45
+  m_Height: 3
   m_Direction: 1
-  m_Center: {x: 0, y: 0.05, z: 0}
+  m_Center: {x: 0, y: -0.18, z: 0}
 --- !u!137 &137000011835604038
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

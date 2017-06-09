@@ -19,7 +19,6 @@ using TMPro;
 /// <summary>
 /// Revive logic and UI controller.
 /// </summary>
-[RequireComponent(typeof(ShowHideAnimator))]
 public class HUDRevive : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -33,20 +32,19 @@ public class HUDRevive : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_pcText = null;
 	[SerializeField] private GameObject m_freeReviveButton = null;
 
+	// Other references
+	[Space]
+	[SerializeField] private ShowHideAnimator m_animator = null;
+
 	// Exposed setup
 	[Space]
-	[SerializeField] private float m_reviveAvailableSecs = 5f;	// [AOC] TODO!! From content
+	[SerializeField] private float m_reviveAvailableSecs = 5f;
+	[SerializeField] private float m_deathAnimDuration = 4f;
 	[SerializeField] private int m_freeRevivesPerGame = 2;	// [AOC] TODO!! From content
 	[SerializeField] private int m_minGamesBeforeFreeReviveAvailable = 3;	// [AOC] TODO!! From content
 
-	// Internal references
-	private ShowHideAnimator m_animator = null;
-
 	// Internal logic
-	private int m_paidReviveCount = 0;
-	private int m_freeReviveCount = 0;
 	private DeltaTimer m_timer = new DeltaTimer();
-	private bool m_allowCurrencyPopup = true;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -55,16 +53,11 @@ public class HUDRevive : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-		// Get references
-		m_animator = GetComponent<ShowHideAnimator>();
-
 		// Subscribe to external events
-		Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 		m_timer.Stop();
-		m_paidReviveCount = 0;
-		m_freeReviveCount = 0;
 	}
 
 	/// <summary>
@@ -80,7 +73,7 @@ public class HUDRevive : MonoBehaviour {
 	/// </summary>
 	void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 		Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 
@@ -120,9 +113,36 @@ public class HUDRevive : MonoBehaviour {
 	/// The revive button has been clicked.
 	/// </summary>
 	public void OnRevive() {
+		// Make sure timer hasn't finished!
+		if(m_timer.IsFinished()) return;
+
 		// Perform transaction
+		// Start purchase flow
+		// Use universal finish event to detect both success and failures
+		ResourcesFlow purchaseFlow = new ResourcesFlow("REVIVE");
+		purchaseFlow.OnFinished.AddListener(
+			(ResourcesFlow _flow) => {
+				// Flow successful?
+				if(_flow.successful) {
+					// Do it!
+					RewardManager.paidReviveCount++;
+					DoRevive( DragonPlayer.ReviveReason.PAYING );
+					PersistenceManager.Save();
+				} else {
+					// Resume countdown timer!
+					m_timer.Resume();
+				}
+			}
+		);
+
+		// Pause timer and begin flow!
+		m_timer.Stop();
+		long costPC = RewardManager.paidReviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
+		purchaseFlow.Begin((long)costPC, UserProfile.Currency.HARD, null);
+
+		// Without resources flow:
 		// If not enough funds, pause timer and open PC shop popup
-		long costPC = m_paidReviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
+		/*long costPC = m_paidReviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
 		if(UsersManager.currentUser.pc >= costPC) {
 			// Perform transaction
 			UsersManager.currentUser.AddPC(-costPC);
@@ -134,25 +154,6 @@ public class HUDRevive : MonoBehaviour {
 		} else {
 			// Currency popup / Resources flow disabled for now
             UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-		}
-
-		// [AOC] TEMP!! Disable currency popup
-		/*
-		else if(m_allowCurrencyPopup) {
-			// Open PC shop popup
-			PopupController popup = PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-			popup.OnClosePostAnimation.AddListener(OnRevive);	// [AOC] Quick'n'dirty: try to revive again, but don't show the popup twice if we're out of currency!
-			m_allowCurrencyPopup = false;
-
-			// Pause timer
-			m_timer.Stop();
-		} else {
-			// Currency popup closed, no funds purchased
-			// If player tries to revive again, show popup
-			m_allowCurrencyPopup = true;
-
-			// Resume timer
-			m_timer.Resume();
 		}*/
 	}
 
@@ -160,6 +161,9 @@ public class HUDRevive : MonoBehaviour {
 	/// The free revive button has been clicked.
 	/// </summary>
 	public void OnFreeRevive() {
+		// Make sure timer hasn't finished!
+		if(m_timer.IsFinished()) return;
+
 		// [AOC] TODO!! Show a video ad!
 		// Open placeholder popup
 		PopupController popup = PopupManager.OpenPopupInstant(PopupAdRevive.PATH);
@@ -172,21 +176,33 @@ public class HUDRevive : MonoBehaviour {
 	/// <summary>
 	/// The player is KO.
 	/// </summary>
-	private void OnPlayerKo(DamageType _type) {
-		// Initialize PC cost
-		if ( m_pcText != null )
-			m_pcText.text = UIConstants.GetIconString((m_freeReviveCount + m_paidReviveCount) + 1, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);	// [AOC] TODO!! Actual revive cost formula
+	private void OnPlayerKo(DamageType _type, Transform _source) {
+		// No revive available during the tutorial! Kill the dragon after some delay
+		bool tutorialCompleted = UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN);
 
-		// Free revive available?
-		m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && m_freeReviveCount < m_freeRevivesPerGame);
+		// Init some stuff
+		float duration = 0f;
+		if(tutorialCompleted) {
+			// Timer
+			duration = m_reviveAvailableSecs;
 
-		// Reset timer and control vars
-		m_timer.Start(m_reviveAvailableSecs * 1000);
-		m_allowCurrencyPopup = true;
+			// Initialize PC cost
+			if(m_pcText != null) {
+				m_pcText.text = UIConstants.GetIconString((RewardManager.freeReviveCount + RewardManager.paidReviveCount) + 1, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);	// [AOC] TODO!! Actual revive cost formula
+			}
 
-		// Show!
-		if ( m_animator != null )
-			m_animator.Show();
+			// Free revive available?
+			m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && RewardManager.freeReviveCount < m_freeRevivesPerGame);
+
+			// Show!
+			if(m_animator != null) m_animator.Show();
+		} else {
+			// Timer
+			duration = m_deathAnimDuration;
+		}
+
+		// Reset timer
+		m_timer.Start(duration * 1000);
 
 		// Slow motion
 		Time.timeScale = 0.25f;
@@ -218,7 +234,7 @@ public class HUDRevive : MonoBehaviour {
 	/// </summary>
 	private void OnAdClosed() {
 		// Do it!
-		m_freeReviveCount++;
+		RewardManager.freeReviveCount++;
 		DoRevive( DragonPlayer.ReviveReason.AD );
 	}
 }

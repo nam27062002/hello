@@ -4,14 +4,26 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
-	private class PoolRequest {
-		public int size;
-		public string path;
+	private class PoolData {
+		public int 			size;
+		public string 		path;
+	}
+
+	private class PoolContaier {
+		public Pool 		pool;
+		public PoolHandler 	handler;
+		public PoolData		buildData;
 	}
 
 	// Entity Pools requests (delayed pool manager)
-	private Dictionary<string, PoolRequest> m_poolRequests = new Dictionary<string, PoolRequest>();
-	private Dictionary<string, Pool> m_pools = new Dictionary<string, Pool>();
+	private Dictionary<string, PoolContaier> m_pools = new Dictionary<string, PoolContaier>();
+	private List<Pool> m_iterator = new List<Pool>();
+
+
+
+	//---------------------------------------------------------------//
+	//-- Static Methods ---------------------------------------------//
+	//---------------------------------------------------------------//
 
 	/// <summary>
 	/// Request a pool. Stores a pool request, it'll be created later loading the level.
@@ -19,121 +31,27 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	/// <param name="_prefabName">Prefab name. Id to ask for this resource.</param>
 	/// <param name="_prefabPath">Prefab path. Resources path without the prefab name.</param>
 	/// <param name="_size">Final pool size.</param>
-	public static void RequestPool(string _prefabName, string _prefabPath, int _size) {
-		PoolRequest pr = null;
-
-		if (instance.m_poolRequests.ContainsKey(_prefabName)) {
-			pr = instance.m_poolRequests[_prefabName];
-			if (pr.size < _size) 
-				pr.size = _size;
-		} else {
-			pr = new PoolRequest();
-			pr.path = _prefabPath;
-			pr.size = _size;
-		}
-
-		instance.m_poolRequests[_prefabName] = pr;
+	public static PoolHandler RequestPool(string _prefabName, string _prefabPath, int _size) {
+		return instance.__RequestPool(_prefabName, _prefabPath, _size);
 	}
 
-	public static void Build() {
-		List<string> keys = new List<string>(instance.m_poolRequests.Keys);
-
-		for (int i = 0; i < keys.Count; i++) {
-			PoolRequest pr = instance.m_poolRequests[keys[i]];
-			CreatePool(keys[i], pr.path, pr.size, true, true); // should it grow?
+	public static PoolHandler GetHandler(string _prefabName) {
+		if (instance.m_pools.ContainsKey(_prefabName)) {
+			return instance.m_pools[_prefabName].handler;
 		}
+		return null;
+	}
 
-		instance.m_poolRequests.Clear();
+	public static bool ContainsPool(string _prefabName) {
+		return instance.m_pools.ContainsKey(_prefabName);
+	}
+
+	public static void Build() { 
+		instance.__Build();
 	}
 
 	public static void Rebuild() {
-		List<string> keys;
-
-		// First eliminate non using prefabs and reduce bigger than need pools
-		keys = new List<string>(instance.m_pools.Keys);
-		for (int i = 0; i < keys.Count; i++) {
-			Pool p = instance.m_pools[keys[i]];
-
-			if (p.isTemporary) {
-				if (instance.m_poolRequests.ContainsKey(keys[i])) {
-					PoolRequest pr = instance.m_poolRequests[keys[i]];
-
-					if (pr.size < p.Size()) {
-						p.Resize(pr.size);
-					}
-				} else {
-					p.Clear();
-					instance.m_pools.Remove(keys[i]);
-				}
-			}
-		}
-
-		Resources.UnloadUnusedAssets();
-
-		// Increase and Add new prefabs
-		keys = new List<string>(instance.m_poolRequests.Keys);
-		for (int i = 0; i < keys.Count; i++) {
-			PoolRequest pr = instance.m_poolRequests[keys[i]];
-
-			if (instance.m_pools.ContainsKey(keys[i])) {
-				Pool p = instance.m_pools[keys[i]];
-			
-				if (pr.size > p.Size()) {
-					// increase size
-					p.Resize(pr.size);
-				}
-			} else {
-				// Create pool
-				CreatePool(keys[i], pr.path, pr.size, true, true); // should it grow?
-			}
-		}
-
-		instance.m_poolRequests.Clear();
-	}
-
-	/// <summary>
-	/// Will destroy all the pools and loose reference to any created instances.
-	/// Additionally they can be deleted from the scene.
-	/// </summary>
-	public static void Clear(bool _all) {
-		if (instance != null) {
-			if (_all) {
-				foreach(KeyValuePair<string, Pool> p in instance.m_pools) {
-					p.Value.Clear();
-				}			
-				instance.m_pools.Clear();
-			} else {
-				// we'll clear only temporary pools (those that don't have to exist between levels)
-				List<string> keys = new List<string>(instance.m_pools.Keys);
-				for (int i = 0; i < keys.Count; i++) {
-					Pool pool = instance.m_pools[keys[i]];
-					if (pool.isTemporary) {
-						pool.Clear();
-						instance.m_pools.Remove(keys[i]);
-					}
-				}
-			}
-		}
-	}
-
-	/// <summary>
-	/// Default pool creation. Will be created as child of the Singleton GameObject.
-	/// </summary>
-	public static void CreatePool(GameObject _prefab, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
-		// Use alternative function
-		CreatePool(_prefab, instance.transform, _initSize, _canGrow, _temporay);
-	}
-
-	/// <summary>
-	/// Alternative version specifying where to create the pool. All instances will
-	/// be created as children of _container.
-	/// </summary>
-	public static void CreatePool(GameObject _prefab, Transform _container, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
-		// Skip if the pool already exists
-		if(!instance.m_pools.ContainsKey(_prefab.name)) {
-			Pool pool = new Pool(_prefab, _container, _initSize, _canGrow, _container == instance.transform, _temporay);	// [AOC] Create new container if given container is the Pool Manager.
-			instance.m_pools.Add(_prefab.name, pool);
-		}
+		instance.__Rebuild();
 	}
 
 	/// <summary>
@@ -143,60 +61,163 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	/// <param name="_prefabPath">Prefab path. Resources path without the prefab name.</param>
 	/// <param name="_initSize">Init size.</param>
 	/// <param name="_canGrow">If set to <c>true</c> can grow.</param>
-	public static void CreatePool(string _prefabName, string _prefabPath, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
-		// Use alternative function
-		CreatePool(_prefabName, _prefabPath, instance.transform, _initSize, _canGrow, _temporay);
+	public static PoolHandler CreatePool(string _prefabName, string _prefabPath, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
+		PoolHandler handler 	= instance.__RequestPool(_prefabName, _prefabPath, _initSize);
+		PoolContaier container 	= instance.m_pools[_prefabName];
+
+		instance.__CreatePool(container, _prefabName, _canGrow, _temporay);
+
+		return handler;
+	}
+
+	public static void ResizePool(string _prefabName, int _newSize) {        
+		if (instance.m_pools.ContainsKey(_prefabName)) {
+			Pool pool = instance.m_pools[_prefabName].pool;
+			pool.Resize(_newSize);
+		}
 	}
 
 	/// <summary>
-	/// Creates the pool.
+	/// Will destroy all the pools and loose reference to any created instances.
+	/// Additionally they can be deleted from the scene.
 	/// </summary>
-	/// <param name="_prefabName">Prefab name.</param>
-	/// <param name="_prefabPath">Prefab path.</param>
-	/// <param name="_container">Container.</param>
-	/// <param name="_initSize">Init size.</param>
-	/// <param name="_canGrow">If set to <c>true</c> can grow.</param>
-	private static void CreatePool(string _prefabName, string _prefabPath, Transform _container, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
-		// Skip if the pool already exists
-		if (!instance.m_pools.ContainsKey(_prefabName)) {
-			GameObject go = Resources.Load<GameObject>(_prefabPath + _prefabName);
-			if (go != null) {
-				Pool pool = new Pool(go, _container, _initSize, _canGrow, _container == instance.transform, _temporay);	// [AOC] Create new container if given container is the Pool Manager.
-				instance.m_pools.Add(_prefabName, pool);
+	public static void Clear(bool _all) { 
+		instance.__Clear(_all);
+	}
+
+
+
+	//---------------------------------------------------------------//
+	//-- Instance Methods -------------------------------------------//
+	//---------------------------------------------------------------//
+
+	void Update() {
+		for (int i = 0; i < m_iterator.Count; i++) {
+			m_iterator[i].Update();
+		}
+	}
+
+	private PoolHandler __RequestPool(string _prefabName, string _prefabPath, int _size) {
+		PoolContaier container;
+
+		if (m_pools.ContainsKey(_prefabName)) {
+			container = m_pools[_prefabName];
+			PoolData data = container.buildData;
+			if (data.size < _size)
+				data.size = _size;			
+		} else {
+			PoolData data = new PoolData();
+			data.path = _prefabPath;
+			data.size = _size;
+
+			container = new PoolContaier();
+			container.buildData = data;
+			container.handler = new PoolHandler();
+
+			m_pools[_prefabName] = container;
+		}
+
+		return container.handler;
+	}
+
+	private void __Build() {
+		List<string> keys = new List<string>(m_pools.Keys);
+
+		for (int i = 0; i < keys.Count; i++) {
+			__CreatePool(m_pools[keys[i]], keys[i], true, true);
+		}
+	}
+
+	private void __Rebuild() {
+		List<string> keys;
+
+		// First eliminate non using prefabs and reduce bigger than need pools
+		keys = new List<string>(m_pools.Keys);
+		for (int i = 0; i < keys.Count; i++) {
+			PoolContaier container = m_pools[keys[i]];
+			Pool p = container.pool;
+
+			if (p != null && p.isTemporary) {
+				PoolData data = container.buildData;
+				if (data.size > 0) {
+					if (data.size < p.Size()) {
+						p.Resize(data.size);
+					}
+				} else {
+					p.Clear();
+					m_iterator.Remove(p);
+
+					container.pool = null;
+					container.handler.Invalidate();
+				}
+			}
+		}
+
+		Resources.UnloadUnusedAssets();
+
+		// Increase and Add new prefabs
+		keys = new List<string>(m_pools.Keys);
+		for (int i = 0; i < keys.Count; i++) {
+			PoolContaier container = m_pools[keys[i]];
+			Pool p = container.pool;
+
+			if (p != null) {
+				PoolData data = container.buildData;
+				if (data.size > p.Size()) {
+					// increase size
+					p.Resize(data.size);
+				}
 			} else {
-				Debug.LogError("Can't create a pool for: " + _prefabPath + _prefabName);
+				// Create pool
+				__CreatePool(container, keys[i], true, true);
 			}
 		}
 	}
 
+	private void __CreatePool(PoolContaier _container, string _prefabName, bool _canGrow, bool _temporay) {
+		if (_container.pool == null) {
+			PoolData data = _container.buildData;
+			GameObject go = Resources.Load<GameObject>(data.path + _prefabName);
+			if (go != null) {
+				Pool pool = new Pool(go, transform, data.size, _canGrow, true, _temporay);
+				_container.pool = pool;
+				m_iterator.Add(pool);
+			} else {
+				Debug.LogError("Can't create a pool for: " + data.path + _prefabName);
+			}
+			data.size = 0;
+		}
 
-	/// <summary>
-	/// Get the first available instance of the prefab with the given name.
-	/// </summary>
-	public static GameObject GetInstance(string _id, bool _activate = true) {
-		if(instance.m_pools.ContainsKey(_id)) 
-			return instance.m_pools[_id].Get(_activate);
-
-		return null;
+		_container.handler.AssignPool(_container.pool);
 	}
 
-	/// <summary>
-	/// Return the instance to the pool
-	/// </summary>
-	public static void ReturnInstance( GameObject go )
-	{
-		if ( instance.m_pools.ContainsKey( go.name ) )
-			instance.m_pools[ go.name ].Return(go);
-	}
+	private void __Clear(bool _all) {
+		if (instance != null) {
+			if (_all) {
+				foreach(KeyValuePair<string, PoolContaier> pair in m_pools) {
+					PoolContaier pc = pair.Value;
+					if (pc.pool != null) {
+						pc.pool.Clear();
+						pc.pool = null;
+						pc.handler.Invalidate();
+					}
+				}
+				m_iterator.Clear();
+			} else {
+				// we'll clear only temporary pools (those that don't have to exist between levels)
+				List<string> keys = new List<string>(m_pools.Keys);
+				for (int i = 0; i < keys.Count; i++) {
+					PoolContaier container = m_pools[keys[i]];
+					Pool p = container.pool;
+					if (p.isTemporary) {
+						p.Clear();
 
-	/// <summary>
-	/// Returns the instance by id _name
-	/// </summary>
-	/// <param name="_name">Name.</param>
-	/// <param name="go">Instance</param>
-	public static void ReturnInstance( string _name, GameObject go)
-	{
-		if ( instance.m_pools.ContainsKey( _name ) )
-			instance.m_pools[ _name ].Return(go);
-	}
+						m_iterator.Remove(p);
+						container.pool = null;
+						container.handler.Invalidate();
+					}
+				}
+			}
+		}
+	}    
 }

@@ -109,7 +109,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_powerIconsPath; }
 	}
 
-	[SerializeField] private string m_powerMiniIconsPath = "UI/Metagame/Powers/icons_mini_powers";
+	[SerializeField] private string m_powerMiniIconsPath = "UI/Common/Icons";
 	public static string POWER_MINI_ICONS_PATH {
 		get { return instance.m_powerMiniIconsPath; }
 	}
@@ -122,6 +122,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	[SerializeField] private string m_shopIconsPath = "UI/Metagame/Shop/";
 	public static string SHOP_ICONS_PATH {
 		get { return instance.m_shopIconsPath; }
+	}
+
+	[SerializeField] private string m_languageIconsPath = "UI/Metagame/Settings/";
+	public static string LANGUAGE_ICONS_PATH {
+		get { return instance.m_languageIconsPath; }
 	}
 	#endregion
 
@@ -264,11 +269,6 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_resultsXPBarMinMaxDuration; }
 	}
 
-	[SerializeField] private float m_resultsDragonUnlockSpeedMultiplier = 1f;
-	public static float resultsDragonUnlockSpeedMultiplier {
-		get { return instance.m_resultsDragonUnlockSpeedMultiplier; }
-	}
-
 	[SerializeField] private float m_resultsChestsAndEggMinDuration = 1f;
 	public static float resultsChestsAndEggMinDuration {
 		get { return instance.m_resultsChestsAndEggMinDuration; }
@@ -369,7 +369,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 
 			case IconAlignment.LEFT: {
 				if(!string.IsNullOrEmpty(iconString)) {
-					instance.m_sb.Append(iconString).Append(" ");
+					instance.m_sb.Append(iconString);//.Append(" ");
 				}
 				instance.m_sb.Append(_text);
 			} break;
@@ -377,7 +377,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			case IconAlignment.RIGHT: {
 				instance.m_sb.Append(_text);
 				if(!string.IsNullOrEmpty(iconString)) {
-					instance.m_sb.Append(" ").Append(iconString);
+					instance.m_sb/*.Append(" ")*/.Append(iconString);
 				}
 			} break;
 		}
@@ -418,12 +418,13 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	/// <returns>The currency icon.</returns>
 	/// <param name="_currency">Currency type.</param>
 	public static IconType GetCurrencyIcon(UserProfile.Currency _currency) {
+		IconType icon = IconType.NONE;
 		switch(_currency) {
-			case UserProfile.Currency.SOFT:				return IconType.COINS;				break;
-			case UserProfile.Currency.HARD:				return IconType.PC;					break;
-			case UserProfile.Currency.GOLDEN_FRAGMENTS:	return IconType.GOLDEN_FRAGMENTS;	break;
+			case UserProfile.Currency.SOFT:				icon = IconType.COINS;				break;
+			case UserProfile.Currency.HARD:				icon = IconType.PC;					break;
+			case UserProfile.Currency.GOLDEN_FRAGMENTS:	icon = IconType.GOLDEN_FRAGMENTS;	break;
 		}
-		return IconType.NONE;
+		return icon;
 	}
 
 	/// <summary>

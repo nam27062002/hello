@@ -9,6 +9,7 @@ namespace AI {
 			public float arrivalRadius = 1f;
 			public string attackPoint;
 			public bool hasGuardState = false;
+			public Range timeout = new Range(0,0);
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Pursuit")]
@@ -23,6 +24,9 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnEnemyOutOfSight = "onEnemyOutOfSight";
 
+			[StateTransitionTrigger]
+			private static string OnPursuitTimeOut = "onPursuitTimeOut";
+
 
 			private enum PursuitState {
 				Move_Towards = 0,
@@ -32,11 +36,14 @@ namespace AI {
 
 			protected PursuitData m_data;
 			protected Transform m_target;
-			protected AI.MachineOld m_targetMachine;
+			protected AI.IMachine m_targetMachine;
 			protected Entity m_targetEntity;
 
 			private PursuitState m_pursuitState;
 			private object[] m_transitionParam;
+
+			protected float m_timer;
+			protected float m_timeOut;
 
 			public override StateComponentData CreateData() {
 				return new PursuitData();
@@ -62,13 +69,12 @@ namespace AI {
 				m_targetMachine = null;
 				m_targetEntity = null;
 
-				if ( param != null && param.Length > 0 )
-				{
+				if (param != null && param.Length > 0) {
 					m_target = param[0] as Transform;
-					if ( m_target )
-						m_targetMachine = m_target.GetComponent<MachineOld>();
-					if ( m_target )
+					if (m_target) {
 						m_targetEntity = m_target.GetComponent<Entity>();
+						m_targetMachine = m_targetEntity.machine;
+					}
 				}
 
 				if (m_target == null && m_machine.enemy != null) {
@@ -77,11 +83,19 @@ namespace AI {
 						m_target = m_machine.enemy;
 					}
 
-					m_targetMachine = m_machine.enemy.GetComponent<MachineOld>();
 					m_targetEntity = m_machine.enemy.GetComponent<Entity>();
+					m_targetMachine = m_machine.enemy.GetComponent<IMachine>();
 				}
 
 				m_pursuitState = PursuitState.Move_Towards;
+
+				m_timer = 0;
+				if ( m_data.timeout.max > 0 ){
+					m_timeOut = m_data.timeout.GetRandom();
+				}else{
+					m_timeOut = -1;
+				}
+					
 			}
 
 			protected override void OnUpdate() {	
@@ -99,7 +113,10 @@ namespace AI {
 									
 				if (m_target != null && m_target.gameObject.activeInHierarchy) {
 
-					if (m_pursuitState == PursuitState.Move_Towards) {
+					m_timer += Time.deltaTime;
+					if (m_timeOut >= 0 && m_timer > m_timeOut) {
+						Transition( OnPursuitTimeOut );
+					} else if (m_pursuitState == PursuitState.Move_Towards) {
 						if (m_machine.GetSignal(Signals.Type.Critical)) {
 							ChangeState(PursuitState.Move_Away);
 						} else {

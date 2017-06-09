@@ -19,42 +19,72 @@ using UnityEditor;
 [CustomEditor(typeof(Spawner), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
 public class SpawnerEditor : Editor {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Casted target object
-	private Spawner m_targetSpawner = null;
+    private readonly float INPUTDELAY = 0.5f;
+
+
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Casted target object
+    private Spawner m_targetSpawner = null;
 
 	// Store a reference of interesting properties for faster access
+	private SerializedProperty m_maxTierProp = null;
 	private SerializedProperty m_activationTriggersProp = null;
+	private SerializedProperty m_activationKillTriggersProp = null;
 	private SerializedProperty m_deactivationTriggersProp = null;
 
-	// Warning messages
-	private bool m_repeatedActivationTriggerTypeError = false;
+    private SerializedProperty m_quantityProp = null;
+    private SerializedProperty m_speedFactorRangeProp = null;
+    private SerializedProperty m_scaleProp = null;
+    private SerializedProperty m_spawnTimeProp = null;
+
+
+    // Warning messages
+    private bool m_repeatedActivationTriggerTypeError = false;
+	private bool m_repeatedActivationKillTriggerTypeError = false;
 	private bool m_repeatedDeactivationTriggerTypeError = false;
 	private bool m_incompatibleValuesError = false;
 
-	//------------------------------------------------------------------------//
-	// METHODS																  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// The editor has been enabled - target object selected.
-	/// </summary>
-	private void OnEnable() {
+    // Time of last input
+    private float m_timeOfLastInput;
+
+    public float currentTime
+    {
+        get { return (float)EditorApplication.timeSinceStartup; }
+    }
+
+    //------------------------------------------------------------------------//
+    // METHODS																  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// The editor has been enabled - target object selected.
+    /// </summary>
+    private void OnEnable() {
 		// Get target object
 		m_targetSpawner = target as Spawner;
 
 		// Store a reference of interesting properties for faster access
+		m_maxTierProp = serializedObject.FindProperty("m_maxTier");
 		m_activationTriggersProp = serializedObject.FindProperty("m_activationTriggers");
+		m_activationKillTriggersProp = serializedObject.FindProperty("m_activationKillTriggers");
 		m_deactivationTriggersProp = serializedObject.FindProperty("m_deactivationTriggers");
 
-		// Do an initial check for errors
-		CheckForErrors();
-	}
+        m_quantityProp = serializedObject.FindProperty("m_quantity");
+        m_speedFactorRangeProp = serializedObject.FindProperty("m_speedFactorRange");
+        m_scaleProp = serializedObject.FindProperty("m_scale");
+        m_spawnTimeProp = serializedObject.FindProperty("m_spawnTime");
+
+        // Do an initial check for errors
+        CheckForErrors();
+
+
+        m_timeOfLastInput = 0.0f;
+    }
 
 	/// <summary>
 	/// The editor has been disabled - target object unselected.
@@ -65,8 +95,9 @@ public class SpawnerEditor : Editor {
 
 		// Clear properties
 		m_activationTriggersProp = null;
+		m_activationKillTriggersProp = null;
 		m_deactivationTriggersProp = null;
-	}
+	}    
 
 	/// <summary>
 	/// Draw the inspector.
@@ -87,10 +118,19 @@ public class SpawnerEditor : Editor {
 		p.Next(true);	// To get first element
 		do {
 			// Properties requiring special treatment
-			if(p.name == m_activationTriggersProp.name) {
+			if (p.name == m_maxTierProp.name) {
+
+			} else if (p.name == "m_checkMaxTier") {
+				EditorGUILayout.PropertyField(p, true);
+				if (p.boolValue) {	
+					EditorGUILayout.PropertyField(m_maxTierProp, true);
+				}
+            }
+            else if (p.name == m_activationTriggersProp.name) { 
 				// Draw activation properties
 				EditorGUI.BeginChangeCheck();
 				EditorGUILayout.PropertyField(m_activationTriggersProp, true);
+				EditorGUILayout.PropertyField(m_activationKillTriggersProp, true);
 				EditorGUILayout.PropertyField(m_deactivationTriggersProp, true);
 				if(EditorGUI.EndChangeCheck()) {
 					// Check for wrong setups (once the property changes have been applied!)
@@ -102,6 +142,10 @@ public class SpawnerEditor : Editor {
 					EditorGUILayout.HelpBox("Two or more activation triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
 				}
 
+				if(m_repeatedActivationKillTriggerTypeError) {
+					EditorGUILayout.HelpBox("Two or more activation kill triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
+				}
+
 				if(m_repeatedDeactivationTriggerTypeError) {
 					EditorGUILayout.HelpBox("Two or more deactivation triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
 				}
@@ -111,15 +155,95 @@ public class SpawnerEditor : Editor {
 				}
 			}
 
-			// Ignore both activation triggers (we're showing them manually)
-			else if(p.name == m_deactivationTriggersProp.name) {
+            else if (p.name == m_activationKillTriggersProp.name) { 
+				// Do nothing
+			}
+
+            // Ignore both activation triggers (we're showing them manually)
+            else if (p.name == m_deactivationTriggersProp.name) { 
 				// Do nothing
 			}
 
 			// Default
 			else {
-				EditorGUILayout.PropertyField(p, true);
-			}
+                if (isRangeRegisteredProperty(p))
+                {
+					SerializedProperty min = p.FindPropertyRelative("min");
+					SerializedProperty max = p.FindPropertyRelative("max");
+					float ovMin = min.floatValue;
+					float ovMax = max.floatValue;
+                    EditorGUI.BeginChangeCheck();
+                    EditorGUILayout.PropertyField(p, true);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+						if (ovMin != min.floatValue)
+						{
+                            if (max.floatValue < min.floatValue)
+	                        {
+	                            max.floatValue = min.floatValue;
+	                        }
+                        }
+                        else
+						{
+                            if (max.floatValue < min.floatValue || (ovMin == ovMax && ((currentTime - m_timeOfLastInput) < INPUTDELAY)))
+							{
+								min.floatValue = max.floatValue;
+                                m_timeOfLastInput = currentTime;
+							}
+                        }
+                    }
+
+                }
+                else if (isRangeRegisteredProperty(p, true))
+                {
+					SerializedProperty min = p.FindPropertyRelative("min");
+					SerializedProperty max = p.FindPropertyRelative("max");
+					int ovMin = min.intValue;
+					int ovMax = max.intValue;
+                    EditorGUI.BeginChangeCheck();
+                    EditorGUILayout.PropertyField(p, true);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+						if (ovMin != min.intValue)
+						{
+                            if (max.intValue < min.intValue)
+							{
+								max.intValue = min.intValue;
+							}
+                        }
+                        else
+						{
+							if (max.intValue < min.intValue || (ovMin == ovMax && ((currentTime - m_timeOfLastInput) < INPUTDELAY)))
+                            {
+								min.intValue = max.intValue;
+                                m_timeOfLastInput = currentTime;
+                            }
+                        }
+                    }
+                }
+                else if (p.name == m_spawnTimeProp.name)
+                {
+                    SerializedProperty min = p.FindPropertyRelative("min");
+                    SerializedProperty max = p.FindPropertyRelative("max");
+                    float ovMin = min.floatValue;
+                    float ovMax = max.floatValue;
+                    EditorGUI.BeginChangeCheck();
+                    EditorGUILayout.PropertyField(p, true);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        if (ovMax == max.floatValue && ovMin != min.floatValue)
+                        {
+                            max.floatValue = min.floatValue;
+                        }
+
+
+                    }
+                }
+                else
+                {
+                    EditorGUILayout.PropertyField(p, true);
+                }
+            }
 		} while(p.NextVisible(false));		// Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
 
 		EditorGUILayout.LabelField("Id: " + m_targetSpawner.GetSpawnerID());
@@ -164,6 +288,21 @@ public class SpawnerEditor : Editor {
 			if(m_repeatedActivationTriggerTypeError) break;
 		}
 
+		m_repeatedActivationKillTriggerTypeError = false;
+		foreach(Spawner.SpawnKillCondition trigger1 in m_targetSpawner.activationKillTriggers) {
+			foreach(Spawner.SpawnKillCondition trigger2 in m_targetSpawner.activationKillTriggers) {
+				// Start value is higher than end value for the same trigger type
+				if (trigger1 != trigger2
+				&& trigger1.category == trigger2.category) {
+					m_repeatedActivationKillTriggerTypeError = true;
+					break;	// Only show message once! :D
+				}
+			}
+
+			// Break from outer loop as well
+			if(m_repeatedActivationKillTriggerTypeError) break;
+		}
+
 		// Check duplicated deactivation triggers
 		m_repeatedDeactivationTriggerTypeError = false;
 		foreach(Spawner.SpawnCondition trigger1 in m_targetSpawner.deactivationTriggers) {
@@ -196,4 +335,14 @@ public class SpawnerEditor : Editor {
 			if(m_incompatibleValuesError) break;
 		}
 	}
+
+    /// <summary>
+    /// Checks for specific Range properties
+    /// </summary>
+    /// 
+    bool isRangeRegisteredProperty(SerializedProperty property, bool isInteger = false)
+    {
+        return isInteger ? (property.name == m_quantityProp.name) : (property.name == m_speedFactorRangeProp.name) || (property.name == m_scaleProp.name);// || (property.name == m_spawnTimeProp.name);
+    }
+
 }

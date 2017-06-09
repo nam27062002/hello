@@ -60,17 +60,23 @@ public class FireBreath : DragonBreathBehaviour {
 	public string m_superFlameUpParticle = "FlameUp";
 	public string m_flameLight = "PF_FireLight";
 
+	private PoolHandler m_flamePoolHandler;
+	private PoolHandler m_flameUpPoolHandler;
+	private PoolHandler m_superFlamePoolHandler;
+	private PoolHandler m_superFlameUpPoolHandler;
+	private PoolHandler m_flameLightPoolHandler;
+
 
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
 
 	override protected void ExtendedStart() {
 
-		PoolManager.RequestPool(m_flameParticle, "Particles/", m_maxParticles);
-		PoolManager.RequestPool(m_flameUpParticle, "Particles/", m_maxParticles);
-		PoolManager.RequestPool(m_superFlameParticle, "Particles/", m_maxParticles);
-		PoolManager.RequestPool(m_superFlameUpParticle, "Particles/", m_maxParticles);
-		PoolManager.RequestPool(m_flameLight, "Particles/", 1);
+		m_flamePoolHandler 			= PoolManager.RequestPool(m_flameParticle, "Particles/", m_maxParticles);
+		m_flameUpPoolHandler 		= PoolManager.RequestPool(m_flameUpParticle, "Particles/", m_maxParticles);
+		m_superFlamePoolHandler 	= PoolManager.RequestPool(m_superFlameParticle, "Particles/", m_maxParticles);
+		m_superFlameUpPoolHandler 	= PoolManager.RequestPool(m_superFlameUpParticle, "Particles/", m_maxParticles);
+		m_flameLightPoolHandler 	= PoolManager.RequestPool(m_flameLight, "Particles/", 1);
 
 		m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "FireBlocker");
 		m_noPlayerMask = ~LayerMask.GetMask("Player");
@@ -133,7 +139,7 @@ public class FireBreath : DragonBreathBehaviour {
 	override protected void BeginFury(Type _type) 
 	{
 		base.BeginFury( _type);
-		m_light = PoolManager.GetInstance(m_flameLight);
+		m_light = m_flameLightPoolHandler.GetInstance();
 		m_light.transform.position = m_mouthTransform.position;
 		m_light.transform.localScale = new Vector3(m_actualLength * 1.25f, m_sizeCurve.Evaluate(1) * transform.localScale.x * 1.75f, 1f);
 	}
@@ -142,7 +148,7 @@ public class FireBreath : DragonBreathBehaviour {
 	{
 		base.EndFury();
 		m_light.SetActive(false);
-		PoolManager.ReturnInstance( m_light );
+		m_flameLightPoolHandler.ReturnInstance(m_light);
 		m_light = null;
 	}
 
@@ -151,10 +157,8 @@ public class FireBreath : DragonBreathBehaviour {
 		m_direction.Normalize();
 		m_directionP.Set(m_direction.y, -m_direction.x);
 
-
-
 		float length = m_length;
-		if ( m_type == Type.Super )
+		if ( m_type == Type.Mega )
 			length = m_length * m_superFuryLengthMultiplier;
 
 		Vector3 flamesUpDir = Vector3.up;
@@ -179,9 +183,8 @@ public class FireBreath : DragonBreathBehaviour {
 				flamesUpDir.Normalize();
 
 			}
-
-
 		}
+
 		{
 			// Pre-Calculate Triangle: wider bounding triangle to make burning easier
 			m_triP0 = m_mouthTransform.position;
@@ -208,14 +211,12 @@ public class FireBreath : DragonBreathBehaviour {
 			GameObject obj = null;
 			switch( m_type )
 			{
-				case Type.Standard:
-				{
-					obj = PoolManager.GetInstance(m_flameParticle);
-				}break;
-				case Type.Super:
-				{
-					obj = PoolManager.GetInstance(m_superFlameParticle);
-				}break;
+				case Type.Standard: {
+						obj = m_flamePoolHandler.GetInstance();
+				}	break;
+				case Type.Mega: {
+						obj = m_superFlamePoolHandler.GetInstance();
+				}	break;
 			}
 			
 			if (obj != null) {
@@ -232,16 +233,13 @@ public class FireBreath : DragonBreathBehaviour {
 			GameObject obj = null;
 			switch( m_type )
 			{
-				case Type.Standard:
-				{
-					obj = PoolManager.GetInstance(m_flameUpParticle);
-				}break;
-				case Type.Super:
-				{
-					obj = PoolManager.GetInstance(m_superFlameUpParticle);
-				}break;
+				case Type.Standard: {
+						obj = m_flameUpPoolHandler.GetInstance();
+				}	break;
+				case Type.Mega: {
+						obj = m_superFlameUpPoolHandler.GetInstance();
+				}	break;
 			}
-				
 
 			if (obj != null) {
 				FlameUp particle = obj.GetComponent<FlameUp>();
@@ -287,7 +285,7 @@ public class FireBreath : DragonBreathBehaviour {
 			Entity prey = m_checkEntities[i];
 			if ((prey.circleArea != null && Overlaps((CircleAreaBounds)prey.circleArea.bounds)) || IsInsideArea(prey.transform.position)) 
 			{
-				if (prey.IsBurnable(m_tier) || m_type == Type.Super) {
+				if (prey.IsBurnable(m_tier) || m_type == Type.Mega) {
 					AI.IMachine machine =  m_checkEntities[i].machine;
 					if (machine != null) {
 						machine.Burn(transform);
@@ -317,7 +315,7 @@ public class FireBreath : DragonBreathBehaviour {
 				{
 					Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length * 2);
 				}break;
-				case Type.Super:
+				case Type.Mega:
 				{
 					Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length);
 				}break;

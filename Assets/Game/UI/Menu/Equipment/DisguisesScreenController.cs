@@ -185,9 +185,6 @@ public class DisguisesScreenController : MonoBehaviour {
 		List<DefinitionNode> defList = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", m_dragonData.def.sku);
 		DefinitionsManager.SharedInstance.SortByProperty(ref defList, "shopOrder", DefinitionsManager.SortType.NUMERIC);
 
-		// Load disguise icons for this dragon
-		Dictionary<string, Sprite> icons = ResourcesExt.LoadSpritesheet(UIConstants.DISGUISE_ICONS_PATH + m_dragonData.def.sku);
-
 		// Hide all the contextual info
 		if(m_powerAnim != null) m_powerAnim.ForceHide(false);
 		if(m_title != null) m_title.showHideAnimator.ForceHide(false);
@@ -200,14 +197,15 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_equippedPill = null;
 		m_selectedPill = null;
 		DisguisePill initialPill = m_pills[0];	// There will always be at least the default pill
+		string disguisesIconPath = UIConstants.DISGUISE_ICONS_PATH + m_dragonData.def.sku + "/";
 		for (int i = 0; i < m_pills.Length; i++) {
 			if (i < defList.Count) {
+				// Load icon sprite for this skin
+				Sprite spr = Resources.Load<Sprite>(disguisesIconPath + defList[i].Get("icon"));
+
 				// Init pill
 				DefinitionNode def = defList[i];
-				Sprite spr = icons[def.GetAsString("icon")];
-				bool locked = (def.GetAsInt("unlockLevel") > m_dragonData.progression.level);
-				bool owned = m_wardrobe.IsDisguiseOwned(def.sku);
-				m_pills[i].Load(def, locked, owned, spr);
+				m_pills[i].Load(def, m_wardrobe.GetSkinState(def.sku), spr);
 
 				// Is it the currently equipped disguise?
 				if(def.sku == currentDisguise) {
@@ -401,6 +399,12 @@ public class DisguisesScreenController : MonoBehaviour {
 			// Notify game
 			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
 		}
+
+		// Remove "new" flag from the skin
+		if(_pill.state == Wardrobe.SkinState.NEW) {
+			m_wardrobe.SetSkinState(_pill.def.sku, Wardrobe.SkinState.AVAILABLE);
+			_pill.SetState(Wardrobe.SkinState.AVAILABLE);
+		}
 	}
 
 	/// <summary>
@@ -420,50 +424,36 @@ public class DisguisesScreenController : MonoBehaviour {
 		bool isPC = pricePC > priceSC;
 
 		// Perform transaction
-		bool success = false;
+		// Get price and start purchase flow
+		ResourcesFlow purchaseFlow = new ResourcesFlow("ACQUIRE_DISGUISE");
+		purchaseFlow.OnSuccess.AddListener(
+			(ResourcesFlow _flow) => {
+				// Acquire it!
+				m_wardrobe.SetSkinState(_flow.itemDef.sku, Wardrobe.SkinState.OWNED);
+
+				// Change selected pill state
+				m_selectedPill.SetState(Wardrobe.SkinState.OWNED);
+
+				// Save!
+				PersistenceManager.Save(true);
+
+				// Show some nice FX
+				// Let's re-select the skin for now
+				DisguisePill pill = m_selectedPill;
+				m_selectedPill = null;
+				OnPillClicked(pill);
+
+				// Immediately equip it!
+				OnEquipButton();
+
+				// Throw out some fireworks!
+				InstanceManager.menuSceneController.dragonScroller.LaunchDisguisePurchasedFX();
+			}
+		);
 		if(isPC) {
-			if(UsersManager.currentUser.pc >= pricePC) {
-				// Perform transaction
-				UsersManager.currentUser.AddPC(-pricePC);
-				success = true;
-			} else {
-				// Open PC shop popup
-				// Currency popup / Resources flow disabled for now
-				//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-			}
+			purchaseFlow.Begin(pricePC, UserProfile.Currency.HARD, m_selectedPill.def);
 		} else {
-			if(UsersManager.currentUser.coins >= priceSC) {
-				// Perform transaction
-				UsersManager.currentUser.AddCoins(-priceSC);
-				success = true;
-			} else {
-				// Open SC shop popup
-				// Currency popup / Resources flow disabled for now
-				//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_SC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-			}
-		}
-
-		// Unlock the disguise
-		if(success) {
-			// Unlock it!
-			m_wardrobe.UnlockDisguise(m_selectedPill.def.sku);
-
-			// Reload selected pill
-			m_selectedPill.Load(m_selectedPill.def, false, true, m_selectedPill.icon.sprite);
-
-			// Save!
-			PersistenceManager.Save(true);
-
-			// Show some nice FX
-			// Let's re-select the skin for now
-			DisguisePill pill = m_selectedPill;
-			m_selectedPill = null;
-			OnPillClicked(pill);
-
-			// Instantly equip it!
-			OnEquipButton();
+			purchaseFlow.Begin(priceSC, UserProfile.Currency.SOFT, m_selectedPill.def);
 		}
 	}
 

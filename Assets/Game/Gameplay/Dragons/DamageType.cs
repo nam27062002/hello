@@ -16,6 +16,7 @@ using UnityEngine;
 /// Enum for the different types of damage.
 /// </summary>
 public enum DamageType {
+	// New values always at the end! Otherwise serialized properties will break!
 	NONE = -1,
 
 	NORMAL,
@@ -24,6 +25,7 @@ public enum DamageType {
 	MINE,
 	EXPLOSION,
 	ARROW,
-	FLOUR
-
+	FLOUR,
+	DRAIN,
+	BIG_DAMAGE
 }

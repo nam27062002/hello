@@ -136,6 +136,11 @@ public class ProfilerControlPanelController : MonoBehaviour
         FpsCounter_Start();
     }
 
+    void OnEnable()
+    {
+        Scene_OnEnable();
+    }
+
     void Update()
     {
         if (PrefabLogicUnits_IsDirty)
@@ -294,27 +299,51 @@ public class ProfilerControlPanelController : MonoBehaviour
     #region checkpoints
     private enum ECheckpoint
     {
-		StartingPoint,
-		WoodsCabins,
-		WoodsLeaves,
-        Castle,
-        Tunnel,
-        Dungeons,
-        Caves,
-        Bridge,
+        //---------------------- Village area ----------------------
+        Village_StartingPoint,
+        Village_FloatingRock,
+        Village_HangingBridge,
+        Village_VineBigLeaf,
+		Village_WoodsCabins,
+		Village_WoodsLeaves,
+        Village_Witches_Woods,
+        Village_Goblins_City,
+        Village_TunnelToCastle,
+
+        //---------------------- Castle area ----------------------
+        Castle_TunnelToVillage,
+        Castle_Castle,
+        Castle_Tunnel,
+        Castle_Dungeons,
+        Castle_Caves,
+        Castle_Bridge,
+
+        //---------------------- Dark area ----------------------
+        //Dark_Woods
     }
 
     private Vector3[] m_checkpointsPositions = new Vector3[]
     {
+        //---------------------- Village area ----------------------
 		new Vector3(-180, 119, 0f),
-		new Vector3(137, 51, 0f),
+        new Vector3(-174, 75, 0f),
+        new Vector3(-132, -21, 0f),
+        new Vector3(-285, 45, 0f),
+        new Vector3(137, 51, 0f),
 		new Vector3(280, 42, 0f),
+        new Vector3(-394, -54, 0f),
+        new Vector3(-450, 1.78f, 0f),
+        new Vector3(360, 69, 0f),                
+
+        //---------------------- Castle area ----------------------
+        new Vector3(414, 68, 0f),
         new Vector3(598, -3, 0f),
         new Vector3(598, -46, 0f),
         new Vector3(566, -62, 0f),
         new Vector3(522, -61, 0f),
         new Vector3(460, -11, 0f),
 
+        //---------------------- Dark area ----------------------
     };
 
     public TMP_Dropdown m_checkpoints;
@@ -406,6 +435,19 @@ public class ProfilerControlPanelController : MonoBehaviour
     {
         ApplicationManager.instance.Debug_SetParticlesState(option);
     }
+
+    public void Particles_PlayerVisibilityOnChangedValue(bool newValue)
+    {
+        if (ApplicationManager.instance != null)
+        {
+            ApplicationManager.instance.Debug_PlayerParticlesVisibility = newValue;
+        }
+    }
+
+    public void Particles_CustomCullingIsEnabledOnChangedValue(bool newValue)
+    {
+        CustomParticlesCulling.Manager_IsEnabled = newValue;
+    }
     #endregion
 
     #region ground
@@ -437,6 +479,34 @@ public class ProfilerControlPanelController : MonoBehaviour
         {
             ApplicationManager.instance.Debug_OnToggleBossCameraEffect(m_bossCameraAffector);
         }
+    }
+    #endregion
+
+    #region Scene
+    public TMP_Text mSceneGoToMemoryText;
+
+    private void Scene_OnEnable()
+    {     
+        if (mSceneGoToMemoryText != null)
+        {
+            /*mSceneGoToMemoryText.transform.parent.gameObject.SetActive(false);
+            if (GameSceneManager.nextScene == ProfilerMemoryController.NAME)
+            {
+                mSceneGoToMemoryText.text = "Go To Menu";
+            }
+            else
+            {
+                mSceneGoToMemoryText.text = "Go To Memory Scene";
+            }*/
+            mSceneGoToMemoryText.text = "Send Notif";
+        }
+    }
+
+    public void Scene_OnGoToMemorySceneClicked()
+    {
+        //ApplicationManager.instance.Debug_ToggleProfilerMemoryScene();
+        //ApplicationManager.instance.Debug_ToggleProfilerLoadScenesScene();
+        ApplicationManager.instance.Debug_ScheduleNotification();
     }
     #endregion
 }

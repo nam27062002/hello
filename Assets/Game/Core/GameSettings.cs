@@ -8,22 +8,72 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.Audio;
 using System;
 using System.Collections.Generic;
-
-[Serializable]
-public struct TimeDrain {
-	public float seconds;
-	public float drainIncrement;
-};
 
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Global setup of the game.
+/// Global setup of the game and non-critical player settings stored in the device's cache.
 /// </summary>
 public class GameSettings : SingletonScriptableObject<GameSettings> {
+	//------------------------------------------------------------------------//
+	// AUDIO SETTINGS														  //
+	//------------------------------------------------------------------------//
+	public const string SOUND_ENABLED = "GAME_SETTINGS_SOUND_ENABLED";	// bool, default true
+	public static bool soundEnabled { 
+		get { return Prefs.GetBoolPlayer(SOUND_ENABLED, true); }
+		set { 
+			if(instance.m_audioMixer != null) {
+				instance.m_audioMixer.SetFloat("SfxVolume", value ? 0f : -80f);
+				instance.m_audioMixer.SetFloat("Sfx2DVolume", value ? 0f : -80f);
+			}
+			Prefs.SetBoolPlayer(SOUND_ENABLED, value);
+		}
+	}
+
+	public const string MUSIC_ENABLED = "GAME_SETTINGS_MUSIC_ENABLED";	// bool, default true
+	public static bool musicEnabled { 
+		get { return Prefs.GetBoolPlayer(MUSIC_ENABLED, true); }
+		set { 
+			if(instance.m_audioMixer != null) {
+				instance.m_audioMixer.SetFloat("MusicVolume", value ? 0f : -80f);
+			}
+			Prefs.SetBoolPlayer(MUSIC_ENABLED, value);
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// CONTROL SETTINGS														  //
+	//------------------------------------------------------------------------//
+	public const string TILT_CONTROL_ENABLED = "GAME_SETTINGS_TILT_CONTROL_ENABLED";	// bool, default false
+	public static bool tiltControlEnabled {
+		get { return Prefs.GetBoolPlayer(TILT_CONTROL_ENABLED, false); }
+		set {
+			Prefs.SetBoolPlayer(TILT_CONTROL_ENABLED, value);
+			Messenger.Broadcast<bool>(GameEvents.TILT_CONTROL_TOGGLE, value);
+		}
+	}
+
+	public const string TILT_CONTROL_SENSITIVITY = "GAME_SETTINGS_TILT_CONTROL_SENSITIVITY";	// float [0..1], default 0.5f
+	public static float tiltControlSensitivity {
+		get { return Prefs.GetFloatPlayer(TILT_CONTROL_SENSITIVITY, 0.5f); }
+		set {
+			Prefs.SetFloatPlayer(TILT_CONTROL_SENSITIVITY, value);
+			Messenger.Broadcast<float>(GameEvents.TILT_CONTROL_SENSITIVITY_CHANGED, value);
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// UI SETTINGS															  //
+	//------------------------------------------------------------------------//
+	public const string SHOW_BIG_AMOUNT_CONFIRMATION_POPUP = "SHOW_BIG_AMOUNT_CONFIRMATION_POPUP";	// bool, default true
+	public static bool showBigAmountConfirmationPopup {
+		get { return Prefs.GetBoolPlayer(SHOW_BIG_AMOUNT_CONFIRMATION_POPUP, true); }
+		set { Prefs.SetBoolPlayer(SHOW_BIG_AMOUNT_CONFIRMATION_POPUP, value); }
+	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -39,28 +89,29 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private Version m_internalVersion = new Version(0, 1, 0);
 	public static Version internalVersion { get { return instance.m_internalVersion; }}
 
-	[Comment("Public version number displayed in the stores, used by the players to identify different application updates\nFormat X.Y where:\n    - X: Arbitrary, only changed on major game change (usually never)\n        - 0 during Preproduction/Production\n        - [1..N] at Soft/WW Launch\n    - Y: Increased for every push to the app store [1..N]", 10f)]
-	[SerializeField] private string m_publicVersioniOS = "0.1";
-	public static string publicVersioniOS { 
-		get { return instance.m_publicVersioniOS; }
-		set { instance.m_publicVersioniOS = value; }
-	}
-
-	[SerializeField] private string m_publicVersionGGP = "0.1";
-	public static string publicVersionGGP { 
-		get { return instance.m_publicVersionGGP; }
-		set { instance.m_publicVersionGGP = value; }
-	}
-
-	[SerializeField] private string m_publicVersionAmazon = "0.1";
-	public static string publicVersionAmazon { 
-		get { return instance.m_publicVersionAmazon; }
-		set { instance.m_publicVersionAmazon = value; }
-	}
+	// Internal references
+	private AudioMixer m_audioMixer = null;
 
 	//------------------------------------------------------------------//
 	// SINGLETON STATIC METHODS											//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization. To be called at the start of the application.
+	/// </summary>
+	public static void Init() {
+		// Get external references
+		instance.m_audioMixer = AudioController.Instance.AudioObjectPrefab.GetComponent<AudioSource>().outputAudioMixerGroup.audioMixer;
+
+		// Apply stored values
+		// Sound
+		soundEnabled = soundEnabled;
+		musicEnabled = musicEnabled;
+
+		// Controls
+		tiltControlEnabled = tiltControlEnabled;
+		tiltControlSensitivity = tiltControlSensitivity;
+	}
+
 	/// <summary>
 	/// Compute the PC equivalent of a given amount of time.
 	/// </summary>
@@ -76,5 +127,21 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		double pc = timePcCoefA * _time.TotalMinutes + timePcCoefB;
 		pc = Math.Round(pc, MidpointRounding.AwayFromZero);
 		return Mathf.Max(1, (int)pc);	// At least 1
+	}
+
+	/// <summary>
+	/// Compute the PC equivalent of a given amount of coins.
+	/// </summary>
+	/// <returns>The PC worth for <paramref name="_coins"/> amount of coins.</returns>
+	/// <param name="_coins">Amount of coins to be evaluated.</param>
+	public static long ComputePCForCoins(long _coins) {
+		// Get conversion factor from definition
+		DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+		double coinsToPC = gameSettingsDef.GetAsDouble("missingRessourcesPCperSC");
+
+		// Apply, round and return
+		double pc = Mathf.Abs(_coins) * coinsToPC;
+		pc = Math.Round(pc, MidpointRounding.AwayFromZero);
+		return Math.Max(1, (long)pc);	// At least 1
 	}
 }

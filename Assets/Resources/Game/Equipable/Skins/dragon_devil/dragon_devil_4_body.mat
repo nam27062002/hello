@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_devil_4_body
-  m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
+  m_Shader: {fileID: 4800000, guid: 1b06faa56f07da048b78ad837c3cbb04, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -101,11 +101,20 @@ Material:
         name: _InnerLightAdd
       second: 0
     - first:
+        name: _InnerLightWavePhase
+      second: 1
+    - first:
+        name: _InnerLightWaveSpeed
+      second: 1
+    - first:
         name: _Metallic
       second: 0
     - first:
         name: _Mode
       second: 0
+    - first:
+        name: _NormalStrenght
+      second: 1
     - first:
         name: _OcclusionStrength
       second: 1
@@ -119,12 +128,18 @@ Material:
         name: _SrcBlend
       second: 1
     - first:
+        name: _StencilMask
+      second: 10
+    - first:
         name: _UVSec
       second: 0
     - first:
         name: _ZWrite
       second: 1
     m_Colors:
+    - first:
+        name: _AmbientAdd
+      second: {r: 0, g: 0, b: 0, a: 0}
     - first:
         name: _Color
       second: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
@@ -145,4 +160,13 @@ Material:
       second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _InnerLightColor
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _SecondLightColor
+      second: {r: 0, g: 0, b: 0, a: 0}
+    - first:
+        name: _SecondLightDir
+      second: {r: 0, g: 0, b: -1, a: 0}
+    - first:
+        name: _Tint
       second: {r: 1, g: 1, b: 1, a: 1}

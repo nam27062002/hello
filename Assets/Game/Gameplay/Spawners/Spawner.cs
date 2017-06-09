@@ -31,6 +31,15 @@ public class Spawner : AbstractSpawner {
 		public float value = 0f;
 	}
 
+	[System.Serializable]
+	public class SpawnKillCondition {
+		[EntityCategoryListAttribute]
+		public string category;
+
+		[NumericRange(0f)]	// Force positive value
+		public float value = 0f;
+	}
+
 	public enum SpawnPointSeparation {
 		Sphere = 0,
 		Line
@@ -51,7 +60,9 @@ public class Spawner : AbstractSpawner {
 	[SerializeField] private bool		m_hasGroupBonus = false;
 
 	[Separator("Activation")]
-	[SerializeField] public DragonTier m_minTier = DragonTier.TIER_0;
+	[SerializeField] private DragonTier m_minTier = DragonTier.TIER_0;
+	[SerializeField] private DragonTier m_maxTier = DragonTier.TIER_4;
+	[SerializeField] private bool	    m_checkMaxTier = false;
 
 	[Tooltip("Spawners may not be present on every run (percentage).")]
 	[SerializeField][Range(0f, 100f)] public float m_activationChance = 100f;
@@ -60,12 +71,17 @@ public class Spawner : AbstractSpawner {
 	[SerializeField] public SpawnCondition[] m_activationTriggers;
 	public SpawnCondition[] activationTriggers { get { return m_activationTriggers; }}
 
+	[SerializeField] public SpawnKillCondition[] m_activationKillTriggers;
+	public SpawnKillCondition[] activationKillTriggers { get { return m_activationKillTriggers; } }
+
 	[Tooltip("Stop spawning when any of the deactivation conditions is triggered.\nLeave empty for infinite spawning.")]
 	[SerializeField] private SpawnCondition[] m_deactivationTriggers;
 	public SpawnCondition[] deactivationTriggers { get { return m_deactivationTriggers; }}
 
 	[Separator("Respawn")]
 	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
+	[Tooltip("NPCs which always give Premium Currency as reward have a, content based, change to not respawn reduced over kills.")]
+	[SerializeField] private bool m_isPremiumCurrencyNPC = false;
 	[SerializeField] private SpawnPointSeparation m_homePosMethod = SpawnPointSeparation.Sphere;
 	[SerializeField] private Range m_homePosDistance = new Range(1f, 2f);
 
@@ -78,6 +94,13 @@ public class Spawner : AbstractSpawner {
 	// Attributes
 	//-----------------------------------------------
 	private int m_prefabIndex;
+
+	private PoolHandler[] m_poolHandlers;
+	private int[] m_poolHandlerIndex;
+
+	private string[] m_entitySku;
+	private float m_pcProbCoefA;
+	private float m_pcProbCoefB;
 
 	protected EntityGroupController m_groupController;		
 
@@ -119,9 +142,41 @@ public class Spawner : AbstractSpawner {
 
 	protected override void OnStart() {
 		float rnd = Random.Range(0f, 100f);
+		DragonTier playerTier = InstanceManager.player.data.tier;
 
-		if (InstanceManager.player.data.tier >= m_minTier) {
+		bool enabledByTier = false;
+		if (m_checkMaxTier) {
+			enabledByTier = (playerTier >= m_minTier) && (playerTier <= m_maxTier);
+		} else {
+			enabledByTier = (playerTier >= m_minTier);
+		}
+
+		if (m_activationChance < 100f) {
+			// check debug 
+			if (DebugSettings.spawnChance0) {
+				rnd = 100f;
+			} else if (DebugSettings.spawnChance100) {
+				rnd = 0f;
+			}
+		}
+
+		if (InstanceManager.player != null && enabledByTier) {
 			if (m_entityPrefabList != null && m_entityPrefabList.Length > 0 && rnd <= m_activationChance) {
+
+				m_entitySku = new string[GetMaxEntities()];
+				m_poolHandlerIndex = new int[GetMaxEntities()];
+				for (int i = 0; i < m_entitySku.Length; i++) {
+					m_entitySku[i] = "";
+					m_poolHandlerIndex[i] = 0;
+				}
+
+				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+				m_pcProbCoefA = def.GetAsFloat("flyingPigsProbaCoefA", 1f);
+				m_pcProbCoefB = def.GetAsFloat("flyingPigsProbaCoefB", 1f);
+
+				if (m_activationKillTriggers == null) {
+					m_activationKillTriggers = new SpawnKillCondition[0];
+				}
 
 				if (m_quantity.max < m_quantity.min) {
 					m_quantity.min = m_quantity.max;
@@ -175,8 +230,10 @@ public class Spawner : AbstractSpawner {
 
 		if (m_rails == 0) m_rails = 1;
 
+		m_poolHandlers = new PoolHandler[m_entityPrefabList.Length];
+
 		for (int i = 0; i < m_entityPrefabList.Length; i++) {
-			PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, m_entities.Length);
+			m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, m_entities.Length);
 		}
 
 		// Get external references
@@ -186,8 +243,7 @@ public class Spawner : AbstractSpawner {
 		m_area = GetArea();
 
 		m_groupController = GetComponent<EntityGroupController>();
-		if (m_groupController)
-		{
+		if (m_groupController) {
 			m_groupController.Init(m_quantity.max);
 		}
 
@@ -207,6 +263,23 @@ public class Spawner : AbstractSpawner {
 			if (EntitiesAlive == 0) {
 				// Respawn on cooldown?
 				if (m_gameSceneController.elapsedSeconds > m_respawnTime || DebugSettings.ignoreSpawnTime) {
+					if (m_isPremiumCurrencyNPC) {
+						float eaten = 1f;
+
+						string key = m_entitySku[m_prefabIndex];
+						if (RewardManager.killCount.ContainsKey(key)) {
+							eaten = RewardManager.killCount[key];
+						}
+
+						float rnd = Random.Range(0f, 1f);
+						float prob = m_pcProbCoefA / (m_pcProbCoefB * eaten);
+
+						if (rnd > prob) {
+							m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
+							return false;
+						}
+					}
+
 					// Everything ok! Spawn!
 					return true;
 				}
@@ -233,10 +306,16 @@ public class Spawner : AbstractSpawner {
 		m_prefabIndex = GetPrefabIndex();
 	}
 
+	protected override PoolHandler GetPoolHandler(uint index) {
+		return m_poolHandlers[m_poolHandlerIndex[index]];
+	}
+
 	protected override string GetPrefabNameToSpawn(uint index) {
 		if (m_mixEntities) {
 			m_prefabIndex = GetPrefabIndex();
 		}
+
+		m_poolHandlerIndex[index] = m_prefabIndex;
 
 		return m_entityPrefabList[m_prefabIndex].name;
 	}
@@ -259,7 +338,9 @@ public class Spawner : AbstractSpawner {
 		return i;
 	}
 
-	protected override void OnEntitySpawned(GameObject spawning, uint index, Vector3 originPos) {
+	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
+		m_entitySku[index] = spawning.sku;
+
 		if (index > 0) {
 			originPos += RandomStartDisplacement((int)index); // don't let multiple entities spawn on the same point
 		}
@@ -271,7 +352,7 @@ public class Spawner : AbstractSpawner {
 	protected override void OnMachineSpawned(IMachine machine) {
 		if (m_groupController) {				
 			machine.EnterGroup(ref m_groupController.flock);
-			machine.position = transform.position + m_groupController.flock.GetOffset(machine, 1f);
+			machine.position = transform.position + m_groupController.flock.GetOffset(machine, 2f);
 		}
 	}
 
@@ -352,7 +433,7 @@ public class Spawner : AbstractSpawner {
 		if(State != EState.Respawning) return false;
 
 		// Check start conditions
-		bool startConditionsOk = (m_activationTriggers.Length == 0);	// If there are no activation triggers defined, the spawner will be considered ready
+		bool startConditionsOk = (m_activationTriggers.Length == 0) && (m_activationKillTriggers.Length == 0);	// If there are no activation triggers defined, the spawner will be considered ready
 		for(int i = 0; i < m_activationTriggers.Length; i++) {
 			// Is this condition satisfied?
 			switch(m_activationTriggers[i].type) {
@@ -368,6 +449,14 @@ public class Spawner : AbstractSpawner {
 			// If one of the conditions has already triggered, no need to keep checking
 			// [AOC] This would be useful if we had a lot of conditions to check, but it will usually be just one and we would be adding an extra instruction for nothing, so let's keep it commented for now
 			// if(startConditionsOk) break;
+		}
+
+		for (int i = 0; i < m_activationKillTriggers.Length; i++) {
+			string cat = m_activationKillTriggers[i].category;
+
+			if (RewardManager.categoryKillCount.ContainsKey(cat)) {
+				startConditionsOk |= RewardManager.categoryKillCount[cat] >= m_activationKillTriggers[i].value;
+			}
 		}
 
 		// If start conditions aren't met, we can't spawn, no need to check anything else
@@ -439,18 +528,18 @@ public class Spawner : AbstractSpawner {
 
 	protected Vector3 RandomStartDisplacement(int _index)	{
 		Vector3 v = Vector3.zero;
-
-		float d = m_homePosDistance.distance;
-		int s = (_index % 2 == 0)? -1 : 1;
-		_index = Mathf.FloorToInt((_index * s) / 2f) + s;
+		float dAngle = (2f * Mathf.PI) / EntitiesToSpawn;
+		float distance = m_homePosDistance.distance;
+		float randomDistance = Random.Range(distance * 0.5f, distance);
 
 		switch (m_homePosMethod) {
 			case SpawnPointSeparation.Sphere:
-				v = Random.onUnitSphere * _index * (m_homePosDistance.min + Random.Range(-d * 0.5f, d * 0.5f));
+				v.x = randomDistance * 0.5f * Mathf.Cos(dAngle * _index);
+				v.y = randomDistance * 0.5f * Mathf.Sin(dAngle * _index);
 				break;
 
 			case SpawnPointSeparation.Line:
-				v = Vector3.right * _index * (m_homePosDistance.min + Random.Range(-d * 0.5f, d * 0.5f));
+				v = Vector3.right * m_homePosDistance.GetRandom();
 				break;
 		}
 

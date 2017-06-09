@@ -13,7 +13,10 @@ namespace AI {
 		private bool m_beingEaten;
 		private bool m_beingBurned;
 
+
 		//---------------------------------------------------------------------------------
+		public virtual Quaternion orientation 	{ get { return transform.rotation; } set { transform.rotation = value; } }
+
 		public Vector3 position { 	get { return transform.position;  } 
 									set { transform.position = value; } 
 		}
@@ -28,10 +31,10 @@ namespace AI {
 
 		public float lastFallDistance { get { return 0; } }
 
-		public Transform enemy { 
-			get { return null; }
-			set { }
-		}
+		public bool isKinematic	{ get { return false; } set { } }
+		public Transform enemy  { get { return null; }  set { } }
+		public bool isPetTarget { get { return false;}  set { } }
+
 
 		//---------------------------------------------------------------------------------
 
@@ -51,6 +54,9 @@ namespace AI {
 			m_beingBurned = false;
 			m_inflammable.Init();
 		}
+
+		public void Activate() {}
+		public void Deactivate( float duration, UnityEngine.Events.UnityAction _action) {}
 
 		public void OnTrigger(string _trigger, object[] _param = null) {}
 			
@@ -78,12 +84,13 @@ namespace AI {
 		// External interactions
 		public void ReceiveDamage(float _damage) {}
 
-		public void LockInCage() 		{}
-		public void UnlockFromCage() 	{}
+		public void EnterDevice(bool _isCage) 	{}
+		public void LeaveDevice(bool _isCage) 	{}
 
 		// 
 		public bool IsDying() { return m_beingEaten || m_beingBurned; }
 		public bool IsDead() { return IsDying(); }
+		public bool IsFreezing() { return false; }
 
 		public void Drown() {}
 
@@ -104,8 +111,8 @@ namespace AI {
 			}
 		}
 
-		public void BeginSwallowed(Transform _transform, bool _rewardPlayer) {
-			m_edible.BeingSwallowed(_transform, _rewardPlayer); 
+		public void BeginSwallowed(Transform _transform, bool _rewardPlayer, bool _isPlayer) {
+			m_edible.BeingSwallowed(_transform, _rewardPlayer, _isPlayer); 
 		}
 
 		public void EndSwallowed(Transform _transform) {

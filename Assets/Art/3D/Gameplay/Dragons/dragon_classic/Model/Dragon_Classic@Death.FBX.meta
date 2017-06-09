@@ -151,7 +151,7 @@ ModelImporter:
     7400002: Death_Loop
     9500000: //RootNode
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
   animations:
@@ -368,6 +368,8 @@ ModelImporter:
       transformMask:
       - path: 
         weight: 1
+      - path: Dragon_
+        weight: 1
       - path: Dragon_Hip
         weight: 1
       - path: Dragon_Hip/Dragon_LLeg_1
@@ -460,6 +462,8 @@ ModelImporter:
         weight: 1
       - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head/Dragon_R_Eye/Dragon_R_Up_EyeLead
         weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head/Fire_Dummy
+        weight: 1
       - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_RArm_Shoulder
         weight: 1
       - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_RArm_Shoulder/Dragon_RArm_1
@@ -532,6 +536,7 @@ ModelImporter:
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
+    serializedVersion: 2
     human: []
     skeleton: []
     armTwist: 0.5
@@ -542,7 +547,10 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
   humanoidOversampling: 1

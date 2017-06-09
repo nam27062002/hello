@@ -9,7 +9,7 @@ public class BreakableBehaviour : MonoBehaviour
 	[SerializeField] private int m_hitCount = 1;
 	[SerializeField] private bool m_destroyOnBreak = true;
 
-	[SerializeField] private string m_onBreakParticle;
+	[SerializeField] private ParticleData m_onBreakParticle;
 	[SerializeField] private string m_onBreakAudio;
 
 	[SerializeField] Transform m_view;
@@ -20,8 +20,10 @@ public class BreakableBehaviour : MonoBehaviour
 
 
 	private Wobbler m_wobbler;
+	private Collider m_collider;
 	private Vector3 m_initialViewPos;
 
+	private float m_destroyTimer;
 
 	//----------------------------------------------------------------------
 
@@ -29,6 +31,8 @@ public class BreakableBehaviour : MonoBehaviour
 		if (m_view == null)
 			m_view = transform.FindChild("view");
 		
+		m_onBreakParticle.CreatePool();
+			
 		m_initialViewPos = m_view.localPosition;
 	}
 
@@ -36,9 +40,28 @@ public class BreakableBehaviour : MonoBehaviour
 		m_remainingHits = m_hitCount;
 
 		if (m_wobbler == null)
-			m_wobbler = GetComponent<Wobbler>();
-
+			m_wobbler = GetComponent<Wobbler>();		
 		m_wobbler.enabled = false;
+
+		if (m_collider == null)
+			m_collider = GetComponent<Collider>();
+		m_collider.isTrigger = false;
+
+		m_view.gameObject.SetActive(true);
+
+		m_destroyTimer = 0f;
+	}
+
+	void Update() {
+		if (m_destroyTimer > 0f) {
+			m_destroyTimer -= Time.deltaTime;
+			if (m_destroyTimer <= 0f) {
+				gameObject.SetActive(false);
+				if (m_destroyOnBreak) {			
+					Destroy(gameObject);
+				}
+			}
+		}
 	}
 
 	void OnCollisionEnter(Collision collision) {
@@ -81,32 +104,35 @@ public class BreakableBehaviour : MonoBehaviour
 	}
 
 	void Break(Vector3 pushVector) {
+
 		// Spawn particle
-		GameObject prefab = Resources.Load("Particles/" + m_onBreakParticle) as GameObject;
-		if (prefab != null) {
-			GameObject go = Instantiate(prefab) as GameObject;
-			if (go != null) {
-				go.transform.position = transform.position;
-				go.transform.rotation = transform.rotation;
+		GameObject go = m_onBreakParticle.Spawn(transform.position);
+		if (go != null)
+		{
+			go.transform.rotation = transform.rotation;	
+			ParticleScaler scaler = go.GetComponentInChildren<ParticleScaler>();
+			if ( scaler != null )
+			{
+				scaler.m_scale = transform.lossyScale.x;
+				scaler.DoScale();
 			}
 		}
-
+	
 		AudioController.Play(m_onBreakAudio);
 
 		DragonMotion dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
 		if (pushVector != Vector3.zero) {
 			pushVector *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude, 2f));
-			dragonMotion.AddForce( pushVector );
+			dragonMotion.AddForce( pushVector, false );
 		}
-		else {
-			dragonMotion.NoDamageImpact();
-		}
+		dragonMotion.NoDamageImpact();
+
+		// don't destroy them yet, first change the collider to trigger to throw the "on collision exit message"
+		m_collider.isTrigger = true;
+		m_view.gameObject.SetActive(false);
 
 		// Destroy
-		gameObject.SetActive(false);
-		if (m_destroyOnBreak) {			
-			Destroy(gameObject);
-		}
+		m_destroyTimer = 0.15f;
 	}
 
 	public void Shake() {

@@ -205,7 +205,7 @@ public class EasePreviewTool : EditorWindow {
 			EditorGUIUtility.labelWidth = 80f;
 
 			// One curve per type
-			Ease[] eases = Enum.GetValues(typeof(Ease)).Cast<Ease>();
+			Ease[] eases = (Ease[])Enum.GetValues(typeof(Ease));
 			foreach(Ease targetEase in eases) {
 				// If the preview curve for the current value is not yet created, do it now
 				AnimationCurve curve = null;

@@ -11,16 +11,12 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	private DragonPlayer 	m_dragon;
 	private DragonMotion 	m_motion;
-	private DragonControl 	m_controls;
+	private DragonControlPlayer 	m_controls;
 	private Animator 		m_animator;
 
 	private bool m_active;
 	private bool m_ready;
 
-	public List<ParticleSystem> m_particleTrails;
-
-
-	private bool m_trailsActive = false;
 	private bool m_insideWater = false;
 
 	// Cache content data
@@ -48,7 +44,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	void Awake () {
 		m_dragon = GetComponent<DragonPlayer>();	
 		m_motion = GetComponent<DragonMotion>();
-		m_controls = GetComponent<DragonControl>();
+		m_controls = GetComponent<DragonControlPlayer>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 
 		m_active = false;
@@ -60,8 +56,6 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_boostMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
 		m_energyRequiredToBoost = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
 		m_energyRequiredToBoost *= m_dragon.data.def.GetAsFloat("energyMax");
-
-		DeactivateTrails();
 	}
 
 	void OnEnable() {
@@ -97,7 +91,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 		if (m_active) {
 			// Don't drain energy if cheat is enabled or dragon fury is on
-			if(!DebugSettings.infiniteBoost && !m_dragon.IsFuryOn() && !m_superSizeInfiniteBoost) {
+			if(IsDraining()) {
                 if (m_insideWater)
                     m_dragon.AddEnergy(-Time.deltaTime * m_energyDrain * 5);
                 else
@@ -111,7 +105,6 @@ public class DragonBoostBehaviour : MonoBehaviour {
 			m_dragon.AddEnergy(Time.deltaTime * m_energyRefill);
 		}
 	}
-
 
 	private void StartBoost() 
 	{
@@ -138,6 +131,11 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		Messenger.Broadcast<bool>(GameEvents.BOOST_TOGGLED, false);
 	}
 
+	public bool IsDraining() {
+		// Don't drain energy if cheat is enabled or dragon fury is on
+		return !DebugSettings.infiniteBoost && !m_dragon.IsFuryOn() && !m_superSizeInfiniteBoost;
+	}
+
 	public bool IsBoostActive()
 	{
 		return m_active;
@@ -147,38 +145,13 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_ready = true;
 	}
 
-	public void ActivateTrails()
-	{
-		m_trailsActive = true;
-        if (!m_insideWater)
-        {
-			for( int i = 0; i<m_particleTrails.Count; i++ )
-			{
-	            m_particleTrails[i].Play();
-			}
-        }
-	}
 
-	public void DeactivateTrails()
-	{
-		m_trailsActive = false;
-		for( int i = 0; i<m_particleTrails.Count; i++ )
-		{
-            m_particleTrails[i].Stop();
-		}
-	}
 
 	void OnTriggerEnter(Collider _other)
 	{
 		if ( _other.CompareTag("Water") && !m_insideWater)
 		{
 			m_insideWater = true;
-			// if trails active then activate bubles
-			if ( m_trailsActive )
-			{
-				DeactivateTrails();
-				m_trailsActive = true;
-			}
 		}
 
 	}
@@ -188,11 +161,6 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		if ( _other.CompareTag("Water") && m_insideWater)
 		{
 			m_insideWater = false;
-			// if trails active
-			if ( m_trailsActive )
-			{
-				ActivateTrails();
-			}
 		}
 	}
 }

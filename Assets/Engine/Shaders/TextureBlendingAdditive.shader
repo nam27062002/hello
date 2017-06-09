@@ -3,12 +3,12 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Texture Blending Additive + Lightmap And Recieve Shadow" 
+Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Additive" 
 {
 	Properties 
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
-		_SecondTexture ("Second Texture (RGB)", 2D) = "white" {}
+		_SecondTexture("Second Texture (RGB)", 2D) = "white" {}
 	}
 
 	SubShader {
@@ -31,7 +31,7 @@ Shader "Hungry Dragon/Texture Blending Additive + Lightmap And Recieve Shadow"
 								
 				#define FOG
 				#define BLEND_TEXTURE
-				#define COLOR_ADDITIVE
+				#define VERTEXCOLOR_ADDITIVE
 //				#define DEBUG								
 				#include "scenary.cginc"
 

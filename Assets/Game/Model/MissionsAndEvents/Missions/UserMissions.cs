@@ -14,42 +14,25 @@ using System.Collections.Generic;
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
-public class UserMissions
-{
-    //------------------------------------------------------------------//
-    // CONSTANTS														//
-    //------------------------------------------------------------------//
+public class UserMissions {
+	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
 
-    //------------------------------------------------------------------//
-    // MEMBERS AND PROPERTIES											//
-    //------------------------------------------------------------------//
-
-    // Content
-    // [AOC] TEMP!! Eventually it will be replaced by procedural generation
-    private int[] m_generationIdx = new int[(int)Mission.Difficulty.COUNT]; // Pointing to the definition to be generated next
-
-    // Active missions
-    // [AOC] Expose it if you want to see current missions content (alternatively switch to debug inspector)
-    private Mission[] m_missions = new Mission[(int)Mission.Difficulty.COUNT];
-
-
-    // Necessary info for the user missions to work
-    private int m_ownedDragons;
-    public int ownedDragons
-    {
-        set { m_ownedDragons = value; }
-    }
+	//------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES											//
+	//------------------------------------------------------------------//
+	// Active missions
+	// [AOC] Expose it if you want to see current missions content (alternatively switch to debug inspector)
+	private Mission[] m_missions = new Mission[(int)Mission.Difficulty.COUNT];
     
-    //------------------------------------------------------------------//
-    // GENERIC METHODS													//
-    //------------------------------------------------------------------//
-
-    /// <summary>
-    /// </summary>
-    public void CheckActivation(bool canActivate = true) 
-	{
-		for(int i = 0; i < m_missions.Length; i++) 
-		{
+	//------------------------------------------------------------------//
+	// GENERIC METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// </summary>
+	public void CheckActivation(bool canActivate = true) {
+		for(int i = 0; i < m_missions.Length; i++) {
 			// Only initialized missions
 			if(m_missions[i] == null) continue;
 
@@ -60,14 +43,12 @@ public class UserMissions
 					// Yes!
 					// Missions can't be activated during a game, mark them as pending
 					// Are we in-game?
-					if(!canActivate) 
-					{
-						if(m_missions[i].state != Mission.State.ACTIVATION_PENDING){
+					if(!canActivate) {
+						if(m_missions[i].state != Mission.State.ACTIVATION_PENDING) {
 							m_missions[i].ChangeState(Mission.State.ACTIVATION_PENDING);
 						}
-					} 
-					else 
-					{
+					}
+					else {
 						m_missions[i].ChangeState(Mission.State.ACTIVE);
 					}
 				}
@@ -82,8 +63,7 @@ public class UserMissions
 	/// </summary>
 	/// <returns>The mission with the given difficulty.</returns>
 	/// <param name="_difficulty">The difficulty of the mission to be returned.</param>
-	public Mission GetMission(Mission.Difficulty _difficulty) 
-	{
+	public Mission GetMission(Mission.Difficulty _difficulty) {
 		// If there is no mission at the given difficulty, create one
 		if(m_missions[(int)_difficulty] == null) {
 			GenerateNewMission(_difficulty);
@@ -100,18 +80,15 @@ public class UserMissions
 	/// Process active missions:
 	/// Give rewards for those completed and replace them by newly generated missions.
 	/// </summary>
-	public int ProcessMissions() 
-	{
+	public int ProcessMissions() {
 		int coinsToReward = 0;
 		// Check all missions
-		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) 
-		{
+		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
 			// Is mission completed?
 			Mission m = GetMission((Mission.Difficulty)i);
-			if(m.state == Mission.State.ACTIVE && m.objective.isCompleted) 
-			{
+			if(m.state == Mission.State.ACTIVE && m.objective.isCompleted) {
 				// Give reward
-				coinsToReward += m.rewardCoins ;
+				coinsToReward += m.rewardCoins;
 
 				// Generate new mission
 				m = GenerateNewMission((Mission.Difficulty)i);
@@ -136,8 +113,7 @@ public class UserMissions
 	/// this method using the Mission.removeCostPC property.
 	/// </summary>
 	/// <param name="_difficulty">The difficulty of the mission to be removed.</param>
-	public void RemoveMission(Mission.Difficulty _difficulty) 
-	{
+	public void RemoveMission(Mission.Difficulty _difficulty) {
 		// Generate new mission does exactly this :D
 		GenerateNewMission(_difficulty);
 	}
@@ -150,14 +126,14 @@ public class UserMissions
 	/// Nothing will happen if the mission is not on Cooldown state.
 	/// </summary>
 	/// <param name="_difficulty">The difficulty of the mission to be skipped.</param>
-	public void SkipMission(Mission.Difficulty _difficulty) 
-	{
-		// Get mission and check that is in cooldown state
+	/// <param name="_seconds">Time to skip. Use -1 for the whole cooldown duration.</param>
+	public void SkipMission(Mission.Difficulty _difficulty, float _seconds) {
+		// Get mission and check that it is in cooldown state
 		Mission m = GetMission(_difficulty);
-		if(m == null || m.state != Mission.State.COOLDOWN) return;
+		if(m == null) return;
 
-		// Change mission to Active state
-		m.ChangeState(Mission.State.ACTIVE);
+		// Let mission handle it
+		m.SkipCooldownTimer(_seconds);
 	}
 
 	//------------------------------------------------------------------//
@@ -170,54 +146,152 @@ public class UserMissions
 	/// </summary>
 	/// <returns>The newly created mission.</returns>
 	/// <param name="_difficulty">The difficulty slot where to create the new mission.</param>
-	private Mission GenerateNewMission(Mission.Difficulty _difficulty) 
-	{
+	/// <param name="_forceSku">Optional, force a specific mission sku rather than using the procedural engine.</param>
+	private Mission GenerateNewMission(Mission.Difficulty _difficulty, string _forceSku = "") {
+		Debug.Log("<color=green>GENERATING NEW MISSION " + _difficulty + "</color>");
+
+		// Filter types to prevent repetition
+		// Do it before terminating previous mission so we don't repeat the same mission type we just completed/skipped
+		List<string> typesToIgnore = new List<string>();
+		for(int i = 0; i < m_missions.Length; i++) {
+			if(m_missions[i] != null) typesToIgnore.Add(m_missions[i].typeDef.sku);
+		}
+
 		// Terminate any mission at the requested slot
 		ClearMission(_difficulty);
 
-		// Generate new mission
-		// [AOC] TODO!! Automated generation
-		// 		 For now let's pick a new mission definition from the content list matching the requested difficulty
-		int idx = m_generationIdx[(int)_difficulty];
-		bool loopAllowed = true;	// Allow only one loop through all the definitions - just a security check
-		DefinitionNode def = null;
-		List<DefinitionNode> defsList = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSIONS);	// [AOC] Order is not trustable, but we don't care since this is temporal
-		for( ; ; idx++) {
-			// If reached the last definition but still haven't looped, do it now
-			// Otherwise it means there are no definitions for the requested difficulty, throw an exception
-			if(idx >= defsList.Count) {
-				if(loopAllowed) {
-					idx = 0;
-					loopAllowed = false;
-				} else {
-					Debug.Assert(false, "There are no mission definitions for the requested difficulty " + _difficulty);
-					return null;
+		// Aux vars
+		DefinitionNode selectedTypeDef = null;
+		DefinitionNode selectedMissionDef = null;
+		float targetValue = 0f;
+
+		// If a mission is forced, skip procedural engine
+		if(!string.IsNullOrEmpty(_forceSku)) {
+			// Get forced mission def
+			selectedMissionDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSIONS, _forceSku);
+			selectedTypeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, selectedMissionDef.Get("type"));
+			Debug.Log("\tSelected Type: <color=yellow>" + selectedTypeDef.sku + "</color>");
+			Debug.Log("\tSelected Mission: <color=yellow>" + selectedMissionDef.sku + "</color>");
+		} else {
+			// 1. Get available mission types (based on current max dragon tier unlocked and current mission types)
+			DragonTier maxTierUnlocked = DragonManager.biggestOwnedDragon.tier;
+			List<DefinitionNode> typeDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSION_TYPES);
+			typeDefs = typeDefs.FindAll(
+				(DefinitionNode _def) => { 
+					return (_def.GetAsInt("minTierToUnlock") <= (int)maxTierUnlocked)	// Ignore mission types meant for bigger tiers
+						&& (!typesToIgnore.Contains(_def.sku));							// Prevent repetition
 				}
+			);
+			DebugUtils.Assert(typeDefs.Count > 0, "<color=red>NO VALID MISSION TYPES FOUND!!!!</colo>");	// Just in case
+
+			// 2. Select a type based on definitions weights
+			// 2.1. Compute total weight
+			float totalWeight = 0f;
+			float[] weightsArray = new float[typeDefs.Count];	// Store all weights in an array for optimization (avoid repetaedly calling DefinitionNode.GetAsFloat())
+			for(int i = 0; i < typeDefs.Count; i++) {
+				weightsArray[i] = typeDefs[i].GetAsFloat("weight");
+				totalWeight += weightsArray[i];
 			}
 
-			// Is this mission def of the requested difficulty?
-			def = defsList[idx];
-			if(def != null && def.GetAsInt("difficulty") == (int)_difficulty) {
-				// Found! Break the loop
-				break;
+			// 2.2. Select a random value [0..totalWeight]
+			// Iterate through elements until the selected value is reached
+			// This should match weighted probability distribution
+			targetValue = UnityEngine.Random.Range(0f, totalWeight);
+			for(int i = 0; i < typeDefs.Count; i++) {
+				targetValue -= weightsArray[i];
+				if(targetValue <= 0f) {
+					// We reached the target value!
+					selectedTypeDef = typeDefs[i];
+					break;	// No need to keep looping
+				}
+			}
+			Debug.Log("\tSelected Type: <color=yellow>" + selectedTypeDef.sku + "</color>");
+
+			// 3. Get all mission definitions matching the selected type
+			List<DefinitionNode> missionDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.MISSIONS, "type", selectedTypeDef.sku);
+
+			// 4. Select a random mission based on weight (as we just did with the mission type)
+			// 4.1. Compute total weight
+			totalWeight = 0f;
+			weightsArray = new float[missionDefs.Count];	// Store all weights in an array for optimization (avoid repetaedly calling DefinitionNode.GetAsFloat())
+			for(int i = 0; i < missionDefs.Count; i++) {
+				weightsArray[i] = missionDefs[i].GetAsFloat("weight");
+				totalWeight += weightsArray[i];
+			}
+
+			// 4.2. Select a random value [0..totalWeight]
+			// Iterate through elements until the selected value is reached
+			// This should match weighted probability distribution
+			targetValue = UnityEngine.Random.Range(0f, totalWeight);
+			for(int i = 0; i < missionDefs.Count; i++) {
+				targetValue -= weightsArray[i];
+				if(targetValue <= 0f) {
+					// We reached the target value!
+					selectedMissionDef = missionDefs[i];
+					break;	// No need to keep looping
+				}
+			}
+			Debug.Log("\tSelected Mission: <color=yellow>" + selectedMissionDef.sku + "</color>");
+		}
+
+		// 5. If mission type supports single run mode, choose randomly whether to use it or not
+		bool singleRun = false;
+		if(selectedTypeDef.GetAsBool("canBeDuringOneRun")) {
+			// Single run? 50% chance
+			singleRun = UnityEngine.Random.value < 0.5f;	// 50% chance
+		}
+		Debug.Log("\tSingle run?: <color=yellow>" + singleRun + "</color>");
+
+		// 5. Compute target value based on mission min/max range
+		targetValue = UnityEngine.Random.Range(
+			selectedMissionDef.GetAsFloat("objectiveBaseQuantityMin"),
+			selectedMissionDef.GetAsFloat("objectiveBaseQuantityMax")
+		);
+		Debug.Log("\tTarget Value:  <color=yellow>" + targetValue + "</color> [" + selectedMissionDef.GetAsFloat("objectiveBaseQuantityMin") + ", " + selectedMissionDef.GetAsFloat("objectiveBaseQuantityMax") + "]");
+
+		// 6. Compute and apply modifiers to the target value
+		float totalModifier = 0f;	// Modifiers are additive
+
+		// 6.1. Dragon modifier
+		DefinitionNode dragonModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);	// Matching sku
+		if(dragonModifierDef != null) {
+			totalModifier += dragonModifierDef.GetAsFloat("quantityModifier");
+			Debug.Log("\tDragon Modifier " + dragonModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
+		}
+
+		// 6.2. Difficulty modifier
+		DefinitionNode difficultyDef = MissionManager.GetDifficultyDef(_difficulty);
+		DefinitionNode difficultyModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, difficultyDef.sku);
+		if(difficultyModifierDef != null) {
+			totalModifier += difficultyModifierDef.GetAsFloat("quantityModifier");
+			Debug.Log("\tDifficulty Modifier " + difficultyModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
+		}
+
+		// 6.3. Single run modifier
+		if(singleRun) {
+			DefinitionNode singleRunModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, "single_run");
+			if(singleRunModifierDef != null) {
+				totalModifier += singleRunModifierDef.GetAsFloat("quantityModifier");
+				Debug.Log("\tSingle Run Modifier " + singleRunModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
 			}
 		}
 
-		// Create the new mission!
+		// 6.4. Apply modifier and round final value
+		targetValue = Mathf.Round(targetValue * totalModifier);
+		Debug.Log("\t<color=lime>Final Target Value: " + targetValue + "</color>");
+
+		// 7. We got everything we need! Create the new mission
 		Mission newMission = new Mission();
-		newMission.InitFromDefinition(def);
+		newMission.difficulty = _difficulty;
+		newMission.InitWithParams(selectedMissionDef, selectedTypeDef, targetValue, singleRun);
 		m_missions[(int)_difficulty] = newMission;
 
 		// Check whether the new mission should be locked or not
-		if(m_ownedDragons < MissionManager.GetDragonsRequiredToUnlickMissionDifficulty(_difficulty)) 
-		{
+		if(UsersManager.currentUser.GetNumOwnedDragons() < MissionManager.GetDragonsRequiredToUnlockMissionDifficulty(_difficulty)) {
 			newMission.ChangeState(Mission.State.LOCKED);
 		} else {
 			newMission.ChangeState(Mission.State.ACTIVE);	// [AOC] Start active by default, cooldown will be afterwards added if required
 		}
-
-		// Increase generation index - loop if last mission is reached
-		m_generationIdx[(int)_difficulty] = (idx + 1) % defsList.Count;
 
 		// Return new mission
 		return m_missions[(int)_difficulty];
@@ -228,8 +302,7 @@ public class UserMissions
 	/// The mission slot will be left empty, be careful with that!
 	/// </summary>
 	/// <param name="_difficulty">The difficulty slot to be cleared.</param>
-	private void ClearMission(Mission.Difficulty _difficulty) 
-	{
+	private void ClearMission(Mission.Difficulty _difficulty) {
 		// If there is already a mission at the requested slot, terminate it
 		if(m_missions[(int)_difficulty] != null) {
 			m_missions[(int)_difficulty].Clear();
@@ -237,24 +310,41 @@ public class UserMissions
 		}
 	}
 
-	public void ClearAllMissions()
-	{
-		for( int i = 0; i<(int)Mission.Difficulty.COUNT; i++ )
-			ClearMission( (Mission.Difficulty)i );
+	/// <summary>
+	/// Clears all missions.
+	/// </summary>
+	public void ClearAllMissions() {
+		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++)
+			ClearMission((Mission.Difficulty)i);
 	}
 
-	public void UnlockByDragonsNumber()
-	{
+	/// <summary>
+	/// Unlock missions based on owned dragons.
+	/// Deprecated!
+	/// </summary>
+	public void UnlockByDragonsNumber() {
 		for(int i = 0; i < m_missions.Length; i++) {
 			// Is the mission locked?
 			if(m_missions[i].state == Mission.State.LOCKED) {
 				// Do we have enough dragons?
-				if(m_ownedDragons >= MissionManager.GetDragonsRequiredToUnlickMissionDifficulty(( Mission.Difficulty)i)) 
-				{
+				if(UsersManager.currentUser.GetNumOwnedDragons() >= MissionManager.GetDragonsRequiredToUnlockMissionDifficulty((Mission.Difficulty)i)) {
 					m_missions[i].ChangeState(Mission.State.ACTIVE);
 				}
 			}
 		}
+	}
+
+	/// <summary>
+	/// Create the FTUXP missions and mark tutorial step as completed
+	/// </summary>
+	private void GenerateTutorialMissions() {
+		// One for every difficulty!
+		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
+			GenerateNewMission((Mission.Difficulty)i, "ftux" + (i+1).ToString());	// Force sku!
+		}
+
+		// Mark tutorial as completed!
+		UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.FIRST_MISSIONS_GENERATED);
 	}
 
 	//------------------------------------------------------------------//
@@ -265,69 +355,60 @@ public class UserMissions
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public void Load(SimpleJSON.JSONNode _data) {
-		
-		// Load generation index BEFORE missions, in case new missions have to be generated
-		SimpleJSON.JSONArray array = _data["generationIdx"].AsArray;
-		m_generationIdx = new int[(int)Mission.Difficulty.COUNT];
-		for( int i =0 ; i < (int)Mission.Difficulty.COUNT; i++ ) {
-			// If there is no data for this difficulty, put default value
-			if(i >= array.Count) {
-				m_generationIdx[i] = 0;
-			} else {
-				m_generationIdx[i] = array[i].AsInt;
+		// Load missions!
+		// Override if tutorial step was not completed
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_MISSIONS_GENERATED)) {
+			// Create special missions
+			GenerateTutorialMissions();
+		} else {
+			// Load missions from persistence object
+			SimpleJSON.JSONArray activeMissions = _data["activeMissions"].AsArray;
+			for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
+				// If there is no data for this mission, generate a new one
+				if(i >= activeMissions.Count || activeMissions[i] == null || activeMissions[i]["sku"] == "") {
+					GenerateNewMission((Mission.Difficulty)i);
+				} else {
+					// If the mission object was not created, create an empty one now and load its data from persistence
+					if(m_missions[i] == null) {
+						m_missions[i] = new Mission();
+					}
+
+					// Make sure mission has the right difficulty assigned
+					m_missions[i].difficulty = (Mission.Difficulty)i;
+					
+					// Load data into the target mission
+					bool success = m_missions[i].Load(activeMissions[i]);
+
+					// If an error ocurred while loading the mission, generate a new one
+					if(!success) {
+						GenerateNewMission((Mission.Difficulty)i);
+					}
+				}
 			}
 		}
+	}
 
-		// Load missions
-		SimpleJSON.JSONArray activeMissions = _data["activeMissions"].AsArray;
-		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) 
-		{
-			// If there is no data for this mission, generate a new one
-			if(i >= activeMissions.Count || activeMissions[i] == null || activeMissions[i]["sku"] == "") 
-			{
-				GenerateNewMission((Mission.Difficulty)i);
-			} 
-			else 
-			{
-				// If the mission was not created, create an empty one now and load its data from persistence
-				if(m_missions[i] == null) 
-				{
-					m_missions[i] = new Mission();
-				}
-				
-				// Load data into the target mission
-				bool success = m_missions[i].Load(activeMissions[i]);
-
-				// If an error ocurred while loading the mission, generate a new one
-				if(!success) {
-					GenerateNewMission((Mission.Difficulty)i);
-				}
-			}
-		}        
-    }
-	
 	/// <summary>
 	/// Create and return a persistence save data object initialized with the data.
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
 	public SimpleJSON.JSONNode Save() {
+		// If tutorial step was not completed, generate tutorial missions if not already done!
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_MISSIONS_GENERATED)) {
+			// Create special missions
+			GenerateTutorialMissions();
+		}
+
 		// Create new object, initialize and return it
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 		
 		// Missions
 		SimpleJSON.JSONArray missions = new SimpleJSON.JSONArray();
 		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
-			missions.Add (GetMission((Mission.Difficulty)i).Save());
+			missions.Add(GetMission((Mission.Difficulty)i).Save());
 		}
 		data.Add("activeMissions", missions);
         
-        // Generation Index
-        SimpleJSON.JSONArray idxs = new SimpleJSON.JSONArray();
-		for( int i = 0; i<m_generationIdx.Length; i++ )
-			idxs.Add( m_generationIdx[i].ToString() );
-
- 		data.Add("generationIdx", idxs);
-		
 		return data;
 	}
 }

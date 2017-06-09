@@ -49,7 +49,9 @@ public abstract class TrackingObjectiveBase {
 	}
 
 	// UI and other data
-	[SerializeField] protected string m_tidDesc = "";
+	[SerializeField] protected string m_tidDesc = "";		// Main objective TID, typically with at least one replacement %U0 for the amount and optional extra replacements for the objectives (i.e. "Eat %U0 %U1", "Swim %U0 meters")
+	[SerializeField] protected string m_tidTarget = "";		// Optional TID for the objective's target (i.e. "Birds")
+
 	[SerializeField] protected DefinitionNode m_typeDef = null;
 	public DefinitionNode typeDef { get { return m_typeDef; }}
 
@@ -71,19 +73,22 @@ public abstract class TrackingObjectiveBase {
 	/// </summary>
 	/// <param name="_tracker">Tracker to be used for this objective.</param>
 	/// <param name="_targetValue">Objective's target value.</param>
-	/// <param name="_tidDesc">TID corresponding to the objective's description.</param>
-	protected virtual void Init(TrackerBase _tracker, float _targetValue, string _tidDesc, DefinitionNode _typeDef) {
+	/// <param name="_typeDef">Definition of hte objective type.</param>
+	/// <param name="_tidDesc">TID corresponding to the objective's description. Typically contains at least one replacement %U0 for the amount and optional extra replacements for the objectives (i.e. "Eat %U0 %U1", "Swim %U0 meters").</param>
+	/// <param name="_tidTarget">Optional TID for the objective's target (i.e. "Birds").</param>
+	protected virtual void Init(TrackerBase _tracker, float _targetValue, DefinitionNode _typeDef, string _tidDesc, string _tidTarget = "") {
 		// Check some required parameters
-		Debug.Assert(_tracker != null);
+		Debug.Assert(_tracker != null, "Invalid Tracker!");
 
 		// Init tracker
 		m_tracker = _tracker;
 		m_tracker.OnValueChanged.AddListener(OnValueChanged);
 
 		// Store parameters
-		m_targetValue = _targetValue;
-		m_tidDesc = _tidDesc;
+		m_targetValue = m_tracker.RoundTargetValue(_targetValue);	// Round target value using each specific tracker rounding rules!
 		m_typeDef = _typeDef;
+		m_tidDesc = _tidDesc;
+		m_tidTarget = _tidTarget;
 	}
 
 	/// <summary>
@@ -109,8 +114,12 @@ public abstract class TrackingObjectiveBase {
 	/// </summary>
 	/// <returns>The description properly formatted.</returns>
 	public virtual string GetDescription() {
-		// Default
-		return m_tracker.FormatDescription(m_tidDesc, targetValue);
+		// Use replacements?
+		if(string.IsNullOrEmpty(m_tidTarget)) {
+			return m_tracker.FormatDescription(m_tidDesc, targetValue);
+		} else {
+			return m_tracker.FormatDescription(m_tidDesc, targetValue, LocalizationManager.SharedInstance.Localize(m_tidTarget));
+		}
 	}
 
 	/// <summary>

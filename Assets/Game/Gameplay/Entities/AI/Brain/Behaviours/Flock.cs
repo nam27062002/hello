@@ -4,9 +4,9 @@ using System.Collections;
 namespace AI {
 	namespace Behaviour {		
 		[System.Serializable]
-		public class FlockData : StateComponentData {
-			public float changeLeaderTime = 5f;
+		public class FlockData : StateComponentData {			
 			public float separation;
+			public float oscillationSpeed = 1f;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Flock")]
@@ -14,9 +14,9 @@ namespace AI {
 
 			private FlockData m_data;
 
-			private float m_timer;
 			private float m_updateOffsetTimer;
 			private Vector3 m_offset;
+			private float m_fase;
 
 			private bool m_changeFormationOrientation;
 
@@ -31,10 +31,7 @@ namespace AI {
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<FlockData>();
 				m_changeFormationOrientation = false;
-			}
 
-			protected override void OnEnter(State oldState, object[] param) {
-				m_timer = m_data.changeLeaderTime;		
 				Group group = m_machine.GetGroup();
 
 				if (group != null && group.HasOffsets()) {
@@ -43,7 +40,21 @@ namespace AI {
 					m_offset = UnityEngine.Random.insideUnitSphere * m_data.separation;
 				}
 
+				m_machine.position = m_pilot.homePosition + m_offset;
+			}
+
+			protected override void OnEnter(State oldState, object[] param) {				
 				m_updateOffsetTimer = 0f;
+
+				Group group = m_machine.GetGroup();
+
+				if (group != null && group.HasOffsets()) {
+					m_offset = group.GetOffset(m_pilot.m_machine, m_data.separation);
+				} else {
+					m_offset = UnityEngine.Random.insideUnitSphere * m_data.separation;
+				}
+
+				m_fase = Random.Range(0.5f, 4f);
 
 				m_changeFormationOrientation = group != null && (group.formation == Group.Formation.Triangle);
 			}
@@ -52,20 +63,7 @@ namespace AI {
 				Group group = m_machine.GetGroup();
 
 				// Every few seconds we change the leader of this flock
-				if (group != null) {
-					/*if (group.count > 1) {
-						if (m_data.changeLeaderTime > 0f && m_machine.GetSignal(Signals.Type.Leader)) {
-							m_timer -= Time.deltaTime;
-							if (m_timer <= 0) {
-								m_timer = m_data.changeLeaderTime;
-
-								group.ChangeLeader();
-
-								m_updateOffsetTimer = 0f;
-							}
-						}
-					}*/
-
+				if (group != null) {					
 					m_updateOffsetTimer -= Time.deltaTime;
 					if (m_updateOffsetTimer <= 0f) {
 						m_offset = group.GetOffset(m_pilot.m_machine, m_data.separation);
@@ -80,7 +78,14 @@ namespace AI {
 					m_offset = group.GetOffset(m_pilot.m_machine, m_data.separation);
 				}
 
-				m_pilot.GoTo(m_pilot.target + m_offset);
+				// add variation to movement
+				Vector3 offset = m_offset;
+				if (!m_machine.GetSignal(Signals.Type.Leader) && m_data.oscillationSpeed > 0.05f) {
+					offset.y += m_data.oscillationSpeed * (Mathf.Sin(Time.timeSinceLevelLoad) + Mathf.Cos(Time.timeSinceLevelLoad * m_fase)) * m_data.separation * 0.5f;
+					offset.z += m_data.oscillationSpeed * (Mathf.Sin(Time.timeSinceLevelLoad * m_fase) + Mathf.Cos(Time.timeSinceLevelLoad)) * m_data.separation * 0.25f;
+				}
+
+				m_pilot.GoTo(m_pilot.target + offset);
 			}
 		}
 	}

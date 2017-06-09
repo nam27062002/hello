@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 114000013672329336}
   - component: {fileID: 114000012669857030}
   - component: {fileID: 114000011716939334}
-  - component: {fileID: 114000012488899708}
+  - component: {fileID: 114739869877443192}
   - component: {fileID: 114432696441164756}
   - component: {fileID: 114000011637225726}
   - component: {fileID: 54000013371132386}
@@ -683,6 +683,7 @@ GameObject:
   - component: {fileID: 4088437061491218}
   - component: {fileID: 198048676373901094}
   - component: {fileID: 199098196797404146}
+  - component: {fileID: 114142428396452538}
   m_Layer: 0
   m_Name: PS_MagneticSphere
   m_TagString: Untagged
@@ -1717,6 +1718,7 @@ MonoBehaviour:
   m_wingsIdleSound: 
   m_wingsFlyingSound: 
   m_eatSound: 
+  m_eatHoldSound: 
   m_wingsWindSound: 
   m_wingsStrongFlap: 
   m_levelUpSound: 
@@ -1797,67 +1799,17 @@ MonoBehaviour:
   m_blendSpeedFactor: 10
   m_energy: 10
   m_energyDrainSec: 1
+  m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: 5ba1a977b24c0472ea425663825d467a, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speedMultiplier":1.5,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"speedMultiplier":1.5,"chaseTimeout":2,"cooldown":{"min":3,"max":6},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"shootingTier":2,"checkType":0,"dragonSizeRangeMultiplier":10,"shutdownRange":{"min":1,"max":1},"dataType":"AI.Behaviour.PetSearchShootTargetData","editorFolded":false},{"projectileName":"PF_PetMagneticProjectile","projectileSpawnTransformName":"Fire_Dummy","damage":0,"canFollowTarget":false,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":true,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":20,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"timeSecondAction":{"min":7,"max":10},"dataType":"AI.Behaviour.PetDecideActionData","editorFolded":false}]'
+  m_serializedJson: '[{"speedMultiplier":1.5,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"speedMultiplier":1.5,"chaseTimeout":2,"cooldown":{"min":3,"max":6},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"shootingTier":2,"checkType":0,"dragonSizeRangeMultiplier":10,"shutdownRange":{"min":1,"max":1},"dataType":"AI.Behaviour.PetSearchShootTargetData","editorFolded":false},{"projectileName":"PF_PetMagneticProjectile","projectileSpawnTransformName":"Fire_Dummy","damage":0,"canFollowTarget":false,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":true,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":22,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"timeSecondAction":{"min":7,"max":10},"dataType":"AI.Behaviour.PetDecideActionData","editorFolded":false}]'
   m_databaseKey: PF_PetMagnetic
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
   m_avoidWater: 0
---- !u!114 &114000012488899708
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 112168}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_useGravity: 0
-    m_walkOnWalls: 0
-    m_mass: 1
-    m_defaultUpVector: 0
-    m_orientationSpeed: 360
-    m_faceDirection: 1
-    m_useDragonStyleRotation: 0
-    m_rollRotation: 0
-    m_limitHorizontalRotation: 0
-    m_faceLeftAngle: -90
-    m_faceRightAngle: 90
-    m_limitVerticalRotation: 1
-    m_faceUpAngle: 320
-    m_faceDownAngle: 40
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 0
-  m_sensor:
-    m_senseFire: 1
-    m_sightRadius: 0
-    m_maxRadius: 0
-    m_minRadius: 0
-    m_hysteresisOffset: 0
-    m_senseAbove: 1
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 0, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0.25
-      max: 1.25
-  m_onSpawnSound: 
-  m_rotateToMouth: 0
-  m_inflammable:
-    m_ashesAsset: 
-    m_burningTime: 0
-    m_dissolveTime: 1.5
-    m_ashExceptions: []
 --- !u!114 &114000012669857030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1891,12 +1843,17 @@ MonoBehaviour:
     name: PS_Blood_Explosion_Medium
     path: Blood
     offset: {x: 0, y: 0, z: 0}
+  m_holdingFreezeParticle:
+    name: PS_IceExplosionSmall
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_burpSound: 
   m_canEatEntities: 1
   m_eaterTier: 2
   m_isPet: 1
   m_isAquatic: 0
   m_canMultipleLatchOnPlayer: 0
+  m_damageOnBitePlayer: 10
 --- !u!114 &114000013672329336
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1909,6 +1866,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: pet_0
+--- !u!114 &114142428396452538
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1246743877531320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 0
+  m_scale: 1
+  m_transform: {fileID: 0}
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 0
+  m_resetFirst: 0
 --- !u!114 &114432696441164756
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1932,6 +1907,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114739869877443192
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3085e02792f6243cc9d8323aba91b804, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_affectedByDragonTrample: 0
+  m_enableSensor: 0
+  m_sensor:
+    m_senseFire: 1
+    m_sightRadius: 0
+    m_maxRadius: 0
+    m_minRadius: 0
+    m_hysteresisOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
+    m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
+    m_senseDelay:
+      min: 0.25
+      max: 1.25
+  m_edible:
+    m_rotateToMouth: 0
+  m_inflammable:
+    m_ashesAsset: 
+    m_burningTime: 0
+    m_dissolveTime: 1.5
+    m_ashExceptions: []
+  m_onSpawnSound: 
+  m_airMotion:
+    m_mass: 1
+    m_defaultUpVector: 0
+    m_orientationSpeed: 360
+    m_dragonStyleRotation: 0
+    m_faceDirection: 1
+    m_rollRotation: 0
+    m_rollAngle: 35
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 320
+    m_faceDownAngle: 40
 --- !u!135 &135000013338795870
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -4696,7 +4721,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -331056023
+  randomSeed: 328132573
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -15172,7 +15197,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1617196176
+  randomSeed: 221220304
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -25552,7 +25577,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1721373964
+  randomSeed: 190367995
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -30814,7 +30839,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -622408260
+  randomSeed: 2053670221
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -38701,7 +38726,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1443722088
+  randomSeed: 1871477464
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -43963,7 +43988,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1107993348
+  randomSeed: 614983957
   InitialModule:
     serializedVersion: 3
     enabled: 1

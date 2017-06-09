@@ -103,6 +103,7 @@
 				float alfa = clamp((intensity) -_AlphaThreshold, 0.0, 1.0);
 				fixed4 colf = fixed4(col, alfa * _Alpha) * i.vCol;
 				clip(colf.a - 0.1);
+				//colf.a = 0.5;
 				return colf;
 			}
 

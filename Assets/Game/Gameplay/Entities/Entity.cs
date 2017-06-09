@@ -13,7 +13,7 @@ public class Entity : IEntity {
 	// Exposed to inspector
 	[EntitySkuList]
 	[SerializeField] private string m_sku;
-	public string sku { get { return m_sku; } }
+	public override string sku { get { return m_sku; } }
 
 	[SerializeField] private bool m_dieOutsideFrustum = true;
 	public bool dieOutsideFrustum
@@ -80,7 +80,7 @@ public class Entity : IEntity {
 	private static float m_powerUpXpMultiplier = 0;	// XP power up multiplier
 
 	/************/
-	protected virtual void Awake() {
+	protected override void Awake() {
 		base.Awake();
 		// [AOC] Obtain the definition and initialize important data
 		InitFromDef();
@@ -112,6 +112,7 @@ public class Entity : IEntity {
 
 		m_reward.alcohol = m_def.GetAsFloat("alcohol",0);
 		m_reward.origin = m_def.Get("sku");
+		m_reward.category = m_def.Get("category");
 
 		// Simple data
 		m_goldenChance = m_def.GetAsFloat("goldenChance");
@@ -190,12 +191,12 @@ public class Entity : IEntity {
 			newReward.coins = 0;
 		}
 
-		if (_burnt){
+		if (_burnt) {
 			newReward.alcohol = 0;
 		}
 
 		// Give PC?
-		if(!m_isPC) {
+		if (!m_isPC) {
 			newReward.pc = 0;
 		}
 

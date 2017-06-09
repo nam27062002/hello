@@ -41,6 +41,7 @@ GameObject:
   - component: {fileID: 114995655168398052}
   - component: {fileID: 114575154559732234}
   - component: {fileID: 135158328591725760}
+  - component: {fileID: 114969195815019654}
   m_Layer: 16
   m_Name: PF_FlourPLACEHOLDER
   m_TagString: Untagged
@@ -88,16 +89,68 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_damageBase: 5
   m_damageMultiplier: 1
-  m_damageDuration: 0.5
-  m_damageType: 6
-  m_knockBackIntensity: 2
+  m_damageDuration: 0.25
+  m_damageType: 1
+  m_knockBackIntensity: 0
   m_visualActivationRadius: 0
   m_initialState: 2
   m_initialDelay: 0
   m_idleDuration: 5
   m_activationDuration: 1
   m_activeDuration: -1
-  m_particlesPrefab: {fileID: 0}
+  m_poisonParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
+  m_poisonParticleRotation: {x: 0, y: 0, z: 0}
   m_view: {fileID: 0}
   m_animator: {fileID: 0}
   m_onActiveSound: 
@@ -106,7 +159,19 @@ MonoBehaviour:
   m_coneRotation: {x: 0, y: 0, z: 0}
   m_coneLength: 2
   m_coneArc: 45
+  m_animEvents: {fileID: 0}
   m_visualActivationRadiusSqr: 0
+--- !u!114 &114969195815019654
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1371496961716566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114995655168398052
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2889,8 +2954,8 @@ ParticleSystem:
         m_Mode: 0
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
-      minColor: {r: 0.9764706, g: 0.79607844, b: 0.6313726, a: 1}
-      maxColor: {r: 0.80784315, g: 0.59607846, b: 0.56078434, a: 1}
+      minColor: {r: 0.7647059, g: 0.58431375, b: 0.40392157, a: 1}
+      maxColor: {r: 0.88235295, g: 0.7647059, b: 0.5058824, a: 1}
       minMaxState: 2
     startSize:
       scalar: 2.5
@@ -5205,7 +5270,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4c1f57ec47eb11943b702537ab2af59a, type: 2}
+  - {fileID: 2100000, guid: 8d57faf195d1d164999692335ebe561d, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0

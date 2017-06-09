@@ -6,6 +6,7 @@ namespace AI {
 		[System.Serializable]
 		public class IdleData : StateComponentData {
 			public Range restTime = new Range(2f, 4f);
+			public bool randomLookAt = true;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Idle")]
@@ -34,6 +35,17 @@ namespace AI {
 			protected override void OnEnter(State oldState, object[] param) {
 				m_timer = m_data.restTime.GetRandom();
 				m_pilot.SetMoveSpeed(0, false);
+
+				if (m_data.randomLookAt) {
+					Vector3 dir = Vector3.back;
+					if (m_machine.direction.x >= 0f) 
+						dir.x = Random.Range(0.1f, 1f);
+					else 
+						dir.x = Random.Range(-1f, -0.1f);
+					dir.Normalize();
+
+					m_pilot.SetDirection(dir);
+				}
 			}
 
 			protected override void OnUpdate() {

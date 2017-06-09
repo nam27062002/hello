@@ -28,7 +28,8 @@ public enum GameEvents {
 	PROFILE_COINS_CHANGED,		// params: long _oldAmount, long _newAmount
 	PROFILE_PC_CHANGED,			// params: long _oldAmount, long _newAmount
 	PROFILE_CURRENCY_CHANGED,	// params: UserProfile.Currency _currency, long _oldAmount, long _newAmount
-	PROFILE_MAP_UPGRADED,		// params: int mapLevel
+	PROFILE_MAP_UNLOCKED,		// no params
+	TUTORIAL_STEP_TOGGLED,		// params: TutorialStep _step, bool _completed
 	
 	// Game logic events
 	GAME_LEVEL_LOADED,			// no params
@@ -50,7 +51,8 @@ public enum GameEvents {
 	DRUNK_TOGGLED,				// params: bool _isDrunk
 	BIGGER_DRAGON_NEEDED,		// params: DragonTier _requiredTierSku (use COUNT for generic message), string _entitySku
 	UNDERWATER_TOGGLED,			// params: bool _activated
-	BREAK_OBJECT_BIGGER_DRAGON, // no params
+    INTOSPACE_TOGGLED,          // params: bool _activated
+    BREAK_OBJECT_BIGGER_DRAGON, // no params
 	BREAK_OBJECT_NEED_TURBO,	// no params
 
 	// Entity events
@@ -58,6 +60,7 @@ public enum GameEvents {
 	ENTITY_BURNED,				// params: Transform _entity, Reward _reward
 	ENTITY_DESTROYED,			// params: Transform _entity, Reward _reward
 	FLOCK_EATEN,				// params: Transform _entity, Reward _reward
+	STAR_COMBO,
 	ENTITY_ESCAPED,				// params: Transform _entity
 
 	// Player events
@@ -65,7 +68,7 @@ public enum GameEvents {
 	PLAYER_LOST_SHIELD,			// params: DamageType _type, Transform _originTransform
 	PLAYER_HEALTH_MODIFIER_CHANGED,	// params: DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier
 	PLAYER_STATE_CHANGED,		// params: DragonPlayer.EState _oldState, DragonPlayer.EState _newState
-	PLAYER_KO,					// params: DamageType
+	PLAYER_KO,					// params: DamageType _type, Transform _source
 	PLAYER_DIED,				// no params
 	PLAYER_PET_PRE_FREE_REVIVE,			// no params
 	PLAYER_FREE_REVIVE,			// no params
@@ -95,6 +98,10 @@ public enum GameEvents {
 	MENU_DRAGON_DISGUISE_CHANGE, // params: string _dragonSku
 	MENU_DRAGON_PET_CHANGE,		 // params: string _dragonSku, int _slotIdx, string _newPetSku
 
+	MENU_SCREEN_TRANSITION_REQUESTED,	// params: MenuScreen _from, MenuScreen _to
+	MENU_SCREEN_TRANSITION_START,		// params: MenuScreen _from, MenuScreen _to
+	MENU_SCREEN_TRANSITION_END,			// params: MenuScreen _from, MenuScreen _to
+
 	// Mission events
 	MISSION_COMPLETED,			// params: Mission _mission
 	MISSION_REMOVED,			// params: Mission _newMission
@@ -120,7 +127,9 @@ public enum GameEvents {
 	
 	// UI events
 	UI_INGAME_PC_FEEDBACK_END,		// no params
-	UI_TOGGLE_CURRENCY_COUNTERS,	// bool _show
+	UI_TOGGLE_CURRENCY_COUNTERS,	// params: bool _show
+	UI_MAP_ZOOM_CHANGED,			// params: float _zoomFactor (percentage relative to initial zoom level (0.5x, 1x, 2x, etc, the smaller the closer)
+	UI_MAP_CENTER_TO_DRAGON,		// Request centering the map to the dragon! params: float _scrollSpeed (use <= 0 for instant)
 
 	// Camera events
 	CAMERA_INTRO_DONE,			// no params
@@ -133,7 +142,12 @@ public enum GameEvents {
 
     // Device events
     DEVICE_RESOLUTION_CHANGED,  // params: Vector2 _newResolution
-    DEVICE_ORIENTATION_CHANGED  // params: DeviceOrientation _newOrientation
+    DEVICE_ORIENTATION_CHANGED,  // params: DeviceOrientation _newOrientation
+
+    // Settigns events
+    TILT_CONTROL_TOGGLE,		// params: Bool _useTile
+	TILT_CONTROL_CALIBRATE,		// no params, use to force a tilt calibration (only in-game)
+	TILT_CONTROL_SENSITIVITY_CHANGED	// params: float _sensitivity
 }
 
 //------------------------------------------------------------------------//

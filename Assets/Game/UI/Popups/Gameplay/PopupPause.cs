@@ -1,102 +1,159 @@
-// PopupMissionsIngame.cs
+// PopupPause.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 16/12/2015.
-// Copyright (c) 2015 Ubisoft. All rights reserved.
+// Created by Alger Ortín Castellví on 30/03/2017.
+// Copyright (c) 2017 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-using System;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Temp popup to show active missions during the game.
+/// In-game pause popup.
 /// </summary>
-[RequireComponent(typeof(PopupController))]
-public class PopupPause : MonoBehaviour {
+public class PopupPause : PopupPauseBase {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/PF_PopupPause";
+	public const string PATH = "UI/Popups/InGame/PF_PopupPause";
 
 	public enum Tabs {
 		MISSIONS,
-		MAP,
 		OPTIONS,
+		FAQ,
 
 		COUNT
 	}
 
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	// Shortcut to tabs system
+	private TabSystem m_tabs = null;
+	private TabSystem tabs {
+		get {
+			if(m_tabs == null) {
+				m_tabs = GetComponent<TabSystem>();
+			}
+			return m_tabs;
+		}
+	}
+
+	// Internal
+	private bool m_endGame = false;
+	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
-		// This popup won't be destroyed during the whole game, but we want to destroy it upon game ending
-		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnd);
+	override protected void Awake() {
+		base.Awake();
+	}
+
+	/// <summary>
+	/// First update call.
+	/// </summary>
+	private void Start() {
+
+	}
+
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+
+	}
+
+	/// <summary>
+	/// Component has been disabled.
+	/// </summary>
+	private void OnDisable() {
+
+	}
+
+	/// <summary>
+	/// Called every frame
+	/// </summary>
+	private void Update() {
+
 	}
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	private void OnDestroy() {
-		// Unsubscribe to external events
-		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnd);
+	override protected void OnDestroy() {
+		// Remove listeners
+		m_popup.OnClosePostAnimation.RemoveListener(OnClosePostAnimation);
+
+		base.OnDestroy();
 	}
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// End game button has been pressed
+	/// </summary>
+	public void OnEndGameButton() {
+		// Activate flag and close popup
+		m_endGame = true;
+		GetComponentInParent<PopupController>().Close(true);
+	}
+
+	/// <summary>
+	/// Dragon info button has been pressed.
+	/// </summary>
+	public void OnDragonInfoButton() {
+		// Open the dragon info popup and initialize it with the current dragon's data
+		PopupDragonInfo popup = PopupManager.OpenPopupInstant(PopupDragonInfo.PATH).GetComponent<PopupDragonInfo>();
+		popup.Init(DragonManager.currentDragon);
+	}
+
+	/// <summary>
 	/// Open animation is about to start.
 	/// </summary>
-	public void OnOpenPreAnimation() {
-		// Pause the game
-		GameSceneController gameController = InstanceManager.gameSceneController;
-		if(gameController != null) {
-			gameController.PauseGame(true);
-		}
+	override public void OnOpenPreAnimation() {
+		// Call parent
+		base.OnOpenPreAnimation();
 
-		// Hide the tabs during the first run (tutorial)
-		if(UsersManager.currentUser.gamesPlayed < 1 && SceneManager.GetActiveScene().name != "SC_Popups") {
+		// Hide the mission tab during the first run (tutorial)
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN) && SceneManager.GetActiveScene().name != "SC_Popups") {
 			// Get the tab system component
-			TabSystem tabs = GetComponent<TabSystem>();
 			if(tabs != null) {
 				// Set options tab as initial screen
-				tabs.initialScreen = tabs.GetScreen((int)Tabs.OPTIONS);
+				tabs.SetInitialScreen((int)Tabs.OPTIONS);
 				//tabs.GoToScreen((int)Tabs.OPTIONS, NavigationScreen.AnimType.NONE);
 
-				// Hide all buttons
-				for(int i = 0; i < tabs.m_tabButtons.Count; i++) {
-					tabs.m_tabButtons[i].gameObject.SetActive(false);
-				}
+				// Hide unwanted buttons
+				tabs.m_tabButtons[(int)Tabs.MISSIONS].gameObject.SetActive(false);
 			}
 		}
 	}
 
+
 	/// <summary>
 	/// Close animation has finished.
 	/// </summary>
-	public void OnClosePostAnimation() {
-		// Resume game
-		if(InstanceManager.gameSceneController != null) {
-			InstanceManager.gameSceneController.PauseGame(false);
-		}
-	}
+	override public void OnClosePostAnimation() {
+		// Call parent
+		base.OnClosePostAnimation();
 
-	/// <summary>
-	/// The game has eneded.
-	/// </summary>
-	private void OnGameEnd() {
-		// Destroy this popup
-		GameObject.Destroy(this.gameObject);
+		// End the game?
+		if(m_endGame) {
+			if(InstanceManager.gameSceneController != null) {
+				InstanceManager.gameSceneController.EndGame();
+			}
+		}
 	}
 }

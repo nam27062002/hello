@@ -206,7 +206,7 @@ public static class EditorGUILayoutExt {
 		selectedIdx = EditorGUILayout.Popup(_label, selectedIdx, options, _layoutOptions);
 
 		// Return new selection
-		if(selectedIdx < _options.Length) {
+		if(selectedIdx > 0 && selectedIdx < _options.Length) {
 			return _options[selectedIdx];
 		}
 		return null;

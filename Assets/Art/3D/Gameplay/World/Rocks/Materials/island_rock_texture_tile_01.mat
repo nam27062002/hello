@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: island_rock_texture_tile_01
-  m_Shader: {fileID: 4800000, guid: 52c5ffafd0b8d7745b23aaf4e3254094, type: 3}
+  m_Shader: {fileID: 4800000, guid: 19dde0312a65c514cba5f3bd41f40562, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -49,7 +49,7 @@ Material:
         name: _MainTex
       second:
         m_Texture: {fileID: 2800000, guid: 6048d8669d888784f83d18b5088ee0b0, type: 3}
-        m_Scale: {x: 5, y: 5}
+        m_Scale: {x: 3, y: 3}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
@@ -79,7 +79,7 @@ Material:
         name: _SecondTexture
       second:
         m_Texture: {fileID: 2800000, guid: 0421fdf77331d4608994040bf0edfcce, type: 3}
-        m_Scale: {x: 3, y: 3}
+        m_Scale: {x: 4, y: 4}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
@@ -88,6 +88,12 @@ Material:
     - first:
         name: _Cutoff
       second: 0.5
+    - first:
+        name: _DarkenDistance
+      second: 20
+    - first:
+        name: _DarkenPosition
+      second: 0
     - first:
         name: _DetailNormalMapScale
       second: 1
@@ -124,6 +130,9 @@ Material:
     - first:
         name: _SrcBlend
       second: 1
+    - first:
+        name: _StencilMask
+      second: 5
     - first:
         name: _UVSec
       second: 0

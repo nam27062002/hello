@@ -10,7 +10,7 @@ GameObject:
   - component: {fileID: 400704}
   - component: {fileID: 9558306}
   - component: {fileID: 11431294}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25,7 +25,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 445530}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Jaw
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 497182}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_RArm_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,7 +55,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 405482}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,7 +70,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 416762}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Tail_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +85,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 401898}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_LArm_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,7 +100,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 446478}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Legs_Digit_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -115,7 +115,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 419442}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Legs_Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130,7 +130,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 413984}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_LArm_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,7 +145,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 499976}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_LArm_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -160,7 +160,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 473974}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Legs_Palms
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -176,7 +176,7 @@ GameObject:
   m_Component:
   - component: {fileID: 445430}
   - component: {fileID: 13703098}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -209,7 +209,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 452198}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_RArm_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -224,7 +224,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 471000}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Legs_Digit_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -241,7 +241,7 @@ GameObject:
   - component: {fileID: 471064}
   - component: {fileID: 11438448}
   - component: {fileID: 11456858}
-  - component: {fileID: 11482668}
+  - component: {fileID: 114674344583441840}
   - component: {fileID: 11407270}
   - component: {fileID: 11436980}
   - component: {fileID: 136000013736614776}
@@ -261,7 +261,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 411990}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Legs_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -276,7 +276,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 401984}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -291,7 +291,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 464196}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_RArm_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -306,7 +306,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 429268}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Eagle_Legs_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -634,6 +634,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_knockback: 0
+  m_timeBetweenHits: 0.5
+  m_damageType: 0
+  m_trail: {fileID: 0}
+  m_trailParticles: []
 --- !u!114 &11407270
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -653,10 +657,10 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":16,"acceleration":15,"damage":25,"retreatTime":5,"attackPoint":"attack_4","dataType":"AI.Behaviour.ChargeData","editorFolded":false},{"boostSpeed":10,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"timeBeforeBackHome":0.5,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":16,"acceleration":15,"damage":25,"retreatTime":5,"attackPoint":"attack_4","dataType":"AI.Behaviour.ChargeData","editorFolded":false},{"boostSpeed":20,"panicSpeed":40,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":20,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"timeBeforeBackHome":0.5,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"seconds":3,"dataType":"AI.Behaviour.TimerBData","editorFolded":false}]'
   m_databaseKey: PF_Hawk
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 3.5
+  m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!114 &11422592
@@ -672,6 +676,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Eagle_Legs_Palms
   m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
 --- !u!114 &11431294
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -710,26 +715,266 @@ MonoBehaviour:
     name: PF_feathers_3D
     path: 
     offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 0.14705884, g: 0.097546, b: 0.06596022, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
     offset: {x: 0, y: 0, z: 0}
-  m_onEatenAudio: 
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
+  m_onEatenAudio: hd_hawk_dead
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
     offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
   m_onExplosionAudio: 
   m_onAttackAudio: hd_hawk_attack
   m_onScaredAudio: 
@@ -763,57 +1008,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sku: Hawk
   m_dieOutsideFrustum: 1
---- !u!114 &11482668
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 182380}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_useGravity: 0
-    m_walkOnWalls: 0
-    m_mass: 20
-    m_defaultUpVector: 0
-    m_orientationSpeed: 180
-    m_faceDirection: 1
-    m_useDragonStyleRotation: 0
-    m_rollRotation: 1
-    m_limitHorizontalRotation: 0
-    m_faceLeftAngle: -90
-    m_faceRightAngle: 90
-    m_limitVerticalRotation: 1
-    m_faceUpAngle: 340
-    m_faceDownAngle: 20
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 1
-  m_sensor:
-    m_senseFire: 0
-    m_sightRadius: 9
-    m_maxRadius: 5
-    m_minRadius: 3
-    m_hysteresisOffset: 0
-    m_senseAbove: 0
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: -0.84, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0
-      max: 0
-  m_onSpawnSound: 
-  m_rotateToMouth: 0
-  m_inflammable:
-    m_ashesAsset: 
-    m_burningTime: 0
-    m_dissolveTime: 1.5
-    m_ashExceptions: []
 --- !u!137 &13703098
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -895,9 +1089,59 @@ Rigidbody:
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 112
+  m_Interpolate: 0
+  m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &114674344583441840
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 182380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3085e02792f6243cc9d8323aba91b804, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_affectedByDragonTrample: 0
+  m_enableSensor: 1
+  m_sensor:
+    m_senseFire: 1
+    m_sightRadius: 7
+    m_maxRadius: 4
+    m_minRadius: 2
+    m_hysteresisOffset: 0
+    m_senseAbove: 0
+    m_senseBelow: 1
+    m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
+    m_senseDelay:
+      min: 0
+      max: 0
+  m_edible:
+    m_rotateToMouth: 0
+  m_inflammable:
+    m_ashesAsset: 
+    m_burningTime: 0
+    m_dissolveTime: 1.5
+    m_ashExceptions: []
+  m_onSpawnSound: 
+  m_airMotion:
+    m_mass: 5
+    m_defaultUpVector: 0
+    m_orientationSpeed: 180
+    m_dragonStyleRotation: 0
+    m_faceDirection: 1
+    m_rollRotation: 1
+    m_rollAngle: 35
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -45
+    m_faceRightAngle: 45
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 340
+    m_faceDownAngle: 20
 --- !u!136 &136000013736614776
 CapsuleCollider:
   m_ObjectHideFlags: 1

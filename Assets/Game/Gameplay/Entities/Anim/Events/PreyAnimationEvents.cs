@@ -6,15 +6,25 @@ public class PreyAnimationEvents : MonoBehaviour {
 	public delegate void OnAttackStartDelegate();
 	public delegate void OnAttackDealDamageDelegate();
 	public delegate void OnAttackEndDelegate();
+	public delegate void OnEnableWeaponDelegate();
+	public delegate void OnDisableWeaponDelegate();
 	public delegate void OnEatDelegate();
 	public delegate void OnStandUpDelegate();
+	public delegate void OnHitEndDelegate();
+	public delegate void OnInterruptDelegate();
+	public delegate void OnAttackEventIdDelegate( int id);
 
 	public event OnAttachprojectile 		onAttachProjectile;
 	public event OnAttackStartDelegate 		onAttackStart;
 	public event OnAttackDealDamageDelegate onAttackDealDamage;
 	public event OnAttackEndDelegate 		onAttackEnd;
+	public event OnEnableWeaponDelegate		onEnableWeapon;
+	public event OnDisableWeaponDelegate	onDisableWeapon;
 	public event OnEatDelegate 				onEat;
 	public event OnStandUpDelegate			onStandUp;
+	public event OnHitEndDelegate			onHitEnd;
+	public event OnInterruptDelegate 		onInterrupt;
+	public event OnAttackEventIdDelegate 		onAttackEventId;
 
 	// To avoid blend trees to fire the same event twice in one frame we will use a flag
 	// For the moment we use attack start flag for the archer
@@ -51,6 +61,18 @@ public class PreyAnimationEvents : MonoBehaviour {
 		}
 	}
 
+	public void EnableWeapon() {
+		if (onEnableWeapon != null) {
+			onEnableWeapon();
+		}
+	}
+
+	public void DisableWeapon() {
+		if (onDisableWeapon != null) {
+			onDisableWeapon();
+		}
+	}
+
 	public void EatEvent() {
 		if (onEat != null)
 			onEat();
@@ -59,6 +81,24 @@ public class PreyAnimationEvents : MonoBehaviour {
 	public void OnStandUpEvent() {
 		if (onStandUp != null) {
 			onStandUp();
+		}
+	}
+
+	public void HitEnd() {
+		if (onHitEnd != null) {
+			onHitEnd();
+		}
+	}
+
+	public void Interrupt() {
+		if (onInterrupt != null) {
+			onInterrupt();
+		}
+	}
+
+	public void AttackEventId( int id ) {
+		if (onAttackEventId != null){
+			onAttackEventId(id);
 		}
 	}
 }

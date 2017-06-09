@@ -51,6 +51,11 @@ public class HungryLetter : MonoBehaviour
 		{
 			return;
 		}
+		if (m_letterManager.IsLetterCollected(m_letter))
+		{
+			return;
+		}
+
 		// notify that this letter has been collected.
 		m_letterManager.LetterCollected(this);
 		// disable the collider.
@@ -60,10 +65,10 @@ public class HungryLetter : MonoBehaviour
 		// disable particle and map marker.
 		// TODO: Recover
 		// m_mapMarker.HideOnMap = true;
-		m_particle.Stop();
+		m_particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
-        ParticleSystem.EmissionModule em = m_particle.emission;
-        em.enabled = false;
+        // ParticleSystem.EmissionModule em = m_particle.emission;
+        // em.enabled = false;
     }
 
 	//------------------------------------------------------------
@@ -79,6 +84,15 @@ public class HungryLetter : MonoBehaviour
 		{
 			m_mapMarker.OnUpdateMarkerStatus();
 		}
+
+		m_particle.Play();
+		// ParticleSystem.EmissionModule em = m_particle.emission;
+        // em.enabled = true;
+
+		enabled = true;
+		m_collider.enabled = true;
+		ChangeLayersBack();
+		gameObject.transform.localScale = Vector3.one;
 	}
 
 	public void ChangeLayers()
@@ -88,6 +102,13 @@ public class HungryLetter : MonoBehaviour
 		gameObject.layer = LayerMask.NameToLayer("Default");
 		m_mesh.layer = LayerMask.NameToLayer("UI");
 	}
+
+	public void ChangeLayersBack()
+	{
+		gameObject.layer = LayerMask.NameToLayer("Triggers");
+		m_mesh.layer = LayerMask.NameToLayer("Default");
+	}
+
 
 	public HungryLettersManager GetHungryLettersManager( ) {
 		return m_letterManager;

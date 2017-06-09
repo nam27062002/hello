@@ -49,6 +49,14 @@ public class WorldFeedbackSpawner : MonoBehaviour {
     public int m_flockBonusFeedbackMax = 2;
     public int m_escapedFeedbackMax = 2;
 
+	private PoolHandler m_scoreFeedbackPoolHandler;
+	private PoolHandler m_coinsFeedbackPoolHandler;
+	private PoolHandler m_pcFeedbackPoolHandler;
+	private PoolHandler m_killFeedbackPoolHandler;
+	private PoolHandler m_flockBonusFeedbackPoolHandler;
+	private PoolHandler m_escapedFeedbackPoolHandler;
+
+
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//      	
@@ -64,18 +72,18 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			if(m_scoreFeedbackContainer != null) {
 				parent = m_scoreFeedbackContainer.transform;
 			}
-			PoolManager.CreatePool(m_scoreFeedbackPrefab, parent, m_scoreFeedbackMax, true, false);
+			m_scoreFeedbackPoolHandler = UIPoolManager.CreatePool(m_scoreFeedbackPrefab, parent, m_scoreFeedbackMax, true, false);
 		}
 
 		// Coins
 		if(m_coinsFeedbackPrefab != null) {
-			PoolManager.CreatePool(m_coinsFeedbackPrefab, m_coinsFeedbackMax, true, false);
+			m_coinsFeedbackPoolHandler = UIPoolManager.CreatePool(m_coinsFeedbackPrefab, m_coinsFeedbackMax, true, false);
 		}
 
 		// PC
 		if(m_pcFeedbackPrefab != null) {
 			// Use a dedicated camera as parent, that way the feedback will be positioned relative to the viewport
-			PoolManager.CreatePool(m_pcFeedbackPrefab, m_3dFeedbackContainer.transform, 2, false, false);
+			m_pcFeedbackPoolHandler = UIPoolManager.CreatePool(m_pcFeedbackPrefab, m_3dFeedbackContainer.transform, 2, false, false);
 		}
 
 		// Kill Feedback
@@ -84,7 +92,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			if(m_killFeedbackContainer != null) {
 				parent = m_killFeedbackContainer.transform;
 			}
-			PoolManager.CreatePool(m_killFeedbackPrefab, parent, m_killFeedbackMax, false, false);
+			m_killFeedbackPoolHandler = UIPoolManager.CreatePool(m_killFeedbackPrefab, parent, m_killFeedbackMax, false, false);
 		}
 			
 		// Flock Bonus
@@ -93,7 +101,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			if(m_scoreFeedbackContainer != null) {
 				parent = m_scoreFeedbackContainer.transform;
 			}
-			PoolManager.CreatePool(m_flockBonusFeedbackPrefab, parent, m_flockBonusFeedbackMax, true, false);
+			m_flockBonusFeedbackPoolHandler = UIPoolManager.CreatePool(m_flockBonusFeedbackPrefab, parent, m_flockBonusFeedbackMax, true, false);
 		}
 
 		// Escape
@@ -103,7 +111,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			if(m_escapeFeedbackContainer != null) {
 				parent = m_escapeFeedbackContainer.transform;
 			}
-			PoolManager.CreatePool(m_escapedFeedbackPrefab, parent, m_escapedFeedbackMax, false, false);
+			m_escapedFeedbackPoolHandler = UIPoolManager.CreatePool(m_escapedFeedbackPrefab, parent, m_escapedFeedbackMax, false, false);
 		}
 
         Cache_Init();
@@ -123,6 +131,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnDestroyed);
 		Messenger.AddListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.AddListener<Transform, Reward>(GameEvents.STAR_COMBO, OnStarCombo);
 		Messenger.AddListener<Transform>(GameEvents.ENTITY_ESCAPED, OnEscaped);
         Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);        
     }
@@ -137,6 +146,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnDestroyed);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.RemoveListener<Transform, Reward>(GameEvents.STAR_COMBO, OnStarCombo);
 		Messenger.RemoveListener<Transform>(GameEvents.ENTITY_ESCAPED, OnEscaped);
         Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
     }
@@ -247,18 +257,17 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		}
 
 		// Coins
-		if(m_coinsFeedbackPrefab != null && _reward.coins > 0) {
+		if(m_coinsFeedbackPrefab != null && _reward.coins > 0 && ((_reward.origin != null && _reward.origin.CompareTo("GoodJunkCoin") != 0 && _reward.origin.CompareTo("letter") != 0) || _reward.origin == null )) {	// if its no coin
             CacheItemData itemData = m_cacheDatas[ECacheTypes.Coins].GetCacheItemDataAvailable();
             if (itemData != null)
             {
-                itemData.Spawn(CacheWatch.ElapsedMilliseconds, worldPos, _reward.score);                
-            }           
+                itemData.Spawn(CacheWatch.ElapsedMilliseconds, worldPos, _reward.coins);                
+            }
 		}
 
 		// PC
 		if(m_pcFeedbackPrefab != null && _reward.pc > 0) {
-			GameObject obj = PoolManager.GetInstance(m_pcFeedbackPrefab.name);
-			obj.SetActive(true);
+			m_pcFeedbackPoolHandler.GetInstance();
 		}
 	}
 
@@ -307,6 +316,23 @@ public class WorldFeedbackSpawner : MonoBehaviour {
         }           		
 	}
 
+	/// <summary>
+	/// A full group of stars has been eaten.
+	/// </summary>
+	/// <param name="_entity">Entity.</param>
+	/// <param name="_reawrd">Reawrd.</param>
+	private void OnStarCombo(Transform _entity, Reward _reward) {		
+		// Spawn flock feedback bonus, score will be displayed as any other score feedback		
+		string text = LocalizationManager.SharedInstance.Localize("TID_STARS_REWARD");
+
+		// Get an instance from the pool and spawn it!
+		TextCacheItemData itemData = m_cacheDatas[ECacheTypes.FlockBonus].GetCacheItemDataAvailable() as TextCacheItemData;
+		if (itemData != null)
+		{
+			itemData.SpawnText(CacheWatch.ElapsedMilliseconds, _entity.position, text);
+			m_feedbacksQueue.Enqueue(itemData.Controller);
+		}           		
+	}
 
 	private void OnEscaped(Transform _entity) {
 		SpawnEscapedFeedback(_entity);
@@ -363,14 +389,16 @@ public class WorldFeedbackSpawner : MonoBehaviour {
     private abstract class CacheData
     {
         private CacheItemData[] CacheItemDatas;
+		private PoolHandler m_poolHandler;
 
-        public CacheData(int itemsAmount, string prefabName) {
+		public CacheData(int itemsAmount, PoolHandler _poolHandler) {
             CacheItemDatas = new CacheItemData[itemsAmount];
+			m_poolHandler = _poolHandler;
 
             // Instantiate all game objects in order to make sure they already exist when they have to be spawned
             GameObject go;
-            for (int i = 0; i < itemsAmount; i++) {
-                go = PoolManager.GetInstance(prefabName, false);
+            for (int i = 0; i < itemsAmount; i++) {				
+				go = m_poolHandler.GetInstance(false);
                 CacheItemDatas[i] = CreateItemData(0, go);
             }            
         }
@@ -382,8 +410,8 @@ public class WorldFeedbackSpawner : MonoBehaviour {
                 if (PoolManager.instance != null) {
                     int count = CacheItemDatas.Length;
                     for (int i = 0; i < count; i++) {
-                        if (CacheItemDatas[i].GameObject != null) {
-                            PoolManager.ReturnInstance(CacheItemDatas[i].GameObject);
+                        if (CacheItemDatas[i].GameObject != null) {							
+							m_poolHandler.ReturnInstance(CacheItemDatas[i].GameObject);
                         }
                     }
                 }
@@ -409,7 +437,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
     }
 
     private class ScoreCacheData : CacheData {
-        public ScoreCacheData(int itemsAmount, string prefabName) : base(itemsAmount, prefabName) {
+		public ScoreCacheData(int itemsAmount, PoolHandler _poolHandler) : base(itemsAmount, _poolHandler) {
         }
 
         protected override CacheItemData CreateItemData(long timeStamp, GameObject go)
@@ -419,7 +447,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
     }
 
     private class CoinsCacheData : CacheData {
-        public CoinsCacheData(int itemsAmount, string prefabName) : base(itemsAmount, prefabName) {}
+		public CoinsCacheData(int itemsAmount, PoolHandler _poolHandler) : base(itemsAmount, _poolHandler) {}
 
         protected override CacheItemData CreateItemData(long timeStamp, GameObject go) {
             return new CoinsCacheItemData(timeStamp, go);
@@ -428,7 +456,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 
     private class TextCacheData : CacheData
     {
-        public TextCacheData(int itemsAmount, string prefabName) : base(itemsAmount, prefabName) { }
+		public TextCacheData(int itemsAmount, PoolHandler _poolHandler) : base(itemsAmount, _poolHandler) { }
 
         protected override CacheItemData CreateItemData(long timeStamp, GameObject go)
         {
@@ -529,23 +557,23 @@ public class WorldFeedbackSpawner : MonoBehaviour {
             m_cacheDatas = new Dictionary<ECacheTypes, CacheData>();
             
             // Score cache data
-            CacheData cacheData = new ScoreCacheData(m_scoreFeedbackMax, m_scoreFeedbackPrefab.name);
+			CacheData cacheData = new ScoreCacheData(m_scoreFeedbackMax, m_scoreFeedbackPoolHandler);
             m_cacheDatas.Add(ECacheTypes.Score, cacheData);
 
             // Coins cache data
-            cacheData = new CoinsCacheData(m_coinsFeedbackMax, m_coinsFeedbackPrefab.name);
+			cacheData = new CoinsCacheData(m_coinsFeedbackMax, m_coinsFeedbackPoolHandler);
             m_cacheDatas.Add(ECacheTypes.Coins, cacheData);
 
             // Kill feedback cache data
-            cacheData = new TextCacheData(m_killFeedbackMax, m_killFeedbackPrefab.name);
+			cacheData = new TextCacheData(m_killFeedbackMax, m_killFeedbackPoolHandler);
             m_cacheDatas.Add(ECacheTypes.Kill, cacheData);
 
             // Flock bonus cache data
-            cacheData = new TextCacheData(m_flockBonusFeedbackMax, m_flockBonusFeedbackPrefab.name);
+            cacheData = new TextCacheData(m_flockBonusFeedbackMax, m_flockBonusFeedbackPoolHandler);
             m_cacheDatas.Add(ECacheTypes.FlockBonus, cacheData);            
 
             // Escaped feedback cache data
-            cacheData = new TextCacheData(m_escapedFeedbackMax, m_escapedFeedbackPrefab.name);
+            cacheData = new TextCacheData(m_escapedFeedbackMax, m_escapedFeedbackPoolHandler);
             m_cacheDatas.Add(ECacheTypes.Escaped, cacheData);            
         }
     }

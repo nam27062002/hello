@@ -22,7 +22,7 @@ public class PopupInfoPet : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/PF_PopupInfoPet";
+	public const string PATH = "UI/Popups/Tutorial/PF_PopupInfoPet";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -46,12 +46,14 @@ public class PopupInfoPet : MonoBehaviour {
 	[SerializeField] private Localizer m_unlockInfoText = null;
 	[Space]
 	[SerializeField] private GameObject m_panel = null;
-	[SerializeField] private GameObject m_arrows = null;
+	[SerializeField] private ShowHideAnimator m_arrowAnimPrev = null;
+	[SerializeField] private ShowHideAnimator m_arrowanimNext = null;
 	[SerializeField] private PopupInfoPetScroller m_scroller = null;
 
 	// Internal
 	private MenuPetLoader m_petLoader = null;
 	private Sequence m_scrollSequence = null;
+	private bool m_hasScrolled = false;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -90,9 +92,6 @@ public class PopupInfoPet : MonoBehaviour {
 
 		// Select target def
 		m_scroller.SelectItem(_petDef);
-
-		// Set arrows visibility
-		m_arrows.SetActive(m_scroller.items.Count > 1);	// At least 2 pets
 
 		// Initialize with currently selected pet
 		Refresh();
@@ -168,6 +167,10 @@ public class PopupInfoPet : MonoBehaviour {
 				m_unlockInfoText.Localize("TID_PET_UNLOCK_INFO");
 			}
 		}
+
+		// Update arrows visibility
+		m_arrowAnimPrev.Set(m_scroller.items.Count > 1 && m_scroller.selectedItem != m_scroller.items.First());	// At least 2 pets and selected pet is not the first one
+		m_arrowanimNext.Set(m_scroller.items.Count > 1 && m_scroller.selectedItem != m_scroller.items.Last());	// At least 2 pets and selected pet is not the last one
 	}
 
 	//------------------------------------------------------------------------//
@@ -221,6 +224,9 @@ public class PopupInfoPet : MonoBehaviour {
 		// Ignore if animating
 		//if(m_scrollSequence != null && m_scrollSequence.IsPlaying()) return;
 
+		// Record selection change
+		m_hasScrolled = true;
+
 		// Figure out animation direction and launch it!
 		bool backwards = _oldIdx > _newIdx;
 		if(_looped) backwards = !backwards;	// Reverse animation direction if a loop was completed
@@ -241,5 +247,32 @@ public class PopupInfoPet : MonoBehaviour {
 	public void OnPreviousPet() {
 		// UISelector will do it for us
 		m_scroller.SelectPreviousItem();
+	}
+
+	/// <summary>
+	/// The popup is about to be opened.
+	/// </summary>
+	public void OnOpenPreAnimation() {
+		// Reset scrolled flag
+		m_hasScrolled = false;
+	}
+
+	/// <summary>
+	/// The popup has just closed.
+	/// </summary>
+	public void OnClosePostAnimation() {
+		// If we have changed selected pet, scroll to it!
+		if(m_hasScrolled || true) {	// Do it always for now
+			// If active, scroll pets screen to the current pet!
+			if(InstanceManager.menuSceneController == null) return;
+			if(InstanceManager.menuSceneController.screensController.currentScreenIdx != (int)MenuScreens.PETS) return;	// Only if we are in the pets screen!
+
+			// Get pets screen ref
+			PetsScreenController petsScreen = InstanceManager.menuSceneController.GetScreen(MenuScreens.PETS).GetComponent<PetsScreenController>();
+			if(petsScreen == null) return;
+
+			// Tell it to scroll to the target pet!
+			petsScreen.ScrollToPet(m_scroller.selectedItem.sku, false, 0.15f);
+		}
 	}
 }

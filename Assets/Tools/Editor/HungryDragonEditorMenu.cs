@@ -7,6 +7,8 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -18,20 +20,22 @@ using UnityEditor.SceneManagement;
 /// Setup of the Hungry Dragon menu entry in the Unity Editor menu, giving fast access to several tools.
 /// </summary>
 [InitializeOnLoad]	// To call the constructor upon Unity initialization
-public class HungryDragonEditorMenu {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
-	private static readonly string DEFINITIONS_FOLDER = "Assets/Resources/Definitions/";
-	private static readonly string SINGLETONS_FOLDER = "Assets/Resources/Singletons/";
+public class HungryDragonEditorMenu
+{
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
+    private static readonly string DEFINITIONS_FOLDER = "Assets/Resources/Definitions/";
+    private static readonly string SINGLETONS_FOLDER = "Assets/Resources/Singletons/";
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Constructor.
-	/// </summary>
-	static HungryDragonEditorMenu() {
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    static HungryDragonEditorMenu()
+    {
         // Subscribe to the scene update call
         //SceneView.onSceneGUIDelegate += OnSceneGUI;
 
@@ -39,202 +43,264 @@ public class HungryDragonEditorMenu {
         Shader.EnableKeyword(FeatureSettingsManager.SHADERS_KEY_HIGH);
     }
 
-	/// <summary>
-	/// Scene has been updated.
-	/// </summary>
-	/// <param name="_sceneview">Target scene view.</param>
-	public static void OnSceneGUI(SceneView _sceneview) {
-		/*Event e = Event.current;
+    /// <summary>
+    /// Scene has been updated.
+    /// </summary>
+    /// <param name="_sceneview">Target scene view.</param>
+    public static void OnSceneGUI(SceneView _sceneview)
+    {
+        /*Event e = Event.current;
 		if(e != null && e.keyCode != KeyCode.None) {
 			Debug.Log("Key pressed in editor: " + e.keyCode);
 		}*/
-	}
+    }
 
-	//------------------------------------------------------------------------//
-	// MENU SETUP															  //
-	//------------------------------------------------------------------------//
-	//--------------------------------------------------- CONTENT ----------------------------------------------------//
-	[MenuItem("Hungry Dragon/Content/Game Settings", false, 0)]
-	public static void ShowSettings() { OpenFile("GameSettings.asset", SINGLETONS_FOLDER); }
+    //------------------------------------------------------------------------//
+    // MENU SETUP															  //
+    //------------------------------------------------------------------------//
+    //--------------------------------------------------- CONTENT ----------------------------------------------------//
+    [MenuItem("Hungry Dragon/Content/Game Settings", false, 0)]
+    public static void ShowSettings() { OpenFile("GameSettings.asset", SINGLETONS_FOLDER); }
 
-	[MenuItem("Hungry Dragon/Content/UI Constants", false, 0)]
-	public static void ShowUIConstants() { OpenFile("UIConstants.asset", SINGLETONS_FOLDER); }
+    [MenuItem("Hungry Dragon/Content/UI Constants", false, 0)]
+    public static void ShowUIConstants() { OpenFile("UIConstants.asset", SINGLETONS_FOLDER); }
 
-	[MenuItem("Hungry Dragon/Content/Reload Rules", false, 50)]
-	public static void ReloadDefinitions() { ContentManager.InitContent(true); }
+    [MenuItem("Hungry Dragon/Content/Reload Rules", false, 50)]
+    public static void ReloadDefinitions() { ContentManager.InitContent(true); }
 
-	//---------------------------------------------------- TOOLS -----------------------------------------------------//
-	/// <summary>
-	/// Saves all assets to disk. Useful to make sure changes in scriptable object instances are stored.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Save Assets", false, 0)]
-	public static void SaveAssets() {
-		AssetDatabase.SaveAssets();
-	}
+    //---------------------------------------------------- TOOLS -----------------------------------------------------//
+    /// <summary>
+    /// Saves all assets to disk. Useful to make sure changes in scriptable object instances are stored.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Save Assets", false, 0)]
+    public static void SaveAssets()
+    {
+        AssetDatabase.SaveAssets();
+    }
 
-	/// <summary>
-	/// Delete all empty folders under the "Assets" directory.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Delete Empty Folders", false, 1)]
-	public static void DoDeleteEmptyFolders() {
-		DeleteEmptyFolders.DeleteFolders();
-	}
+    /// <summary>
+    /// Delete all empty folders under the "Assets" directory.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Delete Empty Folders", false, 1)]
+    public static void DoDeleteEmptyFolders()
+    {
+        DeleteEmptyFolders.DeleteFolders();
+    }
 
-	/// <summary>
-	/// Simple content viewer.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Rules Reader", false, 2)]
-	public static void ShowRulesReader() {
-		RulesReaderEditorWindow.ShowWindow(); 
-	}
+    /// <summary>
+    /// Simple content viewer.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Rules Reader", false, 2)]
+    public static void ShowRulesReader()
+    {
+        RulesReaderEditorWindow.ShowWindow();
+    }
 
-	/// <summary>
-	/// Find missing references on scene.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Find Missing References", false, 3)]
-	public static void FindMissingReferences() {
-		FindMissingReferencesTool.FindMissingReferences(false);
-	}
+    /// <summary>
+    /// Find missing references on scene.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Find Missing References", false, 3)]
+    public static void FindMissingReferences()
+    {
+        FindMissingReferencesTool.FindMissingReferences(false);
+    }
 
-	/// <summary>
-	/// Find missing references on scene.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Find Missing And NULL References", false, 4)]
-	public static void FindMissingAndNullReferences() {
-		FindMissingReferencesTool.FindMissingReferences(true);
-	}
+    /// <summary>
+    /// Find missing references on scene.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Find Missing And NULL References", false, 4)]
+    public static void FindMissingAndNullReferences()
+    {
+        FindMissingReferencesTool.FindMissingReferences(true);
+    }
 
-	/// <summary>
-	/// Easily change time scale in runtime.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Time Scaler", false, 50)]
-	public static void TimeScalerWindow() {
-		TimeScaler.ShowWindow();
-	}
+    /// <summary>
+    /// Easily change time scale in runtime.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Time Scaler", false, 50)]
+    public static void TimeScalerWindow()
+    {
+        TimeScaler.ShowWindow();
+    }
 
-	/// <summary>
-	/// Preview of all Ease functions.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Ease Preview Tool", false, 51)]
-	public static void EasePreviewToolWindow() {
-		EasePreviewTool.ShowWindow();
-	}
+    /// <summary>
+    /// Preview of all Ease functions.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Ease Preview Tool", false, 51)]
+    public static void EasePreviewToolWindow()
+    {
+        EasePreviewTool.ShowWindow();
+    }
 
-	/// <summary>
-	/// Custom toolbar for the project.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Hungry Dragon Toolbar", false, 100)]
-	public static void HungryDragonToolbar() {
-		HungryDragonEditorToolbar.ShowWindow();
-	}
+    /// <summary>
+    /// Custom toolbar for the project.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Hungry Dragon Toolbar", false, 100)]
+    public static void HungryDragonToolbar()
+    {
+        HungryDragonEditorToolbar.ShowWindow();
+    }
 
-	/// <summary>
-	/// Custom tools for the dragon selection menu.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Dragon Selection Menu Tools", false, 150)]
-	public static void DragonMenuTools() {
-		DragonMenuToolsEditorWindow.ShowWindow();
-	}
+    /// <summary>
+    /// Custom tools for the dragon selection menu.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Dragon Selection Menu Tools", false, 150)]
+    public static void DragonMenuTools()
+    {
+        DragonMenuToolsEditorWindow.ShowWindow();
+    }
 
-	/// <summary>
-	/// Regenerate the icon for the selected entity prefab.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (selected entity prefabs)", false, 200)]
-	public static void GenerateSpawnerIconsSelected() {
-		// Show error message if nothing is selected
-		if(Selection.gameObjects.Length == 0) {
-			EditorUtility.DisplayDialog("Error", "No prefab is selected.", "Ok");
-			return;
-		}
+    /// <summary>
+    /// Regenerate the icon for the selected entity prefab.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (selected entity prefabs)", false, 200)]
+    public static void GenerateSpawnerIconsSelected()
+    {
+        // Show error message if nothing is selected
+        if (Selection.gameObjects.Length == 0)
+        {
+            EditorUtility.DisplayDialog("Error", "No prefab is selected.", "Ok");
+            return;
+        }
 
-		int removeString = "Assets/Resources/".Length;
-		int removeExternsion =  ".prefab".Length;
-		// Pick selected prefab adn check that it's valid
-		for(int i = 0; i < Selection.gameObjects.Length; i++) {
-			// Check that prefab corresponds to an entity
-			GameObject entityPrefab = Selection.gameObjects[i];
-			if(entityPrefab.GetComponent<Entity>() == null) {
-				EditorUtility.DisplayDialog("Error", "Selected prefab " + entityPrefab.name + " doesn't have the Entity component.", "Skip It");
-				continue;
-			}
+        int removeString = "Assets/Resources/".Length;
+        int removeExternsion = ".prefab".Length;
+        // Pick selected prefab adn check that it's valid
+        for (int i = 0; i < Selection.gameObjects.Length; i++)
+        {
+            // Check that prefab corresponds to an entity
+            GameObject entityPrefab = Selection.gameObjects[i];
+            if (entityPrefab.GetComponent<Entity>() == null)
+            {
+                EditorUtility.DisplayDialog("Error", "Selected prefab " + entityPrefab.name + " doesn't have the Entity component.", "Skip It");
+                continue;
+            }
 
-			string myPath = AssetDatabase.GetAssetPath( entityPrefab );
-			if ( !string.IsNullOrEmpty(myPath) )
-			{
-				myPath = myPath.Substring( removeString);
-				myPath = myPath.Substring(0, myPath.Length - removeExternsion);
-				SpawnerIconGeneratorEditor.GenerateIcon(entityPrefab, Colors.transparentWhite, myPath + ".png");
-			}
+            string myPath = AssetDatabase.GetAssetPath(entityPrefab);
+            if (!string.IsNullOrEmpty(myPath))
+            {
+                myPath = myPath.Substring(removeString);
+                myPath = myPath.Substring(0, myPath.Length - removeExternsion);
+                SpawnerIconGeneratorEditor.GenerateIcon(entityPrefab, Colors.transparentWhite, myPath + ".png");
+            }
 
 
-			// Generate icon for the selected prefab
-			// SpawnerIconGeneratorEditor.GenerateIcon(entityPrefab, Colors.transparentWhite);
-		}
-	}
+            // Generate icon for the selected prefab
+            // SpawnerIconGeneratorEditor.GenerateIcon(entityPrefab, Colors.transparentWhite);
+        }
+    }
 
-	/// <summary>
-	/// Regenerate the icon for all the spawners in the scene.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (all, takes a while)", false, 201)]
-	public static void GenerateSpawnerIconsAll() {
-		//SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();
-		SpawnerIconGeneratorEditor.GenerateSpawnerIconsInResources(Colors.transparentWhite);
-	}   
+    /// <summary>
+    /// Regenerate the icon for all the spawners in the scene.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (all, takes a while)", false, 201)]
+    public static void GenerateSpawnerIconsAll()
+    {
+        //SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();
+        SpawnerIconGeneratorEditor.GenerateSpawnerIconsInResources(Colors.transparentWhite);
+    }
 
     //--------------------------------------------------- OTHERS -----------------------------------------------------//
     /// <summary>
     /// Add menu item to be able to open the level editor.
     /// </summary>
     [MenuItem("Hungry Dragon/Level Editor", false, 50)]
-	public static void ShowLevelEditorWindow() {
-		// Show existing window instance. If one doesn't exist, make one.
-		LevelEditor.LevelEditorWindow window = LevelEditor.LevelEditorWindow.instance;
+    public static void ShowLevelEditorWindow()
+    {
+        // Show existing window instance. If one doesn't exist, make one.
+        LevelEditor.LevelEditorWindow window = LevelEditor.LevelEditorWindow.instance;
 
-		// Setup window
-		window.titleContent = new GUIContent("Level Editor");
-		window.minSize = new Vector2(330f, 350f);	// Min required width to properly fit all the content
-		//window.maxSize = new Vector2(window.minSize.x, window.minSize.y);
-		window.position = new Rect(100f, 100f, 540f, Screen.currentResolution.height - 110f);
-		
-		// Make sure everything is initialized properly
-		window.Init();
-		window.CloseNonEditableScenes();
-		
-		// Show it
-		window.ShowTab();
-	}
+        // Setup window
+        window.titleContent = new GUIContent("Level Editor");
+        window.minSize = new Vector2(330f, 350f);   // Min required width to properly fit all the content
+                                                    //window.maxSize = new Vector2(window.minSize.x, window.minSize.y);
+        window.position = new Rect(100f, 100f, 540f, Screen.currentResolution.height - 110f);
 
-	/// <summary>
-	/// Add menu item to be open the persistence profiles editor.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Persistence Profiles", false, 51)]
-	public static void ShowPersistenceProfilesWindow() {
-		// Show existing window instance. If one doesn't exist, make one.
-		PersistenceProfilesEditorWindow window = PersistenceProfilesEditorWindow.instance;
-		
-		// Setup window
-		window.titleContent = new GUIContent("Persistence Profiles");
-		window.minSize = new Vector2(PersistenceProfilesEditorWindow.SPACING + PersistenceProfilesEditorWindow.PROFILE_LIST_COLUMN_WIDTH + PersistenceProfilesEditorWindow.PROFILE_VIEW_COLUMN_WIDTH + PersistenceProfilesEditorWindow.SPACING, PersistenceProfilesEditorWindow.MIN_WINDOW_HEIGHT);	// Fixed width, arbitrary minimum
-		window.maxSize = new Vector2(window.minSize.x, float.PositiveInfinity);						// Fixed width, limitless
-		
-		// Reset some vars
-		window.m_newProfileName = "";
-		
-		// Show it
-		window.Show();	// In this case we actually want the window to be closed when losing focus so the temp object created to display savegames is properly destroyed
-	}
+        // Make sure everything is initialized properly
+        window.Init();
+        window.CloseNonEditableScenes();
+
+        // Show it
+        window.ShowTab();
+    }
 
     /// <summary>
-	/// Add menu item to be open the persistence profiles editor.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Profiler Settings", false, 51)]
-    public static void ShowProfilerWindow()
+    /// Add menu item to be open the persistence profiles editor.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Persistence Profiles", false, 51)]
+    public static void ShowPersistenceProfilesWindow()
+    {
+        // Show existing window instance. If one doesn't exist, make one.
+        PersistenceProfilesEditorWindow window = PersistenceProfilesEditorWindow.instance;
+
+        // Setup window
+        window.titleContent = new GUIContent("Persistence Profiles");
+        window.minSize = new Vector2(PersistenceProfilesEditorWindow.SPACING + PersistenceProfilesEditorWindow.PROFILE_LIST_COLUMN_WIDTH + PersistenceProfilesEditorWindow.PROFILE_VIEW_COLUMN_WIDTH + PersistenceProfilesEditorWindow.SPACING, PersistenceProfilesEditorWindow.MIN_WINDOW_HEIGHT); // Fixed width, arbitrary minimum
+        window.maxSize = new Vector2(window.minSize.x, float.PositiveInfinity);                     // Fixed width, limitless
+
+        // Reset some vars
+        window.m_newProfileName = "";
+
+        // Show it
+        window.Show();  // In this case we actually want the window to be closed when losing focus so the temp object created to display savegames is properly destroyed
+    }
+
+    /// <summary>
+    /// Add menu item to generate the shaders properties file, which is used by the memory profiler to obtain the set of textures used by a game object
+    /// </summary>
+    [MenuItem("Hungry Dragon/Profiler/Generate shaders properties file", false, 51)]
+    public static void Profiler_GenerateShadersPropertiesFile()
+    {
+        Debug.Log("Generating shaders properties file");
+
+        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
+
+        Dictionary<string, List<string>> data = new Dictionary<string, List<string>>();
+        List<string> properties;
+        Material[] materialList;
+        AssetFinder.FindAssetInContent<Material>(System.IO.Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+
+        Shader shader;
+        int count = materialList.Length;
+        int propertiesCount;
+        string propertyName;
+        for (int c = 0; c < count; c++)
+        {
+            shader = materialList[c].shader;
+
+            if (!data.ContainsKey(shader.name))
+            {
+                properties = new List<string>();
+                propertiesCount = UnityEditor.ShaderUtil.GetPropertyCount(shader);
+                for (int i = 0; i < propertiesCount; i++)
+                {
+                    if (UnityEditor.ShaderUtil.GetPropertyType(shader, i) == UnityEditor.ShaderUtil.ShaderPropertyType.TexEnv)
+                    {
+                        propertyName = UnityEditor.ShaderUtil.GetPropertyName(shader, i);
+                        properties.Add(propertyName);
+                    }
+                }
+
+                data.Add(shader.name, properties);
+            }
+        }
+
+        AssetMemoryProfiler.ShadersSettings_SaveToFile(data);
+
+        AssetDatabase.SaveAssets();
+    }
+
+    /// <summary>
+    /// Add menu item to be open the npcs settings manager editor.
+    /// </summary>
+    [MenuItem("Hungry Dragon/Profiler/NPCs Settings", false, 51)]
+    public static void ShowNpcsSettingsManagerWindow()
     {
         // Show existing window instance. If one doesn't exist, make one.
         ProfilerEditorWindow window = ProfilerEditorWindow.instance;
 
         // Setup window
-        window.titleContent = new GUIContent("Profiler Settings");
+        window.titleContent = new GUIContent("NPCs Settings");
         window.minSize = new Vector2(ProfilerEditorWindow.SPACING + ProfilerEditorWindow.PROFILE_LIST_COLUMN_WIDTH + ProfilerEditorWindow.PROFILE_VIEW_COLUMN_WIDTH + ProfilerEditorWindow.SPACING, ProfilerEditorWindow.MIN_WINDOW_HEIGHT); // Fixed width, arbitrary minimum
         window.maxSize = new Vector2(window.minSize.x, float.PositiveInfinity);                     // Fixed width, limitless        
 
@@ -244,59 +310,167 @@ public class HungryDragonEditorMenu {
 
     //----------------------------------------------- SCENE SHORTCUTS -------------------------------------------------//
     [MenuItem("Hungry Dragon/Scenes/SC_Loading", false, 0)]
-	public static void OpenScene1() { OpenScene("Assets/Game/Scenes/SC_Loading.unity", true); }
+    public static void OpenScene1() { OpenScene("Assets/Game/Scenes/SC_Loading.unity", true); }
 
-	[MenuItem("Hungry Dragon/Scenes/SC_Menu", false, 1)]
-	public static void OpenScene2() { OpenScene("Assets/Game/Scenes/SC_Menu.unity", true); }
+    [MenuItem("Hungry Dragon/Scenes/SC_Menu", false, 1)]
+    public static void OpenScene2() { OpenScene("Assets/Game/Scenes/SC_Menu.unity", true); }
 
-	[MenuItem("Hungry Dragon/Scenes/SC_Game", false, 2)]
-	public static void OpenScene3() { OpenScene("Assets/Game/Scenes/SC_Game.unity", true); }
+    [MenuItem("Hungry Dragon/Scenes/SC_Game", false, 2)]
+    public static void OpenScene3() { OpenScene("Assets/Game/Scenes/SC_Game.unity", true); }
 
+	[MenuItem("Hungry Dragon/Scenes/SC_Results", false, 3)]
+	public static void OpenScene4() { OpenScene("Assets/Game/Scenes/SC_ResultsScreen.unity", false); }
+    
 	[MenuItem("Hungry Dragon/Scenes/SC_Popups", false, 51)]
-	public static void OpenScene4() { OpenScene("Assets/Tests/SC_Popups.unity", false); }
+    public static void OpenScene5() { OpenScene("Assets/Tests/SC_Popups.unity", false); }
 
-	//------------------------------------------------------------------------//
-	// CONTEXT MENU SETUP													  //
-	// Use the "Assets/" prefix to show the option in the Project's view 	  //
-	// context menu															  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Regenerate the icon for the selected entity prefab.
-	/// </summary>
-	[MenuItem("Assets/Hungry Dragon/Generate Spawner Icons", false, 0)]
-	public static void ContextGenerateSpawnerIcons(MenuCommand _command) {
-		GenerateSpawnerIconsSelected();
-	}
 
-	//------------------------------------------------------------------------//
-	// INTERNAL UTILS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Open and select a file (scriptable object, prefab).
-	/// </summary>
-	/// <param name="_fileName">The name of the file, including extension.</param>
-	/// <param name="_folderPath">The path of folder containing such file, optional. From project's root and ending with a '/' (i.e. "Assets/Resources/MyFolder/").</param>
-	public static void OpenFile(string _fileName, string _folderPath) {
-		// Just find and select the scriptable object
-		Object targetObj = AssetDatabase.LoadMainAssetAtPath(_folderPath + _fileName);
-		EditorUtils.FocusObject(targetObj, true, false, true);
-	}
+    //------------------------------------------------------------------------//
+    // CONTEXT MENU SETUP													  //
+    // Use the "Assets/" prefix to show the option in the Project's view 	  //
+    // context menu															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Regenerate the icon for the selected entity prefab.
+    /// </summary>
+    [MenuItem("Assets/Hungry Dragon/Generate Spawner Icons", false, 0)]
+    public static void ContextGenerateSpawnerIcons(MenuCommand _command)
+    {
+        GenerateSpawnerIconsSelected();
+    }
 
-	/// <summary>
-	/// Open the scene with the given name.
-	/// </summary>
-	/// <param name="_sceneName">The path of the scene starting at project root and with extension (e.g. "Assets/MyScenesFolder/MyScene.unity").</param>
-	/// <param name="_closeLevelEditor">Whether to force closing the level editor before opening the scene.</param>
-	public static void OpenScene(string _scenePath, bool _closeLevelEditor) {
-		// Ask to save current scenes first
-		if(!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+    //------------------------------------------------------------------------//
+    // INTERNAL UTILS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Open and select a file (scriptable object, prefab).
+    /// </summary>
+    /// <param name="_fileName">The name of the file, including extension.</param>
+    /// <param name="_folderPath">The path of folder containing such file, optional. From project's root and ending with a '/' (i.e. "Assets/Resources/MyFolder/").</param>
+    public static void OpenFile(string _fileName, string _folderPath)
+    {
+        // Just find and select the scriptable object
+        Object targetObj = AssetDatabase.LoadMainAssetAtPath(_folderPath + _fileName);
+        EditorUtils.FocusObject(targetObj, true, false, true);
+    }
 
-		// If asked to close the level editor, do it now
-		if(_closeLevelEditor) {
-			LevelEditor.LevelEditorWindow.instance.Close();
-		}
+    /// <summary>
+    /// Open the scene with the given name.
+    /// </summary>
+    /// <param name="_sceneName">The path of the scene starting at project root and with extension (e.g. "Assets/MyScenesFolder/MyScene.unity").</param>
+    /// <param name="_closeLevelEditor">Whether to force closing the level editor before opening the scene.</param>
+    public static void OpenScene(string _scenePath, bool _closeLevelEditor)
+    {
+        // Ask to save current scenes first
+        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
 
-		// Just do it
-		EditorSceneManager.OpenScene(_scenePath, OpenSceneMode.Single);	// Will close all open scenes
-	}
+        // If asked to close the level editor, do it now
+        if (_closeLevelEditor)
+        {
+            LevelEditor.LevelEditorWindow.instance.Close();
+        }
+
+        // Just do it
+        EditorSceneManager.OpenScene(_scenePath, OpenSceneMode.Single); // Will close all open scenes
+    }
+
+    #region memory_profiler
+    private static string MEMORY_PROFILER_PATH = "profiler/develop/";
+
+    private static HDMemoryProfiler smMemoryProfiler;
+
+    private static HDMemoryProfiler MemoryProfiler_MP {
+        get {
+            if (smMemoryProfiler == null) {
+                
+                // The profiler depends on the shaders properties, that's why this list is generated the first time the profiler is needed
+                Profiler_GenerateShadersPropertiesFile();
+                smMemoryProfiler = new HDMemoryProfiler();
+            }
+
+            return smMemoryProfiler;
+        }
+    }
+    
+    private static MemorySample MemoryProfiler_SampleFromAll { get; set; }        
+
+    private static void MemoryProfiler_Clear() {
+        if (MemoryProfiler_SampleFromAll != null) {
+            MemoryProfiler_SampleFromAll.Clear();
+        }
+
+        MemoryProfiler_MP.Clear(true);                        
+    }   
+
+    [MenuItem("Hungry Dragon/Profiler/Memory/Take a sample from game object", false, 51)]
+    public static void MemoryProfiler_TakeAsampleFromGO() {
+        MemoryProfiler_MP.Clear(true);
+
+        GameObject go = GameObject.Find("PF_DragonBaby");
+        if (go != null) {
+            MemorySample.ESizeStrategy sizeStrategy = MemorySample.ESizeStrategy.Profiler;
+            AbstractMemorySample sample = MemoryProfiler_MP.GO_TakeASample(go, null, sizeStrategy);
+
+            //Dictionary<string, List<string>> typeGroups = null;
+            Dictionary<string, List<string>> typeGroups = MemoryProfiler_MP.GameTypeGroups;
+            string xml = sample.ToXML(null, null, typeGroups).OuterXml;           
+            Debug.Log(xml);
+            File.WriteAllText(MEMORY_PROFILER_PATH + "memorySampleFromGO", xml);
+        }
+    }   
+
+    /*[MenuItem("Hungry Dragon/Profiler/Memory/Take a sample from all", false, 51)]
+    public static void MemoryProfiler_TakeAsampleFromAll() {
+        Resources.UnloadUnusedAssets();
+        System.GC.Collect();
+        
+        MemoryProfiler_SampleFromAll = MemoryProfiler_MP.All_TakeASample();
+        string xml = MemoryProfiler_SampleFromAll.ToXML().OuterXml;
+        Debug.Log(xml);
+        File.WriteAllText("memorySampleFromAll", xml);        
+    }*/
+
+    [MenuItem("Hungry Dragon/Profiler/Memory/Take a sample from scene", false, 51)]
+    public static void MemoryProfiler_TakeAsampleFromScene()
+    {
+        MemoryProfiler_Clear();
+
+        AbstractMemorySample sample = MemoryProfiler_MP.Scene_TakeASample(false);
+        
+        string xml = sample.ToXML(null, null, MemoryProfiler_MP.GameTypeGroups).OuterXml;
+        Debug.Log(xml);
+        File.WriteAllText(MEMORY_PROFILER_PATH + "memorySampleFromScene", xml);
+    }
+
+    [MenuItem("Hungry Dragon/Profiler/Memory/Take a sample from game", false, 51)]
+    public static void MemoryProfiler_TakeASampleFromGame()
+    {
+        MemoryProfiler_TakeASampleFromGameInternal(false);
+    }
+
+    [MenuItem("Hungry Dragon/Profiler/Memory/Take a sample from game with categories", false, 51)]
+    public static void MemoryProfiler_TakeASampleFromGameWithCategories()
+    {
+        MemoryProfiler_TakeASampleFromGameInternal(true);
+    }
+
+    private static void MemoryProfiler_TakeASampleFromGameInternal(bool withCategories)
+    {
+        MemoryProfiler_Clear();               
+
+        AbstractMemorySample sample;
+        if (withCategories)
+        {
+            sample = MemoryProfiler_MP.Scene_TakeAGameSampleWithCategories(false, HDMemoryProfiler.CATEGORY_SET_NAME_GAME);
+        }
+        else
+        {
+            sample = MemoryProfiler_MP.Scene_TakeAGameSample(false);
+        }
+       
+        string xml = sample.ToXML(null, null, MemoryProfiler_MP.GameTypeGroups).OuterXml;
+        Debug.Log(xml);
+        File.WriteAllText(MEMORY_PROFILER_PATH + "memorySampleFromGame", xml);
+    }
+    #endregion
 }

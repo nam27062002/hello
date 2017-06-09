@@ -98,6 +98,11 @@ namespace FGOL.Plugins.Native
 			return 0;
 		}
 
+		public int GetMaxMemoryUsage()
+		{
+			return 0;
+		}
+
 		public long GetMaxHeapMemory()
 		{
 			return -1;

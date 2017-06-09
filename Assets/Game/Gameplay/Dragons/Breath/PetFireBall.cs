@@ -15,20 +15,24 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 	private bool m_hasBeenShot;
 	private Rect m_rect;
 
+	private PoolHandler m_poolHandler;
+
 
 	// Use this for initialization
 	void Start () 
 	{
 		m_area = GetComponent<CircleArea2D>();
 		m_rect = new Rect();
-		if (m_explosionParticle.IsValid()) {
-			ParticleManager.CreatePool(m_explosionParticle);
-		}
+
+		m_explosionParticle.CreatePool();
+
 		m_colliderMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "WaterPreys", "GroundPreys", "AirPreys");
 
 		m_pMotion = GetComponent<ProjectileMotion>();	
 		if (m_pMotion) m_pMotion.enabled = false;
 		m_hasBeenShot = false;
+
+		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
 	
 	// Update is called once per frame
@@ -105,10 +109,8 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 	}
 
 	public void Explode( bool _hitsDragon )
-	{
-		if (m_explosionParticle.IsValid()) {
-			ParticleManager.Spawn( m_explosionParticle, transform.position);
-		}
+	{		
+		m_explosionParticle.Spawn(transform.position);
 
 		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_area.center, m_area.radius * 3);
 		for (int i = 0; i < preys.Length; i++) {
@@ -125,7 +127,7 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 		FirePropagationManager.instance.FireUpNodes( m_rect, Overlaps, m_fireTier, Vector3.zero);
 
 		gameObject.SetActive(false);
-		PoolManager.ReturnInstance( gameObject );
+		m_poolHandler.ReturnInstance( gameObject );
 	}
 
 	bool Overlaps( CircleAreaBounds _fireNodeBounds )

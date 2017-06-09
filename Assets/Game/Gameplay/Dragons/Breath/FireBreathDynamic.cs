@@ -28,6 +28,9 @@ public class FireBreathDynamic : MonoBehaviour
 
 		[SerializeField]
 		public Type m_type;
+
+		[HideInInspector]
+		public ParticleHandler m_handler;
     }
 
 
@@ -99,6 +102,31 @@ public class FireBreathDynamic : MonoBehaviour
 	private bool m_insideWater = false;
 	private float m_waterHeigth = 0;
 
+    private ParticleSystem[] m_particleList;
+
+
+    void OnEnable()
+    {
+        Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
+    }
+    void OnDisable()
+    {
+        Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
+    }
+
+    void OnBoostToggled(bool value)
+    {
+        ParticleSystem.InheritVelocityModule iVelocityModule;
+        foreach (ParticleSystem psystem in m_particleList)
+        {
+            iVelocityModule = psystem.inheritVelocity;
+//            iVelocityModule.curveMultiplier = value ? 2.0f : 0.7f;
+            iVelocityModule.curveMultiplier = value ? 0.975f : 0.975f;
+        }
+        // Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
+    }
+
+
     public void setEffectScale(float furyBaseLength, float dragonScale)
     {
         m_collisionMaxDistance = (furyBaseLength * dragonScale);
@@ -149,9 +177,8 @@ public class FireBreathDynamic : MonoBehaviour
                 m_collisionPrefabs[i].m_CollisionPrefabPath = "";
             }
 
-            ParticleManager.CreatePool(m_collisionPrefabs[i].m_CollisionPrefab,
-                                       m_collisionPrefabs[i].m_CollisionPrefabPath);
-
+			m_collisionPrefabs[i].m_handler = ParticleManager.CreatePool(m_collisionPrefabs[i].m_CollisionPrefab,
+                                       									 m_collisionPrefabs[i].m_CollisionPrefabPath);
         }
 
         // Cache
@@ -160,6 +187,8 @@ public class FireBreathDynamic : MonoBehaviour
 
         m_whipEnd = transform.FindChild("WhipEnd").gameObject;
         m_collisionPlane = transform.FindChild("WhipEnd/collisionPlane").gameObject;
+
+
 /*
         for( int i = 0; i<m_fireParticles.Count; i++ )
 			m_fireParticles[i].transform.SetLocalScale(m_effectScale);
@@ -175,6 +204,9 @@ public class FireBreathDynamic : MonoBehaviour
 		ReshapeFromWhip();
 
         CreateMesh();
+
+
+        m_particleList = GetComponentsInChildren<ParticleSystem>();
 
     }
 
@@ -412,7 +444,7 @@ public class FireBreathDynamic : MonoBehaviour
 					}
                     if (spawn && Time.time > m_lastTime + cp.m_CollisionDelay)
                     {
-                        GameObject colFire = ParticleManager.Spawn(cp.m_CollisionPrefab, hit.point, cp.m_CollisionPrefabPath);
+						GameObject colFire = cp.m_handler.Spawn(null, hit.point);
                         if (colFire != null)
                         {
                             colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);
@@ -447,7 +479,7 @@ public class FireBreathDynamic : MonoBehaviour
 						bool spawn = false;
 	                    if (spawn && Time.time > m_lastTime + cp.m_CollisionDelay)
 	                    {
-	                        GameObject colFire = ParticleManager.Spawn(cp.m_CollisionPrefab, hit.point, cp.m_CollisionPrefabPath);
+							GameObject colFire = cp.m_handler.Spawn(null, hit.point);
 	                        if (colFire != null)
 	                        {
 	                            colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);

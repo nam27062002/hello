@@ -30,8 +30,15 @@ public class HungryDragonEditorToolbar : EditorWindow {
 	private const float BUTTON_SIZE = 25f;
 	private const float SEPARATOR_SIZE = 10f;
 
-	private const int NUM_BUTTONS = 8;		// Update as needed
-	private const int NUM_SEPARATORS = 1;		// Update as needed
+	private const int NUM_BUTTONS = 12;		// Update as needed
+	private const int NUM_SEPARATORS = 3;		// Update as needed
+
+	private enum Icons {
+		DISGUISES_CAPTURE_TOOL = 0,
+		PETS_CAPTURE_TOOL,
+
+		COUNT
+	}
 
 	//------------------------------------------------------------------------//
 	// STATICS																  //
@@ -52,6 +59,8 @@ public class HungryDragonEditorToolbar : EditorWindow {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Internal
+	private List<Texture> m_icons = new List<Texture>();
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -67,6 +76,31 @@ public class HungryDragonEditorToolbar : EditorWindow {
 
 		// Show it
 		instance.ShowTab();
+	}
+
+	/// <summary>
+	/// Window has been opened.
+	/// </summary>
+	private void OnEnable() {
+		// Reload all icons
+		m_icons.Clear();
+		string[] iconPaths = new string[] {
+			"Assets/Tools/UITools/icon_camera_disguises.png",
+			"Assets/Tools/UITools/icon_camera_pets.png"
+		};
+
+		for(int i = 0; i < (int)Icons.COUNT; i++) {
+			Debug.Assert(i < iconPaths.Length, "<color=red>NO ICON PATH DEFINED FOR ICON " + ((Icons)i).ToString() + "</color>");
+			m_icons.Add(AssetDatabase.LoadAssetAtPath<Texture>(iconPaths[i]));
+		}
+	}
+
+	/// <summary>
+	/// Window has been closed.
+	/// </summary>
+	private void OnDisable() {
+		// Unload icons
+		m_icons.Clear();
 	}
 
 	/// <summary>
@@ -116,6 +150,14 @@ public class HungryDragonEditorToolbar : EditorWindow {
 				HungryDragonEditorMenu.OpenScene3();
 			}
 
+			// Results
+			if(GUILayout.Button(new GUIContent("RES", "Results Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				HungryDragonEditorMenu.OpenScene4();
+			}
+
+			// Add a separator
+			GUILayout.Space(SEPARATOR_SIZE);
+
 			// Level Editor
 			if(GUILayout.Button(new GUIContent("LE", "Level Editor"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				HungryDragonEditorMenu.ShowLevelEditorWindow();
@@ -123,11 +165,21 @@ public class HungryDragonEditorToolbar : EditorWindow {
 
 			// Popups
 			if(GUILayout.Button(new GUIContent("P", "Popups Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				HungryDragonEditorMenu.OpenScene4();
+				HungryDragonEditorMenu.OpenScene5();
 			}
 
 			// Add a separator
 			GUILayout.Space(SEPARATOR_SIZE);
+
+			// UI Disguises Capture Tool
+			if(GUILayout.Button(new GUIContent(m_icons[(int)Icons.DISGUISES_CAPTURE_TOOL], "UI Disguises Capture Tool"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				HungryDragonEditorMenu.OpenScene("Assets/Tools/UITools/SC_DisguisesCaptureTool.unity", true);
+			}
+
+			// UI Pets Capture Tool
+			if(GUILayout.Button(new GUIContent(m_icons[(int)Icons.PETS_CAPTURE_TOOL], "UI Pets Capture Tool"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				HungryDragonEditorMenu.OpenScene("Assets/Tools/UITools/SC_PetsCaptureTool.unity", true);
+			}
 
 			// Egg Test Scene
 			if(GUILayout.Button(new GUIContent("00", "Eggs Test Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {

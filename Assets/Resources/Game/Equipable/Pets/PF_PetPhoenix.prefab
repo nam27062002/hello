@@ -30,7 +30,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 4.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4897437064355290}
@@ -720,7 +720,6 @@ GameObject:
   - component: {fileID: 4154966873562340}
   - component: {fileID: 33610703152325418}
   - component: {fileID: 23659922899563640}
-  - component: {fileID: 95313931924916728}
   m_Layer: 0
   m_Name: OpenCone (1)
   m_TagString: Untagged
@@ -770,6 +769,7 @@ GameObject:
   - component: {fileID: 4275142651916304}
   - component: {fileID: 198339639954208950}
   - component: {fileID: 199653055477777642}
+  - component: {fileID: 114034872661822402}
   m_Layer: 0
   m_Name: PS_FireAura
   m_TagString: Untagged
@@ -838,7 +838,7 @@ GameObject:
   - component: {fileID: 95144398328074758}
   - component: {fileID: 114860669569164406}
   m_Layer: 0
-  m_Name: OpenCone (1)
+  m_Name: OpenCone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -932,6 +932,7 @@ GameObject:
   - component: {fileID: 4730510048177874}
   - component: {fileID: 198634269761918622}
   - component: {fileID: 199942962547828720}
+  - component: {fileID: 114749189899725200}
   m_Layer: 0
   m_Name: Sparkles
   m_TagString: Untagged
@@ -1839,7 +1840,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1607190107314336}
-  m_LocalRotation: {x: -0.033695877, y: 0.6956988, z: 0.032704055, w: 0.7167973}
+  m_LocalRotation: {x: 0.04186565, y: 0.6672611, z: -0.03761347, w: 0.7426945}
   m_LocalPosition: {x: 0, y: -0.23, z: -0.11}
   m_LocalScale: {x: 8, y: 8, z: 8}
   m_Children:
@@ -2179,9 +2180,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1341313886595646}
-  m_LocalRotation: {x: -0.033695877, y: 0.6956988, z: 0.032704055, w: 0.7167973}
+  m_LocalRotation: {x: 0.04186567, y: 0.66726106, z: -0.03761349, w: 0.74269456}
   m_LocalPosition: {x: 0.000000014901161, y: -0.22999954, z: -0.110000625}
-  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children:
   - {fileID: 4154966873562340}
   m_Father: {fileID: 424588}
@@ -2486,23 +2487,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!95 &95313931924916728
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1227223857927026}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 2b7268a8fcdae2149ba50c12fe29fa3d, type: 3}
-  m_Controller: {fileID: 9100000, guid: 88487e464385b6444aaabcabd7c39425, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
 --- !u!95 &95454229215530422
 Animator:
   serializedVersion: 3
@@ -2568,6 +2552,7 @@ MonoBehaviour:
   m_wingsIdleSound: 
   m_wingsFlyingSound: 
   m_eatSound: 
+  m_eatHoldSound: 
   m_wingsWindSound: 
   m_wingsStrongFlap: 
   m_levelUpSound: 
@@ -2685,6 +2670,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: pet_0
+--- !u!114 &114034872661822402
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1320567416356056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 0
+  m_scale: 1
+  m_transform: {fileID: 0}
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 0
+  m_resetFirst: 0
 --- !u!114 &114361397547265102
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2698,6 +2701,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_parentName: Pet_Hip
   m_parentRoot: {fileID: 4000012877512430}
+  m_worldPositionStays: 1
 --- !u!114 &114398525925297784
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2724,6 +2728,7 @@ MonoBehaviour:
   m_wingsIdleSound: 
   m_wingsFlyingSound: 
   m_eatSound: 
+  m_eatHoldSound: 
   m_wingsWindSound: 
   m_wingsStrongFlap: 
   m_levelUpSound: 
@@ -2748,6 +2753,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba1c905da34946d68ce50345b05e48f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_overrideCamera: {fileID: 0}
 --- !u!114 &114687268252911206
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2759,22 +2765,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c151f2f948280407e8ed77eac6c66e15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_useGravity: 0
-    m_walkOnWalls: 0
-    m_mass: 1
-    m_defaultUpVector: 0
-    m_orientationSpeed: 360
-    m_faceDirection: 1
-    m_useDragonStyleRotation: 0
-    m_rollRotation: 0
-    m_limitHorizontalRotation: 0
-    m_faceLeftAngle: -90
-    m_faceRightAngle: 90
-    m_limitVerticalRotation: 1
-    m_faceUpAngle: 320
-    m_faceDownAngle: 40
   m_affectedByDragonTrample: 0
   m_enableSensor: 0
   m_sensor:
@@ -2792,13 +2782,28 @@ MonoBehaviour:
     m_senseDelay:
       min: 0.25
       max: 1.25
-  m_onSpawnSound: 
-  m_rotateToMouth: 0
+  m_edible:
+    m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
     m_dissolveTime: 1.5
     m_ashExceptions: []
+  m_onSpawnSound: 
+  m_airMotion:
+    m_mass: 1
+    m_defaultUpVector: 0
+    m_orientationSpeed: 360
+    m_dragonStyleRotation: 0
+    m_faceDirection: 1
+    m_rollRotation: 0
+    m_rollAngle: 35
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 320
+    m_faceDownAngle: 40
   m_fire: {fileID: 1371148990655892}
   m_view: {fileID: 1807455591130590}
   m_viewWhenBurning: {fileID: 1000014122255018}
@@ -2810,6 +2815,24 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+--- !u!114 &114749189899725200
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1534470124664140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 0
+  m_scale: 1
+  m_transform: {fileID: 0}
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 0
+  m_resetFirst: 0
 --- !u!114 &114860669569164406
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2821,6 +2844,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba1c905da34946d68ce50345b05e48f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_overrideCamera: {fileID: 0}
 --- !u!114 &114871587501049214
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3046,7 +3070,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1145695216
+  randomSeed: 1538722032
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -5611,7 +5635,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1415014757
+  randomSeed: -1863418970
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -8248,7 +8272,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 866504325
+  randomSeed: -1551914165
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10777,7 +10801,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1575227471
+  randomSeed: -1546046606
   InitialModule:
     serializedVersion: 3
     enabled: 1

@@ -40,7 +40,7 @@ public class IncubatorSlot : MonoBehaviour {
 	[Space]
 	[SerializeField] private Slider m_incubationTimeSlider = null;
 	[SerializeField] private TextMeshProUGUI m_incubationTimeText = null;
-	[SerializeField] private TextMeshProUGUI m_skipCostText = null;
+	[SerializeField] private Localizer m_skipButtonText = null;
 	[SerializeField] private UINotification m_newNotification = null;
 
 	// Show/Hide elements
@@ -92,6 +92,14 @@ public class IncubatorSlot : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+		// Initialize all animators hidden
+		if(m_emptySlotAnim != null)			m_emptySlotAnim.ForceHide(false);
+		if(m_pendingIncubationAnim != null)	m_pendingIncubationAnim.ForceHide(false);
+		if(m_incubatingAnim != null)		m_incubatingAnim.ForceHide(false);
+		if(m_readyAnim != null)				m_readyAnim.ForceHide(false);
+		if(m_glowAnim != null)				m_glowAnim.ForceHide(false);
+		if(m_emptyInfoAnim != null)			m_emptyInfoAnim.ForceHide(false);
+
 		// Make sure we're updated
 		Refresh();
 
@@ -118,7 +126,7 @@ public class IncubatorSlot : MonoBehaviour {
 			m_incubationTimeSlider.normalizedValue = targetEgg.incubationProgress;
 
 			// Timer text
-			m_incubationTimeText.text = TimeUtils.FormatTime(targetEgg.incubationRemaining.TotalSeconds, TimeUtils.EFormat.DIGITS, 3);
+			m_incubationTimeText.text = TimeUtils.FormatTime(targetEgg.incubationRemaining.TotalSeconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
 
 			// Skip PC cost - only when changed
 			int costPC = targetEgg.GetIncubationSkipCostPC();
@@ -128,17 +136,9 @@ public class IncubatorSlot : MonoBehaviour {
 
 				// If cost is 0, use the "free" word instead
 				if(costPC == 0) {
-					m_skipCostText.text = UIConstants.GetIconString(
-						LocalizationManager.SharedInstance.Localize("TID_GEN_EXCLAMATION_EXPRESSION", LocalizationManager.SharedInstance.Localize("TID_GEN_FREE")),
-						UIConstants.IconType.PC,
-						UIConstants.IconAlignment.LEFT
-					);
+					m_skipButtonText.Localize("TID_INCUBATOR_SKIP_FREE");
 				} else {
-					m_skipCostText.text = UIConstants.GetIconString(
-						costPC,
-						UIConstants.IconType.PC,
-						UIConstants.IconAlignment.LEFT
-					);
+					m_skipButtonText.Localize("TID_INCUBATOR_SKIP_FOR", StringUtils.FormatNumber(costPC));
 				}
 			}
 		}
@@ -196,21 +196,17 @@ public class IncubatorSlot : MonoBehaviour {
 		// Just in case
 		if(targetEgg == null) return;
 
-		// Resources check
-		long pricePC = (long)targetEgg.GetIncubationSkipCostPC();
-		if(UsersManager.currentUser.pc >= pricePC) {
-			// Instantly finish current incubation
-			if(targetEgg.SkipIncubation()) {
-				UsersManager.currentUser.AddPC(-pricePC);
-				PersistenceManager.Save();
+		// Start purchase flow
+		ResourcesFlow purchaseFlow = new ResourcesFlow("SKIP_EGG_INCUBATION");
+		purchaseFlow.OnSuccess.AddListener(
+			(ResourcesFlow _flow) => {
+				// Instantly finish current incubation
+				if(targetEgg.SkipIncubation()) {
+					PersistenceManager.Save();
+				}
 			}
-		} else {
-			// Open PC shop popup
-			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-
-			// Currency popup / Resources flow disabled for now
-			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-		}
+		);
+		purchaseFlow.Begin((long)targetEgg.GetIncubationSkipCostPC(), UserProfile.Currency.HARD, targetEgg.def);
 	}
 
 	/// <summary>

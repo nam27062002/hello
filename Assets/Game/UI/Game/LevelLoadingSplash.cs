@@ -28,7 +28,7 @@ public class LevelLoadingSplash : MonoBehaviour {
 	// Exposed
 	[SerializeField] private Slider m_progressBar = null;
 	[Space]
-	[SerializeField] private UIScene3DLoader m_dragonPreview = null;
+	[SerializeField] private Image m_dragonIcon = null;
 	[SerializeField] private PowerIcon[] m_powerIcons = null;
 
 	// Internal references
@@ -98,24 +98,15 @@ public class LevelLoadingSplash : MonoBehaviour {
 	private void Initialize() {
 		// Aux vars
 		DragonData currentDragon = DragonManager.GetDragonData(UsersManager.currentUser.currentDragon);
+		DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.diguise);
 
-		// Dragon preview
-		if(m_dragonPreview != null) {
-			MenuDragonLoader dragonLoader = m_dragonPreview.scene.FindComponentRecursive<MenuDragonLoader>();
-			if(dragonLoader != null) {
-				// Load dragon
-				//dragonLoader.removeFresnel = true;
-				dragonLoader.showPets = false;
-				dragonLoader.LoadDragon(currentDragon.def.sku);
-				dragonLoader.dragonInstance.SetAnim(MenuDragonPreview.Anim.POSE_FLY);
-			}
-		}
+		// Dragon image
+		m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + currentDragon.def.sku + "/" + skinDef.Get("icon"));
 
 		// Powers: skin + pets
 		List<DefinitionNode> powerDefs = new List<DefinitionNode>();
 
 		// Skin
-		DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.diguise);
 		if(skinDef == null) {
 			powerDefs.Add(null);
 		} else {

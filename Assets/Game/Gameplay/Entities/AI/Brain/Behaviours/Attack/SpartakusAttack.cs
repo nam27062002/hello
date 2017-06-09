@@ -63,7 +63,7 @@ namespace AI {
 				m_animEvents.onDizzyRecover  += new SpartakusAnimationEvents.OnDizzyRecoverDelegate(DizzyRecover);
 
 				m_pilot.PressAction(Pilot.Action.Attack);
-				m_machine.SetSignal(Signals.Type.Invulnerable, true);
+				m_machine.SetSignal(Signals.Type.InvulnerableBite, true);
 
 				if (m_attacksLeft <= 0) 
 					m_attacksLeft = m_data.consecutiveAttacks;
@@ -72,11 +72,13 @@ namespace AI {
 			}
 
 			protected override void OnExit(State _newState) {
+				m_meleeWeapon.enabled = false;
+
 				m_animEvents.onJumpImpulse   -= new SpartakusAnimationEvents.OnJumpImpulseDelegate(Jump);
 				m_animEvents.onJumpReception -= new SpartakusAnimationEvents.OnJumpReceptionDelegate(EndAttack);
 				m_animEvents.onDizzyRecover  -= new SpartakusAnimationEvents.OnDizzyRecoverDelegate(DizzyRecover);
 
-				m_machine.SetSignal(Signals.Type.Invulnerable, false);
+				m_machine.SetSignal(Signals.Type.InvulnerableBite, false);
 				m_pilot.ReleaseAction(Pilot.Action.Attack);
 				m_pilot.ReleaseAction(Pilot.Action.Button_B);
 				m_pilot.ReleaseAction(Pilot.Action.Jump);
@@ -116,8 +118,10 @@ namespace AI {
 				m_meleeWeapon.enabled = true;
 
 				Vector3 direction = Vector3.right;
-				if (m_machine.enemy.position.x < m_machine.position.x) {
-					direction = Vector3.left;
+				if (m_machine.enemy != null) {
+					if (m_machine.enemy.position.x < m_machine.position.x) {
+						direction = Vector3.left;
+					}
 				}
 				m_pilot.SetDirection(direction, true);
 
@@ -136,7 +140,7 @@ namespace AI {
 					}
 				} else {
 					m_pilot.PressAction(Pilot.Action.Button_B);
-					m_machine.SetSignal(Signals.Type.Invulnerable, false);
+					m_machine.SetSignal(Signals.Type.InvulnerableBite, false);
 
 					m_timer = m_data.dizzyTime;
 

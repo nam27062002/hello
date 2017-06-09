@@ -10,8 +10,6 @@ public class Explosive {
 	private DamageType m_damageType;
 	private float m_radiusSqr;
 
-	private float m_playerRadiusSqr;
-
 	private float m_cameraShakeTime;
 
 	private ParticleData m_particleData;
@@ -29,13 +27,8 @@ public class Explosive {
 		m_particleData = _particleData;
 
 		if (m_particleData != null) {
-			if (m_particleData.IsValid()) {
-				ParticleManager.CreatePool(m_particleData);
-			}
+			m_particleData.CreatePool();
 		}
-
-		SphereCollider sc = InstanceManager.player.GetComponentInChildren<SphereCollider>();
-		m_playerRadiusSqr = sc.radius * sc.radius;
 	}
 
 	public void Explode(Transform _at, float _knockback, bool _triggeredByPlayer) {
@@ -43,10 +36,8 @@ public class Explosive {
 		bool hasPlayerReceivedDamage = _triggeredByPlayer;
 
 		if (!hasPlayerReceivedDamage && m_radiusSqr > 0f) {
-			float dSqr = (dragon.transform.position - _at.position).sqrMagnitude;
-			float rSqr = m_radiusSqr + m_playerRadiusSqr;
-
-			hasPlayerReceivedDamage = (dSqr <= rSqr);
+			float dSqr = InstanceManager.player.dragonMotion.hitBounds.DistanceSqr( _at.position );
+			hasPlayerReceivedDamage = (dSqr <= m_radiusSqr);
 		}
 
 		if (hasPlayerReceivedDamage) {			
@@ -73,10 +64,8 @@ public class Explosive {
 			}
 		}
 
-		if (m_particleData != null) {
-			if (m_particleData.IsValid()) {
-				ParticleManager.Spawn(m_particleData, _at.position + m_particleData.offset);
-			}
+		if (m_particleData != null) {			
+			m_particleData.Spawn(_at.position + m_particleData.offset);
 		}
 	}
 }

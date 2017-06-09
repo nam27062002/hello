@@ -14,17 +14,15 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
+	[SeparatorAttribute("Spawner")]
 	[SerializeField] private float m_spawnTime;
+
+	[SeparatorAttribute("Ground")]
+	[SerializeField] private Collider[] m_ground;
 
 
 	private State m_state;
-	public State state
-	{
-		get
-		{
-			return m_state;
-		}
-	}
+	public State state { get { return m_state; } }
 
 	private float m_respawnTime;
 	private SpawnerConditions m_spawnConditions;
@@ -33,6 +31,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	private Rect m_rect;
 	public Rect boundingRect { get { return m_rect; } }
 	public Quaternion rotation { get { return Quaternion.identity; } }
+	public Vector3 homePosition { get { return transform.position; } }
 
 	private bool m_disableAtFirstUpdate;
 
@@ -91,9 +90,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	}
 
     void OnDestroy() {
-        if (SpawnerManager.instance != null) {
-            SpawnerManager.instance.Unregister(this, true);
-        }
+		if (SpawnerManager.isInstanceCreated)
+            SpawnerManager.instance.Unregister(this, false);
     }
 
 	/// <summary>
@@ -122,12 +120,27 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
     }
 
     public void ForceRemoveEntities() {}
+    public void ForceReset() {}
 
-	public void StartRespawn() {
+    public void StartRespawn() {		
 		// Program the next spawn time
 		m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime;
+
+		for (int i = 0; i < m_ground.Length; ++i) {
+			m_ground[i].isTrigger = true;
+		}
+
 		m_state = State.Respawning;
 	}        
+
+	public bool IsRespawing() {
+		return (m_state == State.Respawning);
+	}
+
+	// this spawner will kill its entities if it is outside camera disable area
+	public bool MustCheckCameraBounds() {
+		return false;
+	}
 
     public bool CanRespawn() {
 		if (m_state == State.Respawning) {
@@ -138,7 +151,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 			} else if (m_spawnConditions == null || m_spawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 				if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
 					bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(m_bounds);
-					//bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(transform.position);	
 					if (isInsideActivationArea) {
 						return true;
 					}
@@ -157,10 +169,15 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	private void Spawn() {
 		gameObject.SetActive(true);
 
-		Initializable[] components = GetComponents<Initializable>();
-		foreach (Initializable component in components) {
-			component.Initialize();
+		ISpawnable[] components = GetComponents<ISpawnable>();
+		foreach (ISpawnable component in components) {
+			component.Spawn(this);
 		}
+
+		for (int i = 0; i < m_ground.Length; ++i) {
+			m_ground[i].isTrigger = false;
+		}
+
 		m_state = State.Idle;
 	}
 

@@ -20,38 +20,45 @@ namespace AI {
 		[SerializeField] private Range m_senseDelay = new Range(0.25f, 1.25f);
 
 		private Transform m_enemy; //enemy should be a Machine.. but dragon doesn't have this component
-		public Transform enemy { 
-			get { return m_enemy; } 
-			set { m_enemy = value; }
-		}
+		public Transform enemy { get { return m_enemy; } }
 
-		private float m_radiusOffsetFactor = 1f;
 		private float m_enemyRadiusSqr;
+		private RectAreaBounds m_enemyBounds;
 		private float m_senseTimer;
 
+		private float m_sightRadiusIn 	= 0f;
+		private float m_sightRadiusOut 	= 0f;
+		private float m_maxRadiusIn 	= 0f;
+		private float m_minRadiusIn 	= 0f;
+		private float m_maxRadiusOut 	= 0f;
+		private float m_minRadiusOut 	= 0f;
+	
 		private static int s_groundMask;
 
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		public MachineSensor() {}
 
 		public override void Init() {
+			float radiusOffsetFactor = m_radiusOffset.GetRandom();
+
 			m_senseTimer = 0f;
 			m_enemyRadiusSqr = 0f;
 
-			/*
-			if (InstanceManager.player != null) {
-				SetupEnemy(InstanceManager.player.transform, InstanceManager.player.dragonEatBehaviour.eatDistanceSqr);
-			}
-			*/
-			m_radiusOffsetFactor = m_radiusOffset.GetRandom();
+			m_sightRadiusIn 	= m_sightRadius * radiusOffsetFactor;
+			m_maxRadiusIn 		= (m_maxRadius * radiusOffsetFactor);
+			m_minRadiusIn 		= (m_minRadius * radiusOffsetFactor);
+
+			m_sightRadiusOut 	= m_sightRadiusIn + m_hysteresisOffset;
+			m_maxRadiusOut 		= m_maxRadiusIn + m_hysteresisOffset;
+			m_minRadiusOut 		= m_minRadiusIn + m_hysteresisOffset;
 
 			s_groundMask = LayerMask.GetMask("Ground", "GroundVisible");			
 		}
 
-		public void SetupEnemy( Transform _tr, float distanceSqr )
-		{
+		public void SetupEnemy(Transform _tr, float distanceSqr, RectAreaBounds _enemyBounds) {
 			m_enemy = _tr;
 			m_enemyRadiusSqr = distanceSqr;
+			m_enemyBounds = _enemyBounds;
 		}
 
 		public void Disable(float _seconds) {
@@ -65,7 +72,6 @@ namespace AI {
 		}
 
 		public override void Update() {
-			bool isFalling = m_machine.GetSignal(Signals.Type.FallDown) && !m_pilot.IsActionPressed(Pilot.Action.Jump);
 			if (m_machine.GetSignal(Signals.Type.Panic)) {
 				m_machine.SetSignal(Signals.Type.Warning, true);
 				m_machine.SetSignal(Signals.Type.Danger, true);
@@ -83,6 +89,11 @@ namespace AI {
 				bool isInsideMinArea = m_machine.GetSignal(Signals.Type.Critical);
 				bool sense = false;
 
+				m_senseTimer -= Time.deltaTime;
+				if (m_senseTimer <= 0f) {
+					m_senseTimer = 0f;
+				}
+
 				if (m_senseAbove && m_senseBelow) {
 					sense = true;
 				} else if (m_senseAbove) {
@@ -91,40 +102,37 @@ namespace AI {
 					sense = m_enemy.position.y < sensorPosition.y;								
 				}
 
-				float fireRadius = 0f;
-				if (m_senseFire) {
-					if (InstanceManager.player.IsFuryOn() || InstanceManager.player.IsSuperFuryOn()) {
-						fireRadius = InstanceManager.player.breathBehaviour.actualLength;
+				if (sense) {
+					float fireRadius = 0f;
+					if (m_senseFire) {
+						if (InstanceManager.player.IsFuryOn() || InstanceManager.player.IsMegaFuryOn()) {
+							fireRadius = InstanceManager.player.breathBehaviour.actualLength;
+						}
 					}
-				}
 
-				m_senseTimer -= Time.deltaTime;
-				if (m_senseTimer <= 0) {
-					float sightRadiusIn = fireRadius + (m_sightRadius * m_radiusOffsetFactor);
-					float sightRadiusOut = sightRadiusIn + m_hysteresisOffset;
+					if (m_senseTimer <= 0) {
+						distanceSqr = DistanceSqrToEnemy();
 
-					Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);
-					distanceSqr = Mathf.Max(0f, vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr);
+						float sightRadiusIn =  m_sightRadiusIn + fireRadius;
+						float sightRadiusOut =  m_sightRadiusOut + fireRadius;
 
-					if (distanceSqr < sightRadiusIn * sightRadiusIn) {
-						isInsideSightArea = true;
-						m_senseTimer = m_senseDelay.GetRandom();
-					} else if (distanceSqr > sightRadiusOut * sightRadiusOut) {
-						isInsideSightArea = false;
-						m_senseTimer = 0f;
+						if (distanceSqr < sightRadiusIn * sightRadiusIn ) {
+							isInsideSightArea = true;
+							m_senseTimer = m_senseDelay.GetRandom();
+						} else if (distanceSqr > sightRadiusOut * sightRadiusOut) {
+							isInsideSightArea = false;
+							m_senseTimer = 0f;
+						}
 					}
-				}
 
-				if (isInsideSightArea) {
-					if (sense) {
-						float maxRadiusIn = fireRadius + (m_maxRadius * m_radiusOffsetFactor);
-						float minRadiusIn = fireRadius + (m_minRadius * m_radiusOffsetFactor);
-						float maxRadiusOut = maxRadiusIn + m_hysteresisOffset;
-						float minRadiusOut = minRadiusIn + m_hysteresisOffset;
+					if (isInsideSightArea) {
+						float maxRadiusIn  = m_maxRadiusIn + fireRadius;
+						float minRadiusIn  = m_minRadiusIn + fireRadius;
+						float maxRadiusOut = m_maxRadiusOut + fireRadius;
+						float minRadiusOut = m_minRadiusOut + fireRadius;
 
 						if (distanceSqr == 0f) {
-							Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);
-							distanceSqr = Mathf.Max(0f, vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr);
+							distanceSqr = DistanceSqrToEnemy();
 						}
 
 						if (distanceSqr < m_maxRadius * maxRadiusIn) {
@@ -143,11 +151,15 @@ namespace AI {
 							// Check line cast
 							if (Physics.Linecast(sensorPosition, m_enemy.position, s_groundMask)) {
 								isInsideSightArea = false;
-								isInsideMinArea = false;
 								isInsideMaxArea = false;
+								isInsideMinArea = false;
 							}
 						}
 					}
+				} else {
+					isInsideSightArea = false;
+					isInsideMaxArea = false;
+					isInsideMinArea = false;
 				}
 
 				m_machine.SetSignal(Signals.Type.Warning, 	isInsideSightArea);
@@ -156,37 +168,38 @@ namespace AI {
 			}				
 		}
 
+		public float DistanceSqrToEnemy() {
+			Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);
+			float distanceSqr = Mathf.Max(0f, vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr);
+
+			if (m_enemyBounds != null && (distanceSqr > m_minRadiusIn * m_minRadiusIn) ) {
+				float distanceToBounds = m_enemyBounds.DistanceSqr( sensorPosition );
+				distanceSqr = Mathf.Min( distanceSqr, distanceToBounds);
+			}
+			return distanceSqr;
+		}
+
 		// Debug
 		public override void OnDrawGizmosSelected(Transform _go) {
-			float sightRadiusIn = (m_sightRadius * m_radiusOffsetFactor);
-			float maxRadiusIn   = (m_maxRadius * m_radiusOffsetFactor);
-			float minRadiusIn   = (m_minRadius * m_radiusOffsetFactor);
-			float sightRadiusOut= sightRadiusIn + m_hysteresisOffset;
-			float maxRadiusOut	= maxRadiusIn + m_hysteresisOffset;
-			float minRadiusOut	= minRadiusIn + m_hysteresisOffset;
-
+			float fireRadius = 0f;
 			if (Application.isPlaying) {
-				if (m_senseFire && InstanceManager.player != null) {
-					float fireRadius = 0f;
-					if (InstanceManager.player.IsFuryOn() || InstanceManager.player.IsSuperFuryOn()) {
+				if (m_senseFire && InstanceManager.player != null) {					
+					if (InstanceManager.player.IsFuryOn() || InstanceManager.player.IsMegaFuryOn()) {
 						fireRadius = InstanceManager.player.breathBehaviour.actualLength;
 					}
-					sightRadiusIn += fireRadius;
-					maxRadiusIn += fireRadius;
-					minRadiusIn += fireRadius;
 				}
 			}
 
 			Vector3 pos = _go.position + (_go.rotation * m_sensorOffset);
 			Gizmos.color = Colors.paleYellow;
-			Gizmos.DrawWireSphere(pos, sightRadiusIn);
-			Gizmos.DrawWireSphere(pos, sightRadiusOut);
+			Gizmos.DrawWireSphere(pos, m_sightRadiusIn + fireRadius);
+			Gizmos.DrawWireSphere(pos, m_sightRadiusOut + fireRadius);
 			Gizmos.color = Colors.red;
-			Gizmos.DrawWireSphere(pos, maxRadiusIn);
-			Gizmos.DrawWireSphere(pos, maxRadiusOut);
+			Gizmos.DrawWireSphere(pos, m_maxRadiusIn + fireRadius);
+			Gizmos.DrawWireSphere(pos, m_maxRadiusOut + fireRadius);
 			Gizmos.color = Colors.magenta;
-			Gizmos.DrawWireSphere(pos, minRadiusIn);
-			Gizmos.DrawWireSphere(pos, minRadiusOut);
+			Gizmos.DrawWireSphere(pos, m_minRadiusIn + fireRadius);
+			Gizmos.DrawWireSphere(pos, m_minRadiusOut + fireRadius);
 		}
 	}
 }

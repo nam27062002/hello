@@ -10,7 +10,12 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
+
 using DG.Tweening;
+
+using System.Linq;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -22,7 +27,9 @@ public class PetPill : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private static readonly Color LOCKED_COLOR = new Color(0.5f, 0.5f, 0.5f);
+	private const string TUTORIAL_HIGHLIGHT_PREFAB_PATH = "UI/Metagame/Pets/PF_PetPillTutorialFX";
+
+	public class PetPillEvent : UnityEvent<PetPill> { }
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -37,6 +44,14 @@ public class PetPill : MonoBehaviour {
 	[SerializeField] private GameObject m_equippedPowerFrame = null;
 	[Space]
 	[SerializeField] private GameObject[] m_rarityDecorations = new GameObject[(int)EggReward.Rarity.COUNT];
+	[Space]
+	[SerializeField] private UIColorFX m_frameColorFX = null;
+	public UIColorFX frameColorFX {
+		get { return m_frameColorFX; }
+	}
+
+	[SerializeField] private Color m_lockedColor = new Color(0.5f, 0.5f, 0.5f);
+	[SerializeField] private Color m_equippedColor = Colors.orange;
 
 	// Internal
 	private DefinitionNode m_def = null;
@@ -46,6 +61,9 @@ public class PetPill : MonoBehaviour {
 
 	private GameObject m_currentLockIcon = null;
 	private Animator m_currentLockIconAnim = null;
+	private bool m_waitingForUnlockAnim = false;
+
+	private GameObject m_tutorialHighlightFX = null;
 
 	// Shortcuts
 	private PetCollection petCollection {
@@ -59,6 +77,16 @@ public class PetPill : MonoBehaviour {
 				m_parentScreen = this.gameObject.FindComponentInParents<PetsScreenController>();	// Find rather than Get to include inactive objects (this method could be called with the screen disabled)
 			}
 			return m_parentScreen;
+		}
+	}
+
+	private ShowHideAnimator m_animator = null;
+	public ShowHideAnimator animator {
+		get { 
+			if(m_animator == null) {
+				m_animator = GetComponent<ShowHideAnimator>();
+			}
+			return m_animator; 
 		}
 	}
 
@@ -78,7 +106,14 @@ public class PetPill : MonoBehaviour {
 	}
 
 	private bool m_special = false;
+	public bool special {
+		get { return m_special; }
+	}
+
 	private DragonData m_dragonData = null;
+
+	// Events
+	public PetPillEvent OnPillTapped = new PetPillEvent();
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -119,7 +154,7 @@ public class PetPill : MonoBehaviour {
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
+	//------------------------------------------------------------------------//º	
 	/// <summary>
 	/// Initialize from a given pet definition.
 	/// </summary>
@@ -150,7 +185,7 @@ public class PetPill : MonoBehaviour {
 			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_def.Get("powerup"));
 			Sprite powerIcon = null;
 			if(powerDef != null) {
-				parentScreen.powerMiniIcons.TryGetValue(powerDef.Get("miniIcon"), out powerIcon);
+				powerIcon = Resources.Load<Sprite>(UIConstants.POWER_MINI_ICONS_PATH + powerDef.Get("miniIcon"));
 			}
 			m_powerIcon.sprite = powerIcon;	// If null it will look ugly, that way we know we have a miniIcon missing
 		}
@@ -192,19 +227,23 @@ public class PetPill : MonoBehaviour {
 		m_locked = !petCollection.IsPetUnlocked(m_def.sku);
 		m_slot = UsersManager.currentUser.GetPetSlot(m_dragonData.def.sku, m_def.sku);
 
-		// Lock icon
-		m_currentLockIcon.SetActive(m_locked);
+		// Lock icon (unless waiting for animation)
+		if(!m_waitingForUnlockAnim) {
+			m_currentLockIcon.SetActive(m_locked);
+		}
 
 		// Hide power icon for locked special pets
 		bool isSpecialAndLocked = m_special && m_locked;
 		m_powerIcon.transform.parent.gameObject.SetActive(!isSpecialAndLocked);
 
 		// Color highlight when equipped
+		m_frameColorFX.brightness = m_locked ? -0.25f : 0f;
+		m_frameColorFX.saturation = m_locked ? -0.25f : 0f;
 		m_equippedFrame.SetActive(equipped);
 		m_equippedPowerFrame.SetActive(equipped);
 
 		// Tone down pet preview when locked for better contrast with the lock icon
-		m_preview.color = m_locked ? LOCKED_COLOR : Color.white;
+		m_preview.color = m_locked ? m_lockedColor : Color.white;
 	}
 
 	/// <summary>
@@ -214,13 +253,36 @@ public class PetPill : MonoBehaviour {
 	public void PrepareUnlockAnim() {
 		m_currentLockIcon.SetActive(true);
 		m_currentLockIconAnim.SetTrigger("idle");
+		m_waitingForUnlockAnim = true;
 	}
 
 	/// <summary>
 	/// Show the unlock animation.
 	/// </summary>
 	public void LaunchUnlockAnim() {
+		m_currentLockIcon.SetActive(true);	// Just in case
 		m_currentLockIconAnim.SetTrigger("unlock");
+		m_waitingForUnlockAnim = false;
+
+		// If equip tutorial is not yet completed, show highlight around the pill!
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PETS_EQUIP)) {
+			// Give enough time for the unlock animation to finish
+			DOVirtual.DelayedCall(
+				1f, 	// Sync with animation!
+				() => {
+					// Instantiate highlight prefab
+					GameObject prefab = Resources.Load<GameObject>(PetPill.TUTORIAL_HIGHLIGHT_PREFAB_PATH);
+					m_tutorialHighlightFX = GameObject.Instantiate<GameObject>(prefab, this.transform, false);
+				}
+			);
+		}
+	}
+
+	/// <summary>
+	/// Do a short bounce animation on the pill.
+	/// </summary>
+	public void LaunchBounceAnim() {
+		this.transform.DOJump(this.transform.position, 0.15f, 1, 0.15f);
 	}
 
 	//------------------------------------------------------------------------//
@@ -232,33 +294,12 @@ public class PetPill : MonoBehaviour {
 	public void OnTap() {
 		// If locked, show some feedback
 		if(locked) {
-			// Different feedback if pet is unlocked with golden egg fragments
-			if(m_special) {
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO_SPECIAL"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-			} else {
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-			}
-
 			// Small animation on the lock icon
 			m_currentLockIconAnim.SetTrigger("bounce");
 		}
 
-		// If equipped, try to unequip
-		else if(equipped) {
-			// Unequip
-			UsersManager.currentUser.UnequipPet(m_dragonData.def.sku, m_def.sku);
-		} 
-
-		// Otherwise try to equip
-		else {
-			// Equip
-			// Refresh will be automatically triggered by the OnPetChanged callback
-			int newSlot = UsersManager.currentUser.EquipPet(m_dragonData.def.sku, m_def.sku);
-			if(newSlot == -4) {
-				// No available slots, show feedback
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_NO_SLOTS"), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// There are no available slots!\nUnequip another pet before equipping this one.
-			}
-		}
+		// Propagate the event
+		OnPillTapped.Invoke(this);
 	}
 
 	/// <summary>
@@ -272,7 +313,8 @@ public class PetPill : MonoBehaviour {
 		PopupController popup = PopupManager.OpenPopupInstant(PopupInfoPet.PATH);
 		PopupInfoPet petPopup = popup.GetComponent<PopupInfoPet>();
 		if(petPopup != null) {
-			petPopup.Init(m_def, parentScreen.currentTab.defs);
+			// Open popup with the filtered list!
+			petPopup.Init(m_def, parentScreen.petFilters.filteredDefs);
 		}
 	}
 
@@ -289,6 +331,16 @@ public class PetPill : MonoBehaviour {
 		// Check whether it affects this pill
 		if(m_slot == _slotIdx || _newPetSku == m_def.sku) {
 			Refresh();
+
+			// If we were showing a highlight around this pill, remove it
+			if(m_tutorialHighlightFX != null) {
+				// Destroy and lose reference
+				GameObject.Destroy(m_tutorialHighlightFX);
+				m_tutorialHighlightFX = null;
+
+				// Mark pet equip tutorial as completed
+				UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.PETS_EQUIP, true);
+			}
 		}
 	}
 }

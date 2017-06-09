@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DestructibleDecoration : Initializable {
+public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 	private enum InteractionType {
 		Collision = 0,
@@ -14,9 +14,11 @@ public class DestructibleDecoration : Initializable {
 	[SerializeField] private bool m_particleFaceDragonDirection = false;
 
 	[CommentAttribute("Add a feedback effect when this object is touched by Dragon.")]
-	[SerializeField] private string m_feddbackParticle = "";
+	//[SerializeField] private string m_feddbackParticle = "";
+	[SerializeField] private ParticleData  m_feedbackParticle;
 	[CommentAttribute("Add a destroy effect when this object is trampled by Dragon.")]
-	[SerializeField] private string m_destroyParticle = "";
+	//[SerializeField] private string m_destroyParticle = "";
+	[SerializeField] private ParticleData m_destroyParticle;
 
 	[CommentAttribute("Audio When Dragon completely destroys the object.")]
 	[SerializeField] private string m_onDestroyAudio = "";
@@ -24,7 +26,6 @@ public class DestructibleDecoration : Initializable {
 	[SerializeField] private string m_onFeedbackAudio = "";
 
 
-	private ZoneManager m_zoneManager;
 	private ZoneManager.ZoneEffect m_effect;
 	private ZoneManager.Zone m_zone;
 
@@ -44,12 +45,11 @@ public class DestructibleDecoration : Initializable {
 
 
 
-
 	//-------------------------------------------------------------------------------------------//
 	// Use this for initialization
 	void Start() {		
-		ParticleManager.CreatePool(m_feddbackParticle);
-		ParticleManager.CreatePool(m_destroyParticle);
+		m_feedbackParticle.CreatePool();
+		m_destroyParticle.CreatePool();
 	}
 
 	/// <summary>
@@ -58,6 +58,7 @@ public class DestructibleDecoration : Initializable {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnLevelLoaded);
 	}
 
 	/// <summary>
@@ -66,6 +67,7 @@ public class DestructibleDecoration : Initializable {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.RemoveListener(GameEvents.GAME_AREA_ENTER, OnLevelLoaded);
 	}
 
 	/// <summary>
@@ -75,18 +77,11 @@ public class DestructibleDecoration : Initializable {
 		m_entity = GetComponent<Decoration>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_collider = GetComponent<BoxCollider>();
+	
+		m_zone = InstanceManager.zoneManager.GetZone(transform.position.z);
+		m_effect = InstanceManager.zoneManager.GetDestructionEffectCode(m_entity, InstanceManager.player.data.tier);
 
-		m_zoneManager = GameObjectExt.FindComponent<ZoneManager>(true);
-		if (m_zoneManager != null) {
-			m_zone = m_zoneManager.GetZone(transform.position.z);
-			m_effect = m_zoneManager.GetDestructionEffectCode(m_entity, InstanceManager.player.data.tier);
-		} else {
-			m_zone = ZoneManager.Zone.None;
-			m_effect = ZoneManager.ZoneEffect.None;
-			Debug.LogWarning("No Zone Manager");
-		}
-
-		if (m_effect == ZoneManager.ZoneEffect.None) {
+		if (m_zone == ZoneManager.Zone.None || m_effect == ZoneManager.ZoneEffect.None) {
 			if (m_collider) Destroy(m_collider);
 			//TODO: find a better way to clean prefabs
 			//if (m_viewDestroyed) Destroy(m_viewDestroyed);
@@ -129,7 +124,7 @@ public class DestructibleDecoration : Initializable {
 		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
 	}
 
-	public override void Initialize() {
+	public void Spawn(ISpawner _spawner) {
 		enabled = true;
 
 		m_view.SetActive(true);
@@ -146,18 +141,19 @@ public class DestructibleDecoration : Initializable {
 		m_collider.enabled = true;
 	}
 
+	public void CustomUpdate() {}
+
 	void OnCollisionEnter(Collision _other) {
 		if (enabled && m_spawned) {
 			if (!m_breath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (_other.contacts.Length > 0) {
 						ContactPoint contact = _other.contacts[0];
-						if (m_feddbackParticle != "") {
-							GameObject ps = ParticleManager.Spawn(m_feddbackParticle, contact.point - (m_collider.center - m_colliderCenter));
-							if (ps != null) {
-								if (m_particleFaceDragonDirection) {
-									FaceDragon(ps);
-								}
+
+						GameObject ps = m_feedbackParticle.Spawn(contact.point - (m_collider.center - m_colliderCenter) + m_feedbackParticle.offset);
+						if (ps != null) {
+							if (m_particleFaceDragonDirection) {
+								FaceDragon(ps);
 							}
 						}
 					}
@@ -171,7 +167,8 @@ public class DestructibleDecoration : Initializable {
 			if (!m_breath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (m_effect == ZoneManager.ZoneEffect.S) {
-						if (m_feddbackParticle != "") {
+						GameObject ps = m_feedbackParticle.Spawn();
+						if (ps != null) {
 							Vector3 particlePosition = transform.position + m_colliderCenter;
 							particlePosition.y = _other.transform.position.y;
 
@@ -180,23 +177,21 @@ public class DestructibleDecoration : Initializable {
 							} else {
 								particlePosition.x -= m_collider.size.x * 0.5f;
 							}
-							GameObject ps = ParticleManager.Spawn(m_feddbackParticle, particlePosition);
-							if (ps != null) {
-								if (m_particleFaceDragonDirection) {
-									FaceDragon(ps);
-								}
+
+							ps.transform.position = particlePosition + m_feedbackParticle.offset;
+
+							if (m_particleFaceDragonDirection) {
+								FaceDragon(ps);
 							}
 						}
-
+					
 						if ( !string.IsNullOrEmpty(m_onFeedbackAudio) )
 							AudioController.Play(m_onFeedbackAudio, transform.position + m_colliderCenter);
 					} else {
-						if (m_destroyParticle != "") {
-							GameObject ps = ParticleManager.Spawn(m_destroyParticle, transform.position);
-							if (ps != null) {
-								if (m_particleFaceDragonDirection) {
-									FaceDragon(ps);
-								}
+						GameObject ps = m_destroyParticle.Spawn(transform.position + m_destroyParticle.offset);
+						if (ps != null) {
+							if (m_particleFaceDragonDirection) {
+								FaceDragon(ps);
 							}
 						}
 
@@ -222,6 +217,9 @@ public class DestructibleDecoration : Initializable {
 							m_corpse.Spawn(false, false);
 						}
 						m_spawned = false;
+
+						// [AOC] Notify game!
+						Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_DESTROYED, transform, m_entity.reward);
 					}
 				}
 			}
@@ -242,12 +240,10 @@ public class DestructibleDecoration : Initializable {
 							particlePosition.x -= m_collider.size.x * 0.5f;
 						}
 
-						if ( m_feddbackParticle != "") {
-							GameObject ps = ParticleManager.Spawn(m_feddbackParticle, particlePosition);
-							if (ps != null) {
-								if (m_particleFaceDragonDirection) {
-									FaceDragon(ps);
-								}
+						GameObject ps = m_feedbackParticle.Spawn(particlePosition + m_feedbackParticle.offset);
+						if (ps != null) {
+							if (m_particleFaceDragonDirection) {
+								FaceDragon(ps);
 							}
 						}
 

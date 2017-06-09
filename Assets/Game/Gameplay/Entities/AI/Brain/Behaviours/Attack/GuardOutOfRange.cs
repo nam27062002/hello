@@ -57,11 +57,7 @@ namespace AI {
 				if (m_machine.GetSignal(Signals.Type.Danger)) {
 					Transition(OnEnemyInRange);
 				} else {
-					if (m_target != null) {
-						Vector3 dir = m_target.position - m_machine.position;
-						dir.y = 0f;
-						m_pilot.SetDirection(dir.normalized);
-					
+					if (m_target != null) {					
 						float m = Mathf.Abs(m_machine.position.x - m_target.position.x);
 						if (m > 2f) {
 							Transition(OnPursuitEnemy/*, m_transitionParam*/);

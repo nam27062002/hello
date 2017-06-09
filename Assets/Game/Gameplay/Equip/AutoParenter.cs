@@ -12,8 +12,16 @@ using UnityEngine.Serialization;
 public class AutoParenter : MonoBehaviour {
 	
 	[SerializeField] private string m_parentName;
+	public string parentName
+	{
+		get{ return m_parentName; }
+	}
 	[FormerlySerializedAs("m_lookAtRoot")]
 	[SerializeField] private Transform m_parentRoot;
+	public Transform parentRoot
+	{
+		get{ return m_parentRoot; }
+	}
 	[SerializeField] private bool m_worldPositionStays = true;
 
 	void Awake() {
@@ -35,5 +43,26 @@ public class AutoParenter : MonoBehaviour {
 
 		Destroy(this);
 	}
+
+	public void CopyTargetPosAndRot()
+	{
+		if (!string.IsNullOrEmpty(parentName)) {
+			Transform t = transform;
+			Transform p;
+			if (parentRoot == null)
+				p = t.parent.FindTransformRecursive(parentName);
+			else
+				p = parentRoot.FindTransformRecursive(parentName);
+
+			if (p != null) {
+				t.position = p.position;
+				t.rotation = p.rotation;
+			} 
+		}
+	}
+
+
+
+
 
 }

@@ -100,7 +100,7 @@ public class GlobalEventObjective {
 		if(!enabled) return;
 
 		// Skip during first game session (tutorial)
-		if(UsersManager.currentUser.gamesPlayed < 1) return;
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) return;
 
 		// Skip if already completed
 		if(isCompleted) return;

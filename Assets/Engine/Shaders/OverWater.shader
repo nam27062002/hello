@@ -108,7 +108,10 @@ Shader "Hungry Dragon/OverWater"
 					o.color = v.color;
 //					o.color = float4(1.0, 0.0, 1.0, 1.0);
 					//					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
-					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
+//					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
+					float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
+					_FogStart = -12.0;
+					o.fogCoord = float2(saturate((worldPos.z - _FogStart) / (_FogEnd - _FogStart)), 0.5);
 
 					return o;
 				}
@@ -128,8 +131,11 @@ Shader "Hungry Dragon/OverWater"
 					fixed3 one = fixed3(1, 1, 1);
 					col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
 
-					HG_APPLY_FOG(i, col);	// Fog
 
+					HG_APPLY_FOG(i, col);
+//					fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
+//					col.rgb = lerp((col).rgb, fogCol.rgb, fogCol.a);
+//					col = clamp(col + fixed4(0.25, 0.25, 0.25, 0.25), fixed4(0.0, 0.0, 0.0, 1.0), fixed4(1.0, 1.0, 1.0, 1.0));
 					UNITY_OPAQUE_ALPHA(col.a);
 
 //					float attenuation = LIGHT_ATTENUATION(i);	// Shadow

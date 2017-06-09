@@ -43,7 +43,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Shaders_CurrentKey = null;
         State = EState.WaitingForRules;        
 
-        m_deviceQualityManager = new DeviceQualityManager();       
+        m_deviceQualityManager = new DeviceQualityManager();
+
+        InitDefaultValues();    
+    }
+
+    private void InitDefaultValues()
+    {
+        IsFogOnDemandEnabled = !IsDebugEnabled;
     }
 
     protected override void OnDestroy()
@@ -978,7 +985,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     }
 
     /// <summary>
-    /// Returns whether or not debug mode is enabled. It's a static method to be sure that it will be available at all times since it's looked up by some MonoBehaviours when awaking
+    /// Returns whether or not debug mode is enabled. 
+    /// It's a static method to be sure that it will be available at all times since it's looked up by some MonoBehaviours when awaking
     /// </summary>
     public static bool IsDebugEnabled
     {
@@ -988,11 +996,52 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    /// <summary>
+    /// Returns whether or not the profiler is enabled. It's used to enable some features required by the profiler
+    /// It's a static method to be sure that it will be available at all times since it's looked up by some MonoBehaviours when awaking
+    /// </summary>
     public static bool IsProfilerEnabled
     {
         get
         {
             return UnityEngine.Debug.isDebugBuild;
+        }
+    }
+
+    /// <summary>
+    /// Whether or not the game leve scenes under development should be loaded when loading the level.
+    /// It's a static method because it doesn't depend on the device profile and we want it to be ready at any moment since it can be called
+    /// when the level editor loads the game
+    /// </summary>
+    public static bool IsWIPScenesEnabled
+    {
+        get
+        {
+            // Makes sure that WIO scenes won't be loaded on PRODUCTION
+            ServerManager.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+            return (kServerConfig != null && kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);            
+        }
+    }
+
+    public static bool IsControlPanelEnabled
+    {
+        get
+        {
+#if UNITY_EDITOR || true
+            return true;
+#else
+            ServerManager.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+            return (kServerConfig != null && kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);               
+#endif
+        }
+    }
+
+    public bool IsMiniTrackingEnabled
+    {
+        get
+        {
+            // Disabled since it's a temporary tracking that is used only for play test
+            return false;
         }
     }
 
@@ -1051,6 +1100,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_DECO_SPAWNERS);
         }
     }
+
+    public bool IsFogOnDemandEnabled { get; set; }    
     #endregion
 
     #region log

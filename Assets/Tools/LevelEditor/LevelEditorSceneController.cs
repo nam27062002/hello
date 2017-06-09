@@ -49,6 +49,12 @@ namespace LevelEditor {
             PersistenceManager.Init();
             PersistenceManager.Load();
 
+			if (LevelEditor.settings.poolLimit == "unlimited") {
+				ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.Unlimited;
+			} else {
+				ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LevelEditor;
+			}
+
 			// Load the dragon
             DragonManager.LoadDragon(LevelEditor.settings.testDragon);
             if (InstanceManager.player != null)
@@ -80,7 +86,7 @@ namespace LevelEditor {
 		private void OnEnable() {
 			// Subscribe to external events
 			Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
-			Messenger.AddListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
+			Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		}
 		
 		/// <summary>
@@ -92,7 +98,7 @@ namespace LevelEditor {
 
 			// Unsubscribe from external events
 			Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
-			Messenger.RemoveListener<DamageType>(GameEvents.PLAYER_KO, OnPlayerKo);
+			Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
 		}
 
 		/// <summary>
@@ -127,7 +133,9 @@ namespace LevelEditor {
 		override protected void OnDestroy() {
 			// Clear pools
 			FirePropagationManager.DestroyInstance();
+			ParticleManager.Clear();
 			PoolManager.Clear(true);
+			UIPoolManager.Clear(true);
 
 			// Call parent
 			base.OnDestroy();
@@ -158,6 +166,9 @@ namespace LevelEditor {
 			// Init game camera
 			InstanceManager.gameCamera.Init();
 
+			// Instantiate map prefab
+			InitLevelMap();
+
 			// Simulate level loaded
 			Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);
 
@@ -176,6 +187,9 @@ namespace LevelEditor {
 			m_elapsedSeconds = 0;
 
 			m_started = true;
+
+			// Notify the game
+			Messenger.Broadcast(GameEvents.GAME_STARTED);
 		}
 
 		//------------------------------------------------------------------//
@@ -184,7 +198,7 @@ namespace LevelEditor {
 		/// <summary>
 		/// The player is ko.
 		/// </summary>
-		private void OnPlayerKo(DamageType _type) {
+		private void OnPlayerKo(DamageType _type, Transform _source) {
 			// Just open summary popup for now
 			Time.timeScale = 0.0f;	// Pause game
 			PopupManager.OpenPopupInstant(PopupLevelEditorSummary.PATH);

@@ -265,6 +265,11 @@ public class FastBounds2D
 	{
 		return !((x1<b.min.x) || (y1<b.min.y) || (x0>b.max.x) || (y0>b.max.y));
 	}
+
+	public bool Intersects( Rect b )
+	{
+		return !((x1<b.min.x) || (y1<b.min.y) || (x0>b.max.x) || (y0>b.max.y));
+	}
 	
 	public bool Contains(Vector3 p)
 	{

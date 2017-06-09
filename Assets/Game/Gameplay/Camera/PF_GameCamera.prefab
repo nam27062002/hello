@@ -12,13 +12,12 @@ GameObject:
   - component: {fileID: 12481626}
   - component: {fileID: 9212364}
   - component: {fileID: 8136056}
-  - component: {fileID: 11486938}
   - component: {fileID: 11447402}
   - component: {fileID: 114000011327172364}
   - component: {fileID: 114000011558897754}
   - component: {fileID: 114911447019432680}
-  - component: {fileID: 114728181362819458}
   - component: {fileID: 114877917579243700}
+  - component: {fileID: 114776725440998684}
   m_Layer: 0
   m_Name: PF_GameCamera
   m_TagString: MainCamera
@@ -33,7 +32,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101152}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 407.19043, y: 51.817307, z: -44.236843}
+  m_LocalPosition: {x: 477.35782, y: 59.490692, z: 1.0789595}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000011292646294}
@@ -57,7 +56,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 5
+  near clip plane: 1
   far clip plane: 1000
   field of view: 30
   orthographic: 0
@@ -65,7 +64,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294671839
+    m_Bits: 3220930015
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -104,20 +103,6 @@ MonoBehaviour:
   m_superFireColor: {r: 0.042225357, g: 0.52205884, b: 0.3036518, a: 1}
   m_starvingColor: {r: 0.7058823, g: 0, b: 0, a: 1}
   m_material: {fileID: 2100000, guid: 61a60bd291fc348e398d551143f6b9ed, type: 2}
---- !u!114 &11486938
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 101152}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77e0c772f84704359baf1e78af46db60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shader: {fileID: 4800000, guid: e9ba2083ad114a07d000fbfb8d76c639, type: 3}
-  blurAmount: 0.8
-  extraBlur: 0
 --- !u!124 &12481626
 Behaviour:
   m_ObjectHideFlags: 1
@@ -357,6 +342,7 @@ MonoBehaviour:
   m_refCamera: {fileID: 2055932}
   m_collisionReplacementShader: {fileID: 4800000, guid: 13e9ed0c2439a45e483c113bffde0e61,
     type: 3}
+  m_resolutionFactor: 0.25
 --- !u!114 &114000011098854082
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -457,23 +443,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TurnSpeed: 10
   m_MoveSpeed: 10
---- !u!114 &114728181362819458
+--- !u!114 &114776725440998684
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101152}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b2854bce623d0c44978254dab903414, type: 3}
+  m_Script: {fileID: 11500000, guid: c4b1bbe988a964709b8f5fba8860b7c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Tint: {r: 1, g: 1, b: 1, a: 1}
-  m_Tint2: {r: 1, g: 1, b: 1, a: 1}
-  timeDecay: 2
-  m_shader: {fileID: 4800000, guid: dd36d0c2ae0fac84dbb7ef8e357fcb03, type: 3}
-  m_TexelOffset: 2
-  m_LensOffset: 0.5
+  m_refCamera: {fileID: 0}
+  m_collisionReplacementShader: {fileID: 0}
+  m_resolutionFactor: 0.25
 --- !u!114 &114877917579243700
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -490,49 +473,51 @@ MonoBehaviour:
     m_fogGradient:
       key0:
         serializedVersion: 2
-        rgba: 13341263
+        rgba: 2620334117
       key1:
         serializedVersion: 2
-        rgba: 1373580588
+        rgba: 963489742
       key2:
         serializedVersion: 2
-        rgba: 2546759456
+        rgba: 1604910871
       key3:
         serializedVersion: 2
-        rgba: 16176801
+        rgba: 1778372154
       key4:
         serializedVersion: 2
-        rgba: 0
+        rgba: 1358935296
       key5:
         serializedVersion: 2
-        rgba: 0
+        rgba: 2784987648
       key6:
         serializedVersion: 2
-        rgba: 0
+        rgba: 2852110080
       key7:
         serializedVersion: 2
         rgba: 0
-      ctime0: 6506
-      ctime1: 22374
-      ctime2: 47287
-      ctime3: 63790
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
+      ctime0: 1542
+      ctime1: 2891
+      ctime2: 8260
+      ctime3: 12931
+      ctime4: 29789
+      ctime5: 44480
+      ctime6: 65535
       ctime7: 0
-      atime0: 3967
-      atime1: 59823
-      atime2: 65535
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
+      atime0: 1735
+      atime1: 3084
+      atime2: 8530
+      atime3: 13269
+      atime4: 29653
+      atime5: 44412
+      atime6: 65535
       atime7: 0
       m_Mode: 0
-      m_NumColorKeys: 4
-      m_NumAlphaKeys: 2
-    m_fogStart: -238.4
-    m_fogEnd: 712.4
+      m_NumColorKeys: 7
+      m_NumAlphaKeys: 7
+    m_fogStart: -25.6
+    m_fogEnd: 674.76
+  m_transitionDuration: 1.6
+  m_generatedAttributes: []
 --- !u!114 &114911447019432680
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -37,6 +37,10 @@ public class DragonPlayer : MonoBehaviour {
 	//------------------------------------------------------------------//
 	[Header("Type and general data")]
 	[SerializeField] private string m_sku = "";
+	public string sku
+	{
+		get{ return m_sku; }
+	}
 	[SerializeField] private float m_invulnerableTime = 5f;
 
 	private DragonData m_data = null;
@@ -99,8 +103,12 @@ public class DragonPlayer : MonoBehaviour {
 
 
 	// Interaction
+	private bool m_playable = true;
 	public bool playable {
 		set {
+			// Store new value
+			m_playable = value;
+
 			// Enable/disable all the components that make the dragon playable
 			// Add as many as needed
 			GetComponent<DragonControlPlayer>().enabled = value;	// Move around
@@ -108,6 +116,8 @@ public class DragonPlayer : MonoBehaviour {
 			GetComponent<DragonHealthBehaviour>().enabled = value;	// Receive damage
 			GetComponent<DragonBoostBehaviour>().enabled = value;	// Boost
 		}
+
+		get { return m_playable; }
 	}
 
 	// References
@@ -153,6 +163,14 @@ public class DragonPlayer : MonoBehaviour {
 
 	// Internal
 	private float m_invulnerableAfterReviveTimer;
+
+	private bool m_changingArea = false;
+	public bool changingArea
+	{
+		get{ return m_changingArea; }
+		set{ m_changingArea = value; }
+	}
+
 
 	private bool m_superSizeInvulnerable = false;
 	public bool superSizeInvulnerable
@@ -213,6 +231,12 @@ public class DragonPlayer : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+
+		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
+		{
+			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INVULNERABLE, true);
+			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INFINITE_BOOST, true);
+		}
 	}
 
 	void OnDestroy()
@@ -342,7 +366,9 @@ public class DragonPlayer : MonoBehaviour {
 	/// Add/remove health to the dragon.
 	/// </summary>
 	/// <param name="_offset">The amount of health to be added/removed.</param>
-	public void AddLife(float _offset, DamageType _type = DamageType.NONE) {
+	/// <param name="_type">Type of damage, if any.</param>
+	/// <param name="_source">Source of the damage, if any.</param>
+	public void AddLife(float _offset, DamageType _type, Transform _source) {
 		// If invulnerable and taking damage, don't apply
 		if(IsInvulnerable() && _offset < 0) return;
 
@@ -370,8 +396,8 @@ public class DragonPlayer : MonoBehaviour {
 			// If I have an angel pet and aura still playing
 			else
 			{
-				// Send global even
-				Messenger.Broadcast<DamageType>(GameEvents.PLAYER_KO, _type);	// Reason
+				// Send global event
+				Messenger.Broadcast<DamageType, Transform>(GameEvents.PLAYER_KO, _type, _source);	// Reason
 
 				// Clear any health modifiers
 				m_currentHealthModifier = null;
@@ -430,9 +456,9 @@ public class DragonPlayer : MonoBehaviour {
 	/// Determines whether this instance is super fury on.
 	/// </summary>
 	/// <returns><c>true</c> if this instance is super fury on; otherwise, <c>false</c>.</returns>
-	public bool IsSuperFuryOn() {
+	public bool IsMegaFuryOn() {
 		
-		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Super;
+		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Mega;
 	}
 
 	/// <summary>
@@ -529,6 +555,8 @@ public class DragonPlayer : MonoBehaviour {
 
 		// During fire, we're invulnerable
 		if(m_breathBehaviour.IsFuryOn()) return true;
+
+		if ( m_changingArea ) return true;
 
 		if ( m_superSizeInvulnerable ) return true;
 		

@@ -26,7 +26,8 @@ public class MapMarker : MonoBehaviour {
 		CHEST,
 		EGG,
 		LETTER,
-		DECO
+		DECO,
+		DRAGON
 	}
 	
 	//------------------------------------------------------------------------//
@@ -48,7 +49,8 @@ public class MapMarker : MonoBehaviour {
 	}
 
 	// Store some original properties of the marker
-	private Vector3 m_originalScale = Vector3.one;
+	protected Vector3 m_originalScale = Vector3.one;
+	protected float m_zoomScaleFactor = 1f;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -58,11 +60,12 @@ public class MapMarker : MonoBehaviour {
 	/// </summary>
 	protected virtual void Awake() {
 		// Initialize internal vars
-		m_originalScale = transform.localScale;
+		m_originalScale = GetMarkerTransform().localScale;
 
 		// Subscribe to external events
 		Messenger.AddListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.AddListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
+		Messenger.AddListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Messenger.AddListener<float>(GameEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
 	}
 
 	/// <summary>
@@ -92,7 +95,8 @@ public class MapMarker : MonoBehaviour {
 	protected virtual void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.RemoveListener<int>(GameEvents.PROFILE_MAP_UPGRADED, OnMapUpgraded);
+		Messenger.RemoveListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Messenger.RemoveListener<float>(GameEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
 	}
 
 	//------------------------------------------------------------------------//
@@ -101,60 +105,126 @@ public class MapMarker : MonoBehaviour {
 	/// <summary>
 	/// Refresh marker to match the object's position, rotation, scaling, etc.
 	/// </summary>
-	private void UpdateMarker() {
-		// Check visibility based on marker type and level
+	protected virtual void UpdateMarker() {
+		// Check visibility based on marker type and map upgrade level
 		switch(m_type) {
-			case Type.DECO: {
-				this.gameObject.SetActive(showMarker && UsersManager.currentUser.mapLevel > 0);
-			} break;
-
+			// Unlockable marker types
 			case Type.CHEST:
 			case Type.EGG:
 			case Type.LETTER: {
-				this.gameObject.SetActive(showMarker && UsersManager.currentUser.mapLevel > 1);
+				// [AOC] If the map timer runs out during the game, we let the player enjoy the unlocked map for the whole run
+				//       That's why we check the GameSceneController rather than the user profile
+				this.gameObject.SetActive(showMarker && InstanceManager.gameSceneControllerBase.mapUnlocked);
+			} break;
+
+			// Rest of marker types
+			default: {
+				this.gameObject.SetActive(showMarker);
 			} break;
 		}
 
 		// Nothing else to do if not visible
 		if(!this.gameObject.activeSelf) return;
 
-		// Reset position
-		transform.localPosition = Vector3.zero;
+		// Update marker's transformation
+		UpdatePosition();
+		UpdateScale();
+		UpdateRotation();
+	}
+
+	//------------------------------------------------------------------------//
+	// OVERRIDE CANDIDATES													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Gets the root marker transform, in case it's not this object's transform.
+	/// </summary>
+	/// <returns>The marker's transform.</returns>
+	protected virtual Transform GetMarkerTransform() {
+		return this.transform;
+	}
+
+	/// <summary>
+	/// Gets the transform used as reference for the marker.
+	/// Typically the actual object they're representing on the map, to copy position, scale, rotation, etc.
+	/// </summary>
+	/// <returns>The marker's reference transform.</returns>
+	protected virtual Transform GetReferenceTransform() {
+		return GetMarkerTransform().parent;
+	}
+
+	/// <summary>
+	/// Set the position of the marker relative to its reference transform.
+	/// </summary>
+	protected virtual void UpdatePosition() {
+		GetMarkerTransform().localPosition = Vector3.zero;
+	}
+
+	/// <summary>
+	/// Set the scale of the marker based on its reference transform.
+	/// </summary>
+	protected virtual void UpdateScale() {
+		// Aux vars
+		Transform markerTransform = GetMarkerTransform();
+		Transform refTransform = GetReferenceTransform();
 
 		// Compensate parent's scale factor (i.e. if parent is a dragon, which scales with level, or if parent has a non-linear scale)
-		//Vector3 parentScale = parentTransform.lossyScale;
-		//transform.localScale = new Vector3(m_originalScale.x / parentScale.x, m_originalScale.y / parentScale.y, m_originalScale.z / parentScale.z);
-		transform.localScale = new Vector3(m_originalScale.x, m_originalScale.y, 1f);	// [AOC] Don't like it, plust Z scale should always be 1
+		// Also apply minimap's zoom correction so markers keep a constant size
+		Vector3 parentScale = refTransform.lossyScale;	// Global scale of the parent
+		markerTransform.localScale = new Vector3(
+			m_originalScale.x / parentScale.x / m_zoomScaleFactor, // If smaller zoom (closer), make marker bigger and vice-versa
+			m_originalScale.y / parentScale.y / m_zoomScaleFactor, 
+			1f	// We don't care about Z scaling
+		);
+	}
 
-		// Apply parent's rotation - only in the XY plane
+	/// <summary>
+	/// Apply the XY plane rotation to the marker based on reference transform.
+	/// Will also flip the target transform if looking to the left.
+	/// </summary>
+	protected virtual void UpdateRotation() {
+		// Rotate?
 		if(m_rotateWithObject) {
-			// Black maths magic from HSX
-			// Find out parent's direction and nullify Z component
-			Vector3 dir = transform.parent.forward;
-			dir.z = 0.0f;
-
-			// Flip based on direction
-			Vector3 scale = transform.localScale;
-			scale.x = dir.x >= 0? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
-			transform.localScale = scale;
-
-			// Make x absolute, since we're flipping the sprite
-			Vector3 absDir = dir;
-			absDir.x = Mathf.Abs(absDir.x);
-
-			// Compute rotation angle
-			float angle = Vector3.Angle(absDir, Vector3.right);
-			if((dir.x >= 0 && dir.y < 0) || (dir.x < 0 && dir.y >= 0)) {
-				angle = -angle;
-			}
-
-			// Apply rotation
-			transform.LookAt(transform.position + Vector3.forward);
-			transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+			// Yes!
+			ApplyRotation(GetMarkerTransform(), GetReferenceTransform());
 		} else {
 			// Compensate parent's rotation
-			transform.rotation = Quaternion.identity;
+			GetMarkerTransform().rotation = Quaternion.identity;
 		}
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Apply the XY plane rotation from the reference transform to the target transform.
+	/// Will also flip the target if looking to the left.
+	/// </summary>
+	/// <param name="_target">Target transform.</param>
+	/// <param name="_reference">Reference transform.</param>
+	protected void ApplyRotation(Transform _target, Transform _reference) {
+		// Black maths magic from HSX
+		// Find out parent's direction and nullify Z component
+		Vector3 dir = _reference.forward;
+		dir.z = 0.0f;
+
+		// Flip based on direction
+		Vector3 scale = _target.localScale;
+		scale.x = dir.x >= 0? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+		_target.localScale = scale;
+
+		// Make x absolute, since we're flipping the sprite
+		Vector3 absDir = dir;
+		absDir.x = Mathf.Abs(absDir.x);
+
+		// Compute rotation angle
+		float angle = Vector3.Angle(absDir, Vector3.right);
+		if((dir.x >= 0 && dir.y < 0) || (dir.x < 0 && dir.y >= 0)) {
+			angle = -angle;
+		}
+
+		// Apply rotation
+		_target.LookAt(_target.position + Vector3.forward);
+		_target.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 	}
 
 	//------------------------------------------------------------------------//
@@ -165,8 +235,8 @@ public class MapMarker : MonoBehaviour {
 	/// </summary>
 	/// <param name="_popup">The popup that has just been opened.</param>
 	private void OnPopupOpened(PopupController _popup) {
-		// If it's the pause popup, refresh marker
-		if(_popup.GetComponent<PopupPause>() != null) {
+		// If it's the map popup, refresh marker
+		if(_popup.GetComponent<PopupInGameMap>() != null) {
 			UpdateMarker();
 		}
 	}
@@ -174,12 +244,21 @@ public class MapMarker : MonoBehaviour {
 	/// <summary>
 	/// Minimap has been upgraded.
 	/// </summary>
-	/// <param name="_newLevel">New minimap level.</param>
-	private void OnMapUpgraded(int _newLevel) {
+	private void OnMapUnlocked() {
 		// Update marker will do the job
 		// Add some delay to give time for feedback to show off
-		float delay = 0.25f;
-		if(_newLevel == 1) delay = 1.3f;	// Unlock animation is a bit longer
-		DOVirtual.DelayedCall(delay, UpdateMarker, true);
+		DOVirtual.DelayedCall(0.25f, UpdateMarker, true);
+	}
+
+	/// <summary>
+	/// The zoom has changed in the minimap.
+	/// </summary>
+	/// <param name="_zoomFactor">Percentage relative to initial zoom level (0.5x, 1x, 2x, etc, the smaller the closer.</param>
+	private void OnMapZoomChanged(float _zoomFactor) {
+		// Update zoom correction factor
+		m_zoomScaleFactor = _zoomFactor;
+
+		// Refresh marker
+		UpdateMarker();
 	}
 }

@@ -5,15 +5,17 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Lightmap And Recieve Shadow + Normal Map" 
+Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Normal Map" 
 {
 	Properties 
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
 		_NormalStrength("Normal Strength", float) = 3
-		_Specular("Specular Factor", float) = 3
+		_SpecularPower("Specular Power", float) = 3
 		_SpecularDir("Specular Dir", Vector) = (0,0,-1,0)
+		_StencilMask("Stencil Mask", int) = 5
+
 	}
 
 	SubShader {
@@ -21,6 +23,14 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow + Normal Map"
 		LOD 100
 		
 		Pass {  
+
+			Stencil
+			{
+				Ref[_StencilMask]
+				Comp always
+				Pass Replace
+				ZFail keep
+			}
 
 			CGPROGRAM
 				#pragma vertex vert

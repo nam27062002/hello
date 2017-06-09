@@ -200,9 +200,35 @@ public class EggView : MonoBehaviour {
 
 		// Idle FX - disabled after tapping the egg
 		if(m_idleFX != null) {
+			/*
 			bool hide = (state == Egg.State.OPENING && step > 0);
 			hide |= state == Egg.State.COLLECTED;
 			m_idleFX.SetActive(!hide);
+			*/
+			// This works for both eggs:
+			bool show = false;
+			switch(state) {
+				case Egg.State.READY: {
+					show = true;	// Show always
+				} break;
+
+				case Egg.State.OPENING: {
+					show = (step <= 0);	// Show only while no tap has been done
+				} break;
+
+				case Egg.State.SHOWROOM: {
+					// Only for premium eggs
+					if(m_eggData != null && m_eggData.def.sku == Egg.SKU_PREMIUM_EGG) {
+						show = true;
+					}
+				} break;
+
+				default: {
+					show = false;	// Hide for the rest of cases
+				} break;
+			}
+
+			m_idleFX.SetActive(show);
 		}
 
 		// Animation intensity - reset to default if state is different than collected

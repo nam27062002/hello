@@ -36,6 +36,7 @@ namespace AI {
 
 			DragonPlayer m_owner;
 			float m_range;
+			MachineSensor m_sensor;
 
 			private PetSearchShootTargetData m_data;
 
@@ -61,6 +62,8 @@ namespace AI {
 				m_owner = InstanceManager.player;
 				m_data = m_pilot.GetComponentData<PetSearchShootTargetData>();
 				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * m_data.dragonSizeRangeMultiplier;
+
+				m_sensor = (m_machine as Machine).sensor;
 			}
 
 			// The first element in _param must contain the amount of time without detecting an enemy
@@ -84,7 +87,7 @@ namespace AI {
 					for (int e = 0; e < m_numCheckEntities; e++) 
 					{
 						Entity entity = m_checkEntities[e];
-						MachineOld machine = entity.GetComponent<MachineOld>();
+						Machine machine = entity.GetComponent<Machine>();
 						if (machine != null && machine.CanBeBitten() && !machine.isPetTarget )
 						{
 							bool isViable = false;
@@ -114,7 +117,10 @@ namespace AI {
 									{
 										// Check if closed? Not for the moment
 										m_transitionParam[0] = entity.transform;
-										m_machine.enemy = entity.transform;
+										if ( entity.circleArea )
+											m_sensor.SetupEnemy(entity.transform, entity.circleArea.radius * entity.circleArea.radius, null);
+										else
+											m_sensor.SetupEnemy(entity.transform, 0, null);
 										m_machine.SetSignal(Signals.Type.Warning, true);
 										Transition( onEnemyTargeted, m_transitionParam);
 										break;

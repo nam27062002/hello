@@ -22,6 +22,9 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnEnemyInRange = "onEnemyInRange";
 
+			[StateTransitionTrigger]
+			private static string OnEnemyInRangeNoEat = "onEnemyInRangeNoEat";
+
 			private float m_shutdownSensorTime;
 			private float m_timer;
 			private DragonTier m_eaterTier;
@@ -115,6 +118,15 @@ namespace AI {
 				}
 			}
 
+			private bool IsReachable( Entity entity )
+			{
+				// Check if physics reachable
+				RaycastHit hit;
+				Vector3 dir = entity.circleArea.center - m_machine.position;
+				bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
+				return !hasHit ;
+			}
+
 			protected override void OnUpdate() {
 				if (m_timer > 0f) {
 					m_timer -= Time.deltaTime;
@@ -122,7 +134,7 @@ namespace AI {
 					m_eatBehaviour.enabled = true;
 					Vector3 centerPos = m_owner.transform.position;
 
-
+					bool done = false;
 					// if prefered entieies check first
 					if ( m_preferedEntities.Count > 0 || m_searchButNoEatList.Count > 0 )
 					{
@@ -133,21 +145,25 @@ namespace AI {
 							bool inSearchButNotEat = m_searchButNoEatList.Contains( entity.sku );
 							if ( inSearchButNotEat || m_preferedEntities.Contains(entity.sku) )
 							{
-								MachineOld machine = entity.GetComponent<MachineOld>();
+								Machine machine = entity.GetComponent<Machine>();
 								if ( machine != null && !machine.isPetTarget)
 								{
-									if ( inSearchButNotEat || machine.CanBeBitten() )
+									if ( inSearchButNotEat )
 									{
-										// Check if physics reachable
-										RaycastHit hit;
-										Vector3 dir = entity.circleArea.center - m_machine.position;
-										bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
-										if ( !hasHit )
+										if (IsReachable( entity ))
 										{
-											// Check if closed? Not for the moment
+											m_transitionParam[0] = entity.transform;
+											Transition( OnEnemyInRangeNoEat, m_transitionParam);
+											done = true;
+										}
+									}
+									else if ( machine.CanBeBitten() )
+									{
+										if (IsReachable( entity ))
+										{
 											m_transitionParam[0] = entity.transform;
 											Transition( OnEnemyInRange, m_transitionParam);
-											return;
+											done = true;
 										}
 									}
 								}
@@ -155,28 +171,23 @@ namespace AI {
 						}
 					}
 
-					if ( !m_data.m_ignoreNotListedUnits )
+					if ( !m_data.m_ignoreNotListedUnits && !done)
 					{
 						m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( centerPos , m_range, m_checkEntities);
 						for (int e = 0; e < m_numCheckEntities; e++) 
 						{
 							Entity entity = m_checkEntities[e];
-							MachineOld machine = entity.GetComponent<MachineOld>();
+							IMachine machine = entity.machine;
 							EatBehaviour.SpecialEatAction specialAction = m_eatBehaviour.GetSpecialEatAction( entity.sku );
 							if (
 								entity.IsEdible() && specialAction != EatBehaviour.SpecialEatAction.CannotEat && entity.IsEdible( m_eaterTier ) && machine != null && machine.CanBeBitten() && !machine.isPetTarget
 							)
 							{
-								// Check if physics reachable
-								RaycastHit hit;
-								Vector3 dir = entity.circleArea.center - m_machine.position;
-								bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
-								if ( !hasHit )
+								if (IsReachable( entity ))
 								{
 									// Check if closed? Not for the moment
 									m_transitionParam[0] = entity.transform;
 									Transition( OnEnemyInRange, m_transitionParam);
-									break;
 								}
 							}
 						}

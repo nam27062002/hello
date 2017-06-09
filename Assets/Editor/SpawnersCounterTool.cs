@@ -149,7 +149,7 @@ class SpawnerCounter : EditorWindow
                 }
             }
 
-			finalArray[i+1] = initalArray[i].name + ";" + initalArray[i].m_quantity.center + ";" + gpCondition + ";" + timeCondition + ";" + initalArray[i].m_spawnTime.center + ";" + initalArray[i].m_activationChance + ";" + initalArray[i].m_minTier + ";" + initalArray[i].transform.position;
+			finalArray[i+1] = initalArray[i].m_entityPrefabList[0].name + ";" + initalArray[i].m_quantity.center + ";" + gpCondition + ";" + timeCondition + ";" + initalArray[i].m_spawnTime.center + ";" + initalArray[i].m_activationChance;
         }
         return (finalArray);
     }

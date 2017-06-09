@@ -76,7 +76,8 @@ public class AmbientHazard : MonoBehaviour {
 
 	// References
 	[Separator("References")]
-	[SerializeField] private GameObject m_particlesPrefab = null;
+	[SerializeField] private ParticleData m_poisonParticle = null;
+	[SerializeField] private Vector3 m_poisonParticleRotation;
 	// [AOC] Will be pooled
 	[SerializeField] private GameObject m_view = null;
 	// We want the logic to keep running when the object is not visible, so keep the view apart
@@ -96,8 +97,12 @@ public class AmbientHazard : MonoBehaviour {
 	[SerializeField] private float m_coneLength = 2f;
 	[SerializeField] private float m_coneArc = 45f;
 
+	[Separator("Anim Events")]
+	[SerializeField] private AmbientHazardAnimEvents m_animEvents;
+
 	// Internal references
 	private GameObject m_particlesObj = null;
+
 	private Collider m_collider = null;
 
 	// Dynamic references
@@ -145,12 +150,17 @@ public class AmbientHazard : MonoBehaviour {
 	private void Awake() {
 		// Initialize internal references
 		m_collider = GetComponent<Collider>();
+
+		m_poisonParticle.CreatePool();
 	}
 
 	/// <summary>
 	/// First update call.
 	/// </summary>
 	private void Start() {
+		if ( m_visualActivationRadius < 0 )
+			m_visualActivationRadius = 40;
+		
 		// Always start with the initial delay state, provided there is some initial delay. Otherwise go straight to the initial state.
 		if(m_initialDelay > 0f) {
 			SetState(State.INITIAL_DELAY);
@@ -158,25 +168,16 @@ public class AmbientHazard : MonoBehaviour {
 			SetState(m_initialState);
 		}
 
+		if ( m_animEvents != null )
+		{
+			m_animEvents.onOpenEvent += OnAnimOpenEvent;
+		}
+
 		// Visibility logic
 		if(m_visualActivationRadius <= 0f) {
 			// Always visible
 			SetVisible(true);
 		}
-	}
-
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-
 	}
 
 	/// <summary>
@@ -233,11 +234,9 @@ public class AmbientHazard : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
+	void OnAnimOpenEvent ()
+	{
+		ActivateParticles( true );
 	}
 
 	/// <summary>
@@ -286,22 +285,42 @@ public class AmbientHazard : MonoBehaviour {
 		// Particles
 		if (m_visible) {
 			// If particles are not created, do it now
-			if (m_particlesObj == null && m_particlesPrefab != null) {
-				m_particlesObj = ParticleManager.Spawn(m_particlesPrefab);
+			if (m_particlesObj == null) {
+				m_particlesObj = m_poisonParticle.Spawn();
 				if (m_particlesObj != null) {
 					// As children of ourselves
 					// Particle system should already be created to match the zero position
 					m_particlesObj.transform.SetParentAndReset(this.transform);
+					m_particlesObj.transform.localPosition = m_poisonParticle.offset;
+					m_particlesObj.transform.localEulerAngles = m_poisonParticleRotation;
 
 					// Particles are automatically started when spawned from the pool
 					// Stop them if hazard is not active
-					if(m_state == State.IDLE) ActivateParticles(false);
+					if(m_state == State.IDLE || m_state == State.ACTIVATING) ActivateParticles(false);
 				}
+			}
+
+			if ( m_state == State.ACTIVATING || m_state == State.ACTIVE )
+			{
+				// In case always
+				if(m_animator != null && m_animator.isInitialized) {
+					m_animator.SetBool("active", true);
+					if ( m_state == State.ACTIVE )
+					{
+						m_animator.Play("ACTIVATE", 0, 1);
+						ActivateParticles(true);
+					}
+				}
+			}
+			else if ( m_state == State.IDLE )
+			{
+				if(m_animator != null && m_animator.isInitialized)	
+					m_animator.Play("DEACTIVATE", 0, 1);
 			}
 		} else {
 			// Return them to the pool
 			if (m_particlesObj != null) {
-				ParticleManager.ReturnInstance(m_particlesObj);
+				m_poisonParticle.ReturnInstance(m_particlesObj);
 				m_particlesObj = null;
 			}
 		}
@@ -331,8 +350,7 @@ public class AmbientHazard : MonoBehaviour {
 
 				// Launch deactivation animation
 				if(m_animator != null && m_animator.isInitialized) {
-					m_animator.ResetTrigger("activate");
-					m_animator.SetTrigger("deactivate");
+					m_animator.SetBool("active", false);
 				}
 
 				// Reset timer
@@ -343,22 +361,25 @@ public class AmbientHazard : MonoBehaviour {
 			case State.ACTIVATING: {
 				// Launch activation animation
 				if(m_animator != null && m_animator.isInitialized) {
-					m_animator.ResetTrigger("deactivate");
-					m_animator.SetTrigger("activate");
+					m_animator.SetBool("active", true);
 				}
 
 				// Reset timer
 				m_stateTimer = 0f;
 				m_stateTargetTime = m_activationDuration;
 
-				if ( !string.IsNullOrEmpty(m_onActiveSound) )
-					AudioController.Play(m_onActiveSound, transform.position);
+				if ( m_visible )
+				{
+					if ( !string.IsNullOrEmpty(m_onActiveSound) )
+						AudioController.Play(m_onActiveSound, transform.position);
+				}
 
-				// Start particles!
-				ActivateParticles(true);
+				// Start particles! -> done on animation event
+				// ActivateParticles(true);
 			} break;
 
 			case State.ACTIVE: {
+
 				// Enable collision
 				m_collider.enabled = true;
 

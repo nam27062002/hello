@@ -192,7 +192,7 @@ public class DragonPowerUp : MonoBehaviour {
 				}break;
 				case "fury_size_increase":	// Increases fire size by param1 %
 				{
-					FireBreathNew fireBreath = GetComponent<FireBreathNew>();
+					DragonBreathBehaviour fireBreath = GetComponent<DragonBreathBehaviour>();
 					float percentage = def.GetAsFloat("param1", 0);
 					if (fireBreath != null )
 					{

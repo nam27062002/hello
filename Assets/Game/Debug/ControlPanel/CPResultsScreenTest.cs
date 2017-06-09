@@ -218,11 +218,11 @@ public class CPResultsScreenTest : MonoBehaviour {
 			}
 		);
 
-		m_chestsModeDropdown.InitFromEnum(CHESTS_MODE, typeof(ChestTestMode), 0);
-		m_eggModeDropdown.InitFromEnum(EGG_MODE, typeof(EggTestMode), 0);
-		m_missionsModeDropdown.InitFromEnum(MISSIONS_MODE, typeof(MissionsTestMode), 0);
+		m_chestsModeDropdown.InitFromEnum(CHESTS_MODE, typeof(ChestTestMode), (int)ChestTestMode.RANDOM);
+		m_eggModeDropdown.InitFromEnum(EGG_MODE, typeof(EggTestMode), (int)EggTestMode.RANDOM);
+		m_missionsModeDropdown.InitFromEnum(MISSIONS_MODE, typeof(MissionsTestMode), (int)MissionsTestMode.NONE);
 
-		m_chestsLayoutDropdown.InitFromEnum(CHESTS_LAYOUT, typeof(ChestsLayout), 0);
+		m_chestsLayoutDropdown.InitFromEnum(CHESTS_LAYOUT, typeof(ChestsLayout), (int)ChestsLayout.FULL_PROGRESSION);
 
 		m_scoreValueInput.onValueChanged.AddListener(_text => scoreValue = long.Parse(_text));
 		m_highScoreValueInput.onValueChanged.AddListener(_text => highScoreValue = long.Parse(_text));

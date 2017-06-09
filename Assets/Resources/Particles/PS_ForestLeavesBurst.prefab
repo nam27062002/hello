@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 198890181269093844}
   - component: {fileID: 199791882376103944}
   - component: {fileID: 114497934012234850}
+  - component: {fileID: 114551661285272580}
   m_Layer: 0
   m_Name: PS_ForestLeavesBurst
   m_TagString: Untagged
@@ -82,6 +83,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1f909925ab84d41e690e75abdd8a2027, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114551661285272580
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1630992844379352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!198 &198593322504549530
@@ -453,7 +465,7 @@ ParticleSystem:
         m_RotationOrder: 4
       minMaxState: 3
     randomizeRotationDirection: 0
-    maxNumParticles: 24
+    maxNumParticles: 12
     size3D: 0
     rotation3D: 1
     gravityModifier:
@@ -587,11 +599,11 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
       minMaxState: 0
-    cnt0: 12
+    cnt0: 6
     cnt1: 1
     cnt2: 30
     cnt3: 30
-    cntmax0: 24
+    cntmax0: 12
     cntmax1: 1
     cntmax2: 30
     cntmax3: 30
