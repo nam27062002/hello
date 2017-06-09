@@ -172,7 +172,8 @@
 
 //				return fixed4(col, step(_AlphaThreshold / _ColorSteps, intensity));
 				float threshold = _AlphaThreshold / _ColorSteps;
-				col.w *= step(threshold, intensity) * _Alpha;
+//				col.w *= step(threshold, intensity) * _Alpha;
+				col.w *= (intensity - threshold) * _Alpha;
 
 //				float alfa = clamp((intensity) -_AlphaThreshold, 0.0, 1.0);
 //				fixed4 colf = fixed4(col, alfa * _Alpha);
