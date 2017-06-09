@@ -27,7 +27,6 @@ public class GlobalEvent {
 		INIT,
 		TEASING,
 		ACTIVE,
-		REWARD_PENDING,
 		FINISHED,
 
 		COUNT
@@ -55,6 +54,11 @@ public class GlobalEvent {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Data
+	private string m_id = "";
+	public string id {
+		get { return m_id; }
+	}
+
 	private DefinitionNode m_typeDef = null;
 	public DefinitionNode typeDef {
 		get { return m_typeDef; }
@@ -78,7 +82,7 @@ public class GlobalEvent {
 	}
 
 	public float progress {
-		get { return m_currentValue/m_steps.Last().targetValue; }
+		get { return Mathf.Clamp01(m_currentValue/m_steps.Last().targetValue); }
 	}
 
 	// Rewards
@@ -107,12 +111,11 @@ public class GlobalEvent {
 		set { SetState(value); }
 	}
 
-	// Contribution
-	private Contributor m_player = null;
-	public Contributor player {
-		get { return m_player; }
+	public bool isActive {
+		get { return m_state == State.ACTIVE; }
 	}
 
+	// Contribution
 	private List<Contributor> m_topContributors = new List<Contributor>();	// Sorted
 	public List<Contributor> topContributors {
 		get { return m_topContributors; }
@@ -148,12 +151,15 @@ public class GlobalEvent {
 	}
 
 	/// <summary>
-	/// Add a contribution from the current player.
-	/// No validation is done.
+	/// Add a contribution to the event.
 	/// </summary>
 	/// <param name="_value">Value to be added.</param>
 	public void AddContribution(float _value) {
+		// Ignore if event is not active
+		if(!isActive) return;
 
+		// Update current value
+		m_currentValue += _value;
 	}
 
 	//------------------------------------------------------------------------//

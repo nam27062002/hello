@@ -7,13 +7,16 @@
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
+using UnityEngine;
+
 using FGOL.Save;
 using FGOL.Save.SaveStates;
-using UnityEngine;
+
 using System;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Globalization;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
 
 
 //----------------------------------------------------------------------//
@@ -30,8 +33,10 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	private const string TAG = "PersistenceManager";
 
-	const string TAG = "PersistenceManager";
+	// Make sure persistence JSON is formatted equal in all systems!
+	public static readonly CultureInfo JSON_FORMATTING_CULTURE = CultureInfo.InvariantCulture;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
