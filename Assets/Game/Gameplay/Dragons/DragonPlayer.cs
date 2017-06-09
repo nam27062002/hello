@@ -37,6 +37,10 @@ public class DragonPlayer : MonoBehaviour {
 	//------------------------------------------------------------------//
 	[Header("Type and general data")]
 	[SerializeField] private string m_sku = "";
+	public string sku
+	{
+		get{ return m_sku; }
+	}
 	[SerializeField] private float m_invulnerableTime = 5f;
 
 	private DragonData m_data = null;
