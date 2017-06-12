@@ -8,6 +8,8 @@ namespace AI {
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Free Revive")]
 		public class PetFreeRevive : StateComponent {
 
+			[StateTransitionTrigger]
+			public const string onStartFreeRevive = "onStartFreeRevive";
 
 			PetFreeRevive(){
 				Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnFreeRevive);
@@ -20,10 +22,17 @@ namespace AI {
 			private bool m_revive = true;
 			private bool m_executeFreeRevive = false;
 			private float m_executingRevive = 0f;
+
 			protected override void OnUpdate(){
 				if ( m_executeFreeRevive ){
 					m_executeFreeRevive = false;
-					m_executingRevive = 0.25f;
+					Transition(onStartFreeRevive);
+				}
+			}
+			/*
+			protected override void OnUpdate(){
+				if ( m_executeFreeRevive ){
+					m_executeFreeRevive = false;
 					// InstanceManager.player.ResetStats(true, DragonPlayer.ReviveReason.FREE_REVIVE_PET);	// do it on next update?
 					Messenger.Broadcast(GameEvents.PLAYER_PET_PRE_FREE_REVIVE);
 
@@ -36,6 +45,8 @@ namespace AI {
 							particles[i].Stop();
 					}
 
+					// Revive animation
+					m_pilot.PressAction(Pilot.Action.Button_A);
 
 				}
 				else if ( m_executingRevive > 0 )
@@ -43,19 +54,21 @@ namespace AI {
 					m_executingRevive -= Time.deltaTime;
 					if ( m_executingRevive <= 0 )
 					{
+						m_pilot.ReleaseAction(Pilot.Action.Button_A);
+						// Hide Harp and Halo
+
 						InstanceManager.player.ResetStats(true, DragonPlayer.ReviveReason.FREE_REVIVE_PET);	// do it on next update?
 					}
 				}
 			}
+			*/
 
 			void OnFreeRevive( DamageType _type, Transform _source ){
 				if (  m_revive && InstanceManager.player != null && !InstanceManager.player.IsAlive() ){
-					// Free Revive!
-					// and tell view to lose aura
 					m_revive = false;
 					m_executeFreeRevive = true;
+					// Transition(onStartFreeRevive);
 				}
-
 			}
 		}
 	}
