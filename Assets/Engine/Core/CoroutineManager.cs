@@ -67,4 +67,15 @@ public class CoroutineManager : UbiBCN.SingletonMonoBehaviour<CoroutineManager> 
 		// Launch the coroutine
 		instance.StartCoroutine(instance.DelayedCoroutine(_action, _delay, _ignoreTimescale));
 	}
+
+	/// <summary>
+	/// Static wrapper for the StartCoroutine method, allowing any class to launch 
+	/// a coroutine from this manager.
+	/// </summary>
+	/// <returns>The started coroutine.</returns>
+	/// <param name="_coroutine">The coroutine to be started.</param>
+	public static Coroutine StartExternalCoroutine(IEnumerator _coroutine) {
+		// Just use the instance method
+		return instance.StartCoroutine(_coroutine);
+	}
 }
