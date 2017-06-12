@@ -84,7 +84,7 @@ public class SceneParticlePoolingGroupEditor : Editor {
 			// As children of ourselves
 			// Particle system should already be created to match the zero position
 			_particleInstance.transform.SetParentAndReset(particle.transform);
-			_particleInstance.transform.localPosition = particle.m_particle.offset;
+			_particleInstance.transform.position += particle.m_particle.offset;
 			_particleInstance.transform.rotation = particle.transform.rotation;
 			_particleInstance.hideFlags = HideFlags.DontSaveInEditor;
 

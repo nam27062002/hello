@@ -252,7 +252,7 @@ public class SceneParticlePooling : MonoBehaviour
 					// As children of ourselves
 					// Particle system should already be created to match the zero position
 					m_particleInstance.transform.SetParentAndReset(this.transform);
-					m_particleInstance.transform.localPosition = m_particle.offset;
+					m_particleInstance.transform.position += m_particle.offset;
 					m_particleInstance.transform.rotation = this.transform.rotation;
 				}
 			}
