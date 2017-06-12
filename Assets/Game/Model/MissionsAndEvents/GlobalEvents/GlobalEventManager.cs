@@ -134,10 +134,10 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 	/// <returns>Whether the user can contribute to the current event and why.</returns>
 	public static ErrorCode CanContribute() {
 		// Debugging override
-		if(CPGlobalEventsTest.testEnabled) return ErrorCode.NONE;
+		bool testing = CPGlobalEventsTest.testEnabled;
 
 		// We must be online!
-		if(Application.internetReachability == NetworkReachability.NotReachable) return ErrorCode.OFFLINE;
+		if(!testing && Application.internetReachability == NetworkReachability.NotReachable) return ErrorCode.OFFLINE;
 
 		// Manager must be properly setup
 		if(!IsReady()) return ErrorCode.NOT_INITIALIZED;
