@@ -97,7 +97,9 @@ ModelImporter:
     400086: Pet_Tonge1
     400088: Pet_Tonge2
     400090: Pet_Tonge3
-    7400000: Take 001
+    7400000: Revive
+    7400002: Revive_Loop
+    7400004: Revive_End
     9500000: //RootNode
   materials:
     importMaterials: 0
@@ -119,7 +121,127 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Revive
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 30
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Pet_Hip
+        weight: 1
+      - path: Pet_Hip/Pet_Back_Cloth_1
+        weight: 1
+      - path: Pet_Hip/Pet_Back_Cloth_1/Pet_Back_Cloth_2
+        weight: 1
+      - path: Pet_Hip/Pet_Front_Cloth_1
+        weight: 1
+      - path: Pet_Hip/Pet_Front_Cloth_1/Pet_Front_Cloth_2
+        weight: 1
+      - path: Pet_Hip/Pet_Head
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_Crown
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_Jaw
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_Jaw/Pet_Tonge1
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_Jaw/Pet_Tonge1/Pet_Tonge2
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_Jaw/Pet_Tonge1/Pet_Tonge2/Pet_Tonge3
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_L_Arm_1
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_L_Arm_1/Pet_L_Arm_2
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_L_Arm_1/Pet_L_Arm_2/Pet_L_Arm_Palm
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_L_Arm_1/Pet_L_Arm_2/Pet_L_Arm_Palm/Pet_Accessory
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_L_Arm_1/Pet_L_Arm_2/Pet_L_Arm_Palm/Pet_L_Arm_Fingers
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_L_Arm_1/Pet_L_Arm_2/Pet_L_Arm_Palm/Pet_L_Arm_Thumb
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_L_Eyelid_Down
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_L_Eyelid_Up
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_L_Wing_1
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_L_Wing_1/Pet_L_Wing_2
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_L_Wing_1/Pet_L_Wing_2/Pet_L_Wing_3
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_R_Arm_1
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_R_Arm_1/Pet_R_Arm_2
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_R_Arm_1/Pet_R_Arm_2/Pet_R_Arm_Palm
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_R_Arm_1/Pet_R_Arm_2/Pet_R_Arm_Palm/Pet_R_Arm_Fingers
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_R_Arm_1/Pet_R_Arm_2/Pet_R_Arm_Palm/Pet_R_Arm_Thumb
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_R_Eyelid_Down
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_R_Eyelid_Up
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_R_Wing_1
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_R_Wing_1/Pet_R_Wing_2
+        weight: 1
+      - path: Pet_Hip/Pet_Head/Pet_R_Wing_1/Pet_R_Wing_2/Pet_R_Wing_3
+        weight: 1
+      - path: Pet_Hip/Pet_L_Leg_1
+        weight: 1
+      - path: Pet_Hip/Pet_L_Leg_1/Pet_L_Leg_2
+        weight: 1
+      - path: Pet_Hip/Pet_L_Leg_1/Pet_L_Leg_2/Pet_L_Leg_Ankle
+        weight: 1
+      - path: Pet_Hip/Pet_R_Leg_1
+        weight: 1
+      - path: Pet_Hip/Pet_R_Leg_1/Pet_R_Leg_2
+        weight: 1
+      - path: Pet_Hip/Pet_R_Leg_1/Pet_R_Leg_2/Pet_R_Leg_Ankle
+        weight: 1
+      - path: Pet_Hip/Pet_Tail_1
+        weight: 1
+      - path: Pet_Hip/Pet_Tail_1/Pet_Tail_2
+        weight: 1
+      - path: Pet_Hip/Pet_Tail_1/Pet_Tail_2/Pet_Tail_3
+        weight: 1
+      - path: Pet_Hip/Pet_Tail_1/Pet_Tail_2/Pet_Tail_3/Pet_Tail_4
+        weight: 1
+      - path: Pet_L_Leg_Platform
+        weight: 1
+      - path: Pet_Master
+        weight: 1
+      - path: Pet_R_Leg_Platform
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
