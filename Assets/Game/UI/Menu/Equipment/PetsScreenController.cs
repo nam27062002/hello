@@ -455,11 +455,11 @@ public class PetsScreenController : MonoBehaviour {
 			}
 
 			// Open popup with delay
-			DOVirtual.DelayedCall(
-				delay, 
+			CoroutineManager.DelayedCall(
 				() => {
 					PopupManager.OpenPopupInstant(PopupInfoPets.PATH);
-				}
+				},
+				delay
 			);
 
 			// Mark tutorial as completed

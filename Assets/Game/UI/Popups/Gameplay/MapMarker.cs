@@ -9,7 +9,6 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -247,7 +246,7 @@ public class MapMarker : MonoBehaviour {
 	private void OnMapUnlocked() {
 		// Update marker will do the job
 		// Add some delay to give time for feedback to show off
-		DOVirtual.DelayedCall(0.25f, UpdateMarker, true);
+		CoroutineManager.DelayedCall(UpdateMarker, 0.25f, true);
 	}
 
 	/// <summary>

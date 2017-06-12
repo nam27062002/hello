@@ -9,7 +9,6 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System.Collections;
-using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -57,8 +56,7 @@ public class IncubatorTutorial : MonoBehaviour {
 		// If we must show the popup, do it with some delay
 		// Make sure we're on the right screen
 		if(m_showPending && InstanceManager.menuSceneController.screensController.currentMenuScreen == MenuScreens.DRAGON_SELECTION) {
-			DOVirtual.DelayedCall(
-				m_delay, 
+			CoroutineManager.DelayedCall(
 				() => {
 					// Open popup
 					PopupManager.OpenPopupInstant(PopupInfoEgg.PATH);
@@ -68,7 +66,8 @@ public class IncubatorTutorial : MonoBehaviour {
 
 					// Disable this component (we don't need it anymore)
 					this.enabled = false;
-				}
+				},
+				m_delay
 			);
 			m_showPending = false;
 		}

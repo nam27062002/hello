@@ -74,6 +74,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
+		DOVirtual.DelayedCall(6f, () => Debug.Log(""));
 		Debug.Log("<color=magenta>Launching coroutine...</color> " + Time.realtimeSinceStartup);
 		CoroutineManager.DelayedCall(
 			() => {

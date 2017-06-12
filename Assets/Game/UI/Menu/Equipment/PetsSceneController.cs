@@ -190,7 +190,7 @@ public class PetsSceneController : MonoBehaviour {
 				pet.SetAnim(MenuPetPreview.Anim.OUT);
 
 				// Program a delayed destruction of the pet preview (to give some time to see the anim)
-				DOVirtual.DelayedCall(0.3f, () => petLoaders[_slotIdx].Unload(), true);	// [AOC] MAGIC NUMBERS!! More or less synced with the animation
+				CoroutineManager.DelayedCall(() => petLoaders[_slotIdx].Unload(), 0.3f, true);	// [AOC] MAGIC NUMBERS!! More or less synced with the animation
 			}
 		} else {
 			// The loader will do everything!

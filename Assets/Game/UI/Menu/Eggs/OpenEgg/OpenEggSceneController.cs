@@ -295,7 +295,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		}
 
 		// Program reward animation
-		DOVirtual.DelayedCall(0.35f, OnEggOpenFinishedCallback, false);
+		CoroutineManager.DelayedCall(OnEggOpenFinishedCallback, 0.35f, false);
 	}
 
 	/// <summary>
