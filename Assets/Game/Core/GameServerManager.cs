@@ -20,9 +20,17 @@ public class GameServerManager
         {
             if (s_pInstance == null)
             {
-                // Calety implementation is used
-                s_pInstance = new GameServerManagerCalety();
-                s_pInstance.Configure();
+				// Test mode?
+				if(DebugSettings.useDebugServer) {
+					// Offline implementation is used
+					s_pInstance = new GameServerOffline();
+				} else {
+					// Calety implementation is used
+					s_pInstance = new GameServerManagerCalety();
+				}
+
+				// Configure new instance
+				s_pInstance.Configure();
             }
 
             return s_pInstance;
@@ -74,4 +82,13 @@ public class GameServerManager
     public virtual void GetQualitySettings(Action<Error, Dictionary<string, object>> callback) {}
     public virtual void SetQualitySettings(string qualitySettings, Action<Error, Dictionary<string, object>> callback) {}
     public virtual void SendPlayTest(bool silent, string playTestUserId, string trackingData, Action<Error, Dictionary<string, object>> callback) {}    
+
+	//------------------------------------------------------------------------//
+	// GLOBAL EVENTS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get a list of all current global events.
+	/// </summary>
+	/// <param name="_callback">Callback action.</param>
+	public virtual void GetGlobalEvents(Action<Error, Dictionary<string, object>> _callback) {}
 }

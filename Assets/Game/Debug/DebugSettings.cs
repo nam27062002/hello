@@ -15,7 +15,7 @@ using UnityEngine;
 /// <summary>
 /// Global setup of the game.
 /// </summary>
-public static class DebugSettings {
+public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -104,6 +104,7 @@ public static class DebugSettings {
 		set { Prefs.SetBoolPlayer(PLAY_TEST, value); }
 	}
 
+	// Spawners cheats
 	static bool m_ignoreSpawnTime = false;
 	public static bool ignoreSpawnTime{
 		get { return m_ignoreSpawnTime; }
@@ -122,10 +123,33 @@ public static class DebugSettings {
 		set { m_spawnChance100 = value;}
 	}
 
+	// Server debugging tools
+	// Only in editor!
+	[Separator("Server debugging tools")]
+	[SerializeField] private bool m_useDebugServer = false;
+	public static bool useDebugServer {
+		get {
+			// Only in the editor!
+			#if UNITY_EDITOR
+			return instance.m_useDebugServer; 
+			#else
+			return false;
+			#endif
+		}
+	}
+
+	[SerializeField] private Range m_debugServerDelayRange = new Range(0f, 0f);		// Simulate a delay on the server response. A random value will be taken for each call.
+	public static Range serverDelayRange {
+		get { return instance.m_debugServerDelayRange; }
+		set { instance.m_debugServerDelayRange = value; }
+	}
 
     //------------------------------------------------------------------//
     // METHODS															//
     //------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization. To be called at the start of the application.
+	/// </summary>
     public static void Init() {
         // Properties that need to be positive by default should be initialized here
         string key = INGAME_HUD;        
