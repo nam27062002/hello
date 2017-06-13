@@ -842,9 +842,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         if (FeatureSettingsManager.instance.IsMiniTrackingEnabled)
         {
             MiniTrackingEngine.SendTrackingFile(false,
-            delegate (FGOL.Server.Error error, Dictionary<string, object> response)
+			(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) => 
             {
-                if (error == null)
+				if (_error == null)
                 {
                     Debug.Log("Play test tracking sent successfully");
                 }

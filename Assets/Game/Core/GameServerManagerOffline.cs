@@ -31,7 +31,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Simulate global event progression
-	private Dictionary<string, float> m_eventsValues = new Dictionary<string, float>();
+	private Dictionary<string, float> m_eventValues = new Dictionary<string, float>();
 
 	//------------------------------------------------------------------------//
 	// INTERNAL UTILS														  //
@@ -58,7 +58,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// 
 	/// </summary>
 	/// <param name="_callback">Action called once the server response arrives.</param>
-	override public void Ping(Action<Error> _callback) {
+	override public void Ping(ServerCallbackNoResponse _callback) {
 		// No response
 		DelayedCall(() => _callback(null));
 	}
@@ -71,9 +71,9 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// 
 	/// </summary>
 	/// <param name="_callback">Action called once the server response arrives.</param>
-	override public void GetPersistence(Action<Error, Dictionary<string, object>> _callback) {
+	override public void GetPersistence(ServerCallback _callback) {
 		// Either load current local persistence of a fake json from disk
-		Dictionary<string, object> res = new Dictionary<string, object>();
+		ServerResponse res = new ServerResponse();
 	#if false
 		// Current local persistence
 		res["response"] = PersistenceManager.LoadToObject().ToString();
@@ -95,7 +95,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// 
 	/// </summary>
 	/// <param name="_callback">Action called once the server response arrives.</param>
-	override public void SetPersistence(string _persistence, Action<Error, Dictionary<string, object>> _callback) {
+	override public void SetPersistence(string _persistence, ServerCallback _callback) {
 		// Doesn't need response
 		DelayedCall(() => _callback(null, null));
 	}
@@ -110,9 +110,9 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// a future event or no event at all.
 	/// </summary>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_GetCurrent(Action<Error, Dictionary<string, object>> _callback) {
+	override public void GlobalEvent_GetCurrent(ServerCallback _callback) {
 		// Create return dictionary
-		Dictionary<string, object> res = new Dictionary<string, object>();
+		ServerResponse res = new ServerResponse();
 
 		// Type and target
 		SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass();
@@ -150,9 +150,9 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// <param name="_eventID">The identifier of the event whose state we want.</param>
 	/// <param name="_getLeaderboard">Whether to retrieve the leaderboard as well or not (top 100 + player).</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_GetState(string _eventID, bool _getLeaderboard, Action<Error, Dictionary<string, object>> _callback) {
+	override public void GlobalEvent_GetState(string _eventID, bool _getLeaderboard, ServerCallback _callback) {
 		// Create return dictionary
-		Dictionary<string, object> res = new Dictionary<string, object>();
+		ServerResponse res = new ServerResponse();
 
 		// Create json
 		SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass();
@@ -160,8 +160,8 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		// Current value
 		// Use a local dictionary to simulate events values progression
 		float currentValue = 600f;
-		if(!m_eventsValues.TryGetValue(_eventID, out currentValue)) {
-			m_eventsValues[_eventID] = currentValue;
+		if(!m_eventValues.TryGetValue(_eventID, out currentValue)) {
+			m_eventValues[_eventID] = currentValue;
 		}
 		eventData.Add("currentValue", currentValue.ToString(JSON_FORMAT));
 
@@ -220,14 +220,14 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_score">The score to be registered.</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_RegisterScore(string _eventID, float _score, Action<Error> _callback) {
+	override public void GlobalEvent_RegisterScore(string _eventID, float _score, ServerCallbackNoResponse _callback) {
 		// Increase event's current value
-		if(!m_eventsValues.ContainsKey(_eventID)) {
+		if(!m_eventValues.ContainsKey(_eventID)) {
 			// Invalid event ID, simulate validation error
 			DelayedCall(() => _callback(new Error("User can't register score into the event with id " + _eventID, ErrorCodes.ValidationError)));
 		} else {
 			// Increase event's total score and simulate server delay
-			m_eventsValues[_eventID] += _score;
+			m_eventValues[_eventID] += _score;
 			DelayedCall(() => _callback(null));
 		}
 	}
@@ -237,7 +237,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// </summary>
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_callback">Callback action. Given rewards?</param>
-	override public void GlobalEvent_ApplyRewards(string _eventID, Action<Error, Dictionary<string, object>> _callback) {
+	override public void GlobalEvent_ApplyRewards(string _eventID, ServerCallback _callback) {
 		// [AOC] TODO!!
 		DelayedCall(() => _callback(null, null));
 	}

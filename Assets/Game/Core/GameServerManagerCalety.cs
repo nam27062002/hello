@@ -220,14 +220,14 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	public override void Ping(Action<Error> callback) {
+	public override void Ping(ServerCallbackNoResponse callback) {
 		Commands_EnqueueCommand(ECommand.Ping, null, callback);
 	}
 	
 	/// <summary>
 	/// 
 	/// </summary>
-	public override void LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken, Action<Error, Dictionary<string, object>> callback) {
+	public override void LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken, ServerCallback callback) {
 		Log("LogInToServerThruPlatform");
 		
 		//if(!m_delegate.m_logged)
@@ -254,7 +254,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	public override void LogOut(Action<Error> callback) {
+	public override void LogOut(ServerCallbackNoResponse callback) {
 		// The response is immediate. We don't want to treat it as a command because it could be trigger at any moment and we don't want it to mess with a command that is being processed
 		GameSessionManager.SharedInstance.LogOutFromServer(false);
 		if(callback != null) {
@@ -272,21 +272,21 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	public override void GetServerTime(Action<Error, Dictionary<string, object>> callback) {
+	public override void GetServerTime(ServerCallback callback) {
 		Commands_EnqueueCommand(ECommand.GetTime, null, callback);            
 	}
 
 	/// <summary>
 	/// 
 	/// </summary>
-	public override void GetPersistence(Action<Error, Dictionary<string, object>> callback) {
+	public override void GetPersistence(ServerCallback callback) {
 		Commands_EnqueueCommand(ECommand.GetPersistence, null, callback);        
 	}
 
 	/// <summary>
 	/// 
 	/// </summary>
-	public override void SetPersistence(string persistence, Action<Error, Dictionary<string, object>> callback) {
+	public override void SetPersistence(string persistence, ServerCallback callback) {
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("persistence", persistence);
 		Commands_EnqueueCommand(ECommand.SetPersistence, parameters, callback);        
@@ -295,7 +295,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	public override void UpdateSaveVersion(bool prelimUpdate, Action<Error, Dictionary<string, object>> callback) {
+	public override void UpdateSaveVersion(bool prelimUpdate, ServerCallback callback) {
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("fgolID", GameSessionManager.SharedInstance.GetUID());
 		parameters.Add("prelimUpdate", prelimUpdate.ToString());
@@ -305,7 +305,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	public override void GetQualitySettings(Action<Error, Dictionary<string, object>> callback) {
+	public override void GetQualitySettings(ServerCallback callback) {
 		Commands_EnqueueCommand(ECommand.GetQualitySettings, null, callback);
 	}
 
@@ -313,7 +313,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// Uploads the quality settings information calculated by client to the server
 	/// </summary>
 	/// <param name="qualitySettings">Json in string format of the quality settings to upload</param>    
-	public override void SetQualitySettings(string qualitySettings, Action<Error, Dictionary<string, object>> callback) {
+	public override void SetQualitySettings(string qualitySettings, ServerCallback callback) {
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("qualitySettings", qualitySettings);
 		Commands_EnqueueCommand(ECommand.SetQualitySettings, parameters, callback);
@@ -322,7 +322,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	public override void SendPlayTest(bool silent, string playTestUserId, string trackingData, Action<Error, Dictionary<string, object>> callback) {
+	public override void SendPlayTest(bool silent, string playTestUserId, string trackingData, ServerCallback callback) {
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("silent", silent.ToString());
 		parameters.Add("playTestUserId", playTestUserId);
@@ -336,7 +336,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// a future event or no event at all.
 	/// </summary>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_GetCurrent(Action<Error, Dictionary<string, object>> _callback) {
+	override public void GlobalEvent_GetCurrent(ServerCallback _callback) {
 		// No params for now
 		Commands_EnqueueCommand(ECommand.GlobalEvents_GetCurrent, null, _callback);
 	}
@@ -347,7 +347,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <param name="_eventID">The identifier of the event whose state we want.</param>
 	/// <param name="_getLeaderboard">Whether to retrieve the leaderboard as well or not (top 100 + player).</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_GetState(string _eventID, bool _getLeaderboard, Action<Error, Dictionary<string, object>> _callback) {
+	override public void GlobalEvent_GetState(string _eventID, bool _getLeaderboard, ServerCallback _callback) {
 		// Compose parameters and enqeue command
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("id", _eventID);
@@ -361,7 +361,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_score">The score to be registered.</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_RegisterScore(string _eventID, float _score, Action<Error> _callback) {
+	override public void GlobalEvent_RegisterScore(string _eventID, float _score, ServerCallbackNoResponse _callback) {
 		// Compose parameters and enqeue command
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("id", _eventID);
@@ -374,7 +374,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// </summary>
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_callback">Callback action. Given rewards?</param>
-	override public void GlobalEvent_ApplyRewards(string _eventID, Action<Error, Dictionary<string, object>> _callback) {
+	override public void GlobalEvent_ApplyRewards(string _eventID, ServerCallback _callback) {
 		// Compose parameters and enqeue command
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("id", _eventID);
@@ -418,7 +418,7 @@ public class GameServerManagerCalety : GameServerManager {
 
 		public Dictionary<string, string> Parameters { get; set; }
 
-		public Action<Error, Dictionary<string, object>> Callback { get; private set; }
+		public ServerCallback Callback { get; private set; }
 
 		/// <summary>
 		/// 
@@ -432,7 +432,7 @@ public class GameServerManagerCalety : GameServerManager {
 		/// <summary>
 		/// 
 		/// </summary>
-		public void Setup(ECommand cmd, Dictionary<string, string> parameters, Action<Error, Dictionary<string, object>> callback) {
+		public void Setup(ECommand cmd, Dictionary<string, string> parameters, ServerCallback callback) {
 			Cmd = cmd;
 			Parameters = parameters;
 			Callback = callback;
@@ -448,7 +448,7 @@ public class GameServerManagerCalety : GameServerManager {
 	private Command Commands_CurrentCommand { get; set; }
 
 	public delegate void BeforeCommandComplete(Error error);
-	//public delegate void AfterCommand(Command command, Dictionary<string, string> parameters, Error error, Dictionary<string, object> result, Action<Error, Dictionary<string, object>> callback, int retries);
+	//public delegate void AfterCommand(Command command, Dictionary<string, string> parameters, Error error, ServerResponse result, ServerCallback callback, int retries);
 
 	/// <summary>
 	/// 
@@ -488,12 +488,12 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	private void Commands_EnqueueCommand(ECommand command, Dictionary<string, string> parameters, Action<Error> callback) {
+	private void Commands_EnqueueCommand(ECommand command, Dictionary<string, string> parameters, ServerCallbackNoResponse callback) {
 		// Wrap single parameter action into a 2 parameter action callback
 		Commands_EnqueueCommand(
 			command, 
 			parameters, 
-			(Error _error, Dictionary<string, object> _response) => {
+			(Error _error, ServerResponse _response) => {
 				callback(_error); 
 			}
 		);
@@ -502,7 +502,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	private void Commands_EnqueueCommand(ECommand command, Dictionary<string, string> parameters, Action<Error, Dictionary<string, object>> callback) {
+	private void Commands_EnqueueCommand(ECommand command, Dictionary<string, string> parameters, ServerCallback callback) {
 		Command cmd = Commands_GetCommand();
 		cmd.Setup(command, parameters, callback);
 
@@ -550,7 +550,7 @@ public class GameServerManagerCalety : GameServerManager {
 		parameters["version"] = Globals.GetApplicationVersion();
 		parameters["platform"] = Globals.GetPlatform().ToString();
 
-		Action<Error> onAuthed = delegate (Error authError) {
+		ServerCallbackNoResponse onAuthed = delegate (Error authError) {
 			if(authError == null) {
 				string sessionToken = Authenticator.Instance.User.sessionToken;
 				if(sessionToken != null) {
@@ -590,7 +590,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	private void Commands_AfterCommand(Command command, Error error, Dictionary<string, object> result, int retries) {                       
+	private void Commands_AfterCommand(Command command, Error error, ServerResponse result, int retries) {                       
 		//Try and recover from an auth error                    
 		if(error != null && error.GetType() == typeof(AuthenticationError) && retries < COMMANDS_MAX_AUTH_RETRIES && command.Cmd != ECommand.Login) {
 			//Invalidate the session in an attempt to force re-auth
@@ -620,7 +620,7 @@ public class GameServerManagerCalety : GameServerManager {
 
 		BeforeCommandComplete runCommand = delegate(Error beforeError) {
 			if(beforeError == null) {
-				Commands_RunCommand(command, delegate (Error error, Dictionary<string, object> result) {
+				Commands_RunCommand(command, delegate (Error error, ServerResponse result) {
 					Commands_AfterCommand(command, error, result, retries);                        
 				});
 			} else if(command.Callback != null) {
@@ -634,7 +634,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	private void Commands_RunCommand(Command command, Action<Error, Dictionary<string, object>> callback) {
+	private void Commands_RunCommand(Command command, ServerCallback callback) {
 		Log("RunCommand " + command.Cmd + " CurrentCommand = " + Commands_CurrentCommand.Cmd);
 		// Commands have to be executed one by one since we're not using actions on server side
 		if(Commands_CurrentCommand == command) {
@@ -688,8 +688,8 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	private void Commands_OnExecuteCommandDone(Error error, Dictionary<string, object> result) {
-		Action<Error, Dictionary<string, object>> callback = Commands_CurrentCommand.Callback;
+	private void Commands_OnExecuteCommandDone(Error error, ServerResponse result) {
+		ServerCallback callback = Commands_CurrentCommand.Callback;
 		Commands_ReturnCommand(Commands_CurrentCommand);
 		Commands_CurrentCommand = null;
 		if(callback != null) {
@@ -709,7 +709,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// </summary>
 	private bool Commands_OnResponse(string responseData, int statusCode) {
 		Error error = null;
-		Dictionary<string, object> response = null;
+		ServerResponse response = null;
 
 		// 426 code means that there's a new version of the application available. We simulate that the response was 200 (SUCCESS) because we don't want to force the
 		// user to upgrade        
@@ -730,12 +730,12 @@ public class GameServerManagerCalety : GameServerManager {
 
 				/*if (response.DataAsText != null && response.DataAsText != "")
 				{
-				    Dictionary<string, object> result = Json.Deserialize(response.DataAsText) as Dictionary<string, object>;
+				    ServerResponse result = Json.Deserialize(response.DataAsText) as ServerResponse;
 				    if (result != null)
 				    {
 				        if (result.ContainsKey("response"))
 				        {
-				            Dictionary<string, object> expectedResult = result["response"] as Dictionary<string, object>;
+				            ServerResponse expectedResult = result["response"] as ServerResponse;
 
 				            if (expectedResult != null)
 				            {
@@ -750,7 +750,7 @@ public class GameServerManagerCalety : GameServerManager {
 				        }
 				        else if (result.ContainsKey("error"))
 				        {
-				            Dictionary<string, object> errorJson = result["error"] as Dictionary<string, object>;
+				            ServerResponse errorJson = result["error"] as ServerResponse;
 
 				            string errorMessage = errorJson["message"] as string;
 				            string errorName = errorJson["name"] as string;
@@ -773,11 +773,11 @@ public class GameServerManagerCalety : GameServerManager {
 				            }
 				            catch (Exception) { }
 
-				            Dictionary<string, object> errorData = null;
+				            ServerResponse errorData = null;
 
 				            if (errorJson.ContainsKey("data"))
 				            {
-				                errorData = errorJson["data"] as Dictionary<string, object>;
+				                errorData = errorJson["data"] as ServerResponse;
 				            }
 
 				            error = new ServerInternalError(errorMessage, errorName, errorCode);
@@ -868,7 +868,7 @@ public class GameServerManagerCalety : GameServerManager {
 				case ECommand.Login:
 				{                   
 					// [DGR] SERVER: Receive these parameters from server
-					response = new Dictionary<string, object>();
+					response = new ServerResponse();
 					response["fgolID"] = GameSessionManager.SharedInstance.GetUID();
 					response["sessionToken"] = GameSessionManager.SharedInstance.GetUserToken();
 					response["authState"] = Authenticator.AuthState.Authenticated.ToString(); //(Authenticator.AuthState)Enum.Parse(typeof(Authenticator.AuthState), response["authState"] as string);                        
@@ -896,7 +896,7 @@ public class GameServerManagerCalety : GameServerManager {
 					}
 
 					// [DGR] SERVER: Receive these parameters from server
-					response = new Dictionary<string, object>();
+					response = new ServerResponse();
 					response["dateTime"] = time;
 					response["unixTimestamp"] = time;
 				}
@@ -904,7 +904,7 @@ public class GameServerManagerCalety : GameServerManager {
 
 				case ECommand.GetQualitySettings:
 				{                
-					response = new Dictionary<string, object>();
+					response = new ServerResponse();
 					response["response"] = responseData;
 
 					// statusCode 204 means that the client has to upload its settings to the server
@@ -915,7 +915,7 @@ public class GameServerManagerCalety : GameServerManager {
 				default:
 				{
 					// [DGR] SERVER: Receive these parameters from server
-					response = new Dictionary<string, object>();
+					response = new ServerResponse();
 					response["response"] = responseData;                    
 				}
 				break;
