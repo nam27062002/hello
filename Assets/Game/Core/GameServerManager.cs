@@ -27,7 +27,7 @@ public class GameServerManager
 				// Test mode?
 				if(DebugSettings.useDebugServer) {
 					// Offline implementation is used
-					s_pInstance = new GameServerOffline();
+					s_pInstance = new GameServerManagerOffline();
 				} else {
 					// Calety implementation is used
 					s_pInstance = new GameServerManagerCalety();

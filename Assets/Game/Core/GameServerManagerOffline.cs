@@ -22,7 +22,7 @@ using System.Collections.Generic;
 /// Inherits from GameServerManagerCalety, so if a method is not overriden, the default
 /// behaviour is executed.
 /// </summary>
-public class GameServerOffline : GameServerManagerCalety {
+public class GameServerManagerOffline : GameServerManagerCalety {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
