@@ -41,11 +41,12 @@ public class MachineEatBehaviour : EatBehaviour {
 
 		if (m_isPet) {
 			m_canLatchOnPlayer = false;	
-			AddToIgnoreList("badJunk");
 		} else {
 			m_canLatchOnPlayer = true;
 			m_canBitePlayer = false;
 		}
+
+		AddToIgnoreList("BadBird");
 
 		// Check if view has eat event
 		PreyAnimationEvents animEvents = gameObject.FindComponentRecursive<PreyAnimationEvents>();
