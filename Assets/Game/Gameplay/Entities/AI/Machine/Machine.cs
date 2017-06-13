@@ -331,11 +331,13 @@ namespace AI {
 				if (m_motion != null) m_motion.Update();
 
 				//forward special actions
-				m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.A, m_pilot.IsActionPressed(Pilot.Action.Button_A));
-				m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.B, m_pilot.IsActionPressed(Pilot.Action.Button_B));
-				m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.C, m_pilot.IsActionPressed(Pilot.Action.Button_C));
+				if (m_pilot != null) {
+					m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.A, m_pilot.IsActionPressed(Pilot.Action.Button_A));
+					m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.B, m_pilot.IsActionPressed(Pilot.Action.Button_B));
+					m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.C, m_pilot.IsActionPressed(Pilot.Action.Button_C));
 
-				m_viewControl.ShowExclamationMark(m_pilot.IsActionPressed(Pilot.Action.ExclamationMark));
+					m_viewControl.ShowExclamationMark(m_pilot.IsActionPressed(Pilot.Action.ExclamationMark));
+				}
 			}
 			m_inflammable.Update();
 			if (m_checkCurrents)
@@ -436,7 +438,10 @@ namespace AI {
 		}
 
 		public bool GetSignal(Signals.Type _signal) {
-			return m_signals.GetValue(_signal);
+			if (m_signals != null)
+				return m_signals.GetValue(_signal);
+
+			return false;
 		}
 
 		public object[] GetSignalParams(Signals.Type _signal) {
@@ -533,7 +538,7 @@ namespace AI {
 				return false;
 			if (m_isHolded)
 				return false;
-			if (m_pilot.IsActionPressed(Pilot.Action.Latching))
+			if (m_pilot != null && m_pilot.IsActionPressed(Pilot.Action.Latching))
 				return false;
 
 			return true;
