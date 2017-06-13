@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4116535471618292}
   - component: {fileID: 114527574069856934}
   m_Layer: 0
-  m_Name: SP_BadBird
+  m_Name: SP_BadJunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -53,7 +53,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Junk/PF_BadBird
+  - name: Junk/PF_BadJunkBone
+    chance: 100
+  - name: Junk/PF_BadJunkEye
+    chance: 100
+  - name: Junk/PF_BadJunkFrog
+    chance: 100
+  - name: Junk/PF_BadJunkMagicBottle
     chance: 100
   m_quantity:
     min: 1
@@ -67,12 +73,16 @@ MonoBehaviour:
   m_rails: 1
   m_hasGroupBonus: 0
   m_minTier: 0
+  m_maxTier: 4
+  m_checkMaxTier: 0
   m_activationChance: 100
   m_activationTriggers: []
+  m_activationKillTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
     min: 200
     max: 200
+  m_isPremiumCurrencyNPC: 0
   m_homePosMethod: 0
   m_homePosDistance:
     min: 0
