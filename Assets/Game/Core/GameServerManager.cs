@@ -7,9 +7,13 @@
 using FGOL.Server;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 public class GameServerManager
 {
+	// Make sure that JSON dataused to communicate with the server is properly formatted!
+	public static readonly CultureInfo JSON_FORMAT = CultureInfo.InvariantCulture;
+
     #region singleton
     // Singleton ///////////////////////////////////////////////////////////
     private static GameServerManager s_pInstance = null;
@@ -87,8 +91,33 @@ public class GameServerManager
 	// GLOBAL EVENTS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Get a list of all current global events.
+	/// Get the current global event for this user from the server.
+	/// Current global event can be a past event with pending rewards, an active event,
+	/// a future event or no event at all.
 	/// </summary>
 	/// <param name="_callback">Callback action.</param>
-	public virtual void GetGlobalEvents(Action<Error, Dictionary<string, object>> _callback) {}
+	public virtual void GlobalEvent_GetCurrent(Action<Error, Dictionary<string, object>> _callback) {}
+
+	/// <summary>
+	/// Get the current value and (optionally) the leaderboard for a specific event.
+	/// </summary>
+	/// <param name="_eventID">The identifier of the event whose state we want.</param>
+	/// <param name="_getLeaderboard">Whether to retrieve the leaderboard as well or not (top 100 + player).</param>
+	/// <param name="_callback">Callback action.</param>
+	public virtual void GlobalEvent_GetState(string _eventID, bool _getLeaderboard, Action<Error, Dictionary<string, object>> _callback) {}
+
+	/// <summary>
+	/// Register a score to a target event.
+	/// </summary>
+	/// <param name="_eventID">The identifier of the target event.</param>
+	/// <param name="_score">The score to be registered.</param>
+	/// <param name="_callback">Callback action.</param>
+	public virtual void GlobalEvent_RegisterScore(string _eventID, float _score, Action<Error> _callback) {}
+
+	/// <summary>
+	/// Reward the player for his contribution to an event.
+	/// </summary>
+	/// <param name="_eventID">The identifier of the target event.</param>
+	/// <param name="_callback">Callback action. Given rewards?</param>
+	public virtual void GlobalEvent_ApplyRewards(string _eventID, Action<Error, Dictionary<string, object>> _callback) {}
 }
