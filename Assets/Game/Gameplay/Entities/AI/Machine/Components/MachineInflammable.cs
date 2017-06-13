@@ -93,7 +93,11 @@ namespace AI {
 
 			m_timer = m_burningTime;
 
-			m_nextState = State.Burning;
+			if (m_burningTime == 0 && m_dissolveTime == 0) {
+				m_nextState = State.Ashes;
+			} else {
+				m_nextState = State.Burning;
+			}
 		}
 
 
