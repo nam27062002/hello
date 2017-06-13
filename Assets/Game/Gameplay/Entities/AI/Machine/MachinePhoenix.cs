@@ -7,12 +7,7 @@ namespace AI {
 		//--------------------------------------------------
 		[SeparatorAttribute("Phoenix Effects")]
 		[SerializeField] private GameObject m_fire;
-
-		[SerializeField] private GameObject m_view;
-		[SerializeField] private GameObject m_viewWhenBurning;
-
-		[SerializeField] private ParticleData m_onFireParticle;
-		[SerializeField] private ParticleData m_onFireEndsParticle;
+		[SerializeField] private ParticleSystem m_fireParticle;
 
 
 		//--------------------------------------------------
@@ -50,22 +45,14 @@ namespace AI {
 
 		private void Activate() {
 			m_phoenixActive = true;
-
-			m_view.SetActive(false);
-			// on fire particle
-
 			m_fire.SetActive(true);
-			m_viewWhenBurning.SetActive(true);
+			m_fireParticle.Play();
 		}
 
 		private void Deactivate() {
 			m_phoenixActive = false;
-
-			m_view.SetActive(true);
-			// on fire particle
-
 			m_fire.SetActive(false);
-			m_viewWhenBurning.SetActive(false);
+			m_fireParticle.Stop();
 		}
 	}
 }
