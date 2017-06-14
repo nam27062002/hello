@@ -352,7 +352,7 @@ public class GameServerManagerCalety : GameServerManager {
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("id", _eventID);
 		parameters.Add("leaderboard", _getLeaderboard.ToString(JSON_FORMAT));
-		Commands_EnqueueCommand(ECommand.GlobalEvents_GetEventState, null, _callback);
+		Commands_EnqueueCommand(ECommand.GlobalEvents_GetState, null, _callback);
 	}
 
 	/// <summary>
@@ -405,7 +405,7 @@ public class GameServerManagerCalety : GameServerManager {
 		PlayTest,
 
 		GlobalEvents_GetCurrent,		// no params, returns the definition for either a finished event with a pending reward, the current active event, a future event or null
-		GlobalEvents_GetEventState,		// params: string _eventID, bool _getLeaderboard. Returns the current total value of an event and (optionally) the leaderboard for that event (top 100 + user)
+		GlobalEvents_GetState,		// params: string _eventID, bool _getLeaderboard. Returns the current total value of an event and (optionally) the leaderboard for that event (top 100 + user)
 		GlobalEvents_RegisterScore,		// params: string _eventID, float _score
 		GlobalEvents_ApplyRewards		// TODO!!
 	}
@@ -415,9 +415,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// </summary>
 	private class Command {
 		public ECommand Cmd { get; private set; }
-
 		public Dictionary<string, string> Parameters { get; set; }
-
 		public ServerCallback Callback { get; private set; }
 
 		/// <summary>
@@ -628,42 +626,69 @@ public class GameServerManagerCalety : GameServerManager {
        
 			switch(command.Cmd) {
 				case ECommand.Ping: {   
-					CaletyExtensions_Ping();
+					ServerManager.SharedInstance.SendCommand(COMMAND_PING);
 				} break;
 
 				case ECommand.GetTime: {
-					CaletyExtensions_GetTime();
+					ServerManager.SharedInstance.SendCommand(COMMAND_TIME);
 				} break;
 
 				case ECommand.Login: {
 					Log("Command Login");
-					CaletyExtensions_LogInToServerThruPlatform(parameters["platformId"], parameters["platformUserId"], parameters["platformToken"]);
+					if(!string.IsNullOrEmpty(parameters["platformId"])) {
+						ServerManager.SharedInstance.SetSocialPlatform(parameters["platformId"]);
+					}
+					ServerManager.SharedInstance.Server_SendAuth(parameters["platformId"], parameters["platformToken"]);
 				} break;                
 
 				case ECommand.GetPersistence: {
-					CaletyExtensions_GetPersistence();
+					if(IsLogged()) {
+						Dictionary<string, string> kParams = new Dictionary<string, string>();
+						kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
+						kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
+						ServerManager.SharedInstance.SendCommand(COMMAND_GET_PERSISTENCE, kParams);
+					}
 				} break;
 
 				case ECommand.SetPersistence: {
-					CaletyExtensions_SetPersistence(parameters["persistence"]);
+					if(IsLogged()) {
+						Dictionary<string, string> kParams = new Dictionary<string, string>();
+						kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
+						kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
+						kParams["universe"] = parameters["persistence"];
+						ServerManager.SharedInstance.SendCommand(COMMAND_SET_PERSISTENCE, kParams);
+					}
 				} break;
 
 				case ECommand.UpdateSaveVersion: {
-				// [DGR] SERVER: To change for an actual request to the server
+					// [DGR] SERVER: To change for an actual request to the server
 					Commands_OnResponse(null, 200);
 				} break;
 
 				case ECommand.GetQualitySettings: {
-					CaletyExtensions_GetQualitySettings();
+					// The user is not required to be logged to request the quality settings for her device        
+					ServerManager.SharedInstance.SendCommand(COMMAND_GET_QUALITY_SETTINGS);        
 				} break;
 
 				case ECommand.SetQualitySettings: {
-					CaletyExtensions_SetQualitySettings(parameters["qualitySettings"]);
+					// The user is required to be logged to set its quality settings to prevent anonymous users from messing with the quality settings of other users who have the same device model
+					if(IsLogged()) {
+						Dictionary<string, string> kParams = new Dictionary<string, string>();
+						kParams["uid"] = GameSessionManager.SharedInstance.GetUID();                        
+						ServerManager.SharedInstance.SendCommand(COMMAND_SET_QUALITY_SETTINGS, kParams, parameters["qualitySettings"]);
+					} else {
+						LogError("SetQualitySettings require the user to be logged");
+					}
 				} break;
 
 				case ECommand.PlayTest: {
 					bool silent = (parameters["silent"].ToLower() == "true");
-					CaletyExtensions_SendPlayTest(silent, parameters["playTestUserId"], parameters["trackingData"]);
+					string cmd = (silent) ? COMMAND_PLAYTEST_A : COMMAND_PLAYTEST_B;
+
+					// This endpoint is anonymous but we need to send the playtest user id for tracking purposes
+					Dictionary<string, string> kParams = new Dictionary<string, string>();
+					kParams["uid"] = parameters["playTestUserId"];        
+					ServerManager.SharedInstance.SendCommand(cmd, kParams, parameters["trackingData"]);
 				} break;
 			}
 		} else {
@@ -708,8 +733,7 @@ public class GameServerManagerCalety : GameServerManager {
 		int status = (int)Math.Floor(statusCode / 100.0);
 
 		switch(status) {
-			case 2: // Respose is ok
-			{
+			case 2: {// Respose is ok
 				// [DGR] SERVER: Receive response
 				//error = new InvalidServerResponseError("(WRONG RESPONSE FORMAT) " + responseData);
 				//error = new UserAuthError("test");
@@ -825,23 +849,19 @@ public class GameServerManagerCalety : GameServerManager {
 				    LogError(url, error);
 				    callback(error, null);
 				}*/
-			}
-			break;
-			case 4:
-			{
+			} break;
+
+			case 4: {
 				error = new ClientConnectionError("Status code: " + statusCode);                
-			}
-			break;
-			case 5:
-			{
+			} break;
+			
+			case 5: {
 				error = new ServerConnectionError("Status code: " + statusCode);                
-			}
-			break;
-			default:
-			{
+			} break;
+			
+			default: {
 				error = new UnknownError("Status code: " + statusCode);                
-			}
-			break;
+			} break;
 		}
 
 		if(error == null) {
@@ -851,8 +871,7 @@ public class GameServerManagerCalety : GameServerManager {
 			}
 
 			switch(Commands_CurrentCommand.Cmd) {
-				case ECommand.Login:
-				{                   
+				case ECommand.Login: {
 					// [DGR] SERVER: Receive these parameters from server
 					response = new ServerResponse();
 					response["fgolID"] = GameSessionManager.SharedInstance.GetUID();
@@ -866,12 +885,10 @@ public class GameServerManagerCalety : GameServerManager {
 						key = "cloudSaveAvailable";
 						response[key] = result.ContainsKey(key) && Convert.ToBoolean(result[key]);                        
 					}
-				}
-				break;
+				} break;
 
 				case ECommand.GetTime:
-				case ECommand.UpdateSaveVersion:
-				{
+				case ECommand.UpdateSaveVersion: {
 					int time = Globals.GetUnixTimestamp();
 
 					// Checks if the response from server can be interpreted
@@ -885,29 +902,24 @@ public class GameServerManagerCalety : GameServerManager {
 					response = new ServerResponse();
 					response["dateTime"] = time;
 					response["unixTimestamp"] = time;
-				}
-				break;
+				} break;
 
-				case ECommand.GetQualitySettings:
-				{                
+				case ECommand.GetQualitySettings: {
 					response = new ServerResponse();
 					response["response"] = responseData;
 
 					// statusCode 204 means that the client has to upload its settings to the server
 					response["upLoadRequired"] = (statusCode == 204);                    
-				}
-				break;
+				} break;
 
-				default:
-				{
+				default: {
 					// [DGR] SERVER: Receive these parameters from server
 					response = new ServerResponse();
 					response["response"] = responseData;                    
-				}
-				break;
+				} break;
 			}
-		}
-		else {
+		} else {
+			// Server returned an error
 			if(Commands_CurrentCommand != null) {
 				LogWarning(Commands_CurrentCommand.Cmd, error);
 			} else {
@@ -924,17 +936,22 @@ public class GameServerManagerCalety : GameServerManager {
 	// CALETY EXTENSIONS IMPLEMENTATION										  //
 	//------------------------------------------------------------------------//
 	#region calety_extensions
-	private static string COMMAND_PING = "/api/server/ping";
-	private static string COMMAND_TIME = "/api/server/time";
-	private static string COMMAND_GET_PERSISTENCE = "/api/persistence/get";
-	private static string COMMAND_SET_PERSISTENCE = "/api/persistence/set";
-	private static string COMMAND_GET_QUALITY_SETTINGS = "/api/adq/settings";
-	private static string COMMAND_SET_QUALITY_SETTINGS = "/api/quality/upload";
-	private static string COMMAND_PLAYTEST_A = "/api/playtest/a";
-	private static string COMMAND_PLAYTEST_B = "/api/playtest/b";
+	private const string COMMAND_PING = "/api/server/ping";
+	private const string COMMAND_TIME = "/api/server/time";
+	private const string COMMAND_GET_PERSISTENCE = "/api/persistence/get";
+	private const string COMMAND_SET_PERSISTENCE = "/api/persistence/set";
+	private const string COMMAND_GET_QUALITY_SETTINGS = "/api/adq/settings";
+	private const string COMMAND_SET_QUALITY_SETTINGS = "/api/quality/upload";
+	private const string COMMAND_PLAYTEST_A = "/api/playtest/a";
+	private const string COMMAND_PLAYTEST_B = "/api/playtest/b";
+
+	private const string COMMAND_GLOBAL_EVENTS_GET_CURRENT = "/api/events/get_current";
+	private const string COMMAND_GLOBAL_EVENTS_GET_STATE = "/api/events/get_state";
+	private const string COMMAND_GLOBAL_EVENTS_REGISTER_SCORE = "/api/events/register_score";
+	private const string COMMAND_GLOBAL_EVENTS_APPLY_REWARDS = "/api/events/apply_rewards";
 
 	/// <summary>
-	/// 
+	/// Initialize Calety's NetworkManager.
 	/// </summary>
 	private void CaletyExtensions_Init() {
 		// All codes need to be handled in order to be sure that the game will continue regardless the network error
@@ -943,32 +960,35 @@ public class GameServerManagerCalety : GameServerManager {
 			405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 426,
 			500, 501, 502, 503, 504, 505
 		};
-		NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_PING, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnPing);
-		NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_TIME, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnGetTime);
-		NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_GET_PERSISTENCE, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnGetPersistenceResponse);
-		NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_SET_PERSISTENCE, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnSetPersistenceResponse);
-		NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_GET_QUALITY_SETTINGS, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnGetQualitySettingsResponse);
-		NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_SET_QUALITY_SETTINGS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnSetQualitySettingsResponse);
-		NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_PLAYTEST_A, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnPlayTestResponse);
-		NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_PLAYTEST_B, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnPlayTestResponse);
+
+		// Register all endpoints to the network manager
+		NetworkManager nm = NetworkManager.SharedInstance;	// Shorter notation
+		nm.RegistryEndPoint(COMMAND_PING, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_TIME, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_GET_PERSISTENCE, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnGetPersistenceResponse);
+		nm.RegistryEndPoint(COMMAND_SET_PERSISTENCE, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_GET_QUALITY_SETTINGS, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_SET_QUALITY_SETTINGS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_PLAYTEST_A, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_PLAYTEST_B, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+
+		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_CURRENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_STATE, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_APPLY_REWARDS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 	}
 
+
 	/// <summary>
-	/// 
+	/// Default callback from Calety's NetworkManager, will propagate the response to the command system.
 	/// </summary>
-	private bool CaletyExtensions_OnPing(string strResponse, string strCmd, int iResponseCode) {
-		return Commands_OnResponse(strResponse, iResponseCode);        
+	private bool CaletyExtensions_OnCommandDefaultResponse(string strResponse, string strCmd, int iResponseCode) {
+		Log("Received response for command " + strCmd + ",  statusCode=" + iResponseCode);
+		return Commands_OnResponse(strResponse, iResponseCode);
 	}
 
 	/// <summary>
-	/// 
-	/// </summary>
-	private bool CaletyExtensions_OnGetTime(string strResponse, string strCmd, int iResponseCode) {
-		return Commands_OnResponse(strResponse, iResponseCode);        
-	}
-
-	/// <summary>
-	/// 
+	/// Special treatment for the GetPersistence command.
 	/// </summary>
 	private bool CaletyExtensions_OnGetPersistenceResponse(string strResponse, string strCmd, int iResponseCode) {
 		// [DGR] Server: Default universe
@@ -979,124 +999,6 @@ public class GameServerManagerCalety : GameServerManager {
 		}
 
 		return Commands_OnResponse(strResponse, iResponseCode);                
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private bool CaletyExtensions_OnSetPersistenceResponse(string strResponse, string strCmd, int iResponseCode) {
-		Log("OnSetPersistenceResponse statusCode=" + iResponseCode);
-		return Commands_OnResponse(strResponse, iResponseCode);        
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private bool CaletyExtensions_OnGetQualitySettingsResponse(string strResponse, string strCmd, int iResponseCode) {
-		Log("OnGetQualitySettingsResponse statusCode=" + iResponseCode);
-		return Commands_OnResponse(strResponse, iResponseCode);
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private bool CaletyExtensions_OnSetQualitySettingsResponse(string strResponse, string strCmd, int iResponseCode) {
-		Log("OnSetQualitySettingsResponse statusCode=" + iResponseCode);
-		return Commands_OnResponse(strResponse, iResponseCode);
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private bool CaletyExtensions_OnPlayTestResponse(string strResponse, string strCmd, int iResponseCode) {
-		Log("OnPlayTestResponse statusCode=" + iResponseCode);
-		return Commands_OnResponse(strResponse, iResponseCode);
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private void CaletyExtensions_LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken) {        
-		Log("CaletyExtensions_LogInToServerThruPlatform");        
-		if(!string.IsNullOrEmpty(platformId)) {
-			ServerManager.SharedInstance.SetSocialPlatform(platformId);
-		}
-
-		ServerManager.SharedInstance.Server_SendAuth(platformUserId, platformToken);
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private void CaletyExtensions_GetPersistence() {
-		if(IsLogged()) {
-			Dictionary<string, string> kParams = new Dictionary<string, string>();
-			kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
-			kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
-			ServerManager.SharedInstance.SendCommand(COMMAND_GET_PERSISTENCE, kParams);
-		}
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private void CaletyExtensions_SetPersistence(string persistence) {
-		if(IsLogged()) {
-			Dictionary<string, string> kParams = new Dictionary<string, string>();
-			kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
-			kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
-			kParams["universe"] = persistence;
-			ServerManager.SharedInstance.SendCommand(COMMAND_SET_PERSISTENCE, kParams);
-		}
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private void CaletyExtensions_Ping() {        
-		ServerManager.SharedInstance.SendCommand(COMMAND_PING);
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private void CaletyExtensions_GetTime() {
-		ServerManager.SharedInstance.SendCommand(COMMAND_TIME);
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private void CaletyExtensions_GetQualitySettings() {        
-		// The user is not required to be logged to request the quality settings for her device        
-		ServerManager.SharedInstance.SendCommand(COMMAND_GET_QUALITY_SETTINGS);        
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private void CaletyExtensions_SetQualitySettings(string qualitySettings) {
-		// The user is required to be logged to set its quality settings to prevent anonymous users from messing with the quality settings of other users who have the same device model
-		if(IsLogged()) {
-			Dictionary<string, string> kParams = new Dictionary<string, string>();
-			kParams["uid"] = GameSessionManager.SharedInstance.GetUID();                        
-			ServerManager.SharedInstance.SendCommand(COMMAND_SET_QUALITY_SETTINGS, kParams, qualitySettings);
-		}
-		else {
-			LogError("SetQualitySettings require the user to be logged");
-		}
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private void CaletyExtensions_SendPlayTest(bool silent, string playTestUserId, string trackingData) {
-		string command = (silent) ? COMMAND_PLAYTEST_A : COMMAND_PLAYTEST_B;
-
-		// This endpoint is anonymous but we need to send the playtest user id for tracking purposes
-		Dictionary<string, string> kParams = new Dictionary<string, string>();
-		kParams["uid"] = playTestUserId;        
-		ServerManager.SharedInstance.SendCommand(command, kParams, trackingData);
 	}
 	#endregion
 
