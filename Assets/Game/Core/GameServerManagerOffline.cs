@@ -58,9 +58,9 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// 
 	/// </summary>
 	/// <param name="_callback">Action called once the server response arrives.</param>
-	override public void Ping(ServerCallbackNoResponse _callback) {
+	override public void Ping(ServerCallback _callback) {
 		// No response
-		DelayedCall(() => _callback(null));
+		DelayedCall(() => _callback(null, null));
 	}
 
 	//------------------------------------------------------------------------//
@@ -220,15 +220,15 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_score">The score to be registered.</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_RegisterScore(string _eventID, float _score, ServerCallbackNoResponse _callback) {
+	override public void GlobalEvent_RegisterScore(string _eventID, float _score, ServerCallback _callback) {
 		// Increase event's current value
 		if(!m_eventValues.ContainsKey(_eventID)) {
 			// Invalid event ID, simulate validation error
-			DelayedCall(() => _callback(new Error("User can't register score into the event with id " + _eventID, ErrorCodes.ValidationError)));
+			DelayedCall(() => _callback(new Error("User can't register score into the event with id " + _eventID, ErrorCodes.ValidationError), null));
 		} else {
 			// Increase event's total score and simulate server delay
 			m_eventValues[_eventID] += _score;
-			DelayedCall(() => _callback(null));
+			DelayedCall(() => _callback(null, null));
 		}
 	}
 

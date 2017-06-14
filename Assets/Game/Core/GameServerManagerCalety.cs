@@ -220,7 +220,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	public override void Ping(ServerCallbackNoResponse callback) {
+	public override void Ping(ServerCallback callback) {
 		Commands_EnqueueCommand(ECommand.Ping, null, callback);
 	}
 	
@@ -254,11 +254,11 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	public override void LogOut(ServerCallbackNoResponse callback) {
+	public override void LogOut(ServerCallback callback) {
 		// The response is immediate. We don't want to treat it as a command because it could be trigger at any moment and we don't want it to mess with a command that is being processed
 		GameSessionManager.SharedInstance.LogOutFromServer(false);
 		if(callback != null) {
-			callback(null);
+			callback(null, null);
 		}       
 	}
 
@@ -361,7 +361,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_score">The score to be registered.</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_RegisterScore(string _eventID, float _score, ServerCallbackNoResponse _callback) {
+	override public void GlobalEvent_RegisterScore(string _eventID, float _score, ServerCallback _callback) {
 		// Compose parameters and enqeue command
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("id", _eventID);
@@ -488,20 +488,6 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	private void Commands_EnqueueCommand(ECommand command, Dictionary<string, string> parameters, ServerCallbackNoResponse callback) {
-		// Wrap single parameter action into a 2 parameter action callback
-		Commands_EnqueueCommand(
-			command, 
-			parameters, 
-			(Error _error, ServerResponse _response) => {
-				callback(_error); 
-			}
-		);
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
 	private void Commands_EnqueueCommand(ECommand command, Dictionary<string, string> parameters, ServerCallback callback) {
 		Command cmd = Commands_GetCommand();
 		cmd.Setup(command, parameters, callback);
@@ -550,7 +536,7 @@ public class GameServerManagerCalety : GameServerManager {
 		parameters["version"] = Globals.GetApplicationVersion();
 		parameters["platform"] = Globals.GetPlatform().ToString();
 
-		ServerCallbackNoResponse onAuthed = delegate (Error authError) {
+		ServerCallback onAuthed = (Error authError, GameServerManager.ServerResponse _response) => {
 			if(authError == null) {
 				string sessionToken = Authenticator.Instance.User.sessionToken;
 				if(sessionToken != null) {
@@ -572,13 +558,13 @@ public class GameServerManagerCalety : GameServerManager {
 		if(Commands_RequiresAuth(command) || checkAuth) {
 			Log("IsAuthenticated = " + AuthManager.Instance.IsAuthenticated(User.LoginType.Default));
 			if(AuthManager.Instance.IsAuthenticated(User.LoginType.Default)) {
-				onAuthed(null);
+				onAuthed(null, null);
 			} else {
 				LogWarning("(BeforeCommand) :: No authed trying to reauthenticated before command");
 
 				//Try and silently authenticate and continue with request
 				AuthManager.Instance.Authenticate(new PermissionType[] { PermissionType.Basic }, delegate (Error authError, PermissionType[] grantedPermissions, bool cloudSaveAvailable) {
-					onAuthed(authError);
+					onAuthed(authError, null);
 				}, true);
 			}
 		} else {

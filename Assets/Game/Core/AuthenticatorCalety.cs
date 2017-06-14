@@ -11,7 +11,7 @@ public class AuthenticatorCalety : Authenticator
 	protected override void ExtendedCheckConnection(Action<Error> callback)
     {
 		GameServerManager.SharedInstance.Ping(
-			(Error _error) => { 
+			(Error _error, GameServerManager.ServerResponse _response) => { 
 				callback(_error); 
 			}
 		);
@@ -93,7 +93,7 @@ public class AuthenticatorCalety : Authenticator
 	public override void Logout(Action<Error> callback)
     {
 		GameServerManager.SharedInstance.LogOut(
-			(Error _error) => { 
+			(Error _error, GameServerManager.ServerResponse _response) => { 
 				callback(_error); 
 			}
 		);

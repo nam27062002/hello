@@ -84,10 +84,11 @@ public class GameServerManager
 	}
 
 	/// <summary>
-	/// Server callback signatures.
+	/// Server callback signature.
 	/// </summary>
+	/// <param name="_error">Error returned by the server. <c>null</c> if there was no error.</param>
+	/// <param name="_response">Response data sent by the server. Can be <c>null</c> if the command has no response (i.e. ping).</param>
 	public delegate void ServerCallback(Error _error, ServerResponse _response);
-	public delegate void ServerCallbackNoResponse(Error _error);
 
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -119,19 +120,19 @@ public class GameServerManager
 	/// <summary>
 	/// 
 	/// </summary>
-	public void CheckConnection(System.Action<FGOL.Server.Error> callback)
+	public void CheckConnection(ServerCallback callback)
 	{
 		if (Application.internetReachability != NetworkReachability.NotReachable)
 		{
 			if (callback != null)
 			{
-				callback(null);
+				callback(null, null);
 			}
 		}
 		else
 		{
 			Debug.Log("HSXServer (CheckConnection) :: InternetReachability NotReachable");
-			callback(new FGOL.Server.ClientConnectionError("InternetReachability NotReachable", FGOL.Server.ErrorCodes.ClientConnectionError));
+			callback(new FGOL.Server.ClientConnectionError("InternetReachability NotReachable", FGOL.Server.ErrorCodes.ClientConnectionError), null);
 		}
 	}
 
@@ -140,7 +141,7 @@ public class GameServerManager
 	//------------------------------------------------------------------------//
     protected virtual void ExtendedConfigure() {}
     public virtual void Init(GeoLocation.Location location) {}
-	public virtual void Ping(ServerCallbackNoResponse callback) {}
+	public virtual void Ping(ServerCallback callback) {}
 	public virtual void GetServerTime(ServerCallback callback) {}
     public virtual void SetServerLocation(GeoLocation.Location location) {}
 	public virtual void SendLog(string message, string stackTrace, UnityEngine.LogType logType) {}
@@ -149,7 +150,7 @@ public class GameServerManager
 	// LOGIN																  //
 	//------------------------------------------------------------------------//
     public virtual void LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken, ServerCallback callback) {}
-    public virtual void LogOut(ServerCallbackNoResponse callback) {}
+	public virtual void LogOut(ServerCallback callback) {}
 
 	//------------------------------------------------------------------------//
 	// PERSISTENCE															  //
@@ -194,7 +195,7 @@ public class GameServerManager
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_score">The score to be registered.</param>
 	/// <param name="_callback">Callback action.</param>
-	public virtual void GlobalEvent_RegisterScore(string _eventID, float _score, ServerCallbackNoResponse _callback) {}
+	public virtual void GlobalEvent_RegisterScore(string _eventID, float _score, ServerCallback _callback) {}
 
 	/// <summary>
 	/// Reward the player for his contribution to an event.
