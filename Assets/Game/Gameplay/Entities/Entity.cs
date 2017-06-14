@@ -163,11 +163,12 @@ public class Entity : IEntity {
         m_spawned = true;		
     }
 
-    public override void Disable(bool _destroyed) {
-		ViewControl vControl = GetComponent<ViewControl>();
-		if ( vControl != null )
-			vControl.PreDisable();
+    public override void Disable(bool _destroyed) {		
+		if (m_viewControl != null)
+			m_viewControl.PreDisable();
+		
 		base.Disable(_destroyed);
+
 		if (m_spawner != null) {
 			m_spawner.RemoveEntity(gameObject, _destroyed);
 		}
