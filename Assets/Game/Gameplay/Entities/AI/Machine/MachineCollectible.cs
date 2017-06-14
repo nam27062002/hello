@@ -14,8 +14,8 @@ namespace AI {
 		public Vector3 eye						{ get { return Vector3.zero; } }
 		public Vector3 target					{ get { return Vector3.zero; } }
 		public virtual Vector3 upVector 		{ get { return Vector3.up; } set {} }
-		public Transform enemy 					{ get { return null;} }
-		public bool isPetTarget 				{ get { return false;} set {} }
+		public Transform enemy 					{ get { return null; } }
+		public bool isPetTarget 				{ get { return false; } set {} }
 		public virtual float lastFallDistance 	{ get { return 0f; } }
 		public virtual bool isKinematic 		{ get { return false; } set {} }
 
@@ -64,8 +64,8 @@ namespace AI {
 
 		public void OnTrigger(string _trigger, object[] _param = null) {}
 		public void DisableSensor(float _seconds) {}
-		public virtual void CheckCollisions(bool _value) { }
-		public virtual void FaceDirection(bool _value) { }
+		public virtual void CheckCollisions(bool _value) {}
+		public virtual void FaceDirection(bool _value) {}
 		public bool HasCorpse() { return false; }
 		public void ReceiveDamage(float _damage) {}
 
