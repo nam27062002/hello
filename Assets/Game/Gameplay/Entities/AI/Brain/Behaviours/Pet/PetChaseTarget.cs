@@ -5,10 +5,11 @@ namespace AI {
 	namespace Behaviour {
 		[System.Serializable]
 		public class PetChaseTargetData : StateComponentData {
-			public float speedMultiplier = 1.5f;
-			public string attackPoint;
-			public float chaseTimeout;
-			public Range m_cooldown;
+			// public float speedMultiplier = 1.5f;
+			// public float chaseTimeout;
+			// public Range m_cooldown;
+
+			public string petChaseSku = "common";
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Chase Target")]
@@ -23,7 +24,6 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnEnemyOutOfSight = "onEnemyOutOfSight";
 
-			protected PetChaseTargetData m_data;
 			protected Transform m_target;
 			protected AI.IMachine m_targetMachine;
 			protected Entity m_targetEntity;
@@ -32,6 +32,9 @@ namespace AI {
 			protected float m_speed;
 
 			private object[] m_transitionParam;
+
+			protected float m_chaseTimeout;
+			protected Range m_cooldown;
 
 			public override StateComponentData CreateData() {
 				return new PetChaseTargetData();
@@ -42,8 +45,12 @@ namespace AI {
 			}
 
 			protected override void OnInitialise() {
-				m_data = m_pilot.GetComponentData<PetChaseTargetData>();
-				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * m_data.speedMultiplier;
+				PetChaseTargetData data = m_pilot.GetComponentData<PetChaseTargetData>();
+				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PET_MOVEMENT, data.petChaseSku);
+
+				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * def.GetAsFloat("chaseSpeedMultiplier");
+				m_chaseTimeout = def.GetAsFloat("chaseTimeout");
+				m_cooldown = def.GetAsRange("chaseCooldown");
 				m_eatBehaviour = m_pilot.GetComponent<MachineEatBehaviour>();
 
 				m_machine.SetSignal(Signals.Type.Alert, true);
@@ -70,11 +77,7 @@ namespace AI {
 				}
 
 				if (m_target == null && m_machine.enemy != null) {
-					m_target = m_machine.enemy.FindTransformRecursive(m_data.attackPoint);
-					if (m_target == null) {
-						m_target = m_machine.enemy;
-					}
-
+					m_target = m_machine.enemy;
 					m_targetEntity = m_machine.enemy.GetComponent<Entity>();
 					m_targetMachine = m_targetEntity.machine;
 				}
@@ -124,7 +127,7 @@ namespace AI {
 							if ( collision.collider.gameObject.layer == LayerMask.NameToLayer("ground") )
 							{	
 								// We go back
-								m_transitionParam[0] = m_data.m_cooldown.GetRandom();
+								m_transitionParam[0] = m_cooldown.GetRandom();
 								Transition(OnCollisionDetected, m_transitionParam);
 								return;
 							}
@@ -136,9 +139,9 @@ namespace AI {
 					m_pilot.SlowDown(false);
 					// if not eating check chase timeout
 					m_timer += Time.deltaTime;
-					if ( m_timer >= m_data.chaseTimeout )
+					if ( m_timer >= m_chaseTimeout )
 					{
-						m_transitionParam[0] = m_data.m_cooldown.GetRandom();
+						m_transitionParam[0] = m_cooldown.GetRandom();
 						Transition(OnChaseTimeOut, m_transitionParam);
 					}
 					else
@@ -168,7 +171,7 @@ namespace AI {
 					
 
 				} else {
-					m_transitionParam[0] = m_data.m_cooldown.GetRandom();
+					m_transitionParam[0] = m_cooldown.GetRandom();
 					Transition(OnEnemyOutOfSight, m_transitionParam);
 				}
 			}
