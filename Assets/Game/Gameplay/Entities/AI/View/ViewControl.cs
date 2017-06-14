@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class ViewControl : MonoBehaviour, ISpawnable {
+public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	public static Color GOLD_TINT = new Color(255.0f / 255.0f, 161 / 255.0f, 0, 255.0f / 255.0f);
     public static Color FREEZE_TINT = new Color(0.0f / 255.0f, 200.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f);

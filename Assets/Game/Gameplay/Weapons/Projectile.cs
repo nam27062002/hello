@@ -223,7 +223,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 			m_activateOnShoot[i].SetActive(true);
 		}
 
-		m_homingTimer = 0.25f;
+		m_homingTimer = m_maxTime / 20f; //0.25f;
 
 		m_elapsedTime = 0f;
 		if (m_chargeTime > 0f) {			
@@ -317,7 +317,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 								m_homingTimer = 0f;
 
 								Vector3 impulse = (m_target.position - m_position).normalized * m_speed;
-								impulse = (impulse - m_velocity) / 25f; //mass
+								impulse = (impulse - m_velocity) / 15f; //mass
 								m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_speed);
 							}
 						} break;

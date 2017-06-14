@@ -20,9 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4000010793146780}
   - component: {fileID: 114000012930624712}
-  - component: {fileID: 114000013989385924}
-  - component: {fileID: 114000010231284240}
   - component: {fileID: 114584224448975534}
+  - component: {fileID: 114868477671073850}
   - component: {fileID: 135386216034871644}
   m_Layer: 26
   m_Name: PF_GoodJunkBottle
@@ -368,299 +367,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1529257536355122}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &114000010231284240
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000012775619424}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_walkSpeed: 1
-  m_runSpeed: 1
-  m_minPlaybakSpeed: 1
-  m_maxPlaybakSpeed: 1.5
-  m_onBoostMaxPlaybackSpeed: 0
-  m_hasNavigationLayer: 0
-  m_hasRotationLayer: 0
-  m_animA: 
-  m_animB: 
-  m_animC: 
-  m_exclamationTransform: {fileID: 0}
-  m_corpseAsset: 
-  m_onEatenParticle:
-    name: PS_BottleShine
-    path: 
-    offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      key0:
-        serializedVersion: 2
-        rgba: 4294967295
-      key1:
-        serializedVersion: 2
-        rgba: 4294967295
-      key2:
-        serializedVersion: 2
-        rgba: 0
-      key3:
-        serializedVersion: 2
-        rgba: 0
-      key4:
-        serializedVersion: 2
-        rgba: 0
-      key5:
-        serializedVersion: 2
-        rgba: 0
-      key6:
-        serializedVersion: 2
-        rgba: 0
-      key7:
-        serializedVersion: 2
-        rgba: 0
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    scale: 1
-  m_onEatenFrozenParticle:
-    name: PS_BottleShine
-    path: 
-    offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      key0:
-        serializedVersion: 2
-        rgba: 4294967295
-      key1:
-        serializedVersion: 2
-        rgba: 4294967295
-      key2:
-        serializedVersion: 2
-        rgba: 0
-      key3:
-        serializedVersion: 2
-        rgba: 0
-      key4:
-        serializedVersion: 2
-        rgba: 0
-      key5:
-        serializedVersion: 2
-        rgba: 0
-      key6:
-        serializedVersion: 2
-        rgba: 0
-      key7:
-        serializedVersion: 2
-        rgba: 0
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    scale: 1
-  m_onEatenAudio: 
-  m_speedToWaterSplash: 0
-  m_waterSplashParticle:
-    name: 
-    path: 
-    offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      key0:
-        serializedVersion: 2
-        rgba: 4294967295
-      key1:
-        serializedVersion: 2
-        rgba: 4294967295
-      key2:
-        serializedVersion: 2
-        rgba: 0
-      key3:
-        serializedVersion: 2
-        rgba: 0
-      key4:
-        serializedVersion: 2
-        rgba: 0
-      key5:
-        serializedVersion: 2
-        rgba: 0
-      key6:
-        serializedVersion: 2
-        rgba: 0
-      key7:
-        serializedVersion: 2
-        rgba: 0
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    scale: 1
-  m_firePoints: []
-  m_burnParticle:
-    name: 
-    path: 
-    offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      key0:
-        serializedVersion: 2
-        rgba: 4294967295
-      key1:
-        serializedVersion: 2
-        rgba: 4294967295
-      key2:
-        serializedVersion: 2
-        rgba: 0
-      key3:
-        serializedVersion: 2
-        rgba: 0
-      key4:
-        serializedVersion: 2
-        rgba: 0
-      key5:
-        serializedVersion: 2
-        rgba: 0
-      key6:
-        serializedVersion: 2
-        rgba: 0
-      key7:
-        serializedVersion: 2
-        rgba: 0
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    scale: 1
-  m_onBurnAudio: 
-  m_explosionParticles:
-    name: 
-    path: 
-    offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      key0:
-        serializedVersion: 2
-        rgba: 4294967295
-      key1:
-        serializedVersion: 2
-        rgba: 4294967295
-      key2:
-        serializedVersion: 2
-        rgba: 0
-      key3:
-        serializedVersion: 2
-        rgba: 0
-      key4:
-        serializedVersion: 2
-        rgba: 0
-      key5:
-        serializedVersion: 2
-        rgba: 0
-      key6:
-        serializedVersion: 2
-        rgba: 0
-      key7:
-        serializedVersion: 2
-        rgba: 0
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    scale: 1
-  m_onExplosionAudio: 
-  m_onAttackAudio: 
-  m_onScaredAudio: 
-  m_onPanicAudio: 
-  m_idleAudio: 
-  m_skins: []
 --- !u!114 &114000012930624712
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -674,28 +380,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sku: GoodJunkBottle
   m_dieOutsideFrustum: 1
---- !u!114 &114000013989385924
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000012775619424}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15a7ea52045474df5be461e18d5c4f2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
-  m_energy: 10
-  m_energyDrainSec: 1
-  m_energyRecoverSec: 1
-  m_brainResource: {fileID: 0}
-  m_railSeparation:
-    min: 0.5
-    max: 1
-  m_serializedJson: '[]'
-  m_databaseKey: PF_GoodJunkBottle
-  m_updateMachinePos: 0
 --- !u!114 &114584224448975534
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -824,6 +508,70 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_overrideCamera: {fileID: 0}
+--- !u!114 &114868477671073850
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012775619424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81b1962f8e6914ae28c086d109b5c8f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_onCollectParticle:
+    name: PS_BottleShine
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
+  m_onCollectAudio: 
 --- !u!135 &135386216034871644
 SphereCollider:
   m_ObjectHideFlags: 1
