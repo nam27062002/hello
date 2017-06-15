@@ -161,7 +161,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: bb3620561b14f41bf946d789f0259397, type: 3}
   m_Controller: {fileID: 9100000, guid: 4f7435a91052243638fb1047668ab87a, type: 2}
-  m_CullingMode: 1
+  m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -487,6 +487,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: MineMedium
+  m_hideNeedTierMessage: 1
   m_dieOutsideFrustum: 1
 --- !u!114 &114633210379111216
 MonoBehaviour:
@@ -503,7 +504,7 @@ MonoBehaviour:
   m_enableSensor: 0
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 0
+    m_sightRadius: 5
     m_maxRadius: 0
     m_minRadius: 0
     m_hysteresisOffset: 0
@@ -521,7 +522,7 @@ MonoBehaviour:
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
-    m_dissolveTime: 1.5
+    m_dissolveTime: 0
     m_ashExceptions: []
   m_onSpawnSound: 
 --- !u!114 &114772094923774810

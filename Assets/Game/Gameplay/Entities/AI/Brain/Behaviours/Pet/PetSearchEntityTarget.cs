@@ -8,12 +8,15 @@ namespace AI {
 
 		[System.Serializable]
 		public class PetSearchEntityTargetData : StateComponentData {
+			/*
 			[Comment("Comma Separated list", 5)]
 			public string m_preferedEntitiesList;
 			public string m_searchButNoEatEntityList;
 			public bool m_ignoreNotListedUnits = false;
 			public float m_dragonSizeRangeMultiplier = 10;
 			public float m_preferedRangeMultiplier = 2;
+			*/
+			public string m_petSeachEntitySku = "common";
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Search Entity Target")]
@@ -39,11 +42,11 @@ namespace AI {
 			float m_range;
 
 			EatBehaviour m_eatBehaviour;
-
-			private PetSearchEntityTargetData m_data;
+		
 			private List<string> m_preferedEntities = new List<string>();
 			private List<string> m_searchButNoEatList = new List<string>();
-
+			private bool m_ignoreNotListedUnits = false;
+			private float m_preferedRangeMultiplier = 1;
 
 			public override StateComponentData CreateData() {
 				return new PetSearchEntityTargetData();
@@ -69,22 +72,14 @@ namespace AI {
 				base.OnInitialise();
 
 				m_owner = InstanceManager.player;
-				m_data = m_pilot.GetComponentData<PetSearchEntityTargetData>();
-				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * m_data.m_dragonSizeRangeMultiplier;
+				PetSearchEntityTargetData data = m_pilot.GetComponentData<PetSearchEntityTargetData>();
+				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PET_MOVEMENT, data.m_petSeachEntitySku);
 
-				if (!string.IsNullOrEmpty( m_data.m_preferedEntitiesList) )
-				{
-					// Use the separator string to split the string value
-					string[] splitResult = m_data.m_preferedEntitiesList.Split(new string[] { "," }, StringSplitOptions.None);
-					m_preferedEntities = new List<string>( splitResult );
-				}
-
-				if (!string.IsNullOrEmpty( m_data.m_searchButNoEatEntityList) )
-				{
-					// Use the separator string to split the string value
-					string[] splitResult = m_data.m_searchButNoEatEntityList.Split(new string[] { "," }, StringSplitOptions.None);
-					m_searchButNoEatList = new List<string>( splitResult );
-				}
+				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * def.GetAsFloat("searchDistanceMultiplier");
+				m_preferedRangeMultiplier = def.GetAsFloat("preferedRangeMultiplier");
+				m_preferedEntities = def.GetAsList<string>("preferedEntitiesList");
+				m_searchButNoEatList = def.GetAsList<string>("searchButNoEatEntityList");
+				m_ignoreNotListedUnits = def.GetAsBool("ignoreNotListedUnits");
 
 				// if prefered entieies we should tell the mouth
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
@@ -138,7 +133,7 @@ namespace AI {
 					// if prefered entieies check first
 					if ( m_preferedEntities.Count > 0 || m_searchButNoEatList.Count > 0 )
 					{
-						m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( centerPos , m_range * m_data.m_preferedRangeMultiplier, m_checkEntities);	
+						m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( centerPos , m_range * m_preferedRangeMultiplier, m_checkEntities);	
 						for (int e = 0; e < m_numCheckEntities; e++) 
 						{
 							Entity entity = m_checkEntities[e];
@@ -171,7 +166,7 @@ namespace AI {
 						}
 					}
 
-					if ( !m_data.m_ignoreNotListedUnits && !done)
+					if ( !m_ignoreNotListedUnits && !done)
 					{
 						m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( centerPos , m_range, m_checkEntities);
 						for (int e = 0; e < m_numCheckEntities; e++) 

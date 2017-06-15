@@ -4,10 +4,11 @@ using System.Collections.Generic;
 
 public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private enum State {
-		Extinguished = 0,
+		Idle = 0,
 		Spreading,
 		Burning,
-		Extinguish
+		Extinguish,
+		Extinguished
 	};
 
 	private Decoration m_decoration;
@@ -73,7 +74,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	public void Reset() {
 		StopFireEffect();
 
-		m_state = State.Extinguished;
+		m_state = State.Idle;
 		m_nextState = m_state;
 
 		if (m_neighbours == null) {
@@ -84,7 +85,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_timer = 0f;
 	}
 
-	public void Disable() { m_state = State.Extinguish; }
+	public void Disable() { Extinguish(); }
 
 	public bool IsSpreadingFire() 	{ return m_state == State.Spreading;  }
 	public bool IsBurning() 		{ return m_state == State.Burning; 	  }
@@ -92,11 +93,13 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 
 	public void Burn(Vector2 _direction, bool _dragonBreath, DragonTier _tier) {
-		if (m_state == State.Extinguished) {
+		if (m_state == State.Idle) {
 			ZoneManager.ZoneEffect effect = InstanceManager.zoneManager.GetFireEffectCode(m_decoration, _tier);
 			m_breathTier = _tier;
 
 			if (effect >= ZoneManager.ZoneEffect.M) {
+				FirePropagationManager.RegisterBurningNode(this);
+
 				if (effect == ZoneManager.ZoneEffect.L) {
 					m_nextState = State.Extinguish;
 				} else {
@@ -118,7 +121,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	}
 
 	public void Extinguish() {
-		if (m_state == State.Burning) {
+		if (m_state > State.Idle) {
 			m_nextState = State.Extinguish;
 		}
 	}
@@ -138,13 +141,6 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		}
 
 		switch (m_state) {
-			case State.Extinguished:
-				m_timer -= dt;
-				if (m_timer <= 0f) {
-					m_timer = 0f;
-				}
-				break;
-
 			case State.Spreading:
 				ToogleEffect();
 			
@@ -154,7 +150,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 				bool allBurned = true;
 				for (int i = 0; i < m_neihboursFireResistance.Count; i++) {
-					if (m_neighbours[i].IsSpreadingFire()) {
+					if (m_neighbours[i].IsSpreadingFire() || m_neighbours[i].IsBurning()) {
 						m_neihboursFireResistance[i] = 0;
 					} else {
 						allBurned = false;
@@ -172,14 +168,16 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 				break;
 
 			case State.Burning:				
+				ToogleEffect();
+
 				if (m_fireSprite != null) {
 					m_fireSprite.SetPower(m_powerTimer * 6f);
 				}
-
-				ToogleEffect();
 				break;
 
 			case State.Extinguish:
+				ToogleEffect();
+
 				if (m_fireSprite != null) {
 					m_fireSprite.SetPower(6f + (m_powerTimer * (-6f)));
 				}
@@ -188,6 +186,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 					m_timer -= dt;
 					if (m_timer <= 0) {
 						StopFireEffect();
+
+						FirePropagationManager.UnregisterBurningNode(this);
+
+						m_state = State.Extinguished;
 					}
 				}
 				break;
@@ -227,7 +229,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	}
 
 	private void StartFireEffect() {
-		FirePropagationManager.InsertBurning(this);
+		FirePropagationManager.PlayBurnAudio();
 		if (m_fireSprite == null) {
 			GameObject go = m_burnParticle.Spawn(m_transform.position);
 
@@ -245,7 +247,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	}
 
 	private void StopFireEffect() {
-		FirePropagationManager.RemoveBurning(this);
+		FirePropagationManager.StopBurnAudio();
 		if (m_fireSprite != null) {
 			m_fireSprite.gameObject.SetActive(false);
 			m_burnParticle.ReturnInstance(m_fireSprite.gameObject);

@@ -15,11 +15,12 @@ public class Entity : IEntity {
 	[SerializeField] private string m_sku;
 	public override string sku { get { return m_sku; } }
 
+	[SerializeField] private bool m_hideNeedTierMessage = false;
+
 	[SerializeField] private bool m_dieOutsideFrustum = true;
-	public bool dieOutsideFrustum
-	{
-		get{return m_dieOutsideFrustum;}
-		set{m_dieOutsideFrustum = value;}
+	public bool dieOutsideFrustum {
+		get { return m_dieOutsideFrustum; }
+		set { m_dieOutsideFrustum = value; }
 	}
 
 	/************/
@@ -163,11 +164,12 @@ public class Entity : IEntity {
         m_spawned = true;		
     }
 
-    public override void Disable(bool _destroyed) {
-		ViewControl vControl = GetComponent<ViewControl>();
-		if ( vControl != null )
-			vControl.PreDisable();
+    public override void Disable(bool _destroyed) {		
+		if (m_viewControl != null)
+			m_viewControl.PreDisable();
+		
 		base.Disable(_destroyed);
+
 		if (m_spawner != null) {
 			m_spawner.RemoveEntity(gameObject, _destroyed);
 		}
@@ -212,11 +214,14 @@ public class Entity : IEntity {
 	}
 
 	public bool IsEdible() {
+		if (m_hideNeedTierMessage) {
+			return IsEdible(InstanceManager.player.data.tier);
+		}
 		return allowEdible && m_isEdible;
 	}
 
 	public bool IsEdible(DragonTier _tier) {
-		return IsEdible() && (m_edibleFromTier <= _tier);
+		return allowEdible && m_isEdible && (m_edibleFromTier <= _tier);
 	}
 
 	public bool CanBeHolded(DragonTier _tier) {

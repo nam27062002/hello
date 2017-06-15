@@ -40,6 +40,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 	protected AI.IMachine m_machine;
 	public AI.IMachine machine { get { return m_machine; } }
 
+	protected IViewControl m_viewControl;
 
 	protected virtual void Awake() {
 		ISpawnable[] spawners = GetComponents<ISpawnable>();
@@ -49,6 +50,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 				m_otherSpawnables.Add(spawners[i]);				
 		}
 		m_machine = GetComponent<AI.IMachine>();
+		m_viewControl = GetComponent<IViewControl>();
 	}
 
 	public virtual void Spawn(ISpawner _spawner) {

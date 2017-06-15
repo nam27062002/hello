@@ -4,6 +4,14 @@ using System.Collections.Generic;
 
 public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
+	private enum State {
+		Respawn = 0,
+		Idle,
+		Burning,
+		Extinguish,
+		Explode
+	};
+
 	[SerializeField] private float m_burningTime;
 	[SerializeField] private ParticleData m_feedbackParticle;
 	// PF_FireHit
@@ -25,10 +33,6 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	private BoxCollider m_collider;
 
 	private FireNode[] m_fireNodes;
-	private bool m_isBurning;
-	private bool m_exploding;
-	private bool m_burned;
-	private DeltaTimer m_timer = new DeltaTimer();
 
 	private AutoSpawnBehaviour m_autoSpawner;
 	private DestructibleDecoration m_destructibleBehaviour;
@@ -43,6 +47,10 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	private ParticleHandler m_explosionProcHandler;
 
 
+	private DeltaTimer m_timer = new DeltaTimer();
+	private State m_state;
+	private State m_nextState;
+
 
 	public string sku { get { return m_entity.sku; } }
 
@@ -55,8 +63,9 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	
 		m_disintegrateParticle.CreatePool();
 
-
 		m_explosionProcHandler = ParticleManager.CreatePool("PF_FireExplosionProc");
+
+		m_state = m_nextState = State.Idle;
 	}
 
 	/// <summary>
@@ -90,10 +99,6 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		m_view = transform.FindChild("view").gameObject;
 		m_viewBurned = transform.FindChild("view_burned").gameObject;
 
-		m_burned = false;
-		m_isBurning = false;
-		m_exploding = false;
-
 		for (int i = 0; i < m_fireNodes.Length; i++) {
 			m_fireNodes[i].Init(m_entity, m_burnParticle, m_feedbackParticle, m_feedbackParticleMatchDirection, m_hitRadius);
 		}
@@ -107,28 +112,82 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		m_ashMaterial.renderQueue = 3000;// Force transparent
 	}
 
+	public void SetupFireNodes() {
+		if (m_fireNodeSetup == null) {
+			m_fireNodeSetup = new FireNodeSetup();
+		}
+
+		m_fireNodeSetup.Init(transform);
+		m_fireNodeSetup.Build(m_boxelSize);
+	}
+
 	public void Spawn(ISpawner _spawner) {
 		enabled = true;
 
 		m_view.SetActive(true);
 		m_viewBurned.SetActive(false);
 
-		m_burned = false;
-		m_isBurning = false;
-		m_exploding = false;
-
 		for (int i = 0; i < m_fireNodes.Length; i++) {
 			m_fireNodes[i].Reset();
 		}
 
-		enabled = true;
-
 		transform.position = m_startPosition;
 		ResetViewMaterials();
+
+		m_state = m_nextState = State.Idle;
 	}
 
 	public bool IsBurning() {
-		return m_isBurning;
+		return m_state == State.Burning;
+	}
+
+	private void ChangeState() {
+		switch (m_nextState) {
+			case State.Idle: 
+				break;
+
+			case State.Burning:
+				if (m_destructibleBehaviour != null) {
+					m_destructibleBehaviour.enabled = false;
+				}
+				break;
+
+			case State.Extinguish:
+				if (m_operatorSpawner != null && !m_operatorSpawner.IsOperatorDead()) {
+					m_operatorSpawner.OperatorBurn();
+				}
+
+				m_timer.Start(m_burningTime * 1000);
+
+				m_viewBurned.SetActive(true);
+
+				SwitchViewToDissolve();
+				break;
+
+			case State.Explode:
+				if (m_operatorSpawner != null && !m_operatorSpawner.IsOperatorDead()) {
+					m_operatorSpawner.OperatorBurn();
+				}
+
+				//m_disintegrateParticle.Spawn(transform.position + m_disintegrateParticle.offset);
+				for (int i = 0; i < m_fireNodes.Length; ++i) {
+					if (i % 2 != 0) {
+						FireNode n = m_fireNodes[i];
+						GameObject ex = m_explosionProcHandler.Spawn(null, n.transform.position);
+						if (ex != null) {
+							ex.transform.localScale = n.transform.localScale * 1.0f;
+							ex.GetComponent<ExplosionProcController>().Explode(i * 0.015f); //delay
+						}
+					}
+				}
+
+				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, m_entity.reward);
+
+				m_timer.Start(250f);
+				break;
+		}
+
+		m_state = m_nextState;
 	}
 
 	// Update is called once per frame
@@ -136,104 +195,67 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		if (m_autoSpawner == null)
 			return;
 
-		if (m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning) {	// if respawning we wait
-			for (int i = 0; i < m_fireNodes.Length; i++) {
-				m_fireNodes[i].Disable();
-			}
-			return;
+		if (m_state != m_nextState) {
+			ChangeState();
 		}
 
-		if (m_burned) {
-			// Advance dissolve!
-			m_ashMaterial.SetFloat("_BurnLevel", m_timer.GetDelta() * 3.0f);
-
-			if (m_timer.GetDelta() > 0.75f) {
-				for (int i = 0; i < m_fireNodes.Length; i++) {
-					m_fireNodes[i].Extinguish();
+		switch (m_state) {
+			case State.Idle:
+				for (int i = 0; i < m_fireNodes.Length; ++i) {
+					FireNode n = m_fireNodes[i];
+					if (n.IsBurning()) {					
+						ZoneManager.ZoneEffect effect = InstanceManager.zoneManager.GetFireEffectCode(m_entity, n.breathTier);
+						if (effect == ZoneManager.ZoneEffect.L) {
+							m_nextState = State.Explode;
+						} else {
+							m_nextState = State.Burning;
+						}
+						break;
+					}
 				}
-			}
+				break;
 
-			if (m_timer.IsFinished()) {
-				m_view.SetActive(false);
-				m_autoSpawner.StartRespawn();
-				if (m_collider)
-					m_collider.enabled = false;
-			}
-		} else {
+			case State.Burning: {
+					bool allNodesBurning = true;
+					for (int i = 0; i < m_fireNodes.Length; ++i) {
+						allNodesBurning = allNodesBurning && m_fireNodes[i].IsBurning();
+					}
 
-			if (m_exploding) {
+					if (allNodesBurning) {
+						m_nextState = State.Extinguish;
+					}
+				} break;
+
+			case State.Extinguish:
+				// Advance dissolve!
+				m_ashMaterial.SetFloat("_BurnLevel", m_timer.GetDelta() * 3.0f);
+
+				if (m_timer.GetDelta() > 0.75f) {
+					for (int i = 0; i < m_fireNodes.Length; ++i) {
+						m_fireNodes[i].Extinguish();
+					}
+				}
 
 				if (m_timer.IsFinished()) {
-					m_autoSpawner.StartRespawn();
-					m_view.SetActive(false);
-					m_viewBurned.SetActive(true);
-					if (m_collider) m_collider.enabled = false;
+					Destroy();
 				}
+				break;
 
-			} else {
-
-				m_isBurning = false;
-				m_burned = true;
-				bool reachedByFire = false;
-				DragonTier breathTier = DragonTier.COUNT;
-
-				for (int i = 0; i < m_fireNodes.Length && !reachedByFire; i++) {
-					FireNode node = m_fireNodes[i];
-					m_isBurning = m_isBurning || node.IsBurning();
-					m_burned = m_burned && node.IsBurning();
-					reachedByFire = node.IsExtinguishing();
-					breathTier = node.breathTier;
+			case State.Explode:
+				if (m_timer.IsFinished()) {
+					Destroy();
 				}
-
-				if (reachedByFire) {
-					if (m_operatorSpawner != null && !m_operatorSpawner.IsOperatorDead()) {
-						m_operatorSpawner.OperatorBurn();
-					}
-					
-					ZoneManager.ZoneEffect effect = InstanceManager.zoneManager.GetFireEffectCode(m_entity, breathTier);
-					if (effect == ZoneManager.ZoneEffect.L) {					
-						//m_disintegrateParticle.Spawn(transform.position + m_disintegrateParticle.offset);
-						for (int i = 0; i < m_fireNodes.Length; i++) {
-							if (i % 2 != 0) {
-								GameObject ex = m_explosionProcHandler.Spawn(null, m_fireNodes[i].transform.position);
-								if (ex != null) {
-									ex.transform.localScale = m_fireNodes[i].transform.localScale * 1.0f;
-									ex.GetComponent<ExplosionProcController>().Explode(i * 0.015f); //delay
-								}
-							}
-						}
-
-						m_timer.Start(250f);
-					} else {
-						m_timer.Start(0f);
-					}
-
-					m_exploding = true;
-
-					// [AOC] Notify game!				
-					Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, m_entity.reward);
-				} else {
-					if (m_isBurning) {
-						if (m_destructibleBehaviour != null) {
-							m_destructibleBehaviour.enabled = false;
-						}
-					}
-
-					if (m_burned) {
-						// Crumble and dissolve time
-						float seconds = m_burningTime;
-						m_timer.Start(seconds * 1000);
-
-						if (m_operatorSpawner != null && !m_operatorSpawner.IsOperatorDead()) {
-							m_operatorSpawner.OperatorBurn();
-						}
-
-						m_viewBurned.SetActive(true);
-						SwitchViewToDissolve();
-					}
-				}
-			}
+				break;
 		}
+	}
+
+	private void Destroy() {
+		m_autoSpawner.StartRespawn();
+		m_view.SetActive(false);
+		m_viewBurned.SetActive(true);
+		if (m_collider) m_collider.enabled = false;
+
+		m_state = m_nextState = State.Respawn;
 	}
 
 	private void ResetViewMaterials() {
@@ -260,15 +282,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		m_ashMaterial.SetFloat("_BurnLevel", 0);
 	}
 
-	public void SetupFireNodes() {
-		if (m_fireNodeSetup == null) {
-			m_fireNodeSetup = new FireNodeSetup();
-		}
 
-		m_fireNodeSetup.Init(transform);
-		m_fireNodeSetup.Build(m_boxelSize);
-	}
-
+	//----------------------------------------------------------------------------------------
 	void OnDrawGizmosSelected() {
 		if (m_fireNodes != null) {
 			Gizmos.color = Color.magenta;

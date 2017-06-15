@@ -29,12 +29,18 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 7aa033b6c69294a3f8ba3952e042d3c8, type: 2}
     - {fileID: 11400000, guid: 18acb337360e94ce4822269b075680f6, type: 2}
     - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
+  - m_name: Reviving
+    m_componentAssets:
+    - {fileID: 11400000, guid: 32bf943fea5b1418abadbddc3773f637, type: 2}
   m_transitionData:
   - to: 1
     id: onEnemyInRange
     from: 0
   - to: 2
     id: onAreaChangeStart
+    from: 0
+  - to: 3
+    id: onStartFreeRevive
     from: 0
   - to: 0
     id: onEnemyOutOfSight
@@ -48,8 +54,14 @@ MonoBehaviour:
   - to: 2
     id: onAreaChangeStart
     from: 1
+  - to: 3
+    id: onStartFreeRevive
+    from: 1
   - to: 0
     id: onAreaChangeEnd
     from: 2
+  - to: 0
+    id: onFreeReviveDone
+    from: 3
   m_firstState_A: 0
   m_firstState_B: 0

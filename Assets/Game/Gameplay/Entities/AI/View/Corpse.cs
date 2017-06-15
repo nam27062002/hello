@@ -92,14 +92,12 @@ public class Corpse : MonoBehaviour {
 
 			if (!string.IsNullOrEmpty(m_blood.name) && m_bloodPoints != null) {
 				for (int i = 0; i < m_bloodPoints.Length; i++) {
-					GameObject ps = m_blood.Spawn();
+					GameObject ps = m_blood.Spawn(m_bloodPoints[i].transform.position + m_blood.offset);
 
 					if (ps != null) {
 						FollowTransform ft = ps.GetComponent<FollowTransform>();
 						if (ft != null) {
 							ft.m_follow = m_bloodPoints[i].transform;
-						} else {
-							ps.transform.localPosition = Vector3.zero;
 						}
 					}
 				}
