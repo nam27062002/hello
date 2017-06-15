@@ -111,7 +111,7 @@ public class MenuDragonScroller : MonoBehaviour {
 		foreach(KeyValuePair<string, MenuDragonSlot> kvp in m_dragonSlots) {
 			showPets = (kvp.Key == _sku);
 			if(kvp.Value.dragonPreview.equip.showPets != showPets) {
-				kvp.Value.dragonPreview.equip.TogglePets(showPets, true);
+				kvp.Value.dragonPreview.equip.TogglePets(showPets, false);
 			}
 		}
 	}
