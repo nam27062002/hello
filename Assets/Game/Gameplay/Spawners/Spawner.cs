@@ -205,6 +205,10 @@ public class Spawner : AbstractSpawner {
 						}
 					}
 
+					// clamp scale values
+					if (m_scale.min < 0.95f) m_scale.min = 0.95f;
+					if (m_scale.max > 1.05f) m_scale.min = 1.05f;
+						
 					RegisterInSpawnerManager();
 					SpawnerAreaManager.instance.Register(this);
 
