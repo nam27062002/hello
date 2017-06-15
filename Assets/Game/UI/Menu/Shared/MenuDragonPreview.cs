@@ -46,6 +46,17 @@ public class MenuDragonPreview : MonoBehaviour {
 	[SerializeField] private string m_sku;
 	public string sku { get { return m_sku; }}
 
+	// Components
+	private DragonEquip m_equip = null;
+	public DragonEquip equip {
+		get {
+			if(m_equip == null) {
+				m_equip = this.GetComponent<DragonEquip>();
+			}
+			return m_equip;
+		}
+	}
+
 	// Internal
 	private Animator m_animator = null;
 
