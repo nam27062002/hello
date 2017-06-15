@@ -865,25 +865,28 @@ public class GameServerManagerCalety : GameServerManager {
 		}
 
 		if(error == null) {
-			JSONNode result = null;
+			// No error! Pre-process the response based on command
+			response = new ServerResponse();
+
+			// Parse response into a json object
+			JSONNode responseJSON = null;
 			if(responseData != null) {
-				result = SimpleJSON.JSON.Parse(responseData);                
+				responseJSON = SimpleJSON.JSON.Parse(responseData);                
 			}
 
 			switch(Commands_CurrentCommand.Cmd) {
 				case ECommand.Login: {
 					// [DGR] SERVER: Receive these parameters from server
-					response = new ServerResponse();
 					response["fgolID"] = GameSessionManager.SharedInstance.GetUID();
 					response["sessionToken"] = GameSessionManager.SharedInstance.GetUserToken();
 					response["authState"] = Authenticator.AuthState.Authenticated.ToString(); //(Authenticator.AuthState)Enum.Parse(typeof(Authenticator.AuthState), response["authState"] as string);                        
 					//response["authState"] = Authenticator.AuthState.NewSocialLogin.ToString(); //(Authenticator.AuthState)Enum.Parse(typeof(Authenticator.AuthState), response["authState"] as string);                        
-					if(result != null) {
+					if(responseJSON != null) {
 						string key = "upgradeAvailable";
 						response[key] = upgradeAvailable;
 
 						key = "cloudSaveAvailable";
-						response[key] = result.ContainsKey(key) && Convert.ToBoolean(result[key]);                        
+						response[key] = responseJSON.ContainsKey(key) && Convert.ToBoolean(responseJSON[key]);                        
 					}
 				} break;
 
@@ -893,29 +896,36 @@ public class GameServerManagerCalety : GameServerManager {
 
 					// Checks if the response from server can be interpreted
 					string key = "t";                
-					if(result != null && result.ContainsKey(key)) {
-						long timeAsLong = result[key].AsLong;
+					if(responseJSON != null && responseJSON.ContainsKey(key)) {
+						long timeAsLong = responseJSON[key].AsLong;
 						time = (int)(timeAsLong / 1000);                        
 					}
 
 					// [DGR] SERVER: Receive these parameters from server
-					response = new ServerResponse();
 					response["dateTime"] = time;
 					response["unixTimestamp"] = time;
 				} break;
 
 				case ECommand.GetQualitySettings: {
-					response = new ServerResponse();
 					response["response"] = responseData;
 
 					// statusCode 204 means that the client has to upload its settings to the server
 					response["upLoadRequired"] = (statusCode == 204);                    
 				} break;
 
-				default: {
+				case ECommand.GlobalEvents_GetCurrent:
+				case ECommand.GlobalEvents_GetState:
+				case ECommand.GlobalEvents_RegisterScore:
+				case ECommand.GlobalEvents_ApplyRewards: {
+					// Propagate server response directly as a JSON object
 					// [DGR] SERVER: Receive these parameters from server
-					response = new ServerResponse();
-					response["response"] = responseData;                    
+					response["response"] = responseJSON;
+				} break;
+
+				default: {
+					// Propagate server response directly as a string
+					// [DGR] SERVER: Receive these parameters from server
+					response["response"] = responseData;
 				} break;
 			}
 		} else {

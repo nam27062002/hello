@@ -41,15 +41,12 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 	}
 
 	// Current event
+	// Will always contain the data to the last relevant event to the user
+	// That could be an event whose rewards are pending, a future event or the active event
+	// Can also be null if there is no event currently, or if event data could not be retrieved from the server
 	private GlobalEvent m_currentEvent = null;
 	public static GlobalEvent currentEvent {
 		get { return instance.m_currentEvent; }
-	}
-
-	// Past events
-	private List<GlobalEvent> m_pastEvents = new List<GlobalEvent>();	// Sorted from older to more recent
-	public static List<GlobalEvent> pastEvents {
-		get { return instance.m_pastEvents; }
 	}
 	
 	//------------------------------------------------------------------------//
@@ -121,7 +118,9 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 		currentEvent.AddContribution(contribution);
 
 		// Add to current user individual contribution in this event
-		user.globalEvents[currentEvent.id].contribution += contribution;
+		user.GetGlobalEventData(currentEvent.id).score += contribution;
+
+		// [AOC] TODO!! Update leaderboard?
 
 		// Everything went well!
 		return ErrorCode.NONE;
@@ -143,7 +142,7 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 		if(!IsReady()) return ErrorCode.NOT_INITIALIZED;
 
 		// User must be logged in FB!
-		//if(!FacebookManager.SharedInstance.IsLoggedIn()) return ErrorCode.NOT_LOGGED_IN;	// [AOC] CHECK!
+		if(!testing && !SocialManager.Instance.IsLoggedIn(SocialFacade.Network.Default)) return ErrorCode.NOT_LOGGED_IN;	// [AOC] CHECK!
 
 		// We must have a valid event
 		if(currentEvent == null) return ErrorCode.NO_VALID_EVENT;
@@ -160,7 +159,11 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 	/// </summary>
 	/// <param name="_user">Profile to work with.</param>
 	public static void SetupUser(UserProfile _user) {
-		instance.m_user = _user;
+		// If it's a new user, request current event to the server for this user
+		if(instance.m_user != _user) {
+			instance.m_user = _user;
+			GameServerManager.SharedInstance.GlobalEvent_GetCurrent(instance.OnCurrentEventResponse);
+		}
 	}
 
 	/// <summary>
@@ -173,6 +176,38 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 	//------------------------------------------------------------------------//
 	// SERVER COMMUNICATION METHODS											  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Server callback for the current event request.
+	/// </summary>
+	/// <param name="_error">Error.</param>
+	/// <param name="_response">Response.</param>
+	private void OnCurrentEventResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+		// Error?
+		if(_error == null) {
+			// Did the server gave us an event?
+			if(_response != null && _response["response"] != null) {
+				// Yes! If no event is created, create one
+				if(m_currentEvent == null) {
+					m_currentEvent = new GlobalEvent();
+				}
+
+				// If the ID is different from the stored event, load the new event's data!
+				SimpleJSON.JSONClass responseJson = _response["response"] as SimpleJSON.JSONClass;
+				if(m_currentEvent.id != responseJson["id"]) {
+					m_currentEvent.FromJson(responseJson);
+				}
+
+				// Get current event's state
+				// [AOC] TODO!!
+			} else {
+				// No! Clear current event (if any)
+				if(m_currentEvent != null) m_currentEvent = null;
+			}
+		} else {
+			// [AOC] Do something or just ignore?
+			// Probably store somewhere that there was an error so retry timer is reset or smth
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //

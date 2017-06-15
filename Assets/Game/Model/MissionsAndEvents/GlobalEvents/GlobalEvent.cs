@@ -43,12 +43,6 @@ public class GlobalEvent {
 		public float targetValue = 0f;
 		public Reward reward = null;
 	};
-
-	[Serializable]
-	public class Contributor {
-		public string id = "";
-		public float contribution = 0f;
-	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -116,8 +110,8 @@ public class GlobalEvent {
 	}
 
 	// Contribution
-	private List<Contributor> m_topContributors = new List<Contributor>();	// Sorted
-	public List<Contributor> topContributors {
+	private List<GlobalEventUserData> m_topContributors = new List<GlobalEventUserData>();	// Sorted
+	public List<GlobalEventUserData> topContributors {
 		get { return m_topContributors; }
 	}
 	
@@ -160,6 +154,14 @@ public class GlobalEvent {
 
 		// Update current value
 		m_currentValue += _value;
+	}
+
+	/// <summary>
+	/// Load event data from a JSON.
+	/// </summary>
+	/// <param name="_data">JSON data.</param>
+	public void FromJson(SimpleJSON.JSONClass _data) {
+
 	}
 
 	//------------------------------------------------------------------------//

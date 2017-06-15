@@ -44,32 +44,32 @@ public class UserProfile : UserSaveSystem
 
     //------------------------------------------------------------------------//
     // PROPERTIES															  //
-    //------------------------------------------------------------------------//		
-
+    //------------------------------------------------------------------------//
     // Last save timestamp
     private DateTime m_saveTimestamp = DateTime.UtcNow;
-    public DateTime saveTimestamp
-    {
+    public DateTime saveTimestamp {
         get { return m_saveTimestamp; }
     }
-
     public int lastModified { get; set; }
 
-    // Set default values in the inspector, use static methods to set them from code
-    // [AOC] We want these to be consulted but never set from outside, so don't add a setter
-    [Separator("Economy")]
-	[SerializeField] private long m_coins;
+	// User ID shortcut
+	public string userId {
+		get { return GameSessionManager.SharedInstance.GetUID(); }
+	}
+
+    // Economy
+	private long m_coins;
 	public long coins {
 		get { return m_coins; }
 	}
-	
-	[SerializeField] private long m_pc;
+
+	private long m_pc;
 	public  long pc { 
 		get { return m_pc; }
 	}
 
-	[Separator("Game Settings")]
-	[SerializeField] private string m_currentDragon = "";
+	// Game Settings
+	private string m_currentDragon = "";
 	public string currentDragon {
 		get { return m_currentDragon; }
 		set {
@@ -77,26 +77,26 @@ public class UserProfile : UserSaveSystem
         }
 	}
 
-	[SerializeField] /*[SkuList(Definitions.Category.LEVELS)]*/ private string m_currentLevel = "";
+	private string m_currentLevel = "";
 	public string currentLevel {
 		get { return m_currentLevel; }
 		set { m_currentLevel = value; }
 	}
 
-	[SerializeField] private TutorialStep m_tutorialStep;
+	private TutorialStep m_tutorialStep;
 	public TutorialStep tutorialStep { 
 		get { return m_tutorialStep; }
 		set { m_tutorialStep = value; }
 	}
 
-	[SerializeField] private bool m_furyUsed = false;
+	private bool m_furyUsed = false;
 	public bool furyUsed {
 		get { return m_furyUsed; }
 		set { m_furyUsed = value; }
 	}
 
-	[Separator("Game Stats")]
-	[SerializeField] private int m_gamesPlayed = 0;
+	// Game Stats
+	private int m_gamesPlayed = 0;
 	public int gamesPlayed {
 		get { return m_gamesPlayed; }
 		set {
@@ -107,13 +107,13 @@ public class UserProfile : UserSaveSystem
 		}
 	}
 
-	[SerializeField] private long m_highScore = 0;
+	private long m_highScore = 0;
 	public long highScore {
 		get { return m_highScore; }
 		set { m_highScore = value; }
 	}
 	
-	[SerializeField] private int m_superFuryProgression = 0;
+	private int m_superFuryProgression = 0;
 	public int superFuryProgression {
 		get { return m_superFuryProgression; }
 		set { m_superFuryProgression = value; }
@@ -225,8 +225,9 @@ public class UserProfile : UserSaveSystem
 	}
 
 	// Global events
-	private GlobalEventsUserData m_globalEvents = new GlobalEventsUserData();
-	public GlobalEventsUserData globalEvents {
+	// Events dictionary
+	private Dictionary<string, GlobalEventUserData> m_globalEvents = new Dictionary<string, GlobalEventUserData>();
+	public Dictionary<string, GlobalEventUserData> globalEvents {
 		get { return m_globalEvents; }
 	}
 
@@ -599,9 +600,17 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Global events
-		m_globalEvents.Clear();
-		if(_data.ContainsKey("events")) {
-			m_globalEvents.Load(_data["events"]);
+		key = "globalEvents";
+		m_globalEvents.Clear();	// Clear current events data
+		if(_data.ContainsKey(key)) {
+			// Parse json array
+			SimpleJSON.JSONArray eventsData = _data[key].AsArray;
+			for(int i = 0; i < eventsData.Count; ++i) {
+				// Create a new event with the given data and store it to the events dictionary
+				GlobalEventUserData newEvent = new GlobalEventUserData();
+				newEvent.Load(eventsData[i]);
+				m_globalEvents[newEvent.eventId] = newEvent;
+			}
 		}
 	}
 
@@ -713,7 +722,7 @@ public class UserProfile : UserSaveSystem
 
 		data.Add("userProfile", profile);
 
-		// DRAGONS
+		// Dragons
 		SimpleJSON.JSONArray dragons = new SimpleJSON.JSONArray();
 		foreach( KeyValuePair<string,DragonData> pair in m_dragonsBySku)
 		{
@@ -737,8 +746,12 @@ public class UserProfile : UserSaveSystem
 		// Map upgrades
 		data.Add("mapResetTimestamp", m_mapResetTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
-		// Events
-		data.Add("events", m_globalEvents.Save());
+		// Global Events
+		SimpleJSON.JSONArray eventsData = new SimpleJSON.JSONArray();
+		foreach(KeyValuePair<string, GlobalEventUserData> kvp in m_globalEvents) {
+			eventsData.Add(kvp.Value.Save());
+		}
+		data.Add("globalEvents", eventsData);
 
 		// Return it
 		return data;
@@ -843,6 +856,9 @@ public class UserProfile : UserSaveSystem
 		return ret;
 	}
 
+	//------------------------------------------------------------------------//
+	// PETS MANAGEMENT														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Get the current pet loadout for the target dragon.
 	/// </summary>
@@ -1011,6 +1027,26 @@ public class UserProfile : UserSaveSystem
 		Messenger.Broadcast<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, _dragonSku, _slotIdx, string.Empty);
 
 		return _slotIdx;
+	}
+
+	//------------------------------------------------------------------------//
+	// GLOBAL EVENTS MANAGEMENT												  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get the data of this user for a given event.
+	/// A new one will be created if the user has no data stored for this event.
+	/// </summary>
+	/// <returns>The event data for the requested event.</returns>
+	/// <param name="_eventId">Event identifier.</param>
+	public GlobalEventUserData GetGlobalEventData(string _eventId) {
+		// If the user doesn't have data of this event, create a new one
+		GlobalEventUserData data = null;
+		if(!m_globalEvents.TryGetValue(_eventId, out data)) {
+			data = new GlobalEventUserData();
+			data.eventId = _eventId;
+			m_globalEvents[_eventId] = data;
+		}
+		return data;
 	}
 }
 

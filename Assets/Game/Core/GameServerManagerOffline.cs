@@ -32,6 +32,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	//------------------------------------------------------------------------//
 	// Simulate global event progression
 	private Dictionary<string, float> m_eventValues = new Dictionary<string, float>();
+	private Dictionary<string, List<GlobalEventUserData>> m_eventLeaderboards = new Dictionary<string, List<GlobalEventUserData>>();
 
 	//------------------------------------------------------------------------//
 	// INTERNAL UTILS														  //
@@ -165,47 +166,75 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		}
 		eventData.Add("currentValue", currentValue.ToString(JSON_FORMAT));
 
-		// Leaderboard (if requested)
-		if(_getLeaderboard) {
+		// Current player data
+		GlobalEventUserData playerEventData = UsersManager.currentUser.globalEvents[_eventID];
+		if(playerEventData == null) {
+			playerEventData = new GlobalEventUserData(_eventID, UsersManager.currentUser.userId, 0f, -1);
+		}
+
+		// If there is no leaderboard for this event, create one with random values
+		List<GlobalEventUserData> leaderboard = null;
+		if(!m_eventLeaderboards.TryGetValue(_eventID, out leaderboard)) {
 			// Create an array of max 100 random users
 			float remainingScore = currentValue;
-			float minScore = remainingScore;
 			Range scorePerPlayerRange = new Range(remainingScore/100f, remainingScore/10f);	// min 10 players, max 100
-			List<SimpleJSON.JSONClass> leaderboard = new List<SimpleJSON.JSONClass>();
 			while(remainingScore > 0f) {
+				// Compute new score for this user
 				float score = Mathf.Min(remainingScore, scorePerPlayerRange.GetRandom());
 				remainingScore -= score;
-				minScore = Mathf.Min(minScore, score);
 
-				SimpleJSON.JSONClass leaderboardEntry = new SimpleJSON.JSONClass();
-				leaderboardEntry.Add("id", "dummy_player_" + leaderboard.Count);
-				leaderboardEntry.Add("score", score.ToString(JSON_FORMAT));
+				// Create user data
+				GlobalEventUserData leaderboardEntry = new GlobalEventUserData(
+					_eventID,
+					"dummy_player_" + leaderboard.Count,
+					score,
+					-1	// Position will be initialized afterwards when the leaderboard is sorted
+				);
+
+				// Add it to the leaderboard
 				leaderboard.Add(leaderboardEntry);
 			}
 
-			// Add a field with current player's position in the leaderboard
-			GlobalEventsUserData.EventData playerEventData = UsersManager.currentUser.globalEvents[_eventID];
-			float playerScore = playerEventData == null ? 0f : playerEventData.contribution;
-			int playerPos = playerEventData == null ? -1 : UnityEngine.Random.Range(leaderboard.Count, 100000);	// Simulate a random position in the leaderboard
-			eventData.Add("playerPosition", playerPos.ToString(JSON_FORMAT));
+			// Store leaderboard to fake cache data
+			m_eventLeaderboards[_eventID] = leaderboard;
+		}
 
-			// If player is on the leaderboard, add it!
-			// We should probably remove the last one, but since it's test code, we don't care enough
-			if(playerScore > minScore && playerScore > 0f) {
-				SimpleJSON.JSONClass playerData = new SimpleJSON.JSONClass();
-				playerData.Add("id", "PLAYER");
-				playerData.Add("score", playerScore.ToString(JSON_FORMAT));
-				leaderboard.Add(playerData);
+		// Sort leaderboard by score
+		leaderboard.Sort((_a, _b) => _a.score.CompareTo(_b.score));	// Gotta love delta expressions. Using int's CompareTo directly
+
+		// If player is not on the leaderboard but should be, add it!
+		// We should probably remove the last one, but since it's test code, we don't care enough
+		int playerIdx = leaderboard.FindIndex((_data) => _data.userId == playerEventData.userId);
+		float minScore = leaderboard.Last().score;
+		if(playerIdx < 0 && playerEventData.score > minScore && playerEventData.score > 0f) {
+			leaderboard.Add(new GlobalEventUserData(playerEventData));	// Create a copy of the data
+		} else if(playerIdx > 0 && leaderboard.Count >= 100 && playerEventData.score < minScore) {
+			leaderboard.RemoveAt(playerIdx);	// Remove from the leaderboard
+		}
+
+		// Sort leaderboard again with the new data
+		leaderboard.Sort((_a, _b) => _a.score.CompareTo(_b.score));
+
+		// Update position for each data
+		for(int i = 0; i < leaderboard.Count; i++) {
+			leaderboard[i].position = i;
+
+			// If it's the player, update position as well
+			if(leaderboard[i].userId == playerEventData.userId) {
+				playerEventData.position = i;
 			}
+		}
 
-			// Sort list by score and store it into a json array
-			leaderboard.Sort((_a, _b) => _a["score"].AsInt.CompareTo(_b["score"].AsInt));	// Gotta love delta expressions. Using int's CompareTo directly
+		// Add player data to the json
+		eventData.Add("playerData", playerEventData.Save());
+
+		// Add leaderboard data to the json (if requested)
+		if(_getLeaderboard) {
+			// Create a json array with every entry in the leaderboard
 			SimpleJSON.JSONArray leaderboardData = new SimpleJSON.JSONArray();
 			for(int i = 0; i < leaderboard.Count; i++) {
-				leaderboardData.Add(leaderboard[i]);
+				leaderboardData.Add(leaderboard[i].Save());
 			}
-
-			// Add leaderboard data to event data
 			eventData.Add("leaderboard", leaderboardData);
 		}
 
@@ -243,7 +272,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	}
 	
 	/// <summary>
-	/// Create a JSON object simulating an event reward data.
+	/// Auxiliar method to create a JSON object simulating an event reward data.
 	/// </summary>
 	/// <returns>The event reward data json.</returns>
 	/// <param name="_percentage">Target percentage. For top percentile reward, percentile of the leaderboard to whom the reward is given.</param>
