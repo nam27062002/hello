@@ -103,11 +103,7 @@ namespace AI {
 		}
 
 		protected override void ExtendedFixedUpdate() {
-			Vector3 gravityDir = Vector3.down;
-
-			if (m_onGround) {
-				gravityDir = -m_groundNormal;
-			}
+			Vector3 gravityDir = -m_groundNormal;
 
 			if (m_checkCollisions) {
 				m_gravity += gravityDir * GRAVITY * Time.fixedDeltaTime;
@@ -188,10 +184,10 @@ namespace AI {
 			RaycastHit[] hit = new RaycastHit[4];
 			bool[] hasHit = new bool[4];
 
-			hasHit[0] = Physics.Raycast(position, Vector3.down,  out hit[0], 6f, GROUND_MASK);
-			hasHit[1] = Physics.Raycast(position, Vector3.up,	 out hit[1], 6f, GROUND_MASK);
-			hasHit[2] = Physics.Raycast(position, Vector3.right, out hit[2], 6f, GROUND_MASK);
-			hasHit[3] = Physics.Raycast(position, Vector3.left,  out hit[3], 6f, GROUND_MASK);
+			hasHit[0] = Physics.Raycast(position, Vector3.down,  out hit[0], 10f, GROUND_MASK);
+			hasHit[1] = Physics.Raycast(position, Vector3.up,	 out hit[1], 10f, GROUND_MASK);
+			hasHit[2] = Physics.Raycast(position, Vector3.right, out hit[2], 10f, GROUND_MASK);
+			hasHit[3] = Physics.Raycast(position, Vector3.left,  out hit[3], 10f, GROUND_MASK);
 
 			float d = 99999f;
 			for (int i = 0; i < 4; i++) {
