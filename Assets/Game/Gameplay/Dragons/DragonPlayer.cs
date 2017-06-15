@@ -58,6 +58,12 @@ public class DragonPlayer : MonoBehaviour {
 	private float m_alcoholMax = 1;
 	public float alcoholMax {get{return m_alcoholMax;}}
 	public float m_alcoholDrain = 1;
+	private bool m_alcoholResistance = false;
+	public bool alcoholResistance
+	{
+		get{ return m_alcoholResistance; }
+		set{ m_alcoholResistance = value; }
+	}
 
 	// Cache content data
 	private float m_healthMax = 1f;
@@ -429,11 +435,14 @@ public class DragonPlayer : MonoBehaviour {
 	}
 
 	public void AddAlcohol( float _offset ){
-		bool drunk = IsDrunk();
-		m_alcohol += _offset;
-		if ( drunk != IsDrunk() ) 
+		if ( !m_alcoholResistance )
 		{
-			Messenger.Broadcast<bool>(GameEvents.DRUNK_TOGGLED, IsDrunk());
+			bool drunk = IsDrunk();
+			m_alcohol += _offset;
+			if ( drunk != IsDrunk() ) 
+			{
+				Messenger.Broadcast<bool>(GameEvents.DRUNK_TOGGLED, IsDrunk());
+			}
 		}
 	}
 
