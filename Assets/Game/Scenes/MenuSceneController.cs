@@ -133,6 +133,9 @@ public class MenuSceneController : SceneController {
 
 	protected IEnumerator Start()
 	{
+		// Make sure loading screen is hidden
+		LoadingScreen.Toggle(false);
+
 		// Start loading pet pill's on the background!
 		PetsScreenController petsScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();
 		StartCoroutine(petsScreen.InstantiatePillsAsync());
@@ -221,6 +224,10 @@ public class MenuSceneController : SceneController {
 	/// Play button has been pressed.
 	/// </summary>
 	public void OnPlayButton() {
+		// Initialize and show loading screen
+		LoadingScreen.InitWithCurrentData();
+		LoadingScreen.Toggle(true);
+
 		// Go to game!
 		// [AOC] No need to block the button, the GameFlow already controls spamming
 		FlowManager.GoToGame();

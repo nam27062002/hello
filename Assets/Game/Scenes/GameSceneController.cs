@@ -62,11 +62,6 @@ public class GameSceneController : GameSceneControllerBase {
 
 	[SerializeField] private ShowHideAnimator m_gameUIAnimator = null;
 
-	[SerializeField] private LevelLoadingSplash m_loadingScreen = null;
-	public LevelLoadingSplash loadingScreen {
-		get { return m_loadingScreen; }
-	}
-    
 	// Countdown
     public float countdown {
 		get {
@@ -155,8 +150,7 @@ public class GameSceneController : GameSceneControllerBase {
 		base.Awake();
 
 		// Make sure loading screen is visible
-		m_loadingScreen.gameObject.SetActive(true);
-		m_loadingScreen.GetComponent<ShowHideAnimator>().ForceShow(false);
+		LoadingScreen.Toggle(true);
 
 		// Check whether the tutorial popup must be displayed
 		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)
@@ -502,6 +496,9 @@ public class GameSceneController : GameSceneControllerBase {
 				ChestManager.OnLevelLoaded();
 				EggManager.SelectCollectibleEgg();                
 
+				// Hide loading screen
+				LoadingScreen.Toggle(false);
+
                 // Notify the game
                 Messenger.Broadcast(GameEvents.GAME_STARTED);
 			} break;
@@ -573,7 +570,8 @@ public class GameSceneController : GameSceneControllerBase {
 			} break;
 
             case EStates.SHOWING_RESULTS: {
-                ShowLoadingScreen(false);
+                // Show loading screen
+				LoadingScreen.Toggle(true);
 
                 // Disable dragon and entities!
                 InstanceManager.player.gameObject.SetActive(false);
@@ -623,7 +621,8 @@ public class GameSceneController : GameSceneControllerBase {
 	}
 
     private void OnResultsSceneLoaded() {        
-        HideLoadingScreen();
+		// Hide loading screen
+		LoadingScreen.Toggle(false);
 
         // This scene uiRoot is disabled because the results screen scene's uiRoot is going to be used instead
         if (uiRoot != null) {
@@ -639,28 +638,6 @@ public class GameSceneController : GameSceneControllerBase {
         if (resultsSceneController != null) {
             resultsSceneController.Show();
         }               
-    }
-
-    public void ShowLoadingScreen(bool animate) {        
-        if (loadingScreen != null) {
-            if (uiRoot != null && !uiRoot.activeSelf) {
-                uiRoot.SetActive(true);                
-            }
-
-            loadingScreen.GetComponent<ShowHideAnimator>().ForceShow(animate);
-
-			// Hide HUD
-			if(m_gameUIAnimator != null) m_gameUIAnimator.ForceHide(animate);
-        }
-    }
-
-    public void HideLoadingScreen() {
-        if (loadingScreen != null) {           
-            loadingScreen.GetComponent<ShowHideAnimator>().ForceHide();
-
-			// Show HUD
-			if(m_gameUIAnimator != null) m_gameUIAnimator.ForceShow();
-        }
     }
 
     //------------------------------------------------------------------//

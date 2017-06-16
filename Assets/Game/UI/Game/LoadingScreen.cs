@@ -17,7 +17,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Splash screen to show while the level is loading.
 /// </summary>
-public class LevelLoadingSplash : MonoBehaviour {
+public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -26,82 +26,34 @@ public class LevelLoadingSplash : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private Slider m_progressBar = null;
+	[SerializeField] private ShowHideAnimator m_animator = null;
 	[Space]
 	[SerializeField] private Image m_dragonIcon = null;
 	[SerializeField] private PowerIcon[] m_powerIcons = null;
 
-	// Internal references
-	private GameSceneController m_sceneController = null;
-
 	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
+	// SINGLETON STATIC METHODS											//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization.
+	/// Toggle the loading screen on/off.
 	/// </summary>
-	private void Awake() {
-		// Check required references
-		DebugUtils.Assert(m_progressBar != null, "Required param!");
-
-		// Initialize with current dragon setup
-		Initialize();
+	/// <param name="_show">Whether to show or hide the screen.</param>
+	/// <param name="_animate">Use fade animation?</param>
+	public static void Toggle(bool _show, bool _animate = true) {
+		// Just let the animator do it
+		instance.m_animator.Set(_show, _animate);
 	}
 
 	/// <summary>
-	/// First update call.
+	/// Initialize the screen with current data: selected dragon, skin, pets, etc.
 	/// </summary>
-	private void Start() {
-		m_sceneController = InstanceManager.gameSceneController;
-
-		// Show!
-		GetComponent<ShowHideAnimator>().ForceShow(false);
-	}
-
-	/// <summary>
-	/// The component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnGameLevelLoaded);
-	}
-	
-	/// <summary>
-	/// Called once per frame.
-	/// </summary>
-	private void Update() {
-		// Update progress
-		m_progressBar.normalizedValue = m_sceneController.levelLoadingProgress;
-	}
-
-	/// <summary>
-	/// The component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe to external events
-		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnGameLevelLoaded);
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
-	}
-
-	//------------------------------------------------------------------//
-	// OTHER METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialize with current dragon setup.
-	/// </summary>
-	private void Initialize() {
+	public static void InitWithCurrentData() {
 		// Aux vars
 		DragonData currentDragon = DragonManager.GetDragonData(UsersManager.currentUser.currentDragon);
 		DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.diguise);
 
 		// Dragon image
-		m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + currentDragon.def.sku + "/" + skinDef.Get("icon"));
+		instance.m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + currentDragon.def.sku + "/" + skinDef.Get("icon"));
 
 		// Powers: skin + pets
 		List<DefinitionNode> powerDefs = new List<DefinitionNode>();
@@ -124,33 +76,25 @@ public class LevelLoadingSplash : MonoBehaviour {
 		}
 
 		// Initialize power icons
-		for(int i = 0; i < m_powerIcons.Length; i++) {
+		for(int i = 0; i < instance.m_powerIcons.Length; i++) {
+			// Get icon ref
+			PowerIcon powerIcon = instance.m_powerIcons[i];
+
 			// Hide if there are not enough powers defined
 			if(i >= powerDefs.Count) {
-				m_powerIcons[i].gameObject.SetActive(false);
+				powerIcon.gameObject.SetActive(false);
 				continue;
 			}
 
 			// Hide if there is no power associated
 			if(powerDefs[i] == null) {
-				m_powerIcons[i].gameObject.SetActive(false);
+				powerIcon.gameObject.SetActive(false);
 				continue;
 			}
 
 			// Everything ok! Initialize
-			m_powerIcons[i].gameObject.SetActive(true);
-			m_powerIcons[i].InitFromDefinition(powerDefs[i], false, false);
+			powerIcon.gameObject.SetActive(true);
+			powerIcon.InitFromDefinition(powerDefs[i], false, false);
 		}
-	}
-
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// The game level has been loaded.
-	/// </summary>
-	private void OnGameLevelLoaded() {
-		// Hide!
-		GetComponent<ShowHideAnimator>().ForceHide();
 	}
 }
