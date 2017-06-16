@@ -25,7 +25,12 @@ public class DragonEquip : MonoBehaviour {
 		set{ m_dragonSku = value; }
 	}
 	private AttachPoint[] m_attachPoints = new AttachPoint[(int)Equipable.AttachPoint.Count];
+
 	private bool m_showPets = true;
+	public bool showPets {
+		get { return m_showPets; }
+		set { TogglePets(value, false); }
+	}
 
 	// Skins
 	private Material m_bodyMaterial;
