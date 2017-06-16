@@ -70,6 +70,8 @@ public class TrackerDiveDistance : TrackerBase {
 		// Is the dragon underwater?
 		if(m_diving) {
 			currentValue += (InstanceManager.player.transform.position - m_lastPosition).magnitude;
+			Debug.Log("<color=cyan>" + (InstanceManager.player.transform.position - m_lastPosition).magnitude + "</color><color=blue> (" + currentValue + ")</color>");
+			m_lastPosition = InstanceManager.player.transform.position;
 		}
 	}
 
