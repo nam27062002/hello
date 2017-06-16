@@ -1,4 +1,4 @@
-// PopupAdRevive.cs
+// PopupAdPlaceholder.cs
 // 
 // Created by Alger Ortín Castellví on 09/05/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
@@ -18,11 +18,11 @@ using UnityEngine.UI;
 /// Placeholder popup while ads are being integrated.
 /// </summary>
 [RequireComponent(typeof(PopupController))]
-public class PopupAdRevive : MonoBehaviour {
+public class PopupAdPlaceholder : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/InGame/PF_PopupAdRevive";
+	public const string PATH = "UI/Popups/InGame/PF_PopupAdPlaceholder";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -70,7 +70,8 @@ public class PopupAdRevive : MonoBehaviour {
 	/// </summary>
 	public void OnOpenPreAnimation() {
 		// Reset timer
-		m_timer.Start(m_adDuration);
+		// Override if control panel says so
+		m_timer.Start(Prefs.GetFloatPlayer(DebugSettings.POPUP_AD_DURATION, m_adDuration) * 1000f);
 		m_adRunning = true;
 	}
 }

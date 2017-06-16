@@ -57,6 +57,7 @@ public static class DebugSettings {
 
 	public const string MENU_DISGUISES_AUTO_EQUIP		        = "MENU_DISGUISES_AUTO_EQUIP";
 	public const string MENU_ENABLE_SHORTCUTS					= "MENU_ENABLE_SHORTCUTS";
+	public const string POPUP_AD_DURATION						= "POPUP_AD_DURATION";
 
 	public const string PLAY_TEST						        = "PLAY_TEST";
 
