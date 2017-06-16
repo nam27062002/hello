@@ -23,6 +23,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		set { m_sizeUpEatSpeedFactor = value; }
 	}
 
+	protected List<string> m_immuneTrash = new List<string>();
 	private DragonMotion m_dragonMotion;
 
     //--------------
@@ -137,7 +138,10 @@ public class DragonEatBehaviour : EatBehaviour {
 		if (reward.health >= 0) {
 			m_dragon.AddLife(m_dragonHealth.GetBoostedHp(reward.origin, reward.health), DamageType.NONE, t);
 		} else {
-			m_dragonHealth.ReceiveDamage(Mathf.Abs(reward.health), DamageType.NORMAL, t, true);
+			if ( !m_immuneTrash.Contains( reward.origin ) )
+			{
+				m_dragonHealth.ReceiveDamage(Mathf.Abs(reward.health), DamageType.NORMAL, t, true);
+			}
 		}
 		m_dragon.AddEnergy(reward.energy);
 		if (reward.alcohol != 0)
@@ -215,6 +219,11 @@ public class DragonEatBehaviour : EatBehaviour {
 	{
 		m_powerUpEatPercentage += percentage;
 		m_powerUpEatDistance = (m_eatDistance * transform.localScale.x) * m_powerUpEatPercentage / 100.0f;
+	}
+
+	public void AddImmuneTrash( string sku )
+	{
+		m_immuneTrash.Add(sku);
 	}
 
 
