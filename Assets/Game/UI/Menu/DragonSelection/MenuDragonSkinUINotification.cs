@@ -73,6 +73,12 @@ public class MenuDragonSkinUINotification : MonoBehaviour {
 		// Skip if not properly initialized
 		if(m_notification == null) return;
 
+		// Don't show during the FTUXP
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN)) {
+			m_notification.Hide();
+			return;
+		}
+
 		// Notification visible if any of the skins of the currently selected dragon are marked as 'new'
 		DragonData selectedDragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
 
