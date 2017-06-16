@@ -23,6 +23,8 @@ public class MachineEatBehaviour : EatBehaviour {
 	private IAttacker m_attacker;
 	private AI.IMachine m_machine;
 
+	[SerializeField] private bool m_ignoreBadJunk = true;
+
 	override protected void Awake() {
 
 		base.Awake();
@@ -46,7 +48,10 @@ public class MachineEatBehaviour : EatBehaviour {
 			m_canBitePlayer = false;
 		}
 
-		AddToIgnoreList("BadBird");
+		if (m_ignoreBadJunk)
+		{
+			AddToIgnoreList("BadBird");
+		}
 
 		// Check if view has eat event
 		PreyAnimationEvents animEvents = gameObject.FindComponentRecursive<PreyAnimationEvents>();

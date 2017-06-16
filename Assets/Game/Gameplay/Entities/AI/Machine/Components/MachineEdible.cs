@@ -91,7 +91,13 @@ namespace AI {
 				Reward reward = (m_entity as Entity).GetOnKillReward(false);
 				if (!_isPlayer){
 					reward.alcohol = 0;
+					// Pets never harm player if they eat bad junk
+					if (reward.health < 0)
+					{
+						reward.health = 0;
+					}
 				}
+
 				// Dispatch global event
 				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_machine.transform, reward);
 			}
