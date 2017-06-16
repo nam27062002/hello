@@ -318,7 +318,7 @@ public class ProfilerEditorWindow : EditorWindow {
 	private bool ShowSaveDataInfo( ref SimpleJSON.JSONNode _data, bool _isEditable = true ) {
 		bool ret = false;
 
-		string value = _data.ToString("");
+		string value = _data.ToString();
 
         // SC
         if (_isEditable)

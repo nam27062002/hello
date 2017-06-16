@@ -29,14 +29,10 @@ namespace AI {
 
 				m_pilot.Stop();
 				DragonPlayer player = InstanceManager.player;
-				float distance = player.data.GetScaleAtLevel( InstanceManager.player.data.progression.maxLevel) * 4;
-				Vector3 dir = Vector3.right;
-				if (player.dragonMotion.direction.x < 0)
-				{
-					dir = Vector3.left;
-				}
+				float distance = player.data.GetScaleAtLevel( InstanceManager.player.data.progression.maxLevel) * 6;
+				Vector3 dir = Vector3.back;
 				m_pilot.transform.position = player.transform.position + dir * distance;
-				m_pilot.SetDirection( (player.transform.position - m_pilot.transform.position) , true);
+				m_pilot.SetDirection( Vector3.right , true);
 
 				// Revive animation
 				m_pilot.PressAction(Pilot.Action.Button_A);
