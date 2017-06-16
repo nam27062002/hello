@@ -166,56 +166,56 @@ static internal class Messenger {
 	
 	#region AddListener
 	//No parameters
-	static public void AddListener(Enum eventType, Callback handler) {
+	static public void AddListener(Enum eventType, hd.Callback handler) {
 		OnListenerAdding(eventType, handler);
-		eventTable[eventType] = (Callback)eventTable[eventType] + handler;
+		eventTable[eventType] = (hd.Callback)eventTable[eventType] + handler;
 	}
 	
 	//Single parameter
-	static public void AddListener<T>(Enum eventType, Callback<T> handler) {
+	static public void AddListener<T>(Enum eventType, hd.Callback<T> handler) {
 		OnListenerAdding(eventType, handler);
-		eventTable[eventType] = (Callback<T>)eventTable[eventType] + handler;
+		eventTable[eventType] = (hd.Callback<T>)eventTable[eventType] + handler;
 	}
 	
 	//Two parameters
-	static public void AddListener<T, U>(Enum eventType, Callback<T, U> handler) {
+	static public void AddListener<T, U>(Enum eventType, hd.Callback<T, U> handler) {
 		OnListenerAdding(eventType, handler);
-		eventTable[eventType] = (Callback<T, U>)eventTable[eventType] + handler;
+		eventTable[eventType] = (hd.Callback<T, U>)eventTable[eventType] + handler;
 	}
 	
 	//Three parameters
-	static public void AddListener<T, U, V>(Enum eventType, Callback<T, U, V> handler) {
+	static public void AddListener<T, U, V>(Enum eventType, hd.Callback<T, U, V> handler) {
 		OnListenerAdding(eventType, handler);
-		eventTable[eventType] = (Callback<T, U, V>)eventTable[eventType] + handler;
+		eventTable[eventType] = (hd.Callback<T, U, V>)eventTable[eventType] + handler;
 	}
 	#endregion
 	
 	#region RemoveListener
 	//No parameters
-	static public void RemoveListener(Enum eventType, Callback handler) {
+	static public void RemoveListener(Enum eventType, hd.Callback handler) {
 		OnListenerRemoving(eventType, handler);   
-		eventTable[eventType] = (Callback)eventTable[eventType] - handler;
+		eventTable[eventType] = (hd.Callback)eventTable[eventType] - handler;
 		OnListenerRemoved(eventType);
 	}
 	
 	//Single parameter
-	static public void RemoveListener<T>(Enum eventType, Callback<T> handler) {
+	static public void RemoveListener<T>(Enum eventType, hd.Callback<T> handler) {
 		OnListenerRemoving(eventType, handler);
-		eventTable[eventType] = (Callback<T>)eventTable[eventType] - handler;
+		eventTable[eventType] = (hd.Callback<T>)eventTable[eventType] - handler;
 		OnListenerRemoved(eventType);
 	}
 	
 	//Two parameters
-	static public void RemoveListener<T, U>(Enum eventType, Callback<T, U> handler) {
+	static public void RemoveListener<T, U>(Enum eventType, hd.Callback<T, U> handler) {
 		OnListenerRemoving(eventType, handler);
-		eventTable[eventType] = (Callback<T, U>)eventTable[eventType] - handler;
+		eventTable[eventType] = (hd.Callback<T, U>)eventTable[eventType] - handler;
 		OnListenerRemoved(eventType);
 	}
 	
 	//Three parameters
-	static public void RemoveListener<T, U, V>(Enum eventType, Callback<T, U, V> handler) {
+	static public void RemoveListener<T, U, V>(Enum eventType, hd.Callback<T, U, V> handler) {
 		OnListenerRemoving(eventType, handler);
-		eventTable[eventType] = (Callback<T, U, V>)eventTable[eventType] - handler;
+		eventTable[eventType] = (hd.Callback<T, U, V>)eventTable[eventType] - handler;
 		OnListenerRemoved(eventType);
 	}
 	#endregion
@@ -230,7 +230,7 @@ static internal class Messenger {
 		
 		Delegate d;
 		if (eventTable.TryGetValue(eventType, out d)) {
-			Callback callback = d as Callback;
+			hd.Callback callback = d as hd.Callback;
 			
 			if (callback != null) {
 				callback();
@@ -249,7 +249,7 @@ static internal class Messenger {
 		
 		Delegate d;
 		if (eventTable.TryGetValue(eventType, out d)) {
-			Callback<T> callback = d as Callback<T>;
+			hd.Callback<T> callback = d as hd.Callback<T>;
 			
 			if (callback != null) {
 				callback(arg1);
@@ -268,7 +268,7 @@ static internal class Messenger {
 		
 		Delegate d;
 		if (eventTable.TryGetValue(eventType, out d)) {
-			Callback<T, U> callback = d as Callback<T, U>;
+			hd.Callback<T, U> callback = d as hd.Callback<T, U>;
 			
 			if (callback != null) {
 				callback(arg1, arg2);
@@ -287,7 +287,7 @@ static internal class Messenger {
 		
 		Delegate d;
 		if (eventTable.TryGetValue(eventType, out d)) {
-			Callback<T, U, V> callback = d as Callback<T, U, V>;
+			hd.Callback<T, U, V> callback = d as hd.Callback<T, U, V>;
 			
 			if (callback != null) {
 				callback(arg1, arg2, arg3);

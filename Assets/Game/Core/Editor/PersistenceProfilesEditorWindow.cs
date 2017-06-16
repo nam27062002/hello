@@ -581,7 +581,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	private bool ShowSaveDataInfo( ref SimpleJSON.JSONClass _data, bool _isEditable = true ) {
 		bool ret = false;
 
-		string value = _data.ToString("");
+		string value = _data.ToString();
 
         // SC
         if (_isEditable) {
