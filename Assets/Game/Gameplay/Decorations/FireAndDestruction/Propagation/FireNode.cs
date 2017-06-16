@@ -13,7 +13,6 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 	private Decoration m_decoration;
 	private Transform m_transform;
-	private GameCamera m_newCamera;
 
 	private ParticleData m_feedbackParticle;
 	private ParticleData m_burnParticle;
@@ -22,9 +21,11 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private bool m_feedbackParticleMatchDirection = false;
 	private float m_hitRadius = 0f;
 
-	private Bounds m_bounds;
 	private Rect m_rect;
 	public Rect boundingRect { get { return m_rect; } }
+
+	private BoundingSphere m_boundingSphere;
+	public BoundingSphere boundingSphere { get { return m_boundingSphere; } }
 
 	private CircleAreaBounds m_area;
 	public CircleAreaBounds area { get { return m_area; } }
@@ -35,24 +36,21 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private List<FireNode> m_neighbours;
 	private List<float> m_neihboursFireResistance;
 
-
 	private float m_timer;
 	private float m_powerTimer;
 
-
 	private State m_state;
 	private State m_nextState;
+
 
 
 	// Use this for initialization
 	void Start() {
 		m_transform = transform;
 
-		m_bounds = new Bounds(m_transform.position, Vector3.one * m_hitRadius * 2f);
 		m_rect = new Rect((Vector2)m_transform.position, Vector2.zero);
-
-		m_newCamera = Camera.main.GetComponent<GameCamera>();
 		m_area = new CircleAreaBounds(m_transform.position, m_hitRadius);
+		m_boundingSphere = new BoundingSphere(m_transform.position, 8f * m_transform.localScale.x);
 
 		gameObject.SetActive(false);
 	}
@@ -141,9 +139,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		}
 
 		switch (m_state) {
-			case State.Spreading:
-				ToogleEffect();
-			
+			case State.Spreading:						
 				if (m_fireSprite != null) {
 					m_fireSprite.SetPower(m_powerTimer * 6f);
 				}
@@ -167,17 +163,13 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 				}
 				break;
 
-			case State.Burning:				
-				ToogleEffect();
-
+			case State.Burning:
 				if (m_fireSprite != null) {
 					m_fireSprite.SetPower(m_powerTimer * 6f);
 				}
 				break;
 
-			case State.Extinguish:
-				ToogleEffect();
-
+			case State.Extinguish:				
 				if (m_fireSprite != null) {
 					m_fireSprite.SetPower(6f + (m_powerTimer * (-6f)));
 				}
@@ -215,16 +207,13 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_state = m_nextState;
 	}
 
-	private void ToogleEffect() {
-		// Show / Hide fire effect if this node is inside Camera or not
-		bool isInsideActivationMaxArea = m_newCamera.IsInsideActivationMaxArea(m_bounds);
-
-		if (m_fireSprite != null) {
-			if (!isInsideActivationMaxArea) {
+	public void SetEffectVisibility(bool _visible) {
+		if (m_state >= State.Spreading && m_state <= State.Extinguish) {
+			if (_visible) {			
+				StartFireEffect();
+			} else {
 				StopFireEffect();
 			}
-		} else if (isInsideActivationMaxArea) {
-			StartFireEffect();
 		}
 	}
 
