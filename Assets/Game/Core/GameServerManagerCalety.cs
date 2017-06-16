@@ -845,7 +845,7 @@ public class GameServerManagerCalety : GameServerManager
                         response[key] = upgradeAvailable;
 
                         key = "cloudSaveAvailable";
-                        response[key] = result.ContainsKey(key) && Convert.ToBoolean(result[key]);                        
+                        response[key] = result.ContainsKey(key) && Convert.ToBoolean((object)result[key]);                        
                     }
                 }
                 break;
