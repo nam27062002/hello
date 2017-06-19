@@ -1,7 +1,7 @@
-// TrackerDiveDistance.cs
+// TrackerDistance.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 21/03/2017.
+// Created by Alger Ortín Castellví on 19/06/2017.
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
@@ -14,14 +14,13 @@ using System.Collections.Generic;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Tracker for diving distance.
+/// Tracker for traveling distance.
 /// </summary>
-public class TrackerDiveDistance : TrackerBase {
+public class TrackerDistance : TrackerBase {
 	//------------------------------------------------------------------------//
 	// MEMBERS																  //
 	//------------------------------------------------------------------------//
 	// Internal
-	private bool m_diving = false;
 	private Vector3 m_lastPosition = Vector3.zero;
 
 	//------------------------------------------------------------------------//
@@ -30,21 +29,19 @@ public class TrackerDiveDistance : TrackerBase {
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
-	public TrackerDiveDistance() {
+	public TrackerDistance() {
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.GAME_STARTED, OnGameStarted);
 		Messenger.AddListener(GameEvents.GAME_UPDATED, OnGameUpdated);
-		Messenger.AddListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
 	}
 
 	/// <summary>
 	/// Destructor
 	/// </summary>
-	~TrackerDiveDistance() {
+	~TrackerDistance() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(GameEvents.GAME_STARTED, OnGameStarted);
 		Messenger.RemoveListener(GameEvents.GAME_UPDATED, OnGameUpdated);
-		Messenger.RemoveListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
 	}
 
 	//------------------------------------------------------------------------//
@@ -58,34 +55,17 @@ public class TrackerDiveDistance : TrackerBase {
 	/// A new game has started.
 	/// </summary>
 	private void OnGameStarted() {
-		// Reset flag
-		m_diving = false;
+		// Store initial dragon position
+		m_lastPosition = InstanceManager.player.transform.position;
 	}
 
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
 	private void OnGameUpdated() {
-		// We'll receive this event only while the game is actually running, so no need to check anything
-		// Is the dragon underwater?
-		if(m_diving) {
-			currentValue += (InstanceManager.player.transform.position - m_lastPosition).magnitude;
-			//Debug.Log("<color=cyan>" + (InstanceManager.player.transform.position - m_lastPosition).magnitude + "</color><color=blue> (" + currentValue + ")</color>");
-			m_lastPosition = InstanceManager.player.transform.position;
-		}
-	}
-
-	/// <summary>
-	/// The dragon has entered/exit water.
-	/// </summary>
-	/// <param name="_activated">Whether the dragon has entered or exited the water.</param>
-	private void OnUnderwaterToggled(bool _activated) {
-		// Update internal flag
-		m_diving = _activated;
-		
-		// Store initial dive position
-		if(_activated) {
-			m_lastPosition = InstanceManager.player.transform.position;
-		}
+		// We'll receive this event only while the game is actually running, so no need to check anything else
+		currentValue += (InstanceManager.player.transform.position - m_lastPosition).magnitude;
+		//Debug.Log("<color=orange>" + (InstanceManager.player.transform.position - m_lastPosition).magnitude + "</color><color=red> (" + currentValue + ")</color>");
+		m_lastPosition = InstanceManager.player.transform.position;
 	}
 }
