@@ -72,7 +72,8 @@ namespace AI {
 					m_target = param[0] as Transform;
 					if ( m_target ) {
 						m_targetEntity = m_target.GetComponent<Entity>();
-						m_targetMachine = m_targetEntity.machine;
+						if ( m_targetEntity )
+							m_targetMachine = m_targetEntity.machine;
 					}
 				}
 

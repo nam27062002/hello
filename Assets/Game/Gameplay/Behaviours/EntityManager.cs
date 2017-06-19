@@ -165,7 +165,28 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
         return m_searchList.ToArray();
     }
 
+	public int GetOverlapingCages(Vector3 position, float distance, Cage[] results)
+    {
+		int numResult = 0;
+		int size = m_cages.Count;
+		int length = results.Length;
+        for (int i = 0; i < size && numResult < length; ++i)
+        {
+			Cage e = m_cages[i];
+            if (e != null)
+            {
+				float sqrMagnitude = (position - e.behaviour.centerTarget.position).sqrMagnitude;
+				if ( sqrMagnitude <= distance * distance );	
+                {
+                    results[numResult] = e;
+                    numResult++;
+                }
+            }
+        }
+        return numResult;
+    }
 
+    	
     public int GetOverlapingEntities(Vector3 position, float distance, Entity[] result)
     {
         int numEntities = 0;
@@ -173,7 +194,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
         {
             case OverlapingMethod.EntitiesManager:
                 {
-                    numEntities = EntityManager.instance.GetEntitiesInRange2DNonAlloc(position, distance, result);
+                    numEntities = GetEntitiesInRange2DNonAlloc(position, distance, result);
                 }
                 break;
             case OverlapingMethod.Capsule:

@@ -7,10 +7,15 @@ public class Cage : IEntity {
 	private ISpawner m_spawner;
 	private float m_timer;
 	private bool m_wasDestroyed;
+	protected CageBehaviour m_behaviour;
+	public CageBehaviour behaviour{
+		get{ return m_behaviour; }
+	}
 
 	//
 	protected override void Awake() {
 		base.Awake();
+		m_behaviour = GetComponent<CageBehaviour>();
 		m_maxHealth = 1f;
 	}
 
