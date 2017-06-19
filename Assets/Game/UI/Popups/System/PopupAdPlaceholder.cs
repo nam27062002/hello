@@ -29,7 +29,7 @@ public class PopupAdPlaceholder : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private Localizer m_timerText = null;
-	[SerializeField] private float m_adDuration = 1000f;	// Simulate ad duration
+	[SerializeField] private float m_adDuration = 10f;	// Simulate ad duration
 
 	// Internal
 	private bool m_adRunning = false;
@@ -71,7 +71,9 @@ public class PopupAdPlaceholder : MonoBehaviour {
 	public void OnOpenPreAnimation() {
 		// Reset timer
 		// Override if control panel says so
-		m_timer.Start(Prefs.GetFloatPlayer(DebugSettings.POPUP_AD_DURATION, m_adDuration) * 1000f);
+		float duration = Prefs.GetFloatPlayer(DebugSettings.POPUP_AD_DURATION, m_adDuration);
+		if(duration < 0) duration = m_adDuration;
+		m_timer.Start(duration * 1000f);
 		m_adRunning = true;
 	}
 }
