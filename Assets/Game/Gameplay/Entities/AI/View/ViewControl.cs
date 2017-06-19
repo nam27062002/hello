@@ -907,9 +907,18 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
 	}
 
-	public void Freezing( float freezeLevel )
-	{
+	public void Freezing( float freezeLevel ){
 		m_freezingLevel = freezeLevel;
+	}
+
+	public void SetStunned( bool stunned ){
+		if ( stunned ){
+			m_animator.enabled = false;
+			// if no stunned particle -> stun
+		}else{
+			m_animator.enabled = true;
+			// if stunned particle -> remove stun
+		}
 	}
 
 }
