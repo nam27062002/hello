@@ -83,7 +83,7 @@ public class SpawnerEditor : Editor {
         CheckForErrors();
 
 
-        m_timeOfLastInput = 0.0f;
+//        m_timeOfLastInput = 0.0f;
     }
 
 	/// <summary>
