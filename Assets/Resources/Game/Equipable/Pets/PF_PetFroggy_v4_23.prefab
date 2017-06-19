@@ -1538,7 +1538,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"ignoreNotListedUnits":false,"dragonSizeRangeMultiplier":2,"preferedRangeMultiplier":2,"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"petPursuitSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false}]'
   m_databaseKey: PF_PetFroggy_v4_23
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -1684,6 +1684,7 @@ MonoBehaviour:
   m_isAquatic: 0
   m_canMultipleLatchOnPlayer: 0
   m_damageOnBitePlayer: 10
+  m_ignoreBadJunk: 1
 --- !u!114 &114000013672329336
 MonoBehaviour:
   m_ObjectHideFlags: 1

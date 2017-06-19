@@ -16,7 +16,10 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	[SerializeField] private ParticleData m_onBreakParticle;
 	[SerializeField] private string m_onBreakSound;
 	[SerializeField] private string m_onCollideSound;
-
+	[SerializeField] public Transform m_centerTarget;
+	public Transform centerTarget {
+		get{ return m_centerTarget; }
+	}
 
 	private Cage m_entity;
 
@@ -26,6 +29,10 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	private DragonTier m_minTierToBreak;
 
 	private bool m_broken;
+	public bool broken
+	{
+		get { return m_broken; }
+	}
 
 	private PrisonerSpawner m_prisonerSpawner;
 
@@ -114,10 +121,18 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 					Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, m_minTierToBreak, "");
 				}
 			}
+			else if (collision.transform.CompareTag("Pet")) {
+				// Check if pet is trying to break this cage!
+				Pet pet = collision.transform.GetComponent<Pet>();
+				if (pet != null && pet.CanBreakCages && pet.Charging )
+				{
+					Break();
+				}
+			}
 		}
 	}
 
-	private void Break() {
+	public void Break() {
 		// Spawn particle
 		GameObject ps = m_onBreakParticle.Spawn();
 		if (ps != null) {
