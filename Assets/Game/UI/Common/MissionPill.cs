@@ -378,7 +378,7 @@ public class MissionPill : MonoBehaviour {
 	public void OnFreeRemoveMission(){
 		if(m_mission == null) return;
 
-		PopupController popup = PopupManager.OpenPopupInstant(PopupAdRevive.PATH);
+		PopupController popup = PopupManager.OpenPopupInstant(PopupAdPlaceholder.PATH);
 		popup.OnClosePostAnimation.AddListener(OnRemoveMissionAdClosed);
 	}
 
@@ -397,7 +397,7 @@ public class MissionPill : MonoBehaviour {
 	public void OnSkipTimeWithAd() {
 		if(m_mission == null) return;
 
-		PopupController popup = PopupManager.OpenPopupInstant(PopupAdRevive.PATH);
+		PopupController popup = PopupManager.OpenPopupInstant(PopupAdPlaceholder.PATH);
 		popup.OnClosePostAnimation.AddListener(OnSkipTimeAdClosed);
 	}
 
