@@ -44,6 +44,9 @@ public class GoalsSceneChestSlot : MonoBehaviour, IPointerClickHandler {
 		get { return m_view; }
 	}
 
+	private bool m_collected = false;
+	private Chest.RewardData m_rewardData = null;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -68,6 +71,24 @@ public class GoalsSceneChestSlot : MonoBehaviour, IPointerClickHandler {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize this slot with the given chest data.
+	/// </summary>
+	/// <param name="_collected">Was the chest collected?.</param>
+	/// <param name="_rewardData">Reward corresponding to this chest.</param>
+	public void Init(bool _collected, Chest.RewardData _rewardData) {
+		// Store new data
+		m_collected = _collected;
+		m_rewardData = _rewardData;
+
+		// Update view
+		if(m_collected) {
+			// Figure out reward type to show the proper FX
+			view.Open(m_rewardData.type, false);
+		} else {
+			view.Close();
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -82,5 +103,10 @@ public class GoalsSceneChestSlot : MonoBehaviour, IPointerClickHandler {
 		this.transform
 			.DOLocalJump(this.transform.localPosition, m_jumpForce, m_numJumps, m_jumpDuration)
 			.SetEase(m_jumpEase);
+
+		// Trigger UI tooltip as well
+		RectTransform parent = InstanceManager.menuSceneController.GetScreen(MenuScreens.GOALS).transform as RectTransform;
+		string tid = m_collected ? "TID_CHEST_TIP_COLLECTED" : "TID_CHEST_TIP_NOT_COLLECTED";
+		UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(tid), new Vector2(0.5f, 0.4f), parent);
 	}
 }

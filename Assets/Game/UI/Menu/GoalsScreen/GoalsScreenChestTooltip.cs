@@ -31,7 +31,7 @@ public class GoalsScreenChestTooltip : MonoBehaviour {
 
 	// External refs
 	[Space]
-	[SerializeField] private TextMeshProUGUI m_nameText = null;
+	[SerializeField] private Localizer m_nameText = null;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_coinsRewardText = null;
 	[SerializeField] private TextMeshProUGUI m_pcRewardText = null;
@@ -62,14 +62,15 @@ public class GoalsScreenChestTooltip : MonoBehaviour {
 		m_3dAnchor = goalScene.chestSlots[m_chestIdx].uiAnchor;
 
 		// Set name
-		// [AOC] HARDCODED!! I'm going to hell for this >_<
+		string tid = "";
 		switch(m_chestIdx) {
-			case 0: m_nameText.text = "1st"; break;
-			case 1: m_nameText.text = "2nd"; break;
-			case 2: m_nameText.text = "3rd"; break;
-			case 3: m_nameText.text = "4th"; break;
-			case 4: m_nameText.text = "5th"; break;
+			case 0: tid = "TID_GEN_ORDER_1"; break;
+			case 1: tid = "TID_GEN_ORDER_2"; break;
+			case 2: tid = "TID_GEN_ORDER_3"; break;
+			case 3: tid = "TID_GEN_ORDER_4"; break;
+			case 4: tid = "TID_GEN_ORDER_5"; break;
 		}
+		m_nameText.Localize(tid);
 
 		// Initialize reward info - shouldn't change while alive, so do it at the Start() call
 		Chest.RewardData rewardData = ChestManager.GetRewardData(m_chestIdx + 1);
