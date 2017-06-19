@@ -123,7 +123,11 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 			}
 			else if (collision.transform.CompareTag("Pet")) {
 				// Check if pet is trying to break this cage!
-
+				Pet pet = collision.transform.GetComponent<Pet>();
+				if (pet != null && pet.CanBreakCages && pet.Charging )
+				{
+					Break();
+				}
 			}
 		}
 	}
