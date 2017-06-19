@@ -77,6 +77,16 @@ public class SceneParticlePoolingEditor : Editor {
 			_particleInstance.hideFlags = HideFlags.DontSaveInEditor;
 			ParticleSystem ps = _particleInstance.GetComponentInChildren<ParticleSystem>();
 
+			ParticleScaler scaler = _particleInstance.GetComponent<ParticleScaler> ();
+			if (scaler != null) {
+				if (scaler.m_scale != particleObj.m_particle.scale) {
+					scaler.m_scale = particleObj.m_particle.scale;
+					scaler.DoScale();
+				}
+			}
+
+
+
 			m_particlesCreated.Add( particleObj );
 			m_particlesCreatedObj.Add( _particleInstance );
 		}
