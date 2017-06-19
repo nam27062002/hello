@@ -509,4 +509,60 @@ public class ProfilerControlPanelController : MonoBehaviour
         ApplicationManager.instance.Debug_ScheduleNotification();
     }
     #endregion
+
+    #region game_scene
+    private class SceneState
+    {
+        private Dictionary<GameObject, bool> State;                
+
+        public void Toggle(string sceneName)
+        {            
+            UnityEngine.SceneManagement.Scene s = UnityEngine.SceneManagement.SceneManager.GetSceneByName(sceneName);
+            if (s != null && s.isLoaded)
+            {
+                bool isActive = State == null;
+                if (isActive)
+                {
+                    State = new Dictionary<GameObject, bool>();
+                }
+                else
+                {
+                    State = null;
+                }
+
+                GameObject go;
+                GameObject[] allGameObjects = s.GetRootGameObjects();
+                for (int j = 0; j < allGameObjects.Length; j++)
+                {
+                    go = allGameObjects[j];
+
+                    if (State != null)
+                    {
+                        State.Add(go, go.activeSelf);
+                    }
+
+                    go.SetActive(!isActive);
+                }
+            }
+        }
+    }
+
+    private static Dictionary<string, SceneState> GameScene_States;
+
+    public static void GameScene_Toggle(string sceneName)
+    {
+        if (GameScene_States == null)
+        {
+            GameScene_States = new Dictionary<string, SceneState>();
+        }
+
+        if (!GameScene_States.ContainsKey(sceneName))
+        {
+            GameScene_States.Add(sceneName, new SceneState());
+        }
+
+        SceneState state = GameScene_States[sceneName];
+        state.Toggle(sceneName);      
+    }
+    #endregion
 }
