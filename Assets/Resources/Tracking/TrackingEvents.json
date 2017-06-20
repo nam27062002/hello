@@ -1,0 +1,1368 @@
+{
+    "TrackingEvents": {
+        "02_END_SESSION": {
+            "Parameters": [
+                {"Game_Completed": {"Status": "OK"}},
+                {"Global_Playtime": {"Status": "OK"}},
+                {"Last_Map": {"Status": "OK"}},
+                {"Max_Map": {"Status": "OK"}},
+                {"Pack_Collection": {"Status": "OK"}},
+                {"Player_Coins": {"Status": "OK"}},
+                {"Player_First_Connection": {"Status": "OK"}},
+                {"Player_Last_Connection": {"Status": "OK"}},
+                {"Session_nb": {"Status": "OK"}},
+                {"XP": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_LOADING": {
+            "Parameters": [
+                {"Step_Duration": {"Status": "OK"}},
+                {"Total_Duration": {"Status": "OK"}},
+                {"Step_Name": {"Status": "OK"}},
+                {"First_Load": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_LOTTERY": {
+            "Parameters": [
+                {"Lottery_Action": {"Status": "OK"}},
+                {"Lottery_paid": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_AB_TEST": {
+            "Parameters": [
+                {"AB_Experiment": {"Status": ""}},
+                {"AB_Group": {"Status": ""}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "custom.player.contentDownload": {
+            "Parameters": [
+                {"Status": {"Status": ""}},
+                {"DownloadType": {"Status": ""}},
+                {"Size": {"Status": ""}},
+                {"Duration": {"Status": ""}}
+            ],
+            "APIs": ["dna"]
+        },
+        "RUNE_MAIN_TUTO_STEP": {
+            "Parameters": [
+                {"Tuto_Step": {"Status": "OK"}},
+                {"Total_Duration": {"Status": "OK"}},
+                {"Step_Duration": {"Status": "OK"}},
+                {"Session_nb": {"Status": "OK"}},
+                {"Skip_Option": {"Status": ""}},
+                {"Clicks_Counter": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "custom.game.crash": {
+            "Parameters": [
+                {"playerProgress": {"Status": ""}},
+                {"isFatal": {"Status": ""}},
+                {"errorType": {"Status": ""}},
+                {"errorMessage": {"Status": ""}}
+            ],
+            "APIs": ["dna"]
+        },
+        "custom.game.legalpopup": {
+            "Parameters": [
+                {"nbViews": {"Status": ""}},
+                {"LegalPopupType": {"Status": ""}},
+                {"Duration": {"Status": ""}},
+                {"Accepted": {"Status": ""}}
+            ],
+            "APIs": ["dna"]
+        },
+        "RUNE_MONSTER": {
+            "Parameters": [
+                {"Monster_Name": {"Status": "OK"}},
+                {"Monster_Level": {"Status": "OK"}},
+                {"Monster_Stars": {"Status": "OK"}},
+                {"Monster_Action": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "custom.player.mode": {
+            "Parameters": [
+                {"PlayingMode": {"Status": ""}},
+                {"Rank": {"Status": ""}},
+                {"IsSuccess": {"Status": ""}},
+                {"Duration": {"Status": ""}}
+            ],
+            "APIs": ["dna"]
+        },
+        "RUNE_FIRST_SESSION_END": {
+            "Parameters": [
+                {"Session_duration": {"Status": "OK"}},
+                {"Main_Tuto_Completed": {"Status": "OK"}},
+                {"Side_Tuto_Completed": {"Status": "OK"}},
+                {"Missions_Completed": {"Status": "OK"}},
+                {"Total_Waves_Number": {"Status": "OK"}},
+                {"XP": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_SHOP_ENTRY": {
+            "Parameters": [
+                {"Screen_Shop": {"Status": "OK"}},
+                {"Button": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "player.start": {
+            "Parameters": [
+                {"abtesting": {"Status": ""}},
+                {"playerProgress": {"Status": ""}}
+            ],
+            "APIs": ["dna"]
+        },
+        "custom.player.stop": {
+            "Parameters": [
+                {"isPayingSession": {"Status": ""}},
+                {"playerProgress": {"Status": ""}},
+                {"StopCause": {"Status": ""}},
+                {"TotalPlaytime": {"Status": ""}},
+                {"SessionPlaytime": {"Status": ""}}
+            ],
+            "APIs": ["dna"]
+        },
+        "custom.player.authentication": {
+            "Parameters": [
+                {"Provider": {"Status": ""}},
+                {"yearOfBirth": {"Status": ""}},
+                {"gender": {"Status": ""}}
+            ],
+            "APIs": ["dna"]
+        },
+        "04_SOCIAL": {
+            "Parameters": [
+                {"Connection_Reward": {"Status": ""}},
+                {"Friend_Count ": {"Status": ""}},
+                {"Gender_Age": {"Status": ""}},
+                {"Operating_System": {"Status": ""}},
+                {"Session_nb": {"Status": ""}},
+                {"Successful_Invitation_Count": {"Status": ""}},
+                {"User_Action": {"Status": ""}},
+                {"User_Authentication": {"Status": ""}},
+                {"XP": {"Status": ""}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_ACHIEVEMENTS": {
+            "Parameters": [
+                {"Mission_Action": {"Status": "OK"}},
+                {"Mission_SKU": {"Status": "OK"}},
+                {"Mission_Type": {"Status": "OK"}},
+                {"Mission_Level": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "01_START_SESSION": {
+            "Parameters": [
+                {"Connection_Type": {"Status": "OK"}},
+                {"Game_Language": {"Status": "OK"}},
+                {"Global_Playtime": {"Status": "OK"}},
+                {"Operating_System": {"Status": "OK"}},
+                {"Player_Gains": {"Status": "OK"}},
+                {"Push_Impact": {"Status": "OK"}},
+                {"Session_nb": {"Status": "OK"}},
+                {"User_Country": {"Status": "OK"}},
+                {"User_LocalTime": {"Status": "OK"}},
+                {"XP": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "08_PRIMARY_STORE_EXIT": {
+            "Parameters": [
+                {"Last_Map": {"Status": ""}},
+                {"Packs_displayed": {"Status": ""}},
+                {"PStore_Visit_Time": {"Status": ""}},
+                {"PStore_Visits": {"Status": ""}},
+                {"Session_nb": {"Status": ""}},
+                {"Store_Outcome": {"Status": ""}},
+                {"Store_PrePath": {"Status": ""}},
+                {"XP": {"Status": ""}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_MAP_FUNNEL": {
+            "Parameters": [
+                {"Map_Step": {"Status": "OK"}},
+                {"Region_Name": {"Status": "OK"}},
+                {"Source": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "03_IAP": {
+            "Parameters": [
+                {"Connection_Type": {"Status": "OK"}},
+                {"Last_Map": {"Status": "OK"}},
+                {"Money_Currency": {"Status": "OK"}},
+                {"Money_IAP": {"Status": "OK"}},
+                {"Object_ID": {"Status": "OK"}},
+                {"Promotion_ID": {"Status": "OK"}},
+                {"PStore_Visits": {"Status": "OK"}},
+                {"Session_nb": {"Status": "OK"}},
+                {"Transaction_ID": {"Status": "OK"}},
+                {"XP": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "fb_Purchased": {
+            "Parameters": [
+                {"fb_def_logPurchase": {"Status": ""}},
+                {"fb_def_currency": {"Status": ""}}
+            ],
+            "APIs": ["facebook"]
+        },
+        "game.start": {
+            "Parameters": [
+                {"buildVersion": {"Status": ""}},
+                {"gameVersion": {"Status": ""}},
+                {"machineId": {"Status": ""}},
+                {"usSdkVersion": {"Status": ""}},
+                {"osVersion": {"Status": ""}},
+                {"hardware": {"Status": ""}},
+                {"pushNotif": {"Status": ""}},
+                {"typeNotif": {"Status": ""}},
+                {"providerAuth": {"Status": ""}},
+                {"playerID": {"Status": ""}},
+                {"installDate": {"Status": ""}},
+                {"acq_marketing_id": {"Status": ""}}
+            ],
+            "APIs": ["dna"]
+        },
+        "RUNE_WAVE_OVER": {
+            "Parameters": [
+                {"Battle_Result": {"Status": "OK"}},
+                {"Wave_Retry": {"Status": "OK"}},
+                {"Difficulty": {"Status": "OK"}},
+                {"Region_Name": {"Status": "OK"}},
+                {"Dungeon_Name": {"Status": "OK"}},
+                {"Wave_Number": {"Status": "OK"}},
+                {"Damage_Get": {"Status": "OK"}},
+                {"Damage_Received": {"Status": "OK"}},
+                {"Damage_Healed": {"Status": "OK"}},
+                {"Auto_Mode": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "af_purchase": {
+            "Parameters": [
+                {"af_def_logPurchase": {"Status": ""}},
+                {"af_def_currency": {"Status": ""}},
+                {"af_quantity": {"Status": ""}}
+            ],
+            "APIs": ["appsflyer"]
+        },
+        "RUNE_ECO_EARN": {
+            "Parameters": [
+                {"Currency": {"Status": "OK"}},
+                {"Gift_Box": {"Status": ""}},
+                {"Amount_Delta": {"Status": "OK"}},
+                {"Amount_Balance": {"Status": "OK"}},
+                {"Eco_Group": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "07_PRIMARY_STORE_ENTRY": {
+            "Parameters": [
+                {"Connection_Type": {"Status": ""}},
+                {"Game_Completed": {"Status": ""}},
+                {"Last_Map": {"Status": ""}},
+                {"Max_Map": {"Status": ""}},
+                {"Pack_Collection": {"Status": ""}},
+                {"PStore_Visits": {"Status": ""}},
+                {"Session_nb": {"Status": ""}},
+                {"XP": {"Status": ""}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "25_REWARD": {
+            "Parameters": [
+                {"Last_Map": {"Status": "OK"}},
+                {"Reward_Type": {"Status": "OK"}},
+                {"Session_nb": {"Status": "OK"}},
+                {"XP": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_MISSION": {
+            "Parameters": [
+                {"Mission_Action": {"Status": "OK"}},
+                {"Mission_SKU": {"Status": "OK"}},
+                {"Mission_Type": {"Status": "OK"}},
+                {"Mission_Level": {"Status": ""}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_ECO_SPENT": {
+            "Parameters": [
+                {"Currency": {"Status": "OK"}},
+                {"Amount_Delta": {"Status": "OK"}},
+                {"Amount_Balance": {"Status": "OK"}},
+                {"Eco_Group": {"Status": "OK"}},
+                {"Free_Item": {"Status": "OK"}},
+                {"Item": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_MAIN_TUTO_FAILED_STEP": {
+            "Parameters": [
+                {"Tuto_Step": {"Status": "OK"}},
+                {"Total_Duration": {"Status": "OK"}},
+                {"Step_Duration": {"Status": "OK"}},
+                {"Session_nb": {"Status": "OK"}},
+                {"Clicks_Counter": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_AVATAR_SKILL": {
+            "Parameters": [
+                {"Skill_Name": {"Status": "OK"}},
+                {"Lvl": {"Status": "OK"}},
+                {"Skills_Points_Balance": {"Status": "OK"}},
+                {"Skill_Action": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_SPECIAL_OFFER": {
+            "Parameters": [
+                {"Special_Offer_Action": {"Status": ""}},
+                {"Opened_nb": {"Status": ""}},
+                {"Shown_nb": {"Status": ""}},
+                {"Offer_SKU": {"Status": ""}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "22_OBJECTIVE_STOP": {
+            "Parameters": [
+                {"Global_Playtime": {"Status": "OK"}},
+                {"Last_Map": {"Status": "OK"}},
+                {"Objective_ID": {"Status": "OK"}},
+                {"Pad_ID": {"Status": "OK"}},
+                {"Session_nb": {"Status": "OK"}},
+                {"XP": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_MOSTER_USED": {
+            "Parameters": [
+                {"Monster_Name": {"Status": "OK"}},
+                {"Monster_Level": {"Status": "OK"}},
+                {"Monster_Stars": {"Status": "OK"}},
+                {"Monsters_Runes": {"Status": "OK"}},
+                {"Monster_Alive": {"Status": "OK"}},
+                {"HP": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_NEC_POPUP": {
+            "Parameters": [
+                {"NEC_Action": {"Status": "OK"}},
+                {"Currency": {"Status": "OK"}},
+                {"Amount": {"Status": "OK"}},
+                {"Screen": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_DUNGEON_OVER": {
+            "Parameters": [
+                {"Battle_Result": {"Status": "OK"}},
+                {"Difficulty": {"Status": "OK"}},
+                {"Region_Name": {"Status": "OK"}},
+                {"Dungeon_Name": {"Status": "OK"}},
+                {"Source": {"Status": "OK"}},
+                {"Team_Selected": {"Status": "OK"}},
+                {"Team_Selection": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "09_SECONDARY_STORE_PURCHASE": {
+            "Parameters": [
+                {"Currency": {"Status": ""}},
+                {"Game_Completed": {"Status": ""}},
+                {"Item_ID": {"Status": ""}},
+                {"Last_Map": {"Status": ""}},
+                {"Session_nb": {"Status": ""}},
+                {"SStore_ID": {"Status": ""}},
+                {"SStore_Visits": {"Status": ""}},
+                {"XP": {"Status": ""}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_AVATAR_LVL_UP": {
+            "Parameters": [
+                {"House": {"Status": "OK"}},
+                {"Skills_Points_Balance": {"Status": "OK"}},
+                {"Lvl": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "custom.player.iap": {
+            "Parameters": [
+                {"storeTransactionID": {"Status": ""}},
+                {"houstonTransactionID": {"Status": ""}},
+                {"itemID": {"Status": ""}},
+                {"promotionType ": {"Status": ""}},
+                {"playerProgress": {"Status": ""}},
+                {"moneyCurrency": {"Status": ""}},
+                {"moneyIAP": {"Status": ""}},
+                {"totalPurchases": {"Status": ""}},
+                {"totalStoreVisits": {"Status": ""}}
+            ],
+            "APIs": ["dna"]
+        },
+        "RUNE_ACTION": {
+            "Parameters": [
+                {"Rune_Name": {"Status": "OK"}},
+                {"Rune_Level": {"Status": "OK"}},
+                {"Rune_Action": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_AVATAR_HOUSE": {
+            "Parameters": [
+                {"House": {"Status": "OK"}},
+                {"Lvl": {"Status": "OK"}},
+                {"Free_Change": {"Status": "OK"}}
+            ],
+            "APIs": ["flury"]
+        },
+        "RUNE_SIDE_TUTO_STEP": {
+            "Parameters": [
+                {"Tuto_Step": {"Status": "OK"}},
+                {"Total_Duration": {"Status": "OK"}},
+                {"Step_Duration": {"Status": "OK"}},
+                {"Session_nb": {"Status": "OK"}},
+                {"Skip_Option": {"Status": ""}},
+                {"Clicks_Counter": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_GAME_STATE": {
+            "Parameters": [
+                {"Origin_State": {"Status": "OK"}},
+                {"New_State": {"Status": "OK"}},
+                {"Avg_FPS": {"Status": "OK"}},
+                {"Session_nb": {"Status": "OK"}},
+                {"XP": {"Status": "OK"}},
+                {"Loading_Time": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        },
+        "RUNE_IAP_FUNNEL": {
+            "Parameters": [
+                {"IAP_Step": {"Status": "OK"}},
+                {"Payer": {"Status": "OK"}},
+                {"Money_Currency": {"Status": "OK"}},
+                {"Money_IAP": {"Status": "OK"}},
+                {"Object_ID": {"Status": "OK"}},
+                {"Session_nb": {"Status": "OK"}},
+                {"XP": {"Status": "OK"}}
+            ],
+            "APIs": ["flurry"]
+        }
+    },
+    "ParameterValues": {
+        "PlayerID": {
+            "Type": "TRACK_DNA_PLAYER_ID",
+            "Values": []
+        },
+        "User_Authentication": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "AB_Group": {
+            "Type": "STRING:20",
+            "Values": []
+        },
+        "IAP_Step": {
+            "Type": "STRING:10",
+            "Values": [
+                "Started ",
+                "Failure",
+                "Abandoned",
+                "Done"
+            ]
+        },
+        "Lvl": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "Difficulty": {
+            "Type": "INT:2",
+            "Values": []
+        },
+        "Size": {
+            "Type": "INT:8",
+            "Values": []
+        },
+        "Mission_Action": {
+            "Type": "STRING:10",
+            "Values": [
+                "Completed",
+                "Reward"
+            ]
+        },
+        "Objective_ID": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "HP": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "pushNotif": {
+            "Type": "TRACK_DNA_PUSH_NOTIF",
+            "Values": []
+        },
+        "Rune_Name": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "nbViews": {
+            "Type": "INT:8",
+            "Values": []
+        },
+        "Item": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "PlayingMode": {
+            "Type": "STRING:125",
+            "Values": [
+                "Tutorial",
+                "PvP",
+                "PvE",
+                "Building",
+                "Social",
+                "Settings",
+                "MoreGames"
+            ]
+        },
+        "Monster_Level": {
+            "Type": "INT:2",
+            "Values": []
+        },
+        "Tuto_Step": {
+            "Type": "STRING:40",
+            "Values": [
+                "00.00_Tutorial_Starts",
+                "00.01_Dialog_01",
+                "00.05_Click_Battle",
+                "00.06_Select_Dungeon",
+                "00.07_Dialog _03",
+                "00.08_Click_Play",
+                "00.08a_Dialog_03",
+                "00.09_Select_Monster",
+                "00.10_Click_Start",
+                "00.11_Load_01_Done",
+                "00.12_Dialog_04a",
+                "00.12_Dialog_04b",
+                "00.12_Dialog_04c",
+                "00.13_Select_Attack",
+                "00.14_Select_Opp_Monster",
+                "00.15_Dialog_05",
+                "00.16_Select_Spell",
+                "00.18_Kill_Opp_Monster",
+                "00.19_Dialog_06",
+                "00.20_Select_Attack",
+                "00.21_Select_Opp_Monster",
+                "00.21a_Dialog_05a",
+                "00.22_Finish_2nd_Wave",
+                "00.23_Click_Next",
+                "00.24_Dialog_07",
+                "00.25_Click_Continue",
+                "00.26_Click_Home",
+                "00.27_Dialog_08",
+                "00.28_Click_Battle",
+                "00.29_Select_Dungeon",
+                "00.30a_Dialog_09a",
+                "00.30b_Dialog_09b",
+                "00.31_Click_Play",
+                "00.32_Click_Auto",
+                "00.33_Click_Start",
+                "00.34_Load_02_Done",
+                "00.35_Select_Attack",
+                "00.36a_Dialog_10a",
+                "00.36b_Dialog_10b",
+                "00.36c_Dialog_10c",
+                "00.36d_Dialog_10d",
+                "00.37_Finish_1st_Wave",
+                "00.38_Finish_2nd_Wave",
+                "00.39_Click_Next",
+                "00.40_Click_Get",
+                "00.41_Click_Home",
+                "00.42_Dialog_11",
+                "00.43_Click_Battle",
+                "00.44_Select_Dungeon",
+                "00.45_Click_Play",
+                "00.46_Click_Start",
+                "00.47_Load_03_Done",
+                "00.48_Finish_1st_Wave",
+                "00.49_Finish_2nd_Wave",
+                "00.50_Click_Next",
+                "00.51_Click_Get",
+                "00.52_Click_Home",
+                "00.53_Click_Altar",
+                "00.54_Enter_Altar",
+                "00.55_Dialog_12",
+                "00.56_Click_Open",
+                "00.57_Opened",
+                "00.58_Click_Continue",
+                "00.59_Dialog_13",
+                "00.60_Click_Open",
+                "00.61_Opened",
+                "00.62_Click_Continue",
+                "00.63_Dialog_14",
+                "00.64_Click_Chests",
+                "00.65_Click_Open",
+                "00.66_Opened",
+                "00.67_Click_Loot",
+                "00.68_Click_Home",
+                "00.69_Click_Missions",
+                "00.70_Dialog_15",
+                "00.71_Collect_Reward_1",
+                "00.72_Collect_Reward_2",
+                "00.73_Dialog_16",
+                "00.74_Click_Home",
+                "00.75_Dialog_17",
+                "01.00_Lottery_Tuto_Started",
+                "01.01_Dialog",
+                "01.02_Click_Play",
+                "02.00_Avatar_Tuto_Started",
+                "02.01_Dialog_01",
+                "02.02_Click_Skill",
+                "02.03_Dialog_02",
+                "02.04_Click_Activate",
+                "02.05a_Dialog_03a",
+                "02.05b_Dialog_03b",
+                "02.05c_Dialog_03c",
+                "02.06_Click_Upgrade",
+                "02.07_Click_Ok",
+                "03.00_Runes_Tuto_Started",
+                "03.01_Dialog_01",
+                "03.02_Click_Rune_Slot",
+                "03.03_Click_Rune_Type",
+                "03.04_Select_Rune",
+                "03.05_Click_Add_Rune",
+                "03.06_Dialog_02",
+                "03.07_Select_Rune",
+                "03.08_Click_Add_Rune",
+                "03.09_Select_Rune",
+                "03.10_Click_Add_Rune",
+                "03.11_Dialog_03",
+                "03.12_Dialog_04",
+                "03.13_Select_Inst_Rune",
+                "03.14_Click_Upgrade",
+                "03.15_Power_Up_Spent",
+                "03.16_Dialog_05",
+                "03.17_Close_Button",
+                "04.00_Upgrade_Tuto",
+                "04.01_Dialog"
+            ]
+        },
+        "Avg_FPS": {
+            "Type": "INT:2",
+            "Values": []
+        },
+        "Skill_Action": {
+            "Type": "STRING:10",
+            "Values": [
+                "add",
+                "remove"
+            ]
+        },
+        "Button": {
+            "Type": "STRING:20",
+            "Values": []
+        },
+        "typeNotif": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "Game_Language": {
+            "Type": "STRING:2",
+            "Values": []
+        },
+        "Currency": {
+            "Type": "STRING:25",
+            "Values": [
+                "SC",
+                "HC",
+                "PvE_NRG",
+                "Small_Potion",
+                "Medium_Potions",
+                "Big_Potion",
+                "Book",
+                "Small_Chest",
+                "Medium_Chest",
+                "Large_Chest",
+                "Small_Soulstone",
+                "Medium_Soulstone",
+                "Large_Soulstone",
+                "Small_Soulstone_Part",
+                "Medium_Soulstone_Part",
+                "Large_Soulstone_Part",
+                "Instant_Tickets",
+                "Fire_Small",
+                "Water_Small",
+                "Air_Small",
+                "Earth_Small",
+                "Materia_Small",
+                "Chimera_Small",
+                "Anima_Small",
+                "Fire_Big",
+                "Water_Big",
+                "Air_Big",
+                "Earth_Big",
+                "Materia_Big",
+                "Chimera_Big",
+                "Anima_Big"
+            ]
+        },
+        "Friend_Count ": {
+            "Type": "INT:2",
+            "Values": []
+        },
+        "Monster_Alive": {
+            "Type": "BOOL",
+            "Values": []
+        },
+        "af_def_logPurchase": {
+            "Type": "FLOAT",
+            "Values": []
+        },
+        "User_Action": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "Main_Tuto_Completed": {
+            "Type": "BOOL",
+            "Values": []
+        },
+        "Store_Outcome": {
+            "Type": "STRING:50",
+            "Values": [
+                "Abandon",
+                "Purchase",
+                "Fail"
+            ]
+        },
+        "hardware": {
+            "Type": "TRACK_DNA_HARDWARE",
+            "Values": []
+        },
+        "yearOfBirth": {
+            "Type": "INT:8",
+            "Values": []
+        },
+        "Screen_Shop": {
+            "Type": "STRING:20",
+            "Values": []
+        },
+        "Status": {
+            "Type": "STRING:125",
+            "Values": [
+                "Started",
+                "Aborted",
+                "Completed",
+                "Fail"
+            ]
+        },
+        "buildVersion": {
+            "Type": "TRACK_DNA_BUILD_VERSION",
+            "Values": []
+        },
+        "Game_Completed": {
+            "Type": "BOOL",
+            "Values": []
+        },
+        "Offer_SKU": {
+            "Type": "STRING:20",
+            "Values": []
+        },
+        "User_Country": {
+            "Type": "TRACK_COUNTRY_CODE",
+            "Values": []
+        },
+        "fb_def_currency": {
+            "Type": "STRING",
+            "Values": []
+        },
+        "House": {
+            "Type": "STRING:15",
+            "Values": []
+        },
+        "User_LocalTime": {
+            "Type": "TRACK_LOCAL_TIME",
+            "Values": []
+        },
+        "Total_Waves_Number": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "Accepted": {
+            "Type": "INT:8",
+            "Values": []
+        },
+        "Amount_Balance": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "machineId": {
+            "Type": "TRACK_DNA_MACHINE_ID",
+            "Values": []
+        },
+        "LegalPopupType": {
+            "Type": "STRING:125",
+            "Values": [
+                "AgeGate",
+                "Classical"
+            ]
+        },
+        "Global_Playtime": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "Gift_Box": {
+            "Type": "BOOL",
+            "Values": []
+        },
+        "gender": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "Origin_State": {
+            "Type": "STRING:20",
+            "Values": [
+                "Map",
+                "Town",
+                "Battle"
+            ]
+        },
+        "moneyIAP": {
+            "Type": "FLOAT",
+            "Values": []
+        },
+        "isFatal": {
+            "Type": "INT:8",
+            "Values": []
+        },
+        "Mission_SKU": {
+            "Type": "STRING:20",
+            "Values": []
+        },
+        "Max_Map": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "NEC_Action": {
+            "Type": "STRING:15",
+            "Values": [
+                "Pop_Up",
+                "Yes_button",
+                "No_button"
+            ]
+        },
+        "Player_Gains": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "Money_IAP": {
+            "Type": "FLOAT",
+            "Values": []
+        },
+        "Connection_Reward": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "AB_Experiment": {
+            "Type": "STRING:20",
+            "Values": []
+        },
+        "af_def_currency": {
+            "Type": "STRING",
+            "Values": []
+        },
+        "isPayingSession": {
+            "Type": "INT:8",
+            "Values": []
+        },
+        "Object_ID": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "Battle_Result": {
+            "Type": "STRING:10",
+            "Values": [
+                "Victory",
+                "Lost",
+                "Abandoned"
+            ]
+        },
+        "Wave_Number": {
+            "Type": "INT:2",
+            "Values": []
+        },
+        "Monster_Action": {
+            "Type": "STRING:20",
+            "Values": [
+                "New_Soulstone",
+                "New_Reward",
+                "Level_Up",
+                "Rank_Up",
+                "Skill_Up",
+                "Evolve",
+                "Discard"
+            ]
+        },
+        "Total_Duration": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "Lottery_paid": {
+            "Type": "BOOL",
+            "Values": []
+        },
+        "osVersion": {
+            "Type": "TRACK_OS",
+            "Values": []
+        },
+        "storeTransactionID": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "Auto_Mode": {
+            "Type": "BOOL",
+            "Values": []
+        },
+        "acq_marketing_id": {
+            "Type": "TRACK_DNA_MARKETING_ID",
+            "Values": []
+        },
+        "Clicks_Counter": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "Gender_Age": {
+            "Type": "STRING:6",
+            "Values": []
+        },
+        "Free_Change": {
+            "Type": "BOOL",
+            "Values": []
+        },
+        "Store_PrePath": {
+            "Type": "STRING:50",
+            "Values": [
+                "NEC Button",
+                "Menu",
+                "Upgrade_Button"
+            ]
+        },
+        "Amount": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "New_State": {
+            "Type": "STRING:20",
+            "Values": [
+                "Map",
+                "Town",
+                "Battle"
+            ]
+        },
+        "Skill_Name": {
+            "Type": "STRING:950",
+            "Values": []
+        },
+        "errorMessage": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "Rank": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "Pad_ID": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "StopCause": {
+            "Type": "STRING:125",
+            "Values": [
+                "app_closed",
+                "no_activity",
+                "app_crashed"
+            ]
+        },
+        "Map_Source": {
+            "Type": "STRING:20",
+            "Values": [
+                "Dungeon",
+                "Main"
+            ]
+        },
+        "Shown_nb": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "Mission_Type": {
+            "Type": "STRING:20",
+            "Values": []
+        },
+        "Special_Offer_Action": {
+            "Type": "STRING:10",
+            "Values": [
+                "Shown",
+                "Opened",
+                "Used",
+                "Expire"
+            ]
+        },
+        "playerProgress": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "Map_Step": {
+            "Type": "STRING:50",
+            "Values": [
+                "Map",
+                "Dungeon",
+                "Special_Map"
+            ]
+        },
+        "TotalPlaytime": {
+            "Type": "INT:8",
+            "Values": []
+        },
+        "Packs_displayed": {
+            "Type": "STRING:250",
+            "Values": []
+        },
+        "gameVersion": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "Team_Selected": {
+            "Type": "INT:2",
+            "Values": []
+        },
+        "moneyCurrency": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "Push_Impact": {
+            "Type": "TRACK_APP_PUSH",
+            "Values": []
+        },
+        "Step_Duration": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "First_Load": {
+            "Type": "BOOL",
+            "Values": []
+        },
+        "Player_First_Connection": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "Lottery_Action": {
+            "Type": "STRING:10",
+            "Values": [
+                "Open",
+                "Play",
+                "Re-Play",
+                "Finish"
+            ]
+        },
+        "Eco_Group": {
+            "Type": "STRING:20",
+            "Values": [
+                "Chests",
+                "Soulstones",
+                "Fragments",
+                "Currencies_Shop",
+                "Packs",
+                "Special",
+                "Level_Up",
+                "Rank_Up",
+                "Skill_Up",
+                "Evolve",
+                "Mission",
+                "Achievements",
+                "Rune_Remove",
+                "Rune_Upgrade",
+                "Lottery",
+                "Retry_Battle",
+                "Avatar_lvl_Up",
+                "Gift_Box",
+                "Others",
+                "NEC",
+                "Dungeon"
+            ]
+        },
+        "Monster_Stars": {
+            "Type": "INT:2",
+            "Values": []
+        },
+        "Damage_Get": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "Step_Name": {
+            "Type": "STRING:20",
+            "Values": [
+                "1.INIT",
+                "2.LOGIN",
+                "3.COUNTRY",
+                "4.GAME_CENTER",
+                "5.UNIVERSE",
+                "6.TRACKING",
+                "7.OTHER",
+                "7a.ACCEPT",
+                "7b.DONE",
+                "8.START_CLICKED",
+                "Feeedback",
+                "Privacy_Policy"
+            ]
+        },
+        "Player_Last_Connection": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "fb_def_logPurchase": {
+            "Type": "FLOAT",
+            "Values": []
+        },
+        "abtesting": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "Side_Tuto_Completed": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "promotionType ": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "Promotion_ID": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "Reward_Type": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "Payer": {
+            "Type": "BOOL",
+            "Values": []
+        },
+        "totalStoreVisits": {
+            "Type": "INT:8",
+            "Values": []
+        },
+        "Money_Currency": {
+            "Type": "STRING:10",
+            "Values": []
+        },
+        "Amount_Delta": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "SessionPlaytime": {
+            "Type": "INT:8",
+            "Values": []
+        },
+        "Session_duration": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "Duration": {
+            "Type": "INT:8",
+            "Values": []
+        },
+        "Player_Coins": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "Wave_Retry": {
+            "Type": "BOOL",
+            "Values": []
+        },
+        "SStore_Visits": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "houstonTransactionID": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "PStore_Visits": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "totalPurchases": {
+            "Type": "INT:8",
+            "Values": []
+        },
+        "Monster_Name": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "Dungeon_Name": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "Transaction_ID": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "usSdkVersion": {
+            "Type": "TRACK_DNA_UBI_SERVICES_VERSION",
+            "Values": []
+        },
+        "Opened_nb": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "IsSuccess": {
+            "Type": "INT:8",
+            "Values": []
+        },
+        "Session_nb": {
+            "Type": "TRACK_SESSION_NUMBER",
+            "Values": []
+        },
+        "Damage_Received": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "providerAuth": {
+            "Type": "TRACK_DNA_PROVIDER_AUTH",
+            "Values": []
+        },
+        "Screen": {
+            "Type": "STRING:20",
+            "Values": []
+        },
+        "errorType": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "SStore_ID": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "Mission_Level": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "Source": {
+            "Type": "STRING:20",
+            "Values": [
+                "Replay",
+                "Dungeon",
+                "Main",
+                "Map"
+            ]
+        },
+        "Rune_Action": {
+            "Type": "STRING:10",
+            "Values": [
+                "Install",
+                "Remove",
+                "Upgrade",
+                "Sell",
+                "Destroy"
+            ]
+        },
+        "Last_Map": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "itemID": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "Loading_Time": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "Connection_Type": {
+            "Type": "TRACK_CONNECTION",
+            "Values": []
+        },
+        "Successful_Invitation_Count": {
+            "Type": "INT:2",
+            "Values": []
+        },
+        "af_quantity": {
+            "Type": "INT",
+            "Values": []
+        },
+        "Skills_Points_Balance": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "Rune_Level": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "Missions_Completed": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "PStore_Visit_Time": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "DownloadType": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "Pack_Collection": {
+            "Type": "INT:2",
+            "Values": []
+        },
+        "InstallDate": {
+            "Type": "TRACK_DNA_INSTALL_DATE",
+            "Values": []
+        },
+        "Damage_Healed": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "Provider": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "Operating_System": {
+            "Type": "TRACK_OS",
+            "Values": []
+        },
+        "Region_Name": {
+            "Type": "STRING:50",
+            "Values": []
+        },
+        "Monsters_Runes": {
+            "Type": "STRING:250",
+            "Values": []
+        },
+        "XP": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "Item_ID": {
+            "Type": "STRING:20",
+            "Values": []
+        }
+    }
+}
