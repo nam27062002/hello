@@ -246,7 +246,7 @@ public class MapMarker : MonoBehaviour {
 	private void OnMapUnlocked() {
 		// Update marker will do the job
 		// Add some delay to give time for feedback to show off
-		CoroutineManager.DelayedCall(UpdateMarker, 0.25f, true);
+		UbiBCN.CoroutineManager.DelayedCall(UpdateMarker, 0.25f, true);
 	}
 
 	/// <summary>

@@ -125,7 +125,7 @@ public class EggRewardInfo : MonoBehaviour {
 
 				// Fragments counter
 				RefreshGoldenFragmentCounter(EggManager.goldenEggFragments - _rewardData.fragments, false);	// Reward has already been given at this point, so show the current amount minus the rewarded amount
-				CoroutineManager.DelayedCall(() => { RefreshGoldenFragmentCounter(EggManager.goldenEggFragments, true); }, m_counterDelay, false);	// Sync with animation
+				UbiBCN.CoroutineManager.DelayedCall(() => { RefreshGoldenFragmentCounter(EggManager.goldenEggFragments, true); }, m_counterDelay, false);	// Sync with animation
 			}
 		}
 
@@ -178,7 +178,7 @@ public class EggRewardInfo : MonoBehaviour {
 			m_goldenFragmentCounterFX.Play();
 
 			// Program finish callback
-			CoroutineManager.DelayedCall(() => { OnAnimFinished.Invoke(); }, m_counterDuration, false);
+			UbiBCN.CoroutineManager.DelayedCall(() => { OnAnimFinished.Invoke(); }, m_counterDuration, false);
 		}
 	}
 

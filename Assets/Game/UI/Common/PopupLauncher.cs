@@ -112,7 +112,7 @@ public class PopupLauncher : MonoBehaviour {
 		OnPopupInit.Invoke(m_popup);
 
 		// Open (apply delay)
-		CoroutineManager.DelayedCall(() => m_popup.Open(), m_delay);
+		UbiBCN.CoroutineManager.DelayedCall(() => m_popup.Open(), m_delay);
 	}
 
 	//------------------------------------------------------------------------//

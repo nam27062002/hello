@@ -49,7 +49,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		}
 
 		// [AOC] Since this is a simple class and can't launch coroutines, use auxiliar manager to do so
-		CoroutineManager.DelayedCall(_call, _delay);
+		UbiBCN.CoroutineManager.DelayedCall(_call, _delay);
 	}
 
 	//------------------------------------------------------------------------//

@@ -48,7 +48,7 @@ public class MenuDragonSkinUINotification : MonoBehaviour {
 		// Refresh each time the component is enabled
 		// [AOC] MiniHack! Add some delay to give time for the isNew flag to be set
 		m_notification.Set(false, false);
-		CoroutineManager.DelayedCall(Refresh, 0.25f, false);
+		UbiBCN.CoroutineManager.DelayedCall(Refresh, 0.25f, false);
 
 		// Subscribe to external events
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);

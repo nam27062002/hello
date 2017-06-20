@@ -49,7 +49,7 @@ public class MenuDragonEggUINotification : MonoBehaviour {
 		// Refresh each time the component is enabled
 		// [AOC] MiniHack! Add some delay to give time for the isNew flag to be set
 		m_notification.Set(false);
-		CoroutineManager.DelayedCall(Refresh, 0.25f, false);
+		UbiBCN.CoroutineManager.DelayedCall(Refresh, 0.25f, false);
 	}
 
 	//------------------------------------------------------------------------//

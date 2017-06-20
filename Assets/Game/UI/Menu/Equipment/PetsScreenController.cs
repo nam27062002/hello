@@ -455,7 +455,7 @@ public class PetsScreenController : MonoBehaviour {
 			}
 
 			// Open popup with delay
-			CoroutineManager.DelayedCall(
+			UbiBCN.CoroutineManager.DelayedCall(
 				() => {
 					PopupManager.OpenPopupInstant(PopupInfoPets.PATH);
 				},

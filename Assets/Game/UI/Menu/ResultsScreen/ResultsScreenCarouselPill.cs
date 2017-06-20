@@ -57,7 +57,7 @@ public abstract class ResultsScreenCarouselPill : MonoBehaviour {
 	/// <param name="_delay">Seconds to wait before showing this pill.</param>
 	public void ShowAndAnimate(float _delay) {
 		// Super easy with DOTween
-		CoroutineManager.DelayedCall(StartInternal, _delay, false);
+		UbiBCN.CoroutineManager.DelayedCall(StartInternal, _delay, false);
 	}
 
 	//------------------------------------------------------------------------//

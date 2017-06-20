@@ -295,7 +295,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		}
 
 		// Program reward animation
-		CoroutineManager.DelayedCall(OnEggOpenFinishedCallback, 0.35f, false);
+		UbiBCN.CoroutineManager.DelayedCall(OnEggOpenFinishedCallback, 0.35f, false);
 	}
 
 	/// <summary>

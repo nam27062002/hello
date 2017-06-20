@@ -56,7 +56,7 @@ public class IncubatorTutorial : MonoBehaviour {
 		// If we must show the popup, do it with some delay
 		// Make sure we're on the right screen
 		if(m_showPending && InstanceManager.menuSceneController.screensController.currentMenuScreen == MenuScreens.DRAGON_SELECTION) {
-			CoroutineManager.DelayedCall(
+			UbiBCN.CoroutineManager.DelayedCall(
 				() => {
 					// Open popup
 					PopupManager.OpenPopupInstant(PopupInfoEgg.PATH);

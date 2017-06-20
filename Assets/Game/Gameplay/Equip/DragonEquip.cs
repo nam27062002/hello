@@ -471,7 +471,7 @@ public class DragonEquip : MonoBehaviour {
 		// Is it meant for this dragon?
 		if(m_dragonSku == _sku) {
 			// Do it with some delay to sync with FX
-			CoroutineManager.DelayedCall(
+			UbiBCN.CoroutineManager.DelayedCall(
 				() => {
 					EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
 				},

@@ -130,7 +130,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					m_scroller.FocusDragon(UsersManager.currentUser.currentDragon, true);
 
 					// Show tier info popup
-					CoroutineManager.DelayedCall(() => PopupManager.OpenPopupInstant(PopupInfoTiers.PATH), 0.25f);
+					UbiBCN.CoroutineManager.DelayedCall(() => PopupManager.OpenPopupInstant(PopupInfoTiers.PATH), 0.25f);
 
 					// Update tutorial flag and save persistence
 					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.DRAGON_SELECTION);
