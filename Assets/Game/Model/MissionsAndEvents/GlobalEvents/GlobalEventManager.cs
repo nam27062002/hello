@@ -194,7 +194,7 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 				// If the ID is different from the stored event, load the new event's data!
 				SimpleJSON.JSONClass responseJson = _response["response"] as SimpleJSON.JSONClass;
 				if(m_currentEvent.id != responseJson["id"]) {
-					m_currentEvent.FromJson(responseJson);
+					m_currentEvent.InitFromJson(responseJson);
 				}
 
 				// Get current event's state
