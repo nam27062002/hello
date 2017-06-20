@@ -892,13 +892,13 @@ public class GameServerManagerCalety : GameServerManager {
 
 				case ECommand.GetTime:
 				case ECommand.UpdateSaveVersion: {
-					int time = Globals.GetUnixTimestamp();
+					long time = Globals.GetUnixTimestamp();
 
 					// Checks if the response from server can be interpreted
 					string key = "t";                
 					if(responseJSON != null && responseJSON.ContainsKey(key)) {
 						long timeAsLong = responseJSON[key].AsLong;
-						time = (int)(timeAsLong / 1000);                        
+						time = timeAsLong / 1000;	// Server time comes in millis, convert to seconds
 					}
 
 					// [DGR] SERVER: Receive these parameters from server
