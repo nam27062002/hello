@@ -75,7 +75,7 @@ namespace AI {
 				chest = m_pointToObject.GetComponent<CollectibleChest>();
 				letter = m_pointToObject.GetComponent<HungryLetter>();
 
-				m_pilot.SlowDown(false);
+				m_pilot.SlowDown(true);
 				m_pilot.SetMoveSpeed(m_speed);
 			}
 
