@@ -465,10 +465,10 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":25,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":12,"panicSpeed":15,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":0.75,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":35,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":15,"panicSpeed":20,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":0.75,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
   m_databaseKey: PF_BatSmall02_Flock
   m_preciseDestArrival: 1
-  m_avoidDistanceAttenuation: 4
+  m_avoidDistanceAttenuation: 14
   m_avoidCollisions: 0
   m_avoidWater: 0
 --- !u!114 &11477742
@@ -790,6 +790,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: BatSmall_Flock
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!137 &13700364
 SkinnedMeshRenderer:
@@ -896,8 +897,8 @@ MonoBehaviour:
       min: 0.9
       max: 1.1
     m_senseDelay:
-      min: 0.25
-      max: 1.25
+      min: 0
+      max: 0
   m_edible:
     m_rotateToMouth: 0
   m_inflammable:

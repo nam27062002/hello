@@ -83,6 +83,12 @@ public class MenuDragonLoader : MonoBehaviour {
 		set { m_removeFresnel = value; }
 	}
 
+	[SerializeField] private bool m_keepLayers = false;
+	public bool keepLayers {
+		get { return m_keepLayers; }
+		set { m_keepLayers = value; }
+	}
+
 	// Internal
 	private MenuDragonPreview m_dragonInstance = null;
 	public MenuDragonPreview dragonInstance {
@@ -163,10 +169,14 @@ public class MenuDragonLoader : MonoBehaviour {
 			GameObject dragonPrefab = Resources.Load<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString("menuPrefab"));
 			if(dragonPrefab != null) {
 				GameObject newInstance = GameObject.Instantiate<GameObject>(dragonPrefab);
-				newInstance.transform.SetParent(this.transform);
+				newInstance.transform.SetParent(this.transform, false);
 				newInstance.transform.localPosition = Vector3.zero;
 				newInstance.transform.localRotation = Quaternion.identity;
-				newInstance.SetLayerRecursively(this.gameObject.layer);
+
+				// Keep layers?
+				if(!m_keepLayers) {
+					newInstance.SetLayerRecursively(this.gameObject.layer);
+				}
 
 				// Store dragon preview and launch the default animation
 				m_dragonInstance = newInstance.GetComponent<MenuDragonPreview>();

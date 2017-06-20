@@ -194,6 +194,8 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	/// </summary>
 	virtual protected void OnEnable() {
 		// Stop any active movement
+		m_previousValue = Vector2.zero;
+		m_value = Vector2.zero;
 		m_velocity = Vector2.zero;
 		m_dragging = false;
 

@@ -303,8 +303,8 @@ public class MenuShowConditionally : MonoBehaviour {
 		// Delay
 		yield return new WaitForSeconds(m_animator.tweenDuration);
 
-		// Do it!
-		m_animator.Set(_toShow, _useAnims);
+		// Do it! (If still enabled!)
+		if(this.enabled) m_animator.Set(_toShow, _useAnims);
 	}
 }
 
