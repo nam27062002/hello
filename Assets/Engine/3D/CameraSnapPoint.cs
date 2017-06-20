@@ -9,6 +9,7 @@
 using UnityEngine;
 using DG.Tweening;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -21,7 +22,9 @@ public class CameraSnapPoint : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	private static readonly string TWEEN_ID = "CameraSnapPointTween";
+	private const string TWEEN_ID = "CameraSnapPointTween";
+	private const string DARK_SCREEN_PREFAB_PATH = "UI/Common/PF_CameraDarkScreen";
+	private const string DARK_SCREEN_NAME = "PF_CameraDarkScreen";
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
@@ -51,6 +54,11 @@ public class CameraSnapPoint : MonoBehaviour {
 	public bool changeFogEnd = true;
 	public float fogEnd = 100f;
 
+	// Optional screen darkening setup
+	public bool darkenScreen = false;
+	public float darkScreenDistance = 50f;
+	public Color darkScreenColor = Colors.WithAlpha(Color.black, 0.8f);
+
 	// Editor Settings
 	public bool livePreview = true;
 	public bool drawGizmos = true;
@@ -66,6 +74,12 @@ public class CameraSnapPoint : MonoBehaviour {
 			return m_lookAt;
 		}
 	}
+
+	//------------------------------------------------------------------//
+	// STATIC MEMBERS													//
+	//------------------------------------------------------------------//
+	// A single dark screen shared among all cameras/snap points
+	private static SpriteRenderer m_darkScreen = null;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -146,6 +160,20 @@ public class CameraSnapPoint : MonoBehaviour {
 		if(changeFogColor) RenderSettings.fogColor = fogColor;
 		if(changeFogStart) RenderSettings.fogStartDistance = fogStart;
 		if(changeFogEnd) RenderSettings.fogEndDistance = fogEnd;
+
+		// Dark screen
+		// Apply values
+		SpriteRenderer screen = ApplyDarkScreen(_cam);
+		if(screen != null) {
+			if(darkenScreen) {
+				screen.gameObject.SetActive(true);
+				screen.transform.localPosition = Vector3.forward * darkScreenDistance;
+				screen.color = this.darkScreenColor;
+			} else {
+				screen.color = Colors.WithAlpha(screen.color, 0f);
+				screen.gameObject.SetActive(false);
+			}
+		}
 	}
 
 	/// <summary>
@@ -238,8 +266,31 @@ public class CameraSnapPoint : MonoBehaviour {
 			).SetAs(_params));
 		}
 
+		// Dark screen
+		SpriteRenderer screen = ApplyDarkScreen(_cam);
+		if(screen != null) {
+			// Make sure the screen is active (if we have the darken screen toggled)
+			if(darkenScreen) screen.gameObject.SetActive(true);
+
+			// Tween position
+			screen.transform.DOLocalMove(Vector3.forward * darkScreenDistance, _duration).SetAs(_params);
+
+			// Tween color
+			// If disabling the darken screen, tween to transparent
+			Color targetColor = darkenScreen ? this.darkScreenColor : Colors.WithAlpha(screen.color, 0f);
+			seq.Join(DOTween.To(
+				() => { return screen.color; },
+				(_newValue) => { screen.color = _newValue; },
+				targetColor, _duration
+			).SetAs(_params));
+		}
+
 		// Attach custom OnComplete callback
 		seq.OnComplete(() => {
+			// If we were turning off the dark screen, disable it now
+			if(!darkenScreen) screen.gameObject.SetActive(false);
+
+			// If defined, call the OnComplete() callback
 			if(_onComplete != null) _onComplete();
 		});
 
@@ -258,5 +309,26 @@ public class CameraSnapPoint : MonoBehaviour {
 	/// <param name="_cam">Target camera.</param>
 	public static string GetTweenId(Camera _cam) {
 		return TWEEN_ID + _cam.name;
+	}
+
+	/// <summary>
+	/// Apply the dark screen instance to a specific camera.
+	/// The dark screen instance is not created, the prefab will be instantiated.
+	/// </summary>
+	/// <returns>The dark screen linked to the given camera.</returns>
+	/// <param name="_cam">Camera to be checked.</param>
+	private static SpriteRenderer ApplyDarkScreen(Camera _cam) {
+		// Is dark screen instance created?
+		if(m_darkScreen == null) {
+			// No! Do it now
+			GameObject screenPrefab = Resources.Load<GameObject>(DARK_SCREEN_PREFAB_PATH);
+			GameObject screenInstance = GameObject.Instantiate<GameObject>(screenPrefab);
+			screenInstance.hideFlags = HideFlags.DontSave;
+			m_darkScreen = screenInstance.GetComponent<SpriteRenderer>();
+		}
+
+		// Move dark screen to target camera's hierarchy
+		m_darkScreen.transform.SetParent(_cam.transform, false);
+		return m_darkScreen;
 	}
 }
