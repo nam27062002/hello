@@ -4,6 +4,14 @@ using System.Collections;
 namespace AI {
 	namespace Behaviour {
 
+		[System.Serializable]
+		public class PetPointingCollectibleTargetData : StateComponentData {
+			public float m_speedMultiplier = 2;
+			public float m_playerDistance = 5;
+			public float m_closeRangeMultiplier = 10;
+			public float m_farRangeMultiplier = 30;
+		}
+
 		[CreateAssetMenu(menuName = "Behaviour/Pet/PointCollectible")]
 		public class PetPointingCollectible : StateComponent {
 
@@ -27,19 +35,36 @@ namespace AI {
 			HungryLetter letter = null;
 			HungryLettersManager m_lettersManager;
 
+			PetPointingCollectibleTargetData m_data;
+			float m_speed;
+
+
+			public override StateComponentData CreateData() {
+				return new PetPointingCollectibleTargetData();
+			}
+
+			public override System.Type GetDataType() {
+				return typeof(PetPointingCollectibleTargetData);
+			}
+
 
 			protected override void OnInitialise() {
+				m_data = m_pilot.GetComponentData<PetPointingCollectibleTargetData>();
+
 				m_player = InstanceManager.player;
 				float maxLevelScale = m_player.data.GetScaleAtLevel( m_player.data.progression.maxLevel );
-				m_playerDistance = maxLevelScale * 5;
+				m_playerDistance = maxLevelScale * m_data.m_playerDistance;
 
-				m_closeRange = maxLevelScale * 10;
+				m_closeRange = maxLevelScale * m_data.m_closeRangeMultiplier;
 				m_closeRange = m_closeRange * m_closeRange;
 
-				m_farRange = maxLevelScale * 30;
+				m_farRange = maxLevelScale * m_data.m_farRangeMultiplier;
 				m_farRange = m_farRange * m_farRange;
 
 				m_lettersManager = FindObjectOfType<HungryLettersManager>();
+
+				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * m_data.m_speedMultiplier;
+
 			}
 
 			protected override void OnEnter(State oldState, object[] param){
@@ -49,6 +74,9 @@ namespace AI {
 				egg = m_pointToObject.GetComponent<CollectibleEgg>();
 				chest = m_pointToObject.GetComponent<CollectibleChest>();
 				letter = m_pointToObject.GetComponent<HungryLetter>();
+
+				m_pilot.SlowDown(false);
+				m_pilot.SetMoveSpeed(m_speed);
 			}
 
 			override protected void OnUpdate(){
