@@ -25,6 +25,8 @@ namespace AI {
 			CollectibleEgg egg = null;
 			CollectibleChest chest = null;
 			HungryLetter letter = null;
+			HungryLettersManager m_lettersManager;
+
 
 			protected override void OnInitialise() {
 				m_player = InstanceManager.player;
@@ -36,6 +38,8 @@ namespace AI {
 
 				m_farRange = maxLevelScale * 30;
 				m_farRange = m_farRange * m_farRange;
+
+				m_lettersManager = FindObjectOfType<HungryLettersManager>();
 			}
 
 			protected override void OnEnter(State oldState, object[] param){
@@ -49,20 +53,21 @@ namespace AI {
 
 			override protected void OnUpdate(){
 
+				// TODO Improve this to use events
 				if ( egg )
 				{
 					if ( egg.collected )
-					{
 						Transition(OnCollected);
-					}
 				}
 				else if ( chest )
 				{
-					
+					if (chest.chestData.collected )
+						Transition(OnCollected);
 				}
 				else if ( letter )
 				{
-					// if ( letter.letter )
+					if (m_lettersManager.IsLetterCollected( letter.letter))
+						Transition(OnCollected);
 				}
 
 

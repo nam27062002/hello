@@ -57,9 +57,13 @@ namespace AI {
 				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * m_data.m_dragonSizeRangeMultiplier;
 				m_range = m_range * m_range;
 
+				// Ro remove
 				EggManager.CreateInstance(true);
 				EggManager.InitFromDefinitions();
 				EggManager.SelectCollectibleEgg();
+				ChestManager.OnLevelLoaded();
+
+				m_lettersManager = FindObjectOfType<HungryLettersManager>();
 
 				switch( m_data.m_type )
 				{
