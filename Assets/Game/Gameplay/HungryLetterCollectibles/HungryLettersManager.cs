@@ -53,6 +53,7 @@ public class HungryLettersManager : MonoBehaviour
 	private static bool[] m_specificLettersCollected;
 
 	private GameObject[] m_instantiatedLetters;
+	private HungryLetter[] m_instantiatedHungryLetter;
 	private int m_lettersCollected;
 	private DefinitionNode m_data;
 
@@ -324,7 +325,8 @@ public class HungryLettersManager : MonoBehaviour
 					break;
 			}
 			m_instantiatedLetters[i].SetActive(true);
-			m_instantiatedLetters[i].GetComponent<HungryLetter>().Init(this, placeholder.transform);
+			// m_instantiatedHungryLetter[i] = m_instantiatedLetters[i].GetComponent<HungryLetter>();
+			m_instantiatedHungryLetter[i].Init(this, placeholder.transform);
 		}
 		// Assert.Fatal(m_instantiatedLetters.Length == m_data.coinsAwarded.Length && m_instantiatedLetters.Length == m_data.scoreAwarded.Length && m_instantiatedLetters.Length == m_data.gemsAwarded.Length && m_instantiatedLetters.Length == m_data.spinsAwarded.Length, "The number of instantiated collectibles don't match with the number of rewards defined in the DB.");
 	}
@@ -332,10 +334,12 @@ public class HungryLettersManager : MonoBehaviour
 	private void InstantiateLetters(GameObject[] prefabList)
 	{
 		m_instantiatedLetters = new GameObject[prefabList.Length];
+		m_instantiatedHungryLetter = new HungryLetter[prefabList.Length];
 		for(int i = 0; i < prefabList.Length; i++)
 		{
 			m_instantiatedLetters[i] = Instantiate(prefabList[i]);
 			m_instantiatedLetters[i].SetActive(false);
+			m_instantiatedHungryLetter[i] = m_instantiatedLetters[i].GetComponent<HungryLetter>();
 		}
 
 		//Which letters have we picked so far? None at the moment we spawn them.
@@ -384,6 +388,26 @@ public class HungryLettersManager : MonoBehaviour
 		Spawn();
 		// reinitialize the UI.
 		HungryLettersPanel.Instance.ReInit(m_instantiatedLetters.Length);
+	}
+
+	public GameObject GetClosestActiveLetter( Vector3 center )
+	{
+		GameObject go = null;
+		float minDistance = float.MaxValue;
+		int size = m_instantiatedHungryLetter.Length;
+		for( int i = 0; i<size; ++i )
+		{
+			if ( !IsLetterCollected( m_instantiatedHungryLetter[i].letter )	)
+			{
+				float dist = (center - m_instantiatedHungryLetter[i].transform.position).sqrMagnitude;
+				if ( dist < minDistance )
+				{
+					minDistance = dist;
+					go = m_instantiatedLetters[i];
+				}
+			}
+		}
+		return go;
 	}
 
 	//------------------------------------------------------------
