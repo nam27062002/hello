@@ -163,7 +163,7 @@ public class MenuDragonLoader : MonoBehaviour {
 			GameObject dragonPrefab = Resources.Load<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString("menuPrefab"));
 			if(dragonPrefab != null) {
 				GameObject newInstance = GameObject.Instantiate<GameObject>(dragonPrefab);
-				newInstance.transform.SetParent(this.transform);
+				newInstance.transform.SetParent(this.transform, false);
 				newInstance.transform.localPosition = Vector3.zero;
 				newInstance.transform.localRotation = Quaternion.identity;
 				newInstance.SetLayerRecursively(this.gameObject.layer);

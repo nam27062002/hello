@@ -34,6 +34,12 @@ public class MenuDragonLockButtonConditionally : MonoBehaviour {
 
 	// External references
 	private Button m_button = null;
+	public Button button {
+		get { 
+			if(m_button == null) m_button = GetComponent<Button>();
+			return m_button; 
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -75,13 +81,13 @@ public class MenuDragonLockButtonConditionally : MonoBehaviour {
 	}
 
 	//------------------------------------------------------------------//
-	// INTERNAL METHODS													//
+	// OTHER METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Apply button lock based on given parameters.
 	/// </summary>
 	/// <param name="_sku">The sku of the dragon to be considered.</param>
-	private void Apply(string _sku) {
+	public void Apply(string _sku) {
 		// Check whether the button should be locked or not
 		bool toLock = false;
 		DragonData dragon = DragonManager.GetDragonData(_sku);
