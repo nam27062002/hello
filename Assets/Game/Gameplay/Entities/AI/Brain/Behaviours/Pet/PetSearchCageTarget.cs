@@ -29,8 +29,6 @@ namespace AI {
 			DragonPlayer m_owner;
 			float m_range;
 
-			EatBehaviour m_eatBehaviour;
-
 			public override StateComponentData CreateData() {
 				return new PetSearchCageTargetData();
 			}
@@ -52,8 +50,6 @@ namespace AI {
 				m_owner = InstanceManager.player;
 				PetSearchCageTargetData data = m_pilot.GetComponentData<PetSearchCageTargetData>();
 				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * data.m_dragonSizeRangeMultiplier;
-				// if prefered entieies we should tell the mouth
-				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 			}
 
 			// The first element in _param must contain the amount of time without detecting an enemy
@@ -84,7 +80,6 @@ namespace AI {
 				if (m_timer > 0f) {
 					m_timer -= Time.deltaTime;
 				} else {
-					m_eatBehaviour.enabled = true;
 					Vector3 centerPos = m_owner.transform.position;
 					m_numCheckCages = EntityManager.instance.GetOverlapingCages( centerPos , m_range, m_checkCages);
 					for (int e = 0; e < m_numCheckCages; e++) 
