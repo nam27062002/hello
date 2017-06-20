@@ -886,7 +886,7 @@ public class GameServerManagerCalety : GameServerManager {
 						response[key] = upgradeAvailable;
 
 						key = "cloudSaveAvailable";
-						response[key] = responseJSON.ContainsKey(key) && Convert.ToBoolean(responseJSON[key]);                        
+						response[key] = responseJSON.ContainsKey(key) && Convert.ToBoolean((object)responseJSON[key]);                        
 					}
 				} break;
 
