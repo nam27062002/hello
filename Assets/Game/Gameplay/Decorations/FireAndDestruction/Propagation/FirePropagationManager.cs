@@ -93,7 +93,10 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 
 		if (instance.m_fireNodes.Count < instance.m_boundigSpheres.Length) {
 			instance.m_boundigSpheres[instance.m_fireNodes.Count - 1] = _fireNode.boundingSphere;
-			instance.m_cullingGroup.SetBoundingSphereCount(instance.m_fireNodes.Count);
+
+			if (instance.m_cullingGroup != null) {
+				instance.m_cullingGroup.SetBoundingSphereCount(instance.m_fireNodes.Count);
+			}
 		}
 
 		if (instance.m_fireNodesTree != null) instance.m_fireNodesTree.Insert(_fireNode);

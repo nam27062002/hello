@@ -31,7 +31,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.2433047, y: 2.0581722, z: 6.762765}
+  m_LocalPosition: {x: 666.37305, y: 52.54794, z: -5063.213}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4339538399127320}
@@ -760,8 +760,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1791629467194774}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.83, z: -0.251}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_LocalPosition: {x: 0, y: -0.988, z: -0.313}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4917953351134530}
   - {fileID: 4567809172400004}
@@ -1468,7 +1468,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"ignoreNotListedUnits":false,"dragonSizeRangeMultiplier":2,"preferedRangeMultiplier":2,"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"petPursuitSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false}]'
   m_databaseKey: PF_PetFroggy_v1_4
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -1614,6 +1614,7 @@ MonoBehaviour:
   m_isAquatic: 0
   m_canMultipleLatchOnPlayer: 0
   m_damageOnBitePlayer: 10
+  m_ignoreBadJunk: 1
 --- !u!114 &114000013672329336
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1714,7 +1715,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 1.3
   m_Center: {x: 0, y: 0, z: -0.05}
 --- !u!137 &137232084290050980
 SkinnedMeshRenderer:

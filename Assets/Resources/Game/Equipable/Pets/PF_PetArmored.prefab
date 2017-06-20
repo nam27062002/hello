@@ -31,7 +31,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.903234, y: 1.47509, z: -1.8698664}
+  m_LocalPosition: {x: 693.9258, y: 47.685314, z: -5064.0635}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000012927140706}
@@ -1483,8 +1483,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000014052050250}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.681, z: -0.802}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalPosition: {x: 0, y: -1.62, z: -0.73}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000011040104348}
   - {fileID: 4000010849837886}
@@ -2086,7 +2086,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"petPursuitSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"preferedEntitiesList":"","searchButNoEatEntityList":"mine_01,mine_02,mine_03","ignoreNotListedUnits":false,"dragonSizeRangeMultiplier":10,"preferedRangeMultiplier":2,"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false}]'
+  m_serializedJson: '[{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false}]'
   m_databaseKey: PF_PetArmored
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -2232,6 +2232,7 @@ MonoBehaviour:
   m_isAquatic: 0
   m_canMultipleLatchOnPlayer: 0
   m_damageOnBitePlayer: 10
+  m_ignoreBadJunk: 1
 --- !u!114 &114019011530405406
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2292,7 +2293,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.45
+  m_Radius: 2
   m_Center: {x: 0, y: 0, z: -0.09}
 --- !u!137 &137000012077036284
 SkinnedMeshRenderer:

@@ -31,7 +31,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -345.16782, y: 61.665073, z: -1.4399414}
+  m_LocalPosition: {x: 647.541, y: 55.520683, z: -5063.796}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4503749070489216}
@@ -1096,8 +1096,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1571725692823044}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.587, z: -0.156}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_LocalPosition: {x: 0, y: -1.014, z: -0.43}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4087317570175466}
   - {fileID: 4464160350239426}
@@ -1128,8 +1128,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1696794202003428}
-  m_LocalRotation: {x: -0.7071068, y: -0.000000002634178, z: -0.000000002634178, w: 0.7071068}
-  m_LocalPosition: {x: 0.041992188, y: 0.187, z: -0.043945312}
+  m_LocalRotation: {x: 0.5009287, y: -0.49906972, z: -0.50092864, w: 0.49906963}
+  m_LocalPosition: {x: 0, y: 0.11795807, z: -0.5966797}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children:
   - {fileID: 4612928414411726}
@@ -1650,7 +1650,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petPursuitSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"shootingTier":2,"checkType":0,"dragonSizeRangeMultiplier":10,"shutdownRange":{"min":1,"max":1},"dataType":"AI.Behaviour.PetSearchShootTargetData","editorFolded":false},{"projectileName":"PF_PetMagneticProjectile","projectileSpawnTransformName":"Fire_Dummy","damage":0,"canFollowTarget":false,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":true,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":22,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"timeSecondAction":{"min":7,"max":10},"dataType":"AI.Behaviour.PetDecideActionData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"shootingTier":2,"checkType":0,"dragonSizeRangeMultiplier":10,"shutdownRange":{"min":1,"max":1},"dataType":"AI.Behaviour.PetSearchShootTargetData","editorFolded":false},{"projectileName":"PF_PetMagneticProjectile","projectileSpawnTransformName":"Fire_Dummy","damage":0,"canFollowTarget":false,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":true,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":22,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"timeSecondAction":{"min":7,"max":10},"dataType":"AI.Behaviour.PetDecideActionData","editorFolded":false}]'
   m_databaseKey: PF_PetNeutrin_38
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -1796,6 +1796,7 @@ MonoBehaviour:
   m_isAquatic: 0
   m_canMultipleLatchOnPlayer: 0
   m_damageOnBitePlayer: 10
+  m_ignoreBadJunk: 1
 --- !u!114 &114000013672329336
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1807,7 +1808,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e4b01ef8e8b54b638ddb530e3150fe3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: pet_0
+  m_sku: pet_38
 --- !u!114 &114034061267970272
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1951,7 +1952,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 1.3
   m_Center: {x: 0, y: 0, z: -0.05}
 --- !u!137 &137501831557622408
 SkinnedMeshRenderer:
@@ -2073,7 +2074,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1802763578
+  randomSeed: 78592244
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -15186,7 +15187,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1860796507
+  randomSeed: -341649232
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -17823,7 +17824,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 772571072
+  randomSeed: 759710426
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -20460,7 +20461,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -150757458
+  randomSeed: -813596715
   InitialModule:
     serializedVersion: 3
     enabled: 1

@@ -32,7 +32,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -336.43652, y: 58.112755, z: -1.2981422}
+  m_LocalPosition: {x: 678.87744, y: 49.602997, z: -5061.2866}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4129174965201010}
@@ -872,8 +872,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1509557782023722}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.83, z: -0.251}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_LocalPosition: {x: 0, y: -1.021, z: -0.402}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4892063555488778}
   - {fileID: 4422539053732616}
@@ -1769,7 +1769,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"ignoreNotListedUnits":false,"dragonSizeRangeMultiplier":2,"preferedRangeMultiplier":2,"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"petPursuitSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false}]'
   m_databaseKey: PF_PetFreddyMetallicArmor_10
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -1915,6 +1915,7 @@ MonoBehaviour:
   m_isAquatic: 0
   m_canMultipleLatchOnPlayer: 0
   m_damageOnBitePlayer: 10
+  m_ignoreBadJunk: 1
 --- !u!114 &114000013672329336
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2031,7 +2032,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 1.3
   m_Center: {x: 0, y: 0, z: -0.05}
 --- !u!137 &137640057526223280
 SkinnedMeshRenderer:

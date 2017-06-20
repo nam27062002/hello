@@ -31,7 +31,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -345.10147, y: 58.111645, z: 4.999113}
+  m_LocalPosition: {x: 677.4834, y: 50.534542, z: -5061.4917}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4587948370529724}
@@ -1065,8 +1065,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1099262399685934}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.83, z: -0.251}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_LocalPosition: {x: 0, y: -1.064, z: -0.418}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4229154999309830}
   - {fileID: 4698513140004144}
@@ -1699,7 +1699,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"ignoreNotListedUnits":false,"dragonSizeRangeMultiplier":2,"preferedRangeMultiplier":2,"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"petPursuitSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false}]'
   m_databaseKey: PF_PetFreddySportTapes_16
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -1845,6 +1845,7 @@ MonoBehaviour:
   m_isAquatic: 0
   m_canMultipleLatchOnPlayer: 0
   m_damageOnBitePlayer: 10
+  m_ignoreBadJunk: 1
 --- !u!114 &114000013672329336
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1945,7 +1946,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 1.3
   m_Center: {x: 0, y: 0, z: -0.05}
 --- !u!137 &137057752238166764
 SkinnedMeshRenderer:

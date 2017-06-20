@@ -50,14 +50,14 @@ public class SpawnerEditor : Editor {
 	private bool m_repeatedDeactivationTriggerTypeError = false;
 	private bool m_incompatibleValuesError = false;
 
+/*
     // Time of last input
     private float m_timeOfLastInput;
-
     public float currentTime
     {
         get { return (float)EditorApplication.timeSinceStartup; }
     }
-
+*/
     //------------------------------------------------------------------------//
     // METHODS																  //
     //------------------------------------------------------------------------//
@@ -83,7 +83,7 @@ public class SpawnerEditor : Editor {
         CheckForErrors();
 
 
-        m_timeOfLastInput = 0.0f;
+//        m_timeOfLastInput = 0.0f;
     }
 
 	/// <summary>
@@ -183,14 +183,14 @@ public class SpawnerEditor : Editor {
 	                            max.floatValue = min.floatValue;
 	                        }
                         }
-                        else
+/*                        else
 						{
                             if (max.floatValue < min.floatValue || (ovMin == ovMax && ((currentTime - m_timeOfLastInput) < INPUTDELAY)))
 							{
 								min.floatValue = max.floatValue;
                                 m_timeOfLastInput = currentTime;
 							}
-                        }
+                        }*/
                     }
 
                 }
@@ -211,14 +211,14 @@ public class SpawnerEditor : Editor {
 								max.intValue = min.intValue;
 							}
                         }
-                        else
+/*                        else
 						{
 							if (max.intValue < min.intValue || (ovMin == ovMax && ((currentTime - m_timeOfLastInput) < INPUTDELAY)))
                             {
 								min.intValue = max.intValue;
                                 m_timeOfLastInput = currentTime;
                             }
-                        }
+                        }*/
                     }
                 }
                 else if (p.name == m_spawnTimeProp.name)
