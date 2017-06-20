@@ -115,13 +115,7 @@ public class GoalsSceneController : MonoBehaviour {
 			if(m_chestSlots[i] == null) continue;
 
 			// Initialize with the state of that chest
-			if(ChestManager.collectedChests > i) {
-				// Figure out reward type to show the proper FX
-				rewardData = ChestManager.GetRewardData(i + 1);
-				m_chestSlots[i].view.Open(rewardData.type, false);
-			} else {
-				m_chestSlots[i].view.Close();
-			}
+			m_chestSlots[i].Init(ChestManager.collectedChests > i, ChestManager.GetRewardData(i + 1));
 		}
 	}
 

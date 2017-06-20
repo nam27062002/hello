@@ -9,11 +9,16 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	private List<FireNode> m_burningFireNodes;
 	private AudioSource m_fireNodeAudio;
 
+	private BoundingSphere[] m_boundigSpheres;
+
+	private CullingGroup m_cullingGroup;
 
 	void Awake() {
 		m_fireNodesTree = new QuadTree<FireNode>(-600f, -100f, 1000f, 400f);
 		m_fireNodes = new List<FireNode>();
 		m_burningFireNodes = new List<FireNode>();
+
+		m_boundigSpheres = new BoundingSphere[1000];
 
 		m_fireNodeAudio = gameObject.AddComponent<AudioSource>();
 		m_fireNodeAudio.playOnAwake = false;
@@ -56,6 +61,17 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		for(int i = 0; i < m_fireNodes.Count; i++) {
 			m_fireNodesTree.Insert(m_fireNodes[i]);
 		}
+
+
+		m_cullingGroup = new CullingGroup();
+		m_cullingGroup.targetCamera = Camera.main;
+		m_cullingGroup.SetBoundingSpheres(m_boundigSpheres);
+		m_cullingGroup.SetBoundingSphereCount(m_fireNodes.Count);
+		m_cullingGroup.onStateChanged += CullingStateChange;
+
+		/*
+		m_cullingGroup.targetCamera = Camera.main;
+		m_cullingGroup.SetBoundingSphereCount(m_boundingSpheres.Count);*/
 	}
 
 	/// <summary>
@@ -66,16 +82,24 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		m_fireNodesTree = null;
 		m_fireNodes.Clear();
 		m_burningFireNodes.Clear();
+
+		m_cullingGroup.onStateChanged -= CullingStateChange;
+		m_cullingGroup.Dispose();
+		m_cullingGroup = null;
 	}
 
 	public static void Insert(FireNode _fireNode) {
 		instance.m_fireNodes.Add(_fireNode);
-		if (instance.m_fireNodesTree != null) instance.m_fireNodesTree.Insert(_fireNode);
-	}
 
-	public static void Remove(FireNode _fireNode) {
-		instance.m_fireNodes.Remove(_fireNode);
-		if (instance.m_fireNodesTree != null) instance.m_fireNodesTree.Remove(_fireNode);
+		if (instance.m_fireNodes.Count < instance.m_boundigSpheres.Length) {
+			instance.m_boundigSpheres[instance.m_fireNodes.Count - 1] = _fireNode.boundingSphere;
+
+			if (instance.m_cullingGroup != null) {
+				instance.m_cullingGroup.SetBoundingSphereCount(instance.m_fireNodes.Count);
+			}
+		}
+
+		if (instance.m_fireNodesTree != null) instance.m_fireNodesTree.Insert(_fireNode);
 	}
 
 	public static void RegisterBurningNode(FireNode _fireNode) {
@@ -109,6 +133,14 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		for (int i = 0; i < m_burningFireNodes.Count; i++) {
 			m_burningFireNodes[i].UpdateLogic();
 		}
+	}
+
+	private static void CullingStateChange(CullingGroupEvent evt) {
+		if (evt.hasBecomeVisible) {
+			instance.m_fireNodes[evt.index].SetEffectVisibility(true);
+		} else if (evt.hasBecomeInvisible) {
+			instance.m_fireNodes[evt.index].SetEffectVisibility(false);
+		}      
 	}
 
 	public delegate bool CheckMethod( CircleAreaBounds _fireNodeBounds );

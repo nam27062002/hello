@@ -178,7 +178,7 @@ public class MapUpgradeController : MonoBehaviour {
 
 		// [AOC] TODO!! Show a video ad!
 		// Open placeholder popup
-		PopupController popup = PopupManager.OpenPopupInstant(PopupAdRevive.PATH);
+		PopupController popup = PopupManager.OpenPopupInstant(PopupAdPlaceholder.PATH);
 		popup.OnClosePostAnimation.AddListener(OnAdClosed);
 	}
 

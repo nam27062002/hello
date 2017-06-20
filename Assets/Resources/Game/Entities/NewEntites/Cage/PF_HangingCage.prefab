@@ -781,6 +781,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1760980541435762
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4116621546112244}
+  m_Layer: 29
+  m_Name: target
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1764885531337696
 GameObject:
   m_ObjectHideFlags: 1
@@ -906,7 +921,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012592393062}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 110.8131, y: 18.36351, z: -3.8444085}
+  m_LocalPosition: {x: -426.95547, y: -67.17808, z: -2.9873047}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000013145674594}
@@ -1007,6 +1022,7 @@ Transform:
   m_Children:
   - {fileID: 4000012809355024}
   - {fileID: 4996511801047246}
+  - {fileID: 4116621546112244}
   m_Father: {fileID: 4510788193186512}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1077,6 +1093,19 @@ Transform:
   - {fileID: 4261356779416956}
   m_Father: {fileID: 4235219159964834}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4116621546112244
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1760980541435762}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -2.5800023, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4000014271832320}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4132137259692712
 Transform:
@@ -2536,7 +2565,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0.17, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: -0.10199976, z: 0}
+  m_ConnectedAnchor: {x: 0, y: -0.102003574, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -2568,7 +2597,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0.17, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: -0.09230065, z: 0}
+  m_ConnectedAnchor: {x: 0, y: -0.092298746, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -2664,7 +2693,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0.17, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: -0.096999645, z: 0}
+  m_ConnectedAnchor: {x: 0, y: -0.09699774, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -2792,7 +2821,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0.17, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: -0.10200012, z: 0}
+  m_ConnectedAnchor: {x: 0, y: -0.102002025, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -2824,7 +2853,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0.17, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: -0.09599984, z: 0}
+  m_ConnectedAnchor: {x: 0, y: -0.09599793, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -2856,7 +2885,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0.17, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: -0.096999764, z: 0}
+  m_ConnectedAnchor: {x: 0, y: -0.09699881, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -2920,7 +2949,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0.17, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: -0.09700012, z: 0}
+  m_ConnectedAnchor: {x: 0, y: -0.09700394, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -2952,7 +2981,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0.17, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: -0.10000014, z: 0}
+  m_ConnectedAnchor: {x: 0, y: -0.10000205, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -3398,6 +3427,7 @@ MonoBehaviour:
     scale: 1
   m_onBreakSound: 
   m_onCollideSound: hd_hanging_cage
+  m_centerTarget: {fileID: 4116621546112244}
 --- !u!114 &114228936118693692
 MonoBehaviour:
   m_ObjectHideFlags: 1

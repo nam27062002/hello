@@ -25,7 +25,12 @@ public class DragonEquip : MonoBehaviour {
 		set{ m_dragonSku = value; }
 	}
 	private AttachPoint[] m_attachPoints = new AttachPoint[(int)Equipable.AttachPoint.Count];
+
 	private bool m_showPets = true;
+	public bool showPets {
+		get { return m_showPets; }
+		set { TogglePets(value, false); }
+	}
 
 	// Skins
 	private Material m_bodyMaterial;
@@ -362,15 +367,26 @@ public class DragonEquip : MonoBehaviour {
 
 			// Adjust scale and parenting
 			if(m_menuMode) {
+				MenuDragonPreview dragonPreview = GetComponent<MenuDragonPreview>();
+				if ( dragonPreview )
+				{
+					DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, dragonPreview.sku);
+					newInstance.transform.localScale = Vector3.one *  ((def.GetAsFloat("petScale") * transform.localScale.x) / def.GetAsFloat("scaleMin"));
+				}
+
 				// In menu mode, make it a child of the dragon so it inherits scale factor
-				newInstance.transform.SetParent(m_attachPoints[attachPointIdx].transform, true);	// [AOC] Compensate scale factor with the dragon using the worldPositionStays parameter
+				newInstance.transform.SetParent(m_attachPoints[attachPointIdx].transform);	// [AOC] Compensate scale factor with the dragon using the worldPositionStays parameter
 				newInstance.transform.localPosition = Vector3.zero;
 				newInstance.transform.localRotation = Quaternion.identity;
+				// newInstance.transform.localScale = Vector3.one;
 
 				// Initialize preview and launch intro animation
 				MenuPetPreview petPreview = newInstance.GetComponent<MenuPetPreview>();
 				petPreview.sku = _petSku;
 				petPreview.SetAnim(MenuPetPreview.Anim.IN);
+
+
+
 			} else {
 				// In game mode, adjust to dragon's scale factor
 				DragonPlayer player = GetComponent<DragonPlayer>();

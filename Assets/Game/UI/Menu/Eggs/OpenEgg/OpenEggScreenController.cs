@@ -434,6 +434,9 @@ public class OpenEggScreenController : MonoBehaviour {
 			if(_from == MenuScreens.PHOTO) {
 				// Restore reward info
 				m_rewardInfo.Show();
+
+				// Restore photo button
+				InstanceManager.menuSceneController.hud.photoButton.GetComponent<ShowHideAnimator>().Show();
 			}
 		}
 	}

@@ -154,12 +154,18 @@ public class DragonPowerUp : MonoBehaviour {
 					int increase = def.GetAsInt("param1");
 					player.SetOnBreakIncrease( increase );
 				}break;
-				case "preyHpBoost":	// a prey gives you more hp
+				case "prey_hp_boost":	// a prey gives you more hp
 				{
-					string from = def.Get("param1");
+					// string from = def.Get("param1");
+					List<string> from = def.GetAsList<string>("param1");
 					float percentage = def.GetAsFloat("param2");
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
-					healthBehaviour.AddEatingHpBoost( from, percentage);
+					for( int i = 0; i<from.Count; i++ )
+					{
+						if (!string.IsNullOrEmpty(from[i]))
+							healthBehaviour.AddEatingHpBoost( from[i], percentage);	
+					}
+
 				}break;
 				case "food_increase":	// adds % bonus hp from any source
 				{
@@ -211,6 +217,22 @@ public class DragonPowerUp : MonoBehaviour {
 				{
 					DragonEatBehaviour eatBehaviour =  GetComponent<DragonEatBehaviour>();
 					eatBehaviour.AddEatDistance( def.GetAsFloat("param1", 0) );
+				}break;
+				case "alcohol_resistance":
+				{
+					player.alcoholResistance = true;
+				}break;
+				case "immune_trash":
+				{
+					List<string> immuneTrash = def.GetAsList<string>("param1");
+					DragonEatBehaviour eatBehaviour =  GetComponent<DragonEatBehaviour>();
+					for( int i = 0; i<immuneTrash.Count; ++i )
+					{
+						if ( !string.IsNullOrEmpty( immuneTrash[i] ) )
+						{
+							eatBehaviour.AddImmuneTrash( immuneTrash[i] );
+						}
+					}
 				}break;
 				default:
 				{

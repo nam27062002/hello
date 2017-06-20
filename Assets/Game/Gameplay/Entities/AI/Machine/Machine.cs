@@ -88,6 +88,7 @@ namespace AI {
 		}
 		private float m_freezingMultiplier = 1;
 
+		float m_stunned = 0;
 
 		// Activating
 		UnityEngine.Events.UnityAction m_deactivateCallback;
@@ -342,6 +343,7 @@ namespace AI {
 			m_inflammable.Update();
 			if (m_checkCurrents)
 				CheckForCurrents();
+			CheckStun();
 		}
 
 		public virtual void CustomFixedUpdate() {
@@ -431,6 +433,21 @@ namespace AI {
 
 				m_viewControl.Freezing(freezingLevel);
 			}
+		}
+
+		public void CheckStun()
+		{
+			if ( m_stunned > 0 )
+			{
+				m_stunned -= Time.deltaTime;
+				m_pilot.SetStunned( m_stunned > 0 );
+				m_viewControl.SetStunned( m_stunned > 0 );
+			}
+		}
+
+		public void Stun( float _stunTime )
+		{
+			m_stunned = Mathf.Max( _stunTime, m_stunned);
 		}
 
 		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null) {

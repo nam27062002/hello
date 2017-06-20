@@ -134,7 +134,7 @@ namespace AI {
 
 					m_impulse += m_externalImpulse;
 
-					if (!m_directionForced) {// behaviours are overriding the actual direction of this machine
+					if (!m_directionForced && !m_stunned) {// behaviours are overriding the actual direction of this machine
 						if (m_impulse != Vector3.zero) {
 							m_direction = m_impulse.normalized;
 						}
