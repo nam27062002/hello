@@ -1,5 +1,5 @@
 ﻿// Namespace create to prevent these functions from colliding with the same names in Calety
-namespace hd
+namespace UbiBCN
 {
     public delegate void Callback();
     public delegate void Callback<T>(T arg1);
