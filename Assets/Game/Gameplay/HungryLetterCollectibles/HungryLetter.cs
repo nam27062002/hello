@@ -55,7 +55,26 @@ public class HungryLetter : MonoBehaviour
 		{
 			return;
 		}
+		OnLetterCollected();
+    }
 
+	protected void OnTriggerEnter(Collider coll)
+	{
+		DragonPlayer player = InstanceManager.player;
+		// use rigidbody as a shortcut to the player's root, in case player obj has colliders on sub objects.
+		if((player == null) || coll.attachedRigidbody == null || coll.attachedRigidbody.gameObject != player.gameObject)
+		{
+			return;
+		}
+		if (m_letterManager.IsLetterCollected(m_letter))
+		{
+			return;
+		}
+		OnLetterCollected();
+	}
+
+	void OnLetterCollected()
+	{
 		// notify that this letter has been collected.
 		m_letterManager.LetterCollected(this);
 		// disable the collider.
@@ -69,7 +88,7 @@ public class HungryLetter : MonoBehaviour
 
         // ParticleSystem.EmissionModule em = m_particle.emission;
         // em.enabled = false;
-    }
+	}
 
 	//------------------------------------------------------------
 	// Public Methods:

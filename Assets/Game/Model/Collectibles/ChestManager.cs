@@ -88,6 +88,8 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 	// Internal
 	private UserProfile m_user = null;
 
+	private List<CollectibleChest> m_inGameChests = new List<CollectibleChest>();
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -120,6 +122,7 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 	/// To be called at the start of the game.
 	/// </summary>
 	public static void OnLevelLoaded() {
+		instance.m_inGameChests.Clear();
 		// Get all the chests in the scene
 		GameObject[] chestSpawners = GameObject.FindGameObjectsWithTag(CollectibleChest.TAG);	// Finding by tag is much faster than finding by type
 		if(chestSpawners.Length > 0) {
@@ -151,6 +154,7 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 					if(spawner.name == pendingChests[j].spawnPointID) {
 						// Yes!! Use it
 						spawner.Initialize(pendingChests[j]);
+						instance.m_inGameChests.Add(spawner);
 						pendingChests.RemoveAt(j);
 						spawnerUsed = true;
 						break;
@@ -182,6 +186,7 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 
 				// Initialize spawner
 				spawner.Initialize(pendingChests[i]);
+				instance.m_inGameChests.Add(spawner);
 				validSpawners.Remove(spawner);
 			}
 
@@ -192,6 +197,10 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 				toRemove[i] = null;
 			}
 		}
+	}
+
+	public static void OnFinished() {
+		instance.m_inGameChests.Clear();
 	}
 
 	/// <summary>
@@ -284,6 +293,26 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 
 		// Save persistence
 		PersistenceManager.Save();
+	}
+
+	public CollectibleChest GetClosestActiveChest( Vector3 position )
+	{
+		float minDistance = float.MaxValue;
+		CollectibleChest chest = null;
+		int size = m_inGameChests.Count;
+		for( int i = 0; i<size; ++i )
+		{
+			if (!m_inGameChests[i].chestData.collected)
+			{
+				float dist = (position - m_inGameChests[i].transform.position).sqrMagnitude;
+				if ( dist < minDistance )
+				{
+					minDistance = dist;
+					chest = m_inGameChests[i];
+				}
+			}
+		}
+		return chest;
 	}
 
 	//------------------------------------------------------------------//
