@@ -904,6 +904,9 @@ public class GameServerManagerCalety : GameServerManager {
 					// [DGR] SERVER: Receive these parameters from server
 					response["dateTime"] = time;
 					response["unixTimestamp"] = time;
+
+					// Update latest stored server time
+					ServerManager.SharedInstance.SetServerTime((double)time);
 				} break;
 
 				case ECommand.GetQualitySettings: {

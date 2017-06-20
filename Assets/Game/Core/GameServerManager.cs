@@ -111,9 +111,15 @@ public class GameServerManager
     {
 		if (!m_configured)
         {
-            
+			// Init some common stuff
+			// Initialize server time with current local time
+			ServerManager.SharedInstance.SetServerTime((double)Globals.GetUnixTimestamp());
+
+			// Let heirs do their stuff
 			ExtendedConfigure();
-            m_configured = true;            
+
+			// Mark as configured!
+            m_configured = true;
         }
     }
 
@@ -142,9 +148,28 @@ public class GameServerManager
     protected virtual void ExtendedConfigure() {}
     public virtual void Init(GeoLocation.Location location) {}
 	public virtual void Ping(ServerCallback callback) {}
-	public virtual void GetServerTime(ServerCallback callback) {}
-    public virtual void SetServerLocation(GeoLocation.Location location) {}
+	public virtual void SetServerLocation(GeoLocation.Location location) {}
 	public virtual void SendLog(string message, string stackTrace, UnityEngine.LogType logType) {}
+
+	//------------------------------------------------------------------------//
+	// SERVER TIME															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get the current timestamp directly from the server.
+	/// </summary>
+	/// <param name="callback">Callback.</param>
+	public virtual void GetServerTime(ServerCallback callback) {}
+
+	/// <summary>
+	/// Get an estimation of the current server time using the last known server time.
+	/// No request will be done to the server.
+	/// </summary>
+	/// <returns>The estimated server time.</returns>
+	public DateTime GetEstimatedServerTime() {
+		// Calety already manages this, just convert it to a nice DateTime object.
+		double unixTimestamp = ServerManager.SharedInstance.GetServerTime();	// Seconds since 1970
+		return Globals.GetDateFromUnixTimestamp((long)unixTimestamp);
+	}
 
 	//------------------------------------------------------------------------//
 	// LOGIN																  //
