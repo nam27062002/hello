@@ -317,7 +317,7 @@ public class OpenEggSceneController : MonoBehaviour {
 				// Show a 3D preview of the pet
 				m_rewardView = new GameObject("RewardView");
 				m_rewardView.transform.SetParentAndReset(m_rewardAnchor);	// Attach it to the anchor and reset transformation
-				//m_rewardView.transform.DOBlendableRotateBy(Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetRecyclable(true);	// Infinite rotation!
+				m_rewardView.transform.Rotate(0f, 90f, 0f);	// Start looking at camera!
 
 				// Use a PetLoader to simplify things
 				MenuPetLoader loader = m_rewardView.AddComponent<MenuPetLoader>();
