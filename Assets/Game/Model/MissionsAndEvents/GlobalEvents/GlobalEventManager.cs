@@ -197,7 +197,7 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 			}
 
 			// If the ID is different from the stored event, load the new event's data!
-			SimpleJSON.JSONClass responseJson = _response["response"] as SimpleJSON.JSONClass;
+			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
 			if(m_currentEvent.id != responseJson["id"]) {
 				m_currentEvent.InitFromJson(responseJson);
 			}
@@ -232,7 +232,7 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 			// For now let's just assume the given state is for the current event
 
 			// The event will parse the response json by itself
-			SimpleJSON.JSONClass responseJson = _response["response"] as SimpleJSON.JSONClass;
+			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
 			m_currentEvent.UpdateFromJson(responseJson);
 
 			// Player data

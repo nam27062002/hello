@@ -165,7 +165,7 @@ public class GlobalEvent {
 	/// Initialize event from a JSON definition.
 	/// </summary>
 	/// <param name="_data">JSON data.</param>
-	public void InitFromJson(SimpleJSON.JSONClass _data) {
+	public void InitFromJson(SimpleJSON.JSONNode _data) {
 		// Event ID
 		m_id = _data["eventId"];
 
@@ -209,7 +209,7 @@ public class GlobalEvent {
 	/// Corresponds to the GetState server call.
 	/// </summary>
 	/// <param name="_data">Data.</param>
-	public void UpdateFromJson(SimpleJSON.JSONClass _data) {
+	public void UpdateFromJson(SimpleJSON.JSONNode _data) {
 		// Current value
 		m_currentValue = _data["currentValue"].AsFloat;
 
