@@ -91,8 +91,8 @@ SubShader {
 //			o.vertex.z = 0.0;
 //			o.vertex.z = UNITY_MATRIX_MVP[3][2];
 			// Normal
-//			o.normal = UnityObjectToWorldNormal(v.normal);
-			o.normal = UnityObjectToWorldNormal(normalize(v.vertex.xyz));
+			o.normal = UnityObjectToWorldNormal(v.normal);
+//			o.normal = UnityObjectToWorldNormal(normalize(v.vertex.xyz));
 
 			// Half View - See: Blinn-Phong
 //			o.viewDir = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
@@ -114,7 +114,6 @@ SubShader {
 
 		fixed4 frag(v2fo i) : SV_Target
 		{
-//			float intensity = clamp(pow(max(dot(i.viewDir, i.normal), 0.0), _OutlineGradient), 0.0, 1.0);
 			float intensity = clamp(pow(max(dot(i.viewDir, i.normal), 0.0), _OutlineGradient), 0.0, 1.0);
 
 			return fixed4(_OutlineColor.rgb, intensity);
