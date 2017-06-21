@@ -749,7 +749,7 @@ public class UserProfile : UserSaveSystem
 		// Global Events
 		SimpleJSON.JSONArray eventsData = new SimpleJSON.JSONArray();
 		foreach(KeyValuePair<string, GlobalEventUserData> kvp in m_globalEvents) {
-			eventsData.Add(kvp.Value.Save());
+			eventsData.Add(kvp.Value.Save(true));
 		}
 		data.Add("globalEvents", eventsData);
 

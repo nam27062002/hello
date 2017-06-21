@@ -226,14 +226,14 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		}
 
 		// Add player data to the json
-		eventData.Add("playerData", playerEventData.Save());
+		eventData.Add("playerData", playerEventData.Save(true));
 
 		// Add leaderboard data to the json (if requested)
 		if(_getLeaderboard) {
 			// Create a json array with every entry in the leaderboard
 			SimpleJSON.JSONArray leaderboardData = new SimpleJSON.JSONArray();
 			for(int i = 0; i < leaderboard.Count; i++) {
-				leaderboardData.Add(leaderboard[i].Save());
+				leaderboardData.Add(leaderboard[i].Save(false));
 			}
 			eventData.Add("leaderboard", leaderboardData);
 		}

@@ -183,29 +183,61 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 	/// <param name="_response">Response.</param>
 	private void OnCurrentEventResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
 		// Error?
-		if(_error == null) {
-			// Did the server gave us an event?
-			if(_response != null && _response["response"] != null) {
-				// Yes! If no event is created, create one
-				if(m_currentEvent == null) {
-					m_currentEvent = new GlobalEvent();
-				}
-
-				// If the ID is different from the stored event, load the new event's data!
-				SimpleJSON.JSONClass responseJson = _response["response"] as SimpleJSON.JSONClass;
-				if(m_currentEvent.id != responseJson["id"]) {
-					m_currentEvent.InitFromJson(responseJson);
-				}
-
-				// Get current event's state
-				// [AOC] TODO!!
-			} else {
-				// No! Clear current event (if any)
-				if(m_currentEvent != null) m_currentEvent = null;
-			}
-		} else {
+		if(_error != null) {
 			// [AOC] Do something or just ignore?
 			// Probably store somewhere that there was an error so retry timer is reset or smth
+			return;
+		}
+
+		// Did the server gave us an event?
+		if(_response != null && _response["response"] != null) {
+			// Yes! If no event is created, create one
+			if(m_currentEvent == null) {
+				m_currentEvent = new GlobalEvent();
+			}
+
+			// If the ID is different from the stored event, load the new event's data!
+			SimpleJSON.JSONClass responseJson = _response["response"] as SimpleJSON.JSONClass;
+			if(m_currentEvent.id != responseJson["id"]) {
+				m_currentEvent.InitFromJson(responseJson);
+			}
+
+			// Get current event's state
+			GameServerManager.SharedInstance.GlobalEvent_GetState(m_currentEvent.id, true, OnEventStateResponse);
+		} else {
+			// No! Clear current event (if any)
+			if(m_currentEvent != null) m_currentEvent = null;
+		}
+	}
+
+	/// <summary>
+	/// Server callback for the event state request.
+	/// </summary>
+	/// <param name="_error">Error.</param>
+	/// <param name="_response">Response.</param>
+	private void OnEventStateResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+		// Error?
+		if(_error != null) {
+			// [AOC] Do something or just ignore?
+			// Probably store somewhere that there was an error so retry timer is reset or smth
+			return;
+		}
+
+		// Ignore if we don't have a valid event!
+		if(m_currentEvent == null) return;
+
+		// Did the server gave us a response?
+		if(_response != null && _response["response"] != null) {
+			// Validate the event ID?
+			// For now let's just assume the given state is for the current event
+
+			// The event will parse the response json by itself
+			SimpleJSON.JSONClass responseJson = _response["response"] as SimpleJSON.JSONClass;
+			m_currentEvent.UpdateFromJson(responseJson);
+
+			// Player data
+			GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
+			currentEventUserData.Load(responseJson["playerData"]);
 		}
 	}
 

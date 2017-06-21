@@ -87,7 +87,7 @@ public class GlobalEventUserData {
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public void Load(SimpleJSON.JSONNode _data) {
 		// Easy
-		eventId = _data["eventId"];
+		if(_data.ContainsKey("eventId")) eventId = _data["eventId"];	// Event ID is optional
 		userId = _data["userId"];
 		score = _data["score"].AsFloat;
 		position = _data["position"].AsInt;
@@ -97,10 +97,11 @@ public class GlobalEventUserData {
 	/// Create and return a persistence save data object initialized with the data.
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public SimpleJSON.JSONNode Save() {
+	/// <param name="_includeEventId">Whether to save the event ID as well.</param>
+	public SimpleJSON.JSONNode Save(bool _includeEventId) {
 		// Create a new json object for this event
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
-		data.Add("eventId", eventId);
+		if(_includeEventId) data.Add("eventId", eventId);
 		data.Add("userId", userId);
 		data.Add("score", score.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		data.Add("position", position.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));

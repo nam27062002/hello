@@ -150,15 +150,6 @@ public class GlobalEvent {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Set the state of the event.
-	/// </summary>
-	/// <param name="_newState">New event state.</param>
-	public void SetState(State _newState) {
-		// Store new state
-		m_state = _newState;
-	}
-
-	/// <summary>
 	/// Add a contribution to the event.
 	/// </summary>
 	/// <param name="_value">Value to be added.</param>
@@ -192,8 +183,7 @@ public class GlobalEvent {
 		m_endTimestamp = DateTime.Parse(_data["endTimestamp"], GameServerManager.JSON_FORMAT);
 
 		// Infer event's state from timestamps
-		// Use server time to prevent cheating!
-		m_state = GetStateForTimestamp(GameServerManager.SharedInstance.GetEstimatedServerTime());
+		UpdateState();
 
 		// Rewards
 		m_rewards.Clear();
@@ -214,9 +204,63 @@ public class GlobalEvent {
 		m_topContributors.Clear();
 	}
 
+	/// <summary>
+	/// Update the event's current state from a JSON object.
+	/// Corresponds to the GetState server call.
+	/// </summary>
+	/// <param name="_data">Data.</param>
+	public void UpdateFromJson(SimpleJSON.JSONClass _data) {
+		// Current value
+		m_currentValue = _data["currentValue"].AsFloat;
+
+		// Leaderboard (optional)
+		if(_data.ContainsKey("leaderboard")) {
+			SimpleJSON.JSONArray leaderboardData = _data["leaderboard"].AsArray;
+			int numEntries = leaderboardData.Count;
+			for(int i = 0; i < numEntries; ++i) {
+				// Reuse existing entries, create a new one if needed
+				if(i >= m_topContributors.Count) {
+					m_topContributors.Add(new GlobalEventUserData());
+				}
+
+				// Update leaderboard entry
+				m_topContributors[i].Load(leaderboardData[i]);
+			}
+
+			// Remove unused entries from the leaderboard
+			if(m_topContributors.Count > numEntries) {
+				m_topContributors.RemoveRange(numEntries, m_topContributors.Count - numEntries);
+			}
+		}
+
+		// Update event state (just in case, has nothing to do with given json)
+		UpdateState();
+	}
+
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Set the state of the event.
+	/// Nothing happens if given state is the same as current one.
+	/// </summary>
+	/// <param name="_newState">New event state.</param>
+	private void SetState(State _newState) {
+		// Ignore if same state
+		if(_newState == m_state) return;
+
+		// Store new state
+		m_state = _newState;
+	}
+
+	/// <summary>
+	/// Infer event's state based on current timestamp.
+	/// </summary>
+	private void UpdateState() {
+		// Use server time to prevent cheating!
+		SetState(GetStateForTimestamp(GameServerManager.SharedInstance.GetEstimatedServerTime()));
+	}
+
 	/// <summary>
 	/// Given a specific timestamp, figure out to which state it corresponds based
 	/// on event deadlines.
