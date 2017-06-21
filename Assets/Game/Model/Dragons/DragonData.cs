@@ -235,9 +235,9 @@ public class DragonData {
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
 		data.Add("sku", def.sku);
-		data.Add("owned", m_owned.ToString());
-		data.Add("xp", progression.xp.ToString());
-		data.Add("level", progression.level.ToString());
+		data.Add("owned", m_owned.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("xp", progression.xp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("level", progression.level.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		data.Add("disguise", m_disguise);
 
 

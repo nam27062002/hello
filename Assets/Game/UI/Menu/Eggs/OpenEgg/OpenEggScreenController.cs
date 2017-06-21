@@ -267,17 +267,17 @@ public class OpenEggScreenController : MonoBehaviour {
 		} else if(rewardData.coins > 0) {
 			delay = m_finalPanelDelayWhenCoinsGiven;
 		}
-		DOVirtual.DelayedCall(delay, () => { m_finalPanel.Show(); }, false);
+		UbiBCN.CoroutineManager.DelayedCall(() => { m_finalPanel.Show(); }, delay, false);
 
 		// If it's the first time we're getting golden fragments, show info popup
 		if(rewardData.fragments > 0 && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO)) {
 			// Show popup after some extra delay
-			DOVirtual.DelayedCall(
-				delay + 1.5f, 
+			UbiBCN.CoroutineManager.DelayedCall(
 				() => { 
 					PopupManager.OpenPopupInstant(PopupInfoGoldenFragments.PATH);
 					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO, true);
-				}, 
+				},
+				delay + 1.5f, 
 				false
 			);
 		}
@@ -332,7 +332,7 @@ public class OpenEggScreenController : MonoBehaviour {
 			goldenEgg.ChangeState(Egg.State.READY);
 
 			// Start flow! (After some delay)
-			DOVirtual.DelayedCall(0.5f, () => { StartFlow(goldenEgg); });
+			UbiBCN.CoroutineManager.DelayedCall(() => { StartFlow(goldenEgg); }, 0.5f);
 		}
 	}
 
@@ -376,7 +376,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(_egg == m_scene.eggData) {
 			// Launch animation!
 			// Delay to sync with the egg anim
-			DOVirtual.DelayedCall(m_openAnimationDelay, LaunchOpenAnimation, false);
+			UbiBCN.CoroutineManager.DelayedCall(LaunchOpenAnimation, m_openAnimationDelay, false);
 
 			// Hide UI!
 			m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide();
