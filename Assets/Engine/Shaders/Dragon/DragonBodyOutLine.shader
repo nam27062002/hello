@@ -38,15 +38,22 @@ Properties {
 
 SubShader {
 //	Tags { "Queue"="Geometry" "IgnoreProjector"="True" "RenderType"="Opaque" "LightMode"="ForwardBase" }
-	Cull Back
 //	LOD 100
 	ColorMask RGBA
 	
 	Pass {
-		Tags{ "Queue" = "Transparent+10" "IgnoreProjector" = "True" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
+		Tags{ "Queue" = "Transparent+1000" "IgnoreProjector" = "True" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
 		ZWrite off
+		Cull off
+
 //		Blend SrcAlpha OneMinusSrcAlpha // Traditional transparency
-		Blend One OneMinusSrcAlpha
+		Blend SrcAlpha OneMinusSrcAlpha // Traditional transparency
+//		Blend DstAlpha OneminusDstAlpha // Traditional transparency
+//		Blend one one // Traditional transparency
+//		Blend srcAlpha one // Traditional transparency
+										//		Blend One One
+		BlendOp add, max // Traditional transparency
+//		Blend One OneMinusSrcAlpha
 
 		CGPROGRAM
 		#pragma vertex vert
@@ -81,20 +88,35 @@ SubShader {
 			v2fo o;
 			float4 nvert = float4(v.vertex.xyz + v.normal * _OutlineWidth, 1.0);
 			o.vertex = mul(UNITY_MATRIX_MVP, nvert);
+//			o.vertex.z = 0.0;
 //			o.vertex.z = UNITY_MATRIX_MVP[3][2];
 			// Normal
-			o.normal = UnityObjectToWorldNormal(v.normal);
+//			o.normal = UnityObjectToWorldNormal(v.normal);
+			o.normal = UnityObjectToWorldNormal(normalize(v.vertex.xyz));
 
 			// Half View - See: Blinn-Phong
-			o.viewDir = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
+//			o.viewDir = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
+
+/*
+			v2fo o;
+			o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+
+			o.normal = mul((float3x3)UNITY_MATRIX_IT_MV, v.normal);
+			float2 offset = TransformViewToProjection(o.normal.xy);
+
+			o.vertex.xy += offset * o.vertex.z * _OutlineWidth;
+			o.viewDir = normalize(_WorldSpaceCameraPos - o.vertex.xyz);
+*/
+			o.viewDir = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, nvert).xyz);
 
 			return o;
 		}
 
 		fixed4 frag(v2fo i) : SV_Target
 		{
+//			float intensity = clamp(pow(max(dot(i.viewDir, i.normal), 0.0), _OutlineGradient), 0.0, 1.0);
 			float intensity = clamp(pow(max(dot(i.viewDir, i.normal), 0.0), _OutlineGradient), 0.0, 1.0);
-		
+
 			return fixed4(_OutlineColor.rgb, intensity);
 		}
 
@@ -114,8 +136,10 @@ SubShader {
 			ZFail keep
 		}
 
+		cull back
 		ztest less
 		ZWrite On
+
 
 		CGPROGRAM
 		#pragma vertex vert
