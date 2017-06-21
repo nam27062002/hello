@@ -255,7 +255,8 @@ namespace FGOL.Save
                             }
 
                             //First thing to do is download the cloud save if this fails then we just continue as if offline
-                            GameServerManager.SharedInstance.GetPersistence(delegate (Error error, Dictionary<string, object> response)                            
+                            GameServerManager.SharedInstance.GetPersistence(
+							(Error error, GameServerManager.ServerResponse response) =>
                             {
                                 if (error == null)
                                 {                                   
@@ -865,7 +866,7 @@ namespace FGOL.Save
                     {
                         //m_request.UploadFile(user.cloudSaveBucket, user.cloudSaveLocation, user.cloudCredentials.values, ms.ToArray(), unixTimestamp, user.cloudCredentials.expiry, delegate (Error error)
                         GameServerManager.SharedInstance.SetPersistence(save.ToString(),
-                            delegate (Error error, Dictionary<string, object> response)                        
+							(Error error, GameServerManager.ServerResponse response) => 
                             {
                                 if (error == null)
                                 {
