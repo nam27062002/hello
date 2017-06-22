@@ -60,11 +60,11 @@ public class CPStats : MonoBehaviour {
 
         if (NotificationsManager.SharedInstance != null)
         {
-            /*if (DeviceToken != NotificationsManager.SharedInstance.GetDeviceToken())
+            if (DeviceToken != NotificationsManager.SharedInstance.GetDeviceToken())
             {
                 DeviceToken = NotificationsManager.SharedInstance.GetDeviceToken();
                 DeviceToken_UpdateUI();
-            }*/
+            }
         }
     }
 
@@ -78,15 +78,20 @@ public class CPStats : MonoBehaviour {
         if (m_DeviceTokenLabel != null && NotificationsManager.SharedInstance != null)
         {            
             m_DeviceTokenLabel.text = "Device Token: \n" + DeviceToken;
+
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                Debug.Log("Device Token: " + DeviceToken);
+            }
         }
     }
 
     public void DeviceToken_SendToServer()
     {
-        if (NotificationsManager.SharedInstance != null)
+        /*if (NotificationsManager.SharedInstance != null)
         {
-            //NotificationsManager.SharedInstance.SendGCMRegistryID();
-        }
+            NotificationsManager.SharedInstance.SendGCMRegistryID();
+        }*/
     }
     #endregion
 }
