@@ -25,6 +25,8 @@ public class EditorCameraSnapshot : MonoBehaviour {
     private int m_layermaskFire;
     private int m_layermaskDefault;
     private int m_layermaskBackground;
+    private int m_layermaskUI;
+    private int m_layermaskOriginal;
 
     private int m_screenShotcount = 0;
 
@@ -49,6 +51,8 @@ public class EditorCameraSnapshot : MonoBehaviour {
         m_layermaskNPC = LayerMask.GetMask("AirPreys", "WaterPreys", "MachinePreys", "GroundPreys", "Mines");
         m_layermaskDefault = LayerMask.GetMask("Default", "Obstacle");
         m_layermaskBackground = LayerMask.GetMask("Ignore Raycast");
+        m_layermaskUI = LayerMask.GetMask("UI", "3dOverUI");
+        m_layermaskOriginal = m_originalCamera.cullingMask | m_layermaskUI;
 
         m_screenshotPath = Directory.GetCurrentDirectory() + "/" + "HD_SS_";
 
@@ -159,8 +163,11 @@ public class EditorCameraSnapshot : MonoBehaviour {
             doSnapshot(m_layermaskPlayer);
             saveSnapshot(filePath + "4");
 
+//            doSnapshot(m_layermaskUI);
+//            saveSnapshot(filePath + "5");
 
-
+            doSnapshot(m_layermaskOriginal);
+            saveSnapshot(filePath + "5");
 
             m_screenShotcount++;
             m_doSnapshot = false;
