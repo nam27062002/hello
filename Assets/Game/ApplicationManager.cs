@@ -19,12 +19,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     /// <summary>
     /// Time in seconds that will force a cloud save resync if the application has been in background longer than this amount of time
     /// </summary>
-    private const int CloudSaveResyncTime = 3;
+    private const long CloudSaveResyncTime = 3;
 
     /// <summary>
     /// Time in seconds that will force a reauthentication in the social network if the application has been in background longer than this amount of time
     /// </summary>
-    private const int SocialNetworkReauthTime = 120;
+    private const long SocialNetworkReauthTime = 120;
 
     private static bool m_isAlive = true;
     public static bool IsAlive {
@@ -283,14 +283,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         }
     }
 
-    private int LastPauseTime { get; set; }
+    private long LastPauseTime { get; set; }
 
     public void OnApplicationPause(bool pause)
     {
         // If the save stuff done in the first loading is not done then the pause is ignored
         if (SaveLoadIsCompleted)
         {
-            int currentTime = Globals.GetUnixTimestamp();
+            long currentTime = Globals.GetUnixTimestamp();
             bool allowGameRestart = true;
             if ((FlowManager.IsInGameScene() && !Game_IsInGame) || Game_IsPaused)
             {
@@ -324,7 +324,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                         {
                             if (LastPauseTime != -1)
                             {
-                                int timePaused = currentTime - LastPauseTime;
+                                long timePaused = currentTime - LastPauseTime;
                                 if (timePaused >= CloudSaveResyncTime && SaveFacade.Instance.cloudSaveEnabled)
                                 {
                                     SaveFacade.Instance.OnAppResume();
@@ -842,9 +842,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         if (FeatureSettingsManager.instance.IsMiniTrackingEnabled)
         {
             MiniTrackingEngine.SendTrackingFile(false,
-            delegate (FGOL.Server.Error error, Dictionary<string, object> response)
+			(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) => 
             {
-                if (error == null)
+				if (_error == null)
                 {
                     Debug.Log("Play test tracking sent successfully");
                 }

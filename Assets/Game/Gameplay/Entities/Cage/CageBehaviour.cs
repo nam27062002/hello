@@ -23,6 +23,8 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 
 	private Cage m_entity;
 
+	private Vector3 m_initialViewPos;
+
 	private float m_waitTimer = 0;
 	private Hit m_currentHits;
 	private DragonTier m_tier;
@@ -35,6 +37,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	}
 
 	private PrisonerSpawner m_prisonerSpawner;
+	private Wobbler m_wobbler;
 
 
 
@@ -44,7 +47,10 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	void Awake() {
 		m_entity = GetComponent<Cage>();
 		m_prisonerSpawner = GetComponent<PrisonerSpawner>();
+		m_wobbler = GetComponent<Wobbler>();
 		m_minTierToBreak = m_hitsPerTier.GetMinTier();
+
+		m_initialViewPos = m_view.transform.localPosition;
 
 		m_onBreakParticle.CreatePool();
 
@@ -103,6 +109,11 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 									if (m_currentHits.count <= 0) {
 										Break();
 										playCollideSound = false;
+									} else {
+										if (m_wobbler != null) {
+											m_wobbler.enabled = true;
+											m_wobbler.StartWobbling(m_view.transform, m_initialViewPos);
+										}
 									}
 								}
 							} else {
@@ -124,8 +135,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 			else if (collision.transform.CompareTag("Pet")) {
 				// Check if pet is trying to break this cage!
 				Pet pet = collision.transform.GetComponent<Pet>();
-				if (pet != null && pet.CanBreakCages && pet.Charging )
-				{
+				if (pet != null && pet.CanBreakCages && pet.Charging) {
 					Break();
 				}
 			}

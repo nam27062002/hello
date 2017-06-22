@@ -97,7 +97,7 @@ public class CPTrackingSettings : MonoBehaviour {
 	public void OnSendTrackingData() {
 		MiniTrackingEngine.SendTrackingFile(
 			false,
-			(FGOL.Server.Error _error, Dictionary<string, object> _response) =>
+			(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) =>
 			{
 				if(_error == null) {
 					Debug.Log("Play test tracking sent successfully");

@@ -89,6 +89,10 @@ public class MenuDragonLoader : MonoBehaviour {
 		set { m_keepLayers = value; }
 	}
 
+	// Debug
+	[SkuList(DefinitionsCategory.DRAGONS, false)]
+	[SerializeField] private string m_placeholderDragonSku = "dragon_classic";	// If the game is not running, we don't have any data on current dragon/skin, so load a placeholder one manually instead
+
 	// Internal
 	private MenuDragonPreview m_dragonInstance = null;
 	public MenuDragonPreview dragonInstance {
@@ -220,10 +224,28 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// </summary>
 	public void RefreshDragon() {
 		// Load different dragons based on mode
+		// If the game is not running, we don't have any data on current dragon/skin, 
+		// so load a placeholder one manually instead
 		switch(m_mode) {
-			case Mode.CURRENT_DRAGON:	LoadDragon(UsersManager.currentUser.currentDragon);	break;
-			case Mode.SELECTED_DRAGON:	LoadDragon(InstanceManager.menuSceneController.selectedDragon);	break;
-			case Mode.MANUAL:			LoadDragon(m_dragonSku, m_disguiseSku);	break;
+			case Mode.CURRENT_DRAGON: {
+				if(Application.isPlaying) {
+					LoadDragon(UsersManager.currentUser.currentDragon);	
+				} else {
+					LoadDragon(m_placeholderDragonSku);
+				}
+			} break;
+
+			case Mode.SELECTED_DRAGON: {
+				if(Application.isPlaying) {
+					LoadDragon(InstanceManager.menuSceneController.selectedDragon);
+				} else {
+					LoadDragon(m_placeholderDragonSku);
+				}
+			} break;
+
+			case Mode.MANUAL: {
+				LoadDragon(m_dragonSku, m_disguiseSku);
+			} break;
 		}
 	}
 
