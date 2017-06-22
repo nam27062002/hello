@@ -6,10 +6,10 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dragon_crocodile_1_body
+  m_Name: biohazard_disguise
   m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
+  m_ShaderKeywords: _EMISSION
+  m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
@@ -89,14 +89,17 @@ Material:
         name: _DstBlend
       second: 0
     - first:
-        name: _EmissionScaleUI
-      second: 0
-    - first:
         name: _Fresnel
       second: 10
     - first:
+        name: _GlossMapScale
+      second: 1
+    - first:
         name: _Glossiness
       second: 0.5
+    - first:
+        name: _GlossyReflections
+      second: 1
     - first:
         name: _InnerLightAdd
       second: 0
@@ -116,8 +119,14 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
+        name: _SmoothnessTextureChannel
+      second: 0
+    - first:
         name: _SpecExponent
       second: 6.68
+    - first:
+        name: _SpecularHighlights
+      second: 1
     - first:
         name: _SrcBlend
       second: 1
@@ -136,25 +145,19 @@ Material:
       second: {r: 0, g: 0, b: 0, a: 0}
     - first:
         name: _Color
-      second: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _ColorAdd
-      second: {r: 0.062283732, g: 0.11764705, b: 0.07641092, a: 0}
-    - first:
-        name: _ColorMultiply
-      second: {r: 0.9632353, g: 1, b: 1, a: 1}
+      second: {r: 0, g: 0, b: 0, a: 0}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
-        name: _EmissionColorUI
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
         name: _FresnelColor
-      second: {r: 0.28676468, g: 0.28676468, b: 0.28676468, a: 1}
+      second: {r: 0.52205884, g: 0.52205884, b: 0.52205884, a: 1}
     - first:
         name: _InnerLightColor
-      second: {r: 0.27850497, g: 0.39705884, b: 0.26275954, a: 1}
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _SecondLightColor
       second: {r: 0, g: 0, b: 0, a: 0}
