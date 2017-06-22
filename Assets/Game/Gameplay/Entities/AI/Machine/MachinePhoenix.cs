@@ -54,7 +54,8 @@ namespace AI {
 		private void Activate() {
 			m_phoenixActive = true;
 			m_fire.SetActive(true);
-			m_fireParticle.Play();
+			if (m_fireParticle)
+				m_fireParticle.Play();
 			StopCoroutine("FresnelToDeactive");
 			StartCoroutine( FresnelTo( m_phoenixFresnelValue, m_phoenixFresnelColor));
 		}
@@ -62,7 +63,8 @@ namespace AI {
 		private void Deactivate() {
 			m_phoenixActive = false;
 			m_fire.SetActive(false);
-			m_fireParticle.Stop();
+			if (m_fireParticle)
+				m_fireParticle.Stop();
 			StopCoroutine("FresnelToActive");
 			StartCoroutine( FresnelTo( m_originalFresnel, m_originalFresnelColor ));
 		}
