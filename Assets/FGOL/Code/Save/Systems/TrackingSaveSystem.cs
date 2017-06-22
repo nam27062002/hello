@@ -7,7 +7,10 @@ public class TrackingSaveSystem : SaveSystem
     public string UserID { get; set; }
 
     // Counter of sessions since installation
-    public int SessionCount;				
+    public int SessionCount { get; set; }
+
+    public bool IsReady { get; set; }
+
 
     public TrackingSaveSystem()
     {
@@ -19,6 +22,9 @@ public class TrackingSaveSystem : SaveSystem
     {
         UserID = "";
         SessionCount = 0;
+
+        // It'll be ready after Load() is called
+        IsReady = false;
     }
 
     public override void Load()
@@ -27,6 +33,9 @@ public class TrackingSaveSystem : SaveSystem
         {
             UserID =        GetString("UserID");
             SessionCount =  GetInt("SessionCount", 0);
+
+            HDTrackingManager.Log("TrackingSaveSystem loaded");
+            IsReady = true;            
         }
         catch (Exception e)
         {
