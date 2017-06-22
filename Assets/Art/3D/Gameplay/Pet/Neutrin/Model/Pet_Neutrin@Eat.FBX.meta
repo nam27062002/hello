@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: fb6c8faea4a3a46628a3ab3e0c687a4d
-timeCreated: 1497347579
+timeCreated: 1498038955
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
@@ -21,14 +21,14 @@ ModelImporter:
     100026: Pet_Master
     100028: //RootNode
     100030: Pet_R_Back_Leg_1
-    100032: Pet_R_Back_Leg_1 1
-    100034: Pet_R_Back_Leg_2
-    100036: Pet_R_Back_Leg_2 1
-    100038: Pet_R_Back_Leg_Ankle
-    100040: Pet_R_Back_Leg_Ankle 1
-    100042: Pet_R_Back_Leg_Platform
-    100044: Pet_R_Back_Leg_Platform 1
-    100046: Pet_R_Bottom_Eyelid
+    100032: Pet_R_Back_Leg_2
+    100034: Pet_R_Back_Leg_Ankle
+    100036: Pet_R_Back_Leg_Platform
+    100038: Pet_R_Bottom_Eyelid
+    100040: Pet_R_Front_Leg_1
+    100042: Pet_R_Front_Leg_2
+    100044: Pet_R_Front_Leg_Ankle
+    100046: Pet_R_Front_Leg_Platform
     100048: Pet_R_Top_Eyelid
     100050: Pet_Tail_1
     100052: Pet_Tail_2
@@ -49,14 +49,14 @@ ModelImporter:
     400026: Pet_Master
     400028: //RootNode
     400030: Pet_R_Back_Leg_1
-    400032: Pet_R_Back_Leg_1 1
-    400034: Pet_R_Back_Leg_2
-    400036: Pet_R_Back_Leg_2 1
-    400038: Pet_R_Back_Leg_Ankle
-    400040: Pet_R_Back_Leg_Ankle 1
-    400042: Pet_R_Back_Leg_Platform
-    400044: Pet_R_Back_Leg_Platform 1
-    400046: Pet_R_Bottom_Eyelid
+    400032: Pet_R_Back_Leg_2
+    400034: Pet_R_Back_Leg_Ankle
+    400036: Pet_R_Back_Leg_Platform
+    400038: Pet_R_Bottom_Eyelid
+    400040: Pet_R_Front_Leg_1
+    400042: Pet_R_Front_Leg_2
+    400044: Pet_R_Front_Leg_Ankle
+    400046: Pet_R_Front_Leg_Platform
     400048: Pet_R_Top_Eyelid
     400050: Pet_Tail_1
     400052: Pet_Tail_2
@@ -108,22 +108,15 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.13304721
+      - time: 0.20572916
         functionName: EatStartEvent
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.45064378
+      - time: 0.5833333
         functionName: EatEvent
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.75965667
-        functionName: EatEndEvent
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
@@ -164,11 +157,11 @@ ModelImporter:
         weight: 1
       - path: Pet_Hip/Pet_R_Back_Leg_1/Pet_R_Back_Leg_2/Pet_R_Back_Leg_Ankle
         weight: 1
-      - path: Pet_Hip/Pet_R_Back_Leg_1 1
+      - path: Pet_Hip/Pet_R_Front_Leg_1
         weight: 1
-      - path: Pet_Hip/Pet_R_Back_Leg_1 1/Pet_R_Back_Leg_2 1
+      - path: Pet_Hip/Pet_R_Front_Leg_1/Pet_R_Front_Leg_2
         weight: 1
-      - path: Pet_Hip/Pet_R_Back_Leg_1 1/Pet_R_Back_Leg_2 1/Pet_R_Back_Leg_Ankle 1
+      - path: Pet_Hip/Pet_R_Front_Leg_1/Pet_R_Front_Leg_2/Pet_R_Front_Leg_Ankle
         weight: 1
       - path: Pet_Hip/Pet_Tail_1
         weight: 1
@@ -184,7 +177,7 @@ ModelImporter:
         weight: 1
       - path: Pet_R_Back_Leg_Platform
         weight: 1
-      - path: Pet_R_Back_Leg_Platform 1
+      - path: Pet_R_Front_Leg_Platform
         weight: 1
       maskType: 3
       maskSource: {instanceID: 0}

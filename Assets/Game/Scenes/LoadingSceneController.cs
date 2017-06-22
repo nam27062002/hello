@@ -74,7 +74,7 @@ public class LoadingSceneController : SceneController {
         //		 Do it now so we have it under control
         //		 Add all the new created singletons
         // Content and persistence
-        //DefinitionsManager.CreateInstance(true);
+		//DefinitionsManager.CreateInstance(true);	// Moved to Awake() so content is the very first thing loaded (a lot of things depend on it)
 
         // [DGR] A single point to handle applications events (init, pause, resume, etc) in a high level.
         // No parameter is passed because it has to be created only once in order to make sure that it's initialized only once

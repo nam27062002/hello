@@ -27,9 +27,6 @@ public class UserProfile : UserSaveSystem
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
-	// Make sure persistence JSON is formatted equal in all systems!
-	private static readonly System.Globalization.CultureInfo JSON_FORMATTING_CULTURE = System.Globalization.CultureInfo.InvariantCulture;
-
 	public enum Currency {
 		NONE,
 
@@ -47,32 +44,32 @@ public class UserProfile : UserSaveSystem
 
     //------------------------------------------------------------------------//
     // PROPERTIES															  //
-    //------------------------------------------------------------------------//		
-
+    //------------------------------------------------------------------------//
     // Last save timestamp
     private DateTime m_saveTimestamp = DateTime.UtcNow;
-    public DateTime saveTimestamp
-    {
+    public DateTime saveTimestamp {
         get { return m_saveTimestamp; }
     }
-
     public int lastModified { get; set; }
 
-    // Set default values in the inspector, use static methods to set them from code
-    // [AOC] We want these to be consulted but never set from outside, so don't add a setter
-    [Separator("Economy")]
-	[SerializeField] private long m_coins;
+	// User ID shortcut
+	public string userId {
+		get { return GameSessionManager.SharedInstance.GetUID(); }
+	}
+
+    // Economy
+	private long m_coins;
 	public long coins {
 		get { return m_coins; }
 	}
-	
-	[SerializeField] private long m_pc;
+
+	private long m_pc;
 	public  long pc { 
 		get { return m_pc; }
 	}
 
-	[Separator("Game Settings")]
-	[SerializeField] private string m_currentDragon = "";
+	// Game Settings
+	private string m_currentDragon = "";
 	public string currentDragon {
 		get { return m_currentDragon; }
 		set {
@@ -80,26 +77,26 @@ public class UserProfile : UserSaveSystem
         }
 	}
 
-	[SerializeField] /*[SkuList(Definitions.Category.LEVELS)]*/ private string m_currentLevel = "";
+	private string m_currentLevel = "";
 	public string currentLevel {
 		get { return m_currentLevel; }
 		set { m_currentLevel = value; }
 	}
 
-	[SerializeField] private TutorialStep m_tutorialStep;
+	private TutorialStep m_tutorialStep;
 	public TutorialStep tutorialStep { 
 		get { return m_tutorialStep; }
 		set { m_tutorialStep = value; }
 	}
 
-	[SerializeField] private bool m_furyUsed = false;
+	private bool m_furyUsed = false;
 	public bool furyUsed {
 		get { return m_furyUsed; }
 		set { m_furyUsed = value; }
 	}
 
-	[Separator("Game Stats")]
-	[SerializeField] private int m_gamesPlayed = 0;
+	// Game Stats
+	private int m_gamesPlayed = 0;
 	public int gamesPlayed {
 		get { return m_gamesPlayed; }
 		set {
@@ -110,13 +107,13 @@ public class UserProfile : UserSaveSystem
 		}
 	}
 
-	[SerializeField] private long m_highScore = 0;
+	private long m_highScore = 0;
 	public long highScore {
 		get { return m_highScore; }
 		set { m_highScore = value; }
 	}
 	
-	[SerializeField] private int m_superFuryProgression = 0;
+	private int m_superFuryProgression = 0;
 	public int superFuryProgression {
 		get { return m_superFuryProgression; }
 		set { m_superFuryProgression = value; }
@@ -225,6 +222,13 @@ public class UserProfile : UserSaveSystem
 	public bool mapUnlocked {
 		// Map is unlocked as long as the timestamp hasn't expired
 		get { return m_mapResetTimestamp > DateTime.UtcNow; }
+	}
+
+	// Global events
+	// Events dictionary
+	private Dictionary<string, GlobalEventUserData> m_globalEvents = new Dictionary<string, GlobalEventUserData>();
+	public Dictionary<string, GlobalEventUserData> globalEvents {
+		get { return m_globalEvents; }
 	}
 
     //------------------------------------------------------------------------//
@@ -437,7 +441,7 @@ public class UserProfile : UserSaveSystem
 
         if (profile.ContainsKey("timestamp"))
         {
-            m_saveTimestamp = DateTime.Parse(profile["timestamp"], JSON_FORMATTING_CULTURE);
+			m_saveTimestamp = DateTime.Parse(profile["timestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);
         }
         else
         {
@@ -577,7 +581,7 @@ public class UserProfile : UserSaveSystem
 		m_dailyRemoveMissionAdUses = 0;
 		if ( _data.ContainsKey("dailyRemoveMissionAdTimestamp") )
 		{
-			m_dailyRemoveMissionAdTimestamp = DateTime.Parse(_data["dailyRemoveMissionAdTimestamp"], JSON_FORMATTING_CULTURE);;
+			m_dailyRemoveMissionAdTimestamp = DateTime.Parse(_data["dailyRemoveMissionAdTimestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);;
 
 			if ( _data.ContainsKey("dailyRemoveMissionAdUses") )
 				m_dailyRemoveMissionAdUses = _data["dailyRemoveMissionAdUses"].AsInt;
@@ -590,9 +594,23 @@ public class UserProfile : UserSaveSystem
 		// Map upgrades
 		key = "mapResetTimestamp";
 		if(_data.ContainsKey(key)) {
-			m_mapResetTimestamp = DateTime.Parse(_data["mapResetTimestamp"], JSON_FORMATTING_CULTURE);
+			m_mapResetTimestamp = DateTime.Parse(_data["mapResetTimestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);
 		} else {
 			m_mapResetTimestamp = DateTime.UtcNow;	// Already expired
+		}
+
+		// Global events
+		key = "globalEvents";
+		m_globalEvents.Clear();	// Clear current events data
+		if(_data.ContainsKey(key)) {
+			// Parse json array
+			SimpleJSON.JSONArray eventsData = _data[key].AsArray;
+			for(int i = 0; i < eventsData.Count; ++i) {
+				// Create a new event with the given data and store it to the events dictionary
+				GlobalEventUserData newEvent = new GlobalEventUserData();
+				newEvent.Load(eventsData[i]);
+				m_globalEvents[newEvent.eventId] = newEvent;
+			}
 		}
 	}
 
@@ -633,7 +651,7 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Incubator timer
-		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], JSON_FORMATTING_CULTURE);
+		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);
 
         // Eggs collected
         eggsCollected = _data["collectedAmount"].AsInt;
@@ -669,7 +687,7 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Reset timestamp
-		m_dailyChestsResetTimestamp = DateTime.Parse(_data["resetTimestamp"], JSON_FORMATTING_CULTURE);
+		m_dailyChestsResetTimestamp = DateTime.Parse(_data["resetTimestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);
 	}
 
 	//------------------------------------------------------------------------//
@@ -685,26 +703,26 @@ public class UserProfile : UserSaveSystem
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 		SimpleJSON.JSONClass profile = new SimpleJSON.JSONClass();
 
-        profile.Add("timestamp", m_saveTimestamp.ToString(JSON_FORMATTING_CULTURE));
+        profile.Add("timestamp", m_saveTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
         // Economy
-		profile.Add( "sc", m_coins.ToString(JSON_FORMATTING_CULTURE));
-		profile.Add( "pc", m_pc.ToString(JSON_FORMATTING_CULTURE));
+		profile.Add( "sc", m_coins.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add( "pc", m_pc.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Game settings
 		profile.Add("currentDragon",m_currentDragon);
 		profile.Add("currentLevel",m_currentLevel);
-		profile.Add("tutorialStep",((int)m_tutorialStep).ToString(JSON_FORMATTING_CULTURE));
-		profile.Add("furyUsed", m_furyUsed.ToString(JSON_FORMATTING_CULTURE));
+		profile.Add("tutorialStep",((int)m_tutorialStep).ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add("furyUsed", m_furyUsed.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Game stats
-		profile.Add("gamesPlayed",m_gamesPlayed.ToString(JSON_FORMATTING_CULTURE));
-		profile.Add("highScore",m_highScore.ToString(JSON_FORMATTING_CULTURE));
-		profile.Add("superFuryProgression",m_superFuryProgression.ToString(JSON_FORMATTING_CULTURE));
+		profile.Add("gamesPlayed",m_gamesPlayed.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add("highScore",m_highScore.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add("superFuryProgression",m_superFuryProgression.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		data.Add("userProfile", profile);
 
-		// DRAGONS
+		// Dragons
 		SimpleJSON.JSONArray dragons = new SimpleJSON.JSONArray();
 		foreach( KeyValuePair<string,DragonData> pair in m_dragonsBySku)
 		{
@@ -722,11 +740,18 @@ public class UserProfile : UserSaveSystem
 		data.Add("chests", SaveChestsData());
 
 		// Daily remove missions with ads
-		data.Add("dailyRemoveMissionAdTimestamp", m_dailyRemoveMissionAdTimestamp.ToString(JSON_FORMATTING_CULTURE));
-		data.Add("dailyRemoveMissionAdUses", m_dailyRemoveMissionAdUses.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("dailyRemoveMissionAdTimestamp", m_dailyRemoveMissionAdTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("dailyRemoveMissionAdUses", m_dailyRemoveMissionAdUses.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Map upgrades
-		data.Add("mapResetTimestamp", m_mapResetTimestamp.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("mapResetTimestamp", m_mapResetTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+
+		// Global Events
+		SimpleJSON.JSONArray eventsData = new SimpleJSON.JSONArray();
+		foreach(KeyValuePair<string, GlobalEventUserData> kvp in m_globalEvents) {
+			eventsData.Add(kvp.Value.Save(true));
+		}
+		data.Add("globalEvents", eventsData);
 
 		// Return it
 		return data;
@@ -759,14 +784,14 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Incubator timer
-		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
         // Eggs collected
-		data.Add("collectedAmount", eggsCollected.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("collectedAmount", eggsCollected.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Golden eggs
-		data.Add("goldenEggFragments", m_goldenEggFragments.ToString(JSON_FORMATTING_CULTURE));
-		data.Add("goldenEggsCollected", m_goldenEggsCollected.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("goldenEggFragments", m_goldenEggFragments.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("goldenEggsCollected", m_goldenEggsCollected.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
         return data;
 	}
@@ -789,7 +814,7 @@ public class UserProfile : UserSaveSystem
 		data.Add("chests", chestsArray);
 
 		// Reset timestamp
-		data.Add("resetTimestamp", m_dailyChestsResetTimestamp.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("resetTimestamp", m_dailyChestsResetTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Done!
 		return data;
@@ -831,6 +856,9 @@ public class UserProfile : UserSaveSystem
 		return ret;
 	}
 
+	//------------------------------------------------------------------------//
+	// PETS MANAGEMENT														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Get the current pet loadout for the target dragon.
 	/// </summary>
@@ -999,6 +1027,26 @@ public class UserProfile : UserSaveSystem
 		Messenger.Broadcast<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, _dragonSku, _slotIdx, string.Empty);
 
 		return _slotIdx;
+	}
+
+	//------------------------------------------------------------------------//
+	// GLOBAL EVENTS MANAGEMENT												  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get the data of this user for a given event.
+	/// A new one will be created if the user has no data stored for this event.
+	/// </summary>
+	/// <returns>The event data for the requested event.</returns>
+	/// <param name="_eventId">Event identifier.</param>
+	public GlobalEventUserData GetGlobalEventData(string _eventId) {
+		// If the user doesn't have data of this event, create a new one
+		GlobalEventUserData data = null;
+		if(!m_globalEvents.TryGetValue(_eventId, out data)) {
+			data = new GlobalEventUserData();
+			data.eventId = _eventId;
+			m_globalEvents[_eventId] = data;
+		}
+		return data;
 	}
 }
 
