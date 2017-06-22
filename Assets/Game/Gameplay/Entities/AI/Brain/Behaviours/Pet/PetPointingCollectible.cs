@@ -38,6 +38,8 @@ namespace AI {
 			PetPointingCollectibleTargetData m_data;
 			float m_speed;
 
+			GameObject m_visualCue;
+
 
 			public override StateComponentData CreateData() {
 				return new PetPointingCollectibleTargetData();
@@ -65,6 +67,8 @@ namespace AI {
 
 				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * m_data.m_speedMultiplier;
 
+				m_visualCue = m_pilot.FindObjectRecursive("visualCue");
+
 			}
 
 			protected override void OnEnter(State oldState, object[] param){
@@ -77,6 +81,13 @@ namespace AI {
 
 				m_pilot.SlowDown(true);
 				m_pilot.SetMoveSpeed(m_speed);
+
+				// Show some placeholder visual clue
+				if (m_visualCue)
+				{
+					m_visualCue.SetActive(true);
+				}
+
 			}
 
 			override protected void OnUpdate(){
@@ -121,6 +132,14 @@ namespace AI {
 					m_pilot.GoTo(destPos);
 				}
 
+			}
+
+			protected override void OnExit(State _newState){
+				// Hide placeholder visual
+				if (m_visualCue)
+				{
+					m_visualCue.SetActive(false);
+				}
 			}
 		}
 	}
