@@ -564,5 +564,15 @@ public class ProfilerControlPanelController : MonoBehaviour
         SceneState state = GameScene_States[sceneName];
         state.Toggle(sceneName);      
     }
+		
+	public void GameScene_BackgroundVisibleOnChangedValue(bool newValue)
+	{
+		GameScene_Toggle("ART_Levels_Background");
+	}
+
+	public void GameScene_FortressVisibleOnChangedValue(bool newValue)
+	{
+		GameScene_Toggle("ART_L1_Village_Fortress");
+	}
     #endregion
 }
