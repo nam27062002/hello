@@ -2,7 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
+//using UnityEditor;
 
 public class EditorCameraSnapshot : MonoBehaviour {
 
@@ -47,10 +47,10 @@ public class EditorCameraSnapshot : MonoBehaviour {
 //        m_collidersMask = LayerMask.GetMask("Ground", "GroundVisible", "Player", "AirPreys", "WaterPreys", "MachinePreys", "GroundPreys", "Mines");
         m_layermaskPlayer = LayerMask.GetMask("Player");
         m_layermaskNPC = LayerMask.GetMask("AirPreys", "WaterPreys", "MachinePreys", "GroundPreys", "Mines");
-        m_layermaskDefault = LayerMask.GetMask("Default");
+        m_layermaskDefault = LayerMask.GetMask("Default", "Obstacle");
         m_layermaskBackground = LayerMask.GetMask("Ignore Raycast");
 
-        m_screenshotPath = Directory.GetCurrentDirectory() + "/" + "Screnshot";
+        m_screenshotPath = Directory.GetCurrentDirectory() + "/" + "HD_SS_";
 
         m_screenShotcount = checkScreenshotCount(m_screenshotPath);
     }
