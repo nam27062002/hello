@@ -184,7 +184,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	private State m_previousState = State.Idle;
 
-	private Transform m_tongue;
+	// private Transform m_tongue;
 	private Transform m_head;
 	private Transform m_suction;
 	private Transform m_cameraLookAt;
@@ -255,8 +255,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-
-	public Transform tongue { get { if (m_tongue == null) { m_tongue = transform.FindTransformRecursive("Fire_Dummy"); } return m_tongue; } }
 	public Transform head   { get { if (m_head == null)   { m_head = transform.FindTransformRecursive("Dragon_Head");  } return m_head;   } }
 	private Vector3 m_lastPosition;
 	private Vector3 lastPosition
@@ -410,8 +408,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_dragonGravityModifier = m_dragon.data.def.GetAsFloat("gravityModifier");
         m_dragonAirGravityModifier = m_dragon.data.def.GetAsFloat("airGravityModifier");
         m_dragonWaterGravityModifier = m_dragon.data.def.GetAsFloat("waterGravityModifier");
-
-        m_tongue = transform.FindTransformRecursive("Fire_Dummy");
 	}
 
 	/// <summary>
