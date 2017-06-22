@@ -36,7 +36,7 @@ public class FireBreath : DragonBreathBehaviour {
 	private int m_groundMask;
 	private int m_noPlayerMask;
 
-	private Transform m_mouthTransform;
+	private Transform m_fireDummyTransform;
 	private Transform m_headTransform;
 
 	private Vector2 m_directionP;
@@ -81,7 +81,7 @@ public class FireBreath : DragonBreathBehaviour {
 		m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "FireBlocker");
 		m_noPlayerMask = ~LayerMask.GetMask("Player");
 
-		m_mouthTransform = GetComponent<DragonMotion>().tongue;
+		m_fireDummyTransform = transform.FindTransformRecursive("Fire_Dummy");
 		m_headTransform = GetComponent<DragonMotion>().head;
 
 		m_length = m_dragon.data.def.GetAsFloat("furyBaseLength");
@@ -89,7 +89,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 		m_actualLength = m_length;
 
-		m_sphCenter = m_mouthTransform.position;
+		m_sphCenter = m_fireDummyTransform.position;
 		m_sphRadius = 0;
 
 		m_direction = Vector2.zero;
@@ -140,7 +140,7 @@ public class FireBreath : DragonBreathBehaviour {
 	{
 		base.BeginFury( _type);
 		m_light = m_flameLightPoolHandler.GetInstance();
-		m_light.transform.position = m_mouthTransform.position;
+		m_light.transform.position = m_fireDummyTransform.position;
 		m_light.transform.localScale = new Vector3(m_actualLength * 1.25f, m_sizeCurve.Evaluate(1) * transform.localScale.x * 1.75f, 1f);
 	}
 
@@ -153,7 +153,7 @@ public class FireBreath : DragonBreathBehaviour {
 	}
 
 	override protected void Breath(){
-		m_direction = m_mouthTransform.position - m_headTransform.position;
+		m_direction = m_fireDummyTransform.position - m_headTransform.position;
 		m_direction.Normalize();
 		m_directionP.Set(m_direction.y, -m_direction.x);
 
@@ -166,7 +166,7 @@ public class FireBreath : DragonBreathBehaviour {
 		if (m_frame == 0) {
 			// Raycast to ground
 			RaycastHit ground;				
-			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * length, out ground, m_groundMask)) 
+			if (Physics.Linecast(m_fireDummyTransform.position, m_fireDummyTransform.position + (Vector3)m_direction * length, out ground, m_groundMask)) 
 			{
 				m_actualLength = ground.distance;
 				if ( ground.collider.CompareTag("Water") )
@@ -177,7 +177,7 @@ public class FireBreath : DragonBreathBehaviour {
 				m_actualLength = length;
 			}
 
-			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * length, out ground, m_noPlayerMask)) 
+			if (Physics.Linecast(m_fireDummyTransform.position, m_fireDummyTransform.position + (Vector3)m_direction * length, out ground, m_noPlayerMask)) 
 			{
 				flamesUpDir = Vector3.Reflect( m_direction, ground.normal);
 				flamesUpDir.Normalize();
@@ -187,7 +187,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 		{
 			// Pre-Calculate Triangle: wider bounding triangle to make burning easier
-			m_triP0 = m_mouthTransform.position;
+			m_triP0 = m_fireDummyTransform.position;
 			m_triP1 = m_triP0 + m_direction * m_actualLength - m_directionP * m_sizeCurve.Evaluate(1) * transform.localScale.x * 0.5f;
 			m_triP2 = m_triP0 + m_direction * m_actualLength + m_directionP * m_sizeCurve.Evaluate(1) * transform.localScale.x * 0.5f;
 			m_area = (-m_triP1.y * m_triP2.x + m_triP0.y * (-m_triP1.x + m_triP2.x) + m_triP0.x * (m_triP1.y - m_triP2.y) + m_triP1.x * m_triP2.y) * 0.5f;
@@ -223,7 +223,7 @@ public class FireBreath : DragonBreathBehaviour {
 				FlameParticle particle = obj.GetComponent<FlameParticle>();
 				particle.lifeTime = m_lifeTime;
 				particle.finalScale = m_finalScale;
-				particle.Activate(m_mouthTransform, m_direction * m_actualLength, Random.Range(0.75f, 1.25f), m_sizeCurve);
+				particle.Activate(m_fireDummyTransform, m_direction * m_actualLength, Random.Range(0.75f, 1.25f), m_sizeCurve);
 			}
 		}
 
@@ -254,7 +254,7 @@ public class FireBreath : DragonBreathBehaviour {
 					distanceMultiplier = 3;
 				}
 				particle.m_moveDir = flamesUpDir;
-				particle.Activate( scale, scale * 1.25f, (delta + 0.1f), scale * distanceMultiplier, m_mouthTransform.position + (Vector3)m_direction * correctedPos, m_mouthTransform);
+				particle.Activate( scale, scale * 1.25f, (delta + 0.1f), scale * distanceMultiplier, m_fireDummyTransform.position + (Vector3)m_direction * correctedPos, m_fireDummyTransform);
 			}
 		}
 
@@ -313,11 +313,11 @@ public class FireBreath : DragonBreathBehaviour {
 			{
 				case Type.Standard:
 				{
-					Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length * 2);
+					Gizmos.DrawLine(m_fireDummyTransform.position, m_fireDummyTransform.position + (Vector3)m_direction * m_length * 2);
 				}break;
 				case Type.Mega:
 				{
-					Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length);
+					Gizmos.DrawLine(m_fireDummyTransform.position, m_fireDummyTransform.position + (Vector3)m_direction * m_length);
 				}break;
 			}
 		}

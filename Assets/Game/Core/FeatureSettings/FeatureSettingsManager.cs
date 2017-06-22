@@ -208,7 +208,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         // We need to wait for the response
         State = EState.WaitingForServerResponse;
 
-        GameServerManager.SharedInstance.GetQualitySettings(delegate (Error error, Dictionary<string, object> response)
+        GameServerManager.SharedInstance.GetQualitySettings(
+		(Error error, GameServerManager.ServerResponse response) =>
         {
             if (error == null)
             {
@@ -270,7 +271,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         string profileName = Device_CalculatedProfile;
         //profileName = "high";
         json.Add("profile", profileName);             
-        GameServerManager.SharedInstance.SetQualitySettings(json.ToString(), delegate (Error error, Dictionary<string, object> response)
+        GameServerManager.SharedInstance.SetQualitySettings(json.ToString(), 
+		(Error error, GameServerManager.ServerResponse response) =>
         {
             if (error == null)
             {

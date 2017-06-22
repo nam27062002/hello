@@ -33,10 +33,16 @@ public class DefinitionsCategory
 
 	// Progression
 	public const string LEVELS = "LEVELS";
+
+	// Mission
 	public const string MISSIONS = "MISSIONS";
 	public const string MISSION_TYPES = "MISSION_TYPES";
 	public const string MISSION_DIFFICULTIES = "MISSION_DIFFICULTIES";
 	public const string MISSION_MODIFIERS = "MISSION_MODIFIERS";
+
+	// Global Events
+	public const string GLOBAL_EVENT_OBJECTIVES = "GLOBAL_EVENT_OBJECTIVES";
+	public const string GLOBAL_EVENT_REWARDS = "GLOBAL_EVENT_REWARDS";
 
 	// Dragons
 	public const string DRAGONS = "DRAGONS";

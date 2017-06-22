@@ -155,6 +155,7 @@ GameObject:
   - component: {fileID: 4123806754217278}
   - component: {fileID: 33087145536540690}
   - component: {fileID: 23297888542390924}
+  - component: {fileID: 114594637227063056}
   m_Layer: 24
   m_Name: view
   m_TagString: Untagged
@@ -184,7 +185,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012592393062}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 159.03568, y: 7.460153, z: -11.619141}
+  m_LocalPosition: {x: 159.3, y: 0.16, z: -11.619141}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4123806754217278}
@@ -594,6 +595,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fbfcf66f990e43939a1b60ec17b7f6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114594637227063056
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1832573498641906}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db034c24f2ef34bb4b159beded17fcf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_wobbleDuration: 0.5
+  m_wobbleOffset: {x: 0.08, y: 0.08}
+  m_wobbleSpeed: {x: 12, y: 15}
+  m_nextWobbleTimeout: 1
+  m_disableWhenDone: 1
 --- !u!114 &114615019526818454
 MonoBehaviour:
   m_ObjectHideFlags: 1

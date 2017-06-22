@@ -8,9 +8,13 @@ using System;
 using System.Collections.Generic;
 public class AuthenticatorCalety : Authenticator
 {
-    protected override void ExtendedCheckConnection(Action<Error> callback)
+	protected override void ExtendedCheckConnection(Action<Error> callback)
     {
-        GameServerManager.SharedInstance.Ping(callback);
+		GameServerManager.SharedInstance.Ping(
+			(Error _error, GameServerManager.ServerResponse _response) => { 
+				callback(_error); 
+			}
+		);
     }
 
     public override void Authenticate(string fgolID, User.LoginCredentials credentials, User.LoginType network, Action<Error, AuthResult> callback)
@@ -30,7 +34,7 @@ public class AuthenticatorCalety : Authenticator
 
         Log("Authenticate " + network.ToString() + " socialID = " + credentials.socialID);
         GameServerManager.SharedInstance.LogInToServerThruPlatform(User.LoginTypeToCaletySocialPlatform(network), credentials.socialID, credentials.accessToken, 
-            delegate (Error commandError, Dictionary<string, object> response)
+			(Error commandError, GameServerManager.ServerResponse response) => 
             {
                 Log("OnLoginToServerThruPlatform " + commandError);
                 if (commandError == null)
@@ -86,15 +90,19 @@ public class AuthenticatorCalety : Authenticator
         );        
     }
 
-    public override void Logout(Action<Error> callback)
+	public override void Logout(Action<Error> callback)
     {
-        GameServerManager.SharedInstance.LogOut(callback);
+		GameServerManager.SharedInstance.LogOut(
+			(Error _error, GameServerManager.ServerResponse _response) => { 
+				callback(_error); 
+			}
+		);
     }
 
     public override void GetServerTime(Action<Error, string, int> onGetServerTime)
     {
         GameServerManager.SharedInstance.GetServerTime(
-            delegate (Error commandError, Dictionary<string, object> response)
+			(Error commandError, GameServerManager.ServerResponse response) =>
             {
                 string dateTimeNow = null;
                 int unixTimestamp = -1;
@@ -135,7 +143,7 @@ public class AuthenticatorCalety : Authenticator
         }
 
         GameServerManager.SharedInstance.UpdateSaveVersion(preliminary,
-            delegate (Error commandError, Dictionary<string, object> response)
+            (Error commandError, GameServerManager.ServerResponse response) =>
             {
                 //string dateTimeNow = null;
                 int unixTimestamp = -1;

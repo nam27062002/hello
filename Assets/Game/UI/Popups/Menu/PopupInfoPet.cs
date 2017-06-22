@@ -197,9 +197,18 @@ public class PopupInfoPet : MonoBehaviour {
 				.Append(m_panel.transform.DOLocalMoveX(0f, duration).SetEase(Ease.OutCubic))
 				.Join(canvasGroup.DOFade(1f, duration * 0.5f))
 
+				.OnStepComplete(() => {
+					// Re-enable pet selector
+					m_scroller.enabled = true;
+				})
+
 				.SetAutoKill(false)
 				.Pause();
 		}
+
+		// Disable pet selector so we don't interrupt the animation
+		// Will be automatically re-enabled upon finishing the animation
+		m_scroller.enabled = false;
 
 		// Launch the animation in the proper direction
 		if(_backwards) {
@@ -221,9 +230,6 @@ public class PopupInfoPet : MonoBehaviour {
 	/// <param name="_newIdx">New selected pet index.</param>
 	/// <param name="_looped">Have we looped to do the new selection?
 	public void OnPetSelected(int _oldIdx, int _newIdx, bool _looped) {
-		// Ignore if animating
-		//if(m_scrollSequence != null && m_scrollSequence.IsPlaying()) return;
-
 		// Record selection change
 		m_hasScrolled = true;
 

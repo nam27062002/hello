@@ -9,7 +9,6 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.Events;
-using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -113,7 +112,7 @@ public class PopupLauncher : MonoBehaviour {
 		OnPopupInit.Invoke(m_popup);
 
 		// Open (apply delay)
-		DOVirtual.DelayedCall(m_delay, () => m_popup.Open());
+		UbiBCN.CoroutineManager.DelayedCall(() => m_popup.Open(), m_delay);
 	}
 
 	//------------------------------------------------------------------------//

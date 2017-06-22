@@ -50,6 +50,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: Archer01
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &11441542
 MonoBehaviour:
@@ -84,10 +85,10 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"action":4096,"time":2.5,"duration":0,"dataType":"AI.Behaviour.ActivateActionPeriodicallyData","editorFolded":false},{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":11,"panicSpeed":14,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":0,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
+  m_serializedJson: '[{"action":4096,"time":1.5,"duration":1,"dataType":"AI.Behaviour.ActivateActionPeriodicallyData","editorFolded":false},{"speed":12,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":15,"panicSpeed":20,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":0,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
   m_databaseKey: PF_PROTO_Squid
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 10
+  m_avoidDistanceAttenuation: 50
   m_avoidCollisions: 0
   m_avoidWater: 0
 --- !u!1001 &100100000
