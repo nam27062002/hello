@@ -546,13 +546,14 @@ GameObject:
   - component: {fileID: 114015245250687656}
   - component: {fileID: 114302651601776444}
   - component: {fileID: 225038157795728758}
+  - component: {fileID: 114172073133292278}
   m_Layer: 5
   m_Name: PF_PopupDragonInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1814219973190316
 GameObject:
   m_ObjectHideFlags: 1
@@ -1177,6 +1178,18 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114172073133292278
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1813715394893022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114189385545061590
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1322,7 +1335,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnOpenPreAnimation:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114172073133292278}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: hd_popup_open
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   OnOpenPostAnimation:
@@ -1332,7 +1356,18 @@ MonoBehaviour:
       PublicKeyToken=null
   OnClosePreAnimation:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114172073133292278}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: hd_popup_close
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   OnClosePostAnimation:
@@ -1373,7 +1408,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1501170721002422}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5378e1f14d974d419f811d6b0861f20, type: 3}
   m_Name: 
@@ -2199,7 +2234,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1407529736110326}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5378e1f14d974d419f811d6b0861f20, type: 3}
   m_Name: 
@@ -2962,7 +2997,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 295, y: -60}
-  m_SizeDelta: {x: 0, y: 120}
+  m_SizeDelta: {x: 230.36, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224044711543105330
 RectTransform:
@@ -2995,10 +3030,10 @@ RectTransform:
   m_Father: {fileID: 224610525073785552}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 450, y: -600}
+  m_SizeDelta: {x: 900, y: 1200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224050372901631498
 RectTransform:
@@ -3126,10 +3161,10 @@ RectTransform:
   m_Father: {fileID: 224925384277449662}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 129.82, y: -60}
+  m_SizeDelta: {x: 80, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224150284375335854
 RectTransform:
@@ -3147,7 +3182,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 285, y: -60}
-  m_SizeDelta: {x: 0, y: 120}
+  m_SizeDelta: {x: 230.36, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224162030524947980
 RectTransform:
@@ -3277,10 +3312,10 @@ RectTransform:
   m_Father: {fileID: 224127871813178118}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 129.82, y: -60}
+  m_SizeDelta: {x: 60, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224474138268283502
 RectTransform:
@@ -3495,7 +3530,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 0, y: 189.01001}
+  m_SizeDelta: {x: 688.27, y: 189.01001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224807799245091536
 RectTransform:
@@ -3530,10 +3565,10 @@ RectTransform:
   m_Father: {fileID: 224799263816429036}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 315.135, y: -102.005005}
+  m_SizeDelta: {x: 550.27, y: 75.01}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224836958676729686
 RectTransform:
@@ -3643,10 +3678,10 @@ RectTransform:
   m_Father: {fileID: 224610525073785552}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 1350, y: -600}
+  m_SizeDelta: {x: 900, y: 1200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &225038157795728758
 CanvasGroup:

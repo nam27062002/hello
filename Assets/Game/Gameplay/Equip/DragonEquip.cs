@@ -471,12 +471,11 @@ public class DragonEquip : MonoBehaviour {
 		// Is it meant for this dragon?
 		if(m_dragonSku == _sku) {
 			// Do it with some delay to sync with FX
-			// DOTween allows us to do it in a super-easy way
-			DOVirtual.DelayedCall(
-				0.25f, 
+			UbiBCN.CoroutineManager.DelayedCall(
 				() => {
 					EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
 				},
+				0.25f, 
 				false
 			);
 		}

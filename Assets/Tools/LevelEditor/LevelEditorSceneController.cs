@@ -65,6 +65,8 @@ namespace LevelEditor {
 
             // Call parent
             base.Awake();
+
+			
 		}
 
 		/// <summary>
@@ -78,6 +80,16 @@ namespace LevelEditor {
 			}
 
 			InstanceManager.player.gameObject.SetActive(true);
+
+			ChestManager.CreateInstance();
+			ChestManager.OnLevelLoaded();
+			EggManager.SelectCollectibleEgg();
+
+			HungryLettersManager lettersManager = FindObjectOfType<HungryLettersManager>();
+			if ( lettersManager )
+			{
+				lettersManager.Respawn();
+			}
 		}
 
 		/// <summary>

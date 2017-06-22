@@ -378,7 +378,7 @@ public class HungryLettersManager : MonoBehaviour
 		m_lettersCollected = 0;
 	}
 
-	private void Respawn()
+	public void Respawn()
 	{
 		Reset();
 		// instantiate the new letters.

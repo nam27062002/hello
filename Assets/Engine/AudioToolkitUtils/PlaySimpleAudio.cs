@@ -6,8 +6,12 @@ namespace UbiBCN{
 
 		public string m_audioId;
 		public void Play () {
-			if ( !string.IsNullOrEmpty(m_audioId) )
-				AudioController.Play(m_audioId);
+			Play(m_audioId);
+		}
+
+		public void Play(string _id) {
+			if ( !string.IsNullOrEmpty(_id) )
+				AudioController.Play(_id);
 		}
 	}
 }

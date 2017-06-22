@@ -15,7 +15,8 @@ public class SocialManagerUtilities
     {
         PermissionType[] permissions = new PermissionType[] { PermissionType.Basic, PermissionType.Friends };
 
-        GameServerManager.SharedInstance.CheckConnection(delegate (Error error) {
+        GameServerManager.SharedInstance.CheckConnection(
+		(Error error, GameServerManager.ServerResponse response) => {
             if (error == null)
             {
                 Debug.Log("SocialManagerUtilities (CheckConnectionAuth) :: Internet connection available");

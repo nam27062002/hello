@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 89c8d7b9aa8b64fc3abc6612542a1259
-timeCreated: 1497347579
+timeCreated: 1498038955
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
@@ -11,48 +11,56 @@ ModelImporter:
     100006: Pet_L_Back_Leg_1
     100008: Pet_L_Back_Leg_2
     100010: Pet_L_Back_Leg_Ankle
-    100012: Pet_L_Bottom_Eyelid
-    100014: Pet_L_Front_Leg_1
-    100016: Pet_L_Front_Leg_2
-    100018: Pet_L_Front_Leg_Ankle
-    100020: Pet_L_Top_Eyelid
-    100022: Pet_Master
-    100024: //RootNode
-    100026: Pet_R_Back_Leg_1
-    100028: Pet_R_Back_Leg_1 1
-    100030: Pet_R_Back_Leg_2
-    100032: Pet_R_Back_Leg_2 1
+    100012: Pet_L_Back_Leg_Platform
+    100014: Pet_L_Bottom_Eyelid
+    100016: Pet_L_Front_Leg_1
+    100018: Pet_L_Front_Leg_2
+    100020: Pet_L_Front_Leg_Ankle
+    100022: Pet_L_Front_Leg_Platform
+    100024: Pet_L_Top_Eyelid
+    100026: Pet_Master
+    100028: //RootNode
+    100030: Pet_R_Back_Leg_1
+    100032: Pet_R_Back_Leg_2
     100034: Pet_R_Back_Leg_Ankle
-    100036: Pet_R_Back_Leg_Ankle 1
+    100036: Pet_R_Back_Leg_Platform
     100038: Pet_R_Bottom_Eyelid
-    100040: Pet_R_Top_Eyelid
-    100042: Pet_Tail_1
-    100044: Pet_Tail_2
-    100046: Pet_Tail_3
+    100040: Pet_R_Front_Leg_1
+    100042: Pet_R_Front_Leg_2
+    100044: Pet_R_Front_Leg_Ankle
+    100046: Pet_R_Front_Leg_Platform
+    100048: Pet_R_Top_Eyelid
+    100050: Pet_Tail_1
+    100052: Pet_Tail_2
+    100054: Pet_Tail_3
     400000: Pet_Head
     400002: Pet_Hip
     400004: Pet_Jaw
     400006: Pet_L_Back_Leg_1
     400008: Pet_L_Back_Leg_2
     400010: Pet_L_Back_Leg_Ankle
-    400012: Pet_L_Bottom_Eyelid
-    400014: Pet_L_Front_Leg_1
-    400016: Pet_L_Front_Leg_2
-    400018: Pet_L_Front_Leg_Ankle
-    400020: Pet_L_Top_Eyelid
-    400022: Pet_Master
-    400024: //RootNode
-    400026: Pet_R_Back_Leg_1
-    400028: Pet_R_Back_Leg_1 1
-    400030: Pet_R_Back_Leg_2
-    400032: Pet_R_Back_Leg_2 1
+    400012: Pet_L_Back_Leg_Platform
+    400014: Pet_L_Bottom_Eyelid
+    400016: Pet_L_Front_Leg_1
+    400018: Pet_L_Front_Leg_2
+    400020: Pet_L_Front_Leg_Ankle
+    400022: Pet_L_Front_Leg_Platform
+    400024: Pet_L_Top_Eyelid
+    400026: Pet_Master
+    400028: //RootNode
+    400030: Pet_R_Back_Leg_1
+    400032: Pet_R_Back_Leg_2
     400034: Pet_R_Back_Leg_Ankle
-    400036: Pet_R_Back_Leg_Ankle 1
+    400036: Pet_R_Back_Leg_Platform
     400038: Pet_R_Bottom_Eyelid
-    400040: Pet_R_Top_Eyelid
-    400042: Pet_Tail_1
-    400044: Pet_Tail_2
-    400046: Pet_Tail_3
+    400040: Pet_R_Front_Leg_1
+    400042: Pet_R_Front_Leg_2
+    400044: Pet_R_Front_Leg_Ankle
+    400046: Pet_R_Front_Leg_Platform
+    400048: Pet_R_Top_Eyelid
+    400050: Pet_Tail_1
+    400052: Pet_Tail_2
+    400054: Pet_Tail_3
     7400000: Swiming
     9500000: //RootNode
   materials:
@@ -135,11 +143,11 @@ ModelImporter:
         weight: 1
       - path: Pet_Hip/Pet_R_Back_Leg_1/Pet_R_Back_Leg_2/Pet_R_Back_Leg_Ankle
         weight: 1
-      - path: Pet_Hip/Pet_R_Back_Leg_1 1
+      - path: Pet_Hip/Pet_R_Front_Leg_1
         weight: 1
-      - path: Pet_Hip/Pet_R_Back_Leg_1 1/Pet_R_Back_Leg_2 1
+      - path: Pet_Hip/Pet_R_Front_Leg_1/Pet_R_Front_Leg_2
         weight: 1
-      - path: Pet_Hip/Pet_R_Back_Leg_1 1/Pet_R_Back_Leg_2 1/Pet_R_Back_Leg_Ankle 1
+      - path: Pet_Hip/Pet_R_Front_Leg_1/Pet_R_Front_Leg_2/Pet_R_Front_Leg_Ankle
         weight: 1
       - path: Pet_Hip/Pet_Tail_1
         weight: 1
@@ -147,7 +155,15 @@ ModelImporter:
         weight: 1
       - path: Pet_Hip/Pet_Tail_1/Pet_Tail_2/Pet_Tail_3
         weight: 1
+      - path: Pet_L_Back_Leg_Platform
+        weight: 1
+      - path: Pet_L_Front_Leg_Platform
+        weight: 1
       - path: Pet_Master
+        weight: 1
+      - path: Pet_R_Back_Leg_Platform
+        weight: 1
+      - path: Pet_R_Front_Leg_Platform
         weight: 1
       maskType: 3
       maskSource: {instanceID: 0}
