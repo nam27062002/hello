@@ -341,7 +341,7 @@ if $BUILD_IOS; then
 
     print_builder "Archiving"
     rm -rf "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}"    # just in case
-    xcodebuild archive -project "${PROJECT_NAME}" -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM}"  PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}"
+    xcodebuild archive -project "${PROJECT_NAME}" -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM}"
 
     # Generate IPA file
     print_builder "Exporting IPA"
