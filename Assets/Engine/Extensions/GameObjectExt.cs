@@ -270,6 +270,43 @@ public static class GameObjectExt {
         return results;
     }
 
+    public static List<GameObject> FindAllGameObjects(bool _includeInactive) {
+        List<GameObject> results = new List<GameObject>();
+        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++) {
+            var s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+            if (s.isLoaded) {
+                GameObject[] allGameObjects = s.GetRootGameObjects();
+                GameObject go;
+                for (int j = 0; j < allGameObjects.Length; j++) {
+                    go = allGameObjects[j];
+                    FindAllGameObjectsInParent(go, results, _includeInactive, true);                                        
+                }
+            }
+        }
+
+        return results;
+    }
+
+    private static void FindAllGameObjectsInParent(GameObject _parent, List<GameObject> _list, bool _includeInactive, bool _includeParent)
+    {
+        if (_parent != null && _list != null)
+        {            
+            if (_parent.activeInHierarchy || _includeInactive)
+            {
+                if (_includeParent)
+                
+                _list.Add(_parent);
+
+                Transform t = _parent.transform;
+                int count = t.childCount;
+                for (int i = 0; i < count; i++)
+                {
+                    FindAllGameObjectsInParent(t.GetChild(i).gameObject, _list, _includeInactive, true);
+                }
+            }
+        }       
+    }
+
     /// <summary>
     /// Returns the first component of type T found in any of the child objects named <paramref name="_objName"/>.
     /// </summary>
