@@ -50,15 +50,15 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         get { return instance.m_statsCounter; }
     }
 
-    private bool m_isFpsEnabled;
+    private bool m_isStatsEnabled;
     public bool IsStatsEnabled {
         get {
-            return m_isFpsEnabled;
+            return m_isStatsEnabled;
         }
 
         set {
-            m_isFpsEnabled = value;
-            m_fpsCounter.gameObject.SetActive(m_isFpsEnabled);
+            m_isStatsEnabled = value;
+            m_statsCounter.SetActive(m_isStatsEnabled);
         }        
     }
 

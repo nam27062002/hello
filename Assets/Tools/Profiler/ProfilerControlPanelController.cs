@@ -407,7 +407,7 @@ public class ProfilerControlPanelController : MonoBehaviour
     {
         if (ControlPanel.instance != null)
         {
-            ControlPanel.instance.IsStatsEnabled = newValue;
+            ControlPanel.instance.IsStatsEnabled = m_statsToggle.isOn;
         }
     }
     #endregion
