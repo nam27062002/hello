@@ -44,8 +44,14 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		get { return instance.m_fpsCounter; }
 	}
 
+    [SerializeField] private GameObject m_statsCounter;
+    public static GameObject statsCounter
+    {
+        get { return instance.m_statsCounter; }
+    }
+
     private bool m_isFpsEnabled;
-    public bool IsFpsEnabled {
+    public bool IsStatsEnabled {
         get {
             return m_isFpsEnabled;
         }
@@ -134,7 +140,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		// Start disabled
 		m_panel.gameObject.SetActive(false);
 		m_toggleButton.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
-        IsFpsEnabled = UnityEngine.Debug.isDebugBuild;        
+        IsStatsEnabled = UnityEngine.Debug.isDebugBuild;        
         ShowMemoryUsage = UnityEngine.Debug.isDebugBuild;
         m_logicUnitsCounter.transform.parent.gameObject.SetActive(UnityEngine.Debug.isDebugBuild && ProfilerSettingsManager.ENABLED);
 

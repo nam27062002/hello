@@ -133,7 +133,7 @@ public class ProfilerControlPanelController : MonoBehaviour
         }
 
         Checkpoints_Start();
-        FpsCounter_Start();
+        Stats_Start();
     }
 
     void OnEnable()
@@ -392,22 +392,22 @@ public class ProfilerControlPanelController : MonoBehaviour
     }
     #endregion
 
-    #region Fps_counter
-    public Toggle m_fpsCounterToggle;
+    #region stats
+    public Toggle m_statsToggle;
 
-    private void FpsCounter_Start()
+    private void Stats_Start()
     {
-        if (m_fpsCounterToggle != null && ControlPanel.instance != null)
+        if (m_statsToggle != null && ControlPanel.instance != null)
         {
-            m_fpsCounterToggle.isOn = ControlPanel.instance.IsFpsEnabled;
+            m_statsToggle.isOn = ControlPanel.instance.IsStatsEnabled;
         }
     }
 
-    public void FpsCounter_OnChangedValue(bool newValue)
+    public void Stats_OnChangedValue(bool newValue)
     {
         if (ControlPanel.instance != null)
         {
-            ControlPanel.instance.IsFpsEnabled = newValue;
+            ControlPanel.instance.IsStatsEnabled = newValue;
         }
     }
     #endregion
