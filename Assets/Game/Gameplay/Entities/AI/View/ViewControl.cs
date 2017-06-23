@@ -146,6 +146,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     private float m_freezingLevel = 0;
     private bool m_wasFreezing = true;
 
+    private ParticleData m_stunParticle;
+    private GameObject m_stunParticleInstance;
+
     //-----------------------------------------------
     // Use this for initialization
     //-----------------------------------------------
@@ -234,6 +237,12 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_fireParticlesParents = new Transform[m_fireParticles.Length];
 
         Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        if (m_stunParticle == null)
+        {
+        	m_stunParticle = new ParticleData("PS_Stun","",Vector3.one);
+        }
+		m_stunParticle.CreatePool();
+
     }
 
 	void Start() {
@@ -360,7 +369,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				m_fireParticles[i] = null;
 			}
 		}
-
+		if ( m_stunParticleInstance )
+		{
+			m_stunParticle.ReturnInstance( m_stunParticleInstance );
+			m_stunParticleInstance = null;
+		}
 		RemoveAudios();
     }
 
@@ -915,9 +928,18 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		if ( stunned ){
 			m_animator.enabled = false;
 			// if no stunned particle -> stun
+			if (m_stunParticleInstance == null)
+			{
+				m_stunParticleInstance = m_stunParticle.Spawn(transform);
+			}
 		}else{
 			m_animator.enabled = true;
 			// if stunned particle -> remove stun
+			if ( m_stunParticleInstance )
+			{
+				m_stunParticle.ReturnInstance( m_stunParticleInstance );
+				m_stunParticleInstance = null;
+			}
 		}
 	}
 
