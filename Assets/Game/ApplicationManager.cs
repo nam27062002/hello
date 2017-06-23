@@ -82,6 +82,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         Notifications_Init();
 
+        HDTrackingManager.Instance.NotifyStartSession();
         // [DGR] GAME_VALIDATOR: Not supported yet
         // GameValidator gv = new GameValidator();
         //gv.StartBuildValidation();        
@@ -123,13 +124,18 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     protected override void OnDestroy()
     {
-        base.OnDestroy();
+        base.OnDestroy();        
+
         m_isAlive = false;
     }
 
     protected override void OnApplicationQuit()
     {
         base.OnApplicationQuit();
+
+        // Tracking session has to be finished when the game is closed
+        HDTrackingManager.Instance.NotifyEndSession();
+        
         m_isAlive = false;
         Messenger.Broadcast(GameEvents.APPLICATION_QUIT);
     }
@@ -230,7 +236,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
 
             // ---------------------------
-            // Test togling profiler load scenes scene
+            // Test toggling profiler load scenes scene
             //Debug_ToggleProfilerLoadScenesScene();
             // ---------------------------
 
@@ -245,11 +251,15 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
         }
 
+        HDTrackingManager.Instance.Update();
+
         if (NeedsToRestartFlow)
         {
             NeedsToRestartFlow = false;
+            
+            // The user is sent to the initial loading again
             FlowManager.Restart();
-        }
+        }        
 
         if (FeatureSettingsManager.IsDebugEnabled)
         {
