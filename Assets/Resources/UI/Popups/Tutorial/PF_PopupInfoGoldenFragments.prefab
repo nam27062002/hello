@@ -23,13 +23,14 @@ GameObject:
   - component: {fileID: 114000011298517116}
   - component: {fileID: 225000013469517432}
   - component: {fileID: 114541887567281348}
+  - component: {fileID: 114530752840034214}
   m_Layer: 5
   m_Name: PF_PopupInfoGoldenFragments
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1000010518139610
 GameObject:
   m_ObjectHideFlags: 1
@@ -714,7 +715,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnOpenPreAnimation:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114530752840034214}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: hd_popup_open
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   OnOpenPostAnimation:
@@ -724,7 +736,18 @@ MonoBehaviour:
       PublicKeyToken=null
   OnClosePreAnimation:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114530752840034214}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: hd_popup_close
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   OnClosePostAnimation:
@@ -1338,6 +1361,18 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 0
+--- !u!114 &114530752840034214
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010013748420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114541887567281348
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1708,7 +1743,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 0, y: 189.01001}
+  m_SizeDelta: {x: 925.01, y: 189.01001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000010689311958
 RectTransform:
@@ -1723,10 +1758,10 @@ RectTransform:
   m_Father: {fileID: 224000010615425268}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 462.505, y: -102.005005}
+  m_SizeDelta: {x: 845.01, y: 75.01}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000011149787436
 RectTransform:
@@ -1802,7 +1837,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0.000015258789}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 44, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000012422039530
 RectTransform:
@@ -1914,10 +1949,10 @@ RectTransform:
   m_Father: {fileID: 224758254634937742}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 62}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 252.5, y: -31}
+  m_SizeDelta: {x: 505, y: 62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224590574354602526
 RectTransform:
@@ -2046,10 +2081,10 @@ RectTransform:
   m_Father: {fileID: 224758254634937742}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 62}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 757.5, y: -31}
+  m_SizeDelta: {x: 505, y: 62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224870163174999408
 RectTransform:

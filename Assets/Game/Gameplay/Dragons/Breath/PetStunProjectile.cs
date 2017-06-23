@@ -12,6 +12,9 @@ public class PetStunProjectile :  MonoBehaviour, IProjectile {
 	private bool m_hasBeenShot;
 	private PoolHandler m_poolHandler;
 
+	public DragonTier m_maxValidTier = DragonTier.TIER_4;
+	public DragonTier m_minValidTier = DragonTier.TIER_0;
+
 
 	// Use this for initialization
 	void Start () 
@@ -88,19 +91,30 @@ public class PetStunProjectile :  MonoBehaviour, IProjectile {
 	{
 		// if the collision is ground -> Explode!!
 		if(((1 << _collision.gameObject.layer) & m_colliderMask) > 0){
-			Explode(false);
 			AI.Machine machine = _collision.collider.GetComponent<AI.Machine>();
-			if ( machine )
-				machine.Stun(m_stunDuration);
+
+			OnCommonEnter( machine );
 		}
 	}
 
 	void OnTriggerEnter( Collider _collider ){
 		if(((1 << _collider.gameObject.layer) & m_colliderMask) > 0){
-			Explode(false);
 			AI.Machine machine = _collider.GetComponent<AI.Machine>();
-			if ( machine )
+
+			OnCommonEnter( machine );
+		}
+	}
+
+	void OnCommonEnter( AI.Machine machine )
+	{
+		Explode(false);
+		if ( machine )
+		{
+			Entity entity = machine.GetComponent<Entity>();
+			if ( entity && entity.edibleFromTier >= m_minValidTier && entity.edibleFromTier <= m_maxValidTier)
+			{
 				machine.Stun(m_stunDuration);
+			}
 		}
 	}
 

@@ -60,8 +60,14 @@ public class PopupTutorialControls : MonoBehaviour {
 		m_loadProgress = m_sceneController.levelActivationProgress;
 		m_loadingInfo.Set(m_loadProgress < 1f, true);
 		m_playButton.Set(m_loadProgress >= 1f, true);
-		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST && m_loadProgress >= 1)
-		{
+
+        // Loading screen is being painted on the top of this popup until the game is ready to be played
+        // The user is supposed to see this popup when the game has been loaded
+        if (m_loadProgress >= 1f) {
+            LoadingScreen.Toggle(false);
+        }
+
+        if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST && m_loadProgress >= 1) {
 			GetComponent<PopupController>().Close(true);
 		}
 		//m_loadingTxt.text = System.String.Format(m_localizedLoadingString, StringUtils.FormatNumber(m_loadProgress * 100f, 0));
