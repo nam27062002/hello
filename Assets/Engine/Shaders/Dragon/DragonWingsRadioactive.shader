@@ -13,9 +13,6 @@ Properties {
 
 	_DetailTex ("Detail (RGB)", 2D) = "white" {} // r -> inner light, g -> specular
 
-//	_RadMap("Radiation Map", 2D) = "white" {}
-//	_RadAmount("Radiation amount", Range(0.0, 1.0)) = 0.0
-
 	_Tint ("Color Multiply", Color) = (1,1,1,1)
 	_ColorAdd ("Color Add", Color) = (0,0,0,0)
 
@@ -29,25 +26,20 @@ Properties {
 	_SecondLightDir("Second Light dir", Vector) = (0,0,-1,0)
 	_SecondLightColor("Second Light Color", Color) = (0.0, 0.0, 0.0, 0.0)
 
-		_OutlineColor("Outline Color", Color) = (1.0, 1.0, 0.0, 1.0)
-		_OutlineWidth("Outline Width", float) = 0.2
-		_OutlineGradient("Outline Gradient", float) = 2.0
-
-
-
+	_OutlineColor("Outline Color", Color) = (1.0, 1.0, 0.0, 1.0)
+	_OutlineWidth("Outline Width", float) = 0.2
+	_OutlineGradient("Outline Gradient", float) = 2.0
 
 	_StencilMask("Stencil Mask", int) = 10
 }
 
 SubShader {
-//	Tags {"LightMode" = "ForwardBase"}
+	Tags{ "Queue" = "Transparent+500" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
+
 	ColorMask RGBA
 	LOD 100
 
-
 	Pass{
-//		Tags{ "Queue" = "Transparent + 1000" "RenderType" = "Transparent" }
-		Tags{ "Queue" = "Transparent+50" "RenderType" = "Transparent"  "LightMode" = "ForwardBase" }
 		ZWrite off
 		Cull back
 
@@ -87,25 +79,7 @@ SubShader {
 			v2fo o;
 			float4 nvert = float4(v.vertex.xyz + v.normal * _OutlineWidth, 1.0);
 			o.vertex = mul(UNITY_MATRIX_MVP, nvert);
-			//			o.vertex.z = 0.0;
-			//			o.vertex.z = UNITY_MATRIX_MVP[3][2];
-			// Normal
 			o.normal = UnityObjectToWorldNormal(v.normal);
-			//			o.normal = UnityObjectToWorldNormal(normalize(v.vertex.xyz));
-
-			// Half View - See: Blinn-Phong
-			//			o.viewDir = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
-
-			/*
-			v2fo o;
-			o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-
-			o.normal = mul((float3x3)UNITY_MATRIX_IT_MV, v.normal);
-			float2 offset = TransformViewToProjection(o.normal.xy);
-
-			o.vertex.xy += offset * o.vertex.z * _OutlineWidth;
-			o.viewDir = normalize(_WorldSpaceCameraPos - o.vertex.xyz);
-			*/
 			o.viewDir = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, nvert).xyz);
 
 			return o;
@@ -125,11 +99,9 @@ SubShader {
 
 	Pass {
 		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
-		//	Tags{ "Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout" "LightMode" = "ForwardBase" }
-		Cull Off
+		Cull off
 		//	Cull Front
 		ColorMask RGBA
-		//	LOD 100
 
 		Stencil
 		{

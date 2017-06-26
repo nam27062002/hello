@@ -46,14 +46,8 @@ SubShader {
 		ZWrite off
 		Cull off
 
-//		Blend SrcAlpha OneMinusSrcAlpha // Traditional transparency
 		Blend SrcAlpha OneMinusSrcAlpha // Traditional transparency
-//		Blend DstAlpha OneminusDstAlpha // Traditional transparency
-//		Blend one one // Traditional transparency
-//		Blend srcAlpha one // Traditional transparency
-										//		Blend One One
 		BlendOp add, max // Traditional transparency
-//		Blend One OneMinusSrcAlpha
 
 		CGPROGRAM
 		#pragma vertex vert
