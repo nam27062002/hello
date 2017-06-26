@@ -192,6 +192,9 @@ public class MenuDragonScroller : MonoBehaviour {
 		// Auto-destroy after the FX has finished
 		DestroyInSeconds destructor = newObj.AddComponent<DestroyInSeconds>();
 		destructor.lifeTime = 9f;	// Sync with FX duration!
+
+		// Trigger SFX
+		AudioController.Play("hd_unlock_dragon");
 	}
 
 	//------------------------------------------------------------------//
