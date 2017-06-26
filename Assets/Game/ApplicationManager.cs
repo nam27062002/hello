@@ -82,6 +82,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         Notifications_Init();
 
+		Device_Init();
+
         HDTrackingManager.Instance.NotifyStartSession();
         // [DGR] GAME_VALIDATOR: Not supported yet
         // GameValidator gv = new GameValidator();
@@ -135,6 +137,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         // Tracking session has to be finished when the game is closed
         HDTrackingManager.Instance.NotifyEndSession();
+
+		Device_Destroy();
         
         m_isAlive = false;
         Messenger.Broadcast(GameEvents.APPLICATION_QUIT);
@@ -437,6 +441,40 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     /// Current device orientation
     /// </summary>
     public DeviceOrientation Device_Orientation { get; private set; }
+
+	private void Device_Init() 
+	{
+		Device_CalculateOrientation();
+
+		// When this is enabled the user will be allowed to enable the vertical orientation on the control panel
+		if (FeatureSettingsManager.IsVerticalOrientationEnabled)
+		{
+			Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Device_OnOrientationSettingsChanged);
+		}
+	}
+
+	private void Device_Destroy() 
+	{
+		if (FeatureSettingsManager.IsVerticalOrientationEnabled) 
+		{
+			Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Device_OnOrientationSettingsChanged);
+		}
+	}
+
+	private void Device_CalculateOrientation() 
+	{
+		ScreenOrientation screenOrientation = Screen.orientation;
+		bool verticalOrientationIsAllowed = Prefs.GetBoolPlayer(DebugSettings.VERTICAL_ORIENTATION, false);
+		Screen.orientation = (verticalOrientationIsAllowed) ? ScreenOrientation.AutoRotation : ScreenOrientation.Landscape;
+	}
+		
+	private void Device_OnOrientationSettingsChanged(string _key, bool value) 
+	{
+		if (_key == DebugSettings.VERTICAL_ORIENTATION) 
+		{
+			Device_CalculateOrientation();
+		}
+	}
 
     private IEnumerator Device_Update()
     {
