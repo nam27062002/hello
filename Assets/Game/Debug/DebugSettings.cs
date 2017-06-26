@@ -36,7 +36,8 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     public const string RESOLUTION_FACTOR                       = "RESOLUTION_FACTOR";
     public const string SHOW_SPEED						        = "SHOW_SPEED";
 
-	public const string NEW_CAMERA_SYSTEM		 		        = "NEW_CAMERA_SYSTEM";    
+	public const string NEW_CAMERA_SYSTEM		 		        = "NEW_CAMERA_SYSTEM";  
+	public const string VERTICAL_ORIENTATION		 		    = "VERTICAL_ORIENTATION";
 
     public const string INGAME_HUD						        = "INGAME_HUD";
 	public const string INGAME_SPAWNERS					        = "INGAME_SPAWNERS";	

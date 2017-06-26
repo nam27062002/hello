@@ -40,6 +40,11 @@ uniform float _Fresnel;
 uniform float3 _SecondLightDir;
 uniform float4 _SecondLightColor;
 
+#ifdef FIRE
+uniform sampler2D _FireMap;
+uniform float _FireAmount;
+#endif
+
 #ifdef REFL
 uniform samplerCUBE _ReflectionMap;
 uniform float _ReflectionAmount;
@@ -133,20 +138,27 @@ fixed4 frag(v2f i) : SV_Target
 
 	fixed4 col;
 
-#ifdef REFL
+#if defined (REFL)
 	fixed4 reflection = texCUBE(_ReflectionMap, reflect(i.viewDir, normalDirection));
 
-#ifndef REFLECTIONPURE
 	fixed specMask = 0.2126 * reflection.r + 0.7152 * reflection.g + 0.0722 * reflection.b;
 
 	//fixed4 reflection = texCUBE(_ReflectionMap, reflect(halfDir, normalDirection));
 	float ref = specMask * _ReflectionAmount * detail.b;
-#else
-	float ref = _ReflectionAmount;
-#endif
 	col = (1.0 - ref) * main + ref * reflection;
 
 //	col = main * specMask * 1.0;
+
+#elif defined (FIRE)
+
+	i.texcoord.y = 1.0 - (i.texcoord.y * 0.75);
+	i.texcoord.y *= i.texcoord.y;
+
+	fixed4 intensity = tex2D(_FireMap, (i.texcoord.xy + half2(0.25, _Time.y * 0.666)));
+	intensity *= tex2D(_FireMap, (i.texcoord.xy + float2(-0.25, _Time.y * 0.333)));// +pow(i.uv.y, 3.0);
+
+
+	col = lerp(main, intensity, _FireAmount * detail.b); // lerp(fixed4(1.0, 0.0, 0.0, 1.0), fixed4(1.0, 1.0, 0.0, 1.0), intensity);
 
 #else
 	col = main;
