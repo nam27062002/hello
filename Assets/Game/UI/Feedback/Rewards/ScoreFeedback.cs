@@ -36,6 +36,7 @@ public class ScoreFeedback : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[Comment("Thresholds should be scaled for the first dragon.\nFurther dragons will apply the \"scoreTextThresholdMultiplier\" scale factor from the DragonDefinitions content table.")]
 	[SerializeField] private List<ScoreThreshold> m_thresholds = new List<ScoreThreshold>();
 	public List<ScoreThreshold> thresholds {
 		get { return m_thresholds; }
@@ -47,6 +48,7 @@ public class ScoreFeedback : MonoBehaviour {
 	// Internal
 	private float m_baseFontSize = 0f;
 	private StringBuilder m_sbuilder = new StringBuilder();
+	private float m_dragonScaleFactor = 1f;	// Cached value of the "scoreTextThresholdMultiplier" property from the current dragon definition
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -65,13 +67,9 @@ public class ScoreFeedback : MonoBehaviour {
 		m_thresholds.Sort((x, y) => {
 			return x.maxScore.CompareTo(y.maxScore);
 		});
-	}
 
-	/// <summary>
-	/// A change has been made on the inspector.
-	/// </summary>
-	private void OnValidate() {
-		
+		// Cache scale factor for current dragon to avoid a constant acess to the dragon definition and parsing of the value
+		m_dragonScaleFactor = DragonManager.currentDragon.def.GetAsFloat("scoreTextThresholdMultiplier", 1f);
 	}
 
 	//------------------------------------------------------------------------//
@@ -92,6 +90,9 @@ public class ScoreFeedback : MonoBehaviour {
 
 		// Apply to text
 		m_text.text = m_sbuilder.ToString();
+
+		// Scale score value according to current dragon
+		_score = (int)(_score/m_dragonScaleFactor);
 
 		// Find out target threshold to apply proper formatting
 		if(m_thresholds.Count > 0) {
