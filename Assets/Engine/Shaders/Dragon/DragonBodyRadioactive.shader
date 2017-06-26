@@ -29,27 +29,23 @@ Properties {
 	_SecondLightDir("Second Light dir", Vector) = (0,0,-1,0)
 	_SecondLightColor("Second Light Color", Color) = (0.0, 0.0, 0.0, 0.0)
 
-		_OutlineColor("Outline Color", Color) = (1.0, 1.0, 0.0, 1.0)
-		_OutlineWidth("Outline Width", float) = 0.2
-		_OutlineGradient("Outline Gradient", float) = 2.0
-
-
-
+	_OutlineColor("Outline Color", Color) = (1.0, 1.0, 0.0, 1.0)
+	_OutlineWidth("Outline Width", float) = 0.2
+	_OutlineGradient("Outline Gradient", float) = 2.0
 
 	_StencilMask("Stencil Mask", int) = 10
 }
 
 SubShader {
-	Tags{ "Queue" = "Transparent+500" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
+	Tags{ "Queue" = "Transparent+50" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
 
 	ColorMask RGBA
 	LOD 100
 
 
 	Pass{
-//		Tags{ "Queue" = "Transparent+500" "RenderType" = "Transparent" }
 		ZWrite off
-		Ztest always
+//		Ztest always
 		Cull back
 
 		Blend SrcAlpha OneMinusSrcAlpha // Traditional transparency
@@ -58,8 +54,6 @@ SubShader {
 		CGPROGRAM
 		#pragma vertex vert
 		#pragma fragment frag
-//		#pragma glsl_no_auto_normalization
-//		#pragma fragmentoption ARB_precision_hint_fastest
 		#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 		#include "UnityCG.cginc" 
@@ -88,25 +82,7 @@ SubShader {
 			v2fo o;
 			float4 nvert = float4(v.vertex.xyz + v.normal * _OutlineWidth, 1.0);
 			o.vertex = mul(UNITY_MATRIX_MVP, nvert);
-			//			o.vertex.z = 0.0;
-			//			o.vertex.z = UNITY_MATRIX_MVP[3][2];
-			// Normal
 			o.normal = UnityObjectToWorldNormal(v.normal);
-			//			o.normal = UnityObjectToWorldNormal(normalize(v.vertex.xyz));
-
-			// Half View - See: Blinn-Phong
-			//			o.viewDir = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
-
-			/*
-			v2fo o;
-			o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-
-			o.normal = mul((float3x3)UNITY_MATRIX_IT_MV, v.normal);
-			float2 offset = TransformViewToProjection(o.normal.xy);
-
-			o.vertex.xy += offset * o.vertex.z * _OutlineWidth;
-			o.viewDir = normalize(_WorldSpaceCameraPos - o.vertex.xyz);
-			*/
 			o.viewDir = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, nvert).xyz);
 
 			return o;
@@ -125,7 +101,7 @@ SubShader {
 
 
 	Pass {
-		Tags{ "Queue" = "Geometry+2000" "IgnoreProjector" = "True" "RenderType" = "Opaque" "LightMode" = "ForwardBase" }
+		Tags{ "Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "Opaque" "LightMode" = "ForwardBase" }
 		Cull Back
 		//	LOD 100
 
@@ -164,8 +140,6 @@ SubShader {
 		#define NORMALMAP
 		#define SPEC
 		#endif
-
-//		#define RADIOACTIVITY
 
 		struct appdata_t {
 			float4 vertex : POSITION;
