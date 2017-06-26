@@ -1010,6 +1010,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+	public static bool IsVerticalOrientationEnabled
+	{
+		get 
+		{
+			return IsDebugEnabled;
+		}
+	}
+
     /// <summary>
     /// Whether or not the game leve scenes under development should be loaded when loading the level.
     /// It's a static method because it doesn't depend on the device profile and we want it to be ready at any moment since it can be called

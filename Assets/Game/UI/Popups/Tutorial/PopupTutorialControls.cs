@@ -61,12 +61,6 @@ public class PopupTutorialControls : MonoBehaviour {
 		m_loadingInfo.Set(m_loadProgress < 1f, true);
 		m_playButton.Set(m_loadProgress >= 1f, true);
 
-        // Loading screen is being painted on the top of this popup until the game is ready to be played
-        // The user is supposed to see this popup when the game has been loaded
-        if (m_loadProgress >= 1f) {
-            LoadingScreen.Toggle(false);
-        }
-
         if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST && m_loadProgress >= 1) {
 			GetComponent<PopupController>().Close(true);
 		}
@@ -86,6 +80,14 @@ public class PopupTutorialControls : MonoBehaviour {
 		// Initialize popup
 		m_loadingInfo.ForceShow(false);
 		m_playButton.ForceHide(false);
+	}
+
+	/// <summary>
+	/// The popen animation has finished.
+	/// </summary>
+	public void OnOpenPostAnimation() {
+		// Hide loading screen, otherwise it will show on top of the popup!
+		LoadingScreen.Toggle(false);
 	}
 
 	/// <summary>
