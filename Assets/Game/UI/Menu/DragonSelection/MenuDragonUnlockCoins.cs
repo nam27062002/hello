@@ -80,6 +80,9 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 
 				// Throw out some fireworks!
 				InstanceManager.menuSceneController.dragonScroller.LaunchDragonPurchasedFX();
+
+				// Trigger SFX
+				AudioController.Play("hd_unlock_dragon");
 			}
 		);
 		purchaseFlow.Begin(dragonData.def.GetAsLong("unlockPriceCoins"), UserProfile.Currency.SOFT, dragonData.def);

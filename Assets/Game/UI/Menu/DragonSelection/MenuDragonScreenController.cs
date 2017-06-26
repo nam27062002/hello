@@ -123,6 +123,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 				// Show icon unlock animation
 				//m_lockIcon.animator.ResetTrigger("idle");	// Just in case initial delay is 0, both triggers would be set at the same frame and animation wouldn't work
 				m_lockIcon.animator.SetTrigger("unlock");
+
+				// Trigger SFX
+				AudioController.Play("hd_unlock_dragon");
 			})
 			.AppendInterval(m_unlockAnimDuration)
 			.AppendCallback(() => {
