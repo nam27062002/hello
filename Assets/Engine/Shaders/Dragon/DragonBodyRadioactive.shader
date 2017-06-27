@@ -102,6 +102,7 @@ SubShader {
 
 	Pass {
 		Tags{ "Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "Opaque" "LightMode" = "ForwardBase" }
+
 		Cull Back
 		//	LOD 100
 
@@ -113,8 +114,10 @@ SubShader {
 			ZFail keep
 		}
 
+		cull back
 		ztest less
 		ZWrite On
+
 
 		CGPROGRAM
 		#pragma vertex vert
