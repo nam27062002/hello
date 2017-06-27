@@ -98,6 +98,35 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 	// SINGLETON METHODS													  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Launch an async request to the server asking for current event data.
+	/// This will check if there are actually new events for the current user or
+	/// if there is no event at all.
+	/// Listen to the GameEvents.GLOBAL_EVENT_DATA_UPDATED event to know when the
+	/// new data have been received.
+	/// In the case a valid event is returned, its state will automatically be retrieved
+	/// as well in another async call, so be aware that the event might be triggered twice.
+	/// </summary>
+	public static void RefreshCurrentEvent() {
+		// Just do it
+		GameServerManager.SharedInstance.GlobalEvent_GetCurrent(instance.OnCurrentEventResponse);
+	}
+
+	/// <summary>
+	/// Launch an async request to the server asking for current event state.
+	/// The state 
+	/// Listen to the GameEvents.GLOBAL_EVENT_DATA_UPDATED event to know when the
+	/// new data have been received.
+	/// </summary>
+	/// <param name="_getLeaderboard">Whether to get the latest leaderboard for the current event or not. Take in consideration that the leaderboard is a lot of data and is cached, so there's no need to update it every time.</param>
+	public static void RefreshCurrentEventState(bool _getLeaderboard) {
+		// We need a valid event
+		if(currentEvent == null) return;
+
+		// Just do it
+		GameServerManager.SharedInstance.GlobalEvent_GetState(currentEvent.id, true, instance.OnEventStateResponse);
+	}
+
+	/// <summary>
 	/// Contribute to current event!
 	/// Contribution amount will be taken from current event tracker.
 	/// </summary>
@@ -162,7 +191,7 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 		// If it's a new user, request current event to the server for this user
 		if(instance.m_user != _user) {
 			instance.m_user = _user;
-			GameServerManager.SharedInstance.GlobalEvent_GetCurrent(instance.OnCurrentEventResponse);
+			RefreshCurrentEvent();
 		}
 	}
 
@@ -201,12 +230,18 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 			if(m_currentEvent.id != responseJson["id"]) {
 				m_currentEvent.InitFromJson(responseJson);
 			}
-
-			// Get current event's state
-			GameServerManager.SharedInstance.GlobalEvent_GetState(m_currentEvent.id, true, OnEventStateResponse);
 		} else {
 			// No! Clear current event (if any)
 			if(m_currentEvent != null) m_currentEvent = null;
+		}
+
+		// Notify game that we have new data concerning the current event
+		Messenger.Broadcast(GameEvents.GLOBAL_EVENT_DATA_UPDATED);
+
+		// If we have a valid event, request its state too
+		if(m_currentEvent != null) {
+			// Get current event's state
+			RefreshCurrentEventState(true);
 		}
 	}
 
@@ -238,6 +273,9 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 			// Player data
 			GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
 			currentEventUserData.Load(responseJson["playerData"]);
+
+			// Notify game that we have new data concerning the current event
+			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_DATA_UPDATED);
 		}
 	}
 
