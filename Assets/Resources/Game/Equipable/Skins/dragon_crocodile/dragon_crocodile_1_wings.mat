@@ -7,8 +7,8 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_crocodile_1_wings
-  m_Shader: {fileID: 4800000, guid: e4ed8932b499b4d62a9afbbbcc368a56, type: 3}
-  m_ShaderKeywords: 
+  m_Shader: {fileID: 4800000, guid: 08eb0464654be4740b44925f08362264, type: 3}
+  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -96,13 +96,13 @@ Material:
       second: 0
     - first:
         name: _Fresnel
-      second: 10
+      second: 8.45
     - first:
         name: _Glossiness
       second: 0.5
     - first:
         name: _InnerLightAdd
-      second: 0
+      second: 10
     - first:
         name: _Metallic
       second: 0
@@ -119,11 +119,17 @@ Material:
         name: _OcclusionStrength
       second: 1
     - first:
+        name: _OutlineGradient
+      second: 2
+    - first:
+        name: _OutlineWidth
+      second: 0.2
+    - first:
         name: _Parallax
       second: 0.02
     - first:
         name: _SpecExponent
-      second: 6.68
+      second: 123.22
     - first:
         name: _SrcBlend
       second: 1
@@ -139,13 +145,13 @@ Material:
     m_Colors:
     - first:
         name: _AmbientAdd
-      second: {r: 0, g: 0, b: 0, a: 0}
+      second: {r: 0.08823532, g: 0.052797668, b: 0.02141004, a: 0}
     - first:
         name: _Color
       second: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
     - first:
         name: _ColorAdd
-      second: {r: 0.062283732, g: 0.11764705, b: 0.07641092, a: 0}
+      second: {r: 0.33823532, g: 0.24969724, b: 0.11689014, a: 1}
     - first:
         name: _ColorMultiply
       second: {r: 1, g: 1, b: 1, a: 1}
@@ -157,19 +163,22 @@ Material:
       second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _FresnelColor
-      second: {r: 0.28676468, g: 0.28676468, b: 0.28676468, a: 1}
+      second: {r: 0.2794118, g: 0.2794118, b: 0.2794118, a: 1}
     - first:
         name: _InnerLightColor
-      second: {r: 0.27850497, g: 0.39705884, b: 0.26275954, a: 1}
+      second: {r: 0, g: 0, b: 0, a: 0.872}
     - first:
         name: _NoiseColor
       second: {r: 1, g: 1, b: 1, a: 1}
     - first:
+        name: _OutlineColor
+      second: {r: 1, g: 1, b: 0, a: 1}
+    - first:
         name: _SecondLightColor
-      second: {r: 0, g: 0, b: 0, a: 0}
+      second: {r: 0.26666668, g: 0.2, b: 0.2, a: 0}
     - first:
         name: _SecondLightDir
-      second: {r: 0.82, g: -2.75, b: 2.67, a: 0.45}
+      second: {r: 70.8, g: 12.14, b: -1, a: 344}
     - first:
         name: _Tint
       second: {r: 1, g: 1, b: 1, a: 1}
