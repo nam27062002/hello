@@ -56,14 +56,16 @@ public class GoalsScreenGlobalEventsTab : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-
+		// Subscribe to external events
+		Messenger.AddListener(GameEvents.GLOBAL_EVENT_DATA_UPDATED, OnEventDataUpdated);
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-
+		// Unsubscribe from external events
+		Messenger.RemoveListener(GameEvents.GLOBAL_EVENT_DATA_UPDATED, OnEventDataUpdated);
 	}
 
 	/// <summary>
@@ -83,6 +85,21 @@ public class GoalsScreenGlobalEventsTab : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Request current event data to the server.
+	/// </summary>
+	public void RequestEventData() {
+		GlobalEventManager.RequestCurrentEventData();
+	}
+
+	/// <summary>
+	/// Request current event's state to the server.
+	/// Leaderboard wont be updated to save data bandwith.
+	/// </summary>
+	public void RequestEventState() {
+		GlobalEventManager.RequestCurrentEventState(false);
+	}
+
 	/// <summary>
 	/// Select active panel based on current global event state.
 	/// </summary>
@@ -132,6 +149,13 @@ public class GoalsScreenGlobalEventsTab : MonoBehaviour {
 		for(int i = 0; i < m_panels.Length; ++i) {
 			m_panels[i].SetActive(i == (int)targetPanel);
 		}
+
+		// Refresh target panel data (if required)
+		switch(targetPanel) {
+			case Panels.EVENT_ACTIVE: {
+				//m_panels[(int)targetPanel].GetComponent<GlobalEventsActivePanel>().Refresh();
+			} break;
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -141,6 +165,13 @@ public class GoalsScreenGlobalEventsTab : MonoBehaviour {
 	/// Force a refresh every time we enter the tab!
 	/// </summary>
 	public void OnShowPreAnimation() {
+		Refresh();
+	}
+
+	/// <summary>
+	/// The global event manager has received new data from the server.
+	/// </summary>
+	private void OnEventDataUpdated() {
 		Refresh();
 	}
 }

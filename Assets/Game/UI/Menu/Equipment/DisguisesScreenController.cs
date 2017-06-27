@@ -377,7 +377,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_selectedPill = _pill;
 
 		// Equip button or auto-equip? Check settings
-		if(Prefs.GetBoolPlayer(DebugSettings.MENU_DISGUISES_AUTO_EQUIP)) {
+		if(Prefs.GetBoolPlayer(DebugSettings.MENU_DISGUISES_AUTO_EQUIP, true)) {
 			// If selected disguise is owned and not already equipped, equip it
 			if(_pill.owned && _pill != m_equippedPill) {
 				OnEquipButton();

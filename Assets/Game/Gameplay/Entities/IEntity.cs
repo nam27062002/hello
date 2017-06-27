@@ -63,6 +63,20 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 	protected bool m_isOnScreen = false;
 	public bool isOnScreen { get { return m_isOnScreen; } }
 
+	public int GetVertexCount() {
+		if (m_viewControl != null && m_isOnScreen) {
+			return m_viewControl.vertexCount;
+		}
+		return 0;
+	}
+
+	public int GetRendererCount() {
+		if (m_viewControl != null && m_isOnScreen) {
+			return m_viewControl.rendererCount;
+		}
+		return 0;
+	}
+
 	public void Damage(float damage)  {
 		m_health -= damage;
 	}

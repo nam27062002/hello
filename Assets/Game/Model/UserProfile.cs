@@ -54,7 +54,13 @@ public class UserProfile : UserSaveSystem
 
 	// User ID shortcut
 	public string userId {
-		get { return GameSessionManager.SharedInstance.GetUID(); }
+		get {
+			if(GameSessionManager.SharedInstance.IsLogged()) {
+				return GameSessionManager.SharedInstance.GetUID(); 
+			} else {
+				return "local_user";
+			}
+		}
 	}
 
     // Economy

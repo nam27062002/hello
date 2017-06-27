@@ -954,6 +954,9 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 		// Unsubscribe from the event
 		SaveFacade.Instance.OnLoadComplete -= OnLoadCompleted;
 
+		// Initialize managers needing data from the loaded profile
+		GlobalEventManager.SetupUser(UsersManager.currentUser);
+
 		// Change flag
 		instance.m_loadCompleted = true;
 	}

@@ -177,7 +177,6 @@ public class Entity : IEntity {
         m_spawned = false;		
     }
 
-
     /// <summary>
     /// Get a Reward struct initialized with the reward to be given when killing this
     /// prey, taking in account its golden/pc chances and status.

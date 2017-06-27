@@ -120,11 +120,12 @@ fixed4 frag(v2f i) : SV_Target
 
 #else
 	float fresnel = 0.0f;
+
 #endif
 
 	// Specular
-
 	float3 halfDir = normalize(i.viewDir + light0Direction);
+
 #ifdef SPEC
 	float specularLight = pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
 	halfDir = normalize(i.viewDir + light1Direction);
@@ -132,6 +133,7 @@ fixed4 frag(v2f i) : SV_Target
 
 #else
 	float specularLight = 0.0;
+
 #endif
 
 	fixed4 col;
@@ -141,11 +143,8 @@ fixed4 frag(v2f i) : SV_Target
 
 	fixed specMask = 0.2126 * reflection.r + 0.7152 * reflection.g + 0.0722 * reflection.b;
 
-	//fixed4 reflection = texCUBE(_ReflectionMap, reflect(halfDir, normalDirection));
 	float ref = specMask * _ReflectionAmount * detail.b;
 	col = (1.0 - ref) * main + ref * reflection;
-
-//	col = main * specMask * 1.0;
 
 #elif defined (FIRE)
 	i.texcoord.y = 1.0 - (i.texcoord.y * 0.75);
@@ -154,40 +153,38 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 intensity = tex2D(_FireMap, (i.texcoord.xy + half2(0.25, _Time.y * 0.666)));
 	intensity *= tex2D(_FireMap, (i.texcoord.xy + float2(-0.25, _Time.y * 0.333)));// +pow(i.uv.y, 3.0);
 
-	col = lerp(main, intensity, _FireAmount * detail.b); // lerp(fixed4(1.0, 0.0, 0.0, 1.0), fixed4(1.0, 1.0, 0.0, 1.0), intensity);
+	float fireMask = _FireAmount * detail.b;
+	col = lerp(main, intensity, fireMask); // lerp(fixed4(1.0, 0.0, 0.0, 1.0), fixed4(1.0, 1.0, 0.0, 1.0), intensity);
 
 #else
 	col = main;
-#endif
 
+#endif
 	// Inner lights
-#ifdef AUTOINNERLIGHT
+#if defined (AUTOINNERLIGHT)
 	float wave = (i.texcoord.x * _InnerLightWavePhase) + (_Time.y * _InnerLightWaveSpeed);
 	fixed satMask = (0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b) * detail.r;
 	satMask = lerp(satMask, 1.0, detail.b);
-	//	satMask *= detail.r *(((cos(wave.x) + 1.0) * 0.5) * ((sin(_Time.y) + 1.0) * 0.5)) * 10.0;
 	fixed blink = lerp((sin(_Time.y * _InnerLightWavePhase) + 1.0) * 0.5, (cos(wave) + 1.0) * 0.5, detail.b);
 	satMask *= blink * 10.0;
 	fixed3 selfIlluminate = lerp(fixed3(0.0, 0.0, 0.0), _InnerLightColor.xyz, satMask);
 
-#else
-
-#ifdef BLINKLIGHTS
+#elif defined (BLINKLIGHTS)
 	float anim = sin(_Time.x * 40.0); // _SinTime.w * 0.5f;
-#else
-	float anim = 1.0;
-#endif
+	fixed3 selfIlluminate = col.xyz * detail.r * anim;
 
-	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz)) * anim;
+#else
+	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz));
+
 #endif
-	// fixed4 col = (diffuse + fixeW4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _Tint + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
-//	col = (diffuse + fixed4(i.vLight, 0.0)) * col * _Tint + _ColorAdd + specularLight + selfIlluminate + (fresnel * _FresnelColor) + _AmbientAdd; // To use ShaderSH9 better done in vertex shader
 	col.xyz = (diffuse.xyz + i.vLight) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate + (fresnel * _FresnelColor.xyz) + _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
 
 #ifndef CUTOUT
 	UNITY_OPAQUE_ALPHA(col.a);
+
 #else
 	col.w *= _Tint.w;
+
 #endif
 	return col;
 }

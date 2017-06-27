@@ -160,15 +160,17 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
 		// Current value
 		// Use a local dictionary to simulate events values progression
-		float currentValue = 600f;
+		float currentValue = 0f;
 		if(!m_eventValues.TryGetValue(_eventID, out currentValue)) {
+			currentValue = 600f;	// Default initial value
 			m_eventValues[_eventID] = currentValue;
 		}
 		eventData.Add("currentValue", currentValue.ToString(JSON_FORMAT));
 
 		// Current player data
-		GlobalEventUserData playerEventData = UsersManager.currentUser.globalEvents[_eventID];
-		if(playerEventData == null) {
+		GlobalEventUserData playerEventData = null;
+		if(!UsersManager.currentUser.globalEvents.TryGetValue(_eventID, out playerEventData)) {
+			// User has never contributed to this event, create a new, empty, player event data
 			playerEventData = new GlobalEventUserData(_eventID, UsersManager.currentUser.userId, 0f, -1);
 		}
 
@@ -178,6 +180,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			// Create an array of max 100 random users
 			float remainingScore = currentValue;
 			Range scorePerPlayerRange = new Range(remainingScore/100f, remainingScore/10f);	// min 10 players, max 100
+			leaderboard = new List<GlobalEventUserData>(100);
 			while(remainingScore > 0f) {
 				// Compute new score for this user
 				float score = Mathf.Min(remainingScore, scorePerPlayerRange.GetRandom());
@@ -200,7 +203,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		}
 
 		// Sort leaderboard by score
-		leaderboard.Sort((_a, _b) => _a.score.CompareTo(_b.score));	// Gotta love delta expressions. Using int's CompareTo directly
+		leaderboard.Sort((_a, _b) => -(_a.score.CompareTo(_b.score)));	// Gotta love delta expressions. Using float's CompareTo directly. Reverse sign since we want to sort from bigger to lower.
 
 		// If player is not on the leaderboard but should be, add it!
 		// We should probably remove the last one, but since it's test code, we don't care enough
@@ -208,12 +211,12 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		float minScore = leaderboard.Last().score;
 		if(playerIdx < 0 && playerEventData.score > minScore && playerEventData.score > 0f) {
 			leaderboard.Add(new GlobalEventUserData(playerEventData));	// Create a copy of the data
-		} else if(playerIdx > 0 && leaderboard.Count >= 100 && playerEventData.score < minScore) {
+		} else if(playerIdx >= 0 && leaderboard.Count >= 100 && playerEventData.score < minScore) {
 			leaderboard.RemoveAt(playerIdx);	// Remove from the leaderboard
 		}
 
 		// Sort leaderboard again with the new data
-		leaderboard.Sort((_a, _b) => _a.score.CompareTo(_b.score));
+		leaderboard.Sort((_a, _b) => -(_a.score.CompareTo(_b.score)));	// Gotta love delta expressions. Using float's CompareTo directly. Reverse sign since we want to sort from bigger to lower.
 
 		// Update position for each data
 		for(int i = 0; i < leaderboard.Count; i++) {
