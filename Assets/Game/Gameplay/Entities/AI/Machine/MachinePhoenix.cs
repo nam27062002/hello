@@ -13,8 +13,6 @@ namespace AI {
 		//--------------------------------------------------
 		private bool m_phoenixActive = false;
 		private Material m_phoenixMaterial;
-		private float m_originalFresnel;
-		private Color m_originalFresnelColor;
 
 		float m_phoenixFresnelValue = 0.5f;
 		Color m_phoenixFresnelColor = new Color(240/255.0f,140/255.0f,12/255.0f);
@@ -22,8 +20,6 @@ namespace AI {
 		protected override void Awake() {
 			base.Awake();
 			m_phoenixMaterial = m_bodyRenderer.material;
-			m_originalFresnel = m_phoenixMaterial.GetFloat("_Fresnel");
-			m_originalFresnelColor = m_phoenixMaterial.GetColor("_FresnelColor");
 			Deactivate();
 		}
 
@@ -56,8 +52,8 @@ namespace AI {
 			m_fire.SetActive(true);
 			if (m_fireParticle)
 				m_fireParticle.Play();
-			StopCoroutine("FresnelToDeactive");
-			StartCoroutine( FresnelTo( m_phoenixFresnelValue, m_phoenixFresnelColor));
+			StopCoroutine("FireTo");
+			StartCoroutine( FireTo(1) );
 		}
 
 		private void Deactivate() {
@@ -65,14 +61,13 @@ namespace AI {
 			m_fire.SetActive(false);
 			if (m_fireParticle)
 				m_fireParticle.Stop();
-			StopCoroutine("FresnelToActive");
-			StartCoroutine( FresnelTo( m_originalFresnel, m_originalFresnelColor ));
+			StopCoroutine("FireTo");
+			StartCoroutine( FireTo(0) );
 		}
 
-		IEnumerator FresnelTo( float _targetValue, Color _targetColor)
+		IEnumerator FireTo( float _targetValue )
 		{
-			float startValue = m_phoenixMaterial.GetFloat("_Fresnel");
-			Color startColor = m_phoenixMaterial.GetColor("_FresnelColor");
+			float startValue = m_phoenixMaterial.GetFloat("_FireAmount");
 			float timer = 0;
 			float duration = 0.5f;
 			while( timer < duration )
@@ -81,11 +76,9 @@ namespace AI {
 				timer += Time.deltaTime;
 				float delta = timer / duration;
 
-				m_phoenixMaterial.SetFloat("_Fresnel", Mathf.Lerp(startValue, _targetValue, delta));
-				m_phoenixMaterial.SetColor("_FresnelColor", Color.Lerp(startColor, _targetColor, delta));
+				m_phoenixMaterial.SetFloat("_FireAmount", Mathf.Lerp(startValue, _targetValue, delta));
 			}
-			m_phoenixMaterial.SetFloat("_Fresnel", _targetValue);
-			m_phoenixMaterial.SetColor("_FresnelColor", _targetColor);
+			m_phoenixMaterial.SetFloat("_FireAmount", _targetValue);
 		}
 	}
 }
