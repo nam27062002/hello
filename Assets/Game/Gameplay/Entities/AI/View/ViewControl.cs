@@ -105,6 +105,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	private int m_vertexCount;
 	public int vertexCount { get { return m_vertexCount; } }
 
+	private int m_rendererCount;
+	public int rendererCount { get { return m_rendererCount; } }
+
 	protected bool m_boost;
 	protected bool m_scared;
 	protected bool m_panic; //bite and hold state
@@ -179,12 +182,13 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_defaultTints = new List<Color>();
 
 		m_vertexCount = 0;
+		m_rendererCount = 0;
 
         if (renderers != null) {
-            int count = renderers.Length;
+			m_rendererCount = renderers.Length;
             int matCount;
             Material[] materials;
-            for (int i = 0; i < count; i++) {
+			for (int i = 0; i < m_rendererCount; i++) {
 				Renderer renderer = renderers[i];
 
 				// Keep the vertex count (for DEBUG)

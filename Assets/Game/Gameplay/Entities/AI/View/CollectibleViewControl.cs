@@ -14,6 +14,9 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl {
 	private int m_vertexCount;
 	public int vertexCount { get { return m_vertexCount; } }
 
+	private int m_rendererCount;
+	public int rendererCount { get { return m_rendererCount; } }
+
     //-----------------------------------------------
     // Use this for initialization
     //-----------------------------------------------
@@ -24,11 +27,12 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl {
 		m_onCollectParticle.CreatePool();
 
 		m_vertexCount = 0;
+		m_rendererCount = 0;
 
 		Renderer[] renderers = GetComponentsInChildren<Renderer>();
 		if (renderers != null) {
-			int count = renderers.Length;
-			for (int i = 0; i < count; i++) {
+			m_rendererCount = renderers.Length;
+			for (int i = 0; i < m_rendererCount; i++) {
 				Renderer renderer = renderers[i];
 
 				// Keep the vertex count (for DEBUG)

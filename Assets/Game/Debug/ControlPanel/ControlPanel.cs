@@ -98,7 +98,10 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
     private TextMeshProUGUI m_logicUnitsCounter;
 
 	[SerializeField]
-	private TextMeshProUGUI m_vertexCountNPCs;
+	private TextMeshProUGUI m_vertexCount_npc;
+
+	[SerializeField]
+	private TextMeshProUGUI m_drawCalls_npc;
 
 
     // Exposed setup
@@ -263,17 +266,32 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
             m_logicUnitsCounter.text = IntegerToString(value);            
         }
 
-		if (m_vertexCountNPCs != null && m_isStatsEnabled) {
-			int vc = EntityManager.instance.totalVertexCount;
-			if (vc > 30000) {
-				m_vertexCountNPCs.color = FPS_THRESHOLD_COLOR_3;
-			} else if (vc > 25000) {
-				m_vertexCountNPCs.color = FPS_THRESHOLD_COLOR_2;
-			} else {
-				m_vertexCountNPCs.color = FPS_THRESHOLD_COLOR_1;                   
+		if (m_isStatsEnabled) {
+			if (m_vertexCount_npc != null) {
+				int vc = EntityManager.instance.totalVertexCount;
+				if (vc > 30000) {
+					m_vertexCount_npc.color = FPS_THRESHOLD_COLOR_3;
+				} else if (vc > 25000) {
+					m_vertexCount_npc.color = FPS_THRESHOLD_COLOR_2;
+				} else {
+					m_vertexCount_npc.color = FPS_THRESHOLD_COLOR_1;                   
+				}
+	 
+				m_vertexCount_npc.text = ""+vc;
 			}
- 
-			m_vertexCountNPCs.text = vc + " vertexs (npc)";
+
+			if (m_drawCalls_npc != null) {
+				int dc = EntityManager.instance.drawCalls;
+				if (dc > 39) {
+					m_drawCalls_npc.color = FPS_THRESHOLD_COLOR_3;
+				} else if (dc > 34) {
+					m_drawCalls_npc.color = FPS_THRESHOLD_COLOR_2;
+				} else {
+					m_drawCalls_npc.color = FPS_THRESHOLD_COLOR_1;                   
+				}
+
+				m_drawCalls_npc.text = IntegerToString(dc);
+			}
 		}
 
         // Quick Cheats

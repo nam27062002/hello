@@ -24,6 +24,19 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 		} 
 	}
 
+	public int drawCalls {
+		get {
+			int i = 0;
+			int dc = 0;
+
+			for (i = 0; i < m_cages.Count; ++i) 	{ dc += m_cages[i].GetRendererCount(); }
+			for (i = 0; i < m_entities.Count; ++i) 	{ dc += m_entities[i].GetRendererCount(); }
+			for (i = 0; i < m_entitiesBg.Count; ++i){ dc += m_entitiesBg[i].GetRendererCount(); }
+
+			return dc;
+		}
+	}
+
     public enum OverlapingMethod
     {
         EntitiesManager,

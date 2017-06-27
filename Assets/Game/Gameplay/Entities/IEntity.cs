@@ -70,6 +70,13 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		return 0;
 	}
 
+	public int GetRendererCount() {
+		if (m_viewControl != null && m_isOnScreen) {
+			return m_viewControl.rendererCount;
+		}
+		return 0;
+	}
+
 	public void Damage(float damage)  {
 		m_health -= damage;
 	}
