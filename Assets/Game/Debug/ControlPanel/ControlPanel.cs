@@ -62,6 +62,18 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         }        
     }
 
+	private bool m_isFPSEnabled;
+	public bool IsFPSEnabled {
+		get {
+			return m_isFPSEnabled;
+		}
+
+		set {
+			m_isFPSEnabled = value;
+			m_fpsCounter.gameObject.SetActive(m_isFPSEnabled);
+		}        
+	}
+
 	[SerializeField] private TextMeshProUGUI m_memoryLabel;
 	public static TextMeshProUGUI memoryLabel {
 		get { return instance.m_memoryLabel; }
@@ -84,6 +96,10 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 
     [SerializeField]
     private TextMeshProUGUI m_logicUnitsCounter;
+
+	[SerializeField]
+	private TextMeshProUGUI m_vertexCountNPCs;
+
 
     // Exposed setup
     [Space]
@@ -141,6 +157,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		m_panel.gameObject.SetActive(false);
 		m_toggleButton.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
         IsStatsEnabled = UnityEngine.Debug.isDebugBuild;        
+		IsFPSEnabled = UnityEngine.Debug.isDebugBuild;        
         ShowMemoryUsage = UnityEngine.Debug.isDebugBuild;
         m_logicUnitsCounter.transform.parent.gameObject.SetActive(UnityEngine.Debug.isDebugBuild && ProfilerSettingsManager.ENABLED);
 
@@ -196,7 +213,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		if ( m_DeltaIndex >= m_NumDeltaTimes )
 			m_DeltaIndex = 0;
 
-		if ( m_fpsCounter != null )
+		if ( m_fpsCounter != null && m_isFPSEnabled )
 		{
 			float fps = GetFPS();            
 			if(fps >= 0) {
@@ -246,6 +263,18 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
             m_logicUnitsCounter.text = IntegerToString(value);            
         }
 
+		if (m_vertexCountNPCs != null && m_isStatsEnabled) {
+			int vc = EntityManager.instance.totalVertexCount;
+			if (vc > 30000) {
+				m_vertexCountNPCs.color = FPS_THRESHOLD_COLOR_3;
+			} else if (vc > 25000) {
+				m_vertexCountNPCs.color = FPS_THRESHOLD_COLOR_2;
+			} else {
+				m_vertexCountNPCs.color = FPS_THRESHOLD_COLOR_1;                   
+			}
+ 
+			m_vertexCountNPCs.text = vc + " vertexs (npc)";
+		}
 
         // Quick Cheats
         if ( Input.GetKeyDown(KeyCode.L )){

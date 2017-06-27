@@ -134,6 +134,7 @@ public class ProfilerControlPanelController : MonoBehaviour
 
         Checkpoints_Start();
         Stats_Start();
+		FPS_Start();
     }
 
     void OnEnable()
@@ -411,6 +412,26 @@ public class ProfilerControlPanelController : MonoBehaviour
         }
     }
     #endregion
+
+	#region fps
+	public Toggle m_fpsToggle;
+
+	private void FPS_Start()
+	{
+		if (m_fpsToggle != null && ControlPanel.instance != null)
+		{
+			m_fpsToggle.isOn = ControlPanel.instance.IsFPSEnabled;
+		}
+	}
+
+	public void FPS_OnChangedValue(bool newValue)
+	{
+		if (ControlPanel.instance != null)
+		{
+			ControlPanel.instance.IsFPSEnabled = m_fpsToggle.isOn;
+		}
+	}
+	#endregion
 
     #region entities_visibility
     public void EntitiesVisibility_OnChangedValue(bool newValue)

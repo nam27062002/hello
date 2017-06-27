@@ -11,6 +11,8 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl {
 	private IEntity m_entity;
 	private AudioObject m_onCollectAudioAO;
 
+	private int m_vertexCount;
+	public int vertexCount { get { return m_vertexCount; } }
 
     //-----------------------------------------------
     // Use this for initialization
@@ -20,6 +22,26 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl {
 
 		// Preload particle
 		m_onCollectParticle.CreatePool();
+
+		m_vertexCount = 0;
+
+		Renderer[] renderers = GetComponentsInChildren<Renderer>();
+		if (renderers != null) {
+			int count = renderers.Length;
+			for (int i = 0; i < count; i++) {
+				Renderer renderer = renderers[i];
+
+				// Keep the vertex count (for DEBUG)
+				if (renderer.GetType() == typeof(SkinnedMeshRenderer)) {
+					m_vertexCount += (renderer as SkinnedMeshRenderer).sharedMesh.vertexCount;
+				} else if (renderer.GetType() == typeof(MeshRenderer)) {
+					MeshFilter filter = renderer.GetComponent<MeshFilter>();
+					if (filter != null) {
+						m_vertexCount += filter.sharedMesh.vertexCount;
+					}
+				}
+			}
+		}
     }
 
     void OnDestroy() {

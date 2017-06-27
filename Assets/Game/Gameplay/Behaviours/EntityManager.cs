@@ -10,6 +10,20 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
     private List<Entity> m_searchList;
     private Rect m_area;    
 
+
+	public int totalVertexCount { 
+		get { 
+			int i = 0;
+			int vc = 0;
+
+			for (i = 0; i < m_cages.Count; ++i) 	{ vc += m_cages[i].GetVertexCount(); }
+			for (i = 0; i < m_entities.Count; ++i) 	{ vc += m_entities[i].GetVertexCount(); }
+			for (i = 0; i < m_entitiesBg.Count; ++i){ vc += m_entitiesBg[i].GetVertexCount(); }
+
+			return vc; 
+		} 
+	}
+
     public enum OverlapingMethod
     {
         EntitiesManager,
@@ -48,7 +62,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 
     public void UnregisterEntity(Entity _entity)
     {
-        m_entities.Remove(_entity);
+		m_entities.Remove(_entity);
     }
 
     public void RegisterEntityBg(EntityBg _entity)
@@ -62,7 +76,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
     }
 
 	public void RegisterEntityCage(Cage _cage)
-	{     
+	{   
 		m_cages.Add(_cage);
 	}
 

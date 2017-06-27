@@ -102,6 +102,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     private List<Material> m_allMaterials;
 	private List<Color> m_defaultTints;
 
+	private int m_vertexCount;
+	public int vertexCount { get { return m_vertexCount; } }
+
 	protected bool m_boost;
 	protected bool m_scared;
 	protected bool m_panic; //bite and hold state
@@ -174,14 +177,29 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
         m_allMaterials = new List<Material>();
 		m_defaultTints = new List<Color>();
+
+		m_vertexCount = 0;
+
         if (renderers != null) {
             int count = renderers.Length;
             int matCount;
             Material[] materials;
             for (int i = 0; i < count; i++) {
-                // Stores the materials of this renderer in a dictionary for direct access
-                materials = renderers[i].materials;
-                m_materials[renderers[i].GetInstanceID()] = materials;
+				Renderer renderer = renderers[i];
+
+				// Keep the vertex count (for DEBUG)
+				if (renderer.GetType() == typeof(SkinnedMeshRenderer)) {
+					m_vertexCount += (renderer as SkinnedMeshRenderer).sharedMesh.vertexCount;
+				} else if (renderer.GetType() == typeof(MeshRenderer)) {
+					MeshFilter filter = renderer.GetComponent<MeshFilter>();
+					if (filter != null) {
+						m_vertexCount += filter.sharedMesh.vertexCount;
+					}
+				}
+
+				// Stores the materials of this renderer in a dictionary for direct access
+				materials = renderer.materials;
+				m_materials[renderer.GetInstanceID()] = materials;
 
                 // Stores the materials of this renderer in the list of all materials for sequencial access with no memory allocations
                 if (materials != null) {
