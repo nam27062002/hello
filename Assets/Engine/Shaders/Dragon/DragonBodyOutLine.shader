@@ -37,17 +37,18 @@ Properties {
 }
 
 SubShader {
-//	Tags { "Queue"="Geometry" "IgnoreProjector"="True" "RenderType"="Opaque" "LightMode"="ForwardBase" }
-//	LOD 100
-	ColorMask RGBA
-	
-	Pass {
-		Tags{ "Queue" = "Transparent+1000" "IgnoreProjector" = "True" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
-		ZWrite off
-		Cull off
+		Tags{ "Queue" = "Transparent+50" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
 
+		ColorMask RGBA
+		LOD 100
+
+
+	Pass {
+		ZWrite off
+		//		Ztest always
+		Cull back
 		Blend SrcAlpha OneMinusSrcAlpha // Traditional transparency
-		BlendOp add, max // Traditional transparency
+//		BlendOp add, max // Traditional transparency
 
 		CGPROGRAM
 		#pragma vertex vert
