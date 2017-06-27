@@ -80,6 +80,7 @@ namespace AI {
 		public void Bite() {
 			m_machine.SetSignal(Signals.Type.Panic, true);
 			m_machine.SetSignal(Signals.Type.Chewing, true);
+			m_pilot.OnDie();
 
 			if (EntityManager.instance != null)
 				EntityManager.instance.UnregisterEntity(m_entity as Entity);
