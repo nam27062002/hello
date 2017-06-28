@@ -86,7 +86,9 @@ namespace AI {
 			// raise flags
 			m_machine.SetSignal(Signals.Type.Burning, true);
 			m_machine.SetSignal(Signals.Type.Panic, true);
-			m_pilot.OnDie();
+
+			if (m_pilot != null)
+				m_pilot.OnDie();
 
 			// reward
 			Reward reward = (m_entity as Entity).GetOnKillReward(true);

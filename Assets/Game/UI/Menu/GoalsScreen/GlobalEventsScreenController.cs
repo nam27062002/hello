@@ -15,7 +15,7 @@ using UnityEngine;
 /// <summary>
 /// General controller for the Global Events tab in the Goals Screen.
 /// </summary>
-public class GoalsScreenGlobalEventsTab : MonoBehaviour {
+public class GlobalEventsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//

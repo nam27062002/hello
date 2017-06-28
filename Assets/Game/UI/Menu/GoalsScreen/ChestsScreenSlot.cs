@@ -1,4 +1,4 @@
-﻿// ChestTooltip.cs
+﻿// ChestsScreenSlot.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 11/10/2016.
@@ -17,7 +17,7 @@ using DG.Tweening;
 /// <summary>
 /// Control a single chest slot in the Goals Screen 3D scene.
 /// </summary>
-public class GoalsSceneChestSlot : MonoBehaviour, IPointerClickHandler {
+public class ChestsScreenSlot : MonoBehaviour, IPointerClickHandler {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//

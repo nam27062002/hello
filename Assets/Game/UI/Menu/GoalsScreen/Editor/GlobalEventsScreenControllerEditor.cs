@@ -1,4 +1,4 @@
-// GoalsScreenGlobalEventsTabEditor.cs
+// GlobalEventsScreenControllerEditor.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 26/06/2017.
@@ -16,9 +16,9 @@ using UnityEditor;
 /// <summary>
 /// Custom editor for the GoalsScreenGlobalEventsTab class.
 /// </summary>
-[CustomEditor(typeof(GoalsScreenGlobalEventsTab), true)]	// True to be used by heir classes as well
+[CustomEditor(typeof(GlobalEventsScreenController), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
-public class GoalsScreenGlobalEventsTabEditor : Editor {
+public class GlobalEventsScreenControllerEditor : Editor {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -27,7 +27,7 @@ public class GoalsScreenGlobalEventsTabEditor : Editor {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Casted target object
-	GoalsScreenGlobalEventsTab m_targetGoalsScreenGlobalEventsTab = null;
+	GlobalEventsScreenController m_targetGlobalEventsScreenController = null;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -37,7 +37,7 @@ public class GoalsScreenGlobalEventsTabEditor : Editor {
 	/// </summary>
 	private void OnEnable() {
 		// Get target object
-		m_targetGoalsScreenGlobalEventsTab = target as GoalsScreenGlobalEventsTab;
+		m_targetGlobalEventsScreenController = target as GlobalEventsScreenController;
 	}
 
 	/// <summary>
@@ -45,7 +45,7 @@ public class GoalsScreenGlobalEventsTabEditor : Editor {
 	/// </summary>
 	private void OnDisable() {
 		// Clear target object
-		m_targetGoalsScreenGlobalEventsTab = null;
+		m_targetGlobalEventsScreenController = null;
 	}
 
 	/// <summary>
@@ -76,7 +76,7 @@ public class GoalsScreenGlobalEventsTabEditor : Editor {
 			// Panels array
 			else if(p.name == "m_panels") {
 				// Fixed length
-				p.arraySize = (int)GoalsScreenGlobalEventsTab.Panels.COUNT;
+				p.arraySize = (int)GlobalEventsScreenController.Panels.COUNT;
 
 				// Show the expected panel as label for each entry
 				p.isExpanded = EditorGUILayout.Foldout(p.isExpanded, "Panels");
@@ -85,11 +85,11 @@ public class GoalsScreenGlobalEventsTabEditor : Editor {
 					EditorGUI.indentLevel++;
 
 					// Show them nicely formatted
-					for(int i = 0; i < (int)GoalsScreenGlobalEventsTab.Panels.COUNT; i++) {
+					for(int i = 0; i < (int)GlobalEventsScreenController.Panels.COUNT; i++) {
 						// Label + default property inspector
 						EditorGUILayout.PropertyField(
 							p.GetArrayElementAtIndex(i), 
-							new GUIContent(((GoalsScreenGlobalEventsTab.Panels)(i)).ToString()), 
+							new GUIContent(((GlobalEventsScreenController.Panels)(i)).ToString()), 
 							true
 						);
 					}
