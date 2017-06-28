@@ -9,7 +9,7 @@ Material:
   m_Name: dragon_crocodile_1_wings
   m_Shader: {fileID: 4800000, guid: 08eb0464654be4740b44925f08362264, type: 3}
   m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
-  m_LightmapFlags: 5
+  m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
@@ -80,26 +80,26 @@ Material:
         name: _BumpScale
       second: 1
     - first:
-        name: _BumpStrength
-      second: 3
-    - first:
         name: _Cutoff
-      second: 0.21
+      second: 0.5
     - first:
         name: _DetailNormalMapScale
       second: 1
     - first:
         name: _DstBlend
-      second: 10
-    - first:
-        name: _EmissionScaleUI
       second: 0
     - first:
         name: _Fresnel
       second: 8.45
     - first:
+        name: _GlossMapScale
+      second: 1
+    - first:
         name: _Glossiness
       second: 0.5
+    - first:
+        name: _GlossyReflections
+      second: 1
     - first:
         name: _InnerLightAdd
       second: 10
@@ -108,9 +108,6 @@ Material:
       second: 0
     - first:
         name: _Mode
-      second: 3
-    - first:
-        name: _NoiseValue
       second: 0
     - first:
         name: _NormalStrenght
@@ -123,13 +120,19 @@ Material:
       second: 2
     - first:
         name: _OutlineWidth
-      second: 0.2
+      second: 0.4
     - first:
         name: _Parallax
       second: 0.02
     - first:
+        name: _SmoothnessTextureChannel
+      second: 0
+    - first:
         name: _SpecExponent
       second: 123.22
+    - first:
+        name: _SpecularHighlights
+      second: 1
     - first:
         name: _SrcBlend
       second: 1
@@ -141,35 +144,26 @@ Material:
       second: 0
     - first:
         name: _ZWrite
-      second: 0
+      second: 1
     m_Colors:
     - first:
         name: _AmbientAdd
       second: {r: 0.08823532, g: 0.052797668, b: 0.02141004, a: 0}
     - first:
         name: _Color
-      second: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _ColorAdd
       second: {r: 0.33823532, g: 0.24969724, b: 0.11689014, a: 1}
     - first:
-        name: _ColorMultiply
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _EmissionColorUI
-      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _FresnelColor
       second: {r: 0.2794118, g: 0.2794118, b: 0.2794118, a: 1}
     - first:
         name: _InnerLightColor
       second: {r: 0, g: 0, b: 0, a: 0.872}
-    - first:
-        name: _NoiseColor
-      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _OutlineColor
       second: {r: 1, g: 1, b: 0, a: 1}
