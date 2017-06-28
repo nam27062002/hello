@@ -6,10 +6,9 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + Fresnel"
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-//		_MatCap("Gold", 2D) = "white" {}
 	
-		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
-		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
+//		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
+//		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 		_StencilMask("Stencil Mask", int) = 10
 	}
 	SubShader
@@ -56,8 +55,8 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + Fresnel"
 //			#define FRESNEL
 			#endif
 
-			#define FRESNEL
-//			#define MATCAP
+//			#define FRESNEL
+			#define MATCAP
 
 			#include "entities.cginc"
 			ENDCG
