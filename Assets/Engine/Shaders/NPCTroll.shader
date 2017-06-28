@@ -8,8 +8,8 @@ Shader "Hungry Dragon/NPC/NPC Troll"
 		_MainTex ("Texture", 2D) = "white" {}
 //		_MatCap("Gold", 2D) = "white" {}
 	
-		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
-		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
+//		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
+//		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 		_EmissiveColor("Emissive color (RGB)", Color) = (1, 1, 1, 1)
 		_EmissiveBlinkPhase("Emissive blink phase", float) = 10
 		_StencilMask("Stencil Mask", int) = 10
@@ -58,8 +58,8 @@ Shader "Hungry Dragon/NPC/NPC Troll"
 //			#define FRESNEL
 			#endif
 
-			#define FRESNEL
-//			#define MATCAP
+//			#define FRESNEL
+			#define MATCAP
 			#define EMISSIVE_COLOR
 
 			#include "entities.cginc"

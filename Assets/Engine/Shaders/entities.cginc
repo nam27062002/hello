@@ -38,6 +38,7 @@ uniform float4 _MainTex_TexelSize;
 
 #ifdef MATCAP
 uniform sampler2D _MatCap;
+uniform float4 _GoldColor;
 #endif
 
 
@@ -136,7 +137,7 @@ fixed4 frag(v2f i) : SV_Target
 	fixed specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
 #if defined (EMISSIVE)
 	fixed emmisiveMask = col.a;
-#elif  defined (EMISSIVECOLOR)
+#elif  defined (EMISSIVE_COLOR)
 	fixed emmisiveMask = col.a * ((sin(_Time.y * _EmissiveBlinkPhase) + 1.0) * 0.5);
 #endif
 
@@ -180,15 +181,15 @@ fixed4 frag(v2f i) : SV_Target
 #endif
 
 #ifdef MATCAP
-	fixed4 mc = tex2D(_MatCap, i.cap) * fixed4(1.0, 0.8, 0.0, 1.0);
+	fixed4 mc = tex2D(_MatCap, i.cap) * _GoldColor; // _FresnelColor;
 
 //	col = (col + ((mc*2.0) - 0.5));
-	col = lerp(col, (mc * 2.0), 1.0);
+	col = lerp(col, mc * 3.0, _GoldColor.w);// (1.0 - clamp(_FresnelPower, 0.0, 1.0)));
 	//	res.a = 0.5;
 
 #endif
 
-#if defined (EMISSIVE) || defined (EMISSIVECOLOR)
+#if defined (EMISSIVE) || defined (EMISSIVE_COLOR)
 	col = lerp(col, unlitColor, emmisiveMask);
 #endif
 

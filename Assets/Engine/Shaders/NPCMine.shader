@@ -10,8 +10,8 @@ Shader "Hungry Dragon/NPC/NPC Mine (Spawners)"
 		_NormalStrength("Normal Strength", float) = 3
 		_SpecularPower( "Specular power", float ) = 1
 		_SpecularColor("Specular color (RGB)", Color) = (0, 0, 0, 0)
-		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
-		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
+//		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
+//		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 
 		_StencilMask("Stencil Mask", int) = 10
 	}
@@ -62,8 +62,8 @@ Shader "Hungry Dragon/NPC/NPC Mine (Spawners)"
 //			#define NORMALMAP
 //			#define SPECULAR
 
-
-			#define FRESNEL
+//			#define FRESNEL
+			#define MATCAP
 
 			#include "entities.cginc"
 
