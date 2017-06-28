@@ -76,7 +76,7 @@ public class GameServerManagerCalety : GameServerManager {
 				Messenger.Broadcast<bool>(GameEvents.LOGGED, m_logged);
 			}
 
-			// An error is sent, just in case the client is waiting for a response for any command
+			// An error is sent, just in case the client is waiting for a response for any command            
 			if(m_onResponse != null) {
 				m_onResponse(null, 500);
 			}
@@ -700,12 +700,14 @@ public class GameServerManagerCalety : GameServerManager {
 	/// 
 	/// </summary>
 	private void Commands_OnExecuteCommandDone(Error error, ServerResponse result) {
-		ServerCallback callback = Commands_CurrentCommand.Callback;
-		Commands_ReturnCommand(Commands_CurrentCommand);
-		Commands_CurrentCommand = null;
-		if(callback != null) {
-			callback(error, result);
-		}
+        if (Commands_CurrentCommand != null) {
+            ServerCallback callback = Commands_CurrentCommand.Callback;
+            Commands_ReturnCommand(Commands_CurrentCommand);
+            Commands_CurrentCommand = null;
+            if (callback != null) {
+                callback(error, result);
+            }
+        }
 
 		// If no command is being processed and there's a command enqueued then that command is processed
 		// We need to verify that Commands_CurrentCommand is null because the callback called right above might have call another command
