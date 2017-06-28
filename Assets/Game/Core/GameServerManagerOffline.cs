@@ -30,6 +30,9 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Internal vars
+	private DateTime m_initTimestamp = new DateTime();
+
 	// Simulate global event progression
 	private Dictionary<string, float> m_eventValues = new Dictionary<string, float>();
 	private Dictionary<string, List<GlobalEventUserData>> m_eventLeaderboards = new Dictionary<string, List<GlobalEventUserData>>();
@@ -62,6 +65,17 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	override public void Ping(ServerCallback _callback) {
 		// No response
 		DelayedCall(() => _callback(null, null));
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	protected override void ExtendedConfigure() {
+		// Call parent
+		base.ExtendedConfigure();
+
+		// Some extra initialization
+		m_initTimestamp = DateTime.UtcNow;
 	}
 
 	//------------------------------------------------------------------------//
@@ -115,33 +129,57 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		// Create return dictionary
 		ServerResponse res = new ServerResponse();
 
-		// Type and target
-		SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass();
-		eventData.Add("id", "test_event_0");
-		eventData.Add("goal", "eat_birds");
-		eventData.Add("targetValue", 1000f.ToString(JSON_FORMAT));
+		// Check debug settings
+		CPGlobalEventsTest.EventStateTest targetState = CPGlobalEventsTest.eventState;
 
-		// Timestamps
-		DateTime startTimestamp = DateTime.UtcNow.AddDays(-3.3);		// Started 3.3 days ago
-		//DateTime startTimestamp = DateTime.UtcNow.AddDays(2.5);		// Starting in 2.5 days
-		//DateTime startTimestamp = DateTime.UtcNow.AddDays(-85);		// Started 85 days ago
-		eventData.Add("startTimestamp", startTimestamp.ToString(JSON_FORMAT));
-		eventData.Add("teaserTimestamp", startTimestamp.AddDays(-2).ToString(JSON_FORMAT));	// 2 days before start time
-		eventData.Add("endTimestamp", startTimestamp.AddDays(7).ToString(JSON_FORMAT));	// Lasts 7 days
+		// Simulate no event?
+		if(targetState == CPGlobalEventsTest.EventStateTest.NO_EVENT) {
+			res["response"] = null;
+		} else {
+			// Type and target
+			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass();
+			eventData.Add("id", "test_event_0");
+			eventData.Add("goal", "eat_birds");
+			eventData.Add("targetValue", 1000f.ToString(JSON_FORMAT));
 
-		// Rewards
-		SimpleJSON.JSONArray rewardsArray = new SimpleJSON.JSONArray();
-		rewardsArray.Add(CreateEventRewardData(0.2f, "sc", 500));
-		rewardsArray.Add(CreateEventRewardData(0.5f, "sc", 1000));
-		rewardsArray.Add(CreateEventRewardData(0.75f, "hc", 100));
-		rewardsArray.Add(CreateEventRewardData(1f, "egg", 1));
-		eventData.Add("rewards", rewardsArray);
+			// Timestamps
+			// By tuning the start timestamp in relation to the current time we can simulate the different states of the event
+			DateTime startTimestamp = new DateTime();
+			switch(targetState) {
+				case CPGlobalEventsTest.EventStateTest.DEFAULT:
+				case CPGlobalEventsTest.EventStateTest.ACTIVE: {
+					startTimestamp = m_initTimestamp.AddDays(-3.3);		// Started 3.3 days ago
+				} break;
 
-		// Top percentile reward
-		eventData.Add("topReward", CreateEventRewardData(0.1f, "pet1", 1));
+				case CPGlobalEventsTest.EventStateTest.TEASING: {
+					startTimestamp = m_initTimestamp.AddDays(1.5);		// Starting in 1.5 days
+				} break;
 
-		// Store response and simulate server delay
-		res["response"] = eventData.ToString();
+				case CPGlobalEventsTest.EventStateTest.FINISHED: {
+					startTimestamp = m_initTimestamp.AddDays(-85);		// Started 85 days ago
+				} break;
+			}
+
+			eventData.Add("startTimestamp", startTimestamp.ToString(JSON_FORMAT));
+			eventData.Add("teaserTimestamp", startTimestamp.AddDays(-2).ToString(JSON_FORMAT));	// 2 days before start time
+			eventData.Add("endTimestamp", startTimestamp.AddDays(7).ToString(JSON_FORMAT));		// Lasts 7 days
+
+			// Rewards
+			SimpleJSON.JSONArray rewardsArray = new SimpleJSON.JSONArray();
+			rewardsArray.Add(CreateEventRewardData(0.2f, "sc", 500));
+			rewardsArray.Add(CreateEventRewardData(0.5f, "sc", 1000));
+			rewardsArray.Add(CreateEventRewardData(0.75f, "hc", 100));
+			rewardsArray.Add(CreateEventRewardData(1f, "egg", 1));
+			eventData.Add("rewards", rewardsArray);
+
+			// Top percentile reward
+			eventData.Add("topReward", CreateEventRewardData(0.1f, "pet1", 1));
+
+			// Store response
+			res["response"] = eventData.ToString();
+		}
+
+		// Simulate server delay
 		DelayedCall(() => _callback(null, res));
 	}
 

@@ -161,19 +161,17 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 	/// </summary>
 	/// <returns>Whether the user can contribute to the current event and why.</returns>
 	public static ErrorCode CanContribute() {
-		// Debugging override
-		bool testing = CPGlobalEventsTest.testEnabled;
-
+		// Check for debugging overrides
 		// We must be online!
-		if(Application.internetReachability == NetworkReachability.NotReachable) return ErrorCode.OFFLINE;
+		if(CPGlobalEventsTest.networkCheck && Application.internetReachability == NetworkReachability.NotReachable) return ErrorCode.OFFLINE;
 
 		// Manager must be properly setup
 		if(!IsReady()) return ErrorCode.NOT_INITIALIZED;
 
 		// User must be logged in!
 		// [AOC] CHECK HOW TO DO IT!!
-		//if(!testing && !SocialManager.Instance.IsLoggedIn(SocialFacade.Network.Default)) return ErrorCode.NOT_LOGGED_IN;
-		if(!testing && !GameSessionManager.SharedInstance.IsLogged()) return ErrorCode.NOT_LOGGED_IN;
+		//if(CPGlobalEventsTest.loginCheck && !SocialManager.Instance.IsLoggedIn(SocialFacade.Network.Default)) return ErrorCode.NOT_LOGGED_IN;
+		if(CPGlobalEventsTest.loginCheck && !GameSessionManager.SharedInstance.IsLogged()) return ErrorCode.NOT_LOGGED_IN;
 
 		// We must have a valid event
 		if(currentEvent == null) return ErrorCode.NO_VALID_EVENT;
@@ -183,6 +181,14 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 
 		// All checks passed!
 		return ErrorCode.NONE;
+	}
+
+	/// <summary>
+	/// Clear any stored data for current event.
+	/// </summary>
+	public static void ClearCurrentEvent() {
+		// This should be enough
+		instance.m_currentEvent = null;
 	}
 
 	/// <summary>
@@ -235,7 +241,7 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 			}
 		} else {
 			// No! Clear current event (if any)
-			if(m_currentEvent != null) m_currentEvent = null;
+			if(m_currentEvent != null) ClearCurrentEvent();
 		}
 
 		// Notify game that we have new data concerning the current event
@@ -271,7 +277,7 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 
 			// The event will parse the response json by itself
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-			Debug.Log("<color=magenta>Received current event state:</color>\n" + responseJson.ToString(4));
+			Debug.Log("<color=purple>Received current event state:</color>\n" + responseJson.ToString(4));
 			m_currentEvent.UpdateFromJson(responseJson);
 
 			// Player data

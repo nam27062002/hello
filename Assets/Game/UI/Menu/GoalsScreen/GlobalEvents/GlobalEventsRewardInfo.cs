@@ -18,7 +18,7 @@ using TMPro;
 /// <summary>
 /// Widget to display the info of a global event reward.
 /// </summary>
-public class GlobalEventsScreenRewardInfo : MonoBehaviour {
+public class GlobalEventsRewardInfo : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//

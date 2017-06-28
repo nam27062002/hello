@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -16,7 +17,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Panel corresponding to an active global event.
 /// </summary>
-public class GlobalEventsScreenActivePanel : MonoBehaviour {
+public class GlobalEventsPanelActive : GlobalEventsPanel {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -25,51 +26,38 @@ public class GlobalEventsScreenActivePanel : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
+	[SerializeField] private TextMeshProUGUI m_timerText = null;
 	[SerializeField] private Slider m_progressBar = null;
-	//[SerializeField] private 
+	[SerializeField] private GlobalEventsRewardInfo[] m_rewardInfos = new GlobalEventsRewardInfo[0];
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-
-	}
-
-	/// <summary>p
-	/// First update call.
-	/// </summary>
-	private void Start() {
-
-	}
-
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-
-	}
-
-	/// <summary>
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
+		// Just in case
+		if(GlobalEventManager.currentEvent == null) return;
 
+		// Update timer
+		// [AOC] Could be done with less frequency
+		m_timerText.text = TimeUtils.FormatTime(
+			GlobalEventManager.currentEvent.remainingTime.TotalSeconds,
+			TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
+			4
+		);
+
+		// [AOC] TODO!! Manage event end when this panel is active
 	}
 
+	//------------------------------------------------------------------------//
+	// PARENT OVERRIDES														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Destructor.
+	/// Refresh displayed data.
 	/// </summary>
-	private void OnDestroy() {
+	override public void Refresh() {
 
 	}
 

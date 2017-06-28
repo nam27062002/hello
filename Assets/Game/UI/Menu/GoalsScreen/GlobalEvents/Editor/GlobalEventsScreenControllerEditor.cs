@@ -76,7 +76,7 @@ public class GlobalEventsScreenControllerEditor : Editor {
 			// Panels array
 			else if(p.name == "m_panels") {
 				// Fixed length
-				p.arraySize = (int)GlobalEventsScreenController.Panels.COUNT;
+				p.arraySize = (int)GlobalEventsScreenController.Panel.COUNT;
 
 				// Show the expected panel as label for each entry
 				p.isExpanded = EditorGUILayout.Foldout(p.isExpanded, "Panels");
@@ -85,11 +85,11 @@ public class GlobalEventsScreenControllerEditor : Editor {
 					EditorGUI.indentLevel++;
 
 					// Show them nicely formatted
-					for(int i = 0; i < (int)GlobalEventsScreenController.Panels.COUNT; i++) {
+					for(int i = 0; i < (int)GlobalEventsScreenController.Panel.COUNT; i++) {
 						// Label + default property inspector
 						EditorGUILayout.PropertyField(
 							p.GetArrayElementAtIndex(i), 
-							new GUIContent(((GlobalEventsScreenController.Panels)(i)).ToString()), 
+							new GUIContent(((GlobalEventsScreenController.Panel)(i)).ToString()), 
 							true
 						);
 					}
