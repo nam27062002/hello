@@ -21,9 +21,9 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly Color FPS_THRESHOLD_COLOR_1 = new Color(0f, 1f, 0f, 0.75f);	// Green
-	public static readonly Color FPS_THRESHOLD_COLOR_2 = new Color(1f, 0.5f, 0f, 0.75f);	// Orange
-	public static readonly Color FPS_THRESHOLD_COLOR_3 = new Color(1f, 0f, 0f, 0.75f);	// Red
+	public static readonly Color FPS_THRESHOLD_COLOR_1 = new Color(40f/255f, 220f/255f, 140/255f, 0.75f);	// Green
+	public static readonly Color FPS_THRESHOLD_COLOR_2 = new Color(230f/255f, 150f/255f, 0f/255f, 0.75f);	// Orange
+	public static readonly Color FPS_THRESHOLD_COLOR_3 = new Color(230f/255f, 75f/255f, 030f/255f, 0.75f);	// Red
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
