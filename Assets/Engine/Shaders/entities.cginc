@@ -70,6 +70,7 @@ uniform float4 _Tint;
 
 #ifdef EMISSIVE_COLOR
 uniform float4 _EmissiveColor;
+uniform float _EmissiveBlinkPhase;
 #endif
 
 
@@ -133,8 +134,10 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 col = tex2D(_MainTex, i.uv);
 //	fixed specMask = col.a;
 	fixed specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
-#if defined (EMISSIVE) || defined (EMISSIVECOLOR)
+#if defined (EMISSIVE)
 	fixed emmisiveMask = col.a;
+#elif  defined (EMISSIVECOLOR)
+	fixed emmisiveMask = col.a * ((sin(_Time.y * _EmissiveBlinkPhase) + 1.0) * 0.5);
 #endif
 
 #if defined (TINT)
