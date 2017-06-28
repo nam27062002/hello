@@ -353,9 +353,6 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	/// <param name="_icon">Icon to be attached..</param>
 	/// <param name="_alignment">Position of the icon relative to the text.</param>
 	public static string GetIconString(string _text, IconType _icon, IconAlignment _alignment) {
-		// Reset string builder
-		instance.m_sb.Length = 0;
-
 		// Figure out icon string
 		string iconString = string.Empty;
 		switch(_icon) {
@@ -371,6 +368,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		}
 
 		// Compose final string with the proper alignment
+		instance.m_sb.Length = 0;	// Reset string builder
 		switch(_alignment) {
 			case IconAlignment.NONE: {
 				instance.m_sb.Append(_text);
