@@ -1,7 +1,7 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
-Shader "Hungry Dragon/NPC/NPC Diffuse + Fresnel"
+Shader "Hungry Dragon/NPC/NPC Troll"
 {
 	Properties
 	{
@@ -10,6 +10,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + Fresnel"
 	
 		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
 		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
+		_EmissiveColor("Emissive color (RGB)", Color) = (1, 1, 1, 1)
 		_StencilMask("Stencil Mask", int) = 10
 	}
 	SubShader
@@ -58,6 +59,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + Fresnel"
 
 			#define FRESNEL
 //			#define MATCAP
+			#define EMISSIVE_COLOR
 
 			#include "entities.cginc"
 			ENDCG
