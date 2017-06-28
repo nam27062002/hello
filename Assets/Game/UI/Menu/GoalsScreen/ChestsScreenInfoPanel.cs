@@ -1,4 +1,4 @@
-﻿// ChestTooltip.cs
+﻿// ChestsScreenInfoPanel.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 11/10/2016.
@@ -9,34 +9,27 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Control a single tooltip for a chest in the menu.
+/// Initializes and controls the Chests info panel in the Goals Screen.
 /// </summary>
-public class GoalsScreenChestTooltip : MonoBehaviour {
+public class ChestsScreenInfoPanel : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	
 	//------------------------------------------------------------------------//
-	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
-	// Setup
-	[Comment("Position will be anchored to the UIAnchor transform in the corresponding slot of the 3D scene")]
-	[SerializeField][Range(0, 4)] private int m_chestIdx = 0;
-
+	//------------------------------------------------------------------------//
 	// External refs
-	[Space]
-	[SerializeField] private Localizer m_nameText = null;
-	[Space]
-	[SerializeField] private TextMeshProUGUI m_coinsRewardText = null;
-	[SerializeField] private TextMeshProUGUI m_pcRewardText = null;
-	[Space]
-	[SerializeField] private GameObject m_checkMark = null;
+	[SerializeField] private Localizer m_collectedText = null;
+	[SerializeField] private TextMeshProUGUI m_timerText = null;
+	[SerializeField] private Slider m_timerBar = null;
 
 	// Internal
 	private Transform m_3dAnchor = null;
@@ -45,48 +38,18 @@ public class GoalsScreenChestTooltip : MonoBehaviour {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-
-	}
-
-	/// <summary>
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		// Get anchor ref
+		// Get anchor ref (if any)
 		MenuSceneController menuController = InstanceManager.menuSceneController;
-		MenuScreenScene scene = menuController.screensController.GetScene((int)MenuScreens.GOALS);
-		GoalsSceneController goalScene = scene.GetComponent<GoalsSceneController>();
-		m_3dAnchor = goalScene.chestSlots[m_chestIdx].uiAnchor;
-
-		// Set name
-		string tid = "";
-		switch(m_chestIdx) {
-			case 0: tid = "TID_GEN_ORDER_1"; break;
-			case 1: tid = "TID_GEN_ORDER_2"; break;
-			case 2: tid = "TID_GEN_ORDER_3"; break;
-			case 3: tid = "TID_GEN_ORDER_4"; break;
-			case 4: tid = "TID_GEN_ORDER_5"; break;
+		if(menuController != null) {
+			MenuScreenScene scene = menuController.screensController.GetScene((int)MenuScreens.GOALS);
+			if(scene != null) {
+				GoalsSceneController goalScene = scene.GetComponent<GoalsSceneController>();
+				m_3dAnchor = goalScene.infoPanelUIAnchor;
+			}
 		}
-		m_nameText.Localize(tid);
-
-		// Initialize reward info - shouldn't change while alive, so do it at the Start() call
-		Chest.RewardData rewardData = ChestManager.GetRewardData(m_chestIdx + 1);
-		bool isPC = rewardData.type == Chest.RewardType.PC;
-
-		m_coinsRewardText.gameObject.SetActive(!isPC);
-		m_pcRewardText.gameObject.SetActive(isPC);
-
-		if(isPC) {
-			m_pcRewardText.text = UIConstants.GetIconString(rewardData.amount, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
-		} else {
-			m_coinsRewardText.text = UIConstants.GetIconString(rewardData.amount, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
-		}
-
-		// Do a first refresh!
-		Refresh();
 	}
 
 	/// <summary>
@@ -96,12 +59,16 @@ public class GoalsScreenChestTooltip : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.CHESTS_RESET, Refresh);
 		Messenger.AddListener(GameEvents.CHESTS_PROCESSED, Refresh);
+
+		// Refresh
+		Refresh();
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
+		// Unsubscribe from external events
 		Messenger.RemoveListener(GameEvents.CHESTS_RESET, Refresh);
 		Messenger.RemoveListener(GameEvents.CHESTS_PROCESSED, Refresh);
 	}
@@ -110,8 +77,10 @@ public class GoalsScreenChestTooltip : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
+		if(!isActiveAndEnabled) return;
+
 		// Keep anchored
-		if(isActiveAndEnabled && m_3dAnchor != null) {
+		if(m_3dAnchor != null) {
 			// Get camera and apply the inverse transformation
 			if(InstanceManager.sceneController.mainCamera != null) {
 				// From http://answers.unity3d.com/questions/799616/unity-46-beta-19-how-to-convert-from-world-space-t.html
@@ -123,13 +92,9 @@ public class GoalsScreenChestTooltip : MonoBehaviour {
 				rt.anchorMax = posScreen;
 			}
 		}
-	}
 
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
+		// Refresh time
+		RefreshTime();
 	}
 
 	//------------------------------------------------------------------------//
@@ -139,11 +104,31 @@ public class GoalsScreenChestTooltip : MonoBehaviour {
 	/// Refresh all info.
 	/// </summary>
 	private void Refresh() {
-		// Only collected status
-		bool collected = ChestManager.collectedAndPendingChests > m_chestIdx;
+		// Collected count
+		if(m_collectedText != null) {
+			m_collectedText.Localize("TID_CHEST_DAILY_DESC", ChestManager.collectedChests.ToString(), ChestManager.NUM_DAILY_CHESTS.ToString());
+		}
 
-		// Show/hide checkmark accordingly
-		m_checkMark.SetActive(collected);
+		// Time info
+		RefreshTime();
+	}
+
+	/// <summary>
+	/// Refresh timer info.
+	/// </summary>
+	private void RefreshTime() {
+		// Aux vars
+		TimeSpan timeToReset = ChestManager.timeToReset;
+
+		// Text
+		if(m_timerText != null) {
+			m_timerText.text = TimeUtils.FormatTime(timeToReset.TotalSeconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
+		}
+
+		// Bar
+		if(m_timerBar != null) {
+			m_timerBar.normalizedValue = (float)((ChestManager.RESET_PERIOD - timeToReset.TotalHours)/ChestManager.RESET_PERIOD);
+		}
 	}
 
 	//------------------------------------------------------------------------//
