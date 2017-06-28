@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_crocodile_2_body
-  m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
+  m_Shader: {fileID: 4800000, guid: 260a1395b86700441a3582b2755ab21d, type: 3}
   m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -116,6 +116,12 @@ Material:
         name: _OcclusionStrength
       second: 1
     - first:
+        name: _OutlineGradient
+      second: 2
+    - first:
+        name: _OutlineWidth
+      second: 0.4
+    - first:
         name: _Parallax
       second: 0.02
     - first:
@@ -158,6 +164,9 @@ Material:
     - first:
         name: _InnerLightColor
       second: {r: 0, g: 0, b: 0, a: 0.872}
+    - first:
+        name: _OutlineColor
+      second: {r: 1, g: 1, b: 0, a: 1}
     - first:
         name: _SecondLightColor
       second: {r: 0.26666668, g: 0.2, b: 0.2, a: 0}
