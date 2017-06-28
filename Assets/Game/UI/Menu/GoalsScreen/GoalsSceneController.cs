@@ -39,8 +39,8 @@ public class GoalsSceneController : MonoBehaviour {
 	// Chest references
 	[Space]
 	[Tooltip("Always 5 slots, please!")]
-	[SerializeField] private GoalsSceneChestSlot[] m_chestSlots = new GoalsSceneChestSlot[5];
-	public GoalsSceneChestSlot[] chestSlots {
+	[SerializeField] private ChestsScreenSlot[] m_chestSlots = new ChestsScreenSlot[5];
+	public ChestsScreenSlot[] chestSlots {
 		get { return m_chestSlots; }
 	}
 
@@ -93,7 +93,7 @@ public class GoalsSceneController : MonoBehaviour {
 		// There must be exactly 5 chest slots
 		if(m_chestSlots.Length != 5) {
 			// Create a new array with exactly 5 slots and copy as many values as we can
-			GoalsSceneChestSlot[] chestSlots = new GoalsSceneChestSlot[5];
+			ChestsScreenSlot[] chestSlots = new ChestsScreenSlot[5];
 			for(int i = 0; i < m_chestSlots.Length && i < chestSlots.Length; i++) {
 				chestSlots[i] = m_chestSlots[i];
 			}

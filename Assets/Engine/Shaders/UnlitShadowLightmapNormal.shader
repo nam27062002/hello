@@ -37,8 +37,8 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Normal Map"
 				#pragma fragment frag
 //				#pragma multi_compile_fog
 				#pragma multi_compile_fwdbase
-				#pragma glsl_no_auto_normalization
-				#pragma fragmentoption ARB_precision_hint_fastest
+//				#pragma glsl_no_auto_normalization
+//				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 				#define HG_SCENARY

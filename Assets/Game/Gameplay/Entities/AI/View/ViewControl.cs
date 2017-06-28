@@ -8,6 +8,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	public static Color GOLD_TINT = new Color(255.0f / 255.0f, 161 / 255.0f, 0, 255.0f / 255.0f);
     public static Color FREEZE_TINT = new Color(0.0f / 255.0f, 200.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f);
+    public static Color NO_TINT = new Color(0.0f, 0.0f, 0.0f, 0.0f);
     public static float FREEZE_TIME = 1.0f;
 
     [Serializable]
@@ -210,10 +211,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
                     matCount = materials.Length;
                     for (int j = 0; j < matCount; j++) {
                         m_allMaterials.Add(materials[j]);
-						if (materials[j].HasProperty("_FresnelColor")) {
-							m_defaultTints.Add(materials[j].GetColor("_FresnelColor"));
+						if (materials[j].HasProperty("_GoldColor")) {
+							m_defaultTints.Add(materials[j].GetColor("_GoldColor"));
 						} else {
-							m_defaultTints.Add(Color.black);
+							m_defaultTints.Add(ViewControl.NO_TINT);
 						}
                     }
                 }
@@ -436,15 +437,15 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
                 	{
                 		case EntityTint.GOLD:
                 		{
-							m_allMaterials[i].SetColor("_FresnelColor", GOLD_TINT);
+							m_allMaterials[i].SetColor("_GoldColor", GOLD_TINT);
                 		}break;
                 		case EntityTint.FREEZE:
                 		{
-							m_allMaterials[i].SetColor("_FresnelColor", FREEZE_TINT * m_freezingLevel);
+							m_allMaterials[i].SetColor("_GoldColor", FREEZE_TINT * m_freezingLevel);
                 		}break;
                 		case EntityTint.NORMAL:
                 		{
-							m_allMaterials[i].SetColor("_FresnelColor", m_defaultTints[i]);
+							m_allMaterials[i].SetColor("_GoldColor", NO_TINT);
                 		}break;
                 	}
                 }

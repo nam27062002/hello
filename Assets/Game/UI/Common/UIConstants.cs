@@ -10,6 +10,7 @@
 using UnityEngine;
 using DG.Tweening;
 using System.Text;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -42,17 +43,17 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	//------------------------------------------------------------------------//
 	// Text Mesh Pro shortcuts
 	#region TMP_Shortcuts
-	[SerializeField] private string m_tmpSpriteSC = "<sprite name=\"icon_sc\">";
+	[SerializeField] private string m_tmpSpriteSC = "icon_sc";
 	public static string TMP_SPRITE_SC {
 		get { return instance.m_tmpSpriteSC; }
 	}
 
-	[SerializeField] private string m_tmpSpritePC = "<sprite name=\"icon_pc\">";
+	[SerializeField] private string m_tmpSpritePC = "icon_pc";
 	public static string TMP_SPRITE_PC {
 		get { return instance.m_tmpSpritePC; }
 	}
 
-	[SerializeField] private string m_tmpSpriteGoldenEggFragment = "<sprite name=\"icon_dragon_scale\">";
+	[SerializeField] private string m_tmpSpriteGoldenEggFragment = "icon_dragon_scale";
 	public static string TMP_SPRITE_GOLDEN_EGG_FRAGMENT {
 		get { return instance.m_tmpSpriteGoldenEggFragment; }
 	}
@@ -122,6 +123,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	[SerializeField] private string m_languageIconsPath = "UI/Metagame/Settings/";
 	public static string LANGUAGE_ICONS_PATH {
 		get { return instance.m_languageIconsPath; }
+	}
+
+	[SerializeField] private string m_missionIconsPath = "UI/Metagame/Missions/";
+	public static string MISSION_ICONS_PATH {
+		get { return instance.m_missionIconsPath; }
 	}
 	#endregion
 
@@ -323,6 +329,20 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		// Unknown power, return white
 		return Color.white;
 	}
+
+	/// <summary>
+	/// Get the name (sprite id within the atlas) for the given icon type.
+	/// </summary>
+	/// <returns>The name of the requested icon type within the atlas.</returns>
+	/// <param name="_icon">Icon whose name we want.</param>
+	public static string GetIconName(IconType _icon) {
+		switch(_icon) {
+			case IconType.COINS: 			return UIConstants.TMP_SPRITE_SC;
+			case IconType.PC: 				return UIConstants.TMP_SPRITE_PC;
+			case IconType.GOLDEN_FRAGMENTS: return UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT;
+		}
+		return string.Empty;
+	}
 		
 	/// <summary>
 	/// Create a composite string consisting of a text and an icon.
@@ -333,30 +353,22 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	/// <param name="_icon">Icon to be attached..</param>
 	/// <param name="_alignment">Position of the icon relative to the text.</param>
 	public static string GetIconString(string _text, IconType _icon, IconAlignment _alignment) {
-		// Reset string builder
-		instance.m_sb.Length = 0;
-
 		// Figure out icon string
-		string iconString = "";
+		string iconString = string.Empty;
 		switch(_icon) {
-			case IconType.COINS: {
-				iconString = UIConstants.TMP_SPRITE_SC;
-			} break;
-
-			case IconType.PC: {
-				iconString = UIConstants.TMP_SPRITE_PC;
-			} break;
-
+			case IconType.COINS:
+			case IconType.PC:
 			case IconType.GOLDEN_FRAGMENTS: {
-				iconString = UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT;
+				iconString = GetSpriteTag(GetIconName(_icon));
 			} break;
 
-			case IconType.NONE: {
+			default: {
 				iconString = string.Empty;
 			} break;
 		}
 
 		// Compose final string with the proper alignment
+		instance.m_sb.Length = 0;	// Reset string builder
 		switch(_alignment) {
 			case IconAlignment.NONE: {
 				instance.m_sb.Append(_text);
@@ -420,6 +432,20 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			case UserProfile.Currency.GOLDEN_FRAGMENTS:	icon = IconType.GOLDEN_FRAGMENTS;	break;
 		}
 		return icon;
+	}
+
+	/// <summary>
+	/// Get the sprite corresponding to a given icon.
+	/// </summary>
+	/// <returns>The icon sprite.</returns>
+	/// <param name="_icon">Icon whose sprite we want.</param>
+	public static Sprite GetIconSprite(IconType _icon) {
+		// TMPro has the sprites indexed for us and provide us the tools get them!
+		int spriteIdx = TMP_SpriteAsset.defaultSpriteAsset.GetSpriteIndexFromName(GetIconName(_icon));
+		if(spriteIdx < 0) return null;
+
+		// Just get the sprite at the given index!
+		return TMP_SpriteAsset.defaultSpriteAsset.spriteInfoList[spriteIdx].sprite;
 	}
 
 	/// <summary>

@@ -77,7 +77,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		return 0;
 	}
 
-	public void Damage(float damage)  {
+	public void Damage(float damage) {
 		m_health -= damage;
 	}
 
@@ -86,21 +86,17 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		gameObject.SetActive(false);
 	}
 
-    public virtual void CustomUpdate() 
-    {
-    	for( int i = 0; i<m_otherSpawnables.Count; i++ )
-    	{
+    public virtual void CustomUpdate() {
+    	for (int i = 0; i < m_otherSpawnables.Count; i++) {
 			m_otherSpawnables[i].CustomUpdate();
     	}
     }
-    public virtual bool CanDieOutsideFrustrum() { return true; }
 
-	public virtual CircleArea2D circleArea { get{ return null; } }
-
-	public virtual bool CanBeSmashed(){ return false; }
-
-	public virtual void CustomFixedUpdate()
-	{
+	public virtual void CustomFixedUpdate() {
 		if (m_machine != null) m_machine.CustomFixedUpdate();
 	}
+
+	public virtual bool CanBeSmashed()			{ return false; }
+    public virtual bool CanDieOutsideFrustrum() { return true; }
+	public virtual CircleArea2D circleArea 		{ get { return null; } }
 }
