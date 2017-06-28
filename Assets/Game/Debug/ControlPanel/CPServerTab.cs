@@ -33,8 +33,6 @@ public class CPServerTab : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_outputText = null;
 	[SerializeField] private TextMeshProUGUI m_accountIdText = null;
 
-
-
     // Internal
     private DateTime m_startTimestamp;
 	private StringBuilder m_outputSb = new StringBuilder();

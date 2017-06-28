@@ -62,6 +62,18 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         }        
     }
 
+	private bool m_isFPSEnabled;
+	public bool IsFPSEnabled {
+		get {
+			return m_isFPSEnabled;
+		}
+
+		set {
+			m_isFPSEnabled = value;
+			m_fpsCounter.gameObject.SetActive(m_isFPSEnabled);
+		}        
+	}
+
 	[SerializeField] private TextMeshProUGUI m_memoryLabel;
 	public static TextMeshProUGUI memoryLabel {
 		get { return instance.m_memoryLabel; }
@@ -84,6 +96,13 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 
     [SerializeField]
     private TextMeshProUGUI m_logicUnitsCounter;
+
+	[SerializeField]
+	private TextMeshProUGUI m_vertexCount_npc;
+
+	[SerializeField]
+	private TextMeshProUGUI m_drawCalls_npc;
+
 
     // Exposed setup
     [Space]
@@ -141,6 +160,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		m_panel.gameObject.SetActive(false);
 		m_toggleButton.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
         IsStatsEnabled = UnityEngine.Debug.isDebugBuild;        
+		IsFPSEnabled = UnityEngine.Debug.isDebugBuild;        
         ShowMemoryUsage = UnityEngine.Debug.isDebugBuild;
         m_logicUnitsCounter.transform.parent.gameObject.SetActive(UnityEngine.Debug.isDebugBuild && ProfilerSettingsManager.ENABLED);
 
@@ -196,7 +216,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		if ( m_DeltaIndex >= m_NumDeltaTimes )
 			m_DeltaIndex = 0;
 
-		if ( m_fpsCounter != null )
+		if ( m_fpsCounter != null && m_isFPSEnabled )
 		{
 			float fps = GetFPS();            
 			if(fps >= 0) {
@@ -246,6 +266,33 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
             m_logicUnitsCounter.text = IntegerToString(value);            
         }
 
+		if (m_isStatsEnabled) {
+			if (m_vertexCount_npc != null) {
+				int vc = EntityManager.instance.totalVertexCount;
+				if (vc > 30000) {
+					m_vertexCount_npc.color = FPS_THRESHOLD_COLOR_3;
+				} else if (vc > 25000) {
+					m_vertexCount_npc.color = FPS_THRESHOLD_COLOR_2;
+				} else {
+					m_vertexCount_npc.color = FPS_THRESHOLD_COLOR_1;                   
+				}
+	 
+				m_vertexCount_npc.text = ""+vc;
+			}
+
+			if (m_drawCalls_npc != null) {
+				int dc = EntityManager.instance.drawCalls;
+				if (dc > 39) {
+					m_drawCalls_npc.color = FPS_THRESHOLD_COLOR_3;
+				} else if (dc > 34) {
+					m_drawCalls_npc.color = FPS_THRESHOLD_COLOR_2;
+				} else {
+					m_drawCalls_npc.color = FPS_THRESHOLD_COLOR_1;                   
+				}
+
+				m_drawCalls_npc.text = IntegerToString(dc);
+			}
+		}
 
         // Quick Cheats
         if ( Input.GetKeyDown(KeyCode.L )){

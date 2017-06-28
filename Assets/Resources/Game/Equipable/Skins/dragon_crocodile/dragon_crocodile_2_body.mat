@@ -8,8 +8,8 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_crocodile_2_body
   m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
+  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
+  m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
@@ -18,7 +18,7 @@ Material:
     - first:
         name: _BumpMap
       second:
-        m_Texture: {fileID: 2800000, guid: 9cc9b468e807449ce8a419121aed6c67, type: 3}
+        m_Texture: {fileID: 2800000, guid: db98ac620b8b4144e9f6f5736c071d82, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -42,7 +42,7 @@ Material:
     - first:
         name: _DetailTex
       second:
-        m_Texture: {fileID: 2800000, guid: 19dd13502ad3c4bb7843cf255a81e05e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 464ae82c50323c046be182b075ccd923, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -54,7 +54,7 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 5efa6657726824c5fa8af9086ceb7690, type: 3}
+        m_Texture: {fileID: 2800000, guid: 61e9be448ddbee34fa3de3a104753f94, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -89,17 +89,20 @@ Material:
         name: _DstBlend
       second: 0
     - first:
-        name: _EmissionScaleUI
-      second: 0
-    - first:
         name: _Fresnel
-      second: 8.2
+      second: 8.45
+    - first:
+        name: _GlossMapScale
+      second: 1
     - first:
         name: _Glossiness
       second: 0.5
     - first:
+        name: _GlossyReflections
+      second: 1
+    - first:
         name: _InnerLightAdd
-      second: 0
+      second: 10
     - first:
         name: _Metallic
       second: 0
@@ -116,8 +119,14 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
+        name: _SmoothnessTextureChannel
+      second: 0
+    - first:
         name: _SpecExponent
-      second: 6.68
+      second: 123.22
+    - first:
+        name: _SpecularHighlights
+      second: 1
     - first:
         name: _SrcBlend
       second: 1
@@ -133,34 +142,28 @@ Material:
     m_Colors:
     - first:
         name: _AmbientAdd
-      second: {r: 0, g: 0, b: 0, a: 0}
+      second: {r: 0.08823532, g: 0.052797668, b: 0.02141004, a: 0}
     - first:
         name: _Color
-      second: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _ColorAdd
-      second: {r: 0.16911763, g: 0.13203524, b: 0.11191608, a: 0}
-    - first:
-        name: _ColorMultiply
-      second: {r: 1, g: 1, b: 1, a: 1}
+      second: {r: 0.33823532, g: 0.24969724, b: 0.11689014, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
-        name: _EmissionColorUI
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
         name: _FresnelColor
-      second: {r: 0.5735294, g: 0.5735294, b: 0.5735294, a: 1}
+      second: {r: 0.2794118, g: 0.2794118, b: 0.2794118, a: 1}
     - first:
         name: _InnerLightColor
-      second: {r: 0.29180583, g: 0.47794116, b: 0.26708475, a: 1}
+      second: {r: 0, g: 0, b: 0, a: 0.872}
     - first:
         name: _SecondLightColor
-      second: {r: 0, g: 0, b: 0, a: 0}
+      second: {r: 0.26666668, g: 0.2, b: 0.2, a: 0}
     - first:
         name: _SecondLightDir
-      second: {r: 0.82, g: -2.75, b: 2.67, a: 0.45}
+      second: {r: 70.8, g: 12.14, b: -1, a: 344}
     - first:
         name: _Tint
       second: {r: 1, g: 1, b: 1, a: 1}

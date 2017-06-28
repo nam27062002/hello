@@ -167,7 +167,7 @@ public class GlobalEvent {
 	/// <param name="_data">JSON data.</param>
 	public void InitFromJson(SimpleJSON.JSONNode _data) {
 		// Event ID
-		m_id = _data["eventId"];
+		m_id = _data["id"];
 
 		// Target value
 		m_targetValue = _data["targetValue"].AsFloat;
