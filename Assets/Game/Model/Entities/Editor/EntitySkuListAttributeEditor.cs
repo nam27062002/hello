@@ -97,6 +97,7 @@ public class EntitySkuListAttributeEditor : ExtendedPropertyDrawer {
 						break;
 					}
 				}
+				OnSkuSelected(selectedIdx);
 			}
 		}
 		
