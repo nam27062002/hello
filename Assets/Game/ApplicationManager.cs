@@ -83,8 +83,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Notifications_Init();
 
 		Device_Init();
-
-        HDTrackingManager.Instance.NotifyStartSession();
+        
         // [DGR] GAME_VALIDATOR: Not supported yet
         // GameValidator gv = new GameValidator();
         //gv.StartBuildValidation();        
@@ -405,6 +404,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private void OnLoadComplete()
     {
         SaveLoadIsCompleted = true;
+
+        // A new tracking session is started
+        HDTrackingManager.Instance.NotifyStartSession();
     }
 
     #region game

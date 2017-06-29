@@ -1010,6 +1010,16 @@ public class GameServerManagerCalety : GameServerManager {
 		if(strResponse == "{}") {
 			SimpleJSON.JSONNode defaultJson = PersistenceManager.GetDefaultDataFromProfile(PersistenceProfile.DEFAULT_PROFILE);
 			defaultJson.Add("version", FGOL.Save.SaveGameManager.Instance.Version);
+
+            // We need to add the tracking information that has been collected while the user played offline
+            TrackingSaveSystem saveSystem = HDTrackingManager.Instance.TrackingSaveSystem;
+            if (saveSystem != null && !defaultJson.ContainsKey(saveSystem.name))
+            {
+                SocialPlatformManager manager = SocialPlatformManager.SharedInstance;
+                saveSystem.SetSocialParams(manager.GetPlatformName(), manager.GetUserId(), Authenticator.Instance.User.ID);
+                defaultJson.Add(saveSystem.name, saveSystem.ToJSON());
+            }
+
 			strResponse = defaultJson.ToString();
 		}
 
