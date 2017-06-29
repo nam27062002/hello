@@ -45,10 +45,24 @@ public class HDTrackingManager
     public virtual void NotifyEndSession()
     {       
     }
+
+    public virtual void NotifyStartRound(int playerProgress)
+    {
+
+    }
+
+    /// <summary>
+    /// This method is called when the user finishes a round
+    /// </summary>
+    /// <param name="playerProgress">An int value that sums up the user's progress</param>
+    public virtual void NotifyEndRound(int playerProgress)
+    {
+
+    }
     #endregion    
 
     #region log
-    private const bool LOG_USE_COLOR = false;
+    private const bool LOG_USE_COLOR = true;
     private const string LOG_CHANNEL = "[HDTrackingManager] ";
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 
@@ -56,11 +70,11 @@ public class HDTrackingManager
     {        
         if (LOG_USE_COLOR)
         {
-            Debug.Log(LOG_CHANNEL_COLOR + msg);
+            Debug.Log(LOG_CHANNEL_COLOR + msg + " </color>");
         }
         else
         {
-            Debug.Log(LOG_CHANNEL_COLOR +msg + " </color>");
+            Debug.Log(LOG_CHANNEL + msg);
         }
     }
 

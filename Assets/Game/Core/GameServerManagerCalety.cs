@@ -690,7 +690,14 @@ public class GameServerManagerCalety : GameServerManager {
 					kParams["uid"] = parameters["playTestUserId"];        
 					ServerManager.SharedInstance.SendCommand(cmd, kParams, parameters["trackingData"]);
 				} break;
-			}
+
+                default: {
+                    LogWarning("Missing call to the server in GameServerManagerCalety.Commands_RunCommand() form command " + command.Cmd);
+
+                    // An error is simulated because no information is available
+                    Commands_OnResponse(null, 401);
+                } break;
+            }
 		} else {
 			LogError("GameServerManagerCalety error: command " + command.Cmd + " can't be executed because command " + Commands_CurrentCommand.Cmd + " is still being processed.");
 		}

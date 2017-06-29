@@ -24,7 +24,7 @@ public class TrackingSaveSystem : SaveSystem
         }
     }
 
-    // Platform used to log in. It can be either Facebook or Weibo
+    // Platform used to log in. It can be either "facebook" or "weibo"
     public string SocialPlatform
     {
         get
@@ -38,7 +38,7 @@ public class TrackingSaveSystem : SaveSystem
         }
     }
 
-    // Id in the social platform where the user last logged in. It's null if the user has never logged in
+    // Id in the social platform where the user last logged in. It must be "" if the user has never logged in
     public string SocialID
     {
         get
@@ -52,17 +52,17 @@ public class TrackingSaveSystem : SaveSystem
         }
     }
 
-    // Id in our server. It's null if the user has never logged in
-    public string AccountID
+    // Id in our server. It must be 0 if the user has never logged in
+    public int AccountID
     {
         get
         {
-            return Cache_GetString(PARAM_ACCOUNT_ID);
+            return Cache_GetInt(PARAM_ACCOUNT_ID);
         }
 
         set
         {            
-            Cache_SetString(PARAM_ACCOUNT_ID, value);
+            Cache_SetInt(PARAM_ACCOUNT_ID, value);
         }
     }
 
@@ -84,19 +84,20 @@ public class TrackingSaveSystem : SaveSystem
     {
         m_systemName = "Tracking";
 
-        CacheDataString dataString = new CacheDataString(PARAM_USER_ID, null);
+        CacheDataInt dataInt;
+        CacheDataString dataString = new CacheDataString(PARAM_USER_ID, "");
         Cache_AddData(PARAM_USER_ID, dataString);
 
-        dataString = new CacheDataString(PARAM_SOCIAL_PLATFORM, null);
+        dataString = new CacheDataString(PARAM_SOCIAL_PLATFORM, "");
         Cache_AddData(PARAM_SOCIAL_PLATFORM, dataString);
 
-        dataString = new CacheDataString(PARAM_SOCIAL_ID, null);
+        dataString = new CacheDataString(PARAM_SOCIAL_ID, "");
         Cache_AddData(PARAM_SOCIAL_ID, dataString);
 
-        dataString = new CacheDataString(PARAM_ACCOUNT_ID, null);
-        Cache_AddData(PARAM_ACCOUNT_ID, dataString);
+        dataInt = new CacheDataInt(PARAM_ACCOUNT_ID, 0);
+        Cache_AddData(PARAM_ACCOUNT_ID, dataInt);
 
-        CacheDataInt dataInt = new CacheDataInt(PARAM_SESSION_COUNT, 0);
+        dataInt = new CacheDataInt(PARAM_SESSION_COUNT, 0);
         Cache_AddData(PARAM_SESSION_COUNT, dataInt);
 
         Reset();
@@ -130,6 +131,15 @@ public class TrackingSaveSystem : SaveSystem
     {
         SocialPlatform = socialPlatform;
         SocialID = socialID;
-        AccountID = accId;
+
+        // Try to convert it to an int value since the parameter of the DNA event requires an int value
+        if (string.IsNullOrEmpty(accId))
+        {
+            AccountID = 0;
+        }
+        else
+        {
+            AccountID = int.Parse(accId);
+        }
     }
 }

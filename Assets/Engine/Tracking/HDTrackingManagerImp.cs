@@ -143,6 +143,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             kNewEventToTrack.SetParameterValue("SubVersion", "SoftLaunch");
             TrackAddParamProviderAuthToEvent(kNewEventToTrack);
             TrackAddParamPlayerIDToEvent(kNewEventToTrack);
+            TrackAddParamServerAccIDToEvent(kNewEventToTrack);
             TrackingManager.SharedInstance.SendEvent(kNewEventToTrack);
         }
     }    
@@ -153,10 +154,15 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void TrackAddParamProviderAuthToEvent(TrackingManager.TrackingEvent e)
     {
-        string value = "SilentLogin";
+        string value = null;
         if (TrackingSaveSystem != null && !string.IsNullOrEmpty(TrackingSaveSystem.SocialPlatform))
         {
             value = TrackingSaveSystem.SocialPlatform;
+        }
+
+        if (string.IsNullOrEmpty(value))
+        {
+            value = "SilentLogin";
         }
 
         e.SetParameterValue("providerAuth", value);
@@ -164,13 +170,29 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void TrackAddParamPlayerIDToEvent(TrackingManager.TrackingEvent e)
     {
-        string value = "";
+        string value = null;
         if (TrackingSaveSystem != null && !string.IsNullOrEmpty(TrackingSaveSystem.SocialID))
         {
             value = TrackingSaveSystem.SocialID;            
         }
 
+        if (string.IsNullOrEmpty(value))
+        {
+            value = "NotDefined";
+        }
+
         e.SetParameterValue("playerID", value);
+    }
+
+    private void TrackAddParamServerAccIDToEvent(TrackingManager.TrackingEvent e)
+    {
+        int value = 0;
+        if (TrackingSaveSystem != null)
+        {
+            value = TrackingSaveSystem.AccountID;
+        }
+
+        e.SetParameterValue("InGameId", value);
     }
 
     public override void Update()
@@ -244,6 +266,24 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         IsStartSessionNotified = false;
         State = EState.WaitingForSessionStart;        
+    }
+
+    /// <summary>
+    /// This method is called when the user starts a round
+    /// </summary>
+    /// <param name="playerProgress">An int value that sums up the user's progress</param>
+    public override void NotifyStartRound(int playerProgress)
+    {
+
+    }
+
+    /// <summary>
+    /// This method is called when the user finishes a round
+    /// </summary>
+    /// <param name="playerProgress">An int value that sums up the user's progress</param>
+    public override void NotifyEndRound(int playerProgress)
+    {
+
     }
     #endregion        
 }
