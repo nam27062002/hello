@@ -6,7 +6,7 @@ using UnityEngine;
 public class HDTrackingManager
 {
     // Singleton ///////////////////////////////////////////////////////////
-    private static bool IsEnabled = false;
+    private static bool IsEnabled = true;
 
     private static HDTrackingManager smInstance = null;
 
@@ -48,9 +48,20 @@ public class HDTrackingManager
     #endregion    
 
     #region log
+    private const bool LOG_USE_COLOR = false;
+    private const string LOG_CHANNEL = "[HDTrackingManager] ";
+    private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
+
     public static void Log(string msg)
-    {
-        Debug.Log("<color=cyan>[HDTrackingManager] " + msg + " </color>");
+    {        
+        if (LOG_USE_COLOR)
+        {
+            Debug.Log(LOG_CHANNEL_COLOR + msg);
+        }
+        else
+        {
+            Debug.Log(LOG_CHANNEL_COLOR +msg + " </color>");
+        }
     }
 
     public static void LogError(string msg)

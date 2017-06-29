@@ -121,17 +121,13 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
         // Delete key singletons that must be reloaded		
         GameVars.DestroyInstance();
 		
-        //[DGR] We need to destroy SaveFacade system because a new instance of UserProfile will be created when restarting so we need to make sure this system
-        //is going to use the new UserProfile instance
-        //SaveFacade.DestroyInstance();     
+        // [DGR] We need to destroy SaveFacade system because a new instance of UserProfile will be created when restarting so we need to make sure this system
+        // is going to use the new UserProfile instance        
         SaveFacade.Instance.Reset();   
 
         // Change to the loading scene. This change might be needed from the LoadingSceneController itself because of the save game flow (for exaple when clicking of update the game version
         // from the editor)
-        GameSceneManager.SwitchScene(LoadingSceneController.NAME, "", true);
-        
-        // A new tracking session is started
-        HDTrackingManager.Instance.NotifyStartSession();
+        GameSceneManager.SwitchScene(LoadingSceneController.NAME, "", true);                
     }
 }
 
