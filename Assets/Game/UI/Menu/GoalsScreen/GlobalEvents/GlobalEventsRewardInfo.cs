@@ -31,6 +31,11 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_rewardText = null;
 	[SerializeField] private TextMeshProUGUI m_targetText = null;
 
+	// Convenience properties
+	public RectTransform rectTransform {
+		get { return this.transform as RectTransform; }
+	}
+
 	// Internal
 	private GlobalEvent.Reward m_reward = null;
 	public GlobalEvent.Reward reward {

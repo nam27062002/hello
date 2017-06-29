@@ -26,7 +26,11 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
+	[SerializeField] private TextMeshProUGUI m_objectiveText = null;
+	[SerializeField] private Image m_objectiveIcon = null;
+	[Space]
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
+	[Space]
 	[SerializeField] private Slider m_progressBar = null;
 	[SerializeField] private GlobalEventsRewardInfo[] m_rewardInfos = new GlobalEventsRewardInfo[0];
 	
@@ -58,7 +62,37 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// Refresh displayed data.
 	/// </summary>
 	override public void Refresh() {
+		// Get current event
+		GlobalEvent evt = GlobalEventManager.currentEvent;
+		if(evt == null) return;
 
+		// Initialize visuals
+		// Event description
+		m_objectiveText.text = evt.objective.GetDescription();
+
+		// Target icon
+		m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + evt.objective.goalDef.Get("icon"));
+
+		// Rewards
+		for(int i = 0; i < evt.rewards.Count; ++i) {
+			// Break the loop if we don't have more reward info slots
+			if(i >= m_rewardInfos.Length) break;
+
+			// Initialize the reward info corresponding to this reward
+			m_rewardInfos[i].InitFromReward(evt.rewards[i]);
+
+			// Put into position (except last reward, which has a fixed position)
+			if(i < evt.rewards.Count - 1) {
+				// Set min and max anchor in Y to match the target percentage
+				Vector2 anchor = m_rewardInfos[i].rectTransform.anchorMin;
+				anchor.y = evt.rewards[i].targetPercentage;
+				m_rewardInfos[i].rectTransform.anchorMin = anchor;
+
+				anchor = m_rewardInfos[i].rectTransform.anchorMax;
+				anchor.y = evt.rewards[i].targetPercentage;
+				m_rewardInfos[i].rectTransform.anchorMax = anchor;
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//
