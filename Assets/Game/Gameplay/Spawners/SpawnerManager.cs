@@ -22,7 +22,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	//------------------------------------------------------------------------//
 	private const float UPDATE_INTERVAL = 0.2f;	// Seconds, avoid updating all the spawners all the time for better performance
 	private const float FAR_LAYER_Z = 8f;
-	public const float BACKGROUND_LAYER_Z = 45f;
+	public const float BACKGROUND_LAYER_Z = 60f;
     public const float SPAWNING_MAX_TIME = 4f; // Max time (in milliseconds) allowed to spend on spawning entities
     
 	//------------------------------------------------------------------------//
@@ -32,6 +32,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	private List<ISpawner> m_spawners = null;
 	private QuadTree<ISpawner> m_spawnersTreeNear = null;
 	private QuadTree<ISpawner> m_spawnersTreeFar = null;
+	private QuadTree<ISpawner> m_spawnersTreeBG = null;
 
 	// Internal logic
 	private bool m_enabled = false;
@@ -46,6 +47,9 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	private FastBounds2D m_maxRectNear = null;
 	private FastBounds2D m_minRectFar = null;	// From the game camera
 	private FastBounds2D m_maxRectFar = null;
+	private FastBounds2D m_minRectBG = null;	// From the game camera
+	private FastBounds2D m_maxRectBG = null;
+
 	private Rect[] m_subRect = new Rect[4];
 	private HashSet<ISpawner> m_selectedSpawners = new HashSet<ISpawner>();
     
@@ -116,8 +120,13 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		if (m_newCamera != null) {
 			m_minRectNear = m_newCamera.activationMinRectNear;
 			m_maxRectNear = m_newCamera.activationMaxRectNear;
+
 			m_minRectFar = m_newCamera.activationMinRectFar;
 			m_maxRectFar = m_newCamera.activationMaxRectFar;
+
+			m_minRectBG = m_newCamera.activationMinRectBG;
+			m_maxRectBG = m_newCamera.activationMaxRectBG;
+
 			currentX = m_newCamera.position.x;
 			currentY = m_newCamera.position.y;
 		}
@@ -156,94 +165,40 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 			//          |                               |
 			//        max.x0                         max.x1
 			//
-			m_selectedSpawners.Clear();
-			           
+			m_selectedSpawners.Clear();			           
 
-			if (checkBottom)
-            {
-                // Split it in 4 rectangles that the quadtree can process
-                // 1: bottom sub-rect
-				m_subRect[0].Set(
-					m_maxRectFar.x0,
-					m_maxRectFar.y0,
-					m_maxRectFar.w,
-					m_minRectFar.y0 - m_maxRectFar.y0
-				);
-				m_spawnersTreeFar.GetHashSetInRange(m_subRect[0], ref m_selectedSpawners);
-
-				m_subRect[0].Set(
-                    m_maxRectNear.x0,
-                    m_maxRectNear.y0,
-                    m_maxRectNear.w,
-                    m_minRectNear.y0 - m_maxRectNear.y0
-                );
-                m_spawnersTreeNear.GetHashSetInRange(m_subRect[0], ref m_selectedSpawners);
+			if (checkBottom) {
+				// 1: bottom sub-rect
+				CheckBottom(ref m_spawnersTreeBG, ref m_minRectBG, ref m_maxRectBG);
+				CheckBottom(ref m_spawnersTreeFar, ref m_minRectFar, ref m_maxRectFar);
+				CheckBottom(ref m_spawnersTreeNear, ref m_minRectNear, ref m_maxRectNear);
 
                 m_lastY = currentY;
                 //Debug.LogError("BOTTOM");
             }
-			if (checkRight)
-            {
+			if (checkRight) {
                 // 2: right sub-rect
-				m_subRect[1].Set(
-					m_minRectFar.x1,
-					m_minRectFar.y0,
-					m_maxRectFar.x1 - m_minRectFar.x1,
-					m_minRectFar.h
-				);
-				m_spawnersTreeFar.GetHashSetInRange(m_subRect[1], ref m_selectedSpawners);
-
-				m_subRect[1].Set(
-                    m_minRectNear.x1,
-                    m_minRectNear.y0,
-                    m_maxRectNear.x1 - m_minRectNear.x1,
-                    m_minRectNear.h
-                );
-                m_spawnersTreeNear.GetHashSetInRange(m_subRect[1], ref m_selectedSpawners);
+				CheckRight(ref m_spawnersTreeBG, ref m_minRectBG, ref m_maxRectBG);
+				CheckRight(ref m_spawnersTreeFar, ref m_minRectFar, ref m_maxRectFar);
+				CheckRight(ref m_spawnersTreeNear, ref m_minRectNear, ref m_maxRectNear);
 
 				m_lastX = currentX;
                 //Debug.LogError("RIGHT");
             }
-			if (checkTop)
-            {
+			if (checkTop) {
                 // 3: top sub-rect
-				m_subRect[2].Set(
-					m_maxRectFar.x0,
-					m_minRectFar.y1,
-					m_maxRectFar.w,
-					m_maxRectFar.y1 - m_minRectFar.y1
-				);
-				m_spawnersTreeFar.GetHashSetInRange(m_subRect[2], ref m_selectedSpawners);
-
-                m_subRect[2].Set(
-                    m_maxRectNear.x0,
-                    m_minRectNear.y1,
-                    m_maxRectNear.w,
-                    m_maxRectNear.y1 - m_minRectNear.y1
-                );
-                m_spawnersTreeNear.GetHashSetInRange(m_subRect[2], ref m_selectedSpawners);
+				CheckTop(ref m_spawnersTreeBG, ref m_minRectBG, ref m_maxRectBG);
+				CheckTop(ref m_spawnersTreeFar, ref m_minRectFar, ref m_maxRectFar);
+				CheckTop(ref m_spawnersTreeNear, ref m_minRectNear, ref m_maxRectNear);
 
                 m_lastY = currentY;
                 //Debug.LogError("TOP");
             }
-			if (checkLeft)
-            {
+			if (checkLeft) {
                 // 4: left sub-rect
-				m_subRect[3].Set(
-					m_maxRectFar.x0,
-					m_minRectFar.y0,
-					m_minRectFar.x0 - m_maxRectFar.x0,
-					m_minRectFar.h
-				);
-				m_spawnersTreeFar.GetHashSetInRange(m_subRect[3], ref m_selectedSpawners);
-
-				m_subRect[3].Set(
-                    m_maxRectNear.x0,
-                    m_minRectNear.y0,
-                    m_minRectNear.x0 - m_maxRectNear.x0,
-                    m_minRectNear.h
-                );
-                m_spawnersTreeNear.GetHashSetInRange(m_subRect[3], ref m_selectedSpawners);
+				CheckLeft(ref m_spawnersTreeBG, ref m_minRectBG, ref m_maxRectBG);
+				CheckLeft(ref m_spawnersTreeFar, ref m_minRectFar, ref m_maxRectFar);
+				CheckLeft(ref m_spawnersTreeNear, ref m_minRectNear, ref m_maxRectNear);
 
                 m_lastX = currentX;
                 //Debug.LogError("LEFT");
@@ -273,7 +228,18 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
                 sp = m_spawning[0];  
                 
                 // If the spawner is in the deactivation area then its respawning stuff has to be undone as the units respawned would be destroyed anyway             
-				if (m_newCamera.IsInsideDeactivationArea(sp.boundingRect))
+				bool cancelSpawn = false;
+
+				if (sp.transform.position.z < BACKGROUND_LAYER_Z) 
+				{
+					cancelSpawn = m_newCamera.IsInsideDeactivationArea(sp.boundingRect);
+				}
+				else 
+				{
+					cancelSpawn = m_newCamera.IsInsideBackgroundDeactivationArea(sp.boundingRect);
+				}
+
+				if (cancelSpawn)
                 {
                     sp.ForceRemoveEntities();
                     m_spawning.RemoveAt(0);
@@ -313,6 +279,66 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 			}
 		}
 	}
+
+
+	//----------------------------------------------------------------------------------------------------------------//
+	//            min.x0                  min.x1
+	//              |                       |
+	//           _______________________________  _ max.y1
+	//          |               2               |
+	// min.y1 _ |_______________________________|
+	//          |   |                       |   |
+	//          |   |                       |   |
+	//          | 3 |                       | 1 |
+	//          |   |                       |   |
+	// min.y0 _ |___|_______________________|___|
+	//          |               0               |
+	//          |_______________________________| _ max.y0
+	//
+	//          |                               |
+	//        max.x0                         max.x1
+	//
+	private void CheckBottom(ref QuadTree<ISpawner> _qtree, ref FastBounds2D _min, ref FastBounds2D _max) {
+		m_subRect[0].Set(
+			_max.x0,
+			_max.y0,
+			_max.w,
+			_min.y0 - _max.y0
+		);
+		_qtree.GetHashSetInRange(m_subRect[0], ref m_selectedSpawners);
+	}
+
+	private void CheckRight(ref QuadTree<ISpawner> _qtree, ref FastBounds2D _min, ref FastBounds2D _max) {
+		m_subRect[1].Set(
+			_min.x1,
+			_min.y0,
+			_max.x1 - _min.x1,
+			_min.h
+		);
+		_qtree.GetHashSetInRange(m_subRect[1], ref m_selectedSpawners);
+	}
+
+	private void CheckTop(ref QuadTree<ISpawner> _qtree, ref FastBounds2D _min, ref FastBounds2D _max) {
+		m_subRect[2].Set(
+			_max.x0,
+			_min.y1,
+			_max.w,
+			_max.y1 - _min.y1
+		);
+		_qtree.GetHashSetInRange(m_subRect[2], ref m_selectedSpawners);
+	}
+
+	private void CheckLeft(ref QuadTree<ISpawner> _qtree, ref FastBounds2D _min, ref FastBounds2D _max) {
+		m_subRect[3].Set(
+			_max.x0,
+			_min.y0,
+			_min.x0 - _max.x0,
+			_min.h
+		);
+		_qtree.GetHashSetInRange(m_subRect[3], ref m_selectedSpawners);
+	}
+	//----------------------------------------------------------------------------------------------------------------//
+
 
     private int SortSpawners(ISpawner a, ISpawner b)
     {
@@ -421,6 +447,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		if(m_spawnersTreeNear != null) {
 			m_spawnersTreeNear.DrawGizmos(Colors.yellow);
 			m_spawnersTreeFar.DrawGizmos(Colors.gold);
+			m_spawnersTreeBG.DrawGizmos(Colors.white);
 		}
 
 		// Selected spawners
@@ -470,12 +497,15 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		}
 		m_spawnersTreeNear = new QuadTree<ISpawner>(bounds.x, bounds.y, bounds.width, bounds.height);
 		m_spawnersTreeFar = new QuadTree<ISpawner>(bounds.x, bounds.y, bounds.width, bounds.height);
+		m_spawnersTreeBG = new QuadTree<ISpawner>(bounds.x, bounds.y, bounds.width, bounds.height);
 
 		for(int i = 0; i < m_spawners.Count; i++) {
 			if (m_spawners[i].transform.position.z < FAR_LAYER_Z) {
 				m_spawnersTreeNear.Insert(m_spawners[i]);
-			} else { 
+			} else if (m_spawners[i].transform.position.z < BACKGROUND_LAYER_Z) {
 				m_spawnersTreeFar.Insert(m_spawners[i]);
+			} else {
+				m_spawnersTreeBG.Insert(m_spawners[i]);
 			}
 		}
 
@@ -483,6 +513,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		m_minRectNear = m_newCamera.activationMinRectNear;
 		m_spawnersTreeNear.GetHashSetInRange(m_minRectNear.ToRect(), ref m_selectedSpawners);
 		m_spawnersTreeFar.GetHashSetInRange(m_minRectNear.ToRect(), ref m_selectedSpawners);
+		m_spawnersTreeBG.GetHashSetInRange(m_minRectNear.ToRect(), ref m_selectedSpawners);
 
 		// Process all selected spawners!
 		foreach(ISpawner item in m_selectedSpawners) {
@@ -510,6 +541,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
 		m_spawnersTreeNear = null;
 		m_spawnersTreeFar = null;
+		m_spawnersTreeBG = null;
 
 		DisableSpawners();
 	}
@@ -523,6 +555,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Clear QuadTree
 		m_spawnersTreeNear = null;
 		m_spawnersTreeFar = null;
+		m_spawnersTreeBG = null;
 
         // Drop camera references
         m_newCamera = null;

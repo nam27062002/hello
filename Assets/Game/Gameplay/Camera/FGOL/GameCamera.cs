@@ -118,8 +118,16 @@ public class GameCamera : MonoBehaviour
 	private FastBounds2D 		m_activationMaxFar = new FastBounds2D();
 	public FastBounds2D 		activationMaxRectFar { get { return m_activationMaxFar; }}
 
-	private FastBounds2D 		m_deactivation = new FastBounds2D();
-	public FastBounds2D 		deactivationRect { get { return m_deactivation; }}
+	private FastBounds2D 		m_activationMinBG = new FastBounds2D();
+	public FastBounds2D 		activationMinRectBG { get { return m_activationMinBG; }}
+	private FastBounds2D 		m_activationMaxBG = new FastBounds2D();
+	public FastBounds2D 		activationMaxRectBG { get { return m_activationMaxBG; }}
+
+	private FastBounds2D 		m_deactivationNear = new FastBounds2D();
+	public FastBounds2D 		deactivationRectNear { get { return m_deactivationNear; }}
+
+	private FastBounds2D 		m_deactivationBG = new FastBounds2D();
+	public FastBounds2D 		deactivationRectBG { get { return m_deactivationBG; }}
 
 
 	private int					m_pixelWidth = 640;
@@ -1199,26 +1207,40 @@ public class GameCamera : MonoBehaviour
 
 		float expand = 0;
 
-		m_activationMinNear.Set( m_screenWorldBounds );
 		expand = m_activationDistance;
+		m_activationMinNear.Set( m_screenWorldBounds );
 		m_activationMinNear.ExpandBy(expand, expand);
 		m_activationMinNear.ExpandBy(-expand, -expand);
 
 		m_activationMinFar.Set(m_activationMinNear);
 		m_activationMinFar.ApplyScale(1.5f);
 
-		m_activationMaxNear.Set( m_screenWorldBounds );
+		m_activationMinBG.Set(m_backgroundWorldBounds);
+		m_activationMinBG.ExpandBy(expand, expand);
+		m_activationMinBG.ExpandBy(-expand, -expand);
+
+
 		expand = m_activationDistance + m_activationRange;
+		m_activationMaxNear.Set( m_screenWorldBounds );
 		m_activationMaxNear.ExpandBy( expand, expand );
 		m_activationMaxNear.ExpandBy( -expand, -expand );
 
 		m_activationMaxFar.Set(m_activationMaxNear);
 		m_activationMaxFar.ApplyScale(1.5f);
 
-		m_deactivation.Set( m_screenWorldBounds );
+		m_activationMaxBG.Set(m_backgroundWorldBounds);
+		m_activationMaxBG.ExpandBy(expand, expand);
+		m_activationMaxBG.ExpandBy(-expand, -expand);
+
+
 		expand = m_deactivationDistance;
-		m_deactivation.ExpandBy( expand, expand );
-		m_deactivation.ExpandBy( -expand, -expand );  	
+		m_deactivationNear.Set( m_screenWorldBounds );
+		m_deactivationNear.ExpandBy( expand, expand );
+		m_deactivationNear.ExpandBy( -expand, -expand );  	
+
+		m_deactivationBG.Set(m_activationMaxBG);
+		m_deactivationBG.ExpandBy( 2f, 2f );
+		m_deactivationBG.ExpandBy( -2f, -2f );  	
 	}
 	
 	// On-screen tests.  In Hungry Dragons, these were static for performance.
@@ -1264,32 +1286,37 @@ public class GameCamera : MonoBehaviour
 	}
 
 	public bool IsInsideBackgroundActivationArea(Vector3 _point) {
-		return m_backgroundWorldBounds.Contains(_point);
+		return !m_activationMinBG.Contains(_point) && m_activationMaxBG.Contains(_point);
 	}
 
 	public bool IsInsideBackgroundActivationArea(Bounds _bounds) {
-		return m_backgroundWorldBounds.Intersects(_bounds);
+		return !m_activationMinBG.Intersects(_bounds) && m_activationMaxBG.Intersects(_bounds);
 	}
 
 	public bool IsInsideDeactivationArea(Vector3 _point) {		
-		return !m_deactivation.Contains(_point);
+		return !m_deactivationNear.Contains(_point);
 	}
 
 	public bool IsInsideDeactivationArea(Bounds _bounds) {		
-		return !m_deactivation.Intersects(_bounds);
+		return !m_deactivationNear.Intersects(_bounds);
 	}
 
 	public bool IsInsideDeactivationArea(Rect _bounds) {		
-		return !m_deactivation.Intersects(_bounds);
+		return !m_deactivationNear.Intersects(_bounds);
 	}
 
 	public bool IsInsideBackgroundDeactivationArea(Vector3 _point) {
-		return !m_backgroundWorldBounds.Contains(_point);
+		return !m_deactivationBG.Contains(_point);
 	}
 
 	public bool IsInsideBackgroundDeactivationArea(Bounds _bounds) {
-		return !m_backgroundWorldBounds.Intersects(_bounds);
+		return !m_deactivationBG.Intersects(_bounds);
 	}
+
+	public bool IsInsideBackgroundDeactivationArea(Rect _bounds) {		
+		return !m_deactivationBG.Intersects(_bounds);
+	}
+
 
 	public bool IsInsideFrustrum(Vector3 _point) {
 		return m_screenWorldBounds.Contains(_point);
@@ -1347,8 +1374,22 @@ public class GameCamera : MonoBehaviour
 			Gizmos.DrawWireCube(center, size);
 
 			Gizmos.color = Color.magenta;
-			m_deactivation.GetCentre( out center );
-			m_deactivation.GetSize(out size);
+			m_deactivationNear.GetCentre( out center );
+			m_deactivationNear.GetSize(out size);
+			Gizmos.DrawWireCube(center, size);
+
+
+			Gizmos.color = Colors.WithAlpha(Color.cyan, 0.5f);
+			m_activationMinBG.GetCentre( out center );
+			m_activationMinBG.GetSize(out size);
+			Gizmos.DrawWireCube(center, size);
+			m_activationMaxBG.GetCentre( out center );
+			m_activationMaxBG.GetSize(out size);
+			Gizmos.DrawWireCube(center, size);
+
+			Gizmos.color = Colors.WithAlpha(Color.magenta, 0.5f);
+			m_deactivationBG.GetCentre( out center );
+			m_deactivationBG.GetSize(out size);
 			Gizmos.DrawWireCube(center, size);
 		}
 	}

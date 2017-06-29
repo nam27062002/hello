@@ -6,7 +6,7 @@ using UnityEngine;
 public class HDTrackingManager
 {
     // Singleton ///////////////////////////////////////////////////////////
-    private static bool IsEnabled = true;
+    private static bool IsEnabled = false;
 
     private static HDTrackingManager smInstance = null;
 
