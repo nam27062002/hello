@@ -118,6 +118,10 @@ namespace AI {
 			}
 		}
 
+		public override void OnDie() {
+			if (m_brain != null) m_brain.Exit();
+		}
+
 		public override void OnTrigger(string _trigger, object[] _param = null) {
 			if (m_brain != null) m_brain.Transition(_trigger, _param);
 		}

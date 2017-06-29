@@ -184,7 +184,7 @@ public class MissionPill : MonoBehaviour {
 		GameObject iconBoxObj = m_activeObj.FindObjectRecursive("IconBox");
 		if (iconBoxObj != null) {
 			Image img = iconBoxObj.FindObjectRecursive("Image").GetComponent<Image>();
-			Sprite spr = Resources.Load<Sprite>(m_mission.def.GetAsString("icon"));
+			Sprite spr = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_mission.def.GetAsString("icon"));
 			img.sprite = spr;
 		}
 

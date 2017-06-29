@@ -16,7 +16,7 @@ struct v2f
 	float3 viewDir : VECTOR;
 #endif
 
-	float3 normalWorld : TEXCOORD4;
+	float3 normalWorld : NORMAL;
 #ifdef NORMALMAP
 	float3 tangentWorld : TANGENT;
 	float3 binormalWorld : TEXCOORD5;
@@ -26,11 +26,21 @@ struct v2f
 	float height : TEXCOORD3;
 #endif 
 
+#ifdef MATCAP
+	float2 cap : TEXCOORD1;
+#endif
+
 };
 
 uniform sampler2D _MainTex;
 uniform float4 _MainTex_ST;
 uniform float4 _MainTex_TexelSize;
+
+#ifdef MATCAP
+uniform sampler2D _MatCap;
+uniform float4 _GoldColor;
+#endif
+
 
 #ifdef NORMALMAP
 uniform sampler2D _NormalTex;
@@ -57,6 +67,11 @@ uniform float4 _FresnelColor;
 
 #if defined (TINT) || defined (CUSTOM_TINT)
 uniform float4 _Tint;
+#endif
+
+#ifdef EMISSIVE_COLOR
+uniform float4 _EmissiveColor;
+uniform float _EmissiveBlinkPhase;
 #endif
 
 
@@ -105,6 +120,12 @@ v2f vert(appdata_t v)
 	o.height = v.vertex.y;
 #endif
 
+#ifdef MATCAP
+	float3 worldNorm = normalize(unity_WorldToObject[0].xyz * v.normal.x + unity_WorldToObject[1].xyz * v.normal.y + unity_WorldToObject[2].xyz * v.normal.z);
+	worldNorm = mul((float3x3)UNITY_MATRIX_V, worldNorm);
+	o.cap.xy = worldNorm.xy * 0.5 + 0.5;
+#endif
+
 	return o;
 }
 
@@ -114,8 +135,10 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 col = tex2D(_MainTex, i.uv);
 //	fixed specMask = col.a;
 	fixed specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
-#ifdef EMISSIVE
+#if defined (EMISSIVE)
 	fixed emmisiveMask = col.a;
+#elif  defined (EMISSIVE_COLOR)
+	fixed emmisiveMask = col.a * ((sin(_Time.y * _EmissiveBlinkPhase) + 1.0) * 0.5);
 #endif
 
 #if defined (TINT)
@@ -124,7 +147,11 @@ fixed4 frag(v2f i) : SV_Target
 	col = getCustomTint(col, _Tint, i.color);
 #endif
 
+#ifdef EMISSIVE_COLOR
+	fixed4 unlitColor = _EmissiveColor;
+#else
 	fixed4 unlitColor = col;
+#endif
 
 #ifdef NORMALMAP
 	// Calc normal from detail texture normal and tangent world
@@ -153,7 +180,16 @@ fixed4 frag(v2f i) : SV_Target
 
 #endif
 
-#ifdef EMISSIVE
+#ifdef MATCAP
+	fixed4 mc = tex2D(_MatCap, i.cap) * _GoldColor; // _FresnelColor;
+
+//	col = (col + ((mc*2.0) - 0.5));
+	col = lerp(col, mc * 3.0, _GoldColor.w);// (1.0 - clamp(_FresnelPower, 0.0, 1.0)));
+	//	res.a = 0.5;
+
+#endif
+
+#if defined (EMISSIVE) || defined (EMISSIVE_COLOR)
 	col = lerp(col, unlitColor, emmisiveMask);
 #endif
 

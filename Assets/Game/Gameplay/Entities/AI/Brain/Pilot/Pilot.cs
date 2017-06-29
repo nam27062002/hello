@@ -146,6 +146,8 @@ namespace AI {
 			m_actions &= ~_action;
 		}
 
+		public virtual void OnDie() {}
+
 		public virtual void OnTrigger(string _trigger, object[] _param = null) {}
 
 		// all the movement will be offset to follow a specific rail
@@ -227,8 +229,6 @@ namespace AI {
 				m_currentEnergy = Mathf.Lerp(m_currentEnergy, m_energy, Time.deltaTime * m_energyRecoverSec);
 				m_boostAvailable = m_currentEnergy > (m_energy * 0.75f);
 			}
-
-			//TODO blend impulses
 		}
 	}
 }

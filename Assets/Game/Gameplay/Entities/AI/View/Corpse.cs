@@ -57,10 +57,10 @@ public class Corpse : MonoBehaviour {
 			Material[] materials = renderers[i].materials;
 			for (int m = 0; m < materials.Length; m++) {
 				m_materials.Add(materials[m]);
-				if (materials[m].HasProperty("_FresnelColor")) {
-					m_defaultTints.Add(materials[m].GetColor("_FresnelColor"));
+				if (materials[m].HasProperty("_GoldColor")) {
+					m_defaultTints.Add(materials[m].GetColor("_GoldColor"));
 				} else {
-					m_defaultTints.Add(Color.black);
+					m_defaultTints.Add(ViewControl.NO_TINT);
 				}
 			}
 		}
@@ -108,9 +108,9 @@ public class Corpse : MonoBehaviour {
 		Color tint = Color.white;
 		for (int i = 0; i < m_materials.Count; i++) {
 			if (_isGold) {
-				m_materials[i].SetColor("_FresnelColor", ViewControl.GOLD_TINT);                        
+				m_materials[i].SetColor("_GoldColor", ViewControl.GOLD_TINT);                        
 			} else {
-				m_materials[i].SetColor("_FresnelColor", m_defaultTints[i]);
+				m_materials[i].SetColor("_GoldColor", ViewControl.NO_TINT);
 			}
 			m_materials[i].SetColor("_Tint", tint);
 		}

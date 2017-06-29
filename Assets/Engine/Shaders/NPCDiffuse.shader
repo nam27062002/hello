@@ -1,13 +1,14 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
-Shader "Hungry Dragon/NPC/Diffuse + Fresnel"
+Shader "Hungry Dragon/NPC/NPC Diffuse + Fresnel"
 {
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
-		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
+	
+//		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
+//		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 		_StencilMask("Stencil Mask", int) = 10
 	}
 	SubShader
@@ -30,8 +31,8 @@ Shader "Hungry Dragon/NPC/Diffuse + Fresnel"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma glsl_no_auto_normalization
-			#pragma fragmentoption ARB_precision_hint_fastest
+//			#pragma glsl_no_auto_normalization
+//			#pragma fragmentoption ARB_precision_hint_fastest
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 			#define HG_ENTITIES
@@ -54,7 +55,8 @@ Shader "Hungry Dragon/NPC/Diffuse + Fresnel"
 //			#define FRESNEL
 			#endif
 
-			#define FRESNEL
+//			#define FRESNEL
+			#define MATCAP
 
 			#include "entities.cginc"
 			ENDCG

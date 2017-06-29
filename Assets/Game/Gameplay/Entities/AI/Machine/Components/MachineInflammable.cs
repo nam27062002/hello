@@ -87,6 +87,9 @@ namespace AI {
 			m_machine.SetSignal(Signals.Type.Burning, true);
 			m_machine.SetSignal(Signals.Type.Panic, true);
 
+			if (m_pilot != null)
+				m_pilot.OnDie();
+
 			// reward
 			Reward reward = (m_entity as Entity).GetOnKillReward(true);
 			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, m_machine.transform, reward);

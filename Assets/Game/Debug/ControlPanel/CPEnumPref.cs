@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using System;
 using TMPro;
 
@@ -20,6 +21,11 @@ using TMPro;
 /// </summary>
 public class CPEnumPref : CPPrefBase {
 	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
+	public class IntEvent : UnityEvent<int> { }
+
+	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed references
@@ -27,6 +33,12 @@ public class CPEnumPref : CPPrefBase {
 	[SerializeField] private int m_defaultValue = 0;
 	[SerializeField] private string m_enumTypeName = "";
 	[SerializeField] private TMP_Dropdown m_dropdown = null;
+	public TMP_Dropdown dropdown {
+		get { return m_dropdown; }
+	}
+
+	// Events
+	public IntEvent OnPrefChanged = new IntEvent();
 
 	// Internal
 	private Type m_enumType = null;
@@ -153,5 +165,8 @@ public class CPEnumPref : CPPrefBase {
 			Messenger.Broadcast<string, int>(GameEvents.CP_ENUM_CHANGED, id, m_enumValues[_newValueIdx]);
 			Messenger.Broadcast<string>(GameEvents.CP_PREF_CHANGED, id);
 		}
+
+		// Notify subscribers
+		OnPrefChanged.Invoke(m_enumValues[_newValueIdx]);
 	}
 }

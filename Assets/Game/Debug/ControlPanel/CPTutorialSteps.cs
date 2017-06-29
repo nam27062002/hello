@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -35,6 +36,8 @@ public class CPTutorialSteps : MonoBehaviour {
 	// Exposed
 	[SerializeField] private Transform m_container = null;
 	[SerializeField] private GameObject m_stepTogglePrefab = null;
+	[Space]
+	[SerializeField] private TextMeshProUGUI m_gamesPlayedText = null;
 
 	// Internal
 	private List<StepToggle> m_toggles = new List<StepToggle>();
@@ -107,6 +110,9 @@ public class CPTutorialSteps : MonoBehaviour {
 		}
 		m_ignoreToggles = false;
 
+		// Refresh games played text
+		m_gamesPlayedText.text = UsersManager.currentUser.gamesPlayed.ToString();
+
 		// Subscribe to external events
 		Messenger.AddListener<TutorialStep, bool>(GameEvents.TUTORIAL_STEP_TOGGLED, OnTutorialStepToggled);
 	}
@@ -172,5 +178,17 @@ public class CPTutorialSteps : MonoBehaviour {
 			UsersManager.currentUser.SetTutorialStepCompleted(m_toggles[i].step, _toggle);
 		}
 		PersistenceManager.Save();
+	}
+
+	/// <summary>
+	/// Modify the amount of played games.
+	/// </summary>
+	/// <param name="_amount">Amount. Negative to subtract.</param>
+	public void OnAddGamesPlayed(int _amount) {
+		// Min 0!
+		UsersManager.currentUser.gamesPlayed = Mathf.Max(0, UsersManager.currentUser.gamesPlayed + _amount);
+
+		// Refresh text
+		m_gamesPlayedText.text = UsersManager.currentUser.gamesPlayed.ToString();
 	}
 }

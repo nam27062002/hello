@@ -21,9 +21,11 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly Color FPS_THRESHOLD_COLOR_1 = new Color(0f, 1f, 0f, 0.75f);	// Green
-	public static readonly Color FPS_THRESHOLD_COLOR_2 = new Color(1f, 0.5f, 0f, 0.75f);	// Orange
-	public static readonly Color FPS_THRESHOLD_COLOR_3 = new Color(1f, 0f, 0f, 0.75f);	// Red
+	public static readonly Color FPS_THRESHOLD_COLOR_1 = new Color(40f/255f, 220f/255f, 140/255f, 0.75f);	// Green
+	public static readonly Color FPS_THRESHOLD_COLOR_2 = new Color(230f/255f, 150f/255f, 0f/255f, 0.75f);	// Orange
+	public static readonly Color FPS_THRESHOLD_COLOR_3 = new Color(230f/255f, 75f/255f, 030f/255f, 0.75f);	// Red
+
+	private const string LAST_TAB_IDX_PREF_KEY = "ControlPanel.LastTabIdx";
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
@@ -39,6 +41,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		get { return instance.m_toggleButton; }
 	}
 
+	[SerializeField] private TabSystem m_tabs = null;
+
 	[SerializeField] private TextMeshProUGUI m_fpsCounter;
 	public static TextMeshProUGUI fpsCounter {
 		get { return instance.m_fpsCounter; }
@@ -53,7 +57,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
     private bool m_isStatsEnabled;
     public bool IsStatsEnabled {
         get {
-            return m_isStatsEnabled;
+			return m_isStatsEnabled && InstanceManager.menuSceneController == null;	// [AOC] Disable stats at the menu (so annoying for developing UI!)
         }
 
         set {
@@ -61,6 +65,18 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
             m_statsCounter.SetActive(m_isStatsEnabled);
         }        
     }
+
+	private bool m_isFPSEnabled;
+	public bool IsFPSEnabled {
+		get {
+			return m_isFPSEnabled;
+		}
+
+		set {
+			m_isFPSEnabled = value;
+			m_fpsCounter.gameObject.SetActive(m_isFPSEnabled);
+		}        
+	}
 
 	[SerializeField] private TextMeshProUGUI m_memoryLabel;
 	public static TextMeshProUGUI memoryLabel {
@@ -84,6 +100,13 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 
     [SerializeField]
     private TextMeshProUGUI m_logicUnitsCounter;
+
+	[SerializeField]
+	private TextMeshProUGUI m_vertexCount_npc;
+
+	[SerializeField]
+	private TextMeshProUGUI m_drawCalls_npc;
+
 
     // Exposed setup
     [Space]
@@ -141,8 +164,22 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		m_panel.gameObject.SetActive(false);
 		m_toggleButton.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
         IsStatsEnabled = UnityEngine.Debug.isDebugBuild;        
+		IsFPSEnabled = UnityEngine.Debug.isDebugBuild;        
         ShowMemoryUsage = UnityEngine.Debug.isDebugBuild;
         m_logicUnitsCounter.transform.parent.gameObject.SetActive(UnityEngine.Debug.isDebugBuild && ProfilerSettingsManager.ENABLED);
+
+		// Restore saved tab (if any)
+		int lastTabIdx = PlayerPrefs.GetInt(LAST_TAB_IDX_PREF_KEY, -1);
+		if(lastTabIdx >= 0) {
+			m_tabs.GoToScreenInstant(lastTabIdx);
+		}
+
+		// Remember tab index every time the active tab changes
+		m_tabs.OnScreenIndexChanged.AddListener(
+			(int _newTabIdx) => {
+				PlayerPrefs.SetInt(LAST_TAB_IDX_PREF_KEY, _newTabIdx);
+			}
+		);
 
         m_activateTimer = 0;
 	}
@@ -196,7 +233,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		if ( m_DeltaIndex >= m_NumDeltaTimes )
 			m_DeltaIndex = 0;
 
-		if ( m_fpsCounter != null )
+		if ( m_fpsCounter != null && m_isFPSEnabled )
 		{
 			float fps = GetFPS();            
 			if(fps >= 0) {
@@ -246,6 +283,33 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
             m_logicUnitsCounter.text = IntegerToString(value);            
         }
 
+		if (m_isStatsEnabled) {
+			if (m_vertexCount_npc != null) {
+				int vc = EntityManager.instance.totalVertexCount;
+				if (vc > 30000) {
+					m_vertexCount_npc.color = FPS_THRESHOLD_COLOR_3;
+				} else if (vc > 25000) {
+					m_vertexCount_npc.color = FPS_THRESHOLD_COLOR_2;
+				} else {
+					m_vertexCount_npc.color = FPS_THRESHOLD_COLOR_1;                   
+				}
+	 
+				m_vertexCount_npc.text = ""+vc;
+			}
+
+			if (m_drawCalls_npc != null) {
+				int dc = EntityManager.instance.drawCalls;
+				if (dc > 39) {
+					m_drawCalls_npc.color = FPS_THRESHOLD_COLOR_3;
+				} else if (dc > 34) {
+					m_drawCalls_npc.color = FPS_THRESHOLD_COLOR_2;
+				} else {
+					m_drawCalls_npc.color = FPS_THRESHOLD_COLOR_1;                   
+				}
+
+				m_drawCalls_npc.text = IntegerToString(dc);
+			}
+		}
 
         // Quick Cheats
         if ( Input.GetKeyDown(KeyCode.L )){

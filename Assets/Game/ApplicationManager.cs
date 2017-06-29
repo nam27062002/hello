@@ -83,8 +83,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Notifications_Init();
 
 		Device_Init();
-
-        HDTrackingManager.Instance.NotifyStartSession();
+        
         // [DGR] GAME_VALIDATOR: Not supported yet
         // GameValidator gv = new GameValidator();
         //gv.StartBuildValidation();        
@@ -405,6 +404,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private void OnLoadComplete()
     {
         SaveLoadIsCompleted = true;
+
+        // A new tracking session is started
+        HDTrackingManager.Instance.NotifyStartSession();
     }
 
     #region game
@@ -444,13 +446,17 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
 	private void Device_Init() 
 	{
-		Device_CalculateOrientation();
+        // When this is enabled the user will be allowed to enable the vertical orientation on the control panel
+        if (FeatureSettingsManager.IsVerticalOrientationEnabled)
+        {
+            Device_CalculateOrientation();
 
-		// When this is enabled the user will be allowed to enable the vertical orientation on the control panel
-		if (FeatureSettingsManager.IsVerticalOrientationEnabled)
-		{
-			Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Device_OnOrientationSettingsChanged);
-		}
+            // When this is enabled the user will be allowed to enable the vertical orientation on the control panel
+            if (FeatureSettingsManager.IsVerticalOrientationEnabled)
+            {
+                Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Device_OnOrientationSettingsChanged);
+            }
+        }
 	}
 
 	private void Device_Destroy() 

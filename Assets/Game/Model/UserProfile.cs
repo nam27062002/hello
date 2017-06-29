@@ -54,7 +54,13 @@ public class UserProfile : UserSaveSystem
 
 	// User ID shortcut
 	public string userId {
-		get { return GameSessionManager.SharedInstance.GetUID(); }
+		get {
+			if(GameSessionManager.SharedInstance.IsLogged()) {
+				return GameSessionManager.SharedInstance.GetUID(); 
+			} else {
+				return "local_user";
+			}
+		}
 	}
 
     // Economy
@@ -234,10 +240,6 @@ public class UserProfile : UserSaveSystem
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
-
-    //------------------------------------------------------------------------//
-    // PUBLIC METHODS														  //
-    //------------------------------------------------------------------------//
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
@@ -262,6 +264,17 @@ public class UserProfile : UserSaveSystem
 		m_userMissions = new UserMissions();      
     }
 
+	/// <summary>
+	/// Return a string representation of this class.
+	/// </summary>
+	/// <returns>A formatted json string representing this class.</returns>
+	public override string ToString() {
+		return ToJson().ToString();
+	}
+		
+	//------------------------------------------------------------------------//
+	// CURRENCIES MANAGEMENT METHODS										  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Add coins.
 	/// </summary>
@@ -314,50 +327,27 @@ public class UserProfile : UserSaveSystem
 	}
 
 	/// <summary>
-	/// Increases the map level.
-	/// Doesn't perform any check or currency transaction, resets timer.
-	/// Broadcasts the PROFILE_MAP_UNLOCKED event.
+	/// Convert currency from enum to string.
 	/// </summary>
-	public void UnlockMap() {
-		// Reset timer to the start of the following day, in local time zone
-		// [AOC] Small trick to figure out the start of a day, from http://stackoverflow.com/questions/3362959/datetime-now-first-and-last-minutes-of-the-day
-		//DateTime tomorrow = DateTime.Now.AddDays(1);	// Using local time zone to compute tomorrow's date
-		//m_mapResetTimestamp = tomorrow.Date.ToUniversalTime();	// Work in UTC
-
-		// [AOC] Testing purposes
-		//m_mapResetTimestamp = DateTime.Now.AddSeconds(30).ToUniversalTime();
-
-		// [AOC] Fuck it! Easier implementation, fixed timer from the moment you unlock the map
-		DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
-		if(gameSettingsDef != null) {
-			m_mapResetTimestamp = DateTime.UtcNow.AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
-		} else {
-			m_mapResetTimestamp = DateTime.UtcNow.AddHours(24);	// Default timer just in case
+	public static string CurrencyToSku(Currency _currency) {
+		switch(_currency) {
+			case Currency.SOFT: return "sc";
+			case Currency.HARD: return "hc";
+			case Currency.GOLDEN_FRAGMENTS: return "goldenFragments";
 		}
-		Messenger.Broadcast(GameEvents.PROFILE_MAP_UNLOCKED);
+		return string.Empty;
 	}
 
 	/// <summary>
-	/// Gets the number OF owned dragons.
+	/// Convert currency from string to enum.
 	/// </summary>
-	/// <returns>The number owned dragons.</returns>
-	public int GetNumOwnedDragons()
-	{
-		int ret = 0;
-		foreach( KeyValuePair<string, DragonData> pair in m_dragonsBySku )
-		{
-			if ( pair.Value.isOwned )
-				ret++;
+	public static Currency SkuToCurrency(string _sku) {
+		switch(_sku) {
+			case "sc": return Currency.SOFT;
+			case "hc": return Currency.HARD;
+			case "goldenFragments": return Currency.GOLDEN_FRAGMENTS;
 		}
-		return ret;
-	}
-
-	/// <summary>
-	/// Return a string representation of this class.
-	/// </summary>
-	/// <returns>A formatted json string representing this class.</returns>
-	public override string ToString() {
-		return ToJson().ToString();
+		return Currency.NONE;
 	}
 
 	//------------------------------------------------------------------------//
@@ -396,6 +386,48 @@ public class UserProfile : UserSaveSystem
 		if(wasCompleted != _completed) {
 			Messenger.Broadcast(GameEvents.TUTORIAL_STEP_TOGGLED, _step, _completed);
 		}
+	}
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Increases the map level.
+	/// Doesn't perform any check or currency transaction, resets timer.
+	/// Broadcasts the PROFILE_MAP_UNLOCKED event.
+	/// </summary>
+	public void UnlockMap() {
+		// Reset timer to the start of the following day, in local time zone
+		// [AOC] Small trick to figure out the start of a day, from http://stackoverflow.com/questions/3362959/datetime-now-first-and-last-minutes-of-the-day
+		//DateTime tomorrow = DateTime.Now.AddDays(1);	// Using local time zone to compute tomorrow's date
+		//m_mapResetTimestamp = tomorrow.Date.ToUniversalTime();	// Work in UTC
+
+		// [AOC] Testing purposes
+		//m_mapResetTimestamp = DateTime.Now.AddSeconds(30).ToUniversalTime();
+
+		// [AOC] Fuck it! Easier implementation, fixed timer from the moment you unlock the map
+		DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+		if(gameSettingsDef != null) {
+			m_mapResetTimestamp = DateTime.UtcNow.AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
+		} else {
+			m_mapResetTimestamp = DateTime.UtcNow.AddHours(24);	// Default timer just in case
+		}
+		Messenger.Broadcast(GameEvents.PROFILE_MAP_UNLOCKED);
+	}
+
+	/// <summary>
+	/// Gets the number OF owned dragons.
+	/// </summary>
+	/// <returns>The number owned dragons.</returns>
+	public int GetNumOwnedDragons()
+	{
+		int ret = 0;
+		foreach( KeyValuePair<string, DragonData> pair in m_dragonsBySku )
+		{
+			if ( pair.Value.isOwned )
+				ret++;
+		}
+		return ret;
 	}
 
     //------------------------------------------------------------------------//

@@ -81,6 +81,9 @@ namespace AI {
 			m_machine.SetSignal(Signals.Type.Panic, true);
 			m_machine.SetSignal(Signals.Type.Chewing, true);
 
+			if (m_pilot != null)
+				m_pilot.OnDie();
+
 			if (EntityManager.instance != null)
 				EntityManager.instance.UnregisterEntity(m_entity as Entity);
 		}
