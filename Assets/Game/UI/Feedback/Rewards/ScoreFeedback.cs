@@ -49,7 +49,9 @@ public class ScoreFeedback : MonoBehaviour {
 	private float m_baseFontSize = 0f;
 	private StringBuilder m_sbuilder = new StringBuilder();
 	private float m_dragonScaleFactor = 1f;	// Cached value of the "scoreTextThresholdMultiplier" property from the current dragon definition
-	
+	private bool m_dragonScaleCached = false;
+
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -68,8 +70,8 @@ public class ScoreFeedback : MonoBehaviour {
 			return x.maxScore.CompareTo(y.maxScore);
 		});
 
-		// Cache scale factor for current dragon to avoid a constant acess to the dragon definition and parsing of the value
-		m_dragonScaleFactor = DragonManager.currentDragon.def.GetAsFloat("scoreTextThresholdMultiplier", 1f);
+		m_dragonScaleFactor = 1f;
+		m_dragonScaleCached = false;
 	}
 
 	//------------------------------------------------------------------------//
@@ -80,6 +82,14 @@ public class ScoreFeedback : MonoBehaviour {
 	/// </summary>
 	/// <param name="_score">Score amount to be displayed.</param>
 	public void SetScore(int _score) {
+		if (!m_dragonScaleCached) {
+			if (DragonManager.currentDragon != null) {
+				// Cache scale factor for current dragon to avoid a constant acess to the dragon definition and parsing of the value
+				m_dragonScaleFactor = DragonManager.currentDragon.def.GetAsFloat("scoreTextThresholdMultiplier", 1f);
+				m_dragonScaleCached = true;
+			}
+		}
+
 		// Using a string builder for optimal performance/memory usage
 		// Add the '+' symbol when positive, negative values already are formatted with the '-' symbol, 0 has no symbol whatsoever
 		m_sbuilder.Length = 0;	// [AOC] No Clear() in .Net 3.5 yet -_-
