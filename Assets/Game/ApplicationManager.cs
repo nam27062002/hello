@@ -446,13 +446,17 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
 	private void Device_Init() 
 	{
-		Device_CalculateOrientation();
+        // When this is enabled the user will be allowed to enable the vertical orientation on the control panel
+        if (FeatureSettingsManager.IsVerticalOrientationEnabled)
+        {
+            Device_CalculateOrientation();
 
-		// When this is enabled the user will be allowed to enable the vertical orientation on the control panel
-		if (FeatureSettingsManager.IsVerticalOrientationEnabled)
-		{
-			Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Device_OnOrientationSettingsChanged);
-		}
+            // When this is enabled the user will be allowed to enable the vertical orientation on the control panel
+            if (FeatureSettingsManager.IsVerticalOrientationEnabled)
+            {
+                Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Device_OnOrientationSettingsChanged);
+            }
+        }
 	}
 
 	private void Device_Destroy() 
