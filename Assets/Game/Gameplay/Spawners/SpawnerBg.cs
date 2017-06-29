@@ -207,6 +207,9 @@ public class SpawnerBg : AbstractSpawner {
     //-------------------------------------------------------------------    
 
 	void OnDrawGizmos() {
+		Gizmos.color = Colors.paleGreen;
+		Gizmos.DrawCube(transform.position + (Vector3)m_rect.position, m_rect.size);
+
 		// Only if editor allows it
 		if(showSpawnerInEditor) {
 			// Draw spawn area

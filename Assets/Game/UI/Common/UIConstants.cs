@@ -441,11 +441,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	/// <param name="_icon">Icon whose sprite we want.</param>
 	public static Sprite GetIconSprite(IconType _icon) {
 		// TMPro has the sprites indexed for us and provide us the tools get them!
-		int spriteIdx = TMP_SpriteAsset.defaultSpriteAsset.GetSpriteIndexFromName(GetIconName(_icon));
+		int spriteIdx = TMP_Settings.defaultSpriteAsset.GetSpriteIndexFromName(GetIconName(_icon));
 		if(spriteIdx < 0) return null;
 
 		// Just get the sprite at the given index!
-		return TMP_SpriteAsset.defaultSpriteAsset.spriteInfoList[spriteIdx].sprite;
+		return TMP_Settings.defaultSpriteAsset.spriteInfoList[spriteIdx].sprite;
 	}
 
 	/// <summary>
