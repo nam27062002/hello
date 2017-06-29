@@ -25,6 +25,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	public static readonly Color FPS_THRESHOLD_COLOR_2 = new Color(230f/255f, 150f/255f, 0f/255f, 0.75f);	// Orange
 	public static readonly Color FPS_THRESHOLD_COLOR_3 = new Color(230f/255f, 75f/255f, 030f/255f, 0.75f);	// Red
 
+	private const string LAST_TAB_IDX_PREF_KEY = "ControlPanel.LastTabIdx";
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -38,6 +40,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	public static Button toggleButton {
 		get { return instance.m_toggleButton; }
 	}
+
+	[SerializeField] private TabSystem m_tabs = null;
 
 	[SerializeField] private TextMeshProUGUI m_fpsCounter;
 	public static TextMeshProUGUI fpsCounter {
@@ -53,7 +57,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
     private bool m_isStatsEnabled;
     public bool IsStatsEnabled {
         get {
-            return m_isStatsEnabled;
+			return m_isStatsEnabled && InstanceManager.menuSceneController == null;	// [AOC] Disable stats at the menu (so annoying for developing UI!)
         }
 
         set {
@@ -163,6 +167,19 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		IsFPSEnabled = UnityEngine.Debug.isDebugBuild;        
         ShowMemoryUsage = UnityEngine.Debug.isDebugBuild;
         m_logicUnitsCounter.transform.parent.gameObject.SetActive(UnityEngine.Debug.isDebugBuild && ProfilerSettingsManager.ENABLED);
+
+		// Restore saved tab (if any)
+		int lastTabIdx = PlayerPrefs.GetInt(LAST_TAB_IDX_PREF_KEY, -1);
+		if(lastTabIdx >= 0) {
+			m_tabs.GoToScreenInstant(lastTabIdx);
+		}
+
+		// Remember tab index every time the active tab changes
+		m_tabs.OnScreenIndexChanged.AddListener(
+			(int _newTabIdx) => {
+				PlayerPrefs.SetInt(LAST_TAB_IDX_PREF_KEY, _newTabIdx);
+			}
+		);
 
         m_activateTimer = 0;
 	}

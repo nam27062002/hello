@@ -51,41 +51,23 @@ public class HDTrackingManagerImp : HDTrackingManager
                 Log("Generate User ID = " + TrackingSaveSystem.UserID);
             }
         }
-    }
-
-    private void InitCaletyManager()
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            Log("InitCaletyManager");
-        }
-
-        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-        if (settingsInstance != null)
-        {
-            UbimobileToolkit.UbiservicesEnvironment kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.UAT;
-            if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
-            {
-                kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.PROD;
-            }
-
-#if UNITY_ANDROID
-            DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", settingsInstance.m_strVersionAndroidGplay, kDNAEnvironment);
-#elif UNITY_IOS
-			DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", settingsInstance.m_strVersionIOS, kDNAEnvironment);
-#endif            
-        }
-    }
+    }   
 
     private void StartSession()
-    {        
+    {     
+        if (!IsDNAInitialised)
+        {
+            InitDNA();
+            IsDNAInitialised = true;
+        }
+
         Log("StartSession");
         State = EState.SessionStarted;
 
-        // Session counter advanced
-        TrackingSaveSystem.SessionCount++;
-
         CheckAndGenerateUserID();
+
+        // Session counter advanced
+        TrackingSaveSystem.SessionCount++;              
 
         // Calety needs to be initialized every time a session starts because the session count has changed
         StartCaletySession();
@@ -120,7 +102,10 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             int sessionNumber = TrackingSaveSystem.SessionCount;
             string trackingID = TrackingSaveSystem.UserID;
-            Log("SessionNumber = " + sessionNumber + " trackingID = " + trackingID);
+            string userID = (Authenticator.Instance.User != null) ? Authenticator.Instance.User.ID : "";
+            string socialUserID = SocialFacade.Instance.GetSocialIDFromHighestPrecedenceNetwork();
+
+            Log("SessionNumber = " + sessionNumber + " trackingID = " + trackingID + " userId = " + userID + " socialUserID = " + socialUserID);           
 
             TrackingManager.TrackingConfig kTrackingConfig = new TrackingManager.TrackingConfig();
             kTrackingConfig.m_eTrackPlatform = TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
@@ -154,23 +139,46 @@ public class HDTrackingManagerImp : HDTrackingManager
         // DNA start session
         kNewEventToTrack = TrackingManager.SharedInstance.GetNewTrackingEvent("game.start");
         if (kNewEventToTrack != null)
-        {
-            kNewEventToTrack.SetParameterValue("gameVersion", "Release");
+        {            
+            kNewEventToTrack.SetParameterValue("SubVersion", "SoftLaunch");
+            TrackAddParamProviderAuthToEvent(kNewEventToTrack);
+            TrackAddParamPlayerIDToEvent(kNewEventToTrack);
             TrackingManager.SharedInstance.SendEvent(kNewEventToTrack);
         }
-    }
+    }    
 
     private void TrackEndSessionEvent()
     {
+    }
+
+    private void TrackAddParamProviderAuthToEvent(TrackingManager.TrackingEvent e)
+    {
+        string value = "SilentLogin";
+        if (TrackingSaveSystem != null && !string.IsNullOrEmpty(TrackingSaveSystem.SocialPlatform))
+        {
+            value = TrackingSaveSystem.SocialPlatform;
+        }
+
+        e.SetParameterValue("providerAuth", value);
+    }
+
+    private void TrackAddParamPlayerIDToEvent(TrackingManager.TrackingEvent e)
+    {
+        string value = "";
+        if (TrackingSaveSystem != null && !string.IsNullOrEmpty(TrackingSaveSystem.SocialID))
+        {
+            value = TrackingSaveSystem.SocialID;            
+        }
+
+        e.SetParameterValue("playerID", value);
     }
 
     public override void Update()
     {
         switch (State)
         {
-            case EState.WaitingForSessionStart:
-                // We need to wait for the tracking save system to be ready because it might contain the tracking user id
-                if (TrackingSaveSystem != null && TrackingSaveSystem.IsReady && IsStartSessionNotified)
+            case EState.WaitingForSessionStart:                
+                if (TrackingSaveSystem != null && IsStartSessionNotified)
                 {
                     // No tracking for hackers because their sessions will be misleading
                     if (SaveFacade.Instance.userSaveSystem.isHacker)
@@ -183,6 +191,12 @@ public class HDTrackingManagerImp : HDTrackingManager
                     }
                 }
                 break;
+        }
+
+        if (TrackingSaveSystem != null && TrackingSaveSystem.IsDirty)
+        {
+            TrackingSaveSystem.IsDirty = false;
+            SaveFacade.Instance.Save();
         }
     }
 

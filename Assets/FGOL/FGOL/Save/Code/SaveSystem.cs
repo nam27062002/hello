@@ -1,15 +1,194 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using FGOL.Server;
 
 namespace FGOL.Save
 {
     public abstract class SaveSystem
-    {
+    {        
         protected string m_systemName = string.Empty;
         protected SaveData m_saveData = null;
         private Stack<string> m_keyStack = new Stack<string>();
+
+        public bool IsDirty { get; set; }
+
+        #region cache
+        protected abstract class CacheData
+        {
+            public string Key { get; set; }
+
+            public abstract void Reset();
+            public abstract void Load(SaveSystem saveSystem);
+            public abstract void Save(SaveSystem saveSystem);
+        }
+
+        protected class CacheDataString : CacheData
+        {
+            public CacheDataString(string key, string defaultValue)
+            {
+                Key = key;
+                DefaultValue = defaultValue;
+                Reset();
+            }
+
+            public string DefaultValue { get; set; }
+            public string Value { get; set; }
+
+            public override void Reset()
+            {
+                Value = DefaultValue;
+            }
+
+            public override void Load(SaveSystem saveSystem)
+            {
+                Value = saveSystem.GetString(Key, DefaultValue);
+            }
+
+            public override void Save(SaveSystem saveSystem)
+            {
+                saveSystem.SetString(Key, Value);
+            }
+        }
+
+        protected class CacheDataInt : CacheData
+        {
+            public CacheDataInt(string key, int defaultValue)
+            {
+                Key = key;
+                DefaultValue = defaultValue;
+                Value = DefaultValue;
+            }
+
+            public int DefaultValue { get; set; }
+            public int Value { get; set; }
+
+            public override void Reset()
+            {
+                Value = DefaultValue;
+            }
+
+            public override void Load(SaveSystem saveSystem)
+            {
+                Value = saveSystem.GetInt(Key, DefaultValue);
+            }
+
+            public override void Save(SaveSystem saveSystem)
+            {
+                saveSystem.SetInt(Key, Value);
+            }
+        }
+
+        private Dictionary<string, CacheData> m_cacheData;
+
+        protected void Cache_AddData(string key, CacheData data)
+        {
+            if (m_cacheData == null)
+            {
+                m_cacheData = new Dictionary<string, CacheData>();
+            }
+
+            if (m_cacheData.ContainsKey(key))
+            {
+                m_cacheData[key] = data;
+            }
+            else
+            {
+                m_cacheData.Add(key, data);
+            }
+        }
+
+        protected int Cache_GetInt(string key)
+        {
+            int returnValue = 0;
+            if (m_cacheData.ContainsKey(key))
+            {
+                returnValue = ((CacheDataInt)m_cacheData[key]).Value;                
+            }
+
+            return returnValue;
+        }                
+
+        protected void Cache_SetInt(string key, int value)
+        {
+            if (m_cacheData != null && m_cacheData.ContainsKey(key))
+            {
+                CacheDataInt dataInt = ((CacheDataInt)m_cacheData[key]);
+                if (dataInt != null && dataInt.Value != value)
+                {
+                    dataInt.Value = value;
+                    IsDirty = true;
+                }
+            }
+        }
+
+        protected string Cache_GetString(string key)
+        {
+            string returnValue = null;
+            if (m_cacheData.ContainsKey(key))
+            {
+                returnValue = ((CacheDataString)m_cacheData[key]).Value;
+            }
+
+            return returnValue;
+        }
+
+        protected void Cache_SetString(string key, string value)
+        {
+            if (m_cacheData != null && m_cacheData.ContainsKey(key))
+            {
+                CacheDataString dataString = ((CacheDataString)m_cacheData[key]);
+                if (dataString != null && dataString.Value != value)
+                {
+                    dataString.Value = value;
+                    IsDirty = true;
+                }
+            }
+        }
+
+        protected void Cache_Reset()
+        {
+            if (m_cacheData != null)
+            {
+                foreach (KeyValuePair<string, CacheData> pair in m_cacheData)
+                {
+                    pair.Value.Reset();
+                }
+
+                IsDirty = false;
+            }
+        }
+
+        protected void Cache_Load()
+        {
+            if (m_cacheData != null)
+            {
+                try
+                {
+                    foreach (KeyValuePair<string, CacheData> pair in m_cacheData)
+                    {
+                        pair.Value.Load(this);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("SaveSystem (Load) :: Exception - " + e);
+                    throw new CorruptedSaveException(e);
+                }
+            }
+        }
+
+        protected void Cache_Save()
+        {
+            if (m_cacheData != null)
+            {                
+                foreach (KeyValuePair<string, CacheData> pair in m_cacheData)
+                {
+                    pair.Value.Save(this);
+                }                
+            }
+        }
+        #endregion
 
         #region Public Properties
         public string name
@@ -50,6 +229,19 @@ namespace FGOL.Save
         public abstract bool Upgrade();
 
         public abstract void Downgrade();
+
+        public SimpleJSON.JSONNode ToJSON()
+        {
+            SimpleJSON.JSONNode returnValue = null;
+            if (m_saveData != null)
+            {
+                Save();
+                returnValue = SimpleJSON.JSON.Parse(m_saveData.ToString());
+                returnValue = returnValue[name];
+            }
+
+            return returnValue;
+        }
         #endregion
 
         #region Scoping
