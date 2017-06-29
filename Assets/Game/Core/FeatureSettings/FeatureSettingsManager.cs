@@ -1014,7 +1014,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 	{
 		get 
 		{
-			return IsDebugEnabled;
+			return false;
 		}
 	}
 
