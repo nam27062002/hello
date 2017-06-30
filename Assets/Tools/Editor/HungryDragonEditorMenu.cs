@@ -472,5 +472,13 @@ public class HungryDragonEditorMenu
         Debug.Log(xml);
         File.WriteAllText(MEMORY_PROFILER_PATH + "memorySampleFromGame", xml);
     }
+
+    [MenuItem("Hungry Dragon/Profiler/Open Memory Profiler", false, 51)]
+    public static void MemoryProfiler_OpenMemoryProfiler()
+    {
+        // The profiler depends on the shaders properties, that's why this list is generated the first time the profiler is needed
+        Profiler_GenerateShadersPropertiesFile();
+        MemoryProfilerEditorWindow.Init();
+    }
     #endregion
 }

@@ -830,13 +830,43 @@ public class MemoryProfiler
     public class CategoryConfig
     {
         public string Name { get; set; }
-        public float MaxMemory { get; set; }
 
-        public CategoryConfig(string name, float maxMemory)
+        /// <summary>
+        /// In bytes
+        /// </summary>
+        public long MaxMemoryQuarter { get; set; }
+        public long MaxMemoryHalf { get; set; }
+        public long MaxMemoryFull { get; set; }
+
+        public CategoryConfig(string name, long maxQuarter, long maxHalf, long maxFull)
         {
             Name = name;
-            MaxMemory = maxMemory;
+            MaxMemoryQuarter = maxQuarter;
+            MaxMemoryHalf = maxHalf;
+            MaxMemoryFull = maxFull;            
         }
+
+        public long GetMaxMemory(AbstractMemorySample.ESizeStrategy sizeStrategy)
+        {
+            long returnValue = MaxMemoryHalf;
+            switch (sizeStrategy)
+            {
+                case AbstractMemorySample.ESizeStrategy.DeviceFull:
+                case AbstractMemorySample.ESizeStrategy.Profiler:
+                    returnValue = MaxMemoryFull;
+                    break;
+
+                case AbstractMemorySample.ESizeStrategy.DeviceHalf:
+                    returnValue = MaxMemoryHalf;
+                    break;
+
+                case AbstractMemorySample.ESizeStrategy.DeviceQuarter:
+                    returnValue = MaxMemoryQuarter;
+                    break;
+            }
+
+            return returnValue;
+        }        
     }
 
     public class CategorySet
@@ -844,29 +874,33 @@ public class MemoryProfiler
         public string Name { get; set; }
         public List<CategoryConfig> CategoryConfigs { get; set; }
 
-        public void AddCategory(string name, float maxMemory)
+        public void AddCategory(string name, long maxQuarter, long maxHalf, long maxFull)
         {
             if (CategoryConfigs == null)
             {
                 CategoryConfigs = new List<CategoryConfig>();
             }
 
-            CategoryConfig categoryConfig = new CategoryConfig(name, maxMemory);
+            CategoryConfig categoryConfig = new CategoryConfig(name, maxQuarter, maxHalf, maxFull);
             CategoryConfigs.Add(categoryConfig);
         }
 
-        public float TotalMaxMemory {
-            get {
-                float returnValue = 0;
-                if (CategoryConfigs != null) {
-                    int count = CategoryConfigs.Count;
-                    for (int i = 0; i < count; i++) {
-                        returnValue += CategoryConfigs[i].MaxMemory;
-                    }
-                }
+        public void AddCategoryInMb(string name, float maxQuarter, float maxHalf, float maxFull)
+        {
+            AddCategory(name, (long)Util.MegaBytesToBytes(maxQuarter), (long)Util.MegaBytesToBytes(maxHalf), (long)Util.MegaBytesToBytes(maxFull));            
+        }
 
-                return returnValue;
+        public float GetTotalMaxMemory(AbstractMemorySample.ESizeStrategy sizeStrategy)
+        {           
+            float returnValue = 0;
+            if (CategoryConfigs != null) {
+                int count = CategoryConfigs.Count;
+                for (int i = 0; i < count; i++) {
+                    returnValue += CategoryConfigs[i].GetMaxMemory(sizeStrategy);
+                }
             }
+
+            return returnValue;            
         }
     }
 

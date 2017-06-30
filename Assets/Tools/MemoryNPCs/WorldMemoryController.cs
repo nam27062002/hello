@@ -239,6 +239,8 @@ public class WorldMemoryController : MonoBehaviour {
     public void Setup(MemoryProfiler.CategorySet categorySet) {
         m_totalMemoryData = new MemoryData("all");
 
+        AbstractMemorySample.ESizeStrategy sizeStrategy = m_memoryProfiler.SizeStrategy;
+
         if (m_containers != null && categorySet != null) {
             if (categorySet.CategoryConfigs != null) {
                 int containersCount = m_containers.Length;
@@ -250,7 +252,7 @@ public class WorldMemoryController : MonoBehaviour {
 
                     for (int i = 0; i < configsCount; i++) {
                         m_memoryDatas.Add(new MemoryData(categorySet.CategoryConfigs[i].Name));
-                        m_containers[i].Setup(categorySet.CategoryConfigs[i].Name, categorySet.CategoryConfigs[i].MaxMemory);
+                        m_containers[i].Setup(categorySet.CategoryConfigs[i].Name, categorySet.CategoryConfigs[i].GetMaxMemory(sizeStrategy));
                         m_containers[i].SetIsVisible(true);
                     }
 
@@ -262,7 +264,7 @@ public class WorldMemoryController : MonoBehaviour {
         }
 
         if (m_memoryTotal != null) {
-            m_memoryTotal.Setup("memory usage", categorySet.TotalMaxMemory);
+            m_memoryTotal.Setup("memory usage", categorySet.GetTotalMaxMemory(sizeStrategy));
             m_memoryTotal.SetIsVisible(true);
         }        
     }
@@ -313,7 +315,7 @@ public class WorldMemoryController : MonoBehaviour {
                 }
             }
 
-            m_totalMemoryData.all = BytesToMegaBytes(m_sample.GetTotalMemorySize());
+            m_totalMemoryData.all = Util.BytesToMegaBytes(m_sample.GetTotalMemorySize());
 
             UpdateUI();
         }
@@ -333,7 +335,7 @@ public class WorldMemoryController : MonoBehaviour {
                 SampleToData(sample.GetSample(mData.label) as MemorySample, mData);
             }            
 
-            m_totalMemoryData.all = BytesToMegaBytes(sample.GetTotalMemorySize());
+            m_totalMemoryData.all = Util.BytesToMegaBytes(sample.GetTotalMemorySize());
 
             UpdateUI();
         }
@@ -358,13 +360,13 @@ public class WorldMemoryController : MonoBehaviour {
     private void SampleToData(MemorySample sample, MemoryData data) {
         if (sample != null && data != null) {
             sample.TypeGroups_Apply(m_memoryProfiler.GameTypeGroups);
-            float mesh = BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(HDMemoryProfiler.GAME_TYPE_GROUPS_MESHES));
-            float animation = BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(HDMemoryProfiler.GAME_TYPE_GROUPS_ANIMATIONS));
-            float texture = BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(HDMemoryProfiler.GAME_TYPE_GROUPS_TEXTURES));
-            float particles = BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(HDMemoryProfiler.GAME_TYPE_GROUPS_PARTICLES));
-            float audio = BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(HDMemoryProfiler.GAME_TYPE_GROUPS_AUDIO));
-            float other = BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(MemorySample.TYPE_GROUPS_OTHER));
-            float total = BytesToMegaBytes(sample.GetTotalMemorySize());
+            float mesh = Util.BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(HDMemoryProfiler.GAME_TYPE_GROUPS_MESHES));
+            float animation = Util.BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(HDMemoryProfiler.GAME_TYPE_GROUPS_ANIMATIONS));
+            float texture = Util.BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(HDMemoryProfiler.GAME_TYPE_GROUPS_TEXTURES));
+            float particles = Util.BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(HDMemoryProfiler.GAME_TYPE_GROUPS_PARTICLES));
+            float audio = Util.BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(HDMemoryProfiler.GAME_TYPE_GROUPS_AUDIO));
+            float other = Util.BytesToMegaBytes(sample.GetMemorySizePerTypeGroup(MemorySample.TYPE_GROUPS_OTHER));
+            float total = Util.BytesToMegaBytes(sample.GetTotalMemorySize());
 
             data.all = total; //should we add the "other" value?
             data.mesh = mesh;
@@ -391,15 +393,7 @@ public class WorldMemoryController : MonoBehaviour {
 
 	private void OnLevelLoaded() {
 		OnReset(true);
-    }
-
-    private float BytesToMegaBytes(long bytes) {
-        return bytes / (1024f * 1024f);
-    }
-
-    private float BytesToKiloBytes(long bytes) {
-        return bytes / (1024f);
-    }
+    }    
 
     #region categorySet
     [SerializeField]

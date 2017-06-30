@@ -415,9 +415,12 @@ public class MemorySample : AbstractMemorySample
     public override long GetTotalMemorySize()
     {
         long returnValue = 0;
-        foreach (KeyValuePair<string, List<ObjectDetails>> pair in Objects)
+        if (Objects != null)
         {
-            returnValue += GetMemorySizePerType(pair.Key);
+            foreach (KeyValuePair<string, List<ObjectDetails>> pair in Objects)
+            {
+                returnValue += GetMemorySizePerType(pair.Key);
+            }
         }
 
         return returnValue;

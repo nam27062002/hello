@@ -119,13 +119,16 @@ public class HDMemoryProfiler : MemoryProfiler
             calculateKey = false;
         }
 
-        List<GameObject> gosAlreadyProcessed = new List<GameObject>();       
-        DragonPlayer player = InstanceManager.player;
-        if (player != null)
+        List<GameObject> gosAlreadyProcessed = new List<GameObject>();
+        if (InstanceManager.instance != null)
         {
-            go = player.gameObject;                
-            Scene_AddGO(key, go);
-            gosAlreadyProcessed.Add(go);
+            DragonPlayer player = InstanceManager.player;
+            if (player != null)
+            {
+                go = player.gameObject;
+                Scene_AddGO(key, go);
+                gosAlreadyProcessed.Add(go);
+            }
         }        
 
         // We need to ignore this game object because it loads the current dragon for the loading screen. We want to ignore this assets in the "Hud" category
@@ -184,11 +187,17 @@ public class HDMemoryProfiler : MemoryProfiler
                 if (gos != null)
                 {
                     int count = gos.Length;
+
+                    if (calculateKey)
+                    {
+                        key = CATEGORY_SET_GAME_KEY_HUD;
+                    }
+
                     for (int i = 0; i < count; i++)
                     {
                         if (gos[i] != singletons)
                         {
-                            Scene_AddGO(CATEGORY_SET_GAME_KEY_HUD, gos[i]);
+                            Scene_AddGO(key, gos[i]);
                         }
                     }
                 }
@@ -319,12 +328,12 @@ public class HDMemoryProfiler : MemoryProfiler
         CategorySet set = new CategorySet();
         set.Name = CATEGORY_SET_NAME_GAME;
 
-        set.AddCategory(CATEGORY_SET_KEY_PLAYER, 20f);
-        set.AddCategory(CATEGORY_SET_GAME_KEY_HUD, 15f);
-        set.AddCategory(CATEGORY_SET_KEY_LEVEL_ART, 45f);
-        set.AddCategory(CATEGORY_SET_KEY_LEVEL_DESIGN, 15f);
-        set.AddCategory(CATEGORY_SET_KEY_LEVEL_NPCS, 40f);
-        set.AddCategory(CATEGORY_SET_KEY_LEVEL_AUDIO, 6f);
+        set.AddCategoryInMb(CATEGORY_SET_KEY_PLAYER, 15f, 20f, 30f);
+        set.AddCategoryInMb(CATEGORY_SET_GAME_KEY_HUD, 15f, 15f, 15f);
+        set.AddCategoryInMb(CATEGORY_SET_KEY_LEVEL_ART, 30f, 45f, 115f);
+        set.AddCategoryInMb(CATEGORY_SET_KEY_LEVEL_DESIGN, 15f, 15f, 15f);
+        set.AddCategoryInMb(CATEGORY_SET_KEY_LEVEL_NPCS, 37.5f, 40f, 50f);
+        set.AddCategoryInMb(CATEGORY_SET_KEY_LEVEL_AUDIO, 6f, 6f, 6f);
 
         CategorySet_AddToCatalog(set);
 
@@ -332,11 +341,11 @@ public class HDMemoryProfiler : MemoryProfiler
         set = new CategorySet();
         set.Name = CATEGORY_SET_NAME_GAME_1_LEVEL;
 
-        set.AddCategory(CATEGORY_SET_KEY_PLAYER, 20f);
-        set.AddCategory(CATEGORY_SET_GAME_KEY_HUD, 15f);
-        set.AddCategory(CATEGORY_SET_KEY_LEVEL, 60f);        
-        set.AddCategory(CATEGORY_SET_KEY_LEVEL_NPCS, 40f);
-        set.AddCategory(CATEGORY_SET_KEY_LEVEL_AUDIO, 6f);
+        set.AddCategoryInMb(CATEGORY_SET_KEY_PLAYER, 15f, 20f, 30f);
+        set.AddCategoryInMb(CATEGORY_SET_GAME_KEY_HUD, 15f, 15f, 15f);
+        set.AddCategoryInMb(CATEGORY_SET_KEY_LEVEL, 45f, 60f, 130f);        
+        set.AddCategoryInMb(CATEGORY_SET_KEY_LEVEL_NPCS, 37.5f, 40f, 50f);
+        set.AddCategoryInMb(CATEGORY_SET_KEY_LEVEL_AUDIO, 6f, 6f, 6f);
 
         CategorySet_AddToCatalog(set);
 
@@ -344,7 +353,7 @@ public class HDMemoryProfiler : MemoryProfiler
         set = new CategorySet();
         set.Name = CATEGORY_SET_NAME_EVERYTHING;
 
-        set.AddCategory(CATEGORY_SET_GAME_KEY_EVERYTHING, 141);        
+        set.AddCategoryInMb(CATEGORY_SET_GAME_KEY_EVERYTHING, 123.5f, 141f, 230f);        
 
         CategorySet_AddToCatalog(set);
     }
@@ -411,6 +420,12 @@ public class HDMemoryProfiler : MemoryProfiler
             }
         }
 
+        if (returnValue == null)
+        {
+            Debug.LogError("Key can't be empty");
+            returnValue = CATEGORY_SET_GAME_KEY_HUD;
+        }
+
         return returnValue;
     }
 
@@ -450,6 +465,12 @@ public class HDMemoryProfiler : MemoryProfiler
                     }
                 }
             }
+        }
+
+        if (returnValue == null)
+        {
+            Debug.LogError("Key can't be empty");
+            returnValue = CATEGORY_SET_GAME_KEY_HUD;
         }
 
         return returnValue;
