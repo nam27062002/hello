@@ -9,8 +9,9 @@
 				{"playerID": {"Status": ""}},
 				{"providerAuth": {"Status": ""}},                
 				{"pushNotif": {"Status": ""}},                
-				{"SubVersion": {"Status": ""}},                
-                {"typeNotif": {"Status": ""}}                               
+				{"SubVersion": {"Status": ""}},               
+                {"typeNotif": {"Status": ""}},
+				{"InGameId": {"Status": ""}}     								
             ],
             "APIs": ["dna"]
         },        
@@ -51,6 +52,10 @@
         "typeNotif": {
             "Type": "STRING:125",
             "Values": []
-        }                                                                                                 		
+        },
+        "InGameId": {
+            "Type": "INT",
+            "Values": []
+        },		
     }
 }
