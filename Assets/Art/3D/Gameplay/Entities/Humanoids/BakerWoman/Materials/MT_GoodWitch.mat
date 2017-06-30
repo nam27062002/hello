@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pet_neutrin_menu
-  m_Shader: {fileID: 4800000, guid: a7449fc3144c5374592600f0c67f8b5f, type: 3}
+  m_Name: MT_GoodWitch
+  m_Shader: {fileID: 4800000, guid: 7c755659303fc430e9beee01a27dff3e, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -18,7 +18,7 @@ Material:
     - first:
         name: _BumpMap
       second:
-        m_Texture: {fileID: 2800000, guid: 5053af50efe534db8b8076d944b14ceb, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -40,13 +40,13 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
-        name: _DetailTex
+        name: _EmissionMap
       second:
-        m_Texture: {fileID: 2800000, guid: b49e1cffcf1c649a1b35ea1243194ea8, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
-        name: _EmissionMap
+        name: _GlowTex
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -54,11 +54,17 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 1a0aeada5eb41442da821eaa66851490, type: 3}
+        m_Texture: {fileID: 2800000, guid: a65badea59e714e30b4cad3af2d50380, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _NormalTex
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -83,9 +89,6 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
-        name: _Alpha_as_depth
-      second: 0
-    - first:
         name: _BumpScale
       second: 1
     - first:
@@ -98,8 +101,11 @@ Material:
         name: _DstBlend
       second: 0
     - first:
-        name: _Fresnel
-      second: 4.38
+        name: _FresnelFactor
+      second: 5
+    - first:
+        name: _FresnelPower
+      second: 0.27
     - first:
         name: _GlossMapScale
       second: 1
@@ -110,41 +116,35 @@ Material:
         name: _GlossyReflections
       second: 1
     - first:
-        name: _InnerLightAdd
-      second: 0
-    - first:
         name: _Metallic
       second: 0
     - first:
         name: _Mode
       second: 0
     - first:
-        name: _NormalStrenght
-      second: 1
+        name: _NormalStrength
+      second: 0
     - first:
         name: _OcclusionStrength
       second: 1
-    - first:
-        name: _OutlineGradient
-      second: 0.58
-    - first:
-        name: _OutlineWidth
-      second: 0.05
     - first:
         name: _Parallax
       second: 0.02
     - first:
         name: _ReflectionAmount
-      second: 0
+      second: 1
+    - first:
+        name: _RimFactor
+      second: 8
     - first:
         name: _SmoothnessTextureChannel
       second: 0
     - first:
-        name: _SpecExponent
-      second: 6.68
-    - first:
         name: _SpecularHighlights
       second: 1
+    - first:
+        name: _SpecularPower
+      second: 0
     - first:
         name: _SrcBlend
       second: 1
@@ -159,35 +159,35 @@ Material:
       second: 1
     m_Colors:
     - first:
-        name: _AmbientAdd
-      second: {r: 0.021969333, g: 0.04411763, b: 0.01492214, a: 0}
-    - first:
         name: _Color
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _ColorAdd
-      second: {r: 0.01145449, g: 0.029411793, b: 0.010813159, a: 0}
-    - first:
-        name: _ColorMultiply
-      second: {r: 1, g: 1, b: 1, a: 1}
+      second: {r: 0.588, g: 0.588, b: 0.588, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
+        name: _EmissiveColor
+      second: {r: 0, g: 0, b: 0, a: 0}
+    - first:
         name: _FresnelColor
-      second: {r: 0.47794116, g: 0.47794116, b: 0.47794116, a: 1}
+      second: {r: 0, g: 0, b: 0, a: 0}
     - first:
-        name: _InnerLightColor
-      second: {r: 0.15084344, g: 0.33088237, b: 0.18933451, a: 1}
+        name: _FresnelFinalColor
+      second: {r: 0, g: 0, b: 0, a: 0}
     - first:
-        name: _OutlineColor
-      second: {r: 1, g: 0.65882355, b: 0, a: 1}
+        name: _FresnelInitialColor
+      second: {r: 0, g: 0, b: 0, a: 0}
     - first:
-        name: _SecondLightColor
-      second: {r: 0.74156576, g: 0.7906246, b: 0.9338235, a: 0}
+        name: _GlowColor
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
-        name: _SecondLightDir
-      second: {r: -2.52, g: -1.3, b: -0.54, a: 396}
+        name: _LightColor
+      second: {r: 0.16949612, g: 0.41911763, b: 0.253851, a: 1}
+    - first:
+        name: _RimColor
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _SpecularDir
+      second: {r: 0, g: 0, b: -1, a: 0}
     - first:
         name: _Tint
-      second: {r: 1, g: 1, b: 1, a: 1}
+      second: {r: 0.620891, g: 0.9705882, b: 0.6667134, a: 1}

@@ -129,6 +129,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string MISSION_ICONS_PATH {
 		get { return instance.m_missionIconsPath; }
 	}
+
+	[SerializeField] private string m_eggIconsPath = "UI/Metagame/Missions/";
+	public static string EGG_ICONS_PATH {
+		get { return instance.m_eggIconsPath; }
+	}
 	#endregion
 
 	// -------------------------------------------------------------------------

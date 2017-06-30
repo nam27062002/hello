@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using UnityEditor;
 using Object = UnityEngine.Object;
 
+/*
 public class TextureDetails : IEquatable<TextureDetails>
 {
     public bool isCubeMap;
@@ -104,6 +105,7 @@ public class MissingGraphic
     public string type;
     public string name;
 }
+*/
 
 public class GroupDef
 {

@@ -1080,5 +1080,54 @@ public class UserProfile : UserSaveSystem
 		}
 		return data;
 	}
+
+    /// <summary>
+    /// Returns an int that sums up the user's progress.
+    /// </summary>
+    /// <returns></returns>
+    public int GetPlayerProgress()
+    {
+        int returnValue = 0;
+
+        // Find the dragon with the highest level among all dragons acquired by the user.
+        if (m_dragonsBySku != null)
+        {
+            DragonData highestDragon = null;
+            foreach (KeyValuePair<string, DragonData> pair in m_dragonsBySku)
+            {
+                if (pair.Value.isOwned)
+                {                                        
+		            int order = pair.Value.GetOrder();
+                    if (highestDragon == null || order > highestDragon.GetOrder())
+                    {
+                        highestDragon = pair.Value;
+                    }
+                }
+            }
+
+            if (highestDragon != null)
+            {
+                int highestOrder = highestDragon.GetOrder();
+
+                // Add up maxLevel of all dragons with a lower level.
+                foreach (KeyValuePair<string, DragonData> pair in m_dragonsBySku)
+                {
+                    if (pair.Value.GetOrder() < highestOrder)
+                    {
+                        // Since level start at 0 the amount of level is maxLevel + 1 
+                        returnValue += pair.Value.progression.maxLevel + 1;                        
+                    }
+                }
+
+                // Add up the current level of that highest dragon.
+                returnValue += highestDragon.progression.level;
+
+                // Dragon level starts at 0 but player progress starts at 1
+                returnValue++;
+            }
+        }        
+
+        return returnValue;
+    }
 }
 
