@@ -94,6 +94,14 @@ public class DragonPowerUp : MonoBehaviour {
 				{
 					player.AddBoostBonus( def.GetAsFloat("param1"));
 				}break;
+				case "faster_boost": // increases boost refill rate
+				{
+					DragonBoostBehaviour boost = player.dragonBoostBehaviour;
+					if ( boost )
+					{
+						boost.AddRefillBonus( def.GetAsFloat("param1") );
+					}
+				}break;
 				case "fury_duration":	// Adds fury duration
 				{
 					DragonBreathBehaviour breath = player.GetComponent<DragonBreathBehaviour>();
@@ -395,7 +403,7 @@ public class DragonPowerUp : MonoBehaviour {
                     return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_VACUUM.ToHexString("#"));
                 }break;
 
-            case "preyHpBoost": {
+			case "prey_hp_boost": {
 				// Show target entity name
 				// [AOC] TODO!! Plural
 				DefinitionNode entityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, _powerDef.GetAsString("param1"));
