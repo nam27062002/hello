@@ -109,66 +109,49 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 		// Activate game object
 		this.gameObject.SetActive(true);
 
-		// Set reward icon
-		if(m_icon != null) {
-			// Based on type
-			string type = m_reward.def.Get("type");
-			switch(type) {
-				case "pet": {
-					// Get the pet preview
-				} break;
+		// Set reward icon and text
+		// Based on type
+		string type = m_reward.def.Get("type");
+		switch(type) {
+			case "pet": {
+				// Get the pet preview
+				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_reward.def.Get("gameSku"));
+				if(petDef != null) {
+					if(m_icon != null) m_icon.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + petDef.Get("icon"));
+					if(m_rewardText != null) m_rewardText.text = petDef.GetLocalized("tidName");
+				} else {
+					// (shouldn't happen)
+					if(m_icon != null) m_icon.sprite = null;
+					if(m_rewardText != null) m_rewardText.text = LocalizationManager.SharedInstance.Localize("TID_PET");
+				}
+			} break;
 
-				case "egg": {
-					// Get the egg icon :s
-				} break;
+			case "egg": {
+				// Get the egg definition
+				DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, m_reward.def.Get("gameSku"));
+				if(eggDef != null) {
+					if(m_icon != null) m_icon.sprite = Resources.Load<Sprite>(UIConstants.EGG_ICONS_PATH + eggDef.Get("icon"));
+					if(m_rewardText != null) m_rewardText.text = eggDef.GetLocalized("tidName");
+				} else {
+					// (shouldn't happen) Use generic
+					if(m_icon != null) m_icon.sprite = null;
+					if(m_rewardText != null) m_rewardText.text = LocalizationManager.SharedInstance.Localize("TID_EGG");
+				}
+			} break;
 
-				case "sc":
-				case "hc":
-				case "goldenFragments": {
-					// Get the icon linked to this currency
-					UserProfile.Currency currency = UserProfile.SkuToCurrency(type);
-					m_icon.sprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(currency));
-				} break;
+			case "sc":
+			case "hc":
+			case "goldenFragments": {
+				// Get the icon linked to this currency
+				UserProfile.Currency currency = UserProfile.SkuToCurrency(type);
+				if(m_icon != null) m_icon.sprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(currency));
+				if(m_rewardText != null) m_rewardText.text = StringUtils.FormatNumber(m_reward.amount, 0);
+			} break;
 
-				default: {
-					m_icon.sprite = null;
-				} break;
-			}
-
-			Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_reward.def.Get("icon"));
-		}
-
-		// Set reward text
-		if(m_rewardText != null) {
-			// Based on type
-			switch(m_reward.def.Get("type")) {
-				// Pet: pet name (we assume there's never gonna be more than one pet rewarded)
-				case "pet": {
-					DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_reward.def.Get("gameSku"));
-					if(petDef != null) {
-						m_rewardText.text = petDef.GetLocalized("tidName");
-					} else {
-						// (shouldn't happen) Use generic
-						m_rewardText.text = LocalizationManager.SharedInstance.Localize("TID_PET");
-					}
-				} break;
-
-				// Egg: egg name (we assume there's never gonna be more than one egg rewarded)
-				case "egg": {
-					DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, m_reward.def.Get("gameSku"));
-					if(eggDef != null) {
-						m_rewardText.text = eggDef.GetLocalized("tidName");
-					} else {
-						// (shouldn't happen) Use generic
-						m_rewardText.text = LocalizationManager.SharedInstance.Localize("TID_EGG");
-					}
-				} break;
-
-				// Default (typically currencies): amount
-				default: {
-					m_rewardText.text = StringUtils.FormatNumber(m_reward.amount, 0);
-				} break;
-			}
+			default: {
+				if(m_icon != null) m_icon.sprite = null;
+				if(m_rewardText != null) m_rewardText.text = StringUtils.FormatNumber(m_reward.amount, 0);
+			} break;
 		}
 
 		// Set target text
