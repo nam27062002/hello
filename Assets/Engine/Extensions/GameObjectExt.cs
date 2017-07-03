@@ -9,6 +9,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using System;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -393,7 +394,7 @@ public static class GameObjectExt {
 	/// <returns>The first component of type T found in any of the children objects.</returns>
 	/// <param name="_comp">The root component to look wihtin.</param>
 	/// <typeparam name="T">The type to look for.</typeparam>
-	public static List<T> FindComponentsRecursive<T>(this Transform _t) where T : Component {
+	public static List<T> FindComponentsRecursive<T>(this Transform _t) {
 		// Found!
 		List<T> components = new List<T>();
 
@@ -409,6 +410,7 @@ public static class GameObjectExt {
 
 		return components;
 	}
+
 
 	/// <summary>
 	/// Find first component of a given type in game object's parent hirearchy.
