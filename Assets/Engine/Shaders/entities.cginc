@@ -26,7 +26,7 @@ struct v2f
 	float height : TEXCOORD3;
 #endif 
 
-#ifdef MATCAP
+#if defined(MATCAP)
 	float2 cap : TEXCOORD1;
 #endif
 
@@ -36,7 +36,7 @@ uniform sampler2D _MainTex;
 uniform float4 _MainTex_ST;
 uniform float4 _MainTex_TexelSize;
 
-#ifdef MATCAP
+#if defined(MATCAP)
 uniform sampler2D _MatCap;
 uniform float4 _GoldColor;
 #endif
@@ -180,13 +180,12 @@ fixed4 frag(v2f i) : SV_Target
 
 #endif
 
-#ifdef MATCAP
+#if defined(MATCAP)
 	fixed4 mc = tex2D(_MatCap, i.cap) * _GoldColor; // _FresnelColor;
 
 //	col = (col + ((mc*2.0) - 0.5));
 	col = lerp(col, mc * 3.0, _GoldColor.w);// (1.0 - clamp(_FresnelPower, 0.0, 1.0)));
 	//	res.a = 0.5;
-
 #endif
 
 #if defined (EMISSIVE) || defined (EMISSIVE_COLOR)

@@ -20,15 +20,16 @@ Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Overlay
 				#pragma vertex vert
 				#pragma fragment frag
 				#pragma multi_compile_fwdbase
-//				#pragma glsl_no_auto_normalization
-//				#pragma fragmentoption ARB_precision_hint_fastest
+				#pragma glsl_no_auto_normalization
+				#pragma fragmentoption ARB_precision_hint_fastest
 
 				#define	HG_SCENARY
 
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
 				#include "HungryDragon.cginc"
-								
+				#include "Lighting.cginc"
+
 				#define FOG
 				#define BLEND_TEXTURE
 				#define VERTEXCOLOR_OVERLAY

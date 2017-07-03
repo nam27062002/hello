@@ -30,7 +30,7 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap"
 
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
-//				#include "Lighting.cginc"
+				#include "Lighting.cginc"
 				#include "HungryDragon.cginc"
 
 				#define FOG
