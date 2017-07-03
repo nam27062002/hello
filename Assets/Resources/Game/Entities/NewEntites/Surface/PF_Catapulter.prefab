@@ -1073,8 +1073,8 @@ MonoBehaviour:
     name: PS_Blood_Explosion
     path: Blood
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0, b: 0, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -1122,7 +1122,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_onEatenFrozenParticle:
-    name: PS_IceExplosionSmall
+    name: PS_IceExplosion
     path: 
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
@@ -1351,6 +1351,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: Catapulter
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 0
 --- !u!114 &114822994953153240
 MonoBehaviour:
