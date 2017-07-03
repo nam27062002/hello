@@ -41,7 +41,7 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Darken"
 
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
-//				#include "Lighting.cginc"
+				#include "Lighting.cginc"
 				#include "HungryDragon.cginc"
 
 
