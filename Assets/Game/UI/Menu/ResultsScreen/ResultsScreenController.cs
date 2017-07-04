@@ -19,6 +19,16 @@ public class ResultsScreenController : MonoBehaviour {
 		FINISHED
 	};
 
+	// Stuff to check before actually going back to the menu
+	// Order matters!
+	private enum ToCheck {
+		INIT = 0,
+
+		GLOBAL_EVENT,
+
+		COUNT
+	};
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
@@ -48,6 +58,7 @@ public class ResultsScreenController : MonoBehaviour {
 	// Internal
 	private State m_state = State.INIT;
 	private float m_timer = 0f;
+	private ToCheck m_toCheck = ToCheck.INIT;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -388,12 +399,29 @@ public class ResultsScreenController : MonoBehaviour {
 	/// <returns>Whether we're going back to the menu (<c>true</c>) or we've been interrupted by some pending popup (<c>false</c>).</returns>
 	private bool TryGoToMenu() {
 		// Check for any impediment to go to the menu (i.e. pending popups)
-		if(false) {
-			// Nothing for now
+		while((int)m_toCheck < (int)ToCheck.COUNT) {
+			// Check next step
+			++m_toCheck;
+			switch(m_toCheck) {
+				// Show global events contribute popup?		// [AOC] TEMP!! Waiting for the new results screen flow to properly integrate this!
+				case ToCheck.GLOBAL_EVENT: {
+					GlobalEventManager.ErrorCode canContribute = GlobalEventManager.CanContribute();
+					if(canContribute == GlobalEventManager.ErrorCode.NONE
+						|| canContribute == GlobalEventManager.ErrorCode.OFFLINE
+						|| canContribute == GlobalEventManager.ErrorCode.NOT_LOGGED_IN) {
+						// Show global event contribution popup
+						PopupController popup = PopupManager.OpenPopupInstant(PopupGlobalEventContribution.PATH);
+
+						// When the popup is closed, check next step
+						popup.OnClosePostAnimation.AddListener(OnGoToMenu);
+						return false;	// Break the loop (and the function)
+					}
+				} break;
+			}
 		}
 
 		// Nothing else to show, go back to the menu!
-		else {
+		if(m_toCheck == ToCheck.COUNT) {
             // Show loading screen
 			LoadingScreen.Toggle(true);
 
