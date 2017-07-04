@@ -129,6 +129,8 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 	/// <summary>
 	/// Contribute to current event!
 	/// Contribution amount will be taken from current event tracker.
+	/// Listen to the GameEvents.GLOBAL_EVENT_SCORE_REGISTERED event to know when the
+	/// new data have been received.
 	/// </summary>
 	/// <returns>Whether the contribution has been applied or not and why.</returns>
 	/// <param name="_bonusDragonMultiplier">Apply bonus dragon multiplier?</param>
@@ -139,17 +141,31 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 		if(err != ErrorCode.NONE) return err;
 
 		// Get contribution amount and apply multipliers
-		float contribution = currentEvent.objective.tracker.currentValue;
+		float contribution = currentEvent.objective.currentValue;
 		contribution *= _bonusDragonMultiplier;
 		contribution *= _keysMultiplier;
 
-		// Add to event's total contribution!
-		currentEvent.AddContribution(contribution);
+		// Requets to the server!
+		GameServerManager.SharedInstance.GlobalEvent_RegisterScore(
+			currentEvent.id, 
+			contribution,
+			(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) => {
+				// If there was no error, update local cache
+				if(_error == null) {
+					// Add to event's total contribution!
+					currentEvent.AddContribution(contribution);
 
-		// Add to current user individual contribution in this event
-		user.GetGlobalEventData(currentEvent.id).score += contribution;
+					// Add to current user individual contribution in this event
+					user.GetGlobalEventData(currentEvent.id).score += contribution;
 
-		// [AOC] TODO!! Update leaderboard?
+					// [AOC] TODO!! Update leaderboard?
+
+				}
+
+				// Notify game that server response was received
+				Messenger.Broadcast<bool>(GameEvents.GLOBAL_EVENT_SCORE_REGISTERED, _error == null);
+			}
+		);
 
 		// Everything went well!
 		return ErrorCode.NONE;

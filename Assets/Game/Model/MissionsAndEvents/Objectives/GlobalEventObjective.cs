@@ -18,7 +18,7 @@ using System;
 /// Objective for a global event.
 /// </summary>
 [Serializable]
-public class GlobalEventObjective : TrackingObjectiveBase{
+public class GlobalEventObjective : TrackingObjectiveBase {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
