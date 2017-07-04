@@ -134,12 +134,13 @@ public class ProfilerControlPanelController : MonoBehaviour
 
         Checkpoints_Start();
         Stats_Start();
-		FPS_Start();
+        FPS_Start();
     }
 
     void OnEnable()
     {
         Scene_OnEnable();
+        Layers_Init();
     }
 
     void Update()
@@ -160,6 +161,8 @@ public class ProfilerControlPanelController : MonoBehaviour
 
             PrefabLogicUnits_IsDirty = false;
         }
+
+        Layers_Update();
     }
 
     public void SetNumEntities(int optionId)
@@ -305,8 +308,8 @@ public class ProfilerControlPanelController : MonoBehaviour
         Village_FloatingRock,
         Village_HangingBridge,
         Village_VineBigLeaf,
-		Village_WoodsCabins,
-		Village_WoodsLeaves,
+        Village_WoodsCabins,
+        Village_WoodsLeaves,
         Village_Witches_Woods,
         Village_Goblins_City,
         Village_TunnelToCastle,
@@ -331,7 +334,7 @@ public class ProfilerControlPanelController : MonoBehaviour
         new Vector3(-132, -21, 0f),
         new Vector3(-285, 45, 0f),
         new Vector3(137, 51, 0f),
-		new Vector3(280, 42, 0f),
+        new Vector3(280, 42, 0f),
         new Vector3(-394, -54, 0f),
         new Vector3(-450, 1.78f, 0f),
         new Vector3(360, 69, 0f),                
@@ -413,25 +416,25 @@ public class ProfilerControlPanelController : MonoBehaviour
     }
     #endregion
 
-	#region fps
-	public Toggle m_fpsToggle;
+    #region fps
+    public Toggle m_fpsToggle;
 
-	private void FPS_Start()
-	{
-		if (m_fpsToggle != null && ControlPanel.instance != null)
-		{
-			m_fpsToggle.isOn = ControlPanel.instance.IsFPSEnabled;
-		}
-	}
+    private void FPS_Start()
+    {
+        if (m_fpsToggle != null && ControlPanel.instance != null)
+        {
+            m_fpsToggle.isOn = ControlPanel.instance.IsFPSEnabled;
+        }
+    }
 
-	public void FPS_OnChangedValue(bool newValue)
-	{
-		if (ControlPanel.instance != null)
-		{
-			ControlPanel.instance.IsFPSEnabled = m_fpsToggle.isOn;
-		}
-	}
-	#endregion
+    public void FPS_OnChangedValue(bool newValue)
+    {
+        if (ControlPanel.instance != null)
+        {
+            ControlPanel.instance.IsFPSEnabled = m_fpsToggle.isOn;
+        }
+    }
+    #endregion
 
     #region entities_visibility
     public void EntitiesVisibility_OnChangedValue(bool newValue)
@@ -507,7 +510,7 @@ public class ProfilerControlPanelController : MonoBehaviour
     public TMP_Text mSceneGoToMemoryText;
 
     private void Scene_OnEnable()
-    {     
+    {
         if (mSceneGoToMemoryText != null)
         {
             /*mSceneGoToMemoryText.transform.parent.gameObject.SetActive(false);
@@ -534,10 +537,10 @@ public class ProfilerControlPanelController : MonoBehaviour
     #region game_scene
     private class SceneState
     {
-        private Dictionary<GameObject, bool> State;                
+        private Dictionary<GameObject, bool> State;
 
         public void Toggle(string sceneName)
-        {            
+        {
             UnityEngine.SceneManagement.Scene s = UnityEngine.SceneManagement.SceneManager.GetSceneByName(sceneName);
             if (s != null && s.isLoaded)
             {
@@ -583,17 +586,180 @@ public class ProfilerControlPanelController : MonoBehaviour
         }
 
         SceneState state = GameScene_States[sceneName];
-        state.Toggle(sceneName);      
+        state.Toggle(sceneName);
     }
-		
-	public void GameScene_BackgroundVisibleOnChangedValue(bool newValue)
-	{
-		GameScene_Toggle("ART_Levels_Background");
-	}
 
-	public void GameScene_FortressVisibleOnChangedValue(bool newValue)
-	{
-		GameScene_Toggle("ART_L1_Village_Fortress");
-	}
+    public void GameScene_BgSkyVisibleOnChangedValue(bool newValue)
+    {
+        GameScene_Toggle("ART_Levels_Background_Skies");
+    }
+
+    public void GameScene_BgAreaVisibleOnChangedValue(bool newValue)
+    {
+        GameScene_Toggle("ART_L1_Background_Village");
+    }
+
+    public void GameScene_FortressVisibleOnChangedValue(bool newValue)
+    {
+        GameScene_Toggle("ART_L1_Village_Fortress");
+    }
+    #endregion
+
+    #region layers
+
+    public TMP_Dropdown m_layersHoldersDropdown;
+    private List<ProfilerLayers> m_layersHolders;
+    public GameObject m_layerPrefab;
+
+    private List<GameObject> m_layersGOs;
+    private List<Toggle> m_layersGOsToggles;
+
+    private void Layers_Init()
+    {
+        Layers_Destroy();
+
+        if (m_layersHoldersDropdown != null)
+        {
+            m_layersHoldersDropdown.ClearOptions();
+
+            m_layersHolders = GameObjectExt.FindObjectsOfType<ProfilerLayers>(true);
+            if (m_layersHolders != null)
+            {
+                List<TMP_Dropdown.OptionData> options = null;                
+
+                TMP_Dropdown.OptionData optionData;
+                options = new List<TMP_Dropdown.OptionData>();
+                int count = m_layersHolders.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    optionData = new TMP_Dropdown.OptionData();
+                    optionData.text = m_layersHolders[i].gameObject.scene.name;
+                    options.Add(optionData);
+                }
+
+                m_layersHoldersDropdown.AddOptions(options);
+
+                if (count > 0)
+                {
+                    Layers_SetOptionId(0);
+                }
+            }
+        }
+    }
+    
+    private void Layers_Destroy()
+    {
+        m_layersHolders = null;
+        Layers_DestroyLayersUI();
+        Layers_IsDirty = false;
+    }
+
+    public void Layers_SetOptionId(int optionId)
+    {
+       if (m_layersHolders != null)
+       {
+            optionId = m_layersHoldersDropdown.value;
+            ProfilerLayers profilerLayers = m_layersHolders[optionId];
+            Layers_CreateLayersUI(profilerLayers);
+       }
+    }
+
+    private void Layers_CreateLayersUI(ProfilerLayers profilerLayers)
+    {
+        // We need to destroy the previous one
+        Layers_DestroyLayersUI();        
+        
+        if (profilerLayers != null && profilerLayers.m_layers != null)
+        {
+            if (m_layersGOs == null)
+            {
+                m_layersGOs = new List<GameObject>();
+            }
+            else
+            {
+                m_layersGOs.Clear();
+            }
+
+            if (m_layersGOsToggles == null)
+            {
+                m_layersGOsToggles = new List<Toggle>();
+            }
+            else
+            {
+                m_layersGOsToggles.Clear();
+            }
+
+            Transform thisParent = m_layerPrefab.transform.parent;
+            int count = profilerLayers.m_layers.Count;
+            GameObject go;
+            for (int i = 0; i < count; i++)
+            {
+                go = Instantiate(m_layerPrefab, thisParent);
+                go.SetActive(true);
+                go.name = profilerLayers.m_layers[i].name;
+
+                TextMeshProUGUI label = go.GetComponentInChildren<TextMeshProUGUI>();
+                if (label != null)
+                {
+                    label.text = go.name;
+                }
+
+                Toggle toggle = go.GetComponentInChildren<Toggle>();
+                if (toggle != null)
+                {
+                    toggle.isOn = profilerLayers.m_layers[i].activeSelf;                    
+                }
+
+                m_layersGOs.Add(go);
+                m_layersGOsToggles.Add(toggle);
+            }            
+        }
+    }
+
+    private void Layers_DestroyLayersUI()
+    {
+        if (m_layersGOs != null)
+        {
+            int count = m_layersGOs.Count;
+            for (int i = 0; i < count; i++)
+            {
+                Destroy(m_layersGOs[i]);
+            }
+
+            m_layersGOs = null;
+        }
+
+        m_layersGOsToggles = null;        
+    }
+
+    public void Layers_OnLayerValueChanged(bool newValue)
+    {
+        Layers_IsDirty = true;
+    }
+
+    private bool Layers_IsDirty { get; set; }
+
+    private void Layers_Update()
+    {
+        if (m_layersGOs != null && Layers_IsDirty)
+        {
+            Layers_IsDirty = false;
+
+            ProfilerLayers layersHolder = m_layersHolders[m_layersHoldersDropdown.value];
+            if (layersHolder != null)
+            {
+                int count = m_layersGOs.Count;
+                Toggle toggle;
+                for (int i = 0; i < count; i++)
+                {
+                    toggle = m_layersGOsToggles[i];
+                    if (toggle != null)
+                    {
+                        layersHolder.m_layers[i].SetActive(toggle.isOn);                        
+                    }
+                }
+            }
+        }
+    }
     #endregion
 }

@@ -97,6 +97,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// </summary>
 	public void RequestEventData() {
 		GlobalEventManager.RequestCurrentEventData();
+		BusyScreen.Toggle(true);
 	}
 
 	/// <summary>
@@ -105,6 +106,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// </summary>
 	public void RequestEventState() {
 		GlobalEventManager.RequestCurrentEventState(false);
+		BusyScreen.Toggle(true);
 	}
 
 	/// <summary>
@@ -159,8 +161,6 @@ public class GlobalEventsScreenController : MonoBehaviour {
 
 		// Refresh active panel
 		m_panels[(int)targetPanel].Refresh();
-
-		Debug.Log("<color=red>Refreshing Panel </color>" + targetPanel.ToString());
 	}
 
 	//------------------------------------------------------------------------//
@@ -178,5 +178,6 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnEventDataUpdated() {
 		Refresh();
+		BusyScreen.Toggle(false);
 	}
 }
