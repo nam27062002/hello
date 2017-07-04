@@ -586,14 +586,19 @@ public class ProfilerControlPanelController : MonoBehaviour
         state.Toggle(sceneName);      
     }
 		
-	public void GameScene_BackgroundVisibleOnChangedValue(bool newValue)
+	public void GameScene_BgSkyVisibleOnChangedValue(bool newValue)
 	{
-		GameScene_Toggle("ART_Levels_Background");
+		GameScene_Toggle("ART_Levels_Background_Skies");
 	}
 
-	public void GameScene_FortressVisibleOnChangedValue(bool newValue)
+    public void GameScene_BgAreaVisibleOnChangedValue(bool newValue)
+    {
+        GameScene_Toggle("ART_L1_Background_Village");
+    }
+
+    public void GameScene_FortressVisibleOnChangedValue(bool newValue)
 	{
 		GameScene_Toggle("ART_L1_Village_Fortress");
-	}
+	}    
     #endregion
 }
