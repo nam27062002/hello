@@ -39,6 +39,7 @@ public class EditorCameraSnapshot : MonoBehaviour {
         m_originalCamera = gameObject.GetComponent<Camera>();
         m_renderCamera = new GameObject("Background tint camera", typeof(Camera)).GetComponent<Camera>();
         m_renderCamera.gameObject.SetActive(false);
+		m_renderCamera.useOcclusionCulling = false;
 
 
         m_4kRenderTexture = new RenderTexture(m_4kWidth, m_4kHeigth, 24, RenderTextureFormat.ARGB32);
