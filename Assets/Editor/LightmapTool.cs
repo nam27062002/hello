@@ -10,6 +10,7 @@
 using System;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEditor;
 using Object = UnityEngine.Object;
 
@@ -28,6 +29,13 @@ public class LightmapTool : EditorWindow {
         {
             SetFloat("m_LightmapEditorSettings.m_Resolution", val);
         }
+
+        public static void SetMaxAtlasResolution(int val)
+        {
+            SetInt("m_LightmapEditorSettings.m_TextureWidth", val);
+            SetInt("m_LightmapEditorSettings.m_TextureHeight", val);
+        }
+
 
         public static void SetAmbientOcclusion(float val)
         {
@@ -66,7 +74,7 @@ public class LightmapTool : EditorWindow {
 
         public static void ChangeProperty(string name, Action<SerializedProperty> changer)
         {
-            SerializedObject lightmapSettings = getLighmapSettings();
+            SerializedObject lightmapSettings = getLightmapSettings();
             SerializedProperty prop = lightmapSettings.FindProperty(name);
             if (prop != null)
             {
@@ -76,22 +84,19 @@ public class LightmapTool : EditorWindow {
             else Debug.LogError("lighmap property not found: " + name);
         }
 
-
-        public static void GetProperty(string name, Action<SerializedProperty> changer)
+        public static SerializedProperty GetProperty(string name)
         {
-            SerializedObject lightmapSettings = getLighmapSettings();
+            SerializedObject lightmapSettings = getLightmapSettings();
             SerializedProperty prop = lightmapSettings.FindProperty(name);
             if (prop != null)
             {
-                changer(prop);
-                lightmapSettings.ApplyModifiedProperties();
+                return prop;
             }
             else Debug.LogError("lighmap property not found: " + name);
+            return null;
         }
 
-
-
-        static SerializedObject getLighmapSettings()
+        public static SerializedObject getLightmapSettings()
         {
             MethodInfo getLightmapSettingsMethod = typeof(LightmapEditorSettings).GetMethod("GetLightmapSettings", BindingFlags.Static | BindingFlags.NonPublic);
             Object lightmapSettings = getLightmapSettingsMethod.Invoke(null, null) as Object;
@@ -105,6 +110,31 @@ public class LightmapTool : EditorWindow {
             SetAmbientOcclusion(1.337f);
             SetFinalGatherEnabled(true);
             SetFinalGatherRayCount(1337);
+        }
+    }
+
+    [MenuItem("Tools/Set Lightmap properties")]
+    static void SetLightmapProperties()
+    {
+
+        SerializedObject so = LightingSettingsHepler.getLightmapSettings();
+
+        SerializedProperty sp = so.GetIterator();
+
+        while (sp.Next(true))
+        {
+            Debug.Log("Property ---> path: " + sp.propertyPath + " type: " + sp.propertyType + " displayName: " + sp.displayName);
+        }
+
+
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            Scene s = SceneManager.GetSceneAt(i);
+            if (s.isLoaded)
+            {
+                SceneManager.SetActiveScene(s);
+                LightingSettingsHepler.SetMaxAtlasResolution(1024);
+            }
         }
     }
 
