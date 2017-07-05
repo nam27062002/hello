@@ -7,6 +7,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		Idle = 0,
 		Spreading,
 		Burning,
+		GoingToExplode,
 		Extinguish,
 		Extinguished
 	};
@@ -85,9 +86,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 	public void Disable() { Extinguish(); }
 
-	public bool IsSpreadingFire() 	{ return m_state == State.Spreading;  }
-	public bool IsBurning() 		{ return m_state == State.Burning; 	  }
-	public bool IsExtinguishing() 	{ return m_state == State.Extinguish; }
+	public bool IsSpreadingFire() 	{ return m_state == State.Spreading;  		}
+	public bool IsBurning() 		{ return m_state == State.Burning; 	  		}
+	public bool IsGoingToExplode()  { return m_state == State.GoingToExplode; 	}
+	public bool IsExtinguishing() 	{ return m_state == State.Extinguish; 		}
 
 
 	public void Burn(Vector2 _direction, bool _dragonBreath, DragonTier _tier) {
@@ -99,7 +101,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 				FirePropagationManager.RegisterBurningNode(this);
 
 				if (effect == ZoneManager.ZoneEffect.L) {
-					m_nextState = State.Extinguish;
+					m_nextState = State.GoingToExplode;
 				} else {
 					m_nextState = State.Spreading;
 				}
