@@ -203,13 +203,11 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 			case State.Idle:
 				for (int i = 0; i < m_fireNodes.Length; ++i) {
 					FireNode n = m_fireNodes[i];
-					if (n.IsBurning()) {					
-						ZoneManager.ZoneEffect effect = InstanceManager.zoneManager.GetFireEffectCode(m_entity, n.breathTier);
-						if (effect == ZoneManager.ZoneEffect.L) {
-							m_nextState = State.Explode;
-						} else {
-							m_nextState = State.Burning;
-						}
+					if (n.IsBurning()) {
+						m_nextState = State.Burning;
+						break;
+					} else if (n.IsGoingToExplode()) {
+						m_nextState = State.Explode;
 						break;
 					}
 				}
