@@ -167,14 +167,14 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
 			// Rewards
 			SimpleJSON.JSONArray rewardsArray = new SimpleJSON.JSONArray();
-			rewardsArray.Add(CreateEventRewardData(0.2f, "sc", 500));
-			rewardsArray.Add(CreateEventRewardData(0.5f, "sc", 1000));
-			rewardsArray.Add(CreateEventRewardData(0.75f, "hc", 100));
-			rewardsArray.Add(CreateEventRewardData(1f, "egg", 1));
+			rewardsArray.Add(CreateEventRewardData(0.2f, GlobalEvent.Reward.Type.SC, "", 500));
+			rewardsArray.Add(CreateEventRewardData(0.5f, GlobalEvent.Reward.Type.SC, "", 1000));
+			rewardsArray.Add(CreateEventRewardData(0.75f, GlobalEvent.Reward.Type.PC, "", 100));
+			rewardsArray.Add(CreateEventRewardData(1f, GlobalEvent.Reward.Type.EGG, "egg_premium", 1));
 			eventData.Add("rewards", rewardsArray);
 
 			// Top percentile reward
-			eventData.Add("topReward", CreateEventRewardData(0.1f, "pet1", 1));
+			eventData.Add("topReward", CreateEventRewardData(0.1f, GlobalEvent.Reward.Type.PET, "pet_24", 1));
 
 			// Store response
 			res["response"] = eventData.ToString();
@@ -318,11 +318,13 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// </summary>
 	/// <returns>The event reward data json.</returns>
 	/// <param name="_percentage">Target percentage. For top percentile reward, percentile of the leaderboard to whom the reward is given.</param>
-	/// <param name="_sku">Reward sku.</param>
-	/// <param name="_amount">Rewarded amount.</param>
-	private SimpleJSON.JSONClass CreateEventRewardData(float _percentage, string _sku, long _amount) {
+	/// <param name="_type">Type of reward to be given.</param>
+	/// <param name="_sku">Reward sku (optional).</param>
+	/// <param name="_amount">Rewarded amount (optional).</param>
+	private SimpleJSON.JSONClass CreateEventRewardData(float _percentage, GlobalEvent.Reward.Type _type, string _sku, long _amount) {
 		SimpleJSON.JSONClass reward = new SimpleJSON.JSONClass();
 		reward.Add("targetPercentage", _percentage.ToString(JSON_FORMAT));
+		reward.Add("type", GlobalEvent.Reward.TypeToString(_type));
 		reward.Add("sku", _sku);
 		reward.Add("amount", _amount.ToString(JSON_FORMAT));
 		return reward;

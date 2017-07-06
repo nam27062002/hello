@@ -19,7 +19,7 @@ using System.Collections.Generic;
 /// Single global event object.
 /// </summary>
 [Serializable]
-public class GlobalEvent {
+public partial class GlobalEvent {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -32,32 +32,6 @@ public class GlobalEvent {
 		COUNT
 	};
 
-	/// <summary>
-	/// Reward item and the percentage required to achieve it.
-	/// </summary>
-	[Serializable]
-	public class Reward {
-		public DefinitionNode def = null;
-		public float amount = 0f;
-
-		public float targetPercentage = 0f;
-		public float targetAmount = 0f;		// Should match target percentage
-
-		/// <summary>
-		/// Constructor from json data.
-		/// </summary>
-		/// <param name="_data">Data to be parsed.</param>
-		public Reward(SimpleJSON.JSONNode _data) {
-			// Reward data
-			def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.GLOBAL_EVENT_REWARDS, _data["sku"]);
-			amount = _data["amount"].AsFloat;
-
-			// Init target percentage
-			// Target amount should be initialized from outside, knowing the global target
-			targetPercentage = _data["targetPercentage"].AsFloat;
-		}
-	};
-	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
