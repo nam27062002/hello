@@ -230,13 +230,6 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			m_exclamationHandler = ParticleManager.CreatePool("PF_ExclamationMark");
 		}
 
-		// particle management
-		if (!m_onEatenParticle.IsValid()) {
-			// if this entity doesn't have any particles attached, set the standard blood particle
-			m_onEatenParticle.name = "PS_Blood_Explosion";
-			m_onEatenParticle.path = "Blood/";
-		}
-
 		// Preload particle
 		m_onEatenParticle.CreatePool();
 		m_burnParticle.CreatePool();

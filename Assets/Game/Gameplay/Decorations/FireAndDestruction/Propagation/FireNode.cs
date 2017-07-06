@@ -126,6 +126,12 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		}
 	}
 
+	public void Explode() {
+		StopFireEffect();
+		FirePropagationManager.UnregisterBurningNode(this);
+		m_state = State.Extinguished;
+	}
+
 	public void UpdateLogic() {
 		if (m_state != m_nextState) {
 			ChangeState();
