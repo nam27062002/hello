@@ -40,10 +40,6 @@ public class DefinitionsCategory
 	public const string MISSION_DIFFICULTIES = "MISSION_DIFFICULTIES";
 	public const string MISSION_MODIFIERS = "MISSION_MODIFIERS";
 
-	// Global Events
-	public const string GLOBAL_EVENT_OBJECTIVES = "GLOBAL_EVENT_OBJECTIVES";
-	public const string GLOBAL_EVENT_REWARDS = "GLOBAL_EVENT_REWARDS";
-
 	// Dragons
 	public const string DRAGONS = "DRAGONS";
 	public const string DRAGON_TIERS = "DRAGON_TIERS";

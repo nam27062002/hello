@@ -153,9 +153,9 @@ public partial class GlobalEvent {
 		m_objective = new GlobalEventObjective(this, _data["goal"]);
 
 		// Timestamps
-		m_teasingStartTimestamp = DateTime.Parse(_data["teaserTimestamp"], GameServerManager.JSON_FORMAT);
-		m_startTimestamp = DateTime.Parse(_data["startTimestamp"], GameServerManager.JSON_FORMAT);
-		m_endTimestamp = DateTime.Parse(_data["endTimestamp"], GameServerManager.JSON_FORMAT);
+		m_teasingStartTimestamp = TimeUtils.TimestampToDate(_data["teaserTimestamp"].AsLong);
+		m_startTimestamp = TimeUtils.TimestampToDate(_data["startTimestamp"].AsLong);
+		m_endTimestamp = TimeUtils.TimestampToDate(_data["endTimestamp"].AsLong);
 
 		// Infer event's state from timestamps
 		UpdateState();

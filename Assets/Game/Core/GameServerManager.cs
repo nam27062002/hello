@@ -113,7 +113,7 @@ public class GameServerManager
         {
 			// Init some common stuff
 			// Initialize server time with current local time
-			ServerManager.SharedInstance.SetServerTime((double)Globals.GetUnixTimestamp());
+			ServerManager.SharedInstance.SetServerTime((double)TimeUtils.DateToTimestamp(DateTime.UtcNow));
 
 			// Let heirs do their stuff
 			ExtendedConfigure();
@@ -168,7 +168,7 @@ public class GameServerManager
 	public DateTime GetEstimatedServerTime() {
 		// Calety already manages this, just convert it to a nice DateTime object.
 		double unixTimestamp = ServerManager.SharedInstance.GetServerTime();	// Seconds since 1970
-		return Globals.GetDateFromUnixTimestamp((long)unixTimestamp);
+		return TimeUtils.TimestampToDate((long)unixTimestamp);
 	}
 
 	//------------------------------------------------------------------------//

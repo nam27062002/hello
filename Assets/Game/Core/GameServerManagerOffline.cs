@@ -168,9 +168,9 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 				} break;
 			}
 
-			eventData.Add("startTimestamp", startTimestamp.ToString(JSON_FORMAT));
-			eventData.Add("teaserTimestamp", startTimestamp.AddDays(-2).ToString(JSON_FORMAT));	// 2 days before start time
-			eventData.Add("endTimestamp", startTimestamp.AddDays(7).ToString(JSON_FORMAT));		// Lasts 7 days
+			eventData.Add("startTimestamp", TimeUtils.DateToTimestamp(startTimestamp).ToString(JSON_FORMAT));
+			eventData.Add("teaserTimestamp", TimeUtils.DateToTimestamp(startTimestamp.AddDays(-2)).ToString(JSON_FORMAT));	// 2 days before start time
+			eventData.Add("endTimestamp", TimeUtils.DateToTimestamp(startTimestamp.AddDays(7)).ToString(JSON_FORMAT));		// Lasts 7 days
 
 			// Rewards
 			SimpleJSON.JSONArray rewardsArray = new SimpleJSON.JSONArray();
