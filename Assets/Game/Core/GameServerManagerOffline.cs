@@ -34,8 +34,8 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	private DateTime m_initTimestamp = new DateTime();
 
 	// Simulate global event progression
-	private Dictionary<string, float> m_eventValues = new Dictionary<string, float>();
-	private Dictionary<string, List<GlobalEventUserData>> m_eventLeaderboards = new Dictionary<string, List<GlobalEventUserData>>();
+	private Dictionary<int, float> m_eventValues = new Dictionary<int, float>();
+	private Dictionary<int, List<GlobalEventUserData>> m_eventLeaderboards = new Dictionary<int, List<GlobalEventUserData>>();
 
 	//------------------------------------------------------------------------//
 	// INTERNAL UTILS														  //
@@ -138,7 +138,8 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		} else {
 			// Type and target
 			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass();
-			eventData.Add("id", "test_event_0");
+			eventData.Add("id", 0);
+			eventData.Add("name", "test_event_0");
 			eventData.Add("goal", "eat_birds");
 			eventData.Add("targetValue", 1000f.ToString(JSON_FORMAT));
 
@@ -189,7 +190,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// <param name="_eventID">The identifier of the event whose state we want.</param>
 	/// <param name="_getLeaderboard">Whether to retrieve the leaderboard as well or not (top 100 + player).</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_GetState(string _eventID, bool _getLeaderboard, ServerCallback _callback) {
+	override public void GlobalEvent_GetState(int _eventID, bool _getLeaderboard, ServerCallback _callback) {
 		// Create return dictionary
 		ServerResponse res = new ServerResponse();
 
@@ -245,7 +246,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
 		// If player is not on the leaderboard but should be, add it!
 		// We should probably remove the last one, but since it's test code, we don't care enough
-		int playerIdx = leaderboard.FindIndex((_data) => _data.userId == playerEventData.userId);
+		int playerIdx = leaderboard.FindIndex((_data) => _data.userID == playerEventData.userID);
 		float minScore = leaderboard.Last().score;
 		if(playerIdx < 0 && playerEventData.score > minScore && playerEventData.score > 0f) {
 			leaderboard.Add(new GlobalEventUserData(playerEventData));	// Create a copy of the data
@@ -261,7 +262,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			leaderboard[i].position = i;
 
 			// If it's the player, update position as well
-			if(leaderboard[i].userId == playerEventData.userId) {
+			if(leaderboard[i].userID == playerEventData.userID) {
 				playerEventData.position = i;
 			}
 		}
@@ -290,7 +291,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_score">The score to be registered.</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_RegisterScore(string _eventID, float _score, ServerCallback _callback) {
+	override public void GlobalEvent_RegisterScore(int _eventID, float _score, ServerCallback _callback) {
 		// Increase event's current value
 		if(!m_eventValues.ContainsKey(_eventID)) {
 			// Invalid event ID, simulate validation error
@@ -307,7 +308,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// </summary>
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_callback">Callback action. Given rewards?</param>
-	override public void GlobalEvent_ApplyRewards(string _eventID, ServerCallback _callback) {
+	override public void GlobalEvent_ApplyRewards(int _eventID, ServerCallback _callback) {
 		// [AOC] TODO!!
 		DelayedCall(() => _callback(null, null));
 	}

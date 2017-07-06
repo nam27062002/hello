@@ -62,9 +62,14 @@ public class GlobalEvent {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Data
-	private string m_id = "";
-	public string id {
+	private int m_id = -1;
+	public int id {
 		get { return m_id; }
+	}
+
+	private string m_name = "";
+	public string name {
+		get { return m_name; }
 	}
 
 	// Objective - used to track the player's contribution to this event PER GAME
@@ -167,7 +172,8 @@ public class GlobalEvent {
 	/// <param name="_data">JSON data.</param>
 	public void InitFromJson(SimpleJSON.JSONNode _data) {
 		// Event ID
-		m_id = _data["id"];
+		m_id = _data["id"].AsInt;
+		m_name = _data["name"];
 
 		// Target value
 		m_targetValue = _data["targetValue"].AsFloat;
