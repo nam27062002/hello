@@ -27,8 +27,7 @@ public class ParticleControl : MonoBehaviour {
 		// lets iterate
 		for (int i = 0; i < m_subsystems.Count; i++) {
 			ParticleSystem system = m_subsystems[i];
-            if (system == null) continue;
-
+        
             system.Clear(false);
 
 			ParticleSystem.MainModule main = system.main;

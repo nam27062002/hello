@@ -25,7 +25,7 @@ public class ProfilerNPCSceneControllerEditor : Editor {
 			List<ISpawner> spawners = new List<ISpawner>();
 			GameObject[] sceneRoot = scene.GetRootGameObjects();
 			for (int i = 0; i < sceneRoot.Length; ++i) {
-				spawners.AddRange(sceneRoot[i].transform.FindComponentsRecursive<ISpawner>());
+				FindISpawner(sceneRoot[i].transform, ref spawners);
 				sceneRoot[i].SetActive(false);
 			}
 
@@ -37,6 +37,17 @@ public class ProfilerNPCSceneControllerEditor : Editor {
 			if (singletons != null) {
 				GameObject.DestroyImmediate(singletons);
 			}
+		}
+	}
+
+	public void FindISpawner(Transform _t, ref List<ISpawner> _list) {		
+		ISpawner c = _t.GetComponent<ISpawner>();
+		if (c != null) {
+			_list.Add(c);
+		}
+		// Not found, iterate children transforms
+		foreach(Transform t in _t) {
+			FindISpawner(t, ref _list);
 		}
 	}
 }

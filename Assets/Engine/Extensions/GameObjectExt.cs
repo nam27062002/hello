@@ -394,12 +394,12 @@ public static class GameObjectExt {
 	/// <returns>The first component of type T found in any of the children objects.</returns>
 	/// <param name="_comp">The root component to look wihtin.</param>
 	/// <typeparam name="T">The type to look for.</typeparam>
-	public static List<T> FindComponentsRecursive<T>(this Transform _t) {
+	public static List<T> FindComponentsRecursive<T>(this Transform _t) where T : Component {
 		// Found!
 		List<T> components = new List<T>();
 
 		T c = _t.GetComponent<T>();
-		if (c != null) {
+		if ((c as T) != null) {
 			components.Add(c);
 		}
 

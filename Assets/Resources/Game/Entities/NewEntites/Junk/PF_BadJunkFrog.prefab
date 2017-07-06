@@ -40,6 +40,7 @@ GameObject:
   - component: {fileID: 33264100471991406}
   - component: {fileID: 23745088766330302}
   - component: {fileID: 114141733277056478}
+  - component: {fileID: 114702235426119486}
   m_Layer: 26
   m_Name: BadShine
   m_TagString: Untagged
@@ -86,9 +87,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1889390929017582}
-  m_LocalRotation: {x: 0.24746872, y: 0.8725002, z: 0.2096228, w: -0.36546}
-  m_LocalPosition: {x: -0.0058, y: -0.0038, z: 0.0004}
-  m_LocalScale: {x: 0.08514717, y: 0.08514722, z: 0.08514723}
+  m_LocalRotation: {x: 0.26307747, y: 0.8880591, z: 0.20114686, w: -0.31887513}
+  m_LocalPosition: {x: 0.0017, y: -0.0138, z: 0.013}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_Children: []
   m_Father: {fileID: 4128615858546656}
   m_RootOrder: 0
@@ -99,8 +100,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1967378273794162}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.204, y: 5.793, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.168395, y: 0.6296692, z: -0.0016665459}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4128615858546656}
@@ -336,11 +337,11 @@ MonoBehaviour:
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
   m_onEatenParticle:
-    name: 
-    path: 
+    name: PS_Blood_Explosion
+    path: Blood
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0, b: 0, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -386,9 +387,9 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    scale: 1
+    scale: 0.5
   m_onEatenFrozenParticle:
-    name: 
+    name: PS_IceExplosion
     path: 
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
@@ -438,7 +439,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    scale: 1
+    scale: 0.5
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -619,6 +620,70 @@ MonoBehaviour:
   m_sku: BadJunk
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
+--- !u!114 &114702235426119486
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1889390929017582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_view: {fileID: 0}
+  m_particleDatas:
+  - name: PS_BadJunk
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 0, g: 0, b: 0, a: 0}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 0
+      key1:
+        serializedVersion: 2
+        rgba: 0
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 0
 --- !u!114 &114941505771576012
 MonoBehaviour:
   m_ObjectHideFlags: 1
