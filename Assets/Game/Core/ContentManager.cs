@@ -35,10 +35,6 @@ public class ContentManager
 			"Rules/missionOtherModifiersDefinitions"
 		});
 
-		// Global Events
-		kDefinitionFiles.Add(DefinitionsCategory.GLOBAL_EVENT_OBJECTIVES, new string[]{"Rules/eventGoalDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.GLOBAL_EVENT_REWARDS, new string[]{"Rules/eventRewardsDefinitions"});
-
 		// Dragons
 		kDefinitionFiles.Add(DefinitionsCategory.DRAGONS, new string[]{"Rules/dragonDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.DRAGON_TIERS, new string[]{"Rules/dragonTierDefinitions"});
