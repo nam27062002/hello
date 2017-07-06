@@ -34,6 +34,7 @@ public class SnappingScrollRectEditor : ScrollRectEditor {
 	// Cache serialized properties
 	private SerializedProperty m_snapPosProp;
 	private SerializedProperty m_snapAnimDurationProp;
+	private SerializedProperty m_snapAfterDraggingProp;
 	private SerializedProperty m_snapEaseProp;
 	private SerializedProperty m_selectedPointProp;
 	private SerializedProperty m_onSelectionChangedProp;
@@ -51,6 +52,7 @@ public class SnappingScrollRectEditor : ScrollRectEditor {
 		// Acquire properties
 		m_snapPosProp = serializedObject.FindProperty("m_snapPos");
 		m_snapAnimDurationProp = serializedObject.FindProperty("m_snapAnimDuration");
+		m_snapAfterDraggingProp = serializedObject.FindProperty("m_snapAfterDragging");
 		m_snapEaseProp = serializedObject.FindProperty("m_snapEase");
 		m_selectedPointProp = serializedObject.FindProperty("m_selectedPoint");
 		m_onSelectionChangedProp = serializedObject.FindProperty("m_onSelectionChanged");
@@ -78,6 +80,7 @@ public class SnappingScrollRectEditor : ScrollRectEditor {
 		// This keeps all custom attributes defined in each property such as Separators and Comments
 		EditorGUILayout.PropertyField(m_snapPosProp);
 		EditorGUILayout.PropertyField(m_snapAnimDurationProp);
+		EditorGUILayout.PropertyField(m_snapAfterDraggingProp);
 		EditorGUILayout.PropertyField(m_snapEaseProp);
 
 		// Update view whenever the selected point changes
