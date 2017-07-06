@@ -45,7 +45,12 @@ public class LightmapTool : EditorWindow {
 
         public static Color GetAmbientColor()
         {
-            return GetProperty("").colorValue;
+            MethodInfo getLightmapSettingsMethod = typeof(LightmapEditorSettings).GetMethod("get_skyLightColor");
+            Color skyColor = (Color)getLightmapSettingsMethod.Invoke(null, null);
+
+            return skyColor;
+
+//            return GetProperty("").colorValue;
         }
 
 
@@ -145,11 +150,13 @@ public class LightmapTool : EditorWindow {
                     }
                 }
         */
-        MethodInfo[] methods = typeof(LightmapEditorSettings).GetMethods(BindingFlags.Public | BindingFlags.NonPublic);
+
+        /*
+        MethodInfo[] methods = typeof(LightmapEditorSettings).GetMethods();
 
         foreach (MethodInfo m in methods)
         {
-            Debug.Log("Method: " + m.Name);
+            Debug.Log("Method: " + m);
         }
 
         Debug.Log("--------------------------------------------------------------------------------------------------------------------");
@@ -161,12 +168,12 @@ public class LightmapTool : EditorWindow {
             Scene s = SceneManager.GetSceneAt(i);
             if (s.isLoaded && s.name == "ART_Medieval_Lighting")
             {
-//                ambientColor = 
+                ambientColor = LightingSettingsHelper.GetAmbientColor();
                 break;
             }
         }
 
-
+        */
 
 
         for (int i = 0; i < SceneManager.sceneCount; i++)
@@ -175,9 +182,9 @@ public class LightmapTool : EditorWindow {
             if (s.isLoaded)
             {
                 SceneManager.SetActiveScene(s);
-                LightingSettingsHelper.SetMaxAtlasResolution(1024);
+                LightingSettingsHelper.SetMaxAtlasResolution(512);
                 LightingSettingsHelper.SetGIWorkFlowMode(0);
-                LightingSettingsHelper.SetBakedResolution(1.0f);
+                LightingSettingsHelper.SetBakedResolution(2.0f);
             }
         }
     }
