@@ -226,7 +226,7 @@ public class MenuSceneController : SceneController {
 	public void OnPlayButton() {
 		// Initialize and show loading screen
 		LoadingScreen.InitWithCurrentData();
-		LoadingScreen.Toggle(true);
+		LoadingScreen.Toggle(true, false);
 
 		// Go to game!
 		// [AOC] No need to block the button, the GameFlow already controls spamming

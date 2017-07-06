@@ -240,6 +240,9 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 				break;
 
 			case State.Explode:
+				for (int i = 0; i < m_fireNodes.Length; ++i) {
+					m_fireNodes[i].Explode();
+				}
 				if (m_timer.IsFinished()) {
 					Destroy();
 				}

@@ -51,8 +51,24 @@ public class SnappingScrollRect : ScrollRect {
 
 	[Comment("Seconds")]
 	[SerializeField] protected float m_snapAnimDuration = 0.5f;
-	[SerializeField] protected Ease m_snapEase = Ease.OutExpo;
+	public float snapAnimDuration {
+		get { return m_snapAnimDuration; }
+		set { m_snapAnimDuration = value; }
+	}
 
+	[SerializeField] protected bool m_snapAfterDragging = true;
+	public bool snapAfterDragging {
+		get { return m_snapAfterDragging; }
+		set { m_snapAfterDragging = value; }
+	}
+
+	[SerializeField] protected Ease m_snapEase = Ease.OutExpo;
+	public Ease snapEase {
+		get { return m_snapEase; }
+		set { m_snapEase = value; }
+	}
+
+	[Space]
 	[SerializeField]
 	protected ScrollRectSnapPoint m_selectedPoint = null;
 	public ScrollRectSnapPoint selectedPoint {
@@ -70,6 +86,7 @@ public class SnappingScrollRect : ScrollRect {
 	// Internal
 	protected Tweener m_tweener = null;
 	protected bool m_dirty = false;
+	protected bool m_dragging = false;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -110,6 +127,11 @@ public class SnappingScrollRect : ScrollRect {
 				ScrollToSelection();
 			}
 			m_dirty = false;
+		} else {
+			// While moving with inertia, prevent content from going too far
+			if(!m_dragging && velocity.sqrMagnitude > 0) {
+				CheckBounds();
+			}
 		}
 	}
 
@@ -179,11 +201,7 @@ public class SnappingScrollRect : ScrollRect {
 
 		// Store new selection
 		ScrollRectSnapPoint previousSelectedChild = m_selectedPoint;
-		if(_newSelection != null) {
-			m_selectedPoint = _newSelection;
-		} else {
-			m_selectedPoint = null;
-		}
+		m_selectedPoint = _newSelection;
 
 		// If selection has changed, propagate event
 		if(m_selectedPoint != previousSelectedChild) {
@@ -191,7 +209,9 @@ public class SnappingScrollRect : ScrollRect {
 		}
 		
 		// Scroll to newly selected point
-		ScrollToSelection(_animate);
+		if(m_selectedPoint != null) {
+			ScrollToSelection(_animate);
+		}
 	}
 
 	/// <summary>
@@ -199,11 +219,11 @@ public class SnappingScrollRect : ScrollRect {
 	/// </summary>
 	/// <param name="_animate">Whether to animate the scroll or not.</param>
 	public void ScrollToSelection(bool _animate = true) {
-		// Stop inertia
-		this.velocity = Vector2.zero;
-
-		// If new selection is null, end here
+		// If new selection is null, do nothing
 		if(m_selectedPoint == null) return;
+
+		// Stop inertia
+		velocity = Vector2.zero;
 
 		// Compute target position of the content so the target child is aligned to the snap point
 		// Compute distance from the child (correcting with content's current position) to the snap point
@@ -233,6 +253,23 @@ public class SnappingScrollRect : ScrollRect {
 		}
 	}
 
+	/// <summary>
+	/// Check whether the content has gone outside the snap anchor, then force a snap to it.
+	/// Use it to simulate scroll lists elastic behaviour (prevent content going to Cuenca).
+	/// </summary>
+	protected void CheckBounds() {
+		// Check both axis
+		Vector2 viewportSnapPos = snapPosViewport;
+		bool outside = false;
+		if(horizontal)	outside |= m_ContentBounds.min.x > viewportSnapPos.x || m_ContentBounds.max.x < viewportSnapPos.x;
+		if(vertical)	outside |= m_ContentBounds.min.y > viewportSnapPos.y || m_ContentBounds.max.y < viewportSnapPos.y;
+
+		// We're outside snap point! Snap to closest point
+		if(outside) {
+			Snap();
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
@@ -241,9 +278,20 @@ public class SnappingScrollRect : ScrollRect {
 	/// </summary>
 	/// <param name="_eventData">Event data.</param>
 	override public void OnBeginDrag(PointerEventData _eventData) {
+		// Update flag (before anything else)
+		m_dragging = true;
+
 		// Call parent and custom implementation
 		base.OnBeginDrag(_eventData);
-		OnBeginDragImpl(_eventData);
+
+		// If tweener is active, stop it
+		if(m_tweener != null && m_tweener.IsPlaying()) {
+			m_tweener.Kill();
+			m_tweener = null;
+		}
+
+		// Selected point is no more
+		SelectPoint(null, false);
 	}
 
 	/// <summary>
@@ -251,29 +299,87 @@ public class SnappingScrollRect : ScrollRect {
 	/// </summary>
 	/// <param name="_eventData">Event data.</param>
 	override public void OnEndDrag(PointerEventData _eventData) {
+		// Update flag (before anything else)
+		m_dragging = false;
+
 		// Call parent and custom implementation
 		base.OnEndDrag(_eventData);
-		OnEndDragImpl(_eventData);
-	}
 
-	/// <summary>
-	/// Custom implementation of the OnBeginDrag event.
-	/// </summary>
-	/// <param name="_eventData">Event data.</param>
-	protected virtual void OnBeginDragImpl(PointerEventData _eventData) {
-		// If tweener is active, stop it
-		if(m_tweener != null && m_tweener.IsPlaying()) {
-			m_tweener.Kill();
-			m_tweener = null;
+		// Snap to nearest child?
+		if(m_snapAfterDragging) {
+			Snap();
+		} else {
+			// Force it if content is out of the snap point (elastic behaviour simulation)
+			CheckBounds();
 		}
 	}
 
 	/// <summary>
-	/// Custom implementation of the OnEndDrag event.
+	/// Custom implementation of the OnDrag event.
+	/// Not actually needed, we're using it for debug purposes.
 	/// </summary>
 	/// <param name="_eventData">Event data.</param>
-	protected virtual void OnEndDragImpl(PointerEventData _eventData) {
-		// Snap to nearest child!
-		Snap();
+	/*
+	override public void OnDrag(PointerEventData _eventData) {
+		base.OnDrag(_eventData);
+
+		// Pre-compute some values outside the loop
+		Vector2 viewportSnapPos = snapPosViewport;
+
+		// Find nearest child to the snap point
+		float minDist = float.MaxValue;
+		Vector2 minOffset = Vector2.zero;
+		RectTransform nearestChild = null;
+		foreach(RectTransform child in content) {
+			// Skip if child doesn't have the "SnapPoint" component
+			if(child.GetComponent<ScrollRectSnapPoint>() == null) continue;
+
+			// Skip if child is not active
+			if(!child.gameObject.activeSelf) continue;
+
+			// Compute distance from the child (correcting with content's current position) to the snap point
+			Vector2 offset = (new Vector2(child.localPosition.x, child.localPosition.y) + content.anchoredPosition) - viewportSnapPos;
+
+			// Ignore locked scrolling directions
+			if(!horizontal) offset.x = 0;
+			if(!vertical) offset.y = 0;
+
+			// Is it the nearest child?
+			float dist = offset.magnitude;
+			if(dist < minDist) {
+				minDist = dist;
+				minOffset = offset;
+				nearestChild = child;
+			}
+		}
+
+		Debug.Log("------------------------------------------------------");
+		Debug.Log(
+			"<color=red>minOffset: " + minOffset.x + "</color>" 
+			+ ", <color=red>minDist: " + minDist + "</color>\n" 
+			+ "<color=lime>viewportSnapPos: " + viewportSnapPos.x + "</color>" 
+			+ ", <color=magenta>content.anchoredPosition: " + content.anchoredPosition.x + "</color>"
+		);
+
+		Bounds viewBounds = new Bounds(viewRect.rect.center, viewRect.rect.size);	// Same as m_ViewBounds (private var)
+		Debug.Log(
+			"<color=magenta>contentBounds: " + m_ContentBounds.min.x + ", " + m_ContentBounds.max.x + "</color>" 
+			+ "\n<color=lime>viewBounds: " + viewBounds.min.x + ", " + viewBounds.max.x + "</color>" 
+		);
+
+		float diffMinX = viewBounds.min.x - m_ContentBounds.min.x;
+		float diffMaxX = viewBounds.max.x - m_ContentBounds.max.x;
+		Debug.Log(
+			"<color=cyan>difMinX: " + diffMinX + ", diffMaxX" + diffMaxX + "</color>" 
+		);
+
+		Debug.Log(
+			"<color=lime>snapPoint: " + viewportSnapPos.x + "</color>\n" +
+			"<color=yellow>contentMin: " + m_ContentBounds.min.x + ", contentMax: " + m_ContentBounds.max.x + "</color>"
+		);
+
+		bool outside = m_ContentBounds.min.x > viewportSnapPos.x || m_ContentBounds.max.x < viewportSnapPos.x;
+		Debug.Log((outside ? "<color=red>OUTSIDE!</color>" : "<color=lime>INSIDE!</color>"));
 	}
+	*/
 }
