@@ -5,7 +5,7 @@
 		_NoiseTex ("Noise", 2D) = "white" {}
 		_ColorRamp("Color Ramp", 2D) = "white" {}
 		_RampOffset("Ramp Offset", Range(0.0, 1.0)) = 0.2 //
-		_ColorSteps("Color steps", Range(0.0, 16.0)) = 8.0	// color steps
+		_ColorSteps("Color steps", Range(0.0, 16.0)) = 16.0	// color steps
 		_AlphaThreshold("Alpha threshold", Range(0.0, 8.0)) = 2.0	// alpha threshold
 
 		_Speed("Fire Speed", Float) = 1.0				// Fire speed
@@ -102,7 +102,7 @@
 //				float alfa = clamp((intensity / (_AlphaThreshold / _ColorSteps)) - 1.0, 0.0, 1.0);
 				float alfa = clamp((intensity) -_AlphaThreshold, 0.0, 1.0);
 				fixed4 colf = fixed4(col, alfa * _Alpha) * i.vCol;
-				clip(colf.a - 0.1);
+				clip(colf.a - 0.01);
 				//colf.a = 0.5;
 				return colf;
 			}
