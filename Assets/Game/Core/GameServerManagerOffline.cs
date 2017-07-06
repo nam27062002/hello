@@ -136,12 +136,19 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		if(targetState == CPGlobalEventsTest.EventStateTest.NO_EVENT) {
 			res["response"] = null;
 		} else {
-			// Type and target
+			// ID
 			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass();
 			eventData.Add("id", 0);
 			eventData.Add("name", "test_event_0");
-			eventData.Add("goal", "eat_birds");
-			eventData.Add("targetValue", 1000f.ToString(JSON_FORMAT));
+
+			// Goal definition
+			SimpleJSON.JSONClass goalData = new SimpleJSON.JSONClass();
+			goalData.Add("type", "kill");
+			goalData.Add("params", "Canary01_Flock;Canary02_Flock;Canary03_Flock;Canary04_Flock");
+			goalData.Add("icon", "icon_canary");
+			goalData.Add("tidDesc", "TID_EVENT_EAT_BIRDS");
+			goalData.Add("amount", 1000f.ToString(JSON_FORMAT));
+			eventData.Add("goal", goalData);
 
 			// Timestamps
 			// By tuning the start timestamp in relation to the current time we can simulate the different states of the event
@@ -170,11 +177,11 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			rewardsArray.Add(CreateEventRewardData(0.2f, GlobalEvent.Reward.Type.SC, "", 500));
 			rewardsArray.Add(CreateEventRewardData(0.5f, GlobalEvent.Reward.Type.SC, "", 1000));
 			rewardsArray.Add(CreateEventRewardData(0.75f, GlobalEvent.Reward.Type.PC, "", 100));
-			rewardsArray.Add(CreateEventRewardData(1f, GlobalEvent.Reward.Type.EGG, "egg_premium", 1));
+			rewardsArray.Add(CreateEventRewardData(1f, GlobalEvent.Reward.Type.EGG, "egg_premium", -1));
 			eventData.Add("rewards", rewardsArray);
 
 			// Top percentile reward
-			eventData.Add("topReward", CreateEventRewardData(0.1f, GlobalEvent.Reward.Type.PET, "pet_24", 1));
+			eventData.Add("topReward", CreateEventRewardData(0.1f, GlobalEvent.Reward.Type.PET, "pet_24", -1));
 
 			// Store response
 			res["response"] = eventData.ToString();
@@ -325,8 +332,8 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		SimpleJSON.JSONClass reward = new SimpleJSON.JSONClass();
 		reward.Add("targetPercentage", _percentage.ToString(JSON_FORMAT));
 		reward.Add("type", GlobalEvent.Reward.TypeToString(_type));
-		reward.Add("sku", _sku);
-		reward.Add("amount", _amount.ToString(JSON_FORMAT));
+		if(!string.IsNullOrEmpty(_sku)) reward.Add("sku", _sku);
+		if(_amount > 0f) reward.Add("amount", _amount.ToString(JSON_FORMAT));
 		return reward;
 	}
 }

@@ -61,7 +61,7 @@ public partial class GlobalEvent {
 			type = StringToType(_data["type"]);
 
 			// Optional parameters
-			if(_data.ContainsKey("sku")) sku = _data["sku"];
+			if(_data.ContainsKey("sku")) 	sku = _data["sku"];
 			if(_data.ContainsKey("amount")) amount = _data["amount"].AsFloat;
 
 			// Init target percentage
