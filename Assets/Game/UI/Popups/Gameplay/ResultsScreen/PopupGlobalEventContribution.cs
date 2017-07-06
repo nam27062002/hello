@@ -163,7 +163,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 
 		// Initialize static stuff
 		// Objective image
-		m_eventIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_event.objective.goalDef.Get("icon"));
+		m_eventIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_event.objective.icon);
 
 		// Reset number score
 		m_scoreText.SetValue(0, false);

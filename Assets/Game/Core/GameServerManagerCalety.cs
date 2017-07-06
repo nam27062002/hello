@@ -347,10 +347,10 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <param name="_eventID">The identifier of the event whose state we want.</param>
 	/// <param name="_getLeaderboard">Whether to retrieve the leaderboard as well or not (top 100 + player).</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_GetState(string _eventID, bool _getLeaderboard, ServerCallback _callback) {
+	override public void GlobalEvent_GetState(int _eventID, bool _getLeaderboard, ServerCallback _callback) {
 		// Compose parameters and enqeue command
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
-		parameters.Add("id", _eventID);
+		parameters.Add("id", _eventID.ToString(JSON_FORMAT));
 		parameters.Add("leaderboard", _getLeaderboard.ToString(JSON_FORMAT));
 		Commands_EnqueueCommand(ECommand.GlobalEvents_GetState, null, _callback);
 	}
@@ -361,10 +361,10 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_score">The score to be registered.</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_RegisterScore(string _eventID, float _score, ServerCallback _callback) {
+	override public void GlobalEvent_RegisterScore(int _eventID, float _score, ServerCallback _callback) {
 		// Compose parameters and enqeue command
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
-		parameters.Add("id", _eventID);
+		parameters.Add("id", _eventID.ToString(JSON_FORMAT));
 		parameters.Add("score", _score.ToString(JSON_FORMAT));
 		Commands_EnqueueCommand(ECommand.GlobalEvents_RegisterScore, null, _callback);
 	}
@@ -374,10 +374,10 @@ public class GameServerManagerCalety : GameServerManager {
 	/// </summary>
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_callback">Callback action. Given rewards?</param>
-	override public void GlobalEvent_ApplyRewards(string _eventID, ServerCallback _callback) {
+	override public void GlobalEvent_ApplyRewards(int _eventID, ServerCallback _callback) {
 		// Compose parameters and enqeue command
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
-		parameters.Add("id", _eventID);
+		parameters.Add("id", _eventID.ToString(JSON_FORMAT));
 		Commands_EnqueueCommand(ECommand.GlobalEvents_ApplyRewards, null, _callback);
 	}
 	#endregion
@@ -405,8 +405,8 @@ public class GameServerManagerCalety : GameServerManager {
 		PlayTest,
 
 		GlobalEvents_GetCurrent,		// no params, returns the definition for either a finished event with a pending reward, the current active event, a future event or null
-		GlobalEvents_GetState,		// params: string _eventID, bool _getLeaderboard. Returns the current total value of an event and (optionally) the leaderboard for that event (top 100 + user)
-		GlobalEvents_RegisterScore,		// params: string _eventID, float _score
+		GlobalEvents_GetState,		// params: int _eventID, bool _getLeaderboard. Returns the current total value of an event and (optionally) the leaderboard for that event (top 100 + user)
+		GlobalEvents_RegisterScore,		// params: int _eventID, float _score
 		GlobalEvents_ApplyRewards		// TODO!!
 	}
 

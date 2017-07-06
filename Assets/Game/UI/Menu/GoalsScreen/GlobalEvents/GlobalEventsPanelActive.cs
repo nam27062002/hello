@@ -72,7 +72,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		m_objectiveText.text = evt.objective.GetDescription();
 
 		// Target icon
-		m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + evt.objective.goalDef.Get("icon"));
+		m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + evt.objective.icon);
 
 		// Rewards
 		for(int i = 0; i < evt.rewards.Count; ++i) {

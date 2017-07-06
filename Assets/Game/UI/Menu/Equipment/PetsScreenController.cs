@@ -33,8 +33,8 @@ public class PetsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private GameObject m_pillPrefab = null;
-	[SerializeField] private ScrollRect m_scrollList = null;
-	public ScrollRect scrollList {
+	[SerializeField] private SnappingScrollRect m_scrollList = null;
+	public SnappingScrollRect scrollList {
 		get { return m_scrollList; }
 	}
 	[SerializeField] private Localizer m_counterText = null;
@@ -263,8 +263,14 @@ public class PetsScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_petSku">Pet sku.</param>
 	/// <param name="_showUnlockAnim">Whether to launch the unlock animation or not.</param>
-	/// <param name="_additionalDelay">Add extra delay, mostly to sync with other animations</param>
-	public void ScrollToPet(string _petSku, bool _showUnlockAnim, float _additionalDelay = 0f) {
+	/// <param name="_delay">Add delay, mostly to sync with other animations and to wait for the target pill to be instantiated.</param>
+	public void ScrollToPet(string _petSku, bool _showUnlockAnim, float _delay = 0f) {
+		// If a delay is required, call ourselves later on
+		if(_delay > 0f) {
+			UbiBCN.CoroutineManager.DelayedCall(() => ScrollToPet(_petSku, _showUnlockAnim, 0f), _delay);
+			return;
+		}
+
 		// Aux vars
 		int targetPillIdx = 0;
 		int pillCount = 0;
@@ -296,58 +302,23 @@ public class PetsScreenController : MonoBehaviour {
 			}
 
 			// Kill any existing anim on the scrolllist
-			m_scrollList.DOKill();
+			scrollList.DOKill();
 
-			// BASED IN UNITY'S ScrollRect source code
-			// https://bitbucket.org/Unity-Technologies/ui/src/0155c39e05ca5d7dcc97d9974256ef83bc122586/UnityEngine.UI/UI/Core/ScrollRect.cs?at=5.2&fileviewer=file-view-default
-			// Get viewport bounds
-			Bounds viewportBounds = new Bounds(m_scrollList.viewport.rect.center, m_scrollList.viewport.rect.size);
+			// Use scroll list snapping tech, respecting delay
+			m_scrollList.SelectPoint(targetPill.GetComponent<ScrollRectSnapPoint>());
 
-			// Get content bounds in viewport space:
-			Vector3 vMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
-			Vector3 vMax = new Vector3(float.MinValue, float.MinValue, float.MinValue);
-			Matrix4x4 toLocal = m_scrollList.viewport.worldToLocalMatrix;
-			Vector3[] corners = new Vector3[4];
-			m_scrollList.content.GetWorldCorners(corners);
-			for(int i = 0; i < 4; i++) {
-				Vector3 v = toLocal.MultiplyPoint3x4(corners[i]);
-				vMin = Vector3.Min(v, vMin);
-				vMax = Vector3.Max(v, vMax);
-			}
-			Bounds contentBounds = new Bounds(vMin, Vector3.zero);
-			contentBounds.Encapsulate(vMax);
-
-			// Get pill bounds in viewport space:
-			vMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
-			vMax = new Vector3(float.MinValue, float.MinValue, float.MinValue);
-			(targetPill.transform as RectTransform).GetWorldCorners(corners);
-			for(int i = 0; i < 4; i++) {
-				Vector3 v = toLocal.MultiplyPoint3x4(corners[i]);
-				vMin = Vector3.Min(v, vMin);
-				vMax = Vector3.Max(v, vMax);
-			}
-			Bounds pillBounds = new Bounds(vMin, Vector3.zero);
-			pillBounds.Encapsulate(vMax);
-
-			// How much the content is larger than the view.
-			float hiddenLength = contentBounds.size.x - viewportBounds.size.x;
-
-			// Where the position of the lower left corner of the content bounds should be, in the space of the view.
-			float targetDeltaX = (viewportBounds.min.x - contentBounds.min.x + pillBounds.center.x)/hiddenLength;
-			targetDeltaX = Mathf.Clamp01(targetDeltaX);
-
-			// Do it!
-			m_scrollList.DOHorizontalNormalizedPos(targetDeltaX, m_scrollAnimDuration)
-				.SetDelay(_additionalDelay)
-				.SetEase(Ease.OutQuad)
-				.OnComplete(() => {
+			// Once scroll animation has finished, launch target animation
+			UbiBCN.CoroutineManager.DelayedCall(
+				() => {
 					// Show some feedback!
 					if(_showUnlockAnim) {
 						targetPill.LaunchUnlockAnim();
 					} else {
 						targetPill.LaunchBounceAnim();
 					}
-				});
+				},
+				m_scrollList.snapAnimDuration
+			);
 		}
 	}
 
@@ -367,7 +338,7 @@ public class PetsScreenController : MonoBehaviour {
 		}
 
 		// Clear all placeholder content from the scroll list
-		m_scrollList.content.DestroyAllChildren(false);
+		scrollList.content.DestroyAllChildren(false);
 		m_pills.Clear();
 
 		// Create a pill for every definition, one per frame
@@ -375,7 +346,7 @@ public class PetsScreenController : MonoBehaviour {
 		int createdThisFrame = 0;
 		for(int i = 0; i < m_defs.Count; i++) {		// Only if we don't have enough of them!
 			// Instantiate pill
-			GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, m_scrollList.content, false);
+			GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, scrollList.content, false);
 			m_pills.Add(newPillObj.GetComponent<PetPill>());
 			m_pills[i].animator.ForceHide(false);	// Start hidden and disabled
 			m_pills[i].gameObject.SetActive(false);
@@ -402,7 +373,7 @@ public class PetsScreenController : MonoBehaviour {
 			// This should never happen since we've already instantiated all the necessary pills in the InstantiatePillsAsync method, but leave it just in case
 			if(i >= m_pills.Count) {
 				// Instantiate pill
-				GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, m_scrollList.content, false);
+				GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, scrollList.content, false);
 				m_pills.Add(newPillObj.GetComponent<PetPill>());
 				m_pills[i].animator.ForceHide(false);	// Start hidden
 
@@ -430,8 +401,8 @@ public class PetsScreenController : MonoBehaviour {
 		Initialize();
 
 		// Reset scroll list and program initial animation
-		m_scrollList.horizontalNormalizedPosition = 0f;
-		m_scrollList.DOHorizontalNormalizedPos(-10f, 0.5f).From().SetEase(Ease.OutCubic).SetDelay(0.25f).SetUpdate(true);
+		scrollList.horizontalNormalizedPosition = 0f;
+		scrollList.DOHorizontalNormalizedPos(-10f, 0.5f).From().SetEase(Ease.OutCubic).SetDelay(0.25f).SetUpdate(true);
 	}
 
 	/// <summary>
@@ -543,5 +514,8 @@ public class PetsScreenController : MonoBehaviour {
 				text.text.color = Color.red;
 			}
 		}
+
+		// Snap to that pill in any case
+		m_scrollList.SelectPoint(_pill.GetComponent<ScrollRectSnapPoint>());
 	}
 }
