@@ -21,9 +21,8 @@ using Object = UnityEngine.Object;
 /// Custom editor window.
 /// </summary>
 public class LightmapTool : EditorWindow {
-
  
-    public static class LightingSettingsHepler
+    public static class LightingSettingsHelper
     {
         public static void SetIndirectResolution(float val)
         {
@@ -34,6 +33,19 @@ public class LightmapTool : EditorWindow {
         {
             SetInt("m_LightmapEditorSettings.m_TextureWidth", val);
             SetInt("m_LightmapEditorSettings.m_TextureHeight", val);
+        }
+        public static void SetGIWorkFlowMode(int val)
+        {
+            SetInt("m_GIWorkflowMode", val);
+        }
+        public static void SetBakedResolution(float val)
+        {
+            SetFloat("m_LightmapEditorSettings.m_BakeResolution", val);
+        }
+
+        public static Color GetAmbientColor()
+        {
+            return GetProperty("").colorValue;
         }
 
 
@@ -116,15 +128,45 @@ public class LightmapTool : EditorWindow {
     [MenuItem("Tools/Set Lightmap properties")]
     static void SetLightmapProperties()
     {
+        /*
+                SerializedObject so = LightingSettingsHepler.getLightmapSettings();
+                SerializedProperty sp = so.GetIterator();
 
-        SerializedObject so = LightingSettingsHepler.getLightmapSettings();
+                while (sp.Next(true))
+                {
+                    Debug.Log("Property ---> [path:" + sp.propertyPath + "] [type:" + sp.propertyType + "] [displayName:" + sp.displayName + "]");
+                    if (sp.propertyType == SerializedPropertyType.Enum)
+                    {
+                        int i = 0;
+                        foreach (string ename in sp.enumDisplayNames)
+                        {
+                            Debug.Log("        " + i++ + " ---> [enumName:" + ename + "]");
+                        }
+                    }
+                }
+        */
+        MethodInfo[] methods = typeof(LightmapEditorSettings).GetMethods(BindingFlags.Public | BindingFlags.NonPublic);
 
-        SerializedProperty sp = so.GetIterator();
-
-        while (sp.Next(true))
+        foreach (MethodInfo m in methods)
         {
-            Debug.Log("Property ---> path: " + sp.propertyPath + " type: " + sp.propertyType + " displayName: " + sp.displayName);
+            Debug.Log("Method: " + m.Name);
         }
+
+        Debug.Log("--------------------------------------------------------------------------------------------------------------------");
+
+        Color ambientColor;
+
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            Scene s = SceneManager.GetSceneAt(i);
+            if (s.isLoaded && s.name == "ART_Medieval_Lighting")
+            {
+//                ambientColor = 
+                break;
+            }
+        }
+
+
 
 
         for (int i = 0; i < SceneManager.sceneCount; i++)
@@ -133,7 +175,9 @@ public class LightmapTool : EditorWindow {
             if (s.isLoaded)
             {
                 SceneManager.SetActiveScene(s);
-                LightingSettingsHepler.SetMaxAtlasResolution(1024);
+                LightingSettingsHelper.SetMaxAtlasResolution(1024);
+                LightingSettingsHelper.SetGIWorkFlowMode(0);
+                LightingSettingsHelper.SetBakedResolution(1.0f);
             }
         }
     }

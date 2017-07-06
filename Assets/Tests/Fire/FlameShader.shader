@@ -5,7 +5,7 @@
 		_NoiseTex ("Noise", 2D) = "white" {}
 		_ColorRamp("Color Ramp", 2D) = "white" {}
 		_RampOffset("Ramp Offset", Range(0.0, 1.0)) = 0.2 //
-		_ColorSteps("Color steps", Range(0.0, 8.0)) = 8.0	// color steps
+		_ColorSteps("Color steps", Range(0.0, 16.0)) = 8.0	// color steps
 		_AlphaThreshold("Alpha threshold", Range(0.0, 8.0)) = 2.0	// alpha threshold
 
 		_Speed("Fire Speed", Float) = 1.0				// Fire speed
