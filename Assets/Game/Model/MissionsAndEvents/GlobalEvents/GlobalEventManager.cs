@@ -87,8 +87,37 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	/// as well in another async call, so be aware that the event might be triggered twice.
 	/// </summary>
 	public static void RequestCurrentEventData() {
-		// Just do it
-		GameServerManager.SharedInstance.GlobalEvent_GetCurrent(instance.OnCurrentEventResponse);
+		// First we have to resolve all the stored events (profile)
+		Dictionary<int, GlobalEventUserData> storedEvents = user.globalEvents;
+		int currentEventId = -1;
+
+		if (storedEvents.Count > 0) {
+			List<int> deleteEvents = new List<int>();
+
+			foreach (KeyValuePair<int, GlobalEventUserData> pair in storedEvents) {
+				if (pair.Value.rewardCollected) {
+					deleteEvents.Add(pair.Key);
+				} else {
+					currentEventId = pair.Key;
+				}
+			}
+
+			for (int i = 0; i < deleteEvents.Count; i++) {
+				storedEvents.Remove(deleteEvents[i]);
+			}
+		}
+
+		if (currentEventId >= 0) {
+			// We've found an event stored, lets get its data
+			if (m_currentEvent == null) {
+				m_currentEvent = new GlobalEvent();
+			}
+
+			GameServerManager.SharedInstance.GlobalEvent_GetState(currentEventId, true, instance.OnEventStateResponse);
+		} else {
+			// Nothing stored so lets ask server for any event
+			GameServerManager.SharedInstance.GlobalEvent_GetCurrent(instance.OnCurrentEventResponse);
+		}
 	}
 
 	/// <summary>
