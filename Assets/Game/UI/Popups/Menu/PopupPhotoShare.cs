@@ -98,14 +98,14 @@ public class PopupPhotoShare : MonoBehaviour {
 	{
 
 		// [AOC] TODO!! Share Flow
-		UIFeedbackText.CreateAndLaunch(
+		/*UIFeedbackText.CreateAndLaunch(
 			LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"),
 			new Vector2(0.5f, 0.5f),
 			(RectTransform)this.GetComponentInParent<Canvas>().transform
-		);
+		);*/
 
 		// DO NOT REMOVE
-		// string filePath = Application.temporaryCachePath + "/Screenshot.png";
-		// PlatformUtils.Instance.ShareImage( filePath, LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION"));
+		string filePath = Application.temporaryCachePath + "/Screenshot.png";
+	    PlatformUtils.Instance.ShareImage( filePath, LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION"));
 	}
 }

@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -31,14 +32,14 @@ public class GlobalEventObjective : TrackingObjectiveBase {
 		get { return m_parentEvent; }
 	}
 
-	private DefinitionNode m_goalDef = null;
-	public DefinitionNode goalDef {
-		get { return m_goalDef; }
-	}
-
 	private DefinitionNode m_typeDef = null;
 	public DefinitionNode typeDef {
 		get { return m_typeDef; }
+	}
+
+	private string m_icon = "";
+	public string icon {
+		get { return m_icon; }
 	}
 
 	//------------------------------------------------------------------//
@@ -48,27 +49,34 @@ public class GlobalEventObjective : TrackingObjectiveBase {
 	/// Parametrized constructor.
 	/// </summary>
 	/// <param name="_parentEvent">The event owning this objective.</param>
-	/// <param name="_goalDef">The event goal definition used to initialize this objective.</param>
-	/// <param name="_targetValue">Target value.</param>
-	public GlobalEventObjective(GlobalEvent _parentEvent, DefinitionNode _goalDef, float _targetValue) {
+	/// <param name="_data">The event goal json object used to initialize this objective.</param>
+	public GlobalEventObjective(GlobalEvent _parentEvent, SimpleJSON.JSONNode _data) {
 		// Check params
-		Debug.Assert(_goalDef != null);
+		Debug.Assert(_data != null && !_data.IsNull);
 
 		// Store parent event
 		m_parentEvent = _parentEvent;
 
-		// Store goal definition
-		m_goalDef = _goalDef;
-
 		// Gather type definition
-		m_typeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, m_goalDef.Get("type"));
+		m_typeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, _data["type"]);
+
+		// Parse parameters (if any)
+		List<string> parameters = new List<string>();
+		if(_data.ContainsKey("params")) {
+			string paramsString = _data["params"];
+			string[] splitResult = paramsString.Split(new string[] { ";" }, StringSplitOptions.None);
+			parameters.AddRange(splitResult);
+		}
+
+		// Get icon
+		m_icon = _data["icon"];
 
 		// Use parent's initializer
 		Init(
-			TrackerBase.CreateTracker(m_typeDef.sku, m_goalDef.GetAsList<string>("params")),		// Create the tracker based on goal type
-			_targetValue,	// [AOC] TODO!! Target value is actually pointless in global events, but we may use it as a cap to detect cheaters
+			TrackerBase.CreateTracker(m_typeDef.sku, parameters),		// Create the tracker based on goal type
+			_data["amount"].AsFloat,
 			m_typeDef,
-			m_goalDef.Get("titleTID")
+			_data["tidDesc"]
 		);
 
 		// Subscribe to external events

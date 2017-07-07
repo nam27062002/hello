@@ -111,11 +111,10 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 
 		// Set reward icon and text
 		// Based on type
-		string type = m_reward.def.Get("type");
-		switch(type) {
-			case "pet": {
+		switch(_reward.type) {
+			case GlobalEvent.Reward.Type.PET: {
 				// Get the pet preview
-				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_reward.def.Get("gameSku"));
+				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_reward.sku);
 				if(petDef != null) {
 					if(m_icon != null) m_icon.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + petDef.Get("icon"));
 					if(m_rewardText != null) m_rewardText.text = petDef.GetLocalized("tidName");
@@ -126,9 +125,9 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 				}
 			} break;
 
-			case "egg": {
+			case GlobalEvent.Reward.Type.EGG: {
 				// Get the egg definition
-				DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, m_reward.def.Get("gameSku"));
+				DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, m_reward.sku);
 				if(eggDef != null) {
 					if(m_icon != null) m_icon.sprite = Resources.Load<Sprite>(UIConstants.EGG_ICONS_PATH + eggDef.Get("icon"));
 					if(m_rewardText != null) m_rewardText.text = eggDef.GetLocalized("tidName");
@@ -139,11 +138,11 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 				}
 			} break;
 
-			case "sc":
-			case "hc":
-			case "goldenFragments": {
+			case GlobalEvent.Reward.Type.SC:
+			case GlobalEvent.Reward.Type.PC:
+			case GlobalEvent.Reward.Type.GOLDEN_FRAGMENTS: {
 				// Get the icon linked to this currency
-				UserProfile.Currency currency = UserProfile.SkuToCurrency(type);
+				UserProfile.Currency currency = GlobalEvent.Reward.TypeToCurrency(_reward.type);
 				if(m_icon != null) m_icon.sprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(currency));
 				if(m_rewardText != null) m_rewardText.text = StringUtils.FormatNumber(m_reward.amount, 0);
 			} break;

@@ -19,7 +19,7 @@ using System.Collections.Generic;
 /// Single global event object.
 /// </summary>
 [Serializable]
-public class GlobalEvent {
+public partial class GlobalEvent {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -32,32 +32,6 @@ public class GlobalEvent {
 		COUNT
 	};
 
-	/// <summary>
-	/// Reward item and the percentage required to achieve it.
-	/// </summary>
-	[Serializable]
-	public class Reward {
-		public DefinitionNode def = null;
-		public float amount = 0f;
-
-		public float targetPercentage = 0f;
-		public float targetAmount = 0f;		// Should match target percentage
-
-		/// <summary>
-		/// Constructor from json data.
-		/// </summary>
-		/// <param name="_data">Data to be parsed.</param>
-		public Reward(SimpleJSON.JSONNode _data) {
-			// Reward data
-			def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.GLOBAL_EVENT_REWARDS, _data["sku"]);
-			amount = _data["amount"].AsFloat;
-
-			// Init target percentage
-			// Target amount should be initialized from outside, knowing the global target
-			targetPercentage = _data["targetPercentage"].AsFloat;
-		}
-	};
-	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -89,13 +63,12 @@ public class GlobalEvent {
 		get { return m_currentValue; }
 	}
 
-	private float m_targetValue = 0f;
 	public float targetValue {
-		get { return m_targetValue; }
+		get { return m_objective != null ? m_objective.targetValue : 1f; }
 	}
 
 	public float progress {
-		get { return Mathf.Clamp01(m_currentValue/m_targetValue); }
+		get { return Mathf.Clamp01(m_currentValue/targetValue); }
 	}
 
 	// Rewards
@@ -175,18 +148,14 @@ public class GlobalEvent {
 		m_id = _data["id"].AsInt;
 		m_name = _data["name"];
 
-		// Target value
-		m_targetValue = _data["targetValue"].AsFloat;
-
 		// Event objective
 		// Ditch any existing objective, we don't care
-		DefinitionNode objectiveDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.GLOBAL_EVENT_OBJECTIVES, _data["goal"]);
-		m_objective = new GlobalEventObjective(this, objectiveDef, m_targetValue);	// Target value is actually pointless in global events, but we may use it as a cap to detect cheaters
+		m_objective = new GlobalEventObjective(this, _data["goal"]);
 
 		// Timestamps
-		m_teasingStartTimestamp = DateTime.Parse(_data["teaserTimestamp"], GameServerManager.JSON_FORMAT);
-		m_startTimestamp = DateTime.Parse(_data["startTimestamp"], GameServerManager.JSON_FORMAT);
-		m_endTimestamp = DateTime.Parse(_data["endTimestamp"], GameServerManager.JSON_FORMAT);
+		m_teasingStartTimestamp = TimeUtils.TimestampToDate(_data["teaserTimestamp"].AsLong);
+		m_startTimestamp = TimeUtils.TimestampToDate(_data["startTimestamp"].AsLong);
+		m_endTimestamp = TimeUtils.TimestampToDate(_data["endTimestamp"].AsLong);
 
 		// Infer event's state from timestamps
 		UpdateState();
@@ -196,7 +165,7 @@ public class GlobalEvent {
 		SimpleJSON.JSONArray rewardsDataArray = _data["rewards"].AsArray;
 		for(int i = 0; i < rewardsDataArray.Count; ++i) {
 			m_rewards.Add(new Reward(rewardsDataArray[i]));
-			m_rewards[i].targetAmount = m_rewards[i].targetPercentage * m_targetValue;
+			m_rewards[i].targetAmount = m_rewards[i].targetPercentage * targetValue;
 		}
 
 		// Make sure steps are sorted by percentile
