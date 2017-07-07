@@ -22,7 +22,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/InGame/ResultsScreen/PF_PopupGlobalEventContribution";
+	public const string PATH = "UI/Popups/GlobalEvents/PF_PopupGlobalEventContribution";
 
 	private const int MAX_SUBMIT_ATTEMPTS = 2;
 
