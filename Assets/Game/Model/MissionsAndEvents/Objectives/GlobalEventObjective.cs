@@ -37,11 +37,6 @@ public class GlobalEventObjective : TrackingObjectiveBase {
 		get { return m_typeDef; }
 	}
 
-	private float m_targetValue = 0f;
-	public float targetValue {
-		get { return m_targetValue; }
-	}
-
 	private string m_icon = "";
 	public string icon {
 		get { return m_icon; }
@@ -73,16 +68,13 @@ public class GlobalEventObjective : TrackingObjectiveBase {
 			parameters.AddRange(splitResult);
 		}
 
-		// Get target value
-		m_targetValue = _data["amount"].AsFloat;
-
 		// Get icon
 		m_icon = _data["icon"];
 
 		// Use parent's initializer
 		Init(
 			TrackerBase.CreateTracker(m_typeDef.sku, parameters),		// Create the tracker based on goal type
-			m_targetValue,	// [AOC] TODO!! Target value is actually pointless in global events, but we may use it as a cap to detect cheaters
+			_data["amount"].AsFloat,
 			m_typeDef,
 			_data["tidDesc"]
 		);
