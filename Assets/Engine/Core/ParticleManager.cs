@@ -13,6 +13,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		public Pool				pool;
 		public ParticleHandler	handler;
 		public int				size;
+		public string			version;
 	}
 
 	public enum PoolLimits {
@@ -118,20 +119,48 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 					category = LevelEditor.LevelEditor.settings.poolLimit;
 				}
 
-				List<DefinitionNode> poolSize = DefinitionsManager.SharedInstance.GetDefinitionsList(category.ToUpper());
-				for (int i = 0; i < poolSize.Count; i++) {
+				List<DefinitionNode> poolSizes = DefinitionsManager.SharedInstance.GetDefinitionsList(category.ToUpper());
+				for (int i = 0; i < poolSizes.Count; i++) {
+					DefinitionNode def = poolSizes[i];
 					PoolContainer pc = null;
 
-					if (m_pools.ContainsKey(poolSize[i].sku)) {
-						pc = m_pools[poolSize[i].sku];
+					if (m_pools.ContainsKey(def.sku)) {
+						pc = m_pools[def.sku];
 					} else {
 						pc = new PoolContainer();
 						pc.handler = new ParticleHandler();
 
-						m_pools.Add(poolSize[i].sku, pc);
+						m_pools.Add(def.sku, pc);
 					}
 
-					pc.size = poolSize[i].GetAsInt("poolSize");
+					// default values
+					pc.version = "Master/";
+					pc.size = def.GetAsInt("count");
+
+					// npew read the current profile
+					switch(FeatureSettingsManager.instance.Particles) {
+						case FeatureSettings.ELevel5Values.very_low:							
+						case FeatureSettings.ELevel5Values.low:
+							if (def.GetAsBool("lowVersion")) {
+								pc.version = "Low/";
+							}
+							pc.size = def.GetAsInt("countLow", pc.size);
+							break;
+
+						case FeatureSettings.ELevel5Values.high:
+							if (def.GetAsBool("highVersion")) {
+								pc.version = "High/";
+							}
+							pc.size = def.GetAsInt("countHigh", pc.size);
+							break;
+							
+						case FeatureSettings.ELevel5Values.very_high:
+							if (def.GetAsBool("veryHighVersion")) {
+								pc.version = "VeryHigh/";
+							}
+							pc.size = def.GetAsInt("countVeryHigh", pc.size);
+							break;
+					}
 				}
 			}
 		}
@@ -149,6 +178,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 				container = new PoolContainer();
 				container.handler = new ParticleHandler();
 				container.size = 1;
+				container.version = "Master/";
 
 				m_pools.Add(_prefabName, container);
 			}
@@ -158,7 +188,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 					if (!_folderPath.EndsWith("/")) _folderPath = _folderPath + "/";
 				}
 
-				GameObject go = Resources.Load<GameObject>("Particles/" + _folderPath + _prefabName);
+				GameObject go = Resources.Load<GameObject>("Particles/" + container.version + _folderPath + _prefabName);
 
 				if (go != null) {
 					if (m_poolLimits == PoolLimits.Unlimited) {

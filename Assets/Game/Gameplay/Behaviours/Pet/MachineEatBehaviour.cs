@@ -55,7 +55,7 @@ public class MachineEatBehaviour : EatBehaviour {
 
 		if (m_ignoreBadJunk)
 		{
-			AddToIgnoreList("BadBird");
+			AddToIgnoreList("BadJunk");
 		}
 
 		// Check if view has eat event

@@ -72,11 +72,11 @@ public class FireBreath : DragonBreathBehaviour {
 
 	override protected void ExtendedStart() {
 
-		m_flamePoolHandler 			= PoolManager.RequestPool(m_flameParticle, "Particles/", m_maxParticles);
-		m_flameUpPoolHandler 		= PoolManager.RequestPool(m_flameUpParticle, "Particles/", m_maxParticles);
-		m_superFlamePoolHandler 	= PoolManager.RequestPool(m_superFlameParticle, "Particles/", m_maxParticles);
-		m_superFlameUpPoolHandler 	= PoolManager.RequestPool(m_superFlameUpParticle, "Particles/", m_maxParticles);
-		m_flameLightPoolHandler 	= PoolManager.RequestPool(m_flameLight, "Particles/", 1);
+		m_flamePoolHandler 			= PoolManager.RequestPool(m_flameParticle, "Particles/Master/", m_maxParticles);
+		m_flameUpPoolHandler 		= PoolManager.RequestPool(m_flameUpParticle, "Particles/Master/", m_maxParticles);
+		m_superFlamePoolHandler 	= PoolManager.RequestPool(m_superFlameParticle, "Particles/Master/", m_maxParticles);
+		m_superFlameUpPoolHandler 	= PoolManager.RequestPool(m_superFlameUpParticle, "Particles/Master/", m_maxParticles);
+		m_flameLightPoolHandler 	= PoolManager.RequestPool(m_flameLight, "Particles/Master/", 1);
 
 		m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "FireBlocker");
 		m_noPlayerMask = ~LayerMask.GetMask("Player");

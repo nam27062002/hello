@@ -1093,6 +1093,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     }
 
     public bool IsFogOnDemandEnabled { get; set; }    
+
+	public FeatureSettings.ELevel5Values Particles
+	{
+		get
+		{
+			return Device_CurrentFeatureSettings.GetValueAsLevel5(FeatureSettings.KEY_PARTICLES);
+		}
+	}
     #endregion
 
     #region log
