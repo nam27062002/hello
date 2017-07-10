@@ -101,7 +101,7 @@ public class ContainerBehaviour : MonoBehaviour
 	void Break()
 	{
 		// Spawn particle
-		GameObject prefab = Resources.Load("Particles/" + m_onBreakParticle) as GameObject;
+		GameObject prefab = Resources.Load("Particles/Master/" + m_onBreakParticle) as GameObject;
 		if ( prefab != null )
 		{
 			GameObject go = Instantiate( prefab ) as GameObject;
