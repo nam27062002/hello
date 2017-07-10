@@ -182,9 +182,9 @@ public class LightmapTool : EditorWindow {
             if (s.isLoaded)
             {
                 SceneManager.SetActiveScene(s);
-                LightingSettingsHelper.SetMaxAtlasResolution(512);
+                LightingSettingsHelper.SetMaxAtlasResolution(1024);
                 LightingSettingsHelper.SetGIWorkFlowMode(0);
-                LightingSettingsHelper.SetBakedResolution(2.0f);
+                LightingSettingsHelper.SetBakedResolution(1.0f);
             }
         }
     }
