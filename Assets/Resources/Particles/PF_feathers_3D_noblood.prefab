@@ -29,6 +29,7 @@ GameObject:
   - component: {fileID: 19911260}
   - component: {fileID: 11430008}
   - component: {fileID: 114465493619456386}
+  - component: {fileID: 114553334590990032}
   m_Layer: 0
   m_Name: PF_feathers_3D_noblood
   m_TagString: Untagged
@@ -132,7 +133,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -404044650
+  randomSeed: 320839725
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -2613,7 +2614,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -894269223
+  randomSeed: -489720886
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -2927,7 +2928,7 @@ ParticleSystem:
         m_RotationOrder: 0
       minMaxState: 3
     randomizeRotationDirection: 0
-    maxNumParticles: 1
+    maxNumParticles: 2
     size3D: 0
     rotation3D: 1
     gravityModifier:
@@ -3065,7 +3066,7 @@ ParticleSystem:
     cnt1: 30
     cnt2: 30
     cnt3: 30
-    cntmax0: 1
+    cntmax0: 2
     cntmax1: 30
     cntmax2: 30
     cntmax3: 30
@@ -5173,3 +5174,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114553334590990032
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 180066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 2
+  m_scale: 1
+  m_transform: {fileID: 0}
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 1
+  m_resetFirst: 1

@@ -3770,7 +3770,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224319519819859920}
-  - component: {fileID: 114912665657758412}
+  - component: {fileID: 114358887676278818}
   m_Layer: 5
   m_Name: PetsScrollView
   m_TagString: Untagged
@@ -5497,7 +5497,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_pillPrefab: {fileID: 1000011473209686, guid: 40a20ba4cd8cd06409cf8d278b7ca59b,
     type: 2}
-  m_scrollList: {fileID: 114912665657758412}
+  m_scrollList: {fileID: 114358887676278818}
   m_counterText: {fileID: 114491531364599242}
   m_pillCreationDelay: 0.05
   m_petSlots:
@@ -10746,6 +10746,47 @@ MonoBehaviour:
   m_Color: {r: 1, g: 0.72413796, b: 0, a: 0.49803922}
   m_RaycastTarget: 1
   m_gizmoOnlyWhenSelected: 1
+--- !u!114 &114358887676278818
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1733916257857526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2bc97c68d4274f88b917286d09ac694, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Content: {fileID: 224703797351113466}
+  m_Horizontal: 1
+  m_Vertical: 0
+  m_MovementType: 0
+  m_Elasticity: 0.1
+  m_Inertia: 1
+  m_DecelerationRate: 0.135
+  m_ScrollSensitivity: 1
+  m_Viewport: {fileID: 224326360358601720}
+  m_HorizontalScrollbar: {fileID: 114061827701939878}
+  m_VerticalScrollbar: {fileID: 0}
+  m_HorizontalScrollbarVisibility: 0
+  m_VerticalScrollbarVisibility: 0
+  m_HorizontalScrollbarSpacing: 0
+  m_VerticalScrollbarSpacing: 0
+  m_OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  m_snapPos: {x: 0, y: 0.5}
+  m_snapAnimDuration: 0.5
+  m_snapAfterDragging: 0
+  m_snapEase: 18
+  m_selectedPoint: {fileID: 0}
+  m_onSelectionChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: SnappingScrollRect+SelectionChangedEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114360701523234954
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -18771,37 +18812,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eddc1fbd4bd796345832996a9560b9bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114912665657758412
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1733916257857526}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1367256648, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Content: {fileID: 224703797351113466}
-  m_Horizontal: 1
-  m_Vertical: 0
-  m_MovementType: 1
-  m_Elasticity: 0.1
-  m_Inertia: 1
-  m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
-  m_Viewport: {fileID: 224326360358601720}
-  m_HorizontalScrollbar: {fileID: 114061827701939878}
-  m_VerticalScrollbar: {fileID: 0}
-  m_HorizontalScrollbarVisibility: 0
-  m_VerticalScrollbarVisibility: 2
-  m_HorizontalScrollbarSpacing: 40
-  m_VerticalScrollbarSpacing: -3
-  m_OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114914718358370572
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -18832,7 +18842,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 0.49803922}
+  m_Color: {r: 0, g: 0.95862055, b: 1, a: 0.49803922}
   m_RaycastTarget: 1
   m_gizmoOnlyWhenSelected: 0
 --- !u!114 &114918172645665406
@@ -36770,8 +36780,8 @@ RectTransform:
   - {fileID: 224526120243374976}
   - {fileID: 224097538936048974}
   - {fileID: 224407850045421626}
-  - {fileID: 224464411162297776}
   - {fileID: 224123062516810696}
+  - {fileID: 224464411162297776}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -37632,7 +37642,7 @@ RectTransform:
   - {fileID: 224969074218967348}
   - {fileID: 224167981112324914}
   m_Father: {fileID: 224000010212246790}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -39287,7 +39297,7 @@ RectTransform:
   - {fileID: 224569487174430702}
   - {fileID: 224180252178674798}
   m_Father: {fileID: 224000010212246790}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -40475,7 +40485,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0.011198282, y: 0}
+  m_AnchoredPosition: {x: 0.0155928135, y: 0}
   m_SizeDelta: {x: 870, y: -140}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224706345510307320

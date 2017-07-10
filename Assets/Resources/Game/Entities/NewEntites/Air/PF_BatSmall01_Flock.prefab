@@ -512,8 +512,8 @@ MonoBehaviour:
     name: PS_Blood_Explosion
     path: Blood
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0, b: 0, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -561,7 +561,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 0.5
   m_onEatenFrozenParticle:
-    name: PS_IceExplosionSmall
+    name: PS_IceExplosion
     path: 
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
@@ -611,7 +611,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    scale: 1
+    scale: 0.5
   m_onEatenAudio: hd_batsmall_dead
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -790,6 +790,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: BatSmall_Flock
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!137 &13700364
 SkinnedMeshRenderer:

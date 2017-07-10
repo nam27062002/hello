@@ -9,6 +9,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using System;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -398,7 +399,7 @@ public static class GameObjectExt {
 		List<T> components = new List<T>();
 
 		T c = _t.GetComponent<T>();
-		if (c != null) {
+		if ((c as T) != null) {
 			components.Add(c);
 		}
 
@@ -409,6 +410,7 @@ public static class GameObjectExt {
 
 		return components;
 	}
+
 
 	/// <summary>
 	/// Find first component of a given type in game object's parent hirearchy.

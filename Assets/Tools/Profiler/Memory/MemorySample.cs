@@ -47,22 +47,31 @@ public class MemorySample : AbstractMemorySample
 
                 if (sizeStrategy != ESizeStrategy.Profiler)
                 {
-                    if (Obj is Texture)
-                    {
-                        MemSize = (int)CalculateTextureSizeBytes(Obj as Texture, sizeStrategy);
-                    }
-                    else if (Obj is AnimationClip)
-                    {
-                        MemSize = (int)(MemSize * 0.3384f);
-                    }
-                    else if (Obj is GameObject)
-                    {
-                        MemSize = (int)(MemSize * 0.622f);
-                    }
-                    else if (Obj is Transform)
-                    {
-                        MemSize = (int)(MemSize * 0.7f);
-                    }
+					if(Obj is Texture) 
+					{
+						MemSize = (int)CalculateTextureSizeBytes(Obj as Texture, sizeStrategy);
+					} 
+					else if(Obj is AnimationClip) 
+					{
+						MemSize = (int)(MemSize * 0.3384f);
+					} 
+					else if(Obj is GameObject) 
+					{
+						MemSize = (int)(MemSize * 0.622f);
+					} 
+					else if(Obj is Transform) 
+					{
+						MemSize = (int)(MemSize * 0.7f);
+					} 
+					else if(Obj is ParticleSystem) 
+					{
+						MemSize = (int)(MemSize * 0.8f);
+					}
+					else if(Obj is ParticleSystemRenderer) 
+					{
+						MemSize = (int)(MemSize * 0.72f);
+					}
+
                 }               
             }
         }			      
@@ -304,11 +313,11 @@ public class MemorySample : AbstractMemorySample
         if (o != null)
         {          
             Type type = o.GetType();
-            AddGeneric(type.Name, o, UNIQUE_TYPES.Contains(type));
+            AddGeneric(type.Name, o);
         }
     }    
 
-    private void AddGeneric(string typeName, Object o, bool unique)
+    private void AddGeneric(string typeName, Object o)
     {
         if (Objects == null)
         {
@@ -320,20 +329,10 @@ public class MemorySample : AbstractMemorySample
             Objects.Add(typeName, new List<ObjectDetails>());
         }      
 
-        bool goAhead = false;
-        if (unique)
+		ObjectDetails oDetails = FindObjectDetails(typeName, o.GetInstanceID());
+		if ((oDetails == null))
         {
-            ObjectDetails oDetails = FindObjectDetails(typeName, o);
-            goAhead = (oDetails == null);
-        }
-        else
-        {
-            goAhead = true;
-        }
-
-        if (goAhead)
-        {
-            ObjectDetails oDetails = new ObjectDetails(o, SizeStrategy);
+           	oDetails = new ObjectDetails(o, SizeStrategy);
             Objects[typeName].Add(oDetails);
         }
     }

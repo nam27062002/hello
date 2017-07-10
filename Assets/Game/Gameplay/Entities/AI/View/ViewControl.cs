@@ -6,8 +6,8 @@ using System.Collections.Generic;
 
 public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
-	public static Color GOLD_TINT = new Color(255.0f / 255.0f, 161 / 255.0f, 0, 0.75f);
-    public static Color FREEZE_TINT = new Color(0.0f / 255.0f, 200.0f / 255.0f, 255.0f / 255.0f, 0.75f);
+	public static Color GOLD_TINT = new Color(1.0f, 0.63f, 0.0f, 0.75f);
+    public static Color FREEZE_TINT = new Color(0.0f, 0.78f, 1.0f, 0.75f);
     public static Color NO_TINT = new Color(0.0f, 0.0f, 0.0f, 0.0f);
     public static float FREEZE_TIME = 1.0f;
 
@@ -228,13 +228,6 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_isExclamationMarkOn = false;
 		if (m_exclamationTransform != null) {
 			m_exclamationHandler = ParticleManager.CreatePool("PF_ExclamationMark");
-		}
-
-		// particle management
-		if (!m_onEatenParticle.IsValid()) {
-			// if this entity doesn't have any particles attached, set the standard blood particle
-			m_onEatenParticle.name = "PS_Blood_Explosion";
-			m_onEatenParticle.path = "Blood/";
 		}
 
 		// Preload particle

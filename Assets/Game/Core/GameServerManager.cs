@@ -113,7 +113,7 @@ public class GameServerManager
         {
 			// Init some common stuff
 			// Initialize server time with current local time
-			ServerManager.SharedInstance.SetServerTime((double)Globals.GetUnixTimestamp());
+			ServerManager.SharedInstance.SetServerTime((double)TimeUtils.DateToTimestamp(DateTime.UtcNow));
 
 			// Let heirs do their stuff
 			ExtendedConfigure();
@@ -168,7 +168,7 @@ public class GameServerManager
 	public DateTime GetEstimatedServerTime() {
 		// Calety already manages this, just convert it to a nice DateTime object.
 		double unixTimestamp = ServerManager.SharedInstance.GetServerTime();	// Seconds since 1970
-		return Globals.GetDateFromUnixTimestamp((long)unixTimestamp);
+		return TimeUtils.TimestampToDate((long)unixTimestamp);
 	}
 
 	//------------------------------------------------------------------------//
@@ -212,7 +212,7 @@ public class GameServerManager
 	/// <param name="_eventID">The identifier of the event whose state we want.</param>
 	/// <param name="_getLeaderboard">Whether to retrieve the leaderboard as well or not (top 100 + player).</param>
 	/// <param name="_callback">Callback action.</param>
-	public virtual void GlobalEvent_GetState(string _eventID, bool _getLeaderboard, ServerCallback _callback) {}
+	public virtual void GlobalEvent_GetState(int _eventID, bool _getLeaderboard, ServerCallback _callback) {}
 
 	/// <summary>
 	/// Register a score to a target event.
@@ -220,12 +220,12 @@ public class GameServerManager
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_score">The score to be registered.</param>
 	/// <param name="_callback">Callback action.</param>
-	public virtual void GlobalEvent_RegisterScore(string _eventID, float _score, ServerCallback _callback) {}
+	public virtual void GlobalEvent_RegisterScore(int _eventID, float _score, ServerCallback _callback) {}
 
 	/// <summary>
 	/// Reward the player for his contribution to an event.
 	/// </summary>
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_callback">Callback action. Given rewards?</param>
-	public virtual void GlobalEvent_ApplyRewards(string _eventID, ServerCallback _callback) {}
+	public virtual void GlobalEvent_ApplyRewards(int _eventID, ServerCallback _callback) {}
 }

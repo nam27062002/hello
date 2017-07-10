@@ -444,6 +444,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: Canary02_Flock
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &11407044
 MonoBehaviour:
@@ -535,7 +536,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_onEatenFrozenParticle:
-    name: PS_IceExplosionSmall
+    name: PS_IceExplosion
     path: 
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
@@ -585,7 +586,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    scale: 1
+    scale: 0.5
   m_onEatenAudio: hd_canary_dead
   m_speedToWaterSplash: 0
   m_waterSplashParticle:

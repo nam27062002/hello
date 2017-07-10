@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -16,10 +17,15 @@ using System.Collections.Generic;
 /// <summary>
 /// Global singleton manager for global events.
 /// </summary>
-public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManager> {
+public class GlobalEventManager : Singleton<GlobalEventManager> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	// Refresh intervals: Seconds, if current event data is retrieved and this interval has expired, we will request new data from the server
+	private const float STATE_REFRESH_INTERVAL = 1f * 60f;
+	private const float LEADERBOARD_REFRESH_INTERVAL = 10f * 60f;
+	private const float SERVER_REQUEST_TIMEOUT = 5f;	// Safeguard to avoid spamming the server with requests
+
 	// Error codes for event interaction
 	public enum ErrorCode {
 		NONE = 0,
@@ -46,53 +52,33 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 	// Can also be null if there is no event currently, or if event data could not be retrieved from the server
 	private GlobalEvent m_currentEvent = null;
 	public static GlobalEvent currentEvent {
-		get { return instance.m_currentEvent; }
+		get {
+			// If data refresh interval has expired, request new data to the server
+			// Do it in background, return cached data
+			if(instance.m_currentEvent != null) {
+				DateTime now = serverTime;
+				if(instance.m_stateCheckTimestamp < now) {
+					// Request event state
+					// Request leaderboard as well?
+					RequestCurrentEventState(instance.m_leaderboardCheckTimestamp < now);
+				}
+			}
+			return instance.m_currentEvent;
+		}
 	}
+
+	// Shortcuts
+	private static DateTime serverTime {
+		get { return GameServerManager.SharedInstance.GetEstimatedServerTime(); }
+	}
+
+	// Internal
+	private DateTime m_stateCheckTimestamp = new DateTime();
+	private DateTime m_leaderboardCheckTimestamp = new DateTime();
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-		
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-
-	}
-
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-
-	}
-
-	/// <summary>
-	/// Called every frame
-	/// </summary>
-	private void Update() {
-
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
-	}
 
 	//------------------------------------------------------------------------//
 	// SINGLETON METHODS													  //
@@ -107,8 +93,37 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 	/// as well in another async call, so be aware that the event might be triggered twice.
 	/// </summary>
 	public static void RequestCurrentEventData() {
-		// Just do it
-		GameServerManager.SharedInstance.GlobalEvent_GetCurrent(instance.OnCurrentEventResponse);
+		// First we have to resolve all the stored events (profile)
+		Dictionary<int, GlobalEventUserData> storedEvents = user.globalEvents;
+		int currentEventId = -1;
+
+		if (storedEvents.Count > 0) {
+			List<int> deleteEvents = new List<int>();
+
+			foreach (KeyValuePair<int, GlobalEventUserData> pair in storedEvents) {
+				if (pair.Value.rewardCollected) {
+					deleteEvents.Add(pair.Key);
+				} else {
+					currentEventId = pair.Key;
+				}
+			}
+
+			for (int i = 0; i < deleteEvents.Count; i++) {
+				storedEvents.Remove(deleteEvents[i]);
+			}
+		}
+
+		if (currentEventId >= 0) {
+			// We've found an event stored, lets get its data
+			if (instance.m_currentEvent == null) {
+				instance.m_currentEvent = new GlobalEvent();
+			}
+
+			GameServerManager.SharedInstance.GlobalEvent_GetState(currentEventId, true, instance.OnEventStateResponse);
+		} else {
+			// Nothing stored so lets ask server for any event
+			GameServerManager.SharedInstance.GlobalEvent_GetCurrent(instance.OnCurrentEventResponse);
+		}
 	}
 
 	/// <summary>
@@ -120,15 +135,20 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 	/// <param name="_getLeaderboard">Whether to get the latest leaderboard for the current event or not. Take in consideration that the leaderboard is a lot of data and is cached, so there's no need to update it every time.</param>
 	public static void RequestCurrentEventState(bool _getLeaderboard) {
 		// We need a valid event
-		if(currentEvent == null) return;
+		if(instance.m_currentEvent == null) return;
+
+		// Reset timer
+		instance.m_stateCheckTimestamp = serverTime.AddSeconds(SERVER_REQUEST_TIMEOUT);
 
 		// Just do it
-		GameServerManager.SharedInstance.GlobalEvent_GetState(currentEvent.id, true, instance.OnEventStateResponse);
+		GameServerManager.SharedInstance.GlobalEvent_GetState(instance.m_currentEvent.id, true, instance.OnEventStateResponse);
 	}
 
 	/// <summary>
 	/// Contribute to current event!
 	/// Contribution amount will be taken from current event tracker.
+	/// Listen to the GameEvents.GLOBAL_EVENT_SCORE_REGISTERED event to know when the
+	/// new data have been received.
 	/// </summary>
 	/// <returns>Whether the contribution has been applied or not and why.</returns>
 	/// <param name="_bonusDragonMultiplier">Apply bonus dragon multiplier?</param>
@@ -139,17 +159,31 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 		if(err != ErrorCode.NONE) return err;
 
 		// Get contribution amount and apply multipliers
-		float contribution = currentEvent.objective.tracker.currentValue;
+		float contribution = instance.m_currentEvent.objective.currentValue;
 		contribution *= _bonusDragonMultiplier;
 		contribution *= _keysMultiplier;
 
-		// Add to event's total contribution!
-		currentEvent.AddContribution(contribution);
+		// Requets to the server!
+		GameServerManager.SharedInstance.GlobalEvent_RegisterScore(
+			instance.m_currentEvent.id, 
+			contribution,
+			(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) => {
+				// If there was no error, update local cache
+				if(_error == null) {
+					// Add to event's total contribution!
+					instance.m_currentEvent.AddContribution(contribution);
 
-		// Add to current user individual contribution in this event
-		user.GetGlobalEventData(currentEvent.id).score += contribution;
+					// Add to current user individual contribution in this event
+					user.GetGlobalEventData(instance.m_currentEvent.id).score += contribution;
 
-		// [AOC] TODO!! Update leaderboard?
+					// [AOC] TODO!! Update leaderboard?
+
+				}
+
+				// Notify game that server response was received
+				Messenger.Broadcast<bool>(GameEvents.GLOBAL_EVENT_SCORE_REGISTERED, _error == null);
+			}
+		);
 
 		// Everything went well!
 		return ErrorCode.NONE;
@@ -174,10 +208,10 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 		if(CPGlobalEventsTest.loginCheck && !GameSessionManager.SharedInstance.IsLogged()) return ErrorCode.NOT_LOGGED_IN;
 
 		// We must have a valid event
-		if(currentEvent == null) return ErrorCode.NO_VALID_EVENT;
+		if(instance.m_currentEvent == null) return ErrorCode.NO_VALID_EVENT;
 
 		// Event must be active!
-		if(!currentEvent.isActive) return ErrorCode.EVENT_NOT_ACTIVE;
+		if(!instance.m_currentEvent.isActive) return ErrorCode.EVENT_NOT_ACTIVE;
 
 		// All checks passed!
 		return ErrorCode.NONE;
@@ -283,6 +317,13 @@ public class GlobalEventManager : UbiBCN.SingletonMonoBehaviour<GlobalEventManag
 			// Player data
 			GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
 			currentEventUserData.Load(responseJson["playerData"]);
+
+			// Update timestamps
+			DateTime now = serverTime;
+			instance.m_stateCheckTimestamp = now.AddSeconds(STATE_REFRESH_INTERVAL);
+			if(responseJson.ContainsKey("leaderboard")) {
+				instance.m_leaderboardCheckTimestamp = now.AddSeconds(LEADERBOARD_REFRESH_INTERVAL);
+			}
 
 			// Notify game that we have new data concerning the current event
 			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_DATA_UPDATED);

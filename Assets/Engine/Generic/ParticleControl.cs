@@ -27,8 +27,8 @@ public class ParticleControl : MonoBehaviour {
 		// lets iterate
 		for (int i = 0; i < m_subsystems.Count; i++) {
 			ParticleSystem system = m_subsystems[i];
-
-			system.Clear(false);
+        
+            system.Clear(false);
 
 			ParticleSystem.MainModule main = system.main;
 
@@ -76,6 +76,7 @@ public class ParticleControl : MonoBehaviour {
 		bool isAlive = false;
 		for (int i = 0; i < m_subsystems.Count; i++) {
 			ParticleSystem system = m_subsystems[i];
+            if (system == null) continue;
 			ParticleSystem.EmissionModule em = system.emission;
 
 			if (em.enabled && system.main.loop) {

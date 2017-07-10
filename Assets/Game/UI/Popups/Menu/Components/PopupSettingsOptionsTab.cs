@@ -46,24 +46,12 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 
 		// Sort definitions by "order" field, create a pill for each language and init with selected language
 		DefinitionsManager.SharedInstance.SortByProperty(ref languageDefs, "order", DefinitionsManager.SortType.NUMERIC);
-		string currentLangSku = LocalizationManager.SharedInstance.GetCurrentLanguageSKU();
-		PopupSettingsLanguagePill initialPill = null;
 		for(int i = 0; i < languageDefs.Count; i++) {
 			// Create and initialize pill
 			GameObject pillObj = GameObject.Instantiate<GameObject>(m_languagePillPrefab, m_languageScrollList.content.transform, false);
 			PopupSettingsLanguagePill pill = pillObj.GetComponent<PopupSettingsLanguagePill>();
 			pill.InitFromDef(languageDefs[i]);
 			m_pills.Add(pill);
-
-			// Is it the selected one?
-			if(languageDefs[i].sku == currentLangSku) {
-				initialPill = pill;
-			}
-		}
-
-		// Select initial pill
-		if(initialPill != null) {
-			m_languageScrollList.SelectPoint(initialPill.GetComponent<ScrollRectSnapPoint>(), false);
 		}
 
 		// Disable google play group if not available
@@ -93,5 +81,21 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		}
 
 		Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
+	}
+
+	/// <summary>
+	/// The popup is about to open.
+	/// </summary>
+	public void OnOpenPreAnimation() {
+		// Scroll to initial language pill
+		string currentLangSku = LocalizationManager.SharedInstance.GetCurrentLanguageSKU();
+		for(int i = 0; i < m_pills.Count; i++) {
+			// Is it the selected one?
+			if(m_pills[i].def.sku == currentLangSku) {
+				// Yes! Snap to it and break the loop
+				m_languageScrollList.SelectPoint(m_pills[i].GetComponent<ScrollRectSnapPoint>(), false);
+				break;
+			}
+		}
 	}
 }

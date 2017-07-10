@@ -72,6 +72,29 @@ public class TimeUtils {
 	};
 
 	//------------------------------------------------------------------//
+	// CONVERSION METHODS												//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Retrieve the unix timestamp (seconds elapsed since 00:00:00 1 January 1970) given a DateTime object.
+	/// Use DateTime.UtcNow to get current unix timestamp.
+	/// <see cref="https://en.wikipedia.org/wiki/Unix_time"/>
+	/// </summary>
+	/// <returns>The unix timestamp corresponding to the given date.</returns>
+	public static long DateToTimestamp(DateTime _date) {
+		return (long)(_date.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+	}
+
+	/// <summary>
+	/// Parse the given unix timestamp (seconds elapsed since 00:00:00 1 January 1970) into a DateTime object.
+	/// <see cref="https://en.wikipedia.org/wiki/Unix_time"/>
+	/// </summary>
+	/// <returns>The date corresponding to the given unix timestamp.</returns>
+	/// <param name="_timestamp">The unix timestamp to be parsed.</param>
+	public static DateTime TimestampToDate(long _timestamp) {
+		return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(_timestamp);
+	}
+
+	//------------------------------------------------------------------//
 	// FORMATTING METHODS												//
 	//------------------------------------------------------------------//
 	/// <summary>

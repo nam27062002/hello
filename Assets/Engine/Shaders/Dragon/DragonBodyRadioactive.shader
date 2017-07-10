@@ -31,7 +31,7 @@ Properties {
 }
 
 SubShader {
-	Tags{ "Queue" = "Transparent+50" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
+	Tags{ "Queue" = "Transparent+50" "RenderType" = "Opaque" "LightMode" = "ForwardBase" }
 
 	ColorMask RGBA
 	LOD 100

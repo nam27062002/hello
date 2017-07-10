@@ -34,8 +34,8 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	private DateTime m_initTimestamp = new DateTime();
 
 	// Simulate global event progression
-	private Dictionary<string, float> m_eventValues = new Dictionary<string, float>();
-	private Dictionary<string, List<GlobalEventUserData>> m_eventLeaderboards = new Dictionary<string, List<GlobalEventUserData>>();
+	private Dictionary<int, float> m_eventValues = new Dictionary<int, float>();
+	private Dictionary<int, List<GlobalEventUserData>> m_eventLeaderboards = new Dictionary<int, List<GlobalEventUserData>>();
 
 	//------------------------------------------------------------------------//
 	// INTERNAL UTILS														  //
@@ -136,11 +136,19 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		if(targetState == CPGlobalEventsTest.EventStateTest.NO_EVENT) {
 			res["response"] = null;
 		} else {
-			// Type and target
+			// ID
 			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass();
-			eventData.Add("id", "test_event_0");
-			eventData.Add("goal", "eat_birds");
-			eventData.Add("targetValue", 1000f.ToString(JSON_FORMAT));
+			eventData.Add("id", 0);
+			eventData.Add("name", "test_event_0");
+
+			// Goal definition
+			SimpleJSON.JSONClass goalData = new SimpleJSON.JSONClass();
+			goalData.Add("type", "kill");
+			goalData.Add("params", "Canary01_Flock;Canary02_Flock;Canary03_Flock;Canary04_Flock");
+			goalData.Add("icon", "icon_canary");
+			goalData.Add("tidDesc", "TID_EVENT_EAT_BIRDS");
+			goalData.Add("amount", 1000f.ToString(JSON_FORMAT));
+			eventData.Add("goal", goalData);
 
 			// Timestamps
 			// By tuning the start timestamp in relation to the current time we can simulate the different states of the event
@@ -160,20 +168,20 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 				} break;
 			}
 
-			eventData.Add("startTimestamp", startTimestamp.ToString(JSON_FORMAT));
-			eventData.Add("teaserTimestamp", startTimestamp.AddDays(-2).ToString(JSON_FORMAT));	// 2 days before start time
-			eventData.Add("endTimestamp", startTimestamp.AddDays(7).ToString(JSON_FORMAT));		// Lasts 7 days
+			eventData.Add("startTimestamp", TimeUtils.DateToTimestamp(startTimestamp).ToString(JSON_FORMAT));
+			eventData.Add("teaserTimestamp", TimeUtils.DateToTimestamp(startTimestamp.AddDays(-2)).ToString(JSON_FORMAT));	// 2 days before start time
+			eventData.Add("endTimestamp", TimeUtils.DateToTimestamp(startTimestamp.AddDays(7)).ToString(JSON_FORMAT));		// Lasts 7 days
 
 			// Rewards
 			SimpleJSON.JSONArray rewardsArray = new SimpleJSON.JSONArray();
-			rewardsArray.Add(CreateEventRewardData(0.2f, "sc", 500));
-			rewardsArray.Add(CreateEventRewardData(0.5f, "sc", 1000));
-			rewardsArray.Add(CreateEventRewardData(0.75f, "hc", 100));
-			rewardsArray.Add(CreateEventRewardData(1f, "egg", 1));
+			rewardsArray.Add(CreateEventRewardData(0.2f, GlobalEvent.Reward.Type.SC, "", 500));
+			rewardsArray.Add(CreateEventRewardData(0.5f, GlobalEvent.Reward.Type.SC, "", 1000));
+			rewardsArray.Add(CreateEventRewardData(0.75f, GlobalEvent.Reward.Type.PC, "", 100));
+			rewardsArray.Add(CreateEventRewardData(1f, GlobalEvent.Reward.Type.EGG, "egg_premium", -1));
 			eventData.Add("rewards", rewardsArray);
 
 			// Top percentile reward
-			eventData.Add("topReward", CreateEventRewardData(0.1f, "pet1", 1));
+			eventData.Add("topReward", CreateEventRewardData(0.1f, GlobalEvent.Reward.Type.PET, "pet_24", -1));
 
 			// Store response
 			res["response"] = eventData.ToString();
@@ -189,7 +197,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// <param name="_eventID">The identifier of the event whose state we want.</param>
 	/// <param name="_getLeaderboard">Whether to retrieve the leaderboard as well or not (top 100 + player).</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_GetState(string _eventID, bool _getLeaderboard, ServerCallback _callback) {
+	override public void GlobalEvent_GetState(int _eventID, bool _getLeaderboard, ServerCallback _callback) {
 		// Create return dictionary
 		ServerResponse res = new ServerResponse();
 
@@ -245,7 +253,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
 		// If player is not on the leaderboard but should be, add it!
 		// We should probably remove the last one, but since it's test code, we don't care enough
-		int playerIdx = leaderboard.FindIndex((_data) => _data.userId == playerEventData.userId);
+		int playerIdx = leaderboard.FindIndex((_data) => _data.userID == playerEventData.userID);
 		float minScore = leaderboard.Last().score;
 		if(playerIdx < 0 && playerEventData.score > minScore && playerEventData.score > 0f) {
 			leaderboard.Add(new GlobalEventUserData(playerEventData));	// Create a copy of the data
@@ -261,7 +269,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			leaderboard[i].position = i;
 
 			// If it's the player, update position as well
-			if(leaderboard[i].userId == playerEventData.userId) {
+			if(leaderboard[i].userID == playerEventData.userID) {
 				playerEventData.position = i;
 			}
 		}
@@ -290,7 +298,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_score">The score to be registered.</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_RegisterScore(string _eventID, float _score, ServerCallback _callback) {
+	override public void GlobalEvent_RegisterScore(int _eventID, float _score, ServerCallback _callback) {
 		// Increase event's current value
 		if(!m_eventValues.ContainsKey(_eventID)) {
 			// Invalid event ID, simulate validation error
@@ -307,7 +315,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// </summary>
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_callback">Callback action. Given rewards?</param>
-	override public void GlobalEvent_ApplyRewards(string _eventID, ServerCallback _callback) {
+	override public void GlobalEvent_ApplyRewards(int _eventID, ServerCallback _callback) {
 		// [AOC] TODO!!
 		DelayedCall(() => _callback(null, null));
 	}
@@ -317,13 +325,15 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// </summary>
 	/// <returns>The event reward data json.</returns>
 	/// <param name="_percentage">Target percentage. For top percentile reward, percentile of the leaderboard to whom the reward is given.</param>
-	/// <param name="_sku">Reward sku.</param>
-	/// <param name="_amount">Rewarded amount.</param>
-	private SimpleJSON.JSONClass CreateEventRewardData(float _percentage, string _sku, long _amount) {
+	/// <param name="_type">Type of reward to be given.</param>
+	/// <param name="_sku">Reward sku (optional).</param>
+	/// <param name="_amount">Rewarded amount (optional).</param>
+	private SimpleJSON.JSONClass CreateEventRewardData(float _percentage, GlobalEvent.Reward.Type _type, string _sku, long _amount) {
 		SimpleJSON.JSONClass reward = new SimpleJSON.JSONClass();
 		reward.Add("targetPercentage", _percentage.ToString(JSON_FORMAT));
-		reward.Add("sku", _sku);
-		reward.Add("amount", _amount.ToString(JSON_FORMAT));
+		reward.Add("type", GlobalEvent.Reward.TypeToString(_type));
+		if(!string.IsNullOrEmpty(_sku)) reward.Add("sku", _sku);
+		if(_amount > 0f) reward.Add("amount", _amount.ToString(JSON_FORMAT));
 		return reward;
 	}
 }

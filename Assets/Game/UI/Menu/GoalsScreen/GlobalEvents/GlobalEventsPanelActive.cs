@@ -30,6 +30,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	[SerializeField] private Image m_objectiveIcon = null;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
+	[SerializeField] private TextMeshProUGUI m_currentValueText_DEBUG = null;
 	[Space]
 	[SerializeField] private Slider m_progressBar = null;
 	[SerializeField] private GlobalEventsRewardInfo[] m_rewardInfos = new GlobalEventsRewardInfo[0];
@@ -71,7 +72,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		m_objectiveText.text = evt.objective.GetDescription();
 
 		// Target icon
-		m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + evt.objective.goalDef.Get("icon"));
+		m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + evt.objective.icon);
 
 		// Rewards
 		for(int i = 0; i < evt.rewards.Count; ++i) {
@@ -93,6 +94,10 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 				m_rewardInfos[i].rectTransform.anchorMax = anchor;
 			}
 		}
+
+		// Progress
+		m_progressBar.value = evt.progress;
+		m_currentValueText_DEBUG.text = StringUtils.FormatBigNumber(evt.currentValue);
 	}
 
 	//------------------------------------------------------------------------//
