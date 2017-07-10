@@ -416,6 +416,11 @@ public class DragonPowerUp : MonoBehaviour {
                     return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_VACUUM.ToHexString("#"));
                 }break;
 
+            case "faster_boost":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_BOOST.ToHexString("#"));
+                }break;
+
 			case "prey_hp_boost": {
 				/*
 				// Show target entity name
