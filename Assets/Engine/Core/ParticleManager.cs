@@ -158,7 +158,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 					if (!_folderPath.EndsWith("/")) _folderPath = _folderPath + "/";
 				}
 
-				GameObject go = Resources.Load<GameObject>("Particles/" + _folderPath + _prefabName);
+				GameObject go = Resources.Load<GameObject>("Particles/Master/" + _folderPath + _prefabName);
 
 				if (go != null) {
 					if (m_poolLimits == PoolLimits.Unlimited) {
