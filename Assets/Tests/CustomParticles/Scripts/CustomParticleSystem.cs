@@ -73,31 +73,42 @@ public class CustomParticleSystem : MonoBehaviour {
         {
             GameObject go = new GameObject("custom_particle");
             CustomParticle cp = go.AddComponent<CustomParticle>();
+            cp.m_pSystem = this;
             m_particlesStack[c] = m_particles[c] = cp;
             go.SetActive(false);
         }
-
-        m_stackIndex = 0;
+        m_invRateOverTime = 1.0f / m_RateOverTime;
+        m_stackIndex = m_MaxParticles;
     }
 
 	// Use this for initialization
 	void Start () {
-		
-	}
+        m_nextParticleTime = Time.time;
+    }
 	
 	// Update is called once per frame
 	void Update () {
         if (Time.time > m_nextParticleTime)
         {
             CustomParticle cp = Stack;
-            cp.transform.position = transform.position + Random.insideUnitSphere * m_radius;
-            if (m_local)
+            if (cp != null)
             {
-                cp.transform.parent = transform;
-            }
-            else
-            {
-                cp.transform.parent = null;
+                cp.transform.position = transform.position + Random.insideUnitSphere * m_radius;
+                float sc = Random.Range(m_scaleRange.min, m_scaleRange.max);
+//                cp.transform.localScale.Set(sc, sc, sc);
+                if (m_local)
+                {
+                    cp.transform.parent = transform;
+                }
+                else
+                {
+                    cp.transform.parent = null;
+                }
+                cp.m_duration = m_duration;
+                cp.m_velocity = Vector3.zero;
+                cp.gameObject.SetActive(true);
+                m_nextParticleTime = Time.time + m_invRateOverTime;
+
             }
         }
 	}

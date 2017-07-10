@@ -2,6 +2,7 @@
 {
 	Properties{
 		_MainTex("Particle Texture", 2D) = "white" {}
+		[Toggle(GPUINSTANCING)] _EnableGpuinstancing("Instanced", int) = 0.0
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}
 
@@ -34,6 +35,9 @@
 				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile_particles
 
+				#pragma multi_compile_instancing
+				#pragma shader_feature  __ GPUINSTANCING
+
 				#include "UnityCG.cginc"
 
 				sampler2D _MainTex;
@@ -43,19 +47,38 @@
 					float4 vertex : POSITION;
 					fixed4 color : COLOR;
 					float2 texcoord : TEXCOORD0;
+#ifdef GPUINSTANCING
+					UNITY_VERTEX_INPUT_INSTANCE_ID
+#endif
 				};
 
 				struct v2f {
 					float4 vertex : POSITION;
 					fixed4 color : COLOR;
 					float2 texcoord : TEXCOORD0;
+#ifdef GPUINSTANCING
+					UNITY_VERTEX_INPUT_INSTANCE_ID
+#endif
 				};
 
 				float4 _MainTex_ST;
 
+
+#ifdef GPUINSTANCING
+				UNITY_INSTANCING_CBUFFER_START(MyProperties)
+				UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
+				UNITY_INSTANCING_CBUFFER_END
+#endif
+
 				v2f vert(appdata_t v)
 				{
 					v2f o;
+
+#ifdef GPUINSTANCING
+					UNITY_SETUP_INSTANCE_ID(v);
+					UNITY_TRANSFER_INSTANCE_ID(v, o); // necessary only if you want to access instanced properties in the fragment Shader.__
+#endif
+
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 					o.color = v.color;
 					o.texcoord = TRANSFORM_TEX(v.texcoord,_MainTex);
@@ -67,7 +90,10 @@
 
 				fixed4 frag(v2f i) : COLOR
 				{
-					half4 prev = i.color * tex2D(_MainTex, i.texcoord);
+#ifdef GPUINSTANCING
+				UNITY_SETUP_INSTANCE_ID(i); // necessary only if any instanced properties are going to be accessed in the fragment Shader.__
+#endif
+				half4 prev = i.color * tex2D(_MainTex, i.texcoord);
 					prev.rgb *= prev.a;
 					return prev;
 				}

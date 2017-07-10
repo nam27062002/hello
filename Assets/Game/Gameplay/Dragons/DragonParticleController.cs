@@ -288,7 +288,7 @@ public class DragonParticleController : MonoBehaviour
 	private ParticleSystem InitParticles(string particle, Transform _anchor)
 	{
 		ParticleSystem ret = null;
-		GameObject go = Resources.Load<GameObject>( "Particles/" + particle );
+		GameObject go = Resources.Load<GameObject>( "Particles/Master/" + particle );
 		if ( go != null )
 		{
 			 ret = InitParticles( go,  _anchor);
