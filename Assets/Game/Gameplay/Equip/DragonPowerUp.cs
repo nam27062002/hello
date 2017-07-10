@@ -152,6 +152,19 @@ public class DragonPowerUp : MonoBehaviour {
 						}break;
 					}
 				}break;
+				case "lower_damage_origin":
+				{
+					List<string> origins = def.GetAsList<string>("param1");
+					if ( origins.Count > 0 && !string.IsNullOrEmpty(origins[0]) )
+					{
+						float percentage = def.GetAsFloat("param2");
+						DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
+						for( int i = 0; i<origins.Count; ++i )
+						{
+							healthBehaviour.AddDamageReduction( origins[i], percentage );
+						}
+					}
+				}break;
 				case "lives":		// adds lives to the player
 				{
 					int numExtraLives = def.GetAsInt("param1");
