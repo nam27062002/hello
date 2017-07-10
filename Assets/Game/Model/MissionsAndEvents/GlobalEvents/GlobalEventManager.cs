@@ -115,8 +115,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 		if (currentEventId >= 0) {
 			// We've found an event stored, lets get its data
-			if (m_currentEvent == null) {
-				m_currentEvent = new GlobalEvent();
+			if (instance.m_currentEvent == null) {
+				instance.m_currentEvent = new GlobalEvent();
 			}
 
 			GameServerManager.SharedInstance.GlobalEvent_GetState(currentEventId, true, instance.OnEventStateResponse);

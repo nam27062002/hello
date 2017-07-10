@@ -28,6 +28,7 @@ public partial class GlobalEvent {
 		TEASING,
 		ACTIVE,
 		FINISHED,
+		REWARD_COLLECTED,
 
 		COUNT
 	};
@@ -101,6 +102,10 @@ public partial class GlobalEvent {
 		get { return m_state == State.ACTIVE; }
 	}
 
+	public bool isRewarAvailable {
+		get { return m_state == State.FINISHED; }
+	}
+
 	// Contribution
 	private List<GlobalEventUserData> m_topContributors = new List<GlobalEventUserData>();	// Sorted
 	public List<GlobalEventUserData> topContributors {
@@ -137,6 +142,17 @@ public partial class GlobalEvent {
 
 		// Update current value
 		m_currentValue += _value;
+	}
+
+	public void ApplyReward() {
+		if (m_state == State.FINISHED) {
+			// TODO
+
+			// compute reward and store it
+
+			UsersManager.currentUser.GetGlobalEventData(m_id).rewardCollected = true;
+			m_state = State.REWARD_COLLECTED;
+		}
 	}
 
 	/// <summary>
