@@ -201,6 +201,29 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 		return instance.InstantiatePopup(prefab);
 	}
 
+	/// <summary>
+	/// Clear will delete all popups registered with the manager (whether they're open or not).
+	/// It will also stop any active loading task.
+	/// </summary>
+	public static void Clear() {
+		// Create delete action
+		System.Action<PopupController> deleteAction = (PopupController _popup) => {
+			// Destroy directly rather than using PopupController's methods
+			GameObject.Destroy(_popup.gameObject);
+		};
+
+		// Iterate popups lists
+		instance.m_openedPopups.ForEach(deleteAction);
+		instance.m_closedPopups.ForEach(deleteAction);
+
+		// Clear lists
+		instance.m_openedPopups.Clear();
+		instance.m_closedPopups.Clear();
+
+		// Unfortunately, async operations cannot be canceled in Unity, so let's just clear the queue
+		instance.m_loadingQueue.Clear();
+	}
+
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
