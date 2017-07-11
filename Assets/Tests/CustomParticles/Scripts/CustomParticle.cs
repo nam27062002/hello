@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CustomParticle : MonoBehaviour {
+
+#if (!CUSTOMPARTICLES_DRAWMESH)
     public CustomParticleSystem m_pSystem;
 
     private MeshRenderer m_renderer;
@@ -60,4 +62,5 @@ public class CustomParticle : MonoBehaviour {
 //            gameObject.SetActive(false);
         }
 	}
+#endif
 }

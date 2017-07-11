@@ -130,6 +130,46 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 114697897613932588, guid: c1388f5d4378a534db399d77035fef94,
+        type: 2}
+      propertyPath: m_MaxParticles
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114697897613932588, guid: c1388f5d4378a534db399d77035fef94,
+        type: 2}
+      propertyPath: m_RateOverTime
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 114697897613932588, guid: c1388f5d4378a534db399d77035fef94,
+        type: 2}
+      propertyPath: m_VelX.min
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114697897613932588, guid: c1388f5d4378a534db399d77035fef94,
+        type: 2}
+      propertyPath: m_VelX.max
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114697897613932588, guid: c1388f5d4378a534db399d77035fef94,
+        type: 2}
+      propertyPath: m_VelY.max
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114697897613932588, guid: c1388f5d4378a534db399d77035fef94,
+        type: 2}
+      propertyPath: m_VelZ.min
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114697897613932588, guid: c1388f5d4378a534db399d77035fef94,
+        type: 2}
+      propertyPath: m_VelZ.max
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114697897613932588, guid: c1388f5d4378a534db399d77035fef94,
+        type: 2}
+      propertyPath: m_gravity.y
+      value: -0.98
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c1388f5d4378a534db399d77035fef94, type: 2}
   m_IsPrefabParent: 0
@@ -318,7 +358,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1898103430
+  randomSeed: -2139134620
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -761,7 +801,7 @@ ParticleSystem:
     enabled: 1
     serializedVersion: 3
     rateOverTime:
-      scalar: 10
+      scalar: 100
       maxCurve:
         serializedVersion: 2
         m_Curve:
