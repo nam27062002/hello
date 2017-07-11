@@ -10,6 +10,7 @@
 using System;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEditor;
 using Object = UnityEngine.Object;
 
@@ -20,14 +21,38 @@ using Object = UnityEngine.Object;
 /// Custom editor window.
 /// </summary>
 public class LightmapTool : EditorWindow {
-
  
-    public static class LightingSettingsHepler
+    public static class LightingSettingsHelper
     {
         public static void SetIndirectResolution(float val)
         {
             SetFloat("m_LightmapEditorSettings.m_Resolution", val);
         }
+
+        public static void SetMaxAtlasResolution(int val)
+        {
+            SetInt("m_LightmapEditorSettings.m_TextureWidth", val);
+            SetInt("m_LightmapEditorSettings.m_TextureHeight", val);
+        }
+        public static void SetGIWorkFlowMode(int val)
+        {
+            SetInt("m_GIWorkflowMode", val);
+        }
+        public static void SetBakedResolution(float val)
+        {
+            SetFloat("m_LightmapEditorSettings.m_BakeResolution", val);
+        }
+
+        public static Color GetAmbientColor()
+        {
+            MethodInfo getLightmapSettingsMethod = typeof(LightmapEditorSettings).GetMethod("get_skyLightColor");
+            Color skyColor = (Color)getLightmapSettingsMethod.Invoke(null, null);
+
+            return skyColor;
+
+//            return GetProperty("").colorValue;
+        }
+
 
         public static void SetAmbientOcclusion(float val)
         {
@@ -42,6 +67,21 @@ public class LightmapTool : EditorWindow {
         public static void SetFinalGatherEnabled(bool enabled)
         {
             SetBool("m_LightmapEditorSettings.m_FinalGather", enabled);
+        }
+
+        public static void SetEnableRealtimeLightmaps(bool enabled)
+        {
+            SetBool("m_GISettings.m_EnableRealtimeLightmaps", enabled);
+        }
+
+        public static void SetEnvironmentLightingMode(int enabled)
+        {
+            SetInt("m_GISettings.m_EnvironmentLightingMode", enabled);
+        }       
+
+        public static void SetLightmapBakeMode(int val)
+        {
+            SetInt("m_LightmapEditorSettings.m_LightmapsBakeMode", val);
         }
 
         public static void SetFinalGatherRayCount(int val)
@@ -66,7 +106,7 @@ public class LightmapTool : EditorWindow {
 
         public static void ChangeProperty(string name, Action<SerializedProperty> changer)
         {
-            SerializedObject lightmapSettings = getLighmapSettings();
+            SerializedObject lightmapSettings = getLightmapSettings();
             SerializedProperty prop = lightmapSettings.FindProperty(name);
             if (prop != null)
             {
@@ -76,28 +116,25 @@ public class LightmapTool : EditorWindow {
             else Debug.LogError("lighmap property not found: " + name);
         }
 
-
-        public static void GetProperty(string name, Action<SerializedProperty> changer)
+        public static SerializedProperty GetProperty(string name)
         {
-            SerializedObject lightmapSettings = getLighmapSettings();
+            SerializedObject lightmapSettings = getLightmapSettings();
             SerializedProperty prop = lightmapSettings.FindProperty(name);
             if (prop != null)
             {
-                changer(prop);
-                lightmapSettings.ApplyModifiedProperties();
+                return prop;
             }
             else Debug.LogError("lighmap property not found: " + name);
+            return null;
         }
 
-
-
-        static SerializedObject getLighmapSettings()
+        public static SerializedObject getLightmapSettings()
         {
             MethodInfo getLightmapSettingsMethod = typeof(LightmapEditorSettings).GetMethod("GetLightmapSettings", BindingFlags.Static | BindingFlags.NonPublic);
             Object lightmapSettings = getLightmapSettingsMethod.Invoke(null, null) as Object;
             return new SerializedObject(lightmapSettings);
         }
-
+/*
         public static void Test()
         {
             SetBakedGiEnabled(true);
@@ -105,6 +142,68 @@ public class LightmapTool : EditorWindow {
             SetAmbientOcclusion(1.337f);
             SetFinalGatherEnabled(true);
             SetFinalGatherRayCount(1337);
+        }
+*/
+    }
+
+    [MenuItem("Tools/Set Lightmap properties")]
+    static void SetLightmapProperties()
+    {
+                SerializedObject so = LightingSettingsHelper.getLightmapSettings();
+                SerializedProperty sp = so.GetIterator();
+
+                while (sp.Next(true))
+                {
+                    Debug.Log("Property ---> [path:" + sp.propertyPath + "] [type:" + sp.propertyType + "] [displayName:" + sp.displayName + "]");
+                    if (sp.propertyType == SerializedPropertyType.Enum)
+                    {
+                        int i = 0;
+                        foreach (string ename in sp.enumDisplayNames)
+                        {
+                            Debug.Log("        " + i++ + " ---> [enumName:" + ename + "]");
+                        }
+                    }
+                }
+/*
+        MethodInfo[] methods = typeof(LightmapEditorSettings).GetMethods();
+
+        foreach (MethodInfo m in methods)
+        {
+            Debug.Log("Method: " + m);
+        }
+*/
+        /*
+        Debug.Log("--------------------------------------------------------------------------------------------------------------------");
+
+        Color ambientColor;
+
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            Scene s = SceneManager.GetSceneAt(i);
+            if (s.isLoaded && s.name == "ART_Medieval_Lighting")
+            {
+                ambientColor = LightingSettingsHelper.GetAmbientColor();
+                break;
+            }
+        }
+
+        */
+
+
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            Scene s = SceneManager.GetSceneAt(i);
+            if (s.isLoaded)
+            {
+                SceneManager.SetActiveScene(s);
+                LightingSettingsHelper.SetBakedGiEnabled(true);
+                LightingSettingsHelper.SetEnableRealtimeLightmaps(false);
+                LightingSettingsHelper.SetMaxAtlasResolution(1024);
+//                LightingSettingsHelper.SetGIWorkFlowMode(0);
+                LightingSettingsHelper.SetBakedResolution(1.0f);
+//                LightingSettingsHelper.SetEnvironmentLightingMode(0);
+                LightingSettingsHelper.SetLightmapBakeMode(0);
+            }
         }
     }
 

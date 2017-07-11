@@ -37,11 +37,15 @@ public class DeviceQualityManager
     private class ProfileData
     {
         public float Rating { get; set; }
+
+        // Min memory in bytes required to run this profile
+        public int MinMemory { get; set; }
         public JSONNode Json { get; set; }
 
-        public ProfileData(float rating, JSONNode json)
+        public ProfileData(float rating, int minMemory, JSONNode json)
         {
             Rating = rating;
+            MinMemory = minMemory;
             Json = json;
         }
     }
@@ -57,6 +61,11 @@ public class DeviceQualityManager
     /// </summary>
     private Dictionary<string, ProfileData> Profiles_Data { get; set; }
 
+    /// <summary>
+    /// Min memory in bytes required to run the game
+    /// </summary>
+    private int Profiles_MinMemory { get; set; }
+
     public void Profiles_Clear()
     {
         if (Profiles_Names != null)
@@ -68,9 +77,11 @@ public class DeviceQualityManager
         {
             Profiles_Data.Clear();
         }
+
+        Profiles_MinMemory = int.MaxValue;
     }    
 
-    public void Profiles_AddData(string profileName, float rating, JSONNode settings)
+    public void Profiles_AddData(string profileName, float rating, int minMemory, JSONNode settings)
     {
         if (Profiles_Names == null)
         {
@@ -90,11 +101,16 @@ public class DeviceQualityManager
                 Profiles_Data = new Dictionary<string, ProfileData>();
             }
 
-            ProfileData profileData = new ProfileData(rating, settings);
+            ProfileData profileData = new ProfileData(rating, minMemory, settings);
             Profiles_Data.Add(profileName, profileData);
 
             // Makes sure that the profiles are sorted which is important to be able to determine the profile for a rating given (Profiles_RatingToProfileName())
             Profiles_Names.Sort(Profiles_Sort);
+
+            if (minMemory < Profiles_MinMemory)
+            {
+                Profiles_MinMemory = minMemory;
+            }
         }
     }
 
@@ -129,38 +145,40 @@ public class DeviceQualityManager
     }
 
     /// <summary>
-    /// Returns the name of the profile that corresponds to the device rating passed as a parameter
-    /// </summary>    
-    public string Profiles_RatingToProfileName(float rating)
+    /// Returns the name of the profile that corresponds to the device rating passed as a parameter    
+    /// </summary>
+    /// <param name="rating"></param>
+    /// <param name="memorySize">memory size in bytes</param>
+    /// <returns></returns>
+    public string Profiles_RatingToProfileName(float rating, int memorySize)
     {
+        if (memorySize < Profiles_MinMemory)
+        {
+            LogWarning("memory Size " + memorySize + " is lower than the minimum memory required by the game (" + Profiles_MinMemory + ")");
+
+            // Memory size is forced to min memory. Some devices have a few bytes less than 1GB so we try our luck
+            memorySize = 1024;
+        }
+
         string returnValue = null;
         if (Profiles_Names != null)
-        {
-            // Loops through all profiles, which are sorted in ascending order per rating, until one with bigger rating than the passed as an argument is found
+        {            
             int i;
             int count = Profiles_Names.Count;
-            for (i = 0; i < count && Profiles_Data[Profiles_Names[i]].Rating < rating; i++); // Empty            
-
-            // We need to  make sure it doesn't exceed the max value
-            if (i >= count)
+            
+            // Loops through all profiles, which are sorted in ascending order per rating, until one with bigger rating than the passed as an argument is found
+            for (i = 0; i < count && Profiles_Data[Profiles_Names[i]].Rating < rating; i++)
             {
-                i = count - 1;
-            }
-
-            returnValue = Profiles_Names[i];
+                // Makes sure that it has memory and rating enough to use this profile
+                if (memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating < rating)
+                {
+                    returnValue = Profiles_Names[i];
+                }                
+            }                                   
         }
 
         return returnValue;
-    }
-
-    /// <summary>
-    /// Returns the <c>FeatureSettings</c> object of the profile that corresponds to the device rating passed as a parameter.
-    /// </summary>    
-    public JSONNode Profiles_GetDataPerRatingAsJSON(float rating)
-    {
-        string profileName = Profiles_RatingToProfileName(rating);
-        return (profileName == null) ? null : Profiles_Data[profileName].Json;        
-    }
+    }       
     #endregion
 
     #region device

@@ -423,7 +423,7 @@ public class ResultsScreenController : MonoBehaviour {
 		// Nothing else to show, go back to the menu!
 		if(m_toCheck == ToCheck.COUNT) {
             // Show loading screen
-			LoadingScreen.Toggle(true);
+			LoadingScreen.Toggle(true, false);
 
 			// Update global stats
 			UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;

@@ -39,6 +39,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
         Social_Init();
         Cloud_Init();
         User_Init();
+        CS_Init();
         IsShown = false;
     }
 
@@ -793,5 +794,52 @@ public class PopupSettingsSaveTab : MonoBehaviour
     {
         Debug.LogError(LOG_CHANNEL + message);
     }
+    #endregion
+
+
+    #region customersupport
+    // This region is responsible for handling customer support stuff
+
+   
+
+    public void CS_Init()
+    {
+        string country = "es";
+        if (
+            ServerManager.SharedInstance.GetServerAuthBConfig() != null &&
+            ServerManager.SharedInstance.GetServerAuthBConfig()["country"] != null)
+        {
+            country = ServerManager.SharedInstance.GetServerAuthBConfig()["country"].ToString().Replace("\"", "");
+        }
+
+        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+
+        if (settingsInstance != null)
+        {
+            CSTSManager.ECSTSEnvironment kEnv = CSTSManager.ECSTSEnvironment.E_CSTS_DEV;
+            if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
+            {
+                kEnv = CSTSManager.ECSTSEnvironment.E_CSTS_PROD;
+            }
+
+            CSTSManager.CSTSConfig kCSTSConfig = new CSTSManager.CSTSConfig();
+            kCSTSConfig.m_eEnvironment = kEnv;
+            kCSTSConfig.m_strCSTSId = "cd6a617edf97d768067ac38e295f651c";
+            kCSTSConfig.m_strInGamePlayerID = GameSessionManager.SharedInstance.GetUID();
+            kCSTSConfig.m_strCountry = country;
+            kCSTSConfig.m_bIsAutoDestroyable = true;
+            kCSTSConfig.m_bUseNavigationBar = true;
+            kCSTSConfig.m_kViewRect = new Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+
+            CSTSManager.SharedInstance.Initialise(kCSTSConfig);
+        }
+    }
+
+    public void OpenCustomerSupport()
+    {
+        //CSTSManager.SharedInstance.OpenView(TranslationsManager.Instance.ISO.ToString(), PersistenceManager.Instance.IsPayer);
+        CSTSManager.SharedInstance.OpenView("es", false);
+    }
+
     #endregion
 }

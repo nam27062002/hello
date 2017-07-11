@@ -232,8 +232,8 @@ public class UserProfile : UserSaveSystem
 
 	// Global events
 	// Events dictionary
-	private Dictionary<string, GlobalEventUserData> m_globalEvents = new Dictionary<string, GlobalEventUserData>();
-	public Dictionary<string, GlobalEventUserData> globalEvents {
+	private Dictionary<int, GlobalEventUserData> m_globalEvents = new Dictionary<int, GlobalEventUserData>();
+	public Dictionary<int, GlobalEventUserData> globalEvents {
 		get { return m_globalEvents; }
 	}
 
@@ -641,7 +641,7 @@ public class UserProfile : UserSaveSystem
 				// Create a new event with the given data and store it to the events dictionary
 				GlobalEventUserData newEvent = new GlobalEventUserData();
 				newEvent.Load(eventsData[i]);
-				m_globalEvents[newEvent.eventId] = newEvent;
+				m_globalEvents[newEvent.eventID] = newEvent;
 			}
 		}
 	}
@@ -780,7 +780,7 @@ public class UserProfile : UserSaveSystem
 
 		// Global Events
 		SimpleJSON.JSONArray eventsData = new SimpleJSON.JSONArray();
-		foreach(KeyValuePair<string, GlobalEventUserData> kvp in m_globalEvents) {
+		foreach(KeyValuePair<int, GlobalEventUserData> kvp in m_globalEvents) {
 			eventsData.Add(kvp.Value.Save(true));
 		}
 		data.Add("globalEvents", eventsData);
@@ -1070,13 +1070,13 @@ public class UserProfile : UserSaveSystem
 	/// </summary>
 	/// <returns>The event data for the requested event.</returns>
 	/// <param name="_eventId">Event identifier.</param>
-	public GlobalEventUserData GetGlobalEventData(string _eventId) {
+	public GlobalEventUserData GetGlobalEventData(int _eventID) {
 		// If the user doesn't have data of this event, create a new one
 		GlobalEventUserData data = null;
-		if(!m_globalEvents.TryGetValue(_eventId, out data)) {
+		if(!m_globalEvents.TryGetValue(_eventID, out data)) {
 			data = new GlobalEventUserData();
-			data.eventId = _eventId;
-			m_globalEvents[_eventId] = data;
+			data.eventID = _eventID;
+			m_globalEvents[_eventID] = data;
 		}
 		return data;
 	}

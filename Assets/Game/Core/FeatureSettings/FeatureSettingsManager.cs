@@ -330,26 +330,17 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         //Average the devices RAM, CPU and GPU details to give a rating betwen 0 and 1
         float finalDeviceRating = 0.0f;
 
-        int processorCount = SystemInfo.processorCount;
-        int systemMemorySize = SystemInfo.systemMemorySize;
+        int processorCount = SystemInfo.processorCount;        
         int graphicsMemorySize = SystemInfo.graphicsMemorySize;
 
-        Dictionary<string, DefinitionNode> definitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DEVICE_RATING_SETTINGS);
-        List<DeviceSettings> memoryData = new List<DeviceSettings>();
+        Dictionary<string, DefinitionNode> definitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DEVICE_RATING_SETTINGS);        
         List<DeviceSettings> cpuCoresData = new List<DeviceSettings>();
         List<DeviceSettings> gpuMemoryData = new List<DeviceSettings>();        
 
         DeviceSettings data;
         string key;
         foreach (KeyValuePair<string, DefinitionNode> pair in definitions)
-        {
-            key = "memoryRating";
-            if (pair.Value.Has(key))
-            {
-                data = new DeviceSettings(pair.Value.GetAsFloat(key), pair.Value.GetAsFloat("memoryBoundary"));
-                memoryData.Add(data);
-            }
-
+        {            
             key = "cpuCoresRating";
             if (pair.Value.Has(key))
             {
@@ -365,22 +356,12 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             }            
         }
 
-        // Lists are sorted in ascendent order of rating
-        memoryData.Sort(DeviceSettings.Sort);
+        // Lists are sorted in ascendent order of rating        
         cpuCoresData.Sort(DeviceSettings.Sort);
         gpuMemoryData.Sort(DeviceSettings.Sort);        
-
-        // Memory rating
+       
         Device_MemoryRating = 1.0f;        
-        foreach (DeviceSettings ds in memoryData)
-        {
-            if (systemMemorySize <= ds.Boundary)
-            {
-                Device_MemoryRating = ds.Rating;
-                break;
-            }
-        }
-
+       
         // cpu rating
         Device_CPUCoresRating = 1.0f;        
         foreach (DeviceSettings ds in cpuCoresData)
@@ -408,11 +389,10 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             shaderMultiplier = 0.0f;
         }              
 
-        finalDeviceRating = ((Device_MemoryRating + Device_CPUCoresRating + Device_GfxMemoryRating) / 3) * shaderMultiplier;
+        finalDeviceRating = ((Device_CPUCoresRating + Device_GfxMemoryRating) / 2) * shaderMultiplier;
         finalDeviceRating = Mathf.Clamp(finalDeviceRating, 0.0f, 1.0f);
 
-        Log("Memory size = " + systemMemorySize + " memQualityRating = " + Device_MemoryRating +
-           "Graphics memory size = " + graphicsMemorySize + " gpuMemQualityLevel = " + Device_GfxMemoryRating +
+        Log("Graphics memory size = " + graphicsMemorySize + " gpuMemQualityLevel = " + Device_GfxMemoryRating +
            "Num cores = " + processorCount + " cpuQualityRating = " + Device_CPUCoresRating +
            "Shader multiplier = " + shaderMultiplier + 
            "Device rating = " + finalDeviceRating);       
@@ -555,7 +535,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             }
             else
             {                               
-                m_deviceQualityManager.Profiles_AddData(featureSettings.Profile, featureSettings.Rating, settingsJSON);
+                m_deviceQualityManager.Profiles_AddData(featureSettings.Profile, featureSettings.Rating, featureSettings.MinMemory, settingsJSON);
             }
         }
 
@@ -748,7 +728,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         // Gets the FeatureSettings object of the profile that corresponds to the calculated rating
         if (string.IsNullOrEmpty(profileName))
         {
-            profileName = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
+            int systemMemorySize = SystemInfo.systemMemorySize;
+            profileName = m_deviceQualityManager.Profiles_RatingToProfileName(rating, systemMemorySize);
         }
         
         Device_CalculatedProfile = profileName;        
@@ -1112,6 +1093,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     }
 
     public bool IsFogOnDemandEnabled { get; set; }    
+
+	public FeatureSettings.ELevel5Values Particles
+	{
+		get
+		{
+			return Device_CurrentFeatureSettings.GetValueAsLevel5(FeatureSettings.KEY_PARTICLES);
+		}
+	}
     #endregion
 
     #region log
@@ -1140,44 +1129,45 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         // 0.85: high
         // 1: very_high
         float rating = 0f;
-        string profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
-        Log("Rating: " + rating + " profile = " + profile);
+        int memorySize = 512;
+        string profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
 
         rating = 0.1f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
-        Log("Rating: " + rating + " profile = " + profile);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
 
         rating = 0.3f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
-        Log("Rating: " + rating + " profile = " + profile);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
 
         rating = 0.5f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
-        Log("Rating: " + rating + " profile = " + profile);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
 
         rating = 0.7f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
-        Log("Rating: " + rating + " profile = " + profile);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
 
         rating = 0.8f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
-        Log("Rating: " + rating + " profile = " + profile);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
 
         rating = 0.85f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
-        Log("Rating: " + rating + " profile = " + profile);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
 
         rating = 0.9f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
-        Log("Rating: " + rating + " profile = " + profile);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
 
         rating = 1.0f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
-        Log("Rating: " + rating + " profile = " + profile);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
 
         rating = 1.1f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating);
-        Log("Rating: " + rating + " profile = " + profile);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
     }
     #endregion
 }

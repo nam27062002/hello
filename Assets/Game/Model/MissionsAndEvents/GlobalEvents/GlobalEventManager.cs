@@ -24,6 +24,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	// Refresh intervals: Seconds, if current event data is retrieved and this interval has expired, we will request new data from the server
 	private const float STATE_REFRESH_INTERVAL = 1f * 60f;
 	private const float LEADERBOARD_REFRESH_INTERVAL = 10f * 60f;
+	private const float SERVER_REQUEST_TIMEOUT = 5f;	// Safeguard to avoid spamming the server with requests
 
 	// Error codes for event interaction
 	public enum ErrorCode {
@@ -55,15 +56,20 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			// If data refresh interval has expired, request new data to the server
 			// Do it in background, return cached data
 			if(instance.m_currentEvent != null) {
-				DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-				if(instance.m_stateCheckTimestamp < serverTime) {
+				DateTime now = serverTime;
+				if(instance.m_stateCheckTimestamp < now) {
 					// Request event state
 					// Request leaderboard as well?
-					RequestCurrentEventState(instance.m_leaderboardCheckTimestamp < serverTime);
+					RequestCurrentEventState(instance.m_leaderboardCheckTimestamp < now);
 				}
 			}
 			return instance.m_currentEvent;
 		}
+	}
+
+	// Shortcuts
+	private static DateTime serverTime {
+		get { return GameServerManager.SharedInstance.GetEstimatedServerTime(); }
 	}
 
 	// Internal
@@ -87,8 +93,37 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	/// as well in another async call, so be aware that the event might be triggered twice.
 	/// </summary>
 	public static void RequestCurrentEventData() {
-		// Just do it
-		GameServerManager.SharedInstance.GlobalEvent_GetCurrent(instance.OnCurrentEventResponse);
+		// First we have to resolve all the stored events (profile)
+		Dictionary<int, GlobalEventUserData> storedEvents = user.globalEvents;
+		int currentEventId = -1;
+
+		if (storedEvents.Count > 0) {
+			List<int> deleteEvents = new List<int>();
+
+			foreach (KeyValuePair<int, GlobalEventUserData> pair in storedEvents) {
+				if (pair.Value.rewardCollected) {
+					deleteEvents.Add(pair.Key);
+				} else {
+					currentEventId = pair.Key;
+				}
+			}
+
+			for (int i = 0; i < deleteEvents.Count; i++) {
+				storedEvents.Remove(deleteEvents[i]);
+			}
+		}
+
+		if (currentEventId >= 0) {
+			// We've found an event stored, lets get its data
+			if (instance.m_currentEvent == null) {
+				instance.m_currentEvent = new GlobalEvent();
+			}
+
+			GameServerManager.SharedInstance.GlobalEvent_GetState(currentEventId, true, instance.OnEventStateResponse);
+		} else {
+			// Nothing stored so lets ask server for any event
+			GameServerManager.SharedInstance.GlobalEvent_GetCurrent(instance.OnCurrentEventResponse);
+		}
 	}
 
 	/// <summary>
@@ -101,6 +136,9 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	public static void RequestCurrentEventState(bool _getLeaderboard) {
 		// We need a valid event
 		if(instance.m_currentEvent == null) return;
+
+		// Reset timer
+		instance.m_stateCheckTimestamp = serverTime.AddSeconds(SERVER_REQUEST_TIMEOUT);
 
 		// Just do it
 		GameServerManager.SharedInstance.GlobalEvent_GetState(instance.m_currentEvent.id, true, instance.OnEventStateResponse);
@@ -281,10 +319,10 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			currentEventUserData.Load(responseJson["playerData"]);
 
 			// Update timestamps
-			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-			instance.m_stateCheckTimestamp = serverTime.AddSeconds(STATE_REFRESH_INTERVAL);
+			DateTime now = serverTime;
+			instance.m_stateCheckTimestamp = now.AddSeconds(STATE_REFRESH_INTERVAL);
 			if(responseJson.ContainsKey("leaderboard")) {
-				instance.m_leaderboardCheckTimestamp = serverTime.AddSeconds(LEADERBOARD_REFRESH_INTERVAL);
+				instance.m_leaderboardCheckTimestamp = now.AddSeconds(LEADERBOARD_REFRESH_INTERVAL);
 			}
 
 			// Notify game that we have new data concerning the current event

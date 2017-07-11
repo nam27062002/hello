@@ -43,6 +43,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		m_dragonHealth = m_dragon.dragonHealthBehaviour;
 		m_dragonMotion = GetComponent<DragonMotion>();
 		m_motion = m_dragonMotion;
+		m_origin = "player";
 
 		m_tier = m_dragon.data.tier;
 		m_eatSpeedFactor = m_dragon.data.def.GetAsFloat("eatSpeedFactor");

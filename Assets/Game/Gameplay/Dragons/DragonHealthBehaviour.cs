@@ -41,6 +41,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	// Power ups modifiers
 	private float m_drainReduceModifier = 0;
 	private Dictionary<DamageType, float> m_damageReductions = new Dictionary<DamageType, float>();
+	private Dictionary<string, float> m_damageOriginReductions = new Dictionary<string, float>();
 
 	private Dictionary<string, float> m_eatingHpBoosts = new Dictionary<string, float>();
 	private float m_globalEatingHpBoost = 0;
@@ -132,7 +133,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	/// <param name="_type">Type of damage to be applied.</param> 
 	/// <param name="_source">The source of the damage, optional.</param> 
 	/// <param name="_hitAnimation">Whether to trigger the hit animation or not.</param>
-	public void ReceiveDamage(float _amount, DamageType _type, Transform _source = null, bool _hitAnimation = true) {
+	public void ReceiveDamage(float _amount, DamageType _type, Transform _source = null, bool _hitAnimation = true, string _damageOrigin = "") {
 		if(enabled) {
 			if ( m_dragon.IsInvulnerable() )
 				return;
@@ -146,6 +147,11 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			if ( m_damageReductions.ContainsKey( _type ) )
 			{
 				_amount = _amount - _amount * m_damageReductions[ _type ] / 100.0f;
+			}
+
+			if ( !string.IsNullOrEmpty(_damageOrigin) && m_damageOriginReductions.ContainsKey( _damageOrigin ) )
+			{
+				_amount = _amount - _amount * m_damageOriginReductions[ _damageOrigin ] / 100.0f;
 			}
 
 			// Play animation?
@@ -167,7 +173,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	/// <param name="_duration">Total duration.</param>
 	/// <param name="_type">Type of damage to be applied. If a DOT of a different type is being applied, type will be override.</param> 
 	/// <param name="_reset">Whether to override current DOT or accumulate it.</param>
-	public void ReceiveDamageOverTime(float _dps, float _duration, DamageType _type, Transform _source = null, bool _reset = true) {
+	public void ReceiveDamageOverTime(float _dps, float _duration, DamageType _type, Transform _source = null, bool _reset = true, string _damageOrigin = "") {
 
 		if ( m_dragon.IsInvulnerable() )
 			return;
@@ -186,6 +192,11 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		if ( m_damageReductions.ContainsKey( _type ) )
 		{
 			_dps = _dps - _dps * m_damageReductions[ _type ] / 100.0f;
+		}
+
+		if (  !string.IsNullOrEmpty( _damageOrigin ) && m_damageOriginReductions.ContainsKey( _damageOrigin ) )
+		{
+			_dps = _dps - _dps * m_damageOriginReductions[ _damageOrigin ] / 100.0f;
 		}
 
 		// Clear current dots?
@@ -264,6 +275,18 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		else
 		{
 			m_damageReductions.Add(type, percentage);
+		}
+	}
+
+	public void AddDamageReduction( string origin, float percentage)
+	{
+		if (m_damageOriginReductions.ContainsKey(origin))
+		{
+			m_damageOriginReductions[origin] += percentage;
+		}
+		else
+		{
+			m_damageOriginReductions.Add(origin, percentage);
 		}
 	}
 

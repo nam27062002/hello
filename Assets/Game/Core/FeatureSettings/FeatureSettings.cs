@@ -29,6 +29,9 @@ public class FeatureSettings
     // Rating of the device corresponding to this set of settings
     public const string KEY_RATING = "rating";
 
+    // Min memory in bytes required for this profile
+    public const string KEY_MIN_MEMORY = "minMemory";
+
     // Name of the profile assigned to this set of settings
     public const string KEY_PROFILE = "profile";
 
@@ -58,6 +61,9 @@ public class FeatureSettings
 
     // This flag enables/disables the spawners of the entities that have only a decorative purpose
     public const string KEY_DECO_SPAWNERS = "decoSpawners";
+
+	// This key decides the quality level used in the particles manager
+	public const string KEY_PARTICLES = "particles";
 
     // Examples of how to use different type datas
     /*
@@ -94,6 +100,10 @@ public class FeatureSettings
             // Rating
             key = KEY_RATING;
             data = new DataRangeFloat(key, 0f, 0f, 1f);
+            Datas.Add(key, data);
+
+            key = KEY_MIN_MEMORY;
+            data = new DataRangeInt(key, 0, 0, int.MaxValue);
             Datas.Add(key, data);
 
             // profile
@@ -145,6 +155,11 @@ public class FeatureSettings
             key = KEY_DECO_SPAWNERS;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
             Datas.Add(key, data);
+
+			// particles
+			key = KEY_PARTICLES;
+			data = new DataInt(key, EValueType.Level5, (int)ELevel5Values.mid);
+			Datas.Add(key, data);
 
             /*
             // intTest
@@ -658,6 +673,27 @@ public class FeatureSettings
         set
         {
             string key = KEY_RATING;
+            if (Values.ContainsKey(key))
+            {
+                Values[key] = value;
+            }
+            else
+            {
+                Values.Add(key, value);
+            }
+        }
+    }
+
+    public int MinMemory
+    {
+        get
+        {
+            return GetValueAsInt(KEY_MIN_MEMORY);
+        }
+
+        set
+        {
+            string key = KEY_MIN_MEMORY;
             if (Values.ContainsKey(key))
             {
                 Values[key] = value;
