@@ -34,6 +34,9 @@ ModelImporter:
     100052: Human_Ribcage
     100054: Human_Spine1
     100056: Human_Spine2
+    100058: Human_
+    100060: Human_Master
+    100062: Point001
     400000: //RootNode
     400002: Human_Head
     400004: Human_L_Calf
@@ -63,6 +66,9 @@ ModelImporter:
     400052: Human_Ribcage
     400054: Human_Spine1
     400056: Human_Spine2
+    400058: Human_
+    400060: Human_Master
+    400062: Point001
     7400000: Idle
     9500000: //RootNode
   materials:
@@ -90,7 +96,7 @@ ModelImporter:
       name: Idle
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 200
+      lastFrame: 72
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -113,7 +119,13 @@ ModelImporter:
       transformMask:
       - path: 
         weight: 1
+      - path: Human_
+        weight: 1
+      - path: Human_/Point001
+        weight: 1
       - path: Human_L_Platform
+        weight: 1
+      - path: Human_Master
         weight: 1
       - path: Human_Pelvis
         weight: 1
