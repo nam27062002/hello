@@ -34,6 +34,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 	[Space]
 	[SerializeField] private NavigationShowHideAnimator[] m_toHideOnUnlockAnim = null;
 
+	private bool m_goToGlobalEventRewardScreen;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -48,6 +50,15 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+		m_goToGlobalEventRewardScreen = false;
+
+		GlobalEvent ge = GlobalEventManager.currentEvent;
+		if (ge != null) {
+			if (ge.isRewarAvailable) {
+				m_goToGlobalEventRewardScreen = true;
+			}
+		}
+
 		// Subscribe to external events.
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 	}
@@ -64,6 +75,11 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
+		if (m_goToGlobalEventRewardScreen) {
+			InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.REWARD);
+			m_goToGlobalEventRewardScreen = false;
+		}
+
 		// Cheat for simulating dragon unlock
 		#if UNITY_EDITOR
 		if(Input.GetKeyDown(KeyCode.U)) {

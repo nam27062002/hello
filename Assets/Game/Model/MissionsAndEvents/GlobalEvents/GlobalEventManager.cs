@@ -99,12 +99,16 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 		if (storedEvents.Count > 0) {
 			List<int> deleteEvents = new List<int>();
+			long minEndTimestamp = long.MaxValue;
 
 			foreach (KeyValuePair<int, GlobalEventUserData> pair in storedEvents) {
 				if (pair.Value.rewardCollected) {
 					deleteEvents.Add(pair.Key);
 				} else {
-					currentEventId = pair.Key;
+					if (pair.Value.endTimestamp < minEndTimestamp) {
+						currentEventId = pair.Key;
+						minEndTimestamp = pair.Value.endTimestamp;
+					}
 				}
 			}
 
@@ -120,9 +124,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			}
 
 			GameServerManager.SharedInstance.GlobalEvent_GetState(currentEventId, true, instance.OnEventStateResponse);
-		} else {
-			// Nothing stored so lets ask server for any event
-			GameServerManager.SharedInstance.GlobalEvent_GetCurrent(instance.OnCurrentEventResponse);
+		} else {			
+			ClearCurrentEvent();
 		}
 	}
 
@@ -142,6 +145,11 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 		// Just do it
 		GameServerManager.SharedInstance.GlobalEvent_GetState(instance.m_currentEvent.id, true, instance.OnEventStateResponse);
+	}
+
+	public static void RequestCurrentEventRewards() {
+		if(instance.m_currentEvent == null) return;
+		GameServerManager.SharedInstance.GlobalEvent_ApplyRewards(instance.m_currentEvent.id, instance.OnEventRewardResponse);
 	}
 
 	/// <summary>
@@ -314,6 +322,10 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			Debug.Log("<color=purple>Received current event state:</color>\n" + responseJson.ToString(4));
 			m_currentEvent.UpdateFromJson(responseJson);
 
+			if (m_currentEvent.isRewarAvailable) {
+				GlobalEventManager.RequestCurrentEventRewards();
+			}
+
 			// Player data
 			GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
 			currentEventUserData.Load(responseJson["playerData"]);
@@ -330,7 +342,26 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
+	private void OnEventRewardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+		// Error?
+		if(_error != null) {
+			// [AOC] Do something or just ignore?
+			// Probably store somewhere that there was an error so retry timer is reset or smth
+			return;
+		}
+
+		// Ignore if we don't have a valid event!
+		if(m_currentEvent == null) return;
+
+		// Did the server gave us an event?
+		if(_response != null && _response["response"] != null) {
+			// Validate the event ID?
+			// For now let's just assume the given state is for the current event
+
+			// The event will parse the response json by itself
+			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
+			Debug.Log("<color=purple>Received current event reward:</color>\n" + responseJson.ToString(4));
+			m_currentEvent.UpdateRewardLevelFromJson(responseJson);
+		}
+	}
 }

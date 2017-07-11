@@ -217,7 +217,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		GlobalEventUserData playerEventData = null;
 		if(!UsersManager.currentUser.globalEvents.TryGetValue(_eventID, out playerEventData)) {
 			// User has never contributed to this event, create a new, empty, player event data
-			playerEventData = new GlobalEventUserData(_eventID, UsersManager.currentUser.userId, 0f, -1);
+			playerEventData = new GlobalEventUserData(_eventID, UsersManager.currentUser.userId, 0f, -1, 0);
 		}
 
 		// If there is no leaderboard for this event, create one with random values
@@ -237,7 +237,8 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 					_eventID,
 					"dummy_player_" + leaderboard.Count,
 					score,
-					-1	// Position will be initialized afterwards when the leaderboard is sorted
+					-1,	// Position will be initialized afterwards when the leaderboard is sorted
+					0
 				);
 
 				// Add it to the leaderboard
