@@ -73,7 +73,10 @@ public partial class GlobalEvent {
 	}
 
 	// Rewards
-	private Reward m_topContributorsReward = null;		// Percentage is differently used here!
+	private Reward m_topContributorsReward = null; // Percentage is differently used here!
+
+	private int m_rewardLevel = -1; // how many rewards will get this user?
+	public int rewardLevel { get { return m_rewardLevel; } }
 
 	// Timestamps
 	private DateTime m_teasingStartTimestamp = new DateTime();
@@ -144,11 +147,16 @@ public partial class GlobalEvent {
 		m_currentValue += _value;
 	}
 
-	public void ApplyReward() {
+	public void CollectReward() {
 		if (m_state == State.FINISHED) {
-			// TODO
-
-			// compute reward and store it
+			// Temporary, apply rewards
+			for (int i = 0; i < m_rewardLevel; i++) {
+				if (i < m_rewards.Count) {
+					m_rewards[i].Collect();
+				} else {
+					m_topContributorsReward.Collect();
+				}
+			}
 
 			UsersManager.currentUser.GetGlobalEventData(m_id).rewardCollected = true;
 			m_state = State.REWARD_COLLECTED;
@@ -193,7 +201,16 @@ public partial class GlobalEvent {
 		// Reset state vars
 		m_currentValue = 0f;
 		m_topContributors.Clear();
+
+		GlobalEventUserData playerEventData = null;
+		if(!UsersManager.currentUser.globalEvents.TryGetValue(m_id, out playerEventData)) {
+			// User has never contributed to this event, create a new, empty, player event data
+			playerEventData = new GlobalEventUserData(m_id, UsersManager.currentUser.userId, 0f, -1, 0);
+		}
+	
+		playerEventData.endTimestamp = _data["endTimestamp"].AsLong;
 	}
+
 
 	/// <summary>
 	/// Update the event's current state from a JSON object.
@@ -226,6 +243,15 @@ public partial class GlobalEvent {
 
 		// Update event state (just in case, has nothing to do with given json)
 		UpdateState();
+	}
+
+	public void UpdateRewardLevelFromJson(SimpleJSON.JSONNode _data) {
+		// { r: ["SC:100", "SC:200"], top: "SC:50" }
+		SimpleJSON.JSONArray r = _data["r"].AsArray;
+		m_rewardLevel = r.Count;
+		if (_data.ContainsKey("top")) {
+			m_rewardLevel++;
+		}
 	}
 
 	//------------------------------------------------------------------------//

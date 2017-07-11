@@ -21,6 +21,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private const float EVENT_COUNTDOWN_UPDATE_INTERVAL = 1f;	// Seconds
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -34,10 +35,21 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	[Space]
 	[SerializeField] private Slider m_progressBar = null;
 	[SerializeField] private GlobalEventsRewardInfo[] m_rewardInfos = new GlobalEventsRewardInfo[0];
+
+	// Internal
+	private float m_eventCountdownUpdateTimer = 0f;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Make sure event timer will be updated
+		m_eventCountdownUpdateTimer = 0f;
+	}
+
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
@@ -45,13 +57,19 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// Just in case
 		if(GlobalEventManager.currentEvent == null) return;
 
-		// Update timer
-		// [AOC] Could be done with less frequency
-		m_timerText.text = TimeUtils.FormatTime(
-			GlobalEventManager.currentEvent.remainingTime.TotalSeconds,
-			TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
-			4
-		);
+		// Update countdown at intervals
+		m_eventCountdownUpdateTimer -= Time.deltaTime;
+		if(m_eventCountdownUpdateTimer <= 0f) {
+			// Reset timer
+			m_eventCountdownUpdateTimer = EVENT_COUNTDOWN_UPDATE_INTERVAL;
+
+			// Parse remaining time
+			m_timerText.text = TimeUtils.FormatTime(
+				GlobalEventManager.currentEvent.remainingTime.TotalSeconds,
+				TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
+				4
+			);
+		}
 
 		// [AOC] TODO!! Manage event end when this panel is active
 	}

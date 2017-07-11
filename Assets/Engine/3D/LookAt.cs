@@ -83,15 +83,20 @@ public class LookAt : MonoBehaviour {
 	}
 
 	// Internal
-	private Transform m_transform;
+	private Transform __transform = null;
+	private Transform m_transform { 
+		get { 
+			if (__transform == null) {
+				__transform = transform;
+			}
+			return __transform;
+		}
+	}
 	private bool m_dirty = true;
 
 	//------------------------------------------------------------------//
 	// METHODS															//
 	//------------------------------------------------------------------//
-	public void Awake() {
-		m_transform = transform;
-	}
 
 	/// <summary>
 	/// Component has been enabled.

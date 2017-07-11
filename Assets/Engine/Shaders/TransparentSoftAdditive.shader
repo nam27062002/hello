@@ -7,8 +7,7 @@
 	}
 
 	Category{
-		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "GlowTransparent" }
-//		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 		Blend One OneMinusSrcColor
 		ColorMask RGB
 		Cull Off
@@ -68,6 +67,8 @@
 				UNITY_INSTANCING_CBUFFER_START(MyProperties)
 				UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
 				UNITY_INSTANCING_CBUFFER_END
+#else
+				float4 _Color;
 #endif
 
 				v2f vert(appdata_t v)
@@ -85,50 +86,20 @@
 					return o;
 				}
 
-//				sampler2D _CameraDepthTexture;
-//				float _InvFade;
-
 				fixed4 frag(v2f i) : COLOR
 				{
 #ifdef GPUINSTANCING
-				UNITY_SETUP_INSTANCE_ID(i); // necessary only if any instanced properties are going to be accessed in the fragment Shader.__
+					UNITY_SETUP_INSTANCE_ID(i); // necessary only if any instanced properties are going to be accessed in the fragment Shader.__
+					float4 col = UNITY_ACCESS_INSTANCED_PROP(_Color);
+#else
+					float4 col = _Color;
 #endif
-				half4 prev = i.color * tex2D(_MainTex, i.texcoord);
+					half4 prev = i.color * tex2D(_MainTex, i.texcoord) * col;
 					prev.rgb *= prev.a;
 					return prev;
 				}
 				ENDCG
 			}
 		}
-/*
-		// ---- Dual texture cards
-		SubShader
-		{
-			Pass
-			{
-				SetTexture[_MainTex]
-				{
-					combine texture * primary
-				}
-
-				SetTexture[_MainTex]
-				{
-					combine previous * previous alpha, previous
-				}
-			}
-		}
-
-		// ---- Single texture cards (does not do particle colors)
-		SubShader
-		{
-			Pass
-			{
-				SetTexture[_MainTex]
-				{
-					combine texture * texture alpha, texture
-				}
-			}
-		}
-*/
 	}
 }

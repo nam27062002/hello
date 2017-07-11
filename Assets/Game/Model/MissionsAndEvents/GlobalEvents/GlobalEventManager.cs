@@ -1,4 +1,4 @@
-﻿// GlobalEventManager.cs
+// GlobalEventManager.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 20/03/2017.
@@ -99,12 +99,16 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 		if (storedEvents.Count > 0) {
 			List<int> deleteEvents = new List<int>();
+			long minEndTimestamp = long.MaxValue;
 
 			foreach (KeyValuePair<int, GlobalEventUserData> pair in storedEvents) {
 				if (pair.Value.rewardCollected) {
 					deleteEvents.Add(pair.Key);
 				} else {
-					currentEventId = pair.Key;
+					if (pair.Value.endTimestamp < minEndTimestamp) {
+						currentEventId = pair.Key;
+						minEndTimestamp = pair.Value.endTimestamp;
+					}
 				}
 			}
 
@@ -119,10 +123,9 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				instance.m_currentEvent = new GlobalEvent();
 			}
 
-			GameServerManager.SharedInstance.GlobalEvent_GetState(currentEventId, true, instance.OnEventStateResponse);
+			GameServerManager.SharedInstance.GlobalEvent_GetState(currentEventId, instance.OnEventStateResponse);
 		} else {
-			// Nothing stored so lets ask server for any event
-			GameServerManager.SharedInstance.GlobalEvent_GetCurrent(instance.OnCurrentEventResponse);
+			ClearCurrentEvent();
 		}
 	}
 
@@ -141,7 +144,12 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		instance.m_stateCheckTimestamp = serverTime.AddSeconds(SERVER_REQUEST_TIMEOUT);
 
 		// Just do it
-		GameServerManager.SharedInstance.GlobalEvent_GetState(instance.m_currentEvent.id, true, instance.OnEventStateResponse);
+		GameServerManager.SharedInstance.GlobalEvent_GetState(instance.m_currentEvent.id, instance.OnEventStateResponse);
+	}
+
+	public static void RequestCurrentEventRewards() {
+		if(instance.m_currentEvent == null) return;
+		GameServerManager.SharedInstance.GlobalEvent_ApplyRewards(instance.m_currentEvent.id, instance.OnEventRewardResponse);
 	}
 
 	/// <summary>
@@ -217,6 +225,14 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		return ErrorCode.NONE;
 	}
 
+	public static bool Connected()
+	{
+		bool ret = true;
+		if((CPGlobalEventsTest.networkCheck && Application.internetReachability == NetworkReachability.NotReachable) || !GameSessionManager.SharedInstance.IsLogged())
+			ret = false;
+		return ret;
+	}
+
 	/// <summary>
 	/// Clear any stored data for current event.
 	/// </summary>
@@ -233,8 +249,18 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		// If it's a new user, request current event to the server for this user
 		if(instance.m_user != _user) {
 			instance.m_user = _user;
-			RequestCurrentEventData();
+			if ( Connected() )
+			{
+				RequestCurrentEventData();
+			}
+			FGOL.Events.EventManager.Instance.RegisterEvent(Events.OnUserLoggedIn, OnLoggedIn);
 		}
+	}
+
+	static void OnLoggedIn(Enum m_event, object[] args)
+	{
+		// is this the right momment to request the data?
+		RequestCurrentEventData();
 	}
 
 	/// <summary>
@@ -314,6 +340,10 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			Debug.Log("<color=purple>Received current event state:</color>\n" + responseJson.ToString(4));
 			m_currentEvent.UpdateFromJson(responseJson);
 
+			if (m_currentEvent.isRewarAvailable) {
+				GlobalEventManager.RequestCurrentEventRewards();
+			}
+
 			// Player data
 			GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
 			currentEventUserData.Load(responseJson["playerData"]);
@@ -330,7 +360,26 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
+	private void OnEventRewardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+		// Error?
+		if(_error != null) {
+			// [AOC] Do something or just ignore?
+			// Probably store somewhere that there was an error so retry timer is reset or smth
+			return;
+		}
+
+		// Ignore if we don't have a valid event!
+		if(m_currentEvent == null) return;
+
+		// Did the server gave us an event?
+		if(_response != null && _response["response"] != null) {
+			// Validate the event ID?
+			// For now let's just assume the given state is for the current event
+
+			// The event will parse the response json by itself
+			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
+			Debug.Log("<color=purple>Received current event reward:</color>\n" + responseJson.ToString(4));
+			m_currentEvent.UpdateRewardLevelFromJson(responseJson);
+		}
+	}
 }

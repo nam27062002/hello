@@ -28,6 +28,7 @@ public class GlobalEventUserData {
 	public string userID = "";			 // User id
 	public float score = 0f;			 // Contribution of the player to the event
 	public int position = -1;			 // -1 if he hasn't participated to the event
+	public long endTimestamp = 0;		 // End time
 	public bool rewardCollected = false; // User collected the reward 
 
 	//------------------------------------------------------------------------//
@@ -37,14 +38,14 @@ public class GlobalEventUserData {
 	/// Default constructor.
 	/// </summary>
 	public GlobalEventUserData() {
-		Init(-1, "", 0f, -1, false);
+		Init(-1, "", 0f, -1, 0, false);
 	}
 
 	/// <summary>
 	/// Parametrized constructor.
 	/// </summary>
-	public GlobalEventUserData(int _eventID, string _userID, float _score, int _position) {
-		Init(_eventID, _userID, _score, _position, false);
+	public GlobalEventUserData(int _eventID, string _userID, float _score, int _position, long _endTimestamp) {
+		Init(_eventID, _userID, _score, _position, _endTimestamp, false);
 	}
 
 	/// <summary>
@@ -52,7 +53,7 @@ public class GlobalEventUserData {
 	/// </summary>
 	/// <param name="_data">Source data object.</param>
 	public GlobalEventUserData(GlobalEventUserData _data) {
-		Init(_data.eventID, _data.userID, _data.score, _data.position, _data.rewardCollected);
+		Init(_data.eventID, _data.userID, _data.score, _data.position, _data.endTimestamp, _data.rewardCollected);
 	}
 
 	/// <summary>
@@ -72,11 +73,12 @@ public class GlobalEventUserData {
 	/// <param name="_userId">User identifier.</param>
 	/// <param name="_score">Score.</param>
 	/// <param name="_position">Position.</param>
-	private void Init(int _eventID, string _userID, float _score, int _position, bool _rewardCollected) {
+	private void Init(int _eventID, string _userID, float _score, int _position, long _endTimestamp, bool _rewardCollected) {
 		eventID = _eventID;
 		userID = _userID;
 		score = _score;
 		position = _position;
+		endTimestamp = _endTimestamp;
 		rewardCollected = _rewardCollected;
 	}
 
@@ -93,6 +95,7 @@ public class GlobalEventUserData {
 		userID = _data["userId"];
 		score = _data["score"].AsFloat;
 		position = _data["position"].AsInt;
+		endTimestamp = _data["endTimestamp"].AsLong;
 		rewardCollected = _data["rewardCollected"].AsBool;
 	}
 
