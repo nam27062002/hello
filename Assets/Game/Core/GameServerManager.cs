@@ -212,7 +212,7 @@ public class GameServerManager
 	/// <param name="_eventID">The identifier of the event whose state we want.</param>
 	/// <param name="_getLeaderboard">Whether to retrieve the leaderboard as well or not (top 100 + player).</param>
 	/// <param name="_callback">Callback action.</param>
-	public virtual void GlobalEvent_GetState(int _eventID, bool _getLeaderboard, ServerCallback _callback) {}
+	public virtual void GlobalEvent_GetState(int _eventID, ServerCallback _callback) {}
 
 	/// <summary>
 	/// Register a score to a target event.

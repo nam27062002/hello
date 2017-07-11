@@ -40,7 +40,11 @@ public class CustomParticleSystem : MonoBehaviour {
         get
         {
             if (m_stackIndex > 0)
-                return m_particlesStack[--m_stackIndex];
+            {
+                CustomParticle cp = m_particlesStack[--m_stackIndex];
+                cp.gameObject.SetActive(true);
+                return cp;
+            }
             else
                 return null;
         }
@@ -49,6 +53,7 @@ public class CustomParticleSystem : MonoBehaviour {
         {
             if (m_stackIndex < m_MaxParticles)
             {
+                value.gameObject.SetActive(false);
                 m_particlesStack[m_stackIndex++] = value;
             }
         }
@@ -61,7 +66,9 @@ public class CustomParticleSystem : MonoBehaviour {
     private int m_stackIndex;
 
     private float m_invRateOverTime;
-    private float m_nextParticleTime;
+    private float m_lastParticleTime;
+
+    private Camera m_currentCamera;
 
 
     void Awake()
@@ -77,39 +84,46 @@ public class CustomParticleSystem : MonoBehaviour {
             m_particlesStack[c] = m_particles[c] = cp;
             go.SetActive(false);
         }
-        m_invRateOverTime = 1.0f / m_RateOverTime;
         m_stackIndex = m_MaxParticles;
     }
 
 	// Use this for initialization
 	void Start () {
-        m_nextParticleTime = Time.time;
+        m_lastParticleTime = Time.time;
+        m_currentCamera = Camera.main;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        if (Time.time > m_nextParticleTime)
+        m_invRateOverTime = 1.0f / m_RateOverTime;
+        int np = (int)((Time.time - m_lastParticleTime) / m_invRateOverTime);
+        if (np > 0)
         {
-            CustomParticle cp = Stack;
-            if (cp != null)
+            for (int c = 0; c < np; c++)
             {
-                cp.transform.position = transform.position + Random.insideUnitSphere * m_radius;
-                float sc = Random.Range(m_scaleRange.min, m_scaleRange.max);
-//                cp.transform.localScale.Set(sc, sc, sc);
-                if (m_local)
+                CustomParticle cp = Stack;
+                if (cp != null)
                 {
-                    cp.transform.parent = transform;
-                }
-                else
-                {
-                    cp.transform.parent = null;
-                }
-                cp.m_duration = m_duration;
-                cp.m_velocity = Vector3.zero;
-                cp.gameObject.SetActive(true);
-                m_nextParticleTime = Time.time + m_invRateOverTime;
+                    cp.transform.position = transform.position + Random.insideUnitSphere * m_radius;
+                    float sc = Random.Range(m_scaleRange.min, m_scaleRange.max);
+                    cp.m_initscale = sc;
+                    if (m_local)
+                    {
+                        cp.transform.parent = transform;
+                    }
+                    else
+                    {
+                        cp.transform.parent = null;
+                    }
+                    cp.m_duration = m_duration;
 
+                    cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
+                    cp.m_initRot = Random.Range(m_rotationRange.min, m_rotationRange.max);
+                    cp.Init();
+//                    cp.gameObject.SetActive(true);
+                }
             }
+            m_lastParticleTime += (float)np * m_invRateOverTime;
         }
-	}
+    }
 }
