@@ -197,7 +197,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// <param name="_eventID">The identifier of the event whose state we want.</param>
 	/// <param name="_getLeaderboard">Whether to retrieve the leaderboard as well or not (top 100 + player).</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_GetState(int _eventID, bool _getLeaderboard, ServerCallback _callback) {
+	override public void GlobalEvent_GetState(int _eventID, ServerCallback _callback) {
 		// Create return dictionary
 		ServerResponse res = new ServerResponse();
 
@@ -278,6 +278,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		eventData.Add("playerData", playerEventData.Save(true));
 
 		// Add leaderboard data to the json (if requested)
+		/*
 		if(_getLeaderboard) {
 			// Create a json array with every entry in the leaderboard
 			SimpleJSON.JSONArray leaderboardData = new SimpleJSON.JSONArray();
@@ -286,6 +287,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			}
 			eventData.Add("leaderboard", leaderboardData);
 		}
+		*/
 
 		// Store response and simulate server delay
 		res["response"] = eventData.ToString();

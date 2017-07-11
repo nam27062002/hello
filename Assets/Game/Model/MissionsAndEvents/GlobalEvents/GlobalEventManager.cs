@@ -119,7 +119,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				instance.m_currentEvent = new GlobalEvent();
 			}
 
-			GameServerManager.SharedInstance.GlobalEvent_GetState(currentEventId, true, instance.OnEventStateResponse);
+			GameServerManager.SharedInstance.GlobalEvent_GetState(currentEventId, instance.OnEventStateResponse);
 		} else {
 			// Nothing stored so lets ask server for any event
 			GameServerManager.SharedInstance.GlobalEvent_GetCurrent(instance.OnCurrentEventResponse);
@@ -141,7 +141,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		instance.m_stateCheckTimestamp = serverTime.AddSeconds(SERVER_REQUEST_TIMEOUT);
 
 		// Just do it
-		GameServerManager.SharedInstance.GlobalEvent_GetState(instance.m_currentEvent.id, true, instance.OnEventStateResponse);
+		GameServerManager.SharedInstance.GlobalEvent_GetState(instance.m_currentEvent.id, instance.OnEventStateResponse);
 	}
 
 	/// <summary>
@@ -217,6 +217,14 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		return ErrorCode.NONE;
 	}
 
+	public static bool Connected()
+	{
+		bool ret = true;
+		if((CPGlobalEventsTest.networkCheck && Application.internetReachability == NetworkReachability.NotReachable) || !GameSessionManager.SharedInstance.IsLogged())
+			ret = false;
+		return ret;
+	}
+
 	/// <summary>
 	/// Clear any stored data for current event.
 	/// </summary>
@@ -233,8 +241,18 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		// If it's a new user, request current event to the server for this user
 		if(instance.m_user != _user) {
 			instance.m_user = _user;
-			RequestCurrentEventData();
+			if ( Connected() )
+			{
+				RequestCurrentEventData();
+			}
+			FGOL.Events.EventManager.Instance.RegisterEvent(Events.OnUserLoggedIn, OnLoggedIn);
 		}
+	}
+
+	static void OnLoggedIn(Enum m_event, object[] args)
+	{
+		// is this the right momment to request the data?
+		RequestCurrentEventData();
 	}
 
 	/// <summary>
