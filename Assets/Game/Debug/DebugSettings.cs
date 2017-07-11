@@ -130,14 +130,8 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	[Separator("Server debugging tools")]
 	[SerializeField] private bool m_useDebugServer = false;
 	public static bool useDebugServer {
-		get {
-			// Only in the editor!
-			#if UNITY_EDITOR
-			return instance.m_useDebugServer; 
-			#else
-			return false;
-			#endif
-		}
+		get { return instance.m_useDebugServer; }
+		set { instance.m_useDebugServer = value; }
 	}
 
 	[SerializeField] private Range m_debugServerDelayRange = new Range(0f, 0f);		// Simulate a delay on the server response. A random value will be taken for each call.
