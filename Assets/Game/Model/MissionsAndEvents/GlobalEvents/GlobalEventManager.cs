@@ -149,11 +149,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 		if (currentEventId >= 0) {
 			// We've found an event stored, lets get its data
-			if (instance.m_currentEvent == null) {
-				instance.m_currentEvent = new GlobalEvent();
-			}
-
-			GameServerManager.SharedInstance.GlobalEvent_GetState(currentEventId, instance.OnEventStateResponse);
+			GameServerManager.SharedInstance.GlobalEvent_GetEvent(currentEventId, instance.OnCurrentEventResponse);
 		} else {
 			ClearCurrentEvent();
 		}
@@ -255,11 +251,12 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		return ErrorCode.NONE;
 	}
 
-	public static bool Connected()
-	{
+	public static bool Connected() {
 		bool ret = true;
-		if((CPGlobalEventsTest.networkCheck && Application.internetReachability == NetworkReachability.NotReachable) || !GameSessionManager.SharedInstance.IsLogged())
+		if ((CPGlobalEventsTest.networkCheck && Application.internetReachability == NetworkReachability.NotReachable) || 
+			(CPGlobalEventsTest.loginCheck   && !GameSessionManager.SharedInstance.IsLogged())) {
 			ret = false;
+		}
 		return ret;
 	}
 
