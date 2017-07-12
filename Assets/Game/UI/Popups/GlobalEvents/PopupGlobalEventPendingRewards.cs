@@ -85,11 +85,7 @@ public class PopupGlobalEventPendingRewards : MonoBehaviour {
 	/// The collect rewards button has been pressed.
 	/// </summary>
 	public void OnCollectButton() {
-		// [AOC] TODO!!
-		UIFeedbackText.CreateAndLaunch(
-			LocalizationManager.SharedInstance.Localize("TODO!!"),
-			new Vector2(0.5f, 0.5f),
-			(RectTransform)this.GetComponentInParent<Canvas>().transform
-		);
+		GlobalEventManager.currentEvent.CollectReward();
+		GetComponent<PopupController>().Close(true);
 	}
 }

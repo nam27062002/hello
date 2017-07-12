@@ -69,6 +69,16 @@ public partial class GlobalEvent {
 			targetPercentage = _data["targetPercentage"].AsFloat;
 		}
 
+		public void Collect() {
+			switch (type) {
+				case Type.SC:	UsersManager.currentUser.AddCoins((long)amount);		break;
+				case Type.PC:	UsersManager.currentUser.AddPC((long)amount);			break;
+				case Type.PET:	UsersManager.currentUser.petCollection.UnlockPet(sku); 	break;
+				case Type.EGG:	(Egg.CreateFromSku(sku)).Collect();						break;
+				case Type.GOLDEN_FRAGMENTS: UsersManager.currentUser.goldenEggFragments += (int)amount; break;
+			}
+		}
+
 		//------------------------------------------------------------------------//
 		// STATIC UTILS															  //
 		//------------------------------------------------------------------------//

@@ -347,12 +347,11 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <param name="_eventID">The identifier of the event whose state we want.</param>
 	/// <param name="_getLeaderboard">Whether to retrieve the leaderboard as well or not (top 100 + player).</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_GetState(int _eventID, bool _getLeaderboard, ServerCallback _callback) {
+	override public void GlobalEvent_GetState(int _eventID, ServerCallback _callback) {
 		// Compose parameters and enqeue command
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
-		parameters.Add("id", _eventID.ToString(JSON_FORMAT));
-		parameters.Add("leaderboard", _getLeaderboard.ToString(JSON_FORMAT));
-		Commands_EnqueueCommand(ECommand.GlobalEvents_GetState, null, _callback);
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.GlobalEvents_GetState, parameters, _callback);
 	}
 
 	/// <summary>
@@ -366,7 +365,7 @@ public class GameServerManagerCalety : GameServerManager {
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("id", _eventID.ToString(JSON_FORMAT));
 		parameters.Add("score", _score.ToString(JSON_FORMAT));
-		Commands_EnqueueCommand(ECommand.GlobalEvents_RegisterScore, null, _callback);
+		Commands_EnqueueCommand(ECommand.GlobalEvents_RegisterScore, parameters, _callback);
 	}
 
 	/// <summary>
@@ -378,7 +377,7 @@ public class GameServerManagerCalety : GameServerManager {
 		// Compose parameters and enqeue command
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("id", _eventID.ToString(JSON_FORMAT));
-		Commands_EnqueueCommand(ECommand.GlobalEvents_ApplyRewards, null, _callback);
+		Commands_EnqueueCommand(ECommand.GlobalEvents_ApplyRewards, parameters, _callback);
 	}
 	#endregion
 
@@ -690,6 +689,14 @@ public class GameServerManagerCalety : GameServerManager {
 					kParams["uid"] = parameters["playTestUserId"];        
 					ServerManager.SharedInstance.SendCommand(cmd, kParams, parameters["trackingData"]);
 				} break;
+				case ECommand.GlobalEvents_GetState:
+				{
+					if(IsLogged()) {
+						Dictionary<string, string> kParams = new Dictionary<string, string>();
+						kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
+						ServerManager.SharedInstance.SendCommand( COMMAND_GLOBAL_EVENTS_GET_STATE, kParams, parameters, "");
+					}
+				}break;
 
                 default: {
                     LogWarning("Missing call to the server in GameServerManagerCalety.Commands_RunCommand() form command " + command.Cmd);
@@ -931,7 +938,7 @@ public class GameServerManagerCalety : GameServerManager {
 				case ECommand.GlobalEvents_ApplyRewards: {
 					// Propagate server response directly as a JSON object
 					// [DGR] SERVER: Receive these parameters from server
-					response["response"] = responseJSON;
+					response["response"] = responseData;
 				} break;
 
 				default: {
@@ -968,8 +975,8 @@ public class GameServerManagerCalety : GameServerManager {
 	private const string COMMAND_PLAYTEST_B = "/api/playtest/b";
 
 	private const string COMMAND_GLOBAL_EVENTS_GET_CURRENT = "/api/events/get_current";
-	private const string COMMAND_GLOBAL_EVENTS_GET_STATE = "/api/events/get_state";
-	private const string COMMAND_GLOBAL_EVENTS_REGISTER_SCORE = "/api/events/register_score";
+	private const string COMMAND_GLOBAL_EVENTS_GET_STATE = "/api/events/progress";
+	private const string COMMAND_GLOBAL_EVENTS_REGISTER_SCORE = "/api/events/add_progress";
 	private const string COMMAND_GLOBAL_EVENTS_APPLY_REWARDS = "/api/events/apply_rewards";
 
 	/// <summary>

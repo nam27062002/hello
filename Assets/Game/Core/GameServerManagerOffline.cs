@@ -197,7 +197,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// <param name="_eventID">The identifier of the event whose state we want.</param>
 	/// <param name="_getLeaderboard">Whether to retrieve the leaderboard as well or not (top 100 + player).</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_GetState(int _eventID, bool _getLeaderboard, ServerCallback _callback) {
+	override public void GlobalEvent_GetState(int _eventID, ServerCallback _callback) {
 		// Create return dictionary
 		ServerResponse res = new ServerResponse();
 
@@ -217,7 +217,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		GlobalEventUserData playerEventData = null;
 		if(!UsersManager.currentUser.globalEvents.TryGetValue(_eventID, out playerEventData)) {
 			// User has never contributed to this event, create a new, empty, player event data
-			playerEventData = new GlobalEventUserData(_eventID, UsersManager.currentUser.userId, 0f, -1);
+			playerEventData = new GlobalEventUserData(_eventID, UsersManager.currentUser.userId, 0f, -1, 0);
 		}
 
 		// If there is no leaderboard for this event, create one with random values
@@ -237,7 +237,8 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 					_eventID,
 					"dummy_player_" + leaderboard.Count,
 					score,
-					-1	// Position will be initialized afterwards when the leaderboard is sorted
+					-1,	// Position will be initialized afterwards when the leaderboard is sorted
+					0
 				);
 
 				// Add it to the leaderboard
@@ -278,6 +279,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		eventData.Add("playerData", playerEventData.Save(true));
 
 		// Add leaderboard data to the json (if requested)
+		/*
 		if(_getLeaderboard) {
 			// Create a json array with every entry in the leaderboard
 			SimpleJSON.JSONArray leaderboardData = new SimpleJSON.JSONArray();
@@ -286,6 +288,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			}
 			eventData.Add("leaderboard", leaderboardData);
 		}
+		*/
 
 		// Store response and simulate server delay
 		res["response"] = eventData.ToString();
