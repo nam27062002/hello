@@ -116,16 +116,69 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	}
 	*/
 
+	private DateTime CreateStartDate(CPGlobalEventsTest.EventStateTest _targetState) {
+		DateTime startTimestamp = new DateTime();
+		switch(_targetState) {
+			case CPGlobalEventsTest.EventStateTest.DEFAULT:
+			case CPGlobalEventsTest.EventStateTest.ACTIVE: {
+					startTimestamp = m_initTimestamp.AddDays(-3.3);		// Started 3.3 days ago
+				} break;
+
+			case CPGlobalEventsTest.EventStateTest.TEASING: {
+					startTimestamp = m_initTimestamp.AddDays(1.5);		// Starting in 1.5 days
+				} break;
+
+			case CPGlobalEventsTest.EventStateTest.FINISHED: {
+					startTimestamp = m_initTimestamp.AddDays(-85);		// Started 85 days ago
+				} break;
+		}
+		return startTimestamp;
+	}
+
+	private string CreateTeaseTimestamp(DateTime _startDate) {
+		return TimeUtils.DateToTimestamp(_startDate.AddDays(-2)).ToString(JSON_FORMAT);	// 2 days before start time
+	}
+
+	private string CreateStartTimestamp(DateTime _startDate) {
+		return TimeUtils.DateToTimestamp(_startDate).ToString(JSON_FORMAT);
+	}
+
+	private string CreateEndTimestamp(DateTime _startDate) {
+		return TimeUtils.DateToTimestamp(_startDate.AddDays(7)).ToString(JSON_FORMAT); // Lasts 7 days
+	}
+
 	//------------------------------------------------------------------------//
 	// GLOBAL EVENTS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Get the current global event for this user from the server.
-	/// Current global event can be a past event with pending rewards, an active event,
-	/// a future event or no event at all.
-	/// </summary>
-	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_GetCurrent(ServerCallback _callback) {
+	override public void GlobalEvent_TMPCustomizer(ServerCallback _callback) {
+		ServerResponse res = new ServerResponse();
+
+		// Check debug settings
+		CPGlobalEventsTest.EventStateTest targetState = CPGlobalEventsTest.eventState;
+
+		// Simulate no event?
+		if(targetState == CPGlobalEventsTest.EventStateTest.NO_EVENT) {
+			res["response"] = null;
+		} else {
+			DateTime startDate = CreateStartDate(targetState);
+
+			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass(); {
+				SimpleJSON.JSONClass liveEvents = new SimpleJSON.JSONClass(); {
+					liveEvents.Add("code", 0);
+					liveEvents.Add("name", "test_event_0");
+					liveEvents.Add("start", CreateStartTimestamp(startDate));
+					liveEvents.Add("end", CreateEndTimestamp(startDate));
+				}
+				eventData.Add("liveEvents", liveEvents);
+			}
+			res["response"] = eventData.ToString();
+		}
+
+		// Simulate server delay
+		DelayedCall(() => _callback(null, res));
+	}
+
+	override public void GlobalEvent_GetEvent( int _eventID, ServerCallback _callback) {
 		// Create return dictionary
 		ServerResponse res = new ServerResponse();
 
@@ -152,25 +205,10 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
 			// Timestamps
 			// By tuning the start timestamp in relation to the current time we can simulate the different states of the event
-			DateTime startTimestamp = new DateTime();
-			switch(targetState) {
-				case CPGlobalEventsTest.EventStateTest.DEFAULT:
-				case CPGlobalEventsTest.EventStateTest.ACTIVE: {
-					startTimestamp = m_initTimestamp.AddDays(-3.3);		// Started 3.3 days ago
-				} break;
-
-				case CPGlobalEventsTest.EventStateTest.TEASING: {
-					startTimestamp = m_initTimestamp.AddDays(1.5);		// Starting in 1.5 days
-				} break;
-
-				case CPGlobalEventsTest.EventStateTest.FINISHED: {
-					startTimestamp = m_initTimestamp.AddDays(-85);		// Started 85 days ago
-				} break;
-			}
-
-			eventData.Add("startTimestamp", TimeUtils.DateToTimestamp(startTimestamp).ToString(JSON_FORMAT));
-			eventData.Add("teaserTimestamp", TimeUtils.DateToTimestamp(startTimestamp.AddDays(-2)).ToString(JSON_FORMAT));	// 2 days before start time
-			eventData.Add("endTimestamp", TimeUtils.DateToTimestamp(startTimestamp.AddDays(7)).ToString(JSON_FORMAT));		// Lasts 7 days
+			DateTime startDate = CreateStartDate(targetState);
+			eventData.Add("startTimestamp", CreateStartTimestamp(startDate));
+			eventData.Add("teaserTimestamp", CreateTeaseTimestamp(startDate));
+			eventData.Add("endTimestamp", CreateEndTimestamp(startDate));		
 
 			// Rewards
 			SimpleJSON.JSONArray rewardsArray = new SimpleJSON.JSONArray();
@@ -318,7 +356,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// </summary>
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_callback">Callback action. Given rewards?</param>
-	override public void GlobalEvent_ApplyRewards(int _eventID, ServerCallback _callback) {
+	override public void GlobalEvent_GetRewards(int _eventID, ServerCallback _callback) {
 		// [AOC] TODO!!
 		DelayedCall(() => _callback(null, null));
 	}

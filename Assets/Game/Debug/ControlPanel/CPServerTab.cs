@@ -153,7 +153,7 @@ public class CPServerTab : MonoBehaviour {
 
 		// Request current event info
 		Output("GlobalEvent_GetCurrent");
-		GameServerManager.SharedInstance.GlobalEvent_GetCurrent(
+		GameServerManager.SharedInstance.GlobalEvent_GetEvent(0,
 			(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) => {
 				if(_error == null) {
 					// Did the server gave us an event?

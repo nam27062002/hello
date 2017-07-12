@@ -330,15 +330,20 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_EnqueueCommand(ECommand.PlayTest, parameters, callback);                
 	}
 
-	/// <summary>
-	/// Get the current global event for this user from the server.
-	/// Current global event can be a past event with pending rewards, an active event,
-	/// a future event or no event at all.
+	override public void GlobalEvent_TMPCustomizer(ServerCallback _callback) {
+		Commands_EnqueueCommand(ECommand.GlobalEvents_TMPCustomizer, null, _callback);
+	}
+
+		/// <summary>
+	/// Get an event for this user from the server.
 	/// </summary>
+	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_GetCurrent(ServerCallback _callback) {
-		// No params for now
-		Commands_EnqueueCommand(ECommand.GlobalEvents_GetCurrent, null, _callback);
+	public override void GlobalEvent_GetEvent(int _eventID, ServerCallback _callback) 
+	{
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.GlobalEvents_GetEvent, parameters, _callback);
 	}
 
 	/// <summary>
@@ -363,8 +368,8 @@ public class GameServerManagerCalety : GameServerManager {
 	override public void GlobalEvent_RegisterScore(int _eventID, float _score, ServerCallback _callback) {
 		// Compose parameters and enqeue command
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
-		parameters.Add("id", _eventID.ToString(JSON_FORMAT));
-		parameters.Add("score", _score.ToString(JSON_FORMAT));
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		parameters.Add("progress", _score.ToString(JSON_FORMAT));
 		Commands_EnqueueCommand(ECommand.GlobalEvents_RegisterScore, parameters, _callback);
 	}
 
@@ -373,12 +378,21 @@ public class GameServerManagerCalety : GameServerManager {
 	/// </summary>
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_callback">Callback action. Given rewards?</param>
-	override public void GlobalEvent_ApplyRewards(int _eventID, ServerCallback _callback) {
+	override public void GlobalEvent_GetRewards(int _eventID, ServerCallback _callback) {
 		// Compose parameters and enqeue command
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
-		parameters.Add("id", _eventID.ToString(JSON_FORMAT));
-		Commands_EnqueueCommand(ECommand.GlobalEvents_ApplyRewards, parameters, _callback);
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.GlobalEvents_GetRewards, parameters, _callback);
 	}
+
+	override public void GlobalEvent_GetLeaderboard(int _eventID, ServerCallback _callback) 
+	{
+		// Compose parameters and enqeue command
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.GlobalEvents_GetLeadeboard, parameters, _callback);
+	}
+
 	#endregion
 
 	//------------------------------------------------------------------------//
@@ -403,10 +417,13 @@ public class GameServerManagerCalety : GameServerManager {
 		SetQualitySettings,
 		PlayTest,
 
-		GlobalEvents_GetCurrent,		// no params, returns the definition for either a finished event with a pending reward, the current active event, a future event or null
-		GlobalEvents_GetState,		// params: int _eventID, bool _getLeaderboard. Returns the current total value of an event and (optionally) the leaderboard for that event (top 100 + user)
-		GlobalEvents_RegisterScore,		// params: int _eventID, float _score
-		GlobalEvents_ApplyRewards		// TODO!!
+		GlobalEvents_TMPCustomizer,
+		GlobalEvents_GetEvent,		// params: int _eventID. Returns an event description
+		GlobalEvents_GetState,		// params: int _eventID. Returns the current total value of an event
+		GlobalEvents_RegisterScore,	// params: int _eventID, float _score
+		GlobalEvents_GetRewards,	// params: int _eventID
+		GlobalEvents_GetLeadeboard	// params: int _eventID
+
 	}
 
 	/// <summary>
@@ -689,15 +706,39 @@ public class GameServerManagerCalety : GameServerManager {
 					kParams["uid"] = parameters["playTestUserId"];        
 					ServerManager.SharedInstance.SendCommand(cmd, kParams, parameters["trackingData"]);
 				} break;
+				case ECommand.GlobalEvents_TMPCustomizer:{
+						Dictionary<string, string> kParams = new Dictionary<string, string>();
+						kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
+						ServerManager.SharedInstance.SendCommand( COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, kParams, "" );
+				}break;
 				case ECommand.GlobalEvents_GetState:
-				{
+				case ECommand.GlobalEvents_GetEvent:
+				case ECommand.GlobalEvents_GetRewards:
+				case ECommand.GlobalEvents_GetLeadeboard: {
 					if(IsLogged()) {
 						Dictionary<string, string> kParams = new Dictionary<string, string>();
 						kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
-						ServerManager.SharedInstance.SendCommand( COMMAND_GLOBAL_EVENTS_GET_STATE, kParams, parameters, "");
+						string global_event_command = "";
+						switch( command.Cmd )
+						{
+							case ECommand.GlobalEvents_GetState: global_event_command = COMMAND_GLOBAL_EVENTS_GET_STATE;break;
+							case ECommand.GlobalEvents_GetEvent: global_event_command = COMMAND_GLOBAL_EVENTS_GET_EVENT;break;
+							case ECommand.GlobalEvents_GetRewards: global_event_command = COMMAND_GLOBAL_EVENTS_GET_REWARDS;break;
+							case ECommand.GlobalEvents_GetLeadeboard: global_event_command = COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD;break;
+						}
+
+						ServerManager.SharedInstance.SendCommand( global_event_command, kParams, parameters, "");
 					}
 				}break;
 
+				case ECommand.GlobalEvents_RegisterScore: {
+					if ( IsLogged() ) {
+						Dictionary<string, string> kParams = new Dictionary<string, string>();	
+						kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
+						ServerManager.SharedInstance.SendCommand( COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, kParams, parameters, "");
+						// progress
+					}
+				}break;
                 default: {
                     LogWarning("Missing call to the server in GameServerManagerCalety.Commands_RunCommand() form command " + command.Cmd);
 
@@ -932,10 +973,12 @@ public class GameServerManagerCalety : GameServerManager {
 					response["upLoadRequired"] = (statusCode == 204);                    
 				} break;
 
-				case ECommand.GlobalEvents_GetCurrent:
+				case ECommand.GlobalEvents_TMPCustomizer:
+				case ECommand.GlobalEvents_GetEvent:
 				case ECommand.GlobalEvents_GetState:
 				case ECommand.GlobalEvents_RegisterScore:
-				case ECommand.GlobalEvents_ApplyRewards: {
+				case ECommand.GlobalEvents_GetRewards: 
+				case ECommand.GlobalEvents_GetLeadeboard:{
 					// Propagate server response directly as a JSON object
 					// [DGR] SERVER: Receive these parameters from server
 					response["response"] = responseData;
@@ -974,10 +1017,12 @@ public class GameServerManagerCalety : GameServerManager {
 	private const string COMMAND_PLAYTEST_A = "/api/playtest/a";
 	private const string COMMAND_PLAYTEST_B = "/api/playtest/b";
 
-	private const string COMMAND_GLOBAL_EVENTS_GET_CURRENT = "/api/events/get_current";
+	private const string COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER = "/api/testing/getCustomizer";
+	private const string COMMAND_GLOBAL_EVENTS_GET_EVENT = "/api/events/get";
 	private const string COMMAND_GLOBAL_EVENTS_GET_STATE = "/api/events/progress";
 	private const string COMMAND_GLOBAL_EVENTS_REGISTER_SCORE = "/api/events/add_progress";
-	private const string COMMAND_GLOBAL_EVENTS_APPLY_REWARDS = "/api/events/apply_rewards";
+	private const string COMMAND_GLOBAL_EVENTS_GET_REWARDS = "/api/events/reward";
+	private const string COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD = "/api/events/leadeboard";
 
 	/// <summary>
 	/// Initialize Calety's NetworkManager.
@@ -1001,10 +1046,12 @@ public class GameServerManagerCalety : GameServerManager {
 		nm.RegistryEndPoint(COMMAND_PLAYTEST_A, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_PLAYTEST_B, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 
-		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_CURRENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_EVENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_STATE, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
-		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_APPLY_REWARDS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_REWARDS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 	}
 
 
