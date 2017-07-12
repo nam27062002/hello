@@ -5,6 +5,47 @@ using UnityEngine;
 
 public class CustomParticleSystem : MonoBehaviour {
 
+//    public class Stack<T> where T : Object
+    public class Stack<T>// where T : UnityEngine.Object
+    {
+        public Stack(int _size)
+        {
+            size = _size;
+            stack = new T[size];
+            idx = 0;
+        }
+
+        public T Pop()
+        {
+            if (idx > 0)
+            {
+                return stack[--idx];
+            }
+            else
+                return default(T);// null;
+        }
+
+        public void Push(T elem)
+        {
+            if (idx < size)
+            {
+                stack[idx++] = elem;
+            }
+        }
+
+        public T[] ToArray()
+        {
+            return stack;
+        }
+
+
+        private T[] stack;
+        private int size, idx;
+
+    }
+
+
+
     [Header("Emitter")]
     public int m_MaxParticles;
     public float m_RateOverTime;
@@ -41,6 +82,8 @@ public class CustomParticleSystem : MonoBehaviour {
 
     private class CustomParticleData
     {
+        public Matrix4x4 mat = new Matrix4x4();
+
         public Vector3 m_position;
         public Vector3 m_velocity;
         public float m_initScale;
@@ -52,60 +95,11 @@ public class CustomParticleSystem : MonoBehaviour {
     }
 
     private CustomParticleData[] m_particles;
-    private CustomParticleData[] m_particlesStack;
-
-    private CustomParticleData Stack
-    {
-        get
-        {
-            if (m_stackIndex > 0)
-            {
-                CustomParticleData cp = m_particlesStack[--m_stackIndex];
-                cp.m_active = true;
-                return cp;
-            }
-            else
-                return null;
-        }
-
-        set
-        {
-            if (m_stackIndex < m_MaxParticles)
-            {
-                value.m_active = false;
-                m_particlesStack[m_stackIndex++] = value;
-            }
-        }
-    }
+    private Stack<CustomParticleData> m_particlesStack;
 
 #else
     private CustomParticle[] m_particles;
-    private CustomParticle[] m_particlesStack;
-
-    public CustomParticle Stack
-    {
-        get
-        {
-            if (m_stackIndex > 0)
-            {
-                CustomParticle cp = m_particlesStack[--m_stackIndex];
-                cp.gameObject.SetActive(true);
-                return cp;
-            }
-            else
-                return null;
-        }
-
-        set
-        {
-            if (m_stackIndex < m_MaxParticles)
-            {
-                value.gameObject.SetActive(false);
-                m_particlesStack[m_stackIndex++] = value;
-            }
-        }
-    }
-
+    public Stack<CustomParticle> m_particlesStack;
 
 #endif
 
@@ -121,16 +115,15 @@ public class CustomParticleSystem : MonoBehaviour {
     {
 #if (CUSTOMPARTICLES_DRAWMESH)
         m_particles = new CustomParticleData[m_MaxParticles];
-        m_particlesStack = new CustomParticleData[m_MaxParticles];
+        m_particlesStack = new Stack<CustomParticleData>(m_MaxParticles);
         m_matProp = new MaterialPropertyBlock();
 #else
         m_particles = new CustomParticle[m_MaxParticles];
-        m_particlesStack = new CustomParticle[m_MaxParticles];
+        m_particlesStack = new Stack<CustomParticle>(m_MaxParticles);
 #endif
 
         for (int c = 0; c < m_MaxParticles; c++)
         {
-
 #if (CUSTOMPARTICLES_DRAWMESH)
             CustomParticleData cp = new CustomParticleData();
             cp.m_active = false;
@@ -140,7 +133,8 @@ public class CustomParticleSystem : MonoBehaviour {
             cp.m_pSystem = this;
             go.SetActive(false);
 #endif
-            m_particlesStack[c] = m_particles[c] = cp;
+            m_particles[c] = cp;
+            m_particlesStack.Push(cp);
         }
         m_stackIndex = m_MaxParticles;
     }
@@ -157,15 +151,17 @@ public class CustomParticleSystem : MonoBehaviour {
         int np = (int)((Time.time - m_lastParticleTime) / m_invRateOverTime);
         if (np > 0)
         {
+            int initialized = 0;
             for (int c = 0; c < np; c++)
             {
 #if (CUSTOMPARTICLES_DRAWMESH)
-                CustomParticleData cp = Stack;
+                CustomParticleData cp = m_particlesStack.Pop();
 #else
-                CustomParticle cp = Stack;
+                CustomParticle cp = m_particlesStack.Pop();
 #endif
                 if (cp != null)
                 {
+
 #if (CUSTOMPARTICLES_DRAWMESH)
                     cp.m_position = transform.position + Random.insideUnitSphere * m_radius;
                     cp.m_initScale = Random.RandomRange(m_scaleRange.min, m_scaleRange.max);
@@ -174,6 +170,7 @@ public class CustomParticleSystem : MonoBehaviour {
                     cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
                     cp.m_rotZ = Random.Range(m_rotationRange.min, m_rotationRange.max);
                     cp.m_currentTime = Time.time;
+                    cp.m_active = true;
 
 #else
                     cp.transform.position = transform.position + Random.insideUnitSphere * m_radius;
@@ -194,57 +191,51 @@ public class CustomParticleSystem : MonoBehaviour {
                     cp.Init();
 #endif
                 }
+                m_lastParticleTime += m_invRateOverTime;
             }
-            m_lastParticleTime += (float)np * m_invRateOverTime;
         }
 
 #if (CUSTOMPARTICLES_DRAWMESH)
         m_matProp.Clear();
+        List<Matrix4x4> matList = new List<Matrix4x4>();
+        Stack<Vector4> stCol = new Stack<Vector4>(m_MaxParticles);
+
         for (int c = 0; c < m_MaxParticles; c++)
         {
             CustomParticleData cp = m_particles[c];
-            if (!cp.m_active) continue;
-
-            float pTime = Time.time - cp.m_currentTime;
-            cp.m_velocity += m_gravity * Time.deltaTime;
-            cp.m_position += cp.m_velocity * Time.deltaTime;
-            float sv = m_scaleAnimation.Evaluate(pTime);
-            Color col = m_colorAnimation.Evaluate(pTime);
-            Quaternion rot = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, (cp.m_rotZ + m_rotationAnimation.Evaluate(pTime)) * 360.0f);
-
-            m_matProp.SetColor("_Color", col);
-
-            Graphics.DrawMesh(m_particleMesh, cp.m_position, rot, m_particleMaterial, 0, m_currentCamera, 0, m_matProp);
-
-            if (pTime > cp.m_duration)
+            if (cp.m_active)
             {
-                Stack = cp;
+
+                float pTime = Time.time - cp.m_currentTime;
+                cp.m_velocity += m_gravity * Time.deltaTime;
+                cp.m_position += cp.m_velocity * Time.deltaTime;
+                float sv = m_scaleAnimation.Evaluate(pTime);
+                Color col = m_colorAnimation.Evaluate(pTime);
+                Quaternion rot = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, (cp.m_rotZ + m_rotationAnimation.Evaluate(pTime)) * 360.0f);
+
+
+                stCol.Push(col);
+//                m_matProp.SetColor("_Color", col);
+
+                cp.mat.SetTRS(cp.m_position, rot, Vector3.one * (sv + cp.m_initScale));
+                matList.Add(cp.mat);
+
+                if (pTime > cp.m_duration)
+                {
+                    cp.m_active = false;
+                    m_particlesStack.Push(cp);
+                }
             }
-
-            /*
-                    float pTime = Time.time - m_currentTime;
-
-                    m_velocity += m_pSystem.m_gravity * Time.deltaTime;
-                    transform.position += m_velocity * Time.deltaTime;
-
-
-                    float sv = m_pSystem.m_scaleAnimation.Evaluate(pTime);
-
-                    transform.localScale = Vector3.one * (m_initscale + sv);
-
-                    Color col = m_pSystem.m_colorAnimation.Evaluate(pTime);
-                    m_renderer.material.SetColor("_Color", col);
-
-                    transform.rotation = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, (m_initRot + m_pSystem.m_rotationAnimation.Evaluate(pTime)) * 360.0f);
-
-                    if (pTime > m_duration)
-                    {
-                        m_pSystem.Stack = this;
-            //            gameObject.SetActive(false);
-                    }
-
-            */
         }
+
+        if (matList.Count > 0)
+        {
+            //            Graphics.DrawMeshInstanced(m_particleMesh, 0, m_particleMaterial, matList, matList.Count);
+            m_matProp.SetVectorArray("_Color", stCol.ToArray());
+            Graphics.DrawMeshInstanced(m_particleMesh, 0, m_particleMaterial, matList, m_matProp);
+        }
+
+
 #endif
 
 

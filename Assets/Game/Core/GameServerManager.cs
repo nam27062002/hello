@@ -178,6 +178,10 @@ public class GameServerManager
 	public virtual void LogOut(ServerCallback callback) {}
 
 	//------------------------------------------------------------------------//
+	// CUSTOMIZER															  //
+	//------------------------------------------------------------------------//
+
+	//------------------------------------------------------------------------//
 	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//
     public virtual void GetPersistence(ServerCallback callback) {}
@@ -198,19 +202,19 @@ public class GameServerManager
 	//------------------------------------------------------------------------//
 	// GLOBAL EVENTS														  //
 	//------------------------------------------------------------------------//
+	public virtual void GlobalEvent_TMPCustomizer(ServerCallback _callback) {}
+
 	/// <summary>
-	/// Get the current global event for this user from the server.
-	/// Current global event can be a past event with pending rewards, an active event,
-	/// a future event or no event at all.
+	/// Get an event for this user from the server.
 	/// </summary>
+	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_callback">Callback action.</param>
-	public virtual void GlobalEvent_GetCurrent(ServerCallback _callback) {}
+	public virtual void GlobalEvent_GetEvent(int _eventID, ServerCallback _callback) {}
 
 	/// <summary>
 	/// Get the current value and (optionally) the leaderboard for a specific event.
 	/// </summary>
 	/// <param name="_eventID">The identifier of the event whose state we want.</param>
-	/// <param name="_getLeaderboard">Whether to retrieve the leaderboard as well or not (top 100 + player).</param>
 	/// <param name="_callback">Callback action.</param>
 	public virtual void GlobalEvent_GetState(int _eventID, ServerCallback _callback) {}
 
@@ -223,9 +227,16 @@ public class GameServerManager
 	public virtual void GlobalEvent_RegisterScore(int _eventID, float _score, ServerCallback _callback) {}
 
 	/// <summary>
-	/// Reward the player for his contribution to an event.
+	/// Get the rewards for the player
 	/// </summary>
 	/// <param name="_eventID">The identifier of the target event.</param>
-	/// <param name="_callback">Callback action. Given rewards?</param>
-	public virtual void GlobalEvent_ApplyRewards(int _eventID, ServerCallback _callback) {}
+	/// <param name="_callback">Callback action.</param>
+	public virtual void GlobalEvent_GetRewards(int _eventID, ServerCallback _callback) {}
+
+	/// <summary>
+	/// Get leaderboard
+	/// </summary>
+	/// <param name="_eventID">The identifier of the target event.</param>
+	/// <param name="_callback">Callback action</param>
+	public virtual void GlobalEvent_GetLeaderboard(int _eventID, ServerCallback _callback) {}
 }
