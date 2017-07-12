@@ -164,7 +164,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
 			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass(); {
 				SimpleJSON.JSONClass liveEvents = new SimpleJSON.JSONClass(); {
-					liveEvents.Add("code", 0);
+					liveEvents.Add("code", CPGlobalEventsTest.eventCode);
 					liveEvents.Add("name", "test_event_0");
 					liveEvents.Add("start", CreateStartTimestamp(startDate));
 					liveEvents.Add("end", CreateEndTimestamp(startDate));
@@ -191,7 +191,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		} else {
 			// ID
 			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass();
-			eventData.Add("id", 0);
+			eventData.Add("id", CPGlobalEventsTest.eventCode);
 			eventData.Add("name", "test_event_0");
 
 			// Goal definition
@@ -356,9 +356,42 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// </summary>
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_callback">Callback action. Given rewards?</param>
-	override public void GlobalEvent_GetRewards(int _eventID, ServerCallback _callback) {
-		// [AOC] TODO!!
-		DelayedCall(() => _callback(null, null));
+	override public void GlobalEvent_GetRewards(int _eventID, ServerCallback _callback) {		
+		/*
+		{
+			r: [
+				"SC:100",
+				"SC:200"
+			],
+			top: "SC:50"
+		}
+*/
+		ServerResponse res = new ServerResponse();
+
+		// Check debug settings
+		CPGlobalEventsTest.EventStateTest targetState = CPGlobalEventsTest.eventState;
+
+		// Simulate no event?
+		if(targetState == CPGlobalEventsTest.EventStateTest.NO_EVENT) {
+			res["response"] = null;
+		} else {
+			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass(); {
+				SimpleJSON.JSONArray r = new SimpleJSON.JSONArray(); {					
+					r.Add("SC", 100);
+					r.Add("SC", 200);
+					r.Add("SC", 200);
+					r.Add("SC", 200);
+				}
+				SimpleJSON.JSONClass top = new SimpleJSON.JSONClass(); {
+					top.Add("SC", 50);
+				}
+				eventData.Add("r", r);
+				eventData.Add("top", top);
+			}
+			res["response"] = eventData.ToString();
+		}
+
+		DelayedCall(() => _callback(null, res));
 	}
 	
 	/// <summary>
