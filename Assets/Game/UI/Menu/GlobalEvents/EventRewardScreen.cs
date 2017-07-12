@@ -6,6 +6,7 @@ public class EventRewardScreen : MonoBehaviour {
 
 	public void OnRewardButton() {
 		GlobalEventManager.currentEvent.CollectReward();
+		GlobalEventManager.RequestCurrentEventData();
 		InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.DRAGON_SELECTION);
 	}
 }

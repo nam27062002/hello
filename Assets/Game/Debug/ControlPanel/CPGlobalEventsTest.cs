@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections.Generic;
 using TMPro;
 
 //----------------------------------------------------------------------------//
@@ -53,7 +54,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 		ACTIVE,
 		FINISHED
 	};
-
+		
 	public const string EVENT_STATE = "EVENTS_TEST_STATE";
 	public static EventStateTest eventState {
 		get {
@@ -63,6 +64,16 @@ public class CPGlobalEventsTest : MonoBehaviour {
 		set { Prefs.SetIntPlayer(EVENT_STATE, (int)value); }
 	}
 
+	private static TMP_Text sm_eventCode = null;
+	public static int eventCode {
+		get {
+			if (sm_eventCode == null) {
+				return 0;
+			}
+
+			return int.Parse(sm_eventCode.text);
+		}
+	}
 	//------------------------------------------------------------------------//
 	// EXPOSED MEMBERS														  //
 	//------------------------------------------------------------------------//
@@ -73,6 +84,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	[Space]
 	[SerializeField] private Toggle m_networkCheckToggle = null;
 	[SerializeField] private Toggle m_loginCheckToggle = null;
+	[SerializeField] private TMP_Text m_eventCode = null;
 	[SerializeField] private CPEnumPref m_eventStateDropdown = null;
 
 	//------------------------------------------------------------------------//
@@ -103,6 +115,8 @@ public class CPGlobalEventsTest : MonoBehaviour {
 				GlobalEventManager.RequestCurrentEventData();
 			}
 		);
+
+		sm_eventCode = m_eventCode;
 	}
 
 	/// <summary>
