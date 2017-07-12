@@ -22,6 +22,7 @@ public class CustomParticle : MonoBehaviour {
     private float m_currentTime;
     public void Init()
     {
+        gameObject.SetActive(true);
         m_currentTime = Time.time;
     }
 
@@ -59,7 +60,7 @@ public class CustomParticle : MonoBehaviour {
         if (pTime > m_duration)
         {
             m_pSystem.Stack = this;
-//            gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
 	}
 #endif
