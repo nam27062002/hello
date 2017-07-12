@@ -119,13 +119,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	//------------------------------------------------------------------------//
 	// GLOBAL EVENTS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Get the current global event for this user from the server.
-	/// Current global event can be a past event with pending rewards, an active event,
-	/// a future event or no event at all.
-	/// </summary>
-	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_GetCurrent(ServerCallback _callback) {
+	override public void GlobalEvent_GetEvent( int _eventID, ServerCallback _callback) {
 		// Create return dictionary
 		ServerResponse res = new ServerResponse();
 
@@ -318,7 +312,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// </summary>
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_callback">Callback action. Given rewards?</param>
-	override public void GlobalEvent_ApplyRewards(int _eventID, ServerCallback _callback) {
+	override public void GlobalEvent_GetRewards(int _eventID, ServerCallback _callback) {
 		// [AOC] TODO!!
 		DelayedCall(() => _callback(null, null));
 	}
