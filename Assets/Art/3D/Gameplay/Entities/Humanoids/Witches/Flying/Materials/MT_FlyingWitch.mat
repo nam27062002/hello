@@ -6,11 +6,11 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: MT_GoodWitch
-  m_Shader: {fileID: 4800000, guid: 7c755659303fc430e9beee01a27dff3e, type: 3}
-  m_ShaderKeywords: _EMISSION
-  m_LightmapFlags: 1
-  m_CustomRenderQueue: -1
+  m_Name: MT_FlyingWitch
+  m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: 2000
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -46,25 +46,13 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
-        name: _GlowTex
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: a65badea59e714e30b4cad3af2d50380, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6d111a35cfa724d01845f5aeb909e683, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _NormalTex
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -81,16 +69,13 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _ReflectionMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
         name: _BumpScale
       second: 1
+    - first:
+        name: _BumpStrength
+      second: 3
     - first:
         name: _Cutoff
       second: 0.5
@@ -101,28 +86,13 @@ Material:
         name: _DstBlend
       second: 0
     - first:
-        name: _FresnelFactor
-      second: 5
-    - first:
-        name: _FresnelPower
-      second: 0.27
-    - first:
-        name: _GlossMapScale
-      second: 1
-    - first:
         name: _Glossiness
       second: 0.5
-    - first:
-        name: _GlossyReflections
-      second: 1
     - first:
         name: _Metallic
       second: 0
     - first:
         name: _Mode
-      second: 0
-    - first:
-        name: _NormalStrength
       second: 0
     - first:
         name: _OcclusionStrength
@@ -131,19 +101,7 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
-        name: _ReflectionAmount
-      second: 1
-    - first:
-        name: _RimFactor
-      second: 8
-    - first:
-        name: _SmoothnessTextureChannel
-      second: 0
-    - first:
-        name: _SpecularHighlights
-      second: 1
-    - first:
-        name: _SpecularPower
+        name: _Specular
       second: 0
     - first:
         name: _SrcBlend
@@ -164,30 +122,3 @@ Material:
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _EmissiveColor
-      second: {r: 0, g: 0, b: 0, a: 0}
-    - first:
-        name: _FresnelColor
-      second: {r: 0, g: 0, b: 0, a: 0}
-    - first:
-        name: _FresnelFinalColor
-      second: {r: 0, g: 0, b: 0, a: 0}
-    - first:
-        name: _FresnelInitialColor
-      second: {r: 0, g: 0, b: 0, a: 0}
-    - first:
-        name: _GlowColor
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _LightColor
-      second: {r: 0.16949612, g: 0.41911763, b: 0.253851, a: 1}
-    - first:
-        name: _RimColor
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _SpecularDir
-      second: {r: 0, g: 0, b: -1, a: 0}
-    - first:
-        name: _Tint
-      second: {r: 0.620891, g: 0.9705882, b: 0.6667134, a: 1}
