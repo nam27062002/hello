@@ -83,6 +83,36 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	//------------------------------------------------------------------------//
 	// SINGLETON METHODS													  //
 	//------------------------------------------------------------------------//
+
+	public static void TMP_RequestCustomizer() {
+		GameServerManager.SharedInstance.GlobalEvent_TMPCustomizer(instance.OnTMPCustomizerResponse);
+	}
+
+
+	private void OnTMPCustomizerResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+
+		if(_response != null && _response["response"] != null) {
+			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
+			if ( responseJson.ContainsKey("liveEvents") ){
+				int globalEventKey = responseJson["liveEvents"]["code"].AsInt;
+				if ( globalEventKey >= 0 ){
+					GlobalEventUserData globalEventUserData = null;
+					if ( user.globalEvents.ContainsKey(globalEventKey) ){
+						globalEventUserData = user.globalEvents[globalEventKey];
+					}else{
+						globalEventUserData = new GlobalEventUserData();
+						globalEventUserData.eventID = globalEventKey;
+						user.globalEvents.Add(globalEventKey, globalEventUserData);
+					}
+					globalEventUserData.endTimestamp = responseJson["liveEvents"]["end"].AsLong;
+				}
+			}
+		}
+
+		RequestCurrentEventData();
+	}
+
+
 	/// <summary>
 	/// Launch an async request to the server asking for current event data.
 	/// This will check if there are actually new events for the current user or
@@ -119,11 +149,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 		if (currentEventId >= 0) {
 			// We've found an event stored, lets get its data
-			if (instance.m_currentEvent == null) {
-				instance.m_currentEvent = new GlobalEvent();
-			}
-
-			GameServerManager.SharedInstance.GlobalEvent_GetState(currentEventId, instance.OnEventStateResponse);
+			GameServerManager.SharedInstance.GlobalEvent_GetEvent(currentEventId, instance.OnCurrentEventResponse);
 		} else {
 			ClearCurrentEvent();
 		}
@@ -149,7 +175,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 	public static void RequestCurrentEventRewards() {
 		if(instance.m_currentEvent == null) return;
-		GameServerManager.SharedInstance.GlobalEvent_ApplyRewards(instance.m_currentEvent.id, instance.OnEventRewardResponse);
+		GameServerManager.SharedInstance.GlobalEvent_GetRewards(instance.m_currentEvent.id, instance.OnEventRewardResponse);
 	}
 
 	/// <summary>
@@ -225,11 +251,12 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		return ErrorCode.NONE;
 	}
 
-	public static bool Connected()
-	{
+	public static bool Connected() {
 		bool ret = true;
-		if((CPGlobalEventsTest.networkCheck && Application.internetReachability == NetworkReachability.NotReachable) || !GameSessionManager.SharedInstance.IsLogged())
+		if ((CPGlobalEventsTest.networkCheck && Application.internetReachability == NetworkReachability.NotReachable) || 
+			(CPGlobalEventsTest.loginCheck   && !GameSessionManager.SharedInstance.IsLogged())) {
 			ret = false;
+		}
 		return ret;
 	}
 
@@ -251,7 +278,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			instance.m_user = _user;
 			if ( Connected() )
 			{
-				RequestCurrentEventData();
+				// RequestCurrentEventData();
+				TMP_RequestCustomizer();
 			}
 			FGOL.Events.EventManager.Instance.RegisterEvent(Events.OnUserLoggedIn, OnLoggedIn);
 		}
@@ -260,7 +288,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	static void OnLoggedIn(Enum m_event, object[] args)
 	{
 		// is this the right momment to request the data?
-		RequestCurrentEventData();
+		// RequestCurrentEventData();
+		TMP_RequestCustomizer();
 	}
 
 	/// <summary>

@@ -51,8 +51,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53ab405d6f5b09e418f66633b969a23d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MaxParticles: 150
-  m_RateOverTime: 100
+  m_MaxParticles: 10
+  m_RateOverTime: 10
   m_radius: 1
   m_duration: 1
   m_local: 0
@@ -65,33 +65,27 @@ MonoBehaviour:
     - serializedVersion: 2
       time: 0
       value: 0
-      inSlope: 7.5231977
-      outSlope: 7.5231977
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.48400697
-      value: 1
-      inSlope: 0.09054107
-      outSlope: 0.09054107
+      inSlope: 3.9913752
+      outSlope: 3.9913752
       tangentMode: 0
     - serializedVersion: 2
       time: 1
       value: 0
-      inSlope: -6.1796007
-      outSlope: -6.1796007
+      inSlope: -3.860585
+      outSlope: -3.860585
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
   m_VelX:
-    min: -5
-    max: 5
+    min: -2
+    max: 2
   m_VelY:
     min: 0
-    max: 5
+    max: 2
   m_VelZ:
-    min: -5
-    max: 5
+    min: -2
+    max: 2
   m_rotationRange:
     min: 0
     max: 1
@@ -116,16 +110,16 @@ MonoBehaviour:
   m_colorAnimation:
     key0:
       serializedVersion: 2
-      rgba: 255
+      rgba: 16777215
     key1:
       serializedVersion: 2
-      rgba: 4294901760
+      rgba: 4278190335
     key2:
       serializedVersion: 2
       rgba: 4294901760
     key3:
       serializedVersion: 2
-      rgba: 255
+      rgba: 65280
     key4:
       serializedVersion: 2
       rgba: 255
@@ -139,16 +133,16 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 0
     ctime0: 0
-    ctime1: 18583
-    ctime2: 45088
+    ctime1: 18466
+    ctime2: 46544
     ctime3: 65535
     ctime4: 65535
     ctime5: 0
     ctime6: 0
     ctime7: 0
     atime0: 0
-    atime1: 6932
-    atime2: 57671
+    atime1: 4136
+    atime2: 60816
     atime3: 65535
     atime4: 0
     atime5: 0
@@ -159,4 +153,4 @@ MonoBehaviour:
     m_NumAlphaKeys: 4
   m_particleMaterial: {fileID: 2100000, guid: 9f9ff8dd9770d294392afe3eb6ed82f5, type: 2}
   m_particleMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
-  m_gravity: {x: 0, y: -9.8, z: 0}
+  m_gravity: {x: 0, y: -0.98, z: 0}

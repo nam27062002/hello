@@ -174,7 +174,7 @@ public class ProfilerNPCSceneController : MonoBehaviour {
 				DefinitionNode def =  DefinitionsManager.SharedInstance.GetDefinition(m_category, _data.name);
 
 				if (def != null) {
-					psData.quantity = def.GetAsInt("poolSize");
+					psData.quantity = def.GetAsInt("count");
 				}
 
 				psData.path = _data.path;
