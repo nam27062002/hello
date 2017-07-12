@@ -6,7 +6,7 @@ using UnityEngine;
 public class CustomParticleSystem : MonoBehaviour {
 
 //    public class Stack<T> where T : Object
-    private class Stack<T>// where T : UnityEngine.Object
+    public class Stack<T>// where T : UnityEngine.Object
     {
         public Stack(int _size)
         {
@@ -96,61 +96,10 @@ public class CustomParticleSystem : MonoBehaviour {
 
     private CustomParticleData[] m_particles;
     private Stack<CustomParticleData> m_particlesStack;
-    /*
-        private CustomParticleData Stack
-        {
-            get
-            {
-                if (m_stackIndex > 0)
-                {
-                    CustomParticleData cp = m_particlesStack[--m_stackIndex];
-                    cp.m_active = true;
-                    return cp;
-                }
-                else
-                    return null;
-            }
-
-            set
-            {
-                if (m_stackIndex < m_MaxParticles)
-                {
-                    value.m_active = false;
-                    m_particlesStack[m_stackIndex++] = value;
-                }
-            }
-        }
-    */
 
 #else
     private CustomParticle[] m_particles;
-    private Stack<CustomParticle> m_particlesStack;
-
-/*
-    public CustomParticle Stack
-    {
-        get
-        {
-            if (m_stackIndex > 0)
-            {
-                CustomParticle cp = m_particlesStack[--m_stackIndex];
-                cp.gameObject.SetActive(true);
-                return cp;
-            }
-            else
-                return null;
-        }
-
-        set
-        {
-            if (m_stackIndex < m_MaxParticles)
-            {
-                value.gameObject.SetActive(false);
-                m_particlesStack[m_stackIndex++] = value;
-            }
-        }
-    }
-*/
+    public Stack<CustomParticle> m_particlesStack;
 
 #endif
 

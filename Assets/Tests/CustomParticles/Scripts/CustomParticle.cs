@@ -59,7 +59,7 @@ public class CustomParticle : MonoBehaviour {
 
         if (pTime > m_duration)
         {
-            m_pSystem.Stack = this;
+            m_pSystem.m_particlesStack.Push(this);
             gameObject.SetActive(false);
         }
 	}
