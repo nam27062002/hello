@@ -35,6 +35,8 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	[Space]
 	[SerializeField] private Slider m_progressBar = null;
 	[SerializeField] private GlobalEventsRewardInfo[] m_rewardInfos = new GlobalEventsRewardInfo[0];
+	[Space]
+	[SerializeField] private GlobalEventsLeaderboardView m_leaderboard = null;
 
 	// Internal
 	private float m_eventCountdownUpdateTimer = 0f;
@@ -48,6 +50,17 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	private void OnEnable() {
 		// Make sure event timer will be updated
 		m_eventCountdownUpdateTimer = 0f;
+
+		// Subscribe to external events
+		Messenger.AddListener<GlobalEventManager.RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
+	}
+
+	/// <summary>
+	/// Component has been disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<GlobalEventManager.RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
 	}
 
 	/// <summary>
@@ -116,6 +129,9 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// Progress
 		m_progressBar.value = evt.progress;
 		m_currentValueText_DEBUG.text = StringUtils.FormatBigNumber(evt.currentValue);
+
+		// Leaderboard
+		m_leaderboard.Refresh();
 	}
 
 	//------------------------------------------------------------------------//
@@ -125,4 +141,26 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// We have new data concerning the event.
+	/// </summary>
+	/// <param name="_requestType">Request type.</param>
+	private void OnEventDataUpdated(GlobalEventManager.RequestType _requestType) {
+		// Nothing to do if disabled
+		if(!isActiveAndEnabled) return;
+
+		// Different stuff depending on request type
+		switch(_requestType) {
+			case GlobalEventManager.RequestType.EVENT_STATE: {
+				// Chain with state request
+				GlobalEventManager.RequestCurrentEventLeaderboard();
+				BusyScreen.Show(this);
+			} break;
+
+			case GlobalEventManager.RequestType.EVENT_LEADERBOARD: {
+				// Toggle busy screen off
+				BusyScreen.Hide(this);
+			} break;
+		}
+	}
 }

@@ -150,7 +150,10 @@ public enum GameEvents {
 	TILT_CONTROL_SENSITIVITY_CHANGED,	// params: float _sensitivity
 
 	// Global events events (xD)
-	GLOBAL_EVENT_DATA_UPDATED,	// no params, the manager notifies that has received new data from the server related to the current event
+	GLOBAL_EVENT_UPDATED,			// params: _requestType, the manager notifies that has received new data from the server related to the current event. Triggers with all the request types: event definition, event state, leaderboard...
+	GLOBAL_EVENT_DATA_UPDATED,
+	GLOBAL_EVENT_STATE_UPDATED,
+	GLOBAL_EVENT_LEADERBOARD_UPDATED,
 	GLOBAL_EVENT_SCORE_REGISTERED	// params: bool _sucess, the manager notifies whether a contribution has been successfully registered to the server or not
 }
 

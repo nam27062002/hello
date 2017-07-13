@@ -28,6 +28,9 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 	// Exposed
 	[SerializeField] private ShowHideAnimator m_animator = null;
 
+	// Internal
+	private HashSet<Object> m_owners = new HashSet<Object>();	// HashSet ~= List without duplicates
+
 	//------------------------------------------------------------------//
 	// SINGLETON STATIC METHODS											//
 	//------------------------------------------------------------------//
@@ -35,9 +38,48 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 	/// Toggle the loading screen on/off.
 	/// </summary>
 	/// <param name="_show">Whether to show or hide the screen.</param>
+	/// <param name="_owner">The object performing the request.</param>
 	/// <param name="_animate">Use fade animation?</param>
-	public static void Toggle(bool _show, bool _animate = true) {
-		// Just let the animator do it
-		instance.m_animator.Set(_show, _animate);
+	public static void Toggle(bool _show, Object _owner, bool _animate = true) {
+		// Only hide when there are no owners retaining the screen
+		if(_show) {
+			if(_owner != null) instance.m_owners.Add(_owner);
+			instance.m_animator.Show(_animate);
+		} else {
+			instance.m_owners.Remove(_owner);
+			if(instance.m_owners.Count == 0) {
+				instance.m_animator.Hide(_animate);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Toggle the loading screen on.
+	/// </summary>
+	/// <param name="_owner">The object performing the request.</param>
+	/// <param name="_animate">Fade animation?</param>
+	public static void Show(Object _owner, bool _animate = true) {
+		Toggle(true, _owner, _animate);
+	}
+
+	/// <summary>
+	/// Toggle the loading screen off.
+	/// </summary>
+	/// <param name="_owner">The object performing the request.</param>
+	/// <param name="_animate">Fade animation?</param>
+	public static void Hide(Object _owner, bool _animate = true) {
+		Toggle(false, _owner, _animate);
+	}
+
+	/// <summary>
+	/// Toggle the loading screen off, clearing the owners stack.
+	/// </summary>
+	/// <param name="_animate">Fade animation?</param>
+	public static void ForceHide(bool _animate = true) {
+		// Clear owners stack
+		instance.m_owners.Clear();
+
+		// Hide!
+		Hide(null, _animate);
 	}
 }
