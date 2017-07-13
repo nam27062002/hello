@@ -13,7 +13,7 @@ public class CustomParticle : MonoBehaviour {
     private Camera m_currentCamera;
 
 
-    public float m_duration;
+    public float m_particleDuration;
     public Vector3 m_velocity;
 
     public float m_initscale;
@@ -57,7 +57,7 @@ public class CustomParticle : MonoBehaviour {
 //        transform.rotation = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, m_initRot);
         transform.rotation = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, (m_initRot + m_pSystem.m_rotationAnimation.Evaluate(pTime)) * 360.0f);
 
-        if (pTime > m_duration)
+        if (pTime > m_particleDuration)
         {
             m_pSystem.m_particlesStack.Push(this);
             gameObject.SetActive(false);
