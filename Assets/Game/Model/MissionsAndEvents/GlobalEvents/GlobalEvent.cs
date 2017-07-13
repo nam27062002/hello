@@ -147,21 +147,33 @@ public partial class GlobalEvent {
 		m_currentValue += _value;
 	}
 
-	public void CollectReward() {
+	//--------------------------------------------------------------------------------------------------------------
+	public void CollectAllRewards() {
 		if (m_state == State.FINISHED) {
 			// Temporary, apply rewards
 			for (int i = 0; i < m_rewardLevel; i++) {
-				if (i < m_rewards.Count) {
-					m_rewards[i].Collect();
-				} else {
-					m_topContributorsReward.Collect();
-				}
+				CollectReward(i);
 			}
 
-			UsersManager.currentUser.GetGlobalEventData(m_id).rewardCollected = true;
-			m_state = State.REWARD_COLLECTED;
+			FinishRewardCollection();
 		}
 	}
+
+	public void CollectReward(int _index) {
+		if (m_state == State.FINISHED) {
+			if (_index < m_rewards.Count) {
+				m_rewards[_index].Collect();
+			} else {
+				m_topContributorsReward.Collect();
+			}
+		}
+	}
+
+	public void FinishRewardCollection() {
+		UsersManager.currentUser.GetGlobalEventData(m_id).rewardCollected = true;
+		m_state = State.REWARD_COLLECTED;
+	}
+	//--------------------------------------------------------------------------------------------------------------
 
 	/// <summary>
 	/// Initialize event from a JSON definition.

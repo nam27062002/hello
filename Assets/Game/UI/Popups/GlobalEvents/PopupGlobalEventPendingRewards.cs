@@ -85,7 +85,7 @@ public class PopupGlobalEventPendingRewards : MonoBehaviour {
 	/// The collect rewards button has been pressed.
 	/// </summary>
 	public void OnCollectButton() {
-		GlobalEventManager.currentEvent.CollectReward();
+		GlobalEventManager.currentEvent.CollectAllRewards();
 		GetComponent<PopupController>().Close(true);
 	}
 }
