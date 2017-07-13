@@ -110,9 +110,9 @@ public partial class GlobalEvent {
 	}
 
 	// Contribution
-	private List<GlobalEventUserData> m_topContributors = new List<GlobalEventUserData>();	// Sorted
-	public List<GlobalEventUserData> topContributors {
-		get { return m_topContributors; }
+	private List<GlobalEventUserData> m_leaderboard = new List<GlobalEventUserData>();	// Sorted
+	public List<GlobalEventUserData> leaderboard {
+		get { return m_leaderboard; }
 	}
 	
 	//------------------------------------------------------------------------//
@@ -147,21 +147,33 @@ public partial class GlobalEvent {
 		m_currentValue += _value;
 	}
 
-	public void CollectReward() {
+	//--------------------------------------------------------------------------------------------------------------
+	public void CollectAllRewards() {
 		if (m_state == State.FINISHED) {
 			// Temporary, apply rewards
 			for (int i = 0; i < m_rewardLevel; i++) {
-				if (i < m_rewards.Count) {
-					m_rewards[i].Collect();
-				} else {
-					m_topContributorsReward.Collect();
-				}
+				CollectReward(i);
 			}
 
-			UsersManager.currentUser.GetGlobalEventData(m_id).rewardCollected = true;
-			m_state = State.REWARD_COLLECTED;
+			FinishRewardCollection();
 		}
 	}
+
+	public void CollectReward(int _index) {
+		if (m_state == State.FINISHED) {
+			if (_index < m_rewards.Count) {
+				m_rewards[_index].Collect();
+			} else {
+				m_topContributorsReward.Collect();
+			}
+		}
+	}
+
+	public void FinishRewardCollection() {
+		UsersManager.currentUser.GetGlobalEventData(m_id).rewardCollected = true;
+		m_state = State.REWARD_COLLECTED;
+	}
+	//--------------------------------------------------------------------------------------------------------------
 
 	/// <summary>
 	/// Initialize event from a JSON definition.
@@ -200,7 +212,7 @@ public partial class GlobalEvent {
 
 		// Reset state vars
 		m_currentValue = 0f;
-		m_topContributors.Clear();
+		m_leaderboard.Clear();
 
 		GlobalEventUserData playerEventData = null;
 		if(!UsersManager.currentUser.globalEvents.TryGetValue(m_id, out playerEventData)) {
@@ -221,28 +233,33 @@ public partial class GlobalEvent {
 		// Current value
 		m_currentValue = _data["currentValue"].AsFloat;
 
-		// Leaderboard (optional)
-		if(_data.ContainsKey("leaderboard")) {
-			SimpleJSON.JSONArray leaderboardData = _data["leaderboard"].AsArray;
-			int numEntries = leaderboardData.Count;
-			for(int i = 0; i < numEntries; ++i) {
-				// Reuse existing entries, create a new one if needed
-				if(i >= m_topContributors.Count) {
-					m_topContributors.Add(new GlobalEventUserData());
-				}
-
-				// Update leaderboard entry
-				m_topContributors[i].Load(leaderboardData[i]);
-			}
-
-			// Remove unused entries from the leaderboard
-			if(m_topContributors.Count > numEntries) {
-				m_topContributors.RemoveRange(numEntries, m_topContributors.Count - numEntries);
-			}
-		}
-
 		// Update event state (just in case, has nothing to do with given json)
 		UpdateState();
+	}
+
+	/// <summary>
+	/// Update event's leaderboard from a JSON object.
+	/// Correspnds to the GetLeaderboard server call.
+	/// </summary>
+	/// <param name="_data">Data.</param>
+	public void UpdateLeaderboardFromJson(SimpleJSON.JSONNode _data) {
+		// Parse leaderboard
+		SimpleJSON.JSONArray leaderboardData = _data["leaderboard"].AsArray;
+		int numEntries = leaderboardData.Count;
+		for(int i = 0; i < numEntries; ++i) {
+			// Reuse existing entries, create a new one if needed
+			if(i >= m_leaderboard.Count) {
+				m_leaderboard.Add(new GlobalEventUserData());
+			}
+
+			// Update leaderboard entry
+			m_leaderboard[i].Load(leaderboardData[i]);
+		}
+
+		// Remove unused entries from the leaderboard
+		if(m_leaderboard.Count > numEntries) {
+			m_leaderboard.RemoveRange(numEntries, m_leaderboard.Count - numEntries);
+		}
 	}
 
 	public void UpdateRewardLevelFromJson(SimpleJSON.JSONNode _data) {

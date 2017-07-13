@@ -232,7 +232,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 		// Attempt to do the contribution (we may have lost connectivity)
 		if(GlobalEventManager.Contribute(1f, 1f) == GlobalEventManager.ErrorCode.NONE) {
 			// Success! Wait for the confirmation from the server
-			BusyScreen.Toggle(true);
+			BusyScreen.Show(this);
 		} else {
 			// We can't contribute! Refresh panel
 			Refresh(true);
@@ -248,7 +248,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	/// <param name="_success">Was the contribute operation successful?</param>
 	private void OnContributionConfirmed(bool _success) {
 		// Hide busy screen
-		BusyScreen.Toggle(false);
+		BusyScreen.Hide(this);
 
 		// Successful?
 		if(_success) {

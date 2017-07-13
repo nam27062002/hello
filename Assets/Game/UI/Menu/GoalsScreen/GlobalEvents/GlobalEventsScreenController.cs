@@ -34,6 +34,9 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[SerializeField] private GlobalEventsPanel[] m_panels = new GlobalEventsPanel[(int)Panel.COUNT];
+
+	// Internal
+	private Panel m_activePanel = Panel.OFFLINE;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -64,7 +67,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GLOBAL_EVENT_DATA_UPDATED, OnEventDataUpdated);
+		Messenger.AddListener<GlobalEventManager.RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
 	}
 
 	/// <summary>
@@ -72,7 +75,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GLOBAL_EVENT_DATA_UPDATED, OnEventDataUpdated);
+		Messenger.RemoveListener<GlobalEventManager.RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
 	}
 
 	/// <summary>
@@ -93,41 +96,37 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Request current event data to the server.
-	/// </summary>
-	public void RequestEventData() {
-		GlobalEventManager.RequestCurrentEventData();
-		BusyScreen.Toggle(true);
-	}
-
-	/// <summary>
-	/// Request current event's state to the server.
-	/// Leaderboard wont be updated to save data bandwith.
-	/// </summary>
-	public void RequestEventState() {
-		GlobalEventManager.RequestCurrentEventState(false);
-		BusyScreen.Toggle(true);
-	}
-
-	/// <summary>
 	/// Select active panel based on current global event state.
 	/// </summary>
 	public void Refresh() {
+		SelectPanel();
+
+		// Refresh active panel
+		m_panels[(int)m_activePanel].Refresh();
+	}
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Based on current event state, select which panel should be active.
+	/// </summary>
+	private void SelectPanel() {
 		// Check events manager to see which panel to show
 		GlobalEventManager.ErrorCode error = GlobalEventManager.CanContribute();
-		Panel targetPanel = Panel.NO_EVENT;
+		m_activePanel = Panel.NO_EVENT;
 		switch(error) {
 			case GlobalEventManager.ErrorCode.NOT_INITIALIZED:
 			case GlobalEventManager.ErrorCode.OFFLINE: {
-				targetPanel = Panel.OFFLINE;
+				m_activePanel = Panel.OFFLINE;
 			} break;
 
 			case GlobalEventManager.ErrorCode.NOT_LOGGED_IN: {
-				targetPanel = Panel.LOG_IN;
+				m_activePanel = Panel.LOG_IN;
 			} break;
 
 			case GlobalEventManager.ErrorCode.NO_VALID_EVENT: {
-				targetPanel = Panel.NO_EVENT;
+				m_activePanel = Panel.NO_EVENT;
 			} break;
 
 			case GlobalEventManager.ErrorCode.NONE:
@@ -135,32 +134,29 @@ public class GlobalEventsScreenController : MonoBehaviour {
 				// We have a valid event, select panel based on its state
 				switch(GlobalEventManager.currentEvent.state) {
 					case GlobalEvent.State.ACTIVE: {
-						targetPanel = Panel.EVENT_ACTIVE;
+						m_activePanel = Panel.EVENT_ACTIVE;
 					} break;
 
 					case GlobalEvent.State.TEASING: {
-						targetPanel = Panel.EVENT_TEASER;
+						m_activePanel = Panel.EVENT_TEASER;
 					} break;
 
 					default: {
-						targetPanel = Panel.NO_EVENT;
+						m_activePanel = Panel.NO_EVENT;
 					} break;
 				}
 			} break;
 
 			default: {
-				targetPanel = Panel.NO_EVENT;
+				m_activePanel = Panel.NO_EVENT;
 			} break;
 		}
 
 		// Toggle active panel
 		// [AOC] Use animators?
 		for(int i = 0; i < m_panels.Length; ++i) {
-			m_panels[i].gameObject.SetActive(i == (int)targetPanel);
+			m_panels[i].gameObject.SetActive(i == (int)m_activePanel);
 		}
-
-		// Refresh active panel
-		m_panels[(int)targetPanel].Refresh();
 	}
 
 	//------------------------------------------------------------------------//
@@ -170,14 +166,32 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// Force a refresh every time we enter the tab!
 	/// </summary>
 	public void OnShowPreAnimation() {
-		Refresh();
+		// Get latest event data
+		// [AOC] TODO!! Figure out the best place to do so to avoid spamming
+		GlobalEventManager.RequestCurrentEventData();
+		BusyScreen.Show(this);
 	}
 
 	/// <summary>
 	/// The global event manager has received new data from the server.
 	/// </summary>
-	private void OnEventDataUpdated() {
-		Refresh();
-		BusyScreen.Toggle(false);
+	private void OnEventDataUpdated(GlobalEventManager.RequestType _requestType) {
+		// Different stuff depending on request type
+		switch(_requestType) {
+			case GlobalEventManager.RequestType.EVENT_DATA: {
+				// If there is no event, instantly refresh the screen. Otherwise wait for the EVENT_STATE response
+				if(GlobalEventManager.currentEvent == null) {
+					Refresh();
+					BusyScreen.Hide(this);
+				} else {
+					SelectPanel();
+				}
+			} break;
+
+			case GlobalEventManager.RequestType.EVENT_STATE: {
+				Refresh();
+				BusyScreen.Hide(this);
+			} break;
+		}
 	}
 }

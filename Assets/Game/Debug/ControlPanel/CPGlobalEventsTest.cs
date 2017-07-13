@@ -23,9 +23,11 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private const bool OFFLINE_BY_DEFAULT = true;
+
 	public const string TEST_ENABLED = "EVENTS_TEST_ENABLED";
 	public static bool testEnabled {
-		get { return Prefs.GetBoolPlayer(TEST_ENABLED, false); }
+		get { return Prefs.GetBoolPlayer(TEST_ENABLED, OFFLINE_BY_DEFAULT); }
 		set { Prefs.SetBoolPlayer(TEST_ENABLED, value); }
 	}
 
@@ -33,7 +35,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	public static bool networkCheck {
 		get { 
 			if(!testEnabled) return true;
-			return Prefs.GetBoolPlayer(NETWORK_CHECK, true); 
+			return Prefs.GetBoolPlayer(NETWORK_CHECK, !OFFLINE_BY_DEFAULT); 
 		}
 		set { Prefs.SetBoolPlayer(NETWORK_CHECK, value); }
 	}
@@ -42,7 +44,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	public static bool loginCheck {
 		get { 
 			if(!testEnabled) return true;
-			return Prefs.GetBoolPlayer(LOGIN_CHECK, true); 
+			return Prefs.GetBoolPlayer(LOGIN_CHECK, !OFFLINE_BY_DEFAULT); 
 		}
 		set { Prefs.SetBoolPlayer(LOGIN_CHECK, value); }
 	}
@@ -159,6 +161,11 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	/// <param name="_leaderboard">Whether to include the leaderboard or not.</param>
 	public void OnRequestCurrentEventState(bool _leaderboard) {
 		// Manager does it all
-		GlobalEventManager.RequestCurrentEventState(_leaderboard);
+		GlobalEventManager.RequestCurrentEventState();
+
+		// [AOC] TODO!! Separate into different buttons
+		if(_leaderboard) {
+			GlobalEventManager.RequestCurrentEventLeaderboard();
+		}
 	}
 }

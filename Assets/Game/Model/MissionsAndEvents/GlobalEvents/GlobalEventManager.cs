@@ -22,7 +22,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	// Refresh intervals: Seconds, if current event data is retrieved and this interval has expired, we will request new data from the server
-	private const float STATE_REFRESH_INTERVAL = 1f * 60f;
+	private const float STATE_REFRESH_INTERVAL = 5f * 60f;
 	private const float LEADERBOARD_REFRESH_INTERVAL = 10f * 60f;
 	private const float SERVER_REQUEST_TIMEOUT = 5f;	// Safeguard to avoid spamming the server with requests
 
@@ -35,6 +35,12 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		NOT_LOGGED_IN,
 		NO_VALID_EVENT,
 		EVENT_NOT_ACTIVE
+	}
+
+	public enum RequestType {
+		EVENT_DATA,
+		EVENT_STATE,
+		EVENT_LEADERBOARD
 	}
 
 	//------------------------------------------------------------------------//
@@ -53,16 +59,25 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	private GlobalEvent m_currentEvent = null;
 	public static GlobalEvent currentEvent {
 		get {
+			// [AOC] Disable for now, it's too difficult to control :s
+			//		 Manually trigger requests when needed
+			/*
 			// If data refresh interval has expired, request new data to the server
 			// Do it in background, return cached data
 			if(instance.m_currentEvent != null) {
 				DateTime now = serverTime;
 				if(instance.m_stateCheckTimestamp < now) {
 					// Request event state
-					// Request leaderboard as well?
-					RequestCurrentEventState(instance.m_leaderboardCheckTimestamp < now);
+					RequestCurrentEventState();
+
+					// [AOC] Request leaderboard as well?
+					if(instance.m_leaderboardCheckTimestamp < now) {
+						// [AOC] Don't think so, leaderboard should be requested more carefully
+						//RequestCurrentEventLeaderboard();
+					}
 				}
 			}
+			*/
 			return instance.m_currentEvent;
 		}
 	}
@@ -149,6 +164,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 		if (currentEventId >= 0) {
 			// We've found an event stored, lets get its data
+			Debug.Log("<color=magenta>EVENT DATA</color>");
 			GameServerManager.SharedInstance.GlobalEvent_GetEvent(currentEventId, instance.OnCurrentEventResponse);
 		} else {
 			ClearCurrentEvent();
@@ -161,8 +177,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	/// Listen to the GameEvents.GLOBAL_EVENT_DATA_UPDATED event to know when the
 	/// new data have been received.
 	/// </summary>
-	/// <param name="_getLeaderboard">Whether to get the latest leaderboard for the current event or not. Take in consideration that the leaderboard is a lot of data and is cached, so there's no need to update it every time.</param>
-	public static void RequestCurrentEventState(bool _getLeaderboard) {
+	public static void RequestCurrentEventState() {
 		// We need a valid event
 		if(instance.m_currentEvent == null) return;
 
@@ -170,11 +185,29 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		instance.m_stateCheckTimestamp = serverTime.AddSeconds(SERVER_REQUEST_TIMEOUT);
 
 		// Just do it
+		Debug.Log("<color=magenta>EVENT STATE</color>");
 		GameServerManager.SharedInstance.GlobalEvent_GetState(instance.m_currentEvent.id, instance.OnEventStateResponse);
 	}
 
+	/// <summary>
+	/// Requests the current event leaderboard.
+	/// </summary>
+	public static void RequestCurrentEventLeaderboard() {
+		// We need a valid event
+		if(instance.m_currentEvent == null) return;
+
+		// Just do it
+		Debug.Log("<color=magenta>EVENT LEADERBOARD</color>");
+		GameServerManager.SharedInstance.GlobalEvent_GetLeaderboard(instance.m_currentEvent.id, instance.OnEventLeaderboardResponse);
+	}
+
+	/// <summary>
+	/// Requests the current event rewards.
+	/// </summary>
 	public static void RequestCurrentEventRewards() {
 		if(instance.m_currentEvent == null) return;
+
+		Debug.Log("<color=magenta>EVENT REWARDS</color>");
 		GameServerManager.SharedInstance.GlobalEvent_GetRewards(instance.m_currentEvent.id, instance.OnEventRewardResponse);
 	}
 
@@ -198,6 +231,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		contribution *= _keysMultiplier;
 
 		// Requets to the server!
+		Debug.Log("<color=magenta>REGISTER SCORE</color>");
 		GameServerManager.SharedInstance.GlobalEvent_RegisterScore(
 			instance.m_currentEvent.id, 
 			contribution,
@@ -210,11 +244,12 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 					// Add to current user individual contribution in this event
 					user.GetGlobalEventData(instance.m_currentEvent.id).score += contribution;
 
-					// [AOC] TODO!! Update leaderboard?
+					// [AOC] TODO!! Update leaderboard? At least current player's position!
 
 				}
 
 				// Notify game that server response was received
+				Debug.Log("<color=purple>REGISTER SCORE</color>");
 				Messenger.Broadcast<bool>(GameEvents.GLOBAL_EVENT_SCORE_REGISTERED, _error == null);
 			}
 		);
@@ -324,7 +359,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 			// If the ID is different from the stored event, load the new event's data!
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-			Debug.Log("<color=magenta>Received current event data:</color>\n" + responseJson.ToString(4));
+			Debug.Log("<color=purple>EVENT DATA</color>\n" + responseJson.ToString(4));
 			if(m_currentEvent.id != responseJson["id"]) {
 				m_currentEvent.InitFromJson(responseJson);
 			}
@@ -334,12 +369,13 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		}
 
 		// Notify game that we have new data concerning the current event
+		Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
 		Messenger.Broadcast(GameEvents.GLOBAL_EVENT_DATA_UPDATED);
 
 		// If we have a valid event, request its state too
 		if(m_currentEvent != null) {
 			// Get current event's state
-			RequestCurrentEventState(true);
+			RequestCurrentEventState();
 		}
 	}
 
@@ -366,8 +402,48 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 			// The event will parse the response json by itself
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-			Debug.Log("<color=purple>Received current event state:</color>\n" + responseJson.ToString(4));
+			Debug.Log("<color=purple>EVENT STATE</color>\n" + responseJson.ToString(4));
 			m_currentEvent.UpdateFromJson(responseJson);
+
+			if (m_currentEvent.isRewarAvailable) {
+				GlobalEventManager.RequestCurrentEventRewards();
+			}
+
+			// Player data
+			GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
+			currentEventUserData.Load(responseJson["playerData"]);
+
+			// Notify game that we have new data concerning the current event
+			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_STATE);
+			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_STATE_UPDATED);
+		}
+	}
+
+	/// <summary>
+	/// Server callback for the event leaderboard request.
+	/// </summary>
+	/// <param name="_error">Error.</param>
+	/// <param name="_response">Response.</param>
+	private void OnEventLeaderboardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+		// Error?
+		if(_error != null) {
+			// [AOC] Do something or just ignore?
+			// Probably store somewhere that there was an error so retry timer is reset or smth
+			return;
+		}
+
+		// Ignore if we don't have a valid event!
+		if(m_currentEvent == null) return;
+
+		// Did the server gave us a response?
+		if(_response != null && _response["response"] != null) {
+			// Validate the event ID?
+			// For now let's just assume the given state is for the current event
+
+			// The event will parse the response json by itself
+			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
+			Debug.Log("<color=purple>EVENT LEADERBOARD</color>\n" + responseJson.ToString(4));
+			m_currentEvent.UpdateLeaderboardFromJson(responseJson);
 
 			if (m_currentEvent.isRewarAvailable) {
 				GlobalEventManager.RequestCurrentEventRewards();
@@ -385,7 +461,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			}
 
 			// Notify game that we have new data concerning the current event
-			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_DATA_UPDATED);
+			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
+			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
 		}
 	}
 
@@ -407,7 +484,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 			// The event will parse the response json by itself
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-			Debug.Log("<color=purple>Received current event reward:</color>\n" + responseJson.ToString(4));
+			Debug.Log("<color=purple>EVENT REWARD</color>\n" + responseJson.ToString(4));
 			m_currentEvent.UpdateRewardLevelFromJson(responseJson);
 		}
 	}

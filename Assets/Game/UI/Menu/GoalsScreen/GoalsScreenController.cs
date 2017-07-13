@@ -28,8 +28,11 @@ public class GoalsScreenController : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField]
-	private TextMeshProUGUI m_eventCountdownText = null;
+	[SerializeField] private TextMeshProUGUI m_eventCountdownText = null;
+	[SerializeField] private TabSystem m_tabs = null;
+	public TabSystem tabs {
+		get { return m_tabs; }
+	}
 
 	// Internal
 	private float m_eventCountdownUpdateTimer = 0f;

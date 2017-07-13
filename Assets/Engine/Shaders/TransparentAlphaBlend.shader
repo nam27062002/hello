@@ -10,7 +10,7 @@
 
 	Category
 	{
-		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "GlowTransparent" }
+		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 		Blend SrcAlpha OneMinusSrcAlpha
 		Cull Off
 		Lighting Off
