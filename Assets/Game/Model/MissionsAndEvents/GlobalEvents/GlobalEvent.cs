@@ -110,9 +110,9 @@ public partial class GlobalEvent {
 	}
 
 	// Contribution
-	private List<GlobalEventUserData> m_topContributors = new List<GlobalEventUserData>();	// Sorted
-	public List<GlobalEventUserData> topContributors {
-		get { return m_topContributors; }
+	private List<GlobalEventUserData> m_leaderboard = new List<GlobalEventUserData>();	// Sorted
+	public List<GlobalEventUserData> leaderboard {
+		get { return m_leaderboard; }
 	}
 	
 	//------------------------------------------------------------------------//
@@ -212,7 +212,7 @@ public partial class GlobalEvent {
 
 		// Reset state vars
 		m_currentValue = 0f;
-		m_topContributors.Clear();
+		m_leaderboard.Clear();
 
 		GlobalEventUserData playerEventData = null;
 		if(!UsersManager.currentUser.globalEvents.TryGetValue(m_id, out playerEventData)) {
@@ -233,28 +233,33 @@ public partial class GlobalEvent {
 		// Current value
 		m_currentValue = _data["currentValue"].AsFloat;
 
-		// Leaderboard (optional)
-		if(_data.ContainsKey("leaderboard")) {
-			SimpleJSON.JSONArray leaderboardData = _data["leaderboard"].AsArray;
-			int numEntries = leaderboardData.Count;
-			for(int i = 0; i < numEntries; ++i) {
-				// Reuse existing entries, create a new one if needed
-				if(i >= m_topContributors.Count) {
-					m_topContributors.Add(new GlobalEventUserData());
-				}
-
-				// Update leaderboard entry
-				m_topContributors[i].Load(leaderboardData[i]);
-			}
-
-			// Remove unused entries from the leaderboard
-			if(m_topContributors.Count > numEntries) {
-				m_topContributors.RemoveRange(numEntries, m_topContributors.Count - numEntries);
-			}
-		}
-
 		// Update event state (just in case, has nothing to do with given json)
 		UpdateState();
+	}
+
+	/// <summary>
+	/// Update event's leaderboard from a JSON object.
+	/// Correspnds to the GetLeaderboard server call.
+	/// </summary>
+	/// <param name="_data">Data.</param>
+	public void UpdateLeaderboardFromJson(SimpleJSON.JSONNode _data) {
+		// Parse leaderboard
+		SimpleJSON.JSONArray leaderboardData = _data["leaderboard"].AsArray;
+		int numEntries = leaderboardData.Count;
+		for(int i = 0; i < numEntries; ++i) {
+			// Reuse existing entries, create a new one if needed
+			if(i >= m_leaderboard.Count) {
+				m_leaderboard.Add(new GlobalEventUserData());
+			}
+
+			// Update leaderboard entry
+			m_leaderboard[i].Load(leaderboardData[i]);
+		}
+
+		// Remove unused entries from the leaderboard
+		if(m_leaderboard.Count > numEntries) {
+			m_leaderboard.RemoveRange(numEntries, m_leaderboard.Count - numEntries);
+		}
 	}
 
 	public void UpdateRewardLevelFromJson(SimpleJSON.JSONNode _data) {

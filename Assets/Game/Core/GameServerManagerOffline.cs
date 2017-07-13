@@ -12,6 +12,7 @@ using UnityEngine;
 using FGOL.Server;
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -36,6 +37,14 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	// Simulate global event progression
 	private Dictionary<int, float> m_eventValues = new Dictionary<int, float>();
 	private Dictionary<int, List<GlobalEventUserData>> m_eventLeaderboards = new Dictionary<int, List<GlobalEventUserData>>();
+
+	// Simulate users database
+	public class FakeUserSocialInfo {
+		public string id;
+		public string name;
+		public string pictureUrl;
+	}
+	private Dictionary<string, FakeUserSocialInfo> m_socialInfoDatabase = new Dictionary<string, FakeUserSocialInfo>();
 
 	//------------------------------------------------------------------------//
 	// INTERNAL UTILS														  //
@@ -76,6 +85,36 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
 		// Some extra initialization
 		m_initTimestamp = DateTime.UtcNow;
+
+		// Load fake users social info
+		TextAsset jsonFile = Resources.Load<TextAsset>("Debug/debug_sample_friends_list");
+		if(jsonFile != null) {
+			// Clear dictionary
+			m_socialInfoDatabase = new Dictionary<string, FakeUserSocialInfo>();
+
+			// Parse json
+			SimpleJSON.JSONNode jsonData = SimpleJSON.JSON.Parse(jsonFile.text);
+			SimpleJSON.JSONArray friendsDataArray = jsonData["data"].AsArray;
+			foreach(SimpleJSON.JSONNode friendData in friendsDataArray) {
+				/*{
+		            "picture":{
+		                "data":{
+		                    "height":200,
+		                    "is_silhouette":false,
+		                    "url":"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13886387_10100280084427592_3186940560560269419_n.jpg?oh=a9ab49109a28166c2a3409afecdb269e&oe=5A0404C0",
+		                    "width":200
+		                }
+		            },
+		            "name":"Owen Jose Nibbler Convey",
+		            "id":"223102040"
+		        }*/
+				FakeUserSocialInfo newSocialInfo = new FakeUserSocialInfo();
+				newSocialInfo.id = friendData["id"];
+				newSocialInfo.name = friendData["name"];
+				newSocialInfo.pictureUrl = friendData["picture"]["data"]["url"];
+				m_socialInfoDatabase.Add(newSocialInfo.id, newSocialInfo);
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -258,10 +297,54 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			playerEventData = new GlobalEventUserData(_eventID, UsersManager.currentUser.userId, 0f, -1, 0);
 		}
 
+		// Add player data to the json
+		eventData.Add("playerData", playerEventData.Save(true));
+
+		// Store response and simulate server delay
+		res["response"] = eventData.ToString();
+		DelayedCall(() => _callback(null, res));
+	}
+
+	/// <summary>
+	/// Get leaderboard.
+	/// </summary>
+	/// <param name="_eventID">The identifier of the event whose leaderboard we want.</param>
+	/// <param name="_callback">Callback action.</param>
+	override public void GlobalEvent_GetLeaderboard(int _eventID, ServerCallback _callback) {
+		// Create return dictionary
+		ServerResponse res = new ServerResponse();
+
+		// Create json
+		SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass();
+
+		// Current value
+		// Use a local dictionary to simulate events values progression
+		float currentValue = 0f;
+		if(!m_eventValues.TryGetValue(_eventID, out currentValue)) {
+			currentValue = 600f;	// Default initial value
+			m_eventValues[_eventID] = currentValue;
+		}
+
+		// Current player data
+		GlobalEventUserData playerEventData = null;
+		if(!UsersManager.currentUser.globalEvents.TryGetValue(_eventID, out playerEventData)) {
+			// User has never contributed to this event, create a new, empty, player event data
+			playerEventData = new GlobalEventUserData(_eventID, UsersManager.currentUser.userId, 0f, -1, 0);
+		}
+
+		// Make sure there is one entry in the social database with this user ID!
+		FakeUserSocialInfo playerSocialData = GetFakeSocialInfo(playerEventData.userID);	// This will create a new entry if needed, since we're using the player's ID
+
 		// If there is no leaderboard for this event, create one with random values
 		List<GlobalEventUserData> leaderboard = null;
 		if(!m_eventLeaderboards.TryGetValue(_eventID, out leaderboard)) {
 			// Create an array of max 100 random users
+			// Pick random social data for each, but without repeating!
+			// Remove current player from the pool as well
+			Dictionary<string, FakeUserSocialInfo> tempDatabase = new Dictionary<string, FakeUserSocialInfo>(m_socialInfoDatabase);
+			tempDatabase.Remove(playerSocialData.id);
+
+			// Do it!
 			float remainingScore = currentValue;
 			Range scorePerPlayerRange = new Range(remainingScore/100f, remainingScore/10f);	// min 10 players, max 100
 			leaderboard = new List<GlobalEventUserData>(100);
@@ -270,10 +353,16 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 				float score = Mathf.Min(remainingScore, scorePerPlayerRange.GetRandom());
 				remainingScore -= score;
 
+				// Pick a random social info and consume it
+				List<string> keys = Enumerable.ToList(tempDatabase.Keys);
+				string id = keys[UnityEngine.Random.Range(0, keys.Count)];
+				FakeUserSocialInfo socialInfo = tempDatabase[id];
+				tempDatabase.Remove(id);
+
 				// Create user data
 				GlobalEventUserData leaderboardEntry = new GlobalEventUserData(
 					_eventID,
-					"dummy_player_" + leaderboard.Count,
+					id,
 					score,
 					-1,	// Position will be initialized afterwards when the leaderboard is sorted
 					0
@@ -317,16 +406,12 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		eventData.Add("playerData", playerEventData.Save(true));
 
 		// Add leaderboard data to the json (if requested)
-		/*
-		if(_getLeaderboard) {
-			// Create a json array with every entry in the leaderboard
-			SimpleJSON.JSONArray leaderboardData = new SimpleJSON.JSONArray();
-			for(int i = 0; i < leaderboard.Count; i++) {
-				leaderboardData.Add(leaderboard[i].Save(false));
-			}
-			eventData.Add("leaderboard", leaderboardData);
+		// Create a json array with every entry in the leaderboard
+		SimpleJSON.JSONArray leaderboardData = new SimpleJSON.JSONArray();
+		for(int i = 0; i < leaderboard.Count; i++) {
+			leaderboardData.Add(leaderboard[i].Save(false));
 		}
-		*/
+		eventData.Add("leaderboard", leaderboardData);
 
 		// Store response and simulate server delay
 		res["response"] = eventData.ToString();
@@ -409,5 +494,30 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		if(!string.IsNullOrEmpty(_sku)) reward.Add("sku", _sku);
 		if(_amount > 0f) reward.Add("amount", _amount.ToString(JSON_FORMAT));
 		return reward;
+	}
+
+	/// <summary>
+	/// Given a user, get fake social info linked to him :P
+	/// </summary>
+	/// <returns>The fake social info.</returns>
+	/// <param name="_userID">User ID.</param>
+	public FakeUserSocialInfo GetFakeSocialInfo(string _userID) {
+		FakeUserSocialInfo socialInfo = null;
+		if(!m_socialInfoDatabase.TryGetValue(_userID, out socialInfo)) {
+			// Info not found!
+			// If it's the current player, override one entry for him
+			if(_userID == UsersManager.currentUser.userId) {
+				List<string> keys = Enumerable.ToList(m_socialInfoDatabase.Keys);
+				string id = keys[UnityEngine.Random.Range(0, keys.Count)];
+
+				socialInfo = m_socialInfoDatabase[id];
+				socialInfo.id = _userID;
+
+				m_socialInfoDatabase.Remove(id);
+				m_socialInfoDatabase.Add(socialInfo.id, socialInfo);
+			}
+		}
+
+		return socialInfo;
 	}
 }
