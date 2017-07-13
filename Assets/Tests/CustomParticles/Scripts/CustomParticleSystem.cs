@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class CustomParticleSystem : MonoBehaviour {
 
-//    public class Stack<T> where T : Object
-    public class Stack<T>// where T : UnityEngine.Object
+    public class Stack<T>
     {
         public Stack(int _size)
         {
@@ -22,7 +21,9 @@ public class CustomParticleSystem : MonoBehaviour {
                 return stack[--idx];
             }
             else
-                return default(T);// null;
+            {
+                return default(T);
+            }
         }
 
         public void Push(T elem)
@@ -44,14 +45,14 @@ public class CustomParticleSystem : MonoBehaviour {
 
     }
 
-
-
     [Header("Emitter")]
     public int m_MaxParticles;
     public float m_RateOverTime;
     public float m_radius;
-    public float m_duration;
+    public float m_particleDuration;
     public bool m_local;
+    public bool m_loop;
+
 
     [Header("Scale")]
     public Range m_scaleRange;
@@ -89,7 +90,7 @@ public class CustomParticleSystem : MonoBehaviour {
         public float m_initScale;
         public float m_rotZ;
         public Color m_color;
-        public float m_duration;
+        public float m_particleDuration;
         public float m_currentTime;
         public bool m_active;
     }
@@ -103,10 +104,9 @@ public class CustomParticleSystem : MonoBehaviour {
 
 #endif
 
-    private int m_stackIndex;
-
     private float m_invRateOverTime;
     private float m_lastParticleTime;
+    private int m_totalParticlesEmited;
 
     private Camera m_currentCamera;
 
@@ -136,19 +136,31 @@ public class CustomParticleSystem : MonoBehaviour {
             m_particles[c] = cp;
             m_particlesStack.Push(cp);
         }
-        m_stackIndex = m_MaxParticles;
     }
 
 	// Use this for initialization
 	void Start () {
         m_lastParticleTime = Time.time;
+        m_totalParticlesEmited = 0;
         m_currentCamera = Camera.main;
     }
 	
 	// Update is called once per frame
 	void Update () {
+
+        float dTime = Time.time - m_lastParticleTime;
+
+        if (m_loop && (m_totalParticlesEmited > m_MaxParticles))
+        {
+            if (dTime > m_particleDuration)
+            {
+
+            }
+        }
+
+
         m_invRateOverTime = 1.0f / m_RateOverTime;
-        int np = (int)((Time.time - m_lastParticleTime) / m_invRateOverTime);
+        int np = (int)(dTime / m_invRateOverTime);
         if (np > 0)
         {
             int initialized = 0;
@@ -165,7 +177,7 @@ public class CustomParticleSystem : MonoBehaviour {
 #if (CUSTOMPARTICLES_DRAWMESH)
                     cp.m_position = transform.position + Random.insideUnitSphere * m_radius;
                     cp.m_initScale = Random.RandomRange(m_scaleRange.min, m_scaleRange.max);
-                    cp.m_duration = m_duration;
+                    cp.m_particleDuration = m_particleDuration;
 
                     cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
                     cp.m_rotZ = Random.Range(m_rotationRange.min, m_rotationRange.max);
@@ -184,12 +196,13 @@ public class CustomParticleSystem : MonoBehaviour {
                     {
                         cp.transform.parent = null;
                     }
-                    cp.m_duration = m_duration;
+                    cp.m_particleDuration = m_particleDuration;
 
                     cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
                     cp.m_initRot = Random.Range(m_rotationRange.min, m_rotationRange.max);
                     cp.Init();
 #endif
+                    m_totalParticlesEmited++;
                 }
                 m_lastParticleTime += m_invRateOverTime;
             }
@@ -220,7 +233,7 @@ public class CustomParticleSystem : MonoBehaviour {
                 cp.mat.SetTRS(cp.m_position, rot, Vector3.one * (sv + cp.m_initScale));
                 matList.Add(cp.mat);
 
-                if (pTime > cp.m_duration)
+                if (pTime > cp.m_particleDuration)
                 {
                     cp.m_active = false;
                     m_particlesStack.Push(cp);

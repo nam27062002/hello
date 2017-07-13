@@ -159,6 +159,11 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	/// <param name="_leaderboard">Whether to include the leaderboard or not.</param>
 	public void OnRequestCurrentEventState(bool _leaderboard) {
 		// Manager does it all
-		GlobalEventManager.RequestCurrentEventState(_leaderboard);
+		GlobalEventManager.RequestCurrentEventState();
+
+		// [AOC] TODO!! Separate into different buttons
+		if(_leaderboard) {
+			GlobalEventManager.RequestCurrentEventLeaderboard();
+		}
 	}
 }
