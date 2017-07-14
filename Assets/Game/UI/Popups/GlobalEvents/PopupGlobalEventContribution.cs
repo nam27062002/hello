@@ -214,6 +214,8 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 		m_bonusDragonOrnamentAnim.Hide(false);
 		m_keyBonusGroupAnim.Hide(false);
 
+		float pause = 0.5f;
+
 		// Sequentially update values
 		Sequence seq = DOTween.Sequence()
 			.SetId(tweenId)
@@ -230,6 +232,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 				m_finalScoreText.SetValue(m_finalScore, true);
 			})
 			.AppendInterval(m_finalScoreText.duration)
+			.AppendInterval(pause)
 
 			// Bonus Dragon
 			.AppendCallback(() => {
@@ -242,6 +245,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 				m_finalScoreText.SetValue(m_finalScore, true);
 			})
 			.AppendInterval(m_finalScoreText.duration)
+			.AppendInterval(pause)
 
 			// Bonus key
 			.AppendCallback(() => {
@@ -252,6 +256,8 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 				if(m_usedKey) m_finalScore *= 2;
 				m_finalScoreText.SetValue(m_finalScore, true);
 			})
+
+			// Tap to continue
 			.AppendCallback(() => {
 				// Allow continue
 				m_tapToContinueAnim.Show();
@@ -372,6 +378,9 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 		// [AOC] TODO!!
 		// Let's just add max keys for now
 		UsersManager.currentUser.SetCurrency(UserProfile.Currency.KEYS, UsersManager.currentUser.GetCurrencyMax(UserProfile.Currency.KEYS));
+
+		// Refresh visuals
+		RefreshKeysField(true);
 	}
 
 	/// <summary>
