@@ -228,7 +228,6 @@ public class CustomParticleSystem : MonoBehaviour {
 
 
                 stCol.Push(col);
-//                m_matProp.SetColor("_Color", col);
 
                 cp.mat.SetTRS(cp.m_position, rot, Vector3.one * (sv + cp.m_initScale));
                 matList.Add(cp.mat);

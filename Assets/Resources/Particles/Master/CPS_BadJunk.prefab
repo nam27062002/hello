@@ -51,21 +51,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53ab405d6f5b09e418f66633b969a23d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MaxParticles: 3
+  m_MaxParticles: 4
   m_RateOverTime: 3
-  m_radius: 0.2
+  m_radius: 0.1
   m_particleDuration: 1
   m_local: 1
   m_loop: 1
   m_scaleRange:
-    min: 1
-    max: 1
+    min: 0.25
+    max: 0.25
   m_scaleAnimation:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0.5921052
+      inSlope: 2
+      outSlope: 0.4078948
+      tangentMode: 65
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 0.4078948
+      outSlope: 0
+      tangentMode: 5
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   m_VelX:
     min: 0
     max: 0
@@ -93,7 +105,7 @@ MonoBehaviour:
       rgba: 4278190335
     key2:
       serializedVersion: 2
-      rgba: 4278255360
+      rgba: 65280
     key3:
       serializedVersion: 2
       rgba: 65280
@@ -118,8 +130,8 @@ MonoBehaviour:
     ctime6: 0
     ctime7: 0
     atime0: 0
-    atime1: 21554
-    atime2: 39845
+    atime1: 32098
+    atime2: 65535
     atime3: 65535
     atime4: 0
     atime5: 0
@@ -127,7 +139,7 @@ MonoBehaviour:
     atime7: 0
     m_Mode: 0
     m_NumColorKeys: 2
-    m_NumAlphaKeys: 4
+    m_NumAlphaKeys: 3
   m_particleMaterial: {fileID: 2100000, guid: 3e4019d2555846d498b7670e8f7b56ba, type: 2}
   m_particleMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   m_gravity: {x: 0, y: 0, z: 0}
