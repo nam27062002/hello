@@ -141,7 +141,7 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 						StringUtils.FormatNumber(_amount), 
 						StringUtils.FormatNumber(UsersManager.currentUser.GetCurrencyMax(UserProfile.Currency.KEYS))	// [AOC] TODO!! Hardcoded limit
 					),
-					UIConstants.IconType.GOLDEN_FRAGMENTS, m_alignment
+					UIConstants.IconType.KEYS, m_alignment
 				);
 			} break;
 		}
