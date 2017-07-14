@@ -139,7 +139,7 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 					LocalizationManager.SharedInstance.Localize(
 						"TID_FRACTION", 
 						StringUtils.FormatNumber(_amount), 
-						StringUtils.FormatNumber(10)	// [AOC] TODO!! Hardcoded limit
+						StringUtils.FormatNumber(UsersManager.currentUser.GetCurrencyMax(UserProfile.Currency.KEYS))	// [AOC] TODO!! Hardcoded limit
 					),
 					UIConstants.IconType.GOLDEN_FRAGMENTS, m_alignment
 				);
