@@ -321,12 +321,12 @@ public class ResourcesFlow {
 
 		// Currency transaction
 		if(m_finalAmount > 0) {
-			UsersManager.currentUser.AddCurrency(-m_finalAmount, m_currency);
+			UsersManager.currentUser.AddCurrency(m_currency, -m_finalAmount);
 		}
 
 		// Extra PC Cost Transaction
 		if(m_extraPCCost > 0) {
-			UsersManager.currentUser.AddPC(-m_extraPCCost);
+			UsersManager.currentUser.AddCurrency(UserProfile.Currency.HARD, -m_extraPCCost);
 		}
 
 		// Change state

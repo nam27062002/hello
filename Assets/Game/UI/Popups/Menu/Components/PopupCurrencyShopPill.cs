@@ -152,11 +152,11 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		// Add amount
 		switch(type) {
 			case UserProfile.Currency.SOFT: {
-				UsersManager.currentUser.AddCoins(def.GetAsLong("amount"));
+				UsersManager.currentUser.AddCurrency(UserProfile.Currency.SOFT, def.GetAsLong("amount"));
 			} break;
 
 			case UserProfile.Currency.HARD: {
-				UsersManager.currentUser.AddPC(def.GetAsLong("amount"));
+				UsersManager.currentUser.AddCurrency(UserProfile.Currency.HARD, def.GetAsLong("amount"));
 			} break;
 		}
 
@@ -208,7 +208,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 				// Without resources flow:
 				/*long pricePC = (long)m_price;
 				if(UsersManager.currentUser.pc >= pricePC) {
-					UsersManager.currentUser.AddPC(-pricePC);
+					UsersManager.currentUser.AddCurrency(UserProfile.Currency.HARD, -pricePC);
 					ApplyShopPack( m_def );
 
 					// Trigger message

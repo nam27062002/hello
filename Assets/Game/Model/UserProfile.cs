@@ -28,12 +28,13 @@ public class UserProfile : UserSaveSystem
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
 	public enum Currency {
-		NONE,
+		NONE = -1,
 
 		SOFT,
 		HARD,
 		REAL,
 		GOLDEN_FRAGMENTS,
+		KEYS,
 
 		COUNT
 	};
@@ -64,14 +65,23 @@ public class UserProfile : UserSaveSystem
 	}
 
     // Economy
-	private long m_coins;
+	private List<long> m_currencies = new List<long>();
 	public long coins {
-		get { return m_coins; }
+		get { return GetCurrency(Currency.SOFT); }
 	}
 
-	private long m_pc;
-	public  long pc { 
-		get { return m_pc; }
+	public long pc {
+		get { return GetCurrency(Currency.HARD); }
+	}
+
+	public long goldenEggFragments {
+		get { return GetCurrency(Currency.GOLDEN_FRAGMENTS); }
+		set { SetCurrency(Currency.GOLDEN_FRAGMENTS, value); }
+	}
+
+	public long keys {
+		get { return GetCurrency(Currency.KEYS); }
+		set { SetCurrency(Currency.KEYS, value); }
 	}
 
 	// Game Settings
@@ -177,16 +187,6 @@ public class UserProfile : UserSaveSystem
 		set; 
 	}
 
-	private int m_goldenEggFragments = 0;
-	public int goldenEggFragments {
-		get { return m_goldenEggFragments; }
-		set { 
-			int oldValue = m_goldenEggFragments;
-			m_goldenEggFragments = value;
-			Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, UserProfile.Currency.GOLDEN_FRAGMENTS, oldValue, m_goldenEggFragments);
-		}
-	}
-
 	private int m_goldenEggsCollected = 0;
 	public int goldenEggsCollected {
 		get { return m_goldenEggsCollected; }
@@ -231,7 +231,6 @@ public class UserProfile : UserSaveSystem
 	}
 
 	// Global events
-	// Events dictionary
 	private Dictionary<int, GlobalEventUserData> m_globalEvents = new Dictionary<int, GlobalEventUserData>();
 	public Dictionary<int, GlobalEventUserData> globalEvents {
 		get { return m_globalEvents; }
@@ -245,6 +244,11 @@ public class UserProfile : UserSaveSystem
 	/// </summary>
 	public UserProfile()
 	{
+		// Initialize currencies to 0
+		for(int i = 0; i < (int)Currency.COUNT; ++i) {
+			m_currencies.Add(0);
+		}
+
 		m_dragonsBySku = new Dictionary<string, DragonData>();
 		DragonData newDragonData = null;
 		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGONS);
@@ -256,7 +260,6 @@ public class UserProfile : UserSaveSystem
 
 		m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
 		m_incubatingEgg = null;
-		m_goldenEggFragments = 0;
 		m_goldenEggsCollected = 0;
 
 		m_wardrobe = new Wardrobe();
@@ -276,27 +279,31 @@ public class UserProfile : UserSaveSystem
 	// CURRENCIES MANAGEMENT METHODS										  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Add coins.
+	/// Get current amount of any currency.
 	/// </summary>
-	/// <param name="_amount">Amount to add. Negative to subtract.</param>
-	public void AddCoins(long _amount) {
-		// Skip checks for now
-		// Compute new value and dispatch event
-		m_coins += _amount;
-		Messenger.Broadcast<long, long>(GameEvents.PROFILE_COINS_CHANGED, coins - _amount, coins);
-		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, UserProfile.Currency.SOFT, coins - _amount, coins);
+	/// <returns>The current amount of the required currency.</returns>
+	/// <param name="_currency">Currency type.</param>
+	public long GetCurrency(Currency _currency) {
+		return m_currencies[(int)_currency];
 	}
 	
 	/// <summary>
-	/// Add PC.
+	/// Set the current amount of any currenct.
+	/// Use carefully!
 	/// </summary>
-	/// <param name="_iAmount">Amount to add. Negative to subtract.</param>
-	public void AddPC(long _amount) {
-		// Skip checks for now
-		// Compute new value and dispatch event
-		m_pc += _amount;
-		Messenger.Broadcast<long, long>(GameEvents.PROFILE_PC_CHANGED, pc - _amount, pc);
-		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, UserProfile.Currency.HARD, pc - _amount, pc);
+	/// <returns>The currency.</returns>
+	/// <param name="_currency">Currency.</param>
+	/// <param name="_amount">Amount.</param>
+	public void SetCurrency(Currency _currency, long _amount) {
+		// Never go negative! (feel free to change this check if required for a specific currency)
+		if(_amount < 0) _amount = 0;
+
+		// Set the target value
+		long oldValue = GetCurrency(_currency);
+		m_currencies[(int)_currency] = _amount;
+
+		// Notify game!
+		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, _currency, oldValue, _amount);
 	}
 
 	/// <summary>
@@ -304,26 +311,9 @@ public class UserProfile : UserSaveSystem
 	/// </summary>
 	/// <param name="_amount">Amount to be added. Negative to subtract.</param>
 	/// <param name="_currency">Currency type.</param>
-	public void AddCurrency(long _amount, Currency _currency) {
-		switch(_currency) {
-			case Currency.SOFT:				AddCoins(_amount);					break;
-			case Currency.HARD:				AddPC(_amount);						break;
-			case Currency.GOLDEN_FRAGMENTS:	goldenEggFragments += (int)_amount;	break;
-		}
-	}
-
-	/// <summary>
-	/// Get current amount of any currency.
-	/// </summary>
-	/// <returns>The current amount of the required currency.</returns>
-	/// <param name="_currency">Currency type.</param>
-	public long GetCurrency(Currency _currency) {
-		switch(_currency) {
-			case Currency.SOFT:				return coins;						break;
-			case Currency.HARD:				return pc;							break;
-			case Currency.GOLDEN_FRAGMENTS:	return (long)goldenEggFragments;	break;
-		}
-		return 0;
+	public void AddCurrency(Currency _currency, long _amount) {
+		// Just use the setter
+		SetCurrency(_currency, GetCurrency(_currency) + _amount);
 	}
 
 	/// <summary>
@@ -334,6 +324,7 @@ public class UserProfile : UserSaveSystem
 			case Currency.SOFT: return "sc";
 			case Currency.HARD: return "hc";
 			case Currency.GOLDEN_FRAGMENTS: return "goldenFragments";
+			case Currency.KEYS: return "keys";
 		}
 		return string.Empty;
 	}
@@ -346,6 +337,7 @@ public class UserProfile : UserSaveSystem
 			case "sc": return Currency.SOFT;
 			case "hc": return Currency.HARD;
 			case "goldenFragments": return Currency.GOLDEN_FRAGMENTS;
+			case "keys": return Currency.KEYS;
 		}
 		return Currency.NONE;
 	}
@@ -483,16 +475,16 @@ public class UserProfile : UserSaveSystem
         // Economy
         string key = "sc";
         if (profile.ContainsKey(key)) {
-            m_coins = profile[key].AsInt;
+			m_currencies[(int)Currency.SOFT] = profile[key].AsInt;
         } else {
-            m_coins = 0;
+			m_currencies[(int)Currency.SOFT] = 0;
         }
 
         key = "pc";
         if (profile.ContainsKey(key)) {
-            m_pc = profile[key].AsInt;
+			m_currencies[(int)Currency.HARD] = profile[key].AsInt;
         } else {
-            m_pc = 0;
+			m_currencies[(int)Currency.HARD] = 0;
         }        
 
 		// Game settings
@@ -689,7 +681,7 @@ public class UserProfile : UserSaveSystem
         eggsCollected = _data["collectedAmount"].AsInt;
 
 		// Golden egg
-		m_goldenEggFragments = _data["goldenEggFragments"].AsInt;
+		m_currencies[(int)Currency.GOLDEN_FRAGMENTS] = _data["goldenEggFragments"].AsInt;
 		m_goldenEggsCollected = _data["goldenEggsCollected"].AsInt;
     }
 
@@ -738,8 +730,8 @@ public class UserProfile : UserSaveSystem
         profile.Add("timestamp", m_saveTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
         // Economy
-		profile.Add( "sc", m_coins.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		profile.Add( "pc", m_pc.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add( "sc", m_currencies[(int)Currency.SOFT].ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add( "pc", m_currencies[(int)Currency.HARD].ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Game settings
 		profile.Add("currentDragon",m_currentDragon);
@@ -822,7 +814,7 @@ public class UserProfile : UserSaveSystem
 		data.Add("collectedAmount", eggsCollected.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Golden eggs
-		data.Add("goldenEggFragments", m_goldenEggFragments.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("goldenEggFragments", m_currencies[(int)Currency.GOLDEN_FRAGMENTS].ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		data.Add("goldenEggsCollected", m_goldenEggsCollected.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
         return data;

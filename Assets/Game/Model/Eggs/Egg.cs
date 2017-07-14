@@ -270,7 +270,7 @@ public class Egg {
 
 		// Give coins (if any)
 		if(m_rewardData.coins > 0) {
-			UsersManager.currentUser.AddCoins(m_rewardData.coins);
+			UsersManager.currentUser.AddCurrency(UserProfile.Currency.SOFT, m_rewardData.coins);
 		}
 
 		// Change state

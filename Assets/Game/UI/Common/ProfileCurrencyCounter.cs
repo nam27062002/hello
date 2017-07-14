@@ -133,6 +133,17 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 					UIConstants.IconType.GOLDEN_FRAGMENTS, m_alignment
 				);
 			} break;
+
+			case UserProfile.Currency.KEYS: {
+				m_text.text = UIConstants.GetIconString(
+					LocalizationManager.SharedInstance.Localize(
+						"TID_FRACTION", 
+						StringUtils.FormatNumber(_amount), 
+						StringUtils.FormatNumber(10)	// [AOC] TODO!! Hardcoded limit
+					),
+					UIConstants.IconType.GOLDEN_FRAGMENTS, m_alignment
+				);
+			} break;
 		}
 	}
 

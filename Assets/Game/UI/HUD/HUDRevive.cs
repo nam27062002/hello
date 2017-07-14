@@ -145,7 +145,7 @@ public class HUDRevive : MonoBehaviour {
 		/*long costPC = m_paidReviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
 		if(UsersManager.currentUser.pc >= costPC) {
 			// Perform transaction
-			UsersManager.currentUser.AddPC(-costPC);
+			UsersManager.currentUser.AddCurrency(UserProfile.Currency.HARD, -costPC);
 			PersistenceManager.Save();
 
 			// Do it!

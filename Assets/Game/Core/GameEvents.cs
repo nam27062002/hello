@@ -25,8 +25,6 @@ public enum GameEvents {
     CP_QUALITY_CHANGED,         // no params
 
 	// Profile events
-	PROFILE_COINS_CHANGED,		// params: long _oldAmount, long _newAmount
-	PROFILE_PC_CHANGED,			// params: long _oldAmount, long _newAmount
 	PROFILE_CURRENCY_CHANGED,	// params: UserProfile.Currency _currency, long _oldAmount, long _newAmount
 	PROFILE_MAP_UNLOCKED,		// no params
 	TUTORIAL_STEP_TOGGLED,		// params: TutorialStep _step, bool _completed
