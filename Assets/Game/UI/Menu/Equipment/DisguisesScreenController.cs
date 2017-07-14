@@ -309,6 +309,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_selectedPoint">Selected point.</param>
 	public void OnSelectionChanged(ScrollRectSnapPoint _selectedPoint) {
+		if(_selectedPoint == null) return;
 		OnPillClicked(_selectedPoint.GetComponent<DisguisePill>());
 	}
 

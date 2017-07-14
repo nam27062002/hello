@@ -66,6 +66,8 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	/// </summary>
 	/// <param name="_selectedPoint">Selected point.</param>
 	public void OnSelectionChanged(ScrollRectSnapPoint _selectedPoint) {
+		if(_selectedPoint == null) return;
+
 		// Find selected language
 		DefinitionNode newLangDef = _selectedPoint.GetComponent<PopupSettingsLanguagePill>().def;
 
