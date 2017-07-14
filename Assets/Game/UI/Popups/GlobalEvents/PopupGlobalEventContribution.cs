@@ -35,19 +35,20 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Score Group
-	[SerializeField] private NumberTextAnimator m_scoreText = null;
-	[SerializeField] private Image m_eventIcon = null;
+	// Shared
+	[SerializeField] private TextMeshProUGUI m_keyCounterText = null;
 
-	// State panels
-	[Space]
+	// Panels
 	[SerializeField] private ShowHideAnimator m_offlineGroupAnim = null;
 	[SerializeField] private ShowHideAnimator m_loginGroupAnim = null;
 	[SerializeField] private ShowHideAnimator m_doubleUpGroupAnim = null;
 
-	// Double up panel
-	[Space]
-	[SerializeField] private TextMeshProUGUI m_keyCounterText = null;
+	[Separator("Title Panel")]
+	[SerializeField] private TextMeshProUGUI m_descriptionText = null;
+	[SerializeField] private Image m_eventIcon = null;
+
+	[Separator("Double Up Panel")]
+	[SerializeField] private NumberTextAnimator m_scoreText = null;	
 	[SerializeField] private TextMeshProUGUI m_doubleUpButtonText = null;
 
 	// Internal logic
