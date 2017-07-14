@@ -161,7 +161,8 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 		}
 
 		// Loop all the pills to put them into position and hide those not used
-		float deltaY = pillSize.y/2f;	// Pill's anchor is at the middle!
+		float marginY = 30;
+		float deltaY = marginY + pillSize.y/2f;	// Pill's anchor is at the middle!
 		for(int i = 0; i < m_pills.Count; ++i) {
 			// Active pill?
 			pill = m_pills[i];
@@ -188,7 +189,7 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 		}
 
 		// Set content size
-		m_scrollList.content.sizeDelta = new Vector2(m_scrollList.content.sizeDelta.x, deltaY - pillSize.y/2f);	// delta is pointing to where the next pill should be placed
+		m_scrollList.content.sizeDelta = new Vector2(m_scrollList.content.sizeDelta.x, deltaY - pillSize.y/2f + marginY);	// delta is pointing to where the next pill should be placed
 
 		// Launch animation?
 		m_scrollList.ScrollToPositionDelayedFrames(Vector2.zero, 1);
