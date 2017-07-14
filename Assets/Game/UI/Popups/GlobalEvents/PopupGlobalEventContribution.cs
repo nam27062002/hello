@@ -370,11 +370,8 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	/// </summary>
 	public void OnBuyMoreKeysButton() {
 		// [AOC] TODO!!
-		UIFeedbackText.CreateAndLaunch(
-			LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"),
-			new Vector2(0.5f, 0.5f),
-			(RectTransform)this.GetComponentInParent<Canvas>().transform
-		);
+		// Let's just add max keys for now
+		UsersManager.currentUser.SetCurrency(UserProfile.Currency.KEYS, UsersManager.currentUser.GetCurrencyMax(UserProfile.Currency.KEYS));
 	}
 
 	/// <summary>
