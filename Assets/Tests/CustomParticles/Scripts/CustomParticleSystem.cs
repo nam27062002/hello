@@ -244,7 +244,7 @@ public class CustomParticleSystem : MonoBehaviour {
         if (matList.Count > 0)
         {
             //            Graphics.DrawMeshInstanced(m_particleMesh, 0, m_particleMaterial, matList, matList.Count);
-            m_matProp.SetVectorArray("_Color", stCol.ToArray());
+            m_matProp.SetVectorArray("_VColor", stCol.ToArray());
             Graphics.DrawMeshInstanced(m_particleMesh, 0, m_particleMaterial, matList, m_matProp);
         }
 

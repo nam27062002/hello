@@ -52,7 +52,7 @@ public class CustomParticle : MonoBehaviour {
         transform.localScale = Vector3.one * (m_initscale + sv);
 
         Color col = m_pSystem.m_colorAnimation.Evaluate(pTime);
-        m_renderer.material.SetColor("_Color", col);
+        m_renderer.material.SetColor("_VColor", col);
 
 //        transform.rotation = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, m_initRot);
         transform.rotation = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, (m_initRot + m_pSystem.m_rotationAnimation.Evaluate(pTime)) * 360.0f);

@@ -15,13 +15,13 @@
 		ZWrite Off
 		Fog{ Color(0,0,0,0) }
 		ZTest[_ZTest]
-
+/*
 		BindChannels{
 			Bind "Color", color
 			Bind "Vertex", vertex
 			Bind "TexCoord", texcoord
 		}
-
+*/
 		// ---- Fragment program cards
 		SubShader
 		{
@@ -34,8 +34,8 @@
 				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile_particles
 
-				#pragma multi_compile_instancing
-				#pragma shader_feature  __ GPUINSTANCING
+//				#pragma multi_compile_instancing
+//				#pragma shader_feature  __ GPUINSTANCING
 
 				#include "UnityCG.cginc"
 
