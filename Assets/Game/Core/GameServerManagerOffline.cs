@@ -251,14 +251,14 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
 			// Rewards
 			SimpleJSON.JSONArray rewardsArray = new SimpleJSON.JSONArray();
-			rewardsArray.Add(CreateEventRewardData(0.2f, GlobalEvent.Reward.Type.SC, "", 500));
-			rewardsArray.Add(CreateEventRewardData(0.5f, GlobalEvent.Reward.Type.SC, "", 1000));
-			rewardsArray.Add(CreateEventRewardData(0.75f, GlobalEvent.Reward.Type.PC, "", 100));
-			rewardsArray.Add(CreateEventRewardData(1f, GlobalEvent.Reward.Type.EGG, "egg_premium", -1));
+			rewardsArray.Add(CreateEventRewardData(0.2f, Metagame.RewardSoftCurrency.Code, "", 500));
+			rewardsArray.Add(CreateEventRewardData(0.5f, Metagame.RewardSoftCurrency.Code, "", 1000));
+			rewardsArray.Add(CreateEventRewardData(0.75f, Metagame.RewardHardCurrency.Code, "", 100));
+			rewardsArray.Add(CreateEventRewardData(1f, Metagame.RewardEgg.Code, "egg_premium", -1));
 			eventData.Add("rewards", rewardsArray);
 
 			// Top percentile reward
-			eventData.Add("topReward", CreateEventRewardData(0.1f, GlobalEvent.Reward.Type.PET, "pet_24", -1));
+			eventData.Add("topReward", CreateEventRewardData(0.1f, "pet", "pet_24", -1));
 
 			// Store response
 			res["response"] = eventData.ToString();
@@ -467,13 +467,12 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		} else {
 			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass(); {
 				SimpleJSON.JSONArray r = new SimpleJSON.JSONArray(); {					
-					r.Add("SC", 100);
-					r.Add("SC", 200);
-					r.Add("SC", 200);
-					r.Add("SC", 200);
+					r.Add(Metagame.RewardSoftCurrency.Code, 500);
+					r.Add(Metagame.RewardSoftCurrency.Code, 1000);
+					r.Add(Metagame.RewardHardCurrency.Code, 100);
 				}
 				SimpleJSON.JSONClass top = new SimpleJSON.JSONClass(); {
-					top.Add("SC", 50);
+					top.Add(Metagame.RewardEgg.Code, "egg_premium");
 				}
 				eventData.Add("r", r);
 				eventData.Add("top", top);
@@ -492,10 +491,10 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// <param name="_type">Type of reward to be given.</param>
 	/// <param name="_sku">Reward sku (optional).</param>
 	/// <param name="_amount">Rewarded amount (optional).</param>
-	private SimpleJSON.JSONClass CreateEventRewardData(float _percentage, GlobalEvent.Reward.Type _type, string _sku, long _amount) {
+	private SimpleJSON.JSONClass CreateEventRewardData(float _percentage, string _type, string _sku, long _amount) {
 		SimpleJSON.JSONClass reward = new SimpleJSON.JSONClass();
 		reward.Add("targetPercentage", _percentage.ToString(JSON_FORMAT));
-		reward.Add("type", GlobalEvent.Reward.TypeToString(_type));
+		reward.Add("type", _type);
 		if(!string.IsNullOrEmpty(_sku)) reward.Add("sku", _sku);
 		if(_amount > 0f) reward.Add("amount", _amount.ToString(JSON_FORMAT));
 		return reward;
