@@ -359,6 +359,11 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 				FakeUserSocialInfo socialInfo = tempDatabase[id];
 				tempDatabase.Remove(id);
 
+				// If we've run out of social infos, refill the temp database (we will have duplicates, but no crashes :P)
+				if(tempDatabase.Count == 0) {
+					tempDatabase = new Dictionary<string, FakeUserSocialInfo>(m_socialInfoDatabase);
+				}
+
 				// Create user data
 				GlobalEventUserData leaderboardEntry = new GlobalEventUserData(
 					_eventID,

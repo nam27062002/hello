@@ -115,7 +115,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		toAdd = System.Math.Max(toAdd, -UsersManager.currentUser.GetCurrency(_currency));	// Min 0 coins! This will exclude negative amounts :)
 
 		// Update profile
-		UsersManager.currentUser.AddCurrency(toAdd, _currency);
+		UsersManager.currentUser.AddCurrency(_currency, toAdd);
 
 		// Save persistence
 		PersistenceManager.Save();

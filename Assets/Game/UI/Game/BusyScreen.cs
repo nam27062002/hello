@@ -7,6 +7,8 @@
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
+#define DISABLE_BUSY_SCREEN
+
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -32,6 +34,17 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 	private HashSet<Object> m_owners = new HashSet<Object>();	// HashSet ~= List without duplicates
 
 	//------------------------------------------------------------------//
+	// GENERIC METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	private void Awake() {
+		// Start hidden
+		m_animator.Hide(false);
+	}
+
+	//------------------------------------------------------------------//
 	// SINGLETON STATIC METHODS											//
 	//------------------------------------------------------------------//
 	/// <summary>
@@ -41,6 +54,7 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 	/// <param name="_owner">The object performing the request.</param>
 	/// <param name="_animate">Use fade animation?</param>
 	public static void Toggle(bool _show, Object _owner, bool _animate = true) {
+		#if !DISABLE_BUSY_SCREEN
 		// Only hide when there are no owners retaining the screen
 		if(_show) {
 			if(_owner != null) instance.m_owners.Add(_owner);
@@ -51,6 +65,7 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 				instance.m_animator.Hide(_animate);
 			}
 		}
+		#endif
 	}
 
 	/// <summary>
