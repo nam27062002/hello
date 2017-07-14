@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -25,35 +26,56 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	public const string PATH = "UI/Popups/GlobalEvents/PF_PopupGlobalEventContribution";
 
 	private const int MAX_SUBMIT_ATTEMPTS = 2;
+	private const long DOUBLE_UP_COST_KEYS = 1;	// [AOC] HARDCODED!! Take it from content!
 
 	private enum Panel {
 		OFFLINE,
 		LOG_IN,
-		DOUBLE_UP
+		ACTIVE
 	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Score Group
-	[SerializeField] private NumberTextAnimator m_scoreText = null;
-	[SerializeField] private Image m_eventIcon = null;
-
-	// State panels
-	[Space]
+	// Panels
 	[SerializeField] private ShowHideAnimator m_offlineGroupAnim = null;
 	[SerializeField] private ShowHideAnimator m_loginGroupAnim = null;
-	[SerializeField] private ShowHideAnimator m_doubleUpGroupAnim = null;
-
-	// Double up panel
+	[SerializeField] private ShowHideAnimator m_activeGroupAnim = null;
 	[Space]
-	[SerializeField] private TextMeshProUGUI m_keyCounterText = null;
-	[SerializeField] private TextMeshProUGUI m_doubleUpButtonText = null;
+	[SerializeField] private Localizer m_tapToContinueText = null;
+	[SerializeField] private ShowHideAnimator m_tapToContinueAnim = null;
+
+	[Separator("Title Panel")]
+	[SerializeField] private TextMeshProUGUI m_descriptionText = null;
+	[SerializeField] private Image m_eventIcon = null;
+
+	[Separator("Active Panel")]
+	[SerializeField] private NumberTextAnimator m_scoreText = null;	
+	[SerializeField] private TextMeshProUGUI m_bonusDragonText = null;
+	[SerializeField] private NumberTextAnimator m_finalScoreText = null;	
+	[Space]
+	[SerializeField] private TextMeshProUGUI m_keysBonusLabelText = null;
+	[Space]
+	[SerializeField] private TextMeshProUGUI m_useKeysButtonText = null;
+	[SerializeField] private ShowHideAnimator m_useKeysButtonAnim = null;
+	[SerializeField] private ShowHideAnimator m_buyKeysButtonAnim = null;
+	[Space]
+	[SerializeField] private TextMeshProUGUI m_keysBonusText = null;
+	[SerializeField] private ShowHideAnimator m_keysBonusTextAnim = null;
+	[Space]
+	[SerializeField] private ShowHideAnimator m_scoreGroupAnim = null;
+	[SerializeField] private ShowHideAnimator m_scoreOrnamentAnim = null;
+	[SerializeField] private ShowHideAnimator m_bonusDragonGroupAnim = null;
+	[SerializeField] private ShowHideAnimator m_bonusDragonOrnamentAnim = null;
+	[SerializeField] private ShowHideAnimator m_keyBonusGroupAnim = null;
 
 	// Internal logic
 	private Panel m_activePanel = Panel.OFFLINE;
 	private GlobalEvent m_event = null;
 	private int m_submitAttempts = 0;
+	private bool m_usedKey = false;
+	private long m_finalScore = 0;
+	private bool m_continueEnabled = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -109,41 +131,145 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	/// Refresh data based on current event state.
 	/// </summary>
 	/// <param name="_animate">Whether to animate or do an instant refresh.</param>
-	private void Refresh(bool _animate) {
+	private void InitPanel(bool _animate, bool _resetValues) {
 		// Select visible panel based on event state
 		GlobalEventManager.ErrorCode error = GlobalEventManager.CanContribute();
 		switch(error) {
-			case GlobalEventManager.ErrorCode.NONE:				m_activePanel = Panel.DOUBLE_UP;	break;
+			case GlobalEventManager.ErrorCode.NONE:				m_activePanel = Panel.ACTIVE;	break;
 			case GlobalEventManager.ErrorCode.OFFLINE:			m_activePanel = Panel.OFFLINE;		break;
 			case GlobalEventManager.ErrorCode.NOT_LOGGED_IN:	m_activePanel = Panel.LOG_IN;		break;
 		}
 
 		// Initialize active panel
 		switch(m_activePanel) {
-			case Panel.DOUBLE_UP: {
-				// Aux vars
-				int doubleUpCostKeys = 1;	// [AOC] TODO!!
-				int currentKeys = 3;		// [AOC] TODO!!
-				int totalKeys = 10;			// [AOC] TODO!!
+			case Panel.ACTIVE: {
+				if(_resetValues) {
+					m_scoreText.SetValue(0, false);
+					m_bonusDragonText.text = "x2";
+					m_finalScoreText.SetValue(0, false);
+					RefreshKeysField(_animate);
 
-				// Key counter text
-				string text = LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(currentKeys), StringUtils.FormatNumber(totalKeys));
-				m_keyCounterText.text = text + " <sprite name=\"icon_key\"/>";
-
-				// Initialize double-up price button
-				m_doubleUpButtonText.text = StringUtils.FormatNumber(doubleUpCostKeys);
+					// Hide everything (prepare for anim)
+					m_scoreGroupAnim.Hide(false);
+					m_scoreOrnamentAnim.Hide(false);
+					m_bonusDragonGroupAnim.Hide(false);
+					m_bonusDragonOrnamentAnim.Hide(false);
+					m_keyBonusGroupAnim.Hide(false);
+				}
+				m_tapToContinueText.Localize("Tap to continue");	// [AOC] HARDCODED!!
 			} break;
 
 			case Panel.OFFLINE:
 			case Panel.LOG_IN: {
 				// Nothing to do!
+				m_tapToContinueText.Localize("Tap to skip");	// [AOC] HARDCODED!!
 			} break;
 		}
 
 		// Set panels visibility
-		m_doubleUpGroupAnim.Set(m_activePanel == Panel.DOUBLE_UP);
-		m_offlineGroupAnim.Set(m_activePanel == Panel.OFFLINE);
-		m_loginGroupAnim.Set(m_activePanel == Panel.LOG_IN);
+		m_activeGroupAnim.Set(m_activePanel == Panel.ACTIVE, _animate);
+		m_offlineGroupAnim.Set(m_activePanel == Panel.OFFLINE, _animate);
+		m_loginGroupAnim.Set(m_activePanel == Panel.LOG_IN, _animate);
+	}
+
+	/// <summary>
+	/// Shows up the proper asset in the keys field.
+	/// </summary>
+	private void RefreshKeysField(bool _animate) {
+		// Have contributed?
+		if(m_usedKey) {
+			m_keysBonusLabelText.text = LocalizationManager.SharedInstance.Localize("Key Bonus");	// [AOC] HARDCODED!!
+			m_keysBonusText.text = "x2";
+		} else {
+			m_keysBonusLabelText.text = LocalizationManager.SharedInstance.Localize("Key Bonus x2");	// [AOC] HARDCODED!!
+		}
+
+		// Select what to choose - depends on whether we have already used a key and whether we have enough keys
+		m_buyKeysButtonAnim.Set(!m_usedKey && UsersManager.currentUser.keys < DOUBLE_UP_COST_KEYS, _animate);
+		m_useKeysButtonAnim.Set(!m_usedKey && UsersManager.currentUser.keys >= DOUBLE_UP_COST_KEYS, _animate);
+		m_keysBonusTextAnim.Set(m_usedKey, _animate);
+	}
+
+	/// <summary>
+	/// Trigger the active panel animation.
+	/// </summary>
+	private void LaunchActivePanelAnimation() {
+		// Kill any existing tween
+		string tweenId = "PopupGlobalEventContribution.ActivePanel";
+		DOTween.Kill(tweenId);
+
+		// Init some stuff
+		m_finalScoreText.SetValue(m_finalScore, false);
+		m_finalScore = 0;
+
+		m_continueEnabled = false;
+		m_tapToContinueAnim.Hide();
+
+		RefreshKeysField(true);
+
+		// Hide everything
+		m_scoreGroupAnim.Hide(false);
+		m_scoreOrnamentAnim.Hide(false);
+		m_bonusDragonGroupAnim.Hide(false);
+		m_bonusDragonOrnamentAnim.Hide(false);
+		m_keyBonusGroupAnim.Hide(false);
+
+		// Sequentially update values
+		Sequence seq = DOTween.Sequence()
+			.SetId(tweenId)
+
+			// Base score
+			.AppendCallback(() => {
+				m_scoreGroupAnim.Show();
+				m_scoreOrnamentAnim.Show();
+			})
+			.AppendInterval(m_scoreOrnamentAnim.tweenDelay + m_scoreOrnamentAnim.tweenDuration)
+			.AppendCallback(() => {
+				m_finalScore = (long)m_event.objective.currentValue;
+				m_scoreText.SetValue(m_finalScore, true);
+				m_finalScoreText.SetValue(m_finalScore, true);
+			})
+			.AppendInterval(m_finalScoreText.duration)
+
+			// Bonus Dragon
+			.AppendCallback(() => {
+				m_bonusDragonGroupAnim.Show();
+				m_bonusDragonOrnamentAnim.Show();
+			})
+			.AppendInterval(m_bonusDragonOrnamentAnim.tweenDelay + m_bonusDragonOrnamentAnim.tweenDuration)
+			.AppendCallback(() => {
+				m_finalScore *= 2;
+				m_finalScoreText.SetValue(m_finalScore, true);
+			})
+			.AppendInterval(m_finalScoreText.duration)
+
+			// Bonus key
+			.AppendCallback(() => {
+				m_keyBonusGroupAnim.Show();
+			})
+			.AppendInterval(m_keyBonusGroupAnim.tweenDelay + m_keyBonusGroupAnim.tweenDuration)
+			.AppendCallback(() => {
+				if(m_usedKey) m_finalScore *= 2;
+				m_finalScoreText.SetValue(m_finalScore, true);
+			})
+			.AppendCallback(() => {
+				// Allow continue
+				m_tapToContinueAnim.Show();
+				m_continueEnabled = true;
+			});
+	}
+
+	/// <summary>
+	/// Discard event contribution and close the popup.
+	/// </summary>
+	private void CloseAndDiscard() {
+		// If we spend keys, refund
+		if(m_usedKey) {
+			UsersManager.currentUser.AddCurrency(UserProfile.Currency.KEYS, DOUBLE_UP_COST_KEYS);
+		}
+
+		// Close popup
+		GetComponent<PopupController>().Close(true);
 	}
 
 	//------------------------------------------------------------------------//
@@ -165,19 +291,35 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 		// Objective image
 		m_eventIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_event.objective.icon);
 
-		// Reset number score
-		m_scoreText.SetValue(0, false);
+		// Event description
+		m_descriptionText.text = m_event.objective.GetDescription();
 
 		// Do a first refresh
-		Refresh(false);
+		InitPanel(false, true);
+
+		// Don't allow continue
+		m_continueEnabled = false;
 	}
 
 	/// <summary>
 	/// The popup has just been opened.
 	/// </summary>
 	public void OnOpenPostAnimation() {
-		// Trigger score number animation
-		m_scoreText.SetValue((long)m_event.objective.currentValue, true);
+		// Trigger animation
+		if(m_activePanel == Panel.ACTIVE) {
+			LaunchActivePanelAnimation();
+		} else {
+			// Allow continue
+			m_continueEnabled = true;
+		}
+	}
+
+	/// <summary>
+	/// The popup is about to close.
+	/// </summary>
+	public void OnClosePreAnimation() {
+		// Disable continue spamming!
+		m_continueEnabled = false;
 	}
 
 	/// <summary>
@@ -185,8 +327,12 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	/// </summary>
 	public void OnRetryConnectionButton() {
 		// Just refreshing is enough
-		// [AOC] TODO!! Show some feedback
-		Refresh(true);
+		InitPanel(true, false);
+
+		// If suceeded, launch intro anim
+		if(m_activePanel == Panel.ACTIVE) {
+			LaunchActivePanelAnimation();
+		}
 	}
 
 	/// <summary>
@@ -204,13 +350,19 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	/// <summary>
 	/// Double up button has been pressed.
 	/// </summary>
-	public void OnDoubleUpButton() {
-		// [AOC] TODO!!
-		UIFeedbackText.CreateAndLaunch(
-			LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"),
-			new Vector2(0.5f, 0.5f),
-			(RectTransform)this.GetComponentInParent<Canvas>().transform
-		);
+	public void OnUseKeyButton() {
+		// Remember decision
+		m_usedKey = true;
+
+		// Refresh visuals
+		RefreshKeysField(true);
+
+		// Perform transaction
+		UsersManager.currentUser.AddCurrency(UserProfile.Currency.KEYS, -DOUBLE_UP_COST_KEYS);
+
+		// Update final score
+		m_finalScore *= 2;
+		m_finalScoreText.SetValue(m_finalScore, true);
 	}
 
 	/// <summary>
@@ -218,27 +370,38 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	/// </summary>
 	public void OnBuyMoreKeysButton() {
 		// [AOC] TODO!!
-		UIFeedbackText.CreateAndLaunch(
-			LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"),
-			new Vector2(0.5f, 0.5f),
-			(RectTransform)this.GetComponentInParent<Canvas>().transform
-		);
+		// Let's just add max keys for now
+		UsersManager.currentUser.SetCurrency(UserProfile.Currency.KEYS, UsersManager.currentUser.GetCurrencyMax(UserProfile.Currency.KEYS));
 	}
 
 	/// <summary>
 	/// The submit score button has been pressed.
 	/// </summary>
-	public void OnSubmitButton() {
-		// Attempt to do the contribution (we may have lost connectivity)
-		if(GlobalEventManager.Contribute(1f, 1f) == GlobalEventManager.ErrorCode.NONE) {
-			// Success! Wait for the confirmation from the server
-			BusyScreen.Show(this);
-		} else {
-			// We can't contribute! Refresh panel
-			Refresh(true);
+	public void OnTapToContinue() {
+		// Allowed?
+		if(!m_continueEnabled) return;
 
-			// Reset submission attempts
-			m_submitAttempts = 0;
+		// Depends on active panel
+		switch(m_activePanel) {
+			case Panel.ACTIVE: {
+				// Attempt to do the contribution (we may have lost connectivity)
+				if(GlobalEventManager.Contribute(1f, 1f) == GlobalEventManager.ErrorCode.NONE) {
+					// Success! Wait for the confirmation from the server
+					BusyScreen.Show(this);
+				} else {
+					// We can't contribute! Refresh panel
+					InitPanel(true, false);
+
+					// Reset submission attempts
+					m_submitAttempts = 0;
+				}
+			} break;
+
+			case Panel.LOG_IN:
+			case Panel.OFFLINE: {
+				// Discard contribution
+				CloseAndDiscard();
+			} break;
 		}
 	}
 
@@ -262,14 +425,14 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 			if(m_submitAttempts >= MAX_SUBMIT_ATTEMPTS) {
 				// Show feedback
 				UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
-					LocalizationManager.SharedInstance.Localize("Max submission attempts reached.\nIgnoring score!"),	// [AOC] HARDCODED!!
+					LocalizationManager.SharedInstance.Localize("Max submission attempts reached.\nIgnoring score!\n(Used keys will be refunded)"),	// [AOC] HARDCODED!!
 					new Vector2(0.5f, 0.5f),
 					(RectTransform)this.GetComponentInParent<Canvas>().transform
 				);
 				text.text.color = Color.red;
 
-				// Close popup
-				GetComponent<PopupController>().Close(true);
+				// Discard contribution
+				CloseAndDiscard();
 			} else {
 				// Show feedback
 				UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
@@ -280,7 +443,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 				text.text.color = Color.red;
 
 				// Refresh info
-				Refresh(true);
+				InitPanel(true, false);
 			}
 		}
 	}
