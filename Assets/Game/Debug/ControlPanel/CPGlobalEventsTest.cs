@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections.Generic;
 using TMPro;
 
 //----------------------------------------------------------------------------//
@@ -22,9 +23,11 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private const bool OFFLINE_BY_DEFAULT = true;
+
 	public const string TEST_ENABLED = "EVENTS_TEST_ENABLED";
 	public static bool testEnabled {
-		get { return Prefs.GetBoolPlayer(TEST_ENABLED, false); }
+		get { return Prefs.GetBoolPlayer(TEST_ENABLED, OFFLINE_BY_DEFAULT); }
 		set { Prefs.SetBoolPlayer(TEST_ENABLED, value); }
 	}
 
@@ -32,7 +35,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	public static bool networkCheck {
 		get { 
 			if(!testEnabled) return true;
-			return Prefs.GetBoolPlayer(NETWORK_CHECK, true); 
+			return Prefs.GetBoolPlayer(NETWORK_CHECK, !OFFLINE_BY_DEFAULT); 
 		}
 		set { Prefs.SetBoolPlayer(NETWORK_CHECK, value); }
 	}
@@ -41,7 +44,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	public static bool loginCheck {
 		get { 
 			if(!testEnabled) return true;
-			return Prefs.GetBoolPlayer(LOGIN_CHECK, true); 
+			return Prefs.GetBoolPlayer(LOGIN_CHECK, !OFFLINE_BY_DEFAULT); 
 		}
 		set { Prefs.SetBoolPlayer(LOGIN_CHECK, value); }
 	}
@@ -53,7 +56,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 		ACTIVE,
 		FINISHED
 	};
-
+		
 	public const string EVENT_STATE = "EVENTS_TEST_STATE";
 	public static EventStateTest eventState {
 		get {
@@ -63,6 +66,16 @@ public class CPGlobalEventsTest : MonoBehaviour {
 		set { Prefs.SetIntPlayer(EVENT_STATE, (int)value); }
 	}
 
+	private static TMP_Text sm_eventCode = null;
+	public static int eventCode {
+		get {
+			if (sm_eventCode == null) {
+				return 0;
+			}
+
+			return int.Parse(sm_eventCode.text);
+		}
+	}
 	//------------------------------------------------------------------------//
 	// EXPOSED MEMBERS														  //
 	//------------------------------------------------------------------------//
@@ -73,6 +86,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	[Space]
 	[SerializeField] private Toggle m_networkCheckToggle = null;
 	[SerializeField] private Toggle m_loginCheckToggle = null;
+	[SerializeField] private TMP_Text m_eventCode = null;
 	[SerializeField] private CPEnumPref m_eventStateDropdown = null;
 
 	//------------------------------------------------------------------------//
@@ -103,6 +117,8 @@ public class CPGlobalEventsTest : MonoBehaviour {
 				GlobalEventManager.RequestCurrentEventData();
 			}
 		);
+
+		sm_eventCode = m_eventCode;
 	}
 
 	/// <summary>
@@ -145,6 +161,11 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	/// <param name="_leaderboard">Whether to include the leaderboard or not.</param>
 	public void OnRequestCurrentEventState(bool _leaderboard) {
 		// Manager does it all
-		GlobalEventManager.RequestCurrentEventState(_leaderboard);
+		GlobalEventManager.RequestCurrentEventState();
+
+		// [AOC] TODO!! Separate into different buttons
+		if(_leaderboard) {
+			GlobalEventManager.RequestCurrentEventLeaderboard();
+		}
 	}
 }

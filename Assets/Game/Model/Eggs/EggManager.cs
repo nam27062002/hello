@@ -86,7 +86,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	}
 
 	public static int goldenEggFragments {
-		get { return instance.m_user.goldenEggFragments; }
+		get { return (int)instance.m_user.goldenEggFragments; }
 	}
 
 	public static bool goldenEggCompleted {

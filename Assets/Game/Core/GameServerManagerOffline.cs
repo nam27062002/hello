@@ -12,6 +12,7 @@ using UnityEngine;
 using FGOL.Server;
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -36,6 +37,14 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	// Simulate global event progression
 	private Dictionary<int, float> m_eventValues = new Dictionary<int, float>();
 	private Dictionary<int, List<GlobalEventUserData>> m_eventLeaderboards = new Dictionary<int, List<GlobalEventUserData>>();
+
+	// Simulate users database
+	public class FakeUserSocialInfo {
+		public string id;
+		public string name;
+		public string pictureUrl;
+	}
+	private Dictionary<string, FakeUserSocialInfo> m_socialInfoDatabase = new Dictionary<string, FakeUserSocialInfo>();
 
 	//------------------------------------------------------------------------//
 	// INTERNAL UTILS														  //
@@ -76,6 +85,36 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
 		// Some extra initialization
 		m_initTimestamp = DateTime.UtcNow;
+
+		// Load fake users social info
+		TextAsset jsonFile = Resources.Load<TextAsset>("Debug/debug_sample_friends_list");
+		if(jsonFile != null) {
+			// Clear dictionary
+			m_socialInfoDatabase = new Dictionary<string, FakeUserSocialInfo>();
+
+			// Parse json
+			SimpleJSON.JSONNode jsonData = SimpleJSON.JSON.Parse(jsonFile.text);
+			SimpleJSON.JSONArray friendsDataArray = jsonData["data"].AsArray;
+			foreach(SimpleJSON.JSONNode friendData in friendsDataArray) {
+				/*{
+		            "picture":{
+		                "data":{
+		                    "height":200,
+		                    "is_silhouette":false,
+		                    "url":"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13886387_10100280084427592_3186940560560269419_n.jpg?oh=a9ab49109a28166c2a3409afecdb269e&oe=5A0404C0",
+		                    "width":200
+		                }
+		            },
+		            "name":"Owen Jose Nibbler Convey",
+		            "id":"223102040"
+		        }*/
+				FakeUserSocialInfo newSocialInfo = new FakeUserSocialInfo();
+				newSocialInfo.id = friendData["id"];
+				newSocialInfo.name = friendData["name"];
+				newSocialInfo.pictureUrl = friendData["picture"]["data"]["url"];
+				m_socialInfoDatabase.Add(newSocialInfo.id, newSocialInfo);
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -116,16 +155,69 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	}
 	*/
 
+	private DateTime CreateStartDate(CPGlobalEventsTest.EventStateTest _targetState) {
+		DateTime startTimestamp = new DateTime();
+		switch(_targetState) {
+			case CPGlobalEventsTest.EventStateTest.DEFAULT:
+			case CPGlobalEventsTest.EventStateTest.ACTIVE: {
+					startTimestamp = m_initTimestamp.AddDays(-3.3);		// Started 3.3 days ago
+				} break;
+
+			case CPGlobalEventsTest.EventStateTest.TEASING: {
+					startTimestamp = m_initTimestamp.AddDays(1.5);		// Starting in 1.5 days
+				} break;
+
+			case CPGlobalEventsTest.EventStateTest.FINISHED: {
+					startTimestamp = m_initTimestamp.AddDays(-85);		// Started 85 days ago
+				} break;
+		}
+		return startTimestamp;
+	}
+
+	private string CreateTeaseTimestamp(DateTime _startDate) {
+		return TimeUtils.DateToTimestamp(_startDate.AddDays(-2)).ToString(JSON_FORMAT);	// 2 days before start time
+	}
+
+	private string CreateStartTimestamp(DateTime _startDate) {
+		return TimeUtils.DateToTimestamp(_startDate).ToString(JSON_FORMAT);
+	}
+
+	private string CreateEndTimestamp(DateTime _startDate) {
+		return TimeUtils.DateToTimestamp(_startDate.AddDays(7)).ToString(JSON_FORMAT); // Lasts 7 days
+	}
+
 	//------------------------------------------------------------------------//
 	// GLOBAL EVENTS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Get the current global event for this user from the server.
-	/// Current global event can be a past event with pending rewards, an active event,
-	/// a future event or no event at all.
-	/// </summary>
-	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_GetCurrent(ServerCallback _callback) {
+	override public void GlobalEvent_TMPCustomizer(ServerCallback _callback) {
+		ServerResponse res = new ServerResponse();
+
+		// Check debug settings
+		CPGlobalEventsTest.EventStateTest targetState = CPGlobalEventsTest.eventState;
+
+		// Simulate no event?
+		if(targetState == CPGlobalEventsTest.EventStateTest.NO_EVENT) {
+			res["response"] = null;
+		} else {
+			DateTime startDate = CreateStartDate(targetState);
+
+			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass(); {
+				SimpleJSON.JSONClass liveEvents = new SimpleJSON.JSONClass(); {
+					liveEvents.Add("code", CPGlobalEventsTest.eventCode);
+					liveEvents.Add("name", "test_event_0");
+					liveEvents.Add("start", CreateStartTimestamp(startDate));
+					liveEvents.Add("end", CreateEndTimestamp(startDate));
+				}
+				eventData.Add("liveEvents", liveEvents);
+			}
+			res["response"] = eventData.ToString();
+		}
+
+		// Simulate server delay
+		DelayedCall(() => _callback(null, res));
+	}
+
+	override public void GlobalEvent_GetEvent( int _eventID, ServerCallback _callback) {
 		// Create return dictionary
 		ServerResponse res = new ServerResponse();
 
@@ -138,7 +230,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		} else {
 			// ID
 			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass();
-			eventData.Add("id", 0);
+			eventData.Add("id", CPGlobalEventsTest.eventCode);
 			eventData.Add("name", "test_event_0");
 
 			// Goal definition
@@ -152,25 +244,10 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
 			// Timestamps
 			// By tuning the start timestamp in relation to the current time we can simulate the different states of the event
-			DateTime startTimestamp = new DateTime();
-			switch(targetState) {
-				case CPGlobalEventsTest.EventStateTest.DEFAULT:
-				case CPGlobalEventsTest.EventStateTest.ACTIVE: {
-					startTimestamp = m_initTimestamp.AddDays(-3.3);		// Started 3.3 days ago
-				} break;
-
-				case CPGlobalEventsTest.EventStateTest.TEASING: {
-					startTimestamp = m_initTimestamp.AddDays(1.5);		// Starting in 1.5 days
-				} break;
-
-				case CPGlobalEventsTest.EventStateTest.FINISHED: {
-					startTimestamp = m_initTimestamp.AddDays(-85);		// Started 85 days ago
-				} break;
-			}
-
-			eventData.Add("startTimestamp", TimeUtils.DateToTimestamp(startTimestamp).ToString(JSON_FORMAT));
-			eventData.Add("teaserTimestamp", TimeUtils.DateToTimestamp(startTimestamp.AddDays(-2)).ToString(JSON_FORMAT));	// 2 days before start time
-			eventData.Add("endTimestamp", TimeUtils.DateToTimestamp(startTimestamp.AddDays(7)).ToString(JSON_FORMAT));		// Lasts 7 days
+			DateTime startDate = CreateStartDate(targetState);
+			eventData.Add("startTimestamp", CreateStartTimestamp(startDate));
+			eventData.Add("teaserTimestamp", CreateTeaseTimestamp(startDate));
+			eventData.Add("endTimestamp", CreateEndTimestamp(startDate));		
 
 			// Rewards
 			SimpleJSON.JSONArray rewardsArray = new SimpleJSON.JSONArray();
@@ -197,7 +274,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// <param name="_eventID">The identifier of the event whose state we want.</param>
 	/// <param name="_getLeaderboard">Whether to retrieve the leaderboard as well or not (top 100 + player).</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_GetState(int _eventID, bool _getLeaderboard, ServerCallback _callback) {
+	override public void GlobalEvent_GetState(int _eventID, ServerCallback _callback) {
 		// Create return dictionary
 		ServerResponse res = new ServerResponse();
 
@@ -217,13 +294,57 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		GlobalEventUserData playerEventData = null;
 		if(!UsersManager.currentUser.globalEvents.TryGetValue(_eventID, out playerEventData)) {
 			// User has never contributed to this event, create a new, empty, player event data
-			playerEventData = new GlobalEventUserData(_eventID, UsersManager.currentUser.userId, 0f, -1);
+			playerEventData = new GlobalEventUserData(_eventID, UsersManager.currentUser.userId, 0f, -1, 0);
 		}
+
+		// Add player data to the json
+		eventData.Add("playerData", playerEventData.Save(true));
+
+		// Store response and simulate server delay
+		res["response"] = eventData.ToString();
+		DelayedCall(() => _callback(null, res));
+	}
+
+	/// <summary>
+	/// Get leaderboard.
+	/// </summary>
+	/// <param name="_eventID">The identifier of the event whose leaderboard we want.</param>
+	/// <param name="_callback">Callback action.</param>
+	override public void GlobalEvent_GetLeaderboard(int _eventID, ServerCallback _callback) {
+		// Create return dictionary
+		ServerResponse res = new ServerResponse();
+
+		// Create json
+		SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass();
+
+		// Current value
+		// Use a local dictionary to simulate events values progression
+		float currentValue = 0f;
+		if(!m_eventValues.TryGetValue(_eventID, out currentValue)) {
+			currentValue = 600f;	// Default initial value
+			m_eventValues[_eventID] = currentValue;
+		}
+
+		// Current player data
+		GlobalEventUserData playerEventData = null;
+		if(!UsersManager.currentUser.globalEvents.TryGetValue(_eventID, out playerEventData)) {
+			// User has never contributed to this event, create a new, empty, player event data
+			playerEventData = new GlobalEventUserData(_eventID, UsersManager.currentUser.userId, 0f, -1, 0);
+		}
+
+		// Make sure there is one entry in the social database with this user ID!
+		FakeUserSocialInfo playerSocialData = GetFakeSocialInfo(playerEventData.userID);	// This will create a new entry if needed, since we're using the player's ID
 
 		// If there is no leaderboard for this event, create one with random values
 		List<GlobalEventUserData> leaderboard = null;
 		if(!m_eventLeaderboards.TryGetValue(_eventID, out leaderboard)) {
 			// Create an array of max 100 random users
+			// Pick random social data for each, but without repeating!
+			// Remove current player from the pool as well
+			Dictionary<string, FakeUserSocialInfo> tempDatabase = new Dictionary<string, FakeUserSocialInfo>(m_socialInfoDatabase);
+			tempDatabase.Remove(playerSocialData.id);
+
+			// Do it!
 			float remainingScore = currentValue;
 			Range scorePerPlayerRange = new Range(remainingScore/100f, remainingScore/10f);	// min 10 players, max 100
 			leaderboard = new List<GlobalEventUserData>(100);
@@ -232,12 +353,24 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 				float score = Mathf.Min(remainingScore, scorePerPlayerRange.GetRandom());
 				remainingScore -= score;
 
+				// Pick a random social info and consume it
+				List<string> keys = Enumerable.ToList(tempDatabase.Keys);
+				string id = keys[UnityEngine.Random.Range(0, keys.Count)];
+				FakeUserSocialInfo socialInfo = tempDatabase[id];
+				tempDatabase.Remove(id);
+
+				// If we've run out of social infos, refill the temp database (we will have duplicates, but no crashes :P)
+				if(tempDatabase.Count == 0) {
+					tempDatabase = new Dictionary<string, FakeUserSocialInfo>(m_socialInfoDatabase);
+				}
+
 				// Create user data
 				GlobalEventUserData leaderboardEntry = new GlobalEventUserData(
 					_eventID,
-					"dummy_player_" + leaderboard.Count,
+					id,
 					score,
-					-1	// Position will be initialized afterwards when the leaderboard is sorted
+					-1,	// Position will be initialized afterwards when the leaderboard is sorted
+					0
 				);
 
 				// Add it to the leaderboard
@@ -278,14 +411,12 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		eventData.Add("playerData", playerEventData.Save(true));
 
 		// Add leaderboard data to the json (if requested)
-		if(_getLeaderboard) {
-			// Create a json array with every entry in the leaderboard
-			SimpleJSON.JSONArray leaderboardData = new SimpleJSON.JSONArray();
-			for(int i = 0; i < leaderboard.Count; i++) {
-				leaderboardData.Add(leaderboard[i].Save(false));
-			}
-			eventData.Add("leaderboard", leaderboardData);
+		// Create a json array with every entry in the leaderboard
+		SimpleJSON.JSONArray leaderboardData = new SimpleJSON.JSONArray();
+		for(int i = 0; i < leaderboard.Count; i++) {
+			leaderboardData.Add(leaderboard[i].Save(false));
 		}
+		eventData.Add("leaderboard", leaderboardData);
 
 		// Store response and simulate server delay
 		res["response"] = eventData.ToString();
@@ -315,9 +446,42 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// </summary>
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_callback">Callback action. Given rewards?</param>
-	override public void GlobalEvent_ApplyRewards(int _eventID, ServerCallback _callback) {
-		// [AOC] TODO!!
-		DelayedCall(() => _callback(null, null));
+	override public void GlobalEvent_GetRewards(int _eventID, ServerCallback _callback) {		
+		/*
+		{
+			r: [
+				"SC:100",
+				"SC:200"
+			],
+			top: "SC:50"
+		}
+*/
+		ServerResponse res = new ServerResponse();
+
+		// Check debug settings
+		CPGlobalEventsTest.EventStateTest targetState = CPGlobalEventsTest.eventState;
+
+		// Simulate no event?
+		if(targetState == CPGlobalEventsTest.EventStateTest.NO_EVENT) {
+			res["response"] = null;
+		} else {
+			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass(); {
+				SimpleJSON.JSONArray r = new SimpleJSON.JSONArray(); {					
+					r.Add("SC", 100);
+					r.Add("SC", 200);
+					r.Add("SC", 200);
+					r.Add("SC", 200);
+				}
+				SimpleJSON.JSONClass top = new SimpleJSON.JSONClass(); {
+					top.Add("SC", 50);
+				}
+				eventData.Add("r", r);
+				eventData.Add("top", top);
+			}
+			res["response"] = eventData.ToString();
+		}
+
+		DelayedCall(() => _callback(null, res));
 	}
 	
 	/// <summary>
@@ -335,5 +499,30 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		if(!string.IsNullOrEmpty(_sku)) reward.Add("sku", _sku);
 		if(_amount > 0f) reward.Add("amount", _amount.ToString(JSON_FORMAT));
 		return reward;
+	}
+
+	/// <summary>
+	/// Given a user, get fake social info linked to him :P
+	/// </summary>
+	/// <returns>The fake social info.</returns>
+	/// <param name="_userID">User ID.</param>
+	public FakeUserSocialInfo GetFakeSocialInfo(string _userID) {
+		FakeUserSocialInfo socialInfo = null;
+		if(!m_socialInfoDatabase.TryGetValue(_userID, out socialInfo)) {
+			// Info not found!
+			// If it's the current player, override one entry for him
+			if(_userID == UsersManager.currentUser.userId) {
+				List<string> keys = Enumerable.ToList(m_socialInfoDatabase.Keys);
+				string id = keys[UnityEngine.Random.Range(0, keys.Count)];
+
+				socialInfo = m_socialInfoDatabase[id];
+				socialInfo.id = _userID;
+
+				m_socialInfoDatabase.Remove(id);
+				m_socialInfoDatabase.Add(socialInfo.id, socialInfo);
+			}
+		}
+
+		return socialInfo;
 	}
 }

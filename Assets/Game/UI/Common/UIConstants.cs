@@ -28,7 +28,8 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 
 		COINS,
 		PC,
-		GOLDEN_FRAGMENTS
+		GOLDEN_FRAGMENTS,
+		KEYS
 	}
 
 	// Icon alignment type, relative to a text
@@ -56,6 +57,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	[SerializeField] private string m_tmpSpriteGoldenEggFragment = "icon_dragon_scale";
 	public static string TMP_SPRITE_GOLDEN_EGG_FRAGMENT {
 		get { return instance.m_tmpSpriteGoldenEggFragment; }
+	}
+
+	[SerializeField] private string m_tmpSpriteKeys = "icon_key";
+	public static string TMP_SPRITE_KEY {
+		get { return instance.m_tmpSpriteKeys; }
 	}
 	#endregion
 
@@ -345,6 +351,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			case IconType.COINS: 			return UIConstants.TMP_SPRITE_SC;
 			case IconType.PC: 				return UIConstants.TMP_SPRITE_PC;
 			case IconType.GOLDEN_FRAGMENTS: return UIConstants.TMP_SPRITE_GOLDEN_EGG_FRAGMENT;
+			case IconType.KEYS:				return UIConstants.TMP_SPRITE_KEY;
 		}
 		return string.Empty;
 	}
@@ -363,7 +370,8 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		switch(_icon) {
 			case IconType.COINS:
 			case IconType.PC:
-			case IconType.GOLDEN_FRAGMENTS: {
+			case IconType.GOLDEN_FRAGMENTS:
+			case IconType.KEYS: {
 				iconString = GetSpriteTag(GetIconName(_icon));
 			} break;
 
@@ -435,6 +443,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			case UserProfile.Currency.SOFT:				icon = IconType.COINS;				break;
 			case UserProfile.Currency.HARD:				icon = IconType.PC;					break;
 			case UserProfile.Currency.GOLDEN_FRAGMENTS:	icon = IconType.GOLDEN_FRAGMENTS;	break;
+			case UserProfile.Currency.KEYS:				icon = IconType.KEYS;				break;
 		}
 		return icon;
 	}

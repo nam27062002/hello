@@ -62,6 +62,9 @@ public class FeatureSettings
     // This flag enables/disables the spawners of the entities that have only a decorative purpose
     public const string KEY_DECO_SPAWNERS = "decoSpawners";
 
+	// This key decides the quality level used in the particles manager
+	public const string KEY_PARTICLES = "particles";
+
     // Examples of how to use different type datas
     /*
     public const string KEY_INT_TEST = "intTest";    
@@ -152,6 +155,11 @@ public class FeatureSettings
             key = KEY_DECO_SPAWNERS;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
             Datas.Add(key, data);
+
+			// particles
+			key = KEY_PARTICLES;
+			data = new DataInt(key, EValueType.Level5, (int)ELevel5Values.mid);
+			Datas.Add(key, data);
 
             /*
             // intTest

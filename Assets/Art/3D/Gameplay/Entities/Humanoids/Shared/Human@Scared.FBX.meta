@@ -39,6 +39,7 @@ ModelImporter:
     100062: Human_Spine2
     100064: Human_
     100066: Particle View 001
+    100068: Human_R_Weapon_01
     400000: //RootNode
     400002: Human_Head
     400004: Human_L_Calf
@@ -73,7 +74,10 @@ ModelImporter:
     400062: Human_Spine2
     400064: Human_
     400066: Particle View 001
+    400068: Human_R_Weapon_01
     7400000: Scared
+    7400002: ScaredIn
+    7400004: ScaredOut
     9500000: //RootNode
   materials:
     importMaterials: 0
@@ -99,8 +103,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Scared
       takeName: Take 001
-      firstFrame: 0
-      lastFrame: 110
+      firstFrame: 5
+      lastFrame: 20
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -181,11 +185,201 @@ ModelImporter:
         weight: 1
       - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm/Human_R_Forearm/Human_R_Palm/Human_R_Fingers
         weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm/Human_R_Forearm/Human_R_Palm/Human_R_Fingers/Human_R_Weapon_01
+        weight: 1
       - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm/Human_R_Forearm/Human_R_Palm/Human_R_Thumb
         weight: 1
       - path: Human_R_Platform
         weight: 1
       maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: ScaredIn
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 5
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Human_L_Platform
+        weight: 1
+      - path: Human_Master
+        weight: 1
+      - path: Human_Pelvis
+        weight: 1
+      - path: Human_Pelvis/Human_L_Thigh
+        weight: 1
+      - path: Human_Pelvis/Human_L_Thigh/Human_L_Calf
+        weight: 1
+      - path: Human_Pelvis/Human_L_Thigh/Human_L_Calf/Human_L_Foot
+        weight: 1
+      - path: Human_Pelvis/Human_L_Thigh/Human_L_Calf/Human_L_Foot/Human_L_Foot_Fingers
+        weight: 1
+      - path: Human_Pelvis/Human_R_Thigh
+        weight: 1
+      - path: Human_Pelvis/Human_R_Thigh/Human_R_Calf
+        weight: 1
+      - path: Human_Pelvis/Human_R_Thigh/Human_R_Calf/Human_R_Foot
+        weight: 1
+      - path: Human_Pelvis/Human_R_Thigh/Human_R_Calf/Human_R_Foot/Human_R_Foot_Fingers
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone/Human_L_Upperarm
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone/Human_L_Upperarm/Human_L_Forearm
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone/Human_L_Upperarm/Human_L_Forearm/Human_L_Palm
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone/Human_L_Upperarm/Human_L_Forearm/Human_L_Palm/Human_L_Fingers
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone/Human_L_Upperarm/Human_L_Forearm/Human_L_Palm/Human_L_Thumb
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone/Human_L_Upperarm/Human_L_Forearm/Human_L_Palm/Human_L_Weapon_01
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone/Human_L_Upperarm/Human_L_Forearm/Human_L_Palm/Human_L_Weapon_01/Human_L_Weapon_02
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_Neck
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_Neck/Human_Head
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm/Human_R_Forearm
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm/Human_R_Forearm/Human_R_Palm
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm/Human_R_Forearm/Human_R_Palm/Human_R_Fingers
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm/Human_R_Forearm/Human_R_Palm/Human_R_Fingers/Human_R_Weapon_01
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm/Human_R_Forearm/Human_R_Palm/Human_R_Thumb
+        weight: 1
+      - path: Human_R_Platform
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: ScaredOut
+      takeName: Take 001
+      firstFrame: 20
+      lastFrame: 28
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Human_L_Platform
+        weight: 1
+      - path: Human_Master
+        weight: 1
+      - path: Human_Pelvis
+        weight: 1
+      - path: Human_Pelvis/Human_L_Thigh
+        weight: 1
+      - path: Human_Pelvis/Human_L_Thigh/Human_L_Calf
+        weight: 1
+      - path: Human_Pelvis/Human_L_Thigh/Human_L_Calf/Human_L_Foot
+        weight: 1
+      - path: Human_Pelvis/Human_L_Thigh/Human_L_Calf/Human_L_Foot/Human_L_Foot_Fingers
+        weight: 1
+      - path: Human_Pelvis/Human_R_Thigh
+        weight: 1
+      - path: Human_Pelvis/Human_R_Thigh/Human_R_Calf
+        weight: 1
+      - path: Human_Pelvis/Human_R_Thigh/Human_R_Calf/Human_R_Foot
+        weight: 1
+      - path: Human_Pelvis/Human_R_Thigh/Human_R_Calf/Human_R_Foot/Human_R_Foot_Fingers
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone/Human_L_Upperarm
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone/Human_L_Upperarm/Human_L_Forearm
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone/Human_L_Upperarm/Human_L_Forearm/Human_L_Palm
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone/Human_L_Upperarm/Human_L_Forearm/Human_L_Palm/Human_L_Fingers
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone/Human_L_Upperarm/Human_L_Forearm/Human_L_Palm/Human_L_Thumb
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone/Human_L_Upperarm/Human_L_Forearm/Human_L_Palm/Human_L_Weapon_01
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_L_Collarbone/Human_L_Upperarm/Human_L_Forearm/Human_L_Palm/Human_L_Weapon_01/Human_L_Weapon_02
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_Neck
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_Neck/Human_Head
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm/Human_R_Forearm
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm/Human_R_Forearm/Human_R_Palm
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm/Human_R_Forearm/Human_R_Palm/Human_R_Fingers
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm/Human_R_Forearm/Human_R_Palm/Human_R_Fingers/Human_R_Weapon_01
+        weight: 1
+      - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm/Human_R_Forearm/Human_R_Palm/Human_R_Thumb
+        weight: 1
+      - path: Human_R_Platform
+        weight: 1
+      maskType: 3
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     isReadable: 1

@@ -80,6 +80,9 @@ public class NumberTextAnimator : MonoBehaviour {
 	void Awake() {
 		// Get target text component
 		m_targetTxt = gameObject.GetComponent<TextMeshProUGUI>();	// Should have one, since we're using the [RequireComponent] tag
+
+		// Set initial value
+		SetValue(m_currentValue, false);
 	}
 	
 	/// <summary>
@@ -140,6 +143,9 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// </summary>
 	/// <param name="_value">The value to be applied.</param>
 	private void ApplyValue(long _value) {
+		// Ignore if not enabled
+		if(!isActiveAndEnabled) return;
+
 		// If a custom function is defined, invoke it
 		// Otherwise just use default formatting
 		if(m_customTextSetter != null) {

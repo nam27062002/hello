@@ -147,6 +147,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 	public OnEvent onEndEating;
 	public OnEvent onEndLatching;
 
+	protected string m_origin = "";
+
 	public enum SpecialEatAction
 	{
 		Eat,
@@ -712,7 +714,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			damage *= m_holdBoostDamageMultiplier;
 		}
 
-		m_holdingPlayer.dragonHealthBehaviour.ReceiveDamage( damage * Time.deltaTime, DamageType.LATCH, transform, false);
+		m_holdingPlayer.dragonHealthBehaviour.ReceiveDamage( damage * Time.deltaTime, DamageType.LATCH, transform, false, m_origin);
 		if (!m_holdingPlayer.IsAlive())
 		{
 			StartBlood();
@@ -905,7 +907,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 					else
 					{
 						// Bite player!!!
-						InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage( GetBitePlayerDamage(), DamageType.NORMAL, transform);
+						InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage( GetBitePlayerDamage(), DamageType.NORMAL, transform, true, m_origin);
 						if (onBitePlayer != null) {
 							onBitePlayer();
 						}

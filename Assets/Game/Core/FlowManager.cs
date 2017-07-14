@@ -35,6 +35,19 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Switch to a different scene. Nothing happens if given scene is the same as active one.
+	/// </summary>
+	private void SwitchScene(string _nextScene) {
+		// Skip if target scene has already been set
+		if(GameSceneManager.nextScene == _nextScene) return;
+
+		// Make sure we don't carry any cached popup into the game scene
+		PopupManager.Clear();
+
+		// Change scene
+		GameSceneManager.SwitchScene(_nextScene);
+	}
 
 	//------------------------------------------------------------------//
 	// SCENE NAVIGATION													//
@@ -58,48 +71,24 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// Navigate to the game scene.
 	/// </summary>
 	public static void GoToGame() {
-        string nextScene = GameSceneController.NAME;
-
-        // Skip if next scene has already been set
-        if (GameSceneManager.nextScene == nextScene) return;
-
-        // Change scene
-        GameSceneManager.SwitchScene(nextScene);       
+		instance.SwitchScene(GameSceneController.NAME);
 	}
 
     /// <summary>
 	/// Navigate to the results scene.
 	/// </summary>
 	public static void GoToResults() {
-        string nextScene = ResultsScreenController.NAME;
-        
-        // Skip if next scene has already been set
-        if (GameSceneManager.nextScene == nextScene) return;
-
-        // Change scene
-        GameSceneManager.SwitchScene(nextScene);
+		instance.SwitchScene(ResultsScreenController.NAME);
     }
 
     public static void GoToProfilerMemoryScene()
     {
-        string nextScene = ProfilerMemoryController.NAME;
-
-        // Skip if next scene has already been set
-        if (GameSceneManager.nextScene == nextScene) return;
-
-        // Change scene
-        GameSceneManager.SwitchScene(nextScene);       
+		instance.SwitchScene(ProfilerMemoryController.NAME);
     }
 
     public static void GoToProfilerLoadScenesScene()
     {
-        string nextScene = ProfilerLoadScenesController.NAME;
-
-        // Skip if next scene has already been set
-        if (GameSceneManager.nextScene == nextScene) return;
-
-        // Change scene
-        GameSceneManager.SwitchScene(nextScene);            
+		instance.SwitchScene(ProfilerLoadScenesController.NAME);
     }
 
     /// <summary>
