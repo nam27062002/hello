@@ -39,12 +39,13 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	private Dictionary<int, List<GlobalEventUserData>> m_eventLeaderboards = new Dictionary<int, List<GlobalEventUserData>>();
 
 	// Simulate users database
-	public class FakeUserSocialInfo {
+	public struct FakeUserSocialInfo {
 		public string id;
 		public string name;
 		public string pictureUrl;
 	}
 	private Dictionary<string, FakeUserSocialInfo> m_socialInfoDatabase = new Dictionary<string, FakeUserSocialInfo>();
+	private Dictionary<string, FakeUserSocialInfo> m_socialInfoDatabasePool = new Dictionary<string, FakeUserSocialInfo>();	// To avoid repeating a lot, we will use a copy of the database when generating random profiles and removing created profiles from it. Once empty, we will fill it again with a new copy of the original database.
 
 	//------------------------------------------------------------------------//
 	// INTERNAL UTILS														  //
@@ -239,7 +240,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			goalData.Add("params", "Canary01_Flock;Canary02_Flock;Canary03_Flock;Canary04_Flock");
 			goalData.Add("icon", "icon_canary");
 			goalData.Add("tidDesc", "TID_EVENT_EAT_BIRDS");
-			goalData.Add("amount", 1000f.ToString(JSON_FORMAT));
+			goalData.Add("amount", 100000f.ToString(JSON_FORMAT));
 			eventData.Add("goal", goalData);
 
 			// Timestamps
@@ -285,7 +286,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		// Use a local dictionary to simulate events values progression
 		float currentValue = 0f;
 		if(!m_eventValues.TryGetValue(_eventID, out currentValue)) {
-			currentValue = 600f;	// Default initial value
+			currentValue = 60000f;	// Default initial value
 			m_eventValues[_eventID] = currentValue;
 		}
 		eventData.Add("currentValue", currentValue.ToString(JSON_FORMAT));
@@ -321,7 +322,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		// Use a local dictionary to simulate events values progression
 		float currentValue = 0f;
 		if(!m_eventValues.TryGetValue(_eventID, out currentValue)) {
-			currentValue = 600f;	// Default initial value
+			currentValue = 60000f;	// Default initial value
 			m_eventValues[_eventID] = currentValue;
 		}
 
@@ -340,34 +341,27 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		if(!m_eventLeaderboards.TryGetValue(_eventID, out leaderboard)) {
 			// Create an array of max 100 random users
 			// Pick random social data for each, but without repeating!
-			// Remove current player from the pool as well
-			Dictionary<string, FakeUserSocialInfo> tempDatabase = new Dictionary<string, FakeUserSocialInfo>(m_socialInfoDatabase);
-			tempDatabase.Remove(playerSocialData.id);
+			// Remove current player from the pool
+			m_socialInfoDatabasePool.Remove(playerSocialData.id);
 
 			// Do it!
+			// Distribute the total score of the event among a random amount of players
 			float remainingScore = currentValue;
-			Range scorePerPlayerRange = new Range(remainingScore/100f, remainingScore/10f);	// min 10 players, max 100
+			Range totalContributors = new Range(50f, 500f);
+			Range scorePerPlayerRange = new Range(remainingScore/totalContributors.max, remainingScore/totalContributors.min);
 			leaderboard = new List<GlobalEventUserData>(100);
-			while(remainingScore > 0f) {
+			while(remainingScore > 0f && leaderboard.Count <= 100) {
 				// Compute new score for this user
 				float score = Mathf.Min(remainingScore, scorePerPlayerRange.GetRandom());
 				remainingScore -= score;
 
 				// Pick a random social info and consume it
-				List<string> keys = Enumerable.ToList(tempDatabase.Keys);
-				string id = keys[UnityEngine.Random.Range(0, keys.Count)];
-				FakeUserSocialInfo socialInfo = tempDatabase[id];
-				tempDatabase.Remove(id);
-
-				// If we've run out of social infos, refill the temp database (we will have duplicates, but no crashes :P)
-				if(tempDatabase.Count == 0) {
-					tempDatabase = new Dictionary<string, FakeUserSocialInfo>(m_socialInfoDatabase);
-				}
+				FakeUserSocialInfo socialInfo = GetFakeSocialInfo();
 
 				// Create user data
 				GlobalEventUserData leaderboardEntry = new GlobalEventUserData(
 					_eventID,
-					id,
+					socialInfo.id,
 					score,
 					-1,	// Position will be initialized afterwards when the leaderboard is sorted
 					0
@@ -503,22 +497,36 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
 	/// <summary>
 	/// Given a user, get fake social info linked to him :P
+	/// If no info is found in the database, a new one will be created using random values.
 	/// </summary>
 	/// <returns>The fake social info.</returns>
 	/// <param name="_userID">User ID.</param>
-	public FakeUserSocialInfo GetFakeSocialInfo(string _userID) {
-		FakeUserSocialInfo socialInfo = null;
-		if(!m_socialInfoDatabase.TryGetValue(_userID, out socialInfo)) {
+	public FakeUserSocialInfo GetFakeSocialInfo(string _userID = "") {
+		FakeUserSocialInfo socialInfo;
+		if(string.IsNullOrEmpty(_userID) || !m_socialInfoDatabase.TryGetValue(_userID, out socialInfo)) {
 			// Info not found!
-			// If it's the current player, override one entry for him
-			if(_userID == UsersManager.currentUser.userId) {
-				List<string> keys = Enumerable.ToList(m_socialInfoDatabase.Keys);
-				string id = keys[UnityEngine.Random.Range(0, keys.Count)];
+			// Create a new fake profile picking a random entry from the generation pool
 
-				socialInfo = m_socialInfoDatabase[id];
+			// If the pool is empty, fill it with a new copy of the source database!
+			if(m_socialInfoDatabasePool.Count == 0) {
+				m_socialInfoDatabasePool = new Dictionary<string, FakeUserSocialInfo>(m_socialInfoDatabase);
+			}
+
+			// Pick a random id from the pool
+			List<string> keys = Enumerable.ToList(m_socialInfoDatabasePool.Keys);
+			string id = keys[UnityEngine.Random.Range(0, keys.Count)];
+
+			// Grab his social info and remove it from the pool
+			socialInfo = m_socialInfoDatabasePool[id];
+			m_socialInfoDatabasePool.Remove(id);
+
+			// If we requested a specific id, overwrite pool's id
+			if(!string.IsNullOrEmpty(_userID)) {
 				socialInfo.id = _userID;
+			}
 
-				m_socialInfoDatabase.Remove(id);
+			// Add new social info to the database if not there
+			if(!m_socialInfoDatabase.ContainsKey(socialInfo.id)) {
 				m_socialInfoDatabase.Add(socialInfo.id, socialInfo);
 			}
 		}
