@@ -223,7 +223,7 @@ public class CustomParticleSystem : MonoBehaviour {
                 cp.m_velocity += m_gravity * Time.deltaTime;
                 cp.m_position += cp.m_velocity * Time.deltaTime;
                 float sv = m_scaleAnimation.Evaluate(pTime);
-                Color col = m_colorAnimation.Evaluate(pTime);
+                Color col = m_colorAnimation.Evaluate(pTime / cp.m_particleDuration);
                 Quaternion rot = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, (cp.m_rotZ + m_rotationAnimation.Evaluate(pTime)) * 360.0f);
 
 
