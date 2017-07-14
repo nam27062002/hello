@@ -87,10 +87,15 @@ public class GlobalEventsLeaderboardPill : MonoBehaviour {
 	/// <param name="_data">The user to be displayed in the pill.</param>
 	public void InitWithData(GlobalEventUserData _data) {
 		// Set position
-		m_positionText.text = StringUtils.FormatNumber(_data.position + 1);
+		// We might not get a valid position if the player hasn't yet participated in the event
+		if(_data.position >= 0) {
+			m_positionText.text = StringUtils.FormatNumber(_data.position + 1);
+		} else {
+			m_positionText.text = "?";
+		}
 
 		// Apply special colors
-		if(m_positionTextColors.Length > 0) {
+		if(_data.position >= 0 && m_positionTextColors.Length > 0) {
 			if(_data.position < m_positionTextColors.Length) {
 				m_positionText.color = m_positionTextColors[_data.position];
 			} else {
