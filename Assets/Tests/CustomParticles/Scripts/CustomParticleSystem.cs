@@ -112,6 +112,7 @@ public class CustomParticleSystem : MonoBehaviour
     private float m_lastParticleTime;
     private float m_startParticleTime;
     private int m_totalParticlesEmited;
+    private Vector3 m_oldPosition;
 
     private Camera m_currentCamera;
 
@@ -151,7 +152,7 @@ public class CustomParticleSystem : MonoBehaviour
         m_lastParticleTime = Time.time;
         m_totalParticlesEmited = 0;
         m_currentCamera = Camera.main;
-        m_playing = true;
+        Play();
     }
 
 
@@ -159,6 +160,7 @@ public class CustomParticleSystem : MonoBehaviour
     {
         m_startParticleTime = m_lastParticleTime = Time.time;
         m_totalParticlesEmited = 0;
+        m_oldPosition = transform.position;
         m_playing = true;
     }
 
@@ -237,6 +239,8 @@ public class CustomParticleSystem : MonoBehaviour
         List<Matrix4x4> matList = new List<Matrix4x4>();
         Stack<Vector4> stCol = new Stack<Vector4>(m_MaxParticles);
 
+        Vector3 dPosition = m_oldPosition - transform.position;
+
         for (int c = 0; c < m_MaxParticles; c++)
         {
             CustomParticleData cp = m_particles[c];
@@ -246,6 +250,10 @@ public class CustomParticleSystem : MonoBehaviour
                 float pTime = Time.time - cp.m_currentTime;
                 cp.m_velocity += m_gravity * Time.deltaTime;
                 cp.m_position += cp.m_velocity * Time.deltaTime;
+                if (m_local)
+                {
+                    cp.m_position -= dPosition;
+                }
                 float sv = m_scaleAnimation.Evaluate(pTime);
                 Color col = m_colorAnimation.Evaluate(pTime / cp.m_particleDuration);
 //                Quaternion rot = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, (cp.m_initRotZ + m_rotationAnimation.Evaluate(pTime)) * 360.0f);
@@ -271,6 +279,8 @@ public class CustomParticleSystem : MonoBehaviour
             m_matProp.SetVectorArray("_VColor", stCol.ToArray());
             Graphics.DrawMeshInstanced(m_particleMesh, 0, m_particleMaterial, matList, m_matProp);
         }
+
+        m_oldPosition = transform.position;
 #endif
 
     }
