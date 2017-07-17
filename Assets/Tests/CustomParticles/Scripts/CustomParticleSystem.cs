@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public class CustomParticleSystem : MonoBehaviour {
+//[ExecuteInEditMode]
+public class CustomParticleSystem : MonoBehaviour
+{
 
     public class Stack<T>
     {
@@ -65,7 +66,8 @@ public class CustomParticleSystem : MonoBehaviour {
 
     [Header("Rot Z")]
     public Range m_rotationRange;
-    public AnimationCurve m_rotationAnimation;
+    public Range m_vRotationRange;
+//    public AnimationCurve m_rotationAnimation;
 
     [Header("Color")]
     public Gradient m_colorAnimation;
@@ -88,7 +90,8 @@ public class CustomParticleSystem : MonoBehaviour {
         public Vector3 m_position;
         public Vector3 m_velocity;
         public float m_initScale;
-        public float m_rotZ;
+        public float m_initRotZ;
+        public float m_vRotZ;
         public Color m_color;
         public float m_particleDuration;
         public float m_currentTime;
@@ -138,15 +141,18 @@ public class CustomParticleSystem : MonoBehaviour {
         }
     }
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         m_lastParticleTime = Time.time;
         m_totalParticlesEmited = 0;
         m_currentCamera = Camera.main;
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+
+    // Update is called once per frame
+    void Update()
+    {
 
         float dTime = Time.time - m_lastParticleTime;
 
@@ -181,6 +187,7 @@ public class CustomParticleSystem : MonoBehaviour {
 
                     cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
                     cp.m_rotZ = Random.Range(m_rotationRange.min, m_rotationRange.max);
+                    cp.m_vRotZ = Random.Range(m_vRotationRange.min, m_vRotationRange.max);
                     cp.m_currentTime = Time.time;
                     cp.m_active = true;
 
@@ -199,7 +206,8 @@ public class CustomParticleSystem : MonoBehaviour {
                     cp.m_particleDuration = m_particleDuration;
 
                     cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
-                    cp.m_initRot = Random.Range(m_rotationRange.min, m_rotationRange.max);
+                    cp.m_initRotZ = Random.Range(m_rotationRange.min, m_rotationRange.max);
+                    cp.m_vRotZ = Random.Range(m_vRotationRange.min, m_vRotationRange.max);
                     cp.Init();
 #endif
                     m_totalParticlesEmited++;
@@ -246,10 +254,18 @@ public class CustomParticleSystem : MonoBehaviour {
             m_matProp.SetVectorArray("_VColor", stCol.ToArray());
             Graphics.DrawMeshInstanced(m_particleMesh, 0, m_particleMaterial, matList, m_matProp);
         }
-
-
 #endif
 
+    }
 
+
+    void OnDestroy()
+    {
+#if (!CUSTOMPARTICLES_DRAWMESH)
+        for (int c = 0; c < m_MaxParticles; c++)
+        {
+            Destroy(m_particles[c].gameObject);
+        }
+#endif
     }
 }
