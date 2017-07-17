@@ -48,7 +48,11 @@ public class HDTrackingManagerImp : HDTrackingManager
             {
                 // Generate a GUID so that we can identify users over the course of firing multiple events etc.
                 TrackingSaveSystem.UserID = System.Guid.NewGuid().ToString();
-                Log("Generate User ID = " + TrackingSaveSystem.UserID);
+
+                if (FeatureSettingsManager.IsDebugEnabled)
+                {
+                    Log("Generate User ID = " + TrackingSaveSystem.UserID);
+                }
             }
         }
     }   
@@ -61,7 +65,11 @@ public class HDTrackingManagerImp : HDTrackingManager
             IsDNAInitialised = true;
         }
 
-        Log("StartSession");
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("StartSession");
+        }
+
         State = EState.SessionStarted;
 
         CheckAndGenerateUserID();
@@ -164,8 +172,11 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     #region notify
     public override void Notify_ApplicationStart()
-    {        
-        Log("Notify_StartSession");
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Notify_StartSession");
+        }
 
         if (State == EState.WaitingForSessionStart)
         {
@@ -174,8 +185,11 @@ public class HDTrackingManagerImp : HDTrackingManager
     }
 
     public override void Notify_ApplicationEnd()
-    {       
-        Log("Notify_ApplicationEnd");
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Notify_ApplicationEnd");
+        }
 
         Notify_SessionEnd(ESeassionEndReason.app_closed);
 
@@ -185,13 +199,20 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     public override void Notify_ApplicationPaused()
     {
-        Log("Notify_ApplicationPaused");
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Notify_ApplicationPaused");
+        }
+
         Notify_SessionEnd(ESeassionEndReason.no_activity);
     }
 
     public override void Notify_ApplicationResumed()
     {
-        Log("Notify_ApplicationResumed");
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Notify_ApplicationResumed");
+        }
 
         // If the dna session had been started then it has to be restarted
         if (Session_AnyRoundsStarted)
