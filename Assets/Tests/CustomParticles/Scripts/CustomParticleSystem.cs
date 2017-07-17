@@ -40,6 +40,10 @@ public class CustomParticleSystem : MonoBehaviour
             return stack;
         }
 
+        public void Clear()
+        {
+            idx = 0;
+        }
 
         private T[] stack;
         private int size, idx;
@@ -52,9 +56,9 @@ public class CustomParticleSystem : MonoBehaviour
     public float m_radius;
     public float m_particleDuration;
     public float m_systemDuration;
-    public bool m_local;
-    public bool m_loop;
-    public bool m_playOnStart;
+    public bool m_local = true;
+    public bool m_loop = true;
+    public bool m_preWarm;
 
     [Header("Scale")]
     public Range m_scaleRange;
@@ -118,6 +122,13 @@ public class CustomParticleSystem : MonoBehaviour
 
     private bool m_playing;
 
+    public bool IsPlaying
+    {
+        get
+        {
+            return m_playing;
+        }
+    }
 
     void Awake()
     {
@@ -149,7 +160,7 @@ public class CustomParticleSystem : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        m_lastParticleTime = Time.time;
+        m_lastParticleTime = Time.realtimeSinceStartup;
         m_totalParticlesEmited = 0;
         m_currentCamera = Camera.main;
         Play();
@@ -158,59 +169,63 @@ public class CustomParticleSystem : MonoBehaviour
 
     public void Play()
     {
-        m_startParticleTime = m_lastParticleTime = Time.time;
+        m_startParticleTime = m_lastParticleTime = Time.realtimeSinceStartup;
         m_totalParticlesEmited = 0;
         m_oldPosition = transform.position;
         m_playing = true;
     }
-    public void Stop()
+    public void Stop(bool stopAndClear = false)
     {
         m_playing = false;
+        if (stopAndClear)
+        {
+            Clear();
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Clear()
     {
-
-        float dTime = Time.time - m_lastParticleTime;
-
-        if (m_playing)
+        m_particlesStack.Clear();
+        for (int c = 0; c < m_MaxParticles; c++)
         {
-            if (!m_loop)
-            {
-                float tTime = Time.time - m_startParticleTime;
-                if (tTime > m_systemDuration)
-                {
-                    m_playing = false;
-                }
-
-            }
-
-
-            m_invRateOverTime = 1.0f / m_RateOverTime;
-            int np = (int)(dTime / m_invRateOverTime);
-            if (np > 0)
-            {
-                for (int c = 0; c < np; c++)
-                {
 #if (CUSTOMPARTICLES_DRAWMESH)
-                    CustomParticleData cp = m_particlesStack.Pop();
+            CustomParticleData cp = m_particlesStack.Pop();
+            cp.m_active = false;
+#else
+            CustomParticle cp = m_particlesStack.Pop();
+            cp.SetActive(false);
+#endif
+            m_particlesStack.Push(cp);
+        }
+    }
+
+
+    public void InitParticles(float dTime)
+    {
+        m_invRateOverTime = 1.0f / m_RateOverTime;
+        int np = (int)(dTime / m_invRateOverTime);
+        if (np > 0)
+        {
+            for (int c = 0; c < np; c++)
+            {
+#if (CUSTOMPARTICLES_DRAWMESH)
+                CustomParticleData cp = m_particlesStack.Pop();
 #else
                     CustomParticle cp = m_particlesStack.Pop();
 #endif
-                    if (cp != null)
-                    {
+                if (cp != null)
+                {
 
 #if (CUSTOMPARTICLES_DRAWMESH)
-                        cp.m_position = transform.position + Random.insideUnitSphere * m_radius;
-                        cp.m_initScale = Random.Range(m_scaleRange.min, m_scaleRange.max);
-                        cp.m_particleDuration = m_particleDuration;
+                    cp.m_position = transform.position + Random.insideUnitSphere * m_radius;
+                    cp.m_initScale = Random.Range(m_scaleRange.min, m_scaleRange.max);
+                    cp.m_particleDuration = m_particleDuration;
 
-                        cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
-                        cp.m_initRotZ = Random.Range(m_rotationRange.min, m_rotationRange.max);
-                        cp.m_vRotZ = Random.Range(m_vRotationRange.min, m_vRotationRange.max);
-                        cp.m_currentTime = Time.time;
-                        cp.m_active = true;
+                    cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
+                    cp.m_initRotZ = Random.Range(m_rotationRange.min, m_rotationRange.max);
+                    cp.m_vRotZ = Random.Range(m_vRotationRange.min, m_vRotationRange.max);
+                    cp.m_currentTime = Time.realtimeSinceStartup;
+                    cp.m_active = true;
 
 #else
                         cp.transform.position = transform.position + Random.insideUnitSphere * m_radius;
@@ -231,11 +246,30 @@ public class CustomParticleSystem : MonoBehaviour
                         cp.m_vRotZ = Random.Range(m_vRotationRange.min, m_vRotationRange.max);
                         cp.Init();
 #endif
-                        m_totalParticlesEmited++;
-                    }
-                    m_lastParticleTime += m_invRateOverTime;
+                    m_totalParticlesEmited++;
+                }
+                m_lastParticleTime += m_invRateOverTime;
+            }
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        float dTime = Time.realtimeSinceStartup - m_lastParticleTime;
+
+        if (m_playing)
+        {
+            if (!m_loop)
+            {
+                float tTime = Time.realtimeSinceStartup - m_startParticleTime;
+                if (tTime > m_systemDuration)
+                {
+                    m_playing = false;
                 }
             }
+            InitParticles(dTime);
         }
 
 #if (CUSTOMPARTICLES_DRAWMESH)
@@ -250,8 +284,7 @@ public class CustomParticleSystem : MonoBehaviour
             CustomParticleData cp = m_particles[c];
             if (cp.m_active)
             {
-
-                float pTime = Time.time - cp.m_currentTime;
+                float pTime = Time.realtimeSinceStartup - cp.m_currentTime;
                 cp.m_velocity += m_gravity * Time.deltaTime;
                 cp.m_position += cp.m_velocity * Time.deltaTime;
                 if (m_local)
@@ -279,7 +312,6 @@ public class CustomParticleSystem : MonoBehaviour
 
         if (matList.Count > 0)
         {
-            //            Graphics.DrawMeshInstanced(m_particleMesh, 0, m_particleMaterial, matList, matList.Count);
             m_matProp.SetVectorArray("_VColor", stCol.ToArray());
             Graphics.DrawMeshInstanced(m_particleMesh, 0, m_particleMaterial, matList, m_matProp);
         }
