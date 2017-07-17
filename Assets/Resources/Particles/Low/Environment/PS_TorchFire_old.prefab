@@ -9,33 +9,33 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1405865046756142}
+  m_RootGameObject: {fileID: 1469812881163022}
   m_IsPrefabParent: 1
---- !u!1 &1405865046756142
+--- !u!1 &1469812881163022
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4157727933582368}
-  - component: {fileID: 198027985445988764}
-  - component: {fileID: 199613889788457342}
-  - component: {fileID: 114565722403839590}
-  - component: {fileID: 114572643271742284}
+  - component: {fileID: 4052357746596148}
+  - component: {fileID: 198949445396907006}
+  - component: {fileID: 199741808278171822}
+  - component: {fileID: 114891338500937234}
+  - component: {fileID: 114144893720912762}
   m_Layer: 0
-  m_Name: PS_TorchFire
+  m_Name: PS_TorchFire_old
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4157727933582368
+--- !u!4 &4052357746596148
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1405865046756142}
+  m_GameObject: {fileID: 1469812881163022}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -43,12 +43,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -3.617, y: -60.122, z: -25.727001}
---- !u!114 &114565722403839590
+--- !u!114 &114144893720912762
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1405865046756142}
+  m_GameObject: {fileID: 1469812881163022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114891338500937234
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1469812881163022}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
@@ -61,23 +72,12 @@ MonoBehaviour:
   m_scaleAllChildren: 1
   m_whenScale: 1
   m_resetFirst: 1
---- !u!114 &114572643271742284
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1405865046756142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!198 &198027985445988764
+--- !u!198 &198949445396907006
 ParticleSystem:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1405865046756142}
+  m_GameObject: {fileID: 1469812881163022}
   serializedVersion: 5
   lengthInSec: 5
   simulationSpeed: 1
@@ -2637,13 +2637,13 @@ ParticleSystem:
       minColor: {r: 1, g: 1, b: 1, a: 1}
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       minMaxState: 0
---- !u!199 &199613889788457342
+--- !u!199 &199741808278171822
 ParticleSystemRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1405865046756142}
+  m_GameObject: {fileID: 1469812881163022}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
