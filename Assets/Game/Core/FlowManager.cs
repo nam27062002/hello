@@ -70,10 +70,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// <summary>
 	/// Navigate to the game scene.
 	/// </summary>
-	public static void GoToGame() {
-        // Round start is notified when the loading starts
-        HDTrackingManager.Instance.Notify_RoundStart();
-
+	public static void GoToGame() {        
         instance.SwitchScene(GameSceneController.NAME);
 	}
 

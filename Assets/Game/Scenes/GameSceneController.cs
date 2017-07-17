@@ -389,8 +389,11 @@ public class GameSceneController : GameSceneControllerBase {
 	/// Start a new game. All temp game stats will be reset.
 	/// </summary>
 	public void StartGame() {
-		// Reset timer
-		m_elapsedSeconds = 0;
+        // Round start is notified when the loading starts
+        HDTrackingManager.Instance.Notify_RoundStart();
+
+        // Reset timer
+        m_elapsedSeconds = 0;
 
 		// Disable dragon until the game actually starts so its HP doesn't go down
 		InstanceManager.player.gameObject.SetActive(false);
