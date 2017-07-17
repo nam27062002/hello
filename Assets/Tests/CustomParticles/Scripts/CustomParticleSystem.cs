@@ -51,9 +51,10 @@ public class CustomParticleSystem : MonoBehaviour
     public float m_RateOverTime;
     public float m_radius;
     public float m_particleDuration;
+    public float m_systemDuration;
     public bool m_local;
     public bool m_loop;
-
+    public bool m_playOnStart;
 
     [Header("Scale")]
     public Range m_scaleRange;
@@ -109,9 +110,12 @@ public class CustomParticleSystem : MonoBehaviour
 
     private float m_invRateOverTime;
     private float m_lastParticleTime;
+    private float m_startParticleTime;
     private int m_totalParticlesEmited;
 
     private Camera m_currentCamera;
+
+    private bool m_playing;
 
 
     void Awake()
@@ -147,8 +151,16 @@ public class CustomParticleSystem : MonoBehaviour
         m_lastParticleTime = Time.time;
         m_totalParticlesEmited = 0;
         m_currentCamera = Camera.main;
+        m_playing = true;
     }
 
+
+    public void Play()
+    {
+        m_startParticleTime = m_lastParticleTime = Time.time;
+        m_totalParticlesEmited = 0;
+        m_playing = true;
+    }
 
     // Update is called once per frame
     void Update()
@@ -156,63 +168,67 @@ public class CustomParticleSystem : MonoBehaviour
 
         float dTime = Time.time - m_lastParticleTime;
 
-        if (m_loop && (m_totalParticlesEmited > m_MaxParticles))
+        if (m_playing)
         {
-            if (dTime > m_particleDuration)
+            if (!m_loop)
             {
+                float tTime = Time.time - m_startParticleTime;
+                if (tTime > m_systemDuration)
+                {
+                    m_playing = false;
+                }
 
             }
-        }
 
 
-        m_invRateOverTime = 1.0f / m_RateOverTime;
-        int np = (int)(dTime / m_invRateOverTime);
-        if (np > 0)
-        {
-            int initialized = 0;
-            for (int c = 0; c < np; c++)
+            m_invRateOverTime = 1.0f / m_RateOverTime;
+            int np = (int)(dTime / m_invRateOverTime);
+            if (np > 0)
             {
-#if (CUSTOMPARTICLES_DRAWMESH)
-                CustomParticleData cp = m_particlesStack.Pop();
-#else
-                CustomParticle cp = m_particlesStack.Pop();
-#endif
-                if (cp != null)
+                for (int c = 0; c < np; c++)
                 {
+#if (CUSTOMPARTICLES_DRAWMESH)
+                    CustomParticleData cp = m_particlesStack.Pop();
+#else
+                    CustomParticle cp = m_particlesStack.Pop();
+#endif
+                    if (cp != null)
+                    {
 
 #if (CUSTOMPARTICLES_DRAWMESH)
-                    cp.m_position = transform.position + Random.insideUnitSphere * m_radius;
-                    cp.m_initScale = Random.RandomRange(m_scaleRange.min, m_scaleRange.max);
-                    cp.m_particleDuration = m_particleDuration;
+                        cp.m_position = transform.position + Random.insideUnitSphere * m_radius;
+                        cp.m_initScale = Random.Range(m_scaleRange.min, m_scaleRange.max);
+                        cp.m_particleDuration = m_particleDuration;
 
-                    cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
-                    cp.m_initRotZ = Random.Range(m_rotationRange.min, m_rotationRange.max);
-                    cp.m_vRotZ = Random.Range(m_vRotationRange.min, m_vRotationRange.max);
-                    cp.m_currentTime = Time.time;
-                    cp.m_active = true;
+                        cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
+                        cp.m_initRotZ = Random.Range(m_rotationRange.min, m_rotationRange.max);
+                        cp.m_vRotZ = Random.Range(m_vRotationRange.min, m_vRotationRange.max);
+                        cp.m_currentTime = Time.time;
+                        cp.m_active = true;
 
 #else
-                    cp.transform.position = transform.position + Random.insideUnitSphere * m_radius;
-                    float sc = Random.Range(m_scaleRange.min, m_scaleRange.max);
-                    cp.m_initscale = sc;
-                    if (m_local)
-                    {
-                        cp.transform.parent = transform;
-                    }
-                    else
-                    {
-                        cp.transform.parent = null;
-                    }
-                    cp.m_particleDuration = m_particleDuration;
+                        cp.transform.position = transform.position + Random.insideUnitSphere * m_radius;
+                        float sc = Random.Range(m_scaleRange.min, m_scaleRange.max);
+                        cp.m_initscale = sc;
+                        if (m_local)
+                        {
+                            cp.transform.parent = transform;
+                        }
+                        else
+                        {
+                            cp.transform.parent = null;
+                        }
+                        cp.m_particleDuration = m_particleDuration;
 
-                    cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
-                    cp.m_initRotZ = Random.Range(m_rotationRange.min, m_rotationRange.max);
-                    cp.m_vRotZ = Random.Range(m_vRotationRange.min, m_vRotationRange.max);
-                    cp.Init();
+                        cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
+                        cp.m_initRotZ = Random.Range(m_rotationRange.min, m_rotationRange.max);
+                        cp.m_vRotZ = Random.Range(m_vRotationRange.min, m_vRotationRange.max);
+                        cp.Init();
 #endif
-                    m_totalParticlesEmited++;
+                        m_totalParticlesEmited++;
+                    }
+                    m_lastParticleTime += m_invRateOverTime;
                 }
-                m_lastParticleTime += m_invRateOverTime;
             }
         }
 
