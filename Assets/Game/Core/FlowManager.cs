@@ -71,7 +71,10 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// Navigate to the game scene.
 	/// </summary>
 	public static void GoToGame() {
-		instance.SwitchScene(GameSceneController.NAME);
+        // Round start is notified when the loading starts
+        HDTrackingManager.Instance.Notify_RoundStart();
+
+        instance.SwitchScene(GameSceneController.NAME);
 	}
 
     /// <summary>
@@ -103,10 +106,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// <summary>
 	/// Interrupts current flow and restarts the application.
 	/// </summary>
-	public static void Restart() {
-        // The game will be started again so we need to end the current tracking session
-        HDTrackingManager.Instance.NotifyEndSession();
-
+	public static void Restart() {        
         // Delete key singletons that must be reloaded		
         GameVars.DestroyInstance();
 		
