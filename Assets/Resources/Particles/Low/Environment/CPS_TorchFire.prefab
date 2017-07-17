@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4598839153192420}
   - component: {fileID: 114805876319435016}
+  - component: {fileID: 114442991104741758}
   m_Layer: 26
   m_Name: CPS_TorchFire
   m_TagString: Untagged
@@ -40,6 +41,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114442991104741758
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1373815307014894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114805876319435016
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -51,14 +63,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53ab405d6f5b09e418f66633b969a23d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MaxParticles: 8
-  m_RateOverTime: 4
+  m_MaxParticles: 10
+  m_RateOverTime: 8
   m_radius: 0.1
   m_particleDuration: 1
   m_systemDuration: 0
   m_local: 1
   m_loop: 1
-  m_playOnStart: 0
+  m_preWarm: 0
   m_scaleRange:
     min: 1
     max: 2
@@ -121,9 +133,9 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 0
     ctime0: 0
-    ctime1: 14029
-    ctime2: 31134
-    ctime3: 49151
+    ctime1: 9033
+    ctime2: 20372
+    ctime3: 38053
     ctime4: 65535
     ctime5: 0
     ctime6: 0
@@ -137,7 +149,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_NumColorKeys: 4
+    m_NumColorKeys: 5
     m_NumAlphaKeys: 2
   m_particleMaterial: {fileID: 2100000, guid: c59837eea01df8c4a90158eea357c6cc, type: 2}
   m_particleMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
