@@ -186,7 +186,7 @@ public class CustomParticleSystem : MonoBehaviour
                     cp.m_particleDuration = m_particleDuration;
 
                     cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
-                    cp.m_rotZ = Random.Range(m_rotationRange.min, m_rotationRange.max);
+                    cp.m_initRotZ = Random.Range(m_rotationRange.min, m_rotationRange.max);
                     cp.m_vRotZ = Random.Range(m_vRotationRange.min, m_vRotationRange.max);
                     cp.m_currentTime = Time.time;
                     cp.m_active = true;
@@ -232,8 +232,9 @@ public class CustomParticleSystem : MonoBehaviour
                 cp.m_position += cp.m_velocity * Time.deltaTime;
                 float sv = m_scaleAnimation.Evaluate(pTime);
                 Color col = m_colorAnimation.Evaluate(pTime / cp.m_particleDuration);
-                Quaternion rot = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, (cp.m_rotZ + m_rotationAnimation.Evaluate(pTime)) * 360.0f);
-
+//                Quaternion rot = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, (cp.m_initRotZ + m_rotationAnimation.Evaluate(pTime)) * 360.0f);
+                Quaternion rot = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, cp.m_initRotZ * 360.0f);
+                cp.m_initRotZ += cp.m_vRotZ * Time.deltaTime;
 
                 stCol.Push(col);
 
