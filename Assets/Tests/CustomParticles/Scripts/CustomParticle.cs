@@ -51,7 +51,7 @@ public class CustomParticle : MonoBehaviour {
 
         float sv = m_pSystem.m_scaleAnimation.Evaluate(pTime / m_particleDuration);
 
-        transform.localScale = Vector3.one * (m_initscale + sv);
+        transform.localScale = Vector3.one * (m_initscale * sv);
 
         Color col = m_pSystem.m_colorAnimation.Evaluate(pTime / m_particleDuration);
         m_renderer.material.SetColor("_VColor", col);

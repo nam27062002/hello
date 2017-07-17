@@ -163,6 +163,10 @@ public class CustomParticleSystem : MonoBehaviour
         m_oldPosition = transform.position;
         m_playing = true;
     }
+    public void Stop()
+    {
+        m_playing = false;
+    }
 
     // Update is called once per frame
     void Update()
@@ -262,7 +266,7 @@ public class CustomParticleSystem : MonoBehaviour
 
                 stCol.Push(col);
 
-                cp.mat.SetTRS(cp.m_position, rot, Vector3.one * (sv + cp.m_initScale));
+                cp.mat.SetTRS(cp.m_position, rot, Vector3.one * (sv * cp.m_initScale));
                 matList.Add(cp.mat);
 
                 if (pTime > cp.m_particleDuration)
