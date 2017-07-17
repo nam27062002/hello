@@ -39,6 +39,17 @@ public class UserProfile : UserSaveSystem
 		COUNT
 	};
 
+	private class CurrencyData {
+		public long amount = 0;
+		public long min = 0;
+		public long max = -1;
+		public CurrencyData(long _amount, long _min, long _max) {
+			amount = _amount;
+			min = _min;
+			max = _max;
+		}
+	};
+
     //------------------------------------------------------------------------//
     // MEMBERS																  //
     //------------------------------------------------------------------------//
@@ -65,7 +76,8 @@ public class UserProfile : UserSaveSystem
 	}
 
     // Economy
-	private List<long> m_currencies = new List<long>();
+	private List<CurrencyData> m_currencies = new List<CurrencyData>();
+
 	public long coins {
 		get { return GetCurrency(Currency.SOFT); }
 	}
@@ -246,9 +258,15 @@ public class UserProfile : UserSaveSystem
 	{
 		// Initialize currencies to 0
 		for(int i = 0; i < (int)Currency.COUNT; ++i) {
-			m_currencies.Add(0);
+			m_currencies.Add(
+				new CurrencyData(0, 0, -1)
+			);
 		}
 
+		// Define some max values
+		m_currencies[(int)Currency.KEYS].max = 10;	// [AOC] TODO!! Get from content
+
+		// Init dragons
 		m_dragonsBySku = new Dictionary<string, DragonData>();
 		DragonData newDragonData = null;
 		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGONS);
@@ -284,7 +302,7 @@ public class UserProfile : UserSaveSystem
 	/// <returns>The current amount of the required currency.</returns>
 	/// <param name="_currency">Currency type.</param>
 	public long GetCurrency(Currency _currency) {
-		return m_currencies[(int)_currency];
+		return m_currencies[(int)_currency].amount;
 	}
 	
 	/// <summary>
@@ -295,12 +313,14 @@ public class UserProfile : UserSaveSystem
 	/// <param name="_currency">Currency.</param>
 	/// <param name="_amount">Amount.</param>
 	public void SetCurrency(Currency _currency, long _amount) {
-		// Never go negative! (feel free to change this check if required for a specific currency)
-		if(_amount < 0) _amount = 0;
+		// Clamp to range!
+		CurrencyData data = m_currencies[(int)_currency];
+		if(_amount < data.min) _amount = data.min;
+		if(data.max > 0 && _amount > data.max) _amount = data.max;
 
 		// Set the target value
 		long oldValue = GetCurrency(_currency);
-		m_currencies[(int)_currency] = _amount;
+		data.amount = _amount;
 
 		// Notify game!
 		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, _currency, oldValue, _amount);
@@ -314,6 +334,24 @@ public class UserProfile : UserSaveSystem
 	public void AddCurrency(Currency _currency, long _amount) {
 		// Just use the setter
 		SetCurrency(_currency, GetCurrency(_currency) + _amount);
+	}
+
+	/// <summary>
+	/// Gets the currency min value.
+	/// </summary>
+	/// <returns>The minimum amount user can have of a specific currency.</returns>
+	/// <param name="_currency">Currency type.</param>
+	public long GetCurrencyMin(Currency _currency) {
+		return m_currencies[(int)_currency].min;
+	}
+
+	/// <summary>
+	/// Gets the currency max value.
+	/// </summary>
+	/// <returns>The maximum amount user can have of a specific currency. -1 if unlimited.</returns>
+	/// <param name="_currency">Currency type.</param>
+	public long GetCurrencyMax(Currency _currency) {
+		return m_currencies[(int)_currency].max;
 	}
 
 	/// <summary>
@@ -475,17 +513,24 @@ public class UserProfile : UserSaveSystem
         // Economy
         string key = "sc";
         if (profile.ContainsKey(key)) {
-			m_currencies[(int)Currency.SOFT] = profile[key].AsInt;
+			m_currencies[(int)Currency.SOFT].amount = profile[key].AsInt;
         } else {
-			m_currencies[(int)Currency.SOFT] = 0;
+			m_currencies[(int)Currency.SOFT].amount = 0;
         }
 
         key = "pc";
         if (profile.ContainsKey(key)) {
-			m_currencies[(int)Currency.HARD] = profile[key].AsInt;
+			m_currencies[(int)Currency.HARD].amount = profile[key].AsInt;
         } else {
-			m_currencies[(int)Currency.HARD] = 0;
-        }        
+			m_currencies[(int)Currency.HARD].amount = 0;
+        }     
+
+		key = "keys";
+		if (profile.ContainsKey(key)) {
+			m_currencies[(int)Currency.HARD].amount = profile[key].AsInt;
+		} else {
+			m_currencies[(int)Currency.HARD].amount = 5;
+		}    
 
 		// Game settings
 		if ( profile.ContainsKey("currentDragon") )
@@ -681,7 +726,7 @@ public class UserProfile : UserSaveSystem
         eggsCollected = _data["collectedAmount"].AsInt;
 
 		// Golden egg
-		m_currencies[(int)Currency.GOLDEN_FRAGMENTS] = _data["goldenEggFragments"].AsInt;
+		m_currencies[(int)Currency.GOLDEN_FRAGMENTS].amount = _data["goldenEggFragments"].AsInt;
 		m_goldenEggsCollected = _data["goldenEggsCollected"].AsInt;
     }
 
@@ -730,8 +775,9 @@ public class UserProfile : UserSaveSystem
         profile.Add("timestamp", m_saveTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
         // Economy
-		profile.Add( "sc", m_currencies[(int)Currency.SOFT].ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		profile.Add( "pc", m_currencies[(int)Currency.HARD].ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add( "sc", m_currencies[(int)Currency.SOFT].amount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add( "pc", m_currencies[(int)Currency.HARD].amount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add( "keys", m_currencies[(int)Currency.KEYS].amount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Game settings
 		profile.Add("currentDragon",m_currentDragon);
@@ -814,7 +860,7 @@ public class UserProfile : UserSaveSystem
 		data.Add("collectedAmount", eggsCollected.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Golden eggs
-		data.Add("goldenEggFragments", m_currencies[(int)Currency.GOLDEN_FRAGMENTS].ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("goldenEggFragments", m_currencies[(int)Currency.GOLDEN_FRAGMENTS].amount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		data.Add("goldenEggsCollected", m_goldenEggsCollected.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
         return data;

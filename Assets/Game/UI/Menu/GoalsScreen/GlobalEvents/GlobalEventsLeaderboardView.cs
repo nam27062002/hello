@@ -120,10 +120,12 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 		m_pills.Remove(m_playerPill);
 
 		// Iterate event leaderboard
-		int numPills = evt.leaderboard.Count;
-		for(int i = 0; i < evt.leaderboard.Count && i < m_maxPills; ++i) {
+		int numPills = Mathf.Min(evt.leaderboard.Count, m_maxPills);
+		Debug.Log("<color=red>We have " + evt.leaderboard.Count + " entries on the leaderboard, creating " + numPills + " pills!</color>");
+		for(int i = 0; i < numPills; ++i) {
 			// Super-special case: Is it the current player?
 			if(!playerFound && evt.leaderboard[i].userID == playerData.userID) {
+				//Debug.Log("<color=orange>Inserting player pill at " + i + "!</color>");
 				// Use special pill
 				pill = m_playerPill;
 
@@ -144,6 +146,8 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 					pill = pillInstance.GetComponent<GlobalEventsLeaderboardPill>();
 					m_pills.Add(pill);
 				}
+
+				//Debug.Log("<color=red>Pill created at " + i + "!</color>");
 			}
 
 			// We got a pill! Initialize it
@@ -152,8 +156,10 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 
 		// If player pill wasn't added, do it now!
 		if(!playerFound) {
+			//Debug.Log("<color=orange>Player wasnt found! Inserting player pill at " + numPills + "!</color>");
+
 			// Insert at the right position
-			m_pills.Insert(evt.leaderboard.Count, m_playerPill);
+			m_pills.Insert(numPills, m_playerPill);
 			numPills++;
 
 			// Intiialize!
@@ -161,11 +167,13 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 		}
 
 		// Loop all the pills to put them into position and hide those not used
-		float deltaY = pillSize.y/2f;	// Pill's anchor is at the middle!
+		float marginY = 30;
+		float deltaY = marginY + pillSize.y/2f;	// Pill's anchor is at the middle!
 		for(int i = 0; i < m_pills.Count; ++i) {
 			// Active pill?
 			pill = m_pills[i];
 			if(i < numPills) {
+				//Debug.Log("<color=blue>Pill " + i + "</color> <color=green>ON</color>");
 				// Show pill
 				pill.gameObject.SetActive(true);
 				pill.name = "Pill_" + i;	// Debug purposes
@@ -182,13 +190,14 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 				// [AOC] TODO!! Show intro anim?
 			} else {
 				// Hide pill
+				//Debug.Log("<color=blue>Pill " + i + "</color> <color=red>OFF</color>");
 				pill.gameObject.SetActive(false);
 				pill.name = "Pill_" + i + "_OFF";	// Debug purposes
 			}
 		}
 
 		// Set content size
-		m_scrollList.content.sizeDelta = new Vector2(m_scrollList.content.sizeDelta.x, deltaY - pillSize.y/2f);	// delta is pointing to where the next pill should be placed
+		m_scrollList.content.sizeDelta = new Vector2(m_scrollList.content.sizeDelta.x, deltaY - pillSize.y/2f + marginY);	// delta is pointing to where the next pill should be placed
 
 		// Launch animation?
 		m_scrollList.ScrollToPositionDelayedFrames(Vector2.zero, 1);

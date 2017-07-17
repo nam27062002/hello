@@ -91,5 +91,13 @@ public class GameHUD : MonoBehaviour {
 		gameObject.SetActive(Prefs.GetBoolPlayer(DebugSettings.INGAME_HUD, true));
 		if(m_speedGameObject != null) m_speedGameObject.SetActive( Prefs.GetBoolPlayer(DebugSettings.SHOW_SPEED) );
     }
+
+	/// <summary>
+	/// Temporal cheat to activate fire rush once.
+	/// </summary>
+	public void Debug_ResetFireRush() {
+		// That should do trigger the fire rush!
+		InstanceManager.player.breathBehaviour.AddFury(InstanceManager.player.breathBehaviour.furyMax - InstanceManager.player.breathBehaviour.currentFury);
+	}
 #endregion   
 }
