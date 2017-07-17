@@ -8,7 +8,7 @@ public class EventRewardScreen : MonoBehaviour {
 	[SerializeField] private GameObject m_introScreen;
 	[SerializeField] private GameObject m_globalEventStepScreen;
 
-	[SerializeField] private Slider m_rewardBar;
+	[SerializeField] private GlobalEventsProgressBar m_progressBar;
 
 	private GlobalEvent m_event;
 	private int m_step;
@@ -21,9 +21,8 @@ public class EventRewardScreen : MonoBehaviour {
 
 		m_step = 0;
 
-		m_rewardBar.maxValue = m_event.rewards.Count + 1; //(+ Top)
-		m_rewardBar.minValue = 0;
-		m_rewardBar.value = 0;
+		m_progressBar.RefreshRewards(m_event);
+		m_progressBar.RefreshProgress(0);
 	}
 
 	public void OnRewardButton() {
@@ -45,8 +44,13 @@ public class EventRewardScreen : MonoBehaviour {
 	}
 
 	private void AdvanceStep() {
+		if (m_step < m_event.rewardSlots.Count - 1) {
+			m_progressBar.RefreshProgress(m_event.rewardSlots[m_step].targetPercentage);
+		} else {
+			m_progressBar.RefreshProgress(1f);
+		}
+
 		m_event.CollectReward(m_step);
 		m_step++;
-		m_rewardBar.value = m_step;
 	}
 }
