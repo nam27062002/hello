@@ -28,6 +28,7 @@ public partial class GlobalEvent {
 		TEASING,
 		ACTIVE,
 		FINISHED,
+		REWARD_COLLECTED,
 
 		COUNT
 	};
@@ -53,9 +54,9 @@ public partial class GlobalEvent {
 	}
 
 	// Milestones and global progress
-	private List<Reward> m_rewards = new List<Reward>();	// Sorted from lower to higher step
-	public List<Reward> rewards { 
-		get { return m_rewards; }
+	private List<RewardSlot> m_rewardSlots = new List<RewardSlot>();	// Sorted from lower to higher step
+	public List<RewardSlot> rewardSlots { 
+		get { return m_rewardSlots; }
 	}
 
 	private float m_currentValue = 0f;
@@ -72,7 +73,10 @@ public partial class GlobalEvent {
 	}
 
 	// Rewards
-	private Reward m_topContributorsReward = null;		// Percentage is differently used here!
+	private RewardSlot m_topContributorsRewardSlot = null; // Percentage is differently used here!
+
+	private int m_rewardLevel = -1; // how many rewards will get this user?
+	public int rewardLevel { get { return m_rewardLevel; } }
 
 	// Timestamps
 	private DateTime m_teasingStartTimestamp = new DateTime();
@@ -101,10 +105,14 @@ public partial class GlobalEvent {
 		get { return m_state == State.ACTIVE; }
 	}
 
+	public bool isRewarAvailable {
+		get { return m_state == State.FINISHED; }
+	}
+
 	// Contribution
-	private List<GlobalEventUserData> m_topContributors = new List<GlobalEventUserData>();	// Sorted
-	public List<GlobalEventUserData> topContributors {
-		get { return m_topContributors; }
+	private List<GlobalEventUserData> m_leaderboard = new List<GlobalEventUserData>();	// Sorted
+	public List<GlobalEventUserData> leaderboard {
+		get { return m_leaderboard; }
 	}
 	
 	//------------------------------------------------------------------------//
@@ -139,6 +147,34 @@ public partial class GlobalEvent {
 		m_currentValue += _value;
 	}
 
+	//--------------------------------------------------------------------------------------------------------------
+	public void CollectAllRewards() {
+		if (m_state == State.FINISHED) {
+			// Temporary, apply rewards
+			for (int i = 0; i < m_rewardLevel; i++) {
+				CollectReward(i);
+			}
+
+			FinishRewardCollection();
+		}
+	}
+
+	public void CollectReward(int _index) {
+		if (m_state == State.FINISHED) {
+			if (_index < m_rewardSlots.Count) {
+				m_rewardSlots[_index].reward.Collect();
+			} else {
+				m_topContributorsRewardSlot.reward.Collect();
+			}
+		}
+	}
+
+	public void FinishRewardCollection() {
+		UsersManager.currentUser.GetGlobalEventData(m_id).rewardCollected = true;
+		m_state = State.REWARD_COLLECTED;
+	}
+	//--------------------------------------------------------------------------------------------------------------
+
 	/// <summary>
 	/// Initialize event from a JSON definition.
 	/// </summary>
@@ -161,23 +197,32 @@ public partial class GlobalEvent {
 		UpdateState();
 
 		// Rewards
-		m_rewards.Clear();
+		m_rewardSlots.Clear();
 		SimpleJSON.JSONArray rewardsDataArray = _data["rewards"].AsArray;
 		for(int i = 0; i < rewardsDataArray.Count; ++i) {
-			m_rewards.Add(new Reward(rewardsDataArray[i]));
-			m_rewards[i].targetAmount = m_rewards[i].targetPercentage * targetValue;
+			m_rewardSlots.Add(new RewardSlot(rewardsDataArray[i]));
+			m_rewardSlots[i].targetAmount = m_rewardSlots[i].targetPercentage * targetValue;
 		}
 
 		// Make sure steps are sorted by percentile
-		m_rewards.Sort((Reward _a, Reward _b) => { return _a.targetPercentage.CompareTo(_b.targetPercentage); });
+		m_rewardSlots.Sort((RewardSlot _a, RewardSlot _b) => { return _a.targetPercentage.CompareTo(_b.targetPercentage); });
 
 		// Special reward for the top X% contributors
-		m_topContributorsReward = new Reward(_data["topReward"]);
+		m_topContributorsRewardSlot = new RewardSlot(_data["topReward"]);
 
 		// Reset state vars
 		m_currentValue = 0f;
-		m_topContributors.Clear();
+		m_leaderboard.Clear();
+
+		GlobalEventUserData playerEventData = null;
+		if(!UsersManager.currentUser.globalEvents.TryGetValue(m_id, out playerEventData)) {
+			// User has never contributed to this event, create a new, empty, player event data
+			playerEventData = new GlobalEventUserData(m_id, UsersManager.currentUser.userId, 0f, -1, 0);
+		}
+	
+		playerEventData.endTimestamp = _data["endTimestamp"].AsLong;
 	}
+
 
 	/// <summary>
 	/// Update the event's current state from a JSON object.
@@ -188,28 +233,42 @@ public partial class GlobalEvent {
 		// Current value
 		m_currentValue = _data["currentValue"].AsFloat;
 
-		// Leaderboard (optional)
-		if(_data.ContainsKey("leaderboard")) {
-			SimpleJSON.JSONArray leaderboardData = _data["leaderboard"].AsArray;
-			int numEntries = leaderboardData.Count;
-			for(int i = 0; i < numEntries; ++i) {
-				// Reuse existing entries, create a new one if needed
-				if(i >= m_topContributors.Count) {
-					m_topContributors.Add(new GlobalEventUserData());
-				}
-
-				// Update leaderboard entry
-				m_topContributors[i].Load(leaderboardData[i]);
-			}
-
-			// Remove unused entries from the leaderboard
-			if(m_topContributors.Count > numEntries) {
-				m_topContributors.RemoveRange(numEntries, m_topContributors.Count - numEntries);
-			}
-		}
-
 		// Update event state (just in case, has nothing to do with given json)
 		UpdateState();
+	}
+
+	/// <summary>
+	/// Update event's leaderboard from a JSON object.
+	/// Correspnds to the GetLeaderboard server call.
+	/// </summary>
+	/// <param name="_data">Data.</param>
+	public void UpdateLeaderboardFromJson(SimpleJSON.JSONNode _data) {
+		// Parse leaderboard
+		SimpleJSON.JSONArray leaderboardData = _data["leaderboard"].AsArray;
+		int numEntries = leaderboardData.Count;
+		for(int i = 0; i < numEntries; ++i) {
+			// Reuse existing entries, create a new one if needed
+			if(i >= m_leaderboard.Count) {
+				m_leaderboard.Add(new GlobalEventUserData());
+			}
+
+			// Update leaderboard entry
+			m_leaderboard[i].Load(leaderboardData[i]);
+		}
+
+		// Remove unused entries from the leaderboard
+		if(m_leaderboard.Count > numEntries) {
+			m_leaderboard.RemoveRange(numEntries, m_leaderboard.Count - numEntries);
+		}
+	}
+
+	public void UpdateRewardLevelFromJson(SimpleJSON.JSONNode _data) {
+		// { r: ["SC:100", "SC:200"], top: "SC:50" }
+		SimpleJSON.JSONArray r = _data["r"].AsArray;
+		m_rewardLevel = r.Count;
+		if (_data.ContainsKey("top")) {
+			m_rewardLevel++;
+		}
 	}
 
 	//------------------------------------------------------------------------//

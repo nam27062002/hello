@@ -100,14 +100,14 @@ public class AmbientManager : MonoBehaviour
 				}
 
 				// Create Rain particle over player
-				GameObject go = Instantiate( Resources.Load("Particles/PF_RainParticle") ) as GameObject;
+				GameObject go = Instantiate( Resources.Load("Particles/Master/PF_RainParticle") ) as GameObject;
 				// go.transform.parent = InstanceManager.player.transform;
 				go.transform.parent = transform;
 				go.transform.localPosition = Vector3.up * 8 + Vector3.forward * 22;
 				m_rainController = go.GetComponent<RainController>();
 
 				// Create Ember particle over player
-				go = Instantiate( Resources.Load("Particles/PF_FlyingEmber") ) as GameObject;
+				go = Instantiate( Resources.Load("Particles/Master/PF_FlyingEmber") ) as GameObject;
 				go.transform.parent = transform;
 				go.transform.localPosition = Vector3.forward * 50;
 

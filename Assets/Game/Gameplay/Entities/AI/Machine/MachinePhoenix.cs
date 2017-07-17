@@ -7,7 +7,7 @@ namespace AI {
 		//--------------------------------------------------
 		[SeparatorAttribute("Phoenix Effects")]
 		[SerializeField] private GameObject m_fire;
-		[SerializeField] private ParticleSystem m_fireParticle;
+		[SerializeField] private GameObject m_fireView;
 		[SerializeField] private Renderer m_bodyRenderer;
 
 		//--------------------------------------------------
@@ -50,8 +50,8 @@ namespace AI {
 		private void Activate() {
 			m_phoenixActive = true;
 			m_fire.SetActive(true);
-			if (m_fireParticle)
-				m_fireParticle.Play();
+			if (m_fireView)
+				m_fireView.SetActive(true);
 			StopCoroutine("FireTo");
 			StartCoroutine( FireTo(1) );
 		}
@@ -59,8 +59,8 @@ namespace AI {
 		private void Deactivate() {
 			m_phoenixActive = false;
 			m_fire.SetActive(false);
-			if (m_fireParticle)
-				m_fireParticle.Stop();
+			if (m_fireView)
+				m_fireView.SetActive(false);
 			StopCoroutine("FireTo");
 			StartCoroutine( FireTo(0) );
 		}

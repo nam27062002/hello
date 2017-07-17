@@ -794,4 +794,20 @@ public class PopupSettingsSaveTab : MonoBehaviour
         Debug.LogError(LOG_CHANNEL + message);
     }
     #endregion
+
+
+    #region customersupport
+    // This region is responsible for handling customer support stuff
+
+   
+
+   
+
+    public void OpenCustomerSupport()
+    {
+        //CSTSManager.SharedInstance.OpenView(TranslationsManager.Instance.ISO.ToString(), PersistenceManager.Instance.IsPayer);
+        CSTSManager.SharedInstance.OpenView("es", false);
+    }
+
+    #endregion
 }

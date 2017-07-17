@@ -32,6 +32,7 @@ public class CPServerTab : MonoBehaviour {
 	[SerializeField] private ScrollRect m_outputScroll = null;
 	[SerializeField] private TextMeshProUGUI m_outputText = null;
 	[SerializeField] private TextMeshProUGUI m_accountIdText = null;
+	[SerializeField] private Toggle m_debugServerToggle = null;
 
     // Internal
     private DateTime m_startTimestamp;
@@ -62,7 +63,14 @@ public class CPServerTab : MonoBehaviour {
     private void OnEnable()
     {
         m_accountIdText.text = "Account Id: " + GameSessionManager.SharedInstance.GetUID();
+
+		m_debugServerToggle.isOn = DebugSettings.useDebugServer;
+		m_debugServerToggle.onValueChanged.AddListener(OnToggleDebugServer);
     }
+
+	private void OnDisable() {
+		m_debugServerToggle.onValueChanged.RemoveListener(OnToggleDebugServer);
+	}
 
     private void Update()
     {
@@ -126,6 +134,13 @@ public class CPServerTab : MonoBehaviour {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Toggle debug server
+	/// </summary>
+	public void OnToggleDebugServer(bool _toggle) {
+		DebugSettings.useDebugServer = _toggle;
+	}
+
+	/// <summary>
 	/// Generic button callback.
 	/// </summary>
 	public void OnButton1(GameObject _input) {
@@ -138,7 +153,7 @@ public class CPServerTab : MonoBehaviour {
 
 		// Request current event info
 		Output("GlobalEvent_GetCurrent");
-		GameServerManager.SharedInstance.GlobalEvent_GetCurrent(
+		GameServerManager.SharedInstance.GlobalEvent_GetEvent(0,
 			(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) => {
 				if(_error == null) {
 					// Did the server gave us an event?

@@ -87,7 +87,7 @@ public class ProfilerNPCSceneController : MonoBehaviour {
 
 		foreach (string key in m_particles.Keys) {
 			PS_DATA data = m_particles[key];
-			GameObject go = Resources.Load<GameObject>("Particles/" + data.path + key);
+			GameObject go = Resources.Load<GameObject>("Particles/Master/" + data.path + key);
 			if (go == null) {
 				Debug.Log("null -> Particles/" + data.path + key);
 			} else {
@@ -174,7 +174,7 @@ public class ProfilerNPCSceneController : MonoBehaviour {
 				DefinitionNode def =  DefinitionsManager.SharedInstance.GetDefinition(m_category, _data.name);
 
 				if (def != null) {
-					psData.quantity = def.GetAsInt("poolSize");
+					psData.quantity = def.GetAsInt("count");
 				}
 
 				psData.path = _data.path;

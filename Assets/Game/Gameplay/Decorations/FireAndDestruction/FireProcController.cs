@@ -8,6 +8,7 @@ public class FireProcController : MonoBehaviour {
 
 	private void Awake() {
 		m_renderer = transform.GetFirstComponentInChildren<Renderer>();
+		m_material = m_renderer.material;
 		m_material.SetFloat("_Power", 0f);
 		m_renderer.material = m_material;
 	}
