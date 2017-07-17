@@ -132,15 +132,21 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     protected override void OnApplicationQuit()
     {
-        base.OnApplicationQuit();
+        Debug.Log("OnApplicationQuit");
 
-        // Tracking session has to be finished when the game is closed
-        HDTrackingManager.Instance.NotifyEndSession();
+        // Tracking session has to be finished when the application is closed
+        HDTrackingManager.Instance.Notify_ApplicationEnd();
+
+        PersistenceManager.Save();
 
 		Device_Destroy();
         
         m_isAlive = false;
         Messenger.Broadcast(GameEvents.APPLICATION_QUIT);
+
+        // This needs to be called once all stuff is done, otherwise this singleton will be marked as destroyed and some other stuff won't
+        // be able to access it
+        base.OnApplicationQuit();
     }
 
 
@@ -185,7 +191,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             // ---------------------------
             // Test toggle pause
-            //Debug_ToggleIsPaused();
+            Debug_ToggleIsPaused();
             // ---------------------------
 
             // ---------------------------
@@ -252,6 +258,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // Test send play test
             //Debug_OnSendPlayTest();
             // ---------------------------
+
+            // ---------------------------
+            // Test player's progress
+            // Debug_TestPlayerProgress();
+            // ---------------------------             
         }
 
         HDTrackingManager.Instance.Update();
@@ -300,6 +311,18 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     public void OnApplicationPause(bool pause)
     {
+        Debug.Log("OnApplicationPause " + pause);
+
+        // We need to notify the tracking manager before saving the progress so that any data stored by the tracking manager will be saved too
+        if (pause)
+        {
+            HDTrackingManager.Instance.Notify_ApplicationPaused();
+        }
+        else
+        {
+            HDTrackingManager.Instance.Notify_ApplicationResumed();
+        }
+
         // If the save stuff done in the first loading is not done then the pause is ignored
         if (SaveLoadIsCompleted)
         {
@@ -393,7 +416,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             // [DGR] ANALYTICS not supported yet
             // HSXAnalyticsManager.Instance.OnApplicationPause(pause);
-        }
+        }        
     }
 
     private void OnLoadStarted()
@@ -406,7 +429,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         SaveLoadIsCompleted = true;
 
         // A new tracking session is started
-        HDTrackingManager.Instance.NotifyStartSession();
+        HDTrackingManager.Instance.Notify_ApplicationStart();
     }
 
     #region game
@@ -908,6 +931,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 }
             });
         }
+    }
+
+    private void Debug_TestPlayerProgress()
+    {
+        Debug.Log("player progress = " + UsersManager.currentUser.GetPlayerProgress());
     }
     #endregion
 }
