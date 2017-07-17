@@ -66,8 +66,7 @@ public class PopupPhotoShare : MonoBehaviour {
 		// Store photo for future use
 		m_photo = _photo;
 
-		// DO NOT REMOVE
-		// CreateScreenshotFile();
+		CreateScreenshotFile();
 
 		// Init image with the photo
 		m_preview.texture = _photo;
