@@ -37,9 +37,9 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 	}
 
 	// Internal
-	private GlobalEvent.Reward m_reward = null;
-	public GlobalEvent.Reward reward {
-		get { return m_reward; }
+	private GlobalEvent.RewardSlot m_rewardSlot = null;
+	public GlobalEvent.RewardSlot rewardSlot {
+		get { return m_rewardSlot; }
 		set { InitFromReward(value); }
 	}
 	
@@ -96,12 +96,12 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 	/// <summary>
 	/// Refresh the widget with the data of a specific reward.
 	/// </summary>
-	public void InitFromReward(GlobalEvent.Reward _reward) {
+	public void InitFromReward(GlobalEvent.RewardSlot _rewardSlot) {
 		// Store new reward
-		m_reward = _reward;
+		m_rewardSlot = _rewardSlot;
 
 		// If given reward is null, disable game object and don't do anything else
-		if(m_reward == null) {
+		if(m_rewardSlot == null) {
 			this.gameObject.SetActive(false);
 			return;
 		}
@@ -109,54 +109,46 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 		// Activate game object
 		this.gameObject.SetActive(true);
 
+
 		// Set reward icon and text
 		// Based on type
-		switch(_reward.type) {
-			case GlobalEvent.Reward.Type.PET: {
-				// Get the pet preview
-				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_reward.sku);
-				if(petDef != null) {
-					if(m_icon != null) m_icon.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + petDef.Get("icon"));
-					if(m_rewardText != null) m_rewardText.text = petDef.GetLocalized("tidName");
-				} else {
-					// (shouldn't happen)
-					if(m_icon != null) m_icon.sprite = null;
-					if(m_rewardText != null) m_rewardText.text = LocalizationManager.SharedInstance.Localize("TID_PET");
-				}
-			} break;
-
-			case GlobalEvent.Reward.Type.EGG: {
-				// Get the egg definition
-				DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, m_reward.sku);
-				if(eggDef != null) {
-					if(m_icon != null) m_icon.sprite = Resources.Load<Sprite>(UIConstants.EGG_ICONS_PATH + eggDef.Get("icon"));
-					if(m_rewardText != null) m_rewardText.text = eggDef.GetLocalized("tidName");
-				} else {
-					// (shouldn't happen) Use generic
-					if(m_icon != null) m_icon.sprite = null;
-					if(m_rewardText != null) m_rewardText.text = LocalizationManager.SharedInstance.Localize("TID_EGG");
-				}
-			} break;
-
-			case GlobalEvent.Reward.Type.SC:
-			case GlobalEvent.Reward.Type.PC:
-			case GlobalEvent.Reward.Type.GOLDEN_FRAGMENTS: {
-				// Get the icon linked to this currency
-				UserProfile.Currency currency = GlobalEvent.Reward.TypeToCurrency(_reward.type);
-				if(m_icon != null) m_icon.sprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(currency));
-				if(m_rewardText != null) m_rewardText.text = StringUtils.FormatNumber(m_reward.amount, 0);
-			} break;
-
-			default: {
+		Metagame.Reward reward = _rewardSlot.reward;
+		if (reward is Metagame.RewardPet) {
+			// Get the pet preview
+			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.value);
+			if(petDef != null) {
+				if(m_icon != null) m_icon.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + petDef.Get("icon"));
+				if(m_rewardText != null) m_rewardText.text = petDef.GetLocalized("tidName");
+			} else {
+				// (shouldn't happen)
 				if(m_icon != null) m_icon.sprite = null;
-				if(m_rewardText != null) m_rewardText.text = StringUtils.FormatNumber(m_reward.amount, 0);
-			} break;
+				if(m_rewardText != null) m_rewardText.text = LocalizationManager.SharedInstance.Localize("TID_PET");
+			}
+		} else if (reward is Metagame.RewardEgg) {
+			// Get the egg definition
+			DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, reward.value);
+			if(eggDef != null) {
+				if(m_icon != null) m_icon.sprite = Resources.Load<Sprite>(UIConstants.EGG_ICONS_PATH + eggDef.Get("icon"));
+				if(m_rewardText != null) m_rewardText.text = eggDef.GetLocalized("tidName");
+			} else {
+				// (shouldn't happen) Use generic
+				if(m_icon != null) m_icon.sprite = null;
+				if(m_rewardText != null) m_rewardText.text = LocalizationManager.SharedInstance.Localize("TID_EGG");
+			}
+		} else if (reward is Metagame.RewardCurrency) {
+			// Get the icon linked to this currency
+			if(m_icon != null) m_icon.sprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(reward.currency));
+			if(m_rewardText != null) m_rewardText.text = StringUtils.FormatNumber(long.Parse(reward.value), 0);
+		} else {
+			if(m_icon != null) m_icon.sprite = null;
+			if(m_rewardText != null) m_rewardText.text = StringUtils.FormatNumber(long.Parse(reward.value), 0);
 		}
+
 
 		// Set target text
 		if(m_targetText != null) {
 			// Abbreviated for big amounts
-			m_targetText.text = StringUtils.FormatBigNumber(m_reward.targetAmount);
+			m_targetText.text = StringUtils.FormatBigNumber(m_rewardSlot.targetAmount);
 		}
 	}
 
@@ -168,6 +160,6 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 	/// </summary>
 	private void OnLanguageChanged() {
 		// Reapply current reward
-		InitFromReward(m_reward);
+		InitFromReward(m_rewardSlot);
 	}
 }

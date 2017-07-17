@@ -54,9 +54,9 @@ public partial class GlobalEvent {
 	}
 
 	// Milestones and global progress
-	private List<Reward> m_rewards = new List<Reward>();	// Sorted from lower to higher step
-	public List<Reward> rewards { 
-		get { return m_rewards; }
+	private List<RewardSlot> m_rewardSlots = new List<RewardSlot>();	// Sorted from lower to higher step
+	public List<RewardSlot> rewardSlots { 
+		get { return m_rewardSlots; }
 	}
 
 	private float m_currentValue = 0f;
@@ -73,7 +73,7 @@ public partial class GlobalEvent {
 	}
 
 	// Rewards
-	private Reward m_topContributorsReward = null; // Percentage is differently used here!
+	private RewardSlot m_topContributorsRewardSlot = null; // Percentage is differently used here!
 
 	private int m_rewardLevel = -1; // how many rewards will get this user?
 	public int rewardLevel { get { return m_rewardLevel; } }
@@ -161,10 +161,10 @@ public partial class GlobalEvent {
 
 	public void CollectReward(int _index) {
 		if (m_state == State.FINISHED) {
-			if (_index < m_rewards.Count) {
-				m_rewards[_index].Collect();
+			if (_index < m_rewardSlots.Count) {
+				m_rewardSlots[_index].reward.Collect();
 			} else {
-				m_topContributorsReward.Collect();
+				m_topContributorsRewardSlot.reward.Collect();
 			}
 		}
 	}
@@ -197,18 +197,18 @@ public partial class GlobalEvent {
 		UpdateState();
 
 		// Rewards
-		m_rewards.Clear();
+		m_rewardSlots.Clear();
 		SimpleJSON.JSONArray rewardsDataArray = _data["rewards"].AsArray;
 		for(int i = 0; i < rewardsDataArray.Count; ++i) {
-			m_rewards.Add(new Reward(rewardsDataArray[i]));
-			m_rewards[i].targetAmount = m_rewards[i].targetPercentage * targetValue;
+			m_rewardSlots.Add(new RewardSlot(rewardsDataArray[i]));
+			m_rewardSlots[i].targetAmount = m_rewardSlots[i].targetPercentage * targetValue;
 		}
 
 		// Make sure steps are sorted by percentile
-		m_rewards.Sort((Reward _a, Reward _b) => { return _a.targetPercentage.CompareTo(_b.targetPercentage); });
+		m_rewardSlots.Sort((RewardSlot _a, RewardSlot _b) => { return _a.targetPercentage.CompareTo(_b.targetPercentage); });
 
 		// Special reward for the top X% contributors
-		m_topContributorsReward = new Reward(_data["topReward"]);
+		m_topContributorsRewardSlot = new RewardSlot(_data["topReward"]);
 
 		// Reset state vars
 		m_currentValue = 0f;
