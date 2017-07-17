@@ -8,7 +8,8 @@ public class TrackingSaveSystem : SaveSystem
     private const string PARAM_SOCIAL_PLATFORM = "socialPlatform";
     private const string PARAM_SOCIAL_ID = "socialID";
     private const string PARAM_ACCOUNT_ID = "accID";
-    private const string PARAM_SESSION_COUNT = "sessionCount";          
+    private const string PARAM_SESSION_COUNT = "sessionCount";
+    private const string PARAM_TOTAL_PLAY_TIME = "totalPlaytime";    
 
     // Tracking user ID generated upon first time session is started, uses GUID as we don't have server at this point
     public string UserID
@@ -78,7 +79,20 @@ public class TrackingSaveSystem : SaveSystem
         {
             Cache_SetInt(PARAM_SESSION_COUNT, value);
         }       
-    }    
+    }   
+    
+    public int TotalPlaytime
+    {
+        get
+        {
+            return Cache_GetInt(PARAM_TOTAL_PLAY_TIME);
+        }
+
+        set
+        {
+            Cache_SetInt(PARAM_TOTAL_PLAY_TIME, value);
+        }        
+    } 
 
     public TrackingSaveSystem()
     {
@@ -99,6 +113,9 @@ public class TrackingSaveSystem : SaveSystem
 
         dataInt = new CacheDataInt(PARAM_SESSION_COUNT, 0);
         Cache_AddData(PARAM_SESSION_COUNT, dataInt);
+
+        dataInt = new CacheDataInt(PARAM_TOTAL_PLAY_TIME, 0);
+        Cache_AddData(PARAM_TOTAL_PLAY_TIME, dataInt);
 
         Reset();
     }

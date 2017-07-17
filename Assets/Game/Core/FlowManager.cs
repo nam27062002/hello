@@ -63,6 +63,9 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
         // Skip if next scene has already been set
         if (GameSceneManager.nextScene == nextScene) return;
 
+        // Round start is notified when the loading starts
+        HDTrackingManager.Instance.Notify_RoundStart();
+
         // Change scene
         GameSceneManager.SwitchScene(nextScene);       
 	}
@@ -116,7 +119,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// </summary>
 	public static void Restart() {
         // The game will be started again so we need to end the current tracking session
-        HDTrackingManager.Instance.NotifyEndSession();
+        //HDTrackingManager.Instance.NotifyEndSession();
 
         // Delete key singletons that must be reloaded		
         GameVars.DestroyInstance();

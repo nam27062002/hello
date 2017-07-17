@@ -15,6 +15,37 @@
             ],
             "APIs": ["dna"]
         },        
+		"custom.mobile.start": {
+            "Parameters": [                                                                
+				{"abtesting": {"Status": ""}},
+				{"playerProgress": {"Status": ""}}			                
+            ],
+            "APIs": ["dna"]
+        },
+		"custom.mobile.stop": {
+            "Parameters": [                                                                
+				{"isPayingSession": {"Status": ""}},
+				{"playerProgress": {"Status": ""}},				
+                {"sessionPlaytime": {"Status": ""}},
+				{"stopCause": {"Status": ""}},
+				{"totalPlaytime": {"Status": ""}}                				
+            ],
+            "APIs": ["dna"]
+        },    
+		"custom.player.iap": {
+            "Parameters": [                                                                
+				{"storeTransactionID": {"Status": ""}},
+				{"houstonTransactionID": {"Status": ""}},
+				{"itemID": {"Status": ""}},
+				{"promotionType": {"Status": ""}},
+				{"playerProgress": {"Status": ""}},				
+                {"moneyCurrency": {"Status": ""}},				
+				{"moneyIAP": {"Status": ""}},               				
+				{"totalPurchases": {"Status": ""}},
+				{"totalStoreVisits": {"Status": ""}}                								
+            ],
+            "APIs": ["dna"]
+        },        		
     },
     "ParameterValues": {        		
 		"acq_marketing_id": {
@@ -56,6 +87,66 @@
         "InGameId": {
             "Type": "INT",
             "Values": []
+        },	
+		"abtesting": {
+            "Type": "STRING:125",
+            "Values": []
+        },			
+		"playerProgress": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+		"isPayingSession": {
+            "Type": "INT",
+            "Values": []
+        },	
+		"sessionPlaytime": {
+            "Type": "INT",
+            "Values": []
         },		
+		"totalPlaytime": {
+            "Type": "INT",
+            "Values": []
+        },	
+		"stopCause": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"storeTransactionID": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+		"houstonTransactionID": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+		"itemID": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+		"promotionType": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+				"promotionType": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+		"moneyCurrency": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+		"moneyIAP": {
+            "Type": "FLOAT",
+            "Values": []
+        },	
+		"totalPurchases": {
+            "Type": "LONG",
+            "Values": []
+        },	
+		"totalStoreVisits": {
+            "Type": "LONG",
+            "Values": []
+        }
     }
 }

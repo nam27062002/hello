@@ -6,7 +6,7 @@ using UnityEngine;
 public class HDTrackingManager
 {
     // Singleton ///////////////////////////////////////////////////////////
-    private static bool IsEnabled = false;
+    private static bool IsEnabled = true;
 
     private static HDTrackingManager smInstance = null;
 
@@ -38,28 +38,41 @@ public class HDTrackingManager
     }
     
     #region notify
-    public virtual void NotifyStartSession()
-    {        
-    }
-
-    public virtual void NotifyEndSession()
-    {       
-    }
-
-    public virtual void NotifyStartRound(int playerProgress)
-    {
-
-    }
+    /// <summary>
+    /// Called when the application starts
+    /// </summary>
+    public virtual void Notify_ApplicationStart() {}
 
     /// <summary>
-    /// This method is called when the user finishes a round
+    /// Called when the application is closed
     /// </summary>
-    /// <param name="playerProgress">An int value that sums up the user's progress</param>
-    public virtual void NotifyEndRound(int playerProgress)
-    {
+    public virtual void Notify_ApplicationEnd() {}
 
-    }
-    #endregion    
+    /// <summary>
+    /// Called when the application is paused
+    /// </summary>
+    public virtual void Notify_ApplicationPaused() {}
+
+    /// <summary>
+    /// Called when the application is resumed
+    /// </summary>
+    public virtual void Notify_ApplicationResumed() {}
+
+    /// <summary>
+    /// Called when the user starts a round
+    /// </summary>
+    public virtual void Notify_RoundStart() {}
+
+    /// <summary>
+    /// Called when the user finishes a round
+    /// </summary>    
+    public virtual void Notify_RoundEnd() {}
+
+    /// <summary>
+    /// Called when an in-app purchase (with real money) is completed
+    /// </summary>
+    public virtual void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType) {}
+    #endregion
 
     #region log
     private const bool LOG_USE_COLOR = true;
