@@ -401,7 +401,7 @@ public class MemoryProfiler
                 GO_AnalyzeComponent(component, ref list);
             }
 
-            // Loops through all children of this game objectq
+            // Loops through all children of this game object
             Transform t = go.transform;
             for (int i = 0; i < t.childCount; i++)
             {
