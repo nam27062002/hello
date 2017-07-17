@@ -6,7 +6,12 @@ using UnityEngine;
 public class HDTrackingManager
 {
     // Singleton ///////////////////////////////////////////////////////////
+#if UNITY_EDITOR
+    // Disabled on editor because ubimobile services crashes on editor when platform is set to iOS
     private static bool IsEnabled = false;
+#else
+    private static bool IsEnabled = true;
+#endif
 
     private static HDTrackingManager smInstance = null;
 
@@ -37,32 +42,45 @@ public class HDTrackingManager
     {        
     }
     
-    #region notify
-    public virtual void NotifyStartSession()
-    {        
-    }
-
-    public virtual void NotifyEndSession()
-    {       
-    }
-
-    public virtual void NotifyStartRound(int playerProgress)
-    {
-
-    }
+#region notify
+    /// <summary>
+    /// Called when the application starts
+    /// </summary>
+    public virtual void Notify_ApplicationStart() {}
 
     /// <summary>
-    /// This method is called when the user finishes a round
+    /// Called when the application is closed
     /// </summary>
-    /// <param name="playerProgress">An int value that sums up the user's progress</param>
-    public virtual void NotifyEndRound(int playerProgress)
-    {
+    public virtual void Notify_ApplicationEnd() {}
 
-    }
-    #endregion    
+    /// <summary>
+    /// Called when the application is paused
+    /// </summary>
+    public virtual void Notify_ApplicationPaused() {}
 
-    #region log
-    private const bool LOG_USE_COLOR = true;
+    /// <summary>
+    /// Called when the application is resumed
+    /// </summary>
+    public virtual void Notify_ApplicationResumed() {}
+
+    /// <summary>
+    /// Called when the user starts a round
+    /// </summary>
+    public virtual void Notify_RoundStart() {}
+
+    /// <summary>
+    /// Called when the user finishes a round
+    /// </summary>    
+    public virtual void Notify_RoundEnd() {}
+
+    /// <summary>
+    /// Called when an in-app purchase (with real money) is completed
+    /// </summary>
+    public virtual void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType) {}
+#endregion
+
+#region log
+    private const bool LOG_USE_COLOR = false;
     private const string LOG_CHANNEL = "[HDTrackingManager] ";
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 
@@ -82,6 +100,6 @@ public class HDTrackingManager
     {
         Debug.LogError("[HDTrackingManager] " + msg);
     }
-    #endregion
+#endregion
 }
 
