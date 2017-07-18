@@ -303,7 +303,7 @@ public class CustomParticleSystem : MonoBehaviour
                 //                matList.Add(cp.mat);
                 m_matProp.SetColor("_VColor", col);
 
-                Graphics.DrawMesh(m_particleMesh, cp.mat, m_particleMaterial, 0, m_currentCamera, 0, m_matProp);
+                Graphics.DrawMesh(m_particleMesh, cp.mat, m_particleMaterial, 0, null, 0, m_matProp);
 
                 if (pTime > cp.m_particleDuration)
                 {
