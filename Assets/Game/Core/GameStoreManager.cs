@@ -28,6 +28,7 @@ public class GameStoreManager
     public virtual void Initialize(){}
     public virtual bool IsReady(){ return false; }
 	public virtual string GetLocalisedPrice( string sku ){ return ""; }
+    public virtual StoreManager.StoreProduct GetStoreProduct( string sku ){ return null; }
     public virtual bool CanMakePayment(){ return false; }
     public virtual void Buy( string sku ){}
 

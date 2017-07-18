@@ -11,7 +11,15 @@ namespace FGOL.Save
         protected SaveData m_saveData = null;
         private Stack<string> m_keyStack = new Stack<string>();
 
-        public bool IsDirty { get; set; }
+        private bool mIsDirty;
+        public bool IsDirty
+        {
+            get { return mIsDirty; }
+            set
+            {
+                mIsDirty = value;
+            }
+        }
 
         #region cache
         protected abstract class CacheData
@@ -79,6 +87,34 @@ namespace FGOL.Save
             }
         }
 
+        protected class CacheDataLong : CacheData
+        {
+            public CacheDataLong(string key, long defaultValue)
+            {
+                Key = key;
+                DefaultValue = defaultValue;
+                Value = DefaultValue;
+            }
+
+            public long DefaultValue { get; set; }
+            public long Value { get; set; }
+
+            public override void Reset()
+            {
+                Value = DefaultValue;
+            }
+
+            public override void Load(SaveSystem saveSystem)
+            {
+                Value = saveSystem.GetLong(Key, DefaultValue);
+            }
+
+            public override void Save(SaveSystem saveSystem)
+            {
+                saveSystem.SetLong(Key, Value);
+            }
+        }
+
         private Dictionary<string, CacheData> m_cacheData;
 
         protected void Cache_AddData(string key, CacheData data)
@@ -117,6 +153,30 @@ namespace FGOL.Save
                 if (dataInt != null && dataInt.Value != value)
                 {
                     dataInt.Value = value;
+                    IsDirty = true;
+                }
+            }
+        }
+
+        protected long Cache_GetLong(string key)
+        {
+            long returnValue = 0;
+            if (m_cacheData.ContainsKey(key))
+            {
+                returnValue = ((CacheDataLong)m_cacheData[key]).Value;
+            }
+
+            return returnValue;
+        }
+
+        protected void Cache_SetLong(string key, long value)
+        {
+            if (m_cacheData != null && m_cacheData.ContainsKey(key))
+            {
+                CacheDataLong dataLong = ((CacheDataLong)m_cacheData[key]);
+                if (dataLong != null && dataLong.Value != value)
+                {
+                    dataLong.Value = value;
                     IsDirty = true;
                 }
             }
@@ -165,10 +225,14 @@ namespace FGOL.Save
             {
                 try
                 {
+                    bool isDirty = IsDirty;
                     foreach (KeyValuePair<string, CacheData> pair in m_cacheData)
                     {
                         pair.Value.Load(this);
                     }
+
+                    // Prevents it from being marked as dirty because of data that have just been loaded
+                    IsDirty = isDirty;
                 }
                 catch (Exception e)
                 {
@@ -269,7 +333,7 @@ namespace FGOL.Save
             return intObj != null ? Convert.ToInt32(intObj) : defaultValue;
         }
 
-        protected long GetLong(string key, int defaultValue = 0, bool platformSpecific = false)
+        protected long GetLong(string key, long defaultValue = 0, bool platformSpecific = false)
         {
             object intObj = GetObject(key, platformSpecific);
 
