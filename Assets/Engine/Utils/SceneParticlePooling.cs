@@ -76,10 +76,10 @@ public class SceneParticlePooling : MonoBehaviour
                 if (Manager_CullingGroup == null)
                 {
                     Manager_CullingGroup = new CullingGroup();
-                    Manager_CullingGroup.targetCamera = Camera.main;
                     Manager_CullingGroup.SetBoundingSpheres(Manager_BoundingSpheres);
                     Manager_CullingGroup.onStateChanged += Manager_OnStateChanged;
                 }
+				Manager_CullingGroup.targetCamera = Camera.main;
 
                 Manager_CullingGroup.SetBoundingSphereCount(Manager_Items.Count);
 
@@ -261,7 +261,11 @@ public class SceneParticlePooling : MonoBehaviour
 
     void OnDestroy()
     {       
-        Manager_RemoveItem(this);
+		if ( ApplicationManager.IsAlive )
+        { 
+    	    Pause();
+		    Manager_RemoveItem(this);
+        }
     }
 
     void OnDrawGizmos()
