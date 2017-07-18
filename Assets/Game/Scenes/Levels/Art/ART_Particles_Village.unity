@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 8.931044e-36, g: 1.168464e-39, b: 13.523936, a: 1}
+  m_IndirectSpecularColor: {r: 8.855107e-36, g: 1.18159e-39, b: 13.523936, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -281,98 +281,6 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     scale: 1.25
---- !u!1 &33030660
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 33030661}
-  - component: {fileID: 33030662}
-  m_Layer: 0
-  m_Name: SunbeamDust
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &33030661
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 33030660}
-  m_LocalRotation: {x: 0.6772309, y: -0.024726104, z: -0.27281436, w: 0.68287575}
-  m_LocalPosition: {x: 4.52, y: 33.31, z: -1.95}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 726608628}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 65.705, y: -78.576004, z: -99.25001}
---- !u!114 &33030662
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 33030660}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14d5fa704e40440689051ecb1d3c82c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_particle:
-    name: PS_SunbeamDust
-    path: Environment/
-    offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      key0:
-        serializedVersion: 2
-        rgba: 4294967295
-      key1:
-        serializedVersion: 2
-        rgba: 4294967295
-      key2:
-        serializedVersion: 2
-        rgba: 0
-      key3:
-        serializedVersion: 2
-        rgba: 0
-      key4:
-        serializedVersion: 2
-        rgba: 0
-      key5:
-        serializedVersion: 2
-        rgba: 0
-      key6:
-        serializedVersion: 2
-        rgba: 0
-      key7:
-        serializedVersion: 2
-        rgba: 0
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    scale: 1
 --- !u!1 &41349594
 GameObject:
   m_ObjectHideFlags: 0
@@ -10724,8 +10632,8 @@ MonoBehaviour:
     name: PS_SkyDust
     path: Environment/
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0.7254902, b: 0.47843137, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -19618,8 +19526,8 @@ MonoBehaviour:
     name: PS_SkyDust
     path: Environment/
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0.29803923, b: 0, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -25561,8 +25469,8 @@ MonoBehaviour:
     name: PS_SkyDust
     path: Environment/
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0.72636914, b: 0.47794116, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -29180,8 +29088,8 @@ MonoBehaviour:
     name: PS_SkyDust
     path: Environment/
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0.7254902, b: 0.47843137, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -30051,8 +29959,8 @@ Transform:
   - {fileID: 1074601008}
   - {fileID: 19191342}
   - {fileID: 1824178991}
+  - {fileID: 969962558}
   - {fileID: 897413572}
-  - {fileID: 33030661}
   m_Father: {fileID: 1447723092}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: -3.617, y: -60.122, z: -25.727001}
@@ -30251,8 +30159,8 @@ MonoBehaviour:
     name: PS_SkyDust
     path: Environment/
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0.7254902, b: 0.47843137, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -30484,8 +30392,8 @@ MonoBehaviour:
     name: PS_SkyDust
     path: Environment/
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0.7254902, b: 0.47843137, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -30787,8 +30695,8 @@ MonoBehaviour:
     name: PS_SkyDust
     path: Environment/
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0.7254902, b: 0.47843137, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -34878,7 +34786,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 726608628}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &897413573
 MonoBehaviour:
@@ -34932,8 +34840,8 @@ MonoBehaviour:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 65535
-      atime2: 0
+      atime1: 32768
+      atime2: 65535
       atime3: 0
       atime4: 0
       atime5: 0
@@ -34941,7 +34849,7 @@ MonoBehaviour:
       atime7: 0
       m_Mode: 0
       m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
+      m_NumAlphaKeys: 3
     scale: 1
 --- !u!1 &902397059
 GameObject:
@@ -37908,6 +37816,98 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     scale: 1
+--- !u!1 &969962557
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 969962558}
+  - component: {fileID: 969962559}
+  m_Layer: 0
+  m_Name: SunbeamDust3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &969962558
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 969962557}
+  m_LocalRotation: {x: 0.6772308, y: -0.024726123, z: -0.2728144, w: 0.6828759}
+  m_LocalPosition: {x: 2.43, y: 26.13, z: -1.66}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 726608628}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 65.705, y: -78.576004, z: -99.25001}
+--- !u!114 &969962559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 969962557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14d5fa704e40440689051ecb1d3c82c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_particle:
+    name: PS_SunbeamDust
+    path: Environment/
+    offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1.2
 --- !u!1 &971166795
 GameObject:
   m_ObjectHideFlags: 0
@@ -49624,6 +49624,98 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     scale: 1
+--- !u!1 &1150918097
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1150918098}
+  - component: {fileID: 1150918099}
+  m_Layer: 0
+  m_Name: SunbeamDust
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1150918098
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1150918097}
+  m_LocalRotation: {x: 0.6903455, y: -0.15304586, z: -0.15304586, w: 0.6903455}
+  m_LocalPosition: {x: 7.28, y: 36.68, z: -2.33}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1938950193}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 65.705, y: -78.576004, z: -99.25001}
+--- !u!114 &1150918099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1150918097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14d5fa704e40440689051ecb1d3c82c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_particle:
+    name: PS_SunbeamDust
+    path: Environment/
+    offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
 --- !u!1 &1153771120
 GameObject:
   m_ObjectHideFlags: 0
@@ -50440,8 +50532,8 @@ MonoBehaviour:
     name: PS_SkyDust
     path: Environment/
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0.297, b: 0, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -50478,8 +50570,8 @@ MonoBehaviour:
       ctime7: 0
       atime0: 0
       atime1: 65535
-      atime2: 0
-      atime3: 0
+      atime2: 64766
+      atime3: 64766
       atime4: 0
       atime5: 0
       atime6: 0
@@ -56777,8 +56869,8 @@ MonoBehaviour:
     name: PS_SkyDust
     path: Environment/
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0.29803923, b: 0, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -57890,7 +57982,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 439843435
+  randomSeed: 219178985
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -60580,6 +60672,7 @@ Transform:
   - {fileID: 881053954}
   - {fileID: 836991273}
   - {fileID: 726608628}
+  - {fileID: 1938950193}
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -70211,6 +70304,98 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1548805787
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1548805788}
+  - component: {fileID: 1548805789}
+  m_Layer: 0
+  m_Name: SunbeamDust2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1548805788
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1548805787}
+  m_LocalRotation: {x: 0.67723083, y: -0.024726104, z: -0.27281436, w: 0.68287575}
+  m_LocalPosition: {x: 11.05, y: 45.58, z: -3.44}
+  m_LocalScale: {x: 1, y: 1.0000006, z: 1.0000005}
+  m_Children: []
+  m_Father: {fileID: 1938950193}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 65.705, y: -78.576004, z: -99.25001}
+--- !u!114 &1548805789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1548805787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14d5fa704e40440689051ecb1d3c82c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_particle:
+    name: PS_SunbeamDust
+    path: Environment/
+    offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 0.8
 --- !u!1 &1558347481
 GameObject:
   m_ObjectHideFlags: 0
@@ -70628,8 +70813,8 @@ MonoBehaviour:
     name: PS_SkyDust
     path: Environment/
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0.7254902, b: 0.47843137, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -71064,7 +71249,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1891765989
+  randomSeed: 2044237286
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -74434,8 +74619,8 @@ MonoBehaviour:
     name: PS_SkyDust
     path: Environment/
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0.7254902, b: 0.47843137, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -74835,8 +75020,8 @@ MonoBehaviour:
     name: PS_SkyDust
     path: Environment/
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0.7254902, b: 0.47843137, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -76941,6 +77126,51 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     scale: 1
+--- !u!1 &1938950192
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1938950193}
+  - component: {fileID: 1938950194}
+  m_Layer: 0
+  m_Name: SmallCaveGroup2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1938950193
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1938950192}
+  m_LocalRotation: {x: -0, y: -0.19814345, z: -0, w: 0.98017305}
+  m_LocalPosition: {x: -122.630005, y: -113.71, z: -38}
+  m_LocalScale: {x: 0.99999994, y: 1, z: 0.99999994}
+  m_Children:
+  - {fileID: 1150918098}
+  - {fileID: 1548805788}
+  m_Father: {fileID: 1447723092}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: -3.617, y: -60.122, z: -25.727001}
+--- !u!114 &1938950194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1938950192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2fde1183c75f4d1793eda7048ad637a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_cullingCenter: {fileID: 1150918098}
+  m_cullingRadius: 20
+  m_parent: {fileID: 1938950192}
 --- !u!1 &1939445391
 GameObject:
   m_ObjectHideFlags: 0
