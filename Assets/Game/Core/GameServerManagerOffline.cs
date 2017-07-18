@@ -462,7 +462,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 					// Should stay?
 					if(shouldBeOnTheLeaderboard) {
 						// Update score
-						leaderboard[idx].score = _score;
+						leaderboard[idx].score += _score;
 					} else {
 						// Remove from the leaderboard
 						leaderboard.RemoveAt(idx);
