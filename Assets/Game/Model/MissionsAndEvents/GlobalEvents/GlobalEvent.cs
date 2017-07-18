@@ -78,6 +78,12 @@ public partial class GlobalEvent {
 	private int m_rewardLevel = -1; // how many rewards will get this user?
 	public int rewardLevel { get { return m_rewardLevel; } }
 
+	// Bonuses
+	private string m_bonusDragonSku = "";
+	public string bonusDragonSku {
+		get { return m_bonusDragonSku; }
+	}
+
 	// Timestamps
 	private DateTime m_teasingStartTimestamp = new DateTime();
 	private DateTime m_startTimestamp = new DateTime();
@@ -262,6 +268,9 @@ public partial class GlobalEvent {
 
 		// Special reward for the top X% contributors
 		m_topContributorsReward = new Reward(_data["topReward"]);
+
+		// Bonuses
+		m_bonusDragonSku = _data["bonusDragon"];
 
 		// Reset state vars
 		m_currentValue = 0f;

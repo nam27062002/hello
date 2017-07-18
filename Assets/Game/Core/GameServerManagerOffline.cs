@@ -261,6 +261,9 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			// Top percentile reward
 			eventData.Add("topReward", CreateEventRewardData(0.1f, GlobalEvent.Reward.Type.PET, "pet_24", -1));
 
+			// Bonuses
+			eventData.Add("bonusDragon", "dragon_reptile");
+
 			// Store response
 			res["response"] = eventData.ToString();
 		}
