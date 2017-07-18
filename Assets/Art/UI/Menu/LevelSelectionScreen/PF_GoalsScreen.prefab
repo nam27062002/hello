@@ -6705,7 +6705,6 @@ GameObject:
   - component: {fileID: 222250695456181856}
   - component: {fileID: 114765835935077134}
   - component: {fileID: 95913893569784666}
-  - component: {fileID: 114100402457140520}
   - component: {fileID: 114912603547359598}
   m_Layer: 5
   m_Name: InfoBtn
@@ -14030,6 +14029,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_objectiveText: {fileID: 114084852418554246}
   m_objectiveIcon: {fileID: 114756056663132256}
+  m_bonusDragonIcon: {fileID: 114793152890803052}
   m_timerText: {fileID: 114333658136459302}
   m_currentValueText_DEBUG: {fileID: 114794330755187180}
   m_progressBar: {fileID: 114089723420637252}
@@ -15656,24 +15656,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114100402457140520
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1759590072248788}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d677588cf25b47fe84f2f773daf1f23, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_popupPath: UI/Popups/Tutorial/PF_PopupInfoChests
-  m_delay: 0
-  OnPopupInit:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: PopupLauncher+PopupEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
 --- !u!114 &114102636961200490
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -25488,8 +25470,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114032847069621548}
   m_HandleRect: {fileID: 224839529228326770}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.99999994
+  m_Value: 0
+  m_Size: 0.9997983
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -27803,14 +27785,14 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114100402457140520}
-        m_MethodName: OpenPopup
-        m_Mode: 6
+      - m_Target: {fileID: 114008024935332330}
+        m_MethodName: OnBonusDragonInfoButton
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -71347,7 +71329,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000091552734}
+  m_AnchoredPosition: {x: 0, y: 0.074032374}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &224831579642532638
