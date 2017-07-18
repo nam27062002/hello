@@ -170,6 +170,9 @@ public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHand
 	/// <param name="_idx">Index of the item to be selected.</param>
 	/// <param name="_looped">Did we looped when selecting this item?</param>
 	private void SelectItemInternal(int _idx, bool _looped) {
+		// Component must be enabled!
+		if(!this.enabled) return;
+
 		// Clamp index
 		_idx = Mathf.Clamp(_idx, 0, m_items.Count);
 

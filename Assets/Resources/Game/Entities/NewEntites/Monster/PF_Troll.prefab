@@ -1497,7 +1497,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1280568003522936}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 89.43624, y: 16.146751, z: 0}
+  m_LocalPosition: {x: 78.90847, y: 53.78501, z: -7.884306}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4011093325883150}
@@ -1888,8 +1888,8 @@ MonoBehaviour:
     name: PS_Blood_Explosion
     path: Blood
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0, b: 0, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -2049,7 +2049,7 @@ MonoBehaviour:
   - {fileID: 4815254293126706}
   - {fileID: 4673730134176424}
   m_burnParticle:
-    name: PF_BonfireToonLong
+    name: PF_BonfireToon
     path: 
     offset: {x: 0, y: 1.37, z: 0}
     changeStartColor: 0
@@ -2208,6 +2208,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: Troll
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114887832156207672
 MonoBehaviour:
@@ -2223,7 +2224,7 @@ MonoBehaviour:
   m_machineRoot: {fileID: 1280568003522936}
   m_timeBetweenAttaks: 2
   m_hitParticle:
-    name: PS_Blood_Explosion_Large
+    name: PS_Blood_Explosion
     path: Blood
     offset: {x: 0, y: 0, z: 14}
     changeStartColor: 0

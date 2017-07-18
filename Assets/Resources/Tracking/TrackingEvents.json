@@ -1,0 +1,152 @@
+{
+    "TrackingEvents": {        
+        "game.start": {
+            "Parameters": [                                                                
+				{"acq_marketing_id": {"Status": ""}},
+				{"hardware": {"Status": ""}},
+				{"installDate": {"Status": ""}}                              
+                {"osVersion": {"Status": ""}},
+				{"playerID": {"Status": ""}},
+				{"providerAuth": {"Status": ""}},                
+				{"pushNotif": {"Status": ""}},                
+				{"SubVersion": {"Status": ""}},               
+                {"typeNotif": {"Status": ""}},
+				{"InGameId": {"Status": ""}}     								
+            ],
+            "APIs": ["dna"]
+        },        
+		"custom.mobile.start": {
+            "Parameters": [                                                                
+				{"abtesting": {"Status": ""}},
+				{"playerProgress": {"Status": ""}}			                
+            ],
+            "APIs": ["dna"]
+        },
+		"custom.mobile.stop": {
+            "Parameters": [                                                                
+				{"isPayingSession": {"Status": ""}},
+				{"playerProgress": {"Status": ""}},				
+                {"sessionPlaytime": {"Status": ""}},
+				{"stopCause": {"Status": ""}},
+				{"totalPlaytime": {"Status": ""}}                				
+            ],
+            "APIs": ["dna"]
+        },    
+		"custom.player.iap": {
+            "Parameters": [                                                                
+				{"storeTransactionID": {"Status": ""}},
+				{"houstonTransactionID": {"Status": ""}},
+				{"itemID": {"Status": ""}},
+				{"promotionType": {"Status": ""}},
+				{"playerProgress": {"Status": ""}},				
+                {"moneyCurrency": {"Status": ""}},				
+				{"moneyIAP": {"Status": ""}},               				
+				{"totalPurchases": {"Status": ""}},
+				{"totalStoreVisits": {"Status": ""}}                								
+            ],
+            "APIs": ["dna"]
+        },        		
+    },
+    "ParameterValues": {        		
+		"acq_marketing_id": {
+            "Type": "TRACK_DNA_MARKETING_ID",
+            "Values": []
+        },   
+		"hardware": {
+            "Type": "TRACK_DNA_HARDWARE",
+            "Values": []
+        },    
+		"installDate": {
+            "Type": "TRACK_DNA_INSTALL_DATE",
+            "Values": []
+        }, 	
+		"osVersion": {
+            "Type": "TRACK_OS",
+            "Values": []
+        },   
+		"playerID": {
+            "Type": "STRING:125",
+            "Values": []
+        },      		
+		"providerAuth": {
+            "Type": "STRING:125",
+            "Values": []
+        },		
+        "pushNotif": {
+            "Type": "TRACK_DNA_PUSH_NOTIF",
+            "Values": []
+        },
+		"SubVersion": {
+            "Type": "STRING:125",
+            "Values": []
+        },				
+        "typeNotif": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "InGameId": {
+            "Type": "INT",
+            "Values": []
+        },	
+		"abtesting": {
+            "Type": "STRING:125",
+            "Values": []
+        },			
+		"playerProgress": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+		"isPayingSession": {
+            "Type": "INT",
+            "Values": []
+        },	
+		"sessionPlaytime": {
+            "Type": "INT",
+            "Values": []
+        },		
+		"totalPlaytime": {
+            "Type": "INT",
+            "Values": []
+        },	
+		"stopCause": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"storeTransactionID": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+		"houstonTransactionID": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+		"itemID": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+		"promotionType": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+				"promotionType": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+		"moneyCurrency": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+		"moneyIAP": {
+            "Type": "FLOAT",
+            "Values": []
+        },	
+		"totalPurchases": {
+            "Type": "INT",
+            "Values": []
+        },	
+		"totalStoreVisits": {
+            "Type": "INT",
+            "Values": []
+        }
+    }
+}

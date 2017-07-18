@@ -8,7 +8,6 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-using DG.Tweening;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -49,7 +48,7 @@ public class MenuDragonSkinUINotification : MonoBehaviour {
 		// Refresh each time the component is enabled
 		// [AOC] MiniHack! Add some delay to give time for the isNew flag to be set
 		m_notification.Set(false, false);
-		DOVirtual.DelayedCall(0.25f, Refresh, false);
+		UbiBCN.CoroutineManager.DelayedCall(Refresh, 0.25f, false);
 
 		// Subscribe to external events
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
@@ -72,6 +71,12 @@ public class MenuDragonSkinUINotification : MonoBehaviour {
 	public void Refresh() {
 		// Skip if not properly initialized
 		if(m_notification == null) return;
+
+		// Don't show during the FTUXP
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN)) {
+			m_notification.Hide();
+			return;
+		}
 
 		// Notification visible if any of the skins of the currently selected dragon are marked as 'new'
 		DragonData selectedDragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);

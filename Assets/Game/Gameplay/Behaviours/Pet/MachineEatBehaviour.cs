@@ -23,6 +23,8 @@ public class MachineEatBehaviour : EatBehaviour {
 	private IAttacker m_attacker;
 	private AI.IMachine m_machine;
 
+	[SerializeField] private bool m_ignoreBadJunk = true;
+
 	override protected void Awake() {
 
 		base.Awake();
@@ -39,12 +41,21 @@ public class MachineEatBehaviour : EatBehaviour {
 		m_machine = GetComponent<AI.IMachine>();
 		m_attacker = GetComponent<IAttacker>();
 
+		IEntity entity = GetComponent<IEntity>();
+		if ( entity )
+			m_origin = entity.sku;
+
 		if (m_isPet) {
 			m_canLatchOnPlayer = false;	
-			AddToIgnoreList("badJunk");
 		} else {
+			
 			m_canLatchOnPlayer = true;
 			m_canBitePlayer = false;
+		}
+
+		if (m_ignoreBadJunk)
+		{
+			AddToIgnoreList("BadJunk");
 		}
 
 		// Check if view has eat event

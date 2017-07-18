@@ -60,6 +60,12 @@ public class MenuPetLoader : MonoBehaviour {
 		set { m_resetScale = value; }
 	}
 
+	[SerializeField] private bool m_keepLayers = false;
+	public bool keepLayers {
+		get { return m_keepLayers; }
+		set { m_keepLayers = value; }
+	}
+
 	// Internal
 	private GameObject m_petInstance = null;
 	public GameObject petInstance {
@@ -139,7 +145,11 @@ public class MenuPetLoader : MonoBehaviour {
 				m_petInstance.transform.SetParent(this.transform);
 				m_petInstance.transform.localPosition = Vector3.zero;
 				m_petInstance.transform.localRotation = Quaternion.identity;
-				m_petInstance.SetLayerRecursively(this.gameObject.layer);
+
+				// Keep layers?
+				if(!m_keepLayers) {
+					m_petInstance.SetLayerRecursively(this.gameObject.layer);
+				}
 
 				// Initialize preview and launch the default animation
 				MenuPetPreview petPreview = m_petInstance.GetComponent<MenuPetPreview>();

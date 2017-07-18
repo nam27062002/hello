@@ -34,13 +34,50 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	public class ServerResponse : Dictionary<string, object> {
+		/// <summary>
+		/// Nice string output.
+		/// </summary>
+		override public string ToString() {
+			// Special case if empty
+			int remaining = this.Count;
+			if(remaining == 0) return "{ }";
+
+			// Json-like formatting
+			StringBuilder sb = new StringBuilder();
+			sb.AppendLine("{");
+			foreach(KeyValuePair<string, object> kvp in this) {
+				// Add entry
+				sb.Append("    \"").Append(kvp.Key).Append("\" : ");
+
+				// Special case for strings, surraund with quotation marks
+				if(kvp.Value.GetType() == typeof(string)) {
+					sb.Append("\"").Append(kvp.Value.ToString()).Append("\"");
+				} else {
+					sb.Append(kvp.Value.ToString());
+				}
+				remaining--;
+
+				// If not last one, add separator
+				if(remaining > 0) sb.Append(",");
+
+				// New line
+				sb.AppendLine();
+			}
+			sb.AppendLine("}");
+
+			return sb.ToString();
+		}
+	}
+
+	//public class ServerCallback : Action<FGOL.Server.Error, ServerResponse> {}
+	//public class ServerCallbackNoResponse : Action<FGOL.Server.Error> {}
+	public delegate void ServerCallback(FGOL.Server.Error _error, ServerResponse _response);
+	public delegate void ServerCallbackNoResponse(FGOL.Server.Error _error);
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	[SerializeField] private AnimationCurve m_flashEaseCurve = new AnimationCurve();
-
-	public UnityEvent m_theEvent = new UnityEvent();
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -49,8 +86,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		ScrollRect scrollList = GetComponent<ScrollRect>();
-		if(scrollList != null) scrollList.onValueChanged.AddListener(OnScrollListValueChanged);
+		
 	}
 
 	/// <summary>
@@ -78,25 +114,14 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		AnimationCurve flashEaseCurve = new AnimationCurve();
-		flashEaseCurve.AddKey(0f, 0f);
-		flashEaseCurve.AddKey(0.25f, 1f);
-		flashEaseCurve.AddKey(1f, 0f);
-
-		UIColorFX colorFX = GetComponent<UIColorFX>();
-		DOTween.Sequence()
-			.Append(transform.DOLocalMoveY(300f, 0.25f).SetRelative())
-			.Append(transform.DOLocalMoveY(-300f, 0.25f).SetRelative())
-
-			.Append(colorFX.DOBrightness(0.5f, 0.5f).SetEase(flashEaseCurve))
-			.Join(transform.DOScale(1.25f, 0.5f).SetEase(flashEaseCurve))
-
-			.Play();
+		DoCallback(OnServerResponse);
 	}
 
-	private float FlashEase(float _time, float _duration, float _overshootOrAmplitude, float _period) {
-		float delta = _time/_duration;
-		return delta;
+	private void DoCallback(ServerCallback _callback) {
+		ServerResponse response = new ServerResponse();
+		response["param0"] = "response param 0";
+		response["param1"] = 4;
+		_callback(new FGOL.Server.FileNotFoundError(), response);
 	}
 
 	/// <summary>
@@ -109,33 +134,9 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
-	public void OnAddListenersButton() {
-		m_theEvent.AddListener(SampleCallback1);
-		m_theEvent.AddListener(SampleCallback2);
-		m_theEvent.AddListener(() => { Debug.Log("Inline Callback 1"); });
-		m_theEvent.AddListener(() => { Debug.Log("Inline Callback 2"); });
-	}
-
-	public void OnTriggerEvent() {
-		m_theEvent.Invoke();
-	}
-
-	private void SampleCallback1() {
-		Debug.Log("Sample Callback 1");
-	}
-
-	private void SampleCallback2() {
-		Debug.Log("Sample Callback 2");
-	}
-
-	private void OnScrollListValueChanged(Vector2 _newValue) {
-		string color = "lime";
-		if(_newValue.x < Mathf.Epsilon) {
-			color = "red";
-		} else if(_newValue.x > 1 - Mathf.Epsilon) {
-			color = "blue";
-		}
-		ScrollRect scrollList = this.GetComponent<ScrollRect>();
-		Debug.Log("<color=" + color + ">VALUE: (" + _newValue.x + ", " + _newValue.y + ")" + "</color>");
+	private void OnServerResponse(FGOL.Server.Error _error, ServerResponse _response) {
+		Debug.Log("<color=cyan>Received server response!</color>\n" +
+			"<color=red>Error:\n" + _error.message + "</color>\n" +
+			"<color=yellow>Response:\n" + _response.ToString() + "</color>");
 	}
 }

@@ -184,7 +184,7 @@ public class MissionPill : MonoBehaviour {
 		GameObject iconBoxObj = m_activeObj.FindObjectRecursive("IconBox");
 		if (iconBoxObj != null) {
 			Image img = iconBoxObj.FindObjectRecursive("Image").GetComponent<Image>();
-			Sprite spr = Resources.Load<Sprite>(m_mission.def.GetAsString("icon"));
+			Sprite spr = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_mission.def.GetAsString("icon"));
 			img.sprite = spr;
 		}
 
@@ -378,7 +378,7 @@ public class MissionPill : MonoBehaviour {
 	public void OnFreeRemoveMission(){
 		if(m_mission == null) return;
 
-		PopupController popup = PopupManager.OpenPopupInstant(PopupAdRevive.PATH);
+		PopupController popup = PopupManager.OpenPopupInstant(PopupAdPlaceholder.PATH);
 		popup.OnClosePostAnimation.AddListener(OnRemoveMissionAdClosed);
 	}
 
@@ -397,7 +397,7 @@ public class MissionPill : MonoBehaviour {
 	public void OnSkipTimeWithAd() {
 		if(m_mission == null) return;
 
-		PopupController popup = PopupManager.OpenPopupInstant(PopupAdRevive.PATH);
+		PopupController popup = PopupManager.OpenPopupInstant(PopupAdPlaceholder.PATH);
 		popup.OnClosePostAnimation.AddListener(OnSkipTimeAdClosed);
 	}
 

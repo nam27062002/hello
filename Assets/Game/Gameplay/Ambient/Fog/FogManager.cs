@@ -135,7 +135,7 @@ public class FogManager : MonoBehaviour
 			// Register default attributes
 		CheckTextureAvailability( m_defaultAreaFog );
 
-		m_active = Prefs.GetBoolPlayer(DebugSettings.FOG_MANAGER, true);
+		m_active = true;//Prefs.GetBoolPlayer(DebugSettings.FOG_MANAGER, true);
 		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 		Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChangedString);
 		Messenger.AddListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
@@ -174,8 +174,8 @@ public class FogManager : MonoBehaviour
 
 	void Debug_OnChanged( string _key, bool value)
 	{
-		if ( _key == DebugSettings.FOG_MANAGER )
-			m_active = value;
+		/*if ( _key == DebugSettings.FOG_MANAGER )
+			m_active = value;*/
 	}
 
 	void Debug_OnChangedString( string _key )

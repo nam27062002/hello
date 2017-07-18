@@ -28,7 +28,8 @@ Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Overlay
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
 				#include "HungryDragon.cginc"
-								
+				#include "Lighting.cginc"
+
 				#define FOG
 				#define BLEND_TEXTURE
 				#define VERTEXCOLOR_OVERLAY

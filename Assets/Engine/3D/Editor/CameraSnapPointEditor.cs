@@ -158,6 +158,18 @@ public class CameraSnapPointEditor : Editor {
 			GUI.enabled = true;
 		} EditorGUILayoutExt.EndHorizontalSafe();
 
+		// Dark screen
+		EditorGUILayout.Space();
+		EditorGUILayout.LabelField("Optional Dark Screen Setup", CustomEditorStyles.commentLabelLeft);
+
+		// Group it all in a toggle group
+		m_targetSnapPoint.darkenScreen = EditorGUILayout.BeginToggleGroup("Dark Screen", m_targetSnapPoint.darkenScreen); {
+			EditorGUI.indentLevel++;
+			m_targetSnapPoint.darkScreenDistance = EditorGUILayout.FloatField("Distance", m_targetSnapPoint.darkScreenDistance);
+			m_targetSnapPoint.darkScreenColor = EditorGUILayout.ColorField("Color", m_targetSnapPoint.darkScreenColor);
+			EditorGUI.indentLevel--;
+		} EditorGUILayout.EndToggleGroup();
+
 		// Editor stuff
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("Editor Stuff", CustomEditorStyles.commentLabelLeft);

@@ -10,11 +10,13 @@ using System.Linq;
 public class DeleteEmptyFolders : EditorWindow {
 	private static List<string> m_foldersToDelete;
 	private static Vector2 m_scrollPos;
+	private static StringBuilder m_sb = new StringBuilder();
 
 	public static void DeleteFolders() {
 		m_foldersToDelete = new List<string>();
 		m_scrollPos = Vector2.zero;
 
+		Debug.ClearDeveloperConsole();
 		GetEmptyFolders(Application.dataPath);
 
 		var window = EditorWindow.GetWindow(typeof(DeleteEmptyFolders));
@@ -32,12 +34,32 @@ public class DeleteEmptyFolders : EditorWindow {
 			}).ToArray();
 
 		// Don't consider meta files as files
-		string[] files = Directory.GetFiles(path).Where(name => !name.Contains(".meta")).ToArray();
+		string[] files = Directory.GetFiles(path).Where(
+			(string _path) => {
+				return (!_path.Contains(".meta")
+					&& !_path.Contains(".DS_Store"));
+			}
+		).ToArray();
+
+		// Debug
+		string prefix = m_sb.ToString();
+		Debug.Log(prefix + path + " <color=yellow>" + directories.Length + " DIRS, " + files.Length + " FILES</color>");
+		if(false) {
+			for(int i = 0; i < directories.Length; i++) {
+				Debug.Log(prefix + "\t<color=yellow>" + directories[i] + "</color>");
+			}
+
+			for(int i = 0; i < files.Length; i++) {
+				Debug.Log(prefix + "\t<color=yellow>" + files[i] + "</color>");
+			}
+		}
 
 		// Scan inner directories first
 		if(directories != null && directories.Length > 0) {
 			for(int i = 0; i < directories.Length; i++) {
+				m_sb.Append("\t");
 				GetEmptyFolders(directories[i]);
+				m_sb.Remove(m_sb.Length - 1, 1);
 			}
 		}
 
@@ -45,6 +67,7 @@ public class DeleteEmptyFolders : EditorWindow {
 		// 1. There are no inner folders or files - this is an empty folder for sure
 		// 2. There are only empty folders within this folder and no other files - also considered an empty folder
 		if((directories.Length == 0) && (files.Length == 0) || ((files.Length == 0) && directories.Length > 0 && AreAllEmpty(directories))) {
+			Debug.Log(prefix + "<color=green>EMPTY!</color>");
 			m_foldersToDelete.Add(path);
 		}
 	}

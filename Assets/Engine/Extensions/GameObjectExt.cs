@@ -9,6 +9,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using System;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -270,6 +271,43 @@ public static class GameObjectExt {
         return results;
     }
 
+    public static List<GameObject> FindAllGameObjects(bool _includeInactive) {
+        List<GameObject> results = new List<GameObject>();
+        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++) {
+            var s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+            if (s.isLoaded) {
+                GameObject[] allGameObjects = s.GetRootGameObjects();
+                GameObject go;
+                for (int j = 0; j < allGameObjects.Length; j++) {
+                    go = allGameObjects[j];
+                    FindAllGameObjectsInParent(go, results, _includeInactive, true);                                        
+                }
+            }
+        }
+
+        return results;
+    }
+
+    private static void FindAllGameObjectsInParent(GameObject _parent, List<GameObject> _list, bool _includeInactive, bool _includeParent)
+    {
+        if (_parent != null && _list != null)
+        {            
+            if (_parent.activeInHierarchy || _includeInactive)
+            {
+                if (_includeParent)
+                
+                _list.Add(_parent);
+
+                Transform t = _parent.transform;
+                int count = t.childCount;
+                for (int i = 0; i < count; i++)
+                {
+                    FindAllGameObjectsInParent(t.GetChild(i).gameObject, _list, _includeInactive, true);
+                }
+            }
+        }       
+    }
+
     /// <summary>
     /// Returns the first component of type T found in any of the child objects named <paramref name="_objName"/>.
     /// </summary>
@@ -361,7 +399,7 @@ public static class GameObjectExt {
 		List<T> components = new List<T>();
 
 		T c = _t.GetComponent<T>();
-		if (c != null) {
+		if ((c as T) != null) {
 			components.Add(c);
 		}
 
@@ -372,6 +410,7 @@ public static class GameObjectExt {
 
 		return components;
 	}
+
 
 	/// <summary>
 	/// Find first component of a given type in game object's parent hirearchy.

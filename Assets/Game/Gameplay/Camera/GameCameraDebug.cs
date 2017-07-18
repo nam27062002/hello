@@ -12,12 +12,6 @@ using UnityEngine;
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
-/// <summary>
-/// Aux camera to render the game collisions in a custom way, making use of replacement shaders.
-/// See http://technology.blurst.com/2009/03/11/camera-render-with-shader/
-/// See http://docs.unity3d.com/Manual/SL-ShaderReplacement.html
-/// See http://docs.unity3d.com/ScriptReference/Camera.RenderWithShader.html
-/// </summary>
 [RequireComponent(typeof(Camera))]
 public class GameCameraDebug : MonoBehaviour {
 	//------------------------------------------------------------------------//
@@ -28,14 +22,16 @@ public class GameCameraDebug : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] Camera m_refCamera = null;
-	[SerializeField] Shader m_collisionReplacementShader = null;
+//	[SerializeField] Camera m_refCamera = null;
 
 	// Internal
 	private Camera m_camera = null;
 	int m_cullingMask = 0;
 
     int m_collidersMask = 0;
+
+
+    public Texture2D m_matCapTex = null;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -51,7 +47,7 @@ public class GameCameraDebug : MonoBehaviour {
 		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChangedShowCollisions);
         Messenger.AddListener<string, float>(GameEvents.CP_FLOAT_CHANGED, OnDebugSettingChangedResolutionFactor);
 
-
+        Shader.SetGlobalTexture("_MatCap", m_matCapTex);
     }
 
     private int m_width = 0;
@@ -87,10 +83,6 @@ public class GameCameraDebug : MonoBehaviour {
     private void OnDisable() {
 	}
 
-	/// <summary>
-	/// Called after camera has rendered the scene.
-	/// http://docs.unity3d.com/ScriptReference/MonoBehaviour.OnRenderObject.html
-	/// </summary>
 	private void Update() {
         // Backup some camera settings that we don't want to override
 

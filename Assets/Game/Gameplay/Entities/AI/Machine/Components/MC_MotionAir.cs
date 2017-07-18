@@ -14,11 +14,19 @@ namespace AI {
 
 		[SeparatorAttribute]
 		[SerializeField] private bool m_limitHorizontalRotation = false;
+		public bool limitHorizontalRotation{
+			get{ return m_limitHorizontalRotation; }
+			set{ m_limitHorizontalRotation = value; }
+		}
 		[SerializeField] private float m_faceLeftAngle = -90f;
 		[SerializeField] private float m_faceRightAngle = 90f;
 
 		[SeparatorAttribute]
 		[SerializeField] private bool m_limitVerticalRotation = false;
+		public bool limitVerticalRotation{
+			get{ return m_limitVerticalRotation; }
+			set{ m_limitVerticalRotation = value; }
+		}
 		[SerializeField] private float m_faceUpAngle = 320f;
 		[SerializeField] private float m_faceDownAngle = 40f;
 

@@ -21,7 +21,11 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 	// Cache content data
 	private float m_energyDrain = 0f;	// energy per second
+		// Refill
 	private float m_energyRefill = 1f;	// energy per second
+	private float m_energyRefillBase = 1f;	// energy per second
+	private float m_energyRefillBonus = 0;	// energy per second
+
 	private float m_energyRequiredToBoost = 0.2f;	// Percent of total energy
 	private float m_boostMultiplier;
 	public float boostMultiplier
@@ -36,6 +40,12 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		set { m_superSizeInfiniteBoost = value; }
 	}
 
+	protected bool m_petInfiniteBoost = false;
+	public bool petInfiniteBoost
+	{
+		get { return m_petInfiniteBoost; }
+		set { m_petInfiniteBoost = value; }
+	}
 
 	//-----------------------------------------------
 	// Methods
@@ -52,7 +62,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 		// Cache content data
 		m_energyDrain = m_dragon.data.def.GetAsFloat("energyDrain");
-		m_energyRefill = m_dragon.data.def.GetAsFloat("energyRefillRate");
+		m_energyRefillBase = m_dragon.data.def.GetAsFloat("energyRefillRate");
+		SetRefillBonus( m_energyRefillBonus );
 		m_boostMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
 		m_energyRequiredToBoost = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
 		m_energyRequiredToBoost *= m_dragon.data.def.GetAsFloat("energyMax");
@@ -132,8 +143,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	}
 
 	public bool IsDraining() {
-		// Don't drain energy if cheat is enabled or dragon fury is on
-		return !DebugSettings.infiniteBoost && !m_dragon.IsFuryOn() && !m_superSizeInfiniteBoost;
+		// Don't drain energy if cheat is enabled or dragon fury is on, or super size, or pet infinite boost
+		return !(DebugSettings.infiniteBoost || m_dragon.IsFuryOn() || m_superSizeInfiniteBoost || m_petInfiniteBoost);
 	}
 
 	public bool IsBoostActive()
@@ -145,7 +156,17 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_ready = true;
 	}
 
+	public void AddRefillBonus( float value )
+	{
+		m_energyRefillBonus += value;
+		SetRefillBonus( m_energyRefillBonus );
+	}
 
+	public void SetRefillBonus( float percentage )
+	{
+		m_energyRefillBonus = percentage;
+		m_energyRefill = m_energyRefillBase + ( m_energyRefillBonus / 100.0f * m_energyRefillBase);
+	}
 
 	void OnTriggerEnter(Collider _other)
 	{

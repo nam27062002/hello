@@ -184,7 +184,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	private State m_previousState = State.Idle;
 
-	private Transform m_tongue;
+	// private Transform m_tongue;
 	private Transform m_head;
 	private Transform m_suction;
 	private Transform m_cameraLookAt;
@@ -250,13 +250,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	public float m_dragonFricction = 15.0f;
 	public float m_dragonGravityModifier = 0.3f;
     public float m_dragonAirGravityModifier = 0.3f;
+	public float m_dragonAirExpMultiplier = 0.1f;
     public float m_dragonWaterGravityModifier = 0.3f;
     private bool m_waterDeepLimit = false;
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-
-	public Transform tongue { get { if (m_tongue == null) { m_tongue = transform.FindTransformRecursive("Fire_Dummy"); } return m_tongue; } }
 	public Transform head   { get { if (m_head == null)   { m_head = transform.FindTransformRecursive("Dragon_Head");  } return m_head;   } }
 	private Vector3 m_lastPosition;
 	private Vector3 lastPosition
@@ -410,8 +409,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_dragonGravityModifier = m_dragon.data.def.GetAsFloat("gravityModifier");
         m_dragonAirGravityModifier = m_dragon.data.def.GetAsFloat("airGravityModifier");
         m_dragonWaterGravityModifier = m_dragon.data.def.GetAsFloat("waterGravityModifier");
-
-        m_tongue = transform.FindTransformRecursive("Fire_Dummy");
 	}
 
 	/// <summary>
@@ -594,13 +591,11 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					m_animator.SetBool("fly down", true);
                     m_prevImpulse = m_impulse;
 
-                    if (!m_outerSpaceUsePhysics)
+                    if (m_state != State.Stunned && m_state != State.Reviving && m_state != State.Latching)
                     {
-                        if (m_state != State.Stunned && m_state != State.Reviving && m_state != State.Latching)
-                        {
-                            m_startParabolicPosition = transform.position;
-                        }
+                        m_startParabolicPosition = transform.position;
                     }
+                    
 				}break;
 				case State.ExitingSpace:
 				{
@@ -1328,8 +1323,19 @@ public class DragonMotion : MonoBehaviour, IMotion {
             //impulse.Normalize();
             Vector3 gravityAcceleration = Vector3.zero;
                 //if (impulse.y < 0) impulse.y *= m_dragonGravityModifier;
-            gravityAcceleration = Vector3.down * 9.81f * m_dragonAirGravityModifier * 0.9f;// * m_dragonMass;
-            Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
+			gravityAcceleration = Vector3.down * 9.81f * m_dragonAirGravityModifier;// * m_dragonMass;
+			float distance = (transform.position.y - m_startParabolicPosition.y);
+			if (distance > 0) {
+				gravityAcceleration *= 1.0f + (distance) * m_dragonAirExpMultiplier;
+			}
+
+
+			Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
+			/*//TONI
+			if (m_boostSpeedMultiplier > 1)
+				gravityAcceleration *= 2.5f;
+			//TONI
+          */
             Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
             // stroke's Drag

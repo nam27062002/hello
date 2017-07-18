@@ -91,8 +91,7 @@ namespace AI {
 						else
 						{
 							bool startAttack = true;
-							if (m_data.forceFaceToShoot)
-							{
+							if (m_data.forceFaceToShoot) {
 								// Check angle to know if we can shoot
 								Vector3 dir = Vector3.right;
 								if (m_data.facing > 0) {
@@ -102,10 +101,11 @@ namespace AI {
 								}
 							
 								Vector3 pilotDir = m_pilot.transform.forward;
-								if ( Mathf.Abs( Vector2.Angle( dir, pilotDir)) > m_data.maxFacingAngle ){
+								float angle = Vector2.Angle( dir, pilotDir);
+								if (Mathf.Abs(angle) > m_data.maxFacingAngle) {
 									startAttack = false;
 									FacingToShoot();
-								}else{
+								} else {
 									// Save shooting position
 									m_facingTarget = m_machine.enemy.position;
 								}

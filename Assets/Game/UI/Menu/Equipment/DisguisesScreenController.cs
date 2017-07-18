@@ -74,6 +74,16 @@ public class DisguisesScreenController : MonoBehaviour {
 		}
 	}
 
+	private Button m_photoButton = null;
+	private Button photoButton {
+		get {
+			if(m_photoButton == null) {
+				m_photoButton = InstanceManager.menuSceneController.hud.photoButton.GetComponentInChildren<Button>();
+			}
+			return m_photoButton;
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -286,6 +296,12 @@ public class DisguisesScreenController : MonoBehaviour {
 		if(equip != null) {
 			equip.TogglePets(true, true);
 		}
+
+		// Restore photo button
+		// We can only enter the disguises screen with owned dragons, so photo button should be enabled
+		if(photoButton != null) {
+			photoButton.interactable = true;
+		}
 	}
 
 	/// <summary>
@@ -293,6 +309,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_selectedPoint">Selected point.</param>
 	public void OnSelectionChanged(ScrollRectSnapPoint _selectedPoint) {
+		if(_selectedPoint == null) return;
 		OnPillClicked(_selectedPoint.GetComponent<DisguisePill>());
 	}
 
@@ -373,11 +390,17 @@ public class DisguisesScreenController : MonoBehaviour {
 			}
 		}
 
+		// Photo button
+		if(photoButton != null) {
+			// Only enabled for owned skins
+			photoButton.interactable = _pill.owned;
+		}
+
 		// Store as selected pill
 		m_selectedPill = _pill;
 
 		// Equip button or auto-equip? Check settings
-		if(Prefs.GetBoolPlayer(DebugSettings.MENU_DISGUISES_AUTO_EQUIP)) {
+		if(Prefs.GetBoolPlayer(DebugSettings.MENU_DISGUISES_AUTO_EQUIP, true)) {
 			// If selected disguise is owned and not already equipped, equip it
 			if(_pill.owned && _pill != m_equippedPill) {
 				OnEquipButton();

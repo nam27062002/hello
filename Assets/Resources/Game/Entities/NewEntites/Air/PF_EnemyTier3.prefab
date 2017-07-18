@@ -2365,6 +2365,7 @@ MonoBehaviour:
   m_isAquatic: 0
   m_canMultipleLatchOnPlayer: 0
   m_damageOnBitePlayer: 100
+  m_ignoreBadJunk: 1
 --- !u!114 &114000011541247252
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2377,6 +2378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: EnemyTier3
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114000011653825936
 MonoBehaviour:
@@ -2397,7 +2399,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":13,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":13,"restUpsideDown":false,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":57,"arrivalRadius":0.5,"timeout":{"min":1,"max":1.5},"onFailShutdown":{"min":2.5,"max":3.5},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":3,"max":6},"damage":50,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":17,"panicSpeed":17,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"tier":3,"dataType":"AI.Behaviour.AttackSelectorData","editorFolded":false},{"seconds":4,"dataType":"AI.Behaviour.TimerAData","editorFolded":false},{"ignoreNotListedUnits":false,"dragonSizeRangeMultiplier":10,"preferedRangeMultiplier":10,"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"seconds":2,"dataType":"AI.Behaviour.TimerBData","editorFolded":false},{"speed":20,"chaseTimeout":2,"dataType":"AI.Behaviour.PursuitEntityTargetData","editorFolded":false},{"speed":20,"arrivalRadius":1,"hasGuardState":false,"timeout":{"min":2,"max":3},"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":13,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":13,"restUpsideDown":false,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":57,"arrivalRadius":0.5,"timeout":{"min":1,"max":1.5},"onFailShutdown":{"min":2.5,"max":3.5},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":3,"max":6},"damage":50,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":17,"panicSpeed":17,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"tier":3,"dataType":"AI.Behaviour.AttackSelectorData","editorFolded":false},{"seconds":4,"dataType":"AI.Behaviour.TimerAData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"seconds":2,"dataType":"AI.Behaviour.TimerBData","editorFolded":false},{"speed":20,"chaseTimeout":2,"dataType":"AI.Behaviour.PursuitEntityTargetData","editorFolded":false},{"speed":20,"arrivalRadius":1,"hasGuardState":false,"timeout":{"min":2,"max":3},"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
   m_databaseKey: PF_EnemyTier3
   m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 3
@@ -2444,8 +2446,8 @@ MonoBehaviour:
     name: PS_Blood_Explosion
     path: Blood
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0, b: 0, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -3011,7 +3013,7 @@ SkinnedMeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: af1b0b4b64d67ef4eacf422595fd6961, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

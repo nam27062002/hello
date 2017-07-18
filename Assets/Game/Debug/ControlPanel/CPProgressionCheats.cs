@@ -64,7 +64,10 @@ public class CPProgressionCheats : MonoBehaviour {
 		if(!CheckScene()) return;        
 
 		// Close control panel
-		ControlPanel.instance.Toggle();       
+		ControlPanel.instance.Toggle();     
+
+		// Reset some managers
+		GlobalEventManager.ClearCurrentEvent();
 
         // Clear persistence and sets the default persistence
         PersistenceManager.Clear();
@@ -115,7 +118,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		toAdd = System.Math.Max(toAdd, -UsersManager.currentUser.GetCurrency(_currency));	// Min 0 coins! This will exclude negative amounts :)
 
 		// Update profile
-		UsersManager.currentUser.AddCurrency(toAdd, _currency);
+		UsersManager.currentUser.AddCurrency(_currency, toAdd);
 
 		// Save persistence
 		PersistenceManager.Save();

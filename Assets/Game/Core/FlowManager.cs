@@ -35,6 +35,19 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Switch to a different scene. Nothing happens if given scene is the same as active one.
+	/// </summary>
+	private void SwitchScene(string _nextScene) {
+		// Skip if target scene has already been set
+		if(GameSceneManager.nextScene == _nextScene) return;
+
+		// Make sure we don't carry any cached popup into the game scene
+		PopupManager.Clear();
+
+		// Change scene
+		GameSceneManager.SwitchScene(_nextScene);
+	}
 
 	//------------------------------------------------------------------//
 	// SCENE NAVIGATION													//
@@ -57,49 +70,25 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// <summary>
 	/// Navigate to the game scene.
 	/// </summary>
-	public static void GoToGame() {
-        string nextScene = GameSceneController.NAME;
-
-        // Skip if next scene has already been set
-        if (GameSceneManager.nextScene == nextScene) return;
-
-        // Change scene
-        GameSceneManager.SwitchScene(nextScene);       
+	public static void GoToGame() {        
+        instance.SwitchScene(GameSceneController.NAME);
 	}
 
     /// <summary>
 	/// Navigate to the results scene.
 	/// </summary>
 	public static void GoToResults() {
-        string nextScene = ResultsScreenController.NAME;
-        
-        // Skip if next scene has already been set
-        if (GameSceneManager.nextScene == nextScene) return;
-
-        // Change scene
-        GameSceneManager.SwitchScene(nextScene);
+		instance.SwitchScene(ResultsScreenController.NAME);
     }
 
     public static void GoToProfilerMemoryScene()
     {
-        string nextScene = ProfilerMemoryController.NAME;
-
-        // Skip if next scene has already been set
-        if (GameSceneManager.nextScene == nextScene) return;
-
-        // Change scene
-        GameSceneManager.SwitchScene(nextScene);       
+		instance.SwitchScene(ProfilerMemoryController.NAME);
     }
 
     public static void GoToProfilerLoadScenesScene()
     {
-        string nextScene = ProfilerLoadScenesController.NAME;
-
-        // Skip if next scene has already been set
-        if (GameSceneManager.nextScene == nextScene) return;
-
-        // Change scene
-        GameSceneManager.SwitchScene(nextScene);            
+		instance.SwitchScene(ProfilerLoadScenesController.NAME);
     }
 
     /// <summary>
@@ -114,18 +103,17 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// <summary>
 	/// Interrupts current flow and restarts the application.
 	/// </summary>
-	public static void Restart() {
-		// Delete key singletons that must be reloaded		
-		GameVars.DestroyInstance();
+	public static void Restart() {        
+        // Delete key singletons that must be reloaded		
+        GameVars.DestroyInstance();
 		
-        //[DGR] We need to destroy SaveFacade system because a new instance of UserProfile will be created when restarting so we need to make sure this system
-        //is going to use the new UserProfile instance
-        //SaveFacade.DestroyInstance();     
+        // [DGR] We need to destroy SaveFacade system because a new instance of UserProfile will be created when restarting so we need to make sure this system
+        // is going to use the new UserProfile instance        
         SaveFacade.Instance.Reset();   
 
         // Change to the loading scene. This change might be needed from the LoadingSceneController itself because of the save game flow (for exaple when clicking of update the game version
         // from the editor)
-        GameSceneManager.SwitchScene(LoadingSceneController.NAME, "", true);
-	}
+        GameSceneManager.SwitchScene(LoadingSceneController.NAME, "", true);                
+    }
 }
 

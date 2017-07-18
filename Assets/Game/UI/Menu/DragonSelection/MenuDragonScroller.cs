@@ -105,6 +105,15 @@ public class MenuDragonScroller : MonoBehaviour {
 		} else {
 			cameraAnimator.snapPoint = menuOrder;
 		}
+
+		// Only show pets of the focused dragon
+		bool showPets = false;
+		foreach(KeyValuePair<string, MenuDragonSlot> kvp in m_dragonSlots) {
+			showPets = (kvp.Key == _sku);
+			if(kvp.Value.dragonPreview.equip.showPets != showPets) {
+				kvp.Value.dragonPreview.equip.TogglePets(showPets, false);
+			}
+		}
 	}
 
 	/// <summary>
@@ -183,6 +192,9 @@ public class MenuDragonScroller : MonoBehaviour {
 		// Auto-destroy after the FX has finished
 		DestroyInSeconds destructor = newObj.AddComponent<DestroyInSeconds>();
 		destructor.lifeTime = 9f;	// Sync with FX duration!
+
+		// Trigger SFX
+		AudioController.Play("hd_unlock_dragon");
 	}
 
 	//------------------------------------------------------------------//

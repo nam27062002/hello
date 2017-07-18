@@ -26,11 +26,13 @@ public class MenuPlayScreen : MonoBehaviour {
     // MEMBERS AND PROPERTIES											//
     //------------------------------------------------------------------//
     public GameObject m_badge;
-	public Button m_connectButton;	
+	public Button m_connectButton;
 
     [SerializeField]
-    private GameObject m_incentivizeLabel = null;
-    private Localizer m_incentivizeLabelLocalizer;
+    private GameObject m_incentivizeRoot = null;
+
+    [SerializeField]
+    private Localizer m_incentivizeLabelLocalizer = null;    
 
     private SocialFacade.Network m_socialNetwork = SocialFacade.Network.Default;
     //------------------------------------------------------------------//
@@ -40,8 +42,7 @@ public class MenuPlayScreen : MonoBehaviour {
     /// Initialization.
     /// </summary>
     private void Awake() 
-	{		        
-        m_incentivizeLabelLocalizer = m_incentivizeLabel.GetComponent<Localizer>();
+	{		                
         PersistenceManager.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);
 
         if (m_socialNetwork == SocialFacade.Network.Default)
@@ -98,7 +99,7 @@ public class MenuPlayScreen : MonoBehaviour {
         m_badge.SetActive(true);
         m_connectButton.interactable = true;
         
-        m_incentivizeLabel.SetActive(!SocialManager.Instance.WasLoginIncentivised(SocialManager.GetSelectedSocialNetwork()));
+        m_incentivizeRoot.SetActive(!SocialManager.Instance.WasLoginIncentivised(SocialManager.GetSelectedSocialNetwork()));
         
         AuthManager.LoginState loginState = AuthManager.LoginState.NeverLoggedIn;
         loginState = AuthManager.Instance.GetNetworkLoginState(SocialManagerUtilities.GetLoginTypeFromSocialNetwork(m_socialNetwork));

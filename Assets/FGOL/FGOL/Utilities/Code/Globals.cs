@@ -55,12 +55,12 @@ public static class Globals
         return version;
     }
 
-    public static int GetUnixTimestamp()
+    public static long GetUnixTimestamp()
     {
-        return (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+        return (long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
     }
 
-	public static DateTime GetDateFromUnixTimestamp(int timestamp)
+	public static DateTime GetDateFromUnixTimestamp(long timestamp)
 	{
 		return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(timestamp);
 	}

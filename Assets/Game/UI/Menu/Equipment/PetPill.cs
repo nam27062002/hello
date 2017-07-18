@@ -267,13 +267,13 @@ public class PetPill : MonoBehaviour {
 		// If equip tutorial is not yet completed, show highlight around the pill!
 		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PETS_EQUIP)) {
 			// Give enough time for the unlock animation to finish
-			DOVirtual.DelayedCall(
-				1f, 	// Sync with animation!
+			UbiBCN.CoroutineManager.DelayedCall(
 				() => {
 					// Instantiate highlight prefab
 					GameObject prefab = Resources.Load<GameObject>(PetPill.TUTORIAL_HIGHLIGHT_PREFAB_PATH);
 					m_tutorialHighlightFX = GameObject.Instantiate<GameObject>(prefab, this.transform, false);
-				}
+				},
+				1f 	// Sync with animation!
 			);
 		}
 	}

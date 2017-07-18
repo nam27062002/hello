@@ -88,6 +88,21 @@ public class SceneParticlePoolingGroupEditor : Editor {
 			_particleInstance.transform.rotation = particle.transform.rotation;
 			_particleInstance.hideFlags = HideFlags.DontSaveInEditor;
 
+			ParticleControl pc = _particleInstance.GetComponent<ParticleControl>();
+			if (pc != null) {
+				pc.Play(particle.m_particle);
+			}
+			else
+			{
+				ParticleScaler scaler = _particleInstance.GetComponent<ParticleScaler> ();
+				if (scaler != null) {
+					if (scaler.m_scale != particle.m_particle.scale) {
+						scaler.m_scale = particle.m_particle.scale;
+						scaler.DoScale();
+					}
+				}
+			}
+
 			m_particlesCreated.Add( particle );
 			m_particlesCreatedObj.Add( _particleInstance );
 		}

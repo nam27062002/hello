@@ -141,6 +141,10 @@ public class DragonData {
 		m_scaleOffset += _scale;
 	}
 
+    public int GetOrder() {
+        return (def == null) ? -1 : def.GetAsInt("order");
+    }
+
 	/// <summary>
 	/// Gets the current lock state of this dragon.
 	/// </summary>
@@ -149,9 +153,9 @@ public class DragonData {
 		// a) Is dragon owned?
 		if(m_owned) return LockState.OWNED;
 
-		// b) Is dragon locked?
-		// Dragon is considered locked if THE previous dragon is not maxed out
-		int order = def.GetAsInt("order");
+        // b) Is dragon locked?
+        // Dragon is considered locked if THE previous dragon is not maxed out
+        int order = GetOrder();
 		if(order > 0) {		// First dragon should always be owned
 			// Check previous dragon's progression
 			if(!DragonManager.dragonsByOrder[order - 1].progression.isMaxLevel) {
@@ -235,9 +239,9 @@ public class DragonData {
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
 		data.Add("sku", def.sku);
-		data.Add("owned", m_owned.ToString());
-		data.Add("xp", progression.xp.ToString());
-		data.Add("level", progression.level.ToString());
+		data.Add("owned", m_owned.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("xp", progression.xp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("level", progression.level.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		data.Add("disguise", m_disguise);
 
 

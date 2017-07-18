@@ -7,13 +7,16 @@
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
+using UnityEngine;
+
 using FGOL.Save;
 using FGOL.Save.SaveStates;
-using UnityEngine;
+
 using System;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Globalization;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
 
 
 //----------------------------------------------------------------------//
@@ -30,8 +33,10 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	private const string TAG = "PersistenceManager";
 
-	const string TAG = "PersistenceManager";
+	// Make sure persistence JSON is formatted equal in all systems!
+	public static readonly CultureInfo JSON_FORMATTING_CULTURE = CultureInfo.InvariantCulture;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -248,6 +253,7 @@ public class PersistenceManager : Singleton<PersistenceManager> {
                 SimpleJSON.JSONClass _userProfile = new SimpleJSON.JSONClass();
                 _userProfile.Add("sc", _sc);
                 _userProfile.Add("pc", _pc);
+				_userProfile.Add("keys", 3);	// [AOC] HARDCODED!!
                 _userProfile.Add("currentDragon", _initialDragonSku);
                 _userProfile.Add("currentLevel", "level_0");	// Only one level now
                 _returnValue.Add("userProfile", _userProfile);
@@ -948,6 +954,9 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 	public void OnLoadCompleted() {
 		// Unsubscribe from the event
 		SaveFacade.Instance.OnLoadComplete -= OnLoadCompleted;
+
+		// Initialize managers needing data from the loaded profile
+		GlobalEventManager.SetupUser(UsersManager.currentUser);
 
 		// Change flag
 		instance.m_loadCompleted = true;

@@ -40,7 +40,11 @@ public class ParticleHandler {
 			StartSystem(system, null, _data, _at);
 			return system;
 		}
-		Debug.LogError("[Particle] invalid pool handler for " + _data.name);
+		if (_data != null){
+			Debug.LogError("[Particle] invalid pool handler for " + _data.name);
+		}else{
+			Debug.LogError("[Particle] invalid pool handler");
+		}
 		return null;
 	}
 
@@ -50,7 +54,11 @@ public class ParticleHandler {
 			StartSystem(system, _parent, _data, _offset);
 			return system;
 		}
-		Debug.LogError("[Particle] invalid pool handler for " + _data.name);
+		if (_data != null){
+			Debug.LogError("[Particle] invalid pool handler for " + _data.name);
+		}else{
+			Debug.LogError("[Particle] invalid pool handler");
+		}
 		return null;
 	}
 

@@ -6,7 +6,8 @@ namespace AI {
 		
 		[System.Serializable]
 		public class WanderPlayerData : StateComponentData {
-			public float speedMultiplier = 1.5f;
+			// public float speedMultiplier = 1.5f;
+			public string petWanderSku = "common";
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Wander Player")]
@@ -15,7 +16,6 @@ namespace AI {
 			private static int m_groundMask;
 
 			private SphereCollider m_collider;
-			private WanderPlayerData m_data;
 			private Transform m_target;
 			private Vector3 m_targetOffset;
 			private float m_speed;
@@ -36,12 +36,13 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
-				m_data = m_pilot.GetComponentData<WanderPlayerData>();
+				WanderPlayerData data = m_pilot.GetComponentData<WanderPlayerData>();
 				m_collider = m_pilot.GetComponent<SphereCollider>();
 				m_target = m_machine.transform;
-				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * m_data.speedMultiplier;
+				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PET_MOVEMENT, data.petWanderSku);
+				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * def.GetAsFloat("wanderSpeedMultiplier");
 
-				m_maxFarDistance = InstanceManager.player.data.GetScaleAtLevel( InstanceManager.player.data.progression.maxLevel) * 6;
+				m_maxFarDistance = InstanceManager.player.data.GetScaleAtLevel( InstanceManager.player.data.progression.maxLevel) * def.GetAsFloat("wanderDistanceMultiplier");
 				m_startRandom = Random.Range(0, 2 * Mathf.PI);
 				m_minorRandom = Random.Range( 2, 7);
 			}

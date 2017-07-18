@@ -33,6 +33,8 @@ public class DefinitionsCategory
 
 	// Progression
 	public const string LEVELS = "LEVELS";
+
+	// Mission
 	public const string MISSIONS = "MISSIONS";
 	public const string MISSION_TYPES = "MISSION_TYPES";
 	public const string MISSION_DIFFICULTIES = "MISSION_DIFFICULTIES";
@@ -46,6 +48,7 @@ public class DefinitionsCategory
 
 	// Entities
 	public const string PETS 				= "PETS";
+	public const string PET_MOVEMENT 		= "PET_MOVEMENT";
 	public const string ENTITIES 			= "ENTITIES";
 	public const string DECORATIONS 		= "DECORATIONS";
 	public const string ENTITY_CATEGORIES 	= "ENTITY_CATEGORIES";

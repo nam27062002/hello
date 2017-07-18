@@ -451,15 +451,39 @@ public static class Util
 	{
 		return RandInsideUnitCircle().normalized;
 	}
-	
-	//----------------------------------------------------------------------------
-	// Vector/math functions
-	//----------------------------------------------------------------------------
 
-	// Thing to determine if an object's velocity is roughly pointing in the direction of another object.
-	// We return normalize(targetPos - objectPos) DOT normalize(objectVelocity).
-	// So we return 1 if moving directly to the point, 0 if moving perpendicular to it, -1 if moving directly away from it.
-	public static float DotFacingPoint(Vector3 objectPos, Vector3 objectVel, Vector3 targetPos)
+    //----------------------------------------------------------------------------
+    // Memory helper functions
+    //----------------------------------------------------------------------------
+
+    public static float MegaBytesToBytes(float megaBytes)
+    {
+        return megaBytes * (1024f * 1024f);
+    }
+
+    public static float BytesToMegaBytes(long bytes)
+    {
+        return bytes / (1024f * 1024f);
+    }
+
+    public static float KiloBytesToBytes(float kiloBytes)
+    {
+        return kiloBytes * 1024f;
+    }
+
+    public static float BytesToKiloBytes(long bytes)
+    {
+        return bytes / (1024f);
+    }
+
+    //----------------------------------------------------------------------------
+    // Vector/math functions
+    //----------------------------------------------------------------------------
+
+    // Thing to determine if an object's velocity is roughly pointing in the direction of another object.
+    // We return normalize(targetPos - objectPos) DOT normalize(objectVelocity).
+    // So we return 1 if moving directly to the point, 0 if moving perpendicular to it, -1 if moving directly away from it.
+    public static float DotFacingPoint(Vector3 objectPos, Vector3 objectVel, Vector3 targetPos)
 	{
 		Vector3 dirToTarget = (targetPos-objectPos).normalized;
 		Vector3 dirVel = objectVel.normalized;

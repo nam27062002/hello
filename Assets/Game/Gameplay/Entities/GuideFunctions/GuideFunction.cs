@@ -8,7 +8,8 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 	public enum FunctionType{
 		Hypotrochoid,
 		Epitrochoid,
-		Spiral
+		Spiral,
+		Infinity
 	};
 
 	// more equations
@@ -62,7 +63,15 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 			case FunctionType.Spiral:		depth = m_targetDistance * 0.5f; center.z += depth; break;
 		}
 
-		Vector3 size = ((new Vector3(rDiff + m_targetDistance,  rDiff + m_targetDistance,  depth)) + Vector3.one) * 2f;
+		Vector3 size = Vector3.zero;
+
+		if (m_guideFunction == FunctionType.Infinity) {
+			size = ((new Vector3(m_innerRadius * 1.1414f,  m_innerRadius * 0.5f * 1.1414f,  depth)) + Vector3.one);
+		} else {
+			size = ((new Vector3(rDiff + m_targetDistance,  rDiff + m_targetDistance,  depth)) + Vector3.one) * 2f;
+		}
+
+
 		size += m_boundsScale;
 		size = Quaternion.Euler(m_rotation) * Vector3.Scale(m_scale, size);
 		center = Quaternion.Euler(m_rotation) * Vector3.Scale(m_scale, center);
@@ -107,6 +116,10 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 			case FunctionType.Spiral:
 				resetTime = UpdateSpiral(_t);
 				break;
+
+			case FunctionType.Infinity:
+				UpdateInfinity(_t);
+				break;
 		}
 
 		m_target = Quaternion.Euler(m_rotation) * Vector3.Scale(m_scale, m_target);
@@ -149,6 +162,19 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 		}
 
 		return false;
+	}
+
+	private void UpdateInfinity(float _t) {
+		float cosT = Mathf.Cos(_t);
+		float sinT = Mathf.Sin(_t);
+		float sin2T = sinT * sinT;
+
+		float aSqrt2 = m_innerRadius * 1.1414f; //a * Sqrt(2f)
+
+		m_target = Vector3.zero;
+		m_target.x = (aSqrt2 * cosT) / (sin2T + 1f);
+		m_target.y = (aSqrt2 * cosT * sinT) / (sin2T + 1f);
+		m_target.z = (m_depthAmplitude * _t) + Mathf.Cos(m_depthFrequency * _t);
 	}
 
 	//-------------------------------------------------------------------------------------

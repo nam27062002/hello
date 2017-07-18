@@ -34,14 +34,14 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Darken"
 				#pragma fragment frag
 				#pragma multi_compile_fwdbase
 
-				#pragma glsl_no_auto_normalization
-				#pragma fragmentoption ARB_precision_hint_fastest
+//				#pragma glsl_no_auto_normalization
+//				#pragma fragmentoption ARB_precision_hint_fastest
 
 				#define HG_SCENARY
 
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
-//				#include "Lighting.cginc"
+				#include "Lighting.cginc"
 				#include "HungryDragon.cginc"
 
 

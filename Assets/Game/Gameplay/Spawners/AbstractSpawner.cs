@@ -49,7 +49,10 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     private static System.Diagnostics.Stopwatch sm_watch;
 
     void Start() {
-		m_rect = new Rect((Vector2)transform.position, Vector2.one * 2f);
+		if (m_rect.size == Vector2.zero) {
+			m_rect.size = Vector2.one * 2f;
+		}
+		m_rect.center = (Vector2)transform.position + m_rect.position;
 
         OnStart();
     }
@@ -59,7 +62,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
             SpawnerManager.instance.Unregister(this, UseSpawnManagerTree);
     }
 
-    public void Initialize() {		
+    public void Initialize() {
         Entities_Create(GetMaxEntities());
 
         EntitiesAlive = 0;
@@ -303,8 +306,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
             return m_guideFunction;
         }
     }
-
-    protected Rect m_rect;
+		
+	[SerializeField] protected Rect m_rect = new Rect(Vector2.zero, Vector2.one * 2f);
     public Rect boundingRect { get { return m_rect; } }
 
     #region entities

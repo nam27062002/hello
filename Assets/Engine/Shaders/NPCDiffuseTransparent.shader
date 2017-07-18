@@ -1,12 +1,12 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
-Shader "Hungry Dragon/NPC/Diffuse + Fresnel + Transparent (Spawners)"
+Shader "Hungry Dragon/NPC/NPC Diffuse + Fresnel + Transparent (Spawners)"
 {
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
-		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
+//		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
+//		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 		_Tint( "Tint", color) = (1, 1, 1, 1)
 	}
 	SubShader
@@ -32,7 +32,8 @@ Shader "Hungry Dragon/NPC/Diffuse + Fresnel + Transparent (Spawners)"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"
 
-			#define FRESNEL
+//			#define FRESNEL
+			#define MATCAP
 			#define TINT
 
 			#include "entities.cginc"

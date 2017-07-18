@@ -1,6 +1,3 @@
-// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
-
 // Custom Dragon Shader.
 // - Detail Texture. R: Inner Light value. G: Spec value.
 
@@ -12,10 +9,7 @@ Properties {
 	_NormalStrenght("Normal Strenght", float) = 1.0
 
 	_DetailTex ("Detail (RGB)", 2D) = "white" {} // r -> inner light, g -> specular
-/*
-	_ReflectionMap("Reflection Map", Cube) = "white" {}
-	_ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.0
-*/
+
 	_Tint ("Color Multiply", Color) = (1,1,1,1)
 	_ColorAdd ("Color Add", Color) = (0,0,0,0)
 
@@ -37,22 +31,22 @@ Properties {
 }
 
 SubShader {
-//	Tags { "Queue"="Geometry" "IgnoreProjector"="True" "RenderType"="Opaque" "LightMode"="ForwardBase" }
-	Cull Back
-//	LOD 100
+	Tags{ "Queue" = "Transparent+50" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
+
 	ColorMask RGBA
-	
+	LOD 100
+
+
 	Pass {
-		Tags{ "Queue" = "Transparent+10" "IgnoreProjector" = "True" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
 		ZWrite off
-//		Blend SrcAlpha OneMinusSrcAlpha // Traditional transparency
-		Blend One OneMinusSrcAlpha
+		Cull back
+
+		Blend SrcAlpha OneMinusSrcAlpha // Traditional transparency
+//		BlendOp add, max // Traditional transparency
 
 		CGPROGRAM
 		#pragma vertex vert
 		#pragma fragment frag
-		#pragma glsl_no_auto_normalization
-		#pragma fragmentoption ARB_precision_hint_fastest
 		#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 		#include "UnityCG.cginc" 
@@ -81,12 +75,8 @@ SubShader {
 			v2fo o;
 			float4 nvert = float4(v.vertex.xyz + v.normal * _OutlineWidth, 1.0);
 			o.vertex = mul(UNITY_MATRIX_MVP, nvert);
-//			o.vertex.z = UNITY_MATRIX_MVP[3][2];
-			// Normal
 			o.normal = UnityObjectToWorldNormal(v.normal);
-
-			// Half View - See: Blinn-Phong
-			o.viewDir = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
+			o.viewDir = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, nvert).xyz);
 
 			return o;
 		}
@@ -94,7 +84,6 @@ SubShader {
 		fixed4 frag(v2fo i) : SV_Target
 		{
 			float intensity = clamp(pow(max(dot(i.viewDir, i.normal), 0.0), _OutlineGradient), 0.0, 1.0);
-		
 			return fixed4(_OutlineColor.rgb, intensity);
 		}
 
@@ -114,14 +103,16 @@ SubShader {
 			ZFail keep
 		}
 
+		cull back
 		ztest less
 		ZWrite On
+
 
 		CGPROGRAM
 		#pragma vertex vert
 		#pragma fragment frag
-		#pragma glsl_no_auto_normalization
-		#pragma fragmentoption ARB_precision_hint_fastest
+//		#pragma glsl_no_auto_normalization
+//		#pragma fragmentoption ARB_precision_hint_fastest
 		#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 		#include "UnityCG.cginc" 

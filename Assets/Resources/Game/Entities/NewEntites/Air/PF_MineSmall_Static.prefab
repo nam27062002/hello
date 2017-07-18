@@ -27,7 +27,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 146638}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3000, y: 0, z: 0}
+  m_LocalPosition: {x: -53.14395, y: -592.0001, z: -286.2507}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4687866415195384}
@@ -110,7 +110,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_onEatenFrozenParticle:
-    name: 
+    name: PS_IceExplosion
     path: 
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
@@ -160,7 +160,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    scale: 1
+    scale: 0.5
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -339,6 +339,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: MineSmall
+  m_hideNeedTierMessage: 1
   m_dieOutsideFrustum: 1
 --- !u!1001 &100100000
 Prefab:
@@ -420,7 +421,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1556262656390070}
-  m_LocalRotation: {x: 0.50000006, y: -0.5, z: -0.4999999, w: 0.5}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.5787825e-13, y: 0.050433557, z: -0.0000005082441}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -467,7 +468,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: bb3620561b14f41bf946d789f0259397, type: 3}
   m_Controller: {fileID: 9100000, guid: 4f7435a91052243638fb1047668ab87a, type: 2}
-  m_CullingMode: 1
+  m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -511,7 +512,7 @@ MonoBehaviour:
   m_enableSensor: 0
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 0
+    m_sightRadius: 5
     m_maxRadius: 0
     m_minRadius: 0
     m_hysteresisOffset: 0
@@ -529,7 +530,7 @@ MonoBehaviour:
   m_inflammable:
     m_ashesAsset: 
     m_burningTime: 0
-    m_dissolveTime: 1.5
+    m_dissolveTime: 0
     m_ashExceptions: []
   m_onSpawnSound: 
 --- !u!114 &114770986760980144

@@ -91,11 +91,11 @@ MonoBehaviour:
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
   m_onEatenParticle:
-    name: PS_Blood_Green
+    name: PS_Blood_Explosion
     path: Blood
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 0.05490196, g: 0.69803923, b: 0, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       key0:
@@ -141,9 +141,9 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    scale: 0.75
+    scale: 0.5
   m_onEatenFrozenParticle:
-    name: PS_IceExplosionSmall
+    name: PS_IceExplosion
     path: 
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
@@ -193,7 +193,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    scale: 1
+    scale: 0.5
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -441,6 +441,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: SpiderSmall
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &11474244
 MonoBehaviour:
@@ -461,7 +462,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"hangDownChance":{"min":1,"max":1.5},"hangDownDistance":{"min":2,"max":6},"hangDownSpeed":2.5,"restTime":{"min":2,"max":4},"randomLookAt":true,"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":20,"max":30},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
+  m_serializedJson: '[{"hangDownChance":{"min":0.5,"max":3},"hangDownDistance":{"min":2,"max":6},"hangDownSpeed":2.5,"restTime":{"min":1,"max":5},"randomLookAt":true,"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"speed":1.5,"timeToIdle":{"min":5,"max":20},"timeToChangeDirection":{"min":5,"max":30},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
   m_databaseKey: PF_SpiderSmall
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
@@ -1462,7 +1463,7 @@ Animator:
   m_GameObject: {fileID: 1000013744053480}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c56f4e3a2002446b4ad30769db4133bc, type: 3}
-  m_Controller: {fileID: 9100000, guid: bb24ead09b60a42dea11f8ebd28a972d, type: 2}
+  m_Controller: {fileID: 9100000, guid: 9ff06580745ee40d1a358fc87a1af318, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

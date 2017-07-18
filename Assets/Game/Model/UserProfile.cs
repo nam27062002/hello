@@ -27,18 +27,27 @@ public class UserProfile : UserSaveSystem
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
-	// Make sure persistence JSON is formatted equal in all systems!
-	private static readonly System.Globalization.CultureInfo JSON_FORMATTING_CULTURE = System.Globalization.CultureInfo.InvariantCulture;
-
 	public enum Currency {
-		NONE,
+		NONE = -1,
 
 		SOFT,
 		HARD,
 		REAL,
 		GOLDEN_FRAGMENTS,
+		KEYS,
 
 		COUNT
+	};
+
+	private class CurrencyData {
+		public long amount = 0;
+		public long min = 0;
+		public long max = -1;
+		public CurrencyData(long _amount, long _min, long _max) {
+			amount = _amount;
+			min = _min;
+			max = _max;
+		}
 	};
 
     //------------------------------------------------------------------------//
@@ -47,32 +56,48 @@ public class UserProfile : UserSaveSystem
 
     //------------------------------------------------------------------------//
     // PROPERTIES															  //
-    //------------------------------------------------------------------------//		
-
+    //------------------------------------------------------------------------//
     // Last save timestamp
     private DateTime m_saveTimestamp = DateTime.UtcNow;
-    public DateTime saveTimestamp
-    {
+    public DateTime saveTimestamp {
         get { return m_saveTimestamp; }
     }
-
     public int lastModified { get; set; }
 
-    // Set default values in the inspector, use static methods to set them from code
-    // [AOC] We want these to be consulted but never set from outside, so don't add a setter
-    [Separator("Economy")]
-	[SerializeField] private long m_coins;
-	public long coins {
-		get { return m_coins; }
-	}
-	
-	[SerializeField] private long m_pc;
-	public  long pc { 
-		get { return m_pc; }
+	// User ID shortcut
+	public string userId {
+		get {
+			if(!DebugSettings.useDebugServer && GameSessionManager.SharedInstance.IsLogged()) {
+				return GameSessionManager.SharedInstance.GetUID(); 
+			} else {
+				return "local_user";
+			}
+		}
 	}
 
-	[Separator("Game Settings")]
-	[SerializeField] private string m_currentDragon = "";
+    // Economy
+	private List<CurrencyData> m_currencies = new List<CurrencyData>();
+
+	public long coins {
+		get { return GetCurrency(Currency.SOFT); }
+	}
+
+	public long pc {
+		get { return GetCurrency(Currency.HARD); }
+	}
+
+	public long goldenEggFragments {
+		get { return GetCurrency(Currency.GOLDEN_FRAGMENTS); }
+		set { SetCurrency(Currency.GOLDEN_FRAGMENTS, value); }
+	}
+
+	public long keys {
+		get { return GetCurrency(Currency.KEYS); }
+		set { SetCurrency(Currency.KEYS, value); }
+	}
+
+	// Game Settings
+	private string m_currentDragon = "";
 	public string currentDragon {
 		get { return m_currentDragon; }
 		set {
@@ -80,26 +105,26 @@ public class UserProfile : UserSaveSystem
         }
 	}
 
-	[SerializeField] /*[SkuList(Definitions.Category.LEVELS)]*/ private string m_currentLevel = "";
+	private string m_currentLevel = "";
 	public string currentLevel {
 		get { return m_currentLevel; }
 		set { m_currentLevel = value; }
 	}
 
-	[SerializeField] private TutorialStep m_tutorialStep;
+	private TutorialStep m_tutorialStep;
 	public TutorialStep tutorialStep { 
 		get { return m_tutorialStep; }
 		set { m_tutorialStep = value; }
 	}
 
-	[SerializeField] private bool m_furyUsed = false;
+	private bool m_furyUsed = false;
 	public bool furyUsed {
 		get { return m_furyUsed; }
 		set { m_furyUsed = value; }
 	}
 
-	[Separator("Game Stats")]
-	[SerializeField] private int m_gamesPlayed = 0;
+	// Game Stats
+	private int m_gamesPlayed = 0;
 	public int gamesPlayed {
 		get { return m_gamesPlayed; }
 		set {
@@ -110,13 +135,13 @@ public class UserProfile : UserSaveSystem
 		}
 	}
 
-	[SerializeField] private long m_highScore = 0;
+	private long m_highScore = 0;
 	public long highScore {
 		get { return m_highScore; }
 		set { m_highScore = value; }
 	}
 	
-	[SerializeField] private int m_superFuryProgression = 0;
+	private int m_superFuryProgression = 0;
 	public int superFuryProgression {
 		get { return m_superFuryProgression; }
 		set { m_superFuryProgression = value; }
@@ -174,16 +199,6 @@ public class UserProfile : UserSaveSystem
 		set; 
 	}
 
-	private int m_goldenEggFragments = 0;
-	public int goldenEggFragments {
-		get { return m_goldenEggFragments; }
-		set { 
-			int oldValue = m_goldenEggFragments;
-			m_goldenEggFragments = value;
-			Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, UserProfile.Currency.GOLDEN_FRAGMENTS, oldValue, m_goldenEggFragments);
-		}
-	}
-
 	private int m_goldenEggsCollected = 0;
 	public int goldenEggsCollected {
 		get { return m_goldenEggsCollected; }
@@ -227,18 +242,31 @@ public class UserProfile : UserSaveSystem
 		get { return m_mapResetTimestamp > DateTime.UtcNow; }
 	}
 
-    //------------------------------------------------------------------------//
-    // GENERIC METHODS														  //
-    //------------------------------------------------------------------------//
+	// Global events
+	private Dictionary<int, GlobalEventUserData> m_globalEvents = new Dictionary<int, GlobalEventUserData>();
+	public Dictionary<int, GlobalEventUserData> globalEvents {
+		get { return m_globalEvents; }
+	}
 
     //------------------------------------------------------------------------//
-    // PUBLIC METHODS														  //
+    // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
 	public UserProfile()
 	{
+		// Initialize currencies to 0
+		for(int i = 0; i < (int)Currency.COUNT; ++i) {
+			m_currencies.Add(
+				new CurrencyData(0, 0, -1)
+			);
+		}
+
+		// Define some max values
+		m_currencies[(int)Currency.KEYS].max = 10;	// [AOC] TODO!! Get from content
+
+		// Init dragons
 		m_dragonsBySku = new Dictionary<string, DragonData>();
 		DragonData newDragonData = null;
 		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGONS);
@@ -250,7 +278,6 @@ public class UserProfile : UserSaveSystem
 
 		m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
 		m_incubatingEgg = null;
-		m_goldenEggFragments = 0;
 		m_goldenEggsCollected = 0;
 
 		m_wardrobe = new Wardrobe();
@@ -259,27 +286,44 @@ public class UserProfile : UserSaveSystem
     }
 
 	/// <summary>
-	/// Add coins.
+	/// Return a string representation of this class.
 	/// </summary>
-	/// <param name="_amount">Amount to add. Negative to subtract.</param>
-	public void AddCoins(long _amount) {
-		// Skip checks for now
-		// Compute new value and dispatch event
-		m_coins += _amount;
-		Messenger.Broadcast<long, long>(GameEvents.PROFILE_COINS_CHANGED, coins - _amount, coins);
-		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, UserProfile.Currency.SOFT, coins - _amount, coins);
+	/// <returns>A formatted json string representing this class.</returns>
+	public override string ToString() {
+		return ToJson().ToString();
+	}
+		
+	//------------------------------------------------------------------------//
+	// CURRENCIES MANAGEMENT METHODS										  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get current amount of any currency.
+	/// </summary>
+	/// <returns>The current amount of the required currency.</returns>
+	/// <param name="_currency">Currency type.</param>
+	public long GetCurrency(Currency _currency) {
+		return m_currencies[(int)_currency].amount;
 	}
 	
 	/// <summary>
-	/// Add PC.
+	/// Set the current amount of any currenct.
+	/// Use carefully!
 	/// </summary>
-	/// <param name="_iAmount">Amount to add. Negative to subtract.</param>
-	public void AddPC(long _amount) {
-		// Skip checks for now
-		// Compute new value and dispatch event
-		m_pc += _amount;
-		Messenger.Broadcast<long, long>(GameEvents.PROFILE_PC_CHANGED, pc - _amount, pc);
-		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, UserProfile.Currency.HARD, pc - _amount, pc);
+	/// <returns>The currency.</returns>
+	/// <param name="_currency">Currency.</param>
+	/// <param name="_amount">Amount.</param>
+	public void SetCurrency(Currency _currency, long _amount) {
+		// Clamp to range!
+		CurrencyData data = m_currencies[(int)_currency];
+		if(_amount < data.min) _amount = data.min;
+		if(data.max > 0 && _amount > data.max) _amount = data.max;
+
+		// Set the target value
+		long oldValue = GetCurrency(_currency);
+		data.amount = _amount;
+
+		// Notify game!
+		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, _currency, oldValue, _amount);
 	}
 
 	/// <summary>
@@ -287,73 +331,53 @@ public class UserProfile : UserSaveSystem
 	/// </summary>
 	/// <param name="_amount">Amount to be added. Negative to subtract.</param>
 	/// <param name="_currency">Currency type.</param>
-	public void AddCurrency(long _amount, Currency _currency) {
-		switch(_currency) {
-			case Currency.SOFT:				AddCoins(_amount);					break;
-			case Currency.HARD:				AddPC(_amount);						break;
-			case Currency.GOLDEN_FRAGMENTS:	goldenEggFragments += (int)_amount;	break;
-		}
+	public void AddCurrency(Currency _currency, long _amount) {
+		// Just use the setter
+		SetCurrency(_currency, GetCurrency(_currency) + _amount);
 	}
 
 	/// <summary>
-	/// Get current amount of any currency.
+	/// Gets the currency min value.
 	/// </summary>
-	/// <returns>The current amount of the required currency.</returns>
+	/// <returns>The minimum amount user can have of a specific currency.</returns>
 	/// <param name="_currency">Currency type.</param>
-	public long GetCurrency(Currency _currency) {
+	public long GetCurrencyMin(Currency _currency) {
+		return m_currencies[(int)_currency].min;
+	}
+
+	/// <summary>
+	/// Gets the currency max value.
+	/// </summary>
+	/// <returns>The maximum amount user can have of a specific currency. -1 if unlimited.</returns>
+	/// <param name="_currency">Currency type.</param>
+	public long GetCurrencyMax(Currency _currency) {
+		return m_currencies[(int)_currency].max;
+	}
+
+	/// <summary>
+	/// Convert currency from enum to string.
+	/// </summary>
+	public static string CurrencyToSku(Currency _currency) {
 		switch(_currency) {
-			case Currency.SOFT:				return coins;						break;
-			case Currency.HARD:				return pc;							break;
-			case Currency.GOLDEN_FRAGMENTS:	return (long)goldenEggFragments;	break;
+			case Currency.SOFT: return "sc";
+			case Currency.HARD: return "hc";
+			case Currency.GOLDEN_FRAGMENTS: return "goldenFragments";
+			case Currency.KEYS: return "keys";
 		}
-		return 0;
+		return string.Empty;
 	}
 
 	/// <summary>
-	/// Increases the map level.
-	/// Doesn't perform any check or currency transaction, resets timer.
-	/// Broadcasts the PROFILE_MAP_UNLOCKED event.
+	/// Convert currency from string to enum.
 	/// </summary>
-	public void UnlockMap() {
-		// Reset timer to the start of the following day, in local time zone
-		// [AOC] Small trick to figure out the start of a day, from http://stackoverflow.com/questions/3362959/datetime-now-first-and-last-minutes-of-the-day
-		//DateTime tomorrow = DateTime.Now.AddDays(1);	// Using local time zone to compute tomorrow's date
-		//m_mapResetTimestamp = tomorrow.Date.ToUniversalTime();	// Work in UTC
-
-		// [AOC] Testing purposes
-		//m_mapResetTimestamp = DateTime.Now.AddSeconds(30).ToUniversalTime();
-
-		// [AOC] Fuck it! Easier implementation, fixed timer from the moment you unlock the map
-		DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
-		if(gameSettingsDef != null) {
-			m_mapResetTimestamp = DateTime.UtcNow.AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
-		} else {
-			m_mapResetTimestamp = DateTime.UtcNow.AddHours(24);	// Default timer just in case
+	public static Currency SkuToCurrency(string _sku) {
+		switch(_sku) {
+			case "sc": return Currency.SOFT;
+			case "hc": return Currency.HARD;
+			case "goldenFragments": return Currency.GOLDEN_FRAGMENTS;
+			case "keys": return Currency.KEYS;
 		}
-		Messenger.Broadcast(GameEvents.PROFILE_MAP_UNLOCKED);
-	}
-
-	/// <summary>
-	/// Gets the number OF owned dragons.
-	/// </summary>
-	/// <returns>The number owned dragons.</returns>
-	public int GetNumOwnedDragons()
-	{
-		int ret = 0;
-		foreach( KeyValuePair<string, DragonData> pair in m_dragonsBySku )
-		{
-			if ( pair.Value.isOwned )
-				ret++;
-		}
-		return ret;
-	}
-
-	/// <summary>
-	/// Return a string representation of this class.
-	/// </summary>
-	/// <returns>A formatted json string representing this class.</returns>
-	public override string ToString() {
-		return ToJson().ToString();
+		return Currency.NONE;
 	}
 
 	//------------------------------------------------------------------------//
@@ -392,6 +416,48 @@ public class UserProfile : UserSaveSystem
 		if(wasCompleted != _completed) {
 			Messenger.Broadcast(GameEvents.TUTORIAL_STEP_TOGGLED, _step, _completed);
 		}
+	}
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Increases the map level.
+	/// Doesn't perform any check or currency transaction, resets timer.
+	/// Broadcasts the PROFILE_MAP_UNLOCKED event.
+	/// </summary>
+	public void UnlockMap() {
+		// Reset timer to the start of the following day, in local time zone
+		// [AOC] Small trick to figure out the start of a day, from http://stackoverflow.com/questions/3362959/datetime-now-first-and-last-minutes-of-the-day
+		//DateTime tomorrow = DateTime.Now.AddDays(1);	// Using local time zone to compute tomorrow's date
+		//m_mapResetTimestamp = tomorrow.Date.ToUniversalTime();	// Work in UTC
+
+		// [AOC] Testing purposes
+		//m_mapResetTimestamp = DateTime.Now.AddSeconds(30).ToUniversalTime();
+
+		// [AOC] Fuck it! Easier implementation, fixed timer from the moment you unlock the map
+		DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+		if(gameSettingsDef != null) {
+			m_mapResetTimestamp = DateTime.UtcNow.AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
+		} else {
+			m_mapResetTimestamp = DateTime.UtcNow.AddHours(24);	// Default timer just in case
+		}
+		Messenger.Broadcast(GameEvents.PROFILE_MAP_UNLOCKED);
+	}
+
+	/// <summary>
+	/// Gets the number OF owned dragons.
+	/// </summary>
+	/// <returns>The number owned dragons.</returns>
+	public int GetNumOwnedDragons()
+	{
+		int ret = 0;
+		foreach( KeyValuePair<string, DragonData> pair in m_dragonsBySku )
+		{
+			if ( pair.Value.isOwned )
+				ret++;
+		}
+		return ret;
 	}
 
     //------------------------------------------------------------------------//
@@ -437,7 +503,7 @@ public class UserProfile : UserSaveSystem
 
         if (profile.ContainsKey("timestamp"))
         {
-            m_saveTimestamp = DateTime.Parse(profile["timestamp"], JSON_FORMATTING_CULTURE);
+			m_saveTimestamp = DateTime.Parse(profile["timestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);
         }
         else
         {
@@ -447,17 +513,24 @@ public class UserProfile : UserSaveSystem
         // Economy
         string key = "sc";
         if (profile.ContainsKey(key)) {
-            m_coins = profile[key].AsInt;
+			m_currencies[(int)Currency.SOFT].amount = profile[key].AsInt;
         } else {
-            m_coins = 0;
+			m_currencies[(int)Currency.SOFT].amount = 0;
         }
 
         key = "pc";
         if (profile.ContainsKey(key)) {
-            m_pc = profile[key].AsInt;
+			m_currencies[(int)Currency.HARD].amount = profile[key].AsInt;
         } else {
-            m_pc = 0;
-        }        
+			m_currencies[(int)Currency.HARD].amount = 0;
+        }     
+
+		key = "keys";
+		if (profile.ContainsKey(key)) {
+			m_currencies[(int)Currency.KEYS].amount = profile[key].AsInt;
+		} else {
+			m_currencies[(int)Currency.KEYS].amount = 3;
+		}    
 
 		// Game settings
 		if ( profile.ContainsKey("currentDragon") )
@@ -577,7 +650,7 @@ public class UserProfile : UserSaveSystem
 		m_dailyRemoveMissionAdUses = 0;
 		if ( _data.ContainsKey("dailyRemoveMissionAdTimestamp") )
 		{
-			m_dailyRemoveMissionAdTimestamp = DateTime.Parse(_data["dailyRemoveMissionAdTimestamp"], JSON_FORMATTING_CULTURE);;
+			m_dailyRemoveMissionAdTimestamp = DateTime.Parse(_data["dailyRemoveMissionAdTimestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);;
 
 			if ( _data.ContainsKey("dailyRemoveMissionAdUses") )
 				m_dailyRemoveMissionAdUses = _data["dailyRemoveMissionAdUses"].AsInt;
@@ -590,9 +663,24 @@ public class UserProfile : UserSaveSystem
 		// Map upgrades
 		key = "mapResetTimestamp";
 		if(_data.ContainsKey(key)) {
-			m_mapResetTimestamp = DateTime.Parse(_data["mapResetTimestamp"], JSON_FORMATTING_CULTURE);
+			m_mapResetTimestamp = DateTime.Parse(_data["mapResetTimestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);
 		} else {
 			m_mapResetTimestamp = DateTime.UtcNow;	// Already expired
+		}
+
+		// Global events
+		key = "globalEvents";
+		m_globalEvents.Clear();	// Clear current events data
+		if(_data.ContainsKey(key)) {
+			// Parse json array
+			SimpleJSON.JSONArray eventsData = _data[key].AsArray;
+			for(int i = 0; i < eventsData.Count; ++i) {
+				// Create a new event with the given data and store it to the events dictionary
+				GlobalEventUserData newEvent = new GlobalEventUserData();
+				newEvent.Load(eventsData[i]);
+				newEvent.userID = userId;
+				m_globalEvents[newEvent.eventID] = newEvent;
+			}
 		}
 	}
 
@@ -633,13 +721,13 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Incubator timer
-		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], JSON_FORMATTING_CULTURE);
+		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);
 
         // Eggs collected
         eggsCollected = _data["collectedAmount"].AsInt;
 
 		// Golden egg
-		m_goldenEggFragments = _data["goldenEggFragments"].AsInt;
+		m_currencies[(int)Currency.GOLDEN_FRAGMENTS].amount = _data["goldenEggFragments"].AsInt;
 		m_goldenEggsCollected = _data["goldenEggsCollected"].AsInt;
     }
 
@@ -669,7 +757,7 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Reset timestamp
-		m_dailyChestsResetTimestamp = DateTime.Parse(_data["resetTimestamp"], JSON_FORMATTING_CULTURE);
+		m_dailyChestsResetTimestamp = DateTime.Parse(_data["resetTimestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);
 	}
 
 	//------------------------------------------------------------------------//
@@ -685,26 +773,27 @@ public class UserProfile : UserSaveSystem
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 		SimpleJSON.JSONClass profile = new SimpleJSON.JSONClass();
 
-        profile.Add("timestamp", m_saveTimestamp.ToString(JSON_FORMATTING_CULTURE));
+        profile.Add("timestamp", m_saveTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
         // Economy
-		profile.Add( "sc", m_coins.ToString(JSON_FORMATTING_CULTURE));
-		profile.Add( "pc", m_pc.ToString(JSON_FORMATTING_CULTURE));
+		profile.Add( "sc", m_currencies[(int)Currency.SOFT].amount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add( "pc", m_currencies[(int)Currency.HARD].amount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add( "keys", m_currencies[(int)Currency.KEYS].amount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Game settings
 		profile.Add("currentDragon",m_currentDragon);
 		profile.Add("currentLevel",m_currentLevel);
-		profile.Add("tutorialStep",((int)m_tutorialStep).ToString(JSON_FORMATTING_CULTURE));
-		profile.Add("furyUsed", m_furyUsed.ToString(JSON_FORMATTING_CULTURE));
+		profile.Add("tutorialStep",((int)m_tutorialStep).ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add("furyUsed", m_furyUsed.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Game stats
-		profile.Add("gamesPlayed",m_gamesPlayed.ToString(JSON_FORMATTING_CULTURE));
-		profile.Add("highScore",m_highScore.ToString(JSON_FORMATTING_CULTURE));
-		profile.Add("superFuryProgression",m_superFuryProgression.ToString(JSON_FORMATTING_CULTURE));
+		profile.Add("gamesPlayed",m_gamesPlayed.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add("highScore",m_highScore.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add("superFuryProgression",m_superFuryProgression.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		data.Add("userProfile", profile);
 
-		// DRAGONS
+		// Dragons
 		SimpleJSON.JSONArray dragons = new SimpleJSON.JSONArray();
 		foreach( KeyValuePair<string,DragonData> pair in m_dragonsBySku)
 		{
@@ -722,11 +811,18 @@ public class UserProfile : UserSaveSystem
 		data.Add("chests", SaveChestsData());
 
 		// Daily remove missions with ads
-		data.Add("dailyRemoveMissionAdTimestamp", m_dailyRemoveMissionAdTimestamp.ToString(JSON_FORMATTING_CULTURE));
-		data.Add("dailyRemoveMissionAdUses", m_dailyRemoveMissionAdUses.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("dailyRemoveMissionAdTimestamp", m_dailyRemoveMissionAdTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("dailyRemoveMissionAdUses", m_dailyRemoveMissionAdUses.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Map upgrades
-		data.Add("mapResetTimestamp", m_mapResetTimestamp.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("mapResetTimestamp", m_mapResetTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+
+		// Global Events
+		SimpleJSON.JSONArray eventsData = new SimpleJSON.JSONArray();
+		foreach(KeyValuePair<int, GlobalEventUserData> kvp in m_globalEvents) {
+			eventsData.Add(kvp.Value.Save(true));
+		}
+		data.Add("globalEvents", eventsData);
 
 		// Return it
 		return data;
@@ -759,14 +855,14 @@ public class UserProfile : UserSaveSystem
 		}
 
 		// Incubator timer
-		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
         // Eggs collected
-		data.Add("collectedAmount", eggsCollected.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("collectedAmount", eggsCollected.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Golden eggs
-		data.Add("goldenEggFragments", m_goldenEggFragments.ToString(JSON_FORMATTING_CULTURE));
-		data.Add("goldenEggsCollected", m_goldenEggsCollected.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("goldenEggFragments", m_currencies[(int)Currency.GOLDEN_FRAGMENTS].amount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("goldenEggsCollected", m_goldenEggsCollected.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
         return data;
 	}
@@ -789,7 +885,7 @@ public class UserProfile : UserSaveSystem
 		data.Add("chests", chestsArray);
 
 		// Reset timestamp
-		data.Add("resetTimestamp", m_dailyChestsResetTimestamp.ToString(JSON_FORMATTING_CULTURE));
+		data.Add("resetTimestamp", m_dailyChestsResetTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Done!
 		return data;
@@ -831,6 +927,9 @@ public class UserProfile : UserSaveSystem
 		return ret;
 	}
 
+	//------------------------------------------------------------------------//
+	// PETS MANAGEMENT														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Get the current pet loadout for the target dragon.
 	/// </summary>
@@ -1000,5 +1099,79 @@ public class UserProfile : UserSaveSystem
 
 		return _slotIdx;
 	}
+
+	//------------------------------------------------------------------------//
+	// GLOBAL EVENTS MANAGEMENT												  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get the data of this user for a given event.
+	/// A new one will be created if the user has no data stored for this event.
+	/// </summary>
+	/// <returns>The event data for the requested event.</returns>
+	/// <param name="_eventId">Event identifier.</param>
+	public GlobalEventUserData GetGlobalEventData(int _eventID) {
+		// If the user doesn't have data of this event, create a new one
+		GlobalEventUserData data = null;
+		if(!m_globalEvents.TryGetValue(_eventID, out data)) {
+			data = new GlobalEventUserData(
+				_eventID,
+				userId,
+				0f,
+				-1,
+				0
+			);
+			m_globalEvents[_eventID] = data;
+		}
+		return data;
+	}
+
+    /// <summary>
+    /// Returns an int that sums up the user's progress.
+    /// </summary>
+    /// <returns></returns>
+    public int GetPlayerProgress()
+    {
+        int returnValue = 0;
+
+        // Find the dragon with the highest level among all dragons acquired by the user.
+        if (m_dragonsBySku != null)
+        {
+            DragonData highestDragon = null;
+            foreach (KeyValuePair<string, DragonData> pair in m_dragonsBySku)
+            {
+                if (pair.Value.isOwned)
+                {                                        
+		            int order = pair.Value.GetOrder();
+                    if (highestDragon == null || order > highestDragon.GetOrder())
+                    {
+                        highestDragon = pair.Value;
+                    }
+                }
+            }
+
+            if (highestDragon != null)
+            {
+                int highestOrder = highestDragon.GetOrder();
+
+                // Add up maxLevel of all dragons with a lower level.
+                foreach (KeyValuePair<string, DragonData> pair in m_dragonsBySku)
+                {
+                    if (pair.Value.GetOrder() < highestOrder)
+                    {
+                        // Since level start at 0 the amount of level is maxLevel + 1 
+                        returnValue += pair.Value.progression.maxLevel + 1;                        
+                    }
+                }
+
+                // Add up the current level of that highest dragon.
+                returnValue += highestDragon.progression.level;
+
+                // Dragon level starts at 0 but player progress starts at 1
+                returnValue++;
+            }
+        }        
+
+        return returnValue;
+    }
 }
 

@@ -62,8 +62,8 @@ public class ParticleData {
 	}
 
 	public GameObject CreateInstance() {
-		if (!path.EndsWith("/")) path = path + "/";
-		GameObject go = Resources.Load<GameObject>("Particles/" + path + name);
+		if (!string.IsNullOrEmpty(path) && !path.EndsWith("/")) path = path + "/";
+		GameObject go = Resources.Load<GameObject>("Particles/Master/" + path + name);
 		GameObject instance = GameObject.Instantiate(go);
 		return instance;
 	}

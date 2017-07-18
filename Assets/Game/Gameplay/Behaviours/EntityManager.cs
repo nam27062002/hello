@@ -10,6 +10,33 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
     private List<Entity> m_searchList;
     private Rect m_area;    
 
+
+	public int totalVertexCount { 
+		get { 
+			int i = 0;
+			int vc = 0;
+
+			for (i = 0; i < m_cages.Count; ++i) 	{ vc += m_cages[i].GetVertexCount(); }
+			for (i = 0; i < m_entities.Count; ++i) 	{ vc += m_entities[i].GetVertexCount(); }
+			for (i = 0; i < m_entitiesBg.Count; ++i){ vc += m_entitiesBg[i].GetVertexCount(); }
+
+			return vc; 
+		} 
+	}
+
+	public int drawCalls {
+		get {
+			int i = 0;
+			int dc = 0;
+
+			for (i = 0; i < m_cages.Count; ++i) 	{ dc += m_cages[i].GetRendererCount(); }
+			for (i = 0; i < m_entities.Count; ++i) 	{ dc += m_entities[i].GetRendererCount(); }
+			for (i = 0; i < m_entitiesBg.Count; ++i){ dc += m_entitiesBg[i].GetRendererCount(); }
+
+			return dc;
+		}
+	}
+
     public enum OverlapingMethod
     {
         EntitiesManager,
@@ -48,7 +75,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 
     public void UnregisterEntity(Entity _entity)
     {
-        m_entities.Remove(_entity);
+		m_entities.Remove(_entity);
     }
 
     public void RegisterEntityBg(EntityBg _entity)
@@ -62,7 +89,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
     }
 
 	public void RegisterEntityCage(Cage _cage)
-	{     
+	{   
 		m_cages.Add(_cage);
 	}
 
@@ -165,7 +192,28 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
         return m_searchList.ToArray();
     }
 
+	public int GetOverlapingCages(Vector3 position, float distance, Cage[] results)
+    {
+		int numResult = 0;
+		int size = m_cages.Count;
+		int length = results.Length;
+        for (int i = 0; i < size && numResult < length; ++i)
+        {
+			Cage e = m_cages[i];
+            if (e != null)
+            {
+				float sqrMagnitude = (position - e.behaviour.centerTarget.position).sqrMagnitude;
+				if ( sqrMagnitude <= distance * distance );	
+                {
+                    results[numResult] = e;
+                    numResult++;
+                }
+            }
+        }
+        return numResult;
+    }
 
+    	
     public int GetOverlapingEntities(Vector3 position, float distance, Entity[] result)
     {
         int numEntities = 0;
@@ -173,7 +221,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
         {
             case OverlapingMethod.EntitiesManager:
                 {
-                    numEntities = EntityManager.instance.GetEntitiesInRange2DNonAlloc(position, distance, result);
+                    numEntities = GetEntitiesInRange2DNonAlloc(position, distance, result);
                 }
                 break;
             case OverlapingMethod.Capsule:

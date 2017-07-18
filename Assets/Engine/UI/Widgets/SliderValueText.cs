@@ -4,51 +4,66 @@ using UnityEngine.UI;
 using TMPro;
 using System.Text;
 
+[ExecuteInEditMode]
 [RequireComponent(typeof(Slider))]
 public class SliderValueText : MonoBehaviour {
 
-	public TextMeshProUGUI text = null;
-	public bool showMax = true;
-	public bool showDelta = false;
+	[SerializeField] private Slider m_slider = null;
+	[SerializeField] private TextMeshProUGUI m_text = null;
+	[Space]
+	[SerializeField] private bool m_showMax = true;
+	[SerializeField] private bool m_showDelta = false;
+	[Space]
+	[SerializeField] private int m_zeroPadding = 0;
+	[SerializeField] private int m_decimalPlaces = 2;
 
-	private Slider slider = null;
 	private StringBuilder m_sb = new StringBuilder();
 
-	// Use this for initialization
-	void Start () {
-		// Get required components
-		slider = GetComponent<Slider>();
-		DebugUtils.Assert(text != null, "Required Component!!");
-		DebugUtils.Assert(slider != null, "Required Component!!");
-
+	private void OnEnable () {
 		// Subscribe to slider changed event
-		slider.onValueChanged.AddListener(delegate { OnSliderValueChanged(); });
+		if(m_slider != null) m_slider.onValueChanged.AddListener(OnSliderValueChanged);
 
 		// Initialize text
 		RefreshText();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+
+	private void OnDisable() {
+		// Unsubscribe from slider changed event
+		if(m_slider != null) m_slider.onValueChanged.RemoveListener(OnSliderValueChanged);
 	}
 
-	void OnSliderValueChanged() {
+	private void OnValidate() {
+		RefreshText();
+	}
+	
+	void OnSliderValueChanged(float _value) {
 		RefreshText();
 	}
 
 	void RefreshText() {
+		if(m_slider == null) return;
+		if(m_text == null) return;
+
+		// Clear
 		m_sb.Length = 0;
-		if(showMax) {
-			m_sb.AppendLine(string.Format("{0:0.00}/{1}", slider.value, slider.maxValue));
-		} else {
-			m_sb.AppendLine(string.Format("{0:0.00}", slider.value));
+
+		// Value
+		m_sb.Append(StringUtils.FormatNumber(m_slider.value, m_decimalPlaces, m_zeroPadding));
+
+		// Max
+		if(m_showMax) {
+			m_sb.Append("/");
+			m_sb.Append(StringUtils.FormatNumber(m_slider.maxValue, m_decimalPlaces, m_zeroPadding));
 		}
 
-		if(showDelta) {
-			m_sb.AppendLine(string.Format("{0:0.00}", slider.normalizedValue));
+		// Delta
+		if(m_showDelta) {
+			m_sb.AppendLine();
+			m_sb.Append("(");
+			m_sb.Append(StringUtils.FormatNumber(m_slider.normalizedValue, 2));
+			m_sb.Append(")");
 		}
 
-		text.text = m_sb.ToString();
+		m_text.text = m_sb.ToString();
 	}
 }

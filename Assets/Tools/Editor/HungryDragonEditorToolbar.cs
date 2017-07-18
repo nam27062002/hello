@@ -195,8 +195,8 @@ public class HungryDragonEditorToolbar : EditorWindow {
 			}
 
 			// Multipurpose button 2
-			if(GUILayout.Button(new GUIContent("MR", "Find missing and null references in the scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				FindMissingReferencesTool.FindMissingReferences(true/*, 
+			if(GUILayout.Button(new GUIContent("MR", "Find missing and/or null references in the scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				FindMissingReferencesTool.FindMissingReferences(false/*, 
 					new Type[] { typeof(UnityEngine.Sprite) },
 					new Type[] { typeof(UnityEngine.UI.Image) }*/
 				);

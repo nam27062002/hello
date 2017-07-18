@@ -32,7 +32,7 @@ public class PopupSettingsSupportForMiniTrackingTab : MonoBehaviour
 	/// </summary>	
 	public void OnSendTracking() {
         MiniTrackingEngine.SendTrackingFile(false,
-           delegate (FGOL.Server.Error error, Dictionary<string, object> response)
+           (FGOL.Server.Error error, GameServerManager.ServerResponse response) =>
            {
                if (error == null)
                {

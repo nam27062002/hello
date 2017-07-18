@@ -147,6 +147,7 @@ public class TrackerBase {
 			case "survive_time":	return new TrackerSurviveTime();
 			case "kill":			return new TrackerKill(_params);
 			case "burn":			return new TrackerBurn(_params);
+			case "distance":		return new TrackerDistance();
 			case "dive":			return new TrackerDiveDistance();
 			case "dive_time":		return new TrackerDiveTime();
 			case "fire_rush":		return new TrackerFireRush();

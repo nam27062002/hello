@@ -20,8 +20,7 @@ public class LookAtMainCamera : MonoBehaviour {
 
 	private void Update() {        
         Transform targetCamera = GetTargetCameraTransform();
-        if (targetCamera != null)
-        {            
+        if (targetCamera != null) {            
             // This is not done in LateUpdate() because rotating a game object that is the parent of a particle system prevents this
             // stuff from being parallelized with particle system updates introducing a Unity WaitingForJob task that takes 1-2ms. 
             // This camera position might be not the latest one but we consider that the magnitude of the error is negligible
@@ -39,7 +38,9 @@ public class LookAtMainCamera : MonoBehaviour {
 				m_overrideCamera = (Application.isPlaying) ? Camera.main : Camera.current;				
 			}
 
-			m_overrideCameraTransform = overrideCamera.transform;
+			if (m_overrideCamera != null) {
+				m_overrideCameraTransform = overrideCamera.transform;
+			}
 		}
 
 		return m_overrideCameraTransform;

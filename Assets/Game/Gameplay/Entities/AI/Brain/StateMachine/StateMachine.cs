@@ -67,32 +67,33 @@ namespace AI
 			}
 		}
 
-		public void OnDestroy()
-		{
-			if ( ApplicationManager.IsAlive )
-			{
-				if(m_current != null)
-				{
+		public void OnDestroy() {
+			if (ApplicationManager.IsAlive) {
+				if (m_current != null) {
 					m_current.Exit(null);
 					m_current = null;
 				}
-				for(int i = 0; i < m_states.Length; i++)
-				{
+
+				for (int i = 0; i < m_states.Length; i++){
 					m_states[i].Remove();
 				}
 			}
 		}
 
-		public void Reset()
-		{
-			if(m_current != null)
-			{
+		public void Exit() {			
+			if (m_current != null) {
+				m_current.Exit(null);
+				m_current = null;
+			}
+		}
+
+		public void Reset() {
+			if (m_current != null) {
 				m_current.Exit(null);
 				m_current = null;
 			}
 
-			if(m_states.Length > 0 && m_firstState_A > -1)
-			{
+			if (m_states.Length > 0 && m_firstState_A > -1) {
 				int state = m_firstState_A;
 				if (m_firstState_B > -1 && UnityEngine.Random.Range(0f, 1f) > 0.5f) {
 					state = m_firstState_B;
@@ -101,16 +102,12 @@ namespace AI
 			}
 		}
 
-		public void Update()
-		{
-            
-			if(m_current != null)
-			{
+		public void Update() {            
+			if (m_current != null) {
 				m_current.Update();
 			}
 
-			if(m_queuedTransition != null)
-			{
+			if (m_queuedTransition != null) {
 				DoTransition(m_queuedTransition, m_transitionParam);
 			}
 	    }

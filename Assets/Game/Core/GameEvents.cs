@@ -25,8 +25,6 @@ public enum GameEvents {
     CP_QUALITY_CHANGED,         // no params
 
 	// Profile events
-	PROFILE_COINS_CHANGED,		// params: long _oldAmount, long _newAmount
-	PROFILE_PC_CHANGED,			// params: long _oldAmount, long _newAmount
 	PROFILE_CURRENCY_CHANGED,	// params: UserProfile.Currency _currency, long _oldAmount, long _newAmount
 	PROFILE_MAP_UNLOCKED,		// no params
 	TUTORIAL_STEP_TOGGLED,		// params: TutorialStep _step, bool _completed
@@ -147,7 +145,14 @@ public enum GameEvents {
     // Settigns events
     TILT_CONTROL_TOGGLE,		// params: Bool _useTile
 	TILT_CONTROL_CALIBRATE,		// no params, use to force a tilt calibration (only in-game)
-	TILT_CONTROL_SENSITIVITY_CHANGED	// params: float _sensitivity
+	TILT_CONTROL_SENSITIVITY_CHANGED,	// params: float _sensitivity
+
+	// Global events events (xD)
+	GLOBAL_EVENT_UPDATED,			// params: _requestType, the manager notifies that has received new data from the server related to the current event. Triggers with all the request types: event definition, event state, leaderboard...
+	GLOBAL_EVENT_DATA_UPDATED,
+	GLOBAL_EVENT_STATE_UPDATED,
+	GLOBAL_EVENT_LEADERBOARD_UPDATED,
+	GLOBAL_EVENT_SCORE_REGISTERED	// params: bool _sucess, the manager notifies whether a contribution has been successfully registered to the server or not
 }
 
 //------------------------------------------------------------------------//

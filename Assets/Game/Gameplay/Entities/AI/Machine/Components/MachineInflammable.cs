@@ -87,13 +87,20 @@ namespace AI {
 			m_machine.SetSignal(Signals.Type.Burning, true);
 			m_machine.SetSignal(Signals.Type.Panic, true);
 
+			if (m_pilot != null)
+				m_pilot.OnDie();
+
 			// reward
 			Reward reward = (m_entity as Entity).GetOnKillReward(true);
 			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, m_machine.transform, reward);
 
 			m_timer = m_burningTime;
 
-			m_nextState = State.Burning;
+			if (m_burningTime == 0 && m_dissolveTime == 0) {
+				m_nextState = State.Ashes;
+			} else {
+				m_nextState = State.Burning;
+			}
 		}
 
 

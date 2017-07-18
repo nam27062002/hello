@@ -88,6 +88,7 @@ namespace AI {
 		}
 		private float m_freezingMultiplier = 1;
 
+		float m_stunned = 0;
 
 		// Activating
 		UnityEngine.Events.UnityAction m_deactivateCallback;
@@ -331,15 +332,18 @@ namespace AI {
 				if (m_motion != null) m_motion.Update();
 
 				//forward special actions
-				m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.A, m_pilot.IsActionPressed(Pilot.Action.Button_A));
-				m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.B, m_pilot.IsActionPressed(Pilot.Action.Button_B));
-				m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.C, m_pilot.IsActionPressed(Pilot.Action.Button_C));
+				if (m_pilot != null) {
+					m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.A, m_pilot.IsActionPressed(Pilot.Action.Button_A));
+					m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.B, m_pilot.IsActionPressed(Pilot.Action.Button_B));
+					m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.C, m_pilot.IsActionPressed(Pilot.Action.Button_C));
 
-				m_viewControl.ShowExclamationMark(m_pilot.IsActionPressed(Pilot.Action.ExclamationMark));
+					m_viewControl.ShowExclamationMark(m_pilot.IsActionPressed(Pilot.Action.ExclamationMark));
+				}
 			}
 			m_inflammable.Update();
 			if (m_checkCurrents)
 				CheckForCurrents();
+			CheckStun();
 		}
 
 		public virtual void CustomFixedUpdate() {
@@ -431,12 +435,30 @@ namespace AI {
 			}
 		}
 
+		public void CheckStun()
+		{
+			if ( m_stunned > 0 )
+			{
+				m_stunned -= Time.deltaTime;
+				m_pilot.SetStunned( m_stunned > 0 );
+				m_viewControl.SetStunned( m_stunned > 0 );
+			}
+		}
+
+		public void Stun( float _stunTime )
+		{
+			m_stunned = Mathf.Max( _stunTime, m_stunned);
+		}
+
 		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null) {
 			m_signals.SetValue(_signal, _activated, _params);
 		}
 
 		public bool GetSignal(Signals.Type _signal) {
-			return m_signals.GetValue(_signal);
+			if (m_signals != null)
+				return m_signals.GetValue(_signal);
+
+			return false;
 		}
 
 		public object[] GetSignalParams(Signals.Type _signal) {
@@ -533,7 +555,7 @@ namespace AI {
 				return false;
 			if (m_isHolded)
 				return false;
-			if (m_pilot.IsActionPressed(Pilot.Action.Latching))
+			if (m_pilot != null && m_pilot.IsActionPressed(Pilot.Action.Latching))
 				return false;
 
 			return true;

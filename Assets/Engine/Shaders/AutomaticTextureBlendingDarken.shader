@@ -17,7 +17,7 @@ Shader "Hungry Dragon/Scenary/Automatic Texture Blending + Lightmap + Darken"
 	}
 
 	SubShader {
-		Tags { "RenderType"="Opaque" }
+		Tags { "Queue" = "Geometry" "RenderType"="Opaque" }
 		LOD 100
 		
 		Pass {  
@@ -27,8 +27,8 @@ Shader "Hungry Dragon/Scenary/Automatic Texture Blending + Lightmap + Darken"
 				#pragma vertex vert
 				#pragma fragment frag
 				#pragma multi_compile_fwdbase
-				#pragma glsl_no_auto_normalization
-				#pragma fragmentoption ARB_precision_hint_fastest
+//				#pragma glsl_no_auto_normalization
+//				#pragma fragmentoption ARB_precision_hint_fastest
 		
 				#define	HG_SCENARY
 

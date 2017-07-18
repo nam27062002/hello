@@ -223,7 +223,11 @@ namespace AI {
 
 					UpdateAttack();
 
-					m_targetRotation = Quaternion.LookRotation(m_direction + Vector3.back * 0.1f, m_upVector);
+					m_direction = Vector3.Cross(m_direction + Vector3.back * 0.1f, Vector3.down);
+
+					m_upVector = m_machineTransform.parent.up;
+
+					m_targetRotation = Quaternion.LookRotation(Vector3.Cross(m_direction, m_upVector), m_upVector);
 					break;
 
 				case State.Panic:

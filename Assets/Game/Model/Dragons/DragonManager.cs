@@ -98,7 +98,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	public static DragonData GetPreviousDragonData(string _sku) {
 		// Just check order
 		DragonData data = GetDragonData(_sku);
-		int order = data.def.GetAsInt("order");
+		int order = data.GetOrder();
 		if(order > 0) {	// Exclude if first dragon
 			return DragonManager.dragonsByOrder[order - 1];
 		}
@@ -115,7 +115,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	public static DragonData GetNextDragonData(string _sku) {
 		// Just check order
 		DragonData data = GetDragonData(_sku);
-		int order = data.def.GetAsInt("order");
+		int order = data.GetOrder();
 		if(order < DragonManager.dragonsByOrder.Count - 1) {	// Exclude if last dragon
 			return DragonManager.dragonsByOrder[order + 1];
 		}

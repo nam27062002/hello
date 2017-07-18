@@ -1,7 +1,7 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
-Shader "Hungry Dragon/NPC/Diffuse + NormalMap + Specular + Fresnel + Rim (Glow)"
+Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Glow)"
 {
 	Properties
 	{

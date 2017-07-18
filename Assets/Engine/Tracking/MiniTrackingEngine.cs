@@ -180,7 +180,7 @@ public class MiniTrackingEngine : Singleton<MiniTrackingEngine> {
     /// </summary>
     /// <param name="onDone">Callback called once the operation is done. The parameter of this callback states whether or not
     /// the operation has been performed successfully.</param>
-    public static void SendTrackingFile(bool silent, System.Action<FGOL.Server.Error, Dictionary<string, object>> onDone) {
+    public static void SendTrackingFile(bool silent, GameServerManager.ServerCallback onDone) {
         string trackingData = ReadTrackingFile();
         GameServerManager.SharedInstance.SendPlayTest(silent, instance.m_userID, trackingData, onDone);            
     }    

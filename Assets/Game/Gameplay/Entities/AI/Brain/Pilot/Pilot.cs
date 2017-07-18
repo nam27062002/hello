@@ -58,18 +58,43 @@ namespace AI {
 		private float m_freezeFactor = 1;
 		protected virtual float freezeFactor{ get {return m_freezeFactor;} }
 
+		protected bool m_stunned = false;
+
 		private float m_moveSpeed;
-		public float moveSpeed { get { return m_moveSpeed * speedFactor * freezeFactor; } }
+		public float moveSpeed { 
+			get {
+				float ret = 0; 
+				if (!m_stunned){
+					ret = m_moveSpeed * speedFactor * freezeFactor;;
+				}
+				return  ret;
+			} 
+		}
 		
 		private float m_boostSpeed;
-		public float boostSpeed { get { return m_boostSpeed * speedFactor * freezeFactor; } }
+		public float boostSpeed { 
+			get { 
+				float ret = 0;
+				if (!m_stunned){
+					ret = m_boostSpeed * speedFactor * freezeFactor;
+				}
+				return  ret;
+			} 
+		}
 
 		private float m_currentSpeed;
-		public float speed { get { return m_currentSpeed * speedFactor * freezeFactor; } }
+		public float speed { 
+			get { 
+				float ret = 0;
+				if (!m_stunned){
+					ret = m_currentSpeed * speedFactor * freezeFactor; 
+				}
+				return ret;
+			} 
+		}
 
 		private float m_zOffset;
 		protected float zOffset { get { return m_zOffset; } }
-
 
 		//
 		protected bool m_boostAvailable;
@@ -121,6 +146,8 @@ namespace AI {
 			m_actions &= ~_action;
 		}
 
+		public virtual void OnDie() {}
+
 		public virtual void OnTrigger(string _trigger, object[] _param = null) {}
 
 		// all the movement will be offset to follow a specific rail
@@ -151,6 +178,11 @@ namespace AI {
 		public void SetFreezeFactor(float _factor) {
 			m_freezeFactor = _factor;
 		}
+
+		public void SetStunned( bool _stunned ){
+			m_stunned = _stunned;
+		}
+
 
 		public void Stop() {
 			m_moveSpeed = 0f;
@@ -197,8 +229,6 @@ namespace AI {
 				m_currentEnergy = Mathf.Lerp(m_currentEnergy, m_energy, Time.deltaTime * m_energyRecoverSec);
 				m_boostAvailable = m_currentEnergy > (m_energy * 0.75f);
 			}
-
-			//TODO blend impulses
 		}
 	}
 }

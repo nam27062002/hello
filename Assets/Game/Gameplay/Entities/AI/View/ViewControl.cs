@@ -4,10 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class ViewControl : MonoBehaviour, ISpawnable {
+public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
-	public static Color GOLD_TINT = new Color(255.0f / 255.0f, 161 / 255.0f, 0, 255.0f / 255.0f);
-    public static Color FREEZE_TINT = new Color(0.0f / 255.0f, 200.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f);
+	public static Color GOLD_TINT = new Color(1.0f, 0.63f, 0.0f, 0.75f);
+    public static Color FREEZE_TINT = new Color(0.0f, 0.78f, 1.0f, 0.75f);
+    public static Color NO_TINT = new Color(0.0f, 0.0f, 0.0f, 0.0f);
     public static float FREEZE_TIME = 1.0f;
 
     [Serializable]
@@ -102,6 +103,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     private List<Material> m_allMaterials;
 	private List<Color> m_defaultTints;
 
+	private int m_vertexCount;
+	public int vertexCount { get { return m_vertexCount; } }
+
+	private int m_rendererCount;
+	public int rendererCount { get { return m_rendererCount; } }
+
 	protected bool m_boost;
 	protected bool m_scared;
 	protected bool m_panic; //bite and hold state
@@ -146,6 +153,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
     private float m_freezingLevel = 0;
     private bool m_wasFreezing = true;
 
+    private ParticleData m_stunParticle;
+    private GameObject m_stunParticleInstance;
+
     //-----------------------------------------------
     // Use this for initialization
     //-----------------------------------------------
@@ -171,24 +181,40 @@ public class ViewControl : MonoBehaviour, ISpawnable {
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
         m_allMaterials = new List<Material>();
 		m_defaultTints = new List<Color>();
+
+		m_vertexCount = 0;
+		m_rendererCount = 0;
+
         if (renderers != null) {
-            int count = renderers.Length;
+			m_rendererCount = renderers.Length;
             int matCount;
             Material[] materials;
-            for (int i = 0; i < count; i++) {
-                // Stores the materials of this renderer in a dictionary for direct access
-                materials = renderers[i].materials;
-                m_materials[renderers[i].GetInstanceID()] = materials;
+			for (int i = 0; i < m_rendererCount; i++) {
+				Renderer renderer = renderers[i];
+
+				// Keep the vertex count (for DEBUG)
+				if (renderer.GetType() == typeof(SkinnedMeshRenderer)) {
+					m_vertexCount += (renderer as SkinnedMeshRenderer).sharedMesh.vertexCount;
+				} else if (renderer.GetType() == typeof(MeshRenderer)) {
+					MeshFilter filter = renderer.GetComponent<MeshFilter>();
+					if (filter != null) {
+						m_vertexCount += filter.sharedMesh.vertexCount;
+					}
+				}
+
+				// Stores the materials of this renderer in a dictionary for direct access
+				materials = renderer.materials;
+				m_materials[renderer.GetInstanceID()] = materials;
 
                 // Stores the materials of this renderer in the list of all materials for sequencial access with no memory allocations
                 if (materials != null) {
                     matCount = materials.Length;
                     for (int j = 0; j < matCount; j++) {
                         m_allMaterials.Add(materials[j]);
-						if (materials[j].HasProperty("_FresnelColor")) {
-							m_defaultTints.Add(materials[j].GetColor("_FresnelColor"));
+						if (materials[j].HasProperty("_GoldColor")) {
+							m_defaultTints.Add(materials[j].GetColor("_GoldColor"));
 						} else {
-							m_defaultTints.Add(Color.black);
+							m_defaultTints.Add(ViewControl.NO_TINT);
 						}
                     }
                 }
@@ -202,13 +228,6 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_isExclamationMarkOn = false;
 		if (m_exclamationTransform != null) {
 			m_exclamationHandler = ParticleManager.CreatePool("PF_ExclamationMark");
-		}
-
-		// particle management
-		if (!m_onEatenParticle.IsValid()) {
-			// if this entity doesn't have any particles attached, set the standard blood particle
-			m_onEatenParticle.name = "PS_Blood_Explosion";
-			m_onEatenParticle.path = "Blood/";
 		}
 
 		// Preload particle
@@ -234,6 +253,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_fireParticlesParents = new Transform[m_fireParticles.Length];
 
         Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        if (m_stunParticle == null)
+        {
+        	m_stunParticle = new ParticleData("PS_Stun","",Vector3.one);
+        }
+		m_stunParticle.CreatePool();
+
     }
 
 	void Start() {
@@ -360,7 +385,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				m_fireParticles[i] = null;
 			}
 		}
-
+		if ( m_stunParticleInstance )
+		{
+			m_stunParticle.ReturnInstance( m_stunParticleInstance );
+			m_stunParticleInstance = null;
+		}
 		RemoveAudios();
     }
 
@@ -401,15 +430,15 @@ public class ViewControl : MonoBehaviour, ISpawnable {
                 	{
                 		case EntityTint.GOLD:
                 		{
-							m_allMaterials[i].SetColor("_FresnelColor", GOLD_TINT);
+							m_allMaterials[i].SetColor("_GoldColor", GOLD_TINT);
                 		}break;
                 		case EntityTint.FREEZE:
                 		{
-							m_allMaterials[i].SetColor("_FresnelColor", FREEZE_TINT * m_freezingLevel);
+							m_allMaterials[i].SetColor("_GoldColor", FREEZE_TINT * m_freezingLevel);
                 		}break;
                 		case EntityTint.NORMAL:
                 		{
-							m_allMaterials[i].SetColor("_FresnelColor", m_defaultTints[i]);
+							m_allMaterials[i].SetColor("_GoldColor", NO_TINT);
                 		}break;
                 	}
                 }
@@ -907,9 +936,27 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 	}
 
-	public void Freezing( float freezeLevel )
-	{
+	public void Freezing( float freezeLevel ){
 		m_freezingLevel = freezeLevel;
+	}
+
+	public void SetStunned( bool stunned ){
+		if ( stunned ){
+			m_animator.enabled = false;
+			// if no stunned particle -> stun
+			if (m_stunParticleInstance == null)
+			{
+				m_stunParticleInstance = m_stunParticle.Spawn(transform);
+			}
+		}else{
+			m_animator.enabled = true;
+			// if stunned particle -> remove stun
+			if ( m_stunParticleInstance )
+			{
+				m_stunParticle.ReturnInstance( m_stunParticleInstance );
+				m_stunParticleInstance = null;
+			}
+		}
 	}
 
 }

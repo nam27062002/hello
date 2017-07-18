@@ -28,13 +28,13 @@ public class MenuDragonScreenController : MonoBehaviour {
 	// Exposed
 	[SerializeField] private MenuDragonLockIcon m_lockIcon = null;
 	[Space]
-	[SerializeField] private NavigationShowHideAnimator m_bottomBarAnim = null;
-	[SerializeField] private NavigationShowHideAnimator m_unlockButtonsAnim = null;
-	[SerializeField] private NavigationShowHideAnimator m_arrowsAnim = null;
-	[Space]
 	[SerializeField] private float m_initialDelay = 1f;
 	[SerializeField] private float m_scrollDuration = 1f;
 	[SerializeField] private float m_unlockAnimDuration = 1f;
+	[Space]
+	[SerializeField] private NavigationShowHideAnimator[] m_toHideOnUnlockAnim = null;
+
+	private bool m_goToGlobalEventRewardScreen;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -50,6 +50,15 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+		m_goToGlobalEventRewardScreen = false;
+
+		GlobalEvent ge = GlobalEventManager.currentEvent;
+		if (ge != null) {
+			if (ge.isRewarAvailable) {
+				m_goToGlobalEventRewardScreen = true;
+			}
+		}
+
 		// Subscribe to external events.
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 	}
@@ -66,6 +75,11 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
+		if (m_goToGlobalEventRewardScreen) {
+			InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.REWARD);
+			m_goToGlobalEventRewardScreen = false;
+		}
+
 		// Cheat for simulating dragon unlock
 		#if UNITY_EDITOR
 		if(Input.GetKeyDown(KeyCode.U)) {
@@ -106,9 +120,15 @@ public class MenuDragonScreenController : MonoBehaviour {
 			.AppendCallback(() => {
 				// Clean screen
 				// Don't disable elements, otherwise they won't be enabled on the next screen change!
-				m_bottomBarAnim.ForceHide(true, false);
-				m_unlockButtonsAnim.ForceHide(true, false);
-				m_arrowsAnim.ForceHide(true, false);
+				for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
+					m_toHideOnUnlockAnim[i].ForceHide(true, false);
+
+					// If the element has a ShowConditionally component, disable to override its behaviour
+					MenuShowConditionally showConditionally = m_toHideOnUnlockAnim[i].GetComponent<MenuShowConditionally>();
+					if(showConditionally != null) {
+						showConditionally.enabled = false;
+					}
+				}
 				InstanceManager.menuSceneController.hud.animator.ForceHide(true, false);
 
 				// Prepare lock icon animation
@@ -119,6 +139,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 				// Show icon unlock animation
 				//m_lockIcon.animator.ResetTrigger("idle");	// Just in case initial delay is 0, both triggers would be set at the same frame and animation wouldn't work
 				m_lockIcon.animator.SetTrigger("unlock");
+
+				// Trigger SFX
+				AudioController.Play("hd_unlock_dragon");
 			})
 			.AppendInterval(m_unlockAnimDuration)
 			.AppendCallback(() => {
@@ -130,8 +153,19 @@ public class MenuDragonScreenController : MonoBehaviour {
 				m_lockIcon.GetComponent<ShowHideAnimator>().ForceHide(false, false);
 				m_lockIcon.animator.SetTrigger("idle");
 
+				// Re-enable all disabled ShowConditionally components
+				for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
+					MenuShowConditionally showConditionally = m_toHideOnUnlockAnim[i].GetComponent<MenuShowConditionally>();
+					if(showConditionally != null) {
+						showConditionally.enabled = true;
+					}
+				}
+
 				// Navigate to dragon unlock screen!
 				InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.DRAGON_UNLOCK);
+
+				// Throw out some fireworks!
+				InstanceManager.menuSceneController.dragonScroller.LaunchDragonPurchasedFX();
 			})
 			.SetAutoKill(true)
 			.Play();

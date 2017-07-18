@@ -13,6 +13,7 @@ public class MusicController : MonoBehaviour
 
         Messenger.AddListener<string>(EngineEvents.SCENE_PREUNLOAD, OnScenePreunload);
         Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnGameLevelLoaded);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type> (GameEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
 
         Reset();        
 
@@ -23,6 +24,7 @@ public class MusicController : MonoBehaviour
     {
         Messenger.RemoveListener<string>(EngineEvents.SCENE_PREUNLOAD, OnScenePreunload);
         Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnGameLevelLoaded);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
         InstanceManager.musicController = null;
     }	        	
 
@@ -38,9 +40,11 @@ public class MusicController : MonoBehaviour
     {
         Music_StopCurrent();
         Music_CurrentKey = null;
+        Music_LastKey = null;
         Ambience_KeyToPlay = null;        
         Music_OffsetAccummulated = 0f;
         Music_Lengths = null;
+        secondsToSwitchMusic = 0;
 
         // We don't want the music to start playing on the loading screen so we need to wait for the game to load completely before starting playing the music
         IsEnabled = false;
@@ -65,6 +69,10 @@ public class MusicController : MonoBehaviour
     // castle, where an ambience music instead of the default music has to be played
 
     public string m_mainMusicKey = "amb_bed";
+    public string m_fireRushMusic = "";
+    public string m_megaFireRushMusic = "";
+    private bool m_useFireRushMusic = false;
+	private DragonBreathBehaviour.Type m_fireRushType = DragonBreathBehaviour.Type.None;
     #endregion
 
     #region music
@@ -77,7 +85,11 @@ public class MusicController : MonoBehaviour
     /// <summary>
     /// Returns the key of the music that is the current music to play
     /// </summary>
-    private string Music_CurrentKey { get; set; }    
+    private string Music_CurrentKey { get; set; }
+    private string Music_LastKey { get; set; }
+
+    public float minSecondsToSwitchMusic = 20.0f;
+    private float secondsToSwitchMusic;
 
     /// <summary>
     /// Returns whether or not a music is being played
@@ -154,9 +166,10 @@ public class MusicController : MonoBehaviour
 
     private void Music_StopCurrent()
     {
-        if (!string.IsNullOrEmpty(Music_CurrentKey))
+        if (!string.IsNullOrEmpty(Music_CurrentKey) && secondsToSwitchMusic <= 0)
         {
-            AudioController.StopMusic(m_musicFadeOut);            
+            AudioController.StopMusic(m_musicFadeOut);
+            Music_LastKey = Music_CurrentKey;
             Music_CurrentKey = null;
             Music_CurrentAudioObject = null;
         }
@@ -167,12 +180,32 @@ public class MusicController : MonoBehaviour
     private void Music_Update()
     {
         // By default the main music has to be played, unless there's an ambience music
-        string keyToPlay = m_mainMusicKey;
-        if (Ambience_KeyToPlay != null)
+        if (secondsToSwitchMusic > 0)
         {
-            keyToPlay = Ambience_KeyToPlay;
-        }           
+            secondsToSwitchMusic -= Time.deltaTime;
+        }
+
+        string keyToPlay = m_mainMusicKey;
+		float musicFadeOut = m_musicFadeOut;
+		if (!m_useFireRushMusic)
+		{
+	        if (Ambience_KeyToPlay != null)
+	        {
+	            keyToPlay = Ambience_KeyToPlay;
+	        }           
+        }
+        else
+        {
+        	switch( m_fireRushType )
+        	{
+        		case DragonBreathBehaviour.Type.Standard: keyToPlay = m_fireRushMusic;break;
+				case DragonBreathBehaviour.Type.Mega: keyToPlay = m_megaFireRushMusic;break;
+        	}
+			musicFadeOut = 0;
+            secondsToSwitchMusic = 0;
+        }
           
+        if (secondsToSwitchMusic <= 0)
 		if (keyToPlay != Music_CurrentKey || (Music_CurrentAudioObject != null && Music_CurrentAudioObject.IsPaused(true)))
         {
 			if (Music_CurrentAudioObject != null)
@@ -181,20 +214,31 @@ public class MusicController : MonoBehaviour
 				{
 					Music_CurrentKey = keyToPlay;
 					Music_CurrentAudioObject = AudioController.PlayMusic(Music_CurrentKey, m_musicVolume);
-					AudioController.UnpauseMusic( m_musicFadeOut );	
-				}
+					AudioController.UnpauseMusic( musicFadeOut );
+                    secondsToSwitchMusic = minSecondsToSwitchMusic;
+                }
 				else if ( !Music_CurrentAudioObject.IsPaused(true) )
 				{
-					AudioController.PauseMusic( m_musicFadeOut );
+                    //Fading out
+					AudioController.PauseMusic( musicFadeOut );
 				}
 			}
 			else
 			{
 				Music_CurrentKey = keyToPlay;
 				Music_CurrentAudioObject = AudioController.PlayMusic(Music_CurrentKey, m_musicVolume);
-			}
+                secondsToSwitchMusic = minSecondsToSwitchMusic;
+            }
+           
         }
     }
+
+	void OnFuryRushToggled( bool fire, DragonBreathBehaviour.Type fireType)
+	{
+		m_useFireRushMusic = fire;
+		m_fireRushType = fireType;
+	}
+
     #endregion
 
     #region ambience

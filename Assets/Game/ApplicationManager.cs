@@ -19,12 +19,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     /// <summary>
     /// Time in seconds that will force a cloud save resync if the application has been in background longer than this amount of time
     /// </summary>
-    private const int CloudSaveResyncTime = 3;
+    private const long CloudSaveResyncTime = 3;
 
     /// <summary>
     /// Time in seconds that will force a reauthentication in the social network if the application has been in background longer than this amount of time
     /// </summary>
-    private const int SocialNetworkReauthTime = 120;
+    private const long SocialNetworkReauthTime = 120;
 
     private static bool m_isAlive = true;
     public static bool IsAlive {
@@ -82,6 +82,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         Notifications_Init();
 
+		Device_Init();
+        
         // [DGR] GAME_VALIDATOR: Not supported yet
         // GameValidator gv = new GameValidator();
         //gv.StartBuildValidation();        
@@ -123,15 +125,28 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     protected override void OnDestroy()
     {
-        base.OnDestroy();
+        base.OnDestroy();        
+
         m_isAlive = false;
     }
 
     protected override void OnApplicationQuit()
     {
-        base.OnApplicationQuit();
+        Debug.Log("OnApplicationQuit");
+
+        // Tracking session has to be finished when the application is closed
+        HDTrackingManager.Instance.Notify_ApplicationEnd();
+
+        PersistenceManager.Save();
+
+		Device_Destroy();
+        
         m_isAlive = false;
         Messenger.Broadcast(GameEvents.APPLICATION_QUIT);
+
+        // This needs to be called once all stuff is done, otherwise this singleton will be marked as destroyed and some other stuff won't
+        // be able to access it
+        base.OnApplicationQuit();
     }
 
 
@@ -176,7 +191,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             // ---------------------------
             // Test toggle pause
-            //Debug_ToggleIsPaused();
+            Debug_ToggleIsPaused();
             // ---------------------------
 
             // ---------------------------
@@ -230,7 +245,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
 
             // ---------------------------
-            // Test togling profiler load scenes scene
+            // Test toggling profiler load scenes scene
             //Debug_ToggleProfilerLoadScenesScene();
             // ---------------------------
 
@@ -243,13 +258,22 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // Test send play test
             //Debug_OnSendPlayTest();
             // ---------------------------
+
+            // ---------------------------
+            // Test player's progress
+            // Debug_TestPlayerProgress();
+            // ---------------------------             
         }
+
+        HDTrackingManager.Instance.Update();
 
         if (NeedsToRestartFlow)
         {
             NeedsToRestartFlow = false;
+            
+            // The user is sent to the initial loading again
             FlowManager.Restart();
-        }
+        }        
 
         if (FeatureSettingsManager.IsDebugEnabled)
         {
@@ -283,14 +307,26 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         }
     }
 
-    private int LastPauseTime { get; set; }
+    private long LastPauseTime { get; set; }
 
     public void OnApplicationPause(bool pause)
     {
+        Debug.Log("OnApplicationPause " + pause);
+
+        // We need to notify the tracking manager before saving the progress so that any data stored by the tracking manager will be saved too
+        if (pause)
+        {
+            HDTrackingManager.Instance.Notify_ApplicationPaused();
+        }
+        else
+        {
+            HDTrackingManager.Instance.Notify_ApplicationResumed();
+        }
+
         // If the save stuff done in the first loading is not done then the pause is ignored
         if (SaveLoadIsCompleted)
         {
-            int currentTime = Globals.GetUnixTimestamp();
+            long currentTime = Globals.GetUnixTimestamp();
             bool allowGameRestart = true;
             if ((FlowManager.IsInGameScene() && !Game_IsInGame) || Game_IsPaused)
             {
@@ -324,7 +360,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                         {
                             if (LastPauseTime != -1)
                             {
-                                int timePaused = currentTime - LastPauseTime;
+                                long timePaused = currentTime - LastPauseTime;
                                 if (timePaused >= CloudSaveResyncTime && SaveFacade.Instance.cloudSaveEnabled)
                                 {
                                     SaveFacade.Instance.OnAppResume();
@@ -380,7 +416,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             // [DGR] ANALYTICS not supported yet
             // HSXAnalyticsManager.Instance.OnApplicationPause(pause);
-        }
+        }        
     }
 
     private void OnLoadStarted()
@@ -391,6 +427,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private void OnLoadComplete()
     {
         SaveLoadIsCompleted = true;
+
+        // A new tracking session is started
+        HDTrackingManager.Instance.Notify_ApplicationStart();
     }
 
     #region game
@@ -427,6 +466,44 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     /// Current device orientation
     /// </summary>
     public DeviceOrientation Device_Orientation { get; private set; }
+
+	private void Device_Init() 
+	{
+        // When this is enabled the user will be allowed to enable the vertical orientation on the control panel
+        if (FeatureSettingsManager.IsVerticalOrientationEnabled)
+        {
+            Device_CalculateOrientation();
+
+            // When this is enabled the user will be allowed to enable the vertical orientation on the control panel
+            if (FeatureSettingsManager.IsVerticalOrientationEnabled)
+            {
+                Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Device_OnOrientationSettingsChanged);
+            }
+        }
+	}
+
+	private void Device_Destroy() 
+	{
+		if (FeatureSettingsManager.IsVerticalOrientationEnabled) 
+		{
+			Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Device_OnOrientationSettingsChanged);
+		}
+	}
+
+	private void Device_CalculateOrientation() 
+	{
+		ScreenOrientation screenOrientation = Screen.orientation;
+		bool verticalOrientationIsAllowed = Prefs.GetBoolPlayer(DebugSettings.VERTICAL_ORIENTATION, false);
+		Screen.orientation = (verticalOrientationIsAllowed) ? ScreenOrientation.AutoRotation : ScreenOrientation.Landscape;
+	}
+		
+	private void Device_OnOrientationSettingsChanged(string _key, bool value) 
+	{
+		if (_key == DebugSettings.VERTICAL_ORIENTATION) 
+		{
+			Device_CalculateOrientation();
+		}
+	}
 
     private IEnumerator Device_Update()
     {
@@ -842,9 +919,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         if (FeatureSettingsManager.instance.IsMiniTrackingEnabled)
         {
             MiniTrackingEngine.SendTrackingFile(false,
-            delegate (FGOL.Server.Error error, Dictionary<string, object> response)
+			(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) => 
             {
-                if (error == null)
+				if (_error == null)
                 {
                     Debug.Log("Play test tracking sent successfully");
                 }
@@ -854,6 +931,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 }
             });
         }
+    }
+
+    private void Debug_TestPlayerProgress()
+    {
+        Debug.Log("player progress = " + UsersManager.currentUser.GetPlayerProgress());
     }
     #endregion
 }

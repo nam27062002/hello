@@ -21,7 +21,7 @@ public class WeiboListener : MonoBehaviour
 #else
 		//for editor only
 		string tokenID = deserialised["access_token"] as string;
-		int expiryTime = Globals.GetUnixTimestamp() + System.Convert.ToInt32(deserialised["expires_in"]);
+		int expiryTime = (int)Globals.GetUnixTimestamp() + System.Convert.ToInt32(deserialised["expires_in"]);
 		string expiry = expiryTime.ToString();
         string uid = deserialised["uid"] as string;
 #endif

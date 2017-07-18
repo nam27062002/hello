@@ -315,7 +315,55 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
-  m_fireTier: 4
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
+  m_fireTier: 2
 --- !u!114 &114954653416055262
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -350,7 +398,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1096127707558668}
   serializedVersion: 5
   lengthInSec: 0.5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -2849,7 +2897,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1561532330451258}
   serializedVersion: 5
   lengthInSec: 0.5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -5348,7 +5396,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1825540880341524}
   serializedVersion: 5
   lengthInSec: 0.5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1
@@ -7847,7 +7895,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1012651788941912}
   serializedVersion: 5
   lengthInSec: 1
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 1
   playOnAwake: 1
@@ -10442,7 +10490,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1116123783508462}
   serializedVersion: 5
   lengthInSec: 0.5
-  speed: 1
+  simulationSpeed: 1
   looping: 1
   prewarm: 0
   playOnAwake: 1

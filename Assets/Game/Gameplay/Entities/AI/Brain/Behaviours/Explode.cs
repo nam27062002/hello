@@ -43,6 +43,10 @@ namespace AI {
 						playerTriggeredExplosion = true;
 					} else if ( collider.CompareTag("Pet") ){
 						// is armored pet we should push it
+						Pet pet = collider.GetComponent<Pet>();
+						if ( pet != null && !pet.CanExplodeMines)
+							return;
+						// Check powerup is explode_mine
 					} else if (collider.layer == LayerMask.NameToLayer("GroundPreys")) {
 						IMachine machine = collider.GetComponent<IMachine>();
 						if (machine != null) {

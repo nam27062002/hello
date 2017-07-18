@@ -32,8 +32,7 @@ public class CPServerTab : MonoBehaviour {
 	[SerializeField] private ScrollRect m_outputScroll = null;
 	[SerializeField] private TextMeshProUGUI m_outputText = null;
 	[SerializeField] private TextMeshProUGUI m_accountIdText = null;
-
-
+	[SerializeField] private Toggle m_debugServerToggle = null;
 
     // Internal
     private DateTime m_startTimestamp;
@@ -64,7 +63,14 @@ public class CPServerTab : MonoBehaviour {
     private void OnEnable()
     {
         m_accountIdText.text = "Account Id: " + GameSessionManager.SharedInstance.GetUID();
+
+		m_debugServerToggle.isOn = DebugSettings.useDebugServer;
+		m_debugServerToggle.onValueChanged.AddListener(OnToggleDebugServer);
     }
+
+	private void OnDisable() {
+		m_debugServerToggle.onValueChanged.RemoveListener(OnToggleDebugServer);
+	}
 
     private void Update()
     {
@@ -106,11 +112,12 @@ public class CPServerTab : MonoBehaviour {
 
 		// Update scroll
 		// Don't reset scroll if the scroll position was manually set (different than 0)
-		Debug.Log(m_outputScroll.verticalNormalizedPosition); 
 		if(m_outputScroll.verticalNormalizedPosition < 0.01f) {	// Error margin
 			StartCoroutine(ResetScrollPos());
 		}
 
+		// Output to console as well
+		Debug.Log(_text);
 	}
 
 	/// <summary>
@@ -127,6 +134,13 @@ public class CPServerTab : MonoBehaviour {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Toggle debug server
+	/// </summary>
+	public void OnToggleDebugServer(bool _toggle) {
+		DebugSettings.useDebugServer = _toggle;
+	}
+
+	/// <summary>
 	/// Generic button callback.
 	/// </summary>
 	public void OnButton1(GameObject _input) {
@@ -134,17 +148,30 @@ public class CPServerTab : MonoBehaviour {
 		string paramString = GetInputText(_input);
 
 		// Do stuff!
-		// [AOC] @Nacho, ni puta idea de como funciona el sistema de networking que se trajo Miguel del SS
-		//		 Por lo que he visto por encima, la cosa está entre las siguientes clases:
-		// - NetworkManager
-		// - Server
-		// - RequestNetworkOnline - aquí hay definidas las URL de los diferentes servers (dev, stage, prod, etc.), pero ni idea de como se usa
-		//
-		// Good luck!
-		Debug.Log("Button 1 pressed with params " + paramString + " - TODO!!");
+		Debug.Log("Button 1 pressed with params " + paramString);
 		Output("Button 1 pressed with params " + paramString);
 
-        //requestNetwork.Login();
+		// Request current event info
+		Output("GlobalEvent_GetCurrent");
+		GameServerManager.SharedInstance.GlobalEvent_GetEvent(0,
+			(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) => {
+				if(_error == null) {
+					// Did the server gave us an event?
+					if(_response != null && _response["response"] != null) {
+						// If the ID is different from the stored event, load the new event's data!
+						//SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"]);
+						string jsonString = _response["response"] as string;
+						JsonFormatter fmt = new JsonFormatter();
+						jsonString = fmt.PrettyPrint(jsonString);
+						Output(jsonString);
+					} else {
+						Output("<color=red>ERROR!</color> Invalid response but no error was given");
+					}
+				} else {
+					Output("<color=red>ERROR!</color> " + _error.ToString());
+				}
+			}
+		);
     }
 
 	/// <summary>

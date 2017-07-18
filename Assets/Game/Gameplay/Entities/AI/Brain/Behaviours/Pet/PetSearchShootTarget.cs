@@ -13,7 +13,10 @@ namespace AI {
 
 		[System.Serializable]
 		public class PetSearchShootTargetData : StateComponentData {
-			public DragonTier shootingTier;
+			[Tooltip("Max tier this pet will consider target.")]
+			public DragonTier maxValidTier = DragonTier.TIER_4;
+			[Tooltip("Min tier this pet will consider target.")]
+			public DragonTier minValidTier = DragonTier.TIER_0;
 			public CheckType checkType;
 			public float dragonSizeRangeMultiplier = 10;
 			public Range m_shutdownRange = new Range(10,20);
@@ -95,11 +98,12 @@ namespace AI {
 							{
 								case CheckType.Edible:
 								{
-									isViable = entity.IsEdible( m_data.shootingTier );
+									// isViable = entity.IsEdible( m_data.shootingTier );
+									isViable = entity.edibleFromTier >= m_data.minValidTier && entity.edibleFromTier <= m_data.maxValidTier;
 								}break;
 								case CheckType.Burnable:
 								{
-									isViable = entity.IsBurnable( m_data.shootingTier );
+									isViable = entity.burnableFromTier >= m_data.minValidTier && entity.burnableFromTier <= m_data.maxValidTier;
 								}break;
 							}
 

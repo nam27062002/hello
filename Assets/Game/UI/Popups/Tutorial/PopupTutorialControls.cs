@@ -60,8 +60,8 @@ public class PopupTutorialControls : MonoBehaviour {
 		m_loadProgress = m_sceneController.levelActivationProgress;
 		m_loadingInfo.Set(m_loadProgress < 1f, true);
 		m_playButton.Set(m_loadProgress >= 1f, true);
-		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST && m_loadProgress >= 1)
-		{
+
+        if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST && m_loadProgress >= 1) {
 			GetComponent<PopupController>().Close(true);
 		}
 		//m_loadingTxt.text = System.String.Format(m_localizedLoadingString, StringUtils.FormatNumber(m_loadProgress * 100f, 0));
@@ -80,6 +80,14 @@ public class PopupTutorialControls : MonoBehaviour {
 		// Initialize popup
 		m_loadingInfo.ForceShow(false);
 		m_playButton.ForceHide(false);
+	}
+
+	/// <summary>
+	/// The popen animation has finished.
+	/// </summary>
+	public void OnOpenPostAnimation() {
+		// Hide loading screen, otherwise it will show on top of the popup!
+		LoadingScreen.Toggle(false);
 	}
 
 	/// <summary>

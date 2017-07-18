@@ -24,6 +24,8 @@ public class ContentManager
 
 		// Progression
 		kDefinitionFiles.Add(DefinitionsCategory.LEVELS, new string[]{"Rules/levelDefinitions"});
+
+		// Missions
 		kDefinitionFiles.Add(DefinitionsCategory.MISSIONS, new string[]{"Rules/missionsDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.MISSION_TYPES, new string[]{"Rules/missionTypeDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.MISSION_DIFFICULTIES, new string[]{"Rules/missionDifficultyDefinitions"});
@@ -41,6 +43,7 @@ public class ContentManager
 
 		// Entites
 		kDefinitionFiles.Add(DefinitionsCategory.PETS, 				new string[]{"Rules/petDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.PET_MOVEMENT, 		new string[]{"Rules/petMovementDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.ENTITIES, 			new string[]{"Rules/entityDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.DECORATIONS, 		new string[]{"Rules/decorationDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.ENTITY_CATEGORIES, new string[]{"Rules/entityCategoryDefinitions"});

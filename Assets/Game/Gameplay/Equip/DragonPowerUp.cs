@@ -94,6 +94,14 @@ public class DragonPowerUp : MonoBehaviour {
 				{
 					player.AddBoostBonus( def.GetAsFloat("param1"));
 				}break;
+				case "faster_boost": // increases boost refill rate
+				{
+					DragonBoostBehaviour boost = player.dragonBoostBehaviour;
+					if ( boost )
+					{
+						boost.AddRefillBonus( def.GetAsFloat("param1") );
+					}
+				}break;
 				case "fury_duration":	// Adds fury duration
 				{
 					DragonBreathBehaviour breath = player.GetComponent<DragonBreathBehaviour>();
@@ -144,6 +152,19 @@ public class DragonPowerUp : MonoBehaviour {
 						}break;
 					}
 				}break;
+				case "lower_damage_origin":
+				{
+					List<string> origins = def.GetAsList<string>("param1");
+					if ( origins.Count > 0 && !string.IsNullOrEmpty(origins[0]) )
+					{
+						float percentage = def.GetAsFloat("param2");
+						DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
+						for( int i = 0; i<origins.Count; ++i )
+						{
+							healthBehaviour.AddDamageReduction( origins[i], percentage );
+						}
+					}
+				}break;
 				case "lives":		// adds lives to the player
 				{
 					int numExtraLives = def.GetAsInt("param1");
@@ -154,12 +175,18 @@ public class DragonPowerUp : MonoBehaviour {
 					int increase = def.GetAsInt("param1");
 					player.SetOnBreakIncrease( increase );
 				}break;
-				case "preyHpBoost":	// a prey gives you more hp
+				case "prey_hp_boost":	// a prey gives you more hp
 				{
-					string from = def.Get("param1");
+					// string from = def.Get("param1");
+					List<string> from = def.GetAsList<string>("param1");
 					float percentage = def.GetAsFloat("param2");
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
-					healthBehaviour.AddEatingHpBoost( from, percentage);
+					for( int i = 0; i<from.Count; i++ )
+					{
+						if (!string.IsNullOrEmpty(from[i]))
+							healthBehaviour.AddEatingHpBoost( from[i], percentage);	
+					}
+
 				}break;
 				case "food_increase":	// adds % bonus hp from any source
 				{
@@ -211,6 +238,22 @@ public class DragonPowerUp : MonoBehaviour {
 				{
 					DragonEatBehaviour eatBehaviour =  GetComponent<DragonEatBehaviour>();
 					eatBehaviour.AddEatDistance( def.GetAsFloat("param1", 0) );
+				}break;
+				case "alcohol_resistance":
+				{
+					player.alcoholResistance = true;
+				}break;
+				case "immune_trash":
+				{
+					List<string> immuneTrash = def.GetAsList<string>("param1");
+					DragonEatBehaviour eatBehaviour =  GetComponent<DragonEatBehaviour>();
+					for( int i = 0; i<immuneTrash.Count; ++i )
+					{
+						if ( !string.IsNullOrEmpty( immuneTrash[i] ) )
+						{
+							eatBehaviour.AddImmuneTrash( immuneTrash[i] );
+						}
+					}
 				}break;
 				default:
 				{
@@ -373,11 +416,21 @@ public class DragonPowerUp : MonoBehaviour {
                     return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_VACUUM.ToHexString("#"));
                 }break;
 
-            case "preyHpBoost": {
+            case "faster_boost":
+                {
+                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_BOOST.ToHexString("#"));
+                }break;
+
+			case "prey_hp_boost": {
+				/*
 				// Show target entity name
 				// [AOC] TODO!! Plural
 				DefinitionNode entityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, _powerDef.GetAsString("param1"));
 				return _powerDef.GetLocalized(fieldId, entityDef.GetLocalized("tidName"), StringUtils.FormatNumber(_powerDef.GetAsFloat("param2"), 0), UIConstants.POWER_COLOR_ENTITY.ToHexString("#"), UIConstants.POWER_COLOR_HEALTH.ToHexString("#"));
+				*/
+
+				// [AOC] As of 05/07/2017, entity names are included in the TID (i.e. "Increased %U0 health on eating Birds")
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param2"), 0), UIConstants.POWER_COLOR_ENTITY.ToHexString("#"), UIConstants.POWER_COLOR_HEALTH.ToHexString("#"));
 			} break;
 
 			default: {

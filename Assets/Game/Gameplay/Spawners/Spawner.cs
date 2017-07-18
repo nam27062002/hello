@@ -205,6 +205,10 @@ public class Spawner : AbstractSpawner {
 						}
 					}
 
+					// clamp scale values
+					if (m_scale.min < 0.95f) m_scale.min = 0.95f;
+					if (m_scale.max > 1.05f) m_scale.min = 1.05f;
+						
 					RegisterInSpawnerManager();
 					SpawnerAreaManager.instance.Register(this);
 
@@ -505,6 +509,9 @@ public class Spawner : AbstractSpawner {
 	}	
 
 	void OnDrawGizmos() {
+		Gizmos.color = Colors.paleGreen;
+		Gizmos.DrawCube(transform.position + (Vector3)m_rect.position, m_rect.size);
+
 		// Only if editor allows it
 		if(showSpawnerInEditor) {
 			// Draw spawn area

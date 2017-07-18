@@ -7,29 +7,24 @@ namespace AI {
 		//--------------------------------------------------
 		[SeparatorAttribute("Phoenix Effects")]
 		[SerializeField] private GameObject m_fire;
-
-		[SerializeField] private GameObject m_view;
-		[SerializeField] private GameObject m_viewWhenBurning;
-
-		[SerializeField] private ParticleData m_onFireParticle;
-		[SerializeField] private ParticleData m_onFireEndsParticle;
-
+		[SerializeField] private List<GameObject> m_fireView;
+		[SerializeField] private Renderer m_bodyRenderer;
 
 		//--------------------------------------------------
 		private bool m_phoenixActive = false;
-
-
+		private Material m_phoenixMaterial;
 		//--------------------------------------------------
 		protected override void Awake() {
 			base.Awake();
-			Deactivate();
+			m_phoenixMaterial = m_bodyRenderer.material;
+			DeactivateFire();
 		}
 
 		public override void Spawn(ISpawner _spawner) {
 			base.Spawn(_spawner);
 
 			// Set not fire view
-			Deactivate();
+			DeactivateFire();
 		}
 
 		public override void CustomUpdate() {
@@ -38,34 +33,49 @@ namespace AI {
 			if (!m_phoenixActive) {
 				if (m_pilot.IsActionPressed(Pilot.Action.Fire)) {	
 					// Activate Phoenix Mode!!
-					Activate();
+					ActivateFire();
 				}
+
 			} else {
 				if (!m_pilot.IsActionPressed(Pilot.Action.Fire)) {
 					// Deactivate Phoenix Mode
-					Deactivate();
+					DeactivateFire();
 				}
 			}
 		}
 
-		private void Activate() {
+		private void ActivateFire() {
 			m_phoenixActive = true;
-
-			m_view.SetActive(false);
-			// on fire particle
-
 			m_fire.SetActive(true);
-			m_viewWhenBurning.SetActive(true);
+			for( int i = 0; i<m_fireView.Count; ++i)
+				m_fireView[i].SetActive(true);
+			StopCoroutine("FireTo");
+			StartCoroutine( FireTo(1) );
 		}
 
-		private void Deactivate() {
+		private void DeactivateFire() {
 			m_phoenixActive = false;
-
-			m_view.SetActive(true);
-			// on fire particle
-
 			m_fire.SetActive(false);
-			m_viewWhenBurning.SetActive(false);
+			for( int i = 0; i<m_fireView.Count; ++i)
+				m_fireView[i].SetActive(false);
+			StopCoroutine("FireTo");
+			StartCoroutine( FireTo(0) );
+		}
+
+		IEnumerator FireTo( float _targetValue )
+		{
+			float startValue = m_phoenixMaterial.GetFloat("_FireAmount");
+			float timer = 0;
+			float duration = 0.5f;
+			while( timer < duration )
+			{
+				yield return null;
+				timer += Time.deltaTime;
+				float delta = timer / duration;
+
+				m_phoenixMaterial.SetFloat("_FireAmount", Mathf.Lerp(startValue, _targetValue, delta));
+			}
+			m_phoenixMaterial.SetFloat("_FireAmount", _targetValue);
 		}
 	}
 }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using System.Collections;
+using System.Collections.Generic;
 
 public class SwapGameObjects : ScriptableWizard
 {
@@ -16,12 +16,13 @@ public class SwapGameObjects : ScriptableWizard
 
 	void OnWizardCreate()
 	{
-		//Transform[] Replaces;
-		//Replaces = Replace.GetComponentsInChildren<Transform>();
+        //Transform[] Replaces;
+        //Replaces = Replace.GetComponentsInChildren<Transform>();  
+        
+        // All game objects regardless they are active or not      
+        List<GameObject> gameObjects = GameObjectExt.FindAllGameObjects(true);
 
-		GameObject[] gameObjects = GameObject.FindObjectsOfType<GameObject>();
-
-		for (var i = 0; i < gameObjects.Length; ++i) {
+        for (var i = 0; i < gameObjects.Count; ++i) {
 			GameObject go = gameObjects[i];
 			if (go.name.Contains(nameSearch)) {
 				GameObject newObject;
@@ -29,9 +30,12 @@ public class SwapGameObjects : ScriptableWizard
 				newObject.transform.position = go.transform.position;
 				newObject.transform.rotation = go.transform.rotation;
 				newObject.transform.parent = go.transform.parent;
-				DestroyImmediate(go);
-			}
-		}
+                newObject.transform.localScale = go.transform.localScale;                                
+                DestroyImmediate(go);
 
+                // The scene is marked as dirty so it's noticeable that it's been changed
+                UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(newObject.scene);
+            }
+		}        
 	}
 }

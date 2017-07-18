@@ -67,7 +67,7 @@ public class InflammableDecorationEditor : Editor {
 	}
 
 	private void GetFireNodesData() {
-		GameObject prefab = (GameObject)Resources.Load("Particles/PF_FireProc");
+		GameObject prefab = (GameObject)Resources.Load("Particles/Master/PF_FireProc");
 
 		FireNode[] nodes = m_component.transform.GetComponentsInChildren<FireNode>();
 		for (int i = 0; i < nodes.Length; i++) {

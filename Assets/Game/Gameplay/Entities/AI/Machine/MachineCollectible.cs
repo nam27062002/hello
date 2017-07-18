@@ -3,19 +3,19 @@ using System.Collections.Generic;
 
 namespace AI {
 	public class MachineCollectible : MonoBehaviour, IMachine {		
-
-		[SerializeField] protected MachineEdible m_edible = new MachineEdible();
-		protected ViewControl m_viewControl = null;
-		protected IEntity m_entity = null;
 		UnityEngine.Events.UnityAction m_deactivateCallback;
-		Transform m_transform;
+
+
+		private CollectibleViewControl m_viewControl = null;
+		private IEntity m_entity = null;
+		private Transform m_transform;
 
 
 		public Vector3 eye						{ get { return Vector3.zero; } }
 		public Vector3 target					{ get { return Vector3.zero; } }
 		public virtual Vector3 upVector 		{ get { return Vector3.up; } set {} }
-		public Transform enemy 					{ get { return null;}}
-		public bool isPetTarget 				{ get { return false;} set {} }
+		public Transform enemy 					{ get { return null; } }
+		public bool isPetTarget 				{ get { return false; } set {} }
 		public virtual float lastFallDistance 	{ get { return 0f; } }
 		public virtual bool isKinematic 		{ get { return false; } set {} }
 
@@ -29,26 +29,26 @@ namespace AI {
 		public float biteResistance { get { return 0; } }
 		public HoldPreyPoint[] holdPreyPoints { get{ return null; } }
 
+
 		protected virtual void Awake() {
 			m_transform = transform;
-			m_viewControl = GetComponent<ViewControl>();
+			m_viewControl = GetComponent<CollectibleViewControl>();
 			m_entity = GetComponent<IEntity>();	
-			m_edible.Attach(this, m_entity, null);
 		}
 
 		protected virtual void OnTriggerEnter(Collider _other) {
-			if (_other.CompareTag("Player")) {
-				m_viewControl.BeginSwallowed(_other.transform);
-				m_edible.BeingSwallowed(_other.transform, true, true);
-				m_edible.EndSwallowed(_other.transform);
-				m_viewControl.Die(true, false);
+			if (_other.CompareTag("Player")) {				
+				Reward reward = (m_entity as Entity).GetOnKillReward(false);
+
+				// Dispatch global event
+				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_transform, reward);
+
+				m_viewControl.Collect();
 				m_entity.Disable(true);
 			} 
 		}
 
-		public virtual void Spawn(ISpawner _spawner) {
-			m_edible.Init();
-		}
+		public void Spawn(ISpawner _spawner) {}
 
 		public void Activate() {
 			gameObject.SetActive(true);
@@ -64,8 +64,8 @@ namespace AI {
 
 		public void OnTrigger(string _trigger, object[] _param = null) {}
 		public void DisableSensor(float _seconds) {}
-		public virtual void CheckCollisions(bool _value) { }
-		public virtual void FaceDirection(bool _value) { }
+		public virtual void CheckCollisions(bool _value) {}
+		public virtual void FaceDirection(bool _value) {}
 		public bool HasCorpse() { return false; }
 		public void ReceiveDamage(float _damage) {}
 

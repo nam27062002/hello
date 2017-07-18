@@ -145,7 +145,7 @@ public class HUDRevive : MonoBehaviour {
 		/*long costPC = m_paidReviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
 		if(UsersManager.currentUser.pc >= costPC) {
 			// Perform transaction
-			UsersManager.currentUser.AddPC(-costPC);
+			UsersManager.currentUser.AddCurrency(UserProfile.Currency.HARD, -costPC);
 			PersistenceManager.Save();
 
 			// Do it!
@@ -166,7 +166,7 @@ public class HUDRevive : MonoBehaviour {
 
 		// [AOC] TODO!! Show a video ad!
 		// Open placeholder popup
-		PopupController popup = PopupManager.OpenPopupInstant(PopupAdRevive.PATH);
+		PopupController popup = PopupManager.OpenPopupInstant(PopupAdPlaceholder.PATH);
 		popup.OnClosePostAnimation.AddListener(OnAdClosed);
 
 		// Pause timer

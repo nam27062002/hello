@@ -39,8 +39,13 @@ public abstract class TrackingObjectiveBase {
 	}
 
 	// Progress tracking
-	public bool isCompleted { get { return m_tracker.currentValue >= targetValue; }}
-	public float progress { get { return m_tracker.currentValue/targetValue; }}
+	public bool isCompleted { 
+		get { return m_tracker.currentValue >= targetValue; }
+	}
+
+	public float progress { 
+		get { return m_targetValue > 0f ? m_tracker.currentValue/targetValue : 1f; }	// Protect for infinite values!
+	}
 
 	// State
 	public bool enabled {

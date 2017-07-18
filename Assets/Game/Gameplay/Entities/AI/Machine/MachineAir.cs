@@ -14,6 +14,9 @@ namespace AI {
 		public override Vector3 velocity		{ get { return m_airMotion.velocity; } }
 		public override Vector3 angularVelocity	{ get { return m_airMotion.angularVelocity; } }
 
+		public bool limitHorizontalRotation{ get{ return m_airMotion.limitHorizontalRotation;} set{ m_airMotion.limitHorizontalRotation = value;} }
+		public bool limitVerticalRotation{ get{ return m_airMotion.limitVerticalRotation;} set{ m_airMotion.limitVerticalRotation = value;} }
+
 		protected override void Awake() {
 			m_motion = m_airMotion;
 			base.Awake();

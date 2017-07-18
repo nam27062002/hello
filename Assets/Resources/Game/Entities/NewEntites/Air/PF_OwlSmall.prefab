@@ -279,7 +279,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 137012}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.09, y: -0.19572568, z: 1.4002496}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 443562}
@@ -395,7 +395,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 49d538633149e421d8ccb6acaf0279be, type: 3}
   m_Controller: {fileID: 22100000, guid: 300532ce062894234b1fe0a153e85b00, type: 2}
-  m_CullingMode: 1
+  m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -421,7 +421,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":7,"panicSpeed":9,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":0,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":6,"panicSpeed":7,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":0,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
   m_databaseKey: PF_OwlSmall
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 4
@@ -451,10 +451,10 @@ MonoBehaviour:
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
   m_onEatenParticle:
-    name: PF_feathers_3D
+    name: PF_feathers_3D_noblood
     path: 
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
+    changeStartColor: 1
     startColor: {r: 0.375, g: 0.25451317, b: 0.17647058, a: 1}
     changeColorOvertime: 0
     colorOvertime:
@@ -503,10 +503,10 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_onEatenFrozenParticle:
-    name: PS_IceExplosionSmall
+    name: PS_IceExplosion
     path: 
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
+    changeStartColor: 1
     startColor: {r: 0.5294118, g: 0.8636917, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
@@ -553,7 +553,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    scale: 1
+    scale: 0.5
   m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -732,6 +732,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: OwlSmall
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &11485456
 MonoBehaviour:

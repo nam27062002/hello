@@ -4,15 +4,16 @@ using System.Collections.Generic;
 
 public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private enum State {
-		Extinguished = 0,
+		Idle = 0,
 		Spreading,
 		Burning,
-		Extinguish
+		GoingToExplode,
+		Extinguish,
+		Extinguished
 	};
 
 	private Decoration m_decoration;
 	private Transform m_transform;
-	private GameCamera m_newCamera;
 
 	private ParticleData m_feedbackParticle;
 	private ParticleData m_burnParticle;
@@ -21,9 +22,11 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private bool m_feedbackParticleMatchDirection = false;
 	private float m_hitRadius = 0f;
 
-	private Bounds m_bounds;
 	private Rect m_rect;
 	public Rect boundingRect { get { return m_rect; } }
+
+	private BoundingSphere m_boundingSphere;
+	public BoundingSphere boundingSphere { get { return m_boundingSphere; } }
 
 	private CircleAreaBounds m_area;
 	public CircleAreaBounds area { get { return m_area; } }
@@ -34,24 +37,21 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private List<FireNode> m_neighbours;
 	private List<float> m_neihboursFireResistance;
 
-
 	private float m_timer;
 	private float m_powerTimer;
 
-
 	private State m_state;
 	private State m_nextState;
+
 
 
 	// Use this for initialization
 	void Start() {
 		m_transform = transform;
 
-		m_bounds = new Bounds(m_transform.position, Vector3.one * m_hitRadius * 2f);
 		m_rect = new Rect((Vector2)m_transform.position, Vector2.zero);
-
-		m_newCamera = Camera.main.GetComponent<GameCamera>();
 		m_area = new CircleAreaBounds(m_transform.position, m_hitRadius);
+		m_boundingSphere = new BoundingSphere(m_transform.position, 8f * m_transform.localScale.x);
 
 		gameObject.SetActive(false);
 	}
@@ -73,7 +73,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	public void Reset() {
 		StopFireEffect();
 
-		m_state = State.Extinguished;
+		m_state = State.Idle;
 		m_nextState = m_state;
 
 		if (m_neighbours == null) {
@@ -84,21 +84,24 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_timer = 0f;
 	}
 
-	public void Disable() { m_state = State.Extinguish; }
+	public void Disable() { Extinguish(); }
 
-	public bool IsSpreadingFire() 	{ return m_state == State.Spreading;  }
-	public bool IsBurning() 		{ return m_state == State.Burning; 	  }
-	public bool IsExtinguishing() 	{ return m_state == State.Extinguish; }
+	public bool IsSpreadingFire() 	{ return m_state == State.Spreading;  		}
+	public bool IsBurning() 		{ return m_state == State.Burning; 	  		}
+	public bool IsGoingToExplode()  { return m_state == State.GoingToExplode; 	}
+	public bool IsExtinguishing() 	{ return m_state == State.Extinguish; 		}
 
 
 	public void Burn(Vector2 _direction, bool _dragonBreath, DragonTier _tier) {
-		if (m_state == State.Extinguished) {
+		if (m_state == State.Idle) {
 			ZoneManager.ZoneEffect effect = InstanceManager.zoneManager.GetFireEffectCode(m_decoration, _tier);
 			m_breathTier = _tier;
 
 			if (effect >= ZoneManager.ZoneEffect.M) {
+				FirePropagationManager.RegisterBurningNode(this);
+
 				if (effect == ZoneManager.ZoneEffect.L) {
-					m_nextState = State.Extinguish;
+					m_nextState = State.GoingToExplode;
 				} else {
 					m_nextState = State.Spreading;
 				}
@@ -118,9 +121,15 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	}
 
 	public void Extinguish() {
-		if (m_state == State.Burning) {
+		if (m_state > State.Idle) {
 			m_nextState = State.Extinguish;
 		}
+	}
+
+	public void Explode() {
+		StopFireEffect();
+		FirePropagationManager.UnregisterBurningNode(this);
+		m_state = State.Extinguished;
 	}
 
 	public void UpdateLogic() {
@@ -138,23 +147,14 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		}
 
 		switch (m_state) {
-			case State.Extinguished:
-				m_timer -= dt;
-				if (m_timer <= 0f) {
-					m_timer = 0f;
-				}
-				break;
-
-			case State.Spreading:
-				ToogleEffect();
-			
+			case State.Spreading:						
 				if (m_fireSprite != null) {
 					m_fireSprite.SetPower(m_powerTimer * 6f);
 				}
 
 				bool allBurned = true;
 				for (int i = 0; i < m_neihboursFireResistance.Count; i++) {
-					if (m_neighbours[i].IsSpreadingFire()) {
+					if (m_neighbours[i].IsSpreadingFire() || m_neighbours[i].IsBurning()) {
 						m_neihboursFireResistance[i] = 0;
 					} else {
 						allBurned = false;
@@ -171,15 +171,13 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 				}
 				break;
 
-			case State.Burning:				
+			case State.Burning:
 				if (m_fireSprite != null) {
 					m_fireSprite.SetPower(m_powerTimer * 6f);
 				}
-
-				ToogleEffect();
 				break;
 
-			case State.Extinguish:
+			case State.Extinguish:				
 				if (m_fireSprite != null) {
 					m_fireSprite.SetPower(6f + (m_powerTimer * (-6f)));
 				}
@@ -188,6 +186,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 					m_timer -= dt;
 					if (m_timer <= 0) {
 						StopFireEffect();
+
+						FirePropagationManager.UnregisterBurningNode(this);
+
+						m_state = State.Extinguished;
 					}
 				}
 				break;
@@ -213,21 +215,18 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_state = m_nextState;
 	}
 
-	private void ToogleEffect() {
-		// Show / Hide fire effect if this node is inside Camera or not
-		bool isInsideActivationMaxArea = m_newCamera.IsInsideActivationMaxArea(m_bounds);
-
-		if (m_fireSprite != null) {
-			if (!isInsideActivationMaxArea) {
+	public void SetEffectVisibility(bool _visible) {
+		if (m_state >= State.Spreading && m_state <= State.Extinguish) {
+			if (_visible) {			
+				StartFireEffect();
+			} else {
 				StopFireEffect();
 			}
-		} else if (isInsideActivationMaxArea) {
-			StartFireEffect();
 		}
 	}
 
 	private void StartFireEffect() {
-		FirePropagationManager.InsertBurning(this);
+		FirePropagationManager.PlayBurnAudio();
 		if (m_fireSprite == null) {
 			GameObject go = m_burnParticle.Spawn(m_transform.position);
 
@@ -245,7 +244,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	}
 
 	private void StopFireEffect() {
-		FirePropagationManager.RemoveBurning(this);
+		FirePropagationManager.StopBurnAudio();
 		if (m_fireSprite != null) {
 			m_fireSprite.gameObject.SetActive(false);
 			m_burnParticle.ReturnInstance(m_fireSprite.gameObject);

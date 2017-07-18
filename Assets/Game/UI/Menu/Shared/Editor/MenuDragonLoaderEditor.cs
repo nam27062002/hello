@@ -149,7 +149,19 @@ public class MenuDragonLoaderEditor : Editor {
 				}
 			}
 
-			// Properties we don't want to show
+			// Placeholder dragon sku, show only in current/selected modes
+			else if(p.name == "m_placeholderDragonSku") {
+				// Draw a separator (first item of the "Debug" section
+				EditorGUILayoutExt.Separator(new SeparatorAttribute("Debug"));
+
+				// Only if mode is not manual
+				if(m_modeProp.enumValueIndex != (int)MenuDragonLoader.Mode.MANUAL) {
+					// Default property rendering
+					EditorGUILayout.PropertyField(p, true);
+				}
+			}
+
+			// Properties we don't want to show or that are already processed
 			else if(p.name == "m_ObjectHideFlags"
 				|| p.name == "m_dragonSku"
 				|| p.name == "m_disguiseSku") {
@@ -168,6 +180,7 @@ public class MenuDragonLoaderEditor : Editor {
 		// Force loading the dragon
 		if(GUILayout.Button("Load Dragon", GUILayout.Height(50))) {
 			for(int i = 0; i < targets.Length; i++) {
+				// If the game is not running, we don't have any data on current dragon/skin, so load a placeholder one manually instead
 				((MenuDragonLoader)targets[i]).RefreshDragon();
 			}
 		}

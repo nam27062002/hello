@@ -6,15 +6,22 @@ public class SpawnParticleSystem : StateMachineBehaviour {
 	[SerializeField] private float m_delay = 0f;
 	[SerializeField] private bool m_attach = true;
 
+	private bool m_createPool = true;
 	private float m_timer = 0f;
 
 	// Use this for initialization
-	void Start () {	
-		m_particleSystemData.CreatePool();
+	void Awake() {	
+		m_createPool = true;
 		m_timer = 0f;
 	}
 	
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+		if (m_createPool) {
+			m_particleSystemData.CreatePool();
+			m_createPool = false;
+		}
+		m_timer = 0f;
+
 		if (m_delay > 0f) {
 			m_timer = m_delay;
 		} else {

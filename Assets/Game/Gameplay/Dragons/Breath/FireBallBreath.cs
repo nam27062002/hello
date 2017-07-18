@@ -8,7 +8,7 @@ public class FireBallBreath : DragonBreathBehaviour {
     public float m_speedBall = 20.0f;
 	private float m_timer;
 
-	private Transform m_mouthTransform;
+	private Transform m_fireDummyTransform;
 	private DragonMotion m_dragonMotion;
 
 	// Use this for initialization
@@ -17,7 +17,7 @@ public class FireBallBreath : DragonBreathBehaviour {
 		//PoolManager.CreatePool(m_fireBallPrefab);
 
 		m_dragonMotion = GetComponent<DragonMotion>();
-		m_mouthTransform = m_dragonMotion.tongue;
+		m_fireDummyTransform = transform.FindTransformRecursive("Fire_Dummy");
 		m_direction = Vector2.zero;
 	}
 
@@ -38,7 +38,7 @@ public class FireBallBreath : DragonBreathBehaviour {
 			// Throw fire ball!!!
 			GameObject go = null; //PoolManager.GetInstance (m_fireBallPrefab.name);
 			if (go != null) {
-				go.transform.position = m_mouthTransform.position;
+				go.transform.position = m_fireDummyTransform.position;
 				FireBall fb = go.GetComponent<FireBall> ();
 				if (fb != null) {
 					fb.SetBreath (this);

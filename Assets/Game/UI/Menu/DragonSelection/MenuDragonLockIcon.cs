@@ -53,6 +53,9 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 		// Trigger bounce animation
 		m_animator.SetTrigger("bounce");
 
+		// Trigger sound
+		AudioController.Play("hd_padlock");
+
 		// Propagate event to parent hierarchy (we don't want to capture the event)
 		// From https://coeurdecode.com/2015/10/20/bubbling-events-in-unity/ <3
 		// Dirty hack to simulate event propagation. The downside is that the lock icon must then be a children of the dragon scroller.

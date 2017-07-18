@@ -40,6 +40,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 	protected AI.IMachine m_machine;
 	public AI.IMachine machine { get { return m_machine; } }
 
+	protected IViewControl m_viewControl;
 
 	protected virtual void Awake() {
 		ISpawnable[] spawners = GetComponents<ISpawnable>();
@@ -49,6 +50,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 				m_otherSpawnables.Add(spawners[i]);				
 		}
 		m_machine = GetComponent<AI.IMachine>();
+		m_viewControl = GetComponent<IViewControl>();
 	}
 
 	public virtual void Spawn(ISpawner _spawner) {
@@ -61,7 +63,21 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 	protected bool m_isOnScreen = false;
 	public bool isOnScreen { get { return m_isOnScreen; } }
 
-	public void Damage(float damage)  {
+	public int GetVertexCount() {
+		if (m_viewControl != null && m_isOnScreen) {
+			return m_viewControl.vertexCount;
+		}
+		return 0;
+	}
+
+	public int GetRendererCount() {
+		if (m_viewControl != null && m_isOnScreen) {
+			return m_viewControl.rendererCount;
+		}
+		return 0;
+	}
+
+	public void Damage(float damage) {
 		m_health -= damage;
 	}
 
@@ -70,21 +86,17 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		gameObject.SetActive(false);
 	}
 
-    public virtual void CustomUpdate() 
-    {
-    	for( int i = 0; i<m_otherSpawnables.Count; i++ )
-    	{
+    public virtual void CustomUpdate() {
+    	for (int i = 0; i < m_otherSpawnables.Count; i++) {
 			m_otherSpawnables[i].CustomUpdate();
     	}
     }
-    public virtual bool CanDieOutsideFrustrum() { return true; }
 
-	public virtual CircleArea2D circleArea { get{ return null; } }
-
-	public virtual bool CanBeSmashed(){ return false; }
-
-	public virtual void CustomFixedUpdate()
-	{
+	public virtual void CustomFixedUpdate() {
 		if (m_machine != null) m_machine.CustomFixedUpdate();
 	}
+
+	public virtual bool CanBeSmashed()			{ return false; }
+    public virtual bool CanDieOutsideFrustrum() { return true; }
+	public virtual CircleArea2D circleArea 		{ get { return null; } }
 }

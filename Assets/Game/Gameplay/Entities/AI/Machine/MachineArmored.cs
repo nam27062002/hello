@@ -29,7 +29,13 @@ namespace AI {
 					m_armorDurability.count--;
 					if (m_armorDurability.count <= 0) {
 						SetSignal(Signals.Type.Destroyed, true);
+
+						// Get the reward to be given from the entity
+						Reward reward = (m_entity as Entity).GetOnKillReward(false);
+						// Dispatch global event
+						Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_transform, reward);
 					}
+
 					return true;
 				} else {
 					// Message : You need boost!

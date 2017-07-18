@@ -51,7 +51,7 @@ Function spawnerInfo()
 		aux = Replace(Replace(prefabFolder,"/","\")," ","")
 		REM prefabFile = "D:\Projects\HungryDragon\Assets\Resources\Game\Entities\NewEntites\"+ aux + ".prefab"
 		prefabFile = "..\..\Assets\Resources\Game\Entities\NewEntites\"+ aux + ".prefab"
-		prefab  = Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(prefabFolder,"Surface/",""),"Junk/",""),"Air/",""),"Goblin/",""),"Water/",""),"Monster/",""),"Cage/",""),"Vehicles/","")
+		prefab  = Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(prefabFolder,"Surface/",""),"Junk/",""),"Air/",""),"Goblin/",""),"Water/",""),"Monster/",""),"Cage/",""),"Vehicles/",""),"Magic/","")
 	End If			
 	substrToFind = "m_spawnTime:"
 	If foundStrMatch(tmpStr,substrToFind) = true Then
