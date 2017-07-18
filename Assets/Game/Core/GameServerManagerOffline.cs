@@ -340,7 +340,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			m_socialInfoDatabasePool.Remove(playerSocialData.id);
 
 			// Select leaderboard size
-			float totalContributors = UnityEngine.Random.Range(50f, 500f);
+			float totalContributors = UnityEngine.Random.Range(50f, 150f);
 			switch(CPGlobalEventsTest.leaderboardSize) {
 				case CPGlobalEventsTest.LeaderboardSize.SIZE_0:		totalContributors = 0;		break;
 				case CPGlobalEventsTest.LeaderboardSize.SIZE_5:		totalContributors = 5;		break;
