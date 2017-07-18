@@ -242,10 +242,11 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 					instance.m_currentEvent.AddContribution(contribution);
 
 					// Add to current user individual contribution in this event
-					user.GetGlobalEventData(instance.m_currentEvent.id).score += contribution;
+					GlobalEventUserData playerData = user.GetGlobalEventData(instance.m_currentEvent.id);
+					playerData.score += contribution;
 
-					// [AOC] TODO!! Update leaderboard? At least current player's position!
-
+					// Check if player can join the leaderboard! (or update its position)
+					instance.m_currentEvent.RefreshLeaderboardPosition(playerData);
 				}
 
 				// Notify game that server response was received

@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -22,7 +23,7 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -33,10 +34,18 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 	[SerializeField] private GameObject m_playerPillPrefab = null;
 	[Space]
 	[SerializeField] private int m_maxPills = 100;
+	[Space]
+	[SerializeField] private float m_listPadding = 0f;
+	[SerializeField] private float m_pillSpacing = 5f;
+	[SerializeField] private float m_playerPillMarginOffset = -15f;	// [AOC] Some extra margin to make up for the pill's transparency
 
 	// Internal
 	private List<GlobalEventsLeaderboardPill> m_pills = null;
 	private GlobalEventsLeaderboardPill m_playerPill = null;
+
+	// Snap player pill to scrollList viewport
+	private RectTransform m_playerPillSlot = null;
+	private Bounds m_playerPillDesiredBounds;	// Original rect where the player pill should be (scrollList's content local coords)
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -74,8 +83,9 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() {
-
+	private void LateUpdate() {
+		// Keep player pill within the viewport
+		RefreshPlayerPillPosition();
 	}
 
 	/// <summary>
@@ -111,9 +121,21 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 
 		// Same with the player pill, which we'll have for sure
 		if(m_playerPill == null) {
-			pillInstance = GameObject.Instantiate<GameObject>(m_playerPillPrefab, m_scrollList.content, false);
+			// Player pill will be placed in the viewport, so it renders in top of everything else
+			pillInstance = GameObject.Instantiate<GameObject>(m_playerPillPrefab, m_scrollList.viewport, false);
 			m_playerPill = pillInstance.GetComponent<GlobalEventsLeaderboardPill>();
+			pillTransform = m_playerPill.transform as RectTransform;
+			InitPillAnchors(ref pillTransform);
 			m_pills.Add(m_playerPill);
+
+			// Create empty slot rectangle as well, which will be used for the snapping logic
+			GameObject slotGo = new GameObject("PlayerPillSlot");
+			m_playerPillSlot = slotGo.AddComponent<RectTransform>();
+			m_playerPillSlot.SetParent(m_scrollList.content, false);
+
+			// Set size and anchoring properties
+			m_playerPillSlot.sizeDelta = pillTransform.sizeDelta;
+			InitPillAnchors(ref m_playerPillSlot);
 		}
 
 		// Remove player pill from the list, we will insert it at the proper position when it matters
@@ -121,7 +143,7 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 
 		// Iterate event leaderboard
 		int numPills = Mathf.Min(evt.leaderboard.Count, m_maxPills);
-		Debug.Log("<color=red>We have " + evt.leaderboard.Count + " entries on the leaderboard, creating " + numPills + " pills!</color>");
+		Debug.Log("<color=orange>We have " + evt.leaderboard.Count + " entries on the leaderboard, creating " + numPills + " pills!</color>");
 		for(int i = 0; i < numPills; ++i) {
 			// Super-special case: Is it the current player?
 			if(!playerFound && evt.leaderboard[i].userID == playerData.userID) {
@@ -145,6 +167,10 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 					pillInstance = GameObject.Instantiate<GameObject>(m_pillPrefab, m_scrollList.content, false);
 					pill = pillInstance.GetComponent<GlobalEventsLeaderboardPill>();
 					m_pills.Add(pill);
+
+					// Make sure anchor is properly set!
+					pillTransform = pill.transform as RectTransform;
+					InitPillAnchors(ref pillTransform);
 				}
 
 				//Debug.Log("<color=red>Pill created at " + i + "!</color>");
@@ -167,8 +193,7 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 		}
 
 		// Loop all the pills to put them into position and hide those not used
-		float marginY = 30;
-		float deltaY = marginY + pillSize.y/2f;	// Pill's anchor is at the middle!
+		float deltaY = m_listPadding + pillSize.y/2f;	// Pill's anchor is at the middle!
 		for(int i = 0; i < m_pills.Count; ++i) {
 			// Active pill?
 			pill = m_pills[i];
@@ -176,18 +201,36 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 				//Debug.Log("<color=blue>Pill " + i + "</color> <color=green>ON</color>");
 				// Show pill
 				pill.gameObject.SetActive(true);
-				pill.name = "Pill_" + i;	// Debug purposes
 
-				// Make sure anchor is properly set! (we want the pills to fill the content from the top)
-				pillTransform = pill.transform as RectTransform;
-				pillTransform.anchorMin = new Vector2(0.5f, 1f);
-				pillTransform.anchorMax = new Vector2(0.5f, 1f);
+				// If target pill is the player pill, use its placeholder slot instead
+				if(pill == m_playerPill) {
+					pill.name = "Pill_" + i + "_PLAYER";
+					pillTransform = m_playerPillSlot;
+				} else {
+					pill.name = "Pill_" + i;	// Debug purposes
+					pillTransform = pill.transform as RectTransform;
+				}
 
 				// Put into position
 				pillTransform.SetLocalPosY(-deltaY);	// Going down!
-				deltaY += pillTransform.sizeDelta.y;
+				if(i < numPills - 1) {
+					deltaY += pillTransform.sizeDelta.y + m_pillSpacing;
+				}
 
-				// [AOC] TODO!! Show intro anim?
+				// Show intro anim
+				Transform animAnchor = pillTransform.FindChild("Margins");	// [AOC] TODO!! Do this better :P
+				if(animAnchor != null) {
+					// Stop any previous animation
+					animAnchor.DOKill(true);
+
+					// Only first X pills
+					if(i < 10) {
+						animAnchor.DOScale(0f, 0.25f)
+							.From()
+							.SetDelay(i * 0.1f)
+							.SetEase(Ease.OutBack);
+					}
+				}
 			} else {
 				// Hide pill
 				//Debug.Log("<color=blue>Pill " + i + "</color> <color=red>OFF</color>");
@@ -196,11 +239,45 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 			}
 		}
 
+		// Make sure player's pill is always rendered on top
+		m_playerPill.transform.SetAsLastSibling();
+
 		// Set content size
-		m_scrollList.content.sizeDelta = new Vector2(m_scrollList.content.sizeDelta.x, deltaY - pillSize.y/2f + marginY);	// delta is pointing to where the next pill should be placed
+		m_scrollList.content.sizeDelta = new Vector2(m_scrollList.content.sizeDelta.x, deltaY + pillSize.y/2f + m_listPadding);	// delta is pointing to where the next pill should be placed
 
 		// Launch animation?
-		m_scrollList.ScrollToPositionDelayedFrames(Vector2.zero, 1);
+		m_scrollList.verticalNormalizedPosition = 1f;
+		m_scrollList.ScrollToPositionDelayedFrames(m_scrollList.normalizedPosition, 1);
+	}
+
+	/// <summary>
+	/// Keeps player pill within scroll list viewport, snapping to the nearest edge 
+	/// to its actual position.
+	/// </summary>
+	private void RefreshPlayerPillPosition() {
+		// Must be initialized!
+		if(m_playerPill == null || m_playerPillSlot == null) return;
+
+		// Black magic math to snap the pill in the viewport
+		Rect viewportRect = m_scrollList.viewport.rect;
+		Bounds slotBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(m_scrollList.viewport, m_playerPillSlot);
+		Range yRange = new Range(
+			viewportRect.y + m_listPadding + slotBounds.extents.y + m_playerPillMarginOffset,
+			viewportRect.y + viewportRect.height - (slotBounds.extents.y + m_listPadding) - m_playerPillMarginOffset
+		);
+		float newY = yRange.Clamp(slotBounds.center.y);
+		m_playerPill.transform.SetLocalPosY(newY);
+	}
+
+	/// <summary>
+	/// Initializes a rect transform to fit the scrolllist content.
+	/// </summary>
+	/// <param name="_rt">Rect transform to be initialized.</param>
+	private void InitPillAnchors(ref RectTransform _rt) {
+		_rt.anchorMin = new Vector2(0f, 1f);
+		_rt.anchorMax = new Vector2(1f, 1f);
+		_rt.offsetMin = new Vector2(0f, _rt.offsetMin.y);
+		_rt.offsetMax = new Vector2(0f, _rt.offsetMax.y);
 	}
 
 	//------------------------------------------------------------------------//

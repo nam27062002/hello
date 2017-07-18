@@ -478,7 +478,7 @@ public class ResultsScreenController : MonoBehaviour {
 		int chestsFound = 0;
 		int totalCollectedChests = ChestManager.collectedChests;
 		long chestsCoinsReward = 0;
-		for(int i = 0; i < ChestManager.NUM_DAILY_CHESTS; i++) {
+		for(int i = 0; i < ChestManager.dailyChests.Length; i++) {
 			if(ChestManager.dailyChests[i].state == Chest.State.PENDING_REWARD) {
 				// Count chest
 				chestsFound++;
