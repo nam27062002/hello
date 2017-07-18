@@ -193,9 +193,9 @@ public class EggView : MonoBehaviour {
 
 		// Rarity
 		if(m_eggData != null) {
-			m_animator.SetInteger("rarity", (int)m_eggData.rewardData.rarity);
+			m_animator.SetInteger("rarity", (int)m_eggData.reward.rarity);
 		} else {
-			m_animator.SetInteger("rarity", (int)EggReward.Rarity.COMMON);
+			m_animator.SetInteger("rarity", (int)Metagame.Reward.Rarity.COMMON);
 		}
 
 		// Idle FX - disabled after tapping the egg

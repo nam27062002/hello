@@ -3,9 +3,10 @@
 	public abstract class RewardCurrency : Reward {
 		private long m_amount;
 
-		public RewardCurrency(long _amount) {			
+		public RewardCurrency(long _amount, Rarity _rarity) {			
 			m_value = _amount.ToString();
 			m_amount = _amount;
+			m_rarity = _rarity;
 		}
 
 		public override void Collect() {
@@ -17,7 +18,7 @@
 	public class RewardSoftCurrency : RewardCurrency {
 		public const string Code = "sc";
 
-		public RewardSoftCurrency(long _amount) : base(_amount) {			
+		public RewardSoftCurrency(long _amount, Rarity _rarity) : base(_amount, _rarity) {
 			m_currency = UserProfile.Currency.SOFT;
 		}
 	}
@@ -25,7 +26,7 @@
 	public class RewardHardCurrency : RewardCurrency {		
 		public const string Code = "pc";
 
-		public RewardHardCurrency(long _amount) : base(_amount) {			
+		public RewardHardCurrency(long _amount, Rarity _rarity) : base(_amount, _rarity) {
 			m_currency = UserProfile.Currency.HARD;
 		}
 	}
@@ -33,7 +34,7 @@
 	public class RewardGoldenFragments : RewardCurrency {
 		public const string Code = "gf";
 
-		public RewardGoldenFragments(long _amount) : base(_amount) {			
+		public RewardGoldenFragments(long _amount, Rarity _rarity) : base(_amount, _rarity) {
 			m_currency = UserProfile.Currency.GOLDEN_FRAGMENTS;
 		}
 

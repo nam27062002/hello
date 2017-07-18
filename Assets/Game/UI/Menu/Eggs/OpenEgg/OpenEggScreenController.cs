@@ -214,11 +214,10 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Aux vars
 		Egg eggData = m_scene.eggData;
-		EggReward rewardData = eggData.rewardData;
 
 		// Do a full-screen flash FX (TEMP)
 		if(m_flashFX != null) {
-			Color rarityColor = UIConstants.GetRarityColor(rewardData.rarity);		// Color based on reward's rarity :)
+			Color rarityColor = UIConstants.GetRarityColor(eggData.reward.rarity);		// Color based on reward's rarity :)
 			m_flashFX.SetActive(true);
 			m_flashFX.GetComponent<Image>().color = rarityColor;
 			m_flashFX.GetComponent<Image>().DOFade(0f, 2f).SetEase(Ease.OutExpo).SetRecyclable(true).OnComplete(() => { m_flashFX.SetActive(false); });
@@ -236,7 +235,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	private void LaunchRewardAnimation() {
 		// Aux vars
-		EggReward rewardData = m_scene.eggData.rewardData;
+		EggReward rewardData ;//= m_scene.eggData.rewardData;
 		bool goldenEggCompleted = EggManager.goldenEggCompleted;
 
 		// Show HUD
@@ -245,31 +244,30 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Photo button only enabled if reward is not a duplicate!
 		// Only animate if showing
 		ShowHideAnimator photoAnimator = InstanceManager.menuSceneController.hud.photoButton.GetComponent<ShowHideAnimator>();
-		if(rewardData.duplicated) {
+		if(false){//rewardData.duplicated) {
 			photoAnimator.ForceHide(false);
 		} else {
 			photoAnimator.Show();
 		}
 
 		// Initialize stuff based on reward type
-		switch(rewardData.type) {
-			case "pet": {
-				// Call to action text
-				m_callToActionText.Localize("TID_EGG_SHOW_REWARD");
-			} break;
-		}
+		// we only have one type of rewards: pet
+		m_callToActionText.Localize("TID_EGG_SHOW_REWARD");
 
 		// Initialize and show final panel
 		// Delay if duplicate, we need to give enough time for the duplicate animation!
 		float delay = m_finalPanelDelay;
-		if(rewardData.fragments > 0) {
+		// TODO  !!!
+		/*if(rewardData.fragments > 0) {
 			delay = m_finalPanelDelayWhenFragmentsGiven;
 		} else if(rewardData.coins > 0) {
 			delay = m_finalPanelDelayWhenCoinsGiven;
-		}
+		}*/
 		UbiBCN.CoroutineManager.DelayedCall(() => { m_finalPanel.Show(); }, delay, false);
 
 		// If it's the first time we're getting golden fragments, show info popup
+		// TODO  !!!
+		/*
 		if(rewardData.fragments > 0 && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO)) {
 			// Show popup after some extra delay
 			UbiBCN.CoroutineManager.DelayedCall(
@@ -281,9 +279,10 @@ public class OpenEggScreenController : MonoBehaviour {
 				false
 			);
 		}
-
+		*/
 		// Don't show call to action button if the reward is a duplicate
-		m_callToActionButton.SetActive(!rewardData.duplicated);
+		// TODO  !!!
+		//m_callToActionButton.SetActive(!rewardData.duplicated);
 
 		// Don't show back button if we've completed a golden egg!
 		m_backButton.SetActive(!goldenEggCompleted);
@@ -296,7 +295,8 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Initialize and launch 2D info animation
 		m_rewardInfo.gameObject.SetActive(true);
-		m_rewardInfo.InitAndAnimate(rewardData);
+		// TODO  !!!
+		//m_rewardInfo.InitAndAnimate(rewardData);
 	}
 
 	//------------------------------------------------------------------//
@@ -351,7 +351,9 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Depending on opened egg's reward, perform different actions
 		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
-		switch(m_scene.eggData.rewardData.type) {
+
+		// TODO!!!!
+		/*switch(m_scene.eggData.rewardData.type) {
 			case "pet": {
 				// Make sure selected dragon is owned
 				InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
@@ -361,7 +363,7 @@ public class OpenEggScreenController : MonoBehaviour {
 				petScreen.Initialize(m_scene.eggData.rewardData.itemDef.sku);
 				screensController.GoToScreen((int)MenuScreens.PETS);
 			} break;
-		}
+		}*/
 	}
 
 	/// <summary>
