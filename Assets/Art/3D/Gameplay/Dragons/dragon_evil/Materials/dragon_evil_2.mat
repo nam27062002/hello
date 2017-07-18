@@ -6,10 +6,10 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dragon_classic_0_body
+  m_Name: dragon_evil_2
   m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
+  m_ShaderKeywords: _EMISSION _NORMALMAP
+  m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
@@ -18,7 +18,7 @@ Material:
     - first:
         name: _BumpMap
       second:
-        m_Texture: {fileID: 2800000, guid: 7395b972cce14c040969c56258cc2546, type: 3}
+        m_Texture: {fileID: 2800000, guid: c9cd142e4d473ec4b83c10d846a9559a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -42,7 +42,7 @@ Material:
     - first:
         name: _DetailTex
       second:
-        m_Texture: {fileID: 2800000, guid: b52274686bd107d4cafc4c752a6c62ab, type: 3}
+        m_Texture: {fileID: 2800000, guid: c5504928e025a3747a32c8249ffa121c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -54,7 +54,7 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 2589c8c7989c3b3419637518aed23b49, type: 3}
+        m_Texture: {fileID: 2800000, guid: 938f8a721d72a134ebcb9ecf81ce1ea4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -104,8 +104,14 @@ Material:
         name: _Fresnel
       second: 10
     - first:
+        name: _GlossMapScale
+      second: 1
+    - first:
         name: _Glossiness
       second: 0.5
+    - first:
+        name: _GlossyReflections
+      second: 1
     - first:
         name: _InnerLightAdd
       second: 0
@@ -126,13 +132,16 @@ Material:
       second: 0.02
     - first:
         name: _ReflectionAmount
-      second: 0.157
+      second: 0
     - first:
-        name: _SecondLightIntensity
-      second: 0.47
+        name: _SmoothnessTextureChannel
+      second: 0
     - first:
         name: _SpecExponent
-      second: 6.68
+      second: 30.48
+    - first:
+        name: _SpecularHighlights
+      second: 1
     - first:
         name: _SrcBlend
       second: 1
@@ -157,7 +166,7 @@ Material:
       second: {r: 0, g: 0, b: 0, a: 0}
     - first:
         name: _ColorMultiply
-      second: {r: 0.8308824, g: 0.81255406, b: 0.81255406, a: 1}
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
