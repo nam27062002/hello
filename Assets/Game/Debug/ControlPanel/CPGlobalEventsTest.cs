@@ -76,6 +76,27 @@ public class CPGlobalEventsTest : MonoBehaviour {
 			return int.Parse(sm_eventCode.text);
 		}
 	}
+
+	public enum LeaderboardSize {
+		DEFAULT,
+		SIZE_0,
+		SIZE_5,
+		SIZE_10,
+		SIZE_25,
+		SIZE_50,
+		SIZE_75,
+		SIZE_100
+	};
+
+	public const string LEADERBOARD_SIZE = "EVENTS_TEST_LEADERBOARD_SIZE";
+	public static LeaderboardSize leaderboardSize {
+		get {
+			if(!testEnabled) return LeaderboardSize.DEFAULT;
+			return (LeaderboardSize)Prefs.GetIntPlayer(LEADERBOARD_SIZE, (int)LeaderboardSize.DEFAULT); 
+		}
+		set { Prefs.SetIntPlayer(LEADERBOARD_SIZE, (int)value); }
+	}
+
 	//------------------------------------------------------------------------//
 	// EXPOSED MEMBERS														  //
 	//------------------------------------------------------------------------//
@@ -88,6 +109,9 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	[SerializeField] private Toggle m_loginCheckToggle = null;
 	[SerializeField] private TMP_Text m_eventCode = null;
 	[SerializeField] private CPEnumPref m_eventStateDropdown = null;
+	[Space]
+	[SerializeField] private TMP_InputField m_playerScoreText = null;
+	[SerializeField] private CPEnumPref m_leaderboardSizeDropdown = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -119,6 +143,22 @@ public class CPGlobalEventsTest : MonoBehaviour {
 		);
 
 		sm_eventCode = m_eventCode;
+
+		m_leaderboardSizeDropdown.InitFromEnum(LEADERBOARD_SIZE, typeof(LeaderboardSize), (int)LeaderboardSize.DEFAULT);
+		m_leaderboardSizeDropdown.OnPrefChanged.AddListener(
+			(int _newValueIdx) => {
+				// Clear current event leaderboard
+				if(GlobalEventManager.currentEvent != null) {
+					GlobalEventManager.currentEvent.leaderboard.Clear();
+
+					// Clear offline server leaderboard cache
+					(GameServerManager.SharedInstance as GameServerManagerOffline).ClearEventLeaderboard(GlobalEventManager.currentEvent.id);
+				}
+
+				// Request event data
+				GlobalEventManager.RequestCurrentEventLeaderboard();
+			}
+		);
 	}
 
 	/// <summary>
@@ -144,6 +184,35 @@ public class CPGlobalEventsTest : MonoBehaviour {
 		m_eventStateDropdown.Refresh();
 	}
 
+	/// <summary>
+	/// Sets the player score to the current event, if any.
+	/// </summary>
+	/// <param name="_score">Score.</param>
+	private void SetPlayerScore(float _score) {
+		if(GlobalEventManager.currentEvent == null) return;
+
+		// Clamp value
+		if(_score < 0) _score = -1;	// Negative score means the user has never participated to that event
+
+		// Get player contribution to current event
+		GlobalEventUserData playerData = UsersManager.currentUser.GetGlobalEventData(GlobalEventManager.currentEvent.id);
+		float scoreToAdd = _score - Mathf.Max(playerData.score, 0f);
+
+		// Add to event's total contribution!
+		GlobalEventManager.currentEvent.AddContribution(scoreToAdd);
+
+		// Add to current user individual contribution in this event
+		playerData.score += scoreToAdd;
+
+		// Check if player can join the leaderboard! (or update its position)
+		GlobalEventManager.currentEvent.RefreshLeaderboardPosition(playerData);
+
+		// Notify game
+		Messenger.Broadcast<bool>(GameEvents.GLOBAL_EVENT_SCORE_REGISTERED, true);
+		Messenger.Broadcast<GlobalEventManager.RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, GlobalEventManager.RequestType.EVENT_LEADERBOARD);
+		Messenger.Broadcast(GameEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -167,5 +236,36 @@ public class CPGlobalEventsTest : MonoBehaviour {
 		if(_leaderboard) {
 			GlobalEventManager.RequestCurrentEventLeaderboard();
 		}
+	}
+
+	/// <summary>
+	/// Add event score to current player.
+	/// </summary>
+	public void OnAddScore() {
+		float amount = float.Parse(m_playerScoreText.text);
+		GlobalEventUserData playerData = UsersManager.currentUser.GetGlobalEventData(GlobalEventManager.currentEvent.id);
+		if(playerData.score > 0) {
+			amount = playerData.score + amount;
+		}
+		SetPlayerScore(amount);
+	}
+
+	/// <summary>
+	/// Remove event score to current player.
+	/// </summary>
+	public void OnRemoveScore() {
+		float amount = float.Parse(m_playerScoreText.text);
+		GlobalEventUserData playerData = UsersManager.currentUser.GetGlobalEventData(GlobalEventManager.currentEvent.id);
+		amount = playerData.score - amount;
+		if(amount < 0) amount = 0;
+		SetPlayerScore(amount);
+	}
+
+	/// <summary>
+	/// Set event score for current player.
+	/// </summary>
+	public void OnSetScore() {
+		float amount = float.Parse(m_playerScoreText.text);
+		SetPlayerScore(amount);
 	}
 }

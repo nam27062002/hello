@@ -56,7 +56,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_keysBonusLabelText = null;
 	[Space]
-	[SerializeField] private TextMeshProUGUI m_useKeysButtonText = null;
+	[SerializeField] private Localizer m_useKeysButtonText = null;
 	[SerializeField] private ShowHideAnimator m_useKeysButtonAnim = null;
 	[SerializeField] private ShowHideAnimator m_buyKeysButtonAnim = null;
 	[Space]
@@ -68,12 +68,15 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_bonusDragonGroupAnim = null;
 	[SerializeField] private ShowHideAnimator m_bonusDragonOrnamentAnim = null;
 	[SerializeField] private ShowHideAnimator m_keyBonusGroupAnim = null;
+	[Space]
+	[SerializeField] private float m_rowDelay = 1f;
 
 	// Internal logic
 	private Panel m_activePanel = Panel.OFFLINE;
 	private GlobalEvent m_event = null;
 	private int m_submitAttempts = 0;
 	private bool m_usedKey = false;
+	private bool m_bonusDragon = false;
 	private long m_finalScore = 0;
 	private bool m_continueEnabled = false;
 
@@ -145,9 +148,15 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 			case Panel.ACTIVE: {
 				if(_resetValues) {
 					m_scoreText.SetValue(0, false);
-					m_bonusDragonText.text = "x2";
 					m_finalScoreText.SetValue(0, false);
 					RefreshKeysField(_animate);
+
+					// Bonus dragon text
+					if(m_event.bonusDragonSku == DragonManager.currentDragon.def.sku) {
+						m_bonusDragonText.text = "x2";
+					} else {
+						m_bonusDragonText.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_BONUS_DRAGON_NOT_APPLIED");
+					}
 
 					// Hide everything (prepare for anim)
 					m_scoreGroupAnim.Hide(false);
@@ -156,13 +165,13 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 					m_bonusDragonOrnamentAnim.Hide(false);
 					m_keyBonusGroupAnim.Hide(false);
 				}
-				m_tapToContinueText.Localize("Tap to continue");	// [AOC] HARDCODED!!
+				m_tapToContinueText.Localize("TID_RESULTS_TAP_TO_CONTINUE");
 			} break;
 
 			case Panel.OFFLINE:
 			case Panel.LOG_IN: {
 				// Nothing to do!
-				m_tapToContinueText.Localize("Tap to skip");	// [AOC] HARDCODED!!
+				m_tapToContinueText.Localize("TID_RESULTS_TAP_TO_SKIP");
 			} break;
 		}
 
@@ -178,16 +187,19 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	private void RefreshKeysField(bool _animate) {
 		// Have contributed?
 		if(m_usedKey) {
-			m_keysBonusLabelText.text = LocalizationManager.SharedInstance.Localize("Key Bonus");	// [AOC] HARDCODED!!
+			m_keysBonusLabelText.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_KEY_BONUS_USED");
 			m_keysBonusText.text = "x2";
 		} else {
-			m_keysBonusLabelText.text = LocalizationManager.SharedInstance.Localize("Key Bonus x2");	// [AOC] HARDCODED!!
+			m_keysBonusLabelText.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_KEY_BONUS", "x2");
 		}
 
 		// Select what to choose - depends on whether we have already used a key and whether we have enough keys
 		m_buyKeysButtonAnim.Set(!m_usedKey && UsersManager.currentUser.keys < DOUBLE_UP_COST_KEYS, _animate);
 		m_useKeysButtonAnim.Set(!m_usedKey && UsersManager.currentUser.keys >= DOUBLE_UP_COST_KEYS, _animate);
 		m_keysBonusTextAnim.Set(m_usedKey, _animate);
+
+		// Set up double up price tag
+		m_useKeysButtonText.Localize("TID_EVENT_RESULTS_USE_KEY_BUTTON", StringUtils.FormatNumber(DOUBLE_UP_COST_KEYS));
 	}
 
 	/// <summary>
@@ -214,10 +226,8 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 		m_bonusDragonOrnamentAnim.Hide(false);
 		m_keyBonusGroupAnim.Hide(false);
 
-		float pause = 0.5f;
-
 		// Sequentially update values
-		Sequence seq = DOTween.Sequence()
+		DOTween.Sequence()
 			.SetId(tweenId)
 
 			// Base score
@@ -231,8 +241,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 				m_scoreText.SetValue(m_finalScore, true);
 				m_finalScoreText.SetValue(m_finalScore, true);
 			})
-			.AppendInterval(m_finalScoreText.duration)
-			.AppendInterval(pause)
+			.AppendInterval(m_rowDelay)
 
 			// Bonus Dragon
 			.AppendCallback(() => {
@@ -241,11 +250,10 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 			})
 			.AppendInterval(m_bonusDragonOrnamentAnim.tweenDelay + m_bonusDragonOrnamentAnim.tweenDuration)
 			.AppendCallback(() => {
-				m_finalScore *= 2;
+				if(m_bonusDragon) m_finalScore *= 2;
 				m_finalScoreText.SetValue(m_finalScore, true);
 			})
-			.AppendInterval(m_finalScoreText.duration)
-			.AppendInterval(pause)
+			.AppendInterval(m_rowDelay)
 
 			// Bonus key
 			.AppendCallback(() => {
@@ -285,12 +293,18 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	/// The popup is about to be opened.
 	/// </summary>
 	public void OnOpenPreAnimation() {
-		// Reset submit attempts
-		m_submitAttempts = 0;
-
 		// If we have no event data cached, get it now
 		if(m_event == null) {
 			m_event = GlobalEventManager.currentEvent;	// Should never be null (we shouldn't be displaying this popup if event is null
+		}
+
+		// Reset local vars
+		m_submitAttempts = 0;
+		m_usedKey = false;
+		if(m_event != null) {
+			m_bonusDragon = DragonManager.currentDragon.def.sku == m_event.bonusDragonSku;
+		} else {
+			m_bonusDragon = false;
 		}
 
 		// Initialize static stuff
@@ -394,7 +408,11 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 		switch(m_activePanel) {
 			case Panel.ACTIVE: {
 				// Attempt to do the contribution (we may have lost connectivity)
-				if(GlobalEventManager.Contribute(1f, 1f) == GlobalEventManager.ErrorCode.NONE) {
+				GlobalEventManager.ErrorCode res = GlobalEventManager.Contribute(
+					m_bonusDragon ? 2f : 1f,
+					m_usedKey ? 2f : 1f
+				);
+				if(res == GlobalEventManager.ErrorCode.NONE) {
 					// Success! Wait for the confirmation from the server
 					BusyScreen.Show(this);
 				} else {
@@ -434,7 +452,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 			if(m_submitAttempts >= MAX_SUBMIT_ATTEMPTS) {
 				// Show feedback
 				UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
-					LocalizationManager.SharedInstance.Localize("Max submission attempts reached.\nIgnoring score!\n(Used keys will be refunded)"),	// [AOC] HARDCODED!!
+					LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_MAX_SUBMISSIONS_ERROR"),
 					new Vector2(0.5f, 0.5f),
 					(RectTransform)this.GetComponentInParent<Canvas>().transform
 				);
@@ -445,7 +463,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 			} else {
 				// Show feedback
 				UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
-					LocalizationManager.SharedInstance.Localize("Something went wrong!"),	// [AOC] HARDCODED!!
+					LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR"),
 					new Vector2(0.5f, 0.5f),
 					(RectTransform)this.GetComponentInParent<Canvas>().transform
 				);
