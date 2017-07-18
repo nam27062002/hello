@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-[RequireComponent( typeof(ParticleSystem) )]
 public class ParticleScaler : MonoBehaviour 
 {
 

@@ -20,6 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4946125401620050}
   - component: {fileID: 114451218104134500}
+  - component: {fileID: 114556681516655152}
+  - component: {fileID: 114818668056293130}
   m_Layer: 26
   m_Name: CPS_BadJunk
   m_TagString: Untagged
@@ -55,8 +57,10 @@ MonoBehaviour:
   m_RateOverTime: 3
   m_radius: 0.1
   m_particleDuration: 1
+  m_systemDuration: 0
   m_local: 1
   m_loop: 1
+  m_preWarm: 0
   m_scaleRange:
     min: 0.25
     max: 0.25
@@ -140,3 +144,32 @@ MonoBehaviour:
   m_particleMaterial: {fileID: 2100000, guid: 3e4019d2555846d498b7670e8f7b56ba, type: 2}
   m_particleMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   m_gravity: {x: 0, y: 0, z: 0}
+--- !u!114 &114556681516655152
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1376407087042754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114818668056293130
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1376407087042754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 2
+  m_scale: 1
+  m_transform: {fileID: 0}
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 1
+  m_resetFirst: 1

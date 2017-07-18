@@ -189,10 +189,10 @@ public class CustomParticleSystem : MonoBehaviour
         for (int c = 0; c < m_MaxParticles; c++)
         {
 #if (CUSTOMPARTICLES_DRAWMESH)
-            CustomParticleData cp = m_particlesStack.Pop();
+            CustomParticleData cp = m_particles[c];
             cp.m_active = false;
 #else
-            CustomParticle cp = m_particlesStack.Pop();
+            CustomParticle cp = m_particles[c];
             cp.SetActive(false);
 #endif
             m_particlesStack.Push(cp);
@@ -211,7 +211,7 @@ public class CustomParticleSystem : MonoBehaviour
 #if (CUSTOMPARTICLES_DRAWMESH)
                 CustomParticleData cp = m_particlesStack.Pop();
 #else
-                    CustomParticle cp = m_particlesStack.Pop();
+                CustomParticle cp = m_particlesStack.Pop();
 #endif
                 if (cp != null)
                 {
@@ -228,23 +228,23 @@ public class CustomParticleSystem : MonoBehaviour
                     cp.m_active = true;
 
 #else
-                        cp.transform.position = transform.position + Random.insideUnitSphere * m_radius;
-                        float sc = Random.Range(m_scaleRange.min, m_scaleRange.max);
-                        cp.m_initscale = sc;
-                        if (m_local)
-                        {
-                            cp.transform.parent = transform;
-                        }
-                        else
-                        {
-                            cp.transform.parent = null;
-                        }
-                        cp.m_particleDuration = m_particleDuration;
+                    cp.transform.position = transform.position + Random.insideUnitSphere * m_radius;
+                    float sc = Random.Range(m_scaleRange.min, m_scaleRange.max);
+                    cp.m_initscale = sc;
+                    if (m_local)
+                    {
+                        cp.transform.parent = transform;
+                    }
+                    else
+                    {
+                        cp.transform.parent = null;
+                    }
+                    cp.m_particleDuration = m_particleDuration;
 
-                        cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
-                        cp.m_initRotZ = Random.Range(m_rotationRange.min, m_rotationRange.max);
-                        cp.m_vRotZ = Random.Range(m_vRotationRange.min, m_vRotationRange.max);
-                        cp.Init();
+                    cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
+                    cp.m_initRotZ = Random.Range(m_rotationRange.min, m_rotationRange.max);
+                    cp.m_vRotZ = Random.Range(m_vRotationRange.min, m_vRotationRange.max);
+                    cp.Init();
 #endif
                     m_totalParticlesEmited++;
                 }
