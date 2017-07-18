@@ -64,7 +64,10 @@ public class CPProgressionCheats : MonoBehaviour {
 		if(!CheckScene()) return;        
 
 		// Close control panel
-		ControlPanel.instance.Toggle();       
+		ControlPanel.instance.Toggle();     
+
+		// Reset some managers
+		GlobalEventManager.ClearCurrentEvent();
 
         // Clear persistence and sets the default persistence
         PersistenceManager.Clear();

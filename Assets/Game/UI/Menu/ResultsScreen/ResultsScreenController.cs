@@ -405,10 +405,14 @@ public class ResultsScreenController : MonoBehaviour {
 			switch(m_toCheck) {
 				// Show global events contribute popup?		// [AOC] TEMP!! Waiting for the new results screen flow to properly integrate this!
 				case ToCheck.GLOBAL_EVENT: {
+					// Never during first run!
+					if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) break;
+
+					// Is there a valid current event to display? Check error codes to know so.
 					GlobalEventManager.ErrorCode canContribute = GlobalEventManager.CanContribute();
 					if(canContribute == GlobalEventManager.ErrorCode.NONE
-						|| canContribute == GlobalEventManager.ErrorCode.OFFLINE
-						|| canContribute == GlobalEventManager.ErrorCode.NOT_LOGGED_IN) {
+					|| canContribute == GlobalEventManager.ErrorCode.OFFLINE
+					|| canContribute == GlobalEventManager.ErrorCode.NOT_LOGGED_IN) {
 						// Show global event contribution popup
 						PopupController popup = PopupManager.OpenPopupInstant(PopupGlobalEventContribution.PATH);
 
@@ -474,7 +478,7 @@ public class ResultsScreenController : MonoBehaviour {
 		int chestsFound = 0;
 		int totalCollectedChests = ChestManager.collectedChests;
 		long chestsCoinsReward = 0;
-		for(int i = 0; i < ChestManager.NUM_DAILY_CHESTS; i++) {
+		for(int i = 0; i < ChestManager.dailyChests.Length; i++) {
 			if(ChestManager.dailyChests[i].state == Chest.State.PENDING_REWARD) {
 				// Count chest
 				chestsFound++;
