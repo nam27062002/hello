@@ -273,11 +273,11 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 
 		// Update listeners
 		if(_track) {
-			Messenger.AddListener<string>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+			Messenger.AddListener<string, string, SimpleJSON.JSONNode>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
 			Messenger.AddListener<string>(EngineEvents.PURCHASE_ERROR, OnPurchaseFailed);
 			Messenger.AddListener<string>(EngineEvents.PURCHASE_FAILED, OnPurchaseFailed);
 		} else {
-			Messenger.RemoveListener<string>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+			Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
 			Messenger.RemoveListener<string>(EngineEvents.PURCHASE_ERROR, OnPurchaseFailed);
 			Messenger.RemoveListener<string>(EngineEvents.PURCHASE_FAILED, OnPurchaseFailed);
 		}
@@ -287,9 +287,21 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 	/// Real money transaction has succeeded.
 	/// </summary>
 	/// <param name="_sku">Sku of the purchased item.</param>
-	private void OnPurchaseSuccessful(string _sku) {
+	private void OnPurchaseSuccessful(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) {
 		// Is it this one?
 		if(_sku == m_def.sku) {
+            StoreManager.StoreProduct product = GameStoreManager.SharedInstance.GetStoreProduct(m_def.sku);
+            string moneyCurrencyCode = null;
+            float moneyPrice = 0f;            
+            if (product != null) {
+                moneyCurrencyCode = product.m_strCurrencyCode;
+                moneyPrice = product.m_fPrice;
+            }
+
+            string houstonTransactionID = null; // Not implemented yet
+            string promotionType = null; // Not implemented yet            
+            HDTrackingManager.Instance.Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice);
+
 			// Stop tracking
 			TrackPurchaseResult(false);
 

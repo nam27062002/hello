@@ -260,12 +260,35 @@ public class HDTrackingManagerImp : HDTrackingManager
     }    
 
     /// <summary>
-    /// Called when the user completed an in app purchase.
+    /// Called when the user opens the app store
     /// </summary>
-    public override void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType)
+    public override void Notify_StoreVisited()
+    {
+        if (TrackingSaveSystem != null)
+        {
+            TrackingSaveSystem.TotalStoreVisits++;
+        }
+    }
+
+    /// <summary>
+    /// /// Called when the user completed an in app purchase.    
+    /// </summary>
+    /// <param name="storeTransactionID">transaction ID returned by the platform</param>
+    /// <param name="houstonTransactionID">transaction ID returned by houston</param>
+    /// <param name="itemID">ID of the item purchased</param>
+    /// <param name="promotionType">Promotion type if there was one</param>
+    /// <param name="moneyCurrencyCode">Code of the currency that the user used to pay for the item</param>
+    /// <param name="moneyPrice">Price paid by the user in her currency</param>
+    public override void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice)
     {
         Session_IsPayingSession = true;
-        Track_IAPCompleted(storeTransactionID, houstonTransactionID, itemID, promotionType);
+
+        if (TrackingSaveSystem != null)
+        {
+            TrackingSaveSystem.TotalPurchases++;
+        }
+
+        Track_IAPCompleted(storeTransactionID, houstonTransactionID, itemID, promotionType, moneyCurrencyCode, moneyPrice);
     }
     #endregion
 
@@ -303,7 +326,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamIsPayingSession(e);
             Track_AddParamPlayerProgress(e);
             Track_AddParamSessionPlaytime(e);
-            Track_AddParamStopCause(e, stopCause);
+            Track_AddParamString(e, "stopCause", stopCause);
             Track_AddParamTotalPlaytime(e);
             TrackingManager.SharedInstance.SendEvent(e);
         }
@@ -326,18 +349,33 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-    private void Track_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType)
+    private void Track_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Track_IAPCompleted");
-        }
+            Log("Track_IAPCompleted storeTransactionID = " + storeTransactionID + " houstonTransactionID = " + houstonTransactionID + 
+                " itemID = " + itemID + " promotionType = " + promotionType + " moneyCurrencyCode = " + moneyCurrencyCode + " moneyPrice = " + moneyPrice);
+        }        
 
         // DNA custom.mobile.stop
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.iap");
         if (e != null)
-        {
-            e.SetParameterValue("storeTransactionID", "SoftLaunch");            
+        {            
+            Track_AddParamString(e, "storeTransactionID", storeTransactionID);
+            Track_AddParamString(e, "houstonTransactionID", houstonTransactionID);
+            Track_AddParamString(e, "itemID", itemID);
+            Track_AddParamString(e, "promotionType", promotionType);
+            Track_AddParamString(e, "moneyCurrency", moneyCurrencyCode);            
+            e.SetParameterValue("moneyIAP", moneyPrice);
+
+            Track_AddParamPlayerProgress(e);
+
+            if (TrackingSaveSystem != null)
+            {
+                e.SetParameterValue("totalPurchases", TrackingSaveSystem.TotalPurchases);
+                e.SetParameterValue("totalStoreVisits", TrackingSaveSystem.TotalStoreVisits);
+            }
+
             TrackingManager.SharedInstance.SendEvent(e);
         }
     }
@@ -345,11 +383,10 @@ public class HDTrackingManagerImp : HDTrackingManager
     // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------
-
     private void Track_AddParamSubVersion(TrackingManager.TrackingEvent e)
     {
         // "SoftLaunch" is sent so far. It will be changed wto "HardLaunch" after WWL
-        e.SetParameterValue("SubVersion", "SoftLaunch");
+        Track_AddParamString(e, "SubVersion", "SoftLaunch");
     }
 
     private void Track_AddParamProviderAuth(TrackingManager.TrackingEvent e)
@@ -365,7 +402,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             value = "SilentLogin";
         }
 
-        e.SetParameterValue("providerAuth", value);
+        Track_AddParamString(e, "providerAuth", value);
     }
 
     private void Track_AddParamPlayerID(TrackingManager.TrackingEvent e)
@@ -381,7 +418,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             value = "NotDefined";
         }
 
-        e.SetParameterValue("playerID", value);
+        Track_AddParamString(e, "playerID", value);
     }
 
     private void Track_AddParamServerAccID(TrackingManager.TrackingEvent e)
@@ -408,8 +445,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void Track_AddParamPlayerProgress(TrackingManager.TrackingEvent e)
     {
-        int value = (UsersManager.currentUser != null) ? UsersManager.currentUser.GetPlayerProgress() : 0;        
-        e.SetParameterValue("playerProgress", value + "");
+        int value = (UsersManager.currentUser != null) ? UsersManager.currentUser.GetPlayerProgress() : 0;
+        Track_AddParamString(e, "playerProgress", value + "");
     }
 
     private void Track_AddParamSessionPlaytime(TrackingManager.TrackingEvent e)
@@ -422,11 +459,17 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         int value = (TrackingSaveSystem != null) ? TrackingSaveSystem.TotalPlaytime : 0;
         e.SetParameterValue("totalPlaytime", value);
-    }
+    }    
 
-    private void Track_AddParamStopCause(TrackingManager.TrackingEvent e, string stopCause)
+    private void Track_AddParamString(TrackingManager.TrackingEvent e, string paramName, string value)
     {
-        e.SetParameterValue("stopCause", stopCause);
+        // null is not a valid value for Calety
+        if (value == null)
+        {
+            value = "";
+        }
+
+        e.SetParameterValue(paramName, value);
     }
     #endregion
 

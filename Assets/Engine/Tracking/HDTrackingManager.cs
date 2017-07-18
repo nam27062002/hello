@@ -74,9 +74,20 @@ public class HDTrackingManager
     public virtual void Notify_RoundEnd() {}
 
     /// <summary>
-    /// Called when an in-app purchase (with real money) is completed
+    /// Called when the user opens the app store
     /// </summary>
-    public virtual void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType) {}
+    public virtual void Notify_StoreVisited() {}
+
+    /// <summary>
+    /// /// Called when the user completed an in app purchase.    
+    /// </summary>
+    /// <param name="storeTransactionID">transaction ID returned by the platform</param>
+    /// <param name="houstonTransactionID">transaction ID returned by houston</param>
+    /// <param name="itemID">ID of the item purchased</param>
+    /// <param name="promotionType">Promotion type if there was one</param>
+    /// <param name="moneyCurrencyCode">Code of the currency that the user used to pay for the item</param>
+    /// <param name="moneyPrice">Price paid by the user in her currency</param>
+    public virtual void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice) {}
 #endregion
 
 #region log
