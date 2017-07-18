@@ -78,6 +78,12 @@ public partial class GlobalEvent {
 	private int m_rewardLevel = -1; // how many rewards will get this user?
 	public int rewardLevel { get { return m_rewardLevel; } }
 
+	// Bonuses
+	private string m_bonusDragonSku = "";
+	public string bonusDragonSku {
+		get { return m_bonusDragonSku; }
+	}
+
 	// Timestamps
 	private DateTime m_teasingStartTimestamp = new DateTime();
 	private DateTime m_startTimestamp = new DateTime();
@@ -137,6 +143,7 @@ public partial class GlobalEvent {
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Add a contribution to the event.
+	/// Current value as well as local leaderboard will be updated.
 	/// </summary>
 	/// <param name="_value">Value to be added.</param>
 	public void AddContribution(float _value) {
@@ -145,6 +152,58 @@ public partial class GlobalEvent {
 
 		// Update current value
 		m_currentValue += _value;
+	}
+
+	/// <summary>
+	/// Check whether the given user data still belongs to the cached leaderboard.
+	/// Leaderboard is updated according to it.
+	/// </summary>
+	/// <param name="_data">User data to be checked.</param>
+	public void RefreshLeaderboardPosition(GlobalEventUserData _data) {
+		// Check whether the player is in the leaderboard
+		int idx = m_leaderboard.FindIndex((_a) => _a.userID == _data.userID);
+		bool wasOnTheLeaderboard = (idx >= 0);
+		bool shouldBeOnTheLeaderboard = _data.score > 0; 
+			//&& (m_leaderboard.Count == 0 || m_leaderboard.Count < 100 || _data.score >= m_leaderboard.Last().score);
+
+		// Cases:
+		// a) Player on the leaderboard
+		if(wasOnTheLeaderboard) {
+			// Should stay?
+			if(shouldBeOnTheLeaderboard) {
+				// Update score
+				m_leaderboard[idx].score = _data.score;
+			} else {
+				// Remove from the leaderboard
+				m_leaderboard.RemoveAt(idx);
+			}
+		}
+
+		// b) Player not on the leaderboard
+		else {
+			// Should enter?
+			if(shouldBeOnTheLeaderboard) {
+				m_leaderboard.Add(_data);
+			} else {
+				// Nothing to do
+			}
+		}
+
+		// Sort the leaderboard
+		m_leaderboard.Sort((_a, _b) => -(_a.score.CompareTo(_b.score)));	// Using float's CompareTo directly. Reverse sign since we want to sort from bigger to lower.
+
+		// Update positions
+		for(int i = 0; i < m_leaderboard.Count; ++i) {
+			m_leaderboard[i].position = i;
+			if(m_leaderboard[i].userID == _data.userID) {
+				_data.position = i;
+			}
+		}
+
+		// Keep leaderboard size controlled
+		if(m_leaderboard.Count > 100) {
+			m_leaderboard.RemoveRange(100, m_leaderboard.Count - 100);
+		}
 	}
 
 	//--------------------------------------------------------------------------------------------------------------
@@ -209,6 +268,9 @@ public partial class GlobalEvent {
 
 		// Special reward for the top X% contributors
 		m_topContributorsRewardSlot = new RewardSlot(_data["topReward"]);
+
+		// Bonuses
+		m_bonusDragonSku = _data["bonusDragon"];
 
 		// Reset state vars
 		m_currentValue = 0f;

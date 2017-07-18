@@ -67,7 +67,7 @@ public class UserProfile : UserSaveSystem
 	// User ID shortcut
 	public string userId {
 		get {
-			if(GameSessionManager.SharedInstance.IsLogged()) {
+			if(!DebugSettings.useDebugServer && GameSessionManager.SharedInstance.IsLogged()) {
 				return GameSessionManager.SharedInstance.GetUID(); 
 			} else {
 				return "local_user";
@@ -527,9 +527,9 @@ public class UserProfile : UserSaveSystem
 
 		key = "keys";
 		if (profile.ContainsKey(key)) {
-			m_currencies[(int)Currency.HARD].amount = profile[key].AsInt;
+			m_currencies[(int)Currency.KEYS].amount = profile[key].AsInt;
 		} else {
-			m_currencies[(int)Currency.HARD].amount = 5;
+			m_currencies[(int)Currency.KEYS].amount = 3;
 		}    
 
 		// Game settings
@@ -678,6 +678,7 @@ public class UserProfile : UserSaveSystem
 				// Create a new event with the given data and store it to the events dictionary
 				GlobalEventUserData newEvent = new GlobalEventUserData();
 				newEvent.Load(eventsData[i]);
+				newEvent.userID = userId;
 				m_globalEvents[newEvent.eventID] = newEvent;
 			}
 		}
@@ -1112,8 +1113,13 @@ public class UserProfile : UserSaveSystem
 		// If the user doesn't have data of this event, create a new one
 		GlobalEventUserData data = null;
 		if(!m_globalEvents.TryGetValue(_eventID, out data)) {
-			data = new GlobalEventUserData();
-			data.eventID = _eventID;
+			data = new GlobalEventUserData(
+				_eventID,
+				userId,
+				0f,
+				-1,
+				0
+			);
 			m_globalEvents[_eventID] = data;
 		}
 		return data;

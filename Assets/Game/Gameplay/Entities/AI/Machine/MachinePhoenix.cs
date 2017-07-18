@@ -7,27 +7,24 @@ namespace AI {
 		//--------------------------------------------------
 		[SeparatorAttribute("Phoenix Effects")]
 		[SerializeField] private GameObject m_fire;
-		[SerializeField] private GameObject m_fireView;
+		[SerializeField] private List<GameObject> m_fireView;
 		[SerializeField] private Renderer m_bodyRenderer;
 
 		//--------------------------------------------------
 		private bool m_phoenixActive = false;
 		private Material m_phoenixMaterial;
-
-		float m_phoenixFresnelValue = 0.5f;
-		Color m_phoenixFresnelColor = new Color(240/255.0f,140/255.0f,12/255.0f);
 		//--------------------------------------------------
 		protected override void Awake() {
 			base.Awake();
 			m_phoenixMaterial = m_bodyRenderer.material;
-			Deactivate();
+			DeactivateFire();
 		}
 
 		public override void Spawn(ISpawner _spawner) {
 			base.Spawn(_spawner);
 
 			// Set not fire view
-			Deactivate();
+			DeactivateFire();
 		}
 
 		public override void CustomUpdate() {
@@ -36,31 +33,31 @@ namespace AI {
 			if (!m_phoenixActive) {
 				if (m_pilot.IsActionPressed(Pilot.Action.Fire)) {	
 					// Activate Phoenix Mode!!
-					Activate();
+					ActivateFire();
 				}
 
 			} else {
 				if (!m_pilot.IsActionPressed(Pilot.Action.Fire)) {
 					// Deactivate Phoenix Mode
-					Deactivate();
+					DeactivateFire();
 				}
 			}
 		}
 
-		private void Activate() {
+		private void ActivateFire() {
 			m_phoenixActive = true;
 			m_fire.SetActive(true);
-			if (m_fireView)
-				m_fireView.SetActive(true);
+			for( int i = 0; i<m_fireView.Count; ++i)
+				m_fireView[i].SetActive(true);
 			StopCoroutine("FireTo");
 			StartCoroutine( FireTo(1) );
 		}
 
-		private void Deactivate() {
+		private void DeactivateFire() {
 			m_phoenixActive = false;
 			m_fire.SetActive(false);
-			if (m_fireView)
-				m_fireView.SetActive(false);
+			for( int i = 0; i<m_fireView.Count; ++i)
+				m_fireView[i].SetActive(false);
 			StopCoroutine("FireTo");
 			StartCoroutine( FireTo(0) );
 		}

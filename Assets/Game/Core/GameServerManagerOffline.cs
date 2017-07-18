@@ -203,11 +203,14 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			DateTime startDate = CreateStartDate(targetState);
 
 			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass(); {
-				SimpleJSON.JSONClass liveEvents = new SimpleJSON.JSONClass(); {
-					liveEvents.Add("code", CPGlobalEventsTest.eventCode);
-					liveEvents.Add("name", "test_event_0");
-					liveEvents.Add("start", CreateStartTimestamp(startDate));
-					liveEvents.Add("end", CreateEndTimestamp(startDate));
+				SimpleJSON.JSONArray liveEvents = new SimpleJSON.JSONArray(); {
+					SimpleJSON.JSONClass currentLiveEvent = new SimpleJSON.JSONClass(); {
+						currentLiveEvent.Add("code", CPGlobalEventsTest.eventCode);
+						currentLiveEvent.Add("name", "test_event_0");
+						currentLiveEvent.Add("start", CreateStartTimestamp(startDate));
+						currentLiveEvent.Add("end", CreateEndTimestamp(startDate));
+					}
+					liveEvents.Add(currentLiveEvent);
 				}
 				eventData.Add("liveEvents", liveEvents);
 			}
@@ -261,6 +264,9 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			// Top percentile reward
 			eventData.Add("topReward", CreateEventRewardData(0.1f, "pet", "pet_24", -1));
 
+			// Bonuses
+			eventData.Add("bonusDragon", "dragon_reptile");
+
 			// Store response
 			res["response"] = eventData.ToString();
 		}
@@ -292,11 +298,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		eventData.Add("currentValue", currentValue.ToString(JSON_FORMAT));
 
 		// Current player data
-		GlobalEventUserData playerEventData = null;
-		if(!UsersManager.currentUser.globalEvents.TryGetValue(_eventID, out playerEventData)) {
-			// User has never contributed to this event, create a new, empty, player event data
-			playerEventData = new GlobalEventUserData(_eventID, UsersManager.currentUser.userId, 0f, -1, 0);
-		}
+		GlobalEventUserData playerEventData = UsersManager.currentUser.GetGlobalEventData(_eventID);
 
 		// Add player data to the json
 		eventData.Add("playerData", playerEventData.Save(true));
@@ -327,11 +329,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		}
 
 		// Current player data
-		GlobalEventUserData playerEventData = null;
-		if(!UsersManager.currentUser.globalEvents.TryGetValue(_eventID, out playerEventData)) {
-			// User has never contributed to this event, create a new, empty, player event data
-			playerEventData = new GlobalEventUserData(_eventID, UsersManager.currentUser.userId, 0f, -1, 0);
-		}
+		GlobalEventUserData playerEventData = UsersManager.currentUser.GetGlobalEventData(_eventID);
 
 		// Make sure there is one entry in the social database with this user ID!
 		FakeUserSocialInfo playerSocialData = GetFakeSocialInfo(playerEventData.userID);	// This will create a new entry if needed, since we're using the player's ID
@@ -344,16 +342,39 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			// Remove current player from the pool
 			m_socialInfoDatabasePool.Remove(playerSocialData.id);
 
+			// Select leaderboard size
+			float totalContributors = UnityEngine.Random.Range(50f, 500f);
+			switch(CPGlobalEventsTest.leaderboardSize) {
+				case CPGlobalEventsTest.LeaderboardSize.SIZE_0:		totalContributors = 0;		break;
+				case CPGlobalEventsTest.LeaderboardSize.SIZE_5:		totalContributors = 5;		break;
+				case CPGlobalEventsTest.LeaderboardSize.SIZE_10:	totalContributors = 10;		break;
+				case CPGlobalEventsTest.LeaderboardSize.SIZE_25:	totalContributors = 25;		break;
+				case CPGlobalEventsTest.LeaderboardSize.SIZE_50:	totalContributors = 50;		break;
+				case CPGlobalEventsTest.LeaderboardSize.SIZE_75:	totalContributors = 75;		break;
+				case CPGlobalEventsTest.LeaderboardSize.SIZE_100:	totalContributors = 100;	break;
+			}
+
+			// Restriction: at least 1 per player!
+			float minScorePerPlayer = 1f;
+			totalContributors = Mathf.Min(totalContributors, currentValue/minScorePerPlayer);
+
 			// Do it!
-			// Distribute the total score of the event among a random amount of players
+			// Distribute the total score of the event among the total amount of players
 			float remainingScore = currentValue;
-			Range totalContributors = new Range(50f, 500f);
-			Range scorePerPlayerRange = new Range(remainingScore/totalContributors.max, remainingScore/totalContributors.min);
+			int remainingContributors = (int)totalContributors;
 			leaderboard = new List<GlobalEventUserData>(100);
-			while(remainingScore > 0f && leaderboard.Count <= 100) {
+			while(remainingContributors > 0 && remainingScore > 0f && leaderboard.Count <= 100) {
 				// Compute new score for this user
-				float score = Mathf.Min(remainingScore, scorePerPlayerRange.GetRandom());
+				float score = 0f;
+				if(remainingContributors == 1) {
+					// Last contributor? Put all the remaining score
+					score = remainingScore;
+				} else {
+					// Leave enough score for the rest of contributors!
+					score = UnityEngine.Random.Range(minScorePerPlayer, remainingScore - remainingContributors * minScorePerPlayer);
+				}
 				remainingScore -= score;
+				remainingContributors--;
 
 				// Pick a random social info and consume it
 				FakeUserSocialInfo socialInfo = GetFakeSocialInfo();
@@ -381,7 +402,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		// If player is not on the leaderboard but should be, add it!
 		// We should probably remove the last one, but since it's test code, we don't care enough
 		int playerIdx = leaderboard.FindIndex((_data) => _data.userID == playerEventData.userID);
-		float minScore = leaderboard.Last().score;
+		float minScore = leaderboard.Count > 0 ? leaderboard.Last().score : 0f;
 		if(playerIdx < 0 && playerEventData.score > minScore && playerEventData.score > 0f) {
 			leaderboard.Add(new GlobalEventUserData(playerEventData));	// Create a copy of the data
 		} else if(playerIdx >= 0 && leaderboard.Count >= 100 && playerEventData.score < minScore) {
@@ -429,8 +450,59 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			// Invalid event ID, simulate validation error
 			DelayedCall(() => _callback(new Error("User can't register score into the event with id " + _eventID, ErrorCodes.ValidationError), null));
 		} else {
-			// Increase event's total score and simulate server delay
+			// Increase event's total score
 			m_eventValues[_eventID] += _score;
+
+			// Update leaderboard cache!
+			string userID = UsersManager.currentUser.userId;
+			List<GlobalEventUserData> leaderboard = null;
+			if(m_eventLeaderboards.TryGetValue(_eventID, out leaderboard)) {
+				// Check whether the player is in the leaderboard
+				int idx = leaderboard.FindIndex((_a) => _a.userID == userID);
+				bool wasOnTheLeaderboard = (idx >= 0);
+				bool shouldBeOnTheLeaderboard = _score > 0;
+
+				// Cases:
+				// a) Player on the leaderboard
+				if(wasOnTheLeaderboard) {
+					// Should stay?
+					if(shouldBeOnTheLeaderboard) {
+						// Update score
+						leaderboard[idx].score += _score;
+					} else {
+						// Remove from the leaderboard
+						leaderboard.RemoveAt(idx);
+					}
+				}
+
+				// b) Player not on the leaderboard
+				else {
+					// Should enter?
+					if(shouldBeOnTheLeaderboard) {
+						leaderboard.Add(new GlobalEventUserData(_eventID, userID, _score, -1, 0));
+					} else {
+						// Nothing to do
+					}
+				}
+
+				// Sort the leaderboard
+				leaderboard.Sort((_a, _b) => -(_a.score.CompareTo(_b.score)));	// Using float's CompareTo directly. Reverse sign since we want to sort from bigger to lower.
+
+				// Update positions
+				for(int i = 0; i < leaderboard.Count; ++i) {
+					leaderboard[i].position = i;
+					if(leaderboard[i].userID == userID) {
+						leaderboard[i].position = i;
+					}
+				}
+
+				// Keep leaderboard size controlled
+				if(leaderboard.Count > 100) {
+					leaderboard.RemoveRange(100, leaderboard.Count - 100);
+				}
+			}
+
+			// Simulate server delay
 			DelayedCall(() => _callback(null, null));
 		}
 	}
@@ -505,6 +577,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		if(string.IsNullOrEmpty(_userID) || !m_socialInfoDatabase.TryGetValue(_userID, out socialInfo)) {
 			// Info not found!
 			// Create a new fake profile picking a random entry from the generation pool
+			//Debug.Log("<color=red>Social info for id </color><color=white>" + _userID + "</color><color=red> not found!</color>");
 
 			// If the pool is empty, fill it with a new copy of the source database!
 			if(m_socialInfoDatabasePool.Count == 0) {
@@ -531,5 +604,15 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		}
 
 		return socialInfo;
+	}
+
+	/// <summary>
+	/// Clears the fake generated event leaderboard.
+	/// </summary>
+	/// <param name="_eventID">Event identifier.</param>
+	public void ClearEventLeaderboard(int _eventID) {
+		if(m_eventLeaderboards.ContainsKey(_eventID)) {
+			m_eventLeaderboards.Remove(_eventID);
+		}
 	}
 }

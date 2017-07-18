@@ -30,7 +30,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -180.55019, y: 120.353836, z: -22.97168}
+  m_LocalPosition: {x: -179.17624, y: 122.14268, z: 6.7478046}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4745434911807152}
@@ -251,7 +251,7 @@ GameObject:
   - component: {fileID: 4358911191158252}
   - component: {fileID: 95704579982802008}
   - component: {fileID: 114956433723977088}
-  - component: {fileID: 114047521520872150}
+  - component: {fileID: 114516871991770100}
   m_Layer: 0
   m_Name: PhoenixVFX
   m_TagString: Untagged
@@ -473,7 +473,7 @@ GameObject:
   - component: {fileID: 4731330412948696}
   - component: {fileID: 95143701801138090}
   - component: {fileID: 114166775445100108}
-  - component: {fileID: 114023387701280064}
+  - component: {fileID: 114316777975014858}
   m_Layer: 0
   m_Name: PhoenixVFX2
   m_TagString: Untagged
@@ -709,8 +709,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1323447970682874}
-  m_LocalRotation: {x: -0, y: 0.69966817, z: -0, w: 0.714468}
-  m_LocalPosition: {x: -0.049999185, y: 0, z: -0.41000372}
+  m_LocalRotation: {x: -0.005043065, y: 0.53816396, z: 0.0032201407, w: 0.842819}
+  m_LocalPosition: {x: -0.049999185, y: 1, z: -0.41000372}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4933350434108516}
@@ -752,7 +752,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1490152861428162}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -1.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4731330412948696}
@@ -833,8 +833,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1757452838849936}
-  m_LocalRotation: {x: -0, y: 0.69966817, z: -0, w: 0.714468}
-  m_LocalPosition: {x: -0.049999185, y: 0, z: -0.41000372}
+  m_LocalRotation: {x: -0.005043065, y: 0.53816396, z: 0.0032201407, w: 0.842819}
+  m_LocalPosition: {x: -0.049999185, y: 1, z: -0.41000372}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4656408621613636}
@@ -1525,32 +1525,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: pet_33
---- !u!114 &114023387701280064
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1757452838849936}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c15c2bdf3e8b542bbbdb40897f30a54f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_offset: {x: 0, y: 0, z: 0}
-  m_follow: {fileID: 4237740049637302}
---- !u!114 &114047521520872150
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1323447970682874}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c15c2bdf3e8b542bbbdb40897f30a54f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_offset: {x: 0, y: 0, z: 0}
-  m_follow: {fileID: 4237740049637302}
 --- !u!114 &114166775445100108
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1563,6 +1537,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_overrideCamera: {fileID: 0}
+--- !u!114 &114316777975014858
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1757452838849936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Pet_Hip
+  m_parentRoot: {fileID: 424588}
+  m_worldPositionStays: 1
 --- !u!114 &114361397547265102
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1617,6 +1605,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tier: 4
+--- !u!114 &114516871991770100
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1323447970682874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Pet_Hip
+  m_parentRoot: {fileID: 424588}
+  m_worldPositionStays: 1
 --- !u!114 &114687268252911206
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1668,7 +1670,9 @@ MonoBehaviour:
     m_faceUpAngle: 320
     m_faceDownAngle: 40
   m_fire: {fileID: 1371148990655892}
-  m_fireView: {fileID: 1490152861428162}
+  m_fireView:
+  - {fileID: 1757452838849936}
+  - {fileID: 1323447970682874}
   m_bodyRenderer: {fileID: 137659519323806380}
 --- !u!114 &114871587501049214
 MonoBehaviour:

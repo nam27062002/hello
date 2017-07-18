@@ -2,6 +2,7 @@
 {
 	Properties{
 		_MainTex("Particle Texture", 2D) = "white" {}
+		[HideInInspector] _VColor("Custom vertex color", Color) = (1.0, 1.0, 1.0, 1.0)
 		[Toggle(GPUINSTANCING)] _EnableGpuinstancing("Instanced", int) = 0.0
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}
@@ -15,13 +16,13 @@
 		ZWrite Off
 		Fog{ Color(0,0,0,0) }
 		ZTest[_ZTest]
-
+/*
 		BindChannels{
 			Bind "Color", color
 			Bind "Vertex", vertex
 			Bind "TexCoord", texcoord
 		}
-
+*/
 		// ---- Fragment program cards
 		SubShader
 		{
@@ -34,8 +35,8 @@
 				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile_particles
 
-				#pragma multi_compile_instancing
-				#pragma shader_feature  __ GPUINSTANCING
+//				#pragma multi_compile_instancing
+//				#pragma shader_feature  __ GPUINSTANCING
 
 				#include "UnityCG.cginc"
 
@@ -65,10 +66,10 @@
 
 #ifdef GPUINSTANCING
 				UNITY_INSTANCING_CBUFFER_START(MyProperties)
-				UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
+				UNITY_DEFINE_INSTANCED_PROP(float4, _VColor)
 				UNITY_INSTANCING_CBUFFER_END
 #else
-				float4 _Color;
+				float4 _VColor;
 #endif
 
 				v2f vert(appdata_t v)
@@ -90,11 +91,11 @@
 				{
 #ifdef GPUINSTANCING
 					UNITY_SETUP_INSTANCE_ID(i); // necessary only if any instanced properties are going to be accessed in the fragment Shader.__
-					float4 col = UNITY_ACCESS_INSTANCED_PROP(_Color);
-#else
-					float4 col = _Color;
-#endif
+					float4 col = UNITY_ACCESS_INSTANCED_PROP(_VColor);
 					half4 prev = i.color * tex2D(_MainTex, i.texcoord) * col;
+#else
+					half4 prev = i.color * tex2D(_MainTex, i.texcoord) * _VColor;
+#endif
 					prev.rgb *= prev.a;
 					return prev;
 				}
