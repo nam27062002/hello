@@ -18,10 +18,7 @@ using TMPro;
 /// <summary>
 /// Widget to display the info of a global event reward.
 /// </summary>
-public class GlobalEventsProgressBar : MonoBehaviour {
-	[SerializeField] private TextMeshProUGUI m_objectiveText = null;
-	[SerializeField] private Image m_objectiveIcon = null;
-	[Space]
+public class GlobalEventsProgressBar : MonoBehaviour {	
 	[SerializeField] private TextMeshProUGUI m_currentValueText_DEBUG = null;
 	[Space]
 	[SerializeField] private Slider m_progressBar = null;
@@ -33,14 +30,6 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 	public void RefreshRewards(GlobalEvent _evt) {
 		// Initialize visuals
 		// Event description
-		if (m_objectiveText != null) {
-			m_objectiveText.text = _evt.objective.GetDescription();
-		}
-
-		// Target icon
-		if (m_objectiveIcon != null) {
-			m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + _evt.objective.icon);
-		}
 
 		// Rewards
 		for(int i = 0; i < _evt.rewardSlots.Count; ++i) {

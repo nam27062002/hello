@@ -264,6 +264,9 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			// Top percentile reward
 			eventData.Add("topReward", CreateEventRewardData(0.1f, "pet", "pet_24", -1));
 
+			// Bonuses
+			eventData.Add("bonusDragon", "dragon_reptile");
+
 			// Store response
 			res["response"] = eventData.ToString();
 		}
@@ -465,7 +468,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 					// Should stay?
 					if(shouldBeOnTheLeaderboard) {
 						// Update score
-						leaderboard[idx].score = _score;
+						leaderboard[idx].score += _score;
 					} else {
 						// Remove from the leaderboard
 						leaderboard.RemoveAt(idx);
