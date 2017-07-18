@@ -297,10 +297,13 @@ public class CustomParticleSystem : MonoBehaviour
                 Quaternion rot = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, cp.m_initRotZ * 360.0f);
                 cp.m_initRotZ += cp.m_vRotZ * Time.deltaTime;
 
-                stCol.Push(col);
+//                stCol.Push(col);
 
                 cp.mat.SetTRS(cp.m_position, rot, Vector3.one * (sv * cp.m_initScale));
-                matList.Add(cp.mat);
+                //                matList.Add(cp.mat);
+                m_matProp.SetColor("_VColor", col);
+
+                Graphics.DrawMesh(m_particleMesh, cp.mat, m_particleMaterial, 0, m_currentCamera, 0, m_matProp);
 
                 if (pTime > cp.m_particleDuration)
                 {
@@ -309,13 +312,13 @@ public class CustomParticleSystem : MonoBehaviour
                 }
             }
         }
-
+/*
         if (matList.Count > 0)
         {
             m_matProp.SetVectorArray("_VColor", stCol.ToArray());
             Graphics.DrawMeshInstanced(m_particleMesh, 0, m_particleMaterial, matList, m_matProp);
         }
-
+*/
         m_oldPosition = transform.position;
 #endif
 
