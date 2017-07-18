@@ -62,6 +62,18 @@ public class ParticleScaler : MonoBehaviour
 		public float m_forceOverLifetimeY;
 		public float m_forceOverLifetimeZ;
 
+        //Custom particle data
+        //Emmision radius
+        public float m_radius;
+
+        //Scale
+        public Range m_scaleRange;
+
+        //Velocity
+        public Range m_VelX;
+        public Range m_VelY;
+        public Range m_VelZ;
+
         public ParticleSystem m_psystem;
         public CustomParticleSystem m_cpsystem;
 	}
@@ -201,7 +213,26 @@ public class ParticleScaler : MonoBehaviour
         m_originalData.Add(data);
 	}
 
-	void ResetOriginalData()
+    void SaveParticleData(CustomParticleSystem ps)
+    {
+        PSDataRegistry data = new PSDataRegistry();
+
+        data.m_radius = ps.m_radius;
+        data.m_scaleRange = ps.m_scaleRange;
+        data.m_VelX = ps.m_VelX;
+        data.m_VelY = ps.m_VelY;
+        data.m_VelZ = ps.m_VelZ;
+
+        data.m_cpsystem = ps;
+        data.m_psystem = null;
+
+        m_originalData.Add(data);
+
+    }
+
+
+
+    void ResetOriginalData()
 	{
 		if ( m_scaleAllChildren )
 		{
@@ -316,11 +347,19 @@ public class ParticleScaler : MonoBehaviour
             forceOverLifetime.yMultiplier = data.m_forceOverLifetimeY;
             forceOverLifetime.zMultiplier = data.m_forceOverLifetimeZ;
         }
+        else if (data.m_cpsystem != null)
+        {
+            CustomParticleSystem cps = data.m_cpsystem;
 
+            cps.m_radius = data.m_radius;
+            cps.m_scaleRange = data.m_scaleRange;
+            cps.m_VelX = data.m_VelX;
+            cps.m_VelY = data.m_VelY;
+            cps.m_VelZ = data.m_VelZ;
+        }
+    }
 
-	}
-
-	void OnEnable()
+    void OnEnable()
 	{
 		if ( m_whenScale == WhenScale.ENABLE )
 			DoScale();
@@ -380,98 +419,118 @@ public class ParticleScaler : MonoBehaviour
 	
 	void ScaleParticle(PSDataRegistry data, float scale)
 	{
-        ParticleSystem ps = data.m_psystem;
+        if (data.m_psystem != null)
+        {
+            ParticleSystem ps = data.m_psystem;
 
-		ParticleSystem.MainModule mainModule = ps.main;
-		if ( mainModule.startSize3D )
-		{
-			mainModule.startSizeXMultiplier *= scale;
-			mainModule.startSizeYMultiplier *= scale;
-			mainModule.startSizeZMultiplier *= scale;
-		}
-		else
-		{
-			mainModule.startSizeMultiplier *= scale;
-		}
+            ParticleSystem.MainModule mainModule = ps.main;
+            if (mainModule.startSize3D)
+            {
+                mainModule.startSizeXMultiplier *= scale;
+                mainModule.startSizeYMultiplier *= scale;
+                mainModule.startSizeZMultiplier *= scale;
+            }
+            else
+            {
+                mainModule.startSizeMultiplier *= scale;
+            }
 
-		mainModule.gravityModifierMultiplier *= scale;
-		mainModule.startSpeedMultiplier *= scale;
-		if (m_scaleLifetime)
-			mainModule.startLifetimeMultiplier *= scale;
+            mainModule.gravityModifierMultiplier *= scale;
+            mainModule.startSpeedMultiplier *= scale;
+            if (m_scaleLifetime)
+                mainModule.startLifetimeMultiplier *= scale;
 
-		ParticleSystem.ShapeModule shape = ps.shape;
-		switch( shape.shapeType )
-		{
-			case ParticleSystemShapeType.Sphere:
-			case ParticleSystemShapeType.SphereShell:
-			{
-				shape.radius *= scale;
-			}break;
-			case ParticleSystemShapeType.Hemisphere:
-			case ParticleSystemShapeType.HemisphereShell:
-			{
-				shape.radius *= scale;
-			}break;
-			case ParticleSystemShapeType.Cone:
-			case ParticleSystemShapeType.ConeShell:
-			case ParticleSystemShapeType.ConeVolume:
-			case ParticleSystemShapeType.ConeVolumeShell:
-			{	
-				shape.radius *= scale;
-				shape.length *= scale;
-			}break;
-			case ParticleSystemShapeType.Box:
-			case ParticleSystemShapeType.BoxShell:
-			case ParticleSystemShapeType.BoxEdge:
-			{
-				shape.box *= scale;
-			}break;
-			case ParticleSystemShapeType.Mesh:
-			{
-				shape.meshScale *= scale;
-			}break;
-			case ParticleSystemShapeType.MeshRenderer:
-			{
-				shape.meshScale *= scale;
-			}break;
-			case ParticleSystemShapeType.SkinnedMeshRenderer:
-			{
-				shape.meshScale *= scale;
-			}break;
-			case ParticleSystemShapeType.CircleEdge:
-			case ParticleSystemShapeType.Circle:
-			{
-				shape.radius *= scale;
-			}break;
-			case ParticleSystemShapeType.SingleSidedEdge:
-			{
-				shape.radius *= scale;
-			}break;
-		}
+            ParticleSystem.ShapeModule shape = ps.shape;
+            switch (shape.shapeType)
+            {
+                case ParticleSystemShapeType.Sphere:
+                case ParticleSystemShapeType.SphereShell:
+                    {
+                        shape.radius *= scale;
+                    }
+                    break;
+                case ParticleSystemShapeType.Hemisphere:
+                case ParticleSystemShapeType.HemisphereShell:
+                    {
+                        shape.radius *= scale;
+                    }
+                    break;
+                case ParticleSystemShapeType.Cone:
+                case ParticleSystemShapeType.ConeShell:
+                case ParticleSystemShapeType.ConeVolume:
+                case ParticleSystemShapeType.ConeVolumeShell:
+                    {
+                        shape.radius *= scale;
+                        shape.length *= scale;
+                    }
+                    break;
+                case ParticleSystemShapeType.Box:
+                case ParticleSystemShapeType.BoxShell:
+                case ParticleSystemShapeType.BoxEdge:
+                    {
+                        shape.box *= scale;
+                    }
+                    break;
+                case ParticleSystemShapeType.Mesh:
+                    {
+                        shape.meshScale *= scale;
+                    }
+                    break;
+                case ParticleSystemShapeType.MeshRenderer:
+                    {
+                        shape.meshScale *= scale;
+                    }
+                    break;
+                case ParticleSystemShapeType.SkinnedMeshRenderer:
+                    {
+                        shape.meshScale *= scale;
+                    }
+                    break;
+                case ParticleSystemShapeType.CircleEdge:
+                case ParticleSystemShapeType.Circle:
+                    {
+                        shape.radius *= scale;
+                    }
+                    break;
+                case ParticleSystemShapeType.SingleSidedEdge:
+                    {
+                        shape.radius *= scale;
+                    }
+                    break;
+            }
 
-		ParticleSystem.VelocityOverLifetimeModule velocityOverLifetime = ps.velocityOverLifetime;
-		velocityOverLifetime.xMultiplier *= scale;
-		velocityOverLifetime.yMultiplier *= scale;
-		velocityOverLifetime.zMultiplier *= scale;
+            ParticleSystem.VelocityOverLifetimeModule velocityOverLifetime = ps.velocityOverLifetime;
+            velocityOverLifetime.xMultiplier *= scale;
+            velocityOverLifetime.yMultiplier *= scale;
+            velocityOverLifetime.zMultiplier *= scale;
 
-		ParticleSystem.LimitVelocityOverLifetimeModule limitVelocityOverLifetime = ps.limitVelocityOverLifetime;
-		if (limitVelocityOverLifetime.separateAxes)
-		{
-			limitVelocityOverLifetime.limitXMultiplier *= scale;
-			limitVelocityOverLifetime.limitYMultiplier *= scale;
-			limitVelocityOverLifetime.limitZMultiplier *= scale;	
-		}
-		else
-		{
-			limitVelocityOverLifetime.limitMultiplier *= scale;
-		}
+            ParticleSystem.LimitVelocityOverLifetimeModule limitVelocityOverLifetime = ps.limitVelocityOverLifetime;
+            if (limitVelocityOverLifetime.separateAxes)
+            {
+                limitVelocityOverLifetime.limitXMultiplier *= scale;
+                limitVelocityOverLifetime.limitYMultiplier *= scale;
+                limitVelocityOverLifetime.limitZMultiplier *= scale;
+            }
+            else
+            {
+                limitVelocityOverLifetime.limitMultiplier *= scale;
+            }
 
 
-		ParticleSystem.ForceOverLifetimeModule forceOverLifetime = ps.forceOverLifetime;
-		forceOverLifetime.xMultiplier *= scale;
-		forceOverLifetime.yMultiplier *= scale;
-		forceOverLifetime.zMultiplier *= scale;
+            ParticleSystem.ForceOverLifetimeModule forceOverLifetime = ps.forceOverLifetime;
+            forceOverLifetime.xMultiplier *= scale;
+            forceOverLifetime.yMultiplier *= scale;
+            forceOverLifetime.zMultiplier *= scale;
+        }
+        else if (data.m_cpsystem != null)
+        {
+            CustomParticleSystem cps = data.m_cpsystem;
 
-	}
-	
+            cps.m_radius = data.m_radius * scale;
+            cps.m_scaleRange = data.m_scaleRange * scale;
+            cps.m_VelX = data.m_VelX * scale;
+            cps.m_VelY = data.m_VelY * scale;
+            cps.m_VelZ = data.m_VelZ * scale;
+        }
+    }	
 }
