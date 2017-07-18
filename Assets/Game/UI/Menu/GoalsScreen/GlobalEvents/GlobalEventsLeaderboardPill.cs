@@ -108,6 +108,7 @@ public class GlobalEventsLeaderboardPill : MonoBehaviour {
 		// [AOC] TODO!! Do it properly!
 		if(DebugSettings.useDebugServer) {
 			// Get social info
+			//Debug.Log("Requesting social info for id <color=red>" + _data.userID + "</color>");
 			GameServerManagerOffline.FakeUserSocialInfo socialInfo = (GameServerManager.SharedInstance as GameServerManagerOffline).GetFakeSocialInfo(_data.userID);
 
 			// Load picture
