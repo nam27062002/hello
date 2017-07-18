@@ -105,11 +105,14 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 
 	private void OnTMPCustomizerResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
-
+		user.globalEvents.Clear();
+		bool parsed = false;
 		if(_response != null && _response["response"] != null) {
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-			if ( responseJson.ContainsKey("liveEvents") ){
-				int globalEventKey = responseJson["liveEvents"]["code"].AsInt;
+			if ( responseJson != null && responseJson.ContainsKey("liveEvents") ){
+				SimpleJSON.JSONArray arr = responseJson["liveEvents"].AsArray;
+				SimpleJSON.JSONClass liveEvent = arr[0].AsObject;
+				int globalEventKey = liveEvent["code"].AsInt;
 				if ( globalEventKey >= 0 ){
 					GlobalEventUserData globalEventUserData = null;
 					if ( user.globalEvents.ContainsKey(globalEventKey) ){
@@ -119,12 +122,13 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 						globalEventUserData.eventID = globalEventKey;
 						user.globalEvents.Add(globalEventKey, globalEventUserData);
 					}
-					globalEventUserData.endTimestamp = responseJson["liveEvents"]["end"].AsLong;
+					globalEventUserData.endTimestamp = liveEvent["end"].AsLong;
 				}
+				parsed = true;
 			}
 		}
-
-		RequestCurrentEventData();
+		if (parsed)
+			RequestCurrentEventData();
 	}
 
 
@@ -242,10 +246,11 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 					instance.m_currentEvent.AddContribution(contribution);
 
 					// Add to current user individual contribution in this event
-					user.GetGlobalEventData(instance.m_currentEvent.id).score += contribution;
+					GlobalEventUserData playerData = user.GetGlobalEventData(instance.m_currentEvent.id);
+					playerData.score += contribution;
 
-					// [AOC] TODO!! Update leaderboard? At least current player's position!
-
+					// Check if player can join the leaderboard! (or update its position)
+					instance.m_currentEvent.RefreshLeaderboardPosition(playerData);
 				}
 
 				// Notify game that server response was received
@@ -287,10 +292,10 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	}
 
 	public static bool Connected() {
-		bool ret = true;
-		if ((CPGlobalEventsTest.networkCheck && Application.internetReachability == NetworkReachability.NotReachable) || 
-			(CPGlobalEventsTest.loginCheck   && !GameSessionManager.SharedInstance.IsLogged())) {
-			ret = false;
+		bool ret = false;	
+		if ((CPGlobalEventsTest.networkCheck && Application.internetReachability != NetworkReachability.NotReachable) &&
+			(CPGlobalEventsTest.loginCheck   && GameSessionManager.SharedInstance.IsLogged())) {
+			ret = true;
 		}
 		return ret;
 	}
