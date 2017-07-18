@@ -95,16 +95,11 @@ namespace UbiBCN
 			}
 		}
 
-		protected virtual void OnApplicationQuit() {
-			// Make sure instance reference is cleaned up
-			// [AOC] I think it's useless, but they do it: https://youtu.be/64uOVmQ5R1k?t=20m16s
-			// [AOC] In any case make sure to do it only if we're the singleton instance!
-			if(m_instance != null && m_instance == this) m_instance = null;
-			
+		protected virtual void OnApplicationQuit() {			
 			// Avoid re-creating the instance while the application is quitting
 			// Unless manually destroying the instance
-			m_state = ISingleton.EState.APPLICATION_QUITTING;
-		}
+			m_state = ISingleton.EState.APPLICATION_QUITTING;            
+		}       
 		
 		//------------------------------------------------------------------//
 		// PUBLIC METHODS													//
