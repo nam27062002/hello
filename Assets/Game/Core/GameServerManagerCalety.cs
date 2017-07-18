@@ -1017,7 +1017,7 @@ public class GameServerManagerCalety : GameServerManager {
 	private const string COMMAND_PLAYTEST_A = "/api/playtest/a";
 	private const string COMMAND_PLAYTEST_B = "/api/playtest/b";
 
-	private const string COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER = "/api/testing/getCustomizer";
+	private const string COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER = "/api/gevent/customizer";
 	private const string COMMAND_GLOBAL_EVENTS_GET_EVENT = "/api/events/get";
 	private const string COMMAND_GLOBAL_EVENTS_GET_STATE = "/api/events/progress";
 	private const string COMMAND_GLOBAL_EVENTS_REGISTER_SCORE = "/api/events/add_progress";

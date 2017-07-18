@@ -203,11 +203,14 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			DateTime startDate = CreateStartDate(targetState);
 
 			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass(); {
-				SimpleJSON.JSONClass liveEvents = new SimpleJSON.JSONClass(); {
-					liveEvents.Add("code", CPGlobalEventsTest.eventCode);
-					liveEvents.Add("name", "test_event_0");
-					liveEvents.Add("start", CreateStartTimestamp(startDate));
-					liveEvents.Add("end", CreateEndTimestamp(startDate));
+				SimpleJSON.JSONArray liveEvents = new SimpleJSON.JSONArray(); {
+					SimpleJSON.JSONClass currentLiveEvent = new SimpleJSON.JSONClass(); {
+						currentLiveEvent.Add("code", CPGlobalEventsTest.eventCode);
+						currentLiveEvent.Add("name", "test_event_0");
+						currentLiveEvent.Add("start", CreateStartTimestamp(startDate));
+						currentLiveEvent.Add("end", CreateEndTimestamp(startDate));
+					}
+					liveEvents.Add(currentLiveEvent);
 				}
 				eventData.Add("liveEvents", liveEvents);
 			}
