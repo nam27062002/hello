@@ -12,6 +12,8 @@ public class EventRewardScreen : MonoBehaviour {
 
 	[SerializeField] private GameObject m_introScreen;
 	[SerializeField] private GameObject m_globalEventStepScreen;
+	[SerializeField] private ShowHideAnimator m_topToContinueText;
+
 	[SerializeField] private DragControlRotation m_rewardDragController = null;
 
 	[SerializeField] private GlobalEventsProgressBar m_progressBar;
