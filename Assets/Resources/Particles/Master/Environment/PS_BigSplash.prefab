@@ -55,7 +55,7 @@ Transform:
   m_GameObject: {fileID: 1857133604858882}
   m_LocalRotation: {x: -0.0000001490116, y: 0.000000040829757, z: 0.0000000013170885,
     w: 1}
-  m_LocalPosition: {x: 16.5, y: -3.4255219, z: 0.8721001}
+  m_LocalPosition: {x: -18.8, y: -3.4255219, z: 0.8721001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4547481973488442}
@@ -165,13 +165,13 @@ ParticleSystem:
     serializedVersion: 3
     enabled: 1
     startLifetime:
-      scalar: 0.6
+      scalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 0.6666666
+          value: 1
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -183,7 +183,7 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 1
+          value: 0.6
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -312,7 +312,7 @@ ParticleSystem:
       maxColor: {r: 0.7019608, g: 1, b: 1, a: 1}
       minMaxState: 2
     startSize:
-      scalar: 10
+      scalar: 5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -850,7 +850,7 @@ ParticleSystem:
           rgba: 4294951058
         key2:
           serializedVersion: 2
-          rgba: 4278190080
+          rgba: 0
         key3:
           serializedVersion: 2
           rgba: 0
@@ -875,8 +875,8 @@ ParticleSystem:
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 21627
-        atime2: 43253
+        atime1: 43253
+        atime2: 65535
         atime3: 65535
         atime4: 0
         atime5: 0
@@ -884,7 +884,7 @@ ParticleSystem:
         atime7: 0
         m_Mode: 0
         m_NumColorKeys: 2
-        m_NumAlphaKeys: 4
+        m_NumAlphaKeys: 3
       minGradient:
         key0:
           serializedVersion: 2
@@ -2629,7 +2629,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1387716017
+  randomSeed: 281416330
   InitialModule:
     serializedVersion: 3
     enabled: 1
