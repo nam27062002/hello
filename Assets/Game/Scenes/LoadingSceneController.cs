@@ -109,6 +109,9 @@ public class LoadingSceneController : SceneController {
         // The stuff that this manager handles has to be done only once, regardless the game reboots
         FeatureSettingsManager.CreateInstance(false);
 
+        GameAds.CreateInstance(true);
+        GameAds.instance.Init();
+
         // Load persistence        
         SaveFacade.Instance.Init();               
         PersistenceManager.Init();        

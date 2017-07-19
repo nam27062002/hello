@@ -5873,7 +5873,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224018844868054774}
   - component: {fileID: 114089723420637252}
-  - component: {fileID: 114718395072752428}
+  - component: {fileID: 114581095025887366}
   m_Layer: 5
   m_Name: ProgressBar
   m_TagString: Untagged
@@ -14032,7 +14032,7 @@ MonoBehaviour:
   m_objectiveIcon: {fileID: 114756056663132256}
   m_bonusDragonIcon: {fileID: 114793152890803052}
   m_timerText: {fileID: 114333658136459302}
-  m_progressBar: {fileID: 114718395072752428}
+  m_progressBar: {fileID: 114581095025887366}
   m_leaderboard: {fileID: 114891800227622416}
 --- !u!114 &114008236961001442
 MonoBehaviour:
@@ -24083,6 +24083,24 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114581095025887366
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1634164910569996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3346efa07eb2d4e5f8f8257eff420f6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_currentValueText_DEBUG: {fileID: 114794330755187180}
+  m_progressBar: {fileID: 114089723420637252}
+  m_rewardInfos:
+  - {fileID: 114565219077048720}
+  - {fileID: 114832117789253190}
+  - {fileID: 114777144221450526}
+  - {fileID: 114381255142011072}
 --- !u!114 &114581232509390392
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -26862,24 +26880,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114718395072752428
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1634164910569996}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3346efa07eb2d4e5f8f8257eff420f6a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_currentValueText_DEBUG: {fileID: 114794330755187180}
-  m_progressBar: {fileID: 114089723420637252}
-  m_rewardInfos:
-  - {fileID: 114565219077048720}
-  - {fileID: 114832117789253190}
-  - {fileID: 114777144221450526}
-  - {fileID: 114381255142011072}
 --- !u!114 &114719046575638604
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -30679,7 +30679,7 @@ MonoBehaviour:
   m_maxPills: 100
   m_listPadding: 0
   m_pillSpacing: 5
-  m_playerPillMarginOffset: -15
+  m_playerPillMarginOffset: -10
 --- !u!114 &114895079673214356
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -66588,8 +66588,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 5}
-  m_SizeDelta: {x: 0, y: 10}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224044276232349432
 RectTransform:
@@ -71342,7 +71342,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000061035156}
+  m_AnchoredPosition: {x: 0, y: 0.1133728}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &224831579642532638

@@ -81,7 +81,7 @@ public class TimeUtils {
 	/// </summary>
 	/// <returns>The unix timestamp corresponding to the given date.</returns>
 	public static long DateToTimestamp(DateTime _date) {
-		return (long)(_date.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+		return (long)(_date.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
 	}
 
 	/// <summary>
@@ -91,7 +91,8 @@ public class TimeUtils {
 	/// <returns>The date corresponding to the given unix timestamp.</returns>
 	/// <param name="_timestamp">The unix timestamp to be parsed.</param>
 	public static DateTime TimestampToDate(long _timestamp) {
-		return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(_timestamp);
+		double d = _timestamp / 1000.0;
+		return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(d);
 	}
 
 	//------------------------------------------------------------------//

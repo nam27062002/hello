@@ -342,7 +342,7 @@ public class GameServerManagerCalety : GameServerManager {
 	public override void GlobalEvent_GetEvent(int _eventID, ServerCallback _callback) 
 	{
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
-		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		parameters.Add("eventId", _eventID.ToString("D"));
 		Commands_EnqueueCommand(ECommand.GlobalEvents_GetEvent, parameters, _callback);
 	}
 
@@ -718,6 +718,7 @@ public class GameServerManagerCalety : GameServerManager {
 					if(IsLogged()) {
 						Dictionary<string, string> kParams = new Dictionary<string, string>();
 						kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
+						kParams["eventId"] = parameters["eventId"];
 						string global_event_command = "";
 						switch( command.Cmd )
 						{
@@ -727,7 +728,7 @@ public class GameServerManagerCalety : GameServerManager {
 							case ECommand.GlobalEvents_GetLeadeboard: global_event_command = COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD;break;
 						}
 
-						ServerManager.SharedInstance.SendCommand( global_event_command, kParams, parameters, "");
+						ServerManager.SharedInstance.SendCommand( global_event_command, kParams );
 					}
 				}break;
 
@@ -1018,11 +1019,11 @@ public class GameServerManagerCalety : GameServerManager {
 	private const string COMMAND_PLAYTEST_B = "/api/playtest/b";
 
 	private const string COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER = "/api/gevent/customizer";
-	private const string COMMAND_GLOBAL_EVENTS_GET_EVENT = "/api/events/get";
-	private const string COMMAND_GLOBAL_EVENTS_GET_STATE = "/api/events/progress";
-	private const string COMMAND_GLOBAL_EVENTS_REGISTER_SCORE = "/api/events/add_progress";
-	private const string COMMAND_GLOBAL_EVENTS_GET_REWARDS = "/api/events/reward";
-	private const string COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD = "/api/events/leadeboard";
+	private const string COMMAND_GLOBAL_EVENTS_GET_EVENT = "/api/gevent/get";
+	private const string COMMAND_GLOBAL_EVENTS_GET_STATE = "/api/gevent/progress";
+	private const string COMMAND_GLOBAL_EVENTS_REGISTER_SCORE = "/api/gevent/addProgress";
+	private const string COMMAND_GLOBAL_EVENTS_GET_REWARDS = "/api/gevent/reward";
+	private const string COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD = "/api/gevent/leaderboard";
 
 	/// <summary>
 	/// Initialize Calety's NetworkManager.
