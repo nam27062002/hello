@@ -183,7 +183,7 @@ public partial class GlobalEvent {
 		else {
 			// Should enter?
 			if(shouldBeOnTheLeaderboard) {
-				m_leaderboard.Add(_data);
+				m_leaderboard.Add(new GlobalEventUserData(_data));	// Make a copy!
 			} else {
 				// Nothing to do
 			}

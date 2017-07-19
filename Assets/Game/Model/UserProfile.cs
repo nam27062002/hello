@@ -1123,7 +1123,7 @@ public class UserProfile : UserSaveSystem
 			m_globalEvents[_eventID] = data;
 		}
 
-		// [AOC] Sick of bugs, make sure the user ID is valid!
+		// [AOC] Sick of insane bugs, make sure the user ID is valid!
 		data.userID = this.userId;
 		return data;
 	}
