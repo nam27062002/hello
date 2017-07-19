@@ -150,7 +150,7 @@ public class GameSceneController : GameSceneControllerBase {
 		base.Awake();
 
 		// Make sure loading screen is visible
-		LoadingScreen.Toggle(true);
+		LoadingScreen.Toggle(true, false);
 
 		// Check whether the tutorial popup must be displayed
 		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)
@@ -576,7 +576,7 @@ public class GameSceneController : GameSceneControllerBase {
 
             case EStates.SHOWING_RESULTS: {
                 // Show loading screen
-				LoadingScreen.Toggle(true);
+				LoadingScreen.Toggle(true, false);
 
                 // Disable dragon and entities!
                 InstanceManager.player.gameObject.SetActive(false);
@@ -627,7 +627,7 @@ public class GameSceneController : GameSceneControllerBase {
 
     private void OnResultsSceneLoaded() {        
 		// Hide loading screen
-		LoadingScreen.Toggle(false);
+		LoadingScreen.Toggle(false, false);
 
         // This scene uiRoot is disabled because the results screen scene's uiRoot is going to be used instead
         if (uiRoot != null) {
