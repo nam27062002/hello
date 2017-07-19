@@ -119,14 +119,16 @@ public class EntitySkuListAttributeEditor : ExtendedPropertyDrawer {
 	/// </summary>
 	/// <param name="_selectedIdx">The index of the newly selected option.</param>
 	private void OnSkuSelected(int _selectedIdx) {
-		// Store new value - "NONE" will be stored as "" when allowed
-		EntitySkuListAttribute attr = attribute as EntitySkuListAttribute;
-		if(attr.m_allowNullValue && _selectedIdx == 0) {
-			m_targetProperty.stringValue = "";
-		} else {
-			m_targetProperty.stringValue = m_skus[_selectedIdx];	// Options array match the definition skus, so no need to do anything else :)
+		if (m_targetProperty != null) {
+			// Store new value - "NONE" will be stored as "" when allowed
+			EntitySkuListAttribute attr = attribute as EntitySkuListAttribute;
+			if(attr.m_allowNullValue && _selectedIdx == 0) {
+				m_targetProperty.stringValue = "";
+			} else {
+				m_targetProperty.stringValue = m_skus[_selectedIdx];	// Options array match the definition skus, so no need to do anything else :)
+			}
+			m_targetProperty.serializedObject.ApplyModifiedProperties();
 		}
-		m_targetProperty.serializedObject.ApplyModifiedProperties();
 	}
 }
 
