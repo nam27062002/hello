@@ -343,7 +343,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			m_socialInfoDatabasePool.Remove(playerSocialData.id);
 
 			// Select leaderboard size
-			float totalContributors = UnityEngine.Random.Range(50f, 500f);
+			float totalContributors = UnityEngine.Random.Range(50f, 150f);
 			switch(CPGlobalEventsTest.leaderboardSize) {
 				case CPGlobalEventsTest.LeaderboardSize.SIZE_0:		totalContributors = 0;		break;
 				case CPGlobalEventsTest.LeaderboardSize.SIZE_5:		totalContributors = 5;		break;
@@ -371,7 +371,11 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 					score = remainingScore;
 				} else {
 					// Leave enough score for the rest of contributors!
-					score = UnityEngine.Random.Range(minScorePerPlayer, remainingScore - remainingContributors * minScorePerPlayer);
+					score = UnityEngine.Random.Range(
+						minScorePerPlayer, 
+						//remainingScore - remainingContributors * minScorePerPlayer
+						Mathf.Min(remainingScore - remainingContributors * minScorePerPlayer, currentValue * 0.25f)	// Try to distribute score more evenly by limiting the max reward
+					);
 				}
 				remainingScore -= score;
 				remainingContributors--;
