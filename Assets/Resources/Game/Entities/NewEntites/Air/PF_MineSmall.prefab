@@ -27,7 +27,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 146638}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -54.367813, y: -590.20874, z: -285.1459}
+  m_LocalPosition: {x: -53.378296, y: -593.4483, z: -285.1459}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4891021811086126}
@@ -365,7 +365,7 @@ GameObject:
   - component: {fileID: 114971670106080820}
   - component: {fileID: 135111696826582982}
   - component: {fileID: 114017337114042500}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: Mine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -380,7 +380,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4825320487550456}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: Mine_General
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -396,7 +396,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4891021811086126}
   - component: {fileID: 95929900689800294}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: MediumMine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -550,7 +550,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ec28088696d843d1a86f4d065110df8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_receiver: {fileID: 0}
+  m_receiver: {fileID: 146638}
   m_onCollisionEnter: 0
   m_onCollisionStay: 0
   m_onCollisionExit: 0
@@ -635,7 +635,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1604996702229136}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 1.14
