@@ -483,6 +483,16 @@ public class RewardSceneController : MonoBehaviour {
 	}
 
 	private void OnAnimationFinish() {
+		if (m_currentReward is Metagame.RewardPet) {
+			if (UsersManager.currentUser.rewardStack.Count > 0) {
+				Metagame.Reward moreRewards = UsersManager.currentUser.rewardStack.Peek();
+				if (moreRewards != null && moreRewards is Metagame.RewardEgg) {
+					OpenReward();
+					return;
+				}
+			}
+		}
+
 		m_currentReward = null;
 		// Notify external script
 		OnAnimFinished.Invoke();

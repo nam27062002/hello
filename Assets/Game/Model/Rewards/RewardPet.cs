@@ -32,13 +32,16 @@ namespace Metagame {
 
 			// If duplicated, give alternative rewards
 			if (duplicated) {
+				string petRewardSku = "pet_" + _def.GetAsString("rarity");
+				DefinitionNode petRewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, petRewardSku);
+
 				// Have all golden eggs been collected?
 				if (EggManager.allGoldenEggsCollected) {
 					// Yes! Give coins rather than golden egg fragments (based on rarity)
-					m_replacement = CreateTypeSoftCurrency(_def.GetAsLong("duplicateCoinsGiven"));
+					m_replacement = CreateTypeSoftCurrency(petRewardDef.GetAsLong("duplicateCoinsGiven"));
 				} else {
 					// No! Give golden egg fragments based on rarity
-					m_replacement = CreateTypeGoldenFragments(_def.GetAsInt("duplicateFragmentsGiven"), rarity);
+					m_replacement = CreateTypeGoldenFragments(petRewardDef.GetAsInt("duplicateFragmentsGiven"), rarity);
 				}
 			} 
 		}

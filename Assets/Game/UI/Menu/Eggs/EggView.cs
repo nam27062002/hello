@@ -192,7 +192,7 @@ public class EggView : MonoBehaviour {
 		m_animator.SetInteger("collect_step", step);
 
 		// Rarity
-		if(m_eggData != null) {
+		if(m_eggData != null && m_eggData.reward != null) {
 			m_animator.SetInteger("rarity", (int)m_eggData.reward.rarity);
 		} else {
 			m_animator.SetInteger("rarity", (int)Metagame.Reward.Rarity.COMMON);

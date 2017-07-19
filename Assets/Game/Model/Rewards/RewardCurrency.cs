@@ -41,9 +41,10 @@
 		public override void Collect() {
 			base.Collect();
 
-			// we got enough golden fragments to create a golden egg!
-			// new RewardGoldenEgg
-			// push it to the profile
+			if (EggManager.goldenEggCompleted) {
+				Reward reward = Reward.CreateTypeEgg(Egg.SKU_GOLDEN_EGG);
+				UsersManager.currentUser.rewardStack.Push(reward);
+			}
 		}
 	}
 }
