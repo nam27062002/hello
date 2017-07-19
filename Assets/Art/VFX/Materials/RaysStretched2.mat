@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: softGlowCoin
-  m_Shader: {fileID: 4800000, guid: 4e1e1141bde9f85439ec41b6eead491d, type: 3}
+  m_Name: RaysStretched2
+  m_Shader: {fileID: 4800000, guid: e2e52a5da952247b0a2b911f92db4e3c, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -18,20 +18,20 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 84af9b940753dd74aa3c3aed4da8621b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6edf3b0ba3436b144af7156010b9f91b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
-        name: _ColorStrength
-      second: 1
-    - first:
-        name: _InvFade
-      second: 1
+        name: _EnableCustomParticleSystem
+      second: 0
     - first:
         name: _ZTest
-      second: 6
+      second: 2
     m_Colors:
     - first:
         name: _TintColor
-      second: {r: 1, g: 0.072, b: 0, a: 0.1254902}
+      second: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+    - first:
+        name: _VColor
+      second: {r: 1, g: 1, b: 1, a: 1}
