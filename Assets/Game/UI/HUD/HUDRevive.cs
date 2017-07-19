@@ -46,6 +46,7 @@ public class HUDRevive : MonoBehaviour {
 	// Internal logic
 	private DeltaTimer m_timer = new DeltaTimer();
 
+	private PopupController m_adBlockingPopup;
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -166,13 +167,27 @@ public class HUDRevive : MonoBehaviour {
 
 		// [AOC] TODO!! Show a video ad!
 		// Open placeholder popup
-		PopupController popup = PopupManager.OpenPopupInstant(PopupAdPlaceholder.PATH);
-		popup.OnClosePostAnimation.AddListener(OnAdClosed);
+		// PopupController popup = PopupManager.OpenPopupInstant(PopupAdPlaceholder.PATH);
+		// popup.OnClosePostAnimation.AddListener(OnAdClosed);
+
+		m_adBlockingPopup = PopupManager.OpenPopupInstant("UI/Popups/InGame/PF_PopupAdBlocker");
+		GameAds.instance.ShowRewarded( OnVideoRewardCallback );
 
 		// Pause timer
 		m_timer.Stop();
 	}
 
+	void OnVideoRewardCallback( bool done ){
+		m_adBlockingPopup.Close(true);
+		if (done){
+			RewardManager.freeReviveCount++;
+			DoRevive( DragonPlayer.ReviveReason.AD );
+		}else{
+			m_timer.Resume();
+		}
+	}
+
+		
 	/// <summary>
 	/// The player is KO.
 	/// </summary>
