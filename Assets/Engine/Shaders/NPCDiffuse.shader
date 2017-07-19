@@ -46,17 +46,16 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 
 			#if MEDIUM_DETAIL_ON
 //			#define NORMALMAP
-//			#define FRESNEL
 			#endif
 
 			#if HI_DETAIL_ON
 //			#define NORMALMAP
 //			#define SPECULAR
-//			#define FRESNEL
 			#endif
 
 //			#define FRESNEL
 			#define MATCAP
+			#define OPAQUEALPHA
 
 			#include "entities.cginc"
 			ENDCG

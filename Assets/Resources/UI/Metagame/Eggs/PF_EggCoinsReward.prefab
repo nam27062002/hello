@@ -110,8 +110,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1949424081059156}
-  m_LocalRotation: {x: 0.010946348, y: 0.005698308, z: 0.30061027, w: 0.9536673}
-  m_LocalPosition: {x: 0, y: -0, z: -0.02}
+  m_LocalRotation: {x: 0.010946354, y: 0.0056983083, z: 0.30061027, w: 0.9536673}
+  m_LocalPosition: {x: 0, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4513920147479076}
@@ -125,7 +125,7 @@ Transform:
   m_GameObject: {fileID: 1255943045399510}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.58079106, y: 0.5807909, z: 1.4519771}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1.2}
   m_Children: []
   m_Father: {fileID: 4513920147479076}
   m_RootOrder: 0
@@ -573,11 +573,11 @@ ParticleSystem:
         m_RotationOrder: 4
       minMaxState: 0
     randomizeRotationDirection: 0
-    maxNumParticles: 12
+    maxNumParticles: 6
     size3D: 0
     rotation3D: 0
     gravityModifier:
-      scalar: -0.05
+      scalar: 0
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -733,7 +733,7 @@ ParticleSystem:
     time3: 0
     m_BurstCount: 0
   SizeModule:
-    enabled: 0
+    enabled: 1
     curve:
       scalar: 1
       maxCurve:
@@ -741,19 +741,25 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 1
-          inSlope: 0
-          outSlope: 0
+          value: 0.008241758
+          inSlope: 6.6659074
+          outSlope: 6.6659074
           tangentMode: 0
         - serializedVersion: 2
-          time: 1
+          time: 0.1536643
           value: 1
-          inSlope: 0
-          outSlope: 0
+          inSlope: 5.834769
+          outSlope: -0.5452825
+          tangentMode: 1
+        - serializedVersion: 2
+          time: 1
+          value: 0.5502631
+          inSlope: -0.51559705
+          outSlope: -0.51559705
           tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
-        m_RotationOrder: 4
+        m_RotationOrder: 0
       minCurve:
         serializedVersion: 2
         m_Curve:
