@@ -9,7 +9,9 @@ public class TrackingSaveSystem : SaveSystem
     private const string PARAM_SOCIAL_ID = "socialID";
     private const string PARAM_ACCOUNT_ID = "accID";
     private const string PARAM_SESSION_COUNT = "sessionCount";
-    private const string PARAM_TOTAL_PLAY_TIME = "totalPlaytime";    
+    private const string PARAM_TOTAL_PLAY_TIME = "totalPlaytime";
+    private const string PARAM_TOTAL_PURCHASES = "totalPurchases";
+    private const string PARAM_TOTAL_STORE_VISITS = "totalStoreVisits";
 
     // Tracking user ID generated upon first time session is started, uses GUID as we don't have server at this point
     public string UserID
@@ -92,13 +94,39 @@ public class TrackingSaveSystem : SaveSystem
         {
             Cache_SetInt(PARAM_TOTAL_PLAY_TIME, value);
         }        
-    } 
+    }
+    
+    public int TotalPurchases
+    {
+        get
+        {
+            return Cache_GetInt(PARAM_TOTAL_PURCHASES);
+        }
+
+        set
+        {
+            Cache_SetInt(PARAM_TOTAL_PURCHASES, value);
+        }
+    }
+    
+    public int TotalStoreVisits
+    {
+        get
+        {
+            return Cache_GetInt(PARAM_TOTAL_STORE_VISITS);
+        }
+
+        set
+        {
+            Cache_SetInt(PARAM_TOTAL_STORE_VISITS, value);
+        }
+    }
 
     public TrackingSaveSystem()
     {
         m_systemName = "Tracking";
 
-        CacheDataInt dataInt;
+        CacheDataInt dataInt;        
         CacheDataString dataString = new CacheDataString(PARAM_USER_ID, "");
         Cache_AddData(PARAM_USER_ID, dataString);
 
@@ -116,6 +144,12 @@ public class TrackingSaveSystem : SaveSystem
 
         dataInt = new CacheDataInt(PARAM_TOTAL_PLAY_TIME, 0);
         Cache_AddData(PARAM_TOTAL_PLAY_TIME, dataInt);
+
+        dataInt = new CacheDataInt(PARAM_TOTAL_PURCHASES, 0);
+        Cache_AddData(PARAM_TOTAL_PURCHASES, dataInt);
+
+        dataInt = new CacheDataInt(PARAM_TOTAL_STORE_VISITS, 0);
+        Cache_AddData(PARAM_TOTAL_STORE_VISITS, dataInt);
 
         Reset();
     }

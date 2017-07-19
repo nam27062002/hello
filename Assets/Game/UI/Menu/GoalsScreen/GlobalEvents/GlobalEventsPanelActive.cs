@@ -27,6 +27,10 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
+	[SerializeField] private TextMeshProUGUI m_objectiveText = null;
+	[SerializeField] private Image m_objectiveIcon = null;
+	[SerializeField] private Image m_bonusDragonIcon = null;
+	[Space]
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
 	[Space]
 	[SerializeField] private GlobalEventsProgressBar m_progressBar = null;
@@ -95,7 +99,17 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		GlobalEvent evt = GlobalEventManager.currentEvent;
 		if(evt == null) return;
 
-		// Get current event
+		// Initialize visuals
+		// Event description
+		m_objectiveText.text = evt.objective.GetDescription();
+
+		// Target icon
+		m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + evt.objective.icon);
+
+		// Bonus dragon icon
+		m_bonusDragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + evt.bonusDragonSku + "/icon_disguise_0");	// Default skin
+
+		// Progress
 		if (m_progressBar != null) {
 			m_progressBar.RefreshRewards(evt);
 			m_progressBar.RefreshProgress(evt.progress);
@@ -133,5 +147,21 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 				BusyScreen.Hide(this);
 			} break;
 		}
+	}
+
+	/// <summary>
+	/// The bonus dragon info button has been pressed.
+	/// </summary>
+	public void OnBonusDragonInfoButton() {
+		// Get bonus dragon definition
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, GlobalEventManager.currentEvent.bonusDragonSku);
+		if(def == null) return;	// Shouldn't happen
+
+		// Show feedback
+		UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
+			LocalizationManager.SharedInstance.Localize("TID_EVENT_BONUS_DRAGON_INFO_MESSAGE", def.GetLocalized("tidName")),
+			new Vector2(0.5f, 0.5f),
+			(RectTransform)this.GetComponentInParent<Canvas>().transform
+		);
 	}
 }

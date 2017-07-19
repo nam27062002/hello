@@ -145,9 +145,10 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 		int numPills = Mathf.Min(evt.leaderboard.Count, m_maxPills);
 		Debug.Log("<color=orange>We have " + evt.leaderboard.Count + " entries on the leaderboard, creating " + numPills + " pills!</color>");
 		for(int i = 0; i < numPills; ++i) {
+			Debug.Log("<color=green>Leaderboard " + i + " (" + evt.leaderboard[i].position + "): </color><color=white>" + evt.leaderboard[i].userID + "</color>");
 			// Super-special case: Is it the current player?
 			if(!playerFound && evt.leaderboard[i].userID == playerData.userID) {
-				//Debug.Log("<color=orange>Inserting player pill at " + i + "!</color>");
+				Debug.Log("<color=orange>Inserting player pill at " + i + "!</color>");
 				// Use special pill
 				pill = m_playerPill;
 

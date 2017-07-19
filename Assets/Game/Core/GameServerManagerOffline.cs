@@ -264,6 +264,9 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			// Top percentile reward
 			eventData.Add("topReward", CreateEventRewardData(0.1f, "pet", "pet_24", -1));
 
+			// Bonuses
+			eventData.Add("bonusDragon", "dragon_reptile");
+
 			// Store response
 			res["response"] = eventData.ToString();
 		}
@@ -340,7 +343,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			m_socialInfoDatabasePool.Remove(playerSocialData.id);
 
 			// Select leaderboard size
-			float totalContributors = UnityEngine.Random.Range(50f, 500f);
+			float totalContributors = UnityEngine.Random.Range(50f, 150f);
 			switch(CPGlobalEventsTest.leaderboardSize) {
 				case CPGlobalEventsTest.LeaderboardSize.SIZE_0:		totalContributors = 0;		break;
 				case CPGlobalEventsTest.LeaderboardSize.SIZE_5:		totalContributors = 5;		break;
@@ -368,7 +371,11 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 					score = remainingScore;
 				} else {
 					// Leave enough score for the rest of contributors!
-					score = UnityEngine.Random.Range(minScorePerPlayer, remainingScore - remainingContributors * minScorePerPlayer);
+					score = UnityEngine.Random.Range(
+						minScorePerPlayer, 
+						//remainingScore - remainingContributors * minScorePerPlayer
+						Mathf.Min(remainingScore - remainingContributors * minScorePerPlayer, currentValue * 0.25f)	// Try to distribute score more evenly by limiting the max reward
+					);
 				}
 				remainingScore -= score;
 				remainingContributors--;
@@ -465,7 +472,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 					// Should stay?
 					if(shouldBeOnTheLeaderboard) {
 						// Update score
-						leaderboard[idx].score = _score;
+						leaderboard[idx].score += _score;
 					} else {
 						// Remove from the leaderboard
 						leaderboard.RemoveAt(idx);

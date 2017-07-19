@@ -790,6 +790,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224476993139538660}
   - component: {fileID: 222431119687370450}
+  - component: {fileID: 114784172530983676}
   - component: {fileID: 114242434558886848}
   m_Layer: 5
   m_Name: ButtonText
@@ -1142,7 +1143,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224033983963491486}
   - component: {fileID: 222815217539766134}
-  - component: {fileID: 114875369016207984}
   - component: {fileID: 114704304727378082}
   m_Layer: 5
   m_Name: ValueText
@@ -1351,7 +1351,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Global Event
+  m_tid: TID_EVENT_TITLE
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000010880648360
@@ -1929,7 +1929,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: You need to be online to contribute to the event!
+  m_tid: TID_EVENT_RESULTS_OFFLINE_MESSAGE
   m_caseType: 0
   m_replacements:
   - '#FFB712'
@@ -2132,7 +2132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Run Score
+  m_tid: TID_EVENT_RESULTS_RUN_SCORE_TITLE
   m_caseType: 0
   m_replacements:
   - '#FFB712'
@@ -2210,7 +2210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Connect
+  m_tid: TID_EVENT_RESULTS_NOT_LOGGED_IN_BUTTON
   m_caseType: 1
   m_replacements: []
 --- !u!114 &114088364460532996
@@ -3272,9 +3272,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tweenType: 7
+  m_tweenType: 6
   m_tweenDuration: 0.25
-  m_tweenValue: 0
+  m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0.1
   m_ignoreTimeScale: 1
@@ -3534,7 +3534,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: <sprite name="icon_key"/>BUY
+  m_tid: TID_EVENT_RESULTS_BUY_KEY_BUTTON
   m_caseType: 1
   m_replacements: []
 --- !u!114 &114351676751673884
@@ -4694,7 +4694,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013874201612}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 1297475563, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
@@ -4819,9 +4819,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tweenType: 7
+  m_tweenType: 6
   m_tweenDuration: 0.25
-  m_tweenValue: 0
+  m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0.1
   m_ignoreTimeScale: 1
@@ -5208,9 +5208,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tweenType: 7
+  m_tweenType: 6
   m_tweenDuration: 0.25
-  m_tweenValue: 0
+  m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0
   m_ignoreTimeScale: 1
@@ -5280,9 +5280,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tweenType: 7
+  m_tweenType: 6
   m_tweenDuration: 0.25
-  m_tweenValue: 0
+  m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0
   m_ignoreTimeScale: 1
@@ -5657,7 +5657,7 @@ MonoBehaviour:
   m_bonusDragonText: {fileID: 114704304727378082}
   m_finalScoreText: {fileID: 114385124323734642}
   m_keysBonusLabelText: {fileID: 114247108408813268}
-  m_useKeysButtonText: {fileID: 114242434558886848}
+  m_useKeysButtonText: {fileID: 114784172530983676}
   m_useKeysButtonAnim: {fileID: 114043327842673728}
   m_buyKeysButtonAnim: {fileID: 114467245737062594}
   m_keysBonusText: {fileID: 114327281109118266}
@@ -5667,6 +5667,7 @@ MonoBehaviour:
   m_bonusDragonGroupAnim: {fileID: 114948428781864492}
   m_bonusDragonOrnamentAnim: {fileID: 114284538273665302}
   m_keyBonusGroupAnim: {fileID: 114670211403802030}
+  m_rowDelay: 1
 --- !u!114 &114773427817139882
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5824,6 +5825,20 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114784172530983676
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1647803337086574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_EVENT_RESULTS_USE_KEY_BUTTON
+  m_caseType: 1
+  m_replacements: []
 --- !u!114 &114786988697667424
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5987,7 +6002,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Bonus Dragon
+  m_tid: TID_EVENT_RESULTS_BONUS_DRAGON_TITLE
   m_caseType: 0
   m_replacements:
   - '#FFB712'
@@ -6003,7 +6018,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Retry
+  m_tid: TID_EVENT_RESULTS_OFFLINE_RETRY_BUTTON
   m_caseType: 1
   m_replacements: []
 --- !u!114 &114829045108105378
@@ -6093,23 +6108,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114875369016207984
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1950859072031076}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7be9f59bb0dcd40a7b620ec7cb4b3371, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_duration: 1
-  m_onFinished:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
 --- !u!114 &114892949017307146
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6233,7 +6231,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Log in to social network to contribute to the event!
+  m_tid: TID_EVENT_RESULTS_NOT_LOGGED_IN_MESSAGE
   m_caseType: 0
   m_replacements:
   - '#FFB712'
@@ -6391,7 +6389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: Final Score
+  m_tid: TID_EVENT_RESULTS_FINAL_SCORE_TITLE
   m_caseType: 0
   m_replacements:
   - '#FFB712'
@@ -6434,9 +6432,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tweenType: 7
+  m_tweenType: 6
   m_tweenDuration: 0.25
-  m_tweenValue: 0
+  m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0
   m_ignoreTimeScale: 1
@@ -7220,9 +7218,9 @@ RectTransform:
   m_Father: {fileID: 224000012422039530}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 600, y: -573}
   m_SizeDelta: {x: 1200, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224239670623564738
@@ -7337,9 +7335,9 @@ RectTransform:
   m_Father: {fileID: 224000012422039530}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 600, y: -288}
   m_SizeDelta: {x: 1200, y: 140}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224301810193874218
@@ -7523,9 +7521,9 @@ RectTransform:
   m_Father: {fileID: 224000012422039530}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 600, y: -144}
   m_SizeDelta: {x: 1200, y: 140}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224455958824420484
@@ -7543,9 +7541,9 @@ RectTransform:
   m_Father: {fileID: 224000012422039530}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 600, y: 0}
   m_SizeDelta: {x: 1200, y: 140}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224461881094943142
@@ -7638,9 +7636,9 @@ RectTransform:
   m_Father: {fileID: 224000012422039530}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 600, y: -428}
   m_SizeDelta: {x: 1200, y: 70}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224562234692592996
@@ -7748,9 +7746,9 @@ RectTransform:
   m_Father: {fileID: 224000012422039530}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 600, y: -288}
   m_SizeDelta: {x: 1200, y: 4}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224666806784308540
@@ -7858,9 +7856,9 @@ RectTransform:
   m_Father: {fileID: 224000012422039530}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 600, y: -144}
   m_SizeDelta: {x: 1200, y: 4}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224793506445723818
@@ -8065,7 +8063,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 599.7644, y: -80}
+  m_AnchoredPosition: {x: 600, y: -80}
   m_SizeDelta: {x: 460, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224966422412491808

@@ -210,8 +210,10 @@ public class PopupCurrencyShop : MonoBehaviour {
 		// Hide other currency counters to prevent conflicts
 		Messenger.Broadcast<bool>(GameEvents.UI_TOGGLE_CURRENCY_COUNTERS, false);
 
-		// Reset packs purchased list
-		m_packsPurchased.Clear();
+        HDTrackingManager.Instance.Notify_StoreVisited();
+
+        // Reset packs purchased list
+        m_packsPurchased.Clear();
 	}
 
 	/// <summary>

@@ -194,8 +194,9 @@ fixed4 frag(v2f i) : SV_Target
 
 #if defined (OPAQUEALPHA)
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
+#endif
 
-#elif defined (CUSTOM_ALPHA)
+#if defined (CUSTOM_ALPHA)
 	float st = smoothstep(_AlphaMSKOffset - 0.3, _AlphaMSKOffset, i.height);
 	float2 off = float2(0.333, _Time.y * 0.75);
 	float alpha = tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off).w;
