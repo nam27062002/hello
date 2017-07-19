@@ -55,6 +55,8 @@ public class MissionPill : MonoBehaviour {
 		}
 	}
 
+	private PopupController m_adBlockingPopup;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -378,8 +380,21 @@ public class MissionPill : MonoBehaviour {
 	public void OnFreeRemoveMission(){
 		if(m_mission == null) return;
 
-		PopupController popup = PopupManager.OpenPopupInstant(PopupAdPlaceholder.PATH);
-		popup.OnClosePostAnimation.AddListener(OnRemoveMissionAdClosed);
+		m_adBlockingPopup = PopupManager.OpenPopupInstant("UI/Popups/InGame/PF_PopupAdBlocker");
+		GameAds.instance.ShowRewarded( OnVideoRewardCallback );
+		// PopupController popup = PopupManager.OpenPopupInstant(PopupAdPlaceholder.PATH);
+		// popup.OnClosePostAnimation.AddListener(OnRemoveMissionAdClosed);
+	}
+
+	void OnVideoRewardCallback( bool done )
+	{
+		m_adBlockingPopup.Close(true);
+		if ( done )
+		{
+			UsersManager.currentUser.dailyRemoveMissionAdUses++;
+			MissionManager.RemoveMission(m_missionDifficulty);
+			PersistenceManager.Save();
+		}
 	}
 
 	/// <summary>

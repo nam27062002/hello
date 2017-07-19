@@ -11,7 +11,7 @@ public class GameStoreManagerCalety : GameStoreManager
 	private class CaletyGameStoreListener : StoreManager.StoreListenerBase
     {
     	public bool m_isReady = false;
-        public override void onPurchaseCompleted(string sku, string strTransactionID, JSONNode kReceiptJSON) 
+		public override void onPurchaseCompleted(string sku, string strTransactionID, JSONNode kReceiptJSON, string strPlatformOrderID) 
 		{
 			string gameSku = PlatformSkuToGameSku( sku );
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.SHOP_PACKS, gameSku);
@@ -150,7 +150,7 @@ public class GameStoreManagerCalety : GameStoreManager
     {
 		yield return new WaitForSecondsRealtime( 0.25f );
 		string item = GameSkuToPlatformSku( _sku );
-    	m_storeListener.onPurchaseCompleted( item, "", null);
+    	m_storeListener.onPurchaseCompleted( item, "", null, "");
     }
 
     private string GameSkuToPlatformSku( string gameSku )
