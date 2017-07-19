@@ -136,6 +136,9 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 			// Set size and anchoring properties
 			m_playerPillSlot.sizeDelta = pillTransform.sizeDelta;
 			InitPillAnchors(ref m_playerPillSlot);
+
+			// Scroll to player's position on click
+			m_playerPill.GetComponent<Button>().onClick.AddListener(OnPlayerPillClick);
 		}
 
 		// Remove player pill from the list, we will insert it at the proper position when it matters
@@ -145,7 +148,7 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 		int numPills = Mathf.Min(evt.leaderboard.Count, m_maxPills);
 		Debug.Log("<color=orange>We have " + evt.leaderboard.Count + " entries on the leaderboard, creating " + numPills + " pills!</color>");
 		for(int i = 0; i < numPills; ++i) {
-			Debug.Log("<color=green>Leaderboard " + i + " (" + evt.leaderboard[i].position + "): </color><color=white>" + evt.leaderboard[i].userID + "</color>");
+			//Debug.Log("<color=green>Leaderboard " + i + " (" + evt.leaderboard[i].position + "): </color><color=white>" + evt.leaderboard[i].userID + "</color>");
 			// Super-special case: Is it the current player?
 			if(!playerFound && evt.leaderboard[i].userID == playerData.userID) {
 				Debug.Log("<color=orange>Inserting player pill at " + i + "!</color>");
@@ -247,7 +250,7 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 		m_scrollList.content.sizeDelta = new Vector2(m_scrollList.content.sizeDelta.x, deltaY + pillSize.y/2f + m_listPadding);	// delta is pointing to where the next pill should be placed
 
 		// Launch animation?
-		m_scrollList.verticalNormalizedPosition = 1f;
+		m_scrollList.verticalNormalizedPosition = 2f;
 		m_scrollList.ScrollToPositionDelayedFrames(m_scrollList.normalizedPosition, 1);
 	}
 
@@ -289,5 +292,31 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 	/// </summary>
 	public void OnLeaderboardUpdated() {
 		Refresh();
+	}
+
+	/// <summary>
+	/// The player's pill has been clicked.
+	/// </summary>
+	public void OnPlayerPillClick() {
+		// Scroll to player's position
+		// Compensate content size with viewport to properly compute delta corresponding to the target pill
+		float viewportHeight = m_scrollList.viewport.rect.height;
+		float contentHeight = m_scrollList.content.sizeDelta.y - viewportHeight;
+
+		// Compute pill's delta
+		float targetDeltaY = Mathf.Abs(m_playerPillSlot.anchoredPosition.y / contentHeight);
+
+		// Center in viewport
+		float viewportRelativeSize = viewportHeight / contentHeight;
+		targetDeltaY -= viewportRelativeSize/2f;
+
+		// Reverse delta (scroll list goes 1 to 0)
+		targetDeltaY = 1f - targetDeltaY;
+
+		// Stop inertia
+		m_scrollList.velocity = Vector2.zero;
+
+		// Launch anim!
+		m_scrollList.DOVerticalNormalizedPos(targetDeltaY, 0.5f).SetEase(Ease.OutQuad);
 	}
 }
