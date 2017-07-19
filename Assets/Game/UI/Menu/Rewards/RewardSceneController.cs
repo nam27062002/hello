@@ -43,10 +43,12 @@ public class RewardSceneController : MonoBehaviour {
 	[Tooltip("One per rarity, matching order")]
 	[SerializeField] private ParticleSystem[] m_openFX = new ParticleSystem[(int)EggReward.Rarity.COUNT];
 
-	[Separator("Alternative Rewards")]
-	[SerializeField] private GameObject m_coinsReward = null;
+	[Separator("Reward views")]
+	[SerializeField] private GameObject m_petReward = null;
+	[SerializeField] private GameObject m_hcReward = null;
+	[SerializeField] private GameObject m_scReward = null;
 	[Tooltip("One per rarity, matching order. None for \"special\".")]
-	[SerializeField] private GameObject[] m_goldenFragments = new GameObject[(int)EggReward.Rarity.COUNT];
+	[SerializeField] private GameObject[] m_goldenFragmentsRewards = new GameObject[(int)EggReward.Rarity.COUNT - 1];
 
 	[Separator("Others")]
 	[Tooltip("Will replace the camera snap point for the photo screen when doing photos to the egg reward.")]
@@ -55,7 +57,6 @@ public class RewardSceneController : MonoBehaviour {
 	//------------------------------------------------------------------------------------------------------------//
 
 	public UnityEvent OnAnimFinished = new UnityEvent();
-	public UnityEvent OnEggOpenFinished = new UnityEvent();
 
 	// Internal
 	private GameObject m_rewardView = null;
@@ -107,6 +108,9 @@ public class RewardSceneController : MonoBehaviour {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
+		// Clean up
+		Clear();
+
 		// Unsubscribe from external events
 		Messenger.RemoveListener<EggView, int>(GameEvents.EGG_TAP, OnEggTap);
 	}
@@ -126,7 +130,7 @@ public class RewardSceneController : MonoBehaviour {
 		// Make sure the rarity array has exactly the same length as rarities in the game.
 		m_openFX.Resize((int)EggReward.Rarity.COUNT);
 		m_tapFX.Resize((int)EggReward.Rarity.COUNT);
-		m_goldenFragments.Resize((int)EggReward.Rarity.COUNT);
+		m_goldenFragmentsRewards.Resize((int)EggReward.Rarity.COUNT);
 	}
 
 	//------------------------------------------------------------------------//
@@ -154,27 +158,8 @@ public class RewardSceneController : MonoBehaviour {
 			m_eggView = null;
 		}
 
-		// Hide golden fragments view
-		for (int i = 0; i < m_goldenFragments.Length; i++) {
-			if (m_goldenFragments[i] != null) {
-				// Pause rotation animation (to stop updating it)
-				m_goldenFragments[i].transform.DOPause();
-				m_goldenFragments[i].SetActive(false);
-			}
-		}
-
-		// Hide coins fragments view
-		if (m_coinsReward != null) {
-			// Pause rotation animation (to stop updating it)
-			m_coinsReward.transform.DOPause();
-			m_coinsReward.SetActive(false);
-		}
-
-		// Destroy reward view
-		if (m_rewardView != null) {
-			GameObject.Destroy(m_rewardView);
-			m_rewardView = null;
-		}
+		HideAllRewards();
+		m_rewardView = null;
 
 		// Stop all FX
 		if (m_godRaysFX != null) {
@@ -193,6 +178,16 @@ public class RewardSceneController : MonoBehaviour {
 
 		if (m_explosionFX != null) {
 			m_explosionFX.Stop(true);
+		}
+	}
+
+	private void HideAllRewards() {
+		m_petReward.SetActive(false);
+		m_hcReward.SetActive(false);
+		m_scReward.SetActive(false);
+
+		for (int i = 0; i < m_goldenFragmentsRewards.Length; ++i) {
+			m_goldenFragmentsRewards[i].SetActive(false);
 		}
 	}
 
@@ -270,18 +265,17 @@ public class RewardSceneController : MonoBehaviour {
 	}
 
 	private void InitPetView(Metagame.RewardPet _petReward) {
+		HideAllRewards();
+
 		// Aux vars
 		Sequence seq = DOTween.Sequence();
 		Vector2 baseIdleVelocity = m_dragController.idleVelocity;
 
-		// Create a fake reward view
-		// Show a 3D preview of the pet
-		m_rewardView = new GameObject("RewardView");
-		m_rewardView.transform.SetParentAndReset(m_rewardAnchor);	// Attach it to the anchor and reset transformation
-		m_rewardView.transform.Rotate(0f, 90f, 0f);	// Start looking at camera!
-
 		// Use a PetLoader to simplify things
-		MenuPetLoader loader = m_rewardView.AddComponent<MenuPetLoader>();
+		m_rewardView = m_petReward;
+		m_rewardView.SetActive(true);
+
+		MenuPetLoader loader = m_rewardView.GetComponent<MenuPetLoader>();
 		loader.Setup(MenuPetLoader.Mode.MANUAL, MenuPetPreview.Anim.IN, true);
 		loader.Load(_petReward.value);
 
@@ -296,9 +290,9 @@ public class RewardSceneController : MonoBehaviour {
 		GameObject replacementRewardView = null;
 		if (_petReward.WillBeReplaced()) {
 			if (_petReward.ReplacementCurrency() == UserProfile.Currency.GOLDEN_FRAGMENTS) {
-				replacementRewardView = m_goldenFragments[(int)_petReward.rarity];
+				replacementRewardView = m_goldenFragmentsRewards[(int)_petReward.rarity];
 			} else {
-				replacementRewardView = m_coinsReward;
+				replacementRewardView = m_scReward;
 			}
 		}
 
@@ -358,21 +352,24 @@ public class RewardSceneController : MonoBehaviour {
 			// Show with some delay to sync with pet's animation
 			seq.Insert(0.15f, m_godRaysFX.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
 		}
+
+		seq.OnComplete(OnAnimationFinish);
 	}
 
-	private void InitCurrencyView(Metagame.RewardCurrency _reward) {		
+	private void InitCurrencyView(Metagame.RewardCurrency _reward) {
+		HideAllRewards();
+
 		// Aux vars
 		Sequence seq = DOTween.Sequence();
 		Vector2 baseIdleVelocity = m_dragController.idleVelocity;
 
 		if (_reward.currency == UserProfile.Currency.GOLDEN_FRAGMENTS) {
-			m_rewardView = m_goldenFragments[(int)_reward.rarity];
+			m_rewardView = m_goldenFragmentsRewards[(int)_reward.rarity];
+		} else if (_reward.currency == UserProfile.Currency.HARD) {
+			m_rewardView = m_hcReward;
 		} else {
-			m_rewardView = m_coinsReward;
+			m_rewardView = m_scReward;
 		}
-
-		m_rewardView.transform.SetParentAndReset(m_rewardAnchor);	// Attach it to the anchor and reset transformation
-		m_rewardView.transform.Rotate(0f, 90f, 0f);	// Start looking at camera!
 
 		m_rewardView.SetActive(true);
 
@@ -386,7 +383,7 @@ public class RewardSceneController : MonoBehaviour {
 			2f)	// Duration
 			.From()
 			.SetEase(Ease.OutCubic)
-		).OnComplete(OnEggOpenFinishedCallback);
+		).OnComplete(OnAnimationFinish);
 	}
 
 	//------------------------------------------------------------------//
@@ -411,8 +408,6 @@ public class RewardSceneController : MonoBehaviour {
 	/// Launch the egg open animation.
 	/// </summary>
 	public void LaunchOpenEggAnim() {
-		m_currentReward.Collect();
-
 		// Ignore if we don't have a valid egg view
 		if(m_eggView == null) return;
 
@@ -487,9 +482,15 @@ public class RewardSceneController : MonoBehaviour {
 		}
 	}
 
-	private void OnEggOpenFinishedCallback() {
-		// Notify external script
+	private void OnAnimationFinish() {
 		m_currentReward = null;
+		// Notify external script
 		OnAnimFinished.Invoke();
+	}
+
+	private void OnEggOpenFinishedCallback() {
+		// Next we have to open the reward inside the egg
+		m_currentReward = null;
+		OpenReward();
 	}
 }

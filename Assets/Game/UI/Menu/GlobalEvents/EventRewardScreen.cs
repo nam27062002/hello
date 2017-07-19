@@ -39,7 +39,13 @@ public class EventRewardScreen : MonoBehaviour {
 		m_progressBar.RefreshRewards(m_event);
 		m_progressBar.RefreshProgress(0);
 
+		Messenger.AddListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
+
 		m_state = State.OpenNextReward;
+	}
+
+	void OnDisable() {
+		Messenger.RemoveListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
 	}
 
 	/// <summary>
@@ -60,7 +66,6 @@ public class EventRewardScreen : MonoBehaviour {
 
 					// Subscribe to listeners
 					m_sceneController.OnAnimFinished.AddListener(OnStateNextReward);
-					m_sceneController.OnEggOpenFinished.AddListener(OnEggOpenFinished);
 				}
 			}
 		}
@@ -107,7 +112,6 @@ public class EventRewardScreen : MonoBehaviour {
 
 	private void LaunchRewardAnimation() {
 		// Aux vars
-		EggReward rewardData ;//= m_scene.eggData.rewardData;
 		bool goldenEggCompleted = EggManager.goldenEggCompleted;
 
 		// Show HUD
@@ -140,7 +144,7 @@ public class EventRewardScreen : MonoBehaviour {
 			);
 		}*/
 
-		m_sceneController.OpenReward();
+		m_sceneController.LaunchOpenEggAnim();
 	}
 
 
@@ -149,8 +153,8 @@ public class EventRewardScreen : MonoBehaviour {
 		m_state = State.OpenNextReward;
 	}
 
-	private void OnEggOpenFinished() {
-		// Launch the reward animation
-		LaunchRewardAnimation();
+	private void OnEggCollected(Egg _egg) {		
+		// Delay to sync with the egg anim
+		UbiBCN.CoroutineManager.DelayedCall(LaunchRewardAnimation, 1.75f, false);
 	}
 }
