@@ -193,7 +193,7 @@ public class CustomParticleSystem : MonoBehaviour
             cp.m_active = false;
 #else
             CustomParticle cp = m_particles[c];
-            cp.SetActive(false);
+			cp.gameObject.SetActive(false);
 #endif
             m_particlesStack.Push(cp);
         }
