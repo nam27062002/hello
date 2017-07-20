@@ -290,6 +290,7 @@ namespace AI {
 
 						m_velocity += m_acceleration * Time.fixedDeltaTime;
 						m_velocity = Vector3.ClampMagnitude(m_velocity, terminalVelocity) + m_externalVelocity;
+						m_rbody.angularVelocity = Vector3.zero;
 						m_rbody.velocity = m_velocity;
 					} break;
 			}

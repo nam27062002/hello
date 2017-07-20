@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: MT_SmallFishingBoat
+  m_Name: MT_MineWagon
   m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
@@ -48,7 +48,7 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: b6d092ba153764768b9de8b50be513cd, type: 3}
+        m_Texture: {fileID: 2800000, guid: c30270e41dccf9441ab56d94261bdcfa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -82,9 +82,6 @@ Material:
     - first:
         name: _DstBlend
       second: 0
-    - first:
-        name: _FresnelPower
-      second: 0.27
     - first:
         name: _GlossMapScale
       second: 1
@@ -127,10 +124,7 @@ Material:
     m_Colors:
     - first:
         name: _Color
-      second: {r: 0.588, g: 0.588, b: 0.588, a: 1}
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _FresnelColor
-      second: {r: 0, g: 0, b: 0, a: 0}

@@ -19,6 +19,7 @@ namespace AI {
 
 		//--------------------------------------------------
 		[SeparatorAttribute("Orientation")]
+		[SerializeField] private bool m_faceDirection = false;
 		[SerializeField] private bool m_limitHorizontalRotation = false;
 		[SerializeField] private float m_faceLeftAngle = -90f;
 		[SerializeField] private float m_faceRightAngle = 90f;
@@ -69,10 +70,14 @@ namespace AI {
 				ChangeState();
 			}
 
-			m_direction = m_pilot.direction;
+			if (m_faceDirection) {
+				m_direction = m_velocity.normalized;
+			} else {
+				m_direction = m_pilot.direction;
 
-			if (!m_pilot.IsActionPressed(Pilot.Action.Stop)) {
-				m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;
+				if (!m_pilot.IsActionPressed(Pilot.Action.Stop)) {
+					m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;
+				}
 			}
 
 			switch (m_subState) {
@@ -166,6 +171,11 @@ namespace AI {
 
 
 		protected override void ExtendedUpdateFreeFall() {
+			if (m_faceDirection) {
+				m_direction = m_velocity.normalized;
+				UpdateOrientation();
+			}
+
 			if (m_onGround) {
 				m_fallTimer = FREE_FALL_THRESHOLD;
 				m_machine.SetSignal(Signals.Type.FallDown, false);
