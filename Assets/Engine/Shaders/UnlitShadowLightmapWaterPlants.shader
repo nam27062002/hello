@@ -19,15 +19,6 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Animated Vertex (Water plants
 		LOD 100
 		
 		Pass {		
-/*
-			Stencil
-			{
-				Ref 4
-				Comp always
-				Pass Replace
-				ZFail keep
-			}
-*/
 //			cull front
 			cull off
 			ZWrite On
