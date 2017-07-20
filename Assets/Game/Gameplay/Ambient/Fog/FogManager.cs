@@ -9,7 +9,7 @@ public class FogManager : MonoBehaviour
 	private int m_maxGradientTextures = 64;
 
 	[System.Serializable]
-	public class FogAttributes
+	public class FogAttributes// : ISerializationCallbackReceiver
 	{
 		public const int TEXTURE_SIZE = 128;
 
@@ -21,6 +21,12 @@ public class FogManager : MonoBehaviour
 			get { return m_texture; } 
 			set { m_texture = value; } 
 		}
+
+
+		public List<float> m_alphaTimes = new List<float>();
+		public List<float> m_alphaValues = new List<float>();
+		public List<float> m_colorTimes = new List<float>();
+		public List<Color> m_colorValues = new List<Color>();
 
 		public void CreateTexture()
 		{
@@ -60,6 +66,45 @@ public class FogManager : MonoBehaviour
 			Shader.SetGlobalFloat("_FogEnd", m_fogEnd);
 			Shader.SetGlobalTexture("_FogTexture", texture);
 		}
+
+
+		public void SaveKeys()
+	    {
+	    	m_alphaTimes.Clear();
+	    	m_alphaValues.Clear();
+	    	for( int i = 0; i<m_fogGradient.alphaKeys.Length; i++ )
+	    	{
+	    		m_alphaTimes.Add( m_fogGradient.alphaKeys[i].time );
+				m_alphaValues.Add( m_fogGradient.alphaKeys[i].alpha );
+	    	}
+
+			m_colorTimes.Clear();
+	    	m_colorValues.Clear();
+	    	for( int i = 0; i<m_fogGradient.colorKeys.Length; i++ )
+	    	{
+				m_colorTimes.Add( m_fogGradient.colorKeys[i].time );
+				m_colorValues.Add( m_fogGradient.colorKeys[i].color );
+	    	}
+	    }
+
+		public void LoadKeys()
+	    {
+	    	GradientAlphaKey[] alphas = m_fogGradient.alphaKeys;
+	    	GradientColorKey[] colors = m_fogGradient.colorKeys;
+			for( int i = 0; i<m_alphaTimes.Count; i++ )
+			{
+				alphas[i].alpha = m_alphaValues[i];
+				alphas[i].time = m_alphaTimes[i];
+			}
+
+			for( int i = 0; i<m_colorTimes.Count; i++ )
+			{
+				colors[i].color = m_colorValues[i];
+				colors[i].time = m_colorTimes[i];
+			}
+			m_fogGradient.SetKeys(colors, alphas);
+	    }
+
 	}
 
 
