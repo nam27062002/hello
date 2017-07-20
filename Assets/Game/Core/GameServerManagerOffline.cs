@@ -374,7 +374,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 					score = UnityEngine.Random.Range(
 						minScorePerPlayer, 
 						//remainingScore - remainingContributors * minScorePerPlayer
-						Mathf.Min(remainingScore - remainingContributors * minScorePerPlayer, currentValue * 0.25f)	// Try to distribute score more evenly by limiting the max reward
+						Mathf.Min(remainingScore - remainingContributors * minScorePerPlayer, currentValue/remainingContributors)	// Try to distribute score more evenly by limiting the max reward
 					);
 				}
 				remainingScore -= score;

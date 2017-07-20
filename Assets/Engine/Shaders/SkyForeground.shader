@@ -23,7 +23,7 @@
 
 
 		Cull off
-//		ZWrite Off
+		ZWrite Off
 
 		Pass
 		{

@@ -134,7 +134,7 @@ public class MenuSceneController : SceneController {
 	protected IEnumerator Start()
 	{
 		// Make sure loading screen is hidden
-		LoadingScreen.Toggle(false);
+		LoadingScreen.Toggle(false, false);
 
 		// Start loading pet pill's on the background!
 		PetsScreenController petsScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();

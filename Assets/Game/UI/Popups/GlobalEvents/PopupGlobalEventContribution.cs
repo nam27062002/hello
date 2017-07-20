@@ -79,6 +79,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	private bool m_bonusDragon = false;
 	private long m_finalScore = 0;
 	private bool m_continueEnabled = false;
+	private Sequence m_activePanelSequence = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -124,7 +125,11 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-
+		// Clear sequence
+		if(m_activePanelSequence != null) {
+			m_activePanelSequence.Kill();
+			m_activePanelSequence = null;
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -227,7 +232,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 		m_keyBonusGroupAnim.Hide(false);
 
 		// Sequentially update values
-		DOTween.Sequence()
+		m_activePanelSequence = DOTween.Sequence()
 			.SetId(tweenId)
 
 			// Base score
@@ -268,8 +273,9 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 			// Tap to continue
 			.AppendCallback(() => {
 				// Allow continue
-				m_tapToContinueAnim.Show();
 				m_continueEnabled = true;
+				m_tapToContinueAnim.Show();
+				m_activePanelSequence = null;
 			});
 	}
 
@@ -401,33 +407,43 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	/// The submit score button has been pressed.
 	/// </summary>
 	public void OnTapToContinue() {
-		// Allowed?
-		if(!m_continueEnabled) return;
-
 		// Depends on active panel
 		switch(m_activePanel) {
 			case Panel.ACTIVE: {
-				// Attempt to do the contribution (we may have lost connectivity)
-				GlobalEventManager.ErrorCode res = GlobalEventManager.Contribute(
-					m_bonusDragon ? 2f : 1f,
-					m_usedKey ? 2f : 1f
-				);
-				if(res == GlobalEventManager.ErrorCode.NONE) {
-					// Success! Wait for the confirmation from the server
-					BusyScreen.Show(this);
-				} else {
-					// We can't contribute! Refresh panel
-					InitPanel(true, false);
+				// If the sequence is running, fast forward
+				if(m_activePanelSequence != null) {
+					// Accelerate everything
+					m_activePanelSequence.timeScale = 10;
+					m_scoreText.duration = 0.1f;
+					m_finalScoreText.duration = 0.1f;
+				}
 
-					// Reset submission attempts
-					m_submitAttempts = 0;
+				// Sequence has finished
+				else if(m_continueEnabled) {
+					// Attempt to do the contribution (we may have lost connectivity)
+					GlobalEventManager.ErrorCode res = GlobalEventManager.Contribute(
+						m_bonusDragon ? 2f : 1f,
+						m_usedKey ? 2f : 1f
+					);
+					if(res == GlobalEventManager.ErrorCode.NONE) {
+						// Success! Wait for the confirmation from the server
+						BusyScreen.Show(this);
+					} else {
+						// We can't contribute! Refresh panel
+						InitPanel(true, false);
+
+						// Reset submission attempts
+						m_submitAttempts = 0;
+					}
 				}
 			} break;
 
 			case Panel.LOG_IN:
 			case Panel.OFFLINE: {
-				// Discard contribution
-				CloseAndDiscard();
+				// Discard contribution if allowed
+				if(m_continueEnabled) {
+					CloseAndDiscard();
+				}
 			} break;
 		}
 	}
