@@ -54177,8 +54177,12 @@ Prefab:
     m_TransformParent: {fileID: 31688071}
     m_Modifications:
     - target: {fileID: 11426232, guid: 1e31994dd8646524e87e65f72b42b575, type: 2}
-      propertyPath: m_deactivationTriggers.Array.size
+      propertyPath: m_activationTriggers.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11426232, guid: 1e31994dd8646524e87e65f72b42b575, type: 2}
+      propertyPath: m_deactivationTriggers.Array.size
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 465066, guid: 1e31994dd8646524e87e65f72b42b575, type: 2}
       propertyPath: m_LocalPosition.x
@@ -54218,7 +54222,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 158102, guid: 1e31994dd8646524e87e65f72b42b575, type: 2}
       propertyPath: m_Name
-      value: SP_MineMedium_Static_0_26000
+      value: SP_MineMedium_Static_26000_0
       objectReference: {fileID: 0}
     - target: {fileID: 11426232, guid: 1e31994dd8646524e87e65f72b42b575, type: 2}
       propertyPath: m_spawnTime.min
@@ -54250,6 +54254,10 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11426232, guid: 1e31994dd8646524e87e65f72b42b575, type: 2}
       propertyPath: m_deactivationTriggers.Array.data[0].value
+      value: 26000
+      objectReference: {fileID: 0}
+    - target: {fileID: 11426232, guid: 1e31994dd8646524e87e65f72b42b575, type: 2}
+      propertyPath: m_activationTriggers.Array.data[0].value
       value: 26000
       objectReference: {fileID: 0}
     m_RemovedComponents: []
