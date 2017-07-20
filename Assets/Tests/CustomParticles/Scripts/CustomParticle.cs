@@ -35,7 +35,7 @@ public class CustomParticle : MonoBehaviour {
     }
 	// Use this for initialization
 	void Start () {
-        m_renderer.material = m_pSystem.m_particleMaterial;
+        m_renderer.material = m_pSystem.m_particleMaterialInstance;
         m_filter.sharedMesh = m_pSystem.m_particleMesh;
         m_currentCamera = Camera.main;
     }

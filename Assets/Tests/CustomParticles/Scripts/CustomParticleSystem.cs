@@ -81,8 +81,12 @@ public class CustomParticleSystem : MonoBehaviour
     public Material m_particleMaterial;
     public Mesh m_particleMesh;
 
-    [Header("Gravity")]
+    [Header("Forces")]
     public Vector3 m_gravity;
+
+
+    [HideInInspector]
+    public Material m_particleMaterialInstance;
 
 #if (CUSTOMPARTICLES_DRAWMESH)
 
@@ -140,6 +144,9 @@ public class CustomParticleSystem : MonoBehaviour
         m_particles = new CustomParticle[m_MaxParticles];
         m_particlesStack = new Stack<CustomParticle>(m_MaxParticles);
 #endif
+
+        m_particleMaterialInstance = new Material(m_particleMaterial);
+        m_particleMaterialInstance.EnableKeyword("CUSTOMPARTICLESYSTEM");
 
         for (int c = 0; c < m_MaxParticles; c++)
         {
@@ -303,7 +310,7 @@ public class CustomParticleSystem : MonoBehaviour
                 //                matList.Add(cp.mat);
                 m_matProp.SetColor("_VColor", col);
 
-                Graphics.DrawMesh(m_particleMesh, cp.mat, m_particleMaterial, 0, null, 0, m_matProp);
+                Graphics.DrawMesh(m_particleMesh, cp.mat, m_particleMaterialInstance, 0, null, 0, m_matProp);
 
                 if (pTime > cp.m_particleDuration)
                 {
