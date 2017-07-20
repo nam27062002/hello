@@ -317,6 +317,6 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 		m_scrollList.velocity = Vector2.zero;
 
 		// Launch anim!
-		m_scrollList.DOVerticalNormalizedPos(targetDeltaY, 0.5f).SetEase(Ease.OutQuad);
+		m_scrollList.DOVerticalNormalizedPos(targetDeltaY, 0.5f).SetEase(Ease.OutExpo);
 	}
 }
