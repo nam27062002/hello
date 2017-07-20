@@ -46,7 +46,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 	}
 
 	SubShader {
-		Tags { "Queue"="Geometry" "IgnoreProjector"="True" "RenderType"="Opaque" "LightMode"="ForwardBase" }
+		Tags { "Queue"="Geometry+10" "IgnoreProjector"="True" "RenderType"="Opaque" "LightMode"="ForwardBase" }
 		Cull Back
 	//	LOD 100
 		ColorMask RGBA

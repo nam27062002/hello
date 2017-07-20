@@ -87,6 +87,60 @@ public class HungryDragonEditorMenu
         DeleteEmptyFolders.DeleteFolders();
     }
 
+	[MenuItem("Hungry Dragon/Tools/Fog Area Save Gradients", false, 1)]
+    public static void FogAreaSave()
+    {
+		FogArea[] allObjects = UnityEngine.Object.FindObjectsOfType<FogArea>();
+		foreach( FogArea go in allObjects)
+		{
+			if ( go.gameObject.scene.IsValid() )
+			{
+				go.m_attributes.SaveKeys();
+				Undo.RecordObject(go, "marking");
+				EditorUtility.SetDirty(go);
+			}
+		}
+
+		FogManager[] allManagers = UnityEngine.Object.FindObjectsOfType<FogManager>();
+		foreach( FogManager go in allManagers)
+		{
+			if ( go.gameObject.scene.IsValid() )
+			{
+				go.m_defaultAreaFog.SaveKeys();
+				Undo.RecordObject(go, "marking");
+				EditorUtility.SetDirty(go);
+			}
+		}
+		EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+    }
+
+	[MenuItem("Hungry Dragon/Tools/Fog Area Restore Gradients", false, 1)]
+    public static void FogAreaLoad()
+    {
+		FogArea[] allObjects = UnityEngine.Object.FindObjectsOfType<FogArea>();
+		foreach( FogArea go in allObjects)
+		{
+			if ( go.gameObject.scene.IsValid() )
+			{
+				go.m_attributes.LoadKeys();
+				Undo.RecordObject(go, "marking");
+				EditorUtility.SetDirty(go);
+			}
+		}
+		FogManager[] allManagers = UnityEngine.Object.FindObjectsOfType<FogManager>();
+		foreach( FogManager go in allManagers)
+		{
+			if ( go.gameObject.scene.IsValid() )
+			{
+				go.m_defaultAreaFog.LoadKeys();
+				Undo.RecordObject(go, "marking");
+				EditorUtility.SetDirty(go);
+			}
+		}
+		EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+    }
+
+
     /// <summary>
     /// Simple content viewer.
     /// </summary>
