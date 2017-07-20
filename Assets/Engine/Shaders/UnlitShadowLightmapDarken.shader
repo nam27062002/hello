@@ -12,7 +12,6 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Darken"
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_DarkenPosition("Darken position",  float) = 0.0
 		_DarkenDistance("Darken distance",  float) = 20.0
-		_StencilMask("Stencil Mask", int) = 10
 	}
 
 	SubShader {
@@ -20,15 +19,6 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Darken"
 		LOD 100
 		
 		Pass {		
-
-			Stencil
-			{
-				Ref [_StencilMask]
-				Comp always
-				Pass Replace
-				ZFail keep
-			}
-
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
