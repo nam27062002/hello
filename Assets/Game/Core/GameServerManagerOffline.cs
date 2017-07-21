@@ -295,7 +295,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			currentValue = 60000f;	// Default initial value
 			m_eventValues[_eventID] = currentValue;
 		}
-		eventData.Add("currentValue", currentValue.ToString(JSON_FORMAT));
+		eventData.Add("globalScore", currentValue.ToString(JSON_FORMAT));
 
 		// Current player data
 		GlobalEventUserData playerEventData = UsersManager.currentUser.GetGlobalEventData(_eventID);
@@ -365,13 +365,13 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			leaderboard = new List<GlobalEventUserData>(100);
 			while(remainingContributors > 0 && remainingScore > 0f && leaderboard.Count <= 100) {
 				// Compute new score for this user
-				float score = 0f;
+				int score = 0;
 				if(remainingContributors == 1) {
 					// Last contributor? Put all the remaining score
-					score = remainingScore;
+					score = Mathf.CeilToInt(remainingScore);
 				} else {
 					// Leave enough score for the rest of contributors!
-					score = UnityEngine.Random.Range(
+					score = (int)UnityEngine.Random.Range(
 						minScorePerPlayer, 
 						//remainingScore - remainingContributors * minScorePerPlayer
 						Mathf.Min(remainingScore - remainingContributors * minScorePerPlayer, currentValue/remainingContributors)	// Try to distribute score more evenly by limiting the max reward
@@ -418,7 +418,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
 		// Update position for each data
 		for(int i = 0; i < leaderboard.Count; i++) {
-			leaderboard[i].position = i;
+			// leaderboard[i].position = i;
 
 			// If it's the player, update position as well
 			if(leaderboard[i].userID == playerEventData.userID) {
@@ -433,7 +433,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		// Create a json array with every entry in the leaderboard
 		SimpleJSON.JSONArray leaderboardData = new SimpleJSON.JSONArray();
 		for(int i = 0; i < leaderboard.Count; i++) {
-			leaderboardData.Add(leaderboard[i].Save(false));
+			leaderboardData.Add(leaderboard[i].Save(false, false, false));
 		}
 		eventData.Add("leaderboard", leaderboardData);
 
@@ -448,7 +448,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_score">The score to be registered.</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_RegisterScore(int _eventID, float _score, ServerCallback _callback) {
+	override public void GlobalEvent_RegisterScore(int _eventID, int _score, ServerCallback _callback) {
 		// Increase event's current value
 		if(!m_eventValues.ContainsKey(_eventID)) {
 			// Invalid event ID, simulate validation error

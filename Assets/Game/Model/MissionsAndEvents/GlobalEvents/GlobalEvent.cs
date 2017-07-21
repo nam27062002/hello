@@ -146,7 +146,7 @@ public partial class GlobalEvent {
 	/// Current value as well as local leaderboard will be updated.
 	/// </summary>
 	/// <param name="_value">Value to be added.</param>
-	public void AddContribution(float _value) {
+	public void AddContribution(int _value) {
 		// Ignore if event is not active
 		if(!isActive) return;
 
@@ -279,7 +279,7 @@ public partial class GlobalEvent {
 		GlobalEventUserData playerEventData = null;
 		if(!UsersManager.currentUser.globalEvents.TryGetValue(m_id, out playerEventData)) {
 			// User has never contributed to this event, create a new, empty, player event data
-			playerEventData = new GlobalEventUserData(m_id, UsersManager.currentUser.userId, 0f, -1, 0);
+			playerEventData = new GlobalEventUserData(m_id, UsersManager.currentUser.userId, 0, -1, 0);
 		}
 	
 		playerEventData.endTimestamp = _data["endTimestamp"].AsLong;
@@ -293,7 +293,7 @@ public partial class GlobalEvent {
 	/// <param name="_data">Data.</param>
 	public void UpdateFromJson(SimpleJSON.JSONNode _data) {
 		// Current value
-		m_currentValue = _data["currentValue"].AsFloat;
+		m_currentValue = _data["globalScore"].AsFloat;
 
 		// Update event state (just in case, has nothing to do with given json)
 		UpdateState();
@@ -316,6 +316,7 @@ public partial class GlobalEvent {
 
 			// Update leaderboard entry
 			m_leaderboard[i].Load(leaderboardData[i]);
+			m_leaderboard[i].position = i;
 		}
 
 		// Remove unused entries from the leaderboard

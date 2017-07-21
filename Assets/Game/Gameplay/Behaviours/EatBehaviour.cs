@@ -174,6 +174,9 @@ public abstract class EatBehaviour : MonoBehaviour {
         m_bloodEmitter = new List<GameObject>();
         m_freezeEmitter = new List<GameObject>();
 
+		m_holdingBloodParticle.changeStartColor = true;
+		m_holdingBloodParticle.startColor = Color.red;
+
 		MouthCache();
 		m_holdStunTime = 0.5f;
 		m_holdDamage = 10;

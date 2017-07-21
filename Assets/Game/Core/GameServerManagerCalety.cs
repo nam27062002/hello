@@ -365,7 +365,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_score">The score to be registered.</param>
 	/// <param name="_callback">Callback action.</param>
-	override public void GlobalEvent_RegisterScore(int _eventID, float _score, ServerCallback _callback) {
+	override public void GlobalEvent_RegisterScore(int _eventID, int _score, ServerCallback _callback) {
 		// Compose parameters and enqeue command
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
