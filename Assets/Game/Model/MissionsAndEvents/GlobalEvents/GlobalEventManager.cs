@@ -105,7 +105,6 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 
 	private void OnTMPCustomizerResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
-		user.globalEvents.Clear();
 		bool parsed = false;
 		if(_response != null && _response["response"] != null) {
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
@@ -357,16 +356,20 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 		// Did the server gave us an event?
 		if(_response != null && _response["response"] != null) {
-			// Yes! If no event is created, create one
-			if(m_currentEvent == null) {
-				m_currentEvent = new GlobalEvent();
-			}
-
 			// If the ID is different from the stored event, load the new event's data!
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-			Debug.Log("<color=purple>EVENT DATA</color>\n" + responseJson.ToString(4));
-			if(m_currentEvent.id != responseJson["id"]) {
-				m_currentEvent.InitFromJson(responseJson);
+			if ( responseJson )
+			{
+				// Yes! If no event is created, create one
+				if(m_currentEvent == null) {
+					m_currentEvent = new GlobalEvent();
+				}
+				Debug.Log("<color=purple>EVENT DATA</color>\n" + responseJson.ToString(4));
+				if(m_currentEvent.id != responseJson["id"]) {
+					m_currentEvent.InitFromJson(responseJson);
+				}
+			}else{
+				if(m_currentEvent != null) ClearCurrentEvent();
 			}
 		} else {
 			// No! Clear current event (if any)
