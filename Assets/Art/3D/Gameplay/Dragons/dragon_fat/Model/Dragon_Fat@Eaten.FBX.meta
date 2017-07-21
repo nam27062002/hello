@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 3d79e7e2a896c4c2185602fe5c73bb4d
-timeCreated: 1500023903
+guid: 9b806a904d28445c9a0edd13d4dea72a
+timeCreated: 1500637327
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
@@ -23,19 +23,19 @@ ModelImporter:
     100030: Dragon_LLeg_2
     100032: Dragon_LLeg_4
     100034: Dragon_LLeg_Digit
-    100036: Dragon_LSmear_1_1
-    100038: Dragon_LSmear_1_2
-    100040: Dragon_LSmear_1_3
-    100042: Dragon_LSmear_2_2
-    100044: Dragon_LSmear_2_3
-    100046: Dragon_LWing_1
-    100048: Dragon_LWing_2
-    100050: Dragon_LWing_3
-    100052: Dragon_LWing_Digit1_1
-    100054: Dragon_LWing_Digit1_2
-    100056: Dragon_LWing_Digit2_1
-    100058: Dragon_LWing_Digit2_2
-    100060: Dragon_Master
+    100036: Dragon_LLeg_Platform
+    100038: Dragon_LSmear_1_1
+    100040: Dragon_LSmear_1_2
+    100042: Dragon_LSmear_1_3
+    100044: Dragon_LSmear_2_2
+    100046: Dragon_LSmear_2_3
+    100048: Dragon_LWing_1
+    100050: Dragon_LWing_2
+    100052: Dragon_LWing_3
+    100054: Dragon_LWing_Digit1_1
+    100056: Dragon_LWing_Digit1_2
+    100058: Dragon_LWing_Digit2_1
+    100060: Dragon_LWing_Digit2_2
     100062: Dragon_Mouth_Comisure
     100064: Dragon_Neck
     100066: Dragon_R_Down_EyeLead
@@ -68,11 +68,11 @@ ModelImporter:
     100120: Dragon_Tail3
     100122: Dragon_Tail4
     100124: Dragon_Tail5
-    100126: Dragon_Tongue_01
-    100128: Dragon_Tongue_02
-    100130: Dragon_Tongue_03
-    100132: Dragon_Up_Snout
-    100134: Dragon_Tail6
+    100126: Dragon_Tail6
+    100128: Dragon_Tongue_01
+    100130: Dragon_Tongue_02
+    100132: Dragon_Tongue_03
+    100134: Dragon_Up_Snout
     400000: Dragon_Chest
     400002: Dragon_Down_Snout
     400004: //RootNode
@@ -91,19 +91,19 @@ ModelImporter:
     400030: Dragon_LLeg_2
     400032: Dragon_LLeg_4
     400034: Dragon_LLeg_Digit
-    400036: Dragon_LSmear_1_1
-    400038: Dragon_LSmear_1_2
-    400040: Dragon_LSmear_1_3
-    400042: Dragon_LSmear_2_2
-    400044: Dragon_LSmear_2_3
-    400046: Dragon_LWing_1
-    400048: Dragon_LWing_2
-    400050: Dragon_LWing_3
-    400052: Dragon_LWing_Digit1_1
-    400054: Dragon_LWing_Digit1_2
-    400056: Dragon_LWing_Digit2_1
-    400058: Dragon_LWing_Digit2_2
-    400060: Dragon_Master
+    400036: Dragon_LLeg_Platform
+    400038: Dragon_LSmear_1_1
+    400040: Dragon_LSmear_1_2
+    400042: Dragon_LSmear_1_3
+    400044: Dragon_LSmear_2_2
+    400046: Dragon_LSmear_2_3
+    400048: Dragon_LWing_1
+    400050: Dragon_LWing_2
+    400052: Dragon_LWing_3
+    400054: Dragon_LWing_Digit1_1
+    400056: Dragon_LWing_Digit1_2
+    400058: Dragon_LWing_Digit2_1
+    400060: Dragon_LWing_Digit2_2
     400062: Dragon_Mouth_Comisure
     400064: Dragon_Neck
     400066: Dragon_R_Down_EyeLead
@@ -136,12 +136,12 @@ ModelImporter:
     400120: Dragon_Tail3
     400122: Dragon_Tail4
     400124: Dragon_Tail5
-    400126: Dragon_Tongue_01
-    400128: Dragon_Tongue_02
-    400130: Dragon_Tongue_03
-    400132: Dragon_Up_Snout
-    400134: Dragon_Tail6
-    7400000: Swiming
+    400126: Dragon_Tail6
+    400128: Dragon_Tongue_01
+    400130: Dragon_Tongue_02
+    400132: Dragon_Tongue_03
+    400134: Dragon_Up_Snout
+    7400000: Eaten
     9500000: //RootNode
   materials:
     importMaterials: 0
@@ -165,7 +165,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Swiming
+      name: Eaten
       takeName: Take 001
       firstFrame: 0
       lastFrame: 27
@@ -319,7 +319,9 @@ ModelImporter:
         weight: 1
       - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5
         weight: 1
-      - path: Dragon_Master
+      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6
+        weight: 1
+      - path: Dragon_LLeg_Platform
         weight: 1
       - path: Dragon_RLeg_Platform
         weight: 1
