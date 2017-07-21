@@ -293,9 +293,9 @@ public class PopupCurrencyShopPill : MonoBehaviour {
             StoreManager.StoreProduct product = GameStoreManager.SharedInstance.GetStoreProduct(m_def.sku);
             string moneyCurrencyCode = null;
             float moneyPrice = 0f;            
-            if (product != null) {
+            if (product != null) {                
                 moneyCurrencyCode = product.m_strCurrencyCode;
-                moneyPrice = product.m_fPrice;
+                moneyPrice = product.m_fLocalisedPriceValue;
             }
 
             string houstonTransactionID = null; // Not implemented yet

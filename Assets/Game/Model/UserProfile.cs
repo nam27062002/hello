@@ -1116,12 +1116,15 @@ public class UserProfile : UserSaveSystem
 			data = new GlobalEventUserData(
 				_eventID,
 				userId,
-				0f,
+				0,
 				-1,
 				0
 			);
 			m_globalEvents[_eventID] = data;
 		}
+
+		// [AOC] Sick of insane bugs, make sure the user ID is valid!
+		data.userID = this.userId;
 		return data;
 	}
 

@@ -319,4 +319,35 @@ public class NavigationScreenSystem : MonoBehaviour {
 	public void SetInitialScreen(string _screenName) {
 		SetInitialScreen(GetScreen(_screenName));
 	}
+
+	//------------------------------------------------------------------//
+	// SCREENS MANAGEMENT												//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Add a screen at the given index.
+	/// Will push the rest of screens back.
+	/// Doesn't do any checks, use at your own risk!
+	/// </summary>
+	/// <param name="_idx">Index to insert the screen.</param>
+	/// <param name="_screen">Screen to be added.</param>
+	public void AddScreen(int _idx, NavigationScreen _screen) {
+		m_screens.Insert(_idx, _screen);
+	}
+
+	/// <summary>
+	/// Remove the screen at the given index.
+	/// Doesn't do any checks, use at your own risk!
+	/// </summary>
+	/// <param name="_idx">Index of the screen to be removed.</param>
+	public void RemoveScreen(int _idx) {
+		m_screens.RemoveAt(_idx);
+	}
+
+	/// <summary>
+	/// Remove the given screen from the system.
+	/// </summary>
+	/// <param name="_screen">Screen to be removed8.</param>
+	public void RemoveScreen(NavigationScreen _screen) {
+		m_screens.Remove(_screen);
+	}
 }

@@ -93,6 +93,18 @@ public class TabSystem : NavigationScreenSystem {
 		}
 	}
 
+	/// <summary>
+	/// Add a tab to the system.
+	/// No checks will be performed, use at your own risk.
+	/// </summary>
+	/// <param name="_idx">New tab's index.</param>
+	/// <param name="_btn">Button linked to this tab.</param>
+	/// <param name="_tab">The tab to be added.</param>
+	public void AddTab(int _idx, SelectableButton _btn, Tab _tab) {
+		m_tabButtons.Insert(_idx, _btn);
+		AddScreen(_idx, _tab);
+	}
+
 	//------------------------------------------------------------------//
 	// OVERRIDES														//
 	//------------------------------------------------------------------//

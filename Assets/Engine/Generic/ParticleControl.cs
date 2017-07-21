@@ -6,10 +6,12 @@ public class ParticleControl : MonoBehaviour {
 
 	private ParticleScaler m_scaler;
 	private List<ParticleSystem> m_subsystems = null;
+    private List<CustomParticleSystem> m_customSubsystems = null;
+    private bool m_initialized = false;
 
 
-	private void Awake() {
-		if (m_subsystems == null) {
+    private void Awake() {
+		if (!m_initialized) {
 			FindSystems();
 		}
 	}
@@ -17,11 +19,13 @@ public class ParticleControl : MonoBehaviour {
 	private void FindSystems() {
 		m_scaler = GetComponent<ParticleScaler>();
 		m_subsystems = transform.FindComponentsRecursive<ParticleSystem>();
+        m_customSubsystems = transform.FindComponentsRecursive<CustomParticleSystem>();
+        m_initialized = true;
 	}
 
 	public void Play(ParticleData _data) {
-		if (m_subsystems == null) {
-			FindSystems();
+        if (!m_initialized) {
+            FindSystems();
 		}
 
 		// lets iterate
@@ -57,7 +61,31 @@ public class ParticleControl : MonoBehaviour {
 			system.Play(false);
 		}
 
-		if (_data != null) {
+
+        // lets iterate custom
+        for (int i = 0; i < m_customSubsystems.Count; i++)
+        {
+            CustomParticleSystem system = m_customSubsystems[i];
+
+            system.Clear();
+
+            if (_data != null)
+            {
+                if (_data.changeColorOvertime)
+                {
+                    system.m_colorAnimation = _data.colorOvertime;
+                }
+            }
+
+            if (system.m_preWarm)
+            {
+                system.InitParticles(1.0f);
+            }
+
+            system.Play();
+        }
+
+        if (_data != null) {
 			if (m_scaler != null) {
 				if (m_scaler.m_scale != _data.scale) {
 					m_scaler.m_scale = _data.scale;
@@ -69,11 +97,11 @@ public class ParticleControl : MonoBehaviour {
 
 	// returns if it is fully stopped or not
 	public bool Stop() {
-		if (m_subsystems == null) {
-			FindSystems();
-		}
+        if (!m_initialized) {
+            FindSystems();
+        }
 
-		bool isAlive = false;
+        bool isAlive = false;
 		for (int i = 0; i < m_subsystems.Count; i++) {
 			ParticleSystem system = m_subsystems[i];            
 			ParticleSystem.EmissionModule em = system.emission;
@@ -88,6 +116,20 @@ public class ParticleControl : MonoBehaviour {
 			}
 		}
 
-		return !isAlive;
+        for (int i = 0; i < m_customSubsystems.Count; i++)
+        {
+            CustomParticleSystem system = m_customSubsystems[i];
+
+            if (system.m_loop)
+            {
+                system.Stop(true);
+            }
+
+            if (system.IsPlaying)
+            {
+                isAlive = true;
+            }
+        }
+        return !isAlive;
 	}
 }

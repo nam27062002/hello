@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//[ExecuteInEditMode]
 public class CustomParticle : MonoBehaviour {
 
 #if (!CUSTOMPARTICLES_DRAWMESH)
@@ -17,7 +18,8 @@ public class CustomParticle : MonoBehaviour {
     public Vector3 m_velocity;
 
     public float m_initscale;
-    public float m_initRot;
+    public float m_initRotZ;
+    public float m_vRotZ;
 
     private float m_currentTime;
     public void Init()
@@ -33,7 +35,7 @@ public class CustomParticle : MonoBehaviour {
     }
 	// Use this for initialization
 	void Start () {
-        m_renderer.material = m_pSystem.m_particleMaterial;
+        m_renderer.material = m_pSystem.m_particleMaterialInstance;
         m_filter.sharedMesh = m_pSystem.m_particleMesh;
         m_currentCamera = Camera.main;
     }
@@ -47,15 +49,17 @@ public class CustomParticle : MonoBehaviour {
 //        transform.LookAt(m_currentCamera.transform.position, Vector3.up);
 
 
-        float sv = m_pSystem.m_scaleAnimation.Evaluate(pTime);
+        float sv = m_pSystem.m_scaleAnimation.Evaluate(pTime / m_particleDuration);
 
-        transform.localScale = Vector3.one * (m_initscale + sv);
+        transform.localScale = Vector3.one * (m_initscale * sv);
 
-        Color col = m_pSystem.m_colorAnimation.Evaluate(pTime);
-        m_renderer.material.SetColor("_Color", col);
+        Color col = m_pSystem.m_colorAnimation.Evaluate(pTime / m_particleDuration);
+        m_renderer.material.SetColor("_VColor", col);
 
-//        transform.rotation = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, m_initRot);
-        transform.rotation = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, (m_initRot + m_pSystem.m_rotationAnimation.Evaluate(pTime)) * 360.0f);
+//        transform.rotation = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, m_initRotZ);
+//        transform.rotation = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, (m_initRotZ + m_pSystem.m_rotationAnimation.Evaluate(pTime)) * 360.0f);
+        transform.rotation = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, m_initRotZ * 360.0f);
+        m_initRotZ += m_vRotZ * Time.deltaTime;
 
         if (pTime > m_particleDuration)
         {

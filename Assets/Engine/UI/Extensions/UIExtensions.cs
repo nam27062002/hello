@@ -37,6 +37,7 @@ public static class UIExtensions {
 
 		// Do it!
 		_target.normalizedPosition = _targetNormalizedPosition;
+		_target.velocity = Vector2.zero;
 	}
 
 	/// <summary>
@@ -52,5 +53,6 @@ public static class UIExtensions {
 
 		// Do it!
 		_target.normalizedPosition = _targetNormalizedPosition;
+		_target.velocity = Vector2.zero;
 	}
 }

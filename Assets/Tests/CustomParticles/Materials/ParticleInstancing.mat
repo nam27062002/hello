@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: ParticleInstancing
   m_Shader: {fileID: 4800000, guid: 7b02f7ce37d284f438c24c60b25379a4, type: 3}
-  m_ShaderKeywords: GPUINSTANCING _EMISSION
+  m_ShaderKeywords: CUSTOMPARTICLESYSTEM GPUINSTANCING _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -83,6 +83,9 @@ Material:
         name: _DstBlend
       second: 0
     - first:
+        name: _EnableCustomParticleSystem
+      second: 1
+    - first:
         name: _EnableGpuinstancing
       second: 1
     - first:
@@ -131,3 +134,6 @@ Material:
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _VColor
+      second: {r: 1, g: 1, b: 1, a: 1}

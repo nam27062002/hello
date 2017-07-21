@@ -20,8 +20,8 @@ public class EventRewardScreen : MonoBehaviour {
 		m_event = GlobalEventManager.currentEvent;
 
 		m_step = 0;
-
-		m_progressBar.RefreshRewards(m_event);
+		if ( m_event != null )
+			m_progressBar.RefreshRewards(m_event);
 		m_progressBar.RefreshProgress(0);
 	}
 

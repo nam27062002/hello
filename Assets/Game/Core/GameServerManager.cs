@@ -113,7 +113,7 @@ public class GameServerManager
         {
 			// Init some common stuff
 			// Initialize server time with current local time
-			ServerManager.SharedInstance.SetServerTime((double)TimeUtils.DateToTimestamp(DateTime.UtcNow));
+			ServerManager.SharedInstance.SetServerTime((double)TimeUtils.DateToTimestamp(DateTime.UtcNow) / 1000.0f);
 
 			// Let heirs do their stuff
 			ExtendedConfigure();
@@ -168,7 +168,8 @@ public class GameServerManager
 	public DateTime GetEstimatedServerTime() {
 		// Calety already manages this, just convert it to a nice DateTime object.
 		double unixTimestamp = ServerManager.SharedInstance.GetServerTime();	// Seconds since 1970
-		return TimeUtils.TimestampToDate((long)unixTimestamp);
+		long timestamp = (long)unixTimestamp * 1000;
+		return TimeUtils.TimestampToDate( timestamp );
 	}
 
 	//------------------------------------------------------------------------//
@@ -224,7 +225,7 @@ public class GameServerManager
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_score">The score to be registered.</param>
 	/// <param name="_callback">Callback action.</param>
-	public virtual void GlobalEvent_RegisterScore(int _eventID, float _score, ServerCallback _callback) {}
+	public virtual void GlobalEvent_RegisterScore(int _eventID, int _score, ServerCallback _callback) {}
 
 	/// <summary>
 	/// Get the rewards for the player

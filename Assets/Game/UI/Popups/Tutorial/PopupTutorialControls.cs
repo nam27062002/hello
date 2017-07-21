@@ -87,7 +87,7 @@ public class PopupTutorialControls : MonoBehaviour {
 	/// </summary>
 	public void OnOpenPostAnimation() {
 		// Hide loading screen, otherwise it will show on top of the popup!
-		LoadingScreen.Toggle(false);
+		LoadingScreen.Toggle(false, false);
 	}
 
 	/// <summary>

@@ -625,7 +625,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	}
 
 	public void RotationLayer(ref Quaternion _from, ref Quaternion _to) {
-		if (m_hasRotationLayer) {
+		if (m_hasRotationLayer && m_animator != null) {
 			float angle = Quaternion.Angle(_from, _to);
 			m_animator.SetBool("rotate left", angle < 0);
 			m_animator.SetBool("rotate right", angle > 0);
@@ -633,47 +633,47 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	}
 
 	public void Aim(float _blendFactor) {
-		m_animator.SetFloat("aim", _blendFactor);
+		if (m_animator != null)
+			m_animator.SetFloat("aim", _blendFactor);
 	}
 
 	public void Height(float _height) {
-		m_animator.SetFloat("height", _height);
+		if (m_animator != null)
+			m_animator.SetFloat("height", _height);
 	}
 
 	public void Move(float _speed) {
-		if (m_panic || m_falling) {
-			m_animator.speed = 1f;
-			return;
-		}
-
-		if (_speed > 0.01f) {
-			// 0- walk  1- run, blending in between
-			float blendFactor = 0f;
-			float animSpeedFactor = 1f;
-
-			if (_speed <= m_walkSpeed) {
-				blendFactor = 0f;
-				animSpeedFactor = Mathf.Max(m_minPlaybakSpeed, _speed / m_walkSpeed);
-			} else if (_speed >= m_runSpeed) {
-				blendFactor = 1f;
-				animSpeedFactor = Mathf.Min(m_maxPlaybakSpeed, _speed / m_runSpeed);
-			} else {
-				blendFactor = 0f + (_speed - m_walkSpeed) * ((1f - 0f) / (m_runSpeed - m_walkSpeed));
+		if (m_animator != null) {
+			if (m_panic || m_falling) {			
+				m_animator.speed = 1f;
+				return;
 			}
 
-			if (m_boost && m_onBoostMaxPlaybackSpeed) {
-				animSpeedFactor = m_maxPlaybakSpeed;
-			}
+			if (_speed > 0.01f) {
+				// 0- walk  1- run, blending in between
+				float blendFactor = 0f;
+				float animSpeedFactor = 1f;
 
-			m_moving = true;
+				if (_speed <= m_walkSpeed) {
+					blendFactor = 0f;
+					animSpeedFactor = Mathf.Max(m_minPlaybakSpeed, _speed / m_walkSpeed);
+				} else if (_speed >= m_runSpeed) {
+					blendFactor = 1f;
+					animSpeedFactor = Mathf.Min(m_maxPlaybakSpeed, _speed / m_runSpeed);
+				} else {
+					blendFactor = 0f + (_speed - m_walkSpeed) * ((1f - 0f) / (m_runSpeed - m_walkSpeed));
+				}
 
-			if (m_animator != null) {
+				if (m_boost && m_onBoostMaxPlaybackSpeed) {
+					animSpeedFactor = m_maxPlaybakSpeed;
+				}
+
+				m_moving = true;
+
 				m_animator.SetFloat("speed", blendFactor);
 				m_animator.speed = Mathf.Lerp(m_animator.speed, animSpeedFactor, Time.deltaTime * 2f);
-			}
-		} else {
-			m_moving = false;
-			if (m_animator != null) {
+			} else {
+				m_moving = false;
 				m_animator.speed = Mathf.Lerp(m_animator.speed, 1f, Time.deltaTime * 2f);
 			}
 		}
@@ -698,7 +698,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			{
 				m_onScaredAudioAO = AudioController.Play(m_onScaredAudio, transform);
 			}
-			m_animator.SetBool("scared", _scared);
+			if (m_animator != null)
+				m_animator.SetBool("scared", _scared);
 		}
 	}
 
@@ -709,11 +710,13 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			if (_burning) {
 				// lets buuurn!!!
 				// will we have a special animation when burning?
-				m_animator.speed = 0f;
+				if (m_animator != null)
+					m_animator.speed = 0f;
 			} else {
 				if ( !string.IsNullOrEmpty(m_onPanicAudio) )
 					m_onPanicAudioAO = AudioController.Play( m_onPanicAudio, transform);
-				m_animator.SetBool("holded", _panic);
+				if (m_animator != null)
+					m_animator.SetBool("holded", _panic);
 			}
 		}
 	}
@@ -721,22 +724,27 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void Hit() {
 		m_hitAnimOn = true;
 		//m_animator.SetTrigger("hit");
-		m_animator.Play("Damage");
+		if (m_animator != null)
+			m_animator.Play("Damage");
 	}
 
 	public void Falling(bool _falling) {
 		if (m_falling != _falling) {
 			m_falling = _falling;
-			m_animator.speed = 1f;
-			m_animator.SetBool("falling", _falling);
+			if (m_animator != null) {
+				m_animator.speed = 1f;
+				m_animator.SetBool("falling", _falling);
+			}
 		}
 	}
 
 	public void Jumping(bool _jumping) {
 		if (m_jumping != _jumping) {
 			m_jumping = _jumping;
-			m_animator.speed = 1f;
-			m_animator.SetBool("jump", _jumping);
+			if (m_animator != null) {
+				m_animator.speed = 1f;
+				m_animator.SetBool("jump", _jumping);
+			}
 		}
 	}
 		
@@ -746,9 +754,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		
 		if (!m_attack) {
 			m_attack = true;
-			m_animator.SetBool("attack", true);
-			m_animator.SetBool("melee",  _melee);
-			m_animator.SetBool("ranged", _ranged);
+			if (m_animator != null) {
+				m_animator.SetBool("attack", true);
+				m_animator.SetBool("melee",  _melee);
+				m_animator.SetBool("ranged", _ranged);
+			}
 		}
 	}
 
@@ -758,20 +768,24 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		
 		if (m_attack) {
 			m_attack = false;
-			m_animator.SetBool("attack", false);
-			m_animator.SetBool("melee",  false);
-			m_animator.SetBool("ranged", false);
+			if (m_animator != null) {
+				m_animator.SetBool("attack", false);
+				m_animator.SetBool("melee",  false);
+				m_animator.SetBool("ranged", false);
+			}
 		}
 	}
 
 	public void StartAttackTarget() {
 		m_attackingTarget = true;
-		m_animator.SetBool("eat", true);
+		if (m_animator != null)
+			m_animator.SetBool("eat", true);
 	}
 
 	public void StopAttackTarget() {
 		m_attackingTarget = false;
-		m_animator.SetBool("eat", false);
+		if (m_animator != null)
+			m_animator.SetBool("eat", false);
 	}
 
 	public void StartEating() {
@@ -784,7 +798,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	}
 
 	public void Impact() {
-		m_animator.SetTrigger("impact");
+		if (m_animator != null)
+			m_animator.SetTrigger("impact");
 	}
 
 	public void EnterWater(Collider _other, Vector3 impulse) {
@@ -942,14 +957,16 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	public void SetStunned( bool stunned ){
 		if ( stunned ){
-			m_animator.enabled = false;
+			if (m_animator != null)
+				m_animator.enabled = false;
 			// if no stunned particle -> stun
 			if (m_stunParticleInstance == null)
 			{
 				m_stunParticleInstance = m_stunParticle.Spawn(transform);
 			}
 		}else{
-			m_animator.enabled = true;
+			if (m_animator != null)
+				m_animator.enabled = true;
 			// if stunned particle -> remove stun
 			if ( m_stunParticleInstance )
 			{
