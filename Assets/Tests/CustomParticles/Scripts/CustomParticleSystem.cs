@@ -179,6 +179,13 @@ public class CustomParticleSystem : MonoBehaviour
         m_startParticleTime = m_lastParticleTime = Time.realtimeSinceStartup;
         m_totalParticlesEmited = 0;
         m_oldPosition = transform.position;
+
+        if (m_preWarm)
+        {
+            InitParticles(1.0f);
+        }
+
+
         m_playing = true;
     }
     public void Stop(bool stopAndClear = false)
