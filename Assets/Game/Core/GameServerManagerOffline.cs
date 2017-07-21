@@ -536,6 +536,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			res["response"] = null;
 		} else {
 			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass(); {
+				/*
 				SimpleJSON.JSONArray r = new SimpleJSON.JSONArray(); {					
 					r.Add(Metagame.RewardSoftCurrency.Code, 500);
 					r.Add(Metagame.RewardSoftCurrency.Code, 1000);
@@ -544,8 +545,9 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 				SimpleJSON.JSONClass top = new SimpleJSON.JSONClass(); {
 					top.Add(Metagame.RewardEgg.Code, "egg_premium");
 				}
-				eventData.Add("r", r);
-				eventData.Add("top", top);
+				*/
+				eventData.Add("r", 3);
+				eventData.Add("top", true);
 			}
 			res["response"] = eventData.ToString();
 		}
