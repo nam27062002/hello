@@ -26,7 +26,7 @@ public class GlobalEventUserData {
 	// Event data
 	public int eventID = -1;			 // Event id
 	public string userID = "";			 // User id
-	public float score = 0f;			 // Contribution of the player to the event
+	public int score = 0;			 // Contribution of the player to the event
 	public int position = -1;			 // -1 if he hasn't participated to the event
 	public long endTimestamp = 0;		 // End time
 	public bool rewardCollected = false; // User collected the reward 
@@ -38,13 +38,13 @@ public class GlobalEventUserData {
 	/// Default constructor.
 	/// </summary>
 	public GlobalEventUserData() {
-		Init(-1, "", 0f, -1, 0, false);
+		Init(-1, "", 0, -1, 0, false);
 	}
 
 	/// <summary>
 	/// Parametrized constructor.
 	/// </summary>
-	public GlobalEventUserData(int _eventID, string _userID, float _score, int _position, long _endTimestamp) {
+	public GlobalEventUserData(int _eventID, string _userID, int _score, int _position, long _endTimestamp) {
 		Init(_eventID, _userID, _score, _position, _endTimestamp, false);
 	}
 
@@ -73,7 +73,7 @@ public class GlobalEventUserData {
 	/// <param name="_userId">User identifier.</param>
 	/// <param name="_score">Score.</param>
 	/// <param name="_position">Position.</param>
-	private void Init(int _eventID, string _userID, float _score, int _position, long _endTimestamp, bool _rewardCollected) {
+	private void Init(int _eventID, string _userID, int _score, int _position, long _endTimestamp, bool _rewardCollected) {
 		eventID = _eventID;
 		userID = _userID;
 		score = _score;
@@ -82,9 +82,18 @@ public class GlobalEventUserData {
 		rewardCollected = _rewardCollected;
 	}
 
+
+
 	//------------------------------------------------------------------------//
 	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Resets the object. Useful when this user is not participating on a global event.
+	/// </summary>
+	public void Reset(){
+		Init(-1, "", 0, -1, 0, false);
+	}
+
 	/// <summary>
 	/// Load state from a persistence object.
 	/// </summary>
@@ -93,10 +102,10 @@ public class GlobalEventUserData {
 		// Easy
 		if(_data.ContainsKey("eventId")) eventID = _data["eventId"].AsInt;	// Event ID is optional
 		userID = _data["userId"];
-		score = _data["score"].AsFloat;
-		position = _data["position"].AsInt;
-		endTimestamp = _data["endTimestamp"].AsLong;
-		rewardCollected = _data["rewardCollected"].AsBool;
+		score = _data["score"].AsInt;
+		if(_data.ContainsKey("position")) position = _data["position"].AsInt;
+		if(_data.ContainsKey("endTimestamp")) endTimestamp = _data["endTimestamp"].AsLong;
+		if(_data.ContainsKey("rewardCollected")) rewardCollected = _data["rewardCollected"].AsBool;
 	}
 
 	/// <summary>
@@ -104,14 +113,14 @@ public class GlobalEventUserData {
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
 	/// <param name="_includeEventId">Whether to save the event ID as well.</param>
-	public SimpleJSON.JSONNode Save(bool _includeEventID) {
+	public SimpleJSON.JSONNode Save(bool _includeEventID, bool includePosition = true, bool includeRewardCollected = true) {
 		// Create a new json object for this event
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 		if(_includeEventID) data.Add("eventId", eventID.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		data.Add("userId", userID);
 		data.Add("score", score.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		data.Add("position", position.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		data.Add("rewardCollected", rewardCollected);
+		if ( includePosition ) data.Add("position", position.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		if (includeRewardCollected) data.Add("rewardCollected", rewardCollected);
 		return data;
 	}
 }

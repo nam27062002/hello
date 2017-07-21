@@ -1116,7 +1116,7 @@ public class UserProfile : UserSaveSystem
 			data = new GlobalEventUserData(
 				_eventID,
 				userId,
-				0f,
+				0,
 				-1,
 				0
 			);

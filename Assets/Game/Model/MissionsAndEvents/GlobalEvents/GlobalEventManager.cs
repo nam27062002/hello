@@ -105,7 +105,6 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 
 	private void OnTMPCustomizerResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
-		user.globalEvents.Clear();
 		bool parsed = false;
 		if(_response != null && _response["response"] != null) {
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
@@ -230,9 +229,9 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		if(err != ErrorCode.NONE) return err;
 
 		// Get contribution amount and apply multipliers
-		float contribution = instance.m_currentEvent.objective.currentValue;
-		contribution *= _bonusDragonMultiplier;
-		contribution *= _keysMultiplier;
+		int contribution = (int)instance.m_currentEvent.objective.currentValue;
+		contribution = (int)(_bonusDragonMultiplier * contribution);
+		contribution = (int)(_keysMultiplier * contribution);
 
 		// Requets to the server!
 		Debug.Log("<color=magenta>REGISTER SCORE</color>");
@@ -357,16 +356,20 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 		// Did the server gave us an event?
 		if(_response != null && _response["response"] != null) {
-			// Yes! If no event is created, create one
-			if(m_currentEvent == null) {
-				m_currentEvent = new GlobalEvent();
-			}
-
 			// If the ID is different from the stored event, load the new event's data!
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-			Debug.Log("<color=purple>EVENT DATA</color>\n" + responseJson.ToString(4));
-			if(m_currentEvent.id != responseJson["id"]) {
-				m_currentEvent.InitFromJson(responseJson);
+			if ( responseJson )
+			{
+				// Yes! If no event is created, create one
+				if(m_currentEvent == null) {
+					m_currentEvent = new GlobalEvent();
+				}
+				Debug.Log("<color=purple>EVENT DATA</color>\n" + responseJson.ToString(4));
+				if(m_currentEvent.id != responseJson["id"]) {
+					m_currentEvent.InitFromJson(responseJson);
+				}
+			}else{
+				if(m_currentEvent != null) ClearCurrentEvent();
 			}
 		} else {
 			// No! Clear current event (if any)
@@ -414,9 +417,13 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				GlobalEventManager.RequestCurrentEventRewards();
 			}
 
-			// Player data
 			GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
-			currentEventUserData.Load(responseJson["playerData"]);
+			// Player data
+			if ( responseJson.ContainsKey("playerData") ) {
+				currentEventUserData.Load(responseJson["playerData"]);
+			}else{
+				currentEventUserData.Reset();
+			}
 
 			// Notify game that we have new data concerning the current event
 			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_STATE);
@@ -454,9 +461,13 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				GlobalEventManager.RequestCurrentEventRewards();
 			}
 
-			// Player data
 			GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
-			currentEventUserData.Load(responseJson["playerData"]);
+			// Player data
+			if ( responseJson.ContainsKey("playerData") ) {
+				currentEventUserData.Load(responseJson["playerData"]);
+			}else{
+				currentEventUserData.Reset();
+			}
 
 			// Update timestamps
 			DateTime now = serverTime;

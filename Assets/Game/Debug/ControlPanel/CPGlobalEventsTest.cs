@@ -188,7 +188,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	/// Sets the player score to the current event, if any.
 	/// </summary>
 	/// <param name="_score">Score.</param>
-	private void SetPlayerScore(float _score) {
+	private void SetPlayerScore(int _score) {
 		if(GlobalEventManager.currentEvent == null) return;
 
 		// Clamp value
@@ -196,7 +196,10 @@ public class CPGlobalEventsTest : MonoBehaviour {
 
 		// Get player contribution to current event
 		GlobalEventUserData playerData = UsersManager.currentUser.GetGlobalEventData(GlobalEventManager.currentEvent.id);
-		float scoreToAdd = _score - Mathf.Max(playerData.score, 0f);
+		int scoreToAdd = _score;
+		if ( playerData.score > 0 )
+			scoreToAdd -= playerData.score;
+		// int scoreToAdd = _score - Math.Max(playerData.score, 0f);
 
 		// Add to event's total contribution!
 		GlobalEventManager.currentEvent.AddContribution(scoreToAdd);
@@ -242,7 +245,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	/// Add event score to current player.
 	/// </summary>
 	public void OnAddScore() {
-		float amount = float.Parse(m_playerScoreText.text);
+		int amount = int.Parse(m_playerScoreText.text);
 		GlobalEventUserData playerData = UsersManager.currentUser.GetGlobalEventData(GlobalEventManager.currentEvent.id);
 		if(playerData.score > 0) {
 			amount = playerData.score + amount;
@@ -254,7 +257,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	/// Remove event score to current player.
 	/// </summary>
 	public void OnRemoveScore() {
-		float amount = float.Parse(m_playerScoreText.text);
+		int amount = int.Parse(m_playerScoreText.text);
 		GlobalEventUserData playerData = UsersManager.currentUser.GetGlobalEventData(GlobalEventManager.currentEvent.id);
 		amount = playerData.score - amount;
 		if(amount < 0) amount = 0;
@@ -265,7 +268,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	/// Set event score for current player.
 	/// </summary>
 	public void OnSetScore() {
-		float amount = float.Parse(m_playerScoreText.text);
+		int amount = int.Parse(m_playerScoreText.text);
 		SetPlayerScore(amount);
 	}
 }
