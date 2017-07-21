@@ -7,12 +7,13 @@
 		/// <param name="_data">Data to be parsed.</param>
 		public static Reward CreateFromJson(SimpleJSON.JSONNode _data) {			
 			string type = _data["type"];
+			type = type.ToLower();
 			string data = "";
 
 			if(_data.ContainsKey("sku")) 	data = _data["sku"];
 			if(_data.ContainsKey("amount")) data = _data["amount"];
 
-			return CreateFromTypeCode(_data["type"], data);
+			return CreateFromTypeCode(type, data);
 		}
 
 		/// <summary>

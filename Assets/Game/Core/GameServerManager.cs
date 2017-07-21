@@ -225,7 +225,7 @@ public class GameServerManager
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_score">The score to be registered.</param>
 	/// <param name="_callback">Callback action.</param>
-	public virtual void GlobalEvent_RegisterScore(int _eventID, float _score, ServerCallback _callback) {}
+	public virtual void GlobalEvent_RegisterScore(int _eventID, int _score, ServerCallback _callback) {}
 
 	/// <summary>
 	/// Get the rewards for the player
