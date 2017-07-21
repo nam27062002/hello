@@ -230,9 +230,9 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		if(err != ErrorCode.NONE) return err;
 
 		// Get contribution amount and apply multipliers
-		float contribution = instance.m_currentEvent.objective.currentValue;
-		contribution *= _bonusDragonMultiplier;
-		contribution *= _keysMultiplier;
+		int contribution = (int)instance.m_currentEvent.objective.currentValue;
+		contribution = (int)(_bonusDragonMultiplier * contribution);
+		contribution = (int)(_keysMultiplier * contribution);
 
 		// Requets to the server!
 		Debug.Log("<color=magenta>REGISTER SCORE</color>");
@@ -414,9 +414,13 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				GlobalEventManager.RequestCurrentEventRewards();
 			}
 
-			// Player data
 			GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
-			currentEventUserData.Load(responseJson["playerData"]);
+			// Player data
+			if ( responseJson.ContainsKey("playerData") ) {
+				currentEventUserData.Load(responseJson["playerData"]);
+			}else{
+				currentEventUserData.Reset();
+			}
 
 			// Notify game that we have new data concerning the current event
 			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_STATE);
@@ -454,9 +458,13 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				GlobalEventManager.RequestCurrentEventRewards();
 			}
 
-			// Player data
 			GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
-			currentEventUserData.Load(responseJson["playerData"]);
+			// Player data
+			if ( responseJson.ContainsKey("playerData") ) {
+				currentEventUserData.Load(responseJson["playerData"]);
+			}else{
+				currentEventUserData.Reset();
+			}
 
 			// Update timestamps
 			DateTime now = serverTime;
