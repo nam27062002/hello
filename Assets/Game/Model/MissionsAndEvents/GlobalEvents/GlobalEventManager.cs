@@ -171,6 +171,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			GameServerManager.SharedInstance.GlobalEvent_GetEvent(currentEventId, instance.OnCurrentEventResponse);
 		} else {
 			ClearCurrentEvent();
+			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
+			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_DATA_UPDATED);
 		}
 	}
 
@@ -358,7 +360,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		if(_response != null && _response["response"] != null) {
 			// If the ID is different from the stored event, load the new event's data!
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-			if ( responseJson )
+			if ( responseJson != null )
 			{
 				// Yes! If no event is created, create one
 				if(m_currentEvent == null) {
@@ -500,8 +502,10 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 			// The event will parse the response json by itself
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-			Debug.Log("<color=purple>EVENT REWARD</color>\n" + responseJson.ToString(4));
-			m_currentEvent.UpdateRewardLevelFromJson(responseJson);
+			if ( responseJson != null ){
+				Debug.Log("<color=purple>EVENT REWARD</color>\n" + responseJson.ToString(4));
+				m_currentEvent.UpdateRewardLevelFromJson(responseJson);
+			}
 		}
 	}
 }

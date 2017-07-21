@@ -297,7 +297,7 @@ public class ResourcesFlow {
 			// Final PC amount over threshold?
 			if(finalPCAmount > PC_CONFIRMATION_POPUP_THRESHOLD) {
 				// Show confirmation popup
-				OpenBigAmountConfirmationPopup(finalPCAmount, () => { DoTransaction(false); });	// Do the transaction on success
+				OpenBigAmountConfirmationPopup(finalPCAmount, () => { TryTransaction(false); });	// Do the transaction on success
 				return;	// Don't do anything else until confirmed by user
 			}
 		}
@@ -519,7 +519,7 @@ public class ResourcesFlow {
 		// Otherwise buy the missing currency with PC
 		else {
 			// Transaction will do everything! ^_^
-			DoTransaction(false);	// Ask confirmation? No, looks weird after having purchased the gems
+			TryTransaction(false);	// Ask confirmation? No, looks weird after having purchased the gems
 		}
 	}
 
@@ -528,7 +528,7 @@ public class ResourcesFlow {
 	/// </summary>
 	private void OnPCPackPurchased() {
 		// We should have enough PC to complete the transaction now, do it!
-		DoTransaction(false);	// Ask confirmation? No, looks weird after having purchased the pack
+		TryTransaction(false);	// Ask confirmation? No, looks weird after having purchased the pack
 	}
 
 	/// <summary>
@@ -564,7 +564,7 @@ public class ResourcesFlow {
 				// Have we bought enough extra PC?
 				if(m_extraPCCost <= UsersManager.currentUser.pc) {
 					// Yes! Complete transaction
-					DoTransaction(false);	// Ask confirmation? No, looks weird after having purchased the gems
+					TryTransaction(false);	// Ask confirmation? No, looks weird after having purchased the gems
 				} else {
 					// No! Refresh the MISSING_EXTRA_PC popup
 					ResourcesFlowMissingPCPopup pcPopup = GetPopup<ResourcesFlowMissingPCPopup>();
