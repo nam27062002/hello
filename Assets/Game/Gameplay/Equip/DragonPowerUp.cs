@@ -152,19 +152,7 @@ public class DragonPowerUp : MonoBehaviour {
 						}break;
 					}
 				}break;
-				case "lower_damage_origin":
-				{
-					List<string> origins = def.GetAsList<string>("param1");
-					if ( origins.Count > 0 && !string.IsNullOrEmpty(origins[0]) )
-					{
-						float percentage = def.GetAsFloat("param2");
-						DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
-						for( int i = 0; i<origins.Count; ++i )
-						{
-							healthBehaviour.AddDamageReduction( origins[i], percentage );
-						}
-					}
-				}break;
+
 				case "lives":		// adds lives to the player
 				{
 					int numExtraLives = def.GetAsInt("param1");
@@ -352,6 +340,21 @@ public class DragonPowerUp : MonoBehaviour {
 					} break;
 				}
 			} break;
+
+			case "lower_damage_origin": {
+				// Check sub type with param one
+				string subtype = _powerDef.Get("param1");
+				int numHits = _powerDef.GetAsInt("param2");
+				switch(subtype) {
+					case "EnemyTier0;EnemyTier1;EnemyTier2;EnemyTier3;EnemyTier4": {
+						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
+					} break;
+
+                    default: {
+                        return _powerDef.GetLocalized(fieldId);
+                    }break;
+                    }
+                } break;
 
 			case "lives": {
 				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_HEALTH.ToHexString("#"));
