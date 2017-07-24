@@ -63,9 +63,12 @@ public class ResourcesFlow {
 		get { return m_itemDef; }
 		set { m_itemDef = value; }
 	}
-
-	// Base prices
-	private UserProfile.Currency m_currency = 0;
+    
+    // Id of the economy group this purchase belongs to. It's used for tracking purposes
+    public HDTrackingManager.EEconomyGroup economyGroup { get; set; }
+    
+    // Base prices
+    private UserProfile.Currency m_currency = 0;
 	public UserProfile.Currency currency {
 		get { return m_currency; }
 	}
@@ -149,14 +152,15 @@ public class ResourcesFlow {
 		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
 	}
 
-	/// <summary>
-	/// Start the flow.
-	/// Prices should have been set.
-	/// </summary>
-	/// <param name="_targetAmount">How much are we trying to spend?</param>
-	/// <param name="_currency">Which currency are we trying to spend?</param>
-	/// <param name="_itemDef">Optional, which item are we trying to buy? (Only for visual purposes)</param>
-	public void Begin(long _targetAmount, UserProfile.Currency _currency, DefinitionNode _itemDef) {
+    /// <summary>
+    /// Start the flow.
+    /// Prices should have been set.
+    /// </summary>
+    /// <param name="_targetAmount">How much are we trying to spend?</param>
+    /// <param name="_currency">Which currency are we trying to spend?</param>
+    /// <param name="_economyGroup">Id used to identify this purchase economy group. It's used for tracking purposes</param>
+    /// <param name="_itemDef">Optional, which item are we trying to buy? (Only for visual purposes)</param>
+    public void Begin(long _targetAmount, UserProfile.Currency _currency, HDTrackingManager.EEconomyGroup _economyGroup, DefinitionNode _itemDef) {
 		// Only from Init state!
 		if(m_state != State.INIT) return;
 
@@ -164,9 +168,10 @@ public class ResourcesFlow {
 		m_originalAmount = _targetAmount;
 		m_currency = _currency;
 		m_itemDef = _itemDef;
+        economyGroup = _economyGroup;
 
-		// Try it now!
-		TryTransaction(true);
+        // Try it now!
+        TryTransaction(true);
 	}
 
 	//------------------------------------------------------------------------//
@@ -317,15 +322,24 @@ public class ResourcesFlow {
 			return;
 		}
 
-		// [AOC] TODO!! Tracking
+        // Tracking
+        if (m_extraPCCost > 0) {
+            // If the user had to exchange some pc to some resources because she didn't have enough resources then a specific event has to be sent
+            HDTrackingManager.Instance.Notify_PurchaseWithResourcesCompleted(HDTrackingManager.EEconomyGroup.NOT_ENOUGH_RESOURCES, 
+                HDTrackingManager.EconomyGroupToString(economyGroup), null, UserProfile.Currency.HARD, (int)m_extraPCCost);            
+        }
 
-		// Currency transaction
-		if(m_finalAmount > 0) {
-			UsersManager.currentUser.AddCurrency(m_currency, -m_finalAmount);
-		}
+        // Currency transaction
+        if (m_finalAmount > 0) {
+            // Tracking
+            string trackingItemId = (m_itemDef != null) ? m_itemDef.Get("trackingSku") : null;            
+            HDTrackingManager.Instance.Notify_PurchaseWithResourcesCompleted(economyGroup, trackingItemId, null, m_currency, (int)m_originalAmount);
 
-		// Extra PC Cost Transaction
-		if(m_extraPCCost > 0) {
+            UsersManager.currentUser.AddCurrency(m_currency, -m_finalAmount);            
+        }
+
+        // Extra PC Cost Transaction
+        if (m_extraPCCost > 0) {
 			UsersManager.currentUser.AddCurrency(UserProfile.Currency.HARD, -m_extraPCCost);
 		}
 

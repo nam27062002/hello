@@ -242,16 +242,18 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			contribution,
 			(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) => {
 				// If there was no error, update local cache
-				if(_error == null && _response != null && _response.ContainsKey("response") && _response["response"].ToString().ToLower().CompareTo("failed") != 0) {
-					// Add to event's total contribution!
-					instance.m_currentEvent.AddContribution(contribution);
+				if(_error == null && _response != null && _response.ContainsKey("response")) {
+					if ( _response["response"] == null || _response["response"].ToString().ToLower().CompareTo("failed") != 0 ){
+						// Add to event's total contribution!
+						instance.m_currentEvent.AddContribution(contribution);
 
-					// Add to current user individual contribution in this event
-					GlobalEventUserData playerData = user.GetGlobalEventData(instance.m_currentEvent.id);
-					playerData.score += contribution;
+						// Add to current user individual contribution in this event
+						GlobalEventUserData playerData = user.GetGlobalEventData(instance.m_currentEvent.id);
+						playerData.score += contribution;
 
-					// Check if player can join the leaderboard! (or update its position)
-					instance.m_currentEvent.RefreshLeaderboardPosition(playerData);
+						// Check if player can join the leaderboard! (or update its position)
+						instance.m_currentEvent.RefreshLeaderboardPosition(playerData);
+					}
 				}
 
 				// Notify game that server response was received
@@ -315,13 +317,15 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	/// <param name="_user">Profile to work with.</param>
 	public static void SetupUser(UserProfile _user) {
 		// If it's a new user, request current event to the server for this user
-		if(instance.m_user != _user) {
+		// if(instance.m_user != _user) 
+		{
 			instance.m_user = _user;
 			if ( Connected() )
 			{
 				// RequestCurrentEventData();
 				TMP_RequestCustomizer();
 			}
+			FGOL.Events.EventManager.Instance.DeregisterEvent(Events.OnUserLoggedIn, OnLoggedIn );
 			FGOL.Events.EventManager.Instance.RegisterEvent(Events.OnUserLoggedIn, OnLoggedIn);
 		}
 	}

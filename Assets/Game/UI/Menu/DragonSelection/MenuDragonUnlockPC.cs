@@ -83,6 +83,6 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 				InstanceManager.menuSceneController.GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>().LaunchUnlockAnim(dragonData.def.sku, 0.2f, 0.1f);
 			}
 		);
-		purchaseFlow.Begin(dragonData.def.GetAsLong("unlockPricePC"), UserProfile.Currency.HARD, dragonData.def);
+		purchaseFlow.Begin(dragonData.def.GetAsLong("unlockPricePC"), UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.UNLOCK_DRAGON, dragonData.def);
 	}
 }
