@@ -85,6 +85,6 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 				AudioController.Play("hd_unlock_dragon");
 			}
 		);
-		purchaseFlow.Begin(dragonData.def.GetAsLong("unlockPriceCoins"), UserProfile.Currency.SOFT, dragonData.def);
+		purchaseFlow.Begin(dragonData.def.GetAsLong("unlockPriceCoins"), UserProfile.Currency.SOFT, HDTrackingManager.EEconomyGroup.UNLOCK_DRAGON, dragonData.def);
 	}
 }

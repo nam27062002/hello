@@ -35,9 +35,28 @@ public class HDTrackingManager
         }
     }
     //////////////////////////////////////////////////////////////////////////
-        
+
+    public enum EEconomyGroup
+    {
+        REMOVE_MISSION,
+        SKIP_MISSION,
+        UNLOCK_MAP,
+        REVIVE,
+        UNLOCK_DRAGON,
+        BUY_EGG,
+        SKIP_EGG_INCUBATION,
+        ACQUIRE_DISGUISE,
+        SHOP_COINS_PACK,
+        NOT_ENOUGH_RESOURCES
+    };
+
+    public static string EconomyGroupToString(EEconomyGroup group)
+    {
+        return group.ToString();
+    }
+
     public TrackingSaveSystem TrackingSaveSystem { get; set; }
-            
+             
     public virtual void Update()
     {        
     }
@@ -84,13 +103,23 @@ public class HDTrackingManager
     /// <param name="storeTransactionID">transaction ID returned by the platform</param>
     /// <param name="houstonTransactionID">transaction ID returned by houston</param>
     /// <param name="itemID">ID of the item purchased</param>
-    /// <param name="promotionType">Promotion type if there was one</param>
+    /// <param name="promotionType">Promotion type if there is one, otherwise <c>null</c></param>
     /// <param name="moneyCurrencyCode">Code of the currency that the user used to pay for the item</param>
     /// <param name="moneyPrice">Price paid by the user in her currency</param>
     public virtual void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice) {}
-#endregion
 
-#region log
+    /// <summary>
+    /// Called when the user completed a purchase by using game resources (either soft currency or hard currency)
+    /// </summary>
+    /// <param name="economyGroup">ID used to identify the type of item the user has bought. Example UNLOCK_DRAGON</param>
+    /// <param name="itemID">ID used to identify the item that the user bought. Example: sku of the dragon unlocked</param>
+    /// <param name="promotionType">Promotion type if there is one, otherwise <c>null</c></param>
+    /// <param name="moneyCurrencyCode">Currency type used</param>
+    /// <param name="moneyPrice">Amount of the currency paid</param>
+    public virtual void Notify_PurchaseWithResourcesCompleted(EEconomyGroup economyGroup, string itemID, string promotionType, UserProfile.Currency moneyCurrencyCode, int moneyPrice) { }    
+    #endregion
+
+    #region log
     private const bool LOG_USE_COLOR = false;
     private const string LOG_CHANNEL = "[HDTrackingManager] ";
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;

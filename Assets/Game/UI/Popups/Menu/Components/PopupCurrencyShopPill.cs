@@ -203,7 +203,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 						OnPurchaseSuccessEnd(_flow.itemDef);
 					}
 				);
-				purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, m_def);
+				purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.SHOP_COINS_PACK,  m_def);
 
 				// Without resources flow:
 				/*long pricePC = (long)m_price;
