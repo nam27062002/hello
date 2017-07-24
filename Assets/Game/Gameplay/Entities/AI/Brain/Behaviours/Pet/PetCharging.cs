@@ -14,10 +14,12 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
+				base.OnEnter(oldState, param);
 				m_entity.Charging = true;
 			}
 
-			protected virtual void OnExit(State _newState){
+			protected override void OnExit(State _newState){
+				base.OnExit(_newState);
 				m_entity.Charging = false;
 			}
 		}
