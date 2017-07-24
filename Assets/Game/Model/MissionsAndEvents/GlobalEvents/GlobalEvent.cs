@@ -78,7 +78,7 @@ public partial class GlobalEvent {
 	private int m_rewardLevel = -1; // how many rewards will get this user?
 	public int rewardLevel { get { return m_rewardLevel; } }
 
-	private bool m_topContributor = false; // how many rewards will get this user?
+	private bool m_topContributor = false; // if top contributor
 	public bool topContributor { get { return m_topContributor; } }
 
 	// Bonuses

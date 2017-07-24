@@ -242,7 +242,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			contribution,
 			(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) => {
 				// If there was no error, update local cache
-				if(_error == null) {
+				if(_error == null && _response != null && _response.ContainsKey("response") && _response["response"].ToString().ToLower().CompareTo("failed") != 0) {
 					// Add to event's total contribution!
 					instance.m_currentEvent.AddContribution(contribution);
 
@@ -315,13 +315,15 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	/// <param name="_user">Profile to work with.</param>
 	public static void SetupUser(UserProfile _user) {
 		// If it's a new user, request current event to the server for this user
-		if(instance.m_user != _user) {
+		// if(instance.m_user != _user) 
+		{
 			instance.m_user = _user;
 			if ( Connected() )
 			{
 				// RequestCurrentEventData();
 				TMP_RequestCustomizer();
 			}
+			FGOL.Events.EventManager.Instance.DeregisterEvent(Events.OnUserLoggedIn, OnLoggedIn );
 			FGOL.Events.EventManager.Instance.RegisterEvent(Events.OnUserLoggedIn, OnLoggedIn);
 		}
 	}
@@ -412,24 +414,27 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 			// The event will parse the response json by itself
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-			Debug.Log("<color=purple>EVENT STATE</color>\n" + responseJson.ToString(4));
-			m_currentEvent.UpdateFromJson(responseJson);
+			if ( responseJson != null )
+			{
+				Debug.Log("<color=purple>EVENT STATE</color>\n" + responseJson.ToString(4));
+				m_currentEvent.UpdateFromJson(responseJson);
 
-			if (m_currentEvent.isRewarAvailable) {
-				GlobalEventManager.RequestCurrentEventRewards();
+				if (m_currentEvent.isRewarAvailable) {
+					GlobalEventManager.RequestCurrentEventRewards();
+				}
+
+				GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
+				// Player data
+				if ( responseJson.ContainsKey("playerData") ) {
+					currentEventUserData.Load(responseJson["playerData"]);
+				}else{
+					currentEventUserData.Reset();
+				}
+
+				// Notify game that we have new data concerning the current event
+				Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_STATE);
+				Messenger.Broadcast(GameEvents.GLOBAL_EVENT_STATE_UPDATED);
 			}
-
-			GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
-			// Player data
-			if ( responseJson.ContainsKey("playerData") ) {
-				currentEventUserData.Load(responseJson["playerData"]);
-			}else{
-				currentEventUserData.Reset();
-			}
-
-			// Notify game that we have new data concerning the current event
-			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_STATE);
-			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_STATE_UPDATED);
 		}
 	}
 
