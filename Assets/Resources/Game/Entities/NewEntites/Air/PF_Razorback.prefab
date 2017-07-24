@@ -30,10 +30,10 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 107828}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 191.03087, y: 68.25803, z: -6.497969}
+  m_LocalPosition: {x: 12, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4893835830028248}
+  - {fileID: 4503713848385084}
   - {fileID: 4633756124339510}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -102,17 +102,32 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 107828}
   m_IsPrefabParent: 1
---- !u!1 &1601318177997068
+--- !u!1 &1372828295036996
 GameObject:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4893835830028248}
-  - component: {fileID: 95241234296876216}
+  - component: {fileID: 4447853252013058}
+  - component: {fileID: 137722631890301094}
   m_Layer: 0
-  m_Name: view
+  m_Name: FkyingBoar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1436174313033442
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4975918529610778}
+  m_Layer: 0
+  m_Name: FlyingPig_Spine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -134,22 +149,50 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1741057615285872
+--- !u!1 &1827730648690194
 GameObject:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4993834120789350}
-  - component: {fileID: 137031755528639158}
+  - component: {fileID: 4503713848385084}
+  - component: {fileID: 95093078366219960}
   m_Layer: 0
-  m_Name: FlyingPig
+  m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &4447853252013058
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1372828295036996}
+  m_LocalRotation: {x: 0.7071069, y: -0.000000053385065, z: -0.7071067, w: -0.00000005338508}
+  m_LocalPosition: {x: -0.000000046402818, y: 0.7149565, z: -0.116349585}
+  m_LocalScale: {x: 0.3931828, y: 0.3931828, z: 0.3931828}
+  m_Children: []
+  m_Father: {fileID: 4503713848385084}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4503713848385084
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1827730648690194}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.29, z: 0.19}
+  m_LocalScale: {x: 1.65, y: 1.65, z: 1.65}
+  m_Children:
+  - {fileID: 4447853252013058}
+  - {fileID: 4975918529610778}
+  m_Father: {fileID: 490524}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4633756124339510
 Transform:
   m_ObjectHideFlags: 1
@@ -163,32 +206,18 @@ Transform:
   m_Father: {fileID: 490524}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4893835830028248
+--- !u!4 &4975918529610778
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1601318177997068}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.29, z: 0.19}
-  m_LocalScale: {x: 1.65, y: 1.65, z: 1.65}
-  m_Children:
-  - {fileID: 4993834120789350}
-  m_Father: {fileID: 490524}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4993834120789350
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1741057615285872}
-  m_LocalRotation: {x: -0.6338931, y: 0.20984827, z: 0.7207389, w: -0.18622233}
-  m_LocalPosition: {x: -0.005263963, y: 0.6474031, z: -0.1281781}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_GameObject: {fileID: 1436174313033442}
+  m_LocalRotation: {x: 0.7068081, y: 0.01903821, z: -0.7068928, w: -0.019038457}
+  m_LocalPosition: {x: -0.000000046402818, y: 0.7149565, z: -0.116349585}
+  m_LocalScale: {x: 1, y: 1.0000004, z: 1}
   m_Children: []
-  m_Father: {fileID: 4893835830028248}
-  m_RootOrder: 0
+  m_Father: {fileID: 4503713848385084}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &54000011245771724
 Rigidbody:
@@ -205,15 +234,15 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!95 &95241234296876216
+--- !u!95 &95093078366219960
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1601318177997068}
+  m_GameObject: {fileID: 1827730648690194}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 1c85c7a146ed64de2ae784f60c4f74bf, type: 3}
+  m_Avatar: {fileID: 9000000, guid: 6e269e3b57cc94e528983e0de10606cc, type: 3}
   m_Controller: {fileID: 9100000, guid: efd883671dee74004ad63c721d1d85bb, type: 2}
   m_CullingMode: 2
   m_UpdateMode: 0
@@ -233,8 +262,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parentName: FlyingPig
-  m_parentRoot: {fileID: 490524}
+  m_parentName: FlyingPig_Spine
+  m_parentRoot: {fileID: 4503713848385084}
   m_worldPositionStays: 1
 --- !u!114 &114716784683227552
 MonoBehaviour:
@@ -297,12 +326,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d181ece4f6e24e9c93305c68565bd26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 1
-  m_runSpeed: 1
+  m_walkSpeed: 20
+  m_runSpeed: 20
   m_minPlaybakSpeed: 1
   m_maxPlaybakSpeed: 1.5
-  m_onBoostMaxPlaybackSpeed: 0
-  m_hasNavigationLayer: 0
+  m_onBoostMaxPlaybackSpeed: 1
+  m_hasNavigationLayer: 1
   m_hasRotationLayer: 0
   m_animA: throwFlour
   m_animB: 
@@ -657,12 +686,12 @@ CapsuleCollider:
   m_Height: 2.63
   m_Direction: 2
   m_Center: {x: 0, y: 0.54, z: 0.63}
---- !u!137 &137031755528639158
+--- !u!137 &137722631890301094
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1741057615285872}
+  m_GameObject: {fileID: 1372828295036996}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -670,7 +699,7 @@ SkinnedMeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: f1c7a8e02558e1c4a9faf425b10a64b7, type: 2}
+  - {fileID: 2100000, guid: 74e3160104721402d8bfa9663c654276, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -692,11 +721,11 @@ SkinnedMeshRenderer:
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 4300000, guid: 1c85c7a146ed64de2ae784f60c4f74bf, type: 3}
+  m_Mesh: {fileID: 4300002, guid: 6e269e3b57cc94e528983e0de10606cc, type: 3}
   m_Bones: []
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 0}
   m_AABB:
-    m_Center: {x: -0.33847764, y: 0.30810067, z: 0.048223644}
-    m_Extent: {x: 0.852098, y: 0.73832536, z: 0.7491535}
+    m_Center: {x: -1.0500243, y: -0.2867818, z: -0.000000059604645}
+    m_Extent: {x: 2.5662408, y: 2.2630897, z: 1.0874412}
   m_DirtyAABB: 0
