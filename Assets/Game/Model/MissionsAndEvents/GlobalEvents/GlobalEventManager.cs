@@ -315,13 +315,15 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	/// <param name="_user">Profile to work with.</param>
 	public static void SetupUser(UserProfile _user) {
 		// If it's a new user, request current event to the server for this user
-		if(instance.m_user != _user) {
+		// if(instance.m_user != _user) 
+		{
 			instance.m_user = _user;
 			if ( Connected() )
 			{
 				// RequestCurrentEventData();
 				TMP_RequestCustomizer();
 			}
+			FGOL.Events.EventManager.Instance.DeregisterEvent(Events.OnUserLoggedIn, OnLoggedIn );
 			FGOL.Events.EventManager.Instance.RegisterEvent(Events.OnUserLoggedIn, OnLoggedIn);
 		}
 	}
