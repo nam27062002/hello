@@ -736,6 +736,8 @@ public class GameServerManagerCalety : GameServerManager {
 					if ( IsLogged() ) {
 						Dictionary<string, string> kParams = new Dictionary<string, string>();	
 						kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
+						kParams["eventId"] = parameters["eventId"];
+						kParams["progress"] = parameters["progress"];
 						ServerManager.SharedInstance.SendCommand( COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, kParams, parameters, "");
 						// progress
 					}

@@ -78,6 +78,9 @@ public partial class GlobalEvent {
 	private int m_rewardLevel = -1; // how many rewards will get this user?
 	public int rewardLevel { get { return m_rewardLevel; } }
 
+	private bool m_topContributor = false; // if top contributor
+	public bool topContributor { get { return m_topContributor; } }
+
 	// Bonuses
 	private string m_bonusDragonSku = "";
 	public string bonusDragonSku {
@@ -326,11 +329,9 @@ public partial class GlobalEvent {
 	}
 
 	public void UpdateRewardLevelFromJson(SimpleJSON.JSONNode _data) {
-		// { r: ["SC:100", "SC:200"], top: "SC:50" }
-		SimpleJSON.JSONArray r = _data["r"].AsArray;
-		m_rewardLevel = r.Count;
+		m_rewardLevel = _data["r"].AsInt;
 		if (_data.ContainsKey("top")) {
-			m_rewardLevel++;
+			m_topContributor = _data["top"].AsBool;
 		}
 	}
 

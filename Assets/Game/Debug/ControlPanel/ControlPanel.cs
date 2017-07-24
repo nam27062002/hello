@@ -41,8 +41,6 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		get { return instance.m_toggleButton; }
 	}
 
-	[SerializeField] private TabSystem m_tabs = null;
-
 	[SerializeField] private TextMeshProUGUI m_fpsCounter;
 	public static TextMeshProUGUI fpsCounter {
 		get { return instance.m_fpsCounter; }
@@ -112,6 +110,18 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
     [Space]
 	[SerializeField] private float m_activationTime = 3f;
 
+	// Tabs setup
+	[System.Serializable]
+	private class TabSetup {
+		public SelectableButton button = null;
+		public GameObject prefab = null;
+	}
+
+	[Space]
+	[SerializeField] private RectTransform m_tabsContainer = null;
+	[SerializeField] private TabSystem m_tabs = null;
+	[SerializeField] private TabSetup[] m_tabsSetup = null;
+
 	// Internal logic
 	private float m_activateTimer;
     const int m_NumDeltaTimes = 30;
@@ -167,6 +177,15 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		IsFPSEnabled = UnityEngine.Debug.isDebugBuild;        
         ShowMemoryUsage = UnityEngine.Debug.isDebugBuild;
         m_logicUnitsCounter.transform.parent.gameObject.SetActive(UnityEngine.Debug.isDebugBuild && ProfilerSettingsManager.ENABLED);
+
+		// Initialize tabs
+		for(int i = 0; i < m_tabsSetup.Length; ++i) {
+			// Create a new instance of the tab
+			GameObject newTabObj = GameObject.Instantiate<GameObject>(m_tabsSetup[i].prefab, m_tabsContainer, false);
+
+			// Add it to the tab system
+			m_tabs.AddTab(i, m_tabsSetup[i].button, newTabObj.GetComponent<Tab>());
+		}
 
 		// Restore saved tab (if any)
 		int lastTabIdx = PlayerPrefs.GetInt(LAST_TAB_IDX_PREF_KEY, -1);
