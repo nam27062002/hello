@@ -371,7 +371,7 @@ public class MissionPill : MonoBehaviour {
 				PersistenceManager.Save();
 			}
 		);
-		purchaseFlow.Begin((long)m_mission.removeCostPC, UserProfile.Currency.HARD, m_mission.def);
+		purchaseFlow.Begin((long)m_mission.removeCostPC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.REMOVE_MISSION, m_mission.def);
 	}
 
 	/// <summary>
@@ -432,16 +432,16 @@ public class MissionPill : MonoBehaviour {
 		// Ignore if mission not initialized
 		if(m_mission == null) return;
 
-		// Start purchase flow
-		ResourcesFlow purchaseFlow = new ResourcesFlow("SKIP_MISSION");
-		purchaseFlow.OnSuccess.AddListener(
+        // Start purchase flow        
+        ResourcesFlow purchaseFlow = new ResourcesFlow("SKIP_MISSION");
+        purchaseFlow.OnSuccess.AddListener(
 			(ResourcesFlow _flow) => {
 				// Just do it
 				MissionManager.SkipMission(m_missionDifficulty, -1f);
 				PersistenceManager.Save();
 			}
 		);
-		purchaseFlow.Begin((long)m_mission.skipCostPC, UserProfile.Currency.HARD, m_mission.def);
+		purchaseFlow.Begin((long)m_mission.skipCostPC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.SKIP_MISSION, m_mission.def);
 	}
 
 	/// <summary>

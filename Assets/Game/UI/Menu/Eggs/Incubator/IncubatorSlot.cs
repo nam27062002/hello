@@ -206,7 +206,7 @@ public class IncubatorSlot : MonoBehaviour {
 				}
 			}
 		);
-		purchaseFlow.Begin((long)targetEgg.GetIncubationSkipCostPC(), UserProfile.Currency.HARD, targetEgg.def);
+		purchaseFlow.Begin((long)targetEgg.GetIncubationSkipCostPC(), UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.SKIP_EGG_INCUBATION, targetEgg.def);
 	}
 
 	/// <summary>

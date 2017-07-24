@@ -474,9 +474,9 @@ public class DisguisesScreenController : MonoBehaviour {
 			}
 		);
 		if(isPC) {
-			purchaseFlow.Begin(pricePC, UserProfile.Currency.HARD, m_selectedPill.def);
+			purchaseFlow.Begin(pricePC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.ACQUIRE_DISGUISE, m_selectedPill.def);
 		} else {
-			purchaseFlow.Begin(priceSC, UserProfile.Currency.SOFT, m_selectedPill.def);
+			purchaseFlow.Begin(priceSC, UserProfile.Currency.SOFT, HDTrackingManager.EEconomyGroup.ACQUIRE_DISGUISE, m_selectedPill.def);
 		}
 	}
 

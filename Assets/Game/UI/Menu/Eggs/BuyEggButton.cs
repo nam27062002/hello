@@ -59,6 +59,6 @@ public class BuyEggButton : MonoBehaviour {
 				InstanceManager.sceneController.GetComponent<MenuScreensController>().StartOpenEggFlow(purchasedEgg);
 			}
 		);
-		purchaseFlow.Begin(eggDef.GetAsLong("pricePC"), UserProfile.Currency.HARD, eggDef);
+		purchaseFlow.Begin(eggDef.GetAsLong("pricePC"), UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.BUY_EGG, eggDef);
 	}
 }

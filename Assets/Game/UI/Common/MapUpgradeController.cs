@@ -203,16 +203,16 @@ public class MapUpgradeController : MonoBehaviour {
 		// Ignore if map is already unlocked
 		if(isUnlocked) return;
 
-		// Start purchase flow
-		ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_MAP");
-		purchaseFlow.OnSuccess.AddListener(
+        // Start purchase flow        
+        ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_MAP");
+        purchaseFlow.OnSuccess.AddListener(
 			(ResourcesFlow _flow) => {
 				// Just do it
 				UsersManager.currentUser.UnlockMap();
 				PersistenceManager.Save();
 			}
 		);
-		purchaseFlow.Begin(m_unlockPricePC, UserProfile.Currency.HARD, null);
+		purchaseFlow.Begin(m_unlockPricePC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.UNLOCK_MAP, null);
 	}
 
 	/// <summary>
