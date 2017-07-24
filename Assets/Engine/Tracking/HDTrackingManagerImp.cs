@@ -290,6 +290,19 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         Track_IAPCompleted(storeTransactionID, houstonTransactionID, itemID, promotionType, moneyCurrencyCode, moneyPrice);
     }
+
+    /// <summary>
+    /// Called when the user completed a purchase by using game resources (either soft currency or hard currency)
+    /// </summary>
+    /// <param name="economyGroup">ID used to identify the type of item the user has bought. Example UNLOCK_DRAGON</param>
+    /// <param name="itemID">ID used to identify the item that the user bought. Example: sku of the dragon unlocked</param>
+    /// <param name="promotionType">Promotion type if there is one, otherwise <c>null</c></param>
+    /// <param name="moneyCurrency">Currency type used</param>
+    /// <param name="moneyPrice">Amount of the currency paid</param>
+    public override void Notify_PurchaseWithResourcesCompleted(EEconomyGroup economyGroup, string itemID, string promotionType, UserProfile.Currency moneyCurrency, int moneyPrice)
+    {
+        Track_PurchaseWithResourcesCompleted(EconomyGroupToString(economyGroup), itemID, 1, promotionType, Track_UserCurrencyToString(moneyCurrency), moneyPrice);
+    }
     #endregion
 
     #region track
@@ -372,13 +385,39 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             if (TrackingSaveSystem != null)
             {
-                e.SetParameterValue("totalPurchases", TrackingSaveSystem.TotalPurchases);
+                Track_AddParamTotalPurchases(e);
                 e.SetParameterValue("totalStoreVisits", TrackingSaveSystem.TotalStoreVisits);
             }
 
             TrackingManager.SharedInstance.SendEvent(e);
         }
     }
+
+    private void Track_PurchaseWithResourcesCompleted(string economyGroup, string itemID, int itemQuantity, string promotionType, string moneyCurrency, float moneyPrice)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_PurchaseWithResourcesCompleted economyGroup = " + economyGroup + " itemID = " + itemID + " promotionType = " + promotionType + 
+                " moneyCurrency = " + moneyCurrency + " moneyPrice = " + moneyPrice);
+        }
+
+        // DNA custom.mobile.stop
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.iap.secondaryStore");
+        if (e != null)
+        {
+            Track_AddParamString(e, "economyGroup", economyGroup);
+            Track_AddParamString(e, "itemID", itemID);
+            e.SetParameterValue("itemQuantity", itemQuantity);
+            Track_AddParamString(e, "promotionType", promotionType);
+            Track_AddParamString(e, "currency", moneyCurrency);            
+            e.SetParameterValue("moneyIAP", moneyPrice);
+
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamTotalPurchases(e);            
+
+            TrackingManager.SharedInstance.SendEvent(e);
+        }
+    }    
 
     // -------------------------------------------------------------
     // Params
@@ -459,7 +498,15 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         int value = (TrackingSaveSystem != null) ? TrackingSaveSystem.TotalPlaytime : 0;
         e.SetParameterValue("totalPlaytime", value);
-    }    
+    }
+
+    private void Track_AddParamTotalPurchases(TrackingManager.TrackingEvent e)
+    {
+        if (TrackingSaveSystem != null)
+        {
+            e.SetParameterValue("totalPurchases", TrackingSaveSystem.TotalPurchases);
+        }        
+    }
 
     private void Track_AddParamString(TrackingManager.TrackingEvent e, string paramName, string value)
     {
@@ -470,6 +517,36 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         e.SetParameterValue(paramName, value);
+    }  
+    
+    private string Track_UserCurrencyToString(UserProfile.Currency currency)
+    {
+        string returnValue = "";
+        switch (currency)
+        {
+            case UserProfile.Currency.HARD:
+                returnValue = "HardCurrency";
+                break;
+
+            case UserProfile.Currency.SOFT:
+                returnValue = "SoftCurrency_Coins";
+                break;
+
+            case UserProfile.Currency.GOLDEN_FRAGMENTS:
+                returnValue = "SoftCurrency_GoldenFragments";
+                break;
+
+            case UserProfile.Currency.KEYS:
+                returnValue = "SoftCurrency_Keys";
+                break;
+
+            case UserProfile.Currency.REAL:
+                returnValue = "Real";
+                break;
+
+        }
+
+        return returnValue;
     }
     #endregion
 

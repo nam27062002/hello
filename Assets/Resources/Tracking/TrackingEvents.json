@@ -46,6 +46,18 @@
             ],
             "APIs": ["dna"]
         },        		
+		"custom.player.iap.secondaryStore": {
+            "Parameters": [                                                                				
+				{"itemID": {"Status": ""}},
+				{"itemQuantity": {"Status": ""}},               				
+				{"promotionType": {"Status": ""}},
+				{"playerProgress": {"Status": ""}},				
+                {"currency": {"Status": ""}},				
+				{"moneyIAP": {"Status": ""}},               				
+				{"totalPurchases": {"Status": ""}}				
+            ],
+            "APIs": ["dna"]
+        }        		
     },
     "ParameterValues": {        		
 		"acq_marketing_id": {
@@ -146,6 +158,14 @@
         },	
 		"totalStoreVisits": {
             "Type": "INT",
+            "Values": []
+        },
+		"itemQuantity": {
+            "Type": "INT",
+            "Values": []
+        },
+		"currency": {
+            "Type": "STRING:125",
             "Values": []
         }
     }

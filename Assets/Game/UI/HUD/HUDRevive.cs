@@ -139,7 +139,7 @@ public class HUDRevive : MonoBehaviour {
 		// Pause timer and begin flow!
 		m_timer.Stop();
 		long costPC = RewardManager.paidReviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
-		purchaseFlow.Begin((long)costPC, UserProfile.Currency.HARD, null);
+		purchaseFlow.Begin((long)costPC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.REVIVE, null);
 
 		// Without resources flow:
 		// If not enough funds, pause timer and open PC shop popup
