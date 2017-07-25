@@ -16,6 +16,9 @@ public class Entity : IEntity {
 	public override string sku { get { return m_sku; } }
 
 	[SerializeField] private bool m_hideNeedTierMessage = false;
+	public bool hideNeedTierMessage{
+		get{ return m_hideNeedTierMessage; }
+	}
 
 	[SerializeField] private bool m_dieOutsideFrustum = true;
 	public bool dieOutsideFrustum {
@@ -213,9 +216,10 @@ public class Entity : IEntity {
 	}
 
 	public bool IsEdible() {
-		if (m_hideNeedTierMessage) {
+		/*if (m_hideNeedTierMessage) {
 			return IsEdible(InstanceManager.player.data.tier);
 		}
+		*/
 		return allowEdible && m_isEdible;
 	}
 
