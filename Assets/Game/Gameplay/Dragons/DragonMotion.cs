@@ -1797,14 +1797,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		Messenger.Broadcast<bool>(GameEvents.UNDERWATER_TOGGLED, false);
 	}
 
-	public void StartSpaceMovement()
+	public void StartSpaceMovement(Collider _other)
 	{
 		// Trigger animation
 		m_animationEventController.OnEnterOuterSpace();
         
         // Trigger particles (min. speed required)
-        if (m_particleController != null && Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed) {
-			m_particleController.OnEnterOuterSpace();
+        if (m_particleController != null) {
+			m_particleController.OnEnterOuterSpace( _other, Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed );
 		}
 
 		if ( m_state != State.Latching )
@@ -1817,14 +1817,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
         Messenger.Broadcast<bool>(GameEvents.INTOSPACE_TOGGLED, true);        
     }
 
-	public void EndSpaceMovement()
+	public void EndSpaceMovement(Collider _other)
 	{
 		// Trigger animation
 		m_animationEventController.OnExitOuterSpace();
 
 		// Trigger particles (min. speed required)
-		if(m_particleController != null && Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed) {
-			m_particleController.OnExitOuterSpace();
+		if(m_particleController != null ) {
+			m_particleController.OnExitOuterSpace( _other, Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed );
 		}
 
 		if ( m_state != State.Latching )
@@ -1972,7 +1972,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			m_outterSpace = true;
 			if (IsAliveState())
 			{
-				StartSpaceMovement();
+				StartSpaceMovement( _other );
 				m_previousState = State.OuterSpace;
 			}
 		}
@@ -2033,7 +2033,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			m_outterSpace = false;
 			if (IsAliveState())
 			{
-				EndSpaceMovement();
+				EndSpaceMovement( _other );
 				m_previousState = State.Idle;
 			}
 		}
