@@ -151,9 +151,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	public enum SpecialEatAction
 	{
-		Eat,
-		CannotEat,
-		None
+		Eat,	// Eat always. It ignores eating tier
+		CannotEat,	// Cannot eat no matter what.
+		None	// No special case
 	};
 	private Dictionary<string, SpecialEatAction> m_specialEatActions = new Dictionary<string, SpecialEatAction>();
 
@@ -837,12 +837,21 @@ public abstract class EatBehaviour : MonoBehaviour {
 				Entity entity = m_checkEntities[e];
 				if (entity.IsEdible())
 				{
+					
 					// if not player check that it can be eaten
 					if ( !m_isPlayer )
 					{
 						SpecialEatAction specialAction = GetSpecialEatAction( entity.sku );
-						if ( specialAction == SpecialEatAction.CannotEat )
-							continue;
+						if ( specialAction != SpecialEatAction.Eat ){
+							if ( specialAction == SpecialEatAction.CannotEat || (entity.hideNeedTierMessage && !entity.IsEdible( m_tier ))){
+								continue;
+							}
+						}
+					}
+					else
+					{
+						if ( entity.hideNeedTierMessage && !entity.IsEdible( m_tier ) )
+							continue;	
 					}
 
 					// Start bite attempt
@@ -970,7 +979,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 					}
 					else 
 					{
-						if (m_isPlayer)
+						if (m_isPlayer && !entity.hideNeedTierMessage)
 							Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier, entity.sku);
 					}
 				}
