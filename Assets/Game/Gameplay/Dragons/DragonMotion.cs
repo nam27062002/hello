@@ -1329,7 +1329,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				gravityAcceleration *= 1.0f + (distance) * m_dragonAirExpMultiplier;
 			}
 
-
 			Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
 			/*//TONI
 			if (m_boostSpeedMultiplier > 1)
@@ -1798,14 +1797,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		Messenger.Broadcast<bool>(GameEvents.UNDERWATER_TOGGLED, false);
 	}
 
-	public void StartSpaceMovement()
+	public void StartSpaceMovement(Collider _other)
 	{
 		// Trigger animation
 		m_animationEventController.OnEnterOuterSpace();
         
         // Trigger particles (min. speed required)
-        if (m_particleController != null && Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed) {
-			m_particleController.OnEnterOuterSpace();
+        if (m_particleController != null) {
+			m_particleController.OnEnterOuterSpace( _other, Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed );
 		}
 
 		if ( m_state != State.Latching )
@@ -1818,14 +1817,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
         Messenger.Broadcast<bool>(GameEvents.INTOSPACE_TOGGLED, true);        
     }
 
-	public void EndSpaceMovement()
+	public void EndSpaceMovement(Collider _other)
 	{
 		// Trigger animation
 		m_animationEventController.OnExitOuterSpace();
 
 		// Trigger particles (min. speed required)
-		if(m_particleController != null && Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed) {
-			m_particleController.OnExitOuterSpace();
+		if(m_particleController != null ) {
+			m_particleController.OnExitOuterSpace( _other, Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed );
 		}
 
 		if ( m_state != State.Latching )
@@ -1973,7 +1972,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			m_outterSpace = true;
 			if (IsAliveState())
 			{
-				StartSpaceMovement();
+				StartSpaceMovement( _other );
 				m_previousState = State.OuterSpace;
 			}
 		}
@@ -2034,7 +2033,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			m_outterSpace = false;
 			if (IsAliveState())
 			{
-				EndSpaceMovement();
+				EndSpaceMovement( _other );
 				m_previousState = State.Idle;
 			}
 		}
@@ -2054,18 +2053,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			}break;
 
 			case State.OuterSpace: {
-                    // Move down
-                    if(m_impulse.y <= 0) 
-                    {
-					    m_impulse.y = 0;
-                        m_rbody.velocity.Scale(new Vector3(1, 0, 1));
-                        m_prevImpulse.y = 0.0f;
-                        //Debug.LogError("OUTER COL"+ m_prevImpulse.y);
-                    }
-                    
-                    // Smooth bounce effect on X
-                    m_impulse.x = -m_impulse.x * 0.05f;
-                    
+				OutterSpaceCollision( collision.contacts[0].normal );
             } break;
 
 			default:
@@ -2080,35 +2068,25 @@ public class DragonMotion : MonoBehaviour, IMotion {
         switch (m_state)
         {
             case State.OuterSpace:
-                {
-                    // Move down
-                    if(m_impulse.y <= 0) 
-                    {
-                        m_impulse.y = 0;
-                        m_rbody.velocity.Scale(new Vector3(1, 0, 1));
-                        m_prevImpulse.y = 0;
-                        //Debug.LogError("OUTER COL" + m_prevImpulse.y);
-                        float velX;
-                        if (m_rbody.velocity.x > 0)
-                        {
-                            velX = Mathf.Max(m_rbody.velocity.x, 1.0f);
-                        }
-                        else
-                        {
-                            velX = Mathf.Min(m_rbody.velocity.x, -1.0f);
-                        }
-                        m_rbody.velocity = new Vector3(velX, m_rbody.velocity.y, m_rbody.velocity.z);
-                    }
-
-                    // Smooth bounce effect on X
-                    //m_impulse.x = -m_impulse.x * 0.05f;
-
-                }
-                break;
-
-         
+            {
+				OutterSpaceCollision( collision.contacts[0].normal );
+            }
+            break;
         }
+    }
 
+    void OutterSpaceCollision( Vector3 normal)
+    {
+		if(m_impulse.y <= 0) 
+        {
+        	float magnitude = m_impulse.magnitude;
+			m_impulse = m_impulse - Vector3.Dot( m_impulse, normal) * normal;
+		    m_impulse.z = 0;
+		    m_impulse = m_impulse.normalized * magnitude;
+		    m_rbody.velocity = m_impulse;
+        }
+		m_prevImpulse.y = m_impulse.y;
+		m_impulse -= m_impulse * 0.05f;
     }
 
     private bool IsAliveState()

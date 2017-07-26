@@ -49,7 +49,7 @@ public class GameCamera : MonoBehaviour
     private float               m_fovDampingRangeNormal = 5.0f;
 
     // water-line offsets
-    private Vector3             m_waterLineOffset = new Vector3(0,0,0);
+    private Vector3             m_spaceLineOffset = new Vector3(0,0,0);
 
 	// camera-shake
 	private float				m_cameraShake = 0.0f;
@@ -64,14 +64,16 @@ public class GameCamera : MonoBehaviour
     private float m_maxLookUpOffset = 3.0f;
     [SerializeField]
     private float m_maxLookDownOffset = 3.0f;
+	[SerializeField]
+    private float m_spaceHeight = 150.0f;
     [SerializeField]
-    private float m_waterHeightLookUpMin = -10.0f;
+    private float m_spaceHeightLookUpMin = -10.0f;
     [SerializeField]
-    private float m_waterHeightLookUpMax = -5.0f;
+    private float m_spaceHeightLookUpMax = -5.0f;
     [SerializeField]
-    private float m_waterHeightLookDownMin = -5.0f;
+    private float m_spaceHeightLookDownMin = -5.0f;
     [SerializeField]
-    private float m_waterHeightLookDownMax = 5.0f;
+    private float m_spaceHeightLookDownMax = 5.0f;
     [SerializeField]
     private float m_rotateLerpDuration = 2.0f;
     [SerializeField]
@@ -664,14 +666,12 @@ public class GameCamera : MonoBehaviour
 		}
 
 		Vector3 desiredPos = targetPosition - m_trackAheadVector;
-        // water-line camera position offsetiness
-        /*
+        // space-line camera position offsetiness
         if(m_targetObject != null)
         {
-            UpdateWaterLevelOffset ();
-            desiredPos += m_waterLineOffset;
+            UpdateSpaceLevelOffset ();
+            desiredPos += m_spaceLineOffset;
         }
-        */
 
 		// If we just changed target and are not snapping, we fairly quickly lerp to our new position
 		// DB: Bypass this if we are being affected by boss cameras
@@ -831,42 +831,42 @@ public class GameCamera : MonoBehaviour
 
 
 
-	void UpdateWaterLevelOffset()
+	void UpdateSpaceLevelOffset()
 	{
-		float y = m_targetObject.transform.position.y;
-		float halfHeight = (m_waterHeightLookUpMax + m_waterHeightLookDownMin) / 2.0f;
+		float y = m_targetObject.transform.position.y - m_spaceHeight;
+		float halfHeight = (m_spaceHeightLookUpMax + m_spaceHeightLookDownMin) / 2.0f;
 
-		if (y < m_waterHeightLookUpMin) 
+		if (y < m_spaceHeightLookUpMin) 
 		{
 			// do nothing
-			m_waterLineOffset.y = 0.0f;
+			m_spaceLineOffset.y = 0.0f;
 		}
-		else if ((y >= m_waterHeightLookUpMin) && (y < m_waterHeightLookUpMax)) 
+		else if ((y >= m_spaceHeightLookUpMin) && (y < m_spaceHeightLookUpMax)) 
 		{
-			float ratio = (y - m_waterHeightLookUpMin) / (m_waterHeightLookUpMax - m_waterHeightLookUpMin);
-			m_waterLineOffset.y = -(ratio * m_maxLookUpOffset);
+			float ratio = (y - m_spaceHeightLookUpMin) / (m_spaceHeightLookUpMax - m_spaceHeightLookUpMin);
+			m_spaceLineOffset.y = -(ratio * m_maxLookUpOffset);
 		}
-		else if ((y >= m_waterHeightLookUpMax) && (y < halfHeight)) 
+		else if ((y >= m_spaceHeightLookUpMax) && (y < halfHeight)) 
 		{
 			// first half in between looking up and down
-			float ratio = 1.0f - (y - m_waterHeightLookUpMax) / (halfHeight - m_waterHeightLookUpMax);
-			m_waterLineOffset.y = -(ratio * m_maxLookUpOffset);
+			float ratio = 1.0f - (y - m_spaceHeightLookUpMax) / (halfHeight - m_spaceHeightLookUpMax);
+			m_spaceLineOffset.y = -(ratio * m_maxLookUpOffset);
 		}
-		else if ((y >= halfHeight) && (y < m_waterHeightLookDownMin)) 
+		else if ((y >= halfHeight) && (y < m_spaceHeightLookDownMin)) 
 		{
 			// second half in between looking up and down
-			float ratio = (y - halfHeight) / (m_waterHeightLookDownMin - halfHeight);
-			m_waterLineOffset.y = ratio * m_maxLookDownOffset;
+			float ratio = (y - halfHeight) / (m_spaceHeightLookDownMin - halfHeight);
+			m_spaceLineOffset.y = ratio * m_maxLookDownOffset;
 		}
-		else if ((y >= m_waterHeightLookDownMin) && (y < m_waterHeightLookDownMax)) 
+		else if ((y >= m_spaceHeightLookDownMin) && (y < m_spaceHeightLookDownMax)) 
 		{
-			float ratio = 1.0f - (y - m_waterHeightLookDownMin) / (m_waterHeightLookDownMax - m_waterHeightLookDownMin);
-			m_waterLineOffset.y = (ratio * m_maxLookDownOffset);
+			float ratio = 1.0f - (y - m_spaceHeightLookDownMin) / (m_spaceHeightLookDownMax - m_spaceHeightLookDownMin);
+			m_spaceLineOffset.y = (ratio * m_maxLookDownOffset);
 		}
-		else if (y > m_waterHeightLookDownMax) 
+		else if (y > m_spaceHeightLookDownMax) 
 		{
 			// do nothing
-			m_waterLineOffset.y = 0.0f;
+			m_spaceLineOffset.y = 0.0f;
 		}
 	}
 
