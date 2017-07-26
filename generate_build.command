@@ -220,6 +220,7 @@ git pull origin "${BRANCH}"
 # Update calety
 print_builder "Updating Calety"
 cd Calety
+git checkout "hungrydragon"
 git pull
 cd ..
 
