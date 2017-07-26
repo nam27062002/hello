@@ -28,6 +28,8 @@ public class DragonParticleController : MonoBehaviour
 	public GameObject m_cloudTrail;
 	public Transform m_cloudTrailAnchor;
 	private ParticleSystem m_cloudTrailInstance;
+	public ParticleData m_spaceEnterSplash = new ParticleData("PS_DiveIn", "Water" , Vector3.zero);
+	public ParticleData m_spaceExitSplash = new ParticleData("PS_DiveOut", "Water" , Vector3.zero);
 
 	[Space]
 	public float m_minSpeedEnterSplash;
@@ -167,6 +169,11 @@ public class DragonParticleController : MonoBehaviour
 			GameObject go = m_landingParticle.CreateInstance();
 			m_landingInstance = go.GetComponent<ParticleSystem>();
 		}
+
+		if ( m_spaceEnterSplash.IsValid() )
+			m_spaceEnterSplash.CreatePool();
+		if ( m_spaceExitSplash.IsValid() )
+			m_spaceExitSplash.CreatePool();
 	}
 
 	void OnEnable() {
@@ -440,17 +447,32 @@ public class DragonParticleController : MonoBehaviour
 		}
 	}
 
-	public void OnEnterOuterSpace() {
+	public void OnEnterOuterSpace( Collider _spaceCollider, bool fast ) {
 		// Launch cloud trail, will stop automatically
-		if(m_cloudTrailInstance != null) {
+		if(fast && m_cloudTrailInstance != null) {
 			m_cloudTrailInstance.Play();
 		}
+		if ( m_spaceEnterSplash.IsValid() )
+		{
+			Vector3 pos = _transform.position;
+			float spaceY = _spaceCollider.bounds.center.y - _spaceCollider.bounds.extents.y;
+			pos.y = spaceY;
+			m_spaceEnterSplash.Spawn(pos);
+		}
+			
 	}
 
-	public void OnExitOuterSpace() {
+	public void OnExitOuterSpace(Collider _spaceCollider, bool fast) {
 		// Launch cloud trail again!
-		if(m_cloudTrailInstance != null) {
+		if(fast && m_cloudTrailInstance != null) {
 			m_cloudTrailInstance.Play();
+		}
+		if ( m_spaceExitSplash.IsValid() )
+		{
+			Vector3 pos = _transform.position;
+			float spaceY = _spaceCollider.bounds.center.y - _spaceCollider.bounds.extents.y;
+			pos.y = spaceY;
+			m_spaceExitSplash.Spawn( pos );
 		}
 	}
 
