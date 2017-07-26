@@ -6,7 +6,7 @@ using DG.Tweening;
 
 public class HUDFading : MonoBehaviour {
 
-	public Image m_blackImage;
+	private Image m_blackImage;
 	enum State
 	{
 		NONE,
@@ -25,6 +25,10 @@ public class HUDFading : MonoBehaviour {
 
 	public GameObject m_text;
 
+
+    private Material m_originalCurtain;
+    private Material m_oldMaterial;
+
 	// Use this for initialization
 	void Awake () 
 	{
@@ -33,6 +37,8 @@ public class HUDFading : MonoBehaviour {
 		m_text.SetActive(false);
 		m_color.a = 0;
 		enabled = false;
+
+        m_oldMaterial = m_originalCurtain = m_blackImage.material;
 
 		Messenger.AddListener(GameEvents.PLAYER_LEAVING_AREA, PlayerLeavingArea);
 		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnAreaStart);
