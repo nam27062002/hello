@@ -13,6 +13,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
     private Material m_oldMaterial;
     private bool m_enableState = false;
     private GameCamera m_gameCamera;
+    private Camera m_camera;
 
     // Use this for initialization
     void Start () {
@@ -22,6 +23,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
         SetEnable(true);
 
         m_gameCamera = InstanceManager.gameCamera;
+        m_camera = m_gameCamera.gameObject.GetComponent<Camera>();
     }
 
     void SetEnable(bool value)
@@ -45,6 +47,11 @@ public class HUDDarkZoneEffect : MonoBehaviour {
 
     void Update()
     {
-        Debug.Log("track ahead vector: " + m_gameCamera.m_trackAheadVector);
+        if (m_enableState)
+        {
+            //        Debug.Log("track ahead vector: " + m_gameCamera.m_trackAheadVector);
+            Vector3 offset = m_camera.WorldToViewportPoint(InstanceManager.player.transform.position);
+            m_candleMaterial.SetVector("_Offset", offset);
+        }
     }
 }

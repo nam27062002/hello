@@ -6,6 +6,7 @@
 		_Tint ("Color", Color) = (1,1,1,1)
 		_Radius ("Radius", Range(0.0, 1.0)) = 0.1
 		_FallOff("FallOff", Range(0.0, 1.0)) = 0.1
+		_Offset("Offset", Vector) = (0.0, 0.0, 0.0, 0.0)
 	}
 	SubShader
 	{
@@ -53,6 +54,7 @@
 			float4		_Tint;
 			float		_Radius;
 			float		_FallOff;
+			float2		_Offset;
 
 			fixed4 frag (v2f i) : SV_Target
 			{
@@ -60,7 +62,7 @@
 //				float w = WIDTH * (1.0 - i.color.a);
 //				float t = THRESHOLD * (1.0 - i.color.a);
 //				float s = spiral(i.uv, w, t);
-				float2 d = i.uv - 0.5;
+				float2 d = i.uv - _Offset;
 				float dq = length(d);	// dot(d, d);
 				fixed4 col = _Tint;
 				col.a *= smoothstep(_Radius, _Radius + _FallOff, dq);
