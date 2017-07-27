@@ -8766,7 +8766,7 @@ Animator:
   m_GameObject: {fileID: 1410568412781276}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 4c8448a29ac684ba891f69a0bd3a0d77, type: 3}
-  m_Controller: {fileID: 22100000, guid: bcae704867f844c08afa03cbdbde6550, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -8783,7 +8783,7 @@ Animator:
   m_GameObject: {fileID: 1658746792482930}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 02cca3fe64b994915aa1c4df395f8fee, type: 3}
-  m_Controller: {fileID: 22100000, guid: 3cb36912f2fdf44c0900d1476a7263c6, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -8870,6 +8870,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: Sheep
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114018971382403212
 MonoBehaviour:
@@ -9366,7 +9367,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2959559, g: 0.33823532, b: 0.33259806, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -9890,6 +9891,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: Worker
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114181946187046780
 MonoBehaviour:
@@ -10411,6 +10413,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: Archer01
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114332016188458722
 MonoBehaviour:
@@ -10452,6 +10455,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: FlyingPig
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114370048925737780
 MonoBehaviour:
@@ -10591,6 +10595,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: Villager01
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114466130779054124
 MonoBehaviour:
@@ -10943,6 +10948,7 @@ MonoBehaviour:
     m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 230
+    m_faceDirection: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
@@ -11031,6 +11037,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: EnemyTier0
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114559143204878514
 MonoBehaviour:
@@ -11083,6 +11090,7 @@ MonoBehaviour:
     m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 230
+    m_faceDirection: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
@@ -11193,7 +11201,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -11202,14 +11210,14 @@ MonoBehaviour:
   m_text: Now Destructible
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
-  m_sharedMaterial: {fileID: 2140630, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 3a0143e13882843f48da7c1fdc74ce06, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4287271030
-  m_fontColor: {r: 0.46626297, g: 0.5661765, b: 0.5447665, a: 1}
+    rgba: 4285321983
+  m_fontColor: {r: 1, g: 0.82555145, b: 0.42647058, a: 1}
   m_enableVertexGradient: 0
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
@@ -11365,6 +11373,7 @@ MonoBehaviour:
     m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 120
+    m_faceDirection: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
@@ -11380,6 +11389,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: Canary01_Flock
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114637405861399484
 MonoBehaviour:
@@ -12567,6 +12577,7 @@ MonoBehaviour:
   m_isAquatic: 0
   m_canMultipleLatchOnPlayer: 0
   m_damageOnBitePlayer: 20
+  m_ignoreBadJunk: 1
 --- !u!114 &114735188740337728
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12591,7 +12602,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2959559, g: 0.33823532, b: 0.33259806, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -12652,6 +12663,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: BatSmall_Flock
+  m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114779419247884546
 MonoBehaviour:
@@ -13187,6 +13199,7 @@ MonoBehaviour:
     m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 200
+    m_faceDirection: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
@@ -13267,7 +13280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -13276,14 +13289,14 @@ MonoBehaviour:
   m_text: Now Edible
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
-  m_sharedMaterial: {fileID: 2140630, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 3a0143e13882843f48da7c1fdc74ce06, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4287271030
-  m_fontColor: {r: 0.46626297, g: 0.5661765, b: 0.5447665, a: 1}
+    rgba: 4285321983
+  m_fontColor: {r: 1, g: 0.82555145, b: 0.42647058, a: 1}
   m_enableVertexGradient: 0
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
@@ -13875,7 +13888,7 @@ SkinnedMeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: b1ca8a5bdbdae49469e7aa714c2dc1e2, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14008,7 +14021,7 @@ SkinnedMeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: af1b0b4b64d67ef4eacf422595fd6961, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14227,7 +14240,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0015457225, y: 13.0268135}
+  m_AnchoredPosition: {x: -0.0014389105, y: 13.026796}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224037239219110648
@@ -14342,7 +14355,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0025977287, y: 6.2823277}
+  m_AnchoredPosition: {x: -0.0021704808, y: 6.282365}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224147379786769756
@@ -14361,7 +14374,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -20}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -20.621536, y: 40.054096}
+  m_AnchoredPosition: {x: -20.621529, y: 40.0541}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224186460995482744
@@ -14437,7 +14450,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: -140, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0052096164, y: -64.48323}
+  m_AnchoredPosition: {x: 0.005209381, y: -64.48323}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224413400612382132
@@ -14456,7 +14469,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.2412076, y: 17.6159}
+  m_AnchoredPosition: {x: -0.24146721, y: 17.615932}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224432464807154352
@@ -14475,7 +14488,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.0457935, y: -21.542946}
+  m_AnchoredPosition: {x: -1.0436276, y: -21.543097}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224454884897058284
@@ -14494,7 +14507,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.8755905, y: -37.07604}
+  m_AnchoredPosition: {x: 0.8773156, y: -37.076023}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224463467601954708
@@ -14532,7 +14545,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0009843912, y: -10.477359}
+  m_AnchoredPosition: {x: 0.0013048272, y: -10.477381}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224493577306309516
@@ -14729,6 +14742,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0000019073486, y: 22.939285}
+  m_AnchoredPosition: {x: -0.0000019073486, y: 22.93929}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
