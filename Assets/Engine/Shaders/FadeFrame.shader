@@ -1,4 +1,4 @@
-﻿Shader "Hungry Dragon/FadeFrame"
+﻿Shader "Hungry Dragon/FadeEffect"
 {
 	Properties
 	{
