@@ -121,7 +121,7 @@ v2f vert (appdata_t v)
 	TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 #endif
 
-#ifdef LIGHTMAP_ON
+#if defined(LIGHTMAP_ON) && !defined(EMISSIVEBLINK)
 	o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 #endif
 
@@ -195,7 +195,7 @@ fixed4 frag (v2f i) : SV_Target
 	col *= attenuation;
 #endif
 
-#ifdef LIGHTMAP_ON
+#if defined(LIGHTMAP_ON) && !defined(EMISSIVEBLINK)
 	fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 	col.rgb *= lm * 1.3;
 #endif
@@ -215,7 +215,7 @@ fixed4 frag (v2f i) : SV_Target
 #endif	
 
 #ifdef EMISSIVEBLINK
-	float intensity = (2.0 + sin(_Time.y * _BlinkTimeMultiplier + (i.vertex.x + i.vertex.y) * 0.0025));
+	float intensity = 1.0 + (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower;
 	col *= intensity;
 #endif
 
