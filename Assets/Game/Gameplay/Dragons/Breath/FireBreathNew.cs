@@ -129,7 +129,14 @@ public class FireBreathNew : DragonBreathBehaviour {
 	override protected void BeginFury(Type _type) 
 	{
 		base.BeginFury( _type);
-        if (_type == Type.Standard)
+		StartCoroutine( StartFlame(0.25f, _type));
+        
+    }
+
+	IEnumerator StartFlame( float delay, Type _type )
+    {
+    	yield return new WaitForSeconds(delay);
+		if (_type == Type.Standard)
         {
             dragonFlameStandardInstance.EnableFlame(true, m_insideWater);
         }
@@ -138,6 +145,7 @@ public class FireBreathNew : DragonBreathBehaviour {
             dragonFlameSuperInstance.EnableFlame(true, m_insideWater);
         }
     }
+
 
     override protected void EndFury() 
 	{

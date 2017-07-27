@@ -14031,7 +14031,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 799, y: 0}
+  m_AnchoredPosition: {x: 200.435, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22493498
@@ -16699,6 +16699,7 @@ GameObject:
   - component: {fileID: 222581607714266788}
   - component: {fileID: 114612781672475552}
   - component: {fileID: 114435946445088836}
+  - component: {fileID: 114980671453304730}
   m_Layer: 5
   m_Name: Fading
   m_TagString: Untagged
@@ -25260,7 +25261,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae777744dd49141799838f4a13a43cb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blackImage: {fileID: 114612781672475552}
   m_text: {fileID: 121896}
 --- !u!114 &114437614523033332
 MonoBehaviour:
@@ -29039,6 +29039,18 @@ MonoBehaviour:
   optionalRotationMode: 0
   optionalScrambleMode: 0
   optionalString: 
+--- !u!114 &114980671453304730
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1933880529245938}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a38caec49dc0ca4bb23908661d4dd37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_candleMaterial: {fileID: 2100000, guid: 57a768f2663930f47ac9c05c65afe768, type: 2}
 --- !u!114 &114982462990613558
 MonoBehaviour:
   m_ObjectHideFlags: 1
