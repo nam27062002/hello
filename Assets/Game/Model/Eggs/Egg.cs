@@ -48,9 +48,9 @@ public class Egg {
 		get { return m_def; }
 	}
 
-	private Metagame.RewardEgg m_reward;
-	public Metagame.RewardEgg reward {
-		get { return m_reward; }
+	private Metagame.RewardEgg m_rewardData;
+	public Metagame.RewardEgg rewardData {
+		get { return m_rewardData; }
 	}
 
 	// Logic
@@ -176,11 +176,9 @@ public class Egg {
 				// Dispatch game event
 				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_STARTED, this);
 
+				// Schedule local notification!
                 NotificationsManager.SharedInstance.ScheduleNotification("sku.not.01", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_EGG_HATCHED"), "Action", (int)(incubationMinutes*60));
-
-
-                }
-                break;
+           	} break;
 
 			// Opening
 			case State.OPENING: {
@@ -227,7 +225,7 @@ public class Egg {
 	}
 
 	public void SetReward(Metagame.RewardEgg _reward) {
-		m_reward = _reward;
+		m_rewardData = _reward;
 	}
 
 	/// <summary>
@@ -235,8 +233,9 @@ public class Egg {
 	/// Will be ignored if the egg already has a reward.
 	/// </summary>
 	public void GenerateReward() {
-		m_reward = Metagame.Reward.CreateTypeEgg(m_def.sku) as Metagame.RewardEgg;
-		m_reward.egg = this;
+		if(m_rewardData != null) return;
+		m_rewardData = Metagame.Reward.CreateTypeEgg(m_def.sku) as Metagame.RewardEgg;
+		m_rewardData.egg = this;
 	}
 
 	/// <summary>
@@ -244,7 +243,7 @@ public class Egg {
 	/// Only if the egg is in the OPENING state.
 	/// </summary>
 	public void Collect() {
-		m_reward.Collect();
+		m_rewardData.Collect();
 
 		// Change state
 		ChangeState(State.COLLECTED);
@@ -298,8 +297,8 @@ public class Egg {
 
 		// Reward
 		if ( _data.ContainsKey("rewardSku") ) {
-			m_reward = Metagame.Reward.CreateTypeEgg(m_def.sku, _data["rewardSku"]) as Metagame.RewardEgg;
-			m_reward.egg = this;
+			m_rewardData = Metagame.Reward.CreateTypeEgg(m_def.sku, _data["rewardSku"]) as Metagame.RewardEgg;
+			m_rewardData.egg = this;
 		} else {
 			GenerateReward();
 		}
@@ -324,8 +323,8 @@ public class Egg {
 		data.Add("isNew",m_isNew.ToString());
 
 		// Reward
-		if (m_reward != null) {
-			data.Add("rewardSku", m_reward.eggRewardSku);
+		if (m_rewardData != null && m_rewardData.reward != null) {
+			data.Add("rewardSku", m_rewardData.reward.sku);
 		}
 
 		// Incubating timestamp

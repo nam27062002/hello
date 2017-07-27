@@ -12,6 +12,9 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
 
+using System;
+using System.Collections.Generic;
+
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -23,28 +26,43 @@ public class EggRewardInfo : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+	[Serializable]
+	public class RewardTypeSetup {
+		public GameObject rootObj = null;
+		public string animTrigger = "";
+		public float animDuration = 1f;
+	}
+
+	[Serializable]
+	public class RewardTypeSetupDictionary : SerializableDictionary<string, RewardTypeSetup> { }
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[Separator("Reward Info")]
-	[SerializeField] private RarityTitleGroup m_rarityTitle = null;
-	[SerializeField] private PowerIcon m_rewardPower = null;
+	[Separator("Shared")]
+	[SerializeField] private TextMeshProUGUI m_extraInfoText = null;
+	[SerializeField] private RewardTypeSetupDictionary m_typeSetups = new RewardTypeSetupDictionary();
 
-	[Separator("Golden Egg Fragments Info")]
+	[Separator("Pet Reward")]
+	[SerializeField] private RarityTitleGroup m_petRarityTitle = null;
+	[SerializeField] private PowerIcon m_petPower = null;
+
+	[Separator("Golden Egg Fragments Reward")]
 	[SerializeField] private Localizer m_goldenFragmentTitle = null;
-	[SerializeField] private Localizer m_goldenFragmentInfo = null;
-
-	[Separator("Golden Egg Fragments Counter")]
+	[Space]
 	[SerializeField] private ShowHideAnimator m_goldenFragmentCounter = null;
 	[SerializeField] private TextMeshProUGUI m_goldenFragmentCounterText = null;
 	[SerializeField] private ShowHideAnimator m_goldenEggCompletedInfo = null;
 	[SerializeField] private ParticleSystem m_goldenFragmentCounterFX = null;
+	[Space]
+	[SerializeField] private float m_goldFragmentsCounterDelay = 3f;
 
-	[Separator("Animation Parameters")]
-	[SerializeField] private float m_counterDelay = 3f;
-	[SerializeField] private float m_counterDuration = 1f;
+	[SeparatorAttribute("SC Reward")]
+	[SerializeField] private Localizer m_scTitle = null;
+
+	[SeparatorAttribute("PC Reward")]
+	[SerializeField] private Localizer m_pcTitle = null;
 
 	// Events
 	[Separator("Events")]
@@ -59,6 +77,17 @@ public class EggRewardInfo : MonoBehaviour {
 		}
 	}
 
+	private ShowHideAnimator m_showHideAnimator = null;
+	public ShowHideAnimator showHideAnimator {
+		get {
+			if(m_showHideAnimator == null) m_showHideAnimator = GetComponent<ShowHideAnimator>();
+			return m_showHideAnimator;
+		}
+	}
+
+	// Internal
+	private Metagame.Reward m_reward = null;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -66,7 +95,8 @@ public class EggRewardInfo : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		
+		// Start with everything hidden
+		SetRewardType(string.Empty);
 	}
 
 	//------------------------------------------------------------------------//
@@ -76,76 +106,113 @@ public class EggRewardInfo : MonoBehaviour {
 	/// Initialize the title with the given Egg Reward Data and launch the animation.
 	/// </summary>
 	/// <param name="_rewardData">Egg reward data to be used for initialization.</param>
-	public void InitAndAnimate(EggReward _rewardData) {
+	public void InitAndAnimate(Metagame.Reward _rewardData, string _extraInfo = "") {
 		// Ignore if given data is not valid or is not initialized
 		if(_rewardData == null) return;
-		if(_rewardData.def == null) return;
+
+		// Store reward
+		m_reward = _rewardData;
+
+		// If we're not visible, show ourselves now!
+		showHideAnimator.Show(false);
+
+		// Show target object
+		SetRewardType(_rewardData.type);
 
 		// Aux vars
-		DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, _rewardData.def.Get("rarity"));
+		float totalAnimDuration = m_typeSetups.Get(_rewardData.type).animDuration;	// Used to dispatch the OnAnimFinished event. Depends on reward type.
 
 		// Different initializations based on reward type
 		switch(_rewardData.type) {
-			case "pet": {
-				// Rarity
-				string text = _rewardData.def.GetLocalized("tidName");	// "Rare Pet"
-				m_rarityTitle.InitFromRarity(rarityDef, text);
+			// Pet
+			case Metagame.RewardPet.TYPE_CODE: {
+				// Rarity - Try to extract special name from egg rewards definitions. Otherwise don't show rarity title.
+				string petRewardSku = "pet_" + _rewardData.def.GetAsString("rarity");
+				DefinitionNode petRewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, petRewardSku);
+				if(petRewardDef != null) {
+					string text = petRewardDef.GetLocalized("tidName");	// "Rare Pet"
+					m_petRarityTitle.gameObject.SetActive(true);
+
+					DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, _rewardData.def.Get("rarity"));
+					m_petRarityTitle.InitFromRarity(rarityDef, text);
+				} else {
+					m_petRarityTitle.gameObject.SetActive(false);
+				}
 
 				// Pet name
-				TextMeshProUGUI rewardNameText = m_rarityTitle.activeTitle.auxText;
+				TextMeshProUGUI rewardNameText = m_petRarityTitle.activeTitle.auxText;
 				if(rewardNameText != null) {
 					Localizer loc = rewardNameText.GetComponent<Localizer>();
-					if(loc != null) loc.Localize(_rewardData.itemDef.Get("tidName"));	// Froggy
+					if(loc != null) loc.Localize(_rewardData.def.Get("tidName"));	// Froggy
 				}
 
-				// Power icon
-				if(!_rewardData.duplicated) {
+				// Power icon - don't show if pet will be replaced
+				m_petPower.gameObject.SetActive(!_rewardData.WillBeReplaced());
+				if(!_rewardData.WillBeReplaced()) {
 					// Initialize with powers data
-					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.itemDef.GetAsString("powerup"));
-					m_rewardPower.InitFromDefinition(powerDef, false);
+					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.def.GetAsString("powerup"));
+					m_petPower.InitFromDefinition(powerDef, false);
 				}
+			} break;
+
+			// Golden Fragments
+			case Metagame.RewardGoldenFragments.TYPE_CODE: {
+				// Title
+				m_goldenFragmentTitle.Localize("TID_EGG_REWARD_FRAGMENT", StringUtils.FormatNumber(_rewardData.amount));	// %U0 Golden Egg Fragments
+
+				// Fragments counter
+				m_goldenEggCompletedInfo.Set(false, false);	// Will be activated after the animation, if needed
+				RefreshGoldenFragmentCounter(EggManager.goldenEggFragments - _rewardData.amount, false);	// Reward has already been given at this point, so show the current amount minus the rewarded amount
+				UbiBCN.CoroutineManager.DelayedCall(() => { RefreshGoldenFragmentCounter(EggManager.goldenEggFragments, true); }, m_goldFragmentsCounterDelay, false);	// Sync with animation
+			} break;
+
+			// Coins
+			case Metagame.RewardSoftCurrency.TYPE_CODE: {
+				// Set text
+				m_scTitle.Localize("TID_EGG_REWARD_COINS", StringUtils.FormatNumber(_rewardData.amount));	// %U0 Coins!
+			} break;
+
+			// PC
+			case Metagame.RewardHardCurrency.TYPE_CODE: {
+				// Set text
+				m_pcTitle.Localize("TID_EGG_REWARD_GEMS", StringUtils.FormatNumber(_rewardData.amount));	// %U0 Gems!
+			} break;
+
+			// Egg
+			case Metagame.RewardEgg.TYPE_CODE: {
+				// Nothing to do
 			} break;
 		}
 
-		// Golden egg fragments counter
-		m_goldenFragmentCounter.Set(_rewardData.fragments > 0, false);
-		m_goldenEggCompletedInfo.Set(false, false);	// Will be activated after the animation, if needed
+		// Launch animation!
+		SetRewardType(m_reward.type);
 
-		// Duplicated info
-		if(_rewardData.duplicated) {
-			// Are all the golden eggs opened (giving coins instead if so)
-			if(_rewardData.coins > 0) {
-				// Giving coins
-				m_goldenFragmentTitle.Localize("TID_EGG_REWARD_COINS", StringUtils.FormatNumber(_rewardData.coins));	// %U0 Coins!
-				m_goldenFragmentInfo.Localize("TID_EGG_REWARD_DUPLICATED_2", _rewardData.itemDef.GetLocalized("tidName"), StringUtils.FormatNumber(_rewardData.coins));	// %U0 already unlocked!\nYou get %U1 coins instead!
-			} else {
-				// Giving fragments
-				m_goldenFragmentTitle.Localize("TID_EGG_REWARD_FRAGMENT", StringUtils.FormatNumber(_rewardData.fragments));	// %U0 Golden Egg Fragments
-				m_goldenFragmentInfo.Localize("TID_EGG_REWARD_DUPLICATED_1", _rewardData.itemDef.GetLocalized("tidName"), StringUtils.FormatNumber(_rewardData.fragments));	// %U0 already unlocked!\nYou get %U1 Golden Egg fragments instead!
+		// Aux text
+		m_extraInfoText.gameObject.SetActive(!string.IsNullOrEmpty(_extraInfo));
+		m_extraInfoText.text = _extraInfo;
 
-				// Fragments counter
-				RefreshGoldenFragmentCounter(EggManager.goldenEggFragments - _rewardData.fragments, false);	// Reward has already been given at this point, so show the current amount minus the rewarded amount
-				UbiBCN.CoroutineManager.DelayedCall(() => { RefreshGoldenFragmentCounter(EggManager.goldenEggFragments, true); }, m_counterDelay, false);	// Sync with animation
+		// Program finish callback
+		UbiBCN.CoroutineManager.DelayedCall(() => { OnAnimFinished.Invoke(); }, totalAnimDuration, false);
+	}
+
+	/// <summary>
+	/// Toggle displayed info based on reward type. Triggers animation corresponding to that type.
+	/// </summary>
+	/// <param name="_rewardType">Type of reward whose info we want to show. Use empty string to hide everything.</param>
+	public void SetRewardType(string _rewardType) {
+		// Hide extra info, will be activated if needed
+		m_extraInfoText.gameObject.SetActive(false);
+
+		/// Toggle everything off except the target type!
+		foreach(KeyValuePair<string, RewardTypeSetup> kvp in m_typeSetups.dict) {
+			bool match = _rewardType == kvp.Key;
+			kvp.Value.rootObj.SetActive(match);
+
+			// If match, trigger the target animation!
+			if(match) {
+				animator.SetTrigger(kvp.Value.animTrigger);
 			}
 		}
-
-		// Setup and launch animation
-		animator.SetBool("duplicated", _rewardData.duplicated);
-		animator.SetTrigger("show");
-	}
-
-	/// <summary>
-	/// Hide everything!
-	/// </summary>
-	public void Hide() {
-		animator.SetTrigger("hide");
-	}
-
-	/// <summary>
-	/// Show everything, no setup!
-	/// </summary>
-	public void Show() {
-		animator.SetTrigger("show");
 	}
 
 	//------------------------------------------------------------------------//
@@ -156,7 +223,7 @@ public class EggRewardInfo : MonoBehaviour {
 	/// </summary>
 	/// <param name="_amount">Amount to display.</param>
 	/// <param name="_animate">Whether to animate or not.</param>
-	private void RefreshGoldenFragmentCounter(int _amount, bool _animate) {
+	private void RefreshGoldenFragmentCounter(long _amount, bool _animate) {
 		// Compose new string
 		// If we've actually completed the egg, show completed info instead
 		bool goldenEggCompleted = (_amount >= EggManager.goldenEggRequiredFragments);
@@ -176,9 +243,6 @@ public class EggRewardInfo : MonoBehaviour {
 		if(_animate) {
 			// Trigger Particle FX
 			m_goldenFragmentCounterFX.Play();
-
-			// Program finish callback
-			UbiBCN.CoroutineManager.DelayedCall(() => { OnAnimFinished.Invoke(); }, m_counterDuration, false);
 		}
 	}
 

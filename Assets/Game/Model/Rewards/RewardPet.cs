@@ -1,23 +1,61 @@
-﻿using UnityEngine;
+﻿// RewardPet.cs
+// Hungry Dragon
+// 
+// Created by Marc Saña Forrellach on 18/07/2017.
+// Copyright (c) 2017 Ubisoft. All rights reserved.
 
+//----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
+using UnityEngine;
+
+//----------------------------------------------------------------------------//
+// CLASSES																	  //
+//----------------------------------------------------------------------------//
 namespace Metagame {
+	/// <summary>
+	/// Pet reward.
+	/// </summary>
 	public class RewardPet : Reward {
-		public const string Code = "pet";
+		//------------------------------------------------------------------------//
+		// CONSTANTS															  //
+		//------------------------------------------------------------------------//
+		public const string TYPE_CODE = "pet";
 
-		private Reward m_replacement;
+		//------------------------------------------------------------------------//
+		// MEMBERS AND PROPERTIES												  //
+		//------------------------------------------------------------------------//
 
+		//------------------------------------------------------------------------//
+		// METHODS																  //
+		//------------------------------------------------------------------------//
+		/// <summary>
+		/// Constructor from pet sku.
+		/// </summary>
+		/// <param name="_sku">Pet sku.</param>
 		public RewardPet(string _sku) {
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _sku);
 			InitFrom(def);
 		}
 
+		/// <summary>
+		/// Constructor from pet definition.
+		/// </summary>
+		/// <param name="_def">Pet definition.</param>
 		public RewardPet(DefinitionNode _def) {
 			InitFrom(_def);
 		}
 
+		/// <summary>
+		/// Internal initializer from pet definition.
+		/// </summary>
+		/// <param name="_def">Pet definition.</param>
 		private void InitFrom(DefinitionNode _def) {
-			m_currency = UserProfile.Currency.NONE;
-			m_value = _def.sku;
+			base.Init(TYPE_CODE);
+
+			m_sku = _def.sku;
+			m_def = _def;
+
 			m_rarity = Reward.SkuToRarity(_def.GetAsString("rarity"));
 
 			bool duplicated = false;
@@ -31,31 +69,26 @@ namespace Metagame {
 			}
 
 			// If duplicated, give alternative rewards
-			if (duplicated) {
+			if(duplicated) {
 				string petRewardSku = "pet_" + _def.GetAsString("rarity");
 				DefinitionNode petRewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, petRewardSku);
 
 				// Have all golden eggs been collected?
 				if (EggManager.allGoldenEggsCollected) {
 					// Yes! Give coins rather than golden egg fragments (based on rarity)
-					m_replacement = CreateTypeSoftCurrency(petRewardDef.GetAsLong("duplicateCoinsGiven"));
+					m_replacement = Metagame.Reward.CreateTypeSoftCurrency(petRewardDef.GetAsLong("duplicateCoinsGiven"));
 				} else {
 					// No! Give golden egg fragments based on rarity
-					m_replacement = CreateTypeGoldenFragments(petRewardDef.GetAsInt("duplicateFragmentsGiven"), rarity);
+					m_replacement = Metagame.Reward.CreateTypeGoldenFragments(petRewardDef.GetAsInt("duplicateFragmentsGiven"), rarity);
 				}
 			} 
 		}
 
-		public bool WillBeReplaced() 						{ return m_replacement != null; }
-		public UserProfile.Currency ReplacementCurrency() 	{ return m_replacement.currency; }
-		public string ReplacementValue() 				  	{ return m_replacement.value; }
-
-		public override void Collect() {
-			if (m_replacement != null) {
-				m_replacement.Collect();
-			} else {
-				UsersManager.currentUser.petCollection.UnlockPet(m_value);
-			}
+		/// <summary>
+		/// Implementation of the abstract Collect() method.
+		/// </summary>
+		override protected void DoCollect() {
+			UsersManager.currentUser.petCollection.UnlockPet(m_sku);
 		}
 	}
 }

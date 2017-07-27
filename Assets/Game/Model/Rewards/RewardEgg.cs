@@ -1,15 +1,37 @@
-﻿using UnityEngine;
+﻿// RewardEgg.cs
+// Hungry Dragon
+// 
+// Created by Marc Saña Forrellach on 18/07/2017.
+// Copyright (c) 2017 Ubisoft. All rights reserved.
+
+//----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
+using UnityEngine;
 using System.Collections.Generic;
 
+//----------------------------------------------------------------------------//
+// CLASSES																	  //
+//----------------------------------------------------------------------------//
 namespace Metagame {
+	/// <summary>
+	/// Egg as reward.
+	/// </summary>
 	public class RewardEgg : Reward {
-		public const string Code = "egg";
+		//------------------------------------------------------------------------//
+		// CONSTANTS															  //
+		//------------------------------------------------------------------------//
+		public const string TYPE_CODE = "egg";
 
+		//------------------------------------------------------------------------//
+		// MEMBERS AND PROPERTIES												  //
+		//------------------------------------------------------------------------//
+		// Egg linked to this reward
 		private Egg m_egg;
 		public Egg egg { 
 			get { 
 				if (m_egg == null) {
-					m_egg = Egg.CreateFromSku(m_value);
+					m_egg = Egg.CreateFromSku(m_sku);
 					m_egg.SetReward(this);
 				}
 				return m_egg; 
@@ -20,34 +42,46 @@ namespace Metagame {
 			}
 		}
 
-		private Reward m_reward;
-		public string eggRewardSku { 
-			get { 
-				if (m_reward != null) 
-					return m_reward.value;
-				return "";
-			}
+		// The reward given by the egg
+		private Reward m_reward = null;
+		public Reward reward { 
+			get { return m_reward; }
 		}
 
+		//------------------------------------------------------------------------//
+		// METHODS																  //
+		//------------------------------------------------------------------------//
+		/// <summary>
+		/// Constructor from egg sku.
+		/// </summary>
+		/// <param name="_sku">Egg sku.</param>
 		public RewardEgg(string _sku) {
-			Build(_sku, "");
+			Build(_sku, "");	// This will generate a random reward following the gacha rules
 		}
 
-		public RewardEgg(string _sku, string _rewardSku) {
-			Build(_sku, _rewardSku);
+		/// <summary>
+		/// Constructor with egg sku and reward sku.
+		/// </summary>
+		/// <param name="_sku">Egg sku.</param>
+		/// <param name="_rewardTypeSku">Reward sku (from EGG_REWARDS definitions category).</param>
+		public RewardEgg(string _sku, string _rewardTypeSku) {
+			Build(_sku, _rewardTypeSku);
 		}
 
-		public override void Collect() {
-			if (m_reward != null) {
-				UsersManager.currentUser.rewardStack.Push(m_reward);
-			}
-		}
+		/// <summary>
+		/// Internal builder with egg sku and reward sku.
+		/// </summary>
+		/// <param name="_sku">Egg sku.</param>
+		/// <param name="_rewardTypeSku">Reward sku (from EGG_REWARDS definitions category).</param>
+		private void Build(string _sku, string _rewardTypeSku) {
+			// Internal initializer
+			base.Init(TYPE_CODE);
 
-		private void Build(string _sku, string _rewardSku) {
-			m_currency = UserProfile.Currency.NONE;
-			m_value = _sku;
+			// Override some fields
+			m_sku = _sku;
+			m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _sku);
 
-			BuildReward(_rewardSku);
+			BuildReward(_rewardTypeSku);
 
 			if (m_reward != null) {
 				m_rarity = m_reward.rarity;
@@ -56,30 +90,47 @@ namespace Metagame {
 			}
 		}
 
-		private void BuildReward(string _rewardSku) {
-			DefinitionNode rewardDef = null;
-			if (!string.IsNullOrEmpty(_rewardSku)) {
-				rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, _rewardSku);
-			} else if (m_value.Equals(Egg.SKU_GOLDEN_EGG)) {
-				rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, "pet_special");
+		/// <summary>
+		/// Initializes the reward given by this egg.
+		/// </summary>
+		/// <param name="_rewardTypeSku">Reward sku (from EGG_REWARDS definitions category). Leave empty to generate a random reward following the gacha rules.</param>
+		private void BuildReward(string _rewardTypeSku = "") {
+			// Get the reward definition
+			DefinitionNode rewardTypeDef = null;
+			if(!string.IsNullOrEmpty(_rewardTypeSku)) {
+				rewardTypeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, _rewardTypeSku);
+			} else if(m_sku.Equals(Egg.SKU_GOLDEN_EGG)) {
+				rewardTypeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, "pet_special");
 			} else {
-				rewardDef = EggManager.GenerateReward();
+				rewardTypeDef = EggManager.GenerateReward();
 			}
-		
-			if (rewardDef != null) {
-				string type = rewardDef.GetAsString("type");
-				string raritySku = rewardDef.GetAsString("rarity");
-				Rarity rarity = Reward.SkuToRarity(raritySku);
 
-				// right now, eggs only reward pets
-				if (type.Equals("pet")) {
+			// Nothing else to do if def is null
+			if(rewardTypeDef == null) return;
+
+			// Initialize the reward data based on type
+			string rewardType = rewardTypeDef.GetAsString("type");
+			switch(rewardType) {
+				case RewardPet.TYPE_CODE: {
+					// Find out reward rarity
+					string raritySku = rewardTypeDef.Get("rarity");
+					m_rarity = SkuToRarity(raritySku);
+
+					// Select a pet to be rewarded!
 					List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", raritySku);
 					DefinitionNode petDef = null;
 
-					if (CPGachaTest.rewardChanceMode == CPGachaTest.RewardChanceMode.FORCED_PET_SKU) {
+					// a) Forcing a specific sku from cheats?
+					if(CPGachaTest.rewardChanceMode == CPGachaTest.RewardChanceMode.FORCED_PET_SKU) {
+						// Get that specific pet!
 						petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, CPGachaTest.forcedPetSku);
-					} else if (rarity == Rarity.SPECIAL) {
-						if (!EggManager.allGoldenEggsCollected) {
+					}
+
+					// b) Special case if golden egg
+					else if (rarity == Rarity.SPECIAL) {
+						// We should never be opening a special egg when all of them are already collected, but check just in case!
+						if(!EggManager.allGoldenEggsCollected) {
+							// Get a random special pet, but make sure it's one we don't have. If we have it, just reroll the dice.
 							// Still add a safeguard just in case
 							int maxTries = 100;
 							int tryCount = 0;
@@ -87,23 +138,44 @@ namespace Metagame {
 								petDef = petDefs.GetRandomValue();
 								tryCount++;
 							} while (UsersManager.currentUser.petCollection.IsPetUnlocked(petDef.sku) && tryCount < maxTries);
+						} else {
+							// This should never happen!
+							// We should never be opening a golden egg when all golden eggs had been collected
+							Debug.LogError("We should never be opening a golden egg when all golden eggs had been collected");
 						}
-					} else {
-						if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
-							// If tutorial is not completed, choose from a limited pool
+					}
+
+					// c) Normal case: random pet of the target rarity
+					else {
+						// If tutorial is not completed, choose from a limited pool
+						if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
 							do {
 								petDef = petDefs.GetRandomValue();
-							} while (!petDef.GetAsBool("startingPool"));
+							} while(!petDef.GetAsBool("startingPool"));
 						} else {
 							// Default behaviour
 							petDef = petDefs.GetRandomValue();
 						}
 					}
 
-					if (petDef != null) {
+					// Create the egg reward!
+					if(petDef != null) {
 						m_reward = CreateTypePet(petDef);
+						Debug.Log("EGG REWARD GENERATED FOR EGG " + m_sku + ":\n" + m_reward.ToString());
+					} else {
+						Debug.LogError("COULDN'T GENERATE EGG REWARD FOR EGG " + m_sku + "!");
 					}
-				}
+				} break;
+			}
+		}
+
+		/// <summary>
+		/// Implementation of the abstract Collect() method.
+		/// </summary>
+		override protected void DoCollect() {
+			// Push the egg's reward to the stack
+			if (m_reward != null) {
+				UsersManager.currentUser.rewardStack.Push(m_reward);
 			}
 		}
 	}

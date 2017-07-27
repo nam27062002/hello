@@ -1,45 +1,69 @@
-﻿namespace Metagame {
-	//------------------------------------------//
-	public abstract class RewardCurrency : Reward {
-		private long m_amount;
+﻿// RewardCurrency.cs
+// Hungry Dragon
+// 
+// Created by Marc Saña Forrellach on 18/07/2017.
+// Copyright (c) 2017 Ubisoft. All rights reserved.
 
-		public RewardCurrency(long _amount, Rarity _rarity) {			
-			m_value = _amount.ToString();
+//----------------------------------------------------------------------------//
+// CLASSES																	  //
+//----------------------------------------------------------------------------//
+namespace Metagame {
+	/// <summary>
+	/// Base abstract class for all currency rewards.
+	/// </summary>
+	public abstract class RewardCurrency : Reward {
+		public RewardCurrency() {			
+			
+		}
+
+		protected void Init(string _type, long _amount, Rarity _rarity) {
+			base.Init(_type);
 			m_amount = _amount;
 			m_rarity = _rarity;
 		}
 
-		public override void Collect() {
+		override protected void DoCollect() {
 			UsersManager.currentUser.AddCurrency(m_currency, m_amount);
 		}		
 	}
-	//------------------------------------------//
-
+	
+	/// <summary>
+	/// Soft currency reward.
+	/// </summary>
 	public class RewardSoftCurrency : RewardCurrency {
-		public const string Code = "sc";
+		public const string TYPE_CODE = "sc";
 
-		public RewardSoftCurrency(long _amount, Rarity _rarity) : base(_amount, _rarity) {
+		public RewardSoftCurrency(long _amount, Rarity _rarity) : base() {
+			base.Init(TYPE_CODE, _amount, _rarity);
 			m_currency = UserProfile.Currency.SOFT;
 		}
 	}
 
+	/// <summary>
+	/// Hard currency reward.
+	/// </summary>
 	public class RewardHardCurrency : RewardCurrency {		
-		public const string Code = "pc";
+		public const string TYPE_CODE = "pc";
 
-		public RewardHardCurrency(long _amount, Rarity _rarity) : base(_amount, _rarity) {
+		public RewardHardCurrency(long _amount, Rarity _rarity) : base() {
+			base.Init(TYPE_CODE, _amount, _rarity);
 			m_currency = UserProfile.Currency.HARD;
 		}
 	}
 
+	/// <summary>
+	/// Golden fragments reward.
+	/// </summary>
 	public class RewardGoldenFragments : RewardCurrency {
-		public const string Code = "gf";
+		public const string TYPE_CODE = "gf";
 
-		public RewardGoldenFragments(long _amount, Rarity _rarity) : base(_amount, _rarity) {
+		public RewardGoldenFragments(long _amount, Rarity _rarity) : base() {
+			base.Init(TYPE_CODE, _amount, _rarity);
 			m_currency = UserProfile.Currency.GOLDEN_FRAGMENTS;
 		}
 
-		public override void Collect() {
-			base.Collect();
+		override protected void DoCollect() {
+			base.DoCollect();
 
 			if (EggManager.goldenEggCompleted) {
 				Reward reward = Reward.CreateTypeEgg(Egg.SKU_GOLDEN_EGG);

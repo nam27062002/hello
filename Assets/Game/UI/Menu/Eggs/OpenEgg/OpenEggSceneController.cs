@@ -234,7 +234,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		}
 
 		// Attach tap FX to the egg's view (but don't activate it just yet)
-		ParticleSystem tapFX = m_tapFX[(int)eggData.reward.rarity];
+		ParticleSystem tapFX = m_tapFX[(int)eggData.rewardData.rarity];
 		if(tapFX != null) {
 			tapFX.transform.SetParentAndReset(m_eggView.anchorFX);
 			tapFX.gameObject.SetActive(false);
@@ -270,7 +270,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		m_eggView.gameObject.SetActive(false);
 
 		// Trigger the proper FX based on reward rarity
-		ParticleSystem openFX = m_openFX[(int)eggData.reward.rarity];
+		ParticleSystem openFX = m_openFX[(int)eggData.rewardData.rarity];
 		if(openFX != null) {
 			openFX.Clear();
 			openFX.Play(true);
@@ -319,14 +319,14 @@ public class OpenEggSceneController : MonoBehaviour {
 		// Use a PetLoader to simplify things
 		MenuPetLoader loader = m_rewardView.AddComponent<MenuPetLoader>();
 		loader.Setup(MenuPetLoader.Mode.MANUAL, MenuPetPreview.Anim.IN, true);
-		loader.Load(eggData.reward.value);
+		loader.Load(eggData.rewardData.sku);
 
 		// Animate it
 		seq.AppendInterval(0.05f);	// Initial delay
 		seq.Append(m_rewardView.transform.DOScale(0f, 0.5f).From().SetRecyclable(true).SetEase(Ease.OutBack));
+
 		// Make it target of the drag controller
 		seq.AppendCallback(() => { SetDragTarget(m_rewardView.transform); });
-
 
 		// If the reward is a duplicate, check which alternate reward are we giving instead and switch the reward view by the replacement with a nice animation
 		GameObject replacementRewardView = null;
@@ -441,7 +441,7 @@ public class OpenEggSceneController : MonoBehaviour {
 		// Show the right particle effect based on rarity!
 		if(_tapCount == 1 && _egg == m_eggView) {
 			// Activate FX
-			ParticleSystem tapFX = m_tapFX[(int)_egg.eggData.reward.rarity];
+			ParticleSystem tapFX = m_tapFX[(int)_egg.eggData.rewardData.rarity];
 			tapFX.gameObject.SetActive(true);
 			tapFX.Stop(true);
 			tapFX.Clear();

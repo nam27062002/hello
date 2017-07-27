@@ -64,7 +64,7 @@ public class EventRewardScreen : MonoBehaviour {
 				m_sceneController = menuScene.GetComponent<RewardSceneController>();
 				if (m_sceneController != null) {
 					// Initialize
-					m_sceneController.InitReferences(m_rewardDragController);
+					m_sceneController.InitReferences(m_rewardDragController, null);	// [AOC] TODO!! Assign reward info UI
 
 					// Subscribe to listeners
 					m_sceneController.OnAnimFinished.AddListener(OnStateNextReward);
@@ -89,7 +89,7 @@ public class EventRewardScreen : MonoBehaviour {
 	public void OnContinueButton() {
 		if (m_state == State.OpenNextReward) {
 			if (m_step == m_event.rewardLevel) {
-				m_event.FinishRewardCollection();
+				m_event.FinishRewardCollection();	// [AOC] TODO!! Mark event as collected immediately after rewards have been pushed to the stack
 
 				GlobalEventManager.RequestCurrentEventData();
 				InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.DRAGON_SELECTION);
@@ -146,7 +146,7 @@ public class EventRewardScreen : MonoBehaviour {
 			);
 		}*/
 
-		m_sceneController.LaunchOpenEggAnim();
+		m_sceneController.OpenReward();
 	}
 
 

@@ -252,10 +252,10 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
 			// Rewards
 			SimpleJSON.JSONArray rewardsArray = new SimpleJSON.JSONArray();
-			rewardsArray.Add(CreateEventRewardData(0.2f, Metagame.RewardSoftCurrency.Code, "", 500));
-			rewardsArray.Add(CreateEventRewardData(0.5f, Metagame.RewardSoftCurrency.Code, "", 1000));
-			rewardsArray.Add(CreateEventRewardData(0.75f, Metagame.RewardHardCurrency.Code, "", 100));
-			rewardsArray.Add(CreateEventRewardData(1f, Metagame.RewardEgg.Code, "egg_premium", -1));
+			rewardsArray.Add(CreateEventRewardData(0.2f, Metagame.RewardSoftCurrency.TYPE_CODE, "", 500));
+			rewardsArray.Add(CreateEventRewardData(0.5f, Metagame.RewardSoftCurrency.TYPE_CODE, "", 1000));
+			rewardsArray.Add(CreateEventRewardData(0.75f, Metagame.RewardHardCurrency.TYPE_CODE, "", 100));
+			rewardsArray.Add(CreateEventRewardData(1f, Metagame.RewardEgg.TYPE_CODE, "egg_premium", -1));
 			eventData.Add("rewards", rewardsArray);
 
 			// Top percentile reward
@@ -461,12 +461,12 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		} else {
 			SimpleJSON.JSONClass eventData = new SimpleJSON.JSONClass(); {
 				SimpleJSON.JSONArray r = new SimpleJSON.JSONArray(); {					
-					r.Add(Metagame.RewardSoftCurrency.Code, 500);
-					r.Add(Metagame.RewardSoftCurrency.Code, 1000);
-					r.Add(Metagame.RewardHardCurrency.Code, 100);
+					r.Add(Metagame.RewardSoftCurrency.TYPE_CODE, 500);
+					r.Add(Metagame.RewardSoftCurrency.TYPE_CODE, 1000);
+					r.Add(Metagame.RewardHardCurrency.TYPE_CODE, 100);
 				}
 				SimpleJSON.JSONClass top = new SimpleJSON.JSONClass(); {
-					top.Add(Metagame.RewardEgg.Code, "egg_premium");
+					top.Add(Metagame.RewardEgg.TYPE_CODE, "egg_premium");
 				}
 				eventData.Add("r", r);
 				eventData.Add("top", top);
