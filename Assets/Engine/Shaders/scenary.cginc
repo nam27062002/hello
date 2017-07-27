@@ -70,13 +70,15 @@ uniform float _DarkenPosition;
 uniform float _DarkenDistance;
 #endif
 
-
+#ifdef EMISSIVEBLINK
+uniform float _EmissivePower;
+uniform float _BlinkTimeMultiplier;
+#endif
 
 float4 getCustomVertexColor(inout appdata_t v)
 {
 	//					return float4(v.color.xyz, 1.0 - dot(mul(float4(v.normal,0), unity_WorldToObject).xyz, float3(0,1,0)));
 	return float4(v.color.xyz, 1.0 - dot(UnityObjectToWorldNormal(v.normal), float3(0, 1, 0)));
-
 }
 
 
@@ -196,12 +198,6 @@ fixed4 frag (v2f i) : SV_Target
 #ifdef LIGHTMAP_ON
 	fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 	col.rgb *= lm * 1.3;
-/*
-	float luminance = step(0.5, 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b);
-	fixed4 one = fixed4(1, 1, 1, 1);
-	col = (2.0 * i.color * col) * (1.0 - luminance) + (one - 2.0 * (one - i.color) * (one - col)) * luminance;
-*/
-
 #endif
 
 #ifdef NORMALMAP
@@ -218,6 +214,10 @@ fixed4 frag (v2f i) : SV_Target
 	col = col + (specular * specMask * i.color * _LightColor0);
 #endif	
 
+#ifdef EMISSIVEBLINK
+	float intensity = (2.0 + sin(_Time.y * _BlinkTimeMultiplier + (i.vertex.x + i.vertex.y) * 0.0025));
+	col *= intensity;
+#endif
 
 #ifdef FOG	
 	HG_APPLY_FOG(i, col);	// Fog
@@ -226,7 +226,6 @@ fixed4 frag (v2f i) : SV_Target
 #ifdef DARKEN
 	HG_APPLY_DARKEN(i, col);	//darken
 #endif
-
 
 #ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
