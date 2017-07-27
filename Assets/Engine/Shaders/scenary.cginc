@@ -70,13 +70,15 @@ uniform float _DarkenPosition;
 uniform float _DarkenDistance;
 #endif
 
-
+#ifdef EMISSIVEBLINK
+uniform float _EmissivePower;
+uniform float _BlinkTimeMultiplier;
+#endif
 
 float4 getCustomVertexColor(inout appdata_t v)
 {
 	//					return float4(v.color.xyz, 1.0 - dot(mul(float4(v.normal,0), unity_WorldToObject).xyz, float3(0,1,0)));
 	return float4(v.color.xyz, 1.0 - dot(UnityObjectToWorldNormal(v.normal), float3(0, 1, 0)));
-
 }
 
 
@@ -119,7 +121,7 @@ v2f vert (appdata_t v)
 	TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 #endif
 
-#ifdef LIGHTMAP_ON
+#if defined(LIGHTMAP_ON) && !defined(EMISSIVEBLINK)
 	o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 #endif
 
@@ -193,15 +195,10 @@ fixed4 frag (v2f i) : SV_Target
 	col *= attenuation;
 #endif
 
-#ifdef LIGHTMAP_ON
+#if defined(LIGHTMAP_ON) && !defined(EMISSIVEBLINK)
 	fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
+//	col.rgb *= lm * 1.3;
 	col.rgb *= lm * 1.3;
-/*
-	float luminance = step(0.5, 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b);
-	fixed4 one = fixed4(1, 1, 1, 1);
-	col = (2.0 * i.color * col) * (1.0 - luminance) + (one - 2.0 * (one - i.color) * (one - col)) * luminance;
-*/
-
 #endif
 
 #ifdef NORMALMAP
@@ -218,15 +215,23 @@ fixed4 frag (v2f i) : SV_Target
 	col = col + (specular * specMask * i.color * _LightColor0);
 #endif	
 
+#ifdef EMISSIVEBLINK
+	float intensity = 1.0 + (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower;
+	col *= intensity;
+#endif
 
-#ifdef FOG	
+#if defined(FOG) && !defined(EMISSIVEBLINK)
 	HG_APPLY_FOG(i, col);	// Fog
+//	fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
+//	float lmi = (dot(lm, lm) - 0.5) * 0.2;	// (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.15;
+//	float lmi = lm.x;// (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.15;
+//	col.rgb = lerp((col).rgb, fogCol.rgb, clamp(fogCol.a - lmi, 0.0, 1.0));
+
 #endif	
 
 #ifdef DARKEN
 	HG_APPLY_DARKEN(i, col);	//darken
 #endif
-
 
 #ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
