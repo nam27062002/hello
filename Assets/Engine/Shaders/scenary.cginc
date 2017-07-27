@@ -219,7 +219,7 @@ fixed4 frag (v2f i) : SV_Target
 	col *= intensity;
 #endif
 
-#ifdef FOG	
+#if defined(FOG) && !defined(EMISSIVEBLINK)
 	HG_APPLY_FOG(i, col);	// Fog
 #endif	
 
