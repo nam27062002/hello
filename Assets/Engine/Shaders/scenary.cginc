@@ -197,6 +197,7 @@ fixed4 frag (v2f i) : SV_Target
 
 #if defined(LIGHTMAP_ON) && !defined(EMISSIVEBLINK)
 	fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
+//	col.rgb *= lm * 1.3;
 	col.rgb *= lm * 1.3;
 #endif
 
@@ -221,6 +222,11 @@ fixed4 frag (v2f i) : SV_Target
 
 #if defined(FOG) && !defined(EMISSIVEBLINK)
 	HG_APPLY_FOG(i, col);	// Fog
+//	fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
+//	float lmi = (dot(lm, lm) - 0.5) * 0.2;	// (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.15;
+//	float lmi = lm.x;// (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.15;
+//	col.rgb = lerp((col).rgb, fogCol.rgb, clamp(fogCol.a - lmi, 0.0, 1.0));
+
 #endif	
 
 #ifdef DARKEN
