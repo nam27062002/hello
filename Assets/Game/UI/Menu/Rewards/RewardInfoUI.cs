@@ -22,7 +22,7 @@ using System.Collections.Generic;
 /// Simple script to easily setup the egg reward title.
 /// </summary>
 [RequireComponent(typeof(Animator))]
-public class EggRewardInfo : MonoBehaviour {
+public class RewardInfoUI : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//

@@ -78,7 +78,7 @@ public class RewardSceneController : MonoBehaviour {
 
 	// Other references that must be set from script
 	private DragControlRotation m_dragController = null;
-	private EggRewardInfo m_rewardInfoUI = null;
+	private RewardInfoUI m_rewardInfoUI = null;
 	private CameraSnapPoint m_originalPhotoCameraSnapPoint = null;
 
 	private Metagame.Reward m_currentReward;
@@ -216,7 +216,7 @@ public class RewardSceneController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_dragController">Drag controller to be used for rewards.</param>
 	/// <param name="_rewardInfoUI">UI widget used to display the info on the reward.</param>
-	public void InitReferences(DragControlRotation _dragController, EggRewardInfo _rewardInfoUI) {
+	public void InitReferences(DragControlRotation _dragController, RewardInfoUI _rewardInfoUI) {
 		m_dragController = _dragController;
 		m_rewardInfoUI = _rewardInfoUI;
 	}

@@ -16,5 +16,5 @@ using UnityEditor;
 /// <summary>
 /// Custom editor for the MonoBehaviourTemplate class.
 /// </summary>
-[CustomPropertyDrawer(typeof(EggRewardInfo.RewardTypeSetupDictionary), true)]
+[CustomPropertyDrawer(typeof(RewardInfoUI.RewardTypeSetupDictionary), true)]
 public class RewardTypeSetupDictionaryEditor : SerializableDictionaryEditor { }

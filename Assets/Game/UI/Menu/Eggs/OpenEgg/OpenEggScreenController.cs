@@ -44,7 +44,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_finalPanel = null;
 
 	[Separator("Rewards")]
-	[SerializeField] private EggRewardInfo m_rewardInfo = null;
+	[SerializeField] private RewardInfoUI m_rewardInfo = null;
 	[SerializeField] private DragControlRotation m_rewardDragController = null;
 
 	[Separator("Animation Parameters")]
