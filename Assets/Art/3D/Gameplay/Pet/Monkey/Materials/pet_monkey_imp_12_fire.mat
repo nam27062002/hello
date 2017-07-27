@@ -6,11 +6,12 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pet_monkey_imp_12
-  m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
-  m_ShaderKeywords: _EMISSION
+  m_Name: pet_monkey_imp_12_fire
+  m_Shader: {fileID: 4800000, guid: b5d133454c866364f90d201e1c7baed2, type: 3}
+  m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
+    GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR
   m_LightmapFlags: 1
-  m_CustomRenderQueue: 2010
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -19,6 +20,12 @@ Material:
         name: _BumpMap
       second:
         m_Texture: {fileID: 2800000, guid: 4257de601a87f4deeaf87cae224c54f8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _ColorRamp
+      second:
+        m_Texture: {fileID: 2800000, guid: 5818f0fb913f3c64d9d905206ea8b6cd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -64,6 +71,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
+        name: _NoiseTex
+      second:
+        m_Texture: {fileID: 2800000, guid: b883c2cb833d7a443998ec04d8fa7faa, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
         name: _OcclusionMap
       second:
         m_Texture: {fileID: 0}
@@ -83,11 +96,20 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
+        name: _Alpha
+      second: 0.892
+    - first:
+        name: _AlphaThreshold
+      second: 0.57
+    - first:
         name: _Alpha_as_depth
       second: 0
     - first:
         name: _BumpScale
       second: 1
+    - first:
+        name: _ColorSteps
+      second: 16.2
     - first:
         name: _Cutoff
       second: 0.5
@@ -119,6 +141,9 @@ Material:
         name: _Mode
       second: 0
     - first:
+        name: _NoiseScale
+      second: 1
+    - first:
         name: _NormalStrenght
       second: 1
     - first:
@@ -128,7 +153,19 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
+        name: _Power
+      second: 7.46
+    - first:
+        name: _RampOffset
+      second: 0.983
+    - first:
         name: _ReflectionAmount
+      second: 0
+    - first:
+        name: _Seed
+      second: 1
+    - first:
+        name: _ShaderTime
       second: 0
     - first:
         name: _SmoothnessTextureChannel
@@ -139,6 +176,9 @@ Material:
     - first:
         name: _SpecularHighlights
       second: 1
+    - first:
+        name: _Speed
+      second: 2
     - first:
         name: _SrcBlend
       second: 1
