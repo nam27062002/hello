@@ -807,6 +807,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     {
         //CSTSManager.SharedInstance.OpenView(TranslationsManager.Instance.ISO.ToString(), PersistenceManager.Instance.IsPayer);
         CSTSManager.SharedInstance.OpenView("es", false);
+        HDTrackingManager.Instance.Notify_CustomerSupportRequested();
     }
 
     #endregion
