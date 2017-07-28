@@ -21,6 +21,7 @@ namespace BSpline {
 		[SerializeField][HideInInspector] private List<SplineSegment> m_segments;
 		[SerializeField][HideInInspector] private float[] m_splineLength;
 		[SerializeField][HideInInspector] private float m_arcLength;
+		public float length { get { return m_arcLength; } }
 
 
 		public int controlPointCount 	{ get { return m_points.Length; } }
@@ -132,6 +133,30 @@ namespace BSpline {
 			Vector3 right = Vector3.Cross(Vector3.up, forward);
 			return Vector3.Cross(forward, right);
 		}
+
+		public Vector3 GetPointAtDistance(float _distance, ref Vector3 _direction, ref Vector3 _up, ref Vector3 _right) {
+			SplineSegment data;
+			if (_distance >= m_arcLength) {
+				data = m_segments.Last();
+				_distance = data.length;
+			} else {
+				int s = 0;
+				while (_distance > m_segments[s].length) {
+					_distance -= m_segments[s].length;
+					s++;
+				}
+				data = m_segments[s];
+			}
+
+			_direction = data.direction;
+
+			Vector3 forward = data.direction;
+			_right = Vector3.Cross(Vector3.up, forward);
+			_up = Vector3.Cross(forward, _right);
+
+			return data.p0 + data.direction * _distance;
+		}
+
 
 		public void Reset() {
 			m_points = new Vector3[] {
