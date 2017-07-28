@@ -75,7 +75,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
         bool adAvailable = FeatureSettingsManager.AreAdsEnabled;
         // Ad has been requested is tracked
-        //HDTrackingManager.Instance.Notify_AdStarted(Track_EAdPurposeToAdType(adPurpose), Track_EAdPurposeToRewardType(adPurpose), adAvailable, TRACK_AD_PROVIDER_ID);
+        HDTrackingManager.Instance.Notify_AdStarted(Track_EAdPurposeToAdType(adPurpose), Track_EAdPurposeToRewardType(adPurpose), adAvailable, TRACK_AD_PROVIDER_ID);
 
         if (adAvailable) {
             // Ad is requested
@@ -95,8 +95,8 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 		}
 
         // Ad has been finished is tracked
-        //bool videoWatched = result == AdsManager.EPlayResult.PLAYED;
-        //HDTrackingManager.Instance.Notify_AdFinished(Track_EAdPurposeToAdType(CurrentAdPurpose), videoWatched, false, 0, TRACK_AD_PROVIDER_ID);
+        bool videoWatched = result == AdsManager.EPlayResult.PLAYED;
+        HDTrackingManager.Instance.Notify_AdFinished(Track_EAdPurposeToAdType(CurrentAdPurpose), videoWatched, false, 0, TRACK_AD_PROVIDER_ID);
 
         CurrentAdPurpose = EAdPurpose.NONE;
     }

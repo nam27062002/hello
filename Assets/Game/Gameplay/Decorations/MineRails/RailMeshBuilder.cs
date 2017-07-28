@@ -20,10 +20,12 @@ public class RailMeshBuilder : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		if (m_spline != null) {
+			m_spline.CalculateArcLength();
+
 			List<Vector3> verticesLeft = new List<Vector3>();
 			List<Vector3> verticesRight = new List<Vector3>();
 
-			for (float t = 0f; t <= 1f; t += 1f / m_subdivisions) {
+			for (float t = 0f; t < 1f; t += 1f / m_subdivisions) {
 				Vector3 point = m_spline.GetPoint(t);
 				Vector3 forward = m_spline.GetDirection(t);
 				Vector3 up = m_spline.GetUpVector(t);
@@ -33,6 +35,15 @@ public class RailMeshBuilder : MonoBehaviour {
 				CreateRailAt(point + right * 0.325f, up, -right, ref verticesRight);
 				CreateRailAt(point - right * 0.325f, up, -right, ref verticesLeft);
 			}
+
+			Vector3 pointLast = m_spline.GetPoint(1f);
+			Vector3 forwardLast = m_spline.GetDirection(1f);
+			Vector3 upLast = m_spline.GetUpVector(1f);
+
+			Vector3 rightLast = Vector3.Cross(forwardLast, upLast);
+
+			CreateRailAt(pointLast + rightLast * 0.325f, upLast, -rightLast, ref verticesRight);
+			CreateRailAt(pointLast - rightLast * 0.325f, upLast, -rightLast, ref verticesLeft);
 
 			MeshFilter meshFilter = GetComponent<MeshFilter>();
 			if (meshFilter.sharedMesh != null) meshFilter.sharedMesh = null;
@@ -58,7 +69,7 @@ public class RailMeshBuilder : MonoBehaviour {
 			combine[1].mesh.triangles = Triangulate(verticesLeft);
 			combine[1].mesh.RecalculateNormals();
 
-			float dist = 0;
+			float dist = distanceBetweenTies * 0.5f;
 			for (int i = 0; i < woodTieCount; ++i) {
 				Vector3 dir = Vector3.zero;
 				Vector3 up = Vector3.zero;
@@ -88,19 +99,23 @@ public class RailMeshBuilder : MonoBehaviour {
 	private Mesh CreateWoodTie(Vector3 _point, Vector3 _up, Vector3 _right, Vector3 _dir) {
 		List<Vector3> vertices = new List<Vector3>();
 		// top
-		vertices.Add(_point + _up * 0.00f - _right * 0.07f + _dir * 0.22f);
-		vertices.Add(_point + _up * 0.00f + _right * 0.07f + _dir * 0.22f);
-		vertices.Add(_point + _up * 0.00f + _right * 0.07f - _dir * 0.22f);
-		vertices.Add(_point + _up * 0.00f - _right * 0.07f - _dir * 0.22f);
+		vertices.Add(_point - _up * 0.05f - _right * 0.70f + _dir * 0.22f);
+		vertices.Add(_point - _up * 0.05f + _right * 0.70f + _dir * 0.22f);
+		vertices.Add(_point - _up * 0.05f + _right * 0.70f - _dir * 0.22f);
+		vertices.Add(_point - _up * 0.05f - _right * 0.70f - _dir * 0.22f);
 
 		// bottom
-		vertices.Add(_point + _up * 0.08f - _right * 0.07f + _dir * 0.22f);
-		vertices.Add(_point + _up * 0.08f + _right * 0.07f + _dir * 0.22f);
-		vertices.Add(_point + _up * 0.08f + _right * 0.07f - _dir * 0.22f);
-		vertices.Add(_point + _up * 0.08f - _right * 0.07f - _dir * 0.22f);
+		vertices.Add(_point - _up * 0.12f - _right * 0.70f + _dir * 0.22f);
+		vertices.Add(_point - _up * 0.12f + _right * 0.70f + _dir * 0.22f);
+		vertices.Add(_point - _up * 0.12f + _right * 0.70f - _dir * 0.22f);
+		vertices.Add(_point - _up * 0.12f - _right * 0.70f - _dir * 0.22f);
 
 		int[] triangles = {	0, 1, 2, 2, 3, 0, // top
-							5, 4, 6, 6, 4, 7};  // bottom
+							5, 4, 6, 6, 4, 7, // bottom
+							1, 0, 4, 5, 1, 4,
+							3, 2, 6, 6, 7, 3,
+							2, 1, 5, 5, 6, 2,
+							0, 3, 7, 7, 4, 0};
 
 		Mesh mesh = new Mesh();
 		mesh.vertices = vertices.ToArray();

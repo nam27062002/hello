@@ -218,7 +218,7 @@ fixed4 frag (v2f i) : SV_Target
 #endif	
 
 #ifdef EMISSIVEBLINK
-	float intensity = 1.0 + (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower;
+	float intensity = 1.0 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01 )) * _EmissivePower;
 	col *= intensity;
 #endif
 
@@ -229,7 +229,7 @@ fixed4 frag (v2f i) : SV_Target
 #ifdef LIGHTMAPCONTRAST
 	fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
 	lm -= 0.5;
-	float lmi = (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.1;
+	float lmi = (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.2;
 //	float lmi = (length(lm) - 0.5) * 0.03;	// (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.15;
 //	float lmi = lm.x;// (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.15;
 	col.rgb = lerp((col).rgb, fogCol.rgb, clamp(fogCol.a - lmi, 0.0, 1.0));
