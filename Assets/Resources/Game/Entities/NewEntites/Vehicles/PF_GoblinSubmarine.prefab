@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4823578351156774}
   - component: {fileID: 33348760787485298}
   - component: {fileID: 23070175720647790}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 4459324326698120}
   - component: {fileID: 33292809948622442}
   - component: {fileID: 23641341273326428}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -77,7 +77,7 @@ GameObject:
   - component: {fileID: 114153569177723640}
   - component: {fileID: 54948983558789238}
   - component: {fileID: 114957559196842710}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: PF_GoblinSubmarine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 4566646707194052}
   - component: {fileID: 95751814472908170}
   - component: {fileID: 114621170332869960}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -220,7 +220,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1367130675427906}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 128.69577, y: 76.31089, z: 14.329953}
+  m_LocalPosition: {x: 119.87, y: 85.76, z: 14.329953}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4566646707194052}
@@ -363,7 +363,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
-  radius: 5
+  radius: 6.557434
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114178290901123198
 MonoBehaviour:
@@ -380,10 +380,10 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 0
-    m_maxRadius: 0
+    m_sightRadius: 15
+    m_maxRadius: 15
     m_minRadius: 0
-    m_hysteresisOffset: 0
+    m_hysteresisOffset: 2
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
@@ -416,8 +416,18 @@ MonoBehaviour:
     m_faceUpAngle: 320
     m_faceDownAngle: 40
   m_armorDurabilityPerTier:
-    m_valueList: []
-    m_keyList: 
+    m_valueList:
+    - count: 1
+      needBoost: 1
+    - count: 1
+      needBoost: 1
+    - count: 1
+      needBoost: 1
+    - count: 1
+      needBoost: 1
+    - count: 1
+      needBoost: 1
+    m_keyList: 0000000001000000020000000300000004000000
   m_ground: []
 --- !u!114 &114223318615474706
 MonoBehaviour:
@@ -824,7 +834,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: 
+  m_sku: GoblinBoat
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114957559196842710
