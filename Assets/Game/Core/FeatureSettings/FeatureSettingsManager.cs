@@ -1027,6 +1027,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    public static bool AreAdsEnabled
+    {
+        get
+        {                  
+            return true;
+        }
+    }
+
     public bool IsMiniTrackingEnabled
     {
         get
@@ -1100,7 +1108,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 		{
 			return Device_CurrentFeatureSettings.GetValueAsLevel5(FeatureSettings.KEY_PARTICLES);
 		}
-	}
+	}    
     #endregion
 
     #region log

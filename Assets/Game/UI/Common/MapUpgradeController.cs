@@ -179,7 +179,7 @@ public class MapUpgradeController : MonoBehaviour {
 		}
 
 		m_adBlockingPopup = PopupManager.OpenPopupInstant("UI/Popups/InGame/PF_PopupAdBlocker");
-		GameAds.instance.ShowRewarded( OnVideoRewardCallback );
+		GameAds.instance.ShowRewarded( GameAds.EAdPurpose.UPGRADE_MAP, OnVideoRewardCallback );
 
 		// [AOC] TODO!! Show a video ad!
 		// Open placeholder popup

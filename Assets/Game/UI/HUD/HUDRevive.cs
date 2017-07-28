@@ -171,7 +171,7 @@ public class HUDRevive : MonoBehaviour {
 		// popup.OnClosePostAnimation.AddListener(OnAdClosed);
 
 		m_adBlockingPopup = PopupManager.OpenPopupInstant("UI/Popups/InGame/PF_PopupAdBlocker");
-		GameAds.instance.ShowRewarded( OnVideoRewardCallback );
+		GameAds.instance.ShowRewarded( GameAds.EAdPurpose.REVIVE, OnVideoRewardCallback );
 
 		// Pause timer
 		m_timer.Stop();
