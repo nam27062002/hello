@@ -1,4 +1,6 @@
 
+#define LIGHTMAPCONTRAST
+
 struct v2f {
 	float4 vertex : SV_POSITION;
 	half2 texcoord : TEXCOORD0;
@@ -221,11 +223,25 @@ fixed4 frag (v2f i) : SV_Target
 #endif
 
 #if defined(FOG) && !defined(EMISSIVEBLINK)
-	HG_APPLY_FOG(i, col);	// Fog
-//	fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
-//	float lmi = (dot(lm, lm) - 0.5) * 0.2;	// (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.15;
+
+#if defined (LIGHTMAP_ON)
+
+#ifdef LIGHTMAPCONTRAST
+	fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
+	lm -= 0.5;
+	float lmi = (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.1;
+//	float lmi = (length(lm) - 0.5) * 0.03;	// (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.15;
 //	float lmi = lm.x;// (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.15;
-//	col.rgb = lerp((col).rgb, fogCol.rgb, clamp(fogCol.a - lmi, 0.0, 1.0));
+	col.rgb = lerp((col).rgb, fogCol.rgb, clamp(fogCol.a - lmi, 0.0, 1.0));
+#else
+	HG_APPLY_FOG(i, col);	// Fog
+#endif
+
+#else
+	HG_APPLY_FOG(i, col);	// Fog
+#endif
+
+
 
 #endif	
 

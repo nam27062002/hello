@@ -314,11 +314,13 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 		}
 
 		// Initialize static stuff
-		// Objective image
-		m_eventIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_event.objective.icon);
+		if(m_event != null && m_event.objective != null) {
+			// Objective image
+			m_eventIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_event.objective.icon);
 
-		// Event description
-		m_descriptionText.text = m_event.objective.GetDescription();
+			// Event description
+			m_descriptionText.text = m_event.objective.GetDescription();
+		}
 
 		// Do a first refresh
 		InitPanel(false, true);
