@@ -362,8 +362,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.008245468, y: 0.014090061}
-  radius: 1.4783714
+  offset: {x: 0, y: 0}
+  radius: 5
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114178290901123198
 MonoBehaviour:
@@ -380,8 +380,8 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 12
-    m_maxRadius: 10
+    m_sightRadius: 0
+    m_maxRadius: 0
     m_minRadius: 0
     m_hysteresisOffset: 0
     m_senseAbove: 1
@@ -416,18 +416,8 @@ MonoBehaviour:
     m_faceUpAngle: 320
     m_faceDownAngle: 40
   m_armorDurabilityPerTier:
-    m_valueList:
-    - count: 6
-      needBoost: 1
-    - count: 5
-      needBoost: 1
-    - count: 4
-      needBoost: 1
-    - count: 3
-      needBoost: 1
-    - count: 2
-      needBoost: 1
-    m_keyList: 0000000001000000020000000300000004000000
+    m_valueList: []
+    m_keyList: 
   m_ground: []
 --- !u!114 &114223318615474706
 MonoBehaviour:
@@ -441,8 +431,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_walkSpeed: 1
-  m_runSpeed: 5
-  m_minPlaybakSpeed: 0.5
+  m_runSpeed: 1
+  m_minPlaybakSpeed: 1
   m_maxPlaybakSpeed: 1.5
   m_onBoostMaxPlaybackSpeed: 0
   m_hasNavigationLayer: 0
@@ -453,59 +443,7 @@ MonoBehaviour:
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
   m_onEatenParticle:
-    name: PS_Blood_Explosion
-    path: Blood
-    offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      key0:
-        serializedVersion: 2
-        rgba: 4294967295
-      key1:
-        serializedVersion: 2
-        rgba: 4294967295
-      key2:
-        serializedVersion: 2
-        rgba: 0
-      key3:
-        serializedVersion: 2
-        rgba: 0
-      key4:
-        serializedVersion: 2
-        rgba: 0
-      key5:
-        serializedVersion: 2
-        rgba: 0
-      key6:
-        serializedVersion: 2
-        rgba: 0
-      key7:
-        serializedVersion: 2
-        rgba: 0
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    scale: 1
-  m_onEatenFrozenParticle:
-    name: PS_IceExplosionSmall
+    name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
@@ -556,7 +494,59 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     scale: 1
-  m_onEatenAudio: Soldier_Dead
+  m_onEatenFrozenParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      key0:
+        serializedVersion: 2
+        rgba: 4294967295
+      key1:
+        serializedVersion: 2
+        rgba: 4294967295
+      key2:
+        serializedVersion: 2
+        rgba: 0
+      key3:
+        serializedVersion: 2
+        rgba: 0
+      key4:
+        serializedVersion: 2
+        rgba: 0
+      key5:
+        serializedVersion: 2
+        rgba: 0
+      key6:
+        serializedVersion: 2
+        rgba: 0
+      key7:
+        serializedVersion: 2
+        rgba: 0
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
+  m_onEatenAudio: 
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
     name: 
@@ -612,9 +602,9 @@ MonoBehaviour:
     scale: 1
   m_firePoints: []
   m_burnParticle:
-    name: PF_BonfireToon
+    name: 
     path: 
-    offset: {x: 0, y: 1.05, z: 0}
+    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
@@ -734,7 +724,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_machineRoot: {fileID: 1367130675427906}
-  m_timeBetweenAttaks: 2
+  m_timeBetweenAttaks: 1
   m_hitParticle:
     name: 
     path: 
@@ -806,12 +796,12 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"projectileName":"PF_SubmarineBomb","projectileSpawnTransformName":"cannon","damage":55,"canFollowTarget":false,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":3,"stop":true,"faceEnemy":true,"faceEnemyY":true,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":25,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":6,"panicSpeed":8,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
+  m_serializedJson: '[{"projectileName":"PF_SubmarineBomb","projectileSpawnTransformName":"cannon","damage":55,"canFollowTarget":false,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":3,"stop":true,"faceEnemy":true,"faceEnemyY":true,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":25,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":1.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false}]'
   m_databaseKey: PF_GoblinSubmarine
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 5
-  m_avoidCollisions: 1
-  m_avoidWater: 1
+  m_avoidDistanceAttenuation: 2
+  m_avoidCollisions: 0
+  m_avoidWater: 0
 --- !u!114 &114621170332869960
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -834,7 +824,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: GoblinBoat
+  m_sku: 
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114957559196842710
@@ -848,9 +838,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ecedc79e668a408395849ca8a7a9c4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frameWidthIncrement: 20
+  frameWidthIncrement: 0
   frameMeAndPlayer: 0
-  radius: 14
+  radius: 0
   detectType: 0
   m_minPerformanceRatingToUse: 0.4
 --- !u!135 &135423568791365360
@@ -863,7 +853,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 14
+  m_Radius: 0
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &136257756774929906
 CapsuleCollider:
