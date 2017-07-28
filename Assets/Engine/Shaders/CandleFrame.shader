@@ -7,24 +7,35 @@
 		_Radius ("Radius", Range(0.0, 1.0)) = 0.1
 		_FallOff("FallOff", Range(0.0, 1.0)) = 0.1
 		_Offset("Offset", Vector) = (0.0, 0.0, 0.0, 0.0)
+		_StencilMask("Stencil Mask", int) = 10
 	}
 	SubShader
 	{
 
-		Tags{ "ForceSupported" = "True" "RenderType" = "Overlay" }
+//		Tags{ "ForceSupported" = "True" "RenderType" = "Overlay" }
+		Tags{ "Queue" = "Transparent+50" "RenderType" = "Transparent"  "LightMode" = "ForwardBase" }
 
-		Lighting Off
-		Blend SrcAlpha OneMinusSrcAlpha
-		Cull Off
-		ZWrite Off
-		ZTest Always
 
 		Pass
 		{
+			Lighting Off
+			Blend SrcAlpha OneMinusSrcAlpha
+			Cull Off
+			ZWrite Off
+			ZTest Always
+
+			Stencil
+			{
+				Ref[_StencilMask]
+				Comp NotEqual
+			}
+
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			
+			#pragma multi_compile_fwdbase
+
+
 			#include "UnityCG.cginc"
 
 			struct appdata
@@ -63,7 +74,8 @@
 //				float t = THRESHOLD * (1.0 - i.color.a);
 //				float s = spiral(i.uv, w, t);
 				float2 d = i.uv - _Offset;
-				float dq = length(d);	// dot(d, d);
+				float dq = length(d);
+//				float dq = dot(d, d);
 				fixed4 col = _Tint;
 				col.a *= smoothstep(_Radius, _Radius + _FallOff, dq);
 				return col;
