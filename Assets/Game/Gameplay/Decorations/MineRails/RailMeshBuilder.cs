@@ -44,7 +44,10 @@ public class RailMeshBuilder : MonoBehaviour {
 				meshFilter.mesh = mesh;
 			}
 
-			CombineInstance[] combine = new CombineInstance[2];
+			float distanceBetweenTies = 1f;
+			int woodTieCount = (int)(m_spline.length / distanceBetweenTies);
+
+			CombineInstance[] combine = new CombineInstance[2 + woodTieCount];
 			combine[0].mesh = new Mesh();
 			combine[0].mesh.vertices = verticesRight.ToArray();
 			combine[0].mesh.triangles = Triangulate(verticesRight);
@@ -54,6 +57,18 @@ public class RailMeshBuilder : MonoBehaviour {
 			combine[1].mesh.vertices = verticesLeft.ToArray();
 			combine[1].mesh.triangles = Triangulate(verticesLeft);
 			combine[1].mesh.RecalculateNormals();
+
+			float dist = 0;
+			for (int i = 0; i < woodTieCount; ++i) {
+				Vector3 dir = Vector3.zero;
+				Vector3 up = Vector3.zero;
+				Vector3 right = Vector3.zero;
+				Vector3 point = m_spline.GetPointAtDistance(dist, ref dir, ref up, ref right);
+
+				combine[2 + i].mesh = CreateWoodTie(point, up, right, dir);
+
+				dist += distanceBetweenTies;
+			}
 
 			mesh.CombineMeshes(combine, true, false);
 		}
@@ -68,6 +83,30 @@ public class RailMeshBuilder : MonoBehaviour {
 		_vertices.Add(_point - _up * 0.05f - _right * 0.10f);
 		_vertices.Add(_point + _up * 0.00f - _right * 0.10f);
 		_vertices.Add(_point + _up * 0.00f - _right * 0.05f);
+	}
+
+	private Mesh CreateWoodTie(Vector3 _point, Vector3 _up, Vector3 _right, Vector3 _dir) {
+		List<Vector3> vertices = new List<Vector3>();
+		// top
+		vertices.Add(_point + _up * 0.00f - _right * 0.07f + _dir * 0.22f);
+		vertices.Add(_point + _up * 0.00f + _right * 0.07f + _dir * 0.22f);
+		vertices.Add(_point + _up * 0.00f + _right * 0.07f - _dir * 0.22f);
+		vertices.Add(_point + _up * 0.00f - _right * 0.07f - _dir * 0.22f);
+
+		// bottom
+		vertices.Add(_point + _up * 0.08f - _right * 0.07f + _dir * 0.22f);
+		vertices.Add(_point + _up * 0.08f + _right * 0.07f + _dir * 0.22f);
+		vertices.Add(_point + _up * 0.08f + _right * 0.07f - _dir * 0.22f);
+		vertices.Add(_point + _up * 0.08f - _right * 0.07f - _dir * 0.22f);
+
+		int[] triangles = {	0, 1, 2, 2, 3, 0, // top
+							5, 4, 6, 6, 4, 7};  // bottom
+
+		Mesh mesh = new Mesh();
+		mesh.vertices = vertices.ToArray();
+		mesh.triangles = triangles;
+		mesh.RecalculateNormals();
+		return mesh;
 	}
 
 	private int[] Triangulate(List<Vector3> _vertices) {
