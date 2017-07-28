@@ -17,7 +17,9 @@ namespace AI {
 
 		protected override void Awake() {
 			m_passengersSpawner = GetComponent<DevicePassengersSpawner>();
-			m_passengersSpawner.Initialize();
+			if (m_passengersSpawner != null) {
+				m_passengersSpawner.Initialize();
+			}
 
 			m_minTierToBreak = m_armorDurabilityPerTier.GetMinTier();
 
@@ -32,8 +34,10 @@ namespace AI {
 			m_armorDurability.count = originalHits.count;
 			m_armorDurability.needBoost = originalHits.needBoost;
 
-			m_passengersSpawner.Respawn();
-			m_passengersSpawner.PassengersEnterDevice();
+			if (m_passengersSpawner != null) {
+				m_passengersSpawner.Respawn();
+				m_passengersSpawner.PassengersEnterDevice();
+			}
 
 			for (int i = 0; i < m_ground.Length; ++i) {
 				m_ground[i].isTrigger = false;
@@ -48,7 +52,10 @@ namespace AI {
 					if (!m_armorDurability.needBoost || _boost) {
 						m_armorDurability.count--;
 						if (m_armorDurability.count <= 0) {
-							m_passengersSpawner.PassengersLeaveDevice();
+							if (m_passengersSpawner != null) {
+								m_passengersSpawner.PassengersLeaveDevice();
+							}
+
 							for (int i = 0; i < m_ground.Length; ++i) {
 								m_ground[i].isTrigger = true;
 							}
@@ -73,7 +80,9 @@ namespace AI {
 
 		public override bool Burn(Transform _transform) {			
 			if (base.Burn(_transform)) {				
-				m_passengersSpawner.PassengersBurn();
+				if (m_passengersSpawner != null) {
+					m_passengersSpawner.PassengersBurn();
+				}
 				return true;
 			}
 
