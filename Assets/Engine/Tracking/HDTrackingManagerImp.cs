@@ -303,6 +303,48 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         Track_PurchaseWithResourcesCompleted(EconomyGroupToString(economyGroup), itemID, 1, promotionType, Track_UserCurrencyToString(moneyCurrency), moneyPrice);
     }
+
+    /// <summary>
+    /// Called when the user clicks on the button to request a customer support ticked
+    /// </summary>
+    public override void Notify_CustomerSupportRequested()
+    {
+        Track_CustomerSupportRequested();
+    }
+
+    /// <summary>
+    /// Called when an ad has been requested by the user. 
+    /// <param name="adType">Ad Type.</param>
+    /// <param name="rewardType">Type of reward given for watching the ad.</param>
+    /// <param name="adIsAvailable"><c>true</c>c> if the ad is available, <c>false</c> otherwise.</param>
+    /// <param name="provider">Ad Provider. Optional.</param>    
+    /// </summary>
+    public override void Notify_AdStarted(string adType, string rewardType, bool adIsAvailable, string provider=null)
+    {
+        Track_AdStarted(adType, rewardType, adIsAvailable, provider);
+    }
+
+    /// <summary>
+    /// Called then the ad requested by the user has finished
+    /// <param name="adType">Ad Type.</param>    
+    /// <param name="adIsLoaded"><c>true</c>c> if the ad was effectively viewed, <c>false</c> otherwise.</param>
+    /// <param name="maxReached"><c>true</c> if the user has reached the limit of ad viewing authorized by the app. Used for reward ads</param>
+    /// <param name="adViewingDuration">Duration in seconds of the ad viewing.</param>
+    /// <param name="provider">Ad Provider. Optional.</param>    
+    /// </summary>
+    public override void Notify_AdFinished(string adType, bool adIsLoaded, bool maxReached, int adViewingDuration = 0, string provider = null)
+    {
+        if (adIsLoaded && TrackingSaveSystem != null)
+        {
+            TrackingSaveSystem.AdsCount++;
+
+            if (!Session_IsAdSession)
+            {
+                Session_IsAdSession = true;
+                TrackingSaveSystem.AdsSessions++;
+            }
+        }
+    }
     #endregion
 
     #region track
@@ -313,7 +355,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_StartSessionEvent");
         }        
 
-        // DNA game.start
+        // DNA
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("game.start");
         if (e != null)
         {
@@ -332,14 +374,14 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_ApplicationEndEvent " + stopCause);
         }        
 
-        // DNA custom.mobile.stop
+        // DNA
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.mobile.stop");
         if (e != null)
         {
-            Track_AddParamIsPayingSession(e);
+            Track_AddParamBool(e, TRACK_PARAM_IS_PAYING_SESSION, Session_IsPayingSession);
             Track_AddParamPlayerProgress(e);
-            Track_AddParamSessionPlaytime(e);
-            Track_AddParamString(e, "stopCause", stopCause);
+            e.SetParameterValue(TRACK_PARAM_SESSION_PLAY_TIME, (int)Session_PlayTime);
+            Track_AddParamString(e, TRACK_PARAM_STOP_CAUSE, stopCause);
             Track_AddParamTotalPlaytime(e);
             TrackingManager.SharedInstance.SendEvent(e);
         }
@@ -352,7 +394,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_MobileStartEvent");
         }
 
-        // DNA custom.mobile.stop
+        // DNA
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.mobile.start");
         if (e != null)
         {
@@ -370,23 +412,23 @@ public class HDTrackingManagerImp : HDTrackingManager
                 " itemID = " + itemID + " promotionType = " + promotionType + " moneyCurrencyCode = " + moneyCurrencyCode + " moneyPrice = " + moneyPrice);
         }        
 
-        // DNA custom.mobile.stop
+        // DNA
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.iap");
         if (e != null)
         {            
-            Track_AddParamString(e, "storeTransactionID", storeTransactionID);
-            Track_AddParamString(e, "houstonTransactionID", houstonTransactionID);
-            Track_AddParamString(e, "itemID", itemID);
-            Track_AddParamString(e, "promotionType", promotionType);
-            Track_AddParamString(e, "moneyCurrency", moneyCurrencyCode);            
-            e.SetParameterValue("moneyIAP", moneyPrice);
+            Track_AddParamString(e, TRACK_PARAM_STORE_TRANSACTION_ID, storeTransactionID);
+            Track_AddParamString(e, TRACK_PARAM_HOUSTON_TRANSACTION_ID, houstonTransactionID);
+            Track_AddParamString(e, TRACK_PARAM_ITEM_ID, itemID);
+            Track_AddParamString(e, TRACK_PARAM_PROMOTION_TYPE, promotionType);
+            Track_AddParamString(e, TRACK_PARAM_MONEY_CURRENCY, moneyCurrencyCode);            
+            e.SetParameterValue(TRACK_PARAM_MONEY_IAP, moneyPrice);
 
             Track_AddParamPlayerProgress(e);
 
             if (TrackingSaveSystem != null)
             {
                 Track_AddParamTotalPurchases(e);
-                e.SetParameterValue("totalStoreVisits", TrackingSaveSystem.TotalStoreVisits);
+                e.SetParameterValue(TRACK_PARAM_TOTAL_STORE_VISITS, TrackingSaveSystem.TotalStoreVisits);
             }
 
             TrackingManager.SharedInstance.SendEvent(e);
@@ -401,31 +443,110 @@ public class HDTrackingManagerImp : HDTrackingManager
                 " moneyCurrency = " + moneyCurrency + " moneyPrice = " + moneyPrice);
         }
 
-        // DNA custom.mobile.stop
+        // DNA
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.iap.secondaryStore");
         if (e != null)
         {
-            Track_AddParamString(e, "economyGroup", economyGroup);
-            Track_AddParamString(e, "itemID", itemID);
-            e.SetParameterValue("itemQuantity", itemQuantity);
-            Track_AddParamString(e, "promotionType", promotionType);
-            Track_AddParamString(e, "currency", moneyCurrency);            
-            e.SetParameterValue("moneyIAP", moneyPrice);
+            Track_AddParamString(e, TRACK_PARAM_ECONOMY_GROUP, economyGroup);
+            Track_AddParamString(e, TRACK_PARAM_ITEM_ID, itemID);
+            e.SetParameterValue(TRACK_PARAM_ITEM_QUANTITY, itemQuantity);
+            Track_AddParamString(e, TRACK_PARAM_PROMOTION_TYPE, promotionType);
+            Track_AddParamString(e, TRACK_PARAM_CURRENCY, moneyCurrency);            
+            e.SetParameterValue(TRACK_PARAM_MONEY_IAP, moneyPrice);
 
             Track_AddParamPlayerProgress(e);
             Track_AddParamTotalPurchases(e);            
 
             TrackingManager.SharedInstance.SendEvent(e);
         }
-    }    
+    }
+
+    private void Track_CustomerSupportRequested()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_CustomerSupportRequested");
+        }
+
+        // DNA custom.mobile.stop
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.cs");
+        if (e != null)
+        {                                    
+            Track_AddParamTotalPurchases(e);
+            Track_AddParamSessionsCount(e);
+            Track_AddParamPlayerProgress(e);
+            // Always 0 since there's no pvp in the game
+            e.SetParameterValue(TRACK_PARAM_PVP_MATCHES_PLAYED, 0);            
+
+            TrackingManager.SharedInstance.SendEvent(e);
+        }
+    }
+
+    private void Track_AdStarted(string adType, string rewardType, bool adIsAvailable, string provider = null)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_AdStarted");
+        }
+
+        // DNA custom.mobile.stop
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.ad.start");
+        if (e != null)
+        {                
+            Track_AddParamString(e, TRACK_PARAM_ADS_TYPE, adType);
+            Track_AddParamString(e, TRACK_PARAM_REWARD_TYPE, rewardType);
+            Track_AddParamBool(e, TRACK_PARAM_AD_IS_AVAILABLE, adIsAvailable);
+            Track_AddParamString(e, TRACK_PARAM_PROVIDER, provider);            
+            Track_AddParamPlayerProgress(e);
+
+            if (TrackingSaveSystem != null)
+            {
+                e.SetParameterValue(TRACK_PARAM_NB_ADS_LTD, TrackingSaveSystem.AdsCount);
+                e.SetParameterValue(TRACK_PARAM_NB_ADS_SESSION, TrackingSaveSystem.AdsSessions);
+            }
+
+            TrackingManager.SharedInstance.SendEvent(e);
+        }
+    }
 
     // -------------------------------------------------------------
     // Params
-    // -------------------------------------------------------------
+    // -------------------------------------------------------------    
+    private const string TRACK_PARAM_AB_TESTING                 = "abtesting";
+    private const string TRACK_PARAM_AD_IS_AVAILABLE            = "adIsAvailable";
+    private const string TRACK_PARAM_ADS_TYPE                   = "adsType";
+    private const string TRACK_PARAM_CURRENCY                   = "currency";
+    private const string TRACK_PARAM_ECONOMY_GROUP              = "economyGroup";
+    private const string TRACK_PARAM_HOUSTON_TRANSACTION_ID     = "houstonTransactionID";
+    private const string TRACK_PARAM_IN_GAME_ID                 = "InGameId";
+    private const string TRACK_PARAM_IS_PAYING_SESSION          = "isPayingSession";
+    private const string TRACK_PARAM_ITEM_ID                    = "itemID";
+    private const string TRACK_PARAM_ITEM_QUANTITY              = "itemQuantity";
+    private const string TRACK_PARAM_MONEY_CURRENCY             = "moneyCurrency";
+    private const string TRACK_PARAM_MONEY_IAP                  = "moneyIAP";
+    private const string TRACK_PARAM_NB_ADS_LTD                 = "nbAdsLtd";
+    private const string TRACK_PARAM_NB_ADS_SESSION             = "nbAdsSession";
+    private const string TRACK_PARAM_PLAYER_ID                  = "playerID";
+    private const string TRACK_PARAM_PLAYER_PROGRESS            = "playerProgress";
+    private const string TRACK_PARAM_PROMOTION_TYPE             = "promotionType";    
+    private const string TRACK_PARAM_PROVIDER                   = "provider";
+    private const string TRACK_PARAM_PROVIDER_AUTH              = "providerAuth";
+    private const string TRACK_PARAM_PVP_MATCHES_PLAYED         = "pvpMatchesPlayed";
+    private const string TRACK_PARAM_REWARD_TYPE                = "rewardType";    
+    private const string TRACK_PARAM_SESSION_PLAY_TIME          = "sessionPlaytime";
+    private const string TRACK_PARAM_SESSIONS_COUNT             = "sessionsCount";
+    private const string TRACK_PARAM_STOP_CAUSE                 = "stopCause";
+    private const string TRACK_PARAM_SUBVERSION                 = "SubVersion";
+    private const string TRACK_PARAM_STORE_TRANSACTION_ID       = "storeTransactionID";
+    private const string TRACK_PARAM_TOTAL_PLAYTIME             = "totalPlaytime";
+    private const string TRACK_PARAM_TOTAL_PURCHASES            = "totalPurchases";
+    private const string TRACK_PARAM_TOTAL_STORE_VISITS         = "totalStoreVisits";    
+
+
     private void Track_AddParamSubVersion(TrackingManager.TrackingEvent e)
     {
         // "SoftLaunch" is sent so far. It will be changed wto "HardLaunch" after WWL
-        Track_AddParamString(e, "SubVersion", "SoftLaunch");
+        Track_AddParamString(e, TRACK_PARAM_SUBVERSION, "SoftLaunch");
     }
 
     private void Track_AddParamProviderAuth(TrackingManager.TrackingEvent e)
@@ -441,7 +562,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             value = "SilentLogin";
         }
 
-        Track_AddParamString(e, "providerAuth", value);
+        Track_AddParamString(e, TRACK_PARAM_PROVIDER_AUTH, value);
     }
 
     private void Track_AddParamPlayerID(TrackingManager.TrackingEvent e)
@@ -457,7 +578,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             value = "NotDefined";
         }
 
-        Track_AddParamString(e, "playerID", value);
+        Track_AddParamString(e, TRACK_PARAM_PLAYER_ID, value);
     }
 
     private void Track_AddParamServerAccID(TrackingManager.TrackingEvent e)
@@ -468,45 +589,39 @@ public class HDTrackingManagerImp : HDTrackingManager
             value = TrackingSaveSystem.AccountID;
         }
 
-        e.SetParameterValue("InGameId", value);
-    }
-
-    private void Track_AddParamIsPayingSession(TrackingManager.TrackingEvent e)
-    {
-        int value = (Session_IsPayingSession) ? 1 : 0;        
-        e.SetParameterValue("isPayingSession", value);
-    }
+        e.SetParameterValue(TRACK_PARAM_IN_GAME_ID, value);
+    }    
 
     private void Track_AddParamAbTesting(TrackingManager.TrackingEvent e)
     {        
-        e.SetParameterValue("abtesting", "");
+        e.SetParameterValue(TRACK_PARAM_AB_TESTING, "");
     }
 
     private void Track_AddParamPlayerProgress(TrackingManager.TrackingEvent e)
     {
         int value = (UsersManager.currentUser != null) ? UsersManager.currentUser.GetPlayerProgress() : 0;
-        Track_AddParamString(e, "playerProgress", value + "");
-    }
+        Track_AddParamString(e, TRACK_PARAM_PLAYER_PROGRESS, value + "");
+    }    
 
-    private void Track_AddParamSessionPlaytime(TrackingManager.TrackingEvent e)
+    private void Track_AddParamSessionsCount(TrackingManager.TrackingEvent e)
     {
-        int value = (int)Session_PlayTime;
-        e.SetParameterValue("sessionPlaytime", value);
+        int value = (TrackingSaveSystem != null) ? TrackingSaveSystem.SessionCount : 0;
+        e.SetParameterValue(TRACK_PARAM_SESSIONS_COUNT, value);
     }
 
     private void Track_AddParamTotalPlaytime(TrackingManager.TrackingEvent e)
     {
         int value = (TrackingSaveSystem != null) ? TrackingSaveSystem.TotalPlaytime : 0;
-        e.SetParameterValue("totalPlaytime", value);
+        e.SetParameterValue(TRACK_PARAM_TOTAL_PLAYTIME, value);
     }
 
     private void Track_AddParamTotalPurchases(TrackingManager.TrackingEvent e)
     {
         if (TrackingSaveSystem != null)
         {
-            e.SetParameterValue("totalPurchases", TrackingSaveSystem.TotalPurchases);
+            e.SetParameterValue(TRACK_PARAM_TOTAL_PURCHASES, TrackingSaveSystem.TotalPurchases);
         }        
-    }
+    }   
 
     private void Track_AddParamString(TrackingManager.TrackingEvent e, string paramName, string value)
     {
@@ -517,8 +632,14 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         e.SetParameterValue(paramName, value);
-    }  
-    
+    }
+
+    private void Track_AddParamBool(TrackingManager.TrackingEvent e, string paramName, bool value)
+    {
+        int valueToSend = (value) ? 1 : 0;
+        e.SetParameterValue(paramName, valueToSend);
+    }
+
     private string Track_UserCurrencyToString(UserProfile.Currency currency)
     {
         string returnValue = "";
@@ -569,9 +690,19 @@ public class HDTrackingManagerImp : HDTrackingManager
     private bool Session_IsPayingSession { get; set; }
 
     /// <summary>
+    /// Whether or not the user has already watched an ad during the current session
+    /// </summary>
+    private bool Session_IsAdSession { get; set; }
+
+    /// <summary>
     /// Current session duration (in seconds) so far. It has to start being accumulated after the first game round
     /// </summary>
     private float Session_PlayTime { get; set; }
+
+    /// <summary>
+    /// Sessions amount, including this one, played by the user since installation
+    /// </summary>
+    private int Session_Count { get; set; }
 
     /// <summary>
     /// This flag states whether or not the user has started any rounds. This is used to start DNA session. DNA session starts when the user 
@@ -582,7 +713,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void Session_Reset()
     {
         Session_IsPayingSession = false;
+        Session_IsAdSession = false;
         Session_PlayTime = 0f;
+        Session_Count = 0;
         Session_AnyRoundsStarted = false;
     }
     #endregion

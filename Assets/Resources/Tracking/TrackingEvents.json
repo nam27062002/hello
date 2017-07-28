@@ -57,21 +57,116 @@
 				{"totalPurchases": {"Status": ""}}				
             ],
             "APIs": ["dna"]
-        }        		
+        },
+		"custom.game.cs": {
+            "Parameters": [                                                                				
+				{"totalPurchases": {"Status": ""}},							
+				{"sessionsCount": {"Status": ""}},               								
+				{"playerProgress": {"Status": ""}},
+				{"pvpMatchesPlayed": {"Status": ""}}
+            ],
+            "APIs": ["dna"]
+        },
+		"custom.game.ad.start": {
+            "Parameters": [                                                                				
+				{"nbAdsLtd": {"Status": ""}},							
+				{"nbAdsSession": {"Status": ""}},               								
+				{"adIsAvailable": {"Status": ""}},               								
+				{"rewardType": {"Status": ""}},               								
+				{"playerProgress": {"Status": ""}},
+				{"provider": {"Status": ""}},
+				{"adsType": {"Status": ""}}              							
+            ],
+            "APIs": ["dna"]
+        },
+		"custom.game.ad.finished": {
+            "Parameters": [                                                                				
+				{"isLoaded": {"Status": ""}},							
+				{"provider": {"Status": ""}},
+				{"adViewingDuration": {"Status": ""}},               								
+				{"maxReached": {"Status": ""}},               																
+				{"adsType": {"Status": ""}}              							
+            ],
+            "APIs": ["dna"]
+        }        					
     },
-    "ParameterValues": {        		
+    "ParameterValues": { 
+		"abtesting": {
+            "Type": "STRING:125",
+            "Values": []
+        },			
 		"acq_marketing_id": {
             "Type": "TRACK_DNA_MARKETING_ID",
             "Values": []
-        },   
+        },  
+		"adIsAvailable": {
+            "Type": "INT",
+            "Values": []
+        },	
+		"adsType": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"adViewingDuration": {
+            "Type": "INT",
+            "Values": []
+        },			
+		"currency": {
+            "Type": "STRING:125",
+            "Values": []
+        },				
 		"hardware": {
             "Type": "TRACK_DNA_HARDWARE",
             "Values": []
-        },    
+        }, 
+		"houstonTransactionID": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+		"InGameId": {
+            "Type": "INT",
+            "Values": []
+        },	
 		"installDate": {
             "Type": "TRACK_DNA_INSTALL_DATE",
             "Values": []
-        }, 	
+        }, 
+		"isLoaded": {
+            "Type": "INT",
+            "Values": []
+        },	
+		"isPayingSession": {
+            "Type": "INT",
+            "Values": []
+        },	
+		"itemID": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"itemQuantity": {
+            "Type": "INT",
+            "Values": []
+        },	
+		"maxReached": {
+            "Type": "INT",
+            "Values": []
+        },					
+		"moneyCurrency": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+		"moneyIAP": {
+            "Type": "FLOAT",
+            "Values": []
+        },
+		"nbAdsLtd": {
+            "Type": "INT",
+            "Values": []
+        },	
+		"nbAdsSession": {
+            "Type": "INT",
+            "Values": []
+        },				
 		"osVersion": {
             "Type": "TRACK_OS",
             "Values": []
@@ -79,7 +174,19 @@
 		"playerID": {
             "Type": "STRING:125",
             "Values": []
-        },      		
+        }, 
+		"playerProgress": {
+            "Type": "STRING:125",
+            "Values": []
+        },	
+		"promotionType": {
+            "Type": "STRING:125",
+            "Values": []
+        },			
+		"provider": {
+            "Type": "STRING:125",
+            "Values": []
+        },		   		
 		"providerAuth": {
             "Type": "STRING:125",
             "Values": []
@@ -88,68 +195,36 @@
             "Type": "TRACK_DNA_PUSH_NOTIF",
             "Values": []
         },
-		"SubVersion": {
-            "Type": "STRING:125",
-            "Values": []
-        },				
-        "typeNotif": {
-            "Type": "STRING:125",
+		"pvpMatchesPlayed": {
+            "Type": "INT",
             "Values": []
         },
-        "InGameId": {
-            "Type": "INT",
-            "Values": []
-        },	
-		"abtesting": {
+		"rewardType": {
             "Type": "STRING:125",
             "Values": []
-        },			
-		"playerProgress": {
-            "Type": "STRING:125",
-            "Values": []
-        },	
-		"isPayingSession": {
-            "Type": "INT",
-            "Values": []
-        },	
+        },		
 		"sessionPlaytime": {
             "Type": "INT",
             "Values": []
-        },		
-		"totalPlaytime": {
+        },	
+		"sessionsCount": {
             "Type": "INT",
             "Values": []
-        },	
+        }
 		"stopCause": {
             "Type": "STRING:125",
             "Values": []
-        },
+        },		
 		"storeTransactionID": {
             "Type": "STRING:125",
             "Values": []
-        },	
-		"houstonTransactionID": {
+        },			
+		"SubVersion": {
             "Type": "STRING:125",
             "Values": []
-        },	
-		"itemID": {
-            "Type": "STRING:125",
-            "Values": []
-        },	
-		"promotionType": {
-            "Type": "STRING:125",
-            "Values": []
-        },	
-				"promotionType": {
-            "Type": "STRING:125",
-            "Values": []
-        },	
-		"moneyCurrency": {
-            "Type": "STRING:125",
-            "Values": []
-        },	
-		"moneyIAP": {
-            "Type": "FLOAT",
+        },
+		"totalPlaytime": {
+            "Type": "INT",
             "Values": []
         },	
 		"totalPurchases": {
@@ -159,14 +234,10 @@
 		"totalStoreVisits": {
             "Type": "INT",
             "Values": []
-        },
-		"itemQuantity": {
-            "Type": "INT",
-            "Values": []
-        },
-		"currency": {
+        },		
+        "typeNotif": {
             "Type": "STRING:125",
             "Values": []
-        }
+        }    																
     }
 }

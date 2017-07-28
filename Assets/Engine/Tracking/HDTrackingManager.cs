@@ -116,7 +116,31 @@ public class HDTrackingManager
     /// <param name="promotionType">Promotion type if there is one, otherwise <c>null</c></param>
     /// <param name="moneyCurrencyCode">Currency type used</param>
     /// <param name="moneyPrice">Amount of the currency paid</param>
-    public virtual void Notify_PurchaseWithResourcesCompleted(EEconomyGroup economyGroup, string itemID, string promotionType, UserProfile.Currency moneyCurrencyCode, int moneyPrice) { }    
+    public virtual void Notify_PurchaseWithResourcesCompleted(EEconomyGroup economyGroup, string itemID, string promotionType, UserProfile.Currency moneyCurrencyCode, int moneyPrice) {}
+
+    /// <summary>
+    /// Called when the user clicks on the button to request a customer support ticked
+    /// </summary>
+    public virtual void Notify_CustomerSupportRequested() {}
+
+    /// <summary>
+    /// Called when an ad has been requested by the user. 
+    /// <param name="adType">Ad Type.</param>
+    /// <param name="rewardType">Type of reward given for watching the ad.</param>
+    /// <param name="adIsAvailable"><c>true</c>c> if the ad is available, <c>false</c> otherwise.</param>
+    /// <param name="provider">Ad Provider. Optional.</param>    
+    /// </summary>
+    public virtual void Notify_AdStarted(string adType, string rewardType, bool adIsAvailable, string provider=null) {}
+
+    /// <summary>
+    /// Called then the ad requested by the user has finished
+    /// <param name="adType">Ad Type.</param>    
+    /// <param name="adIsLoaded"><c>true</c>c> if the ad was effectively viewed, <c>false</c> otherwise.</param>
+    /// <param name="maxReached"><c>true</c> if the user has reached the limit of ad viewing authorized by the app. Used for reward ads</param>
+    /// <param name="adViewingDuration">Duration in seconds of the ad viewing.</param>
+    /// <param name="provider">Ad Provider. Optional.</param>    
+    /// </summary>
+    public virtual void Notify_AdFinished(string adType, bool adIsLoaded, bool maxReached, int adViewingDuration=0, string provider=null) {}
     #endregion
 
     #region log

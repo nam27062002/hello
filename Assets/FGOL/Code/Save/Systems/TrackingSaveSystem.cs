@@ -4,14 +4,16 @@ using FGOL.Save;
 using FGOL.Server;
 public class TrackingSaveSystem : SaveSystem
 {
-    private const string PARAM_USER_ID = "userID";
-    private const string PARAM_SOCIAL_PLATFORM = "socialPlatform";
-    private const string PARAM_SOCIAL_ID = "socialID";
-    private const string PARAM_ACCOUNT_ID = "accID";
-    private const string PARAM_SESSION_COUNT = "sessionCount";
-    private const string PARAM_TOTAL_PLAY_TIME = "totalPlaytime";
-    private const string PARAM_TOTAL_PURCHASES = "totalPurchases";
-    private const string PARAM_TOTAL_STORE_VISITS = "totalStoreVisits";
+    private const string PARAM_ACCOUNT_ID               = "accID";
+    private const string PARAM_ADS_COUNT                = "adsCount";
+    private const string PARAM_ADS_SESSIONS             = "adsSessions";
+    private const string PARAM_SESSION_COUNT            = "sessionCount";
+    private const string PARAM_SOCIAL_ID                = "socialID";
+    private const string PARAM_SOCIAL_PLATFORM          = "socialPlatform";
+    private const string PARAM_TOTAL_PLAY_TIME          = "totalPlaytime";
+    private const string PARAM_TOTAL_PURCHASES          = "totalPurchases";
+    private const string PARAM_TOTAL_STORE_VISITS       = "totalStoreVisits";
+    private const string PARAM_USER_ID                  = "userID";
 
     // Tracking user ID generated upon first time session is started, uses GUID as we don't have server at this point
     public string UserID
@@ -122,6 +124,32 @@ public class TrackingSaveSystem : SaveSystem
         }
     }
 
+    public int AdsCount
+    {
+        get
+        {
+            return Cache_GetInt(PARAM_ADS_COUNT);
+        }
+
+        set
+        {
+            Cache_SetInt(PARAM_ADS_COUNT, value);
+        }
+    }
+
+    public int AdsSessions
+    {
+        get
+        {
+            return Cache_GetInt(PARAM_ADS_SESSIONS);
+        }
+
+        set
+        {
+            Cache_SetInt(PARAM_ADS_SESSIONS, value);
+        }
+    }
+
     public TrackingSaveSystem()
     {
         m_systemName = "Tracking";
@@ -130,26 +158,49 @@ public class TrackingSaveSystem : SaveSystem
         CacheDataString dataString = new CacheDataString(PARAM_USER_ID, "");
         Cache_AddData(PARAM_USER_ID, dataString);
 
-        dataString = new CacheDataString(PARAM_SOCIAL_PLATFORM, "");
-        Cache_AddData(PARAM_SOCIAL_PLATFORM, dataString);
+        string key = PARAM_SOCIAL_PLATFORM;
+        dataString = new CacheDataString(key, "");
+        Cache_AddData(key, dataString);
 
-        dataString = new CacheDataString(PARAM_SOCIAL_ID, "");
-        Cache_AddData(PARAM_SOCIAL_ID, dataString);
+        key = PARAM_SOCIAL_ID;
+        dataString = new CacheDataString(key, "");
+        Cache_AddData(key, dataString);
 
-        dataInt = new CacheDataInt(PARAM_ACCOUNT_ID, 0);
-        Cache_AddData(PARAM_ACCOUNT_ID, dataInt);
+        key = PARAM_ACCOUNT_ID;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
 
-        dataInt = new CacheDataInt(PARAM_SESSION_COUNT, 0);
-        Cache_AddData(PARAM_SESSION_COUNT, dataInt);
+        key = PARAM_SESSION_COUNT;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
 
-        dataInt = new CacheDataInt(PARAM_TOTAL_PLAY_TIME, 0);
-        Cache_AddData(PARAM_TOTAL_PLAY_TIME, dataInt);
+        key = PARAM_TOTAL_PLAY_TIME;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
 
-        dataInt = new CacheDataInt(PARAM_TOTAL_PURCHASES, 0);
-        Cache_AddData(PARAM_TOTAL_PURCHASES, dataInt);
+        key = PARAM_TOTAL_PURCHASES;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
 
-        dataInt = new CacheDataInt(PARAM_TOTAL_STORE_VISITS, 0);
-        Cache_AddData(PARAM_TOTAL_STORE_VISITS, dataInt);
+        key = PARAM_TOTAL_STORE_VISITS;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
+
+        key = PARAM_ADS_COUNT;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
+
+        key = PARAM_TOTAL_STORE_VISITS;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
+
+        key = PARAM_ADS_COUNT;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
+
+        key = PARAM_ADS_SESSIONS;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
 
         Reset();
     }
