@@ -381,7 +381,7 @@ public class MissionPill : MonoBehaviour {
 		if(m_mission == null) return;
 
 		m_adBlockingPopup = PopupManager.OpenPopupInstant("UI/Popups/InGame/PF_PopupAdBlocker");
-		GameAds.instance.ShowRewarded( OnVideoRewardCallback );
+		GameAds.instance.ShowRewarded( GameAds.EAdPurpose.REMOVE_MISSION, OnVideoRewardCallback );
 		// PopupController popup = PopupManager.OpenPopupInstant(PopupAdPlaceholder.PATH);
 		// popup.OnClosePostAnimation.AddListener(OnRemoveMissionAdClosed);
 	}
