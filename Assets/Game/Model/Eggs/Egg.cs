@@ -48,8 +48,8 @@ public class Egg {
 		get { return m_def; }
 	}
 
-	private EggReward m_rewardData = new EggReward();	// Only valid after the egg has been collected
-	public EggReward rewardData {
+	private Metagame.RewardEgg m_rewardData;
+	public Metagame.RewardEgg rewardData {
 		get { return m_rewardData; }
 	}
 
@@ -176,11 +176,9 @@ public class Egg {
 				// Dispatch game event
 				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_STARTED, this);
 
+				// Schedule local notification!
                 NotificationsManager.SharedInstance.ScheduleNotification("sku.not.01", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_EGG_HATCHED"), "Action", (int)(incubationMinutes*60));
-
-
-                }
-                break;
+           	} break;
 
 			// Opening
 			case State.OPENING: {
@@ -226,22 +224,18 @@ public class Egg {
 		return true;
 	}
 
+	public void SetReward(Metagame.RewardEgg _reward) {
+		m_rewardData = _reward;
+	}
+
 	/// <summary>
 	/// Generates a reward for this particular egg.
 	/// Will be ignored if the egg already has a reward.
 	/// </summary>
 	public void GenerateReward() {
-		// Skip if reward was already generated
-		if(m_rewardData.def != null) return; 
-
-		// Generate the reward and init data
-		// For golden eggs, reward is always a special pet!
-		if(m_def.sku == SKU_GOLDEN_EGG) {
-			DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, "pet_special");
-			m_rewardData.InitFromDef(rewardDef);
-		} else {
-			m_rewardData.InitFromDef(EggManager.GenerateReward());
-		}
+		if(m_rewardData != null) return;
+		m_rewardData = Metagame.Reward.CreateTypeEgg(m_def.sku) as Metagame.RewardEgg;
+		m_rewardData.egg = this;
 	}
 
 	/// <summary>
@@ -249,29 +243,7 @@ public class Egg {
 	/// Only if the egg is in the OPENING state.
 	/// </summary>
 	public void Collect() {
-		// If no reward was generated (shouldn't happen), do it now
-		if(m_rewardData.def == null) GenerateReward();
-
-		// Apply the reward!
-		switch(m_rewardData.type) {
-			case "pet": {
-				// Tell the pet collection to add the new pet
-				// No problem if the pet is already unlocked ^^
-				UsersManager.currentUser.petCollection.UnlockPet(m_rewardData.itemDef.sku);
-			} break;
-		}
-
-		// Give golden fragment (if any)
-		if(m_rewardData.fragments > 0) {
-			// Add golden egg fragments
-			// Detecting when the golden egg is completed will be controlled by the UI (to better sync animations)
-			UsersManager.currentUser.goldenEggFragments += m_rewardData.fragments;
-		}
-
-		// Give coins (if any)
-		if(m_rewardData.coins > 0) {
-			UsersManager.currentUser.AddCurrency(UserProfile.Currency.SOFT, m_rewardData.coins);
-		}
+		m_rewardData.Collect();
 
 		// Change state
 		ChangeState(State.COLLECTED);
@@ -324,10 +296,12 @@ public class Egg {
 		}
 
 		// Reward
-		if ( _data.ContainsKey("rewardSku") )
-			m_rewardData.InitFromDef(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, _data["rewardSku"]));
-		else
-			m_rewardData.InitFromDef(null);
+		if ( _data.ContainsKey("rewardSku") ) {
+			m_rewardData = Metagame.Reward.CreateTypeEgg(m_def.sku, _data["rewardSku"]) as Metagame.RewardEgg;
+			m_rewardData.egg = this;
+		} else {
+			GenerateReward();
+		}
 
 		// Incubating timestamp
 		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"]);
@@ -349,9 +323,8 @@ public class Egg {
 		data.Add("isNew",m_isNew.ToString());
 
 		// Reward
-		if(m_rewardData.def != null) 
-		{
-			data.Add("rewardSku", m_rewardData.def.sku);
+		if (m_rewardData != null && m_rewardData.reward != null) {
+			data.Add("rewardSku", m_rewardData.reward.sku);
 		}
 
 		// Incubating timestamp
