@@ -10,6 +10,7 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Transparent (On Line Decorati
 	Properties 
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
+		_LightmapIntensity("Lightmap intensity", Range(0.0, 1.0)) = 0.1
 	}
 
 	SubShader {
