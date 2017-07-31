@@ -13,6 +13,7 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Animated Vertex (Water plants
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_SpeedWave ("Speed Wave", float) = 1.0
+		_LightmapIntensity("Lightmap intensity", Range(0.0, 1.0)) = 0.1
 	}
 
 	SubShader {

@@ -1,4 +1,6 @@
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+// Upgrade NOTE: excluded shader from DX11; has structs without semantics (struct v2f members _LightmapIntensity)
+#pragma exclude_renderers d3d11
 
 
 #define LIGHTMAPCONTRAST
@@ -49,6 +51,13 @@ float4 _MainTex_ST;
 sampler2D _SecondTexture;
 float4 _SecondTexture_ST;
 #endif
+
+#ifdef LIGHTMAP_ON
+float _LightmapIntensity;
+#endif
+
+
+
 
 #ifdef NORMALMAP
 uniform sampler2D _NormalTex;
@@ -231,8 +240,9 @@ fixed4 frag (v2f i) : SV_Target
 #ifdef LIGHTMAPCONTRAST
 	fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
 	lm -= 0.5;
-	float lmi = (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.2;
-//	float lmi = (length(lm) - 0.5) * 0.03;	// (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.15;
+//	float lmi = (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.2 * (1.0 + (1.0 + sin((_Time.y * 4.0) + i.vertex.x * 0.01))) ;
+	float lmi = (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * _LightmapIntensity * (1.0 + (1.0 + sin((_Time.y * 2.0) + i.vertex.x * 0.01)));
+	//	float lmi = (length(lm) - 0.5) * 0.03;	// (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.15;
 //	float lmi = lm.x;// (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * 0.15;
 	col.rgb = lerp((col).rgb, fogCol.rgb, clamp(fogCol.a - lmi, 0.0, 1.0));
 #else
@@ -242,8 +252,6 @@ fixed4 frag (v2f i) : SV_Target
 #else
 	HG_APPLY_FOG(i, col);	// Fog
 #endif
-
-
 
 #endif	
 

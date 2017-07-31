@@ -12,6 +12,8 @@ Shader "Hungry Dragon/Scenary/Automatic Texture Blending + Lightmap"
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
 		_SecondTexture("Second Texture (RGB)", 2D) = "white" {}
+		_LightmapIntensity("Lightmap intensity", Range(0.0, 1.0)) = 0.1
+
 //		_WaveRadius("Wave Radius", float) = 1.5
 //		_WavePhase("Wave phase", float) = 1.0
 	}

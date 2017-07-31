@@ -9,6 +9,7 @@ Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Overlay
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
 		_SecondTexture("Second Texture (RGB)", 2D) = "white" {}
+		_LightmapIntensity("Lightmap intensity", Range(0.0, 1.0)) = 0.1
 	}
 
 	SubShader {

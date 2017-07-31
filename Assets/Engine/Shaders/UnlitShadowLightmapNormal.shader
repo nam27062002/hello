@@ -14,6 +14,7 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Normal Map"
 		_NormalStrength("Normal Strength", float) = 3
 		_SpecularPower("Specular Power", float) = 3
 		_SpecularDir("Specular Dir", Vector) = (0,0,-1,0)
+		_LightmapIntensity("Lightmap intensity", Range(0.0, 1.0)) = 0.1
 	}
 
 	SubShader {
