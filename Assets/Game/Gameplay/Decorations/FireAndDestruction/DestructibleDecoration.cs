@@ -89,12 +89,12 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 			Destroy(this);
 			//Destroy(m_entity);
 		} else {
-			m_view = transform.FindChild("view").gameObject;
-			Transform viewDestroyed = transform.FindChild("view_destroyed");
+			m_view = transform.Find("view").gameObject;
+			Transform viewDestroyed = transform.Find("view_destroyed");
 			if (viewDestroyed != null) {
 				m_viewDestroyed = viewDestroyed.gameObject;
 			} else {
-				m_viewDestroyed = transform.FindChild("view_burned").gameObject; // maybe, we'll need another game object, for now we use the burned one
+				m_viewDestroyed = transform.Find("view_burned").gameObject; // maybe, we'll need another game object, for now we use the burned one
 			}
 			m_corpse = m_viewDestroyed.GetComponent<Corpse>();
 			m_colliderCenter = m_collider.center;

@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Extension of Unity's default shader for UI images
 // Adding saturation/contrast/brightness and additive color
 // Inspired by http://armedunity.com/topic/4950-brightnesscontrastsaturation-shader/
@@ -62,7 +64,7 @@ Shader "Custom/UI/UIFont" {
 			v2f vert(appdata_t IN) {
 				// Default treatment
 				v2f OUT;
-				OUT.vertex = mul(UNITY_MATRIX_MVP, IN.vertex);
+				OUT.vertex = UnityObjectToClipPos(IN.vertex);
 				OUT.color = IN.color * _Color;
 				OUT.texcoord = TRANSFORM_TEX(IN.texcoord, _MainTex);
 #ifdef UNITY_HALF_TEXEL_OFFSET

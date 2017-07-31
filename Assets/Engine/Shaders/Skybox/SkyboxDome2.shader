@@ -1,4 +1,6 @@
-﻿// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
 // - Unlit
 // - Scroll 2 layers /w Multiplicative op
@@ -63,7 +65,7 @@ SubShader {
 	v2f vert (appdata_full v)
 	{
 		v2f o;
-		o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.vertex = UnityObjectToClipPos(v.vertex);
 		o.uv = TRANSFORM_TEX(v.texcoord.xy,_MainTex); 
 		o.uv2 = TRANSFORM_TEX(v.texcoord.xy,_DetailTex);
 		HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog

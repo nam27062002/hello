@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Main shader which computes the glow effect
 Shader "Glow Effect/Glow Effect" {
 	Properties {
@@ -34,7 +36,7 @@ Shader "Glow Effect/Glow Effect" {
 			v2f vert (appdata_img v)
 			{
 				v2f o;
-				o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+				o.pos = UnityObjectToClipPos (v.vertex);
 		       	o.uv = v.texcoord;
 		       	o.uv1 = v.texcoord;
 		       	
@@ -90,7 +92,7 @@ Shader "Glow Effect/Glow Effect" {
 			v2f vert (appdata_img v)
 			{
 				v2f o;
-				o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+				o.pos = UnityObjectToClipPos (v.vertex);
 		       	o.uv = v.texcoord;
 		       	
 		       	o.uv2[0] = v.texcoord + _MainTex_TexelSize.xy * half2(_BlurSpread, _BlurSpread);					
@@ -139,7 +141,7 @@ Shader "Glow Effect/Glow Effect" {
 			v2f vert (appdata_img v)
 			{
 				v2f o;
-				o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+				o.pos = UnityObjectToClipPos (v.vertex);
 		       	
 		       	o.uv = v.texcoord;
 		       	o.uv2[0] = v.texcoord + _MainTex_TexelSize.xy * half2(_BlurSpread, _BlurSpread);					
@@ -207,7 +209,7 @@ Shader "Glow Effect/Glow Effect" {
 			v2f vert (appdata_img v)
 			{
 				v2f o;
-				o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+				o.pos = UnityObjectToClipPos (v.vertex);
 		       	
 		       	o.uv = v.texcoord;
 		       	o.uv1 = v.texcoord;
@@ -270,7 +272,7 @@ Shader "Glow Effect/Glow Effect" {
 			v2f vert (appdata_img v)
 			{
 				v2f o;
-				o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+				o.pos = UnityObjectToClipPos (v.vertex);
 		       	
 		       	o.uv = v.texcoord;
 		       	o.uv2[0] = v.texcoord + _MainTex_TexelSize.xy * half2(2.5,2.5);					

@@ -1,4 +1,6 @@
-﻿Shader "Hungry Dragon/SkyForeground"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Hungry Dragon/SkyForeground"
 {
 	Properties
 	{
@@ -79,7 +81,7 @@
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.vCol = v.color;
 				o.uv = TRANSFORM_TEX(v.uv, _CloudTex);
 				o.depth = mul(unity_ObjectToWorld, v.vertex).z;

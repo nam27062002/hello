@@ -116,7 +116,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	{
 		m_healthBehaviour = GetComponent<DragonHealthBehaviour>();
 		m_attackBehaviour = GetComponent<DragonAttackBehaviour>();		
-		m_animator = transform.FindChild("view").GetComponent<Animator>();
+		m_animator = transform.Find("view").GetComponent<Animator>();
 		m_isFuryOn = false;
 		m_bounds2D = new Rect();
 

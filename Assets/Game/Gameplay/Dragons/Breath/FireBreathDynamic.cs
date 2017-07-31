@@ -185,8 +185,8 @@ public class FireBreathDynamic : MonoBehaviour
         m_meshFilter = GetComponent<MeshFilter>();
         m_numPos = (int)(4 + m_splits * 2);
 
-        m_whipEnd = transform.FindChild("WhipEnd").gameObject;
-        m_collisionPlane = transform.FindChild("WhipEnd/collisionPlane").gameObject;
+        m_whipEnd = transform.Find("WhipEnd").gameObject;
+        m_collisionPlane = transform.Find("WhipEnd/collisionPlane").gameObject;
 
 
 /*

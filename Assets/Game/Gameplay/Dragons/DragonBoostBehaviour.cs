@@ -55,7 +55,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_dragon = GetComponent<DragonPlayer>();	
 		m_motion = GetComponent<DragonMotion>();
 		m_controls = GetComponent<DragonControlPlayer>();
-		m_animator = transform.FindChild("view").GetComponent<Animator>();
+		m_animator = transform.Find("view").GetComponent<Animator>();
 
 		m_active = false;
 		m_ready = true;

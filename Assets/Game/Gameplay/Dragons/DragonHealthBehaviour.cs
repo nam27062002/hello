@@ -58,7 +58,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	// Use this for initialization
 	void Start() {
 		
-		m_animator = transform.FindChild("view").GetComponent<Animator>();
+		m_animator = transform.Find("view").GetComponent<Animator>();
 		m_gameController = InstanceManager.gameSceneControllerBase;
 
 		// Shark related values

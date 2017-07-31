@@ -1,4 +1,6 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
 Shader "Hungry Dragon/NPC/NPC Ghost (Spawners)"
@@ -93,7 +95,7 @@ Shader "Hungry Dragon/NPC/NPC Ghost (Spawners)"
 				float incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.y * _WavePhase)) * 0.5) * _WaveRadius * wvc;
 //				float4 tvertex = v.vertex + float4(normal.xyz, 0.0) * ((incWave.x + incWave.y + incWave.z) * 0.33333);
 				float4 tvertex = v.vertex + float4(normal, 0.0) * incWave;
-				return mul(UNITY_MATRIX_MVP, tvertex);
+				return UnityObjectToClipPos(tvertex);
 			}
 
 			#define CUSTOM_TINT

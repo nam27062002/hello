@@ -1,4 +1,6 @@
-﻿// - Unlit
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// - Unlit
 // - Scroll 2 layers /w Multiplicative op
 
 Shader "Hungry Dragon/Skybox/Dome Skybox" {
@@ -64,7 +66,7 @@ SubShader {
 	v2f vert (appdata_full v)
 	{
 		v2f o;
-		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.pos = UnityObjectToClipPos(v.vertex);
 		o.uv = TRANSFORM_TEX(v.texcoord.xy,_MainTex); 
 		o.height = v.texcoord.y;
 		o.uv2 = TRANSFORM_TEX(v.texcoord.xy,_DetailTex);

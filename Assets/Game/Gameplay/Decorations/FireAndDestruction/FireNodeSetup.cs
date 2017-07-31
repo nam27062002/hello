@@ -21,7 +21,7 @@ public class FireNodeSetup {
 
 		m_bounds.center = _parent.position;
 
-		Transform view = _parent.FindChild("view");
+		Transform view = _parent.Find("view");
 		Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
 
 		for (int i = 0; i < renderers.Length; ++i) {
@@ -121,7 +121,7 @@ public class FireNodeSetup {
 	}
 
 	private void BuildFireNodes() {
-		Transform fireNodes = m_parent.transform.FindChild("FireNodes");
+		Transform fireNodes = m_parent.transform.Find("FireNodes");
 
 		if (fireNodes != null) {
 			fireNodes.parent = null;

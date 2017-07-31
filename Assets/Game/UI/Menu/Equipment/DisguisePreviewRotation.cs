@@ -21,7 +21,7 @@ public class DisguisePreviewRotation : MonoBehaviour, IBeginDragHandler, IDragHa
 		// find the 3D dragon position
 		GameObject disguiseScene = GameObject.Find("PF_MenuDisguisesScene");
 		if (disguiseScene != null) {
-			m_dragonWorldTransform = disguiseScene.transform.FindChild("CurrentDragon");
+			m_dragonWorldTransform = disguiseScene.transform.Find("CurrentDragon");
 			if(m_dragonWorldTransform != null) {
 				m_defaultAngle = m_dragonWorldTransform.localRotation.eulerAngles.y;
 			}

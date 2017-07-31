@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/Glow Effect/Glow Replace" {
     SubShader
 	{
@@ -55,7 +57,7 @@ Shader "Hidden/Glow Effect/Glow Replace" {
 			v2f vert (appdata_glow v)
 			{
 				v2f o;
-				o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+				o.pos = UnityObjectToClipPos (v.vertex);
 				#if GLOWEFFECT_USE_MAINTEX
 		       	o.uv = TRANSFORM_TEX(v.texcoord, _MainTex).xy;
 				#endif
@@ -156,7 +158,7 @@ Shader "Hidden/Glow Effect/Glow Replace" {
 			v2f vert (appdata_glow v)
 			{
 				v2f o;
-				o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+				o.pos = UnityObjectToClipPos (v.vertex);
 
 		       	o.uv = TRANSFORM_TEX(v.texcoord, _MainTex).xy;
 				#if GLOWEFFECT_USE_GLOWTEX

@@ -1,4 +1,6 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 Shader "Hungry Dragon/Skybox/SkyboxCubeMap"
 {
@@ -46,7 +48,7 @@ Shader "Hungry Dragon/Skybox/SkyboxCubeMap"
 
 				float4x4 modelMatrix = unity_ObjectToWorld;
 				output.uv = normalize(mul(modelMatrix, input.vertex).xyz - _WorldSpaceCameraPos);
-				output.pos = mul(UNITY_MATRIX_MVP, input.vertex);
+				output.pos = UnityObjectToClipPos(input.vertex);
 				return output;
 			}
 

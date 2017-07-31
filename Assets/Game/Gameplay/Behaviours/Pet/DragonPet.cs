@@ -7,7 +7,7 @@ public class DragonPet : MonoBehaviour {
 	void Start () {
 		// InstanceManager.pet = this;
 
-		Animator animator = transform.FindChild("view").GetComponent<Animator>();
+		Animator animator = transform.Find("view").GetComponent<Animator>();
 		animator.speed = 2;
 	}
 }

@@ -24,7 +24,7 @@ public class DragonOrientation : Orientation {
 	// Use this for initialization
 	void Start () {
 		
-		m_animator = transform.FindChild("view").GetComponent<Animator>();
+		m_animator = transform.Find("view").GetComponent<Animator>();
 		m_targetRotation = transform.rotation;
 		m_rotation = transform.rotation;
 		m_direction = Vector3.right;

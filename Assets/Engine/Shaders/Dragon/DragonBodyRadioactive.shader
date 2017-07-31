@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Custom Dragon Shader.
 // - Detail Texture. R: Inner Light value. G: Spec value.
 
@@ -74,7 +76,7 @@ SubShader {
 		{
 			v2fo o;
 			float4 nvert = float4(v.vertex.xyz + v.normal * _OutlineWidth, 1.0);
-			o.vertex = mul(UNITY_MATRIX_MVP, nvert);
+			o.vertex = UnityObjectToClipPos(nvert);
 			o.normal = UnityObjectToWorldNormal(v.normal);
 			o.viewDir = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, nvert).xyz);
 

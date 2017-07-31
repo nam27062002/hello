@@ -29,7 +29,7 @@ public class BreakableBehaviour : MonoBehaviour
 
 	void Start() {
 		if (m_view == null)
-			m_view = transform.FindChild("view");
+			m_view = transform.Find("view");
 		
 		m_onBreakParticle.CreatePool();
 			

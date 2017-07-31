@@ -27,11 +27,11 @@ public class Builder : MonoBehaviour
 	static void GenerateXcode()
 	{
 		// Save Player Settings
-		string oldBundleIdentifier = PlayerSettings.bundleIdentifier;
+		string oldBundleIdentifier = PlayerSettings.applicationIdentifier;
 		string oldSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup( BuildTargetGroup.iOS);
 
 		// Generate project		
-		PlayerSettings.bundleIdentifier = m_bundleIdentifier;
+		PlayerSettings.applicationIdentifier = m_bundleIdentifier;
         if (OVERRIDE_SYMBOLS)
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.iOS, m_iOSSymbols);
@@ -54,7 +54,7 @@ public class Builder : MonoBehaviour
 		BuildPipeline.BuildPlayer( GetBuildingScenes(), stagePath, BuildTarget.iOS, BuildOptions.None); 
 
 		// Restore 
-		PlayerSettings.bundleIdentifier = oldBundleIdentifier;
+		PlayerSettings.applicationIdentifier = oldBundleIdentifier;
 
         if (OVERRIDE_SYMBOLS)
         {
@@ -66,11 +66,11 @@ public class Builder : MonoBehaviour
 	static void GenerateAPK()
 	{
 		// Save Player Settings
-		string oldBundleIdentifier = PlayerSettings.bundleIdentifier;
+		string oldBundleIdentifier = PlayerSettings.applicationIdentifier;
 		string oldSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android);
 
 		// Build
-		PlayerSettings.bundleIdentifier = m_bundleIdentifier;
+		PlayerSettings.applicationIdentifier = m_bundleIdentifier;
         if (OVERRIDE_SYMBOLS)
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, m_AndroidSymbols);
@@ -104,7 +104,7 @@ public class Builder : MonoBehaviour
 		BuildPipeline.BuildPlayer(GetBuildingScenes(), stagePath, BuildTarget.Android, BuildOptions.None);
 
 		// Restore Player Settings
-		PlayerSettings.bundleIdentifier = oldBundleIdentifier;
+		PlayerSettings.applicationIdentifier = oldBundleIdentifier;
         if (OVERRIDE_SYMBOLS)
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, oldSymbols);

@@ -325,24 +325,24 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
 
 		// Get references
-		m_animator			= transform.FindChild("view").GetComponent<Animator>();
+		m_animator			= transform.Find("view").GetComponent<Animator>();
 		m_flyLoopBehaviour	= m_animator.GetBehaviour<FlyLoopBehaviour>();
 		m_dragon			= GetComponent<DragonPlayer>();
 		// m_health			= GetComponent<DragonHealthBehaviour>();
 		m_controls 			= GetComponent<DragonControlPlayer>();
 		m_animationEventController = GetComponentInChildren<DragonAnimationEvents>();
 		m_particleController = GetComponentInChildren<DragonParticleController>();
-		Transform sensors	= transform.FindChild("sensors").transform; 
-		m_sensor.top 		= sensors.FindChild("TopSensor").transform;
-		m_sensor.bottom		= sensors.FindChild("BottomSensor").transform;
+		Transform sensors	= transform.Find("sensors").transform; 
+		m_sensor.top 		= sensors.Find("TopSensor").transform;
+		m_sensor.bottom		= sensors.Find("BottomSensor").transform;
 
 		int n = 0;
 		Transform t = null;
-		Transform points = transform.FindChild("points");
+		Transform points = transform.Find("points");
 		List<Transform> hitTargets = new List<Transform>();
 
 		while (true) {
-			t = points.FindChild("attack_" + n);
+			t = points.Find("attack_" + n);
 			if (t != null) {
 				hitTargets.Add(t);
 				n++;

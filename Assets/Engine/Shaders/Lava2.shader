@@ -1,4 +1,6 @@
-﻿Shader "Hungry Dragon/Lava2" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Hungry Dragon/Lava2" {
 Properties 
 	{
 		_MainTex ("Base layer (RGB)", 2D) = "white" {}
@@ -38,7 +40,7 @@ Properties
 			v2f vert (appdata_base v)
 			{
 				v2f o; 
-				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.pos = UnityObjectToClipPos(v.vertex);
 				o.uv = TRANSFORM_TEX(v.texcoord.xy,_MainTex);
 				o.uv2 = TRANSFORM_TEX(v.texcoord.xy,_DetailTex) + frac(float2(_SpeedX, 0) * _Time);
 		
