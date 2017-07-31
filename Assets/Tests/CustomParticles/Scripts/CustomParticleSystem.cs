@@ -289,6 +289,7 @@ public class CustomParticleSystem : MonoBehaviour
             }
         }
     }
+		
 
     // Update is called once per frame
     void Update()
@@ -328,7 +329,7 @@ public class CustomParticleSystem : MonoBehaviour
                 {
                     cp.m_position -= dPosition;
                 }
-                float sv = m_scaleAnimation.Evaluate(pTime);
+				float sv = m_scaleAnimation.Evaluate(pTime / cp.m_particleDuration);
                 Color col = m_colorAnimation.Evaluate(pTime / cp.m_particleDuration);
 //                Quaternion rot = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, (cp.m_initRotZ + m_rotationAnimation.Evaluate(pTime)) * 360.0f);
                 Quaternion rot = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, cp.m_initRotZ * 360.0f);
