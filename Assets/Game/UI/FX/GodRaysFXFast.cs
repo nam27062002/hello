@@ -46,7 +46,7 @@ public class GodRaysFXFast : MonoBehaviour {
 	/// Start (or restart) the FX with a given rarity.
 	/// </summary>
 	/// <param name="_rarity">The rarity to be used to initialize the FX.</param>
-	public void StartFX(EggReward.Rarity _rarity) {
+	public void StartFX(Metagame.Reward.Rarity _rarity) {
 		// Enable ourselves
 		this.gameObject.SetActive(true);
 

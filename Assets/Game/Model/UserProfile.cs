@@ -248,6 +248,10 @@ public class UserProfile : UserSaveSystem
 		get { return m_globalEvents; }
 	}
 
+	// Rewards
+	private Stack<Metagame.Reward> m_rewards = new Stack<Metagame.Reward>();
+	public Stack<Metagame.Reward> rewardStack { get { return m_rewards; } }
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//

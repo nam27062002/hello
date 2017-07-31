@@ -311,7 +311,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
     /// </summary>
     /// <returns>The rarity color.</returns>
     /// <param name="_rarity">The rarity to be checked.</param>
-    public static Color GetRarityColor(EggReward.Rarity _rarity) {
+	public static Color GetRarityColor(Metagame.Reward.Rarity _rarity) {
 		return RARITY_COLORS[(int)_rarity];
 	}
 
@@ -322,7 +322,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	/// <param name="_raritySku">The rarity to be checcked.</param>
 	public static Color GetRarityColor(string _raritySku) {
 		// Get rarity enum equivalent from sku
-		return GetRarityColor(EggReward.SkuToRarity(_raritySku));
+		return GetRarityColor(Metagame.Reward.SkuToRarity(_raritySku));
 	}
 
 	/// <summary>
