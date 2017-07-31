@@ -41,6 +41,7 @@ public class ShowHideAnimator : MonoBehaviour {
 		RIGHT,
 
 		SCALE,
+		DELTA_SIZE,
 
 		CUSTOM,
 
@@ -503,6 +504,12 @@ public class ShowHideAnimator : MonoBehaviour {
 			case TweenType.SCALE: {
 				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
 				m_sequence.Join(transform.DOScale(m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+			} break;
+
+			case TweenType.DELTA_SIZE: {
+				RectTransform rt = transform as RectTransform;
+				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(rt.DOSizeDelta(rt.sizeDelta + Vector2.one * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
 			} break;
 		}
 
