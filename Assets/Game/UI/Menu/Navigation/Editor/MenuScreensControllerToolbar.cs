@@ -76,7 +76,7 @@ public class MenuScreensControllerToolbar {
 
 		// Inexplicably, Unity hasn't included these events until version 5.6
 		#if UNITY_5_6_OR_NEWER
-		EditorSceneManager.sceneLoaded += ((Scene _scene, LoadSceneMode _mode) => {
+		EditorSceneManager.sceneOpened += ((Scene _scene, OpenSceneMode _mode) => {
 			FindMenuScreensController();
 		});
 		#endif
