@@ -416,4 +416,32 @@ public static class EditorUtils {
 	public static Texture2D CreateTexture(Color _color, int _width = 2, int _height = 2) {
 		return Texture2DExt.Create(_color, _width, _height);
 	}
+
+	//------------------------------------------------------------------//
+	// SERIALIZED PROPERTIES UTILS										//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Extension method to reset the value of a serialized property to a default.
+	/// </summary>
+	/// <param name="_prop">Property to be modified.</param>
+	public static void ResetValue(this SerializedProperty _prop) {
+		// Use an arbitrary default value for 
+		switch(_prop.propertyType) {
+			case SerializedPropertyType.AnimationCurve: _prop.animationCurveValue = default(AnimationCurve); break;
+			case SerializedPropertyType.Boolean: _prop.boolValue = default(bool); break;
+			case SerializedPropertyType.Bounds: _prop.boundsValue = default(Bounds); break;
+			case SerializedPropertyType.Color: _prop.colorValue = default(Color); break;
+			case SerializedPropertyType.Enum: _prop.enumValueIndex = 0; break;
+			case SerializedPropertyType.Float: _prop.floatValue = default(float); break;
+			case SerializedPropertyType.Integer: _prop.intValue = default(int); break;
+			case SerializedPropertyType.LayerMask: _prop.intValue = 0; break;
+			case SerializedPropertyType.ObjectReference: _prop.objectReferenceValue = null; break;
+			case SerializedPropertyType.Quaternion: _prop.quaternionValue = default(Quaternion); break;
+			case SerializedPropertyType.Rect: _prop.rectValue = default(Rect); break;
+			case SerializedPropertyType.String: _prop.stringValue = default(string); break;
+			case SerializedPropertyType.Vector2: _prop.vector2Value = default(Vector2); break;
+			case SerializedPropertyType.Vector3: _prop.vector3Value = default(Vector3); break;
+			case SerializedPropertyType.Vector4: _prop.vector4Value = default(Vector4); break;
+		}
+	}
 }
