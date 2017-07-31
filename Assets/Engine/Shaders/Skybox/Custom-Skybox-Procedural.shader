@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 Shader "Hungry Dragon/Skybox/Procedural" {
@@ -57,7 +59,7 @@ SubShader {
 		v2f vert (appdata_t v)
 		{
 			v2f OUT;
-			OUT.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+			OUT.pos = UnityObjectToClipPos(v.vertex);
 			// Get the ray from the camera to the vertex and its length (which is the far point of the ray passing through the atmosphere)
 			float3 eyeRay = normalize(mul((float3x3)unity_ObjectToWorld, v.vertex.xyz));
 			OUT.rayDir = half3(-eyeRay);

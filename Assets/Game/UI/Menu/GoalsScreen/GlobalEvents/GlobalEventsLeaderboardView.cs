@@ -222,7 +222,7 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 				}
 
 				// Show intro anim
-				Transform animAnchor = pillTransform.FindChild("Margins");	// [AOC] TODO!! Do this better :P
+				Transform animAnchor = pillTransform.Find("Margins");	// [AOC] TODO!! Do this better :P
 				if(animAnchor != null) {
 					// Stop any previous animation
 					animAnchor.DOKill(true);

@@ -96,8 +96,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		m_operatorSpawner = GetComponent<DeviceOperatorSpawner>();
 		m_destructibleBehaviour = GetComponent<DestructibleDecoration>();
 
-		m_view = transform.FindChild("view").gameObject;
-		m_viewBurned = transform.FindChild("view_burned").gameObject;
+		m_view = transform.Find("view").gameObject;
+		m_viewBurned = transform.Find("view_burned").gameObject;
 
 		for (int i = 0; i < m_fireNodes.Length; i++) {
 			m_fireNodes[i].Init(m_entity, m_burnParticle, m_feedbackParticle, m_feedbackParticleMatchDirection, m_hitRadius);

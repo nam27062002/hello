@@ -24,8 +24,8 @@ public class UIIconFireColors : MonoBehaviour {
 
 	public void UpdateColor() {
 		if (m_iconBase == null) {
-			m_iconBase = transform.FindChild("IconBase").GetComponent<Image>();
-			m_iconInside = transform.FindChild("IconInside").GetComponent<Image>();
+			m_iconBase = transform.Find("IconBase").GetComponent<Image>();
+			m_iconInside = transform.Find("IconInside").GetComponent<Image>();
 		}
 
 		m_iconBase.color = m_baseColor;

@@ -31,7 +31,7 @@ public class DragonEatBehaviour : EatBehaviour {
     override protected void Awake()
 	{
 		base.Awake();
-		m_animator = transform.FindChild("view").GetComponent<Animator>();
+		m_animator = transform.Find("view").GetComponent<Animator>();
 	}
 
 

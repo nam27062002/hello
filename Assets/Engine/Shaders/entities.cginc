@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 
 struct v2f
 {
@@ -82,7 +84,7 @@ v2f vert(appdata_t v)
 #ifdef CUSTOM_VERTEXPOSITION
 	o.vertex = getCustomVertexPosition(v);
 #else
-	o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+	o.vertex = UnityObjectToClipPos(v.vertex);
 #endif
 
 	o.uv = TRANSFORM_TEX(v.uv, _MainTex);

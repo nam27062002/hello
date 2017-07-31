@@ -21,7 +21,7 @@ public class DragonAttackBehaviour : MonoBehaviour {
 	// Methods
 	//-----------------------------------------------
 	void Start () {		
-		m_animator = transform.FindChild("view").GetComponent<Animator>();
+		m_animator = transform.Find("view").GetComponent<Animator>();
 		m_motion = GetComponent<DragonMotion>();
 
 		m_target = null;

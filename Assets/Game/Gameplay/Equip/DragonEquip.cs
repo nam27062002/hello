@@ -299,7 +299,7 @@ public class DragonEquip : MonoBehaviour {
 		m_bodyMaterial = Resources.Load<Material>(SKIN_PATH + m_dragonSku + "/" + _name + "_body");
 		m_wingsMaterial = Resources.Load<Material>(SKIN_PATH + m_dragonSku + "/" + _name + "_wings");
 
-		Transform view = transform.FindChild("view");
+		Transform view = transform.Find("view");
 		if(view != null) {
 			Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
 			for(int i = 0; i < renderers.Length; i++) {

@@ -1,4 +1,6 @@
-﻿// Template for SoftMask.shader and SoftMaskETC1.shader.
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Template for SoftMask.shader and SoftMaskETC1.shader.
 // SOFTMASK_ETC1 define determines whether alpha split texture should be supported.
 
 #include "UnityCG.cginc"
@@ -42,7 +44,7 @@
 #if UNITY_VERSION >= 540
         OUT.vertex = UnityObjectToClipPos(OUT.worldPosition);
 #else
-        OUT.vertex = mul(UNITY_MATRIX_MVP, OUT.worldPosition);
+        OUT.vertex = UnityObjectToClipPos(OUT.worldPosition);
 #endif
 
         OUT.texcoord = IN.texcoord;

@@ -54,7 +54,7 @@ public class DragonTint : MonoBehaviour
 		m_health = GetComponent<DragonHealthBehaviour>();
 		m_motion = m_player.dragonMotion;
 		yield return null;
-		Transform t = transform.FindChild("view");
+		Transform t = transform.Find("view");
 		if ( t != null )
 		{
 			m_renderers = t.GetComponentsInChildren<Renderer>();

@@ -1,4 +1,6 @@
-﻿Shader "Hungry Dragon/Fire Transparent"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Hungry Dragon/Fire Transparent"
 {
 	Properties
 	{
@@ -68,7 +70,7 @@
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.color = v.color;
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				o.noiseUV = TRANSFORM_TEX( v.uv + float2( 0, -_Time.y * _Flamespeed) , _NoiseTex );

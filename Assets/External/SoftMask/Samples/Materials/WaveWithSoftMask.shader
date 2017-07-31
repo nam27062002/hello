@@ -1,4 +1,6 @@
-﻿Shader "UI/Soft Mask/Custom Shader with Soft Mask support"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "UI/Soft Mask/Custom Shader with Soft Mask support"
 {
     // This is an example of UI shader with Soft Mask support added. All places where
     // something related to Soft Mask support was added marked with comment
@@ -116,7 +118,7 @@
             {
                 v2f OUT;
                 OUT.worldPosition = IN.vertex;
-                OUT.vertex = mul(UNITY_MATRIX_MVP, IN.vertex);
+                OUT.vertex = UnityObjectToClipPos(IN.vertex);
 
                 OUT.texcoord = IN.texcoord;
 

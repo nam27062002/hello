@@ -113,10 +113,10 @@ namespace AI {
 
 			m_machineTransform = m_machine.transform;
 
-			m_eye = m_machineTransform.FindChild("eye");
+			m_eye = m_machineTransform.Find("eye");
 			m_hasEye = m_eye != null;
 
-			m_groundSensor = m_machineTransform.FindChild("groundSensor");
+			m_groundSensor = m_machineTransform.Find("groundSensor");
 			if (m_groundSensor == null) {
 				m_groundSensor = m_machineTransform;
 			}

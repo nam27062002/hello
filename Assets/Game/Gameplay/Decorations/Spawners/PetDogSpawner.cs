@@ -131,7 +131,7 @@ public class PetDogSpawner : AbstractSpawner {
 	public override bool SpawnersCheckCurrents(){ return true; }
 
 	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
-        Transform groundSensor = spawning.transform.FindChild("groundSensor");
+        Transform groundSensor = spawning.transform.Find("groundSensor");
         Transform t = spawning.transform;
         
 		if (m_mustBeChild) {

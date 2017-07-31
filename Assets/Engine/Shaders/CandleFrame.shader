@@ -1,4 +1,6 @@
-﻿Shader "Hungry Dragon/Candle frame"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Hungry Dragon/Candle frame"
 {
 	Properties
 	{
@@ -55,7 +57,7 @@
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;
 				o.color = v.color;
 				return o;

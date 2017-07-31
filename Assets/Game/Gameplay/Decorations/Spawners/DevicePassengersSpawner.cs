@@ -131,7 +131,7 @@ public class DevicePassengersSpawner : AbstractSpawner {
 	}    
 
 	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
-        Transform groundSensor = spawning.transform.FindChild("groundSensor");
+        Transform groundSensor = spawning.transform.Find("groundSensor");
         Transform t = spawning.transform;
         
 		m_parents[index] = t.parent;

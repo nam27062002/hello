@@ -93,7 +93,7 @@ public class HUDStatBar : MonoBehaviour {
 		string[] barNames = { "BaseSlider", "ExtraSlider", "DamageSlider" };
 		for(int i = 0; i < (int)Bars.COUNT; i++) {
 			m_bars[i] = new BarData();
-			child = transform.FindChild(barNames[i]);
+			child = transform.Find(barNames[i]);
 			if(child != null) {
 				m_bars[i].slider = child.GetComponent<Slider>();
 			}
@@ -103,7 +103,7 @@ public class HUDStatBar : MonoBehaviour {
 		m_canvasGroup = GetComponent<CanvasGroup>();
 		m_valueTxt = gameObject.FindComponentRecursive<TextMeshProUGUI>("TextValue");
 
-		child = transform.FindChild("InvulnerabilityGlow");
+		child = transform.Find("InvulnerabilityGlow");
 		if(child != null) {
 			m_invulnerabilityGlow = child.gameObject;
 		}
@@ -113,7 +113,7 @@ public class HUDStatBar : MonoBehaviour {
 			m_particles.Stop();
 
 
-		child = transform.FindChild("Icon");
+		child = transform.Find("Icon");
 		if ( child )
 		{
 			m_icon = child.gameObject;

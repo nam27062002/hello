@@ -1,4 +1,6 @@
-﻿Shader "Hungry Dragon/FireShader - Cutout"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Hungry Dragon/FireShader - Cutout"
 {
 	Properties
 	{
@@ -65,7 +67,7 @@
 			{
 				v2f o;
 //				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _NoiseTex);
 //				UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;

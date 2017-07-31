@@ -14,7 +14,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 7
+  serializedVersion: 8
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -26,6 +26,7 @@ RenderSettings:
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 0
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 1568243664}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
@@ -42,7 +43,7 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 7
+  serializedVersion: 9
   m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
@@ -54,7 +55,7 @@ LightmapSettings:
     m_EnableBakedLightmaps: 1
     m_EnableRealtimeLightmaps: 0
   m_LightmapEditorSettings:
-    serializedVersion: 4
+    serializedVersion: 8
     m_Resolution: 2
     m_BakeResolution: 1
     m_TextureWidth: 1024
@@ -67,14 +68,28 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 0
     m_TextureCompression: 1
-    m_DirectLightInLightProbes: 1
     m_FinalGather: 0
     m_FinalGatherFiltering: 1
     m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
+    m_MixedBakeMode: 1
+    m_BakeBackend: 0
+    m_PVRSampling: 1
+    m_PVRDirectSampleCount: 32
+    m_PVRSampleCount: 500
+    m_PVRBounces: 2
+    m_PVRFiltering: 0
+    m_PVRFilteringMode: 1
+    m_PVRCulling: 1
+    m_PVRFilteringGaussRadiusDirect: 1
+    m_PVRFilteringGaussRadiusIndirect: 5
+    m_PVRFilteringGaussRadiusAO: 2
+    m_PVRFilteringAtrousColorSigma: 1
+    m_PVRFilteringAtrousNormalSigma: 1
+    m_PVRFilteringAtrousPositionSigma: 1
   m_LightingDataAsset: {fileID: 112000009, guid: d97efc82565b7df409a0698ef992429e,
     type: 2}
-  m_RuntimeCPUUsage: 25
+  m_ShadowMaskMode: 2
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -91,6 +106,8 @@ NavMeshSettings:
     minRegionArea: 2
     manualCellSize: 0
     cellSize: 0.16666667
+    manualTileSize: 0
+    tileSize: 256
     accuratePlacement: 0
   m_NavMeshData: {fileID: 0}
 --- !u!43 &44535550
@@ -624,6 +641,71 @@ Prefab:
         type: 2}
       propertyPath: m_attributes.m_colorValues.Array.data[2].a
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.g
+      value: 0.21176471
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.b
+      value: 0.21960784
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.a
+      value: 0.7176471
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.r
+      value: 0.44313726
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.g
+      value: 0.3764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.b
+      value: 0.20784314
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.a
+      value: 0.43529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.g
+      value: 0.8745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.a
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.a
+      value: 0.5254902
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.a
+      value: 0.7254902
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f1e628f1384b433ba859ade06207e46, type: 2}
@@ -1399,6 +1481,76 @@ Prefab:
       propertyPath: m_attributes.m_colorValues.Array.data[3].a
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.g
+      value: 0.02745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.b
+      value: 0.21960784
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.a
+      value: 0.69803923
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.g
+      value: 0.8352941
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.a
+      value: 0.27450982
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.r
+      value: 0.1254902
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.g
+      value: 0.2509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.b
+      value: 0.3254902
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.a
+      value: 0.6313726
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.g
+      value: 0.8392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.b
+      value: 0.8392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.a
+      value: 0.9098039
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f1e628f1384b433ba859ade06207e46, type: 2}
   m_IsPrefabParent: 0
@@ -1877,6 +2029,101 @@ Prefab:
     - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
         type: 2}
       propertyPath: m_attributes.m_colorValues.Array.data[4].a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.r
+      value: 0.011764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.g
+      value: 0.03529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.b
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.a
+      value: 0.77254903
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.r
+      value: 0.02745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.g
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.b
+      value: 0.32156864
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.a
+      value: 0.45490196
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.r
+      value: 0.08627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.g
+      value: 0.4745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.b
+      value: 0.7058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.r
+      value: 0.16470589
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.g
+      value: 0.7764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.b
+      value: 0.95686275
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.r
+      value: 0.7372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.g
+      value: 0.94509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.b
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -2359,6 +2606,106 @@ Prefab:
         type: 2}
       propertyPath: m_attributes.m_colorValues.Array.data[4].a
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.a
+      value: 0.62352943
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.r
+      value: 0.047058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.g
+      value: 0.36862746
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.b
+      value: 0.5019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.a
+      value: 0.6666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.r
+      value: 0.15686275
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.g
+      value: 0.4627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.b
+      value: 0.64705884
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.a
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.r
+      value: 0.11764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.g
+      value: 0.59607846
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.b
+      value: 0.6392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.a
+      value: 0.7529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.r
+      value: 0.14509805
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.g
+      value: 0.7411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.b
+      value: 0.827451
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.a
+      value: 0.8117647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f1e628f1384b433ba859ade06207e46, type: 2}
@@ -2933,6 +3280,111 @@ Prefab:
         type: 2}
       propertyPath: m_attributes.m_colorValues.Array.data[5].a
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.r
+      value: 0.105882354
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.g
+      value: 0.10980392
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.b
+      value: 0.06666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.a
+      value: 0.99215686
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.r
+      value: 0.36862746
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.g
+      value: 0.32941177
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.b
+      value: 0.24705882
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.a
+      value: 0.5882353
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.r
+      value: 0.078431375
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.g
+      value: 0.18039216
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.b
+      value: 0.29411766
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.a
+      value: 0.6901961
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.r
+      value: 0.14901961
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.g
+      value: 0.5372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.b
+      value: 0.80784315
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.a
+      value: 0.92156863
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.r
+      value: 0.14509805
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.g
+      value: 0.27058825
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.b
+      value: 0.3254902
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.g
+      value: 0.30588236
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.b
+      value: 0.6039216
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f1e628f1384b433ba859ade06207e46, type: 2}
@@ -3557,6 +4009,106 @@ Prefab:
         type: 2}
       propertyPath: m_attributes.m_colorValues.Array.data[4].a
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.r
+      value: 0.03137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.g
+      value: 0.03137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.b
+      value: 0.03529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.a
+      value: 0.72156864
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.r
+      value: 0.047058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.g
+      value: 0.25490198
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.b
+      value: 0.5019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.a
+      value: 0.49019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.r
+      value: 0.15686275
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.g
+      value: 0.4627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.b
+      value: 0.64705884
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.a
+      value: 0.79607844
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.r
+      value: 0.12941177
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.g
+      value: 0.6509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.b
+      value: 0.69803923
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.a
+      value: 0.7529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.r
+      value: 0.14509805
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.g
+      value: 0.7411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.b
+      value: 0.827451
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.a
+      value: 0.8117647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f1e628f1384b433ba859ade06207e46, type: 2}
@@ -4221,6 +4773,121 @@ Prefab:
         type: 2}
       propertyPath: m_attributes.m_colorValues.Array.data[5].a
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.r
+      value: 0.007843138
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.g
+      value: 0.03529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.b
+      value: 0.11764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.r
+      value: 0.6901961
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.g
+      value: 0.5058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.b
+      value: 0.22745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.a
+      value: 0.3529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.r
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.g
+      value: 0.75686276
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.b
+      value: 0.40392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.a
+      value: 0.44313726
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.r
+      value: 0.3372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.g
+      value: 0.57254905
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.b
+      value: 0.14509805
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.a
+      value: 0.7372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.r
+      value: 0.19215687
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.g
+      value: 0.6901961
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.b
+      value: 0.93333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.r
+      value: 0.47843137
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.g
+      value: 0.8039216
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.a
+      value: 0.27450982
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f1e628f1384b433ba859ade06207e46, type: 2}
@@ -5116,6 +5783,111 @@ Prefab:
       propertyPath: m_attributes.m_colorValues.Array.data[5].a
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.r
+      value: 0.05882353
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.g
+      value: 0.047058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.b
+      value: 0.019607844
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.b
+      value: 0.7529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.a
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.r
+      value: 0.023529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.g
+      value: 0.7529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.b
+      value: 0.99215686
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.a
+      value: 0.4862745
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.r
+      value: 0.34901962
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.g
+      value: 0.972549
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.b
+      value: 0.7137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.r
+      value: 0.36078432
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.g
+      value: 0.5254902
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.b
+      value: 0.9137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.a
+      value: 0.6509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.r
+      value: 0.5294118
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.g
+      value: 0.7647059
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.b
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f1e628f1384b433ba859ade06207e46, type: 2}
   m_IsPrefabParent: 0
@@ -5897,6 +6669,136 @@ Prefab:
       propertyPath: m_attributes.m_colorValues.Array.data[6].a
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.r
+      value: 0.13333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.g
+      value: 0.09411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.b
+      value: 0.11372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.a
+      value: 0.77254903
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.r
+      value: 0.44313726
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.g
+      value: 0.31764707
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.b
+      value: 0.12941177
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.a
+      value: 0.44705883
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.r
+      value: 0.41960785
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.g
+      value: 0.77254903
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.b
+      value: 0.6392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.a
+      value: 0.5764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.r
+      value: 0.2901961
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.g
+      value: 0.6784314
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.b
+      value: 0.80784315
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.a
+      value: 0.5019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.r
+      value: 0.105882354
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.g
+      value: 0.54901963
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.b
+      value: 0.7294118
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.a
+      value: 0.7137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.g
+      value: 0.5411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.a
+      value: 0.5764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key6.g
+      value: 0.7490196
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key6.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key6.a
+      value: 0.6627451
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f1e628f1384b433ba859ade06207e46, type: 2}
   m_IsPrefabParent: 0
@@ -6436,6 +7338,76 @@ Prefab:
         type: 2}
       propertyPath: m_attributes.m_colorValues.Array.data[3].a
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.g
+      value: 0.44705883
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.b
+      value: 0.4627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.a
+      value: 0.31764707
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.g
+      value: 0.16862746
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.b
+      value: 0.11372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.g
+      value: 0.14509805
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.b
+      value: 0.16862746
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.a
+      value: 0.43529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.g
+      value: 0.8745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.a
+      value: 0.7882353
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f1e628f1384b433ba859ade06207e46, type: 2}
@@ -7596,6 +8568,126 @@ Prefab:
         type: 2}
       propertyPath: m_attributes.m_colorValues.Array.data[6].a
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.r
+      value: 0.14509805
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.g
+      value: 0.1254902
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.b
+      value: 0.18431373
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.a
+      value: 0.6117647
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.r
+      value: 0.80784315
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.g
+      value: 0.6862745
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.b
+      value: 0.42745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.a
+      value: 0.22352941
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.r
+      value: 0.09019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.g
+      value: 0.43529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.a
+      value: 0.37254903
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.r
+      value: 0.22745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.g
+      value: 0.80784315
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.a
+      value: 0.4117647
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.g
+      value: 0.70980394
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.a
+      value: 0.3137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.g
+      value: 0.5411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.a
+      value: 0.64705884
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key6.g
+      value: 0.29411766
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key6.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key6.a
+      value: 0.6627451
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f1e628f1384b433ba859ade06207e46, type: 2}
@@ -8862,6 +9954,101 @@ Prefab:
       propertyPath: m_attributes.m_colorValues.Array.data[4].a
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.r
+      value: 0.015686275
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.g
+      value: 0.05490196
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.b
+      value: 0.14117648
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.a
+      value: 0.9372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.g
+      value: 0.67058825
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.b
+      value: 0.67058825
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.a
+      value: 0.27450982
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.r
+      value: 0.09019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.g
+      value: 0.3882353
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.b
+      value: 0.3882353
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.a
+      value: 0.6666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.g
+      value: 0.12941177
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.b
+      value: 0.25882354
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.a
+      value: 0.7176471
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.r
+      value: 0.1764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.g
+      value: 0.9647059
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.a
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f1e628f1384b433ba859ade06207e46, type: 2}
   m_IsPrefabParent: 0
@@ -9322,148 +10509,79 @@ Material:
   m_Shader: {fileID: 4800000, guid: 0c3cc5525b04f47eba2541662d3ca964, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
   m_CustomRenderQueue: 1000
   stringTagMap: {}
+  disabledShaderPasses: []
   m_SavedProperties:
-    serializedVersion: 2
+    serializedVersion: 3
     m_TexEnvs:
-    - first:
-        name: _BumpMap
-      second:
+    - _BumpMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailAlbedoMap
-      second:
+    - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailMask
-      second:
+    - _DetailMask:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailNormalMap
-      second:
+    - _DetailNormalMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _EmissionMap
-      second:
+    - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MainTex
-      second:
+    - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MetallicGlossMap
-      second:
+    - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _OcclusionMap
-      second:
+    - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _ParallaxMap
-      second:
+    - _ParallaxMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - first:
-        name: _AtmosphereThickness
-      second: 0.68999904
-    - first:
-        name: _BumpScale
-      second: 1
-    - first:
-        name: _Cutoff
-      second: 0.5
-    - first:
-        name: _DetailNormalMapScale
-      second: 1
-    - first:
-        name: _DstBlend
-      second: 0
-    - first:
-        name: _EmissionScaleUI
-      second: 0
-    - first:
-        name: _Exposure
-      second: 1.1099983
-    - first:
-        name: _Glossiness
-      second: 0.5
-    - first:
-        name: _HorizonHeight
-      second: 0.009999999
-    - first:
-        name: _Metallic
-      second: 0
-    - first:
-        name: _Mode
-      second: 0
-    - first:
-        name: _OcclusionStrength
-      second: 1
-    - first:
-        name: _Parallax
-      second: 0.02
-    - first:
-        name: _SrcBlend
-      second: 1
-    - first:
-        name: _SunSize
-      second: 0
-    - first:
-        name: _UVSec
-      second: 0
-    - first:
-        name: _ZWrite
-      second: 1
+    - _AtmosphereThickness: 0.68999904
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _EmissionScaleUI: 0
+    - _Exposure: 1.1099983
+    - _Glossiness: 0.5
+    - _HorizonHeight: 0.009999999
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _SrcBlend: 1
+    - _SunSize: 0
+    - _UVSec: 0
+    - _ZWrite: 1
     m_Colors:
-    - first:
-        name: _AddColor
-      second: {r: 0, g: 0, b: 0, a: 0}
-    - first:
-        name: _Color
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _EmissionColor
-      second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _EmissionColorUI
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _GroundColor
-      second: {r: 0.9852941, g: 0.8816683, b: 0.5433607, a: 0.99999994}
-    - first:
-        name: _HorizonColor
-      second: {r: 1, g: 0.8413793, b: 0.50000006, a: 1}
-    - first:
-        name: _SkyColor
-      second: {r: 0.50735295, g: 0.65344805, b: 0.99999994, a: 0.99999994}
-    - first:
-        name: _SkyTint
-      second: {r: 0, g: 0.5862069, b: 1, a: 1}
-    - first:
-        name: _SunColor
-      second: {r: 1, g: 0.007352948, b: 0.007352948, a: 1}
-    - first:
-        name: _SunPos
-      second: {r: 1, g: 0, b: 0, a: 0}
+    - _AddColor: {r: 0, g: 0, b: 0, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
+    - _GroundColor: {r: 0.9852941, g: 0.8816683, b: 0.5433607, a: 0.99999994}
+    - _HorizonColor: {r: 1, g: 0.8413793, b: 0.50000006, a: 1}
+    - _SkyColor: {r: 0.50735295, g: 0.65344805, b: 0.99999994, a: 0.99999994}
+    - _SkyTint: {r: 0, g: 0.5862069, b: 1, a: 1}
+    - _SunColor: {r: 1, g: 0.007352948, b: 0.007352948, a: 1}
+    - _SunPos: {r: 1, g: 0, b: 0, a: 0}
 --- !u!43 &1581951569
 Mesh:
   m_ObjectHideFlags: 0
@@ -10073,6 +11191,106 @@ Prefab:
         type: 2}
       propertyPath: m_attributes.m_colorValues.Array.data[4].a
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.r
+      value: 0.015686275
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.g
+      value: 0.05490196
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.b
+      value: 0.14117648
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.a
+      value: 0.9372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.r
+      value: 0.05882353
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.g
+      value: 0.07450981
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.b
+      value: 0.07450981
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.a
+      value: 0.2509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.r
+      value: 0.11764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.g
+      value: 0.42352942
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.b
+      value: 0.4862745
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.a
+      value: 0.5254902
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.r
+      value: 0.07058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.g
+      value: 0.29411766
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.b
+      value: 0.3372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.a
+      value: 0.7254902
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.r
+      value: 0.24313726
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.g
+      value: 0.6666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.b
+      value: 0.68235296
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.a
+      value: 0.64705884
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f1e628f1384b433ba859ade06207e46, type: 2}
@@ -11180,6 +12398,146 @@ Prefab:
       propertyPath: m_attributes.m_colorValues.Array.data[6].a
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.a
+      value: 0.7294118
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.r
+      value: 0.21960784
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.g
+      value: 0.8235294
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.b
+      value: 0.9411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.a
+      value: 0.25490198
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.g
+      value: 0.16470589
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.b
+      value: 0.3254902
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.a
+      value: 0.7254902
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.r
+      value: 0.16862746
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.g
+      value: 0.5294118
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.b
+      value: 0.7137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.a
+      value: 0.92941177
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.r
+      value: 0.14901961
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.g
+      value: 0.3019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.b
+      value: 0.40392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.a
+      value: 0.9254902
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.r
+      value: 0.41960785
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.g
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.b
+      value: 0.8666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.a
+      value: 0.7411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key6.r
+      value: 0.20392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key6.g
+      value: 0.18431373
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key6.b
+      value: 0.83137256
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key6.a
+      value: 0.83137256
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f1e628f1384b433ba859ade06207e46, type: 2}
   m_IsPrefabParent: 0
@@ -11837,6 +13195,121 @@ Prefab:
         type: 2}
       propertyPath: m_attributes.m_colorValues.Array.data[5].a
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key0.a
+      value: 0.7294118
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.r
+      value: 0.20784314
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.g
+      value: 0.047058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.b
+      value: 0.003921569
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key1.a
+      value: 0.6509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.r
+      value: 0.1764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.g
+      value: 0.06666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.b
+      value: 0.02745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key2.a
+      value: 0.9098039
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.r
+      value: 0.26666668
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.g
+      value: 0.16470589
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.b
+      value: 0.09019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key3.a
+      value: 0.8862745
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.r
+      value: 0.9254902
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.g
+      value: 0.6901961
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.b
+      value: 0.18431373
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key4.a
+      value: 0.83137256
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.r
+      value: 0.21176471
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.g
+      value: 0.16078432
+      objectReference: {fileID: 0}
+    - target: {fileID: 114979508704950318, guid: 3f1e628f1384b433ba859ade06207e46,
+        type: 2}
+      propertyPath: m_attributes.m_fogGradient.key5.b
+      value: 0.03137255
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f1e628f1384b433ba859ade06207e46, type: 2}

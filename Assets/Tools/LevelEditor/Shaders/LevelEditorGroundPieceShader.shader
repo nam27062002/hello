@@ -1,4 +1,6 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 // @see http://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html
 Shader "LevelEditor/LevelEditorGroundPieceShader" {
@@ -49,7 +51,7 @@ Shader "LevelEditor/LevelEditorGroundPieceShader" {
 			//--------------------------------------------------------------//
 			Vertex2Fragment vert(appdata_full _v) {
 				Vertex2Fragment v2f;
-				v2f.position = mul(UNITY_MATRIX_MVP, _v.vertex);
+				v2f.position = UnityObjectToClipPos(_v.vertex);
 				
 				float4 vertexWorldPos = mul(unity_ObjectToWorld, _v.vertex);
 				float3 cameraVector = _WorldSpaceCameraPos - vertexWorldPos;
