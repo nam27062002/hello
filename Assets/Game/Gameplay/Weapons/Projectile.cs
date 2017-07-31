@@ -217,6 +217,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 		Vector3 newDir = Vector3.RotateTowards(Vector3.forward, -m_direction, 2f * Mathf.PI, 0.0f);
 		m_trasnform.rotation = Quaternion.AngleAxis(90f, newDir) * Quaternion.LookRotation(newDir);
+		m_trasnform.localScale = Vector3.one;
 
 		//
 		for (int i = 0; i < m_activateOnShoot.Count; i++) {
