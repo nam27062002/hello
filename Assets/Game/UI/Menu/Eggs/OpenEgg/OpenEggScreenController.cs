@@ -25,7 +25,8 @@ public class OpenEggScreenController : MonoBehaviour {
 	public enum State {
 		IDLE,
 		INTRO,
-		OPENING
+		OPENING,
+		REWARD_IN
 	}
 	
 	//------------------------------------------------------------------//
@@ -43,26 +44,21 @@ public class OpenEggScreenController : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_finalPanel = null;
 
 	[Separator("Rewards")]
-	[SerializeField] private EggRewardInfo m_rewardInfo = null;
+	[SerializeField] private RewardInfoUI m_rewardInfo = null;
 	[SerializeField] private DragControlRotation m_rewardDragController = null;
 
 	[Separator("Animation Parameters")]
-	[SerializeField] private float m_openAnimationDelay = 1.75f;
 	[SerializeField] private float m_finalPanelDelay = 0f;
 	[SerializeField] private float m_finalPanelDelayWhenFragmentsGiven = 2f;
 	[SerializeField] private float m_finalPanelDelayWhenCoinsGiven = 1f;
-	[SerializeField] private float m_goldenEggOpenDelay = 3f;
 
 	// Reference to 3D scene
-	private OpenEggSceneController m_scene = null;
+	private RewardSceneController m_scene = null;
 
 	// Internal
 	private State m_state = State.IDLE;
 	private bool m_tutorialCompletedPending = false;
 
-	// FX
-	private GameObject m_flashFX = null;
-	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -70,27 +66,6 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Prepare the flash FX image
-		//m_flashFX = new GameObject("FlashFX");
-		if(m_flashFX != null) {
-			// Transform - full screen rect transform
-			RectTransform rectTransform = m_flashFX.AddComponent<RectTransform>();
-			rectTransform.SetParent(this.transform, false);
-			rectTransform.anchorMin = Vector2.zero;
-			rectTransform.anchorMax = Vector2.one;
-			rectTransform.offsetMin = Vector2.zero;
-			rectTransform.offsetMax = Vector2.zero;
-
-			// Image
-			Image image = m_flashFX.AddComponent<Image>();
-			image.color = Colors.white;
-			image.raycastTarget = false;
-
-			// Start hidden
-			m_flashFX.SetLayerRecursively("UI");
-			m_flashFX.SetActive(false);
-		}
-
 		// Subscribe to external events.
 		Messenger.AddListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 		Messenger.AddListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
@@ -100,8 +75,8 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		Messenger.AddListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
-		m_rewardInfo.OnAnimFinished.AddListener(OnRewardAnimFinished);
+		// Subscribe to external events
+		Messenger.AddListener<EggView, int>(GameEvents.EGG_TAP, OnEggTap);
 	}
 
 	/// <summary>
@@ -118,9 +93,8 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Reset state
 		m_state = State.IDLE;
 
-		// Unsubscribe to external events.
-		Messenger.RemoveListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
-		m_rewardInfo.OnAnimFinished.RemoveListener(OnRewardAnimFinished);
+		// Unsubscribe from external events
+		Messenger.RemoveListener<EggView, int>(GameEvents.EGG_TAP, OnEggTap);
 	}
 
 	/// <summary>
@@ -151,27 +125,12 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Clear 3D scene
 		m_scene.Clear();
 
-		// Hide HUD and buttons
-		bool animate = this.gameObject.activeInHierarchy;	// If the screen is not visible, don't animate
-		InstanceManager.menuSceneController.hud.animator.ForceHide(animate);
-		m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide(animate);
-		m_finalPanel.ForceHide(animate);
+		// Push the egg reward to the stack!
+		if(_egg.rewardData == null) _egg.GenerateReward();	// Generate a reward if the egg hasn't one
+		UsersManager.currentUser.rewardStack.Push(_egg.rewardData);
 
-		// Hide Flash FX
-		if(m_flashFX != null) m_flashFX.SetActive(false);
-
-		// Hide reward elements
-		m_rewardInfo.Hide();
-
-		// Change egg state
-		_egg.ChangeState(Egg.State.OPENING);
-
-		// Initialize egg view
-		m_scene.InitEggView(_egg);
-
-		// Launch intro!
-		m_scene.LaunchIntro();
-		m_state = State.INTRO;
+		// Tell the scene to start the open reward flow with the latest pushed reward
+		m_scene.OpenReward();
 	}
 
 	//------------------------------------------------------------------//
@@ -188,115 +147,17 @@ public class OpenEggScreenController : MonoBehaviour {
 			MenuScreenScene menuScene = sceneController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
 			if(menuScene != null) {
 				// Get scene controller and initialize
-				m_scene = menuScene.GetComponent<OpenEggSceneController>();
+				m_scene = menuScene.GetComponent<RewardSceneController>();
 				if(m_scene != null) {
 					// Initialize
-					m_scene.InitReferences(m_rewardDragController);
+					m_scene.InitReferences(m_rewardDragController, m_rewardInfo);
 
 					// Subscribe to listeners
-					m_scene.OnIntroFinished.AddListener(OnIntroFinished);
-					m_scene.OnEggOpenFinished.AddListener(OnEggOpenFinished);
+					m_scene.OnAnimStarted.AddListener(OnSceneAnimStarted);
+					m_scene.OnAnimFinished.AddListener(OnSceneAnimFinished);
 				}
 			}
 		}
-	}
-
-	//------------------------------------------------------------------//
-	// ANIMATIONS														//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Launches the open egg animation!
-	/// </summary>
-	private void LaunchOpenAnimation() {
-		// This option should only be available on the OPENING state and with a valid egg
-		if(m_state != State.OPENING) return;
-		if(m_scene.eggView == null) return;
-
-		// Aux vars
-		Egg eggData = m_scene.eggData;
-		EggReward rewardData = eggData.rewardData;
-
-		// Do a full-screen flash FX (TEMP)
-		if(m_flashFX != null) {
-			Color rarityColor = UIConstants.GetRarityColor(rewardData.rarity);		// Color based on reward's rarity :)
-			m_flashFX.SetActive(true);
-			m_flashFX.GetComponent<Image>().color = rarityColor;
-			m_flashFX.GetComponent<Image>().DOFade(0f, 2f).SetEase(Ease.OutExpo).SetRecyclable(true).OnComplete(() => { m_flashFX.SetActive(false); });
-		}
-
-		// Do the 3D anim
-		m_scene.LaunchOpenEggAnim();
-
-		// Change logic state
-		m_state = State.IDLE;
-	}
-
-	/// <summary>
-	/// Launches the animation of the reward components.
-	/// </summary>
-	private void LaunchRewardAnimation() {
-		// Aux vars
-		EggReward rewardData = m_scene.eggData.rewardData;
-		bool goldenEggCompleted = EggManager.goldenEggCompleted;
-
-		// Show HUD
-		InstanceManager.menuSceneController.hud.animator.Show();
-
-		// Photo button only enabled if reward is not a duplicate!
-		// Only animate if showing
-		ShowHideAnimator photoAnimator = InstanceManager.menuSceneController.hud.photoButton.GetComponent<ShowHideAnimator>();
-		if(rewardData.duplicated) {
-			photoAnimator.ForceHide(false);
-		} else {
-			photoAnimator.Show();
-		}
-
-		// Initialize stuff based on reward type
-		switch(rewardData.type) {
-			case "pet": {
-				// Call to action text
-				m_callToActionText.Localize("TID_EGG_SHOW_REWARD");
-			} break;
-		}
-
-		// Initialize and show final panel
-		// Delay if duplicate, we need to give enough time for the duplicate animation!
-		float delay = m_finalPanelDelay;
-		if(rewardData.fragments > 0) {
-			delay = m_finalPanelDelayWhenFragmentsGiven;
-		} else if(rewardData.coins > 0) {
-			delay = m_finalPanelDelayWhenCoinsGiven;
-		}
-		UbiBCN.CoroutineManager.DelayedCall(() => { m_finalPanel.Show(); }, delay, false);
-
-		// If it's the first time we're getting golden fragments, show info popup
-		if(rewardData.fragments > 0 && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO)) {
-			// Show popup after some extra delay
-			UbiBCN.CoroutineManager.DelayedCall(
-				() => { 
-					PopupManager.OpenPopupInstant(PopupInfoGoldenFragments.PATH);
-					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO, true);
-				},
-				delay + 1.5f, 
-				false
-			);
-		}
-
-		// Don't show call to action button if the reward is a duplicate
-		m_callToActionButton.SetActive(!rewardData.duplicated);
-
-		// Don't show back button if we've completed a golden egg!
-		m_backButton.SetActive(!goldenEggCompleted);
-
-		// Same with egg buy button
-		m_buyEggButton.SetActive(!goldenEggCompleted);
-
-		// Initialize and launch 3D reward view
-		m_scene.LaunchRewardAnim();
-
-		// Initialize and launch 2D info animation
-		m_rewardInfo.gameObject.SetActive(true);
-		m_rewardInfo.InitAndAnimate(rewardData);
 	}
 
 	//------------------------------------------------------------------//
@@ -314,25 +175,117 @@ public class OpenEggScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// The egg open animation has finished!
+	/// An animation for a reward has started in the 3d scene!
 	/// </summary>
-	private void OnEggOpenFinished() {
-		// Launch the reward animation
-		LaunchRewardAnimation();
+	private void OnSceneAnimStarted() {
+		// What type of reward are we opening?
+		// Egg
+		if(m_scene.currentReward is Metagame.RewardEgg) {
+			// Hide HUD and buttons
+			bool animate = this.gameObject.activeInHierarchy;	// If the screen is not visible, don't animate
+			InstanceManager.menuSceneController.hud.animator.ForceHide(animate);
+			m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide(animate);
+			m_finalPanel.ForceHide(animate);
+
+			// Wait for the intro anim to finish (sync delay with Egg intro anim)
+			m_state = State.INTRO;
+			UbiBCN.CoroutineManager.DelayedCall(OnIntroFinished, 0.25f);
+		}
+
+		// Other - should be the actual egg reward
+		else {
+			// Launch the reward UI animation
+			// Aux vars
+			Metagame.Reward finalReward = m_scene.eggData.rewardData.reward;
+			bool goldenEggCompleted = EggManager.goldenEggCompleted;
+
+			// Special initializations when reward is duplicated
+			float finalPanelDelay = m_finalPanelDelay;
+			ShowHideAnimator photoAnimator = InstanceManager.menuSceneController.hud.photoButton.GetComponent<ShowHideAnimator>();
+			if(finalReward.WillBeReplaced()) {
+				// Photo button only enabled if reward is not a duplicate!
+				photoAnimator.ForceHide(false);
+
+				// Don't show call to action button if the reward is a duplicate
+				m_callToActionButton.SetActive(false);
+
+				// Which is the replacement currency?
+				if(finalReward.replacement.currency == UserProfile.Currency.GOLDEN_FRAGMENTS) {
+					// Give enough time for the duplicate animation!
+					finalPanelDelay = m_finalPanelDelayWhenFragmentsGiven;
+
+					// If it's the first time we're getting golden fragments, show info popup
+					if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO)) {
+						// Show popup after some extra delay
+						UbiBCN.CoroutineManager.DelayedCall(
+							() => { 
+								PopupManager.OpenPopupInstant(PopupInfoGoldenFragments.PATH);
+								UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO, true);
+							},
+							finalPanelDelay + 1.5f, 
+							false
+						);
+					}
+				} else if(finalReward.replacement.currency == UserProfile.Currency.SOFT) {
+					// Give enough time for the duplicate animation!
+					finalPanelDelay = m_finalPanelDelayWhenCoinsGiven;
+				}
+			} else {
+				// Photo button only enabled if reward is not a duplicate!
+				photoAnimator.Show();	// Only animate if showing
+
+				// Don't show call to action button if the reward is a duplicate
+				m_callToActionText.Localize("TID_EGG_SHOW_REWARD");
+				m_callToActionButton.SetActive(true);
+			}
+
+			// Initialize and show final panel
+			UbiBCN.CoroutineManager.DelayedCall(
+				() => { m_finalPanel.Show(); }, 
+				finalPanelDelay - m_finalPanel.tweenDelay, false	// Compensate the delay of the ShowHideAnimator (the delay is meant to screen transitions only)
+			);
+
+			// Same with HUD - unless golden egg was completed
+			if(!goldenEggCompleted) {
+				UbiBCN.CoroutineManager.DelayedCall(
+					() => { InstanceManager.menuSceneController.hud.animator.Show(); },
+					finalPanelDelay, false
+				);
+			}
+
+			// Make sure tap info is hidden
+			m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide();
+
+			// Don't show back button if we've completed a golden egg!
+			m_backButton.SetActive(!goldenEggCompleted);
+
+			// Same with egg buy button
+			m_buyEggButton.SetActive(!goldenEggCompleted);
+
+			// Change logic state
+			m_state = State.REWARD_IN;
+			//te paso su Skype para que te avise cuando haya terminado de trabajar en el popup de settings
+		}
 	}
 
 	/// <summary>
-	/// The reward animation has finished.
+	/// An animation for a reward has finished in the 3d scene!
 	/// </summary>
-	private void OnRewardAnimFinished() {
-		// If a golden egg has been completed, start the open flow
-		if(EggManager.goldenEggCompleted) {
-			// Create a new egg
-			Egg goldenEgg = Egg.CreateFromSku(Egg.SKU_GOLDEN_EGG);
-			goldenEgg.ChangeState(Egg.State.READY);
+	private void OnSceneAnimFinished() {
+		// Change logic state
+		m_state = State.IDLE;
+	}
 
-			// Start flow! (After some delay)
-			UbiBCN.CoroutineManager.DelayedCall(() => { StartFlow(goldenEgg); }, 0.5f);
+	/// <summary>
+	/// An opening egg has been tapped.
+	/// </summary>
+	/// <param name="_egg">The egg that has been tapped.</param>
+	/// <param name="_tapCount">Tap count.</param>
+	private void OnEggTap(EggView _egg, int _tapCount) {
+		// If it matches our curent egg, hide tip
+		if(_egg == m_scene.eggView) {
+			// Hide UI!
+			m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide();
 		}
 	}
 
@@ -351,35 +304,16 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Depending on opened egg's reward, perform different actions
 		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
-		switch(m_scene.eggData.rewardData.type) {
-			case "pet": {
+		switch(m_scene.eggData.rewardData.reward.type) {
+			case Metagame.RewardPet.TYPE_CODE: {
 				// Make sure selected dragon is owned
 				InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
 
 				// Go to the pets screen
 				PetsScreenController petScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();
-				petScreen.Initialize(m_scene.eggData.rewardData.itemDef.sku);
+				petScreen.Initialize(m_scene.eggData.rewardData.reward.sku);
 				screensController.GoToScreen((int)MenuScreens.PETS);
 			} break;
-		}
-	}
-
-	/// <summary>
-	/// An egg has been opened and its reward collected.
-	/// </summary>
-	/// <param name="_egg">The egg.</param>
-	private void OnEggCollected(Egg _egg) {
-		// Must have a valid egg
-		if(m_scene.eggData == null) return;
-
-		// If it matches our curent egg, launch its animation!
-		if(_egg == m_scene.eggData) {
-			// Launch animation!
-			// Delay to sync with the egg anim
-			UbiBCN.CoroutineManager.DelayedCall(LaunchOpenAnimation, m_openAnimationDelay, false);
-
-			// Hide UI!
-			m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide();
 		}
 	}
 
@@ -404,9 +338,6 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Leaving this screen
 		if(_from == MenuScreens.OPEN_EGG && _to != MenuScreens.OPEN_EGG) {
 			// Launch all the hide animations that are not automated
-			// Hide reward elements
-			m_rewardInfo.Hide();
-
 			// Restore HUD
 			InstanceManager.menuSceneController.hud.animator.Show();
 
@@ -432,9 +363,6 @@ public class OpenEggScreenController : MonoBehaviour {
 
 			// Special stuff if coming back from the photo screen
 			if(_from == MenuScreens.PHOTO) {
-				// Restore reward info
-				m_rewardInfo.Show();
-
 				// Restore photo button
 				InstanceManager.menuSceneController.hud.photoButton.GetComponent<ShowHideAnimator>().Show();
 			}

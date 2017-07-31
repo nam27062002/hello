@@ -379,8 +379,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 496eb6d30e8434219814682a6649d1ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_bca: {fileID: 114957559196842710}
-  m_collider: {fileID: 135423568791365360}
+  m_bca: {fileID: 0}
+  m_collider: {fileID: 0}
 --- !u!114 &114153569177723640
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -393,7 +393,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
-  radius: 6.557434
+  radius: 5
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114178290901123198
 MonoBehaviour:
@@ -410,10 +410,10 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 15
-    m_maxRadius: 15
+    m_sightRadius: 0
+    m_maxRadius: 0
     m_minRadius: 0
-    m_hysteresisOffset: 2
+    m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
@@ -446,18 +446,8 @@ MonoBehaviour:
     m_faceUpAngle: 320
     m_faceDownAngle: 40
   m_armorDurabilityPerTier:
-    m_valueList:
-    - count: 1
-      needBoost: 1
-    - count: 1
-      needBoost: 1
-    - count: 1
-      needBoost: 1
-    - count: 1
-      needBoost: 1
-    - count: 1
-      needBoost: 1
-    m_keyList: 0000000001000000020000000300000004000000
+    m_valueList: []
+    m_keyList: 
   m_ground: []
 --- !u!114 &114223318615474706
 MonoBehaviour:
@@ -763,7 +753,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54131b759c6954307be11fbe09e38c39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_machineRoot: {fileID: 1367130675427906}
+  m_machineRoot: {fileID: 0}
   m_timeBetweenAttaks: 1
   m_hitParticle:
     name: 
@@ -832,12 +822,12 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
-  m_brainResource: {fileID: 11400000, guid: f436fee72373a49e1bb9367acb803ef6, type: 2}
+  m_brainResource: {fileID: 0}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"projectileName":"PF_SubmarineBomb","projectileSpawnTransformName":"cannon","damage":55,"canFollowTarget":false,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":3,"stop":true,"faceEnemy":true,"faceEnemyY":true,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":25,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":1.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false}]'
-  m_databaseKey: PF_GoblinSubmarine
+  m_serializedJson: '[]'
+  m_databaseKey: 
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
@@ -864,7 +854,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: GoblinBoat
+  m_sku: 
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114957559196842710

@@ -115,7 +115,7 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 		Metagame.Reward reward = _rewardSlot.reward;
 		if (reward is Metagame.RewardPet) {
 			// Get the pet preview
-			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.value);
+			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.sku);
 			if(petDef != null) {
 				if(m_icon != null) m_icon.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + petDef.Get("icon"));
 				if(m_rewardText != null) m_rewardText.text = petDef.GetLocalized("tidName");
@@ -126,7 +126,7 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 			}
 		} else if (reward is Metagame.RewardEgg) {
 			// Get the egg definition
-			DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, reward.value);
+			DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, reward.sku);
 			if(eggDef != null) {
 				if(m_icon != null) m_icon.sprite = Resources.Load<Sprite>(UIConstants.EGG_ICONS_PATH + eggDef.Get("icon"));
 				if(m_rewardText != null) m_rewardText.text = eggDef.GetLocalized("tidName");
@@ -138,10 +138,10 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 		} else if (reward is Metagame.RewardCurrency) {
 			// Get the icon linked to this currency
 			if(m_icon != null) m_icon.sprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(reward.currency));
-			if(m_rewardText != null) m_rewardText.text = StringUtils.FormatNumber(long.Parse(reward.value), 0);
+			if(m_rewardText != null) m_rewardText.text = StringUtils.FormatNumber(reward.amount, 0);
 		} else {
 			if(m_icon != null) m_icon.sprite = null;
-			if(m_rewardText != null) m_rewardText.text = StringUtils.FormatNumber(long.Parse(reward.value), 0);
+			if(m_rewardText != null) m_rewardText.text = StringUtils.FormatNumber(reward.amount, 0);
 		}
 
 
