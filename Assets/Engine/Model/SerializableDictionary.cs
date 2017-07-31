@@ -22,6 +22,14 @@ using System.Collections.Generic;
 /// [Serializable]
 /// public class MyDict : SerializableDictionary<string, GameObject> { }
 /// </code></example>
+/// 
+/// Similarly, the property drawer included must be inherited in an Editor class
+/// and marked as custom property drawer for that specific SerializableDictionary specification:
+/// <example><code>
+/// [CustomPropertyDrawer(typeof(MyDict), true)]
+/// public class MyDictEditor : SerializableDictionaryEditor { }
+/// </code></example>
+/// 
 /// Implements ISerializationCallbackReceiver to be able to edit definitions as an array, 
 /// but store them as a dictionary.
 /// See http://docs.unity3d.com/ScriptReference/ISerializationCallbackReceiver.OnBeforeSerialize.html
@@ -90,7 +98,11 @@ public class SerializableDictionary<K,T> : ISerializationCallbackReceiver {
 		m_dict = new Dictionary<K, T>();
 		for(int i = 0; i < Mathf.Min( m_valueList.Count, m_keyList.Count ); i++) 
 		{
-			m_dict.Add( m_keyList[i], m_valueList[i]);
+			try {
+				m_dict.Add( m_keyList[i], m_valueList[i]);
+			} catch {
+				Debug.LogError("<color=red>Element with key </color><color=white>" + m_keyList[i] + "</color><color=red> already exists!</color>");
+			}
 		}
 	}
 }
