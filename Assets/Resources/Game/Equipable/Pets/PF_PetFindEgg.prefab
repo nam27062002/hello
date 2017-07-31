@@ -1208,11 +1208,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_walkSpeed: 1
-  m_runSpeed: 2
+  m_runSpeed: 1
   m_minPlaybakSpeed: 1
   m_maxPlaybakSpeed: 1.5
   m_onBoostMaxPlaybackSpeed: 0
-  m_hasNavigationLayer: 1
+  m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
   m_animA: 
   m_animB: 
@@ -1500,18 +1500,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 10
+  m_blendSpeedFactor: 1
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
-  m_brainResource: {fileID: 11400000, guid: b93b5fba9c9964d299580ba89af38273, type: 2}
+  m_brainResource: {fileID: 0}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"dragonSizeRangeMultiplier":55,"type":0,"dataType":"AI.Behaviour.PetSearchCollectibleTargetData","editorFolded":false},{"speedMultiplier":2.2,"playerDistance":12,"closeRangeMultiplier":10,"farRangeMultiplier":60,"dataType":"AI.Behaviour.PetPointingCollectibleTargetData","editorFolded":false}]'
-  m_databaseKey: PF_PetFindEgg
+  m_serializedJson: '[]'
+  m_databaseKey: 
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 0
+  m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
   m_avoidWater: 0
 --- !u!114 &114000012669857030
@@ -1539,8 +1539,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba2f224ef9dd2406dad9cae440cae718, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_minEatAnimTime: 0.1
-  m_eatDistance: 0.5
+  m_minEatAnimTime: 1
+  m_eatDistance: 1
   m_eatDetectionRadiusMultiplier: 2.75
   m_eatDetectionSpeedRadiusMultiplier: 0.15
   m_holdingBloodParticle:
@@ -1648,9 +1648,9 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_burpSound: 
-  m_canEatEntities: 1
+  m_canEatEntities: 0
   m_eaterTier: 0
-  m_isPet: 1
+  m_isPet: 0
   m_isAquatic: 0
   m_canMultipleLatchOnPlayer: 0
   m_damageOnBitePlayer: 10
@@ -1666,7 +1666,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e4b01ef8e8b54b638ddb530e3150fe3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: pet_0
+  m_sku: 
 --- !u!114 &114397079671672192
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1691,7 +1691,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_affectedByDragonTrample: 0
-  m_enableSensor: 0
+  m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
     m_sightRadius: 0
@@ -1718,7 +1718,7 @@ MonoBehaviour:
   m_airMotion:
     m_mass: 1
     m_defaultUpVector: 0
-    m_orientationSpeed: 360
+    m_orientationSpeed: 120
     m_dragonStyleRotation: 0
     m_faceDirection: 1
     m_rollRotation: 0
@@ -1726,7 +1726,7 @@ MonoBehaviour:
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
-    m_limitVerticalRotation: 1
+    m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
 --- !u!135 &135000013338795870
