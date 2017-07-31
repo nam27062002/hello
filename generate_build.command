@@ -316,6 +316,20 @@ if $BUILD_ANDROID; then
 	ANDROID_BUILD_VERSION="$(cat androidBuildVersion.txt)"
 	rm -f "androidBuildVersion.txt";
 	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}";
+
+    if $GENERATE_OBB; then
+        HAS_AAPT=false
+        if type aapt &>/dev/null; then
+            HAS_AAPT=true
+        fi
+        if $HAS_AAPT; then
+            PACKAGE_NAME="$(aapt dump badging ${STAGE_APK_FILE}.apk | grep package | awk '{print $2}' | sed s/name=//g | sed s/\'//g)"
+            OBB_FILE="main.${ANDROID_BUILD_VERSION}.${PACKAGE_NAME}.obb"
+            mv "${PROJECT_CODE_NAME}.main.obb" "${OBB_FILE}"
+        else
+            echo "No aapt found on PATH. I cannot rename obb\n"
+        fi 
+    fi
 fi
 
 # Generate iOS build
@@ -367,6 +381,9 @@ if $UPLOAD;then
   # Copy APK
   if $BUILD_ANDROID; then
       cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}"* "server/"
+      if $GENERATE_OBB && $HAS_AAPT; then
+          cp "${OUTPUT_DIR}/apks/${OBB_FILE}" "server/"
+      fi
   fi
 
   # Unmount server and remove tmp folder
@@ -386,7 +403,7 @@ if $COMMIT_CHANGES;then
   # Create Git tag
   if $CREATE_TAG; then
       print_builder "Pushing Tag ${VERSION_ID}"
-      set +e  # Don't exit script on error
+      set +e  # Dont exit script on error
       git tag "${VERSION_ID}"
       git push origin "${VERSION_ID}"
       set -e
