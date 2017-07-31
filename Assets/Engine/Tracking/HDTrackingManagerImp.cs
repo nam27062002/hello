@@ -344,6 +344,8 @@ public class HDTrackingManagerImp : HDTrackingManager
                 TrackingSaveSystem.AdsSessions++;
             }
         }
+
+        Track_AdFinished(adType, adIsLoaded, maxReached, adViewingDuration, provider);
     }
     #endregion
 
@@ -492,18 +494,39 @@ public class HDTrackingManagerImp : HDTrackingManager
         // DNA custom.mobile.stop
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.ad.start");
         if (e != null)
-        {                
-            Track_AddParamString(e, TRACK_PARAM_ADS_TYPE, adType);
-            Track_AddParamString(e, TRACK_PARAM_REWARD_TYPE, rewardType);
-            Track_AddParamBool(e, TRACK_PARAM_AD_IS_AVAILABLE, adIsAvailable);
-            Track_AddParamString(e, TRACK_PARAM_PROVIDER, provider);            
-            Track_AddParamPlayerProgress(e);
-
+        {
             if (TrackingSaveSystem != null)
             {
                 e.SetParameterValue(TRACK_PARAM_NB_ADS_LTD, TrackingSaveSystem.AdsCount);
                 e.SetParameterValue(TRACK_PARAM_NB_ADS_SESSION, TrackingSaveSystem.AdsSessions);
             }
+
+            Track_AddParamBool(e, TRACK_PARAM_AD_IS_AVAILABLE, adIsAvailable);
+            Track_AddParamString(e, TRACK_PARAM_REWARD_TYPE, rewardType);
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamString(e, TRACK_PARAM_PROVIDER, provider);
+            Track_AddParamString(e, TRACK_PARAM_ADS_TYPE, adType);
+
+            TrackingManager.SharedInstance.SendEvent(e);
+        }
+    }
+
+    private void Track_AdFinished(string adType, bool adIsLoaded, bool maxReached, int adViewingDuration, string provider)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_AdFinished");
+        }
+
+        // DNA custom.mobile.stop
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.ad.finished");
+        if (e != null)
+        {            
+            Track_AddParamBool(e, TRACK_PARAM_IS_LOADED, adIsLoaded);
+            Track_AddParamString(e, TRACK_PARAM_PROVIDER, provider);            
+            e.SetParameterValue(TRACK_PARAM_AD_VIEWING_DURATION, adViewingDuration);
+            Track_AddParamBool(e, TRACK_PARAM_MAX_REACHED, maxReached);            
+            Track_AddParamString(e, TRACK_PARAM_ADS_TYPE, adType);
 
             TrackingManager.SharedInstance.SendEvent(e);
         }
@@ -514,14 +537,17 @@ public class HDTrackingManagerImp : HDTrackingManager
     // -------------------------------------------------------------    
     private const string TRACK_PARAM_AB_TESTING                 = "abtesting";
     private const string TRACK_PARAM_AD_IS_AVAILABLE            = "adIsAvailable";
+    private const string TRACK_PARAM_AD_VIEWING_DURATION        = "adViewingDuration";
     private const string TRACK_PARAM_ADS_TYPE                   = "adsType";
     private const string TRACK_PARAM_CURRENCY                   = "currency";
     private const string TRACK_PARAM_ECONOMY_GROUP              = "economyGroup";
     private const string TRACK_PARAM_HOUSTON_TRANSACTION_ID     = "houstonTransactionID";
     private const string TRACK_PARAM_IN_GAME_ID                 = "InGameId";
+    private const string TRACK_PARAM_IS_LOADED                  = "isLoaded";
     private const string TRACK_PARAM_IS_PAYING_SESSION          = "isPayingSession";
     private const string TRACK_PARAM_ITEM_ID                    = "itemID";
     private const string TRACK_PARAM_ITEM_QUANTITY              = "itemQuantity";
+    private const string TRACK_PARAM_MAX_REACHED                = "maxReached";
     private const string TRACK_PARAM_MONEY_CURRENCY             = "moneyCurrency";
     private const string TRACK_PARAM_MONEY_IAP                  = "moneyIAP";
     private const string TRACK_PARAM_NB_ADS_LTD                 = "nbAdsLtd";
