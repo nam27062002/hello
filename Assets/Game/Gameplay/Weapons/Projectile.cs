@@ -18,6 +18,12 @@ public class Projectile : MonoBehaviour, IProjectile {
 		Die
 	}
 
+	private enum RotationAxis {
+		Up = 0,
+		Right,
+		Forward
+	}
+
 	//---------------------------------------------------------------------------------------
 
 	[SeparatorAttribute("Motion")]
@@ -25,6 +31,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	[SerializeField] private float m_chargeTime = 0f;
 	[SerializeField] private float m_speed = 0f;
 	[SerializeField] private float m_rotationSpeed = 0f;
+	[SerializeField] private RotationAxis m_rotationAxis = RotationAxis.Up;
 	[SerializeField] private float m_maxTime = 0f; // 0 infinite
 	[SerializeField] private float m_scaleTime = 1f;
 	[SerializeField] private bool m_stopAtTarget = false;
@@ -278,7 +285,12 @@ public class Projectile : MonoBehaviour, IProjectile {
 				}
 
 				if (m_rotationSpeed > 0f) {
-					m_trasnform.rotation = Quaternion.AngleAxis(m_elapsedTime * 240f * m_rotationSpeed, m_trasnform.up) * m_trasnform.rotation;
+					Vector3 axis = m_trasnform.up;
+
+					if (m_rotationAxis == RotationAxis.Right) 			axis = m_trasnform.right;
+					else if (m_rotationAxis == RotationAxis.Forward)	axis = m_trasnform.forward;
+
+					m_trasnform.rotation = Quaternion.AngleAxis(m_elapsedTime * 240f * m_rotationSpeed, axis) * m_trasnform.rotation;
 				}
 			}
 		} else if (m_state == State.Stuck_On_Player) {
