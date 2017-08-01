@@ -73,7 +73,6 @@ public class Startup {
 
 			// Save value
 			EditorUtility.SetDirty( referencesObject );
-			AssetDatabase.SaveAssets();
 		}
     }
 }
