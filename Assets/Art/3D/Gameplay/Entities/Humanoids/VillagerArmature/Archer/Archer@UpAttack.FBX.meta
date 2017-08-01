@@ -87,6 +87,8 @@ ModelImporter:
     resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -102,7 +104,7 @@ ModelImporter:
       name: UPAttack
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 41
+      lastFrame: 26
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -122,7 +124,14 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.13177642
+      - time: 0
+        functionName: AttackStart
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.05263973
         functionName: AttachProjectile
         data: 
         objectReferenceParameter: {instanceID: 0}
@@ -143,17 +152,8 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0
-        functionName: AttackStart
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
       transformMask:
       - path: 
-        weight: 1
-      - path: Human_
         weight: 1
       - path: Human_L_Platform
         weight: 1
@@ -218,8 +218,6 @@ ModelImporter:
       - path: Human_Pelvis/Human_Spine1/Human_Spine2/Human_Ribcage/Human_R_Collarbone/Human_R_Upperarm/Human_R_Forearm/Human_R_Palm/Human_R_Thumb
         weight: 1
       - path: Human_R_Platform
-        weight: 1
-      - path: Particle View 001
         weight: 1
       maskType: 0
       maskSource: {instanceID: 0}
