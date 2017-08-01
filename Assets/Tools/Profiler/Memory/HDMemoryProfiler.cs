@@ -81,7 +81,7 @@ public class HDMemoryProfiler : MemoryProfiler
             int count = lightmaps.Length;
             for (int i = 0; i < count; i++)
             {
-				Scene_AddObject(key, lightmaps[i].lightmapLight);
+                Scene_AddObject(key, lightmaps[i].lightmapColor);
                 Scene_AddObject(key, lightmaps[i].lightmapDir);
             }
         }
