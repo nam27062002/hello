@@ -30,6 +30,9 @@ public class RailMeshBuilder : MonoBehaviour {
 			bool isDirty = m_spline.isDirty3D || (m_currentSubdivisions != m_subdivisions) || (m_currentUVscale != m_uvScale);
 
 			if (isDirty) {
+				m_currentSubdivisions = m_subdivisions;
+				m_currentUVscale = m_uvScale;
+
 				while (transform.childCount > 0) {
 					Transform child = transform.GetChild(0);
 					child.parent = null;
@@ -52,15 +55,12 @@ public class RailMeshBuilder : MonoBehaviour {
 		obj.transform.SetParent(transform, false);
 		MeshRenderer renderer =obj.AddComponent<MeshRenderer>();
 		MeshFilter meshFilter = obj.AddComponent<MeshFilter>();
-		UnityEditor.GameObjectUtility.SetStaticEditorFlags(obj, UnityEditor.StaticEditorFlags.LightmapStatic);
+		//UnityEditor.GameObjectUtility.SetStaticEditorFlags(obj, UnityEditor.StaticEditorFlags.LightmapStatic);
 		//
 
 		float totalDistance = _toDist - _fromDist;
 
 		_subdivisions = Mathf.Max(1f, _subdivisions);
-
-		m_currentSubdivisions = _subdivisions;
-		m_currentUVscale = m_uvScale;
 
 		List<Vector3> verticesLeft = new List<Vector3>();
 		List<Vector3> verticesRight = new List<Vector3>();
@@ -104,7 +104,7 @@ public class RailMeshBuilder : MonoBehaviour {
 		combine[0].mesh.RecalculateNormals();
 		combine[0].mesh.RecalculateBounds();
 		combine[0].mesh.SetUVs(0, CreateRailUVs(verticesRight.Count));
-		UnityEditor.Unwrapping.GenerateSecondaryUVSet(combine[0].mesh);
+		//UnityEditor.Unwrapping.GenerateSecondaryUVSet(combine[0].mesh);
 
 		combine[1].mesh = new Mesh();
 		combine[1].mesh.vertices = verticesLeft.ToArray();
@@ -112,7 +112,7 @@ public class RailMeshBuilder : MonoBehaviour {
 		combine[1].mesh.RecalculateNormals();
 		combine[1].mesh.RecalculateBounds();
 		combine[1].mesh.SetUVs(0, CreateRailUVs(verticesLeft.Count));
-		UnityEditor.Unwrapping.GenerateSecondaryUVSet(combine[1].mesh);
+		//UnityEditor.Unwrapping.GenerateSecondaryUVSet(combine[1].mesh);
 
 		float dist = _fromDist + distanceBetweenTies * 0.5f;
 		for (int i = 0; i < woodTieCount; ++i) {
@@ -192,7 +192,7 @@ public class RailMeshBuilder : MonoBehaviour {
 		mesh.RecalculateNormals();
 		mesh.RecalculateBounds();
 		mesh.SetUVs(0, CreateTieUVs());
-		UnityEditor.Unwrapping.GenerateSecondaryUVSet(mesh);
+		//UnityEditor.Unwrapping.GenerateSecondaryUVSet(mesh);
 
 		return mesh;
 	}
