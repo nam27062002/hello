@@ -38,18 +38,21 @@ Shader "Hungry Dragon/TransparentAlphaBlend smoke"
 				sampler2D _NoiseTex;
 				float4 _NoiseTex_ST;
 				sampler2D _MaskTex;
-		//fixed4 _TintColor;
+				float4 _MaskTex_ST;
+				//fixed4 _TintColor;
 
 				struct appdata_t {
 					float4 vertex : POSITION;
 					fixed4 color : COLOR;
 					float2 uv : TEXCOORD0;
+					float2 uv2 : TEXCOORD1;
 				};
 
 				struct v2f {
 					float4 vertex : POSITION;
 					fixed4 color : COLOR;
 					float2 uv : TEXCOORD0;
+					float2 uv2 : TEXCOORD1;
 				};
 
 				float4 _TintColor;
@@ -63,6 +66,7 @@ Shader "Hungry Dragon/TransparentAlphaBlend smoke"
 					o.vertex = UnityObjectToClipPos(v.vertex);
 					o.color = v.color;
 					o.uv = TRANSFORM_TEX(v.uv, _NoiseTex);
+					o.uv2 = TRANSFORM_TEX(v.uv2, _MaskTex);
 					return o;
 				}
 
@@ -77,7 +81,7 @@ Shader "Hungry Dragon/TransparentAlphaBlend smoke"
 					float temp_output_73_0 = smoothstep(_SmotthVal.x, _SmotthVal.y, (((t1.r * uv_Noise.y) + (t2.g * uv_Noise.y)) * t1.r * t2.g * ramp * uv_Noise.y));
 //					float4 lerpResult65 = lerp(_ColorA_Instance, _ColorB_Instance, temp_output_73_0);
 
-					return _TintColor * temp_output_73_0 * tex2D(_MaskTex, i.uv).a;
+					return _TintColor * temp_output_73_0 * tex2D(_MaskTex, i.uv2).a;
 				}
 
 				ENDCG
