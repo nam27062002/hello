@@ -288,7 +288,7 @@ public class EventRewardScreen : MonoBehaviour {
 		// If in the INIT state, show the initial screen
 		if(m_state == State.INIT) {
 			// Show initial screen
-			m_introScreen.RestartShow(true);
+			m_introScreen.RestartShow();
 			m_globalEventStepScreen.ForceHide(false);
 
 			// Change state!
