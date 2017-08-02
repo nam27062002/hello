@@ -14,10 +14,12 @@ public class PetDogSpawner : AbstractSpawner {
 
 	//-------------------------------------------------------------------
 	[SerializeField] private string m_entityPrefabStr;
+	private int m_entityPrefabIndex;
 	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
 	[SerializeField] private Transform m_spawnAtTransform;
 	[SerializeField] private bool m_mustBeChild = false;
 	[SerializeField] private LookAtVector m_lookAtVector;
+
 	//-------------------------------------------------------------------	
 
 	private IMachine m_operator;
@@ -98,7 +100,7 @@ public class PetDogSpawner : AbstractSpawner {
     }        
 
 	protected override PoolHandler GetPoolHandler(uint index) {
-		return m_poolHandlers[index];
+		return m_poolHandlers[m_entityPrefabIndex];
 	}
 
     protected override string GetPrefabNameToSpawn(uint index) {
@@ -123,6 +125,7 @@ public class PetDogSpawner : AbstractSpawner {
 			if (chance <= currentChance )
 			{
 				m_entityPrefabStr = m_possibleSpawners[ i ].m_spawnPrefab;
+				m_entityPrefabIndex = i;
 				break;
 			}
 		}
