@@ -68,6 +68,13 @@ public class RewardInfoUI : MonoBehaviour {
 	[Separator("Events")]
 	public UnityEvent OnAnimFinished = new UnityEvent();
 
+	// Non-exposed setup, to be set from code
+	private string m_goldenEggCompletedSFX = "";
+	public string goldenEggCompletedSFX {
+		get { return m_goldenEggCompletedSFX; }
+		set { m_goldenEggCompletedSFX = value; }
+	}
+
 	// Other references
 	private Animator m_animator = null;
 	private Animator animator {
@@ -243,6 +250,9 @@ public class RewardInfoUI : MonoBehaviour {
 		if(_animate) {
 			// Trigger Particle FX
 			m_goldenFragmentCounterFX.Play();
+
+			// Trigger SFX
+			AudioController.Play(m_goldenEggCompletedSFX);
 		}
 	}
 
