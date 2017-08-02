@@ -145,6 +145,7 @@ namespace BSpline {
 			if (_distance >= m_arcLength) {
 				data = m_segments.Last();
 				_distance = data.length;
+				_direction = data.direction;
 			} else {
 				int s = 0;
 				while (s < m_segments.Count && _distance > m_segments[s].length) {
@@ -153,15 +154,28 @@ namespace BSpline {
 				}
 				if (s < m_segments.Count) {
 					data = m_segments[s];
+					_direction = data.direction;
+
+					float p = _distance / data.length;
+					if (p < 0.3f) {
+						if (s > 0) {
+							_direction += m_segments[s - 1].direction;
+							_direction.Normalize();
+						}
+					} else if (p > 0.6f) {
+						if (s < m_segments.Count - 1) {
+							_direction += m_segments[s + 1].direction;
+							_direction.Normalize();
+						}
+					}
 				} else {
 					data = m_segments.Last();
 					_distance = data.length;
+					_direction = data.direction;
 				}
 			}
 
-			_direction = data.direction;
-
-			Vector3 forward = data.direction;
+			Vector3 forward = _direction;
 			_right = Vector3.Cross(Vector3.up, forward);
 			_up = Vector3.Cross(forward, _right);
 

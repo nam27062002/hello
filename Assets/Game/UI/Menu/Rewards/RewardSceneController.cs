@@ -50,6 +50,10 @@ public class RewardSceneController : MonoBehaviour {
 	[Tooltip("One per rarity, matching order. None for \"special\".")]
 	[SerializeField] private GameObject[] m_goldenFragmentsRewards = new GameObject[(int)EggReward.Rarity.COUNT - 1];
 
+	[Separator("SFX")]
+	[SerializeField] private string m_eggTapSFX = "";
+	[SerializeField] private string m_eggExplosionSFX = "";
+
 	[Separator("Others")]
 	[Tooltip("Will replace the camera snap point for the photo screen when doing photos to the egg reward.")]
 	[SerializeField] private CameraSnapPoint m_photoCameraSnapPoint = null;
@@ -270,6 +274,9 @@ public class RewardSceneController : MonoBehaviour {
 			// [AOC] TODO!! Some awesome FX!!
 			m_eggView.transform.DOScale(0f, 0.5f).From().SetEase(Ease.OutElastic);
 		}
+
+		// Trigger UI animation
+		UbiBCN.CoroutineManager.DelayedCall(() => { m_rewardInfoUI.InitAndAnimate(_eggReward); }, 0.25f, false);
 	}
 
 	/// <summary>
@@ -285,7 +292,7 @@ public class RewardSceneController : MonoBehaviour {
 		seq.AppendInterval(0.05f);	// Initial delay
 		seq.Append(m_rewardView.transform.DOScale(0f, 0.5f).From().SetRecyclable(true).SetEase(Ease.OutBack));
 
-		// Trigger animation UI
+		// Trigger UI animation
 		seq.InsertCallback(seq.Duration() - 0.15f, () => { m_rewardInfoUI.InitAndAnimate(_petReward); });
 
 		// Make it target of the drag controller
@@ -399,6 +406,11 @@ public class RewardSceneController : MonoBehaviour {
 		// Animate
 		Vector2 baseIdleVelocity = m_dragController.idleVelocity;
 		Sequence seq = DOTween.Sequence();
+
+		seq.AppendCallback(() => {
+			m_rewardInfoUI.InitAndAnimate(_currencyReward);
+		});
+
 		seq.Append(m_rewardView.transform.DOScale(0f, 1f).From().SetEase(Ease.OutBack));
 		seq.Join(DOTween.To(
 			() => { return baseIdleVelocity; },	// Getter
@@ -407,7 +419,9 @@ public class RewardSceneController : MonoBehaviour {
 			2f)	// Duration
 			.From()
 			.SetEase(Ease.OutCubic)
-		).OnComplete(OnAnimationFinish);
+		);
+			
+		seq.OnComplete(OnAnimationFinish);
 	}
 
 	/// <summary>
@@ -489,7 +503,7 @@ public class RewardSceneController : MonoBehaviour {
 	/// <summary>
 	/// Launch the egg open animation.
 	/// </summary>
-	private void LaunchEggOpenAnim() {
+	private void LaunchEggExplosionAnim() {
 		// Ignore if we don't have a valid egg view
 		if(m_eggView == null) return;
 
@@ -521,8 +535,11 @@ public class RewardSceneController : MonoBehaviour {
 			m_explosionFX.Play();
 		}
 
+		// Trigger SFX
+		AudioController.Play(m_eggExplosionSFX);
+
 		// Program reward animation
-		UbiBCN.CoroutineManager.DelayedCall(OnEggOpenAnimFinished, 0.35f, false);
+		UbiBCN.CoroutineManager.DelayedCall(OnEggExplosionAnimFinished, 0.35f, false);
 	}
 
 	//------------------------------------------------------------------------//
@@ -562,6 +579,12 @@ public class RewardSceneController : MonoBehaviour {
 			tapFX.Stop(true);
 			tapFX.Clear();
 			tapFX.Play(true);
+
+			// Hide UI
+			m_rewardInfoUI.SetRewardType(string.Empty);
+
+			// Play SFX
+			AudioController.Play(m_eggTapSFX);
 		}
 	}
 
@@ -577,14 +600,14 @@ public class RewardSceneController : MonoBehaviour {
 		if(_egg == eggData) {
 			// Launch animation!
 			// Delay to sync with the egg anim
-			UbiBCN.CoroutineManager.DelayedCall(LaunchEggOpenAnim, 1.75f, false);
+			UbiBCN.CoroutineManager.DelayedCall(LaunchEggExplosionAnim, 1.75f, false);
 		}
 	}
 
 	/// <summary>
 	/// The egg open animation has been finished.
 	/// </summary>
-	private void OnEggOpenAnimFinished() {
+	private void OnEggExplosionAnimFinished() {
 		// Open the reward inside the egg, which has been pushed into the stack by the egg view
 		m_currentReward = null;
 		OpenReward();

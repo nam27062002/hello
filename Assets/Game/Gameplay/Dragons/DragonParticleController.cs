@@ -105,6 +105,8 @@ public class DragonParticleController : MonoBehaviour
 	public ParticleData m_landingParticle;
 	ParticleSystem m_landingInstance;
 
+	private List<ParticleSystem> m_toDeactivate = new List<ParticleSystem>();
+
 
 	void Start () 
 	{
@@ -113,10 +115,6 @@ public class DragonParticleController : MonoBehaviour
 		// Instantiate Particles (at start so we don't feel any framerate drop during gameplay)
 		m_levelUpInstance = InitParticles(m_levelUp, m_levelUpAnchor);
 		m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
-		if (m_reviveInstance)
-		{
-			m_reviveInstance.gameObject.SetActive(false);
-		}
 		m_bubblesInstance = InitParticles(m_bubbles, m_bubblesAnchor);
 		if ( m_bubblesInstance != null )
 		{
@@ -151,6 +149,7 @@ public class DragonParticleController : MonoBehaviour
 			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
 		}
 		m_hiccupInstance = InitParticles( m_hiccupParticle, m_hiccupAnchor);
+
 		if (dragonAnimEvents != null)
 			dragonAnimEvents.onHiccupEvent += OnHiccup;
 
@@ -162,12 +161,14 @@ public class DragonParticleController : MonoBehaviour
 			go.transform.localScale = Vector3.one;
 			go.transform.localRotation = Quaternion.identity;
 			m_trailsInstance = go.GetComponent<ParticleSystem>();
+			m_trailsInstance.gameObject.SetActive(false);
 		}
 
 		if ( m_landingParticle.IsValid() )
 		{
 			GameObject go = m_landingParticle.CreateInstance();
 			m_landingInstance = go.GetComponent<ParticleSystem>();
+			m_landingInstance.gameObject.SetActive(false);
 		}
 
 		if ( m_spaceEnterSplash.IsValid() )
@@ -201,11 +202,18 @@ public class DragonParticleController : MonoBehaviour
 			if ( m_waterY - _transform.position.y > m_waterDepth ){
 				// Bubbles should be activated
 				if ( !m_bubblesInstance.isPlaying )
+				{
+					m_bubblesInstance.gameObject.SetActive(true);
 					m_bubblesInstance.Play();
+
+				}
 			}else{
 				// Bubbles should be desactivated
 				if ( m_bubblesInstance.isPlaying )
+				{
 					m_bubblesInstance.Stop();
+					m_toDeactivate.Add(m_bubblesInstance);
+				}
 			}
 		}
 
@@ -228,6 +236,7 @@ public class DragonParticleController : MonoBehaviour
 				if ( stopSkimming )
 				{
 					m_skimmingInstance.Stop();
+					m_toDeactivate.Add( m_skimmingInstance );
 					m_skimming = false;
 					m_dargonMotion.EndedSkimming();
 				}
@@ -243,6 +252,7 @@ public class DragonParticleController : MonoBehaviour
 					if ( hitsWater )
 					{
 						// Start skimming	
+						m_skimmingInstance.gameObject.SetActive(true);
 						m_skimmingInstance.Play();
 						m_skimming = true;
 						m_dargonMotion.StartedSkimming();
@@ -281,6 +291,15 @@ public class DragonParticleController : MonoBehaviour
 			}
 		}
 
+		int size = m_toDeactivate.Count;
+		for( int i = size-1; i>= 0; --i )
+		{
+			if ( !m_toDeactivate[i].IsAlive() )	
+			{
+				m_toDeactivate[i].gameObject.SetActive(false);
+				m_toDeactivate.RemoveAt(i);
+			}
+		}
 
 
 #if UNITY_EDITOR
@@ -312,13 +331,16 @@ public class DragonParticleController : MonoBehaviour
 		if(psInstance != null) {
 			psInstance.transform.SetParentAndReset(_anchor);
 			psInstance.Stop();
+			go.SetActive(false);
 		}
 		return psInstance;
 	}
 
 	void OnLevelUp( DragonData data )
 	{
+		m_levelUpInstance.gameObject.SetActive(true);
 		m_levelUpInstance.Play();
+		m_toDeactivate.Add(m_levelUpInstance);
 		m_waterDepth = data.scale + m_waterDepthIncrease;
 	}
 
@@ -367,7 +389,7 @@ public class DragonParticleController : MonoBehaviour
 			{
 				m_reviveInstance.gameObject.SetActive(true);
 				m_reviveInstance.Play();
-				StartCoroutine(DeactivateInSeconds(m_reviveInstance.gameObject, 2.0f));
+				m_toDeactivate.Add( m_reviveInstance );
 			}break;
 			case DragonPlayer.ReviveReason.FREE_REVIVE_PET:
 			{
@@ -376,12 +398,6 @@ public class DragonParticleController : MonoBehaviour
 		}
 		m_alive = true;
 		CheckBodyParts();
-	}
-
-	IEnumerator DeactivateInSeconds( GameObject go, float seconds )
-	{
-		yield return new WaitForSeconds(seconds);
-		go.SetActive(false);
 	}
 
 	public void OnShieldLost( DamageType _damageType, Transform _tr)
@@ -424,7 +440,10 @@ public class DragonParticleController : MonoBehaviour
 	{
 		m_insideWater = false;
 		if ( m_bubblesInstance != null && m_bubblesInstance.isPlaying)
+		{
 			m_bubblesInstance.Stop();
+			m_toDeactivate.Add( m_bubblesInstance );
+		}
 
 		CheckBodyParts();
 
@@ -449,8 +468,11 @@ public class DragonParticleController : MonoBehaviour
 
 	public void OnEnterOuterSpace( Collider _spaceCollider, bool fast ) {
 		// Launch cloud trail, will stop automatically
-		if(fast && m_cloudTrailInstance != null) {
+		if(fast && m_cloudTrailInstance != null) 
+		{
+			m_cloudTrailInstance.gameObject.SetActive(true);
 			m_cloudTrailInstance.Play();
+			m_toDeactivate.Add( m_cloudTrailInstance );
 		}
 		if ( m_spaceEnterSplash.IsValid() )
 		{
@@ -464,8 +486,11 @@ public class DragonParticleController : MonoBehaviour
 
 	public void OnExitOuterSpace(Collider _spaceCollider, bool fast) {
 		// Launch cloud trail again!
-		if(fast && m_cloudTrailInstance != null) {
+		if(fast && m_cloudTrailInstance != null) 
+		{
+			m_cloudTrailInstance.gameObject.SetActive(true);
 			m_cloudTrailInstance.Play();
+			m_toDeactivate.Add( m_cloudTrailInstance );
 		}
 		if ( m_spaceExitSplash.IsValid() )
 		{
@@ -485,8 +510,10 @@ public class DragonParticleController : MonoBehaviour
 		{
 			if (m_waterAirLimitInstance != null)
 			{
+				m_waterAirLimitInstance.gameObject.SetActive(true);
 				m_waterAirLimitInstance.transform.rotation = Quaternion.Euler(90,0,0);
 				m_waterAirLimitInstance.Play();
+				m_toDeactivate.Add(m_waterAirLimitInstance);
 			}
 
 			if ( m_bubblesInstance != null )
@@ -527,21 +554,31 @@ public class DragonParticleController : MonoBehaviour
 	private void OnHiccup()
 	{
 		if ( m_hiccupInstance != null )
+		{
+			m_hiccupInstance.gameObject.SetActive(true);
 			m_hiccupInstance.Play();
+			m_toDeactivate.Add( m_hiccupInstance );
+		}
 	}
 
 	#region boost_trails
 	void PlayTrails()
 	{
 		if (m_trailsInstance)
+		{
+			m_trailsInstance.gameObject.SetActive(true);
 			m_trailsInstance.Play();
+		}
 		m_playinTrails = true;
 	}
 
 	void StopTrails()
 	{
 		if (m_trailsInstance)
+		{
 			m_trailsInstance.Stop();
+			m_toDeactivate.Add( m_trailsInstance );
+		}
 		m_playinTrails = false;
 	}
 
@@ -563,7 +600,9 @@ public class DragonParticleController : MonoBehaviour
 		{
 			Vector3 disp = transform.rotation * m_landingParticle.offset;
 			m_landingInstance.transform.position = m_dargonMotion.lastGroundHit + disp;
+			m_landingInstance.gameObject.SetActive(true);
 			m_landingInstance.Play();
+			m_toDeactivate.Add(m_landingInstance);
 		}
 	}
 

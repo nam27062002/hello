@@ -24,7 +24,7 @@ using DG.Tweening;
 /// - Elastic bounce on limits
 /// </summary>
 [RequireComponent(typeof(Graphic))]
-public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
+public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerDownHandler, IPointerClickHandler {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -138,6 +138,7 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	// Events
 	[Space]
 	public DragControlEvent OnValueChanged = new DragControlEvent();
+	public UnityEvent OnClick = new UnityEvent();
 
 	// Public Logic
 	protected Vector2 m_velocity = Vector2.zero;
@@ -170,6 +171,7 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	protected float m_correctedSensitivity = 1f;
 	private Vector2 m_originalValue = Vector2.zero;
 	private Tweener m_tween = null;
+	protected bool m_hasDragged = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -488,6 +490,7 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
 		// Reset flag
 		m_dragging = true;
+		m_hasDragged = true;
 	}
 
 	/// <summary>
@@ -506,5 +509,23 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	public void OnEndDrag(PointerEventData _event) {
 		// Reset flag
 		m_dragging = false;
+	}
+
+	/// <summary>
+	/// Input detected a mouse down on this element.
+	/// </summary>
+	/// <param name="eventData">Data related to the event.</param>
+	public void OnPointerDown(PointerEventData _eventData) {
+		// Reset click flag
+		m_hasDragged = false;
+	}
+
+	/// <summary>
+	/// Input detected a click on this element.
+	/// </summary>
+	/// <param name="_eventData">Data related to the event.</param>
+	public void OnPointerClick(PointerEventData _eventData) {
+		// Propagate to listeners
+		if(!m_hasDragged) OnClick.Invoke();
 	}
 }

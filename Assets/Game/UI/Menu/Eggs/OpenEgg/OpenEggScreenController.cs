@@ -33,9 +33,6 @@ public class OpenEggScreenController : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed References
-	[Separator("Info")]
-	[SerializeField] private Localizer m_tapInfoText = null;
-
 	[Separator("Buttons")]
 	[SerializeField] private GameObject m_backButton = null;
 	[SerializeField] private GameObject m_buyEggButton = null;
@@ -75,8 +72,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener<EggView, int>(GameEvents.EGG_TAP, OnEggTap);
+		
 	}
 
 	/// <summary>
@@ -92,9 +88,6 @@ public class OpenEggScreenController : MonoBehaviour {
 	private void OnDisable() {
 		// Reset state
 		m_state = State.IDLE;
-
-		// Unsubscribe from external events
-		Messenger.RemoveListener<EggView, int>(GameEvents.EGG_TAP, OnEggTap);
 	}
 
 	/// <summary>
@@ -167,9 +160,6 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// The intro has finished!
 	/// </summary>
 	private void OnIntroFinished() {
-		// Show info text
-		m_tapInfoText.GetComponent<ShowHideAnimator>().Show();
-
 		// Change logic state
 		m_state = State.OPENING;
 	}
@@ -184,7 +174,6 @@ public class OpenEggScreenController : MonoBehaviour {
 			// Hide HUD and buttons
 			bool animate = this.gameObject.activeInHierarchy;	// If the screen is not visible, don't animate
 			InstanceManager.menuSceneController.hud.animator.ForceHide(animate);
-			m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide(animate);
 			m_finalPanel.ForceHide(animate);
 
 			// Wait for the intro anim to finish (sync delay with Egg intro anim)
@@ -253,9 +242,6 @@ public class OpenEggScreenController : MonoBehaviour {
 				);
 			}
 
-			// Make sure tap info is hidden
-			m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide();
-
 			// Don't show back button if we've completed a golden egg!
 			m_backButton.SetActive(!goldenEggCompleted);
 
@@ -264,7 +250,6 @@ public class OpenEggScreenController : MonoBehaviour {
 
 			// Change logic state
 			m_state = State.REWARD_IN;
-			//te paso su Skype para que te avise cuando haya terminado de trabajar en el popup de settings
 		}
 	}
 
@@ -274,19 +259,6 @@ public class OpenEggScreenController : MonoBehaviour {
 	private void OnSceneAnimFinished() {
 		// Change logic state
 		m_state = State.IDLE;
-	}
-
-	/// <summary>
-	/// An opening egg has been tapped.
-	/// </summary>
-	/// <param name="_egg">The egg that has been tapped.</param>
-	/// <param name="_tapCount">Tap count.</param>
-	private void OnEggTap(EggView _egg, int _tapCount) {
-		// If it matches our curent egg, hide tip
-		if(_egg == m_scene.eggView) {
-			// Hide UI!
-			m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide();
-		}
 	}
 
 	/// <summary>
@@ -354,9 +326,6 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// If entering this screen, force some show/hide animations that conflict with automated ones
 		if(_to == MenuScreens.OPEN_EGG) {
-			// At this point automated ones have already been launched, so we override them
-			m_tapInfoText.GetComponent<ShowHideAnimator>().Hide(false);
-
 			// Put photo screen in EggReward mode and override some setup
 			PhotoScreenController photoScreen = InstanceManager.menuSceneController.GetScreen(MenuScreens.PHOTO).GetComponent<PhotoScreenController>();
 			photoScreen.mode = PhotoScreenController.Mode.EGG_REWARD;

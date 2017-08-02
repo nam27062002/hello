@@ -112,6 +112,11 @@ public class ShowHideAnimator : MonoBehaviour {
 	[Comment("Must have triggers \"show\", \"hide\", \"instantShow\" and \"instantHide\"")]
 	[SerializeField] protected Animator m_animator = null;
 
+	// Other setup
+	[Tooltip("Children ShowHideAnimators belonging to active GameObjects will be triggered with this one when showing/hiding")]
+	[SerializeField] protected bool m_triggerChildren = true;
+	[SerializeField] protected bool m_canBeTriggeredByParents = true;
+
 	// Events
 	public ShowHideAnimatorEvent OnShowPreAnimation = new ShowHideAnimatorEvent();
 	public ShowHideAnimatorEvent OnShowPreAnimationAfterDelay = new ShowHideAnimatorEvent();
@@ -232,28 +237,8 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// </summary>
 	/// <param name="_animate">Whether to use animations or not.</param>
 	public virtual void Show(bool _animate = true) {
-		// If we're already in the target state, skip (unless dirty, in which case we want to place the animation sequence at the right place)
-		if(visible && !m_isDirty) return;
-
-		// Update state
-		m_state = State.VISIBLE;
-
-		// In any case, make sure the object is active
-		gameObject.SetActive(true);
-
-		// If dirty, re-create the tween (will be destroyed if not needed)
-		if(m_isDirty) RecreateTween();
-
-		// Broadcast pre-animation event
-		OnShowPreAnimation.Invoke(this);
-
-		// Trigger the animation!
-		LaunchShowAnimation(_animate);
-
-		// If not animating, do immediate postprocessing
-		if(!_animate) {
-			DoShowPostProcessing();
-		}
+		// Use internal call with the right parameters
+		InternalShow(_animate, true, false);
 	}
 
 	/// <summary>
@@ -270,11 +255,8 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// Relaunches the show animation from the start, regardless of current state.
 	/// </summary>
 	public void RestartShow() {
-		// Instantly force hide state without animation
-		ForceHide(false);
-
-		// Launch the show animation
-		Show(true);
+		// Use internal call with the right parameters
+		InternalShow(true, true, true);
 	}
 
 	/// <summary>
@@ -283,31 +265,8 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// <param name="_animate">Whether to use animations or not.</param>
 	/// <param name="_disableAfterAnimation">Whether to disable the object once the animation has finished or not. Only for non-custom tween animations.</param>
 	public virtual void Hide(bool _animate, bool _disableAfterAnimation = true) {
-		// If we're already in the target state, skip (unless dirty, in which case we want to place the animation sequence at the right place)
-		if(!visible && !m_isDirty) return;
-
-		// Update state
-		m_state = State.HIDDEN;
-		m_disableAfterHide = _disableAfterAnimation;
-
-		// If dirty, re-create the tween (will be destroyed if not needed)
-		if(m_isDirty) {
-			RecreateTween();
-
-			// Since we're going backwards, initialize the new sequence at the end (in case there is one)
-			if(m_sequence != null) m_sequence.Goto(1f);
-		}
-
-		// Broadcast pre-animation event
-		OnHidePreAnimation.Invoke(this);
-
-		// Trigger the animation!
-		LaunchHideAnimation(_animate);
-
-		// If not animating, do immediate post-processing
-		if(!_animate) {
-			DoHidePostProcessing();
-		}
+		// Use internal call with the right parameters
+		InternalHide(_animate, _disableAfterAnimation, true, false);
 	}
 
 	/// <summary>
@@ -344,11 +303,8 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// </summary>
 	/// <param name="_disableAfterAnimation">Whether to disable the object once the animation has finished or not. Only for non-custom tween animations.</param>
 	public void RestartHide(bool _disableAfterAnimation = true) {
-		// Instantly force show state without animation
-		ForceShow(false);
-
-		// Launch the hide animation
-		Hide(true, _disableAfterAnimation);
+		// Use internal call with the right parameters
+		InternalHide(true, _disableAfterAnimation, true, true);
 	}
 
 	/// <summary>
@@ -513,15 +469,119 @@ public class ShowHideAnimator : MonoBehaviour {
 			} break;
 		}
 
-		m_sequence.PrependCallback( PostDelayCallback );
+		m_sequence.PrependCallback(() => {
+			OnShowPreAnimationAfterDelay.Invoke(this); 
+		});
 
 		// Insert delay at the beginning of the sequence
 		m_sequence.PrependInterval(m_tweenDelay);
 	}
 
-	protected virtual void PostDelayCallback()
-	{
-		OnShowPreAnimationAfterDelay.Invoke(this);
+	/// <summary>
+	/// Show the object. Will be ignored if object is already visible/showing.
+	/// </summary>
+	/// <param name="_animate">Whether to use animations or not.</param>
+	/// <param name="_propagateToChildren">Whether to propagate to children ShowHideAnimators. Setup flags will be checked anyways.</param>
+	/// <param name="_restartAnim">Whether the animation should be restarted.</param>
+	protected virtual void InternalShow(bool _animate, bool _propagateToChildren, bool _restartAnim) {
+		// If restarting the animation, instantly force hide state without animation
+		if(_restartAnim) {
+			ForceHide(false);
+		}
+
+		// If we're already in the target state, skip (unless dirty, in which case we want to place the animation sequence at the right place)
+		if(visible && !m_isDirty) return;
+
+		// Update state
+		m_state = State.VISIBLE;
+
+		// In any case, make sure the object is active
+		gameObject.SetActive(true);
+
+		// If dirty, re-create the tween (will be destroyed if not needed)
+		if(m_isDirty) RecreateTween();
+
+		// Broadcast pre-animation event
+		OnShowPreAnimation.Invoke(this);
+
+		// Trigger the animation!
+		LaunchShowAnimation(_animate);
+
+		// If configured, look for all children containing a ShowHideAnimator component and trigger it!
+		if(_propagateToChildren && m_triggerChildren) {
+			ShowHideAnimator[] animators = GetComponentsInChildren<ShowHideAnimator>(false);	// Exclude inactive ones - if they're inactive we probably don't want to show them!
+			for(int i = 0; i < animators.Length; i++) {
+				// Skip ourselves
+				if(animators[i] == this) continue;
+
+				// Skip if not allowed
+				if(!animators[i].m_canBeTriggeredByParents) continue;
+
+				// Show using internal method directly
+				animators[i].InternalShow(_animate, false, _restartAnim);
+			}
+		}
+
+		// If not animating, do immediate postprocessing
+		if(!_animate) {
+			DoShowPostProcessing();
+		}
+	}
+
+	/// <summary>
+	/// Hide the object. Will be ignored if object is already hidden/hiding.
+	/// </summary>
+	/// <param name="_animate">Whether to use animations or not.</param>
+	/// <param name="_disableAfterAnimation">Whether to disable the object once the animation has finished or not. Only for non-custom tween animations.</param>
+	/// <param name="_propagateToChildren">Whether to propagate to children ShowHideAnimators. Setup flags will be checked anyways.</param>
+	/// <param name="_restartAnim">Whether the animation should be restarted.</param>
+	protected virtual void InternalHide(bool _animate, bool _disableAfterAnimation, bool _propagateToChildren, bool _restartAnim) {
+		// If restarting the animation, instantly force hide state without animation
+		if(_restartAnim) {
+			ForceShow(false);
+		}
+
+		// If we're already in the target state, skip (unless dirty, in which case we want to place the animation sequence at the right place)
+		if(!visible && !m_isDirty) return;
+
+		// Update state
+		m_state = State.HIDDEN;
+		m_disableAfterHide = _disableAfterAnimation;
+
+		// If dirty, re-create the tween (will be destroyed if not needed)
+		if(m_isDirty) {
+			RecreateTween();
+
+			// Since we're going backwards, initialize the new sequence at the end (in case there is one)
+			if(m_sequence != null) m_sequence.Goto(1f);
+		}
+
+		// Broadcast pre-animation event
+		OnHidePreAnimation.Invoke(this);
+
+		// Trigger the animation!
+		LaunchHideAnimation(_animate);
+
+		// If configured, look for all children containing a ShowHideAnimator component and trigger it!
+		if(_propagateToChildren && m_triggerChildren) {
+			ShowHideAnimator[] animators = GetComponentsInChildren<ShowHideAnimator>(false);	// Exclude inactive ones - if they're inactive we probably don't want to show them!
+			for(int i = 0; i < animators.Length; i++) {
+				// Skip ourselves
+				if(animators[i] == this) continue;
+
+				// Skip if not allowed
+				if(!animators[i].m_canBeTriggeredByParents) continue;
+
+				// Hide but don't disable them, otherwise they won't be shown again when triggering the show animation!
+				// Using internal method directly
+				animators[i].InternalHide(_animate, false, false, _restartAnim);
+			}
+		}
+
+		// If not animating, do immediate post-processing
+		if(!_animate) {
+			DoHidePostProcessing();
+		}
 	}
 
 	/// <summary>

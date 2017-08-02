@@ -23,7 +23,7 @@ public class ParticleControl : MonoBehaviour {
         m_initialized = true;
 	}
 
-	public void Play(ParticleData _data) {
+	public void Play(ParticleData _data = null) {
         if (!m_initialized) {
             FindSystems();
 		}
