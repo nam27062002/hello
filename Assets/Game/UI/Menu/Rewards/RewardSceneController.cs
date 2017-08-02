@@ -53,6 +53,10 @@ public class RewardSceneController : MonoBehaviour {
 	[Separator("SFX")]
 	[SerializeField] private string m_eggTapSFX = "";
 	[SerializeField] private string m_eggExplosionSFX = "";
+	[SerializeField] private string m_scSFX = "";
+	[SerializeField] private string m_pcSFX = "";
+	[SerializeField] private string m_goldenFragmentsSFX = "";
+	[SerializeField] private string m_goldenEggCompletedSFX = "";
 
 	[Separator("Others")]
 	[Tooltip("Will replace the camera snap point for the photo screen when doing photos to the egg reward.")]
@@ -221,8 +225,12 @@ public class RewardSceneController : MonoBehaviour {
 	/// <param name="_dragController">Drag controller to be used for rewards.</param>
 	/// <param name="_rewardInfoUI">UI widget used to display the info on the reward.</param>
 	public void InitReferences(DragControlRotation _dragController, RewardInfoUI _rewardInfoUI) {
+		// Store and initialize drag controller
 		m_dragController = _dragController;
+
+		// Store and initialize UI
 		m_rewardInfoUI = _rewardInfoUI;
+		m_rewardInfoUI.goldenEggCompletedSFX = m_goldenEggCompletedSFX;
 	}
 
 	/// <summary>
@@ -310,9 +318,6 @@ public class RewardSceneController : MonoBehaviour {
 
 		// Launch a nice animation
 		if(replacementRewardView != null) {
-			// Restart infinite rotation tween
-			replacementRewardView.transform.DORestart();
-
 			// Reward acceleration
 			// Make it compatible with the drag controller!
 			Vector2 baseIdleVelocity = m_dragController.idleVelocity;
@@ -351,15 +356,18 @@ public class RewardSceneController : MonoBehaviour {
 
 			// Show replacement UI info
 			seq.AppendCallback(() => {
-				// Depending on replacement type, show different texts
+				// Depending on replacement type, show different texts and play different sounds
 				string replacementInfoText = "";
+				string sfx = "";
 				if(_petReward.replacement.currency == UserProfile.Currency.GOLDEN_FRAGMENTS) {
+					sfx = m_goldenFragmentsSFX;
 					replacementInfoText = LocalizationManager.SharedInstance.Localize(
 						"TID_EGG_REWARD_DUPLICATED_1", 
 						_petReward.def.GetLocalized("tidName"), 
 						StringUtils.FormatNumber(_petReward.replacement.amount)
 					);
 				} else if(_petReward.replacement.currency == UserProfile.Currency.SOFT) {
+					sfx = m_scSFX;
 					replacementInfoText = LocalizationManager.SharedInstance.Localize(
 						"TID_EGG_REWARD_DUPLICATED_2", 
 						_petReward.def.GetLocalized("tidName"), 
@@ -367,6 +375,7 @@ public class RewardSceneController : MonoBehaviour {
 					);
 				}
 				m_rewardInfoUI.InitAndAnimate(_petReward.replacement, replacementInfoText);
+				AudioController.Play(sfx);
 			});
 
 			// Replacement reward initial inertia and scale up
@@ -408,7 +417,17 @@ public class RewardSceneController : MonoBehaviour {
 		Sequence seq = DOTween.Sequence();
 
 		seq.AppendCallback(() => {
+			// Show UI
 			m_rewardInfoUI.InitAndAnimate(_currencyReward);
+
+			// Trigger SFX, depends on currency type
+			string sfx = "";
+			switch(_currencyReward.currency) {
+				case UserProfile.Currency.SOFT: sfx = m_scSFX; break;
+				case UserProfile.Currency.HARD: sfx = m_pcSFX; break;
+				case UserProfile.Currency.GOLDEN_FRAGMENTS: sfx = m_goldenFragmentsSFX; break;
+			}
+			AudioController.Play(sfx);
 		});
 
 		seq.Append(m_rewardView.transform.DOScale(0f, 1f).From().SetEase(Ease.OutBack));

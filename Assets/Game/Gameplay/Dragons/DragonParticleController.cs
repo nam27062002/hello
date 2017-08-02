@@ -292,7 +292,7 @@ public class DragonParticleController : MonoBehaviour
 		}
 
 		int size = m_toDeactivate.Count;
-		for( int i = size-1; i>= 0; ++i )
+		for( int i = size-1; i>= 0; --i )
 		{
 			if ( !m_toDeactivate[i].IsAlive() )	
 			{
