@@ -76,6 +76,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		if (m_goToGlobalEventRewardScreen) {
+			EventRewardScreen scr = InstanceManager.menuSceneController.GetScreen(MenuScreens.REWARD).GetComponent<EventRewardScreen>();
+			scr.StartFlow();
 			InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.REWARD);
 			m_goToGlobalEventRewardScreen = false;
 		}

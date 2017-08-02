@@ -70,7 +70,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	public static int eventCode {
 		get {
 			if (sm_eventCode == null) {
-				return 0;
+				return 10;
 			}
 
 			return int.Parse(sm_eventCode.text);
@@ -239,6 +239,13 @@ public class CPGlobalEventsTest : MonoBehaviour {
 		if(_leaderboard) {
 			GlobalEventManager.RequestCurrentEventLeaderboard();
 		}
+	}
+
+	/// <summary>
+	/// Forces a customizer request.
+	/// </summary>
+	public void OnRequestCustomizer() {
+		GlobalEventManager.TMP_RequestCustomizer();
 	}
 
 	/// <summary>

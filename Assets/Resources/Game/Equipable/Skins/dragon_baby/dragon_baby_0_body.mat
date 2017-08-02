@@ -10,169 +10,88 @@ Material:
   m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2010
   stringTagMap: {}
+  disabledShaderPasses: []
   m_SavedProperties:
-    serializedVersion: 2
+    serializedVersion: 3
     m_TexEnvs:
-    - first:
-        name: _BumpMap
-      second:
-        m_Texture: {fileID: 2800000, guid: 409be444e27cfaf4e8d20cf2e884a91b, type: 3}
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: 9413984af4c0b6948aeac8f350b4c6c9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailAlbedoMap
-      second:
+    - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailMask
-      second:
+    - _DetailMask:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailNormalMap
-      second:
+    - _DetailNormalMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailTex
-      second:
-        m_Texture: {fileID: 2800000, guid: 652f4ceb3761b974a94c8e5e57f77076, type: 3}
+    - _DetailTex:
+        m_Texture: {fileID: 2800000, guid: 01d352f5a7eb482419e901f7c7236d1b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _EmissionMap
-      second:
+    - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MainTex
-      second:
+    - _MainTex:
         m_Texture: {fileID: 2800000, guid: 255f4642216a02643bff73728a6ff4b7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MetallicGlossMap
-      second:
+    - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _OcclusionMap
-      second:
+    - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _ParallaxMap
-      second:
+    - _ParallaxMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _ReflectionMap
-      second:
+    - _ReflectionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - first:
-        name: _Alpha_as_depth
-      second: 0
-    - first:
-        name: _BumpScale
-      second: 1
-    - first:
-        name: _Cutoff
-      second: 0.5
-    - first:
-        name: _DetailNormalMapScale
-      second: 1
-    - first:
-        name: _DstBlend
-      second: 0
-    - first:
-        name: _EmissionScaleUI
-      second: 0
-    - first:
-        name: _Fresnel
-      second: 1.65
-    - first:
-        name: _Glossiness
-      second: 0.5
-    - first:
-        name: _InnerLightAdd
-      second: 0
-    - first:
-        name: _Metallic
-      second: 0
-    - first:
-        name: _Mode
-      second: 0
-    - first:
-        name: _NormalStrenght
-      second: 1
-    - first:
-        name: _OcclusionStrength
-      second: 1
-    - first:
-        name: _Parallax
-      second: 0.02
-    - first:
-        name: _ReflectionAmount
-      second: 0
-    - first:
-        name: _SpecExponent
-      second: 6.68
-    - first:
-        name: _SrcBlend
-      second: 1
-    - first:
-        name: _StencilMask
-      second: 10
-    - first:
-        name: _UVSec
-      second: 0
-    - first:
-        name: _ZWrite
-      second: 1
+    - _Alpha_as_depth: 0
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _EmissionScaleUI: 0
+    - _Fresnel: 10
+    - _Glossiness: 0.5
+    - _InnerLightAdd: 0
+    - _Metallic: 0
+    - _Mode: 0
+    - _NormalStrenght: 1
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _ReflectionAmount: 0
+    - _SpecExponent: 6.68
+    - _SrcBlend: 1
+    - _StencilMask: 10
+    - _UVSec: 0
+    - _ZWrite: 1
     m_Colors:
-    - first:
-        name: _AmbientAdd
-      second: {r: 0, g: 0, b: 0, a: 0}
-    - first:
-        name: _Color
-      second: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
-    - first:
-        name: _ColorAdd
-      second: {r: 0.04411763, g: 0.04411763, b: 0.04411763, a: 0}
-    - first:
-        name: _ColorMultiply
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _EmissionColor
-      second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _EmissionColorUI
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _FresnelColor
-      second: {r: 0.31525734, g: 0.33420384, b: 0.3602941, a: 1}
-    - first:
-        name: _InnerLightColor
-      second: {r: 0.45263842, g: 0.57458836, b: 0.6764706, a: 1}
-    - first:
-        name: _SecondLightColor
-      second: {r: 0.30709344, g: 0.3708419, b: 0.52205884, a: 0}
-    - first:
-        name: _SecondLightDir
-      second: {r: 0.82, g: -2.75, b: 2.67, a: 0.45}
-    - first:
-        name: _Tint
-      second: {r: 0.9044118, g: 0.9044118, b: 0.9044118, a: 1}
+    - _AmbientAdd: {r: 0.08823532, g: 0.08823532, b: 0.08823532, a: 0}
+    - _Color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
+    - _ColorAdd: {r: 0.08823532, g: 0.08823532, b: 0.08823532, a: 0}
+    - _ColorMultiply: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
+    - _FresnelColor: {r: 0.44290656, g: 0.45455194, b: 0.4705882, a: 1}
+    - _InnerLightColor: {r: 0.28676468, g: 0.13283953, b: 0.13283953, a: 1}
+    - _SecondLightColor: {r: 0.38570502, g: 0.5609922, b: 0.9044118, a: 0}
+    - _SecondLightDir: {r: 0.82, g: -2.75, b: 2.67, a: 0.45}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}

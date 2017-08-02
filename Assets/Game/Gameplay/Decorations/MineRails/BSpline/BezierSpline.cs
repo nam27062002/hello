@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace BSpline {
 	public class BezierSpline : MonoBehaviour {
-		private struct SplineSegment {
+		public struct SplineSegment {
 			public Vector3 p0;
 			public Vector3 p1;
 			public Vector3 direction;
@@ -23,6 +23,8 @@ namespace BSpline {
 		[SerializeField][HideInInspector] private float m_arcLength;
 		public float length { get { return m_arcLength; } }
 
+		private bool m_isDirty3D = false;
+		public bool isDirty3D { get { bool isDirty = m_isDirty3D; m_isDirty3D = false; return isDirty; } }
 
 		public int controlPointCount 	{ get { return m_points.Length; } }
 		public int splineCount 			{ get { return (m_points.Length - 1) / 3; } }
@@ -135,22 +137,45 @@ namespace BSpline {
 		}
 
 		public Vector3 GetPointAtDistance(float _distance, ref Vector3 _direction, ref Vector3 _up, ref Vector3 _right) {
+			if (m_segments == null) {
+				CalculateArcLength();
+			}
+
 			SplineSegment data;
 			if (_distance >= m_arcLength) {
 				data = m_segments.Last();
 				_distance = data.length;
+				_direction = data.direction;
 			} else {
 				int s = 0;
-				while (_distance > m_segments[s].length) {
+				while (s < m_segments.Count && _distance > m_segments[s].length) {
 					_distance -= m_segments[s].length;
 					s++;
 				}
-				data = m_segments[s];
+				if (s < m_segments.Count) {
+					data = m_segments[s];
+					_direction = data.direction;
+
+					float p = _distance / data.length;
+					if (p < 0.3f) {
+						if (s > 0) {
+							_direction += m_segments[s - 1].direction;
+							_direction.Normalize();
+						}
+					} else if (p > 0.6f) {
+						if (s < m_segments.Count - 1) {
+							_direction += m_segments[s + 1].direction;
+							_direction.Normalize();
+						}
+					}
+				} else {
+					data = m_segments.Last();
+					_distance = data.length;
+					_direction = data.direction;
+				}
 			}
 
-			_direction = data.direction;
-
-			Vector3 forward = data.direction;
+			Vector3 forward = _direction;
 			_right = Vector3.Cross(Vector3.up, forward);
 			_up = Vector3.Cross(forward, _right);
 
@@ -175,15 +200,17 @@ namespace BSpline {
 		}
 
 		public void AddSpline() {
-			Vector3 point = m_points[m_points.Length - 1];
+			SplineSegment lastSegment = m_segments.Last();
+			Vector3 point = lastSegment.p1;
 			Array.Resize(ref m_points, m_points.Length + 3);
 			Array.Resize(ref m_splineLength, m_splineLength.Length + 1);
 
-			point.x += 1f;
+			//we'll create the new spline along last node direction
+			point += lastSegment.direction;
 			m_points[m_points.Length - 3] = point;
-			point.x += 1f;
+			point += lastSegment.direction;
 			m_points[m_points.Length - 2] = point;
-			point.x += 1f;
+			point += lastSegment.direction;
 			m_points[m_points.Length - 1] = point;
 
 			Array.Resize(ref m_modes, m_modes.Length + 1);
@@ -251,6 +278,8 @@ namespace BSpline {
 			}
 
 			SplitIntoSegments();
+
+			m_isDirty3D = true;
 		}
 
 		// t0 and t1 are time values along all the splines. Values from 0 to splineCount

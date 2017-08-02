@@ -3,13 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[RequireComponent(typeof(MeshFilter))]
-[RequireComponent(typeof(MeshRenderer))]
 [ExecuteInEditMode]
 public class RailMeshBuilder : MonoBehaviour {
 
 	[SerializeField] private BSpline.BezierSpline m_spline;
 	[SerializeField] private float m_subdivisions = 10f;
+	[SerializeField] private float m_distancePerGameObject = 3f;
+	[SerializeField] private float m_uvScale = 1f;
+	[SerializeField] private Material m_material;
+
+	private float m_currentSubdivisions = 0f;
+	private float m_currentUVscale = 0f;
+
+
+
 
 
 	// Use this for initialization
@@ -20,69 +27,108 @@ public class RailMeshBuilder : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		if (m_spline != null) {
-			m_spline.CalculateArcLength();
+			bool isDirty = m_spline.isDirty3D || (m_currentSubdivisions != m_subdivisions) || (m_currentUVscale != m_uvScale);
 
-			List<Vector3> verticesLeft = new List<Vector3>();
-			List<Vector3> verticesRight = new List<Vector3>();
+			if (isDirty) {
+				while (transform.childCount > 0) {
+					Transform child = transform.GetChild(0);
+					child.parent = null;
+					GameObject.DestroyImmediate(child.gameObject);
+				}
 
-			for (float t = 0f; t < 1f; t += 1f / m_subdivisions) {
-				Vector3 point = m_spline.GetPoint(t);
-				Vector3 forward = m_spline.GetDirection(t);
-				Vector3 up = m_spline.GetUpVector(t);
-
-				Vector3 right = Vector3.Cross(forward, up);
-
-				CreateRailAt(point + right * 0.325f, up, -right, ref verticesRight);
-				CreateRailAt(point - right * 0.325f, up, -right, ref verticesLeft);
+				float dist = 0;
+				while ((dist + m_distancePerGameObject) < m_spline.length) {
+					BuildRail(dist, dist + m_distancePerGameObject, m_subdivisions);
+					dist += m_distancePerGameObject;
+				}
+				BuildRail(dist, m_spline.length, m_subdivisions * 0.5f);
 			}
-
-			Vector3 pointLast = m_spline.GetPoint(1f);
-			Vector3 forwardLast = m_spline.GetDirection(1f);
-			Vector3 upLast = m_spline.GetUpVector(1f);
-
-			Vector3 rightLast = Vector3.Cross(forwardLast, upLast);
-
-			CreateRailAt(pointLast + rightLast * 0.325f, upLast, -rightLast, ref verticesRight);
-			CreateRailAt(pointLast - rightLast * 0.325f, upLast, -rightLast, ref verticesLeft);
-
-			MeshFilter meshFilter = GetComponent<MeshFilter>();
-			if (meshFilter.sharedMesh != null) meshFilter.sharedMesh = null;
-
-			Mesh mesh = meshFilter.sharedMesh;
-			if (mesh == null) {
-				mesh = new Mesh();
-				mesh.name = name + "_Mesh";
-				meshFilter.mesh = mesh;
-			}
-
-			float distanceBetweenTies = 1f;
-			int woodTieCount = (int)(m_spline.length / distanceBetweenTies);
-
-			CombineInstance[] combine = new CombineInstance[2 + woodTieCount];
-			combine[0].mesh = new Mesh();
-			combine[0].mesh.vertices = verticesRight.ToArray();
-			combine[0].mesh.triangles = Triangulate(verticesRight);
-			combine[0].mesh.RecalculateNormals();
-
-			combine[1].mesh = new Mesh();
-			combine[1].mesh.vertices = verticesLeft.ToArray();
-			combine[1].mesh.triangles = Triangulate(verticesLeft);
-			combine[1].mesh.RecalculateNormals();
-
-			float dist = distanceBetweenTies * 0.5f;
-			for (int i = 0; i < woodTieCount; ++i) {
-				Vector3 dir = Vector3.zero;
-				Vector3 up = Vector3.zero;
-				Vector3 right = Vector3.zero;
-				Vector3 point = m_spline.GetPointAtDistance(dist, ref dir, ref up, ref right);
-
-				combine[2 + i].mesh = CreateWoodTie(point, up, right, dir);
-
-				dist += distanceBetweenTies;
-			}
-
-			mesh.CombineMeshes(combine, true, false);
 		}
+	}
+
+	void BuildRail(float _fromDist, float _toDist, float _subdivisions) {
+		// Create game object
+		GameObject obj = new GameObject("Rail");
+		obj.transform.SetParent(transform, false);
+		MeshRenderer renderer =obj.AddComponent<MeshRenderer>();
+		MeshFilter meshFilter = obj.AddComponent<MeshFilter>();
+		UnityEditor.GameObjectUtility.SetStaticEditorFlags(obj, UnityEditor.StaticEditorFlags.LightmapStatic);
+		//
+
+		float totalDistance = _toDist - _fromDist;
+
+		_subdivisions = Mathf.Max(1f, _subdivisions);
+
+		m_currentSubdivisions = _subdivisions;
+		m_currentUVscale = m_uvScale;
+
+		List<Vector3> verticesLeft = new List<Vector3>();
+		List<Vector3> verticesRight = new List<Vector3>();
+
+		float distance = 0f;
+		float step = totalDistance / _subdivisions;
+		for (distance = _fromDist; distance < _toDist; distance += step) {
+			Vector3 dir = Vector3.zero;
+			Vector3 up = Vector3.zero;
+			Vector3 right = Vector3.zero;
+			Vector3 point = m_spline.GetPointAtDistance(distance, ref dir, ref up, ref right);
+
+			CreateRailAt(point + right * 0.325f, up, right, ref verticesRight);
+			CreateRailAt(point - right * 0.325f, up, right, ref verticesLeft);
+		}
+
+		Vector3 forwardLast = Vector3.zero;
+		Vector3 upLast = Vector3.zero;
+		Vector3 rightLast = Vector3.zero;
+		Vector3 pointLast = m_spline.GetPointAtDistance(_toDist, ref forwardLast, ref upLast, ref rightLast);
+
+		CreateRailAt(pointLast + rightLast * 0.325f, upLast, rightLast, ref verticesRight);
+		CreateRailAt(pointLast - rightLast * 0.325f, upLast, rightLast, ref verticesLeft);
+
+		if (meshFilter.sharedMesh != null) meshFilter.sharedMesh = null;
+
+		Mesh mesh = meshFilter.sharedMesh;
+		if (mesh == null) {
+			mesh = new Mesh();
+			mesh.name = name + "_Mesh";
+			meshFilter.mesh = mesh;
+		}
+
+		float distanceBetweenTies = 1f;
+		int woodTieCount = (int)(totalDistance / distanceBetweenTies);
+
+		CombineInstance[] combine = new CombineInstance[2 + woodTieCount];
+		combine[0].mesh = new Mesh();
+		combine[0].mesh.vertices = verticesRight.ToArray();
+		combine[0].mesh.triangles = Triangulate(verticesRight);
+		combine[0].mesh.RecalculateNormals();
+		combine[0].mesh.RecalculateBounds();
+		combine[0].mesh.SetUVs(0, CreateRailUVs(verticesRight.Count));
+		UnityEditor.Unwrapping.GenerateSecondaryUVSet(combine[0].mesh);
+
+		combine[1].mesh = new Mesh();
+		combine[1].mesh.vertices = verticesLeft.ToArray();
+		combine[1].mesh.triangles = Triangulate(verticesLeft);
+		combine[1].mesh.RecalculateNormals();
+		combine[1].mesh.RecalculateBounds();
+		combine[1].mesh.SetUVs(0, CreateRailUVs(verticesLeft.Count));
+		UnityEditor.Unwrapping.GenerateSecondaryUVSet(combine[1].mesh);
+
+		float dist = _fromDist + distanceBetweenTies * 0.5f;
+		for (int i = 0; i < woodTieCount; ++i) {
+			Vector3 dir = Vector3.zero;
+			Vector3 up = Vector3.zero;
+			Vector3 right = Vector3.zero;
+			Vector3 point = m_spline.GetPointAtDistance(dist, ref dir, ref up, ref right);
+
+			combine[2 + i].mesh = CreateWoodTie(point, up, right, dir);
+
+			dist += distanceBetweenTies;
+		}
+
+		mesh.CombineMeshes(combine, true, false);
+
+		renderer.sharedMaterial = m_material;
 	}
 
 	private void CreateRailAt(Vector3 _point, Vector3 _up, Vector3 _right, ref List<Vector3> _vertices) {
@@ -94,6 +140,29 @@ public class RailMeshBuilder : MonoBehaviour {
 		_vertices.Add(_point - _up * 0.05f - _right * 0.10f);
 		_vertices.Add(_point + _up * 0.00f - _right * 0.10f);
 		_vertices.Add(_point + _up * 0.00f - _right * 0.05f);
+	}
+
+	private List<Vector2> CreateRailUVs(int vCount) {
+		List<Vector2> uvs = new List<Vector2>();
+		float vStep = (1f / m_uvScale);
+		float v = 0;
+
+		for (int i = 0; i < vCount; i += 8) {
+			uvs.Add(new Vector2(0.175f, v));
+			uvs.Add(new Vector2(0.330f, v));
+			uvs.Add(new Vector2(0.450f, v));
+			uvs.Add(new Vector2(0.500f, v));
+			uvs.Add(new Vector2(0.45f, v));
+			uvs.Add(new Vector2(0.020f, v));
+			uvs.Add(new Vector2(0.060f, v));
+			uvs.Add(new Vector2(0.055f, v));
+
+			v += vStep;
+			if (v > 1f)
+				v = 0f;
+		}
+
+		return uvs;
 	}
 
 	private Mesh CreateWoodTie(Vector3 _point, Vector3 _up, Vector3 _right, Vector3 _dir) {
@@ -121,7 +190,26 @@ public class RailMeshBuilder : MonoBehaviour {
 		mesh.vertices = vertices.ToArray();
 		mesh.triangles = triangles;
 		mesh.RecalculateNormals();
+		mesh.RecalculateBounds();
+		mesh.SetUVs(0, CreateTieUVs());
+		UnityEditor.Unwrapping.GenerateSecondaryUVSet(mesh);
+
 		return mesh;
+	}
+
+	private List<Vector2> CreateTieUVs() {
+		List<Vector2> uvs = new List<Vector2>();
+		uvs.Add(new Vector2(1.0f, 0.0f));
+		uvs.Add(new Vector2(1.0f, 1.0f));
+		uvs.Add(new Vector2(0.5f, 1.0f));
+		uvs.Add(new Vector2(0.5f, 0.0f));
+
+		uvs.Add(new Vector2(1.0f, 0.0f));
+		uvs.Add(new Vector2(1.0f, 1.0f));
+		uvs.Add(new Vector2(0.5f, 1.0f));
+		uvs.Add(new Vector2(0.5f, 0.0f));
+
+		return uvs;
 	}
 
 	private int[] Triangulate(List<Vector3> _vertices) {

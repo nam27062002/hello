@@ -86,9 +86,9 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	}
 
 	/// <summary>
-	/// The popup is about to open.
+	/// The popup has just finished open.
 	/// </summary>
-	public void OnOpenPreAnimation() {
+	public void OnOpenPostAnimation() {
 		// Scroll to initial language pill
 		string currentLangSku = LocalizationManager.SharedInstance.GetCurrentLanguageSKU();
 		for(int i = 0; i < m_pills.Count; i++) {

@@ -175,7 +175,7 @@ public class RewardInfoUI : MonoBehaviour {
 			// PC
 			case Metagame.RewardHardCurrency.TYPE_CODE: {
 				// Set text
-				m_pcTitle.Localize("TID_EGG_REWARD_GEMS", StringUtils.FormatNumber(_rewardData.amount));	// %U0 Gems!
+				m_pcTitle.Localize("TID_REWARD_PC", StringUtils.FormatNumber(_rewardData.amount));	// %U0 Gems!
 			} break;
 
 			// Egg
