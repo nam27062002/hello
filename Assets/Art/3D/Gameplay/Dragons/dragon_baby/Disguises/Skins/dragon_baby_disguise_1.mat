@@ -6,20 +6,20 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dragon_baby_0_wings
-  m_Shader: {fileID: 4800000, guid: e4ed8932b499b4d62a9afbbbcc368a56, type: 3}
-  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
+  m_Name: dragon_baby_disguise_1
+  m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3020
+  m_CustomRenderQueue: 2010
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 9413984af4c0b6948aeac8f350b4c6c9, type: 3}
+        m_Texture: {fileID: 2800000, guid: 525b3a90a60ac4b768b212b8052a7e67, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -35,7 +35,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: 01d352f5a7eb482419e901f7c7236d1b, type: 3}
+        m_Texture: {fileID: 2800000, guid: f2d2ef995112d93409b2aa21a1a06c8f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -43,7 +43,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 255f4642216a02643bff73728a6ff4b7, type: 3}
+        m_Texture: {fileID: 2800000, guid: bdd140db9c230304d966def94fda0e1d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -63,37 +63,35 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _Alpha_as_depth: 0
     - _BumpScale: 1
-    - _BumpStrength: 3
-    - _Cutoff: 0.148
+    - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DstBlend: 10
+    - _DstBlend: 0
     - _EmissionScaleUI: 0
-    - _Fresnel: 2.44
+    - _Fresnel: 10
     - _Glossiness: 0.5
-    - _InnerLightAdd: 11.68
+    - _InnerLightAdd: 0
     - _Metallic: 0
-    - _Mode: 3
-    - _NoiseValue: 0
+    - _Mode: 0
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReflectionAmount: 0
-    - _SpecExponent: 60.8
+    - _SpecExponent: 6.68
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
-    - _ZWrite: 0
+    - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
-    - _ColorAdd: {r: 0.33823532, g: 0.24969724, b: 0.11689014, a: 1}
+    - _ColorAdd: {r: 0, g: 0.10502028, b: 0.1397059, a: 0}
     - _ColorMultiply: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
-    - _FresnelColor: {r: 0.9558824, g: 0.21754564, b: 0, a: 1}
-    - _InnerLightColor: {r: 0.7794118, g: 0.103157446, b: 0.103157446, a: 0.872}
-    - _NoiseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SecondLightColor: {r: 0.29411763, g: 0.26989618, b: 0.16868511, a: 0}
-    - _SecondLightDir: {r: 0, g: 0, b: -1, a: 0}
-    - _Tint: {r: 0.71323526, g: 0.6835774, b: 0.6607915, a: 1}
+    - _FresnelColor: {r: 0.7077206, g: 0.75732756, b: 0.875, a: 1}
+    - _InnerLightColor: {r: 0.19117647, g: 0.18586601, b: 0.1813365, a: 1}
+    - _SecondLightColor: {r: 0.22188583, g: 0.27383375, b: 0.39705884, a: 0}
+    - _SecondLightDir: {r: 0.82, g: -2.75, b: 2.67, a: 0.45}
+    - _Tint: {r: 0.6838235, g: 0.63354236, b: 0.63354236, a: 1}
