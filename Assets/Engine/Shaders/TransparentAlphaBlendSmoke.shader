@@ -5,6 +5,7 @@ Shader "Hungry Dragon/TransparentAlphaBlend smoke"
 	Properties
 	{
 		_NoiseTex("Noise Texture", 2D) = "white" {}
+		_MaskTex("Mask Texture", 2D) = "white" {}
 		_TintColor("Smoke Color 1", Color) = (0.5,0.5,0.5,0.5)
 		_TintColor2("Smoke Color2", Color) = (0.5,0.5,0.5,0.5)
 		_Speed("SpeedXY1.xy SpeedXY.zw", Vector) = (0.0, 0.0, 0.0, 0.0)
@@ -36,6 +37,7 @@ Shader "Hungry Dragon/TransparentAlphaBlend smoke"
 
 				sampler2D _NoiseTex;
 				float4 _NoiseTex_ST;
+				sampler2D _MaskTex;
 		//fixed4 _TintColor;
 
 				struct appdata_t {
@@ -75,7 +77,7 @@ Shader "Hungry Dragon/TransparentAlphaBlend smoke"
 					float temp_output_73_0 = smoothstep(_SmotthVal.x, _SmotthVal.y, (((t1.r * uv_Noise.y) + (t2.g * uv_Noise.y)) * t1.r * t2.g * ramp * uv_Noise.y));
 //					float4 lerpResult65 = lerp(_ColorA_Instance, _ColorB_Instance, temp_output_73_0);
 
-					return _TintColor * temp_output_73_0;
+					return _TintColor * temp_output_73_0 * tex2D(_MaskTex, i.uv).a;
 				}
 
 				ENDCG
