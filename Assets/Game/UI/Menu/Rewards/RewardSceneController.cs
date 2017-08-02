@@ -50,6 +50,10 @@ public class RewardSceneController : MonoBehaviour {
 	[Tooltip("One per rarity, matching order. None for \"special\".")]
 	[SerializeField] private GameObject[] m_goldenFragmentsRewards = new GameObject[(int)EggReward.Rarity.COUNT - 1];
 
+	[Separator("SFX")]
+	[SerializeField] private string m_eggTapSFX = "";
+	[SerializeField] private string m_eggExplosionSFX = "";
+
 	[Separator("Others")]
 	[Tooltip("Will replace the camera snap point for the photo screen when doing photos to the egg reward.")]
 	[SerializeField] private CameraSnapPoint m_photoCameraSnapPoint = null;
@@ -531,6 +535,9 @@ public class RewardSceneController : MonoBehaviour {
 			m_explosionFX.Play();
 		}
 
+		// Trigger SFX
+		AudioController.Play(m_eggExplosionSFX);
+
 		// Program reward animation
 		UbiBCN.CoroutineManager.DelayedCall(OnEggExplosionAnimFinished, 0.35f, false);
 	}
@@ -575,6 +582,9 @@ public class RewardSceneController : MonoBehaviour {
 
 			// Hide UI
 			m_rewardInfoUI.SetRewardType(string.Empty);
+
+			// Play SFX
+			AudioController.Play(m_eggTapSFX);
 		}
 	}
 
