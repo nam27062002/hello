@@ -118,14 +118,14 @@ public class NavigationScreen : MonoBehaviour {
 		}
 
 		// Additionally look for all children containing a NavigationShowHideAnimator component and trigger it!
-		NavigationShowHideAnimator[] animators = GetComponentsInChildren<NavigationShowHideAnimator>(false);	// Exclude inactive ones - they are already hidden! ^_^
+		/*NavigationShowHideAnimator[] animators = GetComponentsInChildren<NavigationShowHideAnimator>(false);	// Exclude inactive ones - they are already hidden! ^_^
 		for(int i = 0; i < animators.Length; i++) {
 			// Skip ourselves
 			if(animators[i] == m_showHideAnimator) continue;
 
 			// IMPORTANT!! Hide but don't disable them, otherwise they won't be shown again when navigating back to this screen
 			animators[i].ForceHide(useAnim, false);
-		}
+		}*/
 
 		// If no animation was triggered, hide instantly
 		if(!applied) {

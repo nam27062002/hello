@@ -118,9 +118,13 @@ public class ShowHideAnimatorEditor : Editor {
 			} break;
 		}
 
+		// Other stuff
+		EditorGUILayoutExt.Separator();
+		DoProperty("m_triggerChildren");
+		DoProperty("m_canBeTriggeredByParents");
+
 		// Events
 		// Use the expanded attribute of the "OnShowPreAnimation" property so setting is stored per object
-		EditorGUILayout.Space();
 		SerializedProperty onShowPreAnimationProp = serializedObject.FindProperty("OnShowPreAnimation");
 		onShowPreAnimationProp.isExpanded = EditorGUILayout.Foldout(onShowPreAnimationProp.isExpanded, "Events");
 		if(onShowPreAnimationProp.isExpanded) {
