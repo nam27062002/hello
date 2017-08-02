@@ -72,7 +72,6 @@ Shader "Hungry Dragon/TransparentAlphaBlend"
 				fixed4 frag(v2f i) : COLOR
 				{
 #ifdef CUSTOMPARTICLESYSTEM
-					UNITY_SETUP_INSTANCE_ID(i); // necessary only if any instanced properties are going to be accessed in the fragment Shader.__
 					float4 col = _VColor * 0.5;
 #else
 					float4 col = _TintColor;

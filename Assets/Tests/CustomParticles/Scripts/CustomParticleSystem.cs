@@ -198,19 +198,10 @@ public class CustomParticleSystem : MonoBehaviour
         m_totalParticlesEmited = 0;
         m_oldPosition = transform.position;
 
+        Debug.Log("CustomParticleSystem: CurrentTime " + CurrentTime);
         if (m_preWarm)
         {
             InitParticles(1.0f);
-#if (CUSTOMPARTICLES_DRAWMESH)
-            CustomParticleData cp;
-#else
-            CustomParticle cp;
-#endif
-            while ((cp = m_spawnedParticles.Pop()) != null)
-            {
-                cp.m_currentTime -= cp.m_particleDuration * Random.value;
-            }
-
         }
 
 
@@ -240,6 +231,26 @@ public class CustomParticleSystem : MonoBehaviour
             m_particlesStack.Push(cp);
         }
     }
+
+    public void Simulate(float dTime)
+    {
+        InitParticles(dTime);
+        if (m_preWarm)
+        {
+#if (CUSTOMPARTICLES_DRAWMESH)
+            CustomParticleData cp;
+#else
+            CustomParticle cp;
+#endif
+            while ((cp = m_spawnedParticles.Pop()) != null)
+            {
+                Debug.Log("CustomParticle: CurrentTime " + cp.m_currentTime);
+                cp.m_currentTime -= cp.m_particleDuration * Random.value;
+            }
+        }
+    }
+
+
 
 #if (CUSTOMPARTICLES_DRAWMESH)
     public void InitParticles(float dTime)
@@ -297,7 +308,7 @@ public class CustomParticleSystem : MonoBehaviour
             }
         }
     }
-		
+
 
     // Update is called once per frame
     void Update()
@@ -325,7 +336,7 @@ public class CustomParticleSystem : MonoBehaviour
 
         Vector3 dPosition = m_oldPosition - transform.position;
 
-        for (int c = 0; c < m_MaxParticles; c++)
+        for (int c = 0; c < m_MaxParticles; c++) 
         {
             CustomParticleData cp = m_particles[c];
             if (cp.m_active)

@@ -100,6 +100,16 @@ public class Builder : MonoBehaviour
 		// Some feedback
 		UnityEngine.Debug.Log("Generating Android APK at path: " + stagePath);
 
+		// string keyPath = Application.dataPath;
+		// keyPath = keyPath.Substring( 0, keyPath.Length - "Assets".Length);
+		// keyPath += "AndroidKeys/releaseKey.keystore";
+		// PlayerSettings.Android.keystoreName = keyPath;
+		PlayerSettings.Android.keystoreName = "AndroidKeys/releaseKey.keystore";
+
+		PlayerSettings.Android.keystorePass = "android";
+		PlayerSettings.Android.keyaliasName = "androidreleasekey";
+		PlayerSettings.Android.keyaliasPass = "android";
+
 		// Do the build!
 		BuildPipeline.BuildPlayer(GetBuildingScenes(), stagePath, BuildTarget.Android, BuildOptions.None);
 
