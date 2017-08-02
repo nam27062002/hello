@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using TMPro;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -57,9 +58,13 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 		}
 	}
 
-	public void RefreshProgress(float _value) {
+	public void RefreshProgress(float _value, float _animDuration = -1f) {
 		if (m_progressBar != null) {
-			m_progressBar.value = _value;
+			if(_animDuration < 0f) {
+				m_progressBar.value = _value;
+			} else {
+				m_progressBar.DOValue(_value, _animDuration).SetEase(Ease.OutQuad);
+			}
 		}
 
 	}
