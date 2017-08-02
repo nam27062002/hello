@@ -134,6 +134,14 @@ public class CustomParticleSystem : MonoBehaviour
 
     private bool m_playing;
 
+    public float CurrentTime
+    {
+        get
+        {
+            return Time.time;
+        }
+    }
+
     public bool IsPlaying
     {
         get
@@ -177,7 +185,7 @@ public class CustomParticleSystem : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        m_lastParticleTime = Time.realtimeSinceStartup;
+        m_lastParticleTime = CurrentTime;
         m_totalParticlesEmited = 0;
         m_currentCamera = Camera.main;
         Play();
@@ -186,7 +194,7 @@ public class CustomParticleSystem : MonoBehaviour
 
     public void Play()
     {
-        m_startParticleTime = m_lastParticleTime = Time.realtimeSinceStartup;
+        m_startParticleTime = m_lastParticleTime = CurrentTime;
         m_totalParticlesEmited = 0;
         m_oldPosition = transform.position;
 
@@ -260,7 +268,7 @@ public class CustomParticleSystem : MonoBehaviour
                     cp.m_velocity.Set(Random.Range(m_VelX.min, m_VelX.max), Random.Range(m_VelY.min, m_VelY.max), Random.Range(m_VelZ.min, m_VelZ.max));
                     cp.m_initRotZ = Random.Range(m_rotationRange.min, m_rotationRange.max);
                     cp.m_vRotZ = Random.Range(m_vRotationRange.min, m_vRotationRange.max);
-                    cp.m_currentTime = Time.realtimeSinceStartup;
+                    cp.m_currentTime = CurrentTime;
                     cp.m_active = true;
 
 #else
@@ -295,14 +303,14 @@ public class CustomParticleSystem : MonoBehaviour
     void Update()
     {
 
-        float dTime = Time.realtimeSinceStartup - m_lastParticleTime;
+        float dTime = CurrentTime - m_lastParticleTime;
 
         if (m_playing)
         {
             if (!m_loop)
             {
-                float tTime = Time.realtimeSinceStartup - m_startParticleTime;
-                if (tTime > m_systemDuration)
+//                float dTime = CurrentTime - m_startParticleTime;
+                if (dTime > m_systemDuration)
                 {
                     m_playing = false;
                 }
@@ -322,7 +330,7 @@ public class CustomParticleSystem : MonoBehaviour
             CustomParticleData cp = m_particles[c];
             if (cp.m_active)
             {
-                float pTime = Time.realtimeSinceStartup - cp.m_currentTime;
+                float pTime = CurrentTime - cp.m_currentTime;
                 cp.m_velocity += m_gravity * Time.deltaTime;
                 cp.m_position += cp.m_velocity * Time.deltaTime;
                 if (m_local)
