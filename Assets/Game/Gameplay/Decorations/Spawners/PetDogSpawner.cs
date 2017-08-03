@@ -21,7 +21,11 @@ public class PetDogSpawner : AbstractSpawner {
 	[SerializeField] private LookAtVector m_lookAtVector;
 
 	//-------------------------------------------------------------------	
-
+	private IEntity m_operatorEntity;
+	public IEntity operatorEntity
+	{
+		get { return m_operatorEntity; }
+	}
 	private IMachine m_operator;
 	private Pilot m_operatorPilot;
 	public Pilot operatorPilot
@@ -134,6 +138,7 @@ public class PetDogSpawner : AbstractSpawner {
 	public override bool SpawnersCheckCurrents(){ return true; }
 
 	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
+		m_operatorEntity = spawning;
         Transform groundSensor = spawning.transform.Find("groundSensor");
         Transform t = spawning.transform;
         
