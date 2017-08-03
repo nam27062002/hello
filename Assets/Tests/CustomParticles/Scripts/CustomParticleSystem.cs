@@ -201,7 +201,7 @@ public class CustomParticleSystem : MonoBehaviour
         Debug.Log("CustomParticleSystem: CurrentTime " + CurrentTime);
         if (m_preWarm)
         {
-            InitParticles(1.0f);
+            Simulate(1.0f);
         }
 
 
@@ -247,10 +247,9 @@ public class CustomParticleSystem : MonoBehaviour
                 Debug.Log("CustomParticle: CurrentTime " + cp.m_currentTime);
                 cp.m_currentTime -= cp.m_particleDuration * Random.value;
             }
+            m_lastParticleTime = CurrentTime;
         }
     }
-
-
 
 #if (CUSTOMPARTICLES_DRAWMESH)
     public void InitParticles(float dTime)
