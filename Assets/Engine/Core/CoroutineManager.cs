@@ -55,6 +55,23 @@ namespace UbiBCN {
 			_action.Invoke();
 		}
 
+		/// <summary>
+		/// Creates a simple coroutine that waits some frames before triggering an action.
+		/// </summary>
+		/// <returns>The coroutine.</returns>
+		/// <param name="_action">Action to be triggered.</param>
+		/// <param name="_delay">Frames to wait before triggereing the action.</param>
+		private IEnumerator DelayedCoroutineByFrames(Action _action, int _delayFrames) {
+			// If delay is 0, invoke the action immediately
+			while(_delayFrames > 0) {
+				_delayFrames--;
+				yield return new WaitForEndOfFrame();
+			}
+
+			// Trigger the action
+			_action.Invoke();
+		}
+
 		//------------------------------------------------------------------------//
 		// SINGLETON METHODS													  //
 		//------------------------------------------------------------------------//
@@ -67,6 +84,16 @@ namespace UbiBCN {
 		public static void DelayedCall(Action _action, float _delay = 0f, bool _ignoreTimescale = true) {
 			// Launch the coroutine
 			instance.StartCoroutine(instance.DelayedCoroutine(_action, _delay, _ignoreTimescale));
+		}
+
+		/// <summary>
+		/// Trigger an action after some frames.
+		/// </summary>
+		/// <param name="_action">Action to be triggered.</param>
+		/// <param name="_delay">Frames to wait before triggereing the action.</param>
+		public static void DelayedCallByFrames(Action _action, int _delayFrames) {
+			// Launch the coroutine
+			instance.StartCoroutine(instance.DelayedCoroutineByFrames(_action, _delayFrames));
 		}
 
 		/// <summary>
