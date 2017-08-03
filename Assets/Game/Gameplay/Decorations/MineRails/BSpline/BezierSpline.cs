@@ -179,7 +179,7 @@ namespace BSpline {
 			_right = Vector3.Cross(Vector3.up, forward);
 			_up = Vector3.Cross(forward, _right);
 
-			return data.p0 + data.direction * _distance;
+			return transform.TransformPoint(data.p0 + data.direction * _distance);
 		}
 
 

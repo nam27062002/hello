@@ -243,7 +243,7 @@ namespace AI {
 			}
 		}
 
-		void OnCollisionStay(Collision _collision) {
+		protected virtual void OnCollisionStay(Collision _collision) {
 			if (m_motion != null) {
 				if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
 					m_motion.OnCollisionGroundStay(_collision);
@@ -251,7 +251,7 @@ namespace AI {
 			}
 		}
 
-		void OnCollisionExit(Collision _collision) {
+		protected virtual void OnCollisionExit(Collision _collision) {
 			if (m_motion != null) {
 				if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
 					m_motion.OnCollisionGroundExit(_collision);
@@ -261,7 +261,7 @@ namespace AI {
 			SetSignal(Signals.Type.Collision, false);
 		}
 
-		void OnTriggerEnter(Collider _other) {
+		protected virtual void OnTriggerEnter(Collider _other) {
 			OnTriggerStay(_other);
 
 			object[] _params = new object[1]{_other.gameObject};
@@ -277,7 +277,7 @@ namespace AI {
 			}
 		}
 
-		void OnTriggerExit(Collider _other) {
+		protected virtual void OnTriggerExit(Collider _other) {
 			OnTriggerStay(_other);
 
 			SetSignal(Signals.Type.Trigger, false);

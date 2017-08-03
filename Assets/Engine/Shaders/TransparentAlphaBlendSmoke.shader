@@ -7,7 +7,6 @@ Shader "Hungry Dragon/TransparentAlphaBlend smoke"
 		_NoiseTex("Noise Texture", 2D) = "white" {}
 		_MaskTex("Mask Texture", 2D) = "white" {}
 		_TintColor("Smoke Color 1", Color) = (0.5,0.5,0.5,0.5)
-		_TintColor2("Smoke Color2", Color) = (0.5,0.5,0.5,0.5)
 		_Speed("SpeedXY1.xy SpeedXY.zw", Vector) = (0.0, 0.0, 0.0, 0.0)
 		_SmotthVal("SmotthVal", Vector) = (0,0,0,0)
 		_Offset("Offset", Range(0.0, 0.49)) = 0.3
@@ -76,12 +75,15 @@ Shader "Hungry Dragon/TransparentAlphaBlend smoke"
 					float4 t1 = tex2D(_NoiseTex, uv_Noise + (_Speed.xy * _Time.y));
 					float4 t2 = tex2D(_NoiseTex, uv_Noise + (_Speed.zw * _Time.y));
 
-					float ramp =(uv_Noise.y - _Offset) / (0.5 - _Offset);
+					float ramp =(i.uv2.y - _Offset) / (0.5 - _Offset);
 
-					float temp_output_73_0 = smoothstep(_SmotthVal.x, _SmotthVal.y, (((t1.r * uv_Noise.y) + (t2.g * uv_Noise.y)) * t1.r * t2.g * ramp * uv_Noise.y));
-//					float4 lerpResult65 = lerp(_ColorA_Instance, _ColorB_Instance, temp_output_73_0);
+//					float temp_output_73_0 = smoothstep(_SmotthVal.x, _SmotthVal.y, (((t1.r * uv_Noise.y) + (t2.g * uv_Noise.y)) * t1.r * t2.g * ramp * uv_Noise.y));
+//					float temp_output_73_0 = smoothstep(_SmotthVal.x, _SmotthVal.y, ((t1.r + t2.g) * ramp) * t1.r * t2.g * uv_Noise.y);
+					float temp_output_73_0 = smoothstep(_SmotthVal.x, _SmotthVal.y, (((t1.r * ramp) + (t2.g * i.uv2.y)) * t1.r * t2.g * ramp * i.uv2.y));
 
-					return _TintColor * temp_output_73_0 * tex2D(_MaskTex, i.uv2).a;
+//					float4 col = float4(_TintColor.rgb * temp_output_73_0 * tex2D(_MaskTex, i.uv2).r, _TintColor.w);
+					return _TintColor * temp_output_73_0 * tex2D(_MaskTex, i.uv2).r;
+//					return col;
 				}
 
 				ENDCG
