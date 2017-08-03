@@ -8,17 +8,18 @@ Shader "Hungry Dragon/TransparentAlphaBlend smoke"
 		_MaskTex("Mask Texture", 2D) = "white" {}
 		_TintColor("Smoke Color 1", Color) = (0.5,0.5,0.5,0.5)
 		_TintColor2("Smoke Color2", Color) = (0.5,0.5,0.5,0.5)
-		_Speed("SpeedXY1.xy SpeedXY.zw", Vector) = (0.0, 0.0, 0.0, 0.0)
-		_SmotthVal("SmotthVal", Vector) = (0,0,0,0)
+		_Speed("SpeedXY1.xy SpeedXY2.zw", Vector) = (0.0, 0.0, 0.0, 0.0)
+		_SmoothVal("SmoothVal.xy Emission.w", Vector) = (0,0,0,0)
 		_Offset("Offset", Range(0.0, 0.49)) = 0.3
 
 		//		[Toggle(CUSTOMPARTICLESYSTEM)] _EnableCustomParticleSystem("Custom Particle System", int) = 0.0
-		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
+		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest", Float) = 2.0
+		[Enum(Additive, 1, AlphaBlend, 10)] _BlendMode("Blend mode", Float) = 10
 	}
 
 	Category{
 		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
-		Blend SrcAlpha OneMinusSrcAlpha
+		Blend SrcAlpha [_BlendMode]
 		Cull back
 		Lighting Off
 		ZWrite Off
@@ -57,7 +58,7 @@ Shader "Hungry Dragon/TransparentAlphaBlend smoke"
 
 				float4 _TintColor;
 				float4 _Speed;
-				float4 _SmotthVal;
+				float4 _SmoothVal;
 				float _Offset;
 
 				v2f vert(appdata_t v)
@@ -78,10 +79,10 @@ Shader "Hungry Dragon/TransparentAlphaBlend smoke"
 
 					float ramp =(uv_Noise.y - _Offset) / (0.5 - _Offset);
 
-					float temp_output_73_0 = smoothstep(_SmotthVal.x, _SmotthVal.y, (((t1.r * uv_Noise.y) + (t2.g * uv_Noise.y)) * t1.r * t2.g * ramp * uv_Noise.y));
+					float temp_output_73_0 = smoothstep(_SmoothVal.x, _SmoothVal.y, (((t1.r * uv_Noise.y) + (t2.g * uv_Noise.y)) * t1.r * t2.g * ramp * uv_Noise.y));
 //					float4 lerpResult65 = lerp(_ColorA_Instance, _ColorB_Instance, temp_output_73_0);
 
-					return _TintColor * temp_output_73_0 * tex2D(_MaskTex, i.uv2).a;
+					return _TintColor * temp_output_73_0 * tex2D(_MaskTex, i.uv2).a * _SmoothVal.w;
 				}
 
 				ENDCG

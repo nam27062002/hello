@@ -76,12 +76,12 @@ public class ParticleControl : MonoBehaviour {
                     system.m_colorAnimation = _data.colorOvertime;
                 }
             }
-
-            if (system.m_preWarm)
+/*
+            if (system.m_ preWarm)
             {
                 system.Simulate(1.0f);
             }
-
+*/
             system.Play();
         }
 
