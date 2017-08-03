@@ -79,7 +79,7 @@ public class ParticleControl : MonoBehaviour {
 
             if (system.m_preWarm)
             {
-                system.InitParticles(1.0f);
+                system.Simulate(1.0f);
             }
 
             system.Play();
