@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
-  size: {x: 28.595276, y: 8.317092}
+  size: {x: 10, y: 8}
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114661269244186024
 MonoBehaviour:
@@ -66,6 +66,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_rect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 2
+    height: 2
   m_mixEntities: 0
   m_entityPrefabList:
   - name: Surface/PF_Merida
@@ -82,15 +88,19 @@ MonoBehaviour:
   m_rails: 1
   m_hasGroupBonus: 0
   m_minTier: 0
+  m_maxTier: 4
+  m_checkMaxTier: 0
   m_activationChance: 100
   m_activationTriggers: []
+  m_activationKillTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
     min: 280
     max: 280
+  m_isPremiumCurrencyNPC: 0
   m_homePosMethod: 1
   m_homePosDistance:
     min: 0
-    max: 0
+    max: 2
   m_maxSpawns: 0
   m_checkCurrents: 0
