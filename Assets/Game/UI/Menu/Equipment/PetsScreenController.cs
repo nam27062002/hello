@@ -400,9 +400,14 @@ public class PetsScreenController : MonoBehaviour {
 		// Refresh with initial data!
 		Initialize();
 
-		// Reset scroll list and program initial animation
+		// Reset scroll list postiion
 		scrollList.horizontalNormalizedPosition = 0f;
-		scrollList.DOHorizontalNormalizedPos(-10f, 0.5f).From().SetEase(Ease.OutCubic).SetDelay(0.25f).SetUpdate(true);
+
+		// Program initial animation, except if going to a pet
+		if(string.IsNullOrEmpty(m_initialPetSku)) {
+			scrollList.viewport.SetLocalPosX(1000f);
+			scrollList.viewport.DOLocalMoveX(0f, 1f).SetDelay(0.1f).SetEase(Ease.OutQuad);
+		}
 	}
 
 	/// <summary>
