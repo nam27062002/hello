@@ -82,7 +82,7 @@ Shader "Hungry Dragon/TransparentAlphaBlend smoke"
 					float temp_output_73_0 = smoothstep(_SmoothVal.x, _SmoothVal.y, (((t1.r * uv_Noise.y) + (t2.g * uv_Noise.y)) * t1.r * t2.g * ramp * uv_Noise.y));
 //					float4 lerpResult65 = lerp(_ColorA_Instance, _ColorB_Instance, temp_output_73_0);
 
-					return _TintColor * temp_output_73_0 * tex2D(_MaskTex, i.uv2).a * _SmoothVal.w;
+					return _TintColor * temp_output_73_0 * tex2D(_MaskTex, i.uv2).r * _SmoothVal.w;
 				}
 
 				ENDCG

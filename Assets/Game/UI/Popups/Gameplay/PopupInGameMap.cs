@@ -24,6 +24,7 @@ public class PopupInGameMap : PopupPauseBase {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	[SerializeField] private MapScroller m_mapScroller = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -77,4 +78,17 @@ public class PopupInGameMap : PopupPauseBase {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Show the map. To be connected in the open animation.
+	/// </summary>
+	public void ShowMapAnimationEvent() {
+		m_mapScroller.OnOpenPostAnimation();
+	}
+
+	/// <summary>
+	/// Hide the map. To be connected in the close animation.
+	/// </summary>
+	public void HideMapAnimationEvent() {
+		m_mapScroller.OnClosePreAnimation();
+	}
 }

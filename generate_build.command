@@ -328,6 +328,7 @@ if $BUILD_ANDROID; then
             mv "${PROJECT_CODE_NAME}.main.obb" "${OBB_FILE}"
         else
             echo "No aapt found on PATH. I cannot rename obb\n"
+            echo "This is the PATH: $PATH\n"
         fi 
     fi
 fi
