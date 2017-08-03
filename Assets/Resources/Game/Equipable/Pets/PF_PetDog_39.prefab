@@ -539,7 +539,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"possiblePreyList":"Air/PF_FlyingPig","speedMultiplier":1,"eatPauseAfterPreyRelease":{"min":2,"max":3},"dataType":"AI.Behaviour.PetTakePreyToPlayer+PetTakePreyToPlayerData","editorFolded":false},{"waitingTime":{"min":0,"max":1},"dataType":"AI.Behaviour.PetWaitDeactivated+PetWaitDeactivatedData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"timeSecondAction":{"min":5,"max":10},"dataType":"AI.Behaviour.PetDecideDogActionData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"possiblePreyList":"Air/PF_FlyingPig","speedMultiplier":1,"eatPauseAfterPreyRelease":{"min":2,"max":3},"dataType":"AI.Behaviour.PetTakePreyToPlayer+PetTakePreyToPlayerData","editorFolded":false},{"waitingTime":{"min":1,"max":3},"dataType":"AI.Behaviour.PetWaitDeactivated+PetWaitDeactivatedData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"timeSecondAction":{"min":5,"max":10},"dataType":"AI.Behaviour.PetDecideDogActionData","editorFolded":false}]'
   m_databaseKey: PF_PetDog_39
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -798,19 +798,19 @@ MonoBehaviour:
     m_chance: 1
   - m_spawnPrefab: Air/PF_OwlSmall
     m_chance: 1
-  - m_spawnPrefab: Air/PF_EnemyTier0
+  - m_spawnPrefab: Dragon/PF_EnemyTier0
     m_chance: 1
   - m_spawnPrefab: Air/PF_MineSmall
-    m_chance: 1
+    m_chance: 2
   - m_spawnPrefab: Air/PF_MineMedium
-    m_chance: 1
+    m_chance: 2
   - m_spawnPrefab: Air/PF_FlyingPig
-    m_chance: 4
+    m_chance: 2
   - m_spawnPrefab: Surface/PF_Horse
     m_chance: 1
-  - m_spawnPrefab: Surface/PF_Ghost03_Static
+  - m_spawnPrefab: Air/PF_Ghost03
     m_chance: 1
-  - m_spawnPrefab: Surface/PF_Ghost02
+  - m_spawnPrefab: Air/PF_Ghost02
     m_chance: 1
   - m_spawnPrefab: Junk/PF_GoodJunkBottle
     m_chance: 2
