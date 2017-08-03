@@ -282,7 +282,9 @@ public class PetPill : MonoBehaviour {
 	/// Do a short bounce animation on the pill.
 	/// </summary>
 	public void LaunchBounceAnim() {
-		this.transform.DOJump(this.transform.position, 0.15f, 1, 0.15f);
+		//this.transform.DOJump(this.transform.position, 0.15f, 1, 0.15f);
+		this.transform.DOKill(true);
+		this.transform.DOScale(1.25f, 0.25f).SetEase(Ease.OutCubic).SetLoops(2, LoopType.Yoyo);
 	}
 
 	//------------------------------------------------------------------------//

@@ -235,6 +235,7 @@ public class SnappingScrollRect : ScrollRect {
 		// Move content to the target position
 		if(_animate) {
 			// Animate
+			MovementType originalMovementType = this.movementType;
 			m_tweener = DOTween.To(
 				() => { 
 					return content.anchoredPosition; 
@@ -246,7 +247,13 @@ public class SnappingScrollRect : ScrollRect {
 				m_snapAnimDuration)
 				.SetEase(m_snapEase)
 				.SetAutoKill(true)
-				.SetRecyclable(true);	// [AOC] By making it recyclable, we do a "pooling" of this tween type, avoiding creating memory garbage
+				.SetRecyclable(true)	// [AOC] By making it recyclable, we do a "pooling" of this tween type, avoiding creating memory garbage
+				.OnStart(() => {
+					this.movementType = MovementType.Unrestricted;
+				})
+				.OnKill(() => {
+					this.movementType = originalMovementType;
+				});
 		} else {
 			// Don't animate
 			SetContentAnchoredPosition(targetContentPos); 

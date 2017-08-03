@@ -572,6 +572,7 @@ public class RewardSceneController : MonoBehaviour {
 		// Drag controller must be valid
 		if(m_dragController == null) return;
 
+		// Reset current target to its original value
 		m_dragController.RestoreOriginalValue(false);
 
 		// Just do it!
