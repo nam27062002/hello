@@ -4,6 +4,7 @@ using UnityEngine;
 
 
 [ExecuteInEditMode]
+[RequireComponent(typeof(BSpline.BezierSpline))]
 public class RailMeshBuilder : MonoBehaviour {
 
 	[SerializeField] private BSpline.BezierSpline m_spline;
@@ -101,7 +102,7 @@ public class RailMeshBuilder : MonoBehaviour {
 		}
 
 		int tieCount = m_tieCountPerGameObject;
-		float distBetweenTies = (m_distancePerGameObject / (float)m_tieCountPerGameObject);
+		float distBetweenTies = (m_distancePerGameObject / (float)(m_tieCountPerGameObject + 1));
 		tieCount = (int)(totalDistance / distBetweenTies);
 
 		CombineInstance[] combine = new CombineInstance[2 + tieCount];
