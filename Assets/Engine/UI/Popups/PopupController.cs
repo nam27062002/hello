@@ -30,6 +30,9 @@ public class PopupController : MonoBehaviour {
 	private bool m_isOpen = false;
 	public bool isOpen { get { return m_isOpen; }}
 
+	private bool m_isReady = false;
+	public bool isReady { get { return m_isReady; }}
+
 	// Internal
 	private Animator m_anim = null;
 	private bool m_destroyAfterClose = true;
@@ -145,6 +148,7 @@ public class PopupController : MonoBehaviour {
 	private void OnOpenAnimFinished() {
 		// Invoke event
 		OnOpenPostAnimation.Invoke();
+		m_isReady = true;
 	}
 
 	/// <summary>
@@ -154,6 +158,7 @@ public class PopupController : MonoBehaviour {
 	private void OnCloseAnimationFinished() {
 		// Update state
 		m_isOpen = false;
+		m_isReady = false;
 
 		// Invoke event
 		OnClosePostAnimation.Invoke();
