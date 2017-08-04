@@ -3,8 +3,7 @@ using System;
 
 namespace AI {
 	[Serializable]
-	public sealed class MC_MotionWagon : MC_Motion {		
-
+	public sealed class MC_MotionWagon : MC_Motion {
 		private BSpline.BezierSpline m_rails;
 		public BSpline.BezierSpline rails { 
 			set { 
@@ -14,29 +13,49 @@ namespace AI {
 		}
 
 		private Vector3 m_right;
+		private float m_acceleration;
 
 		private float m_distanceMoved;
 
 		//--------------------------------------------------
-		protected override void ExtendedInit() {
-			m_rbody.isKinematic = true;
-			m_distanceMoved = 0;
+		protected override void ExtendedInit() {			
+			m_distanceMoved = 0f;
+			m_acceleration = 0f;
 		}
 
 		protected override void ExtendedUpdate() {
-			if (m_distanceMoved > m_rails.length) {
-				m_velocity = m_direction * m_pilot.speed;
-				m_rbody.isKinematic = false;
+			if (m_distanceMoved >= m_rails.length) {				
 				//check free fall conditions
+				m_externalVelocity = m_velocity * 2f;
+				m_velocity = Vector3.zero;
 				FreeFall();
 			}
 		}
 
 		protected override void ExtendedFixedUpdate() {
 			// move along our path
-			m_distanceMoved += m_pilot.speed * Time.fixedDeltaTime;
+			float dt = Time.fixedDeltaTime;
+			float speed = m_pilot.speed;// - (m_direction.y * m_pilot.speed * 0.9f);
+
+			if (m_direction.y < 0) { // going down
+				m_acceleration += Math.Abs(m_direction.y) * 0.5f;
+				if (m_acceleration > m_pilot.speed * 2f) 
+					m_acceleration = m_pilot.speed * 2f;
+			} else { // going up
+				m_acceleration -= m_direction.y * 0.25f;
+				if (m_acceleration < -m_pilot.speed * 0.25f) 
+					m_acceleration = -m_pilot.speed * 0.25f;
+			}
+
+			speed += m_acceleration;
+
+			m_velocity = m_direction * speed;
+
+			m_distanceMoved += speed * dt;
 			if (m_distanceMoved < m_rails.length) {				
 				m_machine.position = m_rails.GetPointAtDistance(m_distanceMoved, ref m_direction, ref m_upVector, ref m_right);
+			} else {
+				//m_machine.position += m_velocity * dt * 0.5f;
 			}
 		}
 
