@@ -317,20 +317,13 @@ if $BUILD_ANDROID; then
 	rm -f "androidBuildVersion.txt";
 	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}";
 
-    if $GENERATE_OBB; then
-        HAS_AAPT=false
-        if type aapt &>/dev/null; then
-            HAS_AAPT=true
-        fi
-        if $HAS_AAPT; then
-            PACKAGE_NAME="$(aapt dump badging ${STAGE_APK_FILE}.apk | grep package | awk '{print $2}' | sed s/name=//g | sed s/\'//g)"
-            OBB_FILE="main.${ANDROID_BUILD_VERSION}.${PACKAGE_NAME}.obb"
-            mv "${PROJECT_CODE_NAME}.main.obb" "${OBB_FILE}"
-        else
-            echo "No aapt found on PATH. I cannot rename obb\n"
-            echo "This is the PATH: $PATH\n"
-        fi 
-    fi
+  if $GENERATE_OBB; then
+    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputBundleIdentifier"
+    PACKAGE_NAME="$(cat bundleIdentifier.txt)"
+    rm -f "bundleIdentifier.txt"
+    OBB_FILE="main.${ANDROID_BUILD_VERSION}.${PACKAGE_NAME}.obb"
+    mv "${PROJECT_CODE_NAME}.main.obb" "${OBB_FILE}"
+  fi
 fi
 
 # Generate iOS build
