@@ -83,7 +83,8 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
         } else {
             // 1 second to wait before calling the callback because of an error on the blocker popup that prevents the popup from being closed when close() is
             // called immediately after open() was called
-            UbiBCN.CoroutineManager.DelayedCall(() => OnRewardedResult(AdsManager.EPlayResult.TIMEOUT), 1);            
+            //UbiBCN.CoroutineManager.DelayedCall(() => OnRewardedResult(AdsManager.EPlayResult.TIMEOUT), 1);
+			UbiBCN.CoroutineManager.DelayedCall(() => OnRewardedResult(AdsManager.EPlayResult.PLAYED), 1);	// [AOC] TEMP!! Simulate the ad was viewed while we try to fix some weird bug with ads not being given sometimes
         }       
 	}
 
