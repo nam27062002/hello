@@ -353,7 +353,7 @@ MonoBehaviour:
       Volume: 1
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 0
+      MaxInstanceCount: 1
       Delay: 0
       RandomVolume: 0
       RandomPitch: 0
@@ -808,6 +808,81 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
+    - Name: hd_pet_selection
+      Loop: 0
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 1
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 1
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: a05ee1990f539364fbbb24a70e69bddc, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: 2ffd33039c7501d4e9e1708a363362eb, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: ec12b92c98737ab48861b1f27d6a4c2b, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
     _volume: 1
     audioMixerGroup: {fileID: 24309366, guid: f9c941808b0b54fa79ff7aae4e1db556, type: 2}
   - Name: MUSIC
@@ -870,7 +945,7 @@ MonoBehaviour:
   _volume: 1
   _currentInspectorSelection:
     currentCategoryIndex: 0
-    currentItemIndex: 17
-    currentSubitemIndex: 0
+    currentItemIndex: 18
+    currentSubitemIndex: 2
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
