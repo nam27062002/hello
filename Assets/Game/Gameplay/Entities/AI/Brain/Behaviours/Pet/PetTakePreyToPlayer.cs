@@ -50,17 +50,16 @@ namespace AI {
 				m_eatBehaviour.AdvanceHold(false);
 				m_petDogSpawner.RamdomizeEntity();
 				m_petDogSpawner.Respawn();
-				Pilot p = m_petDogSpawner.operatorPilot;
-				if ( p != null)
+				m_spawnedEntity = m_petDogSpawner.operatorEntity as Entity;
+				if ( m_spawnedEntity != null)
 				{
-					m_spawnedEntity = p.GetComponent<Entity>();
 					m_spawnedEntity.dieOutsideFrustum = false;
 					m_pilot.SlowDown(false);
 					m_eatBehaviour.StartHold( m_spawnedEntity.machine, true);
 				}
 				else
 				{
-					Debug.TaggedLogError( "PetDog", "No not get pilot on " + m_petDogSpawner.GetSelectedPrefabStr());
+					Debug.TaggedLogError( "PetDog", "No Entity on " + m_petDogSpawner.GetSelectedPrefabStr());
 				}
 			}
 

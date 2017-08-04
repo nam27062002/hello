@@ -336,7 +336,6 @@ GameObject:
   - component: {fileID: 224252674970403994}
   - component: {fileID: 222011113283246198}
   - component: {fileID: 114100770016997232}
-  - component: {fileID: 114398565926824232}
   - component: {fileID: 225522857860984860}
   m_Layer: 5
   m_Name: Curtain
@@ -476,7 +475,7 @@ GameObject:
   - component: {fileID: 222656763440161652}
   - component: {fileID: 114853063645243500}
   m_Layer: 5
-  m_Name: 'Top '
+  m_Name: Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1433,7 +1432,7 @@ Animator:
   m_GameObject: {fileID: 1154419844528712}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 22100000, guid: c1a3a7f6189700143bb46af85aeeae87, type: 2}
+  m_Controller: {fileID: 22100000, guid: 8b5cae9da4892544da714d105e85c531, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 2
   m_ApplyRootMotion: 0
@@ -2116,6 +2115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63bd39ba6184c4f0bb3bcf5578954643, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_mapScroller: {fileID: 114800704272642578}
 --- !u!114 &114200581406382460
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2509,6 +2509,8 @@ MonoBehaviour:
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -2894,58 +2896,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_audioId: 
---- !u!114 &114398565926824232
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1194095963756716}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 0
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114412268384017034}
-        m_MethodName: Close
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114412268384017034
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2971,60 +2921,16 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_MethodName: RestartShow
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   OnOpenPostAnimation:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114800704272642578}
-        m_MethodName: OnOpenPostAnimation
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   OnClosePreAnimation:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114800704272642578}
-        m_MethodName: OnClosePreAnimation
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_MethodName: Hide
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   OnClosePostAnimation:
@@ -3208,6 +3114,8 @@ MonoBehaviour:
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -3341,6 +3249,8 @@ MonoBehaviour:
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -3503,6 +3413,8 @@ MonoBehaviour:
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -3735,6 +3647,8 @@ MonoBehaviour:
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -8928,7 +8842,7 @@ RectTransform:
   - {fileID: 224429361524812236}
   - {fileID: 224734287477192720}
   m_Father: {fileID: 224330000158359528}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -9247,13 +9161,13 @@ RectTransform:
   m_Children:
   - {fileID: 224074203028914292}
   - {fileID: 224625364610378262}
-  m_Father: {fileID: 224330000158359528}
+  m_Father: {fileID: 224260828583883862}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -45}
+  m_SizeDelta: {x: 0, y: -190}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224228324929673250
 RectTransform:
@@ -9339,6 +9253,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 224226798024015352}
   - {fileID: 224294165525365650}
   - {fileID: 224517139051288538}
   m_Father: {fileID: 224334783988812784}
@@ -9386,7 +9301,7 @@ RectTransform:
   - {fileID: 224047620571088230}
   - {fileID: 224441757355787102}
   m_Father: {fileID: 224330000158359528}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
@@ -9423,7 +9338,7 @@ RectTransform:
   m_Children:
   - {fileID: 224879649872559148}
   m_Father: {fileID: 224260828583883862}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -9440,7 +9355,6 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 224226798024015352}
   - {fileID: 224951924269691522}
   - {fileID: 224277184920950572}
   - {fileID: 224958892374895274}
@@ -9694,7 +9608,7 @@ RectTransform:
   m_Children:
   - {fileID: 224101386108627406}
   m_Father: {fileID: 224260828583883862}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -10219,7 +10133,7 @@ RectTransform:
   - {fileID: 224700533248363274}
   - {fileID: 224755870198119744}
   m_Father: {fileID: 224330000158359528}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -10240,7 +10154,7 @@ RectTransform:
   - {fileID: 224875244111478434}
   - {fileID: 224504113241201732}
   m_Father: {fileID: 224330000158359528}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -10296,7 +10210,7 @@ CanvasGroup:
   m_Enabled: 1
   m_Alpha: 1
   m_Interactable: 1
-  m_BlocksRaycasts: 0
+  m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
 --- !u!225 &225455937600318792
 CanvasGroup:

@@ -22,6 +22,9 @@ public class GameHUD : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	public GameObject m_speedGameObject;
+	public Button m_pauseButton;
+
+	private bool m_paused = false;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -33,34 +36,64 @@ public class GameHUD : MonoBehaviour {
             Debug_Awake();        
     }
 
+    // Check back button on Android
+	void Update(){
+		if (Input.GetKeyDown(KeyCode.Escape) && CanPause())
+		{
+			OnPauseButton();
+		}
+    }
+
     void OnDestroy() {
         if (ApplicationManager.IsAlive && FeatureSettingsManager.IsDebugEnabled)
             Debug_OnDestroy();
     }    
 
+    bool CanPause(){
+    	if (!m_paused){
+			if (m_pauseButton.IsInteractable()){
+				return m_pauseButton.IsInteractable();
+			}
+			return false;
+    	}
+    	return false;
+    }
+
     //------------------------------------------------------------------//
     // CALLBACKS														//
     //------------------------------------------------------------------//
+
+
+
     /// <summary>
     /// Callback for the pause button.
     /// </summary>
     public void OnPauseButton() {
 		// Open pause popup
-		PopupManager.OpenPopupInstant(PopupPause.PATH);
+		m_paused = true;
+		PopupController popupController = PopupManager.OpenPopupInstant(PopupPause.PATH);
+		popupController.OnClosePostAnimation.AddListener(Unpaused);
 	}
 
+	void Unpaused(){
+		m_paused = false;
+	}
 	/// <summary>
 	/// Callback for the map button.
 	/// </summary>
 	public void OnMapButton() {
-		PopupManager.OpenPopupInstant(PopupInGameMap.PATH);
+		m_paused = true;
+		PopupController popupController = PopupManager.OpenPopupInstant(PopupInGameMap.PATH);
+		popupController.OnClosePostAnimation.AddListener(Unpaused);
 	}
 
 	/// <summary>
 	/// Callback for the missions button.
 	/// </summary>
 	public void OnMissionsButton() {
-		PopupManager.OpenPopupInstant(PopupInGameMissions.PATH);
+		m_paused = true;
+		PopupController popupController = PopupManager.OpenPopupInstant(PopupInGameMissions.PATH);
+		popupController.OnClosePostAnimation.AddListener(Unpaused);
 	}
 
 #region debug

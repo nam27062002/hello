@@ -345,6 +345,13 @@ public class Builder : MonoBehaviour
 		sw2.Close();
 	}
 
+	// [MenuItem ("Build/Output Bundle Identifier")]
+	private static void OutputBundleIdentifier(){
+		StreamWriter sw2 = File.CreateText("bundleIdentifier.txt");
+		sw2.WriteLine( PlayerSettings.GetApplicationIdentifier( EditorUserBuildSettings.selectedBuildTargetGroup ) );
+		sw2.Close();
+	}
+
 	// This action will be used to make custom project stuff. Like generating lightmaps or splitting scenes
 	public static void CustomAction()
 	{
