@@ -1031,7 +1031,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     {
         get
         {                  
-            return true;
+            return false;
         }
     }
 
