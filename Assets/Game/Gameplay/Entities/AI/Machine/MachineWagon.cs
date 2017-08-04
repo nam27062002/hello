@@ -24,23 +24,25 @@ namespace AI {
 		}
 
 		// Collision events
-		protected virtual void OnCollisionEnter(Collision _collision) {
+		protected override void OnCollisionEnter(Collision _collision) {
+			if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
+				SetSignal(Signals.Type.Destroyed, true);
+			}
+		}
+
+		protected override void OnCollisionStay(Collision _collision) {
+
+		}
+
+		protected override void OnCollisionExit(Collision _collision) {
 			
 		}
 
-		protected virtual void OnCollisionStay(Collision _collision) {
-
-		}
-
-		protected virtual void OnCollisionExit(Collision _collision) {
+		protected override void OnTriggerEnter(Collider _other) {
 			
 		}
 
-		protected virtual void OnTriggerEnter(Collider _other) {
-			
-		}
-
-		protected virtual void OnTriggerExit(Collider _other) {
+		protected override void OnTriggerExit(Collider _other) {
 			
 		}
 	}
