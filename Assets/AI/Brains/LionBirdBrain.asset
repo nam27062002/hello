@@ -15,14 +15,32 @@ MonoBehaviour:
   - m_name: Wander
     m_componentAssets:
     - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
+  - m_name: Wander Curse
+    m_componentAssets:
+    - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
+    - {fileID: 11400000, guid: 15a25ed0d6b1f46bea5039e70b4c333a, type: 2}
     - {fileID: 11400000, guid: f108278378c454c55bf61b21322ed73a, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
   - m_name: Dead
     m_componentAssets: []
   m_transitionData:
   - to: 1
+    id: onEnemyInSight
+    from: 0
+  - to: 1
+    id: onEnemyInRange
+    from: 0
+  - to: 0
+    id: onCalm
+    from: 1
+  - to: 0
+    id: onSafe
+    from: 1
+  - to: 2
     id: onChewing
     from: -1
-  - to: 1
+  - to: 2
     id: onBurning
     from: -1
   m_firstState_A: 0
