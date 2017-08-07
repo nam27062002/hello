@@ -230,6 +230,35 @@ namespace BSpline {
 			CalculateArcLength();
 		}
 
+		public void DeleteSpline(int _pointIndex) {
+			if (splineCount > 1) {
+				int splineIndex = _pointIndex / 3;
+				int modeIndex = (_pointIndex + 1) / 3;
+
+				if (splineIndex < splineCount - 1) {
+					_pointIndex = splineIndex * 3;
+
+					for (int i = _pointIndex; i < m_points.Length - 3; ++i) {
+						m_points[i] = m_points[i + 3];
+					}
+
+					for (int i = splineIndex; i < splineCount - 1; ++i) {
+						m_splineLength[i] = m_splineLength[i + 1];
+					}
+
+					for (int i = modeIndex; i < m_modes.Length - 1; ++i) {
+						m_modes[i] = m_modes[i + 1];
+					}
+				}
+
+				Array.Resize(ref m_points, m_points.Length - 3);
+				Array.Resize(ref m_splineLength, m_splineLength.Length - 1);
+				Array.Resize(ref m_modes, m_modes.Length - 1);
+
+				CalculateArcLength();
+			}
+		}
+
 		private void EnforceMode(int _index) { 
 			int modeIndex = (_index + 1) / 3; 
 

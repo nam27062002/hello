@@ -21,7 +21,8 @@ public class CustomParticle : MonoBehaviour {
     public float m_initRotZ;
     public float m_vRotZ;
 
-    private float m_currentTime;
+    [HideInInspector]
+    public float m_currentTime;
     public void Init()
     {
         gameObject.SetActive(true);
@@ -54,7 +55,7 @@ public class CustomParticle : MonoBehaviour {
         transform.localScale = Vector3.one * (m_initscale * sv);
 
         Color col = m_pSystem.m_colorAnimation.Evaluate(pTime / m_particleDuration);
-        m_renderer.material.SetColor("_VColor", col);
+//        m_renderer.material.SetColor("_VColor", col);
 
 //        transform.rotation = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, m_initRotZ);
 //        transform.rotation = m_currentCamera.transform.rotation * Quaternion.Euler(0.0f, 0.0f, (m_initRotZ + m_pSystem.m_rotationAnimation.Evaluate(pTime)) * 360.0f);

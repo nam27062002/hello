@@ -120,7 +120,7 @@ public class CustomParticleSystem : MonoBehaviour
 #else
     private CustomParticle[] m_particles;
     public Stack<CustomParticle> m_particlesStack;
-    private Stack<CustomParticleData> m_spawnedParticles;
+    private Stack<CustomParticle> m_spawnedParticles;
 
 #endif
 
@@ -251,9 +251,9 @@ public class CustomParticleSystem : MonoBehaviour
         }
     }
 
-#if (CUSTOMPARTICLES_DRAWMESH)
+//#if (CUSTOMPARTICLES_DRAWMESH)
     public void InitParticles(float dTime)
-#endif
+//#endif
     {
         m_spawnedParticles.Clear();
         m_invRateOverTime = 1.0f / m_RateOverTime;
@@ -356,7 +356,7 @@ public class CustomParticleSystem : MonoBehaviour
 //                stCol.Push(col);
 
                 cp.mat.SetTRS(cp.m_position, rot, Vector3.one * (sv * cp.m_initScale));
-                m_matProp.SetColor("_VColor", col);
+//                m_matProp.SetColor("_VColor", col);
 
                 Graphics.DrawMesh(m_particleMesh, cp.mat, m_particleMaterialInstance, 0, null, 0, m_matProp);
 
