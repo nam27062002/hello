@@ -136,7 +136,7 @@ namespace BSpline {
 			return Vector3.Cross(forward, right);
 		}
 
-		public Vector3 GetPointAtDistance(float _distance, ref Vector3 _direction, ref Vector3 _up, ref Vector3 _right) {
+		public Vector3 GetPointAtDistance(float _distance, ref Vector3 _direction, ref Vector3 _up, ref Vector3 _right, bool _local = false) {
 			if (m_segments == null) {
 				CalculateArcLength();
 			}
@@ -179,7 +179,11 @@ namespace BSpline {
 			_right = Vector3.Cross(Vector3.up, forward);
 			_up = Vector3.Cross(forward, _right);
 
-			return transform.TransformPoint(data.p0 + data.direction * _distance);
+			if (_local) {
+				return data.p0 + data.direction * _distance;
+			} else {
+				return transform.TransformPoint(data.p0 + data.direction * _distance);
+			}
 		}
 
 
