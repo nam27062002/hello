@@ -16,8 +16,9 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 	private OnPlayVideoCallback m_onInterstitialCallback;
 	private OnPlayVideoCallback m_onRewardedCallback;
     private EAdPurpose CurrentAdPurpose { get; set; }
+    private float CurrentAdStartTimestamp { get; set; }
 
-	public void Init()
+    public void Init()
 	{
         if (FeatureSettingsManager.AreAdsEnabled)
         {
@@ -43,6 +44,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
             }
 
             CurrentAdPurpose = EAdPurpose.NONE;
+            CurrentAdStartTimestamp = 0f;
             AdsManager.SharedInstance.Init(interstitialId, rewardId, true, 30);
         }
 	}
@@ -50,7 +52,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 	public void ShowInterstitial(OnPlayVideoCallback callback)
 	{
         m_onInterstitialCallback = callback;
-
+        
         if (FeatureSettingsManager.AreAdsEnabled) {            
             AdsManager.SharedInstance.PlayNotRewarded(OnInsterstitialResult, 5);
         } else {
@@ -77,6 +79,8 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
         // Ad has been requested is tracked
         HDTrackingManager.Instance.Notify_AdStarted(Track_EAdPurposeToAdType(adPurpose), Track_EAdPurposeToRewardType(adPurpose), adAvailable, TRACK_AD_PROVIDER_ID);
 
+        CurrentAdStartTimestamp = Time.unscaledTime;
+
         if (adAvailable) {
             // Ad is requested
             AdsManager.SharedInstance.PlayRewarded(OnRewardedResult, 5);
@@ -96,7 +100,8 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
         // Ad has been finished is tracked
         bool videoWatched = result == AdsManager.EPlayResult.PLAYED;
-        HDTrackingManager.Instance.Notify_AdFinished(Track_EAdPurposeToAdType(CurrentAdPurpose), videoWatched, false, 0, TRACK_AD_PROVIDER_ID);
+        int duration = (int)(Time.unscaledTime - CurrentAdStartTimestamp);
+        HDTrackingManager.Instance.Notify_AdFinished(Track_EAdPurposeToAdType(CurrentAdPurpose), videoWatched, false, duration, TRACK_AD_PROVIDER_ID);
 
         CurrentAdPurpose = EAdPurpose.NONE;
     }
