@@ -191,7 +191,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             // ---------------------------
             // Test toggle pause
-            Debug_ToggleIsPaused();
+            //Debug_ToggleIsPaused();
             // ---------------------------
 
             // ---------------------------
