@@ -289,4 +289,10 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 
         return _popup;
     }
+
+    // Tells if the popup is the latest opened popup
+    public static bool IsLastOpenPopup( PopupController popup ){
+    	return instance.m_openedPopups.Last() == popup;
+    }
+
 }

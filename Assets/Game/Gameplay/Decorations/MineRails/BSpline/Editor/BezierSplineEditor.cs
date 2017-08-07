@@ -120,14 +120,14 @@ namespace BSpline {
 
 		private Vector3 ShowPoint(int _index) {
 			Vector3 point = m_handleTransform.TransformPoint(m_spline.GetControlPoint(_index));
-			float size = HandleUtility.GetHandleSize(point);
+			float size = HandleUtility.GetHandleSize(point) * 2f;
 
 			if (_index == 0) {
 				size *= 2f;
 			}
 
 			Handles.color = modeColors[(int)m_spline.GetControlPointMode(_index)];
-			if (Handles.Button(point, m_handleRotation, size * HANDLE_SIZE, size * PICK_SIZE, Handles.DotCap)) {
+			if (Handles.Button(point, m_handleRotation, size * HANDLE_SIZE, size * PICK_SIZE, Handles.DotHandleCap)) {
 				m_selectedIndex = _index;
 				Repaint();
 			}

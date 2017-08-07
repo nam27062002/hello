@@ -12,12 +12,11 @@ namespace AI {
 
 		[SeparatorAttribute("Components")]
 		protected MC_Motion m_motion = null; // basic machine doesn't have a motion component
+
 		[SerializeField] private bool m_enableSensor = true;
 		[SerializeField] protected MachineSensor m_sensor = new MachineSensor();
-		public MachineSensor sensor
-		{
-			get{ return m_sensor; }
-		}
+		public MachineSensor sensor { get{ return m_sensor; } }
+
 		[SerializeField] protected MachineEdible m_edible = new MachineEdible();
 		[SerializeField] protected MachineInflammable m_inflammable = new MachineInflammable();
 
@@ -435,18 +434,15 @@ namespace AI {
 			}
 		}
 
-		public void CheckStun()
-		{
-			if ( m_stunned > 0 )
-			{
+		public void CheckStun() {
+			if (m_stunned > 0) {
 				m_stunned -= Time.deltaTime;
-				m_pilot.SetStunned( m_stunned > 0 );
-				m_viewControl.SetStunned( m_stunned > 0 );
+				m_pilot.SetStunned(m_stunned > 0);
+				m_viewControl.SetStunned(m_stunned > 0);
 			}
 		}
 
-		public void Stun( float _stunTime )
-		{
+		public void Stun(float _stunTime) {
 			m_stunned = Mathf.Max( _stunTime, m_stunned);
 		}
 
