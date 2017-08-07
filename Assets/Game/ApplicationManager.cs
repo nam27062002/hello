@@ -412,10 +412,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             {
                 m_storeManager.OnApplicationPause(pause);
             }
-            */
-
-            // [DGR] ANALYTICS not supported yet
-            // HSXAnalyticsManager.Instance.OnApplicationPause(pause);
+            */            
         }        
     }
 
