@@ -9,10 +9,10 @@ public class RailMeshBuilder : MonoBehaviour {
 
 	[SerializeField] private BSpline.BezierSpline m_spline;
 	[SerializeField] private float m_subdivisions = 10f;
-	[SerializeField] private float m_distancePerGameObject = 3f;
+	[SerializeField] private float m_distancePerGameObject = 6f;
 	[SeparatorAttribute]
-	[SerializeField] private int m_tieCountPerGameObject = 1;
-	[SerializeField] private float m_meshScale = 1f;
+	[SerializeField] private int m_tieCountPerGameObject = 2;
+	[SerializeField] private float m_meshScale = 2.25f;
 	[SerializeField] private float m_uvScale = 1f;
 	[SerializeField] private Material m_material;
 

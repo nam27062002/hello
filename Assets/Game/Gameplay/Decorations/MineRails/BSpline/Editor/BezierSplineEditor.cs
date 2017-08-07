@@ -81,6 +81,12 @@ namespace BSpline {
 				m_spline.CalculateArcLength();
 				EditorUtility.SetDirty(m_spline);
 			}
+
+			if (GUILayout.Button("Delete Point")) {
+				Undo.RecordObject(m_spline, "Delete Point");
+				m_spline.DeleteSpline(m_selectedIndex);
+				EditorUtility.SetDirty(m_spline);
+			}
 		}
 
 		private void OnSceneGUI() {

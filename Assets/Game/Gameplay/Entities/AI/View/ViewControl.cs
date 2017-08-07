@@ -93,7 +93,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 
 	//-----------------------------------------------
-	private Entity m_entity;
+	protected Entity m_entity;
 	protected Animator m_animator;
 	protected float m_disableAnimatorTimer;
 
@@ -119,6 +119,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	protected bool m_inSpace;
 	protected bool m_moving;
 	protected bool m_attackingTarget;
+	protected float m_aim;
 
 	private bool m_hitAnimOn;
 
@@ -316,6 +317,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_attackingTarget = false;
 		m_hitAnimOn = false;
 		m_isExclamationMarkOn = false;
+
+		m_aim = 0f;
 
 		m_disableAnimatorTimer = 0f;
 		if (m_animator != null) {
@@ -633,6 +636,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	}
 
 	public void Aim(float _blendFactor) {
+		m_aim = _blendFactor;
 		if (m_animator != null)
 			m_animator.SetFloat("aim", _blendFactor);
 	}
