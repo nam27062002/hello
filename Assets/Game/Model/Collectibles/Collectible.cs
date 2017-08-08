@@ -36,6 +36,12 @@ public abstract class Collectible : MonoBehaviour {
 	[Space]
 	[SerializeField] protected MapMarker m_mapMarker = null;
 
+	[Space]
+	[Comment("Optional:")]
+	[SerializeField] protected GameObject m_view = null;
+	[SerializeField] protected ParticleSystem m_idleFX = null;
+	[SerializeField] protected ParticleSystem m_collectFX = null;
+
 	// Internal logic
 	protected State m_state = State.INIT;
 	public State state { get { return m_state; }}
@@ -72,6 +78,36 @@ public abstract class Collectible : MonoBehaviour {
 
 		// Map marker
 		if(m_mapMarker != null) m_mapMarker.showMarker = active;
+
+		// FX
+		if(m_idleFX != null) {
+			if(active) {
+				m_idleFX.Play();
+			} else {
+				m_idleFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+			}
+			m_idleFX.gameObject.SetActive(active);	// [AOC] There seems to be some kind of bug where the particles stay on screen. Disable the game object to be 100% sure they are not visible.
+		}
+
+		if(m_collectFX != null) {
+			m_collectFX.gameObject.SetActive(_state == State.COLLECTED);
+			m_collectFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+			if(_state == State.COLLECTED) {
+				m_collectFX.Play();
+			}
+		}
+
+		// View (optional)
+		if(m_view != null) {
+			if(_state == State.COLLECTED) {
+				// Hide view after some delay to sync with VFX
+				UbiBCN.CoroutineManager.DelayedCall(() => { 
+					m_view.SetActive(false);
+				}, 0.05f);
+			} else {
+				m_view.SetActive(true);
+			}
+		}
 
 		// Save new state
 		m_state = _state;
