@@ -85,6 +85,7 @@ public enum GameEvents {
 	EARLY_ALL_HUNGRY_LETTERS_COLLECTED, 	//
 	ALL_HUNGRY_LETTERS_COLLECTED,			//
 	SUPER_SIZE_TOGGLE,			// params: bool _activated
+	KEY_COLLECTED,				// params: CollectibleKey _key
 
 	// Dragon collection events
 	DRAGON_ACQUIRED,			// params: DragonData _data
