@@ -7,12 +7,14 @@ public class BreakableBehaviour : MonoBehaviour
 	[SerializeField] private DragonTier m_tierNoTurboBreak = 0;
 
 	[SerializeField] private int m_hitCount = 1;
+	[SerializeField] private bool m_disableOnBreak = true;
 	[SerializeField] private bool m_destroyOnBreak = true;
 
 	[SerializeField] private ParticleData m_onBreakParticle;
 	[SerializeField] private string m_onBreakAudio;
 
 	[SerializeField] Transform m_view;
+	[SerializeField] GameObject m_activateOnDestroy;
 
 	//----------------------------------------------------------------------
 
@@ -49,6 +51,9 @@ public class BreakableBehaviour : MonoBehaviour
 
 		m_view.gameObject.SetActive(true);
 
+		if (m_activateOnDestroy != null)
+			m_activateOnDestroy.SetActive(false);
+
 		m_destroyTimer = 0f;
 	}
 
@@ -56,7 +61,9 @@ public class BreakableBehaviour : MonoBehaviour
 		if (m_destroyTimer > 0f) {
 			m_destroyTimer -= Time.deltaTime;
 			if (m_destroyTimer <= 0f) {
-				gameObject.SetActive(false);
+				if (m_disableOnBreak) {
+					gameObject.SetActive(false);
+				}
 				if (m_destroyOnBreak) {			
 					Destroy(gameObject);
 				}
@@ -130,6 +137,9 @@ public class BreakableBehaviour : MonoBehaviour
 		// don't destroy them yet, first change the collider to trigger to throw the "on collision exit message"
 		m_collider.isTrigger = true;
 		m_view.gameObject.SetActive(false);
+
+		if (m_activateOnDestroy != null)
+			m_activateOnDestroy.SetActive(true);
 
 		// Destroy
 		m_destroyTimer = 0.15f;
