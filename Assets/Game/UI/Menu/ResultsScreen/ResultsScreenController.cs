@@ -19,11 +19,12 @@ public class ResultsScreenController : MonoBehaviour {
 		FINISHED
 	};
 
-	// Stuff to check before actually going back to the menu
+	// Stuff to do before actually going back to the menu
 	// Order matters!
 	private enum ToCheck {
 		INIT = 0,
 
+		APPLY_REWARDS,
 		GLOBAL_EVENT,
 
 		COUNT
@@ -403,6 +404,31 @@ public class ResultsScreenController : MonoBehaviour {
 			// Check next step
 			++m_toCheck;
 			switch(m_toCheck) {
+				// Apply rewards! This should be done BEFORE any other step requiring the use of currencies (i.e. Global Event contribution)
+				case ToCheck.APPLY_REWARDS: {
+					// Update global stats
+					UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;
+
+					// Local mini-tracking event!
+					// Before applying the rewards!
+					EndOfGameTracking();
+
+					// Apply rewards to user profile
+					RewardManager.ApplyEndOfGameRewards();
+
+					// Process Missions: give rewards and generate new missions replacing those completed
+					MissionManager.ProcessMissions();
+
+					// Process collectibles
+					CollectiblesManager.Process();
+
+					// Process unlocked skins for current dragon
+					UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(DragonManager.currentDragon);
+
+					// Save persistence
+					PersistenceManager.Save(true);
+				} break;
+
 				// Show global events contribute popup?		// [AOC] TEMP!! Waiting for the new results screen flow to properly integrate this!
 				case ToCheck.GLOBAL_EVENT: {
 					// Never during first run!
@@ -428,31 +454,6 @@ public class ResultsScreenController : MonoBehaviour {
 		if(m_toCheck == ToCheck.COUNT) {
             // Show loading screen
 			LoadingScreen.Toggle(true, false);
-
-			// Update global stats
-			UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;
-
-			// Local mini-tracking event!
-			// Before applying the rewards!
-			EndOfGameTracking();
-
-			// Apply rewards to user profile
-			RewardManager.ApplyEndOfGameRewards();
-
-			// Process Missions: give rewards and generate new missions replacing those completed
-			MissionManager.ProcessMissions();
-
-			// Process collectible chests: give rewards and update collected chests count
-			ChestManager.ProcessChests();
-
-			// Process collectible egg
-			EggManager.ProcessCollectibleEgg();
-
-			// Process unlocked skins for current dragon
-			UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(DragonManager.currentDragon);
-
-			// Save persistence
-			PersistenceManager.Save(true);
 
 			// If a new dragon was unlocked, tell the menu to show the dragon unlocked screen first!
 			if(m_unlockBar.newDragonUnlocked) {
@@ -522,7 +523,7 @@ public class ResultsScreenController : MonoBehaviour {
                 new TrackingParam("death_cause", RewardManager.deathSource),
                 new TrackingParam("death_type", RewardManager.deathType),
                 new TrackingParam("chests_found", chestsFound),
-                new TrackingParam("egg_found", (EggManager.collectibleEgg != null && EggManager.collectibleEgg.collected)),
+				new TrackingParam("egg_found", (CollectiblesManager.egg != null && CollectiblesManager.egg.collected)),
                 new TrackingParam("score_total", score),
                 new TrackingParam("highest_multiplier", RewardManager.maxScoreMultiplier),
                 new TrackingParam("highest_base_multiplier", RewardManager.maxBaseScoreMultiplier),

@@ -74,21 +74,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1297936212281022
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4193402705732148}
-  m_Layer: 16
-  m_Name: groundSensor
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1402021251475968
 GameObject:
   m_ObjectHideFlags: 0
@@ -183,13 +168,13 @@ GameObject:
   m_Component:
   - component: {fileID: 4180769720416804}
   - component: {fileID: 114686857843740582}
-  - component: {fileID: 114488342276520406}
-  - component: {fileID: 54660539689881680}
-  - component: {fileID: 135371319773816950}
-  - component: {fileID: 114668257655566900}
-  - component: {fileID: 135467562921756604}
   - component: {fileID: 114841953096760618}
   - component: {fileID: 114947252965343510}
+  - component: {fileID: 114488342276520406}
+  - component: {fileID: 114668257655566900}
+  - component: {fileID: 54660539689881680}
+  - component: {fileID: 135371319773816950}
+  - component: {fileID: 135467562921756604}
   m_Layer: 16
   m_Name: PF_MineWagonGoblin_New
   m_TagString: Untagged
@@ -296,28 +281,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1676908728645650}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -14.230496, y: -1015.36896, z: 0}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 113.51, y: 21.673, z: -16.026382}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4701749767189936}
   - {fileID: 4501537186221194}
-  - {fileID: 4193402705732148}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4193402705732148
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1297936212281022}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.979, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4180769720416804}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4201570547034732
 Transform:
@@ -353,7 +324,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1209341787739376}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.063, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4105812480588402}
@@ -396,7 +367,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1402021251475968}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.006, y: 0.13, z: 0}
+  m_LocalPosition: {x: -0.006, y: 1.1929989, z: 0}
   m_LocalScale: {x: 1.35, y: 1.35, z: 1.35}
   m_Children:
   - {fileID: 4552087567332978}
@@ -487,7 +458,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 4d7eb818ca032448190e5c9dba8aa77f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -551,7 +522,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 4d7eb818ca032448190e5c9dba8aa77f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -583,7 +554,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 4d7eb818ca032448190e5c9dba8aa77f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -679,7 +650,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 4d7eb818ca032448190e5c9dba8aa77f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -854,10 +825,10 @@ MonoBehaviour:
   m_exclamationTransform: {fileID: 0}
   m_corpseAsset: 
   m_onEatenParticle:
-    name: PS_Blood_Explosion
-    path: Blood
-    offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 1
+    name: PS_D_MetalBreaking
+    path: 
+    offset: {x: 0, y: 2.4, z: 0}
+    changeStartColor: 0
     startColor: {r: 1, g: 0, b: 0, a: 1}
     changeColorOvertime: 0
     colorOvertime:
@@ -1008,7 +979,7 @@ MonoBehaviour:
   m_explosionParticles:
     name: PS_D_MetalBreaking
     path: 
-    offset: {x: 0, y: 0, z: 0}
+    offset: {x: 0, y: 2.4, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
@@ -1071,7 +1042,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -0.065826416, y: 0.45786476}
+  offset: {x: -0.065834045, y: 1.7907448}
   radius: 1.5154037
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114686857843740582
@@ -1144,6 +1115,10 @@ MonoBehaviour:
     m_mass: 10
     m_defaultUpVector: 0
     m_orientationSpeed: 120
+  m_canExplode: 0
+  m_explosionDamage: 0
+  m_explosionRadius: 0
+  m_explosionCameraShake: 0
 --- !u!135 &135371319773816950
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -1154,8 +1129,8 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.64
-  m_Center: {x: 0, y: -0.45, z: 0}
+  m_Radius: 1
+  m_Center: {x: 0, y: 1.25, z: 0}
 --- !u!135 &135467562921756604
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -1167,7 +1142,7 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.92
-  m_Center: {x: 0, y: 0.5, z: 0}
+  m_Center: {x: 0, y: 2.22, z: 0}
 --- !u!137 &137515213781132104
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

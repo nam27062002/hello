@@ -16,8 +16,7 @@ using System;
 /// <summary>
 /// Single Chest object.
 /// </summary>
-[RequireComponent(typeof(Collider))]
-public class CollectibleChest : MonoBehaviour {
+public class CollectibleChest : Collectible {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -26,13 +25,6 @@ public class CollectibleChest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// Exposed to inspector
-	[SerializeField] private DragonTier m_requiredTier = DragonTier.TIER_0;
-	public DragonTier requiredTier { get { return m_requiredTier; }}
-
-	[Space]
-	[SerializeField] private MapMarker m_mapMarker = null;
-
 	// Internal
 	private ChestViewController m_chestView = null;   
 
@@ -48,13 +40,11 @@ public class CollectibleChest : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
-		// Make sure it belongs to the "Collectible" layer
-		this.gameObject.layer = LayerMask.NameToLayer("Collectible");
+	override protected void Awake() {
+		// Call parent
+		base.Awake();
 
-		// Also make sure the object has the right tag
-		this.gameObject.tag = TAG;
-
+		// Store view
 		m_chestView = this.gameObject.GetComponentInChildren<ChestViewController>();
     }
 
@@ -70,11 +60,10 @@ public class CollectibleChest : MonoBehaviour {
 		m_chestData = _chest;
         
         // If already collected, update visuals
-        if (m_chestData.collected) {
-			SetCollected();
-		}
-        else
-        {
+        if(m_chestData.collected) {
+			SetState(State.COLLECTED);
+			SetCollectedVisuals();
+		} else {
             m_chestView.ShowGlowFX(true);
         }
 	}
@@ -82,40 +71,47 @@ public class CollectibleChest : MonoBehaviour {
 	/// <summary>
 	/// Update object and visuals to match the "collected" state.
 	/// </summary>
-	private void SetCollected() {
-		// Disable collider
-		GetComponent<Collider>().enabled = false;
-
-		// Disable map marker
-		if(m_mapMarker != null) m_mapMarker.showMarker = false;
-
+	private void SetCollectedVisuals() {
 		// Open chest and launch FX
 		// Figure out reward type to show the proper FX
 		Chest.RewardData rewardData = ChestManager.GetRewardData(ChestManager.collectedAndPendingChests);
-//		m_chestView.ShowGlowFX(false);
 		m_chestView.Open(rewardData.type, false);
 	}
 
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// ABSTRACT METHODS														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Another collider has collided with this collider.
+	/// Get the unique tag identifying collectible objects of this type.
 	/// </summary>
-	/// <param name="_other">The other collider.</param>
-	private void OnTriggerEnter(Collider _other) {
-		// Since it belongs to the "Collectible" layer, only the player will collide with it - no need to check
-		// If already collected, skip
-		if(m_chestData.collected) return;
+	/// <returns>The tag.</returns>
+	override public string GetTag() {
+		return TAG;
+	}
 
-		if (InstanceManager.player != null && !InstanceManager.player.IsAlive())
-			return;
+	//------------------------------------------------------------------------//
+	// VIRTUAL METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Override to check additional conditions when attempting to collect.
+	/// </summary>
+	/// <returns><c>true</c> if this collectible can be collected, <c>false</c> otherwise.</returns>
+	override protected bool CanBeCollected() {
+		// Skip if already collected
+		if(m_chestData.collected) return false;
 
+		return true;
+	}
+
+	/// <summary>
+	/// Override to perform additional actions when collected.
+	/// </summary>
+	override protected void OnCollect() {
 		// Change chest state
 		m_chestData.ChangeState(Chest.State.PENDING_REWARD);
 
 		// Apply collected visuals
-		SetCollected();
+		SetCollectedVisuals();
 
 		// Dispatch global event
 		Messenger.Broadcast<CollectibleChest>(GameEvents.CHEST_COLLECTED, this);
