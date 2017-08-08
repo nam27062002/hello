@@ -82,8 +82,9 @@ namespace LevelEditor {
 			InstanceManager.player.gameObject.SetActive(true);
 
 			ChestManager.CreateInstance();
-			ChestManager.OnLevelLoaded();
-			EggManager.SelectCollectibleEgg();
+			EggManager.CreateInstance();
+			CollectiblesManager.CreateInstance();
+			CollectiblesManager.OnLevelLoaded();
 
 			HungryLettersManager lettersManager = FindObjectOfType<HungryLettersManager>();
 			if ( lettersManager )

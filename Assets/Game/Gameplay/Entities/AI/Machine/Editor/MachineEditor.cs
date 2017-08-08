@@ -100,6 +100,8 @@ using AI;
 				// do nothing
 			} else if ((m_motionProp != null && p.name == m_motionProp.name) || p.name == m_edibleProp.name || p.name == m_inflammableProp.name || p.name == m_enableSensorProp.name || p.name == m_sensorProp.name) {
 				// do nothing
+			} else if (HasCustomDraw(p.name)) {
+				CustomDraw(p);			
 			} else {
 				// Default
 				EditorGUILayout.PropertyField(p, true);
@@ -108,6 +110,14 @@ using AI;
 
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties();
+	}
+
+	protected virtual bool HasCustomDraw(string _pName) {
+		return false;
+	}
+
+	protected virtual void CustomDraw(SerializedProperty _p) {
+
 	}
 
 	/// <summary>

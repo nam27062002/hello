@@ -26,6 +26,18 @@ public class HUDDarkZoneEffect : MonoBehaviour {
         m_camera = m_gameCamera.gameObject.GetComponent<Camera>();
     }
 
+    void OnEnable()
+    {
+        Messenger.AddListener<bool>(GameEvents.DARK_ZONE_TOGGLE, SetEnable);
+    }
+
+    void OnDisable()
+    {
+        Messenger.RemoveListener<bool>(GameEvents.DARK_ZONE_TOGGLE, SetEnable);
+    }
+
+
+
     void SetEnable(bool value)
     {
         if (value != m_enableState)

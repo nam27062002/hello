@@ -88,8 +88,6 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 	// Internal
 	private UserProfile m_user = null;
 
-	private List<CollectibleChest> m_inGameChests = new List<CollectibleChest>();
-
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -117,92 +115,6 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 	//------------------------------------------------------------------//
 	// PUBLIC STATIC METHODS											//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Pick all the collectible chests in the level and initialize with the current chest data.
-	/// To be called at the start of the game.
-	/// </summary>
-	public static void OnLevelLoaded() {
-		instance.m_inGameChests.Clear();
-		// Get all the chests in the scene
-		GameObject[] chestSpawners = GameObject.FindGameObjectsWithTag(CollectibleChest.TAG);	// Finding by tag is much faster than finding by type
-		if(chestSpawners.Length > 0) {
-			// Special case: chests are disabled during the very first run!
-			if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
-				for(int i = 0; i < chestSpawners.Length; i++) {
-					GameObject.Destroy(chestSpawners[i]);
-				}
-				return;
-			}
-
-			// Aux vars
-			List<Chest> pendingChests = new List<Chest>(dailyChests);
-			List<CollectibleChest> validSpawners = new List<CollectibleChest>();
-			List<CollectibleChest> toRemove = new List<CollectibleChest>();
-			DragonTier currentTier = DragonManager.IsReady() ? DragonManager.currentDragon.tier : DragonTier.TIER_0;
-			CollectibleChest spawner = null;
-			bool spawnerUsed = false;
-
-			// Iterate all spawn points and initialize them
-			for(int i = 0; i < chestSpawners.Length; i++) {
-				// Reset aux vars
-				spawnerUsed = false;
-				spawner = chestSpawners[i].GetComponent<CollectibleChest>();
-				if(spawner == null) continue;
-
-				// Does this spawn point match one of the chests?
-				for(int j = 0; j < pendingChests.Count && !spawnerUsed; j++) {
-					if(spawner.name == pendingChests[j].spawnPointID) {
-						// Yes!! Use it
-						spawner.Initialize(pendingChests[j]);
-						instance.m_inGameChests.Add(spawner);
-						pendingChests.RemoveAt(j);
-						spawnerUsed = true;
-						break;
-					}
-				}
-
-				// Skip to next spawner if used
-				if(spawnerUsed) continue;
-
-				// Check whether it's a valid spawner (filter by dragon tier)
-				if(spawner.requiredTier <= currentTier) {
-					validSpawners.Add(spawner);
-				} else {
-					toRemove.Add(spawner);
-				}
-			}
-
-			// If we have any pending chest, assing a new spawner to it!
-			for(int i = 0; i < pendingChests.Count; i++) {
-				// Pick a random one from the valid spawners list
-				spawner = validSpawners.GetRandomValue();
-
-				// Update chest
-				// If chest was in the INIT state, change to NOT_COLLECTED and assign the new spawner to it
-				if(pendingChests[i].state == Chest.State.INIT) {
-					pendingChests[i].ChangeState(Chest.State.NOT_COLLECTED);
-				}
-				pendingChests[i].spawnPointID = spawner.name;
-
-				// Initialize spawner
-				spawner.Initialize(pendingChests[i]);
-				instance.m_inGameChests.Add(spawner);
-				validSpawners.Remove(spawner);
-			}
-
-			// Finally remove the unused spawners from the scene
-			toRemove.AddRange(validSpawners);
-			for(int i = 0; i < toRemove.Count; i++) {
-				GameObject.Destroy(toRemove[i].gameObject);
-				toRemove[i] = null;
-			}
-		}
-	}
-
-	public static void OnFinished() {
-		instance.m_inGameChests.Clear();
-	}
-
 	/// <summary>
 	/// Give pending rewards and update chests states and collected chests count.
 	/// </summary>
@@ -293,26 +205,6 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 
 		// Save persistence
 		PersistenceManager.Save();
-	}
-
-	public CollectibleChest GetClosestActiveChest( Vector3 position )
-	{
-		float minDistance = float.MaxValue;
-		CollectibleChest chest = null;
-		int size = m_inGameChests.Count;
-		for( int i = 0; i<size; ++i )
-		{
-			if (!m_inGameChests[i].chestData.collected)
-			{
-				float dist = (position - m_inGameChests[i].transform.position).sqrMagnitude;
-				if ( dist < minDistance )
-				{
-					minDistance = dist;
-					chest = m_inGameChests[i];
-				}
-			}
-		}
-		return chest;
 	}
 
 	//------------------------------------------------------------------//

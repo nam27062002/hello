@@ -182,7 +182,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 			} break;
 
 			case CPResultsScreenTest.EggTestMode.NONE: {
-				m_eggFound = EggManager.collectibleEgg != null && EggManager.collectibleEgg.collected;
+				m_eggFound = CollectiblesManager.egg != null && CollectiblesManager.egg.collected;
 			} break;
 		}
 

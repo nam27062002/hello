@@ -47,6 +47,7 @@ namespace AI {
 			m_rbody.velocity = m_velocity + m_externalVelocity;
 		}
 
+		protected override void OnFreeFall() { }
 		protected override void ExtendedUpdateFreeFall() {
 			m_pilot.SetDirection(Vector3.down, true);
 			if (m_machine.GetSignal(Signals.Type.InWater)) {				
