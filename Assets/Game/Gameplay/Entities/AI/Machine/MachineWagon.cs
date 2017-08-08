@@ -6,6 +6,12 @@ namespace AI {
 	public class MachineWagon : Machine {		
 		[SerializeField] protected MC_MotionWagon m_wagonMotion = new MC_MotionWagon();
 
+		[SeparatorAttribute("Mine Wagon Setup")]
+		[SerializeField] private bool m_canExplode = false;
+		[SerializeField] private float m_explosionDamage = 5f;
+		[SerializeField] private float m_explosionRadius = 0f;
+		[SerializeField] private float m_explosionCameraShake = 1f;
+
 		public override Quaternion orientation 	{ get { return m_wagonMotion.orientation; } set { m_wagonMotion.orientation = value; } }
 		public override Vector3 position		{ get { return m_wagonMotion.position; } set { m_wagonMotion.position = value; } }
 		public override Vector3 direction 		{ get { return m_wagonMotion.direction; } }
@@ -14,8 +20,16 @@ namespace AI {
 		public override Vector3 velocity		{ get { return m_wagonMotion.velocity; } }
 		public override Vector3 angularVelocity	{ get { return m_wagonMotion.angularVelocity; } }
 
+
+
+		private Explosive m_explosive;
+
+
+
 		protected override void Awake() {
 			m_motion = m_wagonMotion;
+			m_explosive = new Explosive(true, m_explosionDamage, m_explosionRadius, m_explosionCameraShake);
+
 			base.Awake();
 		}
 
@@ -26,6 +40,7 @@ namespace AI {
 		// Collision events
 		protected override void OnCollisionEnter(Collision _collision) {
 			if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
+				m_explosive.Explode(m_transform, 2f, false);
 				SetSignal(Signals.Type.Destroyed, true);
 			}
 		}
@@ -39,7 +54,12 @@ namespace AI {
 		}
 
 		protected override void OnTriggerEnter(Collider _other) {
-			
+			if (_other.CompareTag("WagonFall")) {
+				m_wagonMotion.FreeFall();
+			} else if (_other.CompareTag("Player")) {
+				m_explosive.Explode(m_transform, 2f, true);
+				SetSignal(Signals.Type.Destroyed, true);
+			}
 		}
 
 		protected override void OnTriggerExit(Collider _other) {

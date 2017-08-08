@@ -57,6 +57,8 @@ Shader "Hungry Dragon/TransparentAdditive"
 #ifdef CUSTOMPARTICLESYSTEM
 				float4 _VColor;
 #endif
+				float4 _TintColor;
+
 				v2f vert(appdata_t v)
 				{
 					v2f o;
@@ -71,7 +73,7 @@ Shader "Hungry Dragon/TransparentAdditive"
 #ifdef CUSTOMPARTICLESYSTEM
 					half4 prev = i.color * tex2D(_MainTex, i.texcoord) * _VColor;
 #else
-					half4 prev = i.color * tex2D(_MainTex, i.texcoord);
+					half4 prev = i.color * tex2D(_MainTex, i.texcoord) * _TintColor;
 #endif
 					return prev;
 				}
