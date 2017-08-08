@@ -8,6 +8,8 @@ namespace BSpline {
 			public Vector3 p0;
 			public Vector3 p1;
 			public Vector3 direction;
+			public Vector3 up;
+			public Vector3 right;
 			public float length;
 		}
 
@@ -175,9 +177,9 @@ namespace BSpline {
 				}
 			}
 
-			Vector3 forward = _direction;
-			_right = Vector3.Cross(Vector3.up, forward);
-			_up = Vector3.Cross(forward, _right);
+			_direction.Normalize();
+			_right = data.right;
+			_up = data.up;
 
 			if (_local) {
 				return data.p0 + data.direction * _distance;
@@ -228,6 +230,35 @@ namespace BSpline {
 			}
 
 			CalculateArcLength();
+		}
+
+		public void DeleteSpline(int _pointIndex) {
+			if (splineCount > 1) {
+				int splineIndex = _pointIndex / 3;
+				int modeIndex = (_pointIndex + 1) / 3;
+
+				if (splineIndex < splineCount - 1) {
+					_pointIndex = splineIndex * 3;
+
+					for (int i = _pointIndex; i < m_points.Length - 3; ++i) {
+						m_points[i] = m_points[i + 3];
+					}
+
+					for (int i = splineIndex; i < splineCount - 1; ++i) {
+						m_splineLength[i] = m_splineLength[i + 1];
+					}
+
+					for (int i = modeIndex; i < m_modes.Length - 1; ++i) {
+						m_modes[i] = m_modes[i + 1];
+					}
+				}
+
+				Array.Resize(ref m_points, m_points.Length - 3);
+				Array.Resize(ref m_splineLength, m_splineLength.Length - 1);
+				Array.Resize(ref m_modes, m_modes.Length - 1);
+
+				CalculateArcLength();
+			}
 		}
 
 		private void EnforceMode(int _index) { 
@@ -433,6 +464,8 @@ namespace BSpline {
 			float segmentLength = m_arcLength / (float)segments;
 			float currentDistance = 0f + segmentLength;
 
+			Vector3 lastDirection = Vector3.right;
+			Vector3 lastUp = Vector3.up;
 			Vector3 lastPos = m_points[0];
 
 			for (int s = 0; s < segments; ++s) {
@@ -445,10 +478,23 @@ namespace BSpline {
 				ss.p0 = lastPos;
 				ss.p1 = pos;
 				ss.direction = dir.normalized;
+				ss.up = lastUp;
+
+				if (s > 0) {
+					ss.up = Quaternion.FromToRotation(lastDirection, ss.direction) * lastUp;
+					// force up z = 0?
+					ss.up.z = 0f;
+					ss.up.Normalize();
+				}
+
+				ss.right = Vector3.Cross(ss.up, ss.direction);
+
 				ss.length = dir.magnitude;
 				m_segments[s] = ss;
 
 				lastPos = pos;
+				lastDirection = ss.direction;
+				lastUp = ss.up;
 
 				currentDistance += segmentLength;
 			}
@@ -468,9 +514,15 @@ namespace BSpline {
 				if (s % 2 == 0) Gizmos.color = Colors.WithAlpha(Color.red, 0.5f);
 				else 			Gizmos.color = Colors.WithAlpha(Color.yellow, 0.5f);
 
-				Vector3 p0 = transform.TransformPoint(m_segments[s].p0) + Vector3.up * 0.25f;
-				Vector3 p1 = transform.TransformPoint(m_segments[s].p1) + Vector3.up * 0.25f;
+				Vector3 p0 = transform.TransformPoint(m_segments[s].p0) + m_segments[s].up * 0.25f;
+				Vector3 p1 = transform.TransformPoint(m_segments[s].p1) + m_segments[s].up * 0.25f;
 				Gizmos.DrawLine(p0, p1);
+
+				Gizmos.color = Color.green;
+				Gizmos.DrawLine(p0, p0 + m_segments[s].up);
+
+				Gizmos.color = Color.blue;
+				Gizmos.DrawLine(p0, p0 + m_segments[s].right);
 			}
 		}
 	}

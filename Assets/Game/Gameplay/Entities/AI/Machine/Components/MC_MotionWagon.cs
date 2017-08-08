@@ -24,12 +24,7 @@ namespace AI {
 		}
 
 		protected override void ExtendedUpdate() {
-			if (m_distanceMoved >= m_rails.length) {				
-				//check free fall conditions
-				m_externalVelocity = m_velocity * 2f;
-				m_velocity = Vector3.zero;
-				FreeFall();
-			}
+			
 		}
 
 		protected override void ExtendedFixedUpdate() {
@@ -42,7 +37,7 @@ namespace AI {
 				if (m_acceleration > m_pilot.speed * 2f) 
 					m_acceleration = m_pilot.speed * 2f;
 			} else { // going up
-				m_acceleration -= m_direction.y * 0.25f;
+				m_acceleration -= 0.05f;
 				if (m_acceleration < -m_pilot.speed * 0.25f) 
 					m_acceleration = -m_pilot.speed * 0.25f;
 			}
@@ -55,8 +50,14 @@ namespace AI {
 			if (m_distanceMoved < m_rails.length) {				
 				m_machine.position = m_rails.GetPointAtDistance(m_distanceMoved, ref m_direction, ref m_upVector, ref m_right);
 			} else {
-				//m_machine.position += m_velocity * dt * 0.5f;
+				FreeFall();
 			}
+		}
+
+		protected override void OnFreeFall() { 
+			//check free fall conditions
+			m_externalVelocity = m_velocity * 2f;
+			//m_velocity = Vector3.zero;
 		}
 
 		protected override void ExtendedUpdateFreeFall() {			
