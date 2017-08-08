@@ -309,7 +309,7 @@ namespace AI {
 		}
 
 		public void FreeFall() {
-			if (m_state != State.FreeFall && m_state != State.StandUp) {
+			if (m_state != State.FreeFall && m_state != State.StandUp) {				
 				m_viewControl.Height(100f);
 				m_machine.SetSignal(Signals.Type.FallDown, true);
 				m_nextState = State.FreeFall;
@@ -458,6 +458,7 @@ namespace AI {
 					break;
 
 				case State.FreeFall:
+					OnFreeFall();
 					m_viewControl.Falling(true);
 					break;
 
@@ -475,8 +476,10 @@ namespace AI {
 		protected abstract void ExtendedInit();
 
 		protected abstract void ExtendedUpdate();
-		protected abstract void ExtendedUpdateFreeFall();
 		protected abstract void ExtendedFixedUpdate();
+
+		protected abstract void OnFreeFall();
+		protected abstract void ExtendedUpdateFreeFall();
 
 		protected abstract void UpdateOrientation();
 		protected abstract void OnSetVelocity();

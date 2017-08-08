@@ -39,7 +39,9 @@ namespace AI {
 		}
 
 		protected override void OnTriggerEnter(Collider _other) {
-			
+			if (_other.tag.Equals("WagonFall")) {
+				m_wagonMotion.FreeFall();
+			}
 		}
 
 		protected override void OnTriggerExit(Collider _other) {
