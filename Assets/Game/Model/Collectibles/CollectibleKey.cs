@@ -55,7 +55,12 @@ public class CollectibleKey : Collectible {
 	/// </summary>
 	/// <returns><c>true</c> if this collectible can be collected, <c>false</c> otherwise.</returns>
 	override protected bool CanBeCollected() {
-		// Nothing to do for now
+		// If limit reached, don't collect
+		if(UsersManager.currentUser.keys >= UsersManager.currentUser.GetCurrencyMax(UserProfile.Currency.KEYS)) {
+			// Broadcast message to show some feedback
+			Messenger.Broadcast<CollectibleKey>(GameEvents.KEY_COLLECTED_FAIL, this);
+			return false;
+		}
 		return true;
 	}
 
