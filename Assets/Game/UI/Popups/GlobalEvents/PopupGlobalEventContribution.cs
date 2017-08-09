@@ -285,7 +285,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	private void CloseAndDiscard() {
 		// If we spend keys, refund
 		if(m_usedKey) {
-			UsersManager.currentUser.AddCurrency(UserProfile.Currency.KEYS, DOUBLE_UP_COST_KEYS);
+			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.KEYS, (ulong)DOUBLE_UP_COST_KEYS, true);	// Refund as a paid key so we don't have any issue with the limits
 		}
 
 		// Close popup
@@ -386,7 +386,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 		RefreshKeysField(true);
 
 		// Perform transaction
-		UsersManager.currentUser.AddCurrency(UserProfile.Currency.KEYS, -DOUBLE_UP_COST_KEYS);
+		UsersManager.currentUser.SpendCurrency(UserProfile.Currency.KEYS, (ulong)DOUBLE_UP_COST_KEYS);
 
 		// Update final score
 		m_finalScore *= 2;
@@ -398,8 +398,8 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	/// </summary>
 	public void OnBuyMoreKeysButton() {
 		// [AOC] TODO!!
-		// Let's just add max keys for now
-		UsersManager.currentUser.SetCurrency(UserProfile.Currency.KEYS, UsersManager.currentUser.GetCurrencyMax(UserProfile.Currency.KEYS));
+		// Let's just add some keys for now
+		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.KEYS, 5, true);
 
 		// Refresh visuals
 		RefreshKeysField(true);

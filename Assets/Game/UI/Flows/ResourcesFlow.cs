@@ -335,12 +335,12 @@ public class ResourcesFlow {
             string trackingItemId = (m_itemDef != null) ? m_itemDef.Get("trackingSku") : null;            
             HDTrackingManager.Instance.Notify_PurchaseWithResourcesCompleted(economyGroup, trackingItemId, null, m_currency, (int)m_originalAmount);
 
-            UsersManager.currentUser.AddCurrency(m_currency, -m_finalAmount);            
+			UsersManager.currentUser.SpendCurrency(m_currency, (ulong)m_finalAmount);            
         }
 
         // Extra PC Cost Transaction
         if (m_extraPCCost > 0) {
-			UsersManager.currentUser.AddCurrency(UserProfile.Currency.HARD, -m_extraPCCost);
+			UsersManager.currentUser.SpendCurrency(UserProfile.Currency.HARD, (ulong)m_extraPCCost);
 		}
 
 		// Change state

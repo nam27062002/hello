@@ -405,7 +405,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	public static void ApplyEndOfGameRewards() {
 		// Coins, PC and XP are applied in real time during gameplay
 		// Apply the rest of rewards
-		UsersManager.currentUser.AddCurrency(UserProfile.Currency.SOFT, instance.CalculateSurvivalBonus());
+		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)instance.CalculateSurvivalBonus(), false);
 	}
 
 	//------------------------------------------------------------------//
@@ -434,11 +434,11 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
 		// Coins
 		instance.m_coins += _reward.coins;
-		UsersManager.currentUser.AddCurrency(UserProfile.Currency.SOFT, _reward.coins);
+		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)_reward.coins, false);
 
 		// PC
 		instance.m_pc += _reward.pc;
-		UsersManager.currentUser.AddCurrency(UserProfile.Currency.HARD, _reward.pc);
+		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)_reward.pc, false);
 
 		// XP
 		InstanceManager.player.data.progression.AddXp(_reward.xp, true);

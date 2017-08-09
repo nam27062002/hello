@@ -39,14 +39,47 @@ public class UserProfile : UserSaveSystem
 		COUNT
 	};
 
-	private class CurrencyData {
-		public long amount = 0;
+	public class CurrencyData {
+		public long freeAmount = 0;		// Free amount is restricted to the limit
+		public long paidAmount = 0;		// Paid amount can overflow the limits
+		public long amount { 
+			get { return freeAmount + paidAmount; }
+		}
+
 		public long min = 0;
-		public long max = -1;
-		public CurrencyData(long _amount, long _min, long _max) {
-			amount = _amount;
-			min = _min;
-			max = _max;
+		public long max = -1;	// -1 for unlimited
+
+		/// <summary>
+		/// Serialize into a string to store in the persistence json.
+		/// </summary>
+		public string Serialize() {
+			// freeAmount:paidAmount -> "50:20"
+			return freeAmount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE) + ":" + paidAmount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE);
+		}
+
+		/// <summary>
+		/// Read values from a string as stored in the persistence json.
+		/// </summary>
+		/// <param name="_str">Data string, must match the format of the string produced by the Serialize() method.</param>
+		/// <param name="_defaultFree">Default value if the free amount is not found.</param>
+		/// <param name="_defaultPaid">Default value if the paid amount is not found.</param>
+		public void Deserialize(string _str, long _defaultFree = 0, long _defaultPaid = 0) {
+			// "50:20" -> freeAmount:paidAmount
+			string[] values = _str.Split(':');
+
+			// Parse free amount
+			if(values.Length > 0) {
+				long.TryParse(values[0], System.Globalization.NumberStyles.Any, PersistenceManager.JSON_FORMATTING_CULTURE, out freeAmount);
+			} else {
+				freeAmount = _defaultFree;
+			}
+
+			// Parse paid amount
+			if(values.Length > 1) {
+				long.TryParse(values[1], System.Globalization.NumberStyles.Any, PersistenceManager.JSON_FORMATTING_CULTURE, out paidAmount);
+			} else {
+				paidAmount = _defaultPaid;
+			}
 		}
 	};
 
@@ -88,12 +121,10 @@ public class UserProfile : UserSaveSystem
 
 	public long goldenEggFragments {
 		get { return GetCurrency(Currency.GOLDEN_FRAGMENTS); }
-		set { SetCurrency(Currency.GOLDEN_FRAGMENTS, value); }
 	}
 
 	public long keys {
 		get { return GetCurrency(Currency.KEYS); }
-		set { SetCurrency(Currency.KEYS, value); }
 	}
 
 	// Game Settings
@@ -262,12 +293,10 @@ public class UserProfile : UserSaveSystem
 	{
 		// Initialize currencies to 0
 		for(int i = 0; i < (int)Currency.COUNT; ++i) {
-			m_currencies.Add(
-				new CurrencyData(0, 0, -1)
-			);
+			m_currencies.Add(new CurrencyData());
 		}
 
-		// Define some max values
+		// Define some custom values
 		m_currencies[(int)Currency.KEYS].max = 10;	// [AOC] TODO!! Get from content
 
 		// Init dragons
@@ -308,36 +337,77 @@ public class UserProfile : UserSaveSystem
 	public long GetCurrency(Currency _currency) {
 		return m_currencies[(int)_currency].amount;
 	}
-	
-	/// <summary>
-	/// Set the current amount of any currenct.
-	/// Use carefully!
-	/// </summary>
-	/// <returns>The currency.</returns>
-	/// <param name="_currency">Currency.</param>
-	/// <param name="_amount">Amount.</param>
-	public void SetCurrency(Currency _currency, long _amount) {
-		// Clamp to range!
-		CurrencyData data = m_currencies[(int)_currency];
-		if(_amount < data.min) _amount = data.min;
-		if(data.max > 0 && _amount > data.max) _amount = data.max;
 
-		// Set the target value
-		long oldValue = GetCurrency(_currency);
-		data.amount = _amount;
+	/// <summary>
+	/// Add any type of currency. If free, max limit will be checked.
+	/// </summary>
+	/// <param name="_amount">Amount to be added.</param>
+	/// <param name="_currency">Currency type.</param>
+	/// <param name="_paid">Store the amount in the "paid" count. Limits will be ignored.</param>
+	public void EarnCurrency(Currency _currency, ulong _amount, bool _paid) {
+		// Gather currency data
+		CurrencyData data = m_currencies[(int)_currency];
+		long toAdd = (long)_amount;
+
+		// Clamp to limit (if not paid)
+		if(!_paid && data.max > 0) {	// Ignore if there is no max
+			long finalTotalAmount = data.amount + toAdd;	// Predicted amount
+			if(finalTotalAmount > data.max) toAdd = finalTotalAmount - data.max;	// Add as much as we can
+		}
+
+		// [AOC] DISCLAIMER: At this point we could break if the amount to be added is 0. 
+		//		 However, we're finishing the flow anyway since it's harmless and might 
+		//		 be expected in some cases to broadcast the event even when earnt amount is 0.
+
+		// Set the new value!
+		long oldAmount = data.amount;	// Tracking purposes
+		if(_paid) {
+			data.paidAmount += toAdd;
+		} else {
+			data.freeAmount += toAdd;
+		}
 
 		// Notify game!
-		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, _currency, oldValue, _amount);
+		// [AOC] For now we don't need to differientate earnings from paid and free sources, neither do we need to differientate earnings and expenses, so use the same event for everything
+		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, _currency, oldAmount, data.amount);
 	}
 
 	/// <summary>
-	/// Add any type of currency.
+	/// Subtract from any type of currency. Min limit will be checked.
+	/// Arbitrarily, free currency will be used before paid currency, but can't be manually choosen which source to use.
 	/// </summary>
-	/// <param name="_amount">Amount to be added. Negative to subtract.</param>
+	/// <param name="_amount">Amount to be subtracted.</param>
 	/// <param name="_currency">Currency type.</param>
-	public void AddCurrency(Currency _currency, long _amount) {
-		// Just use the setter
-		SetCurrency(_currency, GetCurrency(_currency) + _amount);
+	public void SpendCurrency(Currency _currency, ulong _amount) {
+		// Gather currency data
+		CurrencyData data = m_currencies[(int)_currency];
+		long toSpend = (long)_amount;
+
+		// Clamp amount to subtract to min limit
+		long predictedAmount = data.amount - toSpend;
+		if(predictedAmount < data.min) toSpend = data.amount - data.min;	// Maximum amount that we can spend
+
+		// [AOC] DISCLAIMER: At this point we could break if the amount to be subtracted is 0. 
+		//		 However, we're finishing the flow anyway since it's harmless and might 
+		//		 be expected in some cases to broadcast the event even when spent amount is 0.
+
+		// Set the new value!
+		long oldAmount = data.amount;	// Tracking purposes
+
+		// Consume free currency first, as much as possible
+		long partialAmount = (long)Mathf.Min(data.freeAmount, toSpend);
+		data.freeAmount -= partialAmount;
+		toSpend -= partialAmount;
+
+		// If there is still amount to spend, take it from the paid balance
+		if(toSpend > 0) {
+			partialAmount = (long)Mathf.Min(data.paidAmount, toSpend);	// That should always be the toSpend, since we checked the limits earlier
+			data.paidAmount -= partialAmount;
+		}
+
+		// Notify game!
+		// [AOC] For now we don't need to differientate earnings from paid and free sources, neither do we need to differientate earnings and expenses, so use the same event for everything
+		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, _currency, oldAmount, data.amount);
 	}
 
 	/// <summary>
@@ -356,6 +426,34 @@ public class UserProfile : UserSaveSystem
 	/// <param name="_currency">Currency type.</param>
 	public long GetCurrencyMax(Currency _currency) {
 		return m_currencies[(int)_currency].max;
+	}
+
+	/// <summary>
+	/// Gets the data object of a specific currency.
+	/// Mostly for debug purposes. Use with caution!
+	/// </summary>
+	/// <returns>The currency data of the requested currency.</returns>
+	/// <param name="_currency">Target currency.</param>
+	public CurrencyData GetCurrencyData(Currency _currency) {
+		return m_currencies[(int)_currency];
+	}
+
+	/// <summary>
+	/// Directly sets the given amounts to the target currency, overriding current values.
+	/// Mostly for debug purposes. Use with caution!
+	/// </summary>
+	/// <param name="_currency">Target currency.</param>
+	/// <param name="_freeAmount">Free amount to set.</param>
+	/// <param name="_paidAmount">Paid amount to set.</param>
+	public void SetCurrency(Currency _currency, long _freeAmount, long _paidAmount) {
+		// Reset current amount manually
+		CurrencyData data = GetCurrencyData(_currency);
+		data.freeAmount = 0;
+		data.paidAmount = 0;
+
+		// Use earn method so limits are checked and events broadcasted
+		UsersManager.currentUser.EarnCurrency(_currency, (ulong)_freeAmount, false);
+		UsersManager.currentUser.EarnCurrency(_currency, (ulong)_paidAmount, true);
 	}
 
 	/// <summary>
@@ -502,6 +600,9 @@ public class UserProfile : UserSaveSystem
     /// </summary>
     /// <param name="_data">The data object loaded from persistence.</param>
     private void Load(SimpleJSON.JSONNode _data) {
+		// Aux vars
+		string key;
+
 		// Just read values from persistence object
 		SimpleJSON.JSONNode profile = _data["userProfile"];
 
@@ -515,26 +616,10 @@ public class UserProfile : UserSaveSystem
         }
 
         // Economy
-        string key = "sc";
-        if (profile.ContainsKey(key)) {
-			m_currencies[(int)Currency.SOFT].amount = profile[key].AsInt;
-        } else {
-			m_currencies[(int)Currency.SOFT].amount = 0;
-        }
-
-        key = "pc";
-        if (profile.ContainsKey(key)) {
-			m_currencies[(int)Currency.HARD].amount = profile[key].AsInt;
-        } else {
-			m_currencies[(int)Currency.HARD].amount = 0;
-        }     
-
-		key = "keys";
-		if (profile.ContainsKey(key)) {
-			m_currencies[(int)Currency.KEYS].amount = profile[key].AsInt;
-		} else {
-			m_currencies[(int)Currency.KEYS].amount = 3;
-		}    
+		m_currencies[(int)Currency.SOFT].Deserialize(profile.ContainsKey("sc") ? (string)profile["sc"] : "");
+		m_currencies[(int)Currency.HARD].Deserialize(profile.ContainsKey("pc") ? (string)profile["pc"] : "");
+		m_currencies[(int)Currency.GOLDEN_FRAGMENTS].Deserialize(profile.ContainsKey("gf") ? (string)profile["gf"] : "");
+		m_currencies[(int)Currency.KEYS].Deserialize(profile.ContainsKey("keys") ? (string)profile["keys"] : "", 3, 0);
 
 		// Game settings
 		if ( profile.ContainsKey("currentDragon") )
@@ -731,7 +816,6 @@ public class UserProfile : UserSaveSystem
         eggsCollected = _data["collectedAmount"].AsInt;
 
 		// Golden egg
-		m_currencies[(int)Currency.GOLDEN_FRAGMENTS].amount = _data["goldenEggFragments"].AsInt;
 		m_goldenEggsCollected = _data["goldenEggsCollected"].AsInt;
     }
 
@@ -780,9 +864,10 @@ public class UserProfile : UserSaveSystem
         profile.Add("timestamp", m_saveTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
         // Economy
-		profile.Add( "sc", m_currencies[(int)Currency.SOFT].amount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		profile.Add( "pc", m_currencies[(int)Currency.HARD].amount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		profile.Add( "keys", m_currencies[(int)Currency.KEYS].amount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add( "sc", m_currencies[(int)Currency.SOFT].Serialize());
+		profile.Add( "pc", m_currencies[(int)Currency.HARD].Serialize());
+		profile.Add( "gf", m_currencies[(int)Currency.GOLDEN_FRAGMENTS].Serialize());
+		profile.Add( "keys", m_currencies[(int)Currency.KEYS].Serialize());
 
 		// Game settings
 		profile.Add("currentDragon",m_currentDragon);
@@ -865,7 +950,6 @@ public class UserProfile : UserSaveSystem
 		data.Add("collectedAmount", eggsCollected.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Golden eggs
-		data.Add("goldenEggFragments", m_currencies[(int)Currency.GOLDEN_FRAGMENTS].amount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		data.Add("goldenEggsCollected", m_goldenEggsCollected.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
         return data;
