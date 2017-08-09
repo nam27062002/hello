@@ -17,6 +17,7 @@ public class RailMeshBuilder : MonoBehaviour {
 	[SerializeField] private Material m_material;
 
 	private float m_currentSubdivisions = 0f;
+	private float m_currentDistancePerGameObject = 0f;
 	private int	  m_currentTieCountPerGameObject = 0;
 	private float m_currentMeshScale = 0f;
 	private float m_currentUVscale = 0f;
@@ -31,11 +32,17 @@ public class RailMeshBuilder : MonoBehaviour {
 	void Update() {
 		if (Application.isEditor) {
 			if (m_spline != null) {
-				bool isDirty = m_spline.isDirty3D || (m_currentSubdivisions != m_subdivisions) || (m_currentTieCountPerGameObject != m_tieCountPerGameObject) || (m_currentMeshScale != m_meshScale) || (m_currentUVscale != m_uvScale);
+				bool isDirty =	m_spline.isDirty3D || 
+								(m_currentSubdivisions != m_subdivisions) || 
+								(m_currentDistancePerGameObject != m_distancePerGameObject) ||
+								(m_currentTieCountPerGameObject != m_tieCountPerGameObject) || 
+								(m_currentMeshScale != m_meshScale) || 
+								(m_currentUVscale != m_uvScale);
 
 				if (isDirty) {					
-					m_currentTieCountPerGameObject = m_tieCountPerGameObject;
 					m_currentSubdivisions = m_subdivisions;
+					m_currentDistancePerGameObject = m_distancePerGameObject;
+					m_currentTieCountPerGameObject = m_tieCountPerGameObject;
 					m_currentMeshScale = m_meshScale;
 					m_currentUVscale = m_uvScale;
 
@@ -78,7 +85,7 @@ public class RailMeshBuilder : MonoBehaviour {
 			Vector3 dir = Vector3.zero;
 			Vector3 up = Vector3.zero;
 			Vector3 right = Vector3.zero;
-			Vector3 point = m_spline.GetPointAtDistance(distance, ref dir, ref up, ref right, true);
+			Vector3 point = m_spline.GetPointAtDistance(distance, ref dir, ref up, ref right, false, true);
 
 			CreateRailAt(point + right * 0.325f * m_meshScale, up, right, ref verticesRight);
 			CreateRailAt(point - right * 0.325f * m_meshScale, up, right, ref verticesLeft);
@@ -87,7 +94,7 @@ public class RailMeshBuilder : MonoBehaviour {
 		Vector3 forwardLast = Vector3.zero;
 		Vector3 upLast = Vector3.zero;
 		Vector3 rightLast = Vector3.zero;
-		Vector3 pointLast = m_spline.GetPointAtDistance(_toDist, ref forwardLast, ref upLast, ref rightLast, true);
+		Vector3 pointLast = m_spline.GetPointAtDistance(_toDist, ref forwardLast, ref upLast, ref rightLast, false, true);
 
 		CreateRailAt(pointLast + rightLast * 0.325f * m_meshScale, upLast, rightLast, ref verticesRight);
 		CreateRailAt(pointLast - rightLast * 0.325f * m_meshScale, upLast, rightLast, ref verticesLeft);
@@ -125,7 +132,7 @@ public class RailMeshBuilder : MonoBehaviour {
 			Vector3 dir = Vector3.zero;
 			Vector3 up = Vector3.zero;
 			Vector3 right = Vector3.zero;
-			Vector3 point = m_spline.GetPointAtDistance(dist, ref dir, ref up, ref right, true);
+			Vector3 point = m_spline.GetPointAtDistance(dist, ref dir, ref up, ref right, false, true);
 
 			combine[2 + i].mesh = CreateWoodTie(point, up, -right, dir);
 

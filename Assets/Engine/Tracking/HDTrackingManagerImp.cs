@@ -251,7 +251,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// <summary>
     /// Called when the user starts a round
     /// </summary>    
-    public override void Notify_RoundStart(float dragonXp, int dragonProgression, string dragonSkin, List<string> pets)
+    public override void Notify_RoundStart(int dragonXp, int dragonProgression, string dragonSkin, List<string> pets)
     {
         // custom.game.start has to be send just the first time
         if (!Session_AnyRoundsStarted)
@@ -527,7 +527,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         // DNA custom.mobile.stop
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.ad.finished");
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.ad.finished");
         if (e != null)
         {            
             Track_AddParamBool(e, TRACK_PARAM_IS_LOADED, adIsLoaded);
@@ -540,7 +540,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-    private void Track_RoundStart(float dragonXp, int dragonProgression, string dragonSkin, List<string> pets)
+    private void Track_RoundStart(int dragonXp, int dragonProgression, string dragonSkin, List<string> pets)
     {
         if(FeatureSettingsManager.IsDebugEnabled)
         {
