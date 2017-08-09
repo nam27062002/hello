@@ -53,7 +53,9 @@ public class HUDMessage : MonoBehaviour {
 		BREAK_OBJECT_NEED_TURBO,
 		SHIELD_POISON_LOST,
 		SHIELD_MINE_LOST,
-		DRUNK
+		DRUNK,
+		KEY_FOUND,
+		KEY_LIMIT
 	}
 
 	// How to react with consecutive triggers
@@ -199,6 +201,8 @@ public class HUDMessage : MonoBehaviour {
 			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.AddListener(GameEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.AddListener(GameEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
 			case Type.DRUNK:				Messenger.AddListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
+			case Type.KEY_FOUND:			Messenger.AddListener<CollectibleKey>(GameEvents.KEY_COLLECTED, OnKeyCollected);			break;
+			case Type.KEY_LIMIT:			Messenger.AddListener<CollectibleKey>(GameEvents.KEY_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 		}
 	}
 
@@ -227,6 +231,8 @@ public class HUDMessage : MonoBehaviour {
 			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.RemoveListener(GameEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.RemoveListener(GameEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
 			case Type.DRUNK:				Messenger.RemoveListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
+			case Type.KEY_FOUND:			Messenger.RemoveListener<CollectibleKey>(GameEvents.KEY_COLLECTED, OnKeyCollected);			break;
+			case Type.KEY_LIMIT:			Messenger.RemoveListener<CollectibleKey>(GameEvents.KEY_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 		}
 	}
 
@@ -558,5 +564,21 @@ public class HUDMessage : MonoBehaviour {
 	/// <param name="_isDrunk">Whether the player is drunk or not.</param>
 	private void OnDrunkToggled(bool _isDrunk) {
 		if(_isDrunk) Show();
+	}
+
+	/// <summary>
+	/// A key has been found while playing.
+	/// </summary>
+	/// <param name="_key">The found key.</param>
+	private void OnKeyCollected(CollectibleKey _key) {
+		Show();
+	}
+
+	/// <summary>
+	/// A key has been found while playing, but we failed to collect it (limit reached).
+	/// </summary>
+	/// <param name="_key">The found key.</param>
+	private void OnKeyCollectedFail(CollectibleKey _key) {
+		Show();
 	}
 }
