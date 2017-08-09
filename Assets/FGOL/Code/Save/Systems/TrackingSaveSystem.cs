@@ -7,6 +7,7 @@ public class TrackingSaveSystem : SaveSystem
     private const string PARAM_ACCOUNT_ID               = "accID";
     private const string PARAM_ADS_COUNT                = "adsCount";
     private const string PARAM_ADS_SESSIONS             = "adsSessions";
+    private const string PARAM_GAME_ROUND_COUNT         = "gameRoundCount";
     private const string PARAM_SESSION_COUNT            = "sessionCount";
     private const string PARAM_SOCIAL_ID                = "socialID";
     private const string PARAM_SOCIAL_PLATFORM          = "socialPlatform";
@@ -83,8 +84,22 @@ public class TrackingSaveSystem : SaveSystem
         {
             Cache_SetInt(PARAM_SESSION_COUNT, value);
         }       
-    }   
-    
+    }
+
+    // Counter of game runs since installation
+    public int GameRoundCount
+    {
+        get
+        {
+            return Cache_GetInt(PARAM_GAME_ROUND_COUNT);
+        }
+
+        set
+        {
+            Cache_SetInt(PARAM_GAME_ROUND_COUNT, value);
+        }
+    }
+
     public int TotalPlaytime
     {
         get
@@ -171,6 +186,10 @@ public class TrackingSaveSystem : SaveSystem
         Cache_AddData(key, dataInt);
 
         key = PARAM_SESSION_COUNT;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
+
+        key = PARAM_GAME_ROUND_COUNT;
         dataInt = new CacheDataInt(key, 0);
         Cache_AddData(key, dataInt);
 
