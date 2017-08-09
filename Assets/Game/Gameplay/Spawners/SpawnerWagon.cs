@@ -263,10 +263,9 @@ public class SpawnerWagon : MonoBehaviour, ISpawner {
 		}
 
 		if (index > -1) {
-			index = m_poolHandlerIndex[index];
-			PoolHandler handler = m_poolHandlers[index];
+			PoolHandler handler = m_poolHandlers[m_poolHandlerIndex[index]];
 			if (ProfilerSettingsManager.ENABLED) {               
-				SpawnerManager.RemoveFromTotalLogicUnits(1, m_entityPrefabList[index].name);
+				SpawnerManager.RemoveFromTotalLogicUnits(1, m_entityPrefabList[m_poolHandlerIndex[index]].name);
 			}
 
 			// Unregisters the entity            
