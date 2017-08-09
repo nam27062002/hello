@@ -38,6 +38,7 @@ namespace BSpline {
 				if (value == true) {
 					m_modes[m_modes.Length - 1] = m_modes[0];
 					SetControlPoint(0, m_points[0]);
+					CalculateArcLength();
 				}
 			}
 		}
@@ -138,7 +139,7 @@ namespace BSpline {
 			return Vector3.Cross(forward, right);
 		}
 
-		public Vector3 GetPointAtDistance(float _distance, ref Vector3 _direction, ref Vector3 _up, ref Vector3 _right, bool _local = false) {
+		public Vector3 GetPointAtDistance(float _distance, ref Vector3 _direction, ref Vector3 _up, ref Vector3 _right, bool _smoothDirection = false, bool _local = false) {
 			if (m_segments == null) {
 				CalculateArcLength();
 			}
@@ -148,6 +149,7 @@ namespace BSpline {
 				data = m_segments.Last();
 				_distance = data.length;
 				_direction = data.direction;
+				_up = data.up;
 			} else {
 				int s = 0;
 				while (s < m_segments.Count && _distance > m_segments[s].length) {
@@ -156,30 +158,25 @@ namespace BSpline {
 				}
 				if (s < m_segments.Count) {
 					data = m_segments[s];
-					_direction = data.direction;
 
-					float p = _distance / data.length;
-					if (p < 0.3f) {
-						if (s > 0) {
-							_direction += m_segments[s - 1].direction;
-							_direction.Normalize();
-						}
-					} else if (p > 0.6f) {
-						if (s < m_segments.Count - 1) {
-							_direction += m_segments[s + 1].direction;
-							_direction.Normalize();
-						}
+					if (_smoothDirection && s < m_segments.Count - 1) {
+						float p = _distance / data.length;
+						_direction = data.direction * (1f - p) + m_segments[s + 1].direction * p;
+						_up = data.up * (1f - p) + m_segments[s + 1].up * p;
+					} else {
+						_direction = data.direction;
+						_up = data.up;
 					}
 				} else {
 					data = m_segments.Last();
 					_distance = data.length;
 					_direction = data.direction;
+					_up = data.up;
 				}
 			}
 
-			_direction.Normalize();
 			_right = data.right;
-			_up = data.up;
+
 
 			if (_local) {
 				return data.p0 + data.direction * _distance;
@@ -212,11 +209,11 @@ namespace BSpline {
 			Array.Resize(ref m_splineLength, m_splineLength.Length + 1);
 
 			//we'll create the new spline along last node direction
-			point += lastSegment.direction;
+			point += lastSegment.direction * 2f;
 			m_points[m_points.Length - 3] = point;
-			point += lastSegment.direction;
+			point += lastSegment.direction * 2f;
 			m_points[m_points.Length - 2] = point;
-			point += lastSegment.direction;
+			point += lastSegment.direction * 2f;
 			m_points[m_points.Length - 1] = point;
 
 			Array.Resize(ref m_modes, m_modes.Length + 1);
@@ -233,11 +230,11 @@ namespace BSpline {
 		}
 
 		public void DeleteSpline(int _pointIndex) {
-			if (splineCount > 1) {
-				int splineIndex = _pointIndex / 3;
-				int modeIndex = (_pointIndex + 1) / 3;
+			if (splineCount > 1) {				
+				if (_pointIndex < m_points.Length - 3) {
+					int splineIndex = _pointIndex / 3;
+					int modeIndex = (_pointIndex + 1) / 3;
 
-				if (splineIndex < splineCount - 1) {
 					_pointIndex = splineIndex * 3;
 
 					for (int i = _pointIndex; i < m_points.Length - 3; ++i) {
