@@ -35,7 +35,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1276736636910630}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -199.82, y: 55.87, z: 5.68}
+  m_LocalPosition: {x: 415.85706, y: -40.529522, z: 5.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -52,6 +52,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_rect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 2
+    height: 2
   m_mixEntities: 0
   m_entityPrefabList:
   - name: Air/PF_PufferBird
@@ -68,12 +74,16 @@ MonoBehaviour:
   m_rails: 1
   m_hasGroupBonus: 0
   m_minTier: 0
+  m_maxTier: 4
+  m_checkMaxTier: 0
   m_activationChance: 100
   m_activationTriggers: []
+  m_activationKillTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
     min: 220
     max: 220
+  m_isPremiumCurrencyNPC: 0
   m_homePosMethod: 0
   m_homePosDistance:
     min: 0
@@ -94,5 +104,9 @@ MonoBehaviour:
   m_circular: 1
   m_smoothRadius: 0.5
   m_points:
-  - {x: -1, y: 0, z: 0}
-  - {x: 1, y: 0, z: 0}
+  - {x: -3.8650818, y: -1.796196, z: 0}
+  - {x: -3.224945, y: 1.0363922, z: 0}
+  - {x: 1.2298889, y: 2.3879128, z: 0}
+  - {x: 3.6301575, y: 1.2948685, z: 0}
+  - {x: 2.6033325, y: -1.1731529, z: 0}
+  - {x: -0.45632935, y: -2.5462685, z: 0}
