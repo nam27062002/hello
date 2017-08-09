@@ -1277,6 +1277,10 @@ public class GameCamera : MonoBehaviour
 		return m_activationMaxNear.Intersects(_bounds);
 	}
 
+	public bool IsInsideActivationMaxArea(Rect _bounds) {
+		return m_activationMaxNear.Intersects(_bounds);
+	}
+
 	public bool IsInsideActivationArea(Vector3 _point) {
 		return !m_activationMinNear.Contains(_point) && m_activationMaxNear.Contains(_point);
 	}

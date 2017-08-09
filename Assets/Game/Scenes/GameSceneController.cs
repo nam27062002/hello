@@ -390,17 +390,21 @@ public class GameSceneController : GameSceneControllerBase {
 	/// </summary>
 	public void StartGame() {
         DragonData dragonData = InstanceManager.player.data;
-        float dragonXp = 0f;
+        int dragonXp = 0;
         int dragonProgress = 0;
         string dragonSkin = null;
         List<string> pets = null;
         if (dragonData != null) {
             if (dragonData.progression != null) {
-                dragonXp = dragonData.progression.xp;
+                dragonXp = (int)dragonData.progression.xp;
             }
 
             dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
+
+            // TODO: use trackSku instead of sku
             dragonSkin = dragonData.diguise;
+
+            // TODO: use trackSkus instead of skus
             pets = dragonData.pets;
         }
 

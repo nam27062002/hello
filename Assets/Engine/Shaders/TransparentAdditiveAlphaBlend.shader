@@ -75,23 +75,15 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend"
 					fixed4 frag(v2f i) : COLOR
 					{
 #ifdef CUSTOMPARTICLESYSTEM
-						float4 col = _VColor * 0.5;
+						float4 tint = _VColor * 0.5;
 #else
-						float4 col = _TintColor;
+						float4 tint = _TintColor;
 #endif
-						col = i.color * tex2D(_MainTex, i.texcoord) * col;
-//				return prev;
-//						float a = col.w;
-
-		//				float luminance = step(0.5, 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b);
-						float luminance = col.a;// step(_ABOffset, col.a);
-						fixed4 one = fixed4(1, 1, 1, 1);
-//						col = (2.0 * i.color * col) * (1.0 - luminance) + (one - 2.0 * (one - i.color) * (one - col)) * luminance;
-//						col = (_ABOffset * i.color * col) * (1.0 - luminance) + (one - _ABOffset * (one - i.color) * (one - col)) * luminance;
-						col = (_ABOffset * i.color * col) * (1.0 - luminance) + (one - _ABOffset * (one - i.color) * (one - col)) * luminance;
-						//						col.zw = 0.0;
+						float4 tex = tex2D(_MainTex, i.texcoord) * tint;
+						float luminance = clamp(dot(tex, float4(0.2126, 0.7152, 0.0722, 0.0)) * tex.a * _ABOffset, 0.0, 1.0);
+						float4 one = float4(1, 1, 1, 1);
+						float4 col = lerp(2.0 * (i.color * tex), one - 2.0 * (one - i.color) * (one - tex), luminance);
 						return col;
-
 					}
 					ENDCG
 				}
