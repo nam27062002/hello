@@ -52,9 +52,10 @@ public enum GameEvents {
     INTOSPACE_TOGGLED,          // params: bool _activated
     BREAK_OBJECT_BIGGER_DRAGON, // no params
 	BREAK_OBJECT_NEED_TURBO,	// no params
+    DARK_ZONE_TOGGLE,           // params: bool Enter / Leave
 
-	// Entity events
-	ENTITY_EATEN,				// params: Transform _entity, Reward _reward
+    // Entity events
+    ENTITY_EATEN,				// params: Transform _entity, Reward _reward
 	ENTITY_BURNED,				// params: Transform _entity, Reward _reward
 	ENTITY_DESTROYED,			// params: Transform _entity, Reward _reward
 	FLOCK_EATEN,				// params: Transform _entity, Reward _reward
@@ -85,6 +86,8 @@ public enum GameEvents {
 	EARLY_ALL_HUNGRY_LETTERS_COLLECTED, 	//
 	ALL_HUNGRY_LETTERS_COLLECTED,			//
 	SUPER_SIZE_TOGGLE,			// params: bool _activated
+	KEY_COLLECTED,				// params: CollectibleKey _key
+	KEY_COLLECTED_FAIL,			// params: CollectibleKey _key
 
 	// Dragon collection events
 	DRAGON_ACQUIRED,			// params: DragonData _data

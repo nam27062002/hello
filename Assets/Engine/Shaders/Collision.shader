@@ -9,11 +9,13 @@ Shader "Hungry Dragon/Collision Debug"
 	}
 	SubShader
 	{
-		Tags { "RenderType"="Opaque" "ReplacementShaderID"="Collision"}
+		Tags { "RenderType"="Transparent" "ReplacementShaderID"="Collision"}
 		LOD 100
 
 		Pass
 		{
+			Blend SrcAlpha OneMinusSrcAlpha
+
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag

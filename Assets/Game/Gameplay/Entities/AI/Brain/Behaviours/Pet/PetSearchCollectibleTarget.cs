@@ -63,9 +63,9 @@ namespace AI {
 				{
 					case CollectibleType.EGG:
 					{
-						if (!EggManager.collectibleEgg.collected)
+						if (!CollectiblesManager.egg.collected)
 						{
-							m_eggTransform = EggManager.collectibleEgg.transform;
+							m_eggTransform = CollectiblesManager.egg.transform;
 						}
 					}break;
 				}
@@ -112,12 +112,12 @@ namespace AI {
 				{
 					case CollectibleType.EGG:
 					{
-						if ( !EggManager.collectibleEgg.collected )
-							closestObject = EggManager.collectibleEgg.gameObject;
+						if ( !CollectiblesManager.egg.collected )
+							closestObject = CollectiblesManager.egg.gameObject;
 					}break;
 					case CollectibleType.CHEST:
 					{
-						CollectibleChest chest = ChestManager.instance.GetClosestActiveChest(centerPos);
+						CollectibleChest chest = CollectiblesManager.GetClosestActiveChest(centerPos);
 						if (chest)
 							closestObject = chest.gameObject;
 					}break;

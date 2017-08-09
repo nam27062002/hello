@@ -119,6 +119,7 @@ namespace AI {
 		protected override void ExtendedAttach() {}
 		protected override void ExtendedInit() {}
 
+		protected override void OnFreeFall() {}
 		protected override void ExtendedUpdateFreeFall() {}
 
 		protected override void OnSetVelocity() {}

@@ -169,7 +169,7 @@ namespace AI {
 			}
 		}
 
-
+		protected override void OnFreeFall() { }
 		protected override void ExtendedUpdateFreeFall() {
 			if (m_faceDirection) {
 				m_direction = m_velocity.normalized;

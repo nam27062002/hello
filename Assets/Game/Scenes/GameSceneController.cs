@@ -511,8 +511,7 @@ public class GameSceneController : GameSceneControllerBase {
 				InstanceManager.player.StartIntroMovement();
 
 				// Spawn collectibles
-				ChestManager.OnLevelLoaded();
-				EggManager.SelectCollectibleEgg();                
+				CollectiblesManager.OnLevelLoaded();              
 
 				// Hide loading screen
 				LoadingScreen.Toggle(false);
@@ -585,8 +584,6 @@ public class GameSceneController : GameSceneControllerBase {
 
                 // The time of the play session that has just finished is accumulated to the total amount of time played by the user so far
                 SaveFacade.Instance.timePlayed += (int)m_elapsedSeconds;
-
-				ChestManager.OnFinished();
 			} break;
 
             case EStates.SHOWING_RESULTS: {

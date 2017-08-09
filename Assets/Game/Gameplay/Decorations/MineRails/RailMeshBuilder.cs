@@ -127,7 +127,7 @@ public class RailMeshBuilder : MonoBehaviour {
 			Vector3 right = Vector3.zero;
 			Vector3 point = m_spline.GetPointAtDistance(dist, ref dir, ref up, ref right, true);
 
-			combine[2 + i].mesh = CreateWoodTie(point, up, right, dir);
+			combine[2 + i].mesh = CreateWoodTie(point, up, -right, dir);
 
 			dist += distBetweenTies;
 		}
@@ -174,18 +174,18 @@ public class RailMeshBuilder : MonoBehaviour {
 	private Mesh CreateWoodTie(Vector3 _point, Vector3 _up, Vector3 _right, Vector3 _dir) {
 		List<Vector3> vertices = new List<Vector3>();
 		// top
-		vertices.Add(_point + (-_up * 0.05f - _right * 0.70f + _dir * 0.22f) * m_meshScale);
 		vertices.Add(_point + (-_up * 0.05f + _right * 0.70f + _dir * 0.22f) * m_meshScale);
-		vertices.Add(_point + (-_up * 0.05f + _right * 0.70f - _dir * 0.22f) * m_meshScale);
+		vertices.Add(_point + (-_up * 0.05f - _right * 0.70f + _dir * 0.22f) * m_meshScale);
 		vertices.Add(_point + (-_up * 0.05f - _right * 0.70f - _dir * 0.22f) * m_meshScale);
+		vertices.Add(_point + (-_up * 0.05f + _right * 0.70f - _dir * 0.22f) * m_meshScale);
 
 		// bottom
-		vertices.Add(_point + (-_up * 0.12f - _right * 0.70f + _dir * 0.22f) * m_meshScale);
 		vertices.Add(_point + (-_up * 0.12f + _right * 0.70f + _dir * 0.22f) * m_meshScale);
-		vertices.Add(_point + (-_up * 0.12f + _right * 0.70f - _dir * 0.22f) * m_meshScale);
+		vertices.Add(_point + (-_up * 0.12f - _right * 0.70f + _dir * 0.22f) * m_meshScale);
 		vertices.Add(_point + (-_up * 0.12f - _right * 0.70f - _dir * 0.22f) * m_meshScale);
+		vertices.Add(_point + (-_up * 0.12f + _right * 0.70f - _dir * 0.22f) * m_meshScale);
 
-		int[] triangles = {	0, 1, 2, 2, 3, 0, // top
+		int[] triangles = {	0, 1, 2, 2, 3, 0, // top							
 							5, 4, 6, 6, 4, 7, // bottom
 							1, 0, 4, 5, 1, 4,
 							3, 2, 6, 6, 7, 3,
