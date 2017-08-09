@@ -82,8 +82,8 @@ namespace BSpline {
 				EditorUtility.SetDirty(m_spline);
 			}
 
-			if (GUILayout.Button("Delete Point")) {
-				Undo.RecordObject(m_spline, "Delete Point");
+			if (GUILayout.Button("Delete Curve")) {
+				Undo.RecordObject(m_spline, "Delete Curve");
 				m_spline.DeleteSpline(m_selectedIndex);
 				EditorUtility.SetDirty(m_spline);
 			}

@@ -389,8 +389,27 @@ public class GameSceneController : GameSceneControllerBase {
 	/// Start a new game. All temp game stats will be reset.
 	/// </summary>
 	public void StartGame() {
+        DragonData dragonData = InstanceManager.player.data;
+        int dragonXp = 0;
+        int dragonProgress = 0;
+        string dragonSkin = null;
+        List<string> pets = null;
+        if (dragonData != null) {
+            if (dragonData.progression != null) {
+                dragonXp = (int)dragonData.progression.xp;
+            }
+
+            dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
+
+            // TODO: use trackSku instead of sku
+            dragonSkin = dragonData.diguise;
+
+            // TODO: use trackSkus instead of skus
+            pets = dragonData.pets;
+        }
+
         // Round start is notified when the loading starts
-        HDTrackingManager.Instance.Notify_RoundStart();
+        HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
 
         // Reset timer
         m_elapsedSeconds = 0;

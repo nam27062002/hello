@@ -1,8 +1,9 @@
 ﻿/// <summary>
 /// This class is responsible for handling any Hungry Dragon related stuff needed for tracking. It uses Calety Tracking support to send tracking events
 /// </summary>
+/// 
 
-using UnityEngine;
+using System.Collections.Generic;
 public class HDTrackingManager
 {
     // Singleton ///////////////////////////////////////////////////////////
@@ -83,12 +84,16 @@ public class HDTrackingManager
     public virtual void Notify_ApplicationResumed() {}
 
     /// <summary>
-    /// Called when the user starts a round
+    /// Called when the user starts a round.
     /// </summary>
-    public virtual void Notify_RoundStart() {}
+    /// <param name="dragonXp">Xp of the dragon chosen by the user to play the current round.</param>
+    /// <param name="dragonProgression">Progression of the current dragon. It's calculated the same way as playerProgression is but it's done for the dragon chosen by the user to play this round</param>
+    /// <param name="dragonSkin">Track id of the skin chosen by the user to play the current round.</param>
+    /// <param name="pets">List with the track ids of the pets equipped to play the current round. Null if no pets are equipped.</param>    
+    public virtual void Notify_RoundStart(int dragonXp, int dragonProgression, string dragonSkin, List<string> pets) {}
 
     /// <summary>
-    /// Called when the user finishes a round
+    /// Called when the user finishes a round (because of death or quit game)
     /// </summary>    
     public virtual void Notify_RoundEnd() {}
 

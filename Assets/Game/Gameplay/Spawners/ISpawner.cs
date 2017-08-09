@@ -4,16 +4,20 @@ public interface ISpawner : IQuadTreeItem {
 	string name { get; }
 	void Initialize();
     void Clear();
-    void ForceRemoveEntities();
-    void ForceReset(); // Used for debug purpose    
-        
+    
 	bool IsRespawing();
-    bool CanRespawn();
+	bool IsRespawingPeriodically();
+	bool CanRespawn();
 	bool Respawn(); //return true if it respawned completelly
-	void RemoveEntity(GameObject _entity, bool _killedByPlayer);
+
 	bool MustCheckCameraBounds(); // this spawner will kill its entities if it is outside camera disable area
-	void DrawStateGizmos();
 	bool SpawnersCheckCurrents();
+
+	void RemoveEntity(GameObject _entity, bool _killedByPlayer);
+	void ForceRemoveEntities();
+    void ForceReset(); // Used for debug purpose    
+    
+	void DrawStateGizmos();
 
 	AreaBounds area { get; }
 	IGuideFunction guideFunction { get; }

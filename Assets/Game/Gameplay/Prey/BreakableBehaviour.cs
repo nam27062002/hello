@@ -13,8 +13,8 @@ public class BreakableBehaviour : MonoBehaviour
 	[SerializeField] private ParticleData m_onBreakParticle;
 	[SerializeField] private string m_onBreakAudio;
 
-	[SerializeField] Transform m_view;
-	[SerializeField] GameObject m_activateOnDestroy;
+	[SerializeField] private Transform m_view;
+	[SerializeField] private GameObject m_activateOnDestroy;
 
 	//----------------------------------------------------------------------
 

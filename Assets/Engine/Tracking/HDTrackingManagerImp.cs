@@ -3,6 +3,7 @@
 /// </summary>
 
 using UnityEngine;
+using System.Collections.Generic;
 public class HDTrackingManagerImp : HDTrackingManager
 {    
     private enum EState
@@ -250,13 +251,20 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// <summary>
     /// Called when the user starts a round
     /// </summary>    
-    public override void Notify_RoundStart()
+    public override void Notify_RoundStart(int dragonXp, int dragonProgression, string dragonSkin, List<string> pets)
     {
+        // custom.game.start has to be send just the first time
         if (!Session_AnyRoundsStarted)
         {
             Session_AnyRoundsStarted = true;
             Track_MobileStartEvent();
         }
+
+        // One more game round
+        TrackingSaveSystem.GameRoundCount++;
+
+        // Notifies that one more round has started
+        Track_RoundStart(dragonXp, dragonProgression, dragonSkin, pets);
     }    
 
     /// <summary>
@@ -532,6 +540,27 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
+    private void Track_RoundStart(int dragonXp, int dragonProgression, string dragonSkin, List<string> pets)
+    {
+        if(FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_RoundStart");
+        }
+
+        // DNA custom.mobile.stop
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.start");
+        if (e != null)
+        {            
+            Track_AddParamSessionsCount(e);
+            Track_AddParamGameRoundCount(e);
+            e.SetParameterValue(TRACK_PARAM_XP, dragonXp);
+            e.SetParameterValue(TRACK_PARAM_DRAGON_PROGRESSION, dragonProgression);            
+            Track_AddParamString(e, TRACK_PARAM_DRAGON_SKIN, dragonSkin);
+            Track_AddParamPets(e, pets);            
+            TrackingManager.SharedInstance.SendEvent(e);
+        }
+    }
+
     // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------    
@@ -540,7 +569,10 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_AD_VIEWING_DURATION        = "adViewingDuration";
     private const string TRACK_PARAM_ADS_TYPE                   = "adsType";
     private const string TRACK_PARAM_CURRENCY                   = "currency";
+    private const string TRACK_PARAM_DRAGON_PROGRESSION         = "dragonProgression";
+    private const string TRACK_PARAM_DRAGON_SKIN                = "dragonSkin";
     private const string TRACK_PARAM_ECONOMY_GROUP              = "economyGroup";
+    private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNB";
     private const string TRACK_PARAM_HOUSTON_TRANSACTION_ID     = "houstonTransactionID";
     private const string TRACK_PARAM_IN_GAME_ID                 = "InGameId";
     private const string TRACK_PARAM_IS_LOADED                  = "isLoaded";
@@ -552,6 +584,10 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_MONEY_IAP                  = "moneyIAP";
     private const string TRACK_PARAM_NB_ADS_LTD                 = "nbAdsLtd";
     private const string TRACK_PARAM_NB_ADS_SESSION             = "nbAdsSession";
+    private const string TRACK_PARAM_PET1                       = "pet1";
+    private const string TRACK_PARAM_PET2                       = "pet2";
+    private const string TRACK_PARAM_PET3                       = "pet3";
+    private const string TRACK_PARAM_PET4                       = "pet4";
     private const string TRACK_PARAM_PLAYER_ID                  = "playerID";
     private const string TRACK_PARAM_PLAYER_PROGRESS            = "playerProgress";
     private const string TRACK_PARAM_PROMOTION_TYPE             = "promotionType";    
@@ -566,7 +602,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_STORE_TRANSACTION_ID       = "storeTransactionID";
     private const string TRACK_PARAM_TOTAL_PLAYTIME             = "totalPlaytime";
     private const string TRACK_PARAM_TOTAL_PURCHASES            = "totalPurchases";
-    private const string TRACK_PARAM_TOTAL_STORE_VISITS         = "totalStoreVisits";    
+    private const string TRACK_PARAM_TOTAL_STORE_VISITS         = "totalStoreVisits";
+    private const string TRACK_PARAM_XP                         = "xp";
 
 
     private void Track_AddParamSubVersion(TrackingManager.TrackingEvent e)
@@ -635,10 +672,53 @@ public class HDTrackingManagerImp : HDTrackingManager
         e.SetParameterValue(TRACK_PARAM_SESSIONS_COUNT, value);
     }
 
+    private void Track_AddParamGameRoundCount(TrackingManager.TrackingEvent e)
+    {
+        int value = (TrackingSaveSystem != null) ? TrackingSaveSystem.GameRoundCount : 0;
+        e.SetParameterValue(TRACK_PARAM_GAME_RUN_NB, value);
+    }
+
     private void Track_AddParamTotalPlaytime(TrackingManager.TrackingEvent e)
     {
         int value = (TrackingSaveSystem != null) ? TrackingSaveSystem.TotalPlaytime : 0;
         e.SetParameterValue(TRACK_PARAM_TOTAL_PLAYTIME, value);
+    }
+
+    private void Track_AddParamPets(TrackingManager.TrackingEvent e, List<string> pets)
+    {
+        // 4 pets are currently supported
+        string pet1 = null;
+        string pet2 = null;
+        string pet3 = null;
+        string pet4 = null;
+        if (pets != null)
+        {
+            int count = pets.Count;
+            if (count > 0)
+            {
+                pet1 = pets[0];
+            }
+
+            if (count > 1)
+            {
+                pet2 = pets[1];
+            }
+
+            if (count > 2)
+            {
+                pet3 = pets[2];
+            }
+
+            if (count > 3)
+            {
+                pet4 = pets[3];
+            }
+        }
+
+        Track_AddParamString(e, TRACK_PARAM_PET1, pet1);
+        Track_AddParamString(e, TRACK_PARAM_PET2, pet2);
+        Track_AddParamString(e, TRACK_PARAM_PET3, pet3);
+        Track_AddParamString(e, TRACK_PARAM_PET4, pet4);
     }
 
     private void Track_AddParamTotalPurchases(TrackingManager.TrackingEvent e)
@@ -753,7 +833,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            Notify_RoundStart();
+            Notify_RoundStart(0, 0, null, null);
         }        
     }
     #endregion

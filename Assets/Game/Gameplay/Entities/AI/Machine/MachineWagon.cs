@@ -28,7 +28,9 @@ namespace AI {
 
 		protected override void Awake() {
 			m_motion = m_wagonMotion;
-			m_explosive = new Explosive(true, m_explosionDamage, m_explosionRadius, m_explosionCameraShake);
+			if (m_canExplode) {
+				m_explosive = new Explosive(true, m_explosionDamage, m_explosionRadius, m_explosionCameraShake);
+			}
 
 			base.Awake();
 		}
@@ -40,7 +42,9 @@ namespace AI {
 		// Collision events
 		protected override void OnCollisionEnter(Collision _collision) {
 			if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
-				m_explosive.Explode(m_transform, 2f, false);
+				if (m_canExplode) {
+					m_explosive.Explode(m_transform, 2f, false);
+				}
 				SetSignal(Signals.Type.Destroyed, true);
 			}
 		}
@@ -57,7 +61,9 @@ namespace AI {
 			if (_other.CompareTag("WagonFall")) {
 				m_wagonMotion.FreeFall();
 			} else if (_other.CompareTag("Player")) {
-				m_explosive.Explode(m_transform, 2f, true);
+				if (m_canExplode) {
+					m_explosive.Explode(m_transform, 2f, true);
+				}
 				SetSignal(Signals.Type.Destroyed, true);
 			}
 		}

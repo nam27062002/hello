@@ -1220,47 +1220,70 @@ public class UserProfile : UserSaveSystem
     /// Returns an int that sums up the user's progress.
     /// </summary>
     /// <returns></returns>
-    public int GetPlayerProgress()
-    {
+    public int GetPlayerProgress() {
         int returnValue = 0;
 
         // Find the dragon with the highest level among all dragons acquired by the user.
-        if (m_dragonsBySku != null)
-        {
+        if (m_dragonsBySku != null) {
             DragonData highestDragon = null;
-            foreach (KeyValuePair<string, DragonData> pair in m_dragonsBySku)
-            {
-                if (pair.Value.isOwned)
-                {                                        
-		            int order = pair.Value.GetOrder();
-                    if (highestDragon == null || order > highestDragon.GetOrder())
-                    {
+            foreach (KeyValuePair<string, DragonData> pair in m_dragonsBySku) {
+                if (pair.Value.isOwned) {
+                    int order = pair.Value.GetOrder();
+                    if (highestDragon == null || order > highestDragon.GetOrder()) {
                         highestDragon = pair.Value;
                     }
                 }
             }
 
-            if (highestDragon != null)
-            {
-                int highestOrder = highestDragon.GetOrder();
+            returnValue = GetDragonProgress(highestDragon);
+        }
 
-                // Add up maxLevel of all dragons with a lower level.
-                foreach (KeyValuePair<string, DragonData> pair in m_dragonsBySku)
-                {
-                    if (pair.Value.GetOrder() < highestOrder)
-                    {
-                        // Since level start at 0 the amount of level is maxLevel + 1 
-                        returnValue += pair.Value.progression.maxLevel + 1;                        
-                    }
+        return returnValue;
+    }
+
+    /// <summary>
+    /// Returns the progress of the dragon sku passed as a parameter.
+    /// </summary>
+    /// <param name="_dragonSku">Dragon sku in <c>DefinitionsCategory.DRAGONS</c> table.</param>
+    /// <returns>0 is returned if <c>_dragonSku</c> is not a valid gragon, otherwise a positive value representing the progress of the dragon sku 
+    /// passed as a parameter is returned.
+    /// </returns>
+    public int GetDragonProgress(string _dragonSku) {
+        DragonData data = null;
+        if (m_dragonsBySku != null && m_dragonsBySku.ContainsKey(_dragonSku)) {
+            data = m_dragonsBySku[_dragonSku];
+        }
+
+        return GetDragonProgress(data);
+    }
+
+    /// <summary>
+    /// Returns the progress of the dragon data passed as a parameter.
+    /// </summary>
+    /// <param name="_dragonData">Dragon data.</param>
+    /// <returns>0 is returned if <c>_dragonData</c> is null, otherwise a positive value representing the progress of the dragon data
+    /// passed as a parameter is returned.
+    /// </returns>
+    public int GetDragonProgress(DragonData _dragonData) {
+        int returnValue = 0;
+
+        if (_dragonData != null) {
+            int highestOrder = _dragonData.GetOrder();
+
+            // Add up maxLevel of all dragons with a lower level.
+            foreach (KeyValuePair<string, DragonData> pair in m_dragonsBySku) {
+                if (pair.Value.GetOrder() < highestOrder) {
+                    // Since level start at 0 the amount of level is maxLevel + 1 
+                    returnValue += pair.Value.progression.maxLevel + 1;
                 }
-
-                // Add up the current level of that highest dragon.
-                returnValue += highestDragon.progression.level;
-
-                // Dragon level starts at 0 but player progress starts at 1
-                returnValue++;
             }
-        }        
+
+            // Add up the current level of that highest dragon.
+            returnValue += _dragonData.progression.level;
+
+            // Dragon level starts at 0 but player progress starts at 1
+            returnValue++;
+        }
 
         return returnValue;
     }
