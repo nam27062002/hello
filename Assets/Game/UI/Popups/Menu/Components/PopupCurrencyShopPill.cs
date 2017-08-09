@@ -152,11 +152,11 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		// Add amount
 		switch(type) {
 			case UserProfile.Currency.SOFT: {
-				UsersManager.currentUser.AddCurrency(UserProfile.Currency.SOFT, def.GetAsLong("amount"));
+				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)def.GetAsLong("amount"), true);
 			} break;
 
 			case UserProfile.Currency.HARD: {
-				UsersManager.currentUser.AddCurrency(UserProfile.Currency.HARD, def.GetAsLong("amount"));
+				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)def.GetAsLong("amount"), true);
 			} break;
 		}
 

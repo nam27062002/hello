@@ -39,7 +39,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	private float m_updateTimer = 0f;
 
 	// External references
-	private GameCamera m_newCamera = null;
+	private GameCamera m_camera = null;
     private Transform m_newCameraTransform;
 
 	// Detection area
@@ -54,6 +54,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	private HashSet<ISpawner> m_selectedSpawners = new HashSet<ISpawner>();
     
     public List<ISpawner> m_spawning;
+	private List<ISpawner> m_spawningPeriodicallyWhileActive;
 	private List<ISpawner> m_activeMustCheckCameraBounds;
 
     private float m_lastX, m_lastY;
@@ -68,9 +69,10 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
     /// <summary>
     /// Inititalization.
     /// </summary>
-    private void Awake() {
+	private void Awake() {
 		m_spawners = new List<ISpawner>();
 		m_spawning = new List<ISpawner>();
+		m_spawningPeriodicallyWhileActive = new List<ISpawner>();
 		m_activeMustCheckCameraBounds = new List<ISpawner>();
 
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -117,18 +119,18 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Get activation bounds
 		// Update every frame in case camera bounds change (i.e. zoom in/out)
 		float currentX = 0, currentY = 0;
-		if (m_newCamera != null) {
-			m_minRectNear = m_newCamera.activationMinRectNear;
-			m_maxRectNear = m_newCamera.activationMaxRectNear;
+		if (m_camera != null) {
+			m_minRectNear = m_camera.activationMinRectNear;
+			m_maxRectNear = m_camera.activationMaxRectNear;
 
-			m_minRectFar = m_newCamera.activationMinRectFar;
-			m_maxRectFar = m_newCamera.activationMaxRectFar;
+			m_minRectFar = m_camera.activationMinRectFar;
+			m_maxRectFar = m_camera.activationMaxRectFar;
 
-			m_minRectBG = m_newCamera.activationMinRectBG;
-			m_maxRectBG = m_newCamera.activationMaxRectBG;
+			m_minRectBG = m_camera.activationMinRectBG;
+			m_maxRectBG = m_camera.activationMaxRectBG;
 
-			currentX = m_newCamera.position.x;
-			currentY = m_newCamera.position.y;
+			currentX = m_camera.position.x;
+			currentY = m_camera.position.y;
 		}
 
 		const float delta = 0.5f;
@@ -208,7 +210,11 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
             foreach (ISpawner item in m_selectedSpawners) {            
                 if (item.CanRespawn()) {
 					//add item into respawn stack and begin the respawn process
-					m_spawning.Add(item);
+					if (item.IsRespawingPeriodically()) {
+						m_spawningPeriodicallyWhileActive.Add(item);
+					} else {
+						m_spawning.Add(item);
+					}
 					item.Respawn();
 				}
 			}          
@@ -232,11 +238,11 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
 				if (sp.transform.position.z < BACKGROUND_LAYER_Z) 
 				{
-					cancelSpawn = m_newCamera.IsInsideDeactivationArea(sp.boundingRect);
+					cancelSpawn = m_camera.IsInsideDeactivationArea(sp.boundingRect);
 				}
 				else 
 				{
-					cancelSpawn = m_newCamera.IsInsideBackgroundDeactivationArea(sp.boundingRect);
+					cancelSpawn = m_camera.IsInsideBackgroundDeactivationArea(sp.boundingRect);
 				}
 
 				if (cancelSpawn)
@@ -265,7 +271,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 			{
 				sp = m_activeMustCheckCameraBounds[i];
 
-				if (m_newCamera.IsInsideDeactivationArea(sp.boundingRect))
+				if (m_camera.IsInsideDeactivationArea(sp.boundingRect))
 				{
 					sp.ForceRemoveEntities();
 					m_activeMustCheckCameraBounds.RemoveAt(i);
@@ -274,6 +280,19 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 				else if (sp.IsRespawing())
 				{
 					m_activeMustCheckCameraBounds.RemoveAt(i);
+					i++;
+				}
+			}
+		}
+
+		if (m_spawningPeriodicallyWhileActive.Count > 0) {
+			for (int i = 0; i < m_spawningPeriodicallyWhileActive.Count; ++i) {
+				sp = m_spawningPeriodicallyWhileActive[i];
+				if (m_camera.IsInsideActivationMaxArea(sp.boundingRect)) {
+					sp.Respawn();
+				} else {
+					sp.ForceRemoveEntities();
+					m_spawningPeriodicallyWhileActive.RemoveAt(i);
 					i++;
 				}
 			}
@@ -481,9 +500,9 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Make sure camera reference is valid
 		// Spawners are only used in the game and level editor scenes, so we can be sure that both game camera and game scene controller will be present
 		Camera gameCamera = InstanceManager.sceneController.mainCamera;
-		m_newCamera = gameCamera.GetComponent<GameCamera>();
-        if (m_newCamera != null)        
-            m_newCameraTransform = m_newCamera.transform;
+		m_camera = gameCamera.GetComponent<GameCamera>();
+        if (m_camera != null)        
+            m_newCameraTransform = m_camera.transform;
 		OnAreaEnter();
 	}
 
@@ -510,7 +529,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		}
 
 		m_selectedSpawners.Clear();
-		m_minRectNear = m_newCamera.activationMinRectNear;
+		m_minRectNear = m_camera.activationMinRectNear;
 		m_spawnersTreeNear.GetHashSetInRange(m_minRectNear.ToRect(), ref m_selectedSpawners);
 		m_spawnersTreeFar.GetHashSetInRange(m_minRectNear.ToRect(), ref m_selectedSpawners);
 		m_spawnersTreeBG.GetHashSetInRange(m_minRectNear.ToRect(), ref m_selectedSpawners);
@@ -518,10 +537,15 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Process all selected spawners!
 		foreach(ISpawner item in m_selectedSpawners) {
 			if (item.CanRespawn()) {
-				int iterations = 0;
-				do {
-					iterations++;
-				} while (iterations < 100 && !item.Respawn());
+				if (item.IsRespawingPeriodically()) {
+					item.Respawn();
+					m_spawningPeriodicallyWhileActive.Add(item);
+				} else {
+					int iterations = 0;
+					do {
+						iterations++;
+					} while (iterations < 100 && !item.Respawn());
+				}
 			}
 		}
 
@@ -558,7 +582,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		m_spawnersTreeBG = null;
 
         // Drop camera references
-        m_newCamera = null;
+        m_camera = null;
         m_newCameraTransform = null;  
         
         if (m_spawners != null) {

@@ -7,7 +7,7 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend"
 		_TintColor("Tint Color", Color) = (0.5,0.5,0.5,0.5)
 		[HideInInspector] _VColor("Custom vertex color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_MainTex("Particle Texture", 2D) = "white" {}
-		_ABOffset("Alpha blend offset", Range(0.0, 4.0)) = 0.5
+		_ABOffset("Alpha blend offset", Range(0.0, 8.0)) = 0.5
 //		[Toggle(CUSTOMPARTICLESYSTEM)] _EnableCustomParticleSystem("Custom Particle System", int) = 0.0
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}

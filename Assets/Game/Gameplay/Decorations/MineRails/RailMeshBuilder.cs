@@ -24,8 +24,8 @@ public class RailMeshBuilder : MonoBehaviour {
 
 
 	// Use this for initialization
-	void Start () {
-		
+	void Awake() {
+		RailManager.RegisterRail(m_spline);
 	}
 	
 	// Update is called once per frame

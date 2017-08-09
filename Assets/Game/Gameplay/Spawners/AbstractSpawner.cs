@@ -92,9 +92,9 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     }
 
 	// this spawner will kill its entities if it is outside camera disable area
-	public virtual bool MustCheckCameraBounds() {
-		return false;
-	}
+	public virtual bool MustCheckCameraBounds()	 	{ return false; }
+	public virtual bool IsRespawingPeriodically() 	{ return false; }
+	public virtual bool SpawnersCheckCurrents()		{ return false; }
     
     //return true if it respawned completelly
     public bool Respawn() {
@@ -322,8 +322,6 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     private void Entities_Create(uint amount) {
         m_entities = new IEntity[amount];        
     }    
-
-	public virtual bool SpawnersCheckCurrents(){ return false; }
     #endregion
 
     #region interface_for_subclasses

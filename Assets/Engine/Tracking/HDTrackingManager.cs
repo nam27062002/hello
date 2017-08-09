@@ -9,7 +9,7 @@ public class HDTrackingManager
     // Singleton ///////////////////////////////////////////////////////////
 #if UNITY_EDITOR
     // Disabled on editor because ubimobile services crashes on editor when platform is set to iOS
-    private static bool IsEnabled = true;
+    private static bool IsEnabled = false;
 #else
     private static bool IsEnabled = true;
 #endif
