@@ -8,7 +8,7 @@ namespace AI {
 		public BSpline.BezierSpline rails { 
 			set { 
 				m_rails = value; 
-				m_machine.position = m_rails.GetPointAtDistance(0, ref m_direction, ref m_upVector, ref m_right);
+				m_machine.position = m_rails.GetPointAtDistance(0, ref m_direction, ref m_upVector, ref m_right, true);
 			} 
 		}
 
@@ -48,7 +48,7 @@ namespace AI {
 
 			m_distanceMoved += speed * dt;
 			if (m_distanceMoved < m_rails.length) {				
-				m_machine.position = m_rails.GetPointAtDistance(m_distanceMoved, ref m_direction, ref m_upVector, ref m_right);
+				m_machine.position = m_rails.GetPointAtDistance(m_distanceMoved, ref m_direction, ref m_upVector, ref m_right, true);
 			} else {
 				FreeFall();
 			}
