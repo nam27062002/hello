@@ -3,8 +3,6 @@
 #pragma exclude_renderers d3d11
 
 
-#define LIGHTMAPCONTRAST
-
 struct v2f {
 	float4 vertex : SV_POSITION;
 	half2 texcoord : TEXCOORD0;
@@ -55,9 +53,6 @@ float4 _SecondTexture_ST;
 #ifdef LIGHTMAP_ON
 float _LightmapIntensity;
 #endif
-
-
-
 
 #ifdef NORMALMAP
 uniform sampler2D _NormalTex;
