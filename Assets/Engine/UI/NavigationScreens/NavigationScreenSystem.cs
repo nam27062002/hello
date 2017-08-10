@@ -128,6 +128,16 @@ public class NavigationScreenSystem : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Operator [].
+	/// Obtain the screen at the given index.
+	/// </summary>
+	/// <param name="_screenIdx">Index of the desired screen.</param>
+	/// <returns>The screen with the given index. <c>null</c> if not found.</returns>
+	public NavigationScreen this[int _screenIdx] {
+		get { return GetScreen(_screenIdx); }
+	}
+
+	/// <summary>
 	/// Obtain the screen with the given name.
 	/// </summary>
 	/// <param name="_screenName">Name of the desired screen.</param>
@@ -135,6 +145,16 @@ public class NavigationScreenSystem : MonoBehaviour {
 	public NavigationScreen GetScreen(string _screenName) {
 		// [AOC] Use native C# find function with lambda expression to define the match algorithm
 		return m_screens.Find(_screen => _screen.name.Equals(_screenName));
+	}
+
+	/// <summary>
+	/// Operator [].
+	/// Obtain the screen with the given name.
+	/// </summary>
+	/// <param name="_screenName">Name of the desired screen.</param>
+	/// <returns>The screen with the given name. <c>null</c> if not found.</returns>
+	public NavigationScreen this[string _screenName] {
+		get { return GetScreen(_screenName); }
 	}
 
 	/// <summary>
