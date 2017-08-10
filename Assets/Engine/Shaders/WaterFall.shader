@@ -18,13 +18,16 @@ Shader "Hungry Dragon/Waterfall"
 
 	SubShader {
 //		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque"  "LightMode" = "ForwardBase" }
-		Tags{ "Queue" = "Transparent+50" "RenderType" = "Transparent"  "LightMode" = "ForwardBase" }
-		LOD 100
+		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
+//		LOD 100
+		Lighting Off
+		Cull back
+		ZWrite Off
+		ZTest LEqual
+
 
 		Pass {  
 			Blend SrcAlpha OneMinusSrcAlpha
-			Cull back
-			ZWrite On
 //			Fog{ Color(0, 0, 0, 0) }
 
 			Stencil
@@ -38,7 +41,7 @@ Shader "Hungry Dragon/Waterfall"
 				#pragma vertex vert
 				#pragma fragment frag
 //				#pragma multi_compile_fog
-				#pragma multi_compile_fwdbase
+//				#pragma multi_compile_fwdbase
 //				#pragma glsl_no_auto_normalization
 //				#pragma fragmentoption ARB_precision_hint_fastest
 
@@ -71,6 +74,7 @@ Shader "Hungry Dragon/Waterfall"
 				sampler2D _BlendTex;
 				float4 _BlendTex_ST;
 				float _WaterSpeed;
+				fixed4 _BackColor;
 
 
 				v2f vert (appdata_t v) 
@@ -102,11 +106,12 @@ Shader "Hungry Dragon/Waterfall"
 //					col.w *= 1.0 - i.color.w;
 //					return col;
 
-					fixed3 one = fixed3(1, 1, 1);
-					col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
+//					fixed4 one = fixed4(1, 1, 1, 1);
+//					col = one - 2.0 * (one - i.color * 0.75) * (one - col);	// Overlay
+//					col.a *= 0.5;
 
 //					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
-//					col *= attenuation;
+					col.a *= _BackColor.a;
 
 					return col;
 				}
@@ -116,9 +121,6 @@ Shader "Hungry Dragon/Waterfall"
 
 		Pass{
 			Blend SrcAlpha OneMinusSrcAlpha
-			Cull back
-			ZWrite On
-//			Fog{ Color(0, 0, 0, 0) }
 
 			Stencil
 			{
@@ -131,10 +133,7 @@ Shader "Hungry Dragon/Waterfall"
 			#pragma vertex vert
 			#pragma fragment frag
 //			#pragma multi_compile_fog
-//			#pragma multi_compile_fwdbase
-//			#pragma glsl_no_auto_normalization
-//			#pragma fragmentoption ARB_precision_hint_fastest
-//			#pragma multi_compile_particles
+			#pragma multi_compile_fwdbase
 
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
@@ -187,8 +186,8 @@ Shader "Hungry Dragon/Waterfall"
 				//					col.w *= 1.0 - i.color.w;
 				//					return col;
 
-				fixed3 one = fixed3(1, 1, 1);
-				col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
+//				fixed3 one = fixed3(1, 1, 1);
+//				col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
 				fixed saturate = (col.r + 0.7152 * col.g + 0.0722 * col.b) * col.a * 0.5;
 
 				fixed4 fcol = _BackColor;
