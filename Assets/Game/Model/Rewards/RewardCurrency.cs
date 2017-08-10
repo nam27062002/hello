@@ -23,7 +23,7 @@ namespace Metagame {
 		}
 
 		override protected void DoCollect() {
-			UsersManager.currentUser.AddCurrency(m_currency, m_amount);
+			UsersManager.currentUser.EarnCurrency(m_currency, (ulong)m_amount, false);
 		}		
 	}
 	

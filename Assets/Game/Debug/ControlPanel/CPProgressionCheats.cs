@@ -109,16 +109,22 @@ public class CPProgressionCheats : MonoBehaviour {
 		long amount = long.Parse(input.text);
 
 		// Compute amount to add
-		long toAdd = 0;
 		switch(_operation) {
-			case CurrencyOperation.ADD:		toAdd = amount;		break;
-			case CurrencyOperation.REMOVE:	toAdd = -amount;	break;
-			case CurrencyOperation.SET:		toAdd = amount - UsersManager.currentUser.GetCurrency(_currency);	break;
-		}
-		toAdd = System.Math.Max(toAdd, -UsersManager.currentUser.GetCurrency(_currency));	// Min 0 coins! This will exclude negative amounts :)
+			case CurrencyOperation.ADD: {
+				UsersManager.currentUser.EarnCurrency(_currency, (ulong)amount, false);
+			} break;
 
-		// Update profile
-		UsersManager.currentUser.AddCurrency(_currency, toAdd);
+			case CurrencyOperation.REMOVE: {
+				UsersManager.currentUser.SpendCurrency(_currency, (ulong)amount);
+			} break;
+
+			case CurrencyOperation.SET: {
+				// Apply the amount respecting the current free/paid ratio
+				UserProfile.CurrencyData data = UsersManager.currentUser.GetCurrencyData(_currency);
+				float ratio = data.amount > 0 ? (float)data.freeAmount/(float)data.amount : 1f;
+				UsersManager.currentUser.SetCurrency(_currency, (long)(amount * ratio), (long)(amount * (1f - ratio)));
+			} break;
+		}
 
 		// Save persistence
 		PersistenceManager.Save();
@@ -249,10 +255,10 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Get amount from linked input field
 		TMP_InputField input = GetComponentInChildren<TMP_InputField>();
 		if(input == null) Debug.Log("Requires a nested Input Field!");
-		int amount = int.Parse(input.text);
+		long amount = long.Parse(input.text);
 
-		// Update profile - make sure amount is valid
-		UsersManager.currentUser.goldenEggFragments = Mathf.Max(0, amount);		// No negative values!
+		// Update profile
+		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, amount, 0);
 
 		// Save persistence
 		PersistenceManager.Save();
@@ -340,8 +346,8 @@ public class CPProgressionCheats : MonoBehaviour {
 
 		// Clear collected eggs and fragments
 		UsersManager.currentUser.eggsCollected = 0;
-		UsersManager.currentUser.goldenEggFragments = 0;
 		UsersManager.currentUser.goldenEggsCollected = 0;
+		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, 0, 0);
 
 		// Save!
 		PersistenceManager.Save();
@@ -362,8 +368,8 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Clear pet collection and eggs and fragments
 		UsersManager.currentUser.petCollection.Reset();
 		UsersManager.currentUser.eggsCollected = 0;
-		UsersManager.currentUser.goldenEggFragments = 0;
 		UsersManager.currentUser.goldenEggsCollected = 0;
+		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, 0, 0);
 
 		// Iterate all the pets list and randomly unlock some of them
 		float unlockChance = 0.5f;
@@ -385,7 +391,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		}
 
 		// Initialize current amount of golden fragments to a random value within the limit
-		UsersManager.currentUser.goldenEggFragments = Random.Range(0, EggManager.goldenEggRequiredFragments);
+		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, (long)Random.Range(0, EggManager.goldenEggRequiredFragments), 0);
 
 		// Save!
 		PersistenceManager.Save();
@@ -412,7 +418,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		}
 
 		// Clear collected data
-		UsersManager.currentUser.goldenEggFragments = 0;
+		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, 0, 0);
 		UsersManager.currentUser.goldenEggsCollected = 0;
 
 		// Save!

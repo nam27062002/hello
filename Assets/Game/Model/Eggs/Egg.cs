@@ -261,7 +261,7 @@ public class Egg {
 
 		// If golden egg, increase total and reset fragments counter
 		if(def.sku == SKU_GOLDEN_EGG) {
-			UsersManager.currentUser.goldenEggFragments -= EggManager.goldenEggRequiredFragments;	// In case we have extra fragments!
+			UsersManager.currentUser.SpendCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, (ulong)EggManager.goldenEggRequiredFragments);	// If we have extra fragments, they will be kept in the profile
 			UsersManager.currentUser.goldenEggsCollected++;
 		}
 

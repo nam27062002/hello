@@ -43,6 +43,7 @@ namespace LevelEditor {
             // Initialize some required managers
             ContentManager.InitContent(true);
 			SpawnerManager.CreateInstance();
+			RailManager.CreateInstance();
 
             UsersManager.CreateInstance();
             SaveFacade.Instance.Init();

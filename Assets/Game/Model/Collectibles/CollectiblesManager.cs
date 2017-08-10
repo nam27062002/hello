@@ -89,7 +89,7 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 		// Process keys
 		if(instance.m_key != null && instance.m_key.collected) {
 			// Just add a new key to the user profile
-			UsersManager.currentUser.AddCurrency(UserProfile.Currency.KEYS, 1);
+			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.KEYS, 1, false);
 		}
 
 		// Save persistence

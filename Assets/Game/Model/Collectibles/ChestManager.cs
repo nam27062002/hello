@@ -141,11 +141,11 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 			// Give reward
 			switch(rewardData.type) {
 				case Chest.RewardType.SC: {
-					instance.m_user.AddCurrency(UserProfile.Currency.SOFT, rewardData.amount);
+					instance.m_user.EarnCurrency(UserProfile.Currency.SOFT, (ulong)rewardData.amount, false);
 				} break;
 
 				case Chest.RewardType.PC: {
-					instance.m_user.AddCurrency(UserProfile.Currency.HARD, rewardData.amount);
+					instance.m_user.EarnCurrency(UserProfile.Currency.HARD, (ulong)rewardData.amount, false);
 				} break;
 			}
 		}
