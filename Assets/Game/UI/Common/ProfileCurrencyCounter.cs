@@ -35,8 +35,14 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_text = null;
 	[SerializeField] private Animator m_anim = null;
 
+	// More setup
+	[Space]
+	[SerializeField] private Color m_colorWhenMinReached = Color.red;
+	[SerializeField] private Color m_colorWhenMaxReached = Color.green;
+
 	// Internal
 	private NumberTextAnimator m_textAnim = null;
+	private Color m_defaultColor = Color.white;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -47,6 +53,9 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 	private void Awake() {
 		// Required references
 		DebugUtils.Assert(m_text != null, "Required field!");	// Anim not required
+
+		// Store original color
+		m_defaultColor = m_text.color;
 
 		// If the text has a number animator linked, store it and assign it a custom text setter
 		m_textAnim = m_text.GetComponent<NumberTextAnimator>();
@@ -115,6 +124,9 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 	/// </summary>
 	/// <param name="_amount">Amount to be displayed.</param>
 	private void SetText(long _amount) {
+		// Aux vars
+		UserProfile.CurrencyData currencyData = UsersManager.currentUser.GetCurrencyData(m_currency);
+
 		// Select text and icon based on currency
 		// UIConstants does the job for us
 		switch(m_currency) {
@@ -139,11 +151,20 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 					LocalizationManager.SharedInstance.Localize(
 						"TID_FRACTION", 
 						StringUtils.FormatNumber(_amount), 
-						StringUtils.FormatNumber(UsersManager.currentUser.GetCurrencyMax(UserProfile.Currency.KEYS))	// [AOC] TODO!! Hardcoded limit
+						StringUtils.FormatNumber(currencyData.max)
 					),
 					UIConstants.IconType.KEYS, m_alignment
 				);
 			} break;
+		}
+
+		// Apply proper color based on limits
+		if(_amount < currencyData.min) {
+			m_text.color = m_colorWhenMinReached;
+		} else if(currencyData.max > 0 && _amount > currencyData.max) {
+			m_text.color = m_colorWhenMaxReached;
+		} else {
+			m_text.color = m_defaultColor;
 		}
 	}
 

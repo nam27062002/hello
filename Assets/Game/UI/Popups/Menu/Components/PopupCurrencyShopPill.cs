@@ -122,9 +122,9 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 
 		// Price
 		// Figure out currency first
-		m_price = m_def.GetAsFloat("priceDollars");		// [AOC] TODO!! Price should be provided by the store api
+		m_price = m_def.GetAsFloat("priceDollars");
 		if(m_price > 0) {	// Real money prevails over HC
-			// Price should be localized by the store api
+			// Price is localized by the store api
 			m_currency = UserProfile.Currency.REAL;
 			if (GameStoreManager.SharedInstance.IsReady())
 			{
@@ -150,6 +150,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 	{	
 		UserProfile.Currency type = GetCurrencyType(def);
 		// Add amount
+		// [AOC] Could be joined in a single instruction for all types, but keep it split in case we need some extra processing (i.e. tracking!)
 		switch(type) {
 			case UserProfile.Currency.SOFT: {
 				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)def.GetAsLong("amount"), true);
@@ -157,6 +158,10 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 
 			case UserProfile.Currency.HARD: {
 				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)def.GetAsLong("amount"), true);
+			} break;
+
+			case UserProfile.Currency.KEYS: {
+				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.KEYS, (ulong)def.GetAsLong("amount"), true);
 			} break;
 		}
 
@@ -175,6 +180,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		switch(def.Get("type")) {
 			case "sc": type = UserProfile.Currency.SOFT; break;
 			case "hc": type = UserProfile.Currency.HARD; break;
+			case "keys": type = UserProfile.Currency.KEYS; break;
 		}
 		return type;
 	}
@@ -192,9 +198,24 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		// Depends on currency
 		switch(m_currency) {
 			case UserProfile.Currency.HARD: {
+				// What are we buying?
+				string resourcesFlowName = "";
+				HDTrackingManager.EEconomyGroup trackingId = HDTrackingManager.EEconomyGroup.SHOP_COINS_PACK;
+				switch(m_type) {
+					case UserProfile.Currency.SOFT: {
+						resourcesFlowName = "SHOP_COINS_PACK";
+						trackingId = HDTrackingManager.EEconomyGroup.SHOP_COINS_PACK;
+					} break;
+
+					case UserProfile.Currency.KEYS: {
+						resourcesFlowName = "SHOP_KEYS_PACK";
+						trackingId = HDTrackingManager.EEconomyGroup.SHOP_KEYS_PACK;
+					} break;
+				}
+
 				// Make sure we have enough and adjust new balance
 				// Resources flow makes it easy for us!
-				ResourcesFlow purchaseFlow = new ResourcesFlow("SHOP_COINS_PACK");
+				ResourcesFlow purchaseFlow = new ResourcesFlow(resourcesFlowName);
 				purchaseFlow.OnSuccess.AddListener(
 					(ResourcesFlow _flow) => {
 						ApplyShopPack(_flow.itemDef);
@@ -203,7 +224,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 						OnPurchaseSuccessEnd(_flow.itemDef);
 					}
 				);
-				purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.SHOP_COINS_PACK,  m_def);
+				purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, trackingId,  m_def);
 
 				// Without resources flow:
 				/*long pricePC = (long)m_price;

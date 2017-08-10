@@ -48,7 +48,8 @@ public class HDTrackingManager
         SKIP_EGG_INCUBATION,
         ACQUIRE_DISGUISE,
         SHOP_COINS_PACK,
-        NOT_ENOUGH_RESOURCES
+        NOT_ENOUGH_RESOURCES,
+		SHOP_KEYS_PACK
     };
 
     public static string EconomyGroupToString(EEconomyGroup group)
