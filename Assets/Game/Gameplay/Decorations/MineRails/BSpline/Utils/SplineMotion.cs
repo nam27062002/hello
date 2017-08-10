@@ -55,9 +55,9 @@ public class SplineMotion : MonoBehaviour {
 			dir *= -1;
 		}
 
-		if (dir.y < 0) 	m_acceleration += m_speed * 0.1f * Mathf.Abs(dir.y);
-		else 			m_acceleration -= m_speed * 0.05f;
-		m_acceleration = Mathf.Clamp(m_acceleration, -m_speed * 0.25f, m_speed * 2f);
+		if (dir.y < -0.15f) 	m_acceleration = Mathf.MoveTowards(m_acceleration, m_speed * 2f, m_speed * 0.1f * Mathf.Abs(dir.y));
+		else if (dir.y > 0.15f)	m_acceleration = Mathf.MoveTowards(m_acceleration, -m_speed * 0.25f, m_speed * 0.05f);
+		else 					m_acceleration = Mathf.MoveTowards(m_acceleration, 0f, m_speed * 0.05f);
 
 		m_transform.localPosition = position;
 		m_transform.localRotation = Quaternion.LookRotation(dir, up);
