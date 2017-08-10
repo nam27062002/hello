@@ -27,7 +27,7 @@ namespace AI {
 
 			private float m_speed;
 			private float m_elapsedTime;
-			private MeleeWeapon m_meleeWeapon;
+			private IMeleeWeapon m_meleeWeapon;
 
 
 			public override StateComponentData CreateData() {
@@ -44,7 +44,7 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<ChargeData>();
 				m_machine.SetSignal(Signals.Type.Alert, true);
 
-				m_meleeWeapon = m_pilot.FindComponentRecursive<MeleeWeapon>();
+				m_meleeWeapon = m_pilot.FindComponentRecursive<IMeleeWeapon>();
 				m_meleeWeapon.enabled = false;
 			}
 

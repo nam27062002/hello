@@ -45,7 +45,7 @@ namespace AI {
 					}
 
 					if (m_timer <= 0f) {
-						if (m_machine.GetSignal(Signals.Type.Trigger)) {					
+						if (m_machine.GetSignal(Signals.Type.Trigger)) {
 							object[] param = m_machine.GetSignalParams(Signals.Type.Trigger);
 							if (param != null && param.Length > 0 && ((GameObject)param[0]).CompareTag("Player")) {
 								m_dragon.ReceiveDamageOverTime(m_data.damage, m_data.duration, DamageType.POISON, m_pilot.transform);

@@ -25,7 +25,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 422272}
-  - component: {fileID: 11401348}
+  - component: {fileID: 114813829020859810}
   - component: {fileID: 6575346}
   - component: {fileID: 11422592}
   m_Layer: 16
@@ -92,7 +92,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 182380}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -9.53, z: 1.09}
+  m_LocalPosition: {x: 156.36021, y: 66.34892, z: 1.09}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400704}
@@ -129,22 +129,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11401348
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 174932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32ee45223b4af4374bf6c562470c1498, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_knockback: 0
-  m_timeBetweenHits: 0.5
-  m_damageType: 0
-  m_trail: {fileID: 0}
-  m_trailParticles: []
 --- !u!114 &11407270
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -164,10 +148,10 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":16,"acceleration":15,"damage":25,"retreatTime":5,"attackPoint":"attack_4","dataType":"AI.Behaviour.ChargeData","editorFolded":false},{"boostSpeed":20,"panicSpeed":40,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":20,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"timeBeforeBackHome":0.5,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"seconds":3,"dataType":"AI.Behaviour.TimerBData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":4,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":8,"acceleration":7,"damage":25,"retreatTime":0,"attackPoint":"attack_4","dataType":"AI.Behaviour.ChargeData","editorFolded":false},{"boostSpeed":10,"panicSpeed":20,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"timeBeforeBackHome":0.5,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"seconds":5,"dataType":"AI.Behaviour.TimerBData","editorFolded":false}]'
   m_databaseKey: PF_StingrayLarge
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 0
+  m_avoidDistanceAttenuation: 5
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!114 &11422592
@@ -181,7 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parentName: back (1)
+  m_parentName: view
   m_parentRoot: {fileID: 471064}
   m_worldPositionStays: 1
 --- !u!114 &11431294
@@ -206,8 +190,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 10
-  m_runSpeed: 15
+  m_walkSpeed: 4
+  m_runSpeed: 8
   m_minPlaybakSpeed: 1
   m_maxPlaybakSpeed: 1
   m_onBoostMaxPlaybackSpeed: 1
@@ -620,11 +604,11 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 7
-    m_maxRadius: 5
-    m_minRadius: 3
+    m_sightRadius: 15
+    m_maxRadius: 10
+    m_minRadius: 6
     m_hysteresisOffset: 0
-    m_senseAbove: 0
+    m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
     m_radiusOffset:
@@ -655,6 +639,20 @@ MonoBehaviour:
     m_limitVerticalRotation: 1
     m_faceUpAngle: 340
     m_faceDownAngle: 20
+--- !u!114 &114813829020859810
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 174932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5210f5095e3ce47719842ee94948a84a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_timeBetweenHits: 0.5
+  m_damageType: 1
+  m_duration: 5
 --- !u!135 &135774557559101730
 SphereCollider:
   m_ObjectHideFlags: 1

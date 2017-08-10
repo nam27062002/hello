@@ -15,7 +15,7 @@ namespace AI {
 			private static string OnTurnAroundEnd = "onTurnAroundEnd";
 
 
-			private MeleeWeapon m_meleeWeapon;
+			private IMeleeWeapon m_meleeWeapon;
 			private AttackTurnAroundData m_data;
 
 			private PreyAnimationEvents m_animEvents;
@@ -32,7 +32,7 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<AttackTurnAroundData>();
-				m_meleeWeapon = m_pilot.FindComponentRecursive<MeleeWeapon>();
+				m_meleeWeapon = m_pilot.FindComponentRecursive<IMeleeWeapon>();
 				m_animEvents = m_pilot.FindComponentRecursive<PreyAnimationEvents>();
 
 				m_meleeWeapon.enabled = false;
