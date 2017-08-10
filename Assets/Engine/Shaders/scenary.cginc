@@ -115,28 +115,29 @@ v2f vert (appdata_t v)
 	o.color = getCustomVertexColor(v);
 #else
 	o.color = v.color;
-#endif
+#endif // CUSTOM_VERTEXCOLOR
 
 
 #if defined (FOG) || defined (DARKEN) || defined (SPECULAR)
 	float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
-#endif
+#endif // FOG || DARKEN || SPECULAR
 
 #ifdef FOG	
 	HG_TRANSFER_FOG(o, worldPos);	// Fog
-#endif
+#endif // FOG
 
 #ifdef DARKEN
 	HG_TRANSFER_DARKEN(o, worldPos);
-#endif
-
+#endif // DARKEN
+/*
 #ifdef DYNAMIC_SHADOWS
 	TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 #endif
+*/
 
 #if defined(LIGHTMAP_ON) && !defined(EMISSIVEBLINK)
 	o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
-#endif
+#endif // LIGHTMAP_ON && !EMISSIVEBLINK
 
 #ifdef NORMALMAP																		// To calculate tangent world
 	float4x4 modelMatrix = unity_ObjectToWorld;
@@ -146,7 +147,7 @@ v2f vert (appdata_t v)
 	o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
 #else
 	o.normalWorld = UnityObjectToWorldNormal(v.normal);
-#endif
+#endif // NORMALMAP
 
 #ifdef SPECULAR
 //	fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
@@ -154,7 +155,7 @@ v2f vert (appdata_t v)
 	float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
 	float3 lightDirection = normalize(_SpecularDir.rgb);
 	o.halfDir = normalize(lightDirection + viewDirection);	
-#endif
+#endif // SPECULAR
 
 	return o;
 }
@@ -174,18 +175,18 @@ fixed4 frag (v2f i) : SV_Target
 
 #ifdef CUTOFF
 	clip(col.a - _CutOff);
-#endif
+#endif // CUTOFF
 
 #ifdef SPECULAR
 	float specMask = col.w;
-#endif
+#endif // SPECULAR
 	
 #ifdef BLEND_TEXTURE
 	fixed4 col2 = tex2D(_SecondTexture, i.texcoord2);	// Color
 	float l = saturate( col.a + ( (i.color.a * 2) - 1 ) );
 //					float l = clamp(col.a + (i.color.a * 2.0) - 1.0, 0.0, 1.0);
 	col = lerp( col2, col, l);
-#endif	
+#endif // BLEND_TEXTURE
 
 #if defined (VERTEXCOLOR_OVERLAY)
 	// Sof Light with vertex color 
@@ -200,19 +201,20 @@ fixed4 frag (v2f i) : SV_Target
 
 #elif defined (VERTEXCOLOR_MODULATE)
 	col *= i.color;
-#endif	
+#endif // VERTEXCOLOR
 
-
+/*
 #ifdef DYNAMIC_SHADOWS
 	float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 	col *= attenuation;
 #endif
+*/
 
 #if defined(LIGHTMAP_ON) && !defined(EMISSIVEBLINK)
 	fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 //	col.rgb *= lm * 1.3;
 	col.rgb *= lm * 1.3;
-#endif
+#endif // LIGHTMAP_ON && !EMISSIVEBLINK
 
 #ifdef NORMALMAP
 	float4 encodedNormal = tex2D(_NormalTex, i.texcoord);
@@ -221,17 +223,17 @@ fixed4 frag (v2f i) : SV_Target
 	float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
 #else
 	float3 normalDirection = i.normalWorld;
-#endif
+#endif // NORMALMAP
 
 #ifdef SPECULAR
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower);
 	col = col + (specular * specMask * i.color * _LightColor0);
-#endif	
+#endif // SPECULAR
 
 #ifdef EMISSIVEBLINK
 	float intensity = 1.0 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01 )) * _EmissivePower;
 	col *= intensity;
-#endif
+#endif // EMISSIVEBLINK
 
 #if defined(FOG) && !defined(EMISSIVEBLINK)
 
@@ -240,24 +242,24 @@ fixed4 frag (v2f i) : SV_Target
 #ifdef LIGHTMAPCONTRAST
 	fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
 	lm -= 0.5;
-	float lmi = 0.0f;// (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * _LightmapIntensity * (1.0 + (1.0 + sin((_Time.y * 2.0) + i.vertex.x * 0.01)));
+	float lmi = (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * _LightmapIntensity * (1.0 + (1.0 + sin((_Time.y * 2.0) + i.vertex.x * 0.01)));
 	col.rgb = lerp((col).rgb, fogCol.rgb, clamp(fogCol.a - lmi, 0.0, 1.0));
 #else
 	HG_APPLY_FOG(i, col);	// Fog
-#endif
+#endif // LIGHTMAPCONTRAST
 
 #else
 	HG_APPLY_FOG(i, col);	// Fog
-#endif
+#endif // LIGHTMAP_ON
 
-#endif	
+#endif	// FOG && !EMISSIVEBLINK
 
 #ifdef DARKEN
 	HG_APPLY_DARKEN(i, col);	//darken
-#endif
+#endif // DARKEN
 
 #ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-#endif
+#endif // OPAQUEALPHA
 	return col;
 }

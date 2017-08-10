@@ -20,12 +20,6 @@ Shader "Hungry Dragon/TransparentAdditive"
 		Fog{ Color(0,0,0,0) }
 		ZTest[_ZTest]
 
-		BindChannels{
-			Bind "Color", color
-			Bind "Vertex", vertex
-			Bind "TexCoord", texcoord
-		}
-
 		SubShader
 		{
 			Pass
