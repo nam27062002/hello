@@ -690,7 +690,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1105724363084128}
-  m_LocalRotation: {x: -0.6838953, y: 0.17968687, z: 0.6957584, w: 0.126175}
+  m_LocalRotation: {x: -0.68389535, y: 0.17968689, z: 0.69575846, w: 0.12617502}
   m_LocalPosition: {x: -0.49961922, y: 0.45823368, z: -0.51378953}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -1538,7 +1538,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false}]'
-  m_databaseKey: PF_PetMonkeyRocket_9
+  m_databaseKey: PF_PetMonkeyRocket_9 (1)
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
@@ -1866,7 +1866,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1639655656129168}
   serializedVersion: 5
   lengthInSec: 5
-  simulationSpeed: 2
+  simulationSpeed: 3
   looping: 1
   prewarm: 1
   playOnAwake: 1
@@ -1915,14 +1915,14 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 549577369
+  randomSeed: 1488987267
   InitialModule:
     serializedVersion: 3
     enabled: 1
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 2
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -2067,7 +2067,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1.2
+      scalar: 1.21
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -2311,7 +2311,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 6
+    maxNumParticles: 8
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -2472,7 +2472,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 4
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -2564,28 +2564,22 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - serializedVersion: 2
-          time: 0.0033340454
-          value: 0.036087036
-          inSlope: 2.043413
-          outSlope: 2.043413
+          time: 0.004425049
+          value: 0.007522583
+          inSlope: 2.3437955
+          outSlope: 2.3437955
           tangentMode: 0
         - serializedVersion: 2
-          time: 0.26559258
-          value: 0.4266857
-          inSlope: -0.023405245
-          outSlope: -0.023405245
+          time: 0.5177913
+          value: 0.42734239
+          inSlope: 0.21517277
+          outSlope: 0.21517277
           tangentMode: 0
         - serializedVersion: 2
-          time: 0.6698028
-          value: 0.5438253
-          inSlope: 0.949502
-          outSlope: 0.949502
-          tangentMode: 0
-        - serializedVersion: 2
-          time: 0.9913044
+          time: 1
           value: 1
-          inSlope: 1.800335
-          outSlope: 1.800335
+          inSlope: 2.7805884
+          outSlope: 2.7805884
           tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -5029,7 +5023,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 0
   m_RenderMode: 1
   m_SortMode: 3
   m_MinParticleSize: 0
