@@ -85,7 +85,7 @@ public class TimeUtils {
 	}
 
 	/// <summary>
-	/// Parse the given unix timestamp (seconds elapsed since 00:00:00 1 January 1970) into a DateTime object.
+	/// Parse the given unix timestamp (milliseconds elapsed since 00:00:00 1 January 1970) into a DateTime object.
 	/// <see cref="https://en.wikipedia.org/wiki/Unix_time"/>
 	/// </summary>
 	/// <returns>The date corresponding to the given unix timestamp.</returns>

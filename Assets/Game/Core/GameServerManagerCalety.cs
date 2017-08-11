@@ -197,14 +197,17 @@ public class GameServerManagerCalety : GameServerManager {
 		kServerConfig.m_bIsNewVersionRestrictive = false;
 		kServerConfig.m_bIsUsingHTTPS = false;
 
-		#if UNITY_EDITOR
-		kServerConfig.m_strClientPlatformBuild = "editor";
-		#elif UNITY_ANDROID
+#if UNITY_EDITOR
+        kServerConfig.m_strClientPlatformBuild = "editor";
+#elif UNITY_ANDROID
 		kServerConfig.m_strClientPlatformBuild = "android";
-		#elif UNITY_IOS
+        #elif UNITY_IOS
 		kServerConfig.m_strClientPlatformBuild = "ios";
-		#endif
-		kServerConfig.m_strServerApplicationSecretKey = "avefusilmagnifica";
+#endif
+
+        // [DGR] TODO: To adapt when Weibo is integrated
+        kServerConfig.m_strSocialPlatform = CaletyConstants.SOCIAL_PLATFORM_FACEBOOK;
+        kServerConfig.m_strServerApplicationSecretKey = "avefusilmagnifica";
 
 		ServerManager.SharedInstance.Initialise(ref kServerConfig);
 
@@ -224,6 +227,10 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_EnqueueCommand(ECommand.Ping, null, callback);
 	}
 	
+    public override void Auth(ServerCallback callback) {
+        Commands_EnqueueCommand(ECommand.Auth, null, callback);
+    }
+
 	/// <summary>
 	/// 
 	/// </summary>
@@ -407,6 +414,7 @@ public class GameServerManagerCalety : GameServerManager {
 	private enum ECommand {
 		Unknown = -1,
 		None,
+        Auth,
 		Ping,
 		Login,
 		GetTime,
@@ -450,7 +458,7 @@ public class GameServerManagerCalety : GameServerManager {
 			Cmd = cmd;
 			Parameters = parameters;
 			Callback = callback;
-		}
+		}        
 	}
 
 	/// <summary>
@@ -636,20 +644,32 @@ public class GameServerManagerCalety : GameServerManager {
 	/// </summary>
 	private void Commands_RunCommand(Command command, ServerCallback callback) {
 		Log("RunCommand " + command.Cmd + " CurrentCommand = " + Commands_CurrentCommand.Cmd);
-		// Commands have to be executed one by one since we're not using actions on server side
+        // Commands have to be executed one by one since we're not using actions on server side
+
+        //
+        // [DGR] 
+        // NOTE: Please use Command_SendCommand() to send the command to the server. This method will add "uid" and "token" parameters automatically if the 
+        // command is not anonymous
+        //        
 		if(Commands_CurrentCommand == command) {
 			Dictionary<string, string> parameters = command.Parameters;
        
 			switch(command.Cmd) {
-				case ECommand.Ping: {   
-					ServerManager.SharedInstance.SendCommand(COMMAND_PING);
+				case ECommand.Ping: {
+                    Command_SendCommand(COMMAND_PING);                    
 				} break;
 
 				case ECommand.GetTime: {
-					ServerManager.SharedInstance.SendCommand(COMMAND_TIME);
+                    Command_SendCommand(COMMAND_TIME);                    
 				} break;
 
-				case ECommand.Login: {
+                case ECommand.Auth: {
+                    Log("Command Auth");
+                    GameSessionManager.SharedInstance.LogInToServer();                    
+                }
+                break;
+
+                case ECommand.Login: {
 					Log("Command Login");
 					if(!string.IsNullOrEmpty(parameters["platformId"])) {
 						ServerManager.SharedInstance.SetSocialPlatform(parameters["platformId"]);
@@ -659,20 +679,15 @@ public class GameServerManagerCalety : GameServerManager {
 
 				case ECommand.GetPersistence: {
 					if(IsLogged()) {
-						Dictionary<string, string> kParams = new Dictionary<string, string>();
-						kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
-						kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
-						ServerManager.SharedInstance.SendCommand(COMMAND_GET_PERSISTENCE, kParams);
+                        Command_SendCommand(COMMAND_GET_PERSISTENCE);                        
 					}
 				} break;
 
 				case ECommand.SetPersistence: {
 					if(IsLogged()) {
-						Dictionary<string, string> kParams = new Dictionary<string, string>();
-						kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
-						kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
+						Dictionary<string, string> kParams = new Dictionary<string, string>();						
 						kParams["universe"] = parameters["persistence"];
-						ServerManager.SharedInstance.SendCommand(COMMAND_SET_PERSISTENCE, kParams);
+                        Command_SendCommand(COMMAND_SET_PERSISTENCE);                            
 					}
 				} break;
 
@@ -682,16 +697,14 @@ public class GameServerManagerCalety : GameServerManager {
 				} break;
 
 				case ECommand.GetQualitySettings: {
-					// The user is not required to be logged to request the quality settings for her device        
-					ServerManager.SharedInstance.SendCommand(COMMAND_GET_QUALITY_SETTINGS);        
+                    // The user is not required to be logged to request the quality settings for her device     
+                    Command_SendCommand(COMMAND_GET_QUALITY_SETTINGS);                    
 				} break;
 
 				case ECommand.SetQualitySettings: {
 					// The user is required to be logged to set its quality settings to prevent anonymous users from messing with the quality settings of other users who have the same device model
 					if(IsLogged()) {
-						Dictionary<string, string> kParams = new Dictionary<string, string>();
-						kParams["uid"] = GameSessionManager.SharedInstance.GetUID();                        
-						ServerManager.SharedInstance.SendCommand(COMMAND_SET_QUALITY_SETTINGS, kParams, parameters["qualitySettings"]);
+                        Command_SendCommand(COMMAND_SET_QUALITY_SETTINGS, null, null, parameters["qualitySettings"]);                       
 					} else {
 						LogError("SetQualitySettings require the user to be logged");
 					}
@@ -703,21 +716,18 @@ public class GameServerManagerCalety : GameServerManager {
 
 					// This endpoint is anonymous but we need to send the playtest user id for tracking purposes
 					Dictionary<string, string> kParams = new Dictionary<string, string>();
-					kParams["uid"] = parameters["playTestUserId"];        
-					ServerManager.SharedInstance.SendCommand(cmd, kParams, parameters["trackingData"]);
+					kParams["uid"] = parameters["playTestUserId"];                        
+                    Command_SendCommand(cmd, kParams, null, parameters["trackingData"]);
 				} break;
 				case ECommand.GlobalEvents_TMPCustomizer:{
-						Dictionary<string, string> kParams = new Dictionary<string, string>();
-						kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
-						ServerManager.SharedInstance.SendCommand( COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, kParams, "" );
+                    Command_SendCommand( COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, null, null, "" );
 				}break;
 				case ECommand.GlobalEvents_GetState:
 				case ECommand.GlobalEvents_GetEvent:
 				case ECommand.GlobalEvents_GetRewards:
 				case ECommand.GlobalEvents_GetLeadeboard: {
 					if(IsLogged()) {
-						Dictionary<string, string> kParams = new Dictionary<string, string>();
-						kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
+						Dictionary<string, string> kParams = new Dictionary<string, string>();						
 						kParams["eventId"] = parameters["eventId"];
 						string global_event_command = "";
 						switch( command.Cmd )
@@ -728,17 +738,16 @@ public class GameServerManagerCalety : GameServerManager {
 							case ECommand.GlobalEvents_GetLeadeboard: global_event_command = COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD;break;
 						}
 
-						ServerManager.SharedInstance.SendCommand( global_event_command, kParams );
+                        Command_SendCommand( global_event_command, kParams );
 					}
 				}break;
 
 				case ECommand.GlobalEvents_RegisterScore: {
 					if ( IsLogged() ) {
-						Dictionary<string, string> kParams = new Dictionary<string, string>();	
-						kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
+						Dictionary<string, string> kParams = new Dictionary<string, string>();							
 						kParams["eventId"] = parameters["eventId"];
 						kParams["progress"] = parameters["progress"];
-						ServerManager.SharedInstance.SendCommand( COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, kParams, parameters, "");
+                        Command_SendCommand( COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, kParams, parameters, "");
 						// progress
 					}
 				}break;
@@ -754,10 +763,41 @@ public class GameServerManagerCalety : GameServerManager {
 		}
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
-	private void Commands_OnExecuteCommandDone(Error error, ServerResponse result) {
+    /// <summary>
+    /// It sends the command request to the server.
+    /// </summary>    
+    private void Command_SendCommand(string commandName, Dictionary<string, string> urlParams=null, Dictionary<string, string> headerParams=null, string body=null) {
+        if (!Command_IsAnonymous(commandName)) {
+            if (urlParams == null) {
+                urlParams = new Dictionary<string, string>();
+            }
+
+            string key = "uid";
+            if (!urlParams.ContainsKey(key)) {
+                urlParams[key] = GameSessionManager.SharedInstance.GetUID();                                
+            }
+
+            key = "token";
+            if (!urlParams.ContainsKey(key)) {
+                urlParams[key] = GameSessionManager.SharedInstance.GetUserToken();
+            }            
+        }
+
+        ServerManager.SharedInstance.SendCommand(commandName, urlParams, headerParams, body);
+    }
+
+    /// <summary>
+    /// Returns whether or not the command passed as a parameter is anonymous. An anonymous command is a command that doesn't require to contain the uid and the session token
+    /// for the server to respond.
+    /// </summary>        
+    private bool Command_IsAnonymous(string commandName) {
+        return commandName == COMMAND_PING || commandName == COMMAND_TIME || commandName == COMMAND_GET_QUALITY_SETTINGS;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void Commands_OnExecuteCommandDone(Error error, ServerResponse result) {
         if (Commands_CurrentCommand != null) {
             ServerCallback callback = Commands_CurrentCommand.Callback;
             Commands_ReturnCommand(Commands_CurrentCommand);

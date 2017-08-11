@@ -10,7 +10,6 @@ Shader "Hungry Dragon/Scenary/Diffuse + LightMap + AlphaCutoff (cutoff vegetatio
 	Properties 
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
-		_LightmapIntensity("Lightmap intensity", Range(0.0, 1.0)) = 0.1
 		_CutOff  ("alpha Cutoff", Range(0.0, 1.0)) = 0.5
 	}
 

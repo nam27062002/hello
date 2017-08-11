@@ -172,9 +172,10 @@ public class GameServerManager
 		return TimeUtils.TimestampToDate( timestamp );
 	}
 
-	//------------------------------------------------------------------------//
-	// LOGIN																  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // LOGIN																  //
+    //------------------------------------------------------------------------//
+    public virtual void Auth(ServerCallback callback) {}    
     public virtual void LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken, ServerCallback callback) {}
 	public virtual void LogOut(ServerCallback callback) {}
 

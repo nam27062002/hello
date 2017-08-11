@@ -12,7 +12,6 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Darken"
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_DarkenPosition("Darken position",  float) = 0.0
 		_DarkenDistance("Darken distance",  float) = 20.0
-		_LightmapIntensity("Lightmap intensity", Range(0.0, 1.0)) = 0.1
 	}
 
 	SubShader {

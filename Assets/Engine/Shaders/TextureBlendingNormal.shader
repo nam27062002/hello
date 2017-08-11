@@ -15,8 +15,6 @@ Shader "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Overlay
 		_NormalStrength("Normal Strength", float) = 3
 		_Specular("Specular Factor", float) = 3
 		_SpecularDir("Specular Dir", Vector) = (0,0,-1,0)
-		_LightmapIntensity("Lightmap intensity", Range(0.0, 1.0)) = 0.1
-
 	}
 
 	SubShader {
