@@ -158,7 +158,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 
 		// Check for incubator deadline
 		if(incubatingEgg != null && incubatingEgg.isIncubating) {
-			if(DateTime.UtcNow >= incubatingEgg.incubationEndTimestamp) {
+			if(GameServerManager.SharedInstance.GetEstimatedServerTime() >= incubatingEgg.incubationEndTimestamp) {
 				// Incubation done!
 				incubatingEgg.ChangeState(Egg.State.READY);
 			}

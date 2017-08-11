@@ -241,9 +241,9 @@ public class MissionPill : MonoBehaviour {
 			if ( usesPerDay > 0 )
 			{
 				// Check remaining uses
-				if ( DateTime.UtcNow >= UsersManager.currentUser.dailyRemoveMissionAdTimestamp )
+				if ( GameServerManager.SharedInstance.GetEstimatedServerTime() >= UsersManager.currentUser.dailyRemoveMissionAdTimestamp )
 				{
-					UsersManager.currentUser.dailyRemoveMissionAdTimestamp = DateTime.UtcNow.AddDays(1);
+					UsersManager.currentUser.dailyRemoveMissionAdTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddDays(1);
 					UsersManager.currentUser.dailyRemoveMissionAdUses = 0;
 				}
 				if (UsersManager.currentUser.dailyRemoveMissionAdUses >= usesPerDay) 

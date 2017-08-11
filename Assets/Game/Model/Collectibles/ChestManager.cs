@@ -82,7 +82,7 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 	}
 
 	public static TimeSpan timeToReset {
-		get { return resetTimestamp - DateTime.UtcNow; }
+		get { return resetTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime(); }
 	}
 
 	// Internal
@@ -106,7 +106,7 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 		if(!IsReady()) return;
 
 		// Check reset timer
-		if(DateTime.UtcNow >= resetTimestamp) {
+		if(GameServerManager.SharedInstance.GetEstimatedServerTime() >= resetTimestamp) {
 			// Reset!
 			Reset();
 		}
@@ -198,7 +198,7 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 		}
 
 		// Reset timer
-		resetTimestamp = DateTime.UtcNow.AddHours(RESET_PERIOD);
+		resetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddHours(RESET_PERIOD);
 
 		// Notify game
 		Messenger.Broadcast(GameEvents.CHESTS_RESET);

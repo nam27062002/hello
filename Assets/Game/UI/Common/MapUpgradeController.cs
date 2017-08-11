@@ -157,7 +157,7 @@ public class MapUpgradeController : MonoBehaviour {
 		if(m_timerText == null) return;
 
 		// Countdown format
-		TimeSpan timeToReset = UsersManager.currentUser.mapResetTimestamp - DateTime.UtcNow;
+		TimeSpan timeToReset = UsersManager.currentUser.mapResetTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
 		m_timerText.text = TimeUtils.FormatTime(timeToReset.TotalSeconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
 	}
 

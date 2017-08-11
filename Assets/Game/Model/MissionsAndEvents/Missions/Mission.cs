@@ -81,7 +81,7 @@ public class Mission {
 	private DateTime m_cooldownStartTimestamp = new DateTime();
 	public DateTime cooldownStartTimestamp { get { return m_cooldownStartTimestamp; }}
 	public TimeSpan cooldownDuration { get { return new TimeSpan(0, MissionManager.GetCooldownPerDifficulty(difficulty), 0); }}
-	public TimeSpan cooldownElapsed { get { return DateTime.UtcNow - m_cooldownStartTimestamp; }}
+	public TimeSpan cooldownElapsed { get { return GameServerManager.SharedInstance.GetEstimatedServerTime() - m_cooldownStartTimestamp; }}
 	public TimeSpan cooldownRemaining { get { return cooldownDuration - cooldownElapsed; }}
 	public float cooldownProgress { get { return Mathf.InverseLerp(0f, (float)cooldownDuration.TotalSeconds, (float)cooldownElapsed.TotalSeconds); }}
 
@@ -141,7 +141,7 @@ public class Mission {
 		switch(_newState) {
 			case State.COOLDOWN: {
 				// Store timestamp
-				m_cooldownStartTimestamp = DateTime.UtcNow;
+				m_cooldownStartTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
 			} break;
 
 			case State.ACTIVE: {

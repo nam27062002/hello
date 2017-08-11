@@ -70,11 +70,26 @@ public class Egg {
 	[SerializeField] private DateTime m_incubationEndTimestamp;
 	public DateTime incubationEndTimestamp { get { return m_incubationEndTimestamp; }}
 	public DateTime incubationStartTimestamp { get { return incubationEndTimestamp - incubationDuration; }}
-	public TimeSpan incubationDuration { get { return new TimeSpan(0, 0, isIncubating ? (int)(def.GetAsFloat("incubationMinutes") * 60f) : 0); }}
-	public TimeSpan incubationElapsed { get { return DateTime.UtcNow - incubationStartTimestamp; }}
-	public TimeSpan incubationRemaining { get { return incubationEndTimestamp - DateTime.UtcNow; }}
+	public TimeSpan incubationElapsed { get { return GameServerManager.SharedInstance.GetEstimatedServerTime() - incubationStartTimestamp; }}
+	public TimeSpan incubationRemaining { get { return incubationEndTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime(); }}
 	public float incubationProgress { get { return isIncubating ? Mathf.InverseLerp(0f, (float)incubationDuration.TotalSeconds, (float)incubationElapsed.TotalSeconds) : 0f; }}
 	public bool isIncubating { get { return state == Egg.State.INCUBATING; }}
+
+	public TimeSpan incubationDuration { 
+		get {
+			// Cheat support!
+			int seconds = 0;
+			if(isIncubating) {
+				switch(CPGachaTest.incubationTime) {
+					case CPGachaTest.IncubationTime.DEFAULT: 		seconds = (int)(def.GetAsFloat("incubationMinutes") * 60f);	break;
+					case CPGachaTest.IncubationTime.SECONDS_10: 	seconds = 10; 	break;
+					case CPGachaTest.IncubationTime.SECONDS_30: 	seconds = 30; 	break;
+					case CPGachaTest.IncubationTime.SECONDS_60: 	seconds = 60; 	break;
+				}
+			}
+			return new TimeSpan(0, 0, isIncubating ? seconds : 0); 
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// FACTORY METHODS														  //
@@ -170,14 +185,13 @@ public class Egg {
 			// Incubating
 			case State.INCUBATING: {
 				// Reset incubation timer
-				float incubationMinutes = def.GetAsFloat("incubationMinutes");
-				m_incubationEndTimestamp = DateTime.UtcNow.AddMinutes(incubationMinutes);
+				m_incubationEndTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().Add(incubationDuration);
 
 				// Dispatch game event
 				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_STARTED, this);
 
 				// Schedule local notification!
-                NotificationsManager.SharedInstance.ScheduleNotification("sku.not.01", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_EGG_HATCHED"), "Action", (int)(incubationMinutes*60));
+                NotificationsManager.SharedInstance.ScheduleNotification("sku.not.01", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_EGG_HATCHED"), "Action", (int)(incubationDuration.TotalSeconds));
            	} break;
 
 			// Opening

@@ -540,9 +540,9 @@ public class UserProfile : UserSaveSystem
 		// [AOC] Fuck it! Easier implementation, fixed timer from the moment you unlock the map
 		DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
 		if(gameSettingsDef != null) {
-			m_mapResetTimestamp = DateTime.UtcNow.AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
+			m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
 		} else {
-			m_mapResetTimestamp = DateTime.UtcNow.AddHours(24);	// Default timer just in case
+			m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddHours(24);	// Default timer just in case
 		}
 		Messenger.Broadcast(GameEvents.PROFILE_MAP_UNLOCKED);
 	}
@@ -732,7 +732,7 @@ public class UserProfile : UserSaveSystem
 			for(int i = 0; i < ChestManager.NUM_DAILY_CHESTS; i++) {
 				dailyChests[i] = new Chest();
 			}
-			m_dailyChestsResetTimestamp = DateTime.UtcNow;
+			m_dailyChestsResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
 		}
 
 		// Daily mission Ads
@@ -754,7 +754,7 @@ public class UserProfile : UserSaveSystem
 		if(_data.ContainsKey(key)) {
 			m_mapResetTimestamp = DateTime.Parse(_data["mapResetTimestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);
 		} else {
-			m_mapResetTimestamp = DateTime.UtcNow;	// Already expired
+			m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// Already expired
 		}
 
 		// Global events

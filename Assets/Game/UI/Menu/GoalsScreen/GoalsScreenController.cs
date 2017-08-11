@@ -61,7 +61,7 @@ public class GoalsScreenController : MonoBehaviour {
 			// Show countdown only if there is an active event
 			GlobalEvent evt = GlobalEventManager.currentEvent;
 			bool showTimer = evt != null && evt.isActive;
-			m_eventCountdownText.gameObject.SetActive(showTimer);
+			m_eventCountdownText.transform.parent.gameObject.SetActive(showTimer);
 			if(showTimer) {
 				m_eventCountdownText.text = TimeUtils.FormatTime(
 					evt.remainingTime.TotalSeconds,

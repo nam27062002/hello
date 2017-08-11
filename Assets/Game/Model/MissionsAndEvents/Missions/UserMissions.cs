@@ -39,7 +39,7 @@ public class UserMissions {
 			// Check missions in cooldown to be unlocked
 			if(m_missions[i].state == Mission.State.COOLDOWN || m_missions[i].state == Mission.State.ACTIVATION_PENDING) {
 				// Has enough time passed for this mission's difficulty?
-				if((DateTime.UtcNow - m_missions[i].cooldownStartTimestamp).TotalMinutes >= MissionManager.GetCooldownPerDifficulty((Mission.Difficulty)i)) {
+				if((GameServerManager.SharedInstance.GetEstimatedServerTime() - m_missions[i].cooldownStartTimestamp).TotalMinutes >= MissionManager.GetCooldownPerDifficulty((Mission.Difficulty)i)) {
 					// Yes!
 					// Missions can't be activated during a game, mark them as pending
 					// Are we in-game?
