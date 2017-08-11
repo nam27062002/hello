@@ -952,22 +952,23 @@ public class GameServerManagerCalety : GameServerManager {
 
 				case ECommand.GetTime:
 				case ECommand.UpdateSaveVersion: {
-					long time = Globals.GetUnixTimestamp();
+					long time = Globals.GetUnixTimestamp();                        
 
 					// Checks if the response from server can be interpreted
 					string key = "t";                
 					if(responseJSON != null && responseJSON.ContainsKey(key)) {
-						long timeAsLong = responseJSON[key].AsLong;
-						time = timeAsLong / 1000;	// Server time comes in millis, convert to seconds
+						time = responseJSON[key].AsLong;                        
 					}
 
-					// [DGR] SERVER: Receive these parameters from server
-					response["dateTime"] = time;
-					response["unixTimestamp"] = time;
+                    long timeInSeconds = time / 1000;
 
-					// Update latest stored server time
-					ServerManager.SharedInstance.SetServerTime((double)time);
-				} break;
+					// [DGR] SERVER: Receive these parameters from server
+					response["dateTime"] = timeInSeconds;
+					response["unixTimestamp"] = timeInSeconds;
+
+                    // Update latest stored server time (in milliseconds)
+                    ServerManager.SharedInstance.SetServerTime((double)time);                    
+                } break;
 
 				case ECommand.GetQualitySettings: {
 					response["response"] = responseData;
