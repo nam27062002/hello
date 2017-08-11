@@ -39,6 +39,13 @@ public class CPGachaTest : MonoBehaviour {
 		RANDOM
 	};
 
+	public enum IncubationTime {
+		DEFAULT = 0,
+		SECONDS_10,
+		SECONDS_30,
+		SECONDS_60
+	}
+
 	public const string REWARD_CHANCE_MODE = "GACHA_REWARD_CHANCE_MODE";
 	public static RewardChanceMode rewardChanceMode {
 		get { return (RewardChanceMode)Prefs.GetIntPlayer(REWARD_CHANCE_MODE, (int)RewardChanceMode.DEFAULT); }
@@ -57,6 +64,12 @@ public class CPGachaTest : MonoBehaviour {
 		set { Prefs.SetStringPlayer(FORCED_PET_SKU, value); }
 	}
 
+	public const string INCUBATION_TIME = "GACHA_INCUBATION_TIME";
+	public static IncubationTime incubationTime {
+		get { return (IncubationTime)Prefs.GetIntPlayer(INCUBATION_TIME, (int)IncubationTime.DEFAULT); }
+		set { Prefs.SetIntPlayer(INCUBATION_TIME, (int)value); }
+	}
+
 	//------------------------------------------------------------------------//
 	// EXPOSED MEMBERS														  //
 	//------------------------------------------------------------------------//
@@ -65,6 +78,7 @@ public class CPGachaTest : MonoBehaviour {
 	[SerializeField] private CPEnumPref m_rewardChanceDropdown = null;
 	[SerializeField] private CPEnumPref m_duplicateDropdown = null;
 	[SerializeField] private TMP_Dropdown m_petSkuDropdown = null;
+	[SerializeField] private CPEnumPref m_incubationTimeDropdown = null;
 
 	// Internal
 	private List<DefinitionNode> m_petDefs = null;
@@ -79,9 +93,10 @@ public class CPGachaTest : MonoBehaviour {
 		// Init pets dropdown
 		m_petSkuDropdown.onValueChanged.AddListener(OnPetValueChanged);
 
-		// Subscribe to changed events
+		// Init enum dropdowns
 		m_rewardChanceDropdown.InitFromEnum(REWARD_CHANCE_MODE, typeof(RewardChanceMode), 0);
 		m_duplicateDropdown.InitFromEnum(DUPLICATE_MODE, typeof(DuplicateMode), 0);
+		m_incubationTimeDropdown.InitFromEnum(INCUBATION_TIME, typeof(IncubationTime), 0);
 	}
 
 	/// <summary>
@@ -106,6 +121,7 @@ public class CPGachaTest : MonoBehaviour {
 	private void Refresh() {
 		m_rewardChanceDropdown.Refresh();
 		m_duplicateDropdown.Refresh();
+		m_incubationTimeDropdown.Refresh();
 
 		// Initialize pets dropdown
 		m_petSkuDropdown.ClearOptions();
