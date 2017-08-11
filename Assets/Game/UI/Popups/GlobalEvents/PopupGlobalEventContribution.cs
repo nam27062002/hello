@@ -397,9 +397,12 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	/// Buy more keys button has been pressed.
 	/// </summary>
 	public void OnBuyMoreKeysButton() {
-		// [AOC] TODO!!
-		// Let's just add some keys for now
-		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.KEYS, 5, true);
+		// Open the shop!
+		PopupController popup = PopupManager.LoadPopup(PopupCurrencyShop.PATH);
+		PopupCurrencyShop shopPopup = popup.GetComponent<PopupCurrencyShop>();
+		shopPopup.Init(PopupCurrencyShop.Mode.KEYS_ONLY);
+		shopPopup.closeAfterPurchase = true;
+		popup.Open();
 
 		// Refresh visuals
 		RefreshKeysField(true);

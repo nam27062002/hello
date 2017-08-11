@@ -141,6 +141,14 @@ public class CPProgressionCheats : MonoBehaviour {
 	public void OnRemovePC() 	{ OnSetCurrency(UserProfile.Currency.HARD, CurrencyOperation.REMOVE); }
 	public void OnSetPC() 		{ OnSetCurrency(UserProfile.Currency.HARD, CurrencyOperation.SET); }
 
+	public void OnSetGoldenFragments() 		{ OnSetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, CurrencyOperation.SET); }
+	public void OnAddGoldenFragments() 		{ OnSetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, CurrencyOperation.ADD); }
+	public void OnRemoveGoldenFragments() 	{ OnSetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, CurrencyOperation.REMOVE); }
+
+	public void OnAddKeys() 	{ OnSetCurrency(UserProfile.Currency.KEYS, CurrencyOperation.ADD); }
+	public void OnRemoveKeys() 	{ OnSetCurrency(UserProfile.Currency.KEYS, CurrencyOperation.REMOVE); }
+	public void OnSetKeys() 	{ OnSetCurrency(UserProfile.Currency.KEYS, CurrencyOperation.SET); }
+
 	/// <summary>
 	/// Add xp to the currently selected dragon (if owned). Debug purposes only.
 	/// Will add 1/3 of the current level.
@@ -246,22 +254,6 @@ public class CPProgressionCheats : MonoBehaviour {
 
 		// If successful, save persistence
 		if(slotIdx >= 0) PersistenceManager.Save();
-	}
-
-	/// <summary>
-	/// Set the amount of golden egg fragments.
-	/// </summary>
-	public void OnSetGoldenEggFragments() {
-		// Get amount from linked input field
-		TMP_InputField input = GetComponentInChildren<TMP_InputField>();
-		if(input == null) Debug.Log("Requires a nested Input Field!");
-		long amount = long.Parse(input.text);
-
-		// Update profile
-		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, amount, 0);
-
-		// Save persistence
-		PersistenceManager.Save();
 	}
 
 	/// <summary>
