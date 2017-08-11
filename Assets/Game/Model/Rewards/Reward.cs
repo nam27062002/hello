@@ -92,7 +92,6 @@ namespace Metagame {
 		public static RewardHardCurrency CreateTypeHardCurrency(long _amount)			{ return new RewardHardCurrency(_amount, Rarity.COMMON); }
 		public static RewardGoldenFragments CreateTypeGoldenFragments(int _amount, Rarity _rarity) { return new RewardGoldenFragments(_amount, _rarity); }
 		public static RewardEgg CreateTypeEgg(string _sku) 								{ return new RewardEgg(_sku); }
-		public static RewardEgg CreateTypeEgg(string _sku, string _rewardSku) 			{ return new RewardEgg(_sku, _rewardSku); }
 		public static RewardPet CreateTypePet(string _sku)								{ return new RewardPet(_sku); }
 		public static RewardPet CreateTypePet(DefinitionNode _def)						{ return new RewardPet(_def); }
 		#endregion
