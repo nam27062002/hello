@@ -80,11 +80,13 @@ public class MultiCurrencyButton : MonoBehaviour {
 
 			// Show only if it matches target currency
 			show = (i == (int)_currency);
-			if(m_buttons[i].animator != null) {
+			// [AOC] TODO!! Animator doesn't always work, specially when calling this during the Awake() function. Disable for now.
+			/*if(m_buttons[i].animator != null) {
 				m_buttons[i].animator.Set(show);
 			} else {
 				m_buttons[i].gameObject.SetActive(show);
-			}
+			}*/
+			m_buttons[i].gameObject.SetActive(show);
 		}
 	}
 
