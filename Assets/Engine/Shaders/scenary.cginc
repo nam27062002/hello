@@ -210,8 +210,7 @@ fixed4 frag (v2f i) : SV_Target
 
 #if defined(LIGHTMAP_ON) && !defined(EMISSIVEBLINK)
 	fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
-//	col.rgb *= lm * 1.3;
-//	col.rgb *= lm * 1.3;
+	col.rgb *= lm * 1.3;
 #endif
 
 #ifdef NORMALMAP
