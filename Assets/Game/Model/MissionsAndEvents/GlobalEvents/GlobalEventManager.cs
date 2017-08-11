@@ -325,16 +325,18 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				// RequestCurrentEventData();
 				TMP_RequestCustomizer();
 			}
-			FGOL.Events.EventManager.Instance.DeregisterEvent(Events.OnUserLoggedIn, OnLoggedIn );
-			FGOL.Events.EventManager.Instance.RegisterEvent(Events.OnUserLoggedIn, OnLoggedIn);
-		}
+            
+            Messenger.AddListener<bool>(GameEvents.LOGGED, OnLoggedIn);            
+        }
 	}
 
-	static void OnLoggedIn(Enum m_event, object[] args)
+	static void OnLoggedIn(bool _isLogged)
 	{
-		// is this the right momment to request the data?
-		// RequestCurrentEventData();
-		TMP_RequestCustomizer();
+        if (_isLogged) {
+            // is this the right momment to request the data?
+            // RequestCurrentEventData();
+            TMP_RequestCustomizer();
+        }
 	}
 
 	/// <summary>
