@@ -10,7 +10,6 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap"
 	Properties 
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_LightmapIntensity("Lightmap intensity", Range(0.0, 1.0)) = 0.1
 	}
 
 	SubShader {
