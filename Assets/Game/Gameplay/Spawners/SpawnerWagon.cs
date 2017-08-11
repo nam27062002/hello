@@ -268,7 +268,7 @@ public class SpawnerWagon : MonoBehaviour, ISpawner {
 				SpawnerManager.RemoveFromTotalLogicUnits(1, m_entityPrefabList[m_poolHandlerIndex[index]].name);
 			}
 
-			// Unregisters the entity            
+			// Unregisters the entity
 			EntityManager.instance.UnregisterEntity(m_wagonList[index] as Entity);
 
 			// Returns the entity to the pool

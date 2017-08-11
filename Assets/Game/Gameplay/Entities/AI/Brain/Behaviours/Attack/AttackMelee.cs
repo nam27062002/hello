@@ -11,7 +11,7 @@ namespace AI {
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Melee")]
 		public class AttackMelee : Attack {
 		
-			private MeleeWeapon m_meleeWeapon;
+			private IMeleeWeapon m_meleeWeapon;
 
 
 			public override StateComponentData CreateData() {
@@ -24,7 +24,7 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<AttackMeleeData>();
-				m_meleeWeapon = m_pilot.FindComponentRecursive<MeleeWeapon>();
+				m_meleeWeapon = m_pilot.FindComponentRecursive<IMeleeWeapon>();
 
 				m_meleeWeapon.enabled = false;
 

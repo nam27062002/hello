@@ -40,7 +40,7 @@ Shader "Hungry Dragon/Scenary/Automatic Texture Blending + Lightmap + Darken"
 
 				#define FOG
 				#define BLEND_TEXTURE
-
+//				#define LIGHTMAPCONTRAST
 				#define CUSTOM_VERTEXCOLOR		
 
 				#define DARKEN
