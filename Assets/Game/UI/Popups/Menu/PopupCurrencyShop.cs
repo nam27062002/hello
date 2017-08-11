@@ -30,31 +30,30 @@ public class PopupCurrencyShop : MonoBehaviour {
 	public enum Mode {
 		DEFAULT,
 		SC_ONLY,
-		PC_ONLY
+		PC_ONLY,
+		KEYS_ONLY
 	};
 
 	public enum Tabs {
 		PC,
-		SC
+		SC,
+		KEYS,
+		COUNT
 	};
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed Setup
-	[SerializeField] private GameObject m_tabButtons = null;
 	[SerializeField] private TabSystem m_tabs = null;
 	public TabSystem tabs {
 		get { return m_tabs; }
 	}
 
 	[Space]
-	[SerializeField] private GameObject m_pillPrefab = null;
-	[SerializeField] private ScrollRect m_scScrollList = null;
-	[SerializeField] private ScrollRect m_pcScrollList = null;
-
-	[Space]
 	[SerializeField] private float[] m_pillRotationSequence = new float[0];
+	[SerializeField] private GameObject m_tabButtonsContainer = null;
+	[SerializeField] private GameObject m_tabButtonsContainerAlt = null;
 
 	// Other setup parameters
 	private bool m_closeAfterPurchase = false;
@@ -69,10 +68,6 @@ public class PopupCurrencyShop : MonoBehaviour {
 		get { return m_packsPurchased; }
 	}
 
-	// Internal
-	private List<PopupCurrencyShopPill> m_scPills = new List<PopupCurrencyShopPill>();
-	private List<PopupCurrencyShopPill> m_pcPills = new List<PopupCurrencyShopPill>();
-
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -82,73 +77,46 @@ public class PopupCurrencyShop : MonoBehaviour {
 	void Awake() {
 		// Check required fields
 		Debug.Assert(m_tabs != null, "Missing required reference!");
-		Debug.Assert(m_pillPrefab != null, "Missing required reference!");
-		Debug.Assert(m_scScrollList != null, "Missing required reference!");
-		Debug.Assert(m_pcScrollList != null, "Missing required reference!");
 
-		// Clear containers
-		m_scScrollList.content.DestroyAllChildren(false);
-		m_pcScrollList.content.DestroyAllChildren(false);
+		// Create pills for each tab
+		for(int i = 0; i < (int)Tabs.COUNT; ++i) {
+			// Get target tab
+			PopupCurrencyShopTab tab = m_tabs[i] as PopupCurrencyShopTab;
 
-		// Create pills
-		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.SHOP_PACKS);
-		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
-		for(int i = 0; i < defs.Count; i++) {
-			// Create new instance and initialize it
-			GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab);
-			PopupCurrencyShopPill newPill = newPillObj.GetComponent<PopupCurrencyShopPill>();
-			newPill.InitFromDef(defs[i]);
-
-			// Based on pill's type, add it to corresponding list and container
-			int pillIdx = -1;	// Will be used later on
-			switch(newPill.type) {
-				case UserProfile.Currency.SOFT: {
-					// Store to list and add to parent
-					newPill.transform.SetParentAndReset(m_scScrollList.content);
-					m_scPills.Add(newPill);
-					pillIdx = m_scPills.Count - 1;
+			// Get de definitions corresponding to this tab
+			List<DefinitionNode> defs = null;;
+			switch((Tabs)i) {
+				case Tabs.SC: {
+					defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SHOP_PACKS, "type", "sc");
 				} break;
 
-				case UserProfile.Currency.HARD: {
-					// Store to list and add to parent
-					newPill.transform.SetParentAndReset(m_pcScrollList.content);
-					m_pcPills.Add(newPill);
-					pillIdx = m_pcPills.Count - 1;
+				case Tabs.PC: {
+					defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SHOP_PACKS, "type", "hc");
 				} break;
 
-				default: {
-					// Unknown pill type, destroy it and move on
-					GameObject.Destroy(newPillObj);
-					continue;
+				case Tabs.KEYS: {
+					defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SHOP_PACKS, "type", "keys");
 				} break;
 			}
 
-			// Subscribe to purchase events
-			newPill.OnPurchaseSuccess.AddListener(OnPurchaseSuccessful);
+			// Initialize the tab
+			Debug.Assert(tab != null, "Unknown tab type!");
+			tab.InitWithDefs(defs);
 
-			// Apply "random" rotation to the pill
-			if(m_pillRotationSequence.Length > 0 && pillIdx >= 0) {
-				newPill.transform.localRotation = Quaternion.Euler(0f, 0f, m_pillRotationSequence[pillIdx % m_pillRotationSequence.Length]);
+			// Do some extra initialization on the pills
+			for(int j = 0; j < tab.pills.Count; ++j) {
+				// Get pill
+				PopupCurrencyShopPill pill = tab.pills[j];
+
+				// Subscribe to purchase events
+				pill.OnPurchaseSuccess.AddListener(OnPurchaseSuccessful);
+
+				// Apply "random" rotation to the pill
+				if(m_pillRotationSequence.Length > 0) {
+					pill.transform.localRotation = Quaternion.Euler(0f, 0f, m_pillRotationSequence[j % m_pillRotationSequence.Length]);
+				}
 			}
 		}
-
-		// Reset scroll lists and program initial animation
-		m_scScrollList.horizontalNormalizedPosition = 0f;
-		m_pcScrollList.horizontalNormalizedPosition = 0f;
-	}
-	
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	void OnEnable() {
-		
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-		
 	}
 
 	/// <summary>
@@ -159,33 +127,33 @@ public class PopupCurrencyShop : MonoBehaviour {
 		// Refresh pills?
 
 		// Reset scroll lists
-		m_scScrollList.horizontalNormalizedPosition = 0f;
-		m_pcScrollList.horizontalNormalizedPosition = 0f;
+		for(int i = 0; i < (int)Tabs.COUNT; ++i) {
+			(m_tabs[i] as PopupCurrencyShopTab).scrollList.horizontalNormalizedPosition = 0f;
+		}
 
 		// If required, hide tab buttons
-		m_tabButtons.SetActive(_mode == Mode.DEFAULT);
+		m_tabButtonsContainer.SetActive(_mode == Mode.DEFAULT);
+		m_tabButtonsContainerAlt.SetActive(!m_tabButtonsContainer.activeSelf);	// Show alternative deco if buttons are hidden
 
 		// Select initial tab and scroll list
-		NavigationScreen initialTab = m_tabs.initialScreen;
-		ScrollRect initialList = m_pcScrollList;
+		int initialTab = m_tabs.GetScreenIndex(m_tabs.initialScreen);
 		switch(_mode) {
 			case Mode.SC_ONLY: {
-				initialTab = m_tabs.GetScreen((int)Tabs.SC);
-				initialList = m_scScrollList;
+				initialTab = (int)Tabs.SC; 
+			}break;
+
+			case Mode.KEYS_ONLY: {
+				initialTab = (int)Tabs.KEYS; 
 			} break;
 
-			case Mode.PC_ONLY:
-			case Mode.DEFAULT: {	// By default show PC tab
-				initialTab = m_tabs.GetScreen((int)Tabs.PC);
-				initialList = m_pcScrollList;
+			case Mode.PC_ONLY: 
+			case Mode.DEFAULT: {
+				initialTab = (int)Tabs.PC;
 			} break;
 		}
 
 		// Go to initial tab
-		m_tabs.GoToScreen(initialTab, NavigationScreen.AnimType.NONE);
-
-		// Program initial scroll list animation
-		initialList.DOHorizontalNormalizedPos(-10f, 0.5f).From().SetEase(Ease.OutCubic).SetDelay(0.25f).SetUpdate(true);
+		m_tabs.GoToScreen(initialTab);
 	}
 
 	//------------------------------------------------------------------//
