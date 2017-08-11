@@ -11,6 +11,7 @@ public class HazardFistMotion : MonoBehaviour {
 	[SerializeField] private float m_speed;
 
 	// Size
+	private float m_initialPosY;
 	private float m_columnHeight;
 
 	// Transforms
@@ -34,8 +35,13 @@ public class HazardFistMotion : MonoBehaviour {
 			m_staticColumnTransform = m_staticColumn.transform;
 			m_fistTransform = m_fist.transform;
 
-			int auxColumnsCount = Mathf.CeilToInt(m_realDistance / m_columnHeight);
+			m_initialPosY = m_staticColumnTransform.localPosition.y;
+
+			int auxColumnsCount = Mathf.FloorToInt(m_realDistance / m_columnHeight);
 			m_mobileColumnTransforms = new Transform[auxColumnsCount];
+
+			float yScale = (m_realDistance / auxColumnsCount) / m_columnHeight;
+			m_columnHeight *= yScale;
 
 			float scale = 1f;
 			for (int i = 0; i < auxColumnsCount; ++i) {
@@ -43,13 +49,13 @@ public class HazardFistMotion : MonoBehaviour {
 				Transform tr = go.transform;
 				tr.SetParent(transform);
 				tr.CopyFrom(m_staticColumnTransform);
-				tr.localScale = tr.localScale.x * (new Vector3(scale, 1f, scale));
+				tr.localScale = tr.localScale.x * (new Vector3(scale, yScale, scale));
 				m_mobileColumnTransforms[i] = tr;
 
 				scale -= 0.025f;
 			}
 
-			m_staticColumnTransform.localScale = m_staticColumnTransform.localScale.x * (new Vector3(scale, 1f, scale));
+			m_staticColumnTransform.localScale = m_staticColumnTransform.localScale.x * (new Vector3(scale, yScale, scale));
 
 			m_time = 0f;
 		}
@@ -63,9 +69,9 @@ public class HazardFistMotion : MonoBehaviour {
 
 			m_fistTransform.localPosition = position;
 			for (int i = 0; i < m_mobileColumnTransforms.Length; ++i) {
-				Vector3 p = position + Vector3.up * (m_columnHeight) * i;
-				if (p.y > 0f) {
-					p.y = 0f;
+				Vector3 p = position + Vector3.up * (m_initialPosY + (m_columnHeight * i));
+				if (p.y > m_initialPosY) {
+					p.y = m_initialPosY;
 				}
 				m_mobileColumnTransforms[i].localPosition = p;
 			}
