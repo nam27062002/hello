@@ -309,14 +309,6 @@ public class Egg {
 			m_state = State.READY;
 		}
 
-		// Reward
-		if ( _data.ContainsKey("rewardSku") ) {
-			m_rewardData = Metagame.Reward.CreateTypeEgg(m_def.sku, _data["rewardSku"]) as Metagame.RewardEgg;
-			m_rewardData.egg = this;
-		} else {
-			GenerateReward();
-		}
-
 		// Incubating timestamp
 		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"]);
 	}
@@ -335,11 +327,6 @@ public class Egg {
 		// State
 		data.Add("state", ((int)m_state).ToString());
 		data.Add("isNew",m_isNew.ToString());
-
-		// Reward
-		if (m_rewardData != null && m_rewardData.reward != null) {
-			data.Add("rewardSku", m_rewardData.reward.sku);
-		}
 
 		// Incubating timestamp
 		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString());

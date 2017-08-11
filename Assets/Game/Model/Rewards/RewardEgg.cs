@@ -56,24 +56,16 @@ namespace Metagame {
 		/// </summary>
 		/// <param name="_sku">Egg sku.</param>
 		public RewardEgg(string _sku) {
-			Build(_sku, "");	// This will generate a random reward following the gacha rules
-		}
-
-		/// <summary>
-		/// Constructor with egg sku and reward sku.
-		/// </summary>
-		/// <param name="_sku">Egg sku.</param>
-		/// <param name="_rewardTypeSku">Reward sku (from EGG_REWARDS definitions category).</param>
-		public RewardEgg(string _sku, string _rewardTypeSku) {
-			Build(_sku, _rewardTypeSku);
+			Build(_sku);	// This will generate a random reward following the gacha rules
 		}
 
 		/// <summary>
 		/// Internal builder with egg sku and reward sku.
 		/// </summary>
 		/// <param name="_sku">Egg sku.</param>
-		/// <param name="_rewardTypeSku">Reward sku (from EGG_REWARDS definitions category).</param>
-		private void Build(string _sku, string _rewardTypeSku) {
+		private void Build(string _sku) {
+			Debug.Log("<color=purple>Building egg with sku " + _sku + "</color>");
+
 			// Internal initializer
 			base.Init(TYPE_CODE);
 
@@ -81,7 +73,7 @@ namespace Metagame {
 			m_sku = _sku;
 			m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _sku);
 
-			BuildReward(_rewardTypeSku);
+			BuildReward();
 
 			if (m_reward != null) {
 				m_rarity = m_reward.rarity;
@@ -94,19 +86,22 @@ namespace Metagame {
 		/// Initializes the reward given by this egg.
 		/// </summary>
 		/// <param name="_rewardTypeSku">Reward sku (from EGG_REWARDS definitions category). Leave empty to generate a random reward following the gacha rules.</param>
-		private void BuildReward(string _rewardTypeSku = "") {
+		private void BuildReward() {
+			Debug.Log("<color=purple>Building egg reward!</color>");
+
 			// Get the reward definition
 			DefinitionNode rewardTypeDef = null;
-			if(!string.IsNullOrEmpty(_rewardTypeSku)) {
-				rewardTypeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, _rewardTypeSku);
-			} else if(m_sku.Equals(Egg.SKU_GOLDEN_EGG)) {
+			if(m_sku.Equals(Egg.SKU_GOLDEN_EGG)) {
 				rewardTypeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, "pet_special");
 			} else {
 				rewardTypeDef = EggManager.GenerateReward();
 			}
 
 			// Nothing else to do if def is null
-			if(rewardTypeDef == null) return;
+			if(rewardTypeDef == null) {
+				Debug.Log("<color=red>COULDN'T DO IT!</color>");
+				return;
+			}
 
 			// Initialize the reward data based on type
 			string rewardType = rewardTypeDef.GetAsString("type");
@@ -161,9 +156,9 @@ namespace Metagame {
 					// Create the egg reward!
 					if(petDef != null) {
 						m_reward = CreateTypePet(petDef);
-						Debug.Log("EGG REWARD GENERATED FOR EGG " + m_sku + ":\n" + m_reward.ToString());
+						Debug.Log("<color=purple>EGG REWARD GENERATED FOR EGG " + m_sku + ":\n" + m_reward.ToString() + "</color>");
 					} else {
-						Debug.LogError("COULDN'T GENERATE EGG REWARD FOR EGG " + m_sku + "!");
+						Debug.LogError("<color=red>COULDN'T GENERATE EGG REWARD FOR EGG " + m_sku + "!" + "</color>");
 					}
 				} break;
 			}
