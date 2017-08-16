@@ -15,6 +15,11 @@ public class RailMeshBuilder : MonoBehaviour {
 	[SerializeField] private float m_meshScale = 2.25f;
 	[SerializeField] private float m_uvScale = 1f;
 	[SerializeField] private Material m_material;
+	[SeparatorAttribute]
+	[SerializeField] private List<int> m_destroyedParts = new List<int>();
+
+	private bool m_forceDirty = false;
+	public bool dirty { set { m_forceDirty = value; } }
 
 	private float m_currentSubdivisions = 0f;
 	private float m_currentDistancePerGameObject = 0f;
@@ -33,14 +38,15 @@ public class RailMeshBuilder : MonoBehaviour {
 	void Update() {
 		if (Application.isEditor) {
 			if (m_spline != null) {
-				bool isDirty =	m_spline.isDirty3D || 
+				bool isDirty =	m_spline.isDirty3D || m_forceDirty ||
 								(m_currentSubdivisions != m_subdivisions) || 
 								(m_currentDistancePerGameObject != m_distancePerGameObject) ||
 								(m_currentTieCountPerGameObject != m_tieCountPerGameObject) || 
 								(m_currentMeshScale != m_meshScale) || 
 								(m_currentUVscale != m_uvScale);
 
-				if (isDirty) {					
+				if (isDirty) {		
+					m_forceDirty = false;
 					m_currentSubdivisions = m_subdivisions;
 					m_currentDistancePerGameObject = m_distancePerGameObject;
 					m_currentTieCountPerGameObject = m_tieCountPerGameObject;
@@ -54,11 +60,17 @@ public class RailMeshBuilder : MonoBehaviour {
 					}
 
 					float dist = 0;
+					int railIdx = 0;
 					while ((dist + m_distancePerGameObject) < m_spline.length) {
-						BuildRail(dist, dist + m_distancePerGameObject, m_subdivisions);
+						if (!m_destroyedParts.Contains(railIdx)) {
+							BuildRail(dist, dist + m_distancePerGameObject, m_subdivisions);
+						}
 						dist += m_distancePerGameObject;
+						railIdx++;
 					}
-					BuildRail(dist, m_spline.length, m_subdivisions * 0.5f);
+					if (!m_destroyedParts.Contains(railIdx)) {
+						BuildRail(dist, m_spline.length, m_subdivisions * 0.5f);
+					}
 				}
 			}
 		}

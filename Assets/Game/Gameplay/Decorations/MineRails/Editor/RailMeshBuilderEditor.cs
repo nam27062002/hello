@@ -9,6 +9,11 @@ public class RailMeshBuilderEditor : Editor {
 	public override void OnInspectorGUI() {		
 		DrawDefaultInspector();
 
+		if (GUILayout.Button("Refresh Mesh")) {
+			RailMeshBuilder builder = target as RailMeshBuilder;
+			builder.dirty = true;
+		}
+
 		if (GUILayout.Button("Build Light Map UVS")) {
 			RailMeshBuilder builder = target as RailMeshBuilder;
 			List<MeshFilter> meshFilters = builder.transform.FindComponentsRecursive<MeshFilter>();
