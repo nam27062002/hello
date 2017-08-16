@@ -250,11 +250,11 @@ fixed4 frag (v2f i) : SV_Target
 #endif
 
 #endif	
-
+/*
 #ifdef DARKEN
 	HG_APPLY_DARKEN(i, col);	//darken
 #endif
-
+*/
 #ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 #endif
