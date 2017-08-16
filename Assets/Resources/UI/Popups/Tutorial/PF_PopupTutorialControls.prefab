@@ -500,6 +500,8 @@ MonoBehaviour:
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -863,7 +865,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224211932948670914}
   - component: {fileID: 222481567177542966}
-  - component: {fileID: 114760556617261192}
   - component: {fileID: 114542455649272358}
   - component: {fileID: 114688775502294542}
   m_Layer: 5
@@ -1802,33 +1803,6 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &114760556617261192
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1375421152165356}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 5d77e9e029a41534bb8a619c3fd57389, type: 3}
-  m_Type: 2
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
 --- !u!114 &114816229554638536
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1991,6 +1965,8 @@ MonoBehaviour:
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
