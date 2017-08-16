@@ -62,6 +62,7 @@ namespace AI {
 
 		protected override void ExtendedUpdateFreeFall() {			
 			m_direction = m_velocity.normalized;
+			m_upVector = Vector3.Cross(m_direction, m_right);
 			UpdateOrientation();
 		}
 
