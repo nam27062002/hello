@@ -193,11 +193,18 @@ public class PetsScreenController : MonoBehaviour {
 		}
 
 		// Sort them!
-		// Cache some data
+		// Category order: same as filter buttons
 		Dictionary<string, int> filterOrder = new Dictionary<string, int>();
 		for(int i = 0; i < petFilters.filterButtons.Length; i++) {
 			filterOrder[petFilters.filterButtons[i].filterName] = i;
 		}
+
+		// Rarity order: rarer pets first
+		Dictionary<string, int> rarityOrder = new Dictionary<string, int>();
+		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.SPECIAL)] = 0;
+		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.EPIC)] = 1;
+		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.RARE)] = 2;
+		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.COMMON)] = 3;
 
 		// Put owned pets at the beginning of the list, then sort by category (following filter buttons order), finally by content order
 		m_defs.Sort((DefinitionNode _def1, DefinitionNode _def2) => {
@@ -208,18 +215,32 @@ public class PetsScreenController : MonoBehaviour {
 			} else if(unlocked2 && !unlocked1) {
 				return 1;
 			} else {
-				// Both pets locked or unlocked: sort by category first (following filter buttons order), by content order afterwards
-				int catOrder1 = int.MaxValue;
-				int catOrder2 = int.MaxValue;
-				filterOrder.TryGetValue(_def1.Get("category"), out catOrder1);
-				filterOrder.TryGetValue(_def2.Get("category"), out catOrder2);
-				if(catOrder1 < catOrder2) {
+				// Both pets locked or unlocked:
+				// Sort by rarity (rarest ones first)
+				int rarityOrder1 = int.MaxValue;
+				int rarityOrder2 = int.MaxValue;
+				rarityOrder.TryGetValue(_def1.Get("rarity"), out rarityOrder1);
+				rarityOrder.TryGetValue(_def2.Get("rarity"), out rarityOrder2);
+				if(rarityOrder1 < rarityOrder2) {
 					return -1;
-				} else if(catOrder2 < catOrder1) {
+				} else if(rarityOrder2 < rarityOrder1) {
 					return 1;
 				} else {
-					// Both pets of the same category: sort by order
-					return _def1.GetAsInt("order").CompareTo(_def2.GetAsInt("order"));
+					// Same rarity:
+					// Sort by category (following filter buttons order)
+					int catOrder1 = int.MaxValue;
+					int catOrder2 = int.MaxValue;
+					filterOrder.TryGetValue(_def1.Get("category"), out catOrder1);
+					filterOrder.TryGetValue(_def2.Get("category"), out catOrder2);
+					if(catOrder1 < catOrder2) {
+						return -1;
+					} else if(catOrder2 < catOrder1) {
+						return 1;
+					} else {
+						// Same category:
+						// Sort by order as defined in content
+						return _def1.GetAsInt("order").CompareTo(_def2.GetAsInt("order"));
+					}
 				}
 			}
 		});
@@ -476,12 +497,29 @@ public class PetsScreenController : MonoBehaviour {
 			(_def) => UsersManager.currentUser.petCollection.IsPetUnlocked(_def.sku)
 		).ToList().Count;
 
+		// Get current filter name
+		string categoryName = "all";
+		if(string.IsNullOrEmpty(_filters.currentFilter)) {
+			categoryName = LocalizationManager.SharedInstance.Localize("TID_PET_CATEGORY_ALL");
+		} else {
+			DefinitionNode categoryDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PET_CATEGORIES, _filters.currentFilter);
+			if(categoryDef != null) {
+				categoryName = categoryDef.GetLocalized("tidName");
+			} else {
+				categoryName = "UNKNOWN CATEGORY!";
+			}
+		}
+
 		// Refresh counter text
 		m_counterText.Localize(
 			m_counterText.tid,
 			StringUtils.FormatNumber(unlockedCount),
-			StringUtils.FormatNumber(_filters.filteredDefs.Count)
+			StringUtils.FormatNumber(_filters.filteredDefs.Count),
+			categoryName,
+			"#888888"
 		);
+
+		// Animate!
 		m_counterText.GetComponent<ShowHideAnimator>().RestartShow();
 	}
 

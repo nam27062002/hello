@@ -61,6 +61,12 @@ public class PetFilters : MonoBehaviour {
 		get { return m_filteredDefs; }
 	}
 
+	// For the tab behaviour
+	private string m_currentFilter = "";
+	public string currentFilter {
+		get { return m_currentFilter; }
+	}
+
 	// Events
 	public PetFiltersEvent OnFilterChanged = new PetFiltersEvent();
 
@@ -68,7 +74,6 @@ public class PetFilters : MonoBehaviour {
 	private Dictionary<string, bool> m_activeFilters = new Dictionary<string, bool>();	// Dictionary of <filterName, status>. If a filterName is not on the dictionary, filter is considered off.
 	private bool m_dirty = false;
 	private bool m_ignoreToggleEvents = false;	// Internal control var for when changing a toggle state from code
-	private string m_currentFilter = "";	// Behave as tabs
 	private Coroutine m_refreshPillsCoroutine = null;	// Pills are enabled asynchronously to prevent peaks of cpu load
 
 	//------------------------------------------------------------------------//
@@ -260,7 +265,8 @@ public class PetFilters : MonoBehaviour {
 		// [AOC] Usually we would use a content size fitter, but since we're enabling 
 		// the pills with delay, the scrolling logic goes all crazy
 		HorizontalLayoutGroup layout = petsScreen.scrollList.content.GetComponent<HorizontalLayoutGroup>();
-		float pillWidth = petsScreen.pills[0].GetComponent<LayoutElement>().preferredWidth;
+		//float pillWidth = petsScreen.pills[0].GetComponent<LayoutElement>().preferredWidth;
+		float pillWidth = petsScreen.pills[0].GetComponent<RectTransform>().sizeDelta.x;
 		int numVisiblePills = m_filteredDefs.Count;
 		Vector2 contentSize = petsScreen.scrollList.content.sizeDelta;
 		contentSize.x = layout.padding.left
