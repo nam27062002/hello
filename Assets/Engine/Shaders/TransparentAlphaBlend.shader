@@ -18,16 +18,7 @@ Shader "Hungry Dragon/TransparentAlphaBlend"
 		Cull Off
 		Lighting Off
 		ZWrite Off
-		//		Fog{ Color(0,0,0,0) }
 		ZTest[_ZTest]
-		/*
-		BindChannels{
-		Bind "Color", color
-		Bind "Vertex", vertex
-		Bind "TexCoord", texcoord
-		}
-		*/
-
 
 		Pass
 		{
