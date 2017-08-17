@@ -9,7 +9,7 @@ Shader "Hungry Dragon/NPC/NPC Gold"
 	Properties
 	{
 		_MatCap("Gold Tex", 2D) = "white" {}
-		_GoldColor("Gold tint", Color) = (1.0, 1.0, 1.0, 1.0)
+		_Tint("Gold tint", Color) = (1.0, 1.0, 1.0, 1.0)
 	}
 	
 	Subshader
@@ -46,11 +46,11 @@ Shader "Hungry Dragon/NPC/NPC Gold"
 				}
 				
 				uniform sampler2D _MatCap;
-				uniform float4 _GoldColor;
+				uniform float4 _Tint;
 				
 				fixed4 frag (v2f i) : COLOR
 				{
-					fixed4 mc = tex2D(_MatCap, i.cap) * _GoldColor;					
+					fixed4 mc = tex2D(_MatCap, i.cap) * _Tint;					
 					return mc * 3.0;
 				}
 			ENDCG
