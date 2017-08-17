@@ -7,39 +7,39 @@
 
 struct v2f {
 	float4 vertex : SV_POSITION;
-	half2 texcoord : TEXCOORD0;
-	
+	float2 texcoord : TEXCOORD0;
+
+#ifdef LIGHTMAP_ON
+	float2 lmap : TEXCOORD1;
+#endif	
+
+
 #ifdef BLEND_TEXTURE	
-	half2 texcoord2 : TEXCOORD5;
+	float2 texcoord2 : TEXCOORD2;
 #endif
 
 	float4 color : COLOR;
-	
+
 #ifdef FOG	
-	HG_FOG_COORDS(1)
+	HG_FOG_COORDS(3)
 #endif
 
 #ifdef DARKEN
-	HG_DARKEN(8)
+		HG_DARKEN(4)
 #endif
 
 #ifdef DYNAMIC_SHADOWS
-	LIGHTING_COORDS(2,3)	
+		LIGHTING_COORDS(2, 3)
 #endif
+		float3 normalWorld : NORMAL;
 
-#ifdef LIGHTMAP_ON
-	float2 lmap : TEXCOORD4;
-#endif	
-
-	float3 normalWorld : NORMAL;
-	
 #ifdef NORMALMAP
 	float3 tangentWorld : TANGENT;
-	float3 binormalWorld : TEXCOORD6;
+	float3 binormalWorld : TEXCOORD5;
 #endif
 
 #ifdef SPECULAR
-	float3 halfDir : TEXCOORD7;
+	float3 halfDir : TEXCOORD6;
 #endif	
 
 };

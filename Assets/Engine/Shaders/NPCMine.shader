@@ -63,7 +63,7 @@ Shader "Hungry Dragon/NPC/NPC Mine (Spawners)"
 //			#define SPECULAR
 
 //			#define FRESNEL
-			#define MATCAP
+//			#define MATCAP
 
 			#include "entities.cginc"
 

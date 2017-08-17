@@ -33,7 +33,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + Fresnel + Transparent (Spawners)"
 			#include "HungryDragon.cginc"
 
 //			#define FRESNEL
-			#define MATCAP
+//			#define MATCAP
 			#define TINT
 			#define OPAQUEALPHA
 

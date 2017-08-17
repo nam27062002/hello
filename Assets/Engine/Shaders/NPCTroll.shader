@@ -59,8 +59,10 @@ Shader "Hungry Dragon/NPC/NPC Troll"
 			#endif
 
 //			#define FRESNEL
-			#define MATCAP
-			#define EMISSIVE_COLOR
+//			#define MATCAP
+//			#define EMISSIVE_COLOR
+			#define OPAQUEALPHA
+
 
 			#include "entities.cginc"
 			ENDCG

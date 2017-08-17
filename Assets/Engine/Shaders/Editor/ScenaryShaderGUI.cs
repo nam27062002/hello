@@ -12,6 +12,10 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 
+#pragma warning disable 0168 // variable declared but not used.
+#pragma warning disable 0219 // variable assigned but not used.
+#pragma warning disable 0414 // private field assigned but not used.
+
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -34,37 +38,54 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
     private static class Styles
     {
-        public static string mainTextureText = "MainTex";
-        public static string blendTextureText = "Blend Texture";
+        readonly public static string mainTextureText = "MainTex";
 
-        public static string normalTextureText = "Normal Texture";
-        public static string normalStrengthText = "Normal Texture strength";
-        public static GUIContent alphaCutoffText = new GUIContent("Alpha Cutoff", "Threshold for alpha cutoff");
+        readonly public static string enableBlendTextureText = "Enable Blend Texture";
+        readonly public static string blendTextureText = "Blend Texture";
 
-//        public static GUIContent fogText = new GUIContent("Fog");
-///        public static GUIContent darkenText = new GUIContent("Darken");
+        readonly public static string enableNormalMapText = "Enable Normal map";
+        readonly public static string normalTextureText = "Normal Texture";
+        readonly public static string normalStrengthText = "Normal Texture strength";
 
-        public static string fogText = "Fog";
-        public static string darkenText = "Darken";
-        public static string specularText = "Specular";
-        public static string automaticBlendingText = "Automatic blending";
-        public static string overlayColorText = "Vertex Color Tint";
+        readonly public static string enableCutoffText = "Enable Alpha cutoff";
+        readonly public static string CutoffText = "Alpha cutoff threshold";
 
-        public static string specularFactorText = "Specular factor:";
-        public static string specularDirText = "Specular direction:";
+        //        public static GUIContent fogText = new GUIContent("Fog");
+        ///        public static GUIContent darkenText = new GUIContent("Darken");
 
-        public static string darkenPositionText = "Darken position:";
-        public static string darkenDistanceText = "Darken distance:";
+        readonly public static string enableSpecularText = "Enable Specular";
+        readonly public static string specularPowerText = "Specular Power";
+        readonly public static string specularDirText = "Specular direction";
 
-        public static string whiteSpaceString = " ";
-        public static string primaryMapsText = "Maps";
-        public static string renderOptions = "Render Options";
-        public static string renderingMode = "Rendering Mode";
-//        public static GUIContent emissiveWarning = new GUIContent("Emissive value is animated but the material has not been configured to support emissive. Please make sure the material itself has some amount of emissive.");
-//        public static GUIContent emissiveColorWarning = new GUIContent("Ensure emissive color is non-black for emission to have effect.");
-        public static readonly string[] blendNames = Enum.GetNames(typeof(BlendMode));
+
+        readonly public static string enableFogText = "Enable Fog";
+        readonly public static string enableDarkenText = "Enable Darken";
+
+
+        readonly public static string automaticBlendingText = "Automatic blending";
+        readonly public static string overlayColorText = "Vertex Color Tint";
+
+        readonly public static string darkenPositionText = "Darken position";
+        readonly public static string darkenDistanceText = "Darken distance";
+
+        readonly public static string vertexColorModeText = "VertexColorMode";
+
+        readonly public static string enableEmissiveBlink = "Enable emissive blink";
+        readonly public static string emissivePowerText = "Emissive power";
+        readonly public static string blinkTimeMultiplierText = "Blink time multiplier";
+
+        readonly public static string lightmapContrastText = "Lightmap contrast";
+
+//        readonly public static string primaryMapsText = "Maps";
+//        readonly public static string renderOptions = "Render Options";
+//        readonly public static string renderingMode = "Rendering Mode";
+
+//        readonly public static string[] blendNames = Enum.GetNames(typeof(BlendMode));
     }
 
+/// <summary>
+/// Material Properties
+/// </summary>
     MaterialProperty mp_mainTexture;
 
     MaterialProperty mp_blendTexture;
@@ -86,7 +107,32 @@ internal class ScenaryShaderGUI : ShaderGUI {
     MaterialProperty mp_EmissivePower;
     MaterialProperty mp_BlinkTimeMultiplier;
 
-    MaterialEditor m_MaterialEditor;
+    MaterialProperty mp_Cull;
+
+
+/// <summary>
+/// Toggle Material Properties
+/// </summary>
+    MaterialProperty mp_EnableBlendTexture;
+    MaterialProperty mp_EnableAutomaticBlend;
+
+    MaterialProperty mp_EnableSpecular;
+    MaterialProperty mp_EnableNormalMap;
+
+    MaterialProperty mp_EnableCutoff;
+    MaterialProperty mp_EnableFog;
+    MaterialProperty mp_EnableDarken;
+
+    MaterialProperty mp_EnableEmissiveBlink;
+    MaterialProperty mp_EnableLightmapContrast;
+
+    /// <summary>
+    /// Enum Material PProperties
+    /// </summary>
+
+    MaterialProperty mp_VertexcolorMode;
+
+    MaterialEditor m_materialEditor;
     ColorPickerHDRConfig m_ColorPickerHDRConfig = new ColorPickerHDRConfig(0f, 99f, 1 / 99f, 3f);
 
     readonly static string kw_blendTexture = "BLEND_TEXTURE";
@@ -101,15 +147,27 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
     bool m_FirstTimeApply = true;
 
+
+    private GUISkin editorSkin;
+    private readonly static string editorSkinPath = "Assets/Engine/Shaders/Editor/GUISkin/MaterialEditorSkin.guiskin";
+
     //------------------------------------------------------------------------//
     // METHODS																  //
     //------------------------------------------------------------------------//
+
+    void IniEditorSkin()
+    {
+        if (editorSkin == null)
+        {
+            editorSkin = AssetDatabase.LoadAssetAtPath(editorSkinPath, typeof(GUISkin)) as GUISkin;
+        }
+    }
 
     public void FindProperties(MaterialProperty[] props)
     {
         mp_mainTexture = FindProperty("_MainTex", props);
         mp_blendTexture = FindProperty("_SecondTexture", props);
-        mp_lightmapIntensity = FindProperty("_LightmapIntensity", props);
+//        mp_lightmapIntensity = FindProperty("_LightmapIntensity", props);
 
         mp_normalTexture = FindProperty("_NormalTex", props);
         mp_normalStrength = FindProperty("_NormalStrength", props);
@@ -122,12 +180,43 @@ internal class ScenaryShaderGUI : ShaderGUI {
         mp_darkenPosition = FindProperty("_DarkenPosition", props);
         mp_darkenDistance = FindProperty("_DarkenDistance", props);
 
-        mp_blendMode = FindProperty("_Mode", props);
-
         mp_EmissivePower = FindProperty("_EmissivePower", props);
         mp_BlinkTimeMultiplier = FindProperty("_BlinkTimeMultiplier", props);
+
+        /// Toggle Material Properties
+
+        mp_EnableBlendTexture = FindProperty("_EnableBlendTexture", props);
+        mp_EnableAutomaticBlend = FindProperty("_EnableAutomaticBlend", props);
+
+        mp_EnableSpecular = FindProperty("_EnableSpecular", props);
+        mp_EnableNormalMap = FindProperty("_EnableNormalMap", props);
+
+        mp_EnableCutoff = FindProperty("_EnableCutoff", props);
+        mp_EnableFog = FindProperty("_EnableFog", props);
+        mp_EnableDarken = FindProperty("_EnableDarken", props);
+
+        mp_EnableEmissiveBlink = FindProperty("_EnableEmissiveBlink", props);
+        mp_EnableLightmapContrast = FindProperty("_EnableLightmapContrast", props);
+
+        /// Enum Material PProperties
+
+        mp_VertexcolorMode = FindProperty("VertexColor", props);
+
+        mp_Cull = FindProperty("_Cull", props);
+
     }
 
+
+
+
+    private bool featureSet(MaterialProperty feature, string label)
+    {
+        EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
+        m_materialEditor.ShaderProperty(feature, label);
+        EditorGUILayout.EndVertical();
+
+        return feature.floatValue > 0.0f;
+    }
 
     /// <summary>
     /// Draw the inspector.
@@ -135,62 +224,103 @@ internal class ScenaryShaderGUI : ShaderGUI {
     /// 
     public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] props)
     {
+        IniEditorSkin();
         FindProperties(props); // MaterialProperties can be animated so we do not cache them but fetch them every event to ensure animated values are updated correctly
         Material material = materialEditor.target as Material;
 
+        m_materialEditor = materialEditor;
+
+        GUILayout.BeginHorizontal(editorSkin.customStyles[0]);
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.LabelField("Scenary standard shader", editorSkin.customStyles[0]);
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
+
         materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
 
-//        m_
-        bool textureBlend = material.IsKeywordEnabled(kw_blendTexture);
+        materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
 
-        EditorGUI.BeginChangeCheck();
-        textureBlend = EditorGUILayout.Foldout(textureBlend, Styles.blendTextureText, true);
+        bool normalMap = mp_normalTexture.textureValue != null as Texture;
+
         if (EditorGUI.EndChangeCheck())
         {
-            SetKeyword(material, kw_blendTexture, textureBlend);
+            //            mp_EnableNormalMap.floatValue =  normalMap ? 1.0f : 0.0f;
+            //            materialEditor.ShaderProperty(mp_EnableNormalMap, Styles.enableNormalMapText);
+            SetKeyword(material, kw_normalmap, normalMap);
+//            material.SetFloat("_EnableNormalMap", normalMap ? 1.0f : 0.0f);
+            EditorUtility.SetDirty(material);
+            Debug.Log("EnableNormalMap " + (normalMap));
+            DebugKeywords(material);
         }
-        if (textureBlend)
+
+        EditorGUI.BeginChangeCheck();
+
+        if (normalMap)
         {
-            m_MaterialEditor.TextureProperty(mp_blendTexture, Styles.blendTextureText);
+            materialEditor.ShaderProperty(mp_normalStrength, Styles.normalStrengthText);
+        }
 
-            bool automaticBlend = material.IsKeywordEnabled(kw_automaticBlend);
-            EditorGUI.BeginChangeCheck();
-            automaticBlend = EditorGUILayout.Toggle(automaticBlend, Styles.automaticBlendingText);
-            if (EditorGUI.EndChangeCheck())
-            {
-                SetKeyword(material, kw_automaticBlend, automaticBlend);
-            }
+        if (featureSet(mp_EnableBlendTexture, Styles.enableBlendTextureText))
+        {
+//            materialEditor.TextureProperty(mp_blendTexture, Styles.blendTextureText);
+            materialEditor.TextureProperty(mp_blendTexture, Styles.blendTextureText);
+            materialEditor.ShaderProperty(mp_EnableAutomaticBlend, Styles.automaticBlendingText);
         }
 
 
-    }
+        if (featureSet(mp_EnableSpecular, Styles.enableSpecularText))
+        {
+            materialEditor.ShaderProperty(mp_specularPower, Styles.specularPowerText);
+            materialEditor.ShaderProperty(mp_specularDirection, Styles.specularDirText);
+        }
 
-    static void MaterialChanged(Material material)
-    {
-//        material.shaderKeywords = null;
+        EditorGUI.BeginChangeCheck();
+        bool cutoff = featureSet(mp_EnableCutoff, Styles.enableCutoffText);
+        if (EditorGUI.EndChangeCheck())
+        {
+            mp_Cull.floatValue = cutoff ? 0.0f : 2.0f;  // https://docs.unity3d.com/ScriptReference/Rendering.CullMode.html
+            material.SetOverrideTag("RenderType", cutoff ? "TransparentCutout" : "Opaque");
+        }
 
-        SetupMaterialWithBlendMode(material, (BlendMode)material.GetFloat("_Mode"));
+        if (cutoff)
+        {
+            materialEditor.ShaderProperty(mp_cutOff, Styles.CutoffText);
+        }
 
-        SetMaterialKeywords(material);
+        featureSet(mp_EnableFog, Styles.enableFogText);
 
+        if(featureSet(mp_EnableDarken, Styles.enableDarkenText))
+        {
+            materialEditor.ShaderProperty(mp_darkenPosition, Styles.darkenPositionText);
+            materialEditor.ShaderProperty(mp_darkenDistance, Styles.darkenDistanceText);
+        }
+
+        featureSet(mp_VertexcolorMode, Styles.vertexColorModeText);
+
+        if (featureSet(mp_EnableEmissiveBlink, Styles.enableEmissiveBlink))
+        {
+            materialEditor.ShaderProperty(mp_EmissivePower, Styles.emissivePowerText);
+            materialEditor.ShaderProperty(mp_BlinkTimeMultiplier, Styles.blinkTimeMultiplierText);
+        }
 /*
-        string kwl = "";
-        foreach (string kw in material.shaderKeywords)
+        if (featureSet(mp_EnableLightmapContrast, Styles.lightmapContrastText))
         {
-            kwl += kw + ",";
+            materialEditor.
         }
-
-        Debug.Log("Material keywords: " + kwl);
 */
+/*
+        if (GUILayout.Button("Reset keywords", editorSkin.customStyles[0]))
+        {
+            material.shaderKeywords = null;
+        }
+*/
+
     }
 
-
-    static void SetMaterialKeywords(Material material)
+    static void DebugKeywords(Material mat)
     {
-        // Note: keywords must be based on Material value not on MaterialProperty due to multi-edit & material animation
-        // (MaterialProperty value might come from renderer material property block)
-        SetKeyword(material, "NORMALMAP", material.GetTexture("_NormalTex"));
-        SetKeyword(material, "BLEND_TEXTURE", material.GetTexture("_SecondTexture"));
+        foreach (string kw in mat.shaderKeywords)
+            Debug.Log("Material keywords: " + kw);
     }
 
 
@@ -202,61 +332,5 @@ internal class ScenaryShaderGUI : ShaderGUI {
             m.DisableKeyword(keyword);
     }
 
-
-    void BlendModePopup()
-    {
-        EditorGUI.showMixedValue = mp_blendMode.hasMixedValue;
-        BlendMode mode = (BlendMode)mp_blendMode.floatValue;
-
-        EditorGUI.BeginChangeCheck();
-        mode = (BlendMode)EditorGUILayout.Popup(Styles.renderingMode, (int)mode, Styles.blendNames);
-        if (EditorGUI.EndChangeCheck())
-        {
-            m_MaterialEditor.RegisterPropertyChangeUndo("Rendering Mode");
-            mp_blendMode.floatValue = (float)mode;
-        }
-
-        EditorGUI.showMixedValue = false;
-    }
-
-    public static void SetupMaterialWithBlendMode(Material material, BlendMode blendMode)
-    {
-        switch (blendMode)
-        {
-            case BlendMode.Opaque:
-                material.SetOverrideTag("RenderType", "");
-                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-                material.SetInt("_ZWrite", 1);
-                material.DisableKeyword("CUTOFF");
-//                material.DisableKeyword("_ALPHATEST_ON");
-//                material.DisableKeyword("_ALPHABLEND_ON");
-//                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                material.renderQueue = -1;
-                break;
-            case BlendMode.Cutout:
-                material.SetOverrideTag("RenderType", "TransparentCutout");
-                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-                material.SetInt("_ZWrite", 1);
-                material.EnableKeyword("CUTOFF");
-//                material.EnableKeyword("_ALPHATEST_ON");
-//                material.DisableKeyword("_ALPHABLEND_ON");
-//                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
-                break;
-            case BlendMode.Transparent:
-                material.SetOverrideTag("RenderType", "Transparent");
-                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                material.SetInt("_ZWrite", 0);
-                material.DisableKeyword("CUTOFF");
-//                material.DisableKeyword("_ALPHATEST_ON");
-//                material.DisableKeyword("_ALPHABLEND_ON");
-//                material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-                material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-                break;
-        }
-    }
-
+    
 }
