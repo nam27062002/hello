@@ -56,6 +56,4 @@ Shader "Hungry Dragon/NPC/NPC Gold"
 			ENDCG
 		}
 	}
-	
-//	Fallback "VertexLit"
 }

@@ -60,6 +60,4 @@ Shader "Hungry Dragon/NPC/NPC Gold Transparent"
 			ENDCG
 		}
 	}
-	
-//	Fallback "VertexLit"
 }

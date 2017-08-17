@@ -54,7 +54,11 @@ public class LightmapTool : EditorWindow {
         }
 
 
-        public static void SetAmbientOcclusion(float val)
+        public static void SetAmbientOcclusion(bool val)
+        {
+            SetBool("m_LightmapEditorSettings.m_AO", val);
+        }
+        public static void SetAmbientOcclusionExponent(float val)
         {
             SetFloat("m_LightmapEditorSettings.m_CompAOExponent", val);
         }
@@ -203,6 +207,8 @@ public class LightmapTool : EditorWindow {
                 LightingSettingsHelper.SetBakedResolution(1.0f);
 //                LightingSettingsHelper.SetEnvironmentLightingMode(0);
                 LightingSettingsHelper.SetLightmapBakeMode(0);
+                LightingSettingsHelper.SetAmbientOcclusion(true);
+                LightingSettingsHelper.SetFinalGatherEnabled(false);
             }
         }
     }

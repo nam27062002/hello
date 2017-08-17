@@ -99,6 +99,11 @@ fixed4 frag(v2f i) : SV_Target
 	clip(main.a - _Cutoff);
 #endif
 
+#ifdef SILHOUETTE
+	return _Tint;
+#endif
+
+
 #ifdef NORMALMAP
 	float3 encodedNormal = UnpackNormal(tex2D(_BumpMap, i.texcoord));
 	encodedNormal.z *= _NormalStrenght;

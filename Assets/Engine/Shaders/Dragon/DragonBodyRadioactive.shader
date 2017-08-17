@@ -50,6 +50,8 @@ SubShader {
 		#pragma vertex vert
 		#pragma fragment frag
 		#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
+		#pragma multi_compile __ SILHOUETTE
+
 
 		#include "UnityCG.cginc" 
 		#include "Lighting.cginc"
