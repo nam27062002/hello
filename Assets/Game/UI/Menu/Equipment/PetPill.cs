@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
+using TMPro;
 using DG.Tweening;
 
 using System.Linq;
@@ -38,7 +39,8 @@ public class PetPill : MonoBehaviour {
 	[SerializeField] private Image m_preview = null;
 	[SerializeField] private GameObject m_lockIcon = null;
 	[SerializeField] private GameObject m_lockIconSpecial = null;
-	[SerializeField] private Image m_powerIcon = null;
+	[Tooltip("Optional")] [SerializeField] private Image m_powerIcon = null;
+	[Tooltip("Optional")] [SerializeField] private TextMeshProUGUI m_shortDescriptionText = null;
 	[Space]
 	[SerializeField] private GameObject m_equippedFrame = null;
 	[SerializeField] private GameObject m_equippedPowerFrame = null;
@@ -180,14 +182,23 @@ public class PetPill : MonoBehaviour {
 			m_preview.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + m_def.Get("icon"));
 		}
 
-		// Power icon
-		if(m_powerIcon != null) {
-			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_def.Get("powerup"));
-			Sprite powerIcon = null;
-			if(powerDef != null) {
-				powerIcon = Resources.Load<Sprite>(UIConstants.POWER_MINI_ICONS_PATH + powerDef.Get("miniIcon"));
+		// Power data
+		DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_def.Get("powerup"));
+		if(powerDef != null) {
+			// Power icon
+			if(m_powerIcon != null) {
+				Sprite powerIcon = Resources.Load<Sprite>(UIConstants.POWER_MINI_ICONS_PATH + powerDef.Get("miniIcon"));
+				m_powerIcon.sprite = powerIcon;	// If null it will look ugly, that way we know we have a miniIcon missing
 			}
-			m_powerIcon.sprite = powerIcon;	// If null it will look ugly, that way we know we have a miniIcon missing
+
+			// Power short description
+			if(m_shortDescriptionText != null) {
+				m_shortDescriptionText.text = DragonPowerUp.GetDescription(powerDef, true);	// Custom formatting depending on powerup type, already localized
+			}
+		} else {
+			if(m_powerIcon != null) {
+				m_powerIcon.sprite = null;	// If null it will look ugly, that way we know we have a miniIcon missing
+			}
 		}
 
 		// Lock icons
@@ -233,14 +244,18 @@ public class PetPill : MonoBehaviour {
 		}
 
 		// Hide power icon for locked special pets
-		bool isSpecialAndLocked = m_special && m_locked;
-		m_powerIcon.transform.parent.gameObject.SetActive(!isSpecialAndLocked);
+		if(m_powerIcon != null) {
+			bool isSpecialAndLocked = m_special && m_locked;
+			m_powerIcon.transform.parent.gameObject.SetActive(!isSpecialAndLocked);
+		}
 
 		// Color highlight when equipped
-		m_frameColorFX.brightness = m_locked ? -0.25f : 0f;
-		m_frameColorFX.saturation = m_locked ? -0.25f : 0f;
-		m_equippedFrame.SetActive(equipped);
-		m_equippedPowerFrame.SetActive(equipped);
+		if(m_frameColorFX != null) {
+			m_frameColorFX.brightness = m_locked ? -0.25f : 0f;
+			m_frameColorFX.saturation = m_locked ? -0.25f : 0f;
+		}
+		if(m_equippedFrame != null) m_equippedFrame.SetActive(equipped);
+		if(m_equippedPowerFrame != null) m_equippedPowerFrame.SetActive(equipped);
 
 		// Tone down pet preview when locked for better contrast with the lock icon
 		m_preview.color = m_locked ? m_lockedColor : Color.white;
