@@ -49,10 +49,12 @@ public class HazardFistMotion : MonoBehaviour {
 				Transform tr = go.transform;
 				tr.SetParent(transform);
 				tr.CopyFrom(m_staticColumnTransform);
-				tr.localScale = tr.localScale.x * (new Vector3(scale, yScale, scale));
+				if (i > 0) { // the column next to the hand won't be scaled
+					tr.localScale = tr.localScale.x * (new Vector3(scale, yScale, scale));
+				}
 				m_mobileColumnTransforms[i] = tr;
 
-				scale -= 0.025f;
+				scale -= 0.1f;
 			}
 
 			m_staticColumnTransform.localScale = m_staticColumnTransform.localScale.x * (new Vector3(scale, yScale, scale));
