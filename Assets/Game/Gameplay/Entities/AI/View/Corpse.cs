@@ -10,6 +10,12 @@ public class Corpse : MonoBehaviour {
 		public Quaternion localRotation;
 	}
 
+
+	//------------------------------------
+	private static Material sm_goldenMaterial = null;
+	private static Material sm_frozenMaterial = null;
+
+
 	//------------------------------------
 	[SerializeField] private float m_fadeDelay = 0.5f;
 	[SerializeField] private float m_fadeTime = 1f;
@@ -19,8 +25,8 @@ public class Corpse : MonoBehaviour {
 	[SerializeField] private Transform[] m_bloodPoints;
 
 	private Rigidbody[] m_gibs;
-	private List<Material> m_materials;
-	private List<Color> m_defaultTints;
+	private Renderer[] m_renderers;
+	private Dictionary<int, List<Material>> m_materials;
 	private List<SimpleTransform> m_originalTransforms;
 	private List<Vector3> m_forceDirection;
 
@@ -30,13 +36,16 @@ public class Corpse : MonoBehaviour {
 
 
 	// Use this for initialization
-	void Awake() {		
+	void Awake() {
+		//----------------------------
+		if (sm_goldenMaterial == null) sm_goldenMaterial = new Material(Resources.Load("Game/Materials/NPC_GoldenTransparent") as Material);
+		if (sm_frozenMaterial == null) sm_frozenMaterial = new Material(Resources.Load("Game/Materials/NPC_FrozenTransparent") as Material);
+		//---------------------------- 
+
 		m_spawned = false;
 
 		m_originalTransforms = new List<SimpleTransform>();
 		m_forceDirection = new List<Vector3>();
-		m_materials = new List<Material>();
-		m_defaultTints = new List<Color>();
 
 		m_gibs = m_view.GetComponentsInChildren<Rigidbody>();
 
@@ -52,17 +61,21 @@ public class Corpse : MonoBehaviour {
 			m_forceDirection.Add(dir);
 		}
 
-		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
-		for (int i = 0; i < renderers.Length; i++) {
-			Material[] materials = renderers[i].materials;
-			for (int m = 0; m < materials.Length; m++) {
-				m_materials.Add(materials[m]);
-				if (materials[m].HasProperty("_GoldColor")) {
-					m_defaultTints.Add(materials[m].GetColor("_GoldColor"));
-				} else {
-					m_defaultTints.Add(ViewControl.NO_TINT);
-				}
+		m_renderers = m_view.GetComponentsInChildren<Renderer>();
+		m_materials = new Dictionary<int, List<Material>>();
+
+		for (int i = 0; i < m_renderers.Length; ++i) {
+			Renderer renderer = m_renderers[i];
+			Material[] materials = renderer.sharedMaterials;
+
+			List<Material> materialList = new List<Material>();	
+			materialList.AddRange(materials);
+			m_materials[renderer.GetInstanceID()] = materialList;
+
+			for (int m = 0; m < materials.Length; ++m) {
+				materials[m] = null;
 			}
+			renderer.sharedMaterials = materials;
 		}
 
 		m_blood.CreatePool();
@@ -105,29 +118,34 @@ public class Corpse : MonoBehaviour {
 		}
 
 		m_time = m_fadeTime;
-		Color tint = Color.white;
-		for (int i = 0; i < m_materials.Count; i++) {
-			if (_isGold) {
-				m_materials[i].SetColor("_GoldColor", ViewControl.GOLD_TINT);                        
-			} else {
-				m_materials[i].SetColor("_GoldColor", ViewControl.NO_TINT);
+		for (int i = 0; i < m_renderers.Length; ++i) {
+			int id = m_renderers[i].GetInstanceID();
+			Material[] materials = m_renderers[i].sharedMaterials;
+			for (int m = 0; m < materials.Length; m++) {
+				if (_isGold)	materials[m] = sm_goldenMaterial; 
+				else			materials[m] = m_materials[id][m];
+				Color tint = materials[m].GetColor("_Tint");
+				tint.a = 1f;
+				materials[m].SetColor("_Tint", tint);
 			}
-			m_materials[i].SetColor("_Tint", tint);
+			m_renderers[i].sharedMaterials = materials;
 		}
 
 		m_delay = m_fadeDelay;
 		m_spawned = true;
 	}
 
-	public void SwitchDragonTextures( Texture bodyTexture, Texture wingsTexture )
-	{
-		Color tint = Color.white;
-		for (int i = 0; i < m_materials.Count; i++) {
-			if (m_materials[i].name.Contains("body")) {
-				m_materials[i].mainTexture = bodyTexture;
-			} else if (m_materials[i].name.Contains("wings")) {
-				m_materials[i].mainTexture = wingsTexture;
+	public void SwitchDragonTextures(Texture bodyTexture, Texture wingsTexture) {
+		for (int i = 0; i < m_renderers.Length; ++i) {			
+			Material[] materials = m_renderers[i].materials;
+			for (int m = 0; m < materials.Length; m++) {
+				if (materials[m].name.Contains("body")) {
+					materials[m].mainTexture = bodyTexture;
+				} else if (materials[m].name.Contains("wings")) {
+					materials[m].mainTexture = wingsTexture;	
+				}
 			}
+			m_renderers[i].materials = materials;
 		}
 	}
 
@@ -135,10 +153,15 @@ public class Corpse : MonoBehaviour {
 		if (m_spawned) {
 			m_delay -= Time.deltaTime;
 			if (m_delay <= 0) {
-				Color tint = Color.white;
-				tint.a = m_time / m_fadeTime;
-				for (int i = 0; i < m_materials.Count; i++) {
-					m_materials[i].SetColor("_Tint", tint);
+				float a = m_time / m_fadeTime;
+				for (int i = 0; i < m_renderers.Length; ++i) {			
+					Material[] materials = m_renderers[i].sharedMaterials;
+					for (int m = 0; m < materials.Length; m++) {
+						Color tint = materials[m].GetColor("_Tint");
+						tint.a = a;
+						materials[m].SetColor("_Tint", tint);
+					}
+					m_renderers[i].sharedMaterials = materials;
 				}
 
 				m_time -= Time.deltaTime;
