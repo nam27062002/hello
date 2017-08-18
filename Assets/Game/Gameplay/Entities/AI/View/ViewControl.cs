@@ -6,9 +6,9 @@ using System.Collections.Generic;
 
 public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
-	public static Color GOLD_TINT = new Color(1.0f, 0.63f, 0.0f, 0.75f);
-    public static Color FREEZE_TINT = new Color(0.0f, 0.78f, 1.0f, 0.75f);
-    public static Color NO_TINT = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+	private static Material sm_goldenMaterial = null;
+	private static Material sm_frozenMaterial = null;
+
     public static float FREEZE_TIME = 1.0f;
 
     [Serializable]
@@ -97,11 +97,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	protected Animator m_animator;
 	protected float m_disableAnimatorTimer;
 
-	//	private Material m_materialGold;
-	private Dictionary<int, Material[]> m_materials;
-    // All materials are stored in this list (it contains the same materials as m_materials does) to prevent memory from being allocated when looping through m_materials in entityTint()
-    private List<Material> m_allMaterials;
-	private List<Color> m_defaultTints;
+	private Renderer[] m_renderers;
+	private Dictionary<int, List<Material>> m_materials;
 
 	private int m_vertexCount;
 	public int vertexCount { get { return m_vertexCount; } }
@@ -161,6 +158,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     // Use this for initialization
     //-----------------------------------------------
     protected virtual void Awake() {
+		//----------------------------
+		if (sm_goldenMaterial == null) sm_goldenMaterial = new Material(Resources.Load("Game/Materials/NPC_Golden") as Material);
+		if (sm_frozenMaterial == null) sm_frozenMaterial = new Material(Resources.Load("Game/Materials/NPC_Frozen") as Material);
+		//---------------------------- 
+
 		m_entity = GetComponent<Entity>();
 		m_animator = transform.FindComponentRecursive<Animator>();
 		if (m_animator != null)
@@ -174,24 +176,19 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			m_animEvents.onHitEnd += OnHitAnimEnd;
 		}
 
-        // Load gold material
-        //		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
-
         // keep the original materials, sometimes it will become Gold!
-        m_materials = new Dictionary<int, Material[]>();        
-        Renderer[] renderers = GetComponentsInChildren<Renderer>();
-        m_allMaterials = new List<Material>();
-		m_defaultTints = new List<Color>();
-
+        m_materials = new Dictionary<int, List<Material>>();        
+		m_renderers = GetComponentsInChildren<Renderer>();
+        
 		m_vertexCount = 0;
 		m_rendererCount = 0;
 
-        if (renderers != null) {
-			m_rendererCount = renderers.Length;
+		if (m_renderers != null) {
+			m_rendererCount = m_renderers.Length;
             int matCount;
-            Material[] materials;
+            
 			for (int i = 0; i < m_rendererCount; i++) {
-				Renderer renderer = renderers[i];
+				Renderer renderer = m_renderers[i];
 
 				// Keep the vertex count (for DEBUG)
 				if (renderer.GetType() == typeof(SkinnedMeshRenderer)) {
@@ -203,22 +200,17 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 					}
 				}
 
-				// Stores the materials of this renderer in a dictionary for direct access
-				materials = renderer.materials;
-				m_materials[renderer.GetInstanceID()] = materials;
+				Material[] materials = renderer.sharedMaterials;
 
-                // Stores the materials of this renderer in the list of all materials for sequencial access with no memory allocations
-                if (materials != null) {
-                    matCount = materials.Length;
-                    for (int j = 0; j < matCount; j++) {
-                        m_allMaterials.Add(materials[j]);
-						if (materials[j].HasProperty("_GoldColor")) {
-							m_defaultTints.Add(materials[j].GetColor("_GoldColor"));
-						} else {
-							m_defaultTints.Add(ViewControl.NO_TINT);
-						}
-                    }
-                }
+				// Stores the materials of this renderer in a dictionary for direct access//
+				List<Material> materialList = new List<Material>();	
+				materialList.AddRange(materials);
+				m_materials[renderer.GetInstanceID()] = materialList;
+
+				for (int m = 0; m < materials.Length; ++m) {					
+					materials[m] = null; // remove all materials to avoid instantiation.
+				}
+				renderer.sharedMaterials = materials;
             }
         }
 
@@ -285,16 +277,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	protected virtual void animEventsOnAttackDealDamage(){}
 
 
-	void onStartAnim( int stateNameHash ){
-		if ( stateNameHash == ATTACK_HASH )
-		{
+	void onStartAnim(int stateNameHash) {
+		if (stateNameHash == ATTACK_HASH) {
 			animEventsOnAttackStart();
 		}
 	}
 
-	void onEndAnim( int stateNameHash ){
-		if ( stateNameHash == ATTACK_HASH )
-		{
+	void onEndAnim(int stateNameHash) {
+		if (stateNameHash == ATTACK_HASH) {
 			animEventsOnAttackEnd();
 		}
 	}
@@ -339,40 +329,18 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				}
 			}
 
-			// Restore materials
-			Renderer[] renderers = GetComponentsInChildren<Renderer>();
-			for (int i = 0; i < renderers.Length; i++) {
-				if (altMaterial != null) {				
-					Material[] materials = renderers[i].materials;
-					for (int m = 0; m < materials.Length; m++) {
-						if (!materials[m].shader.name.EndsWith("Additive"))
-							materials[m] = altMaterial;
-					}
-					renderers[i].materials = materials;
-				} else {
-					if (m_materials.ContainsKey(renderers[i].GetInstanceID()))
-						renderers[i].materials = m_materials[renderers[i].GetInstanceID()];
-				}
-			}
-
 			if (!string.IsNullOrEmpty(m_idleAudio))	{
 				m_idleAudioAO = AudioController.Play( m_idleAudio, transform);
 			}
 		}
 
 		DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
-		CheckTint(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
+		SetEntityTint(GetEntityTint(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type));
 
 		m_dragonBoost = InstanceManager.player.dragonBoostBehaviour;
     }
 
-    /*
-        void OnEnable()
-        {
-            Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
-        }
-    */
-    void OnDestroy() {
+	void OnDestroy() {
         Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		RemoveAudios();
     }
@@ -396,14 +364,12 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		RemoveAudios();
     }
 
-    protected virtual void RemoveAudios()
-    {
-		if ( ApplicationManager.IsAlive )
-    	{
-	        if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
+    protected virtual void RemoveAudios() {
+		if (ApplicationManager.IsAlive) {
+	        if (m_idleAudioAO != null && m_idleAudioAO.IsPlaying())
 				m_idleAudioAO.Stop();
 
-				// Return parented audio objects if needed
+			// Return parented audio objects if needed
 			RemoveAudioParent( m_idleAudioAO );
 			RemoveAudioParent( m_onAttackAudioAO );
 			RemoveAudioParent( m_onEatenAudioAO );
@@ -421,36 +387,25 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
 	}
 
-    void SetEntityTint(EntityTint value)
-    {
+    void SetEntityTint(EntityTint value) {
     	m_entityTint = value;
-        if (m_allMaterials != null) {
-            int i;
-            int count = m_allMaterials.Count;
-            for (i = 0; i < count; i++) {
-                if (m_allMaterials[i] != null) {
-                	switch( value )
-                	{
-                		case EntityTint.GOLD:
-                		{
-							m_allMaterials[i].SetColor("_GoldColor", GOLD_TINT);
-                		}break;
-                		case EntityTint.FREEZE:
-                		{
-							m_allMaterials[i].SetColor("_GoldColor", FREEZE_TINT * m_freezingLevel);
-                		}break;
-                		case EntityTint.NORMAL:
-                		{
-							m_allMaterials[i].SetColor("_GoldColor", NO_TINT);
-                		}break;
-                	}
-                }
-            }
-        }       
+        
+		// Restore materials
+		for (int i = 0; i < m_renderers.Length; i++) {
+			int id = m_renderers[i].GetInstanceID();
+			Material[] materials = m_renderers[i].sharedMaterials;
+			for (int m = 0; m < materials.Length; m++) {
+				switch (value) {
+					case EntityTint.GOLD: 	materials[m] = sm_goldenMaterial;  break;
+					case EntityTint.FREEZE:	materials[m] = sm_frozenMaterial;  break;						
+					case EntityTint.NORMAL:	materials[m] = m_materials[id][m]; break;
+				}
+			}
+			m_renderers[i].sharedMaterials = materials;
+		}
     }
 
-    void OnFuryToggled(bool _active, DragonBreathBehaviour.Type _type)
-    {
+    void OnFuryToggled(bool _active, DragonBreathBehaviour.Type _type) {
 		CheckTint(IsEntityGolden(), _active, _type);
     }
 
@@ -475,28 +430,24 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     	return false;
     }
 
-
-	void CheckTint(bool _isGolden, bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None )
-    {
-    	EntityTint _tint = ViewControl.EntityTint.NORMAL;
-		if ( _isGolden || _furyActive )
-    	{
-			if ( IsBurnableByPlayer(_type) )
-			{	
+	EntityTint GetEntityTint(bool _isGolden, bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None) {
+		EntityTint _tint = ViewControl.EntityTint.NORMAL;
+		if (_isGolden || _furyActive) {
+			if (IsBurnableByPlayer(_type)) {	
 				_tint = EntityTint.GOLD;
 			}
-    	}
-    	else
-    	{
-    		if ( m_freezingLevel > 0 )	
-    		{
-    			_tint = EntityTint.FREEZE;
-    		}
-    	}
+		} else {
+			if (m_freezingLevel > 0) {
+				_tint = EntityTint.FREEZE;
+			}
+		}
+		return _tint;
+	}
 
-    	if ( _tint != m_entityTint )
-    	{
-    		SetEntityTint( _tint);
+	void CheckTint(bool _isGolden, bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None) {
+		EntityTint _tint = GetEntityTint(_isGolden, _furyActive, _type);
+    	if (_tint != m_entityTint) {
+    		SetEntityTint(_tint);
     	}
     }
 
