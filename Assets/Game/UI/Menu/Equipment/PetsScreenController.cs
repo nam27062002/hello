@@ -498,12 +498,14 @@ public class PetsScreenController : MonoBehaviour {
 		).ToList().Count;
 
 		// Get current filter name
+		string categorySku = "";
 		string categoryName = "all";
 		if(string.IsNullOrEmpty(_filters.currentFilter)) {
 			categoryName = LocalizationManager.SharedInstance.Localize("TID_PET_CATEGORY_ALL");
 		} else {
 			DefinitionNode categoryDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PET_CATEGORIES, _filters.currentFilter);
 			if(categoryDef != null) {
+				categorySku = categoryDef.sku;
 				categoryName = categoryDef.GetLocalized("tidName");
 			} else {
 				categoryName = "UNKNOWN CATEGORY!";
@@ -512,11 +514,11 @@ public class PetsScreenController : MonoBehaviour {
 
 		// Refresh counter text
 		m_counterText.Localize(
-			m_counterText.tid,
+			"TID_PET_COUNTER",
 			StringUtils.FormatNumber(unlockedCount),
 			StringUtils.FormatNumber(_filters.filteredDefs.Count),
 			categoryName,
-			"#888888"
+			UIConstants.GetPetCategoryColor(categorySku).ToHexString("#")
 		);
 
 		// Animate!
