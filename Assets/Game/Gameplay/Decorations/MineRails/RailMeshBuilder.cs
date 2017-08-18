@@ -25,10 +25,10 @@ public class RailMeshBuilder : MonoBehaviour {
 	public bool lightmapUVsDirty { get { return m_lightmapUVsDirty; } set { m_lightmapUVsDirty = value; } }
 
 	[SerializeField][HideInInspector] private float m_currentSubdivisions = 0f;
-	[SerializeField][HideInInspector]private float m_currentDistancePerGameObject = 0f;
-	[SerializeField][HideInInspector]private int	  m_currentTieCountPerGameObject = 0;
-	[SerializeField][HideInInspector]private float m_currentMeshScale = 0f;
-	[SerializeField][HideInInspector]private float m_currentUVscale = 0f;
+	[SerializeField][HideInInspector] private float m_currentDistancePerGameObject = 0f;
+	[SerializeField][HideInInspector] private int	m_currentTieCountPerGameObject = 0;
+	[SerializeField][HideInInspector] private float m_currentMeshScale = 0f;
+	[SerializeField][HideInInspector] private float m_currentUVscale = 0f;
 
 
 	// Use this for initialization
@@ -62,6 +62,10 @@ public class RailMeshBuilder : MonoBehaviour {
 					while (transform.childCount > 0) {
 						Transform child = transform.GetChild(0);
 						child.parent = null;
+
+						MeshFilter mf = child.gameObject.GetComponent<MeshFilter>();
+						Object.DestroyImmediate(mf.sharedMesh);
+
 						GameObject.DestroyImmediate(child.gameObject);
 					}
 
@@ -161,6 +165,10 @@ public class RailMeshBuilder : MonoBehaviour {
 		}
 
 		mesh.CombineMeshes(combine, true, false);
+
+		for (int i = 0; i < combine.Length; ++i) {
+			Object.DestroyImmediate(combine[i].mesh);
+		}
 
 		renderer.sharedMaterial = m_material;
 	}
