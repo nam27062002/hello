@@ -66,20 +66,6 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	#endregion
 
 	// -------------------------------------------------------------------------
-	// Colors
-	#region Colors
-	[SerializeField] private Color m_coinsTextColor = new Color(1f, 0.8f, 0.1f);
-	public static Color COINS_TEXT_COLOR {
-		get { return instance.m_coinsTextColor; }
-	}
-
-	[SerializeField] private Color m_pcTextColor = new Color(0.9f, 0.5f, 0.8f);
-	public static Color PC_TEXT_COLOR {
-		get { return instance.m_pcTextColor; }
-	}
-	#endregion
-
-	// -------------------------------------------------------------------------
 	// Rarities
 	#region Rarities
 	[SerializeField] private Color[] m_rarityColors = new Color[(int)EggReward.Rarity.COUNT];
@@ -140,6 +126,19 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string EGG_ICONS_PATH {
 		get { return instance.m_eggIconsPath; }
 	}
+	#endregion
+
+	// -------------------------------------------------------------------------
+	// Pet category colors
+	#region PetCategoryColors
+	[SerializeField] private Color m_petCategoryColorEat = Color.white;
+	[SerializeField] private Color m_petCategoryColorHealth = Color.white;
+	[SerializeField] private Color m_petCategoryColorSpeed = Color.white;
+	[SerializeField] private Color m_petCategoryColorScore = Color.white;
+	[SerializeField] private Color m_petCategoryColorFire = Color.white;
+	[SerializeField] private Color m_petCategoryColorDefense = Color.white;
+	[SerializeField] private Color m_petCategoryColorSpecial = Color.white;
+	[SerializeField] private Color m_petCategoryColorDefault = Color.white;
 	#endregion
 
 	// -------------------------------------------------------------------------
@@ -217,12 +216,12 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 
 	[SerializeField] private Color m_powerColorVacuum = new Color(0f, 0.91f, 1f);
 	public static Color POWER_COLOR_VACUUM {
-		get { return instance.m_powerColorDrain; }
+		get { return instance.m_powerColorVacuum; }
 	}
 
 	[SerializeField] private Color m_powerColorMagnetic = new Color(0f, 0.91f, 1f);
 	public static Color POWER_COLOR_MAGNETIC {
-		get { return instance.m_powerColorDrain; }
+		get { return instance.m_powerColorMagnetic; }
 	}
 
 	[SerializeField] private Color m_powerColorScore = new Color(0f, 0.91f, 1f);
@@ -339,6 +338,25 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 
 		// Unknown power, return white
 		return Color.white;
+	}
+
+	/// <summary>
+	/// Get the color assigned to a specific pet category.
+	/// </summary>
+	/// <returns>The color linked to the requested pet category.</returns>
+	/// <param name="_categorySku">Sku of the pet category, as defined in the PET_CATEGORY_DEFINITIONS table.</param>
+	public static Color GetPetCategoryColor(string _categorySku) {
+		switch(_categorySku) {
+			// [AOC] Not beautiful, but enough
+			case "eat":		return instance.m_petCategoryColorEat; break;
+			case "health":	return instance.m_petCategoryColorHealth; break;
+			case "speed":	return instance.m_petCategoryColorSpeed; break;
+			case "score":	return instance.m_petCategoryColorScore; break;
+			case "fire":	return instance.m_petCategoryColorFire; break;
+			case "defense":	return instance.m_petCategoryColorDefense; break;
+			case "special":	return instance.m_petCategoryColorSpecial; break;
+			default: 		return instance.m_petCategoryColorDefault; break;
+		}
 	}
 
 	/// <summary>
