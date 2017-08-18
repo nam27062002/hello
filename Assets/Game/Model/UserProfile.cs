@@ -1216,29 +1216,32 @@ public class UserProfile : UserSaveSystem
 		return data;
 	}
 
+    public DragonData GetHighestDragon() {
+        DragonData returnValue = null;
+
+        // Find the dragon with the highest level among all dragons acquired by the user.
+        if (m_dragonsBySku != null) {            
+            foreach (KeyValuePair<string, DragonData> pair in m_dragonsBySku) {
+                if (pair.Value.isOwned) {
+                    int order = pair.Value.GetOrder();
+                    if (returnValue == null || order > returnValue.GetOrder()) {
+                        returnValue = pair.Value;
+                    }
+                }
+            }            
+        }
+
+        return returnValue;
+    }
+
     /// <summary>
     /// Returns an int that sums up the user's progress.
     /// </summary>
     /// <returns></returns>
-    public int GetPlayerProgress() {
-        int returnValue = 0;
-
+    public int GetPlayerProgress() {        
         // Find the dragon with the highest level among all dragons acquired by the user.
-        if (m_dragonsBySku != null) {
-            DragonData highestDragon = null;
-            foreach (KeyValuePair<string, DragonData> pair in m_dragonsBySku) {
-                if (pair.Value.isOwned) {
-                    int order = pair.Value.GetOrder();
-                    if (highestDragon == null || order > highestDragon.GetOrder()) {
-                        highestDragon = pair.Value;
-                    }
-                }
-            }
-
-            returnValue = GetDragonProgress(highestDragon);
-        }
-
-        return returnValue;
+        DragonData highestDragon = GetHighestDragon();        
+        return (highestDragon == null) ? 0 : GetDragonProgress(highestDragon);        
     }
 
     /// <summary>

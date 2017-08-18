@@ -389,27 +389,7 @@ public class GameSceneController : GameSceneControllerBase {
 	/// Start a new game. All temp game stats will be reset.
 	/// </summary>
 	public void StartGame() {
-        DragonData dragonData = InstanceManager.player.data;
-        int dragonXp = 0;
-        int dragonProgress = 0;
-        string dragonSkin = null;
-        List<string> pets = null;
-        if (dragonData != null) {
-            if (dragonData.progression != null) {
-                dragonXp = (int)dragonData.progression.xp;
-            }
-
-            dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
-
-            // TODO: use trackSku instead of sku
-            dragonSkin = dragonData.diguise;
-
-            // TODO: use trackSkus instead of skus
-            pets = dragonData.pets;
-        }
-
-        // Round start is notified when the loading starts
-        HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
+        Track_RoundStart();
 
         // Reset timer
         m_elapsedSeconds = 0;
@@ -425,13 +405,23 @@ public class GameSceneController : GameSceneControllerBase {
 		// Change state
 		ChangeState(EStates.DELAY);
 	}
-	
-	/// <summary>
-	/// End the current game. Wont reset the stats so they can be used.
-	/// </summary>
-	public void EndGame() {
-		// Make sure game is not paused
-		PauseGame(false);
+
+    /// <summary>
+    /// End the current game. Wont reset the stats so they can be used.
+    /// <param name="_quitGame">Whether or not the game is ended because the user has quit.</param>
+    public void EndGame(bool _quitGame) {    
+        //
+        // Tracking
+        //
+        // If the user has quit then we also need to send the run end event
+        if (_quitGame) {
+            Track_RunEnd(_quitGame);
+        }
+
+        Track_RoundEnd();
+
+        // Make sure game is not paused
+        PauseGame(false);
 
 		// Change state
 		ChangeState(EStates.FINISHED);
@@ -530,8 +520,9 @@ public class GameSceneController : GameSceneControllerBase {
 			} break;
 
 			case EStates.RUNNING: {
-				// Unsubscribe from external events
-				Messenger.RemoveListener(GameEvents.PLAYER_DIED, OnPlayerDied);
+                // Unsubscribe from external events
+                Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKO);
+                Messenger.RemoveListener(GameEvents.PLAYER_DIED, OnPlayerDied);
 			} break;
 		}
 		
@@ -575,8 +566,9 @@ public class GameSceneController : GameSceneControllerBase {
 			} break;
 				
 			case EStates.RUNNING: {
-				// Subscribe to external events
-				Messenger.AddListener(GameEvents.PLAYER_DIED, OnPlayerDied);
+                // Subscribe to external events
+                Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKO);
+                Messenger.AddListener(GameEvents.PLAYER_DIED, OnPlayerDied);
 
 				// Make dragon playable!
 				InstanceManager.player.playable = true;
@@ -664,12 +656,17 @@ public class GameSceneController : GameSceneControllerBase {
     //------------------------------------------------------------------//
     // CALLBACKS														//
     //------------------------------------------------------------------//
+    // The player had died but the user still has the chance to revive
+    private void OnPlayerKO(DamageType _damageType, Transform _damageSource) {
+        Track_RunEnd(false);
+    }
+
     /// <summary>
     /// The player has died.
     /// </summary>
     private void OnPlayerDied() {
 		// End game
-		EndGame();
+		EndGame(false);        
 
 		// Add some delay to the summary popup
 		m_timer = 0.5f;
@@ -699,7 +696,95 @@ public class GameSceneController : GameSceneControllerBase {
 		}
     }
 
+    #region track
+    private void Track_RoundStart() {
+        int dragonXp = 0;
+        int dragonProgress = 0;
+        string dragonSkin = null;
+        List<string> pets = null;
+        if (InstanceManager.player != null) {
+            DragonData dragonData = InstanceManager.player.data;
+            if (dragonData != null) {
+                if (dragonData.progression != null) {
+                    dragonXp = (int)dragonData.progression.xp;
+                }
 
+                dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
+
+                // TODO: use trackSku instead of sku
+                dragonSkin = dragonData.diguise;
+
+                // TODO: use trackSkus instead of skus
+                pets = dragonData.pets;
+            }
+        }
+
+        HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
+    }
+
+    private void Track_RoundEnd() {
+        int dragonXp = 0;
+        int timePlayed = (int)elapsedSeconds;
+        int score = (int)RewardManager.score;
+        int dragonProgress = 0;
+        if (InstanceManager.player != null) {
+            DragonData dragonData = InstanceManager.player.data;
+            if (dragonData != null) {
+                if (dragonData.progression != null) {
+                    dragonXp = (int)dragonData.progression.xp;
+                }
+
+                dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
+            }
+        }
+
+        DragonData highestDragon = UsersManager.currentUser.GetHighestDragon();
+        int highestDragonXp = (highestDragon != null && highestDragon.progression != null) ? (int)highestDragon.progression.xp : 0;
+
+        int eggsFound = (CollectiblesManager.egg != null && CollectiblesManager.egg.collected) ? 1 : 0;
+
+        int chestsFound = 0;
+        for (int i = 0; i < ChestManager.dailyChests.Length; i++) {
+            if (ChestManager.dailyChests[i].state == Chest.State.PENDING_REWARD) {
+                // Count chest
+                chestsFound++;
+            }
+        }
+
+        HDTrackingManager.Instance.Notify_RoundEnd(dragonXp, (int)RewardManager.xp, highestDragonXp, dragonProgress, timePlayed, score, chestsFound, eggsFound,
+            RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
+            RewardManager.paidReviveCount, RewardManager.freeReviveCount);
+    }
+
+    private void Track_RunEnd(bool _quitGame) {
+        DragonPlayer dragonPlayer = InstanceManager.player;
+        DragonData dragonData = null;
+        Vector3 deathCoordinates = Vector3.zero;
+        if (dragonPlayer != null) {
+            dragonData = dragonPlayer.data;
+            deathCoordinates = dragonPlayer.transform.position;
+        }
+
+        int dragonXp = 0;
+        int timePlayed = (int)elapsedSeconds;
+        int score = (int)RewardManager.score;
+        if (dragonData != null && dragonData.progression != null) {
+            dragonXp = (int)dragonData.progression.xp;
+        }
+
+        string deathType = null;
+        string deathSource = null;
+        if (_quitGame) {
+            deathType = "QUIT";
+        }
+        else {
+            deathType = RewardManager.deathType.ToString();
+            deathSource = RewardManager.deathSource;
+        }
+
+        HDTrackingManager.Instance.Notify_RunEnd(dragonXp, timePlayed, score, deathType, deathSource, deathCoordinates);
+    }
+    #endregion
     /*
     // Test to load new areas
 	IEnumerator WaitTasksFinished( AsyncOperation[] operations )

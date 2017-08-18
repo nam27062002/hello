@@ -159,7 +159,7 @@ public class PopupPause : PopupPauseBase {
 		// End the game?
 		if(m_endGame) {
 			if(InstanceManager.gameSceneController != null) {
-				InstanceManager.gameSceneController.EndGame();
+				InstanceManager.gameSceneController.EndGame(true);
 			}
 		}
 	}
