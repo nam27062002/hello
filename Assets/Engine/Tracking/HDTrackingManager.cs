@@ -4,6 +4,8 @@
 /// 
 
 using System.Collections.Generic;
+using UnityEngine;
+
 public class HDTrackingManager
 {
     // Singleton ///////////////////////////////////////////////////////////
@@ -94,9 +96,36 @@ public class HDTrackingManager
     public virtual void Notify_RoundStart(int dragonXp, int dragonProgression, string dragonSkin, List<string> pets) {}
 
     /// <summary>
-    /// Called when the user finishes a round (because of death or quit game)
+    /// Called when the user finishes a round (because of death and not survive or because of quit game).    
     /// </summary>    
-    public virtual void Notify_RoundEnd() {}
+    /// <param name="dragonXp">Xp of the dragon chosen by the user to play the current round.</param>
+    /// <param name="deltaXp">Dragon xp gained during the whole round.</param>
+    /// <param name="highestDragonXp">Xp of the highest dragon unlocked by the user. Keep in mind that the hightest dragon and the dragon used by the user for the round can be different.</param>
+    /// <param name="dragonProgression">Progression of the current dragon. It's calculated the same way as playerProgression is but it's done for the dragon chosen by the user to play this round</param>
+    /// <param name="timePlayed">Time (in seconds) spent on the round.</param>
+    /// <param name="score">Score made in the round.</param>    
+    /// <param name="chestsFound">Amount of chests found during the round.</param>
+    /// <param name="eggFound">Amount of eggs found during the round.</param>
+    /// <param name="highestMultiplier">Highest score multiplier got during the round.</param>
+    /// <param name="highestBaseMultiplier">Highest base score multiplier got during the round.</param>
+    /// <param name="furyRushNb">Amount of times fury rush has been triggered during the round.</param>
+    /// <param name="superFireRushNb">Amount of times superfury rush has been triggered during the round.</param>
+    /// <param name="hcRevive">Amount of times the user paid with HC spent to revive the dragon.</param>
+    /// <param name="adRevive">Amount of times the user paid by watching an ad to revive her dragon druring the round.</param>
+    public virtual void Notify_RoundEnd(int dragonXp, int deltaXp, int highestDragonXp, int dragonProgression, int timePlayed, int score, 
+        int chestsFound, int eggFound, float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive) {}
+
+    /// <summary>
+    /// Called when a run finished (because of death or quit game). Remember that a round is composed of at least one run, but it can have more than one if after a run
+    /// because of death the user decides to revive so a new run is started.
+    /// </summary>
+    /// <param name="dragonXp">Xp of the dragon chosen by the user to play the current round.</param>
+    /// <param name="timePlayed">Time (in seconds) spent on the round so far.</param>
+    /// <param name="score">Current score in the round.</param>
+    /// <param name="deathType">Reason why the run ended.</param>
+    /// <param name="deathSource">Some death types might have a source such as the sku of the entity that killed the user's dragon, otherwise it must be null.</param>
+    /// <param name="deathCoordinates">Coordinates of the map where the user's dragon was when the run ended.</param>
+    public virtual void Notify_RunEnd(int dragonXp, int timePlayed, int score, string deathType, string deathSource, Vector3 deathCoordinates) {}
 
     /// <summary>
     /// Called when the user opens the app store
