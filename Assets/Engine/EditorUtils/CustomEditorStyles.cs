@@ -57,4 +57,17 @@ public static partial class CustomEditorStyles {
 			return s_richLabel;
 		}
 	}
+
+	private static GUIStyle s_separatorAttributeLabelStyle = null;
+	public static GUIStyle separatorAttributeLabelStyle {
+		get {
+			if(s_separatorAttributeLabelStyle == null) {
+				s_separatorAttributeLabelStyle = new GUIStyle(GUI.skin.label);	// Default label style
+				s_separatorAttributeLabelStyle.alignment = TextAnchor.MiddleCenter;	// Alignment!
+				s_separatorAttributeLabelStyle.fontStyle = FontStyle.Italic;
+				s_separatorAttributeLabelStyle.normal.textColor = Colors.gray;
+			}
+			return s_separatorAttributeLabelStyle;
+		}
+	}
 }

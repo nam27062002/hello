@@ -90,13 +90,8 @@ public class SeparatorAttributeEditor : DecoratorDrawer {
 			}
 		} else {
 			// Yes! Slightly more complicated
-			// Create style and content for the text
 			GUIContent textContent = new GUIContent(_separator.m_text);
-			GUIStyle textStyle = new GUIStyle(EditorStyles.label);	// Default label style
-			textStyle.alignment = TextAnchor.MiddleCenter;	// Alignment!
-			textStyle.fontStyle = FontStyle.Italic;
-			textStyle.normal.textColor = Colors.gray;
-			Vector2 textSize = textStyle.CalcSize(textContent);
+			Vector2 textSize = CustomEditorStyles.separatorAttributeLabelStyle.CalcSize(textContent);
 			
 			// We need to create a layout with flexible spaces to each part so the line and the title are aligned
 			// Vertical or horizontal?
@@ -113,7 +108,7 @@ public class SeparatorAttributeEditor : DecoratorDrawer {
 					// Draw label
 					EditorGUILayout.BeginHorizontal(GUILayout.Height(textSize.y)); {
 						GUILayout.FlexibleSpace();
-						GUILayout.Label(_separator.m_text, textStyle);
+						GUILayout.Label(_separator.m_text, CustomEditorStyles.separatorAttributeLabelStyle);
 						GUILayout.FlexibleSpace();
 					} EditorGUILayout.EndHorizontal();
 					
@@ -125,6 +120,7 @@ public class SeparatorAttributeEditor : DecoratorDrawer {
 					} EditorGUILayout.EndHorizontal();
 				} EditorGUILayout.EndVertical();
 			} else {
+				float height = 50f;
 				EditorGUILayout.BeginHorizontal(GUILayout.ExpandWidth(true), GUILayout.Height(Mathf.Max(textSize.y, _thickness))); {
 					// Draw line before title
 					EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true)); {
@@ -136,7 +132,7 @@ public class SeparatorAttributeEditor : DecoratorDrawer {
 					// Draw label
 					EditorGUILayout.BeginVertical(GUILayout.Width(textSize.x)); {
 						GUILayout.FlexibleSpace();
-						GUILayout.Label(_separator.m_text, textStyle);
+						GUILayout.Label(_separator.m_text, CustomEditorStyles.separatorAttributeLabelStyle);
 						GUILayout.FlexibleSpace();
 					} EditorGUILayout.EndVertical();
 					
@@ -186,11 +182,7 @@ public class SeparatorAttributeEditor : DecoratorDrawer {
 			// Yes!
 			// Compute title's width
 			GUIContent titleContent = new GUIContent(_separator.m_text);
-			GUIStyle titleStyle = new GUIStyle(EditorStyles.label);	// Default label style
-			titleStyle.alignment = TextAnchor.MiddleCenter;	// Alignment!
-			titleStyle.fontStyle = FontStyle.Italic;
-			titleStyle.normal.textColor = Colors.gray;
-			float titleWidth = titleStyle.CalcSize(titleContent).x;
+			float titleWidth = CustomEditorStyles.separatorAttributeLabelStyle.CalcSize(titleContent).x;
 			titleWidth += 10f;	// Add some spacing around the title
 			
 			// Draw line at the left of the title
@@ -202,7 +194,7 @@ public class SeparatorAttributeEditor : DecoratorDrawer {
 			Rect titleBounds = _pos;	// Using whole area's height
 			titleBounds.x = lineBounds.xMax;	// Concatenate to the line we just draw
 			titleBounds.width = titleWidth;
-			GUI.Label(titleBounds, _separator.m_text, titleStyle);
+			GUI.Label(titleBounds, _separator.m_text, CustomEditorStyles.separatorAttributeLabelStyle);
 			
 			// Draw line at the right of the title
 			lineBounds.x = titleBounds.xMax;	// Concatenate to the title label
