@@ -1,22 +1,21 @@
-// ToggleSlider.cs
+// GameSettingsToggle.cs
+// Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 07/04/2017.
+// Created by Alger Ortín Castellví on 18/08/2017.
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-using UnityEngine.UI;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Simple script to make a slider behave like an On/Off toggle.
 /// 
 /// </summary>
-public class ToggleSlider : MonoBehaviour {
+public class GameSettingsToggle : ToggleSlider {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -24,42 +23,37 @@ public class ToggleSlider : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] private Slider m_slider = null;
-	public Slider slider {
-		get { return m_slider; }
-	}
-
-	public bool toggled {
-		get { return m_slider.value > 0; }
-		set { m_slider.value = value ? 1 : 0; }
-	}
+	[SerializeField] protected string m_settingId = "";
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization.
+	/// Component has been enabled.
 	/// </summary>
-	protected virtual void Awake() {
-		// Setup the slider
-		m_slider.wholeNumbers = true;
-		m_slider.minValue = 0;
-		m_slider.maxValue = 1;
-		m_slider.value = Mathf.Round(Mathf.Clamp01(m_slider.value));
+	protected virtual void OnEnable() {
+		// Init toggle with current value
+		this.toggled = GameSettings.Get(m_settingId);
+
+		// Be aware for toggle changes
+		this.slider.onValueChanged.AddListener(OnToggleChanged);
 	}
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Change the value!
+	/// Component has been disabled.
 	/// </summary>
-	public void Toggle() {
-		toggled = !toggled;
+	protected virtual void OnDisable() {
+		// Stop listening for toggle changes
+		this.slider.onValueChanged.RemoveListener(OnToggleChanged);
 	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Slider value changed.
+	/// </summary>
+	protected virtual void OnToggleChanged(float _newValue) {
+		GameSettings.Set(m_settingId, this.toggled);
+	}
 }
