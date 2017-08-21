@@ -48,10 +48,7 @@ public class RailMeshBuilder : MonoBehaviour {
 								(m_currentMeshScale != m_meshScale) || 
 								(m_currentUVscale != m_uvScale);
 
-				if (isDirty) {		
-
-					Debug.Log("DIRTY JOBS");
-
+				if (isDirty) {					
 					m_forceDirty = false;
 					m_currentSubdivisions = m_subdivisions;
 					m_currentDistancePerGameObject = m_distancePerGameObject;

@@ -43,10 +43,6 @@ public class PopupTiltCalibrationAnim : MonoBehaviour {
 	[SerializeField] private float m_totalDuration = 3f;
 	[SerializeField] private Ease m_ease = Ease.Linear;
 
-	[Space]
-	[SerializeField] private Sprite m_targetSprite = null;
-	[SerializeField] private Sprite m_animatedSprite = null;
-
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -118,10 +114,6 @@ public class PopupTiltCalibrationAnim : MonoBehaviour {
 
 		RectTransform animatedRt = (RectTransform)m_animatedObj.transform;
 		RectTransform targetRt = (RectTransform)m_targetObj.transform;
-
-		// Setup animation
-		if(m_animatedSprite != null) m_animatedObj.GetComponent<Image>().sprite = m_animatedSprite;
-		if(m_targetSprite != null) m_targetObj.GetComponent<Image>().sprite = m_targetSprite;
 
 		// Create sequence
 		Sequence sq = DOTween.Sequence()
