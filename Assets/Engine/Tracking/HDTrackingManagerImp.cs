@@ -341,6 +341,18 @@ public class HDTrackingManagerImp : HDTrackingManager
     }
 
     /// <summary>
+    /// Called when the user earned some resources
+    /// </summary>
+    /// <param name="economyGroup">ID used to identify the type of item the user has earned. Example UNLOCK_DRAGON</param>        
+    /// <param name="moneyCurrencyCode">Currency type earned</param>
+    /// <param name="amountDelta">Amount of the currency earned</param>
+    /// <param name="amountBalance">Amount of this currency after the transaction was performed</param>
+    public override void Notify_EarnResources(EEconomyGroup economyGroup, UserProfile.Currency moneyCurrencyCode, int amountDelta, int amountBalance)
+    {
+        Track_EarnResources(EconomyGroupToString(economyGroup), Track_UserCurrencyToString(moneyCurrencyCode), amountDelta, amountBalance);
+    }
+
+    /// <summary>
     /// Called when the user clicks on the button to request a customer support ticked
     /// </summary>
     public override void Notify_CustomerSupportRequested()
@@ -505,13 +517,37 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamPlayerProgress(e);
             Track_AddParamString(e, TRACK_PARAM_MONEY_CURRENCY, moneyCurrency);
             e.SetParameterValue(TRACK_PARAM_AMOUNT_DELTA, (int)moneyPrice);
-            e.SetParameterValue(TRACK_PARAM_AMOUNT_BALANCE, (int)amountBalance);
+            e.SetParameterValue(TRACK_PARAM_AMOUNT_BALANCE, amountBalance);
             Track_AddParamString(e, TRACK_PARAM_ECONOMY_GROUP, economyGroup);
             Track_AddParamString(e, TRACK_PARAM_ITEM_ID, itemID);            
 
             TrackingManager.SharedInstance.SendEvent(e);
         }
 
+    }
+
+    private void Track_EarnResources(string economyGroup, string moneyCurrency, int amountDelta, int amountBalance)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_EarnResources economyGroup = " + economyGroup + " moneyCurrency = " + moneyCurrency + " moneyPrice = " + amountDelta + " amountBalance = " + amountBalance);
+        }
+        
+        // Game event
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.eco.source");
+        if (e != null)
+        {
+            Track_AddParamSessionsCount(e);
+            Track_AddParamGameRoundCount(e);
+            Track_AddParamHighestDragonXp(e);
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamString(e, TRACK_PARAM_MONEY_CURRENCY, moneyCurrency);
+            e.SetParameterValue(TRACK_PARAM_AMOUNT_DELTA, (int)amountDelta);
+            e.SetParameterValue(TRACK_PARAM_AMOUNT_BALANCE, amountBalance);
+            Track_AddParamString(e, TRACK_PARAM_ECONOMY_GROUP, economyGroup);            
+
+            TrackingManager.SharedInstance.SendEvent(e);
+        }
     }
 
     private void Track_CustomerSupportRequested()

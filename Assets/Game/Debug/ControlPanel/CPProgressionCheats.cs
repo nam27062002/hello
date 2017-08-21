@@ -111,7 +111,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Compute amount to add
 		switch(_operation) {
 			case CurrencyOperation.ADD: {
-				UsersManager.currentUser.EarnCurrency(_currency, (ulong)amount, false);
+				UsersManager.currentUser.EarnCurrency(_currency, (ulong)amount, false, HDTrackingManager.EEconomyGroup.CHEAT);
 			} break;
 
 			case CurrencyOperation.REMOVE: {
