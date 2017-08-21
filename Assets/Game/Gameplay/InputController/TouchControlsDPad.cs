@@ -19,6 +19,7 @@ public class TouchControlsDPad : TouchControls {
 	[Space]
 	public GameObject m_dpadObj;
 	public GameObject m_dpadDotObj;
+	public GameObject m_dpadBoost;
 
 	// PRIVATE VARIABLES - DPAD SPECIFIC
 	private float m_radiusToCheck = 40.0f;
@@ -34,6 +35,9 @@ public class TouchControlsDPad : TouchControls {
 	private RectTransform m_dPadContainerRectTransform = null;
 	private RectTransform m_dPadRectTransform = null;
 	private RectTransform m_dPadDotRectTransform = null;
+
+	private RectTransform m_dPadBoostContainerRectTransform = null;
+	private RectTransform m_dpadBoostRectTransform = null;
 
 	// [AOC] D-Pad setup and logic
 	private Mode m_dPadMode = Mode.FOLLOW_CUSTOM; 
@@ -56,6 +60,8 @@ public class TouchControlsDPad : TouchControls {
 		get{ return m_directionChanged; }
 	}
 
+	private float m_lastArrowAngle = 0f;
+
 	// [AOC] Debug
 	private TextMeshProUGUI m_debugText = null;
 
@@ -67,7 +73,12 @@ public class TouchControlsDPad : TouchControls {
 		m_dPadDotRectTransform = m_dpadDotObj.transform as RectTransform;
 		m_dPadContainerRectTransform = m_dPadRectTransform.parent as RectTransform;
 		m_dPadContainerRectTransform.anchoredPosition = Vector2.zero;	// Make sure it's centered to its anchors, which we will be moving around!
-        m_debugText = m_dPadContainerRectTransform.FindComponentRecursive<TextMeshProUGUI>();	// Optional
+
+		m_dpadBoostRectTransform = m_dpadBoost.transform as RectTransform;
+		m_dPadBoostContainerRectTransform = m_dpadBoostRectTransform.parent as RectTransform;
+		m_dPadBoostContainerRectTransform.anchoredPosition = Vector2.zero;	// Make sure it's centered to its anchors, which we will be moving around!
+
+		m_debugText = m_dPadContainerRectTransform.FindComponentRecursive<TextMeshProUGUI>();	// Optional
         if (!DEBUG && m_debugText != null) {                        
             m_debugText.enabled = false;
             m_debugText = null;            
@@ -91,7 +102,10 @@ public class TouchControlsDPad : TouchControls {
 		// Start hidden
 		m_dpadObj.SetActive(false);
 		m_dpadDotObj.SetActive(false);
+		m_dpadBoost.SetActive(false);
 		if(m_debugText != null) m_debugText.gameObject.SetActive(false);		
+
+		m_lastArrowAngle = 0f;
 	}	
 	
 	override public void SetRender(bool enable)
@@ -182,16 +196,13 @@ public class TouchControlsDPad : TouchControls {
 				case Mode.FOLLOW_TOUCH:
 				case Mode.FOLLOW_TOUCH_SMOOTH:
 				case Mode.FOLLOW_CUSTOM: {
-					// Move dot a distance within the pad's size in the same orientation as the touch diff vector and proportional to it
-					// Using the anchors allows us to directly set relative position [0..1] within the parent
-					// Clamp?
-					float targetDelta = clampDot ? Mathf.Clamp01(delta) : delta;
-					Vector2 correctedDPadDotPos = new Vector2(
-						m_diffVecNorm.x * targetDelta * 0.5f + 0.5f,	// Scale from [-1..1] to [0..1]
-						m_diffVecNorm.y * targetDelta * 0.5f + 0.5f	// Scale from [-1..1] to [0..1]
-					);
-					m_dPadDotRectTransform.anchorMin = correctedDPadDotPos;
-					m_dPadDotRectTransform.anchorMax = correctedDPadDotPos;
+					float angle = m_lastArrowAngle;
+					if (m_diffVecNorm != Vector3.zero) {
+						angle = Vector2.Angle(Vector2.left, m_diffVecNorm); // the arrow graphics is facing left
+						if (m_diffVecNorm.y > 0) angle *= -1;
+						m_lastArrowAngle = angle;
+					}
+					m_dPadDotRectTransform.localRotation = Quaternion.AngleAxis(angle, Vector3.forward);
 				} break;
 			}
 
@@ -200,6 +211,39 @@ public class TouchControlsDPad : TouchControls {
 				m_debugText.text = delta.ToString() + "\n" + (m_dPadMoving ? "moving true" : "moving false") + "\n" + threshold;
 			}
 		}
+	}
+
+	override public void SetTouch2ObjRendering(bool on)
+	{
+		base.SetTouch2ObjRendering(on);
+
+		if (m_boostWithHardPush)
+		{
+			m_dPadBoostContainerRectTransform.anchorMin = m_dPadContainerRectTransform.anchorMin;
+			m_dPadBoostContainerRectTransform.anchorMax = m_dPadContainerRectTransform.anchorMax;
+		} 
+		else 
+		{
+			Vector3 touchPos = m_initialTouch2Pos;
+			FitInScreen(ref touchPos);
+			Vector2 correctedDPadPos = new Vector2(
+				(touchPos.x / Screen.width),
+				(touchPos.y / Screen.height)
+			);
+
+			m_dPadBoostContainerRectTransform.anchorMin = correctedDPadPos;
+			m_dPadBoostContainerRectTransform.anchorMax = correctedDPadPos;
+		}
+	}
+
+	override public void Set2Render(bool enable)
+	{
+		if (m_boostWithHardPush)
+		{
+			m_dpadObj.SetActive(!enable);
+		}
+
+		m_dpadBoost.SetActive(enable);
 	}
 	
 	public void SetInitialTouchPos()
