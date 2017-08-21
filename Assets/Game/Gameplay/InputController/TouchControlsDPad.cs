@@ -213,11 +213,11 @@ public class TouchControlsDPad : TouchControls {
 		}
 	}
 
-	override public void SetTouch2ObjRendering(bool on)
+	override public void SetTouch2ObjRendering(bool on, bool is3dTouch)
 	{
-		base.SetTouch2ObjRendering(on);
+		base.SetTouch2ObjRendering(on, is3dTouch);
 
-		if (m_boostWithHardPush)
+		if ( is3dTouch )
 		{
 			m_dPadBoostContainerRectTransform.anchorMin = m_dPadContainerRectTransform.anchorMin;
 			m_dPadBoostContainerRectTransform.anchorMax = m_dPadContainerRectTransform.anchorMax;
@@ -236,13 +236,12 @@ public class TouchControlsDPad : TouchControls {
 		}
 	}
 
-	override public void Set2Render(bool enable)
+	override public void Set2Render(bool enable, bool is3dTouch)
 	{
-		if (m_boostWithHardPush)
+		if (is3dTouch)
 		{
 			m_dpadObj.SetActive(!enable);
 		}
-
 		m_dpadBoost.SetActive(enable);
 	}
 	
