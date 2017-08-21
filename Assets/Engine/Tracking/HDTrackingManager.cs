@@ -99,8 +99,7 @@ public class HDTrackingManager
     /// Called when the user finishes a round (because of death and not survive or because of quit game).    
     /// </summary>    
     /// <param name="dragonXp">Xp of the dragon chosen by the user to play the current round.</param>
-    /// <param name="deltaXp">Dragon xp gained during the whole round.</param>
-    /// <param name="highestDragonXp">Xp of the highest dragon unlocked by the user. Keep in mind that the hightest dragon and the dragon used by the user for the round can be different.</param>
+    /// <param name="deltaXp">Dragon xp gained during the whole round.</param>    
     /// <param name="dragonProgression">Progression of the current dragon. It's calculated the same way as playerProgression is but it's done for the dragon chosen by the user to play this round</param>
     /// <param name="timePlayed">Time (in seconds) spent on the round.</param>
     /// <param name="score">Score made in the round.</param>    
@@ -112,7 +111,7 @@ public class HDTrackingManager
     /// <param name="superFireRushNb">Amount of times superfury rush has been triggered during the round.</param>
     /// <param name="hcRevive">Amount of times the user paid with HC spent to revive the dragon.</param>
     /// <param name="adRevive">Amount of times the user paid by watching an ad to revive her dragon druring the round.</param>
-    public virtual void Notify_RoundEnd(int dragonXp, int deltaXp, int highestDragonXp, int dragonProgression, int timePlayed, int score, 
+    public virtual void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, 
         int chestsFound, int eggFound, float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive) {}
 
     /// <summary>
@@ -151,7 +150,9 @@ public class HDTrackingManager
     /// <param name="promotionType">Promotion type if there is one, otherwise <c>null</c></param>
     /// <param name="moneyCurrencyCode">Currency type used</param>
     /// <param name="moneyPrice">Amount of the currency paid</param>
-    public virtual void Notify_PurchaseWithResourcesCompleted(EEconomyGroup economyGroup, string itemID, string promotionType, UserProfile.Currency moneyCurrencyCode, int moneyPrice) {}
+    /// <param name="amountBalance">Amount of this currency after the transaction was performed</param>
+    public virtual void Notify_PurchaseWithResourcesCompleted(EEconomyGroup economyGroup, string itemID, string promotionType, 
+        UserProfile.Currency moneyCurrencyCode, int moneyPrice, int amountBalance) {}
 
     /// <summary>
     /// Called when the user clicks on the button to request a customer support ticked
