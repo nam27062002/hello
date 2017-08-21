@@ -65,11 +65,11 @@ public class DragonControlPlayer : MonoBehaviour {
 				m_followingSpline = go.GetComponent<Assets.Code.Game.Spline.BezierSpline>();
 			}
 		}
-		m_useTiltControl = GameSettings.tiltControlEnabled;
+		m_useTiltControl = GameSettings.Get(GameSettings.TILT_CONTROL_ENABLED);
 		SetupInputs();
 
 		// Subscribe to external events
-		Messenger.AddListener<bool>(GameEvents.TILT_CONTROL_TOGGLE, OnTiltToggled);
+		Messenger.AddListener<string, bool>(GameEvents.GAME_SETTING_TOGGLED, OnTiltToggled);
 		Messenger.AddListener(GameEvents.TILT_CONTROL_CALIBRATE, OnTiltCalibrate);
 		Messenger.AddListener<float>(GameEvents.TILT_CONTROL_SENSITIVITY_CHANGED, OnTiltSensitivityChanged);
 	}
@@ -78,7 +78,7 @@ public class DragonControlPlayer : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	void OnDestroy() {
-		Messenger.RemoveListener<bool>(GameEvents.TILT_CONTROL_TOGGLE, OnTiltToggled);
+		Messenger.RemoveListener<string, bool>(GameEvents.GAME_SETTING_TOGGLED, OnTiltToggled);
 		Messenger.RemoveListener(GameEvents.TILT_CONTROL_CALIBRATE, OnTiltCalibrate);
 		Messenger.RemoveListener<float>(GameEvents.TILT_CONTROL_SENSITIVITY_CHANGED, OnTiltSensitivityChanged);
 	}
@@ -232,11 +232,13 @@ public class DragonControlPlayer : MonoBehaviour {
 	/// The tilt control has been toggled.
 	/// </summary>
 	/// <param name="_useTilt">Toggle on or off?</param>
-	private void OnTiltToggled(bool _useTilt) {
-		m_useTiltControl = _useTilt;
-		if(tiltControls && _useTilt) {
-			tiltControls.Calibrate();
-			tiltControls.SetSensitivity(GameSettings.tiltControlSensitivity);
+	private void OnTiltToggled(string _settingId, bool _useTilt) {
+		if(_settingId == GameSettings.TILT_CONTROL_ENABLED) {
+			m_useTiltControl = _useTilt;
+			if(tiltControls && _useTilt) {
+				tiltControls.Calibrate();
+				tiltControls.SetSensitivity(GameSettings.tiltControlSensitivity);
+			}
 		}
 	}
 

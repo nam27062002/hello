@@ -18,14 +18,17 @@ public class RailMeshBuilder : MonoBehaviour {
 	[SeparatorAttribute]
 	[SerializeField] private List<int> m_destroyedParts = new List<int>();
 
-	private bool m_forceDirty = false;
+	[SerializeField][HideInInspector] private bool m_forceDirty = false;
 	public bool dirty { set { m_forceDirty = value; } }
 
-	private float m_currentSubdivisions = 0f;
-	private float m_currentDistancePerGameObject = 0f;
-	private int	  m_currentTieCountPerGameObject = 0;
-	private float m_currentMeshScale = 0f;
-	private float m_currentUVscale = 0f;
+	[SerializeField][HideInInspector] private bool m_lightmapUVsDirty = false;
+	public bool lightmapUVsDirty { get { return m_lightmapUVsDirty; } set { m_lightmapUVsDirty = value; } }
+
+	[SerializeField][HideInInspector] private float m_currentSubdivisions = 0f;
+	[SerializeField][HideInInspector] private float m_currentDistancePerGameObject = 0f;
+	[SerializeField][HideInInspector] private int	m_currentTieCountPerGameObject = 0;
+	[SerializeField][HideInInspector] private float m_currentMeshScale = 0f;
+	[SerializeField][HideInInspector] private float m_currentUVscale = 0f;
 
 
 	// Use this for initialization
@@ -45,7 +48,7 @@ public class RailMeshBuilder : MonoBehaviour {
 								(m_currentMeshScale != m_meshScale) || 
 								(m_currentUVscale != m_uvScale);
 
-				if (isDirty) {		
+				if (isDirty) {					
 					m_forceDirty = false;
 					m_currentSubdivisions = m_subdivisions;
 					m_currentDistancePerGameObject = m_distancePerGameObject;
@@ -56,6 +59,10 @@ public class RailMeshBuilder : MonoBehaviour {
 					while (transform.childCount > 0) {
 						Transform child = transform.GetChild(0);
 						child.parent = null;
+
+						MeshFilter mf = child.gameObject.GetComponent<MeshFilter>();
+						Object.DestroyImmediate(mf.sharedMesh);
+
 						GameObject.DestroyImmediate(child.gameObject);
 					}
 
@@ -71,6 +78,8 @@ public class RailMeshBuilder : MonoBehaviour {
 					if (!m_destroyedParts.Contains(railIdx)) {
 						BuildRail(dist, m_spline.length, m_subdivisions * 0.5f);
 					}
+
+					m_lightmapUVsDirty = true;
 				}
 			}
 		}
@@ -153,6 +162,10 @@ public class RailMeshBuilder : MonoBehaviour {
 		}
 
 		mesh.CombineMeshes(combine, true, false);
+
+		for (int i = 0; i < combine.Length; ++i) {
+			Object.DestroyImmediate(combine[i].mesh);
+		}
 
 		renderer.sharedMaterial = m_material;
 	}

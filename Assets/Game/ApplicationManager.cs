@@ -605,7 +605,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private void Debug_TestToggleSound()
     {
-		GameSettings.soundEnabled = !GameSettings.soundEnabled;
+		GameSettings.Set(GameSettings.SOUND_ENABLED, !GameSettings.Get(GameSettings.SOUND_ENABLED));
     }
 
     private void Debug_TestEggsCollected()

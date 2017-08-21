@@ -255,7 +255,7 @@ public class ResourcesFlow {
 
 				case UserProfile.Currency.HARD: {
 					// Show confirmation popup?
-					if(_askConfirmationForBigPCAmounts && GameSettings.showBigAmountConfirmationPopup && (m_originalAmount > PC_CONFIRMATION_POPUP_THRESHOLD)) {
+					if(_askConfirmationForBigPCAmounts && GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP) && (m_originalAmount > PC_CONFIRMATION_POPUP_THRESHOLD)) {
 						// Final PC amount over threshold!
 						// Show confirmation popup
 						OpenBigAmountConfirmationPopup(m_originalAmount, () => { OpenMissingPCPopup(m_missingAmount); });	// If confirmed, open missing PC popup
@@ -285,7 +285,7 @@ public class ResourcesFlow {
 	private void DoTransaction(bool _askConfirmationForBigPCAmounts) {
 		// Confirmation required?
 		// Only if confirmation popup is enabled
-		if(_askConfirmationForBigPCAmounts && GameSettings.showBigAmountConfirmationPopup) {
+		if(_askConfirmationForBigPCAmounts && GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP)) {
 			// Final PC cost?
 			long finalPCAmount = 0;
 
