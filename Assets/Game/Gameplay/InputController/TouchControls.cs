@@ -7,7 +7,7 @@ abstract public class TouchControls : MonoBehaviour {
     public bool m_boostWithRadiusCheck = false;
 	public bool m_boostWithSecondTouch = true;
 
-    private bool m_boostWithHardPush = false;
+	protected bool m_boostWithHardPush = false;
     private float m_boostWithHardPushThreshold = 0.85f;
 
     // PROTECTED MEMBERS
