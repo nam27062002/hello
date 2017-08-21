@@ -127,6 +127,7 @@ abstract public class TouchControls : MonoBehaviour {
 		if(GameInput.m_controlMethod == ControlMethod.touch)
 		{
 			touchAction = false;
+			bool touchActionIs3DTouch = false;
 			//Debug.Log("ABOUT TO CHECK TOUCH STATE FOR 0..!!!");
 			TouchState touchState = GameInput.CheckTouchState(0);            
 			//Debug.Log("Got touchState 0 = " + touchState.ToString()); 		// NO TOUCH STATE IS BEING RECEIVED AFTER APP COMES BACK
@@ -160,10 +161,8 @@ abstract public class TouchControls : MonoBehaviour {
 					{
 						if ( GameInput.touchPressure[0] > m_boostWithHardPushThreshold) {
 							touchAction = true;
-							SetTouch2ObjRendering(true, true);
-						} else {
-							SetTouch2ObjRendering(false, false);
-						}
+							touchActionIs3DTouch = true;
+						} 
 					}
 				}
 			}
@@ -219,7 +218,7 @@ abstract public class TouchControls : MonoBehaviour {
 					}
 					if ( m_currentTouchState2 == TouchState.pressed ) {
 						touchAction = true;
-						SetTouch2ObjRendering(true, false);
+						touchActionIs3DTouch = false;
 					}
 				}
 				else if(touchState2 == TouchState.held)
@@ -228,7 +227,7 @@ abstract public class TouchControls : MonoBehaviour {
 					{
 						m_currentTouchState2 = TouchState.held;
 						touchAction = true;
-						SetTouch2ObjRendering(true, false);
+						touchActionIs3DTouch = false;
 					}
 				}
 				else if(touchState2 == TouchState.released)
@@ -236,18 +235,14 @@ abstract public class TouchControls : MonoBehaviour {
 					if((m_currentTouchState2 == TouchState.pressed) || (m_currentTouchState2 == TouchState.held))
 					{
 						m_currentTouchState2 = TouchState.released;
-						if (!touchAction)
-							SetTouch2ObjRendering(false, false);
 					}
 				}
 				else if(touchState2 == TouchState.none)
 				{
 					m_currentTouchState2 = TouchState.none;
-					if (!touchAction)
-						SetTouch2ObjRendering(false, false);
 				}
 			}
-
+			SetTouch2ObjRendering(touchAction, touchActionIs3DTouch);
 		}
 	}
 	
