@@ -270,11 +270,11 @@ public class HDTrackingManagerImp : HDTrackingManager
         Track_RoundStart(dragonXp, dragonProgression, dragonSkin, pets);
     }
 
-    public override void Notify_RoundEnd(int dragonXp, int deltaXp, int highestDragonXp, int dragonProgression, int timePlayed, int score, int chestsFound, int eggFound, 
+    public override void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, int chestsFound, int eggFound, 
         float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive)
     {
         // Last deathType, deathSource and deathCoordinates are used since this information is provided when Notify_RunEnd() is called
-        Track_RoundEnd(dragonXp, deltaXp, highestDragonXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
+        Track_RoundEnd(dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
             chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive);
     }
 
@@ -333,9 +333,11 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// <param name="promotionType">Promotion type if there is one, otherwise <c>null</c></param>
     /// <param name="moneyCurrency">Currency type used</param>
     /// <param name="moneyPrice">Amount of the currency paid</param>
-    public override void Notify_PurchaseWithResourcesCompleted(EEconomyGroup economyGroup, string itemID, string promotionType, UserProfile.Currency moneyCurrency, int moneyPrice)
+    /// <param name="amountBalance">Amount of this currency after the transaction was performed</param>
+    public override void Notify_PurchaseWithResourcesCompleted(EEconomyGroup economyGroup, string itemID, string promotionType, 
+        UserProfile.Currency moneyCurrency, int moneyPrice, int amountBalance)
     {
-        Track_PurchaseWithResourcesCompleted(EconomyGroupToString(economyGroup), itemID, 1, promotionType, Track_UserCurrencyToString(moneyCurrency), moneyPrice);
+        Track_PurchaseWithResourcesCompleted(EconomyGroupToString(economyGroup), itemID, 1, promotionType, Track_UserCurrencyToString(moneyCurrency), moneyPrice, amountBalance);
     }
 
     /// <summary>
@@ -444,7 +446,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_IAPCompleted storeTransactionID = " + storeTransactionID + " houstonTransactionID = " + houstonTransactionID + 
                 " itemID = " + itemID + " promotionType = " + promotionType + " moneyCurrencyCode = " + moneyCurrencyCode + " moneyPrice = " + moneyPrice);
         }        
-        
+                
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.iap");
         if (e != null)
         {            
@@ -467,14 +469,16 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-    private void Track_PurchaseWithResourcesCompleted(string economyGroup, string itemID, int itemQuantity, string promotionType, string moneyCurrency, float moneyPrice)
+    private void Track_PurchaseWithResourcesCompleted(string economyGroup, string itemID, int itemQuantity, string promotionType, 
+        string moneyCurrency, float moneyPrice, int amountBalance)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             Log("Track_PurchaseWithResourcesCompleted economyGroup = " + economyGroup + " itemID = " + itemID + " promotionType = " + promotionType + 
-                " moneyCurrency = " + moneyCurrency + " moneyPrice = " + moneyPrice);
+                " moneyCurrency = " + moneyCurrency + " moneyPrice = " + moneyPrice + " amountBalance = " + amountBalance);
         }
         
+        // HQ event
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.iap.secondaryStore");
         if (e != null)
         {
@@ -490,6 +494,24 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             TrackingManager.SharedInstance.SendEvent(e);
         }
+
+        // Game event
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.eco.sink");
+        if (e != null)
+        {
+            Track_AddParamSessionsCount(e);
+            Track_AddParamGameRoundCount(e);
+            Track_AddParamHighestDragonXp(e);
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamString(e, TRACK_PARAM_MONEY_CURRENCY, moneyCurrency);
+            e.SetParameterValue(TRACK_PARAM_AMOUNT_DELTA, (int)moneyPrice);
+            e.SetParameterValue(TRACK_PARAM_AMOUNT_BALANCE, (int)amountBalance);
+            Track_AddParamString(e, TRACK_PARAM_ECONOMY_GROUP, economyGroup);
+            Track_AddParamString(e, TRACK_PARAM_ITEM_ID, itemID);            
+
+            TrackingManager.SharedInstance.SendEvent(e);
+        }
+
     }
 
     private void Track_CustomerSupportRequested()
@@ -589,13 +611,13 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-    public void Track_RoundEnd(int dragonXp, int deltaXp, int highestDragonXp, int dragonProgression, int timePlayed, int score, 
+    public void Track_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, 
         string deathType, string deathSource, string deathCoordinates, int chestsFound, int eggFound,
         float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Track_RoundEnd dragonXp = " + dragonXp + " deltaXp = " + deltaXp + " highestDragonXp = " + highestDragonXp + " dragonProgression = " + dragonProgression + 
+            Log("Track_RoundEnd dragonXp = " + dragonXp + " deltaXp = " + deltaXp + " dragonProgression = " + dragonProgression + 
                 " timePlayed = " + timePlayed + " score = " + score +
                 " deathType = " + deathType + " deathSource = " + deathSource + " deathCoor = " + deathCoordinates + 
                 " chestsFound = " + chestsFound + " eggFound = " + eggFound + 
@@ -609,9 +631,9 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamSessionsCount(e);
             Track_AddParamGameRoundCount(e);
             Track_AddParamRunsAmount(e);
+            Track_AddParamHighestDragonXp(e);
             e.SetParameterValue(TRACK_PARAM_XP, dragonXp);
-            e.SetParameterValue(TRACK_PARAM_DELTA_XP, deltaXp);
-            e.SetParameterValue(TRACK_PARAM_MAX_XP, highestDragonXp);
+            e.SetParameterValue(TRACK_PARAM_DELTA_XP, deltaXp);            
             e.SetParameterValue(TRACK_PARAM_DRAGON_PROGRESSION, dragonProgression);
             e.SetParameterValue(TRACK_PARAM_TIME_PLAYED, timePlayed);
             e.SetParameterValue(TRACK_PARAM_SCORE, score);
@@ -660,8 +682,10 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_AB_TESTING                 = "abtesting";
     private const string TRACK_PARAM_AD_IS_AVAILABLE            = "adIsAvailable";
     private const string TRACK_PARAM_AD_REVIVE                  = "adRevive";
-    private const string TRACK_PARAM_AD_VIEWING_DURATION        = "adViewingDuration";
     private const string TRACK_PARAM_ADS_TYPE                   = "adsType";
+    private const string TRACK_PARAM_AD_VIEWING_DURATION        = "adViewingDuration";
+    private const string TRACK_PARAM_AMOUNT_BALANCE             = "amountBalance";
+    private const string TRACK_PARAM_AMOUNT_DELTA               = "amountDelta";                
     private const string TRACK_PARAM_CURRENCY                   = "currency";
     private const string TRACK_PARAM_CHESTS_FOUND               = "chestsFound";
     private const string TRACK_PARAM_DEATH_CAUSE                = "deathCause";
@@ -767,6 +791,21 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void Track_AddParamAbTesting(TrackingManager.TrackingEvent e)
     {        
         e.SetParameterValue(TRACK_PARAM_AB_TESTING, "");
+    }
+
+    private void Track_AddParamHighestDragonXp(TrackingManager.TrackingEvent e)
+    {
+        int value = 0;
+        if (UsersManager.currentUser != null)
+        {
+            DragonData highestDragon = UsersManager.currentUser.GetHighestDragon();
+            if (highestDragon != null && highestDragon.progression != null)
+            {
+                value = (int)highestDragon.progression.xp;
+            }
+        }
+
+        e.SetParameterValue(TRACK_PARAM_MAX_XP, value);
     }
 
     private void Track_AddParamPlayerProgress(TrackingManager.TrackingEvent e)
