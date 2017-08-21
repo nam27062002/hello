@@ -213,8 +213,8 @@ abstract public class TouchControls : MonoBehaviour {
 					if(m_currentTouchState2 == TouchState.none)
 					{
 						m_currentTouchState2 = TouchState.pressed;
-						m_initialTouch2Pos.x = GameInput.touchPosition[0].x;
-						m_initialTouch2Pos.y = GameInput.touchPosition[0].y;
+						m_initialTouch2Pos.x = GameInput.touchPosition[1].x;
+						m_initialTouch2Pos.y = GameInput.touchPosition[1].y;
 						m_initialTouch2Pos.z = 0;
 					}
 					if ( m_currentTouchState2 == TouchState.pressed ) {

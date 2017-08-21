@@ -25,6 +25,9 @@ public class PopupSettings : MonoBehaviour {
     [SerializeField]
     private GameObject m_saveTab;
 
+	[SerializeField]
+    private GameObject m_3dTouch;
+
     void Awake()
     {
         if (m_saveTab != null)
@@ -35,6 +38,10 @@ public class PopupSettings : MonoBehaviour {
             m_saveTab.SetActive(false);
 #endif
         }
+		if (m_3dTouch != null)
+		{
+			m_3dTouch.SetActive( Input.touchPressureSupported );
+		}
         CS_Init();
     }
 
