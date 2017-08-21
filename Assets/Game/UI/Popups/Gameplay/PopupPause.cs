@@ -30,6 +30,9 @@ public class PopupPause : PopupPauseBase {
 		COUNT
 	}
 
+	[SerializeField]
+    private GameObject m_3dTouch;
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -55,6 +58,10 @@ public class PopupPause : PopupPauseBase {
 	/// </summary>
 	override protected void Awake() {
 		base.Awake();
+		if (m_3dTouch != null)
+		{
+			m_3dTouch.SetActive( Input.touchPressureSupported );
+		}
 	}
 
 	/// <summary>
