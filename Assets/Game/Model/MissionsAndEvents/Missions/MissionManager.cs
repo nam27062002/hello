@@ -160,7 +160,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	public static void ProcessMissions() {
 		// Check all missions
 		int coins = instance.m_user.userMissions.ProcessMissions();
-		instance.m_user.EarnCurrency(UserProfile.Currency.SOFT, (ulong)coins, false);
+		instance.m_user.EarnCurrency(UserProfile.Currency.SOFT, (ulong)coins, false, HDTrackingManager.EEconomyGroup.REWARD_MISSION);
 	}
 
 	/// <summary>

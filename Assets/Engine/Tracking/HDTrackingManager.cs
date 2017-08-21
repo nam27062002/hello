@@ -51,7 +51,16 @@ public class HDTrackingManager
         ACQUIRE_DISGUISE,
         SHOP_COINS_PACK,
         NOT_ENOUGH_RESOURCES,
-		SHOP_KEYS_PACK
+		SHOP_KEYS_PACK,
+        INCENTIVISE_SOCIAL_LOGIN,       // Used when the user logs in social platform
+        CHEAT,                          // Use this if the currency comes from a cheat so it won't be tracked
+        REWARD_CHEST,
+        REWARD_GLOBAL_EVENT,
+        REWARD_MISSION,                 
+        REWARD_RUN,                     // Used when the user gets something such as soft currency during a run
+        PET_DUPLICATED,                 // Used when the user gets some reward instead of a pet because the user already has that pet
+        REFUND_GLOBAL_EVENT,            // USed when the user quits a global event so keys spent on it need to be refunded
+        SHOP_EXCHANGE                   // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
     };
 
     public static string EconomyGroupToString(EEconomyGroup group)
@@ -153,6 +162,16 @@ public class HDTrackingManager
     /// <param name="amountBalance">Amount of this currency after the transaction was performed</param>
     public virtual void Notify_PurchaseWithResourcesCompleted(EEconomyGroup economyGroup, string itemID, string promotionType, 
         UserProfile.Currency moneyCurrencyCode, int moneyPrice, int amountBalance) {}
+
+    /// <summary>
+    /// Called when the user earned some resources
+    /// </summary>
+    /// <param name="economyGroup">ID used to identify the type of item the user has earned. Example UNLOCK_DRAGON</param>        
+    /// <param name="moneyCurrencyCode">Currency type earned</param>
+    /// <param name="amountDelta">Amount of the currency earned</param>
+    /// <param name="amountBalance">Amount of this currency after the transaction was performed</param>
+    public virtual void Notify_EarnResources(EEconomyGroup economyGroup, UserProfile.Currency moneyCurrencyCode, int amountDelta, int amountBalance) {}
+
 
     /// <summary>
     /// Called when the user clicks on the button to request a customer support ticked

@@ -76,10 +76,10 @@ namespace Metagame {
 				// Have all golden eggs been collected?
 				if (EggManager.allGoldenEggsCollected) {
 					// Yes! Give coins rather than golden egg fragments (based on rarity)
-					m_replacement = Metagame.Reward.CreateTypeSoftCurrency(petRewardDef.GetAsLong("duplicateCoinsGiven"));
+					m_replacement = Metagame.Reward.CreateTypeSoftCurrency(petRewardDef.GetAsLong("duplicateCoinsGiven"), HDTrackingManager.EEconomyGroup.PET_DUPLICATED);
 				} else {
 					// No! Give golden egg fragments based on rarity
-					m_replacement = Metagame.Reward.CreateTypeGoldenFragments(petRewardDef.GetAsInt("duplicateFragmentsGiven"), rarity);
+					m_replacement = Metagame.Reward.CreateTypeGoldenFragments(petRewardDef.GetAsInt("duplicateFragmentsGiven"), rarity, HDTrackingManager.EEconomyGroup.PET_DUPLICATED);
 				}
 			} 
 		}
