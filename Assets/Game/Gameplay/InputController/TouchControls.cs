@@ -3,15 +3,12 @@ using System.Collections;
 
 abstract public class TouchControls : MonoBehaviour {
 
-    public static bool BOOST_WITH_HARD_PUSH_DEFAULT_ENABLED = false;
-    public static float BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD = 0.85f;   
-
     // INSPECTOR VARIABLES
     public bool m_boostWithRadiusCheck = false;
 	public bool m_boostWithSecondTouch = true;
 
-    private bool m_boostWithHardPush = BOOST_WITH_HARD_PUSH_DEFAULT_ENABLED;
-    private float m_boostWithHardPushThreshold = BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD;
+    private bool m_boostWithHardPush = false;
+    private float m_boostWithHardPushThreshold = 0.85f;
 
     // PROTECTED MEMBERS
     protected TouchControlsType m_type;
@@ -55,8 +52,6 @@ abstract public class TouchControls : MonoBehaviour {
 			Input.GetMouseButtonUp(0);
 			Input.GetMouseButtonUp(1);
 		}
-
-        UpdateBoostWithHardPush();
 
         // Subscribe to external events
         Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);
@@ -239,10 +234,6 @@ abstract public class TouchControls : MonoBehaviour {
     {     
         switch (id)            
         {
-            case DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH:
-                UpdateBoostWithHardPushEnabled();
-                break;
-
             case DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD:
                 UpdateBoostWithHardPushThreshold();
                 break;
@@ -259,21 +250,13 @@ abstract public class TouchControls : MonoBehaviour {
     /// <param name="id"></param>
     protected virtual void OnPrefChangedExtended(string id) {}
 
-    private void UpdateBoostWithHardPush()
+    public void Set3DTouch( bool use3DTouch, float pressure )
     {
-        UpdateBoostWithHardPushEnabled();
-        UpdateBoostWithHardPushThreshold();
-    }
-
-    private void UpdateBoostWithHardPushEnabled()
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
+    	m_boostWithHardPush = use3DTouch;
+    	m_boostWithHardPushThreshold = pressure;
+		if (FeatureSettingsManager.IsDebugEnabled)
         {
-            m_boostWithHardPush = Prefs.GetBoolPlayer(DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH);
-        }
-        else
-        {
-            m_boostWithHardPush = BOOST_WITH_HARD_PUSH_DEFAULT_ENABLED;
+            m_boostWithHardPushThreshold = Prefs.GetFloatPlayer(DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD);
         }
     }
 
@@ -283,9 +266,5 @@ abstract public class TouchControls : MonoBehaviour {
         {
             m_boostWithHardPushThreshold = Prefs.GetFloatPlayer(DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD);
         }
-        else
-        {
-            m_boostWithHardPushThreshold = BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD;
-        }            
     }
 }
