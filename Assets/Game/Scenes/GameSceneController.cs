@@ -737,10 +737,7 @@ public class GameSceneController : GameSceneControllerBase {
                 dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
             }
         }
-
-        DragonData highestDragon = UsersManager.currentUser.GetHighestDragon();
-        int highestDragonXp = (highestDragon != null && highestDragon.progression != null) ? (int)highestDragon.progression.xp : 0;
-
+        
         int eggsFound = (CollectiblesManager.egg != null && CollectiblesManager.egg.collected) ? 1 : 0;
 
         int chestsFound = 0;
@@ -751,7 +748,7 @@ public class GameSceneController : GameSceneControllerBase {
             }
         }
 
-        HDTrackingManager.Instance.Notify_RoundEnd(dragonXp, (int)RewardManager.xp, highestDragonXp, dragonProgress, timePlayed, score, chestsFound, eggsFound,
+        HDTrackingManager.Instance.Notify_RoundEnd(dragonXp, (int)RewardManager.xp, dragonProgress, timePlayed, score, chestsFound, eggsFound,
             RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
             RewardManager.paidReviveCount, RewardManager.freeReviveCount);
     }
