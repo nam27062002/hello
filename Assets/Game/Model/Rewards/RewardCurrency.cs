@@ -12,18 +12,21 @@ namespace Metagame {
 	/// Base abstract class for all currency rewards.
 	/// </summary>
 	public abstract class RewardCurrency : Reward {
+        private HDTrackingManager.EEconomyGroup EconomyGroup { get; set; }
+
 		public RewardCurrency() {			
 			
 		}
 
-		protected void Init(string _type, long _amount, Rarity _rarity) {
+		protected void Init(string _type, long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup) {
 			base.Init(_type);
 			m_amount = _amount;
 			m_rarity = _rarity;
+            EconomyGroup = _economyGroup;
 		}
 
 		override protected void DoCollect() {
-			UsersManager.currentUser.EarnCurrency(m_currency, (ulong)m_amount, false);
+			UsersManager.currentUser.EarnCurrency(m_currency, (ulong)m_amount, false, EconomyGroup);
 		}		
 	}
 	
@@ -33,8 +36,8 @@ namespace Metagame {
 	public class RewardSoftCurrency : RewardCurrency {
 		public const string TYPE_CODE = "sc";
 
-		public RewardSoftCurrency(long _amount, Rarity _rarity) : base() {
-			base.Init(TYPE_CODE, _amount, _rarity);
+		public RewardSoftCurrency(long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup) : base() {
+			base.Init(TYPE_CODE, _amount, _rarity, _economyGroup);
 			m_currency = UserProfile.Currency.SOFT;
 		}
 	}
@@ -45,8 +48,8 @@ namespace Metagame {
 	public class RewardHardCurrency : RewardCurrency {		
 		public const string TYPE_CODE = "pc";
 
-		public RewardHardCurrency(long _amount, Rarity _rarity) : base() {
-			base.Init(TYPE_CODE, _amount, _rarity);
+		public RewardHardCurrency(long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup) : base() {
+			base.Init(TYPE_CODE, _amount, _rarity, _economyGroup);
 			m_currency = UserProfile.Currency.HARD;
 		}
 	}
@@ -57,8 +60,8 @@ namespace Metagame {
 	public class RewardGoldenFragments : RewardCurrency {
 		public const string TYPE_CODE = "gf";
 
-		public RewardGoldenFragments(long _amount, Rarity _rarity) : base() {
-			base.Init(TYPE_CODE, _amount, _rarity);
+		public RewardGoldenFragments(long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup) : base() {
+			base.Init(TYPE_CODE, _amount, _rarity, _economyGroup);
 			m_currency = UserProfile.Currency.GOLDEN_FRAGMENTS;
 		}
 

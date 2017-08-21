@@ -285,7 +285,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	private void CloseAndDiscard() {
 		// If we spend keys, refund
 		if(m_usedKey) {
-			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.KEYS, (ulong)DOUBLE_UP_COST_KEYS, true);	// Refund as a paid key so we don't have any issue with the limits
+			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.KEYS, (ulong)DOUBLE_UP_COST_KEYS, true, HDTrackingManager.EEconomyGroup.REFUND_GLOBAL_EVENT);	// Refund as a paid key so we don't have any issue with the limits
 		}
 
 		// Close popup

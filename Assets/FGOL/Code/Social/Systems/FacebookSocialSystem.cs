@@ -316,7 +316,7 @@ public class FacebookSocialSystem : ISocialSystem
                 
                 // Gives the reward
                 int rewardAmount = Rules_GetPCAmountToIncentivizeSocial();
-				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)rewardAmount, false);
+				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)rewardAmount, false, HDTrackingManager.EEconomyGroup.INCENTIVISE_SOCIAL_LOGIN);
                 // [DGR] All systems are saves in order to save the reward too
                 //SaveFacade.Instance.Save(m_socialSaveSystem.name, true);
                 SaveFacade.Instance.Save(null, true);

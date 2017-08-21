@@ -338,13 +338,15 @@ public class UserProfile : UserSaveSystem
 		return m_currencies[(int)_currency].amount;
 	}
 
-	/// <summary>
-	/// Add any type of currency. If free, max limit will be checked.
-	/// </summary>
-	/// <param name="_amount">Amount to be added.</param>
-	/// <param name="_currency">Currency type.</param>
-	/// <param name="_paid">Store the amount in the "paid" count. Limits will be ignored.</param>
-	public void EarnCurrency(Currency _currency, ulong _amount, bool _paid) {
+    /// <summary>
+    /// Add any type of currency. If free, max limit will be checked.
+    /// </summary>
+    /// <param name="_amount">Amount to be added.</param>
+    /// <param name="_currency">Currency type.</param>
+    /// <param name="_paid">Store the amount in the "paid" count. Limits will be ignored.</param>
+    /// <param name="_paid">Economy group where the currency comes from. Use <c>HDTrackingManager.EEConomyGroup.CHEAT</c> if that currency comes from a cheat so it
+    /// won't be tracked.</param>
+    public void EarnCurrency(Currency _currency, ulong _amount, bool _paid, HDTrackingManager.EEconomyGroup _economyGroup) {
 		// Gather currency data
 		CurrencyData data = m_currencies[(int)_currency];
 		long toAdd = (long)_amount;
@@ -370,7 +372,11 @@ public class UserProfile : UserSaveSystem
 		// Notify game!
 		// [AOC] For now we don't need to differientate earnings from paid and free sources, neither do we need to differientate earnings and expenses, so use the same event for everything
 		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, _currency, oldAmount, data.amount);
-	}
+
+        if (_economyGroup != HDTrackingManager.EEconomyGroup.CHEAT) {
+            HDTrackingManager.Instance.Notify_EarnResources(_economyGroup, _currency, (int)toAdd, (int)data.amount);
+        }
+    }
 
 	/// <summary>
 	/// Subtract from any type of currency. Min limit will be checked.
@@ -452,8 +458,8 @@ public class UserProfile : UserSaveSystem
 		data.paidAmount = 0;
 
 		// Use earn method so limits are checked and events broadcasted
-		UsersManager.currentUser.EarnCurrency(_currency, (ulong)_freeAmount, false);
-		UsersManager.currentUser.EarnCurrency(_currency, (ulong)_paidAmount, true);
+		UsersManager.currentUser.EarnCurrency(_currency, (ulong)_freeAmount, false, HDTrackingManager.EEconomyGroup.CHEAT);
+		UsersManager.currentUser.EarnCurrency(_currency, (ulong)_paidAmount, true, HDTrackingManager.EEconomyGroup.CHEAT);
 	}
 
 	/// <summary>

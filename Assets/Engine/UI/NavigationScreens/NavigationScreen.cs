@@ -7,6 +7,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.Events;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -42,6 +43,10 @@ public class NavigationScreen : MonoBehaviour {
 		get { return m_allowBackToThisScreen; }
 		set { m_allowBackToThisScreen = value; }
 	}
+
+	// Events
+	public UnityEvent OnShow = new UnityEvent();
+	public UnityEvent OnHide = new UnityEvent();
 
 	// References
 	private Animator m_unityAnimator = null;
@@ -92,6 +97,9 @@ public class NavigationScreen : MonoBehaviour {
 			if(animators[i] == m_showHideAnimator) continue;
 			animators[i].RestartShow();
 		}
+
+		// Notify listeners
+		OnShow.Invoke();
 	}
 	
 	/// <summary>
@@ -118,6 +126,7 @@ public class NavigationScreen : MonoBehaviour {
 		}
 
 		// Additionally look for all children containing a NavigationShowHideAnimator component and trigger it!
+		// [AOC] Now animators automatically trigger nested animators, so this is no longer needed. Leave it in case we have issues with the new feature.
 		/*NavigationShowHideAnimator[] animators = GetComponentsInChildren<NavigationShowHideAnimator>(false);	// Exclude inactive ones - they are already hidden! ^_^
 		for(int i = 0; i < animators.Length; i++) {
 			// Skip ourselves
@@ -131,5 +140,8 @@ public class NavigationScreen : MonoBehaviour {
 		if(!applied) {
 			gameObject.SetActive(false);
 		}
+
+		// Notify listeners
+		OnHide.Invoke();
 	}
 }
