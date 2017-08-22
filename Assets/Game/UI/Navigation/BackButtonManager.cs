@@ -26,37 +26,41 @@ public class BackButtonManager : UbiBCN.SingletonMonoBehaviour<BackButtonManager
 	//------------------------------------------------------------------------//
 	// Registered handlers
 	// [AOC] Test if a Stack works fine or is too restrictive
-	private Stack<BackButtonHandler> m_handlers = new Stack<BackButtonHandler>();
+	private List<BackButtonHandler> m_handlers = new List<BackButtonHandler>();
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization.
+	/// Register to the manager, on top of the stack.
 	/// </summary>
-	private void Awake() {
-
+	public static void Register(BackButtonHandler _handler) {
+		instance.__Register(_handler);
 	}
 
 	/// <summary>
-	/// First update call.
+	/// Unregister from the manager, regardless of the position it's stacked.
 	/// </summary>
-	private void Start() {
+	public static void Unregister(BackButtonHandler _handler) {
+		instance.__Unregister(_handler);
+	}
 
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Register to the manager, on top of the stack.
+	/// </summary>
+	private void __Register(BackButtonHandler _handler) {
+		m_handlers.Add(_handler);
 	}
 
 	/// <summary>
-	/// Component has been enabled.
+	/// Unregister from the manager, regardless of the position it's stacked.
 	/// </summary>
-	private void OnEnable() {
-
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-
+	private void __Unregister(BackButtonHandler _handler) {
+		m_handlers.Remove(_handler);
 	}
 
 	/// <summary>
@@ -64,21 +68,13 @@ public class BackButtonManager : UbiBCN.SingletonMonoBehaviour<BackButtonManager
 	/// </summary>
 	private void Update() {
 		// Back button pressed?
-		if(Input.GetKeyUp(KeyCode.Escape)) {
-			// Peek and trigger
+		if (Input.GetKeyUp(KeyCode.Escape)) {
+			if (m_handlers.Count > 0) {
+				m_handlers.Last().Trigger();
+				//TODO: Should we add a delay before next back event?
+			}
 		}
 	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
-	}
-
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
