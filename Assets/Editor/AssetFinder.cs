@@ -228,6 +228,30 @@ public class AssetFinder : EditorWindow {
     /// <summary>
     /// Resets all shader keywords stored in materials or material selection
     /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Seek for directional lights")]
+    public static void seekForLights()
+    {
+
+        Light[] lightList;
+        FindAssetInScene<Light>(out lightList);
+
+        for (int c = 0; c < lightList.Length; c++)
+        {
+            if (lightList[c].type == LightType.Directional)
+            {
+                Debug.Log("Directional Light: " + lightList[c].gameObject.name);
+            }
+        }
+
+        Debug.Log("list length: " + lightList.Length);
+
+    }
+
+
+
+    /// <summary>
+    /// Resets all shader keywords stored in materials or material selection
+    /// </summary>
     /// 
     public static int checkRepeatedName(ref Spawner[] spawnerList, string name)
     {
