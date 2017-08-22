@@ -15,7 +15,7 @@ public class Builder : MonoBehaviour
 	const string m_bundleIdentifier = "com.ubisoft.hungrydragon.dev";
 	const string m_iOSSymbols = "";
 
-	const string m_apkName = "hd";
+	// const string m_apkName = "hd";
 	const string m_AndroidSymbols = "";
 
     /// <summary>
@@ -95,7 +95,8 @@ public class Builder : MonoBehaviour
 
 
 		string date = System.DateTime.Now.ToString("yyyyMMdd");
-		string finalApkName = m_apkName + "_" + GameSettings.internalVersion + "_" + date + "_b" + PlayerSettings.Android.bundleVersionCode + "_" + GetEnvironmentString() + ".apk";
+		string code = GetArg("-code");
+		string finalApkName = code + "_" + GameSettings.internalVersion + "_" + date + "_b" + PlayerSettings.Android.bundleVersionCode + "_" + GetEnvironmentString() + ".apk";
 		string stagePath = System.IO.Path.Combine(outputDir, finalApkName);	// Should be something like ouputDir/hd_2.4.3_20160826_b12421.apk
 
 		// Some feedback
