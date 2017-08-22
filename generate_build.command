@@ -345,7 +345,7 @@ if $BUILD_ANDROID; then
     PACKAGE_NAME="$(cat bundleIdentifier.txt)"
     rm -f "bundleIdentifier.txt"
     OBB_FILE="main.${ANDROID_BUILD_VERSION}.${PACKAGE_NAME}.obb"
-    mv "${STAGE_APK_FILE}.main.obb" "${OBB_FILE}"
+    mv "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.main.obb" "${OUTPUT_DIR}/apks/${OBB_FILE}"
   fi
 fi
 
