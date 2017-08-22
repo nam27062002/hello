@@ -6,10 +6,10 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: VFX_Marmite_Smoke
-  m_Shader: {fileID: 4800000, guid: cac050e216f992d4daea2d13a5ee10f0, type: 3}
-  m_ShaderKeywords: _EMISSION
-  m_LightmapFlags: 1
+  m_Name: VFX_PetMenuGlow
+  m_Shader: {fileID: 203, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -39,24 +39,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MaskTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 84af9b940753dd74aa3c3aed4da8621b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Noise:
-        m_Texture: {fileID: 2800000, guid: 90832223f03f15747b1f8abec445c7d5, type: 3}
-        m_Scale: {x: 2, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _NoiseTex:
-        m_Texture: {fileID: 2800000, guid: 90832223f03f15747b1f8abec445c7d5, type: 3}
-        m_Scale: {x: 2, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
@@ -66,47 +54,28 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _texcoord:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _BlendMode: 10
+    - _ABOffset: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EmissionPower: 0.421
-    - _FresnelPower: 0
-    - _FresnelScale: 0
     - _GlossMapScale: 1
-    - _Glossiness: 1
+    - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _InvFade: 1
-    - _Metallic: 1
+    - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _Offset: 0.449
-    - _OpacityPower: 0.64
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _USpeed: 0
-    - _USpeed2: 0
     - _UVSec: 0
-    - _VSpeed: 0.5
-    - _VSpeed2: 0.3
     - _ZTest: 2
     - _ZWrite: 1
-    - __dirty: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _ColorA: {r: 0.6589011, g: 0.8161765, b: 0.21604672, a: 0}
-    - _ColorB: {r: 0.6589011, g: 0.8161765, b: 0.21604672, a: 0}
-    - _EmissionColor: {r: 0.912, g: 0.912, b: 0.912, a: 1}
-    - _SmoothVal: {r: 0.05, g: 0.28, b: 0, a: 1}
-    - _SmotthVal: {r: 0.11, g: 0.31, b: 0, a: 0}
-    - _Speed: {r: -0.1, g: 0.1, b: 0.1, a: 0.4}
-    - _TintColor: {r: 0.48627454, g: 0.74509805, b: 0.09019608, a: 0.697}
-    - _TintColor2: {r: 0.6965518, g: 1, b: 0, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _TintColor: {r: 0.58823526, g: 0.58823526, b: 0.58823526, a: 1}
+    - _VColor: {r: 1, g: 1, b: 1, a: 1}

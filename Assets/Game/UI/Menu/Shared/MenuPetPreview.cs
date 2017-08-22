@@ -94,9 +94,6 @@ public class MenuPetPreview : MonoBehaviour {
 	/// </summary>
 	/// <param name="_show">Whether to show or hide the rarity glow around the pet.</param>
 	public void ToggleRarityGlow(bool _show) {
-		// [AOC] Using new tech now, keep the code just in case
-		return;
-
 		// Show?
 		if(_show) {
 			// If not yet loaded, do it
