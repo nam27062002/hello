@@ -68,7 +68,7 @@ Shader "Hungry Dragon/Transparent Dissolve"
 					float4 t2 = tex2D(_DissolveTex, i.uv);
 
 					float ramp = -1.0 + (i.dissolve * 2.0);
-					float4 col = float4(t1.xyz * i.color.xyz * _EmissionSaturation, t1.w * (t2.x + ramp) * _OpacitySaturation * i.color.w);
+					float4 col = float4(t1.xyz * i.color.xyz * _EmissionSaturation,clamp(t1.w * (t2.x + ramp) * _OpacitySaturation * i.color.w,0.0,1.0));
 
 					return col;
 				}
