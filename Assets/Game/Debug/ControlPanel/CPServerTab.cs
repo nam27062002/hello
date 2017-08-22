@@ -32,7 +32,8 @@ public class CPServerTab : MonoBehaviour {
 	[SerializeField] private ScrollRect m_outputScroll = null;
 	[SerializeField] private TextMeshProUGUI m_outputText = null;
 	[SerializeField] private TextMeshProUGUI m_accountIdText = null;
-	[SerializeField] private Toggle m_debugServerToggle = null;
+    [SerializeField] private TextMeshProUGUI m_enviromentText = null;
+    [SerializeField] private Toggle m_debugServerToggle = null;
 
     // Internal
     private DateTime m_startTimestamp;
@@ -63,8 +64,9 @@ public class CPServerTab : MonoBehaviour {
     private void OnEnable()
     {
         m_accountIdText.text = "Account Id: " + GameSessionManager.SharedInstance.GetUID();
+        m_enviromentText.text = "Env: " + ServerManager.SharedInstance.GetServerConfig().m_eBuildEnvironment.ToString();
 
-		m_debugServerToggle.isOn = DebugSettings.useDebugServer;
+        m_debugServerToggle.isOn = DebugSettings.useDebugServer;
 		m_debugServerToggle.onValueChanged.AddListener(OnToggleDebugServer);
     }
 
