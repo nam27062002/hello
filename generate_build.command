@@ -240,11 +240,15 @@ cd ..
 print_builder "Custom Builder Action"
 eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.CustomAction"
 
-
 if [ "$ENVIRONMENT" != false ]; then
     print_builder "Setting environment";
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetEnvironment -env ${ENVIRONMENT}"
 fi
+
+eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputEnvironment"
+ENVIRONMENT="$(cat environment.txt)"
+echo "Environment: ${ENVIRONMENT}"
+rm -f "environment.txt"
 
 if [ "$FORCE_VERSION" != false ]; then
   print_builder "Force Version ${FORCE_VERSION}"
@@ -327,21 +331,21 @@ if $BUILD_ANDROID; then
   mkdir -p "${OUTPUT_DIR}/apks/"
 
   # Do it!
-  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB}"
+  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB} -code ${PROJECT_CODE_NAME}"
 
   # Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
 	print_builder "BUILDER: Reading internal android build version number";
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputAndroidBuildVersion"
 	ANDROID_BUILD_VERSION="$(cat androidBuildVersion.txt)"
 	rm -f "androidBuildVersion.txt";
-	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}";
+	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}_${ENVIRONMENT}";
 
   if $GENERATE_OBB; then
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputBundleIdentifier"
     PACKAGE_NAME="$(cat bundleIdentifier.txt)"
     rm -f "bundleIdentifier.txt"
     OBB_FILE="main.${ANDROID_BUILD_VERSION}.${PACKAGE_NAME}.obb"
-    mv "${PROJECT_CODE_NAME}.main.obb" "${OBB_FILE}"
+    mv "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.main.obb" "${OUTPUT_DIR}/apks/${OBB_FILE}"
   fi
 fi
 
@@ -358,7 +362,7 @@ if $BUILD_IOS; then
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
     ARCHIVE_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}.xcarchive"
-    STAGE_IPA_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}.ipa"
+    STAGE_IPA_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_${ENVIRONMENT}.ipa"
     PROJECT_NAME="${OUTPUT_DIR}/xcode/Unity-iPhone.xcodeproj"
 
     # Generate Archive

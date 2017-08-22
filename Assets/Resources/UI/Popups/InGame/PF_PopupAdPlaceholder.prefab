@@ -29,6 +29,7 @@ GameObject:
   - component: {fileID: 22443574}
   - component: {fileID: 9527898}
   - component: {fileID: 11434904}
+  - component: {fileID: 114543312813210232}
   - component: {fileID: 22512864}
   - component: {fileID: 11422562}
   m_Layer: 5
@@ -450,6 +451,22 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114543312813210232
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 185082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32e9d7cb2b52341ae96764925899c7db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnBackButton:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!225 &225740396669805742
 CanvasGroup:
   m_ObjectHideFlags: 1

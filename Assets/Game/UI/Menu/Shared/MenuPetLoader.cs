@@ -54,6 +54,12 @@ public class MenuPetLoader : MonoBehaviour {
 		set { m_anim = value; }
 	}
 
+	[SerializeField] private bool m_showRarityGlow = false;
+	public bool showRarityGlow {
+		get { return m_showRarityGlow; }
+		set { m_showRarityGlow = value; }
+	}
+
 	[SerializeField] private bool m_resetScale = true;
 	public bool resetScale {
 		get { return m_resetScale; }
@@ -155,6 +161,11 @@ public class MenuPetLoader : MonoBehaviour {
 				MenuPetPreview petPreview = m_petInstance.GetComponent<MenuPetPreview>();
 				petPreview.sku = _sku;
 				petPreview.SetAnim(MenuPetPreview.Anim.IN);
+
+				// Show rarity glow if required
+				if(m_showRarityGlow) {
+					petPreview.ToggleRarityGlow(true);
+				}
 
 				// Reset scale if required
 				if(m_resetScale) {

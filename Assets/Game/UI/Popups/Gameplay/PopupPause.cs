@@ -89,10 +89,7 @@ public class PopupPause : PopupPauseBase {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
-		if (Input.GetKeyDown(KeyCode.Escape) && CanReturn()){
-			// Controller close
-			m_popup.Close(false);
-		}
+
 	}
 
 	private bool CanReturn(){
