@@ -38,10 +38,7 @@ public class GameHUD : MonoBehaviour {
 
     // Check back button on Android
 	void Update(){
-		if (Input.GetKeyDown(KeyCode.Escape) && CanPause())
-		{
-			OnPauseButton();
-		}
+
     }
 
     void OnDestroy() {
