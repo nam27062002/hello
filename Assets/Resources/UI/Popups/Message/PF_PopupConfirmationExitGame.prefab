@@ -271,6 +271,7 @@ GameObject:
   - component: {fileID: 114952770322171302}
   - component: {fileID: 225396770058029830}
   - component: {fileID: 114936983018475748}
+  - component: {fileID: 114879104154825296}
   m_Layer: 5
   m_Name: PF_PopupConfirmationExitGame
   m_TagString: Untagged
@@ -628,9 +629,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: 
-        m_Mode: 6
+      - m_Target: {fileID: 114879104154825296}
+        m_MethodName: OnExitGame
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1166,6 +1167,17 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
+--- !u!114 &114879104154825296
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1690166981988120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c34825ae877ca4c55acd2579ef711567, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114898774878824632
 MonoBehaviour:
   m_ObjectHideFlags: 1

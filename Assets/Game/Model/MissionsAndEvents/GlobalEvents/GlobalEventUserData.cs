@@ -105,8 +105,8 @@ public class GlobalEventUserData {
 	public void Load(SimpleJSON.JSONNode _data) {
 		// Easy
 		if(_data.ContainsKey("eventId")) eventID = _data["eventId"].AsInt;	// Event ID is optional
-		userID = _data["userId"];
-		score = _data["score"].AsInt;
+		if(_data.ContainsKey("uid")) userID = _data["uid"];
+		if(_data.ContainsKey("score")) score = _data["score"].AsInt;
 		if(_data.ContainsKey("rank")) position = _data["rank"].AsInt;
 		if(_data.ContainsKey("endTimestamp")) endTimestamp = _data["endTimestamp"].AsLong;
 		if(_data.ContainsKey("rewardCollected")) rewardCollected = _data["rewardCollected"].AsBool;
@@ -125,7 +125,7 @@ public class GlobalEventUserData {
 		// Create a new json object for this event
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 		if(_includeEventID) data.Add("eventId", eventID.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		data.Add("userId", userID);
+		data.Add("uid", userID);
 		data.Add("score", score.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		if(_includePosition) data.Add("rank", position.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		if(_includeRewardCollected) data.Add("rewardCollected", rewardCollected);
