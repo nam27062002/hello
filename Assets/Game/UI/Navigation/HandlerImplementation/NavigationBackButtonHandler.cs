@@ -10,8 +10,8 @@ public class NavigationBackButtonHandler : BackButtonHandler {
 	[SerializeField] protected MenuScreens m_targetScreen = MenuScreens.NONE;
 
 	//
-	protected MenuScreensController m_navigationSystem = null;
-	private NavigationScreen m_screen = null;
+	private MenuScreensController m_navigationSystem = null;
+
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -22,10 +22,14 @@ public class NavigationBackButtonHandler : BackButtonHandler {
 	private void Awake() {
 		// Get a reference to the navigation system, which in this particular case should be a component in the menu scene controller
 		m_navigationSystem = InstanceManager.sceneController.GetComponent<MenuScreensController>();
+	}
 
-		m_screen = GetComponent<NavigationScreen>();
-		m_screen.OnShow.AddListener(Register);
-		m_screen.OnHide.AddListener(Unregister);
+	private void OnEnable() {
+		Register();
+	}
+
+	private void OnDisable() {
+		Unregister();
 	}
 
 	public override void Trigger() {

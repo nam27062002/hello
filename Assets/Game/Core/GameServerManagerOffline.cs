@@ -302,6 +302,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
 		// Current player data
 		GlobalEventUserData playerEventData = UsersManager.currentUser.GetGlobalEventData(_eventID);
+		InitSocialData(ref playerEventData);	// Make sure it has social info
 
 		// Add player data to the json
 		SimpleJSON.JSONNode playerJson = playerEventData.Save(true);
@@ -320,6 +321,40 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// <param name="_eventID">The identifier of the event whose leaderboard we want.</param>
 	/// <param name="_callback">Callback action.</param>
 	override public void GlobalEvent_GetLeaderboard(int _eventID, ServerCallback _callback) {
+		/*
+		 EXPECTED RESPONSE:
+		 {
+		  l: [
+		    {
+		      name: "randomName72",
+		      pic: "randomPicUrl72",
+		      score: 1926
+		    },
+		    ...{
+		      name: "randomName469",
+		      pic: "randomPicUrl469",
+		      score: 1338
+		    },
+		    {
+		      name: "randomName205",
+		      pic: "randomPicUrl205",
+		      score: 1334
+		    },
+		    {
+		      name: "randomName474",
+		      pic: "randomPicUrl474",
+		      score: 1333
+		    }
+		  ],
+		  n: 500,
+		  u: {
+		    name: "randomName1",
+		    pic: "randomPicUrl1",
+		    score: 774
+		  }
+		}
+		*/
+
 		// Create return dictionary
 		ServerResponse res = new ServerResponse();
 
@@ -386,38 +421,15 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 				remainingScore -= score;
 				remainingContributors--;
 
-				// Randomly use social info or not to simulate anonymous logins
-				bool useSocialInfo = UnityEngine.Random.value < 0.5f;
-				GlobalEventUserData leaderboardEntry = null;
-				if(useSocialInfo) {
-					// Pick a random social info and consume it
-					FakeUserSocialInfo socialInfo = GetFakeSocialInfo();
-
-					// Create user data
-					leaderboardEntry = new GlobalEventUserData(
-						_eventID,
-						socialInfo.id,
-						score,
-						-1,	// Position will be initialized afterwards when the leaderboard is sorted
-						0
-					);
-
-					// Include social info
-					leaderboardEntry.name = socialInfo.name;
-					leaderboardEntry.pictureUrl = socialInfo.pictureUrl;
-				} else {
-					// Create user data with anonymous login data simulation
-					// Create user data
-					leaderboardEntry = new GlobalEventUserData(
-						_eventID,
-						UnityEngine.Random.Range(0, int.MaxValue).ToString(),
-						score,
-						-1,	// Position will be initialized afterwards when the leaderboard is sorted
-						0
-					);
-					leaderboardEntry.name = ANONYMOUS_NAMES.GetRandomValue() + " " + ANONYMOUS_ADJECTIVES.GetRandomValue();
-					leaderboardEntry.pictureUrl = "";	// This will show a placeholder (should)
-				}
+				// Create user data
+				GlobalEventUserData leaderboardEntry = new GlobalEventUserData(
+					_eventID,
+					"",	// Will be initialized with the social info (next instruction)
+					score,
+					-1,	// Position will be initialized afterwards when the leaderboard is sorted
+					0
+				);
+				InitSocialData(ref leaderboardEntry);
 
 				// Add it to the leaderboard
 				leaderboard.Add(leaderboardEntry);
@@ -454,21 +466,23 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		}
 
 		// Add player data to the json
-		SimpleJSON.JSONNode playerJson = playerEventData.Save(true);
+		SimpleJSON.JSONClass playerJson = new SimpleJSON.JSONClass();
+		playerJson.Add("score", playerEventData.score);
 		playerJson.Add("name", playerEventData.name);
 		playerJson.Add("pic", playerEventData.pictureUrl);
-		eventData.Add("playerData", playerJson);
+		eventData.Add("u", playerJson);
 
 		// Add leaderboard data to the json (if requested)
 		// Create a json array with every entry in the leaderboard
 		SimpleJSON.JSONArray leaderboardData = new SimpleJSON.JSONArray();
 		for(int i = 0; i < leaderboard.Count; i++) {
-			SimpleJSON.JSONNode entryData = leaderboard[i].Save(false, false, false);
+			SimpleJSON.JSONClass entryData = new SimpleJSON.JSONClass();
+			entryData.Add("score", leaderboard[i].score);
 			entryData.Add("name", leaderboard[i].name);
 			entryData.Add("pic", leaderboard[i].pictureUrl);
 			leaderboardData.Add(entryData);
 		}
-		eventData.Add("leaderboard", leaderboardData);
+		eventData.Add("l", leaderboardData);
 
 		// Add the total amount of participants
 		eventData.Add("n", Mathf.Min(leaderboard.Count, UnityEngine.Random.Range(1000f, 5000f)).ToString(JSON_FORMAT));
@@ -519,7 +533,9 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 				else {
 					// Should enter?
 					if(shouldBeOnTheLeaderboard) {
-						leaderboard.Add(new GlobalEventUserData(_eventID, userID, _score, -1, 0));
+						GlobalEventUserData newData = new GlobalEventUserData(_eventID, userID, _score, -1, 0);
+						InitSocialData(ref newData);	// Make sure it has social info
+						leaderboard.Add(newData);
 					} else {
 						// Nothing to do
 					}
@@ -590,7 +606,10 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
 		DelayedCall(() => _callback(null, res));
 	}
-	
+
+	//------------------------------------------------------------------------//
+	// UTILS																  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Auxiliar method to create a JSON object simulating an event reward data.
 	/// </summary>
@@ -606,6 +625,37 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		if(!string.IsNullOrEmpty(_sku)) reward.Add("sku", _sku);
 		if(_amount > 0f) reward.Add("amount", _amount.ToString(JSON_FORMAT));
 		return reward;
+	}
+
+	/// <summary>
+	/// Initialize the given event data with social info, if not already done.
+	/// Will randomly simulate Facebook data or Anonymous login data.
+	/// </summary>
+	/// <param name="_userData">User data to be modified.</param>
+	public void InitSocialData(ref GlobalEventUserData _userData) {
+		// If social info already initialized, do nothing
+		if(!string.IsNullOrEmpty(_userData.name)) return;
+
+		// Randomly use social info or not to simulate anonymous logins
+		bool anonymousLogin = UnityEngine.Random.value < 0.5f;
+		if(anonymousLogin) {
+			// Initialize user data with anonymous login data simulation
+			if(string.IsNullOrEmpty(_userData.userID)) {	// Keep user ID if already have one
+				_userData.userID = UnityEngine.Random.Range(0, int.MaxValue).ToString();
+			}
+			_userData.name = ANONYMOUS_NAMES.GetRandomValue() + " " + ANONYMOUS_ADJECTIVES.GetRandomValue();
+			_userData.pictureUrl = "";	// This will show a placeholder (should)
+		} else {
+			// Pick a random social info and consume it
+			FakeUserSocialInfo socialInfo = GetFakeSocialInfo();
+
+			// Initialize user data with social data simulation
+			if(string.IsNullOrEmpty(_userData.userID)) {	// Keep user ID if already have one
+				_userData.userID = socialInfo.id;
+			}
+			_userData.name = socialInfo.name;
+			_userData.pictureUrl = socialInfo.pictureUrl;
+		}
 	}
 
 	/// <summary>

@@ -16,16 +16,21 @@ using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 /// <summary>
 /// Load an image from a url and show a placeholder meanwhile.
-/// Has a small manager integrated to avoid having too many images loading at the same time.
 /// </summary>
 [RequireComponent(typeof(RawImage))]
 public class RemoteImageLoader : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private const int MAX_SIMULTANEOUS_LOADS = 3;
-	private static List<RemoteImageLoader> s_queue = new List<RemoteImageLoader>();
-	private static HashSet<RemoteImageLoader> s_loading = new HashSet<RemoteImageLoader>();
+	private const float REQUEST_TIMEOUT = 10f;	// Seconds
+
+	public enum State {
+		IDLE,
+		QUEUE_PENDING,
+		QUEUE,
+		LOADING,
+		POST_LOADING
+	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -36,11 +41,19 @@ public class RemoteImageLoader : MonoBehaviour {
 	[SerializeField] private Texture2D m_placeholderImage = null;
 	[SerializeField] private GameObject m_loadingPlaceholderPrefab = null;
 
-	// Internal
+	// Internal logic
+	private State m_state = State.IDLE;
+	public State state {
+		get { return m_state; }
+		set { ChangeState(value); }
+	}
+
+	// Internal refs
 	private RawImage m_targetImage = null;
 	private GameObject m_loadingPlaceholderInstance = null;
-	private bool m_queuePending = false;
 
+	// Others
+	private float m_timer = 0f;
 	private IEnumerator m_loadingCoroutine = null;
 	
 	//------------------------------------------------------------------------//
@@ -50,8 +63,10 @@ public class RemoteImageLoader : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Mark as dirty if we have a URL predefined
-		m_queuePending = !string.IsNullOrEmpty(m_url);
+		// Mark as queue pending if we have a URL predefined
+		if(!string.IsNullOrEmpty(m_url)) {
+			m_state = State.QUEUE_PENDING;
+		}
 
 		// Get target image
 		m_targetImage = GetComponent<RawImage>();
@@ -62,8 +77,42 @@ public class RemoteImageLoader : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// If dirty, load image
-		if(m_queuePending) {
+		if(m_state == State.QUEUE_PENDING) {
 			Load(m_url);
+		}
+	}
+
+	/// <summary>
+	/// Update call.
+	/// </summary>
+	private void Update() {
+		switch(m_state) {
+			case State.IDLE:
+			case State.QUEUE: {
+				// Nothing to do!
+			} break;
+
+			case State.QUEUE_PENDING: {
+				// Put into the queue
+				ChangeState(State.QUEUE);
+			} break;
+
+			case State.LOADING: {
+				// Check for timeout
+				m_timer += Time.unscaledDeltaTime;
+				if(m_timer >= REQUEST_TIMEOUT) {
+					// Cancel request and pull off the queue
+					ChangeState(State.IDLE);
+				}
+			} break;
+
+			case State.POST_LOADING: {
+				// Wait a couple of frames before going back to idle
+				m_timer += 1f;
+				if(m_timer >= 2) {
+					ChangeState(State.IDLE);
+				}
+			} break;
 		}
 	}
 
@@ -71,89 +120,107 @@ public class RemoteImageLoader : MonoBehaviour {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Load the image at the stored url.
-	/// If the component is disabled, the image will be loaded as soon as it is enabled.
-	/// </summary>
-	public void Load() {
-		Load(m_url);
-	}
-
-	/// <summary>
 	/// Load the image at the given url.
 	/// If the component is disabled, the image will be loaded as soon as it is enabled.
 	/// </summary>
 	/// <param name="_url">Image URL, no validation done.</param>
 	public void Load(string _url) {
+		// Do nothing if url is the same
+		if(m_url == _url) return;
+
 		// Store url
 		m_url = _url;
 
-		// If we're disabled, mark as dirty (image will be loaded the next time we get enabled)
+		// If we're disabled, mark as queue pending (image will be loaded the next time we get enabled)
 		if(!this.isActiveAndEnabled) {
-			m_queuePending = true;
+			ChangeState(State.QUEUE_PENDING);
 			return;
 		}
 
-		// If we have a coroutine in progress, cancel it
-		if(m_loadingCoroutine != null) {
-			// StopCoroutine throws a nasty error on the console, fixed in 5.6 (https://issuetracker.unity3d.com/issues/www-getting-error-message-coroutine-continue-failure-when-stopping-a-www-coroutine)
-			// Using StopAllCoroutines() in the meanwhile
-			//StopCoroutine(m_loadingCoroutine);
-			StopAllCoroutines();
-			m_loadingCoroutine = null;
+		// Otherwise put it straight to the queue
+		ChangeState(State.QUEUE);
+	}
 
-			// Remove ourselves from the queue and the loading set
-			s_queue.Remove(this);
-			s_loading.Remove(this);
+	/// <summary>
+	/// Change to a target state.
+	/// </summary>
+	/// <param name="_newState">New state.</param>
+	public void ChangeState(State _newState) {
+		// Actions to perform when leaving a state
+		switch(m_state) {
+			case State.LOADING: {
+				// If interrupting the normal flow, do some extra stuff
+				if(_newState != State.POST_LOADING) {
+					// If we have a coroutine in progress, cancel it
+					if(m_loadingCoroutine != null) {
+						StopCoroutine(m_loadingCoroutine);
+						m_loadingCoroutine = null;
+					}
+
+					// Remove ourselves from the manager
+					RemoteImageLoaderManager.Remove(this);
+				}
+
+				// Show image
+				ToggleImage(true);
+			} break;
+
+			case State.POST_LOADING: {
+				// Clear coroutine reference
+				m_loadingCoroutine = null;
+
+				// Remove ourselves from the manager
+				RemoteImageLoaderManager.Remove(this);
+			} break;
 		}
 
-		// Hide target image while loading
-		m_targetImage.color = Colors.transparentWhite;
+		// Save new state
+		m_state = _newState;
 
-		// Show loading placeholder
-		if(m_loadingPlaceholderPrefab != null) {
-			// If it's already instantiated, re-use it!
-			if(m_loadingPlaceholderInstance != null) {
-				m_loadingPlaceholderInstance.SetActive(true);
-			} else {
-				m_loadingPlaceholderInstance = GameObject.Instantiate<GameObject>(m_loadingPlaceholderPrefab, this.transform, false);
-				RectTransform rt = m_loadingPlaceholderInstance.transform as RectTransform;
-				//rt.anchorMin = Vector2.zero;
-				//rt.anchorMax = Vector2.one;
-				rt.anchoredPosition = Vector2.zero;
-			}
+		// Actions to perform when entering a state
+		switch(_newState) {
+			case State.QUEUE: {
+				// Optimization: If url is empty, directly show the placeholder (no need to add it to the queue)
+				if(string.IsNullOrEmpty(m_url)) {
+					// Assign new texture to the image
+					m_targetImage.texture = m_placeholderImage;
+
+					// Change state
+					ChangeState(State.POST_LOADING);
+				} else {
+					// Show loading
+					ToggleImage(false);
+
+					// Add ourselves to the manager
+					RemoteImageLoaderManager.Add(this);
+				}
+			} break;
+
+			case State.LOADING: {
+				// Start the loading async task
+				// See https://docs.unity3d.com/ScriptReference/WWW.LoadImageIntoTexture.html
+				m_loadingCoroutine = LoadImageAsync(m_url);
+				StartCoroutine(m_loadingCoroutine);
+
+				// Reset timer
+				m_timer = 0f;
+			} break;
+
+			case State.POST_LOADING: {
+				// Reset timer
+				m_timer = 0f;
+			} break;
 		}
-
-		// Add ourselves to the queue
-		s_queue.Add(this);
-		Debug.Log("<color=blue>Enqueuing " + _url + "</color>" + " <color=orange>(" + s_queue.Count + ", " + s_loading.Count + ")</color>");
-
-		// Check the queue
-		CheckQueue();
-
-		// No longer dirty ^^
-		m_queuePending = false;
 	}
 
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Starts the loading async task, doesn't check the queue.
-	/// </summary>
-	private void StartLoadingTask() {
-		// Just do it
-		// See https://docs.unity3d.com/ScriptReference/WWW.LoadImageIntoTexture.html
-		m_loadingCoroutine = LoadImageAsync(m_url);
-		StartCoroutine(m_loadingCoroutine);
-	}
-
-	/// <summary>
 	/// Async loading coroutine.
 	/// </summary>
 	/// <param name="_url">Image URL, no validation done.</param>
 	private IEnumerator LoadImageAsync(string _url) {
-		Debug.Log("<color=yellow>Starting " + _url + "</color>" + " <color=orange>(" + s_queue.Count + ", " + s_loading.Count + ")</color>");
-
 		// Aux vars
 		Texture2D tex = null;
 
@@ -163,70 +230,56 @@ public class RemoteImageLoader : MonoBehaviour {
 			tex = m_placeholderImage;
 		} else {
 			// Launch request
-			Debug.Log("<color=yellow>Starting WWW request</color>");
 			WWW www = new WWW(_url);
 			yield return www;
 
 			// Store image into a new texture
 			if(string.IsNullOrEmpty(www.error)) {
-				Debug.Log("<color=green>WWW Success!</color>");
 				tex = new Texture2D(4, 4, TextureFormat.DXT1, false);	// Size doesn't matter, will be changed by WWW
 				www.LoadImageIntoTexture(tex);
 			} else {
 				// Put placeholder instead
-				Debug.Log("<color=red>WWW Error!</color>");
 				tex = m_placeholderImage;
 			}
 		}
 
-		Debug.Log("<color=green>Received " + _url + "</color>" + " <color=orange>(" + s_queue.Count + ", " + s_loading.Count + ")</color>");
-
 		// Assign new texture to the image
 		m_targetImage.texture = tex;
 
-		// Loading finished, show back
-		m_targetImage.color = Colors.white;
-
-		// Hide loading placeholder!
-		if(m_loadingPlaceholderInstance != null) {
-			m_loadingPlaceholderInstance.SetActive(false);
-		}
-
-		// Wait a couple of frames before updating the queue
-
-		// Clear coroutine reference
-		Debug.Log("<color=green>FINISHED! " + _url + "</color>" + " <color=orange>(" + s_queue.Count + ", " + s_loading.Count + ")</color>");
-		m_loadingCoroutine = null;
-
-		// Free loading slot and check queue
-		s_loading.Remove(this);
-		CheckQueue();
+		// Change state
+		ChangeState(State.POST_LOADING);
 	}
 
-	//------------------------------------------------------------------------//
-	// MANAGER METHODS														  //
-	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Check whether we can start loading the first element in the queue.
+	/// Show/hide the image or the loading placeholder instead.
 	/// </summary>
-	private static void CheckQueue() {
-		// Nothing to do if queue is empty
-		if(s_queue.Count == 0) return;
+	/// <param name="_show">Show the image?.</param>
+	private void ToggleImage(bool _show) {
+		if(_show) {
+			// Show target image
+			m_targetImage.color = Colors.white;
 
-		// Nothing to do either if all loading slots are full
-		if(s_loading.Count >= MAX_SIMULTANEOUS_LOADS) return;
+			// Hide loading placeholder!
+			if(m_loadingPlaceholderInstance != null) {
+				m_loadingPlaceholderInstance.SetActive(false);
+			}
+		} else {
+			// Hide target image while loading
+			m_targetImage.color = Colors.transparentWhite;
 
-		Debug.Log("<color=orange>Checking queue: " + s_queue.Count + ", " + s_loading.Count + "</color>");
-
-		// Pop the first element in the queue into the loading collection
-		RemoteImageLoader loader = s_queue[0];
-		s_loading.Add(loader);
-		s_queue.RemoveAt(0);
-
-		// Start the loading process!
-		loader.StartLoadingTask();
-
-		// Check whether we can load next element in the queue
-		CheckQueue();
+			// Show loading placeholder
+			if(m_loadingPlaceholderPrefab != null) {
+				// If it's already instantiated, re-use it!
+				if(m_loadingPlaceholderInstance != null) {
+					m_loadingPlaceholderInstance.SetActive(true);
+				} else {
+					m_loadingPlaceholderInstance = GameObject.Instantiate<GameObject>(m_loadingPlaceholderPrefab, this.transform, false);
+					RectTransform rt = m_loadingPlaceholderInstance.transform as RectTransform;
+					//rt.anchorMin = Vector2.zero;
+					//rt.anchorMax = Vector2.one;
+					rt.anchoredPosition = Vector2.zero;
+				}
+			}
+		}
 	}
 }

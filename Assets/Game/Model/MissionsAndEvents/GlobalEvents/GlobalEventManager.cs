@@ -458,6 +458,40 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	/// <param name="_error">Error.</param>
 	/// <param name="_response">Response.</param>
 	private void OnEventLeaderboardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+		/*
+		 EXPECTED RESPONSE:
+		 {
+		  l: [
+		    {
+		      name: "randomName72",
+		      pic: "randomPicUrl72",
+		      score: 1926
+		    },
+		    ...{
+		      name: "randomName469",
+		      pic: "randomPicUrl469",
+		      score: 1338
+		    },
+		    {
+		      name: "randomName205",
+		      pic: "randomPicUrl205",
+		      score: 1334
+		    },
+		    {
+		      name: "randomName474",
+		      pic: "randomPicUrl474",
+		      score: 1333
+		    }
+		  ],
+		  n: 500,
+		  u: {
+		    name: "randomName1",
+		    pic: "randomPicUrl1",
+		    score: 774
+		  }
+		}
+		*/
+
 		// Error?
 		if(_error != null) {
 			// [AOC] Do something or just ignore?
@@ -484,8 +518,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 			GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
 			// Player data
-			if ( responseJson.ContainsKey("playerData") ) {
-				currentEventUserData.Load(responseJson["playerData"]);
+			if ( responseJson.ContainsKey("u") ) {
+				currentEventUserData.Load(responseJson["u"]);
 			}else{
 				currentEventUserData.Reset();
 			}
@@ -493,7 +527,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			// Update timestamps
 			DateTime now = serverTime;
 			instance.m_stateCheckTimestamp = now.AddSeconds(STATE_REFRESH_INTERVAL);
-			if(responseJson.ContainsKey("leaderboard")) {
+			if(responseJson.ContainsKey("l")) {
 				instance.m_leaderboardCheckTimestamp = now.AddSeconds(LEADERBOARD_REFRESH_INTERVAL);
 			}
 
