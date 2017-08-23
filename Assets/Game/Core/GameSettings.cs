@@ -37,6 +37,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 				m_defaultValues[BLOOD_ENABLED] = true;
 
 				m_defaultValues[SHOW_BIG_AMOUNT_CONFIRMATION_POPUP] = true;
+				m_defaultValues[SHOW_EXIT_RUN_CONFIRMATION_POPUP] = true;
 
 				m_defaultValues[NOTIFICATIONS_ENABLED] = true;
 			}
@@ -64,6 +65,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 
 	// UI Settings
 	public const string SHOW_BIG_AMOUNT_CONFIRMATION_POPUP = "SHOW_BIG_AMOUNT_CONFIRMATION_POPUP";	// bool, default true
+	public const string SHOW_EXIT_RUN_CONFIRMATION_POPUP = "SHOW_EXIT_RUN_CONFIRMATION_POPUP";	// bool, default true
 
 	// Other settings
 	public const string NOTIFICATIONS_ENABLED = "GAME_SETTINGS_NOTIFICATIONS_ENABLED";	// bool, default true
@@ -104,6 +106,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		Set(BLOOD_ENABLED, Get(BLOOD_ENABLED));
 
 		Set(SHOW_BIG_AMOUNT_CONFIRMATION_POPUP, Get(SHOW_BIG_AMOUNT_CONFIRMATION_POPUP));
+		Set(SHOW_EXIT_RUN_CONFIRMATION_POPUP, Get(SHOW_EXIT_RUN_CONFIRMATION_POPUP));
 	}
 
 	/// <summary>
