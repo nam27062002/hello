@@ -157,7 +157,8 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 		for(int i = 0; i < numPills; ++i) {
 			//Debug.Log("<color=green>Leaderboard " + i + " (" + evt.leaderboard[i].position + "): </color><color=white>" + evt.leaderboard[i].userID + "</color>");
 			// Super-special case: Is it the current player?
-			if(!playerFound && evt.leaderboard[i].userID == playerData.userID) {
+			//if(!playerFound && evt.leaderboard[i].userID == playerData.userID) {	// [AOC] No longer using user IDs
+			if(i == playerData.position) {
 				Debug.Log("<color=orange>Inserting player pill at " + i + "!</color>");
 				// Use special pill
 				pill = m_playerPill;
@@ -185,10 +186,9 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 				}
 
 				//Debug.Log("<color=red>Pill created at " + i + "!</color>");
+				// We got a pill! Initialize it
+				pill.InitWithData(evt.leaderboard[i]);
 			}
-
-			// We got a pill! Initialize it
-			pill.InitWithData(evt.leaderboard[i]);
 		}
 
 		// If player pill wasn't added, do it now!

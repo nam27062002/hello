@@ -558,8 +558,10 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 				}
 			}
 
-			// Simulate server delay
-			DelayedCall(() => _callback(null, null));
+			// Simulate server response and delay
+			ServerResponse res = new ServerResponse();
+			res["response"] = "success";	// [AOC] Check possible response values with Nacho
+			DelayedCall(() => _callback(null, res));
 		}
 	}
 
