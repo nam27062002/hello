@@ -54,7 +54,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 		GlobalEvent ge = GlobalEventManager.currentEvent;
 		if (ge != null) {
-			if (ge.isRewarAvailable) {
+			if (ge.isRewardAvailable) {
 				m_goToGlobalEventRewardScreen = true;
 			}
 		}

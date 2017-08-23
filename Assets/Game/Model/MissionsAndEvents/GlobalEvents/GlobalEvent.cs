@@ -74,6 +74,9 @@ public partial class GlobalEvent {
 
 	// Rewards
 	private RewardSlot m_topContributorsRewardSlot = null; // Percentage is differently used here!
+	public RewardSlot topContributorsRewardSlot {
+		get { return m_topContributorsRewardSlot; }
+	}
 
 	private int m_rewardLevel = -1; // how many rewards will get this user?
 	public int rewardLevel { get { return m_rewardLevel; } }
@@ -114,7 +117,7 @@ public partial class GlobalEvent {
 		get { return m_state == State.ACTIVE; }
 	}
 
-	public bool isRewarAvailable {
+	public bool isRewardAvailable {
 		get { return m_state == State.FINISHED; }
 	}
 
@@ -122,6 +125,11 @@ public partial class GlobalEvent {
 	private List<GlobalEventUserData> m_leaderboard = new List<GlobalEventUserData>();	// Sorted
 	public List<GlobalEventUserData> leaderboard {
 		get { return m_leaderboard; }
+	}
+
+	private int m_totalPlayers = 0;
+	public int totalPlayers {
+		get { return m_totalPlayers; }
 	}
 	
 	//------------------------------------------------------------------------//
@@ -326,6 +334,9 @@ public partial class GlobalEvent {
 		if(m_leaderboard.Count > numEntries) {
 			m_leaderboard.RemoveRange(numEntries, m_leaderboard.Count - numEntries);
 		}
+
+		// Store total amount of players
+		m_totalPlayers = _data["n"].AsInt;
 	}
 
 	public void UpdateRewardLevelFromJson(SimpleJSON.JSONNode _data) {

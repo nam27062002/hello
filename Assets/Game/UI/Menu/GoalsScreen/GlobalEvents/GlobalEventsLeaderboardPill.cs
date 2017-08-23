@@ -106,21 +106,11 @@ public class GlobalEventsLeaderboardPill : MonoBehaviour {
 
 		// Get social info
 		// [AOC] TODO!! Do it properly!
-		if(DebugSettings.useDebugServer) {
-			// Get social info
-			//Debug.Log("Requesting social info for id <color=red>" + _data.userID + "</color>");
-			GameServerManagerOffline.FakeUserSocialInfo socialInfo = (GameServerManager.SharedInstance as GameServerManagerOffline).GetFakeSocialInfo(_data.userID);
+		// Load picture
+		m_picture.Load(_data.pictureUrl);
 
-			// Load picture
-			m_picture.Load(socialInfo.pictureUrl);
-
-			// Set name
-			m_nameText.text = socialInfo.name;
-		} else {
-			// Leave picture empty
-			// Use id as name while social info not properly implemented
-			m_nameText.text = _data.userID;
-		}
+		// Set name
+		m_nameText.text = _data.name;	// [AOC] TODO!! Special characters support
 
 		// Set score
 		m_scoreText.text = StringUtils.FormatBigNumber(_data.score);

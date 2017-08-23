@@ -28,6 +28,7 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed members
+	[SerializeField] private Localizer m_titleText = null;
 	[SerializeField] private ScrollRect m_scrollList = null;
 	[Space]
 	[SerializeField] private GameObject m_pillPrefab = null;
@@ -105,6 +106,9 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 		// Get current event
 		GlobalEvent evt = GlobalEventManager.currentEvent;
 		if(evt == null) return;
+
+		// Title
+		if(m_titleText != null) m_titleText.Localize(m_titleText.tid, StringUtils.FormatNumber(m_maxPills));
 
 		// If pills list not yet initialized, do it now!
 		if(m_pills == null) {
@@ -249,9 +253,9 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 		// Set content size
 		m_scrollList.content.sizeDelta = new Vector2(m_scrollList.content.sizeDelta.x, deltaY + pillSize.y/2f + m_listPadding);	// delta is pointing to where the next pill should be placed
 
-		// Launch animation?
-		m_scrollList.verticalNormalizedPosition = 2f;
-		m_scrollList.ScrollToPositionDelayedFrames(m_scrollList.normalizedPosition, 1);
+		// Launch animation
+		m_scrollList.verticalNormalizedPosition = 1f;
+		m_scrollList.GetComponent<ShowHideAnimator>().RestartShow();
 	}
 
 	/// <summary>

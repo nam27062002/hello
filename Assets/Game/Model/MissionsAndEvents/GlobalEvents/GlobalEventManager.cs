@@ -196,14 +196,24 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 	/// <summary>
 	/// Requests the current event leaderboard.
+	/// If not enough time has passed since the last update, cached data will be returned (unless force flag is active).
 	/// </summary>
-	public static void RequestCurrentEventLeaderboard() {
+	/// <param name="_force">Whether to force the request or accept cached data.</param>
+	public static void RequestCurrentEventLeaderboard(bool _force) {
 		// We need a valid event
 		if(instance.m_currentEvent == null) return;
 
-		// Just do it
-		Debug.Log("<color=magenta>EVENT LEADERBOARD</color>");
-		GameServerManager.SharedInstance.GlobalEvent_GetLeaderboard(instance.m_currentEvent.id, instance.OnEventLeaderboardResponse);
+		// If leaderboard refresh interval has expired, request new data to the server
+		DateTime now = serverTime;
+		if(instance.m_leaderboardCheckTimestamp < now || _force) {
+			// Do it
+			Debug.Log("<color=magenta>EVENT LEADERBOARD</color>");
+			GameServerManager.SharedInstance.GlobalEvent_GetLeaderboard(instance.m_currentEvent.id, instance.OnEventLeaderboardResponse);
+		} else {
+			// Notify game that leaderboard data is ready
+			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
+			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
+		}
 	}
 
 	/// <summary>
@@ -423,7 +433,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				Debug.Log("<color=purple>EVENT STATE</color>\n" + responseJson.ToString(4));
 				m_currentEvent.UpdateFromJson(responseJson);
 
-				if (m_currentEvent.isRewarAvailable) {
+				if (m_currentEvent.isRewardAvailable) {
 					GlobalEventManager.RequestCurrentEventRewards();
 				}
 
@@ -468,7 +478,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			Debug.Log("<color=purple>EVENT LEADERBOARD</color>\n" + responseJson.ToString(4));
 			m_currentEvent.UpdateLeaderboardFromJson(responseJson);
 
-			if (m_currentEvent.isRewarAvailable) {
+			if (m_currentEvent.isRewardAvailable) {
 				GlobalEventManager.RequestCurrentEventRewards();
 			}
 

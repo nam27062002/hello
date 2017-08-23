@@ -27,7 +27,10 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+	// Anonymous names generator
+	public static readonly string[] ANONYMOUS_NAMES = { "Drogo", "Hadri", "Helen", "Algerion", "Mike", "Mark", "Dave", "Natch", "Diggy", "Reuben", "Froggy", "Altaïr", "Ezzo", "Nate", "Mario", "Luigi", "Lara" };
+	public static readonly string[] ANONYMOUS_ADJECTIVES = { "the Great", "the Fat", "the Epic", "the Fierce", "the Furious", "the Fast", "the Sloppy", "the Lazy", "the Superstar", "the Red", "the Blue", "the Green", "the Mad", "the Crazy", "the Black", "the White", "the Gray", "the Slow" };
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -262,7 +265,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			eventData.Add("rewards", rewardsArray);
 
 			// Top percentile reward
-			eventData.Add("topReward", CreateEventRewardData(0.1f, "pet", "pet_24", -1));
+			eventData.Add("topReward", CreateEventRewardData(0.01f, "pet", "pet_24", -1));
 
 			// Bonuses
 			eventData.Add("bonusDragon", "dragon_reptile");
@@ -301,7 +304,10 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		GlobalEventUserData playerEventData = UsersManager.currentUser.GetGlobalEventData(_eventID);
 
 		// Add player data to the json
-		eventData.Add("playerData", playerEventData.Save(true));
+		SimpleJSON.JSONNode playerJson = playerEventData.Save(true);
+		playerJson.Add("name", playerEventData.name);
+		playerJson.Add("pic", playerEventData.pictureUrl);
+		eventData.Add("playerData", playerJson);
 
 		// Store response and simulate server delay
 		res["response"] = eventData.ToString();
@@ -380,17 +386,38 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 				remainingScore -= score;
 				remainingContributors--;
 
-				// Pick a random social info and consume it
-				FakeUserSocialInfo socialInfo = GetFakeSocialInfo();
+				// Randomly use social info or not to simulate anonymous logins
+				bool useSocialInfo = UnityEngine.Random.value < 0.5f;
+				GlobalEventUserData leaderboardEntry = null;
+				if(useSocialInfo) {
+					// Pick a random social info and consume it
+					FakeUserSocialInfo socialInfo = GetFakeSocialInfo();
 
-				// Create user data
-				GlobalEventUserData leaderboardEntry = new GlobalEventUserData(
-					_eventID,
-					socialInfo.id,
-					score,
-					-1,	// Position will be initialized afterwards when the leaderboard is sorted
-					0
-				);
+					// Create user data
+					leaderboardEntry = new GlobalEventUserData(
+						_eventID,
+						socialInfo.id,
+						score,
+						-1,	// Position will be initialized afterwards when the leaderboard is sorted
+						0
+					);
+
+					// Include social info
+					leaderboardEntry.name = socialInfo.name;
+					leaderboardEntry.pictureUrl = socialInfo.pictureUrl;
+				} else {
+					// Create user data with anonymous login data simulation
+					// Create user data
+					leaderboardEntry = new GlobalEventUserData(
+						_eventID,
+						UnityEngine.Random.Range(0, int.MaxValue).ToString(),
+						score,
+						-1,	// Position will be initialized afterwards when the leaderboard is sorted
+						0
+					);
+					leaderboardEntry.name = ANONYMOUS_NAMES.GetRandomValue() + " " + ANONYMOUS_ADJECTIVES.GetRandomValue();
+					leaderboardEntry.pictureUrl = "";	// This will show a placeholder (should)
+				}
 
 				// Add it to the leaderboard
 				leaderboard.Add(leaderboardEntry);
@@ -427,15 +454,24 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		}
 
 		// Add player data to the json
-		eventData.Add("playerData", playerEventData.Save(true));
+		SimpleJSON.JSONNode playerJson = playerEventData.Save(true);
+		playerJson.Add("name", playerEventData.name);
+		playerJson.Add("pic", playerEventData.pictureUrl);
+		eventData.Add("playerData", playerJson);
 
 		// Add leaderboard data to the json (if requested)
 		// Create a json array with every entry in the leaderboard
 		SimpleJSON.JSONArray leaderboardData = new SimpleJSON.JSONArray();
 		for(int i = 0; i < leaderboard.Count; i++) {
-			leaderboardData.Add(leaderboard[i].Save(false, false, false));
+			SimpleJSON.JSONNode entryData = leaderboard[i].Save(false, false, false);
+			entryData.Add("name", leaderboard[i].name);
+			entryData.Add("pic", leaderboard[i].pictureUrl);
+			leaderboardData.Add(entryData);
 		}
 		eventData.Add("leaderboard", leaderboardData);
+
+		// Add the total amount of participants
+		eventData.Add("n", Mathf.Min(leaderboard.Count, UnityEngine.Random.Range(1000f, 5000f)).ToString(JSON_FORMAT));
 
 		// Store response and simulate server delay
 		res["response"] = eventData.ToString();
