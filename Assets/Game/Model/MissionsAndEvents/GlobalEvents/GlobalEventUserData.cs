@@ -31,6 +31,10 @@ public class GlobalEventUserData {
 	public long endTimestamp = 0;		 // End time
 	public bool rewardCollected = false; // User collected the reward 
 
+	// Social info - probably will go elsewhere in the future
+	public string name = "";
+	public string pictureUrl = "";
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -82,8 +86,6 @@ public class GlobalEventUserData {
 		rewardCollected = _rewardCollected;
 	}
 
-
-
 	//------------------------------------------------------------------------//
 	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//
@@ -92,6 +94,8 @@ public class GlobalEventUserData {
 	/// </summary>
 	public void Reset(){
 		Init(-1, "", 0, -1, 0, false);
+		name = "";
+		pictureUrl = "";
 	}
 
 	/// <summary>
@@ -103,9 +107,13 @@ public class GlobalEventUserData {
 		if(_data.ContainsKey("eventId")) eventID = _data["eventId"].AsInt;	// Event ID is optional
 		userID = _data["userId"];
 		score = _data["score"].AsInt;
-		if(_data.ContainsKey("position")) position = _data["position"].AsInt;
+		if(_data.ContainsKey("rank")) position = _data["rank"].AsInt;
 		if(_data.ContainsKey("endTimestamp")) endTimestamp = _data["endTimestamp"].AsLong;
 		if(_data.ContainsKey("rewardCollected")) rewardCollected = _data["rewardCollected"].AsBool;
+
+		// Social info
+		if(_data.ContainsKey("name")) name = _data["name"];
+		if(_data.ContainsKey("pic")) pictureUrl = _data["pic"];
 	}
 
 	/// <summary>
@@ -113,14 +121,14 @@ public class GlobalEventUserData {
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
 	/// <param name="_includeEventId">Whether to save the event ID as well.</param>
-	public SimpleJSON.JSONNode Save(bool _includeEventID, bool includePosition = true, bool includeRewardCollected = true) {
+	public SimpleJSON.JSONNode Save(bool _includeEventID, bool _includePosition = true, bool _includeRewardCollected = true) {
 		// Create a new json object for this event
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 		if(_includeEventID) data.Add("eventId", eventID.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		data.Add("userId", userID);
 		data.Add("score", score.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		if ( includePosition ) data.Add("position", position.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		if (includeRewardCollected) data.Add("rewardCollected", rewardCollected);
+		if(_includePosition) data.Add("rank", position.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		if(_includeRewardCollected) data.Add("rewardCollected", rewardCollected);
 		return data;
 	}
 }
