@@ -120,19 +120,14 @@ public class RemoteImageLoader : MonoBehaviour {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Load the image at the stored url.
-	/// If the component is disabled, the image will be loaded as soon as it is enabled.
-	/// </summary>
-	public void Load() {
-		Load(m_url);
-	}
-
-	/// <summary>
 	/// Load the image at the given url.
 	/// If the component is disabled, the image will be loaded as soon as it is enabled.
 	/// </summary>
 	/// <param name="_url">Image URL, no validation done.</param>
 	public void Load(string _url) {
+		// Do nothing if url is the same
+		if(m_url == _url) return;
+
 		// Store url
 		m_url = _url;
 
