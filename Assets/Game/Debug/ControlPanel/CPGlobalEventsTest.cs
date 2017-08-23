@@ -156,7 +156,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 				}
 
 				// Request event data
-				GlobalEventManager.RequestCurrentEventLeaderboard();
+				GlobalEventManager.RequestCurrentEventLeaderboard(true);
 			}
 		);
 	}
@@ -237,7 +237,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 
 		// [AOC] TODO!! Separate into different buttons
 		if(_leaderboard) {
-			GlobalEventManager.RequestCurrentEventLeaderboard();
+			GlobalEventManager.RequestCurrentEventLeaderboard(true);
 		}
 	}
 

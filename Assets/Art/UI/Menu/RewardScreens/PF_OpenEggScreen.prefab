@@ -140,7 +140,6 @@ GameObject:
   - component: {fileID: 11429674}
   - component: {fileID: 11419772}
   - component: {fileID: 114392117346052460}
-  - component: {fileID: 114156402052431506}
   m_Layer: 5
   m_Name: PF_OpenEggScreen
   m_TagString: Untagged
@@ -1066,6 +1065,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224000012326202346}
   - component: {fileID: 114000011555794320}
+  - component: {fileID: 114586813670047738}
   m_Layer: 5
   m_Name: FinalPanel
   m_TagString: Untagged
@@ -4228,22 +4228,6 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
---- !u!114 &114156402052431506
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 164792}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 647d42d5f2c2143299f6c5fe086b2be9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnBackButton:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
 --- !u!114 &114165135682229932
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6017,6 +6001,33 @@ MonoBehaviour:
   m_tid: 
   m_caseType: 0
   m_replacements: []
+--- !u!114 &114586813670047738
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012258613916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cb311cd3ec894a7fb34b8ac4a8a3af9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnBackButton:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114469534589499244}
+        m_MethodName: OnBackButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!114 &114591403712121158
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10892,7 +10903,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 1687.6156, y: 0}
+  m_AnchoredPosition: {x: 1613.0525, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000013856595366
