@@ -7,11 +7,13 @@ public class QuitPlayBackButtonHandler : BackButtonHandler {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	private void OnEnable() {
-		Register();
+		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, Register);
+		Messenger.AddListener(GameEvents.GAME_ENDED, Unregister);
 	}
 
 	private void OnDisable() {
-		Unregister();
+		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, Register);
+		Messenger.RemoveListener(GameEvents.GAME_ENDED, Unregister);
 	}
 
 	public override void Trigger() {
