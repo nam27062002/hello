@@ -52,7 +52,7 @@ public enum GameEvents {
     INTOSPACE_TOGGLED,          // params: bool _activated
     BREAK_OBJECT_BIGGER_DRAGON, // no params
 	BREAK_OBJECT_NEED_TURBO,	// no params
-    DARK_ZONE_TOGGLE,           // params: bool Enter / Leave
+    DARK_ZONE_TOGGLE,           // params: bool _enter / _exit
 
     // Entity events
     ENTITY_EATEN,				// params: Transform _entity, Reward _reward
