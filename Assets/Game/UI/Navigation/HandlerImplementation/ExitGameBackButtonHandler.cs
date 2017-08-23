@@ -16,7 +16,6 @@ public class ExitGameBackButtonHandler : BackButtonHandler {
 	}
 
 	public override void Trigger() {
-		//TODO: add a confirmation popup
-		Application.Quit();
+		PopupManager.OpenPopupInstant(PopupExitGameConfirmation.PATH);
 	}
 }
