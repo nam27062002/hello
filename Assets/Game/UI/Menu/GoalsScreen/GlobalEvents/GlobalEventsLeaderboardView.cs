@@ -145,6 +145,9 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 			m_playerPill.GetComponent<Button>().onClick.AddListener(OnPlayerPillClick);
 		}
 
+		// Initialize player pill data before the rest
+		m_playerPill.InitWithData(playerData);
+
 		// Remove player pill from the list, we will insert it at the proper position when it matters
 		m_pills.Remove(m_playerPill);
 
@@ -190,14 +193,10 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 
 		// If player pill wasn't added, do it now!
 		if(!playerFound) {
-			//Debug.Log("<color=orange>Player wasnt found! Inserting player pill at " + numPills + "!</color>");
-
 			// Insert at the right position
+			//Debug.Log("<color=orange>Player wasnt found! Inserting player pill at " + numPills + "!</color>");
 			m_pills.Insert(numPills, m_playerPill);
 			numPills++;
-
-			// Intiialize!
-			m_playerPill.InitWithData(playerData);
 		}
 
 		// Loop all the pills to put them into position and hide those not used

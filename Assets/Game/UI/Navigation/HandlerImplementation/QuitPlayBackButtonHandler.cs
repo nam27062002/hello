@@ -17,9 +17,12 @@ public class QuitPlayBackButtonHandler : BackButtonHandler {
 	}
 
 	public override void Trigger() {
-		//TODO: add a confirmation popup
-		if (InstanceManager.gameSceneController != null) {
-			InstanceManager.gameSceneController.EndGame(true);
+		if (GameSettings.Get(GameSettings.SHOW_EXIT_RUN_CONFIRMATION_POPUP)) {
+			PopupManager.OpenPopupInstant(PopupExitRunConfirmation.PATH);
+		} else {
+			if (InstanceManager.gameSceneController != null) {
+				InstanceManager.gameSceneController.EndGame(true);
+			}
 		}
 	}
 }

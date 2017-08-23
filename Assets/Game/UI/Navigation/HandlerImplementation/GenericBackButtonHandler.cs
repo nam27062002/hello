@@ -19,10 +19,6 @@ public class GenericBackButtonHandler : BackButtonHandler {
 		Unregister();
 	}
 
-	private void OnDestroy() {
-		Unregister();
-	}
-
 	public override void Trigger() {
 		OnBackButton.Invoke();
 	}
