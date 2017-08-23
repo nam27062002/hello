@@ -1255,6 +1255,8 @@ AnimatorStateMachine:
     data:
       first: {fileID: 1107762313643754276}
       second:
+      - {fileID: 1109243796097354160}
+      - {fileID: 1109651680886061350}
       - {fileID: 1109253734597877278}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: 624, y: -72, z: 0}
@@ -2050,6 +2052,25 @@ AnimatorTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 1
+--- !u!1109 &1109243796097354160
+AnimatorTransition:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 
+  m_Conditions:
+  - m_ConditionMode: 2
+    m_ConditionEvent: special
+    m_EventTreshold: 0
+  - m_ConditionMode: 1
+    m_ConditionEvent: swim
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: 110258430}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 1
 --- !u!1109 &1109253734597877278
 AnimatorTransition:
   m_ObjectHideFlags: 1
@@ -2093,6 +2114,25 @@ AnimatorTransition:
     m_ConditionEvent: special
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 1107762313643754276}
+  m_DstState: {fileID: 0}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 1
+--- !u!1109 &1109651680886061350
+AnimatorTransition:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 
+  m_Conditions:
+  - m_ConditionMode: 2
+    m_ConditionEvent: special
+    m_EventTreshold: 0
+  - m_ConditionMode: 1
+    m_ConditionEvent: move
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 110700636}
   m_DstState: {fileID: 0}
   m_Solo: 0
   m_Mute: 0
