@@ -331,7 +331,7 @@ if $BUILD_ANDROID; then
   mkdir -p "${OUTPUT_DIR}/apks/"
 
   # Do it!
-  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB}"
+  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB} -code ${PROJECT_CODE_NAME}"
 
   # Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
 	print_builder "BUILDER: Reading internal android build version number";
@@ -345,7 +345,7 @@ if $BUILD_ANDROID; then
     PACKAGE_NAME="$(cat bundleIdentifier.txt)"
     rm -f "bundleIdentifier.txt"
     OBB_FILE="main.${ANDROID_BUILD_VERSION}.${PACKAGE_NAME}.obb"
-    mv "${PROJECT_CODE_NAME}.main.obb" "${OBB_FILE}"
+    mv "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.main.obb" "${OUTPUT_DIR}/apks/${OBB_FILE}"
   fi
 fi
 

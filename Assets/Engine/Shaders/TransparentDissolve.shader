@@ -8,6 +8,7 @@ Shader "Hungry Dragon/Transparent Dissolve"
 		_DissolveTex("Dissolve Texture", 2D) = "white" {}
 		_EmissionSaturation("Emission Saturation", float) = 1.0
 		_OpacitySaturation("Opacity Saturation", float) = 1.0
+		_DissolveStep("DissolveStep.xy", Vector) = (0.0, 1.0, 0.0, 0.0)
 
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest", Float) = 2.0
 		[Enum(Additive, 1, AlphaBlend, 10)] _BlendMode("Blend mode", Float) = 10
@@ -38,6 +39,7 @@ Shader "Hungry Dragon/Transparent Dissolve"
 
 				float _EmissionSaturation;
 				float _OpacitySaturation;
+				float4 _DissolveStep;
 
 				struct appdata_t {
 					float4 vertex : POSITION;
@@ -68,7 +70,7 @@ Shader "Hungry Dragon/Transparent Dissolve"
 					float4 t2 = tex2D(_DissolveTex, i.uv);
 
 					float ramp = -1.0 + (i.dissolve * 2.0);
-					float4 col = float4(t1.xyz * i.color.xyz * _EmissionSaturation,clamp(t1.w * (t2.x + ramp) * _OpacitySaturation * i.color.w,0.0,1.0));
+					float4 col = float4(t1.xyz * i.color.xyz * _EmissionSaturation,clamp(t1.w * smoothstep(_DissolveStep.x, _DissolveStep.y, t2.x + ramp) * _OpacitySaturation * i.color.w,0.0,1.0));
 
 					return col;
 				}

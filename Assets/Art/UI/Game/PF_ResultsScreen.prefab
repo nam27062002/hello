@@ -94,6 +94,8 @@ GameObject:
   m_Component:
   - component: {fileID: 22452400}
   - component: {fileID: 11429448}
+  - component: {fileID: 114498988514180934}
+  - component: {fileID: 114403691022336170}
   m_Layer: 5
   m_Name: PF_ResultsScreen
   m_TagString: Untagged
@@ -4712,6 +4714,8 @@ MonoBehaviour:
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -5499,6 +5503,8 @@ MonoBehaviour:
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -5784,6 +5790,8 @@ MonoBehaviour:
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -6833,6 +6841,8 @@ MonoBehaviour:
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -7898,6 +7908,8 @@ MonoBehaviour:
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -7937,6 +7949,33 @@ MonoBehaviour:
   m_tid: TID_CHEST_TIME_REMAIN
   m_caseType: 0
   m_replacements: []
+--- !u!114 &114403691022336170
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 124242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cb311cd3ec894a7fb34b8ac4a8a3af9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnBackButton:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11429448}
+        m_MethodName: OnGoToMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!114 &114405348656996142
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8254,6 +8293,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114498988514180934
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 124242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 098f56e36056b4f1396b8d1b74e110a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetScreen: -1
 --- !u!114 &114508359905903318
 MonoBehaviour:
   m_ObjectHideFlags: 1

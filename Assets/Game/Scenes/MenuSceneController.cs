@@ -140,6 +140,10 @@ public class MenuSceneController : SceneController {
 		PetsScreenController petsScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();
 		StartCoroutine(petsScreen.InstantiatePillsAsync());
 
+		// Request latest global event data
+		GlobalEventManager.RequestCurrentEventData();
+
+		// Test mode
 		yield return new WaitForSeconds(5.0f);
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
 		{
