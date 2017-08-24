@@ -6,9 +6,11 @@ public class HazardFistMotion : MonoBehaviour {
 
 	[SerializeField] private Renderer m_staticColumn;
 	[SerializeField] private Renderer m_fist;
-
+	[SeparatorAttribute]
 	[SerializeField] private float m_distance;
 	[SerializeField] private float m_speed;
+	[SeparatorAttribute]
+	[SerializeField] ParticleData m_hitGroundParticles;
 
 	// Size
 	private float m_initialPosY;
@@ -22,6 +24,9 @@ public class HazardFistMotion : MonoBehaviour {
 	// Motion
 	private float m_realDistance;
 	private float m_time;
+
+	//
+	private bool m_spawnParticles;
 
 
 	//
@@ -59,6 +64,9 @@ public class HazardFistMotion : MonoBehaviour {
 
 			m_staticColumnTransform.localScale = m_staticColumnTransform.localScale.x * (new Vector3(scale, yScale, scale));
 
+			m_hitGroundParticles.CreatePool();
+			m_spawnParticles = true;
+
 			m_time = 0f;
 		}
 	}
@@ -67,7 +75,8 @@ public class HazardFistMotion : MonoBehaviour {
 	void Update() {
 		if (m_speed > 0) {
 			m_time += Time.deltaTime;
-			Vector3 position = Vector3.up * ((Mathf.Sin(m_time * m_speed) - 1) * m_realDistance * 0.5f);
+			float sinValue = (Mathf.Sin(m_time * m_speed) - 1);
+			Vector3 position = Vector3.up * (sinValue * m_realDistance * 0.5f);
 
 			m_fistTransform.localPosition = position;
 			for (int i = 0; i < m_mobileColumnTransforms.Length; ++i) {
@@ -76,6 +85,15 @@ public class HazardFistMotion : MonoBehaviour {
 					p.y = m_initialPosY;
 				}
 				m_mobileColumnTransforms[i].localPosition = p;
+			}
+
+			if (sinValue < -1.9f) {
+				if (m_spawnParticles) {
+					m_hitGroundParticles.Spawn(m_fistTransform.position);
+					m_spawnParticles = false;
+				}
+			} else if (sinValue > -0.15f) {
+				m_spawnParticles = true;
 			}
 		}
 	}

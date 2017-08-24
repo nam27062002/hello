@@ -54,9 +54,28 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 			m_pills.Add(pill);
 		}
 
+		// Focus curent language
+		//SelectCurrentLanguage(false);
+
 		// Disable google play group if not available
 		m_googlePlayGroup.SetActive(false);	// [AOC] TODO!!
     }
+
+	/// <summary>
+	/// Focus the currently selected language.
+	/// </summary>
+	private void SelectCurrentLanguage(bool _animate) {
+		// Scroll to initial language pill
+		string currentLangSku = LocalizationManager.SharedInstance.GetCurrentLanguageSKU();
+		for(int i = 0; i < m_pills.Count; i++) {
+			// Is it the selected one?
+			if(m_pills[i].def.sku == currentLangSku) {
+				// Yes! Snap to it and break the loop
+				m_languageScrollList.SelectPoint(m_pills[i].GetComponent<ScrollRectSnapPoint>(), _animate);
+				break;
+			}
+		}
+	}
 
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
@@ -89,15 +108,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	/// The popup has just finished open.
 	/// </summary>
 	public void OnOpenPostAnimation() {
-		// Scroll to initial language pill
-		string currentLangSku = LocalizationManager.SharedInstance.GetCurrentLanguageSKU();
-		for(int i = 0; i < m_pills.Count; i++) {
-			// Is it the selected one?
-			if(m_pills[i].def.sku == currentLangSku) {
-				// Yes! Snap to it and break the loop
-				m_languageScrollList.SelectPoint(m_pills[i].GetComponent<ScrollRectSnapPoint>(), false);
-				break;
-			}
-		}
+		SelectCurrentLanguage(true);
+		//UbiBCN.CoroutineManager.DelayedCallByFrames(() => { SelectCurrentLanguage(true); }, 5);
 	}
 }
