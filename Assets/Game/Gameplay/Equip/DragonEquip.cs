@@ -385,8 +385,8 @@ public class DragonEquip : MonoBehaviour {
 				petPreview.sku = _petSku;
 				petPreview.SetAnim(MenuPetPreview.Anim.IN);
 
-
-
+				// Show rarity glow by default
+				petPreview.ToggleRarityGlow(true);
 			} else {
 				// In game mode, adjust to dragon's scale factor
 				DragonPlayer player = GetComponent<DragonPlayer>();

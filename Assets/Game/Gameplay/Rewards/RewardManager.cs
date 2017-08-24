@@ -218,18 +218,27 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
     // Counter for the amount of times the player has entered water during the session
     private int m_enterWaterAmount = 0;
-    public static int enterWaterAmount
-    {
+    public static int enterWaterAmount {
         get { return instance.m_enterWaterAmount; }
     }
 
     // Counter for the amount of times the player has entered space during the session
     private int m_enterSpaceAmount = 0;
-    public static int enterSpaceAmount
-    {
+    public static int enterSpaceAmount {
         get { return instance.m_enterSpaceAmount; }
     }
 
+    // Counter for the amount of times the fury fire rush is triggered during the session
+    private int m_furyFireRushAmount = 0;
+    public static int furyFireRushAmount {
+        get { return instance.m_furyFireRushAmount; }
+    }
+
+    // Counter for the amount of times the fury superfire rush is triggered during the session
+    private int m_furySuperfireRushAmount = 0;
+    public static int furySuperFireRushAmount {
+        get { return instance.m_furySuperfireRushAmount; }
+    }
 
     // Shortcuts
     private GameSceneControllerBase m_sceneController;
@@ -396,6 +405,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		instance.m_deathType = DamageType.NORMAL;
         instance.m_enterWaterAmount = 0;
         instance.m_enterSpaceAmount = 0;
+        instance.m_furyFireRushAmount = 0;
+        instance.m_furySuperfireRushAmount = 0;
     }
 
 	/// <summary>
@@ -405,7 +416,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	public static void ApplyEndOfGameRewards() {
 		// Coins, PC and XP are applied in real time during gameplay
 		// Apply the rest of rewards
-		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)instance.CalculateSurvivalBonus(), false);
+		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)instance.CalculateSurvivalBonus(), false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 	}
 
 	//------------------------------------------------------------------//
@@ -434,14 +445,14 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
 		// Coins
 		instance.m_coins += _reward.coins;
-		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)_reward.coins, false);
+		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)_reward.coins, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 
 		// PC
 		instance.m_pc += _reward.pc;
-		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)_reward.pc, false);
+		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)_reward.pc, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 
-		// XP
-		InstanceManager.player.data.progression.AddXp(_reward.xp, true);
+        // XP
+        InstanceManager.player.data.progression.AddXp(_reward.xp, true);
 		instance.m_xp += _reward.xp;
 
 		// Global notification (i.e. to show feedback)
@@ -642,10 +653,23 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	private void OnFuryRush(bool toggle, DragonBreathBehaviour.Type type )
 	{
 		Messenger.Broadcast<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, currentScoreMultiplierData, m_currentFireRushMultiplier);
-
+        
 		// [AOC] Update tracking vars
 		instance.m_maxScoreMultiplier = Mathf.Max(instance.m_maxScoreMultiplier, currentScoreMultiplier);
 		instance.m_maxBaseScoreMultiplier = Mathf.Max(instance.m_maxBaseScoreMultiplier, currentScoreMultiplierData.multiplier);
+
+        // We need to increase the amount of times the fire rush is triggered by type
+        if (toggle) {
+            switch (type) {
+                case DragonBreathBehaviour.Type.Mega:
+                    instance.m_furySuperfireRushAmount++;
+                    break;
+
+                case DragonBreathBehaviour.Type.Standard:
+                    instance.m_furyFireRushAmount++;
+                    break;
+            }
+        }
 	}
 
 	/// <summary>

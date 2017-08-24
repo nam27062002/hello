@@ -196,14 +196,24 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 	/// <summary>
 	/// Requests the current event leaderboard.
+	/// If not enough time has passed since the last update, cached data will be returned (unless force flag is active).
 	/// </summary>
-	public static void RequestCurrentEventLeaderboard() {
+	/// <param name="_force">Whether to force the request or accept cached data.</param>
+	public static void RequestCurrentEventLeaderboard(bool _force) {
 		// We need a valid event
 		if(instance.m_currentEvent == null) return;
 
-		// Just do it
-		Debug.Log("<color=magenta>EVENT LEADERBOARD</color>");
-		GameServerManager.SharedInstance.GlobalEvent_GetLeaderboard(instance.m_currentEvent.id, instance.OnEventLeaderboardResponse);
+		// If leaderboard refresh interval has expired, request new data to the server
+		DateTime now = serverTime;
+		if(instance.m_leaderboardCheckTimestamp < now || _force) {
+			// Do it
+			Debug.Log("<color=magenta>EVENT LEADERBOARD</color>");
+			GameServerManager.SharedInstance.GlobalEvent_GetLeaderboard(instance.m_currentEvent.id, instance.OnEventLeaderboardResponse);
+		} else {
+			// Notify game that leaderboard data is ready
+			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
+			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
+		}
 	}
 
 	/// <summary>
@@ -423,7 +433,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				Debug.Log("<color=purple>EVENT STATE</color>\n" + responseJson.ToString(4));
 				m_currentEvent.UpdateFromJson(responseJson);
 
-				if (m_currentEvent.isRewarAvailable) {
+				if (m_currentEvent.isRewardAvailable) {
 					GlobalEventManager.RequestCurrentEventRewards();
 				}
 
@@ -448,6 +458,40 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	/// <param name="_error">Error.</param>
 	/// <param name="_response">Response.</param>
 	private void OnEventLeaderboardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+		/*
+		 EXPECTED RESPONSE:
+		 {
+		  l: [
+		    {
+		      name: "randomName72",
+		      pic: "randomPicUrl72",
+		      score: 1926
+		    },
+		    ...{
+		      name: "randomName469",
+		      pic: "randomPicUrl469",
+		      score: 1338
+		    },
+		    {
+		      name: "randomName205",
+		      pic: "randomPicUrl205",
+		      score: 1334
+		    },
+		    {
+		      name: "randomName474",
+		      pic: "randomPicUrl474",
+		      score: 1333
+		    }
+		  ],
+		  n: 500,
+		  u: {
+		    name: "randomName1",
+		    pic: "randomPicUrl1",
+		    score: 774
+		  }
+		}
+		*/
+
 		// Error?
 		if(_error != null) {
 			// [AOC] Do something or just ignore?
@@ -468,14 +512,14 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			Debug.Log("<color=purple>EVENT LEADERBOARD</color>\n" + responseJson.ToString(4));
 			m_currentEvent.UpdateLeaderboardFromJson(responseJson);
 
-			if (m_currentEvent.isRewarAvailable) {
+			if (m_currentEvent.isRewardAvailable) {
 				GlobalEventManager.RequestCurrentEventRewards();
 			}
 
 			GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
 			// Player data
-			if ( responseJson.ContainsKey("playerData") ) {
-				currentEventUserData.Load(responseJson["playerData"]);
+			if ( responseJson.ContainsKey("u") ) {
+				currentEventUserData.Load(responseJson["u"]);
 			}else{
 				currentEventUserData.Reset();
 			}
@@ -483,7 +527,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			// Update timestamps
 			DateTime now = serverTime;
 			instance.m_stateCheckTimestamp = now.AddSeconds(STATE_REFRESH_INTERVAL);
-			if(responseJson.ContainsKey("leaderboard")) {
+			if(responseJson.ContainsKey("l")) {
 				instance.m_leaderboardCheckTimestamp = now.AddSeconds(LEADERBOARD_REFRESH_INTERVAL);
 			}
 

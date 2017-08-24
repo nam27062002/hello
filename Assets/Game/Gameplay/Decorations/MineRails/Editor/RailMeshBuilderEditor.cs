@@ -7,10 +7,28 @@ using UnityEditor;
 public class RailMeshBuilderEditor : Editor {
 
 	public override void OnInspectorGUI() {		
+		RailMeshBuilder builder = target as RailMeshBuilder;
+
 		DrawDefaultInspector();
 
+		if (GUILayout.Button("Refresh Mesh")) {			
+			builder.dirty = true;
+		}
+
 		if (GUILayout.Button("Build Light Map UVS")) {
-			RailMeshBuilder builder = target as RailMeshBuilder;
+			List<MeshFilter> meshFilters = builder.transform.FindComponentsRecursive<MeshFilter>();
+			UpdateUVs(meshFilters);
+		}
+
+		if (builder.lightmapUVsDirty) {
+			List<MeshFilter> meshFilters = builder.transform.FindComponentsRecursive<MeshFilter>();
+			UpdateUVs(meshFilters);
+		}
+	}
+
+	private void OnSceneGUI() {
+		RailMeshBuilder builder = target as RailMeshBuilder;
+		if (builder.lightmapUVsDirty) {
 			List<MeshFilter> meshFilters = builder.transform.FindComponentsRecursive<MeshFilter>();
 			UpdateUVs(meshFilters);
 		}
@@ -21,5 +39,8 @@ public class RailMeshBuilderEditor : Editor {
 			UnityEditor.GameObjectUtility.SetStaticEditorFlags(mf.gameObject, UnityEditor.StaticEditorFlags.LightmapStatic);		
 			UnityEditor.Unwrapping.GenerateSecondaryUVSet(mf.sharedMesh);
 		}
+
+		RailMeshBuilder builder = target as RailMeshBuilder;
+		builder.lightmapUVsDirty = false;
 	}
 }

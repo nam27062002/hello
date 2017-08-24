@@ -302,5 +302,17 @@ public class SpawnerWagon : MonoBehaviour, ISpawner {
 	void OnDrawGizmos() {
 		Gizmos.color = Colors.WithAlpha(Colors.paleGreen, 0.25f);
 		Gizmos.DrawCube(transform.position + (Vector3)m_rect.position, m_rect.size);
+
+		Gizmos.color = Colors.paleGreen;
+		Gizmos.DrawWireCube(transform.position + (Vector3)m_rect.position, m_rect.size);
+
+		// Draw icon! - only in editor!
+		#if UNITY_EDITOR
+		// Icons are stored in the Gizmos folder in the project root (Unity rules), and have the same name as the entities
+		if (this.m_entityPrefabList != null && this.m_entityPrefabList.Length > 0) {
+			Gizmos.DrawIcon(transform.position, IEntity.ENTITY_PREFABS_PATH + this.m_entityPrefabList[0].name, true);
+		}
+		#endif
+
 	}
 }

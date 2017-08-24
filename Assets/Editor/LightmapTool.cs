@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using System;
 using System.Reflection;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
@@ -54,7 +55,11 @@ public class LightmapTool : EditorWindow {
         }
 
 
-        public static void SetAmbientOcclusion(float val)
+        public static void SetAmbientOcclusion(bool val)
+        {
+            SetBool("m_LightmapEditorSettings.m_AO", val);
+        }
+        public static void SetAmbientOcclusionExponent(float val)
         {
             SetFloat("m_LightmapEditorSettings.m_CompAOExponent", val);
         }
@@ -134,6 +139,18 @@ public class LightmapTool : EditorWindow {
             Object lightmapSettings = getLightmapSettingsMethod.Invoke(null, null) as Object;
             return new SerializedObject(lightmapSettings);
         }
+
+
+        public static SerializedObject getEnvironment()
+        {
+            MethodInfo[] methods = typeof(LightmapEditorSettings).GetMethods();
+            foreach (MethodInfo m in methods)
+            {
+                MethodBody mb = m.GetMethodBody();
+                Debug.Log("Method: " + mb.ToString());
+            }
+            return null as SerializedObject;
+        }
 /*
         public static void Test()
         {
@@ -146,32 +163,91 @@ public class LightmapTool : EditorWindow {
 */
     }
 
+
+/*
+    static readonly string scene2name = "ART_twister_cave";
+    static readonly string scene1name = "ART_twister_cave_GOOD";
+
+    static GameObject[] getCompleteGameObjectList(string scenename)
+    {
+        List<GameObject> cl = new List<GameObject>();
+        Scene scene = SceneManager.GetSceneByName(scenename);
+        GameObject[] gos = scene.GetRootGameObjects();
+
+        for (int j = 0; j < gos.Length; j++)
+        {
+            GameObjectExt.FindAllGameObjectsInParent(gos[j], cl, false, true);
+        }
+
+        return cl.ToArray();
+    }
+
+    [MenuItem("Tools/Scene compare")]
+    static void SceneCompare()
+    {
+        GameObject[] gos1 = getCompleteGameObjectList(scene1name);
+        GameObject[] gos2 = getCompleteGameObjectList(scene2name);
+
+        foreach (GameObject go2 in gos2)
+        {
+            bool notFound = true;
+            foreach (GameObject go1 in gos1)
+            {
+                if (go1.name == go2.name)
+                {
+                    notFound = false;
+                    break;
+                }
+            }
+
+            if (notFound)
+            {
+                Debug.Log("GameObject: " + go2.name);
+            }
+        }
+
+    }
+*/
+
     [MenuItem("Tools/Set Lightmap properties")]
     static void SetLightmapProperties()
     {
-                SerializedObject so = LightingSettingsHelper.getLightmapSettings();
-                SerializedProperty sp = so.GetIterator();
-
-                while (sp.Next(true))
-                {
-                    Debug.Log("Property ---> [path:" + sp.propertyPath + "] [type:" + sp.propertyType + "] [displayName:" + sp.displayName + "]");
-                    if (sp.propertyType == SerializedPropertyType.Enum)
-                    {
-                        int i = 0;
-                        foreach (string ename in sp.enumDisplayNames)
-                        {
-                            Debug.Log("        " + i++ + " ---> [enumName:" + ename + "]");
-                        }
-                    }
-                }
+        SerializedObject so = LightingSettingsHelper.getLightmapSettings();
+        SerializedProperty sp = so.GetIterator();
 /*
+        while (sp.Next(true))
+        {
+            Debug.Log("Property ---> [path:" + sp.propertyPath + "] [type:" + sp.propertyType + "] [displayName:" + sp.displayName + "]");
+            if (sp.propertyType == SerializedPropertyType.Enum)
+            {
+                int i = 0;
+                foreach (string ename in sp.enumDisplayNames)
+                {
+                    Debug.Log("        " + i++ + " ---> [enumName:" + ename + "]");
+                }
+            }
+        }
+*/
         MethodInfo[] methods = typeof(LightmapEditorSettings).GetMethods();
+
+        Debug.Log(">>>> Public <<<<<");
 
         foreach (MethodInfo m in methods)
         {
             Debug.Log("Method: " + m);
         }
-*/
+
+
+        methods = typeof(LightmapEditorSettings).GetMethods();
+
+        Debug.Log(">>>> Static <<<<<");
+
+        foreach (MethodInfo m in methods)
+        {
+            Debug.Log("Method: " + m);
+        }
+
+
         /*
         Debug.Log("--------------------------------------------------------------------------------------------------------------------");
 
@@ -203,6 +279,10 @@ public class LightmapTool : EditorWindow {
                 LightingSettingsHelper.SetBakedResolution(1.0f);
 //                LightingSettingsHelper.SetEnvironmentLightingMode(0);
                 LightingSettingsHelper.SetLightmapBakeMode(0);
+                LightingSettingsHelper.SetAmbientOcclusion(true);
+                LightingSettingsHelper.SetFinalGatherEnabled(false);
+                RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+                RenderSettings.fog = false;
             }
         }
     }

@@ -30,14 +30,14 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	[SerializeField] private TextMeshProUGUI m_objectiveText = null;
 	[SerializeField] private Image m_objectiveIcon = null;
 	[SerializeField] private Image m_bonusDragonIcon = null;
+	[SerializeField] private Localizer m_topRewardPercentileText = null;
+	[SerializeField] private Localizer m_playerPercentileText = null;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
 	[Space]
 	[SerializeField] private GlobalEventsProgressBar m_progressBar = null;
 	[Space]
 	[SerializeField] private GlobalEventsLeaderboardView m_leaderboard = null;
-
-
 
 	// Internal
 	private float m_eventCountdownUpdateTimer = 0f;
@@ -109,6 +109,50 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// Bonus dragon icon
 		m_bonusDragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + evt.bonusDragonSku + "/icon_disguise_0");	// Default skin
 
+		// Top reward info text
+		float topPercentile = evt.topContributorsRewardSlot.targetPercentage * 100f;
+		m_topRewardPercentileText.Localize(
+			m_topRewardPercentileText.tid, 
+			StringUtils.FormatNumber(topPercentile, 2)
+		);
+
+		// Player percentile text
+		if(m_playerPercentileText != null) {
+			// Don't show if player is not yet classified
+			GlobalEventUserData playerData = UsersManager.currentUser.GetGlobalEventData(evt.id);
+			if(playerData.position < 0) {
+				m_playerPercentileText.gameObject.SetActive(false);
+			} else {
+				m_playerPercentileText.gameObject.SetActive(false);
+
+				// Compute using player current position and total amount of players
+				float playerPercentile = (float)playerData.position / (float)evt.totalPlayers * 100f;
+				
+				// Snap to a nice value
+				float snapValue = 100f;
+				float snappedValue = snapValue;
+				while(playerPercentile < snapValue && snapValue > topPercentile) {	// At least the top percentile!
+					// Store last valid value
+					snappedValue = snapValue;
+					
+					// More precision for the smallest percentiles
+					if(snapValue <= 5f) {
+						snapValue -= 1f;
+					} else if(snapValue <= 20f) {
+						snapValue -= 5f;
+					} else {
+						snapValue -= 10f;
+					}
+				}
+				
+				// Localize
+				m_playerPercentileText.Localize(
+					m_playerPercentileText.tid, 
+					StringUtils.FormatNumber(snapValue, 2)
+				);
+			}
+		}
+
 		// Progress
 		if (m_progressBar != null) {
 			m_progressBar.RefreshRewards(evt);
@@ -137,8 +181,8 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// Different stuff depending on request type
 		switch(_requestType) {
 			case GlobalEventManager.RequestType.EVENT_STATE: {
-				// Chain with state request
-				GlobalEventManager.RequestCurrentEventLeaderboard();
+				// Chain with leaderboard request
+				GlobalEventManager.RequestCurrentEventLeaderboard(false);
 				BusyScreen.Show(this);
 			} break;
 

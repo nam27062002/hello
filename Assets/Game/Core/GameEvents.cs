@@ -52,7 +52,7 @@ public enum GameEvents {
     INTOSPACE_TOGGLED,          // params: bool _activated
     BREAK_OBJECT_BIGGER_DRAGON, // no params
 	BREAK_OBJECT_NEED_TURBO,	// no params
-    DARK_ZONE_TOGGLE,           // params: bool Enter / Leave
+    DARK_ZONE_TOGGLE,           // params: bool _enter / _exit
 
     // Entity events
     ENTITY_EATEN,				// params: Transform _entity, Reward _reward
@@ -142,12 +142,12 @@ public enum GameEvents {
 	APPLICATION_QUIT,
 
     // Device events
-    DEVICE_RESOLUTION_CHANGED,  // params: Vector2 _newResolution
-    DEVICE_ORIENTATION_CHANGED,  // params: DeviceOrientation _newOrientation
+    DEVICE_RESOLUTION_CHANGED, 	// params: Vector2 _newResolution
+    DEVICE_ORIENTATION_CHANGED, // params: DeviceOrientation _newOrientation
 
     // Settigns events
-    TILT_CONTROL_TOGGLE,		// params: Bool _useTile
-	TILT_CONTROL_CALIBRATE,		// no params, use to force a tilt calibration (only in-game)
+	GAME_SETTING_TOGGLED,		// params: string settingId, bool _toggled
+    TILT_CONTROL_CALIBRATE,		// no params, use to force a tilt calibration (only in-game)
 	TILT_CONTROL_SENSITIVITY_CHANGED,	// params: float _sensitivity
 
 	// Global events events (xD)

@@ -58,6 +58,13 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 		get { return instance.m_loadingQueue.Count; }
 	}
 
+	/// <summary>
+	/// Creates a new list with a reference to all opened popups.
+	/// </summary>
+	public static List<PopupController> openedPopups {
+		get { return new List<PopupController>(instance.m_openedPopups); }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//

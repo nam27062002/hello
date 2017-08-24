@@ -54,7 +54,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 			#endif
 
 //			#define FRESNEL
-			#define MATCAP
+//			#define MATCAP
 			#define OPAQUEALPHA
 
 			#include "entities.cginc"

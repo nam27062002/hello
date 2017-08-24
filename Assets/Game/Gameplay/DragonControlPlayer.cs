@@ -39,6 +39,7 @@ public class DragonControlPlayer : MonoBehaviour {
 	private Assets.Code.Game.Spline.BezierSpline m_followingSpline;
 	private int m_testDirecton = 1;
 
+	public static float BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD = 0.85f;
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -49,6 +50,9 @@ public class DragonControlPlayer : MonoBehaviour {
 		GameObject gameInputObj = GameObject.Find("PF_GameInput");
 		if(gameInputObj != null) {
 			touchControls = gameInputObj.GetComponent<TouchControlsDPad>();
+			if (touchControls != null){
+				touchControls.Set3DTouch( Prefs.GetBoolPlayer(GameSettings.TOUCH_3D_ENABLED) , BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD);
+			}
 			tiltControls = gameInputObj.GetComponent<TiltControls>();
 			if(tiltControls != null) {
 				tiltControls.Calibrate();
@@ -65,11 +69,11 @@ public class DragonControlPlayer : MonoBehaviour {
 				m_followingSpline = go.GetComponent<Assets.Code.Game.Spline.BezierSpline>();
 			}
 		}
-		m_useTiltControl = GameSettings.tiltControlEnabled;
+		m_useTiltControl = GameSettings.Get(GameSettings.TILT_CONTROL_ENABLED);
 		SetupInputs();
 
 		// Subscribe to external events
-		Messenger.AddListener<bool>(GameEvents.TILT_CONTROL_TOGGLE, OnTiltToggled);
+		Messenger.AddListener<string, bool>(GameEvents.GAME_SETTING_TOGGLED, OnGameSettingsToggled);
 		Messenger.AddListener(GameEvents.TILT_CONTROL_CALIBRATE, OnTiltCalibrate);
 		Messenger.AddListener<float>(GameEvents.TILT_CONTROL_SENSITIVITY_CHANGED, OnTiltSensitivityChanged);
 	}
@@ -78,7 +82,7 @@ public class DragonControlPlayer : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	void OnDestroy() {
-		Messenger.RemoveListener<bool>(GameEvents.TILT_CONTROL_TOGGLE, OnTiltToggled);
+		Messenger.RemoveListener<string, bool>(GameEvents.GAME_SETTING_TOGGLED, OnGameSettingsToggled);
 		Messenger.RemoveListener(GameEvents.TILT_CONTROL_CALIBRATE, OnTiltCalibrate);
 		Messenger.RemoveListener<float>(GameEvents.TILT_CONTROL_SENSITIVITY_CHANGED, OnTiltSensitivityChanged);
 	}
@@ -229,14 +233,21 @@ public class DragonControlPlayer : MonoBehaviour {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// The tilt control has been toggled.
+	/// The game settings has been toggled.
 	/// </summary>
-	/// <param name="_useTilt">Toggle on or off?</param>
-	private void OnTiltToggled(bool _useTilt) {
-		m_useTiltControl = _useTilt;
-		if(tiltControls && _useTilt) {
-			tiltControls.Calibrate();
-			tiltControls.SetSensitivity(GameSettings.tiltControlSensitivity);
+	/// <param name="">Toggle on or off?</param>
+	private void OnGameSettingsToggled(string _settingId, bool _settingsValue) {
+		if(_settingId == GameSettings.TILT_CONTROL_ENABLED) {
+			m_useTiltControl = _settingsValue;
+			if(tiltControls && _settingsValue) {
+				tiltControls.Calibrate();
+				tiltControls.SetSensitivity(GameSettings.tiltControlSensitivity);
+			}
+		}
+		else if( _settingId == GameSettings.TOUCH_3D_ENABLED ) {
+			if ( touchControls != null ) {
+				touchControls.Set3DTouch( Prefs.GetBoolPlayer(GameSettings.TOUCH_3D_ENABLED) , BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD);
+			}
 		}
 	}
 

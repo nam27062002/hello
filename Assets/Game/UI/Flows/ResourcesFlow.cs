@@ -255,7 +255,7 @@ public class ResourcesFlow {
 
 				case UserProfile.Currency.HARD: {
 					// Show confirmation popup?
-					if(_askConfirmationForBigPCAmounts && GameSettings.showBigAmountConfirmationPopup && (m_originalAmount > PC_CONFIRMATION_POPUP_THRESHOLD)) {
+					if(_askConfirmationForBigPCAmounts && GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP) && (m_originalAmount > PC_CONFIRMATION_POPUP_THRESHOLD)) {
 						// Final PC amount over threshold!
 						// Show confirmation popup
 						OpenBigAmountConfirmationPopup(m_originalAmount, () => { OpenMissingPCPopup(m_missingAmount); });	// If confirmed, open missing PC popup
@@ -285,7 +285,7 @@ public class ResourcesFlow {
 	private void DoTransaction(bool _askConfirmationForBigPCAmounts) {
 		// Confirmation required?
 		// Only if confirmation popup is enabled
-		if(_askConfirmationForBigPCAmounts && GameSettings.showBigAmountConfirmationPopup) {
+		if(_askConfirmationForBigPCAmounts && GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP)) {
 			// Final PC cost?
 			long finalPCAmount = 0;
 
@@ -321,30 +321,38 @@ public class ResourcesFlow {
 			Close();
 			return;
 		}
-
-        // Tracking
-        if (m_extraPCCost > 0) {
-            // If the user had to exchange some pc to some resources because she didn't have enough resources then a specific event has to be sent
-            HDTrackingManager.Instance.Notify_PurchaseWithResourcesCompleted(HDTrackingManager.EEconomyGroup.NOT_ENOUGH_RESOURCES, 
-                HDTrackingManager.EconomyGroupToString(economyGroup), null, UserProfile.Currency.HARD, (int)m_extraPCCost);            
-        }
-
+               
         // Currency transaction
-        if (m_finalAmount > 0) {
-            // Tracking
-            string trackingItemId = (m_itemDef != null) ? m_itemDef.Get("trackingSku") : null;            
-            HDTrackingManager.Instance.Notify_PurchaseWithResourcesCompleted(economyGroup, trackingItemId, null, m_currency, (int)m_originalAmount);
-
+        if (m_finalAmount > 0) {            
 			UsersManager.currentUser.SpendCurrency(m_currency, (ulong)m_finalAmount);            
         }
 
         // Extra PC Cost Transaction
         if (m_extraPCCost > 0) {
 			UsersManager.currentUser.SpendCurrency(UserProfile.Currency.HARD, (ulong)m_extraPCCost);
-		}
 
-		// Change state
-		ChangeState(State.FINISHED_SUCCESS);
+            //
+            // Tracking (exchange HC into SC)
+            //
+            int amountBalance = (int)UsersManager.currentUser.GetCurrency(UserProfile.Currency.HARD);
+
+            // If the user had to exchange some pc to some resources because she didn't have enough resources then a specific event has to be sent
+            HDTrackingManager.Instance.Notify_PurchaseWithResourcesCompleted(HDTrackingManager.EEconomyGroup.NOT_ENOUGH_RESOURCES,
+                HDTrackingManager.EconomyGroupToString(economyGroup), null, UserProfile.Currency.HARD, (int)m_extraPCCost, amountBalance);
+        }
+
+        //
+        // Tracking actual transaction. It's important to track this event here (after an eventual extra pc cost transaction was performed) because tracking event of 
+        // an extra pc cost transaction has to be sent before the actual transaction is tracked
+        //
+        if (m_finalAmount > 0) {
+            int amountBalance = (int)UsersManager.currentUser.GetCurrency(m_currency);
+            string trackingItemId = (m_itemDef != null) ? m_itemDef.Get("trackingSku") : null;
+            HDTrackingManager.Instance.Notify_PurchaseWithResourcesCompleted(economyGroup, trackingItemId, null, m_currency, (int)m_originalAmount, amountBalance);            
+        }
+
+        // Change state
+        ChangeState(State.FINISHED_SUCCESS);
 
 		// Notify!
 		OnSuccess.Invoke(this);

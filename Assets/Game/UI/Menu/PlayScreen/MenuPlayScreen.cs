@@ -120,4 +120,11 @@ public class MenuPlayScreen : MonoBehaviour {
     //------------------------------------------------------------------//
     // CALLBACKS														//
     //------------------------------------------------------------------//
+	/// <summary>
+	/// The Privacy Policy button has been pressed.
+	/// </summary>
+	public void OnPrivacyPolicyButton() {
+		string privacyPolicyUrl = "https://legal.ubi.com/privacypolicy/" + LocalizationManager.SharedInstance.Culture.Name;	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
+		Application.OpenURL(privacyPolicyUrl);
+	}
 }

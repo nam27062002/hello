@@ -20,42 +20,39 @@ using System.Collections.Generic;
 /// </summary>
 public class GameSettings : SingletonScriptableObject<GameSettings> {
 	//------------------------------------------------------------------------//
-	// AUDIO SETTINGS														  //
+	// DEFAULT VALUES														  //
+	// Add here any new setting that needs initialization!					  //
 	//------------------------------------------------------------------------//
+	private Dictionary<string, bool> m_defaultValues = null;
+	private Dictionary<string, bool> defaultValues {
+		get {
+			if(m_defaultValues == null) {
+				m_defaultValues = new Dictionary<string, bool>();
+
+				m_defaultValues[SOUND_ENABLED] = true;
+				m_defaultValues[MUSIC_ENABLED] = true;
+
+				m_defaultValues[TILT_CONTROL_ENABLED] = false;
+				m_defaultValues[TOUCH_3D_ENABLED] = false;
+				m_defaultValues[BLOOD_ENABLED] = true;
+
+				m_defaultValues[SHOW_BIG_AMOUNT_CONFIRMATION_POPUP] = true;
+				m_defaultValues[SHOW_EXIT_RUN_CONFIRMATION_POPUP] = true;
+
+				m_defaultValues[NOTIFICATIONS_ENABLED] = true;
+			}
+			return m_defaultValues;
+		}
+	}
+
+	// Audio Settings
 	public const string SOUND_ENABLED = "GAME_SETTINGS_SOUND_ENABLED";	// bool, default true
-	public static bool soundEnabled { 
-		get { return Prefs.GetBoolPlayer(SOUND_ENABLED, true); }
-		set { 
-			if(instance.m_audioMixer != null) {
-				instance.m_audioMixer.SetFloat("SfxVolume", value ? 0f : -80f);
-				instance.m_audioMixer.SetFloat("Sfx2DVolume", value ? 0f : -80f);
-			}
-			Prefs.SetBoolPlayer(SOUND_ENABLED, value);
-		}
-	}
-
 	public const string MUSIC_ENABLED = "GAME_SETTINGS_MUSIC_ENABLED";	// bool, default true
-	public static bool musicEnabled { 
-		get { return Prefs.GetBoolPlayer(MUSIC_ENABLED, true); }
-		set { 
-			if(instance.m_audioMixer != null) {
-				instance.m_audioMixer.SetFloat("MusicVolume", value ? 0f : -80f);
-			}
-			Prefs.SetBoolPlayer(MUSIC_ENABLED, value);
-		}
-	}
 
-	//------------------------------------------------------------------------//
-	// CONTROL SETTINGS														  //
-	//------------------------------------------------------------------------//
+	// Game Options Settings
 	public const string TILT_CONTROL_ENABLED = "GAME_SETTINGS_TILT_CONTROL_ENABLED";	// bool, default false
-	public static bool tiltControlEnabled {
-		get { return Prefs.GetBoolPlayer(TILT_CONTROL_ENABLED, false); }
-		set {
-			Prefs.SetBoolPlayer(TILT_CONTROL_ENABLED, value);
-			Messenger.Broadcast<bool>(GameEvents.TILT_CONTROL_TOGGLE, value);
-		}
-	}
+	public const string TOUCH_3D_ENABLED = "GAME_SETTINGS_TOUCH_3D_ENABLED";	// bool, default false
+	public const string BLOOD_ENABLED = "GAME_SETTINGS_BLOOD_ENABLED";	// bool, default true
 
 	public const string TILT_CONTROL_SENSITIVITY = "GAME_SETTINGS_TILT_CONTROL_SENSITIVITY";	// float [0..1], default 0.5f
 	public static float tiltControlSensitivity {
@@ -66,14 +63,12 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// UI SETTINGS															  //
-	//------------------------------------------------------------------------//
+	// UI Settings
 	public const string SHOW_BIG_AMOUNT_CONFIRMATION_POPUP = "SHOW_BIG_AMOUNT_CONFIRMATION_POPUP";	// bool, default true
-	public static bool showBigAmountConfirmationPopup {
-		get { return Prefs.GetBoolPlayer(SHOW_BIG_AMOUNT_CONFIRMATION_POPUP, true); }
-		set { Prefs.SetBoolPlayer(SHOW_BIG_AMOUNT_CONFIRMATION_POPUP, value); }
-	}
+	public const string SHOW_EXIT_RUN_CONFIRMATION_POPUP = "SHOW_EXIT_RUN_CONFIRMATION_POPUP";	// bool, default true
+
+	// Other settings
+	public const string NOTIFICATIONS_ENABLED = "GAME_SETTINGS_NOTIFICATIONS_ENABLED";	// bool, default true
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -103,15 +98,63 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		instance.m_audioMixer = AudioController.Instance.AudioObjectPrefab.GetComponent<AudioSource>().outputAudioMixerGroup.audioMixer;
 
 		// Apply stored values
-		// Sound
-		soundEnabled = soundEnabled;
-		musicEnabled = musicEnabled;
+		Set(SOUND_ENABLED, Get(SOUND_ENABLED));
+		Set(MUSIC_ENABLED, Get(MUSIC_ENABLED));
 
-		// Controls
-		tiltControlEnabled = tiltControlEnabled;
-		tiltControlSensitivity = tiltControlSensitivity;
+		Set(TILT_CONTROL_ENABLED, Get(TILT_CONTROL_ENABLED));
+		Set(TOUCH_3D_ENABLED, Get(TOUCH_3D_ENABLED));
+		Set(BLOOD_ENABLED, Get(BLOOD_ENABLED));
+
+		Set(SHOW_BIG_AMOUNT_CONFIRMATION_POPUP, Get(SHOW_BIG_AMOUNT_CONFIRMATION_POPUP));
+		Set(SHOW_EXIT_RUN_CONFIRMATION_POPUP, Get(SHOW_EXIT_RUN_CONFIRMATION_POPUP));
 	}
 
+	/// <summary>
+	/// Get
+	/// </summary>
+	/// <param name="_settingId">Setting identifier.</param>
+	/// <param name="_defaultValue">If set to <c>true</c> default value.</param>
+	public static bool Get(string _settingId) {
+		// Gather default value for this property, if any
+		bool defaultValue = true;
+		instance.defaultValues.TryGetValue(_settingId, out defaultValue);
+
+		// Return persisted value
+		return Prefs.GetBoolPlayer(_settingId, defaultValue);
+	}
+
+	/// <summary>
+	/// Set a specific setting.
+	/// </summary>
+	/// <param name="_settingId">Setting identifier, typically a constant from this class.</param>
+	/// <param name="_value">New value for the setting.</param>
+	public static void Set(string _settingId, bool _value) {
+		// Some properties need extra stuff
+		switch(_settingId) {
+			case MUSIC_ENABLED: {
+				if(instance.m_audioMixer != null) {
+					instance.m_audioMixer.SetFloat("MusicVolume", _value ? 0f : -80f);
+				}
+			} break;
+
+			case SOUND_ENABLED: {
+				if(instance.m_audioMixer != null) {
+					instance.m_audioMixer.SetFloat("SfxVolume", _value ? 0f : -80f);
+					instance.m_audioMixer.SetFloat("Sfx2DVolume", _value ? 0f : -80f);
+				}
+			} break;
+		}
+
+		// Persist
+		Prefs.SetBoolPlayer(_settingId, _value);
+
+		// Notify game
+		Messenger.Broadcast<string, bool>(GameEvents.GAME_SETTING_TOGGLED, _settingId, _value);
+	}
+
+	//------------------------------------------------------------------//
+	// OTHER STATIC METHODS												//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// Compute the PC equivalent of a given amount of time.
 	/// </summary>

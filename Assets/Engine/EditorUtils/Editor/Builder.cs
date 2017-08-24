@@ -15,7 +15,7 @@ public class Builder : MonoBehaviour
 	const string m_bundleIdentifier = "com.ubisoft.hungrydragon.dev";
 	const string m_iOSSymbols = "";
 
-	const string m_apkName = "hd";
+	// const string m_apkName = "hd";
 	const string m_AndroidSymbols = "";
 
     /// <summary>
@@ -95,7 +95,9 @@ public class Builder : MonoBehaviour
 
 
 		string date = System.DateTime.Now.ToString("yyyyMMdd");
-		string stagePath = System.IO.Path.Combine(outputDir, m_apkName + "_" + GameSettings.internalVersion + "_" + date + "_b" + PlayerSettings.Android.bundleVersionCode + ".apk");	// Should be something like ouputDir/hd_2.4.3_20160826_b12421.apk
+		string code = GetArg("-code");
+		string finalApkName = code + "_" + GameSettings.internalVersion + "_" + date + "_b" + PlayerSettings.Android.bundleVersionCode + "_" + GetEnvironmentString() + ".apk";
+		string stagePath = System.IO.Path.Combine(outputDir, finalApkName);	// Should be something like ouputDir/hd_2.4.3_20160826_b12421.apk
 
 		// Some feedback
 		UnityEngine.Debug.Log("Generating Android APK at path: " + stagePath);
@@ -350,6 +352,62 @@ public class Builder : MonoBehaviour
 		StreamWriter sw2 = File.CreateText("bundleIdentifier.txt");
 		sw2.WriteLine( PlayerSettings.GetApplicationIdentifier( EditorUserBuildSettings.selectedBuildTargetGroup ) );
 		sw2.Close();
+	}
+
+	// [MenuItem ("Build/Output Environment")]
+	private static void OutputEnvironment(){
+		StreamWriter sw2 = File.CreateText("environment.txt");
+		sw2.WriteLine( GetEnvironmentString() );
+		sw2.Close();
+	}
+
+	private static string GetEnvironmentString()
+	{
+		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+		string environment = "unknown";
+		if(settingsInstance != null)
+		{
+			switch( settingsInstance.m_iBuildEnvironmentSelected )
+			{
+				case (int)CaletyConstants.eBuildEnvironments.BUILD_DEV: environment = "dev"; break;
+				case (int)CaletyConstants.eBuildEnvironments.BUILD_INTEGRATION: environment = "integration"; break;
+				case (int)CaletyConstants.eBuildEnvironments.BUILD_LOCAL: environment = "local"; break;
+				case (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION: environment = "production"; break;
+				case (int)CaletyConstants.eBuildEnvironments.BUILD_STAGE: environment = "stage"; break;
+				case (int)CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC: environment = "stage_qc"; break;
+			}
+		}
+		return environment;
+	}
+
+	private static void SetEnvironment()
+	{
+		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+		if(settingsInstance != null){
+			string environment = GetArg("-env");
+			CaletySettings clonedSettings = settingsInstance.Clone ();
+			switch( environment )
+			{
+				case "dev": settingsInstance.m_iBuildEnvironmentSelected = (int)CaletyConstants.eBuildEnvironments.BUILD_DEV;break;
+				case "integration": settingsInstance.m_iBuildEnvironmentSelected = (int)CaletyConstants.eBuildEnvironments.BUILD_INTEGRATION;break;
+				case "local": settingsInstance.m_iBuildEnvironmentSelected = (int)CaletyConstants.eBuildEnvironments.BUILD_LOCAL;break;
+				case "production": settingsInstance.m_iBuildEnvironmentSelected = (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION;break;
+				case "stage": settingsInstance.m_iBuildEnvironmentSelected = (int)CaletyConstants.eBuildEnvironments.BUILD_STAGE;break;
+				case "stage_qc": settingsInstance.m_iBuildEnvironmentSelected = (int)CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC;break;
+			}
+			CaletySettings.UpdatePlayerSettings (ref settingsInstance);
+			EditorUtility.SetDirty( settingsInstance );
+			AssetDatabase.SaveAssets();
+			if (clonedSettings.CheckAndroidManifestUpdateNeeded (ref settingsInstance))
+			{
+				NetworkManager.DestroyInstance ();
+				GameContext.DestroyInstance ();
+				// Update Gradle
+				CaletySettingsEditor.UpdateGradleConfig();
+				// Generate Manifest
+				CaletySettingsEditor.UpdateManifests( settingsInstance );
+			}
+		}
 	}
 
 	// This action will be used to make custom project stuff. Like generating lightmaps or splitting scenes

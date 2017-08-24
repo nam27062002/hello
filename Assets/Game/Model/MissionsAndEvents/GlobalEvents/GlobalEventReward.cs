@@ -42,7 +42,7 @@ public partial class GlobalEvent {
 		/// <param name="_data">Data to be parsed.</param>
 		public RewardSlot(SimpleJSON.JSONNode _data) {
 			// Reward data
-			reward = Metagame.Reward.CreateFromJson(_data);
+			reward = Metagame.Reward.CreateFromJson(_data, HDTrackingManager.EEconomyGroup.REWARD_GLOBAL_EVENT);
 
 			// Init target percentage
 			// Target amount should be initialized from outside, knowing the global target

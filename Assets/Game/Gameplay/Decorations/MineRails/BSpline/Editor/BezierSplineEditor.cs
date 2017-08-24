@@ -24,6 +24,16 @@ namespace BSpline {
 		private int m_selectedIndex = -1;
 
 
+		private void OnEnable() {
+			// Subscribe to external events
+			Undo.undoRedoPerformed += OnUndoRedo;
+		}
+
+		private void OnDisable() {
+			// Unsubscribe to external events
+			Undo.undoRedoPerformed -= OnUndoRedo;
+		}
+
 		public override void OnInspectorGUI () {			
 			m_spline = target as BezierSpline;
 
@@ -89,7 +99,7 @@ namespace BSpline {
 			}
 		}
 
-		private void OnSceneGUI() {
+		private void OnSceneGUI() {			
 			m_spline = target as BezierSpline;
 			m_handleTransform = m_spline.transform;
 			m_handleRotation = Tools.pivotRotation == PivotRotation.Local ? m_handleTransform.rotation : Quaternion.identity;
@@ -150,6 +160,19 @@ namespace BSpline {
 				}
 			}
 			return point;
+		}
+
+		//------------------------------------------------------------------//
+		// CALLBACKS														//
+		//------------------------------------------------------------------//
+		/// <summary>
+		/// An undo action has been performed.
+		/// </summary>
+		private void OnUndoRedo() {
+			// Mark curve as dirty and repaint
+			m_spline = target as BezierSpline;
+			m_spline.CalculateArcLength();
+			EditorUtility.SetDirty(m_spline);
 		}
 	}
 }

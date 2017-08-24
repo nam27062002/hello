@@ -16,6 +16,7 @@ Shader "Hungry Dragon/OverWater"
 		_WaveRadius("Wave radius ", Range(0.0, 1.0)) = 0.15
 		_StartTime("Start time", Float) = 0.0
 		_StartPosition("Start position", Vector) = (0,0,0,0)
+		_ZLimit("Fog Z limit", Range(0.0, 0.3)) = 0.0
 	}
 
 	SubShader {
@@ -78,6 +79,7 @@ Shader "Hungry Dragon/OverWater"
 				uniform float _StartTime;
 				uniform fixed4 _StartPosition;
 
+				float _ZLimit;
 
 #define SPLASHRADIUS 10.0
 #define SPLASHSIZE 1.5
@@ -122,6 +124,7 @@ Shader "Hungry Dragon/OverWater"
 					float2 anim = float2(0.0, _Time.y * _WaterSpeed);
 
 					fixed4 col = tex2D(_MainTex, (i.uv.xy + anim));
+
 					col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.75)) * 0.5f;
 
 					fixed4 blend = tex2D(_BlendTex, 1.0f * (i.uv2.xy + anim * 1.5));
@@ -132,7 +135,13 @@ Shader "Hungry Dragon/OverWater"
 					col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
 
 
-					HG_APPLY_FOG(i, col);
+					fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
+					float intensity = smoothstep(0.0, _ZLimit, i.fogCoord.x);
+					col.rgb = lerp((col).rgb, fogCol.rgb, fogCol.a * intensity);// *(i.fogCoord.x * 1.2));
+
+
+
+//					HG_APPLY_FOG(i, col);
 //					fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
 //					col.rgb = lerp((col).rgb, fogCol.rgb, fogCol.a);
 //					col = clamp(col + fixed4(0.25, 0.25, 0.25, 0.25), fixed4(0.0, 0.0, 0.0, 1.0), fixed4(1.0, 1.0, 1.0, 1.0));

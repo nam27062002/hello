@@ -43,7 +43,6 @@ uniform sampler2D _MatCap;
 uniform float4 _GoldColor;
 #endif
 
-
 #ifdef NORMALMAP
 uniform sampler2D _NormalTex;
 uniform float4 _NormalTex_ST;

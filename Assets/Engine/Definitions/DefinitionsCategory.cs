@@ -49,6 +49,7 @@ public class DefinitionsCategory
 	// Entities
 	public const string PETS 				= "PETS";
 	public const string PET_MOVEMENT 		= "PET_MOVEMENT";
+	public const string PET_CATEGORIES 		= "PET_CATEGORIES";
 	public const string ENTITIES 			= "ENTITIES";
 	public const string DECORATIONS 		= "DECORATIONS";
 	public const string ENTITY_CATEGORIES 	= "ENTITY_CATEGORIES";

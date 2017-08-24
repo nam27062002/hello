@@ -58,6 +58,8 @@ SubShader {
 		#pragma glsl_no_auto_normalization
 		#pragma fragmentoption ARB_precision_hint_fastest
 		#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
+		#pragma multi_compile __ SILHOUETTE
+
 
 		#include "UnityCG.cginc" 
 		#include "Lighting.cginc"

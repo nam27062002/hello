@@ -41,7 +41,7 @@ public class ToggleSlider : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
+	protected virtual void Awake() {
 		// Setup the slider
 		m_slider.wholeNumbers = true;
 		m_slider.minValue = 0;

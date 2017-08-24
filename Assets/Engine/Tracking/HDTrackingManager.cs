@@ -4,6 +4,8 @@
 /// 
 
 using System.Collections.Generic;
+using UnityEngine;
+
 public class HDTrackingManager
 {
     // Singleton ///////////////////////////////////////////////////////////
@@ -49,7 +51,16 @@ public class HDTrackingManager
         ACQUIRE_DISGUISE,
         SHOP_COINS_PACK,
         NOT_ENOUGH_RESOURCES,
-		SHOP_KEYS_PACK
+		SHOP_KEYS_PACK,
+        INCENTIVISE_SOCIAL_LOGIN,       // Used when the user logs in social platform
+        CHEAT,                          // Use this if the currency comes from a cheat so it won't be tracked
+        REWARD_CHEST,
+        REWARD_GLOBAL_EVENT,
+        REWARD_MISSION,                 
+        REWARD_RUN,                     // Used when the user gets something such as soft currency during a run
+        PET_DUPLICATED,                 // Used when the user gets some reward instead of a pet because the user already has that pet
+        REFUND_GLOBAL_EVENT,            // USed when the user quits a global event so keys spent on it need to be refunded
+        SHOP_EXCHANGE                   // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
     };
 
     public static string EconomyGroupToString(EEconomyGroup group)
@@ -94,9 +105,35 @@ public class HDTrackingManager
     public virtual void Notify_RoundStart(int dragonXp, int dragonProgression, string dragonSkin, List<string> pets) {}
 
     /// <summary>
-    /// Called when the user finishes a round (because of death or quit game)
+    /// Called when the user finishes a round (because of death and not survive or because of quit game).    
     /// </summary>    
-    public virtual void Notify_RoundEnd() {}
+    /// <param name="dragonXp">Xp of the dragon chosen by the user to play the current round.</param>
+    /// <param name="deltaXp">Dragon xp gained during the whole round.</param>    
+    /// <param name="dragonProgression">Progression of the current dragon. It's calculated the same way as playerProgression is but it's done for the dragon chosen by the user to play this round</param>
+    /// <param name="timePlayed">Time (in seconds) spent on the round.</param>
+    /// <param name="score">Score made in the round.</param>    
+    /// <param name="chestsFound">Amount of chests found during the round.</param>
+    /// <param name="eggFound">Amount of eggs found during the round.</param>
+    /// <param name="highestMultiplier">Highest score multiplier got during the round.</param>
+    /// <param name="highestBaseMultiplier">Highest base score multiplier got during the round.</param>
+    /// <param name="furyRushNb">Amount of times fury rush has been triggered during the round.</param>
+    /// <param name="superFireRushNb">Amount of times superfury rush has been triggered during the round.</param>
+    /// <param name="hcRevive">Amount of times the user paid with HC spent to revive the dragon.</param>
+    /// <param name="adRevive">Amount of times the user paid by watching an ad to revive her dragon druring the round.</param>
+    public virtual void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, 
+        int chestsFound, int eggFound, float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive) {}
+
+    /// <summary>
+    /// Called when a run finished (because of death or quit game). Remember that a round is composed of at least one run, but it can have more than one if after a run
+    /// because of death the user decides to revive so a new run is started.
+    /// </summary>
+    /// <param name="dragonXp">Xp of the dragon chosen by the user to play the current round.</param>
+    /// <param name="timePlayed">Time (in seconds) spent on the round so far.</param>
+    /// <param name="score">Current score in the round.</param>
+    /// <param name="deathType">Reason why the run ended.</param>
+    /// <param name="deathSource">Some death types might have a source such as the sku of the entity that killed the user's dragon, otherwise it must be null.</param>
+    /// <param name="deathCoordinates">Coordinates of the map where the user's dragon was when the run ended.</param>
+    public virtual void Notify_RunEnd(int dragonXp, int timePlayed, int score, string deathType, string deathSource, Vector3 deathCoordinates) {}
 
     /// <summary>
     /// Called when the user opens the app store
@@ -122,7 +159,19 @@ public class HDTrackingManager
     /// <param name="promotionType">Promotion type if there is one, otherwise <c>null</c></param>
     /// <param name="moneyCurrencyCode">Currency type used</param>
     /// <param name="moneyPrice">Amount of the currency paid</param>
-    public virtual void Notify_PurchaseWithResourcesCompleted(EEconomyGroup economyGroup, string itemID, string promotionType, UserProfile.Currency moneyCurrencyCode, int moneyPrice) {}
+    /// <param name="amountBalance">Amount of this currency after the transaction was performed</param>
+    public virtual void Notify_PurchaseWithResourcesCompleted(EEconomyGroup economyGroup, string itemID, string promotionType, 
+        UserProfile.Currency moneyCurrencyCode, int moneyPrice, int amountBalance) {}
+
+    /// <summary>
+    /// Called when the user earned some resources
+    /// </summary>
+    /// <param name="economyGroup">ID used to identify the type of item the user has earned. Example UNLOCK_DRAGON</param>        
+    /// <param name="moneyCurrencyCode">Currency type earned</param>
+    /// <param name="amountDelta">Amount of the currency earned</param>
+    /// <param name="amountBalance">Amount of this currency after the transaction was performed</param>
+    public virtual void Notify_EarnResources(EEconomyGroup economyGroup, UserProfile.Currency moneyCurrencyCode, int amountDelta, int amountBalance) {}
+
 
     /// <summary>
     /// Called when the user clicks on the button to request a customer support ticked

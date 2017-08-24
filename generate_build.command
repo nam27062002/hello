@@ -18,6 +18,7 @@ PROJECT_PATH="${SCRIPT_PATH}"
 PROJECT_CODE_NAME="xx"
   # git config
 BRANCH="develop"
+CALETY_BRANCH="hungrydragon"
 RESET_GIT=false
 COMMIT_CHANGES=false
 CREATE_TAG=false
@@ -25,6 +26,7 @@ CREATE_TAG=false
 BUILD_ANDROID=false
 GENERATE_OBB=false
 BUILD_IOS=false
+ENVIRONMENT=false
   # versioning
 FORCE_VERSION=false
 INCREASE_VERSION_NUMBER=false
@@ -59,7 +61,8 @@ USAGE="Usage: generate_build.command [-path project_path=script_path] [-code pro
       [-version forced_version] [-increase_version]  \
       [-iosPublic iosPublicVersion] [-ggpPublic google_play_public_version] [-amzPublic amazonPublicVersion]  \
       [-increase_VCodes] [-iosVCode ios_version_code] [-ggpVCode google_play_version_code] [-amzVCode amazon_version_code]  \
-      [-output dirpath=Desktop/builds] [-upload] [-smbOutput server_folder=]"
+      [-output dirpath=Desktop/builds] [-upload] [-smbOutput server_folder=] \
+      [-env environment] [-calety_branch branch]"
 
 # Parse parameters
 for ((i=1;i<=$#;i++));
@@ -67,6 +70,7 @@ do
     PARAM_NAME=${!i}
     if [ "$PARAM_NAME" == "--help" ] ; then
         echo $USAGE
+        echo ""
         exit 0
     elif [ "$PARAM_NAME" == "-path" ] ; then
         ((i++))
@@ -132,6 +136,12 @@ do
     elif [ "$PARAM_NAME" == "-smbOutput" ] ; then
         ((i++))
         SMB_FOLDER=${!i}
+    elif [ "$PARAM_NAME" == "-env" ] ; then
+        ((i++))
+        ENVIRONMENT=${!i}
+    elif [ "$PARAM_NAME" == "-calety_branch" ] ; then
+        ((i++))
+        CALETY_BRANCH=${!i}
     else
         echo "BUILDER: Unknown parameter ${PARAM_NAME}"
         echo "BUILDER: ${USAGE}"
@@ -150,6 +160,9 @@ print_builder() {
 # Calculate num of stps
 TOTAL_STEPS=5;
 if $RESET_GIT; then
+  TOTAL_STEPS=$((TOTAL_STEPS+1));
+fi
+if [ "$ENVIRONMENT" != false ]; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
 if [ "$FORCE_VERSION" != false ]; then
@@ -220,12 +233,22 @@ git pull origin "${BRANCH}"
 # Update calety
 print_builder "Updating Calety"
 cd Calety
-git checkout "hungrydragon"
+git checkout "${CALETY_BRANCH}"
 git pull
 cd ..
 
 print_builder "Custom Builder Action"
 eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.CustomAction"
+
+if [ "$ENVIRONMENT" != false ]; then
+    print_builder "Setting environment";
+    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetEnvironment -env ${ENVIRONMENT}"
+fi
+
+eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputEnvironment"
+ENVIRONMENT="$(cat environment.txt)"
+echo "Environment: ${ENVIRONMENT}"
+rm -f "environment.txt"
 
 if [ "$FORCE_VERSION" != false ]; then
   print_builder "Force Version ${FORCE_VERSION}"
@@ -308,21 +331,21 @@ if $BUILD_ANDROID; then
   mkdir -p "${OUTPUT_DIR}/apks/"
 
   # Do it!
-  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB}"
+  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB} -code ${PROJECT_CODE_NAME}"
 
   # Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
 	print_builder "BUILDER: Reading internal android build version number";
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputAndroidBuildVersion"
 	ANDROID_BUILD_VERSION="$(cat androidBuildVersion.txt)"
 	rm -f "androidBuildVersion.txt";
-	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}";
+	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}_${ENVIRONMENT}";
 
   if $GENERATE_OBB; then
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputBundleIdentifier"
     PACKAGE_NAME="$(cat bundleIdentifier.txt)"
     rm -f "bundleIdentifier.txt"
     OBB_FILE="main.${ANDROID_BUILD_VERSION}.${PACKAGE_NAME}.obb"
-    mv "${PROJECT_CODE_NAME}.main.obb" "${OBB_FILE}"
+    mv "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.main.obb" "${OUTPUT_DIR}/apks/${OBB_FILE}"
   fi
 fi
 
@@ -339,7 +362,7 @@ if $BUILD_IOS; then
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
     ARCHIVE_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}.xcarchive"
-    STAGE_IPA_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}.ipa"
+    STAGE_IPA_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_${ENVIRONMENT}.ipa"
     PROJECT_NAME="${OUTPUT_DIR}/xcode/Unity-iPhone.xcodeproj"
 
     # Generate Archive

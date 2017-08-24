@@ -386,7 +386,7 @@ public class DragonPowerUp : MonoBehaviour {
 
             case "more_coin":
                 {
-                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.COINS_TEXT_COLOR.ToHexString("#"));
+					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_GOLD.ToHexString("#"));
                 }break;
 
             case "score_increase":

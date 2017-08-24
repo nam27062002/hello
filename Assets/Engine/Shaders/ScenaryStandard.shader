@@ -1,81 +1,85 @@
-﻿Shader "Hungry Dragon/Scenary/Scenary Standard"
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+// Unlit shader, with shadows
+// - no lighting
+// - can receive shadows
+// - has lightmap
+
+Shader "Hungry Dragon/Scenary/Scenary Standard" 
 {
-	Properties
+	Properties 
 	{
-		_MainTex("Main Texture", 2D) = "white" {}
-		_LightmapIntensity("Lightmap intensity", Range(0.001, 4.0)) = 1.0
-		_SecondTexture("Blend Texture", 2D) = "white" {}
-		_NormalTex("Normal Texture", 2D) = "white" {}
-		_NormalStrength("Normal strength", Range(0.001, 1.0)) = 1.0
-
-		_CutOff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
-/*
-		[Toggle(FOG)] _EnableFog("Fog", int) = 0.0
-		[Toggle(DARKEN)] _EnableDarken("Darken", int) = 0.0
-		[Toggle(SPECULAR)] _EnableSpecular("Specular", int) = 0.0
-		[Toggle(CUSTOM_VERTEXCOLOR)] _AutomaticBlend("Automatic blend", int) = 0.0
-		[Toggle(BLEND_TEXTURE)] _BlendTexture("BlendTexture", int) = 0.0
-		[Toggle(NORMAL_MAP)] _NormalMap("Normal Map", int) = 0.0
-		[Toggle(CUTOFF)] _CutOff("CutOff", int) = 0.0
-*/
-		_EmissivePower("Emissive Power", Range(0.0, 5.0)) = 1.0
-		_BlinkTimeMultiplier("Emissive blink multiplier", Range(0.0, 5.0)) = 2.0
-
+		_MainTex ("Base (RGB)", 2D) = "white" {}
+		_SecondTexture("Second Texture (RGB)", 2D) = "white" {}
+		_NormalTex("Normal (RGBA)", 2D) = "white" {}
+		_NormalStrength("Normal Strength", Range(0.1, 5.0)) = 1.0
 		_SpecularPower("Specular Power", float) = 3
 		_SpecularDir("Specular Dir", Vector) = (0,0,-1,0)
-
+	
+		_CutOff("Alpha cutoff threshold", Range(0.0, 1.0)) = 0.5
 		_DarkenPosition("Darken position",  float) = 0.0
 		_DarkenDistance("Darken distance",  float) = 20.0
 
-		[KeywordEnum(NONE, OVERLAY, ADDITIVE, MODULATE)] VertexColor("Overlay mode", int) = 0
-//		[Enum(UV0,0,UV1,1)] _UVSec("UV Set for secondary textures", Float) = 0
+		_EmissivePower("Emissive Power", Float) = 1.0
+		_BlinkTimeMultiplier("Blink time multiplier", Float) = 2.0
 
-		// Blending state
-		[HideInInspector] _Mode("__mode", Float) = 0.0
-		[HideInInspector] _SrcBlend("__src", Float) = 1.0
-		[HideInInspector] _DstBlend("__dst", Float) = 0.0
-		[HideInInspector] _ZWrite("__zw", Float) = 1.0
+//		_StencilMask("Stencil Mask", int) = 10
 
-		_StencilMask("Stencil Mask", int) = 5
+		[Toggle(BLEND_TEXTURE)] _EnableBlendTexture("Enable Blend Texture", Float) = 0
+		[Toggle(CUSTOM_VERTEXCOLOR)] _EnableAutomaticBlend("Automatic Y blend", Float) = 0
+		[Toggle(SPECULAR)] _EnableSpecular("Enable Specular Light", Float) = 0
+		[Toggle(NORMALMAP)] _EnableNormalMap("Enable Normal Map", Float) = 0
+		[Toggle(CUTOFF)] _EnableCutoff("Enable cut off", Float) = 0
+		[Toggle(FOG)] _EnableFog("Enable fog", Float) = 0
+		[Toggle(DARKEN)] _EnableDarken("Enable darken", Float) = 0
+		[Toggle(EMISSIVEBLINK)] _EnableEmissiveBlink("Enable emissive blink", Float) = 0
+		[Toggle(LIGHTMAPCONTRAST)] _EnableLightmapContrast("Enable lightmap contrast", Float) = 0
+		[KeywordEnum(None, Overlay, Additive, Modulate)] VertexColor("Vertex color mode", Float) = 0
+		[Enum(Back, 0, Front, 1, Off, 2)] _Cull("Cull mode", Float) = 0.0
 	}
 
-	SubShader{
-		Tags{ "RenderType" = "Opaque" "Queue" = "Geometry" "LightMode" = "ForwardBase" }
+	SubShader {
+		Tags { "RenderType"="Opaque" "Queue"="Geometry"}
 		LOD 100
+		
+		Pass {		
+			Tags{ "LightMode" = "ForwardBase" }
 
-		Pass{
+			Cull [_Cull]
 
 			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-			#pragma multi_compile_fwdbase
-//			#pragma glsl_no_auto_normalization
-//			#pragma fragmentoption ARB_precision_hint_fastest
+				#pragma vertex vert
+				#pragma fragment frag
+				#pragma multi_compile_fwdbase
+				#pragma multi_compile __ BLEND_TEXTURE
+				#pragma multi_compile __ CUSTOM_VERTEXCOLOR
+				#pragma multi_compile __ SPECULAR
+				#pragma multi_compile __ NORMALMAP
+				#pragma multi_compile __ FOG
+				#pragma multi_compile __ DARKEN
+				#pragma multi_compile __ CUTOFF
+				#pragma multi_compile __ OPAQUEALFA
+				#pragma multi_compile __ EMISSIVEBLINK
 
-			#pragma shader_feature  __ FOG
-			#pragma shader_feature  __ DARKEN
-			#pragma shader_feature  __ SPECULAR
-			#pragma shader_feature  __ CUSTOM_VERTEXCOLOR
-			#pragma shader_feature  __ BLEND_TEXTURE
-			#pragma shader_feature  __ NORMALMAP
-			#pragma shader_feature  __ CUTOFF
-			#pragma shader_feature  __ VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
-			#pragma shader_feature	__ EMISSIVEBLINK
-			#pragma shader_feature  __ LIGHTMAPCONTRAST
+				#pragma multi_compile VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
 
-			#define HG_SCENARY
+				#define HG_SCENARY
 
-			#include "UnityCG.cginc"
-			#include "AutoLight.cginc"
-			#include "HungryDragon.cginc"
-			#include "Lighting.cginc"
+				#include "UnityCG.cginc"
+				#include "AutoLight.cginc"
+				#include "Lighting.cginc"
 
-//			#define FOG
-	
-			#define OPAQUEALPHA
-			#include "scenary.cginc"
+				#include "HungryDragon.cginc"
+
+//				#define FOG
+//				#define OPAQUEALPHA
+//				#define BLEND_TEXTURE
+//				#define CUSTOM_VERTEXCOLOR
+
+				#include "scenary.cginc"
 			ENDCG
 		}
 	}
+
 	CustomEditor "ScenaryShaderGUI"
 }

@@ -8,6 +8,9 @@ Shader "Hungry Dragon/TransparentAlphaBlend"
 		[HideInInspector] _VColor("Custom vertex color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_MainTex("Particle Texture", 2D) = "white" {}
 //		[Toggle(CUSTOMPARTICLESYSTEM)] _EnableCustomParticleSystem("Custom Particle System", int) = 0.0
+		[Toggle(EMISSIVEPOWER)] _EnableEmissivePower("Enable Emissive Power", int) = 0.0
+		_EmissivePower("Emissive Power", Range(1.0, 4.0)) = 1.0
+
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}
 
@@ -18,16 +21,7 @@ Shader "Hungry Dragon/TransparentAlphaBlend"
 		Cull Off
 		Lighting Off
 		ZWrite Off
-		//		Fog{ Color(0,0,0,0) }
 		ZTest[_ZTest]
-		/*
-		BindChannels{
-		Bind "Color", color
-		Bind "Vertex", vertex
-		Bind "TexCoord", texcoord
-		}
-		*/
-
 
 		Pass
 		{
@@ -36,6 +30,7 @@ Shader "Hungry Dragon/TransparentAlphaBlend"
 			#pragma fragment frag
 			#pragma multi_compile_particles
 			#pragma shader_feature  __ CUSTOMPARTICLESYSTEM
+			#pragma shader_feature  __ EMISSIVEPOWER
 
 			#include "UnityCG.cginc"
 
@@ -61,6 +56,10 @@ Shader "Hungry Dragon/TransparentAlphaBlend"
 #endif
 			float4 _TintColor;
 
+#ifdef EMISSIVEPOWER
+			float _EmissivePower;
+#endif
+
 			v2f vert(appdata_t v)
 			{
 				v2f o;
@@ -78,7 +77,11 @@ Shader "Hungry Dragon/TransparentAlphaBlend"
 				float4 col = _TintColor;
 #endif
 				half4 prev = i.color * tex2D(_MainTex, i.texcoord) * col * 2.0;
+#ifdef EMISSIVEPOWER
+				return prev * _EmissivePower;
+#else
 				return prev;
+#endif
 			}
 			ENDCG
 		}

@@ -55,7 +55,10 @@ public class Localizer : MonoBehaviour {
 	// References
 	private TextMeshProUGUI m_text = null;
 	public TextMeshProUGUI text {
-		get { return m_text; }
+		get { 
+			if(m_text == null) m_text = GetComponent<TextMeshProUGUI>();
+			return m_text; 
+		}
 	}
 
 	//------------------------------------------------------------------------//

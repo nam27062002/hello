@@ -58,7 +58,7 @@ public class ResourcesFlowBigAmountConfirmationPopup : MonoBehaviour {
 		m_buttonText.Localize(m_buttonText.tid, priceTag);
 
 		// Initialize toggle
-		m_dontShowAgainToggle.isOn = !GameSettings.showBigAmountConfirmationPopup;	// Inverse
+		m_dontShowAgainToggle.isOn = !GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP);	// Inverse
 	}
 
 	//------------------------------------------------------------------------//
@@ -86,6 +86,6 @@ public class ResourcesFlowBigAmountConfirmationPopup : MonoBehaviour {
 	/// <param name="_newValue">New value of the toggle.</param>
 	public void OnDontShowAgainToggled(bool _newValue) {
 		// Store settings
-		GameSettings.showBigAmountConfirmationPopup = !_newValue;	// Inverse!
+		GameSettings.Set(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP, !_newValue);	// Inverse!
 	}
 }

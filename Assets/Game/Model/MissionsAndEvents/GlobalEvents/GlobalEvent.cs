@@ -74,6 +74,9 @@ public partial class GlobalEvent {
 
 	// Rewards
 	private RewardSlot m_topContributorsRewardSlot = null; // Percentage is differently used here!
+	public RewardSlot topContributorsRewardSlot {
+		get { return m_topContributorsRewardSlot; }
+	}
 
 	private int m_rewardLevel = -1; // how many rewards will get this user?
 	public int rewardLevel { get { return m_rewardLevel; } }
@@ -114,7 +117,7 @@ public partial class GlobalEvent {
 		get { return m_state == State.ACTIVE; }
 	}
 
-	public bool isRewarAvailable {
+	public bool isRewardAvailable {
 		get { return m_state == State.FINISHED; }
 	}
 
@@ -122,6 +125,11 @@ public partial class GlobalEvent {
 	private List<GlobalEventUserData> m_leaderboard = new List<GlobalEventUserData>();	// Sorted
 	public List<GlobalEventUserData> leaderboard {
 		get { return m_leaderboard; }
+	}
+
+	private int m_totalPlayers = 0;
+	public int totalPlayers {
+		get { return m_totalPlayers; }
 	}
 	
 	//------------------------------------------------------------------------//
@@ -308,8 +316,42 @@ public partial class GlobalEvent {
 	/// </summary>
 	/// <param name="_data">Data.</param>
 	public void UpdateLeaderboardFromJson(SimpleJSON.JSONNode _data) {
+		/*
+		 EXPECTED JSON:
+		 {
+		  l: [
+		    {
+		      name: "randomName72",
+		      pic: "randomPicUrl72",
+		      score: 1926
+		    },
+		    ...{
+		      name: "randomName469",
+		      pic: "randomPicUrl469",
+		      score: 1338
+		    },
+		    {
+		      name: "randomName205",
+		      pic: "randomPicUrl205",
+		      score: 1334
+		    },
+		    {
+		      name: "randomName474",
+		      pic: "randomPicUrl474",
+		      score: 1333
+		    }
+		  ],
+		  n: 500,
+		  u: {
+		    name: "randomName1",
+		    pic: "randomPicUrl1",
+		    score: 774
+		  }
+		}
+		*/
+
 		// Parse leaderboard
-		SimpleJSON.JSONArray leaderboardData = _data["leaderboard"].AsArray;
+		SimpleJSON.JSONArray leaderboardData = _data["l"].AsArray;
 		int numEntries = leaderboardData.Count;
 		for(int i = 0; i < numEntries; ++i) {
 			// Reuse existing entries, create a new one if needed
@@ -326,8 +368,15 @@ public partial class GlobalEvent {
 		if(m_leaderboard.Count > numEntries) {
 			m_leaderboard.RemoveRange(numEntries, m_leaderboard.Count - numEntries);
 		}
+
+		// Store total amount of players
+		m_totalPlayers = _data["n"].AsInt;
 	}
 
+	/// <summary>
+	/// Update the user's reward level for this event with new data from the server.
+	/// </summary>
+	/// <param name="_data">Data.</param>
 	public void UpdateRewardLevelFromJson(SimpleJSON.JSONNode _data) {
 		m_rewardLevel = _data["r"].AsInt;
 		if (_data.ContainsKey("top")) {
