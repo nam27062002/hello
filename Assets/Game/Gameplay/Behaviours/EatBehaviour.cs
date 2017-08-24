@@ -383,6 +383,22 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_holdingPrey.transform.localPosition = Vector3.Lerp( pos, -holdPoint, Time.deltaTime * 20);
 	}
 
+	public void InstantGrabMotion()
+	{
+		// Rotation
+		Quaternion rot = m_holdingPrey.transform.localRotation;
+		m_holdingPrey.transform.localRotation = Quaternion.identity;
+		Vector3 holdDirection = m_mouth.InverseTransformDirection(m_holdTransform.forward);
+		Vector3 holdUpDirection = m_mouth.InverseTransformDirection(m_holdTransform.up);
+		m_holdingPrey.transform.localRotation = Quaternion.LookRotation( -holdDirection, holdUpDirection );
+
+		// Position
+		Vector3 pos = m_holdingPrey.transform.localPosition;
+		m_holdingPrey.transform.localPosition = Vector3.zero;
+		Vector3 holdPoint = m_mouth.InverseTransformPoint( m_holdTransform.position );
+		m_holdingPrey.transform.localPosition = -holdPoint;
+	}
+
 	/// <summary>
 	/// Pauses the eating. End eating what it has in the mouth but does not let anything else in
 	/// </summary>
