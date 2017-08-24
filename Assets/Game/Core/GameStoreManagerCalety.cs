@@ -13,35 +13,36 @@ public class GameStoreManagerCalety : GameStoreManager
     	public bool m_isReady = false;
 		public override void onPurchaseCompleted(string sku, string strTransactionID, JSONNode kReceiptJSON, string strPlatformOrderID) 
 		{
-			string gameSku = PlatformSkuToGameSku( sku );
-			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.SHOP_PACKS, gameSku);
+			// string gameSku = PlatformSkuToGameSku( sku );
+			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.SHOP_PACKS, sku);
 			if ( def != null )
 			{
 				PopupCurrencyShopPill.ApplyShopPack( def );	
 			}
-			Messenger.Broadcast<string, string, JSONNode>(EngineEvents.PURCHASE_SUCCESSFUL, gameSku, strTransactionID, kReceiptJSON);
+			Messenger.Broadcast<string, string, JSONNode>(EngineEvents.PURCHASE_SUCCESSFUL, sku, strTransactionID, kReceiptJSON);
 		}
 
 		public override void onPurchaseCancelled(string sku, string strTransactionID) 
 		{
-			Messenger.Broadcast<string>(EngineEvents.PURCHASE_CANCELLED, PlatformSkuToGameSku( sku ) );
+			Messenger.Broadcast<string>(EngineEvents.PURCHASE_CANCELLED, sku);
 		}
 
 		public override void onPurchaseFailed(string sku, string strTransactionID) 
 		{
-			Messenger.Broadcast<string>(EngineEvents.PURCHASE_FAILED, PlatformSkuToGameSku( sku ) );
+			Messenger.Broadcast<string>(EngineEvents.PURCHASE_FAILED, sku);
 		}
 
 		public override void onStoreIsReady() 
 		{
 			m_isReady = true;	
 		}
-
+		/*
 		private string PlatformSkuToGameSku( string platform_sku )
 	    {
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinitionByVariable( DefinitionsCategory.SHOP_PACKS, GameStoreManagerCalety.GetPlatformAttribute(), platform_sku);
 			return def.sku;
 	    }
+	    */
     }
 	#endregion
 
@@ -103,8 +104,8 @@ public class GameStoreManagerCalety : GameStoreManager
 
 	public override string GetLocalisedPrice( string sku )
 	{
-		string item = GameSkuToPlatformSku( sku );
-		StoreManager.StoreProduct product = StoreManager.SharedInstance.GetStoreProduct( item );
+		// string item = GameSkuToPlatformSku( sku );
+		StoreManager.StoreProduct product = StoreManager.SharedInstance.GetStoreProduct( sku );
 		if ( product != null )
 		{            
 			return product.m_strLocalisedPrice;
@@ -114,8 +115,8 @@ public class GameStoreManagerCalety : GameStoreManager
 
     public override StoreManager.StoreProduct GetStoreProduct( string sku )
     {
-        string item = GameSkuToPlatformSku(sku);
-        return StoreManager.SharedInstance.GetStoreProduct(item);
+        // string item = GameSkuToPlatformSku(sku);
+        return StoreManager.SharedInstance.GetStoreProduct(sku);
     }
 
 
@@ -137,10 +138,10 @@ public class GameStoreManagerCalety : GameStoreManager
 #else
     	if (StoreManager.SharedInstance.CanMakePayments()) 
     	{
-    		string item = GameSkuToPlatformSku( _sku );
-			if ( !string.IsNullOrEmpty( item ) )
+    		// string item = GameSkuToPlatformSku( _sku );
+			if ( !string.IsNullOrEmpty( _sku ) )
     		{
-				StoreManager.SharedInstance.RequestProduct (item);
+				StoreManager.SharedInstance.RequestProduct (_sku);
     		}
     	}
 #endif
@@ -149,10 +150,10 @@ public class GameStoreManagerCalety : GameStoreManager
     IEnumerator SimulatePurchase( string _sku)
     {
 		yield return new WaitForSecondsRealtime( 0.25f );
-		string item = GameSkuToPlatformSku( _sku );
-    	m_storeListener.onPurchaseCompleted( item, "", null, "");
+		// string item = GameSkuToPlatformSku( _sku );
+		m_storeListener.onPurchaseCompleted( _sku, "", null, "");
     }
-
+    /*
     private string GameSkuToPlatformSku( string gameSku )
     {
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, gameSku);
@@ -163,6 +164,7 @@ public class GameStoreManagerCalety : GameStoreManager
 		}
 		return "";
     }
+    */
 
     private static string GetPlatformAttribute()
     {

@@ -470,6 +470,7 @@ public class UserProfile : UserPersistenceSystem
 			case Currency.HARD: return "hc";
 			case Currency.GOLDEN_FRAGMENTS: return "goldenFragments";
 			case Currency.KEYS: return "keys";
+			case Currency.REAL: return "money";
 		}
 		return string.Empty;
 	}
@@ -483,6 +484,7 @@ public class UserProfile : UserPersistenceSystem
 			case "hc": return Currency.HARD;
 			case "goldenFragments": return Currency.GOLDEN_FRAGMENTS;
 			case "keys": return Currency.KEYS;
+			case "money": return Currency.REAL;
 		}
 		return Currency.NONE;
 	}

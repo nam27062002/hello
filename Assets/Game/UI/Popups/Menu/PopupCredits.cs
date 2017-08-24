@@ -40,6 +40,12 @@ public class PopupCredits : MonoBehaviour {
 		public Color color = Color.white;
 		public bool titleFont = false;
 	}
+
+	[Serializable]
+	public class PrefabTag {
+		public string name = "";
+		public GameObject prefab = null;
+	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -47,11 +53,13 @@ public class PopupCredits : MonoBehaviour {
 	// Exposed
 	[SerializeField] private ScrollRect m_scroll = null;
 	[SerializeField] private TextMeshProUGUI m_text = null;
-	[Space]
 	[SerializeField] private float m_scrollSpeed = 150f;	// Units per second
 	[SerializeField] private float m_inertiaThreshold = 100f;
+	[SerializeField] private float m_finalPause = 3f;	// Seconds
 	[Space]
+	[SerializeField] private GameObject m_textPrefab = null;
 	[SerializeField] private List<TextStyle> m_styles = new List<TextStyle>();
+	[SerializeField] private List<PrefabTag> m_prefabTags = new List<PrefabTag>();
 
 	// Internal
 	private Tween m_tween = null;
@@ -168,7 +176,10 @@ public class PopupCredits : MonoBehaviour {
 			.SetRecyclable(true)
 			.OnComplete(() => {
 				// Auto-close popup once animation is completed!
-				GetComponent<PopupController>().Close(true);
+				UbiBCN.CoroutineManager.DelayedCall(
+					() => { GetComponent<PopupController>().Close(true); },
+					m_finalPause
+				);
 			})
 			.Play();
 	}
