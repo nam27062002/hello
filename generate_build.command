@@ -379,7 +379,19 @@ if $BUILD_IOS; then
     # Generate IPA file
     print_builder "Exporting IPA"
     rm -f "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}"    # just in case
-    xcodebuild -exportArchive -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" -exportPath "${OUTPUT_DIR}/ipas/" -exportOptionsPlist "${OUTPUT_DIR}/xcode/Info.plist"
+
+    echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \
+      <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\"> \
+      <plist version=\"1.0\"> \
+      <dict> \
+        <key>method</key> \
+        <string>adhoc</string> \
+        <key>teamId</key> \
+        <string>${DEVELOPMENT_TEAM}</string> \
+      </dict> \
+      </plist>" > build.plist
+
+    xcodebuild -exportArchive -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" -exportPath "${OUTPUT_DIR}/ipas/" -exportOptionsPlist "build.plist"
     mv -f "${OUTPUT_DIR}/ipas/Unity-iPhone.ipa" "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}"
 fi
 
