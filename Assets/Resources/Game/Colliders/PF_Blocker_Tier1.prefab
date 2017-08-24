@@ -43,7 +43,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 225182178071f0e459bfa5bf231a1fb6, type: 2}
+  - {fileID: 2100000, guid: 4680a2ebda63ef54b90af3e2beae3f5d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -60,6 +60,7 @@ MeshRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
 --- !u!33 &3374166
 MeshFilter:
@@ -122,7 +123,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1363612444948474}
   m_LocalRotation: {x: 0.7474518, y: -0.66430974, z: -0.0021542849, w: 0.0019461833}
-  m_LocalPosition: {x: 919, y: -550.3, z: 0}
+  m_LocalPosition: {x: -500.28967, y: -500.25592, z: 0}
   m_LocalScale: {x: 1.1153306, y: 0.78579247, z: 1}
   m_Children:
   - {fileID: 466452}
@@ -143,13 +144,48 @@ MonoBehaviour:
   m_tierWithTurboBreak: 1
   m_tierNoTurboBreak: 1
   m_hitCount: 1
+  m_disableOnBreak: 1
   m_destroyOnBreak: 1
   m_onBreakParticle:
     name: PF_CaveBlockerExplosion
     path: 
     offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
   m_onBreakAudio: Rocks
   m_view: {fileID: 466452}
+  m_activateOnDestroy: {fileID: 0}
 --- !u!114 &114714819731338518
 MonoBehaviour:
   m_ObjectHideFlags: 1

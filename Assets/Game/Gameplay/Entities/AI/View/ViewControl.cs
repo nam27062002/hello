@@ -25,7 +25,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		Count
 	}
 
-	public enum EntityTint
+	public enum MaterialType
 	{
 		NORMAL,
 		GOLD,
@@ -142,7 +142,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     //Dragon breath detection
 	private DragonBoostBehaviour m_dragonBoost;
 
-	private EntityTint m_entityTint = EntityTint.NONE;
+	private MaterialType m_materialType = MaterialType.NONE;
 
 	private Transform[] m_fireParticles;
 	private Transform[] m_fireParticlesParents;
@@ -335,7 +335,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
 
 		DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
-		SetEntityTint(GetEntityTint(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type));
+		SetMaterialType(GetMaterialType(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type));
 
 		m_dragonBoost = InstanceManager.player.dragonBoostBehaviour;
     }
@@ -387,18 +387,18 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
 	}
 
-    void SetEntityTint(EntityTint value) {
-    	m_entityTint = value;
+    public void SetMaterialType(MaterialType _type) {
+		m_materialType = _type;
         
 		// Restore materials
 		for (int i = 0; i < m_renderers.Length; i++) {
 			int id = m_renderers[i].GetInstanceID();
 			Material[] materials = m_renderers[i].sharedMaterials;
 			for (int m = 0; m < materials.Length; m++) {
-				switch (value) {
-					case EntityTint.GOLD: 	materials[m] = sm_goldenMaterial;  break;
-					case EntityTint.FREEZE:	materials[m] = sm_frozenMaterial;  break;						
-					case EntityTint.NORMAL:	materials[m] = m_materials[id][m]; break;
+				switch (_type) {
+					case MaterialType.GOLD: 	materials[m] = sm_goldenMaterial;  break;
+					case MaterialType.FREEZE:	materials[m] = sm_frozenMaterial;  break;						
+					case MaterialType.NORMAL:	materials[m] = m_materials[id][m]; break;
 				}
 			}
 			m_renderers[i].sharedMaterials = materials;
@@ -406,7 +406,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     }
 
     void OnFuryToggled(bool _active, DragonBreathBehaviour.Type _type) {
-		CheckTint(IsEntityGolden(), _active, _type);
+		CheckMaterialType(IsEntityGolden(), _active, _type);
     }
 
     /// <summary>
@@ -430,24 +430,24 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     	return false;
     }
 
-	EntityTint GetEntityTint(bool _isGolden, bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None) {
-		EntityTint _tint = ViewControl.EntityTint.NORMAL;
+	MaterialType GetMaterialType(bool _isGolden, bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None) {
+		MaterialType matType = ViewControl.MaterialType.NORMAL;
 		if (_isGolden || _furyActive) {
 			if (IsBurnableByPlayer(_type)) {	
-				_tint = EntityTint.GOLD;
+				matType = MaterialType.GOLD;
 			}
 		} else {
 			if (m_freezingLevel > 0) {
-				_tint = EntityTint.FREEZE;
+				matType = MaterialType.FREEZE;
 			}
 		}
-		return _tint;
+		return matType;
 	}
 
-	void CheckTint(bool _isGolden, bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None) {
-		EntityTint _tint = GetEntityTint(_isGolden, _furyActive, _type);
-    	if (_tint != m_entityTint) {
-    		SetEntityTint(_tint);
+	void CheckMaterialType(bool _isGolden, bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None) {
+		MaterialType matType = GetMaterialType(_isGolden, _furyActive, _type);
+		if (matType != m_materialType) {
+			SetMaterialType(matType);
     	}
     }
 
@@ -483,12 +483,12 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
         if (m_freezingLevel > 0)
         {
 			m_wasFreezing = true;
-            SetEntityTint(EntityTint.FREEZE);
+            SetMaterialType(MaterialType.FREEZE);
         }
         else if ( m_wasFreezing )
         {
 			DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
-			CheckTint(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
+			CheckMaterialType(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
         	m_wasFreezing = false;
         }
     }
