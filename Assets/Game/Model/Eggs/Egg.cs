@@ -206,7 +206,7 @@ public class Egg {
 
 		// Save persistence
 		// [AOC] A bit of an overkill, try to improve it on the future
-		PersistenceManager.Save();
+		PersistenceFacade.instance.Save_Request();
 	}
 
 	/// <summary>
