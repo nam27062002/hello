@@ -38,6 +38,8 @@ GameObject:
   - component: {fileID: 4410738719326226}
   - component: {fileID: 198042405990245930}
   - component: {fileID: 199564715094669112}
+  - component: {fileID: 114146959824524214}
+  - component: {fileID: 114391488790379872}
   m_Layer: 0
   m_Name: PS_PunchSmoke
   m_TagString: Untagged
@@ -72,6 +74,31 @@ Transform:
   m_Father: {fileID: 4410738719326226}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114146959824524214
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1596524689708090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114391488790379872
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1596524689708090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activeTime: 1
+  m_returnTo: 1
+  m_disableOnInvisible: 1
 --- !u!198 &198042405990245930
 ParticleSystem:
   m_ObjectHideFlags: 1
