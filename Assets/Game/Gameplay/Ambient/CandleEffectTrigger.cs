@@ -14,7 +14,7 @@ public class CandleEffectTrigger : MonoBehaviour {
 	{
         if (other.CompareTag("Player"))
         {
-            Messenger.Broadcast<bool>(GameEvents.DARK_ZONE_TOGGLE, m_status == EffectStatus.enter ? true : false);
+            Messenger.Broadcast<bool>(GameEvents.DARK_ZONE_TOGGLE, (m_status == EffectStatus.enter) ? true : false);
         }
 	}
 }

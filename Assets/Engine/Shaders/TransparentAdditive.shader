@@ -9,6 +9,9 @@ Shader "Hungry Dragon/TransparentAdditive"
 		_MainTex("Particle Texture", 2D) = "white" {}
 //		[Toggle(CUSTOMPARTICLESYSTEM)] _EnableCustomParticleSystem("Custom Particle System", int) = 0.0
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
+//		[Toggle(AUTOMATICPANNING)] _AutomaticPanning("Custom Particle System", int) = 0.0
+		[Toggle(EMISSIVEPOWER)] _EnableEmissivePower("Enable Emissive Power", int) = 0.0
+		_EmissivePower("Emissive Power", Range(1.0, 4.0)) = 1.0
 	}
 
 	Category{
@@ -17,7 +20,6 @@ Shader "Hungry Dragon/TransparentAdditive"
 		Cull Off
 		Lighting Off
 		ZWrite Off
-		Fog{ Color(0,0,0,0) }
 		ZTest[_ZTest]
 
 		SubShader
@@ -29,6 +31,7 @@ Shader "Hungry Dragon/TransparentAdditive"
 				#pragma fragment frag
 				#pragma multi_compile_particles
 				#pragma shader_feature  __ CUSTOMPARTICLESYSTEM
+				#pragma shader_feature  __ EMISSIVEPOWER
 
 				#include "UnityCG.cginc"
 
@@ -53,6 +56,9 @@ Shader "Hungry Dragon/TransparentAdditive"
 #endif
 				float4 _TintColor;
 
+#ifdef EMISSIVEPOWER
+				float _EmissivePower;
+#endif
 				v2f vert(appdata_t v)
 				{
 					v2f o;
@@ -69,7 +75,12 @@ Shader "Hungry Dragon/TransparentAdditive"
 #else
 					half4 prev = i.color * tex2D(_MainTex, i.texcoord) * _TintColor;
 #endif
+
+#ifdef EMISSIVEPOWER
+					return prev * _EmissivePower;
+#else
 					return prev;
+#endif
 				}
 				ENDCG
 			}
