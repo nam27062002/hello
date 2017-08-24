@@ -530,7 +530,9 @@ public class Spawner : AbstractSpawner {
 			Gizmos.DrawLine(transform.position, transform.position + transform.rotation * Vector3.forward * 5f);
 		}
 
-		DrawStateGizmos();
+		if (Application.isPlaying) {
+			DrawStateGizmos();
+		}
 	}
 
 	protected Vector3 RandomStartDisplacement(int _index)	{
