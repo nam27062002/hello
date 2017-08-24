@@ -215,6 +215,11 @@ public class UI3DLoader : MonoBehaviour {
 
 			// Reset position
 			m_loadedInstance.transform.localPosition = Vector3.zero;
+
+			ViewControl vc = m_loadedInstance.GetComponent<ViewControl>();
+			if (vc != null) {
+				vc.SetMaterialType(ViewControl.MaterialType.NORMAL);
+			}
 		}
 
 		// The scaler needs refreshing, but do it delayed so the animation has time to initialize
