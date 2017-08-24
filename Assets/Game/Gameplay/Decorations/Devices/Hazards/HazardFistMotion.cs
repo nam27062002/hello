@@ -87,7 +87,7 @@ public class HazardFistMotion : MonoBehaviour {
 				m_mobileColumnTransforms[i].localPosition = p;
 			}
 
-			if (sinValue < -1.9f) {
+			if (sinValue < -1.8f) {
 				if (m_spawnParticles) {
 					m_hitGroundParticles.Spawn(m_fistTransform.position);
 					m_spawnParticles = false;
