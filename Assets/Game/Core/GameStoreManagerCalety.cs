@@ -86,13 +86,19 @@ public class GameStoreManagerCalety : GameStoreManager
 		List<string> skus = new List<string>();;
 		DefinitionsManager.SharedInstance.GetDefinitions( DefinitionsCategory.SHOP_PACKS, ref outList);
 		for( int i = 0; i<outList.Count; i++ )
-		{
-			string platformId = outList[i].Get( GetPlatformAttribute());
+		{  
+            /*          
+            // We used to use a different field for the name of the product in every platform
+            string platformId = outList[i].Get( GetPlatformAttribute());
 			if ( !string.IsNullOrEmpty(platformId) )
 			{
 				skus.Add( platformId );
 			}
-		}
+            */
+         
+            // Sku is used directly as product id
+            skus.Add(outList[i].sku);
+        }
 		m_storeSkus = skus.ToArray();
 	}
 
