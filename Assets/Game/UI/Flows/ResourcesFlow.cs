@@ -540,6 +540,11 @@ public class ResourcesFlow {
 
 		// Otherwise buy the missing currency with PC
 		else {
+			// [AOC] TEST!!
+			// Buy the missing SC using HC
+			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)m_missingAmount, true, HDTrackingManager.EEconomyGroup.NOT_ENOUGH_RESOURCES);
+			UsersManager.currentUser.SpendCurrency(UserProfile.Currency.HARD, (ulong)m_extraPCCost);
+
 			// Transaction will do everything! ^_^
 			TryTransaction(false);	// Ask confirmation? No, looks weird after having purchased the gems
 		}

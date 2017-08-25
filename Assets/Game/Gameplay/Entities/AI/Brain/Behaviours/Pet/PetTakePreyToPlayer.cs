@@ -56,6 +56,7 @@ namespace AI {
 					m_spawnedEntity.dieOutsideFrustum = false;
 					m_pilot.SlowDown(false);
 					m_eatBehaviour.StartHold( m_spawnedEntity.machine, true);
+					m_eatBehaviour.InstantGrabMotion();
 				}
 				else
 				{
@@ -70,6 +71,7 @@ namespace AI {
 
 				if ( m_spawnedEntity != null )
 				{
+					m_eatBehaviour.InstantGrabMotion();
 					float magnitude = (targetPos - m_pilot.transform.position).sqrMagnitude;
 					if ( magnitude <= 1 )
 					{
