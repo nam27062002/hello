@@ -413,8 +413,9 @@ if $UPLOAD;then
   # Copy APK
   if $BUILD_ANDROID; then
       cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}"* "server/"
-      if $GENERATE_OBB && $HAS_AAPT; then
-          cp "${OUTPUT_DIR}/apks/${OBB_FILE}" "server/"
+      if $GENERATE_OBB; then
+          mkdir -p "server/${STAGE_APK_FILE}"
+          cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/${OBB_FILE}" "server/${STAGE_APK_FILE}/"
       fi
   fi
 
