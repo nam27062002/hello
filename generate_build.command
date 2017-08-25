@@ -387,7 +387,7 @@ if $BUILD_IOS; then
       <plist version=\"1.0\"> \
       <dict> \
         <key>method</key> \
-        <string>adhoc</string> \
+        <string>ad-hoc</string> \
         <key>teamId</key> \
         <string>${DEVELOPMENT_TEAM}</string> \
       </dict> \
