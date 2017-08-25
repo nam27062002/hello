@@ -46,10 +46,8 @@ SMB_FOLDER="BCNStudio/QA/builds"
 
 
 # iOS Code Sign
-# PROVISIONING_PROFILE="XC Ad Hoc: com.ubisoft.hungrydragon.dev"  # Not used, just for reference. Make sure it's downloaded in the build machine (XCode->Preferences->Accounts->View Details)
-# SIGNING_ID="iPhone Distribution: Marie Cordon (Y3J3C97LQ8)" # NOT WORKING!!
-#PROVISIONING_PROFILE_UUID="99d18f4a-2a05-4e39-a5da-370321ce140b"
-# PROVISIONING_PROFILE_UUID="86c9ccf0-d239-45aa-b867-03a91ca719f1" # Get it by right-click on the target provisioning profile in XCode->Preferences->Accounts->View Details and choosing "Show in Finder" (the UUID is the filename of the selected profile)
+CODE_SIGN_IDENTITY="iPhone Distribution"
+PROVISIONING_PROFILE_UUID="86c9ccf0-d239-45aa-b867-03a91ca719f1"
 DEVELOPMENT_TEAM="Y3J3C97LQ8"
 
 # SMB Settings
@@ -57,7 +55,7 @@ SMB_USER="srv_acc_bcn_jenkins"
 SMB_PASS="Lm0%2956jkR%23Tg"
 
 USAGE="Usage: generate_build.command [-path project_path=script_path] [-code project_code=xx] [-b branch_name=develop] [-reset_git] [-commit] [-tag] \
-      [-android][-obb][-ios][-iosTeam teamId] \
+      [-android][-obb][-ios][-iosTeam teamId] [-iosProvisioningId provisioningId]\
       [-version forced_version] [-increase_version]  \
       [-iosPublic iosPublicVersion] [-ggpPublic google_play_public_version] [-amzPublic amazonPublicVersion]  \
       [-increase_VCodes] [-iosVCode ios_version_code] [-ggpVCode google_play_version_code] [-amzVCode amazon_version_code]  \
@@ -98,6 +96,9 @@ do
     elif [ "$PARAM_NAME" == "-iosTeam" ] ; then
         ((i++))
         DEVELOPMENT_TEAM=${!i}
+    elif [ "$PARAM_NAME" == "-iosProvisioningId" ] ; then
+        ((i++))
+        PROVISIONING_PROFILE_UUID=${!i}
 
     elif [ "$PARAM_NAME" == "-version" ] ; then
         ((i++))
@@ -374,7 +375,8 @@ if $BUILD_IOS; then
 
     print_builder "Archiving"
     rm -rf "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}"    # just in case
-    xcodebuild archive -project "${PROJECT_NAME}" -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM}"
+    sed -i "" "s|ProvisioningStyle = Automatic;|ProvisioningStyle = Manual;|" "${PROJECT_NAME}/project.pbxproj" # for archive to work we need it to be manual
+    xcodebuild archive -project "${PROJECT_NAME}" -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM}" PROVISIONING_PROFILE_UUID="${PROVISIONING_PROFILE_UUID}" CODE_SIGN_IDENTITY="${CODE_SIGN_IDENTITY}"
 
     # Generate IPA file
     print_builder "Exporting IPA"
