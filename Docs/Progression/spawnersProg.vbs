@@ -6,11 +6,11 @@ Dim objShell
 Set objFSO 				= CreateObject("Scripting.FileSystemObject")
 Set objShell 			= WScript.CreateObject("WScript.Shell")
 
-REM Set SpawnersSceneFile	= objFSO.GetFolder("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Village.unity")
 Set objOutputFile 		= objFSO.CreateTextFile("spawnersProg.txt", 2, true)
 
 
-Set objInputFile = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Village.unity")
+REM Set objInputFile = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Village.unity")
+Set objInputFile = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Castle.unity")
 Dim substrToFind
 
 	Do until objInputFile.AtEndOfStream
