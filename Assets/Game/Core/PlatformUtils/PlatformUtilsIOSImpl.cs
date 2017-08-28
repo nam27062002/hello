@@ -157,6 +157,15 @@ public class PlatformUtilsIOSImpl : PlatformUtils
 		}
 		return System.Environment.GetCommandLineArgs();
 	}
-	
+
+
+	public override bool InputPressureSupprted()
+	{ 
+		if (UnityEngine.iOS.Device.generation.ToString().StartsWith("iPadPro"))
+		{
+			return false;
+		}
+		return Input.touchPressureSupported;
+	}
 }
 #endif

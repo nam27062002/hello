@@ -254,10 +254,6 @@ abstract public class TouchControls : MonoBehaviour {
     {     
         switch (id)            
         {
-            case DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD:
-                UpdateBoostWithHardPushThreshold();
-                break;
-
             default:
                 OnPrefChangedExtended(id);
                 break;
@@ -274,17 +270,6 @@ abstract public class TouchControls : MonoBehaviour {
     {
     	m_boostWithHardPush = use3DTouch;
     	m_boostWithHardPushThreshold = pressure;
-		if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            m_boostWithHardPushThreshold = Prefs.GetFloatPlayer(DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD);
-        }
     }
 
-    private void UpdateBoostWithHardPushThreshold()
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            m_boostWithHardPushThreshold = Prefs.GetFloatPlayer(DebugSettings.DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD);
-        }
-    }
 }

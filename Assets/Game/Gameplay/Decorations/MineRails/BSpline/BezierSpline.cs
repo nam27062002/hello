@@ -139,6 +139,36 @@ namespace BSpline {
 			return Vector3.Cross(forward, right);
 		}
 
+		public Vector3 GetPointAtDistance(float _distance, bool _local = false) {
+			if (m_segments == null) {
+				CalculateArcLength();
+			}
+
+			SplineSegment data;
+			if (_distance >= m_arcLength) {
+				data = m_segments.Last();
+				_distance = data.length;
+			} else {
+				int s = 0;
+				while (s < m_segments.Count && _distance > m_segments[s].length) {
+					_distance -= m_segments[s].length;
+					s++;
+				}
+				if (s < m_segments.Count) {
+					data = m_segments[s];
+				} else {
+					data = m_segments.Last();
+					_distance = data.length;
+				}
+			}
+
+			if (_local) {
+				return data.p0 + data.direction * _distance;
+			} else {
+				return transform.TransformPoint(data.p0 + data.direction * _distance);
+			}
+		}
+
 		public Vector3 GetPointAtDistance(float _distance, ref Vector3 _direction, ref Vector3 _up, ref Vector3 _right, bool _smoothDirection = false, bool _local = false) {
 			if (m_segments == null) {
 				CalculateArcLength();
