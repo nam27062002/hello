@@ -40,7 +40,8 @@ public class PopupSettings : MonoBehaviour {
         }
 		if (m_3dTouch != null)
 		{
-			m_3dTouch.SetActive( Input.touchPressureSupported );
+			// m_3dTouch.SetActive( Input.touchPressureSupported );
+			m_3dTouch.SetActive( PlatformUtils.Instance.InputPressureSupprted());
 		}
         CS_Init();
     }

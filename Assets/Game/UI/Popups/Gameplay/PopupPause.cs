@@ -58,7 +58,8 @@ public class PopupPause : PopupPauseBase {
 		base.Awake();
 		if (m_3dTouch != null)
 		{
-			m_3dTouch.SetActive( Input.touchPressureSupported );
+			// m_3dTouch.SetActive( Input.touchPressureSupported );
+			m_3dTouch.SetActive( PlatformUtils.Instance.InputPressureSupprted() );
 		}
 	}
 
