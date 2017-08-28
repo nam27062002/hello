@@ -95,14 +95,18 @@ public class RailMeshBuilder : MonoBehaviour {
 		//
 
 		float totalDistance = _toDist - _fromDist;
+		Vector3 pointA = m_spline.GetPointAtDistance(_fromDist);
+		Vector3 pointB = m_spline.GetPointAtDistance(_toDist);
 
-		_subdivisions = Mathf.Max(1f, _subdivisions);
+		float smartSubdivisions = totalDistance / ((pointB - pointA).magnitude);
+		smartSubdivisions = (smartSubdivisions - 1f) * 100f;
+		smartSubdivisions = Mathf.Clamp(smartSubdivisions * 20f, 1f, _subdivisions);
 
 		List<Vector3> verticesLeft = new List<Vector3>();
 		List<Vector3> verticesRight = new List<Vector3>();
 
 		float distance = 0f;
-		float step = totalDistance / _subdivisions;
+		float step = totalDistance / smartSubdivisions;
 		for (distance = _fromDist; distance < _toDist; distance += step) {
 			Vector3 dir = Vector3.zero;
 			Vector3 up = Vector3.zero;
