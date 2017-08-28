@@ -49,11 +49,16 @@ public class AttachPoint : MonoBehaviour {
 		}
 	}
 
-	public void EquipAccessory( Equipable _accesory ) {
+	public void EquipAccessory( Equipable _accesory, DragonEquip _dragonEquip ) {
 		m_item = _accesory;
 		m_item.transform.parent = transform;
 		m_item.transform.localPosition = Vector3.zero;
 		m_item.transform.localScale = Vector3.one;
 		m_item.transform.localRotation = Quaternion.identity;
+		ScaleEquipableParticle scaler = _accesory.GetComponentInChildren<ScaleEquipableParticle>();
+		if ( scaler != null )
+		{
+			scaler.Setup();
+		}
 	}
 }
