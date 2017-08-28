@@ -44,4 +44,6 @@ public abstract class PlatformUtils
 	public virtual void ReportProgress( string achievementId, double progress) {}
 
 	public virtual string[] GetCommandLineArgs(){ return System.Environment.GetCommandLineArgs(); }
+
+	public virtual bool InputPressureSupprted(){ return Input.touchPressureSupported; }
 }

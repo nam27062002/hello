@@ -7,7 +7,6 @@ Shader "Hungry Dragon/TransparentAlphaBlend smoke"
 		_NoiseTex("Noise Texture", 2D) = "white" {}
 		_MaskTex("Mask Texture", 2D) = "white" {}
 		_TintColor("Smoke Color 1", Color) = (0.5,0.5,0.5,0.5)
-		_TintColor2("Smoke Color2", Color) = (0.5,0.5,0.5,0.5)
 		_Speed("SpeedXY1.xy SpeedXY2.zw", Vector) = (0.0, 0.0, 0.0, 0.0)
 		_SmoothVal("SmoothVal.xy Emission.w", Vector) = (0,0,0,0)
 		_Offset("Offset", Range(0.0, 0.49)) = 0.3

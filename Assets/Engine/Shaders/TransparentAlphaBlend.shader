@@ -5,11 +5,11 @@ Shader "Hungry Dragon/TransparentAlphaBlend"
 	Properties
 	{
 		_TintColor("Tint Color", Color) = (0.5,0.5,0.5,0.5)
-		[HideInInspector] _VColor("Custom vertex color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_MainTex("Particle Texture", 2D) = "white" {}
-//		[Toggle(CUSTOMPARTICLESYSTEM)] _EnableCustomParticleSystem("Custom Particle System", int) = 0.0
 		[Toggle(EMISSIVEPOWER)] _EnableEmissivePower("Enable Emissive Power", int) = 0.0
 		_EmissivePower("Emissive Power", Range(1.0, 4.0)) = 1.0
+		[Toggle(AUTOMATICPANNING)] _EnableAutomaticPanning("Enable Automatic Panning", int) = 0.0
+		_Panning("Automatic Panning", Vector) = (0.0, 0.0, 0.0, 0.0)
 
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}
@@ -31,9 +31,15 @@ Shader "Hungry Dragon/TransparentAlphaBlend"
 			#pragma multi_compile_particles
 			#pragma shader_feature  __ CUSTOMPARTICLESYSTEM
 			#pragma shader_feature  __ EMISSIVEPOWER
+			#pragma shader_feature  __ AUTOMATICPANNING
 
 			#include "UnityCG.cginc"
 
+			#define	ALPHABLEND
+			#include "transparentparticles.cginc"
+
+
+/*
 			sampler2D _MainTex;
 			//fixed4 _TintColor;
 
@@ -51,9 +57,6 @@ Shader "Hungry Dragon/TransparentAlphaBlend"
 
 			float4 _MainTex_ST;
 
-#ifdef CUSTOMPARTICLESYSTEM
-			float4 _VColor;
-#endif
 			float4 _TintColor;
 
 #ifdef EMISSIVEPOWER
@@ -71,18 +74,16 @@ Shader "Hungry Dragon/TransparentAlphaBlend"
 
 			fixed4 frag(v2f i) : COLOR
 			{
-#ifdef CUSTOMPARTICLESYSTEM
-				float4 col = _VColor * 0.5;
-#else
 				float4 col = _TintColor;
-#endif
 				half4 prev = i.color * tex2D(_MainTex, i.texcoord) * col * 2.0;
+
 #ifdef EMISSIVEPOWER
 				return prev * _EmissivePower;
 #else
 				return prev;
 #endif
 			}
+*/
 			ENDCG
 		}
 	}
