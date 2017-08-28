@@ -47,9 +47,7 @@ public class PopupPause : PopupPauseBase {
 		}
 	}
 
-	// Internal
-	private bool m_endGame = false;
-	
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -89,10 +87,7 @@ public class PopupPause : PopupPauseBase {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
-		if (Input.GetKeyDown(KeyCode.Escape) && CanReturn()){
-			// Controller close
-			m_popup.Close(false);
-		}
+
 	}
 
 	private bool CanReturn(){
@@ -120,9 +115,9 @@ public class PopupPause : PopupPauseBase {
 	/// End game button has been pressed
 	/// </summary>
 	public void OnEndGameButton() {
-		// Activate flag and close popup
-		m_endGame = true;
-		GetComponentInParent<PopupController>().Close(true);
+		if (GameSettings.Get(GameSettings.SHOW_EXIT_RUN_CONFIRMATION_POPUP)) {
+			PopupManager.OpenPopupInstant(PopupExitRunConfirmation.PATH);
+		}
 	}
 
 	/// <summary>
@@ -151,22 +146,6 @@ public class PopupPause : PopupPauseBase {
 
 				// Hide unwanted buttons
 				tabs.m_tabButtons[(int)Tabs.MISSIONS].gameObject.SetActive(false);
-			}
-		}
-	}
-
-
-	/// <summary>
-	/// Close animation has finished.
-	/// </summary>
-	override public void OnClosePostAnimation() {
-		// Call parent
-		base.OnClosePostAnimation();
-
-		// End the game?
-		if(m_endGame) {
-			if(InstanceManager.gameSceneController != null) {
-				InstanceManager.gameSceneController.EndGame(true);
 			}
 		}
 	}

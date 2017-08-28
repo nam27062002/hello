@@ -35,7 +35,7 @@ public class EntityGroupController : MonoBehaviour
 		}
 	}
 
-
+	/*
 	void OnDrawGizmosSelected() {
 		if (flock == null) {
 			flock = new AI.Group();
@@ -53,5 +53,5 @@ public class EntityGroupController : MonoBehaviour
 			}
 
 		}
-	}
+	}*/
 }

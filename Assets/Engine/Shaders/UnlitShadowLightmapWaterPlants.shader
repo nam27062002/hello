@@ -29,7 +29,7 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Animated Vertex (Water plants
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				#pragma autocompile_fwdbase
+				#pragma multi_compile_fwdbase
 //				#pragma glsl_no_auto_normalization
 //				#pragma fragmentoption ARB_precision_hint_fastest
 

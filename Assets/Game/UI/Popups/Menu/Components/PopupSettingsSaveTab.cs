@@ -806,7 +806,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     public void OpenCustomerSupport()
     {
         //CSTSManager.SharedInstance.OpenView(TranslationsManager.Instance.ISO.ToString(), PersistenceManager.Instance.IsPayer);
-        CSTSManager.SharedInstance.OpenView("es", false);
+		CSTSManager.SharedInstance.OpenView(LocalizationManager.SharedInstance.Culture.Name, false);	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.;
         HDTrackingManager.Instance.Notify_CustomerSupportRequested();
     }
 
