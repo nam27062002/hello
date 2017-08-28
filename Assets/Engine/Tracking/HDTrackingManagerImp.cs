@@ -30,29 +30,29 @@ public class HDTrackingManagerImp : HDTrackingManager
         IsStartSessionNotified = false;
         IsDNAInitialised = false;
 
-        if (TrackingSaveSystem == null)
+        if (TrackingPersistenceSystem == null)
         {
-            TrackingSaveSystem = new TrackingSaveSystem();
+            TrackingPersistenceSystem = new TrackingPersistenceSystem();
         }
         else
         {
-            TrackingSaveSystem.Reset();
+            TrackingPersistenceSystem.Reset();
         }        
     }
 
     private void CheckAndGenerateUserID()
     {
-        if (TrackingSaveSystem != null)
+        if (TrackingPersistenceSystem != null)
         {
             // Generate Analytics user ID if not already set, it cannot be done in init function as we don't know the user ID at that point
-            if (string.IsNullOrEmpty(TrackingSaveSystem.UserID))
+            if (string.IsNullOrEmpty(TrackingPersistenceSystem.UserID))
             {
                 // Generate a GUID so that we can identify users over the course of firing multiple events etc.
-                TrackingSaveSystem.UserID = System.Guid.NewGuid().ToString();
+                TrackingPersistenceSystem.UserID = System.Guid.NewGuid().ToString();
 
                 if (FeatureSettingsManager.IsDebugEnabled)
                 {
-                    Log("Generate User ID = " + TrackingSaveSystem.UserID);
+                    Log("Generate User ID = " + TrackingPersistenceSystem.UserID);
                 }
             }
         }
@@ -76,7 +76,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         CheckAndGenerateUserID();
 
         // Session counter advanced
-        TrackingSaveSystem.SessionCount++;              
+        TrackingPersistenceSystem.SessionCount++;              
 
         // Calety needs to be initialized every time a session starts because the session count has changed
         StartCaletySession();
@@ -109,8 +109,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
         if (settingsInstance != null)
         {
-            int sessionNumber = TrackingSaveSystem.SessionCount;
-            string trackingID = TrackingSaveSystem.UserID;
+            int sessionNumber = TrackingPersistenceSystem.SessionCount;
+            string trackingID = TrackingPersistenceSystem.UserID;
             string userID = (Authenticator.Instance.User != null) ? Authenticator.Instance.User.ID : "";
             string socialUserID = SocialFacade.Instance.GetSocialIDFromHighestPrecedenceNetwork();
 
@@ -139,10 +139,10 @@ public class HDTrackingManagerImp : HDTrackingManager
         switch (State)
         {
             case EState.WaitingForSessionStart:                
-                if (TrackingSaveSystem != null && IsStartSessionNotified)
+                if (TrackingPersistenceSystem != null && IsStartSessionNotified)
                 {
                     // No tracking for hackers because their sessions will be misleading
-                    if (SaveFacade.Instance.userSaveSystem.isHacker)
+                    if (UsersManager.currentUser.isHacker)
                     {
                         State = EState.Banned;
                     }
@@ -154,10 +154,10 @@ public class HDTrackingManagerImp : HDTrackingManager
                 break;
         }
 
-        if (TrackingSaveSystem != null && TrackingSaveSystem.IsDirty)
+        if (TrackingPersistenceSystem != null && TrackingPersistenceSystem.IsDirty)
         {
-            TrackingSaveSystem.IsDirty = false;
-            SaveFacade.Instance.Save();
+            TrackingPersistenceSystem.IsDirty = false;
+            PersistenceFacade.instance.Save_Request();
         }
 
         if (Session_AnyRoundsStarted)
@@ -227,19 +227,19 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             string str = "Notify_SessionEnd reason = " + reason + " sessionPlayTime = " + Session_PlayTime;
-            if (TrackingSaveSystem != null)
+            if (TrackingPersistenceSystem != null)
             {
-                str += " totalPlayTime = " + TrackingSaveSystem.TotalPlaytime;
+                str += " totalPlayTime = " + TrackingPersistenceSystem.TotalPlaytime;
             }
 
             Log(str);
         }
         
-        if (TrackingSaveSystem != null)
+        if (TrackingPersistenceSystem != null)
         {
             // Current session play time is added up to the total
             int sessionTime = (int)Session_PlayTime;
-            TrackingSaveSystem.TotalPlaytime += sessionTime;
+            TrackingPersistenceSystem.TotalPlaytime += sessionTime;
         }            
 
         Track_ApplicationEndEvent(reason.ToString());
@@ -264,7 +264,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_RunsAmountInCurrentRound = 0;
 
         // One more game round
-        TrackingSaveSystem.GameRoundCount++;
+        TrackingPersistenceSystem.GameRoundCount++;
 
         // Notifies that one more round has started
         Track_RoundStart(dragonXp, dragonProgression, dragonSkin, pets);
@@ -298,9 +298,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// </summary>
     public override void Notify_StoreVisited()
     {
-        if (TrackingSaveSystem != null)
+        if (TrackingPersistenceSystem != null)
         {
-            TrackingSaveSystem.TotalStoreVisits++;
+            TrackingPersistenceSystem.TotalStoreVisits++;
         }
     }
 
@@ -317,9 +317,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         Session_IsPayingSession = true;
 
-        if (TrackingSaveSystem != null)
+        if (TrackingPersistenceSystem != null)
         {
-            TrackingSaveSystem.TotalPurchases++;
+            TrackingPersistenceSystem.TotalPurchases++;
         }
 
         Track_IAPCompleted(storeTransactionID, houstonTransactionID, itemID, promotionType, moneyCurrencyCode, moneyPrice);
@@ -382,14 +382,14 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// </summary>
     public override void Notify_AdFinished(string adType, bool adIsLoaded, bool maxReached, int adViewingDuration = 0, string provider = null)
     {
-        if (adIsLoaded && TrackingSaveSystem != null)
+        if (adIsLoaded && TrackingPersistenceSystem != null)
         {
-            TrackingSaveSystem.AdsCount++;
+            TrackingPersistenceSystem.AdsCount++;
 
             if (!Session_IsAdSession)
             {
                 Session_IsAdSession = true;
-                TrackingSaveSystem.AdsSessions++;
+                TrackingPersistenceSystem.AdsSessions++;
             }
         }
 
@@ -471,10 +471,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             Track_AddParamPlayerProgress(e);
 
-            if (TrackingSaveSystem != null)
+            if (TrackingPersistenceSystem != null)
             {
                 Track_AddParamTotalPurchases(e);
-                e.SetParameterValue(TRACK_PARAM_TOTAL_STORE_VISITS, TrackingSaveSystem.TotalStoreVisits);
+                e.SetParameterValue(TRACK_PARAM_TOTAL_STORE_VISITS, TrackingPersistenceSystem.TotalStoreVisits);
             }
 
             TrackingManager.SharedInstance.SendEvent(e);
@@ -580,10 +580,10 @@ public class HDTrackingManagerImp : HDTrackingManager
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.ad.start");
         if (e != null)
         {
-            if (TrackingSaveSystem != null)
+            if (TrackingPersistenceSystem != null)
             {
-                e.SetParameterValue(TRACK_PARAM_NB_ADS_LTD, TrackingSaveSystem.AdsCount);
-                e.SetParameterValue(TRACK_PARAM_NB_ADS_SESSION, TrackingSaveSystem.AdsSessions);
+                e.SetParameterValue(TRACK_PARAM_NB_ADS_LTD, TrackingPersistenceSystem.AdsCount);
+                e.SetParameterValue(TRACK_PARAM_NB_ADS_SESSION, TrackingPersistenceSystem.AdsSessions);
             }
 
             Track_AddParamBool(e, TRACK_PARAM_AD_IS_AVAILABLE, adIsAvailable);
@@ -784,9 +784,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void Track_AddParamProviderAuth(TrackingManager.TrackingEvent e)
     {
         string value = null;
-        if (TrackingSaveSystem != null && !string.IsNullOrEmpty(TrackingSaveSystem.SocialPlatform))
+        if (TrackingPersistenceSystem != null && !string.IsNullOrEmpty(TrackingPersistenceSystem.SocialPlatform))
         {
-            value = TrackingSaveSystem.SocialPlatform;
+            value = TrackingPersistenceSystem.SocialPlatform;
         }
 
         if (string.IsNullOrEmpty(value))
@@ -800,9 +800,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void Track_AddParamPlayerID(TrackingManager.TrackingEvent e)
     {
         string value = null;
-        if (TrackingSaveSystem != null && !string.IsNullOrEmpty(TrackingSaveSystem.SocialID))
+        if (TrackingPersistenceSystem != null && !string.IsNullOrEmpty(TrackingPersistenceSystem.SocialID))
         {
-            value = TrackingSaveSystem.SocialID;
+            value = TrackingPersistenceSystem.SocialID;
         }
 
         if (string.IsNullOrEmpty(value))
@@ -816,9 +816,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void Track_AddParamServerAccID(TrackingManager.TrackingEvent e)
     {
         int value = 0;
-        if (TrackingSaveSystem != null)
+        if (TrackingPersistenceSystem != null)
         {
-            value = TrackingSaveSystem.AccountID;
+            value = TrackingPersistenceSystem.AccountID;
         }
 
         e.SetParameterValue(TRACK_PARAM_IN_GAME_ID, value);
@@ -852,19 +852,19 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void Track_AddParamSessionsCount(TrackingManager.TrackingEvent e)
     {
-        int value = (TrackingSaveSystem != null) ? TrackingSaveSystem.SessionCount : 0;
+        int value = (TrackingPersistenceSystem != null) ? TrackingPersistenceSystem.SessionCount : 0;
         e.SetParameterValue(TRACK_PARAM_SESSIONS_COUNT, value);
     }
 
     private void Track_AddParamGameRoundCount(TrackingManager.TrackingEvent e)
     {
-        int value = (TrackingSaveSystem != null) ? TrackingSaveSystem.GameRoundCount : 0;
+        int value = (TrackingPersistenceSystem != null) ? TrackingPersistenceSystem.GameRoundCount : 0;
         e.SetParameterValue(TRACK_PARAM_GAME_RUN_NB, value);
     }
 
     private void Track_AddParamTotalPlaytime(TrackingManager.TrackingEvent e)
     {
-        int value = (TrackingSaveSystem != null) ? TrackingSaveSystem.TotalPlaytime : 0;
+        int value = (TrackingPersistenceSystem != null) ? TrackingPersistenceSystem.TotalPlaytime : 0;
         e.SetParameterValue(TRACK_PARAM_TOTAL_PLAYTIME, value);
     }
 
@@ -907,15 +907,15 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void Track_AddParamTotalPurchases(TrackingManager.TrackingEvent e)
     {
-        if (TrackingSaveSystem != null)
+        if (TrackingPersistenceSystem != null)
         {
-            e.SetParameterValue(TRACK_PARAM_TOTAL_PURCHASES, TrackingSaveSystem.TotalPurchases);
+            e.SetParameterValue(TRACK_PARAM_TOTAL_PURCHASES, TrackingPersistenceSystem.TotalPurchases);
         }        
     }   
 
     private void Track_AddParamRunsAmount(TrackingManager.TrackingEvent e)
     {
-        if (TrackingSaveSystem != null)
+        if (TrackingPersistenceSystem != null)
         {
             e.SetParameterValue(TRACK_PARAM_DEATH_IN_CURRENT_RUN_NB, Session_RunsAmountInCurrentRound);
         }
