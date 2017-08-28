@@ -30,7 +30,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[Toggle(SPECULAR)] _EnableSpecular("Enable Specular Light", Float) = 0
 		[Toggle(NORMALMAP)] _EnableNormalMap("Enable Normal Map", Float) = 0
 		[Toggle(CUTOFF)] _EnableCutoff("Enable cut off", Float) = 0
-		[Toggle(FOG)] _EnableFog("Enable fog", Float) = 0
+		[Toggle(FOG)] _EnableFog("Enable fog", Float) = 1
 		[Toggle(DARKEN)] _EnableDarken("Enable darken", Float) = 0
 		[Toggle(EMISSIVEBLINK)] _EnableEmissiveBlink("Enable emissive blink", Float) = 0
 		[Toggle(LIGHTMAPCONTRAST)] _EnableLightmapContrast("Enable lightmap contrast", Float) = 0
