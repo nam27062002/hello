@@ -59,6 +59,18 @@ public class AttachPoint : MonoBehaviour {
 		if ( scaler != null )
 		{
 			scaler.Setup();
+			if ( scaler.m_addToBodyParts )
+			{
+				DragonParticleController particleController = _dragonEquip.GetComponentInChildren<DragonParticleController>();
+				if ( particleController )
+				{
+					DragonParticleController.BodyParticle bParticle = new DragonParticleController.BodyParticle();
+					bParticle.m_stopInsideWater = scaler.m_stopInsideWater;
+					bParticle.m_stopWhenDead = scaler.m_stopWhenDead;
+					bParticle.m_particleReference = scaler.GetComponentInChildren<ParticleSystem>();
+					particleController.m_bodyParticles.Add( bParticle );
+				}
+			}
 		}
 	}
 }
