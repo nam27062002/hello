@@ -35,11 +35,12 @@ public class GameHUD : MonoBehaviour {
         if (FeatureSettingsManager.IsDebugEnabled)
             Debug_Awake();        
     }
-
+    /*
     // Check back button on Android
 	void Update(){
 
     }
+    */
 
     void OnDestroy() {
         if (ApplicationManager.IsAlive && FeatureSettingsManager.IsDebugEnabled)
@@ -60,7 +61,12 @@ public class GameHUD : MonoBehaviour {
     // CALLBACKS														//
     //------------------------------------------------------------------//
 
-
+    void OnApplicationPause( bool pauseStatus){
+    	if ( pauseStatus && CanPause() )
+    	{
+			OnPauseButton();
+    	}
+    }
 
     /// <summary>
     /// Callback for the pause button.

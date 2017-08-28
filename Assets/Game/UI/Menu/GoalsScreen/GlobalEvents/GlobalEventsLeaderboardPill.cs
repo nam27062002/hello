@@ -110,7 +110,7 @@ public class GlobalEventsLeaderboardPill : MonoBehaviour {
 		m_picture.Load(_data.pictureUrl);
 
 		// Set name
-		m_nameText.text = _data.name;	// [AOC] TODO!! Special characters support
+		if(m_nameText != null) m_nameText.text = _data.name;	// [AOC] TODO!! Special characters support
 
 		// Set score
 		m_scoreText.text = StringUtils.FormatBigNumber(_data.score);

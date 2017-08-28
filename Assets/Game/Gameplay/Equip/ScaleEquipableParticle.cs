@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class ScaleEquipableParticle : MonoBehaviour {
-	
+
+	public bool m_addToBodyParts = false;
+	public bool m_stopInsideWater = false;
+	public bool m_stopWhenDead = false;
+
 	public void Setup()
 	{
 		ParticleScaler scaler = GetComponentInChildren<ParticleScaler>();
