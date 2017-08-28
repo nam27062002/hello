@@ -518,8 +518,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_MONEY_CURRENCY, moneyCurrency);
             e.SetParameterValue(TRACK_PARAM_AMOUNT_DELTA, (int)moneyPrice);
             e.SetParameterValue(TRACK_PARAM_AMOUNT_BALANCE, amountBalance);
-            Track_AddParamString(e, TRACK_PARAM_ECONOMY_GROUP, economyGroup);
-            Track_AddParamString(e, TRACK_PARAM_ITEM_ID, itemID);            
+            Track_AddParamString(e, TRACK_PARAM_ECO_GROUP, economyGroup);
+            Track_AddParamString(e, TRACK_PARAM_ITEM, itemID);            
 
             TrackingManager.SharedInstance.SendEvent(e);
         }
@@ -544,7 +544,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_MONEY_CURRENCY, moneyCurrency);
             e.SetParameterValue(TRACK_PARAM_AMOUNT_DELTA, (int)amountDelta);
             e.SetParameterValue(TRACK_PARAM_AMOUNT_BALANCE, amountBalance);
-            Track_AddParamString(e, TRACK_PARAM_ECONOMY_GROUP, economyGroup);            
+            Track_AddParamString(e, TRACK_PARAM_ECO_GROUP, economyGroup);            
 
             TrackingManager.SharedInstance.SendEvent(e);
         }
@@ -731,6 +731,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_DELTA_XP                   = "deltaXp";
     private const string TRACK_PARAM_DRAGON_PROGRESSION         = "dragonProgression";
     private const string TRACK_PARAM_DRAGON_SKIN                = "dragonSkin";
+    private const string TRACK_PARAM_ECO_GROUP                  = "ecoGroup";
     private const string TRACK_PARAM_ECONOMY_GROUP              = "economyGroup";
     private const string TRACK_PARAM_EGG_FOUND                  = "eggFound";
     private const string TRACK_PARAM_FURY_RUSH_NB               = "furyRushNb";
@@ -742,6 +743,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_IN_GAME_ID                 = "InGameId";
     private const string TRACK_PARAM_IS_LOADED                  = "isLoaded";
     private const string TRACK_PARAM_IS_PAYING_SESSION          = "isPayingSession";
+    private const string TRACK_PARAM_ITEM                       = "item";
     private const string TRACK_PARAM_ITEM_ID                    = "itemID";
     private const string TRACK_PARAM_ITEM_QUANTITY              = "itemQuantity";
     private const string TRACK_PARAM_MAX_REACHED                = "maxReached";
