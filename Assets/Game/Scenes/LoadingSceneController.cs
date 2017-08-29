@@ -69,13 +69,10 @@ public class LoadingSceneController : SceneController {
 	            config.OnConfirm = onConfirm;
 	            config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
             }
-			m_confirmPopup = PopupManager.PopupMessage_Open(config);
-			// TODO: Add this as a config parameter
-			GameObject go = m_confirmPopup.FindObjectRecursive("ButtonClose");
-			if (go != null)
-			{
-				go.SetActive(false);
-			}
+
+            // The user is not allowed to close this popup
+            config.IsButtonCloseVisible = false;
+			m_confirmPopup = PopupManager.PopupMessage_Open(config);			
         }
 
         void onConfirm()
