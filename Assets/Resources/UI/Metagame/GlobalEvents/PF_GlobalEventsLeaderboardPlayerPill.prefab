@@ -225,6 +225,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224645779801054194}
   - component: {fileID: 222893931995733768}
+  - component: {fileID: 114047618749455396}
   - component: {fileID: 114407803596275508}
   m_Layer: 5
   m_Name: NameText
@@ -261,6 +262,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AspectMode: 2
   m_AspectRatio: 1
+--- !u!114 &114047618749455396
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1960322025409354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_GEN_PLAYER_NAME
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114071984696989666
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -330,7 +345,7 @@ MonoBehaviour:
   m_positionText: {fileID: 114911056060567000}
   m_positionTextColors: []
   m_picture: {fileID: 114089963367912286}
-  m_nameText: {fileID: 114407803596275508}
+  m_nameText: {fileID: 0}
   m_scoreText: {fileID: 114818185749772608}
 --- !u!114 &114344800276045488
 MonoBehaviour:
@@ -417,7 +432,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: "Alger Ort\xEDn Castellv\xED"
+  m_text: Me
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 373cfe43d8edb4ade8df1a6d6746c1b8, type: 2}
   m_sharedMaterial: {fileID: 2116890, guid: 373cfe43d8edb4ade8df1a6d6746c1b8, type: 2}
@@ -484,10 +499,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 114407803596275508}
-    characterCount: 21
+    characterCount: 2
     spriteCount: 0
-    spaceCount: 2
-    wordCount: 3
+    spaceCount: 0
+    wordCount: 1
     linkCount: 0
     lineCount: 1
     pageCount: 1
