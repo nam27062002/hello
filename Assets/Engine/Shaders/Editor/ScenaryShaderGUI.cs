@@ -363,9 +363,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.shader = shader;
                 mat.SetFloat("_EnableFog", 1.0f);
                 mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-
-//                mat.EnableKeyword("FOG");
-//                mat.EnableKeyword("OPAQUEALPHA");
                 EditorUtility.SetDirty(mat);
             }
             // UnlitShadowLightmapDarken.shader
@@ -375,23 +372,15 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.SetFloat("_EnableDarken", 1.0f);
                 mat.SetFloat("_EnableFog", 1.0f);
                 mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-
-//                mat.EnableKeyword("DARKEN");
-//                mat.EnableKeyword("FOG");
-//                mat.EnableKeyword("OPAQUEALPHA");
                 EditorUtility.SetDirty(mat);
             }
             // UnlitShadowLightmapEmissive.shader
             else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Emissive blink")
             {
-                mat.shader = shader;                
+                mat.shader = shader;
                 mat.SetFloat("_EnableEmissiveBlink", 1.0f);
                 mat.SetFloat("_EnableFog", 1.0f);
                 mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-
-//                mat.EnableKeyword("EMISSIVEBLINK");
-//                mat.EnableKeyword("FOG");
-//                mat.EnableKeyword("OPAQUEALPHA");
                 EditorUtility.SetDirty(mat);
             }
             // UnlitShadowLightmapNormal.shader
@@ -404,11 +393,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.SetFloat("_NormalStrength", 1.0f);
                 mat.SetFloat("_EnableFog", 1.0f);
                 mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-
-//                mat.EnableKeyword("NORMALMAP");
-//                mat.EnableKeyword("SPECULAR");
-//                mat.EnableKeyword("FOG");
-//                mat.EnableKeyword("OPAQUEALPHA");
                 EditorUtility.SetDirty(mat);
             }
             // UnlitShadowLightmapCutoff.shader
@@ -418,11 +402,54 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.SetFloat("_EnableFog", 1.0f);
                 mat.SetFloat("_EnableCutoff", 1.0f);
                 mat.SetFloat("_Cutoff", 0.5f);
-
-//                mat.EnableKeyword("FOG");
-//                mat.EnableKeyword("CUTOFF");
                 EditorUtility.SetDirty(mat);
             }
+            // UnlitShadowLightmapVColorMultiply.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Vertex Color Multiply")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+                mat.SetFloat("VertexColor", 3.0f);
+                EditorUtility.SetDirty(mat);
+            }
+            // AutomaticTextureBlending.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Automatic Texture Blending + Lightmap")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+                mat.SetFloat("_EnableBlendTexture", 1.0f);
+                mat.SetFloat("_EnableAutomaticBlend", 1.0f);
+                EditorUtility.SetDirty(mat);
+            }
+            // AutomaticTextureBlendingDarken.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Automatic Texture Blending + Lightmap + Darken")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableDarken", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+                mat.SetFloat("_EnableBlendTexture", 1.0f);
+                mat.SetFloat("_EnableAutomaticBlend", 1.0f);
+                EditorUtility.SetDirty(mat);
+            }
+
+
+
+
+            /*
+                        // UnlitShadowLightmapTransparent.shader
+                        else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Transparent (On Line Decorations)")
+                        {
+                            mat.shader = shader;
+                            mat.SetFloat("_EnableFog", 1.0f);
+
+                            //                mat.EnableKeyword("FOG");
+                            //                mat.EnableKeyword("CUTOFF");
+                            EditorUtility.SetDirty(mat);
+                        }
+            */
         }
     }
     
