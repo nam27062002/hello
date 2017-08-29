@@ -70,7 +70,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		GlobalEventManager.ClearCurrentEvent();
 
         // Clear persistence and sets the default persistence
-        PersistenceManager.Clear();
+        PersistenceFacade.instance.Save_ResetToDefault();
 
         UsersManager.Reset();
 

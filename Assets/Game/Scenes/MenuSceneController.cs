@@ -249,12 +249,12 @@ public class MenuSceneController : SceneController {
 		if(_sku != UsersManager.currentUser.currentDragon && DragonManager.GetDragonData(_sku).isOwned) {
 			// Update profile
 			UsersManager.currentUser.currentDragon = _sku;
-		
-			// Save persistence
-			PersistenceManager.Save();
 
-			// Broadcast message
-			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_CONFIRMED, _sku);
+            // Save persistence
+            PersistenceFacade.instance.Save_Request();
+
+            // Broadcast message
+            Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_CONFIRMED, _sku);
 		}
 	}
 

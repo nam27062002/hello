@@ -75,7 +75,7 @@ namespace LevelEditor {
 		/// </summary>
 		private IEnumerator Start() {
 
-			while( !PersistenceManager.loadCompleted )
+			while( !PersistenceFacade.instance.IsLoadCompleted)
 			{
 				yield return null;
 			}

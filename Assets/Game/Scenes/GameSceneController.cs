@@ -579,7 +579,7 @@ public class GameSceneController : GameSceneControllerBase {
 				InstanceManager.player.playable = false;
 
                 // The time of the play session that has just finished is accumulated to the total amount of time played by the user so far
-                SaveFacade.Instance.timePlayed += (int)m_elapsedSeconds;
+                UsersManager.currentUser.timePlayed += (int)m_elapsedSeconds;                    
 			} break;
 
             case EStates.SHOWING_RESULTS: {
