@@ -66,6 +66,11 @@ public class HDTrackingManager
         SHOP_EXCHANGE                   // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
     };
 
+	public enum EFunnels
+	{
+		LOAD_GAME = 0
+	};
+
     public static string EconomyGroupToString(EEconomyGroup group)
     {
         return group.ToString();
@@ -199,6 +204,18 @@ public class HDTrackingManager
     /// <param name="provider">Ad Provider. Optional.</param>    
     /// </summary>
     public virtual void Notify_AdFinished(string adType, bool adIsLoaded, bool maxReached, int adViewingDuration=0, string provider=null) {}
+
+	/// <summary>
+	/// The game has reached a step in the loading funnel.
+	/// </summary>
+	/// <param name="_step">Step to notify.</param>
+	public virtual void Notify_Funnel_Load(FunnelData_Load.Steps _step) {}
+
+	/// <summary>
+	/// The game has reached a step in the firts user experience funnel.
+	/// </summary>
+	/// <param name="_step">Step to notify.</param>
+	public virtual void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {}
     #endregion
 
     #region log
@@ -222,6 +239,6 @@ public class HDTrackingManager
     {
         Debug.LogError("[HDTrackingManager] " + msg);
     }
-#endregion
+	#endregion
 }
 

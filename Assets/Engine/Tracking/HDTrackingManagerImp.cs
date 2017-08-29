@@ -4,6 +4,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+
 public class HDTrackingManagerImp : HDTrackingManager
 {    
     private enum EState
@@ -13,11 +14,20 @@ public class HDTrackingManagerImp : HDTrackingManager
         Banned
     }
 
+	private FunnelData_Load m_loadFunnel;
+	private FunnelData_FirstUX m_firstUXFunnel;
+
     private EState State { get; set; }    
 
     private bool IsStartSessionNotified { get; set; }
 
     private bool IsDNAInitialised { get; set; }    
+
+    public HDTrackingManagerImp()
+    {
+		m_loadFunnel = new FunnelData_Load();
+		m_firstUXFunnel = new FunnelData_FirstUX();		        
+    }
 
     public override void Init()
     {        
@@ -35,6 +45,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         Session_Reset();
+        m_loadFunnel.Reset();
+		m_firstUXFunnel.Reset();
     }
 
     private void CheckAndGenerateUserID()
@@ -392,6 +404,22 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         Track_AdFinished(adType, adIsLoaded, maxReached, adViewingDuration, provider);
     }
+
+	/// <summary>
+	/// The game has reached a step in the loading funnel.
+	/// </summary>
+	/// <param name="_step">Step to notify.</param>
+	public override void Notify_Funnel_Load(FunnelData_Load.Steps _step) {
+		Track_Funnel(m_loadFunnel.name, m_loadFunnel.GetStepName(_step), m_loadFunnel.GetStepDuration(_step), m_loadFunnel.GetStepTotalTime(_step));
+	}
+
+	/// <summary>
+	/// The game has reached a step in the firts user experience funnel.
+	/// </summary>
+	/// <param name="_step">Step to notify.</param>
+	public override void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {
+		Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), m_firstUXFunnel.GetStepDuration(_step), m_firstUXFunnel.GetStepTotalTime(_step));
+	}
     #endregion
 
     #region track
@@ -712,6 +740,24 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
+	private void Track_Funnel(string _event, string _step, int _stepDuration, int _totalDuration)
+	{
+		if (FeatureSettingsManager.IsDebugEnabled)
+		{
+			Log("Track_Funnel eventID = " + _event + " stepName = " + _step + " stepDuration = " + _stepDuration + " totalDuration = " + _totalDuration + " firstLoad ");
+		}
+
+		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent(_event);
+		if (e != null)
+		{
+			e.SetParameterValue(TRACK_PARAM_STEP_NAME, _step);
+			e.SetParameterValue(TRACK_PARAM_STEP_DURATION, _stepDuration);
+			e.SetParameterValue(TRACK_PARAM_TOTAL_DURATION, _totalDuration);
+			e.SetParameterValue(TRACK_PARAM_FIRST_LOAD, false);	// first load?
+			TrackingManager.SharedInstance.SendEvent(e);
+		}
+	}
+
     // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------    
@@ -734,8 +780,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_ECO_GROUP                  = "ecoGroup";
     private const string TRACK_PARAM_ECONOMY_GROUP              = "economyGroup";
     private const string TRACK_PARAM_EGG_FOUND                  = "eggFound";
+    private const string TRACK_PARAM_FIRST_LOAD                 = "firstLoad";
     private const string TRACK_PARAM_FIRE_RUSH_NB               = "fireRushNb";
-    private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNb";
+    private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNb";	
     private const string TRACK_PARAM_HC_REVIVE                  = "hcRevive";
     private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER    = "highestBaseMultiplier";
     private const string TRACK_PARAM_HIGHEST_MULTIPLIER         = "highestMultiplier";
@@ -765,12 +812,15 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_REWARD_TYPE                = "rewardType";
     private const string TRACK_PARAM_SCORE                      = "score";
     private const string TRACK_PARAM_SESSION_PLAY_TIME          = "sessionPlaytime";
-    private const string TRACK_PARAM_SESSIONS_COUNT             = "sessionsCount";
-    private const string TRACK_PARAM_STOP_CAUSE                 = "stopCause";
+    private const string TRACK_PARAM_SESSIONS_COUNT             = "sessionsCount";    
+	private const string TRACK_PARAM_STEP_DURATION              = "stepDuration";
+	private const string TRACK_PARAM_STEP_NAME	                = "stepName";
+	private const string TRACK_PARAM_STOP_CAUSE                 = "stopCause";
     private const string TRACK_PARAM_STORE_TRANSACTION_ID       = "storeTransactionID";
     private const string TRACK_PARAM_SUBVERSION                 = "SubVersion";
     private const string TRACK_PARAM_SUPER_FIRE_RUSH_NB         = "superFireRushNb";    
-    private const string TRACK_PARAM_TIME_PLAYED                = "timePlayed";    
+    private const string TRACK_PARAM_TIME_PLAYED                = "timePlayed";
+    private const string TRACK_PARAM_TOTAL_DURATION             = "totalDuration";
     private const string TRACK_PARAM_TOTAL_PLAYTIME             = "totalPlaytime";
     private const string TRACK_PARAM_TOTAL_PURCHASES            = "totalPurchases";
     private const string TRACK_PARAM_TOTAL_STORE_VISITS         = "totalStoreVisits";
