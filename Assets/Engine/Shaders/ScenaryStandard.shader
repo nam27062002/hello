@@ -17,6 +17,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		_SpecularDir("Specular Dir", Vector) = (0,0,-1,0)
 	
 		_CutOff("Alpha cutoff threshold", Range(0.0, 1.0)) = 0.5
+
 		_DarkenPosition("Darken position",  float) = 0.0
 		_DarkenDistance("Darken distance",  float) = 20.0
 
@@ -29,6 +30,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[Toggle(CUSTOM_VERTEXCOLOR)] _EnableAutomaticBlend("Automatic Y blend", Float) = 0
 		[Toggle(SPECULAR)] _EnableSpecular("Enable Specular Light", Float) = 0
 		[Toggle(NORMALMAP)] _EnableNormalMap("Enable Normal Map", Float) = 0
+		[Toggle(OPAQUEALPHA)] _EnableOpaqueAlpha("Enable opaque alpha", Float) = 1
 		[Toggle(CUTOFF)] _EnableCutoff("Enable cut off", Float) = 0
 		[Toggle(FOG)] _EnableFog("Enable fog", Float) = 1
 		[Toggle(DARKEN)] _EnableDarken("Enable darken", Float) = 0
