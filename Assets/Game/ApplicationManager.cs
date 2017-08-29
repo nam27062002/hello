@@ -322,8 +322,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         // If the  done in the first loading is not done then the pause is ignored
         if (PersistenceFacade.instance.IsLoadCompleted)
-        {
-            long currentTime = Globals.GetUnixTimestamp();
+        {            
             bool allowGameRestart = true;
             if ((FlowManager.IsInGameScene() && !Game_IsInGame) || Game_IsPaused)
             {
@@ -358,6 +357,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                         {
                             if (LastPauseTime != -1)
                             {
+                                long currentTime = Globals.GetUnixTimestamp();
                                 long timePaused = currentTime - LastPauseTime;
                                 if (timePaused >= CloudSaveResyncTime && SaveFacade.Instance.cloudSaveEnabled)
                                 {
