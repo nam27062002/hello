@@ -750,7 +750,7 @@ public class GameSceneController : GameSceneControllerBase {
 
         HDTrackingManager.Instance.Notify_RoundEnd(dragonXp, (int)RewardManager.xp, dragonProgress, timePlayed, score, chestsFound, eggsFound,
             RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
-            RewardManager.paidReviveCount, RewardManager.freeReviveCount);
+            RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc);
     }
 
     private void Track_RunEnd(bool _quitGame) {

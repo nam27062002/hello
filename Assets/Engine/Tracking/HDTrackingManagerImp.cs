@@ -280,11 +280,11 @@ public class HDTrackingManagerImp : HDTrackingManager
     }
 
     public override void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, int chestsFound, int eggFound, 
-        float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive)
+        float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, int scGained, int hcGained)
     {
         // Last deathType, deathSource and deathCoordinates are used since this information is provided when Notify_RunEnd() is called
         Track_RoundEnd(dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
-            chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive);
+            chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained);
     }
 
     public override void Notify_RunEnd(int dragonXp, int timePlayed, int score, string deathType, string deathSource, Vector3 deathCoordinates)
@@ -357,7 +357,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// <param name="amountDelta">Amount of the currency earned</param>
     /// <param name="amountBalance">Amount of this currency after the transaction was performed</param>
     public override void Notify_EarnResources(EEconomyGroup economyGroup, UserProfile.Currency moneyCurrencyCode, int amountDelta, int amountBalance)
-    {
+    {       
         Track_EarnResources(EconomyGroupToString(economyGroup), Track_UserCurrencyToString(moneyCurrencyCode), amountDelta, amountBalance);
     }
 
@@ -676,7 +676,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     public void Track_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, 
         string deathType, string deathSource, string deathCoordinates, int chestsFound, int eggFound,
-        float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive)
+        float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive,
+        int scGained, int hcGained)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
@@ -685,7 +686,8 @@ public class HDTrackingManagerImp : HDTrackingManager
                 " deathType = " + deathType + " deathSource = " + deathSource + " deathCoor = " + deathCoordinates + 
                 " chestsFound = " + chestsFound + " eggFound = " + eggFound + 
                 " highestMultiplier = " + highestMultiplier + " highestBaseMultiplier = " + highestBaseMultiplier + 
-                " furyRushNb = " + furyRushNb + " superFireRushNb = " + superFireRushNb + " hcRevive = " + hcRevive + " adRevive = " + adRevive);
+                " furyRushNb = " + furyRushNb + " superFireRushNb = " + superFireRushNb + " hcRevive = " + hcRevive + " adRevive = " + adRevive + 
+                " scGained = " + scGained + " hcGained = " + hcGained);
         }
 
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.end");
