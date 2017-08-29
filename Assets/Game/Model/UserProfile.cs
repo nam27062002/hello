@@ -372,7 +372,7 @@ public class UserProfile : UserPersistenceSystem
 		// [AOC] For now we don't need to differientate earnings from paid and free sources, neither do we need to differientate earnings and expenses, so use the same event for everything
 		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, _currency, oldAmount, data.amount);
 
-        if (_economyGroup != HDTrackingManager.EEconomyGroup.CHEAT) {
+        if (_economyGroup != HDTrackingManager.EEconomyGroup.CHEAT && toAdd > 0) {
             HDTrackingManager.Instance.Notify_EarnResources(_economyGroup, _currency, (int)toAdd, (int)data.amount);
         }
     }
