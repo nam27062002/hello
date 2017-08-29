@@ -76,6 +76,22 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 //				#define BLEND_TEXTURE
 //				#define CUSTOM_VERTEXCOLOR
 
+				#if LOW_DETAIL_ON
+				#undef NORMALMAP
+				#undef SPECULAR
+				#endif
+
+				#if MEDIUM_DETAIL_ON
+				#undef SPECULAR
+				#endif
+
+				#if HI_DETAIL_ON
+				#endif
+
+//				#define FOG
+//				#define OPAQUEALPHA
+
+
 				#include "scenary.cginc"
 			ENDCG
 		}
