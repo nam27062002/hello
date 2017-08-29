@@ -339,10 +339,7 @@ public class LoadingSceneController : SceneController {
 
         switch (state)
         {
-            case State.WAITING_SAVE_FACADE:
-                SaveFacade.Instance.Init();
-                PersistenceManager.Init();
-
+            case State.WAITING_SAVE_FACADE:                
                 DragonManager.SetupUser(UsersManager.currentUser);
                 MissionManager.SetupUser(UsersManager.currentUser);
                 EggManager.SetupUser(UsersManager.currentUser);
@@ -353,7 +350,7 @@ public class LoadingSceneController : SceneController {
                 break;
         }
     }
-
+        
     private void StartLoadFlow()
     {
         if (m_startLoadFlow)
@@ -375,7 +372,7 @@ public class LoadingSceneController : SceneController {
                 HDTrackingManager.Instance.Notify_ApplicationStart();
             };
 
-            PersistenceFacade.instance.Sync_GameProgress(onDone);            			
+            PersistenceFacade.instance.Sync_Persistences(onDone);            			
         }
     }
 
