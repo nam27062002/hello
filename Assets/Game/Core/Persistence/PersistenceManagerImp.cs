@@ -24,9 +24,7 @@ public class PersistenceManagerImp : GameProgressManager
     /// Whether or not a game progress can be saved locally. It's used to keep I/O operations in sync, so saving locally will be disabled while a loading/saving operation
     /// is already being performed.
     /// </summary>
-    private bool LocalProgress_IsSaveEnabled { get; set; }
-
-    protected PersistenceData LocalProgress_Data { get; set; }
+    private bool LocalProgress_IsSaveEnabled { get; set; }    
 
     private void LocalProgress_Init()
     {
@@ -34,7 +32,7 @@ public class PersistenceManagerImp : GameProgressManager
         LocalProgress_IsSaveEnabled = false;
     }
 
-    public override PersistenceStates.LoadState LocalProgress_Load()
+    public override PersistenceData LocalProgress_Load()
     {
         LocalProgress_IsSaveEnabled = false;
 
@@ -75,10 +73,10 @@ public class PersistenceManagerImp : GameProgressManager
                 break;
         }        
 
-        return LocalProgress_Data.LoadState;
+        return LocalProgress_Data;
     }
 
-    public override PersistenceStates.LoadState LocalProgress_ResetToDefault()
+    public override void LocalProgress_ResetToDefault()
     {        
         LocalProgress_Data = new PersistenceData(LOCAL_SAVE_ID);        
         SimpleJSON.JSONNode defaultJson = PersistenceManager.GetDefaultDataFromProfile();
@@ -95,16 +93,12 @@ public class PersistenceManagerImp : GameProgressManager
         if (LocalProgress_IsSaveEnabled)
         {
             LocalProgress_SaveToDisk();
-        }
-
-        return LocalProgress_Data.LoadState;
+        }        
     }
 
     public override PersistenceStates.SaveState LocalProgress_SaveToDisk()            
     {
-        PersistenceStates.SaveState state = PersistenceStates.SaveState.Disabled;
-
-        //Only save if we can and we are allowed!
+        PersistenceStates.SaveState state = PersistenceStates.SaveState.Disabled;        
         if (LocalProgress_Data != null && LocalProgress_IsSaveEnabled)
         {
             Systems_Save();

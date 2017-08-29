@@ -33,6 +33,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 
         Systems_Init();
         Save_Reset();
+        Sync_Reset();
 
         GameServerManager.SharedInstance.Configure();
         GameServerManager.SharedInstance.Auth(null);
@@ -44,54 +45,156 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
     }    
     
     public void Update()
-    {
-        Save_TimeLeftToSave -= Time.unscaledDeltaTime;
-        if (Save_TimeLeftToSave <= 0f)
+    {        
+        if (Sync_IsRunning())
         {
-            Save_Perform();
+            Sync_Update();
+        }
+        else
+        {
+            // Save is not allowed while syncing
+            Save_TimeLeftToSave -= Time.unscaledDeltaTime;
+            if (Save_TimeLeftToSave <= 0f)
+            {
+                Save_Perform();
+            }
+        }
+    }    
+
+    #region sync
+    private enum ESyncState
+    {
+        None,
+        GettingPersistences,
+        Syncing,   
+        Error     
+    }
+
+    private ESyncState m_syncState;
+    private ESyncState SyncState
+    {
+        get
+        {
+            return m_syncState;
+        }
+
+        set
+        {
+            m_syncState = value;
+            switch (m_syncState)
+            {
+                case ESyncState.GettingPersistences:
+                    Manager.LocalProgress_Load();
+
+                    /*
+                    GameServerManager.SharedInstance.Configure();
+                    GameServerManager.SharedInstance.Auth(null);
+                    */
+                    break;
+
+                case ESyncState.Syncing:
+                    bool cloudPersistenceIsReady = false;
+                    bool cloudPersistenceIsValid = false;
+
+                    // Checks local persistence status
+                    switch (Manager.LocalProgress_Data.LoadState)
+                    {
+                        case PersistenceStates.LoadState.Corrupted:
+                            bool useCloud = cloudPersistenceIsReady && cloudPersistenceIsValid;
+
+                            Action solveConflict = delegate ()
+                            {
+                                if (!useCloud)
+                                {
+                                    // Local persistence has to be reseted to the default one
+                                    Manager.LocalProgress_ResetToDefault();
+                                }
+                                Sync_OnLoadedSuccessfully();
+                            };
+
+                            Popups_OpenLoadSaveCorruptedError(useCloud, solveConflict);
+                            SyncState = ESyncState.Error;
+                            break;
+
+                        case PersistenceStates.LoadState.OK:
+                            Sync_OnLoadedSuccessfully();
+                            break;
+                    }
+                    break;
+            }
         }
     }
 
-    #region sync
-    public void Sync_GameProgress(Action onDone)
-    {
-        AuthManager.Instance.LoadUser();
+    private bool Sync_IsRunning() { return SyncState != ESyncState.None; }
+    private Action Sync_OnDone { get; set; }
 
-        PersistenceStates.LoadState localState = Manager.LocalProgress_Load();
-        Sync_ProcessLocalProgress(localState, onDone);        
+    private void Sync_Reset()
+    {
+        SyncState = ESyncState.None;
+        Sync_OnDone = null;
     }
 
-    private void Sync_ProcessLocalProgress(PersistenceStates.LoadState localState, Action onDone)
+    public void Sync_Persistences(Action onDone)
     {
-        Action solveConflict = delegate ()
+        if (!Sync_IsRunning())
         {
-            // Local persistence has to be reseted to the default one
-            localState = Manager.LocalProgress_ResetToDefault();
-            Sync_ProcessLocalProgress(localState, onDone);
-        };
+            AuthManager.Instance.LoadUser();
 
-        switch (localState)
-        {            
-            case PersistenceStates.LoadState.Corrupted:
-                Popups_OpenLoadSaveCorruptedError(false, solveConflict);
-                break;
-
-            case PersistenceStates.LoadState.OK:
-                Sync_OnLoadedSuccessfully(onDone);
-                break;
-        }        
+            SyncState = ESyncState.GettingPersistences;
+            Sync_OnDone = onDone;                        
+        }
+        else if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            LogError("Sync is already running");
+        }
     }
+    
 
-    private void Sync_OnLoadedSuccessfully(Action onDone)
+    private void Sync_OnLoadedSuccessfully()
     {
         // Initialize managers needing data from the loaded profile
         GlobalEventManager.SetupUser(UsersManager.currentUser);
 
-        IsLoadCompleted = true;
+        IsLoadCompleted = true;        
 
-        if (onDone != null)
+        if (Sync_OnDone != null)
         {
-            onDone();
+            Sync_OnDone();            
+        }
+
+        Sync_Reset();
+    }
+
+    private void Sync_Update()
+    {
+        switch (SyncState)
+        {
+            case ESyncState.GettingPersistences:
+            {
+                bool localPersistenceIsReady = Manager.LocalProgress_Data != null;
+                bool needsCloudPersistence = false;
+                bool cloudPersistenceIsReady = false;
+
+                // Examine local progress
+                if (localPersistenceIsReady)
+                {
+                    switch (Manager.LocalProgress_Data.LoadState)
+                    {
+                        case PersistenceStates.LoadState.Corrupted:
+                            // We need to wait for the cloud response because if the user has saved some progress in the cloud then the user's local progress
+                            // can be restored to the cloud progress
+                            //needsCloudPersistence = true;                        
+                            break;
+                    }
+                }
+
+                if (localPersistenceIsReady &&
+                (!needsCloudPersistence || cloudPersistenceIsReady))
+                {
+                    SyncState = ESyncState.Syncing;
+                }
+            }
+            break;            
         }
     }
     #endregion

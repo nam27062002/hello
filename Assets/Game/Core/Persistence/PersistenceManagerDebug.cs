@@ -14,14 +14,13 @@ public class PersistenceManagerDebug : PersistenceManagerImp
     public Queue<PersistenceStates.LoadState> ForcedLoadStates { get; set; }        
     public Queue<PersistenceStates.SaveState> ForcedSaveStates { get; set; }                
 
-    public override PersistenceStates.LoadState LocalProgress_Load()
+    public override PersistenceData LocalProgress_Load()
     {
-        PersistenceStates.LoadState returnValue = base.LocalProgress_Load();        
+        PersistenceData returnValue = base.LocalProgress_Load();        
         
         if (ForcedLoadStates != null && ForcedLoadStates.Count > 0)
-        {
-            returnValue = ForcedLoadStates.Dequeue();
-            LocalProgress_Data.LoadState = returnValue;
+        {            
+            LocalProgress_Data.LoadState = ForcedLoadStates.Dequeue();
         }        
         
         return returnValue;
