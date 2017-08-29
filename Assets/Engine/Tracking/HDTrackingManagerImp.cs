@@ -19,12 +19,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private bool IsDNAInitialised { get; set; }    
 
-    public HDTrackingManagerImp()
-    {
-        Reset();
-    }
-
-    private void Reset()
+    public override void Init()
     {        
         State = EState.WaitingForSessionStart;
         IsStartSessionNotified = false;
@@ -37,7 +32,9 @@ public class HDTrackingManagerImp : HDTrackingManager
         else
         {
             TrackingPersistenceSystem.Reset();
-        }        
+        }
+
+        Session_Reset();
     }
 
     private void CheckAndGenerateUserID()
@@ -412,6 +409,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamProviderAuth(e);
             Track_AddParamPlayerID(e);
             Track_AddParamServerAccID(e);
+            // "" is sent because Calety doesn't support this yet
+            Track_AddParamString(e, TRACK_PARAM_TYPE_NOTIF, "");
             TrackingManager.SharedInstance.SendEvent(e);
         }
     }    
@@ -515,7 +514,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamGameRoundCount(e);
             Track_AddParamHighestDragonXp(e);
             Track_AddParamPlayerProgress(e);
-            Track_AddParamString(e, TRACK_PARAM_MONEY_CURRENCY, moneyCurrency);
+            Track_AddParamString(e, TRACK_PARAM_CURRENCY, moneyCurrency);
             e.SetParameterValue(TRACK_PARAM_AMOUNT_DELTA, (int)moneyPrice);
             e.SetParameterValue(TRACK_PARAM_AMOUNT_BALANCE, amountBalance);
             Track_AddParamString(e, TRACK_PARAM_ECO_GROUP, economyGroup);
@@ -541,7 +540,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamGameRoundCount(e);
             Track_AddParamHighestDragonXp(e);
             Track_AddParamPlayerProgress(e);
-            Track_AddParamString(e, TRACK_PARAM_MONEY_CURRENCY, moneyCurrency);
+            Track_AddParamString(e, TRACK_PARAM_CURRENCY, moneyCurrency);
             e.SetParameterValue(TRACK_PARAM_AMOUNT_DELTA, (int)amountDelta);
             e.SetParameterValue(TRACK_PARAM_AMOUNT_BALANCE, amountBalance);
             Track_AddParamString(e, TRACK_PARAM_ECO_GROUP, economyGroup);            
@@ -668,6 +667,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamGameRoundCount(e);
             Track_AddParamRunsAmount(e);
             Track_AddParamHighestDragonXp(e);
+            Track_AddParamPlayerProgress(e);
             e.SetParameterValue(TRACK_PARAM_XP, dragonXp);
             e.SetParameterValue(TRACK_PARAM_DELTA_XP, deltaXp);            
             e.SetParameterValue(TRACK_PARAM_DRAGON_PROGRESSION, dragonProgression);
@@ -680,7 +680,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_EGG_FOUND, eggFound);
             e.SetParameterValue(TRACK_PARAM_HIGHEST_MULTIPLIER, highestMultiplier);
             e.SetParameterValue(TRACK_PARAM_HIGHEST_BASE_MULTIPLIER, highestBaseMultiplier);
-            e.SetParameterValue(TRACK_PARAM_FURY_RUSH_NB, furyRushNb);
+            e.SetParameterValue(TRACK_PARAM_FIRE_RUSH_NB, furyRushNb);
             e.SetParameterValue(TRACK_PARAM_SUPER_FIRE_RUSH_NB, superFireRushNb);
             e.SetParameterValue(TRACK_PARAM_HC_REVIVE, hcRevive);
             e.SetParameterValue(TRACK_PARAM_AD_REVIVE, adRevive);
@@ -726,7 +726,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_CHESTS_FOUND               = "chestsFound";
     private const string TRACK_PARAM_DEATH_CAUSE                = "deathCause";
     private const string TRACK_PARAM_DEATH_COORDINATES          = "deathCoordinates";
-    private const string TRACK_PARAM_DEATH_IN_CURRENT_RUN_NB    = "deathInCurrentRunNB";
+    private const string TRACK_PARAM_DEATH_IN_CURRENT_RUN_NB    = "deathInCurrentRunNb";
     private const string TRACK_PARAM_DEATH_TYPE                 = "deathType";
     private const string TRACK_PARAM_DELTA_XP                   = "deltaXp";
     private const string TRACK_PARAM_DRAGON_PROGRESSION         = "dragonProgression";
@@ -734,8 +734,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_ECO_GROUP                  = "ecoGroup";
     private const string TRACK_PARAM_ECONOMY_GROUP              = "economyGroup";
     private const string TRACK_PARAM_EGG_FOUND                  = "eggFound";
-    private const string TRACK_PARAM_FURY_RUSH_NB               = "furyRushNb";
-    private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNB";
+    private const string TRACK_PARAM_FIRE_RUSH_NB               = "fireRushNb";
+    private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNb";
     private const string TRACK_PARAM_HC_REVIVE                  = "hcRevive";
     private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER    = "highestBaseMultiplier";
     private const string TRACK_PARAM_HIGHEST_MULTIPLIER         = "highestMultiplier";
@@ -770,10 +770,11 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_STORE_TRANSACTION_ID       = "storeTransactionID";
     private const string TRACK_PARAM_SUBVERSION                 = "SubVersion";
     private const string TRACK_PARAM_SUPER_FIRE_RUSH_NB         = "superFireRushNb";    
-    private const string TRACK_PARAM_TIME_PLAYED                = "timePlayed";
+    private const string TRACK_PARAM_TIME_PLAYED                = "timePlayed";    
     private const string TRACK_PARAM_TOTAL_PLAYTIME             = "totalPlaytime";
     private const string TRACK_PARAM_TOTAL_PURCHASES            = "totalPurchases";
     private const string TRACK_PARAM_TOTAL_STORE_VISITS         = "totalStoreVisits";
+    private const string TRACK_PARAM_TYPE_NOTIF                 = "typeNotif";
     private const string TRACK_PARAM_XP                         = "xp";
 
 
@@ -1003,12 +1004,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// Current session duration (in seconds) so far. It has to start being accumulated after the first game round
     /// </summary>
     private float Session_PlayTime { get; set; }
-
-    /// <summary>
-    /// Sessions amount, including this one, played by the user since installation
-    /// </summary>
-    private int Session_Count { get; set; }
-
+    
     /// <summary>
     /// This flag states whether or not the user has started any rounds. This is used to start DNA session. DNA session starts when the user 
     /// starts the first round since the application started
@@ -1028,8 +1024,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         Session_IsPayingSession = false;
         Session_IsAdSession = false;
-        Session_PlayTime = 0f;
-        Session_Count = 0;
+        Session_PlayTime = 0f;        
         Session_AnyRoundsStarted = false;
         Session_RunsAmountInCurrentRound = 0;
         Session_LastDeathType = null;
@@ -1045,7 +1040,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            Notify_RoundStart(0, 0, null, null);
+            //Notify_RoundStart(0, 0, null, null);
+            Debug.Log("gamRoundCount = " + TrackingPersistenceSystem.GameRoundCount + " Session_PlayTime = " + Session_PlayTime);
         }        
     }
     #endregion

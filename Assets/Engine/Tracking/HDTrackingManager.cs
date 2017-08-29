@@ -37,6 +37,9 @@ public class HDTrackingManager
             return smInstance;
         }
     }
+
+    public virtual void Init() {}
+
     //////////////////////////////////////////////////////////////////////////
 
     public enum EEconomyGroup
@@ -68,7 +71,7 @@ public class HDTrackingManager
         return group.ToString();
     }
 
-    public TrackingSaveSystem TrackingSaveSystem { get; set; }
+    public TrackingPersistenceSystem TrackingPersistenceSystem { get; set; }
              
     public virtual void Update()
     {        
