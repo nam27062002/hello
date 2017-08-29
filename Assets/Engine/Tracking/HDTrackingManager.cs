@@ -59,8 +59,9 @@ public class HDTrackingManager
         REWARD_MISSION,                 
         REWARD_RUN,                     // Used when the user gets something such as soft currency during a run
         PET_DUPLICATED,                 // Used when the user gets some reward instead of a pet because the user already has that pet
-        REFUND_GLOBAL_EVENT,            // USed when the user quits a global event so keys spent on it need to be refunded
-        SHOP_EXCHANGE                   // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
+        REFUND_GLOBAL_EVENT,            // Used when adding a score to the global event is not possible and the HC spent to duplicate the score needs to be refunded
+        SHOP_EXCHANGE,                  // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
+		GLOBAL_EVENT_BONUS				// Spend HC to duplicate score contribution to the event when a key was not found
     };
 
     public static string EconomyGroupToString(EEconomyGroup group)
