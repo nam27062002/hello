@@ -546,7 +546,7 @@ public class ProfilerControlPanelController : MonoBehaviour
         public void Toggle(string sceneName)
         {
             UnityEngine.SceneManagement.Scene s = UnityEngine.SceneManagement.SceneManager.GetSceneByName(sceneName);
-            if (s != null && s.isLoaded)
+            if (s.isLoaded)
             {
                 bool isActive = State == null;
                 if (isActive)

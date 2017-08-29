@@ -9,7 +9,7 @@ public class PersistenceManagerImp : GameProgressManager
 {
     //m_version needs to reflect the minimum version on the server and the minimum support version of the app
     // [DGR] Version number set here so it will be accessible immediately, which is needed when the persistence profiles editor is used with the game off
-    private string m_version = "0.1.1";
+    //private string m_version = "0.1.1";
 
     public override void Init()
     {
