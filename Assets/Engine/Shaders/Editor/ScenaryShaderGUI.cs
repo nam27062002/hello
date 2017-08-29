@@ -357,49 +357,71 @@ internal class ScenaryShaderGUI : ShaderGUI {
         {
             Material mat = materialList[c];
 
+            // UnlitShadowLightmap.shader
             if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap")
             {
                 mat.shader = shader;
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+
+//                mat.EnableKeyword("FOG");
+//                mat.EnableKeyword("OPAQUEALPHA");
                 EditorUtility.SetDirty(mat);
-//                Debug.Log("ScenaryShaderGUI: ReplaceOldScenaryShaders : " + mat.shader.name);
             }
+            // UnlitShadowLightmapDarken.shader
             else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Darken")
             {
                 mat.shader = shader;
-                mat.EnableKeyword("DARKEN");
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
+                mat.SetFloat("_EnableDarken", 1.0f);
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+
+//                mat.EnableKeyword("DARKEN");
+//                mat.EnableKeyword("FOG");
+//                mat.EnableKeyword("OPAQUEALPHA");
                 EditorUtility.SetDirty(mat);
-//                Debug.Log("ScenaryShaderGUI: ReplaceOldScenaryShaders : " + mat.shader.name);
             }
+            // UnlitShadowLightmapEmissive.shader
             else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Emissive blink")
             {
-                mat.shader = shader;
-                mat.EnableKeyword("EMISSIVEBLINK");
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
+                mat.shader = shader;                
+                mat.SetFloat("_EnableEmissiveBlink", 1.0f);
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+
+//                mat.EnableKeyword("EMISSIVEBLINK");
+//                mat.EnableKeyword("FOG");
+//                mat.EnableKeyword("OPAQUEALPHA");
                 EditorUtility.SetDirty(mat);
-//                Debug.Log("ScenaryShaderGUI: ReplaceOldScenaryShaders : " + mat.shader.name);
             }
+            // UnlitShadowLightmapNormal.shader
             else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Normal Map")
             {
                 mat.shader = shader;
-                mat.EnableKeyword("NORMALMAP");
-                mat.EnableKeyword("SPECULAR");
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_SpecularPower", 20.0f);
+                mat.SetFloat("_EnableNormalMap", 1.0f);
+                mat.SetFloat("_NormalStrength", 1.0f);
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+
+//                mat.EnableKeyword("NORMALMAP");
+//                mat.EnableKeyword("SPECULAR");
+//                mat.EnableKeyword("FOG");
+//                mat.EnableKeyword("OPAQUEALPHA");
                 EditorUtility.SetDirty(mat);
-//                Debug.Log("ScenaryShaderGUI: ReplaceOldScenaryShaders : " + mat.shader.name);
             }
+            // UnlitShadowLightmapCutoff.shader
             else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + LightMap + AlphaCutoff (cutoff vegetation)")
             {
                 mat.shader = shader;
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("CUTOFF");
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableCutoff", 1.0f);
+                mat.SetFloat("_Cutoff", 0.5f);
+
+//                mat.EnableKeyword("FOG");
+//                mat.EnableKeyword("CUTOFF");
                 EditorUtility.SetDirty(mat);
-//                Debug.Log("ScenaryShaderGUI: ReplaceOldScenaryShaders : " + mat.shader.name);
             }
         }
     }
