@@ -28,6 +28,12 @@ public static class Prefs {
 		EDITOR
 	}
 
+
+	public const string RATE_CHECK = "Rate.Check";
+	public const string RATE_LATERS = "Rate.Later";
+	public const string RATE_CHECK_DRAGON = "Rate.CheckDragon";
+	public const string RATE_FUTURE_DATE = "Rate.FutureDate";
+
 	//------------------------------------------------------------------//
 	// GENERAL METHODS	 												//
 	//------------------------------------------------------------------//
