@@ -849,8 +849,8 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 15
-    m_maxRadius: 15
+    m_sightRadius: 7
+    m_maxRadius: 7
     m_minRadius: 5
     m_hysteresisOffset: 0
     m_senseAbove: 1
@@ -860,8 +860,8 @@ MonoBehaviour:
       min: 0.9
       max: 1.1
     m_senseDelay:
-      min: 0.25
-      max: 1.25
+      min: 1
+      max: 2
   m_edible:
     m_rotateToMouth: 0
   m_inflammable:
@@ -878,7 +878,7 @@ MonoBehaviour:
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
   m_shield: {fileID: 135955020639540408}
-  m_shieldTier: 4
+  m_shieldTier: 3
 --- !u!135 &135955020639540408
 SphereCollider:
   m_ObjectHideFlags: 1
