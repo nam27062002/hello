@@ -301,7 +301,7 @@ public class SpawnerWagon : MonoBehaviour, ISpawner {
 
 	void OnDrawGizmos() {
 		Gizmos.color = Colors.WithAlpha(Colors.paleGreen, 0.25f);
-		Gizmos.DrawCube(transform.position + (Vector3)m_rect.position, m_rect.size);
+		Gizmos.DrawCube(transform.position + (Vector3)boundingRect.position, m_rect.size);
 
 		Gizmos.color = Colors.paleGreen;
 		Gizmos.DrawWireCube(transform.position + (Vector3)m_rect.position, m_rect.size);
