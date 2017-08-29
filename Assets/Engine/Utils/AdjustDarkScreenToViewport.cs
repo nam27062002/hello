@@ -17,7 +17,7 @@ using UnityEngine;
 /// </summary>
 [ExecuteInEditMode]
 [RequireComponent(typeof(MeshRenderer))]
-public class AdjustSpriteToViewport : MonoBehaviour {
+public class AdjustDarkScreenToViewport : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -27,6 +27,8 @@ public class AdjustSpriteToViewport : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	[SerializeField] private bool m_executeInEditMode = false;
 	private MeshRenderer m_renderer = null;
+
+    public bool m_darkUpdate = true;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -61,7 +63,7 @@ public class AdjustSpriteToViewport : MonoBehaviour {
 	/// </summary>
 	private void LateUpdate() {
 		// Apply it by the end of the frame to make sure camera transform is updated!
-		if(Application.isPlaying) {
+		if(Application.isPlaying && m_darkUpdate) {
 			FitViewport();
 		}
 	}
