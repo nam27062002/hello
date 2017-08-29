@@ -72,10 +72,7 @@ public class CPProgressionCheats : MonoBehaviour {
         // Clear persistence and sets the default persistence
         PersistenceFacade.instance.Save_ResetToDefault();
 
-        UsersManager.Reset();
-
-        // We need to load the default persistence in order to make UserManager.currentUser load the default data
-        FGOL.Save.SaveGameManager.Instance.Load(Authenticator.Instance.User);
+        UsersManager.Reset();        
 
 		// Backup all preferences that must be kept between resets
 		int resetProgressCount = PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0);
