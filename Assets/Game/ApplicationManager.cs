@@ -59,24 +59,18 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             DebugSettings.Init();
         }
 
-
-
         Reset();
 
         FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);
         SocialFacade.Instance.Init();
         GameServicesFacade.Instance.Init();
 
-
         SocialManager.Instance.Init();
 
         // This class needs to know whether or not the user is in the middle of a game
         Messenger.AddListener(GameEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
         Messenger.AddListener<bool>(GameEvents.GAME_PAUSED, Game_OnPaused);
-        Messenger.AddListener(GameEvents.GAME_ENDED, Game_OnEnded);
-
-        SaveFacade.Instance.OnLoadStarted += OnLoadStarted;
-        SaveFacade.Instance.OnLoadComplete += OnLoadComplete;
+        Messenger.AddListener(GameEvents.GAME_ENDED, Game_OnEnded);        
 
         Notifications_Init();
 
@@ -153,16 +147,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private void Reset()
     {
         LastPauseTime = -1;
-        NeedsToRestartFlow = false;
-        SaveLoadIsCompleted = false;
+        NeedsToRestartFlow = false;        
         Game_IsInGame = false;
         Game_IsPaused = false;
         Debug_IsPaused = false;
     }
 
-    public bool NeedsToRestartFlow { get; set; }
-
-    private bool SaveLoadIsCompleted { get; set; }
+    public bool NeedsToRestartFlow { get; set; }    
 
     protected void Update()
     {
@@ -329,8 +320,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             HDTrackingManager.Instance.Notify_ApplicationResumed();
         }
 
-        // If the save stuff done in the first loading is not done then the pause is ignored
-        if (SaveLoadIsCompleted)
+        // If the  done in the first loading is not done then the pause is ignored
+        if (PersistenceFacade.instance.IsLoadCompleted)
         {
             long currentTime = Globals.GetUnixTimestamp();
             bool allowGameRestart = true;
@@ -353,7 +344,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 // [DGR] NOTIF Not supported yet
                 //NotificationManager.Instance.ScheduleReEngagementNotifications();
 
-                SaveFacade.Instance.Save(null, false);
+                PersistenceFacade.instance.Save_Request();
             }
             else
             {
@@ -362,6 +353,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                     // [DGR] NOTIF Not supported yet           
                     //NotificationManager.Instance.CheckNotifications(delegate ()
                     {
+                        /*
                         if (SocialManager.Instance.IsUser(SocialFacade.Network.Default))
                         {
                             if (LastPauseTime != -1)
@@ -387,6 +379,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                                 SocialManager.Instance.OnAppResume(false);
                             }
                         }
+                        */
                     }
                     // [DGR] NOTIF Not supported yet           
                     //);
@@ -420,20 +413,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             }
             */            
         }        
-    }
-
-    private void OnLoadStarted()
-    {
-        SaveLoadIsCompleted = false;
-    }
-
-    private void OnLoadComplete()
-    {
-        SaveLoadIsCompleted = true;
-
-        // A new tracking session is started
-        HDTrackingManager.Instance.Notify_ApplicationStart();
-    }
+    }    
 
     #region game
     private bool Game_IsInGame { get; set; }
