@@ -26,7 +26,7 @@ public class PersistenceManagerImp : GameProgressManager
     /// </summary>
     private bool LocalProgress_IsSaveEnabled { get; set; }
 
-    private PersistenceData LocalProgress_Data { get; set; }
+    protected PersistenceData LocalProgress_Data { get; set; }
 
     private void LocalProgress_Init()
     {
@@ -80,14 +80,15 @@ public class PersistenceManagerImp : GameProgressManager
 
     public override PersistenceStates.LoadState LocalProgress_ResetToDefault()
     {        
+        LocalProgress_Data = new PersistenceData(LOCAL_SAVE_ID);        
         SimpleJSON.JSONNode defaultJson = PersistenceManager.GetDefaultDataFromProfile();
         LocalProgress_Data.Merge(defaultJson.ToString());
 
+        // Default persistence is always OK
+        LocalProgress_Data.LoadState = PersistenceStates.LoadState.OK;
+
         // Loads the systems         
-        if (LocalProgress_Data.LoadState == PersistenceStates.LoadState.OK)
-        {
-            Systems_Load(LocalProgress_Data);
-        }
+        Systems_Load(LocalProgress_Data);        
         
         // Saves the default persistence if everything went ok
         LocalProgress_IsSaveEnabled = LocalProgress_Data.LoadState == PersistenceStates.LoadState.OK;

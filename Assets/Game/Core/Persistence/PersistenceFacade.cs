@@ -4,12 +4,20 @@ using UnityEngine;
 public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade>
 {
     private GameProgressManager Manager;
-    private string m_debugManagerKey = null;// DEBUG_PM_LOCAL_CORRUPTED;
+    private string m_debugManagerKey = null;   
+    
+    public bool IsLoadCompleted { get; set; } 
 
     public void Init()
-    {        
+    {
+        // If you want to test a particular flow you just need to set the id of the flow to test to m_debugManagerKey
+        //m_debugManagerKey = DEBUG_PM_LOCAL_CORRUPTED;        
+
+        IsLoadCompleted = false;
+
         if (FeatureSettingsManager.IsDebugEnabled && !string.IsNullOrEmpty(m_debugManagerKey))
         {
+            // Test a particular flow
             Manager = Debug_GetManager(m_debugManagerKey);            
             if (Manager == null)
             {
@@ -50,23 +58,26 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
         AuthManager.Instance.LoadUser();
 
         PersistenceStates.LoadState localState = Manager.LocalProgress_Load();
-        Sync_ProcessLocalProgress(localState);
-        Sync_OnLoadedSuccessfully(onDone);        
+        Sync_ProcessLocalProgress(localState, onDone);        
     }
 
-    private void Sync_ProcessLocalProgress(PersistenceStates.LoadState localState)
+    private void Sync_ProcessLocalProgress(PersistenceStates.LoadState localState, Action onDone)
     {
         Action solveConflict = delegate ()
         {
             // Local persistence has to be reseted to the default one
             localState = Manager.LocalProgress_ResetToDefault();
-            Sync_ProcessLocalProgress(localState);
+            Sync_ProcessLocalProgress(localState, onDone);
         };
 
         switch (localState)
         {            
             case PersistenceStates.LoadState.Corrupted:
                 Popups_OpenLoadSaveCorruptedError(false, solveConflict);
+                break;
+
+            case PersistenceStates.LoadState.OK:
+                Sync_OnLoadedSuccessfully(onDone);
                 break;
         }        
     }
@@ -75,6 +86,8 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
     {
         // Initialize managers needing data from the loaded profile
         GlobalEventManager.SetupUser(UsersManager.currentUser);
+
+        IsLoadCompleted = true;
 
         if (onDone != null)
         {
@@ -105,6 +118,12 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
     private void Save_Reset()
     {
         Save_TimeLeftToSave = SAVE_PERIOD_TIME;
+    }
+
+    public void Save_ResetToDefault()
+    {
+        Manager.LocalProgress_ResetToDefault();
+        Save_Request(true);
     }
 
     /// <summary>
@@ -191,24 +210,29 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
     }
 
     private const string DEBUG_PM_LOCAL_CORRUPTED = "LocalCorrupted";
-    private const string DEBUG_PM_LOCAL_PERMISSION_ERROR = "LocalPermissionError";
-
-    private Dictionary<string, PersistenceManagerDebug> Debug_PersistenceManagers;
+    private const string DEBUG_PM_LOCAL_PERMISSION_ERROR = "LocalPermissionError";    
 
     private GameProgressManager Debug_GetManager(string managerKey)
-    {        
-        PersistenceManagerImp normalManager = new PersistenceManagerImp();
-        PersistenceManagerDebug manager = new PersistenceManagerDebug(managerKey, normalManager);
+    {                
+        PersistenceManagerDebug manager = new PersistenceManagerDebug(managerKey);
 
         switch (managerKey)
         {
-            case DEBUG_PM_LOCAL_CORRUPTED:                                
-                manager.ForcedLoadState = PersistenceStates.LoadState.Corrupted;                
-                break;
+            case DEBUG_PM_LOCAL_CORRUPTED:
+            {
+                Queue<PersistenceStates.LoadState> states = new Queue<PersistenceStates.LoadState>();
+                states.Enqueue(PersistenceStates.LoadState.Corrupted);
+                manager.ForcedLoadStates = states;
+            }
+            break;
 
-            case DEBUG_PM_LOCAL_PERMISSION_ERROR:                
-                manager.ForcedLoadState = PersistenceStates.LoadState.PermissionError;                
-                break;
+            case DEBUG_PM_LOCAL_PERMISSION_ERROR:
+            {
+                Queue<PersistenceStates.LoadState> states = new Queue<PersistenceStates.LoadState>();
+                states.Enqueue(PersistenceStates.LoadState.PermissionError);
+                manager.ForcedLoadStates = states;
+            }
+            break;
 
             default:
                 manager = null;
@@ -232,6 +256,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
         config.MessageTid = (cloudEver) ? "TID_SAVE_ERROR_LOCAL_CORRUPTED_OFFLINE_DESC" : "TID_SAVE_ERROR_LOCAL_CORRUPTED_DESC";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
+        config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);
     }
     #endregion

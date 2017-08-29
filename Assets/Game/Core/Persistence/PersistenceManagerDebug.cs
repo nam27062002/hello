@@ -1,73 +1,28 @@
 ﻿/// <summary>
 /// This class is responsible for simulating different cases for debug purposes
 /// </summary>
-public class PersistenceManagerDebug : GameProgressManager
-{
-    public class Forced
+using System.Collections.Generic;
+public class PersistenceManagerDebug : PersistenceManagerImp
+{    
+    public PersistenceManagerDebug(string name)
     {
-        public int Times { get; set; }
-
-        public void Reset()
-        {
-            Times = 0;
-        }
+        Name = name;        
     }
 
-    public PersistenceManagerDebug(string name, PersistenceManagerImp manager)
-    {
-        Name = name;
-        Manager = manager;
-
-        Reset();
-    }
-
-    public string Name { get; set; }
-
-    private PersistenceManagerImp Manager;
-
-    private bool NeedsToForceLoadState { get; set; }
-
-    private PersistenceStates.LoadState m_forcedLoadState;
-    public PersistenceStates.LoadState ForcedLoadState
-    {
-        get { return m_forcedLoadState; }
-        set
-        {
-            NeedsToForceLoadState = true;
-            m_forcedLoadState = value;
-        }
-    }
-
-    private bool NeedsToForceSaveState { get; set; }
-
-    private PersistenceStates.SaveState m_forcedSaveState;
-    public PersistenceStates.SaveState ForcedSaveState
-    { 
-        get { return m_forcedSaveState; }
-        set
-        {
-            NeedsToForceSaveState = true;
-            m_forcedSaveState = value;
-        }
-    }
-
-    private void Reset()
-    {
-        NeedsToForceLoadState = false;
-        NeedsToForceSaveState = false;
-    }
+    public string Name { get; set; }    
     
+    public Queue<PersistenceStates.LoadState> ForcedLoadStates { get; set; }        
+    public Queue<PersistenceStates.SaveState> ForcedSaveStates { get; set; }                
+
     public override PersistenceStates.LoadState LocalProgress_Load()
     {
-        PersistenceStates.LoadState returnValue;
-        if (NeedsToForceLoadState)
+        PersistenceStates.LoadState returnValue = base.LocalProgress_Load();        
+        
+        if (ForcedLoadStates != null && ForcedLoadStates.Count > 0)
         {
-            returnValue = ForcedLoadState;
-        }
-        else
-        {
-            returnValue = Manager.LocalProgress_Load();
-        }
+            returnValue = ForcedLoadStates.Dequeue();
+            LocalProgress_Data.LoadState = returnValue;
+        }        
         
         return returnValue;
     }
@@ -75,20 +30,15 @@ public class PersistenceManagerDebug : GameProgressManager
     public override PersistenceStates.SaveState LocalProgress_SaveToDisk()
     {
         PersistenceStates.SaveState returnValue;
-        if (NeedsToForceSaveState)
+        if (ForcedSaveStates != null && ForcedSaveStates.Count > 0)
         {
-            returnValue = ForcedSaveState;
+            returnValue = ForcedSaveStates.Dequeue();
         }
         else
         {
-            returnValue = Manager.LocalProgress_SaveToDisk();
+            returnValue = base.LocalProgress_SaveToDisk();
         }
 
         return returnValue;
-    }
-
-    public override PersistenceStates.LoadState LocalProgress_ResetToDefault()
-    {
-        return Manager.LocalProgress_ResetToDefault();
-    }
+    }   
 }
