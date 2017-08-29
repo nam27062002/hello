@@ -11,6 +11,7 @@ using System;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
+using System.IO;
 
 #pragma warning disable 0168 // variable declared but not used.
 #pragma warning disable 0219 // variable assigned but not used.
@@ -332,5 +333,75 @@ internal class ScenaryShaderGUI : ShaderGUI {
             m.DisableKeyword(keyword);
     }
 
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    //  Tools
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    /// Seek for old scenary shaders and change by new scenary standard material
+    /// </summary>
+    [MenuItem("Tools/Replace old scenary shaders")]
+    public static void ReplaceOldScenaryShaders()
+    {
+        Debug.Log("Obtaining material list");
+
+        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
+
+        Material[] materialList;
+        AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+
+        Shader shader = Shader.Find("Hungry Dragon/Scenary/Scenary Standard");
+
+        for (int c = 0; c < materialList.Length; c++)
+        {
+            Material mat = materialList[c];
+
+            if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap")
+            {
+                mat.shader = shader;
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("OPAQUEALPHA");
+                EditorUtility.SetDirty(mat);
+//                Debug.Log("ScenaryShaderGUI: ReplaceOldScenaryShaders : " + mat.shader.name);
+            }
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Darken")
+            {
+                mat.shader = shader;
+                mat.EnableKeyword("DARKEN");
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("OPAQUEALPHA");
+                EditorUtility.SetDirty(mat);
+//                Debug.Log("ScenaryShaderGUI: ReplaceOldScenaryShaders : " + mat.shader.name);
+            }
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Emissive blink")
+            {
+                mat.shader = shader;
+                mat.EnableKeyword("EMISSIVEBLINK");
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("OPAQUEALPHA");
+                EditorUtility.SetDirty(mat);
+//                Debug.Log("ScenaryShaderGUI: ReplaceOldScenaryShaders : " + mat.shader.name);
+            }
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Normal Map")
+            {
+                mat.shader = shader;
+                mat.EnableKeyword("NORMALMAP");
+                mat.EnableKeyword("SPECULAR");
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("OPAQUEALPHA");
+                EditorUtility.SetDirty(mat);
+//                Debug.Log("ScenaryShaderGUI: ReplaceOldScenaryShaders : " + mat.shader.name);
+            }
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + LightMap + AlphaCutoff (cutoff vegetation)")
+            {
+                mat.shader = shader;
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("CUTOFF");
+                EditorUtility.SetDirty(mat);
+//                Debug.Log("ScenaryShaderGUI: ReplaceOldScenaryShaders : " + mat.shader.name);
+            }
+        }
+    }
     
 }
