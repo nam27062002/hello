@@ -403,6 +403,8 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.SetFloat("_EnableCutoff", 1.0f);
                 mat.SetFloat("_Cutoff", 0.5f);
                 EditorUtility.SetDirty(mat);
+
+                Debug.Log("Cutoff: " + mat.name);
             }
             // UnlitShadowLightmapVColorMultiply.shader
             else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Vertex Color Multiply")
