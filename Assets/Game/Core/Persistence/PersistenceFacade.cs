@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade>
-{
+{    
     private GameProgressManager Manager;
     private string m_debugManagerKey = null;   
     
@@ -84,7 +84,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
             switch (m_syncState)
             {
                 case ESyncState.GettingPersistences:
-                    Manager.LocalProgress_Load();
+                    Manager.LocalProgress_Load(LocalPersistence_ActiveProfileID);
 
                     /*
                     GameServerManager.SharedInstance.Configure();
@@ -93,35 +93,46 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
                     break;
 
                 case ESyncState.Syncing:
-                    bool cloudPersistenceIsReady = false;
-                    bool cloudPersistenceIsValid = false;
-
-                    // Checks local persistence status
-                    switch (Manager.LocalProgress_Data.LoadState)
-                    {
-                        case PersistenceStates.LoadState.Corrupted:
-                            bool useCloud = cloudPersistenceIsReady && cloudPersistenceIsValid;
-
-                            Action solveConflict = delegate ()
-                            {
-                                if (!useCloud)
-                                {
-                                    // Local persistence has to be reseted to the default one
-                                    Manager.LocalProgress_ResetToDefault();
-                                }
-                                Sync_OnLoadedSuccessfully();
-                            };
-
-                            Popups_OpenLoadSaveCorruptedError(useCloud, solveConflict);
-                            SyncState = ESyncState.Error;
-                            break;
-
-                        case PersistenceStates.LoadState.OK:
-                            Sync_OnLoadedSuccessfully();
-                            break;
-                    }
+                    Sync_ProcessSyncing();
                     break;
             }
+        }
+    }
+
+    private void Sync_ProcessSyncing()
+    {
+        bool cloudPersistenceIsReady = false;
+        bool cloudPersistenceIsValid = false;
+
+        // Checks local persistence status
+        switch (Manager.LocalProgress_Data.LoadState)
+        {
+            case PersistenceStates.LoadState.Corrupted:
+                bool useCloud = cloudPersistenceIsReady && cloudPersistenceIsValid;
+
+                Action solveConflict = delegate ()
+                {
+                    if (!useCloud)
+                    {
+                        // Local persistence has to be reseted to the default one
+                        Manager.LocalProgress_ResetToDefault(LocalPersistence_ActiveProfileID, LocalPersistenceUtils.GetDefaultDataFromProfile());
+                    }
+                    Sync_OnLoadedSuccessfully();
+                };
+
+                Popups_OpenLoadSaveCorruptedError(useCloud, solveConflict);
+                SyncState = ESyncState.Error;
+                break;
+
+            case PersistenceStates.LoadState.NotFound:
+                // If it hasn't been found then the default persistence is stored locally and we proces the Syncing state again
+                Manager.LocalProgress_ResetToDefault(LocalPersistence_ActiveProfileID, LocalPersistenceUtils.GetDefaultDataFromProfile());
+                Sync_ProcessSyncing();
+                break;
+
+            case PersistenceStates.LoadState.OK:
+                Sync_OnLoadedSuccessfully();
+                break;
         }
     }
 
@@ -225,8 +236,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 
     public void Save_ResetToDefault()
     {
-        Manager.LocalProgress_ResetToDefault();
-        Save_Request(true);
+        Manager.LocalProgress_ResetToDefault(LocalPersistence_ActiveProfileID, LocalPersistenceUtils.GetDefaultDataFromProfile());        
     }
 
     /// <summary>
@@ -263,6 +273,19 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
         Save_Reset();
         Manager.LocalProgress_SaveToDisk();        
     }
+    #endregion
+
+    #region local_persistence
+
+    // Default persistence profile - it's stored in the player preferences, that way can be set from the editor and read during gameplay
+    public static string LocalPersistence_ActiveProfileID
+    {
+        get { return PlayerPrefs.GetString("activeProfile", PersistenceProfile.DEFAULT_PROFILE); }
+        set
+        {
+            PlayerPrefs.SetString("activeProfile", value);            
+        }
+    }    
     #endregion
 
     #region systems
@@ -362,5 +385,5 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);
     }
-    #endregion
+    #endregion    
 }
