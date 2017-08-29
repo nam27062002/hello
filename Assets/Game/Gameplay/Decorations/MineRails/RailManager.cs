@@ -4,11 +4,7 @@ using UnityEngine;
 
 public class RailManager : UbiBCN.SingletonMonoBehaviour<RailManager> {
 
-	private Dictionary<string, BSpline.BezierSpline> m_rails;
-
-	private void Awake() {
-		m_rails = new Dictionary<string, BSpline.BezierSpline>();
-	}
+	private Dictionary<string, BSpline.BezierSpline> m_rails = new Dictionary<string, BSpline.BezierSpline>();
 
 	public static void RegisterRail(BSpline.BezierSpline _rail) {
 		instance.m_rails.Add(_rail.name, _rail);

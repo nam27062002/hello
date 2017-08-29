@@ -38,8 +38,8 @@ namespace AI {
 					m_acceleration = m_pilot.speed * 2f;
 			} else { // going up
 				m_acceleration -= 0.05f;
-				if (m_acceleration < -m_pilot.speed * 0.25f) 
-					m_acceleration = -m_pilot.speed * 0.25f;
+				if (m_acceleration < -m_pilot.speed * 0.1f) 
+					m_acceleration = -m_pilot.speed * 0.1f;
 			}
 
 			speed += m_acceleration;
