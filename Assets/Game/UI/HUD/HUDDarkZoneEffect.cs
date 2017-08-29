@@ -8,16 +8,20 @@ public class HUDDarkZoneEffect : MonoBehaviour {
 //    public Shader m_candleEffect;
     public Material m_candleMaterial;
 
-    private Image m_blackImage;
+    private MeshRenderer m_blackImage;
 //    private Material m_candleMaterial;
     private Material m_oldMaterial;
     private bool m_enableState = false;
     private GameCamera m_gameCamera;
     private Camera m_camera;
 
+    public bool m_activate = false;
+
+    private bool m_oldActivate = false;
+
     // Use this for initialization
     void Start () {
-        m_blackImage = GetComponent<Image>();
+        m_blackImage = GetComponent<MeshRenderer>();
 //        m_candleMaterial = new Material(m_candleEffect);
         m_oldMaterial = m_blackImage.material;
 //        SetEnable();
@@ -60,6 +64,12 @@ public class HUDDarkZoneEffect : MonoBehaviour {
 
     void Update()
     {
+        if (m_activate != m_oldActivate)
+        {
+            SetEnable(m_activate);
+            m_oldActivate = m_activate;
+        }
+
         if (m_enableState)
         {
             //        Debug.Log("track ahead vector: " + m_gameCamera.m_trackAheadVector);
