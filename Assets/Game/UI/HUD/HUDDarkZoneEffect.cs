@@ -24,7 +24,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
         m_blackImage = GetComponent<MeshRenderer>();
 //        m_candleMaterial = new Material(m_candleEffect);
         m_oldMaterial = m_blackImage.material;
-//        SetEnable();
+        SetEnable(false);
 
         m_gameCamera = InstanceManager.gameCamera;
         m_camera = m_gameCamera.gameObject.GetComponent<Camera>();
@@ -44,8 +44,8 @@ public class HUDDarkZoneEffect : MonoBehaviour {
 
     void SetEnable(bool enter)
     {
-        if (enter != m_enableState)
-        {
+//        if (enter != m_enableState)
+//        {
             if (enter)
             {
                 m_blackImage.material = m_candleMaterial;
@@ -58,7 +58,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
             }
 
             m_enableState = enter;
-        }
+//        }
     }
 
 
