@@ -35,7 +35,15 @@ public class RailMeshBuilder : MonoBehaviour {
 	void Awake() {		
 		RailManager.RegisterRail(m_spline);
 	}
-	
+
+	void OnDisable() {
+		RailManager.UnRegisterRail(m_spline);
+	}
+
+	void OnDestroy() {
+		RailManager.UnRegisterRail(m_spline);
+	}
+
 	// Update is called once per frame
 	void Update() {
 		if (Application.isEditor) {
