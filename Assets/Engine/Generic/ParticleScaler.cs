@@ -126,7 +126,23 @@ public class ParticleScaler : MonoBehaviour
 		}
 		else
 		{
-			data.m_startSizeXMultiplier = mainModule.startSizeMultiplier;	
+			switch( mainModule.startSize.mode )
+        	{
+				case ParticleSystemCurveMode.Constant:
+        		{
+					data.m_startSizeXMultiplier = mainModule.startSizeMultiplier;	
+        		}break;
+				case ParticleSystemCurveMode.TwoConstants:
+				{
+					data.m_startSizeXMultiplier = mainModule.startSize.constantMin;
+					data.m_startSizeYMultiplier = mainModule.startSize.constantMax;
+				}break;
+				default:
+        		{
+					data.m_startSizeXMultiplier = mainModule.startSize.curveMultiplier;	
+        		}break;
+        	}
+			
 		}
 
 
@@ -259,7 +275,26 @@ public class ParticleScaler : MonoBehaviour
             }
             else
             {
-                mainModule.startSizeMultiplier = data.m_startSizeXMultiplier;
+            	switch( mainModule.startSize.mode )
+            	{
+					case ParticleSystemCurveMode.Constant:
+            		{
+						mainModule.startSizeMultiplier = data.m_startSizeXMultiplier;
+            		}break;
+            		case ParticleSystemCurveMode.TwoConstants:
+            		{
+						ParticleSystem.MinMaxCurve curve = mainModule.startSize;
+						curve.constantMin = data.m_startSizeXMultiplier;
+						curve.constantMax = data.m_startSizeYMultiplier;
+						mainModule.startSize = curve;
+            		}break;
+					default:
+            		{
+						ParticleSystem.MinMaxCurve curve = mainModule.startSize;
+						curve.curveMultiplier = data.m_startSizeXMultiplier;
+						mainModule.startSize = curve;
+            		}break;
+            	}
             }
             mainModule.gravityModifierMultiplier = data.m_gravityModifierMultiplier;
             mainModule.startSpeedMultiplier = data.m_startSpeedMultiplier;
@@ -432,7 +467,27 @@ public class ParticleScaler : MonoBehaviour
             }
             else
             {
-                mainModule.startSizeMultiplier *= scale;
+            	switch( mainModule.startSize.mode )
+            	{
+            		case ParticleSystemCurveMode.Constant:
+            		{
+						mainModule.startSizeMultiplier *= scale;
+            		}break;
+					case ParticleSystemCurveMode.TwoConstants:
+					{
+						ParticleSystem.MinMaxCurve curve = mainModule.startSize;
+						curve.constantMin *= scale;
+						curve.constantMax *= scale;
+						mainModule.startSize = curve;
+					}break;
+					default:
+            		{
+						ParticleSystem.MinMaxCurve curve = mainModule.startSize;
+						curve.curveMultiplier *= scale;
+						mainModule.startSize = curve;
+            		}break;
+            	}
+                
             }
 
             mainModule.gravityModifierMultiplier *= scale;
