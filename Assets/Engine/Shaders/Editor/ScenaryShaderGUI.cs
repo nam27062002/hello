@@ -369,6 +369,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.EnableKeyword("FOG");
                 mat.EnableKeyword("OPAQUEALPHA");
 
+                mat.SetOverrideTag("RenderType", "Opaque");
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
@@ -384,6 +385,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.EnableKeyword("FOG");
                 mat.EnableKeyword("OPAQUEALPHA");
 
+                mat.SetOverrideTag("RenderType", "Opaque");
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
@@ -399,6 +401,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.EnableKeyword("FOG");
                 mat.EnableKeyword("OPAQUEALPHA");
 
+                mat.SetOverrideTag("RenderType", "Opaque");
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
@@ -418,6 +421,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.EnableKeyword("FOG");
                 mat.EnableKeyword("OPAQUEALPHA");
 
+                mat.SetOverrideTag("RenderType", "Opaque");
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
@@ -434,6 +438,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
                 EditorUtility.SetDirty(mat);
 
+                mat.SetOverrideTag("RenderType", "TransparentCutout");
                 Debug.Log("Cutoff: " + mat.name);
                 sChanged++;
             }
@@ -448,7 +453,8 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.EnableKeyword("FOG");
                 mat.EnableKeyword("OPAQUEALPHA");
                 mat.EnableKeyword("VERTEXCOLOR_MODULATE");
-                
+
+                mat.SetOverrideTag("RenderType", "Opaque");
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
@@ -466,6 +472,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.EnableKeyword("BLEND_TEXTURE");
                 mat.EnableKeyword("CUSTOM_VERTEXCOLOR");
 
+                mat.SetOverrideTag("RenderType", "Opaque");
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
@@ -485,6 +492,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.EnableKeyword("BLEND_TEXTURE");
                 mat.EnableKeyword("CUSTOM_VERTEXCOLOR");
 
+                mat.SetOverrideTag("RenderType", "Opaque");
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
@@ -500,6 +508,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.EnableKeyword("OPAQUEALPHA");
                 mat.EnableKeyword("BLEND_TEXTURE");
 
+                mat.SetOverrideTag("RenderType", "Opaque");
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
@@ -517,6 +526,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.EnableKeyword("BLEND_TEXTURE");
                 mat.EnableKeyword("VERTEXCOLOR_ADDITIVE");
 
+                mat.SetOverrideTag("RenderType", "Opaque");
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
@@ -534,6 +544,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.EnableKeyword("DARKEN");
                 mat.EnableKeyword("BLEND_TEXTURE");
 
+                mat.SetOverrideTag("RenderType", "Opaque");
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
@@ -555,6 +566,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.EnableKeyword("OPAQUEALPHA");
                 mat.EnableKeyword("VERTEXCOLOR_OVERLAY");
 
+                mat.SetOverrideTag("RenderType", "Opaque");
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
@@ -572,21 +584,22 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.EnableKeyword("BLEND_TEXTURE");
                 mat.EnableKeyword("VERTEXCOLOR_OVERLAY");
 
+                mat.SetOverrideTag("RenderType", "Opaque");
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
-            /*
-                        // UnlitShadowLightmapTransparent.shader
-                        else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Transparent (On Line Decorations)")
-                        {
-                            mat.shader = shader;
-                            mat.SetFloat("_EnableFog", 1.0f);
+            // UnlitShadowLightmapTransparent.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Transparent (On Line Decorations)")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableFog", 1.0f);
 
-                            //                mat.EnableKeyword("FOG");
-                            //                mat.EnableKeyword("CUTOFF");
-                            EditorUtility.SetDirty(mat);
-                        }
-            */
+                mat.EnableKeyword("FOG");
+                //                mat.EnableKeyword("CUTOFF");
+                mat.SetOverrideTag("RenderType", "Transparent");
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
         }
         Debug.Log(sChanged + " materials changed.");
     }
