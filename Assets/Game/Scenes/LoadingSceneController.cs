@@ -69,13 +69,10 @@ public class LoadingSceneController : SceneController {
 	            config.OnConfirm = onConfirm;
 	            config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
             }
-			m_confirmPopup = PopupManager.PopupMessage_Open(config);
-			// TODO: Add this as a config parameter
-			GameObject go = m_confirmPopup.FindObjectRecursive("ButtonClose");
-			if (go != null)
-			{
-				go.SetActive(false);
-			}
+
+            // The user is not allowed to close this popup
+            config.IsButtonCloseVisible = false;
+			m_confirmPopup = PopupManager.PopupMessage_Open(config);			
         }
 
         void onConfirm()
@@ -146,9 +143,7 @@ public class LoadingSceneController : SceneController {
 	/// <summary>
 	/// First update.
 	/// </summary>
-	void Start() {                
-        SaveFacade.Instance.OnLoadComplete += OnLoadingFinished;
-
+	void Start() {                        
         // Load menu scene
         //GameFlow.GoToMenu();
         // [AOC] TEMP!! Simulate loading time with a timer for now
@@ -163,10 +158,15 @@ public class LoadingSceneController : SceneController {
         // [DGR] A single point to handle applications events (init, pause, resume, etc) in a high level.
         // No parameter is passed because it has to be created only once in order to make sure that it's initialized only once
         ApplicationManager.CreateInstance();
-        
-		UsersManager.CreateInstance();                
+
+        HDTrackingManager.Instance.Init();
+
+		UsersManager.CreateInstance();
 
         // Game
+        PersistenceFacade.CreateInstance();
+        PersistenceFacade.instance.Init();
+
         DragonManager.CreateInstance(true);
 		LevelManager.CreateInstance(true);
 		MissionManager.CreateInstance(true);
@@ -195,7 +195,7 @@ public class LoadingSceneController : SceneController {
         FeatureSettingsManager.CreateInstance(false);
 
         GameAds.CreateInstance(true);
-        GameAds.instance.Init();
+        GameAds.instance.Init();        
 
         // Initialize localization
         SetSavedLanguage();
@@ -238,11 +238,8 @@ public class LoadingSceneController : SceneController {
                     // Application.targetFrameRate = 10;
 					m_state = State.WAITING_ANDROID_PERMISSIONS;
 				}else{
-					// Load persistence
-					m_state = State.WAITING_SAVE_FACADE;
-			        SaveFacade.Instance.Init();
-			        PersistenceManager.Init();
-
+                    // Load persistence
+                    SetState(State.WAITING_SAVE_FACADE);								        
 			        // TEST
 			        /*
 					m_state = State.WAITING_ANDROID_PERMISSIONS;
@@ -261,18 +258,14 @@ public class LoadingSceneController : SceneController {
             }
             else
             {
-				// Load persistence        
-				m_state = State.WAITING_SAVE_FACADE;
-		        SaveFacade.Instance.Init();               
-		        PersistenceManager.Init();     
+                // Load persistence        
+                SetState(State.WAITING_SAVE_FACADE);				
             }
         #else
 			// Load persistence        
-			m_state = State.WAITING_SAVE_FACADE;
-	        SaveFacade.Instance.Init();               
-	        PersistenceManager.Init();     
+            SetState(State.WAITING_SAVE_FACADE);				
         #endif
-	}
+    }
 
     public static void SetSavedLanguage()
     {
@@ -306,11 +299,9 @@ public class LoadingSceneController : SceneController {
     		case State.WAITING_ANDROID_PERMISSIONS:
     		{
     			if ( m_androidPermissionsListener.m_permissionsFinished )
-    			{
-					// Load persistence        
-					m_state = State.WAITING_SAVE_FACADE;
-			        SaveFacade.Instance.Init();               
-			        PersistenceManager.Init(); 
+    			{  
+                    // Load persistence        
+                    SetState(State.WAITING_SAVE_FACADE);                        
     			}
     		}break;
     		default:
@@ -325,24 +316,14 @@ public class LoadingSceneController : SceneController {
 				m_loadingTxt.text = "Loading";	// Don't show percentage (too techy), don't localize (language data not yet loaded)
 
 				if (m_loadingBar != null)
-					m_loadingBar.normalizedValue = loadProgress;
-
-		        // The persistence is loaded once this loading state is loaded and the social facade is initialized (or a reasonable timeout in order to prevent the game from getting stack 
-		        // if social facade can't be initialized). We want to wait for the social facade to be initialized in order to have the chance to reuse a previous login to the social platform 
-		        // if the session hasn't expired yet.
-		        if (!GameSceneManager.isLoading && 
-		            (SocialFacade.Instance.IsInited() || timer > 1f)) {
-		            StartLoadFlow();
-		        }
+					m_loadingBar.normalizedValue = loadProgress;                    		        	        
 
 		        // Once load is finished, navigate to the menu scene
 		        if (loadProgress >= 1f && !GameSceneManager.isLoading && m_loadingDone) {
 		            FlowManager.GoToMenu();
 		        }
     		}break;
-    	}
-
-		
+    	}		
     }
 
 	/// <summary>
@@ -351,7 +332,25 @@ public class LoadingSceneController : SceneController {
 	override protected void OnDestroy() {
 		base.OnDestroy();
 	}
-		
+
+    private void SetState(State state)
+    {
+        m_state = state;
+
+        switch (state)
+        {
+            case State.WAITING_SAVE_FACADE:                
+                DragonManager.SetupUser(UsersManager.currentUser);
+                MissionManager.SetupUser(UsersManager.currentUser);
+                EggManager.SetupUser(UsersManager.currentUser);
+                ChestManager.SetupUser(UsersManager.currentUser);
+                GameStoreManager.SharedInstance.Initialize();
+
+                StartLoadFlow();
+                break;
+        }
+    }
+        
     private void StartLoadFlow()
     {
         if (m_startLoadFlow)
@@ -364,9 +363,16 @@ public class LoadingSceneController : SceneController {
 
             Debug.Log("Started Loading Flow");
 
-            PersistenceManager.Load();
-			GameStoreManager.SharedInstance.Initialize();
+            Action onDone = delegate()
+            {
+                m_loadingDone = true;
+                m_loading = false;
+                s_inSaveLoaderState = false;
 
+                HDTrackingManager.Instance.Notify_ApplicationStart();
+            };
+
+            PersistenceFacade.instance.Sync_Persistences(onDone);            			
         }
     }
 
@@ -399,6 +405,6 @@ public class LoadingSceneController : SceneController {
                 onComplete();
             }
         }
-    }
+    }    
 }
 

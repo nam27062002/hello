@@ -191,8 +191,8 @@ public class MapUpgradeController : MonoBehaviour {
 		m_adBlockingPopup.Close(true);
 		if ( done ){
 			UsersManager.currentUser.UnlockMap();
-			PersistenceManager.Save();
-		}
+            PersistenceFacade.instance.Save_Request();
+        }
 
 	}
 
@@ -209,8 +209,8 @@ public class MapUpgradeController : MonoBehaviour {
 			(ResourcesFlow _flow) => {
 				// Just do it
 				UsersManager.currentUser.UnlockMap();
-				PersistenceManager.Save();
-			}
+                PersistenceFacade.instance.Save_Request();
+            }
 		);
 		purchaseFlow.Begin(m_unlockPricePC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.UNLOCK_MAP, null);
 	}
@@ -221,8 +221,8 @@ public class MapUpgradeController : MonoBehaviour {
 	private void OnAdClosed() {
 		// Do it!
 		UsersManager.currentUser.UnlockMap();
-		PersistenceManager.Save();
-	}
+        PersistenceFacade.instance.Save_Request();
+    }
 
 	/// <summary>
 	/// The map has been upgraded.

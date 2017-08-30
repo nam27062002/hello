@@ -134,8 +134,8 @@ public class DragonSelectionTutorial : MonoBehaviour {
 
 					// Update tutorial flag and save persistence
 					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.DRAGON_SELECTION);
-					PersistenceManager.Save();
-				} else {
+                    PersistenceFacade.instance.Save_Request();
+                } else {
 					// Timer not finished, scroll
 					m_scroller.cameraAnimator.delta = Mathf.Lerp(1f, m_targetDelta, m_timer.GetDelta(m_ease));	// [AOC] Reverse scroll!
 				}

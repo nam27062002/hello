@@ -368,8 +368,8 @@ public class MissionPill : MonoBehaviour {
 			(ResourcesFlow _flow) => {
 				// Just do it
 				MissionManager.RemoveMission(m_missionDifficulty);
-				PersistenceManager.Save();
-			}
+                PersistenceFacade.instance.Save_Request();
+            }
 		);
 		purchaseFlow.Begin((long)m_mission.removeCostPC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.REMOVE_MISSION, m_mission.def);
 	}
@@ -393,8 +393,8 @@ public class MissionPill : MonoBehaviour {
 		{
 			UsersManager.currentUser.dailyRemoveMissionAdUses++;
 			MissionManager.RemoveMission(m_missionDifficulty);
-			PersistenceManager.Save();
-		}
+            PersistenceFacade.instance.Save_Request();
+        }
 	}
 
 	/// <summary>
@@ -403,8 +403,8 @@ public class MissionPill : MonoBehaviour {
 	private void OnRemoveMissionAdClosed() {
 		UsersManager.currentUser.dailyRemoveMissionAdUses++;
 		MissionManager.RemoveMission(m_missionDifficulty);
-		PersistenceManager.Save();
-	}
+        PersistenceFacade.instance.Save_Request();
+    }
 
 	/// <summary>
 	/// The skip time with ad button has been pressed.
@@ -421,9 +421,9 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void OnSkipTimeAdClosed() {
 		// Do it!
-		MissionManager.SkipMission(m_missionDifficulty, Mission.SECONDS_SKIPPED_WITH_AD);		
-		PersistenceManager.Save();
-	}
+		MissionManager.SkipMission(m_missionDifficulty, Mission.SECONDS_SKIPPED_WITH_AD);
+        PersistenceFacade.instance.Save_Request();
+    }
 
 	/// <summary>
 	/// Callback for the skip mission button.
@@ -438,8 +438,8 @@ public class MissionPill : MonoBehaviour {
 			(ResourcesFlow _flow) => {
 				// Just do it
 				MissionManager.SkipMission(m_missionDifficulty, -1f);
-				PersistenceManager.Save();
-			}
+                PersistenceFacade.instance.Save_Request();
+            }
 		);
 		purchaseFlow.Begin((long)m_mission.skipCostPC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.SKIP_MISSION, m_mission.def);
 	}

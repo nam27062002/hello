@@ -108,7 +108,7 @@ public class CPLevelSelector : MonoBehaviour {
 		string newLevelSku = m_levelDatas[_newValue].def.sku;
 		if(newLevelSku != UsersManager.currentUser.currentLevel) {
 			UsersManager.currentUser.currentLevel = newLevelSku;
-			PersistenceManager.Save();
+			PersistenceFacade.instance.Save_Request();
 		}
 	}
 }

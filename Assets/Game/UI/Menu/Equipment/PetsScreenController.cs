@@ -483,9 +483,9 @@ public class PetsScreenController : MonoBehaviour {
 		// Update data!
 		Refresh(true);
 
-		// Save persistence - centralize all pets management persistence in here
-		PersistenceManager.Save();
-	}
+        // Save persistence - centralize all pets management persistence in here
+        PersistenceFacade.instance.Save_Request();
+    }
 
 	/// <summary>
 	/// The filters have changed.

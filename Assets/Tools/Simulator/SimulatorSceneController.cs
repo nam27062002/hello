@@ -79,11 +79,11 @@ public class SimulatorSceneController : SceneController {
 	/// Reset button has been pressed.
 	/// </summary>
 	public void OnResetButton() {
-		// Clear persistence
-		PersistenceManager.Clear();
+        // Clear persistence
+        PersistenceFacade.instance.Save_ResetToDefault();
 
-		// Restart game
-		FlowManager.Restart();
+        // Restart game
+        FlowManager.Restart();
 	}
 }
 
