@@ -115,7 +115,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
                     if (!useCloud)
                     {
                         // Local persistence has to be reseted to the default one
-                        Manager.LocalProgress_ResetToDefault(LocalPersistence_ActiveProfileID, LocalPersistenceUtils.GetDefaultDataFromProfile());
+                        Manager.LocalProgress_ResetToDefault(LocalPersistence_ActiveProfileID, PersistenceUtils.GetDefaultDataFromProfile());
                     }
                     Sync_OnLoadedSuccessfully();
                 };
@@ -126,7 +126,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 
             case PersistenceStates.LoadState.NotFound:
                 // If it hasn't been found then the default persistence is stored locally and we proces the Syncing state again
-                Manager.LocalProgress_ResetToDefault(LocalPersistence_ActiveProfileID, LocalPersistenceUtils.GetDefaultDataFromProfile());
+                Manager.LocalProgress_ResetToDefault(LocalPersistence_ActiveProfileID, PersistenceUtils.GetDefaultDataFromProfile());
                 Sync_ProcessSyncing();
                 break;
 
@@ -236,7 +236,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 
     public void Save_ResetToDefault()
     {
-        Manager.LocalProgress_ResetToDefault(LocalPersistence_ActiveProfileID, LocalPersistenceUtils.GetDefaultDataFromProfile());        
+        Manager.LocalProgress_ResetToDefault(LocalPersistence_ActiveProfileID, PersistenceUtils.GetDefaultDataFromProfile());        
     }
 
     /// <summary>

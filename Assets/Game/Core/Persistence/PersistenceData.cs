@@ -534,7 +534,25 @@ public class PersistenceData
     // [DGR] Method added so the default persistence can be merged with the current one
     public bool Merge(string json)
     {
-        return (m_data != null) ? m_data.Merge(json) : false;
+        bool returnValue = false;
+        if (m_data == null)
+        {
+            LoadState = PersistenceStates.LoadState.NotFound;            
+        }
+        else
+        {
+            returnValue = m_data.Merge(json);
+            if (returnValue)
+            {
+                LoadState = PersistenceStates.LoadState.OK;
+            }
+            else
+            {
+                LoadState = PersistenceStates.LoadState.Corrupted;
+            }
+        }
+
+        return returnValue;    
     }
 
 #if UNITY_EDITOR

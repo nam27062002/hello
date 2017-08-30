@@ -107,7 +107,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 							{
 								m_profilePrefabs[ m_newProfileName ] = newProfilePrefab;
 
-                                LocalPersistenceUtils.SaveFromObject( m_newProfileName, newProfilePrefab);
+                                PersistenceUtils.SaveFromObject( m_newProfileName, newProfilePrefab);
 								m_saveGames[ m_newProfileName ] = newProfilePrefab;	
 
 								// Yes!!
@@ -363,7 +363,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 			string saveToRemove = m_selectedProfile;
 			m_profilePrefabs.Remove( saveToRemove );
 			DeleteCurrentProfile();
-            LocalPersistenceUtils.Clear(saveToRemove);
+            PersistenceUtils.Clear(saveToRemove);
 			m_saveGames.Remove(saveToRemove);
 		}
 			
@@ -410,7 +410,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		if(GUILayout.Button("Reset to Profile")) 
 		{
 			m_saveGames[ m_selectedSavegame ] = m_profilePrefabs[ m_selectedSavegame ];
-            LocalPersistenceUtils.SaveFromObject( m_selectedSavegame, m_saveGames[ m_selectedSavegame ]);
+            PersistenceUtils.SaveFromObject( m_selectedSavegame, m_saveGames[ m_selectedSavegame ]);
 		}
 
 		// If not cleared, draw content
@@ -422,7 +422,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
                 if (ShowSaveDataInfo(ref data))
                 {
                     m_saveGames[m_selectedSavegame] = data;
-                    LocalPersistenceUtils.SaveFromObject(m_selectedSavegame, data);
+                    PersistenceUtils.SaveFromObject(m_selectedSavegame, data);
                 }
             }
 		}
@@ -446,7 +446,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
         m_profilePrefabs.Clear();
 		for(int i = 0; i < prefabs.Length; i++) {
             if (prefabs[i].name == PersistenceProfile.DEFAULT_PROFILE) {
-                json = LocalPersistenceUtils.GetDefaultDataFromProfile(PersistenceProfile.DEFAULT_PROFILE);
+                json = PersistenceUtils.GetDefaultDataFromProfile(PersistenceProfile.DEFAULT_PROFILE);
             }
             else {
                 json = SimpleJSON.JSONNode.Parse(prefabs[i].text) as SimpleJSON.JSONClass;
@@ -468,7 +468,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 
 		// Get save games list
 		m_saveGames.Clear();
-		string[] saveGameNames = LocalPersistenceUtils.GetSavedGamesList();        
+		string[] saveGameNames = PersistenceUtils.GetSavedGamesList();        
 		
 		// Make sure we still have exactly one savegame for each profile
 		// Make sure current selection is still valid
@@ -477,20 +477,20 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		{            
 			if(!m_profilePrefabs.ContainsKey(saveGameNames[i])) 
 			{
-                LocalPersistenceUtils.Clear(saveGameNames[i]);
+                PersistenceUtils.Clear(saveGameNames[i]);
 			}
 			else
 			{	
-				m_saveGames[ saveGameNames[i] ] = LocalPersistenceUtils.LoadToObject( saveGameNames[i]);	
+				m_saveGames[ saveGameNames[i] ] = PersistenceUtils.LoadToObject( saveGameNames[i]);	
 			}
 		}
 
 		// b) Check for profiles needing a new savegame
 		foreach(string key in m_profilePrefabs.Keys) 
 		{
-			if(!LocalPersistenceUtils.HasSavedGame(key)) 
+			if(!PersistenceUtils.HasSavedGame(key)) 
 			{
-                LocalPersistenceUtils.SaveFromObject( key, m_profilePrefabs[ key ] );
+                PersistenceUtils.SaveFromObject( key, m_profilePrefabs[ key ] );
 			}
 		}
 
@@ -518,7 +518,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		SimpleJSON.JSONClass newSaveData = null;
 		try
 		{
-			newSaveData = LocalPersistenceUtils.GetDefaultDataFromProfile(PersistenceProfile.DEFAULT_PROFILE);
+			newSaveData = PersistenceUtils.GetDefaultDataFromProfile(PersistenceProfile.DEFAULT_PROFILE);
 		}
 		catch( System.Exception )
 		{
@@ -562,7 +562,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	/// <param name="_profile">The profile to which we want to create a new savegame.</param>
 	private void CreateNewSavegame(string _name, SimpleJSON.JSONClass _profile) 
 	{
-		LocalPersistenceUtils.SaveFromObject(_name, _profile);
+		PersistenceUtils.SaveFromObject(_name, _profile);
 	}
 
 	/// <summary>
