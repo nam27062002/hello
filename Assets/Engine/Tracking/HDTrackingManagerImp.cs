@@ -96,6 +96,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void InitDNA()
     {
+        // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
+#if !UNITY_EDITOR
         CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
         if (settingsInstance != null)
         {
@@ -109,8 +111,9 @@ public class HDTrackingManagerImp : HDTrackingManager
             DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", settingsInstance.m_strVersionAndroidGplay, kDNAEnvironment);
 #elif UNITY_IOS
 			DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", settingsInstance.m_strVersionIOS, kDNAEnvironment);
-#endif            
+#endif
         }
+#endif
     }
 
     private void StartCaletySession()
@@ -180,7 +183,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-    #region notify
+#region notify
     public override void Notify_ApplicationStart()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -420,9 +423,9 @@ public class HDTrackingManagerImp : HDTrackingManager
 	public override void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {
 		Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), m_firstUXFunnel.GetStepDuration(_step), m_firstUXFunnel.GetStepTotalTime(_step));
 	}
-    #endregion
+#endregion
 
-    #region track
+#region track
     private void Track_StartSessionEvent()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -1027,9 +1030,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         return "x=" + coord.x.ToString("0.0") + ", y=" + coord.y.ToString("0.0");
     }
-    #endregion
+#endregion
 
-    #region session
+#region session
     // This region is responsible for storing data generated during the current session. These data don't need to be persisted.
 
     /// <summary>
@@ -1083,9 +1086,9 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_LastDeathSource = null;
         Session_LastDeathCoordinates = null;
     }
-    #endregion
+#endregion
 
-    #region debug
+#region debug
     private const bool Debug_IsEnabled = true;
 
     private void Debug_Update()
@@ -1096,6 +1099,6 @@ public class HDTrackingManagerImp : HDTrackingManager
             Debug.Log("gamRoundCount = " + TrackingPersistenceSystem.GameRoundCount + " Session_PlayTime = " + Session_PlayTime);
         }        
     }
-    #endregion
+#endregion
 }
 
