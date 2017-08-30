@@ -64,6 +64,8 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	public const string MAP_ZOOM_RESET							= "MAP_ZOOM_RESET";
 	public const string MAP_POSITION_RESET						= "MAP_POSITION_RESET";
 
+	public const string GLOBAL_EVENTS_DONT_CACHE_LEADERBOARD	= "GLOBAL_EVENTS_DONT_CACHE_LEADERBOARD";
+
     //------------------------------------------------------------------//
     // PROPERTIES														//
     //------------------------------------------------------------------//
