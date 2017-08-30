@@ -425,7 +425,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 	}
 #endregion
 
-#region track
+#region track	
     private void Track_StartSessionEvent()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -442,7 +442,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamServerAccID(e);
             // "" is sent because Calety doesn't support this yet
             Track_AddParamString(e, TRACK_PARAM_TYPE_NOTIF, "");
-            TrackingManager.SharedInstance.SendEvent(e);
+            Track_SendEvent(e);
         }
     }    
 
@@ -461,7 +461,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_SESSION_PLAY_TIME, (int)Session_PlayTime);
             Track_AddParamString(e, TRACK_PARAM_STOP_CAUSE, stopCause);
             Track_AddParamTotalPlaytime(e);
-            TrackingManager.SharedInstance.SendEvent(e);
+			Track_SendEvent(e);
         }
     }
 
@@ -477,7 +477,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             Track_AddParamAbTesting(e);
             Track_AddParamPlayerProgress(e);         
-            TrackingManager.SharedInstance.SendEvent(e);
+			Track_SendEvent(e);
         }
     }
 
@@ -507,7 +507,7 @@ public class HDTrackingManagerImp : HDTrackingManager
                 e.SetParameterValue(TRACK_PARAM_TOTAL_STORE_VISITS, TrackingPersistenceSystem.TotalStoreVisits);
             }
 
-            TrackingManager.SharedInstance.SendEvent(e);
+			Track_SendEvent(e);
         }
     }
 
@@ -534,7 +534,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamPlayerProgress(e);
             Track_AddParamTotalPurchases(e);            
 
-            TrackingManager.SharedInstance.SendEvent(e);
+			Track_SendEvent(e);
         }
 
         // Game event
@@ -551,7 +551,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_ECO_GROUP, economyGroup);
             Track_AddParamString(e, TRACK_PARAM_ITEM, itemID);            
 
-            TrackingManager.SharedInstance.SendEvent(e);
+			Track_SendEvent(e);
         }
 
     }
@@ -576,7 +576,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_AMOUNT_BALANCE, amountBalance);
             Track_AddParamString(e, TRACK_PARAM_ECO_GROUP, economyGroup);            
 
-            TrackingManager.SharedInstance.SendEvent(e);
+			Track_SendEvent(e);
         }
     }
 
@@ -596,7 +596,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             // Always 0 since there's no pvp in the game
             e.SetParameterValue(TRACK_PARAM_PVP_MATCHES_PLAYED, 0);            
 
-            TrackingManager.SharedInstance.SendEvent(e);
+			Track_SendEvent(e);
         }
     }
 
@@ -622,7 +622,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_PROVIDER, provider);
             Track_AddParamString(e, TRACK_PARAM_ADS_TYPE, adType);
 
-            TrackingManager.SharedInstance.SendEvent(e);
+			Track_SendEvent(e);
         }
     }
 
@@ -643,7 +643,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamBool(e, TRACK_PARAM_MAX_REACHED, maxReached);            
             Track_AddParamString(e, TRACK_PARAM_ADS_TYPE, adType);
 
-            TrackingManager.SharedInstance.SendEvent(e);
+			Track_SendEvent(e);
         }
     }
 
@@ -673,7 +673,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_DRAGON_PROGRESSION, dragonProgression);            
             Track_AddParamString(e, TRACK_PARAM_DRAGON_SKIN, dragonSkin);
             Track_AddParamPets(e, pets);            
-            TrackingManager.SharedInstance.SendEvent(e);
+			Track_SendEvent(e);
         }
     }
 
@@ -717,7 +717,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_SUPER_FIRE_RUSH_NB, superFireRushNb);
             e.SetParameterValue(TRACK_PARAM_HC_REVIVE, hcRevive);
             e.SetParameterValue(TRACK_PARAM_AD_REVIVE, adRevive);
-            TrackingManager.SharedInstance.SendEvent(e);
+			
+			Track_SendEvent(e);
         }
     }
 
@@ -741,7 +742,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_DEATH_TYPE, deathType);
             Track_AddParamString(e, TRACK_PARAM_DEATH_CAUSE, deathSource);
             Track_AddParamString(e, TRACK_PARAM_DEATH_COORDINATES, deathCoordinates);
-            TrackingManager.SharedInstance.SendEvent(e);
+
+			Track_SendEvent(e);
         }
     }
 
@@ -759,7 +761,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 			e.SetParameterValue(TRACK_PARAM_STEP_DURATION, _stepDuration);
 			e.SetParameterValue(TRACK_PARAM_TOTAL_DURATION, _totalDuration);
 			e.SetParameterValue(TRACK_PARAM_FIRST_LOAD, false);	// first load?
-			TrackingManager.SharedInstance.SendEvent(e);
+			
+			Track_SendEvent(e);
 		}
 	}
 
@@ -832,6 +835,13 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_TYPE_NOTIF                 = "typeNotif";
     private const string TRACK_PARAM_XP                         = "xp";
 
+	private void Track_SendEvent(TrackingManager.TrackingEvent e)
+	{
+		// Events are not sent in UNITY_EDITOR because DNA crashes on Mac
+		#if !UNITY_EDITOR
+		TrackingManager.SharedInstance.SendEvent(e);
+		#endif
+	}
 
     private void Track_AddParamSubVersion(TrackingManager.TrackingEvent e)
     {

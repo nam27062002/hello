@@ -462,6 +462,10 @@ public class ResultsScreenController : MonoBehaviour {
 				GameVars.unlockedDragonSku = m_unlockBar.nextDragonData.def.sku;
 			}
 
+			if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
+				HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._05_continue_clicked);
+			}
+
 			// Go back to main menu
 			FlowManager.GoToMenu();
 

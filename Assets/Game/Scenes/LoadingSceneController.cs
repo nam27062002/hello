@@ -188,7 +188,6 @@ public class LoadingSceneController : SceneController {
 		SpawnerManager.CreateInstance(true);
 		SpawnerAreaManager.CreateInstance(true);
 		EntityManager.CreateInstance(true);
-		RailManager.CreateInstance(true);
 		InstanceManager.CreateInstance(true);
 
         // The stuff that this manager handles has to be done only once, regardless the game reboots
