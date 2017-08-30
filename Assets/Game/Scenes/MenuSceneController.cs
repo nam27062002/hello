@@ -161,7 +161,7 @@ public class MenuSceneController : SceneController {
 	{
 		// Check we come form a run!
 		// Check if we need to make the player rate the game
-		if ( Prefs.GetBoolPlayer(Prefs.RATE_CHECK, true) || true )
+		if ( Prefs.GetBoolPlayer(Prefs.RATE_CHECK, true))
 		{
 			if ( GameSceneManager.prevScene.CompareTo(ResultsScreenController.NAME) == 0 || GameSceneManager.prevScene.CompareTo(GameSceneController.NAME) == 0)
 			{
@@ -179,7 +179,7 @@ public class MenuSceneController : SceneController {
 						if ( _checked )
 						{
 							// Start Asking!
-							PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );		
+							PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );
 						}
 						else
 						{

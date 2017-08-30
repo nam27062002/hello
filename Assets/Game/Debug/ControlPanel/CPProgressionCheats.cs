@@ -449,4 +449,12 @@ public class CPProgressionCheats : MonoBehaviour {
 		UsersManager.currentUser.mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime(); // Already expired
         PersistenceFacade.instance.Save_Request();
     }
+
+    /// <summary>
+    /// Starts the like game flow.
+    /// </summary>
+    public void StartLikeGameFlow()
+    {
+		PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );
+    }
 }
