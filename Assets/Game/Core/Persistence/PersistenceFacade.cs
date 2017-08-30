@@ -115,11 +115,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 
     private void Sync_LoadLocalPersistence()
     {
-        Manager.LocalProgress_Load(LocalPersistence_ActiveProfileID);
-        if (Manager.LocalProgress_Data.LoadState == PersistenceStates.LoadState.OK)
-        {
-            HDTrackingManager.Instance.Notify_LocalPersistenceLoaded();
-        }
+        Manager.LocalProgress_Load(LocalPersistence_ActiveProfileID);        
     }
 
     private void Sync_ProcessSyncing()
