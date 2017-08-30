@@ -94,6 +94,8 @@ public class PopupTutorialControls : MonoBehaviour {
 	/// Close animation has started.
 	/// </summary>
 	public void OnClosePreAnimation() {
+		HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._02_clicked_play);
+			
 		// Start playing!
 		m_sceneController.startWhenLoaded = true;
 	}

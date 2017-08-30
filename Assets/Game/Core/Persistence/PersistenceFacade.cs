@@ -11,7 +11,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
     public void Init()
     {
         // If you want to test a particular flow you just need to set the id of the flow to test to m_debugManagerKey
-        //m_debugManagerKey = DEBUG_PM_LOCAL_CORRUPTED;        
+        //m_debugManagerKey = DEBUG_PM_LOCAL_PERMISSION_ERROR;                
 
         IsLoadCompleted = false;
 
@@ -66,8 +66,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
     {
         None,
         GettingPersistences,
-        Syncing,   
-        Error     
+        Syncing              
     }
 
     private ESyncState m_syncState;
@@ -108,9 +107,10 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
         switch (Manager.LocalProgress_Data.LoadState)
         {
             case PersistenceStates.LoadState.Corrupted:
+            {
                 bool useCloud = cloudPersistenceIsReady && cloudPersistenceIsValid;
 
-                Action solveConflict = delegate ()
+                Action solveProblem = delegate ()
                 {
                     if (!useCloud)
                     {
@@ -120,19 +120,39 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
                     Sync_OnLoadedSuccessfully();
                 };
 
-                Popups_OpenLoadSaveCorruptedError(useCloud, solveConflict);
-                SyncState = ESyncState.Error;
-                break;
+                Popups_OpenLoadSaveCorruptedError(useCloud, solveProblem);                
+            }
+            break;
 
             case PersistenceStates.LoadState.NotFound:
+            {
                 // If it hasn't been found then the default persistence is stored locally and we proces the Syncing state again
                 Manager.LocalProgress_ResetToDefault(LocalPersistence_ActiveProfileID, PersistenceUtils.GetDefaultDataFromProfile());
                 Sync_ProcessSyncing();
-                break;
+            }
+            break;
+
+            case PersistenceStates.LoadState.PermissionError:
+            {
+                Action solveProblem = delegate ()
+                {
+                    // We need to try to read local persistence again
+                    Manager.LocalProgress_Load(LocalPersistence_ActiveProfileID);
+
+                    // And check its status again
+                    Sync_ProcessSyncing();
+                };
+
+                // A popup asking the user to check internal storage permissions and try again
+                Popups_OpenLocalSavePermissionError(solveProblem);
+            }
+            break;
 
             case PersistenceStates.LoadState.OK:
+            {
                 Sync_OnLoadedSuccessfully();
-                break;
+            }
+            break;
         }
     }
 
@@ -336,6 +356,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
     }
 
     private const string DEBUG_PM_LOCAL_CORRUPTED = "LocalCorrupted";
+    private const string DEBUG_PM_LOCAL_NOT_FOUND = "LocalNotFound";
     private const string DEBUG_PM_LOCAL_PERMISSION_ERROR = "LocalPermissionError";    
 
     private GameProgressManager Debug_GetManager(string managerKey)
@@ -352,10 +373,24 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
             }
             break;
 
+            case DEBUG_PM_LOCAL_NOT_FOUND:
+            {
+                Queue<PersistenceStates.LoadState> states = new Queue<PersistenceStates.LoadState>();
+                states.Enqueue(PersistenceStates.LoadState.NotFound);
+                manager.ForcedLoadStates = states;
+            }
+            break;
+
             case DEBUG_PM_LOCAL_PERMISSION_ERROR:
             {
                 Queue<PersistenceStates.LoadState> states = new Queue<PersistenceStates.LoadState>();
-                states.Enqueue(PersistenceStates.LoadState.PermissionError);
+
+                // Two are enqueued so we can test the case where the problem is not fixed and the case where the problem is fixed
+                for (int i = 0; i < 2; i++)
+                {
+                    states.Enqueue(PersistenceStates.LoadState.PermissionError);
+                }
+
                 manager.ForcedLoadStates = states;
             }
             break;
@@ -380,6 +415,22 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
         config.MessageTid = (cloudEver) ? "TID_SAVE_ERROR_LOCAL_CORRUPTED_OFFLINE_DESC" : "TID_SAVE_ERROR_LOCAL_CORRUPTED_DESC";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    /// <summary>
+    /// This popup is shown when the access to the local save file is not authorized by the device
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/18%29No+access+to+local+data
+    /// </summary>    
+    public static void Popups_OpenLocalSavePermissionError(Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_ERROR_LOAD_FAILED_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_LOAD_FAILED_DESC";
+        config.ConfirmButtonTid = "TID_GEN_RETRY";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
