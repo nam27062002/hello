@@ -228,6 +228,17 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 	/// To be called at the start of the game.
 	/// </summary>
 	private void InitLevelKeys() {
+		// Remove all keys from the user, with the new design keys are no longer stockable
+		if(UsersManager.currentUser.keys > 0) {
+			ResourcesFlow flow = new ResourcesFlow();
+			flow.Begin(
+				UsersManager.currentUser.keys, 	// Spend as many keys as we currently have
+				UserProfile.Currency.KEYS, 
+				HDTrackingManager.EEconomyGroup.GLOBAL_EVENT_KEYS_RESET,
+				null
+			);
+		}
+
 		// Pick a random key from the scene
 		instance.m_key = SelectRandomCollectible<CollectibleKey>(CollectibleKey.TAG, true, TutorialStep.FIRST_RUN);
 	}
