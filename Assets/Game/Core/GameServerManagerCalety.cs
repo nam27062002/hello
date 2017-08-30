@@ -235,7 +235,8 @@ public class GameServerManagerCalety : GameServerManager {
 	/// 
 	/// </summary>
 	public override void LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken, ServerCallback callback) {
-		Log("LogInToServerThruPlatform");
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("LogInToServerThruPlatform");
 		
 		//if(!m_delegate.m_logged)
 		{
@@ -501,7 +502,8 @@ public class GameServerManagerCalety : GameServerManager {
 		command.Reset();
 
 		if(Commands_Pool.Contains(command)) {
-			LogError("This command is already in the pool");
+            if (FeatureSettingsManager.IsDebugEnabled)
+                LogError("This command is already in the pool");
 		} else {            
 			Commands_Pool.Enqueue(command);
 		}
@@ -548,7 +550,9 @@ public class GameServerManagerCalety : GameServerManager {
 	/// 
 	/// </summary>
 	private void Commands_BeforeCommand(ECommand command, Dictionary<string, string> parameters, BeforeCommandComplete callback) {
-		Log("BeforeCommand " + command + " requires auth = " + Commands_RequiresAuth(command));
+        if (FeatureSettingsManager.IsDebugEnabled)        
+            Log("BeforeCommand " + command + " requires auth = " + Commands_RequiresAuth(command));        
+
 		Error error = null;
 
 		if(Authenticator.Instance.Token != null) {
@@ -578,11 +582,14 @@ public class GameServerManagerCalety : GameServerManager {
 		//bool checkAuth = command.Name == ClaimedRewardReceiptCommand && Authenticator.Instance.User != null && !string.IsNullOrEmpty(Authenticator.Instance.User.ID);
 		bool checkAuth = false;        
 		if(Commands_RequiresAuth(command) || checkAuth) {
-			Log("IsAuthenticated = " + AuthManager.Instance.IsAuthenticated(User.LoginType.Default));
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Log("IsAuthenticated = " + AuthManager.Instance.IsAuthenticated(User.LoginType.Default));
+
 			if(AuthManager.Instance.IsAuthenticated(User.LoginType.Default)) {
 				onAuthed(null, null);
 			} else {
-				LogWarning("(BeforeCommand) :: No authed trying to reauthenticated before command");
+                if (FeatureSettingsManager.IsDebugEnabled)
+                    LogWarning("(BeforeCommand) :: No authed trying to reauthenticated before command");
 
 				//Try and silently authenticate and continue with request
 				AuthManager.Instance.Authenticate(new PermissionType[] { PermissionType.Basic }, delegate (Error authError, PermissionType[] grantedPermissions, bool cloudSaveAvailable) {
@@ -590,7 +597,9 @@ public class GameServerManagerCalety : GameServerManager {
 				}, true);
 			}
 		} else {
-			Log("Continue");
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Log("Continue");
+
 			callback(null);
 		}
 	}
@@ -603,14 +612,20 @@ public class GameServerManagerCalety : GameServerManager {
 		if(error != null && error.GetType() == typeof(AuthenticationError) && retries < COMMANDS_MAX_AUTH_RETRIES && command.Cmd != ECommand.Login) {
 			//Invalidate the session in an attempt to force re-auth
 			if(Authenticator.Instance.User != null) {
-				Log("(AfterCommand) :: Invalidating session");
+                if (FeatureSettingsManager.IsDebugEnabled)
+                    Log("(AfterCommand) :: Invalidating session");
+
 				Authenticator.Instance.User.InvalidateSession();
 			}
 
-			Log(string.Format("(AfterCommand) :: Auth Error Retrying ({0})", retries));
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Log(string.Format("(AfterCommand) :: Auth Error Retrying ({0})", retries));
+
 			Commands_PrepareToRunCommand(command, ++retries);
 		} else if(command.Callback != null) {
-			Log("Commander Callback :: " + command);
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Log("Commander Callback :: " + command);
+
 			command.Callback(error, result);
 		}                             
 	}
@@ -619,7 +634,8 @@ public class GameServerManagerCalety : GameServerManager {
 	/// 
 	/// </summary>
 	private void Commands_PrepareToRunCommand(Command command, int retries = 0) {
-		Log("PrepareToRunCommand " + command.Cmd);       
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("PrepareToRunCommand " + command.Cmd);       
 
 		//Make sure we have a valid parameters object as before or after command callbacks may modify it
 		if(command.Parameters == null) {
@@ -643,7 +659,8 @@ public class GameServerManagerCalety : GameServerManager {
 	/// 
 	/// </summary>
 	private void Commands_RunCommand(Command command, ServerCallback callback) {
-		Log("RunCommand " + command.Cmd + " CurrentCommand = " + Commands_CurrentCommand.Cmd);
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("RunCommand " + command.Cmd + " CurrentCommand = " + Commands_CurrentCommand.Cmd);
         // Commands have to be executed one by one since we're not using actions on server side
 
         //
@@ -664,13 +681,17 @@ public class GameServerManagerCalety : GameServerManager {
 				} break;
 
                 case ECommand.Auth: {
-                    Log("Command Auth");
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                        Log("Command Auth");
+
                     GameSessionManager.SharedInstance.LogInToServer();                    
                 }
                 break;
 
                 case ECommand.Login: {
-					Log("Command Login");
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                        Log("Command Login");
+
 					if(!string.IsNullOrEmpty(parameters["platformId"])) {
 						ServerManager.SharedInstance.SetSocialPlatform(parameters["platformId"]);
 					}
@@ -705,7 +726,7 @@ public class GameServerManagerCalety : GameServerManager {
 					// The user is required to be logged to set its quality settings to prevent anonymous users from messing with the quality settings of other users who have the same device model
 					if(IsLogged()) {
                         Command_SendCommand(COMMAND_SET_QUALITY_SETTINGS, null, null, parameters["qualitySettings"]);                       
-					} else {
+					} else if (FeatureSettingsManager.IsDebugEnabled) {
 						LogError("SetQualitySettings require the user to be logged");
 					}
 				} break;
@@ -752,14 +773,16 @@ public class GameServerManagerCalety : GameServerManager {
 					}
 				}break;
                 default: {
-                    LogWarning("Missing call to the server in GameServerManagerCalety.Commands_RunCommand() form command " + command.Cmd);
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                        LogWarning("Missing call to the server in GameServerManagerCalety.Commands_RunCommand() form command " + command.Cmd);
 
                     // An error is simulated because no information is available
                     Commands_OnResponse(null, 401);
                 } break;
             }
 		} else {
-			LogError("GameServerManagerCalety error: command " + command.Cmd + " can't be executed because command " + Commands_CurrentCommand.Cmd + " is still being processed.");
+            if (FeatureSettingsManager.IsDebugEnabled)
+                LogError("GameServerManagerCalety error: command " + command.Cmd + " can't be executed because command " + Commands_CurrentCommand.Cmd + " is still being processed.");
 		}
 	}
 
@@ -1034,12 +1057,14 @@ public class GameServerManagerCalety : GameServerManager {
 				} break;
 			}
 		} else {
-			// Server returned an error
-			if(Commands_CurrentCommand != null) {
-				LogWarning(Commands_CurrentCommand.Cmd, error);
-			} else {
-				LogWarning(ECommand.Unknown, error);
-			}
+            // Server returned an error
+            if (FeatureSettingsManager.IsDebugEnabled) {
+                if (Commands_CurrentCommand != null) {
+                    LogWarning(Commands_CurrentCommand.Cmd, error);
+                } else {
+                    LogWarning(ECommand.Unknown, error);
+                }
+            }
 		}
 
 		Commands_OnExecuteCommandDone(error, response);
@@ -1102,7 +1127,9 @@ public class GameServerManagerCalety : GameServerManager {
 	/// Default callback from Calety's NetworkManager, will propagate the response to the command system.
 	/// </summary>
 	private bool CaletyExtensions_OnCommandDefaultResponse(string strResponse, string strCmd, int iResponseCode) {
-		Log("Received response for command " + strCmd + ",  statusCode=" + iResponseCode);
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Received response for command " + strCmd + ",  statusCode=" + iResponseCode);
+
 		return Commands_OnResponse(strResponse, iResponseCode);
 	}
 
