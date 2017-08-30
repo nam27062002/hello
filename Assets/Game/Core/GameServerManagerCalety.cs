@@ -78,7 +78,7 @@ public class GameServerManagerCalety : GameServerManager {
 
 			// An error is sent, just in case the client is waiting for a response for any command            
 			if(m_onResponse != null) {
-				m_onResponse(null, 500);
+				//m_onResponse(null, 500);
 			}
 
 			// no problem, continue playing
@@ -1116,12 +1116,12 @@ public class GameServerManagerCalety : GameServerManager {
 			defaultJson.Add("version", FGOL.Save.SaveGameManager.Instance.Version);
 
             // We need to add the tracking information that has been collected while the user played offline
-            TrackingSaveSystem saveSystem = HDTrackingManager.Instance.TrackingSaveSystem;
-            if (saveSystem != null && !defaultJson.ContainsKey(saveSystem.name))
+            TrackingPersistenceSystem system = HDTrackingManager.Instance.TrackingPersistenceSystem;
+            if (system != null && !defaultJson.ContainsKey(system.name))
             {
                 SocialPlatformManager manager = SocialPlatformManager.SharedInstance;
-                saveSystem.SetSocialParams(manager.GetPlatformName(), manager.GetUserId(), Authenticator.Instance.User.ID);
-                defaultJson.Add(saveSystem.name, saveSystem.ToJSON());
+                system.SetSocialParams(manager.GetPlatformName(), manager.GetUserId(), Authenticator.Instance.User.ID);
+                defaultJson.Add(system.name, system.ToJSON());
             }
 
 			strResponse = defaultJson.ToString();

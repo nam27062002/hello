@@ -207,8 +207,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 				}
 			}
 
-			// Save persistence to store current dragon
-			PersistenceManager.Save(true);
-		}
+            // Save persistence to store current dragon
+            PersistenceFacade.instance.Save_Request(true);
+        }
 	}
 }

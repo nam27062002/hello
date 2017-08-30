@@ -202,8 +202,8 @@ public class IncubatorSlot : MonoBehaviour {
 			(ResourcesFlow _flow) => {
 				// Instantly finish current incubation
 				if(targetEgg.SkipIncubation()) {
-					PersistenceManager.Save();
-				}
+                    PersistenceFacade.instance.Save_Request();
+                }
 			}
 		);
 		purchaseFlow.Begin((long)targetEgg.GetIncubationSkipCostPC(), UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.SKIP_EGG_INCUBATION, targetEgg.def);
